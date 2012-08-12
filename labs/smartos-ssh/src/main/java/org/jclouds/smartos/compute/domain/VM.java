@@ -1,6 +1,5 @@
 package org.jclouds.smartos.compute.domain;
 
-import java.util.Map;
 import java.util.UUID;
 
 import com.google.common.base.Objects;
@@ -25,12 +24,12 @@ public class VM {
 
    public static class Builder {
 
-      protected SmartOSHost host;
-      protected UUID uuid;
-      protected String type;
-      protected String ram;
-      protected State state = State.STOPPED;
-      protected String alias;
+      private Optional<String> publicAddress = Optional.absent();
+      private UUID uuid;
+      private String type;
+      private String ram;
+      private State state = State.STOPPED;
+      private String alias;
 
       public Builder uuid(UUID uuid) {
          this.uuid = uuid;
@@ -42,8 +41,8 @@ public class VM {
          return this;
       }
 
-      public Builder host(SmartOSHost host) {
-         this.host = host;
+      public Builder publicAddress(String publicAddress) {
+         this.publicAddress = Optional.fromNullable(publicAddress);
          return this;
       }
 
@@ -88,24 +87,24 @@ public class VM {
       }
 
       public VM build() {
-         return new VM(host, uuid, type, ram, state, alias);
+         return new VM(publicAddress, uuid, type, ram, state, alias);
       }
 
       public Builder fromVM(VM in) {
-         return host(in.getHost()).uuid(in.getUuid()).type(in.getType()).ram(in.getRam()).state(in.getState())
-                  .alias(in.getAlias());
+         return publicAddress(in.getPublicAddress().orNull()).uuid(in.getUuid()).type(in.getType()).ram(in.getRam())
+                  .state(in.getState()).alias(in.getAlias());
       }
    }
 
-   protected SmartOSHost host;
-   protected final UUID uuid;
-   protected String type;
-   protected String ram;
-   protected State state;
-   protected String alias;
+   private Optional<String> publicAddress;
+   private final UUID uuid;
+   private String type;
+   private String ram;
+   private State state;
+   private String alias;
 
-   public VM(SmartOSHost host, UUID uuid, String type, String ram, State state, String alias) {
-      this.host = host;
+   protected VM(Optional<String> publicAddress, UUID uuid, String type, String ram, State state, String alias) {
+      this.publicAddress = publicAddress;
       this.uuid = uuid;
       this.type = type;
       this.ram = ram;
@@ -117,42 +116,8 @@ public class VM {
       return state;
    }
 
-   public void destroy() {
-      host.destroyHost(uuid);
-   }
-
-   public void reboot() {
-      host.rebootHost(uuid);
-   }
-
-   public void stop() {
-      host.stopHost(uuid);
-   }
-
-   public void start() {
-      host.startHost(uuid);
-   }
-
-   public Optional<String> getPublicAddress() throws InterruptedException {
-      Map<String, String> ipAddresses;
-
-      for (int i = 0; i < 30; i++) {
-         ipAddresses = host.getVMIpAddresses(uuid);
-         if (!ipAddresses.isEmpty()) {
-            // Got some
-            String ip = ipAddresses.get("net0");
-            if (ip != null && !ip.equals("0.0.0.0"))
-               return Optional.of(ip);
-         }
-
-         Thread.sleep(1000);
-      }
-
-      return Optional.absent();
-   }
-
-   public SmartOSHost getHost() {
-      return host;
+   public Optional<String> getPublicAddress() {
+      return publicAddress;
    }
 
    public UUID getUuid() {
@@ -191,7 +156,7 @@ public class VM {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      return uuid.equals(((DataSet) obj).getUuid());
+      return uuid.equals(((VM) obj).getUuid());
    }
 
    /**
@@ -200,6 +165,6 @@ public class VM {
    @Override
    public String toString() {
       return Objects.toStringHelper(this).omitNullValues().add("uuid", uuid).add("type", type).add("ram", ram)
-               .add("alias", alias).toString();
+               .add("alias", alias).add("publicAddress", publicAddress.orNull()).toString();
    }
 }

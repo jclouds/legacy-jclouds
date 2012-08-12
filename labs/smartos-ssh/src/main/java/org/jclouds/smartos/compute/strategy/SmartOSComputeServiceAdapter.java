@@ -20,41 +20,41 @@ package org.jclouds.smartos.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
+import java.util.UUID;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.domain.LoginCredentials;
+import org.jclouds.smartos.SmartOSHostController;
 import org.jclouds.smartos.compute.domain.DataSet;
-import org.jclouds.smartos.compute.domain.SmartOSHost;
 import org.jclouds.smartos.compute.domain.VM;
 import org.jclouds.smartos.compute.domain.VmNIC;
 import org.jclouds.smartos.compute.domain.VmSpecification;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 
 /**
- * defines the connection between the {@link org.jclouds.smartos.compute.domain.SmartOSHost}
+ * defines the connection between the {@link org.jclouds.smartos.compute.domain.SmartOSHostController}
  * implementation and the jclouds {@link ComputeService}
  * 
  */
 @Singleton
-public class SmartOSComputeServiceAdapter implements ComputeServiceAdapter<VM, VmSpecification, DataSet, SmartOSHost> {
-   private final SmartOSHost host;
+public class SmartOSComputeServiceAdapter implements ComputeServiceAdapter<VM, VmSpecification, DataSet, SmartOSHostController> {
+   private final SmartOSHostController host;
    private final Map<String, VmSpecification> specificationMap;
 
 
    @Inject
-   public SmartOSComputeServiceAdapter(SmartOSHost host) {
+   public SmartOSComputeServiceAdapter(SmartOSHostController host) {
       this.host = checkNotNull(host, "host");
 
       Collection<VmSpecification> specifications = new ArrayList<VmSpecification>();
@@ -73,14 +73,14 @@ public class SmartOSComputeServiceAdapter implements ComputeServiceAdapter<VM, V
 
       specificationMap = Maps.uniqueIndex(specifications, new Function<VmSpecification,String>() {
           @Override
-          public String apply(@Nullable VmSpecification input) {
+          public String apply(VmSpecification input) {
               return input.getAlias();
           }
       });
 
    }
 
-   private SmartOSHost getHost() {
+   private SmartOSHostController getHost() {
       return host;
    }
 
@@ -129,7 +129,7 @@ public class SmartOSComputeServiceAdapter implements ComputeServiceAdapter<VM, V
    }
 
    @Override
-   public Iterable<SmartOSHost> listLocations() {
+   public Iterable<SmartOSHostController> listLocations() {
       return ImmutableSet.of();
    }
 
@@ -140,21 +140,21 @@ public class SmartOSComputeServiceAdapter implements ComputeServiceAdapter<VM, V
 
    @Override
    public void destroyNode(String id) {
-      getHost().getVM(UUID.fromString(id)).destroy();
+      getHost().destroyHost(UUID.fromString(id));
    }
 
    @Override
    public void rebootNode(String id) {
-      getHost().getVM(UUID.fromString(id)).reboot();
+      getHost().rebootHost(UUID.fromString(id));
    }
 
    @Override
    public void resumeNode(String id) {
-      getHost().getVM(UUID.fromString(id)).start();
+      getHost().startHost(UUID.fromString(id));
    }
 
    @Override
    public void suspendNode(String id) {
-      getHost().getVM(UUID.fromString(id)).stop();
+      getHost().stopHost(UUID.fromString(id));
    }
 }

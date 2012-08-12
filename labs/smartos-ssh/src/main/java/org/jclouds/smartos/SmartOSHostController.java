@@ -1,4 +1,4 @@
-package org.jclouds.smartos.compute.domain;
+package org.jclouds.smartos;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,9 +13,13 @@ import javax.inject.Inject;
 
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.json.Json;
 import org.jclouds.location.Provider;
 import org.jclouds.rest.annotations.Credential;
 import org.jclouds.rest.annotations.Identity;
+import org.jclouds.smartos.compute.domain.DataSet;
+import org.jclouds.smartos.compute.domain.VM;
+import org.jclouds.smartos.compute.domain.VmSpecification;
 import org.jclouds.ssh.SshClient;
 
 import com.google.common.base.Splitter;
@@ -23,18 +27,19 @@ import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.net.HostAndPort;
+import com.google.common.util.concurrent.RateLimiter;
 
 /**
  * A host machine that runs smartOS
  */
-public class SmartOSHost {
+public class SmartOSHostController {
    protected final String hostname;
    protected final String username;
    protected final String password;
+   protected final SshClient.Factory sshClientFactory;
+   protected final Json json;
 
-   protected SshClient.Factory sshClientFactory;
-
-   private SshClient _connection;
+   protected transient SshClient _connection;
 
    public static class HostException extends RuntimeException {
       private static final long serialVersionUID = -2247796213703641847L;
@@ -55,65 +60,14 @@ public class SmartOSHost {
       }
    }
 
-   public static Builder builder() {
-      return new Builder();
-   }
-
-   public Builder toBuilder() {
-      return builder().fromSmartOSHost(this);
-   }
-
-   public static class Builder {
-      protected String hostname;
-      protected String username;
-      protected String password;
-      protected SshClient.Factory sshFactory;
-
-      public Builder hostname(String hostname) {
-         this.hostname = hostname;
-         return this;
-      }
-
-      public Builder username(String username) {
-         this.username = username;
-         return this;
-      }
-
-      public Builder password(String password) {
-         this.password = password;
-         return this;
-      }
-
-      public Builder sshFactory(SshClient.Factory sshFactory) {
-         this.sshFactory = sshFactory;
-         return this;
-      }
-
-      public SmartOSHost build() {
-         return new SmartOSHost(hostname, username, password, sshFactory);
-      }
-
-      public Builder fromSmartOSHost(SmartOSHost in) {
-         return this.hostname(in.getHostname()).username(in.getHostname()).password(in.getPassword())
-                  .sshFactory(in.getSshClientFactory());
-      }
-   }
-
    @Inject
-   protected SmartOSHost(@Provider Supplier<URI> provider, @Nullable @Identity String identity,
-            @Nullable @Credential String credential, SshClient.Factory sshFactory) {
-
+   protected SmartOSHostController(@Provider Supplier<URI> provider, @Nullable @Identity String identity,
+            @Nullable @Credential String credential, SshClient.Factory sshFactory, Json json) {
       this.hostname = provider.get().getHost();
       this.username = identity;
       this.password = credential;
       this.sshClientFactory = sshFactory;
-   }
-
-   protected SmartOSHost(String hostname, String username, String password, SshClient.Factory sshClientFactory) {
-      this.hostname = hostname;
-      this.username = username;
-      this.password = password;
-      this.sshClientFactory = sshClientFactory;
+      this.json = json;
    }
 
    public String getDescription() {
@@ -202,8 +156,8 @@ public class SmartOSHost {
 
    public VM createVM(VmSpecification specification) {
 
-      String response = getConnection().exec(
-               "(cat <<END\n" + specification.toJSONSpecification() + "\nEND\n) | vmadm create").getOutput();
+      String specAsJson = json.toJson(specification);
+      String response = getConnection().exec("(cat <<END\n" + specAsJson + "\nEND\n) | vmadm create").getOutput();
 
       Pattern uuidPattern = Pattern.compile("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}");
       Matcher matcher = uuidPattern.matcher(response);
@@ -211,8 +165,7 @@ public class SmartOSHost {
          String uuid = matcher.group();
          return getVM(UUID.fromString(uuid));
       } else {
-         throw new HostException("Error creating Host: response = " + response + "\n source = "
-                  + specification.toJSONSpecification());
+         throw new HostException("Error creating Host: response = " + response + "\n source = " + specAsJson);
       }
 
    }
@@ -241,7 +194,23 @@ public class SmartOSHost {
          String line;
          ImmutableList.Builder<VM> resultBuilder = ImmutableList.builder();
          while ((line = r.readLine()) != null) {
-            VM vm = VM.builder().host(this).fromVmadmString(line).build();
+            VM vm = VM.builder().fromVmadmString(line).build();
+
+            Map<String, String> ipAddresses;
+            RateLimiter limiter = RateLimiter.create(1.0);
+            for (int i = 0; i < 30; i++) {
+               ipAddresses = getVMIpAddresses(vm.getUuid());
+               if (!ipAddresses.isEmpty()) {
+                  // Got some
+                  String ip = ipAddresses.get("net0");
+                  if (ip != null && !ip.equals("0.0.0.0")) {
+                     vm = vm.toBuilder().publicAddress(ip).build();
+                     break;
+                  }
+               }
+
+               limiter.acquire();
+            }
 
             resultBuilder.add(vm);
          }
@@ -253,7 +222,7 @@ public class SmartOSHost {
 
    public VM getVM(UUID serverId) {
       for (VM vm : getVMs())
-         if (vm.uuid.equals(serverId))
+         if (vm.getUuid().equals(serverId))
             return vm;
       return null;
    }

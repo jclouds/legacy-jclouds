@@ -8,10 +8,6 @@ import com.google.common.base.Objects;
  * Dataset is a pre-built image ready to be cloned.
  */
 public class DataSet {
-   private final UUID uuid;
-   private final String os;
-   private final String published;
-   private final String urn;
 
    public static Builder builder() {
       return new Builder();
@@ -23,10 +19,10 @@ public class DataSet {
 
    public static class Builder {
 
-      public UUID uuid;
-      public String os;
-      public String published;
-      public String urn;
+      private UUID uuid;
+      private String os;
+      private String published;
+      private String urn;
 
       public Builder uuid(UUID uuid) {
          this.uuid = uuid;
@@ -72,6 +68,11 @@ public class DataSet {
          return uuid(in.getUuid()).os(in.getOs()).published(in.getPublished()).urn(in.getUrn());
       }
    }
+
+   private final UUID uuid;
+   private final String os;
+   private final String published;
+   private final String urn;
 
    protected DataSet(UUID uuid, String os, String published, String urn) {
       this.uuid = uuid;
