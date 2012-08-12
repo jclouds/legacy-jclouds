@@ -56,7 +56,7 @@ public class TenantApiExpectTest extends BaseKeystoneRestApiExpectTest<KeystoneA
                HttpResponse.builder().statusCode(200).payload(
                         payloadFromResourceWithContentType("/tenant_list.json", APPLICATION_JSON)).build())
                .getTenantApi().get();
-      Set<Tenant> tenants = api.list();
+      Set<? extends Tenant> tenants = api.list();
       assertNotNull(tenants);
       assertFalse(tenants.isEmpty());
 
@@ -74,7 +74,7 @@ public class TenantApiExpectTest extends BaseKeystoneRestApiExpectTest<KeystoneA
             HttpResponse.builder().statusCode(200).payload(
                   payloadFromResourceWithContentType("/tenant_list_att.json", APPLICATION_JSON)).build())
             .getTenantApi().get();
-      Set<Tenant> tenants = api.list();
+      Set<? extends Tenant> tenants = api.list();
       assertNotNull(tenants);
       assertFalse(tenants.isEmpty());
 

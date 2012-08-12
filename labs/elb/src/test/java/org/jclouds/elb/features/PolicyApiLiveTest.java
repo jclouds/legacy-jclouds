@@ -22,8 +22,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Set;
 
-import javax.annotation.Nullable;
-
 import org.jclouds.elb.domain.AttributeMetadata;
 import org.jclouds.elb.domain.Policy;
 import org.jclouds.elb.domain.PolicyType;
@@ -95,7 +93,7 @@ public class PolicyApiLiveTest extends BaseELBApiLiveTest {
          Iterable<String> names = Iterables.transform(response, new Function<PolicyType, String>() {
 
             @Override
-            public String apply(@Nullable PolicyType input) {
+            public String apply(PolicyType input) {
                return input.getName();
             }
 

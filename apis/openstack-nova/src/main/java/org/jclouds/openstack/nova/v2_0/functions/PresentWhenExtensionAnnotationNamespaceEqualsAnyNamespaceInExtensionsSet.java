@@ -51,7 +51,7 @@ import com.google.common.collect.Multimap;
 @Singleton
 public class PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensionsSet implements
       ImplicitOptionalConverter {
-   private final LoadingCache<String, Set<Extension>> extensions;
+   private final LoadingCache<String, Set<? extends Extension>> extensions;
 
    @com.google.inject.Inject(optional=true)
    @Named("openstack.nova.extensions")
@@ -88,7 +88,7 @@ public class PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensio
    
    @Inject
    public PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensionsSet(
-         LoadingCache<String, Set<Extension>> extensions) {
+         LoadingCache<String, Set<? extends Extension>> extensions) {
       this.extensions = checkNotNull(extensions, "extensions");
    }
 

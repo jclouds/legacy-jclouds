@@ -21,8 +21,6 @@ package org.jclouds.virtualbox.functions;
 import static org.virtualbox_4_1.NetworkAdapterType.Am79C973;
 import static org.virtualbox_4_1.NetworkAttachmentType.Bridged;
 
-import javax.annotation.Nullable;
-
 import org.jclouds.virtualbox.domain.NetworkInterfaceCard;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.INetworkAdapter;
@@ -42,7 +40,7 @@ public class AttachBridgedAdapterToMachine implements Function<IMachine, Void> {
    }
 
    @Override
-   public Void apply(@Nullable IMachine machine) {
+   public Void apply(IMachine machine) {
       INetworkAdapter iNetworkAdapter = machine.getNetworkAdapter(networkInterfaceCard.getSlot());
       iNetworkAdapter.setAttachmentType(Bridged);
       iNetworkAdapter.setAdapterType(Am79C973);

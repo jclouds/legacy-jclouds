@@ -76,7 +76,7 @@ public interface ServerAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/servers")
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<Resource>> listServers();
+   ListenableFuture<? extends Set<? extends Resource>> listServers();
 
    /**
     * @see ServerApi#listServersInDetail

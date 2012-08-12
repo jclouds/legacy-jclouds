@@ -62,7 +62,7 @@ public interface TenantAsyncApi {
    @Path("/tenants")
    @RequestFilters(AuthenticateRequest.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<Tenant>> list();
+   ListenableFuture<? extends Set<? extends Tenant>> list();
 
    /** @see TenantApi#get(String) */
    @GET
@@ -71,7 +71,7 @@ public interface TenantAsyncApi {
    @Path("/tenants/{tenantId}")
    @RequestFilters(AuthenticateRequest.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Tenant> get(@PathParam("tenantId") String tenantId);
+   ListenableFuture<? extends Tenant> get(@PathParam("tenantId") String tenantId);
 
    /** @see TenantApi#getByName(String) */
    @GET
@@ -80,6 +80,6 @@ public interface TenantAsyncApi {
    @Path("/tenants")
    @RequestFilters(AuthenticateRequest.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Tenant> getByName(@QueryParam("name") String tenantName);
+   ListenableFuture<? extends Tenant> getByName(@QueryParam("name") String tenantName);
 
 }

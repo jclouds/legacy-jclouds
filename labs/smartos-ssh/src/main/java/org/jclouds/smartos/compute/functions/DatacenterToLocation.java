@@ -27,7 +27,7 @@ import javax.inject.Singleton;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
-import org.jclouds.smartos.compute.domain.SmartOSHost;
+import org.jclouds.smartos.SmartOSHostController;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -36,7 +36,7 @@ import com.google.common.base.Supplier;
  * @author Nigel Magnay
  */
 @Singleton
-public class DatacenterToLocation implements Function<SmartOSHost, Location> {
+public class DatacenterToLocation implements Function<SmartOSHostController, Location> {
    private final Provider<Supplier<Location>> provider;
 
    // allow us to lazy discover the provider of a resource
@@ -46,7 +46,7 @@ public class DatacenterToLocation implements Function<SmartOSHost, Location> {
    }
 
    @Override
-   public Location apply(SmartOSHost from) {
+   public Location apply(SmartOSHostController from) {
       return new LocationBuilder().scope(LocationScope.ZONE).id(from.getHostname() + "")
                .description(from.getDescription()).parent(provider.get().get()).build();
    }

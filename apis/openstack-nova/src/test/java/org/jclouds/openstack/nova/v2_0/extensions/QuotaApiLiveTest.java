@@ -36,7 +36,7 @@ import com.google.common.collect.Iterables;
  */
 @Test(groups = "live", testName = "QuotaApiLiveTest", singleThreaded = true)
 public class QuotaApiLiveTest extends BaseNovaApiLiveTest {
-   private Optional<QuotaApi> apiOption;
+   private Optional<? extends QuotaApi> apiOption;
    private String tenant;
 
    @BeforeClass(groups = {"integration", "live"})

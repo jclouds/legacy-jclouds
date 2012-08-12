@@ -18,7 +18,21 @@
  */
 package org.jclouds.openstack.glance.v1_0.functions;
 
-import static org.jclouds.openstack.glance.v1_0.options.ImageField.*;
+import static org.jclouds.openstack.glance.v1_0.options.ImageField.CHECKSUM;
+import static org.jclouds.openstack.glance.v1_0.options.ImageField.CONTAINER_FORMAT;
+import static org.jclouds.openstack.glance.v1_0.options.ImageField.CREATED_AT;
+import static org.jclouds.openstack.glance.v1_0.options.ImageField.DELETED_AT;
+import static org.jclouds.openstack.glance.v1_0.options.ImageField.DISK_FORMAT;
+import static org.jclouds.openstack.glance.v1_0.options.ImageField.ID;
+import static org.jclouds.openstack.glance.v1_0.options.ImageField.IS_PUBLIC;
+import static org.jclouds.openstack.glance.v1_0.options.ImageField.LOCATION;
+import static org.jclouds.openstack.glance.v1_0.options.ImageField.MIN_DISK;
+import static org.jclouds.openstack.glance.v1_0.options.ImageField.MIN_RAM;
+import static org.jclouds.openstack.glance.v1_0.options.ImageField.NAME;
+import static org.jclouds.openstack.glance.v1_0.options.ImageField.OWNER;
+import static org.jclouds.openstack.glance.v1_0.options.ImageField.SIZE;
+import static org.jclouds.openstack.glance.v1_0.options.ImageField.STATUS;
+import static org.jclouds.openstack.glance.v1_0.options.ImageField.UPDATED_AT;
 
 import javax.inject.Inject;
 
@@ -44,6 +58,7 @@ public class ParseImageDetailsFromHeaders implements Function<HttpResponse, Imag
       this.dateService = dateService;
    }
 
+   @Override
    public ImageDetails apply(HttpResponse from) {
       ImageDetails.Builder<?> builder = ImageDetails.builder()
                 .id(from.getFirstHeaderOrNull(ID.asHeader()))

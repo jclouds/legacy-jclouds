@@ -27,8 +27,6 @@ import static org.jclouds.virtualbox.predicates.IMediumPredicates.machineIdsCont
 import static org.jclouds.virtualbox.util.IMediumAttachments.toMedium;
 import static org.virtualbox_4_1.DeviceType.HardDisk;
 
-import javax.annotation.Nullable;
-
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IMedium;
 
@@ -48,7 +46,7 @@ public class IMachinePredicates {
 
       @SuppressWarnings("unchecked")
       @Override
-      public boolean apply(@Nullable IMachine machine) {
+      public boolean apply(IMachine machine) {
          Iterable<IMedium> mediumsOnMachine = transform(machine.getMediumAttachments(), toMedium());
          // TODO: previous impl walked the parent medium back to the child
          // before checking machine ids. Determine if that extra walk was really

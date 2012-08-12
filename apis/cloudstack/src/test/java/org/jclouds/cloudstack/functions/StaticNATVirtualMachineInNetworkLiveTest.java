@@ -26,8 +26,6 @@ import static org.testng.Assert.assertEquals;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import javax.annotation.Nullable;
-
 import org.jclouds.cloudstack.domain.IPForwardingRule;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
@@ -96,7 +94,7 @@ public class StaticNATVirtualMachineInNetworkLiveTest extends NATClientLiveTest 
       rule = getOnlyElement(filter(client.getNATClient().getIPForwardingRulesForIPAddress(ip.getId()),
             new Predicate<IPForwardingRule>() {
                @Override
-               public boolean apply(@Nullable IPForwardingRule rule) {
+               public boolean apply(IPForwardingRule rule) {
                   return rule != null && rule.getStartPort() == 22;
                }
             }));

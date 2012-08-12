@@ -59,7 +59,7 @@ public interface ImageAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/images")
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<Resource>> listImages();
+   ListenableFuture<? extends Set<? extends Resource>> listImages();
 
    /**
     * @see ImageApi#listImagesInDetail

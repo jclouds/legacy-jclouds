@@ -20,9 +20,8 @@ package org.jclouds.rds;
 
 import java.util.Set;
 
-import javax.annotation.Nullable;
-
 import org.jclouds.aws.filters.FormSigner;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.Region;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.rds.features.InstanceAsyncApi;

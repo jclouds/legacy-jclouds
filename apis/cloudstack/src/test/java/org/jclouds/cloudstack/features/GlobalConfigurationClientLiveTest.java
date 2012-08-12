@@ -24,8 +24,6 @@ import static org.testng.Assert.assertEquals;
 
 import java.util.Set;
 
-import javax.annotation.Nullable;
-
 import org.jclouds.cloudstack.domain.ConfigurationEntry;
 import org.jclouds.cloudstack.internal.BaseCloudStackClientLiveTest;
 import org.testng.annotations.Test;
@@ -97,7 +95,7 @@ public class GlobalConfigurationClientLiveTest extends BaseCloudStackClientLiveT
    private ConfigurationEntry getEntryByName(Set<ConfigurationEntry> entries, final String name) {
       return Iterables.find(entries, new Predicate<ConfigurationEntry>() {
          @Override
-         public boolean apply(@Nullable ConfigurationEntry entry) {
+         public boolean apply(ConfigurationEntry entry) {
             return entry != null && Objects.equal(name, entry.getName());
          }
       });

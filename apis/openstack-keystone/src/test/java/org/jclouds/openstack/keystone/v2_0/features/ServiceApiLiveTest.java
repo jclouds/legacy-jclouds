@@ -37,7 +37,7 @@ public class ServiceApiLiveTest extends BaseKeystoneApiLiveTest {
 
    public void testTenants() {
       ServiceApi api = keystoneContext.getApi().getServiceApi();
-      Set<Tenant> result = api.listTenants();
+      Set<? extends Tenant> result = api.listTenants();
       assertNotNull(result);
       assertFalse(result.isEmpty());
 

@@ -48,7 +48,7 @@ import com.google.common.collect.Iterables;
 @Test(groups = "live", testName = "VolumeApiLiveTest", singleThreaded = true)
 public class VolumeApiLiveTest extends BaseNovaApiLiveTest {
 
-   private Optional<VolumeApi> volumeOption;
+   private Optional<? extends VolumeApi> volumeOption;
    private String zone;
 
    private Volume testVolume;

@@ -56,8 +56,6 @@ public class StartVBoxIfNotAlreadyRunningLiveTest {
       RetryIfSocketNotYetOpen client = createMock(RetryIfSocketNotYetOpen.class);
       NodeMetadata host = new NodeMetadataBuilder().id("host").status(Status.RUNNING).build();
       URI provider = URI.create("http://localhost:18083/");
-      String identity = "adminstrator";
-      String credential = "12345";
       expect(client.seconds(3)).andReturn(client);
       expect(client.apply(HostAndPort.fromParts(provider.getHost(), provider.getPort()))).andReturn(true).anyTimes();
       manager.connect(provider.toASCIIString(), "", "");
@@ -66,7 +64,7 @@ public class StartVBoxIfNotAlreadyRunningLiveTest {
       replay(manager, runScriptOnNodeFactory, client);
 
       new StartVBoxIfNotAlreadyRunning((Function) Functions.constant(manager), runScriptOnNodeFactory, client,
-               Suppliers.ofInstance(host), Suppliers.ofInstance(provider), identity, credential).start();
+               Suppliers.ofInstance(host), Suppliers.ofInstance(provider)).start();
 
       verify(manager, runScriptOnNodeFactory, client);
 
@@ -83,8 +81,6 @@ public class StartVBoxIfNotAlreadyRunningLiveTest {
       NodeMetadata host = new NodeMetadataBuilder().id("host").status(Status.RUNNING).operatingSystem(
                OperatingSystem.builder().description("unix").build()).build();
       URI provider = URI.create("http://localhost:18083/");
-      String identity = "adminstrator";
-      String credential = "12345";
       
       expect(client.seconds(3)).andReturn(client);
       expect(client.apply(HostAndPort.fromParts(provider.getHost(), provider.getPort()))).andReturn(false).once().andReturn(true).once();
@@ -106,7 +102,7 @@ public class StartVBoxIfNotAlreadyRunningLiveTest {
 
       replay(manager, runScriptOnNodeFactory, runScriptOnNode, client);
       new StartVBoxIfNotAlreadyRunning((Function) Functions.constant(manager), runScriptOnNodeFactory, client,
-               Suppliers.ofInstance(host), Suppliers.ofInstance(provider), identity, credential);
+               Suppliers.ofInstance(host), Suppliers.ofInstance(provider));
       verify(manager, runScriptOnNodeFactory, runScriptOnNode, client);
 
    }

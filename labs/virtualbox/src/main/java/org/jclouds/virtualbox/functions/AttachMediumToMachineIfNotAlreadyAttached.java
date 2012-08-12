@@ -19,8 +19,6 @@
 
 package org.jclouds.virtualbox.functions;
 
-import javax.annotation.Nullable;
-
 import org.jclouds.virtualbox.domain.DeviceDetails;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IMedium;
@@ -44,7 +42,7 @@ public class AttachMediumToMachineIfNotAlreadyAttached implements Function<IMach
    }
 
    @Override
-   public Void apply(@Nullable IMachine machine) {
+   public Void apply(IMachine machine) {
       try {
          machine.attachDevice(controllerName, device.getPort(), device.getDeviceSlot(), device.getDeviceType(), medium);
          machine.saveSettings();

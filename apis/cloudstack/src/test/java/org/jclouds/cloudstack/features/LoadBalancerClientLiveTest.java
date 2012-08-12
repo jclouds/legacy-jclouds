@@ -30,8 +30,6 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.Nullable;
-
 import org.jclouds.cloudstack.domain.AsyncJob;
 import org.jclouds.cloudstack.domain.JobResult;
 import org.jclouds.cloudstack.domain.LoadBalancerRule;
@@ -78,7 +76,7 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
                Predicates.and(hasLoadBalancerService(), isVirtualNetwork(),
                   new Predicate<Network>() {
                      @Override
-                     public boolean apply(@Nullable Network network) {
+                     public boolean apply(Network network) {
                         return network.isDefault()
                            && !network.isSecurityGroupEnabled()
                            && !network.isSystem()

@@ -46,11 +46,11 @@ public class PortApiLiveTest extends BaseQuantumApiLiveTest {
    public void testListPorts() {
       for (String regionId : quantumContext.getApi().getConfiguredRegions()) {
          NetworkApi netApi = quantumContext.getApi().getNetworkApiForRegion(regionId);
-         Set<Reference> nets = netApi.listReferences();
+         Set<? extends Reference> nets = netApi.listReferences();
          for(Reference net : nets) {
             PortApi portApi = quantumContext.getApi().getPortApiForRegionAndNetwork(regionId, net.getId());
-            Set<Reference> portRefs = portApi.listReferences();
-            Set<Port> ports = portApi.list();
+            Set<? extends Reference> portRefs = portApi.listReferences();
+            Set<? extends Port> ports = portApi.list();
             
             assertEquals(portRefs.size(), ports.size());
             for (Port port : ports) {

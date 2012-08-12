@@ -24,8 +24,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Collections;
 import java.util.Set;
 
-import javax.annotation.Nullable;
-
+import org.jclouds.javax.annotation.Nullable;
 import org.virtualbox_4_1.NATProtocol;
 import org.virtualbox_4_1.NetworkAttachmentType;
 

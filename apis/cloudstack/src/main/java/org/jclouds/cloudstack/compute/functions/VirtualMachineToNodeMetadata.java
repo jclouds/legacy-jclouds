@@ -27,7 +27,6 @@ import static org.jclouds.util.InetAddresses2.isPrivateIPAddress;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -153,12 +152,12 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
             filter(getIPForwardingRulesByVirtualMachine.getUnchecked(from.getId()),
                new Predicate<IPForwardingRule>() {
                   @Override
-                  public boolean apply(@Nullable IPForwardingRule rule) {
+                  public boolean apply(IPForwardingRule rule) {
                      return !"Deleting".equals(rule.getState());
                   }
                }), new Function<IPForwardingRule, String>() {
             @Override
-            public String apply(@Nullable IPForwardingRule rule) {
+            public String apply(IPForwardingRule rule) {
                return rule.getIPAddress();
             }
          }));

@@ -56,7 +56,7 @@ public class UserApiExpectTest extends BaseKeystoneRestApiExpectTest<KeystoneApi
             authenticatedGET().endpoint(endpoint + "/v2.0/users").build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResourceWithContentType("/user_list.json", APPLICATION_JSON)).build())
             .getUserApi().get();
-      Set<User> users = api.list();
+      Set<? extends User> users = api.list();
       assertNotNull(users);
       assertFalse(users.isEmpty());
 
@@ -123,7 +123,7 @@ public class UserApiExpectTest extends BaseKeystoneRestApiExpectTest<KeystoneApi
             authenticatedGET().endpoint(endpoint + "/v2.0/users/3f6c1c9ba993495ead7d2eb2192e284f/roles").build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResourceWithContentType("/user_role_list.json", APPLICATION_JSON)).build())
             .getUserApi().get();
-      Set<Role> roles = api.listRolesOfUser("3f6c1c9ba993495ead7d2eb2192e284f");
+      Set<? extends Role> roles = api.listRolesOfUser("3f6c1c9ba993495ead7d2eb2192e284f");
       assertNotNull(roles);
       assertFalse(roles.isEmpty());
       assertEquals(roles, ImmutableSet.of(
@@ -154,7 +154,7 @@ public class UserApiExpectTest extends BaseKeystoneRestApiExpectTest<KeystoneApi
             authenticatedGET().endpoint(endpoint + "/v2.0/users/3f6c1c9ba993495ead7d2eb2192e284f/roles").build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResourceWithContentType("/user_tenant_role_list.json", APPLICATION_JSON)).build())
             .getUserApi().get();
-      Set<Role> roles = api.listRolesOfUser("3f6c1c9ba993495ead7d2eb2192e284f");
+      Set<? extends Role> roles = api.listRolesOfUser("3f6c1c9ba993495ead7d2eb2192e284f");
       assertNotNull(roles);
       assertFalse(roles.isEmpty());
       assertEquals(roles, ImmutableSet.of(

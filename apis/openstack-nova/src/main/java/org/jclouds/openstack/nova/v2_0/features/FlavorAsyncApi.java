@@ -61,7 +61,7 @@ public interface FlavorAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/flavors")
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<Resource>> listFlavors();
+   ListenableFuture<? extends Set<? extends Resource>> listFlavors();
 
    /**
     * @see FlavorApi#listFlavorsInDetail

@@ -27,8 +27,6 @@ import java.net.URI;
 import java.net.URLDecoder;
 import java.util.Set;
 
-import javax.annotation.Nullable;
-
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.AsyncJob;
 import org.jclouds.cloudstack.domain.ExtractMode;
@@ -107,7 +105,7 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
       Iterable<Network> networks = client.getNetworkClient().listNetworks(ListNetworksOptions.Builder.zoneId(zone.getId()).isDefault(true));
       networks = Iterables.filter(networks, new Predicate<Network>() {
          @Override
-         public boolean apply(@Nullable Network network) {
+         public boolean apply(Network network) {
             return network != null && network.getState().equals("Implemented");
          }
       });
@@ -160,7 +158,7 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
       Iterable<Network> networks = client.getNetworkClient().listNetworks(ListNetworksOptions.Builder.zoneId(zone.getId()).isDefault(true));
       networks = Iterables.filter(networks, new Predicate<Network>() {
          @Override
-         public boolean apply(@Nullable Network network) {
+         public boolean apply(Network network) {
             return network != null && network.getName().equals("Virtual Network");
          }
       });
@@ -181,7 +179,7 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
       final String zoneId = zone.getId();
       Predicate<Template> templateReadyPredicate = new Predicate<Template>() {
          @Override
-         public boolean apply(@Nullable Template template) {
+         public boolean apply(Template template) {
             if (template == null) return false;
             Template t2 = client.getTemplateClient().getTemplateInZone(template.getId(), zoneId);
             Logger.CONSOLE.info("%s", t2.getStatus());

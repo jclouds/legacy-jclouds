@@ -64,7 +64,7 @@ public interface TokenAsyncApi {
    @Path("/tokens/{token}")
    @RequestFilters(AuthenticateRequest.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Token> get(@PathParam("token") String token);
+   ListenableFuture<? extends Token> get(@PathParam("token") String token);
 
    /** @see TokenApi#getUserOfToken(String) */
    @GET
@@ -73,7 +73,7 @@ public interface TokenAsyncApi {
    @Path("/tokens/{token}")
    @RequestFilters(AuthenticateRequest.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<User> getUserOfToken(@PathParam("token") String token);
+   ListenableFuture<? extends User> getUserOfToken(@PathParam("token") String token);
 
    /** @see TokenApi#isValid(String) */
    @HEAD
@@ -89,6 +89,6 @@ public interface TokenAsyncApi {
    @Path("/tokens/{token}/endpoints")
    @RequestFilters(AuthenticateRequest.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<Endpoint>> listEndpointsForToken(@PathParam("token") String token);
+   ListenableFuture<? extends Set<? extends Endpoint>> listEndpointsForToken(@PathParam("token") String token);
 
 }

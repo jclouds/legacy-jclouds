@@ -34,8 +34,6 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 
-import javax.annotation.Nullable;
-
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.AsyncJob;
@@ -94,7 +92,7 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
       if (networks.size() > 0) {
          Network network = get(filter(networks, new Predicate<Network>() {
             @Override
-            public boolean apply(@Nullable Network network) {
+            public boolean apply(Network network) {
                return network != null && network.getState().equals("Implemented");
             }
          }), 0);
@@ -143,7 +141,7 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
       String zoneId = getFirst(networks, null).getZoneId();
       options.networkIds(Iterables.transform(networks, new Function<Network, String>() {
          @Override
-         public String apply(@Nullable Network network) {
+         public String apply(Network network) {
             return network.getId();
          }
       }));
@@ -240,7 +238,7 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
          Network requiredNetwork = getOnlyElement(filter(adminClient.getNetworkClient().listNetworks(
             ListNetworksOptions.Builder.zoneId(template.getZoneId())), new Predicate<Network>() {
             @Override
-            public boolean apply(@Nullable Network network) {
+            public boolean apply(Network network) {
                return network.isDefault() &&
                   network.getGuestIPType() == GuestIPType.VIRTUAL;
             }

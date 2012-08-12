@@ -119,8 +119,8 @@ public class PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensio
 
    private PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensionsSet whenExtensionsAndAliasesInclude(
             final Set<Extension> extensions, final Multimap<URI, URI> aliases) {
-      final LoadingCache<String, Set<Extension>> extensionsForZone = CacheBuilder.newBuilder().build(
-               CacheLoader.from(Functions.forMap(ImmutableMap.of("expectedzone", extensions, "differentzone",
+      final LoadingCache<String, Set<? extends Extension>> extensionsForZone = CacheBuilder.newBuilder().build(
+               CacheLoader.from(Functions.forMap(ImmutableMap.<String, Set<? extends Extension>>of("expectedzone", extensions, "differentzone",
                         ImmutableSet.<Extension> of()))));
 
       PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensionsSet fn = Guice.createInjector(
@@ -130,7 +130,7 @@ public class PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensio
                   }
 
                   @Provides
-                  LoadingCache<String, Set<Extension>> getExtensions() {
+                  LoadingCache<String, Set<? extends Extension>> getExtensions() {
                      return extensionsForZone;
                   }
 

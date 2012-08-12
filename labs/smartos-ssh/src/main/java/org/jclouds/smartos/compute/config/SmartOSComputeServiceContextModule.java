@@ -22,8 +22,8 @@ import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.domain.Location;
+import org.jclouds.smartos.SmartOSHostController;
 import org.jclouds.smartos.compute.domain.DataSet;
-import org.jclouds.smartos.compute.domain.SmartOSHost;
 import org.jclouds.smartos.compute.domain.VM;
 import org.jclouds.smartos.compute.domain.VmSpecification;
 import org.jclouds.smartos.compute.functions.DataSetToImage;
@@ -40,12 +40,12 @@ import com.google.inject.TypeLiteral;
  * @author Nigel Magnay
  */
 public class SmartOSComputeServiceContextModule extends
-         ComputeServiceAdapterContextModule<VM, VmSpecification, DataSet, SmartOSHost> {
+         ComputeServiceAdapterContextModule<VM, VmSpecification, DataSet, SmartOSHostController> {
 
    @Override
    protected void configure() {
       super.configure();
-      bind(new TypeLiteral<ComputeServiceAdapter<VM, VmSpecification, DataSet, SmartOSHost>>() {
+      bind(new TypeLiteral<ComputeServiceAdapter<VM, VmSpecification, DataSet, SmartOSHostController>>() {
       }).to(SmartOSComputeServiceAdapter.class);
       bind(new TypeLiteral<Function<VM, NodeMetadata>>() {
       }).to(VMToNodeMetadata.class);
@@ -53,7 +53,7 @@ public class SmartOSComputeServiceContextModule extends
       }).to(DataSetToImage.class);
       bind(new TypeLiteral<Function<VmSpecification, org.jclouds.compute.domain.Hardware>>() {
       }).to(VmSpecificationToHardware.class);
-      bind(new TypeLiteral<Function<SmartOSHost, Location>>() {
+      bind(new TypeLiteral<Function<SmartOSHostController, Location>>() {
       }).to(DatacenterToLocation.class);
       // to have the compute service adapter override default locations
       // install(new LocationsFromComputeServiceAdapterModule<VM, VmSpecification, DataSet,

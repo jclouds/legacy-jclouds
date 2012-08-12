@@ -44,12 +44,12 @@ public interface ImageApi {
    /**
     * Returns a set of brief metadata about images
     */
-   Set<Image> list(ListImageOptions... options);
+   Set<? extends Image> list(ListImageOptions... options);
 
    /**
     * Returns a set of detailed metadata about images
     */
-   Set<ImageDetails> listInDetail(ListImageOptions... options);
+   Set<? extends ImageDetails> listInDetail(ListImageOptions... options);
 
    /**
     * Return metadata about an image with id
