@@ -21,11 +21,11 @@ package org.jclouds.imagemaker.internal;
 
 import static com.google.common.base.Preconditions.checkState;
 
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import org.jclouds.compute.ComputeServiceContext;
@@ -37,8 +37,10 @@ import org.jclouds.imagemaker.ImageMaker;
 import org.jclouds.imagemaker.PackageProcessor;
 import org.jclouds.imagemaker.PackageProcessor.Type;
 import org.jclouds.imagemaker.config.ImageDescriptor;
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Sets;
 
@@ -54,11 +56,11 @@ import com.google.common.collect.Sets;
 public class ImageMakerImpl implements ImageMaker {
 
    private final Map<PackageProcessor.Type, Set<PackageProcessor>> packageProcessors;
-   private final Map<String, ImageDescriptor> images;
+   private final Supplier<Map<String, ImageDescriptor>> images;
    private final ComputeServiceContext ctx;
 
    @Inject
-   public ImageMakerImpl(Map<String, ImageDescriptor> images, Set<PackageProcessor> processors,
+   public ImageMakerImpl(Supplier<Map<String, ImageDescriptor>> images, Set<PackageProcessor> processors,
             ComputeServiceContext ctx) {
       this.images = images;
       this.packageProcessors = new EnumMap<PackageProcessor.Type, Set<PackageProcessor>>(Type.class);
@@ -66,7 +68,7 @@ public class ImageMakerImpl implements ImageMaker {
          Set<PackageProcessor> thisTypesProcessors = Sets.newLinkedHashSet();
          for (PackageProcessor processor : processors) {
             if (processor.type() == type) {
-               processors.add(processor);
+               thisTypesProcessors.add(processor);
             }
          }
          packageProcessors.put(type, thisTypesProcessors);
@@ -77,9 +79,9 @@ public class ImageMakerImpl implements ImageMaker {
    @Override
    public Image makeImage(NodeMetadata node, String imageDescriptorId, String newImageName) {
       checkState(ctx.getComputeService().getImageExtension().isPresent(), "image extension is not present");
-      checkState(this.images.containsKey(imageDescriptorId), "no image descriptor with id: " + imageDescriptorId);
+      checkState(this.images.get().containsKey(imageDescriptorId), "no image descriptor with id: " + imageDescriptorId);
       // get the descriptor that contains which packages are to be processed for this image
-      ImageDescriptor descriptor = images.get(imageDescriptorId);
+      ImageDescriptor descriptor = images.get().get(imageDescriptorId);
 
       // run the processors (in sequence as we have no guarantee they don't interact)
       for (Map.Entry<Type, Set<PackageProcessor>> entry : processorsCompatibleWithNode(node).entrySet()) {
@@ -97,6 +99,11 @@ public class ImageMakerImpl implements ImageMaker {
       } catch (Exception e) {
          throw Throwables.propagate(e);
       }
+   }
+
+   @Override
+   public Map<Type, Set<PackageProcessor>> registeredProcessors() {
+      return Collections.unmodifiableMap(packageProcessors);
    }
 
    private Map<Type, Set<PackageProcessor>> processorsCompatibleWithNode(final NodeMetadata node) {

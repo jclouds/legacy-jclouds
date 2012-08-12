@@ -19,15 +19,30 @@
 
 package org.jclouds.imagemaker;
 
+import java.util.Map;
+import java.util.Set;
+
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.extensions.ImageExtension;
 import org.jclouds.imagemaker.internal.ImageMakerImpl;
 
 import com.google.inject.ImplementedBy;
 
+/**
+ * An ImageMake takes a node, applies a series of {@link PackageProcessor}s that are adequate to
+ * that node's OS (each doing stuff like pre-caching apt packages or installing pip packages) and
+ * outputs a ready to use image. Requires a {@link ComputeServiceContext} that has an
+ * {@link ImageExtension}.
+ * 
+ * @author David Alves
+ */
 @ImplementedBy(ImageMakerImpl.class)
 public interface ImageMaker {
 
    public Image makeImage(NodeMetadata node, String imageDescriptorId, String newImageName);
+
+   public Map<PackageProcessor.Type, Set<PackageProcessor>> registeredProcessors();
 
 }

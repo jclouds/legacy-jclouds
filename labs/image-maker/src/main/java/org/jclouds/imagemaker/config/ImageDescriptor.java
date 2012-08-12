@@ -19,24 +19,19 @@
 
 package org.jclouds.imagemaker.config;
 
-import static com.google.common.base.Preconditions.checkState;
-
-import java.io.File;
 import java.util.List;
 import java.util.Map;
 
 import org.jclouds.imagemaker.PackageProcessor.Type;
-import org.yaml.snakeyaml.Loader;
-import org.yaml.snakeyaml.TypeDescription;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.Constructor;
 
-import com.google.common.base.Charsets;
-import com.google.common.base.Supplier;
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
-import com.google.common.io.Files;
 
+/**
+ * Loaded from YAML describes what each package processor should do.
+ * 
+ * @author David Alves
+ * 
+ */
 public class ImageDescriptor {
 
    public String id;
@@ -52,35 +47,6 @@ public class ImageDescriptor {
                      .<String> of();
          default:
             throw new UnsupportedOperationException("unknown packageprocessor type");
-      }
-   }
-
-   public static class ImageDescriptorLoader implements Supplier<List<ImageDescriptor>> {
-
-      public List<ImageDescriptor> images;
-
-      public List<ImageDescriptor> get() {
-
-         Constructor constructor = new Constructor(ImageDescriptorLoader.class);
-
-         TypeDescription packagesDesc = new TypeDescription(ImageDescriptor.class);
-         packagesDesc.putMapPropertyType("cached_packages", String.class, List.class);
-         packagesDesc.putMapPropertyType("installed_packages", String.class, List.class);
-         constructor.addTypeDescription(packagesDesc);
-
-         // Issue 855: testng is rev-locking us to snakeyaml 1.6
-         // we have to use old constructor until this is fixed
-         Yaml yaml = new Yaml(new Loader(constructor));
-         ImageDescriptorLoader config = null;
-         try {
-            config = (ImageDescriptorLoader) yaml.load(Files.toString(
-                     new File(getClass().getResource("/image-maker.yaml").toURI()), Charsets.UTF_8));
-         } catch (Exception e) {
-            Throwables.propagate(e);
-         }
-         checkState(config != null, "missing config: class");
-         checkState(config.images != null, "missing images: collection");
-         return config.images;
       }
    }
 
