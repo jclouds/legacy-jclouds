@@ -45,7 +45,7 @@ public class FlavorApiLiveTest extends BaseNovaApiLiveTest {
    public void testListFlavors() throws Exception {
       for (String zoneId : novaContext.getApi().getConfiguredZones()) {
          FlavorApi api = novaContext.getApi().getFlavorApiForZone(zoneId);
-         Set<Resource> response = api.listFlavors();
+         Set<? extends Resource> response = api.listFlavors();
          assert null != response;
          assertTrue(response.size() >= 0);
          for (Resource flavor : response) {

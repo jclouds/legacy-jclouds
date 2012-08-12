@@ -40,7 +40,7 @@ public class ServerApiLiveTest extends BaseNovaApiLiveTest {
    public void testListServersInDetail() throws Exception {
       for (String zoneId : novaContext.getApi().getConfiguredZones()) {
          ServerApi api = novaContext.getApi().getServerApiForZone(zoneId);
-         Set<Resource> response = api.listServers();
+         Set<? extends Resource> response = api.listServers();
          assert null != response;
          assertTrue(response.size() >= 0);
          for (Resource server : response) {
