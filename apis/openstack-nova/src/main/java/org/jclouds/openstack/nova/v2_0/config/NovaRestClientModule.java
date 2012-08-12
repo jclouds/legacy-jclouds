@@ -129,12 +129,12 @@ public class NovaRestClientModule<S extends NovaApi, A extends NovaAsyncApi> ext
 
    @Provides
    @Singleton
-   public LoadingCache<String, Set<Extension>> provideExtensionsByZone(final Provider<NovaApi> novaApi) {
+   public LoadingCache<String, Set<? extends Extension>> provideExtensionsByZone(final Provider<NovaApi> novaApi) {
       return CacheBuilder.newBuilder().expireAfterWrite(23, TimeUnit.HOURS)
-            .build(new CacheLoader<String, Set<Extension>>() {
+            .build(new CacheLoader<String, Set<? extends Extension>>() {
 
                @Override
-               public Set<Extension> load(String key) throws Exception {
+               public Set<? extends Extension> load(String key) throws Exception {
                   return novaApi.get().getExtensionApiForZone(key).listExtensions();
                }
 

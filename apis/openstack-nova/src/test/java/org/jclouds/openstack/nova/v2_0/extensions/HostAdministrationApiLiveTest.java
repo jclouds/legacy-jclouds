@@ -42,7 +42,7 @@ import com.google.common.collect.Iterables;
  */
 @Test(groups = "live", testName = "HostAdministrationApiLiveTest", singleThreaded = true)
 public class HostAdministrationApiLiveTest extends BaseNovaApiLiveTest {
-   private Optional<HostAdministrationApi> optApi = Optional.absent();
+   private Optional<? extends HostAdministrationApi> optApi = Optional.absent();
 
    Predicate<Host> isComputeHost = new Predicate<Host>() {
       @Override

@@ -59,7 +59,7 @@ public class CreateUniqueKeyPair extends CacheLoader<ZoneAndName, KeyPair> {
       String zoneId = checkNotNull(zoneAndName, "zoneAndName").getZone();
       String prefix = zoneAndName.getName();
 
-      Optional<KeyPairApi> api = novaApi.getKeyPairExtensionForZone(zoneId);
+      Optional<? extends KeyPairApi> api = novaApi.getKeyPairExtensionForZone(zoneId);
       checkArgument(api.isPresent(), "Key pairs are required, but the extension is not available in zone %s!",
             zoneId);
 

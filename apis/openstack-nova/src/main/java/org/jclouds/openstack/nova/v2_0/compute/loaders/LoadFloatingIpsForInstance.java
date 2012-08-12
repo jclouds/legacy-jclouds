@@ -51,7 +51,7 @@ public class LoadFloatingIpsForInstance extends CacheLoader<ZoneAndId, Iterable<
    @Override
    public Iterable<FloatingIP> load(final ZoneAndId key) throws Exception {
       String zone = key.getZone();
-      Optional<FloatingIPApi> ipApiOptional = api.getFloatingIPExtensionForZone(zone);
+      Optional<? extends FloatingIPApi> ipApiOptional = api.getFloatingIPExtensionForZone(zone);
       if (ipApiOptional.isPresent()) {
          return Iterables.filter(ipApiOptional.get().listFloatingIPs(),
                   new Predicate<FloatingIP>() {

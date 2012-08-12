@@ -72,6 +72,6 @@ public interface TokenApi {
     *
     * @return the set of endpoints
     */
-   Set<Endpoint> listEndpointsForToken(String token);
+   Set<? extends Endpoint> listEndpointsForToken(String token);
 
 }

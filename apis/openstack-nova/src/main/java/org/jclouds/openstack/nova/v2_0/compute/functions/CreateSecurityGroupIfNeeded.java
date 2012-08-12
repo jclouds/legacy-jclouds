@@ -62,7 +62,7 @@ public class CreateSecurityGroupIfNeeded implements Function<ZoneSecurityGroupNa
       checkNotNull(zoneSecurityGroupNameAndPorts, "zoneSecurityGroupNameAndPorts");
 
       String zoneId = zoneSecurityGroupNameAndPorts.getZone();
-      Optional<SecurityGroupApi> api = novaApi.getSecurityGroupExtensionForZone(zoneId);
+      Optional<? extends SecurityGroupApi> api = novaApi.getSecurityGroupExtensionForZone(zoneId);
       checkArgument(api.isPresent(), "Security groups are required, but the extension is not availablein zone %s!", zoneId);
       logger.debug(">> creating securityGroup %s", zoneSecurityGroupNameAndPorts);
       try {

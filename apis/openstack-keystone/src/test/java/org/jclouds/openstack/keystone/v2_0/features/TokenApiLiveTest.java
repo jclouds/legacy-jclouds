@@ -82,7 +82,7 @@ public class TokenApiLiveTest extends BaseKeystoneApiLiveTest {
    public void testTokenEndpoints() {
 
       TokenApi api = keystoneContext.getApi().getTokenApi().get();
-      Set<Endpoint> endpoints = api.listEndpointsForToken(token);
+      Set<? extends Endpoint> endpoints = api.listEndpointsForToken(token);
       assertNotNull(endpoints);
       assertFalse(endpoints.isEmpty());
 

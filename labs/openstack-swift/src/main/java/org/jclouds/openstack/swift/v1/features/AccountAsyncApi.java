@@ -59,7 +59,7 @@ public interface AccountAsyncApi {
    @HEAD
    @ResponseParser(ParseAccountMetadataResponseFromHeaders.class)
    @Path("/")
-   ListenableFuture<AccountMetadata> getAccountMetadata();
+   ListenableFuture<? extends AccountMetadata> getAccountMetadata();
 
    /**
     * @see AccountApi#listContainers()
@@ -69,7 +69,7 @@ public interface AccountAsyncApi {
    @QueryParams(keys = "format", values = "json")
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    @Path("/")
-   ListenableFuture<Set<ContainerMetadata>> listContainers();
+   ListenableFuture<? extends Set<? extends ContainerMetadata>> listContainers();
 
    /**
     * @see AccountApi#listContainers(ListContainersOptions)
@@ -79,5 +79,5 @@ public interface AccountAsyncApi {
    @QueryParams(keys = "format", values = "json")
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    @Path("/")
-   ListenableFuture<Set<ContainerMetadata>> listContainers(ListContainersOptions options);
+   ListenableFuture<? extends Set<? extends ContainerMetadata>> listContainers(ListContainersOptions options);
 }

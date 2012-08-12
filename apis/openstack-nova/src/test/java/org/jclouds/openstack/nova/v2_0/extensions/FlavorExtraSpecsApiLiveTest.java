@@ -44,7 +44,7 @@ import com.google.common.collect.Maps;
 @Test(groups = "live", testName = "FlavorExtraSpecsApiLiveTest", singleThreaded = true)
 public class FlavorExtraSpecsApiLiveTest extends BaseNovaApiLiveTest {
    private FlavorApi flavorApi;
-   private Optional<FlavorExtraSpecsApi> apiOption;
+   private Optional<? extends FlavorExtraSpecsApi> apiOption;
    private String zone;
 
    private Resource testFlavor;
