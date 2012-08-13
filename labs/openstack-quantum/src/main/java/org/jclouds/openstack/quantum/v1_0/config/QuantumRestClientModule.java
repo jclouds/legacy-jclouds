@@ -26,17 +26,18 @@ import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
-import org.jclouds.openstack.quantum.v1_0.QuantumAsyncApi;
 import org.jclouds.openstack.quantum.v1_0.QuantumApi;
-import org.jclouds.openstack.quantum.v1_0.features.NetworkAsyncApi;
+import org.jclouds.openstack.quantum.v1_0.QuantumAsyncApi;
 import org.jclouds.openstack.quantum.v1_0.features.NetworkApi;
-import org.jclouds.openstack.quantum.v1_0.features.PortAsyncApi;
+import org.jclouds.openstack.quantum.v1_0.features.NetworkAsyncApi;
 import org.jclouds.openstack.quantum.v1_0.features.PortApi;
+import org.jclouds.openstack.quantum.v1_0.features.PortAsyncApi;
 import org.jclouds.openstack.quantum.v1_0.handlers.QuantumErrorHandler;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.reflect.TypeToken;
 
 /**
  * Configures the Quantum connection.
@@ -44,7 +45,7 @@ import com.google.common.collect.ImmutableMap;
  * @author Adam Lowe
  */
 @ConfiguresRestClient
-public class QuantumRestClientModule extends RestClientModule<QuantumApi, QuantumAsyncApi> {
+public class QuantumRestClientModule<S extends QuantumApi, A extends QuantumAsyncApi> extends RestClientModule<S, A> {
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()
          .put(NetworkApi.class, NetworkAsyncApi.class)
@@ -52,7 +53,11 @@ public class QuantumRestClientModule extends RestClientModule<QuantumApi, Quantu
          .build();
 
    public QuantumRestClientModule() {
-      super(DELEGATE_MAP);
+      super(TypeToken.class.cast(TypeToken.of(QuantumApi.class)), TypeToken.class.cast(TypeToken.of(QuantumAsyncApi.class)), DELEGATE_MAP);
+   }
+
+   protected QuantumRestClientModule(TypeToken<S> syncClientType, TypeToken<A> asyncClientType, Map<Class<?>, Class<?>> sync2Async) {
+      super(syncClientType, asyncClientType, sync2Async);
    }
    
    @Override
