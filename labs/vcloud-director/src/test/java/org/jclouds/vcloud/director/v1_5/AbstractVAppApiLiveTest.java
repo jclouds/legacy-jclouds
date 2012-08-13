@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URI;
 import java.util.List;
+import java.util.Set;
 
 import org.jclouds.dmtf.cim.CimBoolean;
 import org.jclouds.dmtf.cim.CimString;
@@ -47,6 +48,8 @@ import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.Vdc;
 import org.jclouds.vcloud.director.v1_5.domain.Vm;
 import org.jclouds.vcloud.director.v1_5.domain.dmtf.RasdItem;
+import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConnection;
+import org.jclouds.vcloud.director.v1_5.domain.network.VAppNetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.params.UndeployVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.section.GuestCustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.section.NetworkConnectionSection;
@@ -371,5 +374,27 @@ public abstract class AbstractVAppApiLiveTest extends BaseVCloudDirectorApiLiveT
       } catch (IOException ioe) {
          Throwables.propagate(ioe);
       }
+   }
+   
+   protected VAppNetworkConfiguration getVAppNetworkConfig(VApp vApp) {
+      Set<VAppNetworkConfiguration> vAppNetworkConfigs = vAppApi.getNetworkConfigSection(vApp.getHref()).getNetworkConfigs();
+      return Iterables.tryFind(vAppNetworkConfigs, Predicates.notNull()).orNull();
+   }
+   
+   protected boolean vAppHasNetworkConfigured(VApp vApp) {
+      return getVAppNetworkConfig(vApp) != null;
+   }
+
+   protected boolean vmHasNetworkConnectionConfigured(Vm vm) {
+      return listNetworkConnections(vm).size() > 0;
+   }
+   
+   protected Set<NetworkConnection> listNetworkConnections(Vm vm) {
+      return vmApi.getNetworkConnectionSection(vm.getHref()).getNetworkConnections();
+   }
+   
+   protected Set<VAppNetworkConfiguration> listVappNetworkConfigurations(VApp vApp) {
+      Set<VAppNetworkConfiguration> vAppNetworkConfigs = vAppApi.getNetworkConfigSection(vApp.getHref()).getNetworkConfigs();
+      return vAppNetworkConfigs;
    }
 }
