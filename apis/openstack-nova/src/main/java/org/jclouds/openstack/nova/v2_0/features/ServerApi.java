@@ -47,14 +47,14 @@ public interface ServerApi {
     * 
     * @return all servers (IDs, names, links)
     */
-   Set<Resource> listServers();
+   Set<? extends Resource> listServers();
 
    /**
     * List all servers (all details)
     * 
     * @return all servers (all details)
     */
-   Set<Server> listServersInDetail();
+   Set<? extends Server> listServersInDetail();
 
    /**
     * List details of the specified server

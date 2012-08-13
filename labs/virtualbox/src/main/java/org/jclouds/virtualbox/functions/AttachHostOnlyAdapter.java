@@ -21,8 +21,6 @@ package org.jclouds.virtualbox.functions;
 import static org.virtualbox_4_1.NetworkAdapterType.Am79C973;
 import static org.virtualbox_4_1.NetworkAttachmentType.HostOnly;
 
-import javax.annotation.Nullable;
-
 import org.jclouds.virtualbox.domain.NetworkInterfaceCard;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.INetworkAdapter;
@@ -41,7 +39,7 @@ public class AttachHostOnlyAdapter implements Function<IMachine, Void> {
    }
 
    @Override
-   public Void apply(@Nullable IMachine machine) {
+   public Void apply(IMachine machine) {
       INetworkAdapter iNetworkAdapter = machine.getNetworkAdapter(networkInterfaceCard.getSlot());
       iNetworkAdapter.setAttachmentType(HostOnly);
       iNetworkAdapter.setAdapterType(Am79C973);

@@ -16,19 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.greenqloud.compute;
+package org.jclouds.cloudstack.ec2.services;
 
-import org.jclouds.ec2.compute.EC2ComputeServiceLiveTest;
+import org.jclouds.ec2.services.AMIClientLiveTest;
 import org.testng.annotations.Test;
 
 /**
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", singleThreaded = true, testName = "GreenQloudComputeComputeServiceLiveTest")
-public class GreenQloudComputeComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
-
-   public GreenQloudComputeComputeServiceLiveTest() {
-      provider = "greenqloud-compute";
+@Test(groups = "live", singleThreaded = true, testName = "CloudStackEC2AMIClientLiveTest")
+public class CloudStackEC2AMIClientLiveTest extends AMIClientLiveTest {
+   public CloudStackEC2AMIClientLiveTest() {
+      provider = "cloudstack-ec2";
    }
+
 }

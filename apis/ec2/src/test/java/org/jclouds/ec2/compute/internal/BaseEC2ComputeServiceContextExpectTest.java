@@ -17,49 +17,20 @@
  * under the License.
  */
 
-package org.jclouds.ec2.compute;
+package org.jclouds.ec2.compute.internal;
 
 import java.util.Properties;
 
-import org.jclouds.apis.ApiMetadata;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.date.DateService;
-import org.jclouds.date.internal.SimpleDateFormatDateService;
-import org.jclouds.ec2.EC2ApiMetadata;
-import org.jclouds.ec2.EC2AsyncClient;
-import org.jclouds.ec2.EC2Client;
-import org.jclouds.ec2.config.EC2RestClientModule;
+import org.jclouds.ec2.internal.BaseEC2ExpectTest;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.internal.BaseRestClientExpectTest;
 
 import com.google.common.base.Function;
 import com.google.inject.Module;
-import com.google.inject.Provides;
 
-/**
- * 
- * @author David Alves
- */
-public abstract class BaseEC2ComputeServiceExpectTest<T> extends BaseRestClientExpectTest<T> implements
+public abstract class BaseEC2ComputeServiceContextExpectTest<T> extends BaseEC2ExpectTest<T> implements
          Function<ComputeServiceContext, T> {
-
-   protected static final String CONSTANT_DATE = "2012-04-16T15:54:08.897Z";
-   protected DateService dateService = new SimpleDateFormatDateService();
-
-   public BaseEC2ComputeServiceExpectTest() {
-      provider = "ec2";
-   }
-
-   @ConfiguresRestClient
-   private static final class TestEC2RestClientModule extends EC2RestClientModule<EC2Client, EC2AsyncClient> {
-      @Override
-      @Provides
-      protected String provideTimeStamp(DateService dateService) {
-         return CONSTANT_DATE;
-      }
-   }
 
    @Override
    public T createClient(Function<HttpRequest, HttpResponse> fn, Module module, Properties props) {
@@ -71,14 +42,5 @@ public abstract class BaseEC2ComputeServiceExpectTest<T> extends BaseRestClientE
       return createInjector(fn, module, props).getInstance(ComputeServiceContext.class);
    }
 
-   @Override
-   protected Module createModule() {
-      return new TestEC2RestClientModule();
-   }
-
-   @Override
-   protected ApiMetadata createApiMetadata() {
-      return new EC2ApiMetadata();
-   }
 
 }

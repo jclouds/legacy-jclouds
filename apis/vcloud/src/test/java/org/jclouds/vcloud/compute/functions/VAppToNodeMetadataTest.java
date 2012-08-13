@@ -43,13 +43,16 @@ import org.jclouds.vcloud.compute.config.VCloudComputeServiceDependenciesModule;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VApp;
+import org.jclouds.vcloud.domain.internal.VAppImpl;
 import org.jclouds.vcloud.xml.VAppHandler;
 import org.jclouds.vcloud.xml.ovf.VCloudResourceAllocationSettingDataHandler;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
+import com.google.common.base.Joiner;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;
@@ -113,9 +116,39 @@ public class VAppToNodeMetadataTest {
       VApp result = factory.create(injector.getInstance(VAppHandler.class)).parse(is);
       VAppToNodeMetadata converter = injector.getInstance(VAppToNodeMetadata.class);
       NodeMetadata node = converter.apply(result);
+      assertEquals(node.getUserMetadata(), ImmutableMap.<String, String>of());
+      assertEquals(node.getTags(), ImmutableSet.<String>of());
       assertEquals(node.getLocation(), location);
       assertEquals(node.getPrivateAddresses(), ImmutableSet.of("172.16.7.230"));
       assertEquals(node.getPublicAddresses(), ImmutableSet.of());
+   }
+   
+
+   public void testWithEncodedMetadata() {
+      Location location = new LocationBuilder().id("https://1.1.1.1/api/v1.0/vdc/1").description("description")
+            .scope(LocationScope.PROVIDER).build();
+      Injector injector = createInjectorWithLocation(location);
+      InputStream is = getClass().getResourceAsStream("/vapp-pool.xml");
+      Factory factory = injector.getInstance(ParseSax.Factory.class);
+      VApp result = factory.create(injector.getInstance(VAppHandler.class)).parse(is);
+      VAppToNodeMetadata converter = injector.getInstance(VAppToNodeMetadata.class);
+      ImmutableMap<String, String> metadata = ImmutableMap.<String, String>of("foo", "bar");
+      ImmutableSet<String> tags = ImmutableSet.<String>of("tag1", "tag2");
+      
+      String description = Joiner
+               .on('\n')
+               .withKeyValueSeparator("=")
+               .join(ImmutableMap.<String, String> builder().putAll(metadata)
+                        .put("jclouds_tags", Joiner.on(',').join(tags)).build());
+      
+      result = new VAppImpl(result.getName(), result.getType(), result.getHref(), result.getStatus(), result.getVDC(),
+               description, result.getTasks(), result.isOvfDescriptorUploaded(), result.getChildren(),
+               result.getNetworkSection());
+      
+      NodeMetadata node = converter.apply(result);
+      assertEquals(node.getUserMetadata(), metadata);
+      assertEquals(node.getTags(), tags);
+
    }
 
    public void testGracefulWhenNoIPs() {

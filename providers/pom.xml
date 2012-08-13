@@ -72,5 +72,6 @@
         <module>hpcloud-objectstorage</module>
         <module>trystack-nova</module>
         <module>rackspace-cloudservers-us</module>
+        <module>rackspace-cloudservers-uk</module>
     </modules>
 </project>

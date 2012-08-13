@@ -127,9 +127,9 @@ public class Role {
    @ConstructorProperties({
          "id", "name", "description", "serviceId", "tenantId", "tenantName"
    })
-   protected Role(String id, String name, @Nullable String description, @Nullable String serviceId, @Nullable String tenantId,
+   protected Role(@Nullable String id, String name, @Nullable String description, @Nullable String serviceId, @Nullable String tenantId,
                   @Nullable String tenantName) {
-      this.id = checkNotNull(id, "id");
+      this.id = id;
       this.name = checkNotNull(name, "name");
       this.description = description;
       this.serviceId = serviceId;
@@ -141,6 +141,7 @@ public class Role {
     *
     * @return the id of the role in the current OpenStack deployment
     */
+   @Nullable
    public String getId() {
       return this.id;
    }

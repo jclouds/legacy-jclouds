@@ -10,7 +10,7 @@
     <Link rel="controlAccess" type="application/vnd.vmware.vcloud.controlAccess+xml" href="https://1.1.1.1/api/v1.0/vApp/vapp-1/action/controlAccess"/>
     <Link rel="up" type="application/vnd.vmware.vcloud.vdc+xml" href="https://1.1.1.1/api/v1.0/vdc/1"/>
     <Link rel="edit" type="application/vnd.vmware.vcloud.vApp+xml" href="https://1.1.1.1/api/v1.0/vApp/vapp-1"/>
-    <Description/>
+    <Description>Example FTP Server vApp</Description>
     <LeaseSettingsSection type="application/vnd.vmware.vcloud.leaseSettingsSection+xml" href="https://1.1.1.1/api/v1.0/vApp/vapp-1/leaseSettingsSection/" ovf:required="false">
         <ovf:Info>Lease settings section</ovf:Info>
         <Link rel="edit" type="application/vnd.vmware.vcloud.leaseSettingsSection+xml" href="https://1.1.1.1/api/v1.0/vApp/vapp-1/leaseSettingsSection/"/>

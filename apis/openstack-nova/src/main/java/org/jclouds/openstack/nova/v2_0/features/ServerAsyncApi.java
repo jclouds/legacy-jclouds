@@ -76,7 +76,7 @@ public interface ServerAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/servers")
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<Resource>> listServers();
+   ListenableFuture<? extends Set<? extends Resource>> listServers();
 
    /**
     * @see ServerApi#listServersInDetail
@@ -86,7 +86,7 @@ public interface ServerAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/servers/detail")
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<Server>> listServersInDetail();
+   ListenableFuture<? extends Set<? extends Server>> listServersInDetail();
 
    /**
     * @see ServerApi#getServer
@@ -96,7 +96,7 @@ public interface ServerAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/servers/{id}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Server> getServer(@PathParam("id") String id);
+   ListenableFuture<? extends Server> getServer(@PathParam("id") String id);
 
    /**
     * @see ServerApi#deleteServer
@@ -144,7 +144,7 @@ public interface ServerAsyncApi {
    @Path("/servers/{id}/action")
    @Consumes
    @Produces(MediaType.APPLICATION_JSON)
-   @Payload("%7B\"resize\":%7B\"flavorId\":{flavorId}%7D%7D")
+   @Payload("%7B\"resize\":%7B\"flavorRef\":{flavorId}%7D%7D")
    ListenableFuture<Void> resizeServer(@PathParam("id") String id, @PayloadParam("flavorId") String flavorId);
 
    /**

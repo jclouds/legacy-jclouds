@@ -18,6 +18,9 @@
  */
 package org.jclouds.rackspace.cloudservers.us;
 
+import static org.jclouds.location.reference.LocationConstants.ISO3166_CODES;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_ZONE;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_ZONES;
 import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.CREDENTIAL_TYPE;
 
 import java.net.URI;
@@ -65,6 +68,9 @@ public class CloudServersUSProviderMetadata extends BaseProviderMetadata {
    public static Properties defaultProperties() {
       Properties properties = new Properties();
       properties.setProperty(CREDENTIAL_TYPE, CloudIdentityCredentialTypes.API_KEY_CREDENTIALS);
+      properties.setProperty(PROPERTY_ZONES, "ORD,DFW");
+      properties.setProperty(PROPERTY_ZONE + ".ORD." + ISO3166_CODES, "US-IL");
+      properties.setProperty(PROPERTY_ZONE + ".DFW." + ISO3166_CODES, "US-TX");
       return properties;
    }
    
@@ -72,7 +78,7 @@ public class CloudServersUSProviderMetadata extends BaseProviderMetadata {
 
       protected Builder(){
          id("rackspace-cloudservers-us")
-         .name("Rackspace Next Generation Cloud Servers")
+         .name("Rackspace Next Generation Cloud Servers US")
          .apiMetadata(new NovaApiMetadata().toBuilder()
                   .identityName("${userName}")
                   .credentialName("${apiKey}")
@@ -89,7 +95,7 @@ public class CloudServersUSProviderMetadata extends BaseProviderMetadata {
          .homepage(URI.create("http://www.rackspace.com/cloud/nextgen"))
          .console(URI.create("https://mycloud.rackspace.com"))
          .linkedServices("rackspace-cloudservers-us", "cloudfiles-swift-us")
-         .iso3166Codes("US-TX")
+         .iso3166Codes("US-IL", "US-TX")
          .endpoint("https://identity.api.rackspacecloud.com/v2.0/")
          .defaultProperties(CloudServersUSProviderMetadata.defaultProperties());
       }

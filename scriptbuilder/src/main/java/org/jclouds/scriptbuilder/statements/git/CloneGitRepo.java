@@ -22,6 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 
+import org.jclouds.scriptbuilder.domain.GitRepoAndRef;
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.Statements;
@@ -33,9 +34,10 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 /**
- * Clones a repository into a newly created directory, creates remote-tracking branches for each
- * branch in the cloned repository (visible using git branch -r), and creates and checks out an
- * initial branch that is forked from the cloned repository's currently active branch. PWD is set to
+ * Clones a gitRepoAndRef into a newly created directory, creates
+ * remote-tracking branches for each branch in the cloned gitRepoAndRef (visible
+ * using git branch -r), and creates and checks out an initial branch that is
+ * forked from the cloned gitRepoAndRef's currently active branch. PWD is set to
  * the directory being checked out.
  * 
  * @author Adrian Cole
@@ -52,39 +54,45 @@ public class CloneGitRepo implements Statement {
 
    public static class Builder {
 
-      protected URI repository;
-      protected Optional<String> branch = Optional.absent();
-      protected Optional<String> tag = Optional.absent();
+      protected GitRepoAndRef.Builder gitRepoAndRef = GitRepoAndRef.builder();
       protected Optional<String> directory = Optional.absent();
 
       /**
-       * @see CloneGitRepo#getRepository()
+       * @see GitRepoAndRef#getRepository()
        */
       public Builder repository(URI repository) {
-         this.repository = repository;
+         this.gitRepoAndRef.repository(repository);
          return this;
       }
 
       /**
-       * @see CloneGitRepo#getRepository()
+       * @see GitRepoAndRef#getRepository()
        */
       public Builder repository(String repository) {
          return repository(URI.create(repository));
       }
 
       /**
-       * @see CloneGitRepo#getBranch()
+       * @see GitRepoAndRef#getBranch()
        */
       public Builder branch(String branch) {
-         this.branch = Optional.fromNullable(branch);
+         this.gitRepoAndRef.branch(branch);
          return this;
       }
 
       /**
-       * @see CloneGitRepo#getTag()
+       * @see GitRepoAndRef#getTag()
        */
       public Builder tag(String tag) {
-         this.tag = Optional.fromNullable(tag);
+         this.gitRepoAndRef.tag(tag);
+         return this;
+      }
+
+      /**
+       * @see CloneGitRepo#getGitRepoAndRef()
+       */
+      public Builder gitRepoAndRef(GitRepoAndRef gitRepoAndRef) {
+         this.gitRepoAndRef.fromGitRepoAndRef(gitRepoAndRef);
          return this;
       }
 
@@ -97,54 +105,33 @@ public class CloneGitRepo implements Statement {
       }
 
       public CloneGitRepo build() {
-         return new CloneGitRepo(repository, branch, tag, directory);
+         return new CloneGitRepo(gitRepoAndRef.build(), directory);
       }
 
       public Builder fromCloneGitRepo(CloneGitRepo in) {
-         return this.repository(in.getRepository()).branch(in.getBranch().orNull()).tag(in.getTag().orNull())
-                  .directory(in.getDirectory().orNull());
+         return this.gitRepoAndRef(in.getGitRepoAndRef()).directory(in.getDirectory().orNull());
       }
    }
 
-   protected final URI repository;
-   protected final Optional<String> branch;
-   protected final Optional<String> tag;
+   protected final GitRepoAndRef gitRepoAndRef;
    protected final Optional<String> directory;
 
-   protected CloneGitRepo(URI repository, Optional<String> branch, Optional<String> tag, Optional<String> directory) {
-      this.repository = checkNotNull(repository, "repository");
-      this.branch = checkNotNull(branch, "branch");
-      this.tag = checkNotNull(tag, "tag");
+   protected CloneGitRepo(GitRepoAndRef gitRepoAndRef, Optional<String> directory) {
+      this.gitRepoAndRef = checkNotNull(gitRepoAndRef, "gitRepoAndRef");
       this.directory = checkNotNull(directory, "directory");
    }
 
    /**
-    * The (possibly remote) repository to clone from.
+    * The coordinates to checkout
     */
-   public URI getRepository() {
-      return repository;
+   public GitRepoAndRef getGitRepoAndRef() {
+      return gitRepoAndRef;
    }
-
+   
    /**
-    * Instead of pointing the newly created HEAD to the branch pointed to by the cloned repository's
-    * HEAD, point to this branch instead. In a non-bare repository, this is the branch that will be
-    * checked out.
-    */
-   public Optional<String> getBranch() {
-      return branch;
-   }
-
-   /**
-    * checkout the following tag on the branch
-    */
-   public Optional<String> getTag() {
-      return tag;
-   }
-
-   /**
-    * The name of a new directory to clone into. The "humanish" part of the source repository is
-    * used if no directory is explicitly given (repo for /path/to/repo.git and foo for
-    * host.xz:foo/.git).
+    * The name of a new directory to clone into. The "humanish" part of the
+    * source gitRepoAndRef is used if no directory is explicitly given (repo for
+    * /path/to/repo.git and foo for host.xz:foo/.git).
     */
    public Optional<String> getDirectory() {
       return directory;
@@ -155,7 +142,7 @@ public class CloneGitRepo implements Statement {
     */
    @Override
    public int hashCode() {
-      return Objects.hashCode(repository, branch, tag, directory);
+      return Objects.hashCode(gitRepoAndRef, directory);
    }
 
    /**
@@ -170,8 +157,7 @@ public class CloneGitRepo implements Statement {
       if (getClass() != obj.getClass())
          return false;
       CloneGitRepo other = CloneGitRepo.class.cast(obj);
-      return Objects.equal(this.repository, other.repository) && Objects.equal(this.branch, other.branch)
-               && Objects.equal(this.tag, other.tag) && Objects.equal(this.directory, other.directory);
+      return Objects.equal(this.gitRepoAndRef, other.gitRepoAndRef) && Objects.equal(this.directory, other.directory);
    }
 
    /**
@@ -189,16 +175,16 @@ public class CloneGitRepo implements Statement {
    public String render(OsFamily arg0) {
       StringBuilder command = new StringBuilder();
       command.append("git clone");
-      if (branch.isPresent())
-         command.append(" -b ").append(branch.get());
-      command.append(' ').append(repository.toASCIIString());
+      if (gitRepoAndRef.getBranch().isPresent())
+         command.append(" -b ").append(gitRepoAndRef.getBranch().get());
+      command.append(' ').append(gitRepoAndRef.getRepository().toASCIIString());
       if (directory.isPresent())
          command.append(' ').append(directory.get());
       command.append("{lf}");
       command.append("{cd} ").append(
-               directory.or(Iterables.getLast(Splitter.on('/').split(repository.getPath())).replace(".git", "")));
-      if (tag.isPresent()) {
-         command.append("{lf}").append("git checkout ").append(tag.get());
+            directory.or(Iterables.getLast(Splitter.on('/').split(gitRepoAndRef.getRepository().getPath())).replace(".git", "")));
+      if (gitRepoAndRef.getTag().isPresent()) {
+         command.append("{lf}").append("git checkout ").append(gitRepoAndRef.getTag().get());
       }
       return Statements.exec(command.toString()).render(arg0);
    }
@@ -208,8 +194,8 @@ public class CloneGitRepo implements Statement {
     */
    @Override
    public String toString() {
-      return Objects.toStringHelper(this).omitNullValues().add("repository", repository).add("branch", branch.orNull())
-               .add("tag", tag.orNull()).add("directory", directory.orNull()).toString();
+      return Objects.toStringHelper(this).omitNullValues().add("gitRepoAndRef", gitRepoAndRef)
+            .add("directory", directory.orNull()).toString();
    }
 
 }

@@ -25,7 +25,6 @@ import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
 
 import java.net.URI;
 
-import javax.annotation.Nullable;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -36,8 +35,6 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.location.Provider;
 import org.jclouds.logging.Logger;
-import org.jclouds.rest.annotations.Credential;
-import org.jclouds.rest.annotations.Identity;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.virtualbox.predicates.RetryIfSocketNotYetOpen;
 import org.virtualbox_4_1.SessionState;
@@ -65,8 +62,7 @@ public class StartVBoxIfNotAlreadyRunning implements Supplier<VirtualBoxManager>
    @Inject
    public StartVBoxIfNotAlreadyRunning(Function<Supplier<NodeMetadata>, VirtualBoxManager> managerForNode,
             Factory runScriptOnNodeFactory, RetryIfSocketNotYetOpen socketTester, Supplier<NodeMetadata> host,
-            @Provider Supplier<URI> providerSupplier, @Nullable @Identity String identity,
-            @Nullable @Credential String credential) {
+            @Provider Supplier<URI> providerSupplier) {
       this.runScriptOnNodeFactory = checkNotNull(runScriptOnNodeFactory, "runScriptOnNodeFactory");
       this.socketTester = checkNotNull(socketTester, "socketTester");
       this.socketTester.seconds(3L);

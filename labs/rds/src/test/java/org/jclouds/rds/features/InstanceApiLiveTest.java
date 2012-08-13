@@ -26,8 +26,6 @@ import static org.testng.Assert.assertTrue;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-import javax.annotation.Nullable;
-
 import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
@@ -95,7 +93,7 @@ public class InstanceApiLiveTest extends BaseRDSApiLiveTest {
                      return Iterables.all(sgApi().get(input.getName()).getIPRanges(), new Predicate<Authorization>() {
 
                         @Override
-                        public boolean apply(@Nullable Authorization i2) {
+                        public boolean apply(Authorization i2) {
                            return i2.getStatus() == Status.AUTHORIZED;
                         }
 

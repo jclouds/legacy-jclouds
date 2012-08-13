@@ -38,7 +38,7 @@ public class SimpleTenantUsageApiLiveTest extends BaseNovaApiLiveTest {
 
    public void testList() throws Exception {
       for (String zoneId : novaContext.getApi().getConfiguredZones()) {
-         Optional<SimpleTenantUsageApi> optApi = novaContext.getApi().getSimpleTenantUsageExtensionForZone(zoneId);
+         Optional<? extends SimpleTenantUsageApi> optApi = novaContext.getApi().getSimpleTenantUsageExtensionForZone(zoneId);
          if (optApi.isPresent() && identity.endsWith(":admin")) {
             SimpleTenantUsageApi api = optApi.get();
             Set<SimpleTenantUsage> usages = api.listTenantUsages();

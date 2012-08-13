@@ -203,7 +203,7 @@ public class EC2TemplateOptions extends TemplateOptions implements Cloneable {
       return this;
    }
 
-   public static class Builder {
+   public static class Builder extends TemplateOptions.Builder {
       /**
        * @see EC2TemplateOptions#blockDeviceMappings
        */
@@ -352,6 +352,45 @@ public class EC2TemplateOptions extends TemplateOptions implements Cloneable {
          return options.overrideLoginCredentials(credentials);
       }
 
+      public static EC2TemplateOptions nameTask(String name) {
+         EC2TemplateOptions options = new EC2TemplateOptions();
+         return options.nameTask(name);
+      }
+
+      public static EC2TemplateOptions runAsRoot(boolean value) {
+         EC2TemplateOptions options = new EC2TemplateOptions();
+         return options.runAsRoot(value);
+      }
+
+      public static EC2TemplateOptions tags(Iterable<String> tags) {
+         EC2TemplateOptions options = new EC2TemplateOptions();
+         return options.tags(tags);
+      }
+
+      public static EC2TemplateOptions blockUntilRunning(boolean blockUntilRunning) {
+         EC2TemplateOptions options = new EC2TemplateOptions();
+         return options.blockUntilRunning(blockUntilRunning);
+      }
+
+      public static EC2TemplateOptions runScript(Statement script) {
+         EC2TemplateOptions options = new EC2TemplateOptions();
+         return options.runScript(script);
+      }
+      
+      public static EC2TemplateOptions runScript(String script) {
+         EC2TemplateOptions options = new EC2TemplateOptions();
+         return options.runScript(script);
+      }
+
+      public static EC2TemplateOptions userMetadata(String key, String value) {
+         EC2TemplateOptions options = new EC2TemplateOptions();
+         return options.userMetadata(key, value);
+      }
+
+      public static EC2TemplateOptions blockOnComplete(boolean value) {
+         EC2TemplateOptions options = new EC2TemplateOptions();
+         return options.blockOnComplete(value);
+      }
    }
 
    // methods that only facilitate returning the correct object type
@@ -485,6 +524,38 @@ public class EC2TemplateOptions extends TemplateOptions implements Cloneable {
    }
 
    /**
+    * {@inheritDoc}
+    */
+   @Override
+   public EC2TemplateOptions runScript(String script) {
+      return EC2TemplateOptions.class.cast(super.runScript(script));
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public EC2TemplateOptions tags(Iterable<String> tags) {
+      return EC2TemplateOptions.class.cast(super.tags(tags));
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public EC2TemplateOptions wrapInInitScript(boolean wrapInInitScript) {
+      return EC2TemplateOptions.class.cast(super.wrapInInitScript(wrapInInitScript));
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public EC2TemplateOptions blockOnComplete(boolean blockOnComplete) {
+      return EC2TemplateOptions.class.cast(super.blockOnComplete(blockOnComplete));
+   }
+   
+   /**
     * @return groupNames the user specified to run instances with, or zero
     *         length set to create an implicit group
     */
@@ -520,4 +591,5 @@ public class EC2TemplateOptions extends TemplateOptions implements Cloneable {
    public Set<BlockDeviceMapping> getBlockDeviceMappings() {
       return blockDeviceMappings.build();
    }
+
 }

@@ -31,7 +31,6 @@ import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -96,7 +95,7 @@ public class ImageToOperatingSystem implements Function<Image, OperatingSystem> 
             try {
                osFamily = find(Arrays.asList(OsFamily.values()), new Predicate<OsFamily>() {
                   @Override
-                  public boolean apply(@Nullable OsFamily osFamily) {
+                  public boolean apply(OsFamily osFamily) {
                      return any(imageNameParts, equalTo(osFamily.name().toLowerCase()));
                   }
                });

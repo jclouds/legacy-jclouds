@@ -61,7 +61,7 @@ public interface UserAsyncApi {
    @Path("/users")
    @RequestFilters(AuthenticateRequest.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<User>> list();
+   ListenableFuture<? extends Set<? extends User>> list();
 
    /** @see UserApi#get(String) */
    @GET
@@ -70,7 +70,7 @@ public interface UserAsyncApi {
    @Path("/users/{userId}")
    @RequestFilters(AuthenticateRequest.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<User> get(@PathParam("userId") String userId);
+   ListenableFuture<? extends User> get(@PathParam("userId") String userId);
    
    /** @see UserApi#getByName(String) */
    @GET
@@ -79,7 +79,7 @@ public interface UserAsyncApi {
    @Path("/users")
    @RequestFilters(AuthenticateRequest.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<User> getByName(@QueryParam("name") String userName);
+   ListenableFuture<? extends User> getByName(@QueryParam("name") String userName);
    
    /** @see UserApi#listRolesOfUser(String) */
    @GET
@@ -88,7 +88,7 @@ public interface UserAsyncApi {
    @Path("/users/{userId}/roles")
    @RequestFilters(AuthenticateRequest.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<Role>> listRolesOfUser(@PathParam("userId") String userId);
+   ListenableFuture<? extends Set<? extends Role>> listRolesOfUser(@PathParam("userId") String userId);
 
    /** @see UserApi#listRolesOfUserOnTenant(String, String) */
    @GET
@@ -97,5 +97,5 @@ public interface UserAsyncApi {
    @Path("/tenants/{tenantId}/users/{userId}/roles")
    @RequestFilters(AuthenticateRequest.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<Role>> listRolesOfUserOnTenant(@PathParam("userId") String userId, @PathParam("tenantId") String tenantId);
+   ListenableFuture<? extends Set<? extends Role>> listRolesOfUserOnTenant(@PathParam("userId") String userId, @PathParam("tenantId") String tenantId);
 }

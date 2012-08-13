@@ -47,6 +47,7 @@ import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.Vdc;
 import org.jclouds.vcloud.director.v1_5.domain.Vm;
 import org.jclouds.vcloud.director.v1_5.domain.dmtf.RasdItem;
+import org.jclouds.vcloud.director.v1_5.domain.params.UndeployVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.section.GuestCustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.section.NetworkConnectionSection;
 import org.jclouds.vcloud.director.v1_5.features.CatalogApi;
@@ -112,7 +113,6 @@ public abstract class AbstractVAppApiLiveTest extends BaseVCloudDirectorApiLiveT
     * @see BaseVCloudDirectorApiLiveTest#setupRequiredApis()
     */
    @Override
-   @BeforeClass(alwaysRun = true, description = "Retrieves the required apis from the REST API context")
    protected void setupRequiredApis() {
       assertNotNull(context.getApi());
 
@@ -122,14 +122,13 @@ public abstract class AbstractVAppApiLiveTest extends BaseVCloudDirectorApiLiveT
       vAppTemplateApi = context.getApi().getVAppTemplateApi();
       vdcApi = context.getApi().getVdcApi();
       vmApi = context.getApi().getVmApi();
-
-      setupEnvironment();
    }
-
+   
    /**
     * Sets up the environment. Retrieves the test {@link Vdc} and {@link VAppTemplate} from their
     * configured {@link URI}s. Instantiates a new test VApp.
     */
+   @BeforeClass(alwaysRun = true, description = "Retrieves the required apis from the REST API context")
    protected void setupEnvironment() {
       // Get the configured Vdc for the tests
       vdc = vdcApi.getVdc(vdcURI);
@@ -295,9 +294,10 @@ public abstract class AbstractVAppApiLiveTest extends BaseVCloudDirectorApiLiveT
    protected Vm powerOffVm(final URI testVmURI) {
       Vm test = vmApi.getVm(testVmURI);
       Status status = test.getStatus();
-      if (status != Status.POWERED_OFF) {
-         Task powerOff = vmApi.powerOff(vm.getHref());
-         assertTaskSucceedsLong(powerOff);
+      if (status != Status.POWERED_OFF || test.isDeployed()) {
+         UndeployVAppParams undeployParams = UndeployVAppParams.builder().build();
+         Task shutdownVapp = vAppApi.undeploy(test.getHref(), undeployParams);
+         assertTaskSucceedsLong(shutdownVapp);
       }
       test = vmApi.getVm(testVmURI);
       assertStatus(VM, test, Status.POWERED_OFF);

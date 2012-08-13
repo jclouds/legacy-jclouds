@@ -32,9 +32,9 @@ function installOpenJDK() {
   if [ -n "$JAVA_HOME" -a -x "$JAVA_HOME/bin/java" ]; then
     echo reusing JAVA_HOME $JAVA_HOME
   else
-    if hash apt-get 2>/dev/null; then
+    if which dpkg &> /dev/null; then
       apt-get-update && apt-get-install openjdk-6-jdk
-    elif hash yum 2>/dev/null; then
+    elif which rpm &> /dev/null; then
       yum-install java-1.6.0-openjdk-devel
     else
       abort "we only support apt-get and yum right now... please contribute"

@@ -6,6 +6,10 @@ import org.jclouds.apis.ApiMetadata;
 import org.jclouds.apis.internal.BaseApiMetadata;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.smartos.compute.config.SmartOSComputeServiceContextModule;
+import org.jclouds.smartos.compute.config.SmartOSParserModule;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 
 /**
  * Implementation of {@link ApiMetadata} for SmartOS
@@ -38,14 +42,16 @@ public class SmartOSApiMetadata extends BaseApiMetadata {
 
       protected Builder() {
          id("smartos-ssh")
-                  .name("SmartOS SSH API")
-                  .identityName("Username")
-                  .defaultIdentity("root")
-                  .defaultCredential("smartos")
-                  .defaultEndpoint("http://localhost")
-                  .documentation(
-                           URI.create("http://http://wiki.smartos.org/display/DOC/How+to+create+a+Virtual+Machine+in+SmartOS"))
-                  .view(ComputeServiceContext.class).defaultModule(SmartOSComputeServiceContextModule.class);
+         .name("SmartOS SSH API")
+         .identityName("Username")
+         .defaultIdentity("root")
+         .defaultCredential("smartos")
+         .defaultEndpoint("http://localhost")
+         .documentation(URI.create("http://http://wiki.smartos.org/display/DOC/How+to+create+a+Virtual+Machine+in+SmartOS"))
+         .view(ComputeServiceContext.class)
+         .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
+                                     .add(SmartOSComputeServiceContextModule.class)
+                                     .add(SmartOSParserModule.class).build());
       }
 
       @Override

@@ -55,7 +55,7 @@ public class NetworkApiExpectTest extends BaseQuantumApiExpectTest {
             HttpResponse.builder().statusCode(200).payload(payloadFromResourceWithContentType("/list_network_refs.json", APPLICATION_JSON)).build())
             .getNetworkApiForRegion("region-a.geo-1");
       
-      Set<Reference> nets = api.listReferences();
+      Set<? extends Reference> nets = api.listReferences();
       assertEquals(nets, listOfNetworkRefs());
    }
 
@@ -76,7 +76,7 @@ public class NetworkApiExpectTest extends BaseQuantumApiExpectTest {
             HttpResponse.builder().statusCode(200).payload(payloadFromResourceWithContentType("/list_networks.json", APPLICATION_JSON)).build())
             .getNetworkApiForRegion("region-a.geo-1");
 
-      Set<Network> nets = api.list();
+      Set<? extends Network> nets = api.list();
       assertEquals(nets, listOfNetworks());
    }
 

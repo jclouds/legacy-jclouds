@@ -42,7 +42,7 @@ public interface ExtensionApi {
     * 
     * @return all extensions
     */
-   Set<Extension> listExtensions();
+   Set<? extends Extension> listExtensions();
 
    /**
     * Extensions may also be queried individually by their unique alias.

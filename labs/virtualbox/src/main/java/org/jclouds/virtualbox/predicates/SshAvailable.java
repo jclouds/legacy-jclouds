@@ -20,7 +20,6 @@ package org.jclouds.virtualbox.predicates;
 
 import static org.jclouds.compute.options.RunScriptOptions.Builder.wrapInInitScript;
 
-import javax.annotation.Nullable;
 import javax.annotation.Resource;
 import javax.inject.Named;
 
@@ -48,7 +47,7 @@ public class SshAvailable implements Predicate<String> {
    }
 
    @Override
-   public boolean apply(@Nullable String nodeId) {
+   public boolean apply(String nodeId) {
       boolean sshDaemonIsRunning = false;
       try {
          if (context.getComputeService()

@@ -18,8 +18,6 @@
  */
 package org.jclouds.virtualbox.functions;
 
-import javax.annotation.Nullable;
-
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.VBoxException;
 
@@ -42,7 +40,7 @@ public class DetachDistroMediumFromMachine implements Function<IMachine, Void> {
 
    //TODO: should this be a function on HardDisk?
    @Override
-   public Void apply(@Nullable IMachine machine) {
+   public Void apply(IMachine machine) {
       try {
          machine.detachDevice(controller, port, deviceSlot);
          machine.saveSettings();

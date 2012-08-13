@@ -20,6 +20,8 @@ package org.jclouds.util;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.WildcardType;
 
 import com.google.common.base.Optional;
 
@@ -35,7 +37,11 @@ public class Optionals2 {
       if (optional) {
          ParameterizedType futureType = ParameterizedType.class.cast(method.getGenericReturnType());
          // TODO: error checking in case this is a type, not a class.
-         syncClass = Class.class.cast(futureType.getActualTypeArguments()[0]);
+         Type t = futureType.getActualTypeArguments()[0];
+         if (t instanceof WildcardType) {
+            t = ((WildcardType) t).getUpperBounds()[0];
+         }
+         syncClass = Class.class.cast(t);
       } else {
          syncClass = method.getReturnType();
       }

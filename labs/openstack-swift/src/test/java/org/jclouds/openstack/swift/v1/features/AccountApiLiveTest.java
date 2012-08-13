@@ -49,7 +49,7 @@ public class AccountApiLiveTest extends BaseSwiftApiLiveTest {
    public void testListContainers() throws Exception {
       for (String regionId : swiftContext.getApi().getConfiguredRegions()) {
          AccountApi api = swiftContext.getApi().getAccountApiForRegion(regionId);
-         Set<ContainerMetadata> response = api.listContainers();
+         Set<? extends ContainerMetadata> response = api.listContainers();
          assertNotNull(response);
          for (ContainerMetadata container : response) {
             assertNotNull(container.getName());

@@ -64,7 +64,7 @@ public interface NetworkAsyncApi {
    @GET
    @SelectJson("networks")
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<Reference>> listReferences();
+   ListenableFuture<? extends Set<? extends Reference>> listReferences();
 
    /**
     * @see NetworkApi#list
@@ -73,7 +73,7 @@ public interface NetworkAsyncApi {
    @SelectJson("networks")
    @Path("/detail")
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<Network>> list();
+   ListenableFuture<? extends Set<? extends Network>> list();
 
    /**
     * @see NetworkApi#get
@@ -82,7 +82,7 @@ public interface NetworkAsyncApi {
    @SelectJson("network")
    @Path("/{id}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Network> get(@PathParam("id") String id);
+   ListenableFuture<? extends Network> get(@PathParam("id") String id);
 
    /**
     * @see NetworkApi#getDetails
@@ -91,7 +91,7 @@ public interface NetworkAsyncApi {
    @SelectJson("network")
    @Path("/{id}/detail")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<NetworkDetails> getDetails(@PathParam("id") String id);
+   ListenableFuture<? extends NetworkDetails> getDetails(@PathParam("id") String id);
 
    /**
     * @see NetworkApi#create
@@ -100,7 +100,7 @@ public interface NetworkAsyncApi {
    @SelectJson("network")
    @Produces(MediaType.APPLICATION_JSON)
    @WrapWith("network")
-   ListenableFuture<Reference> create(@PayloadParam("name") String name);
+   ListenableFuture<? extends Reference> create(@PayloadParam("name") String name);
 
    /**
     * @see NetworkApi#rename

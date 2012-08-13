@@ -29,8 +29,8 @@
   </parent>
   <groupId>org.jclouds.provider</groupId>
   <artifactId>rackspace-cloudservers-us</artifactId>
-  <name>jclouds Rackspace Next Generation Cloud Servers provider</name>
-  <description>OpenStack Nova implementation targeted to Rackspace Next Generation Cloud Servers</description>
+  <name>jclouds Rackspace Next Generation Cloud Servers US provider</name>
+  <description>OpenStack Nova implementation targeted to Rackspace Next Generation Cloud Servers US</description>
   <packaging>bundle</packaging>
 
   <properties>

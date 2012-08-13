@@ -26,8 +26,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Nullable;
-
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.openstack.nova.v2_0.domain.Image;
@@ -69,7 +67,7 @@ public class ImageToOperatingSystemTest {
       return Iterables.toArray(
             Iterables.transform(Arrays.asList(OsFamily.values()), new Function<OsFamily, Object[]>() {
                @Override
-               public Object[] apply(@Nullable OsFamily osFamily) {
+               public Object[] apply(OsFamily osFamily) {
                   return new Object[] { osFamily };
                }
             }), Object[].class);

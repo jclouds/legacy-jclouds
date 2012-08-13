@@ -21,7 +21,6 @@ package org.jclouds.virtualbox.functions;
 
 import java.util.List;
 
-import javax.annotation.Nullable;
 import javax.annotation.Resource;
 import javax.inject.Named;
 
@@ -53,7 +52,7 @@ public class IMachineToVmSpec implements Function<IMachine, VmSpec> {
    protected Logger logger = Logger.NULL;
 
    @Override
-   public VmSpec apply(@Nullable IMachine machine) {
+   public VmSpec apply(IMachine machine) {
       List<StorageController> controllers = buildControllers(machine);
 
       // TODO some parameters are predefined cause the IMachine doesn't have the

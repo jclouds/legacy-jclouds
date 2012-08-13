@@ -691,8 +691,8 @@ public class Checks {
       // Check optional fields
       Owner owner = template.getOwner();
       if (owner != null) checkOwner(owner);
-      for (VAppTemplate child : template.getChildren()) {
-         checkVAppTemplate(child);
+      for (Vm child : template.getChildren()) {
+         checkVm(child);
       }
       for (SectionType section : template.getSections()) {
          checkSectionType(section);
@@ -735,8 +735,8 @@ public class Checks {
       if (params.isSharedToEveryone()) {
          assertNotNull(params.getEveryoneAccessLevel(), String.format(OBJ_FIELD_REQ, "ControlAccessParams", "EveryoneAccessLevel"));
          assertNotNull(params.getAccessSettings(), String.format(OBJ_FIELD_REQ, "ControlAccessParams", "AccessSettings when isSharedToEveryone"));
-         assertTrue(params.getAccessSettings().size() >= 1, String.format(OBJ_FIELD_GTE_1, "ControlAccessParams", "AccessSettings.size", params.getAccessSettings().size()));
       } else {
+         assertTrue(params.getAccessSettings().size() >= 1, String.format(OBJ_FIELD_GTE_1, "ControlAccessParams", "AccessSettings.size", params.getAccessSettings().size()));
          for (AccessSetting setting : params.getAccessSettings()) {
             checkAccessSetting(setting);
          }

@@ -85,7 +85,8 @@ public class ParseS3ErrorFromXmlContent extends ParseAWSErrorFromXmlContent {
                      exception = new ContainerNotFoundException(container, message);
                   else
                      exception = new KeyNotFoundException(container, key, message);
-               } else if (command.getCurrentRequest().getEndpoint().getPath().indexOf(servicePath + "/") == 0) {
+               } else if (command.getCurrentRequest().getEndpoint().getPath()
+                        .indexOf(servicePath.equals("/") ? "/" : servicePath + "/") == 0) {
                   String path = command.getCurrentRequest().getEndpoint().getPath().substring(servicePath.length());
                   List<String> parts = newArrayList(filter(Splitter.on('/').split(path), not(equalTo(""))));
                   if (parts.size() == 1) {

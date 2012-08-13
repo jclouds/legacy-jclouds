@@ -23,8 +23,6 @@ import static org.jclouds.cloudstack.options.UpdateDomainOptions.Builder.name;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
-import javax.annotation.Nullable;
-
 import org.jclouds.cloudstack.domain.Domain;
 import org.jclouds.cloudstack.internal.BaseCloudStackClientLiveTest;
 import org.testng.annotations.BeforeMethod;
@@ -48,7 +46,7 @@ public class GlobalDomainClientLiveTest extends BaseCloudStackClientLiveTest {
       domainClient = globalAdminClient.getDomainClient();
       rootDomain = find(domainClient.listDomains(), new Predicate<Domain>() {
          @Override
-         public boolean apply(@Nullable Domain domain) {
+         public boolean apply(Domain domain) {
             return domain != null && domain.getName().equals("ROOT");
          }
       });

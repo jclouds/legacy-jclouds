@@ -19,8 +19,6 @@
 
 package org.jclouds.virtualbox.functions;
 
-import javax.annotation.Nullable;
-
 import org.virtualbox_4_1.IMachine;
 
 import com.google.common.base.Function;
@@ -37,7 +35,7 @@ public class ApplyMemoryToMachine implements Function<IMachine, Object> {
    }
 
    @Override
-   public Object apply(@Nullable IMachine machine) {
+   public Object apply(IMachine machine) {
       machine.setMemorySize(memorySize);
       machine.saveSettings();
       return null;

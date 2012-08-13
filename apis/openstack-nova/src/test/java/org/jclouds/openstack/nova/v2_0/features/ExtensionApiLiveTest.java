@@ -44,7 +44,7 @@ public class ExtensionApiLiveTest extends BaseNovaApiLiveTest {
    public void testListExtensions() throws Exception {
       for (String zoneId : novaContext.getApi().getConfiguredZones()) {
          ExtensionApi api = novaContext.getApi().getExtensionApiForZone(zoneId);
-         Set<Extension> response = api.listExtensions();
+         Set<? extends Extension> response = api.listExtensions();
          assert null != response;
          assertTrue(response.size() >= 0);
          for (Extension extension : response) {

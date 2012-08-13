@@ -62,7 +62,7 @@ public class FindSecurityGroupWithNameAndReturnTrue implements Predicate<AtomicR
       checkNotNull(securityGroupInZoneRef, "securityGroupRef");
       final ZoneAndName securityGroupInZone = checkNotNull(securityGroupInZoneRef.get(), "securityGroupInZone");
 
-      Optional<SecurityGroupApi> api = novaApi.getSecurityGroupExtensionForZone(securityGroupInZone.getZone());
+      Optional<? extends SecurityGroupApi> api = novaApi.getSecurityGroupExtensionForZone(securityGroupInZone.getZone());
       checkArgument(api.isPresent(), "Security groups are required, but the extension is not available!");
 
       logger.trace("looking for security group %s", securityGroupInZone.slashEncode());

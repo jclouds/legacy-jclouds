@@ -25,7 +25,6 @@ import static org.jclouds.virtualbox.util.MachineUtils.machineNotFoundException;
 import java.io.File;
 import java.util.Set;
 
-import javax.annotation.Nullable;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -78,7 +77,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Functi
    }
 
    @Override
-   public IMachine apply(@Nullable MasterSpec launchSpecification) {
+   public IMachine apply(MasterSpec launchSpecification) {
       final IVirtualBox vBox = manager.get().getVBox();
       String vmName = launchSpecification.getVmSpec().getVmName();
       String vmId = launchSpecification.getVmSpec().getVmId();

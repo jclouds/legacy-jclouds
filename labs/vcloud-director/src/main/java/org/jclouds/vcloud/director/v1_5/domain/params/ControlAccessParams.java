@@ -136,7 +136,7 @@ public class ControlAccessParams {
 	      this.accessSettings = null;
       } else {
 	      this.everyoneAccessLevel = null;
-         this.accessSettings = Iterables.isEmpty(checkNotNull(accessSettings, "accessSettings")) ? null : ImmutableList.copyOf(accessSettings);
+            this.accessSettings = Iterables.isEmpty(checkNotNull(accessSettings, "accessSettings")) ? null : ImmutableList.copyOf(accessSettings);
       }
    }
 
