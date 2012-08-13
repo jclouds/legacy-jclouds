@@ -25,7 +25,7 @@ import javax.ws.rs.PathParam;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.snia.cdmi.v1.domain.Container;
 import org.jclouds.snia.cdmi.v1.options.CreateContainerOptions;
-import org.jclouds.snia.cdmi.v1.options.GetContainerOptions;
+import org.jclouds.snia.cdmi.v1.queryparams.ContainerQueryParams;
 
 /**
  * CDMI Container Object Resource Operations
@@ -56,23 +56,23 @@ public interface ContainerApi {
 	 * get CDMI Container
 	 * 
 	 * @param containerName
-	 * @param options
+	 * @param queryParams
 	 *            enables getting only certain fields, metadata, children range
 	 * @see GetContainerOptions
 	 */
-	Container getContainer(String containerName, GetContainerOptions... options);
+	Container getContainer(String containerName, ContainerQueryParams queryParams);
 
 	/**
 	 * get CDMI Container
 	 * 
 	 * @param parentURI
 	 * @param containerName
-	 * @param options
+	 * @param queryParams
 	 *            enables getting only certain fields, metadata, children range
-	 * @see GetContainerOptions
+	 * @see ContainerQueryParams
 	 */
 	Container getContainer(String parentContainerURI, String containerName,
-			GetContainerOptions... options);
+			ContainerQueryParams queryParams);
 
 	/**
 	 * Create CDMI Container
@@ -126,5 +126,6 @@ public interface ContainerApi {
 	 * @param containerName
 	 */
 	void deleteContainer(String parentContainerURI, String containerName);
+	
 
 }

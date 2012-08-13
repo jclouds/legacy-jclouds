@@ -47,7 +47,7 @@ import org.jclouds.snia.cdmi.v1.internal.BaseCDMIApiLiveTest;
 import org.jclouds.snia.cdmi.v1.options.CreateContainerOptions;
 import org.jclouds.snia.cdmi.v1.options.CreateDataObjectNonCDMIOptions;
 import org.jclouds.snia.cdmi.v1.options.CreateDataObjectOptions;
-import org.jclouds.snia.cdmi.v1.options.GetDataObjectOptions;
+import org.jclouds.snia.cdmi.v1.queryparams.DataObjectQueryParams;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Charsets;
@@ -669,20 +669,20 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 					.getChildren().contains(dataObjectNameIn), true);
 			
 			dataObject = dataApi.getDataObject(containerName,
-					dataObjectNameIn,GetDataObjectOptions.Builder.field("parentURI").toString());
+					dataObjectNameIn,DataObjectQueryParams.Builder.field("parentURI"));
 			assertNotNull(dataObject);
 			System.out.println(dataObject);
 			assertEquals(dataObject.getParentURI(),container.getParentURI()+container.getObjectName());
 			
 			dataObject = dataApi.getDataObject(containerName,
-					dataObjectNameIn,GetDataObjectOptions.Builder.field("parentURI").field("objectName").toString());
+					dataObjectNameIn,DataObjectQueryParams.Builder.field("parentURI").field("objectName"));
 			assertNotNull(dataObject);
 			System.out.println(dataObject);			
 			assertEquals(dataObject.getParentURI(),container.getParentURI()+container.getObjectName());
 			assertEquals(dataObject.getObjectName(),dataObjectNameIn);
 
 			dataObject = dataApi.getDataObject(containerName,
-					dataObjectNameIn,GetDataObjectOptions.Builder.field("parentURI").field("objectName").field("mimetype").toString());
+					dataObjectNameIn,DataObjectQueryParams.Builder.field("parentURI").field("objectName").field("mimetype"));
 			assertNotNull(dataObject);
 			System.out.println(dataObject);			
 			assertEquals(dataObject.getParentURI(),container.getParentURI()+container.getObjectName());
@@ -690,7 +690,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 			assertEquals(dataObject.getMimetype(),"text/plain");
 
 			dataObject = dataApi.getDataObject(containerName,
-					dataObjectNameIn,GetDataObjectOptions.Builder.field("parentURI").field("objectName").field("mimetype").metadata().toString());
+					dataObjectNameIn,DataObjectQueryParams.Builder.field("parentURI").field("objectName").field("mimetype").metadata());
 			assertNotNull(dataObject);
 			System.out.println(dataObject);			
 			assertEquals(dataObject.getParentURI(),container.getParentURI()+container.getObjectName());
@@ -710,7 +710,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 							"cdmi_size")), value.length());
 			
 			dataObject = dataApi.getDataObject(containerName,
-					dataObjectNameIn,GetDataObjectOptions.Builder.metadata("cdmi_size").toString());
+					dataObjectNameIn,DataObjectQueryParams.Builder.metadata("cdmi_size"));
 			assertNotNull(dataObject);
 			System.out.println(dataObject);			
 			assertEquals(
@@ -718,7 +718,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 							"cdmi_size")), value.length());
 
 			dataObject = dataApi.getDataObject(containerName,
-					dataObjectNameIn,GetDataObjectOptions.Builder.field("mimetype").value().toString());
+					dataObjectNameIn,DataObjectQueryParams.Builder.field("mimetype").value());
 			assertNotNull(dataObject);
 			System.out.println(dataObject);
 			System.out.println(dataObject.getValueAsString());
@@ -726,7 +726,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 			assertEquals(dataObject.getValueAsString(),value);
 			
 			dataObject = dataApi.getDataObject(containerName,
-					dataObjectNameIn,GetDataObjectOptions.Builder.field("mimetype").value(0,3).toString());
+					dataObjectNameIn,DataObjectQueryParams.Builder.field("mimetype").value(0,3));
 			assertNotNull(dataObject);
 			System.out.println(dataObject);
 			System.out.println(dataObject.getValueAsString());
@@ -762,7 +762,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 		byte[] bytes;
 		
 		CreateDataObjectOptions pCreateDataObjectOptions;
-		GetDataObjectOptions pGetDataObjectOptions;
+		DataObjectQueryParams pDataObjectQueryParams;
 		DataObject dataObject;
 		Iterator<String> keys;
 		Map<String, String> dataObjectMetaDataOut;

@@ -29,6 +29,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.io.Payload;
+import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.QueryParams;
@@ -36,12 +37,14 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.snia.cdmi.v1.ObjectTypes;
+import org.jclouds.snia.cdmi.v1.binders.BindQueryParmsToSuffix;
 import org.jclouds.snia.cdmi.v1.domain.DataObject;
 import org.jclouds.snia.cdmi.v1.filters.BasicAuthenticationAndTenantId;
 import org.jclouds.snia.cdmi.v1.filters.StripExtraAcceptHeader;
 import org.jclouds.snia.cdmi.v1.options.CreateDataObjectNonCDMIOptions;
 import org.jclouds.snia.cdmi.v1.options.CreateDataObjectOptions;
 import org.jclouds.snia.cdmi.v1.options.GetDataObjectOptions;
+import org.jclouds.snia.cdmi.v1.queryparams.DataObjectQueryParams;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -75,27 +78,12 @@ public interface DataAsyncApi {
 	@GET
 	@Consumes({ ObjectTypes.DATAOBJECT, MediaType.APPLICATION_JSON })
 	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
-	@Path("/{containerName}/{dataObjectName}{queryParams}")
+	@Path("/{containerName}/{dataObjectName}")
 	ListenableFuture<DataObject> getDataObject(
 			@PathParam("containerName") String containerName,
 			@PathParam("dataObjectName") String dataObjectName,
-	        @PathParam("queryParams") String queryParams);
+			@BinderParam(BindQueryParmsToSuffix.class) DataObjectQueryParams queryParams);
 	
-
-	/**
-	 * @see DataApi#getDataObject()
-	 */
-	//@Headers(keys = "X-CDMI-Specification-Version", values = "{jclouds.api-version}")
-	//@GET
-	//@Consumes({ ObjectTypes.DATAOBJECT, MediaType.APPLICATION_JSON })
-	//@ExceptionParser(ReturnNullOnNotFoundOr404.class)
-	//@Path("/{containerName}/{dataObjectName}")
-	//ListenableFuture<DataObject> getDataObject(
-	//		@PathParam("containerName") String containerName,
-	//		@PathParam("dataObjectName") String dataObjectName,
-	//		GetDataObjectOptions... options);
-	
-
 	/**
 	 * @see DataApi#createDataObject
 	 */

@@ -29,6 +29,7 @@ import org.jclouds.snia.cdmi.v1.domain.DataObject;
 import org.jclouds.snia.cdmi.v1.options.CreateDataObjectNonCDMIOptions;
 import org.jclouds.snia.cdmi.v1.options.CreateDataObjectOptions;
 import org.jclouds.snia.cdmi.v1.options.GetDataObjectOptions;
+import org.jclouds.snia.cdmi.v1.queryparams.DataObjectQueryParams;
 
 /**
  * Data Object Resource Operations
@@ -51,11 +52,9 @@ public interface DataApi {
 
 	DataObject getDataObject(String containerName, String dataObjectName);
 	
-	DataObject getDataObject(String containerName, String dataObjectName, String queryParams);
+	DataObject getDataObject(String containerName, String dataObjectName, 
+			DataObjectQueryParams queryParams);
 	
-	//DataObject getDataObject(String containerName, String dataObjectName,
-	//		GetDataObjectOptions... options);
-
 	void deleteDataObject(String containerName, String dataObjectName);
 
 

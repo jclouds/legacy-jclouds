@@ -34,6 +34,7 @@ import org.jclouds.snia.cdmi.v1.internal.BaseCDMIApiLiveTest;
 import org.jclouds.snia.cdmi.v1.options.CreateContainerOptions;
 import org.jclouds.snia.cdmi.v1.options.GetContainerOptions;
 import org.jclouds.snia.cdmi.v1.options.GetDataObjectOptions;
+import org.jclouds.snia.cdmi.v1.queryparams.ContainerQueryParams;
 import org.testng.annotations.Test;
 
 /**
@@ -207,18 +208,18 @@ public class ContainerApiLiveTest extends BaseCDMIApiLiveTest {
 			assertEquals(
 					container.getChildren().contains(pContainerName + "/"),
 					true);
-			container = api.getContainer(pContainerName,GetContainerOptions.Builder.field("parentURI"));
+			container = api.getContainer(pContainerName,ContainerQueryParams.Builder.field("parentURI"));
 			//container = api.getContainer(pContainerName,"parentURI");
 			assertNotNull(container);
 			assertEquals(container.getParentURI(),"/");
 			System.out.println(container);
 			
-			container = api.getContainer(pContainerName,GetContainerOptions.Builder.field("parentURI").field("objectName"));
+			container = api.getContainer(pContainerName,ContainerQueryParams.Builder.field("parentURI").field("objectName"));
 			assertNotNull(container);
 			assertEquals(container.getParentURI(),"/");
 			assertEquals(container.getObjectName(),pContainerName+"/");			
 
-			container = api.getContainer(pContainerName,GetContainerOptions.Builder.metadata());
+			container = api.getContainer(pContainerName,ContainerQueryParams.Builder.metadata());
 			assertNotNull(container);
 			pContainerMetaDataOut = container.getUserMetadata();
 			keys = pContainerMetaDataIn.keySet().iterator();
@@ -231,7 +232,7 @@ public class ContainerApiLiveTest extends BaseCDMIApiLiveTest {
 			System.out.println(container);
 			
 			System.out.println("GetContainerOptions.Builder.metadata(cdmi_acl)");
-			container = api.getContainer(pContainerName,GetContainerOptions.Builder.metadata("cdmi_acl"));
+			container = api.getContainer(pContainerName,ContainerQueryParams.Builder.metadata("cdmi_acl"));
 			assertNotNull(container);
 			System.out.println(container);			
 			assertNotNull(container.getACLMetadata());
@@ -248,19 +249,19 @@ public class ContainerApiLiveTest extends BaseCDMIApiLiveTest {
 				container = api.createContainer(container.getParentURI()+container.getObjectName(),"grandchild",pCreateContainerOptions);
 				assertEquals(container.getParentURI(),pContainerName+"/"+"childcontainer"+i+"/");
 				assertEquals(container.getObjectName(),"grandchild"+"/");
-				container = api.getContainer(container.getParentURI(),"",GetContainerOptions.Builder.children());
+				container = api.getContainer(container.getParentURI(),"",ContainerQueryParams.Builder.children());
 				assertEquals(container.getChildren().contains("grandchild"+"/"),true);
 			}
-			container = api.getContainer(pContainerName,GetContainerOptions.Builder.children());
+			container = api.getContainer(pContainerName,ContainerQueryParams.Builder.children());
 			assertNotNull(container);
 			assertNotNull(container.getChildren());
 			assertEquals(container.getChildren().size(), 10);
-			container = api.getContainer(pContainerName,GetContainerOptions.Builder.children(0,3));
+			container = api.getContainer(pContainerName,ContainerQueryParams.Builder.children(0,3));
 			assertNotNull(container);
 			assertNotNull(container.getChildren());
 			assertEquals(container.getChildren().size(), 4);
 			
-			container = api.getContainer(pContainerName,GetContainerOptions.Builder.field("parentURI").field("objectName").children().metadata());
+			container = api.getContainer(pContainerName,ContainerQueryParams.Builder.field("parentURI").field("objectName").children().metadata());
 			assertNotNull(container);
 			assertNotNull(container.getChildren());
 			assertEquals(container.getChildren().size(), 10);
@@ -271,7 +272,7 @@ public class ContainerApiLiveTest extends BaseCDMIApiLiveTest {
 			for(String childName: container.getChildren()){
 				api.deleteContainer(container.getObjectName(), childName);				
 			}
-			assertEquals(api.getContainer(pContainerName,GetContainerOptions.Builder.children()).getChildren().isEmpty(),true);		
+			assertEquals(api.getContainer(pContainerName,ContainerQueryParams.Builder.children()).getChildren().isEmpty(),true);
 			
 		} finally {
 			Logger.getAnonymousLogger().info(

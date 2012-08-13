@@ -48,6 +48,7 @@ import org.jclouds.snia.cdmi.v1.filters.BasicAuthenticationAndTenantId;
 import org.jclouds.snia.cdmi.v1.filters.StripExtraAcceptHeader;
 import org.jclouds.snia.cdmi.v1.options.CreateContainerOptions;
 import org.jclouds.snia.cdmi.v1.options.GetContainerOptions;
+import org.jclouds.snia.cdmi.v1.queryparams.ContainerQueryParams;
 import org.jclouds.rest.annotations.QueryParams;
 
 import com.google.common.util.concurrent.ListenableFuture;
@@ -105,7 +106,7 @@ public interface ContainerAsyncApi {
 	@Path("/{containerName}/")
 	ListenableFuture<Container> getContainer(
 			@PathParam("containerName") String containerName,
-			GetContainerOptions... options);
+			@BinderParam(BindQueryParmsToSuffix.class) ContainerQueryParams queryParams);
 
 	/**
 	 * get CDMI Container
@@ -123,7 +124,7 @@ public interface ContainerAsyncApi {
 	ListenableFuture<Container> getContainer(
 			@PathParam("parentURI") String parentURI,
 			@PathParam("containerName") String containerName,
-			GetContainerOptions... options);
+			@BinderParam(BindQueryParmsToSuffix.class) ContainerQueryParams queryParams);
 
 	/**
 	 * Create CDMI Container
@@ -214,40 +215,5 @@ public interface ContainerAsyncApi {
 	ListenableFuture<Void> deleteContainer(
 			@PathParam("parentContainerURI") String parentContainerURI,
 			@PathParam("containerName") String containerName);
-
-	/**
-	 * Experimenting with this to see if can solve ?,;,: encoding binding
-	 */
-	// @GET
-	// @Consumes( { ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
-	// @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-	// @Path("/{containerName}/")
-	// ListenableFuture<Container> getContainer(@PathParam("containerName")
-	// String containerName, @BinderParam(BindQueryParmsToSuffix.class) String
-	// queryParams);
-
-	/**
-	 * Experimenting with String queryParmas. This is superceeded get with
-	 * options
-	 */
-	// @GET
-	// @Consumes({ ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
-	// @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-	// @Path("/{containerName}/?{queryParams}")
-	// ListenableFuture<Container> getContainer(
-	// @PathParam("containerName") String containerName,
-	// @PathParam("queryParams") String queryParams);
-
-	/**
-	 * @MatrixParam Experiment for less ackward CDMI definition
-	 */
-	// @GET
-	// @Consumes({ ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
-	// @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-	// @Path("/{containerName}/")
-	// ListenableFuture<Container> getContainer(
-	// @PathParam("containerName") String containerName,
-	// @MatrixParam("fields") String queryParams,
-	// @MatrixParam("children") String queryParams2);
 
 }
