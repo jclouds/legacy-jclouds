@@ -27,9 +27,8 @@ import org.jclouds.snia.cdmi.v1.domain.Container;
 import org.jclouds.snia.cdmi.v1.options.CreateContainerOptions;
 import org.jclouds.snia.cdmi.v1.options.GetContainerOptions;
 
-
 /**
- * Container Object Resource Operations
+ * CDMI Container Object Resource Operations
  * 
  * @see ContainerAsyncApi
  * @author Kenneth Nagin
@@ -37,17 +36,95 @@ import org.jclouds.snia.cdmi.v1.options.GetContainerOptions;
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface ContainerApi {
+
+	/**
+	 * get CDMI Container
+	 * 
+	 * @param containerName
+	 */
+	Container getContainer(String containerName);
+
+	/**
+	 * get CDMI Container
+	 * 
+	 * @param parentURI
+	 * @param containerName
+	 */
+	Container getContainer(String parentContainerURI, String containerName);
+
+	/**
+	 * get CDMI Container
+	 * 
+	 * @param containerName
+	 * @param options
+	 *            enables getting only certain fields, metadata, children range
+	 * @see GetContainerOptions
+	 */
+	Container getContainer(String containerName, GetContainerOptions... options);
+
+	/**
+	 * get CDMI Container
+	 * 
+	 * @param parentURI
+	 * @param containerName
+	 * @param options
+	 *            enables getting only certain fields, metadata, children range
+	 * @see GetContainerOptions
+	 */
+	Container getContainer(String parentContainerURI, String containerName,
+			GetContainerOptions... options);
+
+	/**
+	 * Create CDMI Container
+	 * 
+	 * @param containerName
+	 */
+	Container createContainer(String containerName);
+
+	/**
+	 * Create CDMI Container
+	 * 
+	 * @param parentContainerURI
+	 * @param containerName
+	 */
+	Container createContainer(String parentContainerURI, String containerName);
+
+	/**
+	 * Create CDMI Container
+	 * 
+	 * @param containerName
+	 * @param options
+	 *            enables adding metadata
+	 * @see CreateContainerOptions
+	 */
 	Container createContainer(String containerName,
 			CreateContainerOptions... options);
 
-	Container getContainer(String containerName);
-	
-	Container getContainer(String containerName, GetContainerOptions... options);
-	
-	Container getContainer(String containerName, String queryParams);
-	
-	Container getContainer(String containerName, String queryParam1, String queryParam2);
+	/**
+	 * Create CDMI Container
+	 * 
+	 * @param parentContainerURI
+	 * @param containerName
+	 * @param options
+	 *            enables adding metadata
+	 * @see CreateContainerOptions
+	 */
+	Container createContainer(String parentContainerURI, String containerName,
+			CreateContainerOptions... options);
 
+	/**
+	 * Delete CDMI Container
+	 * 
+	 * @param containerName
+	 */
 	void deleteContainer(String containerName);
+
+	/**
+	 * Delete CDMI Container
+	 * 
+	 * @param parentContainerURI
+	 * @param containerName
+	 */
+	void deleteContainer(String parentContainerURI, String containerName);
 
 }

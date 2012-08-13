@@ -75,11 +75,25 @@ public interface DataAsyncApi {
 	@GET
 	@Consumes({ ObjectTypes.DATAOBJECT, MediaType.APPLICATION_JSON })
 	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
-	@Path("/{containerName}/{dataObjectName}")
+	@Path("/{containerName}/{dataObjectName}{queryParams}")
 	ListenableFuture<DataObject> getDataObject(
 			@PathParam("containerName") String containerName,
 			@PathParam("dataObjectName") String dataObjectName,
-			GetDataObjectOptions... options);
+	        @PathParam("queryParams") String queryParams);
+	
+
+	/**
+	 * @see DataApi#getDataObject()
+	 */
+	//@Headers(keys = "X-CDMI-Specification-Version", values = "{jclouds.api-version}")
+	//@GET
+	//@Consumes({ ObjectTypes.DATAOBJECT, MediaType.APPLICATION_JSON })
+	//@ExceptionParser(ReturnNullOnNotFoundOr404.class)
+	//@Path("/{containerName}/{dataObjectName}")
+	//ListenableFuture<DataObject> getDataObject(
+	//		@PathParam("containerName") String containerName,
+	//		@PathParam("dataObjectName") String dataObjectName,
+	//		GetDataObjectOptions... options);
 	
 
 	/**

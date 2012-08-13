@@ -50,11 +50,10 @@ import org.jclouds.snia.cdmi.v1.options.CreateContainerOptions;
 import org.jclouds.snia.cdmi.v1.options.GetContainerOptions;
 import org.jclouds.rest.annotations.QueryParams;
 
-
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * Container Object Resource Operations
+ * CDMI Container Object Resource Operations
  * 
  * @see ContainerApi
  * @author Kenneth Nagin
@@ -67,7 +66,9 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface ContainerAsyncApi {
 
 	/**
-	 * @see ContainerApi#listContainers()
+	 * get CDMI Container
+	 * 
+	 * @param containerName
 	 */
 	@GET
 	@Consumes({ ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
@@ -77,15 +78,142 @@ public interface ContainerAsyncApi {
 			@PathParam("containerName") String containerName);
 
 	/**
-	 * @see ContainerApi#listContainers()
+	 * get CDMI Container
+	 * 
+	 * @param parentURI
+	 * @param containerName
 	 */
 	@GET
 	@Consumes({ ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
 	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
-	@Path("/{containerName}/?")
+	@Path("/{parentURI}{containerName}/")
+	ListenableFuture<Container> getContainer(
+			@PathParam("parentURI") String parentURI,
+			@PathParam("containerName") String containerName);
+
+	/**
+	 * get CDMI Container
+	 * 
+	 * @param containerName
+	 * @param options
+	 *            enables getting only certain fields, metadata, children range
+	 * @see GetContainerOptions
+	 */
+	@GET
+	@Consumes({ ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
+	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
+	@Path("/{containerName}/")
 	ListenableFuture<Container> getContainer(
 			@PathParam("containerName") String containerName,
 			GetContainerOptions... options);
+
+	/**
+	 * get CDMI Container
+	 * 
+	 * @param parentURI
+	 * @param containerName
+	 * @param options
+	 *            enables getting only certain fields, metadata, children range
+	 * @see GetContainerOptions
+	 */
+	@GET
+	@Consumes({ ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
+	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
+	@Path("/{parentURI}{containerName}/")
+	ListenableFuture<Container> getContainer(
+			@PathParam("parentURI") String parentURI,
+			@PathParam("containerName") String containerName,
+			GetContainerOptions... options);
+
+	/**
+	 * Create CDMI Container
+	 * 
+	 * @param containerName
+	 */
+	@PUT
+	@Consumes({ ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
+	@Produces({ ObjectTypes.CONTAINER })
+	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
+	@Path("/{containerName}/")
+	ListenableFuture<Container> createContainer(
+			@PathParam("containerName") String containerName);
+
+	/**
+	 * Create CDMI Container
+	 * 
+	 * @param parentContainerURI
+	 * @param containerName
+	 */
+	@PUT
+	@Consumes({ ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
+	@Produces({ ObjectTypes.CONTAINER })
+	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
+	@Path("/{parentContainerURI}{containerName}/")
+	ListenableFuture<Container> createContainer(
+			@PathParam("parentContainerURI") String parentContainerURI,
+			@PathParam("containerName") String containerName);
+
+	/**
+	 * Create CDMI Container
+	 * 
+	 * @param containerName
+	 * @param options
+	 *            enables adding metadata
+	 * @see CreateContainerOptions
+	 */
+	@PUT
+	@Consumes({ ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
+	@Produces({ ObjectTypes.CONTAINER })
+	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
+	@Path("/{containerName}/")
+	ListenableFuture<Container> createContainer(
+			@PathParam("containerName") String containerName,
+			CreateContainerOptions... options);
+
+	/**
+	 * Create CDMI Container
+	 * 
+	 * @param parentContainerURI
+	 * @param containerName
+	 * @param options
+	 *            enables adding metadata
+	 * @see CreateContainerOptions
+	 */
+	@PUT
+	@Consumes({ ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
+	@Produces({ ObjectTypes.CONTAINER })
+	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
+	@Path("/{parentContainerURI}{containerName}/")
+	ListenableFuture<Container> createContainer(
+			@PathParam("parentContainerURI") String parentContainerURI,
+			@PathParam("containerName") String containerName,
+			CreateContainerOptions... options);
+
+	/**
+	 * Delete Container
+	 * 
+	 * @param containerName
+	 */
+	@DELETE
+	@Consumes(MediaType.APPLICATION_JSON)
+	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
+	@Path("/{containerName}/")
+	ListenableFuture<Void> deleteContainer(
+			@PathParam("containerName") String containerName);
+
+	/**
+	 * Delete Container
+	 * 
+	 * @param parentContainerURI
+	 * @param containerName
+	 */
+	@DELETE
+	@Consumes(MediaType.APPLICATION_JSON)
+	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
+	@Path("/{parentContainerURI}{containerName}/")
+	ListenableFuture<Void> deleteContainer(
+			@PathParam("parentContainerURI") String parentContainerURI,
+			@PathParam("containerName") String containerName);
 
 	/**
 	 * Experimenting with this to see if can solve ?,;,: encoding binding
@@ -99,49 +227,27 @@ public interface ContainerAsyncApi {
 	// queryParams);
 
 	/**
-	 * @see ContainerApi#listContainers()
+	 * Experimenting with String queryParmas. This is superceeded get with
+	 * options
 	 */
-	@GET
-	@Consumes({ ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
-	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
-	@Path("/{containerName}/?{queryParams}")
-	ListenableFuture<Container> getContainer(
-			@PathParam("containerName") String containerName,
-			@PathParam("queryParams") String queryParams);
-	
-	
-	/**
-	 * @see ContainerApi#listContainers()
-	 */
-	@GET
-	@Consumes({ ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
-	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
-	@Path("/{containerName}/")
-	ListenableFuture<Container> getContainer(
-			@PathParam("containerName") String containerName,
-			@MatrixParam("fields") String queryParams,
-	        @MatrixParam("children") String queryParams2);
+	// @GET
+	// @Consumes({ ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
+	// @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+	// @Path("/{containerName}/?{queryParams}")
+	// ListenableFuture<Container> getContainer(
+	// @PathParam("containerName") String containerName,
+	// @PathParam("queryParams") String queryParams);
 
 	/**
-	 * @see ContainerApi#createContainer
+	 * @MatrixParam Experiment for less ackward CDMI definition
 	 */
-	@PUT
-	@Consumes({ ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
-	@Produces({ ObjectTypes.CONTAINER })
-	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
-	@Path("/{containerName}/")
-	ListenableFuture<Container> createContainer(
-			@PathParam("containerName") String containerName,
-			CreateContainerOptions... options);
-
-	/**
-	 * @see ContainerApi#createContainer()
-	 */
-	@DELETE
-	@Consumes(MediaType.APPLICATION_JSON)
-	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
-	@Path("/{containerName}/")
-	ListenableFuture<Void> deleteContainer(
-			@PathParam("containerName") String containerName);
+	// @GET
+	// @Consumes({ ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
+	// @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+	// @Path("/{containerName}/")
+	// ListenableFuture<Container> getContainer(
+	// @PathParam("containerName") String containerName,
+	// @MatrixParam("fields") String queryParams,
+	// @MatrixParam("children") String queryParams2);
 
 }

@@ -51,8 +51,10 @@ public interface DataApi {
 
 	DataObject getDataObject(String containerName, String dataObjectName);
 	
-	DataObject getDataObject(String containerName, String dataObjectName,
-			GetDataObjectOptions... options);
+	DataObject getDataObject(String containerName, String dataObjectName, String queryParams);
+	
+	//DataObject getDataObject(String containerName, String dataObjectName,
+	//		GetDataObjectOptions... options);
 
 	void deleteDataObject(String containerName, String dataObjectName);
 

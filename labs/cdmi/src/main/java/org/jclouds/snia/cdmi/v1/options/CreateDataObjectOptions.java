@@ -22,8 +22,7 @@ import com.google.common.io.Files;
  * 
  * @author Kenneth Nagin
  */
-public class CreateDataObjectOptions extends BaseHttpRequestOptions {
-	private JsonObject jsonObjectBody = new JsonObject();
+public class CreateDataObjectOptions extends CreateCDMIObjectOptions {
 
 	public CreateDataObjectOptions() {
 		jsonObjectBody.addProperty("value", new String());
@@ -36,15 +35,7 @@ public class CreateDataObjectOptions extends BaseHttpRequestOptions {
 	 * @return this
 	 */
 	public CreateDataObjectOptions metadata(Map<String, String> metadata) {
-		JsonObject jsonObjectMetadata = new JsonObject();
-		if (metadata != null) {
-			for (Entry<String, String> entry : metadata.entrySet()) {
-				jsonObjectMetadata
-						.addProperty(entry.getKey(), entry.getValue());
-			}
-		}
-		jsonObjectBody.add("metadata", jsonObjectMetadata);
-		this.payload = jsonObjectBody.toString();
+		super.metadata(metadata);
 		return this;
 	}
 
