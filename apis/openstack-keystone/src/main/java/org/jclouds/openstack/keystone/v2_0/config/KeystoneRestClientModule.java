@@ -23,6 +23,8 @@ import static org.jclouds.util.Suppliers2.getLastValueInMap;
 import java.net.URI;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Singleton;
 
@@ -46,6 +48,9 @@ import org.jclouds.openstack.keystone.v2_0.handlers.KeystoneErrorHandler;
 import org.jclouds.openstack.keystone.v2_0.suppliers.RegionIdToAdminURIFromAccessForTypeAndVersion;
 import org.jclouds.openstack.keystone.v2_0.suppliers.RegionIdToAdminURISupplier;
 import org.jclouds.openstack.v2_0.ServiceType;
+import org.jclouds.openstack.v2_0.domain.Extension;
+import org.jclouds.openstack.v2_0.features.ExtensionApi;
+import org.jclouds.openstack.v2_0.features.ExtensionAsyncApi;
 import org.jclouds.openstack.v2_0.services.Identity;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.annotations.ApiVersion;
@@ -54,7 +59,13 @@ import org.jclouds.rest.functions.ImplicitOptionalConverter;
 import org.jclouds.util.Suppliers2;
 
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -70,17 +81,18 @@ public class KeystoneRestClientModule<S extends KeystoneApi, A extends KeystoneA
          RestClientModule<S, A> {
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()
-            .put(ServiceApi.class, ServiceAsyncApi.class).put(TokenApi.class, TokenAsyncApi.class)
-            .put(UserApi.class, UserAsyncApi.class).put(TenantApi.class, TenantAsyncApi.class).build();
+            .put(ServiceApi.class, ServiceAsyncApi.class)
+            .put(ExtensionApi.class, ExtensionAsyncApi.class)
+            .put(TokenApi.class, TokenAsyncApi.class)
+            .put(UserApi.class, UserAsyncApi.class)
+            .put(TenantApi.class, TenantAsyncApi.class)
+            .build();
 
-   @SuppressWarnings("unchecked")
    public KeystoneRestClientModule() {
-      super(TypeToken.class.cast(TypeToken.of(KeystoneApi.class)), TypeToken.class.cast(TypeToken
-               .of(KeystoneAsyncApi.class)), DELEGATE_MAP);
+      super(TypeToken.class.cast(TypeToken.of(KeystoneApi.class)), TypeToken.class.cast(TypeToken.of(KeystoneAsyncApi.class)), DELEGATE_MAP);
    }
 
-   protected KeystoneRestClientModule(TypeToken<S> syncApiType, TypeToken<A> asyncApiType,
-            Map<Class<?>, Class<?>> sync2Async) {
+   protected KeystoneRestClientModule(TypeToken<S> syncApiType, TypeToken<A> asyncApiType, Map<Class<?>, Class<?>> sync2Async) {
       super(syncApiType, asyncApiType, sync2Async);
    }
 
@@ -110,6 +122,25 @@ public class KeystoneRestClientModule<S extends KeystoneApi, A extends KeystoneA
                   whenIdentityServiceIsntListedFallbackToProviderURI, providerURI);
          return whenIdentityServiceHasNoAdminURLFallbackToProviderURI;
       }
+   }
+   
+   @Provides
+   @Singleton
+   public Multimap<URI, URI> aliases() {
+       return ImmutableMultimap.<URI, URI>builder()
+          .build();
+   }
+
+   @Provides
+   @Singleton
+   public LoadingCache<String, Set<? extends Extension>> provideExtensionsByZone(final javax.inject.Provider<KeystoneApi> keystoneApi) {
+      return CacheBuilder.newBuilder().expireAfterWrite(23, TimeUnit.HOURS)
+            .build(CacheLoader.from(Suppliers.memoize(new Supplier<Set<? extends Extension>>() {
+               @Override
+               public Set<? extends Extension> get() {
+                  return keystoneApi.get().getExtensionApi().listExtensions();
+               }
+            })));
    }
 
    @Override

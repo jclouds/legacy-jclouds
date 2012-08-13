@@ -26,6 +26,7 @@ import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.Region;
 import org.jclouds.location.functions.RegionToEndpoint;
 import org.jclouds.openstack.glance.v1_0.features.ImageApi;
+import org.jclouds.openstack.v2_0.features.ExtensionApi;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
 
@@ -48,6 +49,13 @@ public interface GlanceApi {
    @Provides
    @Region
    Set<String> getConfiguredRegions();
+
+   /**
+    * Provides synchronous access to Extension features.
+    */
+   @Delegate
+   ExtensionApi getExtensionApiForRegion(
+         @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region);
 
    /**
     * Provides synchronous access to Image features.

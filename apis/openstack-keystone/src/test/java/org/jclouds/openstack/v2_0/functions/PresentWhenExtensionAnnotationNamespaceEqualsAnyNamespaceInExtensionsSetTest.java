@@ -1,4 +1,4 @@
-package org.jclouds.openstack.nova.v2_0.functions;
+package org.jclouds.openstack.v2_0.functions;
 
 import static org.testng.Assert.assertEquals;
 
@@ -9,10 +9,9 @@ import javax.inject.Named;
 
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.internal.ClassMethodArgsAndReturnVal;
-import org.jclouds.openstack.nova.v2_0.domain.Extension;
-import org.jclouds.openstack.nova.v2_0.extensions.ExtensionNamespaces;
-import org.jclouds.openstack.nova.v2_0.extensions.KeyPairAsyncApi;
 import org.jclouds.openstack.v2_0.ServiceType;
+import org.jclouds.openstack.v2_0.domain.Extension;
+import org.jclouds.openstack.v2_0.functions.PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensionsSet;
 import org.jclouds.rest.annotations.Delegate;
 import org.testng.annotations.Test;
 
@@ -40,8 +39,8 @@ public class PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensio
             new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-08-08T00:00:00+00:00")).description(
             "Keypair Support").build();
 
-   @org.jclouds.openstack.v2_0.services.Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.KEYPAIRS)
-   static interface KeyPairIPAsyncApi {
+   @org.jclouds.openstack.v2_0.services.Extension(of = ServiceType.COMPUTE, namespace = "http://docs.openstack.org/ext/keypairs/api/v1.1")
+   static interface KeyPairAsyncApi {
 
    }
 
@@ -50,7 +49,7 @@ public class PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensio
             new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-06-16T00:00:00+00:00")).description(
             "Floating IPs support").build();
 
-   @org.jclouds.openstack.v2_0.services.Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.FLOATING_IPS)
+   @org.jclouds.openstack.v2_0.services.Extension(of = ServiceType.COMPUTE, namespace = "http://docs.openstack.org/ext/floating_ips/api/v1.1")
    static interface FloatingIPAsyncApi {
 
    }
@@ -68,27 +67,27 @@ public class PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensio
    ClassMethodArgsAndReturnVal getFloatingIPExtension() throws SecurityException, NoSuchMethodException {
       return ClassMethodArgsAndReturnVal.builder().clazz(FloatingIPAsyncApi.class).method(
                NovaAsyncApi.class.getDeclaredMethod("getFloatingIPExtensionForZone", String.class)).args(
-               new Object[] { "expectedzone" }).returnVal("foo").build();
+               new Object[] { "zone" }).returnVal("foo").build();
    }
 
    ClassMethodArgsAndReturnVal getKeyPairExtension() throws SecurityException, NoSuchMethodException {
       return ClassMethodArgsAndReturnVal.builder().clazz(KeyPairAsyncApi.class).method(
                NovaAsyncApi.class.getDeclaredMethod("getKeyPairExtensionForZone", String.class)).args(
-               new Object[] { "expectedzone" }).returnVal("foo").build();
+               new Object[] { "zone" }).returnVal("foo").build();
    }
 
    public void testPresentWhenExtensionsIncludeNamespaceFromAnnotationAbsentWhenNot() throws SecurityException, NoSuchMethodException {
 
-      assertEquals(whenExtensionsInclude(keypairs, floatingIps).apply(getFloatingIPExtension()), Optional.of("foo"));
-      assertEquals(whenExtensionsInclude(keypairs, floatingIps).apply(getKeyPairExtension()), Optional.of("foo"));
-      assertEquals(whenExtensionsInclude(keypairs).apply(getFloatingIPExtension()), Optional.absent());
-      assertEquals(whenExtensionsInclude(floatingIps).apply(getKeyPairExtension()), Optional.absent());
+      assertEquals(whenExtensionsInZoneInclude("zone", keypairs, floatingIps).apply(getFloatingIPExtension()), Optional.of("foo"));
+      assertEquals(whenExtensionsInZoneInclude("zone", keypairs, floatingIps).apply(getKeyPairExtension()), Optional.of("foo"));
+      assertEquals(whenExtensionsInZoneInclude("zone", keypairs).apply(getFloatingIPExtension()), Optional.absent());
+      assertEquals(whenExtensionsInZoneInclude("zone", floatingIps).apply(getKeyPairExtension()), Optional.absent());
    }
    
    public void testZoneWithoutExtensionsReturnsAbsent() throws SecurityException, NoSuchMethodException {
-      assertEquals(whenExtensionsInclude(floatingIps).apply(
+      assertEquals(whenExtensionsInZoneInclude("zone", floatingIps).apply(
                getFloatingIPExtension().toBuilder().args(new Object[] { "differentzone" }).build()), Optional.absent());
-      assertEquals(whenExtensionsInclude(keypairs).apply(
+      assertEquals(whenExtensionsInZoneInclude("zone", keypairs).apply(
                getKeyPairExtension().toBuilder().args(new Object[] { "differentzone" }).build()), Optional.absent());
    }
 
@@ -105,22 +104,22 @@ public class PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensio
       Multimap<URI, URI> aliases = ImmutableMultimap.of(keypairs.getNamespace(), keypairsWithDifferentNamespace
                .getNamespace());
 
-      assertEquals(whenExtensionsAndAliasesInclude(ImmutableSet.of(keypairsWithDifferentNamespace), aliases).apply(
+      assertEquals(whenExtensionsAndAliasesInZoneInclude("zone", ImmutableSet.of(keypairsWithDifferentNamespace), aliases).apply(
               getKeyPairExtension()), Optional.of("foo"));
-      assertEquals(whenExtensionsAndAliasesInclude(ImmutableSet.of(keypairsWithDifferentNamespace), aliases).apply(
+      assertEquals(whenExtensionsAndAliasesInZoneInclude("zone", ImmutableSet.of(keypairsWithDifferentNamespace), aliases).apply(
               getFloatingIPExtension()), Optional.absent());
 
    }
 
-   private PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensionsSet whenExtensionsInclude(
-            Extension... extensions) {
-      return whenExtensionsAndAliasesInclude(ImmutableSet.copyOf(extensions), ImmutableMultimap.<URI, URI> of());
+   private PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensionsSet whenExtensionsInZoneInclude(
+            String zone, Extension... extensions) {
+      return whenExtensionsAndAliasesInZoneInclude(zone, ImmutableSet.copyOf(extensions), ImmutableMultimap.<URI, URI> of());
    }
 
-   private PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensionsSet whenExtensionsAndAliasesInclude(
-            final Set<Extension> extensions, final Multimap<URI, URI> aliases) {
+   private PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensionsSet whenExtensionsAndAliasesInZoneInclude(
+            String zone, final Set<Extension> extensions, final Multimap<URI, URI> aliases) {
       final LoadingCache<String, Set<? extends Extension>> extensionsForZone = CacheBuilder.newBuilder().build(
-               CacheLoader.from(Functions.forMap(ImmutableMap.<String, Set<? extends Extension>>of("expectedzone", extensions, "differentzone",
+               CacheLoader.from(Functions.forMap(ImmutableMap.<String, Set<? extends Extension>>of(zone, extensions, "differentzone",
                         ImmutableSet.<Extension> of()))));
 
       PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensionsSet fn = Guice.createInjector(
@@ -135,7 +134,6 @@ public class PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensio
                   }
 
                   @Provides
-                  @Named("openstack.nova.extensions")
                   Multimap<URI, URI> getAliases() {
                      return aliases;
                   }

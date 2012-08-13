@@ -18,7 +18,13 @@
  */
 package org.jclouds.openstack.glance.v1_0.config;
 
+import java.net.URI;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import javax.inject.Provider;
+import javax.inject.Singleton;
 
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.annotation.ClientError;
@@ -31,11 +37,20 @@ import org.jclouds.openstack.glance.v1_0.GlanceAsyncApi;
 import org.jclouds.openstack.glance.v1_0.features.ImageApi;
 import org.jclouds.openstack.glance.v1_0.features.ImageAsyncApi;
 import org.jclouds.openstack.glance.v1_0.handlers.GlanceErrorHandler;
+import org.jclouds.openstack.v2_0.domain.Extension;
+import org.jclouds.openstack.v2_0.features.ExtensionApi;
+import org.jclouds.openstack.v2_0.features.ExtensionAsyncApi;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
 import com.google.common.reflect.TypeToken;
+import com.google.inject.Provides;
 
 /**
  * Configures the Glance connection.
@@ -46,6 +61,7 @@ import com.google.common.reflect.TypeToken;
 public class GlanceRestClientModule<S extends GlanceApi, A extends GlanceAsyncApi> extends RestClientModule<S, A> {
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()
+         .put(ExtensionApi.class, ExtensionAsyncApi.class)
          .put(ImageApi.class, ImageAsyncApi.class)
          .build();
 
@@ -61,6 +77,25 @@ public class GlanceRestClientModule<S extends GlanceApi, A extends GlanceAsyncAp
    protected void configure() {
       bind(DateAdapter.class).to(Iso8601DateAdapter.class);
       super.configure();
+   }
+   
+   @Provides
+   @Singleton
+   public Multimap<URI, URI> aliases() {
+       return ImmutableMultimap.<URI, URI>builder()
+          .build();
+   }
+
+   @Provides
+   @Singleton
+   public LoadingCache<String, Set<? extends Extension>> provideExtensionsByZone(final Provider<GlanceApi> glanceApi) {
+      return CacheBuilder.newBuilder().expireAfterWrite(23, TimeUnit.HOURS)
+            .build(new CacheLoader<String, Set<? extends Extension>>() {
+               @Override
+               public Set<? extends Extension> load(String key) throws Exception {
+                  return glanceApi.get().getExtensionApiForRegion(key).listExtensions();
+               }
+            });
    }
    
    @Override
