@@ -73,9 +73,9 @@ public class NetworkConnection {
    @XmlType
    @XmlEnum(String.class)
    public static enum IpAddressAllocationMode {
-      @XmlEnumValue("pool") POOL("pool"),
-      @XmlEnumValue("dhcp") DHCP("dhcp"),
-      @XmlEnumValue("manual") MANUAL("manual"),
+      @XmlEnumValue("POOL") POOL("pool"),
+      @XmlEnumValue("DHCP") DHCP("dhcp"),
+      @XmlEnumValue("MANUAL") MANUAL("manual"),
       @XmlEnumValue("NONE") NONE("none"),
       @XmlEnumValue("") UNRECOGNIZED("unrecognized");
       

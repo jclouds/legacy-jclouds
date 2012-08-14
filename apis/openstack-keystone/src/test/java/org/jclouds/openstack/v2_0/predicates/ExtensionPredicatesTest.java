@@ -16,15 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.nova.v2_0.predicates;
+package org.jclouds.openstack.v2_0.predicates;
 
-import static org.jclouds.openstack.nova.v2_0.predicates.ExtensionPredicates.aliasEquals;
-import static org.jclouds.openstack.nova.v2_0.predicates.ExtensionPredicates.namespaceEquals;
+import static org.jclouds.openstack.v2_0.predicates.ExtensionPredicates.aliasEquals;
+import static org.jclouds.openstack.v2_0.predicates.ExtensionPredicates.namespaceEquals;
 
 import java.net.URI;
 
 import org.jclouds.date.internal.SimpleDateFormatDateService;
-import org.jclouds.openstack.nova.v2_0.domain.Extension;
+import org.jclouds.openstack.v2_0.domain.Extension;
 import org.testng.annotations.Test;
 
 /**

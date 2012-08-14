@@ -44,8 +44,8 @@ import com.google.common.collect.Iterables;
  */
 @Test(groups = "live", testName = "AggregateApiLiveTest", singleThreaded = true)
 public class HostAggregateApiLiveTest extends BaseNovaApiLiveTest {
-   private Optional<HostAggregateApi> apiOption;
-   private Optional<HostAdministrationApi> hostAdminOption;
+   private Optional<? extends HostAggregateApi> apiOption;
+   private Optional<? extends HostAdministrationApi> hostAdminOption;
 
    private HostAggregate testAggregate;
 

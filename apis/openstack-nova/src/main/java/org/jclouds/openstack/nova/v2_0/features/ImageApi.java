@@ -43,14 +43,14 @@ public interface ImageApi {
     * 
     * @return all images (IDs, names, links)
     */
-   Set<Resource> listImages();
+   Set<? extends Resource> listImages();
 
    /**
     * List all images (all details)
     * 
     * @return all images (all details)
     */
-   Set<Image> listImagesInDetail();
+   Set<? extends Image> listImagesInDetail();
 
    /**
     * List details of the specified image

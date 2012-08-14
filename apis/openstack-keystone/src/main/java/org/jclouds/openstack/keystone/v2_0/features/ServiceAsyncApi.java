@@ -57,5 +57,5 @@ public interface ServiceAsyncApi {
    @Path("/tenants")
    @RequestFilters(AuthenticateRequest.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<Tenant>> listTenants();
+   ListenableFuture<? extends Set<? extends Tenant>> listTenants();
 }

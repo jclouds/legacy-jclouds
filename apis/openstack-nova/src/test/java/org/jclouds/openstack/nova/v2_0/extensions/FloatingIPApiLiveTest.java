@@ -48,7 +48,7 @@ public class FloatingIPApiLiveTest extends BaseNovaApiLiveTest {
    @Test
    public void testListFloatingIPs() throws Exception {
       for (String zoneId : novaContext.getApi().getConfiguredZones()) {
-         Optional<FloatingIPApi> apiOption = novaContext.getApi().getFloatingIPExtensionForZone(zoneId);
+         Optional<? extends FloatingIPApi> apiOption = novaContext.getApi().getFloatingIPExtensionForZone(zoneId);
          if (!apiOption.isPresent())
             continue;
          FloatingIPApi api = apiOption.get();
@@ -70,7 +70,7 @@ public class FloatingIPApiLiveTest extends BaseNovaApiLiveTest {
    @Test
    public void testAllocateAndDeallocateFloatingIPs() throws Exception {
       for (String zoneId : novaContext.getApi().getConfiguredZones()) {
-         Optional<FloatingIPApi> apiOption = novaContext.getApi().getFloatingIPExtensionForZone(zoneId);
+         Optional<? extends FloatingIPApi> apiOption = novaContext.getApi().getFloatingIPExtensionForZone(zoneId);
          if (!apiOption.isPresent())
             continue;
          FloatingIPApi api = apiOption.get();
@@ -101,7 +101,7 @@ public class FloatingIPApiLiveTest extends BaseNovaApiLiveTest {
    @Test
    public void testAddAndRemoveFloatingIp() throws Exception {
       for (String zoneId : novaContext.getApi().getConfiguredZones()) {
-         Optional<FloatingIPApi> apiOption = novaContext.getApi().getFloatingIPExtensionForZone(zoneId);
+         Optional<? extends FloatingIPApi> apiOption = novaContext.getApi().getFloatingIPExtensionForZone(zoneId);
          if (!apiOption.isPresent())
             continue;
          FloatingIPApi api = apiOption.get();

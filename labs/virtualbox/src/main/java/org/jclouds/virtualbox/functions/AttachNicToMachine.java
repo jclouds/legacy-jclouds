@@ -20,8 +20,6 @@ package org.jclouds.virtualbox.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import javax.annotation.Nullable;
-
 import org.jclouds.virtualbox.domain.NetworkInterfaceCard;
 import org.jclouds.virtualbox.util.MachineUtils;
 import org.virtualbox_4_1.NetworkAttachmentType;
@@ -42,7 +40,7 @@ public class AttachNicToMachine implements Function<NetworkInterfaceCard, Void> 
    }
 
    @Override
-   public Void apply(@Nullable NetworkInterfaceCard nic) {
+   public Void apply(NetworkInterfaceCard nic) {
       if (hasNatAdapter(nic)) {
          return machineUtils.writeLockMachineAndApply(vmName, new AttachNATAdapterToMachineIfNotAlreadyExists(nic));
       } else if (hasBridgedAdapter(nic)) {

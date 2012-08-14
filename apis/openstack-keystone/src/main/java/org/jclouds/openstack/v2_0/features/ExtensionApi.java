@@ -16,13 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.nova.v2_0.features;
+package org.jclouds.openstack.v2_0.features;
 
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.openstack.nova.v2_0.domain.Extension;
+import org.jclouds.openstack.v2_0.domain.Extension;
 
 /**
  * Provides asynchronous access to Extensions via their REST API.
@@ -42,7 +42,7 @@ public interface ExtensionApi {
     * 
     * @return all extensions
     */
-   Set<Extension> listExtensions();
+   Set<? extends Extension> listExtensions();
 
    /**
     * Extensions may also be queried individually by their unique alias.

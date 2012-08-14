@@ -205,6 +205,22 @@ public abstract class BaseTemplateBuilderLiveTest extends BaseComputeServiceCont
                   || location.getParent().getIso3166Codes().containsAll(location.getIso3166Codes()) : location + " ||"
                   + location.getParent();
             break;
+         case SYSTEM:
+            Location systemParent = location.getParent();
+            // loop up to root, which must be the provider
+            while (systemParent.getParent() != null) {
+                systemParent = systemParent.getParent();
+            }
+            assertProvider(systemParent);
+            break;
+         case NETWORK:
+             Location networkParent = location.getParent();
+             // loop up to root, which must be the provider
+             while (networkParent.getParent() != null) {
+                 networkParent = networkParent.getParent();
+             }
+             assertProvider(networkParent);
+             break;
          case HOST:
             Location provider2 = location.getParent().getParent().getParent();
             // zone can be a direct descendant of provider

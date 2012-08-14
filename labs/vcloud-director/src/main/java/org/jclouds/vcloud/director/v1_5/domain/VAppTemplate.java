@@ -74,7 +74,7 @@ public class VAppTemplate extends ResourceEntity {
    
    public static abstract class Builder<B extends Builder<B>> extends ResourceEntity.Builder<B> {
       private Owner owner;
-      private Set<VAppTemplate> children = Sets.newLinkedHashSet();
+      private Set<Vm> children = Sets.newLinkedHashSet();
       private Set<SectionType> sections = Sets.newLinkedHashSet();
       private String vAppScopedLocalId;
       private Boolean ovfDescriptorUploaded;
@@ -91,7 +91,7 @@ public class VAppTemplate extends ResourceEntity {
       /**
        * @see VAppTemplate#getChildren()
        */
-      public B children(Iterable<VAppTemplate> children) {
+      public B children(Iterable<Vm> children) {
          this.children = Sets.newLinkedHashSet(checkNotNull(children, "children"));
          return self();
       }
@@ -148,7 +148,7 @@ public class VAppTemplate extends ResourceEntity {
    private Owner owner;
    @XmlElementWrapper(name = "Children")
    @XmlElement(name = "Vm")
-   private Set<VAppTemplate> children = Sets.newLinkedHashSet();
+   private Set<Vm> children = Sets.newLinkedHashSet();
    @XmlElementRefs({
       @XmlElementRef(type = VirtualHardwareSection.class),
       @XmlElementRef(type = LeaseSettingsSection.class),
@@ -179,7 +179,7 @@ public class VAppTemplate extends ResourceEntity {
    protected VAppTemplate(Builder<?> builder) {
       super(builder);
       this.owner = builder.owner;
-      this.children = builder.children.isEmpty() ? Collections.<VAppTemplate>emptySet() : ImmutableSet.copyOf(builder.children);
+      this.children = builder.children.isEmpty() ? Collections.<Vm>emptySet() : ImmutableSet.copyOf(builder.children);
       this.sections = builder.sections.isEmpty() ? null : ImmutableSet.copyOf(builder.sections);
       this.vAppScopedLocalId = builder.vAppScopedLocalId;
       this.ovfDescriptorUploaded = builder.ovfDescriptorUploaded;
@@ -200,7 +200,7 @@ public class VAppTemplate extends ResourceEntity {
    /**
     * Gets the value of the children property.
     */
-   public Set<VAppTemplate> getChildren() {
+   public Set<Vm> getChildren() {
       return children;
    }
 

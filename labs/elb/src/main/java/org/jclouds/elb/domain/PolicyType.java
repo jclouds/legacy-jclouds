@@ -23,8 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Nullable;
-
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
@@ -135,7 +133,7 @@ public class PolicyType {
       return Maps.uniqueIndex(attributeMetadata, new Function<AttributeMetadata<?>, String>(){
 
          @Override
-         public String apply(@Nullable AttributeMetadata<?> input) {
+         public String apply(AttributeMetadata<?> input) {
             return input.getName();
          }
          

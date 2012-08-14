@@ -26,8 +26,6 @@ import static org.testng.Assert.assertTrue;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import javax.annotation.Nullable;
-
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.FirewallRule;
 import org.jclouds.cloudstack.domain.Network;
@@ -69,7 +67,7 @@ public class FirewallClientLiveTest extends BaseCloudStackClientLiveTest {
          network = find(client.getNetworkClient().listNetworks(), Predicates.and(supportsPortForwarding(),
             new Predicate<Network>() {
                @Override
-               public boolean apply(@Nullable Network network) {
+               public boolean apply(Network network) {
                   return network.isDefault()
                      && !network.isSecurityGroupEnabled()
                      && network.getAccount().equals(user.getAccount());

@@ -20,8 +20,6 @@ package org.jclouds.cloudstack.predicates;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import javax.annotation.Nullable;
-
 import org.jclouds.cloudstack.domain.GuestIPType;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.NetworkService;
@@ -163,7 +161,7 @@ public class NetworkPredicates {
       }
 
       @Override
-      public boolean apply(@Nullable GuestIPType guestIPType) {
+      public boolean apply(GuestIPType guestIPType) {
          return guestIPType == this.guestIPType;
       }
 

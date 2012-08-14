@@ -73,7 +73,7 @@ public interface ImageAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/images")
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<Image>> list(ListImageOptions... options);
+   ListenableFuture<? extends Set<? extends Image>> list(ListImageOptions... options);
    
    /**
     * @see ImageApi#listInDetail
@@ -83,7 +83,7 @@ public interface ImageAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/images/detail")
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<ImageDetails>> listInDetail(ListImageOptions... options);
+   ListenableFuture<? extends Set<? extends ImageDetails>> listInDetail(ListImageOptions... options);
    
    /**
     * @see ImageApi#show
@@ -110,7 +110,7 @@ public interface ImageAsyncApi {
    @Produces(MediaType.APPLICATION_OCTET_STREAM)
    @SelectJson("image")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<ImageDetails> create(@HeaderParam("x-image-meta-name") String name, Payload payload, CreateImageOptions... options);
+   ListenableFuture<? extends ImageDetails> create(@HeaderParam("x-image-meta-name") String name, Payload payload, CreateImageOptions... options);
 
    /**
     * @see ImageApi#reserve
@@ -119,7 +119,7 @@ public interface ImageAsyncApi {
    @Path("/images")
    @SelectJson("image")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<ImageDetails> reserve(@HeaderParam("x-image-meta-name") String name, CreateImageOptions... options);
+   ListenableFuture<? extends ImageDetails> reserve(@HeaderParam("x-image-meta-name") String name, CreateImageOptions... options);
 
    /**
     * @see ImageApi#upload
@@ -129,7 +129,7 @@ public interface ImageAsyncApi {
    @Produces(MediaType.APPLICATION_OCTET_STREAM)
    @SelectJson("image")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<ImageDetails> upload(@PathParam("id") String id, Payload imageData, UpdateImageOptions... options);
+   ListenableFuture<? extends ImageDetails> upload(@PathParam("id") String id, Payload imageData, UpdateImageOptions... options);
 
    /**
     * @see ImageApi#update
@@ -138,7 +138,7 @@ public interface ImageAsyncApi {
    @Path("/images/{id}")
    @SelectJson("image")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<ImageDetails> update(@PathParam("id") String id, UpdateImageOptions... options);
+   ListenableFuture<? extends ImageDetails> update(@PathParam("id") String id, UpdateImageOptions... options);
 
    /**
     * @see ImageApi#delete

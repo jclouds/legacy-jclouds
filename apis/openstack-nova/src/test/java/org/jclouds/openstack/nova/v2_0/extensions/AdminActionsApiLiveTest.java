@@ -27,11 +27,11 @@ import org.jclouds.http.HttpResponseException;
 import org.jclouds.openstack.nova.v2_0.domain.BackupType;
 import org.jclouds.openstack.nova.v2_0.domain.Image;
 import org.jclouds.openstack.nova.v2_0.domain.Server.Status;
-import org.jclouds.openstack.nova.v2_0.features.ExtensionApi;
 import org.jclouds.openstack.nova.v2_0.features.ImageApi;
 import org.jclouds.openstack.nova.v2_0.features.ServerApi;
 import org.jclouds.openstack.nova.v2_0.internal.BaseNovaApiLiveTest;
 import org.jclouds.openstack.nova.v2_0.options.CreateBackupOfServerOptions;
+import org.jclouds.openstack.v2_0.features.ExtensionApi;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeGroups;
@@ -53,7 +53,7 @@ public class AdminActionsApiLiveTest extends BaseNovaApiLiveTest {
    private ImageApi imageApi;
    private ServerApi serverApi;
    private ExtensionApi extensionApi;
-   private Optional<AdminActionsApi> apiOption;
+   private Optional<? extends AdminActionsApi> apiOption;
    private String zone;
 
    private String testServerId;

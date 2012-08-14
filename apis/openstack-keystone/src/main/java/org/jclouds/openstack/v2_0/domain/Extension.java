@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.nova.v2_0.domain;
+package org.jclouds.openstack.v2_0.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -26,8 +26,6 @@ import java.util.Date;
 import java.util.Set;
 
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.openstack.v2_0.domain.Link;
-import org.jclouds.openstack.v2_0.domain.Resource;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;

@@ -27,12 +27,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
-import javax.annotation.Nullable;
-
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.domain.Location;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.util.Strings2;
 import org.testng.SkipException;
 import org.testng.annotations.Test;

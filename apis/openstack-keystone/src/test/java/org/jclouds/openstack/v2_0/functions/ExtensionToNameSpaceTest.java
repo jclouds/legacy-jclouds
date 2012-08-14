@@ -1,4 +1,4 @@
-package org.jclouds.openstack.nova.v2_0.functions;
+package org.jclouds.openstack.v2_0.functions;
 
 import static org.testng.Assert.assertEquals;
 
@@ -8,8 +8,7 @@ import javax.inject.Provider;
 import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.date.internal.SimpleDateFormatDateService;
-import org.jclouds.openstack.nova.v2_0.domain.Extension;
-import org.jclouds.openstack.nova.v2_0.extensions.ExtensionNamespaces;
+import org.jclouds.openstack.v2_0.domain.Extension;
 import org.testng.annotations.Test;
 
 import com.sun.jersey.api.uri.UriBuilderImpl;
@@ -39,6 +38,6 @@ public class ExtensionToNameSpaceTest {
       assertEquals(fn.apply(Extension.builder().alias("security_groups").name("SecurityGroups").namespace(
                URI.create("https://docs.openstack.org/ext/securitygroups/api/v1.1")).updated(
                new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-07-21T00:00:00+00:00")).description(
-               "Security group support").build()), URI.create(ExtensionNamespaces.SECURITY_GROUPS));
+               "Security group support").build()), URI.create("http://docs.openstack.org/ext/securitygroups/api/v1.1"));
    }
 }

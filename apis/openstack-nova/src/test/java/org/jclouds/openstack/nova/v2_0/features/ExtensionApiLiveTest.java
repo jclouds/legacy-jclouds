@@ -23,8 +23,9 @@ import static org.testng.Assert.assertTrue;
 
 import java.util.Set;
 
-import org.jclouds.openstack.nova.v2_0.domain.Extension;
 import org.jclouds.openstack.nova.v2_0.internal.BaseNovaApiLiveTest;
+import org.jclouds.openstack.v2_0.domain.Extension;
+import org.jclouds.openstack.v2_0.features.ExtensionApi;
 import org.testng.annotations.Test;
 
 /**
@@ -44,7 +45,7 @@ public class ExtensionApiLiveTest extends BaseNovaApiLiveTest {
    public void testListExtensions() throws Exception {
       for (String zoneId : novaContext.getApi().getConfiguredZones()) {
          ExtensionApi api = novaContext.getApi().getExtensionApiForZone(zoneId);
-         Set<Extension> response = api.listExtensions();
+         Set<? extends Extension> response = api.listExtensions();
          assert null != response;
          assertTrue(response.size() >= 0);
          for (Extension extension : response) {

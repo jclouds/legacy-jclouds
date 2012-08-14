@@ -38,7 +38,7 @@ import com.google.common.collect.Iterables;
  */
 @Test(groups = "live", testName = "VirtualInterfaceApiLiveTest", singleThreaded = true)
 public class VirtualInterfaceApiLiveTest extends BaseNovaApiLiveTest {
-   private Optional<VirtualInterfaceApi> apiOption;
+   private Optional<? extends VirtualInterfaceApi> apiOption;
    private String zone;
 
 

@@ -28,7 +28,7 @@ import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.json.BaseSetParserTest;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.openstack.nova.v2_0.config.NovaParserModule;
-import org.jclouds.openstack.nova.v2_0.domain.Extension;
+import org.jclouds.openstack.v2_0.domain.Extension;
 import org.jclouds.openstack.v2_0.domain.Link;
 import org.jclouds.openstack.v2_0.domain.Link.Relation;
 import org.jclouds.rest.annotations.SelectJson;

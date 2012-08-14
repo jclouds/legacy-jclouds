@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.nova.v2_0.functions;
+package org.jclouds.openstack.v2_0.functions;
 
 import java.net.URI;
 
@@ -25,7 +25,7 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.ws.rs.core.UriBuilder;
 
-import org.jclouds.openstack.nova.v2_0.domain.Extension;
+import org.jclouds.openstack.v2_0.domain.Extension;
 
 import com.google.common.base.Function;
 

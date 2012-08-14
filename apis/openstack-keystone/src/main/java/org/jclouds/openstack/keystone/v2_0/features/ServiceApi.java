@@ -40,5 +40,5 @@ public interface ServiceApi {
    /**
     * The operation returns a list of tenants which the current token provides access to.
     */
-   Set<Tenant> listTenants();
+   Set<? extends Tenant> listTenants();
 }

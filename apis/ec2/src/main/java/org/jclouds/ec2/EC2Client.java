@@ -21,8 +21,6 @@ package org.jclouds.ec2;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.Nullable;
-
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.ec2.features.WindowsApi;
 import org.jclouds.ec2.services.AMIClient;
@@ -33,6 +31,7 @@ import org.jclouds.ec2.services.InstanceClient;
 import org.jclouds.ec2.services.KeyPairClient;
 import org.jclouds.ec2.services.SecurityGroupClient;
 import org.jclouds.ec2.services.WindowsClient;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.Region;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.rest.annotations.Delegate;

@@ -61,7 +61,7 @@ public interface FlavorAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/flavors")
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<Resource>> listFlavors();
+   ListenableFuture<? extends Set<? extends Resource>> listFlavors();
 
    /**
     * @see FlavorApi#listFlavorsInDetail
@@ -71,7 +71,7 @@ public interface FlavorAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/flavors/detail")
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<Flavor>> listFlavorsInDetail();
+   ListenableFuture<? extends Set<? extends Flavor>> listFlavorsInDetail();
 
    /**
     * @see FlavorApi#getFlavor
@@ -81,6 +81,6 @@ public interface FlavorAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/flavors/{id}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Flavor> getFlavor(@PathParam("id") String id);
+   ListenableFuture<? extends Flavor> getFlavor(@PathParam("id") String id);
 
 }

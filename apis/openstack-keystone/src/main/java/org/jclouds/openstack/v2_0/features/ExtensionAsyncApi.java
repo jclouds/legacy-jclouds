@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.nova.v2_0.features;
+package org.jclouds.openstack.v2_0.features;
 
 import java.util.Set;
 
@@ -27,7 +27,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
-import org.jclouds.openstack.nova.v2_0.domain.Extension;
+import org.jclouds.openstack.v2_0.domain.Extension;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
@@ -59,7 +59,7 @@ public interface ExtensionAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/extensions")
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<Extension>> listExtensions();
+   ListenableFuture<? extends Set<? extends Extension>> listExtensions();
 
    /**
     * @see ExtensionApi#getExtensionByAlias
@@ -69,6 +69,6 @@ public interface ExtensionAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/extensions/{alias}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Extension> getExtensionByAlias(@PathParam("alias") String id);
+   ListenableFuture<? extends Extension> getExtensionByAlias(@PathParam("alias") String id);
 
 }

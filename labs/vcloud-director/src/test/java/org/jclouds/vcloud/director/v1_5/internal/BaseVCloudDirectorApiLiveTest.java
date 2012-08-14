@@ -358,7 +358,7 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
    }
 
    /** Build an {@link InstantiationParams} object. */
-   private InstantiationParams instantiationParams() {
+   protected InstantiationParams instantiationParams() {
       InstantiationParams instantiationParams = InstantiationParams.builder()
             .sections(ImmutableSet.of(networkConfigSection()))
             .build();

@@ -39,10 +39,10 @@ import org.jclouds.openstack.nova.v2_0.extensions.SimpleTenantUsageApi;
 import org.jclouds.openstack.nova.v2_0.extensions.VirtualInterfaceApi;
 import org.jclouds.openstack.nova.v2_0.extensions.VolumeApi;
 import org.jclouds.openstack.nova.v2_0.extensions.VolumeTypeApi;
-import org.jclouds.openstack.nova.v2_0.features.ExtensionApi;
 import org.jclouds.openstack.nova.v2_0.features.FlavorApi;
 import org.jclouds.openstack.nova.v2_0.features.ImageApi;
 import org.jclouds.openstack.nova.v2_0.features.ServerApi;
+import org.jclouds.openstack.v2_0.features.ExtensionApi;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
 
@@ -100,98 +100,98 @@ public interface NovaApi {
     * Provides synchronous access to Floating IP features.
     */
    @Delegate
-   Optional<FloatingIPApi> getFloatingIPExtensionForZone(
+   Optional<? extends FloatingIPApi> getFloatingIPExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
    /**
     * Provides synchronous access to Security Group features.
     */
    @Delegate
-   Optional<SecurityGroupApi> getSecurityGroupExtensionForZone(
+   Optional<? extends SecurityGroupApi> getSecurityGroupExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
    /**
     * Provides synchronous access to Key Pair features.
     */
    @Delegate
-   Optional<KeyPairApi> getKeyPairExtensionForZone(
+   Optional<? extends KeyPairApi> getKeyPairExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
    /**
     * Provides synchronous access to Host Administration features.
     */
    @Delegate
-   Optional<HostAdministrationApi> getHostAdministrationExtensionForZone(
+   Optional<? extends HostAdministrationApi> getHostAdministrationExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
    /**
     * Provides synchronous access to Simple Tenant Usage features.
     */
    @Delegate
-   Optional<SimpleTenantUsageApi> getSimpleTenantUsageExtensionForZone(
+   Optional<? extends SimpleTenantUsageApi> getSimpleTenantUsageExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
    /**
     * Provides synchronous access to Volume features.
     */
    @Delegate
-   Optional<VolumeApi> getVolumeExtensionForZone(
+   Optional<? extends VolumeApi> getVolumeExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
    /**
     * Provides synchronous access to Virtual Interface features.
     */
    @Delegate
-   Optional<VirtualInterfaceApi> getVirtualInterfaceExtensionForZone(
+   Optional<? extends VirtualInterfaceApi> getVirtualInterfaceExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
    /**
     * Provides synchronous access to Server Extra Data features.
     */
    @Delegate
-   Optional<ServerWithSecurityGroupsApi> getServerWithSecurityGroupsExtensionForZone(
+   Optional<? extends ServerWithSecurityGroupsApi> getServerWithSecurityGroupsExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
    /**
     * Provides synchronous access to Server Admin Actions features.
     */
    @Delegate
-   Optional<AdminActionsApi> getAdminActionsExtensionForZone(
+   Optional<? extends AdminActionsApi> getAdminActionsExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
  
    /**
     * Provides synchronous access to Aggregate features.
     */
    @Delegate
-   Optional<HostAggregateApi> getHostAggregateExtensionForZone(
+   Optional<? extends HostAggregateApi> getHostAggregateExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
    /**
     * Provides synchronous access to Flavor extra specs features.
     */
    @Delegate
-   Optional<FlavorExtraSpecsApi> getFlavorExtraSpecsExtensionForZone(
+   Optional<? extends FlavorExtraSpecsApi> getFlavorExtraSpecsExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
    /**
     * Provides synchronous access to Quota features.
     */
    @Delegate
-   Optional<QuotaApi> getQuotaExtensionForZone(
+   Optional<? extends QuotaApi> getQuotaExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
    /**
     * Provides synchronous access to Quota Classes features.
     */
    @Delegate
-   Optional<QuotaClassApi> getQuotaClassExtensionForZone(
+   Optional<? extends QuotaClassApi> getQuotaClassExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
    /**
     * Provides synchronous access to Volume Type features.
     */
    @Delegate
-   Optional<VolumeTypeApi> getVolumeTypeExtensionForZone(
+   Optional<? extends VolumeTypeApi> getVolumeTypeExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
 }

@@ -19,8 +19,6 @@
 
 package org.jclouds.nodepool.config;
 
-import javax.annotation.Nullable;
-
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.config.JCloudsNativeComputeServiceAdapterContextModule;
@@ -30,6 +28,7 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.nodepool.NodePoolApiMetadata;
 import org.jclouds.nodepool.NodePoolComputeServiceAdapter;
 import org.jclouds.nodepool.NodePoolComputeServiceContext;

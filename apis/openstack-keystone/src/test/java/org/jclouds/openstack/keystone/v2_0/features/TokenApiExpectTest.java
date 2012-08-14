@@ -138,7 +138,7 @@ public class TokenApiExpectTest extends BaseKeystoneRestApiExpectTest<KeystoneAp
             authenticatedGET().endpoint(endpoint + "/v2.0/tokens/XXXXXX/endpoints").build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResourceWithContentType("/user_endpoints.json", APPLICATION_JSON)).build())
             .getTokenApi().get();
-      Set<Endpoint> endpoints = api.listEndpointsForToken("XXXXXX");
+      Set<? extends Endpoint> endpoints = api.listEndpointsForToken("XXXXXX");
       
       assertEquals(endpoints, ImmutableSet.of(
             Endpoint.builder().publicURL(URI.create("https://csnode.jclouds.org/v2.0/"))

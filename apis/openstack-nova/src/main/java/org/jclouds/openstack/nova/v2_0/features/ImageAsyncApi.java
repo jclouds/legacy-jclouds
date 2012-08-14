@@ -59,7 +59,7 @@ public interface ImageAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/images")
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<Resource>> listImages();
+   ListenableFuture<? extends Set<? extends Resource>> listImages();
 
    /**
     * @see ImageApi#listImagesInDetail
@@ -69,7 +69,7 @@ public interface ImageAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/images/detail")
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<Image>> listImagesInDetail();
+   ListenableFuture<? extends Set<? extends Image>> listImagesInDetail();
 
    /**
     * @see ImageApi#getImage
@@ -79,7 +79,7 @@ public interface ImageAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/images/{id}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Image> getImage(@PathParam("id") String id);
+   ListenableFuture<? extends Image> getImage(@PathParam("id") String id);
 
    /**
     * @see ImageApi#deleteImage

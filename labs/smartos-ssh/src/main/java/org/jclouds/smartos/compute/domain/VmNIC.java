@@ -1,18 +1,15 @@
 package org.jclouds.smartos.compute.domain;
 
+import java.beans.ConstructorProperties;
+
+import javax.inject.Named;
+
 import com.google.common.base.Objects;
-import com.google.gson.annotations.SerializedName;
 
 /**
  * Specification of a network card.
  */
 public class VmNIC {
-
-   @SerializedName("nic_tag")
-   protected final String tag;
-   protected final String ip;
-   protected final String netmask;
-   protected final String gateway;
 
    public static Builder builder() {
       return new Builder();
@@ -24,10 +21,10 @@ public class VmNIC {
 
    public static class Builder {
 
-      public String tag = "admin";
-      public String ip;
-      public String netmask;
-      public String gateway;
+      private String tag = "admin";
+      private String ip;
+      private String netmask;
+      private String gateway;
 
       public Builder simpleDHCPNic() {
          tag = "admin";
@@ -64,7 +61,14 @@ public class VmNIC {
       }
    }
 
-   public VmNIC(String tag, String ip, String netmask, String gateway) {
+   @Named("nic_tag")
+   private final String tag;
+   private final String ip;
+   private final String netmask;
+   private final String gateway;
+
+   @ConstructorProperties({ "nic_tag", "ip", "netmask", "gateway" })
+   protected VmNIC(String tag, String ip, String netmask, String gateway) {
       this.tag = tag;
       this.ip = ip;
       this.netmask = netmask;
@@ -85,6 +89,22 @@ public class VmNIC {
 
    public String getGateway() {
       return gateway;
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(tag, ip, netmask, gateway);
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null || getClass() != obj.getClass())
+         return false;
+      VmNIC that = VmNIC.class.cast(obj);
+      return Objects.equal(this.tag, that.tag) && Objects.equal(this.ip, that.ip)
+               && Objects.equal(this.netmask, that.netmask) && Objects.equal(this.gateway, that.gateway);
    }
 
    /**

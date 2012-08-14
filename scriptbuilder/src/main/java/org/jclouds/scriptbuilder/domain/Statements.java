@@ -171,6 +171,26 @@ public class Statements {
       return new PipeHttpResponseToTarxpzfIntoDirectory(method, endpoint, headers, directory);
    }
 
+   /**
+    * like {@link #extractTargzIntoDirectory(URI, String)} except that it
+    * flattens the first directory in the archive
+    * 
+    * For example, {@code apache-maven-3.0.4-bin.tar.gz} normally extracts
+    * directories like {@code ./apache-maven-3.0.4/bin}. This command eliminates
+    * the intermediate directory, in the example {@code ./apache-maven-3.0.4/}
+    * 
+    * @param tgz remote ref to download
+    * @param dest path where the files in the intermediate directory will end
+    */
+   public static Statement extractTargzAndFlattenIntoDirectory(URI tgz, String dest) {
+      return new StatementList(ImmutableSet.<Statement> builder()
+            .add(exec("mkdir /tmp/$$"))
+            .add(extractTargzIntoDirectory(tgz, "/tmp/$$"))
+            .add(exec("mkdir -p " + dest))
+            .add(exec("mv /tmp/$$/*/* " + dest))
+            .add(exec("rm -rf /tmp/$$")).build());
+   }
+   
    public static Statement extractTargzIntoDirectory(URI targz, String directory) {
       return extractTargzIntoDirectory("GET", targz, ImmutableMultimap.<String, String> of(), directory);
    }

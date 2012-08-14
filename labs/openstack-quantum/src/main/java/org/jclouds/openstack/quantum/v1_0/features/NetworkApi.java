@@ -44,12 +44,12 @@ public interface NetworkApi {
     * Returns the list of all networks currently defined in Quantum for the current tenant. The list provides the unique
     * identifier of each network configured for the tenant.
     */
-   Set<Reference> listReferences();
+   Set<? extends Reference> listReferences();
 
    /**
     * Returns all networks currently defined in Quantum for the current tenant.
     */
-   Set<Network> list();
+   Set<? extends Network> list();
 
    /**
     * Returns the specific network.

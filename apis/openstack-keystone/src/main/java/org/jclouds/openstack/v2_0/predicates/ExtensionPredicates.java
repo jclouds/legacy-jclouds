@@ -16,14 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.nova.v2_0.predicates;
+package org.jclouds.openstack.v2_0.predicates;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 import java.util.Collection;
 
-import org.jclouds.openstack.nova.v2_0.domain.Extension;
+import org.jclouds.openstack.v2_0.domain.Extension;
 
 import com.google.common.base.Predicate;
 
