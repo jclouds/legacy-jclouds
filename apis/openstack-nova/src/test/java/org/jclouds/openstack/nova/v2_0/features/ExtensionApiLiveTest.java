@@ -23,8 +23,9 @@ import static org.testng.Assert.assertTrue;
 
 import java.util.Set;
 
-import org.jclouds.openstack.nova.v2_0.domain.Extension;
 import org.jclouds.openstack.nova.v2_0.internal.BaseNovaApiLiveTest;
+import org.jclouds.openstack.v2_0.domain.Extension;
+import org.jclouds.openstack.v2_0.features.ExtensionApi;
 import org.testng.annotations.Test;
 
 /**
