@@ -34,6 +34,7 @@
   <packaging>bundle</packaging>
 
   <properties>
+    <test.image-maker.provider>FIXME_PROVIDER</test.image-maker.provider>
     <jclouds.osgi.export>org.jclouds.imagemaker*;version=&quot;${project.version}&quot;</jclouds.osgi.export>
     <jclouds.osgi.import>org.jclouds*;version="${project.version}",*</jclouds.osgi.import>
   </properties>
@@ -79,6 +80,13 @@
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
       <version>1.0.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jclouds.labs</groupId>
+      <artifactId>nodepool</artifactId>
+      <version>1.5.0-SNAPSHOT</version>
+      <type>bundle</type>
       <scope>test</scope>
     </dependency>
   </dependencies>

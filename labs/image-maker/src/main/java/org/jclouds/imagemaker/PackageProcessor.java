@@ -20,11 +20,9 @@
 package org.jclouds.imagemaker;
 
 import java.util.List;
-import java.util.Set;
 
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.OsFamily;
 
 public interface PackageProcessor {
 
@@ -47,11 +45,12 @@ public interface PackageProcessor {
    public String name();
 
    /**
-    * The set of {@link OsFamily} compatible with this package processor.
+    * Whether this processor is compatible with {@link NodeMetadata}
     * 
+    * @param node
     * @return
     */
-   public Set<OsFamily> compatibleOSs();
+   public boolean isCompatible(NodeMetadata node);
 
    /**
     * Executes this package processor on the node.

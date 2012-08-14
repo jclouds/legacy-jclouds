@@ -41,8 +41,23 @@ import com.google.inject.ImplementedBy;
 @ImplementedBy(ImageMakerImpl.class)
 public interface ImageMaker {
 
+   /**
+    * Creates an {@link Image} based on a node by applied all compatible, registered
+    * {@link PackageProcessor}s and registering the node as a new Image with {@link ImageExtension}.
+    * 
+    * @param node
+    *           the node upon to base the new image
+    * @param imageDescriptorId
+    *           the id of the image descriptor (in the yaml file)
+    * @param newImageName
+    *           the name of the newly created image
+    * @return the newly created and available {@link Image}
+    */
    public Image makeImage(NodeMetadata node, String imageDescriptorId, String newImageName);
 
+   /**
+    * Returns the set of registered {@link PackageProcessor}s
+    */
    public Map<PackageProcessor.Type, Set<PackageProcessor>> registeredProcessors();
 
 }

@@ -20,7 +20,6 @@
 package org.jclouds.imagemaker.internal;
 
 import java.util.List;
-import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -43,8 +42,8 @@ public class AptCacher implements PackageProcessor {
    }
 
    @Override
-   public Set<OsFamily> compatibleOSs() {
-      return ImmutableSet.of(OsFamily.DEBIAN, OsFamily.UBUNTU);
+   public boolean isCompatible(NodeMetadata node) {
+      return ImmutableSet.of(OsFamily.UBUNTU, OsFamily.DEBIAN).contains(node.getOperatingSystem().getFamily());
    }
 
    public static class AptCacheStatement implements Statement {

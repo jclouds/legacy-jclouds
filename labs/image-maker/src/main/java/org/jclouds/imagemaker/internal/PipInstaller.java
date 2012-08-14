@@ -1,7 +1,6 @@
 package org.jclouds.imagemaker.internal;
 
 import java.util.List;
-import java.util.Set;
 
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
@@ -23,9 +22,9 @@ public class PipInstaller implements PackageProcessor {
    }
 
    @Override
-   public Set<OsFamily> compatibleOSs() {
+   public boolean isCompatible(NodeMetadata node) {
       return ImmutableSet.of(OsFamily.AMZN_LINUX, OsFamily.CENTOS, OsFamily.DEBIAN, OsFamily.FEDORA, OsFamily.LINUX,
-               OsFamily.UBUNTU);
+               OsFamily.UBUNTU).contains(node.getOperatingSystem().getFamily());
    }
 
    @Override

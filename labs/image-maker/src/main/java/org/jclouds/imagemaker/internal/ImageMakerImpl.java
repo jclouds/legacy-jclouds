@@ -113,7 +113,7 @@ public class ImageMakerImpl implements ImageMaker {
          compatibleProcessorsMap.put(entry.getKey(), Sets.filter(entry.getValue(), new Predicate<PackageProcessor>() {
             @Override
             public boolean apply(@Nullable PackageProcessor input) {
-               return input.compatibleOSs().contains(node.getOperatingSystem().getFamily());
+               return input.isCompatible(node);
             }
          }));
       }
