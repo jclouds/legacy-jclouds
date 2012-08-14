@@ -26,18 +26,22 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Resource;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageTemplate;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.extensions.ImageExtension;
+import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.imagemaker.ImageMaker;
 import org.jclouds.imagemaker.PackageProcessor;
 import org.jclouds.imagemaker.PackageProcessor.Type;
 import org.jclouds.imagemaker.config.ImageDescriptor;
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.logging.Logger;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
@@ -54,6 +58,10 @@ import com.google.common.collect.Sets;
  * 
  */
 public class ImageMakerImpl implements ImageMaker {
+
+   @Resource
+   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
+   protected Logger logger = Logger.NULL;
 
    private final Map<PackageProcessor.Type, Set<PackageProcessor>> packageProcessors;
    private final Supplier<Map<String, ImageDescriptor>> images;
@@ -84,10 +92,17 @@ public class ImageMakerImpl implements ImageMaker {
       ImageDescriptor descriptor = images.get().get(imageDescriptorId);
 
       // run the processors (in sequence as we have no guarantee they don't interact)
+      boolean ranProcessors = false;
       for (Map.Entry<Type, Set<PackageProcessor>> entry : processorsCompatibleWithNode(node).entrySet()) {
          for (PackageProcessor processor : entry.getValue()) {
             processor.process(node, descriptor.getPackagesFor(processor.name(), processor.type()));
+            ranProcessors = true;
          }
+      }
+
+      if (!ranProcessors) {
+         logger.warn("Image not created because no PackageProcessors were compatible with node ");
+         return null;
       }
 
       // build the image

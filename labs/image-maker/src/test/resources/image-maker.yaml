@@ -2,7 +2,7 @@ images:
     - id: test
       cached_packages: 
         apt: 
-          - vi
+          - unzip
       installed_packages: 
         apt: 
           - nginx

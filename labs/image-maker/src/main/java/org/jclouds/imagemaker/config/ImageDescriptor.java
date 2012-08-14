@@ -39,6 +39,10 @@ public class ImageDescriptor {
    public Map<String, List<String>> installed_packages;
 
    public List<String> getPackagesFor(String system, Type type) {
+      System.out.println(system);
+      System.out.println(type);
+      System.out.println("cached: "+cached_packages);
+      System.out.println("installed: "+installed_packages);
       switch (type) {
          case CACHER:
             return cached_packages.get(system) != null ? cached_packages.get(system) : ImmutableList.<String> of();

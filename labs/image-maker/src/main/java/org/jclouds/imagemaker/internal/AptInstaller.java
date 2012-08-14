@@ -28,6 +28,7 @@ import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.imagemaker.PackageProcessor;
+import org.jclouds.imagemaker.internal.AptCacher.AptCacheStatement;
 import org.jclouds.scriptbuilder.domain.Statement;
 
 import com.google.common.collect.ImmutableSet;
@@ -43,14 +44,15 @@ public class AptInstaller implements PackageProcessor {
 
    @Override
    public boolean isCompatible(NodeMetadata node) {
+      System.out.println();
       return ImmutableSet.of(OsFamily.UBUNTU, OsFamily.DEBIAN).contains(node.getOperatingSystem().getFamily());
    }
 
-   public static class AptCacheStatement implements Statement {
+   public static class AptInstallStatement implements Statement {
 
       private List<String> packages;
 
-      public AptCacheStatement(List<String> packages) {
+      public AptInstallStatement(List<String> packages) {
          this.packages = packages;
       }
 
@@ -79,7 +81,7 @@ public class AptInstaller implements PackageProcessor {
 
    @Override
    public Type type() {
-      return Type.CACHER;
+      return Type.INSTALLER;
    }
 
    @Override
