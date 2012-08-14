@@ -27,6 +27,7 @@ import org.jclouds.openstack.keystone.v2_0.features.ServiceAsyncApi;
 import org.jclouds.openstack.keystone.v2_0.features.TenantAsyncApi;
 import org.jclouds.openstack.keystone.v2_0.features.TokenAsyncApi;
 import org.jclouds.openstack.keystone.v2_0.features.UserAsyncApi;
+import org.jclouds.openstack.v2_0.features.ExtensionAsyncApi;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.SelectJson;
@@ -61,6 +62,12 @@ public interface KeystoneAsyncApi {
    ServiceAsyncApi getServiceApi();
 
    /**
+    * Provides asynchronous access to Extension features.
+    */
+   @Delegate
+   ExtensionAsyncApi getExtensionApi();
+
+   /**
     * @see KeystoneApi#getTokenApi()
     */
    @Delegate
@@ -71,7 +78,6 @@ public interface KeystoneAsyncApi {
     */
    @Delegate
    Optional<UserAsyncApi> getUserApi();
-   
 
    /**
     * @see KeystoneApi#getTenantApi()

@@ -80,6 +80,7 @@ import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.Vm;
 import org.jclouds.vcloud.director.v1_5.domain.network.NetworkAssignment;
 import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConnection;
+import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConnection.IpAddressAllocationMode;
 import org.jclouds.vcloud.director.v1_5.domain.network.VAppNetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.params.ComposeVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.params.ControlAccessParams;
@@ -612,7 +613,8 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
    public void testModifyNetworkConfigSection() {
       // Copy existing section and update fields
       NetworkConfigSection oldSection = vAppApi.getNetworkConfigSection(vApp.getHref());
-      NetworkConfigSection newSection = oldSection.toBuilder()
+      VAppNetworkConfiguration networkConfig = VAppNetworkConfiguration.builder().build();
+      NetworkConfigSection newSection = oldSection.toBuilder().networkConfigs(ImmutableSet.of(networkConfig))
             .build();
 
       // The method under test
@@ -848,27 +850,55 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
 
       InstantiationParams vmInstantiationParams = null;
 
+      Set<NetworkAssignment> networkAssignments = Sets.newLinkedHashSet();
+
       // if the vm contains a network connection and the vApp does not contain any configured network
-      if (vmHasNetworkConnectionConfigured(vm) && vAppHasNetworkConfigured(vApp)) {
-         // creating empty network connection section for the vm.
-         NetworkConnectionSection networkConnectionSection = NetworkConnectionSection.builder()
-                  .info("Empty network configuration parameters")
-                  .build();
-         
-         // adding the network connection section to the instantiation params of the vapp.
-         vmInstantiationParams = InstantiationParams.builder().sections(ImmutableSet.of(networkConnectionSection)).build();
+      if (vmHasNetworkConnectionConfigured(vm)) {
+         if (!vAppHasNetworkConfigured(vApp)) {
+            // create a new network connection section for the vm.
+            NetworkConnectionSection networkConnectionSection = NetworkConnectionSection.builder()
+                     .info("Empty network configuration parameters").build();
+            // adding the network connection section to the instantiation params of the vapp.
+            vmInstantiationParams = InstantiationParams.builder().sections(ImmutableSet.of(networkConnectionSection))
+                     .build();
+         }
+
+         // if the vm already contains a network connection section and if the vapp contains a
+         // configured network -> vm could be mapped to that network.
+         else {
+            Set<VAppNetworkConfiguration> vAppNetworkConfigurations = listVappNetworkConfigurations(vApp);
+            Set<NetworkConnection> listVmNetworkConnections = listNetworkConnections(vm);
+            for (NetworkConnection networkConnection : listVmNetworkConnections) {
+               for (VAppNetworkConfiguration vAppNetworkConfiguration : vAppNetworkConfigurations) {
+                  NetworkAssignment networkAssignment = NetworkAssignment.builder()
+                           .innerNetwork(vAppNetworkConfiguration.getNetworkName())
+                           .containerNetwork(vAppNetworkConfiguration.getNetworkName()).build();
+                  networkAssignments.add(networkAssignment);
+               }
+            }
+         }
       }
 
-      // if the vm already contains a network connection section and if the vapp contains a configured network -> vm could be mapped to that network.
-      NetworkAssignment networkAssignment = null;
-      if (vmHasNetworkConnectionConfigured(vm) && !vAppHasNetworkConfigured(vApp)) {
-         for (NetworkConnection networkConnection : vmApi.getNetworkConnectionSection(vm.getHref())
-                  .getNetworkConnections()) {
-            if (networkConnection.getNetworkConnectionIndex() == vmApi.getNetworkConnectionSection(vm.getHref())
-                     .getPrimaryNetworkConnectionIndex()) {
-               networkAssignment = NetworkAssignment.builder().innerNetwork(networkConnection.getNetwork())
-                        .containerNetwork(getVAppNetworkConfig(vApp).getNetworkName()).build();
-            }
+      // if the vm does not contain any network connection sections and if the
+      // vapp contains a network configuration. we should add the vm to this
+      // vapp network
+      else {
+         if (vAppHasNetworkConfigured(vApp)) {
+
+            VAppNetworkConfiguration vAppNetworkConfiguration = getVAppNetworkConfig(vApp);
+            System.out.println(vAppNetworkConfiguration.getNetworkName());
+            System.out.println(vAppNetworkConfiguration.getDescription());
+
+            NetworkConnection networkConnection = NetworkConnection.builder()
+                     .network(vAppNetworkConfiguration.getNetworkName())
+                     .ipAddressAllocationMode(IpAddressAllocationMode.DHCP).build();
+
+            NetworkConnectionSection networkConnectionSection = NetworkConnectionSection.builder().info("networkInfo")
+                     .primaryNetworkConnectionIndex(0).networkConnection(networkConnection).build();
+
+            // adding the network connection section to the instantiation params of the vapp.
+            vmInstantiationParams = InstantiationParams.builder().sections(ImmutableSet.of(networkConnectionSection))
+                     .build();
          }
       }
 
@@ -877,27 +907,15 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
                   .instantiationParams(vmInstantiationParams)
                   .build();
       
-      if (networkAssignment != null)
+      if (networkAssignments != null)
          vmItem = SourcedCompositionItemParam.builder().fromSourcedCompositionItemParam(vmItem)
-                  .networkAssignment(ImmutableSet.of(networkAssignment))
+                  .networkAssignment(networkAssignments)
                   .build();
       
       return RecomposeVAppParams.builder().name(name("recompose-"))
                // adding the vm item.
                .sourcedItems(ImmutableList.of(vmItem)).build();
-   }
 
-   private VAppNetworkConfiguration getVAppNetworkConfig(VApp vApp) {
-      Set<VAppNetworkConfiguration> vAppNetworkConfigs = vAppApi.getNetworkConfigSection(vApp.getHref()).getNetworkConfigs();
-      return Iterables.tryFind(vAppNetworkConfigs, Predicates.notNull()).orNull();
-   }
-   
-   private boolean vAppHasNetworkConfigured(VApp vApp) {
-      return getVAppNetworkConfig(vApp) != null;
-   }
-
-   private boolean vmHasNetworkConnectionConfigured(Vm vm) {
-      return vmApi.getNetworkConnectionSection(vm.getHref()).getNetworkConnections().size() > 0;
    }
 
 }

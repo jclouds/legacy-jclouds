@@ -28,6 +28,7 @@ import org.jclouds.location.Region;
 import org.jclouds.location.functions.RegionToEndpoint;
 import org.jclouds.openstack.quantum.v1_0.features.NetworkAsyncApi;
 import org.jclouds.openstack.quantum.v1_0.features.PortAsyncApi;
+import org.jclouds.openstack.v2_0.features.ExtensionAsyncApi;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
 
@@ -49,6 +50,13 @@ public interface QuantumAsyncApi {
    @Provides
    @Region
    Set<String> getConfiguredRegions();
+
+   /**
+    * Provides asynchronous access to Extension features.
+    */
+   @Delegate
+   ExtensionAsyncApi getExtensionApiForRegion(
+         @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region);
 
    /**
     * Provides asynchronous access to Network features.
