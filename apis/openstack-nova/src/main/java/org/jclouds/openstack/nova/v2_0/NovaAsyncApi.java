@@ -37,10 +37,10 @@ import org.jclouds.openstack.nova.v2_0.extensions.SimpleTenantUsageAsyncApi;
 import org.jclouds.openstack.nova.v2_0.extensions.VirtualInterfaceAsyncApi;
 import org.jclouds.openstack.nova.v2_0.extensions.VolumeAsyncApi;
 import org.jclouds.openstack.nova.v2_0.extensions.VolumeTypeAsyncApi;
-import org.jclouds.openstack.nova.v2_0.features.ExtensionAsyncApi;
 import org.jclouds.openstack.nova.v2_0.features.FlavorAsyncApi;
 import org.jclouds.openstack.nova.v2_0.features.ImageAsyncApi;
 import org.jclouds.openstack.nova.v2_0.features.ServerAsyncApi;
+import org.jclouds.openstack.v2_0.features.ExtensionAsyncApi;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
 

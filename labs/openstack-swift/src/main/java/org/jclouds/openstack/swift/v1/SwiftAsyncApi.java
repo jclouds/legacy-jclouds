@@ -26,6 +26,7 @@ import org.jclouds.location.functions.RegionToEndpoint;
 import org.jclouds.openstack.swift.v1.features.AccountAsyncApi;
 import org.jclouds.openstack.swift.v1.features.ContainerAsyncApi;
 import org.jclouds.openstack.swift.v1.features.ObjectAsyncApi;
+import org.jclouds.openstack.v2_0.features.ExtensionAsyncApi;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
 
@@ -47,6 +48,13 @@ public interface SwiftAsyncApi {
    @Provides
    @Region
    Set<String> getConfiguredRegions();
+
+   /**
+    * Provides asynchronous access to Extension features.
+    */
+   @Delegate
+   ExtensionAsyncApi getExtensionApiForRegion(
+         @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region);
 
    /**
     * Provides asynchronous access to Account features.
