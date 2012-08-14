@@ -51,6 +51,7 @@ import org.jclouds.openstack.v2_0.ServiceType;
 import org.jclouds.openstack.v2_0.domain.Extension;
 import org.jclouds.openstack.v2_0.features.ExtensionApi;
 import org.jclouds.openstack.v2_0.features.ExtensionAsyncApi;
+import org.jclouds.openstack.v2_0.functions.PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensionsSet;
 import org.jclouds.openstack.v2_0.services.Identity;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.annotations.ApiVersion;
@@ -122,6 +123,12 @@ public class KeystoneRestClientModule<S extends KeystoneApi, A extends KeystoneA
                   whenIdentityServiceIsntListedFallbackToProviderURI, providerURI);
          return whenIdentityServiceHasNoAdminURLFallbackToProviderURI;
       }
+   }
+
+   @Override
+   protected void configure() {
+      bind(ImplicitOptionalConverter.class).to(PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensionsSet.class);
+      super.configure();
    }
    
    @Provides

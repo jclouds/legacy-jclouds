@@ -126,8 +126,7 @@ public class NovaRestClientModule<S extends NovaApi, A extends NovaAsyncApi> ext
    @Override
    protected void configure() {
       install(new NovaParserModule());
-      bind(ImplicitOptionalConverter.class).to(
-            PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensionsSet.class);
+      bind(ImplicitOptionalConverter.class).to(PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensionsSet.class);
       super.configure();
    }
    
