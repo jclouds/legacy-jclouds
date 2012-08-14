@@ -19,7 +19,6 @@
 package org.jclouds.openstack.v2_0.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 
 import java.net.URI;
 import java.util.Set;
@@ -71,11 +70,14 @@ public class PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensio
 	        if (Iterables.any(extensions.getUnchecked(checkNotNull(input.getArgs()[0], "arg[0] in %s", input).toString()),
 	              ExtensionPredicates.namespaceOrAliasEquals(namespace, aliases.get(namespace))))
 	           return Optional.of(input.getReturnVal());
+         } else {
+            throw new RuntimeException(String.format("expecting zero or one args %s", input));
+         }
+         return Optional.absent();
       } else {
-          throw new RuntimeException(String.format("expecting zero or one args %s", input));
+         // No extension annotation, should check whether to return absent
+	     return Optional.of(input.getReturnVal());
       }
-      }
-      return Optional.absent();
    }
 
    @Override

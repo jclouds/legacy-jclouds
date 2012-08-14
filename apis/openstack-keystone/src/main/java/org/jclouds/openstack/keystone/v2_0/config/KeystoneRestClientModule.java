@@ -43,7 +43,6 @@ import org.jclouds.openstack.keystone.v2_0.features.TokenApi;
 import org.jclouds.openstack.keystone.v2_0.features.TokenAsyncApi;
 import org.jclouds.openstack.keystone.v2_0.features.UserApi;
 import org.jclouds.openstack.keystone.v2_0.features.UserAsyncApi;
-import org.jclouds.openstack.keystone.v2_0.functions.PresentWhenAdminURLExistsForIdentityService;
 import org.jclouds.openstack.keystone.v2_0.handlers.KeystoneErrorHandler;
 import org.jclouds.openstack.keystone.v2_0.suppliers.RegionIdToAdminURIFromAccessForTypeAndVersion;
 import org.jclouds.openstack.keystone.v2_0.suppliers.RegionIdToAdminURISupplier;
@@ -101,7 +100,6 @@ public class KeystoneRestClientModule<S extends KeystoneApi, A extends KeystoneA
 
       @Override
       protected void configure() {
-         bind(ImplicitOptionalConverter.class).to(PresentWhenAdminURLExistsForIdentityService.class);
          install(new FactoryModuleBuilder().implement(RegionIdToAdminURISupplier.class,
                   RegionIdToAdminURIFromAccessForTypeAndVersion.class).build(RegionIdToAdminURISupplier.Factory.class));
       }
