@@ -50,4 +50,11 @@ public interface CDMIAsyncApi {
     */
    @Delegate
    DataAsyncApi getDataApi();
+
+   /**
+    * Provides asynchronous access to Data Object Resource Operations.
+    */
+   @Delegate
+   DataAsyncApi getDataNonCDMIContentTypeApi();
+   
 }

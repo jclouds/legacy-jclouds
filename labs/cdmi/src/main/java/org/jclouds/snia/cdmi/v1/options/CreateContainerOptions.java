@@ -1,11 +1,6 @@
 package org.jclouds.snia.cdmi.v1.options;
 
 import java.util.Map;
-import java.util.Map.Entry;
-
-import org.jclouds.http.options.BaseHttpRequestOptions;
-
-import com.google.gson.JsonObject;
 
 /**
  * Optional Create CDMI Contain options

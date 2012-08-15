@@ -779,6 +779,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 		ContainerApi containerApi = cdmiContext.getApi()
 				.getContainerApi();
 		DataApi dataApi = cdmiContext.getApi().getDataApi();
+		DataNonCDMIContentTypeApi dataNonCDMIContentTypeApi = cdmiContext.getApi().getDataNonCDMIContentTypeApi();
 		Logger.getAnonymousLogger().info("createContainer: " + containerName);
 		Container container = containerApi.createContainer(containerName,
 				pCreateContainerOptions);
@@ -794,7 +795,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 			// exercise create data object with none cdmi put with payload string.
 			value = "Hello CDMI World non-cdmi String";
 			payload = new StringPayload(value);
-			dataApi.createDataObjectNonCDMI(containerName, dataObjectNameIn,
+			dataNonCDMIContentTypeApi.createDataObject(containerName, dataObjectNameIn,
 					payload);
 			System.out.println(containerApi.getContainer(containerName));
 			dataObject = dataApi.getDataObject(containerName,
@@ -821,7 +822,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 			value = "Hello CDMI World non-cdmi byte array";
 			bytes = value.getBytes("UTF-8");
 			payload = new ByteArrayPayload(bytes);
-			dataApi.createDataObjectNonCDMI(containerName, dataObjectNameIn,
+			dataNonCDMIContentTypeApi.createDataObject(containerName, dataObjectNameIn,
 					payload);
 			System.out.println(containerApi.getContainer(containerName));
 			dataObject = dataApi.getDataObject(containerName,
@@ -849,7 +850,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 			value = "Hello CDMI World non-cdmi File";
 			Files.write(value, tmpFileIn, Charsets.UTF_8);
 			payload = new FilePayload(tmpFileIn);
-			dataApi.createDataObjectNonCDMI(containerName, dataObjectNameIn,
+			dataNonCDMIContentTypeApi.createDataObject(containerName, dataObjectNameIn,
 					payload);
 			System.out.println(containerApi.getContainer(containerName));
 			dataObject = dataApi.getDataObject(containerName,
@@ -880,7 +881,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 					+ "/src/test/resources/container.json");
 			assertEquals(true, inFile.isFile());
 			payload = new FilePayload(inFile);
-			dataApi.createDataObjectNonCDMI(containerName, inFile.getName(),
+			dataNonCDMIContentTypeApi.createDataObject(containerName, inFile.getName(),
 					payload);
 			System.out.println(containerApi.getContainer(containerName));
 			dataObject = dataApi.getDataObject(containerName,
@@ -912,7 +913,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 					+ "/src/test/resources/Jellyfish.jpg");
 			assertEquals(true, inFile.isFile());
 			payload = new FilePayload(inFile);
-			dataApi.createDataObjectNonCDMI(containerName, inFile.getName(),
+			dataNonCDMIContentTypeApi.createDataObject(containerName, inFile.getName(),
 					payload);
 			System.out.println(containerApi.getContainer(containerName));
 			//getDatObject is throwing an exception
@@ -947,7 +948,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 			//ContentMetadata contentMetadata = payload.getContentMetadata().toBuilder().contentLength(new Long(value.length())).build();
 			//contentMetadata = contentMetadata.toBuilder().contentLength(new Long(value.length())).build();
 			payload.setContentMetadata(BaseMutableContentMetadata.fromContentMetadata(payload.getContentMetadata().toBuilder().contentLength(new Long(value.length())).build()));
-			dataApi.createDataObjectNonCDMI(containerName, dataObjectNameIn,
+			dataNonCDMIContentTypeApi.createDataObject(containerName, dataObjectNameIn,
 					payload);
 			System.out.println(containerApi.getContainer(containerName));
 			dataObject = dataApi.getDataObject(containerName,
@@ -981,7 +982,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 			value = "Hello CDMI World1";
 			CreateDataObjectNonCDMIOptions pCreateDataObjectNoneCDMIOptions = CreateDataObjectNonCDMIOptions.Builder
 					.withStringPayload(value);
-			dataApi.createDataObjectNonCDMI(containerName, dataObjectNameIn,
+			dataNonCDMIContentTypeApi.createDataObject(containerName, dataObjectNameIn,
 					pCreateDataObjectNoneCDMIOptions);
 			System.out.println(containerApi.getContainer(containerName));
 			dataObject = dataApi.getDataObject(containerName,

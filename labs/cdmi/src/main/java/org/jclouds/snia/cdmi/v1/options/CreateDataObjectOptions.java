@@ -7,12 +7,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.Map;
-import java.util.Map.Entry;
-
-import org.jclouds.http.options.BaseHttpRequestOptions;
 import com.google.common.base.Charsets;
 import java.nio.charset.Charset;
-import com.google.gson.JsonObject;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Files;
 
@@ -32,7 +28,7 @@ public class CreateDataObjectOptions extends CreateCDMIObjectOptions {
 	 * Create CDMI data object with metadata
 	 * 
 	 * @param metadata
-	 * @return this
+	 * @return CreateDataObjectOptions
 	 */
 	public CreateDataObjectOptions metadata(Map<String, String> metadata) {
 		super.metadata(metadata);
