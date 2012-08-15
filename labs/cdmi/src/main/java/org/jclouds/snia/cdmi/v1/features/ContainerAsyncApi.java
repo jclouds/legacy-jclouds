@@ -18,20 +18,13 @@
  */
 package org.jclouds.snia.cdmi.v1.features;
 
-import java.util.Map;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.Encoded;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.MatrixParam;
-
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.blobstore.binders.BindMapToHeadersWithPrefix;
@@ -49,8 +42,6 @@ import org.jclouds.snia.cdmi.v1.filters.StripExtraAcceptHeader;
 import org.jclouds.snia.cdmi.v1.options.CreateContainerOptions;
 import org.jclouds.snia.cdmi.v1.options.GetContainerOptions;
 import org.jclouds.snia.cdmi.v1.queryparams.ContainerQueryParams;
-import org.jclouds.rest.annotations.QueryParams;
-
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -70,59 +61,47 @@ public interface ContainerAsyncApi {
 	 * get CDMI Container
 	 * 
 	 * @param containerName
+	 *            containerName must end with a forward slash, /.
+	 * @return Container
+	 * 
+	 * <pre>
+	 *  Examples: 
+	 *  {@code
+	 *  container = getContainer("myContainer/");
+	 *  container = getContainer("parentContainer/childContainer/");
+	 * }
+	 * 
+	 * <pre>
 	 */
 	@GET
 	@Consumes({ ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
 	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
-	@Path("/{containerName}/")
+	@Path("/{containerName}")
 	ListenableFuture<Container> getContainer(
 			@PathParam("containerName") String containerName);
 
 	/**
 	 * get CDMI Container
 	 * 
-	 * @param parentURI
 	 * @param containerName
-	 */
-	@GET
-	@Consumes({ ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
-	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
-	@Path("/{parentURI}{containerName}/")
-	ListenableFuture<Container> getContainer(
-			@PathParam("parentURI") String parentURI,
-			@PathParam("containerName") String containerName);
-
-	/**
-	 * get CDMI Container
-	 * 
-	 * @param containerName
-	 * @param options
+	 * @param queryParams
 	 *            enables getting only certain fields, metadata, children range
-	 * @see GetContainerOptions
-	 */
-	@GET
-	@Consumes({ ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
-	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
-	@Path("/{containerName}/")
-	ListenableFuture<Container> getContainer(
-			@PathParam("containerName") String containerName,
-			@BinderParam(BindQueryParmsToSuffix.class) ContainerQueryParams queryParams);
-
-	/**
-	 * get CDMI Container
+	 * @return Container
 	 * 
-	 * @param parentURI
-	 * @param containerName
-	 * @param options
-	 *            enables getting only certain fields, metadata, children range
-	 * @see GetContainerOptions
+	 * <pre>
+	 * Examples: 
+	 * {@code
+	 * container = getContainer("myContainer/",ContainerQueryParams.Builder.field("parentURI").field("objectName"))
+	 * container = getContainer("myContainer/",ContainerQueryParams.Builder.metadata().field("objectName"))
+	 * }
+	 * </pre>
+	 * @see ContainerQueryParams
 	 */
 	@GET
 	@Consumes({ ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
 	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
-	@Path("/{parentURI}{containerName}/")
+	@Path("/{containerName}")
 	ListenableFuture<Container> getContainer(
-			@PathParam("parentURI") String parentURI,
 			@PathParam("containerName") String containerName,
 			@BinderParam(BindQueryParmsToSuffix.class) ContainerQueryParams queryParams);
 
@@ -130,28 +109,22 @@ public interface ContainerAsyncApi {
 	 * Create CDMI Container
 	 * 
 	 * @param containerName
+	 *            containerName must end with a forward slash, /.
+	 * @return Container
+	 *  <pre>
+	 *  Examples: 
+	 *  {@code
+	 *  container = createContainer("myContainer/");
+	 *  container = createContainer("parentContainer/childContainer/");
+	 *  }
+	 *  </pre>
 	 */
 	@PUT
 	@Consumes({ ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
 	@Produces({ ObjectTypes.CONTAINER })
 	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
-	@Path("/{containerName}/")
+	@Path("/{containerName}")
 	ListenableFuture<Container> createContainer(
-			@PathParam("containerName") String containerName);
-
-	/**
-	 * Create CDMI Container
-	 * 
-	 * @param parentContainerURI
-	 * @param containerName
-	 */
-	@PUT
-	@Consumes({ ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
-	@Produces({ ObjectTypes.CONTAINER })
-	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
-	@Path("/{parentContainerURI}{containerName}/")
-	ListenableFuture<Container> createContainer(
-			@PathParam("parentContainerURI") String parentContainerURI,
 			@PathParam("containerName") String containerName);
 
 	/**
@@ -160,33 +133,21 @@ public interface ContainerAsyncApi {
 	 * @param containerName
 	 * @param options
 	 *            enables adding metadata
+	 * @return Container
+	 *  <pre>
+	 *  Examples: 
+	 *  {@code
+	 *  container = createContainer("myContainer/",CreateContainerOptions.Builder..metadata(metaDataIn));
+	 *  }
+	 *  </pre>
 	 * @see CreateContainerOptions
 	 */
 	@PUT
 	@Consumes({ ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
 	@Produces({ ObjectTypes.CONTAINER })
 	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
-	@Path("/{containerName}/")
+	@Path("/{containerName}")
 	ListenableFuture<Container> createContainer(
-			@PathParam("containerName") String containerName,
-			CreateContainerOptions... options);
-
-	/**
-	 * Create CDMI Container
-	 * 
-	 * @param parentContainerURI
-	 * @param containerName
-	 * @param options
-	 *            enables adding metadata
-	 * @see CreateContainerOptions
-	 */
-	@PUT
-	@Consumes({ ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
-	@Produces({ ObjectTypes.CONTAINER })
-	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
-	@Path("/{parentContainerURI}{containerName}/")
-	ListenableFuture<Container> createContainer(
-			@PathParam("parentContainerURI") String parentContainerURI,
 			@PathParam("containerName") String containerName,
 			CreateContainerOptions... options);
 
@@ -198,22 +159,8 @@ public interface ContainerAsyncApi {
 	@DELETE
 	@Consumes(MediaType.APPLICATION_JSON)
 	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
-	@Path("/{containerName}/")
+	@Path("/{containerName}")
 	ListenableFuture<Void> deleteContainer(
-			@PathParam("containerName") String containerName);
-
-	/**
-	 * Delete Container
-	 * 
-	 * @param parentContainerURI
-	 * @param containerName
-	 */
-	@DELETE
-	@Consumes(MediaType.APPLICATION_JSON)
-	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
-	@Path("/{parentContainerURI}{containerName}/")
-	ListenableFuture<Void> deleteContainer(
-			@PathParam("parentContainerURI") String parentContainerURI,
 			@PathParam("containerName") String containerName);
 
 }

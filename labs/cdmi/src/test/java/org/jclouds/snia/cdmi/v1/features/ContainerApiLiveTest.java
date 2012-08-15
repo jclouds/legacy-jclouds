@@ -32,8 +32,6 @@ import org.jclouds.snia.cdmi.v1.ObjectTypes;
 import org.jclouds.snia.cdmi.v1.domain.Container;
 import org.jclouds.snia.cdmi.v1.internal.BaseCDMIApiLiveTest;
 import org.jclouds.snia.cdmi.v1.options.CreateContainerOptions;
-import org.jclouds.snia.cdmi.v1.options.GetContainerOptions;
-import org.jclouds.snia.cdmi.v1.options.GetDataObjectOptions;
 import org.jclouds.snia.cdmi.v1.queryparams.ContainerQueryParams;
 import org.testng.annotations.Test;
 
@@ -47,7 +45,7 @@ public class ContainerApiLiveTest extends BaseCDMIApiLiveTest {
 
 	@Test
 	public void testCreateContainer() throws Exception {
-		String pContainerName = "MyContainer" + System.currentTimeMillis();
+		String pContainerName = "MyContainer" + System.currentTimeMillis() + "/";
 		Map<String, String> pContainerMetaDataIn = new HashMap<String, String>();
 		Iterator<String> keys;
 		pContainerMetaDataIn.put("containerkey1", "value1");
@@ -72,7 +70,7 @@ public class ContainerApiLiveTest extends BaseCDMIApiLiveTest {
 			assertEquals(container.getObjectType(), ObjectTypes.CONTAINER);
 			assertNotNull(container.getObjectID());
 			assertNotNull(container.getObjectName());
-			assertEquals(container.getObjectName(), pContainerName + "/");
+			assertEquals(container.getObjectName(), pContainerName);
 			assertEquals(container.getParentURI(), "/");
 			assertNotNull(container.getChildren());
 			assertEquals(container.getChildren().isEmpty(), true);
@@ -110,19 +108,20 @@ public class ContainerApiLiveTest extends BaseCDMIApiLiveTest {
 			container = api.getContainer("/");
 			System.out.println("root container: " + container);
 			assertEquals(
-					container.getChildren().contains(pContainerName + "/"),
+					container.getChildren().contains(pContainerName),
 					true);
 			System.out.println("adding containers to container");
 			String firstParentURI = api.getContainer(pContainerName).getObjectName();
 			for(int i=0;i<10;i++) {
-				container = api.createContainer(firstParentURI,"childcontainer"+i);
+//				container = api.createContainer(firstParentURI+"childcontainer"+i+"/");
+				container = api.createContainer(pContainerName+"childcontainer"+i+"/");
 				assertNotNull(container);
 				System.out.println(container);
-				assertEquals(container.getParentURI(),pContainerName+"/");
+				assertEquals(container.getParentURI(),pContainerName);
 				assertEquals(container.getObjectName(),"childcontainer"+i+"/");
-				container = api.createContainer(container.getParentURI()+container.getObjectName(),"grandchild");
-				assertEquals(container.getParentURI(),pContainerName+"/"+"childcontainer"+i+"/");
-				assertEquals(container.getObjectName(),"grandchild"+"/");				
+				container = api.createContainer(container.getParentURI()+container.getObjectName()+"grandchild/");
+				assertEquals(container.getParentURI(),pContainerName+"childcontainer"+i+"/");
+				assertEquals(container.getObjectName(),"grandchild/");				
 				System.out.println(container);				
 			}
 			container = api.getContainer(pContainerName);
@@ -137,7 +136,7 @@ public class ContainerApiLiveTest extends BaseCDMIApiLiveTest {
 			container = api.getContainer("/");
 			System.out.println("root container: " + container);
 			assertEquals(
-					container.getChildren().contains(pContainerName + "/"),
+					container.getChildren().contains(pContainerName),
 					false);
 		}
 
@@ -145,7 +144,7 @@ public class ContainerApiLiveTest extends BaseCDMIApiLiveTest {
 	
 	@Test
 	public void testGetContainer() throws Exception {
-		String pContainerName = "MyContainer" + System.currentTimeMillis();
+		String pContainerName = "MyContainer" + System.currentTimeMillis() + "/";
 		Map<String, String> pContainerMetaDataIn = new HashMap<String, String>();
 		Iterator<String> keys;
 		pContainerMetaDataIn.put("containerkey1", "value1");
@@ -169,7 +168,7 @@ public class ContainerApiLiveTest extends BaseCDMIApiLiveTest {
 			assertEquals(container.getObjectType(), ObjectTypes.CONTAINER);
 			assertNotNull(container.getObjectID());
 			assertNotNull(container.getObjectName());
-			assertEquals(container.getObjectName(), pContainerName + "/");
+			assertEquals(container.getObjectName(), pContainerName);
 			assertEquals(container.getParentURI(), "/");
 			assertNotNull(container.getChildren());
 			assertEquals(container.getChildren().isEmpty(), true);
@@ -206,10 +205,9 @@ public class ContainerApiLiveTest extends BaseCDMIApiLiveTest {
 			container = api.getContainer("/");
 			System.out.println("root container: " + container);
 			assertEquals(
-					container.getChildren().contains(pContainerName + "/"),
+					container.getChildren().contains(pContainerName),
 					true);
 			container = api.getContainer(pContainerName,ContainerQueryParams.Builder.field("parentURI"));
-			//container = api.getContainer(pContainerName,"parentURI");
 			assertNotNull(container);
 			assertEquals(container.getParentURI(),"/");
 			System.out.println(container);
@@ -217,7 +215,7 @@ public class ContainerApiLiveTest extends BaseCDMIApiLiveTest {
 			container = api.getContainer(pContainerName,ContainerQueryParams.Builder.field("parentURI").field("objectName"));
 			assertNotNull(container);
 			assertEquals(container.getParentURI(),"/");
-			assertEquals(container.getObjectName(),pContainerName+"/");			
+			assertEquals(container.getObjectName(),pContainerName);			
 
 			container = api.getContainer(pContainerName,ContainerQueryParams.Builder.metadata());
 			assertNotNull(container);
@@ -242,14 +240,14 @@ public class ContainerApiLiveTest extends BaseCDMIApiLiveTest {
 			System.out.println("adding containers to container");
 			String firstParentURI = api.getContainer(pContainerName).getObjectName();
 			for(int i=0;i<10;i++) {
-				container = api.createContainer(firstParentURI,"childcontainer"+i);
+				container = api.createContainer(firstParentURI+"childcontainer"+i+"/");
 				assertNotNull(container);
-				assertEquals(container.getParentURI(),pContainerName+"/");
+				assertEquals(container.getParentURI(),pContainerName);
 				assertEquals(container.getObjectName(),"childcontainer"+i+"/");
-				container = api.createContainer(container.getParentURI()+container.getObjectName(),"grandchild",pCreateContainerOptions);
-				assertEquals(container.getParentURI(),pContainerName+"/"+"childcontainer"+i+"/");
+				container = api.createContainer(container.getParentURI()+container.getObjectName()+"grandchild/",pCreateContainerOptions);
+				assertEquals(container.getParentURI(),pContainerName+"childcontainer"+i+"/");
 				assertEquals(container.getObjectName(),"grandchild"+"/");
-				container = api.getContainer(container.getParentURI(),"",ContainerQueryParams.Builder.children());
+				container = api.getContainer(container.getParentURI(),ContainerQueryParams.Builder.children());
 				assertEquals(container.getChildren().contains("grandchild"+"/"),true);
 			}
 			container = api.getContainer(pContainerName,ContainerQueryParams.Builder.children());
@@ -266,11 +264,11 @@ public class ContainerApiLiveTest extends BaseCDMIApiLiveTest {
 			assertNotNull(container.getChildren());
 			assertEquals(container.getChildren().size(), 10);
 			assertEquals(container.getParentURI(),"/");
-			assertEquals(container.getObjectName(),pContainerName+"/");	
+			assertEquals(container.getObjectName(),pContainerName);	
 			assertEquals(container.getParentURI(),"/");
 			assertEquals(container.getACLMetadata().size(),3);
 			for(String childName: container.getChildren()){
-				api.deleteContainer(container.getObjectName(), childName);				
+				api.deleteContainer(container.getObjectName()+ childName);				
 			}
 			assertEquals(api.getContainer(pContainerName,ContainerQueryParams.Builder.children()).getChildren().isEmpty(),true);
 			
@@ -281,7 +279,7 @@ public class ContainerApiLiveTest extends BaseCDMIApiLiveTest {
 			container = api.getContainer("/");
 			System.out.println("root container: " + container);
 			assertEquals(
-					container.getChildren().contains(pContainerName + "/"),
+					container.getChildren().contains(pContainerName),
 					false);
 		}
 

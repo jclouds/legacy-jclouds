@@ -20,8 +20,6 @@ package org.jclouds.snia.cdmi.v1.features;
 
 import java.util.concurrent.TimeUnit;
 
-import javax.ws.rs.PathParam;
-
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.snia.cdmi.v1.domain.Container;
 import org.jclouds.snia.cdmi.v1.options.CreateContainerOptions;
@@ -41,75 +39,69 @@ public interface ContainerApi {
 	 * get CDMI Container
 	 * 
 	 * @param containerName
+	 *            containerName must end with a forward slash, /.
+	 * @return Container
+	 *  <pre>
+	 *  Examples: 
+	 *  {@code
+	 *  container = getContainer("myContainer/");
+	 *  container = getContainer("parentContainer/childContainer/");
+	 *  }
+	 *  <pre>
 	 */
 	Container getContainer(String containerName);
 
 	/**
 	 * get CDMI Container
 	 * 
-	 * @param parentURI
-	 * @param containerName
-	 */
-	Container getContainer(String parentContainerURI, String containerName);
-
-	/**
-	 * get CDMI Container
-	 * 
 	 * @param containerName
 	 * @param queryParams
 	 *            enables getting only certain fields, metadata, children range
-	 * @see GetContainerOptions
+	 * @return Container
+	 * <pre>
+	 * Examples: 
+	 * {@code
+	 * container = getContainer("myContainer/",ContainerQueryParams.Builder.mimetype("text/plain").field("objectName"))
+	 * container = getContainer("myContainer/",ContainerQueryParams.Builder.metadata().field("objectName"))
+	 * }
+	 * </pre>
+	 * @see ContainerQueryParams 
 	 */
-	Container getContainer(String containerName, ContainerQueryParams queryParams);
-
-	/**
-	 * get CDMI Container
-	 * 
-	 * @param parentURI
-	 * @param containerName
-	 * @param queryParams
-	 *            enables getting only certain fields, metadata, children range
-	 * @see ContainerQueryParams
-	 */
-	Container getContainer(String parentContainerURI, String containerName,
+	Container getContainer(String containerName,
 			ContainerQueryParams queryParams);
 
 	/**
 	 * Create CDMI Container
 	 * 
 	 * @param containerName
+	 *            containerName must end with a forward slash, /.
+	 * @return Container
+	 *  <pre>
+	 *  Examples: 
+	 *  {@code
+	 *  container = createContainer("myContainer/");
+	 *  container = createContainer("parentContainer/childContainer/");
+	 *  }
+	 *  </pre>
 	 */
 	Container createContainer(String containerName);
 
 	/**
 	 * Create CDMI Container
 	 * 
-	 * @param parentContainerURI
-	 * @param containerName
-	 */
-	Container createContainer(String parentContainerURI, String containerName);
-
-	/**
-	 * Create CDMI Container
-	 * 
 	 * @param containerName
 	 * @param options
 	 *            enables adding metadata
+	 * @return Container
+	 *  <pre>
+	 *  Examples: 
+	 *  {@code
+	 *  container = createContainer("myContainer/",CreateContainerOptions.Builder..metadata(metaDataIn));
+	 *  }
+	 *  </pre>
 	 * @see CreateContainerOptions
 	 */
 	Container createContainer(String containerName,
-			CreateContainerOptions... options);
-
-	/**
-	 * Create CDMI Container
-	 * 
-	 * @param parentContainerURI
-	 * @param containerName
-	 * @param options
-	 *            enables adding metadata
-	 * @see CreateContainerOptions
-	 */
-	Container createContainer(String parentContainerURI, String containerName,
 			CreateContainerOptions... options);
 
 	/**
@@ -118,14 +110,5 @@ public interface ContainerApi {
 	 * @param containerName
 	 */
 	void deleteContainer(String containerName);
-
-	/**
-	 * Delete CDMI Container
-	 * 
-	 * @param parentContainerURI
-	 * @param containerName
-	 */
-	void deleteContainer(String parentContainerURI, String containerName);
-	
 
 }

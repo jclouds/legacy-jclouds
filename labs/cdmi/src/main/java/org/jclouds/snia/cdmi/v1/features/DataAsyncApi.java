@@ -25,14 +25,12 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.io.Payload;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.Headers;
-import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
@@ -41,9 +39,7 @@ import org.jclouds.snia.cdmi.v1.binders.BindQueryParmsToSuffix;
 import org.jclouds.snia.cdmi.v1.domain.DataObject;
 import org.jclouds.snia.cdmi.v1.filters.BasicAuthenticationAndTenantId;
 import org.jclouds.snia.cdmi.v1.filters.StripExtraAcceptHeader;
-import org.jclouds.snia.cdmi.v1.options.CreateDataObjectNonCDMIOptions;
 import org.jclouds.snia.cdmi.v1.options.CreateDataObjectOptions;
-import org.jclouds.snia.cdmi.v1.options.GetDataObjectOptions;
 import org.jclouds.snia.cdmi.v1.queryparams.DataObjectQueryParams;
 
 import com.google.common.util.concurrent.ListenableFuture;
@@ -66,7 +62,7 @@ public interface DataAsyncApi {
 	@GET
 	@Consumes({ ObjectTypes.DATAOBJECT, MediaType.APPLICATION_JSON })
 	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
-	@Path("/{containerName}/{dataObjectName}")
+	@Path("/{containerName}{dataObjectName}")
 	ListenableFuture<DataObject> getDataObject(
 			@PathParam("containerName") String containerName,
 			@PathParam("dataObjectName") String dataObjectName);
@@ -78,12 +74,12 @@ public interface DataAsyncApi {
 	@GET
 	@Consumes({ ObjectTypes.DATAOBJECT, MediaType.APPLICATION_JSON })
 	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
-	@Path("/{containerName}/{dataObjectName}")
+	@Path("/{containerName}{dataObjectName}")
 	ListenableFuture<DataObject> getDataObject(
 			@PathParam("containerName") String containerName,
 			@PathParam("dataObjectName") String dataObjectName,
 			@BinderParam(BindQueryParmsToSuffix.class) DataObjectQueryParams queryParams);
-	
+
 	/**
 	 * @see DataApi#createDataObject
 	 */
@@ -92,7 +88,7 @@ public interface DataAsyncApi {
 	@Consumes({ ObjectTypes.DATAOBJECT, MediaType.APPLICATION_JSON })
 	@Produces({ ObjectTypes.DATAOBJECT })
 	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
-	@Path("/{containerName}/{dataObjectName}")
+	@Path("/{containerName}{dataObjectName}")
 	ListenableFuture<DataObject> createDataObject(
 			@PathParam("containerName") String containerName,
 			@PathParam("dataObjectName") String dataObjectName,
@@ -105,24 +101,10 @@ public interface DataAsyncApi {
 	@Consumes({ "text/plain" })
 	@Produces({ "text/plain;charset=utf-8" })
 	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
-	@Path("/{containerName}/{dataObjectName}")
+	@Path("/{containerName}{dataObjectName}")
 	ListenableFuture<Void> createDataObjectNonCDMI(
 			@PathParam("containerName") String containerName,
-			@PathParam("dataObjectName") String dataObjectName,
-			CreateDataObjectNonCDMIOptions... options);
-	/**
-	 * @see DataApi#createDataObjectNonCDMI
-	 */
-	@PUT
-	@Consumes({ "text/plain" })
-	@Produces({ "text/plain;charset=utf-8" })
-	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
-	@Path("/{containerName}/{dataObjectName}")
-	ListenableFuture<Void> createDataObjectNonCDMI(
-			@PathParam("containerName") String containerName,
-			@PathParam("dataObjectName") String dataObjectName,
-			Payload payload);
-	
+			@PathParam("dataObjectName") String dataObjectName, Payload payload);
 
 	/**
 	 * @see DataApi#deleteDataObject()
@@ -133,7 +115,7 @@ public interface DataAsyncApi {
 	// note: MediaType.APPLICATION_JSON work also, however without consumes
 	// jclouds throws null exception
 	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
-	@Path("/{containerName}/{dataObjectName}")
+	@Path("/{containerName}{dataObjectName}")
 	ListenableFuture<Void> deleteDataObject(
 			@PathParam("containerName") String containerName,
 			@PathParam("dataObjectName") String dataObjectName);

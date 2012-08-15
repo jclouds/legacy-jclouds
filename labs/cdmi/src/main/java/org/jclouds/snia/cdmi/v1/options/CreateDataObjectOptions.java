@@ -43,7 +43,7 @@ public class CreateDataObjectOptions extends CreateCDMIObjectOptions {
 	 * Create CDMI data object with mimetype
 	 * 
 	 * @param mimetype
-	 * @return
+	 * @return CreateDataObjectOptions
 	 */
 	public CreateDataObjectOptions mimetype(String mimetype) {
 		jsonObjectBody.addProperty("mimetype", mimetype);
@@ -54,7 +54,7 @@ public class CreateDataObjectOptions extends CreateCDMIObjectOptions {
 	/**
 	 * Create CDMI data object with value equal to empty string
 	 * 
-	 * @return
+	 * @return CreateDataObjectOptions
 	 */
 	public CreateDataObjectOptions value() {
 		this.payload = jsonObjectBody.toString();
@@ -66,7 +66,7 @@ public class CreateDataObjectOptions extends CreateCDMIObjectOptions {
 	 * 
 	 * @param value
 	 *            String value
-	 * @return
+	 * @return CreateDataObjectOptions
 	 */
 	public CreateDataObjectOptions value(String value) {
 		jsonObjectBody.addProperty("value", (value == null) ? new String()
@@ -80,7 +80,7 @@ public class CreateDataObjectOptions extends CreateCDMIObjectOptions {
 	 * 
 	 * @param value
 	 *            byte array value byte array is converted to a String value
-	 * @return
+	 * @return CreateDataObjectOptions
 	 */
 	public CreateDataObjectOptions value(byte[] value) throws IOException {
 		jsonObjectBody.addProperty("value",
@@ -95,7 +95,7 @@ public class CreateDataObjectOptions extends CreateCDMIObjectOptions {
 	 * 
 	 * @param value
 	 *            File File is converted to a String value with charset UTF_8
-	 * @return
+	 * @return CreateDataObjectOptions
 	 */
 	public CreateDataObjectOptions value(File value) throws IOException {
 		jsonObjectBody.addProperty("value", (value == null) ? new String()
@@ -111,7 +111,7 @@ public class CreateDataObjectOptions extends CreateCDMIObjectOptions {
 	 *            File
 	 * @param charset
 	 *            character set of file File is converted to a String value
-	 * @return
+	 * @return CreateDataObjectOptions
 	 */
 	public CreateDataObjectOptions value(File value, Charset charset)
 			throws IOException {
@@ -127,7 +127,7 @@ public class CreateDataObjectOptions extends CreateCDMIObjectOptions {
 	 * @param value
 	 *            InputSteam InputSteam is converted to a String value with
 	 *            charset UTF_8
-	 * @return
+	 * @return CreateDataObjectOptions
 	 */
 	public CreateDataObjectOptions value(InputStream value) throws IOException {
 		jsonObjectBody
@@ -148,7 +148,7 @@ public class CreateDataObjectOptions extends CreateCDMIObjectOptions {
 	 * @param charset
 	 *            character set of input stream InputSteam is converted to a
 	 *            String value with charset UTF_8
-	 * @return
+	 * @return CreateDataObjectOptions
 	 */
 	public CreateDataObjectOptions value(InputStream value, Charset charset)
 			throws IOException {

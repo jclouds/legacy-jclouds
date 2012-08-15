@@ -62,7 +62,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 	//@Test
 	public void testCreateDataObjects() throws Exception {
 
-		String containerName = "MyContainer" + System.currentTimeMillis();
+		String containerName = "MyContainer" + System.currentTimeMillis() + "/";
 		String dataObjectNameIn = "dataobject08121.txt";
 		File tmpFileIn = new File("temp.txt");
 		String value;
@@ -129,7 +129,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 							"cdmi_size")), value.length());
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
-			assertEquals(dataObject.getParentURI(), "/" + containerName + "/");
+			assertEquals(dataObject.getParentURI(), "/" + containerName );
 			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), true);
 			
@@ -166,7 +166,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 							"cdmi_size")), value.length());
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
-			assertEquals(dataObject.getParentURI(), "/" + containerName + "/");
+			assertEquals(dataObject.getParentURI(), "/" + containerName);
 			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), true);
 			dataApi.deleteDataObject(containerName, dataObjectNameIn);
@@ -197,7 +197,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 							"cdmi_size")), value.length());
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
-			assertEquals(dataObject.getParentURI(), "/" + containerName + "/");
+			assertEquals(dataObject.getParentURI(), "/" + containerName);
 			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), true);
 			dataApi.deleteDataObject(containerName, dataObjectNameIn);
@@ -226,7 +226,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 							"cdmi_size")), value.length());
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
-			assertEquals(dataObject.getParentURI(), "/" + containerName + "/");
+			assertEquals(dataObject.getParentURI(), "/" + containerName);
 			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), true);
 			dataApi.deleteDataObject(containerName, dataObjectNameIn);
@@ -254,7 +254,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 							"cdmi_size")), value.length());
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
-			assertEquals(dataObject.getParentURI(), "/" + containerName + "/");
+			assertEquals(dataObject.getParentURI(), "/" + containerName);
 			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), true);
 			dataApi.deleteDataObject(containerName, dataObjectNameIn);
@@ -301,7 +301,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 							"cdmi_size")), value.length());
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
-			assertEquals(dataObject.getParentURI(), "/" + containerName + "/");
+			assertEquals(dataObject.getParentURI(), "/" + containerName);
 			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), true);
 			dataApi.deleteDataObject(containerName, dataObjectNameIn);
@@ -332,7 +332,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 							"cdmi_size")), value.length());
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
-			assertEquals(dataObject.getParentURI(), "/" + containerName + "/");
+			assertEquals(dataObject.getParentURI(), "/" + containerName);
 			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), true);
 			dataApi.deleteDataObject(containerName, dataObjectNameIn);
@@ -362,7 +362,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 					Files.toString(inFile, Charsets.UTF_8).length());
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
-			assertEquals(dataObject.getParentURI(), "/" + containerName + "/");
+			assertEquals(dataObject.getParentURI(), "/" + containerName);
 			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), true);
 			dataApi.deleteDataObject(containerName, dataObjectNameIn);
@@ -393,7 +393,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 							"cdmi_size")), value.length());
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
-			assertEquals(dataObject.getParentURI(), "/" + containerName + "/");
+			assertEquals(dataObject.getParentURI(), "/" + containerName);
 			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), true);
 			dataApi.deleteDataObject(containerName, dataObjectNameIn);
@@ -423,7 +423,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 							"cdmi_size")), value.length());
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
-			assertEquals(dataObject.getParentURI(), "/" + containerName + "/");
+			assertEquals(dataObject.getParentURI(), "/" + containerName);
 			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), true);
 			dataApi.deleteDataObject(containerName, dataObjectNameIn);
@@ -453,7 +453,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 							"cdmi_size")), value.length());
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
-			assertEquals(dataObject.getParentURI(), "/" + containerName + "/");
+			assertEquals(dataObject.getParentURI(), "/" + containerName);
 			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), true);
 			dataApi.deleteDataObject(containerName, dataObjectNameIn);
@@ -486,7 +486,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 					Files.toString(tmpFileIn, Charsets.UTF_8).length());
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
-			assertEquals(dataObject.getParentURI(), "/" + containerName + "/");
+			assertEquals(dataObject.getParentURI(), "/" + containerName);
 			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), true);
 			dataApi.deleteDataObject(containerName, dataObjectNameIn);
@@ -519,7 +519,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 					Files.toString(tmpFileIn, Charsets.UTF_8).length());
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
-			assertEquals(dataObject.getParentURI(), "/" + containerName + "/");
+			assertEquals(dataObject.getParentURI(), "/" + containerName);
 			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), true);
 			dataApi.deleteDataObject(containerName, dataObjectNameIn);
@@ -552,7 +552,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 					Files.toString(tmpFileIn, Charsets.ISO_8859_1).length());
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
-			assertEquals(dataObject.getParentURI(), "/" + containerName + "/");
+			assertEquals(dataObject.getParentURI(), "/" + containerName);
 			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), true);
 			dataApi.deleteDataObject(containerName, dataObjectNameIn);
@@ -580,7 +580,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 							"cdmi_size")), value.length());
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
-			assertEquals(dataObject.getParentURI(), "/" + containerName + "/");
+			assertEquals(dataObject.getParentURI(), "/" + containerName);
 			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), true);
 			dataApi.deleteDataObject(containerName, dataObjectNameIn);
@@ -597,7 +597,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 	@Test
 	public void testGetDataObjects() throws Exception {
 
-		String containerName = "MyContainer" + System.currentTimeMillis();
+		String containerName = "MyContainer" + System.currentTimeMillis() + "/";
 		String dataObjectNameIn = "dataobject08121.txt";
 		File tmpFileIn = new File("temp.txt");
 		String value;
@@ -664,7 +664,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 							"cdmi_size")), value.length());
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
-			assertEquals(dataObject.getParentURI(), "/" + containerName + "/");
+			assertEquals(dataObject.getParentURI(), "/" + containerName);
 			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), true);
 			
@@ -749,7 +749,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 	//@Test
 	public void testCreateDataObjectsNonCDMI() throws Exception {
 
-		String containerName = "MyContainer" + System.currentTimeMillis();
+		String containerName = "MyContainer" + System.currentTimeMillis() + "/";
 		String dataObjectNameIn = "dataobject08121.txt";
 		File tmpFileIn = new File("temp.txt");
 		String value;
@@ -810,7 +810,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 							"cdmi_size")), value.length());
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
-			assertEquals(dataObject.getParentURI(), "/" + containerName + "/");
+			assertEquals(dataObject.getParentURI(), "/" + containerName);
 			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), true);
 			dataApi.deleteDataObject(containerName, dataObjectNameIn);
@@ -837,7 +837,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 							"cdmi_size")), value.length());
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
-			assertEquals(dataObject.getParentURI(), "/" + containerName + "/");
+			assertEquals(dataObject.getParentURI(), "/" + containerName);
 			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), true);
 			dataApi.deleteDataObject(containerName, dataObjectNameIn);
@@ -868,7 +868,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 							"cdmi_size")), value.length());
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
-			assertEquals(dataObject.getParentURI(), "/" + containerName + "/");
+			assertEquals(dataObject.getParentURI(), "/" + containerName);
 			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), true);
 			dataApi.deleteDataObject(containerName, dataObjectNameIn);
@@ -899,7 +899,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 							"cdmi_size")), inFile.length());
 			assertEquals(dataObject.getObjectName(), inFile.getName());
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
-			assertEquals(dataObject.getParentURI(), "/" + containerName + "/");
+			assertEquals(dataObject.getParentURI(), "/" + containerName);
 			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(inFile.getName()), true);
 			dataApi.deleteDataObject(containerName, inFile.getName());
@@ -930,7 +930,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 			//				"cdmi_size")), inFile.length());
 			//assertEquals(dataObject.getObjectName(), inFile.getName());
 			//assertEquals(dataObject.getObjectType(), "application/cdmi-object");
-			//assertEquals(dataObject.getParentURI(), "/" + containerName + "/");
+			//assertEquals(dataObject.getParentURI(), "/" + containerName);
 			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(inFile.getName()), true);
 			dataApi.deleteDataObject(containerName, inFile.getName());
@@ -966,7 +966,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 							"cdmi_size")), value.length());
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
-			assertEquals(dataObject.getParentURI(), "/" + containerName + "/");
+			assertEquals(dataObject.getParentURI(), "/" + containerName);
 			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), true);
 			dataApi.deleteDataObject(containerName, dataObjectNameIn);
@@ -977,6 +977,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 			
 
 			// exercise create data object with none cdmi put
+			/*
 			value = "Hello CDMI World1";
 			CreateDataObjectNonCDMIOptions pCreateDataObjectNoneCDMIOptions = CreateDataObjectNonCDMIOptions.Builder
 					.withStringPayload(value);
@@ -996,12 +997,13 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 							"cdmi_size")), value.length());
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
-			assertEquals(dataObject.getParentURI(), "/" + containerName + "/");
+			assertEquals(dataObject.getParentURI(), "/" + containerName);
 			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), true);
 			dataApi.deleteDataObject(containerName, dataObjectNameIn);
 			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(dataObjectNameIn), false);
+					*/
 
 			
 	

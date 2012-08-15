@@ -56,6 +56,7 @@ public class DataObjectQueryParams extends CDMIObjectQueryParams {
 	 * @return this
 	 */
 	public DataObjectQueryParams value() {
+		queryParams = queryParams + "value;";
 		return this;
 	}
 	
