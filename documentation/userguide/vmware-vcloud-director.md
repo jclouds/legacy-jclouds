@@ -9,15 +9,6 @@ title: Using jclouds to manage VMWare vCloud Director 1.5
 jclouds currently supports most of the VMware vCloud Director API.
 We also provide tools that make developing to it easier.
 
-## Service Providers
-
-Here are the providers of the VMware vCloud API and the level of support in jclouds:
-
-| *Company* | *Offering* | *Provider in jclouds* | *API Version in jclouds* |
-|-----------|------------|-----------------------|--------------------------|
-| <img src="http://www.vmware.com/files/images/vam/img-bluelock.gif"> | [vCloud Director Enterprise](http://www.bluelock.com/bluelock-cloud-hosting/virtual-cloud-enterprise/)| bluelock-vcdirector | 1.5 | 
-| <a href="http://www.greenhousedata.com"><img src="http://www.greenhousedata.com/images/logo.png"></a> | [Green House Data](http://www.greenhousedata.com/element-cloud-hosting/vcloud-services/)| mycloud.greenhousedata.com | 1.5 |
-
 ## Obtaining a context to vCloud Director
 TBD
 
