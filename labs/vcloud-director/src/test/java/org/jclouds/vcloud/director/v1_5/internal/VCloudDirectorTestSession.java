@@ -6,13 +6,13 @@ import java.io.Closeable;
 import java.util.Properties;
 
 import org.jclouds.ContextBuilder;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorContext;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
-import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminAsyncApi;
 import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminApi;
+import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminAsyncApi;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Role.DefaultRoles;
@@ -77,7 +77,7 @@ public class VCloudDirectorTestSession implements Closeable {
       ContextBuilder builder = ContextBuilder.newBuilder(provider)
             .credentials(identity, credential)
             .endpoint(endpoint)
-            .modules(ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()))
+            .modules(ImmutableSet.<Module> of(new SLF4JLoggingModule(), new SshjSshClientModule()))
             .overrides(overrides);
       userContext = VCloudDirectorContext.class.cast(builder.build());
 
