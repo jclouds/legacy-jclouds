@@ -71,17 +71,17 @@ public interface KeystoneAsyncApi {
     * @see KeystoneApi#getTokenApi()
     */
    @Delegate
-   Optional<TokenAsyncApi> getTokenApi();
+   Optional<? extends TokenAsyncApi> getTokenApi();
 
    /**
     * @see KeystoneApi#getUserApi()
     */
    @Delegate
-   Optional<UserAsyncApi> getUserApi();
+   Optional<? extends UserAsyncApi> getUserApi();
 
    /**
     * @see KeystoneApi#getTenantApi()
     */
    @Delegate
-   Optional<TenantAsyncApi> getTenantApi();
+   Optional<? extends TenantAsyncApi> getTenantApi();
 }
