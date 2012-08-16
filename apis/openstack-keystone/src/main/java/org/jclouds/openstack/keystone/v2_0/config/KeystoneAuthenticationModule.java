@@ -186,11 +186,11 @@ public class KeystoneAuthenticationModule extends AbstractModule {
    }
 
    // TODO: what is the timeout of the session token? modify default accordingly
-   // PROPERTY_SESSION_INTERVAL is default to 60 seconds, but we have this here at 23 hours for now.
+   // PROPERTY_SESSION_INTERVAL is default to 60 seconds, but we have this here at 11 hours for now.
    @Provides
    @Singleton
    public LoadingCache<Credentials, Access> provideAccessCache(Function<Credentials, Access> getAccess) {
-      return CacheBuilder.newBuilder().expireAfterWrite(23, TimeUnit.HOURS).build(CacheLoader.from(getAccess));
+      return CacheBuilder.newBuilder().expireAfterWrite(11, TimeUnit.HOURS).build(CacheLoader.from(getAccess));
    }
 
    // Temporary conversion of a cache to a supplier until there is a single-element cache
