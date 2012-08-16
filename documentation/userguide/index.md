@@ -9,6 +9,7 @@ title: User Guides Index
 * [Using Compute API and Tools](/documentation/userguide/compute)
 * [Google App Engine](/documentation/userguide/google-app-engine)
 * [VMWare vCloud](/documentation/userguide/vmware-vcloud)
+* [VMWare vCloud Director 1.5](/documentation/userguide/vmware-vcloud-director)
 * [Terremerk](/documentation/userguide/terremark)
 * [File System Provider](/documentation/userguide/filesystem-provider)
 * [Init Builder](/documentation/userguide/init-builder)
