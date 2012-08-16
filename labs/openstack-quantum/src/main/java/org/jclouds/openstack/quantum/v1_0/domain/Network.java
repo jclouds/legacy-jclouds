@@ -85,7 +85,7 @@ public class Network extends Reference {
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(name);
+      return Objects.hashCode(super.hashCode(), name);
    }
 
    @Override
