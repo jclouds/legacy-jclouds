@@ -30,6 +30,7 @@ We support many cloud providers including _Amazon_, _GoGrid_, _Azure_, _vCloud_,
 * [Using Compute API and Tools](/documentation/userguide/compute)
 * [Google App Engine](/documentation/userguide/google-app-engine)
 * [VMWare vCloud](/documentation/userguide/vmware-vcloud)
+* [VMWare vCloud Director 1.5](/documentation/userguide/vmware-vcloud-director)
 * [Terremark](/documentation/userguide/terremark)
 * [File System Provider](/documentation/userguide/init-builder)
 * [Init Builder](/documentation/userguide/filesystem-provider)

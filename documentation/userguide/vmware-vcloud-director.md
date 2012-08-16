@@ -2,7 +2,7 @@
 layout: jclouds
 title: Using jclouds to manage VMWare vCloud Director 1.5
 ---
-#Using jclouds to manage VMWare vCloud Direcotr 1.5
+#Using jclouds to manage VMWare vCloud Director 1.5
 
 ## Introduction
 
