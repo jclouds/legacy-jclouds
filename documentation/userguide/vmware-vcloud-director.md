@@ -12,7 +12,7 @@ We also provide tools that make developing to it easier.
 ## Obtaining a context to vCloud Director
 TBD
 
-* Getting a context to any portable version 1.0 vCloud:
+* Getting a context to any portable version 1.5 vCloud:
 TBD
 
 ## Access all the available clients inside the 
@@ -44,7 +44,6 @@ VApp composedVApp = vdcApi.composeVApp(vdcURI, ComposeVAppParams.builder()
 where instantiationParams() are in charge to create a 'vAppNetwork' attached to the orgNetwork 'networkURI':
 
 {% highlight java %}
-   /** Build a {@link NetworkConfigSection} object. */
    private NetworkConfigSection networkConfigSection() {
       NetworkConfigSection networkConfigSection = NetworkConfigSection.builder()
             .info("Configuration parameters for logical networks")
@@ -59,7 +58,6 @@ where instantiationParams() are in charge to create a 'vAppNetwork' attached to 
       return networkConfigSection;
    }
 
-   /** Build a {@link NetworkConfiguration} object. */
    private NetworkConfiguration networkConfiguration() {
       Vdc vdc = context.getApi().getVdcApi().getVdc(vdcURI);
       Set<Reference> networks = vdc.getAvailableNetworks();
