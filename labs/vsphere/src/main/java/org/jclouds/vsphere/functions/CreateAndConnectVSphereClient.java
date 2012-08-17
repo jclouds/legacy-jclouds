@@ -27,7 +27,6 @@ import java.net.URI;
 import java.net.URL;
 import java.rmi.RemoteException;
 
-import javax.annotation.Nullable;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -36,6 +35,7 @@ import javax.inject.Singleton;
 import org.jclouds.compute.callables.RunScriptOnNode.Factory;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.Provider;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.annotations.Credential;

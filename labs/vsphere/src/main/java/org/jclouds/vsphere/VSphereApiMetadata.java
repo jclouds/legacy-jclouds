@@ -19,6 +19,8 @@ import org.jclouds.vsphere.config.VSphereComputeServiceContextModule;
 public class VSphereApiMetadata extends BaseApiMetadata {
 
    private static final long serialVersionUID = 7050419752716105398L;
+   public static final String VSPHERE_VERSION = "5";
+
 
    @Override
    public Builder toBuilder() {
@@ -47,13 +49,12 @@ public class VSphereApiMetadata extends BaseApiMetadata {
 
       protected Builder(){
          id("vsphere")
+         .version(VSPHERE_VERSION)
          .name("vSphere API")
          .identityName("User")
-         .defaultIdentity("root")
          .credentialName("password")
-         .defaultCredential("vmware")
-         .defaultEndpoint("https://192.168.221.130/sdk")
-         .documentation(URI.create("http://www.jclouds.org/documentation/userguide/compute"))
+         .defaultEndpoint("https://50.23.145.66/sdk")
+         .documentation(URI.create("http://pubs.vmware.com/vsphere-50/index.jsp"))
          .defaultProperties(VSphereApiMetadata.defaultProperties())
          .view(ComputeServiceContext.class)
          .defaultModule(VSphereComputeServiceContextModule.class);

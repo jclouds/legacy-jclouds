@@ -27,8 +27,8 @@
 		<!-- when instances are hung, open a ticket and add here -->
 		<jclouds.compute.blacklist-nodes>trmkrun-ccc,test.trmk-924</jclouds.compute.blacklist-nodes>
 		<test.vsphere.identity>FIXME</test.vsphere.identity>
-		<test.vsphere.endpoint>https://vsphere.com</test.vsphere.endpoint>
-		<test.vsphere.api-version>1.0</test.vsphere.api-version>
+		<test.vsphere.endpoint>https://vsphere/sdk</test.vsphere.endpoint>
+		<test.vsphere.api-version>5.0</test.vsphere.api-version>
 		<test.vsphere.build-version></test.vsphere.build-version>
 		<test.vsphere.identity>FIXME</test.vsphere.identity>
 	</properties>

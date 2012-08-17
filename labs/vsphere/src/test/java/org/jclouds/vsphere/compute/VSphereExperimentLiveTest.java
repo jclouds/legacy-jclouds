@@ -35,7 +35,6 @@ import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
-import org.jclouds.scriptbuilder.statements.login.AdminAccess;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.vsphere.BaseVSphereClientLiveTest;
@@ -71,7 +70,7 @@ public class VSphereExperimentLiveTest extends BaseVSphereClientLiveTest {
       int numNodes = 3;
       final String clusterName = "test-launch-cluster";
       Set<? extends NodeMetadata> nodes = context.getComputeService().createNodesInGroup(clusterName, numNodes,
-               TemplateOptions.Builder.overrideLoginUser("toor").overrideLoginPassword("password").runScript(AdminAccess.standard()));
+               TemplateOptions.Builder.overrideLoginUser("toor").overrideLoginPassword("password"));
       assertEquals(numNodes, nodes.size(), "wrong number of nodes");
       for (NodeMetadata node : nodes) {
          assertTrue(node.getGroup().equals("test-launch-cluster"));
