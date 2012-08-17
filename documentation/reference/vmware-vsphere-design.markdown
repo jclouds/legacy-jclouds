@@ -21,8 +21,75 @@ Obviously vSphere has a number of missing features compared to any other compute
 
 Let's analyse them:
 
-  * *set of predefined images*: user can bootstrap a vm starting from a number of images available in any cloud provider (i.e. AMIs in EC2 context). This is an assumption that we can't do with vSphere, because these kind of images (vmware templates) could not be there.
-  * *VMware ESXi doesn't support clone API*: vCenter Server does, so the jclouds-vsphere should check that the endpoint provided by the user supports this required API, when the context is created.
+  * set of predefined images*: user can bootstrap a vm starting from a number of images available in any cloud provider (i.e. AMIs in EC2 context). This is an assumption that we can't do with vSphere, because these kind of images (vmware templates) could not be there.
+  * VMware ESXi doesn't support clone API, vCenter Server does, so the jclouds-vsphere should check that the endpoint provided by the user supports this required API, when the context is created.
+
+# Testing environment
+
+## Host configuration
+
+Thankfully, SoftLayer ended up donating equipment and licenses:
+http://groups.google.com/group/jclouds-dev/browse_thread/thread/3e23bf8b10f2be97
+
+To run jclouds-vsphere live tests against SoftLayer environment, we needed to:
+* create the ESXi host via curl, using the SoftLayer api
+
+$ curl -v -d @order.json "https://username:pwd@api.softlayer.com/rest/v3/SoftLayer_Product_Order/placeOrder.json"
+
+where `order.json` is something like:
+
+{
+    "parameters": [{
+        "complexType": "SoftLayer_Container_Product_Order_Hardware_Server",
+        "packageId": 13,
+        "location": 18171,
+        "quantity": 1,
+        "hardware": [
+            {
+                "hostname": "vmware",
+                "domain": "example.com",
+                "primaryNetworkComponent": {
+                    "networkVlan": {"id": 1384}
+                }
+            }
+        ],
+        "prices": [
+            {"id": 723},
+            {"id": 14048},
+            {"id": 883},
+            {"id": 1267},
+            {"id": 126},
+            {"id": 272},
+            {"id": 55},
+            {"id": 57},
+            {"id": 58},
+            {"id": 876},
+            {"id": 21},
+            {"id": 51},
+            {"id": 420},
+            {"id": 418},
+            {"id": 906}
+        ]
+    }]
+}
+
+This API call created a 'vmware.example.com' server at 50.23.154.28 (public IP) and 10.29.0.69 (private IP) with ESXi 4.1.0u1 installed with `root` and `vmadmin` user.
+
+At SoftLayer, VMware hosts are setup to only be accessible from the private network by default, so a VPN connection is needed to reach vmware.example.com server the 10.29.0.69.
+https://manage.softlayer.com/PrivateNetwork/vpn
+https://manage.softlayer.com/Support/sslVpnTutorial
+
+Later we manually configured the second NIC of `vmware.example.com` with the public IP address to simplify to avoid VPN. So now the server is publicly available at 50.23.154.28.
+
+In order to test vSphere 5 API, we created a couple of guests:
+* vCenter Server 5 appliance at 50.23.145.66 (VM Network 2 on ESXi 4)
+* dhcp3-server at 50.23.154.68
+
+This DHCP server is responsible for assigning public IP addresses (taken from  50.23.154.24/29) to the new VMs created by jclouds-vsphere.
+
+## Guest configuration
+An ubuntu 12.04 server LTS i386 is available as vmware template. This will be used as default jclouds template but the jclouds-vsphere.
+NB: this template contains an annotation NOTE: ubuntu-12.04 used by jclouds to discover the OS and its version.
 
 ## Outstanding design issues
 
