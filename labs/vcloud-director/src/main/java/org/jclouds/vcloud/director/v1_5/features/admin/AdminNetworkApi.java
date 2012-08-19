@@ -66,13 +66,13 @@ public interface AdminNetworkApi extends NetworkApi {
     * @param networkUrn
     *           the reference for the network
     * @param network
-    *           the updated network
+    *           the edited network
     * @return a task. This operation is asynchronous and the user should monitor the returned task
     *         status in order to check when it is completed.
     */
-   Task update(String networkUrn, OrgNetwork network);
+   Task edit(String networkUrn, OrgNetwork network);
 
-   Task update(URI networkAdminHref, OrgNetwork network);
+   Task edit(URI networkAdminHref, OrgNetwork network);
 
    /**
     * Reset(undeploy & redeploy) networking services on a logical network. The reset operation can

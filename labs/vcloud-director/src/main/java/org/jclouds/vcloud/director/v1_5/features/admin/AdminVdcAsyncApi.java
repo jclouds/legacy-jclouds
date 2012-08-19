@@ -62,21 +62,21 @@ public interface AdminVdcAsyncApi extends VdcAsyncApi {
    ListenableFuture<AdminVdc> get(@EndpointParam(parser = VdcURNToAdminHref.class) String vdcUrn);
 
    /**
-    * @see AdminVdcApi#update(String, AdminVdc)
+    * @see AdminVdcApi#edit(String, AdminVdc)
     */
    @PUT
    @Consumes
    @Produces(VCloudDirectorMediaType.ADMIN_VDC)
    @JAXBResponseParser
-   ListenableFuture<Task> update(@EndpointParam(parser = VdcURNToAdminHref.class) String vdcUrn, AdminVdc vdc);
+   ListenableFuture<Task> edit(@EndpointParam(parser = VdcURNToAdminHref.class) String vdcUrn, AdminVdc vdc);
 
    /**
-    * @see AdminVdcApi#delete(String)
+    * @see AdminVdcApi#remove(String)
     */
    @DELETE
    @Consumes
    @JAXBResponseParser
-   ListenableFuture<Task> delete(@EndpointParam(parser = VdcURNToAdminHref.class) String vdcUrn);
+   ListenableFuture<Task> remove(@EndpointParam(parser = VdcURNToAdminHref.class) String vdcUrn);
 
    /**
     * @see AdminVdcApi#enable(String)
@@ -107,21 +107,21 @@ public interface AdminVdcAsyncApi extends VdcAsyncApi {
    ListenableFuture<AdminVdc> get(@EndpointParam URI vdcHref);
 
    /**
-    * @see AdminVdcApi#update(URI, AdminVdc)
+    * @see AdminVdcApi#edit(URI, AdminVdc)
     */
    @PUT
    @Consumes
    @Produces(VCloudDirectorMediaType.ADMIN_VDC)
    @JAXBResponseParser
-   ListenableFuture<Task> update(@EndpointParam URI vdcHref, AdminVdc vdc);
+   ListenableFuture<Task> edit(@EndpointParam URI vdcHref, AdminVdc vdc);
 
    /**
-    * @see AdminVdcApi#delete(URI)
+    * @see AdminVdcApi#remove(URI)
     */
    @DELETE
    @Consumes
    @JAXBResponseParser
-   ListenableFuture<Task> delete(@EndpointParam URI vdcHref);
+   ListenableFuture<Task> remove(@EndpointParam URI vdcHref);
 
    /**
     * @see AdminVdcApi#enable(URI)

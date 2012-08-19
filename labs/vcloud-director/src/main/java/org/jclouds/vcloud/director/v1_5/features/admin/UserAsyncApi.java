@@ -51,25 +51,25 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface UserAsyncApi {
 
    /**
-    * @see UserApi#createUserInOrg(User, String)
+    * @see UserApi#addUserToOrg(User, String)
     */
    @POST
    @Path("/users")
    @Consumes(VCloudDirectorMediaType.USER)
    @Produces(VCloudDirectorMediaType.USER)
    @JAXBResponseParser
-   ListenableFuture<User> createUserInOrg(@BinderParam(BindToXMLPayload.class) User user,
+   ListenableFuture<User> addUserToOrg(@BinderParam(BindToXMLPayload.class) User user,
             @EndpointParam(parser = OrgURNToAdminHref.class) String orgUrn);
 
    /**
-    * @see UserApi#createUserInOrg(User, URI)
+    * @see UserApi#addUserToOrg(User, URI)
     */
    @POST
    @Path("/users")
    @Consumes(VCloudDirectorMediaType.USER)
    @Produces(VCloudDirectorMediaType.USER)
    @JAXBResponseParser
-   ListenableFuture<User> createUserInOrg(@BinderParam(BindToXMLPayload.class) User user,
+   ListenableFuture<User> addUserToOrg(@BinderParam(BindToXMLPayload.class) User user,
             @EndpointParam URI orgAdminHref);
 
    /**
@@ -91,39 +91,39 @@ public interface UserAsyncApi {
    ListenableFuture<User> get(@EndpointParam URI userHref);
 
    /**
-    * @see UserApi#update(String, User)
+    * @see UserApi#edit(String, User)
     */
    @PUT
    @Consumes(VCloudDirectorMediaType.USER)
    @Produces(VCloudDirectorMediaType.USER)
    @JAXBResponseParser
-   ListenableFuture<User> update(@EndpointParam(parser = UserURNToHref.class) String userUrn,
+   ListenableFuture<User> edit(@EndpointParam(parser = UserURNToHref.class) String userUrn,
             @BinderParam(BindToXMLPayload.class) User user);
 
    /**
-    * @see UserApi#update(URI, User)
+    * @see UserApi#edit(URI, User)
     */
    @PUT
    @Consumes(VCloudDirectorMediaType.USER)
    @Produces(VCloudDirectorMediaType.USER)
    @JAXBResponseParser
-   ListenableFuture<User> update(@EndpointParam URI userHref, @BinderParam(BindToXMLPayload.class) User user);
+   ListenableFuture<User> edit(@EndpointParam URI userHref, @BinderParam(BindToXMLPayload.class) User user);
 
    /**
-    * @see UserApi#delete(String)
+    * @see UserApi#remove(String)
     */
    @DELETE
    @Consumes
    @JAXBResponseParser
-   ListenableFuture<Void> delete(@EndpointParam(parser = UserURNToHref.class) String userUrn);
+   ListenableFuture<Void> remove(@EndpointParam(parser = UserURNToHref.class) String userUrn);
 
    /**
-    * @see UserApi#delete(URI)
+    * @see UserApi#remove(URI)
     */
    @DELETE
    @Consumes
    @JAXBResponseParser
-   ListenableFuture<Void> delete(@EndpointParam URI userHref);
+   ListenableFuture<Void> remove(@EndpointParam URI userHref);
 
    /**
     * @see UserApi#unlock(String)

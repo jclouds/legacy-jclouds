@@ -42,8 +42,8 @@ public interface AdminVdcApi extends VdcApi {
     * Retrieves an admin view of virtual data center. The redwood admin can disable an 
     * organization vDC. This will prevent any further allocation to be used by the organization. 
     * Changing the state will not affect allocations already used. For example, if an organization 
-    * vDC is disabled, an organization user cannot deploy or create a new virtual machine in the 
-    * vDC (deploy uses memory and cpu allocations, and create uses storage allocation).
+    * vDC is disabled, an organization user cannot deploy or add a new virtual machine in the 
+    * vDC (deploy uses memory and cpu allocations, and add uses storage allocation).
     * 
     * @return the admin vDC or null if not found
     */
@@ -58,18 +58,18 @@ public interface AdminVdcApi extends VdcApi {
     * Additionally it could have one of these states FAILED_CREATION(-1), NOT_READY(0), 
     * READY(1), UNKNOWN(1) and UNRECOGNIZED(3).
     */
-   Task update(String vdcUrn, AdminVdc vdc);
+   Task edit(String vdcUrn, AdminVdc vdc);
    
-   Task update(URI vdcHref, AdminVdc vdc);
+   Task edit(URI vdcHref, AdminVdc vdc);
 
    /**
-    * Deletes a Virtual Data Center. The Virtual Data Center should be disabled when delete is issued. 
+    * Deletes a Virtual Data Center. The Virtual Data Center should be disabled when remove is issued. 
     * Otherwise error code 400 Bad Request is returned.
     */
    // TODO Saw what exception, instead of 400 
-   Task delete(String vdcUrn);
+   Task remove(String vdcUrn);
 
-   Task delete(URI vdcHref);
+   Task remove(URI vdcHref);
 
    /**
     * Enables a Virtual Data Center. This operation enables disabled Virtual Data Center. 

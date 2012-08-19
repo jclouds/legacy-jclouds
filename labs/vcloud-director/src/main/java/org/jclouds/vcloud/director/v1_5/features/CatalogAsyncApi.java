@@ -83,22 +83,22 @@ public interface CatalogAsyncApi {
    ListenableFuture<CatalogItem> getItem(@EndpointParam(parser = CatalogItemURNToHref.class) String catalogItemUrn);
 
    /**
-    * @see CatalogApi#updateItem(String, CatalogItem)
+    * @see CatalogApi#editItem(String, CatalogItem)
     */
    @PUT
    @Consumes(VCloudDirectorMediaType.CATALOG_ITEM)
    @Produces(VCloudDirectorMediaType.CATALOG_ITEM)
    @JAXBResponseParser
-   ListenableFuture<CatalogItem> updateItem(@EndpointParam(parser = CatalogItemURNToHref.class) String catalogItemUrn,
+   ListenableFuture<CatalogItem> editItem(@EndpointParam(parser = CatalogItemURNToHref.class) String catalogItemUrn,
             @BinderParam(BindToXMLPayload.class) CatalogItem catalogItem);
 
    /**
-    * @see CatalogApi#deleteItem(String)
+    * @see CatalogApi#removeItem(String)
     */
    @DELETE
    @Consumes
    @JAXBResponseParser
-   ListenableFuture<Void> deleteItem(@EndpointParam(parser = CatalogItemURNToHref.class) String catalogItemUrn);
+   ListenableFuture<Void> removeItem(@EndpointParam(parser = CatalogItemURNToHref.class) String catalogItemUrn);
 
    /**
     * @see CatalogApi#get(URI)
@@ -130,22 +130,22 @@ public interface CatalogAsyncApi {
    ListenableFuture<CatalogItem> getItem(@EndpointParam URI catalogItemHref);
 
    /**
-    * @see CatalogApi#updateItem(URI, CatalogItem)
+    * @see CatalogApi#editItem(URI, CatalogItem)
     */
    @PUT
    @Consumes(VCloudDirectorMediaType.CATALOG_ITEM)
    @Produces(VCloudDirectorMediaType.CATALOG_ITEM)
    @JAXBResponseParser
-   ListenableFuture<CatalogItem> updateItem(@EndpointParam URI catalogItemHref,
+   ListenableFuture<CatalogItem> editItem(@EndpointParam URI catalogItemHref,
             @BinderParam(BindToXMLPayload.class) CatalogItem catalogItem);
 
    /**
-    * @see CatalogApi#deleteItem(URI)
+    * @see CatalogApi#removeItem(URI)
     */
    @DELETE
    @Consumes
    @JAXBResponseParser
-   ListenableFuture<Void> deleteItem(@EndpointParam URI catalogItemHref);
+   ListenableFuture<Void> removeItem(@EndpointParam URI catalogItemHref);
 
    /**
     * @return asynchronous access to {@link Metadata.Readable} features

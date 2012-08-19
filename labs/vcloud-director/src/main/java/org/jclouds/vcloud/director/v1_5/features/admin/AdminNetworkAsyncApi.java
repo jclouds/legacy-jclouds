@@ -74,23 +74,23 @@ public interface AdminNetworkAsyncApi extends NetworkAsyncApi {
    ListenableFuture<? extends Network> get(@EndpointParam URI networkAdminHref);
 
    /**
-    * @see AdminNetworkApi#update(String, OrgNetwork)
+    * @see AdminNetworkApi#edit(String, OrgNetwork)
     */
    @PUT
    @Consumes(VCloudDirectorMediaType.TASK)
    @Produces(VCloudDirectorMediaType.ADMIN_ORG_NETWORK)
    @JAXBResponseParser
-   ListenableFuture<Task> update(@EndpointParam(parser = NetworkURNToAdminHref.class) String networkUrn,
+   ListenableFuture<Task> edit(@EndpointParam(parser = NetworkURNToAdminHref.class) String networkUrn,
             @BinderParam(BindToXMLPayload.class) OrgNetwork network);
 
    /**
-    * @see AdminNetworkApi#update(URI, OrgNetwork)
+    * @see AdminNetworkApi#edit(URI, OrgNetwork)
     */
    @PUT
    @Consumes(VCloudDirectorMediaType.TASK)
    @Produces(VCloudDirectorMediaType.ADMIN_ORG_NETWORK)
    @JAXBResponseParser
-   ListenableFuture<Task> update(@EndpointParam URI networkAdminHref,
+   ListenableFuture<Task> edit(@EndpointParam URI networkAdminHref,
             @BinderParam(BindToXMLPayload.class) OrgNetwork network);
 
    /**

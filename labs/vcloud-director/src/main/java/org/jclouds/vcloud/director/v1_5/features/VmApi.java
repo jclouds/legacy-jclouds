@@ -58,23 +58,23 @@ public interface VmApi {
     * @since 0.9
     * @see VAppApi#getVApp(URI)
     */
-   Vm getVm(URI vmURI);
+   Vm get(URI vmURI);
 
    /**
     * Modifies the name/description of a {@link Vm}.
     *
     * @since 0.9
-    * @see VAppApi#modifyVApp(URI, VApp)
+    * @see VAppApi#editVApp(URI, VApp)
     */
-   Task modifyVm(URI vmURI, Vm vm);
+   Task edit(URI vmURI, Vm vm);
 
    /**
     * Deletes a {@link Vm}.
     *
     * @since 0.9
-    * @see VAppApi#deleteVApp(URI)
+    * @see VAppApi#removeVApp(URI)
     */
-   Task deleteVm(URI vmURI);
+   Task remove(URI vmURI);
 
    /**
     * Consolidates a {@link Vm}.
@@ -85,7 +85,7 @@ public interface VmApi {
     *
     * @since 1.5
     */
-   Task consolidateVm(URI vmURI);
+   Task consolidate(URI vmURI);
 
    /**
     * Deploys a {@link Vm}.
@@ -125,7 +125,7 @@ public interface VmApi {
     *
     * @since 1.5
     */
-   Task relocateVm(URI vmURI, RelocateParams params);
+   Task relocate(URI vmURI, RelocateParams params);
 
    /**
     * Undeploy a {@link Vm}.
@@ -216,7 +216,7 @@ public interface VmApi {
     *
     * @since 1.0
     */
-   Task modifyGuestCustomizationSection(URI vmURI, GuestCustomizationSection section);
+   Task editGuestCustomizationSection(URI vmURI, GuestCustomizationSection section);
 
    /**
     * Ejects media from a {@link Vm}.
@@ -260,7 +260,7 @@ public interface VmApi {
     *
     * @since 0.9
     */
-   Task modifyNetworkConnectionSection(URI vmURI, NetworkConnectionSection section);
+   Task editNetworkConnectionSection(URI vmURI, NetworkConnectionSection section);
 
    /**
     * Retrieves the operating system section of a {@link Vm}.
@@ -282,7 +282,7 @@ public interface VmApi {
     *
     * @since 0.9
     */
-   Task modifyOperatingSystemSection(URI vmURI, OperatingSystemSection section);
+   Task editOperatingSystemSection(URI vmURI, OperatingSystemSection section);
 
    /**
     * Retrieves {@link Vm} product sections.
@@ -296,9 +296,9 @@ public interface VmApi {
     * Modifies the product section information of a {@link Vm}.
     *
     * @since 1.5
-    * @see VAppApi#modifyProductSections(URI, ProductSectionList)
+    * @see VAppApi#editProductSections(URI, ProductSectionList)
     */
-   Task modifyProductSections(URI vmURI, ProductSectionList sectionList);
+   Task editProductSections(URI vmURI, ProductSectionList sectionList);
 
    /**
     * Retrieves a pending question for a {@link Vm}.
@@ -387,7 +387,7 @@ public interface VmApi {
     *
     * @since 0.9
     */
-   Task modifyVirtualHardwareSection(URI vmURI, VirtualHardwareSection section);
+   Task editVirtualHardwareSection(URI vmURI, VirtualHardwareSection section);
 
    /**
     * Retrieves the CPU properties in virtual hardware section of a {@link Vm}.
@@ -409,7 +409,7 @@ public interface VmApi {
     *
     * @since 0.9
     */
-   Task modifyVirtualHardwareSectionCpu(URI vmURI, RasdItem rasd);
+   Task editVirtualHardwareSectionCpu(URI vmURI, RasdItem rasd);
 
    /**
     * Retrieves a list of items for disks from virtual hardware section of a {@link Vm}.
@@ -431,7 +431,7 @@ public interface VmApi {
     *
     * @since 0.9
     */
-   Task modifyVirtualHardwareSectionDisks(URI vmURI, RasdItemsList rasdItemsList);
+   Task editVirtualHardwareSectionDisks(URI vmURI, RasdItemsList rasdItemsList);
 
    /**
     * Retrieves the list of items that represents the floppies and CD/DVD drives in a {@link Vm}.
@@ -464,7 +464,7 @@ public interface VmApi {
     *
     * @since 0.9
     */
-   Task modifyVirtualHardwareSectionMemory(URI vmURI, RasdItem rasd);
+   Task editVirtualHardwareSectionMemory(URI vmURI, RasdItem rasd);
 
    /**
     * Retrieves a list of items for network cards from virtual hardware section of a {@link Vm}.
@@ -486,7 +486,7 @@ public interface VmApi {
     *
     * @since 0.9
     */
-   Task modifyVirtualHardwareSectionNetworkCards(URI vmURI, RasdItemsList rasdItemsList);
+   Task editVirtualHardwareSectionNetworkCards(URI vmURI, RasdItemsList rasdItemsList);
 
    /**
     * Retrieves a list of items for serial ports from virtual hardware section of a {@link Vm}.
@@ -508,7 +508,7 @@ public interface VmApi {
     *
     * @since 1.5
     */
-   Task modifyVirtualHardwareSectionSerialPorts(URI vmURI, RasdItemsList rasdItemsList);
+   Task editVirtualHardwareSectionSerialPorts(URI vmURI, RasdItemsList rasdItemsList);
 
    /**
     * Synchronous access to {@link Vm} {@link Metadata} features.

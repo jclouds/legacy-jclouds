@@ -42,11 +42,11 @@ public interface UserApi {
     * 
     * @param orgUrn
     *           the urn for the org
-    * @return the created user
+    * @return the addd user
     */
-   User createUserInOrg(User user, String orgUrn);
+   User addUserToOrg(User user, String orgUrn);
 
-   User createUserInOrg(User user, URI orgAdminHref);
+   User addUserToOrg(User user, URI orgAdminHref);
 
    /**
     * Retrieves a user. This entity could be enabled or disabled.
@@ -75,20 +75,20 @@ public interface UserApi {
     *           the reference for the user
     * @return the modified user
     */
-   User update(String userUrn, User user);
+   User edit(String userUrn, User user);
    
-   User update(URI userHref, User user);
+   User edit(URI userHref, User user);
 
    /**
-    * Deletes a user. Enabled and disabled users could be deleted.
+    * Deletes a user. Enabled and disabled users could be removed.
     * 
     * <pre>
     * DELETE /admin/catalog/{id}
     * </pre>
     */
-   void delete(String userUrn);
+   void remove(String userUrn);
    
-   void delete(URI userHref);
+   void remove(URI userHref);
 
    /**
     * Unlocks a user.

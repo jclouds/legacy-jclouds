@@ -147,14 +147,14 @@ public interface VdcAsyncApi {
             @BinderParam(BindToXMLPayload.class) UploadVAppTemplateParams params);
 
    /**
-    * @see VdcApi#createMedia(String, Media)
+    * @see VdcApi#addMedia(String, Media)
     */
    @POST
    @Path("/media")
    @Consumes(VCloudDirectorMediaType.MEDIA)
    @Produces(VCloudDirectorMediaType.MEDIA)
    @JAXBResponseParser
-   ListenableFuture<Media> createMedia(@EndpointParam(parser = VdcURNToHref.class) String vdcUrn,
+   ListenableFuture<Media> addMedia(@EndpointParam(parser = VdcURNToHref.class) String vdcUrn,
             @BinderParam(BindToXMLPayload.class) Media media);
 
    /**
@@ -245,14 +245,14 @@ public interface VdcAsyncApi {
             @BinderParam(BindToXMLPayload.class) UploadVAppTemplateParams params);
 
    /**
-    * @see VdcApi#createMedia(URI, Media)
+    * @see VdcApi#addMedia(URI, Media)
     */
    @POST
    @Path("/media")
    @Consumes(VCloudDirectorMediaType.MEDIA)
    @Produces(VCloudDirectorMediaType.MEDIA)
    @JAXBResponseParser
-   ListenableFuture<Media> createMedia(@EndpointParam URI vdcHref, @BinderParam(BindToXMLPayload.class) Media media);
+   ListenableFuture<Media> addMedia(@EndpointParam URI vdcHref, @BinderParam(BindToXMLPayload.class) Media media);
 
    /**
     * @return asynchronous access to {@link Metadata.Readable} features

@@ -87,12 +87,12 @@ public interface AdminOrgApi extends OrgApi {
     * @param orgUrn
     *           the reference for the admin org
     * @param newSettings
-    *           the requested updated settings
+    *           the requested edited settings
     * @return the resultant settings
     */
-   OrgSettings updateSettings(String orgUrn, OrgSettings newSettings);
+   OrgSettings editSettings(String orgUrn, OrgSettings newSettings);
 
-   OrgSettings updateSettings(URI orgAdminHref, OrgSettings newSettings);
+   OrgSettings editSettings(URI orgAdminHref, OrgSettings newSettings);
 
    /**
     * Retrieves email settings for an organization.
@@ -119,12 +119,12 @@ public interface AdminOrgApi extends OrgApi {
     * @param orgUrn
     *           the reference for the admin org
     * @param newSettings
-    *           the requested updated settings
+    *           the requested edited settings
     * @return the resultant settings
     */
-   OrgEmailSettings updateEmailSettings(String orgUrn, OrgEmailSettings newSettings);
+   OrgEmailSettings editEmailSettings(String orgUrn, OrgEmailSettings newSettings);
 
-   OrgEmailSettings updateEmailSettings(URI orgAdminHref, OrgEmailSettings newSettings);
+   OrgEmailSettings editEmailSettings(URI orgAdminHref, OrgEmailSettings newSettings);
 
    /**
     * Gets general organization settings.
@@ -151,12 +151,12 @@ public interface AdminOrgApi extends OrgApi {
     * @param orgUrn
     *           the reference for the admin org
     * @param newSettings
-    *           the requested updated settings
+    *           the requested edited settings
     * @return the resultant settings
     */
-   OrgGeneralSettings updateGeneralSettings(String orgUrn, OrgGeneralSettings newSettings);
+   OrgGeneralSettings editGeneralSettings(String orgUrn, OrgGeneralSettings newSettings);
 
-   OrgGeneralSettings updateGeneralSettings(URI orgAdminHref, OrgGeneralSettings newSettings);
+   OrgGeneralSettings editGeneralSettings(URI orgAdminHref, OrgGeneralSettings newSettings);
 
    /**
     * Retrieves LDAP settings for an organization.
@@ -198,12 +198,12 @@ public interface AdminOrgApi extends OrgApi {
     * @param orgUrn
     *           the reference for the admin org
     * @param newSettings
-    *           the requested updated settings
+    *           the requested edited settings
     * @return the resultant settings
     */
-   OrgPasswordPolicySettings updatePasswordPolicy(String orgUrn, OrgPasswordPolicySettings newSettings);
+   OrgPasswordPolicySettings editPasswordPolicy(String orgUrn, OrgPasswordPolicySettings newSettings);
 
-   OrgPasswordPolicySettings updatePasswordPolicy(URI orgAdminHref, OrgPasswordPolicySettings newSettings);
+   OrgPasswordPolicySettings editPasswordPolicy(URI orgAdminHref, OrgPasswordPolicySettings newSettings);
 
    /**
     * Gets organization resource cleanup settings on the level of vApp.
@@ -230,12 +230,12 @@ public interface AdminOrgApi extends OrgApi {
     * @param orgUrn
     *           the reference for the admin org
     * @param newSettings
-    *           the requested updated settings
+    *           the requested edited settings
     * @return the resultant settings
     */
-   OrgLeaseSettings updateVAppLeaseSettings(String orgUrn, OrgLeaseSettings newSettings);
+   OrgLeaseSettings editVAppLeaseSettings(String orgUrn, OrgLeaseSettings newSettings);
 
-   OrgLeaseSettings updateVAppLeaseSettings(URI orgAdminHref, OrgLeaseSettings newSettings);
+   OrgLeaseSettings editVAppLeaseSettings(URI orgAdminHref, OrgLeaseSettings newSettings);
 
    /**
     * Retrieves expiration and storage policy for vApp templates in an organization.
@@ -262,12 +262,12 @@ public interface AdminOrgApi extends OrgApi {
     * @param orgUrn
     *           the reference for the admin org
     * @param newSettings
-    *           the requested updated settings
+    *           the requested edited settings
     * @return the resultant settings
     */
-   OrgVAppTemplateLeaseSettings updateVAppTemplateLeaseSettings(String orgUrn, OrgVAppTemplateLeaseSettings newSettings);
+   OrgVAppTemplateLeaseSettings editVAppTemplateLeaseSettings(String orgUrn, OrgVAppTemplateLeaseSettings newSettings);
 
-   OrgVAppTemplateLeaseSettings updateVAppTemplateLeaseSettings(URI orgAdminHref, OrgVAppTemplateLeaseSettings newSettings);
+   OrgVAppTemplateLeaseSettings editVAppTemplateLeaseSettings(URI orgAdminHref, OrgVAppTemplateLeaseSettings newSettings);
 
    /**
     * @return synchronous access to admin {@link MetadataApi.Writeable} features

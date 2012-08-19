@@ -53,7 +53,7 @@ public interface VAppApi {
     * The {@link VApp} could be in one of these statuses:
     * <ul>
     * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#FAILED_CREATION FAILED_CREATION(-1)} -
-    *    Transient entity state, e.g., model object is created but the corresponding VC backing does not
+    *    Transient entity state, e.g., model object is addd but the corresponding VC backing does not
     *		exist yet. This is further sub-categorized in the respective entities.
     * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#UNRESOLVED UNRESOLVED(0)} -
     *		Entity is whole, e.g., VM creation is complete and all the required model objects and VC backings are
@@ -98,7 +98,7 @@ public interface VAppApi {
     *
     * @since 0.9
     */
-   Task modifyVApp(URI vAppURI, VApp vApp);
+   Task editVApp(URI vAppURI, VApp vApp);
 
    /**
     * Deletes a {@link VApp}.
@@ -109,7 +109,7 @@ public interface VAppApi {
     *
     * @since 0.9
     */
-   Task deleteVApp(URI vAppURI);
+   Task removeVApp(URI vAppURI);
 
    /**
     * Modifies the control access of a {@link VApp}.
@@ -120,7 +120,7 @@ public interface VAppApi {
     *
     * @since 0.9
     */
-   ControlAccessParams modifyControlAccess(URI vAppURI, ControlAccessParams params);
+   ControlAccessParams editControlAccess(URI vAppURI, ControlAccessParams params);
 
    /**
     * Deploys a {@link VApp}.
@@ -217,7 +217,7 @@ public interface VAppApi {
     * Retrieves the control access information for a {@link VApp}.
     *
     * The vApp could be shared to everyone or could be shared to specific user,
-    * by modifying the control access values.
+    * by editing the control access values.
     *
     * <pre>
     * GET /vApp/{id}/controlAccess
@@ -330,7 +330,7 @@ public interface VAppApi {
     *
     * @since 0.9
     */
-   Task modifyLeaseSettingsSection(URI vAppURI, LeaseSettingsSection section);
+   Task editLeaseSettingsSection(URI vAppURI, LeaseSettingsSection section);
 
    /**
     * Retrieves the network config section of a {@link VApp}.
@@ -352,7 +352,7 @@ public interface VAppApi {
     *
     * @since 0.9
     */
-   Task modifyNetworkConfigSection(URI vAppURI, NetworkConfigSection section);
+   Task editNetworkConfigSection(URI vAppURI, NetworkConfigSection section);
 
    /**
     * Retrieves the network section of a {@link VApp}.
@@ -385,7 +385,7 @@ public interface VAppApi {
     *
     * @since 1.5
     */
-   void modifyOwner(URI vAppURI, Owner owner);
+   void editOwner(URI vAppURI, Owner owner);
 
    /**
     * Retrieves {@link VApp} product sections.
@@ -407,7 +407,7 @@ public interface VAppApi {
     *
     * @since 1.5
     */
-   Task modifyProductSections(URI vAppURI, ProductSectionList sectionList);
+   Task editProductSections(URI vAppURI, ProductSectionList sectionList);
 
    /**
     * Retrieves the startup section of a {@link VApp}.
@@ -429,7 +429,7 @@ public interface VAppApi {
     *
     * @since 0.9
     */
-   Task modifyStartupSection(URI vAppURI, StartupSection section);
+   Task editStartupSection(URI vAppURI, StartupSection section);
 
    /**
     * Synchronous access to {@link VApp} {@link Metadata} features.

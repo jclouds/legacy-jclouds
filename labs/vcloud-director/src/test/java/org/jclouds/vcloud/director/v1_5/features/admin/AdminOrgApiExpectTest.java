@@ -219,21 +219,21 @@ public class AdminOrgApiExpectTest extends VCloudDirectorAdminApiExpectTest {
    }
 
    @Test(enabled = false)
-   public void testUpdateSettings() {
+   public void testEditSettings() {
       VCloudDirectorAdminApi api = requestsSendResponses(
                loginRequest,
                sessionResponse,
                new VcloudHttpRequestPrimer()
                         .apiCommand("PUT", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/")
-                        .xmlFilePayload("/org/admin/updateSettingsSource.xml", VCloudDirectorMediaType.ORG_SETTINGS)
+                        .xmlFilePayload("/org/admin/editSettingsSource.xml", VCloudDirectorMediaType.ORG_SETTINGS)
                         .acceptMedia(VCloudDirectorMediaType.ORG_SETTINGS).httpRequestBuilder().build(),
                new VcloudHttpResponsePrimer()
-                        .xmlFilePayload("/org/admin/updateSettings.xml", VCloudDirectorMediaType.ORG_SETTINGS)
+                        .xmlFilePayload("/org/admin/editSettings.xml", VCloudDirectorMediaType.ORG_SETTINGS)
                         .httpResponseBuilder().build());
 
-      OrgSettings expected = updateSettings();
+      OrgSettings expected = editSettings();
 
-      assertEquals(api.getOrgApi().updateSettings(orgRef.getHref(), expected), expected);
+      assertEquals(api.getOrgApi().editSettings(orgRef.getHref(), expected), expected);
    }
 
    @Test
@@ -254,22 +254,22 @@ public class AdminOrgApiExpectTest extends VCloudDirectorAdminApiExpectTest {
    }
 
    @Test
-   public void testUpdateEmailSettings() {
+   public void testEditEmailSettings() {
       VCloudDirectorAdminApi api = requestsSendResponses(
                loginRequest,
                sessionResponse,
                new VcloudHttpRequestPrimer()
                         .apiCommand("PUT", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/email")
-                        .xmlFilePayload("/org/admin/updateEmailSettingsSource.xml",
+                        .xmlFilePayload("/org/admin/editEmailSettingsSource.xml",
                                  VCloudDirectorMediaType.ORG_EMAIL_SETTINGS)
                         .acceptMedia(VCloudDirectorMediaType.ORG_EMAIL_SETTINGS).httpRequestBuilder().build(),
                new VcloudHttpResponsePrimer()
-                        .xmlFilePayload("/org/admin/updateEmailSettings.xml",
+                        .xmlFilePayload("/org/admin/editEmailSettings.xml",
                                  VCloudDirectorMediaType.ORG_EMAIL_SETTINGS).httpResponseBuilder().build());
 
-      OrgEmailSettings expected = updateEmailSettings();
+      OrgEmailSettings expected = editEmailSettings();
 
-      assertEquals(api.getOrgApi().updateEmailSettings(orgRef.getHref(), expected), expected);
+      assertEquals(api.getOrgApi().editEmailSettings(orgRef.getHref(), expected), expected);
    }
 
    @Test(enabled = false)
@@ -304,25 +304,25 @@ public class AdminOrgApiExpectTest extends VCloudDirectorAdminApiExpectTest {
    }
 
    @Test(enabled = false)
-   public void testUpdateGeneralSettings() {
+   public void testEditGeneralSettings() {
       VCloudDirectorAdminApi api = requestsSendResponses(
                loginRequest,
                sessionResponse,
                new VcloudHttpRequestPrimer()
                         .apiCommand("PUT", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/general")
-                        .xmlFilePayload("/org/admin/updateGeneralSettingsSource.xml",
+                        .xmlFilePayload("/org/admin/editGeneralSettingsSource.xml",
                                  VCloudDirectorMediaType.ORG_GENERAL_SETTINGS)
                         .acceptMedia(VCloudDirectorMediaType.ORG_GENERAL_SETTINGS).httpRequestBuilder().build(),
                new VcloudHttpResponsePrimer()
-                        .xmlFilePayload("/org/admin/updateGeneralSettings.xml",
+                        .xmlFilePayload("/org/admin/editGeneralSettings.xml",
                                  VCloudDirectorMediaType.ORG_GENERAL_SETTINGS).httpResponseBuilder().build());
 
-      OrgGeneralSettings expected = updateGeneralSettings();
+      OrgGeneralSettings expected = editGeneralSettings();
 
-      assertEquals(api.getOrgApi().updateGeneralSettings(orgRef.getHref(), expected), expected);
+      assertEquals(api.getOrgApi().editGeneralSettings(orgRef.getHref(), expected), expected);
    }
 
-   public static final OrgGeneralSettings updateGeneralSettings() {
+   public static final OrgGeneralSettings editGeneralSettings() {
       return generalSettings().toBuilder()
 
       .build();
@@ -385,25 +385,25 @@ public class AdminOrgApiExpectTest extends VCloudDirectorAdminApiExpectTest {
    }
 
    @Test
-   public void testUpdatePasswordPolicy() {
+   public void testEditPasswordPolicy() {
       VCloudDirectorAdminApi api = requestsSendResponses(
                loginRequest,
                sessionResponse,
                new VcloudHttpRequestPrimer()
                         .apiCommand("PUT", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/passwordPolicy")
-                        .xmlFilePayload("/org/admin/updatePasswordPolicySource.xml",
+                        .xmlFilePayload("/org/admin/editPasswordPolicySource.xml",
                                  VCloudDirectorMediaType.ORG_PASSWORD_POLICY_SETTINGS)
                         .acceptMedia(VCloudDirectorMediaType.ORG_PASSWORD_POLICY_SETTINGS).httpRequestBuilder().build(),
                new VcloudHttpResponsePrimer()
-                        .xmlFilePayload("/org/admin/updatePasswordPolicy.xml",
+                        .xmlFilePayload("/org/admin/editPasswordPolicy.xml",
                                  VCloudDirectorMediaType.ORG_PASSWORD_POLICY_SETTINGS).httpResponseBuilder().build());
 
-      OrgPasswordPolicySettings expected = updateOrgPasswordPolicy();
+      OrgPasswordPolicySettings expected = editOrgPasswordPolicy();
 
-      assertEquals(api.getOrgApi().updatePasswordPolicy(orgRef.getHref(), expected), expected);
+      assertEquals(api.getOrgApi().editPasswordPolicy(orgRef.getHref(), expected), expected);
    }
 
-   public static final OrgPasswordPolicySettings updateOrgPasswordPolicy() {
+   public static final OrgPasswordPolicySettings editOrgPasswordPolicy() {
       return passwordPolicy().toBuilder().accountLockoutEnabled(true).invalidLoginsBeforeLockout(6)
                .accountLockoutIntervalMinutes(11).build();
    }
@@ -440,25 +440,25 @@ public class AdminOrgApiExpectTest extends VCloudDirectorAdminApiExpectTest {
    }
 
    @Test(enabled = false)
-   public void testUpdateOrgVAppLeaseSettings() {
+   public void testEditOrgVAppLeaseSettings() {
       VCloudDirectorAdminApi api = requestsSendResponses(
                loginRequest,
                sessionResponse,
                new VcloudHttpRequestPrimer()
                         .apiCommand("PUT", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/vAppLeaseSettings")
-                        .xmlFilePayload("/org/admin/updateVAppLeaseSettingsSource.xml",
+                        .xmlFilePayload("/org/admin/editVAppLeaseSettingsSource.xml",
                                  VCloudDirectorMediaType.ORG_LEASE_SETTINGS)
                         .acceptMedia(VCloudDirectorMediaType.ORG_LEASE_SETTINGS).httpRequestBuilder().build(),
                new VcloudHttpResponsePrimer()
-                        .xmlFilePayload("/org/admin/updateVAppLeaseSettings.xml",
+                        .xmlFilePayload("/org/admin/editVAppLeaseSettings.xml",
                                  VCloudDirectorMediaType.ORG_LEASE_SETTINGS).httpResponseBuilder().build());
 
-      OrgLeaseSettings expected = updateVAppLeaseSettings();
+      OrgLeaseSettings expected = editVAppLeaseSettings();
 
-      assertEquals(api.getOrgApi().updateVAppLeaseSettings(orgRef.getHref(), expected), expected);
+      assertEquals(api.getOrgApi().editVAppLeaseSettings(orgRef.getHref(), expected), expected);
    }
 
-   public static final OrgLeaseSettings updateVAppLeaseSettings() {
+   public static final OrgLeaseSettings editVAppLeaseSettings() {
       return vAppLeaseSettings().toBuilder()
 
       .build();
@@ -497,28 +497,28 @@ public class AdminOrgApiExpectTest extends VCloudDirectorAdminApiExpectTest {
    }
 
    @Test(enabled = false)
-   public void testUpdateOrgVAppTemplateLeaseSettings() {
+   public void testEditOrgVAppTemplateLeaseSettings() {
       VCloudDirectorAdminApi api = requestsSendResponses(
                loginRequest,
                sessionResponse,
                new VcloudHttpRequestPrimer()
                         .apiCommand("PUT",
                                  "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/vAppTemplateLeaseSettings")
-                        .xmlFilePayload("/org/admin/updateVAppLeaseSettingsSource.xml",
+                        .xmlFilePayload("/org/admin/editVAppLeaseSettingsSource.xml",
                                  VCloudDirectorMediaType.ORG_VAPP_TEMPLATE_LEASE_SETTINGS)
                         .acceptMedia(VCloudDirectorMediaType.ORG_VAPP_TEMPLATE_LEASE_SETTINGS).httpRequestBuilder()
                         .build(),
                new VcloudHttpResponsePrimer()
-                        .xmlFilePayload("/org/admin/updateVAppLeaseSettings.xml",
+                        .xmlFilePayload("/org/admin/editVAppLeaseSettings.xml",
                                  VCloudDirectorMediaType.ORG_VAPP_TEMPLATE_LEASE_SETTINGS).httpResponseBuilder()
                         .build());
 
-      OrgVAppTemplateLeaseSettings expected = updateVAppTemplateLeaseSettings();
+      OrgVAppTemplateLeaseSettings expected = editVAppTemplateLeaseSettings();
 
-      assertEquals(api.getOrgApi().updateVAppTemplateLeaseSettings(orgRef.getHref(), expected), expected);
+      assertEquals(api.getOrgApi().editVAppTemplateLeaseSettings(orgRef.getHref(), expected), expected);
    }
 
-   public static final OrgVAppTemplateLeaseSettings updateVAppTemplateLeaseSettings() {
+   public static final OrgVAppTemplateLeaseSettings editVAppTemplateLeaseSettings() {
       return vAppTemplateLeaseSettings().toBuilder()
 
       .build();
@@ -576,7 +576,7 @@ public class AdminOrgApiExpectTest extends VCloudDirectorAdminApiExpectTest {
    }
 
    @Test
-   public static final OrgSettings updateSettings() {
+   public static final OrgSettings editSettings() {
       return settings().toBuilder().build();
    }
 
@@ -602,7 +602,7 @@ public class AdminOrgApiExpectTest extends VCloudDirectorAdminApiExpectTest {
    }
 
    @Test
-   public static final OrgEmailSettings updateEmailSettings() {
+   public static final OrgEmailSettings editEmailSettings() {
       return emailSettings()
                .toBuilder()
                .isDefaultSmtpServer(false)

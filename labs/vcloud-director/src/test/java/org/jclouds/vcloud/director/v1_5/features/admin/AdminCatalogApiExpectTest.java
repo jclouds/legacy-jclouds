@@ -109,24 +109,24 @@ public class AdminCatalogApiExpectTest extends VCloudDirectorAdminApiExpectTest 
    static URI orgHref = URI.create(endpoint + "/org/" + org);
    static URI orgAdminHref = URI.create(endpoint + "/admin/org/" + org);
    
-   HttpRequest create = HttpRequest.builder()
+   HttpRequest add = HttpRequest.builder()
             .method("POST")
             .endpoint(orgAdminHref + "/catalogs")
             .addHeader("Accept", ADMIN_CATALOG)
             .addHeader("x-vcloud-authorization", token)
             .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
-            .payload(payloadFromResourceWithContentType("/catalog/admin/createCatalogSource.xml", VCloudDirectorMediaType.ADMIN_CATALOG))
+            .payload(payloadFromResourceWithContentType("/catalog/admin/addCatalogSource.xml", VCloudDirectorMediaType.ADMIN_CATALOG))
             .build();
 
-    HttpResponse createResponse = HttpResponse.builder()
+    HttpResponse addResponse = HttpResponse.builder()
             .statusCode(200)
-            .payload(payloadFromResourceWithContentType("/catalog/admin/createCatalog.xml", ADMIN_CATALOG + ";version=1.5"))
+            .payload(payloadFromResourceWithContentType("/catalog/admin/addCatalog.xml", ADMIN_CATALOG + ";version=1.5"))
             .build();
     
    @Test
-   public void testCreateCatalogHref() {
-      VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, create, createResponse);
-      assertEquals(api.getCatalogApi().createCatalogInOrg(createCatalogInOrgSource(), orgAdminHref), createCatalogInOrg());
+   public void testAddCatalogHref() {
+      VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, add, addResponse);
+      assertEquals(api.getCatalogApi().addCatalogToOrg(addCatalogToOrgSource(), orgAdminHref), addCatalogToOrg());
    }
    
    HttpRequest resolveOrg = HttpRequest.builder()
@@ -151,35 +151,35 @@ public class AdminCatalogApiExpectTest extends VCloudDirectorAdminApiExpectTest 
            .build();
    
    @Test
-   public void testCreateCatalogUrn() {
-      VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, resolveOrg, resolveOrgResponse, create, createResponse);
-      assertEquals(api.getCatalogApi().createCatalogInOrg(createCatalogInOrgSource(), orgUrn), createCatalogInOrg());
+   public void testAddCatalogUrn() {
+      VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, resolveOrg, resolveOrgResponse, add, addResponse);
+      assertEquals(api.getCatalogApi().addCatalogToOrg(addCatalogToOrgSource(), orgUrn), addCatalogToOrg());
    }
    
-   HttpRequest update = HttpRequest.builder()
+   HttpRequest edit = HttpRequest.builder()
             .method("PUT")
             .endpoint(catalogAdminHref)
             .addHeader("Accept", ADMIN_CATALOG)
             .addHeader("x-vcloud-authorization", token)
             .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
-            .payload(payloadFromResourceWithContentType("/catalog/admin/updateCatalogSource.xml", VCloudDirectorMediaType.ADMIN_CATALOG))
+            .payload(payloadFromResourceWithContentType("/catalog/admin/editCatalogSource.xml", VCloudDirectorMediaType.ADMIN_CATALOG))
             .build();
 
-    HttpResponse updateResponse = HttpResponse.builder()
+    HttpResponse editResponse = HttpResponse.builder()
             .statusCode(200)
-            .payload(payloadFromResourceWithContentType("/catalog/admin/updateCatalog.xml", ADMIN_CATALOG + ";version=1.5"))
+            .payload(payloadFromResourceWithContentType("/catalog/admin/editCatalog.xml", ADMIN_CATALOG + ";version=1.5"))
             .build();
     
    @Test
-   public void testUpdateCatalogHref() {
-      VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, update, updateResponse);
-      assertEquals(api.getCatalogApi().update(catalogAdminHref, updateCatalog()), updateCatalog());
+   public void testEditCatalogHref() {
+      VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, edit, editResponse);
+      assertEquals(api.getCatalogApi().edit(catalogAdminHref, editCatalog()), editCatalog());
    }
   
    @Test
-   public void testUpdateCatalogUrn() {
-      VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, resolveCatalog, resolveCatalogResponse, update, updateResponse);
-      assertEquals(api.getCatalogApi().update(catalogUrn, updateCatalog()), updateCatalog());
+   public void testEditCatalogUrn() {
+      VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, resolveCatalog, resolveCatalogResponse, edit, editResponse);
+      assertEquals(api.getCatalogApi().edit(catalogUrn, editCatalog()), editCatalog());
    }
    
    HttpRequest getOwner = HttpRequest.builder()
@@ -226,7 +226,7 @@ public class AdminCatalogApiExpectTest extends VCloudDirectorAdminApiExpectTest 
             .addHeader("Accept", "*/*")
             .addHeader("x-vcloud-authorization", token)
             .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
-            .payload(payloadFromResourceWithContentType("/catalog/admin/updateOwnerSource.xml", OWNER + ";version=1.5"))
+            .payload(payloadFromResourceWithContentType("/catalog/admin/editOwnerSource.xml", OWNER + ";version=1.5"))
             .build();
 
    HttpResponse setOwnerResponse = HttpResponse.builder()
@@ -282,7 +282,7 @@ public class AdminCatalogApiExpectTest extends VCloudDirectorAdminApiExpectTest 
    }
 
    
-   HttpRequest deleteCatalog = HttpRequest.builder()
+   HttpRequest removeCatalog = HttpRequest.builder()
             .method("DELETE")
             .endpoint(catalogAdminHref)
             .addHeader("Accept", "*/*")
@@ -290,34 +290,34 @@ public class AdminCatalogApiExpectTest extends VCloudDirectorAdminApiExpectTest 
             .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
             .build();
 
-   HttpResponse deleteCatalogResponse = HttpResponse.builder()
+   HttpResponse removeCatalogResponse = HttpResponse.builder()
             .statusCode(204)
             .build();
    
    @Test
-   public void testDeleteCatalogHref() {
-      VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, deleteCatalog,
-               deleteCatalogResponse);
-      api.getCatalogApi().delete(catalogAdminHref);
+   public void testRemoveCatalogHref() {
+      VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, removeCatalog,
+               removeCatalogResponse);
+      api.getCatalogApi().remove(catalogAdminHref);
    }
 
    @Test
-   public void testDeleteCatalogUrn() {
+   public void testRemoveCatalogUrn() {
       VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, resolveCatalog,
-               resolveCatalogResponse, deleteCatalog, deleteCatalogResponse);
-      api.getCatalogApi().delete(catalogUrn);
+               resolveCatalogResponse, removeCatalog, removeCatalogResponse);
+      api.getCatalogApi().remove(catalogUrn);
    }
 
    //TODO: tests for access control!
    
-   public static final AdminCatalog createCatalogInOrgSource() {
+   public static final AdminCatalog addCatalogToOrgSource() {
       return AdminCatalog.builder()
          .name("Test Catalog")
          .description("created by testCreateCatalog()")
          .build();
    }
    
-   public static final AdminCatalog createCatalogInOrg() {
+   public static final AdminCatalog addCatalogToOrg() {
       return AdminCatalog.builder()
          .name("Test Catalog")
          .id("urn:vcloud:catalog:c56d9159-7838-446f-bb35-9ee12dfbbef3")
@@ -358,7 +358,6 @@ public class AdminCatalogApiExpectTest extends VCloudDirectorAdminApiExpectTest 
             .type("application/vnd.vmware.vcloud.metadata+xml")
             .href(URI.create("https://vcloudbeta.bluelock.com/api/catalog/c56d9159-7838-446f-bb35-9ee12dfbbef3/metadata"))
             .build())
-         .description("created by testCreateCatalog()")
          .tasks(ImmutableSet.<Task>builder()
             .add(Task.builder()
                .status("running")
@@ -472,7 +471,7 @@ public class AdminCatalogApiExpectTest extends VCloudDirectorAdminApiExpectTest 
          .build();
    }
    
-   public static final AdminCatalog updateCatalog() {
+   public static final AdminCatalog editCatalog() {
       return catalog().toBuilder()
          .name("new QunyingTestCatalog")
          .description("new Testing")

@@ -40,10 +40,10 @@ public interface GroupApi {
     * POST /admin/org/{id}/groups
     * </pre>
     *
-    * @param orgUri the admin org to create the group in
-    * @return the created group
+    * @param orgUri the admin org to add the group in
+    * @return the addd group
     */
-   Group createGroup(URI adminOrgUri, Group group);
+   Group addGroup(URI adminOrgUri, Group group);
    
    /**
     * Retrieves a group.
@@ -64,9 +64,9 @@ public interface GroupApi {
     * PUT /admin/group/{id}
     * </pre>
     * 
-    * @return the updated group
+    * @return the edited group
     */
-   Group updateGroup(URI groupRef, Group group);
+   Group editGroup(URI groupRef, Group group);
 
    /**
     * Deletes a group.
@@ -75,5 +75,5 @@ public interface GroupApi {
     * DELETE /admin/group/{id}
     * </pre>
     */
-   void deleteGroup(URI groupRef);
+   void removeGroup(URI groupRef);
 }

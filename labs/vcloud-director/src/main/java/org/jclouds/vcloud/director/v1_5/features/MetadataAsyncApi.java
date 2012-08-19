@@ -103,13 +103,13 @@ public interface MetadataAsyncApi {
                @BinderParam(BindToXMLPayload.class) MetadataValue metadataValue);
       
       /**
-       * @see MetadataApi.Writable#deleteEntry(URI, String))
+       * @see MetadataApi.Writable#removeEntry(URI, String))
        */
       @DELETE
       @Path("/metadata/{key}")
       @Consumes(VCloudDirectorMediaType.TASK)
       @JAXBResponseParser
-      ListenableFuture<Task> deleteEntry(@EndpointParam URI metaDataUri, @PathParam("key") String key);
+      ListenableFuture<Task> removeEntry(@EndpointParam URI metaDataUri, @PathParam("key") String key);
 
    }
 }

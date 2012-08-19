@@ -77,7 +77,7 @@ public interface MetadataApi {
        * @return a task. This operation is asynchronous and the user should monitor the returned
        *         task status in order to check when it is completed.
        */
-      Task deleteEntry(URI uri, String key);
+      Task removeEntry(URI uri, String key);
 
    }
 }

@@ -52,10 +52,10 @@ public interface VAppTemplateApi {
     * The vApp could be in one of these statues:
     * <ul>
     * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#FAILED_CREATION FAILED_CREATION(-1)} -
-    *    Transient entity state, e.g., model object is created but the corresponding VC backing does not exist yet. This
+    *    Transient entity state, e.g., model object is addd but the corresponding VC backing does not exist yet. This
     *    is further sub-categorized in the respective entities.
     * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#UNRESOLVED UNRESOLVED(0)} -
-    *    Entity is whole, e.g., VM creation is complete and all the required model objects and VC backings are created.
+    *    Entity is whole, e.g., VM creation is complete and all the required model objects and VC backings are addd.
     * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#RESOLVED RESOLVED(1)} -
     *    Entity is resolved.
     * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#UNKNOWN UNKNOWN(6)} -
@@ -87,7 +87,7 @@ public interface VAppTemplateApi {
     * @return the task performing the action. This operation is asynchronous and the user should monitor the returned
     *         task status in order to check when it is completed.
     */
-   Task modifyVAppTemplate(URI templateUri, VAppTemplate template);
+   Task editVAppTemplate(URI templateUri, VAppTemplate template);
 
    /**
     * Deletes a vApp template.
@@ -100,7 +100,7 @@ public interface VAppTemplateApi {
     * @return the task performing the action. This operation is asynchronous and the user should monitor the returned
     *         task status in order to check when it is completed.
     */
-   Task deleteVappTemplate(URI templateUri);
+   Task removeVappTemplate(URI templateUri);
 
    /**
     * Consolidates a VM
@@ -189,7 +189,7 @@ public interface VAppTemplateApi {
     * @return the task performing the action. This operation is asynchronous and the user should monitor the returned
     *         task status in order to check when it is completed.
     */
-   Task modifyGuestCustomizationSection(URI templateUri, GuestCustomizationSection section);
+   Task editGuestCustomizationSection(URI templateUri, GuestCustomizationSection section);
 
    /**
     * Retrieves the lease settings section of a vApp or vApp template
@@ -215,7 +215,7 @@ public interface VAppTemplateApi {
     * @return the task performing the action. This operation is asynchronous and the user should monitor the returned
     *         task status in order to check when it is completed.
     */
-   Task modifyLeaseSettingsSection(URI templateUri, LeaseSettingsSection section);
+   Task editLeaseSettingsSection(URI templateUri, LeaseSettingsSection section);
 
    /**
     * Retrieves the network config section of a vApp or vApp template.
@@ -304,7 +304,7 @@ public interface VAppTemplateApi {
     * @return the task performing the action. This operation is asynchronous and the user should monitor the returned
     *         task status in order to check when it is completed.
     */
-   Task modifyProductSections(URI templateUri, ProductSectionList sections);
+   Task editProductSections(URI templateUri, ProductSectionList sections);
 
    /**
     * <pre>
