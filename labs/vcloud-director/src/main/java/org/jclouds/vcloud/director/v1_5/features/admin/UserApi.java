@@ -25,9 +25,9 @@ import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.director.v1_5.domain.User;
 
 /**
- * Provides synchronous access to {@link Group} objects.
+ * Provides synchronous access to {@link User} objects.
  * 
- * @see GroupAsyncApi
+ * @see UserAsyncApi
  * @author danikov
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)

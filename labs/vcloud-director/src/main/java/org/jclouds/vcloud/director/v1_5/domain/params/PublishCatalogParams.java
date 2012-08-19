@@ -46,6 +46,7 @@ import com.google.common.base.Objects;
 @XmlType(propOrder = {
     "isPublished"
 })
+//TODO: this is ridiculous
 public class PublishCatalogParams {
    
    public static Builder builder() {

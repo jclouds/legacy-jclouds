@@ -18,10 +18,19 @@
  */
 package org.jclouds.vcloud.director.v1_5.features.admin;
 
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.ADMIN_CATALOG;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.ADMIN_ORG;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.CATALOG;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.ENTITY;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.ORG;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.OWNER;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.PUBLISH_CATALOG_PARAMS;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpResponse;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminApi;
 import org.jclouds.vcloud.director.v1_5.domain.AdminCatalog;
@@ -34,132 +43,197 @@ import org.jclouds.vcloud.director.v1_5.internal.VCloudDirectorAdminApiExpectTes
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.net.HttpHeaders;
 
 /**
  * Test the {@link AdminCatalogApi} by observing its side effects.
  * 
- * @author grkvlt@apache.org
+ * @author grkvlt@apache.org, Adrian Cole
  */
 @Test(groups = { "unit", "admin" }, singleThreaded = true, testName = "CatalogApiExpectTest")
 public class AdminCatalogApiExpectTest extends VCloudDirectorAdminApiExpectTest {
    
-   private Reference catalogRef = Reference.builder()
-         .type("application/vnd.vmware.vcloud.catalog+xml")
-         .name("QunyingTestCatalog")
-         .href(URI.create(endpoint + "/admin/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4"))
-         .build();
+   static String catalog = "7212e451-76e1-4631-b2de-ba1dfd8080e4";
+   static String catalogUrn = "urn:vcloud:catalog:" + catalog;
+   static URI adminCatalogHref = URI.create(endpoint + "/admin/catalog/" + catalog);
+   static URI catalogHref = URI.create(endpoint + "/catalog/" + catalog);
    
+   HttpRequest get = HttpRequest.builder()
+            .method("GET")
+            .endpoint(adminCatalogHref)
+            .addHeader("Accept", "*/*")
+            .addHeader("x-vcloud-authorization", token)
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
+            .build();
+
+    HttpResponse getResponse = HttpResponse.builder()
+            .statusCode(200)
+            .payload(payloadFromResourceWithContentType("/catalog/admin/catalog.xml", ADMIN_CATALOG + ";version=1.5"))
+            .build();
+    
    @Test
-   public void testCreateCatalog() {
-      VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("POST", "/admin/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4/catalogs")
-            .xmlFilePayload("/catalog/admin/createCatalogSource.xml", VCloudDirectorMediaType.ADMIN_CATALOG)
-            .acceptMedia(VCloudDirectorMediaType.ADMIN_CATALOG)
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/catalog/admin/createCatalog.xml", VCloudDirectorMediaType.ADMIN_CATALOG)
-            .httpResponseBuilder().build());
-
-      AdminCatalog source = createCatalogSource();
-      AdminCatalog expected = createCatalog();
-
-      assertEquals(api.getCatalogApi().createCatalog(catalogRef.getHref(), source), expected);
-   }
-
-   // FIXME disabled due to intermittent JXB error: javax.xml.bind.UnmarshalException:
-   // unexpected element (uri:"http://www.vmware.com/vcloud/v1.5", local:"AdminCatalog").
-   // Expected elements are <{http://www.vmware.com/vcloud/v1.5}Catalog>, <{http://www.vmware.com/vcloud/v1.5}CatalogReference>,
-   // <{http://www.vmware.com/vcloud/v1.5}Error>,<{http://www.vmware.com/vcloud/v1.5}Link>,
-   // <{http://www.vmware.com/vcloud/v1.5}Owner>,<{http://www.vmware.com/vcloud/v1.5}Reference>,
-   // <{http://www.vmware.com/vcloud/v1.5}RoleReference>,<{http://www.vmware.com/vcloud/v1.5}Task>,
-   // <{http://www.vmware.com/vcloud/v1.5}VAppReference>
-   @Test(enabled = false)
-   public void testGetCatalog() {
-      VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("GET", "/admin/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4")
-            .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/catalog/admin/catalog.xml", VCloudDirectorMediaType.ADMIN_CATALOG)
-            .httpResponseBuilder().build());
-
-      AdminCatalog expected = catalog();
-
-      AdminCatalog actual = api.getCatalogApi().getCatalog(catalogRef.getHref());
-      assertEquals(actual.getHref(), expected.getHref());
-      assertEquals(actual.getLinks(), expected.getLinks());
-      assertEquals(actual.getTasks(), expected.getTasks());
-      
-      System.out.println(actual.getOwner());
-      System.out.println(expected.getOwner());
-      
-      Reference actualUser = actual.getOwner().getUser();
-      Reference expectedUser = expected.getOwner().getUser();
-      assertEquals(actualUser, expectedUser);
-
-      assertEquals(actual.getOwner(), expected.getOwner());
-      
-      assertEquals(api.getCatalogApi().getCatalog(catalogRef.getHref()), expected);
+   public void testGetCatalogHref() {
+      VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, get, getResponse);
+      assertEquals(api.getCatalogApi().get(adminCatalogHref), catalog());
    }
    
+   HttpRequest resolveCatalog = HttpRequest.builder()
+            .method("GET")
+            .endpoint(endpoint + "/entity/" + catalogUrn)
+            .addHeader("Accept", "*/*")
+            .addHeader("x-vcloud-authorization", token)
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
+            .build();
+   
+   String catalogEntity = asString(createXMLBuilder("Entity").a("xmlns", "http://www.vmware.com/vcloud/v1.5")
+                                                             .a("name", catalogUrn)
+                                                             .a("id", catalogUrn)
+                                                             .a("type", ENTITY)
+                                                             .a("href", endpoint + "/entity/" + catalogUrn)
+                                  .e("Link").a("rel", "alternate").a("type", CATALOG).a("href", catalogHref.toString()).up()
+                                  .e("Link").a("rel", "alternate").a("type", ADMIN_CATALOG).a("href", adminCatalogHref.toString()).up());
+   
+   HttpResponse resolveCatalogResponse = HttpResponse.builder()
+           .statusCode(200)
+           .payload(payloadFromStringWithContentType(catalogEntity, ENTITY + ";version=1.5"))
+           .build();
+   
    @Test
-   public void testModifyCatalog() {
-      VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("PUT", "/admin/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4")
-            .xmlFilePayload("/catalog/admin/updateCatalogSource.xml", VCloudDirectorMediaType.ADMIN_CATALOG)
-            .acceptMedia(VCloudDirectorMediaType.ADMIN_CATALOG)
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/catalog/admin/updateCatalog.xml", VCloudDirectorMediaType.ADMIN_CATALOG)
-            .httpResponseBuilder().build());
+   public void testGetCatalogUrn() {
+      VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, resolveCatalog, resolveCatalogResponse, get, getResponse);
+      assertEquals(api.getCatalogApi().get(catalogUrn), catalog());
+   }
+   
+   static String org = "7212e451-76e1-4631-b2de-asdasdasd";
+   static String orgUrn = "urn:vcloud:org:" + org;
+   static URI orgHref = URI.create(endpoint + "/org/" + org);
+   static URI adminOrgHref = URI.create(endpoint + "/admin/org/" + org);
+   
+   HttpRequest create = HttpRequest.builder()
+            .method("POST")
+            .endpoint(adminOrgHref + "/catalogs")
+            .addHeader("Accept", ADMIN_CATALOG)
+            .addHeader("x-vcloud-authorization", token)
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
+            .payload(payloadFromResourceWithContentType("/catalog/admin/createCatalogSource.xml", VCloudDirectorMediaType.ADMIN_CATALOG))
+            .build();
 
-      AdminCatalog expected = modifyCatalog();
+    HttpResponse createResponse = HttpResponse.builder()
+            .statusCode(200)
+            .payload(payloadFromResourceWithContentType("/catalog/admin/createCatalog.xml", ADMIN_CATALOG + ";version=1.5"))
+            .build();
+    
+   @Test
+   public void testCreateCatalogHref() {
+      VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, create, createResponse);
+      assertEquals(api.getCatalogApi().createCatalogInOrg(createCatalogInOrgSource(), adminOrgHref), createCatalogInOrg());
+   }
+   
+   HttpRequest resolveOrg = HttpRequest.builder()
+            .method("GET")
+            .endpoint(endpoint + "/entity/" + orgUrn)
+            .addHeader("Accept", "*/*")
+            .addHeader("x-vcloud-authorization", token)
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
+            .build();
+   
+   String orgEntity = asString(createXMLBuilder("Entity").a("xmlns", "http://www.vmware.com/vcloud/v1.5")
+                                                             .a("name", orgUrn)
+                                                             .a("id", orgUrn)
+                                                             .a("type", ENTITY)
+                                                             .a("href", endpoint + "/entity/" + catalogUrn)
+                                  .e("Link").a("rel", "alternate").a("type", ORG).a("href", orgHref.toString()).up()
+                                  .e("Link").a("rel", "alternate").a("type", ADMIN_ORG).a("href", adminOrgHref.toString()).up());
+   
+   HttpResponse resolveOrgResponse = HttpResponse.builder()
+           .statusCode(200)
+           .payload(payloadFromStringWithContentType(orgEntity, ENTITY + ";version=1.5"))
+           .build();
+   
+   @Test
+   public void testCreateCatalogUrn() {
+      VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, resolveOrg, resolveOrgResponse, create, createResponse);
+      assertEquals(api.getCatalogApi().createCatalogInOrg(createCatalogInOrgSource(), orgUrn), createCatalogInOrg());
+   }
+   
+   HttpRequest update = HttpRequest.builder()
+            .method("PUT")
+            .endpoint(adminCatalogHref)
+            .addHeader("Accept", ADMIN_CATALOG)
+            .addHeader("x-vcloud-authorization", token)
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
+            .payload(payloadFromResourceWithContentType("/catalog/admin/updateCatalogSource.xml", VCloudDirectorMediaType.ADMIN_CATALOG))
+            .build();
 
-      assertEquals(api.getCatalogApi().updateCatalog(catalogRef.getHref(), expected), expected);
+    HttpResponse updateResponse = HttpResponse.builder()
+            .statusCode(200)
+            .payload(payloadFromResourceWithContentType("/catalog/admin/updateCatalog.xml", ADMIN_CATALOG + ";version=1.5"))
+            .build();
+    
+   @Test
+   public void testUpdateCatalogHref() {
+      VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, update, updateResponse);
+      assertEquals(api.getCatalogApi().update(adminCatalogHref, updateCatalog()), updateCatalog());
+   }
+  
+   @Test
+   public void testUpdateCatalogUrn() {
+      VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, resolveCatalog, resolveCatalogResponse, update, updateResponse);
+      assertEquals(api.getCatalogApi().update(catalogUrn, updateCatalog()), updateCatalog());
+   }
+   
+   HttpRequest getOwner = HttpRequest.builder()
+            .method("GET")
+            .endpoint(adminCatalogHref + "/owner")
+            .addHeader("Accept", "*/*")
+            .addHeader("x-vcloud-authorization", token)
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
+            .build();
+
+    HttpResponse getOwnerResponse = HttpResponse.builder()
+            .statusCode(200)
+            .payload(payloadFromResourceWithContentType("/catalog/admin/owner.xml", OWNER + ";version=1.5"))
+            .build();
+    
+    Owner expectedGetOwner = owner().toBuilder()
+             .link(Link.builder()
+                      .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4"))
+                      .type("application/vnd.vmware.vcloud.catalog+xml")
+                      .rel("up")
+                      .build())
+             .link(Link.builder()
+                      .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4/owner"))
+                      .type("application/vnd.vmware.vcloud.owner+xml")
+                      .rel("edit")
+                      .build())
+             .build();
+    
+   @Test
+   public void testGetCatalogOwnerHref() {
+      VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, getOwner, getOwnerResponse);
+      assertEquals(api.getCatalogApi().getOwner(adminCatalogHref), expectedGetOwner);
    }
    
    @Test
-   public void testGetOwner() {
-      VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, 
-            new VcloudHttpRequestPrimer()
-               .apiCommand("GET", "/admin/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4/owner")
-               .acceptAnyMedia()
-               .httpRequestBuilder().build(), 
-            new VcloudHttpResponsePrimer()
-               .xmlFilePayload("/catalog/admin/owner.xml", VCloudDirectorMediaType.OWNER)
-               .httpResponseBuilder().build());
-      
-      Owner expected = owner().toBuilder()
-               .link(Link.builder()
-                        .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4"))
-                        .type("application/vnd.vmware.vcloud.catalog+xml")
-                        .rel("up")
-                        .build())
-               .link(Link.builder()
-                        .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4/owner"))
-                        .type("application/vnd.vmware.vcloud.owner+xml")
-                        .rel("edit")
-                        .build())
-               .build();
-
-      assertEquals(api.getCatalogApi().getOwner(catalogRef.getHref()), expected);
+   public void testGetCatalogOwnerUrn() {
+      VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, resolveCatalog, resolveCatalogResponse, getOwner, getOwnerResponse);
+      assertEquals(api.getCatalogApi().getOwner(catalogUrn), expectedGetOwner);
    }
    
-   @Test
-   public void testSetOwner() {
-      VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, 
-            new VcloudHttpRequestPrimer()
-               .apiCommand("PUT", "/admin/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4/owner")
-               .xmlFilePayload("/catalog/admin/updateOwnerSource.xml", VCloudDirectorMediaType.OWNER)
-               .acceptAnyMedia()
-               .httpRequestBuilder().build(), 
-            new VcloudHttpResponsePrimer()
-               .httpResponseBuilder().statusCode(204).build());
-      
-      Owner newOwner = Owner.builder()
+   HttpRequest setOwner = HttpRequest.builder()
+            .method("PUT")
+            .endpoint(adminCatalogHref + "/owner")
+            .addHeader("Accept", "*/*")
+            .addHeader("x-vcloud-authorization", token)
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
+            .payload(payloadFromResourceWithContentType("/catalog/admin/updateOwnerSource.xml", OWNER + ";version=1.5"))
+            .build();
+
+   HttpResponse setOwnerResponse = HttpResponse.builder()
+            .statusCode(204)
+            .build();
+   
+   Owner ownerToSet = Owner.builder()
             .type("application/vnd.vmware.vcloud.owner+xml")
             .user(Reference.builder()
                   .type("application/vnd.vmware.admin.user+xml")
@@ -167,49 +241,81 @@ public class AdminCatalogApiExpectTest extends VCloudDirectorAdminApiExpectTest 
                   .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/user/e9eb1b29-0404-4c5e-8ef7-e584acc51da9"))
                   .build())
             .build();
-      
-      api.getCatalogApi().setOwner(catalogRef.getHref(), newOwner);
+   
+   @Test
+   public void testSetCatalogOwnerHref() {
+      VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, setOwner, setOwnerResponse);
+      api.getCatalogApi().setOwner(adminCatalogHref, ownerToSet);
    }
    
    @Test
-   public void testPublishCatalog() {
-      VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, 
-            new VcloudHttpRequestPrimer()
-               .apiCommand("POST", "/admin/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4/action/publish")
-               .xmlFilePayload("/catalog/admin/publishCatalogParams.xml", VCloudDirectorMediaType.PUBLISH_CATALOG_PARAMS)
-               .acceptAnyMedia()
-               .httpRequestBuilder().build(), 
-            new VcloudHttpResponsePrimer()
-               .httpResponseBuilder().statusCode(204).build());
-      
-      PublishCatalogParams params = PublishCatalogParams.builder()
-            .isPublished(true)
+   public void testSetCatalogOwnerUrn() {
+      VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, resolveCatalog, resolveCatalogResponse, setOwner, setOwnerResponse);
+      api.getCatalogApi().setOwner(catalogUrn, ownerToSet);
+   }
+   
+   HttpRequest publishCatalog = HttpRequest.builder()
+            .method("POST")
+            .endpoint(adminCatalogHref + "/action/publish")
+            .addHeader("Accept", "*/*")
+            .addHeader("x-vcloud-authorization", token)
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
+            .payload(payloadFromResourceWithContentType("/catalog/admin/publishCatalogParams.xml", PUBLISH_CATALOG_PARAMS + ";version=1.5"))
             .build();
-      
-      api.getCatalogApi().publishCatalog(catalogRef.getHref(), params);
-   }
+
+   HttpResponse publishCatalogResponse = HttpResponse.builder()
+            .statusCode(204)
+            .build();
    
    @Test
-   public void testDeleteCatalog() {
-      VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, 
-            new VcloudHttpRequestPrimer()
-               .apiCommand("DELETE", "/admin/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4")
-               .acceptAnyMedia()
-               .httpRequestBuilder().build(), 
-            new VcloudHttpResponsePrimer()
-               .httpResponseBuilder().statusCode(204).build());
-      
-      api.getCatalogApi().deleteCatalog(catalogRef.getHref());
+   public void testPublishCatalogHref() {
+      VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, publishCatalog,
+               publishCatalogResponse);
+      api.getCatalogApi().publish(adminCatalogHref, PublishCatalogParams.builder().isPublished(true).build());
+   }
+
+   @Test
+   public void testPublishCatalogUrn() {
+      VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, resolveCatalog,
+               resolveCatalogResponse, publishCatalog, publishCatalogResponse);
+      api.getCatalogApi().publish(catalogUrn, PublishCatalogParams.builder().isPublished(true).build());
+   }
+
+   
+   HttpRequest deleteCatalog = HttpRequest.builder()
+            .method("DELETE")
+            .endpoint(adminCatalogHref)
+            .addHeader("Accept", "*/*")
+            .addHeader("x-vcloud-authorization", token)
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
+            .build();
+
+   HttpResponse deleteCatalogResponse = HttpResponse.builder()
+            .statusCode(204)
+            .build();
+   
+   @Test
+   public void testDeleteCatalogHref() {
+      VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, deleteCatalog,
+               deleteCatalogResponse);
+      api.getCatalogApi().delete(adminCatalogHref);
+   }
+
+   @Test
+   public void testDeleteCatalogUrn() {
+      VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, resolveCatalog,
+               resolveCatalogResponse, deleteCatalog, deleteCatalogResponse);
+      api.getCatalogApi().delete(catalogUrn);
    }
    
-   public static final AdminCatalog createCatalogSource() {
+   public static final AdminCatalog createCatalogInOrgSource() {
       return AdminCatalog.builder()
          .name("Test Catalog")
          .description("created by testCreateCatalog()")
          .build();
    }
    
-   public static final AdminCatalog createCatalog() {
+   public static final AdminCatalog createCatalogInOrg() {
       return AdminCatalog.builder()
          .name("Test Catalog")
          .id("urn:vcloud:catalog:c56d9159-7838-446f-bb35-9ee12dfbbef3")
@@ -364,7 +470,7 @@ public class AdminCatalogApiExpectTest extends VCloudDirectorAdminApiExpectTest 
          .build();
    }
    
-   public static final AdminCatalog modifyCatalog() {
+   public static final AdminCatalog updateCatalog() {
       return catalog().toBuilder()
          .name("new QunyingTestCatalog")
          .description("new Testing")

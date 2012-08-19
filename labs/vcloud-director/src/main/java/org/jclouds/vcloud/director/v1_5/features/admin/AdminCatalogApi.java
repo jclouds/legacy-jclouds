@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.vcloud.director.v1_5.domain.AdminCatalog;
+import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.params.PublishCatalogParams;
 import org.jclouds.vcloud.director.v1_5.features.CatalogApi;
@@ -33,40 +34,47 @@ import org.jclouds.vcloud.director.v1_5.features.MetadataApi;
  * Provides synchronous access to {@link AdminCatalog} objects.
  * 
  * @see AdminCatalogAsyncApi
- * @author danikov
+ * @author danikov, Adrian Cole
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface AdminCatalogApi extends CatalogApi {
-   
-   
+
    /**
     * Creates a catalog in an organization. The catalog will always be created in unpublished state.
-    *
+    * 
     * <pre>
     * POST /admin/org/{id}/catalogs
     * </pre>
-    *
-    * @param orgRef the reference for the org
+    * 
+    * @param orgUrn
+    *           the urn for the org
     * @return contains a , which will point to the running asynchronous creation operation.
     */
-   AdminCatalog createCatalog(URI orgRef, AdminCatalog catalog);
+   AdminCatalog createCatalogInOrg(AdminCatalog catalog, String orgUrn);
+
+   AdminCatalog createCatalogInOrg(AdminCatalog catalog, URI adminCatalogHref);
 
    /**
     * Retrieves a catalog.
-    *
+    * 
     * <pre>
     * GET /admin/catalog/{id}
     * </pre>
-    *
-    * @param catalogRef the reference for the catalog
+    * 
+    * @param catalogUrn
+    *           the urn for the catalog
     * @return a catalog
     */
    @Override
-   AdminCatalog getCatalog(URI catalogRef);
+   AdminCatalog get(String catalogUrn);
    
+   @Override
+   AdminCatalog get(URI adminCatalogHref);
+
    /**
-    * Modifies a catalog. A catalog could be published or unpublished. The IsPublished property is treated as a 
-    * read only value by the server. In order to control publishing settings use the 'publish' action must be used.
+    * Modifies a catalog. A catalog could be published or unpublished. The IsPublished property is
+    * treated as a read only value by the server. In order to control publishing settings use the
+    * 'publish' action must be used.
     * 
     * <pre>
     * PUT /admin/catalog/{id}
@@ -74,8 +82,10 @@ public interface AdminCatalogApi extends CatalogApi {
     * 
     * @return the updated catalog
     */
-   AdminCatalog updateCatalog(URI catalogRef, AdminCatalog catalog);
-   
+   AdminCatalog update(String catalogUrn, AdminCatalog catalog);
+
+   AdminCatalog update(URI adminCatalogHref, AdminCatalog catalog);
+
    /**
     * Deletes a catalog. The catalog could be deleted if it is either published or unpublished.
     * 
@@ -83,8 +93,10 @@ public interface AdminCatalogApi extends CatalogApi {
     * DELETE /admin/catalog/{id}
     * </pre>
     */
-   void deleteCatalog(URI catalogRef);
-   
+   void delete(String catalogUrn);
+
+   void delete(URI adminCatalogHref);
+
    /**
     * Retrieves the owner of a catalog.
     * 
@@ -94,8 +106,10 @@ public interface AdminCatalogApi extends CatalogApi {
     * 
     * @return the owner or null if not found
     */
-   Owner getOwner(URI catalogRef);
-   
+   Owner getOwner(String catalogUrn);
+
+   Owner getOwner(URI adminCatalogHref);
+
    /**
     * Changes owner for catalog.
     * 
@@ -103,15 +117,22 @@ public interface AdminCatalogApi extends CatalogApi {
     * PUT /admin/catalog/{id}/owner
     * </pre>
     */
-   void setOwner(URI catalogRef, Owner newOwner);
-   
+   void setOwner(String catalogUrn, Owner newOwner);
+
+   void setOwner(URI adminCatalogHref, Owner newOwner);
+
    /**
-    * Publish a catalog. Publishing a catalog makes the catalog visible to all organizations in a vCloud.
+    * Publish a catalog. Publishing a catalog makes the catalog visible to all organizations in a
+    * vCloud.
+    * @param orgUrn
     */
-   void publishCatalog(URI catalogRef, PublishCatalogParams params);
-   
-   //TODO: lot of work to pass in a single boolean, would like to polymorphically include something like:
-   //void publishCatalog(URI catalogRef)
+   void publish(String catalogUrn, PublishCatalogParams params);
+
+   void publish(URI adminCatalogHref, PublishCatalogParams params);
+
+   // TODO: lot of work to pass in a single boolean, would like to polymorphically include something
+   // like:
+   // void publishCatalog(String catalogUrn)
 
    /**
     * @return synchronous access to {@link Metadata.Writeable} features

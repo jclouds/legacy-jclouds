@@ -16,24 +16,28 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.vcloud.director.v1_5.functions;
+package org.jclouds.vcloud.director.v1_5.functions.href;
 
-import java.net.URI;
-
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.vcloud.director.v1_5.domain.Reference;
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+import org.jclouds.vcloud.director.v1_5.domain.Entity;
+import org.jclouds.vcloud.director.v1_5.functions.URNToHref;
 
-import com.google.common.base.Function;
+import com.google.common.cache.LoadingCache;
 
-/**
- * @author danikov
- */
 @Singleton
-public class ReferenceToEndpoint implements Function<Reference, URI> {
-   
-   @Override
-   public URI apply(Reference from) {
-      return from.getHref();
+public class CatalogURNToHref extends URNToHref {
+
+   @Inject
+   public CatalogURNToHref(LoadingCache<String, Entity> resolveEntityCache) {
+      super(resolveEntityCache);
    }
+
+   @Override
+   protected String type() {
+      return VCloudDirectorMediaType.CATALOG;
+   }
+
 }

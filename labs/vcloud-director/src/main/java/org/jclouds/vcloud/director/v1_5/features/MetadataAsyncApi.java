@@ -48,64 +48,68 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see MetadataApi
  * @author danikov
  */
+//TODO: take out the endpoint params and supply them in the Delegate calls.
 public interface MetadataAsyncApi {
 
    @RequestFilters(AddVCloudAuthorizationAndCookieToRequest.class)
    public static interface Readable extends MetadataAsyncApi {
 
       /**
-       * @see MetadataApi.Readable#getMetadata(URISupplier)
+       * @see MetadataApi.Readable#get(URI)
        */
       @GET
       @Path("/metadata")
       @Consumes
       @JAXBResponseParser
       @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-      ListenableFuture<Metadata> getMetadata(@EndpointParam URI metaDataUri);
-      
+      ListenableFuture<Metadata> get(@EndpointParam URI metaDataUri);
+
       /**
-       * @see MetadataApi.Readable#getMetadataValue(URI, String)
+       * @see MetadataApi.Readable#getValue(URI, String)
        */
       @GET
       @Path("/metadata/{key}")
       @Consumes
       @JAXBResponseParser
       @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-      ListenableFuture<MetadataValue> getMetadataValue(@EndpointParam URI metaDataUri, @PathParam("key") String key);
+      ListenableFuture<MetadataValue> getValue(@EndpointParam URI metaDataUri, @PathParam("key") String key);
+
    }
-   
+
    @RequestFilters(AddVCloudAuthorizationAndCookieToRequest.class)
    public static interface Writeable extends Readable {
 
       /**
-       * @see MetadataApi.Writable#mergeMetadata(URI, Metadata))
+       * @see MetadataApi.Writable#merge(URI, Metadata))
        */
       @POST
       @Path("/metadata")
       @Consumes(VCloudDirectorMediaType.TASK)
       @Produces(VCloudDirectorMediaType.METADATA)
       @JAXBResponseParser
-      ListenableFuture<Task> mergeMetadata(@EndpointParam URI metaDataUri, @BinderParam(BindToXMLPayload.class) Metadata metadata);
-      
+      ListenableFuture<Task> merge(@EndpointParam URI metaDataUri,
+               @BinderParam(BindToXMLPayload.class) Metadata metadata);
+
       /**
-       * @see MetadataApi.Writable#setMetadata(URI, String, MetadataEntry))
+       * @see MetadataApi.Writeable#putEntry(URI, String, MetadataEntry))
        */
       @PUT
       @Path("/metadata/{key}")
       @Consumes(VCloudDirectorMediaType.TASK)
       @Produces(VCloudDirectorMediaType.METADATA_VALUE)
       @JAXBResponseParser
-      ListenableFuture<Task> setMetadata(@EndpointParam URI metaDataUri,
-            @PathParam("key") String key, 
-            @BinderParam(BindToXMLPayload.class) MetadataValue metadataValue);
+      // TODO: this is rediculous. get rid of the MetadataValue type, as it is only a string!
+      ListenableFuture<Task> putEntry(@EndpointParam URI metaDataUri, @PathParam("key") String key,
+               @BinderParam(BindToXMLPayload.class) MetadataValue metadataValue);
       
       /**
-       * @see MetadataApi.Writable#deleteMetadataEntry(URISupplier, String))
+       * @see MetadataApi.Writable#deleteEntry(URI, String))
        */
-       @DELETE
-       @Path("/metadata/{key}")
-       @Consumes(VCloudDirectorMediaType.TASK)
-       @JAXBResponseParser
-       ListenableFuture<Task> deleteMetadataEntry(@EndpointParam URI metaDataUri, @PathParam("key") String key);
+      @DELETE
+      @Path("/metadata/{key}")
+      @Consumes(VCloudDirectorMediaType.TASK)
+      @JAXBResponseParser
+      ListenableFuture<Task> deleteEntry(@EndpointParam URI metaDataUri, @PathParam("key") String key);
+
    }
 }

@@ -40,6 +40,9 @@ public class VCloudDirectorException extends RuntimeException {
    private final Error error;
    private final Task task;
 
+   // TODO: this type wipes out the http response, which often has the data needed to troubleshoot
+   // the issue
+   
    public VCloudDirectorException(Error error) {
       super(message(error, "Error"));
       this.error = error;

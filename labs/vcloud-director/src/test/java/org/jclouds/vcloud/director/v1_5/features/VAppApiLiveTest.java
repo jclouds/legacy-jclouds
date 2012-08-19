@@ -743,10 +743,10 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
       key = name("key-");
       String value = name("value-");
       metadataValue = MetadataValue.builder().value(value).build();
-      vAppApi.getMetadataApi().setMetadata(vApp.getHref(), key, metadataValue);
+      vAppApi.getMetadataApi().putEntry(vApp.getHref(), key, metadataValue);
 
       // Retrieve the value, and assert it was set correctly
-      MetadataValue newMetadataValue = vAppApi.getMetadataApi().getMetadataValue(vApp.getHref(), key);
+      MetadataValue newMetadataValue = vAppApi.getMetadataApi().getValue(vApp.getHref(), key);
 
       // Check the retrieved object is well formed
       checkMetadataValueFor(VAPP, newMetadataValue, value);
@@ -757,10 +757,10 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
       key = name("key-");
       String value = name("value-");
       metadataValue = MetadataValue.builder().value(value).build();
-      vAppApi.getMetadataApi().setMetadata(vApp.getHref(), key, metadataValue);
+      vAppApi.getMetadataApi().putEntry(vApp.getHref(), key, metadataValue);
       
       // Call the method being tested
-      Metadata metadata = vAppApi.getMetadataApi().getMetadata(vApp.getHref());
+      Metadata metadata = vAppApi.getMetadataApi().get(vApp.getHref());
       
       checkMetadata(metadata);
       
@@ -771,7 +771,7 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
    @Test(description = "GET /vApp/{id}/metadata/{key}", dependsOnMethods = { "testGetMetadata" })
    public void testGetOrgMetadataValue() {
       // Call the method being tested
-      MetadataValue value = vAppApi.getMetadataApi().getMetadataValue(vApp.getHref(), key);
+      MetadataValue value = vAppApi.getMetadataApi().getValue(vApp.getHref(), key);
       
       String expected = metadataValue.getValue();
 
@@ -782,11 +782,11 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
    @Test(description = "DELETE /vApp/{id}/metadata/{key}", dependsOnMethods = { "testSetMetadataValue" })
    public void testDeleteMetadataEntry() {
       // Delete the entry
-      Task task = vAppApi.getMetadataApi().deleteMetadataEntry(vApp.getHref(), key);
+      Task task = vAppApi.getMetadataApi().deleteEntry(vApp.getHref(), key);
       retryTaskSuccess.apply(task);
 
       // Confirm the entry has been deleted
-      Metadata newMetadata = vAppApi.getMetadataApi().getMetadata(vApp.getHref());
+      Metadata newMetadata = vAppApi.getMetadataApi().get(vApp.getHref());
 
       // Check the retrieved object is well formed
       checkMetadataKeyAbsentFor(VAPP, newMetadata, key);
@@ -794,7 +794,7 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
 
    @Test(description = "POST /vApp/{id}/metadata", dependsOnMethods = { "testGetMetadata" })
    public void testMergeMetadata() {
-      Metadata oldMetadata = vAppApi.getMetadataApi().getMetadata(vApp.getHref());
+      Metadata oldMetadata = vAppApi.getMetadataApi().get(vApp.getHref());
       Map<String, String> oldMetadataMap = Checks.metadataToMap(oldMetadata);
 
       // Store a value, to be deleted
@@ -803,11 +803,11 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
       Metadata addedMetadata = Metadata.builder()
             .entry(MetadataEntry.builder().key(key).value(value).build())
             .build();
-      Task task = vAppApi.getMetadataApi().mergeMetadata(vApp.getHref(), addedMetadata);
+      Task task = vAppApi.getMetadataApi().merge(vApp.getHref(), addedMetadata);
       retryTaskSuccess.apply(task);
 
       // Confirm the entry contains everything that was there, and everything that was being added
-      Metadata newMetadata = vAppApi.getMetadataApi().getMetadata(vApp.getHref());
+      Metadata newMetadata = vAppApi.getMetadataApi().get(vApp.getHref());
       Map<String, String> expectedMetadataMap = ImmutableMap.<String, String>builder()
             .putAll(oldMetadataMap)
             .put(key, value)

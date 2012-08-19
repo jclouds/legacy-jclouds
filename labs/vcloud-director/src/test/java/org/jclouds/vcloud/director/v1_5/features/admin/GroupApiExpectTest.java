@@ -96,6 +96,6 @@ public class GroupApiExpectTest extends VCloudDirectorAdminApiExpectTest {
             new VcloudHttpResponsePrimer()
                .httpResponseBuilder().statusCode(204).build());
       
-      api.getCatalogApi().deleteCatalog(groupRef.getHref());
+      api.getGroupApi().deleteGroup(groupRef.getHref());
    }
 }

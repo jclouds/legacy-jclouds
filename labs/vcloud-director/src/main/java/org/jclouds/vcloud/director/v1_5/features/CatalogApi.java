@@ -25,76 +25,94 @@ import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.vcloud.director.v1_5.domain.Catalog;
 import org.jclouds.vcloud.director.v1_5.domain.CatalogItem;
+import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 
 /**
  * Provides synchronous access to {@link Catalog} objects.
  * 
  * @see CatalogAsyncApi
- * @author grkvlt@apache.org
+ * @author grkvlt@apache.org, Adrian Cole
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface CatalogApi {
 
    /**
     * Retrieves a catalog.
-    *
+    * 
     * <pre>
     * GET /catalog/{id}
     * </pre>
-    *
-    * @param catalogUri the reference for the catalog
+    * 
+    * @param catalogUri
+    *           the reference for the catalog
     * @return a catalog
     */
-   Catalog getCatalog(URI catalogUri);
+   Catalog get(String catalogUrn);
+
+   Catalog get(URI catalogHref);
 
    /**
     * Creates a catalog item in a catalog.
-    *
+    * 
     * <pre>
     * POST /catalog/{id}/catalogItems
     * </pre>
-    *
-    * @param catalogUri the URI of the catalog
-    * @param item the catalog item to create
+    * 
+    * @param catalogUri
+    *           the URI of the catalog
+    * @param item
+    *           the catalog item to create
     * @return the created catalog item
     */
-   CatalogItem addCatalogItem(URI catalogUri, CatalogItem item);
+   CatalogItem addItem(String catalogUrn, CatalogItem item);
+
+   CatalogItem addItem(URI catalogHref, CatalogItem item);
 
    /**
     * Retrieves a catalog item.
-    *
+    * 
     * <pre>
     * GET /catalogItem/{id}
     * </pre>
     * 
-    * @param catalogItemRef the reference for the catalog item
+    * @param catalogItemRef
+    *           the reference for the catalog item
     * @return the catalog item
     */
-   CatalogItem getCatalogItem(URI catalogItemRef);
+   CatalogItem getItem(String catalogItemUrn);
+
+   CatalogItem getItem(URI catalogItemHref);
 
    /**
     * Modifies a catalog item.
-    *
+    * 
     * <pre>
     * PUT /catalogItem/{id}
     * </pre>
-    *
-    * @param catalogItemRef the reference for the catalog item
-    * @param catalogItem the catalog item
+    * 
+    * @param catalogItemRef
+    *           the reference for the catalog item
+    * @param catalogItem
+    *           the catalog item
     * @return the updated catalog item
     */
-   CatalogItem updateCatalogItem(URI catalogItemRef, CatalogItem catalogItem);
+   CatalogItem updateItem(String catalogItemUrn, CatalogItem catalogItem);
+
+   CatalogItem updateItem(URI catalogItemHref, CatalogItem catalogItem);
 
    /**
     * Deletes a catalog item.
-    *
+    * 
     * <pre>
     * DELETE /catalogItem/{id}
     * </pre>
-    *
-    * @param catalogItemRef the reference for the catalog item
+    * 
+    * @param catalogItemRef
+    *           the reference for the catalog item
     */
-   void deleteCatalogItem(URI catalogItemRef);
+   void deleteItem(String catalogItemUrn);
+
+   void deleteItem(URI catalogItemHref);
 
    /**
     * @return synchronous access to {@link Metadata.Readable} features
@@ -106,6 +124,6 @@ public interface CatalogApi {
     * @return synchronous access to {@link Metadata.Writeable} features for CatalogItems
     */
    @Delegate
-   MetadataApi.Writeable getCatalogItemMetadataApi();
+   MetadataApi.Writeable getItemMetadataApi();
 
 }

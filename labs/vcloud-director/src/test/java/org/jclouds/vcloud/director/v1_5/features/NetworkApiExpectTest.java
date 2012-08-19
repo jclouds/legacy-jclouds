@@ -158,7 +158,7 @@ public class NetworkApiExpectTest extends VCloudDirectorAdminApiExpectTest {
          .entries(ImmutableSet.of(MetadataEntry.builder().entry("key", "value").build()))
          .build();
  
-       assertEquals(api.getNetworkApi().getMetadataApi().getMetadata(networkUri), expected);
+       assertEquals(api.getNetworkApi().getMetadataApi().get(networkUri), expected);
    }
    
    @Test
@@ -184,7 +184,7 @@ public class NetworkApiExpectTest extends VCloudDirectorAdminApiExpectTest {
          .value("value")
          .build();
 
-      assertEquals(api.getNetworkApi().getMetadataApi().getMetadataValue(networkUri, "KEY"), expected);
+      assertEquals(api.getNetworkApi().getMetadataApi().getValue(networkUri, "KEY"), expected);
    }
    
    public static OrgNetwork orgNetwork() {

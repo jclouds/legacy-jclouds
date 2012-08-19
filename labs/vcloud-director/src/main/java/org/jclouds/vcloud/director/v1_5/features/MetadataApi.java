@@ -33,51 +33,51 @@ import org.jclouds.vcloud.director.v1_5.domain.Task;
  * @author danikov
  */
 public interface MetadataApi {
-   
+
    @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
    public static interface Readable extends MetadataApi {
-   
       /**
        * Retrieves an list of metadata
        * 
        * @return a list of metadata
        */
-      Metadata getMetadata(URI uri);
-      
+      Metadata get(URI uri);
+
       /**
        * Retrieves a metadata value
        * 
        * @return the metadata value, or null if not found
        */
-      MetadataValue getMetadataValue(URI uri, String key);
+      MetadataValue getValue(URI uri, String key);
    }
-   
+
    @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
    public static interface Writeable extends Readable {
-   
+
       /**
        * Merges the metadata for a media with the information provided.
        * 
-       * @return a task. This operation is asynchronous and the user should monitor the returned 
-       * task status in order to check when it is completed.
+       * @return a task. This operation is asynchronous and the user should monitor the returned
+       *         task status in order to check when it is completed.
        */
-      Task mergeMetadata(URI uri, Metadata metadata);
+      Task merge(URI uri, Metadata metadata);
 
       /**
-       * Sets the metadata for the particular key for the media to the value provided. 
-       * Note: this will replace any existing metadata information
+       * Sets the metadata for the particular key for the media to the value provided. Note: this
+       * will replace any existing metadata information
        * 
-       * @return a task. This operation is asynchronous and the user should monitor the returned 
-       * task status in order to check when it is completed.
+       * @return a task. This operation is asynchronous and the user should monitor the returned
+       *         task status in order to check when it is completed.
        */
-      Task setMetadata(URI uri, String key, MetadataValue metadataValue);
-      
+      Task putEntry(URI uri, String key, MetadataValue metadataValue);
+
       /**
        * Deletes a metadata entry.
        * 
-       * @return a task. This operation is asynchronous and the user should monitor the returned 
-       * task status in order to check when it is completed.
+       * @return a task. This operation is asynchronous and the user should monitor the returned
+       *         task status in order to check when it is completed.
        */
-      Task deleteMetadataEntry(URI uri, String key);
+      Task deleteEntry(URI uri, String key);
+
    }
 }
