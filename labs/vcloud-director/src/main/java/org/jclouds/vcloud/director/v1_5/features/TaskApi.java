@@ -22,47 +22,56 @@ import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.TasksList;
+import org.jclouds.vcloud.director.v1_5.domain.org.Org;
 
 /**
  * Provides synchronous access to {@link Task} objects.
  * 
  * @see TaskAsyncApi
- * @author grkvlt@apache.org
+ * @author grkvlt@apache.org, Adrian Cole
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface TaskApi {
 
    /**
     * Retrieves a list of tasks.
-    *
+    * 
     * <pre>
     * GET /tasksList/{id}
     * </pre>
     * 
-    * @param orgURI the URI of the organization
+    * @param tasksListUrn
+    *           from {@link Org#getLinks()} where {@link Link#getType} is
+    *           {@link VCloudDirectorMediaType#TASKS_LIST}
     * @return a list of tasks
     */
-   TasksList getTaskList(URI orgURI);
+   TasksList getTasksList(URI tasksListHref);
 
    /**
     * Retrieves a task.
-    *
+    * 
     * <pre>
     * GET /task/{id}
     * </pre>
     * 
     * @return the task or null if not found
     */
-   Task getTask(URI taskUri);
+   Task get(String taskUrn);
+
+   Task get(URI taskHref);
 
    /**
     * Cancels a task.
-    *
+    * 
     * <pre>
     * POST /task/{id}/action/cancel
     * </pre>
     */
-   void cancelTask(URI taskUri);
+   void cancel(String taskUrn);
+
+   void cancel(URI taskHref);
 }

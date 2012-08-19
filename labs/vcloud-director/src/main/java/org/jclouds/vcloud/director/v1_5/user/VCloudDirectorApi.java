@@ -54,7 +54,7 @@ public interface VCloudDirectorApi {
     * GET /entity/{id}
     * </pre>
     */
-   Entity resolveEntity(String id);
+   Entity resolveEntity(String urn);
    
    /**
     * @return the current login session

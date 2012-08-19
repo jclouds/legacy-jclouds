@@ -28,48 +28,57 @@ import org.jclouds.vcloud.director.v1_5.domain.User;
  * Provides synchronous access to {@link User} objects.
  * 
  * @see UserAsyncApi
- * @author danikov
+ * @author danikov, Adrian Cole
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface UserApi {
 
    /**
     * Creates or imports a user in an organization. The user could be enabled or disabled.
-    *
+    * 
     * <pre>
     * POST /admin/org/{id}/users
     * </pre>
-    *
-    * @param orgRef the reference for the org
+    * 
+    * @param orgUrn
+    *           the urn for the org
     * @return the created user
     */
-   User createUser(URI orgRef, User user);
-   
+   User createUserInOrg(User user, String orgUrn);
+
+   User createUserInOrg(User user, URI orgAdminHref);
+
    /**
     * Retrieves a user. This entity could be enabled or disabled.
-    *
+    * 
     * <pre>
     * GET /admin/user/{id}
     * </pre>
-    *
-    * @param userRef the reference for the user
+    * 
+    * @param userUrn
+    *           the reference for the user
     * @return a user
     */
-   User getUser(URI userRef);
-   
+   User get(String userUrn);
+
+   User get(URI userHref);
+
    /**
-    * Modifies a user. The user object could be enabled or disabled. 
-    * Note: the lock status cannot be changed using this call: use unlockUser.
-    *
+    * Modifies a user. The user object could be enabled or disabled. Note: the lock status cannot be
+    * changed using this call: use unlockUser.
+    * 
     * <pre>
     * PUT /admin/user/{id}
     * </pre>
-    *
-    * @param userRef the reference for the user
+    * 
+    * @param userUrn
+    *           the reference for the user
     * @return the modified user
     */
-   User updateUser(URI userRef, User user);
+   User update(String userUrn, User user);
    
+   User update(URI userHref, User user);
+
    /**
     * Deletes a user. Enabled and disabled users could be deleted.
     * 
@@ -77,8 +86,10 @@ public interface UserApi {
     * DELETE /admin/catalog/{id}
     * </pre>
     */
-   void deleteUser(URI userRef);
+   void delete(String userUrn);
    
+   void delete(URI userHref);
+
    /**
     * Unlocks a user.
     * 
@@ -86,5 +97,7 @@ public interface UserApi {
     * POST /admin/user/{id}/action/unlock
     * </pre>
     */
-   void unlockUser(URI userRef);
+   void unlock(String userUrn);
+
+   void unlock(URI userHref);
 }

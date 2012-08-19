@@ -21,7 +21,7 @@ package org.jclouds.vcloud.director.v1_5.features;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_EQ;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_REQ_LIVE;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_REQ_LIVE;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REF_REQ_LIVE;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.URN_REQ_LIVE;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
@@ -40,6 +40,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.Vdc;
+import org.jclouds.vcloud.director.v1_5.domain.network.Network;
 import org.jclouds.vcloud.director.v1_5.domain.network.Network.FenceMode;
 import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.network.VAppNetworkConfiguration;
@@ -85,6 +86,7 @@ public class VdcApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    private VAppTemplate capturedVAppTemplate;
    private VAppTemplate uploadedVAppTemplate;
    private boolean metadataSet = false;
+   private Network network;
    
    @Override
    @BeforeClass(alwaysRun = true)
@@ -93,7 +95,8 @@ public class VdcApiLiveTest extends BaseVCloudDirectorApiLiveTest {
       vappTemplateApi = context.getApi().getVAppTemplateApi();
       vappApi = context.getApi().getVAppApi();
       
-      assertNotNull(vdcURI, String.format(REF_REQ_LIVE, VDC));
+      assertNotNull(vdcURI, String.format(URN_REQ_LIVE, VDC));
+      network = lazyGetNetwork();
    }
    
    @AfterClass(alwaysRun = true)
@@ -241,12 +244,12 @@ public class VdcApiLiveTest extends BaseVCloudDirectorApiLiveTest {
             networks, new Predicate<Reference>() {
                   @Override
                   public boolean apply(Reference reference) {
-                     return reference.getHref().equals(networkURI);
+                     return reference.getHref().equals(network.getHref());
                   }
             });
 
       if (!parentNetwork.isPresent()) {
-         fail(String.format("Could not find network %s in vdc", networkURI.toASCIIString()));
+         fail(String.format("Could not find network %s in vdc", network.getHref().toASCIIString()));
       }
 
       NetworkConfiguration networkConfiguration = NetworkConfiguration.builder()

@@ -18,12 +18,9 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.ENTITY_NON_NULL;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.TASK_COMPLETE_TIMELY;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkNetworkConfigSection;
-import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
 
 import java.net.URI;
 import java.util.List;
@@ -33,7 +30,6 @@ import java.util.Set;
 import org.jclouds.vcloud.director.v1_5.AbstractVAppApiLiveTest;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
-import org.jclouds.vcloud.director.v1_5.domain.Vdc;
 import org.jclouds.vcloud.director.v1_5.domain.Vm;
 import org.jclouds.vcloud.director.v1_5.domain.network.FirewallRule;
 import org.jclouds.vcloud.director.v1_5.domain.network.FirewallRuleProtocols;
@@ -42,6 +38,7 @@ import org.jclouds.vcloud.director.v1_5.domain.network.IpRange;
 import org.jclouds.vcloud.director.v1_5.domain.network.IpRanges;
 import org.jclouds.vcloud.director.v1_5.domain.network.IpScope;
 import org.jclouds.vcloud.director.v1_5.domain.network.NatService;
+import org.jclouds.vcloud.director.v1_5.domain.network.Network;
 import org.jclouds.vcloud.director.v1_5.domain.network.Network.FenceMode;
 import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConnection;
@@ -57,11 +54,8 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Joiner;
-import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
@@ -78,9 +72,8 @@ public class VAppNetworksLiveTest extends AbstractVAppApiLiveTest {
    private static final String HTTP_SECURITY_GROUP = "http";
    private static final String DEFAULT_SECURITY_GROUP = "default";
    private String key;
-   private Reference parentNetworkRef;
    private Map<String, NetworkConfiguration> securityGroupToNetworkConfig;
-   private String orgNetworkName;
+   private Network network;
 
    @AfterClass(alwaysRun = true, dependsOnMethods = { "cleanUpEnvironment" })
    protected void tidyUp() {
@@ -96,9 +89,8 @@ public class VAppNetworksLiveTest extends AbstractVAppApiLiveTest {
    
    @BeforeClass
    void setUp() {
-      parentNetworkRef = lookUpNewtorkInVdc(networkURI);
-      securityGroupToNetworkConfig = createSecurityGroupToNetworkConfiguration(parentNetworkRef);
-      orgNetworkName = parentNetworkRef.getName();
+      network = lazyGetNetwork();
+      securityGroupToNetworkConfig = createSecurityGroupToNetworkConfiguration(Reference.builder().fromEntity(network).build());
    }
    
    @AfterMethod
@@ -164,7 +156,7 @@ public class VAppNetworksLiveTest extends AbstractVAppApiLiveTest {
    }
    
    private void createVAppNetworkWithSecurityGroupOnVApp(ImmutableList<String> securityGroups, URI vAppURI) {
-      String newVAppNetworkName = generateVAppNetworkName(orgNetworkName, securityGroups);
+      String newVAppNetworkName = generateVAppNetworkName(network.getName(), securityGroups);
       // Create a vAppNetwork with firewall rules
       NetworkConfigSection newSection = generateNetworkConfigSection(securityGroups, newVAppNetworkName);
       Task modifyNetworkConfigSection = vAppApi.modifyNetworkConfigSection(vAppURI, newSection);
@@ -185,7 +177,7 @@ public class VAppNetworksLiveTest extends AbstractVAppApiLiveTest {
       IpScope ipScope = createNewIpScope();      
       NetworkConfiguration newConfiguration = NetworkConfiguration.builder()
                .ipScope(ipScope)
-               .parentNetwork(parentNetworkRef)
+               .parentNetwork(Reference.builder().fromEntity(network).build())
                .fenceMode(FenceMode.NAT_ROUTED)
                .retainNetInfoAcrossDeployments(false)
                .features(createNetworkFeatures(ImmutableSet.of(firewallService, natService)))
@@ -239,25 +231,6 @@ public class VAppNetworksLiveTest extends AbstractVAppApiLiveTest {
                .endAddress("192.168.2.199")
                .build();
       return newIpRange;
-   }
-
-   private Reference lookUpNewtorkInVdc(final URI networkURI) {
-      Vdc vdc = context.getApi().getVdcApi().getVdc(vdcURI);
-      assertNotNull(vdc, String.format(ENTITY_NON_NULL, VDC));
-
-      Set<Reference> networks = vdc.getAvailableNetworks();
-
-      // Look up the network in the Vdc with the id configured for the tests
-      Optional<Reference> parentNetwork = Iterables.tryFind(networks, new Predicate<Reference>() {
-         @Override
-         public boolean apply(Reference reference) {
-            return reference.getHref().equals(networkURI);
-         }
-      });
-      if (!parentNetwork.isPresent()) {
-         fail(String.format("Could not find network %s in vdc", networkURI.toASCIIString()));
-      }
-      return parentNetwork.get();
    }
 
    private Set<FirewallRule> retrieveAllFirewallRules(NetworkFeatures networkFeatures) {

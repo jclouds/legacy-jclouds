@@ -18,9 +18,10 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.ENTITY;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.TASK;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.TASKS_LIST;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.fail;
 
 import java.net.URI;
 
@@ -28,9 +29,6 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
-import org.jclouds.vcloud.director.v1_5.domain.Error;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.TasksList;
@@ -45,183 +43,140 @@ import org.testng.annotations.Test;
  */
 @Test(groups = { "unit", "user" }, singleThreaded = true, testName = "TaskApiExpectTest")
 public class TaskApiExpectTest extends VCloudDirectorAdminApiExpectTest {
-
-   @Test
-   public void testTaskListForValidOrg() {
-      HttpRequest taskRequest = HttpRequest.builder()
-              .method("GET")
-              .endpoint(endpoint + "/tasksList/6f312e42-cd2b-488d-a2bb-97519cd57ed0")
-              .addHeader("Accept", "*/*")
-              .addHeader("x-vcloud-authorization", token)
-              .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token).build();
-
-      HttpResponse taskResponse = HttpResponse.builder()
-              .statusCode(200)
-              .payload(payloadFromResourceWithContentType("/task/taskslist.xml", VCloudDirectorMediaType.TASKS_LIST + ";version=1.5"))
-              .build();
-      
-      HttpRequest orgRequest = HttpRequest.builder().method("GET")
-            .endpoint(endpoint + "/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0")
+   static String tasksList = "6f312e42-cd2b-488d-a2bb-97519cd57ed0";
+   static URI tasksListHref = URI.create(endpoint + "/tasksList/" + tasksList);
+   
+   HttpRequest getTasksList = HttpRequest.builder()
+            .method("GET")
+            .endpoint(tasksListHref)
             .addHeader("Accept", "*/*")
             .addHeader("x-vcloud-authorization", token)
-            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token).build();
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
+            .build();
 
-		HttpResponse orgResponse = HttpResponse.builder()
+    HttpResponse getTasksListResponse = HttpResponse.builder()
             .statusCode(200)
-            .payload(payloadFromResourceWithContentType("/org/org.xml", VCloudDirectorMediaType.TASKS_LIST + ";version=1.5"))
+            .payload(payloadFromResourceWithContentType("/task/tasksList.xml", TASKS_LIST + ";version=1.5"))
             .build();
-
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, taskRequest, taskResponse, orgRequest, orgResponse);
-
-      TasksList expected = TasksList.builder()
-              .name("Tasks Lists")
-              .type("application/vnd.vmware.vcloud.tasksList+xml")
-              .href(URI.create("https://vcloudbeta.bluelock.com/api/tasksList/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
-              .task(taskOne())
-              .task(taskTwo())
-              .build();
-
-      assertEquals(api.getTaskApi().getTaskList(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0")), expected);
-   }
-
+    
    @Test
-   public void testTaskListForInvalidOrgId() {
-      HttpRequest taskRequest = HttpRequest.builder().method("GET")
-              .endpoint(endpoint + "/tasksList/NOTAUUID")
-              .addHeader("Accept", "*/*")
-              .addHeader("x-vcloud-authorization", token).build();
-
-      HttpResponse taskResponse = HttpResponse.builder().build();
-      
-      HttpRequest orgRequest = HttpRequest.builder().method("GET")
-            .endpoint(endpoint + "/org/NOTAUUID")
-            .addHeader("Accept", "*/*")
-            .addHeader("x-vcloud-authorization", token)
-            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token).build();
-
-      HttpResponse orgResponse = HttpResponse.builder()
-            .statusCode(400)
-            .payload(payloadFromResourceWithContentType("/org/error400.xml", VCloudDirectorMediaType.ERROR + ";version=1.5"))
-            .build();
-
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, taskRequest, taskResponse, orgRequest, orgResponse);
-
-      Error expected = Error.builder()
-            .message("validation error on field 'id': String value has invalid format or length")
-            .majorErrorCode(400)
-            .minorErrorCode("BAD_REQUEST")
-            .build();
-
-      try {
-         api.getTaskApi().getTaskList(URI.create("https://vcloudbeta.bluelock.com/api/org/NOTAUUID"));
-         fail("Should give HTTP 400 error");
-      } catch (VCloudDirectorException vde) {
-         assertEquals(vde.getError(), expected);
-      } catch (Exception e) {
-         fail("Should have thrown a VCloudDirectorException");
-      }
+   public void testGetTasksListHref() {
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, getTasksList, getTasksListResponse);
+      assertEquals(api.getTaskApi().getTasksList(tasksListHref), tasksList());
    }
-
-   @Test
-   public void testTaskListForNotFoundOrgId() {
-      HttpRequest taskRequest = HttpRequest.builder().method("GET")
-            .endpoint(endpoint + "/tasksList/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee")
-            .addHeader("Accept", "*/*")
-            .addHeader("x-vcloud-authorization", token)
-            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token).build();
-
-      HttpResponse taskResponse = HttpResponse.builder().build();
-      
-      HttpRequest orgRequest = HttpRequest.builder().method("GET")
-            .endpoint(endpoint + "/org/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee")
-            .addHeader("Accept", "*/*")
-            .addHeader("x-vcloud-authorization", token)
-            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token).build();
-
-      HttpResponse orgResponse = HttpResponse.builder()
-            .statusCode(403)
-            .payload(payloadFromResourceWithContentType("/org/error403-fake.xml", VCloudDirectorMediaType.ERROR + ";version=1.5"))
-            .build();
-
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, taskRequest, taskResponse, orgRequest, orgResponse);
-
-		assertNull(api.getTaskApi().getTaskList(URI.create("https://vcloudbeta.bluelock.com/api/org/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee")));
-   }
-
-   @Test
-   public void testGetTaskForTaskRef() {
-      HttpRequest taskRequest = HttpRequest.builder()
-              .method("GET")
-              .endpoint(endpoint + "/task/5fcd2af3-d0ec-45ce-9451-8c585a2c766b")
-              .addHeader("Accept", "*/*")
-              .addHeader("x-vcloud-authorization", token)
-              .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token).build();
-
-      HttpResponse taskResponse = HttpResponse.builder()
-              .statusCode(200)
-              .payload(payloadFromResourceWithContentType("/task/task.xml", VCloudDirectorMediaType.TASK + ";version=1.5"))
-              .build();
-
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, taskRequest, taskResponse);
-
-      URI taskUri = URI.create(endpoint + "/task/5fcd2af3-d0ec-45ce-9451-8c585a2c766b");
-      
-      //TODO: incorrect relationship, as task should not have a nested task container!!
-      Task expected = taskOne();
-
-      assertEquals(api.getTaskApi().getTask(taskUri), expected);
-   }
-
-   @Test
-   public void testCancelTaskByTaskRef() {
-      HttpRequest taskRequest = HttpRequest.builder()
-            .method("POST")
-            .endpoint(endpoint + "/task/5fcd2af3-d0ec-45ce-9451-8c585a2c766b/action/cancel")
-            .addHeader("Accept", "*/*")
-            .addHeader("x-vcloud-authorization", token)
-            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token).build();
-
-      HttpResponse taskResponse = HttpResponse.builder()
-            .statusCode(200)
-            .build();
-
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, taskRequest, taskResponse);
-
-      URI taskUri = URI.create(endpoint + "/task/5fcd2af3-d0ec-45ce-9451-8c585a2c766b");
-      
-      api.getTaskApi().cancelTask(taskUri);
-   }
-
-   public static Task taskOne() {
-      return Task.builder()
-		            .type("application/vnd.vmware.vcloud.task+xml")
-		            .name("task")
-		            .id("urn:vcloud:task:5fcd2af3-d0ec-45ce-9451-8c585a2c766b")
-		            .href(URI.create("https://vcloudbeta.bluelock.com/api/task/5fcd2af3-d0ec-45ce-9451-8c585a2c766b"))
-		            .status("success")
-		            .operation("Created Catalog QunyingTestCatalog(7212e451-76e1-4631-b2de-ba1dfd8080e4)")
-		            .operationName("catalogCreateCatalog")
-		            .startTime(dateService.iso8601DateParse("2012-02-07T00:16:28.450-05:00"))
-		            .endTime(dateService.iso8601DateParse("2012-02-07T00:16:28.867-05:00"))
-		            .expiryTime(dateService.iso8601DateParse("2012-05-07T00:16:28.450-04:00"))
-		            .owner(Reference.builder()
-		                  .type("application/vnd.vmware.vcloud.catalog+xml")
-		                  .name("QunyingTestCatalog")
-		                  .href(URI.create("https://vcloudbeta.bluelock.com/api/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4"))
-		                  .build())
-		            .user(Reference.builder()
-		                  .type("application/vnd.vmware.admin.user+xml")
-		                  .name("JClouds")
-		                  .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
-		                  .build())
-		            .org(Reference.builder()
-		                  .type("application/vnd.vmware.vcloud.org+xml")
-		                  .name("JClouds")
-		                  .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
-		                  .build())
-		            .build();
+  
+   private TasksList tasksList() {
+      return TasksList.builder()
+               .name("Tasks Lists")
+               .type("application/vnd.vmware.vcloud.tasksList+xml")
+               .href(URI.create("https://vcloudbeta.bluelock.com/api/tasksList/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
+               .task(task())
+               .task(taskTwo())
+               .build();
    }
    
+   static String task = "5fcd2af3-d0ec-45ce-9451-8c585a2c766b";
+   static String taskUrn = "urn:vcloud:task:" + task;
+   static URI taskHref = URI.create(endpoint + "/task/" + task);
+   
+   HttpRequest get = HttpRequest.builder()
+            .method("GET")
+            .endpoint(taskHref)
+            .addHeader("Accept", "*/*")
+            .addHeader("x-vcloud-authorization", token)
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
+            .build();
+
+    HttpResponse getResponse = HttpResponse.builder()
+            .statusCode(200)
+            .payload(payloadFromResourceWithContentType("/task/task.xml", TASK + ";version=1.5"))
+            .build();
+    
+   @Test
+   public void testGetTaskHref() {
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, get, getResponse);
+      assertEquals(api.getTaskApi().get(taskHref), task());
+   }
+   
+   HttpRequest resolveTask = HttpRequest.builder()
+            .method("GET")
+            .endpoint(endpoint + "/entity/" + taskUrn)
+            .addHeader("Accept", "*/*")
+            .addHeader("x-vcloud-authorization", token)
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
+            .build();
+   
+   String taskEntity = asString(createXMLBuilder("Entity").a("xmlns", "http://www.vmware.com/vcloud/v1.5")
+                                                             .a("name", taskUrn)
+                                                             .a("id", taskUrn)
+                                                             .a("type", ENTITY)
+                                                             .a("href", endpoint + "/entity/" + taskUrn)
+                                  .e("Link").a("rel", "alternate").a("type", TASK).a("href", taskHref.toString()).up());
+   
+   HttpResponse resolveTaskResponse = HttpResponse.builder()
+           .statusCode(200)
+           .payload(payloadFromStringWithContentType(taskEntity, ENTITY + ";version=1.5"))
+           .build();
+   
+   @Test
+   public void testGetTaskUrn() {
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, resolveTask, resolveTaskResponse, get, getResponse);
+      assertEquals(api.getTaskApi().get(taskUrn), task());
+   }
+
+   public static Task task() {
+      return Task.builder()
+               .type("application/vnd.vmware.vcloud.task+xml")
+               .name("task")
+               .id("urn:vcloud:task:5fcd2af3-d0ec-45ce-9451-8c585a2c766b")
+               .href(URI.create("https://vcloudbeta.bluelock.com/api/task/5fcd2af3-d0ec-45ce-9451-8c585a2c766b"))
+               .status("success")
+               .operation("Created Catalog QunyingTestCatalog(7212e451-76e1-4631-b2de-ba1dfd8080e4)")
+               .operationName("catalogCreateCatalog")
+               .startTime(dateService.iso8601DateParse("2012-02-07T00:16:28.450-05:00"))
+               .endTime(dateService.iso8601DateParse("2012-02-07T00:16:28.867-05:00"))
+               .expiryTime(dateService.iso8601DateParse("2012-05-07T00:16:28.450-04:00"))
+               .owner(Reference.builder()
+                     .type("application/vnd.vmware.vcloud.catalog+xml")
+                     .name("QunyingTestCatalog")
+                     .href(URI.create("https://vcloudbeta.bluelock.com/api/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4"))
+                     .build())
+               .user(Reference.builder()
+                     .type("application/vnd.vmware.admin.user+xml")
+                     .name("JClouds")
+                     .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
+                     .build())
+               .org(Reference.builder()
+                     .type("application/vnd.vmware.vcloud.org+xml")
+                     .name("JClouds")
+                     .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
+                     .build())
+               .build();
+   }
+
+   HttpRequest cancel = HttpRequest.builder()
+            .method("POST")
+            .endpoint(taskHref+ "/action/cancel")
+            .addHeader("Accept", "*/*")
+            .addHeader("x-vcloud-authorization", token)
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token).build();
+
+   HttpResponse cancelResponse = HttpResponse.builder()
+            .statusCode(200)
+            .build();
+   
+   @Test
+   public void testCancelTaskHref() {
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, cancel, cancelResponse);
+      api.getTaskApi().cancel(taskHref);
+   }
+   
+   @Test
+   public void testCancelTaskUrn() {
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, resolveTask, resolveTaskResponse, cancel, cancelResponse);
+      api.getTaskApi().cancel(taskHref);
+   }
+
    public static Task taskTwo() {
       return Task.builder()
 		            .type("application/vnd.vmware.vcloud.task+xml")

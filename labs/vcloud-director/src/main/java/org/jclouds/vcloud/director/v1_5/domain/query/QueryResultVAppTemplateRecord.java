@@ -119,7 +119,7 @@ public class QueryResultVAppTemplateRecord extends QueryResultRecordType {
       }
 
       /**
-       * @see QueryResultVAppTemplateRecord#getOrg()
+       * @see QueryResultVAppTemplateRecord#get()
        */
       public B org(String val) {
          this.org = val;
@@ -187,7 +187,7 @@ public class QueryResultVAppTemplateRecord extends QueryResultRecordType {
                .isPublished(in.isPublished())
                .vdc(in.getVdc())
                .vdcName(in.getVdcName())
-               .org(in.getOrg())
+               .org(in.get())
                .creationDate(in.getCreationDate())
                .isBusy(in.isBusy())
                .isGoldMaster(in.isGoldMaster())
@@ -292,7 +292,7 @@ public class QueryResultVAppTemplateRecord extends QueryResultRecordType {
    /**
     * Organization reference or id
     */
-   public String getOrg() {
+   public String get() {
       return org;
    }
 

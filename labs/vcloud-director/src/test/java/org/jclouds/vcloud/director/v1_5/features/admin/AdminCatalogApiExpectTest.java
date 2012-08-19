@@ -55,12 +55,12 @@ public class AdminCatalogApiExpectTest extends VCloudDirectorAdminApiExpectTest 
    
    static String catalog = "7212e451-76e1-4631-b2de-ba1dfd8080e4";
    static String catalogUrn = "urn:vcloud:catalog:" + catalog;
-   static URI adminCatalogHref = URI.create(endpoint + "/admin/catalog/" + catalog);
+   static URI catalogAdminHref = URI.create(endpoint + "/admin/catalog/" + catalog);
    static URI catalogHref = URI.create(endpoint + "/catalog/" + catalog);
    
    HttpRequest get = HttpRequest.builder()
             .method("GET")
-            .endpoint(adminCatalogHref)
+            .endpoint(catalogAdminHref)
             .addHeader("Accept", "*/*")
             .addHeader("x-vcloud-authorization", token)
             .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
@@ -74,7 +74,7 @@ public class AdminCatalogApiExpectTest extends VCloudDirectorAdminApiExpectTest 
    @Test
    public void testGetCatalogHref() {
       VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, get, getResponse);
-      assertEquals(api.getCatalogApi().get(adminCatalogHref), catalog());
+      assertEquals(api.getCatalogApi().get(catalogAdminHref), catalog());
    }
    
    HttpRequest resolveCatalog = HttpRequest.builder()
@@ -91,7 +91,7 @@ public class AdminCatalogApiExpectTest extends VCloudDirectorAdminApiExpectTest 
                                                              .a("type", ENTITY)
                                                              .a("href", endpoint + "/entity/" + catalogUrn)
                                   .e("Link").a("rel", "alternate").a("type", CATALOG).a("href", catalogHref.toString()).up()
-                                  .e("Link").a("rel", "alternate").a("type", ADMIN_CATALOG).a("href", adminCatalogHref.toString()).up());
+                                  .e("Link").a("rel", "alternate").a("type", ADMIN_CATALOG).a("href", catalogAdminHref.toString()).up());
    
    HttpResponse resolveCatalogResponse = HttpResponse.builder()
            .statusCode(200)
@@ -107,11 +107,11 @@ public class AdminCatalogApiExpectTest extends VCloudDirectorAdminApiExpectTest 
    static String org = "7212e451-76e1-4631-b2de-asdasdasd";
    static String orgUrn = "urn:vcloud:org:" + org;
    static URI orgHref = URI.create(endpoint + "/org/" + org);
-   static URI adminOrgHref = URI.create(endpoint + "/admin/org/" + org);
+   static URI orgAdminHref = URI.create(endpoint + "/admin/org/" + org);
    
    HttpRequest create = HttpRequest.builder()
             .method("POST")
-            .endpoint(adminOrgHref + "/catalogs")
+            .endpoint(orgAdminHref + "/catalogs")
             .addHeader("Accept", ADMIN_CATALOG)
             .addHeader("x-vcloud-authorization", token)
             .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
@@ -126,7 +126,7 @@ public class AdminCatalogApiExpectTest extends VCloudDirectorAdminApiExpectTest 
    @Test
    public void testCreateCatalogHref() {
       VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, create, createResponse);
-      assertEquals(api.getCatalogApi().createCatalogInOrg(createCatalogInOrgSource(), adminOrgHref), createCatalogInOrg());
+      assertEquals(api.getCatalogApi().createCatalogInOrg(createCatalogInOrgSource(), orgAdminHref), createCatalogInOrg());
    }
    
    HttpRequest resolveOrg = HttpRequest.builder()
@@ -143,7 +143,7 @@ public class AdminCatalogApiExpectTest extends VCloudDirectorAdminApiExpectTest 
                                                              .a("type", ENTITY)
                                                              .a("href", endpoint + "/entity/" + catalogUrn)
                                   .e("Link").a("rel", "alternate").a("type", ORG).a("href", orgHref.toString()).up()
-                                  .e("Link").a("rel", "alternate").a("type", ADMIN_ORG).a("href", adminOrgHref.toString()).up());
+                                  .e("Link").a("rel", "alternate").a("type", ADMIN_ORG).a("href", orgAdminHref.toString()).up());
    
    HttpResponse resolveOrgResponse = HttpResponse.builder()
            .statusCode(200)
@@ -158,7 +158,7 @@ public class AdminCatalogApiExpectTest extends VCloudDirectorAdminApiExpectTest 
    
    HttpRequest update = HttpRequest.builder()
             .method("PUT")
-            .endpoint(adminCatalogHref)
+            .endpoint(catalogAdminHref)
             .addHeader("Accept", ADMIN_CATALOG)
             .addHeader("x-vcloud-authorization", token)
             .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
@@ -173,7 +173,7 @@ public class AdminCatalogApiExpectTest extends VCloudDirectorAdminApiExpectTest 
    @Test
    public void testUpdateCatalogHref() {
       VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, update, updateResponse);
-      assertEquals(api.getCatalogApi().update(adminCatalogHref, updateCatalog()), updateCatalog());
+      assertEquals(api.getCatalogApi().update(catalogAdminHref, updateCatalog()), updateCatalog());
    }
   
    @Test
@@ -184,7 +184,7 @@ public class AdminCatalogApiExpectTest extends VCloudDirectorAdminApiExpectTest 
    
    HttpRequest getOwner = HttpRequest.builder()
             .method("GET")
-            .endpoint(adminCatalogHref + "/owner")
+            .endpoint(catalogAdminHref + "/owner")
             .addHeader("Accept", "*/*")
             .addHeader("x-vcloud-authorization", token)
             .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
@@ -211,7 +211,7 @@ public class AdminCatalogApiExpectTest extends VCloudDirectorAdminApiExpectTest 
    @Test
    public void testGetCatalogOwnerHref() {
       VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, getOwner, getOwnerResponse);
-      assertEquals(api.getCatalogApi().getOwner(adminCatalogHref), expectedGetOwner);
+      assertEquals(api.getCatalogApi().getOwner(catalogAdminHref), expectedGetOwner);
    }
    
    @Test
@@ -222,7 +222,7 @@ public class AdminCatalogApiExpectTest extends VCloudDirectorAdminApiExpectTest 
    
    HttpRequest setOwner = HttpRequest.builder()
             .method("PUT")
-            .endpoint(adminCatalogHref + "/owner")
+            .endpoint(catalogAdminHref + "/owner")
             .addHeader("Accept", "*/*")
             .addHeader("x-vcloud-authorization", token)
             .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
@@ -245,7 +245,7 @@ public class AdminCatalogApiExpectTest extends VCloudDirectorAdminApiExpectTest 
    @Test
    public void testSetCatalogOwnerHref() {
       VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, setOwner, setOwnerResponse);
-      api.getCatalogApi().setOwner(adminCatalogHref, ownerToSet);
+      api.getCatalogApi().setOwner(catalogAdminHref, ownerToSet);
    }
    
    @Test
@@ -256,7 +256,7 @@ public class AdminCatalogApiExpectTest extends VCloudDirectorAdminApiExpectTest 
    
    HttpRequest publishCatalog = HttpRequest.builder()
             .method("POST")
-            .endpoint(adminCatalogHref + "/action/publish")
+            .endpoint(catalogAdminHref + "/action/publish")
             .addHeader("Accept", "*/*")
             .addHeader("x-vcloud-authorization", token)
             .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
@@ -271,7 +271,7 @@ public class AdminCatalogApiExpectTest extends VCloudDirectorAdminApiExpectTest 
    public void testPublishCatalogHref() {
       VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, publishCatalog,
                publishCatalogResponse);
-      api.getCatalogApi().publish(adminCatalogHref, PublishCatalogParams.builder().isPublished(true).build());
+      api.getCatalogApi().publish(catalogAdminHref, PublishCatalogParams.builder().isPublished(true).build());
    }
 
    @Test
@@ -284,7 +284,7 @@ public class AdminCatalogApiExpectTest extends VCloudDirectorAdminApiExpectTest 
    
    HttpRequest deleteCatalog = HttpRequest.builder()
             .method("DELETE")
-            .endpoint(adminCatalogHref)
+            .endpoint(catalogAdminHref)
             .addHeader("Accept", "*/*")
             .addHeader("x-vcloud-authorization", token)
             .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
@@ -298,7 +298,7 @@ public class AdminCatalogApiExpectTest extends VCloudDirectorAdminApiExpectTest 
    public void testDeleteCatalogHref() {
       VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, deleteCatalog,
                deleteCatalogResponse);
-      api.getCatalogApi().delete(adminCatalogHref);
+      api.getCatalogApi().delete(catalogAdminHref);
    }
 
    @Test
@@ -307,6 +307,8 @@ public class AdminCatalogApiExpectTest extends VCloudDirectorAdminApiExpectTest 
                resolveCatalogResponse, deleteCatalog, deleteCatalogResponse);
       api.getCatalogApi().delete(catalogUrn);
    }
+
+   //TODO: tests for access control!
    
    public static final AdminCatalog createCatalogInOrgSource() {
       return AdminCatalog.builder()

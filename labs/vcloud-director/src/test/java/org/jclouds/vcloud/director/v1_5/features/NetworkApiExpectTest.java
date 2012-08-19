@@ -18,14 +18,22 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.ADMIN_NETWORK;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.ENTITY;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.ERROR;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.METADATA;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.METADATA_VALUE;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.NETWORK;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.ORG;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.fail;
 
 import java.net.URI;
 
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpResponse;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Error;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
@@ -36,7 +44,6 @@ import org.jclouds.vcloud.director.v1_5.domain.network.IpAddresses;
 import org.jclouds.vcloud.director.v1_5.domain.network.IpRange;
 import org.jclouds.vcloud.director.v1_5.domain.network.IpRanges;
 import org.jclouds.vcloud.director.v1_5.domain.network.IpScope;
-import org.jclouds.vcloud.director.v1_5.domain.network.Network;
 import org.jclouds.vcloud.director.v1_5.domain.network.Network.FenceMode;
 import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.network.NetworkFeatures;
@@ -47,6 +54,7 @@ import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorApi;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.net.HttpHeaders;
 
 /**
  * Test the {@link NetworkApi} via its side effects.
@@ -55,37 +63,40 @@ import com.google.common.collect.ImmutableSet;
  */
 @Test(groups = { "unit", "user" }, singleThreaded = true, testName = "NetworkApiExpectTest")
 public class NetworkApiExpectTest extends VCloudDirectorAdminApiExpectTest {
-   
-   @Test
-   public void testGetNetwork() {
-      URI networkUri = URI.create(endpoint + "/network/f3ba8256-6f48-4512-aad6-600e85b4dc38");
 
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("GET", "/network/f3ba8256-6f48-4512-aad6-600e85b4dc38")
-            .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/network/network.xml", VCloudDirectorMediaType.ORG_NETWORK)
-            .httpResponseBuilder().build());
-      
-      OrgNetwork expected = orgNetwork();
-      assertEquals(Network.<OrgNetwork>toSubType(api.getNetworkApi().getNetwork(networkUri)), expected);
+   static String network = "55a677cf-ab3f-48ae-b880-fab90421980c";
+   static String networkUrn = "urn:vcloud:network:" + network;
+   static URI networkHref = URI.create(endpoint + "/network/" + network);
+   
+   HttpRequest get = HttpRequest.builder()
+            .method("GET")
+            .endpoint(networkHref)
+            .addHeader("Accept", "*/*")
+            .addHeader("x-vcloud-authorization", token)
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
+            .build();
+
+    HttpResponse getResponse = HttpResponse.builder()
+            .statusCode(200)
+            .payload(payloadFromResourceWithContentType("/network/network.xml", ORG + ";version=1.5"))
+            .build();
+    
+   @Test
+   public void testGetNetworkHref() {
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, get, getResponse);
+      assertEquals(api.getNetworkApi().get(networkHref), network());
    }
-
-   @Test
-   public void testGetNetworkWithInvalidId() {
-      URI networkUri = URI.create(endpoint + "/network/NOTAUUID");
-
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("GET", "/network/NOTAUUID")
-            .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/network/error400.xml", VCloudDirectorMediaType.ERROR)
-            .httpResponseBuilder().statusCode(400).build());
    
+   @Test
+   public void testGetNetworkHrefInvalidId() {
+      
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
+               get.toBuilder().endpoint(endpoint + "/network/NOTAUUID").build(), 
+               HttpResponse.builder()
+                           .statusCode(400)
+                           .payload(payloadFromResourceWithContentType("/network/error400.xml", ERROR + ";version=1.5"))
+                           .build());
+      
       Error expected = Error.builder()
          .message("validation error : EntityRef has incorrect type, expected type is com.vmware.vcloud.entity.network.")
          .majorErrorCode(400)
@@ -93,7 +104,7 @@ public class NetworkApiExpectTest extends VCloudDirectorAdminApiExpectTest {
          .build();
 
       try {
-         api.getNetworkApi().getNetwork(networkUri);
+         api.getNetworkApi().get(URI.create(endpoint + "/network/NOTAUUID"));
          fail("Should give HTTP 400 error");
       } catch (VCloudDirectorException vde) {
          assertEquals(vde.getError(), expected);
@@ -103,91 +114,125 @@ public class NetworkApiExpectTest extends VCloudDirectorAdminApiExpectTest {
    }
 
    @Test
-   public void testGetNetworkWithCatalogId() {
-      URI networkUri = URI.create(endpoint + "/network/9e08c2f6-077a-42ce-bece-d5332e2ebb5c");
-
+   public void testGetNetworkHrefCatalogId() {
       VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("GET", "/network/9e08c2f6-077a-42ce-bece-d5332e2ebb5c")
-            .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/network/error403-catalog.xml", VCloudDirectorMediaType.ERROR)
-            .httpResponseBuilder().statusCode(403).build());
+               get.toBuilder().endpoint(endpoint + "/network/9e08c2f6-077a-42ce-bece-d5332e2ebb5c").build(), 
+               HttpResponse.builder()
+                           .statusCode(403)
+                           .payload(payloadFromResourceWithContentType("/network/error403-catalog.xml", ERROR + ";version=1.5"))
+                           .build());
       
-      assertNull(api.getNetworkApi().getNetwork(networkUri));
+      assertNull(api.getNetworkApi().get(URI.create(endpoint + "/network/9e08c2f6-077a-42ce-bece-d5332e2ebb5c")));
    }
 
    @Test
-   public void testGetNetworkWithFakeId() {
-      URI networkUri = URI.create(endpoint + "/network/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee");
-
+   public void testGetNetworkHrefFakeId() {
       VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("GET", "/network/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee")
-            .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/network/error403-fake.xml", VCloudDirectorMediaType.ERROR)
-            .httpResponseBuilder().statusCode(403).build());
+               get.toBuilder().endpoint(endpoint + "/network/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee").build(), 
+               HttpResponse.builder()
+                           .statusCode(403)
+                           .payload(payloadFromResourceWithContentType("/network/error403-fake.xml", ERROR + ";version=1.5"))
+                           .build());
       
-      assertNull(api.getNetworkApi().getNetwork(networkUri));
+      assertNull(api.getNetworkApi().get(URI.create(endpoint + "/network/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee")));
    }
+   
+   HttpRequest resolveNetwork = HttpRequest.builder()
+            .method("GET")
+            .endpoint(endpoint + "/entity/" + networkUrn)
+            .addHeader("Accept", "*/*")
+            .addHeader("x-vcloud-authorization", token)
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
+            .build();
+   
+   String networkEntity = asString(createXMLBuilder("Entity").a("xmlns", "http://www.vmware.com/vcloud/v1.5")
+                                                             .a("name", networkUrn)
+                                                             .a("id", networkUrn)
+                                                             .a("type", ENTITY)
+                                                             .a("href", endpoint + "/entity/" + networkUrn)
+                                  .e("Link").a("rel", "alternate").a("type", NETWORK).a("href", networkHref.toString()).up()
+                                  // TODO: remove this when VCloudDirectorApiExpectTest no longer inherits from VCloudDirectorAdminApiExpectTest
+                                  .e("Link").a("rel", "alternate").a("type", ADMIN_NETWORK).a("href", networkHref.toString()).up());
+   
+   HttpResponse resolveNetworkResponse = HttpResponse.builder()
+           .statusCode(200)
+           .payload(payloadFromStringWithContentType(networkEntity, ENTITY + ";version=1.5"))
+           .build();
    
    @Test
-   public void testGetMetadata() {
-      URI networkUri = URI.create(endpoint + "/network/55a677cf-ab3f-48ae-b880-fab90421980c");
-      
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("GET", "/network/55a677cf-ab3f-48ae-b880-fab90421980c/metadata")
-            .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/network/metadata.xml", VCloudDirectorMediaType.METADATA)
-            .httpResponseBuilder().build());
-      
-      Metadata expected = Metadata.builder()
-         .type("application/vnd.vmware.vcloud.metadata+xml")
-         .href(URI.create("https://vcloudbeta.bluelock.com/api/network/55a677cf-ab3f-48ae-b880-fab90421980c/metadata"))
-         .link(Link.builder()
-            .rel("up")
-            .type("application/vnd.vmware.vcloud.network+xml")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/network/55a677cf-ab3f-48ae-b880-fab90421980c"))
-            .build())
-         .entries(ImmutableSet.of(MetadataEntry.builder().entry("key", "value").build()))
-         .build();
- 
-       assertEquals(api.getNetworkApi().getMetadataApi().get(networkUri), expected);
+   public void testGetNetworkUrn() {
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, resolveNetwork, resolveNetworkResponse, get, getResponse);
+      assertEquals(api.getNetworkApi().get(networkUrn), network());
    }
    
-   @Test
-   public void testGetMetadataValue() {
-      URI networkUri = URI.create("https://vcloudbeta.bluelock.com/api/network/55a677cf-ab3f-48ae-b880-fab90421980c");
-      
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("GET", "/network/55a677cf-ab3f-48ae-b880-fab90421980c/metadata/KEY")
-            .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/network/metadataValue.xml", VCloudDirectorMediaType.METADATA_ENTRY)
-            .httpResponseBuilder().build());
-      
-      MetadataValue expected = MetadataValue.builder()
-         .href(URI.create("https://vcloudbeta.bluelock.com/api/network/55a677cf-ab3f-48ae-b880-fab90421980c/metadata/key"))
-         .link(Link.builder()
-            .rel("up")
-            .type("application/vnd.vmware.vcloud.metadata+xml")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/network/55a677cf-ab3f-48ae-b880-fab90421980c/metadata"))
-            .build())
-         .value("value")
-         .build();
 
-      assertEquals(api.getNetworkApi().getMetadataApi().getValue(networkUri, "KEY"), expected);
+   HttpRequest getMetadata = HttpRequest.builder()
+            .method("GET")
+            .endpoint(networkHref + "/metadata")
+            .addHeader("Accept", "*/*")
+            .addHeader("x-vcloud-authorization", token)
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token).build();
+
+   HttpResponse getMetadataResponse = HttpResponse.builder()
+            .statusCode(200)
+            .payload(payloadFromResourceWithContentType("/network/metadata.xml", METADATA))
+            .build();
+
+   @Test
+   public void testGetNetworkMetadataHref() {
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, getMetadata, getMetadataResponse);
+      assertEquals(api.getNetworkApi().getMetadataApi().get(networkHref), metadata());
+   }
+
+   static Metadata metadata() {
+      return Metadata.builder()
+                     .type("application/vnd.vmware.vcloud.metadata+xml")
+                     .href(URI.create(endpoint + "/network/" + network + "/metadata"))
+                     .link(Link.builder()
+                               .rel("up")
+                               .type("application/vnd.vmware.vcloud.network+xml")
+                               .href(networkHref)
+                               .build())
+                     .entries(ImmutableSet.of(metadataEntry()))
+                     .build();
    }
    
-   public static OrgNetwork orgNetwork() {
+   private static MetadataEntry metadataEntry() {
+      return MetadataEntry.builder().entry("key", "value").build();
+   }
+
+   HttpRequest getMetadataValue = HttpRequest.builder()
+            .method("GET")
+            .endpoint(networkHref + "/metadata/KEY")
+            .addHeader("Accept", "*/*")
+            .addHeader("x-vcloud-authorization", token)
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token).build();
+
+   HttpResponse getMetadataValueResponse = HttpResponse.builder()
+            .statusCode(200)
+            .payload(payloadFromResourceWithContentType("/network/metadataValue.xml", METADATA_VALUE))
+            .build();
+
+   @Test
+   public void testGetNetworkMetadataEntryHref() {
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, getMetadataValue, getMetadataValueResponse);
+      assertEquals(api.getNetworkApi().getMetadataApi().getValue(networkHref, "KEY"), metadataValue());
+   }
+   
+   private MetadataValue metadataValue() {
+      return MetadataValue.builder()
+               .href(URI.create("https://vcloudbeta.bluelock.com/api/network/55a677cf-ab3f-48ae-b880-fab90421980c/metadata/key"))
+               .link(Link.builder()
+                  .rel("up")
+                  .type("application/vnd.vmware.vcloud.metadata+xml")
+                  .href(URI.create("https://vcloudbeta.bluelock.com/api/network/55a677cf-ab3f-48ae-b880-fab90421980c/metadata"))
+                  .build())
+               .value("value")
+               .build();
+   }
+
+
+   public static OrgNetwork network() {
       return OrgNetwork.builder()
          .name("ilsolation01-Jclouds")
          .id("urn:vcloud:network:f3ba8256-6f48-4512-aad6-600e85b4dc38")

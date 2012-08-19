@@ -37,11 +37,12 @@ import org.jclouds.rest.binders.BindToXMLPayload;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
-import org.jclouds.vcloud.director.v1_5.domain.network.ExternalNetwork;
+import org.jclouds.vcloud.director.v1_5.domain.network.Network;
 import org.jclouds.vcloud.director.v1_5.domain.org.OrgNetwork;
 import org.jclouds.vcloud.director.v1_5.features.MetadataAsyncApi;
 import org.jclouds.vcloud.director.v1_5.features.NetworkAsyncApi;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationAndCookieToRequest;
+import org.jclouds.vcloud.director.v1_5.functions.href.NetworkURNToAdminHref;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -51,36 +52,65 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 @RequestFilters(AddVCloudAuthorizationAndCookieToRequest.class)
 public interface AdminNetworkAsyncApi extends NetworkAsyncApi {
-   
+
    /**
-    * @see AdminNetworkApi#getNetwork(URI)
+    * @see AdminNetworkApi#get(String)
     */
    @Override
    @GET
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<ExternalNetwork> getNetwork(@EndpointParam URI networkRef);
-   
+   ListenableFuture<? extends Network> get(@EndpointParam(parser = NetworkURNToAdminHref.class) String networkUrn);
+
    /**
-    * @see AdminNetworkApi#updateNetwork(URI, OrgNetwork)
+    * @see AdminNetworkApi#get(URI)
+    */
+   @Override
+   @GET
+   @Consumes
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<? extends Network> get(@EndpointParam URI networkAdminHref);
+
+   /**
+    * @see AdminNetworkApi#update(String, OrgNetwork)
     */
    @PUT
    @Consumes(VCloudDirectorMediaType.TASK)
    @Produces(VCloudDirectorMediaType.ADMIN_ORG_NETWORK)
    @JAXBResponseParser
-   ListenableFuture<Task> updateNetwork(@EndpointParam URI networkRef, 
-         @BinderParam(BindToXMLPayload.class) OrgNetwork network);
-   
+   ListenableFuture<Task> update(@EndpointParam(parser = NetworkURNToAdminHref.class) String networkUrn,
+            @BinderParam(BindToXMLPayload.class) OrgNetwork network);
+
    /**
-    * @see AdminNetworkApi#resetNetwork(URI)
+    * @see AdminNetworkApi#update(URI, OrgNetwork)
+    */
+   @PUT
+   @Consumes(VCloudDirectorMediaType.TASK)
+   @Produces(VCloudDirectorMediaType.ADMIN_ORG_NETWORK)
+   @JAXBResponseParser
+   ListenableFuture<Task> update(@EndpointParam URI networkAdminHref,
+            @BinderParam(BindToXMLPayload.class) OrgNetwork network);
+
+   /**
+    * @see AdminNetworkApi#reset(String)
     */
    @POST
    @Path("/action/reset")
    @Consumes
    @JAXBResponseParser
-   ListenableFuture<Task> resetNetwork(@EndpointParam URI networkRef);
-   
+   ListenableFuture<Task> reset(@EndpointParam(parser = NetworkURNToAdminHref.class) String networkUrn);
+
+   /**
+    * @see AdminNetworkApi#reset(URI)
+    */
+   @POST
+   @Path("/action/reset")
+   @Consumes
+   @JAXBResponseParser
+   ListenableFuture<Task> reset(@EndpointParam URI networkAdminHref);
+
    /**
     * @return asynchronous access to admin {@link MetadataAsyncApi.Writeable} features
     */

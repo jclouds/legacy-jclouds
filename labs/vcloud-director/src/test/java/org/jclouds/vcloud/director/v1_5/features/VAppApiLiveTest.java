@@ -75,6 +75,7 @@ import org.jclouds.vcloud.director.v1_5.domain.ProductSectionList;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.ResourceEntity.Status;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
+import org.jclouds.vcloud.director.v1_5.domain.User;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.Vm;
@@ -117,9 +118,9 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
 
    private MetadataValue metadataValue;
    private String key;
-   private URI testUserURI;
    private boolean mediaCreated = false;
    private boolean testUserCreated = false;
+   private User user;
    
    @BeforeClass(alwaysRun = true)
    protected void setupRequiredEntities() {
@@ -161,10 +162,10 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
       
       if (adminContext != null) {
          Link orgLink = find(links, and(relEquals("up"), typeEquals(VCloudDirectorMediaType.ORG)));
-         testUserURI = adminContext.getApi().getUserApi().createUser(toAdminUri(orgLink), randomTestUser("VAppAccessTest")).getHref();
-      } else {
-         testUserURI = userURI;
+         userUrn = adminContext.getApi().getUserApi()
+                  .createUserInOrg(randomTestUser("VAppAccessTest"), toAdminUri(orgLink)).getId();
       }
+      user = lazyGetUser();
    }
    
    @AfterClass(alwaysRun = true, dependsOnMethods = { "cleanUpEnvironment" })
@@ -177,9 +178,9 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
             logger.warn(e, "Error when deleting media");
          }
       }
-      if (adminContext != null && testUserCreated && testUserURI != null) {
+      if (adminContext != null && testUserCreated && userUrn != null) {
          try {
-            adminContext.getApi().getUserApi().deleteUser(testUserURI);
+            adminContext.getApi().getUserApi().delete(userUrn);
          } catch (Exception e) {
             logger.warn(e, "Error when deleting user");
          }
@@ -436,7 +437,7 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
       ControlAccessParams params = ControlAccessParams.builder()
             .notSharedToEveryone()
             .accessSetting(AccessSetting.builder()
-                  .subject(Reference.builder().href(testUserURI).type(ADMIN_USER).build())
+                  .subject(Reference.builder().href(user.getHref()).type(ADMIN_USER).build())
                   .accessLevel("ReadOnly")
                   .build())
             .build();
@@ -653,7 +654,7 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
 
    @Test(description = "PUT /vApp/{id}/owner", dependsOnMethods = { "testGetOwner" })
    public void testModifyOwner() {
-      Owner newOwner = Owner.builder().user(Reference.builder().href(testUserURI).type(ADMIN_USER).build()).build();
+      Owner newOwner = Owner.builder().user(Reference.builder().href(user.getHref()).type(ADMIN_USER).build()).build();
 
       // The method under test
       vAppApi.modifyOwner(vApp.getHref(), newOwner);

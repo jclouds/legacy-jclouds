@@ -40,8 +40,7 @@ import org.jclouds.vcloud.director.v1_5.domain.params.UploadVAppTemplateParams;
  * Provides synchronous access to a vDC.
  * 
  * @see VdcAsyncApi
- * @see <a href= "http://support.theenterprisecloud.com/kb/default.asp?id=984&Lang=1&SID=" />
- * @author danikov
+ * @author danikov, Adrian Cole
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface VdcApi {

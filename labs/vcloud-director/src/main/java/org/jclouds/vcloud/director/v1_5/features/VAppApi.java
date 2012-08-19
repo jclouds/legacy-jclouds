@@ -225,6 +225,7 @@ public interface VAppApi {
     *
     * @since 0.9
     */
+   //TODO: revise
    ControlAccessParams getControlAccess(URI vAppURI);
 
    /**

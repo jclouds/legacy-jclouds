@@ -30,7 +30,6 @@ import static org.testng.AssertJUnit.assertFalse;
 import java.net.URI;
 
 import org.jclouds.rest.AuthorizationException;
-import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Role.DefaultRoles;
 import org.jclouds.vcloud.director.v1_5.domain.SessionWithToken;
 import org.jclouds.vcloud.director.v1_5.domain.User;
@@ -40,8 +39,6 @@ import org.jclouds.vcloud.director.v1_5.login.SessionApi;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.Iterables;
 
 /**
  * Tests live behavior of {@link UserApi}.
@@ -61,21 +58,19 @@ public class UserApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    /*
     * Shared state between dependant tests.
     */
-   private Reference orgRef;
    private User user;
 
    @Override
    @BeforeClass(alwaysRun = true)
    public void setupRequiredApis() {
       userApi = adminContext.getApi().getUserApi();
-      orgRef = Iterables.getFirst(context.getApi().getOrgApi().getOrgList(), null).toAdminReference(endpoint);
    }
    
    @AfterClass(alwaysRun = true)
    public void cleanUp() throws Exception {
       if (user != null) {
          try {
-            userApi.deleteUser(user.getHref());
+            userApi.delete(user.getHref());
          } catch (Exception e) {
             logger.warn(e, "Error deleting user '%s'", user.getName());
          }
@@ -85,13 +80,13 @@ public class UserApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    @Test(description = "POST /admin/org/{id}/users")
    public void testCreateUser() {
       User newUser = randomTestUser("testCreateUser");
-      user = userApi.createUser(orgRef.getHref(), newUser);
+      user = userApi.createUserInOrg(newUser, org.getId());
       checkUser(newUser);
    }
    
    @Test(description = "GET /admin/user/{id}", dependsOnMethods = { "testCreateUser" })
    public void testGetUser() {
-      user = userApi.getUser(user.getHref());
+      user = userApi.get(user.getHref());
       
       checkUser(user);
    }
@@ -116,8 +111,8 @@ public class UserApiLiveTest extends BaseVCloudDirectorApiLiveTest {
          .role(getRoleReferenceFor(DefaultRoles.AUTHOR.value()))
          .build();
       
-      userApi.updateUser(user.getHref(), newUser);
-      user = userApi.getUser(user.getHref());
+      userApi.update(user.getHref(), newUser);
+      user = userApi.get(user.getHref());
       
       checkUser(user);
       assertTrue(equal(user.getFullName(), newUser.getFullName()), 
@@ -148,7 +143,7 @@ public class UserApiLiveTest extends BaseVCloudDirectorApiLiveTest {
 
       // Check the user can really login with the changed password
       // NOTE: the password is NOT returned in the User object returned from the server
-      SessionWithToken sessionWithToken = sessionApi.loginUserInOrgWithPassword(URI.create(endpoint + "/sessions"), user.getName(), orgRef.getName(), "newPassword");
+      SessionWithToken sessionWithToken = sessionApi.loginUserInOrgWithPassword(URI.create(endpoint + "/sessions"), user.getName(), org.getName(), "newPassword");
       assertNotNull(sessionWithToken.getToken());
       sessionApi.logoutSessionWithToken(sessionWithToken.getSession().getHref(), sessionWithToken.getToken());
    }
@@ -162,21 +157,21 @@ public class UserApiLiveTest extends BaseVCloudDirectorApiLiveTest {
       // session api isn't typically exposed to the user, as it is implicit
       SessionApi sessionApi = context.utils().injector().getInstance(SessionApi.class);
       
-      OrgPasswordPolicySettings settings = adminOrgApi.getSettings(orgRef.getHref()).getPasswordPolicy();
+      OrgPasswordPolicySettings settings = adminOrgApi.getSettings(org.getId()).getPasswordPolicy();
       assertNotNull(settings);
 
       // Adjust account settings so we can lock the account - be careful to not set invalidLoginsBeforeLockout too low!
       if (!settings.isAccountLockoutEnabled()) {
          settingsToRevertTo = settings;
          settings = settings.toBuilder().accountLockoutEnabled(true).invalidLoginsBeforeLockout(5).build();
-         settings = adminOrgApi.updatePasswordPolicy(orgRef.getHref(), settings);
+         settings = adminOrgApi.updatePasswordPolicy(org.getId(), settings);
       }
 
       assertTrue(settings.isAccountLockoutEnabled());
       
       for (int i = 0; i < settings.getInvalidLoginsBeforeLockout() + 1; i++) {
          try {
-            sessionApi.loginUserInOrgWithPassword(URI.create(endpoint + "/sessions"), user.getName(), orgRef.getName(), "wrongpassword!");
+            sessionApi.loginUserInOrgWithPassword(URI.create(endpoint + "/sessions"), user.getName(), org.getName(), "wrongpassword!");
             fail("Managed to login using the wrong password!");
          } catch (AuthorizationException e) {
          } catch (Exception e) {
@@ -184,30 +179,30 @@ public class UserApiLiveTest extends BaseVCloudDirectorApiLiveTest {
          }
       }
       
-      user = userApi.getUser(user.getHref());
+      user = userApi.get(user.getHref());
       assertTrue(user.isLocked());
 
       try {
-         sessionApi.loginUserInOrgWithPassword(URI.create(endpoint + "/sessions"), user.getName(), orgRef.getName(), "newPassword");
+         sessionApi.loginUserInOrgWithPassword(URI.create(endpoint + "/sessions"), user.getName(), org.getName(), "newPassword");
          fail("Managed to login to locked account!");
       } catch (AuthorizationException e) {
       } catch (Exception e) {
          fail("Expected AuthorizationException", e);
       }
       
-      userApi.unlockUser(user.getHref());
+      userApi.unlock(user.getHref());
 
-      user = userApi.getUser(user.getHref());
+      user = userApi.get(user.getHref());
       assertFalse(user.isLocked());
 
       // Double-check the user can now login again
-      SessionWithToken sessionWithToken = sessionApi.loginUserInOrgWithPassword(URI.create(endpoint + "/sessions"), user.getName(), orgRef.getName(), "newPassword");
+      SessionWithToken sessionWithToken = sessionApi.loginUserInOrgWithPassword(URI.create(endpoint + "/sessions"), user.getName(), org.getName(), "newPassword");
       assertNotNull(sessionWithToken.getToken());
       sessionApi.logoutSessionWithToken(sessionWithToken.getSession().getHref(), sessionWithToken.getToken());
       
       // Return account settings to the previous values, if necessary
       if (settingsToRevertTo != null) {
-         adminOrgApi.updatePasswordPolicy(orgRef.getHref(), settingsToRevertTo);
+         adminOrgApi.updatePasswordPolicy(org.getId(), settingsToRevertTo);
       }
    }
  
@@ -215,13 +210,13 @@ public class UserApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    public void testDeleteUser() {
       // Create a user to be deleted (so we remove dependencies on test ordering)
       User newUser = randomTestUser("testDeleteUser"+getTestDateTimeStamp());
-      User userToBeDeleted = userApi.createUser(orgRef.getHref(), newUser);
+      User userToBeDeleted = userApi.createUserInOrg(newUser, org.getId());
 
       // Delete the user
-      userApi.deleteUser(userToBeDeleted.getHref());
+      userApi.delete(userToBeDeleted.getHref());
 
       // Confirm cannot no longer be accessed 
-      User deleted = userApi.getUser(userToBeDeleted.getHref());
+      User deleted = userApi.get(userToBeDeleted.getHref());
       assertNull(deleted);
    }
 }

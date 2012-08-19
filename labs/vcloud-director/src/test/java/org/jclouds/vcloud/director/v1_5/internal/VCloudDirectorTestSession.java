@@ -92,12 +92,12 @@ public class VCloudDirectorTestSession implements Closeable {
          adminContext = userContext.getAdminContext();
 
          // Lookup the user details
-         Reference orgRef = Iterables.getFirst(userContext.getApi().getOrgApi().getOrgList(), null)
+         Reference orgRef = Iterables.getFirst(userContext.getApi().getOrgApi().list(), null)
                .toAdminReference(endpoint);
          Reference userRef = Iterables.find(
-               adminContext.getApi().getOrgApi().getOrg(orgRef.getHref()).getUsers(),
+               adminContext.getApi().getOrgApi().get(orgRef.getHref()).getUsers(),
                ReferencePredicates.nameEquals(adminContext.getApi().getCurrentSession().getUser()));
-         User user = adminContext.getApi().getUserApi().getUser(userRef.getHref());
+         User user = adminContext.getApi().getUserApi().get(userRef.getHref());
 
          // Check that the user has the org admin role
          Reference userRole = user.getRole();

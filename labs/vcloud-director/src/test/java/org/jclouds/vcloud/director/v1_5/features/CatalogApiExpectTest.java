@@ -388,7 +388,7 @@ public class CatalogApiExpectTest extends VCloudDirectorApiExpectTest {
       VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, deleteItemMetadataEntry, deleteItemMetadataEntryResponse);
       assertEquals(api.getCatalogApi().getItemMetadataApi().deleteEntry(itemHref, "KEY"), deleteEntryTask());
    }
-
+   
    public static final Catalog catalog() {
       return Catalog.builder()
       		      .name("QunyingTestCatalog")

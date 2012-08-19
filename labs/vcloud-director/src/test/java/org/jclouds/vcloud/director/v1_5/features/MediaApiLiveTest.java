@@ -35,7 +35,7 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.O
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_REQ_LIVE;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_UPDATABLE;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_REQ_LIVE;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REF_REQ_LIVE;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.URN_REQ_LIVE;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.TASK_COMPLETE_TIMELY;
 import static org.jclouds.vcloud.director.v1_5.predicates.LinkPredicates.relEquals;
 import static org.jclouds.vcloud.director.v1_5.predicates.LinkPredicates.typeEquals;
@@ -128,7 +128,7 @@ public class MediaApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    
    @Test(description = "POST /vdc/{id}/media")
    public void testCreateMedia() throws URISyntaxException {
-      assertNotNull(vdcURI, String.format(REF_REQ_LIVE, VDC));
+      assertNotNull(vdcURI, String.format(URN_REQ_LIVE, VDC));
       Vdc vdc = vdcApi.getVdc(vdcURI); 
       assertNotNull(vdc, String.format(OBJ_REQ_LIVE, VDC));
       Link addMedia = find(vdc.getLinks(), and(relEquals("add"), typeEquals(VCloudDirectorMediaType.MEDIA)));
@@ -190,7 +190,7 @@ public class MediaApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    public void testGetMediaOwner() {
       Owner directOwner = mediaApi.getOwner(media.getHref());
       assertEquals(owner.toBuilder()
-            .user(owner.getUser().toBuilder().id(null).build())
+            .user(owner.getUser())
             .build(),
          directOwner.toBuilder().links(Collections.<Link>emptySet()).build(),
          String.format(GETTER_RETURNS_SAME_OBJ,

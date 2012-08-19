@@ -33,7 +33,7 @@ public class VCloudDirectorLiveTestConstants {
 
    /* Error codes from 100 to 199 reflect parsing and other errors in domain object fields and attributes. */
 
-   public static final String REF_REQ_LIVE = "ERR-101: %s reference required to perform live tests";
+   public static final String URN_REQ_LIVE = "ERR-101: %s urn required to perform live tests";
 
    public static final String OBJ_REQ_LIVE = "ERR-102: %s instance required to perform live tests";
 

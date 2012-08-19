@@ -67,7 +67,7 @@ public class TaskStatusEquals implements Predicate<Task> {
       logger.trace("looking for status on task %s", task);
 
       // TODO shouldn't we see if it's already done before getting it from API server?
-      task = taskApi.getTask(task.getHref());
+      task = taskApi.get(task.getHref());
       
       // perhaps task isn't available, yet
       if (task == null) return false;

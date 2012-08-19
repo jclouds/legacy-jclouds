@@ -18,15 +18,18 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.ADMIN_ORG;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.ENTITY;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.METADATA;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.METADATA_VALUE;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.ORG;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.ORG_LIST;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.fail;
 
 import java.net.URI;
 
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
-import org.jclouds.vcloud.director.v1_5.domain.Error;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpResponse;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
@@ -39,7 +42,7 @@ import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorApi;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
+import com.google.common.net.HttpHeaders;
 
 /**
  * Allows us to test the {@link OrgApi} via its side effects.
@@ -51,9 +54,21 @@ public class OrgApiExpectTest extends VCloudDirectorAdminApiExpectTest {
 
    @Test
    public void testGetOrgList() {
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
-            getStandardRequest("GET", "/org/"),
-            getStandardPayloadResponse("/org/orglist.xml", VCloudDirectorMediaType.ORG_LIST));
+      HttpRequest list = HttpRequest.builder()
+               .method("GET")
+               .endpoint(endpoint + "/org/")
+               .addHeader("Accept", "*/*")
+               .addHeader("x-vcloud-authorization", token)
+               .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
+               .build();
+
+      HttpResponse listResponse = HttpResponse.builder()
+               .statusCode(200)
+               .payload(payloadFromResourceWithContentType("/org/orglist.xml", ORG_LIST + ";version=1.5"))
+               .build();
+      
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, list, listResponse);
+
 
       OrgList expected = OrgList.builder()
             .org(Reference.builder()
@@ -63,130 +78,110 @@ public class OrgApiExpectTest extends VCloudDirectorAdminApiExpectTest {
                .build())
             .build();
 
-      assertEquals(api.getOrgApi().getOrgList(), expected);
-   }
-
-   @Test
-   public void testGetOrgFromOrgListReference() {
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
-            getStandardRequest("GET", "/org/"),
-            getStandardPayloadResponse("/org/orglist.xml", VCloudDirectorMediaType.ORG_LIST));
-
-      Reference org = Iterables.getOnlyElement(api.getOrgApi().getOrgList());
-      
-      api = requestsSendResponses(loginRequest, sessionResponse, 
-            getStandardRequest("GET", org.getHref()),
-            getStandardPayloadResponse("/org/org.xml", VCloudDirectorMediaType.ORG));
-
-      Org expected = org();
-
-      assertEquals(api.getOrgApi().getOrg(org.getHref()), expected);
-   }
-
-   @Test
-   public void testGetOrg() {
-      URI orgUri = URI.create(endpoint + "/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0");
-
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
-            getStandardRequest("GET", "/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"),
-            getStandardPayloadResponse("/org/org.xml", VCloudDirectorMediaType.ORG));
-      
-      Org expected = org();
-
-      assertEquals(api.getOrgApi().getOrg(orgUri), expected);
-   }
-
-   @Test
-   public void testGetOrgFailOnInvalidOrgId() {
-      URI orgUri = URI.create(endpoint + "/org/NOTAUUID");
-
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse,
-            getStandardRequest("GET", "/org/NOTAUUID"),
-            getStandardPayloadResponse(400, "/org/error400.xml", VCloudDirectorMediaType.ERROR));
-
-      Error expected = Error.builder()
-            .message("validation error on field 'id': String value has invalid format or length")
-            .majorErrorCode(400)
-            .minorErrorCode("BAD_REQUEST")
-            .build();
-
-      try {
-         api.getOrgApi().getOrg(orgUri);
-         fail("Should give HTTP 400 error");
-      } catch (VCloudDirectorException vde) {
-         assertEquals(vde.getError(), expected);
-      } catch (Exception e) {
-         fail("Should have thrown a VCloudDirectorException");
-      }
-   }
-
-   @Test
-   public void testGetOrgFailOnWrongOrgId() {
-      URI orgUri = URI.create(endpoint + "/org/9e08c2f6-077a-42ce-bece-d5332e2ebb5c");
-
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse,
-            getStandardRequest("GET", "/org/9e08c2f6-077a-42ce-bece-d5332e2ebb5c"),
-            getStandardPayloadResponse(403, "/org/error403-catalog.xml", VCloudDirectorMediaType.ERROR));
-
-      assertNull(api.getOrgApi().getOrg(orgUri));
-   }
-
-   @Test
-   public void testGetOrgFailOnFakeOrgId() {
-      URI orgUri = URI.create(endpoint + "/org/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee");
-
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse,
-            getStandardRequest("GET", "/org/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"),
-            getStandardPayloadResponse(403, "/org/error403-fake.xml", VCloudDirectorMediaType.ERROR));
-
-      assertNull(api.getOrgApi().getOrg(orgUri));
+      assertEquals(api.getOrgApi().list(), expected);
    }
    
-   @Test
-   public void testGetOrgMetadata() {
-      URI orgUri = URI.create(endpoint + "/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0");
-      
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
-            new VcloudHttpRequestPrimer()
-               .apiCommand("GET", "/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/metadata")
-               .acceptAnyMedia()
-               .httpRequestBuilder().build(), 
-            new VcloudHttpResponsePrimer()
-               .xmlFilePayload("/org/orgMetadata.xml", VCloudDirectorMediaType.METADATA)
-               .httpResponseBuilder().build());
-      
-      Metadata expected = Metadata.builder()
-            .type("application/vnd.vmware.vcloud.metadata+xml")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/metadata"))
-            .link(Link.builder()
-                  .rel("up")
-                  .type("application/vnd.vmware.vcloud.org+xml")
-                  .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
-                  .build())
-            .entries(ImmutableSet.of(metadataEntry()))
+   static String org = "6f312e42-cd2b-488d-a2bb-97519cd57ed0";
+   static String orgUrn = "urn:vcloud:org:" + org;
+   static URI orgHref = URI.create(endpoint + "/org/" + org);
+   
+   HttpRequest get = HttpRequest.builder()
+            .method("GET")
+            .endpoint(orgHref)
+            .addHeader("Accept", "*/*")
+            .addHeader("x-vcloud-authorization", token)
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
             .build();
- 
-       assertEquals(api.getOrgApi().getMetadataApi().get(orgUri), expected);
+
+    HttpResponse getResponse = HttpResponse.builder()
+            .statusCode(200)
+            .payload(payloadFromResourceWithContentType("/org/org.xml", ORG + ";version=1.5"))
+            .build();
+    
+   @Test
+   public void testGetOrgHref() {
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, get, getResponse);
+      assertEquals(api.getOrgApi().get(orgHref), org());
    }
    
+   HttpRequest resolveOrg = HttpRequest.builder()
+            .method("GET")
+            .endpoint(endpoint + "/entity/" + orgUrn)
+            .addHeader("Accept", "*/*")
+            .addHeader("x-vcloud-authorization", token)
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
+            .build();
+   
+   String orgEntity = asString(createXMLBuilder("Entity").a("xmlns", "http://www.vmware.com/vcloud/v1.5")
+                                                             .a("name", orgUrn)
+                                                             .a("id", orgUrn)
+                                                             .a("type", ENTITY)
+                                                             .a("href", endpoint + "/entity/" + orgUrn)
+                                  .e("Link").a("rel", "alternate").a("type", ORG).a("href", orgHref.toString()).up()
+                                  // TODO: remove this when VCloudDirectorApiExpectTest no longer inherits from VCloudDirectorAdminApiExpectTest
+                                  .e("Link").a("rel", "alternate").a("type", ADMIN_ORG).a("href", orgHref.toString()).up());
+   
+   HttpResponse resolveOrgResponse = HttpResponse.builder()
+           .statusCode(200)
+           .payload(payloadFromStringWithContentType(orgEntity, ENTITY + ";version=1.5"))
+           .build();
+   
    @Test
-   public void testGetOrgMetadataValue() {
-      URI orgUri = URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0");
-      
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse,
-            new VcloudHttpRequestPrimer()
-               .apiCommand("GET", "/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/metadata/KEY")
-               .acceptAnyMedia()
-               .httpRequestBuilder().build(), 
-            new VcloudHttpResponsePrimer()
-               .xmlFilePayload("/org/orgMetadataValue.xml", VCloudDirectorMediaType.METADATA_VALUE)
-               .httpResponseBuilder().build());
-      
-      MetadataValue expected = metadataValue();
+   public void testGetOrgUrn() {
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, resolveOrg, resolveOrgResponse, get, getResponse);
+      assertEquals(api.getOrgApi().get(orgUrn), org());
+   }
+   
 
-      assertEquals(api.getOrgApi().getMetadataApi().getValue(orgUri, "KEY"), expected);
+   HttpRequest getMetadata = HttpRequest.builder()
+            .method("GET")
+            .endpoint(orgHref + "/metadata")
+            .addHeader("Accept", "*/*")
+            .addHeader("x-vcloud-authorization", token)
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token).build();
+
+   HttpResponse getMetadataResponse = HttpResponse.builder()
+            .statusCode(200)
+            .payload(payloadFromResourceWithContentType("/org/orgMetadata.xml", METADATA))
+            .build();
+
+   @Test
+   public void testGetOrgMetadataHref() {
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, getMetadata, getMetadataResponse);
+      assertEquals(api.getOrgApi().getMetadataApi().get(orgHref), metadata());
    }
 
+   static Metadata metadata() {
+      return Metadata.builder()
+                     .type("application/vnd.vmware.vcloud.metadata+xml")
+                     .href(URI.create(endpoint + "/org/" + org + "/metadata"))
+                     .link(Link.builder()
+                               .rel("up")
+                               .type("application/vnd.vmware.vcloud.org+xml")
+                               .href(orgHref)
+                               .build())
+                     .entries(ImmutableSet.of(metadataEntry()))
+                     .build();
+   }
+   
+   HttpRequest getMetadataValue = HttpRequest.builder()
+            .method("GET")
+            .endpoint(orgHref + "/metadata/KEY")
+            .addHeader("Accept", "*/*")
+            .addHeader("x-vcloud-authorization", token)
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token).build();
+
+   HttpResponse getMetadataValueResponse = HttpResponse.builder()
+            .statusCode(200)
+            .payload(payloadFromResourceWithContentType("/org/orgMetadataValue.xml", METADATA_VALUE))
+            .build();
+
+   @Test
+   public void testGetOrgMetadataEntryHref() {
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, getMetadataValue, getMetadataValueResponse);
+      assertEquals(api.getOrgApi().getMetadataApi().getValue(orgHref, "KEY"), metadataValue());
+   }
+   
    public static Org org() {
       return Org.builder()
          .name("JClouds")
