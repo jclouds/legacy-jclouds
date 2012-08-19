@@ -124,7 +124,7 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
    
    @BeforeClass(alwaysRun = true)
    protected void setupRequiredEntities() {
-      Set<Link> links = vdcApi.getVdc(vdcURI).getLinks();
+      Set<Link> links = lazyGetVdc().getLinks();
 
       if (mediaURI == null) {
          Predicate<Link> addMediaLink = and(relEquals(Link.Rel.ADD), typeEquals(VCloudDirectorMediaType.MEDIA));
@@ -214,7 +214,7 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
    public void testRecomposeVApp() {
       Set<Vm> vms = getAvailableVMsFromVAppTemplates();
   
-      VApp composedVApp = vdcApi.composeVApp(vdcURI, ComposeVAppParams.builder()
+      VApp composedVApp = vdcApi.composeVApp(vdcUrn, ComposeVAppParams.builder()
             .name(name("composed-"))
             .instantiationParams(instantiationParams())
             .build());

@@ -122,7 +122,7 @@ public class VmApiLiveTest extends AbstractVAppApiLiveTest {
    
    @BeforeClass(alwaysRun = true)
    protected void setupRequiredEntities() {
-      Set<Link> links = vdcApi.getVdc(vdcURI).getLinks();
+      Set<Link> links = vdcApi.get(vdcUrn).getLinks();
 
       if (mediaURI == null) {
          Predicate<Link> addMediaLink = and(relEquals(Link.Rel.ADD), typeEquals(VCloudDirectorMediaType.MEDIA));

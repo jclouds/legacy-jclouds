@@ -35,7 +35,6 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.O
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_REQ_LIVE;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_UPDATABLE;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_REQ_LIVE;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.URN_REQ_LIVE;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.TASK_COMPLETE_TIMELY;
 import static org.jclouds.vcloud.director.v1_5.predicates.LinkPredicates.relEquals;
 import static org.jclouds.vcloud.director.v1_5.predicates.LinkPredicates.typeEquals;
@@ -128,9 +127,7 @@ public class MediaApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    
    @Test(description = "POST /vdc/{id}/media")
    public void testCreateMedia() throws URISyntaxException {
-      assertNotNull(vdcURI, String.format(URN_REQ_LIVE, VDC));
-      Vdc vdc = vdcApi.getVdc(vdcURI); 
-      assertNotNull(vdc, String.format(OBJ_REQ_LIVE, VDC));
+      Vdc vdc = lazyGetVdc(); 
       Link addMedia = find(vdc.getLinks(), and(relEquals("add"), typeEquals(VCloudDirectorMediaType.MEDIA)));
       
       // TODO: generate an iso
@@ -207,7 +204,7 @@ public class MediaApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    @Test(description = "POST /vdc/{id}/action/cloneMedia", dependsOnMethods = { "testGetMediaOwner" })
    public void testCloneMedia() {
       oldMedia = media;
-      media = vdcApi.cloneMedia(vdcURI, CloneMediaParams.builder()
+      media = vdcApi.cloneMedia(vdcUrn, CloneMediaParams.builder()
             .source(Reference.builder().fromEntity(media).build())
             .name("copied "+media.getName())
             .description("copied by testCloneMedia()")
@@ -230,7 +227,7 @@ public class MediaApiLiveTest extends BaseVCloudDirectorApiLiveTest {
       
       mediaApi.getMetadataApi().putEntry(media.getHref(), "key", MetadataValue.builder().value("value").build());
       
-      media = vdcApi.cloneMedia(vdcURI, CloneMediaParams.builder()
+      media = vdcApi.cloneMedia(vdcUrn, CloneMediaParams.builder()
             .source(Reference.builder().fromEntity(media).build())
             .name("moved test media")
             .description("moved by testCloneMedia()")

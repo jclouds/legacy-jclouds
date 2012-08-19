@@ -56,7 +56,7 @@ public class AdminVdcApiExpectTest extends VCloudDirectorAdminApiExpectTest {
 
       AdminVdc expected = adminVdc();
 
-      assertEquals(api.getVdcApi().getVdc(vdcRef.getHref()), expected);
+      assertEquals(api.getVdcApi().get(vdcRef.getHref()), expected);
    }
    
    public static final AdminVdc adminVdc() {

@@ -134,8 +134,7 @@ public abstract class AbstractVAppApiLiveTest extends BaseVCloudDirectorApiLiveT
    @BeforeClass(alwaysRun = true, description = "Retrieves the required apis from the REST API context")
    protected void setupEnvironment() {
       // Get the configured Vdc for the tests
-      vdc = vdcApi.getVdc(vdcURI);
-      assertNotNull(vdc, String.format(ENTITY_NON_NULL, VDC));
+      vdc = lazyGetVdc();
 
       // Get the configured VAppTemplate for the tests
       vAppTemplate = vAppTemplateApi.getVAppTemplate(vAppTemplateURI);
@@ -192,7 +191,7 @@ public abstract class AbstractVAppApiLiveTest extends BaseVCloudDirectorApiLiveT
 
    @AfterClass(alwaysRun = true, description = "Cleans up the environment by deleting created VApps")
    protected void cleanUpEnvironment() {
-      vdc = vdcApi.getVdc(vdcURI); // Refresh
+      vdc = vdcApi.get(vdcUrn); // Refresh
 
       // Find references in the Vdc with the VApp type and in the list of instantiated VApp names
       Iterable<Reference> vApps = Iterables.filter(vdc.getResourceEntities(),

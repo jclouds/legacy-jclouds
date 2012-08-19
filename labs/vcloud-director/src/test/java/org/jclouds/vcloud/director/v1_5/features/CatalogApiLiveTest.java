@@ -21,8 +21,6 @@ package org.jclouds.vcloud.director.v1_5.features;
 import static com.google.common.base.Predicates.and;
 import static com.google.common.collect.Iterables.find;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.CORRECT_VALUE_OBJECT_FMT;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_REQ_LIVE;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.URN_REQ_LIVE;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.TASK_COMPLETE_TIMELY;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkCatalogItem;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadata;
@@ -134,7 +132,7 @@ public class CatalogApiLiveTest extends BaseVCloudDirectorApiLiveTest {
 
    @Test(description = "GET /catalog/{id}")
    public void testGetCatalog() {
-      Catalog catalog = catalogApi.get(catalogUrn);
+      Catalog catalog = lazyGetCatalog();
       assertNotNull(catalog);
       // Double check it's pointing at the correct catalog
       assertEquals(catalog.getId(), catalogUrn);
@@ -149,11 +147,8 @@ public class CatalogApiLiveTest extends BaseVCloudDirectorApiLiveTest {
 
    @Test(description = "POST /catalog/{id}/catalogItems")
    public void testAddCatalogItem() {
-      assertNotNull(vdcURI, String.format(URN_REQ_LIVE, VDC));
-
       byte[] iso = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
-      Vdc vdc = context.getApi().getVdcApi().getVdc(vdcURI);
-      assertNotNull(vdc, String.format(OBJ_REQ_LIVE, VDC));
+      Vdc vdc = lazyGetVdc();
       Link addMedia = find(vdc.getLinks(), and(relEquals("add"), typeEquals(VCloudDirectorMediaType.MEDIA)));
 
       Media sourceMedia = Media.builder().type(VCloudDirectorMediaType.MEDIA).name("Test media 1").size(iso.length)
@@ -189,13 +184,13 @@ public class CatalogApiLiveTest extends BaseVCloudDirectorApiLiveTest {
 
    @Test(description = "GET /catalog/{id}/metadata")
    public void testGetCatalogMetadata() {
-      Metadata catalogMetadata = catalogApi.getMetadataApi().get(catalogApi.get(catalogUrn).getHref());
+      Metadata catalogMetadata = catalogApi.getMetadataApi().get(lazyGetCatalog().getHref());
       checkMetadata(catalogMetadata);
    }
 
    @Test(description = "GET /catalog/{id}/metadata/{key}")
    public void testGetCatalogMetadataValue() {
-      Metadata catalogMetadata = catalogApi.getMetadataApi().get(catalogApi.get(catalogUrn).getHref());
+      Metadata catalogMetadata = catalogApi.getMetadataApi().get(lazyGetCatalog().getHref());
       MetadataEntry existingMetadataEntry = Iterables.find(catalogMetadata.getMetadataEntries(),
                new Predicate<MetadataEntry>() {
                   @Override

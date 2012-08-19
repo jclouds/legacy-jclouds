@@ -19,12 +19,10 @@
 package org.jclouds.vcloud.director.v1_5.internal;
 
 import static com.google.common.base.Strings.emptyToNull;
-import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.any;
 import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Iterables.getFirst;
-import static com.google.common.collect.Iterables.getLast;
 import static com.google.common.collect.Iterables.tryFind;
 import static com.google.common.io.Closeables.closeQuietly;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.ENTITY_NON_NULL;
@@ -33,6 +31,9 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.U
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.CATALOG;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.NETWORK;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.ORG_NETWORK;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.USER;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.VAPP;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.VDC;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
@@ -58,6 +59,7 @@ import org.jclouds.vcloud.director.v1_5.VCloudDirectorApiMetadata;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorContext;
 import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminApi;
 import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminAsyncApi;
+import org.jclouds.vcloud.director.v1_5.domain.Catalog;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.ResourceEntity.Status;
@@ -97,7 +99,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -120,9 +121,6 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
    protected static final long TASK_TIMEOUT_SECONDS = 100L;
    protected static final long LONG_TASK_TIMEOUT_SECONDS = 300L;
 
-   public static final String VAPP = "vApp";
-   public static final String VAPP_TEMPLATE = "vAppTemplate";
-   public static final String VDC = "vdc";
    public static final int REQUIRED_ADMIN_VM_QUOTA = 0;
    public static final int REQUIRED_USER_VM_QUOTA = 0;
 
@@ -135,11 +133,13 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
    protected Session session;
 
    protected String catalogUrn;
+   private Catalog catalog;
    protected URI vAppTemplateURI;
    protected URI mediaURI;
    protected String networkUrn;
    private Network network;
-   protected URI vdcURI;
+   protected String vdcUrn;
+   private Vdc vdc;
    protected String userUrn;
    private User user;
 
@@ -255,9 +255,7 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
       if (vAppTemplateId != null)
          vAppTemplateURI = URI.create(endpoint + "/vAppTemplate/" + vAppTemplateId);
 
-      String vdcId = emptyToNull(System.getProperty("test." + provider + ".vdc-id"));
-      if (vdcId != null)
-         vdcURI = URI.create(endpoint + "/vdc/" + vdcId);
+      vdcUrn = emptyToNull(System.getProperty("test." + provider + ".vdc-id"));
 
       String mediaId = emptyToNull(System.getProperty("test." + provider + ".media-id"));
       if (mediaId != null)
@@ -271,11 +269,13 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
                find(context.getApi().getOrgApi().list(),
                         ReferencePredicates.<Reference> nameEquals(session.get())).getHref());
       
-      if (any(Lists.newArrayList(vAppTemplateURI, networkUrn, vdcURI), Predicates.isNull())) {
+      if (any(Lists.newArrayList(vAppTemplateURI, networkUrn, vdcUrn), Predicates.isNull())) {
 
-         if (vdcURI == null)
-            vdcURI = find(org.getLinks(),
-                     ReferencePredicates.<Link> typeEquals(VDC)).getHref();
+         if (vdcUrn == null) {
+            vdc = context.getApi().getVdcApi().get(find(org.getLinks(),
+                     ReferencePredicates.<Link> typeEquals(VDC)).getHref());
+            vdcUrn = vdc.getId();
+         }
 
          if (networkUrn == null) {
             network = context.getApi().getNetworkApi().get(find(org.getLinks(),
@@ -283,13 +283,28 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
             networkUrn = network.getId();
          }
 
-         // FIXME the URI should be opaque
-         if (isNullOrEmpty(catalogUrn)) {
-            String uri = find(org.getLinks(),
-                     ReferencePredicates.<Link> typeEquals(CATALOG)).getHref().toASCIIString();
-            catalogUrn = getLast(Splitter.on('/').split(uri));
+         if (catalogUrn == null) {
+            catalog = context.getApi().getCatalogApi().get(find(org.getLinks(),
+                     ReferencePredicates.<Link> typeEquals(CATALOG)).getHref());
+            catalogUrn = catalog.getId();
          }
       }
+   }
+   
+   protected Vdc lazyGetVdc() {
+      if (vdc == null) {
+         assertNotNull(vdcUrn, String.format(URN_REQ_LIVE, VDC));
+         vdc = from(org.getLinks()).filter(LinkPredicates.typeEquals(VDC))
+                  .transform(new Function<Link, Vdc>() {
+
+                     @Override
+                     public Vdc apply(Link in) {
+                        return context.getApi().getVdcApi().get(in.getHref());
+                     }
+                  }).firstMatch(EntityPredicates.idEquals(vdcUrn)).get();
+         assertNotNull(vdc, String.format(ENTITY_NON_NULL, VDC));
+      }
+      return vdc;
    }
 
    protected Network lazyGetNetwork() {
@@ -303,21 +318,42 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
                         return context.getApi().getNetworkApi().get(in.getHref());
                      }
                   }).firstMatch(EntityPredicates.idEquals(networkUrn)).get();
+         assertNotNull(network, String.format(ENTITY_NON_NULL, NETWORK));
       }
       return network;
+   }
+   
+   protected Catalog lazyGetCatalog() {
+      if (catalog == null) {
+         assertNotNull(catalogUrn, String.format(URN_REQ_LIVE, CATALOG));
+         catalog = from(org.getLinks()).filter(LinkPredicates.typeEquals(CATALOG))
+                  .transform(new Function<Link, Catalog>() {
+
+                     @Override
+                     public Catalog apply(Link in) {
+                        return context.getApi().getCatalogApi().get(in.getHref());
+                     }
+                  }).firstMatch(EntityPredicates.idEquals(catalogUrn)).get();
+         assertNotNull(catalog, String.format(ENTITY_NON_NULL, CATALOG));
+      }
+      return catalog;
    }
 
    protected User lazyGetUser() {
       if (user == null) {
+         assertNotNull(userUrn, String.format(URN_REQ_LIVE, USER));
          user = adminContext.getApi().getUserApi().get(userUrn);
+         assertNotNull(user, String.format(ENTITY_NON_NULL, USER));
       }
       return user;
    }
-
+   
+   @Deprecated
    public URI toAdminUri(Reference ref) {
       return toAdminUri(ref.getHref());
    }
 
+   @Deprecated
    public URI toAdminUri(URI uri) {
       return Reference.builder().href(uri).build().toAdminReference(endpoint).getHref();
    }
@@ -377,7 +413,7 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
             .build();
 
       VdcApi vdcApi = context.getApi().getVdcApi();
-      VApp vAppInstantiated = vdcApi.instantiateVApp(vdcURI, instantiate);
+      VApp vAppInstantiated = vdcApi.instantiateVApp(vdcUrn, instantiate);
       assertNotNull(vAppInstantiated, String.format(ENTITY_NON_NULL, VAPP));
 
       Task instantiationTask = getFirst(vAppInstantiated.getTasks(), null);
@@ -415,7 +451,7 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
 
    /** Build a {@link NetworkConfiguration} object. */
    private NetworkConfiguration networkConfiguration() {
-      Vdc vdc = context.getApi().getVdcApi().getVdc(vdcURI);
+      Vdc vdc = context.getApi().getVdcApi().get(vdcUrn);
       assertNotNull(vdc, String.format(ENTITY_NON_NULL, VDC));
 
       Set<Reference> networks = vdc.getAvailableNetworks();

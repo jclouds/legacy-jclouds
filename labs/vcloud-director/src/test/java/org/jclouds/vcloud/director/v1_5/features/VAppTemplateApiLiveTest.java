@@ -105,7 +105,7 @@ public class VAppTemplateApiLiveTest extends AbstractVAppApiLiveTest {
                .isSourceDelete(false)
                .name("clone")
                .build();
-      VAppTemplate clonedVappTemplate = vdcApi.cloneVAppTemplate(vdcURI, cloneVAppTemplateParams);
+      VAppTemplate clonedVappTemplate = vdcApi.cloneVAppTemplate(vdcUrn, cloneVAppTemplateParams);
       
       if (waitForTask) {
          Task cloneTask = Iterables.getFirst(clonedVappTemplate.getTasks(), null);
