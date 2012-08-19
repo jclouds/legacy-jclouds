@@ -59,7 +59,7 @@ public class AllCatalogsInOrg implements Function<AdminOrg, Iterable<? extends C
             new Function<Reference, Future<? extends Catalog>>() {
                @Override
                public Future<? extends Catalog> apply(Reference from) {
-                  return aapi.getCatalogApi().getCatalog(from.getHref());
+                  return aapi.getCatalogApi().get(from.getHref());
                }
 
             }, executor, null, logger, "catalogs in " + org.getName());

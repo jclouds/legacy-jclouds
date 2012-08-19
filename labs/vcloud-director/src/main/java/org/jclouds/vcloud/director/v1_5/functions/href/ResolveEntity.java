@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,27 +16,34 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.vcloud.director.v1_5;
+package org.jclouds.vcloud.director.v1_5.functions.href;
 
-import static org.testng.Assert.assertEquals;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.vcloud.director.v1_5.internal.VCloudDirectorAdminApiExpectTest;
-import org.jclouds.vcloud.director.v1_5.login.SessionApiExpectTest;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import org.jclouds.vcloud.director.v1_5.domain.Entity;
 import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorApi;
-import org.testng.annotations.Test;
 
-/**
- * @author Adrian Cole
- */
-@Test(groups = "unit", testName = "VCloudDirectorApi")
-public class VCloudDirectorApiExpectTest extends VCloudDirectorAdminApiExpectTest {
+import com.google.common.base.Function;
 
-   //TODO: this inheritance is all wrong!!  the base client shouldn't inherit from the admin client tests!!
-   
-   public void testRestClientModuleWorksProperly() throws Exception {
+@Singleton
+public class ResolveEntity implements Function<String, Entity> {
+   private final VCloudDirectorApi api;
 
-      VCloudDirectorApi apiWhenSessionsExist = requestSendsResponse(loginRequest, sessionResponse);
+   @Inject
+   public ResolveEntity(VCloudDirectorApi api) {
+      this.api = checkNotNull(api, "api");
+   }
 
-      assertEquals(apiWhenSessionsExist.getCurrentSession(), SessionApiExpectTest.SESSION);
+   @Override
+   public Entity apply(String input) {
+      return api.resolveEntity(checkNotNull(input, "urn"));
+   }
+
+   @Override
+   public String toString() {
+      return "resolveEntity()";
    }
 }

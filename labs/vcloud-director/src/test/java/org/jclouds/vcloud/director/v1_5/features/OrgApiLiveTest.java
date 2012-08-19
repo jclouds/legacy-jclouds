@@ -61,29 +61,26 @@ public class OrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
     */
 
    private OrgApi orgApi;
-   private URI catalogRef;
-   private String testCatalogId;
 
    @Override
    @BeforeClass(alwaysRun = true)
    public void setupRequiredApis() {
       orgApi = context.getApi().getOrgApi();
-      testCatalogId = catalogId;
    }
    
    @AfterClass(alwaysRun = true)
    public void cleanUp() throws Exception {
       if (adminMembersSet) {
          try {
-	         Task delete = adminContext.getApi().getOrgApi().getMetadataApi().deleteMetadataEntry(toAdminUri(orgURI), "KEY");
+	         Task delete = adminContext.getApi().getOrgApi().getMetadataApi().deleteEntry(toAdminUri(orgURI), "KEY");
 	         taskDoneEventually(delete);
          } catch (Exception e) {
             logger.warn(e, "Error when deleting metadata entry");
          }
          try {
-	         adminContext.getApi().getCatalogApi().deleteCatalog(catalogRef);
+	         adminContext.getApi().getCatalogApi().delete(catalogUrn);
          } catch (Exception e) {
-            logger.warn(e, "Error when deleting catalog'%s': %s", catalogRef);
+            logger.warn(e, "Error when deleting catalog'%s': %s", catalogUrn);
          }
       }
    }
@@ -134,17 +131,16 @@ public class OrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
     * If we're running in an admin context, it's cleaner to make temporary entities, plus eliminates the need for configuration
     */
    private void setupAdminMembers() {
-      adminContext.getApi().getOrgApi().getMetadataApi().setMetadata(toAdminUri(orgURI), 
+      adminContext.getApi().getOrgApi().getMetadataApi().putEntry(toAdminUri(orgURI), 
             "KEY", MetadataValue.builder().value("VALUE").build());
       
       AdminCatalog newCatalog = AdminCatalog.builder()
             .name("Test Catalog "+getTestDateTimeStamp())
             .description("created by testOrg()")
             .build();
-      newCatalog = adminContext.getApi().getCatalogApi().createCatalog(toAdminUri(orgURI), newCatalog);
+      newCatalog = adminContext.getApi().getCatalogApi().createCatalogInOrg(newCatalog, org.getId());
       
-      catalogRef = newCatalog.getHref();
-      testCatalogId = newCatalog.getId().substring("urn:vcloud:catalog:".length()); 
+      catalogUrn = newCatalog.getId();
       
       adminMembersSet = true;
    }
@@ -153,7 +149,7 @@ public class OrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    public void testGetOrgMetadata() {
       
       // Call the method being tested
-      Metadata metadata = orgApi.getMetadataApi().getMetadata(orgURI);
+      Metadata metadata = orgApi.getMetadataApi().get(orgURI);
       
       // NOTE The environment MUST have at one metadata entry for the first organisation configured
       
@@ -166,7 +162,7 @@ public class OrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    @Test(description = "GET /org/{id}/metadata/{key}", dependsOnMethods = { "testGetOrgMetadata" })
    public void testGetOrgMetadataValue() {
       // Call the method being tested
-      MetadataValue value = orgApi.getMetadataApi().getMetadataValue(orgURI, "KEY");
+      MetadataValue value = orgApi.getMetadataApi().getValue(orgURI, "KEY");
       
       // NOTE The environment MUST have configured the metadata entry as '{ key="KEY", value="VALUE" )'
 
@@ -179,7 +175,7 @@ public class OrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    @Test(description = "GET /org/{id}/catalog/{catalogId}/controlAccess", dependsOnMethods = { "testGetOrg" })
    public void testGetControlAccess() {
       // Call the method being tested
-      ControlAccessParams params = orgApi.getControlAccess(orgURI, testCatalogId);
+      ControlAccessParams params = orgApi.getControlAccess(orgURI, catalogUrn);
 
       // Check params are well formed
       checkControlAccessParams(params);
@@ -188,10 +184,10 @@ public class OrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    @Test(description = "POST /org/{id}/catalog/{catalogId}/action/controlAccess", dependsOnMethods = { "testGetControlAccess" })
    public void testModifyControlAccess() {
       // Setup params
-      ControlAccessParams params = orgApi.getControlAccess(orgURI, testCatalogId);
+      ControlAccessParams params = orgApi.getControlAccess(orgURI, catalogUrn);
 
       // Call the method being tested
-      ControlAccessParams modified = orgApi.modifyControlAccess(orgURI, testCatalogId, params);
+      ControlAccessParams modified = orgApi.modifyControlAccess(orgURI, catalogUrn, params);
 
       // Check params are well formed
       checkControlAccessParams(modified);

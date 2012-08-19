@@ -353,11 +353,11 @@ public class VAppTemplateApiExpectTest extends VCloudDirectorAdminApiExpectTest 
       ).getVAppTemplateApi();
 
       assertNotNull(api);
-      Metadata metadata = api.getMetadataApi().getMetadata(uri);
+      Metadata metadata = api.getMetadataApi().get(uri);
 
       assertEquals(metadata, exampleMetadata());
 
-      Task task = api.getMetadataApi().mergeMetadata(uri, exampleMetadata());
+      Task task = api.getMetadataApi().merge(uri, exampleMetadata());
       assertNotNull(task);
    }
 
@@ -370,7 +370,7 @@ public class VAppTemplateApiExpectTest extends VCloudDirectorAdminApiExpectTest 
             new VcloudHttpRequestPrimer().apiCommand("GET", templateId + "/metadata").acceptMedia(ANY).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error400.xml", ERROR).httpResponseBuilder().statusCode(400).build()).getVAppTemplateApi();
 
-      api.getMetadataApi().getMetadata(uri);
+      api.getMetadataApi().get(uri);
    }
 
    @Test(expectedExceptions = VCloudDirectorException.class)
@@ -382,7 +382,7 @@ public class VAppTemplateApiExpectTest extends VCloudDirectorAdminApiExpectTest 
             new VcloudHttpRequestPrimer().apiCommand("POST", templateId + "/metadata").xmlFilePayload("/vapptemplate/metadata.xml", METADATA).acceptMedia(TASK).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error400.xml", ERROR).httpResponseBuilder().statusCode(400).build()).getVAppTemplateApi();
 
-      api.getMetadataApi().mergeMetadata(uri, exampleMetadata());
+      api.getMetadataApi().merge(uri, exampleMetadata());
    }
    
    public void testVappTemplateMetadataValue() {
@@ -399,14 +399,14 @@ public class VAppTemplateApiExpectTest extends VCloudDirectorAdminApiExpectTest 
       ).getVAppTemplateApi();
 
       assertNotNull(api);
-      MetadataValue metadata = api.getMetadataApi().getMetadataValue(uri, "12345");
+      MetadataValue metadata = api.getMetadataApi().getValue(uri, "12345");
 
       assertEquals(metadata, exampleMetadataValue());
 
-      Task task = api.getMetadataApi().setMetadata(uri, "12345", exampleMetadataValue());
+      Task task = api.getMetadataApi().putEntry(uri, "12345", exampleMetadataValue());
       assertNotNull(task);
 
-      task = api.getMetadataApi().deleteMetadataEntry(uri, "12345");
+      task = api.getMetadataApi().deleteEntry(uri, "12345");
       assertNotNull(task);
    }
 
@@ -418,7 +418,7 @@ public class VAppTemplateApiExpectTest extends VCloudDirectorAdminApiExpectTest 
             new VcloudHttpRequestPrimer().apiCommand("GET", templateId + "/metadata/12345").acceptMedia(METADATA_ENTRY).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error403.xml", ERROR).httpResponseBuilder().statusCode(403).build()).getVAppTemplateApi();
 
-      assertNull(api.getMetadataApi().getMetadataValue(uri, "12345"));
+      assertNull(api.getMetadataApi().getValue(uri, "12345"));
    }
    
    @Test(expectedExceptions = VCloudDirectorException.class)
@@ -430,7 +430,7 @@ public class VAppTemplateApiExpectTest extends VCloudDirectorAdminApiExpectTest 
             new VcloudHttpRequestPrimer().apiCommand("PUT", templateId + "/metadata/12345").xmlFilePayload("/vapptemplate/metadataValue.xml", METADATA_ENTRY).acceptMedia(TASK).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error400.xml", ERROR).httpResponseBuilder().statusCode(400).build()).getVAppTemplateApi();
 
-      api.getMetadataApi().setMetadata(uri, "12345", exampleMetadataValue());
+      api.getMetadataApi().putEntry(uri, "12345", exampleMetadataValue());
    }
 
    @Test(expectedExceptions = ResourceNotFoundException.class)
@@ -442,7 +442,7 @@ public class VAppTemplateApiExpectTest extends VCloudDirectorAdminApiExpectTest 
             new VcloudHttpRequestPrimer().apiCommand("DELETE", templateId + "/metadata/12345").acceptMedia(TASK).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error403.xml", ERROR).httpResponseBuilder().statusCode(403).build()).getVAppTemplateApi();
 
-      api.getMetadataApi().deleteMetadataEntry(uri, "12345");
+      api.getMetadataApi().deleteEntry(uri, "12345");
    }
 
    @Test(expectedExceptions = VCloudDirectorException.class)

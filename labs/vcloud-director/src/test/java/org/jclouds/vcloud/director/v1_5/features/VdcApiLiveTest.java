@@ -119,7 +119,7 @@ public class VdcApiLiveTest extends BaseVCloudDirectorApiLiveTest {
       
       if (metadataSet) {
          try {
-	         Task delete = adminContext.getApi().getVdcApi().getMetadataApi().deleteMetadataEntry(toAdminUri(vdcURI), "key");
+	         Task delete = adminContext.getApi().getVdcApi().getMetadataApi().deleteEntry(toAdminUri(vdcURI), "key");
 	         taskDoneEventually(delete);
          } catch (Exception e) {
             logger.warn(e, "Error deleting metadata entry");
@@ -316,7 +316,7 @@ public class VdcApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    }
    
    private void setupMetadata() {
-      adminContext.getApi().getVdcApi().getMetadataApi().setMetadata(toAdminUri(vdcURI), 
+      adminContext.getApi().getVdcApi().getMetadataApi().putEntry(toAdminUri(vdcURI), 
             "key", MetadataValue.builder().value("value").build());
       metadataSet = true;
    }
@@ -327,7 +327,7 @@ public class VdcApiLiveTest extends BaseVCloudDirectorApiLiveTest {
          setupMetadata();
       }
       
-      Metadata metadata = vdcApi.getMetadataApi().getMetadata(vdcURI);
+      Metadata metadata = vdcApi.getMetadataApi().get(vdcURI);
       
       // required for testing
       assertFalse(Iterables.isEmpty(metadata.getMetadataEntries()), 
@@ -339,12 +339,12 @@ public class VdcApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    @Test(description = "GET /vdc/{id}/metadata/{key}", dependsOnMethods = { "testGetMetadata" } )
    public void testGetMetadataValue() {
       // First find a key
-      Metadata metadata = vdcApi.getMetadataApi().getMetadata(vdcURI);
+      Metadata metadata = vdcApi.getMetadataApi().get(vdcURI);
       Map<String, String> metadataMap = Checks.metadataToMap(metadata);
       String key = Iterables.getFirst(metadataMap.keySet(), "MadeUpKey!");
       String value = metadataMap.get(key);
       
-      MetadataValue metadataValue = vdcApi.getMetadataApi().getMetadataValue(vdcURI, key);
+      MetadataValue metadataValue = vdcApi.getMetadataApi().getValue(vdcURI, key);
       
       Checks.checkMetadataValueFor(VDC, metadataValue, value);
    }

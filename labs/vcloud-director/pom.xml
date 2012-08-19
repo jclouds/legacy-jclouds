@@ -40,6 +40,7 @@
     <test.vcloud-director.identity>FIXME_USERNAME_WHICH_MIGHT_BE_EMAIL@JClouds</test.vcloud-director.identity>
     <test.vcloud-director.credential>FIXME_PASSWORD</test.vcloud-director.credential>
     <test.vcloud-director.template></test.vcloud-director.template>
+    <!-- URN format: ex. urn:vcloud:catalog:7212e451-76e1-4631-b2de-ba1dfd8080e4 -->
     <test.vcloud-director.catalog-id></test.vcloud-director.catalog-id>
     <test.vcloud-director.media-id></test.vcloud-director.media-id>
     <test.vcloud-director.vapptemplate-id></test.vcloud-director.vapptemplate-id>
@@ -57,6 +58,11 @@
   </properties>
 
   <dependencies>
+    <dependency>
+      <groupId>com.jamesmurty.utils</groupId>
+      <artifactId>java-xmlbuilder</artifactId>
+      <version>0.4</version>
+    </dependency>
     <dependency>
       <groupId>org.jclouds</groupId>
       <artifactId>jclouds-compute</artifactId>

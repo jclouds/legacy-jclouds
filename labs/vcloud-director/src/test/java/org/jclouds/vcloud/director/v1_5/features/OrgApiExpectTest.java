@@ -166,7 +166,7 @@ public class OrgApiExpectTest extends VCloudDirectorAdminApiExpectTest {
             .entries(ImmutableSet.of(metadataEntry()))
             .build();
  
-       assertEquals(api.getOrgApi().getMetadataApi().getMetadata(orgUri), expected);
+       assertEquals(api.getOrgApi().getMetadataApi().get(orgUri), expected);
    }
    
    @Test
@@ -184,7 +184,7 @@ public class OrgApiExpectTest extends VCloudDirectorAdminApiExpectTest {
       
       MetadataValue expected = metadataValue();
 
-      assertEquals(api.getOrgApi().getMetadataApi().getMetadataValue(orgUri, "KEY"), expected);
+      assertEquals(api.getOrgApi().getMetadataApi().getValue(orgUri, "KEY"), expected);
    }
 
    public static Org org() {

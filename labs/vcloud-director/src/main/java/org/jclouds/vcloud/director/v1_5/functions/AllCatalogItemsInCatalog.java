@@ -71,7 +71,7 @@ public class AllCatalogItemsInCatalog implements Function<Catalog, Iterable<? ex
 
          @Override
          public Future<CatalogItem> apply(Reference from) {
-            return aapi.getCatalogApi().getCatalogItem(from.getHref());
+            return aapi.getCatalogApi().getItem(from.getHref());
          }
 
       }, executor, null, logger, "catalogItems in " + from.getHref());

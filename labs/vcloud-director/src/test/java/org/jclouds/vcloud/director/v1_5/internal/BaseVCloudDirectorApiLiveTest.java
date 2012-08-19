@@ -122,8 +122,7 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
    protected Session adminSession;
    protected Session session;
 
-   protected String catalogId;
-   protected URI catalogURI;
+   protected String catalogUrn;
    protected URI vAppTemplateURI;
    protected URI mediaURI;
    protected URI networkURI;
@@ -233,12 +232,8 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
          .build();
    }
 
-   // TODO change properties to URI, not id
    protected void initTestParametersFromPropertiesOrLazyDiscover() {
-      catalogId = Strings.emptyToNull(System.getProperty("test." + provider + ".catalog-id"));
-      if (catalogId != null) {
-         catalogURI = URI.create(endpoint + "/catalog/" + catalogId);
-      }
+      catalogUrn = Strings.emptyToNull(System.getProperty("test." + provider + ".catalog-id"));
 
       String vAppTemplateId = Strings.emptyToNull(System.getProperty("test." + provider + ".vapptemplate-id"));
       if (vAppTemplateId != null)
@@ -274,10 +269,10 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
                      ReferencePredicates.<Link> typeEquals(VCloudDirectorMediaType.ORG_NETWORK)).getHref();
 
          // FIXME the URI should be opaque
-         if (Strings.isNullOrEmpty(catalogId)) {
+         if (Strings.isNullOrEmpty(catalogUrn)) {
             String uri = Iterables.find(thisOrg.getLinks(),
                      ReferencePredicates.<Link> typeEquals(VCloudDirectorMediaType.CATALOG)).getHref().toASCIIString();
-            catalogId = Iterables.getLast(Splitter.on('/').split(uri));
+            catalogUrn = Iterables.getLast(Splitter.on('/').split(uri));
          }
       }
    }

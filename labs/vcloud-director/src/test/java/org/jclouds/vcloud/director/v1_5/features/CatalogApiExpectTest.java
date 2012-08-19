@@ -18,6 +18,13 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.ADMIN_CATALOG;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.CATALOG;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.CATALOG_ITEM;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.ENTITY;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.METADATA;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.METADATA_VALUE;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.TASK;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
@@ -25,7 +32,6 @@ import java.net.URI;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorApiExpectTest;
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Catalog;
 import org.jclouds.vcloud.director.v1_5.domain.CatalogItem;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
@@ -43,349 +49,376 @@ import com.google.common.net.HttpHeaders;
 /**
  * Test the {@link CatalogApi} by observing its side effects.
  * 
- * @author grkvlt@apache.org
+ * @author grkvlt@apache.org, Adrian Cole
  */
 @Test(groups = { "unit", "user" }, singleThreaded = true, testName = "CatalogApiExpectTest")
 public class CatalogApiExpectTest extends VCloudDirectorApiExpectTest {
+   static String catalog = "7212e451-76e1-4631-b2de-ba1dfd8080e4";
+   static String catalogUrn = "urn:vcloud:catalog:" + catalog;
+   static URI catalogHref = URI.create(endpoint + "/catalog/" + catalog);
+   
+   HttpRequest get = HttpRequest.builder()
+            .method("GET")
+            .endpoint(catalogHref)
+            .addHeader("Accept", "*/*")
+            .addHeader("x-vcloud-authorization", token)
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
+            .build();
 
+    HttpResponse getResponse = HttpResponse.builder()
+            .statusCode(200)
+            .payload(payloadFromResourceWithContentType("/catalog/catalog.xml", CATALOG + ";version=1.5"))
+            .build();
+    
    @Test
-   public void testGetCatalog() {
-      HttpRequest catalogRequest = HttpRequest.builder()
-              .method("GET")
-              .endpoint(endpoint + "/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4")
-              .addHeader("Accept", "*/*")
-              .addHeader("x-vcloud-authorization", token)
-              .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
-              .build();
-
-      HttpResponse catalogResponse = HttpResponse.builder()
-              .statusCode(200)
-              .payload(payloadFromResourceWithContentType("/catalog/catalog.xml", VCloudDirectorMediaType.CATALOG + ";version=1.5"))
-              .build();
-
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, catalogRequest, catalogResponse);
-
-      Catalog expected = catalog();
-
-      URI catalogURI = URI.create(endpoint + "/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4");      
-      assertEquals(api.getCatalogApi().getCatalog(catalogURI), expected);
+   public void testGetCatalogHref() {
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, get, getResponse);
+      assertEquals(api.getCatalogApi().get(catalogHref), catalog());
    }
-
+   
+   HttpRequest resolveCatalog = HttpRequest.builder()
+            .method("GET")
+            .endpoint(endpoint + "/entity/" + catalogUrn)
+            .addHeader("Accept", "*/*")
+            .addHeader("x-vcloud-authorization", token)
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
+            .build();
+   
+   String catalogEntity = asString(createXMLBuilder("Entity").a("xmlns", "http://www.vmware.com/vcloud/v1.5")
+                                                             .a("name", catalogUrn)
+                                                             .a("id", catalogUrn)
+                                                             .a("type", ENTITY)
+                                                             .a("href", endpoint + "/entity/" + catalogUrn)
+                                  .e("Link").a("rel", "alternate").a("type", CATALOG).a("href", catalogHref.toString()).up()
+                                  // TODO: remove this when VCloudDirectorApiExpectTest no longer inherits from VCloudDirectorAdminApiExpectTest
+                                  .e("Link").a("rel", "alternate").a("type", ADMIN_CATALOG).a("href", catalogHref.toString()).up());
+   
+   HttpResponse resolveCatalogResponse = HttpResponse.builder()
+           .statusCode(200)
+           .payload(payloadFromStringWithContentType(catalogEntity, ENTITY + ";version=1.5"))
+           .build();
+   
    @Test
-   public void testAddCatalogItem() {
-      HttpRequest catalogItemRequest = HttpRequest.builder()
+   public void testGetCatalogUrn() {
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, resolveCatalog, resolveCatalogResponse, get, getResponse);
+      assertEquals(api.getCatalogApi().get(catalogUrn), catalog());
+   }
+   
+   HttpRequest add = HttpRequest.builder()
             .method("POST")
-            .endpoint(endpoint + "/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4/catalogItems")
+            .endpoint(catalogHref + "/catalogItems")
             .addHeader("Accept", "application/vnd.vmware.vcloud.catalogItem+xml")
             .addHeader("x-vcloud-authorization", token)
             .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
-            .payload(payloadFromResourceWithContentType("/catalog/newCatalogItem.xml", VCloudDirectorMediaType.CATALOG_ITEM))
+            .payload(payloadFromResourceWithContentType("/catalog/newCatalogItem.xml", CATALOG_ITEM))
             .build();
 
-      HttpResponse catalogItemResponse = HttpResponse.builder()
-              .statusCode(200)
-              .payload(payloadFromResourceWithContentType("/catalog/createdCatalogItem.xml", VCloudDirectorMediaType.CATALOG_ITEM + ";version=1.5"))
+   HttpResponse addResponse = HttpResponse.builder()
+            .statusCode(200)
+            .payload(payloadFromResourceWithContentType("/catalog/createdCatalogItem.xml", CATALOG_ITEM + ";version=1.5"))
             .build();
-
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, catalogItemRequest, catalogItemResponse);
-
-      URI catalogURI = URI.create(endpoint + "/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4"); 
-      
-      CatalogItem newItem = CatalogItem.builder()
+   
+   CatalogItem newItem = CatalogItem.builder()
             .name("newCatalogItem")
             .description("New Catalog Item")
             .entity(ubuntuVappTemplateReference())
             .build();
 
-      CatalogItem expected = createdCatalogItem();
-      
-      assertEquals(api.getCatalogApi().addCatalogItem(catalogURI, newItem), expected);
-   }
-
    @Test
-   public void testGetCatalogMetadata() {
-      HttpRequest catalogRequest = HttpRequest.builder()
-            .method("GET")
-            .endpoint(endpoint + "/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4/metadata")
-            .addHeader("Accept", "*/*")
-            .addHeader("x-vcloud-authorization", token)
-            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token).build();
-
-      HttpResponse catalogResponse = HttpResponse.builder()
-              .statusCode(200)
-              .payload(payloadFromResourceWithContentType("/catalog/catalogMetadata.xml", VCloudDirectorMediaType.METADATA))
-            .build();
-
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, catalogRequest, catalogResponse);
-
-      URI catalogURI = URI.create(endpoint + "/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4");
-      
-      Metadata expected = Metadata.builder()
-            .type("application/vnd.vmware.vcloud.metadata+xml")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4/metadata"))
-            .link(Link.builder()
-                  .rel("up")
-                  .type("application/vnd.vmware.vcloud.catalog+xml")
-                  .href(URI.create("https://vcloudbeta.bluelock.com/api/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4"))
-                  .build())
-            .entries(ImmutableSet.of(metadataEntry()))
-            .build();
-      
-      assertEquals(api.getCatalogApi().getMetadataApi().getMetadata(catalogURI), expected);
-   }
-
-   @Test
-   public void testGetCatalogMetadataEntry() {
-      HttpRequest catalogRequest = HttpRequest.builder()
-            .method("GET")
-            .endpoint(endpoint + "/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4/metadata/KEY")
-            .addHeader("Accept", "*/*")
-            .addHeader("x-vcloud-authorization", token)
-            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token).build();
-
-      HttpResponse catalogResponse = HttpResponse.builder()
-              .statusCode(200)
-              .payload(payloadFromResourceWithContentType("/catalog/catalogMetadataValue.xml", VCloudDirectorMediaType.METADATA_VALUE))
-            .build();
-
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, catalogRequest, catalogResponse);
-
-      URI catalogURI = URI.create(endpoint + "/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4");
-      
-      MetadataValue expected = metadataValue();
-      
-      assertEquals(api.getCatalogApi().getMetadataApi().getMetadataValue(catalogURI, "KEY"), expected);
+   public void testAddCatalogItemHref() {
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, add, addResponse);
+      assertEquals(api.getCatalogApi().addItem(catalogHref, newItem), createdCatalogItem());
    }
    
    @Test
-   public void testGetCatalogItem() {
-      HttpRequest catalogItemRequest = HttpRequest.builder()
+   public void testAddCatalogItemUrn() {
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, resolveCatalog, resolveCatalogResponse, add, addResponse);
+      assertEquals(api.getCatalogApi().addItem(catalogUrn, newItem), createdCatalogItem());
+   }
+   
+   HttpRequest getMetadata = HttpRequest.builder()
             .method("GET")
-            .endpoint(endpoint + "/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df")
+            .endpoint(catalogHref + "/metadata")
             .addHeader("Accept", "*/*")
             .addHeader("x-vcloud-authorization", token)
             .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token).build();
 
-      HttpResponse catalogItemResponse = HttpResponse.builder()
-              .statusCode(200)
-              .payload(payloadFromResourceWithContentType("/catalog/catalogItem.xml", VCloudDirectorMediaType.CATALOG_ITEM))
+   HttpResponse getMetadataResponse = HttpResponse.builder()
+            .statusCode(200)
+            .payload(payloadFromResourceWithContentType("/catalog/catalogMetadata.xml", METADATA))
             .build();
 
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, catalogItemRequest, catalogItemResponse);
-
-      URI catalogItemURI =   URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df");
-         
-      CatalogItem expected = catalogItem();
-      
-      assertEquals(api.getCatalogApi().getCatalogItem(catalogItemURI), expected);
+   @Test
+   public void testGetCatalogMetadataHref() {
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, getMetadata, getMetadataResponse);
+      assertEquals(api.getCatalogApi().getMetadataApi().get(catalogHref), metadata());
    }
 
+   static Metadata metadata() {
+      return Metadata.builder()
+                     .type("application/vnd.vmware.vcloud.metadata+xml")
+                     .href(URI.create(endpoint + "/catalog/" + catalog + "/metadata"))
+                     .link(Link.builder()
+                               .rel("up")
+                               .type("application/vnd.vmware.vcloud.catalog+xml")
+                               .href(catalogHref)
+                               .build())
+                     .entries(ImmutableSet.of(metadataEntry()))
+                     .build();
+   }
+   
+   HttpRequest getMetadataValue = HttpRequest.builder()
+            .method("GET")
+            .endpoint(catalogHref + "/metadata/KEY")
+            .addHeader("Accept", "*/*")
+            .addHeader("x-vcloud-authorization", token)
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token).build();
+
+   HttpResponse getMetadataValueResponse = HttpResponse.builder()
+            .statusCode(200)
+            .payload(payloadFromResourceWithContentType("/catalog/catalogMetadataValue.xml", METADATA_VALUE))
+            .build();
+
    @Test
-   public void testUpdateCatalogItem() {
-      HttpRequest catalogItemRequest = HttpRequest.builder()
+   public void testGetCatalogMetadataEntryHref() {
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, getMetadataValue, getMetadataValueResponse);
+      assertEquals(api.getCatalogApi().getMetadataApi().getValue(catalogHref, "KEY"), metadataValue());
+   }
+
+   static String item = "a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df";
+   static URI itemHref = URI.create(endpoint + "/catalogItem/" + item);
+   static String itemUrn = "urn:vcloud:catalogitem:" + item;
+
+   HttpRequest resolveItem = HttpRequest.builder()
+            .method("GET")
+            .endpoint(endpoint + "/entity/" + itemUrn)
+            .addHeader("Accept", "*/*")
+            .addHeader("x-vcloud-authorization", token)
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
+            .build();
+   
+   String itemEntity = asString(createXMLBuilder("Entity").a("xmlns", "http://www.vmware.com/vcloud/v1.5")
+                                                             .a("name", itemUrn)
+                                                             .a("id", itemUrn)
+                                                             .a("type", ENTITY)
+                                                             .a("href", endpoint + "/entity/" + itemUrn)
+                               .e("Link").a("rel", "alternate").a("type", CATALOG_ITEM).a("href", itemHref.toString()).up());
+
+   HttpResponse resolveItemResponse = HttpResponse.builder()
+            .statusCode(200)
+            .payload(payloadFromStringWithContentType(itemEntity, ENTITY + ";version=1.5"))
+            .build();
+   
+   HttpRequest getItem = HttpRequest.builder()
+            .method("GET")
+            .endpoint(endpoint + "/catalogItem/" + item)
+            .addHeader("Accept", "*/*")
+            .addHeader("x-vcloud-authorization", token)
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token).build();
+
+   HttpResponse getItemResponse = HttpResponse.builder()
+            .statusCode(200)
+            .payload(payloadFromResourceWithContentType("/catalog/catalogItem.xml", CATALOG_ITEM))
+            .build();
+      
+   @Test
+   public void testGetCatalogItemHref() {
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, getItem, getItemResponse);
+      assertEquals(api.getCatalogApi().getItem(itemHref), catalogItem());
+   }
+   
+   @Test
+   public void testGetCatalogItemUrn() {
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, resolveItem, resolveItemResponse, getItem, getItemResponse);
+      assertEquals(api.getCatalogApi().getItem(itemUrn), catalogItem());
+   }
+   
+   HttpRequest updateItem = HttpRequest.builder()
             .method("PUT")
-            .endpoint(endpoint + "/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df")
+            .endpoint(endpoint + "/catalogItem/" + item)
             .addHeader("Accept", "application/vnd.vmware.vcloud.catalogItem+xml")
             .addHeader("x-vcloud-authorization", token)
             .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
-            .payload(payloadFromResourceWithContentType("/catalog/updateCatalogItem.xml", VCloudDirectorMediaType.CATALOG_ITEM))
+            .payload(payloadFromResourceWithContentType("/catalog/updateCatalogItem.xml", CATALOG_ITEM))
             .build();
 
-      HttpResponse catalogItemResponse = HttpResponse.builder()
-              .statusCode(200)
-              .payload(payloadFromResourceWithContentType("/catalog/updateCatalogItem.xml", VCloudDirectorMediaType.CATALOG_ITEM + ";version=1.5"))
+   HttpResponse updateItemResponse = HttpResponse.builder()
+            .statusCode(200)
+            .payload(payloadFromResourceWithContentType("/catalog/updateCatalogItem.xml", CATALOG_ITEM + ";version=1.5"))
             .build();
 
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, catalogItemRequest, catalogItemResponse);
-
-      URI catalogItemURI = URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df");         
-      CatalogItem expected = catalogItem();
-      
-      assertEquals(api.getCatalogApi().updateCatalogItem(catalogItemURI, expected), expected);
+   @Test
+   public void testUpdateCatalogItemHref() {
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, updateItem, updateItemResponse);
+      assertEquals(api.getCatalogApi().updateItem(itemHref, catalogItem()), catalogItem());
    }
    
    @Test
-   public void testDeleteCatalogItem() {
-      HttpRequest catalogItemRequest = HttpRequest.builder()
+   public void testUpdateCatalogItemUrn() {
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, resolveItem, resolveItemResponse, updateItem, updateItemResponse);
+      assertEquals(api.getCatalogApi().updateItem(itemUrn, catalogItem()), catalogItem());
+   }
+   
+   HttpRequest deleteItem = HttpRequest.builder()
             .method("DELETE")
-            .endpoint(endpoint + "/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df")
+            .endpoint(endpoint + "/catalogItem/" + item)
             .addHeader("Accept", "*/*")
             .addHeader("x-vcloud-authorization", token)
             .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token).build();
 
-      HttpResponse catalogItemResponse = HttpResponse.builder()
+   HttpResponse deleteItemResponse = HttpResponse.builder()
             .statusCode(200)
             .build();
-
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, catalogItemRequest, catalogItemResponse);
-
-      URI catalogItemURI = URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df");
-         
-      api.getCatalogApi().deleteCatalogItem(catalogItemURI);
+      
+   @Test
+   public void testDeleteCatalogItemHref() {
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, deleteItem, deleteItemResponse);
+      api.getCatalogApi().deleteItem(itemHref);
    }
 
    @Test
-   public void testGetCatalogItemMetadata() {
-      HttpRequest catalogItemRequest = HttpRequest.builder()
+   public void testDeleteCatalogItemUrn() {
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, resolveItem, resolveItemResponse, deleteItem, deleteItemResponse);
+      api.getCatalogApi().deleteItem(itemUrn);
+   }
+   
+   HttpRequest getItemMetadata = HttpRequest.builder()
             .method("GET")
-            .endpoint(endpoint + "/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df/metadata")
+            .endpoint(endpoint + "/catalogItem/" + item + "/metadata")
             .addHeader("Accept", "*/*")
             .addHeader("x-vcloud-authorization", token)
             .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token).build();
 
-      HttpResponse catalogItemResponse = HttpResponse.builder()
-              .statusCode(200)
-              .payload(payloadFromResourceWithContentType("/catalog/catalogItemMetadata.xml", VCloudDirectorMediaType.METADATA))
+   HttpResponse getItemMetadataResponse = HttpResponse.builder()
+            .statusCode(200)
+            .payload(payloadFromResourceWithContentType("/catalog/catalogItemMetadata.xml", METADATA))
             .build();
-
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, catalogItemRequest, catalogItemResponse);
-
-      URI catalogItemURI = URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df");
       
-      Metadata expected = Metadata.builder()
+   Metadata expected = Metadata.builder()
             .type("application/vnd.vmware.vcloud.metadata+xml")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df/metadata"))
+            .href(URI.create(endpoint + "/catalogItem/" + item + "/metadata"))
             .link(Link.builder()
                   .rel("up")
                   .type("application/vnd.vmware.vcloud.catalogItem+xml")
-                  .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df"))
+                  .href(itemHref)
                   .build())
             .entries(ImmutableSet.of(itemMetadataEntry()))
             .build();
-      
-      assertEquals(api.getCatalogApi().getMetadataApi().getMetadata(catalogItemURI), expected);
-   }
 
    @Test
-   public void testMergeCatalogItemMetadata() {
-      HttpRequest catalogItemRequest = HttpRequest.builder()
+   public void testGetCatalogItemMetadataHref() {
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, getItemMetadata, getItemMetadataResponse);
+      assertEquals(api.getCatalogApi().getMetadataApi().get(itemHref), expected);
+   }
+
+   HttpRequest mergeItemMetadata = HttpRequest.builder()
             .method("POST")
-            .endpoint(endpoint + "/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df/metadata")
+            .endpoint(endpoint + "/catalogItem/" + item + "/metadata")
             .addHeader("Accept", "application/vnd.vmware.vcloud.task+xml")
             .addHeader("x-vcloud-authorization", token)
             .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
-            .payload(payloadFromResourceWithContentType("/catalog/mergeCatalogItemMetadata.xml", VCloudDirectorMediaType.METADATA))
+            .payload(payloadFromResourceWithContentType("/catalog/mergeCatalogItemMetadata.xml", METADATA))
             .build();
 
-      HttpResponse catalogItemResponse = HttpResponse.builder()
-              .statusCode(200)
-              .payload(payloadFromResourceWithContentType("/catalog/mergeMetadataTask.xml", VCloudDirectorMediaType.TASK + ";version=1.5"))
+   HttpResponse mergeItemMetadataResponse = HttpResponse.builder()
+            .statusCode(200)
+            .payload(payloadFromResourceWithContentType("/catalog/mergeMetadataTask.xml", TASK + ";version=1.5"))
             .build();
-
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, catalogItemRequest, catalogItemResponse);
-
-      URI catalogItemURI = URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df");
- 
-      Metadata metadata = Metadata.builder().entry(MetadataEntry.builder().entry("KEY", "VALUE").build()).build();
       
-      Task expected = mergeMetadataTask();
-      
-      assertEquals(api.getCatalogApi().getCatalogItemMetadataApi().mergeMetadata(catalogItemURI, metadata), expected);
-   }
-
    @Test
-   public void testGetCatalogItemMetadataEntry() {
-      HttpRequest catalogItemRequest = HttpRequest.builder()
+   public void testMergeCatalogItemMetadataHref() {
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, mergeItemMetadata, mergeItemMetadataResponse);
+      // TODO: horrendous way of representing Map<String,String>
+      Metadata metadata = Metadata.builder().entry(MetadataEntry.builder().entry("KEY", "VALUE").build()).build();
+      assertEquals(api.getCatalogApi().getItemMetadataApi().merge(itemHref, metadata), mergeMetadataTask());
+   }
+   
+   HttpRequest getItemMetadataValue = HttpRequest.builder()
             .method("GET")
-            .endpoint(endpoint + "/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df/metadata/KEY")
+            .endpoint(endpoint + "/catalogItem/" + item + "/metadata/KEY")
             .addHeader("Accept", "*/*")
             .addHeader("x-vcloud-authorization", token)
             .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token).build();
-
-      HttpResponse catalogItemResponse = HttpResponse.builder()
-              .statusCode(200)
-              .payload(payloadFromResourceWithContentType("/catalog/catalogItemMetadataValue.xml", VCloudDirectorMediaType.METADATA_VALUE + ";version=1.5"))
+   
+   HttpResponse getItemMetadataValueResponse = HttpResponse.builder()
+            .statusCode(200)
+            .payload(payloadFromResourceWithContentType("/catalog/catalogItemMetadataValue.xml", METADATA_VALUE + ";version=1.5"))
             .build();
-
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, catalogItemRequest, catalogItemResponse);
-
-      URI catalogItemURI = URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df");
-      
-      MetadataValue expected = itemMetadataValue();
-      
-      assertEquals(api.getCatalogApi().getMetadataApi().getMetadataValue(catalogItemURI, "KEY"), expected);
-   }
-
+   
    @Test
-   public void testSetCatalogItemMetadataEntry() {
-      HttpRequest catalogItemRequest = HttpRequest.builder()
+   public void testGetCatalogItemMetadataEntryHref() {
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, getItemMetadataValue, getItemMetadataValueResponse);
+      assertEquals(api.getCatalogApi().getMetadataApi().getValue(itemHref, "KEY"), itemMetadataValue());
+   }
+   
+   HttpRequest putItemMetadata = HttpRequest.builder()
             .method("PUT")
-            .endpoint(endpoint + "/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df/metadata/KEY")
+            .endpoint(endpoint + "/catalogItem/" + item + "/metadata/KEY")
             .addHeader("Accept", "application/vnd.vmware.vcloud.task+xml")
             .addHeader("x-vcloud-authorization", token)
             .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
-            .payload(payloadFromResourceWithContentType("/catalog/setCatalogItemMetadataValue.xml", VCloudDirectorMediaType.METADATA_VALUE))
+            .payload(payloadFromResourceWithContentType("/catalog/setCatalogItemMetadataValue.xml", METADATA_VALUE))
             .build();
 
-      HttpResponse catalogItemResponse = HttpResponse.builder()
+   HttpResponse putItemMetadataResponse = HttpResponse.builder()
             .statusCode(200)
-            .payload(payloadFromResourceWithContentType("/catalog/setMetadataValueTask.xml", VCloudDirectorMediaType.TASK + ";version=1.5"))
-            .build();
-
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, catalogItemRequest, catalogItemResponse);
-
-      URI catalogItemURI = URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df");
-      
-      MetadataValue value = MetadataValue.builder().value("KITTENS").build();
-      
-      Task expected = setMetadataValueTask();
-      
-      assertEquals(api.getCatalogApi().getCatalogItemMetadataApi().setMetadata(catalogItemURI, "KEY", value), expected);
-   }
-
+            .payload(payloadFromResourceWithContentType("/catalog/setMetadataValueTask.xml", TASK + ";version=1.5"))
+            .build(); 
+   
    @Test
-   public void testDeleteCatalogItemMetadataEntry() {
-      HttpRequest catalogItemRequest = HttpRequest.builder()
+   public void testSetCatalogItemMetadataEntryHref() {
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, putItemMetadata, putItemMetadataResponse);
+      assertEquals(api.getCatalogApi().getItemMetadataApi().putEntry(itemHref, "KEY", MetadataValue.builder().value("KITTENS").build()), setMetadataValueTask());
+   }
+   
+   HttpRequest deleteItemMetadataEntry = HttpRequest.builder()
             .method("DELETE")
-            .endpoint(endpoint + "/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df/metadata/KEY")
+            .endpoint(endpoint + "/catalogItem/" + item + "/metadata/KEY")
             .addHeader("Accept", "application/vnd.vmware.vcloud.task+xml")
             .addHeader("x-vcloud-authorization", token)
             .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token).build();
 
-      HttpResponse catalogItemResponse = HttpResponse.builder()
+   HttpResponse deleteItemMetadataEntryResponse = HttpResponse.builder()
             .statusCode(200)
-            .payload(payloadFromResourceWithContentType("/catalog/deleteMetadataEntryTask.xml", VCloudDirectorMediaType.TASK))
-            .build();
-
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, catalogItemRequest, catalogItemResponse);
-
-      URI catalogItemURI = URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df");
-      
-      Task expected = deleteMetadataEntryTask();
-      
-      assertEquals(api.getCatalogApi().getCatalogItemMetadataApi().deleteMetadataEntry(catalogItemURI, "KEY"), expected);
+            .payload(payloadFromResourceWithContentType("/catalog/deleteMetadataEntryTask.xml", TASK))
+            .build();   
+   
+   @Test
+   public void testDeleteCatalogItemMetadataEntryHref() {
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, deleteItemMetadataEntry, deleteItemMetadataEntryResponse);
+      assertEquals(api.getCatalogApi().getItemMetadataApi().deleteEntry(itemHref, "KEY"), deleteEntryTask());
    }
 
    public static final Catalog catalog() {
       return Catalog.builder()
       		      .name("QunyingTestCatalog")
       		      .type("application/vnd.vmware.vcloud.catalog+xml")
-      		      .id("urn:vcloud:catalog:7212e451-76e1-4631-b2de-ba1dfd8080e4")
-      		      .href(URI.create("https://vcloudbeta.bluelock.com/api/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4"))
+      		      .id(catalogUrn)
+      		      .href(catalogHref)
       		      .link(Link.builder()
       		            .rel("up")
       		            .type("application/vnd.vmware.vcloud.org+xml")
-      		            .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
+      		            .href(URI.create(endpoint + "/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
       		            .build())
       		      .link(Link.builder()
       		            .rel("add")
       		            .type("application/vnd.vmware.vcloud.catalogItem+xml")
-      		            .href(URI.create("https://vcloudbeta.bluelock.com/api/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4/catalogItems"))
+      		            .href(URI.create(endpoint + "/catalog/" + catalog + "/catalogItems"))
       		            .build())
       		      .link(Link.builder()
       		            .rel("down")
       		            .type("application/vnd.vmware.vcloud.metadata+xml")
-      		            .href(URI.create("https://vcloudbeta.bluelock.com/api/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4/metadata"))
+      		            .href(URI.create(endpoint + "/catalog/" + catalog + "/metadata"))
       		            .build())
   		            .item(Reference.builder()
   		                  .type("application/vnd.vmware.vcloud.catalogItem+xml")
   		                  .name("ubuntu10")
-  		                  .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df"))
+  		                  .href(itemHref)
   		                  .build())
   		            .item(Reference.builder()
   		                  .type("application/vnd.vmware.vcloud.catalogItem+xml")
   		                  .name("imageTesting")
-  		                  .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a9e0afdb-a42b-4688-8409-2ac68cf22939"))
+  		                  .href(URI.create(endpoint + "/catalogItem/a9e0afdb-a42b-4688-8409-2ac68cf22939"))
   		                  .build())
       		      .description("Testing")
       		      .isPublished(false)
@@ -395,27 +428,27 @@ public class CatalogApiExpectTest extends VCloudDirectorApiExpectTest {
    public static CatalogItem createdCatalogItem() {
       return CatalogItem.builder()
                   .name("newCatalogItem")
-                  .id("urn:vcloud:catalogitem:a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df")
+                  .id("urn:vcloud:catalogitem:" + item)
                   .type("application/vnd.vmware.vcloud.catalogItem+xml")
-                  .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df"))
+                  .href(itemHref)
                   .link(Link.builder()
                         .rel("up")
                         .type("application/vnd.vmware.vcloud.catalog+xml")
-                        .href(URI.create("https://vcloudbeta.bluelock.com/api/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4"))
+                        .href(catalogHref)
                         .build())
                   .link(Link.builder()
                         .rel("down")
                         .type("application/vnd.vmware.vcloud.metadata+xml")
-                        .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df/metadata"))
+                        .href(URI.create(endpoint + "/catalogItem/" + item + "/metadata"))
                         .build())
                   .link(Link.builder()
                         .rel("edit")
                         .type("application/vnd.vmware.vcloud.catalogItem+xml")
-                        .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df"))
+                        .href(itemHref)
                         .build())
                   .link(Link.builder()
                         .rel("remove")
-                        .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df"))
+                        .href(itemHref)
                         .build())
                   .description("New Catalog Item")
                   .entity(ubuntuVappTemplateReference())
@@ -426,17 +459,17 @@ public class CatalogApiExpectTest extends VCloudDirectorApiExpectTest {
       return Reference.builder()
                   .type("application/vnd.vmware.vcloud.vAppTemplate+xml")
                   .name("ubuntu10")
-                  .href(URI.create("https://vcloudbeta.bluelock.com/api/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9"))
+                  .href(URI.create(endpoint + "/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9"))
                   .build();
    }
 
    public static MetadataEntry metadataEntry() {
       return  MetadataEntry.builder()
-                  .href(URI.create("https://vcloudbeta.bluelock.com/api/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4/metadata/KEY"))
+                  .href(URI.create(endpoint + "/catalog/" + catalog + "/metadata/KEY"))
                   .link(Link.builder()
                         .rel("up")
                         .type("application/vnd.vmware.vcloud.metadata+xml")
-                        .href(URI.create("https://vcloudbeta.bluelock.com/api/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4/metadata"))
+                        .href(URI.create(endpoint + "/catalog/" + catalog + "/metadata"))
                         .build())
                   .entry("KEY", "VALUE")
                   .build();
@@ -444,11 +477,11 @@ public class CatalogApiExpectTest extends VCloudDirectorApiExpectTest {
 
    public static MetadataEntry itemMetadataEntry() {
       return  MetadataEntry.builder()
-                  .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df/metadata/KEY"))
+                  .href(URI.create(endpoint + "/catalogItem/" + item + "/metadata/KEY"))
                   .link(Link.builder()
                         .rel("up")
                         .type("application/vnd.vmware.vcloud.metadata+xml")
-                        .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df/metadata"))
+                        .href(URI.create(endpoint + "/catalogItem/" + item + "/metadata"))
                         .build())
                   .entry("KEY", "VALUE")
                   .build();
@@ -456,11 +489,11 @@ public class CatalogApiExpectTest extends VCloudDirectorApiExpectTest {
 
    public static MetadataValue metadataValue() {
       return  MetadataValue.builder()
-                  .href(URI.create("https://vcloudbeta.bluelock.com/api/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4/metadata/KEY"))
+                  .href(URI.create(endpoint + "/catalog/" + catalog + "/metadata/KEY"))
                   .link(Link.builder()
                         .rel("up")
                         .type("application/vnd.vmware.vcloud.metadata+xml")
-                        .href(URI.create("https://vcloudbeta.bluelock.com/api/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4/metadata"))
+                        .href(URI.create(endpoint + "/catalog/" + catalog + "/metadata"))
                         .build())
                   .value("VALUE")
                   .build();
@@ -468,11 +501,11 @@ public class CatalogApiExpectTest extends VCloudDirectorApiExpectTest {
 
    public static MetadataValue itemMetadataValue() {
       return  MetadataValue.builder()
-                  .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df/metadata/KEY"))
+                  .href(URI.create(endpoint + "/catalogItem/" + item + "/metadata/KEY"))
                   .link(Link.builder()
                         .rel("up")
                         .type("application/vnd.vmware.vcloud.metadata+xml")
-                        .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df/metadata"))
+                        .href(URI.create(endpoint + "/catalogItem/" + item + "/metadata"))
                         .build())
                   .value("VALUE")
                   .build();
@@ -481,27 +514,27 @@ public class CatalogApiExpectTest extends VCloudDirectorApiExpectTest {
    public static CatalogItem catalogItem() {
       return CatalogItem.builder()
             .name("ubuntu10")
-            .id("urn:vcloud:catalogitem:a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df")
+            .id("urn:vcloud:catalogitem:" + item)
             .type("application/vnd.vmware.vcloud.catalogItem+xml")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df"))
+            .href(itemHref)
             .link(Link.builder()
                   .rel("up")
                   .type("application/vnd.vmware.vcloud.catalog+xml")
-                  .href(URI.create("https://vcloudbeta.bluelock.com/api/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4"))
+                  .href(catalogHref)
                   .build())
             .link(Link.builder()
                   .rel("down")
                   .type("application/vnd.vmware.vcloud.metadata+xml")
-                  .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df/metadata"))
+                  .href(URI.create(endpoint + "/catalogItem/" + item + "/metadata"))
                   .build())
             .link(Link.builder()
                   .rel("edit")
                   .type("application/vnd.vmware.vcloud.catalogItem+xml")
-                  .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df"))
+                  .href(itemHref)
                   .build())
             .link(Link.builder()
                   .rel("remove")
-                  .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df"))
+                  .href(itemHref)
                   .build())
             .description("For testing")
             .entity(ubuntuVappTemplateReference())
@@ -513,30 +546,30 @@ public class CatalogApiExpectTest extends VCloudDirectorApiExpectTest {
             .name("task")
             .id("urn:vcloud:task:c6dca927-eab4-41fa-ad6a-3ac58602541c")
             .type("application/vnd.vmware.vcloud.task+xml")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/task/c6dca927-eab4-41fa-ad6a-3ac58602541c"))
+            .href(URI.create(endpoint + "/task/c6dca927-eab4-41fa-ad6a-3ac58602541c"))
             .status("running")
             .startTime(dateService.iso8601DateParse("2012-02-13T06:35:08.011-05:00"))
             .expiryTime(dateService.iso8601DateParse("2012-05-13T06:35:08.011-04:00"))
             .operationName("metadataUpdate")
-            .operation("Updating metadata for Catalog Item (a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df)")
+            .operation("Updating metadata for Catalog Item (" + item + ")")
             .link(Link.builder()
                   .rel("task:cancel")
-                  .href(URI.create("https://vcloudbeta.bluelock.com/api/task/c6dca927-eab4-41fa-ad6a-3ac58602541c/action/cancel"))
+                  .href(URI.create(endpoint + "/task/c6dca927-eab4-41fa-ad6a-3ac58602541c/action/cancel"))
                   .build())
             .owner(Reference.builder()
                   .type("application/vnd.vmware.vcloud.catalogItem+xml")
                   .name("")
-                  .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df"))
+                  .href(itemHref)
                   .build())
             .user(Reference.builder()
                   .type("application/vnd.vmware.admin.user+xml")
                   .name("adk@cloudsoftcorp.com")
-                  .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/user/e9eb1b29-0404-4c5e-8ef7-e584acc51da9"))
+                  .href(URI.create(endpoint + "/admin/user/e9eb1b29-0404-4c5e-8ef7-e584acc51da9"))
                   .build())
             .org(Reference.builder()
                   .type("application/vnd.vmware.vcloud.org+xml")
                   .name("JClouds")
-                  .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
+                  .href(URI.create(endpoint + "/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
                   .build())
             .build();
    }
@@ -546,63 +579,63 @@ public class CatalogApiExpectTest extends VCloudDirectorApiExpectTest {
             .name("task")
             .id("urn:vcloud:task:c6dca927-eab4-41fa-ad6a-3ac58602541c")
             .type("application/vnd.vmware.vcloud.task+xml")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/task/c6dca927-eab4-41fa-ad6a-3ac58602541c"))
+            .href(URI.create(endpoint + "/task/c6dca927-eab4-41fa-ad6a-3ac58602541c"))
             .status("running")
             .startTime(dateService.iso8601DateParse("2012-02-13T06:35:08.011-05:00"))
             .expiryTime(dateService.iso8601DateParse("2012-05-13T06:35:08.011-04:00"))
             .operationName("metadataSet")
-            .operation("Setting metadata for Catalog Item (a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df)")
+            .operation("Setting metadata for Catalog Item (" + item + ")")
             .link(Link.builder()
                   .rel("task:cancel")
-                  .href(URI.create("https://vcloudbeta.bluelock.com/api/task/c6dca927-eab4-41fa-ad6a-3ac58602541c/action/cancel"))
+                  .href(URI.create(endpoint + "/task/c6dca927-eab4-41fa-ad6a-3ac58602541c/action/cancel"))
                   .build())
             .owner(Reference.builder()
                   .type("application/vnd.vmware.vcloud.catalogItem+xml")
                   .name("")
-                  .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df"))
+                  .href(itemHref)
                   .build())
             .user(Reference.builder()
                   .type("application/vnd.vmware.admin.user+xml")
                   .name("adk@cloudsoftcorp.com")
-                  .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/user/e9eb1b29-0404-4c5e-8ef7-e584acc51da9"))
+                  .href(URI.create(endpoint + "/admin/user/e9eb1b29-0404-4c5e-8ef7-e584acc51da9"))
                   .build())
             .org(Reference.builder()
                   .type("application/vnd.vmware.vcloud.org+xml")
                   .name("JClouds")
-                  .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
+                  .href(URI.create(endpoint + "/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
                   .build())
             .build();
    }
 
-   public static Task deleteMetadataEntryTask() {
+   public static Task deleteEntryTask() {
       return Task.builder()
             .name("task")
             .id("urn:vcloud:task:c6dca927-eab4-41fa-ad6a-3ac58602541c")
             .type("application/vnd.vmware.vcloud.task+xml")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/task/c6dca927-eab4-41fa-ad6a-3ac58602541c"))
+            .href(URI.create(endpoint + "/task/c6dca927-eab4-41fa-ad6a-3ac58602541c"))
             .status("running")
             .startTime(dateService.iso8601DateParse("2012-02-13T06:35:08.011-05:00"))
             .expiryTime(dateService.iso8601DateParse("2012-05-13T06:35:08.011-04:00"))
             .operationName("metadataDelete")
-            .operation("Deleting metadata for Catalog Item (a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df)")
+            .operation("Deleting metadata for Catalog Item (" + item + ")")
             .link(Link.builder()
                   .rel("task:cancel")
-                  .href(URI.create("https://vcloudbeta.bluelock.com/api/task/c6dca927-eab4-41fa-ad6a-3ac58602541c/action/cancel"))
+                  .href(URI.create(endpoint + "/task/c6dca927-eab4-41fa-ad6a-3ac58602541c/action/cancel"))
                   .build())
             .owner(Reference.builder()
                   .type("application/vnd.vmware.vcloud.catalogItem+xml")
                   .name("")
-                  .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df"))
+                  .href(itemHref)
                   .build())
             .user(Reference.builder()
                   .type("application/vnd.vmware.admin.user+xml")
                   .name("adk@cloudsoftcorp.com")
-                  .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/user/e9eb1b29-0404-4c5e-8ef7-e584acc51da9"))
+                  .href(URI.create(endpoint + "/admin/user/e9eb1b29-0404-4c5e-8ef7-e584acc51da9"))
                   .build())
             .org(Reference.builder()
                   .type("application/vnd.vmware.vcloud.org+xml")
                   .name("JClouds")
-                  .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
+                  .href(URI.create(endpoint + "/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
                   .build())
             .build();
    }

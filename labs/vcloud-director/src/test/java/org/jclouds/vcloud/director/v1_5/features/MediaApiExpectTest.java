@@ -150,7 +150,7 @@ public class MediaApiExpectTest extends VCloudDirectorAdminApiExpectTest {
       } catch (VCloudDirectorException vde) {
          assertEquals(vde.getError(), expected);
       } catch (Exception e) {
-         fail("Should have thrown a VCloudDirectorException");
+         fail("Should have thrown a VCloudDirectorException", e);
       }
    }
  
@@ -240,7 +240,7 @@ public class MediaApiExpectTest extends VCloudDirectorAdminApiExpectTest {
       
       Metadata expected = metadata();
 
-      assertEquals(api.getMediaApi().getMetadataApi().getMetadata(mediaUri), expected);
+      assertEquals(api.getMediaApi().getMetadataApi().get(mediaUri), expected);
    }
    
    @Test
@@ -260,7 +260,7 @@ public class MediaApiExpectTest extends VCloudDirectorAdminApiExpectTest {
       Metadata inputMetadata = metadata();
       Task expectedTask = mergeMetadataTask();
 
-      assertEquals(api.getMediaApi().getMetadataApi().mergeMetadata(mediaUri, inputMetadata), expectedTask);
+      assertEquals(api.getMediaApi().getMetadataApi().merge(mediaUri, inputMetadata), expectedTask);
    }
    
    public void testGetMetadataValue() {
@@ -278,7 +278,7 @@ public class MediaApiExpectTest extends VCloudDirectorAdminApiExpectTest {
       MetadataValue expected = metadataValue();
       
 
-      assertEquals(api.getMediaApi().getMetadataApi().getMetadataValue(mediaUri, "key"), expected);
+      assertEquals(api.getMediaApi().getMetadataApi().getValue(mediaUri, "key"), expected);
    }
    
    @Test
@@ -299,7 +299,7 @@ public class MediaApiExpectTest extends VCloudDirectorAdminApiExpectTest {
       
       Task expectedTask = setMetadataEntryTask();
 
-      assertEquals(api.getMediaApi().getMetadataApi().setMetadata(mediaUri, "key", inputMetadataValue), expectedTask);
+      assertEquals(api.getMediaApi().getMetadataApi().putEntry(mediaUri, "key", inputMetadataValue), expectedTask);
    }
    
    @Test
@@ -315,9 +315,9 @@ public class MediaApiExpectTest extends VCloudDirectorAdminApiExpectTest {
                .xmlFilePayload("/media/deleteMetadataEntryTask.xml", VCloudDirectorMediaType.TASK)
                .httpResponseBuilder().build());
       
-      Task expectedTask = deleteMetadataEntryTask();
+      Task expectedTask = deleteEntryTask();
 
-      assertEquals(api.getMediaApi().getMetadataApi().deleteMetadataEntry(mediaUri, "key"), expectedTask);
+      assertEquals(api.getMediaApi().getMetadataApi().deleteEntry(mediaUri, "key"), expectedTask);
    }
    
    @Test
@@ -723,7 +723,7 @@ public class MediaApiExpectTest extends VCloudDirectorAdminApiExpectTest {
          .build();
    }
    
-   public static Task deleteMetadataEntryTask() {
+   public static Task deleteEntryTask() {
       return Task.builder()
          .name("task")
          .id("urn:vcloud:task:c6dca927-eab4-41fa-ad6a-3ac58602541c")
