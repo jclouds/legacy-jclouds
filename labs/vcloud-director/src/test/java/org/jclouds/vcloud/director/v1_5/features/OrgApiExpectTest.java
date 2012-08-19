@@ -72,7 +72,7 @@ public class OrgApiExpectTest extends VCloudDirectorAdminApiExpectTest {
             getStandardRequest("GET", "/org/"),
             getStandardPayloadResponse("/org/orglist.xml", VCloudDirectorMediaType.ORG_LIST));
 
-      Reference org = Iterables.getOnlyElement(api.getOrgApi().getOrgList().getOrgs());
+      Reference org = Iterables.getOnlyElement(api.getOrgApi().getOrgList());
       
       api = requestsSendResponses(loginRequest, sessionResponse, 
             getStandardRequest("GET", org.getHref()),

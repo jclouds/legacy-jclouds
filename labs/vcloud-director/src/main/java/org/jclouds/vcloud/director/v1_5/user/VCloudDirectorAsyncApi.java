@@ -18,8 +18,28 @@
  */
 package org.jclouds.vcloud.director.v1_5.user;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+
 import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.JAXBResponseParser;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.SkipEncoding;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.vcloud.director.v1_5.domain.Catalog;
+import org.jclouds.vcloud.director.v1_5.domain.Entity;
+import org.jclouds.vcloud.director.v1_5.domain.Media;
 import org.jclouds.vcloud.director.v1_5.domain.Session;
+import org.jclouds.vcloud.director.v1_5.domain.Task;
+import org.jclouds.vcloud.director.v1_5.domain.VApp;
+import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
+import org.jclouds.vcloud.director.v1_5.domain.Vdc;
+import org.jclouds.vcloud.director.v1_5.domain.Vm;
+import org.jclouds.vcloud.director.v1_5.domain.network.Network;
+import org.jclouds.vcloud.director.v1_5.domain.org.Org;
 import org.jclouds.vcloud.director.v1_5.features.CatalogAsyncApi;
 import org.jclouds.vcloud.director.v1_5.features.NetworkAsyncApi;
 import org.jclouds.vcloud.director.v1_5.features.OrgAsyncApi;
@@ -30,7 +50,9 @@ import org.jclouds.vcloud.director.v1_5.features.VAppAsyncApi;
 import org.jclouds.vcloud.director.v1_5.features.VAppTemplateAsyncApi;
 import org.jclouds.vcloud.director.v1_5.features.VdcAsyncApi;
 import org.jclouds.vcloud.director.v1_5.features.VmAsyncApi;
+import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationAndCookieToRequest;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Provides;
 
 /**
@@ -39,7 +61,20 @@ import com.google.inject.Provides;
  * @see VCloudDirectorApi
  * @author Adrian Cole
  */
+@RequestFilters(AddVCloudAuthorizationAndCookieToRequest.class)
+@SkipEncoding({ '-', ':' })
 public interface VCloudDirectorAsyncApi {
+
+   /**
+    * @see VCloudDirectorApi#resolveEntity(String)
+    */
+   @GET
+   @Path("/entity/{id}")
+   @Consumes
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Entity> resolveEntity(@PathParam("id") String id);
+
    /**
     * 
     * @return the current login session
@@ -58,31 +93,31 @@ public interface VCloudDirectorAsyncApi {
     */
    @Delegate
    OrgAsyncApi getOrgApi();
-   
+
    /**
     * @return asynchronous access to {@link Task} features
     */
    @Delegate
    TaskAsyncApi getTaskApi();
-   
+
    /**
     * @return asynchronous access to {@link Network} features
     */
    @Delegate
    NetworkAsyncApi getNetworkApi();
-   
+
    /**
     * @return asynchronous access to {@link Catalog} features
     */
    @Delegate
    CatalogAsyncApi getCatalogApi();
-   
+
    /**
     * @return asynchronous access to {@link Media} features
     */
    @Delegate
    CatalogAsyncApi getMediaApi();
-   
+
    /**
     * @return asynchronous access to {@link Vdc} features
     */
@@ -94,7 +129,7 @@ public interface VCloudDirectorAsyncApi {
     */
    @Delegate
    UploadAsyncApi getUploadApi();
-   
+
    /**
     * @return asynchronous access to {@link VApp} features
     */

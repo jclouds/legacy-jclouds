@@ -262,7 +262,7 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
 
       if (Iterables.any(Lists.newArrayList(vAppTemplateURI, networkURI, vdcURI), Predicates.isNull())) {
          Org thisOrg = context.getApi().getOrgApi().getOrg(
-                  Iterables.find(context.getApi().getOrgApi().getOrgList().getOrgs(),
+                  Iterables.find(context.getApi().getOrgApi().getOrgList(),
                            ReferencePredicates.<Reference> nameEquals(session.getOrg())).getHref());
 
          if (vdcURI == null)

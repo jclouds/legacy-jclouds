@@ -62,7 +62,7 @@ public class OrgsForNames implements Function<Iterable<String>, Iterable<? exten
 
    @Override
    public Iterable<? extends Org> apply(Iterable<String> from) {
-      final Set<Reference> orgs = sapi.getOrgApi().getOrgList().getOrgs();
+      final Set<Reference> orgs = sapi.getOrgApi().getOrgList();
       
       return transformParallel(from, new Function<String, Future<? extends Org>>() {
 

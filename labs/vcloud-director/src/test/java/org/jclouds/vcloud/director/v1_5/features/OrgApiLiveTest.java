@@ -105,9 +105,9 @@ public class OrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
       // NOTE The environment MUST have at least one organisation configured
       
       // Check test requirements
-      assertFalse(Iterables.isEmpty(orgList.getOrgs()), String.format(NOT_EMPTY_OBJECT_FMT, "Org", "OrgList"));
+      assertFalse(Iterables.isEmpty(orgList), String.format(NOT_EMPTY_OBJECT_FMT, "Org", "OrgList"));
       
-      for (Reference orgRef : orgList.getOrgs()) {
+      for (Reference orgRef : orgList) {
          assertEquals(orgRef.getType(), VCloudDirectorMediaType.ORG, String.format(CONDITION_FMT, "Reference.Type", VCloudDirectorMediaType.ORG, orgRef.getType()));
          checkReferenceType(orgRef);
       }
@@ -115,7 +115,7 @@ public class OrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
 
    @Test(description = "GET /org/{id}", dependsOnMethods = { "testGetOrgList" })
    public void testGetOrg() {
-      Reference orgRef = Iterables.getFirst(orgList.getOrgs(), null);
+      Reference orgRef = Iterables.getFirst(orgList, null);
       assertNotNull(orgRef);
       
       orgURI = orgRef.getHref();

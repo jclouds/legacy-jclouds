@@ -83,7 +83,7 @@ public class CatalogApiLiveTest extends BaseVCloudDirectorApiLiveTest {
       // TODO why do I need a guard clause here?
       if (adminCatalog != null) return;
       catalogApi = context.getApi().getCatalogApi();
-      Reference orgRef = Iterables.getFirst(context.getApi().getOrgApi().getOrgList().getOrgs(), null).toAdminReference(endpoint);
+      Reference orgRef = Iterables.getFirst(context.getApi().getOrgApi().getOrgList(), null).toAdminReference(endpoint);
       
       if (adminContext != null) {
          AdminCatalog newCatalog = AdminCatalog.builder()

@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.vcloud.director.v1_5.domain.Entity;
 import org.jclouds.vcloud.director.v1_5.domain.Session;
 import org.jclouds.vcloud.director.v1_5.features.CatalogApi;
 import org.jclouds.vcloud.director.v1_5.features.MediaApi;
@@ -40,11 +41,21 @@ import com.google.inject.Provides;
 /**
  * Provides synchronous access to VCloudDirector.
  * 
- * @see VCloudDirectorAdminAsyncApi
+ * @see VCloudDirectorAsyncApi
  * @author danikov
  */
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface VCloudDirectorApi {
+
+   /**
+    * Redirects to the URL of an entity with the given VCD ID.
+    *
+    * <pre>
+    * GET /entity/{id}
+    * </pre>
+    */
+   Entity resolveEntity(String id);
+   
    /**
     * @return the current login session
     */
