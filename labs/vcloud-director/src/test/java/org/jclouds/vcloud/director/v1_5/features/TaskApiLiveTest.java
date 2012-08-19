@@ -25,12 +25,15 @@ import static org.testng.Assert.assertNotNull;
 
 import java.net.URI;
 
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.TasksList;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
+import org.jclouds.vcloud.director.v1_5.domain.org.Org;
 import org.jclouds.vcloud.director.v1_5.domain.org.OrgList;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorApiLiveTest;
+import org.jclouds.vcloud.director.v1_5.predicates.LinkPredicates;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -79,13 +82,17 @@ public class TaskApiLiveTest extends BaseVCloudDirectorApiLiveTest {
 
    @Test(description = "GET /tasksList/{id}")
    public void testGetTaskList() {
-      orgList = orgApi.getOrgList();
+      orgList = orgApi.list();
       Reference orgRef = Iterables.getFirst(orgList, null);
       assertNotNull(orgRef);
       orgURI = orgRef.getHref();
       
+      Org org = orgApi.get(orgURI);
+      
+      URI taskListHref = Iterables.find(org.getLinks(), LinkPredicates.typeEquals(VCloudDirectorMediaType.TASKS_LIST)).getHref();
+
       // Call the method being tested
-      taskList = taskApi.getTaskList(orgURI);
+      taskList = taskApi.getTasksList(taskListHref);
       
       // NOTE The environment MUST have ...
       
@@ -105,7 +112,7 @@ public class TaskApiLiveTest extends BaseVCloudDirectorApiLiveTest {
       taskURI = taskRef.getHref();
 
       // Call the method being tested
-      task = taskApi.getTask(taskURI);
+      task = taskApi.get(taskURI);
 
       // Check required elements and attributes
       checkTask(task);
@@ -122,7 +129,7 @@ public class TaskApiLiveTest extends BaseVCloudDirectorApiLiveTest {
       assertTaskStatusEventually(task, Task.Status.RUNNING, ImmutableSet.of(Task.Status.ERROR, Task.Status.ABORTED));
 
       // Call the method being tested
-      taskApi.cancelTask(taskURI);
+      taskApi.cancel(taskURI);
       assertTaskStatusEventually(task, Task.Status.CANCELED, ImmutableSet.of(Task.Status.ERROR, Task.Status.ABORTED, Task.Status.SUCCESS));
    }
 }

@@ -18,6 +18,8 @@
  */
 package org.jclouds.vcloud.director.v1_5.features.admin;
 
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.CONTROL_ACCESS;
+
 import java.net.URI;
 
 import javax.ws.rs.Consumes;
@@ -40,6 +42,7 @@ import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.AdminCatalog;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
+import org.jclouds.vcloud.director.v1_5.domain.params.ControlAccessParams;
 import org.jclouds.vcloud.director.v1_5.domain.params.PublishCatalogParams;
 import org.jclouds.vcloud.director.v1_5.features.CatalogAsyncApi;
 import org.jclouds.vcloud.director.v1_5.features.MetadataAsyncApi;
@@ -115,7 +118,7 @@ public interface AdminCatalogAsyncApi extends CatalogAsyncApi {
    @Consumes(VCloudDirectorMediaType.ADMIN_CATALOG)
    @Produces(VCloudDirectorMediaType.ADMIN_CATALOG)
    @JAXBResponseParser
-   ListenableFuture<AdminCatalog> update(@EndpointParam URI adminCatalogHref,
+   ListenableFuture<AdminCatalog> update(@EndpointParam URI catalogAdminHref,
             @BinderParam(BindToXMLPayload.class) AdminCatalog catalog);
 
    /**
@@ -132,7 +135,7 @@ public interface AdminCatalogAsyncApi extends CatalogAsyncApi {
    @DELETE
    @Consumes
    @JAXBResponseParser
-   ListenableFuture<Void> delete(@EndpointParam URI adminCatalogHref);
+   ListenableFuture<Void> delete(@EndpointParam URI catalogAdminHref);
 
    /**
     * @see AdminCatalogApi#getOwner(String)
@@ -152,7 +155,7 @@ public interface AdminCatalogAsyncApi extends CatalogAsyncApi {
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Owner> getOwner(@EndpointParam URI adminCatalogHref);
+   ListenableFuture<Owner> getOwner(@EndpointParam URI catalogAdminHref);
 
    /**
     * @see AdminCatalogApi#setOwner(String, Owner)
@@ -173,7 +176,7 @@ public interface AdminCatalogAsyncApi extends CatalogAsyncApi {
    @Consumes
    @Produces(VCloudDirectorMediaType.OWNER)
    @JAXBResponseParser
-   ListenableFuture<Void> setOwner(@EndpointParam URI adminCatalogHref,
+   ListenableFuture<Void> setOwner(@EndpointParam URI catalogAdminHref,
             @BinderParam(BindToXMLPayload.class) Owner newOwner);
 
    /**
@@ -195,9 +198,51 @@ public interface AdminCatalogAsyncApi extends CatalogAsyncApi {
    @Consumes
    @Produces(VCloudDirectorMediaType.PUBLISH_CATALOG_PARAMS)
    @JAXBResponseParser
-   ListenableFuture<Void> publish(@EndpointParam URI adminCatalogHref,
+   ListenableFuture<Void> publish(@EndpointParam URI catalogAdminHref,
             @BinderParam(BindToXMLPayload.class) PublishCatalogParams params);
 
+   /**
+    * @see AdminCatalogApi#modifyAccessControl(String, ControlAccessParams)
+    */
+   @POST
+   @Path("/action/controlAccess")
+   @Produces(CONTROL_ACCESS)
+   @Consumes(CONTROL_ACCESS)
+   @JAXBResponseParser
+   ListenableFuture<ControlAccessParams> modifyAccessControl(@EndpointParam(parser = CatalogURNToAdminHref.class) String catalogUrn,
+      @BinderParam(BindToXMLPayload.class) ControlAccessParams params);
+
+   /**
+    * @see AdminCatalogApi#modifyAccessControl(URI, ControlAccessParams)
+    */
+   @POST
+   @Path("/action/controlAccess")
+   @Produces(CONTROL_ACCESS)
+   @Consumes(CONTROL_ACCESS)
+   @JAXBResponseParser
+   ListenableFuture<ControlAccessParams> modifyAccessControl(@EndpointParam URI catalogAdminHref,
+      @BinderParam(BindToXMLPayload.class) ControlAccessParams params);
+   
+   /**
+    * @see AdminCatalogApi#getAccessControl(String)
+    */
+   @GET
+   @Path("/controlAccess")
+   @Consumes
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<ControlAccessParams> getAccessControl(@EndpointParam(parser = CatalogURNToAdminHref.class) String catalogUrn);
+   
+   /**
+    * @see AdminCatalogApi#getAccessControl(URI)
+    */
+   @GET
+   @Path("/controlAccess")
+   @Consumes
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<ControlAccessParams> getAccessControl(@EndpointParam URI catalogAdminHref);
+   
    /**
     * @return synchronous access to {@link Metadata.Writeable} features
     */

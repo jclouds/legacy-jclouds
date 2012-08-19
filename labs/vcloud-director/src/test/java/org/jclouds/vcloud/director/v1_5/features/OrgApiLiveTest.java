@@ -21,7 +21,6 @@ package org.jclouds.vcloud.director.v1_5.features;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.CONDITION_FMT;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.CORRECT_VALUE_OBJECT_FMT;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.NOT_EMPTY_OBJECT_FMT;
-import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkControlAccessParams;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadata;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadataValue;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkOrg;
@@ -40,7 +39,6 @@ import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.org.Org;
 import org.jclouds.vcloud.director.v1_5.domain.org.OrgList;
-import org.jclouds.vcloud.director.v1_5.domain.params.ControlAccessParams;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorApiLiveTest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -97,7 +95,7 @@ public class OrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    @Test(description = "GET /org")
    public void testGetOrgList() {
       // Call the method being tested
-      orgList = orgApi.getOrgList();
+      orgList = orgApi.list();
       
       // NOTE The environment MUST have at least one organisation configured
       
@@ -118,8 +116,10 @@ public class OrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
       orgURI = orgRef.getHref();
       
       // Call the method being tested
-      org = orgApi.getOrg(orgURI);
-
+      org = orgApi.get(orgURI);
+      
+      assertEquals(orgApi.get(org.getId()), org);
+      
       checkOrg(org);
       
       if (adminContext != null) {
@@ -172,24 +172,4 @@ public class OrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
       assertEquals(value.getValue(), expected, String.format(CORRECT_VALUE_OBJECT_FMT, "Value", "MetadataValue", expected, value.getValue()));
    }
 
-   @Test(description = "GET /org/{id}/catalog/{catalogId}/controlAccess", dependsOnMethods = { "testGetOrg" })
-   public void testGetControlAccess() {
-      // Call the method being tested
-      ControlAccessParams params = orgApi.getControlAccess(orgURI, catalogUrn);
-
-      // Check params are well formed
-      checkControlAccessParams(params);
-   }
-
-   @Test(description = "POST /org/{id}/catalog/{catalogId}/action/controlAccess", dependsOnMethods = { "testGetControlAccess" })
-   public void testModifyControlAccess() {
-      // Setup params
-      ControlAccessParams params = orgApi.getControlAccess(orgURI, catalogUrn);
-
-      // Call the method being tested
-      ControlAccessParams modified = orgApi.modifyControlAccess(orgURI, catalogUrn, params);
-
-      // Check params are well formed
-      checkControlAccessParams(modified);
-   }
 }

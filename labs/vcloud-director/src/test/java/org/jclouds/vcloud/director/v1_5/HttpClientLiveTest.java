@@ -79,7 +79,7 @@ public class HttpClientLiveTest extends BaseVCloudDirectorApiLiveTest {
       sessionWithToken = SessionWithToken.builder().session(session).token(response.getFirstHeaderOrNull("x-vcloud-authorization")).build();
 
       assertEquals(sessionWithToken.getSession().getUser(), user);
-      assertEquals(sessionWithToken.getSession().getOrg(), org);
+      assertEquals(sessionWithToken.getSession().get(), org);
       assertTrue(sessionWithToken.getSession().getLinks().size() > 0);
       assertNotNull(sessionWithToken.getToken());
 
@@ -87,7 +87,7 @@ public class HttpClientLiveTest extends BaseVCloudDirectorApiLiveTest {
 
       assertTrue(orgList.size() > 0, "must have orgs");
 
-      context.getApi().getOrgApi().getOrg(Iterables.getLast(orgList).getHref());
+      context.getApi().getOrgApi().get(Iterables.getLast(orgList).getHref());
    }
 
    @Test(description = "GET /schema/{schemaFileName}", dependsOnMethods = { "testPostLogin", "testGetLogin" })

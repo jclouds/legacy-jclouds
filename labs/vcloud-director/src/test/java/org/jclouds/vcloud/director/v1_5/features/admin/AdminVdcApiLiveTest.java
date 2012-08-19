@@ -19,7 +19,7 @@
 package org.jclouds.vcloud.director.v1_5.features.admin;
 
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_REQ_LIVE;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REF_REQ_LIVE;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.URN_REQ_LIVE;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.fail;
@@ -66,7 +66,7 @@ public class AdminVdcApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    public void setupRequiredApis() {
       vdcApi = adminContext.getApi().getVdcApi();
       metadataApi = vdcApi.getMetadataApi();
-      assertNotNull(vdcURI, String.format(REF_REQ_LIVE, VDC));
+      assertNotNull(vdcURI, String.format(URN_REQ_LIVE, VDC));
       adminVdcUri = toAdminUri(vdcURI);
    }
 

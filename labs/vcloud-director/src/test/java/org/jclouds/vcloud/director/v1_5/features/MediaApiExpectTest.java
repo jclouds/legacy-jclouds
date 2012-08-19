@@ -98,7 +98,6 @@ public class MediaApiExpectTest extends VCloudDirectorAdminApiExpectTest {
          .source(Reference.builder()
                .type("application/vnd.vmware.vcloud.media+xml")
                .name("copied test media")
-               .id("urn:vcloud:media:da8361af-cccd-4103-a71c-493513c49094")
                .href(URI.create("https://mycloud.greenhousedata.com/api/media/da8361af-cccd-4103-a71c-493513c49094"))
                .build())
          .isSourceDelete(false)

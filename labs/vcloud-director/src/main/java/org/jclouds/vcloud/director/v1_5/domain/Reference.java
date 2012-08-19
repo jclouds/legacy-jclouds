@@ -29,26 +29,24 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
 import org.jclouds.logging.Logger;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorApi;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * A reference to a resource.
- *
+ * 
  * Contains an href attribute and optional name and type attributes.
  * <p>
+ * 
  * <pre>
  * &lt;xs:complexType name="ReferenceType"&gt;
  * </pre>
- *
+ * 
  * @author grkvlt@apache.org
  */
-@XmlSeeAlso({
-         VAppReference.class,
-         CatalogReference.class,
-         RoleReference.class
-})
+@XmlSeeAlso({ VAppReference.class, CatalogReference.class, RoleReference.class })
 @XmlRootElement(name = "Reference")
 @XmlType(name = "ReferenceType")
 public class Reference {
@@ -66,14 +64,13 @@ public class Reference {
 
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
-   
+
    public static class Builder<B extends Builder<B>> {
 
       private URI href;
-      private String id;
       private String name;
       private String type;
-      
+
       @SuppressWarnings("unchecked")
       protected B self() {
          return (B) this;
@@ -84,14 +81,6 @@ public class Reference {
        */
       public B href(URI href) {
          this.href = href;
-         return self();
-      }
-
-      /**
-       * @see Reference#getId()
-       */
-      public B id(String id) {
-         this.id = id;
          return self();
       }
 
@@ -116,22 +105,20 @@ public class Reference {
       }
 
       public B fromReference(Reference in) {
-         return href(in.getHref()).id(in.getId()).name(in.getName()).type(in.getType());
+         return href(in.getHref()).name(in.getName()).type(in.getType());
       }
 
       public B fromEntity(Entity in) {
-         return href(in.getHref()).id(in.getId()).name(in.getName()).type(in.getType());
+         return href(in.getHref()).name(in.getName()).type(in.getType());
       }
-      
+
       protected B fromAttributes(Map<String, String> attributes) {
-         return href(URI.create(attributes.get("href"))).id(attributes.get("id")).name(attributes.get("name")).type(attributes.get("type"));
+         return href(URI.create(attributes.get("href"))).name(attributes.get("name")).type(attributes.get("type"));
       }
    }
 
    @XmlAttribute(required = true)
    private URI href;
-   @XmlAttribute
-   private String id;
    @XmlAttribute
    private String name;
    @XmlAttribute
@@ -139,14 +126,12 @@ public class Reference {
 
    protected Reference(Builder<?> builder) {
       this.href = builder.href;
-      this.id = builder.id;
       this.name = builder.name;
       this.type = builder.type;
    }
 
-   protected Reference(URI href, String id, String name, String type) {
+   protected Reference(URI href, String name, String type) {
       this.href = href;
-      this.id = id;
       this.name = name;
       this.type = type;
    }
@@ -165,7 +150,7 @@ public class Reference {
     * particular context. Although URLs have a well-known syntax and a well-understood
     * interpretation, a api should treat each href as an opaque string. The rules that govern how
     * the server constructs href strings might change in future releases.
-    *
+    * 
     * @return an opaque reference and should never be parsed
     */
    public URI getHref() {
@@ -173,21 +158,11 @@ public class Reference {
    }
 
    /**
-    * The resource identifier, expressed in URN format.
-    * <p/>
-    * The value of this attribute uniquely identifies the resource, persists for the life of the
-    * resource, and is never reused.
-    */
-   public String getId() {
-      return id;
-   }
-
-   /**
     * Contains the name of the the entity.
     * <p/>
     * The object type, specified as a MIME content type, of the object that the link references.
     * This attribute is present only for links to objects. It is not present for links to actions.
-    *
+    * 
     * @return type definition, type, expressed as an HTTP Content-Type
     */
    public String getName() {
@@ -199,7 +174,7 @@ public class Reference {
     * <p/>
     * The object type, specified as a MIME content type, of the object that the link references.
     * This attribute is present only for links to objects. It is not present for links to actions.
-    *
+    * 
     * @return type definition, type, expressed as an HTTP Content-Type
     */
    public String getType() {
@@ -213,12 +188,12 @@ public class Reference {
       if (o == null || getClass() != o.getClass())
          return false;
       Reference that = Reference.class.cast(o);
-      return equal(this.href, that.href) && equal(this.id, that.id) && equal(this.name, that.name) && equal(this.type, that.type);
+      return equal(this.href, that.href) && equal(this.name, that.name) && equal(this.type, that.type);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(href, id, name, type);
+      return Objects.hashCode(href, name, type);
    }
 
    @Override
@@ -227,13 +202,15 @@ public class Reference {
    }
 
    protected ToStringHelper string() {
-      return Objects.toStringHelper("").add("href", href).add("id", id).add("name", name).add("type", type);
+      return Objects.toStringHelper("").add("href", href).add("name", name).add("type", type);
    }
-   
+
+   /**
+    * @see VCloudDirectorApi#resolveEntity
+    */
+   @Deprecated
    public Reference toAdminReference(String endpoint) {
-      return toBuilder()
-        .type(null)
-        .href(URI.create(getHref().toASCIIString().replace(endpoint, endpoint+"/admin")))
-        .build();
+      return toBuilder().type(null).href(URI.create(getHref().toASCIIString().replace(endpoint, endpoint + "/admin")))
+               .build();
    }
 }

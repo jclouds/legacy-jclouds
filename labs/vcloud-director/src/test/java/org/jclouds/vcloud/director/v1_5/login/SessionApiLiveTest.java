@@ -72,7 +72,7 @@ public class SessionApiLiveTest extends BaseContextLiveTest<RestContext<SessionA
 
       sessionWithToken = api.loginUserInOrgWithPassword(URI.create(endpoint + "/sessions"), user, org, password);
       assertEquals(sessionWithToken.getSession().getUser(), user);
-      assertEquals(sessionWithToken.getSession().getOrg(), org);
+      assertEquals(sessionWithToken.getSession().get(), org);
       assertTrue(sessionWithToken.getSession().getLinks().size() > 0);
       assertNotNull(sessionWithToken.getToken());
    }

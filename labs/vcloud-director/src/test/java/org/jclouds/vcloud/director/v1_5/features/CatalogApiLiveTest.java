@@ -22,7 +22,7 @@ import static com.google.common.base.Predicates.and;
 import static com.google.common.collect.Iterables.find;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.CORRECT_VALUE_OBJECT_FMT;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_REQ_LIVE;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REF_REQ_LIVE;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.URN_REQ_LIVE;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.TASK_COMPLETE_TIMELY;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkCatalogItem;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadata;
@@ -83,7 +83,7 @@ public class CatalogApiLiveTest extends BaseVCloudDirectorApiLiveTest {
       if (adminCatalog != null)
          return;
       catalogApi = context.getApi().getCatalogApi();
-      Org org = context.getApi().getOrgApi().getOrg(Iterables.get(context.getApi().getOrgApi().getOrgList(), 0).getHref());
+      Org org = context.getApi().getOrgApi().get(Iterables.get(context.getApi().getOrgApi().list(), 0).getHref());
 
       if (adminContext != null) {
          AdminCatalog newCatalog = AdminCatalog.builder().name(name("Test Catalog "))
@@ -149,7 +149,7 @@ public class CatalogApiLiveTest extends BaseVCloudDirectorApiLiveTest {
 
    @Test(description = "POST /catalog/{id}/catalogItems")
    public void testAddCatalogItem() {
-      assertNotNull(vdcURI, String.format(REF_REQ_LIVE, VDC));
+      assertNotNull(vdcURI, String.format(URN_REQ_LIVE, VDC));
 
       byte[] iso = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
       Vdc vdc = context.getApi().getVdcApi().getVdc(vdcURI);

@@ -18,130 +18,234 @@
  */
 package org.jclouds.vcloud.director.v1_5.features.admin;
 
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.ADMIN_NETWORK;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.ENTITY;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.NETWORK;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.ORG;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.ORG_NETWORK;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.TASK;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpResponse;
 import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminApi;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
+import org.jclouds.vcloud.director.v1_5.domain.network.DhcpService;
+import org.jclouds.vcloud.director.v1_5.domain.network.IpAddresses;
+import org.jclouds.vcloud.director.v1_5.domain.network.IpRange;
+import org.jclouds.vcloud.director.v1_5.domain.network.IpRanges;
+import org.jclouds.vcloud.director.v1_5.domain.network.IpScope;
+import org.jclouds.vcloud.director.v1_5.domain.network.Network.FenceMode;
+import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConfiguration;
+import org.jclouds.vcloud.director.v1_5.domain.network.NetworkFeatures;
+import org.jclouds.vcloud.director.v1_5.domain.network.SyslogServerSettings;
 import org.jclouds.vcloud.director.v1_5.domain.org.OrgNetwork;
-import org.jclouds.vcloud.director.v1_5.features.NetworkApiExpectTest;
 import org.jclouds.vcloud.director.v1_5.internal.VCloudDirectorAdminApiExpectTest;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSet;
+import com.google.common.net.HttpHeaders;
 
 /**
  * Test the {@link AdminNetworkApi} by observing its side effects.
  * 
- * @author danikov
+ * @author danikov, Adrian Cole
  */
 @Test(groups = { "unit", "admin" }, singleThreaded = true, testName = "AdminNetworkApiExpectTest")
 public class AdminNetworkApiExpectTest extends VCloudDirectorAdminApiExpectTest {
+
+   static String network = "55a677cf-ab3f-48ae-b880-fab90421980c";
+   static String networkUrn = "urn:vcloud:network:" + network;
+   static URI networkHref = URI.create(endpoint + "/network/" + network);
+   static URI networkAdminHref = URI.create(endpoint + "/admin/network/" + network);
    
-   Reference networkRef = Reference.builder()
-      .href(URI.create(endpoint+"/admin/network/b466c0c5-8a5c-4335-b703-a2e2e6b5f3e1"))
-      .build();
+   HttpRequest get = HttpRequest.builder()
+            .method("GET")
+            .endpoint(networkAdminHref)
+            .addHeader("Accept", "*/*")
+            .addHeader("x-vcloud-authorization", token)
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
+            .build();
+
+    HttpResponse getResponse = HttpResponse.builder()
+            .statusCode(200)
+            .payload(payloadFromResourceWithContentType("/network/network.xml", ORG + ";version=1.5"))
+            .build();
+    
+   @Test
+   public void testGetNetworkHref() {
+      VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, get, getResponse);
+      assertEquals(api.getNetworkApi().get(networkAdminHref), network());
+   }
+   
+   HttpRequest resolveNetwork = HttpRequest.builder()
+            .method("GET")
+            .endpoint(endpoint + "/entity/" + networkUrn)
+            .addHeader("Accept", "*/*")
+            .addHeader("x-vcloud-authorization", token)
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
+            .build();
+   
+   String networkEntity = asString(createXMLBuilder("Entity").a("xmlns", "http://www.vmware.com/vcloud/v1.5")
+                                                             .a("name", networkUrn)
+                                                             .a("id", networkUrn)
+                                                             .a("type", ENTITY)
+                                                             .a("href", endpoint + "/entity/" + networkUrn)
+                                  .e("Link").a("rel", "alternate").a("type", NETWORK).a("href", networkHref.toString()).up()
+                                  .e("Link").a("rel", "alternate").a("type", ADMIN_NETWORK).a("href", networkAdminHref.toString()).up());
+   
+   HttpResponse resolveNetworkResponse = HttpResponse.builder()
+           .statusCode(200)
+           .payload(payloadFromStringWithContentType(networkEntity, ENTITY + ";version=1.5"))
+           .build();
    
    @Test
-   public void testGetNetworkWithOrgNetwork() {
-      VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("GET", "/admin/network/b466c0c5-8a5c-4335-b703-a2e2e6b5f3e1")
-            .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/network/admin/orgNetwork.xml", VCloudDirectorMediaType.ORG_NETWORK)
-            .httpResponseBuilder().build());
+   public void testGetNetworkUrn() {
+      VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, resolveNetwork, resolveNetworkResponse, get, getResponse);
+      assertEquals(api.getNetworkApi().get(networkUrn), network());
+   }
+   
+   HttpRequest update = HttpRequest.builder()
+            .method("PUT")
+            .endpoint(networkAdminHref )
+            .addHeader("Accept", TASK)
+            .addHeader("x-vcloud-authorization", token)
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
+            .payload(payloadFromResourceWithContentType("/network/admin/updateNetworkSource.xml", ORG_NETWORK))
+            .build();
 
-      OrgNetwork expected = orgNetwork();
+   HttpResponse updateResponse = HttpResponse.builder()
+            .statusCode(200)
+            .payload(payloadFromResourceWithContentType("/network/admin/updateNetworkTask.xml", TASK))
+            .build();
 
-      assertEquals(api.getNetworkApi().getNetwork(networkRef.getHref()), expected);
+   @Test
+   public void testUpdateNetworkHref() {
+      VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, update, updateResponse);
+      assertEquals(api.getNetworkApi().update(networkAdminHref, updateNetwork()), updateNetworkTask());
    }
    
    @Test
-   public void testUpdateNetwork() {
-      VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("PUT", "/admin/network/b466c0c5-8a5c-4335-b703-a2e2e6b5f3e1")
-            .xmlFilePayload("/network/admin/updateNetworkSource.xml", VCloudDirectorMediaType.ORG_NETWORK)
-            .acceptMedia(VCloudDirectorMediaType.TASK)
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/network/admin/updateNetworkTask.xml", VCloudDirectorMediaType.TASK)
-            .httpResponseBuilder().build());
-
-      Task expected = updateNetworkTask();
-
-      assertEquals(api.getNetworkApi().updateNetwork(networkRef.getHref(), updateNetwork()), expected);
+   public void testUpdateNetworkUrn() {
+      VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, resolveNetwork, resolveNetworkResponse, update, updateResponse);
+      assertEquals(api.getNetworkApi().update(networkUrn, updateNetwork()), updateNetworkTask());
    }
    
-   @Test(enabled = false)
-   public void testResetNetwork() {
-      VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("POST", "/admin/network/b466c0c5-8a5c-4335-b703-a2e2e6b5f3e1/action/reset")
-            .acceptMedia(VCloudDirectorMediaType.TASK)
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/network/admin/resetNetworkTask.xml", VCloudDirectorMediaType.TASK)
-            .httpResponseBuilder().build());
+   HttpRequest reset = HttpRequest.builder()
+            .method("POST")
+            .endpoint(networkAdminHref + "/action/reset")
+            .addHeader("Accept", "*/*")
+            .addHeader("x-vcloud-authorization", token)
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
+            .build();
 
-      Task expected = resetNetworkTask();
+   HttpResponse resetResponse = HttpResponse.builder()
+            .statusCode(200)
+            .payload(payloadFromResourceWithContentType("/network/admin/resetNetworkTask.xml", TASK))
+            .build();
 
-      assertEquals(api.getNetworkApi().resetNetwork(networkRef.getHref()), expected);
+   @Test
+   public void testResetNetworkHref() {
+      VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, reset, resetResponse);
+      assertEquals(api.getNetworkApi().reset(networkAdminHref), resetNetworkTask());
    }
    
-   public final OrgNetwork orgNetwork() {
-      return NetworkApiExpectTest.orgNetwork().toBuilder()
-         .href(toAdminUri(NetworkApiExpectTest.orgNetwork().getHref()))
-         .links(ImmutableSet.of(
-            Link.builder()
-               .rel("alternate")
-               .type("application/vnd.vmware.vcloud.orgNetwork+xml")
-               .href(URI.create("https://vcloudbeta.bluelock.com/api/network/f3ba8256-6f48-4512-aad6-600e85b4dc38"))
-               .build(),
-            Link.builder()
-               .rel("edit")
-               .type("application/vnd.vmware.admin.orgNetwork+xml")
-               .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/network/f3ba8256-6f48-4512-aad6-600e85b4dc38"))
-               .build(),
-            Link.builder()
-               .rel("up")
-               .type("application/vnd.vmware.admin.organization+xml")
-               .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
-               .build(),
-            Link.builder()
-               .rel("repair")
-               .type("application/vnd.vmware.admin.orgNetwork+xml")
-               .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/network/f3ba8256-6f48-4512-aad6-600e85b4dc38/action/reset"))
-               .build(),
-            Link.builder()
-               .rel("down")
-               .type("application/vnd.vmware.vcloud.metadata+xml")
-               .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/network/f3ba8256-6f48-4512-aad6-600e85b4dc38/metadata"))
-               .build()))
-         .networkPool(Reference.builder()
-            .type("application/vnd.vmware.admin.networkPool+xml")
-            .name("vcdni01")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/extension/networkPool/e86bfdb5-b3e0-4ece-9125-e764ac64c95c"))
+   @Test
+   public void testResetNetworkUrn() {
+      VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, resolveNetwork, resolveNetworkResponse, reset, resetResponse);
+      assertEquals(api.getNetworkApi().reset(networkUrn), resetNetworkTask());
+   }
+   
+   public static OrgNetwork network() {
+      return OrgNetwork.builder()
+         .name("ilsolation01-Jclouds")
+         .id("urn:vcloud:network:f3ba8256-6f48-4512-aad6-600e85b4dc38")
+         .type("application/vnd.vmware.vcloud.orgNetwork+xml")
+         .href(URI.create("https://vcloudbeta.bluelock.com/api/network/f3ba8256-6f48-4512-aad6-600e85b4dc38"))
+         .link(Link.builder()
+            .rel("up")
+            .type("application/vnd.vmware.vcloud.org+xml")
+            .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
             .build())
+         .link(Link.builder()
+            .rel("down")
+            .type("application/vnd.vmware.vcloud.metadata+xml")
+            .href(URI.create("https://vcloudbeta.bluelock.com/api/network/f3ba8256-6f48-4512-aad6-600e85b4dc38/metadata"))
+            .build())
+         .description("")
+         .configuration(NetworkConfiguration.builder()
+            .ipScope(IpScope.builder()
+               .isInherited(false)
+               .gateway("192.168.1.1")
+               .netmask("255.255.255.0")
+               .dns1("173.240.111.52")
+               .dns2("173.240.111.53")
+               .ipRanges(IpRanges.builder()
+                     .ipRange(IpRange.builder()
+                           .startAddress("192.168.1.100")
+                           .endAddress("192.168.1.199")
+                           .build())
+                     .build())
+               .build())
+            .fenceMode(FenceMode.ISOLATED)
+            .retainNetInfoAcrossDeployments(false)
+            .features(NetworkFeatures.builder()
+               .service(DhcpService.builder()
+                  .enabled(false)
+                  .defaultLeaseTime(3600)
+                  .maxLeaseTime(7200)
+                  .ipRange(IpRange.builder()
+                     .startAddress("192.168.1.2")
+                     .endAddress("192.168.1.99")
+                     .build())
+                  .build())
+               .build())
+            .syslogServerSettings(SyslogServerSettings.builder().build())
+            .build())
+         .allowedExternalIpAddresses(IpAddresses.builder().build())
          .build();
    }
    
    public final OrgNetwork updateNetwork() {
-      return orgNetwork().toBuilder()
+      return network().toBuilder()
             
          .build();
    }
    
    public final Task resetNetworkTask() {
       return Task.builder()
-            
-         .build();
+               .status("running")
+               .startTime(dateService.iso8601DateParse("2012-03-14T12:39:23.720-04:00"))
+               .operationName("networkResetNetwork")
+               .operation("Resetting Network ilsolation01-Jclouds(f3ba8256-6f48-4512-aad6-600e85b4dc38)")
+               .expiryTime(dateService.iso8601DateParse("2012-06-12T12:39:23.720-04:00"))
+               .name("task")
+               .id("urn:vcloud:task:49d2e180-7921-4902-ac39-b4ff5406bb94")
+               .type("application/vnd.vmware.vcloud.task+xml")
+               .href(URI.create("https://vcloudbeta.bluelock.com/api/task/49d2e180-7921-4902-ac39-b4ff5406bb94"))
+               .link(Link.builder()
+                  .rel("task:cancel")
+                  .href(URI.create("https://vcloudbeta.bluelock.com/api/task/49d2e180-7921-4902-ac39-b4ff5406bb94/action/cancel"))
+                  .build())
+               .owner(Reference.builder()
+                  .type("application/vnd.vmware.vcloud.network+xml")
+                  .name("ilsolation01-Jclouds")
+                  .href(URI.create("https://vcloudbeta.bluelock.com/api/network/f3ba8256-6f48-4512-aad6-600e85b4dc38"))
+                  .build())
+               .user(Reference.builder()
+                  .type("application/vnd.vmware.admin.user+xml")
+                  .name("dan@cloudsoftcorp.com")
+                  .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/user/ae75edd2-12de-414c-8e85-e6ea10442c08"))
+                  .build())
+               .org(Reference.builder()
+                  .type("application/vnd.vmware.vcloud.org+xml")
+                  .name("JClouds")
+                  .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
+                  .build())
+               .build();
    }
    
    public final Task updateNetworkTask() {

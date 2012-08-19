@@ -165,8 +165,6 @@ public class Checks {
       assertNotNull(reference.getHref(), String.format(NOT_NULL_OBJ_FIELD_FMT, "Href", "ReferenceType"));
 
       // Check optional fields
-      String id = reference.getId();
-      if (id != null) checkId(id);
       String type = reference.getType();
       if (type != null) checkType(type, validTypes);
       // NOTE name cannot be checked
@@ -257,7 +255,7 @@ public class Checks {
       if (error != null) checkError(error);
       Reference user = task.getUser();
       if (user != null) checkReferenceType(user);
-      Reference org = task.getOrg();
+      Reference org = task.get();
       if (org != null) checkReferenceType(org);
       Integer progress = task.getProgress();
       if (progress != null) checkProgress(progress);

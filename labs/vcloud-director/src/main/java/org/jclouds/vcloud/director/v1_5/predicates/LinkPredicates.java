@@ -39,7 +39,7 @@ public class LinkPredicates {
    /**
     * matches links of the given relation
     * 
-    * @param rel from {@code context.getApi().getCurrentSession().getOrg().getLinks()}
+    * @param rel from {@code context.getApi().getCurrentSession().get().getLinks()}
     * @return predicate that will match links of the given rel
     */
    public static Predicate<Link> relEquals(final String rel) {

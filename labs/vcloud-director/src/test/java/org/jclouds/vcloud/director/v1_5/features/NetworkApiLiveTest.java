@@ -22,7 +22,7 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.O
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_EQ;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_REQ_LIVE;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_REQ_LIVE;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REF_REQ_LIVE;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.URN_REQ_LIVE;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REQUIRED_VALUE_OBJECT_FMT;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkResourceType;
 import static org.testng.Assert.assertEquals;
@@ -60,18 +60,20 @@ public class NetworkApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    protected NetworkApi networkApi;
    
    private boolean metadataSet = false;
+   private Network network;
     
    @Override
    @BeforeClass(alwaysRun = true)
    public void setupRequiredApis() {
       networkApi = context.getApi().getNetworkApi();
+      network = lazyGetNetwork();
    }
    
    @AfterClass(alwaysRun = true)
    public void cleanUp() {
       if (metadataSet) {
          try {
-	         Task delete = adminContext.getApi().getNetworkApi().getMetadataApi().deleteEntry(toAdminUri(networkURI), "key");
+	         Task delete = adminContext.getApi().getNetworkApi().getMetadataApi().deleteEntry(network.getHref(), "key");
 	         taskDoneEventually(delete);
          } catch (Exception e) {
             logger.warn(e, "Error when deleting metadata");
@@ -82,9 +84,9 @@ public class NetworkApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    @Test(description = "GET /network/{id}")
    public void testGetNetwork() {
       // required for testing
-      assertNotNull(networkURI, String.format(REF_REQ_LIVE, NETWORK));
+      assertNotNull(networkUrn, String.format(URN_REQ_LIVE, NETWORK));
        
-      Network abstractNetwork = networkApi.getNetwork(networkURI);
+      Network abstractNetwork = networkApi.get(networkUrn);
       assertTrue(abstractNetwork instanceof OrgNetwork, String.format(REQUIRED_VALUE_OBJECT_FMT, 
             ".class", NETWORK, abstractNetwork.getClass(),"OrgNetwork"));
       OrgNetwork network = Network.toSubType(abstractNetwork);
@@ -95,7 +97,7 @@ public class NetworkApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    }
    
    private void setupMetadata() {
-      adminContext.getApi().getNetworkApi().getMetadataApi().putEntry(toAdminUri(networkURI), 
+      adminContext.getApi().getNetworkApi().getMetadataApi().putEntry(network.getHref(), 
             "key", MetadataValue.builder().value("value").build());
       metadataSet = true;
    }
@@ -106,7 +108,7 @@ public class NetworkApiLiveTest extends BaseVCloudDirectorApiLiveTest {
          setupMetadata();
       }
       
-      Metadata metadata = networkApi.getMetadataApi().get(networkURI);
+      Metadata metadata = networkApi.getMetadataApi().get(network.getHref());
       // required for testing
       assertFalse(Iterables.isEmpty(metadata.getMetadataEntries()), 
             String.format(OBJ_FIELD_REQ_LIVE, NETWORK, "metadata.entries"));
@@ -128,7 +130,7 @@ public class NetworkApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    
    @Test(description = "GET /network/{id}/metadata/{key}", dependsOnMethods = { "testGetMetadata" })
    public void testGetMetadataValue() {
-      MetadataValue metadataValue = networkApi.getMetadataApi().getValue(networkURI, "key");
+      MetadataValue metadataValue = networkApi.getMetadataApi().getValue(network.getHref(), "key");
        
       // Check parent type
       checkResourceType(metadataValue);

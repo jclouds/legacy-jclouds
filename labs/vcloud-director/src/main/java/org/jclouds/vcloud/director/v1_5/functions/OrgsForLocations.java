@@ -18,75 +18,52 @@
  */
 package org.jclouds.vcloud.director.v1_5.functions;
 
-import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Iterables.transform;
-import static org.jclouds.concurrent.FutureIterables.transformParallel;
-
-import java.net.URI;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-
-import javax.annotation.Resource;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.Constants;
 import org.jclouds.domain.Location;
-import org.jclouds.domain.LocationScope;
-import org.jclouds.logging.Logger;
+import org.jclouds.location.predicates.LocationPredicates;
 import org.jclouds.vcloud.director.v1_5.domain.org.Org;
-import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorAsyncApi;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorApi;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Sets;
+import static com.google.common.collect.FluentIterable.*;
 
 /**
- * @author danikov
+ * @author danikov, Adrian Cole
  */
 @Singleton
 public class OrgsForLocations implements Function<Iterable<Location>, Iterable<? extends Org>> {
-   @Resource
-   public Logger logger = Logger.NULL;
-   private final VCloudDirectorAsyncApi aapi;
-   private final ExecutorService executor;
+
+   private final VCloudDirectorApi api;
 
    @Inject
-   OrgsForLocations(VCloudDirectorAsyncApi aapi, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
-      this.aapi = aapi;
-      this.executor = executor;
+   OrgsForLocations(VCloudDirectorApi api) {
+      this.api = api;
    }
 
    /**
-    * Zones are assignable, but we want regions. so we look for zones, whose
-    * parent is region. then, we use a set to extract the unique set.
+    * Zones are assignable, but we want regions. so we look for zones, whose parent is region. then,
+    * we use a set to extract the unique set.
     */
    @Override
    public Iterable<? extends Org> apply(Iterable<Location> from) {
-
-      return transformParallel(Sets.newLinkedHashSet(transform(filter(from, new Predicate<Location>() {
-
-         @Override
-         public boolean apply(Location input) {
-            return input.getScope() == LocationScope.ZONE;
-         }
-
-      }), new Function<Location, URI>() {
-
-         @Override
-         public URI apply(Location from) {
-            return URI.create(from.getParent().getId());
-         }
-
-      })), new Function<URI, Future<? extends Org>>() {
-
-         @Override
-         public Future<? extends Org> apply(URI from) {
-            return aapi.getOrgApi().getOrg(from);
-         }
-
-      }, executor, null, logger, "organizations for uris");
+      return from(from)
+            .filter(LocationPredicates.isZone())
+            .transform(new Function<Location, String>() {
+               @Override
+               public String apply(Location from) {
+                  return from.getParent().getId();
+               }
+            })
+            .transform(new Function<String, Org>() {
+      
+               @Override
+               public Org apply(String from) {
+                  return api.getOrgApi().get(from);
+               }
+      
+            });
    }
 
 }

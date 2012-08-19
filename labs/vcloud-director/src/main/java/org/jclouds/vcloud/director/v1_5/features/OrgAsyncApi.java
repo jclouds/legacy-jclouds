@@ -18,29 +18,23 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.CONTROL_ACCESS;
-
 import java.net.URI;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 
-import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.binders.BindToXMLPayload;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.org.Org;
 import org.jclouds.vcloud.director.v1_5.domain.org.OrgList;
-import org.jclouds.vcloud.director.v1_5.domain.params.ControlAccessParams;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationAndCookieToRequest;
+import org.jclouds.vcloud.director.v1_5.functions.href.OrgURNToHref;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -52,45 +46,31 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface OrgAsyncApi {
 
    /**
-    * @see OrgApi#getOrgList()
+    * @see OrgApi#list()
     */
    @GET
    @Path("/org/")
    @Consumes
    @JAXBResponseParser
-   ListenableFuture<OrgList> getOrgList();
+   ListenableFuture<OrgList> list();
 
    /**
-    * @see OrgApi#getOrg(URI)
+    * @see OrgApi#get(String)
     */
    @GET
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<? extends Org> getOrg(@EndpointParam URI orgUri);
+   ListenableFuture<? extends Org> get(@EndpointParam(parser = OrgURNToHref.class) String orgUrn);
 
    /**
-    * @see OrgApi#modifyControlAccess(URI, URI, ControlAccessParams)
-    */
-   @POST
-   @Path("/catalog/{catalogId}/action/controlAccess")
-   @Produces(CONTROL_ACCESS)
-   @Consumes(CONTROL_ACCESS)
-   @JAXBResponseParser
-   ListenableFuture<ControlAccessParams> modifyControlAccess(@EndpointParam URI orgRef,
-      @PathParam("catalogId") String catalogId,
-      @BinderParam(BindToXMLPayload.class) ControlAccessParams params);
-
-   /**
-    * @see OrgApi#getControlAccess(URI, URI, ControlAccessParams)
+    * @see OrgApi#get(URI)
     */
    @GET
-   @Path("/catalog/{catalogId}/controlAccess")
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<ControlAccessParams> getControlAccess(@EndpointParam URI orgRef,
-      @PathParam("catalogId") String catalogId);
+   ListenableFuture<? extends Org> get(@EndpointParam URI orgHref);
    
    /**
     * @return asynchronous access to {@link Metadata.Readable} features

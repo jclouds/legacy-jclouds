@@ -117,7 +117,6 @@ public class VmApiLiveTest extends AbstractVAppApiLiveTest {
 
    private MetadataValue metadataValue;
    private String key;
-   private URI testUserURI;
    private boolean mediaCreated = false;
    private boolean testUserCreated = false;
    
@@ -161,9 +160,8 @@ public class VmApiLiveTest extends AbstractVAppApiLiveTest {
       
       if (adminContext != null) {
          Link orgLink = find(links, and(relEquals("up"), typeEquals(VCloudDirectorMediaType.ORG)));
-         testUserURI = adminContext.getApi().getUserApi().createUser(toAdminUri(orgLink), randomTestUser("VAppAccessTest")).getHref();
-      } else {
-         testUserURI = userURI;
+         userUrn = adminContext.getApi().getUserApi()
+                  .createUserInOrg(randomTestUser("VAppAccessTest"), toAdminUri(orgLink)).getId();
       }
    }
    
@@ -177,9 +175,9 @@ public class VmApiLiveTest extends AbstractVAppApiLiveTest {
             logger.warn("Error when deleting media: %s", e.getMessage());
          }
       }
-      if (adminContext != null && testUserCreated && testUserURI != null) {
+      if (adminContext != null && testUserCreated && userUrn != null) {
          try {
-	         adminContext.getApi().getUserApi().deleteUser(testUserURI);
+	         adminContext.getApi().getUserApi().delete(userUrn);
          } catch (Exception e) {
             logger.warn("Error when deleting user: %s", e.getMessage());
          }

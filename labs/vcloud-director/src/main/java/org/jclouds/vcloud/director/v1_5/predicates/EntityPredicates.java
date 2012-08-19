@@ -30,9 +30,32 @@ import com.google.common.collect.Iterables;
 /**
  * Predicates for working with {@link EntityType} collections.
  * 
- * @author grkvlt@apache.org
+ * @author grkvlt@apache.org, Adrian Cole
  */
 public class EntityPredicates {
+   
+   /**
+    * Matches {@link EntityType entities} with the given id.
+    * 
+    * @param T type of the entity, for example {@link Vm}
+    * @param id value of the id attribute of the entity
+    * @return predicate that will match entities of the given id
+    */
+   public static <T extends Entity> Predicate<T> idEquals(final String id) {
+      checkNotNull(id, "id must be defined");
+
+      return new Predicate<T>() {
+         @Override
+         public boolean apply(T entity) {
+            return id.equals(entity.getId());
+         }
+
+         @Override
+         public String toString() {
+            return "idEquals(" + id + ")";
+         }
+      };
+   }
 
    /**
     * Matches {@link EntityType entities} with the given name.

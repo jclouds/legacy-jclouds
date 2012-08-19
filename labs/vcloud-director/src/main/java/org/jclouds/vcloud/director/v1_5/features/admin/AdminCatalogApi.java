@@ -26,6 +26,7 @@ import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.vcloud.director.v1_5.domain.AdminCatalog;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
+import org.jclouds.vcloud.director.v1_5.domain.params.ControlAccessParams;
 import org.jclouds.vcloud.director.v1_5.domain.params.PublishCatalogParams;
 import org.jclouds.vcloud.director.v1_5.features.CatalogApi;
 import org.jclouds.vcloud.director.v1_5.features.MetadataApi;
@@ -52,7 +53,7 @@ public interface AdminCatalogApi extends CatalogApi {
     */
    AdminCatalog createCatalogInOrg(AdminCatalog catalog, String orgUrn);
 
-   AdminCatalog createCatalogInOrg(AdminCatalog catalog, URI adminCatalogHref);
+   AdminCatalog createCatalogInOrg(AdminCatalog catalog, URI catalogAdminHref);
 
    /**
     * Retrieves a catalog.
@@ -69,7 +70,7 @@ public interface AdminCatalogApi extends CatalogApi {
    AdminCatalog get(String catalogUrn);
    
    @Override
-   AdminCatalog get(URI adminCatalogHref);
+   AdminCatalog get(URI catalogAdminHref);
 
    /**
     * Modifies a catalog. A catalog could be published or unpublished. The IsPublished property is
@@ -84,7 +85,7 @@ public interface AdminCatalogApi extends CatalogApi {
     */
    AdminCatalog update(String catalogUrn, AdminCatalog catalog);
 
-   AdminCatalog update(URI adminCatalogHref, AdminCatalog catalog);
+   AdminCatalog update(URI catalogAdminHref, AdminCatalog catalog);
 
    /**
     * Deletes a catalog. The catalog could be deleted if it is either published or unpublished.
@@ -95,7 +96,7 @@ public interface AdminCatalogApi extends CatalogApi {
     */
    void delete(String catalogUrn);
 
-   void delete(URI adminCatalogHref);
+   void delete(URI catalogAdminHref);
 
    /**
     * Retrieves the owner of a catalog.
@@ -108,7 +109,7 @@ public interface AdminCatalogApi extends CatalogApi {
     */
    Owner getOwner(String catalogUrn);
 
-   Owner getOwner(URI adminCatalogHref);
+   Owner getOwner(URI catalogAdminHref);
 
    /**
     * Changes owner for catalog.
@@ -119,8 +120,12 @@ public interface AdminCatalogApi extends CatalogApi {
     */
    void setOwner(String catalogUrn, Owner newOwner);
 
-   void setOwner(URI adminCatalogHref, Owner newOwner);
+   void setOwner(URI catalogAdminHref, Owner newOwner);
 
+   // TODO: lot of work to pass in a single boolean, would like to polymorphically include something
+   // like:
+   // void publishCatalog(String catalogUrn)
+   
    /**
     * Publish a catalog. Publishing a catalog makes the catalog visible to all organizations in a
     * vCloud.
@@ -128,11 +133,33 @@ public interface AdminCatalogApi extends CatalogApi {
     */
    void publish(String catalogUrn, PublishCatalogParams params);
 
-   void publish(URI adminCatalogHref, PublishCatalogParams params);
+   void publish(URI catalogAdminHref, PublishCatalogParams params);
 
-   // TODO: lot of work to pass in a single boolean, would like to polymorphically include something
-   // like:
-   // void publishCatalog(String catalogUrn)
+   /**
+    * Modifies a catalog control access.
+    *
+    * <pre>
+    * POST /org/{id}/catalog/{catalogId}/action/controlAccess
+    * </pre>
+    *
+    * @return the control access information
+    */
+   ControlAccessParams modifyAccessControl(String catalogUrn, ControlAccessParams params);
+
+   ControlAccessParams modifyAccessControl(URI catalogAdminHref, ControlAccessParams params);
+
+   /**
+    * Retrieves the catalog control access information.
+    *
+    * <pre>
+    * GET /org/{id}/catalog/{catalogId}/controlAccess
+    * </pre>
+    *
+    * @return the control access information
+    */
+   ControlAccessParams getAccessControl(String catalogUrn);
+   
+   ControlAccessParams getAccessControl(URI catalogAdminHref);
 
    /**
     * @return synchronous access to {@link Metadata.Writeable} features
