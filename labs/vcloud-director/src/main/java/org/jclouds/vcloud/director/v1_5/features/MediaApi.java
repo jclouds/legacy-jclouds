@@ -49,7 +49,7 @@ public interface MediaApi {
     * 
     * @return The response will return a link to transfer site to be able to continue with uploading the media.
     */
-   Media createMedia(URI uploadLink, Media media);
+   Media addMedia(URI uploadLink, Media media);
    
    /**
     * Clones a media into new one. 
@@ -66,12 +66,12 @@ public interface MediaApi {
     * @return a task. This operation is asynchronous and the user should monitor the returned 
     * task status in order to check when it is completed.
     */
-   Task updateMedia(URI mediaUri, Media media);
+   Task editMedia(URI mediaUri, Media media);
    
    /**
     * Deletes a media.
     */
-   Task deleteMedia(URI mediaUri);
+   Task removeMedia(URI mediaUri);
    
    /**
     * Retrieves an owner.

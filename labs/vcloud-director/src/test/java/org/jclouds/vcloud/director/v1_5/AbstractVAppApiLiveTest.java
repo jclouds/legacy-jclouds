@@ -189,7 +189,7 @@ public abstract class AbstractVAppApiLiveTest extends BaseVCloudDirectorApiLiveT
       }
    }
 
-   @AfterClass(alwaysRun = true, description = "Cleans up the environment by deleting created VApps")
+   @AfterClass(alwaysRun = true, description = "Cleans up the environment by deleting addd VApps")
    protected void cleanUpEnvironment() {
       vdc = vdcApi.get(vdcUrn); // Refresh
 
@@ -197,7 +197,7 @@ public abstract class AbstractVAppApiLiveTest extends BaseVCloudDirectorApiLiveT
       Iterable<Reference> vApps = Iterables.filter(vdc.getResourceEntities(),
             Predicates.and(ReferencePredicates.<Reference> typeEquals(VCloudDirectorMediaType.VAPP), ReferencePredicates.<Reference> nameIn(vAppNames)));
 
-      // If we found any references, delete the VApp they point to
+      // If we found any references, remove the VApp they point to
       if (!Iterables.isEmpty(vApps)) {
          for (Reference ref : vApps) {
             cleanUpVApp(ref.getHref()); // NOTE may fail, but should continue deleting
@@ -264,13 +264,13 @@ public abstract class AbstractVAppApiLiveTest extends BaseVCloudDirectorApiLiveT
     * Power on a {@link Vm}.
     */
    protected Vm powerOnVm(final URI testVmURI) {
-      Vm test = vmApi.getVm(testVmURI);
+      Vm test = vmApi.get(testVmURI);
       Status status = test.getStatus();
       if (status != Status.POWERED_ON) {
          Task powerOn = vmApi.powerOn(vm.getHref());
          assertTaskSucceedsLong(powerOn);
       }
-      test = vmApi.getVm(testVmURI);
+      test = vmApi.get(testVmURI);
       assertStatus(VM, test, Status.POWERED_ON);
       return test;
    }
@@ -294,14 +294,14 @@ public abstract class AbstractVAppApiLiveTest extends BaseVCloudDirectorApiLiveT
     * Power off a {@link Vm}.
     */
    protected Vm powerOffVm(final URI testVmURI) {
-      Vm test = vmApi.getVm(testVmURI);
+      Vm test = vmApi.get(testVmURI);
       Status status = test.getStatus();
       if (status != Status.POWERED_OFF || test.isDeployed()) {
          UndeployVAppParams undeployParams = UndeployVAppParams.builder().build();
          Task shutdownVapp = vAppApi.undeploy(test.getHref(), undeployParams);
          assertTaskSucceedsLong(shutdownVapp);
       }
-      test = vmApi.getVm(testVmURI);
+      test = vmApi.get(testVmURI);
       assertStatus(VM, test, Status.POWERED_OFF);
       return test;
    }
@@ -325,13 +325,13 @@ public abstract class AbstractVAppApiLiveTest extends BaseVCloudDirectorApiLiveT
     * Suspend a {@link Vm}.
     */
    protected Vm suspendVm(final URI testVmURI) {
-      Vm test = vmApi.getVm(testVmURI);
+      Vm test = vmApi.get(testVmURI);
       Status status = test.getStatus();
       if (status != Status.SUSPENDED) {
          Task suspend = vmApi.suspend(vm.getHref());
          assertTaskSucceedsLong(suspend);
       }
-      test = vmApi.getVm(testVmURI);
+      test = vmApi.get(testVmURI);
       assertStatus(VM, test, Status.SUSPENDED);
       return test;
    }
@@ -348,7 +348,7 @@ public abstract class AbstractVAppApiLiveTest extends BaseVCloudDirectorApiLiveT
     * Check the {@link Vm}s current status.
     */
    protected void assertVmStatus(final URI testVmURI, final Status status) {
-      Vm testVm = vmApi.getVm(testVmURI);
+      Vm testVm = vmApi.get(testVmURI);
       assertStatus(VM, testVm, status);
    }
 

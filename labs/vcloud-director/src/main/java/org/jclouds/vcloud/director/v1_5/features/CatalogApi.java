@@ -61,8 +61,8 @@ public interface CatalogApi {
     * @param catalogUri
     *           the URI of the catalog
     * @param item
-    *           the catalog item to create
-    * @return the created catalog item
+    *           the catalog item to add
+    * @return the addd catalog item
     */
    CatalogItem addItem(String catalogUrn, CatalogItem item);
 
@@ -94,11 +94,11 @@ public interface CatalogApi {
     *           the reference for the catalog item
     * @param catalogItem
     *           the catalog item
-    * @return the updated catalog item
+    * @return the edited catalog item
     */
-   CatalogItem updateItem(String catalogItemUrn, CatalogItem catalogItem);
+   CatalogItem editItem(String catalogItemUrn, CatalogItem catalogItem);
 
-   CatalogItem updateItem(URI catalogItemHref, CatalogItem catalogItem);
+   CatalogItem editItem(URI catalogItemHref, CatalogItem catalogItem);
 
    /**
     * Deletes a catalog item.
@@ -110,9 +110,9 @@ public interface CatalogApi {
     * @param catalogItemRef
     *           the reference for the catalog item
     */
-   void deleteItem(String catalogItemUrn);
+   void removeItem(String catalogItemUrn);
 
-   void deleteItem(URI catalogItemHref);
+   void removeItem(URI catalogItemHref);
 
    /**
     * @return synchronous access to {@link Metadata.Readable} features

@@ -60,25 +60,25 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface AdminCatalogAsyncApi extends CatalogAsyncApi {
 
    /**
-    * @see AdminCatalogApi#createCatalogInOrg(AdminCatalog, String)
+    * @see AdminCatalogApi#addCatalogToOrg(AdminCatalog, String)
     */
    @POST
    @Path("/catalogs")
    @Consumes(VCloudDirectorMediaType.ADMIN_CATALOG)
    @Produces(VCloudDirectorMediaType.ADMIN_CATALOG)
    @JAXBResponseParser
-   ListenableFuture<AdminCatalog> createCatalogInOrg(@BinderParam(BindToXMLPayload.class) AdminCatalog catalog,
+   ListenableFuture<AdminCatalog> addCatalogToOrg(@BinderParam(BindToXMLPayload.class) AdminCatalog catalog,
             @EndpointParam(parser = OrgURNToAdminHref.class) String orgUrn);
 
    /**
-    * @see AdminCatalogApi#createCatalogInOrg(AdminCatalog, URI)
+    * @see AdminCatalogApi#addCatalogToOrg(AdminCatalog, URI)
     */
    @POST
    @Path("/catalogs")
    @Consumes(VCloudDirectorMediaType.ADMIN_CATALOG)
    @Produces(VCloudDirectorMediaType.ADMIN_CATALOG)
    @JAXBResponseParser
-   ListenableFuture<AdminCatalog> createCatalogInOrg(@BinderParam(BindToXMLPayload.class) AdminCatalog catalog,
+   ListenableFuture<AdminCatalog> addCatalogToOrg(@BinderParam(BindToXMLPayload.class) AdminCatalog catalog,
             @EndpointParam URI orgHref);
 
    /**
@@ -102,40 +102,40 @@ public interface AdminCatalogAsyncApi extends CatalogAsyncApi {
    ListenableFuture<AdminCatalog> get(@EndpointParam URI orgHref);
 
    /**
-    * @see AdminCatalogApi#update(String, AdminCatalog)
+    * @see AdminCatalogApi#edit(String, AdminCatalog)
     */
    @PUT
    @Consumes(VCloudDirectorMediaType.ADMIN_CATALOG)
    @Produces(VCloudDirectorMediaType.ADMIN_CATALOG)
    @JAXBResponseParser
-   ListenableFuture<AdminCatalog> update(@EndpointParam(parser = CatalogURNToAdminHref.class) String catalogUrn,
+   ListenableFuture<AdminCatalog> edit(@EndpointParam(parser = CatalogURNToAdminHref.class) String catalogUrn,
             @BinderParam(BindToXMLPayload.class) AdminCatalog catalog);
 
    /**
-    * @see AdminCatalogApi#update(URI, AdminCatalog)
+    * @see AdminCatalogApi#edit(URI, AdminCatalog)
     */
    @PUT
    @Consumes(VCloudDirectorMediaType.ADMIN_CATALOG)
    @Produces(VCloudDirectorMediaType.ADMIN_CATALOG)
    @JAXBResponseParser
-   ListenableFuture<AdminCatalog> update(@EndpointParam URI catalogAdminHref,
+   ListenableFuture<AdminCatalog> edit(@EndpointParam URI catalogAdminHref,
             @BinderParam(BindToXMLPayload.class) AdminCatalog catalog);
 
    /**
-    * @see AdminCatalogApi#delete(String)
+    * @see AdminCatalogApi#remove(String)
     */
    @DELETE
    @Consumes
    @JAXBResponseParser
-   ListenableFuture<Void> delete(@EndpointParam(parser = CatalogURNToAdminHref.class) String catalogUrn);
+   ListenableFuture<Void> remove(@EndpointParam(parser = CatalogURNToAdminHref.class) String catalogUrn);
 
    /**
-    * @see AdminCatalogApi#delete(URI)
+    * @see AdminCatalogApi#remove(URI)
     */
    @DELETE
    @Consumes
    @JAXBResponseParser
-   ListenableFuture<Void> delete(@EndpointParam URI catalogAdminHref);
+   ListenableFuture<Void> remove(@EndpointParam URI catalogAdminHref);
 
    /**
     * @see AdminCatalogApi#getOwner(String)
@@ -202,25 +202,25 @@ public interface AdminCatalogAsyncApi extends CatalogAsyncApi {
             @BinderParam(BindToXMLPayload.class) PublishCatalogParams params);
 
    /**
-    * @see AdminCatalogApi#modifyAccessControl(String, ControlAccessParams)
+    * @see AdminCatalogApi#editAccessControl(String, ControlAccessParams)
     */
    @POST
    @Path("/action/controlAccess")
    @Produces(CONTROL_ACCESS)
    @Consumes(CONTROL_ACCESS)
    @JAXBResponseParser
-   ListenableFuture<ControlAccessParams> modifyAccessControl(@EndpointParam(parser = CatalogURNToAdminHref.class) String catalogUrn,
+   ListenableFuture<ControlAccessParams> editAccessControl(@EndpointParam(parser = CatalogURNToAdminHref.class) String catalogUrn,
       @BinderParam(BindToXMLPayload.class) ControlAccessParams params);
 
    /**
-    * @see AdminCatalogApi#modifyAccessControl(URI, ControlAccessParams)
+    * @see AdminCatalogApi#editAccessControl(URI, ControlAccessParams)
     */
    @POST
    @Path("/action/controlAccess")
    @Produces(CONTROL_ACCESS)
    @Consumes(CONTROL_ACCESS)
    @JAXBResponseParser
-   ListenableFuture<ControlAccessParams> modifyAccessControl(@EndpointParam URI catalogAdminHref,
+   ListenableFuture<ControlAccessParams> editAccessControl(@EndpointParam URI catalogAdminHref,
       @BinderParam(BindToXMLPayload.class) ControlAccessParams params);
    
    /**

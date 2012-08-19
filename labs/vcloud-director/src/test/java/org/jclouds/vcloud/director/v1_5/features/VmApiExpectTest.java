@@ -86,15 +86,15 @@ public class VmApiExpectTest extends VCloudDirectorAdminApiExpectTest {
       
       Vm expected = getVm();
 
-      assertEquals(api.getVmApi().getVm(vmURI), expected);
+      assertEquals(api.getVmApi().get(vmURI), expected);
    }
 
    @Test(enabled = false)
-   public void testModifyVm() {
+   public void testEditVm() {
       VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("PUT", vmId)
-            .xmlFilePayload("/vm/modifyVm.xml", VCloudDirectorMediaType.VM)
+            .xmlFilePayload("/vm/editVm.xml", VCloudDirectorMediaType.VM)
             .acceptAnyMedia()
             .httpRequestBuilder().build(), 
          new VcloudHttpResponsePrimer()
@@ -105,25 +105,25 @@ public class VmApiExpectTest extends VCloudDirectorAdminApiExpectTest {
 		modified.setName("new-name");
 		modified.setDescription("New Description");
 		
-		Task expected = modifyVmTask();
+		Task expected = editVmTask();
 		
-		assertEquals(api.getVmApi().modifyVm(vmURI, modified), expected);
+		assertEquals(api.getVmApi().edit(vmURI, modified), expected);
    }
 
    @Test(enabled = false)
-   public void testDeleteVm() {
+   public void testRemoveVm() {
       VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("DELETE", vmId)
             .acceptAnyMedia()
             .httpRequestBuilder().build(), 
          new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/vm/deleteVmTask.xml", VCloudDirectorMediaType.TASK)
+            .xmlFilePayload("/vm/removeVmTask.xml", VCloudDirectorMediaType.TASK)
             .httpResponseBuilder().build());
 		
-		Task expected = deleteVmTask();
+		Task expected = removeVmTask();
 		
-		assertEquals(api.getVmApi().deleteVm(vmURI), expected);
+		assertEquals(api.getVmApi().remove(vmURI), expected);
    }
 
    @Test(enabled = false)
@@ -139,7 +139,7 @@ public class VmApiExpectTest extends VCloudDirectorAdminApiExpectTest {
 		
 		Task expected = consolidateVmTask();
 		
-		assertEquals(api.getVmApi().consolidateVm(vmURI), expected);
+		assertEquals(api.getVmApi().consolidate(vmURI), expected);
    }
 
    @Test(enabled = false)
@@ -211,7 +211,7 @@ public class VmApiExpectTest extends VCloudDirectorAdminApiExpectTest {
 		
 		Task expected = relocateTask();
 		
-		assertEquals(api.getVmApi().relocateVm(vmURI, params), expected);
+		assertEquals(api.getVmApi().relocate(vmURI, params), expected);
    }
 
    @Test(enabled = false)
@@ -363,23 +363,23 @@ public class VmApiExpectTest extends VCloudDirectorAdminApiExpectTest {
    }
 
    @Test(enabled = false)
-   public void testModifyGuestCustomizationSection() {
+   public void testEditGuestCustomizationSection() {
       VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("PUT", vmId + "/guestCustomizationSection")
-            .xmlFilePayload("/vApp/modifyGuestCustomizationSection.xml", VCloudDirectorMediaType.GUEST_CUSTOMIZATION_SECTION)
+            .xmlFilePayload("/vApp/editGuestCustomizationSection.xml", VCloudDirectorMediaType.GUEST_CUSTOMIZATION_SECTION)
             .acceptAnyMedia()
             .httpRequestBuilder().build(), 
          new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/vApp/modifyGuestCustomizationSectionTask.xml", VCloudDirectorMediaType.TASK)
+            .xmlFilePayload("/vApp/editGuestCustomizationSectionTask.xml", VCloudDirectorMediaType.TASK)
             .httpResponseBuilder().build());
       
       GuestCustomizationSection section = getGuestCustomizationSection().toBuilder()
             .build();
 
-      Task expected = modifyGuestCustomizationSectionTask();
+      Task expected = editGuestCustomizationSectionTask();
 
-      assertEquals(api.getVmApi().modifyGuestCustomizationSection(vmURI, section), expected);
+      assertEquals(api.getVmApi().editGuestCustomizationSection(vmURI, section), expected);
    }
 
    @Test(enabled = false)
@@ -439,23 +439,23 @@ public class VmApiExpectTest extends VCloudDirectorAdminApiExpectTest {
    }
 
    @Test(enabled = false)
-   public void testModifyNetworkConnectionSection() {
+   public void testEditNetworkConnectionSection() {
       VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("PUT", vmId + "/networkConnectionSection")
-            .xmlFilePayload("/vApp/modifyNetworkConnectionSection.xml", VCloudDirectorMediaType.NETWORK_CONNECTION_SECTION)
+            .xmlFilePayload("/vApp/editNetworkConnectionSection.xml", VCloudDirectorMediaType.NETWORK_CONNECTION_SECTION)
             .acceptAnyMedia()
             .httpRequestBuilder().build(), 
          new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/vApp/modifyNetworkConnectionSectionTask.xml", VCloudDirectorMediaType.TASK)
+            .xmlFilePayload("/vApp/editNetworkConnectionSectionTask.xml", VCloudDirectorMediaType.TASK)
             .httpResponseBuilder().build());
 		      
 		NetworkConnectionSection section = getNetworkConnectionSection().toBuilder()
 		      .build();
 		
-		Task expected = modifyNetworkConnectionSectionTask();
+		Task expected = editNetworkConnectionSectionTask();
 		
-		assertEquals(api.getVmApi().modifyNetworkConnectionSection(vmURI, section), expected);
+		assertEquals(api.getVmApi().editNetworkConnectionSection(vmURI, section), expected);
    }
 
    @Test(enabled = false)
@@ -475,23 +475,23 @@ public class VmApiExpectTest extends VCloudDirectorAdminApiExpectTest {
    }
 
    @Test(enabled = false)
-   public void testModifyOperatingSystemSection() {
+   public void testEditOperatingSystemSection() {
       VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("PUT", vmId + "/operatingSystemSection")
-            .xmlFilePayload("/vApp/modifyOperatingSystemSection.xml", VCloudDirectorMediaType.OPERATING_SYSTEM_SECTION)
+            .xmlFilePayload("/vApp/editOperatingSystemSection.xml", VCloudDirectorMediaType.OPERATING_SYSTEM_SECTION)
             .acceptAnyMedia()
             .httpRequestBuilder().build(), 
          new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/vApp/modifyOperatingSystemSectionTask.xml", VCloudDirectorMediaType.TASK)
+            .xmlFilePayload("/vApp/editOperatingSystemSectionTask.xml", VCloudDirectorMediaType.TASK)
             .httpResponseBuilder().build());
 		      
       OperatingSystemSection section = getOperatingSystemSection().toBuilder()
 		      .build();
 		
-		Task expected = modifyOperatingSystemSectionTask();
+		Task expected = editOperatingSystemSectionTask();
 		
-		assertEquals(api.getVmApi().modifyOperatingSystemSection(vmURI, section), expected);
+		assertEquals(api.getVmApi().editOperatingSystemSection(vmURI, section), expected);
    }
 
    @Test(enabled = false)
@@ -511,20 +511,20 @@ public class VmApiExpectTest extends VCloudDirectorAdminApiExpectTest {
    }
 
    @Test(enabled = false)
-   public void testModifyProductSections() {
+   public void testEditProductSections() {
       VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("PUT", vmId + "/productSections")
-            .xmlFilePayload("/vApp/modifyProductSections.xml", VCloudDirectorMediaType.PRODUCT_SECTION_LIST)
+            .xmlFilePayload("/vApp/editProductSections.xml", VCloudDirectorMediaType.PRODUCT_SECTION_LIST)
             .acceptAnyMedia()
             .httpRequestBuilder().build(), 
          new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/vApp/modifyProductSections.xml", VCloudDirectorMediaType.VAPP)
+            .xmlFilePayload("/vApp/editProductSections.xml", VCloudDirectorMediaType.VAPP)
             .httpResponseBuilder().build());
 
-         Task expected = modifyProductSectionsTask();
+         Task expected = editProductSectionsTask();
 
-         assertEquals(api.getVmApi().modifyProductSections(vmURI, null), expected);
+         assertEquals(api.getVmApi().editProductSections(vmURI, null), expected);
    }
 
    @Test(enabled = false)
@@ -627,23 +627,23 @@ public class VmApiExpectTest extends VCloudDirectorAdminApiExpectTest {
    }
 
    @Test(enabled = false)
-   public void testModifyVirtualHardwareSection() {
+   public void testEditVirtualHardwareSection() {
       VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("PUT", vmId + "/virtualHardwareSection")
-            .xmlFilePayload("/vApp/modifyVirtualHardwareSection.xml", VCloudDirectorMediaType.VIRTUAL_HARDWARE_SECTION)
+            .xmlFilePayload("/vApp/editVirtualHardwareSection.xml", VCloudDirectorMediaType.VIRTUAL_HARDWARE_SECTION)
             .acceptAnyMedia()
             .httpRequestBuilder().build(), 
          new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/vApp/modifyVirtualHardwareSectionTask.xml", VCloudDirectorMediaType.TASK)
+            .xmlFilePayload("/vApp/editVirtualHardwareSectionTask.xml", VCloudDirectorMediaType.TASK)
             .httpResponseBuilder().build());
 
       VirtualHardwareSection section = getVirtualHardwareSection().toBuilder()
             .build();
 
-		Task expected = modifyVirtualHardwareSectionTask();
+		Task expected = editVirtualHardwareSectionTask();
 		
-		assertEquals(api.getVmApi().modifyVirtualHardwareSection(vmURI, section), expected);
+		assertEquals(api.getVmApi().editVirtualHardwareSection(vmURI, section), expected);
    }
 
    @Test(enabled = false)
@@ -663,23 +663,23 @@ public class VmApiExpectTest extends VCloudDirectorAdminApiExpectTest {
    }
 
    @Test(enabled = false)
-   public void testModifyVirtualHardwareSectionCpu() {
+   public void testEditVirtualHardwareSectionCpu() {
       VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("", vmId + "/virtualHardwareSection/cpu")
-            .xmlFilePayload("/vApp/modifyVirtualHardwareSectionCpu.xml", VCloudDirectorMediaType.OVF_RASD_ITEM)
+            .xmlFilePayload("/vApp/editVirtualHardwareSectionCpu.xml", VCloudDirectorMediaType.OVF_RASD_ITEM)
             .acceptAnyMedia()
             .httpRequestBuilder().build(), 
          new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/vApp/modifyVirtualHardwareSectionCpuTask.xml", VCloudDirectorMediaType.TASK)
+            .xmlFilePayload("/vApp/editVirtualHardwareSectionCpuTask.xml", VCloudDirectorMediaType.TASK)
             .httpResponseBuilder().build());
 
       RasdItem cpu = getVirtualHardwareSectionCpu(); // .toBuilder();
 //               .build();
 
-         Task expected = modifyVirtualHardwareSectionCpuTask();
+         Task expected = editVirtualHardwareSectionCpuTask();
 
-         assertEquals(api.getVmApi().modifyVirtualHardwareSectionCpu(vmURI, cpu), expected);
+         assertEquals(api.getVmApi().editVirtualHardwareSectionCpu(vmURI, cpu), expected);
    }
 
    @Test(enabled = false)
@@ -699,23 +699,23 @@ public class VmApiExpectTest extends VCloudDirectorAdminApiExpectTest {
    }
 
    @Test(enabled = false)
-   public void testModifyVirtualHardwareSectionDisks() {
+   public void testEditVirtualHardwareSectionDisks() {
       VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("PUT", vmId + "/virtualHardwareSection/disks")
-            .xmlFilePayload("/vApp/modifyVirtualHardwareSectionDisks.xml", VCloudDirectorMediaType.OVF_RASD_ITEMS_LIST)
+            .xmlFilePayload("/vApp/editVirtualHardwareSectionDisks.xml", VCloudDirectorMediaType.OVF_RASD_ITEMS_LIST)
             .acceptAnyMedia()
             .httpRequestBuilder().build(), 
          new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/vApp/modifyVirtualHardwareSectionDisksTask.xml", VCloudDirectorMediaType.TASK)
+            .xmlFilePayload("/vApp/editVirtualHardwareSectionDisksTask.xml", VCloudDirectorMediaType.TASK)
             .httpResponseBuilder().build());
 
          RasdItemsList disks = getVirtualHardwareSectionDisks().toBuilder()
                .build();
 
-         Task expected = modifyVirtualHardwareSectionDisksTask();
+         Task expected = editVirtualHardwareSectionDisksTask();
 
-         assertEquals(api.getVmApi().modifyVirtualHardwareSectionDisks(vmURI, disks), expected);
+         assertEquals(api.getVmApi().editVirtualHardwareSectionDisks(vmURI, disks), expected);
    }
 
    @Test(enabled = false)
@@ -751,23 +751,23 @@ public class VmApiExpectTest extends VCloudDirectorAdminApiExpectTest {
    }
 
    @Test(enabled = false)
-   public void testModifyVirtualHardwareSectionMemory() {
+   public void testEditVirtualHardwareSectionMemory() {
       VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("PUT", vmId + "/virtualHardwareSection/memory")
-            .xmlFilePayload("/vApp/modifyVirtualHardwareSectionMemory.xml", VCloudDirectorMediaType.VAPP)
+            .xmlFilePayload("/vApp/editVirtualHardwareSectionMemory.xml", VCloudDirectorMediaType.VAPP)
             .acceptAnyMedia()
             .httpRequestBuilder().build(), 
          new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/vApp/modifyVirtualHardwareSectionMemoryTask.xml", VCloudDirectorMediaType.TASK)
+            .xmlFilePayload("/vApp/editVirtualHardwareSectionMemoryTask.xml", VCloudDirectorMediaType.TASK)
             .httpResponseBuilder().build());
 
       RasdItem memory = getVirtualHardwareSectionCpu(); // .toBuilder();
 //               .build();
 
-         Task expected = modifyVirtualHardwareSectionMemoryTask();
+         Task expected = editVirtualHardwareSectionMemoryTask();
 
-         assertEquals(api.getVmApi().modifyVirtualHardwareSectionMemory(vmURI, memory), expected);
+         assertEquals(api.getVmApi().editVirtualHardwareSectionMemory(vmURI, memory), expected);
    }
 
    @Test(enabled = false)
@@ -787,23 +787,23 @@ public class VmApiExpectTest extends VCloudDirectorAdminApiExpectTest {
    }
 
    @Test(enabled = false)
-   public void testModifyVirtualHardwareSectionNetworkCards() {
+   public void testEditVirtualHardwareSectionNetworkCards() {
       VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("PUT", vmId + "/virtualHardwareSection/networkCards")
-            .xmlFilePayload("/vApp/modifyVirtualHardwareSectionNetworkCards.xml", VCloudDirectorMediaType.OVF_RASD_ITEMS_LIST)
+            .xmlFilePayload("/vApp/editVirtualHardwareSectionNetworkCards.xml", VCloudDirectorMediaType.OVF_RASD_ITEMS_LIST)
             .acceptAnyMedia()
             .httpRequestBuilder().build(), 
          new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/vApp/modifyVirtualHardwareSectionNetworkCardsTask.xml", VCloudDirectorMediaType.TASK)
+            .xmlFilePayload("/vApp/editVirtualHardwareSectionNetworkCardsTask.xml", VCloudDirectorMediaType.TASK)
             .httpResponseBuilder().build());
 
          RasdItemsList networkCards = getVirtualHardwareSectionNetworkCards().toBuilder()
                .build();
 
-         Task expected = modifyVirtualHardwareSectionNetworkCardsTask();
+         Task expected = editVirtualHardwareSectionNetworkCardsTask();
 
-         assertEquals(api.getVmApi().modifyVirtualHardwareSectionNetworkCards(vmURI, networkCards), expected);
+         assertEquals(api.getVmApi().editVirtualHardwareSectionNetworkCards(vmURI, networkCards), expected);
    }
 
    @Test(enabled = false)
@@ -823,23 +823,23 @@ public class VmApiExpectTest extends VCloudDirectorAdminApiExpectTest {
    }
 
    @Test(enabled = false)
-   public void testModifyVirtualHardwareSectionSerialPorts() {
+   public void testEditVirtualHardwareSectionSerialPorts() {
       VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("PUT", vmId + "/virtualHardwareSection/serialPorts")
-            .xmlFilePayload("/vApp/modifyVirtualHardwareSectionSerialPorts.xml", VCloudDirectorMediaType.OVF_RASD_ITEMS_LIST)
+            .xmlFilePayload("/vApp/editVirtualHardwareSectionSerialPorts.xml", VCloudDirectorMediaType.OVF_RASD_ITEMS_LIST)
             .acceptAnyMedia()
             .httpRequestBuilder().build(), 
          new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/vApp/modifyVirtualHardwareSectionSerialPortsTask.xml", VCloudDirectorMediaType.TASK)
+            .xmlFilePayload("/vApp/editVirtualHardwareSectionSerialPortsTask.xml", VCloudDirectorMediaType.TASK)
             .httpResponseBuilder().build());
 
          RasdItemsList serialPorts = getVirtualHardwareSectionSerialPorts().toBuilder()
                .build();
 
-         Task expected = modifyVirtualHardwareSectionSerialPortsTask();
+         Task expected = editVirtualHardwareSectionSerialPortsTask();
 
-         assertEquals(api.getVmApi().modifyVirtualHardwareSectionSerialPorts(vmURI, serialPorts), expected);
+         assertEquals(api.getVmApi().editVirtualHardwareSectionSerialPorts(vmURI, serialPorts), expected);
    }
 
    public static Vm getVm() {
@@ -866,14 +866,14 @@ public class VmApiExpectTest extends VCloudDirectorAdminApiExpectTest {
       return vm;
    }
 
-   public static Task modifyVmTask() {
+   public static Task editVmTask() {
       Task task = Task.builder()
             .build();
 
       return task;
    }
 
-   public static Task deleteVmTask() {
+   public static Task removeVmTask() {
       Task task = Task.builder()
             .build();
 
@@ -999,7 +999,7 @@ public class VmApiExpectTest extends VCloudDirectorAdminApiExpectTest {
       return section;
    }
 
-   public static Task modifyGuestCustomizationSectionTask() {
+   public static Task editGuestCustomizationSectionTask() {
       Task task = Task.builder()
             .build();
 
@@ -1013,7 +1013,7 @@ public class VmApiExpectTest extends VCloudDirectorAdminApiExpectTest {
       return section;
    }
 
-   public static Task modifyLeaseSettingsSectionTask() {
+   public static Task editLeaseSettingsSectionTask() {
       Task task = Task.builder()
             .build();
 
@@ -1041,7 +1041,7 @@ public class VmApiExpectTest extends VCloudDirectorAdminApiExpectTest {
       return section;
    }
 
-   public static Task modifyNetworkConfigSectionTask() {
+   public static Task editNetworkConfigSectionTask() {
       Task task = Task.builder()
             .build();
 
@@ -1055,7 +1055,7 @@ public class VmApiExpectTest extends VCloudDirectorAdminApiExpectTest {
       return section;
    }
 
-   public static Task modifyNetworkConnectionSectionTask() {
+   public static Task editNetworkConnectionSectionTask() {
       Task task = Task.builder()
             .build();
 
@@ -1076,7 +1076,7 @@ public class VmApiExpectTest extends VCloudDirectorAdminApiExpectTest {
       return section;
    }
 
-   public static Task modifyOperatingSystemSectionTask() {
+   public static Task editOperatingSystemSectionTask() {
       Task task = Task.builder()
             .build();
 
@@ -1090,7 +1090,7 @@ public class VmApiExpectTest extends VCloudDirectorAdminApiExpectTest {
       return owner;
    }
 
-   public static Task modifyOwnerTask() {
+   public static Task editOwnerTask() {
       Task task = Task.builder()
             .build();
 
@@ -1104,7 +1104,7 @@ public class VmApiExpectTest extends VCloudDirectorAdminApiExpectTest {
       return sectionItems;
    }
 
-   public static Task modifyProductSectionsTask() {
+   public static Task editProductSectionsTask() {
       Task task = Task.builder()
             .build();
 
@@ -1152,7 +1152,7 @@ public class VmApiExpectTest extends VCloudDirectorAdminApiExpectTest {
       return section;
    }
 
-   public static Task modifyStartupSectionTask() {
+   public static Task editStartupSectionTask() {
       Task task = Task.builder()
             .build();
 
@@ -1166,7 +1166,7 @@ public class VmApiExpectTest extends VCloudDirectorAdminApiExpectTest {
       return section;
    }
 
-   public static Task modifyVirtualHardwareSectionTask() {
+   public static Task editVirtualHardwareSectionTask() {
       Task task = Task.builder()
             .build();
 
@@ -1180,7 +1180,7 @@ public class VmApiExpectTest extends VCloudDirectorAdminApiExpectTest {
       return cpu;
    }
 
-   public static Task modifyVirtualHardwareSectionCpuTask() {
+   public static Task editVirtualHardwareSectionCpuTask() {
       Task task = Task.builder()
             .build();
 
@@ -1194,7 +1194,7 @@ public class VmApiExpectTest extends VCloudDirectorAdminApiExpectTest {
       return disks;
    }
 
-   public static Task modifyVirtualHardwareSectionDisksTask() {
+   public static Task editVirtualHardwareSectionDisksTask() {
       Task task = Task.builder()
             .build();
 
@@ -1215,7 +1215,7 @@ public class VmApiExpectTest extends VCloudDirectorAdminApiExpectTest {
       return memory;
    }
 
-   public static Task modifyVirtualHardwareSectionMemoryTask() {
+   public static Task editVirtualHardwareSectionMemoryTask() {
       Task task = Task.builder()
             .build();
 
@@ -1229,7 +1229,7 @@ public class VmApiExpectTest extends VCloudDirectorAdminApiExpectTest {
       return networkCards;
    }
 
-   public static Task modifyVirtualHardwareSectionNetworkCardsTask() {
+   public static Task editVirtualHardwareSectionNetworkCardsTask() {
       Task task = Task.builder()
             .build();
 
@@ -1243,11 +1243,11 @@ public class VmApiExpectTest extends VCloudDirectorAdminApiExpectTest {
       return serialPorts;
    }
 
-   public static Task modifyVirtualHardwareSectionSerialPortsTask() {
+   public static Task editVirtualHardwareSectionSerialPortsTask() {
       return task("id", "name", "description", "status", "operation", "operationName", "startTime");
    }
 
-   /** Used by other methods to create a custom {@link Task} object. */
+   /** Used by other methods to add a custom {@link Task} object. */
    private static Task task(String taskId, String name, String description, String status, String operation, String operationName, String startTime) {
       Task task = Task.builder()
             .error(Error.builder().build())

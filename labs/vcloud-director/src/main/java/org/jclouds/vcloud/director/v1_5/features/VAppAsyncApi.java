@@ -81,32 +81,32 @@ public interface VAppAsyncApi {
    ListenableFuture<VApp> getVApp(@EndpointParam URI vAppURI);
 
    /**
-    * @see VAppApi#modifyVApp(URI, VApp)
+    * @see VAppApi#editVApp(URI, VApp)
     */
    @PUT
    @Produces(VAPP)
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> modifyVApp(@EndpointParam URI vAppURI,
+   ListenableFuture<Task> editVApp(@EndpointParam URI vAppURI,
                                      @BinderParam(BindToXMLPayload.class) VApp vApp);
 
    /**
-    * @see VAppApi#deleteVApp(URI)
+    * @see VAppApi#removeVApp(URI)
     */
    @DELETE
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> deleteVApp(@EndpointParam URI vAppURI);
+   ListenableFuture<Task> removeVApp(@EndpointParam URI vAppURI);
 
    /**
-    * @see VAppApi#modifyControlAccess(URI, ControlAccessParams)
+    * @see VAppApi#editControlAccess(URI, ControlAccessParams)
     */
    @POST
    @Path("/action/controlAccess")
    @Produces(CONTROL_ACCESS)
    @Consumes(CONTROL_ACCESS)
    @JAXBResponseParser
-   ListenableFuture<ControlAccessParams> modifyControlAccess(@EndpointParam URI vAppURI,
+   ListenableFuture<ControlAccessParams> editControlAccess(@EndpointParam URI vAppURI,
                                                              @BinderParam(BindToXMLPayload.class) ControlAccessParams params);
 
    /**
@@ -244,14 +244,14 @@ public interface VAppAsyncApi {
    ListenableFuture<LeaseSettingsSection> getLeaseSettingsSection(@EndpointParam URI vAppURI);
 
    /**
-    * @see VAppApi#modifyLeaseSettingsSection(URI, LeaseSettingsSection)
+    * @see VAppApi#editLeaseSettingsSection(URI, LeaseSettingsSection)
     */
    @PUT
    @Path("/leaseSettingsSection")
    @Produces(LEASE_SETTINGS_SECTION)
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> modifyLeaseSettingsSection(@EndpointParam URI vAppURI,
+   ListenableFuture<Task> editLeaseSettingsSection(@EndpointParam URI vAppURI,
                                                      @BinderParam(BindToXMLPayload.class) LeaseSettingsSection section);
 
    /**
@@ -265,14 +265,14 @@ public interface VAppAsyncApi {
    ListenableFuture<NetworkConfigSection> getNetworkConfigSection(@EndpointParam URI vAppURI);
 
    /**
-    * @see VAppApi#modifyNetworkConfigSection(URI, NetworkConfigSection)
+    * @see VAppApi#editNetworkConfigSection(URI, NetworkConfigSection)
     */
    @PUT
    @Path("/networkConfigSection")
    @Produces(NETWORK_CONFIG_SECTION)
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> modifyNetworkConfigSection(@EndpointParam URI vAppURI,
+   ListenableFuture<Task> editNetworkConfigSection(@EndpointParam URI vAppURI,
                                                      @BinderParam(BindToXMLPayload.class) NetworkConfigSection section);
 
    /**
@@ -296,14 +296,14 @@ public interface VAppAsyncApi {
    ListenableFuture<Owner> getOwner(@EndpointParam URI vAppURI);
 
    /**
-    * @see VAppApi#modifyOwner(URI, Owner)
+    * @see VAppApi#editOwner(URI, Owner)
     */
    @PUT
    @Path("/owner")
    @Produces(OWNER)
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Void> modifyOwner(@EndpointParam URI vAppURI,
+   ListenableFuture<Void> editOwner(@EndpointParam URI vAppURI,
                                       @BinderParam(BindToXMLPayload.class) Owner owner);
 
    /**
@@ -317,14 +317,14 @@ public interface VAppAsyncApi {
    ListenableFuture<ProductSectionList> getProductSections(@EndpointParam URI vAppURI);
 
    /**
-    * @see VAppApi#modifyProductSections(URI, ProductSectionList)
+    * @see VAppApi#editProductSections(URI, ProductSectionList)
     */
    @PUT
    @Path("/productSections")
    @Produces(PRODUCT_SECTION_LIST)
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> modifyProductSections(@EndpointParam URI vAppURI,
+   ListenableFuture<Task> editProductSections(@EndpointParam URI vAppURI,
                                                 @BinderParam(BindToXMLPayload.class) ProductSectionList sectionList);
 
 
@@ -339,14 +339,14 @@ public interface VAppAsyncApi {
    ListenableFuture<StartupSection> getStartupSection(@EndpointParam URI vAppURI);
 
    /**
-    * @see VAppApi#modifyStartupSection(URI, StartupSection)
+    * @see VAppApi#editStartupSection(URI, StartupSection)
     */
    @PUT
    @Path("/startupSection")
    @Produces(STARTUP_SECTION)
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> modifyStartupSection(@EndpointParam URI vAppURI,
+   ListenableFuture<Task> editStartupSection(@EndpointParam URI vAppURI,
                                                @BinderParam(BindToXMLPayload.class) StartupSection section);
 
    /**

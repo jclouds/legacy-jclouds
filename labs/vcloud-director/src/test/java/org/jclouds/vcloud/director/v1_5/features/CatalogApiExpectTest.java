@@ -115,7 +115,7 @@ public class CatalogApiExpectTest extends VCloudDirectorApiExpectTest {
 
    HttpResponse addResponse = HttpResponse.builder()
             .statusCode(200)
-            .payload(payloadFromResourceWithContentType("/catalog/createdCatalogItem.xml", CATALOG_ITEM + ";version=1.5"))
+            .payload(payloadFromResourceWithContentType("/catalog/adddCatalogItem.xml", CATALOG_ITEM + ";version=1.5"))
             .build();
    
    CatalogItem newItem = CatalogItem.builder()
@@ -127,13 +127,13 @@ public class CatalogApiExpectTest extends VCloudDirectorApiExpectTest {
    @Test
    public void testAddCatalogItemHref() {
       VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, add, addResponse);
-      assertEquals(api.getCatalogApi().addItem(catalogHref, newItem), createdCatalogItem());
+      assertEquals(api.getCatalogApi().addItem(catalogHref, newItem), adddCatalogItem());
    }
    
    @Test
    public void testAddCatalogItemUrn() {
       VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, resolveCatalog, resolveCatalogResponse, add, addResponse);
-      assertEquals(api.getCatalogApi().addItem(catalogUrn, newItem), createdCatalogItem());
+      assertEquals(api.getCatalogApi().addItem(catalogUrn, newItem), adddCatalogItem());
    }
    
    HttpRequest getMetadata = HttpRequest.builder()
@@ -233,53 +233,53 @@ public class CatalogApiExpectTest extends VCloudDirectorApiExpectTest {
       assertEquals(api.getCatalogApi().getItem(itemUrn), catalogItem());
    }
    
-   HttpRequest updateItem = HttpRequest.builder()
+   HttpRequest editItem = HttpRequest.builder()
             .method("PUT")
             .endpoint(endpoint + "/catalogItem/" + item)
             .addHeader("Accept", "application/vnd.vmware.vcloud.catalogItem+xml")
             .addHeader("x-vcloud-authorization", token)
             .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
-            .payload(payloadFromResourceWithContentType("/catalog/updateCatalogItem.xml", CATALOG_ITEM))
+            .payload(payloadFromResourceWithContentType("/catalog/editCatalogItem.xml", CATALOG_ITEM))
             .build();
 
-   HttpResponse updateItemResponse = HttpResponse.builder()
+   HttpResponse editItemResponse = HttpResponse.builder()
             .statusCode(200)
-            .payload(payloadFromResourceWithContentType("/catalog/updateCatalogItem.xml", CATALOG_ITEM + ";version=1.5"))
+            .payload(payloadFromResourceWithContentType("/catalog/editCatalogItem.xml", CATALOG_ITEM + ";version=1.5"))
             .build();
 
    @Test
-   public void testUpdateCatalogItemHref() {
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, updateItem, updateItemResponse);
-      assertEquals(api.getCatalogApi().updateItem(itemHref, catalogItem()), catalogItem());
+   public void testEditCatalogItemHref() {
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, editItem, editItemResponse);
+      assertEquals(api.getCatalogApi().editItem(itemHref, catalogItem()), catalogItem());
    }
    
    @Test
-   public void testUpdateCatalogItemUrn() {
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, resolveItem, resolveItemResponse, updateItem, updateItemResponse);
-      assertEquals(api.getCatalogApi().updateItem(itemUrn, catalogItem()), catalogItem());
+   public void testEditCatalogItemUrn() {
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, resolveItem, resolveItemResponse, editItem, editItemResponse);
+      assertEquals(api.getCatalogApi().editItem(itemUrn, catalogItem()), catalogItem());
    }
    
-   HttpRequest deleteItem = HttpRequest.builder()
+   HttpRequest removeItem = HttpRequest.builder()
             .method("DELETE")
             .endpoint(endpoint + "/catalogItem/" + item)
             .addHeader("Accept", "*/*")
             .addHeader("x-vcloud-authorization", token)
             .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token).build();
 
-   HttpResponse deleteItemResponse = HttpResponse.builder()
+   HttpResponse removeItemResponse = HttpResponse.builder()
             .statusCode(200)
             .build();
       
    @Test
-   public void testDeleteCatalogItemHref() {
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, deleteItem, deleteItemResponse);
-      api.getCatalogApi().deleteItem(itemHref);
+   public void testRemoveCatalogItemHref() {
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, removeItem, removeItemResponse);
+      api.getCatalogApi().removeItem(itemHref);
    }
 
    @Test
-   public void testDeleteCatalogItemUrn() {
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, resolveItem, resolveItemResponse, deleteItem, deleteItemResponse);
-      api.getCatalogApi().deleteItem(itemUrn);
+   public void testRemoveCatalogItemUrn() {
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, resolveItem, resolveItemResponse, removeItem, removeItemResponse);
+      api.getCatalogApi().removeItem(itemUrn);
    }
    
    HttpRequest getItemMetadata = HttpRequest.builder()
@@ -371,22 +371,22 @@ public class CatalogApiExpectTest extends VCloudDirectorApiExpectTest {
       assertEquals(api.getCatalogApi().getItemMetadataApi().putEntry(itemHref, "KEY", MetadataValue.builder().value("KITTENS").build()), setMetadataValueTask());
    }
    
-   HttpRequest deleteItemMetadataEntry = HttpRequest.builder()
+   HttpRequest removeItemMetadataEntry = HttpRequest.builder()
             .method("DELETE")
             .endpoint(endpoint + "/catalogItem/" + item + "/metadata/KEY")
             .addHeader("Accept", "application/vnd.vmware.vcloud.task+xml")
             .addHeader("x-vcloud-authorization", token)
             .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token).build();
 
-   HttpResponse deleteItemMetadataEntryResponse = HttpResponse.builder()
+   HttpResponse removeItemMetadataEntryResponse = HttpResponse.builder()
             .statusCode(200)
-            .payload(payloadFromResourceWithContentType("/catalog/deleteMetadataEntryTask.xml", TASK))
+            .payload(payloadFromResourceWithContentType("/catalog/removeMetadataEntryTask.xml", TASK))
             .build();   
    
    @Test
-   public void testDeleteCatalogItemMetadataEntryHref() {
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, deleteItemMetadataEntry, deleteItemMetadataEntryResponse);
-      assertEquals(api.getCatalogApi().getItemMetadataApi().deleteEntry(itemHref, "KEY"), deleteEntryTask());
+   public void testRemoveCatalogItemMetadataEntryHref() {
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, removeItemMetadataEntry, removeItemMetadataEntryResponse);
+      assertEquals(api.getCatalogApi().getItemMetadataApi().removeEntry(itemHref, "KEY"), removeEntryTask());
    }
    
    public static final Catalog catalog() {
@@ -425,7 +425,7 @@ public class CatalogApiExpectTest extends VCloudDirectorApiExpectTest {
       		      .build();
    }
 
-   public static CatalogItem createdCatalogItem() {
+   public static CatalogItem adddCatalogItem() {
       return CatalogItem.builder()
                   .name("newCatalogItem")
                   .id("urn:vcloud:catalogitem:" + item)
@@ -607,7 +607,7 @@ public class CatalogApiExpectTest extends VCloudDirectorApiExpectTest {
             .build();
    }
 
-   public static Task deleteEntryTask() {
+   public static Task removeEntryTask() {
       return Task.builder()
             .name("task")
             .id("urn:vcloud:task:c6dca927-eab4-41fa-ad6a-3ac58602541c")

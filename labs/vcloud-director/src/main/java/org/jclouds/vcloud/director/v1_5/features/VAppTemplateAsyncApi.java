@@ -83,22 +83,22 @@ public interface VAppTemplateAsyncApi {
 
 
    /**
-    * @see VAppTemplateApi#modifyVAppTemplate(URI, VAppTemplate)
+    * @see VAppTemplateApi#editVAppTemplate(URI, VAppTemplate)
     */
    @PUT
    @Produces(VAPP_TEMPLATE)
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> modifyVAppTemplate(@EndpointParam URI templateURI,
+   ListenableFuture<Task> editVAppTemplate(@EndpointParam URI templateURI,
                                              @BinderParam(BindToXMLPayload.class) VAppTemplate template);
 
    /**
-    * @see VAppTemplateApi#deleteVappTemplate(URI)
+    * @see VAppTemplateApi#removeVappTemplate(URI)
     */
    @DELETE
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> deleteVappTemplate(@EndpointParam URI templateUri);
+   ListenableFuture<Task> removeVappTemplate(@EndpointParam URI templateUri);
 
    /**
     * @see VAppTemplateApi#consolidateVm(URI)
@@ -158,14 +158,14 @@ public interface VAppTemplateAsyncApi {
    ListenableFuture<GuestCustomizationSection> getGuestCustomizationSection(@EndpointParam URI templateURI);
 
    /**
-    * @see VAppTemplateApi#modifyGuestCustomizationSection(URI, org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection)
+    * @see VAppTemplateApi#editGuestCustomizationSection(URI, org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection)
     */
    @PUT
    @Produces(GUEST_CUSTOMIZATION_SECTION)
    @Consumes(TASK)
    @Path("/guestCustomizationSection")
    @JAXBResponseParser
-   ListenableFuture<Task> modifyGuestCustomizationSection(@EndpointParam URI templateURI,
+   ListenableFuture<Task> editGuestCustomizationSection(@EndpointParam URI templateURI,
                                                           @BinderParam(BindToXMLPayload.class) GuestCustomizationSection section);
 
    /**
@@ -179,14 +179,14 @@ public interface VAppTemplateAsyncApi {
    ListenableFuture<LeaseSettingsSection> getLeaseSettingsSection(@EndpointParam URI templateURI);
 
    /**
-    * @see VAppTemplateApi#modifyLeaseSettingsSection(URI, LeaseSettingsSection)
+    * @see VAppTemplateApi#editLeaseSettingsSection(URI, LeaseSettingsSection)
     */
    @PUT
    @Produces(LEASE_SETTINGS_SECTION)
    @Consumes(TASK)
    @Path("/leaseSettingsSection")
    @JAXBResponseParser
-   ListenableFuture<Task> modifyLeaseSettingsSection(@EndpointParam URI templateURI,
+   ListenableFuture<Task> editLeaseSettingsSection(@EndpointParam URI templateURI,
                                                      @BinderParam(BindToXMLPayload.class) LeaseSettingsSection settingsSection);
 
    /**
@@ -260,14 +260,14 @@ public interface VAppTemplateAsyncApi {
    ListenableFuture<ProductSectionList> getProductSections(@EndpointParam URI templateURI);
 
    /**
-    * @see VAppTemplateApi#modifyProductSections(URI, ProductSectionList)
+    * @see VAppTemplateApi#editProductSections(URI, ProductSectionList)
     */
    @PUT
    @Produces(PRODUCT_SECTION_LIST)
    @Consumes(TASK)
    @Path("/productSections")
    @JAXBResponseParser
-   ListenableFuture<Task> modifyProductSections(@EndpointParam URI templateURI,
+   ListenableFuture<Task> editProductSections(@EndpointParam URI templateURI,
                                                 @BinderParam(BindToXMLPayload.class) ProductSectionList sections);
    
    /**

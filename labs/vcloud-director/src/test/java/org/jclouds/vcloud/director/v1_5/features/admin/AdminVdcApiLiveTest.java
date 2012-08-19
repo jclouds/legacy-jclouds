@@ -67,7 +67,7 @@ public class AdminVdcApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    public void cleanUp() throws Exception {
       if (metadataKey != null) {
          try {
-            Task task = metadataApi.deleteEntry(lazyGetVdc().getHref(), metadataKey);
+            Task task = metadataApi.removeEntry(lazyGetVdc().getHref(), metadataKey);
             taskDoneEventually(task);
          } catch (VCloudDirectorException e) {
             logger.warn(e, "Error deleting metadata-value (perhaps it doesn't exist?); continuing...");
@@ -94,7 +94,7 @@ public class AdminVdcApiLiveTest extends BaseVCloudDirectorApiLiveTest {
       AdminVdc vdc = AdminVdc.builder().name(newName).build();
 
       try {
-         Task task = vdcApi.update(vdcUrn, vdc);
+         Task task = vdcApi.edit(vdcUrn, vdc);
          assertTaskSucceeds(task);
 
          AdminVdc modified = vdcApi.get(vdcUrn);
@@ -107,7 +107,7 @@ public class AdminVdcApiLiveTest extends BaseVCloudDirectorApiLiveTest {
       } finally {
          try {
             AdminVdc restorableVdc = AdminVdc.builder().name(origName).build();
-            Task task = vdcApi.update(vdcUrn, restorableVdc);
+            Task task = vdcApi.edit(vdcUrn, restorableVdc);
             assertTaskSucceeds(task);
          } catch (Exception e) {
             if (exception != null) {
@@ -122,15 +122,15 @@ public class AdminVdcApiLiveTest extends BaseVCloudDirectorApiLiveTest {
 
    // TODO insufficient permissions to test
    @Test(description = "DELETE /admin/vdc/{id}", enabled = false)
-   public void testDeleteVdc() throws Exception {
-      // TODO Need to have a VDC that we're happy to delete!
-      Task task = vdcApi.delete(vdcUrn);
+   public void testRemoveVdc() throws Exception {
+      // TODO Need to have a VDC that we're happy to remove!
+      Task task = vdcApi.remove(vdcUrn);
       assertTaskSucceeds(task);
 
       try {
          vdcApi.get(vdcUrn);
       } catch (VCloudDirectorException e) {
-         // success; unreachable because it has been deleted
+         // success; unreachable because it has been removed
          // TODO: ^^ wrong. this should return null
       }
    }
@@ -138,7 +138,7 @@ public class AdminVdcApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    // TODO insufficient permissions to test
    @Test(description = "DISABLE/ENABLE /admin/vdc/{id}", enabled = false)
    public void testDisableAndEnableVdc() throws Exception {
-      // TODO Need to have a VDC that we're happy to delete!
+      // TODO Need to have a VDC that we're happy to remove!
       Exception exception = null;
 
       try {
@@ -205,10 +205,10 @@ public class AdminVdcApiLiveTest extends BaseVCloudDirectorApiLiveTest {
 
    // TODO insufficient permissions to test
    @Test(description = "DELETE /admin/vdc/{id}/metadata/{key}", dependsOnMethods = { "testSetMetadataValue" }, enabled = false)
-   public void testDeleteMetadataValue() throws Exception {
-      // TODO Remove dependency on other tests; make cleanUp delete a list of metadata entries?
+   public void testRemoveMetadataValue() throws Exception {
+      // TODO Remove dependency on other tests; make cleanUp remove a list of metadata entries?
 
-      Task task = metadataApi.deleteEntry(lazyGetVdc().getHref(), metadataKey);
+      Task task = metadataApi.removeEntry(lazyGetVdc().getHref(), metadataKey);
       assertTaskSucceeds(task);
 
       try {

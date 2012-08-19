@@ -41,7 +41,7 @@ import org.jclouds.vcloud.director.v1_5.features.MetadataApi;
 public interface AdminCatalogApi extends CatalogApi {
 
    /**
-    * Creates a catalog in an organization. The catalog will always be created in unpublished state.
+    * Creates a catalog in an organization. The catalog will always be addd in unpublished state.
     * 
     * <pre>
     * POST /admin/org/{id}/catalogs
@@ -51,9 +51,9 @@ public interface AdminCatalogApi extends CatalogApi {
     *           the urn for the org
     * @return contains a , which will point to the running asynchronous creation operation.
     */
-   AdminCatalog createCatalogInOrg(AdminCatalog catalog, String orgUrn);
+   AdminCatalog addCatalogToOrg(AdminCatalog catalog, String orgUrn);
 
-   AdminCatalog createCatalogInOrg(AdminCatalog catalog, URI catalogAdminHref);
+   AdminCatalog addCatalogToOrg(AdminCatalog catalog, URI catalogAdminHref);
 
    /**
     * Retrieves a catalog.
@@ -81,22 +81,22 @@ public interface AdminCatalogApi extends CatalogApi {
     * PUT /admin/catalog/{id}
     * </pre>
     * 
-    * @return the updated catalog
+    * @return the edited catalog
     */
-   AdminCatalog update(String catalogUrn, AdminCatalog catalog);
+   AdminCatalog edit(String catalogUrn, AdminCatalog catalog);
 
-   AdminCatalog update(URI catalogAdminHref, AdminCatalog catalog);
+   AdminCatalog edit(URI catalogAdminHref, AdminCatalog catalog);
 
    /**
-    * Deletes a catalog. The catalog could be deleted if it is either published or unpublished.
+    * Deletes a catalog. The catalog could be removed if it is either published or unpublished.
     * 
     * <pre>
     * DELETE /admin/catalog/{id}
     * </pre>
     */
-   void delete(String catalogUrn);
+   void remove(String catalogUrn);
 
-   void delete(URI catalogAdminHref);
+   void remove(URI catalogAdminHref);
 
    /**
     * Retrieves the owner of a catalog.
@@ -144,9 +144,9 @@ public interface AdminCatalogApi extends CatalogApi {
     *
     * @return the control access information
     */
-   ControlAccessParams modifyAccessControl(String catalogUrn, ControlAccessParams params);
+   ControlAccessParams editAccessControl(String catalogUrn, ControlAccessParams params);
 
-   ControlAccessParams modifyAccessControl(URI catalogAdminHref, ControlAccessParams params);
+   ControlAccessParams editAccessControl(URI catalogAdminHref, ControlAccessParams params);
 
    /**
     * Retrieves the catalog control access information.

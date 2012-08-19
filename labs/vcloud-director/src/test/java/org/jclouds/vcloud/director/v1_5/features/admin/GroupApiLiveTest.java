@@ -65,11 +65,11 @@ public class GroupApiLiveTest extends BaseVCloudDirectorApiLiveTest {
 //      OrgLdapSettings newLdapSettings = oldLdapSettings.toBuilder()
 //         .ldapMode(OrgLdapSettings.LdapMode.SYSTEM)  
 //         .build();
-//      context.getApi().getAdminOrgApi().updateLdapSettings(newLdapSettings);
+//      context.getApi().getAdminOrgApi().editLdapSettings(newLdapSettings);
    }
    
    @Test(description = "POST /admin/org/{id}/groups")
-   public void testCreateGroup() {
+   public void testAddGroup() {
       fail("LDAP not configured, group api isn't currently testable.");
 //      group = groupApi.createGroup(orgUri, Group.builder()
 //         .build();
@@ -77,7 +77,7 @@ public class GroupApiLiveTest extends BaseVCloudDirectorApiLiveTest {
       Checks.checkGroup(group);
    }
    
-   @Test(description = "GET /admin/group/{id}", dependsOnMethods = { "testCreateGroup" })
+   @Test(description = "GET /admin/group/{id}", dependsOnMethods = { "testAddGroup" })
    public void testGetGroup() {
       group = groupApi.getGroup(groupRef.getHref());
       
@@ -85,7 +85,7 @@ public class GroupApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    }
    
    @Test(description = "PUT /admin/group/{id}", dependsOnMethods = { "testGetGroup" } )
-   public void testUpdateGroup() {
+   public void testEditGroup() {
       String oldName = group.getName();
       String newName = "new "+oldName;
       String oldDescription = group.getDescription();
@@ -98,7 +98,7 @@ public class GroupApiLiveTest extends BaseVCloudDirectorApiLiveTest {
                .description(newDescription)
                .build();
          
-         group = groupApi.updateGroup(group.getHref(), group);
+         group = groupApi.editGroup(group.getHref(), group);
          
          assertTrue(equal(group.getName(), newName), String.format(OBJ_FIELD_UPDATABLE, GROUP, "name"));
          assertTrue(equal(group.getDescription(), newDescription),
@@ -113,13 +113,13 @@ public class GroupApiLiveTest extends BaseVCloudDirectorApiLiveTest {
                .description(oldDescription)
                .build();
          
-         group = groupApi.updateGroup(group.getHref(), group);
+         group = groupApi.editGroup(group.getHref(), group);
       }
    }
    
-   @Test(description = "DELETE /admin/group/{id}", dependsOnMethods = { "testUpdateGroup" } )
-   public void testDeleteGroup() {
-      groupApi.deleteGroup(groupRef.getHref());
+   @Test(description = "DELETE /admin/group/{id}", dependsOnMethods = { "testEditGroup" } )
+   public void testRemoveGroup() {
+      groupApi.removeGroup(groupRef.getHref());
       
       // TODO stronger assertion of error expected
 //      Error expected = Error.builder()

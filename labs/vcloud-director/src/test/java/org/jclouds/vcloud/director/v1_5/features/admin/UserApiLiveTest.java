@@ -70,7 +70,7 @@ public class UserApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    public void cleanUp() throws Exception {
       if (user != null) {
          try {
-            userApi.delete(user.getHref());
+            userApi.remove(user.getHref());
          } catch (Exception e) {
             logger.warn(e, "Error deleting user '%s'", user.getName());
          }
@@ -78,13 +78,13 @@ public class UserApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    }
    
    @Test(description = "POST /admin/org/{id}/users")
-   public void testCreateUser() {
-      User newUser = randomTestUser("testCreateUser");
-      user = userApi.createUserInOrg(newUser, org.getId());
+   public void testAddUser() {
+      User newUser = randomTestUser("testAddUser");
+      user = userApi.addUserToOrg(newUser, org.getId());
       checkUser(newUser);
    }
    
-   @Test(description = "GET /admin/user/{id}", dependsOnMethods = { "testCreateUser" })
+   @Test(description = "GET /admin/user/{id}", dependsOnMethods = { "testAddUser" })
    public void testGetUser() {
       user = userApi.get(user.getHref());
       
@@ -92,7 +92,7 @@ public class UserApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    }
  
    @Test(description = "PUT /admin/user/{id}", dependsOnMethods = { "testGetUser" })
-   public void testUpdateUser() {
+   public void testEditUser() {
       User oldUser = user.toBuilder().build();
       User newUser = user.toBuilder()
          .fullName("new"+oldUser.getFullName())
@@ -111,7 +111,7 @@ public class UserApiLiveTest extends BaseVCloudDirectorApiLiveTest {
          .role(getRoleReferenceFor(DefaultRoles.AUTHOR.value()))
          .build();
       
-      userApi.update(user.getHref(), newUser);
+      userApi.edit(user.getHref(), newUser);
       user = userApi.get(user.getHref());
       
       checkUser(user);
@@ -148,7 +148,7 @@ public class UserApiLiveTest extends BaseVCloudDirectorApiLiveTest {
       sessionApi.logoutSessionWithToken(sessionWithToken.getSession().getHref(), sessionWithToken.getToken());
    }
  
-   @Test(description = "POST /admin/user/{id}/action/unlock", dependsOnMethods = { "testUpdateUser" })
+   @Test(description = "POST /admin/user/{id}/action/unlock", dependsOnMethods = { "testEditUser" })
    public void testUnlockUser() {
       // Need to know how many times to fail login to lock account
       AdminOrgApi adminOrgApi = adminContext.getApi().getOrgApi();
@@ -164,7 +164,7 @@ public class UserApiLiveTest extends BaseVCloudDirectorApiLiveTest {
       if (!settings.isAccountLockoutEnabled()) {
          settingsToRevertTo = settings;
          settings = settings.toBuilder().accountLockoutEnabled(true).invalidLoginsBeforeLockout(5).build();
-         settings = adminOrgApi.updatePasswordPolicy(org.getId(), settings);
+         settings = adminOrgApi.editPasswordPolicy(org.getId(), settings);
       }
 
       assertTrue(settings.isAccountLockoutEnabled());
@@ -202,21 +202,21 @@ public class UserApiLiveTest extends BaseVCloudDirectorApiLiveTest {
       
       // Return account settings to the previous values, if necessary
       if (settingsToRevertTo != null) {
-         adminOrgApi.updatePasswordPolicy(org.getId(), settingsToRevertTo);
+         adminOrgApi.editPasswordPolicy(org.getId(), settingsToRevertTo);
       }
    }
  
-   @Test(description = "DELETE /admin/user/{id}", dependsOnMethods = { "testCreateUser" })
-   public void testDeleteUser() {
-      // Create a user to be deleted (so we remove dependencies on test ordering)
-      User newUser = randomTestUser("testDeleteUser"+getTestDateTimeStamp());
-      User userToBeDeleted = userApi.createUserInOrg(newUser, org.getId());
+   @Test(description = "DELETE /admin/user/{id}", dependsOnMethods = { "testAddUser" })
+   public void testRemoveUser() {
+      // Create a user to be removed (so we remove dependencies on test ordering)
+      User newUser = randomTestUser("testRemoveUser"+getTestDateTimeStamp());
+      User userToBeDeleted = userApi.addUserToOrg(newUser, org.getId());
 
       // Delete the user
-      userApi.delete(userToBeDeleted.getHref());
+      userApi.remove(userToBeDeleted.getHref());
 
       // Confirm cannot no longer be accessed 
-      User deleted = userApi.get(userToBeDeleted.getHref());
-      assertNull(deleted);
+      User removed = userApi.get(userToBeDeleted.getHref());
+      assertNull(removed);
    }
 }

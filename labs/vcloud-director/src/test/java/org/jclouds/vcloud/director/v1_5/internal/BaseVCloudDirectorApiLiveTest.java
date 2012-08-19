@@ -481,7 +481,7 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
    protected void cleanUpVAppTemplate(VAppTemplate vAppTemplate) {
       VAppTemplateApi vappTemplateApi = context.getApi().getVAppTemplateApi();
       try {
-	      Task task = vappTemplateApi.deleteVappTemplate(vAppTemplate.getHref());
+	      Task task = vappTemplateApi.removeVappTemplate(vAppTemplate.getHref());
 	      taskDoneEventually(task);
       } catch (Exception e) {
          logger.warn(e, "Error deleting template '%s'", vAppTemplate.getName());
@@ -499,12 +499,12 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
       VApp vApp = vAppApi.getVApp(vAppURI); // Refresh
       if (vApp == null) {
          logger.info("Cannot find VApp at %s", vAppURI.getPath());
-         return; // Presumably vApp has already been deleted. Ignore.
+         return; // Presumably vApp has already been removed. Ignore.
       }
       logger.debug("Deleting VApp %s (%s)", vApp.getName(), vAppURI.getPath());
 
       // Wait for busy tasks to complete (don't care if it's failed or successful)
-      // Otherwise, get error on delete "entity is busy completing an operation.
+      // Otherwise, get error on remove "entity is busy completing an operation.
       if (vApp.getTasks() != null) {
          for (Task task : vApp.getTasks()) {
             if (!taskDoneEventually(task)) {
@@ -539,7 +539,7 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
       }
 
       try {
-         Task task = vAppApi.deleteVApp(vAppURI);
+         Task task = vAppApi.removeVApp(vAppURI);
          taskDoneEventually(task);
          vAppNames.remove(vApp.getName());
          logger.info("Deleted VApp %s", vApp.getName());

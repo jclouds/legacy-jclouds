@@ -83,7 +83,7 @@ public class AdminNetworkApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    
    // TODO: this test is far from exhaustive
    @Test(description = "PUT /admin/network/{id}" )
-   public void testUpdateNetwork() {
+   public void testEditNetwork() {
       //TODO: ensure network instanceof OrgNetwork, may require queries
       assertTrue(network instanceof OrgNetwork, String.format(URN_REQ_LIVE, "OrgNetwork"));
       
@@ -92,49 +92,49 @@ public class AdminNetworkApiLiveTest extends BaseVCloudDirectorApiLiveTest {
             .tasks(Collections.<Task>emptySet())
             .build();
       
-      OrgNetwork updateNetwork = getMutatedOrgNetwork(oldNetwork);
+      OrgNetwork editNetwork = getMutatedOrgNetwork(oldNetwork);
       
       try {
-         Task updateNetworkTask = networkApi.update(networkUrn, updateNetwork);
-         Checks.checkTask(updateNetworkTask);
-         assertTrue(retryTaskSuccess.apply(updateNetworkTask), String.format(TASK_COMPLETE_TIMELY, "updateNetworkTask"));
+         Task editNetworkTask = networkApi.edit(networkUrn, editNetwork);
+         Checks.checkTask(editNetworkTask);
+         assertTrue(retryTaskSuccess.apply(editNetworkTask), String.format(TASK_COMPLETE_TIMELY, "editNetworkTask"));
          network = networkApi.get(networkUrn);
          
          Checks.checkOrgNetwork(Network.<OrgNetwork>toSubType(network));
          
          assertTrue(equal(network.getConfiguration().getIpScope(), 
-               updateNetwork.getConfiguration().getIpScope()), 
+               editNetwork.getConfiguration().getIpScope()), 
                String.format(OBJ_FIELD_UPDATABLE, NETWORK+".configuration", "ipScope"));
          assertTrue(equal(network.getConfiguration().getParentNetwork(), 
-               updateNetwork.getConfiguration().getParentNetwork()), 
+               editNetwork.getConfiguration().getParentNetwork()), 
                String.format(OBJ_FIELD_UPDATABLE, NETWORK+".configuration", "parentNetwork"));
          assertTrue(equal(network.getConfiguration().getFenceMode(), 
-               updateNetwork.getConfiguration().getFenceMode()), 
+               editNetwork.getConfiguration().getFenceMode()), 
                String.format(OBJ_FIELD_UPDATABLE, NETWORK+".configuration", "fenceMode"));
          assertTrue(equal(network.getConfiguration().retainNetInfoAcrossDeployments(), 
-               updateNetwork.getConfiguration().retainNetInfoAcrossDeployments()), 
+               editNetwork.getConfiguration().retainNetInfoAcrossDeployments()), 
                String.format(OBJ_FIELD_UPDATABLE, NETWORK+".configuration", "retainNetInfoAcrossDeployments"));
          assertTrue(equal(network.getConfiguration().getNetworkFeatures(), 
-               updateNetwork.getConfiguration().getNetworkFeatures()), 
+               editNetwork.getConfiguration().getNetworkFeatures()), 
                String.format(OBJ_FIELD_UPDATABLE, NETWORK+".configuration", "networkFeatures"));
          assertTrue(equal(network.getConfiguration().getSyslogServerSettings(), 
-               updateNetwork.getConfiguration().getSyslogServerSettings()), 
+               editNetwork.getConfiguration().getSyslogServerSettings()), 
                String.format(OBJ_FIELD_UPDATABLE, NETWORK+".configuration", "syslogServerSettings"));
          assertTrue(equal(network.getConfiguration().getRouterInfo(), 
-               updateNetwork.getConfiguration().getRouterInfo()), 
+               editNetwork.getConfiguration().getRouterInfo()), 
                String.format(OBJ_FIELD_UPDATABLE, NETWORK+".configuration", "routerInfo"));
          // FIXME: fails
 //      assertTrue(equal(Network.<OrgNetwork>toSubType(network).getNetworkPool(), 
-//            updateNetwork.getNetworkPool()), 
+//            editNetwork.getNetworkPool()), 
 //            String.format(OBJ_FIELD_UPDATABLE, NETWORK, "networkPool"));
          
 //      assertTrue(equal(Network.<OrgNetwork>toSubType(network).getAllowedExternalIpAddresses(), 
-//            updateNetwork.getAllowedExternalIpAddresses()), 
+//            editNetwork.getAllowedExternalIpAddresses()), 
 //            String.format(OBJ_FIELD_UPDATABLE, NETWORK, "allowedExternalIpAddresses"));
       } finally {
-         Task updateNetworkTask = networkApi.update(networkUrn, oldNetwork);
-         Checks.checkTask(updateNetworkTask);
-         assertTrue(retryTaskSuccess.apply(updateNetworkTask), String.format(TASK_COMPLETE_TIMELY, "updateNetworkTask"));
+         Task editNetworkTask = networkApi.edit(networkUrn, oldNetwork);
+         Checks.checkTask(editNetworkTask);
+         assertTrue(retryTaskSuccess.apply(editNetworkTask), String.format(TASK_COMPLETE_TIMELY, "editNetworkTask"));
          network = networkApi.get(networkUrn);
       }
    }

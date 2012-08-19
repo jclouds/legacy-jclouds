@@ -84,7 +84,7 @@ public class AdminOrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    }
 
    @Test(description = "PUT /admin/org/{id}/settings/email", dependsOnMethods = { "testGetEmailSettings" })
-   public void testUpdateEmailSettings() {
+   public void testEditEmailSettings() {
       boolean isDefaultSmtpServer = emailSettings.isDefaultSmtpServer();
       boolean isDefaultOrgEmail = emailSettings.isDefaultOrgEmail();
       String oldFromEmailAddress = emailSettings.getFromEmailAddress();
@@ -104,7 +104,7 @@ public class AdminOrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
                   .defaultSubjectPrefix(newDefaultSubjectPrefix).isAlertEmailToAllAdmins(!isAlertEmailToAllAdmins)
                   .smtpServerSettings(newSmtpServerSettings).build();
 
-         emailSettings = orgApi.updateEmailSettings(org.getId(), newEmailSettings);
+         emailSettings = orgApi.editEmailSettings(org.getId(), newEmailSettings);
 
          assertTrue(equal(emailSettings.isDefaultSmtpServer(), !isDefaultSmtpServer),
                   String.format(OBJ_FIELD_UPDATABLE, "emailSettings", "isDefaultSmtpServer"));
@@ -128,7 +128,7 @@ public class AdminOrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
                   .defaultSubjectPrefix(oldDefaultSubjectPrefix).isAlertEmailToAllAdmins(isAlertEmailToAllAdmins)
                   .smtpServerSettings(oldSmtpServerSettings).build();
 
-         emailSettings = orgApi.updateEmailSettings(org.getId(), emailSettings);
+         emailSettings = orgApi.editEmailSettings(org.getId(), emailSettings);
       }
    }
 
@@ -140,8 +140,8 @@ public class AdminOrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    }
 
    @Test(description = "PUT /admin/org/{id}/settings/general", dependsOnMethods = { "testGetGeneralSettings" })
-   public void testUpdateGeneralSettings() {
-      // FIXME: canPublishCatalogs does not update
+   public void testEditGeneralSettings() {
+      // FIXME: canPublishCatalogs does not edit
       // boolean canPublishCatalogs = generalSettings.canPublishCatalogs();
       Integer deployedVMQuota = generalSettings.getDeployedVMQuota();
       Integer storedVmQuota = generalSettings.getStoredVmQuota();
@@ -156,7 +156,7 @@ public class AdminOrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
                   .useServerBootSequence(!useServerBootSequence).delayAfterPowerOnSeconds(delayAfterPowerOnSeconds + 1)
                   .build();
 
-         generalSettings = orgApi.updateGeneralSettings(org.getId(), newGeneralSettings);
+         generalSettings = orgApi.editGeneralSettings(org.getId(), newGeneralSettings);
 
          // assertTrue(equal(generalSettings.canPublishCatalogs(), !canPublishCatalogs),
          // String.format(OBJ_FIELD_UPDATABLE,
@@ -181,7 +181,7 @@ public class AdminOrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
                   .useServerBootSequence(useServerBootSequence).delayAfterPowerOnSeconds(delayAfterPowerOnSeconds)
                   .build();
 
-         generalSettings = orgApi.updateGeneralSettings(org.getId(), generalSettings);
+         generalSettings = orgApi.editGeneralSettings(org.getId(), generalSettings);
       }
    }
 
@@ -200,7 +200,7 @@ public class AdminOrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    }
 
    @Test(description = "PUT /admin/org/{id}/settings/passwordPolicy", dependsOnMethods = { "testGetPasswordPolicy" })
-   public void testUpdatePasswordPolicy() {
+   public void testEditPasswordPolicy() {
       boolean accountLockoutEnabled = passwordPolicy.isAccountLockoutEnabled();
       Integer invalidLoginsBeforeLockout = passwordPolicy.getInvalidLoginsBeforeLockout();
       Integer accountLockoutIntervalMinutes = passwordPolicy.getAccountLockoutIntervalMinutes();
@@ -211,7 +211,7 @@ public class AdminOrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
                   .invalidLoginsBeforeLockout(invalidLoginsBeforeLockout + 1)
                   .accountLockoutIntervalMinutes(accountLockoutIntervalMinutes + 1).build();
 
-         passwordPolicy = orgApi.updatePasswordPolicy(org.getId(), newPasswordPolicy);
+         passwordPolicy = orgApi.editPasswordPolicy(org.getId(), newPasswordPolicy);
 
          assertTrue(equal(passwordPolicy.isAccountLockoutEnabled(), !accountLockoutEnabled),
                   String.format(OBJ_FIELD_UPDATABLE, "PasswordPolicySettings", "deleteOnStorageLeaseExpiration"));
@@ -228,7 +228,7 @@ public class AdminOrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
                   .invalidLoginsBeforeLockout(invalidLoginsBeforeLockout)
                   .accountLockoutIntervalMinutes(accountLockoutIntervalMinutes).build();
 
-         passwordPolicy = orgApi.updatePasswordPolicy(org.getId(), passwordPolicy);
+         passwordPolicy = orgApi.editPasswordPolicy(org.getId(), passwordPolicy);
       }
    }
 
@@ -241,7 +241,7 @@ public class AdminOrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
 
    @Test(description = "PUT /admin/org/{id}/settings/vAppLeaseSettings", dependsOnMethods = { "testGetVAppLeaseSettings" })
    // FIXME: fails with 403 forbidden
-   public void testUpdateVAppLeaseSettings() {
+   public void testEditVAppLeaseSettings() {
       boolean deleteOnStorageLeaseExpiration = vAppLeaseSettings.deleteOnStorageLeaseExpiration();
       Integer storageLeaseSeconds = vAppLeaseSettings.getStorageLeaseSeconds();
       Integer deploymentLeaseSeconds = vAppLeaseSettings.getDeploymentLeaseSeconds();
@@ -252,7 +252,7 @@ public class AdminOrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
                   .storageLeaseSeconds(storageLeaseSeconds + 1).deploymentLeaseSeconds(deploymentLeaseSeconds + 1)
                   .build();
 
-         vAppLeaseSettings = orgApi.updateVAppLeaseSettings(org.getId(), newVAppLeaseSettings);
+         vAppLeaseSettings = orgApi.editVAppLeaseSettings(org.getId(), newVAppLeaseSettings);
 
          assertTrue(equal(vAppLeaseSettings.deleteOnStorageLeaseExpiration(), !deleteOnStorageLeaseExpiration),
                   String.format(OBJ_FIELD_UPDATABLE, "vAppLeaseSettings", "deleteOnStorageLeaseExpiration"));
@@ -269,7 +269,7 @@ public class AdminOrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
                   .deleteOnStorageLeaseExpiration(deleteOnStorageLeaseExpiration)
                   .storageLeaseSeconds(storageLeaseSeconds).deploymentLeaseSeconds(deploymentLeaseSeconds).build();
 
-         vAppLeaseSettings = orgApi.updateVAppLeaseSettings(org.getId(), vAppLeaseSettings);
+         vAppLeaseSettings = orgApi.editVAppLeaseSettings(org.getId(), vAppLeaseSettings);
       }
    }
 
@@ -282,7 +282,7 @@ public class AdminOrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
 
    @Test(description = "PUT /admin/org/{id}/settings/vAppTemplateLeaseSettings", dependsOnMethods = { "testGetVAppTemplateLeaseSettings" })
    // FIXME: fails with 403 forbidden
-   public void testUpdateVAppTemplateLeaseSettings() {
+   public void testEditVAppTemplateLeaseSettings() {
       boolean deleteOnStorageLeaseExpiration = vAppTemplateLeaseSettings.deleteOnStorageLeaseExpiration();
       Integer storageLeaseSeconds = vAppTemplateLeaseSettings.getStorageLeaseSeconds();
 
@@ -291,7 +291,7 @@ public class AdminOrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
                   .deleteOnStorageLeaseExpiration(!deleteOnStorageLeaseExpiration)
                   .storageLeaseSeconds(storageLeaseSeconds + 1).build();
 
-         vAppTemplateLeaseSettings = orgApi.updateVAppTemplateLeaseSettings(org.getId(), newVAppTemplateLeaseSettings);
+         vAppTemplateLeaseSettings = orgApi.editVAppTemplateLeaseSettings(org.getId(), newVAppTemplateLeaseSettings);
 
          assertTrue(equal(vAppTemplateLeaseSettings.deleteOnStorageLeaseExpiration(), !deleteOnStorageLeaseExpiration),
                   String.format(OBJ_FIELD_UPDATABLE, "vAppTemplateLeaseSettings", "deleteOnStorageLeaseExpiration"));
@@ -306,7 +306,7 @@ public class AdminOrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
                   .deleteOnStorageLeaseExpiration(deleteOnStorageLeaseExpiration)
                   .storageLeaseSeconds(storageLeaseSeconds).build();
 
-         vAppTemplateLeaseSettings = orgApi.updateVAppTemplateLeaseSettings(org.getId(), vAppTemplateLeaseSettings);
+         vAppTemplateLeaseSettings = orgApi.editVAppTemplateLeaseSettings(org.getId(), vAppTemplateLeaseSettings);
       }
    }
 
@@ -318,7 +318,7 @@ public class AdminOrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    }
 
    @Test(description = "PUT /admin/org/{id}/settings", dependsOnMethods = { "testGetEmailSettings" })
-   public void testUpdateSettings() throws Exception {
+   public void testEditSettings() throws Exception {
       String newFromEmailAddress = "test" + random.nextInt(Integer.MAX_VALUE) + "@test.com";
       Exception exception = null;
 
@@ -326,7 +326,7 @@ public class AdminOrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
          OrgSettings newSettings = OrgSettings.builder()
                   .emailSettings(emailSettings.toBuilder().fromEmailAddress(newFromEmailAddress).build()).build();
 
-         OrgSettings modified = orgApi.updateSettings(org.getId(), newSettings);
+         OrgSettings modified = orgApi.editSettings(org.getId(), newSettings);
 
          Checks.checkOrgSettings(settings);
          assertTrue(equal(modified.getEmailSettings().getFromEmailAddress(), newFromEmailAddress),
@@ -338,7 +338,7 @@ public class AdminOrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
          try {
             OrgSettings restorableSettings = OrgSettings.builder().emailSettings(emailSettings).build();
 
-            settings = orgApi.updateSettings(org.getId(), restorableSettings);
+            settings = orgApi.editSettings(org.getId(), restorableSettings);
          } catch (Exception e) {
             if (exception != null) {
                logger.warn(e, "Error resetting settings; rethrowing original test exception...");

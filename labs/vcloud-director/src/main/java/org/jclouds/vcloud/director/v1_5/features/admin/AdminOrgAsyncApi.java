@@ -98,25 +98,25 @@ public interface AdminOrgAsyncApi extends OrgAsyncApi {
    ListenableFuture<OrgSettings> getSettings(@EndpointParam URI adminOrgHref);
 
    /**
-    * @see AdminOrgApi#updateSettings(String, OrgSettings)
+    * @see AdminOrgApi#editSettings(String, OrgSettings)
     */
    @PUT
    @Path("/settings")
    @Consumes(VCloudDirectorMediaType.ORG_SETTINGS)
    @Produces(VCloudDirectorMediaType.ORG_SETTINGS)
    @JAXBResponseParser
-   ListenableFuture<OrgSettings> updateSettings(@EndpointParam(parser = OrgURNToAdminHref.class) String orgUrn,
+   ListenableFuture<OrgSettings> editSettings(@EndpointParam(parser = OrgURNToAdminHref.class) String orgUrn,
             @BinderParam(BindToXMLPayload.class) OrgSettings settings);
 
    /**
-    * @see AdminOrgApi#updateSettings(URI, OrgSettings)
+    * @see AdminOrgApi#editSettings(URI, OrgSettings)
     */
    @PUT
    @Path("/settings")
    @Consumes(VCloudDirectorMediaType.ORG_SETTINGS)
    @Produces(VCloudDirectorMediaType.ORG_SETTINGS)
    @JAXBResponseParser
-   ListenableFuture<OrgSettings> updateSettings(@EndpointParam URI adminOrgHref,
+   ListenableFuture<OrgSettings> editSettings(@EndpointParam URI adminOrgHref,
             @BinderParam(BindToXMLPayload.class) OrgSettings settings);
 
    /**
@@ -140,26 +140,26 @@ public interface AdminOrgAsyncApi extends OrgAsyncApi {
    ListenableFuture<OrgEmailSettings> getEmailSettings(@EndpointParam URI adminOrgHref);
 
    /**
-    * @see AdminOrgApi#updateEmailSettings(String, OrgEmailSettings)
+    * @see AdminOrgApi#editEmailSettings(String, OrgEmailSettings)
     */
    @PUT
    @Path("/settings/email")
    @Consumes(VCloudDirectorMediaType.ORG_EMAIL_SETTINGS)
    @Produces(VCloudDirectorMediaType.ORG_EMAIL_SETTINGS)
    @JAXBResponseParser
-   ListenableFuture<OrgEmailSettings> updateEmailSettings(
+   ListenableFuture<OrgEmailSettings> editEmailSettings(
             @EndpointParam(parser = OrgURNToAdminHref.class) String orgUrn,
             @BinderParam(BindToXMLPayload.class) OrgEmailSettings settings);
 
    /**
-    * @see AdminOrgApi#updateEmailSettings(URI, OrgEmailSettings)
+    * @see AdminOrgApi#editEmailSettings(URI, OrgEmailSettings)
     */
    @PUT
    @Path("/settings/email")
    @Consumes(VCloudDirectorMediaType.ORG_EMAIL_SETTINGS)
    @Produces(VCloudDirectorMediaType.ORG_EMAIL_SETTINGS)
    @JAXBResponseParser
-   ListenableFuture<OrgEmailSettings> updateEmailSettings(@EndpointParam URI adminOrgHref,
+   ListenableFuture<OrgEmailSettings> editEmailSettings(@EndpointParam URI adminOrgHref,
             @BinderParam(BindToXMLPayload.class) OrgEmailSettings settings);
 
    /**
@@ -184,26 +184,26 @@ public interface AdminOrgAsyncApi extends OrgAsyncApi {
    ListenableFuture<OrgGeneralSettings> getGeneralSettings(@EndpointParam URI adminOrgHref);
 
    /**
-    * @see AdminOrgApi#updateGeneralSettings(String, OrgGeneralSettings)
+    * @see AdminOrgApi#editGeneralSettings(String, OrgGeneralSettings)
     */
    @PUT
    @Path("/settings/general")
    @Consumes(VCloudDirectorMediaType.ORG_GENERAL_SETTINGS)
    @Produces(VCloudDirectorMediaType.ORG_GENERAL_SETTINGS)
    @JAXBResponseParser
-   ListenableFuture<OrgGeneralSettings> updateGeneralSettings(
+   ListenableFuture<OrgGeneralSettings> editGeneralSettings(
             @EndpointParam(parser = OrgURNToAdminHref.class) String orgUrn,
             @BinderParam(BindToXMLPayload.class) OrgGeneralSettings settings);
 
    /**
-    * @see AdminOrgApi#updateGeneralSettings(URI, OrgGeneralSettings)
+    * @see AdminOrgApi#editGeneralSettings(URI, OrgGeneralSettings)
     */
    @PUT
    @Path("/settings/general")
    @Consumes(VCloudDirectorMediaType.ORG_GENERAL_SETTINGS)
    @Produces(VCloudDirectorMediaType.ORG_GENERAL_SETTINGS)
    @JAXBResponseParser
-   ListenableFuture<OrgGeneralSettings> updateGeneralSettings(@EndpointParam URI adminOrgHref,
+   ListenableFuture<OrgGeneralSettings> editGeneralSettings(@EndpointParam URI adminOrgHref,
             @BinderParam(BindToXMLPayload.class) OrgGeneralSettings settings);
 
    /**
@@ -248,26 +248,26 @@ public interface AdminOrgAsyncApi extends OrgAsyncApi {
    ListenableFuture<OrgPasswordPolicySettings> getPasswordPolicy(@EndpointParam URI adminOrgHref);
 
    /**
-    * @see AdminOrgApi#updatePasswordPolicy(String, OrgPasswordPolicySettings)
+    * @see AdminOrgApi#editPasswordPolicy(String, OrgPasswordPolicySettings)
     */
    @PUT
    @Path("/settings/passwordPolicy")
    @Consumes(VCloudDirectorMediaType.ORG_PASSWORD_POLICY_SETTINGS)
    @Produces(VCloudDirectorMediaType.ORG_PASSWORD_POLICY_SETTINGS)
    @JAXBResponseParser
-   ListenableFuture<OrgPasswordPolicySettings> updatePasswordPolicy(
+   ListenableFuture<OrgPasswordPolicySettings> editPasswordPolicy(
             @EndpointParam(parser = OrgURNToAdminHref.class) String orgUrn,
             @BinderParam(BindToXMLPayload.class) OrgPasswordPolicySettings settings);
 
    /**
-    * @see AdminOrgApi#updatePasswordPolicy(URI, OrgPasswordPolicySettings)
+    * @see AdminOrgApi#editPasswordPolicy(URI, OrgPasswordPolicySettings)
     */
    @PUT
    @Path("/settings/passwordPolicy")
    @Consumes(VCloudDirectorMediaType.ORG_PASSWORD_POLICY_SETTINGS)
    @Produces(VCloudDirectorMediaType.ORG_PASSWORD_POLICY_SETTINGS)
    @JAXBResponseParser
-   ListenableFuture<OrgPasswordPolicySettings> updatePasswordPolicy(@EndpointParam URI adminOrgHref,
+   ListenableFuture<OrgPasswordPolicySettings> editPasswordPolicy(@EndpointParam URI adminOrgHref,
             @BinderParam(BindToXMLPayload.class) OrgPasswordPolicySettings settings);
 
    /**
@@ -292,26 +292,26 @@ public interface AdminOrgAsyncApi extends OrgAsyncApi {
    ListenableFuture<OrgLeaseSettings> getVAppLeaseSettings(@EndpointParam URI adminOrgHref);
 
    /**
-    * @see AdminOrgApi#updateVAppLeaseSettings(String, OrgVAppLeaseSettings)
+    * @see AdminOrgApi#editVAppLeaseSettings(String, OrgVAppLeaseSettings)
     */
    @PUT
    @Path("/settings/vAppLeaseSettings")
    @Consumes(VCloudDirectorMediaType.ORG_LEASE_SETTINGS)
    @Produces(VCloudDirectorMediaType.ORG_LEASE_SETTINGS)
    @JAXBResponseParser
-   ListenableFuture<OrgLeaseSettings> updateVAppLeaseSettings(
+   ListenableFuture<OrgLeaseSettings> editVAppLeaseSettings(
             @EndpointParam(parser = OrgURNToAdminHref.class) String orgUrn,
             @BinderParam(BindToXMLPayload.class) OrgLeaseSettings settings);
 
    /**
-    * @see AdminOrgApi#updateVAppLeaseSettings(URI, OrgVAppLeaseSettings)
+    * @see AdminOrgApi#editVAppLeaseSettings(URI, OrgVAppLeaseSettings)
     */
    @PUT
    @Path("/settings/vAppLeaseSettings")
    @Consumes(VCloudDirectorMediaType.ORG_LEASE_SETTINGS)
    @Produces(VCloudDirectorMediaType.ORG_LEASE_SETTINGS)
    @JAXBResponseParser
-   ListenableFuture<OrgLeaseSettings> updateVAppLeaseSettings(@EndpointParam URI adminOrgHref,
+   ListenableFuture<OrgLeaseSettings> editVAppLeaseSettings(@EndpointParam URI adminOrgHref,
             @BinderParam(BindToXMLPayload.class) OrgLeaseSettings settings);
 
    /**
@@ -336,26 +336,26 @@ public interface AdminOrgAsyncApi extends OrgAsyncApi {
    ListenableFuture<OrgVAppTemplateLeaseSettings> getVAppTemplateLeaseSettings(@EndpointParam URI adminOrgHref);
 
    /**
-    * @see AdminOrgApi#updateVAppTemplateLeaseSettings(String, OrgVAppTemplateLeaseSettings)
+    * @see AdminOrgApi#editVAppTemplateLeaseSettings(String, OrgVAppTemplateLeaseSettings)
     */
    @PUT
    @Path("/settings/vAppTemplateLeaseSettings")
    @Consumes(VCloudDirectorMediaType.ORG_VAPP_TEMPLATE_LEASE_SETTINGS)
    @Produces(VCloudDirectorMediaType.ORG_VAPP_TEMPLATE_LEASE_SETTINGS)
    @JAXBResponseParser
-   ListenableFuture<OrgVAppTemplateLeaseSettings> updateVAppTemplateLeaseSettings(
+   ListenableFuture<OrgVAppTemplateLeaseSettings> editVAppTemplateLeaseSettings(
             @EndpointParam(parser = OrgURNToAdminHref.class) String orgUrn,
             @BinderParam(BindToXMLPayload.class) OrgVAppTemplateLeaseSettings settings);
 
    /**
-    * @see AdminOrgApi#updateVAppTemplateLeaseSettings(URI, OrgVAppTemplateLeaseSettings)
+    * @see AdminOrgApi#editVAppTemplateLeaseSettings(URI, OrgVAppTemplateLeaseSettings)
     */
    @PUT
    @Path("/settings/vAppTemplateLeaseSettings")
    @Consumes(VCloudDirectorMediaType.ORG_VAPP_TEMPLATE_LEASE_SETTINGS)
    @Produces(VCloudDirectorMediaType.ORG_VAPP_TEMPLATE_LEASE_SETTINGS)
    @JAXBResponseParser
-   ListenableFuture<OrgVAppTemplateLeaseSettings> updateVAppTemplateLeaseSettings(@EndpointParam URI adminOrgHref,
+   ListenableFuture<OrgVAppTemplateLeaseSettings> editVAppTemplateLeaseSettings(@EndpointParam URI adminOrgHref,
             @BinderParam(BindToXMLPayload.class) OrgVAppTemplateLeaseSettings settings);
 
    /**

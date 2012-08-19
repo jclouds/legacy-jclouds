@@ -70,13 +70,13 @@ public class OrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    public void cleanUp() throws Exception {
       if (adminMembersSet) {
          try {
-            Task delete = adminContext.getApi().getOrgApi().getMetadataApi().deleteEntry(toAdminUri(orgURI), "KEY");
-            taskDoneEventually(delete);
+            Task remove = adminContext.getApi().getOrgApi().getMetadataApi().removeEntry(toAdminUri(orgURI), "KEY");
+            taskDoneEventually(remove);
          } catch (Exception e) {
             logger.warn(e, "Error when deleting metadata entry");
          }
          try {
-            adminContext.getApi().getCatalogApi().delete(catalogUrn);
+            adminContext.getApi().getCatalogApi().remove(catalogUrn);
          } catch (Exception e) {
             logger.warn(e, "Error when deleting catalog'%s': %s", catalogUrn);
          }
@@ -90,7 +90,7 @@ public class OrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    private OrgList orgList;
    private URI orgURI;
    private Org org;
-   private boolean adminMembersSet = false; // track if test entities have been created
+   private boolean adminMembersSet = false; // track if test entities have been addd
 
    @Test(description = "GET /org")
    public void testGetOrgList() {
@@ -138,7 +138,7 @@ public class OrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
 
       AdminCatalog newCatalog = AdminCatalog.builder().name("Test Catalog " + getTestDateTimeStamp())
                .description("created by testOrg()").build();
-      newCatalog = adminContext.getApi().getCatalogApi().createCatalogInOrg(newCatalog, org.getId());
+      newCatalog = adminContext.getApi().getCatalogApi().addCatalogToOrg(newCatalog, org.getId());
 
       catalogUrn = newCatalog.getId();
 

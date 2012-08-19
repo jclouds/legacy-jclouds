@@ -121,8 +121,8 @@ public class VdcApiLiveTest extends BaseVCloudDirectorApiLiveTest {
 
       if (metadataSet) {
          try {
-            Task delete = adminContext.getApi().getVdcApi().getMetadataApi().deleteEntry(lazyGetVdc().getHref(), "key");
-            taskDoneEventually(delete);
+            Task remove = adminContext.getApi().getVdcApi().getMetadataApi().removeEntry(lazyGetVdc().getHref(), "key");
+            taskDoneEventually(remove);
          } catch (Exception e) {
             logger.warn(e, "Error deleting metadata entry");
          }

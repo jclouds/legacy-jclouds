@@ -53,7 +53,7 @@ public interface GroupAsyncApi {
    @Consumes(VCloudDirectorMediaType.GROUP)
    @Produces(VCloudDirectorMediaType.GROUP)
    @JAXBResponseParser
-   ListenableFuture<Group> createGroup(@EndpointParam URI adminOrgUri, 
+   ListenableFuture<Group> addGroup(@EndpointParam URI adminOrgUri, 
          @BinderParam(BindToXMLPayload.class) Group group);
 
    /**
@@ -66,20 +66,20 @@ public interface GroupAsyncApi {
    ListenableFuture<Group> getGroup(@EndpointParam URI groupUri);
 
    /**
-    * @see GroupApi#updateGroup(URI, Group)
+    * @see GroupApi#editGroup(URI, Group)
     */
    @PUT
    @Consumes(VCloudDirectorMediaType.GROUP)
    @Produces(VCloudDirectorMediaType.GROUP)
    @JAXBResponseParser
-   ListenableFuture<Group> updateGroup(@EndpointParam URI groupRef, 
+   ListenableFuture<Group> editGroup(@EndpointParam URI groupRef, 
          @BinderParam(BindToXMLPayload.class) Group group);
 
    /**
-    * @see GroupApi#deleteGroup(URI)
+    * @see GroupApi#removeGroup(URI)
     */
    @DELETE
    @Consumes
    @JAXBResponseParser
-   ListenableFuture<Void> deleteGroup(@EndpointParam URI groupRef);
+   ListenableFuture<Void> removeGroup(@EndpointParam URI groupRef);
 }

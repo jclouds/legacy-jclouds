@@ -108,30 +108,30 @@ public class AdminNetworkApiExpectTest extends VCloudDirectorAdminApiExpectTest 
       assertEquals(api.getNetworkApi().get(networkUrn), network());
    }
    
-   HttpRequest update = HttpRequest.builder()
+   HttpRequest edit = HttpRequest.builder()
             .method("PUT")
             .endpoint(networkAdminHref )
             .addHeader("Accept", TASK)
             .addHeader("x-vcloud-authorization", token)
             .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
-            .payload(payloadFromResourceWithContentType("/network/admin/updateNetworkSource.xml", ORG_NETWORK))
+            .payload(payloadFromResourceWithContentType("/network/admin/editNetworkSource.xml", ORG_NETWORK))
             .build();
 
-   HttpResponse updateResponse = HttpResponse.builder()
+   HttpResponse editResponse = HttpResponse.builder()
             .statusCode(200)
-            .payload(payloadFromResourceWithContentType("/network/admin/updateNetworkTask.xml", TASK))
+            .payload(payloadFromResourceWithContentType("/network/admin/editNetworkTask.xml", TASK))
             .build();
 
    @Test
-   public void testUpdateNetworkHref() {
-      VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, update, updateResponse);
-      assertEquals(api.getNetworkApi().update(networkAdminHref, updateNetwork()), updateNetworkTask());
+   public void testEditNetworkHref() {
+      VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, edit, editResponse);
+      assertEquals(api.getNetworkApi().edit(networkAdminHref, editNetwork()), editNetworkTask());
    }
    
    @Test
-   public void testUpdateNetworkUrn() {
-      VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, resolveNetwork, resolveNetworkResponse, update, updateResponse);
-      assertEquals(api.getNetworkApi().update(networkUrn, updateNetwork()), updateNetworkTask());
+   public void testEditNetworkUrn() {
+      VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, resolveNetwork, resolveNetworkResponse, edit, editResponse);
+      assertEquals(api.getNetworkApi().edit(networkUrn, editNetwork()), editNetworkTask());
    }
    
    HttpRequest reset = HttpRequest.builder()
@@ -209,7 +209,7 @@ public class AdminNetworkApiExpectTest extends VCloudDirectorAdminApiExpectTest 
          .build();
    }
    
-   public final OrgNetwork updateNetwork() {
+   public final OrgNetwork editNetwork() {
       return network().toBuilder()
             
          .build();
@@ -248,7 +248,7 @@ public class AdminNetworkApiExpectTest extends VCloudDirectorAdminApiExpectTest 
                .build();
    }
    
-   public final Task updateNetworkTask() {
+   public final Task editNetworkTask() {
       return Task.builder()
          .status("running")
          .startTime(dateService.iso8601DateParse("2012-03-14T12:39:23.720-04:00"))

@@ -62,13 +62,13 @@ public interface MediaAsyncApi {
    ListenableFuture<Media> getMedia(@EndpointParam URI uri);
    
    /**
-    * @see MediaApi#createMedia(URI, Media)
+    * @see MediaApi#addMedia(URI, Media)
     */
    @POST
    @Consumes(VCloudDirectorMediaType.MEDIA)
    @Produces(VCloudDirectorMediaType.MEDIA)
    @JAXBResponseParser
-   ListenableFuture<Media> createMedia(@EndpointParam URI link,
+   ListenableFuture<Media> addMedia(@EndpointParam URI link,
          @BinderParam(BindToXMLPayload.class) Media media);
    
    
@@ -84,21 +84,21 @@ public interface MediaAsyncApi {
          @BinderParam(BindToXMLPayload.class) CloneMediaParams params);
    
    /**
-    * @see MediaApi#updateMedia(URI, Media))
+    * @see MediaApi#editMedia(URI, Media))
     */
    @PUT
    @Consumes(VCloudDirectorMediaType.TASK)
    @Produces(VCloudDirectorMediaType.MEDIA)
    @JAXBResponseParser
-   ListenableFuture<Task> updateMedia(@EndpointParam URI uri, @BinderParam(BindToXMLPayload.class) Media media);
+   ListenableFuture<Task> editMedia(@EndpointParam URI uri, @BinderParam(BindToXMLPayload.class) Media media);
    
    /**
-   * @see MediaApi#deleteMedia(URI))
+   * @see MediaApi#removeMedia(URI))
    */
    @DELETE
    @Consumes(VCloudDirectorMediaType.TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> deleteMedia(@EndpointParam URI uri);
+   ListenableFuture<Task> removeMedia(@EndpointParam URI uri);
    
    /**
     * @see MediaApi#getOwner(URI)

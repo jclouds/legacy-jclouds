@@ -188,9 +188,9 @@ public interface VdcApi {
     * 
     * @return The response will return a link to transfer site to be able to continue with uploading the media.
     */
-   Media createMedia(String vdcUrn, Media media);
+   Media addMedia(String vdcUrn, Media media);
    
-   Media createMedia(URI vdcHref, Media media);
+   Media addMedia(URI vdcHref, Media media);
 
    /**
     * @return synchronous access to {@link Metadata.Readable} features

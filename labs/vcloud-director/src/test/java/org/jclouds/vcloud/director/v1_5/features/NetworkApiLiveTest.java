@@ -73,8 +73,8 @@ public class NetworkApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    public void cleanUp() {
       if (metadataSet) {
          try {
-	         Task delete = adminContext.getApi().getNetworkApi().getMetadataApi().deleteEntry(network.getHref(), "key");
-	         taskDoneEventually(delete);
+	         Task remove = adminContext.getApi().getNetworkApi().getMetadataApi().removeEntry(network.getHref(), "key");
+	         taskDoneEventually(remove);
          } catch (Exception e) {
             logger.warn(e, "Error when deleting metadata");
          }

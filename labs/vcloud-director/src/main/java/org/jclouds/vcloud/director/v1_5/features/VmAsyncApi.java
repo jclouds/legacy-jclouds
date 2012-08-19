@@ -83,7 +83,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface VmAsyncApi {
 
    /**
-    * @see VmApi#getVm(URI)
+    * @see VmApi#get(URI)
     */
    @GET
    @Consumes(VM)
@@ -92,25 +92,25 @@ public interface VmAsyncApi {
    ListenableFuture<Vm> getVm(@EndpointParam URI vmURI);
 
    /**
-    * @see VmApi#modifyVm(URI, Vm)
+    * @see VmApi#edit(URI, Vm)
     */
    @PUT
    @Produces(VM)
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> modifyVm(@EndpointParam URI vmURI,
+   ListenableFuture<Task> editVm(@EndpointParam URI vmURI,
                                    @BinderParam(BindToXMLPayload.class) Vm vApp);
 
    /**
-    * @see VmApi#deleteVm(URI)
+    * @see VmApi#remove(URI)
     */
    @DELETE
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> deleteVm(@EndpointParam URI vmURI);
+   ListenableFuture<Task> removeVm(@EndpointParam URI vmURI);
 
    /**
-    * @see VmApi#consolidateVm(URI)
+    * @see VmApi#consolidate(URI)
     */
    @POST
    @Path("/action/consolidate")
@@ -148,7 +148,7 @@ public interface VmAsyncApi {
    ListenableFuture<Task> installVMwareTools(@EndpointParam URI vmURI);
 
    /**
-    * @see VmApi#relocateVm(URI, RelocateParams)
+    * @see VmApi#relocate(URI, RelocateParams)
     */
    @POST
    @Path("/action/relocate")
@@ -243,14 +243,14 @@ public interface VmAsyncApi {
    ListenableFuture<GuestCustomizationSection> getGuestCustomizationSection(@EndpointParam URI vmURI);
 
    /**
-    * @see VmApi#modifyGuestCustomizationSection(URI, GuestCustomizationSection)
+    * @see VmApi#editGuestCustomizationSection(URI, GuestCustomizationSection)
     */
    @PUT
    @Path("/guestCustomizationSection")
    @Produces(GUEST_CUSTOMIZATION_SECTION)
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> modifyGuestCustomizationSection(@EndpointParam URI vmURI,
+   ListenableFuture<Task> editGuestCustomizationSection(@EndpointParam URI vmURI,
                                                           @BinderParam(BindToXMLPayload.class) GuestCustomizationSection section);
 
    /**
@@ -286,14 +286,14 @@ public interface VmAsyncApi {
    ListenableFuture<NetworkConnectionSection> getNetworkConnectionSection(@EndpointParam URI vmURI);
 
    /**
-    * @see VmApi#modifyNetworkConnectionSection(URI, NetworkConnectionSection)
+    * @see VmApi#editNetworkConnectionSection(URI, NetworkConnectionSection)
     */
    @PUT
    @Path("/networkConnectionSection")
    @Produces(NETWORK_CONNECTION_SECTION)
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> modifyNetworkConnectionSection(@EndpointParam URI vmURI,
+   ListenableFuture<Task> editNetworkConnectionSection(@EndpointParam URI vmURI,
                                                          @BinderParam(BindToXMLPayload.class) NetworkConnectionSection section);
 
    /**
@@ -307,14 +307,14 @@ public interface VmAsyncApi {
    ListenableFuture<OperatingSystemSection> getOperatingSystemSection(@EndpointParam URI vmURI);
 
    /**
-    * @see VmApi#modifyOperatingSystemSection(URI, OperatingSystemSection)
+    * @see VmApi#editOperatingSystemSection(URI, OperatingSystemSection)
     */
    @PUT
    @Path("/operatingSystemSection")
    @Produces(OPERATING_SYSTEM_SECTION)
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> modifyOperatingSystemSection(@EndpointParam URI vmURI,
+   ListenableFuture<Task> editOperatingSystemSection(@EndpointParam URI vmURI,
                                                        @BinderParam(BindToXMLPayload.class) OperatingSystemSection section);
 
    /**
@@ -328,14 +328,14 @@ public interface VmAsyncApi {
    ListenableFuture<ProductSectionList> getProductSections(@EndpointParam URI vmURI);
 
    /**
-    * @see VmApi#modifyProductSections(URI, ProductSectionList)
+    * @see VmApi#editProductSections(URI, ProductSectionList)
     */
    @PUT
    @Path("/productSections")
    @Produces(PRODUCT_SECTION_LIST)
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> modifyProductSections(@EndpointParam URI vmURI,
+   ListenableFuture<Task> editProductSections(@EndpointParam URI vmURI,
                                                 @BinderParam(BindToXMLPayload.class) ProductSectionList sectionList);
 
    /**
@@ -400,14 +400,14 @@ public interface VmAsyncApi {
    ListenableFuture<VirtualHardwareSection> getVirtualHardwareSection(@EndpointParam URI vmURI);
 
    /**
-    * @see VmApi#modifyVirtualHardwareSection(URI, VirtualHardwareSection)
+    * @see VmApi#editVirtualHardwareSection(URI, VirtualHardwareSection)
     */
    @PUT
    @Path("/virtualHardwareSection")
    @Produces(VIRTUAL_HARDWARE_SECTION)
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> modifyVirtualHardwareSection(@EndpointParam URI vmURI,
+   ListenableFuture<Task> editVirtualHardwareSection(@EndpointParam URI vmURI,
                                                        @BinderParam(BindToXMLPayload.class) VirtualHardwareSection section);
 
    /**
@@ -421,14 +421,14 @@ public interface VmAsyncApi {
    ListenableFuture<RasdItem> getVirtualHardwareSectionCpu(@EndpointParam URI vmURI);
 
    /**
-    * @see VmApi#modifyVirtualHardwareSectionCpu(URI, ResourceAllocationSettingData)
+    * @see VmApi#editVirtualHardwareSectionCpu(URI, ResourceAllocationSettingData)
     */
    @PUT
    @Path("/virtualHardwareSection/cpu")
    @Produces(OVF_RASD_ITEM)
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> modifyVirtualHardwareSectionCpu(@EndpointParam URI vmURI,
+   ListenableFuture<Task> editVirtualHardwareSectionCpu(@EndpointParam URI vmURI,
                                                           @BinderParam(BindToXMLPayload.class) RasdItem rasd);
 
    /**
@@ -442,14 +442,14 @@ public interface VmAsyncApi {
    ListenableFuture<RasdItemsList> getVirtualHardwareSectionDisks(@EndpointParam URI vmURI);
 
    /**
-    * @see VmApi#modifyVirtualHardwareSectionDisks(URI, RasdItemsList)
+    * @see VmApi#editVirtualHardwareSectionDisks(URI, RasdItemsList)
     */
    @PUT
    @Path("/virtualHardwareSection/disks")
    @Produces(OVF_RASD_ITEMS_LIST)
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> modifyVirtualHardwareSectionDisks(@EndpointParam URI vmURI,
+   ListenableFuture<Task> editVirtualHardwareSectionDisks(@EndpointParam URI vmURI,
                                                             @BinderParam(BindToXMLPayload.class) RasdItemsList rasdItemsList);
 
    /**
@@ -473,14 +473,14 @@ public interface VmAsyncApi {
    ListenableFuture<RasdItem> getVirtualHardwareSectionMemory(@EndpointParam URI vmURI);
 
    /**
-    * @see VmApi#modifyVirtualHardwareSectionMemory(URI, ResourceAllocationSettingData)
+    * @see VmApi#editVirtualHardwareSectionMemory(URI, ResourceAllocationSettingData)
     */
    @PUT
    @Path("/virtualHardwareSection/memory")
    @Produces(OVF_RASD_ITEM)
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> modifyVirtualHardwareSectionMemory(@EndpointParam URI vmURI,
+   ListenableFuture<Task> editVirtualHardwareSectionMemory(@EndpointParam URI vmURI,
                                                              @BinderParam(BindToXMLPayload.class) RasdItem rasd);
 
    /**
@@ -494,14 +494,14 @@ public interface VmAsyncApi {
    ListenableFuture<RasdItemsList> getVirtualHardwareSectionNetworkCards(@EndpointParam URI vmURI);
 
    /**
-    * @see VmApi#modifyVirtualHardwareSectionNetworkCards(URI, RasdItemsList)
+    * @see VmApi#editVirtualHardwareSectionNetworkCards(URI, RasdItemsList)
     */
    @PUT
    @Path("/virtualHardwareSection/networkCards")
    @Produces(OVF_RASD_ITEMS_LIST)
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> modifyVirtualHardwareSectionNetworkCards(@EndpointParam URI vmURI,
+   ListenableFuture<Task> editVirtualHardwareSectionNetworkCards(@EndpointParam URI vmURI,
                                                                    @BinderParam(BindToXMLPayload.class) RasdItemsList rasdItemsList);
 
    /**
@@ -515,14 +515,14 @@ public interface VmAsyncApi {
    ListenableFuture<RasdItemsList> getVirtualHardwareSectionSerialPorts(@EndpointParam URI vmURI);
 
    /**
-    * @see VmApi#modifyVirtualHardwareSectionSerialPorts(URI, RasdItemsList)
+    * @see VmApi#editVirtualHardwareSectionSerialPorts(URI, RasdItemsList)
     */
    @PUT
    @Path("/virtualHardwareSection/serialPorts")
    @Produces(OVF_RASD_ITEMS_LIST)
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> modifyVirtualHardwareSectionSerialPorts(@EndpointParam URI vmURI,
+   ListenableFuture<Task> editVirtualHardwareSectionSerialPorts(@EndpointParam URI vmURI,
                                                                   @BinderParam(BindToXMLPayload.class) RasdItemsList rasdItemsList);
 
    /**

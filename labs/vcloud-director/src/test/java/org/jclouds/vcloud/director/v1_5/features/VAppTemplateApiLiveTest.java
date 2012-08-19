@@ -91,8 +91,8 @@ public class VAppTemplateApiLiveTest extends AbstractVAppApiLiveTest {
    protected void tidyUp() {
       if (key != null) {
          try {
-	         Task delete = vAppTemplateApi.getMetadataApi().deleteEntry(vAppTemplateURI, key);
-	         taskDoneEventually(delete);
+	         Task remove = vAppTemplateApi.getMetadataApi().removeEntry(vAppTemplateURI, key);
+	         taskDoneEventually(remove);
          } catch (Exception e) {
             logger.warn(e, "Error when deleting metadata entry '%s'", key);
          }
@@ -152,7 +152,7 @@ public class VAppTemplateApiLiveTest extends AbstractVAppApiLiveTest {
       ProductSectionList origSections = vAppTemplateApi.getProductSections(vApp.getHref());
       ProductSectionList newSections = origSections.toBuilder().build();
       
-      Task task = vAppTemplateApi.modifyProductSections(vApp.getHref(), newSections);
+      Task task = vAppTemplateApi.editProductSections(vApp.getHref(), newSections);
       assertTaskSucceeds(task);
 
       ProductSectionList modified = vAppTemplateApi.getProductSections(vApp.getHref());
@@ -183,7 +183,7 @@ public class VAppTemplateApiLiveTest extends AbstractVAppApiLiveTest {
       checkMetadata(metadata);
    }
 
-   // implicitly tested by testEditVAppTemplateMetadataValue, which first creates the metadata entry; otherwise no entry may exist
+   // implicitly tested by testEditVAppTemplateMetadataValue, which first adds the metadata entry; otherwise no entry may exist
    @Test(description = "GET /vAppTemplate/{id}/metadata/{key}", dependsOnMethods = { "testGetVAppTemplateMetadata" })
    public void testGetMetadataValue() {
       Metadata metadata = vAppTemplateApi.getMetadataApi().get(vAppTemplateURI);
@@ -235,7 +235,7 @@ public class VAppTemplateApiLiveTest extends AbstractVAppApiLiveTest {
                .description(description)
                .build();
       
-      final Task task = vAppTemplateApi.modifyVAppTemplate(vAppTemplateURI, template);
+      final Task task = vAppTemplateApi.editVAppTemplate(vAppTemplateURI, template);
       assertTaskSucceeds(task);
 
       VAppTemplate newTemplate = vAppTemplateApi.getVAppTemplate(vAppTemplateURI);
@@ -277,8 +277,8 @@ public class VAppTemplateApiLiveTest extends AbstractVAppApiLiveTest {
    }
 
    @Test(description = "DELETE /vAppTemplate/{id}/metadata/{key}", dependsOnMethods = { "testGetMetadataValue" })
-   public void testDeleteVAppTemplateMetadataValue() {
-      final Task deletionTask = vAppTemplateApi.getMetadataApi().deleteEntry(vAppTemplateURI, key);
+   public void testRemoveVAppTemplateMetadataValue() {
+      final Task deletionTask = vAppTemplateApi.getMetadataApi().removeEntry(vAppTemplateURI, key);
       assertTaskSucceeds(deletionTask);
 
       Metadata newMetadata = vAppTemplateApi.getMetadataApi().get(vAppTemplateURI);
@@ -294,7 +294,7 @@ public class VAppTemplateApiLiveTest extends AbstractVAppApiLiveTest {
                .computerName(computerName)
                .build();
       
-      final Task task = vAppTemplateApi.modifyGuestCustomizationSection(vm.getHref(), newSection);
+      final Task task = vAppTemplateApi.editGuestCustomizationSection(vm.getHref(), newSection);
       assertTaskSucceeds(task);
 
       GuestCustomizationSection modified = vAppTemplateApi.getGuestCustomizationSection(vm.getHref());
@@ -314,7 +314,7 @@ public class VAppTemplateApiLiveTest extends AbstractVAppApiLiveTest {
                .storageLeaseInSeconds(storageLeaseInSeconds)
                .build();
       
-      final Task task = vAppTemplateApi.modifyLeaseSettingsSection(vAppTemplateURI, leaseSettingSection);
+      final Task task = vAppTemplateApi.editLeaseSettingsSection(vAppTemplateURI, leaseSettingSection);
       assertTaskSucceeds(task);
       
       LeaseSettingsSection newLeaseSettingsSection = vAppTemplateApi.getLeaseSettingsSection(vAppTemplateURI);
@@ -322,20 +322,20 @@ public class VAppTemplateApiLiveTest extends AbstractVAppApiLiveTest {
    }
 
    @Test(description = "DELETE /vAppTemplate/{id}", dependsOnMethods = { "testGetVAppTemplate" }) 
-   public void testDeleteVAppTemplate() throws Exception {
+   public void testRemoveVAppTemplate() throws Exception {
       VAppTemplate clonedVappTemplate = cloneVAppTemplate(true);
 
-      // Confirm that "get" works pre-delete
+      // Confirm that "get" works pre-remove
       VAppTemplate vAppTemplatePreDelete = vAppTemplateApi.getVAppTemplate(clonedVappTemplate.getHref());
       checkVAppTemplate(vAppTemplatePreDelete);
       
       // Delete the template
-      final Task task = vAppTemplateApi.deleteVappTemplate(clonedVappTemplate.getHref());
+      final Task task = vAppTemplateApi.removeVappTemplate(clonedVappTemplate.getHref());
       assertTaskSucceeds(task);
 
-      // Confirm that can't access post-delete, i.e. template has been deleted
-      VAppTemplate deleted = vAppTemplateApi.getVAppTemplate(clonedVappTemplate.getHref());
-      assertNull(deleted);
+      // Confirm that can't access post-remove, i.e. template has been removed
+      VAppTemplate removed = vAppTemplateApi.getVAppTemplate(clonedVappTemplate.getHref());
+      assertNull(removed);
    }
 
    @Test(description = "POST /vAppTemplate/{id}/action/disableDownload")
