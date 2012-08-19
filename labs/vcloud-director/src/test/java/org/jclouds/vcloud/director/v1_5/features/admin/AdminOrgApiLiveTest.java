@@ -73,7 +73,7 @@ public class AdminOrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    @BeforeClass(alwaysRun = true)
    public void setupRequiredApis() {
       orgApi = adminContext.getApi().getOrgApi();
-      orgRef = Iterables.getFirst(orgApi.getOrgList().getOrgs(), null).toAdminReference(endpoint);
+      orgRef = Iterables.getFirst(orgApi.getOrgList(), null).toAdminReference(endpoint);
       assertNotNull(orgRef, String.format(REF_REQ_LIVE, "admin org"));
    }
    

@@ -19,6 +19,8 @@
 package org.jclouds.vcloud.director.v1_5.admin;
 
 import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.vcloud.director.v1_5.features.admin.AdminCatalogAsyncApi;
 import org.jclouds.vcloud.director.v1_5.features.admin.AdminNetworkAsyncApi;
 import org.jclouds.vcloud.director.v1_5.features.admin.AdminOrgAsyncApi;
@@ -26,6 +28,7 @@ import org.jclouds.vcloud.director.v1_5.features.admin.AdminQueryAsyncApi;
 import org.jclouds.vcloud.director.v1_5.features.admin.AdminVdcAsyncApi;
 import org.jclouds.vcloud.director.v1_5.features.admin.GroupAsyncApi;
 import org.jclouds.vcloud.director.v1_5.features.admin.UserAsyncApi;
+import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationAndCookieToRequest;
 import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorAsyncApi;
 
 /**
@@ -34,6 +37,8 @@ import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorAsyncApi;
  * @see VCloudDirectorAdminApi
  * @author danikov
  */
+@RequestFilters(AddVCloudAuthorizationAndCookieToRequest.class)
+@SkipEncoding({ '-', ':' })
 public interface VCloudDirectorAdminAsyncApi extends VCloudDirectorAsyncApi {
    /**
     * @return asynchronous access to admin query features

@@ -68,7 +68,7 @@ public class UserApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    @BeforeClass(alwaysRun = true)
    public void setupRequiredApis() {
       userApi = adminContext.getApi().getUserApi();
-      orgRef = Iterables.getFirst(context.getApi().getOrgApi().getOrgList().getOrgs(), null).toAdminReference(endpoint);
+      orgRef = Iterables.getFirst(context.getApi().getOrgApi().getOrgList(), null).toAdminReference(endpoint);
    }
    
    @AfterClass(alwaysRun = true)

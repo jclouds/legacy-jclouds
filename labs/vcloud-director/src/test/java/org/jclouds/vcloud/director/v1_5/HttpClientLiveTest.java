@@ -85,9 +85,9 @@ public class HttpClientLiveTest extends BaseVCloudDirectorApiLiveTest {
 
       OrgList orgList = parser.fromXML(Strings2.toString(response.getPayload()), OrgList.class);
 
-      assertTrue(orgList.getOrgs().size() > 0, "must have orgs");
+      assertTrue(orgList.size() > 0, "must have orgs");
 
-      context.getApi().getOrgApi().getOrg(Iterables.getLast(orgList.getOrgs()).getHref());
+      context.getApi().getOrgApi().getOrg(Iterables.getLast(orgList).getHref());
    }
 
    @Test(description = "GET /schema/{schemaFileName}", dependsOnMethods = { "testPostLogin", "testGetLogin" })

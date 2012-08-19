@@ -80,7 +80,7 @@ public class TaskApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    @Test(description = "GET /tasksList/{id}")
    public void testGetTaskList() {
       orgList = orgApi.getOrgList();
-      Reference orgRef = Iterables.getFirst(orgList.getOrgs(), null);
+      Reference orgRef = Iterables.getFirst(orgList, null);
       assertNotNull(orgRef);
       orgURI = orgRef.getHref();
       

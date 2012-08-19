@@ -71,7 +71,7 @@ public class AdminCatalogApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    @BeforeClass(alwaysRun = true)
    protected void setupRequiredApis() {
       catalogApi = adminContext.getApi().getCatalogApi();
-      orgRef = Iterables.getFirst(context.getApi().getOrgApi().getOrgList().getOrgs(), null).toAdminReference(endpoint);
+      orgRef = Iterables.getFirst(context.getApi().getOrgApi().getOrgList(), null).toAdminReference(endpoint);
    }
    
    @AfterClass(alwaysRun = true)

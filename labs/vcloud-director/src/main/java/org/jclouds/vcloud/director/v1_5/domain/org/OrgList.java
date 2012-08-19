@@ -18,7 +18,6 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain.org;
 
-import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Collections;
@@ -30,7 +29,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 
-import com.google.common.base.Objects;
+import com.google.common.collect.ForwardingSet;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
@@ -40,7 +39,7 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 @XmlRootElement(name = "OrgList")
-public class OrgList {
+public class OrgList extends ForwardingSet<Reference> {
 
    public static final String MEDIA_TYPE = VCloudDirectorMediaType.ORG_LIST;
 
@@ -77,7 +76,7 @@ public class OrgList {
       }
 
       public Builder fromOrgList(OrgList in) {
-         return orgs(in.getOrgs());
+         return orgs(in.delegate());
       }
    }
 
@@ -92,27 +91,9 @@ public class OrgList {
    @XmlElement(name = "Org")
    private Set<Reference> orgs = Sets.newLinkedHashSet();
 
-   public Set<Reference> getOrgs() {
+   @Override
+   protected Set<Reference> delegate() {
       return Collections.unmodifiableSet(orgs);
    }
 
-   @Override
-   public boolean equals(Object o) {
-      if (this == o)
-         return true;
-      if (o == null || getClass() != o.getClass())
-         return false;
-      OrgList that = OrgList.class.cast(o);
-      return equal(orgs, that.orgs);
-   }
-
-   @Override
-   public int hashCode() {
-      return Objects.hashCode(orgs);
-   }
-
-   @Override
-   public String toString() {
-      return Objects.toStringHelper("").add("orgs", orgs).toString();
-   }
 }
