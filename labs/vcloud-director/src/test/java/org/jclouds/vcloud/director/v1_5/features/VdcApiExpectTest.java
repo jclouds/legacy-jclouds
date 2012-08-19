@@ -83,7 +83,7 @@ public class VdcApiExpectTest extends VCloudDirectorAdminApiExpectTest {
       
       Vdc expected = getVdc();
 
-      assertEquals(api.getVdcApi().getVdc(vdcURI), expected);
+      assertEquals(api.getVdcApi().get(vdcURI), expected);
    }
 
    @Test
@@ -105,7 +105,7 @@ public class VdcApiExpectTest extends VCloudDirectorAdminApiExpectTest {
             .build();
 
       try {
-         api.getVdcApi().getVdc(URI.create(endpoint + "/vdc/NOTAUUID"));
+         api.getVdcApi().get(URI.create(endpoint + "/vdc/NOTAUUID"));
          fail("Should give HTTP 400 error");
       } catch (VCloudDirectorException vde) {
          assertEquals(vde.getError(), expected);
@@ -124,7 +124,7 @@ public class VdcApiExpectTest extends VCloudDirectorAdminApiExpectTest {
                .xmlFilePayload("/vdc/error403-fake.xml", VCloudDirectorMediaType.ERROR)
                .httpResponseBuilder().statusCode(403).build());
 
-      assertNull(api.getVdcApi().getVdc(URI.create(endpoint + "/vdc/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee")));
+      assertNull(api.getVdcApi().get(URI.create(endpoint + "/vdc/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee")));
    }
    
    @Test(enabled = false)

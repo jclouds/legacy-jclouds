@@ -47,10 +47,10 @@ import org.testng.annotations.Test;
 import com.google.common.collect.Iterables;
 
 /**
-* Tests live behavior of {@link OrgApi}.
-* 
-* @author grkvlt@apache.org
-*/
+ * Tests live behavior of {@link OrgApi}.
+ * 
+ * @author grkvlt@apache.org
+ */
 @Test(groups = { "live", "user" }, singleThreaded = true, testName = "OrgApiLiveTest")
 public class OrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
 
@@ -65,18 +65,18 @@ public class OrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    public void setupRequiredApis() {
       orgApi = context.getApi().getOrgApi();
    }
-   
+
    @AfterClass(alwaysRun = true)
    public void cleanUp() throws Exception {
       if (adminMembersSet) {
          try {
-	         Task delete = adminContext.getApi().getOrgApi().getMetadataApi().deleteEntry(toAdminUri(orgURI), "KEY");
-	         taskDoneEventually(delete);
+            Task delete = adminContext.getApi().getOrgApi().getMetadataApi().deleteEntry(toAdminUri(orgURI), "KEY");
+            taskDoneEventually(delete);
          } catch (Exception e) {
             logger.warn(e, "Error when deleting metadata entry");
          }
          try {
-	         adminContext.getApi().getCatalogApi().delete(catalogUrn);
+            adminContext.getApi().getCatalogApi().delete(catalogUrn);
          } catch (Exception e) {
             logger.warn(e, "Error when deleting catalog'%s': %s", catalogUrn);
          }
@@ -96,14 +96,15 @@ public class OrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    public void testGetOrgList() {
       // Call the method being tested
       orgList = orgApi.list();
-      
+
       // NOTE The environment MUST have at least one organisation configured
-      
+
       // Check test requirements
       assertFalse(Iterables.isEmpty(orgList), String.format(NOT_EMPTY_OBJECT_FMT, "Org", "OrgList"));
-      
+
       for (Reference orgRef : orgList) {
-         assertEquals(orgRef.getType(), VCloudDirectorMediaType.ORG, String.format(CONDITION_FMT, "Reference.Type", VCloudDirectorMediaType.ORG, orgRef.getType()));
+         assertEquals(orgRef.getType(), VCloudDirectorMediaType.ORG,
+                  String.format(CONDITION_FMT, "Reference.Type", VCloudDirectorMediaType.ORG, orgRef.getType()));
          checkReferenceType(orgRef);
       }
    }
@@ -112,64 +113,66 @@ public class OrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    public void testGetOrg() {
       Reference orgRef = Iterables.getFirst(orgList, null);
       assertNotNull(orgRef);
-      
+
       orgURI = orgRef.getHref();
-      
+
       // Call the method being tested
       org = orgApi.get(orgURI);
-      
+
       assertEquals(orgApi.get(org.getId()), org);
-      
+
       checkOrg(org);
-      
+
       if (adminContext != null) {
          setupAdminMembers();
       }
    }
-   
+
    /**
-    * If we're running in an admin context, it's cleaner to make temporary entities, plus eliminates the need for configuration
+    * If we're running in an admin context, it's cleaner to make temporary entities, plus eliminates
+    * the need for configuration
     */
    private void setupAdminMembers() {
-      adminContext.getApi().getOrgApi().getMetadataApi().putEntry(toAdminUri(orgURI), 
-            "KEY", MetadataValue.builder().value("VALUE").build());
-      
-      AdminCatalog newCatalog = AdminCatalog.builder()
-            .name("Test Catalog "+getTestDateTimeStamp())
-            .description("created by testOrg()")
-            .build();
+      adminContext.getApi().getOrgApi().getMetadataApi()
+               .putEntry(toAdminUri(orgURI), "KEY", MetadataValue.builder().value("VALUE").build());
+
+      AdminCatalog newCatalog = AdminCatalog.builder().name("Test Catalog " + getTestDateTimeStamp())
+               .description("created by testOrg()").build();
       newCatalog = adminContext.getApi().getCatalogApi().createCatalogInOrg(newCatalog, org.getId());
-      
+
       catalogUrn = newCatalog.getId();
-      
+
       adminMembersSet = true;
    }
-   
+
    @Test(description = "GET /org/{id}/metadata", dependsOnMethods = { "testGetOrg" })
    public void testGetOrgMetadata() {
-      
+
       // Call the method being tested
       Metadata metadata = orgApi.getMetadataApi().get(orgURI);
-      
+
       // NOTE The environment MUST have at one metadata entry for the first organisation configured
-      
+
       checkMetadata(metadata);
-      
+
       // Check requirements for this test
-      assertFalse(Iterables.isEmpty(metadata.getMetadataEntries()), String.format(NOT_EMPTY_OBJECT_FMT, "MetadataEntry", "Org"));
+      assertFalse(Iterables.isEmpty(metadata.getMetadataEntries()),
+               String.format(NOT_EMPTY_OBJECT_FMT, "MetadataEntry", "Org"));
    }
-   
+
    @Test(description = "GET /org/{id}/metadata/{key}", dependsOnMethods = { "testGetOrgMetadata" })
    public void testGetOrgMetadataValue() {
       // Call the method being tested
       MetadataValue value = orgApi.getMetadataApi().getValue(orgURI, "KEY");
-      
-      // NOTE The environment MUST have configured the metadata entry as '{ key="KEY", value="VALUE" )'
+
+      // NOTE The environment MUST have configured the metadata entry as '{ key="KEY", value="VALUE"
+      // )'
 
       String expected = "VALUE";
 
       checkMetadataValue(value);
-      assertEquals(value.getValue(), expected, String.format(CORRECT_VALUE_OBJECT_FMT, "Value", "MetadataValue", expected, value.getValue()));
+      assertEquals(value.getValue(), expected,
+               String.format(CORRECT_VALUE_OBJECT_FMT, "Value", "MetadataValue", expected, value.getValue()));
    }
 
 }

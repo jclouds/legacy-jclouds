@@ -19,12 +19,9 @@
 package org.jclouds.vcloud.director.v1_5.features.admin;
 
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_REQ_LIVE;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.URN_REQ_LIVE;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.fail;
-
-import java.net.URI;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.domain.AdminVdc;
@@ -47,34 +44,30 @@ import org.testng.annotations.Test;
  */
 @Test(groups = { "live", "admin" }, singleThreaded = true, testName = "AdminVdcApiLiveTest")
 public class AdminVdcApiLiveTest extends BaseVCloudDirectorApiLiveTest {
-   
+
    public static final String VDC = "admin vdc";
- 
+
    /*
     * Convenience reference to API api.
     */
    protected AdminVdcApi vdcApi;
    protected MetadataApi.Writeable metadataApi;
-   
-   protected URI adminVdcUri;
 
    private String metadataKey;
    private String metadataValue;
-   
+
    @Override
    @BeforeClass(alwaysRun = true)
    public void setupRequiredApis() {
       vdcApi = adminContext.getApi().getVdcApi();
       metadataApi = vdcApi.getMetadataApi();
-      assertNotNull(vdcURI, String.format(URN_REQ_LIVE, VDC));
-      adminVdcUri = toAdminUri(vdcURI);
    }
 
    @AfterClass(alwaysRun = true)
    public void cleanUp() throws Exception {
       if (metadataKey != null) {
          try {
-            Task task = metadataApi.deleteEntry(adminVdcUri, metadataKey);
+            Task task = metadataApi.deleteEntry(lazyGetVdc().getHref(), metadataKey);
             taskDoneEventually(task);
          } catch (VCloudDirectorException e) {
             logger.warn(e, "Error deleting metadata-value (perhaps it doesn't exist?); continuing...");
@@ -84,31 +77,29 @@ public class AdminVdcApiLiveTest extends BaseVCloudDirectorApiLiveTest {
 
    @Test(description = "GET /admin/vdc/{id}")
    public void testGetVdc() {
-      AdminVdc vdc = vdcApi.getVdc(adminVdcUri);
+      AdminVdc vdc = vdcApi.get(vdcUrn);
       assertNotNull(vdc, String.format(OBJ_REQ_LIVE, VDC));
-       
+
       // parent type
       Checks.checkAdminVdc(vdc);
    }
-   
+
    // TODO insufficient permissions to test
-   @Test(description = "PUT /admin/vdc/{id}", enabled=false)
+   @Test(description = "PUT /admin/vdc/{id}", enabled = false)
    public void testEditVdc() throws Exception {
-      String origName = vdcApi.getVdc(adminVdcUri).getName();
+      String origName = lazyGetVdc().getName();
       String newName = name("a");
       Exception exception = null;
-      
-      AdminVdc vdc = AdminVdc.builder()
-               .name(newName)
-               .build();
-      
+
+      AdminVdc vdc = AdminVdc.builder().name(newName).build();
+
       try {
-         Task task = vdcApi.editVdc(adminVdcUri, vdc);
+         Task task = vdcApi.update(vdcUrn, vdc);
          assertTaskSucceeds(task);
-         
-         AdminVdc modified = vdcApi.getVdc(adminVdcUri);
+
+         AdminVdc modified = vdcApi.get(vdcUrn);
          assertEquals(modified.getName(), newName);
-          
+
          // parent type
          Checks.checkAdminVdc(vdc);
       } catch (Exception e) {
@@ -116,7 +107,7 @@ public class AdminVdcApiLiveTest extends BaseVCloudDirectorApiLiveTest {
       } finally {
          try {
             AdminVdc restorableVdc = AdminVdc.builder().name(origName).build();
-            Task task = vdcApi.editVdc(adminVdcUri, restorableVdc);
+            Task task = vdcApi.update(vdcUrn, restorableVdc);
             assertTaskSucceeds(task);
          } catch (Exception e) {
             if (exception != null) {
@@ -128,34 +119,35 @@ public class AdminVdcApiLiveTest extends BaseVCloudDirectorApiLiveTest {
          }
       }
    }
-   
+
    // TODO insufficient permissions to test
-   @Test(description = "DELETE /admin/vdc/{id}", enabled=false)
+   @Test(description = "DELETE /admin/vdc/{id}", enabled = false)
    public void testDeleteVdc() throws Exception {
       // TODO Need to have a VDC that we're happy to delete!
-      Task task = vdcApi.deleteVdc(adminVdcUri);
+      Task task = vdcApi.delete(vdcUrn);
       assertTaskSucceeds(task);
-         
+
       try {
-         vdcApi.getVdc(adminVdcUri);
+         vdcApi.get(vdcUrn);
       } catch (VCloudDirectorException e) {
          // success; unreachable because it has been deleted
+         // TODO: ^^ wrong. this should return null
       }
    }
-   
+
    // TODO insufficient permissions to test
-   @Test(description = "DISABLE/ENABLE /admin/vdc/{id}", enabled=false)
+   @Test(description = "DISABLE/ENABLE /admin/vdc/{id}", enabled = false)
    public void testDisableAndEnableVdc() throws Exception {
       // TODO Need to have a VDC that we're happy to delete!
       Exception exception = null;
-      
+
       try {
-         vdcApi.disableVdc(adminVdcUri);
+         vdcApi.disable(vdcUrn);
       } catch (Exception e) {
          exception = e;
       } finally {
          try {
-            vdcApi.enableVdc(adminVdcUri);
+            vdcApi.enable(vdcUrn);
          } catch (Exception e) {
             if (exception != null) {
                logger.warn(e, "Error resetting adminVdc.name; rethrowing original test exception...");
@@ -166,63 +158,62 @@ public class AdminVdcApiLiveTest extends BaseVCloudDirectorApiLiveTest {
          }
       }
    }
-   
+
    @Test(description = "GET /admin/vdc/{id}/metadata")
    public void testGetMetadata() throws Exception {
-      Metadata metadata = metadataApi.get(adminVdcUri);
+      Metadata metadata = metadataApi.get(lazyGetVdc().getHref());
 
       Checks.checkMetadata(metadata);
    }
-   
+
    // TODO insufficient permissions to test
-   @Test(description = "PUT /admin/vdc/{id}/metadata", enabled=false)
+   @Test(description = "PUT /admin/vdc/{id}/metadata", enabled = false)
    public void testSetMetadata() throws Exception {
       metadataKey = name("key-");
       metadataValue = name("value-");
-      Metadata metadata = Metadata.builder()
-               .entry(MetadataEntry.builder().entry(metadataKey, metadataValue).build())
+      Metadata metadata = Metadata.builder().entry(MetadataEntry.builder().entry(metadataKey, metadataValue).build())
                .build();
-      
-      Task task = metadataApi.merge(adminVdcUri, metadata);
+
+      Task task = metadataApi.merge(lazyGetVdc().getHref(), metadata);
       assertTaskSucceeds(task);
-      
-      MetadataValue modified = metadataApi.getValue(adminVdcUri, metadataKey);
+
+      MetadataValue modified = metadataApi.getValue(lazyGetVdc().getHref(), metadataKey);
       Checks.checkMetadataValueFor("AdminVdc", modified, metadataValue);
       Checks.checkMetadata(metadata);
    }
-   
+
    // TODO insufficient permissions to test
-   @Test(description = "GET /admin/vdc/{id}/metadata/{key}", dependsOnMethods = { "testSetMetadata" }, enabled=false)
+   @Test(description = "GET /admin/vdc/{id}/metadata/{key}", dependsOnMethods = { "testSetMetadata" }, enabled = false)
    public void testGetMetadataValue() throws Exception {
-      MetadataValue retrievedMetadataValue = metadataApi.getValue(adminVdcUri, metadataKey);
-         
+      MetadataValue retrievedMetadataValue = metadataApi.getValue(lazyGetVdc().getHref(), metadataKey);
+
       Checks.checkMetadataValueFor("AdminVdc", retrievedMetadataValue, metadataValue);
    }
-   
+
    // TODO insufficient permissions to test
-   @Test(description = "PUT /admin/vdc/{id}/metadata/{key}", dependsOnMethods = { "testGetMetadataValue" }, enabled=false )
+   @Test(description = "PUT /admin/vdc/{id}/metadata/{key}", dependsOnMethods = { "testGetMetadataValue" }, enabled = false)
    public void testSetMetadataValue() throws Exception {
       metadataValue = name("value-");
       MetadataValue newV = MetadataValue.builder().value(metadataValue).build();
-      
-      Task task = metadataApi.putEntry(adminVdcUri, metadataKey, newV);
+
+      Task task = metadataApi.putEntry(lazyGetVdc().getHref(), metadataKey, newV);
       assertTaskSucceeds(task);
-      
-      MetadataValue retrievedMetadataValue = metadataApi.getValue(adminVdcUri, metadataKey);
+
+      MetadataValue retrievedMetadataValue = metadataApi.getValue(lazyGetVdc().getHref(), metadataKey);
       Checks.checkMetadataValueFor("AdminVdc", retrievedMetadataValue, metadataValue);
    }
-   
+
    // TODO insufficient permissions to test
-   @Test(description = "DELETE /admin/vdc/{id}/metadata/{key}", dependsOnMethods = { "testSetMetadataValue" }, enabled=false )
+   @Test(description = "DELETE /admin/vdc/{id}/metadata/{key}", dependsOnMethods = { "testSetMetadataValue" }, enabled = false)
    public void testDeleteMetadataValue() throws Exception {
       // TODO Remove dependency on other tests; make cleanUp delete a list of metadata entries?
-      
-      Task task = metadataApi.deleteEntry(adminVdcUri, metadataKey);
+
+      Task task = metadataApi.deleteEntry(lazyGetVdc().getHref(), metadataKey);
       assertTaskSucceeds(task);
 
       try {
-         metadataApi.getValue(adminVdcUri, metadataKey);
-         fail("Retrieval of metadata value "+metadataKey+" should have fail after deletion");
+         metadataApi.getValue(lazyGetVdc().getHref(), metadataKey);
+         fail("Retrieval of metadata value " + metadataKey + " should have fail after deletion");
       } catch (VCloudDirectorException e) {
          // success; should not be accessible
       }

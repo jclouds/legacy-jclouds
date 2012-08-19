@@ -23,17 +23,17 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
-import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.vcloud.director.v1_5.domain.AdminVdc;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.features.MetadataApi;
+import org.jclouds.vcloud.director.v1_5.features.MetadataApi.Writeable;
 import org.jclouds.vcloud.director.v1_5.features.VdcApi;
 
 /**
  * Provides synchronous access to {@link AdminVdc}.
  * 
  * @see AdminVdcAsyncApi
- * @author danikov
+ * @author danikov, Adrian Cole
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface AdminVdcApi extends VdcApi {
@@ -48,34 +48,45 @@ public interface AdminVdcApi extends VdcApi {
     * @return the admin vDC or null if not found
     */
    @Override
-   AdminVdc getVdc(URI vdcRef);
+   AdminVdc get(String vdcUrn);
+
+   @Override
+   AdminVdc get(URI vdcHref);
 
    /**
     * Modifies a Virtual Data Center. Virtual Data Center could be enabled or disabled. 
     * Additionally it could have one of these states FAILED_CREATION(-1), NOT_READY(0), 
     * READY(1), UNKNOWN(1) and UNRECOGNIZED(3).
     */
-   Task editVdc(URI vdcRef, AdminVdc vdc);
+   Task update(String vdcUrn, AdminVdc vdc);
    
+   Task update(URI vdcHref, AdminVdc vdc);
+
    /**
     * Deletes a Virtual Data Center. The Virtual Data Center should be disabled when delete is issued. 
     * Otherwise error code 400 Bad Request is returned.
     */
    // TODO Saw what exception, instead of 400 
-   Task deleteVdc(URI vdcRef);
-   
+   Task delete(String vdcUrn);
+
+   Task delete(URI vdcHref);
+
    /**
     * Enables a Virtual Data Center. This operation enables disabled Virtual Data Center. 
     * If it is already enabled this operation has no effect.
     */
-   void enableVdc(@EndpointParam URI vdcRef);
+   void enable(String vdcUrn);
    
+   void enable(URI vdcHref);
+
    /**
     * Disables a Virtual Data Center. If the Virtual Data Center is disabled this operation does not 
     * have an effect.
     */
-   void disableVdc(URI vdcRef);
-   
+   void disable(String vdcUrn);
+
+   void disable(URI vdcHref);
+
    /**
     * @return synchronous access to {@link Writeable} features
     */
