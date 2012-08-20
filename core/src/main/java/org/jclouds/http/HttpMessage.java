@@ -32,6 +32,7 @@ import org.jclouds.util.Multimaps2;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 
@@ -185,13 +186,25 @@ public class HttpMessage extends PayloadEnclosingImpl {
       return headers;
    }
 
+   private Multimap<String, String> getLowercaseHeaders() {
+	   Multimap<String, String> lowercaseHeaders = HashMultimap.create(getHeaders().keys().size(), 1);
+	   
+	   for (String header: getHeaders().keys()) {
+		   for (String value: getHeaders().get(header)) {
+			   lowercaseHeaders.put(header.toLowerCase(), value);
+		   }
+	   }
+	   
+	   return lowercaseHeaders;
+   }
+
    /**
     * try to get the value, then try as lowercase.
     */
    public String getFirstHeaderOrNull(String string) {
       Collection<String> values = headers.get(string);
       if (values.size() == 0)
-         values = headers.get(string.toLowerCase());
+         values = getLowercaseHeaders().get(string.toLowerCase());
       return (values.size() >= 1) ? values.iterator().next() : null;
    }
 
