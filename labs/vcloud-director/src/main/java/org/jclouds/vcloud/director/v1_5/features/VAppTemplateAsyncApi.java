@@ -75,7 +75,7 @@ public interface VAppTemplateAsyncApi {
    @Consumes(VAPP_TEMPLATE)
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<VAppTemplate> get(@EndpointParam String reference);
+   ListenableFuture<VAppTemplate> get(@EndpointParam(parser = VAppTemplateURNToHref.class) String reference);
 
    /**
     * @see VAppTemplateApi#edit(String, VAppTemplate)
