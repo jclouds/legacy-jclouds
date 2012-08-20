@@ -42,6 +42,7 @@
     <test.vcloud-director.template></test.vcloud-director.template>
     <!-- URN format: ex. urn:vcloud:catalog:7212e451-76e1-4631-b2de-ba1dfd8080e4 -->
     <test.vcloud-director.catalog-id></test.vcloud-director.catalog-id>
+    <!-- URN format: ex. urn:vcloud:media:7212e451-76e1-4631-b2de-ba1dfd8080e4 -->
     <test.vcloud-director.media-id></test.vcloud-director.media-id>
     <!-- URN format: ex. urn:vcloud:vapptemplate:7212e451-76e1-4631-b2de-ba1dfd8080e4 -->
     <test.vcloud-director.vapptemplate-id></test.vcloud-director.vapptemplate-id>

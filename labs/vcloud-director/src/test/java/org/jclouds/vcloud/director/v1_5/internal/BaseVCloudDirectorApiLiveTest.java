@@ -18,12 +18,13 @@
  */
 package org.jclouds.vcloud.director.v1_5.internal;
 
+import static com.google.common.base.Predicates.and;
 import static com.google.common.base.Strings.emptyToNull;
 import static com.google.common.collect.Iterables.any;
+import static com.google.common.collect.Iterables.contains;
 import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Iterables.getFirst;
 import static com.google.common.collect.Iterables.tryFind;
-import static com.google.common.io.Closeables.closeQuietly;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.ENTITY_NON_NULL;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.TASK_COMPLETE_TIMELY;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.URN_REQ_LIVE;
@@ -34,6 +35,9 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.USER;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.VAPP;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.VAPP_TEMPLATE;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.VDC;
+import static org.jclouds.vcloud.director.v1_5.predicates.LinkPredicates.relEquals;
+import static org.jclouds.vcloud.director.v1_5.predicates.LinkPredicates.typeEquals;
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
@@ -42,7 +46,6 @@ import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Properties;
 import java.util.Random;
 import java.util.Set;
 
@@ -51,17 +54,21 @@ import javax.inject.Inject;
 
 import org.jclouds.apis.BaseContextLiveTest;
 import org.jclouds.date.DateService;
+import org.jclouds.io.Payloads;
 import org.jclouds.logging.Logger;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
 import org.jclouds.vcloud.director.testng.FormatApiResultsListener;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorApiMetadata;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorContext;
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminApi;
 import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminAsyncApi;
 import org.jclouds.vcloud.director.v1_5.domain.Catalog;
+import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Link.Rel;
+import org.jclouds.vcloud.director.v1_5.domain.Media;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.ResourceEntity.Status;
 import org.jclouds.vcloud.director.v1_5.domain.Role.DefaultRoles;
@@ -89,8 +96,6 @@ import org.jclouds.vcloud.director.v1_5.predicates.ReferencePredicates;
 import org.jclouds.vcloud.director.v1_5.predicates.TaskStatusEquals;
 import org.jclouds.vcloud.director.v1_5.predicates.TaskSuccess;
 import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorApi;
-import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorAsyncApi;
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
@@ -131,8 +136,7 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
    public Predicate<Task> retryTaskSuccessLong;
 
    protected RestContext<VCloudDirectorAdminApi, VCloudDirectorAdminAsyncApi> adminContext;
-   protected RestContext<VCloudDirectorApi, VCloudDirectorAsyncApi> context; // FIXME: rename to
-                                                                             // userContext?
+
    protected Session adminSession;
    protected Session session;
 
@@ -142,7 +146,8 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
    private Catalog catalog;
    protected String vAppTemplateUrn;
    private VAppTemplate vAppTemplate;
-   protected URI mediaURI;
+   protected String mediaUrn;
+   private Media media;
    protected String networkUrn;
    private Network network;
    protected String vdcUrn;
@@ -158,8 +163,6 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
    }
 
    protected DateService dateService;
-
-   protected VCloudDirectorTestSession testSession;
 
    protected static String testStamp;
 
@@ -182,24 +185,13 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
       retryTaskSuccessLong = new RetryablePredicate<Task>(taskSuccess, LONG_TASK_TIMEOUT_SECONDS * 1000L);
    }
 
-   @AfterClass(alwaysRun = true)
-   protected void tearDownTestSession() {
-      closeQuietly(testSession);
-   }
+   @BeforeClass(groups = { "integration", "live" })
+   public void setupContext() {
+      super.setupContext();
+      adminContext = context.getAdminContext();
 
-   @Override
-   protected void initializeContext() {
-      Properties overrides = setupProperties();
-      testSession = VCloudDirectorTestSession.builder().provider(provider).identity(identity).credential(credential)
-               .endpoint(endpoint).overrides(overrides).build();
-
-      context = testSession.getUserContext();
-      adminContext = testSession.getAdminContext();
-
-      if (adminContext != null) {
-         adminSession = adminContext.getApi().getCurrentSession();
-         adminContext.utils().injector().injectMembers(this);
-      }
+      adminSession = adminContext.getApi().getCurrentSession();
+      adminContext.utils().injector().injectMembers(this);
 
       session = context.getApi().getCurrentSession();
       context.utils().injector().injectMembers(this);
@@ -246,9 +238,7 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
 
       vdcUrn = emptyToNull(System.getProperty("test." + provider + ".vdc-id"));
 
-      String mediaId = emptyToNull(System.getProperty("test." + provider + ".media-id"));
-      if (mediaId != null)
-         mediaURI = URI.create(endpoint + "/media/" + mediaId);
+      mediaUrn = emptyToNull(System.getProperty("test." + provider + ".media-id"));
 
       networkUrn = emptyToNull(System.getProperty("test." + provider + ".network-id"));
 
@@ -344,7 +334,7 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
       }
 
    };
-
+   
    public Optional<Network> tryFindBridgedNetworkInOrg() {
       FluentIterable<Network> networks = FluentIterable.from(org.getLinks())
                .filter(ReferencePredicates.<Link> typeEquals(ORG_NETWORK)).transform(new Function<Link, Network>() {
@@ -412,6 +402,37 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
       return user;
    }
 
+   protected Media lazyGetMedia(){
+      if (media == null || mediaUrn == null) {
+         Predicate<Link> addMediaLink = and(relEquals(Link.Rel.ADD), typeEquals(VCloudDirectorMediaType.MEDIA));
+         if (contains(lazyGetVdc().getLinks(), addMediaLink)) {
+            Link addMedia = find(lazyGetVdc().getLinks(), addMediaLink);
+            byte[] iso = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+
+            Media sourceMedia = Media.builder().type(VCloudDirectorMediaType.MEDIA).name(name("media"))
+                     .size(iso.length).imageType(Media.ImageType.ISO)
+                     .description("Test media generated by VmApiLiveTest").build();
+            media = context.getApi().getMediaApi().add(addMedia.getHref(), sourceMedia);
+
+            Link uploadLink = getFirst(getFirst(media.getFiles(), null).getLinks(), null);
+            context.getApi().getUploadApi().upload(uploadLink.getHref(), Payloads.newByteArrayPayload(iso));
+
+            media = context.getApi().getMediaApi().get(media.getId());
+
+            if (media.getTasks().size() == 1) {
+               Task uploadTask = Iterables.getOnlyElement(media.getTasks());
+               Checks.checkTask(uploadTask);
+               assertEquals(uploadTask.getStatus(), Task.Status.RUNNING);
+               assertTrue(retryTaskSuccess.apply(uploadTask), String.format(TASK_COMPLETE_TIMELY, "uploadTask"));
+               media = context.getApi().getMediaApi().get(media.getId());
+            }
+
+            mediaUrn = media.getId();
+         }
+      }
+      return media;
+   }
+   
    protected VAppTemplate lazyGetVAppTemplate() {
       if (vAppTemplate == null) {
          assertNotNull(vAppTemplateUrn, String.format(URN_REQ_LIVE, VAPP_TEMPLATE));

@@ -227,7 +227,7 @@ public class NetworkConnection {
       this.needsCustomization = needsCustomization;
    }
 
-   private NetworkConnection() {
+   NetworkConnection() {
       // for JAXB
    }
 

@@ -84,7 +84,7 @@ public abstract class NetworkServiceType<T extends NetworkServiceType<T>> {
          return true;
       if (o == null || getClass() != o.getClass())
          return false;
-      NetworkServiceType that = NetworkServiceType.class.cast(o);
+      NetworkServiceType<?> that = NetworkServiceType.class.cast(o);
       return equal(isEnabled, that.isEnabled);
    }
 

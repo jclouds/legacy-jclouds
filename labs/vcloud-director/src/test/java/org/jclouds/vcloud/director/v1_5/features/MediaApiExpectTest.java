@@ -75,7 +75,7 @@ public class MediaApiExpectTest extends VCloudDirectorAdminApiExpectTest {
          .build();
       Media expected = addMedia();
       
-      assertEquals(api.getMediaApi().addMedia(uploadLink, source), expected);
+      assertEquals(api.getMediaApi().add(uploadLink, source), expected);
    }
    
    @Test
@@ -104,7 +104,7 @@ public class MediaApiExpectTest extends VCloudDirectorAdminApiExpectTest {
          .build();
       Media expected = cloneMedia();
       
-      assertEquals(api.getMediaApi().cloneMedia(vdcURI, params), expected);
+      assertEquals(api.getMediaApi().clone(vdcURI, params), expected);
    }
    
    @Test
@@ -121,7 +121,7 @@ public class MediaApiExpectTest extends VCloudDirectorAdminApiExpectTest {
                .httpResponseBuilder().build());
       
       Media expected = getMedia();
-      assertEquals(api.getMediaApi().getMedia(mediaUri), expected);
+      assertEquals(api.getMediaApi().get(mediaUri), expected);
    }
    
    @Test
@@ -144,7 +144,7 @@ public class MediaApiExpectTest extends VCloudDirectorAdminApiExpectTest {
             .build();
        
       try {
-         api.getMediaApi().getMedia(mediaUri);
+         api.getMediaApi().get(mediaUri);
          fail("Should give HTTP 400 error");
       } catch (VCloudDirectorException vde) {
          assertEquals(vde.getError(), expected);
@@ -166,7 +166,7 @@ public class MediaApiExpectTest extends VCloudDirectorAdminApiExpectTest {
                .xmlFilePayload("/media/error403-catalog.xml", VCloudDirectorMediaType.ERROR)
                .httpResponseBuilder().statusCode(403).build());
  
-      assertNull(api.getMediaApi().getMedia(mediaUri));
+      assertNull(api.getMediaApi().get(mediaUri));
    }
  
    @Test
@@ -182,7 +182,7 @@ public class MediaApiExpectTest extends VCloudDirectorAdminApiExpectTest {
                .xmlFilePayload("/media/error403-fake.xml", VCloudDirectorMediaType.ERROR)
                .httpResponseBuilder().statusCode(403).build());
  
-      assertNull(api.getMediaApi().getMedia(mediaUri));
+      assertNull(api.getMediaApi().get(mediaUri));
    }
    
    @Test
@@ -202,7 +202,7 @@ public class MediaApiExpectTest extends VCloudDirectorAdminApiExpectTest {
       Media edit = editMedia();
       Task expected = editMediaTask();
       
-      assertEquals(api.getMediaApi().editMedia(mediaUri, edit), expected);
+      assertEquals(api.getMediaApi().edit(mediaUri, edit), expected);
    }
    
    @Test
@@ -220,7 +220,7 @@ public class MediaApiExpectTest extends VCloudDirectorAdminApiExpectTest {
       
       Task expected = removeMediaTask();
 
-      assertEquals(api.getMediaApi().removeMedia(mediaUri), expected);
+      assertEquals(api.getMediaApi().remove(mediaUri), expected);
    }
    
    @Test
