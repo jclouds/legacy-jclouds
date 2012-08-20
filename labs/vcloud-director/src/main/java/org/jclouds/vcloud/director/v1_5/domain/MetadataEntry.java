@@ -137,7 +137,7 @@ public class MetadataEntry extends Resource {
 
    }
 
-   private MetadataEntry() {
+   MetadataEntry() {
       // for JAXB
    }
 

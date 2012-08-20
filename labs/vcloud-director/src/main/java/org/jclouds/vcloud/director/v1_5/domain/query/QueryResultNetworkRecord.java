@@ -168,7 +168,7 @@ public class QueryResultNetworkRecord extends QueryResultRecordType {
       isBusy = builder.isBusy;
    }
 
-   private QueryResultNetworkRecord() {
+   QueryResultNetworkRecord() {
       // for JAXB
    }
 

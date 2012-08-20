@@ -61,7 +61,7 @@ public class QueryList extends ContainerType {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   private QueryList() {
+   QueryList() {
       // for JAXB
    }
 

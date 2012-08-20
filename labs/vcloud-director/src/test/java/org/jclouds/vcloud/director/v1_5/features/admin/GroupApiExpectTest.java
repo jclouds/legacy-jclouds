@@ -56,7 +56,7 @@ public class GroupApiExpectTest extends VCloudDirectorAdminApiExpectTest {
 
       Group expected = group();
 
-      assertEquals(api.getGroupApi().getGroup(groupRef.getHref()), expected);
+      assertEquals(api.getGroupApi().get(groupRef.getHref()), expected);
    }
    
    public static final Group group() {
@@ -79,7 +79,7 @@ public class GroupApiExpectTest extends VCloudDirectorAdminApiExpectTest {
 
       Group expected = editGroup();
 
-      assertEquals(api.getGroupApi().editGroup(groupRef.getHref(), expected), expected);
+      assertEquals(api.getGroupApi().edit(groupRef.getHref(), expected), expected);
    }
    
    public static Group editGroup() {
@@ -96,6 +96,6 @@ public class GroupApiExpectTest extends VCloudDirectorAdminApiExpectTest {
             new VcloudHttpResponsePrimer()
                .httpResponseBuilder().statusCode(204).build());
       
-      api.getGroupApi().removeGroup(groupRef.getHref());
+      api.getGroupApi().remove(groupRef.getHref());
    }
 }

@@ -38,48 +38,89 @@ import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Group;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationAndCookieToRequest;
+import org.jclouds.vcloud.director.v1_5.functions.href.GroupURNToHref;
+import org.jclouds.vcloud.director.v1_5.functions.href.OrgURNToAdminHref;
 
 import com.google.common.util.concurrent.ListenableFuture;
-   
+
 /**
  * @see GroupApi
- * @author danikov
+ * @author danikov, Adrian Cole
  */
 @RequestFilters(AddVCloudAuthorizationAndCookieToRequest.class)
 public interface GroupAsyncApi {
-   
+
+   /**
+    * @see GroupApi#addGroupToOrg(Group, String)
+    */
    @POST
    @Path("/groups")
    @Consumes(VCloudDirectorMediaType.GROUP)
    @Produces(VCloudDirectorMediaType.GROUP)
    @JAXBResponseParser
-   ListenableFuture<Group> addGroup(@EndpointParam URI adminOrgUri, 
-         @BinderParam(BindToXMLPayload.class) Group group);
+   ListenableFuture<Group> addGroupToOrg(@BinderParam(BindToXMLPayload.class) Group group,
+            @EndpointParam(parser = OrgURNToAdminHref.class) String adminUrn);
 
    /**
-    * @see GroupApi#getGroup(URI)
+    * @see GroupApi#get(String)
     */
    @GET
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Group> getGroup(@EndpointParam URI groupUri);
+   ListenableFuture<Group> get(@EndpointParam(parser = GroupURNToHref.class) String groupUri);
 
    /**
-    * @see GroupApi#editGroup(URI, Group)
+    * @see GroupApi#edit(String, Group)
     */
    @PUT
    @Consumes(VCloudDirectorMediaType.GROUP)
    @Produces(VCloudDirectorMediaType.GROUP)
    @JAXBResponseParser
-   ListenableFuture<Group> editGroup(@EndpointParam URI groupRef, 
-         @BinderParam(BindToXMLPayload.class) Group group);
+   ListenableFuture<Group> edit(@EndpointParam(parser = GroupURNToHref.class) String groupUrn,
+            @BinderParam(BindToXMLPayload.class) Group group);
 
    /**
-    * @see GroupApi#removeGroup(URI)
+    * @see GroupApi#remove(String)
     */
    @DELETE
    @Consumes
    @JAXBResponseParser
-   ListenableFuture<Void> removeGroup(@EndpointParam URI groupRef);
+   ListenableFuture<Void> remove(@EndpointParam(parser = GroupURNToHref.class) String groupUrn);
+
+   /**
+    * @see GroupApi#addGroupToOrg(Group, URI)
+    */
+   @POST
+   @Path("/groups")
+   @Consumes(VCloudDirectorMediaType.GROUP)
+   @Produces(VCloudDirectorMediaType.GROUP)
+   @JAXBResponseParser
+   ListenableFuture<Group> addGroupToOrg(@BinderParam(BindToXMLPayload.class) Group group, @EndpointParam URI adminUrn);
+
+   /**
+    * @see GroupApi#get(URI)
+    */
+   @GET
+   @Consumes
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Group> get(@EndpointParam URI groupUri);
+
+   /**
+    * @see GroupApi#edit(URI, Group)
+    */
+   @PUT
+   @Consumes(VCloudDirectorMediaType.GROUP)
+   @Produces(VCloudDirectorMediaType.GROUP)
+   @JAXBResponseParser
+   ListenableFuture<Group> edit(@EndpointParam URI groupUrn, @BinderParam(BindToXMLPayload.class) Group group);
+
+   /**
+    * @see GroupApi#remove(URI)
+    */
+   @DELETE
+   @Consumes
+   @JAXBResponseParser
+   ListenableFuture<Void> remove(@EndpointParam URI groupUrn);
 }

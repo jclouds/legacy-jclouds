@@ -30,7 +30,6 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.internal.BaseRestApiExpectTest;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
-import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.testng.annotations.BeforeGroups;
 
 import com.google.common.base.Throwables;
@@ -248,15 +247,6 @@ public abstract class BaseVCloudDirectorExpectTest<T> extends BaseRestApiExpectT
          return builder;
       }
    }
-   
-   public URI toAdminUri(Reference ref) {
-      return toAdminUri(ref.getHref());
-   }
-   
-   public URI toAdminUri(URI uri) {
-      return Reference.builder().href(uri).build().toAdminReference(endpoint).getHref();
-   }
-   
    
    protected static XMLBuilder createXMLBuilder(String root){
       try {

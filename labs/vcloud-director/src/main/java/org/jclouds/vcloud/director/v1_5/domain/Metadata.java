@@ -21,7 +21,8 @@ package org.jclouds.vcloud.director.v1_5.domain;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Collections;
+import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -31,20 +32,22 @@ import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 /**
  * Represents a set of metadata
  * <p/>
+ * 
  * <pre>
  * &lt;xs:complexType name="Metadata"&gt;
  * </pre>
- *
+ * 
  * @author danikov
  */
 @XmlRootElement(name = "Metadata")
-public class Metadata extends Resource {
+public class Metadata extends Resource implements Map<String, String> {
 
    public static final String MEDIA_TYPE = VCloudDirectorMediaType.METADATA;
 
@@ -59,7 +62,7 @@ public class Metadata extends Resource {
 
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
-   
+
    public static abstract class Builder<B extends Builder<B>> extends Resource.Builder<B> {
 
       private Set<MetadataEntry> metadataEntries = Sets.newLinkedHashSet();
@@ -99,12 +102,19 @@ public class Metadata extends Resource {
       this.metadataEntries = ImmutableSet.copyOf(builder.metadataEntries);
    }
 
-
    @XmlElement(name = "MetadataEntry")
    private Set<MetadataEntry> metadataEntries = Sets.newLinkedHashSet();
 
    public Set<MetadataEntry> getMetadataEntries() {
-      return Collections.unmodifiableSet(metadataEntries);
+      return ImmutableSet.copyOf(metadataEntries);
+   }
+
+   protected Map<String, String> toMap() {
+      ImmutableMap.Builder<String, String> builder = ImmutableMap.<String, String> builder();
+      for (MetadataEntry entry : metadataEntries) {
+         builder.put(entry.getKey(), entry.getValue());
+      }
+      return builder.build();
    }
 
    @Override
@@ -125,6 +135,66 @@ public class Metadata extends Resource {
    @Override
    public ToStringHelper string() {
       return super.string().add("metadataEntries", metadataEntries);
+   }
+
+   @Override
+   public void clear() {
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
+   public boolean containsKey(Object arg0) {
+      return toMap().containsKey(arg0);
+   }
+
+   @Override
+   public boolean containsValue(Object arg0) {
+      return toMap().containsValue(arg0);
+   }
+
+   @Override
+   public Set<Map.Entry<String, String>> entrySet() {
+      return toMap().entrySet();
+   }
+
+   @Override
+   public String get(Object arg0) {
+      return toMap().get(arg0);
+   }
+
+   @Override
+   public boolean isEmpty() {
+      return getMetadataEntries().size() == 0;
+   }
+
+   @Override
+   public Set<String> keySet() {
+      return toMap().keySet();
+   }
+
+   @Override
+   public String put(String arg0, String arg1) {
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
+   public void putAll(Map<? extends String, ? extends String> arg0) {
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
+   public String remove(Object arg0) {
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
+   public int size() {
+      return getMetadataEntries().size();
+   }
+
+   @Override
+   public Collection<String> values() {
+      return toMap().values();
    }
 
 }

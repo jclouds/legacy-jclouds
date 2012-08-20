@@ -131,7 +131,7 @@ public class IpScope {
       }
    }
 
-   private IpScope() {
+   IpScope() {
       // For JAXB
    }
 
