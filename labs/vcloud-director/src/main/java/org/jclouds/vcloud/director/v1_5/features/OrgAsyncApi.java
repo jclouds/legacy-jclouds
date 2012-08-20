@@ -76,5 +76,9 @@ public interface OrgAsyncApi {
     * @return asynchronous access to {@link Metadata.Readable} features
     */
    @Delegate
-   MetadataAsyncApi.Readable getMetadataApi();
+   MetadataAsyncApi.Readable getMetadataApi(@EndpointParam(parser = OrgURNToHref.class) String orgUrn);
+
+   @Delegate
+   MetadataAsyncApi.Readable getMetadataApi(@EndpointParam URI orgHref);
+
 }

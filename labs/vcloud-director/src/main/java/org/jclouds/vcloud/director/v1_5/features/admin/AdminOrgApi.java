@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.vcloud.director.v1_5.domain.org.AdminOrg;
 import org.jclouds.vcloud.director.v1_5.domain.org.Org;
 import org.jclouds.vcloud.director.v1_5.domain.org.OrgEmailSettings;
@@ -34,6 +35,7 @@ import org.jclouds.vcloud.director.v1_5.domain.org.OrgSettings;
 import org.jclouds.vcloud.director.v1_5.domain.org.OrgVAppTemplateLeaseSettings;
 import org.jclouds.vcloud.director.v1_5.features.MetadataApi;
 import org.jclouds.vcloud.director.v1_5.features.OrgApi;
+import org.jclouds.vcloud.director.v1_5.functions.href.OrgURNToAdminHref;
 
 /**
  * Provides synchronous access to {@link Org} objects.
@@ -274,6 +276,10 @@ public interface AdminOrgApi extends OrgApi {
     */
    @Override
    @Delegate
-   MetadataApi.Writeable getMetadataApi();
+   MetadataApi.Writeable getMetadataApi(@EndpointParam(parser = OrgURNToAdminHref.class) String orgUrn);
+
+   @Override
+   @Delegate
+   MetadataApi.Writeable getMetadataApi(@EndpointParam URI orgAdminHref);
 
 }

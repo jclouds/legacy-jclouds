@@ -82,7 +82,7 @@ public class VAppApiExpectTest extends VCloudDirectorAdminApiExpectTest {
       
       VApp expected = getVApp();
 
-      assertEquals(api.getVAppApi().getVApp(vAppURI), expected);
+      assertEquals(api.getVAppApi().get(vAppURI), expected);
    }
 
    @Test(enabled = false)
@@ -103,7 +103,7 @@ public class VAppApiExpectTest extends VCloudDirectorAdminApiExpectTest {
 		
 		Task expected = editVAppTask();
 		
-		assertEquals(api.getVAppApi().editVApp(vAppURI, modified), expected);
+		assertEquals(api.getVAppApi().edit(vAppURI, modified), expected);
    }
 
    @Test(enabled = false)
@@ -119,7 +119,7 @@ public class VAppApiExpectTest extends VCloudDirectorAdminApiExpectTest {
 		
 		Task expected = removeVAppTask();
 		
-		assertEquals(api.getVAppApi().removeVApp(vAppURI), expected);
+		assertEquals(api.getVAppApi().remove(vAppURI), expected);
    }
 
    @Test(enabled = false)
@@ -349,12 +349,12 @@ public class VAppApiExpectTest extends VCloudDirectorAdminApiExpectTest {
             .acceptAnyMedia()
             .httpRequestBuilder().build(), 
          new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/vApp/getControlAccess.xml", VCloudDirectorMediaType.VAPP)
+            .xmlFilePayload("/vApp/getAccessControl.xml", VCloudDirectorMediaType.VAPP)
             .httpResponseBuilder().build());
 
-      ControlAccessParams expected = getControlAccessParams();
+      ControlAccessParams expected = getAccessControlParams();
 
-      assertEquals(api.getVAppApi().getControlAccess(vAppURI), expected);
+      assertEquals(api.getVAppApi().getAccessControl(vAppURI), expected);
    }
 
    @Test(enabled = false)
@@ -690,7 +690,7 @@ public class VAppApiExpectTest extends VCloudDirectorAdminApiExpectTest {
       return task;
    }
 
-   public static ControlAccessParams getControlAccessParams() {
+   public static ControlAccessParams getAccessControlParams() {
       ControlAccessParams params = ControlAccessParams.builder()
             .build();
 

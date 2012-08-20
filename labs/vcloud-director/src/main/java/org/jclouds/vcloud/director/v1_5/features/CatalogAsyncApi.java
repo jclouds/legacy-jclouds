@@ -151,11 +151,18 @@ public interface CatalogAsyncApi {
     * @return asynchronous access to {@link Metadata.Readable} features
     */
    @Delegate
-   MetadataAsyncApi.Readable getMetadataApi();
+   MetadataAsyncApi.Readable getMetadataApi(@EndpointParam(parser = CatalogURNToHref.class) String catalogUrn);
+   
+   @Delegate
+   MetadataAsyncApi.Readable getMetadataApi(@EndpointParam URI catalogItemHref);
 
    /**
     * @see CatalogApi#getItemMetadataApi
     */
    @Delegate
-   MetadataAsyncApi.Writeable getItemMetadataApi();
+   MetadataAsyncApi.Writeable getItemMetadataApi(@EndpointParam(parser = CatalogItemURNToHref.class) String catalogItemUrn);
+
+   @Delegate
+   MetadataAsyncApi.Writeable getItemMetadataApi(@EndpointParam URI catalogItemHref);
+
 }

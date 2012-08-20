@@ -181,7 +181,7 @@ public class NetworkApiExpectTest extends VCloudDirectorAdminApiExpectTest {
    @Test
    public void testGetNetworkMetadataHref() {
       VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, getMetadata, getMetadataResponse);
-      assertEquals(api.getNetworkApi().getMetadataApi().get(networkHref), metadata());
+      assertEquals(api.getNetworkApi().getMetadataApi(networkHref).get(), metadata());
    }
 
    static Metadata metadata() {
@@ -216,7 +216,7 @@ public class NetworkApiExpectTest extends VCloudDirectorAdminApiExpectTest {
    @Test
    public void testGetNetworkMetadataEntryHref() {
       VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, getMetadataValue, getMetadataValueResponse);
-      assertEquals(api.getNetworkApi().getMetadataApi().getValue(networkHref, "KEY"), metadataValue());
+      assertEquals(api.getNetworkApi().getMetadataApi(networkHref).getValue("KEY"), metadataValue());
    }
    
    private MetadataValue metadataValue() {

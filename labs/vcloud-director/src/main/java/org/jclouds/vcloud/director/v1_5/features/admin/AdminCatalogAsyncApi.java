@@ -248,6 +248,10 @@ public interface AdminCatalogAsyncApi extends CatalogAsyncApi {
     */
    @Override
    @Delegate
-   MetadataAsyncApi.Writeable getMetadataApi();
+   MetadataAsyncApi.Writeable getMetadataApi(@EndpointParam(parser = CatalogURNToAdminHref.class) String catalogUrn);
+
+   @Override
+   @Delegate
+   MetadataAsyncApi.Writeable getMetadataApi(@EndpointParam URI catalogAdminHref);
 
 }

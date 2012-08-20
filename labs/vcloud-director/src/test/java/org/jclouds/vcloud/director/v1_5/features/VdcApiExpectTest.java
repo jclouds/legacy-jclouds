@@ -355,7 +355,7 @@ public class VdcApiExpectTest extends VCloudDirectorAdminApiExpectTest {
             
       Metadata expected = metadata();
 
-      assertEquals(api.getVdcApi().getMetadataApi().get(vdcUri), expected);
+      assertEquals(api.getVdcApi().getMetadataApi(vdcUri).get(), expected);
    }
    
    @Test(enabled = false)
@@ -373,7 +373,7 @@ public class VdcApiExpectTest extends VCloudDirectorAdminApiExpectTest {
       
       MetadataValue expected = metadataValue();
      
-      assertEquals(api.getVdcApi().getMetadataApi().getValue(vdcUri, "key"), expected);
+      assertEquals(api.getVdcApi().getMetadataApi(vdcUri).getValue("key"), expected);
    }
 
    public static Vdc getVdc() {

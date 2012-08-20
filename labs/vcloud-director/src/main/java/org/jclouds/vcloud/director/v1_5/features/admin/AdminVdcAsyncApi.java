@@ -104,7 +104,7 @@ public interface AdminVdcAsyncApi extends VdcAsyncApi {
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<AdminVdc> get(@EndpointParam URI vdcHref);
+   ListenableFuture<AdminVdc> get(@EndpointParam URI vdcAdminHref);
 
    /**
     * @see AdminVdcApi#edit(URI, AdminVdc)
@@ -113,7 +113,7 @@ public interface AdminVdcAsyncApi extends VdcAsyncApi {
    @Consumes
    @Produces(VCloudDirectorMediaType.ADMIN_VDC)
    @JAXBResponseParser
-   ListenableFuture<Task> edit(@EndpointParam URI vdcHref, AdminVdc vdc);
+   ListenableFuture<Task> edit(@EndpointParam URI vdcAdminHref, AdminVdc vdc);
 
    /**
     * @see AdminVdcApi#remove(URI)
@@ -121,7 +121,7 @@ public interface AdminVdcAsyncApi extends VdcAsyncApi {
    @DELETE
    @Consumes
    @JAXBResponseParser
-   ListenableFuture<Task> remove(@EndpointParam URI vdcHref);
+   ListenableFuture<Task> remove(@EndpointParam URI vdcAdminHref);
 
    /**
     * @see AdminVdcApi#enable(URI)
@@ -130,7 +130,7 @@ public interface AdminVdcAsyncApi extends VdcAsyncApi {
    @Consumes
    @Path("/action/enable")
    @JAXBResponseParser
-   ListenableFuture<Void> enable(@EndpointParam URI vdcHref);
+   ListenableFuture<Void> enable(@EndpointParam URI vdcAdminHref);
 
    /**
     * @see AdminVdcApi#disable(URI)
@@ -139,12 +139,17 @@ public interface AdminVdcAsyncApi extends VdcAsyncApi {
    @Consumes
    @Path("/action/disable")
    @JAXBResponseParser
-   ListenableFuture<Void> disable(@EndpointParam URI vdcHref);
+   ListenableFuture<Void> disable(@EndpointParam URI vdcAdminHref);
 
    /**
     * @return asynchronous access to {@link Writeable} features
     */
    @Override
    @Delegate
-   MetadataAsyncApi.Writeable getMetadataApi();
+   MetadataAsyncApi.Writeable getMetadataApi(@EndpointParam(parser = VdcURNToAdminHref.class) String vdcUrn);
+
+   @Override
+   @Delegate
+   MetadataAsyncApi.Writeable getMetadataApi(@EndpointParam URI vdcAdminHref);
+
 }

@@ -23,6 +23,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.rest.annotations.EndpointParam;
+import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.ProductSectionList;
 import org.jclouds.vcloud.director.v1_5.domain.RasdItemsList;
 import org.jclouds.vcloud.director.v1_5.domain.ScreenTicket;
@@ -41,11 +43,12 @@ import org.jclouds.vcloud.director.v1_5.domain.section.NetworkConnectionSection;
 import org.jclouds.vcloud.director.v1_5.domain.section.OperatingSystemSection;
 import org.jclouds.vcloud.director.v1_5.domain.section.RuntimeInfoSection;
 import org.jclouds.vcloud.director.v1_5.domain.section.VirtualHardwareSection;
+import org.jclouds.vcloud.director.v1_5.functions.href.VmURNToHref;
 
 /**
  * Provides synchronous access to {@link Vm} objects.
- *
- * @author grkvlt@apache.org
+ * 
+ * @author grkvlt@apache.org, Adrian Cole
  * @see VmAsyncApi
  * @version 1.5
  */
@@ -54,465 +57,561 @@ public interface VmApi {
 
    /**
     * Retrieves a {@link Vm}.
-    *
+    * 
     * @since 0.9
-    * @see VAppApi#getVApp(URI)
+    * @see VAppApi#get(String)
     */
-   Vm get(URI vmURI);
+   Vm get(String vmUrn);
+
+   Vm get(URI vmHref);
 
    /**
     * Modifies the name/description of a {@link Vm}.
-    *
+    * 
     * @since 0.9
-    * @see VAppApi#editVApp(URI, VApp)
+    * @see VAppApi#edit(String, VApp)
     */
-   Task edit(URI vmURI, Vm vm);
+   Task edit(String vmUrn, Vm vm);
+
+   Task edit(URI vmHref, Vm vm);
 
    /**
     * Deletes a {@link Vm}.
-    *
+    * 
     * @since 0.9
-    * @see VAppApi#removeVApp(URI)
+    * @see VAppApi#remove(String)
     */
-   Task remove(URI vmURI);
+   Task remove(String vmUrn);
+
+   Task remove(URI vmHref);
 
    /**
     * Consolidates a {@link Vm}.
-    *
+    * 
     * <pre>
     * POST /vApp/{id}/action/consolidate
     * </pre>
-    *
+    * 
     * @since 1.5
     */
-   Task consolidate(URI vmURI);
+   Task consolidate(String vmUrn);
+
+   Task consolidate(URI vmHref);
 
    /**
     * Deploys a {@link Vm}.
-    *
+    * 
     * @since 0.9
-    * @see VAppApi#deploy(URI, DeployVAppParams)
+    * @see VAppApi#deploy(String, DeployVAppParams)
     */
-   Task deploy(URI vmURI, DeployVAppParams params);
+   Task deploy(String vmUrn, DeployVAppParams params);
+
+   Task deploy(URI vmHref, DeployVAppParams params);
 
    /**
     * Discard suspended state of a {@link Vm}.
-    *
+    * 
     * @since 0.9
-    * @see VAppApi#discardSuspendedState(URI)
+    * @see VAppApi#discardSuspendedState(String)
     */
-   Task discardSuspendedState(URI vmURI);
+   Task discardSuspendedState(String vmUrn);
+
+   Task discardSuspendedState(URI vmHref);
 
    /**
     * Installs VMware tools to the virtual machine.
-    *
+    * 
     * It should be running in order for them to be installed.
-    *
+    * 
     * <pre>
     * POST /vApp/{id}/action/installVMwareTools
     * </pre>
-    *
+    * 
     * @since 1.5
     */
-   Task installVMwareTools(URI vmURI);
+   Task installVMwareTools(String vmUrn);
+
+   Task installVMwareTools(URI vmHref);
 
    /**
     * Relocates a {@link Vm}.
-    *
+    * 
     * <pre>
     * POST /vApp/{id}/action/relocate
     * </pre>
-    *
+    * 
     * @since 1.5
     */
-   Task relocate(URI vmURI, RelocateParams params);
+   Task relocate(String vmUrn, RelocateParams params);
+
+   Task relocate(URI vmHref, RelocateParams params);
 
    /**
     * Undeploy a {@link Vm}.
-    *
+    * 
     * @since 0.9
-    * @see VAppApi#undeploy(URI, UndeployVAppParams)
+    * @see VAppApi#undeploy(String, UndeployVAppParams)
     */
-   Task undeploy(URI vmURI, UndeployVAppParams params);
+   Task undeploy(String vmUrn, UndeployVAppParams params);
+
+   Task undeploy(URI vmHref, UndeployVAppParams params);
 
    /**
-    * Upgrade virtual hardware version of a VM to the highest supported virtual
-    * hardware version of provider vDC where the VM locates.
-    *
+    * Upgrade virtual hardware version of a VM to the highest supported virtual hardware version of
+    * provider vDC where the VM locates.
+    * 
     * <pre>
     * POST /vApp/{id}/action/upgradeHardwareVersion
     * </pre>
-    *
+    * 
     * @since 1.5
     */
-   Task upgradeHardwareVersion(URI vmURI);
+   Task upgradeHardwareVersion(String vmUrn);
+
+   Task upgradeHardwareVersion(URI vmHref);
 
    /**
     * Powers off a {@link Vm}.
-    *
+    * 
     * @since 0.9
-    * @see VAppApi#powerOff(URI)
+    * @see VAppApi#powerOff(String)
     */
-   Task powerOff(URI vmURI);
+   Task powerOff(String vmUrn);
+
+   Task powerOff(URI vmHref);
 
    /**
     * Powers on a {@link Vm}.
-    *
+    * 
     * @since 0.9
-    * @see VAppApi#powerOn(URI)
+    * @see VAppApi#powerOn(String)
     */
-   Task powerOn(URI vmURI);
+   Task powerOn(String vmUrn);
+
+   Task powerOn(URI vmHref);
 
    /**
     * Reboots a {@link Vm}.
-    *
+    * 
     * @since 0.9
-    * @see VAppApi#reboot(URI)
+    * @see VAppApi#reboot(String)
     */
-   Task reboot(URI vmURI);
+   Task reboot(String vmUrn);
+
+   Task reboot(URI vmHref);
 
    /**
     * Resets a {@link Vm}.
-    *
+    * 
     * @since 0.9
-    * @see VAppApi#reset(URI)
+    * @see VAppApi#reset(String)
     */
-   Task reset(URI vmURI);
+   Task reset(String vmUrn);
+
+   Task reset(URI vmHref);
 
    /**
     * Shuts down a {@link Vm}.
-    *
+    * 
     * @since 0.9
-    * @see VAppApi#shutdown(URI)
+    * @see VAppApi#shutdown(String)
     */
-   Task shutdown(URI vmURI);
+   Task shutdown(String vmUrn);
+
+   Task shutdown(URI vmHref);
 
    /**
     * Suspends a {@link Vm}.
-    *
+    * 
     * @since 0.9
-    * @see VAppApi#suspend(URI)
+    * @see VAppApi#suspend(String)
     */
-   Task suspend(URI vmURI);
+   Task suspend(String vmUrn);
+
+   Task suspend(URI vmHref);
 
    /**
     * Retrieves the guest customization section of a {@link Vm}.
-    *
+    * 
     * <pre>
     * GET /vApp/{id}/guestCustomizationSection
     * </pre>
-    *
+    * 
     * @since 1.0
-    * @see VAppApi#
     */
-   GuestCustomizationSection getGuestCustomizationSection(URI vmURI);
+   GuestCustomizationSection getGuestCustomizationSection(String vmUrn);
+
+   GuestCustomizationSection getGuestCustomizationSection(URI vmHref);
 
    /**
     * Modifies the guest customization section of a {@link Vm}.
-    *
+    * 
     * <pre>
     * PUT /vApp/{id}/guestCustomizationSection
     * </pre>
-    *
+    * 
     * @since 1.0
     */
-   Task editGuestCustomizationSection(URI vmURI, GuestCustomizationSection section);
+   Task editGuestCustomizationSection(String vmUrn, GuestCustomizationSection section);
+
+   Task editGuestCustomizationSection(URI vmHref, GuestCustomizationSection section);
 
    /**
     * Ejects media from a {@link Vm}.
-    *
+    * 
     * <pre>
     * PUT /vApp/{id}/media/action/ejectMedia
     * </pre>
-    *
+    * 
     * @since 0.9
     */
-   Task ejectMedia(URI vmURI, MediaInsertOrEjectParams mediaParams);
+   Task ejectMedia(String vmUrn, MediaInsertOrEjectParams mediaParams);
+
+   Task ejectMedia(URI vmHref, MediaInsertOrEjectParams mediaParams);
 
    /**
     * Insert media into a {@link Vm}.
-    *
+    * 
     * <pre>
     * PUT /vApp/{id}/media/action/insertMedia
     * </pre>
-    *
+    * 
     * @since 0.9
     */
-   Task insertMedia(URI vmURI, MediaInsertOrEjectParams mediaParams);
+   Task insertMedia(String vmUrn, MediaInsertOrEjectParams mediaParams);
+
+   Task insertMedia(URI vmHref, MediaInsertOrEjectParams mediaParams);
 
    /**
     * Retrieves the network connection section of a {@link Vm}.
-    *
+    * 
     * <pre>
     * GET /vApp/{id}/networkConnectionSection
     * </pre>
-    *
+    * 
     * @since 0.9
     */
-   NetworkConnectionSection getNetworkConnectionSection(URI vmURI);
+   NetworkConnectionSection getNetworkConnectionSection(String vmUrn);
+
+   NetworkConnectionSection getNetworkConnectionSection(URI vmHref);
 
    /**
     * Modifies the network connection section of a {@link Vm}.
-    *
+    * 
     * <pre>
     * PUT /vApp/{id}/networkConnectionSection
     * </pre>
-    *
+    * 
     * @since 0.9
     */
-   Task editNetworkConnectionSection(URI vmURI, NetworkConnectionSection section);
+   Task editNetworkConnectionSection(String vmUrn, NetworkConnectionSection section);
+
+   Task editNetworkConnectionSection(URI vmHref, NetworkConnectionSection section);
 
    /**
     * Retrieves the operating system section of a {@link Vm}.
-    *
+    * 
     * <pre>
     * GET /vApp/{id}/operatingSystemSection
     * </pre>
-    *
+    * 
     * @since 0.9
     */
-   OperatingSystemSection getOperatingSystemSection(URI vmURI);
+   OperatingSystemSection getOperatingSystemSection(String vmUrn);
+
+   OperatingSystemSection getOperatingSystemSection(URI vmHref);
 
    /**
     * Modifies the operating system section of a {@link Vm}.
-    *
+    * 
     * <pre>
     * PUT /vApp/{id}/operatingSystemSection
     * </pre>
-    *
+    * 
     * @since 0.9
     */
-   Task editOperatingSystemSection(URI vmURI, OperatingSystemSection section);
+   Task editOperatingSystemSection(String vmUrn, OperatingSystemSection section);
+
+   Task editOperatingSystemSection(URI vmHref, OperatingSystemSection section);
 
    /**
     * Retrieves {@link Vm} product sections.
-    *
+    * 
     * @since 1.5
-    * @see VAppApi#getProductSections(URI)
+    * @see VAppApi#getProductSections(String)
     */
-   ProductSectionList getProductSections(URI vmURI);
+   ProductSectionList getProductSections(String vmUrn);
+
+   ProductSectionList getProductSections(URI vmHref);
 
    /**
     * Modifies the product section information of a {@link Vm}.
-    *
+    * 
     * @since 1.5
-    * @see VAppApi#editProductSections(URI, ProductSectionList)
+    * @see VAppApi#editProductSections(String, ProductSectionList)
     */
-   Task editProductSections(URI vmURI, ProductSectionList sectionList);
+   Task editProductSections(String vmUrn, ProductSectionList sectionList);
+
+   Task editProductSections(URI vmHref, ProductSectionList sectionList);
 
    /**
     * Retrieves a pending question for a {@link Vm}.
-    *
-    * The user should answer to the question by operation {@link #answerQuestion(URI, VmQuestionAnswer)}.
-    * Usually questions will be asked when the VM is powering on.
-    *
+    * 
+    * The user should answer to the question by operation
+    * {@link #answerQuestion(String, VmQuestionAnswer)}. Usually questions will be asked when the VM
+    * is powering on.
+    * 
     * <pre>
     * GET /vApp/{id}/question
     * </pre>
-    *
+    * 
     * @since 0.9
     */
-   VmPendingQuestion getPendingQuestion(URI vmURI);
+   VmPendingQuestion getPendingQuestion(String vmUrn);
+
+   VmPendingQuestion getPendingQuestion(URI vmHref);
 
    /**
     * Answer a pending question on a {@link Vm}.
-    *
-    * The answer IDs of choice and question should match the ones returned from operation {@link #getPendingQuestion(URI)}.
-    *
+    * 
+    * The answer IDs of choice and question should match the ones returned from operation
+    * {@link #getPendingQuestion(String)}.
+    * 
     * <pre>
     * POST /vApp/{id}/question/action/answer
     * </pre>
-    *
+    * 
     * @since 0.9
     */
-   void answerQuestion(URI vmURI, VmQuestionAnswer answer);
+   void answerQuestion(String vmUrn, VmQuestionAnswer answer);
+
+   void answerQuestion(URI vmHref, VmQuestionAnswer answer);
 
    /**
     * Retrieves the runtime info section of a {@link Vm}.
-    *
+    * 
     * <pre>
     * GET /vApp/{id}/runtimeInfoSection
     * </pre>
-    *
+    * 
     * @since 1.5
     */
-   RuntimeInfoSection getRuntimeInfoSection(URI vmURI);
+   RuntimeInfoSection getRuntimeInfoSection(String vmUrn);
+
+   RuntimeInfoSection getRuntimeInfoSection(URI vmHref);
 
    /**
     * Retrieves the thumbnail of the screen of a {@link Vm}.
-    *
+    * 
     * The content type of the response may vary (e.g. {@code image/png}, {@code image/gif}).
-    *
+    * 
     * <pre>
     * GET /vApp/{id}/screen
     * </pre>
-    *
+    * 
     * @since 0.9
     */
-   byte[] getScreenImage(URI vmURI);
+   byte[] getScreenImage(String vmUrn);
+
+   byte[] getScreenImage(URI vmHref);
 
    /**
     * Retrieve a screen ticket for remote console connection to a {@link Vm}.
-    *
-    * A screen ticket is a string that includes the virtual machine's IP address, its managed object reference, and a string
-    * that has been encoded as described in RFC 2396. Each VM element in a vApp includes a link where rel="screen:acquireTicket".
-    * You can use that link to request a screen ticket that you can use with the vmware-vmrc utility to open a VMware Remote
-    * Console for the virtual machine represented by that VM element. The vApp should be running to get a valid screen ticket.
-    *
+    * 
+    * A screen ticket is a string that includes the virtual machine's IP address, its managed object
+    * reference, and a string that has been encoded as described in RFC 2396. Each VM element in a
+    * vApp includes a link where rel="screen:acquireTicket". You can use that link to request a
+    * screen ticket that you can use with the vmware-vmrc utility to open a VMware Remote Console
+    * for the virtual machine represented by that VM element. The vApp should be running to get a
+    * valid screen ticket.
+    * 
     * <pre>
     * GET /vApp/{id}/screen/action/acquireTicket
     * </pre>
-    *
+    * 
     * @since 0.9
     */
-   ScreenTicket getScreenTicket(URI vmURI);
+   ScreenTicket getScreenTicket(String vmUrn);
+
+   ScreenTicket getScreenTicket(URI vmHref);
 
    /**
     * Retrieves the virtual hardware section of a {@link Vm}.
-    *
+    * 
     * <pre>
     * GET /vApp/{id}/virtualHardwareSection
     * </pre>
-    *
+    * 
     * @since 0.9
     */
-   VirtualHardwareSection getVirtualHardwareSection(URI vmURI);
+   VirtualHardwareSection getVirtualHardwareSection(String vmUrn);
+
+   VirtualHardwareSection getVirtualHardwareSection(URI vmHref);
 
    /**
     * Modifies the virtual hardware section of a {@link Vm}.
-    *
+    * 
     * <pre>
     * PUT /vApp/{id}/virtualHardwareSection
     * </pre>
-    *
+    * 
     * @since 0.9
     */
-   Task editVirtualHardwareSection(URI vmURI, VirtualHardwareSection section);
+   Task editVirtualHardwareSection(String vmUrn, VirtualHardwareSection section);
+
+   Task editVirtualHardwareSection(URI vmHref, VirtualHardwareSection section);
 
    /**
     * Retrieves the CPU properties in virtual hardware section of a {@link Vm}.
-    *
+    * 
     * <pre>
     * GET /vApp/{id}/virtualHardwareSection/cpu
     * </pre>
-    *
+    * 
     * @since 0.9
     */
-   RasdItem getVirtualHardwareSectionCpu(URI vmURI);
+   RasdItem getVirtualHardwareSectionCpu(String vmUrn);
+
+   RasdItem getVirtualHardwareSectionCpu(URI vmHref);
 
    /**
     * Modifies the CPU properties in virtual hardware section of a {@link Vm}.
-    *
+    * 
     * <pre>
     * PUT /vApp/{id}/virtualHardwareSection/cpu
     * </pre>
-    *
+    * 
     * @since 0.9
     */
-   Task editVirtualHardwareSectionCpu(URI vmURI, RasdItem rasd);
+   Task editVirtualHardwareSectionCpu(String vmUrn, RasdItem rasd);
+
+   Task editVirtualHardwareSectionCpu(URI vmHref, RasdItem rasd);
 
    /**
     * Retrieves a list of items for disks from virtual hardware section of a {@link Vm}.
-    *
+    * 
     * <pre>
     * GET /vApp/{id}/virtualHardwareSection/disks
     * </pre>
-    *
+    * 
     * @since 0.9
     */
-   RasdItemsList getVirtualHardwareSectionDisks(URI vmURI);
+   RasdItemsList getVirtualHardwareSectionDisks(String vmUrn);
+
+   RasdItemsList getVirtualHardwareSectionDisks(URI vmHref);
 
    /**
     * Modifies the disks list in virtual hardware section of a {@link Vm}.
-    *
+    * 
     * <pre>
     * PUT /vApp/{id}/virtualHardwareSection/disks
     * </pre>
-    *
+    * 
     * @since 0.9
     */
-   Task editVirtualHardwareSectionDisks(URI vmURI, RasdItemsList rasdItemsList);
+   Task editVirtualHardwareSectionDisks(String vmUrn, RasdItemsList rasdItemsList);
+
+   Task editVirtualHardwareSectionDisks(URI vmHref, RasdItemsList rasdItemsList);
 
    /**
     * Retrieves the list of items that represents the floppies and CD/DVD drives in a {@link Vm}.
-    *
+    * 
     * <pre>
     * GET /vApp/{id}/virtualHardwareSection/media
     * </pre>
-    *
+    * 
     * @since 0.9
     */
-   RasdItemsList getVirtualHardwareSectionMedia(URI vmURI);
+   RasdItemsList getVirtualHardwareSectionMedia(String vmUrn);
+
+   RasdItemsList getVirtualHardwareSectionMedia(URI vmHref);
 
    /**
-    * Retrieves the item that contains memory information from virtual hardware section of a {@link Vm}.
-    *
+    * Retrieves the item that contains memory information from virtual hardware section of a
+    * {@link Vm}.
+    * 
     * <pre>
     * GET /vApp/{id}/virtualHardwareSection/memory
     * </pre>
-    *
+    * 
     * @since 0.9
     */
-   RasdItem getVirtualHardwareSectionMemory(URI vmURI);
+   RasdItem getVirtualHardwareSectionMemory(String vmUrn);
+
+   RasdItem getVirtualHardwareSectionMemory(URI vmHref);
 
    /**
     * Modifies the memory properties in virtual hardware section of a {@link Vm}.
-    *
+    * 
     * <pre>
     * PUT /vApp/{id}/virtualHardwareSection/memory
     * </pre>
-    *
+    * 
     * @since 0.9
     */
-   Task editVirtualHardwareSectionMemory(URI vmURI, RasdItem rasd);
+   Task editVirtualHardwareSectionMemory(String vmUrn, RasdItem rasd);
+
+   Task editVirtualHardwareSectionMemory(URI vmHref, RasdItem rasd);
 
    /**
     * Retrieves a list of items for network cards from virtual hardware section of a {@link Vm}.
-    *
+    * 
     * <pre>
     * GET /vApp/{id}/virtualHardwareSection/networkCards
     * </pre>
-    *
+    * 
     * @since 0.9
     */
-   RasdItemsList getVirtualHardwareSectionNetworkCards(URI vmURI);
+   RasdItemsList getVirtualHardwareSectionNetworkCards(String vmUrn);
+
+   RasdItemsList getVirtualHardwareSectionNetworkCards(URI vmHref);
 
    /**
     * Modifies the network cards list in virtual hardware section of a {@link Vm}.
-    *
+    * 
     * <pre>
     * PUT /vApp/{id}/virtualHardwareSection/networkCards
     * </pre>
-    *
+    * 
     * @since 0.9
     */
-   Task editVirtualHardwareSectionNetworkCards(URI vmURI, RasdItemsList rasdItemsList);
+   Task editVirtualHardwareSectionNetworkCards(String vmUrn, RasdItemsList rasdItemsList);
+
+   Task editVirtualHardwareSectionNetworkCards(URI vmHref, RasdItemsList rasdItemsList);
 
    /**
     * Retrieves a list of items for serial ports from virtual hardware section of a {@link Vm}.
-    *
+    * 
     * <pre>
     * GET /vApp/{id}/virtualHardwareSection/serialPorts
     * </pre>
-    *
+    * 
     * @since 1.5
     */
-   RasdItemsList getVirtualHardwareSectionSerialPorts(URI vmURI);
+   RasdItemsList getVirtualHardwareSectionSerialPorts(String vmUrn);
+
+   RasdItemsList getVirtualHardwareSectionSerialPorts(URI vmHref);
 
    /**
     * Modifies the serial ports list in virtual hardware section of a {@link Vm}.
-    *
+    * 
     * <pre>
     * PUT /vApp/{id}/virtualHardwareSection/serialPorts
     * </pre>
-    *
+    * 
     * @since 1.5
     */
-   Task editVirtualHardwareSectionSerialPorts(URI vmURI, RasdItemsList rasdItemsList);
+   Task editVirtualHardwareSectionSerialPorts(String vmUrn, RasdItemsList rasdItemsList);
+
+   Task editVirtualHardwareSectionSerialPorts(URI vmHref, RasdItemsList rasdItemsList);
 
    /**
     * Synchronous access to {@link Vm} {@link Metadata} features.
     */
    @Delegate
-   MetadataApi.Writeable getMetadataApi();
+   MetadataApi.Writeable getMetadataApi(@EndpointParam(parser = VmURNToHref.class) String vmUrn);
+
+   @Delegate
+   MetadataApi.Writeable getMetadataApi(@EndpointParam URI vmHref);
+
 }

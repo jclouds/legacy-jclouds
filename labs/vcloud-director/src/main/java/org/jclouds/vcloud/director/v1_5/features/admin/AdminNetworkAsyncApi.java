@@ -116,5 +116,10 @@ public interface AdminNetworkAsyncApi extends NetworkAsyncApi {
     */
    @Override
    @Delegate
-   MetadataAsyncApi.Writeable getMetadataApi();
+   MetadataAsyncApi.Writeable getMetadataApi(@EndpointParam(parser = NetworkURNToAdminHref.class) String networkUrn);
+
+   @Override
+   @Delegate
+   MetadataAsyncApi.Writeable getMetadataApi(@EndpointParam URI networkAdminHref);
+
 }

@@ -23,11 +23,13 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.network.Network;
 import org.jclouds.vcloud.director.v1_5.domain.org.OrgNetwork;
 import org.jclouds.vcloud.director.v1_5.features.MetadataApi;
 import org.jclouds.vcloud.director.v1_5.features.NetworkApi;
+import org.jclouds.vcloud.director.v1_5.functions.href.NetworkURNToAdminHref;
 
 /**
  * Provides synchronous access to admin {@link Network} objects.
@@ -97,6 +99,10 @@ public interface AdminNetworkApi extends NetworkApi {
     */
    @Override
    @Delegate
-   MetadataApi.Writeable getMetadataApi();
+   MetadataApi.Writeable getMetadataApi(@EndpointParam(parser = NetworkURNToAdminHref.class) String networkUrn);
+
+   @Override
+   @Delegate
+   MetadataApi.Writeable getMetadataApi(@EndpointParam URI networkAdminHref);
 
 }
