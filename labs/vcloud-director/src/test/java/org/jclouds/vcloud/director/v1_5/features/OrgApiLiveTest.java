@@ -29,15 +29,12 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 
-import java.net.URI;
-
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.AdminCatalog;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
-import org.jclouds.vcloud.director.v1_5.domain.org.Org;
 import org.jclouds.vcloud.director.v1_5.domain.org.OrgList;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorApiLiveTest;
 import org.testng.annotations.AfterClass;
@@ -70,7 +67,7 @@ public class OrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    public void cleanUp() throws Exception {
       if (adminMembersSet) {
          try {
-            Task remove = adminContext.getApi().getOrgApi().getMetadataApi().removeEntry(toAdminUri(orgURI), "KEY");
+            Task remove = adminContext.getApi().getOrgApi().getMetadataApi(orgUrn).removeEntry("KEY");
             taskDoneEventually(remove);
          } catch (Exception e) {
             logger.warn(e, "Error when deleting metadata entry");
@@ -88,8 +85,6 @@ public class OrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
     */
 
    private OrgList orgList;
-   private URI orgURI;
-   private Org org;
    private boolean adminMembersSet = false; // track if test entities have been addd
 
    @Test(description = "GET /org")
@@ -114,12 +109,10 @@ public class OrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
       Reference orgRef = Iterables.getFirst(orgList, null);
       assertNotNull(orgRef);
 
-      orgURI = orgRef.getHref();
-
       // Call the method being tested
-      org = orgApi.get(orgURI);
+      org = orgApi.get(orgUrn);
 
-      assertEquals(orgApi.get(org.getId()), org);
+      assertEquals(orgApi.get(orgUrn), org);
 
       checkOrg(org);
 
@@ -133,12 +126,12 @@ public class OrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
     * the need for configuration
     */
    private void setupAdminMembers() {
-      adminContext.getApi().getOrgApi().getMetadataApi()
-               .putEntry(toAdminUri(orgURI), "KEY", MetadataValue.builder().value("VALUE").build());
+      adminContext.getApi().getOrgApi().getMetadataApi(orgUrn)
+               .putEntry("KEY", MetadataValue.builder().value("VALUE").build());
 
       AdminCatalog newCatalog = AdminCatalog.builder().name("Test Catalog " + getTestDateTimeStamp())
                .description("created by testOrg()").build();
-      newCatalog = adminContext.getApi().getCatalogApi().addCatalogToOrg(newCatalog, org.getId());
+      newCatalog = adminContext.getApi().getCatalogApi().addCatalogToOrg(newCatalog, orgUrn);
 
       catalogUrn = newCatalog.getId();
 
@@ -149,7 +142,7 @@ public class OrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    public void testGetOrgMetadata() {
 
       // Call the method being tested
-      Metadata metadata = orgApi.getMetadataApi().get(orgURI);
+      Metadata metadata = orgApi.getMetadataApi(orgUrn).get();
 
       // NOTE The environment MUST have at one metadata entry for the first organisation configured
 
@@ -163,7 +156,7 @@ public class OrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    @Test(description = "GET /org/{id}/metadata/{key}", dependsOnMethods = { "testGetOrgMetadata" })
    public void testGetOrgMetadataValue() {
       // Call the method being tested
-      MetadataValue value = orgApi.getMetadataApi().getValue(orgURI, "KEY");
+      MetadataValue value = orgApi.getMetadataApi(orgUrn).getValue("KEY");
 
       // NOTE The environment MUST have configured the metadata entry as '{ key="KEY", value="VALUE"
       // )'

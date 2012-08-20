@@ -23,9 +23,12 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.vcloud.director.v1_5.domain.Catalog;
 import org.jclouds.vcloud.director.v1_5.domain.CatalogItem;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
+import org.jclouds.vcloud.director.v1_5.functions.href.CatalogItemURNToHref;
+import org.jclouds.vcloud.director.v1_5.functions.href.CatalogURNToHref;
 
 /**
  * Provides synchronous access to {@link Catalog} objects.
@@ -118,12 +121,18 @@ public interface CatalogApi {
     * @return synchronous access to {@link Metadata.Readable} features
     */
    @Delegate
-   MetadataApi.Readable getMetadataApi();
+   MetadataApi.Readable getMetadataApi(@EndpointParam(parser = CatalogURNToHref.class) String catalogUrn);
+
+   @Delegate
+   MetadataApi.Readable getMetadataApi(@EndpointParam URI catalogItemHref);
 
    /**
     * @return synchronous access to {@link Metadata.Writeable} features for CatalogItems
     */
    @Delegate
-   MetadataApi.Writeable getItemMetadataApi();
+   MetadataApi.Writeable getItemMetadataApi(@EndpointParam(parser = CatalogItemURNToHref.class) String catalogItemUrn);
+
+   @Delegate
+   MetadataApi.Writeable getItemMetadataApi(@EndpointParam URI catalogItemHref);
 
 }

@@ -30,7 +30,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
@@ -38,6 +37,7 @@ import org.jclouds.rest.binders.BindToXMLPayload;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
+import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationAndCookieToRequest;
@@ -48,7 +48,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see MetadataApi
  * @author danikov
  */
-//TODO: take out the endpoint params and supply them in the Delegate calls.
+// TODO: take out the endpoint params and supply them in the Delegate calls.
 public interface MetadataAsyncApi {
 
    @RequestFilters(AddVCloudAuthorizationAndCookieToRequest.class)
@@ -62,17 +62,17 @@ public interface MetadataAsyncApi {
       @Consumes
       @JAXBResponseParser
       @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-      ListenableFuture<Metadata> get(@EndpointParam URI metaDataUri);
+      ListenableFuture<Metadata> get();
 
       /**
-       * @see MetadataApi.Readable#getValue(URI, String)
+       * @see MetadataApi.Readable#getValue(String)
        */
       @GET
       @Path("/metadata/{key}")
       @Consumes
       @JAXBResponseParser
       @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-      ListenableFuture<MetadataValue> getValue(@EndpointParam URI metaDataUri, @PathParam("key") String key);
+      ListenableFuture<MetadataValue> getValue(@PathParam("key") String key);
 
    }
 
@@ -80,18 +80,17 @@ public interface MetadataAsyncApi {
    public static interface Writeable extends Readable {
 
       /**
-       * @see MetadataApi.Writable#merge(URI, Metadata))
+       * @see MetadataApi.Writable#merge(Metadata)
        */
       @POST
       @Path("/metadata")
       @Consumes(VCloudDirectorMediaType.TASK)
       @Produces(VCloudDirectorMediaType.METADATA)
       @JAXBResponseParser
-      ListenableFuture<Task> merge(@EndpointParam URI metaDataUri,
-               @BinderParam(BindToXMLPayload.class) Metadata metadata);
+      ListenableFuture<Task> merge(@BinderParam(BindToXMLPayload.class) Metadata metadata);
 
       /**
-       * @see MetadataApi.Writeable#putEntry(URI, String, MetadataEntry))
+       * @see MetadataApi.Writeable#putEntry(String, MetadataEntry)
        */
       @PUT
       @Path("/metadata/{key}")
@@ -99,17 +98,17 @@ public interface MetadataAsyncApi {
       @Produces(VCloudDirectorMediaType.METADATA_VALUE)
       @JAXBResponseParser
       // TODO: this is rediculous. get rid of the MetadataValue type, as it is only a string!
-      ListenableFuture<Task> putEntry(@EndpointParam URI metaDataUri, @PathParam("key") String key,
+      ListenableFuture<Task> putEntry(@PathParam("key") String key,
                @BinderParam(BindToXMLPayload.class) MetadataValue metadataValue);
-      
+
       /**
-       * @see MetadataApi.Writable#removeEntry(URI, String))
+       * @see MetadataApi.Writable#removeEntry(String)
        */
       @DELETE
       @Path("/metadata/{key}")
       @Consumes(VCloudDirectorMediaType.TASK)
       @JAXBResponseParser
-      ListenableFuture<Task> removeEntry(@EndpointParam URI metaDataUri, @PathParam("key") String key);
+      ListenableFuture<Task> removeEntry(@PathParam("key") String key);
 
    }
 }

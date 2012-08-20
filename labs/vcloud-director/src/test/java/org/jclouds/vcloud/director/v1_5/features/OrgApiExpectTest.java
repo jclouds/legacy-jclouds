@@ -148,7 +148,7 @@ public class OrgApiExpectTest extends VCloudDirectorAdminApiExpectTest {
    @Test
    public void testGetOrgMetadataHref() {
       VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, getMetadata, getMetadataResponse);
-      assertEquals(api.getOrgApi().getMetadataApi().get(orgHref), metadata());
+      assertEquals(api.getOrgApi().getMetadataApi(orgHref).get(), metadata());
    }
 
    static Metadata metadata() {
@@ -179,7 +179,7 @@ public class OrgApiExpectTest extends VCloudDirectorAdminApiExpectTest {
    @Test
    public void testGetOrgMetadataEntryHref() {
       VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, getMetadataValue, getMetadataValueResponse);
-      assertEquals(api.getOrgApi().getMetadataApi().getValue(orgHref, "KEY"), metadataValue());
+      assertEquals(api.getOrgApi().getMetadataApi(orgHref).getValue("KEY"), metadataValue());
    }
    
    public static Org org() {

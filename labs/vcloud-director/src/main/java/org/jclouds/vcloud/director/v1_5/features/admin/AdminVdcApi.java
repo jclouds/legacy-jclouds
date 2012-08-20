@@ -23,11 +23,13 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.vcloud.director.v1_5.domain.AdminVdc;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.features.MetadataApi;
 import org.jclouds.vcloud.director.v1_5.features.MetadataApi.Writeable;
 import org.jclouds.vcloud.director.v1_5.features.VdcApi;
+import org.jclouds.vcloud.director.v1_5.functions.href.VdcURNToAdminHref;
 
 /**
  * Provides synchronous access to {@link AdminVdc}.
@@ -51,7 +53,7 @@ public interface AdminVdcApi extends VdcApi {
    AdminVdc get(String vdcUrn);
 
    @Override
-   AdminVdc get(URI vdcHref);
+   AdminVdc get(URI vdcAdminHref);
 
    /**
     * Modifies a Virtual Data Center. Virtual Data Center could be enabled or disabled. 
@@ -60,7 +62,7 @@ public interface AdminVdcApi extends VdcApi {
     */
    Task edit(String vdcUrn, AdminVdc vdc);
    
-   Task edit(URI vdcHref, AdminVdc vdc);
+   Task edit(URI vdcAdminHref, AdminVdc vdc);
 
    /**
     * Deletes a Virtual Data Center. The Virtual Data Center should be disabled when remove is issued. 
@@ -69,7 +71,7 @@ public interface AdminVdcApi extends VdcApi {
    // TODO Saw what exception, instead of 400 
    Task remove(String vdcUrn);
 
-   Task remove(URI vdcHref);
+   Task remove(URI vdcAdminHref);
 
    /**
     * Enables a Virtual Data Center. This operation enables disabled Virtual Data Center. 
@@ -77,7 +79,7 @@ public interface AdminVdcApi extends VdcApi {
     */
    void enable(String vdcUrn);
    
-   void enable(URI vdcHref);
+   void enable(URI vdcAdminHref);
 
    /**
     * Disables a Virtual Data Center. If the Virtual Data Center is disabled this operation does not 
@@ -85,11 +87,15 @@ public interface AdminVdcApi extends VdcApi {
     */
    void disable(String vdcUrn);
 
-   void disable(URI vdcHref);
+   void disable(URI vdcAdminHref);
 
    /**
     * @return synchronous access to {@link Writeable} features
     */
    @Delegate
-   MetadataApi.Writeable getMetadataApi();
+   MetadataApi.Writeable getMetadataApi(@EndpointParam(parser = VdcURNToAdminHref.class) String vdcUrn);
+
+   @Delegate
+   MetadataApi.Writeable getMetadataApi(@EndpointParam URI vdcAdminHref);
+
 }

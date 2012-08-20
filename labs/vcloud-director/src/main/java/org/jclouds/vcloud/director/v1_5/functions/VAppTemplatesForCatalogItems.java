@@ -90,7 +90,7 @@ public class VAppTemplatesForCatalogItems implements Function<Iterable<CatalogIt
          @Override
          public Future<? extends VAppTemplate> apply(CatalogItem from) {
             return new ExceptionParsingListenableFuture<VAppTemplate>(Futures.makeListenable(VCloudDirectorAsyncApi.class
-                     .cast(aapi).getVAppTemplateApi().getVAppTemplate(from.getEntity().getHref()), executor),
+                     .cast(aapi).getVAppTemplateApi().get(from.getEntity().getHref()), executor),
                      returnNullOnAuthorizationException);
          }
 

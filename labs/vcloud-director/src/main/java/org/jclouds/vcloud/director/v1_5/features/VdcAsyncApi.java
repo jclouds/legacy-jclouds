@@ -258,6 +258,9 @@ public interface VdcAsyncApi {
     * @return asynchronous access to {@link Metadata.Readable} features
     */
    @Delegate
-   MetadataAsyncApi.Readable getMetadataApi();
+   MetadataAsyncApi.Readable getMetadataApi(@EndpointParam(parser = VdcURNToHref.class) String vdcUrn);
+
+   @Delegate
+   MetadataAsyncApi.Readable getMetadataApi(@EndpointParam URI vdcHref);
 
 }

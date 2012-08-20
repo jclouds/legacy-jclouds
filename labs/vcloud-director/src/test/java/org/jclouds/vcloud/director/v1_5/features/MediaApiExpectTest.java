@@ -239,7 +239,7 @@ public class MediaApiExpectTest extends VCloudDirectorAdminApiExpectTest {
       
       Metadata expected = metadata();
 
-      assertEquals(api.getMediaApi().getMetadataApi().get(mediaUri), expected);
+      assertEquals(api.getMediaApi().getMetadataApi(mediaUri).get(), expected);
    }
    
    @Test
@@ -259,7 +259,7 @@ public class MediaApiExpectTest extends VCloudDirectorAdminApiExpectTest {
       Metadata inputMetadata = metadata();
       Task expectedTask = mergeMetadataTask();
 
-      assertEquals(api.getMediaApi().getMetadataApi().merge(mediaUri, inputMetadata), expectedTask);
+      assertEquals(api.getMediaApi().getMetadataApi(mediaUri).merge(inputMetadata), expectedTask);
    }
    
    public void testGetMetadataValue() {
@@ -277,7 +277,7 @@ public class MediaApiExpectTest extends VCloudDirectorAdminApiExpectTest {
       MetadataValue expected = metadataValue();
       
 
-      assertEquals(api.getMediaApi().getMetadataApi().getValue(mediaUri, "key"), expected);
+      assertEquals(api.getMediaApi().getMetadataApi(mediaUri).getValue("key"), expected);
    }
    
    @Test
@@ -298,7 +298,7 @@ public class MediaApiExpectTest extends VCloudDirectorAdminApiExpectTest {
       
       Task expectedTask = setMetadataEntryTask();
 
-      assertEquals(api.getMediaApi().getMetadataApi().putEntry(mediaUri, "key", inputMetadataValue), expectedTask);
+      assertEquals(api.getMediaApi().getMetadataApi(mediaUri).putEntry("key", inputMetadataValue), expectedTask);
    }
    
    @Test
@@ -316,7 +316,7 @@ public class MediaApiExpectTest extends VCloudDirectorAdminApiExpectTest {
       
       Task expectedTask = removeEntryTask();
 
-      assertEquals(api.getMediaApi().getMetadataApi().removeEntry(mediaUri, "key"), expectedTask);
+      assertEquals(api.getMediaApi().getMetadataApi(mediaUri).removeEntry("key"), expectedTask);
    }
    
    @Test

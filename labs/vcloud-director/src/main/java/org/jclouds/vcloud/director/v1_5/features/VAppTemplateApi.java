@@ -24,56 +24,63 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.dmtf.ovf.NetworkSection;
 import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.rest.annotations.EndpointParam;
+import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.ProductSectionList;
 import org.jclouds.vcloud.director.v1_5.domain.References;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.dmtf.Envelope;
-import org.jclouds.vcloud.director.v1_5.domain.params.RelocateParams;
 import org.jclouds.vcloud.director.v1_5.domain.section.CustomizationSection;
-import org.jclouds.vcloud.director.v1_5.domain.section.GuestCustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.section.LeaseSettingsSection;
 import org.jclouds.vcloud.director.v1_5.domain.section.NetworkConfigSection;
-import org.jclouds.vcloud.director.v1_5.domain.section.NetworkConnectionSection;
+import org.jclouds.vcloud.director.v1_5.functions.href.VAppTemplateURNToHref;
 
 /**
  * Provides synchronous access to {@link VAppTemplate} objects.
  * 
- * @author Adam Lowe
- * @see org.jclouds.vcloud.director.v1_5.features.VAppTemplateAsyncApi
+ * @author Adam Lowe, Adrian Cole
+ * @see VAppTemplateAsyncApi
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface VAppTemplateApi {
 
    /**
     * Retrieves a vApp template (can be used also to retrieve a VM from a vApp Template).
-    *
+    * 
     * The vApp could be in one of these statues:
     * <ul>
-    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#FAILED_CREATION FAILED_CREATION(-1)} -
-    *    Transient entity state, e.g., model object is addd but the corresponding VC backing does not exist yet. This
-    *    is further sub-categorized in the respective entities.
-    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#UNRESOLVED UNRESOLVED(0)} -
-    *    Entity is whole, e.g., VM creation is complete and all the required model objects and VC backings are addd.
-    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#RESOLVED RESOLVED(1)} -
-    *    Entity is resolved.
-    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#UNKNOWN UNKNOWN(6)} -
-    *    Entity state could not be retrieved from the inventory, e.g., VM power state is null.
-    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#POWERED_OFF POWERED_OFF(8)} -
-    *    All VMs of the vApp template are powered off.
-    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#MIXED MIXED(10)} -
-    *    vApp template status is set to {@code MIXED} when the VMs in the vApp are in different power states.
+    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#FAILED_CREATION
+    * FAILED_CREATION(-1)} - Transient entity state, e.g., model object is addd but the
+    * corresponding VC backing does not exist yet. This is further sub-categorized in the respective
+    * entities.
+    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#UNRESOLVED
+    * UNRESOLVED(0)} - Entity is whole, e.g., VM creation is complete and all the required model
+    * objects and VC backings are addd.
+    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#RESOLVED
+    * RESOLVED(1)} - Entity is resolved.
+    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#UNKNOWN
+    * UNKNOWN(6)} - Entity state could not be retrieved from the inventory, e.g., VM power state is
+    * null.
+    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#POWERED_OFF
+    * POWERED_OFF(8)} - All VMs of the vApp template are powered off.
+    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#MIXED MIXED(10)}
+    * - vApp template status is set to {@code MIXED} when the VMs in the vApp are in different power
+    * states.
     * </ul>
     * 
     * <pre>
     * GET /vAppTemplate/{id}
     * </pre>
     * 
-    * @param templateUri the URI of the template
+    * @param templateUrn
+    *           the String of the template
     * @return the requested template
     */
-   VAppTemplate getVAppTemplate(URI templateUri);
+   VAppTemplate get(String templateUrn);
+
+   VAppTemplate get(URI templateHref);
 
    /**
     * Modifies only the name/description of a vApp template.
@@ -82,12 +89,16 @@ public interface VAppTemplateApi {
     * PUT /vAppTemplate/{id}
     * </pre>
     * 
-    * @param templateUri the URI of the template
-    * @param template the template containing the new name and/or description
-    * @return the task performing the action. This operation is asynchronous and the user should monitor the returned
-    *         task status in order to check when it is completed.
+    * @param templateUrn
+    *           the String of the template
+    * @param template
+    *           the template containing the new name and/or description
+    * @return the task performing the action. This operation is asynchronous and the user should
+    *         monitor the returned task status in order to check when it is completed.
     */
-   Task editVAppTemplate(URI templateUri, VAppTemplate template);
+   Task edit(String templateUrn, VAppTemplate template);
+
+   Task edit(URI templateHref, VAppTemplate template);
 
    /**
     * Deletes a vApp template.
@@ -96,24 +107,14 @@ public interface VAppTemplateApi {
     * DELETE /vAppTemplate/{id}
     * </pre>
     * 
-    * @param templateUri the URI of the template
-    * @return the task performing the action. This operation is asynchronous and the user should monitor the returned
-    *         task status in order to check when it is completed.
+    * @param templateUrn
+    *           the String of the template
+    * @return the task performing the action. This operation is asynchronous and the user should
+    *         monitor the returned task status in order to check when it is completed.
     */
-   Task removeVappTemplate(URI templateUri);
+   Task remove(String templateUrn);
 
-   /**
-    * Consolidates a VM
-    * 
-    * <pre>
-    * POST /vAppTemplate/{id}/action/consolidate
-    * </pre>
-    * 
-    * @param templateUri the URI of the template
-    * @return the task performing the action. This operation is asynchronous and the user should monitor the returned
-    *         task status in order to check when it is completed.
-    */
-   Task consolidateVm(URI templateUri);
+   Task remove(URI templateHref);
 
    /**
     * Disables the download link to the ovf of a vApp template.
@@ -122,9 +123,12 @@ public interface VAppTemplateApi {
     * POST /vAppTemplate/{id}/action/disableDownload
     * </pre>
     * 
-    * @param templateUri the URI of the template
+    * @param templateUrn
+    *           the String of the template
     */
-   void disableDownload(URI templateUri);
+   void disableDownload(String templateUrn);
+
+   void disableDownload(URI templateHref);
 
    /**
     * Enables downloading of the ovf of a vApp template.
@@ -133,25 +137,14 @@ public interface VAppTemplateApi {
     * POST /vAppTemplate/{id}/action/enableDownload
     * </pre>
     * 
-    * @param templateUri the URI of the template
-    * @return the task performing the action. This operation is asynchronous and the user should monitor the returned
-    *         task status in order to check when it is completed.
+    * @param templateUrn
+    *           the String of the template
+    * @return the task performing the action. This operation is asynchronous and the user should
+    *         monitor the returned task status in order to check when it is completed.
     */
-   Task enableDownload(URI templateUri);
+   Task enableDownload(String templateUrn);
 
-   /**
-    * Relocates a virtual machine in a vApp template to a different datastore.
-    * 
-    * <pre>
-    * POST /vAppTemplate/{id}/action/relocate
-    * </pre>
-    * 
-    * @param templateUri the URI of the template
-    * @param params contains the reference to the new datastore
-    * @return the task performing the action. This operation is asynchronous and the user should monitor the returned
-    *         task status in order to check when it is completed.
-    */
-   Task relocateVm(URI templateUri, RelocateParams params);
+   Task enableDownload(URI templateHref);
 
    /**
     * Retrieves the customization section of a vApp template.
@@ -160,36 +153,13 @@ public interface VAppTemplateApi {
     * GET /vAppTemplate/{id}/customizationSection
     * </pre>
     * 
-    * @param templateUri the URI of the template
+    * @param templateUrn
+    *           the String of the template
     * @return the customization section
     */
-   CustomizationSection getCustomizationSection(URI templateUri);
+   CustomizationSection getCustomizationSection(String templateUrn);
 
-   /**
-    * Retrieves the Guest Customization Section of a VM
-    * 
-    * <pre>
-    * GET /vAppTemplate/{id}/guestCustomizationSection
-    * </pre>
-    * 
-    * @param templateUri the URI of the template
-    * @return the guest customization section
-    */
-   GuestCustomizationSection getGuestCustomizationSection(URI templateUri);
-
-   /**
-    * Modifies the guest customization options of a VM.
-    * 
-    * <pre>
-    * PUT /vAppTemplate/{id}/guestCustomizationSection
-    * </pre>
-    * 
-    * @param templateUri the URI of the template
-    * @param section the new configuration to apply
-    * @return the task performing the action. This operation is asynchronous and the user should monitor the returned
-    *         task status in order to check when it is completed.
-    */
-   Task editGuestCustomizationSection(URI templateUri, GuestCustomizationSection section);
+   CustomizationSection getCustomizationSection(URI templateHref);
 
    /**
     * Retrieves the lease settings section of a vApp or vApp template
@@ -198,10 +168,13 @@ public interface VAppTemplateApi {
     * GET /vAppTemplate/{id}/leaseSettingsSection
     * </pre>
     * 
-    * @param templateUri the URI of the template
+    * @param templateUrn
+    *           the String of the template
     * @return the lease settings
     */
-   LeaseSettingsSection getLeaseSettingsSection(URI templateUri);
+   LeaseSettingsSection getLeaseSettingsSection(String templateUrn);
+
+   LeaseSettingsSection getLeaseSettingsSection(URI templateHref);
 
    /**
     * Modifies the lease settings section of a vApp or vApp template.
@@ -210,12 +183,16 @@ public interface VAppTemplateApi {
     * PUT /vAppTemplate/{id}/leaseSettingsSection
     * </pre>
     * 
-    * @param templateUri the URI of the template
-    * @param section the new configuration to apply
-    * @return the task performing the action. This operation is asynchronous and the user should monitor the returned
-    *         task status in order to check when it is completed.
+    * @param templateUrn
+    *           the String of the template
+    * @param section
+    *           the new configuration to apply
+    * @return the task performing the action. This operation is asynchronous and the user should
+    *         monitor the returned task status in order to check when it is completed.
     */
-   Task editLeaseSettingsSection(URI templateUri, LeaseSettingsSection section);
+   Task editLeaseSettingsSection(String templateUrn, LeaseSettingsSection section);
+
+   Task editLeaseSettingsSection(URI templateHref, LeaseSettingsSection section);
 
    /**
     * Retrieves the network config section of a vApp or vApp template.
@@ -224,22 +201,13 @@ public interface VAppTemplateApi {
     * GET /vAppTemplate/{id}/networkConfigSection
     * </pre>
     * 
-    * @param templateUri the URI of the template
+    * @param templateUrn
+    *           the String of the template
     * @return the network config section requested
     */
-   NetworkConfigSection getNetworkConfigSection(URI templateUri);
+   NetworkConfigSection getNetworkConfigSection(String templateUrn);
 
-   /**
-    * Retrieves the network connection section of a VM
-    * 
-    * <pre>
-    * GET /vAppTemplate/{id}/networkConnectionSection
-    * </pre>
-    * 
-    * @param templateUri the URI of the template
-    * @return the network connection section requested
-    */
-   NetworkConnectionSection getNetworkConnectionSection(URI templateUri);
+   NetworkConfigSection getNetworkConfigSection(URI templateHref);
 
    /**
     * Retrieves the network section of a vApp or vApp template.
@@ -248,26 +216,32 @@ public interface VAppTemplateApi {
     * GET /vAppTemplate/{id}/networkSection
     * </pre>
     * 
-    * @param templateUri the URI of the template
+    * @param templateUrn
+    *           the String of the template
     * @return the network section requested
     */
-   NetworkSection getNetworkSection(URI templateUri);
+   NetworkSection getNetworkSection(String templateUrn);
+
+   NetworkSection getNetworkSection(URI templateHref);
 
    /**
     * Retrieves an OVF descriptor of a vApp template.
-    *
-    * This OVF represents the vApp template as it is, with all vCloud specific information (like mac address, parent
-    * networks, etc). The OVF which could be downloaded by enabling for download will not contain this information.
-    * There are no specific states bound to this entity.
+    * 
+    * This OVF represents the vApp template as it is, with all vCloud specific information (like mac
+    * address, parent networks, etc). The OVF which could be downloaded by enabling for download
+    * will not contain this information. There are no specific states bound to this entity.
     * 
     * <pre>
     * GET /vAppTemplate/{id}/ovf
     * </pre>
     * 
-    * @param templateUri the URI of the template
+    * @param templateUrn
+    *           the String of the template
     * @return the ovf envelope
     */
-   Envelope getOvf(URI templateUri);
+   Envelope getOvf(String templateUrn);
+
+   Envelope getOvf(URI templateHref);
 
    /**
     * Retrieves vApp template owner.
@@ -276,10 +250,13 @@ public interface VAppTemplateApi {
     * GET /vAppTemplate/{id}/owner
     * </pre>
     * 
-    * @param templateUri the URI of the template
+    * @param templateUrn
+    *           the String of the template
     * @return the owner of the vApp template
     */
-   Owner getOwner(URI templateUri);
+   Owner getOwner(String templateUrn);
+
+   Owner getOwner(URI templateHref);
 
    /**
     * Retrieves VAppTemplate/VM product sections
@@ -288,10 +265,13 @@ public interface VAppTemplateApi {
     * GET /vAppTemplate/{id}/productSections
     * </pre>
     * 
-    * @param templateUri the URI of the template
+    * @param templateUrn
+    *           the String of the template
     * @return the product sections
     */
-   ProductSectionList getProductSections(URI templateUri);
+   ProductSectionList getProductSections(String templateUrn);
+
+   ProductSectionList getProductSections(URI templateHref);
 
    /**
     * Modifies the product sections of a vApp or vApp template.
@@ -300,25 +280,35 @@ public interface VAppTemplateApi {
     * PUT /vAppTemplate/{id}/productSections
     * </pre>
     * 
-    * @param templateUri the URI of the template
-    * @return the task performing the action. This operation is asynchronous and the user should monitor the returned
-    *         task status in order to check when it is completed.
+    * @param templateUrn
+    *           the String of the template
+    * @return the task performing the action. This operation is asynchronous and the user should
+    *         monitor the returned task status in order to check when it is completed.
     */
-   Task editProductSections(URI templateUri, ProductSectionList sections);
+   Task editProductSections(String templateUrn, ProductSectionList sections);
+
+   Task editProductSections(URI templateHref, ProductSectionList sections);
 
    /**
     * <pre>
     * GET /vAppTemplate/{id}/shadowVms
     * </pre>
     * 
-    * @param templateUri the URI of the template
+    * @param templateUrn
+    *           the String of the template
     * @return shadowVM references
     */
-   References getShadowVms(URI templateUri);
+   References getShadowVms(String templateUrn);
+
+   References getShadowVms(URI templateHref);
 
    /**
     * @return synchronous access to {@link Metadata} features
     */
    @Delegate
-   MetadataApi.Writeable getMetadataApi();
+   MetadataApi.Writeable getMetadataApi(@EndpointParam(parser = VAppTemplateURNToHref.class) String templateUrn);
+
+   @Delegate
+   MetadataApi.Writeable getMetadataApi(@EndpointParam URI templateHref);
+
 }

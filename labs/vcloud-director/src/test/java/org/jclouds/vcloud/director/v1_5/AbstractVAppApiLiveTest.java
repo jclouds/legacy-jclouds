@@ -107,8 +107,8 @@ public abstract class AbstractVAppApiLiveTest extends BaseVCloudDirectorApiLiveT
    protected Vm vm;
    protected VApp vApp;
    protected VAppTemplate vAppTemplate;
-   protected URI vmURI;
-   protected URI vAppURI;
+   protected String vmUrn;
+   protected String vAppUrn;
 
    /**
     * Retrieves the required apis from the REST API context
@@ -137,35 +137,35 @@ public abstract class AbstractVAppApiLiveTest extends BaseVCloudDirectorApiLiveT
       vdc = lazyGetVdc();
 
       // Get the configured VAppTemplate for the tests
-      vAppTemplate = vAppTemplateApi.getVAppTemplate(vAppTemplateURI);
+      vAppTemplate = vAppTemplateApi.get(vAppTemplateUrn);
       assertNotNull(vAppTemplate, String.format(ENTITY_NON_NULL, VAPP_TEMPLATE));
 
       // Instantiate a new VApp
       VApp vAppInstantiated = instantiateVApp();
       assertNotNull(vAppInstantiated, String.format(ENTITY_NON_NULL, VAPP));
-      vAppURI = vAppInstantiated.getHref();
+      vAppUrn = vAppInstantiated.getId();
 
       // Wait for the task to complete
       Task instantiateTask = Iterables.getOnlyElement(vAppInstantiated.getTasks());
       assertTrue(retryTaskSuccessLong.apply(instantiateTask), String.format(TASK_COMPLETE_TIMELY, "instantiateTask"));
 
       // Get the instantiated VApp
-      vApp = vAppApi.getVApp(vAppURI);
+      vApp = vAppApi.get(vAppUrn);
 
       // Get the Vm
       List<Vm> vms = vApp.getChildren().getVms();
       vm = Iterables.getOnlyElement(vms);
-      vmURI = vm.getHref();
+      vmUrn = vm.getId();
       assertFalse(vms.isEmpty(), "The VApp must have a Vm");
    }
 
-   protected void getGuestCustomizationSection(final Function<URI, GuestCustomizationSection> getGuestCustomizationSection) {
+   protected void getGuestCustomizationSection(final Function<String, GuestCustomizationSection> getGuestCustomizationSection) {
       // Get URI for child VM
-      URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
+      String vmUrn = Iterables.getOnlyElement(vApp.getChildren().getVms()).getId();
 
       // The method under test
       try {
-         GuestCustomizationSection section = getGuestCustomizationSection.apply(vmURI);
+         GuestCustomizationSection section = getGuestCustomizationSection.apply(vmUrn);
 
          // Check the retrieved object is well formed
          checkGuestCustomizationSection(section);
@@ -174,13 +174,13 @@ public abstract class AbstractVAppApiLiveTest extends BaseVCloudDirectorApiLiveT
       }
    }
 
-   protected void getNetworkConnectionSection(final Function<URI, NetworkConnectionSection> getNetworkConnectionSection) {
+   protected void getNetworkConnectionSection(final Function<String, NetworkConnectionSection> getNetworkConnectionSection) {
       // Get URI for child VM
-      URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
+      String vmUrn = Iterables.getOnlyElement(vApp.getChildren().getVms()).getId();
 
       // The method under test
       try {
-         NetworkConnectionSection section = getNetworkConnectionSection.apply(vmURI);
+         NetworkConnectionSection section = getNetworkConnectionSection.apply(vmUrn);
 
          // Check the retrieved object is well formed
          checkNetworkConnectionSection(section);
@@ -200,7 +200,7 @@ public abstract class AbstractVAppApiLiveTest extends BaseVCloudDirectorApiLiveT
       // If we found any references, remove the VApp they point to
       if (!Iterables.isEmpty(vApps)) {
          for (Reference ref : vApps) {
-            cleanUpVApp(ref.getHref()); // NOTE may fail, but should continue deleting
+            cleanUpVApp(context.getApi().getVAppApi().get(ref.getHref())); // NOTE may fail, but should continue deleting
          }
       } else {
          logger.warn("No VApps in list found in Vdc %s (%s)", vdc.getName(), Iterables.toString(vAppNames));
@@ -248,14 +248,14 @@ public abstract class AbstractVAppApiLiveTest extends BaseVCloudDirectorApiLiveT
    /**
     * Power on a {@link VApp}.
     */
-   protected VApp powerOnVApp(final URI testVAppURI) {
-      VApp test = vAppApi.getVApp(testVAppURI);
+   protected VApp powerOnVApp(String vAppUrn) {
+      VApp test = vAppApi.get(vAppUrn);
       Status status = test.getStatus();
       if (status != Status.POWERED_ON) {
-         Task powerOn = vAppApi.powerOn(vm.getHref());
+         Task powerOn = vAppApi.powerOn(vAppUrn);
          assertTaskSucceedsLong(powerOn);
       }
-      test = vAppApi.getVApp(testVAppURI);
+      test = vAppApi.get(vAppUrn);
       assertStatus(VAPP, test, Status.POWERED_ON);
       return test;
    }
@@ -263,14 +263,14 @@ public abstract class AbstractVAppApiLiveTest extends BaseVCloudDirectorApiLiveT
    /**
     * Power on a {@link Vm}.
     */
-   protected Vm powerOnVm(final URI testVmURI) {
-      Vm test = vmApi.get(testVmURI);
+   protected Vm powerOnVm(String vmUrn) {
+      Vm test = vmApi.get(vmUrn);
       Status status = test.getStatus();
       if (status != Status.POWERED_ON) {
-         Task powerOn = vmApi.powerOn(vm.getHref());
+         Task powerOn = vmApi.powerOn(vmUrn);
          assertTaskSucceedsLong(powerOn);
       }
-      test = vmApi.get(testVmURI);
+      test = vmApi.get(vmUrn);
       assertStatus(VM, test, Status.POWERED_ON);
       return test;
    }
@@ -278,14 +278,14 @@ public abstract class AbstractVAppApiLiveTest extends BaseVCloudDirectorApiLiveT
    /**
     * Power off a {@link VApp}.
     */
-   protected VApp powerOffVApp(final URI testVAppURI) {
-      VApp test = vAppApi.getVApp(testVAppURI);
+   protected VApp powerOffVApp(String vAppUrn) {
+      VApp test = vAppApi.get(vAppUrn);
       Status status = test.getStatus();
       if (status != Status.POWERED_OFF) {
-         Task powerOff = vAppApi.powerOff(vm.getHref());
+         Task powerOff = vAppApi.powerOff(vAppUrn);
          assertTaskSucceedsLong(powerOff);
       }
-      test = vAppApi.getVApp(testVAppURI);
+      test = vAppApi.get(vAppUrn);
       assertStatus(VAPP, test, Status.POWERED_OFF);
       return test;
    }
@@ -293,15 +293,15 @@ public abstract class AbstractVAppApiLiveTest extends BaseVCloudDirectorApiLiveT
    /**
     * Power off a {@link Vm}.
     */
-   protected Vm powerOffVm(final URI testVmURI) {
-      Vm test = vmApi.get(testVmURI);
+   protected Vm powerOffVm(String vmUrn) {
+      Vm test = vmApi.get(vmUrn);
       Status status = test.getStatus();
       if (status != Status.POWERED_OFF || test.isDeployed()) {
          UndeployVAppParams undeployParams = UndeployVAppParams.builder().build();
-         Task shutdownVapp = vAppApi.undeploy(test.getHref(), undeployParams);
+         Task shutdownVapp = vAppApi.undeploy(vmUrn, undeployParams);
          assertTaskSucceedsLong(shutdownVapp);
       }
-      test = vmApi.get(testVmURI);
+      test = vmApi.get(vmUrn);
       assertStatus(VM, test, Status.POWERED_OFF);
       return test;
    }
@@ -309,14 +309,14 @@ public abstract class AbstractVAppApiLiveTest extends BaseVCloudDirectorApiLiveT
    /**
     * Suspend a {@link VApp}.
     */
-   protected VApp suspendVApp(final URI testVAppURI) {
-      VApp test = vAppApi.getVApp(testVAppURI);
+   protected VApp suspendVApp(String vAppUrn) {
+      VApp test = vAppApi.get(vAppUrn);
       Status status = test.getStatus();
       if (status != Status.SUSPENDED) {
-         Task suspend = vAppApi.suspend(vm.getHref());
+         Task suspend = vAppApi.suspend(vAppUrn);
          assertTaskSucceedsLong(suspend);
       }
-      test = vAppApi.getVApp(testVAppURI);
+      test = vAppApi.get(vAppUrn);
       assertStatus(VAPP, test, Status.SUSPENDED);
       return test;
    }
@@ -324,14 +324,14 @@ public abstract class AbstractVAppApiLiveTest extends BaseVCloudDirectorApiLiveT
    /**
     * Suspend a {@link Vm}.
     */
-   protected Vm suspendVm(final URI testVmURI) {
-      Vm test = vmApi.get(testVmURI);
+   protected Vm suspendVm(String vmUrn) {
+      Vm test = vmApi.get(vmUrn);
       Status status = test.getStatus();
       if (status != Status.SUSPENDED) {
-         Task suspend = vmApi.suspend(vm.getHref());
+         Task suspend = vmApi.suspend(vmUrn);
          assertTaskSucceedsLong(suspend);
       }
-      test = vmApi.get(testVmURI);
+      test = vmApi.get(vmUrn);
       assertStatus(VM, test, Status.SUSPENDED);
       return test;
    }
@@ -339,16 +339,16 @@ public abstract class AbstractVAppApiLiveTest extends BaseVCloudDirectorApiLiveT
    /**
     * Check the {@link VApp}s current status.
     */
-   protected void assertVAppStatus(final URI testVAppURI, final Status status) {
-      VApp testVApp = vAppApi.getVApp(testVAppURI);
+   protected void assertVAppStatus(final String vAppUrn, final Status status) {
+      VApp testVApp = vAppApi.get(vAppUrn);
       assertStatus(VAPP, testVApp, status);
    }
 
    /**
     * Check the {@link Vm}s current status.
     */
-   protected void assertVmStatus(final URI testVmURI, final Status status) {
-      Vm testVm = vmApi.get(testVmURI);
+   protected void assertVmStatus(String vmUrn, final Status status) {
+      Vm testVm = vmApi.get(vmUrn);
       assertStatus(VM, testVm, status);
    }
 
@@ -376,7 +376,7 @@ public abstract class AbstractVAppApiLiveTest extends BaseVCloudDirectorApiLiveT
    }
    
    protected VAppNetworkConfiguration getVAppNetworkConfig(VApp vApp) {
-      Set<VAppNetworkConfiguration> vAppNetworkConfigs = vAppApi.getNetworkConfigSection(vApp.getHref()).getNetworkConfigs();
+      Set<VAppNetworkConfiguration> vAppNetworkConfigs = vAppApi.getNetworkConfigSection(vApp.getId()).getNetworkConfigs();
       return Iterables.tryFind(vAppNetworkConfigs, Predicates.notNull()).orNull();
    }
    
@@ -389,11 +389,11 @@ public abstract class AbstractVAppApiLiveTest extends BaseVCloudDirectorApiLiveT
    }
    
    protected Set<NetworkConnection> listNetworkConnections(Vm vm) {
-      return vmApi.getNetworkConnectionSection(vm.getHref()).getNetworkConnections();
+      return vmApi.getNetworkConnectionSection(vm.getId()).getNetworkConnections();
    }
    
    protected Set<VAppNetworkConfiguration> listVappNetworkConfigurations(VApp vApp) {
-      Set<VAppNetworkConfiguration> vAppNetworkConfigs = vAppApi.getNetworkConfigSection(vApp.getHref()).getNetworkConfigs();
+      Set<VAppNetworkConfiguration> vAppNetworkConfigs = vAppApi.getNetworkConfigSection(vApp.getId()).getNetworkConfigs();
       return vAppNetworkConfigs;
    }
 }

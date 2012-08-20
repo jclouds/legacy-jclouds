@@ -18,7 +18,6 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
@@ -41,14 +40,14 @@ public interface MetadataApi {
        * 
        * @return a list of metadata
        */
-      Metadata get(URI uri);
+      Metadata get();
 
       /**
        * Retrieves a metadata value
        * 
        * @return the metadata value, or null if not found
        */
-      MetadataValue getValue(URI uri, String key);
+      MetadataValue getValue(String key);
    }
 
    @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
@@ -60,7 +59,7 @@ public interface MetadataApi {
        * @return a task. This operation is asynchronous and the user should monitor the returned
        *         task status in order to check when it is completed.
        */
-      Task merge(URI uri, Metadata metadata);
+      Task merge(Metadata metadata);
 
       /**
        * Sets the metadata for the particular key for the media to the value provided. Note: this
@@ -69,7 +68,7 @@ public interface MetadataApi {
        * @return a task. This operation is asynchronous and the user should monitor the returned
        *         task status in order to check when it is completed.
        */
-      Task putEntry(URI uri, String key, MetadataValue metadataValue);
+      Task putEntry(String key, MetadataValue metadataValue);
 
       /**
        * Deletes a metadata entry.
@@ -77,7 +76,7 @@ public interface MetadataApi {
        * @return a task. This operation is asynchronous and the user should monitor the returned
        *         task status in order to check when it is completed.
        */
-      Task removeEntry(URI uri, String key);
+      Task removeEntry(String key);
 
    }
 }

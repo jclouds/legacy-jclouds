@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.vcloud.director.v1_5.domain.Media;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
@@ -35,6 +36,7 @@ import org.jclouds.vcloud.director.v1_5.domain.params.CloneVAppTemplateParams;
 import org.jclouds.vcloud.director.v1_5.domain.params.ComposeVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.params.InstantiateVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.params.UploadVAppTemplateParams;
+import org.jclouds.vcloud.director.v1_5.functions.href.VdcURNToHref;
 
 /**
  * Provides synchronous access to a vDC.
@@ -196,5 +198,9 @@ public interface VdcApi {
     * @return synchronous access to {@link Metadata.Readable} features
     */
    @Delegate
-   MetadataApi.Readable getMetadataApi();
+   MetadataApi.Readable getMetadataApi(@EndpointParam(parser = VdcURNToHref.class) String vdcUrn);
+
+   @Delegate
+   MetadataApi.Readable getMetadataApi(@EndpointParam URI vdcHref);
+
 }

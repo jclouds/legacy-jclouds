@@ -363,5 +363,10 @@ public interface AdminOrgAsyncApi extends OrgAsyncApi {
     */
    @Override
    @Delegate
-   MetadataAsyncApi.Writeable getMetadataApi();
+   MetadataAsyncApi.Writeable getMetadataApi(@EndpointParam(parser = OrgURNToAdminHref.class) String orgUrn);
+
+   @Override
+   @Delegate
+   MetadataAsyncApi.Writeable getMetadataApi(@EndpointParam URI adminOrgHref);
+
 }

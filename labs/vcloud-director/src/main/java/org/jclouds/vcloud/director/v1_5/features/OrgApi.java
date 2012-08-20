@@ -23,9 +23,11 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.org.Org;
 import org.jclouds.vcloud.director.v1_5.domain.org.OrgList;
+import org.jclouds.vcloud.director.v1_5.functions.href.OrgURNToHref;
 
 /**
  * Provides synchronous access to {@link Org}.
@@ -64,5 +66,9 @@ public interface OrgApi {
     * @return synchronous access to {@link Metadata.Readable} features
     */
    @Delegate
-   MetadataApi.Readable getMetadataApi();
+   MetadataApi.Readable getMetadataApi(@EndpointParam(parser = OrgURNToHref.class) String orgUrn);
+   
+   @Delegate
+   MetadataApi.Readable getMetadataApi(@EndpointParam URI orgHref);
+
 }

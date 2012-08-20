@@ -985,7 +985,7 @@ public class VmApiExpectTest extends VCloudDirectorAdminApiExpectTest {
       return task;
    }
 
-   public static ControlAccessParams getControlAccessParams() {
+   public static ControlAccessParams getAccessControlParams() {
       ControlAccessParams params = ControlAccessParams.builder()
             .build();
 

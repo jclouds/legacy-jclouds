@@ -65,6 +65,9 @@ public interface NetworkAsyncApi {
     * @return asynchronous access to {@link Metadata.Readable} features
     */
    @Delegate
-   MetadataAsyncApi.Readable getMetadataApi();
+   MetadataAsyncApi.Readable getMetadataApi(@EndpointParam(parser = NetworkURNToHref.class) String networkUrn);
+
+   @Delegate
+   MetadataAsyncApi.Readable getMetadataApi(@EndpointParam URI networkHref);
 
 }
