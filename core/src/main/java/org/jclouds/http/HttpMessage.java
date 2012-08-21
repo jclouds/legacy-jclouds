@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.Collection;
 
+import org.jclouds.functions.ToLowerCase;
 import org.jclouds.http.internal.PayloadEnclosingImpl;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
@@ -190,8 +191,10 @@ public class HttpMessage extends PayloadEnclosingImpl {
     */
    public String getFirstHeaderOrNull(String string) {
       Collection<String> values = headers.get(string);
-      if (values.size() == 0)
-         values = headers.get(string.toLowerCase());
+      if (values.size() == 0) {
+         Multimap<String, String> lowerCaseHeaders = Multimaps2.transformKeys(getHeaders(), new ToLowerCase()); 
+         values = lowerCaseHeaders.get(string.toLowerCase());
+      }
       return (values.size() >= 1) ? values.iterator().next() : null;
    }
 
