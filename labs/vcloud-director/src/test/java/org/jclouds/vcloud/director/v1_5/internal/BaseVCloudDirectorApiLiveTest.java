@@ -35,6 +35,7 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.USER;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.VAPP;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.VAPP_TEMPLATE;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.VDC;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.VM;
 import static org.jclouds.vcloud.director.v1_5.predicates.LinkPredicates.relEquals;
 import static org.jclouds.vcloud.director.v1_5.predicates.LinkPredicates.typeEquals;
 import static org.testng.Assert.assertEquals;
@@ -79,6 +80,7 @@ import org.jclouds.vcloud.director.v1_5.domain.User;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.Vdc;
+import org.jclouds.vcloud.director.v1_5.domain.Vm;
 import org.jclouds.vcloud.director.v1_5.domain.network.Network;
 import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.network.VAppNetworkConfiguration;
@@ -259,10 +261,11 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
             vdcUrn = vdc.getId();
 
             if (vAppTemplateUrn == null) {
-               Reference vAppTemplateRef = Iterables.find(vdc.getResourceEntities(),
-                        ReferencePredicates.<Reference> typeEquals(VAPP_TEMPLATE));
-               vAppTemplate = context.getApi().getVAppTemplateApi().get(vAppTemplateRef.getHref());
+               Optional<VAppTemplate> optionalvAppTemplate = tryFindVAppTemplateInOrg();
+               if (optionalvAppTemplate.isPresent()) {
+               vAppTemplate = optionalvAppTemplate.get();
                vAppTemplateUrn = vAppTemplate.getId();
+               }
             }
 
          }
@@ -285,6 +288,85 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
       }
    }
 
+   Function<VAppTemplate, String> prettyVAppTemplate = new Function<VAppTemplate, String>() {
+
+      @Override
+      public String apply(VAppTemplate input) {
+         return Objects.toStringHelper("").omitNullValues().add("name", input.getName()).add("id", input.getId())
+                  .add("owner", input.getOwner()).toString();
+      }
+
+   };
+   
+   public Optional<VAppTemplate> tryFindVAppTemplateInOrg() {
+      FluentIterable<VAppTemplate> vAppTemplates =  FluentIterable.from(vdc.getResourceEntities())
+               .filter(ReferencePredicates.<Reference> typeEquals(VAPP_TEMPLATE))
+               .transform(new Function<Reference, VAppTemplate>() {
+
+                  @Override
+                  public VAppTemplate apply(Reference in) {
+                     return context.getApi().getVAppTemplateApi().get(in.getHref());
+                  }})
+               .filter(Predicates.notNull());      
+      
+      Optional<VAppTemplate> optionalVAppTemplate = tryFind(vAppTemplates, new Predicate<VAppTemplate>() {
+
+         @Override
+         public boolean apply(VAppTemplate input) {
+            return input.getOwner().getUser().getName().equals(session.getUser());
+         }
+
+      });
+      
+      if (optionalVAppTemplate.isPresent()) {
+         Logger.CONSOLE.info("found vAppTemplate: %s", prettyVAppTemplate.apply(optionalVAppTemplate.get()));
+      } else {
+         Logger.CONSOLE.warn("%s doesn't own any vApp Template in org %s; vApp templates: %s", context.getApi()
+                  .getCurrentSession().getUser(), org.getName(), Iterables.transform(vAppTemplates, prettyVAppTemplate));
+      }
+
+      return optionalVAppTemplate;
+   }
+   
+   Function<Vm, String> prettyVm = new Function<Vm, String>() {
+
+      @Override
+      public String apply(Vm input) {
+         return Objects.toStringHelper("").omitNullValues().add("name", input.getName()).add("id", input.getId()).toString();
+      }
+
+   };
+   
+   public Optional<Vm> tryFindVmInOrg() {
+      FluentIterable<Vm> vms =  FluentIterable.from(vdc.getResourceEntities())
+               .filter(ReferencePredicates.<Reference> typeEquals(VM))
+               .transform(new Function<Reference, Vm>() {
+
+                  @Override
+                  public Vm apply(Reference in) {
+                     return context.getApi().getVmApi().get(in.getHref());
+                  }})
+               .filter(Predicates.notNull());      
+      
+      Optional<Vm> optionalVm = tryFind(vms, new Predicate<Vm>() {
+
+         @Override
+         public boolean apply(Vm input) {
+            return input.getId() != null;
+         }
+
+      });
+      
+      if (optionalVm.isPresent()) {
+         Logger.CONSOLE.info("found vAppTemplate: %s", prettyVm.apply(optionalVm.get()));
+      } else {
+         Logger.CONSOLE.warn("%s doesn't have any vm in org %s; vms: %s", context.getApi()
+                  .getCurrentSession().getUser(), org.getName(), Iterables.transform(vms, prettyVm));
+      }
+      
+      return optionalVm;
+   }   
+   
    Function<Catalog, String> prettyCatalog = new Function<Catalog, String>() {
 
       @Override
@@ -529,7 +611,8 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
                .builder()
                .info("Configuration parameters for logical networks")
                .networkConfigs(
-                        ImmutableSet.of(VAppNetworkConfiguration.builder().networkName("vAppNetwork")
+                        ImmutableSet.of(VAppNetworkConfiguration.builder()
+                                 .networkName("vAppNetwork")
                                  .configuration(networkConfiguration()).build())).build();
 
       return networkConfigSection;
