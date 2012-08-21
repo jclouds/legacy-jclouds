@@ -42,7 +42,7 @@ public interface SimpleTenantUsageApi {
     *
     * @return the set of TenantUsage reports
     */
-   Set<SimpleTenantUsage> listTenantUsages();
+   Set<? extends SimpleTenantUsage> listTenantUsages();
 
    /**
     * Retrieve tenant_usage for a specified tenant

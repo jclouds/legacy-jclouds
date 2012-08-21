@@ -69,7 +69,7 @@ public interface KeyPairAsyncApi {
    @SelectJson("keypairs")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<Map<String, KeyPair>>> listKeyPairs();
+   ListenableFuture<? extends Set<? extends Map<String, ? extends KeyPair>>> listKeyPairs();
 
    @POST
    @Path("/os-keypairs")
@@ -77,7 +77,7 @@ public interface KeyPairAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("%7B\"keypair\":%7B\"name\":\"{name}\"%7D%7D")
-   ListenableFuture<KeyPair> createKeyPair(@PayloadParam("name") String name);
+   ListenableFuture<? extends KeyPair> createKeyPair(@PayloadParam("name") String name);
 
    @POST
    @Path("/os-keypairs")
@@ -85,7 +85,7 @@ public interface KeyPairAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("%7B\"keypair\":%7B\"name\":\"{name}\",\"public_key\":\"{publicKey}\"%7D%7D")
-   ListenableFuture<KeyPair> createKeyPairWithPublicKey(@PayloadParam("name") String name,
+   ListenableFuture<? extends KeyPair> createKeyPairWithPublicKey(@PayloadParam("name") String name,
          @PayloadParam("publicKey") String publicKey);
 
    @DELETE

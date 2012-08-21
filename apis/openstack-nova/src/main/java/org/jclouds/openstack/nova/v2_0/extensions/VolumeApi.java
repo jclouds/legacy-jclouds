@@ -45,14 +45,14 @@ public interface VolumeApi {
     *
     * @return the list of snapshots
     */
-   Set<Volume> listVolumes();
+   Set<? extends Volume> listVolumes();
 
    /**
     * Returns a detailed list of volumes.
     *
     * @return the list of volumes.
     */
-   Set<Volume> listVolumesInDetail();
+   Set<? extends Volume> listVolumesInDetail();
 
    /**
     * Return data about the given volume.
@@ -80,7 +80,7 @@ public interface VolumeApi {
     * 
     * @return all Floating IPs
     */
-   Set<VolumeAttachment> listAttachmentsOnServer(String serverId);
+   Set<? extends VolumeAttachment> listAttachmentsOnServer(String serverId);
 
    /**
     * Get a specific attached volume.
@@ -108,14 +108,14 @@ public interface VolumeApi {
     *
     * @return the list of snapshots
     */
-   Set<VolumeSnapshot> listSnapshots();
+   Set<? extends VolumeSnapshot> listSnapshots();
 
    /**
     * Returns a summary list of snapshots.
     *
     * @return the list of snapshots
     */
-   Set<VolumeSnapshot> listSnapshotsInDetail();
+   Set<? extends VolumeSnapshot> listSnapshotsInDetail();
 
    /**
     * Return data about the given snapshot.

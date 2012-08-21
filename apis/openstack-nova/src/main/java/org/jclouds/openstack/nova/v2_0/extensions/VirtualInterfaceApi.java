@@ -41,6 +41,6 @@ public interface VirtualInterfaceApi {
     *
     * @return the list of snapshots
     */
-   Set<VirtualInterface> listVirtualInterfacesForServer(String serverId);   
+   Set<? extends VirtualInterface> listVirtualInterfacesForServer(String serverId);   
 
 }

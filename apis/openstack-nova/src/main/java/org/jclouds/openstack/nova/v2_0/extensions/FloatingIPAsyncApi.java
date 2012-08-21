@@ -70,7 +70,7 @@ public interface FloatingIPAsyncApi {
    @SelectJson("floating_ips")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<FloatingIP>> listFloatingIPs();
+   ListenableFuture<? extends Set<? extends FloatingIP>> listFloatingIPs();
 
    /**
     * @see FloatingIPApi#getFloatingIP
@@ -80,7 +80,7 @@ public interface FloatingIPAsyncApi {
    @SelectJson("floating_ip")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<FloatingIP> getFloatingIP(@PathParam("id") String id);
+   ListenableFuture<? extends FloatingIP> getFloatingIP(@PathParam("id") String id);
 
    /**
     * @see FloatingIPApi#allocate
@@ -92,7 +92,7 @@ public interface FloatingIPAsyncApi {
    @Produces(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Payload("{}")
-   ListenableFuture<FloatingIP> allocate();
+   ListenableFuture<? extends FloatingIP> allocate();
 
    /**
     * @see FloatingIPApi#deallocate

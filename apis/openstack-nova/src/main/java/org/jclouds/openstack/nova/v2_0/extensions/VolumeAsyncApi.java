@@ -71,7 +71,7 @@ public interface VolumeAsyncApi {
    @SelectJson("volumes")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<Volume>> listVolumes();
+   ListenableFuture<? extends Set<? extends Volume>> listVolumes();
 
    /**
     * Returns a detailed list of volumes.
@@ -83,7 +83,7 @@ public interface VolumeAsyncApi {
    @SelectJson("volumes")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<Volume>> listVolumesInDetail();
+   ListenableFuture<? extends Set<? extends Volume>> listVolumesInDetail();
 
    /**
     * Return data about the given volume.
@@ -95,7 +95,7 @@ public interface VolumeAsyncApi {
    @SelectJson("volume")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Volume> getVolume(@PathParam("id") String volumeId);
+   ListenableFuture<? extends Volume> getVolume(@PathParam("id") String volumeId);
 
    /**
     * Creates a new volume
@@ -108,7 +108,7 @@ public interface VolumeAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
    @MapBinder(CreateVolumeOptions.class)
-   ListenableFuture<Volume> createVolume(@PayloadParam("size") int sizeGB, CreateVolumeOptions... options);
+   ListenableFuture<? extends Volume> createVolume(@PayloadParam("size") int sizeGB, CreateVolumeOptions... options);
 
    /**
     * Delete a volume.
@@ -131,7 +131,7 @@ public interface VolumeAsyncApi {
    @SelectJson("volumeAttachments")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<VolumeAttachment>> listAttachmentsOnServer(@PathParam("server_id") String serverId);
+   ListenableFuture<? extends Set<? extends VolumeAttachment>> listAttachmentsOnServer(@PathParam("server_id") String serverId);
 
    /**
     * Get a specific attached volume.
@@ -143,7 +143,7 @@ public interface VolumeAsyncApi {
    @SelectJson("volumeAttachment")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<VolumeAttachment> getAttachmentForVolumeOnServer(@PathParam("id") String volumeId,
+   ListenableFuture<? extends VolumeAttachment> getAttachmentForVolumeOnServer(@PathParam("id") String volumeId,
                                                                      @PathParam("server_id") String serverId);
 
    /**
@@ -157,7 +157,7 @@ public interface VolumeAsyncApi {
    @Produces(MediaType.APPLICATION_JSON)
    @Consumes(MediaType.APPLICATION_JSON)
    @WrapWith("volumeAttachment")
-   ListenableFuture<VolumeAttachment> attachVolumeToServerAsDevice(@PayloadParam("volumeId") String volumeId,
+   ListenableFuture<? extends VolumeAttachment> attachVolumeToServerAsDevice(@PayloadParam("volumeId") String volumeId,
                                              @PathParam("server_id") String serverId, @PayloadParam("device") String device);
 
    /**
@@ -181,7 +181,7 @@ public interface VolumeAsyncApi {
    @SelectJson("snapshots")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<VolumeSnapshot>> listSnapshots();
+   ListenableFuture<? extends Set<? extends VolumeSnapshot>> listSnapshots();
 
    /**
     * Returns a summary list of snapshots.
@@ -193,7 +193,7 @@ public interface VolumeAsyncApi {
    @SelectJson("snapshots")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<VolumeSnapshot>> listSnapshotsInDetail();
+   ListenableFuture<? extends Set<? extends VolumeSnapshot>> listSnapshotsInDetail();
 
    /**
     * Return data about the given snapshot.
@@ -205,7 +205,7 @@ public interface VolumeAsyncApi {
    @SelectJson("snapshot")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<VolumeSnapshot> getSnapshot(@PathParam("id") String snapshotId);
+   ListenableFuture<? extends VolumeSnapshot> getSnapshot(@PathParam("id") String snapshotId);
 
    /**
     * Creates a new Snapshot
@@ -218,7 +218,7 @@ public interface VolumeAsyncApi {
    @Produces(MediaType.APPLICATION_JSON)
    @Consumes(MediaType.APPLICATION_JSON)
    @MapBinder(CreateVolumeSnapshotOptions.class)
-   ListenableFuture<VolumeSnapshot> createSnapshot(@PayloadParam("volume_id") String volumeId, CreateVolumeSnapshotOptions... options);
+   ListenableFuture<? extends VolumeSnapshot> createSnapshot(@PayloadParam("volume_id") String volumeId, CreateVolumeSnapshotOptions... options);
 
    /**
     * Delete a snapshot.
