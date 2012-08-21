@@ -43,7 +43,7 @@ public interface KeyPairApi {
     * 
     * @return all Key Pairs
     */
-   Set<Map<String, KeyPair>> listKeyPairs();
+   Set<? extends Map<String, ? extends KeyPair>> listKeyPairs();
 
    /**
     * Create a Key Pair.

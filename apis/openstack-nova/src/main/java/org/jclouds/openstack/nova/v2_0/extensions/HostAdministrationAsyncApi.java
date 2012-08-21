@@ -73,7 +73,7 @@ public interface HostAdministrationAsyncApi {
    @GET
    @SelectJson("hosts")
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<Host>> listHosts();
+   ListenableFuture<? extends Set<? extends Host>> listHosts();
 
    /**
     * @see HostAdministrationApi#getHostResourceUsage(String)
@@ -82,7 +82,7 @@ public interface HostAdministrationAsyncApi {
    @Path("/{id}")
    @SelectJson("host")
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<HostResourceUsage>> getHostResourceUsage(@PathParam("id") String hostId);
+   ListenableFuture<? extends Set<? extends HostResourceUsage>> getHostResourceUsage(@PathParam("id") String hostId);
 
    /**
     * @see HostAdministrationApi#enableHost(String)

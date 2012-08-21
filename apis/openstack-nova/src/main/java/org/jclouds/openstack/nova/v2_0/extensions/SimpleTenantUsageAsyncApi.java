@@ -62,7 +62,7 @@ public interface SimpleTenantUsageAsyncApi {
    @SelectJson("tenant_usages")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<SimpleTenantUsage>> listTenantUsages();
+   ListenableFuture<? extends Set<? extends SimpleTenantUsage>> listTenantUsages();
 
    /**
     * @see SimpleTenantUsageApi#getTenantUsage(String)
@@ -72,6 +72,6 @@ public interface SimpleTenantUsageAsyncApi {
    @SelectJson("tenant_usage")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<SimpleTenantUsage> getTenantUsage(@PathParam("id") String tenantId);
+   ListenableFuture<? extends SimpleTenantUsage> getTenantUsage(@PathParam("id") String tenantId);
 
 }
