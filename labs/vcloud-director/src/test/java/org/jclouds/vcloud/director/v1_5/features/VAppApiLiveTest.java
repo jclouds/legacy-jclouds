@@ -43,6 +43,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import java.net.URI;
 import java.util.List;
@@ -69,9 +70,20 @@ import org.jclouds.vcloud.director.v1_5.domain.User;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.Vm;
+import org.jclouds.vcloud.director.v1_5.domain.network.DhcpService;
+import org.jclouds.vcloud.director.v1_5.domain.network.FirewallService;
+import org.jclouds.vcloud.director.v1_5.domain.network.IpRange;
+import org.jclouds.vcloud.director.v1_5.domain.network.IpRanges;
+import org.jclouds.vcloud.director.v1_5.domain.network.IpScope;
+import org.jclouds.vcloud.director.v1_5.domain.network.NatService;
+import org.jclouds.vcloud.director.v1_5.domain.network.Network;
+import org.jclouds.vcloud.director.v1_5.domain.network.Network.FenceMode;
 import org.jclouds.vcloud.director.v1_5.domain.network.NetworkAssignment;
+import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConnection;
 import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConnection.IpAddressAllocationMode;
+import org.jclouds.vcloud.director.v1_5.domain.network.NetworkFeatures;
+import org.jclouds.vcloud.director.v1_5.domain.network.SyslogServerSettings;
 import org.jclouds.vcloud.director.v1_5.domain.network.VAppNetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.params.ComposeVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.params.ControlAccessParams;
@@ -80,8 +92,6 @@ import org.jclouds.vcloud.director.v1_5.domain.params.InstantiationParams;
 import org.jclouds.vcloud.director.v1_5.domain.params.RecomposeVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.params.SourcedCompositionItemParam;
 import org.jclouds.vcloud.director.v1_5.domain.params.UndeployVAppParams;
-import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecordType;
-import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecords;
 import org.jclouds.vcloud.director.v1_5.domain.section.GuestCustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.section.LeaseSettingsSection;
 import org.jclouds.vcloud.director.v1_5.domain.section.NetworkConfigSection;
@@ -91,6 +101,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.CharMatcher;
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -160,43 +171,46 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
 
    @Test(description = "POST /vApp/{id}/action/recomposeVApp")
    public void testRecomposeVApp() {
-      Set<Vm> vms = getAvailableVMsFromVAppTemplates();
-
-      VApp composedVApp = vdcApi.composeVApp(vdcUrn, ComposeVAppParams.builder().name(name("composed-"))
-               .instantiationParams(instantiationParams()).build());
-
+      
+      VApp composedVApp = vdcApi.composeVApp(vdcUrn, ComposeVAppParams.builder()
+               .name(name("composed-"))
+               .instantiationParams(instantiationParams())
+               .build());
+      
+      Set<Vm> vms = getAvailableVMsFromVAppTemplate(vAppTemplate);
+          
       // get the first vm to be added to vApp
       Vm toAddVm = Iterables.get(vms, 0);
+
+      // TODO clean up network config of the vm
+      //cleanUpNetworkConnectionSection(toAddVm);
+      
       RecomposeVAppParams params = addRecomposeParams(composedVApp, toAddVm);
 
       // The method under test
       Task recomposeVApp = vAppApi.recompose(composedVApp.getId(), params);
       assertTaskSucceedsLong(recomposeVApp);
 
-      // add another vm instance to vApp
-      params = addRecomposeParams(composedVApp, toAddVm);
-      recomposeVApp = vAppApi.recompose(composedVApp.getId(), params);
-      assertTaskSucceedsLong(recomposeVApp);
-
       // remove a vm
       VApp configured = vAppApi.get(composedVApp.getId());
       List<Vm> vmsToBeDeleted = configured.getChildren().getVms();
-      Vm toBeDeleted = Iterables.get(vmsToBeDeleted, 0);
+      Vm toBeDeleted = Iterables.find(vmsToBeDeleted, new Predicate<Vm>() {
+
+         @Override
+         public boolean apply(Vm vm) {
+            return vm.getName().startsWith("vm-");
+         }
+      
+      });
       Task removeVm = vmApi.remove(toBeDeleted.getId());
       assertTaskSucceedsLong(removeVm);
-
-      Task removeVApp = vAppApi.remove(composedVApp.getId());
-      assertTaskSucceedsLong(removeVApp);
+      
+      Task deleteVApp = vAppApi.remove(composedVApp.getHref());
+      assertTaskSucceedsLong(deleteVApp);
    }
 
-   private Set<Vm> getAvailableVMsFromVAppTemplates() {
-      Set<Vm> vms = Sets.newLinkedHashSet();
-      QueryResultRecords templatesRecords = queryApi.vAppTemplatesQueryAll();
-      for (QueryResultRecordType templateRecord : templatesRecords.getRecords()) {
-         VAppTemplate vAppTemplate = vAppTemplateApi.get(templateRecord.getId());
-         vms.addAll(vAppTemplate.getChildren());
-      }
-      return ImmutableSet.copyOf(Iterables.filter(vms, new Predicate<Vm>() {
+   private Set<Vm> getAvailableVMsFromVAppTemplate(VAppTemplate vAppTemplate) {
+      return ImmutableSet.copyOf(Iterables.filter(vAppTemplate.getChildren(), new Predicate<Vm>() {
          // filter out vms in the vApp template with computer name that contains underscores, dots,
          // or both.
          @Override
@@ -289,6 +303,8 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
       // Power on VApp
       vApp = powerOnVApp(vAppUrn);
 
+      vApp = vAppApi.get(vAppUrn);
+      
       // The method under test
       Task shutdown = vAppApi.shutdown(vAppUrn);
       assertTaskSucceedsLong(shutdown);
@@ -546,10 +562,42 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
 
    @Test(description = "PUT /vApp/{id}/networkConfigSection", dependsOnMethods = { "testGetNetworkConfigSection" })
    public void testEditNetworkConfigSection() {
-      // Copy existing section and edit fields
+      
+      // Copy existing section and update fields
       NetworkConfigSection oldSection = vAppApi.getNetworkConfigSection(vAppUrn);
-      VAppNetworkConfiguration networkConfig = VAppNetworkConfiguration.builder().build();
-      NetworkConfigSection newSection = oldSection.toBuilder().networkConfigs(ImmutableSet.of(networkConfig)).build();
+      Network network = lazyGetNetwork();
+      
+      tryFindBridgedNetworkInOrg();
+      IpRange ipRange = ipRange();
+      NetworkConfiguration newConfiguration = NetworkConfiguration.builder()
+               .ipScope(ipScope(ipRange))
+               .parentNetwork(Reference.builder().fromEntity(network).build())
+               .fenceMode(FenceMode.NAT_ROUTED)
+               .retainNetInfoAcrossDeployments(false)
+               .syslogServerSettings(SyslogServerSettings.builder().syslogServerIp1("192.168.14.27").build())
+               .features(NetworkFeatures.builder()
+                        .service(DhcpService.builder()
+                                 .ipRange(ipRange)
+                                 .build())
+                        .service(FirewallService.builder()
+                                 .logDefaultAction(false)
+                                 .defaultAction("drop")
+                                 .build())
+                        .service(NatService.builder()
+                                 .natType("portForwarding")
+                                 .enabled(false)
+                                 .build())                               
+                        .build())
+               .build();
+           
+      final String networkName = name("vAppNetwork-");
+      VAppNetworkConfiguration newVAppNetworkConfiguration = VAppNetworkConfiguration.builder()
+               .networkName(networkName)
+               .description(name("description-"))
+               .configuration(newConfiguration)
+               .build();
+
+      NetworkConfigSection newSection = oldSection.toBuilder().networkConfigs(ImmutableSet.of(newVAppNetworkConfiguration)).build();
 
       // The method under test
       Task editNetworkConfigSection = vAppApi.editNetworkConfigSection(vAppUrn, newSection);
@@ -561,12 +609,37 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
 
       // Check the retrieved object is well formed
       checkNetworkConfigSection(modified);
+      
+      Optional<VAppNetworkConfiguration> modifiedOptionalVAppNetwork = Iterables.tryFind(modified.getNetworkConfigs(), new IsVAppNetworkNamed(networkName));
+      if(!modifiedOptionalVAppNetwork.isPresent())
+         fail(String.format("Could not find vApp network named %s", networkName));
+      
+      Optional<VAppNetworkConfiguration> newOptionalVAppNetwork = Iterables.tryFind(newSection.getNetworkConfigs(), new IsVAppNetworkNamed(networkName));
+      if(!newOptionalVAppNetwork.isPresent())
+         fail(String.format("Could not find vApp network named %s", networkName));
 
-      // Check the modified section fields are set correctly
-      // assertEquals(modified.getInfo(), newSection.getInfo());
+      assertEquals(modifiedOptionalVAppNetwork.get().getNetworkName(), newOptionalVAppNetwork.get().getNetworkName(), String.format(ENTITY_EQUAL, "NetworkName"));
+      assertEquals(modifiedOptionalVAppNetwork.get().getConfiguration().getFenceMode(), newOptionalVAppNetwork.get().getConfiguration().getFenceMode(), String.format(ENTITY_EQUAL, "FenceMode"));
+      assertEquals(modifiedOptionalVAppNetwork.get().getConfiguration().getIpScope(), newOptionalVAppNetwork.get().getConfiguration().getIpScope(), String.format(ENTITY_EQUAL, "IpScope"));
+      assertEquals(modifiedOptionalVAppNetwork.get().getConfiguration().getNetworkFeatures(), newOptionalVAppNetwork.get().getConfiguration().getNetworkFeatures(), String.format(ENTITY_EQUAL, "NetworkFeatures"));
+   }
 
-      // Check the section was modified correctly
-      assertEquals(modified, newSection, String.format(ENTITY_EQUAL, "NetworkConfigSection"));
+   private IpRange ipRange() {
+      return IpRange.builder()
+               .startAddress("192.168.2.100")
+               .endAddress("192.168.2.199")
+               .build();
+   }
+
+   private IpScope ipScope(IpRange ipRange) {
+      IpRanges newIpRanges = IpRanges.builder()
+               .ipRange(ipRange)
+               .build();
+      return IpScope.builder()
+               .isInherited(false)
+               .gateway("192.168.2.1")
+               .netmask("255.255.0.0")
+               .ipRanges(newIpRanges).build();
    }
 
    @Test(description = "GET /vApp/{id}/networkSection", dependsOnMethods = { "testGetVApp" })
@@ -671,7 +744,6 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
       checkStartupSection(modified);
 
       // Check the modified section fields are set correctly
-      // assertEquals(modified.getX(), "");
       assertEquals(modified, newSection);
    }
 
@@ -708,14 +780,20 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
 
    @Test(description = "GET /vApp/{id}/metadata/{key}", dependsOnMethods = { "testGetMetadata" })
    public void testGetOrgMetadataValue() {
+      
+      key = name("key-");
+      String value = name("value-");
+      metadataValue = MetadataValue.builder().value(value).build();
+      vAppApi.getMetadataApi(vAppUrn).putEntry(key, metadataValue);
+      
       // Call the method being tested
-      MetadataValue value = vAppApi.getMetadataApi(vAppUrn).getValue(key);
+      MetadataValue newValue = vAppApi.getMetadataApi(vAppUrn).getValue(key);
 
       String expected = metadataValue.getValue();
 
-      checkMetadataValue(value);
-      assertEquals(value.getValue(), expected,
-               String.format(CORRECT_VALUE_OBJECT_FMT, "Value", "MetadataValue", expected, value.getValue()));
+      checkMetadataValue(newValue);
+      assertEquals(newValue.getValue(), expected,
+               String.format(CORRECT_VALUE_OBJECT_FMT, "Value", "MetadataValue", expected, newValue.getValue()));
    }
 
    @Test(description = "DELETE /vApp/{id}/metadata/{key}", dependsOnMethods = { "testSetMetadataValue" })
@@ -802,14 +880,11 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
          // configured network -> vm could be mapped to that network.
          else {
             Set<VAppNetworkConfiguration> vAppNetworkConfigurations = listVappNetworkConfigurations(vApp);
-            Set<NetworkConnection> listVmNetworkConnections = listNetworkConnections(vm);
-            for (NetworkConnection networkConnection : listVmNetworkConnections) {
-               for (VAppNetworkConfiguration vAppNetworkConfiguration : vAppNetworkConfigurations) {
-                  NetworkAssignment networkAssignment = NetworkAssignment.builder()
-                           .innerNetwork(vAppNetworkConfiguration.getNetworkName())
-                           .containerNetwork(vAppNetworkConfiguration.getNetworkName()).build();
-                  networkAssignments.add(networkAssignment);
-               }
+            for (VAppNetworkConfiguration vAppNetworkConfiguration : vAppNetworkConfigurations) {
+               NetworkAssignment networkAssignment = NetworkAssignment.builder()
+                        .innerNetwork(vAppNetworkConfiguration.getNetworkName())
+                        .containerNetwork(vAppNetworkConfiguration.getNetworkName()).build();
+               networkAssignments.add(networkAssignment);
             }
          }
       }
@@ -819,11 +894,7 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
       // vapp network
       else {
          if (vAppHasNetworkConfigured(vApp)) {
-
             VAppNetworkConfiguration vAppNetworkConfiguration = getVAppNetworkConfig(vApp);
-            System.out.println(vAppNetworkConfiguration.getNetworkName());
-            System.out.println(vAppNetworkConfiguration.getDescription());
-
             NetworkConnection networkConnection = NetworkConnection.builder()
                      .network(vAppNetworkConfiguration.getNetworkName())
                      .ipAddressAllocationMode(IpAddressAllocationMode.DHCP).build();
@@ -848,7 +919,32 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
       return RecomposeVAppParams.builder().name(name("recompose-"))
       // adding the vm item.
                .sourcedItems(ImmutableList.of(vmItem)).build();
+   }
+   
+   private final class IsVAppNetworkNamed implements Predicate<VAppNetworkConfiguration> {
+      private final String networkName;
 
+      private IsVAppNetworkNamed(String networkName) {
+         this.networkName = networkName;
+      }
+
+      @Override
+      public boolean apply(VAppNetworkConfiguration input) {
+         return input.getNetworkName().equals(networkName);
+      }
+   }
+   
+   private void cleanUpNetworkConnectionSection(Vm toAddVm) {
+      NetworkConnectionSection networkConnectionSection = vmApi.getNetworkConnectionSection(toAddVm.getId());
+      Set<NetworkConnection> networkConnections = networkConnectionSection.getNetworkConnections();
+      for (NetworkConnection networkConnection : networkConnections) {
+         NetworkConnection newNetworkConnection = networkConnection.toBuilder().isConnected(false).build();
+         networkConnectionSection = networkConnectionSection.toBuilder().networkConnection(newNetworkConnection)
+                  .build();
+      }
+
+      Task configureNetwork = vmApi.editNetworkConnectionSection(toAddVm.getId(), networkConnectionSection);
+      assertTaskSucceedsLong(configureNetwork);
    }
 
 }
