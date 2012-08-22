@@ -82,6 +82,7 @@ public class NinefoldComputeTemplateBuilderLiveTest extends BaseTemplateBuilderL
          assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
          assertEquals(defaultTemplate.getOptions().getLoginUser(), "user");
          assertEquals(defaultTemplate.getOptions().getLoginPassword(), "Password01");
+         assertEquals(defaultTemplate.getOptions().getLoginPrivateKey(), null);
          assertEquals(defaultTemplate.getOptions().shouldAuthenticateSudo(), Boolean.TRUE);
       } else {
          assertEquals(defaultTemplate.getImage(), this.view.getComputeService().templateBuilder().from(template)
