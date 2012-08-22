@@ -624,7 +624,7 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
       assertNotNull(vdc, String.format(ENTITY_NON_NULL, VDC));
 
       Set<Reference> networks = vdc.getAvailableNetworks();
-
+      network = lazyGetNetwork();
       // Look up the network in the Vdc with the id configured for the tests
       Optional<Reference> parentNetwork = tryFind(networks, new Predicate<Reference>() {
          @Override
