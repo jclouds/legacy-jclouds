@@ -159,6 +159,7 @@ public class DataObject extends CDMIObject {
 		Files.copy(getValueAsInputSupplier(), fileOut);
 		return fileOut;
 	}
+	
 
 	/**
 	 * get dataObject's value as a File
