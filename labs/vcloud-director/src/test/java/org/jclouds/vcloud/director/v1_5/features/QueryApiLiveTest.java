@@ -134,7 +134,6 @@ public class QueryApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    @Test(description = "GET /vApps/query")
    public void testQueryAllVApps() {
       vApp = instantiateVApp();
-
       QueryResultRecords queryResult = queryApi.vAppsQueryAll();
       Set<URI> hrefs = toHrefs(queryResult);
 

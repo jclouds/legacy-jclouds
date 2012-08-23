@@ -271,7 +271,6 @@ public class CatalogApiLiveTest extends BaseVCloudDirectorApiLiveTest {
       assertNull(removed);
    }
    
-
    private void removeMediaAttachedToCatalogItem(CatalogItem catalogItem) {
       if (media != null) {
          if (catalogItem.getEntity().getHref().equals(media.getHref())) {

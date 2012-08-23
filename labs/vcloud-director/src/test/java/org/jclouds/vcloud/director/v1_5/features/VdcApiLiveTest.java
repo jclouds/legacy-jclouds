@@ -24,6 +24,7 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.O
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.URN_REQ_LIVE;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.fail;
 
@@ -32,6 +33,7 @@ import java.util.Set;
 
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
+import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.ResourceEntity;
@@ -188,7 +190,9 @@ public class VdcApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    @Test(description = "POST /vdc/{id}/action/cloneVAppTemplate")
    public void testCloneVAppTemplate() {
       clonedVAppTemplate = vdcApi.cloneVAppTemplate(vdcUrn,
-               CloneVAppTemplateParams.builder().source(lazyGetVAppTemplate().getHref()).build());
+               CloneVAppTemplateParams.builder()
+                  .source(lazyGetVAppTemplate().getHref())
+                  .build());
 
       Task task = Iterables.getFirst(clonedVAppTemplate.getTasks(), null);
       assertNotNull(task, "vdcApi.cloneVAppTemplate returned VAppTemplate that did not contain any tasks");
@@ -299,22 +303,12 @@ public class VdcApiLiveTest extends BaseVCloudDirectorApiLiveTest {
 
    }
 
-   private void setupMetadata() {
-      adminContext.getApi().getVdcApi().getMetadataApi(vdcUrn)
-               .putEntry("key", MetadataValue.builder().value("value").build());
-      metadataSet = true;
-   }
-
    @Test(description = "GET /vdc/{id}/metadata", dependsOnMethods = { "testGetVdc" })
    public void testGetMetadata() {
-      if (adminContext != null) {
-         setupMetadata();
-      }
-
       Metadata metadata = vdcApi.getMetadataApi(vdcUrn).get();
 
       // required for testing
-      assertFalse(Iterables.isEmpty(metadata.getMetadataEntries()),
+      assertTrue(Iterables.isEmpty(metadata.getMetadataEntries()),
                String.format(OBJ_FIELD_REQ_LIVE, VDC, "metadata.entries"));
 
       Checks.checkMetadataFor(VDC, metadata);
@@ -322,6 +316,7 @@ public class VdcApiLiveTest extends BaseVCloudDirectorApiLiveTest {
 
    @Test(description = "GET /vdc/{id}/metadata/{key}", dependsOnMethods = { "testGetMetadata" })
    public void testGetMetadataValue() {
+      // setupMetadata();
       // First find a key
       Metadata metadata = vdcApi.getMetadataApi(vdcUrn).get();
       Map<String, String> metadataMap = Checks.metadataToMap(metadata);
@@ -331,5 +326,10 @@ public class VdcApiLiveTest extends BaseVCloudDirectorApiLiveTest {
       MetadataValue metadataValue = vdcApi.getMetadataApi(vdcUrn).getValue(key);
 
       Checks.checkMetadataValueFor(VDC, metadataValue, value);
+   }
+   
+   private void setupMetadata() {
+      adminContext.getApi().getVdcApi().getMetadataApi(vdcUrn).putEntry("key", MetadataValue.builder().value("value").build());
+      metadataSet = true;
    }
 }

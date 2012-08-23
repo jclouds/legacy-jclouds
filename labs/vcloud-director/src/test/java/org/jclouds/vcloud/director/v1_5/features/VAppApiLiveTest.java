@@ -114,7 +114,7 @@ import com.google.common.collect.Sets;
  * 
  * @author grkvlt@apache.org
  */
-@Test(groups = { "live", "user" }, singleThreaded = true, testName = "VAppApiLiveTest")
+@Test(singleThreaded = true, testName = "VAppApiLiveTest")
 public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
 
    private MetadataValue metadataValue;
@@ -146,7 +146,7 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
    /**
     * @see VAppApi#get(URI)
     */
-   @Test(description = "GET /vApp/{id}")
+   @Test(groups = { "live", "user" }, description = "GET /vApp/{id}")
    public void testGetVApp() {
       // The method under test
       vApp = vAppApi.get(vAppUrn);
@@ -169,7 +169,7 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
       assertVAppStatus(vAppUrn, Status.POWERED_OFF);
    }
 
-   @Test(description = "POST /vApp/{id}/action/recomposeVApp")
+   @Test(groups = { "live", "user" }, description = "POST /vApp/{id}/action/recomposeVApp")
    public void testRecomposeVApp() {
       
       VApp composedVApp = vdcApi.composeVApp(vdcUrn, ComposeVAppParams.builder()
@@ -227,7 +227,7 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
    /**
     * @see VAppApi#edit(URI, VApp)
     */
-   @Test(description = "PUT /vApp/{id}", dependsOnMethods = { "testGetVApp" })
+   @Test(groups = { "live", "user" }, description = "PUT /vApp/{id}", dependsOnMethods = { "testGetVApp" })
    public void testEditVApp() {
       VApp newVApp = VApp.builder().name(name("new-name-")).description("New Description").build();
       vAppNames.add(newVApp.getName());
@@ -246,7 +246,7 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
                String.format(OBJ_FIELD_EQ, VAPP, "Description", newVApp.getDescription(), vApp.getDescription()));
    }
 
-   @Test(description = "POST /vApp/{id}/action/deploy", dependsOnMethods = { "testGetVApp" })
+   @Test(groups = { "live", "user" }, description = "POST /vApp/{id}/action/deploy", dependsOnMethods = { "testGetVApp" })
    public void testDeployVApp() {
       DeployVAppParams params = DeployVAppParams.builder()
                .deploymentLeaseSeconds((int) TimeUnit.SECONDS.convert(1L, TimeUnit.HOURS)).notForceCustomization()
@@ -266,7 +266,7 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
       assertVAppStatus(vAppUrn, Status.POWERED_OFF);
    }
 
-   @Test(description = "POST /vApp/{id}/power/action/powerOn", dependsOnMethods = { "testDeployVApp" })
+   @Test(groups = { "live", "user" }, description = "POST /vApp/{id}/power/action/powerOn", dependsOnMethods = { "testDeployVApp" })
    public void testPowerOnVApp() {
       // Power off VApp
       vApp = powerOffVApp(vAppUrn);
@@ -282,7 +282,7 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
       assertVAppStatus(vAppUrn, Status.POWERED_ON);
    }
 
-   @Test(description = "POST /vApp/{id}/power/action/reboot", dependsOnMethods = { "testDeployVApp" })
+   @Test(groups = { "live", "user" }, description = "POST /vApp/{id}/power/action/reboot", dependsOnMethods = { "testDeployVApp" })
    public void testReboot() {
       // Power on VApp
       vApp = powerOnVApp(vAppUrn);
@@ -298,7 +298,7 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
       assertVAppStatus(vAppUrn, Status.POWERED_OFF);
    }
 
-   @Test(description = "POST /vApp/{id}/power/action/shutdown", dependsOnMethods = { "testDeployVApp" })
+   @Test(groups = { "live", "user" }, description = "POST /vApp/{id}/power/action/shutdown", dependsOnMethods = { "testDeployVApp" })
    public void testShutdown() {
       // Power on VApp
       vApp = powerOnVApp(vAppUrn);
@@ -319,7 +319,7 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
       vApp = powerOnVApp(vAppUrn);
    }
 
-   @Test(description = "POST /vApp/{id}/power/action/suspend", dependsOnMethods = { "testDeployVApp" })
+   @Test(groups = { "live", "user" }, description = "POST /vApp/{id}/power/action/suspend", dependsOnMethods = { "testDeployVApp" })
    public void testSuspend() {
       // Power on VApp
       vApp = powerOnVApp(vAppUrn);
@@ -338,7 +338,7 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
       vApp = powerOnVApp(vAppUrn);
    }
 
-   @Test(description = "POST /vApp/{id}/power/action/reset", dependsOnMethods = { "testDeployVApp" })
+   @Test(groups = { "live", "user" }, description = "POST /vApp/{id}/power/action/reset", dependsOnMethods = { "testDeployVApp" })
    public void testReset() {
       // Power on VApp
       vApp = powerOnVApp(vAppUrn);
@@ -354,7 +354,7 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
       assertVAppStatus(vAppUrn, Status.POWERED_ON);
    }
 
-   @Test(description = "POST /vApp/{id}/action/undeploy", dependsOnMethods = { "testDeployVApp" })
+   @Test(groups = { "live", "user" }, description = "POST /vApp/{id}/action/undeploy", dependsOnMethods = { "testDeployVApp" })
    public void testUndeployVApp() {
       // Power on VApp
       vApp = powerOnVApp(vAppUrn);
@@ -374,7 +374,7 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
       assertVAppStatus(vAppUrn, Status.POWERED_OFF);
    }
 
-   @Test(description = "POST /vApp/{id}/power/action/powerOff", dependsOnMethods = { "testUndeployVApp" })
+   @Test(groups = { "live", "user" }, description = "POST /vApp/{id}/power/action/powerOff", dependsOnMethods = { "testUndeployVApp" })
    public void testPowerOffVApp() {
       // Power on VApp
       vApp = powerOnVApp(vAppUrn);
@@ -390,7 +390,7 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
       assertVAppStatus(vAppUrn, Status.POWERED_OFF);
    }
 
-   @Test(description = "POST /vApp/{id}/action/controlAccess", dependsOnMethods = { "testGetVApp" })
+   @Test(groups = { "live", "user" }, description = "POST /vApp/{id}/action/controlAccess", dependsOnMethods = { "testGetVApp" })
    public void testControlAccessUser() {
       ControlAccessParams params = ControlAccessParams
                .builder()
@@ -409,7 +409,7 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
       assertEquals(modified, params, String.format(ENTITY_EQUAL, "ControlAccessParams"));
    }
 
-   @Test(description = "POST /vApp/{id}/action/controlAccess", dependsOnMethods = { "testControlAccessUser" })
+   @Test(groups = { "live", "user" }, description = "POST /vApp/{id}/action/controlAccess", dependsOnMethods = { "testControlAccessUser" })
    public void testControlAccessEveryone() {
 
       ControlAccessParams params = ControlAccessParams.builder().sharedToEveryone().everyoneAccessLevel("FullControl")
@@ -425,7 +425,7 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
       assertEquals(modified, params, String.format(ENTITY_EQUAL, "ControlAccessParams"));
    }
 
-   @Test(description = "POST /vApp/{id}/action/discardSuspendedState", dependsOnMethods = { "testDeployVApp" })
+   @Test(groups = { "live", "user" }, description = "POST /vApp/{id}/action/discardSuspendedState", dependsOnMethods = { "testDeployVApp" })
    public void testDiscardSuspendedState() {
       // Power on, then suspend the VApp
       vApp = powerOnVApp(vAppUrn);
@@ -488,7 +488,7 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
       }
    }
 
-   @Test(description = "GET /vApp/{id}/controlAccess", dependsOnMethods = { "testGetVApp" })
+   @Test(groups = { "live", "user" }, description = "GET /vApp/{id}/controlAccess", dependsOnMethods = { "testGetVApp" })
    public void testGetControlAccess() {
       // The method under test
       ControlAccessParams controlAccess = vAppApi.getAccessControl(vAppUrn);
@@ -506,7 +506,7 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
       checkLeaseSettingsSection(section);
    }
 
-   @Test(description = "PUT /vApp/{id}/leaseSettingsSection", dependsOnMethods = { "testGetLeaseSettingsSection" })
+   @Test(groups = { "live", "user" }, description = "PUT /vApp/{id}/leaseSettingsSection", dependsOnMethods = { "testGetLeaseSettingsSection" })
    public void testEditLeaseSettingsSection() {
       // Copy existing section
       LeaseSettingsSection oldSection = vAppApi.getLeaseSettingsSection(vAppUrn);
@@ -551,7 +551,7 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
       assertEquals(modified, newSection, String.format(ENTITY_EQUAL, "LeaseSettingsSection"));
    }
 
-   @Test(description = "GET /vApp/{id}/networkConfigSection", dependsOnMethods = { "testGetVApp" })
+   @Test(groups = { "live", "user" }, description = "GET /vApp/{id}/networkConfigSection", dependsOnMethods = { "testGetVApp" })
    public void testGetNetworkConfigSection() {
       // The method under test
       NetworkConfigSection section = vAppApi.getNetworkConfigSection(vAppUrn);
@@ -642,7 +642,7 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
                .ipRanges(newIpRanges).build();
    }
 
-   @Test(description = "GET /vApp/{id}/networkSection", dependsOnMethods = { "testGetVApp" })
+   @Test(groups = { "live", "user" }, description = "GET /vApp/{id}/networkSection", dependsOnMethods = { "testGetVApp" })
    public void testGetNetworkSection() {
       // The method under test
       NetworkSection section = vAppApi.getNetworkSection(vAppUrn);
@@ -651,7 +651,7 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
       checkNetworkSection(section);
    }
 
-   @Test(description = "GET /vApp/{id}/owner", dependsOnMethods = { "testGetVApp" })
+   @Test(groups = { "live", "user" }, description = "GET /vApp/{id}/owner", dependsOnMethods = { "testGetVApp" })
    public void testGetOwner() {
       // The method under test
       Owner owner = vAppApi.getOwner(vAppUrn);
@@ -660,7 +660,7 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
       checkOwner(owner);
    }
 
-   @Test(description = "PUT /vApp/{id}/owner", dependsOnMethods = { "testGetOwner" })
+   @Test(groups = { "live", "user" }, description = "PUT /vApp/{id}/owner", dependsOnMethods = { "testGetOwner" })
    public void testEditOwner() {
       Owner newOwner = Owner.builder().user(Reference.builder().href(user.getHref()).type(ADMIN_USER).build()).build();
 
@@ -677,7 +677,7 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
       assertEquals(modified.getUser().getHref(), newOwner.getUser().getHref());
    }
 
-   @Test(description = "GET /vApp/{id}/productSections", dependsOnMethods = { "testGetVApp" })
+   @Test(groups = { "live", "user" }, description = "GET /vApp/{id}/productSections", dependsOnMethods = { "testGetVApp" })
    public void testGetProductSections() {
       // The method under test
       ProductSectionList sectionList = vAppApi.getProductSections(vAppUrn);
@@ -686,7 +686,7 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
       checkProductSectionList(sectionList);
    }
 
-   @Test(description = "PUT /vApp/{id}/productSections", dependsOnMethods = { "testGetProductSections" })
+   @Test(groups = { "live", "user" }, description = "PUT /vApp/{id}/productSections", dependsOnMethods = { "testGetProductSections" })
    public void testEditProductSections() {
       // Copy existing section and edit fields
       ProductSectionList oldSections = vAppApi.getProductSections(vAppUrn);
@@ -718,7 +718,7 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
       assertEquals(modified, newSections);
    }
 
-   @Test(description = "GET /vApp/{id}/startupSection", dependsOnMethods = { "testGetVApp" })
+   @Test(groups = { "live", "user" }, description = "GET /vApp/{id}/startupSection", dependsOnMethods = { "testGetVApp" })
    public void testGetStartupSection() {
       // The method under test
       StartupSection section = vAppApi.getStartupSection(vAppUrn);
@@ -727,7 +727,7 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
       checkStartupSection(section);
    }
 
-   @Test(description = "PUT /vApp/{id}/startupSection", dependsOnMethods = { "testGetStartupSection" })
+   @Test(groups = { "live", "user" }, description = "PUT /vApp/{id}/startupSection", dependsOnMethods = { "testGetStartupSection" })
    public void testEditStartupSection() {
       // Copy existing section and edit fields
       StartupSection oldSection = vAppApi.getStartupSection(vAppUrn);
@@ -747,7 +747,7 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
       assertEquals(modified, newSection);
    }
 
-   @Test(description = "PUT /vApp/{id}/metadata", dependsOnMethods = { "testGetVApp" })
+   @Test(groups = { "live", "user" }, description = "PUT /vApp/{id}/metadata", dependsOnMethods = { "testGetVApp" })
    public void testSetMetadataValue() {
       key = name("key-");
       String value = name("value-");
@@ -761,7 +761,7 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
       checkMetadataValueFor(VAPP, newMetadataValue, value);
    }
 
-   @Test(description = "GET /vApp/{id}/metadata", dependsOnMethods = { "testSetMetadataValue" })
+   @Test(groups = { "live", "user" }, description = "GET /vApp/{id}/metadata", dependsOnMethods = { "testSetMetadataValue" })
    public void testGetMetadata() {
       key = name("key-");
       String value = name("value-");
@@ -778,7 +778,7 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
                String.format(NOT_EMPTY_OBJECT_FMT, "MetadataEntry", "vApp"));
    }
 
-   @Test(description = "GET /vApp/{id}/metadata/{key}", dependsOnMethods = { "testGetMetadata" })
+   @Test(groups = { "live", "user" }, description = "GET /vApp/{id}/metadata/{key}", dependsOnMethods = { "testGetMetadata" })
    public void testGetOrgMetadataValue() {
       
       key = name("key-");
@@ -796,7 +796,7 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
                String.format(CORRECT_VALUE_OBJECT_FMT, "Value", "MetadataValue", expected, newValue.getValue()));
    }
 
-   @Test(description = "DELETE /vApp/{id}/metadata/{key}", dependsOnMethods = { "testSetMetadataValue" })
+   @Test(groups = { "live", "user" }, description = "DELETE /vApp/{id}/metadata/{key}", dependsOnMethods = { "testSetMetadataValue" })
    public void testRemoveMetadataEntry() {
       // Delete the entry
       Task task = vAppApi.getMetadataApi(vAppUrn).removeEntry(key);
@@ -809,7 +809,7 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
       checkMetadataKeyAbsentFor(VAPP, newMetadata, key);
    }
 
-   @Test(description = "POST /vApp/{id}/metadata", dependsOnMethods = { "testGetMetadata" })
+   @Test(groups = { "live", "user" }, description = "POST /vApp/{id}/metadata", dependsOnMethods = { "testGetMetadata" })
    public void testMergeMetadata() {
       Metadata oldMetadata = vAppApi.getMetadataApi(vAppUrn).get();
       Map<String, String> oldMetadataMap = Checks.metadataToMap(oldMetadata);
@@ -833,7 +833,7 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
    /**
     * @see VAppApi#remove(URI)
     */
-   @Test(description = "DELETE /vApp/{id}")
+   @Test(groups = { "live", "user" }, description = "DELETE /vApp/{id}")
    public void testRemoveVApp() {
       // Create a temporary VApp to remove
       VApp temp = instantiateVApp();

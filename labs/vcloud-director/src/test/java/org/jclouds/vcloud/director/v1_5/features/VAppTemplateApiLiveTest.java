@@ -135,20 +135,6 @@ public class VAppTemplateApiLiveTest extends AbstractVAppApiLiveTest {
 
       checkProductSectionList(productSectionList);
    }
-
-   @Test(description = "PUT /vAppTemplate/{id}/productSections")
-   public void testEditProductSections() {
-      // TODO make a real modification
-
-      ProductSectionList origSections = vAppTemplateApi.getProductSections(vApp.getId());
-      ProductSectionList newSections = origSections.toBuilder().build();
-
-      Task task = vAppTemplateApi.editProductSections(vApp.getId(), newSections);
-      assertTaskSucceeds(task);
-
-      ProductSectionList modified = vAppTemplateApi.getProductSections(vApp.getId());
-      checkProductSectionList(modified);
-   }
    
    @Test(description = "GET /vAppTemplate/{id}/leaseSettingsSection")
    public void testGetLeaseSettingsSection() {
@@ -305,7 +291,7 @@ public class VAppTemplateApiLiveTest extends AbstractVAppApiLiveTest {
       // First disable so that enable really has some work to do...
       vAppTemplateApi.disableDownload(vAppTemplateUrn);
       final Task task = vAppTemplateApi.enableDownload(vAppTemplateUrn);
-      assertTaskSucceeds(task);
+      assertTaskSucceedsLong(task);
 
       // TODO Check that it really is enabled. The only thing I can see for determining this
       // is the undocumented "download" link in the VAppTemplate. But that is brittle and we
