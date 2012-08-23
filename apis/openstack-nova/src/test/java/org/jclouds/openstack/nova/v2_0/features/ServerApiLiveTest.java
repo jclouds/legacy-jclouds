@@ -19,41 +19,79 @@
 package org.jclouds.openstack.nova.v2_0.features;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 import java.util.Set;
 
 import org.jclouds.openstack.nova.v2_0.domain.Server;
 import org.jclouds.openstack.nova.v2_0.internal.BaseNovaApiLiveTest;
+import org.jclouds.openstack.v2_0.domain.Link.Relation;
 import org.jclouds.openstack.v2_0.domain.Resource;
+import org.jclouds.openstack.v2_0.predicates.LinkPredicates;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.Iterables;
+
 /**
- * Tests behavior of {@code ServerApi}
+ * Tests behavior of {@link ServerApi}
  * 
  * @author Adrian Cole
  */
 @Test(groups = "live", testName = "ServerApiLiveTest")
 public class ServerApiLiveTest extends BaseNovaApiLiveTest {
 
-   @Test
-   public void testListServersInDetail() throws Exception {
-      for (String zoneId : novaContext.getApi().getConfiguredZones()) {
-         ServerApi api = novaContext.getApi().getServerApiForZone(zoneId);
-         Set<? extends Resource> response = api.listServers();
-         assert null != response;
-         assertTrue(response.size() >= 0);
-         for (Resource server : response) {
-            Server newDetails = api.getServer(server.getId());
-            assertEquals(newDetails.getId(), server.getId());
-            assertEquals(newDetails.getName(), server.getName());
-            assertEquals(newDetails.getLinks(), server.getLinks());
-            checkServer(newDetails);
-         }
-      }
-   }
+    @Test(description = "GET /v${apiVersion}/{tenantId}/servers")
+    public void testListServers() throws Exception {
+       for (String zoneId : zones) {
+          ServerApi api = novaContext.getApi().getServerApiForZone(zoneId);
+          Set<? extends Resource> response = api.listServers();
+          assertNotNull(response);
+          assertFalse(response.isEmpty());
+          assert null != response;
+          assertTrue(response.size() >= 0);
+          for (Resource server : response) {
+             checkResource(server);
+          }
+       }
+    }
 
-   private void checkServer(Server server) {
-      assert server.getAddresses().size() > 0 : server;
-   }
+    @Test(description = "GET /v${apiVersion}/{tenantId}/servers/detail")
+    public void testListServersInDetail() throws Exception {
+       for (String zoneId : zones) {
+          ServerApi api = novaContext.getApi().getServerApiForZone(zoneId);
+          Set<? extends Server> response = api.listServersInDetail();
+          assertNotNull(response);
+          assertFalse(response.isEmpty());
+          for (Server server : response) {
+             checkServer(server);
+          }
+       }
+    }
+
+    @Test(description = "GET /v${apiVersion}/{tenantId}/servers/{id}", dependsOnMethods = { "testListServersInDetail" })
+    public void testGetServerById() throws Exception {
+       for (String zoneId : zones) {
+          ServerApi api = novaContext.getApi().getServerApiForZone(zoneId);
+          Set<? extends Resource> response = api.listServers();
+          for (Resource server : response) {
+             Server details = api.getServer(server.getId());
+             assertEquals(details.getId(), server.getId());
+             assertEquals(details.getName(), server.getName());
+             assertEquals(details.getLinks(), server.getLinks());
+             checkServer(details);
+          }
+       }
+    }
+
+    private void checkResource(Resource resource) {
+       assertNotNull(resource.getId());
+       assertNotNull(resource.getName());
+       assertNotNull(resource.getLinks());
+       assertTrue(Iterables.any(resource.getLinks(), LinkPredicates.relationEquals(Relation.SELF)));
+    }
+
+    private void checkServer(Server server) {
+       checkResource(server);
+       assertFalse(server.getAddresses().isEmpty());
+    }
 }
