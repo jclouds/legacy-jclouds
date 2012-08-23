@@ -247,14 +247,7 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
       networkUrn = emptyToNull(System.getProperty("test." + provider + ".network-id"));
 
       userUrn = emptyToNull(System.getProperty("test." + provider + ".user-id"));
-
-//      QueryResultRecords queryResult = adminContext.getApi().getQueryApi().usersQueryAll();
-//      for (QueryResultRecordType recordType : queryResult.getRecords()) {
-//        User user = adminContext.getApi().getUserApi().get(recordType.getHref());
-//        System.out.println(user.getName());
-//        System.out.println(user.getId());
-//      }
-      
+     
       org = context
                .getApi()
                .getOrgApi()
@@ -366,7 +359,7 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
       });
       
       if (optionalVm.isPresent()) {
-         Logger.CONSOLE.info("found vAppTemplate: %s", prettyVm.apply(optionalVm.get()));
+         Logger.CONSOLE.info("found vm: %s", prettyVm.apply(optionalVm.get()));
       } else {
          Logger.CONSOLE.warn("%s doesn't have any vm in org %s; vms: %s", context.getApi()
                   .getCurrentSession().getUser(), org.getName(), Iterables.transform(vms, prettyVm));
@@ -684,10 +677,10 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
          }
       }
 
-      // Shutdown and power off the VApp if necessary
+      // power off the VApp if necessary
       if (vApp.getStatus() == Status.POWERED_ON) {
          try {
-            Task shutdownTask = vAppApi.shutdown(vAppUrn);
+            Task shutdownTask = vAppApi.powerOff(vAppUrn);
             taskDoneEventually(shutdownTask);
          } catch (Exception e) {
             // keep going; cleanup as much as possible
