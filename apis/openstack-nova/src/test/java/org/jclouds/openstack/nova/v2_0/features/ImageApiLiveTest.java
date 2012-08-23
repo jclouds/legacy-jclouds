@@ -19,6 +19,7 @@
 package org.jclouds.openstack.nova.v2_0.features;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
@@ -30,52 +31,72 @@ import org.jclouds.openstack.v2_0.domain.Resource;
 import org.testng.annotations.Test;
 
 /**
- * Tests behavior of {@code ImageApi}
+ * Tests behavior of {@link ImageApi}
  * 
  * @author Michael Arnold
  */
 @Test(groups = "live", testName = "ImageApiLiveTest")
 public class ImageApiLiveTest extends BaseNovaApiLiveTest {
 
-   @Test
+   @Test(description = "GET /v${apiVersion}/{tenantId}/images")
    public void testListImages() throws Exception {
-      for (String zoneId : novaContext.getApi().getConfiguredZones()) {
+      for (String zoneId : zones) {
          ImageApi api = novaContext.getApi().getImageApiForZone(zoneId);
          Set<? extends Resource> response = api.listImages();
          assertNotNull(response);
-         assertTrue(response.size() >= 0);
+         assertFalse(response.isEmpty());
          for (Resource image : response) {
-            Image newDetails = api.getImage(image.getId());
-            assertNotNull(newDetails);
-            assertEquals(newDetails.getId(), image.getId());
-            assertEquals(newDetails.getName(), image.getName());
-            assertEquals(newDetails.getLinks(), image.getLinks());
+            assertNotNull(image.getId());
+            assertNotNull(image.getName());
+            assertNotNull(image.getLinks());
          }
       }
    }
 
-   @Test
+   @Test(description = "GET /v${apiVersion}/{tenantId}/images/detail")
    public void testListImagesInDetail() throws Exception {
       for (String zoneId : novaContext.getApi().getConfiguredZones()) {
          ImageApi api = novaContext.getApi().getImageApiForZone(zoneId);
          Set<? extends Image> response = api.listImagesInDetail();
          assertNotNull(response);
-         assertTrue(response.size() >= 0);
+         assertFalse(response.isEmpty());
          for (Image image : response) {
-            Image newDetails = api.getImage(image.getId());
-            assertNotNull(newDetails);
-            assertEquals(newDetails.getId(), image.getId());
-            assertEquals(newDetails.getName(), image.getName());
-            assertEquals(newDetails.getLinks(), image.getLinks());
-            assertEquals(newDetails.getCreated(), image.getCreated());
-            assertEquals(newDetails.getMinDisk(), image.getMinDisk());
-            assertEquals(newDetails.getMinRam(), image.getMinRam());
-            assertEquals(newDetails.getProgress(), image.getProgress());
-            assertEquals(newDetails.getStatus(), image.getStatus());
-            assertEquals(newDetails.getServer(), image.getServer());
-            assertEquals(newDetails.getTenantId(), image.getTenantId());
-            assertEquals(newDetails.getUpdated(), image.getUpdated());
-            assertEquals(newDetails.getUserId(), image.getUserId());
+            assertNotNull(image.getId());
+            assertNotNull(image.getName());
+            assertNotNull(image.getLinks());
+            assertNotNull(image.getCreated());
+            assertTrue(image.getMinDisk() > 0);
+            assertTrue(image.getMinRam() > 0);
+            assertTrue(image.getProgress() >= 0 && image.getProgress() <= 100);
+            assertNotNull(image.getStatus());
+            assertNotNull(image.getServer());
+            assertNotNull(image.getTenantId());
+            assertNotNull(image.getUpdated());
+            assertNotNull(image.getUserId());
+         }
+      }
+   }
+
+   @Test(description = "GET /v${apiVersion}/{tenantId}/images/{id}", dependsOnMethods = { "testListImagesInDetail" })
+   public void testGetImageById() throws Exception {
+      for (String zoneId : novaContext.getApi().getConfiguredZones()) {
+         ImageApi api = novaContext.getApi().getImageApiForZone(zoneId);
+         Set<? extends Image> response = api.listImagesInDetail();
+         for (Image image : response) {
+            Image details = api.getImage(image.getId());
+            assertNotNull(details);
+            assertEquals(details.getId(), image.getId());
+            assertEquals(details.getName(), image.getName());
+            assertEquals(details.getLinks(), image.getLinks());
+            assertEquals(details.getCreated(), image.getCreated());
+            assertEquals(details.getMinDisk(), image.getMinDisk());
+            assertEquals(details.getMinRam(), image.getMinRam());
+            assertEquals(details.getProgress(), image.getProgress());
+            assertEquals(details.getStatus(), image.getStatus());
+            assertEquals(details.getServer(), image.getServer());
+            assertEquals(details.getTenantId(), image.getTenantId());
+            assertEquals(details.getUpdated(), image.getUpdated());
+            assertEquals(details.getUserId(), image.getUserId());
          }
       }
    }
