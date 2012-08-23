@@ -52,7 +52,7 @@ public class FloatingIPApiLiveTest extends BaseNovaApiLiveTest {
          if (!apiOption.isPresent())
             continue;
          FloatingIPApi api = apiOption.get();
-         Set<FloatingIP> response = api.listFloatingIPs();
+         Set<? extends FloatingIP> response = api.listFloatingIPs();
          assert null != response;
          assertTrue(response.size() >= 0);
          for (FloatingIP ip : response) {
@@ -77,7 +77,7 @@ public class FloatingIPApiLiveTest extends BaseNovaApiLiveTest {
          FloatingIP floatingIP = api.allocate();
          assertNotNull(floatingIP);
 
-         Set<FloatingIP> response = api.listFloatingIPs();
+         Set<? extends FloatingIP> response = api.listFloatingIPs();
          boolean ipInSet = false;
          for (FloatingIP ip : response) {
             if (ip.getId().equals(floatingIP.getId()))

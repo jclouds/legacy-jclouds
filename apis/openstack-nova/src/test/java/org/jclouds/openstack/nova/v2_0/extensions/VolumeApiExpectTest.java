@@ -62,7 +62,7 @@ public class VolumeApiExpectTest extends BaseNovaApiExpectTest {
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/volume_list.json")).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
 
-      Set<Volume> volumes = api.listVolumes();
+      Set<? extends Volume> volumes = api.listVolumes();
       assertEquals(volumes, ImmutableSet.of(testVolume()));
    }
 
@@ -75,7 +75,7 @@ public class VolumeApiExpectTest extends BaseNovaApiExpectTest {
             HttpResponse.builder().statusCode(404).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
 
-      Set<Volume> volumes = api.listVolumes();
+      Set<? extends Volume> volumes = api.listVolumes();
       assertTrue(volumes.isEmpty());
    }
 
@@ -88,7 +88,7 @@ public class VolumeApiExpectTest extends BaseNovaApiExpectTest {
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/volume_list_detail.json")).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
 
-      Set<Volume> volumes = api.listVolumesInDetail();
+      Set<? extends Volume> volumes = api.listVolumesInDetail();
       assertEquals(volumes, ImmutableSet.of(testVolume()));
    }
 
@@ -101,7 +101,7 @@ public class VolumeApiExpectTest extends BaseNovaApiExpectTest {
             HttpResponse.builder().statusCode(404).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
 
-      Set<Volume> volumes = api.listVolumesInDetail();
+      Set<? extends Volume> volumes = api.listVolumesInDetail();
       assertTrue(volumes.isEmpty());
    }
    
@@ -203,7 +203,7 @@ public class VolumeApiExpectTest extends BaseNovaApiExpectTest {
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/attachment_list.json")).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
 
-      Set<VolumeAttachment> attachments = api.listAttachmentsOnServer("instance-1");
+      Set<? extends VolumeAttachment> attachments = api.listAttachmentsOnServer("instance-1");
       assertEquals(attachments, ImmutableSet.of(testAttachment()));
       // double-check individual fields
       VolumeAttachment attachment = Iterables.getOnlyElement(attachments);
@@ -312,7 +312,7 @@ public class VolumeApiExpectTest extends BaseNovaApiExpectTest {
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/snapshot_list.json")).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
 
-      Set<VolumeSnapshot> snapshots = api.listSnapshots();
+      Set<? extends VolumeSnapshot> snapshots = api.listSnapshots();
       assertEquals(snapshots, ImmutableSet.of(testSnapshot()));
    }
 
@@ -325,7 +325,7 @@ public class VolumeApiExpectTest extends BaseNovaApiExpectTest {
             HttpResponse.builder().statusCode(404).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
 
-      Set<VolumeSnapshot> snapshots = api.listSnapshots();
+      Set<? extends VolumeSnapshot> snapshots = api.listSnapshots();
       assertTrue(snapshots.isEmpty());
    }
 
@@ -363,7 +363,7 @@ public class VolumeApiExpectTest extends BaseNovaApiExpectTest {
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/snapshot_list_detail.json")).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
 
-      Set<VolumeSnapshot> snapshots = api.listSnapshotsInDetail();
+      Set<? extends VolumeSnapshot> snapshots = api.listSnapshotsInDetail();
       assertEquals(snapshots, ImmutableSet.of(testSnapshot()));
 
       // double-check individual fields
@@ -385,7 +385,7 @@ public class VolumeApiExpectTest extends BaseNovaApiExpectTest {
             HttpResponse.builder().statusCode(404).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
 
-      Set<VolumeSnapshot> snapshots = api.listSnapshotsInDetail();
+      Set<? extends VolumeSnapshot> snapshots = api.listSnapshotsInDetail();
       assertTrue(snapshots.isEmpty());
    }
    

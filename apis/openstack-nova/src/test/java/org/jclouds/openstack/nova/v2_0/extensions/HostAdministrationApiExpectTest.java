@@ -59,7 +59,7 @@ public class HostAdministrationApiExpectTest extends BaseNovaApiExpectTest {
       
       Host expected = Host.builder().name("ubuntu").service("compute").build();
 
-      Set<Host> result = api.listHosts();
+      Set<? extends Host> result = api.listHosts();
       Host host = Iterables.getOnlyElement(result);
       assertEquals(host.getName(), "ubuntu");
       assertEquals(host.getService(), "compute");
