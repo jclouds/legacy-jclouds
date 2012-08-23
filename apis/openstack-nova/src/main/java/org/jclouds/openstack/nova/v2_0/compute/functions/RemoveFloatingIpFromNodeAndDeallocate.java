@@ -47,11 +47,11 @@ public class RemoveFloatingIpFromNodeAndDeallocate implements Function<ZoneAndId
    protected Logger logger = Logger.NULL;
 
    private final NovaApi novaApi;
-   private final LoadingCache<ZoneAndId, Iterable<FloatingIP>> floatingIpCache;
+   private final LoadingCache<ZoneAndId, Iterable<? extends FloatingIP>> floatingIpCache;
 
    @Inject
    public RemoveFloatingIpFromNodeAndDeallocate(NovaApi novaApi,
-            @Named("FLOATINGIP") LoadingCache<ZoneAndId, Iterable<FloatingIP>> floatingIpCache) {
+            @Named("FLOATINGIP") LoadingCache<ZoneAndId, Iterable<? extends FloatingIP>> floatingIpCache) {
       this.novaApi = checkNotNull(novaApi, "novaApi");
       this.floatingIpCache = checkNotNull(floatingIpCache, "floatingIpCache");
    }
