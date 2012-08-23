@@ -88,6 +88,8 @@ import org.jclouds.vcloud.director.v1_5.domain.org.Org;
 import org.jclouds.vcloud.director.v1_5.domain.params.InstantiateVAppTemplateParams;
 import org.jclouds.vcloud.director.v1_5.domain.params.InstantiationParams;
 import org.jclouds.vcloud.director.v1_5.domain.params.UndeployVAppParams;
+import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecordType;
+import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecords;
 import org.jclouds.vcloud.director.v1_5.domain.section.NetworkConfigSection;
 import org.jclouds.vcloud.director.v1_5.features.TaskApi;
 import org.jclouds.vcloud.director.v1_5.features.VAppApi;
@@ -246,6 +248,13 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
 
       userUrn = emptyToNull(System.getProperty("test." + provider + ".user-id"));
 
+//      QueryResultRecords queryResult = adminContext.getApi().getQueryApi().usersQueryAll();
+//      for (QueryResultRecordType recordType : queryResult.getRecords()) {
+//        User user = adminContext.getApi().getUserApi().get(recordType.getHref());
+//        System.out.println(user.getName());
+//        System.out.println(user.getId());
+//      }
+      
       org = context
                .getApi()
                .getOrgApi()
@@ -267,7 +276,6 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
                vAppTemplateUrn = vAppTemplate.getId();
                }
             }
-
          }
 
          if (networkUrn == null) {
