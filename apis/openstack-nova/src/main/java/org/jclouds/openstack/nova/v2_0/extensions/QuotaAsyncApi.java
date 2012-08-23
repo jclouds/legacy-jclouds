@@ -64,7 +64,7 @@ public interface QuotaAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/{tenant_id}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Quotas> getQuotasForTenant(@PathParam("tenant_id") String tenantId);
+   ListenableFuture<? extends Quotas> getQuotasForTenant(@PathParam("tenant_id") String tenantId);
 
    /**
     * @see QuotaApi#updateQuotasForTenant(String, org.jclouds.openstack.nova.v2_0.domain.Quotas)
@@ -83,6 +83,6 @@ public interface QuotaAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/{tenant_id}/defaults")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Quotas> getDefaultQuotasForTenant(@PathParam("tenant_id") String tenantId);
+   ListenableFuture<? extends Quotas> getDefaultQuotasForTenant(@PathParam("tenant_id") String tenantId);
 
 }

@@ -42,7 +42,7 @@ public interface FloatingIPApi {
     * 
     * @return all Floating IPs
     */
-   Set<FloatingIP> listFloatingIPs();
+   Set<? extends FloatingIP> listFloatingIPs();
 
    /**
     * Get a specific Floating IP address

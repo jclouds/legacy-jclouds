@@ -129,7 +129,7 @@ public class NovaComputeServiceContextModule extends
 
       bind(TemplateOptions.class).to(NovaTemplateOptions.class);
 
-      bind(new TypeLiteral<CacheLoader<ZoneAndId, Iterable<FloatingIP>>>() {
+      bind(new TypeLiteral<CacheLoader<ZoneAndId, Iterable<? extends FloatingIP>>>() {
       }).annotatedWith(Names.named("FLOATINGIP")).to(LoadFloatingIpsForInstance.class);
 
       bind(new TypeLiteral<Function<ZoneSecurityGroupNameAndPorts, SecurityGroupInZone>>() {
@@ -163,8 +163,8 @@ public class NovaComputeServiceContextModule extends
    @Provides
    @Singleton
    @Named("FLOATINGIP")
-   protected LoadingCache<ZoneAndId, Iterable<FloatingIP>> instanceToFloatingIps(
-            @Named("FLOATINGIP") CacheLoader<ZoneAndId, Iterable<FloatingIP>> in) {
+   protected LoadingCache<ZoneAndId, Iterable<? extends FloatingIP>> instanceToFloatingIps(
+            @Named("FLOATINGIP") CacheLoader<ZoneAndId, Iterable<? extends FloatingIP>> in) {
       return CacheBuilder.newBuilder().build(in);
    }
 

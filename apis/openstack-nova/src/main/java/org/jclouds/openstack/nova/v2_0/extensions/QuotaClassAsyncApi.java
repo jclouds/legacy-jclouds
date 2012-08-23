@@ -65,7 +65,7 @@ public interface QuotaClassAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/{id}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<QuotaClass> getQuotaClass(@PathParam("id") String id);
+   ListenableFuture<? extends QuotaClass> getQuotaClass(@PathParam("id") String id);
 
    /**
     * @see QuotaClassApi#updateQuotaClass
