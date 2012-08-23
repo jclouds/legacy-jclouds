@@ -140,7 +140,7 @@ public class NatRule {
       this.vmRule = vmRule;
    }
 
-   private NatRule() {
+   NatRule() {
       // for JAXB
    }
 

@@ -112,7 +112,7 @@ public class QueryResultMediaRecord extends QueryResultRecordType {
       }
 
       /**
-       * @see QueryResultMediaRecord#getOrg()
+       * @see QueryResultMediaRecord#get()
        */
       public B org(String val) {
          this.org = val;
@@ -188,7 +188,7 @@ public class QueryResultMediaRecord extends QueryResultRecordType {
                   .name(in.getName())
                   .vdc(in.getVdc())
                   .vdcName(in.getVdcName())
-                  .org(in.getOrg())
+                  .org(in.get())
                   .creationDate(in.getCreationDate())
                   .isBusy(in.isBusy())
                   .storageB(in.getStorageB())
@@ -296,7 +296,7 @@ public class QueryResultMediaRecord extends QueryResultRecordType {
    /**
     * Organization reference or id
     */
-   public String getOrg() {
+   public String get() {
       return org;
    }
 

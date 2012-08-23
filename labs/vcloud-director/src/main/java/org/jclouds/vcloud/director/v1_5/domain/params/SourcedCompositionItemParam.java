@@ -147,7 +147,7 @@ public class SourcedCompositionItemParam {
       this.sourceDelete = sourceDelete;
    }
 
-   private SourcedCompositionItemParam() {
+   SourcedCompositionItemParam() {
       // for JAXB
    }
 

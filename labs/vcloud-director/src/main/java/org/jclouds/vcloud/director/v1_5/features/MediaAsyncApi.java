@@ -38,68 +38,116 @@ import org.jclouds.rest.binders.BindToXMLPayload;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Media;
+import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.params.CloneMediaParams;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationAndCookieToRequest;
+import org.jclouds.vcloud.director.v1_5.functions.href.MediaURNToHref;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * @see MediaApi
- * @author danikov
+ * @author danikov, Adrian Cole
  */
 @RequestFilters(AddVCloudAuthorizationAndCookieToRequest.class)
 public interface MediaAsyncApi {
 
    /**
-    * @see MediaApi#getMedia(URI)
+    * @see MediaApi#get(String)
     */
    @GET
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Media> getMedia(@EndpointParam URI uri);
-   
+   ListenableFuture<Media> get(@EndpointParam(parser = MediaURNToHref.class) String mediaUrn);
+
    /**
-    * @see MediaApi#createMedia(URI, Media)
+    * @see MediaApi#add(URI, Media)
     */
    @POST
    @Consumes(VCloudDirectorMediaType.MEDIA)
    @Produces(VCloudDirectorMediaType.MEDIA)
    @JAXBResponseParser
-   ListenableFuture<Media> createMedia(@EndpointParam URI link,
-         @BinderParam(BindToXMLPayload.class) Media media);
-   
-   
+   ListenableFuture<Media> add(@EndpointParam URI updateHref, @BinderParam(BindToXMLPayload.class) Media media);
+
    /**
-    * @see MediaApi#cloneMedia(URI, CloneMediaParams)
+    * @see MediaApi#clone(String, CloneMediaParams)
     */
    @POST
    @Path("/action/cloneMedia")
    @Consumes(VCloudDirectorMediaType.MEDIA)
    @Produces(VCloudDirectorMediaType.CLONE_MEDIA_PARAMS)
    @JAXBResponseParser
-   ListenableFuture<Media> cloneMedia(@EndpointParam URI vdcRef,
-         @BinderParam(BindToXMLPayload.class) CloneMediaParams params);
-   
+   ListenableFuture<Media> clone(@EndpointParam(parser = MediaURNToHref.class) String mediaUrn,
+            @BinderParam(BindToXMLPayload.class) CloneMediaParams params);
+
    /**
-    * @see MediaApi#updateMedia(URI, Media))
+    * @see MediaApi#editMedia(String, Media)
     */
    @PUT
    @Consumes(VCloudDirectorMediaType.TASK)
    @Produces(VCloudDirectorMediaType.MEDIA)
    @JAXBResponseParser
-   ListenableFuture<Task> updateMedia(@EndpointParam URI uri, @BinderParam(BindToXMLPayload.class) Media media);
-   
+   ListenableFuture<Task> edit(@EndpointParam(parser = MediaURNToHref.class) String mediaUrn,
+            @BinderParam(BindToXMLPayload.class) Media media);
+
    /**
-   * @see MediaApi#deleteMedia(URI))
-   */
+    * @see MediaApi#removeMedia(String)
+    */
    @DELETE
    @Consumes(VCloudDirectorMediaType.TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> deleteMedia(@EndpointParam URI uri);
-   
+   ListenableFuture<Task> remove(@EndpointParam(parser = MediaURNToHref.class) String mediaUrn);
+
+   /**
+    * @see MediaApi#getOwner(String)
+    */
+   @GET
+   @Path("/owner")
+   @Consumes
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Owner> getOwner(@EndpointParam(parser = MediaURNToHref.class) String mediaUrn);
+
+   /**
+    * @see MediaApi#get(URI)
+    */
+   @GET
+   @Consumes
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Media> get(@EndpointParam URI mediaHref);
+
+   /**
+    * @see MediaApi#clone(URI, CloneMediaParams)
+    */
+   @POST
+   @Path("/action/cloneMedia")
+   @Consumes(VCloudDirectorMediaType.MEDIA)
+   @Produces(VCloudDirectorMediaType.CLONE_MEDIA_PARAMS)
+   @JAXBResponseParser
+   ListenableFuture<Media> clone(@EndpointParam URI mediaHref,
+            @BinderParam(BindToXMLPayload.class) CloneMediaParams params);
+
+   /**
+    * @see MediaApi#editMedia(URI, Media)
+    */
+   @PUT
+   @Consumes(VCloudDirectorMediaType.TASK)
+   @Produces(VCloudDirectorMediaType.MEDIA)
+   @JAXBResponseParser
+   ListenableFuture<Task> edit(@EndpointParam URI mediaHref, @BinderParam(BindToXMLPayload.class) Media media);
+
+   /**
+    * @see MediaApi#removeMedia(URI)
+    */
+   @DELETE
+   @Consumes(VCloudDirectorMediaType.TASK)
+   @JAXBResponseParser
+   ListenableFuture<Task> remove(@EndpointParam URI mediaHref);
+
    /**
     * @see MediaApi#getOwner(URI)
     */
@@ -108,11 +156,14 @@ public interface MediaAsyncApi {
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Owner> getOwner(@EndpointParam URI uri);
-   
+   ListenableFuture<Owner> getOwner(@EndpointParam URI mediaHref);
+
    /**
-   * @return asynchronous access to {@link Metadata.Writeable} features
-   */
+    * @return asynchronous access to {@link Metadata.Writeable} features
+    */
    @Delegate
-   MetadataAsyncApi.Writeable getMetadataApi();
+   MetadataAsyncApi.Writeable getMetadataApi(@EndpointParam(parser = MediaURNToHref.class) String mediaUrn);
+
+   @Delegate
+   MetadataAsyncApi.Writeable getMetadataApi(@EndpointParam URI mediaHref);
 }

@@ -61,7 +61,7 @@ public class AllVdcsInOrg implements Function<AdminOrg, Iterable<? extends Vdc>>
             new Function<Reference, Future<? extends Vdc>>() {
                @Override
                public Future<? extends Vdc> apply(Reference from) {
-                  return aapi.getVdcApi().getVdc(from.getHref());
+                  return aapi.getVdcApi().get(from.getHref());
                }
 
             }, executor, null, logger, "vdcs in org " + org.getName());

@@ -30,7 +30,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
@@ -38,6 +37,7 @@ import org.jclouds.rest.binders.BindToXMLPayload;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
+import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationAndCookieToRequest;
@@ -48,64 +48,67 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see MetadataApi
  * @author danikov
  */
+// TODO: take out the endpoint params and supply them in the Delegate calls.
 public interface MetadataAsyncApi {
 
    @RequestFilters(AddVCloudAuthorizationAndCookieToRequest.class)
    public static interface Readable extends MetadataAsyncApi {
 
       /**
-       * @see MetadataApi.Readable#getMetadata(URISupplier)
+       * @see MetadataApi.Readable#get(URI)
        */
       @GET
       @Path("/metadata")
       @Consumes
       @JAXBResponseParser
       @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-      ListenableFuture<Metadata> getMetadata(@EndpointParam URI metaDataUri);
-      
+      ListenableFuture<Metadata> get();
+
       /**
-       * @see MetadataApi.Readable#getMetadataValue(URI, String)
+       * @see MetadataApi.Readable#getValue(String)
        */
       @GET
       @Path("/metadata/{key}")
       @Consumes
       @JAXBResponseParser
       @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-      ListenableFuture<MetadataValue> getMetadataValue(@EndpointParam URI metaDataUri, @PathParam("key") String key);
+      ListenableFuture<MetadataValue> getValue(@PathParam("key") String key);
+
    }
-   
+
    @RequestFilters(AddVCloudAuthorizationAndCookieToRequest.class)
    public static interface Writeable extends Readable {
 
       /**
-       * @see MetadataApi.Writable#mergeMetadata(URI, Metadata))
+       * @see MetadataApi.Writable#merge(Metadata)
        */
       @POST
       @Path("/metadata")
       @Consumes(VCloudDirectorMediaType.TASK)
       @Produces(VCloudDirectorMediaType.METADATA)
       @JAXBResponseParser
-      ListenableFuture<Task> mergeMetadata(@EndpointParam URI metaDataUri, @BinderParam(BindToXMLPayload.class) Metadata metadata);
-      
+      ListenableFuture<Task> merge(@BinderParam(BindToXMLPayload.class) Metadata metadata);
+
       /**
-       * @see MetadataApi.Writable#setMetadata(URI, String, MetadataEntry))
+       * @see MetadataApi.Writeable#putEntry(String, MetadataEntry)
        */
       @PUT
       @Path("/metadata/{key}")
       @Consumes(VCloudDirectorMediaType.TASK)
       @Produces(VCloudDirectorMediaType.METADATA_VALUE)
       @JAXBResponseParser
-      ListenableFuture<Task> setMetadata(@EndpointParam URI metaDataUri,
-            @PathParam("key") String key, 
-            @BinderParam(BindToXMLPayload.class) MetadataValue metadataValue);
-      
+      // TODO: this is rediculous. get rid of the MetadataValue type, as it is only a string!
+      ListenableFuture<Task> putEntry(@PathParam("key") String key,
+               @BinderParam(BindToXMLPayload.class) MetadataValue metadataValue);
+
       /**
-       * @see MetadataApi.Writable#deleteMetadataEntry(URISupplier, String))
+       * @see MetadataApi.Writable#removeEntry(String)
        */
-       @DELETE
-       @Path("/metadata/{key}")
-       @Consumes(VCloudDirectorMediaType.TASK)
-       @JAXBResponseParser
-       ListenableFuture<Task> deleteMetadataEntry(@EndpointParam URI metaDataUri, @PathParam("key") String key);
+      @DELETE
+      @Path("/metadata/{key}")
+      @Consumes(VCloudDirectorMediaType.TASK)
+      @JAXBResponseParser
+      ListenableFuture<Task> removeEntry(@PathParam("key") String key);
+
    }
 }

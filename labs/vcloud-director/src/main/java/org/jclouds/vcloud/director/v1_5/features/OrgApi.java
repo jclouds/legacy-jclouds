@@ -23,9 +23,11 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.rest.annotations.EndpointParam;
+import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.org.Org;
 import org.jclouds.vcloud.director.v1_5.domain.org.OrgList;
-import org.jclouds.vcloud.director.v1_5.domain.params.ControlAccessParams;
+import org.jclouds.vcloud.director.v1_5.functions.href.OrgURNToHref;
 
 /**
  * Provides synchronous access to {@link Org}.
@@ -38,51 +40,35 @@ public interface OrgApi {
 
    /**
     * Retrieves a list of organizations.
-    *
+    * 
     * <pre>
-    * GET /org
+    * GET / org
     * </pre>
     * 
     * @return a list of organizations
     */
-   OrgList getOrgList();
+   OrgList list();
 
    /**
     * Retrieves an organization.
-    *
+    * 
     * <pre>
     * GET /org/{id}
     * </pre>
     * 
     * @return the org or null if not found
     */
-   Org getOrg(URI orgRef);
+   Org get(String orgUrn);
 
-   /**
-    * Modifies a catalog control access.
-    *
-    * <pre>
-    * POST /org/{id}/catalog/{catalogId}/action/controlAccess
-    * </pre>
-    *
-    * @return the control access information
-    */
-   ControlAccessParams modifyControlAccess(URI orgRef, String catalogId, ControlAccessParams params);
+   Org get(URI orgHref);
 
-   /**
-    * Retrieves the catalog control access information.
-    *
-    * <pre>
-    * GET /org/{id}/catalog/{catalogId}/controlAccess
-    * </pre>
-    *
-    * @return the control access information
-    */
-   ControlAccessParams getControlAccess(URI orgRef, String catalogId);
-   
    /**
     * @return synchronous access to {@link Metadata.Readable} features
     */
    @Delegate
-   MetadataApi.Readable getMetadataApi();
+   MetadataApi.Readable getMetadataApi(@EndpointParam(parser = OrgURNToHref.class) String orgUrn);
+   
+   @Delegate
+   MetadataApi.Readable getMetadataApi(@EndpointParam URI orgHref);
+
 }

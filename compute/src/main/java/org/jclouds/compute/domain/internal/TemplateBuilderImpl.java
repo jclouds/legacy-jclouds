@@ -1086,7 +1086,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
 
    @Override
    public TemplateBuilder from(TemplateBuilderSpec spec) {
-      return spec.copyTo(this, options != null ? options : optionsProvider.get());
+      return spec.copyTo(this, options != null ? options : (options = optionsProvider.get()));
    }
 
    @Override

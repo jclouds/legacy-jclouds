@@ -186,7 +186,7 @@ public class QueryResultAdminVdcRecord extends QueryResultRecordType {
       }
 
       /**
-       * @see QueryResultAdminVdcRecord#getOrg()
+       * @see QueryResultAdminVdcRecord#get()
        */
       public B org(String val) {
          this.org = val;
@@ -270,7 +270,7 @@ public class QueryResultAdminVdcRecord extends QueryResultRecordType {
                   .providerVdcName(in.getProviderVdcName())
                   .providerVdc(in.getProviderVdc())
                   .orgName(in.getOrgName())
-                  .org(in.getOrg())
+                  .org(in.get())
                   .numberOfVApps(in.getNumberOfVApps())
                   .numberOfMedia(in.getNumberOfMedia())
                   .numberOfVAppTemplates(in.getNumberOfVAppTemplates())
@@ -458,7 +458,7 @@ public class QueryResultAdminVdcRecord extends QueryResultRecordType {
    /**
     * Organization reference or id
     */
-   public String getOrg() {
+   public String get() {
       return org;
    }
 

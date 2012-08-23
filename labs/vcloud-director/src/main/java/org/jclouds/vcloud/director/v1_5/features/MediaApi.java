@@ -23,16 +23,19 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.vcloud.director.v1_5.domain.Media;
+import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.params.CloneMediaParams;
+import org.jclouds.vcloud.director.v1_5.functions.href.MediaURNToHref;
 
 /**
  * Provides synchronous access to {@link Media}.
  * 
  * @see MediaAsyncApi
- * @author danikov
+ * @author danikov, Adrian Cole
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface MediaApi {
@@ -42,48 +45,62 @@ public interface MediaApi {
     * 
     * @return the media or null if not found
     */
-   Media getMedia(URI mediaUri);
-   
+   Media get(String mediaUrn);
+
+   Media get(URI mediaHref);
+
    /**
     * Creates a media (and present upload link for the floppy/iso file).
     * 
-    * @return The response will return a link to transfer site to be able to continue with uploading the media.
+    * @return The response will return a link to transfer site to be able to continue with uploading
+    *         the media.
     */
-   Media createMedia(URI uploadLink, Media media);
-   
+   Media add(URI uploadHref, Media media);
+
    /**
-    * Clones a media into new one. 
-    * The status of the returned media is UNRESOLVED(0) until the task for cloning finish.
+    * Clones a media into new one. The status of the returned media is UNRESOLVED(0) until the task
+    * for cloning finish.
     * 
-    * @return a Media resource which will contain a task. 
-    * The user should monitor the contained task status in order to check when it is completed.
+    * @return a Media resource which will contain a task. The user should monitor the contained task
+    *         status in order to check when it is completed.
     */
-   Media cloneMedia(URI cloneLink, CloneMediaParams params);
-   
+   Media clone(String mediaUrn, CloneMediaParams params);
+
+   Media clone(URI mediaHref, CloneMediaParams params);
+
    /**
     * Updates the name/description of a media.
     * 
-    * @return a task. This operation is asynchronous and the user should monitor the returned 
-    * task status in order to check when it is completed.
+    * @return a task. This operation is asynchronous and the user should monitor the returned task
+    *         status in order to check when it is completed.
     */
-   Task updateMedia(URI mediaUri, Media media);
-   
+   Task edit(String mediaUrn, Media media);
+
+   Task edit(URI mediaHref, Media media);
+
    /**
     * Deletes a media.
     */
-   Task deleteMedia(URI mediaUri);
-   
+   Task remove(String mediaUrn);
+
+   Task remove(URI mediaHref);
+
    /**
     * Retrieves an owner.
     * 
     * @return the owner or null if not found
     */
-   Owner getOwner(URI mediaUri);
-   
+   Owner getOwner(String mediaUrn);
+
+   Owner getOwner(URI mediaHref);
+
    /**
     * @return synchronous access to {@link Metadata.Writeable} features
     */
    @Delegate
-   MetadataApi.Writeable getMetadataApi();
+   MetadataApi.Writeable getMetadataApi(@EndpointParam(parser = MediaURNToHref.class) String mediaUrn);
+
+   @Delegate
+   MetadataApi.Writeable getMetadataApi(@EndpointParam URI mediaHref);
 
 }

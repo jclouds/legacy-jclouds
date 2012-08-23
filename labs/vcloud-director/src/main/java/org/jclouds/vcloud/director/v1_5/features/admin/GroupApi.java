@@ -28,7 +28,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Group;
  * Provides synchronous access to {@link Group} objects.
  * 
  * @see GroupAsyncApi
- * @author danikov
+ * @author danikov, Adrian Cole
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface GroupApi {
@@ -40,11 +40,13 @@ public interface GroupApi {
     * POST /admin/org/{id}/groups
     * </pre>
     *
-    * @param orgUri the admin org to create the group in
-    * @return the created group
+    * @param orgUrn the admin org to add the group in
+    * @return the addd group
     */
-   Group createGroup(URI adminOrgUri, Group group);
+   Group addGroupToOrg(Group group, String orgUrn);
    
+   Group addGroupToOrg(Group group, URI orgHref);
+
    /**
     * Retrieves a group.
     *
@@ -52,10 +54,12 @@ public interface GroupApi {
     * GET /admin/group/{id}
     * </pre>
     *
-    * @param groupURI the reference for the group
+    * @param groupString the reference for the group
     * @return a group
     */
-   Group getGroup(URI groupUri);
+   Group get(String groupUrn);
+
+   Group get(URI groupHref);
 
    /**
     * Modifies a group.
@@ -64,9 +68,11 @@ public interface GroupApi {
     * PUT /admin/group/{id}
     * </pre>
     * 
-    * @return the updated group
+    * @return the edited group
     */
-   Group updateGroup(URI groupRef, Group group);
+   Group edit(String groupUrn, Group group);
+
+   Group edit(URI groupHref, Group group);
 
    /**
     * Deletes a group.
@@ -75,5 +81,8 @@ public interface GroupApi {
     * DELETE /admin/group/{id}
     * </pre>
     */
-   void deleteGroup(URI groupRef);
+   void remove(String groupUrn);
+
+   void remove(URI groupHref);
+
 }

@@ -38,60 +38,108 @@ import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.User;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationAndCookieToRequest;
+import org.jclouds.vcloud.director.v1_5.functions.href.OrgURNToAdminHref;
+import org.jclouds.vcloud.director.v1_5.functions.href.UserURNToHref;
 
 import com.google.common.util.concurrent.ListenableFuture;
-   
+
 /**
  * @see UserApi
- * @author danikov
+ * @author danikov, Adrian Cole
  */
 @RequestFilters(AddVCloudAuthorizationAndCookieToRequest.class)
 public interface UserAsyncApi {
 
    /**
-    * @see UserApi#createUser(URI, User)
+    * @see UserApi#addUserToOrg(User, String)
     */
    @POST
    @Path("/users")
    @Consumes(VCloudDirectorMediaType.USER)
    @Produces(VCloudDirectorMediaType.USER)
    @JAXBResponseParser
-   ListenableFuture<User> createUser(@EndpointParam URI userRef, 
-         @BinderParam(BindToXMLPayload.class) User user);
-   
+   ListenableFuture<User> addUserToOrg(@BinderParam(BindToXMLPayload.class) User user,
+            @EndpointParam(parser = OrgURNToAdminHref.class) String orgUrn);
+
    /**
-    * @see UserApi#getUser(URI)
+    * @see UserApi#addUserToOrg(User, URI)
+    */
+   @POST
+   @Path("/users")
+   @Consumes(VCloudDirectorMediaType.USER)
+   @Produces(VCloudDirectorMediaType.USER)
+   @JAXBResponseParser
+   ListenableFuture<User> addUserToOrg(@BinderParam(BindToXMLPayload.class) User user,
+            @EndpointParam URI orgAdminHref);
+
+   /**
+    * @see UserApi#get(String)
     */
    @GET
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<User> getUser(@EndpointParam URI userRef);
- 
+   ListenableFuture<User> get(@EndpointParam(parser = UserURNToHref.class) String userUrn);
+
    /**
-    * @see UserApi#updateUser(URI, User)
+    * @see UserApi#get(URI)
+    */
+   @GET
+   @Consumes
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<User> get(@EndpointParam URI userHref);
+
+   /**
+    * @see UserApi#edit(String, User)
     */
    @PUT
    @Consumes(VCloudDirectorMediaType.USER)
    @Produces(VCloudDirectorMediaType.USER)
    @JAXBResponseParser
-   ListenableFuture<User> updateUser(@EndpointParam URI userRef, 
-         @BinderParam(BindToXMLPayload.class) User user);
- 
+   ListenableFuture<User> edit(@EndpointParam(parser = UserURNToHref.class) String userUrn,
+            @BinderParam(BindToXMLPayload.class) User user);
+
    /**
-    * @see UserApi#deleteUser(URI)
+    * @see UserApi#edit(URI, User)
+    */
+   @PUT
+   @Consumes(VCloudDirectorMediaType.USER)
+   @Produces(VCloudDirectorMediaType.USER)
+   @JAXBResponseParser
+   ListenableFuture<User> edit(@EndpointParam URI userHref, @BinderParam(BindToXMLPayload.class) User user);
+
+   /**
+    * @see UserApi#remove(String)
     */
    @DELETE
    @Consumes
    @JAXBResponseParser
-   ListenableFuture<Void> deleteUser(@EndpointParam URI userRef);
- 
+   ListenableFuture<Void> remove(@EndpointParam(parser = UserURNToHref.class) String userUrn);
+
    /**
-    * @see UserApi#unlockUser(URI)
+    * @see UserApi#remove(URI)
+    */
+   @DELETE
+   @Consumes
+   @JAXBResponseParser
+   ListenableFuture<Void> remove(@EndpointParam URI userHref);
+
+   /**
+    * @see UserApi#unlock(String)
     */
    @POST
    @Path("/action/unlock")
    @Consumes
    @JAXBResponseParser
-   ListenableFuture<Void> unlockUser(@EndpointParam URI userRef);
+   ListenableFuture<Void> unlock(@EndpointParam(parser = UserURNToHref.class) String userUrn);
+
+   /**
+    * @see UserApi#unlock(URI)
+    */
+   @POST
+   @Path("/action/unlock")
+   @Consumes
+   @JAXBResponseParser
+   ListenableFuture<Void> unlock(@EndpointParam URI userHref);
 }

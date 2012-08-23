@@ -68,17 +68,17 @@ public interface KeystoneApi {
     * Provides synchronous access to Token features 
     */
    @Delegate
-   Optional<TokenApi> getTokenApi();
+   Optional<? extends TokenApi> getTokenApi();
 
    /** 
     * Provides synchronous access to User features 
     */
    @Delegate
-   Optional<UserApi> getUserApi();
+   Optional<? extends UserApi> getUserApi();
    
    /** 
     * Provides synchronous access to Tenant features 
     */
    @Delegate
-   Optional<TenantApi> getTenantApi();
+   Optional<? extends TenantApi> getTenantApi();
 }

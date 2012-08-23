@@ -30,7 +30,7 @@ import org.jclouds.atmos.reference.AtmosHeaders;
 import org.jclouds.http.HttpResponse;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -42,23 +42,16 @@ import com.google.common.collect.ImmutableMap.Builder;
  */
 @Singleton
 public class ParseUserMetadataFromHeaders implements Function<HttpResponse, UserMetadata> {
-   private static final Set<String> sysKeys = ImmutableSet.of("atime", "ctime", "gid", "itime", "mtime", "nlink",
+   private static final Set<String> SYS_KEYS = ImmutableSet.of(
+         "atime", "ctime", "gid", "itime", "mtime", "nlink",
          "policyname", "size", "uid", "content-md5", "objectid", "objname", "type");
-   private static final Predicate<String> filter = new Predicate<String>() {
-
-      @Override
-      public boolean apply(String arg0) {
-         return !sysKeys.contains(arg0);
-      }
-
-   };
 
    public UserMetadata apply(HttpResponse from) {
       checkNotNull(from, "http response");
 
       Map<String, String> meta = Maps.filterKeys(
             getMetaMap(checkNotNull(from.getFirstHeaderOrNull(AtmosHeaders.META), AtmosHeaders.META)),
-            filter);
+            Predicates.not(Predicates.in(SYS_KEYS)));
 
       Map<String, String> listableMeta = (from.getFirstHeaderOrNull(AtmosHeaders.LISTABLE_META) != null) ? getMetaMap(from
             .getFirstHeaderOrNull(AtmosHeaders.LISTABLE_META)) : ImmutableMap.<String, String> of();

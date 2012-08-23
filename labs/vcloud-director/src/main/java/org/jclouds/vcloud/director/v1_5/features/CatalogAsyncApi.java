@@ -39,73 +39,130 @@ import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Catalog;
 import org.jclouds.vcloud.director.v1_5.domain.CatalogItem;
+import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationAndCookieToRequest;
+import org.jclouds.vcloud.director.v1_5.functions.href.CatalogItemURNToHref;
+import org.jclouds.vcloud.director.v1_5.functions.href.CatalogURNToHref;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * @see CatalogApi
- * @author grkvlt@apache.org
+ * @author grkvlt@apache.org, Adrian Cole
  */
 @RequestFilters(AddVCloudAuthorizationAndCookieToRequest.class)
 public interface CatalogAsyncApi {
 
    /**
-    * Retrieves a catalog.
+    * @see CatalogApi#get(String)
     */
    @GET
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<? extends Catalog> getCatalog(@EndpointParam URI catalogUri);
+   ListenableFuture<? extends Catalog> get(@EndpointParam(parser = CatalogURNToHref.class) String catalogUrn);
 
    /**
-    * Creates a catalog item in a catalog.
+    * @see CatalogApi#addItem(String, CatalogItem)
     */
    @POST
    @Path("/catalogItems")
    @Consumes(VCloudDirectorMediaType.CATALOG_ITEM)
    @Produces(VCloudDirectorMediaType.CATALOG_ITEM)
    @JAXBResponseParser
-   ListenableFuture<CatalogItem> addCatalogItem(@EndpointParam URI catalogUri,
-         @BinderParam(BindToXMLPayload.class) CatalogItem catalogItem);
-   
+   ListenableFuture<CatalogItem> addItem(@EndpointParam(parser = CatalogURNToHref.class) String catalogUrn,
+            @BinderParam(BindToXMLPayload.class) CatalogItem catalogItem);
+
    /**
-    * Retrieves a catalog item.
+    * @see CatalogApi#getItem(String)
     */
    @GET
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<CatalogItem> getCatalogItem(@EndpointParam URI catalogItemUri);
+   ListenableFuture<CatalogItem> getItem(@EndpointParam(parser = CatalogItemURNToHref.class) String catalogItemUrn);
 
    /**
-    * Modifies a catalog item.
+    * @see CatalogApi#editItem(String, CatalogItem)
     */
    @PUT
    @Consumes(VCloudDirectorMediaType.CATALOG_ITEM)
    @Produces(VCloudDirectorMediaType.CATALOG_ITEM)
    @JAXBResponseParser
-   ListenableFuture<CatalogItem> updateCatalogItem(@EndpointParam URI catalogItemUri,
-         @BinderParam(BindToXMLPayload.class)  CatalogItem catalogItem);
+   ListenableFuture<CatalogItem> editItem(@EndpointParam(parser = CatalogItemURNToHref.class) String catalogItemUrn,
+            @BinderParam(BindToXMLPayload.class) CatalogItem catalogItem);
 
    /**
-    * Deletes a catalog item.
+    * @see CatalogApi#removeItem(String)
     */
    @DELETE
    @Consumes
    @JAXBResponseParser
-   ListenableFuture<Void> deleteCatalogItem(@EndpointParam URI catalogItemUri);
+   ListenableFuture<Void> removeItem(@EndpointParam(parser = CatalogItemURNToHref.class) String catalogItemUrn);
+
+   /**
+    * @see CatalogApi#get(URI)
+    */
+   @GET
+   @Consumes
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<? extends Catalog> get(@EndpointParam URI catalogHref);
+
+   /**
+    * @see CatalogApi#addItem(URI, CatalogItem)
+    */
+   @POST
+   @Path("/catalogItems")
+   @Consumes(VCloudDirectorMediaType.CATALOG_ITEM)
+   @Produces(VCloudDirectorMediaType.CATALOG_ITEM)
+   @JAXBResponseParser
+   ListenableFuture<CatalogItem> addItem(@EndpointParam URI catalogHref,
+            @BinderParam(BindToXMLPayload.class) CatalogItem catalogItem);
+
+   /**
+    * @see CatalogApi#getItem(URI)
+    */
+   @GET
+   @Consumes
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<CatalogItem> getItem(@EndpointParam URI catalogItemHref);
+
+   /**
+    * @see CatalogApi#editItem(URI, CatalogItem)
+    */
+   @PUT
+   @Consumes(VCloudDirectorMediaType.CATALOG_ITEM)
+   @Produces(VCloudDirectorMediaType.CATALOG_ITEM)
+   @JAXBResponseParser
+   ListenableFuture<CatalogItem> editItem(@EndpointParam URI catalogItemHref,
+            @BinderParam(BindToXMLPayload.class) CatalogItem catalogItem);
+
+   /**
+    * @see CatalogApi#removeItem(URI)
+    */
+   @DELETE
+   @Consumes
+   @JAXBResponseParser
+   ListenableFuture<Void> removeItem(@EndpointParam URI catalogItemHref);
 
    /**
     * @return asynchronous access to {@link Metadata.Readable} features
     */
    @Delegate
-   MetadataAsyncApi.Readable getMetadataApi();
+   MetadataAsyncApi.Readable getMetadataApi(@EndpointParam(parser = CatalogURNToHref.class) String catalogUrn);
+   
+   @Delegate
+   MetadataAsyncApi.Readable getMetadataApi(@EndpointParam URI catalogItemHref);
 
    /**
-    * @return asynchronous access to {@link Metadata.Writeable} features for CatalogItems
+    * @see CatalogApi#getItemMetadataApi
     */
    @Delegate
-   MetadataAsyncApi.Writeable getCatalogItemMetadataApi();
+   MetadataAsyncApi.Writeable getItemMetadataApi(@EndpointParam(parser = CatalogItemURNToHref.class) String catalogItemUrn);
+
+   @Delegate
+   MetadataAsyncApi.Writeable getItemMetadataApi(@EndpointParam URI catalogItemHref);
+
 }

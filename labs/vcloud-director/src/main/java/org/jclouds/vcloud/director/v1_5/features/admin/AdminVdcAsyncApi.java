@@ -38,52 +38,118 @@ import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.AdminVdc;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.features.MetadataAsyncApi;
+import org.jclouds.vcloud.director.v1_5.features.MetadataAsyncApi.Writeable;
 import org.jclouds.vcloud.director.v1_5.features.VdcAsyncApi;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationAndCookieToRequest;
+import org.jclouds.vcloud.director.v1_5.functions.href.VdcURNToAdminHref;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * @see AdminVdcApi
- * @author danikov
+ * @author danikov, Adrian Cole
  */
 @RequestFilters(AddVCloudAuthorizationAndCookieToRequest.class)
 public interface AdminVdcAsyncApi extends VdcAsyncApi {
-   
+   /**
+    * @see AdminVdcApi#get(String)
+    */
    @Override
    @GET
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<AdminVdc> getVdc(@EndpointParam URI vdcRef);
-   
+   ListenableFuture<AdminVdc> get(@EndpointParam(parser = VdcURNToAdminHref.class) String vdcUrn);
+
+   /**
+    * @see AdminVdcApi#edit(String, AdminVdc)
+    */
    @PUT
    @Consumes
    @Produces(VCloudDirectorMediaType.ADMIN_VDC)
    @JAXBResponseParser
-   ListenableFuture<Task> editVdc(@EndpointParam URI vdcRef, AdminVdc vdc);
-   
+   ListenableFuture<Task> edit(@EndpointParam(parser = VdcURNToAdminHref.class) String vdcUrn, AdminVdc vdc);
+
+   /**
+    * @see AdminVdcApi#remove(String)
+    */
    @DELETE
    @Consumes
    @JAXBResponseParser
-   ListenableFuture<Task> deleteVdc(@EndpointParam URI vdcRef);
-   
+   ListenableFuture<Task> remove(@EndpointParam(parser = VdcURNToAdminHref.class) String vdcUrn);
+
+   /**
+    * @see AdminVdcApi#enable(String)
+    */
    @POST
    @Consumes
    @Path("/action/enable")
    @JAXBResponseParser
-   ListenableFuture<Void> enableVdc(@EndpointParam URI vdcRef);
-   
+   ListenableFuture<Void> enable(@EndpointParam(parser = VdcURNToAdminHref.class) String vdcUrn);
+
+   /**
+    * @see AdminVdcApi#disable(String)
+    */
    @POST
    @Consumes
    @Path("/action/disable")
    @JAXBResponseParser
-   ListenableFuture<Void> disableVdc(@EndpointParam URI vdcRef);
-   
+   ListenableFuture<Void> disable(@EndpointParam(parser = VdcURNToAdminHref.class) String vdcUrn);
+
+   /**
+    * @see AdminVdcApi#get(URI)
+    */
+   @Override
+   @GET
+   @Consumes
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<AdminVdc> get(@EndpointParam URI vdcAdminHref);
+
+   /**
+    * @see AdminVdcApi#edit(URI, AdminVdc)
+    */
+   @PUT
+   @Consumes
+   @Produces(VCloudDirectorMediaType.ADMIN_VDC)
+   @JAXBResponseParser
+   ListenableFuture<Task> edit(@EndpointParam URI vdcAdminHref, AdminVdc vdc);
+
+   /**
+    * @see AdminVdcApi#remove(URI)
+    */
+   @DELETE
+   @Consumes
+   @JAXBResponseParser
+   ListenableFuture<Task> remove(@EndpointParam URI vdcAdminHref);
+
+   /**
+    * @see AdminVdcApi#enable(URI)
+    */
+   @POST
+   @Consumes
+   @Path("/action/enable")
+   @JAXBResponseParser
+   ListenableFuture<Void> enable(@EndpointParam URI vdcAdminHref);
+
+   /**
+    * @see AdminVdcApi#disable(URI)
+    */
+   @POST
+   @Consumes
+   @Path("/action/disable")
+   @JAXBResponseParser
+   ListenableFuture<Void> disable(@EndpointParam URI vdcAdminHref);
+
    /**
     * @return asynchronous access to {@link Writeable} features
     */
    @Override
    @Delegate
-   MetadataAsyncApi.Writeable getMetadataApi();
+   MetadataAsyncApi.Writeable getMetadataApi(@EndpointParam(parser = VdcURNToAdminHref.class) String vdcUrn);
+
+   @Override
+   @Delegate
+   MetadataAsyncApi.Writeable getMetadataApi(@EndpointParam URI vdcAdminHref);
+
 }

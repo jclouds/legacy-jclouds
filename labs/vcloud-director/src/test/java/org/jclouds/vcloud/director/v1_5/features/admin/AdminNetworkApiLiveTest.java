@@ -20,18 +20,15 @@ package org.jclouds.vcloud.director.v1_5.features.admin;
 
 import static com.google.common.base.Objects.equal;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_UPDATABLE;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_REQ_LIVE;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REF_REQ_LIVE;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REQUIRED_VALUE_OBJECT_FMT;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.TASK_COMPLETE_TIMELY;
-import static org.testng.Assert.assertNotNull;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.URN_REQ_LIVE;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 import java.util.Collections;
 
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
-import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.network.ExternalNetwork;
 import org.jclouds.vcloud.director.v1_5.domain.network.IpScope;
@@ -60,24 +57,19 @@ public class AdminNetworkApiLiveTest extends BaseVCloudDirectorApiLiveTest {
     */
    private AdminNetworkApi networkApi;
 
-   /*
-    * Shared state between dependant tests.
-    */
-   Reference networkRef;
-   Network network;
+   private Network network;
    
    @Override
    @BeforeClass(alwaysRun = true)
    protected void setupRequiredApis() {
       networkApi = adminContext.getApi().getNetworkApi();
-      networkRef = Reference.builder().href(networkURI).build().toAdminReference(endpoint);
    }
    
    @Test(description = "GET /admin/network/{id}")
    public void testGetNetwork() {
       //TODO: test both org and external networks
-      assertNotNull(networkRef, String.format(OBJ_REQ_LIVE, NETWORK));
-      network = networkApi.getNetwork(networkRef.getHref());
+      network =  lazyGetNetwork();
+
       
       if(network instanceof ExternalNetwork) {
          Checks.checkExternalNetwork(Network.<ExternalNetwork>toSubType(network));
@@ -91,69 +83,69 @@ public class AdminNetworkApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    
    // TODO: this test is far from exhaustive
    @Test(description = "PUT /admin/network/{id}" )
-   public void testUpdateNetwork() {
+   public void testEditNetwork() {
       //TODO: ensure network instanceof OrgNetwork, may require queries
-      assertTrue(network instanceof OrgNetwork, String.format(REF_REQ_LIVE, "OrgNetwork"));
+      assertTrue(network instanceof OrgNetwork, String.format(URN_REQ_LIVE, "OrgNetwork"));
       
       OrgNetwork oldNetwork = Network.<OrgNetwork>toSubType(network)
             .toBuilder()
             .tasks(Collections.<Task>emptySet())
             .build();
       
-      OrgNetwork updateNetwork = getMutatedOrgNetwork(oldNetwork);
+      OrgNetwork editNetwork = getMutatedOrgNetwork(oldNetwork);
       
       try {
-         Task updateNetworkTask = networkApi.updateNetwork(network.getHref(), updateNetwork);
-         Checks.checkTask(updateNetworkTask);
-         assertTrue(retryTaskSuccess.apply(updateNetworkTask), String.format(TASK_COMPLETE_TIMELY, "updateNetworkTask"));
-         network = networkApi.getNetwork(network.getHref());
+         Task editNetworkTask = networkApi.edit(networkUrn, editNetwork);
+         Checks.checkTask(editNetworkTask);
+         assertTrue(retryTaskSuccess.apply(editNetworkTask), String.format(TASK_COMPLETE_TIMELY, "editNetworkTask"));
+         network = networkApi.get(networkUrn);
          
          Checks.checkOrgNetwork(Network.<OrgNetwork>toSubType(network));
          
          assertTrue(equal(network.getConfiguration().getIpScope(), 
-               updateNetwork.getConfiguration().getIpScope()), 
+               editNetwork.getConfiguration().getIpScope()), 
                String.format(OBJ_FIELD_UPDATABLE, NETWORK+".configuration", "ipScope"));
          assertTrue(equal(network.getConfiguration().getParentNetwork(), 
-               updateNetwork.getConfiguration().getParentNetwork()), 
+               editNetwork.getConfiguration().getParentNetwork()), 
                String.format(OBJ_FIELD_UPDATABLE, NETWORK+".configuration", "parentNetwork"));
          assertTrue(equal(network.getConfiguration().getFenceMode(), 
-               updateNetwork.getConfiguration().getFenceMode()), 
+               editNetwork.getConfiguration().getFenceMode()), 
                String.format(OBJ_FIELD_UPDATABLE, NETWORK+".configuration", "fenceMode"));
          assertTrue(equal(network.getConfiguration().retainNetInfoAcrossDeployments(), 
-               updateNetwork.getConfiguration().retainNetInfoAcrossDeployments()), 
+               editNetwork.getConfiguration().retainNetInfoAcrossDeployments()), 
                String.format(OBJ_FIELD_UPDATABLE, NETWORK+".configuration", "retainNetInfoAcrossDeployments"));
          assertTrue(equal(network.getConfiguration().getNetworkFeatures(), 
-               updateNetwork.getConfiguration().getNetworkFeatures()), 
+               editNetwork.getConfiguration().getNetworkFeatures()), 
                String.format(OBJ_FIELD_UPDATABLE, NETWORK+".configuration", "networkFeatures"));
          assertTrue(equal(network.getConfiguration().getSyslogServerSettings(), 
-               updateNetwork.getConfiguration().getSyslogServerSettings()), 
+               editNetwork.getConfiguration().getSyslogServerSettings()), 
                String.format(OBJ_FIELD_UPDATABLE, NETWORK+".configuration", "syslogServerSettings"));
          assertTrue(equal(network.getConfiguration().getRouterInfo(), 
-               updateNetwork.getConfiguration().getRouterInfo()), 
+               editNetwork.getConfiguration().getRouterInfo()), 
                String.format(OBJ_FIELD_UPDATABLE, NETWORK+".configuration", "routerInfo"));
          // FIXME: fails
 //      assertTrue(equal(Network.<OrgNetwork>toSubType(network).getNetworkPool(), 
-//            updateNetwork.getNetworkPool()), 
+//            editNetwork.getNetworkPool()), 
 //            String.format(OBJ_FIELD_UPDATABLE, NETWORK, "networkPool"));
          
 //      assertTrue(equal(Network.<OrgNetwork>toSubType(network).getAllowedExternalIpAddresses(), 
-//            updateNetwork.getAllowedExternalIpAddresses()), 
+//            editNetwork.getAllowedExternalIpAddresses()), 
 //            String.format(OBJ_FIELD_UPDATABLE, NETWORK, "allowedExternalIpAddresses"));
       } finally {
-         Task updateNetworkTask = networkApi.updateNetwork(network.getHref(), oldNetwork);
-         Checks.checkTask(updateNetworkTask);
-         assertTrue(retryTaskSuccess.apply(updateNetworkTask), String.format(TASK_COMPLETE_TIMELY, "updateNetworkTask"));
-         network = networkApi.getNetwork(network.getHref());
+         Task editNetworkTask = networkApi.edit(networkUrn, oldNetwork);
+         Checks.checkTask(editNetworkTask);
+         assertTrue(retryTaskSuccess.apply(editNetworkTask), String.format(TASK_COMPLETE_TIMELY, "editNetworkTask"));
+         network = networkApi.get(networkUrn);
       }
    }
    
    @Test(description = "POST /admin/network/{id}/action/reset")
    public void testResetNetwork() { 
       // TODO assert that network is deployed somehow
-      Task resetNetworkTask = networkApi.resetNetwork(networkRef.getHref());
+      Task resetNetworkTask = networkApi.reset(networkUrn);
       Checks.checkTask(resetNetworkTask);
       assertTrue(retryTaskSuccess.apply(resetNetworkTask), String.format(TASK_COMPLETE_TIMELY, "resetNetworkTask"));
-      network = networkApi.getNetwork(network.getHref());
+      network = networkApi.get(networkUrn);
       
       Checks.checkOrgNetwork(Network.<OrgNetwork>toSubType(network));
       // TODO: other assertions about the reset? that network is deployed when task is complete, for example

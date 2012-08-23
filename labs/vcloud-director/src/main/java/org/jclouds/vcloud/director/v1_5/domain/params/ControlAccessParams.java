@@ -167,7 +167,7 @@ public class ControlAccessParams {
    /**
     * The access settings to be applied if {@link #isSharedToEveryone()} is false.
     *
-    * Required on create and modify if {@link #isSharedToEveryone()} is false.
+    * Required on create and edit if {@link #isSharedToEveryone()} is false.
     */
    public List<AccessSetting> getAccessSettings() {
       return accessSettings == null ? Collections.<AccessSetting>emptyList() : accessSettings;

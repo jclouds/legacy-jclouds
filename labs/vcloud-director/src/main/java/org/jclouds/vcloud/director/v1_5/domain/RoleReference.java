@@ -53,8 +53,8 @@ public class RoleReference extends Reference {
       super(builder);
    }
 
-   public RoleReference(URI href, String id, String name, String type) {
-      super(href, id, name, type);
+   public RoleReference(URI href, String name, String type) {
+      super(href, name, type);
    }
 
    protected RoleReference() {

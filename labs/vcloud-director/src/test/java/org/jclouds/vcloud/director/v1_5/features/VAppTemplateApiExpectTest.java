@@ -21,12 +21,10 @@ package org.jclouds.vcloud.director.v1_5.features;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.ANY;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.CUSTOMIZATION_SECTION;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.ERROR;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.GUEST_CUSTOMIZATION_SECTION;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.LEASE_SETTINGS_SECTION;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.METADATA;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.METADATA_ENTRY;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.NETWORK_CONFIG_SECTION;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.RELOCATE_TEMPLATE;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.TASK;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.VAPP_TEMPLATE;
 import static org.testng.Assert.assertEquals;
@@ -50,7 +48,6 @@ import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.Vm;
-import org.jclouds.vcloud.director.v1_5.domain.params.RelocateParams;
 import org.jclouds.vcloud.director.v1_5.domain.section.CustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.section.GuestCustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.section.LeaseSettingsSection;
@@ -86,14 +83,14 @@ public class VAppTemplateApiExpectTest extends VCloudDirectorAdminApiExpectTest 
       ).getVAppTemplateApi();
 
       assertNotNull(api);
-      VAppTemplate template = api.getVAppTemplate(uri);
+      VAppTemplate template = api.get(uri);
 
       assertEquals(template, exampleTemplate());
 
-      Task task = api.modifyVAppTemplate(uri, exampleTemplate());
+      Task task = api.edit(uri, exampleTemplate());
       assertNotNull(task);
 
-      task = api.deleteVappTemplate(uri);
+      task = api.remove(uri);
       assertNotNull(task);
    }
 
@@ -106,7 +103,7 @@ public class VAppTemplateApiExpectTest extends VCloudDirectorAdminApiExpectTest 
             new VcloudHttpRequestPrimer().apiCommand("GET", templateId).acceptMedia(VAPP_TEMPLATE).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error400.xml", ERROR).httpResponseBuilder().statusCode(400).build()).getVAppTemplateApi();
 
-      api.getVAppTemplate(uri);
+      api.get(uri);
    }
 
    @Test(expectedExceptions = ResourceNotFoundException.class)
@@ -118,11 +115,11 @@ public class VAppTemplateApiExpectTest extends VCloudDirectorAdminApiExpectTest 
             new VcloudHttpRequestPrimer().apiCommand("PUT", templateId).xmlFilePayload("/vapptemplate/vAppTemplate.xml", VAPP_TEMPLATE).acceptMedia(TASK).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error403.xml", ERROR).httpResponseBuilder().statusCode(403).build()).getVAppTemplateApi();
 
-      api.modifyVAppTemplate(uri, exampleTemplate());
+      api.edit(uri, exampleTemplate());
    }
 
    @Test(expectedExceptions = VCloudDirectorException.class)
-   public void testDeleteMissingVAppTemplate() {
+   public void testRemoveMissingVAppTemplate() {
       final String templateId = "/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
       URI uri = URI.create(endpoint + templateId);
 
@@ -130,33 +127,7 @@ public class VAppTemplateApiExpectTest extends VCloudDirectorAdminApiExpectTest 
             new VcloudHttpRequestPrimer().apiCommand("DELETE", templateId).acceptMedia(TASK).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error400.xml", ERROR).httpResponseBuilder().statusCode(400).build()).getVAppTemplateApi();
       
-      api.deleteVappTemplate(uri);
-   }
-   
-   public void testConsolidateVAppTemplate() {
-      final String templateId = "/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
-      URI uri = URI.create(endpoint + templateId);
-
-      VAppTemplateApi api = requestsSendResponses(loginRequest, sessionResponse,
-            new VcloudHttpRequestPrimer().apiCommand("POST", templateId + "/action/consolidate").acceptMedia(TASK).httpRequestBuilder().build(),
-            new VcloudHttpResponsePrimer().xmlFilePayload("/task/task.xml", TASK).httpResponseBuilder().build()
-      ).getVAppTemplateApi();
-
-      assertNotNull(api);
-      Task task = api.consolidateVm(uri);
-      assertNotNull(task);
-   }
-
-   @Test(expectedExceptions = ResourceNotFoundException.class)
-   public void testConsolidateMissingVAppTemplate() {
-      final String templateId = "/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
-      URI uri = URI.create(endpoint + templateId);
-
-      VAppTemplateApi api = orderedRequestsSendResponses(loginRequest, sessionResponse,
-            new VcloudHttpRequestPrimer().apiCommand("POST", templateId + "/action/consolidate").acceptMedia(TASK).httpRequestBuilder().build(),
-            new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error403.xml", ERROR).httpResponseBuilder().statusCode(403).build()).getVAppTemplateApi();
-
-      api.consolidateVm(uri);
+      api.remove(uri);
    }
 
    public void testDisableDownloadVAppTemplate() {
@@ -209,39 +180,6 @@ public class VAppTemplateApiExpectTest extends VCloudDirectorAdminApiExpectTest 
 
       api.enableDownload(uri);
    }
-   
-   public void testRelocateVAppTemplate() {
-      final String templateId = "/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
-      URI uri = URI.create(endpoint + templateId);
-
-      VAppTemplateApi api = requestsSendResponses(loginRequest, sessionResponse,
-            new VcloudHttpRequestPrimer().apiCommand("POST", templateId + "/action/relocate").xmlFilePayload("/vapptemplate/relocateParams.xml", RELOCATE_TEMPLATE).acceptMedia(TASK).httpRequestBuilder().build(),
-            new VcloudHttpResponsePrimer().xmlFilePayload("/task/task.xml", TASK).httpResponseBuilder().build()
-      ).getVAppTemplateApi();
-
-      assertNotNull(api);
-
-      Reference datastore = Reference.builder().href(URI.create("https://vcloud.example.com/api/admin/extension/datastore/607")).build();
-      RelocateParams params = RelocateParams.builder().datastore(datastore).build();
-
-      Task task = api.relocateVm(uri, params);
-      assertNotNull(task);
-   }
-
-   @Test(expectedExceptions = VCloudDirectorException.class)
-   public void testRelocateMissingVAppTemplate() {
-      final String templateId = "/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
-      URI uri = URI.create(endpoint + templateId);
-
-      VAppTemplateApi api = orderedRequestsSendResponses(loginRequest, sessionResponse,
-            new VcloudHttpRequestPrimer().apiCommand("POST", templateId + "/action/relocate").xmlFilePayload("/vapptemplate/relocateParams.xml", RELOCATE_TEMPLATE).acceptMedia(TASK).httpRequestBuilder().build(),
-            new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error400.xml", ERROR).httpResponseBuilder().statusCode(400).build()).getVAppTemplateApi();
-
-      Reference datastore = Reference.builder().href(URI.create("https://vcloud.example.com/api/admin/extension/datastore/607")).build();
-      RelocateParams params = RelocateParams.builder().datastore(datastore).build();
-
-      api.relocateVm(uri, params);
-   }
 
    public void testErrorGetCustomizationSection() {
       final String templateId = "/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
@@ -254,50 +192,6 @@ public class VAppTemplateApiExpectTest extends VCloudDirectorAdminApiExpectTest 
       assertNull(api.getCustomizationSection(uri));
    }
    
-   public void testGuestCustomizationSection() {
-      final String templateId = "/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
-      URI uri = URI.create(endpoint + templateId);
-
-      VAppTemplateApi api = orderedRequestsSendResponses(loginRequest, sessionResponse,
-            new VcloudHttpRequestPrimer().apiCommand("GET", templateId + "/guestCustomizationSection").acceptMedia(GUEST_CUSTOMIZATION_SECTION).httpRequestBuilder().build(),
-            new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/guestCustomizationSection.xml", GUEST_CUSTOMIZATION_SECTION).httpResponseBuilder().build(),
-            new VcloudHttpRequestPrimer().apiCommand("PUT", templateId + "/guestCustomizationSection").xmlFilePayload("/vapptemplate/guestCustomizationSection.xml", GUEST_CUSTOMIZATION_SECTION).acceptMedia(TASK).httpRequestBuilder().build(),
-            new VcloudHttpResponsePrimer().xmlFilePayload("/task/task.xml", TASK).httpResponseBuilder().build()
-      ).getVAppTemplateApi();
-
-      assertNotNull(api);
-      GuestCustomizationSection section = api.getGuestCustomizationSection(uri);
-
-      assertEquals(section, exampleGuestCustomizationSection());
-
-      Task task = api.modifyGuestCustomizationSection(uri, exampleGuestCustomizationSection());
-      assertNotNull(task);
-   }
-
-   @Test(expectedExceptions = VCloudDirectorException.class)
-   public void testErrorGetGuestCustomizationSection() {
-      final String templateId = "/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
-      URI uri = URI.create(endpoint + templateId);
-
-      VAppTemplateApi api = orderedRequestsSendResponses(loginRequest, sessionResponse,
-            new VcloudHttpRequestPrimer().apiCommand("GET", templateId + "/guestCustomizationSection").acceptMedia(GUEST_CUSTOMIZATION_SECTION).httpRequestBuilder().build(),
-            new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error400.xml", ERROR).httpResponseBuilder().statusCode(400).build()).getVAppTemplateApi();
-
-      api.getGuestCustomizationSection(uri);
-   }
-   
-   @Test(expectedExceptions = VCloudDirectorException.class)
-   public void testErrorEditGuestCustomizationSection() {
-      final String templateId = "/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
-      URI uri = URI.create(endpoint + templateId);
-
-      VAppTemplateApi api = orderedRequestsSendResponses(loginRequest, sessionResponse,
-            new VcloudHttpRequestPrimer().apiCommand("PUT", templateId + "/guestCustomizationSection").xmlFilePayload("/vapptemplate/guestCustomizationSection.xml", GUEST_CUSTOMIZATION_SECTION).acceptMedia(TASK).httpRequestBuilder().build(),
-            new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error400.xml", ERROR).httpResponseBuilder().statusCode(400).build()).getVAppTemplateApi();
-
-      api.modifyGuestCustomizationSection(uri, exampleGuestCustomizationSection());
-   }
-
    public void testLeaseSettingsSection() throws ParseException {
       final String templateId = "/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
       URI uri = URI.create(endpoint + templateId);
@@ -314,7 +208,7 @@ public class VAppTemplateApiExpectTest extends VCloudDirectorAdminApiExpectTest 
 
       assertEquals(section, exampleLeaseSettingsSection());
 
-      Task task = api.modifyLeaseSettingsSection(uri, exampleLeaseSettingsSection());
+      Task task = api.editLeaseSettingsSection(uri, exampleLeaseSettingsSection());
       assertNotNull(task);
    }
 
@@ -338,7 +232,7 @@ public class VAppTemplateApiExpectTest extends VCloudDirectorAdminApiExpectTest 
             new VcloudHttpRequestPrimer().apiCommand("PUT", templateId + "/leaseSettingsSection").xmlFilePayload("/vapptemplate/leaseSettingsSection.xml", LEASE_SETTINGS_SECTION).acceptMedia(TASK).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error403.xml", ERROR).httpResponseBuilder().statusCode(403).build()).getVAppTemplateApi();
 
-      api.modifyLeaseSettingsSection(uri, exampleLeaseSettingsSection());
+      api.editLeaseSettingsSection(uri, exampleLeaseSettingsSection());
    }
 
    public void testVappTemplateMetadata() {
@@ -353,11 +247,11 @@ public class VAppTemplateApiExpectTest extends VCloudDirectorAdminApiExpectTest 
       ).getVAppTemplateApi();
 
       assertNotNull(api);
-      Metadata metadata = api.getMetadataApi().getMetadata(uri);
+      Metadata metadata = api.getMetadataApi(uri).get();
 
       assertEquals(metadata, exampleMetadata());
 
-      Task task = api.getMetadataApi().mergeMetadata(uri, exampleMetadata());
+      Task task = api.getMetadataApi(uri).merge(exampleMetadata());
       assertNotNull(task);
    }
 
@@ -370,7 +264,7 @@ public class VAppTemplateApiExpectTest extends VCloudDirectorAdminApiExpectTest 
             new VcloudHttpRequestPrimer().apiCommand("GET", templateId + "/metadata").acceptMedia(ANY).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error400.xml", ERROR).httpResponseBuilder().statusCode(400).build()).getVAppTemplateApi();
 
-      api.getMetadataApi().getMetadata(uri);
+      api.getMetadataApi(uri).get();
    }
 
    @Test(expectedExceptions = VCloudDirectorException.class)
@@ -382,7 +276,7 @@ public class VAppTemplateApiExpectTest extends VCloudDirectorAdminApiExpectTest 
             new VcloudHttpRequestPrimer().apiCommand("POST", templateId + "/metadata").xmlFilePayload("/vapptemplate/metadata.xml", METADATA).acceptMedia(TASK).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error400.xml", ERROR).httpResponseBuilder().statusCode(400).build()).getVAppTemplateApi();
 
-      api.getMetadataApi().mergeMetadata(uri, exampleMetadata());
+      api.getMetadataApi(uri).merge(exampleMetadata());
    }
    
    public void testVappTemplateMetadataValue() {
@@ -399,14 +293,14 @@ public class VAppTemplateApiExpectTest extends VCloudDirectorAdminApiExpectTest 
       ).getVAppTemplateApi();
 
       assertNotNull(api);
-      MetadataValue metadata = api.getMetadataApi().getMetadataValue(uri, "12345");
+      MetadataValue metadata = api.getMetadataApi(uri).getValue("12345");
 
       assertEquals(metadata, exampleMetadataValue());
 
-      Task task = api.getMetadataApi().setMetadata(uri, "12345", exampleMetadataValue());
+      Task task = api.getMetadataApi(uri).putEntry("12345", exampleMetadataValue());
       assertNotNull(task);
 
-      task = api.getMetadataApi().deleteMetadataEntry(uri, "12345");
+      task = api.getMetadataApi(uri).removeEntry("12345");
       assertNotNull(task);
    }
 
@@ -418,7 +312,7 @@ public class VAppTemplateApiExpectTest extends VCloudDirectorAdminApiExpectTest 
             new VcloudHttpRequestPrimer().apiCommand("GET", templateId + "/metadata/12345").acceptMedia(METADATA_ENTRY).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error403.xml", ERROR).httpResponseBuilder().statusCode(403).build()).getVAppTemplateApi();
 
-      assertNull(api.getMetadataApi().getMetadataValue(uri, "12345"));
+      assertNull(api.getMetadataApi(uri).getValue("12345"));
    }
    
    @Test(expectedExceptions = VCloudDirectorException.class)
@@ -430,11 +324,11 @@ public class VAppTemplateApiExpectTest extends VCloudDirectorAdminApiExpectTest 
             new VcloudHttpRequestPrimer().apiCommand("PUT", templateId + "/metadata/12345").xmlFilePayload("/vapptemplate/metadataValue.xml", METADATA_ENTRY).acceptMedia(TASK).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error400.xml", ERROR).httpResponseBuilder().statusCode(400).build()).getVAppTemplateApi();
 
-      api.getMetadataApi().setMetadata(uri, "12345", exampleMetadataValue());
+      api.getMetadataApi(uri).putEntry("12345", exampleMetadataValue());
    }
 
    @Test(expectedExceptions = ResourceNotFoundException.class)
-   public void testDeleteMissingMetadataValue() {
+   public void testRemoveMissingMetadataValue() {
       final String templateId = "/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
       URI uri = URI.create(endpoint + templateId);
 
@@ -442,7 +336,7 @@ public class VAppTemplateApiExpectTest extends VCloudDirectorAdminApiExpectTest 
             new VcloudHttpRequestPrimer().apiCommand("DELETE", templateId + "/metadata/12345").acceptMedia(TASK).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error403.xml", ERROR).httpResponseBuilder().statusCode(403).build()).getVAppTemplateApi();
 
-      api.getMetadataApi().deleteMetadataEntry(uri, "12345");
+      api.getMetadataApi(uri).removeEntry("12345");
    }
 
    @Test(expectedExceptions = VCloudDirectorException.class)

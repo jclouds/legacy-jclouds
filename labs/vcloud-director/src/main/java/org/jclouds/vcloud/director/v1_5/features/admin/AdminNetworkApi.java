@@ -23,73 +23,86 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.network.Network;
 import org.jclouds.vcloud.director.v1_5.domain.org.OrgNetwork;
 import org.jclouds.vcloud.director.v1_5.features.MetadataApi;
 import org.jclouds.vcloud.director.v1_5.features.NetworkApi;
+import org.jclouds.vcloud.director.v1_5.functions.href.NetworkURNToAdminHref;
 
 /**
  * Provides synchronous access to admin {@link Network} objects.
  * 
  * @see AdminNetworkAsyncApi
- * @author danikov
+ * @author danikov, Adrian Cole
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface AdminNetworkApi extends NetworkApi {
-   
+
    /**
-    * Gets admin representation of network. This operation could return admin 
-    * representation of organization network or external network. vApp networks 
-    * do not have admin representation.
-    *
+    * Gets admin representation of network. This operation could return admin representation of
+    * organization network or external network. vApp networks do not have admin representation.
+    * 
     * <pre>
     * GET /admin/network/{id}
     * </pre>
-    *
-    * @param networkRef the reference for the network
+    * 
+    * @param networkUrn
+    *           the reference for the network
     * @return the network
     */
    @Override
-   Network getNetwork(URI networkRef);
-   
+   Network get(String networkUrn);
+
+   @Override
+   Network get(URI networkAdminHref);
+
    /**
     * Modifies an org network
-    *
+    * 
     * <pre>
     * PUT /admin/network/{id}
     * </pre>
-    *
-    * @param networkRef the reference for the network
-    * @param network the updated network
-    * @return a task. This operation is asynchronous and the user should monitor the 
-    * returned task status in order to check when it is completed.
+    * 
+    * @param networkUrn
+    *           the reference for the network
+    * @param network
+    *           the edited network
+    * @return a task. This operation is asynchronous and the user should monitor the returned task
+    *         status in order to check when it is completed.
     */
-   Task updateNetwork(URI networkRef, OrgNetwork network);
-   
+   Task edit(String networkUrn, OrgNetwork network);
+
+   Task edit(URI networkAdminHref, OrgNetwork network);
+
    /**
-    * Reset(undeploy & redeploy) networking services on a logical network. 
-    * The reset operation can be performed on: 
-    * - external networks 
-    * - organization networks 
-    * - vApp networks 
-    * The reset operation can be performed only on deployed networks.
-    *
+    * Reset(undeploy & redeploy) networking services on a logical network. The reset operation can
+    * be performed on: - external networks - organization networks - vApp networks The reset
+    * operation can be performed only on deployed networks.
+    * 
     * <pre>
     * POST /admin/network/{id}/action/reset
     * </pre>
-    *
-    * @param networkRef the reference for the network
-    * @return a task. This operation is asynchronous and the user should monitor the 
-    * returned task status in order to check when it is completed.
+    * 
+    * @param networkUrn
+    *           the reference for the network
+    * @return a task. This operation is asynchronous and the user should monitor the returned task
+    *         status in order to check when it is completed.
     */
-   Task resetNetwork(URI networkRef);
+   Task reset(String networkUrn);
    
+   Task reset(URI networkAdminHref);
+
    /**
-   * @return synchronous access to admin {@link MetadataApi.Writeable} features
-   */
+    * @return synchronous access to admin {@link MetadataApi.Writeable} features
+    */
    @Override
    @Delegate
-   MetadataApi.Writeable getMetadataApi();
+   MetadataApi.Writeable getMetadataApi(@EndpointParam(parser = NetworkURNToAdminHref.class) String networkUrn);
+
+   @Override
+   @Delegate
+   MetadataApi.Writeable getMetadataApi(@EndpointParam URI networkAdminHref);
 
 }

@@ -50,7 +50,6 @@ public class GroupApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    /*
     * Shared state between dependant tests.
     */
-   private Reference groupRef;
    private Group group;
    private OrgLdapSettings oldLdapSettings, newLdapSettings;
    
@@ -61,15 +60,15 @@ public class GroupApiLiveTest extends BaseVCloudDirectorApiLiveTest {
       Reference orgRef = null;
       
       // TODO: requisite LDAP settings
-//      oldLdapSettings = adminContext.getApi().getAdminOrgApi().getLdapSettings(orgRef.getHref());
+//      oldLdapSettings = adminContext.getApi().getAdminOrgApi().getLdapSettings(orgRef.getId());
 //      OrgLdapSettings newLdapSettings = oldLdapSettings.toBuilder()
 //         .ldapMode(OrgLdapSettings.LdapMode.SYSTEM)  
 //         .build();
-//      context.getApi().getAdminOrgApi().updateLdapSettings(newLdapSettings);
+//      context.getApi().getAdminOrgApi().editLdapSettings(newLdapSettings);
    }
    
    @Test(description = "POST /admin/org/{id}/groups")
-   public void testCreateGroup() {
+   public void testAddGroup() {
       fail("LDAP not configured, group api isn't currently testable.");
 //      group = groupApi.createGroup(orgUri, Group.builder()
 //         .build();
@@ -77,15 +76,15 @@ public class GroupApiLiveTest extends BaseVCloudDirectorApiLiveTest {
       Checks.checkGroup(group);
    }
    
-   @Test(description = "GET /admin/group/{id}", dependsOnMethods = { "testCreateGroup" })
+   @Test(description = "GET /admin/group/{id}", dependsOnMethods = { "testAddGroup" })
    public void testGetGroup() {
-      group = groupApi.getGroup(groupRef.getHref());
+      group = groupApi.get(group.getId());
       
       Checks.checkGroup(group);
    }
    
    @Test(description = "PUT /admin/group/{id}", dependsOnMethods = { "testGetGroup" } )
-   public void testUpdateGroup() {
+   public void testEditGroup() {
       String oldName = group.getName();
       String newName = "new "+oldName;
       String oldDescription = group.getDescription();
@@ -98,7 +97,7 @@ public class GroupApiLiveTest extends BaseVCloudDirectorApiLiveTest {
                .description(newDescription)
                .build();
          
-         group = groupApi.updateGroup(group.getHref(), group);
+         group = groupApi.edit(group.getId(), group);
          
          assertTrue(equal(group.getName(), newName), String.format(OBJ_FIELD_UPDATABLE, GROUP, "name"));
          assertTrue(equal(group.getDescription(), newDescription),
@@ -113,13 +112,13 @@ public class GroupApiLiveTest extends BaseVCloudDirectorApiLiveTest {
                .description(oldDescription)
                .build();
          
-         group = groupApi.updateGroup(group.getHref(), group);
+         group = groupApi.edit(group.getId(), group);
       }
    }
    
-   @Test(description = "DELETE /admin/group/{id}", dependsOnMethods = { "testUpdateGroup" } )
-   public void testDeleteGroup() {
-      groupApi.deleteGroup(groupRef.getHref());
+   @Test(description = "DELETE /admin/group/{id}", dependsOnMethods = { "testEditGroup" } )
+   public void testRemoveGroup() {
+      groupApi.remove(group.getId());
       
       // TODO stronger assertion of error expected
 //      Error expected = Error.builder()
@@ -129,7 +128,7 @@ public class GroupApiLiveTest extends BaseVCloudDirectorApiLiveTest {
 //            .build();
       
       try {
-         group = groupApi.getGroup(groupRef.getHref());
+         group = groupApi.get(group.getId());
          fail("Should give HTTP 403 error");
       } catch (VCloudDirectorException vde) {
          // success

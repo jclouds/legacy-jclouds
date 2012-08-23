@@ -64,7 +64,7 @@ public class QueryResultAdminGroupRecord extends QueryResultRecordType {
       }
 
       /**
-       * @see QueryResultAdminGroupRecord#getOrg()
+       * @see QueryResultAdminGroupRecord#get()
        */
       public B org(String val) {
          this.org = val;
@@ -95,7 +95,7 @@ public class QueryResultAdminGroupRecord extends QueryResultRecordType {
       public B fromQueryResultAdminGroupRecord(QueryResultAdminGroupRecord in) {
          return fromQueryResultRecordType(in)
                   .name(in.getName())
-                  .org(in.getOrg())
+                  .org(in.get())
                   .roleName(in.getRoleName())
                   .isReadOnly(in.isReadOnly());
       }
@@ -133,7 +133,7 @@ public class QueryResultAdminGroupRecord extends QueryResultRecordType {
    /**
     * Organization reference or id
     */
-   public String getOrg() {
+   public String get() {
       return org;
    }
 

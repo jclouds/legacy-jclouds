@@ -20,7 +20,6 @@ package org.jclouds.elasticstack.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -87,7 +86,6 @@ public class ServerInfoToNodeMetadata implements Function<ServerInfo, NodeMetada
       this.getImageIdFromServer = checkNotNull(getImageIdFromServer, "getImageIdFromServer");
    }
 
-   @SuppressWarnings({ "unchecked", "rawtypes" })
    @Override
    public NodeMetadata apply(ServerInfo from) {
       NodeMetadataBuilder builder = new NodeMetadataBuilder();
@@ -105,7 +103,7 @@ public class ServerInfoToNodeMetadata implements Function<ServerInfo, NodeMetada
       }
       builder.hardware(new HardwareBuilder().ids(from.getUuid()).hypervisor("kvm")
             .processors(ImmutableList.of(new Processor(1, from.getCpu()))).ram(from.getMem())
-            .volumes((List) ImmutableList.of(Iterables.transform(from.getDevices().values(), deviceToVolume))).build());
+            .volumes(Iterables.transform(from.getDevices().values(), deviceToVolume)).build());
       builder.status(serverStatusToNodeStatus.get(from.getStatus()));
       builder.publicAddresses(ImmutableSet.<String> of(from.getNics().get(0).getDhcp()));
       builder.privateAddresses(ImmutableSet.<String> of());

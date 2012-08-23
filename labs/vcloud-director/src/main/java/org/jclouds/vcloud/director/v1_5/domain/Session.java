@@ -70,7 +70,7 @@ public class Session {
       }
 
       /**
-       * @see Session#getOrg()
+       * @see Session#get()
        */
       public Builder org(String org) {
          this.org = org;
@@ -106,7 +106,7 @@ public class Session {
       }
 
       public Builder fromSession(Session in) {
-         return user(in.getUser()).org(in.getOrg()).href(in.getHref()).links(in.getLinks());
+         return user(in.getUser()).org(in.get()).href(in.getHref()).links(in.getLinks());
       }
    }
 
@@ -144,7 +144,7 @@ public class Session {
    /**
     * @return is the name of an organization of which the user is a member
     */
-   public String getOrg() {
+   public String get() {
       return org;
    }
 

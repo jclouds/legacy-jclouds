@@ -52,16 +52,18 @@ public class NinefoldComputeTemplateBuilderLiveTest extends BaseTemplateBuilderL
          @Override
          public boolean apply(OsFamilyVersion64Bit input) {
             switch (input.family) {
-            case UBUNTU:
-               return input.version.equals("") || input.version.equals("10.04");
-            case SUSE:
-               return (input.version.equals("") || input.version.equals("11")) && input.is64Bit;
-            case CENTOS:
-               return (input.version.equals("") || input.version.equals("5.5")) && input.is64Bit;
-            case WINDOWS:
-               return input.version.equals("") || (input.version.equals("2008") && !input.is64Bit);
-            default:
-               return false;
+               case UBUNTU:
+                  return input.version.equals("") || input.version.equals("10.04");
+               case SUSE:
+                  return (input.version.equals("") || input.version.equals("11")) && input.is64Bit;
+               case DEBIAN:
+                  return (input.version.equals("") || input.version.equals("6.0")) && !input.is64Bit;
+               case CENTOS:
+                  return (input.version.equals("") || input.version.equals("5.5")) && input.is64Bit;
+               case WINDOWS:
+                  return input.version.equals("") || (input.version.equals("2008") && !input.is64Bit);
+               default:
+                  return false;
             }
          }
 
@@ -72,14 +74,19 @@ public class NinefoldComputeTemplateBuilderLiveTest extends BaseTemplateBuilderL
    public void testDefaultTemplateBuilder() throws IOException {
       Template defaultTemplate = this.view.getComputeService().templateBuilder().build();
       if (template == null) {
+         assert defaultTemplate.getImage().getOperatingSystem().getVersion().matches("1[012].[10][04]") : defaultTemplate
+                  .getImage().getOperatingSystem().getVersion();
          assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
-         assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "10.04");
          assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
          assertEquals(defaultTemplate.getLocation().getId(), "1");
          assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
+         assertEquals(defaultTemplate.getOptions().getLoginUser(), "user");
+         assertEquals(defaultTemplate.getOptions().getLoginPassword(), "Password01");
+         assertEquals(defaultTemplate.getOptions().getLoginPrivateKey(), null);
+         assertEquals(defaultTemplate.getOptions().shouldAuthenticateSudo(), Boolean.TRUE);
       } else {
          assertEquals(defaultTemplate.getImage(), this.view.getComputeService().templateBuilder().from(template)
-               .build().getImage());
+                  .build().getImage());
       }
    }
 
