@@ -47,7 +47,7 @@ public interface VolumeTypeApi {
    /**
     * @return set of all volume types
     */
-   Set<VolumeType> listVolumeTypes();
+   Set<? extends VolumeType> listVolumeTypes();
 
    /**
     * @param id the id of the volume type to retrieve

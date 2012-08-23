@@ -45,7 +45,7 @@ public interface HostAggregateApi {
    /**
     * @return the set of host aggregates.
     */
-   Set<HostAggregate> listAggregates();
+   Set<? extends HostAggregate> listAggregates();
 
    /**
     * Retrieves the details of an aggregate, hosts and metadata included.

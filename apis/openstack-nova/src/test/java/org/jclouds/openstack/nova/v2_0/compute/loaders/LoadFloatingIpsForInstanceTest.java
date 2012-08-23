@@ -25,6 +25,8 @@ import static org.easymock.EasyMock.verify;
 import static org.testng.Assert.assertEquals;
 import static org.testng.AssertJUnit.assertFalse;
 
+import java.util.Set;
+
 import org.jclouds.openstack.nova.v2_0.NovaApi;
 import org.jclouds.openstack.nova.v2_0.domain.FloatingIP;
 import org.jclouds.openstack.nova.v2_0.domain.zonescoped.ZoneAndId;
@@ -47,7 +49,7 @@ public class LoadFloatingIpsForInstanceTest {
       FloatingIP testIp = FloatingIP.builder().id("1").ip("1.1.1.1").fixedIp("10.1.1.1").instanceId("i-blah").build();
 
       expect(api.getFloatingIPExtensionForZone("Zone")).andReturn((Optional) Optional.of(ipApi)).atLeastOnce();
-      expect(ipApi.listFloatingIPs()).andReturn(ImmutableSet.<FloatingIP>of(testIp)).atLeastOnce();
+      expect(ipApi.listFloatingIPs()).andReturn((Set) ImmutableSet.<FloatingIP>of(testIp)).atLeastOnce();
 
       replay(api);
       replay(ipApi);
@@ -67,7 +69,7 @@ public class LoadFloatingIpsForInstanceTest {
 
       expect(api.getFloatingIPExtensionForZone("Zone")).andReturn((Optional) Optional.of(ipApi)).atLeastOnce();
 
-      expect(ipApi.listFloatingIPs()).andReturn(ImmutableSet.<FloatingIP>of()).atLeastOnce();
+      expect(ipApi.listFloatingIPs()).andReturn((Set) ImmutableSet.<FloatingIP>of()).atLeastOnce();
 
       replay(api);
       replay(ipApi);
@@ -89,7 +91,7 @@ public class LoadFloatingIpsForInstanceTest {
       expect(api.getFloatingIPExtensionForZone("Zone")).andReturn((Optional) Optional.of(ipApi)).atLeastOnce();
 
       expect(ipApi.listFloatingIPs()).andReturn(
-            ImmutableSet.<FloatingIP>of(FloatingIP.builder().id("1").ip("1.1.1.1").build()))
+            (Set) ImmutableSet.<FloatingIP>of(FloatingIP.builder().id("1").ip("1.1.1.1").build()))
             .atLeastOnce();
 
       replay(api);

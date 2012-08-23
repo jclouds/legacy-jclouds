@@ -55,7 +55,7 @@ public class VirtualInterfaceApiLiveTest extends BaseNovaApiLiveTest {
          Server testServer = null;
          try {
             testServer = createServerInZone(zone);
-            Set<VirtualInterface> results = apiOption.get().listVirtualInterfacesForServer(testServer.getId());
+            Set<? extends VirtualInterface> results = apiOption.get().listVirtualInterfacesForServer(testServer.getId());
             for (VirtualInterface vif : results) {
                assertNotNull(vif.getId());
                assertNotNull(vif.getMacAddress());

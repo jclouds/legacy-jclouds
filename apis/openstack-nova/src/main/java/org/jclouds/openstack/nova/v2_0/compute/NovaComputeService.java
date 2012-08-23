@@ -155,7 +155,7 @@ public class NovaComputeService extends BaseComputeService {
       Optional<? extends KeyPairApi> keyPairApi = novaApi.getKeyPairExtensionForZone(zoneId);
       if (keyPairApi.isPresent()) {
          for (String group : groups) {
-            for (Map<String, KeyPair> view : keyPairApi.get().listKeyPairs()) {
+            for (Map<String, ? extends KeyPair> view : keyPairApi.get().listKeyPairs()) {
                for (KeyPair pair : Iterables.filter(view.values(),
                         KeyPairPredicates.nameMatches(namingConvention.create().containsGroup(group)))) {
                   ZoneAndName zoneAndName = ZoneAndName.fromZoneAndName(zoneId, pair.getName());

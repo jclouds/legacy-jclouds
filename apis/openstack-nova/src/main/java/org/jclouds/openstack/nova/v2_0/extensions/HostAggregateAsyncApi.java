@@ -66,7 +66,7 @@ public interface HostAggregateAsyncApi {
    @SelectJson("aggregates")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<HostAggregate>> listAggregates();
+   ListenableFuture<? extends Set<? extends HostAggregate>> listAggregates();
 
    /**
     * @see HostAggregateApi#getAggregate(String)
@@ -76,7 +76,7 @@ public interface HostAggregateAsyncApi {
    @SelectJson("aggregate")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<HostAggregate> getAggregate(@PathParam("id") String id);
+   ListenableFuture<? extends HostAggregate> getAggregate(@PathParam("id") String id);
 
    /**
     * @see HostAggregateApi#createAggregate(String, String)
@@ -86,7 +86,7 @@ public interface HostAggregateAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
    @WrapWith("aggregate")
-   ListenableFuture<HostAggregate> createAggregate(@PayloadParam("name") String name,
+   ListenableFuture<? extends HostAggregate> createAggregate(@PayloadParam("name") String name,
                                                    @PayloadParam("availability_zone") String availabilityZone);
 
    /**
@@ -97,7 +97,7 @@ public interface HostAggregateAsyncApi {
    @SelectJson("aggregate")
    @Consumes(MediaType.APPLICATION_JSON)
    @WrapWith("aggregate")
-   ListenableFuture<HostAggregate> updateName(@PathParam("id") String id, @PayloadParam("name") String name);
+   ListenableFuture<? extends HostAggregate> updateName(@PathParam("id") String id, @PayloadParam("name") String name);
 
    /**
     * @see HostAggregateApi#updateAvailabilityZone
@@ -107,7 +107,7 @@ public interface HostAggregateAsyncApi {
    @SelectJson("aggregate")
    @Consumes(MediaType.APPLICATION_JSON)
    @WrapWith("aggregate")
-   ListenableFuture<HostAggregate> updateAvailabilityZone(@PathParam("id") String id, @PayloadParam("availability_zone") String availabilityZone);
+   ListenableFuture<? extends HostAggregate> updateAvailabilityZone(@PathParam("id") String id, @PayloadParam("availability_zone") String availabilityZone);
    
    /**
     * @see HostAggregateApi#deleteAggregate(String)
@@ -127,7 +127,7 @@ public interface HostAggregateAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
    @WrapWith("add_host")
-   ListenableFuture<HostAggregate> addHost(@PathParam("id") String id, @PayloadParam("host") String host);
+   ListenableFuture<? extends HostAggregate> addHost(@PathParam("id") String id, @PayloadParam("host") String host);
 
 
    /**
@@ -139,7 +139,7 @@ public interface HostAggregateAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
    @WrapWith("remove_host")
-   ListenableFuture<HostAggregate> removeHost(@PathParam("id") String id, @PayloadParam("host") String host);
+   ListenableFuture<? extends HostAggregate> removeHost(@PathParam("id") String id, @PayloadParam("host") String host);
 
    /**
     * @see HostAggregateApi#setMetadata
@@ -150,5 +150,5 @@ public interface HostAggregateAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
    @WrapWith("set_metadata")
-   ListenableFuture<HostAggregate> setMetadata(@PathParam("id") String id, @PayloadParam("metadata") Map<String, String> metadata);
+   ListenableFuture<? extends HostAggregate> setMetadata(@PathParam("id") String id, @PayloadParam("metadata") Map<String, String> metadata);
 }
