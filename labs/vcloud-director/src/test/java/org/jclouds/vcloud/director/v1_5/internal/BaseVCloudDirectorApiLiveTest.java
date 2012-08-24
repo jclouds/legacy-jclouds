@@ -36,6 +36,7 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.VAPP;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.VAPP_TEMPLATE;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.VDC;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.VM;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.MEDIA;
 import static org.jclouds.vcloud.director.v1_5.predicates.LinkPredicates.relEquals;
 import static org.jclouds.vcloud.director.v1_5.predicates.LinkPredicates.typeEquals;
 import static org.testng.Assert.assertEquals;
@@ -355,7 +356,6 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
          public boolean apply(Vm input) {
             return input.getId() != null;
          }
-
       });
       
       if (optionalVm.isPresent()) {
@@ -448,7 +448,28 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
       }
       return optionalNetwork;
    }
+   
+	public FluentIterable<Media> findAllEmptyMediaInOrg() {
+		vdc = context.getApi().getVdcApi().get(vdc.getId());
+		return FluentIterable
+				.from(vdc.getResourceEntities())
+				.filter(ReferencePredicates.<Reference> typeEquals(MEDIA))
+				.transform(new Function<Reference, Media>() {
 
+					@Override
+					public Media apply(Reference in) {
+						return context.getApi().getMediaApi()
+								.get(in.getHref());
+					}
+				}).filter(new Predicate<Media>() {
+
+					@Override
+					public boolean apply(Media input) {
+						return input.getSize() == 0;
+					}
+				});
+	}
+	
    protected Vdc lazyGetVdc() {
       if (vdc == null) {
          assertNotNull(vdcUrn, String.format(URN_REQ_LIVE, VDC));
