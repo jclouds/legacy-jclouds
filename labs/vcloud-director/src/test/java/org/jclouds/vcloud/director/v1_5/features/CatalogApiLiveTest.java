@@ -24,7 +24,6 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.C
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.TASK_COMPLETE_TIMELY;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkCatalogItem;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadata;
-import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadataValue;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkTask;
 import static org.jclouds.vcloud.director.v1_5.predicates.LinkPredicates.relEquals;
 import static org.jclouds.vcloud.director.v1_5.predicates.LinkPredicates.typeEquals;
@@ -41,8 +40,6 @@ import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Media;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.Vdc;
@@ -51,8 +48,7 @@ import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorApiLiveTest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Tests live behavior of {@link CatalogApi}.
@@ -180,29 +176,19 @@ public class CatalogApiLiveTest extends BaseVCloudDirectorApiLiveTest {
       Metadata catalogMetadata = catalogApi.getMetadataApi(catalogUrn).get();
       checkMetadata(catalogMetadata);
    }
-   
+
    @Test(description = "GET /catalog/{id}/metadata/{key}")
    public void testGetCatalogMetadataValue() {
-      
-      Metadata newMetadata = Metadata.builder().entry(MetadataEntry.builder().entry("KEY", "MARMALADE").build())
-               .build();
 
-      Task mergeCatalogMetadata = adminCatalogApi.getMetadataApi(catalogUrn).merge(newMetadata);
+      Task mergeCatalogMetadata = adminCatalogApi.getMetadataApi(catalogUrn)
+            .putAll(ImmutableMap.of("KEY", "MARMALADE"));
       assertTaskSucceedsLong(mergeCatalogMetadata);
-      
+
       Metadata catalogMetadata = catalogApi.getMetadataApi(catalogUrn).get();
-      MetadataEntry existingMetadataEntry = Iterables.find(catalogMetadata.getMetadataEntries(),
-               new Predicate<MetadataEntry>() {
-                  @Override
-                  public boolean apply(MetadataEntry input) {
-                     return input.getKey().equals("KEY");
-                  }
-               });
-      MetadataValue metadataValue = catalogApi.getMetadataApi(catalogUrn)
-               .getValue("KEY");
-      assertEquals(metadataValue.getValue(), existingMetadataEntry.getValue(), String.format(CORRECT_VALUE_OBJECT_FMT,
-               "Value", "MetadataValue", existingMetadataEntry.getValue(), metadataValue.getValue()));
-      checkMetadataValue(metadataValue);
+
+      String metadataValue = catalogApi.getMetadataApi(catalogUrn).get("KEY");
+      assertEquals(metadataValue, catalogMetadata.get("KEY"), String.format(CORRECT_VALUE_OBJECT_FMT, "Value",
+            "MetadataValue", catalogMetadata.get("KEY"), metadataValue));
    }
 
    @Test(description = "GET /catalogItem/{id}/metadata", dependsOnMethods = "testAddCatalogItem")
@@ -213,61 +199,52 @@ public class CatalogApiLiveTest extends BaseVCloudDirectorApiLiveTest {
 
    @Test(description = "POST /catalogItem/{id}/metadata", dependsOnMethods = "testAddCatalogItem")
    public void testMergeCatalogItemMetadata() {
-      Metadata newMetadata = Metadata.builder().entry(MetadataEntry.builder().entry("KEY", "MARMALADE").build())
-               .entry(MetadataEntry.builder().entry("VEGIMITE", "VALUE").build()).build();
-
       Metadata before = catalogApi.getItemMetadataApi(catalogItem.getId()).get();
 
-      Task mergeCatalogItemMetadata = catalogApi.getItemMetadataApi(catalogItem.getId()).merge(newMetadata);
+      Task mergeCatalogItemMetadata = catalogApi.getItemMetadataApi(catalogItem.getId()).putAll(
+            ImmutableMap.of("KEY", "MARMALADE", "VEGIMITE", "VALUE"));
       checkTask(mergeCatalogItemMetadata);
       assertTrue(retryTaskSuccess.apply(mergeCatalogItemMetadata),
-               String.format(TASK_COMPLETE_TIMELY, "mergeCatalogItemMetadata"));
+            String.format(TASK_COMPLETE_TIMELY, "mergeCatalogItemMetadata"));
       Metadata mergedCatalogItemMetadata = catalogApi.getItemMetadataApi(catalogItem.getId()).get();
 
       assertTrue(mergedCatalogItemMetadata.getMetadataEntries().size() > before.getMetadataEntries().size(),
-               "Should have added at least one other MetadataEntry to the CatalogItem");
+            "Should have added at least one other MetadataEntry to the CatalogItem");
 
-      MetadataValue keyMetadataValue = catalogApi.getItemMetadataApi(catalogItem.getId()).getValue("KEY");
-      assertEquals(keyMetadataValue.getValue(), "MARMALADE",
-               "The Value of the MetadataValue for KEY should have changed");
-      checkMetadataValue(keyMetadataValue);
+      String keyMetadataValue = catalogApi.getItemMetadataApi(catalogItem.getId()).get("KEY");
+      assertEquals(keyMetadataValue, "MARMALADE", "The Value of the MetadataValue for KEY should have changed");
 
-      MetadataValue newKeyMetadataValue = catalogApi.getItemMetadataApi(catalogItem.getId()).getValue("VEGIMITE");
+      String newKeyMetadataValue = catalogApi.getItemMetadataApi(catalogItem.getId()).get("VEGIMITE");
 
-      assertEquals(newKeyMetadataValue.getValue(), "VALUE",
-               "The Value of the MetadataValue for NEW_KEY should have been set");
-      checkMetadataValue(newKeyMetadataValue);
+      assertEquals(newKeyMetadataValue, "VALUE", "The Value of the MetadataValue for NEW_KEY should have been set");
    }
 
    @Test(description = "GET /catalogItem/{id}/metadata/{key}", dependsOnMethods = "testSetCatalogItemMetadataValue")
    public void testGetCatalogItemMetadataValue() {
-      MetadataValue metadataValue = catalogApi.getItemMetadataApi(catalogItem.getId()).getValue("KEY");
-      checkMetadataValue(metadataValue);
+      String metadataValue = catalogApi.getItemMetadataApi(catalogItem.getId()).get("KEY");
+      assertNotNull(metadataValue);
    }
 
    @Test(description = "PUT /catalogItem/{id}/metadata/{key}", dependsOnMethods = "testMergeCatalogItemMetadata")
    public void testSetCatalogItemMetadataValue() {
-      MetadataValue newMetadataValue = MetadataValue.builder().value("NEW").build();
 
-      Task setCatalogItemMetadataValue = catalogApi.getItemMetadataApi(catalogItem.getId()).putEntry("KEY",
-               newMetadataValue);
+      Task setCatalogItemMetadataValue = catalogApi.getItemMetadataApi(catalogItem.getId()).put("KEY", "NEW");
       checkTask(setCatalogItemMetadataValue);
       assertTrue(retryTaskSuccess.apply(setCatalogItemMetadataValue),
-               String.format(TASK_COMPLETE_TIMELY, "setCatalogItemMetadataValue"));
+            String.format(TASK_COMPLETE_TIMELY, "setCatalogItemMetadataValue"));
 
-      MetadataValue editedMetadataValue = catalogApi.getItemMetadataApi(catalogItem.getId()).getValue("KEY");
-      assertEquals(editedMetadataValue.getValue(), newMetadataValue.getValue(), String.format(CORRECT_VALUE_OBJECT_FMT,
-               "Value", "MetadataValue", newMetadataValue.getValue(), editedMetadataValue.getValue()));
-      checkMetadataValue(editedMetadataValue);
+      String editedMetadataValue = catalogApi.getItemMetadataApi(catalogItem.getId()).get("KEY");
+      assertEquals(editedMetadataValue, "NEW",
+            String.format(CORRECT_VALUE_OBJECT_FMT, "Value", "MetadataValue", "NEW", editedMetadataValue));
    }
 
    @Test(description = "DELETE /catalogItem/{id}/metadata/{key}", dependsOnMethods = "testGetCatalogItemMetadataValue")
    public void testRemoveCatalogItemMetadataValue() {
-      Task removeCatalogItemMetadataValue = catalogApi.getItemMetadataApi(catalogItem.getId()).removeEntry("KEY");
+      Task removeCatalogItemMetadataValue = catalogApi.getItemMetadataApi(catalogItem.getId()).remove("KEY");
       checkTask(removeCatalogItemMetadataValue);
       assertTrue(retryTaskSuccess.apply(removeCatalogItemMetadataValue),
-               String.format(TASK_COMPLETE_TIMELY, "removeCatalogItemMetadataValue"));
-      MetadataValue removed = catalogApi.getItemMetadataApi(catalogItem.getId()).getValue("KEY");
+            String.format(TASK_COMPLETE_TIMELY, "removeCatalogItemMetadataValue"));
+      String removed = catalogApi.getItemMetadataApi(catalogItem.getId()).get("KEY");
       assertNull(removed);
    }
    

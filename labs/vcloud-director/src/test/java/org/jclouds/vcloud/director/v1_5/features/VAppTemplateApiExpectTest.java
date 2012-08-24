@@ -42,7 +42,6 @@ import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
@@ -251,7 +250,7 @@ public class VAppTemplateApiExpectTest extends VCloudDirectorAdminApiExpectTest 
 
       assertEquals(metadata, exampleMetadata());
 
-      Task task = api.getMetadataApi(uri).merge(exampleMetadata());
+      Task task = api.getMetadataApi(uri).putAll(exampleMetadata());
       assertNotNull(task);
    }
 
@@ -276,7 +275,7 @@ public class VAppTemplateApiExpectTest extends VCloudDirectorAdminApiExpectTest 
             new VcloudHttpRequestPrimer().apiCommand("POST", templateId + "/metadata").xmlFilePayload("/vapptemplate/metadata.xml", METADATA).acceptMedia(TASK).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error400.xml", ERROR).httpResponseBuilder().statusCode(400).build()).getVAppTemplateApi();
 
-      api.getMetadataApi(uri).merge(exampleMetadata());
+      api.getMetadataApi(uri).putAll(exampleMetadata());
    }
    
    public void testVappTemplateMetadataValue() {
@@ -293,14 +292,14 @@ public class VAppTemplateApiExpectTest extends VCloudDirectorAdminApiExpectTest 
       ).getVAppTemplateApi();
 
       assertNotNull(api);
-      MetadataValue metadata = api.getMetadataApi(uri).getValue("12345");
+      String metadata = api.getMetadataApi(uri).get("12345");
 
-      assertEquals(metadata, exampleMetadataValue());
+      assertEquals(metadata, "some value");
 
-      Task task = api.getMetadataApi(uri).putEntry("12345", exampleMetadataValue());
+      Task task = api.getMetadataApi(uri).put("12345", "some value");
       assertNotNull(task);
 
-      task = api.getMetadataApi(uri).removeEntry("12345");
+      task = api.getMetadataApi(uri).remove("12345");
       assertNotNull(task);
    }
 
@@ -312,7 +311,7 @@ public class VAppTemplateApiExpectTest extends VCloudDirectorAdminApiExpectTest 
             new VcloudHttpRequestPrimer().apiCommand("GET", templateId + "/metadata/12345").acceptMedia(METADATA_ENTRY).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error403.xml", ERROR).httpResponseBuilder().statusCode(403).build()).getVAppTemplateApi();
 
-      assertNull(api.getMetadataApi(uri).getValue("12345"));
+      assertNull(api.getMetadataApi(uri).get("12345"));
    }
    
    @Test(expectedExceptions = VCloudDirectorException.class)
@@ -324,7 +323,7 @@ public class VAppTemplateApiExpectTest extends VCloudDirectorAdminApiExpectTest 
             new VcloudHttpRequestPrimer().apiCommand("PUT", templateId + "/metadata/12345").xmlFilePayload("/vapptemplate/metadataValue.xml", METADATA_ENTRY).acceptMedia(TASK).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error400.xml", ERROR).httpResponseBuilder().statusCode(400).build()).getVAppTemplateApi();
 
-      api.getMetadataApi(uri).putEntry("12345", exampleMetadataValue());
+      api.getMetadataApi(uri).put("12345", "some value");
    }
 
    @Test(expectedExceptions = ResourceNotFoundException.class)
@@ -336,7 +335,7 @@ public class VAppTemplateApiExpectTest extends VCloudDirectorAdminApiExpectTest 
             new VcloudHttpRequestPrimer().apiCommand("DELETE", templateId + "/metadata/12345").acceptMedia(TASK).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error403.xml", ERROR).httpResponseBuilder().statusCode(403).build()).getVAppTemplateApi();
 
-      api.getMetadataApi(uri).removeEntry("12345");
+      api.getMetadataApi(uri).remove("12345");
    }
 
    @Test(expectedExceptions = VCloudDirectorException.class)
@@ -435,10 +434,6 @@ public class VAppTemplateApiExpectTest extends VCloudDirectorAdminApiExpectTest 
             .link(Link.builder().href(URI.create("https://vcloudbeta.bluelock.com/api/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9"))
                   .type("application/vnd.vmware.vcloud.vAppTemplate+xml").rel("up").build())
             .entry(MetadataEntry.builder().key("key").value("value").build()).build();
-   }
-
-   private MetadataValue exampleMetadataValue() {
-      return MetadataValue.builder().value("some value").build();
    }
 
 }

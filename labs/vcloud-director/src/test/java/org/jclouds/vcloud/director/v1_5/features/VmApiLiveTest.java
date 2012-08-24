@@ -28,8 +28,6 @@ import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkGuestCustomiza
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadata;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadataFor;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadataKeyAbsentFor;
-import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadataValue;
-import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadataValueFor;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkNetworkConnectionSection;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkOperatingSystemSection;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkProductSectionList;
@@ -59,8 +57,6 @@ import org.jclouds.dmtf.ovf.ProductSection;
 import org.jclouds.vcloud.director.v1_5.AbstractVAppApiLiveTest;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.ProductSectionList;
 import org.jclouds.vcloud.director.v1_5.domain.RasdItemsList;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
@@ -104,7 +100,7 @@ import com.google.common.collect.Sets;
 @Test(groups = { "live", "user" }, singleThreaded = true, testName = "VmApiLiveTest")
 public class VmApiLiveTest extends AbstractVAppApiLiveTest {
 
-   private MetadataValue metadataValue;
+   private String metadataValue;
    private String key;
    private boolean testUserCreated = false;
 
@@ -872,15 +868,16 @@ public class VmApiLiveTest extends AbstractVAppApiLiveTest {
    @Test(description = "PUT /vApp/{id}/metadata/{key}", dependsOnMethods = { "testGetVm" })
    public void testSetMetadataValue() {
       key = name("key-");
-      String value = name("value-");
-      metadataValue = MetadataValue.builder().value(value).build();
-      vmApi.getMetadataApi(vmUrn).putEntry(key, metadataValue);
+      metadataValue = name("value-");
+      //TODO: block!!
+      vmApi.getMetadataApi(vmUrn).put(key, metadataValue);
 
       // Retrieve the value, and assert it was set correctly
-      MetadataValue newMetadataValue = vmApi.getMetadataApi(vmUrn).getValue(key);
+      String newMetadataValue = vmApi.getMetadataApi(vmUrn).get(key);
 
       // Check the retrieved object is well formed
-      checkMetadataValueFor(VM, newMetadataValue, value);
+      assertEquals(newMetadataValue, metadataValue,
+            String.format(CORRECT_VALUE_OBJECT_FMT, "Value", "MetadataValue", metadataValue, newMetadataValue));
    }
 
    @Test(description = "GET /vApp/{id}/metadata", dependsOnMethods = { "testSetMetadataValue" })
@@ -898,24 +895,22 @@ public class VmApiLiveTest extends AbstractVAppApiLiveTest {
    @Test(description = "GET /vApp/{id}/metadata/{key}", dependsOnMethods = { "testGetMetadata" })
    public void testGetOrgMetadataValue() {
       key = name("key-");
-      String value = name("value-");
-      metadataValue = MetadataValue.builder().value(value).build();
-      vmApi.getMetadataApi(vmUrn).putEntry(key, metadataValue);
+      metadataValue = name("value-");
+
+      //TODO: block!!
+      vmApi.getMetadataApi(vmUrn).put(key, metadataValue);
 
       // Call the method being tested
-      MetadataValue metadataValue = vmApi.getMetadataApi(vmUrn).getValue(key);
-
-      String expected = metadataValue.getValue();
-
-      checkMetadataValue(metadataValue);
-      assertEquals(metadataValue.getValue(), expected,
-               String.format(CORRECT_VALUE_OBJECT_FMT, "Value", "MetadataValue", expected, metadataValue.getValue()));
+      String newMetadataValue = vmApi.getMetadataApi(vmUrn).get(key);
+      
+      assertEquals(newMetadataValue, metadataValue,
+            String.format(CORRECT_VALUE_OBJECT_FMT, "Value", "MetadataValue", metadataValue, newMetadataValue));
    }
 
    @Test(description = "DELETE /vApp/{id}/metadata/{key}", dependsOnMethods = { "testSetMetadataValue" })
    public void testRemoveMetadataEntry() {
       // Delete the entry
-      Task task = vmApi.getMetadataApi(vmUrn).removeEntry(key);
+      Task task = vmApi.getMetadataApi(vmUrn).remove(key);
       retryTaskSuccess.apply(task);
 
       // Confirm the entry has been removed
@@ -933,8 +928,7 @@ public class VmApiLiveTest extends AbstractVAppApiLiveTest {
       // Store a value, to be removed
       String key = name("key-");
       String value = name("value-");
-      Metadata addedMetadata = Metadata.builder().entry(MetadataEntry.builder().key(key).value(value).build()).build();
-      Task task = vmApi.getMetadataApi(vmUrn).merge(addedMetadata);
+      Task task = vmApi.getMetadataApi(vmUrn).putAll(ImmutableMap.of(key, value));
       retryTaskSuccess.apply(task);
 
       // Confirm the entry contains everything that was there, and everything that was being added

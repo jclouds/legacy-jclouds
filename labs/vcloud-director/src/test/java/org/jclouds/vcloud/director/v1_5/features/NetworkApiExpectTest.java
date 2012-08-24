@@ -38,7 +38,6 @@ import org.jclouds.vcloud.director.v1_5.domain.Error;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.network.DhcpService;
 import org.jclouds.vcloud.director.v1_5.domain.network.IpAddresses;
 import org.jclouds.vcloud.director.v1_5.domain.network.IpRange;
@@ -216,22 +215,9 @@ public class NetworkApiExpectTest extends VCloudDirectorAdminApiExpectTest {
    @Test
    public void testGetNetworkMetadataEntryHref() {
       VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, getMetadataValue, getMetadataValueResponse);
-      assertEquals(api.getNetworkApi().getMetadataApi(networkHref).getValue("KEY"), metadataValue());
+      assertEquals(api.getNetworkApi().getMetadataApi(networkHref).get("KEY"), "value");
    }
    
-   private MetadataValue metadataValue() {
-      return MetadataValue.builder()
-               .href(URI.create("https://vcloudbeta.bluelock.com/api/network/55a677cf-ab3f-48ae-b880-fab90421980c/metadata/key"))
-               .link(Link.builder()
-                  .rel("up")
-                  .type("application/vnd.vmware.vcloud.metadata+xml")
-                  .href(URI.create("https://vcloudbeta.bluelock.com/api/network/55a677cf-ab3f-48ae-b880-fab90421980c/metadata"))
-                  .build())
-               .value("value")
-               .build();
-   }
-
-
    public static OrgNetwork network() {
       return OrgNetwork.builder()
          .name("ilsolation01-Jclouds")
