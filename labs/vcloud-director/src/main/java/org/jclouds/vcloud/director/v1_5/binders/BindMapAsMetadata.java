@@ -16,29 +16,34 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.vcloud.director.v1_5.domain;
+package org.jclouds.vcloud.director.v1_5.binders;
 
-import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.net.URI;
-import java.util.Set;
+import java.util.Map;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
-
-import com.google.common.base.Objects;
-import com.google.common.base.Objects.ToStringHelper;
-import com.google.common.collect.Sets;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.rest.binders.BindToXMLPayload;
+import org.jclouds.vcloud.director.v1_5.domain.Metadata;
+import org.jclouds.xml.XMLParser;
 
 /**
- * Represents a metadata entry
- * <p/>
- * <pre>
- * &lt;xs:complexType name="MetadataType"&gt;
- * </pre>
- *
- * @author grkvlt@apache.org
+ * Changes a Map to the crufty {@link Metadata type}
  */
+@Singleton
+public class BindMapAsMetadata extends BindToXMLPayload {
+
+   @Inject
+   public BindMapAsMetadata(final XMLParser xmlParser) {
+      super(xmlParser);
+   }
+
+   @SuppressWarnings("unchecked")
+   @Override
+   public <R extends HttpRequest> R bindToRequest(final R request, final Object input) {
+      return super.bindToRequest(request, Metadata.toMetadata(Map.class.cast(checkNotNull(input, "input"))));
+   }
+}

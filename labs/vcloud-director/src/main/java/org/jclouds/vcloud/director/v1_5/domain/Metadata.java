@@ -48,6 +48,16 @@ import com.google.common.collect.Sets;
  */
 @XmlRootElement(name = "Metadata")
 public class Metadata extends Resource implements Map<String, String> {
+   
+   public static Metadata toMetadata(Map<String, String> input) {
+      if (input instanceof Metadata)
+         return Metadata.class.cast(input);
+      Builder<?> builder = builder();
+      for (Map.Entry<String, String> entry : input.entrySet()) {
+         builder.entry(MetadataEntry.builder().entry(entry.getKey(), entry.getValue()).build());
+      }
+      return builder.build();
+   }
 
    public static final String MEDIA_TYPE = VCloudDirectorMediaType.METADATA;
 
@@ -66,7 +76,7 @@ public class Metadata extends Resource implements Map<String, String> {
    public static abstract class Builder<B extends Builder<B>> extends Resource.Builder<B> {
 
       private Set<MetadataEntry> metadataEntries = Sets.newLinkedHashSet();
-
+      
       /**
        * @see Metadata#getMetadataEntries()
        */

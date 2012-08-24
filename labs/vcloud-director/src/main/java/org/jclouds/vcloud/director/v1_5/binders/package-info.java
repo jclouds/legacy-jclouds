@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,21 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.carrenza.vcloud.director;
+@XmlSchema(namespace = VCLOUD_1_5_NS,
+      elementFormDefault = XmlNsForm.QUALIFIED,
+      xmlns = {
+            @XmlNs(prefix = "", namespaceURI = VCLOUD_1_5_NS)
+      }
+)
+@XmlAccessorType(XmlAccessType.FIELD)
+package org.jclouds.vcloud.director.v1_5.binders;
 
-import org.jclouds.vcloud.director.v1_5.HttpClientLiveTest;
-import org.testng.annotations.Test;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 
-/**
- * {@inheritDoc}
- * 
- * @author danikov
- * @author grkvlt
- */
-@Test(groups = { "live", "user" }, singleThreaded = true, testName = "CarrenzaVCloudDirectorHttpClientLiveTest")
-public class CarrenzaVCloudDirectorHttpClientLiveTest extends HttpClientLiveTest {
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlNs;
+import javax.xml.bind.annotation.XmlNsForm;
+import javax.xml.bind.annotation.XmlSchema;
 
-   public CarrenzaVCloudDirectorHttpClientLiveTest() {
-      provider = "carrenza-vcloud-director";
-   }
-}
