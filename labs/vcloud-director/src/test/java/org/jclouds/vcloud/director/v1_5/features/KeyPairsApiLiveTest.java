@@ -46,7 +46,6 @@ import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.File;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Media;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.Vdc;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorApiLiveTest;
@@ -68,7 +67,7 @@ import com.google.inject.Inject;
  */
 @Test(groups = { "live", "user" }, singleThreaded = true, testName = "KeyPairsApiLiveTest")
 public class KeyPairsApiLiveTest extends BaseVCloudDirectorApiLiveTest {
-	
+
 	@Inject
 	protected Json json;
 	public static final String MEDIA = "media";
@@ -77,6 +76,7 @@ public class KeyPairsApiLiveTest extends BaseVCloudDirectorApiLiveTest {
 	protected MediaApi mediaApi;
 
 	private Map<String, String> sshKey;
+	private String keyPairContainer = "keypairs";
 
 	@Override
 	@BeforeClass(alwaysRun = true)
@@ -89,23 +89,20 @@ public class KeyPairsApiLiveTest extends BaseVCloudDirectorApiLiveTest {
 	public void testCreateKeyPair() throws URISyntaxException {
 		sshKey = SshKeys.generate();
 		String keyPairName = "NewKeyPair";
-		String keyPairsContainerName = "keypairs";
 		Vdc currentVDC = lazyGetVdc();
-		Media keyPairsContainer = findOrUploadKeyPairInVDCNamed(currentVDC,
-				keyPairsContainerName, keyPairName);
-		MetadataValue keypairValue = mediaApi.getMetadataApi(
-				keyPairsContainer.getId()).getValue(keyPairName);
-		assertEquals(keypairValue.getValue(), generateKeyPair(keyPairName)
-				.getValue());
+		Media keyPairsContainer = findOrCreateKeyPairContainerInVDCNamed(currentVDC,
+				keyPairContainer, keyPairName);
+		String keypairValue = mediaApi.getMetadataApi(
+				keyPairsContainer.getId()).get(keyPairName);
+		assertEquals(keypairValue, generateKeyPair(keyPairName));
 	}
 
 	@Test(description = "DeleteKeyPair", dependsOnMethods = { "testCreateKeyPair" })
 	public void testDeleteKeyPair() {
 		String keyPairName = "NewKeyPair";
-		String keyPairsContainerName = "keypairs";
 		Vdc currentVDC = lazyGetVdc();
-		Media keyPairsContainer = findOrUploadKeyPairInVDCNamed(currentVDC,
-				keyPairsContainerName, keyPairName);
+		Media keyPairsContainer = findOrCreateKeyPairContainerInVDCNamed(currentVDC,
+				keyPairContainer, keyPairName);
 		Task removeMedia = mediaApi.remove(keyPairsContainer.getId());
 		Checks.checkTask(removeMedia);
 		assertTrue(retryTaskSuccess.apply(removeMedia),
@@ -116,7 +113,7 @@ public class KeyPairsApiLiveTest extends BaseVCloudDirectorApiLiveTest {
 				keyPairsContainer != null ? keyPairsContainer.toString() : ""));
 	}
 
-	private Media findOrUploadKeyPairInVDCNamed(Vdc currentVDC,
+	private Media findOrCreateKeyPairContainerInVDCNamed(Vdc currentVDC,
 			String keyPairsContainerName, final String keyPairName) {
 		Media keyPairsContainer = null;
 
@@ -125,7 +122,7 @@ public class KeyPairsApiLiveTest extends BaseVCloudDirectorApiLiveTest {
 
 					@Override
 					public boolean apply(Media input) {
-						return mediaApi.getMetadataApi(input.getId()).getValue(
+						return mediaApi.getMetadataApi(input.getId()).get(
 								keyPairName) != null;
 					}
 				});
@@ -138,12 +135,11 @@ public class KeyPairsApiLiveTest extends BaseVCloudDirectorApiLiveTest {
 					keyPairsContainerName, keyPairName);
 		}
 		return keyPairsContainer;
-
 	}
 
 	private Media uploadKeyPairInVCD(Vdc currentVDC,
 			String keyPairsContainerName, String keyPairName) {
-		Media keyPairsContainer = generateEmptyMediaInVDC(currentVDC,
+		Media keyPairsContainer = addEmptyMediaInVDC(currentVDC,
 				keyPairsContainerName);
 		assertNotNull(keyPairsContainer.getFiles(),
 				String.format(OBJ_FIELD_REQ, MEDIA, "files"));
@@ -159,8 +155,7 @@ public class KeyPairsApiLiveTest extends BaseVCloudDirectorApiLiveTest {
 				.upload(uploadLink.getHref(), Payloads.newByteArrayPayload(iso));
 
 		Checks.checkMediaFor(VCloudDirectorMediaType.MEDIA, keyPairsContainer);
-		MetadataValue keyPair = generateKeyPair(keyPairName);
-		setKeyPairOnkeyPairsContainer(keyPairsContainer, keyPairName, keyPair);
+		setKeyPairOnkeyPairsContainer(keyPairsContainer, keyPairName, generateKeyPair(keyPairName));
 
 		return keyPairsContainer;
 	}
@@ -189,7 +184,7 @@ public class KeyPairsApiLiveTest extends BaseVCloudDirectorApiLiveTest {
 		return uploadLink;
 	}
 
-	private Media generateEmptyMediaInVDC(Vdc currentVDC, String keyPairName) {
+	private Media addEmptyMediaInVDC(Vdc currentVDC, String keyPairName) {
 		Link addMedia = find(
 				currentVDC.getLinks(),
 				and(relEquals("add"), typeEquals(VCloudDirectorMediaType.MEDIA)));
@@ -203,20 +198,17 @@ public class KeyPairsApiLiveTest extends BaseVCloudDirectorApiLiveTest {
 		return emptyMedia;
 	}
 
-	private MetadataValue generateKeyPair(String keyPairName) {
+	private String generateKeyPair(String keyPairName) {
 		Map<String, String> key = Maps.newHashMap();
 		key.put("keyName", keyPairName);
 		key.put("keyFingerprint", SshKeys.sha1PrivateKey(sshKey.get("private")));
 		key.put("publicKey", sshKey.get("public"));
-
-		MetadataValue keyPair = MetadataValue.builder().value(json.toJson(key))
-				.build();
-		return keyPair;
+		return json.toJson(key);
 	}
 
 	private void setKeyPairOnkeyPairsContainer(Media media, String keyPairName,
-			MetadataValue keyPair) {
-		Task setKeyPair = mediaApi.getMetadataApi(media.getId()).putEntry(
+			String keyPair) {
+		Task setKeyPair = mediaApi.getMetadataApi(media.getId()).put(
 				keyPairName, keyPair);
 		Checks.checkTask(setKeyPair);
 		assertTrue(retryTaskSuccess.apply(setKeyPair),
