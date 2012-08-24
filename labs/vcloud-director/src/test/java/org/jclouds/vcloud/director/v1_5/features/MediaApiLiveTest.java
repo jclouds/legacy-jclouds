@@ -27,6 +27,7 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.G
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_DEL;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_ATTRB_DEL;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_CLONE;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_CONTAINS;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_EQ;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_LIST_SIZE_EQ;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_LIST_SIZE_GE;
@@ -54,6 +55,8 @@ import org.jclouds.vcloud.director.v1_5.domain.File;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Media;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
+import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
+import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
@@ -66,7 +69,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 /**
@@ -92,7 +95,7 @@ public class MediaApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    private Media media, oldMedia;
    private Owner owner;
    private Metadata metadata;
-   private String metadataValue;
+   private MetadataValue metadataValue;
    private String metadataEntryValue = "value";
 
    @Override
@@ -176,7 +179,7 @@ public class MediaApiLiveTest extends BaseVCloudDirectorApiLiveTest {
 
       owner = media.getOwner();
       assertNotNull(owner, String.format(OBJ_FIELD_REQ_LIVE, MEDIA, "owner"));
-      Checks.checkResource(media.getOwner());
+      Checks.checkResourceType(media.getOwner());
 
       Checks.checkMediaFor(MEDIA, media);
    }
@@ -190,7 +193,7 @@ public class MediaApiLiveTest extends BaseVCloudDirectorApiLiveTest {
                         directOwner.toString()));
 
       // parent type
-      Checks.checkResource(directOwner);
+      Checks.checkResourceType(directOwner);
 
       // required
       assertNotNull(directOwner.getUser(), String.format(OBJ_FIELD_REQ, "Owner", "user"));
@@ -220,7 +223,7 @@ public class MediaApiLiveTest extends BaseVCloudDirectorApiLiveTest {
       assertTrue(media.clone(oldMedia),
                String.format(OBJ_FIELD_CLONE, MEDIA, "copied media", media.toString(), oldMedia.toString()));
 
-      mediaApi.getMetadataApi(media.getId()).put("key", "value");
+      mediaApi.getMetadataApi(media.getId()).putEntry("key", MetadataValue.builder().value("value").build());
 
       media = vdcApi
                .cloneMedia(vdcUrn, CloneMediaParams.builder().source(Reference.builder().fromEntity(media).build())
@@ -283,59 +286,83 @@ public class MediaApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    @Test(description = "POST /media/{id}/metadata", dependsOnMethods = { "testGetMedia" })
    public void testMergeMetadata() {
       // test new
-      Task mergeMetadata = mediaApi.getMetadataApi(media.getId()).putAll(ImmutableMap.of("testKey", "testValue"));
+      Set<MetadataEntry> inputEntries = ImmutableSet.of(MetadataEntry.builder().entry("testKey", "testValue").build());
+      Metadata inputMetadata = Metadata.builder().entries(inputEntries).build();
+
+      Task mergeMetadata = mediaApi.getMetadataApi(media.getId()).merge(inputMetadata);
       Checks.checkTask(mergeMetadata);
       assertTrue(retryTaskSuccess.apply(mergeMetadata), String.format(TASK_COMPLETE_TIMELY, "mergeMetadata(new)"));
       metadata = mediaApi.getMetadataApi(media.getId()).get();
       Checks.checkMetadataFor(MEDIA, metadata);
-      assertEquals(metadata.get("testKey"), "testValue");
+      checkMetadataContainsEntries(metadata, inputEntries);
 
       media = mediaApi.get(media.getId());
       Checks.checkMediaFor(MEDIA, media);
 
       // test edit
-      mergeMetadata = mediaApi.getMetadataApi(media.getId()).put("testKey", "new testValue");
+      inputEntries = ImmutableSet.of(MetadataEntry.builder().entry("testKey", "new testValue").build());
+      inputMetadata = Metadata.builder().entries(inputEntries).build();
+
+      mergeMetadata = mediaApi.getMetadataApi(media.getId()).merge(inputMetadata);
       Checks.checkTask(mergeMetadata);
       assertTrue(retryTaskSuccess.apply(mergeMetadata), String.format(TASK_COMPLETE_TIMELY, "mergeMetadata(edit)"));
       metadata = mediaApi.getMetadataApi(media.getId()).get();
       Checks.checkMetadataFor(MEDIA, metadata);
-      assertEquals(metadata.get("testKey"), "new testValue");
+      checkMetadataContainsEntries(metadata, inputEntries);
 
       media = mediaApi.get(media.getId());
       Checks.checkMediaFor(MEDIA, media);
    }
 
+   private void checkMetadataContainsEntries(Metadata metadata, Set<MetadataEntry> entries) {
+      for (MetadataEntry inputEntry : entries) {
+         boolean found = false;
+         for (MetadataEntry entry : metadata.getMetadataEntries()) {
+            if (equal(inputEntry.getKey(), entry.getKey())) {
+               found = true;
+               break;
+            }
+         }
+
+         if (!found) {
+            String.format(OBJ_FIELD_CONTAINS, MEDIA, "metadata", Iterables.toString(metadata.getMetadataEntries()),
+                     Iterables.toString(entries));
+         }
+      }
+   }
+
    @Test(description = "GET /media/{id}/metadata/{key}", dependsOnMethods = { "testSetMetadataValue" })
    public void testGetMetadataValue() {
-      metadataValue = mediaApi.getMetadataApi(media.getId()).get("key");
-      assertNotNull(metadataValue);
+      metadataValue = mediaApi.getMetadataApi(media.getId()).getValue("key");
+      Checks.checkMetadataValueFor(MEDIA, metadataValue);
    }
 
    @Test(description = "PUT /media/{id}/metadata/{key}", dependsOnMethods = { "testMergeMetadata" })
    public void testSetMetadataValue() {
       metadataEntryValue = "value";
-      
-      Task setMetadataEntry = mediaApi.getMetadataApi(media.getId()).put("key", metadataEntryValue);
+      MetadataValue newValue = MetadataValue.builder().value(metadataEntryValue).build();
+
+      Task setMetadataEntry = mediaApi.getMetadataApi(media.getId()).putEntry("key", newValue);
       Checks.checkTask(setMetadataEntry);
       assertTrue(retryTaskSuccess.apply(setMetadataEntry), String.format(TASK_COMPLETE_TIMELY, "setMetadataEntry"));
-      metadataValue = mediaApi.getMetadataApi(media.getId()).get("key");
-      assertNotNull(metadataValue);
+      metadataValue = mediaApi.getMetadataApi(media.getId()).getValue("key");
+      Checks.checkMetadataValueFor(MEDIA, metadataValue);
    }
 
    @Test(description = "DELETE /media/{id}/metadata/{key}", dependsOnMethods = { "testGetMetadata",
             "testGetMetadataValue" })
    public void testRemoveMetadata() {
-      Task remove = mediaApi.getMetadataApi(media.getId()).remove("testKey");
-      Checks.checkTask(remove);
-      assertTrue(retryTaskSuccess.apply(remove), String.format(TASK_COMPLETE_TIMELY, "remove"));
+      Task removeEntry = mediaApi.getMetadataApi(media.getId()).removeEntry("testKey");
+      Checks.checkTask(removeEntry);
+      assertTrue(retryTaskSuccess.apply(removeEntry), String.format(TASK_COMPLETE_TIMELY, "removeEntry"));
 
-      metadataValue = mediaApi.getMetadataApi(media.getId()).get("testKey");
+      metadataValue = mediaApi.getMetadataApi(media.getId()).getValue("testKey");
       assertNull(metadataValue, String.format(OBJ_FIELD_ATTRB_DEL, MEDIA, "Metadata",
                metadataValue != null ? metadataValue.toString() : "", "MetadataEntry",
                metadataValue != null ? metadataValue.toString() : ""));
 
-      metadataValue = mediaApi.getMetadataApi(media.getId()).get("key");
-      assertNotNull(metadataValue);
+      metadataValue = mediaApi.getMetadataApi(media.getId()).getValue("key");
+      Checks.checkMetadataValueFor(MEDIA, metadataValue);
 
       media = mediaApi.get(media.getId());
       Checks.checkMediaFor(MEDIA, media);

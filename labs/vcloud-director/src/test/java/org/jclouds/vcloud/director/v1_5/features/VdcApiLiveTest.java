@@ -24,8 +24,8 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.O
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.URN_REQ_LIVE;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.fail;
 
 import java.util.Map;
@@ -33,6 +33,8 @@ import java.util.Set;
 
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
+import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
+import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.ResourceEntity;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
@@ -121,7 +123,7 @@ public class VdcApiLiveTest extends BaseVCloudDirectorApiLiveTest {
 
       if (metadataSet) {
          try {
-            Task remove = adminContext.getApi().getVdcApi().getMetadataApi(vdcUrn).remove("key");
+            Task remove = adminContext.getApi().getVdcApi().getMetadataApi(vdcUrn).removeEntry("key");
             taskDoneEventually(remove);
          } catch (Exception e) {
             logger.warn(e, "Error deleting metadata entry");
@@ -321,9 +323,13 @@ public class VdcApiLiveTest extends BaseVCloudDirectorApiLiveTest {
       String key = Iterables.getFirst(metadataMap.keySet(), "MadeUpKey!");
       String value = metadataMap.get(key);
 
-      String metadataValue = vdcApi.getMetadataApi(vdcUrn).get(key);
+      MetadataValue metadataValue = vdcApi.getMetadataApi(vdcUrn).getValue(key);
 
-      assertEquals(metadataValue, value);
+      Checks.checkMetadataValueFor(VDC, metadataValue, value);
    }
    
+   private void setupMetadata() {
+      adminContext.getApi().getVdcApi().getMetadataApi(vdcUrn).putEntry("key", MetadataValue.builder().value("value").build());
+      metadataSet = true;
+   }
 }

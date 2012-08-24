@@ -234,7 +234,7 @@ public abstract class BaseVCloudDirectorExpectTest<T> extends BaseRestApiExpectT
    
    @Deprecated
    protected class VcloudHttpResponsePrimer {
-      private HttpResponse.Builder<?> builder = HttpResponse.builder().statusCode(200);
+      private HttpResponse.Builder<?> builder = HttpResponse.builder();
 
       public VcloudHttpResponsePrimer() {
       }

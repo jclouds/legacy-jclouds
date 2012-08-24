@@ -37,12 +37,12 @@ import org.jclouds.vcloud.director.v1_5.domain.CatalogItem;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
+import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorApi;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.net.HttpHeaders;
 
@@ -182,7 +182,7 @@ public class CatalogApiExpectTest extends VCloudDirectorApiExpectTest {
    @Test
    public void testGetCatalogMetadataEntryHref() {
       VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, getMetadataValue, getMetadataValueResponse);
-      assertEquals(api.getCatalogApi().getMetadataApi(catalogHref).get("KEY"), "VALUE");
+      assertEquals(api.getCatalogApi().getMetadataApi(catalogHref).getValue("KEY"), metadataValue());
    }
 
    static String item = "a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df";
@@ -328,7 +328,9 @@ public class CatalogApiExpectTest extends VCloudDirectorApiExpectTest {
    @Test
    public void testMergeCatalogItemMetadataHref() {
       VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, mergeItemMetadata, mergeItemMetadataResponse);
-      assertEquals(api.getCatalogApi().getItemMetadataApi(itemHref).putAll(ImmutableMap.of("KEY", "VALUE")), mergeMetadataTask());
+      // TODO: horrendous way of representing Map<String,String>
+      Metadata metadata = Metadata.builder().entry(MetadataEntry.builder().entry("KEY", "VALUE").build()).build();
+      assertEquals(api.getCatalogApi().getItemMetadataApi(itemHref).merge(metadata), mergeMetadataTask());
    }
    
    HttpRequest getItemMetadataValue = HttpRequest.builder()
@@ -346,7 +348,7 @@ public class CatalogApiExpectTest extends VCloudDirectorApiExpectTest {
    @Test
    public void testGetCatalogItemMetadataEntryHref() {
       VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, getItemMetadataValue, getItemMetadataValueResponse);
-      assertEquals(api.getCatalogApi().getMetadataApi(itemHref).get("KEY"), "VALUE");
+      assertEquals(api.getCatalogApi().getMetadataApi(itemHref).getValue("KEY"), itemMetadataValue());
    }
    
    HttpRequest putItemMetadata = HttpRequest.builder()
@@ -366,7 +368,7 @@ public class CatalogApiExpectTest extends VCloudDirectorApiExpectTest {
    @Test
    public void testSetCatalogItemMetadataEntryHref() {
       VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, putItemMetadata, putItemMetadataResponse);
-      assertEquals(api.getCatalogApi().getItemMetadataApi(itemHref).put("KEY", "KITTENS"), setMetadataValueTask());
+      assertEquals(api.getCatalogApi().getItemMetadataApi(itemHref).putEntry("KEY", MetadataValue.builder().value("KITTENS").build()), setMetadataValueTask());
    }
    
    HttpRequest removeItemMetadataEntry = HttpRequest.builder()
@@ -384,7 +386,7 @@ public class CatalogApiExpectTest extends VCloudDirectorApiExpectTest {
    @Test
    public void testRemoveCatalogItemMetadataEntryHref() {
       VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, removeItemMetadataEntry, removeItemMetadataEntryResponse);
-      assertEquals(api.getCatalogApi().getItemMetadataApi(itemHref).remove("KEY"), removeTask());
+      assertEquals(api.getCatalogApi().getItemMetadataApi(itemHref).removeEntry("KEY"), removeEntryTask());
    }
    
    public static final Catalog catalog() {
@@ -484,6 +486,30 @@ public class CatalogApiExpectTest extends VCloudDirectorApiExpectTest {
                   .entry("KEY", "VALUE")
                   .build();
    }
+
+   public static MetadataValue metadataValue() {
+      return  MetadataValue.builder()
+                  .href(URI.create(endpoint + "/catalog/" + catalog + "/metadata/KEY"))
+                  .link(Link.builder()
+                        .rel("up")
+                        .type("application/vnd.vmware.vcloud.metadata+xml")
+                        .href(URI.create(endpoint + "/catalog/" + catalog + "/metadata"))
+                        .build())
+                  .value("VALUE")
+                  .build();
+   }
+
+   public static MetadataValue itemMetadataValue() {
+      return  MetadataValue.builder()
+                  .href(URI.create(endpoint + "/catalogItem/" + item + "/metadata/KEY"))
+                  .link(Link.builder()
+                        .rel("up")
+                        .type("application/vnd.vmware.vcloud.metadata+xml")
+                        .href(URI.create(endpoint + "/catalogItem/" + item + "/metadata"))
+                        .build())
+                  .value("VALUE")
+                  .build();
+   }
    
    public static CatalogItem catalogItem() {
       return CatalogItem.builder()
@@ -581,7 +607,7 @@ public class CatalogApiExpectTest extends VCloudDirectorApiExpectTest {
             .build();
    }
 
-   public static Task removeTask() {
+   public static Task removeEntryTask() {
       return Task.builder()
             .name("task")
             .id("urn:vcloud:task:c6dca927-eab4-41fa-ad6a-3ac58602541c")

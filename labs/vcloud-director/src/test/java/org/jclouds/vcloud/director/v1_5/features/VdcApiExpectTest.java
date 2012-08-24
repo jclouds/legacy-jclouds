@@ -35,6 +35,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Media;
 import org.jclouds.vcloud.director.v1_5.domain.Media.ImageType;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
+import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.User;
@@ -370,7 +371,9 @@ public class VdcApiExpectTest extends VCloudDirectorAdminApiExpectTest {
                .xmlFilePayload("/vdc/metadataValue.xml", VCloudDirectorMediaType.METADATA_VALUE)
                .httpResponseBuilder().build());
       
-      assertEquals(api.getVdcApi().getMetadataApi(vdcUri).get("key"), "");
+      MetadataValue expected = metadataValue();
+     
+      assertEquals(api.getVdcApi().getMetadataApi(vdcUri).getValue("key"), expected);
    }
 
    public static Vdc getVdc() {
@@ -575,6 +578,11 @@ public class VdcApiExpectTest extends VCloudDirectorAdminApiExpectTest {
    }
    
    private Metadata metadata() {
+      // TODO Auto-generated method stub
+      return null;
+   }
+   
+   private MetadataValue metadataValue() {
       // TODO Auto-generated method stub
       return null;
    }

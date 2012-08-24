@@ -33,6 +33,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Media;
 import org.jclouds.vcloud.director.v1_5.domain.Media.ImageType;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
+import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
@@ -258,7 +259,7 @@ public class MediaApiExpectTest extends VCloudDirectorAdminApiExpectTest {
       Metadata inputMetadata = metadata();
       Task expectedTask = mergeMetadataTask();
 
-      assertEquals(api.getMediaApi().getMetadataApi(mediaUri).putAll(inputMetadata), expectedTask);
+      assertEquals(api.getMediaApi().getMetadataApi(mediaUri).merge(inputMetadata), expectedTask);
    }
    
    public void testGetMetadataValue() {
@@ -272,8 +273,11 @@ public class MediaApiExpectTest extends VCloudDirectorAdminApiExpectTest {
             new VcloudHttpResponsePrimer()
                .xmlFilePayload("/media/metadataValue.xml", VCloudDirectorMediaType.METADATA_VALUE)
                .httpResponseBuilder().build());
-     
-      assertEquals(api.getMediaApi().getMetadataApi(mediaUri).get("key"), "value");
+      
+      MetadataValue expected = metadataValue();
+      
+
+      assertEquals(api.getMediaApi().getMetadataApi(mediaUri).getValue("key"), expected);
    }
    
    @Test
@@ -289,10 +293,12 @@ public class MediaApiExpectTest extends VCloudDirectorAdminApiExpectTest {
             new VcloudHttpResponsePrimer()
                .xmlFilePayload("/media/setMetadataValueTask.xml", VCloudDirectorMediaType.TASK)
                .httpResponseBuilder().build());
-            
+      
+      MetadataValue inputMetadataValue = MetadataValue.builder().value("value").build();
+      
       Task expectedTask = setMetadataEntryTask();
 
-      assertEquals(api.getMediaApi().getMetadataApi(mediaUri).put("key", "value"), expectedTask);
+      assertEquals(api.getMediaApi().getMetadataApi(mediaUri).putEntry("key", inputMetadataValue), expectedTask);
    }
    
    @Test
@@ -308,9 +314,9 @@ public class MediaApiExpectTest extends VCloudDirectorAdminApiExpectTest {
                .xmlFilePayload("/media/removeMetadataEntryTask.xml", VCloudDirectorMediaType.TASK)
                .httpResponseBuilder().build());
       
-      Task expectedTask = removeTask();
+      Task expectedTask = removeEntryTask();
 
-      assertEquals(api.getMediaApi().getMetadataApi(mediaUri).remove("key"), expectedTask);
+      assertEquals(api.getMediaApi().getMetadataApi(mediaUri).removeEntry("key"), expectedTask);
    }
    
    @Test
@@ -629,6 +635,27 @@ public class MediaApiExpectTest extends VCloudDirectorAdminApiExpectTest {
          .build();
    }
    
+   private static MetadataValue metadataValue() {
+      return MetadataValue.builder()
+            .type("application/vnd.vmware.vcloud.metadata.value+xml")
+            .href(URI.create("https://mycloud.greenhousedata.com/api/media/c93e5cdc-f29a-4749-8ed2-093df04cc75e/metadata/key"))
+            .link(Link.builder()
+               .rel("up")
+               .type("application/vnd.vmware.vcloud.metadata+xml")
+               .href(URI.create("https://mycloud.greenhousedata.com/api/media/c93e5cdc-f29a-4749-8ed2-093df04cc75e/metadata"))
+               .build())
+            .link(Link.builder()
+               .rel("edit")
+               .type("application/vnd.vmware.vcloud.metadata.value+xml")
+               .href(URI.create("https://mycloud.greenhousedata.com/api/media/c93e5cdc-f29a-4749-8ed2-093df04cc75e/metadata/key"))
+               .build())
+            .link(Link.builder()
+               .rel("remove")
+               .href(URI.create("https://mycloud.greenhousedata.com/api/media/c93e5cdc-f29a-4749-8ed2-093df04cc75e/metadata/key"))
+               .build())
+            .value("value").build();
+   }
+   
    private Task mergeMetadataTask() {
       return Task.builder()
          .status("running")
@@ -695,7 +722,7 @@ public class MediaApiExpectTest extends VCloudDirectorAdminApiExpectTest {
          .build();
    }
    
-   public static Task removeTask() {
+   public static Task removeEntryTask() {
       return Task.builder()
          .name("task")
          .id("urn:vcloud:task:c6dca927-eab4-41fa-ad6a-3ac58602541c")
