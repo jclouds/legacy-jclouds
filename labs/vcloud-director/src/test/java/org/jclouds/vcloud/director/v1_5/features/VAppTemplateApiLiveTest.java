@@ -23,6 +23,7 @@ import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkLeaseSettingsS
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadata;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadataFor;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadataKeyAbsentFor;
+import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadataValue;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkNetworkConfigSection;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkOvfEnvelope;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkOvfNetworkSection;
@@ -47,6 +48,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Link.Rel;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
+import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.ProductSectionList;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
@@ -82,7 +84,7 @@ public class VAppTemplateApiLiveTest extends AbstractVAppApiLiveTest {
    protected void tidyUp() {
       if (key != null) {
          try {
-            Task remove = vAppTemplateApi.getMetadataApi(vAppTemplateUrn).remove(key);
+            Task remove = vAppTemplateApi.getMetadataApi(vAppTemplateUrn).removeEntry(key);
             taskDoneEventually(remove);
          } catch (Exception e) {
             logger.warn(e, "Error when deleting metadata entry '%s'", key);
@@ -155,9 +157,10 @@ public class VAppTemplateApiLiveTest extends AbstractVAppApiLiveTest {
       Metadata metadata = vAppTemplateApi.getMetadataApi(vAppTemplateUrn).get();
       MetadataEntry entry = Iterables.get(metadata.getMetadataEntries(), 0);
 
-      String val = vAppTemplateApi.getMetadataApi(vAppTemplateUrn).get(entry.getKey());
+      MetadataValue val = vAppTemplateApi.getMetadataApi(vAppTemplateUrn).getValue(entry.getKey());
 
-      assertEquals(val, entry.getValue());
+      checkMetadataValue(val);
+      assertEquals(val.getValue(), entry.getValue());
    }
 
    @Test(description = "GET /vAppTemplate/{id}/networkConfigSection")
@@ -202,8 +205,10 @@ public class VAppTemplateApiLiveTest extends AbstractVAppApiLiveTest {
 
       key = name("key-");
       val = name("value-");
+      MetadataEntry metadataEntry = MetadataEntry.builder().entry(key, val).build();
+      Metadata metadata = Metadata.builder().fromMetadata(oldMetadata).entry(metadataEntry).build();
 
-      final Task task = vAppTemplateApi.getMetadataApi(vAppTemplateUrn).putAll(ImmutableMap.of(key, val));
+      final Task task = vAppTemplateApi.getMetadataApi(vAppTemplateUrn).merge(metadata);
       assertTaskSucceeds(task);
 
       Metadata newMetadata = vAppTemplateApi.getMetadataApi(vAppTemplateUrn).get();
@@ -215,17 +220,18 @@ public class VAppTemplateApiLiveTest extends AbstractVAppApiLiveTest {
    @Test(description = "PUT /vAppTemplate/{id}/metadata/{key}", dependsOnMethods = { "testEditMetadata" })
    public void testEditMetadataValue() {
       val = "new" + val;
+      MetadataValue metadataValue = MetadataValue.builder().value(val).build();
 
-      final Task task = vAppTemplateApi.getMetadataApi(vAppTemplateUrn).put(key, val);
+      final Task task = vAppTemplateApi.getMetadataApi(vAppTemplateUrn).putEntry(key, metadataValue);
       retryTaskSuccess.apply(task);
 
-      String newMetadataValue = vAppTemplateApi.getMetadataApi(vAppTemplateUrn).get(key);
-      assertEquals(newMetadataValue, val);
+      MetadataValue newMetadataValue = vAppTemplateApi.getMetadataApi(vAppTemplateUrn).getValue(key);
+      assertEquals(newMetadataValue.getValue(), metadataValue.getValue());
    }
 
    @Test(description = "DELETE /vAppTemplate/{id}/metadata/{key}", dependsOnMethods = { "testGetMetadataValue" })
    public void testRemoveVAppTemplateMetadataValue() {
-      final Task deletionTask = vAppTemplateApi.getMetadataApi(vAppTemplateUrn).remove(key);
+      final Task deletionTask = vAppTemplateApi.getMetadataApi(vAppTemplateUrn).removeEntry(key);
       assertTaskSucceeds(deletionTask);
 
       Metadata newMetadata = vAppTemplateApi.getMetadataApi(vAppTemplateUrn).get();

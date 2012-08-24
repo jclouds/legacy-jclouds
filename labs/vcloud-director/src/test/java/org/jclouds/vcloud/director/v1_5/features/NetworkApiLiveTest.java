@@ -24,7 +24,7 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.O
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_REQ_LIVE;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REQUIRED_VALUE_OBJECT_FMT;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.URN_REQ_LIVE;
-import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkResource;
+import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkResourceType;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
@@ -33,6 +33,7 @@ import static org.testng.Assert.assertTrue;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
+import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.network.Network;
 import org.jclouds.vcloud.director.v1_5.domain.org.OrgNetwork;
@@ -70,7 +71,7 @@ public class NetworkApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    public void cleanUp() {
       if (metadataSet) {
          try {
-            Task remove = adminContext.getApi().getNetworkApi().getMetadataApi(networkUrn).remove("key");
+            Task remove = adminContext.getApi().getNetworkApi().getMetadataApi(networkUrn).removeEntry("key");
             taskDoneEventually(remove);
          } catch (Exception e) {
             logger.warn(e, "Error when deleting metadata");
@@ -94,8 +95,8 @@ public class NetworkApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    }
 
    private void setupMetadata() {
-      //TODO: block until complete
-      adminContext.getApi().getNetworkApi().getMetadataApi(networkUrn).put("key", "value");
+      adminContext.getApi().getNetworkApi().getMetadataApi(networkUrn)
+               .putEntry("key", MetadataValue.builder().value("value").build());
       metadataSet = true;
    }
 
@@ -111,7 +112,7 @@ public class NetworkApiLiveTest extends BaseVCloudDirectorApiLiveTest {
                String.format(OBJ_FIELD_REQ_LIVE, NETWORK, "metadata.entries"));
 
       // parent type
-      checkResource(metadata);
+      checkResourceType(metadata);
 
       for (MetadataEntry entry : metadata.getMetadataEntries()) {
          // required elements and attributes
@@ -121,14 +122,21 @@ public class NetworkApiLiveTest extends BaseVCloudDirectorApiLiveTest {
                   String.format(OBJ_FIELD_ATTRB_REQ, networkApi, "MetadataEntry", entry.getValue(), "value"));
 
          // parent type
-         checkResource(entry);
+         checkResourceType(entry);
       }
    }
 
    @Test(description = "GET /network/{id}/metadata/{key}", dependsOnMethods = { "testGetMetadata" })
    public void testGetMetadataValue() {
-      String metadataValue = networkApi.getMetadataApi(networkUrn).get("key");
+      MetadataValue metadataValue = networkApi.getMetadataApi(networkUrn).getValue("key");
 
-      assertEquals(metadataValue, "value", String.format(OBJ_FIELD_EQ, NETWORK, "metadataEntry.value", "value", metadataValue));
+      // Check parent type
+      checkResourceType(metadataValue);
+
+      // Check required elements and attributes
+      String value = metadataValue.getValue();
+      assertNotNull(value,
+               String.format(OBJ_FIELD_ATTRB_REQ, NETWORK, "MetadataEntry", metadataValue.toString(), "value"));
+      assertEquals(value, "value", String.format(OBJ_FIELD_EQ, NETWORK, "metadataEntry.value", "value", value));
    }
 }

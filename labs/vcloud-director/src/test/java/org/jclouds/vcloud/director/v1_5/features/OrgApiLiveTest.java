@@ -22,6 +22,7 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.C
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.CORRECT_VALUE_OBJECT_FMT;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.NOT_EMPTY_OBJECT_FMT;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadata;
+import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadataValue;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkOrg;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkReferenceType;
 import static org.testng.Assert.assertEquals;
@@ -31,6 +32,7 @@ import static org.testng.Assert.assertNotNull;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.AdminCatalog;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
+import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.org.OrgList;
@@ -65,7 +67,7 @@ public class OrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    public void cleanUp() throws Exception {
       if (adminMembersSet) {
          try {
-            Task remove = adminContext.getApi().getOrgApi().getMetadataApi(orgUrn).remove("KEY");
+            Task remove = adminContext.getApi().getOrgApi().getMetadataApi(orgUrn).removeEntry("KEY");
             taskDoneEventually(remove);
          } catch (Exception e) {
             logger.warn(e, "Error when deleting metadata entry");
@@ -124,8 +126,8 @@ public class OrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
     * the need for configuration
     */
    private void setupAdminMembers() {
-      //TODO: block until complete
-      adminContext.getApi().getOrgApi().getMetadataApi(orgUrn).put("KEY", "VALUE");
+      adminContext.getApi().getOrgApi().getMetadataApi(orgUrn)
+               .putEntry("KEY", MetadataValue.builder().value("VALUE").build());
 
       AdminCatalog newCatalog = AdminCatalog.builder().name("Test Catalog " + getTestDateTimeStamp())
                .description("created by testOrg()").build();
@@ -154,14 +156,16 @@ public class OrgApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    @Test(description = "GET /org/{id}/metadata/{key}", dependsOnMethods = { "testGetOrgMetadata" })
    public void testGetOrgMetadataValue() {
       // Call the method being tested
-      String value = orgApi.getMetadataApi(orgUrn).get("KEY");
+      MetadataValue value = orgApi.getMetadataApi(orgUrn).getValue("KEY");
 
       // NOTE The environment MUST have configured the metadata entry as '{ key="KEY", value="VALUE"
       // )'
 
       String expected = "VALUE";
 
-      assertEquals(value, expected, String.format(CORRECT_VALUE_OBJECT_FMT, "Value", "MetadataValue", expected, value));
+      checkMetadataValue(value);
+      assertEquals(value.getValue(), expected,
+               String.format(CORRECT_VALUE_OBJECT_FMT, "Value", "MetadataValue", expected, value.getValue()));
    }
 
 }
