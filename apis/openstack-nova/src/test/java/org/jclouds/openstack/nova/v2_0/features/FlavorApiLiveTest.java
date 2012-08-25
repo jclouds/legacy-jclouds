@@ -19,6 +19,8 @@
 package org.jclouds.openstack.nova.v2_0.features;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Set;
@@ -29,7 +31,7 @@ import org.jclouds.openstack.v2_0.domain.Resource;
 import org.testng.annotations.Test;
 
 /**
- * Tests behavior of {@code FlavorApi}
+ * Tests behavior of {@link FlavorApi}
  * 
  * @author Jeremy Daggett
  */
@@ -37,49 +39,69 @@ import org.testng.annotations.Test;
 public class FlavorApiLiveTest extends BaseNovaApiLiveTest {
 
    /**
-    * Tests the listing of Flavors (getFlavor() is tested too!)
+    * Tests the listing of Flavors.
     * 
     * @throws Exception
     */
-   @Test
+   @Test(description = "GET /v${apiVersion}/{tenantId}/flavors")
    public void testListFlavors() throws Exception {
-      for (String zoneId : novaContext.getApi().getConfiguredZones()) {
+      for (String zoneId : zones) {
          FlavorApi api = novaContext.getApi().getFlavorApiForZone(zoneId);
          Set<? extends Resource> response = api.listFlavors();
-         assert null != response;
-         assertTrue(response.size() >= 0);
+         assertNotNull(response);
+         assertFalse(response.isEmpty());
          for (Resource flavor : response) {
-            Flavor newDetails = api.getFlavor(flavor.getId());
-            assertEquals(newDetails.getId(), flavor.getId());
-            assertEquals(newDetails.getName(), flavor.getName());
-            assertEquals(newDetails.getLinks(), flavor.getLinks());
+            assertNotNull(flavor.getId());
+            assertNotNull(flavor.getName());
+            assertNotNull(flavor.getLinks());
          }
       }
    }
 
    /**
-    * Tests the listing of Flavors in detail (getFlavor() is tested too!)
+    * Tests the listing of Flavors in detail.
     * 
     * @throws Exception
     */
-   @Test
+   @Test(description = "GET /v${apiVersion}/{tenantId}/flavors/detail")
    public void testListFlavorsInDetail() throws Exception {
-      for (String zoneId : novaContext.getApi().getConfiguredZones()) {
+      for (String zoneId : zones) {
          FlavorApi api = novaContext.getApi().getFlavorApiForZone(zoneId);
          Set<? extends Flavor> response = api.listFlavorsInDetail();
-         assert null != response;
-         assertTrue(response.size() >= 0);
+         assertNotNull(response);
+         assertFalse(response.isEmpty());
          for (Flavor flavor : response) {
-            Flavor newDetails = api.getFlavor(flavor.getId());
-            assertEquals(newDetails.getId(), flavor.getId());
-            assertEquals(newDetails.getName(), flavor.getName());
-            assertEquals(newDetails.getLinks(), flavor.getLinks());
-            assertEquals(newDetails.getRam(), flavor.getRam());
-            assertEquals(newDetails.getDisk(), flavor.getDisk());
-            assertEquals(newDetails.getVcpus(), flavor.getVcpus());
+             assertNotNull(flavor.getId());
+             assertNotNull(flavor.getName());
+             assertNotNull(flavor.getLinks());
+             assertTrue(flavor.getRam() > 0);
+             assertTrue(flavor.getDisk() > 0);
+             assertTrue(flavor.getVcpus() > 0);
          }
       }
+   }
 
+   /**
+    * Tests getting Flavors by id.
+    * 
+    * @throws Exception
+    */
+   @Test(description = "GET /v${apiVersion}/{tenantId}/flavors/{id}", dependsOnMethods = { "testListFlavorsInDetail" })
+   public void testGetFlavorById() throws Exception {
+      for (String zoneId : zones) {
+         FlavorApi api = novaContext.getApi().getFlavorApiForZone(zoneId);
+         Set<? extends Flavor> response = api.listFlavorsInDetail();
+         for (Flavor flavor : response) {
+            Flavor details = api.getFlavor(flavor.getId());
+            assertNotNull(details);
+            assertEquals(details.getId(), flavor.getId());
+            assertEquals(details.getName(), flavor.getName());
+            assertEquals(details.getLinks(), flavor.getLinks());
+            assertEquals(details.getRam(), flavor.getRam());
+            assertEquals(details.getDisk(), flavor.getDisk());
+            assertEquals(details.getVcpus(), flavor.getVcpus());
+         }
+      }
    }
 
 }

@@ -19,11 +19,12 @@
 package org.jclouds.openstack.nova.v2_0.internal;
 
 import java.util.Properties;
+import java.util.Set;
 
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
-import org.jclouds.openstack.nova.v2_0.NovaAsyncApi;
 import org.jclouds.openstack.nova.v2_0.NovaApi;
+import org.jclouds.openstack.nova.v2_0.NovaAsyncApi;
 import org.jclouds.openstack.nova.v2_0.config.NovaProperties;
 import org.jclouds.openstack.nova.v2_0.domain.Flavor;
 import org.jclouds.openstack.nova.v2_0.domain.Server;
@@ -54,13 +55,15 @@ public class BaseNovaApiLiveTest extends BaseComputeServiceContextLiveTest {
       provider = "openstack-nova";
    }
 
+   protected Set<String> zones;
    protected RestContext<NovaApi, NovaAsyncApi> novaContext;
 
-   @BeforeGroups(groups = { "integration", "live" })
+   @BeforeGroups(groups = { "integration", "live" }, alwaysRun = true)
    @Override
    public void setupContext() {
       super.setupContext();
       novaContext = view.unwrap();
+      zones = novaContext.getApi().getConfiguredZones();
    }
 
    @Override
