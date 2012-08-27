@@ -31,9 +31,6 @@ import static com.google.common.collect.Sets.newTreeSet;
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
 import static java.util.logging.Logger.getAnonymousLogger;
-import static org.jclouds.compute.RunScriptData.JBOSS_HOME;
-import static org.jclouds.compute.RunScriptData.installAdminUserJBossAndOpenPorts;
-import static org.jclouds.compute.RunScriptData.startJBoss;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.nameTask;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.wrapInInitScript;
 import static org.jclouds.compute.options.TemplateOptions.Builder.inboundPorts;
@@ -60,17 +57,14 @@ import java.util.SortedSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeTestUtils;
+import org.jclouds.compute.JettyStatements;
 import org.jclouds.compute.RunNodesException;
-import org.jclouds.compute.RunScriptData;
 import org.jclouds.compute.RunScriptOnNodesException;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.ComputeType;
@@ -83,6 +77,7 @@ import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.options.TemplateOptions;
+import org.jclouds.compute.util.OpenSocketFinder;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
@@ -90,12 +85,12 @@ import org.jclouds.domain.LoginCredentials;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.AuthorizationException;
+import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.scriptbuilder.statements.java.InstallJDK;
 import org.jclouds.scriptbuilder.statements.login.AdminAccess;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
-import org.jclouds.util.Strings2;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -124,7 +119,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
    protected String group;
 
    protected Predicate<HostAndPort> socketTester;
-   protected Predicate<HostAndPort> preciseSocketTester;
+   protected OpenSocketFinder openSocketFinder;
    protected SortedSet<NodeMetadata> nodes;
    protected ComputeService client;
 
@@ -159,12 +154,9 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
       SocketOpen socketOpen = view.utils().injector().getInstance(SocketOpen.class);
       socketTester = new RetryablePredicate<HostAndPort>(socketOpen, 60, 1, TimeUnit.SECONDS);
       // wait a maximum of 60 seconds for port 8080 to open.
-      long maxWait = TimeUnit.SECONDS.toMillis(60);
-      long interval = 50;
-      // get more precise than default socket tester
-      preciseSocketTester = new RetryablePredicate<HostAndPort>(socketOpen, maxWait, interval, interval,
-            TimeUnit.MILLISECONDS);
+      openSocketFinder = context.utils().injector().getInstance(OpenSocketFinder.class);
    }
+   
    @Override
    protected void initializeContext() {
       super.initializeContext();
@@ -606,54 +598,38 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
    static class ServiceStats {
       long backgroundProcessMilliseconds;
       long socketOpenMilliseconds;
-      long reportedStartupTimeMilliseconds;
 
       @Override
       public String toString() {
-         return String.format(
-               "[backgroundProcessMilliseconds=%s, socketOpenMilliseconds=%s, reportedStartupTimeMilliseconds=%s]",
-               backgroundProcessMilliseconds, socketOpenMilliseconds, reportedStartupTimeMilliseconds);
+         return String.format("[backgroundProcessMilliseconds=%s, socketOpenMilliseconds=%s]",
+               backgroundProcessMilliseconds, socketOpenMilliseconds);
       }
    }
 
-   protected ServiceStats trackAvailabilityOfProcessOnNode(Future<ExecResponse> bgProcess, String processName,
-         NodeMetadata node, Pattern parseReported) throws InterruptedException, ExecutionException {
+   protected ServiceStats trackAvailabilityOfProcessOnNode(Statement process, String processName, NodeMetadata node) {
       ServiceStats stats = new ServiceStats();
       Stopwatch watch = new Stopwatch().start();
-
-      ExecResponse exec = bgProcess.get();
+      ExecResponse exec = client.runScriptOnNode(node.getId(), process, runAsRoot(false).wrapInInitScript(false));
       stats.backgroundProcessMilliseconds = watch.elapsedTime(TimeUnit.MILLISECONDS);
       watch.reset().start();
+      
+      HostAndPort socket = null;
+      try {
+         socket = openSocketFinder.findOpenSocketOnNode(node, 8080, 60, TimeUnit.SECONDS);
+      } catch (NoSuchElementException e) {
+         throw new NoSuchElementException(String.format("%s%n%s%s", e.getMessage(), exec.getOutput(), exec.getError()));
+      }
 
-      HostAndPort socket = HostAndPort.fromParts(Iterables.get(node.getPublicAddresses(), 0), 8080);
-      assert preciseSocketTester.apply(socket) : String.format("failed to open socket %s on node %s:%n%s%s", socket,
-            node, init(node, processName, "stdout"), init(node, processName, "stderr"));
       stats.socketOpenMilliseconds = watch.elapsedTime(TimeUnit.MILLISECONDS);
 
-      exec = init(node, processName, "stdout");
-
-      Matcher matcher = parseReported.matcher(exec.getOutput());
-      if (matcher.find())
-         stats.reportedStartupTimeMilliseconds = Long.valueOf(matcher.group(1));
-
-      getAnonymousLogger().info(format("<< %s on node(%s) %s", bgProcess, node.getId(), stats));
+      getAnonymousLogger().info(format("<< %s on node(%s)[%s] %s", processName, node.getId(), socket, stats));
       return stats;
    }
-
-   public ExecResponse init(NodeMetadata node, String processName, String command) {
-      return client.runScriptOnNode(node.getId(), "/tmp/init-" + processName + " " + command, runAsRoot(false)
-            .wrapInInitScript(false));
-   }
-
-   // started in 6462ms -
-   public static final Pattern JBOSS_PATTERN = Pattern.compile("started in ([0-9]+)ms -");
 
    @Test(enabled = true)
    public void testCreateAndRunAService() throws Exception {
 
       String group = this.group + "s";
-      final String configuration = Strings2.toStringAndClose(RunScriptData.class
-            .getResourceAsStream("/standalone-basic.xml"));
       try {
          client.destroyNodesMatching(inGroup(group));
       } catch (Exception e) {
@@ -661,80 +637,54 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
       }
 
       try {
-         ImmutableMap<String, String> userMetadata = ImmutableMap.<String, String> of("Name", group);
-         ImmutableSet<String> tags = ImmutableSet. of(group);
-         Stopwatch watch = new Stopwatch().start();
-         NodeMetadata node = getOnlyElement(client.createNodesInGroup(group, 1,
-               inboundPorts(22, 8080).blockOnPort(22, 300).userMetadata(userMetadata).tags(tags)));
-         long createSeconds = watch.elapsedTime(TimeUnit.SECONDS);
-
-         final String nodeId = node.getId();
-
-         checkUserMetadataInNodeEquals(node, userMetadata);
-         checkTagsInNodeEquals(node, tags);
-
-         getAnonymousLogger().info(
-               format("<< available node(%s) os(%s) in %ss", node.getId(), node.getOperatingSystem(), createSeconds));
-
-         watch.reset().start();
-
-         // note this is a dependency on the template resolution so we have the
-         // right process per
-         // operating system. moreover, we wish this to run as root, so that it
-         // can change ip
-         // tables rules and setup our admin user
-         client.runScriptOnNode(nodeId, installAdminUserJBossAndOpenPorts(node.getOperatingSystem()),
-               nameTask("configure-jboss"));
-
-         long configureSeconds = watch.elapsedTime(TimeUnit.SECONDS);
-
-         getAnonymousLogger().info(
-               format(
-                     "<< configured node(%s) with %s and JBoss %s in %ss",
-                     nodeId,
-                     exec(nodeId, "java -fullversion"),
-                     // version of the jboss jar
-                     exec(nodeId,
-                           format("ls %s/bundles/org/jboss/as/osgi/configadmin/main|sed -e 's/.*-//g' -e 's/.jar//g'",
-                                 JBOSS_HOME)), configureSeconds));
-
-         trackAvailabilityOfProcessOnNode(view.utils().userExecutor().submit(new Callable<ExecResponse>() {
-            @Override
-            public ExecResponse call() {
-               return client.runScriptOnNode(nodeId, startJBoss(configuration), runAsRoot(false).blockOnComplete(false)
-                     .nameTask("jboss"));
-            }
-
-            @Override
-            public String toString() {
-               return "initial start of jboss";
-            }
-
-         }), "jboss", node, JBOSS_PATTERN);
-
-         client.runScriptOnNode(nodeId, "/tmp/init-jboss stop", runAsRoot(false).wrapInInitScript(false));
-
-         trackAvailabilityOfProcessOnNode(view.utils().userExecutor().submit(new Callable<ExecResponse>() {
-
-            @Override
-            public ExecResponse call() {
-               return client.runScriptOnNode(nodeId, "/tmp/init-jboss start", runAsRoot(false).wrapInInitScript(false));
-            }
-
-            @Override
-            public String toString() {
-               return "warm start of jboss";
-            }
-
-         }), "jboss", node, JBOSS_PATTERN);
-
+         createAndRunAServiceInGroup(group);
       } finally {
          client.destroyNodesMatching(inGroup(group));
       }
 
    }
 
+   protected void createAndRunAServiceInGroup(String group) throws RunNodesException {
+      ImmutableMap<String, String> userMetadata = ImmutableMap.<String, String> of("Name", group);
+      ImmutableSet<String> tags = ImmutableSet. of(group);
+      Stopwatch watch = new Stopwatch().start();
+      NodeMetadata node = getOnlyElement(client.createNodesInGroup(group, 1,
+            inboundPorts(22, 8080).blockOnPort(22, 300).userMetadata(userMetadata).tags(tags)));
+      long createSeconds = watch.elapsedTime(TimeUnit.SECONDS);
+
+      final String nodeId = node.getId();
+
+      checkUserMetadataInNodeEquals(node, userMetadata);
+      checkTagsInNodeEquals(node, tags);
+
+      getAnonymousLogger().info(
+            format("<< available node(%s) os(%s) in %ss", node.getId(), node.getOperatingSystem(), createSeconds));
+
+      watch.reset().start();
+
+      client.runScriptOnNode(nodeId, JettyStatements.install(), nameTask("configure-jetty"));
+
+      long configureSeconds = watch.elapsedTime(TimeUnit.SECONDS);
+
+      getAnonymousLogger().info(
+            format(
+                  "<< configured node(%s) with %s and jetty %s in %ss",
+                  nodeId,
+                  exec(nodeId, "java -fullversion"),
+                  exec(nodeId, JettyStatements.version()), configureSeconds));
+
+      trackAvailabilityOfProcessOnNode(JettyStatements.start(), "start jetty", node);
+
+      client.runScriptOnNode(nodeId, JettyStatements.stop(), runAsRoot(false).wrapInInitScript(false));
+
+      trackAvailabilityOfProcessOnNode(JettyStatements.start(), "start jetty", node);
+   }
+
    protected String exec(final String nodeId, String command) {
+      return exec(nodeId, Statements.exec(command));
+   }
+
+   protected String exec(final String nodeId, Statement command) {
       return client.runScriptOnNode(nodeId, command, runAsRoot(false).wrapInInitScript(false)).getOutput().trim();
    }
 

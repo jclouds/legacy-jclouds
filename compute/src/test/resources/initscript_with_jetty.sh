@@ -8,12 +8,12 @@ function abort {
    exit 1
 }
 function default {
-   export INSTANCE_NAME="configure-jboss"
-export INSTANCE_HOME="/tmp/configure-jboss"
+   export INSTANCE_NAME="configure-jetty"
+export INSTANCE_HOME="/tmp/configure-jetty"
 export LOG_DIR="$INSTANCE_HOME"
    return $?
 }
-function configure-jboss {
+function configure-jetty {
       return $?
 }
 function findPid {
@@ -58,27 +58,27 @@ export PATH=/usr/ucb/bin:/bin:/sbin:/usr/bin:/usr/sbin
 case $1 in
 init)
    default || exit 1
-   configure-jboss || exit 1
+   configure-jetty || exit 1
    mkdir -p $INSTANCE_HOME
    
    # create runscript header
-   cat > $INSTANCE_HOME/configure-jboss.sh <<-'END_OF_JCLOUDS_SCRIPT'
+   cat > $INSTANCE_HOME/configure-jetty.sh <<-'END_OF_JCLOUDS_SCRIPT'
 	#!/bin/bash
 	set +u
 	shopt -s xpg_echo
 	shopt -s expand_aliases
 	
-	PROMPT_COMMAND='echo -ne \"\033]0;configure-jboss\007\"'
+	PROMPT_COMMAND='echo -ne \"\033]0;configure-jetty\007\"'
 	export PATH=/usr/ucb/bin:/bin:/sbin:/usr/bin:/usr/sbin
 
-	export INSTANCE_NAME='configure-jboss'
+	export INSTANCE_NAME='configure-jetty'
 END_OF_JCLOUDS_SCRIPT
-   cat >> $INSTANCE_HOME/configure-jboss.sh <<-END_OF_JCLOUDS_SCRIPT
+   cat >> $INSTANCE_HOME/configure-jetty.sh <<-END_OF_JCLOUDS_SCRIPT
 	export INSTANCE_NAME='$INSTANCE_NAME'
 	export INSTANCE_HOME='$INSTANCE_HOME'
 	export LOG_DIR='$LOG_DIR'
 END_OF_JCLOUDS_SCRIPT
-   cat >> $INSTANCE_HOME/configure-jboss.sh <<-'END_OF_JCLOUDS_SCRIPT'
+   cat >> $INSTANCE_HOME/configure-jetty.sh <<-'END_OF_JCLOUDS_SCRIPT'
 	function abort {
    echo "aborting: $@" 1>&2
    exit 1
@@ -191,7 +191,7 @@ function installOpenJDK() {
 END_OF_JCLOUDS_SCRIPT
    
    # add desired commands from the user
-   cat >> $INSTANCE_HOME/configure-jboss.sh <<-'END_OF_JCLOUDS_SCRIPT'
+   cat >> $INSTANCE_HOME/configure-jetty.sh <<-'END_OF_JCLOUDS_SCRIPT'
 	cd $INSTANCE_HOME
 	rm -f $INSTANCE_HOME/rc
 	trap 'echo $?>$INSTANCE_HOME/rc' 0 1 2 3 15
@@ -217,25 +217,24 @@ END_OF_JCLOUDS_SCRIPT
 	test -f /etc/shadow.${SUDO_USER:=${USER}} && mv /etc/shadow.${SUDO_USER:=${USER}} /etc/shadow
 	setupPublicCurl || return 1
 	installOpenJDK || return 1
-	iptables -I INPUT 1 -p tcp --dport 22 -j ACCEPT
 	iptables -I INPUT 1 -p tcp --dport 8080 -j ACCEPT
 	iptables-save
-	curl -q -s -S -L --connect-timeout 10 --max-time 600 --retry 20 -X GET  http://download.jboss.org/jbossas/7.0/jboss-as-7.0.2.Final/jboss-as-web-7.0.2.Final.tar.gz |(mkdir -p /usr/local &&cd /usr/local &&tar -xpzf -)
-	mkdir -p /usr/local/jboss
-	mv /usr/local/jboss-*/* /usr/local/jboss
-	(cd /usr/local/jboss/standalone/configuration && sed 's~inet-address value=.*/~any-address/~g' standalone.xml > standalone.xml.new && mv standalone.xml.new standalone.xml)
-	chmod -R oug+r+w /usr/local/jboss
-	chown -R web /usr/local/jboss
+	mkdir /tmp/$$
+	curl -q -s -S -L --connect-timeout 10 --max-time 600 --retry 20 -X GET  http://download.eclipse.org/jetty/8.1.5.v20120716/dist/jetty-distribution-8.1.5.v20120716.tar.gz |(mkdir -p /tmp/$$ &&cd /tmp/$$ &&tar -xpzf -)
+	mkdir -p /usr/local/jetty
+	mv /tmp/$$/*/* /usr/local/jetty
+	rm -rf /tmp/$$
+	chown -R web /usr/local/jetty
 	
 END_OF_JCLOUDS_SCRIPT
    
    # add runscript footer
-   cat >> $INSTANCE_HOME/configure-jboss.sh <<-'END_OF_JCLOUDS_SCRIPT'
+   cat >> $INSTANCE_HOME/configure-jetty.sh <<-'END_OF_JCLOUDS_SCRIPT'
 	exit $?
 	
 END_OF_JCLOUDS_SCRIPT
    
-   chmod u+x $INSTANCE_HOME/configure-jboss.sh
+   chmod u+x $INSTANCE_HOME/configure-jetty.sh
    ;;
 status)
    default || exit 1
