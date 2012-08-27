@@ -117,7 +117,7 @@ function ensure_hostname_in_hosts() {
 
 # download locations for many services are at public dns
 function ensure_can_resolve_public_dns() {
-  nslookup yahoo.com > /dev/null || echo nameserver 208.67.222.222 >> /etc/resolv.conf
+  nslookup yahoo.com | grep yahoo.com > /dev/null || echo nameserver 208.67.222.222 >> /etc/resolv.conf
 }
 
 function setupPublicCurl() {
