@@ -254,15 +254,15 @@ public class VAppTemplateApiLiveTest extends AbstractVAppApiLiveTest {
       VAppTemplate clonedVappTemplate = cloneVAppTemplate(true);
 
       // Confirm that "get" works pre-remove
-      VAppTemplate vAppTemplatePreDelete = vAppTemplateApi.get(clonedVappTemplate.getId());
+      VAppTemplate vAppTemplatePreDelete = vAppTemplateApi.get(clonedVappTemplate.getHref());
       checkVAppTemplate(vAppTemplatePreDelete);
 
       // Delete the template
-      final Task task = vAppTemplateApi.remove(clonedVappTemplate.getId());
+      final Task task = vAppTemplateApi.remove(clonedVappTemplate.getHref());
       assertTaskSucceeds(task);
 
       // Confirm that can't access post-remove, i.e. template has been removed
-      VAppTemplate removed = vAppTemplateApi.get(clonedVappTemplate.getId());
+      VAppTemplate removed = vAppTemplateApi.get(clonedVappTemplate.getHref());
       assertNull(removed);
    }
 
