@@ -36,6 +36,7 @@ import org.easymock.IArgumentMatcher;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
+import org.jclouds.compute.util.OpenSocketFinder;
 import org.jclouds.crypto.Pems;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.io.Payload;
@@ -81,12 +82,19 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
       SocketOpen socketOpen = createMock(SocketOpen.class);
 
       expect(socketOpen.apply(HostAndPort.fromParts("144.175.1.1", 22))).andReturn(true).times(5);
-      // restart of jboss
-      expect(socketOpen.apply(HostAndPort.fromParts("144.175.1.1", 8080))).andReturn(true).times(2);
 
       replay(socketOpen);
 
-      preciseSocketTester = socketTester = new RetryablePredicate<HostAndPort>(socketOpen, 1, 1, TimeUnit.MILLISECONDS);
+      socketTester = new RetryablePredicate<HostAndPort>(socketOpen, 1, 1, TimeUnit.MILLISECONDS);
+      
+      openSocketFinder = new OpenSocketFinder(){
+
+         @Override
+         public HostAndPort findOpenSocketOnNode(NodeMetadata node, int port, long timeoutValue, TimeUnit timeUnits) {
+            return HostAndPort.fromParts("144.175.1.1", 8080);
+         }
+         
+      };
    }
 
    @Override
@@ -283,9 +291,9 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
             client.connect();
 
             try {
-               String scriptName = "configure-jboss";
+               String scriptName = "configure-jetty";
                client.put("/tmp/init-" + scriptName, Strings2.toStringAndClose(StubComputeServiceIntegrationTest.class
-                        .getResourceAsStream("/initscript_with_jboss.sh")));
+                        .getResourceAsStream("/initscript_with_jetty.sh")));
                expect(client.exec("chmod 755 /tmp/init-" + scriptName)).andReturn(EXEC_GOOD);
                expect(client.exec("ln -fs /tmp/init-" + scriptName + " " + scriptName)).andReturn(EXEC_GOOD);
                expect(client.getUsername()).andReturn("root").atLeastOnce();
@@ -303,52 +311,27 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
                client.disconnect();
 
                clientNew.connect();               
-               expect(clientNew.exec("ls /usr/local/jboss/bundles/org/jboss/as/osgi/configadmin/main|sed -e 's/.*-//g' -e 's/.jar//g'\n")).andReturn(EXEC_GOOD);
+               expect(clientNew.getUsername()).andReturn("web").atLeastOnce();
+               expect(clientNew.getHostAddress()).andReturn("localhost").atLeastOnce();
+               expect(clientNew.exec("head -1 /usr/local/jetty/VERSION.txt | cut -f1 -d ' '\n")).andReturn(EXEC_GOOD);
                clientNew.disconnect();
-               
-               clientNew.connect();               
-               expect(clientNew.exec("nslookup -query=a -timeout=5 download.jboss.org|grep Address|tail -1|sed 's/.* //g'\n")).andReturn(EXEC_GOOD);
-               clientNew.disconnect();
-               
-               clientNew.connect();               
-               expect(clientNew.exec("nslookup -query=a -timeout=5 download.oracle.com|grep Address|tail -1|sed 's/.* //g'\n")).andReturn(EXEC_GOOD);
-               clientNew.disconnect();
-               
-               clientNew.connect();               
-               expect(clientNew.exec("curl -q -s -S -L --connect-timeout 10 --max-time 600 --retry 20 http://checkip.amazonaws.com/\n")).andReturn(EXEC_GOOD);
-               clientNew.disconnect();
-               
+                              
                clientNew.connect();
                expect(clientNew.exec("java -fullversion\n")).andReturn(EXEC_GOOD);
                clientNew.disconnect();
 
                clientNew.connect();
-               scriptName = "jboss";
-               clientNew.put("/tmp/init-" + scriptName, Strings2
-                        .toStringAndClose(StubComputeServiceIntegrationTest.class
-                                 .getResourceAsStream("/runscript_jboss.sh")));
-               expect(clientNew.exec("chmod 755 /tmp/init-" + scriptName)).andReturn(EXEC_GOOD);
-               expect(clientNew.exec("ln -fs /tmp/init-" + scriptName + " " + scriptName)).andReturn(EXEC_GOOD);
-               expect(clientNew.getUsername()).andReturn("web").atLeastOnce();
-               expect(clientNew.getHostAddress()).andReturn("localhost").atLeastOnce();
-               expect(clientNew.exec("/tmp/init-" + scriptName + " init")).andReturn(EXEC_GOOD);
-               expect(clientNew.exec("/tmp/init-" + scriptName + " start")).andReturn(EXEC_GOOD);
-               clientNew.disconnect();
-               clientNew.connect();
-               expect(clientNew.exec("/tmp/init-" + scriptName + " stdout\n")).andReturn(EXEC_GOOD);
+               expect(clientNew.exec("cd /usr/local/jetty\n./bin/jetty.sh start\n")).andReturn(EXEC_GOOD);
                clientNew.disconnect();
 
                clientNew.connect();
-               expect(clientNew.exec("/tmp/init-" + scriptName + " stop\n")).andReturn(EXEC_GOOD);
+               expect(clientNew.exec("cd /usr/local/jetty\n./bin/jetty.sh stop\n")).andReturn(EXEC_GOOD);
                clientNew.disconnect();
 
                clientNew.connect();
-               expect(clientNew.exec("/tmp/init-" + scriptName + " start\n")).andReturn(EXEC_GOOD);
+               expect(clientNew.exec("cd /usr/local/jetty\n./bin/jetty.sh start\n")).andReturn(EXEC_GOOD);
                clientNew.disconnect();
 
-               clientNew.connect();
-               expect(clientNew.exec("/tmp/init-" + scriptName + " stdout\n")).andReturn(EXEC_GOOD);
-               clientNew.disconnect();
             } catch (IOException e) {
                Throwables.propagate(e);
             }

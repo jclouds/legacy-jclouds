@@ -23,6 +23,7 @@ import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.ovf.Envelope;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Operating system based on DMTF CIM model.
@@ -175,8 +176,7 @@ public class CIMOperatingSystem extends OperatingSystem {
    }
 
    @Override
-   public String toString() {
-      return "[name=" + name + ", family=" + family + ", version=" + version + ", arch=" + arch + ", is64Bit="
-               + is64Bit + ", description=" + description + ", osType=" + osType+ "]";
+   protected ToStringHelper string() {
+      return super.string().add("osType", osType);
    }
 }
