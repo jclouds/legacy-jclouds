@@ -20,13 +20,7 @@ package org.jclouds.snia.cdmi.v1.features;
 
 import java.util.concurrent.TimeUnit;
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.io.Payload;
-import org.jclouds.io.payloads.ByteArrayPayload;
-import org.jclouds.io.payloads.FilePayload;
-import org.jclouds.io.payloads.InputStreamPayload;
-import org.jclouds.io.payloads.StringPayload;
 import org.jclouds.snia.cdmi.v1.domain.DataObject;
-import org.jclouds.snia.cdmi.v1.options.CreateDataObjectNonCDMIOptions;
 import org.jclouds.snia.cdmi.v1.options.CreateDataObjectOptions;
 import org.jclouds.snia.cdmi.v1.queryparams.DataObjectQueryParams;
 
@@ -101,29 +95,6 @@ public interface DataApi {
 	 */	
 	DataObject createDataObject(String containerName, String dataObjectName,
 			CreateDataObjectOptions... options);
-
-	/**
-	 * create CDMI Data object Non CDMI
-	 * 
-	 * @param containerName
-	 *            containerName must end with a forward slash, /.
-	 * @param dataObjectName
-	 *            dataObjectName must not end with a forward slash, /. 
-	 * @param payload 
-	 *            enables defining the body's payload i.e. file, inputStream, String, ByteArray
-	 *  <pre>
-	 *  Examples: 
-	 *  {@code
-	 *  createDataObjectNonCDMI("myContainer/","myDataObject",new StringPayload("value");
-	 *  createDataObjectNonCDMI("myContainer/","myDataObject",new ByteArrayPayload(bytes);
-	 *  createDataObjectNonCDMI("myContainer/","myDataObject",new FilePayload(myFileIn);
-	 *  createDataObjectNonCDMI("myContainer/","myDataObject",new InputStreamPayload(is);;
-	 *  }
-	 *  <pre>
-	 */	
-
-	void createDataObjectNonCDMI(String containerName, String dataObjectName,
-			Payload payload);
 
 	/**
 	 * delete CDMI Data object

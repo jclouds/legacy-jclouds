@@ -21,7 +21,6 @@ package org.jclouds.snia.cdmi.v1;
 /**
  * Object Types used in CDMI.
  * 
- * @see javax.ws.rs.core.MediaType;
  */
 public interface ObjectTypes {
 

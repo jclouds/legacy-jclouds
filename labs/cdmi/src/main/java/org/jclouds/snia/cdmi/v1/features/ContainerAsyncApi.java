@@ -26,8 +26,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-
-import org.jclouds.blobstore.binders.BindMapToHeadersWithPrefix;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.Headers;
@@ -40,7 +38,6 @@ import org.jclouds.snia.cdmi.v1.domain.Container;
 import org.jclouds.snia.cdmi.v1.filters.BasicAuthenticationAndTenantId;
 import org.jclouds.snia.cdmi.v1.filters.StripExtraAcceptHeader;
 import org.jclouds.snia.cdmi.v1.options.CreateContainerOptions;
-import org.jclouds.snia.cdmi.v1.options.GetContainerOptions;
 import org.jclouds.snia.cdmi.v1.queryparams.ContainerQueryParams;
 import com.google.common.util.concurrent.ListenableFuture;
 

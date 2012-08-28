@@ -53,7 +53,7 @@ import com.google.common.net.MediaType;
 /**
  * @author Kenneth Nagin
  */
-@Test(groups = "live", testName = "DataApiLiveTest")
+@Test(groups = "live", testName = "DataNonCDMIContentTypeApiLiveTest")
 public class DataNonCDMIContentTypeApiLiveTest extends BaseCDMIApiLiveTest {
 	@Test
 	public void testCreateDataObjectsNonCDMI() throws Exception {
@@ -356,6 +356,58 @@ public class DataNonCDMIContentTypeApiLiveTest extends BaseCDMIApiLiveTest {
 			assertEquals(containerApi.getContainer(containerName)
 					.getChildren().contains(inFile.getName()), false);			
 
+			// exercise get with none cdmi get range.
+			value = "Hello CDMI World non-cdmi String";
+			payloadIn = new StringPayload(value);
+			payloadIn.setContentMetadata(BaseMutableContentMetadata.fromContentMetadata(payloadIn.getContentMetadata().toBuilder()
+					.contentType(MediaType.PLAIN_TEXT_UTF_8.toString())
+					.build()));
+			dataNonCDMIContentTypeApi.createDataObject(containerName, dataObjectNameIn,
+					payloadIn);
+
+			payloadOut = dataNonCDMIContentTypeApi.getDataObjectValue(containerName, dataObjectNameIn, "bytes=0-10");
+			assertNotNull(payloadOut);
+			assertEquals(CharStreams.toString(new InputStreamReader(payloadOut.getInput(), "UTF-8")),value.substring(0, 11));
+			assertEquals(payloadOut.getContentMetadata().getContentLength(),new Long(11));
+			
+			payloadOut = dataNonCDMIContentTypeApi.getDataObjectValue(containerName, dataObjectNameIn, "bytes=11-20");
+			assertNotNull(payloadOut);
+			assertEquals(CharStreams.toString(new InputStreamReader(payloadOut.getInput(), "UTF-8")),value.substring(11, 21));
+			assertEquals(payloadOut.getContentMetadata().getContentLength(),new Long(10));	
+			
+			dataNonCDMIContentTypeApi.deleteDataObject(containerName, dataObjectNameIn);
+			assertEquals(containerApi.getContainer(containerName)
+					.getChildren().contains(dataObjectNameIn), false);
+
+			// exercise create data object with none cdmi partial.
+			// server does not actually support cdmi partial but
+			// trace allows me to see that request was constructed properly
+			value = "Hello CDMI World non-cdmi String";
+			payloadIn = new StringPayload(value);
+			payloadIn.setContentMetadata(BaseMutableContentMetadata.fromContentMetadata(payloadIn.getContentMetadata().toBuilder()
+					.contentType(MediaType.PLAIN_TEXT_UTF_8.toString())
+					.build()));
+			dataNonCDMIContentTypeApi.createDataObjectPartial(containerName, dataObjectNameIn,
+					payloadIn);
+			payloadOut = dataNonCDMIContentTypeApi.getDataObjectValue(containerName, dataObjectNameIn);
+			assertNotNull(payloadOut);
+			System.out.println("payload "+payloadOut);
+			
+			dataNonCDMIContentTypeApi.createDataObjectPartial(containerName, dataObjectNameIn,
+					payloadIn);
+			payloadOut = dataNonCDMIContentTypeApi.getDataObjectValue(containerName, dataObjectNameIn);
+			assertNotNull(payloadOut);
+			System.out.println("payload "+payloadOut);
+
+			
+			
+			dataNonCDMIContentTypeApi.createDataObject(containerName, dataObjectNameIn,
+					payloadIn);
+
+
+			payloadOut = dataNonCDMIContentTypeApi.getDataObjectValue(containerName, dataObjectNameIn);
+			assertNotNull(payloadOut);
+			System.out.println("payload "+payloadOut);
 		
 	
 		} finally {

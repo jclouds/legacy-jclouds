@@ -27,7 +27,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.io.Payload;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.Headers;
@@ -54,11 +53,11 @@ import com.google.common.util.concurrent.ListenableFuture;
 @SkipEncoding({ '/', '=' })
 @RequestFilters({ BasicAuthenticationAndTenantId.class,
 		StripExtraAcceptHeader.class })
+@Headers(keys = "X-CDMI-Specification-Version", values = "{jclouds.api-version}")
 public interface DataAsyncApi {
 	/**
-	 * @see DataApi#getDataObject()
+	 * @see DataApi#getDataObject(String containerName, String dataObjectName)
 	 */
-	@Headers(keys = "X-CDMI-Specification-Version", values = "{jclouds.api-version}")
 	@GET
 	@Consumes({ ObjectTypes.DATAOBJECT, MediaType.APPLICATION_JSON })
 	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
@@ -68,9 +67,9 @@ public interface DataAsyncApi {
 			@PathParam("dataObjectName") String dataObjectName);
 
 	/**
-	 * @see DataApi#getDataObject()
+	 * @see DataApi#getDataObject(String containerName, String dataObjectName,
+	 *      DataObjectQueryParams queryParams)
 	 */
-	@Headers(keys = "X-CDMI-Specification-Version", values = "{jclouds.api-version}")
 	@GET
 	@Consumes({ ObjectTypes.DATAOBJECT, MediaType.APPLICATION_JSON })
 	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
@@ -81,9 +80,9 @@ public interface DataAsyncApi {
 			@BinderParam(BindQueryParmsToSuffix.class) DataObjectQueryParams queryParams);
 
 	/**
-	 * @see DataApi#createDataObject
+	 * @see DataApi#createDataObject(String containerName, String
+	 *      dataObjectName, CreateDataObjectOptions... options)
 	 */
-	@Headers(keys = "X-CDMI-Specification-Version", values = "{jclouds.api-version}")
 	@PUT
 	@Consumes({ ObjectTypes.DATAOBJECT, MediaType.APPLICATION_JSON })
 	@Produces({ ObjectTypes.DATAOBJECT })
@@ -95,21 +94,9 @@ public interface DataAsyncApi {
 			CreateDataObjectOptions... options);
 
 	/**
-	 * @see DataApi#createDataObjectNonCDMI
+	 * @see DataApi#deleteDataObject(String containerName, String
+	 *      dataObjectName)
 	 */
-	@PUT
-	@Consumes({ "text/plain" })
-	@Produces({ "text/plain;charset=utf-8" })
-	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
-	@Path("/{containerName}{dataObjectName}")
-	ListenableFuture<Void> createDataObjectNonCDMI(
-			@PathParam("containerName") String containerName,
-			@PathParam("dataObjectName") String dataObjectName, Payload payload);
-
-	/**
-	 * @see DataApi#deleteDataObject()
-	 */
-	@Headers(keys = "X-CDMI-Specification-Version", values = "{jclouds.api-version}")
 	@DELETE
 	@Consumes(MediaType.TEXT_PLAIN)
 	// note: MediaType.APPLICATION_JSON work also, however without consumes
