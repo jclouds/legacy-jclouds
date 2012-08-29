@@ -470,6 +470,30 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
 				});
 	}
 	
+	public void cleanUpVAppTemplateInOrg() {
+		FluentIterable<VAppTemplate> vAppTemplates = FluentIterable
+				.from(vdc.getResourceEntities())
+				.filter(ReferencePredicates
+						.<Reference> typeEquals(VAPP_TEMPLATE))
+				.transform(new Function<Reference, VAppTemplate>() {
+
+					@Override
+					public VAppTemplate apply(Reference in) {
+						return context.getApi().getVAppTemplateApi()
+								.get(in.getHref());
+					}
+				}).filter(Predicates.notNull());
+
+		Iterables.removeIf(vAppTemplates, new Predicate<VAppTemplate>() {
+
+			@Override
+			public boolean apply(VAppTemplate input) {
+				if(input.getName().startsWith("captured-") || input.getName().startsWith("uploaded-") || input.getName().startsWith("vappTemplateClone-"))
+					context.getApi().getVAppTemplateApi().remove(input.getHref());
+				return false;
+			}});
+	}	
+	
    protected Vdc lazyGetVdc() {
       if (vdc == null) {
          assertNotNull(vdcUrn, String.format(URN_REQ_LIVE, VDC));
@@ -530,9 +554,9 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
                assertTrue(retryTaskSuccess.apply(uploadTask), String.format(TASK_COMPLETE_TIMELY, "uploadTask"));
                media = context.getApi().getMediaApi().get(media.getId());
             }
-
             mediaUrn = media.getId();
-         }
+         } else 
+        	 media = context.getApi().getMediaApi().get(mediaUrn);
       }
       return media;
    }

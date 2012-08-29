@@ -21,12 +21,14 @@ package org.jclouds.vcloud.director.v1_5.features;
 import static com.google.common.base.Predicates.and;
 import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Iterables.getFirst;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.ENTITY_EQUAL;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_DEL;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_EQ;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_LIST_SIZE_EQ;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_LIST_SIZE_GE;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_REQ;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.TASK_COMPLETE_TIMELY;
+import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkGuestCustomizationSection;
 import static org.jclouds.vcloud.director.v1_5.predicates.LinkPredicates.relEquals;
 import static org.jclouds.vcloud.director.v1_5.predicates.LinkPredicates.typeEquals;
 import static org.testng.Assert.assertEquals;
@@ -41,6 +43,7 @@ import java.util.Set;
 import org.jclouds.crypto.SshKeys;
 import org.jclouds.io.Payloads;
 import org.jclouds.json.Json;
+import org.jclouds.vcloud.director.v1_5.AbstractVAppApiLiveTest;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.File;
@@ -48,7 +51,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Media;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.Vdc;
-import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorApiLiveTest;
+import org.jclouds.vcloud.director.v1_5.domain.section.GuestCustomizationSection;
 import org.jclouds.vcloud.director.v1_5.predicates.LinkPredicates;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -66,7 +69,7 @@ import com.google.inject.Inject;
  * @author andrea turli
  */
 @Test(groups = { "live", "user" }, singleThreaded = true, testName = "KeyPairsApiLiveTest")
-public class KeyPairsApiLiveTest extends BaseVCloudDirectorApiLiveTest {
+public class KeyPairsApiLiveTest extends AbstractVAppApiLiveTest {
 
 	@Inject
 	protected Json json;
@@ -83,6 +86,13 @@ public class KeyPairsApiLiveTest extends BaseVCloudDirectorApiLiveTest {
 	public void setupRequiredApis() {
 		vdcApi = context.getApi().getVdcApi();
 		mediaApi = context.getApi().getMediaApi();
+		
+		catalogApi = context.getApi().getCatalogApi();
+		queryApi = context.getApi().getQueryApi();
+		vAppApi = context.getApi().getVAppApi();
+		vAppTemplateApi = context.getApi().getVAppTemplateApi();
+		vdcApi = context.getApi().getVdcApi();
+		vmApi = context.getApi().getVmApi();
 	}
 
 	@Test(description = "Create Key Pair")
@@ -213,5 +223,59 @@ public class KeyPairsApiLiveTest extends BaseVCloudDirectorApiLiveTest {
 		Checks.checkTask(setKeyPair);
 		assertTrue(retryTaskSuccess.apply(setKeyPair),
 				String.format(TASK_COMPLETE_TIMELY, "setKeyPair"));
+	}
+	
+	@Test(description = "Set ssh key authorization on the vm", dependsOnMethods = { "testCreateKeyPair" })
+	public void testSetGuestCustomizationSection() {
+		
+		String script = "#!/bin/bash\n" +
+				"if [ \"$1\" = \"postcustomization\" ]; then \n" +
+				"echo \"post customization\" \n" +
+				"touch /root/.postcustomization \n" +
+				"sleep 30 \n" +
+				"#regenerate keys \n" +
+				"/bin/rm /etc/ssh/ssh_host_*\n" +
+				"/usr/sbin/dpkg-reconfigure openssh-server\n" +
+				"# add ssh key\n" +
+				"cd\n" +
+				"mkdir -p .ssh/\n" +
+				"touch .ssh/authorized_keys\n" +
+				"echo '"+ sshKey.get("public") + "' >> .ssh/authorized_keys\n" +
+				"\"echo completed\"\n" +
+				"fi\n";
+		
+		// Copy existing section and edit fields
+		GuestCustomizationSection oldSection = vmApi.getGuestCustomizationSection(vmUrn);
+		GuestCustomizationSection newSection = oldSection.toBuilder()
+				.computerName(name("n"))
+				.enabled(Boolean.TRUE)
+				.customizationScript(script)
+				.adminPassword(null) // Not allowed
+				.build();
+
+		// The method under test
+		Task editGuestCustomizationSection = vmApi.editGuestCustomizationSection(vmUrn, newSection);
+		assertTrue(retryTaskSuccess.apply(editGuestCustomizationSection),
+				String.format(TASK_COMPLETE_TIMELY,
+						"editGuestCustomizationSection"));
+
+		// Retrieve the modified section
+		GuestCustomizationSection modified = vmApi.getGuestCustomizationSection(vmUrn);
+
+		// Check the retrieved object is well formed
+		checkGuestCustomizationSection(modified);
+
+		// Check the modified section fields are set correctly
+		assertEquals(modified.getComputerName(), newSection.getComputerName());
+		assertTrue(modified.isEnabled());
+		assertEquals(modified.getCustomizationScript(), script);
+
+		// Reset the admin password in the retrieved GuestCustomizationSection
+		// for equality check
+		modified = modified.toBuilder().adminPassword(null).build();
+
+		// Check the section was modified correctly
+		assertEquals(modified, newSection,
+				String.format(ENTITY_EQUAL, "GuestCustomizationSection"));
 	}
 }
