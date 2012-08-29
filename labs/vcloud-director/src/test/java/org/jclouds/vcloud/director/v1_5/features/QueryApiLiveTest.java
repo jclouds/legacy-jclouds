@@ -79,8 +79,6 @@ public class QueryApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    public void setupRequiredApis() {
       queryApi = context.getApi().getQueryApi();
       vAppApi = context.getApi().getVAppApi();
-      
-      cleanUpVAppTemplateInOrg();
    }
 
    @Test(description = "GET /query")
@@ -200,8 +198,8 @@ public class QueryApiLiveTest extends BaseVCloudDirectorApiLiveTest {
 		String message = "VMs query result should equal vms of vApp "
 				+ vApp.getName() + " (" + vmHrefs + "); but only has " + hrefs;
 		assertTrue(
-				ImmutableSet.copyOf(hrefs).equals(
-						ImmutableSet.of(vApp.getHref())), message);
+				ImmutableSet.copyOf(hrefs).equals(ImmutableSet.copyOf(vmHrefs)),
+				message);
 	}
 
    @Test(description = "GET /mediaList/query")
