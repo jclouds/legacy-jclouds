@@ -160,6 +160,11 @@ public class StubSwiftAsyncClient implements CommonSwiftAsyncClient {
                })));
    }
 
+   @Override
+   public ListenableFuture<ContainerMetadata> getContainerMetadata(String container) {
+      throw new UnsupportedOperationException();
+   }
+
    public ListenableFuture<PageSet<ObjectInfo>> listObjects(String container,
             org.jclouds.openstack.swift.options.ListContainerOptions... optionsList) {
       ListContainerOptions options = container2ContainerListOptions.apply(optionsList);
@@ -195,5 +200,4 @@ public class StubSwiftAsyncClient implements CommonSwiftAsyncClient {
    public ListenableFuture<Boolean> objectExists(String bucketName, String key) {
       return blobStore.blobExists(bucketName, key);
    }
-
 }

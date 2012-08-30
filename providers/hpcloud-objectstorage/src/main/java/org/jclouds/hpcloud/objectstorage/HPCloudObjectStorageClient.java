@@ -22,9 +22,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.hpcloud.objectstorage.extensions.HPCloudCDNClient;
-import org.jclouds.hpcloud.objectstorage.options.CreateContainerOptions;
 import org.jclouds.openstack.swift.CommonSwiftClient;
 import org.jclouds.openstack.swift.domain.ContainerMetadata;
+import org.jclouds.openstack.swift.options.CreateContainerOptions;
 import org.jclouds.rest.annotations.Delegate;
 
 import com.google.common.base.Optional;

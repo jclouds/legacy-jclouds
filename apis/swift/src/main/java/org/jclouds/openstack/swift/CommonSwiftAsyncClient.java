@@ -35,11 +35,13 @@ import org.jclouds.blobstore.binders.BindMapToHeadersWithPrefix;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.functions.ReturnFalseOnContainerNotFound;
 import org.jclouds.blobstore.functions.ReturnFalseOnKeyNotFound;
+import org.jclouds.blobstore.functions.ReturnNullOnContainerNotFound;
 import org.jclouds.blobstore.functions.ReturnNullOnKeyNotFound;
 import org.jclouds.http.functions.ParseETagHeader;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.openstack.filters.AuthenticateRequest;
 import org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequest;
+import org.jclouds.openstack.swift.blobstore.functions.ParseContainerMetadataFromHeaders;
 import org.jclouds.openstack.swift.domain.AccountMetadata;
 import org.jclouds.openstack.swift.domain.ContainerMetadata;
 import org.jclouds.openstack.swift.domain.MutableObjectInfoWithMetadata;
@@ -55,6 +57,7 @@ import org.jclouds.openstack.swift.options.ListContainerOptions;
 import org.jclouds.rest.annotations.*;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
+import com.google.common.annotations.Beta;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Provides;
 
@@ -88,6 +91,16 @@ public interface CommonSwiftAsyncClient {
    @QueryParams(keys = "format", values = "json")
    @Path("/")
    ListenableFuture<? extends Set<ContainerMetadata>> listContainers(ListContainerOptions... options);
+
+   /**
+    * @see CommonSwiftClient#getContainerMetadata
+    */
+   @Beta
+   @HEAD
+   @ResponseParser(ParseContainerMetadataFromHeaders.class)
+   @ExceptionParser(ReturnNullOnContainerNotFound.class)
+   @Path("/{container}")
+   ListenableFuture<ContainerMetadata> getContainerMetadata(@PathParam("container") String container);
 
    /**
     * @see CommonSwiftClient#setObjectInfo

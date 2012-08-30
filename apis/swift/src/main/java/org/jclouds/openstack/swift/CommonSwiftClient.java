@@ -87,6 +87,8 @@ public interface CommonSwiftClient {
     */
    Set<ContainerMetadata> listContainers(ListContainerOptions... options);
 
+   ContainerMetadata getContainerMetadata(String container);
+   
    boolean setObjectInfo(String container, String name, Map<String, String> userMetadata);
 
    boolean createContainer(String container);
