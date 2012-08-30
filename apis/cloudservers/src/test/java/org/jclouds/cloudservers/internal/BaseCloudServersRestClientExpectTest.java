@@ -29,7 +29,6 @@ import org.jclouds.cloudservers.CloudServersClient;
 import org.jclouds.cloudservers.config.CloudServersRestClientModule;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.openstack.filters.AddTimestampQuery;
-import org.jclouds.openstack.keystone.v1_1.config.AuthenticationServiceModule;
 import org.jclouds.openstack.keystone.v1_1.internal.BaseKeystoneRestClientExpectTest;
 import org.jclouds.rest.ConfiguresRestClient;
 
@@ -67,13 +66,6 @@ public class BaseCloudServersRestClientExpectTest extends BaseKeystoneRestClient
     * override so that we can control the timestamp used in
     * {@link AddTimestampQuery}
     */
-   public static class TestAuthenticationServiceModule extends AuthenticationServiceModule {
-      @Override
-      protected void configure() {
-         super.configure();
-      }
-   }
-
    @Override
    protected Module createModule() {
       return new TestCloudServersRestClientModule();

@@ -20,20 +20,16 @@ package org.jclouds.openstack.keystone.v1_1.suppliers;
 
 import static org.testng.Assert.assertEquals;
 
-import java.net.URI;
-
 import javax.inject.Singleton;
 
 import org.jclouds.location.Provider;
-import org.jclouds.location.suppliers.RegionIdToURISupplier;
+import org.jclouds.location.suppliers.ImplicitRegionIdSupplier;
 import org.jclouds.openstack.keystone.v1_1.domain.Auth;
 import org.jclouds.openstack.keystone.v1_1.parse.ParseAuthTest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Provides;
@@ -42,15 +38,15 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "RegionIdToURIFromAuthForServiceSupplierTest")
-public class RegionIdToURIFromAuthForServiceSupplierTest {
-   private final RegionIdToURISupplier.Factory factory = Guice.createInjector(new AbstractModule() {
+@Test(groups = "unit", testName = "V1DefaultRegionIdSupplierTest")
+public class V1DefaultRegionIdSupplierTest {
+   private final V1DefaultRegionIdSupplier.Factory factory = Guice.createInjector(new AbstractModule() {
 
       @Override
       protected void configure() {
          bindConstant().annotatedWith(Provider.class).to("keystone");
-         install(new FactoryModuleBuilder().implement(RegionIdToURISupplier.class,
-                  RegionIdToURIFromAuthForServiceSupplier.class).build(RegionIdToURISupplier.Factory.class));
+         install(new FactoryModuleBuilder().implement(ImplicitRegionIdSupplier.class, V1DefaultRegionIdSupplier.class)
+                  .build(V1DefaultRegionIdSupplier.Factory.class));
       }
 
       @Provides
@@ -58,17 +54,13 @@ public class RegionIdToURIFromAuthForServiceSupplierTest {
       public Supplier<Auth> provide() {
          return Suppliers.ofInstance(new ParseAuthTest().expected());
       }
-   }).getInstance(RegionIdToURISupplier.Factory.class);
+   }).getInstance(V1DefaultRegionIdSupplier.Factory.class);
 
    public void testRegionMatches() {
-      assertEquals(Maps.transformValues(factory.createForApiTypeAndVersion("cloudFilesCDN", "1.0").get(), Suppliers
-               .<URI> supplierFunction()), ImmutableMap.of("LON", URI
-               .create("https://cdn3.clouddrive.com/v1/MossoCloudFS_83a9d536-2e25-4166-bd3b-a503a934f953")));
+      assertEquals(factory.createForApiType("cloudFilesCDN").get(), "LON");
    }
 
    public void testTakesFirstPartOfDNSWhenNoRegion() {
-      assertEquals(Maps.transformValues(factory.createForApiTypeAndVersion("cloudServers", "1.1").get(), Suppliers
-               .<URI> supplierFunction()), ImmutableMap.of("lon", URI
-               .create("https://lon.servers.api.rackspacecloud.com/v1.0/10001786")));
+      assertEquals(factory.createForApiType("cloudServers").get(), "lon");
    }
 }

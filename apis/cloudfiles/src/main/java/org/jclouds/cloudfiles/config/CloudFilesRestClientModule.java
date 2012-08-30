@@ -18,7 +18,7 @@
  */
 package org.jclouds.cloudfiles.config;
 
-import static org.jclouds.util.Suppliers2.getLastValueInMap;
+import static org.jclouds.util.Suppliers2.valueForKey;
 
 import java.net.URI;
 
@@ -29,12 +29,12 @@ import org.jclouds.cloudfiles.CloudFilesAsyncClient;
 import org.jclouds.cloudfiles.CloudFilesClient;
 import org.jclouds.location.suppliers.RegionIdToURISupplier;
 import org.jclouds.openstack.keystone.v1_1.config.AuthenticationServiceModule;
+import org.jclouds.openstack.keystone.v1_1.suppliers.V1DefaultRegionIdSupplier;
 import org.jclouds.openstack.swift.CommonSwiftAsyncClient;
 import org.jclouds.openstack.swift.CommonSwiftClient;
 import org.jclouds.openstack.swift.Storage;
 import org.jclouds.openstack.swift.config.SwiftRestClientModule;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.annotations.ApiVersion;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
@@ -62,15 +62,19 @@ public class CloudFilesRestClientModule extends SwiftRestClientModule<CloudFiles
       @Provides
       @Singleton
       @CDNManagement
-      protected Supplier<URI> provideCDNUrl(RegionIdToURISupplier.Factory factory, @ApiVersion String apiVersion) {
-         return getLastValueInMap(factory.createForApiTypeAndVersion("cloudFilesCDN", apiVersion));
+      protected Supplier<URI> provideCDNUrl(RegionIdToURISupplier.Factory factory,
+               V1DefaultRegionIdSupplier.Factory defaultRegion) {
+         return valueForKey(factory.createForApiTypeAndVersion("cloudFilesCDN", null),
+                  defaultRegion.createForApiType("cloudFilesCDN"));
       }
 
       @Provides
       @Singleton
       @Storage
-      protected Supplier<URI> provideStorageUrl(RegionIdToURISupplier.Factory factory, @ApiVersion String apiVersion) {
-         return getLastValueInMap(factory.createForApiTypeAndVersion("cloudFiles", apiVersion));
+      protected Supplier<URI> provideStorageUrl(RegionIdToURISupplier.Factory factory,
+               V1DefaultRegionIdSupplier.Factory defaultRegion) {
+         return valueForKey(factory.createForApiTypeAndVersion("cloudFiles", null),
+                  defaultRegion.createForApiType("cloudFiles"));
       }
    }
 
