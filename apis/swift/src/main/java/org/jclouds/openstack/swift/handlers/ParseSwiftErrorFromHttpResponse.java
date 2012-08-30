@@ -32,6 +32,8 @@ import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.Logger;
+import org.jclouds.openstack.swift.CopyObjectException;
+import org.jclouds.openstack.swift.reference.SwiftHeaders;
 import org.jclouds.rest.AuthorizationException;
 
 /**
@@ -61,10 +63,21 @@ public class ParseSwiftErrorFromHttpResponse implements HttpErrorHandler {
             exception = new AuthorizationException(exception.getMessage(), exception);
             break;
          case 404:
-            if (!command.getCurrentRequest().getMethod().equals("DELETE")) {
+            String sourcePath = command.getCurrentRequest().getFirstHeaderOrNull(SwiftHeaders.OBJECT_COPY_FROM);
+            Exception oldException = exception;
+        	
+            if (sourcePath != null) {
+            	String path = command.getCurrentRequest().getEndpoint().getPath();
+            	int startOfDestinationPath = path.lastIndexOf("/", path.lastIndexOf("/")-1);
+            	String destinationPath = path.substring(startOfDestinationPath);
+            	
+                exception = new CopyObjectException(sourcePath, destinationPath, message);
+                exception.initCause(oldException);
+            }
+            else if (!command.getCurrentRequest().getMethod().equals("DELETE")) {
                String path = command.getCurrentRequest().getEndpoint().getPath();
                Matcher matcher = CONTAINER_PATH.matcher(path);
-               Exception oldException = exception;
+               
                if (matcher.find()) {
                   exception = new ContainerNotFoundException(matcher.group(1), message);
                   exception.initCause(oldException);

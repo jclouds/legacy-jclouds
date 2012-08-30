@@ -46,5 +46,4 @@ public class SwiftContainerLiveTest extends BaseContainerLiveTest {
    public void testPublicAccess() throws MalformedURLException, InterruptedException, IOException {
       super.testPublicAccess();
    }
-
 }

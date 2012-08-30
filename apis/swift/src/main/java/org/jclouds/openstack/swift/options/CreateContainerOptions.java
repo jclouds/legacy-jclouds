@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.hpcloud.objectstorage.options;
+package org.jclouds.openstack.swift.options;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -61,17 +61,11 @@ public class CreateContainerOptions extends BaseHttpRequestOptions {
 
    public static class Builder {
 
-      /**
-       * @see org.jclouds.hpcloud.objectstorage.options.CreateContainerOptions#withPublicAccess
-       */
       public static CreateContainerOptions withPublicAccess() {
          CreateContainerOptions options = new CreateContainerOptions();
          return options.withPublicAccess();
       }
 
-      /**
-       * @see org.jclouds.hpcloud.objectstorage.options.CreateContainerOptions#withMetadata(Multimap<String, String>)
-       */ 
       public static CreateContainerOptions withMetadata(Map<String, String> metadata) {
          CreateContainerOptions options = new CreateContainerOptions();
          return (CreateContainerOptions) options.withMetadata(metadata);
