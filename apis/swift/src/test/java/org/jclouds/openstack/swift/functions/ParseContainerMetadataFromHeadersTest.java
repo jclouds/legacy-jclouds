@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.swift.blobstore.functions;
+package org.jclouds.openstack.swift.functions;
 
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;

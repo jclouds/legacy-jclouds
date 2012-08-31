@@ -166,6 +166,10 @@ public class StubSwiftAsyncClient implements CommonSwiftAsyncClient {
       throw new UnsupportedOperationException();
    }
 
+   public ListenableFuture<Boolean> setContainerMetadata(String container, CreateContainerOptions... options) {
+      throw new UnsupportedOperationException();
+   }
+
    public ListenableFuture<Boolean> createContainer(String container, CreateContainerOptions... options) {
       throw new UnsupportedOperationException();
    }

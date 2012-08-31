@@ -18,11 +18,22 @@
  */
 package org.jclouds.openstack.swift.blobstore.integration;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
 import java.util.Properties;
 
+import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.integration.internal.BaseContainerIntegrationTest;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
+import org.jclouds.openstack.swift.CommonSwiftAsyncClient;
+import org.jclouds.openstack.swift.CommonSwiftClient;
+import org.jclouds.openstack.swift.domain.ContainerMetadata;
+import org.jclouds.openstack.swift.options.CreateContainerOptions;
+import org.jclouds.rest.RestContext;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * @author James Murty
@@ -39,5 +50,27 @@ public class SwiftContainerIntegrationLiveTest extends BaseContainerIntegrationT
    
    public SwiftContainerIntegrationLiveTest() {
       provider = System.getProperty("test.swift.provider", "swift");
+   }
+
+   @Test(groups = "live")
+   public void testSetGetContainerMetadata() throws InterruptedException {
+      BlobStore blobStore = view.getBlobStore();
+      RestContext<CommonSwiftClient, CommonSwiftAsyncClient> swift = blobStore.getContext().unwrap();
+      String containerName = getContainerName();
+      
+      assertTrue(swift.getApi().createContainer(containerName));
+      
+      CreateContainerOptions options = CreateContainerOptions.Builder
+         .withPublicAccess()
+         .withMetadata(ImmutableMap.<String, String> of(
+            "key1", "value1",
+            "key2", "value2")); 
+
+      assertTrue(swift.getApi().setContainerMetadata(containerName, options));
+
+      ContainerMetadata containerMetadata = swift.getApi().getContainerMetadata(containerName);
+      
+      assertEquals(containerMetadata.getMetadata().get("key1"), "value1");
+      assertEquals(containerMetadata.getMetadata().get("key2"), "value2");
    }
 }

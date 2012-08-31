@@ -90,6 +90,8 @@ public interface CommonSwiftClient {
 
    ContainerMetadata getContainerMetadata(String container);
    
+   boolean setContainerMetadata(String container, CreateContainerOptions... options);
+
    boolean createContainer(String container);
 
    boolean createContainer(String container, CreateContainerOptions... options);

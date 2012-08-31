@@ -104,6 +104,14 @@ public interface CommonSwiftAsyncClient {
    ListenableFuture<ContainerMetadata> getContainerMetadata(@PathParam("container") String container);
 
    /**
+    * @see CommonSwiftClient#setContainerMetadata
+    */
+   @POST
+   @Path("/{container}")
+   @ExceptionParser(ReturnNullOnContainerNotFound.class)
+   ListenableFuture<Boolean> setContainerMetadata(@PathParam("container") String container, CreateContainerOptions... options);
+
+   /**
     * @see CommonSwiftClient#createContainer
     */
    @PUT
