@@ -27,6 +27,7 @@ import java.net.URI;
 
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.swift.domain.ContainerMetadata;
+import org.jclouds.openstack.swift.functions.ParseContainerMetadataFromHeaders;
 import org.jclouds.openstack.swift.reference.SwiftHeaders;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;

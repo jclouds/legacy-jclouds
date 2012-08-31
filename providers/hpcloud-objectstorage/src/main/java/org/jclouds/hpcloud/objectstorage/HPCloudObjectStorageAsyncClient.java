@@ -23,7 +23,6 @@ import java.util.Set;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
@@ -34,7 +33,6 @@ import org.jclouds.openstack.swift.CommonSwiftAsyncClient;
 import org.jclouds.openstack.swift.Storage;
 import org.jclouds.openstack.swift.domain.ContainerMetadata;
 import org.jclouds.openstack.swift.functions.ReturnTrueOn404FalseOn409;
-import org.jclouds.openstack.swift.options.CreateContainerOptions;
 import org.jclouds.openstack.swift.options.ListContainerOptions;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.Endpoint;
@@ -63,14 +61,6 @@ import com.google.common.util.concurrent.ListenableFuture;
 @RequestFilters(AuthenticateRequest.class)
 @Endpoint(Storage.class)
 public interface HPCloudObjectStorageAsyncClient extends CommonSwiftAsyncClient {
-
-   /**
-    * @see HPCloudObjectStorageClient#createContainer
-    */
-   @PUT
-   @Path("/{container}")
-   ListenableFuture<Boolean> createContainer(@PathParam("container") String container,
-            CreateContainerOptions... options);
 
    /**
     * @see org.jclouds.openstack.swift.CommonSwiftClient#listContainers

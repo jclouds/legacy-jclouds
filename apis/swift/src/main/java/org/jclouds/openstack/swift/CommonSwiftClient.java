@@ -31,6 +31,7 @@ import org.jclouds.openstack.swift.domain.ContainerMetadata;
 import org.jclouds.openstack.swift.domain.MutableObjectInfoWithMetadata;
 import org.jclouds.openstack.swift.domain.ObjectInfo;
 import org.jclouds.openstack.swift.domain.SwiftObject;
+import org.jclouds.openstack.swift.options.CreateContainerOptions;
 import org.jclouds.openstack.swift.options.ListContainerOptions;
 
 import com.google.inject.Provides;
@@ -89,23 +90,25 @@ public interface CommonSwiftClient {
 
    ContainerMetadata getContainerMetadata(String container);
    
-   boolean setObjectInfo(String container, String name, Map<String, String> userMetadata);
-
    boolean createContainer(String container);
 
+   boolean createContainer(String container, CreateContainerOptions... options);
+   
    boolean deleteContainerIfEmpty(String container);
-
-   PageSet<ObjectInfo> listObjects(String container, ListContainerOptions... options);
 
    boolean containerExists(String container);
 
-   @Timeout(duration = 5 * 1024 * 1024 / 128, timeUnit = TimeUnit.SECONDS)
-   String putObject(String container, SwiftObject object);
+   PageSet<ObjectInfo> listObjects(String container, ListContainerOptions... options);
 
    @Timeout(duration = 5 * 1024 * 1024 / 512, timeUnit = TimeUnit.SECONDS)
    SwiftObject getObject(String container, String name, GetOptions... options);
 
+   boolean setObjectInfo(String container, String name, Map<String, String> userMetadata);
+
    MutableObjectInfoWithMetadata getObjectInfo(String container, String name);
+
+   @Timeout(duration = 5 * 1024 * 1024 / 128, timeUnit = TimeUnit.SECONDS)
+   String putObject(String container, SwiftObject object);
 
    void removeObject(String container, String name);
 

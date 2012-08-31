@@ -41,7 +41,6 @@ import org.jclouds.http.functions.ParseETagHeader;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.openstack.filters.AuthenticateRequest;
 import org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequest;
-import org.jclouds.openstack.swift.blobstore.functions.ParseContainerMetadataFromHeaders;
 import org.jclouds.openstack.swift.domain.AccountMetadata;
 import org.jclouds.openstack.swift.domain.ContainerMetadata;
 import org.jclouds.openstack.swift.domain.MutableObjectInfoWithMetadata;
@@ -49,10 +48,12 @@ import org.jclouds.openstack.swift.domain.ObjectInfo;
 import org.jclouds.openstack.swift.domain.SwiftObject;
 import org.jclouds.openstack.swift.functions.ObjectName;
 import org.jclouds.openstack.swift.functions.ParseAccountMetadataResponseFromHeaders;
+import org.jclouds.openstack.swift.functions.ParseContainerMetadataFromHeaders;
 import org.jclouds.openstack.swift.functions.ParseObjectFromHeadersAndHttpContent;
 import org.jclouds.openstack.swift.functions.ParseObjectInfoFromHeaders;
 import org.jclouds.openstack.swift.functions.ParseObjectInfoListFromJsonResponse;
 import org.jclouds.openstack.swift.functions.ReturnTrueOn404FalseOn409;
+import org.jclouds.openstack.swift.options.CreateContainerOptions;
 import org.jclouds.openstack.swift.options.ListContainerOptions;
 import org.jclouds.rest.annotations.*;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
@@ -101,6 +102,14 @@ public interface CommonSwiftAsyncClient {
    @ExceptionParser(ReturnNullOnContainerNotFound.class)
    @Path("/{container}")
    ListenableFuture<ContainerMetadata> getContainerMetadata(@PathParam("container") String container);
+
+   /**
+    * @see CommonSwiftClient#createContainer
+    */
+   @PUT
+   @Path("/{container}")
+   ListenableFuture<Boolean> createContainer(@PathParam("container") String container,
+            CreateContainerOptions... options);
 
    /**
     * @see CommonSwiftClient#setObjectInfo
