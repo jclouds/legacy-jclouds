@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.beans.ConstructorProperties;
 import java.util.Date;
 
+import com.google.common.base.Strings;
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
@@ -82,9 +83,15 @@ public class Template implements Comparable<Template> {
       UPLOAD_IN_PROGRESS, UNRECOGNIZED;
 
       public static Status fromValue(String state) {
-         if (state.equals("Download Complete")) {
-            return DOWNLOADED;
-         }
+         // Statuses are in free text form. These are the ones in CloudStack 3.0.4 source
+         // https://github.com/CloudStack/CloudStack/blob/e2e76c70ec51bfb35d755371f6c33856cef8a277/server/src/com/cloud/api/ApiResponseHelper.java#L1968
+         if (Strings.isNullOrEmpty(state)) { return UNKNOWN; }
+         else if (state.equals("Processing")) { return DOWNLOAD_IN_PROGRESS; }
+         else if (state.endsWith("% Downloaded")) { return DOWNLOAD_IN_PROGRESS; }
+         else if (state.equals("Installing Template")) { return DOWNLOAD_IN_PROGRESS; }
+         else if (state.equals("Installing ISO")) { return DOWNLOAD_IN_PROGRESS; }
+         else if (state.equals("Download Complete")) { return DOWNLOADED; }
+         else if (state.equals("Successfully Installed")) { return DOWNLOADED; }
          try {
             return valueOf(checkNotNull(state, "state"));
          } catch (IllegalArgumentException e) {
