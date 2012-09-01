@@ -18,7 +18,6 @@
  */
 package org.jclouds.openstack.nova.v2_0.parse;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,6 +32,7 @@ import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -52,7 +52,7 @@ public class ParseKeyPairListTest extends BaseItemParserTest<Set<Map<String, Key
    @SelectJson("keypairs")
    @Consumes(MediaType.APPLICATION_JSON)
    public Set<Map<String, KeyPair>> expected() {
-      Map<String, KeyPair> kp1 = new HashMap<String, KeyPair>();
+      Map<String, KeyPair> kp1 = Maps.newHashMap();
       kp1.put(
             "keypair",
             KeyPair
@@ -60,7 +60,7 @@ public class ParseKeyPairListTest extends BaseItemParserTest<Set<Map<String, Key
                   .publicKey(
                         "ssh-rsa AAAXB3NzaC1yc2EAAAADAQABAAAAgQCy9EC3O7Ff80vPEfAHDQob61PGwcpYc5KE7tEZnZhrB9n0NyHPRm0E0M+ls3fcTa04HDi+R0DzmRwoyhHQJyI658v8kWZZcuvFjKCcsgsSh/dzdX0xTreLIzSOzt5U7RnZYfshP5cmxtF99yrEY3M/swdin0L+fXsTSkR1B42STQ== nova@nv-aw2az1-api0001")
                   .name("default").fingerprint("ab:0c:f4:f3:54:c0:5d:3f:ed:62:ad:d3:94:7c:79:7c").build());
-      Map<String, KeyPair> kp2 = new HashMap<String, KeyPair>();
+      Map<String, KeyPair> kp2 = Maps.newHashMap();
       kp2.put(
             "keypair",
             KeyPair

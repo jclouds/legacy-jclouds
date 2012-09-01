@@ -44,7 +44,7 @@ public interface SecurityGroupApi {
     * 
     * @return all Floating IPs
     */
-   Set<SecurityGroup> listSecurityGroups();
+   Set<? extends SecurityGroup> listSecurityGroups();
 
    /**
     * Get a specific Security Group

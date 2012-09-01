@@ -31,6 +31,8 @@ import org.testng.annotations.Test;
 @Test(groups = "unit", testName = "VCloudDirectorApi")
 public class VCloudDirectorApiExpectTest extends VCloudDirectorAdminApiExpectTest {
 
+   //TODO: this inheritance is all wrong!!  the base client shouldn't inherit from the admin client tests!!
+   
    public void testRestClientModuleWorksProperly() throws Exception {
 
       VCloudDirectorApi apiWhenSessionsExist = requestSendsResponse(loginRequest, sessionResponse);

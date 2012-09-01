@@ -21,9 +21,10 @@ package org.jclouds.vcloud.director.v1_5.features;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.vcloud.director.v1_5.domain.Catalog;
 import org.jclouds.vcloud.director.v1_5.domain.CatalogReference;
-import org.jclouds.vcloud.director.v1_5.domain.Entity;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
+import org.jclouds.vcloud.director.v1_5.domain.Media;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.Vm;
@@ -40,15 +41,6 @@ import org.jclouds.vcloud.director.v1_5.domain.query.VAppReferences;
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface QueryApi {
-
-   /**
-    * Redirects to the URL of an entity with the given VCD ID.
-    *
-    * <pre>
-    * GET /entity/{id}
-    * </pre>
-    */
-   Entity entity(String id);
 
    // TODO Add a typed object for filter syntax, or at least a fluent builder
    

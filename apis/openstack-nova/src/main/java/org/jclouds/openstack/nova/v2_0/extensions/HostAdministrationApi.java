@@ -43,14 +43,14 @@ public interface HostAdministrationApi {
     *
     * @return the usage information
     */
-   Set<Host> listHosts();
+   Set<? extends Host> listHosts();
 
    /**
     * Retrieves the physical/usage resource on a specific host
     *
     * @return the usage information
     */
-   Set<HostResourceUsage> getHostResourceUsage(String hostId);
+   Set<? extends HostResourceUsage> getHostResourceUsage(String hostId);
 
    /**
     * Allow the specified host to accept new instances.

@@ -141,7 +141,7 @@ public class Checks {
       }
       
       // Check parent type
-      checkResourceType(entity);
+      checkResource(entity);
    }
 
    /**
@@ -165,8 +165,6 @@ public class Checks {
       assertNotNull(reference.getHref(), String.format(NOT_NULL_OBJ_FIELD_FMT, "Href", "ReferenceType"));
 
       // Check optional fields
-      String id = reference.getId();
-      if (id != null) checkId(id);
       String type = reference.getType();
       if (type != null) checkType(type, validTypes);
       // NOTE name cannot be checked
@@ -175,20 +173,20 @@ public class Checks {
    /**
     * Assumes the validTypes to be vcloud-specific types.
     * 
-    * @see #checkResourceType(ResourceType, Collection)
+    * @see #checkResource(Resource, Collection)
     */
-   public static void checkResourceType(Resource resource) {
-      checkResourceType(resource, VCloudDirectorMediaType.ALL);
+   public static void checkResource(Resource resource) {
+      checkResource(resource, VCloudDirectorMediaType.ALL);
    }
 
    /**
-    * @see #checkResourceType(ResourceType, Collection)
+    * @see #checkResource(Resource, Collection)
     */
-   public static void checkResourceType(Resource resource, String type) {
-      checkResourceType(resource, ImmutableSet.of(type));
+   public static void checkResource(Resource resource, String type) {
+      checkResource(resource, ImmutableSet.of(type));
    }
 
-   public static void checkResourceType(Resource resource, Collection<String> validTypes) {
+   public static void checkResource(Resource resource, Collection<String> validTypes) {
       // Check optional fields
       URI href = resource.getHref();
       if (href != null) checkHref(href);
@@ -257,7 +255,7 @@ public class Checks {
       if (error != null) checkError(error);
       Reference user = task.getUser();
       if (user != null) checkReferenceType(user);
-      Reference org = task.getOrg();
+      Reference org = task.get();
       if (org != null) checkReferenceType(org);
       Integer progress = task.getProgress();
       if (progress != null) checkProgress(progress);
@@ -296,7 +294,7 @@ public class Checks {
       }
 
       // Check parent type
-      checkResourceType(metadata);
+      checkResource(metadata);
    }
 
    public static void checkMetadataEntry(MetadataEntry metadataEntry) {
@@ -305,15 +303,7 @@ public class Checks {
       assertNotNull(metadataEntry.getValue(), String.format(NOT_NULL_OBJ_FIELD_FMT, "Value", "MetadataEntry"));
 
       // Check parent type
-      checkResourceType(metadataEntry);
-   }
-
-   public static void checkMetadataValue(MetadataValue metadataValue) {
-      // Check required elements and attributes
-      assertNotNull(metadataValue.getValue(), String.format(NOT_NULL_OBJ_FIELD_FMT, "Value", "MetadataValue"));
-      
-      // Check parent type
-      checkResourceType(metadataValue);
+      checkResource(metadataEntry);
    }
 
    public static void checkProgress(Integer progress) {
@@ -341,7 +331,7 @@ public class Checks {
    public static void checkAdminOrg(AdminOrg org) {
       // required
       assertNotNull(org.getSettings(), String.format(NOT_NULL_OBJ_FIELD_FMT, "settings", "AdminOrg"));
-      checkResourceType(org, VCloudDirectorMediaType.ADMIN_ORG);
+      checkResource(org, VCloudDirectorMediaType.ADMIN_ORG);
       
       // optional
       for (Reference user : org.getUsers()) {
@@ -389,7 +379,7 @@ public class Checks {
       }
       
      // Check parent type
-      checkResourceType(owner);
+      checkResource(owner);
    }
 
    public static void checkCatalogItem(CatalogItem catalogItem) {
@@ -575,29 +565,13 @@ public class Checks {
                String.format(OBJ_FIELD_ATTRB_REQ, api, "MetadataEntry", entry.getValue(), "value"));
           
          // Check parent type
-         checkResourceType(entry);
+         checkResource(entry);
       }
       
       // Check parent type
-      checkResourceType(metadata);
+      checkResource(metadata);
    }
 
-   public static void checkMetadataValueFor(String api, MetadataValue metadataValue) {
-      checkMetadataValueFor(api, metadataValue, "value");
-   }
-   
-   public static void checkMetadataValueFor(String api, MetadataValue metadataValue, String expectedValue) {
-      // Check required fields
-      String value = metadataValue.getValue();
-      assertNotNull(value, 
-            String.format(OBJ_FIELD_ATTRB_REQ, api, "MetadataEntry", 
-                  metadataValue.toString(), "value"));
-      assertEquals(value, expectedValue, 
-            String.format(OBJ_FIELD_EQ, api, "metadataEntry.value", expectedValue, value));
-      
-      // Check parent type
-      checkResourceType(metadataValue);
-   }
 
    public static void checkMetadataKeyAbsentFor(String api, Metadata metadata, String key) {
       Map<String,String> metadataMap = metadataToMap(metadata);
@@ -630,7 +604,7 @@ public class Checks {
       }
       
       // Check parent type
-      checkResourceType(question);
+      checkResource(question);
    }
 
    public static void checkVmQuestionAnswerChoice(VmQuestionAnswerChoice choice) {
@@ -850,7 +824,7 @@ public class Checks {
       }
       
       // parent type
-      checkResourceType(settings);
+      checkResource(settings);
    }
    
    public static void checkEmailSettings(OrgEmailSettings settings) {
@@ -866,7 +840,7 @@ public class Checks {
       // NOTE alertEmailsTo cannot be checked
       
       // parent type
-      checkResourceType(settings);
+      checkResource(settings);
    }
    
    public static void checkEmailAddress(String email) {
@@ -891,7 +865,7 @@ public class Checks {
       }
       
       // parent type
-      checkResourceType(settings);
+      checkResource(settings);
    }
    
    public static void checkLdapSettings(OrgLdapSettings settings) {
@@ -907,7 +881,7 @@ public class Checks {
       }
       
       // parent type
-      checkResourceType(settings);
+      checkResource(settings);
    }
    
    public static void checkCustomOrgLdapSettings(CustomOrgLdapSettings settings) {
@@ -982,7 +956,7 @@ public class Checks {
             String.format(OBJ_FIELD_GTE_0, "OrgPasswordPolicySettings", "accountLockoutIntervalMinutes", settings.getAccountLockoutIntervalMinutes()));
       
       // parent type
-      checkResourceType(settings);
+      checkResource(settings);
    }
    
    public static void checkVAppLeaseSettings(OrgLeaseSettings settings) {
@@ -998,7 +972,7 @@ public class Checks {
       }
       
       // parent type
-      checkResourceType(settings);
+      checkResource(settings);
    }
 
    public static void checkVAppTemplateLeaseSettings(OrgVAppTemplateLeaseSettings settings) {
@@ -1010,7 +984,7 @@ public class Checks {
       }
       
       // parent type
-      checkResourceType(settings);
+      checkResource(settings);
    }
    
    public static void checkUser(User user) {
@@ -1089,7 +1063,7 @@ public class Checks {
       }
       
       // Check parent type
-      checkResourceType(sections);
+      checkResource(sections);
    }
 
    public static void checkGuestCustomizationSection(GuestCustomizationSection section) {
@@ -1222,7 +1196,7 @@ public class Checks {
       assertNotNull(val.getNetworkName(), String.format(NOT_NULL_OBJ_FIELD_FMT, "NetworkName", "VAppNetworkConfiguration"));
       checkNetworkConfiguration(val.getConfiguration());
       
-      checkResourceType(val);
+      checkResource(val);
    }
 
    public static void checkNetworkConnectionSection(NetworkConnectionSection val) {
@@ -1519,6 +1493,6 @@ public class Checks {
       }
          
       // parent type
-      checkResourceType(container);
+      checkResource(container);
    }
 }

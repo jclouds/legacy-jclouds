@@ -30,14 +30,15 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.internal.BaseRestApiExpectTest;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
-import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.testng.annotations.BeforeGroups;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.net.HttpHeaders;
 import com.google.inject.Guice;
+import com.jamesmurty.utils.XMLBuilder;
 
 /**
  * Base class for writing vCloud Director REST api expect tests.
@@ -187,6 +188,7 @@ public abstract class BaseVCloudDirectorExpectTest<T> extends BaseRestApiExpectT
     *
     * @author danikov
     */
+   @Deprecated
    public class VcloudHttpRequestPrimer {
       private Multimap<String, String> headers = LinkedListMultimap.create();
       private HttpRequest.Builder<?> builder = HttpRequest.builder();
@@ -230,8 +232,9 @@ public abstract class BaseVCloudDirectorExpectTest<T> extends BaseRestApiExpectT
       }
    }
    
+   @Deprecated
    protected class VcloudHttpResponsePrimer {
-      private HttpResponse.Builder<?> builder = HttpResponse.builder();
+      private HttpResponse.Builder<?> builder = HttpResponse.builder().statusCode(200);
 
       public VcloudHttpResponsePrimer() {
       }
@@ -245,11 +248,19 @@ public abstract class BaseVCloudDirectorExpectTest<T> extends BaseRestApiExpectT
       }
    }
    
-   public URI toAdminUri(Reference ref) {
-      return toAdminUri(ref.getHref());
+   protected static XMLBuilder createXMLBuilder(String root){
+      try {
+         return XMLBuilder.create(root);
+      } catch (Exception e) {
+         throw Throwables.propagate(e);
+      }
    }
    
-   public URI toAdminUri(URI uri) {
-      return Reference.builder().href(uri).build().toAdminReference(endpoint).getHref();
+   protected static String asString(XMLBuilder in){
+      try {
+         return in.asString();
+      } catch (Exception e) {
+         throw Throwables.propagate(e);
+      }
    }
 }

@@ -28,6 +28,7 @@ import org.jclouds.location.functions.RegionToEndpoint;
 import org.jclouds.openstack.swift.v1.features.AccountApi;
 import org.jclouds.openstack.swift.v1.features.ContainerApi;
 import org.jclouds.openstack.swift.v1.features.ObjectApi;
+import org.jclouds.openstack.v2_0.features.ExtensionApi;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
 
@@ -50,6 +51,13 @@ public interface SwiftApi {
    @Provides
    @Region
    Set<String> getConfiguredRegions();
+
+   /**
+    * Provides synchronous access to Extension features.
+    */
+   @Delegate
+   ExtensionApi getExtensionApiForRegion(
+         @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region);
 
    /**
     * Provides synchronous access to Account features.

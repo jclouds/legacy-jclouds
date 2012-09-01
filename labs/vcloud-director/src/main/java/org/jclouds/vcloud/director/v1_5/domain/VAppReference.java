@@ -53,8 +53,8 @@ public class VAppReference extends Reference {
       super(builder);
    }
 
-   public VAppReference(URI href, String id, String name, String type) {
-      super(href, id, name, type);
+   public VAppReference(URI href, String name, String type) {
+      super(href, name, type);
    }
 
    protected VAppReference() {

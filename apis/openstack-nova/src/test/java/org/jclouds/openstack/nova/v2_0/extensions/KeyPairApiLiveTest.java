@@ -38,7 +38,7 @@ public class KeyPairApiLiveTest extends BaseNovaApiLiveTest {
    public void testListKeyPairs() throws Exception {
       for (String zoneId : novaContext.getApi().getConfiguredZones()) {
          KeyPairApi api = novaContext.getApi().getKeyPairExtensionForZone(zoneId).get();
-         Set<Map<String, KeyPair>> keyPairsList = api.listKeyPairs();
+         Set<? extends Map<String, ? extends KeyPair>> keyPairsList = api.listKeyPairs();
          assertNotNull(keyPairsList);
       }
    }

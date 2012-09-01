@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.vcloud.director.v1_5.domain.Media;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
@@ -35,13 +36,13 @@ import org.jclouds.vcloud.director.v1_5.domain.params.CloneVAppTemplateParams;
 import org.jclouds.vcloud.director.v1_5.domain.params.ComposeVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.params.InstantiateVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.params.UploadVAppTemplateParams;
+import org.jclouds.vcloud.director.v1_5.functions.href.VdcURNToHref;
 
 /**
  * Provides synchronous access to a vDC.
  * 
  * @see VdcAsyncApi
- * @see <a href= "http://support.theenterprisecloud.com/kb/default.asp?id=984&Lang=1&SID=" />
- * @author danikov
+ * @author danikov, Adrian Cole
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface VdcApi {
@@ -51,7 +52,9 @@ public interface VdcApi {
     * 
     * @return the vdc or null if not found
     */
-   Vdc getVdc(URI vdcUri);
+   Vdc get(String vdcUrn);
+   
+   Vdc get(URI vdcHref);
    
    /**
     * Captures a vApp into vApp template.
@@ -63,8 +66,10 @@ public interface VdcApi {
     * @return a VApp resource which will contain a task. The user should should wait for this task to finish to be able
     *         to use the vApp.
     */
-   VAppTemplate captureVApp(URI vdcUri, CaptureVAppParams params);
+   VAppTemplate captureVApp(String vdcUrn, CaptureVAppParams params);
    
+   VAppTemplate captureVApp(URI vdcHref, CaptureVAppParams params);
+
    /**
     * Clones a media into new one.
     *
@@ -75,8 +80,10 @@ public interface VdcApi {
     * @return a Media resource which will contain a task. The user should monitor the contained task status in order to
     *         check when it is completed.
     */
-   Media cloneMedia(URI vdcUri, CloneMediaParams params);
+   Media cloneMedia(String vdcUrn, CloneMediaParams params);
    
+   Media cloneMedia(URI vdcHref, CloneMediaParams params);
+
    /**
     * Clones a vApp into new one.
     *
@@ -86,8 +93,10 @@ public interface VdcApi {
     * @return a VApp resource which will contain a task. The user should should wait for this task to finish to be able
     *         to use the vApp.
     */
-   VApp cloneVApp(URI vdcUri, CloneVAppParams params);
+   VApp cloneVApp(String vdcUrn, CloneVAppParams params);
    
+   VApp cloneVApp(URI vdcHref, CloneVAppParams params);
+
    /**
     * Clones a vApp template into new one.
     *
@@ -98,8 +107,10 @@ public interface VdcApi {
     * @return a VAppTemplate resource which will contain a task. The user should should wait for this task to finish to
     *         be able to use the VAppTemplate.
     */
-   VAppTemplate cloneVAppTemplate(URI vdcUri, CloneVAppTemplateParams params);
+   VAppTemplate cloneVAppTemplate(String vdcUrn, CloneVAppTemplateParams params);
    
+   VAppTemplate cloneVAppTemplate(URI vdcHref, CloneVAppTemplateParams params);
+
    /**
     * Composes a new vApp using VMs from other vApps or vApp templates.
     *
@@ -130,8 +141,10 @@ public interface VdcApi {
     * @return a VApp resource which will contain a task. The user should should wait for this task to finish to be able
     *         to use the vApp.
     */
-   VApp composeVApp(URI vdcUri, ComposeVAppParams params);
+   VApp composeVApp(String vdcUrn, ComposeVAppParams params);
    
+   VApp composeVApp(URI vdcHref, ComposeVAppParams params);
+
    /**
     * Instantiate a vApp template into a new vApp.
     *
@@ -145,8 +158,10 @@ public interface VdcApi {
     * @return a VApp resource which will contain a task. The user should should wait for this task to finish to be able
     *         to use the vApp.
     */
-   VApp instantiateVApp(URI vdcUri, InstantiateVAppParams params);
+   VApp instantiateVApp(String vdcUrn, InstantiateVAppParams params);
    
+   VApp instantiateVApp(URI vdcHref, InstantiateVAppParams params);
+
    /**
     * Uploading vApp template to a vDC.
     *
@@ -166,18 +181,26 @@ public interface VdcApi {
     * @return a VAppTemplate resource which will contain a task. The user should should wait for this task to finish to
     *         be able to use the VAppTemplate.
     */
-   VAppTemplate uploadVAppTemplate(URI vdcUri, UploadVAppTemplateParams params);
+   VAppTemplate uploadVAppTemplate(String vdcUrn, UploadVAppTemplateParams params);
    
+   VAppTemplate uploadVAppTemplate(URI vdcHref, UploadVAppTemplateParams params);
+
    /**
     * Creates a media (and present upload link for the floppy/iso file).
     * 
     * @return The response will return a link to transfer site to be able to continue with uploading the media.
     */
-   Media createMedia(URI vdcUri, Media media);
+   Media addMedia(String vdcUrn, Media media);
    
+   Media addMedia(URI vdcHref, Media media);
+
    /**
     * @return synchronous access to {@link Metadata.Readable} features
     */
    @Delegate
-   MetadataApi.Readable getMetadataApi();
+   MetadataApi.Readable getMetadataApi(@EndpointParam(parser = VdcURNToHref.class) String vdcUrn);
+
+   @Delegate
+   MetadataApi.Readable getMetadataApi(@EndpointParam URI vdcHref);
+
 }

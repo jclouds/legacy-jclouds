@@ -157,6 +157,7 @@ import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -558,16 +559,12 @@ public class RestAnnotationProcessor<T> {
    }
 
    public static Multimap<String, String> filterOutContentHeaders(Multimap<String, String> headers) {
-      // TODO make a filter like {@link Maps.filterKeys} instead of this
-      ImmutableMultimap.Builder<String, String> headersBuilder = ImmutableMultimap.builder();
       // http message usually comes in as a null key header, let's filter it
       // out.
-      for (String header : Iterables.filter(headers.keySet(), Predicates.notNull())) {
-         if (!ContentMetadata.HTTP_HEADERS.contains(header)) {
-            headersBuilder.putAll(header, headers.get(header));
-         }
-      }
-      return headersBuilder.build();
+      return ImmutableMultimap.copyOf(Multimaps.filterKeys(headers,
+         Predicates.and(
+            Predicates.notNull(),
+            Predicates.not(Predicates.in(ContentMetadata.HTTP_HEADERS)))));
    }
 
    public static final String BOUNDARY = "--JCLOUDS--";

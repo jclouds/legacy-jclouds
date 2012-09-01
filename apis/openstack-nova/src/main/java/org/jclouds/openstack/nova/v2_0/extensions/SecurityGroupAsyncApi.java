@@ -73,7 +73,7 @@ public interface SecurityGroupAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/os-security-groups")
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<SecurityGroup>> listSecurityGroups();
+   ListenableFuture<? extends Set<? extends SecurityGroup>> listSecurityGroups();
 
    /**
     * @see SecurityGroupApi#getSecurityGroup
@@ -83,7 +83,7 @@ public interface SecurityGroupAsyncApi {
    @SelectJson("security_group")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<SecurityGroup> getSecurityGroup(@PathParam("id") String id);
+   ListenableFuture<? extends SecurityGroup> getSecurityGroup(@PathParam("id") String id);
 
    /**
     * @see SecurityGroupApi#createSecurityGroupWithNameAndDescription
@@ -95,7 +95,7 @@ public interface SecurityGroupAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("%7B\"security_group\":%7B\"name\":\"{name}\",\"description\":\"{description}\"%7D%7D")
-   ListenableFuture<SecurityGroup> createSecurityGroupWithNameAndDescription(@PayloadParam("name") String name,
+   ListenableFuture<? extends SecurityGroup> createSecurityGroupWithNameAndDescription(@PayloadParam("name") String name,
             @PayloadParam("description") String description);
 
    /**
@@ -117,7 +117,7 @@ public interface SecurityGroupAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
    @MapBinder(BindSecurityGroupRuleToJsonPayload.class)
-   ListenableFuture<SecurityGroupRule> createSecurityGroupRuleAllowingCidrBlock(
+   ListenableFuture<? extends SecurityGroupRule> createSecurityGroupRuleAllowingCidrBlock(
             @PayloadParam("parent_group_id") String parent_group_id, Ingress ip_protocol,
             @PayloadParam("cidr") String cidr);
 
@@ -131,7 +131,7 @@ public interface SecurityGroupAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
    @MapBinder(BindSecurityGroupRuleToJsonPayload.class)
-   ListenableFuture<SecurityGroupRule> createSecurityGroupRuleAllowingSecurityGroupId(
+   ListenableFuture<? extends SecurityGroupRule> createSecurityGroupRuleAllowingSecurityGroupId(
             @PayloadParam("parent_group_id") String parent_group_id, Ingress ip_protocol,
             @PayloadParam("group_id") String group_id);
 

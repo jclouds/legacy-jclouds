@@ -57,6 +57,6 @@ public interface ServerWithSecurityGroupsAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/os-create-server-ext/{id}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<ServerWithSecurityGroups> getServer(@PathParam("id") String id);
+   ListenableFuture<? extends ServerWithSecurityGroups> getServer(@PathParam("id") String id);
 
 }

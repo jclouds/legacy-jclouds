@@ -53,7 +53,6 @@ public class RegionIdToURIFromAuthForServiceSupplierTest {
                   RegionIdToURIFromAuthForServiceSupplier.class).build(RegionIdToURISupplier.Factory.class));
       }
 
-      @SuppressWarnings("unused")
       @Provides
       @Singleton
       public Supplier<Auth> provide() {

@@ -76,7 +76,7 @@ public class NetworkFeatures {
       }
    }
 
-   private NetworkFeatures() {
+   NetworkFeatures() {
       // for JAXB
    }
 

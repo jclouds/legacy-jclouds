@@ -367,6 +367,7 @@
                         <ignoredResource>amzn_images.xml</ignoredResource>
                         <ignoredResource>test.jks</ignoredResource>
                         <ignoredResource>CreateInternetService-options-test.xml</ignoredResource>
+                        <ignoredResource>.gitattributes</ignoredResource>
                     </ignoredResources>
                     <failBuildInCaseOfConflict>true</failBuildInCaseOfConflict>
                 </configuration>

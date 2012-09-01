@@ -38,7 +38,8 @@ public class NinefoldComputeProviderMetadata extends BaseProviderMetadata {
 
    public static Properties defaultProperties() {
       Properties properties = new Properties();
-      properties.setProperty(TEMPLATE, "imageId=1215,loginUser=user:Password01,authenticateSudo=true");
+      // https://ninefold.com/support/display/SPT/Ubuntu+10.04+64+Bit+Micro+Server+with+CHEF
+      properties.setProperty(TEMPLATE, "imageNameMatches=.*Micro.*,osFamily=UBUNTU,osVersionMatches=1[012].[01][04],loginUser=user:Password01,authenticateSudo=true");
       return properties;
    }
 

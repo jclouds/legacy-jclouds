@@ -69,7 +69,7 @@ public class RecomposeVAppParams extends ComposeVAppParams {
    public static abstract class Builder<B extends Builder<B>> extends ComposeVAppParams.Builder<B> {
 
       private List<Vm> createItem;
-      private List<Reference> deleteItem;
+      private List<Reference> removeItem;
 
       /**
        * @see RecomposeVAppParams#getCreateItem()
@@ -82,8 +82,8 @@ public class RecomposeVAppParams extends ComposeVAppParams {
       /**
        * @see RecomposeVAppParams#getDeleteItem()
        */
-      public B deleteItem(List<Reference> deleteItem) {
-         this.deleteItem = deleteItem;
+      public B removeItem(List<Reference> removeItem) {
+         this.removeItem = removeItem;
          return self();
       }
 
@@ -93,7 +93,7 @@ public class RecomposeVAppParams extends ComposeVAppParams {
       }
 
       public B fromRecomposeVAppParams(RecomposeVAppParams in) {
-         return fromComposeVAppParams(in).createItem(in.getCreateItem()).deleteItem(in.getDeleteItem());
+         return fromComposeVAppParams(in).createItem(in.getCreateItem()).removeItem(in.getDeleteItem());
       }
    }
 
@@ -104,13 +104,13 @@ public class RecomposeVAppParams extends ComposeVAppParams {
    private RecomposeVAppParams(Builder<?> builder) {
       super(builder);
       this.createItem = builder.createItem;
-      this.deleteItem = builder.deleteItem;
+      this.removeItem = builder.removeItem;
    }
 
    @XmlElement(name = "CreateItem")
    protected List<Vm> createItem;
    @XmlElement(name = "DeleteItem")
-   protected List<Reference> deleteItem;
+   protected List<Reference> removeItem;
 
    /**
     * Gets the value of the createItem property.
@@ -123,13 +123,13 @@ public class RecomposeVAppParams extends ComposeVAppParams {
    }
 
    /**
-    * Gets the value of the deleteItem property.
+    * Gets the value of the removeItem property.
     */
    public List<Reference> getDeleteItem() {
-      if (deleteItem == null) {
-         deleteItem = new ArrayList<Reference>();
+      if (removeItem == null) {
+         removeItem = new ArrayList<Reference>();
       }
-      return this.deleteItem;
+      return this.removeItem;
    }
 
    @Override
@@ -140,17 +140,17 @@ public class RecomposeVAppParams extends ComposeVAppParams {
          return false;
       RecomposeVAppParams that = RecomposeVAppParams.class.cast(o);
       return super.equals(that) &&
-            equal(this.createItem, that.createItem) && equal(this.deleteItem, that.deleteItem);
+            equal(this.createItem, that.createItem) && equal(this.removeItem, that.removeItem);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(super.hashCode(), createItem, deleteItem);
+      return Objects.hashCode(super.hashCode(), createItem, removeItem);
    }
 
    @Override
    public ToStringHelper string() {
-      return super.string().add("createItem", createItem).add("deleteItem", deleteItem);
+      return super.string().add("createItem", createItem).add("removeItem", removeItem);
    }
 
 }

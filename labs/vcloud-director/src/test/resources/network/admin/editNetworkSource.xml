@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<OrgNetwork name="ilsolation01-Jclouds" id="urn:vcloud:network:f3ba8256-6f48-4512-aad6-600e85b4dc38" type="application/vnd.vmware.vcloud.orgNetwork+xml" href="https://vcloudbeta.bluelock.com/api/network/f3ba8256-6f48-4512-aad6-600e85b4dc38" xmlns="http://www.vmware.com/vcloud/v1.5">
+    <Link rel="up" type="application/vnd.vmware.vcloud.org+xml" href="https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.metadata+xml" href="https://vcloudbeta.bluelock.com/api/network/f3ba8256-6f48-4512-aad6-600e85b4dc38/metadata"/>
+    <Description></Description>
+    <Configuration>
+        <IpScope>
+            <IsInherited>false</IsInherited>
+            <Gateway>192.168.1.1</Gateway>
+            <Netmask>255.255.255.0</Netmask>
+            <Dns1>173.240.111.52</Dns1>
+            <Dns2>173.240.111.53</Dns2>
+            <IpRanges>
+                <IpRange>
+                    <StartAddress>192.168.1.100</StartAddress>
+                    <EndAddress>192.168.1.199</EndAddress>
+                </IpRange>
+            </IpRanges>
+        </IpScope>
+        <FenceMode>isolated</FenceMode>
+        <RetainNetInfoAcrossDeployments>false</RetainNetInfoAcrossDeployments>
+        <Features>
+            <DhcpService>
+                <IsEnabled>false</IsEnabled>
+                <DefaultLeaseTime>3600</DefaultLeaseTime>
+                <MaxLeaseTime>7200</MaxLeaseTime>
+                <IpRange>
+                    <StartAddress>192.168.1.2</StartAddress>
+                    <EndAddress>192.168.1.99</EndAddress>
+                </IpRange>
+            </DhcpService>
+        </Features>
+        <SyslogServerSettings/>
+    </Configuration>
+    <AllowedExternalIpAddresses/>
+</OrgNetwork>

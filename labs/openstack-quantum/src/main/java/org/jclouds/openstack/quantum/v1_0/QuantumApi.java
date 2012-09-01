@@ -28,8 +28,10 @@ import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.Region;
 import org.jclouds.location.functions.RegionToEndpoint;
+import org.jclouds.location.functions.ZoneToEndpoint;
 import org.jclouds.openstack.quantum.v1_0.features.NetworkApi;
 import org.jclouds.openstack.quantum.v1_0.features.PortApi;
+import org.jclouds.openstack.v2_0.features.ExtensionApi;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
 
@@ -51,6 +53,13 @@ public interface QuantumApi {
    @Provides
    @Region
    Set<String> getConfiguredRegions();
+
+   /**
+    * Provides synchronous access to Extension features.
+    */
+   @Delegate
+   ExtensionApi getExtensionApiForRegion(
+         @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region);
 
    /**
     * Provides synchronous access to Network features.

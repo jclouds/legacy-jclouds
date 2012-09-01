@@ -53,8 +53,8 @@ public class CatalogReference extends Reference {
       super(builder);
    }
 
-   public CatalogReference(URI href, String id, String name, String type) {
-      super(href, id, name, type);
+   public CatalogReference(URI href, String name, String type) {
+      super(href, name, type);
    }
 
    protected CatalogReference() {

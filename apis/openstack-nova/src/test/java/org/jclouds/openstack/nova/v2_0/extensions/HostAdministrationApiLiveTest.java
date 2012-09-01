@@ -65,7 +65,7 @@ public class HostAdministrationApiLiveTest extends BaseNovaApiLiveTest {
    public void testListAndGet() throws Exception {
       if (optApi.isPresent()) {
          HostAdministrationApi api = optApi.get();
-         Set<Host> hosts = api.listHosts();
+         Set<? extends Host> hosts = api.listHosts();
          assertNotNull(hosts);
          for (Host host : hosts) {
             for (HostResourceUsage usage : api.getHostResourceUsage(host.getName())) {

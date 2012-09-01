@@ -18,10 +18,6 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import static com.google.common.base.Predicates.and;
-import static com.google.common.collect.Iterables.contains;
-import static com.google.common.collect.Iterables.find;
-import static com.google.common.collect.Iterables.getFirst;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.CONDITION_FMT;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.CORRECT_VALUE_OBJECT_FMT;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.ENTITY_EQUAL;
@@ -35,20 +31,17 @@ import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkLeaseSettingsS
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadata;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadataFor;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadataKeyAbsentFor;
-import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadataValue;
-import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadataValueFor;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkNetworkConfigSection;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkNetworkSection;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkOwner;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkProductSectionList;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkStartupSection;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkVApp;
-import static org.jclouds.vcloud.director.v1_5.predicates.LinkPredicates.relEquals;
-import static org.jclouds.vcloud.director.v1_5.predicates.LinkPredicates.typeEquals;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import java.net.URI;
 import java.util.List;
@@ -60,26 +53,33 @@ import org.jclouds.dmtf.ovf.MsgType;
 import org.jclouds.dmtf.ovf.NetworkSection;
 import org.jclouds.dmtf.ovf.ProductSection;
 import org.jclouds.dmtf.ovf.StartupSection;
-import org.jclouds.io.Payloads;
 import org.jclouds.vcloud.director.v1_5.AbstractVAppApiLiveTest;
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.AccessSetting;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
-import org.jclouds.vcloud.director.v1_5.domain.Link;
-import org.jclouds.vcloud.director.v1_5.domain.Media;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.ProductSectionList;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.ResourceEntity.Status;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
+import org.jclouds.vcloud.director.v1_5.domain.User;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.Vm;
+import org.jclouds.vcloud.director.v1_5.domain.network.DhcpService;
+import org.jclouds.vcloud.director.v1_5.domain.network.FirewallService;
+import org.jclouds.vcloud.director.v1_5.domain.network.IpRange;
+import org.jclouds.vcloud.director.v1_5.domain.network.IpRanges;
+import org.jclouds.vcloud.director.v1_5.domain.network.IpScope;
+import org.jclouds.vcloud.director.v1_5.domain.network.NatService;
+import org.jclouds.vcloud.director.v1_5.domain.network.Network;
+import org.jclouds.vcloud.director.v1_5.domain.network.Network.FenceMode;
 import org.jclouds.vcloud.director.v1_5.domain.network.NetworkAssignment;
+import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConnection;
+import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConnection.IpAddressAllocationMode;
+import org.jclouds.vcloud.director.v1_5.domain.network.NetworkFeatures;
+import org.jclouds.vcloud.director.v1_5.domain.network.SyslogServerSettings;
 import org.jclouds.vcloud.director.v1_5.domain.network.VAppNetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.params.ComposeVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.params.ControlAccessParams;
@@ -88,8 +88,6 @@ import org.jclouds.vcloud.director.v1_5.domain.params.InstantiationParams;
 import org.jclouds.vcloud.director.v1_5.domain.params.RecomposeVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.params.SourcedCompositionItemParam;
 import org.jclouds.vcloud.director.v1_5.domain.params.UndeployVAppParams;
-import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecordType;
-import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecords;
 import org.jclouds.vcloud.director.v1_5.domain.section.GuestCustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.section.LeaseSettingsSection;
 import org.jclouds.vcloud.director.v1_5.domain.section.NetworkConfigSection;
@@ -99,8 +97,8 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.CharMatcher;
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -109,77 +107,31 @@ import com.google.common.collect.Sets;
 
 /**
  * Tests behavior of the {@link VAppApi}.
- *
+ * 
  * @author grkvlt@apache.org
  */
-@Test(groups = { "live", "user" }, singleThreaded = true, testName = "VAppApiLiveTest")
+@Test(singleThreaded = true, testName = "VAppApiLiveTest")
 public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
 
-   private MetadataValue metadataValue;
    private String key;
-   private URI testUserURI;
-   private boolean mediaCreated = false;
    private boolean testUserCreated = false;
-   
+   private User user;
+
    @BeforeClass(alwaysRun = true)
    protected void setupRequiredEntities() {
-      Set<Link> links = vdcApi.getVdc(vdcURI).getLinks();
 
-      if (mediaURI == null) {
-         Predicate<Link> addMediaLink = and(relEquals(Link.Rel.ADD), typeEquals(VCloudDirectorMediaType.MEDIA));
-         
-         if (contains(links, addMediaLink)) {
-            Link addMedia = find(links, addMediaLink);
-            byte[] iso = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
-            
-            Media sourceMedia = Media.builder()
-                  .type(VCloudDirectorMediaType.MEDIA)
-                  .name(name("media"))
-                  .size(iso.length)
-                  .imageType(Media.ImageType.ISO)
-                  .description("Test media generated by VAppApiLiveTest")
-                  .build();
-            Media media = context.getApi().getMediaApi().createMedia(addMedia.getHref(), sourceMedia);
-            
-            Link uploadLink = getFirst(getFirst(media.getFiles(), null).getLinks(), null);
-            context.getApi().getUploadApi().upload(uploadLink.getHref(), Payloads.newByteArrayPayload(iso));
-            
-            media = context.getApi().getMediaApi().getMedia(media.getHref());
-            
-            if (media.getTasks().size() == 1) {
-               Task uploadTask = Iterables.getOnlyElement(media.getTasks());
-               Checks.checkTask(uploadTask);
-               assertEquals(uploadTask.getStatus(), Task.Status.RUNNING);
-               assertTrue(retryTaskSuccess.apply(uploadTask), String.format(TASK_COMPLETE_TIMELY, "uploadTask"));
-               media = context.getApi().getMediaApi().getMedia(media.getHref());
-            }
-            
-            mediaURI = media.getHref();
-            mediaCreated = true;
-         }
-      }
-      
       if (adminContext != null) {
-         Link orgLink = find(links, and(relEquals("up"), typeEquals(VCloudDirectorMediaType.ORG)));
-         testUserURI = adminContext.getApi().getUserApi().createUser(toAdminUri(orgLink), randomTestUser("VAppAccessTest")).getHref();
-      } else {
-         testUserURI = userURI;
+         userUrn = adminContext.getApi().getUserApi().addUserToOrg(randomTestUser("VAppAccessTest"), org.getId())
+                  .getId();
       }
+      user = lazyGetUser();
    }
-   
+
    @AfterClass(alwaysRun = true, dependsOnMethods = { "cleanUpEnvironment" })
    public void cleanUp() {
-      if (adminContext != null && mediaCreated && mediaURI != null) {
+      if (adminContext != null && testUserCreated && userUrn != null) {
          try {
-            Task delete = context.getApi().getMediaApi().deleteMedia(mediaURI);
-            taskDoneEventually(delete);
-         } catch (Exception e) {
-            logger.warn(e, "Error when deleting media");
-         }
-      }
-      if (adminContext != null && testUserCreated && testUserURI != null) {
-         try {
-            adminContext.getApi().getUserApi().deleteUser(testUserURI);
+            adminContext.getApi().getUserApi().remove(userUrn);
          } catch (Exception e) {
             logger.warn(e, "Error when deleting user");
          }
@@ -187,262 +139,264 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
    }
 
    /**
-    * @see VAppApi#getVApp(URI)
+    * @see VAppApi#get(URI)
     */
-   @Test(description = "GET /vApp/{id}")
+   @Test(groups = { "live", "user" }, description = "GET /vApp/{id}")
    public void testGetVApp() {
       // The method under test
-      vApp = vAppApi.getVApp(vAppURI);
+      vApp = vAppApi.get(vAppUrn);
 
       // Check the retrieved object is well formed
       checkVApp(vApp);
 
       // Check the required fields are set
-      assertEquals(vApp.isDeployed(), Boolean.FALSE, String.format(OBJ_FIELD_EQ, VAPP, "deployed", "FALSE", vApp.isDeployed().toString()));
-      assertTrue(vApp.getName().startsWith("test-vapp-"), String.format(MATCHES_STRING_FMT, "name", "test-vapp-*", vApp.getName()));
-      assertEquals(vApp.getDescription(), "Test VApp", String.format(OBJ_FIELD_EQ, VAPP, "Description", "Test VApp", vApp.getDescription()));
+      assertEquals(vApp.isDeployed(), Boolean.FALSE,
+               String.format(OBJ_FIELD_EQ, VAPP, "deployed", "FALSE", vApp.isDeployed().toString()));
+      assertTrue(vApp.getName().startsWith("test-vapp-"),
+               String.format(MATCHES_STRING_FMT, "name", "test-vapp-*", vApp.getName()));
+      assertEquals(vApp.getDescription(), "Test VApp",
+               String.format(OBJ_FIELD_EQ, VAPP, "Description", "Test VApp", vApp.getDescription()));
 
       // TODO instantiationParams instantiationParams()
       // TODO source.href vAppTemplateURI
 
       // Check status
-      assertVAppStatus(vAppURI, Status.POWERED_OFF);
+      assertVAppStatus(vAppUrn, Status.POWERED_OFF);
    }
-   
-   @Test(description = "POST /vApp/{id}/action/recomposeVApp")
+
+   @Test(groups = { "live", "user" }, description = "POST /vApp/{id}/action/recomposeVApp")
    public void testRecomposeVApp() {
-      Set<Vm> vms = getAvailableVMsFromVAppTemplates();
-  
-      VApp composedVApp = vdcApi.composeVApp(vdcURI, ComposeVAppParams.builder()
-            .name(name("composed-"))
-            .instantiationParams(instantiationParams())
-            .build());
       
+      VApp composedVApp = vdcApi.composeVApp(vdcUrn, ComposeVAppParams.builder()
+               .name(name("composed-"))
+               .instantiationParams(instantiationParams())
+               .build());
+      
+      Set<Vm> vms = getAvailableVMsFromVAppTemplate(vAppTemplate);
+          
       // get the first vm to be added to vApp
       Vm toAddVm = Iterables.get(vms, 0);
-      RecomposeVAppParams params = createRecomposeParams(composedVApp, toAddVm); 
+
+      // TODO clean up network config of the vm
+      //cleanUpNetworkConnectionSection(toAddVm);
       
+      RecomposeVAppParams params = addRecomposeParams(composedVApp, toAddVm);
+
       // The method under test
-      Task recomposeVApp = vAppApi.recompose(composedVApp.getHref(), params);
+      Task recomposeVApp = vAppApi.recompose(composedVApp.getId(), params);
       assertTaskSucceedsLong(recomposeVApp);
-      
-      // add another vm instance to vApp
-      params = createRecomposeParams(composedVApp, toAddVm); 
-      recomposeVApp = vAppApi.recompose(composedVApp.getHref(), params);
-      assertTaskSucceedsLong(recomposeVApp);
-      
-      // delete a vm
-      VApp configured = vAppApi.getVApp(composedVApp.getHref());
+
+      // remove a vm
+      VApp configured = vAppApi.get(composedVApp.getId());
       List<Vm> vmsToBeDeleted = configured.getChildren().getVms();
-      Vm toBeDeleted = Iterables.get(vmsToBeDeleted, 0);
-      Task deleteVm = vmApi.deleteVm(toBeDeleted.getHref());
-      assertTaskSucceedsLong(deleteVm);
+      Vm toBeDeleted = Iterables.find(vmsToBeDeleted, new Predicate<Vm>() {
+
+         @Override
+         public boolean apply(Vm vm) {
+            return vm.getName().startsWith("vm-");
+         }
       
-      Task deleteVApp = vAppApi.deleteVApp(composedVApp.getHref());
+      });
+      Task removeVm = vmApi.remove(toBeDeleted.getId());
+      assertTaskSucceedsLong(removeVm);
+      
+      Task deleteVApp = vAppApi.remove(composedVApp.getHref());
       assertTaskSucceedsLong(deleteVApp);
    }
 
-   private Set<Vm> getAvailableVMsFromVAppTemplates() {
-      Set<Vm> vms = Sets.newLinkedHashSet();
-      QueryResultRecords templatesRecords = queryApi.vAppTemplatesQueryAll();
-      for (QueryResultRecordType templateRecord : templatesRecords.getRecords()) {
-         VAppTemplate vAppTemplate = vAppTemplateApi.getVAppTemplate(templateRecord.getHref());
-         vms.addAll(vAppTemplate.getChildren());
-      }
-      return ImmutableSet.copyOf(Iterables.filter(vms, new Predicate<Vm>() {
-         // filter out vms in the vApp template with computer name that contains underscores, dots, or both.
+   private Set<Vm> getAvailableVMsFromVAppTemplate(VAppTemplate vAppTemplate) {
+      return ImmutableSet.copyOf(Iterables.filter(vAppTemplate.getChildren(), new Predicate<Vm>() {
+         // filter out vms in the vApp template with computer name that contains underscores, dots,
+         // or both.
          @Override
          public boolean apply(Vm input) {
-            GuestCustomizationSection guestCustomizationSection = vmApi.getGuestCustomizationSection(input.getHref());
+            GuestCustomizationSection guestCustomizationSection = vmApi.getGuestCustomizationSection(input.getId());
             String computerName = guestCustomizationSection.getComputerName();
-            String retainComputerName = CharMatcher.inRange('0', '9')
-                     .or(CharMatcher.inRange('a', 'z'))
-                     .or(CharMatcher.inRange('A', 'Z'))
-                     .or(CharMatcher.is('-'))
-                     .retainFrom(computerName);
+            String retainComputerName = CharMatcher.inRange('0', '9').or(CharMatcher.inRange('a', 'z'))
+                     .or(CharMatcher.inRange('A', 'Z')).or(CharMatcher.is('-')).retainFrom(computerName);
             return computerName.equals(retainComputerName);
          }
       }));
    }
-   
+
    /**
-    * @see VAppApi#modifyVApp(URI, VApp)
+    * @see VAppApi#edit(URI, VApp)
     */
-   @Test(description = "PUT /vApp/{id}", dependsOnMethods = { "testGetVApp" })
-   public void testModifyVApp() {
-      VApp newVApp = VApp.builder()
-            .name(name("new-name-"))
-            .description("New Description")
-            .build();
+   @Test(groups = { "live", "user" }, description = "PUT /vApp/{id}", dependsOnMethods = { "testGetVApp" })
+   public void testEditVApp() {
+      VApp newVApp = VApp.builder().name(name("new-name-")).description("New Description").build();
       vAppNames.add(newVApp.getName());
 
       // The method under test
-      Task modifyVApp = vAppApi.modifyVApp(vApp.getHref(), newVApp);
-      assertTrue(retryTaskSuccess.apply(modifyVApp), String.format(TASK_COMPLETE_TIMELY, "modifyVApp"));
+      Task editVApp = vAppApi.edit(vAppUrn, newVApp);
+      assertTrue(retryTaskSuccess.apply(editVApp), String.format(TASK_COMPLETE_TIMELY, "editVApp"));
 
-      // Get the updated VApp
-      vApp = vAppApi.getVApp(vApp.getHref());
+      // Get the edited VApp
+      vApp = vAppApi.get(vAppUrn);
 
       // Check the required fields are set
-      assertEquals(vApp.getName(), newVApp.getName(), String.format(OBJ_FIELD_EQ, VAPP, "Name", newVApp.getName(), vApp.getName()));
-      assertEquals(vApp.getDescription(), newVApp.getDescription(), String.format(OBJ_FIELD_EQ, VAPP, "Description", newVApp.getDescription(), vApp.getDescription()));
+      assertEquals(vApp.getName(), newVApp.getName(),
+               String.format(OBJ_FIELD_EQ, VAPP, "Name", newVApp.getName(), vApp.getName()));
+      assertEquals(vApp.getDescription(), newVApp.getDescription(),
+               String.format(OBJ_FIELD_EQ, VAPP, "Description", newVApp.getDescription(), vApp.getDescription()));
    }
 
-   @Test(description = "POST /vApp/{id}/action/deploy", dependsOnMethods = { "testGetVApp" })
+   @Test(groups = { "live", "user" }, description = "POST /vApp/{id}/action/deploy", dependsOnMethods = { "testGetVApp" })
    public void testDeployVApp() {
       DeployVAppParams params = DeployVAppParams.builder()
-            .deploymentLeaseSeconds((int) TimeUnit.SECONDS.convert(1L, TimeUnit.HOURS))
-            .notForceCustomization()
-            .notPowerOn()
-            .build();
+               .deploymentLeaseSeconds((int) TimeUnit.SECONDS.convert(1L, TimeUnit.HOURS)).notForceCustomization()
+               .notPowerOn().build();
 
       // The method under test
-      Task deployVApp = vAppApi.deploy(vApp.getHref(), params);
+      Task deployVApp = vAppApi.deploy(vAppUrn, params);
       assertTrue(retryTaskSuccessLong.apply(deployVApp), String.format(TASK_COMPLETE_TIMELY, "deployVApp"));
 
-      // Get the updated VApp
-      vApp = vAppApi.getVApp(vApp.getHref());
+      // Get the edited VApp
+      vApp = vAppApi.get(vAppUrn);
 
       // Check the required fields are set
       assertTrue(vApp.isDeployed(), String.format(OBJ_FIELD_EQ, VAPP, "deployed", "TRUE", vApp.isDeployed().toString()));
 
       // Check status
-      assertVAppStatus(vAppURI, Status.POWERED_OFF);
+      assertVAppStatus(vAppUrn, Status.POWERED_OFF);
    }
 
-   @Test(description = "POST /vApp/{id}/power/action/powerOn", dependsOnMethods = { "testDeployVApp" })
+   @Test(groups = { "live", "user" }, description = "POST /vApp/{id}/power/action/powerOn", dependsOnMethods = { "testDeployVApp" })
    public void testPowerOnVApp() {
       // Power off VApp
-      vApp = powerOffVApp(vApp.getHref());
+      vApp = powerOffVApp(vAppUrn);
 
       // The method under test
-      Task powerOnVApp = vAppApi.powerOn(vApp.getHref());
+      Task powerOnVApp = vAppApi.powerOn(vAppUrn);
       assertTaskSucceedsLong(powerOnVApp);
 
-      // Get the updated VApp
-      vApp = vAppApi.getVApp(vApp.getHref());
+      // Get the edited VApp
+      vApp = vAppApi.get(vAppUrn);
 
       // Check status
-      assertVAppStatus(vAppURI, Status.POWERED_ON);
+      assertVAppStatus(vAppUrn, Status.POWERED_ON);
    }
 
-   @Test(description = "POST /vApp/{id}/power/action/reboot", dependsOnMethods = { "testDeployVApp" })
+   @Test(groups = { "live", "user" }, description = "POST /vApp/{id}/power/action/reboot", dependsOnMethods = { "testDeployVApp" })
    public void testReboot() {
       // Power on VApp
-      vApp = powerOnVApp(vApp.getHref());
- 
+      vApp = powerOnVApp(vAppUrn);
+
       // The method under test
-      Task reboot = vAppApi.reboot(vApp.getHref());
+      Task reboot = vAppApi.reboot(vAppUrn);
       assertTaskSucceedsLong(reboot);
 
-      // Get the updated VApp
-      vApp = vAppApi.getVApp(vApp.getHref());
+      // Get the edited VApp
+      vApp = vAppApi.get(vAppUrn);
 
       // Check status
-      assertVAppStatus(vAppURI, Status.POWERED_OFF);
+      assertVAppStatus(vAppUrn, Status.POWERED_OFF);
    }
 
-   @Test(description = "POST /vApp/{id}/power/action/shutdown", dependsOnMethods = { "testDeployVApp" })
+   @Test(groups = { "live", "user" }, description = "POST /vApp/{id}/power/action/shutdown", dependsOnMethods = { "testDeployVApp" })
    public void testShutdown() {
       // Power on VApp
-      vApp = powerOnVApp(vApp.getHref());
+      vApp = powerOnVApp(vAppUrn);
 
+      vApp = vAppApi.get(vAppUrn);
+      
       // The method under test
-      Task shutdown = vAppApi.shutdown(vApp.getHref());
+      Task shutdown = vAppApi.shutdown(vAppUrn);
       assertTaskSucceedsLong(shutdown);
 
-      // Get the updated VApp
-      vApp = vAppApi.getVApp(vApp.getHref());
+      // Get the edited VApp
+      vApp = vAppApi.get(vAppUrn);
 
       // Check status
-      assertVAppStatus(vApp.getHref(), Status.POWERED_OFF);
+      assertVAppStatus(vAppUrn, Status.POWERED_OFF);
 
       // Power on the VApp again
-      vApp = powerOnVApp(vApp.getHref());
+      vApp = powerOnVApp(vAppUrn);
    }
 
-   @Test(description = "POST /vApp/{id}/power/action/suspend", dependsOnMethods = { "testDeployVApp" })
+   @Test(groups = { "live", "user" }, description = "POST /vApp/{id}/power/action/suspend", dependsOnMethods = { "testDeployVApp" })
    public void testSuspend() {
       // Power on VApp
-      vApp = powerOnVApp(vApp.getHref());
+      vApp = powerOnVApp(vAppUrn);
 
       // The method under test
-      Task suspend = vAppApi.suspend(vAppURI);
+      Task suspend = vAppApi.suspend(vAppUrn);
       assertTaskSucceedsLong(suspend);
 
-      // Get the updated VApp
-      vApp = vAppApi.getVApp(vApp.getHref());
+      // Get the edited VApp
+      vApp = vAppApi.get(vAppUrn);
 
       // Check status
-      assertVAppStatus(vAppURI, Status.SUSPENDED);
+      assertVAppStatus(vAppUrn, Status.SUSPENDED);
 
       // Power on the VApp again
-      vApp = powerOnVApp(vApp.getHref());
+      vApp = powerOnVApp(vAppUrn);
    }
 
-   @Test(description = "POST /vApp/{id}/power/action/reset", dependsOnMethods = { "testDeployVApp" })
+   @Test(groups = { "live", "user" }, description = "POST /vApp/{id}/power/action/reset", dependsOnMethods = { "testDeployVApp" })
    public void testReset() {
       // Power on VApp
-      vApp = powerOnVApp(vApp.getHref());
+      vApp = powerOnVApp(vAppUrn);
 
       // The method under test
-      Task reset = vAppApi.reset(vAppURI);
+      Task reset = vAppApi.reset(vAppUrn);
       assertTaskSucceedsLong(reset);
 
-      // Get the updated VApp
-      vApp = vAppApi.getVApp(vAppURI);
+      // Get the edited VApp
+      vApp = vAppApi.get(vAppUrn);
 
       // Check status
-      assertVAppStatus(vAppURI, Status.POWERED_ON);
+      assertVAppStatus(vAppUrn, Status.POWERED_ON);
    }
 
-   @Test(description = "POST /vApp/{id}/action/undeploy", dependsOnMethods = { "testDeployVApp" })
+   @Test(groups = { "live", "user" }, description = "POST /vApp/{id}/action/undeploy", dependsOnMethods = { "testDeployVApp" })
    public void testUndeployVApp() {
       // Power on VApp
-      vApp = powerOnVApp(vApp.getHref());
+      vApp = powerOnVApp(vAppUrn);
 
       UndeployVAppParams params = UndeployVAppParams.builder().build();
 
       // The method under test
-      Task undeploy = vAppApi.undeploy(vApp.getHref(), params);
+      Task undeploy = vAppApi.undeploy(vAppUrn, params);
       assertTrue(retryTaskSuccess.apply(undeploy), String.format(TASK_COMPLETE_TIMELY, "undeploy"));
 
-      // Get the updated VApp
-      vApp = vAppApi.getVApp(vAppURI);
+      // Get the edited VApp
+      vApp = vAppApi.get(vAppUrn);
 
       // Check status
-      assertFalse(vApp.isDeployed(), String.format(OBJ_FIELD_EQ, VAPP, "deployed", "FALSE", vApp.isDeployed().toString()));
-      assertVAppStatus(vAppURI, Status.POWERED_OFF);
+      assertFalse(vApp.isDeployed(),
+               String.format(OBJ_FIELD_EQ, VAPP, "deployed", "FALSE", vApp.isDeployed().toString()));
+      assertVAppStatus(vAppUrn, Status.POWERED_OFF);
    }
 
-   @Test(description = "POST /vApp/{id}/power/action/powerOff", dependsOnMethods = { "testUndeployVApp" })
+   @Test(groups = { "live", "user" }, description = "POST /vApp/{id}/power/action/powerOff", dependsOnMethods = { "testUndeployVApp" })
    public void testPowerOffVApp() {
       // Power on VApp
-      vApp = powerOnVApp(vApp.getHref());
-      
+      vApp = powerOnVApp(vAppUrn);
+
       // The method under test
-      Task powerOffVApp = vAppApi.powerOff(vApp.getHref());
+      Task powerOffVApp = vAppApi.powerOff(vAppUrn);
       assertTrue(retryTaskSuccess.apply(powerOffVApp), String.format(TASK_COMPLETE_TIMELY, "powerOffVApp"));
 
-      // Get the updated VApp
-      vApp = vAppApi.getVApp(vAppURI);
+      // Get the edited VApp
+      vApp = vAppApi.get(vAppUrn);
 
       // Check status
-      assertVAppStatus(vAppURI, Status.POWERED_OFF);
+      assertVAppStatus(vAppUrn, Status.POWERED_OFF);
    }
 
-   @Test(description = "POST /vApp/{id}/action/controlAccess", dependsOnMethods = { "testGetVApp" })
+   @Test(groups = { "live", "user" }, description = "POST /vApp/{id}/action/controlAccess", dependsOnMethods = { "testGetVApp" })
    public void testControlAccessUser() {
-      ControlAccessParams params = ControlAccessParams.builder()
-            .notSharedToEveryone()
-            .accessSetting(AccessSetting.builder()
-                  .subject(Reference.builder().href(testUserURI).type(ADMIN_USER).build())
-                  .accessLevel("ReadOnly")
-                  .build())
-            .build();
+      ControlAccessParams params = ControlAccessParams
+               .builder()
+               .notSharedToEveryone()
+               .accessSetting(
+                        AccessSetting.builder()
+                                 .subject(Reference.builder().href(user.getHref()).type(ADMIN_USER).build())
+                                 .accessLevel("ReadOnly").build()).build();
 
       // The method under test
-      ControlAccessParams modified = vAppApi.modifyControlAccess(vApp.getHref(), params);
+      ControlAccessParams modified = vAppApi.editControlAccess(vAppUrn, params);
 
       // Check the retrieved object is well formed
       checkControlAccessParams(modified);
@@ -450,16 +404,14 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
       assertEquals(modified, params, String.format(ENTITY_EQUAL, "ControlAccessParams"));
    }
 
-   @Test(description = "POST /vApp/{id}/action/controlAccess", dependsOnMethods = { "testControlAccessUser" })
+   @Test(groups = { "live", "user" }, description = "POST /vApp/{id}/action/controlAccess", dependsOnMethods = { "testControlAccessUser" })
    public void testControlAccessEveryone() {
-      
-      ControlAccessParams params = ControlAccessParams.builder()
-            .sharedToEveryone()
-            .everyoneAccessLevel("FullControl")
-            .build();
-      
+
+      ControlAccessParams params = ControlAccessParams.builder().sharedToEveryone().everyoneAccessLevel("FullControl")
+               .build();
+
       // The method under test
-      ControlAccessParams modified = vAppApi.modifyControlAccess(vApp.getHref(), params);
+      ControlAccessParams modified = vAppApi.editControlAccess(vAppUrn, params);
 
       // Check the retrieved object is well formed
       checkControlAccessParams(modified);
@@ -468,74 +420,73 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
       assertEquals(modified, params, String.format(ENTITY_EQUAL, "ControlAccessParams"));
    }
 
-   @Test(description = "POST /vApp/{id}/action/discardSuspendedState", dependsOnMethods = { "testDeployVApp" })
+   @Test(groups = { "live", "user" }, description = "POST /vApp/{id}/action/discardSuspendedState", dependsOnMethods = { "testDeployVApp" })
    public void testDiscardSuspendedState() {
       // Power on, then suspend the VApp
-      vApp = powerOnVApp(vAppURI);
-      vApp = suspendVApp(vAppURI);
-      
+      vApp = powerOnVApp(vAppUrn);
+      vApp = suspendVApp(vAppUrn);
+
       // The method under test
-      Task discardSuspendedState = vAppApi.discardSuspendedState(vApp.getHref());
-      assertTrue(retryTaskSuccess.apply(discardSuspendedState), String.format(TASK_COMPLETE_TIMELY, "discardSuspendedState"));
+      Task discardSuspendedState = vAppApi.discardSuspendedState(vAppUrn);
+      assertTrue(retryTaskSuccess.apply(discardSuspendedState),
+               String.format(TASK_COMPLETE_TIMELY, "discardSuspendedState"));
    }
 
-   @Test(description = "POST /vApp/{id}/action/enterMaintenanceMode", groups = {"systemAdmin"})
+   @Test(description = "POST /vApp/{id}/action/enterMaintenanceMode", groups = { "systemAdmin" })
    public void testEnterMaintenanceMode() {
 
       // Do this to a new vApp, so don't mess up subsequent tests by making the vApp read-only
       VApp temp = instantiateVApp();
       DeployVAppParams params = DeployVAppParams.builder()
-            .deploymentLeaseSeconds((int) TimeUnit.SECONDS.convert(1L, TimeUnit.HOURS))
-            .notForceCustomization()
-            .notPowerOn()
-            .build();
-      Task deployVApp = vAppApi.deploy(temp.getHref(), params);
+               .deploymentLeaseSeconds((int) TimeUnit.SECONDS.convert(1L, TimeUnit.HOURS)).notForceCustomization()
+               .notPowerOn().build();
+      Task deployVApp = vAppApi.deploy(temp.getId(), params);
       assertTaskSucceedsLong(deployVApp);
-      
+
       try {
          // Method under test
-         vAppApi.enterMaintenanceMode(temp.getHref());
-   
-         temp = vAppApi.getVApp(temp.getHref());
-         assertTrue(temp.isInMaintenanceMode(), String.format(CONDITION_FMT, "InMaintenanceMode", "TRUE", temp.isInMaintenanceMode()));
+         vAppApi.enterMaintenanceMode(temp.getId());
+
+         temp = vAppApi.get(temp.getId());
+         assertTrue(temp.isInMaintenanceMode(),
+                  String.format(CONDITION_FMT, "InMaintenanceMode", "TRUE", temp.isInMaintenanceMode()));
 
          // Exit maintenance mode
-         vAppApi.exitMaintenanceMode(temp.getHref());
+         vAppApi.exitMaintenanceMode(temp.getId());
       } finally {
          cleanUpVApp(temp);
       }
    }
 
-   @Test(description = "POST /vApp/{id}/action/exitMaintenanceMode", dependsOnMethods = { "testEnterMaintenanceMode" }, groups = {"systemAdmin"})
+   @Test(description = "POST /vApp/{id}/action/exitMaintenanceMode", dependsOnMethods = { "testEnterMaintenanceMode" }, groups = { "systemAdmin" })
    public void testExitMaintenanceMode() {
       // Do this to a new vApp, so don't mess up subsequent tests by making the vApp read-only
       VApp temp = instantiateVApp();
       DeployVAppParams params = DeployVAppParams.builder()
-            .deploymentLeaseSeconds((int) TimeUnit.SECONDS.convert(1L, TimeUnit.HOURS))
-            .notForceCustomization()
-            .notPowerOn()
-            .build();
-      Task deployVApp = vAppApi.deploy(temp.getHref(), params);
+               .deploymentLeaseSeconds((int) TimeUnit.SECONDS.convert(1L, TimeUnit.HOURS)).notForceCustomization()
+               .notPowerOn().build();
+      Task deployVApp = vAppApi.deploy(temp.getId(), params);
       assertTaskSucceedsLong(deployVApp);
-      
+
       try {
          // Enter maintenance mode
-         vAppApi.enterMaintenanceMode(temp.getHref());
-   
-         // Method under test
-         vAppApi.exitMaintenanceMode(temp.getHref());
+         vAppApi.enterMaintenanceMode(temp.getId());
 
-         temp = vAppApi.getVApp(temp.getHref());
-         assertFalse(temp.isInMaintenanceMode(), String.format(CONDITION_FMT, "InMaintenanceMode", "FALSE", temp.isInMaintenanceMode()));
+         // Method under test
+         vAppApi.exitMaintenanceMode(temp.getId());
+
+         temp = vAppApi.get(temp.getId());
+         assertFalse(temp.isInMaintenanceMode(),
+                  String.format(CONDITION_FMT, "InMaintenanceMode", "FALSE", temp.isInMaintenanceMode()));
       } finally {
          cleanUpVApp(temp);
       }
    }
 
-   @Test(description = "GET /vApp/{id}/controlAccess", dependsOnMethods = { "testGetVApp" })
+   @Test(groups = { "live", "user" }, description = "GET /vApp/{id}/controlAccess", dependsOnMethods = { "testGetVApp" })
    public void testGetControlAccess() {
       // The method under test
-      ControlAccessParams controlAccess = vAppApi.getControlAccess(vApp.getHref());
+      ControlAccessParams controlAccess = vAppApi.getAccessControl(vAppUrn);
 
       // Check the retrieved object is well formed
       checkControlAccessParams(controlAccess);
@@ -544,27 +495,26 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
    @Test(description = "GET /vApp/{id}/leaseSettingsSection", dependsOnMethods = { "testGetVApp" })
    public void testGetLeaseSettingsSection() {
       // The method under test
-      LeaseSettingsSection section = vAppApi.getLeaseSettingsSection(vApp.getHref());
+      LeaseSettingsSection section = vAppApi.getLeaseSettingsSection(vAppUrn);
 
       // Check the retrieved object is well formed
       checkLeaseSettingsSection(section);
    }
 
-   @Test(description = "PUT /vApp/{id}/leaseSettingsSection", dependsOnMethods = { "testGetLeaseSettingsSection" })
-   public void testModifyLeaseSettingsSection() {
+   @Test(groups = { "live", "user" }, description = "PUT /vApp/{id}/leaseSettingsSection", dependsOnMethods = { "testGetLeaseSettingsSection" })
+   public void testEditLeaseSettingsSection() {
       // Copy existing section
-      LeaseSettingsSection oldSection = vAppApi.getLeaseSettingsSection(vApp.getHref());
+      LeaseSettingsSection oldSection = vAppApi.getLeaseSettingsSection(vAppUrn);
       Integer twoHours = (int) TimeUnit.SECONDS.convert(2L, TimeUnit.HOURS);
-      LeaseSettingsSection newSection = oldSection.toBuilder()
-            .deploymentLeaseInSeconds(twoHours)
-            .build();
+      LeaseSettingsSection newSection = oldSection.toBuilder().deploymentLeaseInSeconds(twoHours).build();
 
       // The method under test
-      Task modifyLeaseSettingsSection = vAppApi.modifyLeaseSettingsSection(vApp.getHref(), newSection);
-      assertTrue(retryTaskSuccess.apply(modifyLeaseSettingsSection), String.format(TASK_COMPLETE_TIMELY, "modifyLeaseSettingsSection"));
+      Task editLeaseSettingsSection = vAppApi.editLeaseSettingsSection(vAppUrn, newSection);
+      assertTrue(retryTaskSuccess.apply(editLeaseSettingsSection),
+               String.format(TASK_COMPLETE_TIMELY, "editLeaseSettingsSection"));
 
       // Retrieve the modified section
-      LeaseSettingsSection modified = vAppApi.getLeaseSettingsSection(vApp.getHref());
+      LeaseSettingsSection modified = vAppApi.getLeaseSettingsSection(vAppUrn);
 
       // Check the retrieved object is well formed
       checkLeaseSettingsSection(modified);
@@ -572,93 +522,148 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
       // Check the date fields
       if (modified.getDeploymentLeaseExpiration() != null && newSection.getDeploymentLeaseExpiration() != null) {
          assertTrue(modified.getDeploymentLeaseExpiration().after(newSection.getDeploymentLeaseExpiration()),
-               String.format("The new deploymentLeaseExpiration timestamp must be later than the original: %s > %s",
-                     dateService.iso8601DateFormat(modified.getDeploymentLeaseExpiration()),
-                     dateService.iso8601DateFormat(newSection.getDeploymentLeaseExpiration())));
+                  String.format("The new deploymentLeaseExpiration timestamp must be later than the original: %s > %s",
+                           dateService.iso8601DateFormat(modified.getDeploymentLeaseExpiration()),
+                           dateService.iso8601DateFormat(newSection.getDeploymentLeaseExpiration())));
       }
       if (modified.getStorageLeaseExpiration() != null && newSection.getStorageLeaseExpiration() != null) {
-         assertTrue(modified.getStorageLeaseExpiration().after(newSection.getStorageLeaseExpiration()),
-               String.format("The new storageLeaseExpiration timestamp must be later than the original: %s > %s",
-                     dateService.iso8601DateFormat(modified.getStorageLeaseExpiration()),
-                     dateService.iso8601DateFormat(newSection.getStorageLeaseExpiration())));
+         assertTrue(modified.getStorageLeaseExpiration().after(newSection.getStorageLeaseExpiration()), String.format(
+                  "The new storageLeaseExpiration timestamp must be later than the original: %s > %s",
+                  dateService.iso8601DateFormat(modified.getStorageLeaseExpiration()),
+                  dateService.iso8601DateFormat(newSection.getStorageLeaseExpiration())));
       }
 
       // Reset the date fields
-      modified = modified.toBuilder()
-            .deploymentLeaseExpiration(null)
-            .storageLeaseExpiration(null)
-            .build();
-      newSection = newSection.toBuilder()
-            .deploymentLeaseExpiration(null)
-            .storageLeaseExpiration(null)
-            .build();
+      modified = modified.toBuilder().deploymentLeaseExpiration(null).storageLeaseExpiration(null).build();
+      newSection = newSection.toBuilder().deploymentLeaseExpiration(null).storageLeaseExpiration(null).build();
 
       // Check the section was modified correctly
-      assertEquals(modified.getDeploymentLeaseInSeconds(), twoHours,
-            String.format(OBJ_FIELD_EQ, "LeaseSettingsSection", "DeploymentLeaseInSeconds", Integer.toString(twoHours), modified.getDeploymentLeaseInSeconds().toString()));
+      assertEquals(
+               modified.getDeploymentLeaseInSeconds(),
+               twoHours,
+               String.format(OBJ_FIELD_EQ, "LeaseSettingsSection", "DeploymentLeaseInSeconds",
+                        Integer.toString(twoHours), modified.getDeploymentLeaseInSeconds().toString()));
       assertEquals(modified, newSection, String.format(ENTITY_EQUAL, "LeaseSettingsSection"));
    }
 
-   @Test(description = "GET /vApp/{id}/networkConfigSection", dependsOnMethods = { "testGetVApp" })
+   @Test(groups = { "live", "user" }, description = "GET /vApp/{id}/networkConfigSection", dependsOnMethods = { "testGetVApp" })
    public void testGetNetworkConfigSection() {
       // The method under test
-      NetworkConfigSection section = vAppApi.getNetworkConfigSection(vApp.getHref());
+      NetworkConfigSection section = vAppApi.getNetworkConfigSection(vAppUrn);
 
       // Check the retrieved object is well formed
       checkNetworkConfigSection(section);
    }
 
    @Test(description = "PUT /vApp/{id}/networkConfigSection", dependsOnMethods = { "testGetNetworkConfigSection" })
-   public void testModifyNetworkConfigSection() {
+   public void testEditNetworkConfigSection() {
+      
       // Copy existing section and update fields
-      NetworkConfigSection oldSection = vAppApi.getNetworkConfigSection(vApp.getHref());
-      NetworkConfigSection newSection = oldSection.toBuilder()
-            .build();
+      NetworkConfigSection oldSection = vAppApi.getNetworkConfigSection(vAppUrn);
+      Network network = lazyGetNetwork();
+      
+      tryFindBridgedNetworkInOrg();
+      IpRange ipRange = ipRange();
+      NetworkConfiguration newConfiguration = NetworkConfiguration.builder()
+               .ipScope(ipScope(ipRange))
+               .parentNetwork(Reference.builder().fromEntity(network).build())
+               .fenceMode(FenceMode.NAT_ROUTED)
+               .retainNetInfoAcrossDeployments(false)
+               .syslogServerSettings(SyslogServerSettings.builder().syslogServerIp1("192.168.14.27").build())
+               .features(NetworkFeatures.builder()
+                        .service(DhcpService.builder()
+                                 .ipRange(ipRange)
+                                 .build())
+                        .service(FirewallService.builder()
+                                 .logDefaultAction(false)
+                                 .defaultAction("drop")
+                                 .build())
+                        .service(NatService.builder()
+                                 .natType("portForwarding")
+                                 .enabled(false)
+                                 .build())                               
+                        .build())
+               .build();
+           
+      final String networkName = name("vAppNetwork-");
+      VAppNetworkConfiguration newVAppNetworkConfiguration = VAppNetworkConfiguration.builder()
+               .networkName(networkName)
+               .description(name("description-"))
+               .configuration(newConfiguration)
+               .build();
+
+      NetworkConfigSection newSection = oldSection.toBuilder().networkConfigs(ImmutableSet.of(newVAppNetworkConfiguration)).build();
 
       // The method under test
-      Task modifyNetworkConfigSection = vAppApi.modifyNetworkConfigSection(vApp.getHref(), newSection);
-      assertTrue(retryTaskSuccess.apply(modifyNetworkConfigSection), String.format(TASK_COMPLETE_TIMELY, "modifyNetworkConfigSection"));
+      Task editNetworkConfigSection = vAppApi.editNetworkConfigSection(vAppUrn, newSection);
+      assertTrue(retryTaskSuccess.apply(editNetworkConfigSection),
+               String.format(TASK_COMPLETE_TIMELY, "editNetworkConfigSection"));
 
       // Retrieve the modified section
-      NetworkConfigSection modified = vAppApi.getNetworkConfigSection(vApp.getHref());
+      NetworkConfigSection modified = vAppApi.getNetworkConfigSection(vAppUrn);
 
       // Check the retrieved object is well formed
       checkNetworkConfigSection(modified);
+      
+      Optional<VAppNetworkConfiguration> modifiedOptionalVAppNetwork = Iterables.tryFind(modified.getNetworkConfigs(), new IsVAppNetworkNamed(networkName));
+      if(!modifiedOptionalVAppNetwork.isPresent())
+         fail(String.format("Could not find vApp network named %s", networkName));
+      
+      Optional<VAppNetworkConfiguration> newOptionalVAppNetwork = Iterables.tryFind(newSection.getNetworkConfigs(), new IsVAppNetworkNamed(networkName));
+      if(!newOptionalVAppNetwork.isPresent())
+         fail(String.format("Could not find vApp network named %s", networkName));
 
-      // Check the modified section fields are set correctly
-//      assertEquals(modified.getInfo(), newSection.getInfo());
-
-      // Check the section was modified correctly
-      assertEquals(modified, newSection, String.format(ENTITY_EQUAL, "NetworkConfigSection"));
+      assertEquals(modifiedOptionalVAppNetwork.get().getNetworkName(), newOptionalVAppNetwork.get().getNetworkName(), String.format(ENTITY_EQUAL, "NetworkName"));
+      assertEquals(modifiedOptionalVAppNetwork.get().getConfiguration().getFenceMode(), newOptionalVAppNetwork.get().getConfiguration().getFenceMode(), String.format(ENTITY_EQUAL, "FenceMode"));
+      assertEquals(modifiedOptionalVAppNetwork.get().getConfiguration().getIpScope(), newOptionalVAppNetwork.get().getConfiguration().getIpScope(), String.format(ENTITY_EQUAL, "IpScope"));
+      assertEquals(modifiedOptionalVAppNetwork.get().getConfiguration().getNetworkFeatures(), newOptionalVAppNetwork.get().getConfiguration().getNetworkFeatures(), String.format(ENTITY_EQUAL, "NetworkFeatures"));
    }
 
-   @Test(description = "GET /vApp/{id}/networkSection", dependsOnMethods = { "testGetVApp" })
+   private IpRange ipRange() {
+      return IpRange.builder()
+               .startAddress("192.168.2.100")
+               .endAddress("192.168.2.199")
+               .build();
+   }
+
+   private IpScope ipScope(IpRange ipRange) {
+      IpRanges newIpRanges = IpRanges.builder()
+               .ipRange(ipRange)
+               .build();
+      return IpScope.builder()
+               .isInherited(false)
+               .gateway("192.168.2.1")
+               .netmask("255.255.0.0")
+               .ipRanges(newIpRanges).build();
+   }
+
+   @Test(groups = { "live", "user" }, description = "GET /vApp/{id}/networkSection", dependsOnMethods = { "testGetVApp" })
    public void testGetNetworkSection() {
       // The method under test
-      NetworkSection section = vAppApi.getNetworkSection(vApp.getHref());
+      NetworkSection section = vAppApi.getNetworkSection(vAppUrn);
 
       // Check the retrieved object is well formed
       checkNetworkSection(section);
    }
 
-   @Test(description = "GET /vApp/{id}/owner", dependsOnMethods = { "testGetVApp" })
+   @Test(groups = { "live", "user" }, description = "GET /vApp/{id}/owner", dependsOnMethods = { "testGetVApp" })
    public void testGetOwner() {
       // The method under test
-      Owner owner = vAppApi.getOwner(vApp.getHref());
+      Owner owner = vAppApi.getOwner(vAppUrn);
 
       // Check the retrieved object is well formed
       checkOwner(owner);
    }
 
-   @Test(description = "PUT /vApp/{id}/owner", dependsOnMethods = { "testGetOwner" })
-   public void testModifyOwner() {
-      Owner newOwner = Owner.builder().user(Reference.builder().href(testUserURI).type(ADMIN_USER).build()).build();
+   @Test(groups = { "live", "user" }, description = "PUT /vApp/{id}/owner", dependsOnMethods = { "testGetOwner" })
+   public void testEditOwner() {
+      Owner newOwner = Owner.builder().user(Reference.builder().href(user.getHref()).type(ADMIN_USER).build()).build();
 
       // The method under test
-      vAppApi.modifyOwner(vApp.getHref(), newOwner);
+      vAppApi.editOwner(vAppUrn, newOwner);
 
       // Get the new VApp owner
-      Owner modified = vAppApi.getOwner(vApp.getHref());
+      Owner modified = vAppApi.getOwner(vAppUrn);
 
       // Check the retrieved object is well formed
       checkOwner(modified);
@@ -667,35 +672,36 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
       assertEquals(modified.getUser().getHref(), newOwner.getUser().getHref());
    }
 
-   @Test(description = "GET /vApp/{id}/productSections", dependsOnMethods = { "testGetVApp" })
+   @Test(groups = { "live", "user" }, description = "GET /vApp/{id}/productSections", dependsOnMethods = { "testGetVApp" })
    public void testGetProductSections() {
       // The method under test
-      ProductSectionList sectionList = vAppApi.getProductSections(vApp.getHref());
+      ProductSectionList sectionList = vAppApi.getProductSections(vAppUrn);
 
       // Check the retrieved object is well formed
       checkProductSectionList(sectionList);
    }
 
-   @Test(description = "PUT /vApp/{id}/productSections", dependsOnMethods = { "testGetProductSections" })
-   public void testModifyProductSections() {
-      // Copy existing section and update fields
-      ProductSectionList oldSections = vAppApi.getProductSections(vApp.getHref());
-      ProductSectionList newSections = oldSections.toBuilder()
-            .productSection(ProductSection.builder()
-                  .info("Information about the installed software") // Default ovf:Info text
-                  .required()
-                  .product(MsgType.builder().value("jclouds").build())
-                  .vendor(MsgType.builder().value("jclouds Inc.").build())
-                  // NOTE other ProductSection elements not returned by vCloud
-                  .build())
-            .build();
+   @Test(groups = { "live", "user" }, description = "PUT /vApp/{id}/productSections", dependsOnMethods = { "testGetProductSections" })
+   public void testEditProductSections() {
+      // Copy existing section and edit fields
+      ProductSectionList oldSections = vAppApi.getProductSections(vAppUrn);
+      ProductSectionList newSections = oldSections
+               .toBuilder()
+               .productSection(
+                        ProductSection.builder().info("Information about the installed software")
+                                 // Default ovf:Info text
+                                 .required().product(MsgType.builder().value("jclouds").build())
+                                 .vendor(MsgType.builder().value("jclouds Inc.").build())
+                                 // NOTE other ProductSection elements not returned by vCloud
+                                 .build()).build();
 
       // The method under test
-      Task modifyProductSections = vAppApi.modifyProductSections(vApp.getHref(), newSections);
-      assertTrue(retryTaskSuccess.apply(modifyProductSections), String.format(TASK_COMPLETE_TIMELY, "modifyProductSections"));
+      Task editProductSections = vAppApi.editProductSections(vAppUrn, newSections);
+      assertTrue(retryTaskSuccess.apply(editProductSections),
+               String.format(TASK_COMPLETE_TIMELY, "editProductSections"));
 
       // Retrieve the modified section
-      ProductSectionList modified = vAppApi.getProductSections(vApp.getHref());
+      ProductSectionList modified = vAppApi.getProductSections(vAppUrn);
 
       // Check the retrieved object is well formed
       checkProductSectionList(modified);
@@ -707,140 +713,135 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
       assertEquals(modified, newSections);
    }
 
-   @Test(description = "GET /vApp/{id}/startupSection", dependsOnMethods = { "testGetVApp" })
+   @Test(groups = { "live", "user" }, description = "GET /vApp/{id}/startupSection", dependsOnMethods = { "testGetVApp" })
    public void testGetStartupSection() {
       // The method under test
-      StartupSection section = vAppApi.getStartupSection(vApp.getHref());
+      StartupSection section = vAppApi.getStartupSection(vAppUrn);
 
       // Check the retrieved object is well formed
       checkStartupSection(section);
    }
 
-   @Test(description = "PUT /vApp/{id}/startupSection", dependsOnMethods = { "testGetStartupSection" })
-   public void testModifyStartupSection() {
-      // Copy existing section and update fields
-      StartupSection oldSection = vAppApi.getStartupSection(vApp.getHref());
+   @Test(groups = { "live", "user" }, description = "PUT /vApp/{id}/startupSection", dependsOnMethods = { "testGetStartupSection" })
+   public void testEditStartupSection() {
+      // Copy existing section and edit fields
+      StartupSection oldSection = vAppApi.getStartupSection(vAppUrn);
       StartupSection newSection = oldSection.toBuilder().build();
 
       // The method under test
-      Task modifyStartupSection = vAppApi.modifyStartupSection(vApp.getHref(), newSection);
-      assertTrue(retryTaskSuccess.apply(modifyStartupSection), String.format(TASK_COMPLETE_TIMELY, "modifyStartupSection"));
+      Task editStartupSection = vAppApi.editStartupSection(vAppUrn, newSection);
+      assertTrue(retryTaskSuccess.apply(editStartupSection), String.format(TASK_COMPLETE_TIMELY, "editStartupSection"));
 
       // Retrieve the modified section
-      StartupSection modified = vAppApi.getStartupSection(vApp.getHref());
+      StartupSection modified = vAppApi.getStartupSection(vAppUrn);
 
       // Check the retrieved object is well formed
       checkStartupSection(modified);
 
       // Check the modified section fields are set correctly
-      // assertEquals(modified.getX(), "");
       assertEquals(modified, newSection);
    }
 
-   @Test(description = "PUT /vApp/{id}/metadata", dependsOnMethods = { "testGetVApp" })
+   @Test(groups = { "live", "user" }, description = "PUT /vApp/{id}/metadata", dependsOnMethods = { "testGetVApp" })
    public void testSetMetadataValue() {
       key = name("key-");
       String value = name("value-");
-      metadataValue = MetadataValue.builder().value(value).build();
-      vAppApi.getMetadataApi().setMetadata(vApp.getHref(), key, metadataValue);
+      vAppApi.getMetadataApi(vAppUrn).put(key, value);
 
       // Retrieve the value, and assert it was set correctly
-      MetadataValue newMetadataValue = vAppApi.getMetadataApi().getMetadataValue(vApp.getHref(), key);
+      String newMetadataValue = vAppApi.getMetadataApi(vAppUrn).get(key);
 
       // Check the retrieved object is well formed
-      checkMetadataValueFor(VAPP, newMetadataValue, value);
+      assertEquals(newMetadataValue, value);
    }
-   
-   @Test(description = "GET /vApp/{id}/metadata", dependsOnMethods = { "testSetMetadataValue" })
+
+   @Test(groups = { "live", "user" }, description = "GET /vApp/{id}/metadata", dependsOnMethods = { "testSetMetadataValue" })
    public void testGetMetadata() {
       key = name("key-");
       String value = name("value-");
-      metadataValue = MetadataValue.builder().value(value).build();
-      vAppApi.getMetadataApi().setMetadata(vApp.getHref(), key, metadataValue);
-      
+      vAppApi.getMetadataApi(vAppUrn).put(key, value);
+
       // Call the method being tested
-      Metadata metadata = vAppApi.getMetadataApi().getMetadata(vApp.getHref());
-      
+      Metadata metadata = vAppApi.getMetadataApi(vAppUrn).get();
+
       checkMetadata(metadata);
-      
+
       // Check requirements for this test
-      assertFalse(Iterables.isEmpty(metadata.getMetadataEntries()), String.format(NOT_EMPTY_OBJECT_FMT, "MetadataEntry", "vApp"));
+      assertFalse(Iterables.isEmpty(metadata.getMetadataEntries()),
+               String.format(NOT_EMPTY_OBJECT_FMT, "MetadataEntry", "vApp"));
    }
-   
-   @Test(description = "GET /vApp/{id}/metadata/{key}", dependsOnMethods = { "testGetMetadata" })
+
+   @Test(groups = { "live", "user" }, description = "GET /vApp/{id}/metadata/{key}", dependsOnMethods = { "testGetMetadata" })
    public void testGetOrgMetadataValue() {
-      // Call the method being tested
-      MetadataValue value = vAppApi.getMetadataApi().getMetadataValue(vApp.getHref(), key);
       
-      String expected = metadataValue.getValue();
+      key = name("key-");
+      String value = name("value-");
+      vAppApi.getMetadataApi(vAppUrn).put(key, value);
+      
+      // Call the method being tested
+      String newValue = vAppApi.getMetadataApi(vAppUrn).get(key);
 
-      checkMetadataValue(value);
-      assertEquals(value.getValue(), expected, String.format(CORRECT_VALUE_OBJECT_FMT, "Value", "MetadataValue", expected, value.getValue()));
+      assertEquals(newValue, value, String.format(CORRECT_VALUE_OBJECT_FMT, "Value", "MetadataValue", value, newValue));
    }
 
-   @Test(description = "DELETE /vApp/{id}/metadata/{key}", dependsOnMethods = { "testSetMetadataValue" })
-   public void testDeleteMetadataEntry() {
+   @Test(groups = { "live", "user" }, description = "DELETE /vApp/{id}/metadata/{key}", dependsOnMethods = { "testSetMetadataValue" })
+   public void testRemoveMetadataEntry() {
       // Delete the entry
-      Task task = vAppApi.getMetadataApi().deleteMetadataEntry(vApp.getHref(), key);
+      Task task = vAppApi.getMetadataApi(vAppUrn).remove(key);
       retryTaskSuccess.apply(task);
 
-      // Confirm the entry has been deleted
-      Metadata newMetadata = vAppApi.getMetadataApi().getMetadata(vApp.getHref());
+      // Confirm the entry has been removed
+      Metadata newMetadata = vAppApi.getMetadataApi(vAppUrn).get();
 
       // Check the retrieved object is well formed
       checkMetadataKeyAbsentFor(VAPP, newMetadata, key);
    }
 
-   @Test(description = "POST /vApp/{id}/metadata", dependsOnMethods = { "testGetMetadata" })
+   @Test(groups = { "live", "user" }, description = "POST /vApp/{id}/metadata", dependsOnMethods = { "testGetMetadata" })
    public void testMergeMetadata() {
-      Metadata oldMetadata = vAppApi.getMetadataApi().getMetadata(vApp.getHref());
+      Metadata oldMetadata = vAppApi.getMetadataApi(vAppUrn).get();
       Map<String, String> oldMetadataMap = Checks.metadataToMap(oldMetadata);
 
-      // Store a value, to be deleted
+      // Store a value, to be removed
       String key = name("key-");
       String value = name("value-");
-      Metadata addedMetadata = Metadata.builder()
-            .entry(MetadataEntry.builder().key(key).value(value).build())
-            .build();
-      Task task = vAppApi.getMetadataApi().mergeMetadata(vApp.getHref(), addedMetadata);
+      Task task = vAppApi.getMetadataApi(vAppUrn).putAll(ImmutableMap.of(key, value));
       retryTaskSuccess.apply(task);
 
       // Confirm the entry contains everything that was there, and everything that was being added
-      Metadata newMetadata = vAppApi.getMetadataApi().getMetadata(vApp.getHref());
-      Map<String, String> expectedMetadataMap = ImmutableMap.<String, String>builder()
-            .putAll(oldMetadataMap)
-            .put(key, value)
-            .build();
+      Metadata newMetadata = vAppApi.getMetadataApi(vAppUrn).get();
+      Map<String, String> expectedMetadataMap = ImmutableMap.<String, String> builder().putAll(oldMetadataMap)
+               .put(key, value).build();
 
       // Check the retrieved object is well formed
       checkMetadataFor(VAPP, newMetadata, expectedMetadataMap);
    }
 
    /**
-    * @see VAppApi#deleteVApp(URI)
+    * @see VAppApi#remove(URI)
     */
-   @Test(description = "DELETE /vApp/{id}")
-   public void testDeleteVApp() {
-      // Create a temporary VApp to delete
+   @Test(groups = { "live", "user" }, description = "DELETE /vApp/{id}")
+   public void testRemoveVApp() {
+      // Create a temporary VApp to remove
       VApp temp = instantiateVApp();
 
       // The method under test
-      Task deleteVApp = vAppApi.deleteVApp(temp.getHref());
-      assertTrue(retryTaskSuccess.apply(deleteVApp), String.format(TASK_COMPLETE_TIMELY, "deleteVApp"));
+      Task removeVApp = vAppApi.remove(temp.getId());
+      assertTrue(retryTaskSuccess.apply(removeVApp), String.format(TASK_COMPLETE_TIMELY, "removeVApp"));
 
-      VApp deleted = vAppApi.getVApp(temp.getHref());
-      assertNull(deleted, "The VApp "+temp.getName()+" should have been deleted");
+      VApp removed = vAppApi.get(temp.getId());
+      assertNull(removed, "The VApp " + temp.getName() + " should have been removed");
    }
-   
+
    /**
     * Create the recompose vapp params.
-    *
+    * 
     * @param vappTemplateRef
     * @param vdc
     * @return
     * @throws VCloudException
     */
-   public RecomposeVAppParams createRecomposeParams(VApp vApp, Vm vm) {
+   public RecomposeVAppParams addRecomposeParams(VApp vApp, Vm vm) {
 
       // creating an item element. this item will contain the vm which should be added to the vapp.
       Reference reference = Reference.builder().name(name("vm-")).href(vm.getHref()).type(vm.getType()).build();
@@ -848,56 +849,89 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
 
       InstantiationParams vmInstantiationParams = null;
 
-      // if the vm contains a network connection and the vApp does not contain any configured network
-      if (vmHasNetworkConnectionConfigured(vm) && vAppHasNetworkConfigured(vApp)) {
-         // creating empty network connection section for the vm.
-         NetworkConnectionSection networkConnectionSection = NetworkConnectionSection.builder()
-                  .info("Empty network configuration parameters")
-                  .build();
-         
-         // adding the network connection section to the instantiation params of the vapp.
-         vmInstantiationParams = InstantiationParams.builder().sections(ImmutableSet.of(networkConnectionSection)).build();
+      Set<NetworkAssignment> networkAssignments = Sets.newLinkedHashSet();
+
+      // if the vm contains a network connection and the vApp does not contain any configured
+      // network
+      if (vmHasNetworkConnectionConfigured(vm)) {
+         if (!vAppHasNetworkConfigured(vApp)) {
+            // add a new network connection section for the vm.
+            NetworkConnectionSection networkConnectionSection = NetworkConnectionSection.builder()
+                     .info("Empty network configuration parameters").build();
+            // adding the network connection section to the instantiation params of the vapp.
+            vmInstantiationParams = InstantiationParams.builder().sections(ImmutableSet.of(networkConnectionSection))
+                     .build();
+         }
+
+         // if the vm already contains a network connection section and if the vapp contains a
+         // configured network -> vm could be mapped to that network.
+         else {
+            Set<VAppNetworkConfiguration> vAppNetworkConfigurations = listVappNetworkConfigurations(vApp);
+            for (VAppNetworkConfiguration vAppNetworkConfiguration : vAppNetworkConfigurations) {
+               NetworkAssignment networkAssignment = NetworkAssignment.builder()
+                        .innerNetwork(vAppNetworkConfiguration.getNetworkName())
+                        .containerNetwork(vAppNetworkConfiguration.getNetworkName()).build();
+               networkAssignments.add(networkAssignment);
+            }
+         }
       }
 
-      // if the vm already contains a network connection section and if the vapp contains a configured network -> vm could be mapped to that network.
-      NetworkAssignment networkAssignment = null;
-      if (vmHasNetworkConnectionConfigured(vm) && !vAppHasNetworkConfigured(vApp)) {
-         for (NetworkConnection networkConnection : vmApi.getNetworkConnectionSection(vm.getHref())
-                  .getNetworkConnections()) {
-            if (networkConnection.getNetworkConnectionIndex() == vmApi.getNetworkConnectionSection(vm.getHref())
-                     .getPrimaryNetworkConnectionIndex()) {
-               networkAssignment = NetworkAssignment.builder().innerNetwork(networkConnection.getNetwork())
-                        .containerNetwork(getVAppNetworkConfig(vApp).getNetworkName()).build();
-            }
+      // if the vm does not contain any network connection sections and if the
+      // vapp contains a network configuration. we should add the vm to this
+      // vapp network
+      else {
+         if (vAppHasNetworkConfigured(vApp)) {
+            VAppNetworkConfiguration vAppNetworkConfiguration = getVAppNetworkConfig(vApp);
+            NetworkConnection networkConnection = NetworkConnection.builder()
+                     .network(vAppNetworkConfiguration.getNetworkName())
+                     .ipAddressAllocationMode(IpAddressAllocationMode.DHCP).build();
+
+            NetworkConnectionSection networkConnectionSection = NetworkConnectionSection.builder().info("networkInfo")
+                     .primaryNetworkConnectionIndex(0).networkConnection(networkConnection).build();
+
+            // adding the network connection section to the instantiation params of the vapp.
+            vmInstantiationParams = InstantiationParams.builder().sections(ImmutableSet.of(networkConnectionSection))
+                     .build();
          }
       }
 
       if (vmInstantiationParams != null)
          vmItem = SourcedCompositionItemParam.builder().fromSourcedCompositionItemParam(vmItem)
-                  .instantiationParams(vmInstantiationParams)
-                  .build();
-      
-      if (networkAssignment != null)
+                  .instantiationParams(vmInstantiationParams).build();
+
+      if (networkAssignments != null)
          vmItem = SourcedCompositionItemParam.builder().fromSourcedCompositionItemParam(vmItem)
-                  .networkAssignment(ImmutableSet.of(networkAssignment))
-                  .build();
-      
+                  .networkAssignment(networkAssignments).build();
+
       return RecomposeVAppParams.builder().name(name("recompose-"))
-               // adding the vm item.
+      // adding the vm item.
                .sourcedItems(ImmutableList.of(vmItem)).build();
    }
+   
+   private final class IsVAppNetworkNamed implements Predicate<VAppNetworkConfiguration> {
+      private final String networkName;
 
-   private VAppNetworkConfiguration getVAppNetworkConfig(VApp vApp) {
-      Set<VAppNetworkConfiguration> vAppNetworkConfigs = vAppApi.getNetworkConfigSection(vApp.getHref()).getNetworkConfigs();
-      return Iterables.tryFind(vAppNetworkConfigs, Predicates.notNull()).orNull();
+      private IsVAppNetworkNamed(String networkName) {
+         this.networkName = networkName;
+      }
+
+      @Override
+      public boolean apply(VAppNetworkConfiguration input) {
+         return input.getNetworkName().equals(networkName);
+      }
    }
    
-   private boolean vAppHasNetworkConfigured(VApp vApp) {
-      return getVAppNetworkConfig(vApp) != null;
-   }
+   private void cleanUpNetworkConnectionSection(Vm toAddVm) {
+      NetworkConnectionSection networkConnectionSection = vmApi.getNetworkConnectionSection(toAddVm.getId());
+      Set<NetworkConnection> networkConnections = networkConnectionSection.getNetworkConnections();
+      for (NetworkConnection networkConnection : networkConnections) {
+         NetworkConnection newNetworkConnection = networkConnection.toBuilder().isConnected(false).build();
+         networkConnectionSection = networkConnectionSection.toBuilder().networkConnection(newNetworkConnection)
+                  .build();
+      }
 
-   private boolean vmHasNetworkConnectionConfigured(Vm vm) {
-      return vmApi.getNetworkConnectionSection(vm.getHref()).getNetworkConnections().size() > 0;
+      Task configureNetwork = vmApi.editNetworkConnectionSection(toAddVm.getId(), networkConnectionSection);
+      assertTaskSucceedsLong(configureNetwork);
    }
 
 }

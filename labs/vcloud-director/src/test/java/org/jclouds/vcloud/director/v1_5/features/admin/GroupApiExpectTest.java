@@ -56,7 +56,7 @@ public class GroupApiExpectTest extends VCloudDirectorAdminApiExpectTest {
 
       Group expected = group();
 
-      assertEquals(api.getGroupApi().getGroup(groupRef.getHref()), expected);
+      assertEquals(api.getGroupApi().get(groupRef.getHref()), expected);
    }
    
    public static final Group group() {
@@ -66,28 +66,28 @@ public class GroupApiExpectTest extends VCloudDirectorAdminApiExpectTest {
    }
    
    @Test(enabled = false)
-   public void testUpdateGroup() {
+   public void testEditGroup() {
       VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("PUT", "/admin/group/???")
-            .xmlFilePayload("/group/updateGroupSource.xml", VCloudDirectorMediaType.GROUP)
+            .xmlFilePayload("/group/editGroupSource.xml", VCloudDirectorMediaType.GROUP)
             .acceptMedia(VCloudDirectorMediaType.GROUP)
             .httpRequestBuilder().build(), 
          new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/group/updateGroup.xml", VCloudDirectorMediaType.GROUP)
+            .xmlFilePayload("/group/editGroup.xml", VCloudDirectorMediaType.GROUP)
             .httpResponseBuilder().build());
 
-      Group expected = updateGroup();
+      Group expected = editGroup();
 
-      assertEquals(api.getGroupApi().updateGroup(groupRef.getHref(), expected), expected);
+      assertEquals(api.getGroupApi().edit(groupRef.getHref(), expected), expected);
    }
    
-   public static Group updateGroup() {
-      return null; // TODO chain onto group() then toBuilder() and modify?
+   public static Group editGroup() {
+      return null; // TODO chain onto group() then toBuilder() and edit?
    }
    
    @Test
-   public void testDeleteGroup() {
+   public void testRemoveGroup() {
       VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
                .apiCommand("DELETE", "/admin/group/???")
@@ -96,6 +96,6 @@ public class GroupApiExpectTest extends VCloudDirectorAdminApiExpectTest {
             new VcloudHttpResponsePrimer()
                .httpResponseBuilder().statusCode(204).build());
       
-      api.getCatalogApi().deleteCatalog(groupRef.getHref());
+      api.getGroupApi().remove(groupRef.getHref());
    }
 }

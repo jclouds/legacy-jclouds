@@ -22,9 +22,9 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.O
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_EQ;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_REQ_LIVE;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_REQ_LIVE;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REF_REQ_LIVE;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REQUIRED_VALUE_OBJECT_FMT;
-import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkResourceType;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.URN_REQ_LIVE;
+import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkResource;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
@@ -33,7 +33,6 @@ import static org.testng.Assert.assertTrue;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.network.Network;
 import org.jclouds.vcloud.director.v1_5.domain.org.OrgNetwork;
@@ -51,94 +50,85 @@ import com.google.common.collect.Iterables;
  */
 @Test(groups = { "live", "user" }, singleThreaded = true, testName = "NetworkApiLiveTest")
 public class NetworkApiLiveTest extends BaseVCloudDirectorApiLiveTest {
-   
+
    public static final String NETWORK = "network";
- 
+
    /*
     * Convenience reference to API api.
     */
    protected NetworkApi networkApi;
-   
+
    private boolean metadataSet = false;
-    
+
    @Override
    @BeforeClass(alwaysRun = true)
    public void setupRequiredApis() {
       networkApi = context.getApi().getNetworkApi();
    }
-   
+
    @AfterClass(alwaysRun = true)
    public void cleanUp() {
       if (metadataSet) {
          try {
-	         Task delete = adminContext.getApi().getNetworkApi().getMetadataApi().deleteMetadataEntry(toAdminUri(networkURI), "key");
-	         taskDoneEventually(delete);
+            Task remove = adminContext.getApi().getNetworkApi().getMetadataApi(networkUrn).remove("key");
+            taskDoneEventually(remove);
          } catch (Exception e) {
             logger.warn(e, "Error when deleting metadata");
          }
       }
    }
-   
+
    @Test(description = "GET /network/{id}")
    public void testGetNetwork() {
       // required for testing
-      assertNotNull(networkURI, String.format(REF_REQ_LIVE, NETWORK));
-       
-      Network abstractNetwork = networkApi.getNetwork(networkURI);
-      assertTrue(abstractNetwork instanceof OrgNetwork, String.format(REQUIRED_VALUE_OBJECT_FMT, 
-            ".class", NETWORK, abstractNetwork.getClass(),"OrgNetwork"));
+      assertNotNull(networkUrn, String.format(URN_REQ_LIVE, NETWORK));
+
+      Network abstractNetwork = networkApi.get(networkUrn);
+      assertTrue(abstractNetwork instanceof OrgNetwork,
+               String.format(REQUIRED_VALUE_OBJECT_FMT, ".class", NETWORK, abstractNetwork.getClass(), "OrgNetwork"));
       OrgNetwork network = Network.toSubType(abstractNetwork);
       assertNotNull(network, String.format(OBJ_REQ_LIVE, NETWORK));
       assertTrue(!network.getDescription().equals("DO NOT USE"), "Network isn't to be used for testing");
-       
+
       Checks.checkOrgNetwork(network);
    }
-   
+
    private void setupMetadata() {
-      adminContext.getApi().getNetworkApi().getMetadataApi().setMetadata(toAdminUri(networkURI), 
-            "key", MetadataValue.builder().value("value").build());
+      //TODO: block until complete
+      adminContext.getApi().getNetworkApi().getMetadataApi(networkUrn).put("key", "value");
       metadataSet = true;
    }
-   
+
    @Test(description = "GET /network/{id}/metadata", dependsOnMethods = { "testGetNetwork" })
    public void testGetMetadata() {
       if (adminContext != null) {
          setupMetadata();
       }
-      
-      Metadata metadata = networkApi.getMetadataApi().getMetadata(networkURI);
+
+      Metadata metadata = networkApi.getMetadataApi(networkUrn).get();
       // required for testing
-      assertFalse(Iterables.isEmpty(metadata.getMetadataEntries()), 
-            String.format(OBJ_FIELD_REQ_LIVE, NETWORK, "metadata.entries"));
-       
+      assertFalse(Iterables.isEmpty(metadata.getMetadataEntries()),
+               String.format(OBJ_FIELD_REQ_LIVE, NETWORK, "metadata.entries"));
+
       // parent type
-      checkResourceType(metadata);
-       
+      checkResource(metadata);
+
       for (MetadataEntry entry : metadata.getMetadataEntries()) {
          // required elements and attributes
-         assertNotNull(entry.getKey(), 
-               String.format(OBJ_FIELD_ATTRB_REQ, networkApi, "MetadataEntry", entry.getKey(), "key"));
-         assertNotNull(entry.getValue(), 
-               String.format(OBJ_FIELD_ATTRB_REQ, networkApi, "MetadataEntry", entry.getValue(), "value"));
-          
+         assertNotNull(entry.getKey(),
+                  String.format(OBJ_FIELD_ATTRB_REQ, networkApi, "MetadataEntry", entry.getKey(), "key"));
+         assertNotNull(entry.getValue(),
+                  String.format(OBJ_FIELD_ATTRB_REQ, networkApi, "MetadataEntry", entry.getValue(), "value"));
+
          // parent type
-         checkResourceType(entry);
+         checkResource(entry);
       }
    }
-   
+
    @Test(description = "GET /network/{id}/metadata/{key}", dependsOnMethods = { "testGetMetadata" })
    public void testGetMetadataValue() {
-      MetadataValue metadataValue = networkApi.getMetadataApi().getMetadataValue(networkURI, "key");
-       
-      // Check parent type
-      checkResourceType(metadataValue);
-       
-      // Check required elements and attributes
-      String value = metadataValue.getValue();
-      assertNotNull(value, 
-            String.format(OBJ_FIELD_ATTRB_REQ, NETWORK, "MetadataEntry", 
-                  metadataValue.toString(), "value"));
-      assertEquals(value, "value", 
-            String.format(OBJ_FIELD_EQ, NETWORK, "metadataEntry.value", "value", value));
+      String metadataValue = networkApi.getMetadataApi(networkUrn).get("key");
+
+      assertEquals(metadataValue, "value", String.format(OBJ_FIELD_EQ, NETWORK, "metadataEntry.value", "value", metadataValue));
    }
 }

@@ -33,41 +33,59 @@ import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.TasksList;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationAndCookieToRequest;
-import org.jclouds.vcloud.director.v1_5.functions.OrgReferenceToTaskListEndpoint;
+import org.jclouds.vcloud.director.v1_5.functions.href.TaskURNToHref;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * @see TaskApi
- * @author grkvlt@apache.org
+ * @author grkvlt@apache.org, Adrian Cole
  */
 @RequestFilters(AddVCloudAuthorizationAndCookieToRequest.class)
 public interface TaskAsyncApi {
-
+   
    /**
-    * @see TaskApi#getTaskList(URISupplier)
+    * @see TaskApi#getTasksList(URI)
     */
    @GET
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<TasksList> getTaskList(@EndpointParam(parser = OrgReferenceToTaskListEndpoint.class) URI orgURI);
+   ListenableFuture<TasksList> getTasksList(@EndpointParam URI tasksListHref);
 
    /**
-    * @see TaskApi#getTask(URI)
+    * @see TaskApi#get(String)
     */
    @GET
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Task> getTask(@EndpointParam URI taskURI);
-
+   ListenableFuture<Task> get(@EndpointParam(parser = TaskURNToHref.class) String taskUrn);
+   
    /**
-    * @see TaskApi#cancelTask(URI)
+    * @see TaskApi#get(URI)
+    */
+   @GET
+   @Consumes
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Task> get(@EndpointParam URI taskURI);
+   
+   /**
+    * @see TaskApi#cancel(String)
     */
    @POST
    @Path("/action/cancel")
    @Consumes
    @JAXBResponseParser
-   ListenableFuture<Void> cancelTask(@EndpointParam URI taskURI);
+   ListenableFuture<Void> cancel(@EndpointParam(parser = TaskURNToHref.class) String taskUrn);
+   
+   /**
+    * @see TaskApi#cancel(URI)
+    */
+   @POST
+   @Path("/action/cancel")
+   @Consumes
+   @JAXBResponseParser
+   ListenableFuture<Void> cancel(@EndpointParam URI taskURI);
 }

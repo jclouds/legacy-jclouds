@@ -91,7 +91,7 @@ public class MetadataBundleListener implements BundleListener {
         providerMetadata = providerMetadataMap.get(event.getBundle().getBundleId());
         apiMetadata = apiMetadataMap.get(event.getBundle().getBundleId());
         if (providerMetadata != null) {
-          ProviderRegistry.uRegisterProvider(providerMetadata);
+          ProviderRegistry.unregisterProvider(providerMetadata);
         }
         if (apiMetadata != null) {
           ApiRegistry.unRegisterApi(apiMetadata);

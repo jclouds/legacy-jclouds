@@ -26,18 +26,23 @@ import static org.jclouds.scriptbuilder.domain.Statements.kill;
 import static org.jclouds.scriptbuilder.domain.Statements.newStatementList;
 import static org.jclouds.scriptbuilder.domain.Statements.switchArg;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.Map;
 
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.ShellToken;
+import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.SwitchArg;
+import org.jclouds.scriptbuilder.util.Utils;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Resources;
 
@@ -146,5 +151,22 @@ public class ScriptBuilderTest {
    public void testExportNPE() {
       new ScriptBuilder().addEnvironmentVariableScope(null, null);
    }
+   
+   @Test
+   public void testResolveFunctionDependenciesForStatementsUNIX() {
+      ImmutableMap<String, String> defaultFunctions = ImmutableMap.of("abort",
+               Utils.writeFunctionFromResource("abort", OsFamily.UNIX));
 
+      for (String fn : defaultFunctions.values()) {
+         assertTrue(fn.indexOf("\r\n") == -1, "windows linefeeds!");
+      }
+
+      Map<String, String> resolvedFunctions = ScriptBuilder.resolveFunctionDependenciesForStatements(defaultFunctions,
+               ImmutableSet.<Statement> of(call("nonewline")), OsFamily.UNIX);
+
+      assertEquals(
+               resolvedFunctions,
+               ImmutableMap.of("abort", Utils.writeFunctionFromResource("abort", OsFamily.UNIX), "nonewline",
+                        Utils.writeFunctionFromResource("nonewline", OsFamily.UNIX)));
+   }
 }

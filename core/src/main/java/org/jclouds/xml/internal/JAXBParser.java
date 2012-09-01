@@ -43,14 +43,14 @@ import com.google.inject.name.Named;
  */
 @Singleton
 public class JAXBParser implements XMLParser {
-    
+
    /** Boolean indicating if the output must be pretty printed. */
    private Boolean prettyPrint;
-   
+
    @Inject
    public JAXBParser(@Named(Constants.PROPERTY_PRETTY_PRINT_PAYLOADS) String prettyPrint) {
-       super();
-       this.prettyPrint = Boolean.valueOf(prettyPrint);
+      super();
+      this.prettyPrint = Boolean.valueOf(prettyPrint);
    }
 
    @Override
@@ -81,7 +81,7 @@ public class JAXBParser implements XMLParser {
          Unmarshaller unmarshaller = context.createUnmarshaller();
          return (T) unmarshaller.unmarshal(reader);
       } catch (Exception ex) {
-         throw new IOException("Could not unmarshall document", ex);
+         throw new IOException("Could not unmarshall document into type: " + type.getSimpleName() + "\n" + xml, ex);
       }
    }
 }

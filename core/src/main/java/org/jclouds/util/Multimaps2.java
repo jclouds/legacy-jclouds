@@ -22,7 +22,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
@@ -88,5 +90,29 @@ public class Multimaps2 {
    
    public static <K, V> Multimap<K, V> withoutKeys(Multimap<K, V> fromMultimap, Set<K> keys) {
       return Multimaps.<K, V> filterKeys(fromMultimap, Predicates.not(Predicates.in(keys)));
+   }
+   
+   /**
+    * change the keys but keep the values in-tact.
+    * 
+    * @param <K1>
+    *           input key type
+    * @param <K2>
+    *           output key type
+    * @param <V>
+    *           value type
+    * @param in
+    *           input map to transform
+    * @param fn
+    *           how to transform the values
+    * @return immutableMap with the new keys.
+    */
+   public static <K1, K2, V> Multimap<K2, V> transformKeys(Multimap<K1, V> in, Function<K1, K2> fn) {
+      checkNotNull(in, "input map");
+      checkNotNull(fn, "function");
+      Builder<K2, V> returnVal = ImmutableMultimap.builder();
+      for (Entry<K1, V> entry : in.entries())
+         returnVal.put(fn.apply(entry.getKey()), entry.getValue());
+      return returnVal.build();
    }
 }

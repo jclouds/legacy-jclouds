@@ -19,17 +19,8 @@
 
 package org.jclouds.nodepool;
 
-import static com.google.common.collect.Iterables.getOnlyElement;
-import static java.lang.String.format;
-import static java.util.logging.Logger.getAnonymousLogger;
-import static org.jclouds.compute.RunScriptData.JBOSS_HOME;
-import static org.jclouds.compute.RunScriptData.installAdminUserJBossAndOpenPorts;
-import static org.jclouds.compute.RunScriptData.startJBoss;
 import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_PORT_OPEN;
 import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_SCRIPT_COMPLETE;
-import static org.jclouds.compute.options.RunScriptOptions.Builder.nameTask;
-import static org.jclouds.compute.options.TemplateOptions.Builder.inboundPorts;
-import static org.jclouds.compute.options.TemplateOptions.Builder.runAsRoot;
 import static org.jclouds.nodepool.config.NodePoolProperties.BASEDIR;
 import static org.jclouds.nodepool.config.NodePoolProperties.MAX_SIZE;
 import static org.jclouds.nodepool.config.NodePoolProperties.MIN_SIZE;
@@ -41,12 +32,8 @@ import static org.testng.Assert.assertTrue;
 
 import java.util.NoSuchElementException;
 import java.util.Properties;
-import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
 
 import org.jclouds.compute.RunNodesException;
-import org.jclouds.compute.RunScriptData;
-import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
 import org.jclouds.compute.predicates.NodePredicates;
@@ -54,13 +41,9 @@ import org.jclouds.logging.config.LoggingModule;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.sshj.config.SshjSshClientModule;
-import org.jclouds.util.Strings2;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Stopwatch;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.common.io.Closeables;
@@ -108,74 +91,7 @@ public class NodePoolComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    @Override
    @Test(enabled = true, groups = "live")
    public void testCreateAndRunAService() throws Exception {
-      final String configuration = Strings2.toStringAndClose(RunScriptData.class
-               .getResourceAsStream("/standalone-basic.xml"));
-
-      ImmutableMap<String, String> userMetadata = ImmutableMap.<String, String> of("Name", group);
-      ImmutableSet<String> tags = ImmutableSet.of(group);
-      Stopwatch watch = new Stopwatch().start();
-      NodeMetadata node = getOnlyElement(client.createNodesInGroup(group, 1, inboundPorts(22, 8080)
-               .blockOnPort(22, 300).userMetadata(userMetadata).tags(tags)));
-      long createSeconds = watch.elapsedTime(TimeUnit.SECONDS);
-
-      final String nodeId = node.getId();
-
-      checkUserMetadataInNodeEquals(node, userMetadata);
-      checkTagsInNodeEquals(node, tags);
-
-      getAnonymousLogger().info(
-               format("<< available node(%s) os(%s) in %ss", node.getId(), node.getOperatingSystem(), createSeconds));
-
-      watch.reset().start();
-
-      // note this is a dependency on the template resolution so we have the
-      // right process per
-      // operating system. moreover, we wish this to run as root, so that it
-      // can change ip
-      // tables rules and setup our admin user
-      client.runScriptOnNode(nodeId, installAdminUserJBossAndOpenPorts(node.getOperatingSystem()),
-               nameTask("configure-jboss"));
-
-      long configureSeconds = watch.elapsedTime(TimeUnit.SECONDS);
-
-      getAnonymousLogger()
-               .info(format("<< configured node(%s) with %s and JBoss %s in %ss",
-                        nodeId,
-                        exec(nodeId, "java -fullversion"),
-                        // version of the jboss jar
-                        exec(nodeId,
-                                 format("ls %s/bundles/org/jboss/as/osgi/configadmin/main|sed -e 's/.*-//g' -e 's/.jar//g'",
-                                          JBOSS_HOME)), configureSeconds));
-
-      trackAvailabilityOfProcessOnNode(view.utils().userExecutor().submit(new Callable<ExecResponse>() {
-         @Override
-         public ExecResponse call() {
-            return client.runScriptOnNode(nodeId, startJBoss(configuration), runAsRoot(false).blockOnComplete(false)
-                     .nameTask("jboss"));
-         }
-
-         @Override
-         public String toString() {
-            return "initial start of jboss";
-         }
-
-      }), "jboss", node, JBOSS_PATTERN);
-
-      client.runScriptOnNode(nodeId, "/tmp/init-jboss stop", runAsRoot(false).wrapInInitScript(false));
-
-      trackAvailabilityOfProcessOnNode(view.utils().userExecutor().submit(new Callable<ExecResponse>() {
-
-         @Override
-         public ExecResponse call() {
-            return client.runScriptOnNode(nodeId, "/tmp/init-jboss start", runAsRoot(false).wrapInInitScript(false));
-         }
-
-         @Override
-         public String toString() {
-            return "warm start of jboss";
-         }
-
-      }), "jboss", node, JBOSS_PATTERN);
+      createAndRunAServiceInGroup(group);
    }
 
    @Test(enabled = true, groups = "live", dependsOnMethods = "testCreateAndRunAService")

@@ -138,7 +138,7 @@ public class Task extends Entity {
       }
 
       /**
-       * @see Task#getOrg()
+       * @see Task#get()
        */
       public B org(Reference org) {
          this.org = org;
@@ -241,7 +241,7 @@ public class Task extends Entity {
       public B fromTask(Task in) {
          return fromEntityType(in)
                .error(in.getError())
-               .org(in.getOrg())
+               .org(in.get())
                .progress(in.getProgress())
                .owner(in.getOwner())
                .user(in.getUser())
@@ -310,7 +310,7 @@ public class Task extends Entity {
    /**
     * The organization that started the task.
     */
-   public Reference getOrg() {
+   public Reference get() {
       return org;
    }
 

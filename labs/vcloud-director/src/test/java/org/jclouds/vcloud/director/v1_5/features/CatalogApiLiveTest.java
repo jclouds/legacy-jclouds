@@ -1,5 +1,5 @@
 /*
- * Licensed to jclouds, Inc. (jclouds) under one or more
+x * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
  * regarding copyright ownership.  jclouds licenses this file
@@ -21,12 +21,9 @@ package org.jclouds.vcloud.director.v1_5.features;
 import static com.google.common.base.Predicates.and;
 import static com.google.common.collect.Iterables.find;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.CORRECT_VALUE_OBJECT_FMT;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_REQ_LIVE;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REF_REQ_LIVE;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.TASK_COMPLETE_TIMELY;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkCatalogItem;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadata;
-import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadataValue;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkTask;
 import static org.jclouds.vcloud.director.v1_5.predicates.LinkPredicates.relEquals;
 import static org.jclouds.vcloud.director.v1_5.predicates.LinkPredicates.typeEquals;
@@ -43,8 +40,6 @@ import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Media;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.Vdc;
@@ -53,8 +48,7 @@ import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorApiLiveTest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Tests live behavior of {@link CatalogApi}.
@@ -75,211 +69,196 @@ public class CatalogApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    private AdminCatalog adminCatalog;
    private Media media;
    private CatalogItem catalogItem;
-
-   private Reference catalogRef;
-
+   private boolean createdByTest = false;
+   private AdminCatalogApi adminCatalogApi;
+   
    @Override
    protected void setupRequiredApis() {
-      // TODO why do I need a guard clause here?
-      if (adminCatalog != null) return;
       catalogApi = context.getApi().getCatalogApi();
-      Reference orgRef = Iterables.getFirst(context.getApi().getOrgApi().getOrgList().getOrgs(), null).toAdminReference(endpoint);
-      
-      if (adminContext != null) {
-         AdminCatalog newCatalog = AdminCatalog.builder()
-               .name(name("Test Catalog "))
-               .description("created by CatalogApiLiveTest")
-               .build();
-         
-         AdminCatalogApi adminCatalogApi = adminContext.getApi().getCatalogApi();
-         adminCatalog = adminCatalogApi.createCatalog(orgRef.getHref(), newCatalog);
-         catalogRef = find(adminCatalog.getLinks(), and(relEquals("alternate"), typeEquals(VCloudDirectorMediaType.CATALOG)));
-   
-         Metadata newMetadata = Metadata.builder()
-               .entry(MetadataEntry.builder().entry("KEY", "MARMALADE").build())
-               .build();
-   
-         Task mergeCatalogMetadata = adminCatalogApi.getMetadataApi().mergeMetadata(adminCatalog.getHref(), newMetadata);
-         checkTask(mergeCatalogMetadata);
-         assertTrue(retryTaskSuccess.apply(mergeCatalogMetadata), String.format(TASK_COMPLETE_TIMELY, "setupRequiredApis"));
-      } else {
-         catalogRef = Reference.builder().href(catalogURI).build();
+      adminCatalogApi = adminContext.getApi().getCatalogApi();
+     
+      if(catalogUrn == null) {
+         AdminCatalog newCatalog = AdminCatalog.builder().name(name("Test Catalog "))
+                  .description("created by CatalogApiLiveTest").build();
+
+         adminCatalog = adminCatalogApi.addCatalogToOrg(newCatalog, org.getId());
+         catalogUrn = catalogApi.get(
+                  find(adminCatalog.getLinks(),
+                           and(relEquals("alternate"), typeEquals(VCloudDirectorMediaType.CATALOG))).getHref()).getId();
+
+         createdByTest = true;
       }
    }
-   
+
    @AfterClass(alwaysRun = true)
    public void tearDown() {
-      if (catalogItem != null) {
-         try {
-	         catalogApi.deleteCatalogItem(catalogItem.getHref());
-         } catch (Exception e) {
-            logger.warn(e, "Error when deleting catalog item '%s'", catalogItem.getName());
-         }
-      }
       if (media != null) {
          try {
-	         Task delete = context.getApi().getMediaApi().deleteMedia(media.getHref());
-	         taskDoneEventually(delete);
+            Task remove = context.getApi().getMediaApi().remove(media.getId());
+            taskDoneEventually(remove);
          } catch (Exception e) {
             logger.warn(e, "Error when deleting media '%s'", media.getName());
          }
       }
-      if (adminContext != null && adminCatalog != null) {
-         try {
-	         adminContext.getApi().getCatalogApi().deleteCatalog(adminCatalog.getHref());
-         } catch (Exception e) {
-            logger.warn(e, "Error when deleting catalog '%s'", adminCatalog.getName());
+      if(createdByTest) {
+         if (catalogItem != null) {
+            try {
+               catalogApi.removeItem(catalogItem.getId());
+            } catch (Exception e) {
+               logger.warn(e, "Error when deleting catalog item '%s'", catalogItem.getName());
+            }
+         }
+         if (adminContext != null && adminCatalog != null) {
+            try {
+               adminContext.getApi().getCatalogApi().remove(adminCatalog.getId());
+            } catch (Exception e) {
+               logger.warn(e, "Error when deleting catalog '%s'", adminCatalog.getName());
+            }
          }
       }
-      // TODO wait for tasks
    }
 
    @Test(description = "GET /catalog/{id}")
    public void testGetCatalog() {
-      Catalog catalog = catalogApi.getCatalog(catalogRef.getHref());
+      Catalog catalog = lazyGetCatalog();
       assertNotNull(catalog);
       // Double check it's pointing at the correct catalog
-      assertEquals(catalog.getHref(), catalogRef.getHref());
+      assertEquals(catalog.getId(), catalogUrn);
    }
 
    @Test(description = "GET /catalogItem/{id}", dependsOnMethods = "testAddCatalogItem")
    public void testGetCatalogItem() {
-      CatalogItem catalogItem = catalogApi.getCatalogItem(this.catalogItem.getHref());
+      CatalogItem catalogItem = catalogApi.getItem(this.catalogItem.getId());
       checkCatalogItem(catalogItem);
       assertEquals(catalogItem.getEntity().getHref(), this.catalogItem.getEntity().getHref());
    }
 
    @Test(description = "POST /catalog/{id}/catalogItems")
    public void testAddCatalogItem() {
-      assertNotNull(vdcURI, String.format(REF_REQ_LIVE, VDC));
-      
       byte[] iso = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
-      Vdc vdc = context.getApi().getVdcApi().getVdc(vdcURI);
-      assertNotNull(vdc, String.format(OBJ_REQ_LIVE, VDC));
+      Vdc vdc = lazyGetVdc();
       Link addMedia = find(vdc.getLinks(), and(relEquals("add"), typeEquals(VCloudDirectorMediaType.MEDIA)));
-     
-      Media sourceMedia = Media.builder()
-            .type(VCloudDirectorMediaType.MEDIA)
-            .name("Test media 1")
-            .size(iso.length)
-            .imageType(Media.ImageType.ISO)
-            .description("Test media generated by testCreateMedia()")
-            .build();
-      media = context.getApi().getMediaApi().createMedia(addMedia.getHref(), sourceMedia);
+
+      Media sourceMedia = Media.builder().type(VCloudDirectorMediaType.MEDIA).name(name("TestMedia-")).size(iso.length)
+               .imageType(Media.ImageType.ISO).description("Test media generated by testAddMedia()").build();
+      media = context.getApi().getMediaApi().add(addMedia.getHref(), sourceMedia);
 
       Checks.checkMediaFor(VCloudDirectorMediaType.MEDIA, media);
 
-      CatalogItem editedCatalogItem = CatalogItem.builder()
-            .name("newitem")
-            .description("New Item")
-            .type(VCloudDirectorMediaType.CATALOG_ITEM)
-            .entity(Reference.builder().href(media.getHref()).build())
-            .build();
-      catalogItem = catalogApi.addCatalogItem(catalogRef.getHref(), editedCatalogItem);
+      CatalogItem editedCatalogItem = CatalogItem.builder().name("newitem").description("New Item")
+               .type(VCloudDirectorMediaType.CATALOG_ITEM).entity(Reference.builder().href(media.getHref()).build())
+               .build();
+      catalogItem = catalogApi.addItem(catalogUrn, editedCatalogItem);
       checkCatalogItem(catalogItem);
       assertEquals(catalogItem.getName(), "newitem");
       assertEquals(catalogItem.getDescription(), "New Item");
    }
 
    @Test(description = "PUT /catalogItem/{id}", dependsOnMethods = "testAddCatalogItem")
-   public void testUpdateCatalogItem() {     
-      CatalogItem updatedCatalogItem = CatalogItem.builder().fromCatalogItem(catalogItem).name("UPDATEDNAME").build();
-      catalogItem = catalogApi.updateCatalogItem(catalogItem.getHref(), updatedCatalogItem);
+   public void testEditCatalogItem() {
+      CatalogItem editedCatalogItem = CatalogItem.builder().fromCatalogItem(catalogItem).name("UPDATEDNAME").build();
+      catalogItem = catalogApi.editItem(catalogItem.getId(), editedCatalogItem);
       checkCatalogItem(catalogItem);
       assertEquals(catalogItem.getName(), "UPDATEDNAME");
    }
 
    // Note this runs after all the metadata tests
-   @Test(description = "DELETE /catalogItem/{id}", dependsOnMethods = "testDeleteCatalogItemMetadataValue")
-   public void testDeleteCatalogItem() {
-      catalogApi.deleteCatalogItem(catalogItem.getHref());
-      catalogItem = catalogApi.getCatalogItem(catalogItem.getHref());
+   @Test(description = "DELETE /catalogItem/{id}", dependsOnMethods = "testRemoveCatalogItemMetadataValue")
+   public void testRemoveCatalogItem() {
+      removeMediaAttachedToCatalogItem(catalogItem);
+      catalogApi.removeItem(catalogItem.getId());
+      catalogItem = catalogApi.getItem(catalogItem.getId());
       assertNull(catalogItem);
    }
 
    @Test(description = "GET /catalog/{id}/metadata")
    public void testGetCatalogMetadata() {
-      Metadata catalogMetadata = catalogApi.getMetadataApi().getMetadata(catalogRef.getHref());
+      Metadata catalogMetadata = catalogApi.getMetadataApi(catalogUrn).get();
       checkMetadata(catalogMetadata);
    }
 
    @Test(description = "GET /catalog/{id}/metadata/{key}")
    public void testGetCatalogMetadataValue() {
-      Metadata catalogMetadata = catalogApi.getMetadataApi().getMetadata(catalogRef.getHref());
-      MetadataEntry existingMetadataEntry = Iterables.find(catalogMetadata.getMetadataEntries(), new Predicate<MetadataEntry>() {
-         @Override
-         public boolean apply(MetadataEntry input) {
-            return input.getKey().equals("KEY");
-         }
-      });
-      MetadataValue metadataValue = catalogApi.getMetadataApi().getMetadataValue(catalogRef.getHref(), "KEY");
-      assertEquals(metadataValue.getValue(), existingMetadataEntry.getValue(),
-            String.format(CORRECT_VALUE_OBJECT_FMT, "Value", "MetadataValue", existingMetadataEntry.getValue(), metadataValue.getValue()));
-      checkMetadataValue(metadataValue);
+
+      Task mergeCatalogMetadata = adminCatalogApi.getMetadataApi(catalogUrn)
+            .putAll(ImmutableMap.of("KEY", "MARMALADE"));
+      assertTaskSucceedsLong(mergeCatalogMetadata);
+
+      Metadata catalogMetadata = catalogApi.getMetadataApi(catalogUrn).get();
+
+      String metadataValue = catalogApi.getMetadataApi(catalogUrn).get("KEY");
+      assertEquals(metadataValue, catalogMetadata.get("KEY"), String.format(CORRECT_VALUE_OBJECT_FMT, "Value",
+            "MetadataValue", catalogMetadata.get("KEY"), metadataValue));
    }
 
    @Test(description = "GET /catalogItem/{id}/metadata", dependsOnMethods = "testAddCatalogItem")
    public void testGetCatalogItemMetadata() {
-      Metadata catalogItemMetadata = catalogApi.getCatalogItemMetadataApi().getMetadata(catalogItem.getHref());
+      Metadata catalogItemMetadata = catalogApi.getItemMetadataApi(catalogItem.getId()).get();
       checkMetadata(catalogItemMetadata);
    }
 
    @Test(description = "POST /catalogItem/{id}/metadata", dependsOnMethods = "testAddCatalogItem")
    public void testMergeCatalogItemMetadata() {
-      Metadata newMetadata = Metadata.builder()
-            .entry(MetadataEntry.builder().entry("KEY", "MARMALADE").build())
-            .entry(MetadataEntry.builder().entry("VEGIMITE", "VALUE").build())
-            .build();
+      Metadata before = catalogApi.getItemMetadataApi(catalogItem.getId()).get();
 
-      Metadata before = catalogApi.getCatalogItemMetadataApi().getMetadata(catalogItem.getHref());
-   
-      Task mergeCatalogItemMetadata = catalogApi.getCatalogItemMetadataApi().mergeMetadata(catalogItem.getHref(), newMetadata);
+      Task mergeCatalogItemMetadata = catalogApi.getItemMetadataApi(catalogItem.getId()).putAll(
+            ImmutableMap.of("KEY", "MARMALADE", "VEGIMITE", "VALUE"));
       checkTask(mergeCatalogItemMetadata);
       assertTrue(retryTaskSuccess.apply(mergeCatalogItemMetadata),
             String.format(TASK_COMPLETE_TIMELY, "mergeCatalogItemMetadata"));
-      Metadata mergedCatalogItemMetadata = catalogApi.getCatalogItemMetadataApi().getMetadata(catalogItem.getHref());
+      Metadata mergedCatalogItemMetadata = catalogApi.getItemMetadataApi(catalogItem.getId()).get();
 
       assertTrue(mergedCatalogItemMetadata.getMetadataEntries().size() > before.getMetadataEntries().size(),
             "Should have added at least one other MetadataEntry to the CatalogItem");
-      
-      MetadataValue keyMetadataValue = catalogApi.getCatalogItemMetadataApi().getMetadataValue(catalogItem.getHref(), "KEY");
-      assertEquals(keyMetadataValue.getValue(), "MARMALADE", "The Value of the MetadataValue for KEY should have changed");
-      checkMetadataValue(keyMetadataValue);
-      
-      MetadataValue newKeyMetadataValue = catalogApi.getCatalogItemMetadataApi().getMetadataValue(catalogItem.getHref(), "VEGIMITE");
 
-      assertEquals(newKeyMetadataValue.getValue(), "VALUE", "The Value of the MetadataValue for NEW_KEY should have been set");
-      checkMetadataValue(newKeyMetadataValue);
+      String keyMetadataValue = catalogApi.getItemMetadataApi(catalogItem.getId()).get("KEY");
+      assertEquals(keyMetadataValue, "MARMALADE", "The Value of the MetadataValue for KEY should have changed");
+
+      String newKeyMetadataValue = catalogApi.getItemMetadataApi(catalogItem.getId()).get("VEGIMITE");
+
+      assertEquals(newKeyMetadataValue, "VALUE", "The Value of the MetadataValue for NEW_KEY should have been set");
    }
 
    @Test(description = "GET /catalogItem/{id}/metadata/{key}", dependsOnMethods = "testSetCatalogItemMetadataValue")
-   public void testGetCatalogItemMetadataValue() {      
-      MetadataValue metadataValue = catalogApi.getCatalogItemMetadataApi().getMetadataValue(catalogItem.getHref(), "KEY");
-      checkMetadataValue(metadataValue);
+   public void testGetCatalogItemMetadataValue() {
+      String metadataValue = catalogApi.getItemMetadataApi(catalogItem.getId()).get("KEY");
+      assertNotNull(metadataValue);
    }
 
    @Test(description = "PUT /catalogItem/{id}/metadata/{key}", dependsOnMethods = "testMergeCatalogItemMetadata")
    public void testSetCatalogItemMetadataValue() {
-      MetadataValue newMetadataValue = MetadataValue.builder().value("NEW").build();
 
-      Task setCatalogItemMetadataValue = catalogApi.getCatalogItemMetadataApi().setMetadata(catalogItem.getHref(), "KEY", newMetadataValue);
+      Task setCatalogItemMetadataValue = catalogApi.getItemMetadataApi(catalogItem.getId()).put("KEY", "NEW");
       checkTask(setCatalogItemMetadataValue);
-      assertTrue(retryTaskSuccess.apply(setCatalogItemMetadataValue), 
+      assertTrue(retryTaskSuccess.apply(setCatalogItemMetadataValue),
             String.format(TASK_COMPLETE_TIMELY, "setCatalogItemMetadataValue"));
-      
-      MetadataValue updatedMetadataValue = catalogApi.getCatalogItemMetadataApi().getMetadataValue(catalogItem.getHref(), "KEY");
-      assertEquals(updatedMetadataValue.getValue(), newMetadataValue.getValue(),
-               String.format(CORRECT_VALUE_OBJECT_FMT, "Value", "MetadataValue", newMetadataValue.getValue(), updatedMetadataValue.getValue()));
-      checkMetadataValue(updatedMetadataValue);
+
+      String editedMetadataValue = catalogApi.getItemMetadataApi(catalogItem.getId()).get("KEY");
+      assertEquals(editedMetadataValue, "NEW",
+            String.format(CORRECT_VALUE_OBJECT_FMT, "Value", "MetadataValue", "NEW", editedMetadataValue));
    }
 
    @Test(description = "DELETE /catalogItem/{id}/metadata/{key}", dependsOnMethods = "testGetCatalogItemMetadataValue")
-   public void testDeleteCatalogItemMetadataValue() {
-      Task deleteCatalogItemMetadataValue = catalogApi.getCatalogItemMetadataApi().deleteMetadataEntry(catalogItem.getHref(), "KEY");
-      checkTask(deleteCatalogItemMetadataValue);
-      assertTrue(retryTaskSuccess.apply(deleteCatalogItemMetadataValue), 
-            String.format(TASK_COMPLETE_TIMELY, "deleteCatalogItemMetadataValue"));
-      MetadataValue deleted = catalogApi.getMetadataApi().getMetadataValue(catalogItem.getHref(), "KEY");
-      assertNull(deleted);
+   public void testRemoveCatalogItemMetadataValue() {
+      Task removeCatalogItemMetadataValue = catalogApi.getItemMetadataApi(catalogItem.getId()).remove("KEY");
+      checkTask(removeCatalogItemMetadataValue);
+      assertTrue(retryTaskSuccess.apply(removeCatalogItemMetadataValue),
+            String.format(TASK_COMPLETE_TIMELY, "removeCatalogItemMetadataValue"));
+      String removed = catalogApi.getItemMetadataApi(catalogItem.getId()).get("KEY");
+      assertNull(removed);
    }
+   
+   private void removeMediaAttachedToCatalogItem(CatalogItem catalogItem) {
+      if (media != null) {
+         if (catalogItem.getEntity().getHref().equals(media.getHref())) {
+            try {
+               Task remove = context.getApi().getMediaApi().remove(media.getId());
+               taskDoneEventually(remove);
+               media = null;
+            } catch (Exception e) {
+               logger.warn(e, "Error when deleting media '%s'", media.getName());
+            }
+         }
+      }
+   }   
 }

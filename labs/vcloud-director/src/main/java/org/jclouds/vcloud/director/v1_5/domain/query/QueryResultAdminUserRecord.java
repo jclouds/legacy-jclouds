@@ -71,7 +71,7 @@ public class QueryResultAdminUserRecord extends QueryResultRecordType {
       }
 
       /**
-       * @see QueryResultAdminUserRecord#getOrg()
+       * @see QueryResultAdminUserRecord#get()
        */
       public B org(String val) {
          this.org = val;
@@ -158,7 +158,7 @@ public class QueryResultAdminUserRecord extends QueryResultRecordType {
       public B fromQueryResultAdminUserRecord(QueryResultAdminUserRecord in) {
          return fromQueryResultRecordType(in)
                   .name(in.getName())
-                  .org(in.getOrg())
+                  .org(in.get())
                   .fullName(in.getFullName())
                   .isEnabled(in.isEnabled())
                   .numberOfDeployedVMs(in.getNumberOfDeployedVMs())
@@ -224,7 +224,7 @@ public class QueryResultAdminUserRecord extends QueryResultRecordType {
    /**
     * Organization reference or id
     */
-   public String getOrg() {
+   public String get() {
       return org;
    }
 

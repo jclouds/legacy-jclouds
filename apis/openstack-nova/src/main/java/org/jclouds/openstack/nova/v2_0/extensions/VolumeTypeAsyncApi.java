@@ -72,7 +72,7 @@ public interface VolumeTypeAsyncApi {
    @GET
    @SelectJson("volume_types")
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<VolumeType>> listVolumeTypes();
+   ListenableFuture<? extends Set<? extends VolumeType>> listVolumeTypes();
 
 
    /**
@@ -82,7 +82,7 @@ public interface VolumeTypeAsyncApi {
    @Path("/{id}")
    @SelectJson("volume_type")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<VolumeType> getVolumeType(@PathParam("id") String id);
+   ListenableFuture<? extends VolumeType> getVolumeType(@PathParam("id") String id);
 
    /**
     * @see VolumeTypeApi#createVolumeType
@@ -91,7 +91,7 @@ public interface VolumeTypeAsyncApi {
    @SelectJson("volume_type")
    @Produces(MediaType.APPLICATION_JSON)
    @WrapWith("volume_type")
-   ListenableFuture<VolumeType> createVolumeType(@PayloadParam("name") String name, CreateVolumeTypeOptions... options);
+   ListenableFuture<? extends VolumeType> createVolumeType(@PayloadParam("name") String name, CreateVolumeTypeOptions... options);
 
    /**
     * @see VolumeTypeApi#deleteVolumeType

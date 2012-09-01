@@ -41,20 +41,39 @@ import com.google.common.io.OutputSupplier;
  */
 public class Suppliers2 {
 
-   public static <K, V> Supplier<V> getLastValueInMap(Supplier<Map<K, Supplier<V>>> input) {
-      return Suppliers2.compose(new Function<Map<K, Supplier<V>>, V>() {
+   /**
+    * Supplies a value that corresponds to a particular key in a map, or null, if not found
+    */
+   public static <K, V> Supplier<V> valueForKey(final Supplier<Map<K, Supplier<V>>> input, final Supplier<K> key) {
+      return new Supplier<V>() {
 
          @Override
-         public V apply(Map<K, Supplier<V>> input) {
-            Supplier<V> last = Iterables.getLast(input.values());
-            return last.get();
+         public V get() {
+            K keyToFind = key.get();
+            Supplier<V> value = input.get().get(keyToFind);
+            return value != null ? value.get() : null;
+         }
+
+         @Override
+         public String toString() {
+            return "withKey()";
+         }
+      };
+   }
+
+   public static <K, V> Supplier<V> getLastValueInMap(final Supplier<Map<K, Supplier<V>>> input) {
+      return new Supplier<V>() {
+         @Override
+         public V get() {
+            Supplier<V> last = Iterables.getLast(input.get().values());
+            return last != null ? last.get() : null;
          }
 
          @Override
          public String toString() {
             return "getLastValueInMap()";
          }
-      }, input);
+      };
    }
 
    public static <X> Function<X, Supplier<X>> ofInstanceFunction() {
