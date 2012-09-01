@@ -57,5 +57,6 @@
        <module>aws-rds</module>
        <module>smartos-ssh</module>
        <module>cloudstack-ec2</module>
+       <module>azure-management</module>
     </modules>
 </project>
