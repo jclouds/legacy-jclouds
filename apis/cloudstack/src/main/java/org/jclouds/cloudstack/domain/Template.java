@@ -91,7 +91,6 @@ public class Template implements Comparable<Template> {
          else if (state.equals("Installing Template")) { return DOWNLOAD_IN_PROGRESS; }
          else if (state.equals("Installing ISO")) { return DOWNLOAD_IN_PROGRESS; }
          else if (state.equals("Download Complete")) { return DOWNLOADED; }
-         else if (state.equals("Successfully Installed")) { return DOWNLOADED; }
          try {
             return valueOf(checkNotNull(state, "state"));
          } catch (IllegalArgumentException e) {
