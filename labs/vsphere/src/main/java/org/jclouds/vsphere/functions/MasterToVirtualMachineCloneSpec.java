@@ -84,7 +84,7 @@ public class MasterToVirtualMachineCloneSpec implements Function<VirtualMachine,
    }
 
    @Override
-   public VirtualMachineCloneSpec apply(@Nullable VirtualMachine master) {
+   public VirtualMachineCloneSpec apply(VirtualMachine master) {
       return prepareCloneSpec(master, resourcePool, datastore);
    }
 
@@ -99,21 +99,21 @@ public class MasterToVirtualMachineCloneSpec implements Function<VirtualMachine,
                   "currentSnapshot");
       } catch (Exception e) {
          logger.error("Can't get current snapshot of the master " + master.getName(), e);
-         propagate(e);
+         throw propagate(e);
       }
 
       try {
          relocateSpec = checkNotNull(configureRelocateSpec(resourcePool, datastore, master), "relocateSpec");
       } catch (Exception e) {
          logger.error("Can't configure relocate spec from vm " + master.getName(), e);
-         propagate(e);
+         throw propagate(e);
       }
 
       try {
          cloneSpec = checkNotNull(configureVirtualMachineCloneSpec(relocateSpec, currentSnapshot), "cloneSpec");
       } catch (Exception e) {
          logger.error("Can't configure clone spec from vm " + master.getName(), e);
-         propagate(e);
+         throw propagate(e);
       }
       return cloneSpec;
    }
@@ -129,7 +129,7 @@ public class MasterToVirtualMachineCloneSpec implements Function<VirtualMachine,
             }
          } catch (Exception e) {
             logger.debug(String.format("Can't take snapshot for '%s'", master.getName()), e);
-            propagate(e);
+            throw propagate(e);
          }
       } else
          logger.debug(String.format("snapshot already available for '%s'", master.getName()));

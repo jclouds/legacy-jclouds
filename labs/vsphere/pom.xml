@@ -23,15 +23,20 @@
 	<name>jclouds vSphere API</name>
 	<packaging>bundle</packaging>
 
-	<properties>
-		<!-- when instances are hung, open a ticket and add here -->
-		<jclouds.compute.blacklist-nodes>trmkrun-ccc,test.trmk-924</jclouds.compute.blacklist-nodes>
-		<test.vsphere.identity>FIXME</test.vsphere.identity>
-		<test.vsphere.endpoint>https://vsphere/sdk</test.vsphere.endpoint>
-		<test.vsphere.api-version>5.0</test.vsphere.api-version>
-		<test.vsphere.build-version></test.vsphere.build-version>
-		<test.vsphere.identity>FIXME</test.vsphere.identity>
-	</properties>
+    <properties>
+        <test.vsphere.identity>FIXME</test.vsphere.identity>
+        <test.vsphere.endpoint>https://vsphere/sdk</test.vsphere.endpoint>
+        <test.vsphere.api-version>5.0</test.vsphere.api-version>
+        <test.vsphere.build-version></test.vsphere.build-version>
+        <test.vsphere.identity>FIXME</test.vsphere.identity>
+        <jclouds.osgi.export>org.jclouds.vsphere*;version="${project.version}"</jclouds.osgi.export>
+        <jclouds.osgi.import>
+            org.jclouds.vsphere*;version="${project.version}",
+            org.jclouds*;version="${project.version}",
+            *
+        </jclouds.osgi.import>
+    </properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>com.cloudbees.thirdparty</groupId>
@@ -61,12 +66,14 @@
 		<dependency>
 			<groupId>org.jclouds.driver</groupId>
 			<artifactId>jclouds-sshj</artifactId>
-			<version>${project.version}</version>
+			<version>${project.version}</version>		
 		</dependency>
 		<dependency>
 			<groupId>org.jclouds.driver</groupId>
 			<artifactId>jclouds-slf4j</artifactId>
 			<version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope> 			
 		</dependency>
 		<dependency>
 			<groupId>org.jclouds</groupId>
@@ -135,19 +142,4 @@
 		</profile>
 	</profiles>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>maven-bundle-plugin</artifactId>
-				<configuration>
-					<instructions>
-						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-						<Export-Package>org.jclouds.vsphere*;version="${project.version}"</Export-Package>
-						<Import-Package>org.jclouds*;version="${project.version}",*</Import-Package>
-					</instructions>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 </project>

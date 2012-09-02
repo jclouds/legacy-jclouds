@@ -20,7 +20,7 @@
 package org.jclouds.vsphere.config;
 
 /**
- * Configuration properties used for interacting with VirtualBox instances.
+ * Configuration properties used for interacting with vsphere instances.
  * 
  * @author Andrea Turli
  * 

@@ -75,9 +75,9 @@ public class CreateAndConnectVSphereClient implements Supplier<ServiceInstance> 
       try {
          client = new ServiceInstance(new URL(provider.toASCIIString()), identity, credential, true);
       } catch (RemoteException e) {
-         Throwables.propagate(e);
+         throw Throwables.propagate(e);
       } catch (MalformedURLException e) {
-         Throwables.propagate(e);
+          throw Throwables.propagate(e);
       }
    }
 

@@ -1,3 +1,23 @@
+/**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ * 
+ * @author Andrea Turli
+ */
 package org.jclouds.vsphere;
 
 import static org.jclouds.compute.config.ComputeServiceProperties.TEMPLATE;
@@ -18,9 +38,8 @@ import org.jclouds.vsphere.config.VSphereComputeServiceContextModule;
  */
 public class VSphereApiMetadata extends BaseApiMetadata {
 
+   private static final String JCLOUDS_VSPHERE_CLONE = "jclouds.vsphere.clone";
    private static final long serialVersionUID = 7050419752716105398L;
-   public static final String VSPHERE_VERSION = "5";
-
 
    @Override
    public Builder toBuilder() {
@@ -38,10 +57,11 @@ public class VSphereApiMetadata extends BaseApiMetadata {
    public static Properties defaultProperties() {
       Properties properties = BaseApiMetadata.defaultProperties();
       
-      String cloneStrategy = System.getProperty("test.vsphere.cloning", "linked");
+      String cloneStrategy = System.getProperty(JCLOUDS_VSPHERE_CLONE, "linked");
       properties.setProperty(CLONING, cloneStrategy);
       properties.setProperty(TEMPLATE,
                         "osFamily=UBUNTU,osVersionMatches=12.04,os64Bit=true,osArchMatches=x86,loginUser=toor:password,authenticateSudo=true");
+      
       return properties;
    }
    
@@ -49,10 +69,11 @@ public class VSphereApiMetadata extends BaseApiMetadata {
 
       protected Builder(){
          id("vsphere")
-         .version(VSPHERE_VERSION)
+         .version("5")
          .name("vSphere API")
          .identityName("User")
          .credentialName("password")
+         .endpointName("ESXi endpoint or vCenter server")
          .defaultEndpoint("https://50.23.145.66/sdk")
          .documentation(URI.create("http://pubs.vmware.com/vsphere-50/index.jsp"))
          .defaultProperties(VSphereApiMetadata.defaultProperties())

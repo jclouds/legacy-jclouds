@@ -20,6 +20,8 @@ package org.jclouds.vsphere.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.concurrent.TimeUnit;
+
 import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -27,11 +29,15 @@ import javax.inject.Singleton;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.logging.Logger;
+import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.ssh.SshClient;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
 import com.google.common.net.HostAndPort;
 import com.google.inject.Inject;
+import com.vmware.vim25.VirtualMachinePowerState;
 import com.vmware.vim25.VirtualMachineToolsStatus;
 import com.vmware.vim25.mo.VirtualMachine;
 
@@ -54,13 +60,19 @@ public class VirtualMachineToSshClient implements Function<VirtualMachine, SshCl
 		SshClient client = null;
 		String clientIpAddress = vm.getGuest().getIpAddress();
 		String sshPort = "22";
-		while(!vm.getGuest().getToolsStatus().equals(VirtualMachineToolsStatus.toolsOk)) {
-               try {
-                  Thread.sleep(1000l);
-               } catch (InterruptedException e) {
-                  logger.error("Problem in waiting vmware tools", e);
-               }
-		   clientIpAddress = vm.getGuest().getIpAddress();
+		while(!vm.getGuest().getToolsStatus().equals(VirtualMachineToolsStatus.toolsOk) || clientIpAddress.isEmpty()) {
+			int timeoutValue = 1000, timeoutUnits = 500;
+			RetryablePredicate<String> tester = new RetryablePredicate<String>(
+					ipAddressTester, timeoutValue, timeoutUnits,
+					TimeUnit.MILLISECONDS);
+			boolean passed = false;
+			while (vm.getRuntime().getPowerState()
+					.equals(VirtualMachinePowerState.poweredOn)
+					&& !passed) {
+				clientIpAddress = Strings.nullToEmpty(vm.getGuest()
+						.getIpAddress());
+				passed = tester.apply(clientIpAddress);
+			}
 		}
 		LoginCredentials loginCredentials = LoginCredentials.builder()
 				.user("toor").password("password").authenticateSudo(true)
@@ -72,5 +84,14 @@ public class VirtualMachineToSshClient implements Function<VirtualMachine, SshCl
 		checkNotNull(client);
 		return client;
 	}
+	
+	Predicate<String> ipAddressTester = new Predicate<String>() {
+
+		@Override
+		public boolean apply(String input) {
+			return !input.isEmpty();
+		}
+		
+	};
 
 }
