@@ -19,10 +19,14 @@
 package org.jclouds.aws.ec2.compute.strategy;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.util.Map;
 import java.util.Set;
 
+import org.jclouds.aws.ec2.domain.AWSImage;
+import org.jclouds.aws.ec2.functions.AWSEC2ImageParser;
+import org.jclouds.aws.ec2.xml.AWSDescribeImagesResponseHandlerTest;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
@@ -35,14 +39,13 @@ import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ec2.compute.config.EC2ComputeServiceDependenciesModule;
 import org.jclouds.ec2.compute.functions.EC2ImageParser;
 import org.jclouds.ec2.compute.strategy.EC2PopulateDefaultLoginCredentialsForImageStrategy;
-import org.jclouds.ec2.domain.Image;
-import org.jclouds.ec2.xml.DescribeImagesResponseHandlerTest;
 import org.jclouds.json.Json;
 import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicates;
 import com.google.common.base.Suppliers;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -55,8 +58,8 @@ import com.google.inject.Guice;
  */
 @Test(groups = "unit", testName = "AWSEC2ImageParserTest")
 public class AWSEC2ImageParserTest {
-   public void testParseAlesticCanonicalImage() {
 
+   public void testParseAlesticCanonicalImage() {
       Set<org.jclouds.compute.domain.Image> result = convertImages("/alestic_canonical.xml");
 
       assertEquals(
@@ -69,11 +72,12 @@ public class AWSEC2ImageParserTest {
                   .description("ubuntu-images-us/ubuntu-hardy-8.04-i386-server-20091130.manifest.xml")
                   .defaultCredentials(new LoginCredentials("ubuntu", false)).id("us-east-1/ami-7e28ca17")
                   .providerId("ami-7e28ca17").location(defaultLocation).version("20091130")
-                  .userMetadata(ImmutableMap.of(
-                     "owner", "099720109477",
-                     "rootDeviceType", "instance-store",
-                     "virtualizationType", "paravirtual",
-                     "hypervisor", "xen"))
+                  .userMetadata(ImmutableMap.<String, String>builder()
+                        .put("owner", "099720109477")
+                        .put("rootDeviceType", "instance-store")
+                        .put("virtualizationType", "paravirtual")
+                        .put("hypervisor", "xen")
+                        .build())
                   .status(org.jclouds.compute.domain.Image.Status.AVAILABLE)
                   .backendStatus("available")
                   .build());
@@ -88,7 +92,10 @@ public class AWSEC2ImageParserTest {
                               .build()).description("alestic/ubuntu-8.04-hardy-base-20080905.manifest.xml")
                   .defaultCredentials(new LoginCredentials("ubuntu", false)).id("us-east-1/ami-c0fa1ea9")
                   .providerId("ami-c0fa1ea9").location(defaultLocation).version("20080905")
-                  .userMetadata(ImmutableMap.of("owner", "063491364108", "rootDeviceType", "instance-store"))
+                  .userMetadata(ImmutableMap.<String, String>builder()
+                        .put("owner", "063491364108")
+                        .put("rootDeviceType", "instance-store")
+                        .build())
                   .status(org.jclouds.compute.domain.Image.Status.AVAILABLE).backendStatus("available").build());
       assertEquals(Iterables.get(result, 4).getStatus(), org.jclouds.compute.domain.Image.Status.AVAILABLE);
 
@@ -103,18 +110,18 @@ public class AWSEC2ImageParserTest {
                   .description("099720109477/ebs/ubuntu-images/ubuntu-lucid-10.04-i386-server-20100827")
                   .defaultCredentials(new LoginCredentials("ubuntu", false)).id("us-east-1/ami-10f3a255")
                   .providerId("ami-10f3a255").location(defaultLocation).version("20100827")
-                  .userMetadata(ImmutableMap.of(
-                     "owner", "099720109477",
-                     "rootDeviceType", "ebs",
-                     "virtualizationType", "paravirtual",
-                     "hypervisor", "xen"))
+                  .userMetadata(ImmutableMap.<String, String>builder()
+                        .put("owner", "099720109477")
+                        .put("rootDeviceType", "ebs")
+                        .put("virtualizationType", "paravirtual")
+                        .put("hypervisor", "xen")
+                        .build())
                   .status(org.jclouds.compute.domain.Image.Status.AVAILABLE).backendStatus("available").build());
-      assertEquals(Iterables.get(result, 6).getStatus(), org.jclouds.compute.domain.Image.Status.AVAILABLE);
 
+      assertEquals(Iterables.get(result, 6).getStatus(), org.jclouds.compute.domain.Image.Status.AVAILABLE);
    }
 
    public void testParseVostokImage() {
-
       Set<org.jclouds.compute.domain.Image> result = convertImages("/vostok.xml");
 
       assertEquals(
@@ -127,13 +134,14 @@ public class AWSEC2ImageParserTest {
                   .description("vostok-builds/vostok-0.95-5622/vostok-0.95-5622.manifest.xml")
                   .defaultCredentials(new LoginCredentials("root", false)).id("us-east-1/ami-870de2ee")
                   .providerId("ami-870de2ee").location(defaultLocation).version("5622")
-                  .userMetadata(ImmutableMap.of("owner", "133804938231", "rootDeviceType", "instance-store"))
+                  .userMetadata(ImmutableMap.<String, String>builder()
+                        .put("owner", "133804938231")
+                        .put("rootDeviceType", "instance-store")
+                        .build())
                   .status(org.jclouds.compute.domain.Image.Status.AVAILABLE).build());
-
    }
 
    public void testParseCCImage() {
-
       Set<org.jclouds.compute.domain.Image> result = convertImages("/describe_images_cc.xml");
 
       assertEquals(
@@ -146,18 +154,18 @@ public class AWSEC2ImageParserTest {
                   .description("EC2 CentOS 5.4 HVM AMI")
                   .defaultCredentials(new LoginCredentials("root", false)).id("us-east-1/ami-7ea24a17")
                   .providerId("ami-7ea24a17").location(defaultLocation)
-                  .userMetadata(ImmutableMap.of(
-                     "owner", "206029621532",
-                     "rootDeviceType", "ebs",
-                     "virtualizationType", "hvm",
-                     "hypervisor", "xen"))
+                  .userMetadata(ImmutableMap.<String, String>builder()
+                        .put("owner", "206029621532")
+                        .put("rootDeviceType", "ebs")
+                        .put("virtualizationType", "hvm")
+                        .put("hypervisor", "xen")
+                        .build())
                   .status(org.jclouds.compute.domain.Image.Status.AVAILABLE).build());
-      assertEquals(Iterables.get(result, 0).getStatus(), org.jclouds.compute.domain.Image.Status.AVAILABLE);
 
+      assertEquals(Iterables.get(result, 0).getStatus(), org.jclouds.compute.domain.Image.Status.AVAILABLE);
    }
 
    public void testParseRightScaleImage() {
-
       Set<org.jclouds.compute.domain.Image> result = convertImages("/rightscale_images.xml");
 
       assertEquals(
@@ -169,8 +177,12 @@ public class AWSEC2ImageParserTest {
                               .build()).description("rightscale-us-east/CentOS_5.4_x64_v4.4.10.manifest.xml")
                   .defaultCredentials(new LoginCredentials("root", false)).id("us-east-1/ami-ccb35ea5")
                   .providerId("ami-ccb35ea5").location(defaultLocation).version("4.4.10")
-                  .userMetadata(ImmutableMap.of("owner", "admin", "rootDeviceType", "instance-store"))
+                  .userMetadata(ImmutableMap.<String, String>builder()
+                        .put("owner", "admin")
+                        .put("rootDeviceType", "instance-store")
+                        .build())
                   .status(org.jclouds.compute.domain.Image.Status.AVAILABLE).backendStatus("available").build());
+
       assertEquals(Iterables.get(result, 0).getStatus(), org.jclouds.compute.domain.Image.Status.AVAILABLE);
 
       assertEquals(
@@ -183,7 +195,6 @@ public class AWSEC2ImageParserTest {
    }
 
    public void testParseAmznImage() {
-
       Set<org.jclouds.compute.domain.Image> result = convertImages("/amzn_images.xml");
 
       assertEquals(
@@ -196,12 +207,13 @@ public class AWSEC2ImageParserTest {
                               .is64Bit(false).build()).description("Amazon")
                   .defaultCredentials(new LoginCredentials("ec2-user", false)).id("us-east-1/ami-82e4b5c7")
                   .providerId("ami-82e4b5c7").location(defaultLocation).version("0.9.7-beta")
-                  .userMetadata(ImmutableMap.of(
-                     "owner", "137112412989",
-                     "rootDeviceType", "ebs",
-                     "virtualizationType", "paravirtual",
-                     "hypervisor", "xen"))
+                  .userMetadata(ImmutableMap.<String, String>builder()
+                        .put("rootDeviceType", "ebs")
+                        .put("virtualizationType", "paravirtual")
+                        .put("hypervisor", "xen")
+                        .build())
                   .status(org.jclouds.compute.domain.Image.Status.AVAILABLE).build());
+
       assertEquals(Iterables.get(result, 0).getStatus(), org.jclouds.compute.domain.Image.Status.AVAILABLE);
 
       assertEquals(
@@ -215,30 +227,64 @@ public class AWSEC2ImageParserTest {
                               .build()).description("Amazon Linux AMI x86_64 S3")
                   .defaultCredentials(new LoginCredentials("ec2-user", false)).id("us-east-1/ami-f2e4b5b7")
                   .providerId("ami-f2e4b5b7").location(defaultLocation).version("0.9.7-beta")
-                  .userMetadata(ImmutableMap.of(
-                     "owner", "137112412989",
-                     "rootDeviceType", "ebs",
-                     "virtualizationType", "paravirtual",
-                     "hypervisor", "xen"))
+                  .userMetadata(ImmutableMap.<String, String>builder()
+	                     .put("owner", "137112412989")
+	                     .put("rootDeviceType", "ebs")
+	                     .put("virtualizationType", "paravirtual")
+	                     .put("hypervisor", "xen")
+	                     .build())
                   .status(org.jclouds.compute.domain.Image.Status.AVAILABLE).build());
-      assertEquals(Iterables.get(result, 3).getStatus(), org.jclouds.compute.domain.Image.Status.AVAILABLE);
 
+      assertEquals(Iterables.get(result, 3).getStatus(), org.jclouds.compute.domain.Image.Status.AVAILABLE);
    }
 
-   static Location defaultLocation = new LocationBuilder().scope(LocationScope.REGION).id("us-east-1")
-         .description("us-east-1").build();
+   public void testParseAmznImageWithTags() {
+      Set<org.jclouds.compute.domain.Image> result = convertImages("/amzn_image_tags.xml");
+
+      assertEquals(
+            Iterables.get(result, 0),
+            new ImageBuilder()
+                  .name("amzn-ami-0.9.7-beta.i386-ebs")
+                  .operatingSystem(
+                        new OperatingSystem.Builder().family(OsFamily.AMZN_LINUX).arch("paravirtual")
+                              .version("0.9.7-beta").description("137112412989/amzn-ami-0.9.7-beta.i386-ebs")
+                              .is64Bit(false).build()).description("Amazon")
+                  .defaultCredentials(new LoginCredentials("ec2-user", false)).id("us-east-1/ami-82e4b5c7")
+                  .providerId("ami-82e4b5c7").location(defaultLocation).version("0.9.7-beta")
+                  .userMetadata(ImmutableMap.<String, String>builder()
+                        .put("owner", "137112412989")
+                        .put("rootDeviceType", "ebs")
+                        .put("virtualizationType", "paravirtual")
+                        .put("hypervisor", "xen")
+                        .put("tagOne", "VALUE_ONE")
+                        .put("tagTtwo", "")
+                        .build())
+                  .tags(ImmutableList.<String>of("tagOne", "tagTwo"))
+                  .status(org.jclouds.compute.domain.Image.Status.AVAILABLE).build());
+
+      org.jclouds.compute.domain.Image image = Iterables.get(result, 0);
+      assertEquals(image.getStatus(), org.jclouds.compute.domain.Image.Status.AVAILABLE);
+      assertEquals(image.getTags().size(), 2);
+      assertTrue(image.getUserMetadata().containsKey("tagOne"));
+      assertTrue(image.getUserMetadata().containsKey("tagTwo"));
+   }
+
+   static Location defaultLocation = new LocationBuilder().scope(LocationScope.REGION)
+																          .id("us-east-1")
+																          .description("us-east-1")
+																          .build();
 
    public static Set<org.jclouds.compute.domain.Image> convertImages(String resource) {
+      Map<OsFamily, Map<String, String>> map = new BaseComputeServiceContextModule() { }
+            .provideOsVersionMap(new ComputeServiceConstants.ReferenceData(), Guice.createInjector(new GsonModule()).getInstance(Json.class));
 
-      Map<OsFamily, Map<String, String>> map = new BaseComputeServiceContextModule() {
-      }.provideOsVersionMap(new ComputeServiceConstants.ReferenceData(), Guice.createInjector(new GsonModule())
-            .getInstance(Json.class));
+      Set<AWSImage> result = AWSDescribeImagesResponseHandlerTest.parseImages(resource);
 
-      Set<Image> result = DescribeImagesResponseHandlerTest.parseImages(resource);
       EC2ImageParser parser = new EC2ImageParser(EC2ComputeServiceDependenciesModule.toPortableImageStatus,
-               new EC2PopulateDefaultLoginCredentialsForImageStrategy(), map, Suppliers
-                        .<Set<? extends Location>> ofInstance(ImmutableSet.<Location> of(defaultLocation)), Suppliers
-                        .ofInstance(defaultLocation), new AWSEC2ReviseParsedImage(map));
-      return Sets.newLinkedHashSet(Iterables.filter(Iterables.transform(result, parser), Predicates.notNull()));
+            new EC2PopulateDefaultLoginCredentialsForImageStrategy(), map,
+            Suppliers.<Set<? extends Location>>ofInstance(ImmutableSet.<Location>of(defaultLocation)),
+            Suppliers.ofInstance(defaultLocation),new AWSEC2ReviseParsedImage(map));
+      AWSEC2ImageParser awsParser = new AWSEC2ImageParser(parser);
+      return Sets.newLinkedHashSet(Iterables.filter(Iterables.transform(result, awsParser), Predicates.notNull()));
    }
 }

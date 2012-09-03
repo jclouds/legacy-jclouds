@@ -56,9 +56,11 @@ import com.google.common.collect.Iterables;
 
 /**
  * @author Adrian Cole
+ * @author Andrew Kennedy
  */
 @Singleton
 public class EC2ImageParser implements Function<org.jclouds.ec2.domain.Image, Image> {
+
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
@@ -69,7 +71,6 @@ public class EC2ImageParser implements Function<org.jclouds.ec2.domain.Image, Im
    private final Supplier<Location> defaultLocation;
    private final Map<OsFamily, Map<String, String>> osVersionMap;
    private final ReviseParsedImage reviseParsedImage;
-
 
    @Inject
    public EC2ImageParser(Map<ImageState, Image.Status> toPortableImageStatus,
@@ -94,16 +95,19 @@ public class EC2ImageParser implements Function<org.jclouds.ec2.domain.Image, Im
       builder.id(from.getRegion() + "/" + from.getId());
       builder.name(from.getName());
       builder.description(from.getDescription() != null ? from.getDescription() : from.getImageLocation());
-      builder.userMetadata(ImmutableMap.<String, String> builder().put("owner", from.getImageOwnerId()).put(
-               "rootDeviceType", from.getRootDeviceType().value()).put("virtualizationType",
-               from.getVirtualizationType().value()).put("hypervisor", from.getHypervisor().value()).build());
-
+      ImmutableMap.Builder<String, String> userMetadata = ImmutableMap.builder();
+      if (from.getImageOwnerId() != null) {
+         userMetadata.put("owner", from.getImageOwnerId());
+      }
+      userMetadata.put("rootDeviceType", from.getRootDeviceType().value());
+      userMetadata.put("virtualizationType", from.getVirtualizationType().value());
+      userMetadata.put("hypervisor", from.getHypervisor().value());
+      builder.userMetadata(userMetadata.build());
       OperatingSystem.Builder osBuilder = OperatingSystem.builder();
       osBuilder.is64Bit(from.getArchitecture() == Architecture.X86_64);
       OsFamily family = parseOsFamily(from);
       osBuilder.family(family);
-      osBuilder.version(ComputeServiceUtils.parseVersionOrReturnEmptyString(family, from.getImageLocation(),
-               osVersionMap));
+      osBuilder.version(ComputeServiceUtils.parseVersionOrReturnEmptyString(family, from.getImageLocation(), osVersionMap));
       osBuilder.description(from.getImageLocation());
       osBuilder.arch(from.getVirtualizationType().value());
 
@@ -113,21 +117,26 @@ public class EC2ImageParser implements Function<org.jclouds.ec2.domain.Image, Im
 
       try {
          builder.location(Iterables.find(locations.get(), new Predicate<Location>() {
-
             @Override
             public boolean apply(Location input) {
                return input.getId().equals(from.getRegion());
             }
-
          }));
       } catch (NoSuchElementException e) {
          logger.error("unknown region %s for image %s; not in %s", from.getRegion(), from.getId(), locations);
-         builder.location(new LocationBuilder().scope(LocationScope.REGION).id(from.getRegion()).description(
-                  from.getRegion()).parent(defaultLocation.get()).build());
+         builder.location(new LocationBuilder().scope(LocationScope.REGION)
+					                     .id(from.getRegion())
+					                     .description(from.getRegion())
+					                     .parent(defaultLocation.get())
+					                     .build());
       }
       builder.operatingSystem(osBuilder.build());
-      builder.status(toPortableImageStatus.get(from.getImageState()));
       builder.backendStatus(from.getRawState());
+      if (from.getImageState() == null) {
+         builder.status(Status.UNRECOGNIZED); // Could be PENDING?
+      } else {
+	      builder.status(toPortableImageStatus.get(from.getImageState()));
+      }
       return builder.build();
    }
 

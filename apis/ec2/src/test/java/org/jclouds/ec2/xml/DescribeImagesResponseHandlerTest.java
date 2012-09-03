@@ -20,19 +20,19 @@ package org.jclouds.ec2.xml;
 
 import static com.google.common.collect.Iterables.get;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 
 import java.io.InputStream;
 import java.util.Set;
 
-import org.jclouds.ec2.compute.functions.EC2ImageParserTest;
 import org.jclouds.ec2.domain.Hypervisor;
 import org.jclouds.ec2.domain.Image;
-import org.jclouds.ec2.domain.RootDeviceType;
-import org.jclouds.ec2.domain.VirtualizationType;
 import org.jclouds.ec2.domain.Image.Architecture;
 import org.jclouds.ec2.domain.Image.EbsBlockDevice;
 import org.jclouds.ec2.domain.Image.ImageState;
 import org.jclouds.ec2.domain.Image.ImageType;
+import org.jclouds.ec2.domain.RootDeviceType;
+import org.jclouds.ec2.domain.VirtualizationType;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.location.Region;
@@ -49,9 +49,10 @@ import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
 
 /**
- * Tests behavior of {@code DescribeImagesResponseHandler}
+ * Tests behavior of {@link DescribeImagesResponseHandler}.
  * 
  * @author Adrian Cole
+ * @author Andrew Kennedy
  */
 @Test(groups = "unit", testName = "DescribeImagesResponseHandlerTest")
 public class DescribeImagesResponseHandlerTest {
@@ -101,8 +102,8 @@ public class DescribeImagesResponseHandlerTest {
    }
    
    public void testDiabloWithIncorrectDisplayNameField() {
-      Set<Image> contents = ImmutableSet.of(new Image("us-east-1", Architecture.X86_64, "CentOS 6.2 Server 64-bit 20120125", "", "ami-0000054e",
-               "local (CentOS 6.2 Server 64-bit 20120125)", "", ImageState.AVAILABLE, "available",
+      Set<Image> contents = ImmutableSet.of(new Image("us-east-1", Architecture.X86_64, "CentOS 6.2 Server 64-bit 20120125", null,
+               "ami-0000054e", "local (CentOS 6.2 Server 64-bit 20120125)", null, ImageState.AVAILABLE, "available",
                ImageType.MACHINE, true, Sets.<String> newHashSet(), "aki-0000054c", null, "ari-0000054d",
                RootDeviceType.INSTANCE_STORE, "/dev/sda1", ImmutableMap.<String, EbsBlockDevice> of(),
                VirtualizationType.PARAVIRTUAL, Hypervisor.XEN));
@@ -114,23 +115,34 @@ public class DescribeImagesResponseHandlerTest {
       assertEquals(get(result, 0).getRawState(), "available");
    }
 
-   static ParseSax<Set<Image>> createParser() {
-      Injector injector = Guice.createInjector(new SaxParserModule(), new AbstractModule() {
+   public void testNovaImagesWithRamdiskNoArchitecture() {
+      Set<Image> result = parseImages("/describe_images_nova_with_ramdisk.xml");
 
+      assertEquals(result.size(), 3);
+      assertNull(get(result, 0).getArchitecture());
+      assertEquals(get(result, 0).getImageType(), ImageType.KERNEL);
+      assertNull(get(result, 1).getArchitecture());
+      assertEquals(get(result, 1).getImageType(), ImageType.RAMDISK);
+      assertNull(get(result, 2).getArchitecture());
+      assertEquals(get(result, 2).getImageType(), ImageType.MACHINE);
+   }
+
+   public static ParseSax<Set<Image>> createParser() {
+      Injector injector = Guice.createInjector(new SaxParserModule(), new AbstractModule() {
          @Override
          protected void configure() {
-            bind(new TypeLiteral<Supplier<String>>() {
-            }).annotatedWith(Region.class).toInstance(Suppliers.ofInstance("us-east-1"));
+            bind(new TypeLiteral<Supplier<String>>() { })
+                  .annotatedWith(Region.class)
+                  .toInstance(Suppliers.ofInstance("us-east-1"));
          }
-
       });
-      ParseSax<Set<Image>> parser = (ParseSax<Set<Image>>) injector.getInstance(ParseSax.Factory.class).create(
-               injector.getInstance(DescribeImagesResponseHandler.class));
+      ParseSax<Set<Image>> parser = (ParseSax<Set<Image>>) injector.getInstance(ParseSax.Factory.class)
+            .create(injector.getInstance(DescribeImagesResponseHandler.class));
       return parser;
    }
 
    public static Set<Image> parseImages(String resource) {
-      InputStream is = EC2ImageParserTest.class.getResourceAsStream(resource);
+      InputStream is = DescribeImagesResponseHandlerTest.class.getResourceAsStream(resource);
       return createParser().parse(is);
    }
 }
