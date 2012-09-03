@@ -29,6 +29,7 @@ public interface SwiftHeaders {
    public static final String CONTAINER_BYTES_USED = "X-Container-Bytes-Used";
    public static final String CONTAINER_OBJECT_COUNT = "X-Container-Object-Count";
    public static final String CONTAINER_METADATA_PREFIX = "X-Container-Meta-";
+   public static final String CONTAINER_DELETE_METADATA_PREFIX = "X-Remove-Container-Meta-";
    public static final String USER_METADATA_PREFIX = "X-Object-Meta-";
    
    public static final String CONTAINER_READ = "X-Container-Read";

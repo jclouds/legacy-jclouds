@@ -54,6 +54,7 @@ import org.jclouds.openstack.swift.domain.MutableObjectInfoWithMetadata;
 import org.jclouds.openstack.swift.domain.ObjectInfo;
 import org.jclouds.openstack.swift.domain.SwiftObject;
 import org.jclouds.openstack.swift.options.CreateContainerOptions;
+import org.jclouds.openstack.swift.options.DeleteContainerMetadataOptions;
 
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
@@ -167,6 +168,10 @@ public class StubSwiftAsyncClient implements CommonSwiftAsyncClient {
    }
 
    public ListenableFuture<Boolean> setContainerMetadata(String container, CreateContainerOptions... options) {
+      throw new UnsupportedOperationException();
+   }
+
+   public ListenableFuture<Boolean> deleteContainerMetadata(String container, DeleteContainerMetadataOptions options) {
       throw new UnsupportedOperationException();
    }
 

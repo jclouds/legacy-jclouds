@@ -54,6 +54,7 @@ import org.jclouds.openstack.swift.functions.ParseObjectInfoFromHeaders;
 import org.jclouds.openstack.swift.functions.ParseObjectInfoListFromJsonResponse;
 import org.jclouds.openstack.swift.functions.ReturnTrueOn404FalseOn409;
 import org.jclouds.openstack.swift.options.CreateContainerOptions;
+import org.jclouds.openstack.swift.options.DeleteContainerMetadataOptions;
 import org.jclouds.openstack.swift.options.ListContainerOptions;
 import org.jclouds.rest.annotations.*;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
@@ -110,6 +111,14 @@ public interface CommonSwiftAsyncClient {
    @Path("/{container}")
    @ExceptionParser(ReturnNullOnContainerNotFound.class)
    ListenableFuture<Boolean> setContainerMetadata(@PathParam("container") String container, CreateContainerOptions... options);
+
+   /**
+    * @see CommonSwiftClient#deleteContainerMetadata
+    */
+   @POST
+   @Path("/{container}")
+   @ExceptionParser(ReturnNullOnContainerNotFound.class)
+   ListenableFuture<Boolean> deleteContainerMetadata(@PathParam("container") String container, DeleteContainerMetadataOptions options);
 
    /**
     * @see CommonSwiftClient#createContainer

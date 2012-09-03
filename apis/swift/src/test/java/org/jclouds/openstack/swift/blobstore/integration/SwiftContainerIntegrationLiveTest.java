@@ -30,14 +30,17 @@ import org.jclouds.openstack.swift.CommonSwiftAsyncClient;
 import org.jclouds.openstack.swift.CommonSwiftClient;
 import org.jclouds.openstack.swift.domain.ContainerMetadata;
 import org.jclouds.openstack.swift.options.CreateContainerOptions;
+import org.jclouds.openstack.swift.options.DeleteContainerMetadataOptions;
 import org.jclouds.rest.RestContext;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 /**
  * @author James Murty
  * @author Adrian Cole
+ * @author Everett Toews
  */
 @Test(groups = "live")
 public class SwiftContainerIntegrationLiveTest extends BaseContainerIntegrationTest {
@@ -72,5 +75,35 @@ public class SwiftContainerIntegrationLiveTest extends BaseContainerIntegrationT
       
       assertEquals(containerMetadata.getMetadata().get("key1"), "value1");
       assertEquals(containerMetadata.getMetadata().get("key2"), "value2");
+   }
+
+   @Test(groups = "live")
+   public void testCreateDeleteContainerMetadata() throws InterruptedException {
+      BlobStore blobStore = view.getBlobStore();
+      RestContext<CommonSwiftClient, CommonSwiftAsyncClient> swift = blobStore.getContext().unwrap();
+      String containerName = getContainerName();
+      CreateContainerOptions options = CreateContainerOptions.Builder
+         .withPublicAccess()
+         .withMetadata(ImmutableMap.<String, String> of(
+            "key1", "value1",
+            "key2", "value2",
+            "key3", "value3")); 
+
+      assertTrue(swift.getApi().createContainer(containerName, options));
+      
+      ContainerMetadata containerMetadata = swift.getApi().getContainerMetadata(containerName);
+      
+      assertEquals(containerMetadata.getMetadata().size(), 3);
+      assertEquals(containerMetadata.getMetadata().get("key1"), "value1");
+      assertEquals(containerMetadata.getMetadata().get("key2"), "value2");
+      assertEquals(containerMetadata.getMetadata().get("key3"), "value3");
+
+      assertTrue(swift.getApi().deleteContainerMetadata(containerName, DeleteContainerMetadataOptions.Builder
+         .deleteMetadata(ImmutableList.<String> of("key2","key3"))));
+
+      containerMetadata = swift.getApi().getContainerMetadata(containerName);
+      
+      assertEquals(containerMetadata.getMetadata().size(), 1);
+      assertEquals(containerMetadata.getMetadata().get("key1"), "value1");
    }
 }

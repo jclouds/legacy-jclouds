@@ -32,6 +32,7 @@ import org.jclouds.openstack.swift.domain.MutableObjectInfoWithMetadata;
 import org.jclouds.openstack.swift.domain.ObjectInfo;
 import org.jclouds.openstack.swift.domain.SwiftObject;
 import org.jclouds.openstack.swift.options.CreateContainerOptions;
+import org.jclouds.openstack.swift.options.DeleteContainerMetadataOptions;
 import org.jclouds.openstack.swift.options.ListContainerOptions;
 
 import com.google.inject.Provides;
@@ -91,6 +92,8 @@ public interface CommonSwiftClient {
    ContainerMetadata getContainerMetadata(String container);
    
    boolean setContainerMetadata(String container, CreateContainerOptions... options);
+   
+   boolean deleteContainerMetadata(String container, DeleteContainerMetadataOptions metadataKeys);
 
    boolean createContainer(String container);
 
