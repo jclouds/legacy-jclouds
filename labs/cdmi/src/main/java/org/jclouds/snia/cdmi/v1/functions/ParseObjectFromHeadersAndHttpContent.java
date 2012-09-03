@@ -16,14 +16,31 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.snia.cdmi.v1;
+package org.jclouds.snia.cdmi.v1.functions;
+
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpResponse;
+import org.jclouds.io.Payload;
+import org.jclouds.rest.InvocationContext;
+
+import com.google.common.base.Function;
 
 /**
- * Object Types used in CDMI.
+ * Parses payload from HTTP response .
  * 
+ * @author Kenneth Nagin
  */
-public interface ObjectTypes {
+public class ParseObjectFromHeadersAndHttpContent implements
+		Function<HttpResponse, Payload>,
+		InvocationContext<ParseObjectFromHeadersAndHttpContent> {
 
-	public static final String CONTAINER = "application/cdmi-container";
-	public static final String DATAOBJECT = "application/cdmi-object";
+	public Payload apply(HttpResponse from) {
+		Payload object = from.getPayload();
+		return object;
+	}
+
+	@Override
+	public ParseObjectFromHeadersAndHttpContent setContext(HttpRequest request) {
+		return this;
+	}
 }
