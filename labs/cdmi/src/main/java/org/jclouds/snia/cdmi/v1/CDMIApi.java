@@ -24,6 +24,7 @@ import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.snia.cdmi.v1.features.ContainerApi;
 import org.jclouds.snia.cdmi.v1.features.DataApi;
+import org.jclouds.snia.cdmi.v1.features.DataNonCDMIContentTypeApi;
 import org.jclouds.snia.cdmi.v1.features.DomainApi;
 
 /**
@@ -54,4 +55,11 @@ public interface CDMIApi {
     */
    @Delegate
    DataApi getDataApi();
+   
+   /**
+    * Provides synchronous access to Data Object Resource Operations.
+    */
+   @Delegate
+   DataNonCDMIContentTypeApi getDataNonCDMIContentTypeApi();
+
 }

@@ -1,39 +1,26 @@
 package org.jclouds.snia.cdmi.v1.options;
 
 import java.util.Map;
-import java.util.Map.Entry;
-
-import org.jclouds.http.options.BaseHttpRequestOptions;
 
 /**
- * Contains options supported in the REST API for the CREATE container
- * operation. <h2>
+ * Optional Create CDMI Contain options
  * 
  * @author Kenneth Nagin
  */
-public class CreateContainerOptions extends BaseHttpRequestOptions {
+public class CreateContainerOptions extends CreateCDMIObjectOptions {
 	/**
 	 * A name-value pair to associate with the container as metadata.
 	 */
-	public CreateContainerOptions withMetadata(Map<String, String> metadata) {
-		String s = "{ \"metadata\" : {\"key1\" : \"value1\",\"key2\" : \"value2\"} }";
-		this.payload = s;
-		String payload = "{ \"metadata\" : {";
-		String separator = " ";
-		for (Entry<String, String> entry : metadata.entrySet()) {
-			payload = payload + separator + "\"" + entry.getKey() + "\" : \""
-					+ entry.getValue() + "\"";
-			separator = ",";
-		}
-		this.payload = payload + "} }";
+	public CreateContainerOptions metadata(Map<String, String> metadata) {
+		super.metadata(metadata);
 		return this;
+		
 	}
-
 	public static class Builder {
-		public static CreateContainerOptions withMetadata(
+		public static CreateContainerOptions metadata(
 				Map<String, String> metadata) {
 			CreateContainerOptions options = new CreateContainerOptions();
-			return (CreateContainerOptions) options.withMetadata(metadata);
+			return (CreateContainerOptions) options.metadata(metadata);
 		}
 	}
 }
