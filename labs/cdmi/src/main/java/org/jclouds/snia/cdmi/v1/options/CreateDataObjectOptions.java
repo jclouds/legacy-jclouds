@@ -7,12 +7,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.Map;
-import java.util.Map.Entry;
-
-import org.jclouds.http.options.BaseHttpRequestOptions;
 import com.google.common.base.Charsets;
 import java.nio.charset.Charset;
-import com.google.gson.JsonObject;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Files;
 
@@ -22,8 +18,7 @@ import com.google.common.io.Files;
  * 
  * @author Kenneth Nagin
  */
-public class CreateDataObjectOptions extends BaseHttpRequestOptions {
-	private JsonObject jsonObjectBody = new JsonObject();
+public class CreateDataObjectOptions extends CreateCDMIObjectOptions {
 
 	public CreateDataObjectOptions() {
 		jsonObjectBody.addProperty("value", new String());
@@ -33,18 +28,10 @@ public class CreateDataObjectOptions extends BaseHttpRequestOptions {
 	 * Create CDMI data object with metadata
 	 * 
 	 * @param metadata
-	 * @return this
+	 * @return CreateDataObjectOptions
 	 */
 	public CreateDataObjectOptions metadata(Map<String, String> metadata) {
-		JsonObject jsonObjectMetadata = new JsonObject();
-		if (metadata != null) {
-			for (Entry<String, String> entry : metadata.entrySet()) {
-				jsonObjectMetadata
-						.addProperty(entry.getKey(), entry.getValue());
-			}
-		}
-		jsonObjectBody.add("metadata", jsonObjectMetadata);
-		this.payload = jsonObjectBody.toString();
+		super.metadata(metadata);
 		return this;
 	}
 
@@ -52,7 +39,7 @@ public class CreateDataObjectOptions extends BaseHttpRequestOptions {
 	 * Create CDMI data object with mimetype
 	 * 
 	 * @param mimetype
-	 * @return
+	 * @return CreateDataObjectOptions
 	 */
 	public CreateDataObjectOptions mimetype(String mimetype) {
 		jsonObjectBody.addProperty("mimetype", mimetype);
@@ -63,7 +50,7 @@ public class CreateDataObjectOptions extends BaseHttpRequestOptions {
 	/**
 	 * Create CDMI data object with value equal to empty string
 	 * 
-	 * @return
+	 * @return CreateDataObjectOptions
 	 */
 	public CreateDataObjectOptions value() {
 		this.payload = jsonObjectBody.toString();
@@ -75,7 +62,7 @@ public class CreateDataObjectOptions extends BaseHttpRequestOptions {
 	 * 
 	 * @param value
 	 *            String value
-	 * @return
+	 * @return CreateDataObjectOptions
 	 */
 	public CreateDataObjectOptions value(String value) {
 		jsonObjectBody.addProperty("value", (value == null) ? new String()
@@ -89,7 +76,7 @@ public class CreateDataObjectOptions extends BaseHttpRequestOptions {
 	 * 
 	 * @param value
 	 *            byte array value byte array is converted to a String value
-	 * @return
+	 * @return CreateDataObjectOptions
 	 */
 	public CreateDataObjectOptions value(byte[] value) throws IOException {
 		jsonObjectBody.addProperty("value",
@@ -104,7 +91,7 @@ public class CreateDataObjectOptions extends BaseHttpRequestOptions {
 	 * 
 	 * @param value
 	 *            File File is converted to a String value with charset UTF_8
-	 * @return
+	 * @return CreateDataObjectOptions
 	 */
 	public CreateDataObjectOptions value(File value) throws IOException {
 		jsonObjectBody.addProperty("value", (value == null) ? new String()
@@ -120,7 +107,7 @@ public class CreateDataObjectOptions extends BaseHttpRequestOptions {
 	 *            File
 	 * @param charset
 	 *            character set of file File is converted to a String value
-	 * @return
+	 * @return CreateDataObjectOptions
 	 */
 	public CreateDataObjectOptions value(File value, Charset charset)
 			throws IOException {
@@ -136,7 +123,7 @@ public class CreateDataObjectOptions extends BaseHttpRequestOptions {
 	 * @param value
 	 *            InputSteam InputSteam is converted to a String value with
 	 *            charset UTF_8
-	 * @return
+	 * @return CreateDataObjectOptions
 	 */
 	public CreateDataObjectOptions value(InputStream value) throws IOException {
 		jsonObjectBody
@@ -157,7 +144,7 @@ public class CreateDataObjectOptions extends BaseHttpRequestOptions {
 	 * @param charset
 	 *            character set of input stream InputSteam is converted to a
 	 *            String value with charset UTF_8
-	 * @return
+	 * @return CreateDataObjectOptions
 	 */
 	public CreateDataObjectOptions value(InputStream value, Charset charset)
 			throws IOException {
