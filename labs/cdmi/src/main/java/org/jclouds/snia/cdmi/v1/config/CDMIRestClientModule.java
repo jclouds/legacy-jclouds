@@ -32,6 +32,8 @@ import org.jclouds.snia.cdmi.v1.features.ContainerAsyncApi;
 import org.jclouds.snia.cdmi.v1.features.ContainerApi;
 import org.jclouds.snia.cdmi.v1.features.DataAsyncApi;
 import org.jclouds.snia.cdmi.v1.features.DataApi;
+import org.jclouds.snia.cdmi.v1.features.DataNonCDMIContentTypeApi;
+import org.jclouds.snia.cdmi.v1.features.DataNonCDMIContentTypeAsyncApi;
 import org.jclouds.snia.cdmi.v1.features.DomainAsyncApi;
 import org.jclouds.snia.cdmi.v1.features.DomainApi;
 import org.jclouds.snia.cdmi.v1.handlers.CDMIErrorHandler;
@@ -48,7 +50,8 @@ public class CDMIRestClientModule extends RestClientModule<CDMIApi, CDMIAsyncApi
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder().put(
             DomainApi.class, DomainAsyncApi.class).put(ContainerApi.class, ContainerAsyncApi.class).put(
-            DataApi.class, DataAsyncApi.class).build();
+            DataApi.class, DataAsyncApi.class).put(
+                    DataNonCDMIContentTypeApi.class, DataNonCDMIContentTypeAsyncApi.class).build();
 
    public CDMIRestClientModule() {
       super(DELEGATE_MAP);

@@ -26,61 +26,138 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-
-
-
+import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.snia.cdmi.v1.ObjectTypes;
+import org.jclouds.snia.cdmi.v1.binders.BindQueryParmsToSuffix;
 import org.jclouds.snia.cdmi.v1.domain.Container;
 import org.jclouds.snia.cdmi.v1.filters.BasicAuthenticationAndTenantId;
 import org.jclouds.snia.cdmi.v1.filters.StripExtraAcceptHeader;
 import org.jclouds.snia.cdmi.v1.options.CreateContainerOptions;
-
+import org.jclouds.snia.cdmi.v1.queryparams.ContainerQueryParams;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * Container Object Resource Operations
+ * CDMI Container Object Resource Operations
  * 
  * @see ContainerApi
  * @author Kenneth Nagin
  * @see <a href="http://www.snia.org/cdmi">api doc</a>
  */
-@SkipEncoding( { '/', '=' })
-@RequestFilters( { BasicAuthenticationAndTenantId.class, StripExtraAcceptHeader.class })
-@Headers(keys="X-CDMI-Specification-Version", values = "{jclouds.api-version}")
+@SkipEncoding({ '/', '=' })
+@RequestFilters({ BasicAuthenticationAndTenantId.class,
+		StripExtraAcceptHeader.class })
+@Headers(keys = "X-CDMI-Specification-Version", values = "{jclouds.api-version}")
 public interface ContainerAsyncApi {
 
-   /**
-    * @see ContainerApi#listContainers()
-    */
-   @GET
-   @Consumes( { ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   @Path("/{containerName}/")
-   ListenableFuture<Container> getContainer(@PathParam("containerName") String containerName);
-   
-   /**
-    * @see ContainerApi#createContainer
-    */
-   @PUT
-   @Consumes( { ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
-   @Produces( { ObjectTypes.CONTAINER})
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)   
-   @Path("/{containerName}/")
-   ListenableFuture<Container> createContainer(@PathParam("containerName") String containerName,
-   					CreateContainerOptions... options);
+	/**
+	 * get CDMI Container
+	 * 
+	 * @param containerName
+	 *            containerName must end with a forward slash, /.
+	 * @return Container
+	 * 
+	 * <pre>
+	 *  Examples: 
+	 *  {@code
+	 *  container = getContainer("myContainer/");
+	 *  container = getContainer("parentContainer/childContainer/");
+	 * }
+	 * 
+	 * <pre>
+	 */
+	@GET
+	@Consumes({ ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
+	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
+	@Path("/{containerName}")
+	ListenableFuture<Container> getContainer(
+			@PathParam("containerName") String containerName);
 
-   /**
-    * @see ContainerApi#createContainer()
-    */
-   @DELETE
-   @Consumes( MediaType.APPLICATION_JSON )
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   @Path("/{containerName}/")
-   ListenableFuture<Void> deleteContainer(@PathParam("containerName") String containerName);
+	/**
+	 * get CDMI Container
+	 * 
+	 * @param containerName
+	 * @param queryParams
+	 *            enables getting only certain fields, metadata, children range
+	 * @return Container
+	 * 
+	 * <pre>
+	 * Examples: 
+	 * {@code
+	 * container = getContainer("myContainer/",ContainerQueryParams.Builder.field("parentURI").field("objectName"))
+	 * container = getContainer("myContainer/",ContainerQueryParams.Builder.metadata().field("objectName"))
+	 * }
+	 * </pre>
+	 * @see ContainerQueryParams
+	 */
+	@GET
+	@Consumes({ ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
+	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
+	@Path("/{containerName}")
+	ListenableFuture<Container> getContainer(
+			@PathParam("containerName") String containerName,
+			@BinderParam(BindQueryParmsToSuffix.class) ContainerQueryParams queryParams);
+
+	/**
+	 * Create CDMI Container
+	 * 
+	 * @param containerName
+	 *            containerName must end with a forward slash, /.
+	 * @return Container
+	 *  <pre>
+	 *  Examples: 
+	 *  {@code
+	 *  container = createContainer("myContainer/");
+	 *  container = createContainer("parentContainer/childContainer/");
+	 *  }
+	 *  </pre>
+	 */
+	@PUT
+	@Consumes({ ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
+	@Produces({ ObjectTypes.CONTAINER })
+	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
+	@Path("/{containerName}")
+	ListenableFuture<Container> createContainer(
+			@PathParam("containerName") String containerName);
+
+	/**
+	 * Create CDMI Container
+	 * 
+	 * @param containerName
+	 * @param options
+	 *            enables adding metadata
+	 * @return Container
+	 *  <pre>
+	 *  Examples: 
+	 *  {@code
+	 *  container = createContainer("myContainer/",CreateContainerOptions.Builder..metadata(metaDataIn));
+	 *  }
+	 *  </pre>
+	 * @see CreateContainerOptions
+	 */
+	@PUT
+	@Consumes({ ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
+	@Produces({ ObjectTypes.CONTAINER })
+	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
+	@Path("/{containerName}")
+	ListenableFuture<Container> createContainer(
+			@PathParam("containerName") String containerName,
+			CreateContainerOptions... options);
+
+	/**
+	 * Delete Container
+	 * 
+	 * @param containerName
+	 */
+	@DELETE
+	@Consumes(MediaType.APPLICATION_JSON)
+	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
+	@Path("/{containerName}")
+	ListenableFuture<Void> deleteContainer(
+			@PathParam("containerName") String containerName);
 
 }
