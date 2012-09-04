@@ -298,7 +298,7 @@ public abstract class AbstractVAppApiLiveTest extends BaseVCloudDirectorApiLiveT
       Status status = test.getStatus();
       if (status != Status.POWERED_OFF || test.isDeployed()) {
          UndeployVAppParams undeployParams = UndeployVAppParams.builder().build();
-         Task shutdownVapp = vAppApi.undeploy(vmUrn, undeployParams);
+         Task shutdownVapp = vmApi.undeploy(vmUrn, undeployParams);
          assertTaskSucceedsLong(shutdownVapp);
       }
       test = vmApi.get(vmUrn);
