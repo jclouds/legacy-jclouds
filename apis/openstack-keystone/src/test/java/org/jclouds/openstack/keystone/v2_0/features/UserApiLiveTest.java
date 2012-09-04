@@ -73,9 +73,9 @@ public class UserApiLiveTest extends BaseKeystoneApiLiveTest {
             Optional<? extends UserApi> api = keystoneContext.getApi().getUserApi();
             if (api.isPresent()) {
                 UserApi userApi = api.get();
+
                 Set<? extends User> users = userApi.list();
                 Set<? extends Tenant> tenants = keystoneContext.getApi().getServiceApi().listTenants();
-
                 for (User user : users) {
                     for (Tenant tenant : tenants) {
                         Set<? extends Role> roles = userApi.listRolesOfUserOnTenant(user.getId(), tenant.getId());
@@ -95,6 +95,7 @@ public class UserApiLiveTest extends BaseKeystoneApiLiveTest {
         Optional<? extends UserApi> api = keystoneContext.getApi().getUserApi();
         if (api.isPresent()) {
             UserApi userApi = api.get();
+
             Set<? extends User> users = userApi.list();
             for (User user : users) {
                 Set<? extends Role> roles = userApi.listRolesOfUser(user.getId());

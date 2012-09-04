@@ -65,8 +65,6 @@ public class TenantApiLiveTest extends BaseKeystoneApiLiveTest {
             if (api.isPresent()) {
                 TenantApi tenantApi = api.get();
                 Set<? extends Tenant> result = tenantApi.list();
-                assertNotNull(result);
-                assertFalse(result.isEmpty());
 
                 for (Tenant tenant : result) {
                     assertNotNull(tenant.getId());
