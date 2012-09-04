@@ -135,7 +135,7 @@ public class CatalogApiLiveTest extends BaseVCloudDirectorApiLiveTest {
 
    @Test(description = "POST /catalog/{id}/catalogItems")
    public void testAddCatalogItem() {
-      byte[] iso = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+      byte[] iso = new byte[] {};
       Vdc vdc = lazyGetVdc();
       Link addMedia = find(vdc.getLinks(), and(relEquals("add"), typeEquals(VCloudDirectorMediaType.MEDIA)));
 
@@ -145,13 +145,15 @@ public class CatalogApiLiveTest extends BaseVCloudDirectorApiLiveTest {
 
       Checks.checkMediaFor(VCloudDirectorMediaType.MEDIA, media);
 
-      CatalogItem editedCatalogItem = CatalogItem.builder().name("newitem").description("New Item")
+      String catalogItemName = name("TestCatalogItem-");
+	String description = "Test Catalog Item";
+	CatalogItem editedCatalogItem = CatalogItem.builder().name(catalogItemName).description(description)
                .type(VCloudDirectorMediaType.CATALOG_ITEM).entity(Reference.builder().href(media.getHref()).build())
                .build();
       catalogItem = catalogApi.addItem(catalogUrn, editedCatalogItem);
       checkCatalogItem(catalogItem);
-      assertEquals(catalogItem.getName(), "newitem");
-      assertEquals(catalogItem.getDescription(), "New Item");
+      assertEquals(catalogItem.getName(), catalogItemName);
+      assertEquals(catalogItem.getDescription(), description);
    }
 
    @Test(description = "PUT /catalogItem/{id}", dependsOnMethods = "testAddCatalogItem")
