@@ -28,21 +28,22 @@ import org.jclouds.openstack.keystone.v2_0.internal.BaseKeystoneApiLiveTest;
 import org.testng.annotations.Test;
 
 /**
- * Tests ServiceApi
+ * Tests {@link ServiceApi}.
  * 
  * @author Adam Lowe
  */
 @Test(groups = "live", testName = "ServiceApiLiveTest")
 public class ServiceApiLiveTest extends BaseKeystoneApiLiveTest {
 
-   public void testTenants() {
-      ServiceApi api = keystoneContext.getApi().getServiceApi();
-      Set<? extends Tenant> result = api.listTenants();
-      assertNotNull(result);
-      assertFalse(result.isEmpty());
+    @Test(description = "/v2.0/tenants")
+    public void testTenants() {
+        ServiceApi api = keystoneContext.getApi().getServiceApi();
+        Set<? extends Tenant> result = api.listTenants();
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
 
-      for (Tenant tenant : result) {
-         assertNotNull(tenant.getId());        
-      }
-   }
+        for (Tenant tenant : result) {
+            assertNotNull(tenant.getId());
+        }
+    }
 }

@@ -30,63 +30,90 @@ import org.jclouds.openstack.keystone.v2_0.domain.User;
 import org.jclouds.openstack.keystone.v2_0.internal.BaseKeystoneApiLiveTest;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Optional;
+
 /**
- * Tests UserApi
+ * Tests {@link UserApi}.
  * 
  * @author Adam Lowe
  */
 @Test(groups = "live", testName = "UserApiLiveTest", singleThreaded = true)
 public class UserApiLiveTest extends BaseKeystoneApiLiveTest {
 
-   public void testUsers() {
+    @Test(description = "GET /v2.0/users")
+    public void testListUsers() {
+        Optional<? extends UserApi> api = keystoneContext.getApi().getUserApi();
+        if (api.isPresent()) {
+            UserApi userApi = api.get();
 
-      UserApi api = keystoneContext.getApi().getUserApi().get();
-      Set<? extends User> users = api.list();
-      assertNotNull(users);
-      assertFalse(users.isEmpty());
-      for (User user : users) {
-         User aUser = api.get(user.getId());
-         assertEquals(aUser, user);
-      }
+            Set<? extends User> users = userApi.list();
+            assertNotNull(users);
+            assertFalse(users.isEmpty());
+        }
+    }
 
-   }
+    @Test(description = "GET /v2.0/users/{userId}", dependsOnMethods = { "testListUsers" })
+    public void testGetUser() {
+        Optional<? extends UserApi> api = keystoneContext.getApi().getUserApi();
+        if (api.isPresent()) {
+            UserApi userApi = api.get();
 
-   public void testUserRolesOnTenant() {
-
-      UserApi api = keystoneContext.getApi().getUserApi().get();
-      Set<? extends User> users = api.list();
-      Set<? extends Tenant> tenants = keystoneContext.getApi().getTenantApi().get().list();
-
-      for (User user : users) {
-         for (Tenant tenant : tenants) {
-            Set<? extends Role> roles = api.listRolesOfUserOnTenant(user.getId(), tenant.getId());
-            for (Role role : roles) {
-               assertNotNull(role.getId());
+            Set<? extends User> users = userApi.list();
+            for (User user : users) {
+                User aUser = userApi.get(user.getId());
+                assertEquals(aUser, user);
             }
-         }
-      }
+        }
+    }
 
-   }
+    @Test(description = "GET /v2.0/tenants/{tenantId}/users/{userId}/roles", dependsOnMethods = { "testListUsers" })
+    public void testUserRolesOnTenant() {
+        Optional<? extends UserApi> api = keystoneContext.getApi().getUserApi();
 
-   public void testListRolesOfUser() {
+        if (api.isPresent()) {
+            UserApi userApi = api.get();
+            Set<? extends User> users = userApi.list();
+            Set<? extends Tenant> tenants = keystoneContext.getApi().getServiceApi().listTenants();
 
-      UserApi api = keystoneContext.getApi().getUserApi().get();
-      for (User user : api.list()) {
-         Set<? extends Role> roles = api.listRolesOfUser(user.getId());
-         for (Role role : roles) {
-            assertNotNull(role.getId());
-         }
-      }
+            for (User user : users) {
+                for (Tenant tenant : tenants) {
+                    Set<? extends Role> roles = userApi.listRolesOfUserOnTenant(user.getId(), tenant.getId());
+                    for (Role role : roles) {
+                        assertNotNull(role.getId());
+                    }
+                }
+            }
+        }
+    }
 
-   }
+    @Test(description = "GET /v2.0/users/{userId}/roles", dependsOnMethods = { "testListUsers" })
+    public void testListRolesOfUser() {
+        Optional<? extends UserApi> api = keystoneContext.getApi().getUserApi();
 
-   public void testUsersByName() {
+        if (api.isPresent()) {
+            UserApi userApi = api.get();
+            Set<? extends User> users = userApi.list();
+            for (User user : users) {
+                Set<? extends Role> roles = userApi.listRolesOfUser(user.getId());
+                for (Role role : roles) {
+                    assertNotNull(role.getId());
+                }
+            }
+        }
 
-      UserApi api = keystoneContext.getApi().getUserApi().get();
-      for (User user : api.list()) {
-         User aUser = api.getByName(user.getName());
-         assertEquals(aUser, user);
-      }
+    }
 
-   }
+    @Test(description = "GET /v2.0/users/?name={userName}", dependsOnMethods = { "testListUsers" })
+    public void testGetUserByName() {
+        Optional<? extends UserApi> api = keystoneContext.getApi().getUserApi();
+
+        if (api.isPresent()) {
+            UserApi userApi = api.get();
+            Set<? extends User> users = userApi.list();
+            for (User user : users) {
+	            User aUser = userApi.getByName(user.getName());
+	            assertEquals(aUser, user);
+	        }
+        }
+    }
 }

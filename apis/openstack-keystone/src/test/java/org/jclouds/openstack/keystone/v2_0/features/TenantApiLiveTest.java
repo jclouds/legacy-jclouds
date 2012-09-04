@@ -28,40 +28,63 @@ import org.jclouds.openstack.keystone.v2_0.domain.Tenant;
 import org.jclouds.openstack.keystone.v2_0.internal.BaseKeystoneApiLiveTest;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Optional;
+
 /**
- * Tests TenantApi
+ * Tests {@link TenantApi}.
  * 
  * @author Adam Lowe
  */
 @Test(groups = "live", testName = "TenantApiLiveTest")
 public class TenantApiLiveTest extends BaseKeystoneApiLiveTest {
 
-   public void testTenants() {
-      TenantApi api = keystoneContext.getApi().getTenantApi().get();
-      Set<? extends Tenant> result = api.list();
-      assertNotNull(result);
-      assertFalse(result.isEmpty());
+    @Test(description = "/v2.0/tenants")
+    public void testListTenants() {
+        Optional<? extends TenantApi> api = keystoneContext.getApi().getTenantApi();
+        if (api.isPresent()) {
+            TenantApi tenantApi = api.get();
+            Set<? extends Tenant> result = tenantApi.list();
+            assertNotNull(result);
+            assertFalse(result.isEmpty());
 
-      for (Tenant tenant : result) {
-         assertNotNull(tenant.getId());
+            for (Tenant tenant : result) {
+                assertNotNull(tenant.getId());
+            }
+        }
+    }
 
-         Tenant aTenant = api.get(tenant.getId());
-         assertNotNull(aTenant, "get returned null for tenant: " + tenant);
+    @Test(description = "/v2.0/tenants/{tenantId}", dependsOnMethods = { "testListTenants" })
+    public void testGetTenant() {
+        Optional<? extends TenantApi> api = keystoneContext.getApi().getTenantApi();
+        if (api.isPresent()) {
+            TenantApi tenantApi = api.get();
+            Set<? extends Tenant> result = tenantApi.list();
+            assertNotNull(result);
+            assertFalse(result.isEmpty());
 
-         assertEquals(aTenant, tenant);
-      }
-   }
+            for (Tenant tenant : result) {
+                assertNotNull(tenant.getId());
 
-   public void testTenantsByName() {
+                Tenant aTenant = tenantApi.get(tenant.getId());
+                assertNotNull(aTenant, "get returned null for tenant: " + tenant);
 
-      TenantApi api = keystoneContext.getApi().getTenantApi().get();
+                assertEquals(aTenant, tenant);
+            }
+        }
+    }
 
-      for (Tenant tenant : api.list()) {
-         Tenant aTenant = api.getByName(tenant.getName());
-         assertNotNull(aTenant, "get returned null for tenant: " + tenant);
+    @Test(description = "/v2.0/tenants/?name={tenantName}", dependsOnMethods = { "testListTenants" })
+    public void testGetTenantByName() {
+        Optional<? extends TenantApi> api = keystoneContext.getApi().getTenantApi();
+        if (api.isPresent()) {
+            TenantApi tenantApi = api.get();
 
-         assertEquals(aTenant, tenant);
-      }
+            for (Tenant tenant : tenantApi.list()) {
+                Tenant aTenant = tenantApi.getByName(tenant.getName());
+                assertNotNull(aTenant, "get returned null for tenant: " + tenant);
 
-   }
+                assertEquals(aTenant, tenant);
+            }
+        }
+    }
 }
