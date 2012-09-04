@@ -50,6 +50,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Vm;
 import org.jclouds.vcloud.director.v1_5.domain.dmtf.RasdItem;
 import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConnection;
 import org.jclouds.vcloud.director.v1_5.domain.network.VAppNetworkConfiguration;
+import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConnection.IpAddressAllocationMode;
 import org.jclouds.vcloud.director.v1_5.domain.params.UndeployVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.section.GuestCustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.section.NetworkConnectionSection;
@@ -298,7 +299,7 @@ public abstract class AbstractVAppApiLiveTest extends BaseVCloudDirectorApiLiveT
       Status status = test.getStatus();
       if (status != Status.POWERED_OFF || test.isDeployed()) {
          UndeployVAppParams undeployParams = UndeployVAppParams.builder().build();
-         Task shutdownVapp = vAppApi.undeploy(vmUrn, undeployParams);
+         Task shutdownVapp = vmApi.undeploy(vmUrn, undeployParams);
          assertTaskSucceedsLong(shutdownVapp);
       }
       test = vmApi.get(vmUrn);
@@ -396,4 +397,27 @@ public abstract class AbstractVAppApiLiveTest extends BaseVCloudDirectorApiLiveT
       Set<VAppNetworkConfiguration> vAppNetworkConfigs = vAppApi.getNetworkConfigSection(vApp.getId()).getNetworkConfigs();
       return vAppNetworkConfigs;
    }
+   
+   protected void attachVmToVAppNetwork(Vm vm, String vAppNetworkName) {
+      Set<NetworkConnection> networkConnections = vmApi.getNetworkConnectionSection(vm.getId())
+               .getNetworkConnections();
+
+      NetworkConnectionSection section = NetworkConnectionSection.builder()
+               .info("info")
+               .primaryNetworkConnectionIndex(0)
+               .build();
+      
+      for (NetworkConnection networkConnection : networkConnections) {
+         NetworkConnection newNetworkConnection = networkConnection.toBuilder()
+                  .network(vAppNetworkName)
+                  .isConnected(true)
+                  .networkConnectionIndex(0)
+                  .ipAddressAllocationMode(IpAddressAllocationMode.POOL)
+                  .build();
+         
+         section = section.toBuilder().networkConnection(newNetworkConnection).build();
+      }
+      Task configureNetwork = vmApi.editNetworkConnectionSection(vm.getId(), section);
+      assertTaskSucceedsLong(configureNetwork);
+   } 
 }
