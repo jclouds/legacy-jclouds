@@ -28,6 +28,7 @@ import org.jclouds.openstack.keystone.v2_0.domain.Role;
 import org.jclouds.openstack.keystone.v2_0.domain.Tenant;
 import org.jclouds.openstack.keystone.v2_0.domain.User;
 import org.jclouds.openstack.keystone.v2_0.internal.BaseKeystoneApiLiveTest;
+import org.jclouds.rest.AuthorizationException;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Optional;
@@ -68,28 +69,30 @@ public class UserApiLiveTest extends BaseKeystoneApiLiveTest {
 
     @Test(description = "GET /v2.0/tenants/{tenantId}/users/{userId}/roles", dependsOnMethods = { "testListUsers" })
     public void testUserRolesOnTenant() {
-        Optional<? extends UserApi> api = keystoneContext.getApi().getUserApi();
+        try {
+            Optional<? extends UserApi> api = keystoneContext.getApi().getUserApi();
+            if (api.isPresent()) {
+                UserApi userApi = api.get();
+                Set<? extends User> users = userApi.list();
+                Set<? extends Tenant> tenants = keystoneContext.getApi().getServiceApi().listTenants();
 
-        if (api.isPresent()) {
-            UserApi userApi = api.get();
-            Set<? extends User> users = userApi.list();
-            Set<? extends Tenant> tenants = keystoneContext.getApi().getServiceApi().listTenants();
-
-            for (User user : users) {
-                for (Tenant tenant : tenants) {
-                    Set<? extends Role> roles = userApi.listRolesOfUserOnTenant(user.getId(), tenant.getId());
-                    for (Role role : roles) {
-                        assertNotNull(role.getId());
+                for (User user : users) {
+                    for (Tenant tenant : tenants) {
+                        Set<? extends Role> roles = userApi.listRolesOfUserOnTenant(user.getId(), tenant.getId());
+                        for (Role role : roles) {
+                            assertNotNull(role.getId());
+                        }
                     }
                 }
             }
+        } catch (AuthorizationException ae) {
+            // Ignore, some Keystone implementations treat this as Admin only
         }
     }
 
     @Test(description = "GET /v2.0/users/{userId}/roles", dependsOnMethods = { "testListUsers" })
     public void testListRolesOfUser() {
         Optional<? extends UserApi> api = keystoneContext.getApi().getUserApi();
-
         if (api.isPresent()) {
             UserApi userApi = api.get();
             Set<? extends User> users = userApi.list();
@@ -100,20 +103,18 @@ public class UserApiLiveTest extends BaseKeystoneApiLiveTest {
                 }
             }
         }
-
     }
 
     @Test(description = "GET /v2.0/users/?name={userName}", dependsOnMethods = { "testListUsers" })
     public void testGetUserByName() {
         Optional<? extends UserApi> api = keystoneContext.getApi().getUserApi();
-
         if (api.isPresent()) {
             UserApi userApi = api.get();
             Set<? extends User> users = userApi.list();
             for (User user : users) {
-	            User aUser = userApi.getByName(user.getName());
-	            assertEquals(aUser, user);
-	        }
+                User aUser = userApi.getByName(user.getName());
+                assertEquals(aUser, user);
+            }
         }
     }
 }

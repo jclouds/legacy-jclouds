@@ -26,6 +26,7 @@ import java.util.Set;
 
 import org.jclouds.openstack.keystone.v2_0.domain.Tenant;
 import org.jclouds.openstack.keystone.v2_0.internal.BaseKeystoneApiLiveTest;
+import org.jclouds.rest.AuthorizationException;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Optional;
@@ -40,51 +41,63 @@ public class TenantApiLiveTest extends BaseKeystoneApiLiveTest {
 
     @Test(description = "/v2.0/tenants")
     public void testListTenants() {
-        Optional<? extends TenantApi> api = keystoneContext.getApi().getTenantApi();
-        if (api.isPresent()) {
-            TenantApi tenantApi = api.get();
-            Set<? extends Tenant> result = tenantApi.list();
-            assertNotNull(result);
-            assertFalse(result.isEmpty());
+        try {
+            Optional<? extends TenantApi> api = keystoneContext.getApi().getTenantApi();
+            if (api.isPresent()) {
+                TenantApi tenantApi = api.get();
+                Set<? extends Tenant> result = tenantApi.list();
+                assertNotNull(result);
+                assertFalse(result.isEmpty());
 
-            for (Tenant tenant : result) {
-                assertNotNull(tenant.getId());
+                for (Tenant tenant : result) {
+                    assertNotNull(tenant.getId());
+                }
             }
+        } catch (AuthorizationException ae) {
+            // Ignore, some Keystone implementations treat this as Admin only
         }
     }
 
     @Test(description = "/v2.0/tenants/{tenantId}", dependsOnMethods = { "testListTenants" })
     public void testGetTenant() {
-        Optional<? extends TenantApi> api = keystoneContext.getApi().getTenantApi();
-        if (api.isPresent()) {
-            TenantApi tenantApi = api.get();
-            Set<? extends Tenant> result = tenantApi.list();
-            assertNotNull(result);
-            assertFalse(result.isEmpty());
+        try {
+            Optional<? extends TenantApi> api = keystoneContext.getApi().getTenantApi();
+            if (api.isPresent()) {
+                TenantApi tenantApi = api.get();
+                Set<? extends Tenant> result = tenantApi.list();
+                assertNotNull(result);
+                assertFalse(result.isEmpty());
 
-            for (Tenant tenant : result) {
-                assertNotNull(tenant.getId());
+                for (Tenant tenant : result) {
+                    assertNotNull(tenant.getId());
 
-                Tenant aTenant = tenantApi.get(tenant.getId());
-                assertNotNull(aTenant, "get returned null for tenant: " + tenant);
+                    Tenant aTenant = tenantApi.get(tenant.getId());
+                    assertNotNull(aTenant, "get returned null for tenant: " + tenant);
 
-                assertEquals(aTenant, tenant);
+                    assertEquals(aTenant, tenant);
+                }
             }
+        } catch (AuthorizationException ae) {
+            // Ignore, some Keystone implementations treat this as Admin only
         }
     }
 
     @Test(description = "/v2.0/tenants/?name={tenantName}", dependsOnMethods = { "testListTenants" })
     public void testGetTenantByName() {
-        Optional<? extends TenantApi> api = keystoneContext.getApi().getTenantApi();
-        if (api.isPresent()) {
-            TenantApi tenantApi = api.get();
+        try {
+            Optional<? extends TenantApi> api = keystoneContext.getApi().getTenantApi();
+            if (api.isPresent()) {
+                TenantApi tenantApi = api.get();
 
-            for (Tenant tenant : tenantApi.list()) {
-                Tenant aTenant = tenantApi.getByName(tenant.getName());
-                assertNotNull(aTenant, "get returned null for tenant: " + tenant);
+                for (Tenant tenant : tenantApi.list()) {
+                    Tenant aTenant = tenantApi.getByName(tenant.getName());
+                    assertNotNull(aTenant, "get returned null for tenant: " + tenant);
 
-                assertEquals(aTenant, tenant);
+                    assertEquals(aTenant, tenant);
+                }
             }
+        } catch (AuthorizationException ae) {
+            // Ignore, some Keystone implementations treat this as Admin only
         }
     }
 }
