@@ -18,7 +18,9 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
+import static com.google.common.collect.Iterables.tryFind;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.NOT_EMPTY_OBJECT_FMT;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.VAPP_TEMPLATE;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
@@ -31,7 +33,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Resource;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
@@ -45,10 +49,16 @@ import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultVAppRecord;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultVAppTemplateRecord;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultVMRecord;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorApiLiveTest;
+import org.jclouds.vcloud.director.v1_5.predicates.ReferencePredicates;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Function;
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Iterables;
 
 /**
@@ -148,8 +158,7 @@ public class QueryApiLiveTest extends BaseVCloudDirectorApiLiveTest {
       Set<URI> hrefs = toHrefs(queryResult);
 
       assertRecordTypes(queryResult, Arrays.asList(VCloudDirectorMediaType.VAPP, null), QueryResultVAppRecord.class);
-      assertEquals(hrefs, Collections.singleton(vApp.getHref()),
-               "VApps query result should have found vApp " + vApp.getHref());
+      assertEquals(hrefs, Collections.singleton(vApp.getHref()));
    }
 
    @Test(description = "GET /vms/query", dependsOnMethods = { "testQueryAllVApps" })
@@ -186,8 +195,7 @@ public class QueryApiLiveTest extends BaseVCloudDirectorApiLiveTest {
       Set<URI> hrefs = toHrefs(queryResult);
 
       assertRecordTypes(queryResult, Arrays.asList(VCloudDirectorMediaType.VM, null), QueryResultVMRecord.class);
-      assertEquals(hrefs, vmHrefs, "VMs query result should equal vms of vApp " + vApp.getName() + " (" + vmHrefs
-               + "); but only has " + hrefs);
+      assertEquals(hrefs, vmHrefs);
    }
 
    @Test(description = "GET /mediaList/query")
@@ -230,4 +238,5 @@ public class QueryApiLiveTest extends BaseVCloudDirectorApiLiveTest {
       }
       return hrefs;
    }
+     
 }
