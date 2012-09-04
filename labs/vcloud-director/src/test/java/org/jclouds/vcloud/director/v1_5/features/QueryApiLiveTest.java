@@ -26,7 +26,6 @@ import static org.testng.Assert.assertTrue;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -49,6 +48,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 /**
@@ -79,6 +79,8 @@ public class QueryApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    public void setupRequiredApis() {
       queryApi = context.getApi().getQueryApi();
       vAppApi = context.getApi().getVAppApi();
+      
+      cleanUpVAppTemplateInOrg();
    }
 
    @Test(description = "GET /query")
@@ -142,15 +144,21 @@ public class QueryApiLiveTest extends BaseVCloudDirectorApiLiveTest {
                + "; but only has " + hrefs);
    }
 
-   @Test(description = "GET /vApps/query?filter", dependsOnMethods = { "testQueryAllVApps" })
-   public void testQueryVAppsWithFilter() {
-      QueryResultRecords queryResult = queryApi.vAppsQuery(String.format("name==%s", vApp.getName()));
-      Set<URI> hrefs = toHrefs(queryResult);
+	@Test(description = "GET /vApps/query?filter", dependsOnMethods = { "testQueryAllVApps" })
+	public void testQueryVAppsWithFilter() {
+		QueryResultRecords queryResult = queryApi.vAppsQuery(String.format(
+				"name==%s", vApp.getName()));
+		Set<URI> hrefs = toHrefs(queryResult);
 
-      assertRecordTypes(queryResult, Arrays.asList(VCloudDirectorMediaType.VAPP, null), QueryResultVAppRecord.class);
-      assertEquals(hrefs, Collections.singleton(vApp.getHref()),
-               "VApps query result should have found vApp " + vApp.getHref());
-   }
+		assertRecordTypes(queryResult,
+				Arrays.asList(VCloudDirectorMediaType.VAPP, null),
+				QueryResultVAppRecord.class);
+		String message = "VApps query result should have found vApp "
+				+ vApp.getHref();
+		assertTrue(
+				ImmutableSet.copyOf(hrefs).equals(
+						ImmutableSet.of(vApp.getHref())), message);
+	}
 
    @Test(description = "GET /vms/query", dependsOnMethods = { "testQueryAllVApps" })
    public void testQueryAllVms() {
@@ -177,18 +185,24 @@ public class QueryApiLiveTest extends BaseVCloudDirectorApiLiveTest {
                + hrefs);
    }
 
-   @Test(description = "GET /vms/query?filter", dependsOnMethods = { "testQueryAllVms" })
-   public void testQueryAllVmsWithFilter() {
-      List<Vm> vms = vApp.getChildren().getVms();
-      Set<URI> vmHrefs = toHrefs(vms);
+	@Test(description = "GET /vms/query?filter", dependsOnMethods = { "testQueryAllVms" })
+	public void testQueryAllVmsWithFilter() {
+		List<Vm> vms = vApp.getChildren().getVms();
+		Set<URI> vmHrefs = toHrefs(vms);
 
-      QueryResultRecords queryResult = queryApi.vmsQuery(String.format("containerName==%s", vApp.getName()));
-      Set<URI> hrefs = toHrefs(queryResult);
+		QueryResultRecords queryResult = queryApi.vmsQuery(String.format(
+				"containerName==%s", vApp.getName()));
+		Set<URI> hrefs = toHrefs(queryResult);
 
-      assertRecordTypes(queryResult, Arrays.asList(VCloudDirectorMediaType.VM, null), QueryResultVMRecord.class);
-      assertEquals(hrefs, vmHrefs, "VMs query result should equal vms of vApp " + vApp.getName() + " (" + vmHrefs
-               + "); but only has " + hrefs);
-   }
+		assertRecordTypes(queryResult,
+				Arrays.asList(VCloudDirectorMediaType.VM, null),
+				QueryResultVMRecord.class);
+		String message = "VMs query result should equal vms of vApp "
+				+ vApp.getName() + " (" + vmHrefs + "); but only has " + hrefs;
+		assertTrue(
+				ImmutableSet.copyOf(hrefs).equals(ImmutableSet.copyOf(vmHrefs)),
+				message);
+	}
 
    @Test(description = "GET /mediaList/query")
    public void testQueryAllMedia() {
@@ -230,4 +244,5 @@ public class QueryApiLiveTest extends BaseVCloudDirectorApiLiveTest {
       }
       return hrefs;
    }
+     
 }
