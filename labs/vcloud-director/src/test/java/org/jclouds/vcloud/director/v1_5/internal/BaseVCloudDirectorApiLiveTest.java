@@ -29,6 +29,7 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.E
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.TASK_COMPLETE_TIMELY;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.URN_REQ_LIVE;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.CATALOG;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.MEDIA;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.NETWORK;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.ORG_NETWORK;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.USER;
@@ -36,7 +37,6 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.VAPP;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.VAPP_TEMPLATE;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.VDC;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.VM;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.MEDIA;
 import static org.jclouds.vcloud.director.v1_5.predicates.LinkPredicates.relEquals;
 import static org.jclouds.vcloud.director.v1_5.predicates.LinkPredicates.typeEquals;
 import static org.testng.Assert.assertEquals;
@@ -89,8 +89,6 @@ import org.jclouds.vcloud.director.v1_5.domain.org.Org;
 import org.jclouds.vcloud.director.v1_5.domain.params.InstantiateVAppTemplateParams;
 import org.jclouds.vcloud.director.v1_5.domain.params.InstantiationParams;
 import org.jclouds.vcloud.director.v1_5.domain.params.UndeployVAppParams;
-import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecordType;
-import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecords;
 import org.jclouds.vcloud.director.v1_5.domain.section.NetworkConfigSection;
 import org.jclouds.vcloud.director.v1_5.features.TaskApi;
 import org.jclouds.vcloud.director.v1_5.features.VAppApi;
@@ -470,6 +468,30 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
 				});
 	}
 	
+	public void cleanUpVAppTemplateInOrg() {
+		FluentIterable<VAppTemplate> vAppTemplates = FluentIterable
+				.from(vdc.getResourceEntities())
+				.filter(ReferencePredicates
+						.<Reference> typeEquals(VAPP_TEMPLATE))
+				.transform(new Function<Reference, VAppTemplate>() {
+
+					@Override
+					public VAppTemplate apply(Reference in) {
+						return context.getApi().getVAppTemplateApi()
+								.get(in.getHref());
+					}
+				}).filter(Predicates.notNull());
+
+		Iterables.removeIf(vAppTemplates, new Predicate<VAppTemplate>() {
+
+			@Override
+			public boolean apply(VAppTemplate input) {
+				if(input.getName().startsWith("captured-") || input.getName().startsWith("uploaded-") || input.getName().startsWith("vappTemplateClone-"))
+					context.getApi().getVAppTemplateApi().remove(input.getHref());
+				return false;
+			}});
+	}	
+	
    protected Vdc lazyGetVdc() {
       if (vdc == null) {
          assertNotNull(vdcUrn, String.format(URN_REQ_LIVE, VDC));
@@ -530,9 +552,9 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
                assertTrue(retryTaskSuccess.apply(uploadTask), String.format(TASK_COMPLETE_TIMELY, "uploadTask"));
                media = context.getApi().getMediaApi().get(media.getId());
             }
-
             mediaUrn = media.getId();
-         }
+         } else 
+        	 media = context.getApi().getMediaApi().get(mediaUrn);
       }
       return media;
    }
