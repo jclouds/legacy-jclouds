@@ -53,6 +53,7 @@ import org.jclouds.openstack.swift.domain.ContainerMetadata;
 import org.jclouds.openstack.swift.domain.MutableObjectInfoWithMetadata;
 import org.jclouds.openstack.swift.domain.ObjectInfo;
 import org.jclouds.openstack.swift.domain.SwiftObject;
+import org.jclouds.openstack.swift.options.CopyObjectOptions;
 import org.jclouds.openstack.swift.options.CreateContainerOptions;
 import org.jclouds.openstack.swift.options.DeleteContainerMetadataOptions;
 
@@ -183,6 +184,10 @@ public class StubSwiftAsyncClient implements CommonSwiftAsyncClient {
             org.jclouds.openstack.swift.options.ListContainerOptions... optionsList) {
       ListContainerOptions options = container2ContainerListOptions.apply(optionsList);
       return Futures.compose(blobStore.list(container, options), resource2ObjectList, service);
+   }
+
+   public ListenableFuture<Boolean> copyObject(String destinationContainer, String destinationObject, CopyObjectOptions copyObjectOptions) {
+      throw new UnsupportedOperationException();
    }
 
    public ListenableFuture<String> putObject(String container, SwiftObject object) {

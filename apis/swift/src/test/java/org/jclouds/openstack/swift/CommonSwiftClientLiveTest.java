@@ -22,6 +22,7 @@ import static org.jclouds.openstack.swift.options.ListContainerOptions.Builder.u
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -43,6 +44,7 @@ import org.jclouds.openstack.swift.domain.ContainerMetadata;
 import org.jclouds.openstack.swift.domain.MutableObjectInfoWithMetadata;
 import org.jclouds.openstack.swift.domain.ObjectInfo;
 import org.jclouds.openstack.swift.domain.SwiftObject;
+import org.jclouds.openstack.swift.options.CopyObjectOptions;
 import org.jclouds.openstack.swift.options.ListContainerOptions;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
@@ -274,6 +276,67 @@ public abstract class CommonSwiftClientLiveTest<C extends CommonSwiftClient> ext
       }
    }
 
+   @Test
+   public void testCopyObjectOperations() throws Exception {
+      String sourceContainerName = getContainerName();
+      String sourceName = "original.txt";
+      String sourcePath = "/" + sourceContainerName + "/" + sourceName;
+      String badSource = "bad source";
+      String destinationContainerName = getContainerName();
+      String destinationName = "copy.txt";
+      String destinationPath = "/" + destinationContainerName + "/" + destinationName;
+      String badDesination = "bad destination";
+      String data = "Hello World";
+      SwiftObject sourceObject = newSwiftObject(data, sourceName);
+      CopyObjectOptions options = CopyObjectOptions.Builder.fromSource(sourceContainerName, sourceName);
+      
+      getApi().putObject(sourceContainerName, sourceObject);
+
+      // test that not giving a destination name *doesn't* copy source name to the destination container with
+      // the source name but copy still returns success :(
+      getApi().copyObject(destinationContainerName, "", options);
+      assertTrue(!getApi().objectExists(destinationContainerName, sourceName));
+      
+      // test copy works
+      getApi().copyObject(destinationContainerName, destinationName, options);      
+      assertTrue(getApi().objectExists(destinationContainerName, destinationName));
+      
+      SwiftObject destinationObject = getApi().getObject(destinationContainerName, destinationName);
+      assertEquals(Strings2.toString(destinationObject.getPayload()), data);
+      
+      // test exception thrown on bad destination container
+      try {
+         getApi().copyObject(badDesination, destinationName, options);
+         fail("Expected CopyObjectException");
+      }
+      catch (CopyObjectException e) {
+         assertEquals(e.getSourcePath(), sourcePath);
+         assertEquals(e.getDestinationPath(), "/" + badDesination + "/" + destinationName);
+      }
+
+      // test exception thrown on bad source container
+      try {
+    	  options = CopyObjectOptions.Builder.fromSource(badSource, sourceName);
+          getApi().copyObject(destinationContainerName, destinationName, options);
+          fail("Expected CopyObjectException");
+       }
+       catch (CopyObjectException e) {
+          assertEquals(e.getSourcePath(), "/" + badSource + "/" + sourceName);
+          assertEquals(e.getDestinationPath(), destinationPath);
+       }
+
+      // test exception thrown on bad source name
+      try {
+    	  options = CopyObjectOptions.Builder.fromSource(sourceContainerName, badSource);
+          getApi().copyObject(destinationContainerName, destinationName, options);
+          fail("Expected CopyObjectException");
+       }
+       catch (CopyObjectException e) {
+          assertEquals(e.getSourcePath(), "/" + sourceContainerName + "/" + badSource);
+          assertEquals(e.getDestinationPath(), destinationPath);
+       }
+   }
+   
    protected void testGetObjectContentType(SwiftObject getBlob) {
        String contentType = getBlob.getPayload().getContentMetadata().getContentType();
        assert contentType.startsWith("text/plain") || "application/x-www-form-urlencoded".equals(contentType): contentType;

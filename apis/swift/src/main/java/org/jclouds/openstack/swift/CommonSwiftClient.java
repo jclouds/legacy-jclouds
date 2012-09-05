@@ -31,6 +31,7 @@ import org.jclouds.openstack.swift.domain.ContainerMetadata;
 import org.jclouds.openstack.swift.domain.MutableObjectInfoWithMetadata;
 import org.jclouds.openstack.swift.domain.ObjectInfo;
 import org.jclouds.openstack.swift.domain.SwiftObject;
+import org.jclouds.openstack.swift.options.CopyObjectOptions;
 import org.jclouds.openstack.swift.options.CreateContainerOptions;
 import org.jclouds.openstack.swift.options.DeleteContainerMetadataOptions;
 import org.jclouds.openstack.swift.options.ListContainerOptions;
@@ -115,6 +116,8 @@ public interface CommonSwiftClient {
    @Timeout(duration = 5 * 1024 * 1024 / 128, timeUnit = TimeUnit.SECONDS)
    String putObject(String container, SwiftObject object);
 
+   boolean copyObject(String destinationContainer, String destinationName, CopyObjectOptions copyObjectOptions);
+   
    void removeObject(String container, String name);
 
    /**

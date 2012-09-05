@@ -53,6 +53,7 @@ import org.jclouds.openstack.swift.functions.ParseObjectFromHeadersAndHttpConten
 import org.jclouds.openstack.swift.functions.ParseObjectInfoFromHeaders;
 import org.jclouds.openstack.swift.functions.ParseObjectInfoListFromJsonResponse;
 import org.jclouds.openstack.swift.functions.ReturnTrueOn404FalseOn409;
+import org.jclouds.openstack.swift.options.CopyObjectOptions;
 import org.jclouds.openstack.swift.options.CreateContainerOptions;
 import org.jclouds.openstack.swift.options.DeleteContainerMetadataOptions;
 import org.jclouds.openstack.swift.options.ListContainerOptions;
@@ -178,6 +179,17 @@ public interface CommonSwiftAsyncClient {
    ListenableFuture<String> putObject(
             @PathParam("container") String container,
             @PathParam("name") @ParamParser(ObjectName.class) @BinderParam(BindSwiftObjectMetadataToRequest.class) SwiftObject object);
+
+   /**
+    * @see CommonSwiftClient#copyObject
+    * TODO (everett): ReturnFalseOnObjectNotFound.class ???
+    */
+   @PUT
+   @Path("/{destinationContainer}/{destinationName}")
+   @ExceptionParser(ReturnFalseOnContainerNotFound.class)
+   ListenableFuture<Boolean> copyObject(@PathParam("destinationContainer") String destinationContainer, 
+                                        @PathParam("destinationName") String destinationName, 
+                                        CopyObjectOptions copyObjectOptions);
 
    /**
     * @see CommonSwiftClient#getObject
