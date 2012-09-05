@@ -31,6 +31,7 @@ import static org.testng.Assert.fail;
 import java.util.Map;
 import java.util.Set;
 
+import org.jclouds.dmtf.ovf.NetworkSection;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
@@ -139,9 +140,12 @@ public class VdcApiLiveTest extends BaseVCloudDirectorApiLiveTest {
 
    @Test(description = "POST /vdc/{id}/action/captureVApp", dependsOnMethods = { "testInstantiateVAppTemplate" })
    public void testCaptureVApp() {
+	  VAppTemplate vAppTemplate = vappTemplateApi.get(vAppTemplateUrn);
       String name = name("captured-");
 
-      CaptureVAppParams captureVappParams = CaptureVAppParams.builder().name(name).source(instantiatedVApp.getHref())
+      CaptureVAppParams captureVappParams = CaptureVAppParams.builder()
+    		  .name(name)
+    		  .source(instantiatedVApp.getHref())
       // TODO: test optional params
       // .description("")
       // .sections(sections) // TODO: ovf sections
@@ -161,15 +165,16 @@ public class VdcApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    @Test(description = "POST /vdc/{id}/action/cloneVApp", dependsOnMethods = { "testInstantiateVAppTemplate" })
    public void testCloneVApp() {
       CloneVAppParams cloneVappParams = CloneVAppParams.builder().source(instantiatedVApp.getHref())
-      // TODO: test optional params
-      // .name("")
-      // .description("")
-      // .deploy(true)
-      // .isSourceDelete(true)
-      // .powerOn(true)
-      // .instantiationParams(InstantiationParams.builder()
-      // .sections(sections) // TODO: ovf sections? various tests?
-      // .build())
+    		  .name(name("vappClone-"))
+    		  .deploy(true)
+		      // TODO: test optional params
+		      // .description("")
+		      // .isSourceDelete(true)
+		      // .powerOn(true)
+		      // .instantiationParams(InstantiationParams.builder()
+		      // .sections(sections) 
+    		  // TODO: ovf sections? various tests?
+		      // .build())
 
                // Reserved. Unimplemented params; may test eventually when implemented
                // .vAppParent(vAppParentRef)
@@ -189,6 +194,7 @@ public class VdcApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    public void testCloneVAppTemplate() {
       clonedVAppTemplate = vdcApi.cloneVAppTemplate(vdcUrn,
                CloneVAppTemplateParams.builder()
+               	  .name(name("vappTemplateClone-"))
                   .source(lazyGetVAppTemplate().getHref())
                   .build());
 

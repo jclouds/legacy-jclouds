@@ -432,57 +432,6 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
                String.format(TASK_COMPLETE_TIMELY, "discardSuspendedState"));
    }
 
-   @Test(description = "POST /vApp/{id}/action/enterMaintenanceMode", groups = { "systemAdmin" })
-   public void testEnterMaintenanceMode() {
-
-      // Do this to a new vApp, so don't mess up subsequent tests by making the vApp read-only
-      VApp temp = instantiateVApp();
-      DeployVAppParams params = DeployVAppParams.builder()
-               .deploymentLeaseSeconds((int) TimeUnit.SECONDS.convert(1L, TimeUnit.HOURS)).notForceCustomization()
-               .notPowerOn().build();
-      Task deployVApp = vAppApi.deploy(temp.getId(), params);
-      assertTaskSucceedsLong(deployVApp);
-
-      try {
-         // Method under test
-         vAppApi.enterMaintenanceMode(temp.getId());
-
-         temp = vAppApi.get(temp.getId());
-         assertTrue(temp.isInMaintenanceMode(),
-                  String.format(CONDITION_FMT, "InMaintenanceMode", "TRUE", temp.isInMaintenanceMode()));
-
-         // Exit maintenance mode
-         vAppApi.exitMaintenanceMode(temp.getId());
-      } finally {
-         cleanUpVApp(temp);
-      }
-   }
-
-   @Test(description = "POST /vApp/{id}/action/exitMaintenanceMode", dependsOnMethods = { "testEnterMaintenanceMode" }, groups = { "systemAdmin" })
-   public void testExitMaintenanceMode() {
-      // Do this to a new vApp, so don't mess up subsequent tests by making the vApp read-only
-      VApp temp = instantiateVApp();
-      DeployVAppParams params = DeployVAppParams.builder()
-               .deploymentLeaseSeconds((int) TimeUnit.SECONDS.convert(1L, TimeUnit.HOURS)).notForceCustomization()
-               .notPowerOn().build();
-      Task deployVApp = vAppApi.deploy(temp.getId(), params);
-      assertTaskSucceedsLong(deployVApp);
-
-      try {
-         // Enter maintenance mode
-         vAppApi.enterMaintenanceMode(temp.getId());
-
-         // Method under test
-         vAppApi.exitMaintenanceMode(temp.getId());
-
-         temp = vAppApi.get(temp.getId());
-         assertFalse(temp.isInMaintenanceMode(),
-                  String.format(CONDITION_FMT, "InMaintenanceMode", "FALSE", temp.isInMaintenanceMode()));
-      } finally {
-         cleanUpVApp(temp);
-      }
-   }
-
    @Test(groups = { "live", "user" }, description = "GET /vApp/{id}/controlAccess", dependsOnMethods = { "testGetVApp" })
    public void testGetControlAccess() {
       // The method under test
