@@ -35,6 +35,7 @@ import org.jclouds.blobstore.binders.BindMapToHeadersWithPrefix;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.functions.ReturnFalseOnContainerNotFound;
 import org.jclouds.blobstore.functions.ReturnFalseOnKeyNotFound;
+import org.jclouds.blobstore.functions.ReturnNullOnContainerNotFound;
 import org.jclouds.blobstore.functions.ReturnNullOnKeyNotFound;
 import org.jclouds.http.functions.ParseETagHeader;
 import org.jclouds.http.options.GetOptions;
@@ -47,14 +48,19 @@ import org.jclouds.openstack.swift.domain.ObjectInfo;
 import org.jclouds.openstack.swift.domain.SwiftObject;
 import org.jclouds.openstack.swift.functions.ObjectName;
 import org.jclouds.openstack.swift.functions.ParseAccountMetadataResponseFromHeaders;
+import org.jclouds.openstack.swift.functions.ParseContainerMetadataFromHeaders;
 import org.jclouds.openstack.swift.functions.ParseObjectFromHeadersAndHttpContent;
 import org.jclouds.openstack.swift.functions.ParseObjectInfoFromHeaders;
 import org.jclouds.openstack.swift.functions.ParseObjectInfoListFromJsonResponse;
 import org.jclouds.openstack.swift.functions.ReturnTrueOn404FalseOn409;
+import org.jclouds.openstack.swift.options.CopyObjectOptions;
+import org.jclouds.openstack.swift.options.CreateContainerOptions;
+import org.jclouds.openstack.swift.options.DeleteContainerMetadataOptions;
 import org.jclouds.openstack.swift.options.ListContainerOptions;
 import org.jclouds.rest.annotations.*;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
+import com.google.common.annotations.Beta;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Provides;
 
@@ -88,6 +94,40 @@ public interface CommonSwiftAsyncClient {
    @QueryParams(keys = "format", values = "json")
    @Path("/")
    ListenableFuture<? extends Set<ContainerMetadata>> listContainers(ListContainerOptions... options);
+
+   /**
+    * @see CommonSwiftClient#getContainerMetadata
+    */
+   @Beta
+   @HEAD
+   @ResponseParser(ParseContainerMetadataFromHeaders.class)
+   @ExceptionParser(ReturnNullOnContainerNotFound.class)
+   @Path("/{container}")
+   ListenableFuture<ContainerMetadata> getContainerMetadata(@PathParam("container") String container);
+
+   /**
+    * @see CommonSwiftClient#setContainerMetadata
+    */
+   @POST
+   @Path("/{container}")
+   @ExceptionParser(ReturnNullOnContainerNotFound.class)
+   ListenableFuture<Boolean> setContainerMetadata(@PathParam("container") String container, CreateContainerOptions... options);
+
+   /**
+    * @see CommonSwiftClient#deleteContainerMetadata
+    */
+   @POST
+   @Path("/{container}")
+   @ExceptionParser(ReturnNullOnContainerNotFound.class)
+   ListenableFuture<Boolean> deleteContainerMetadata(@PathParam("container") String container, DeleteContainerMetadataOptions options);
+
+   /**
+    * @see CommonSwiftClient#createContainer
+    */
+   @PUT
+   @Path("/{container}")
+   ListenableFuture<Boolean> createContainer(@PathParam("container") String container,
+            CreateContainerOptions... options);
 
    /**
     * @see CommonSwiftClient#setObjectInfo
@@ -139,6 +179,17 @@ public interface CommonSwiftAsyncClient {
    ListenableFuture<String> putObject(
             @PathParam("container") String container,
             @PathParam("name") @ParamParser(ObjectName.class) @BinderParam(BindSwiftObjectMetadataToRequest.class) SwiftObject object);
+
+   /**
+    * @see CommonSwiftClient#copyObject
+    * TODO (everett): ReturnFalseOnObjectNotFound.class ???
+    */
+   @PUT
+   @Path("/{destinationContainer}/{destinationName}")
+   @ExceptionParser(ReturnFalseOnContainerNotFound.class)
+   ListenableFuture<Boolean> copyObject(@PathParam("destinationContainer") String destinationContainer, 
+                                        @PathParam("destinationName") String destinationName, 
+                                        CopyObjectOptions copyObjectOptions);
 
    /**
     * @see CommonSwiftClient#getObject

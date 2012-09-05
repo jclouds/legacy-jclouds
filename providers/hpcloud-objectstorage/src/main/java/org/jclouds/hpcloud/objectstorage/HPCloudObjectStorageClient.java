@@ -22,9 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.hpcloud.objectstorage.extensions.HPCloudCDNClient;
-import org.jclouds.hpcloud.objectstorage.options.CreateContainerOptions;
 import org.jclouds.openstack.swift.CommonSwiftClient;
-import org.jclouds.openstack.swift.domain.ContainerMetadata;
 import org.jclouds.rest.annotations.Delegate;
 
 import com.google.common.base.Optional;
@@ -45,10 +43,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 @Timeout(duration = 120, timeUnit = TimeUnit.SECONDS)
 public interface HPCloudObjectStorageClient extends CommonSwiftClient {
-
-   boolean createContainer(String container, CreateContainerOptions... options);
-
-   ContainerMetadata getContainerMetadata(String container);
 
    /**
     * Provides synchronous access to CDN features.
