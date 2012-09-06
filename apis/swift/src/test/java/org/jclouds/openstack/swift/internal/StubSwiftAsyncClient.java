@@ -53,6 +53,8 @@ import org.jclouds.openstack.swift.domain.ContainerMetadata;
 import org.jclouds.openstack.swift.domain.MutableObjectInfoWithMetadata;
 import org.jclouds.openstack.swift.domain.ObjectInfo;
 import org.jclouds.openstack.swift.domain.SwiftObject;
+import org.jclouds.openstack.swift.options.CreateContainerOptions;
+import org.jclouds.openstack.swift.options.DeleteContainerMetadataOptions;
 
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
@@ -160,6 +162,23 @@ public class StubSwiftAsyncClient implements CommonSwiftAsyncClient {
                })));
    }
 
+   @Override
+   public ListenableFuture<ContainerMetadata> getContainerMetadata(String container) {
+      throw new UnsupportedOperationException();
+   }
+
+   public ListenableFuture<Boolean> setContainerMetadata(String container, CreateContainerOptions... options) {
+      throw new UnsupportedOperationException();
+   }
+
+   public ListenableFuture<Boolean> deleteContainerMetadata(String container, DeleteContainerMetadataOptions options) {
+      throw new UnsupportedOperationException();
+   }
+
+   public ListenableFuture<Boolean> createContainer(String container, CreateContainerOptions... options) {
+      throw new UnsupportedOperationException();
+   }
+
    public ListenableFuture<PageSet<ObjectInfo>> listObjects(String container,
             org.jclouds.openstack.swift.options.ListContainerOptions... optionsList) {
       ListContainerOptions options = container2ContainerListOptions.apply(optionsList);
@@ -195,5 +214,4 @@ public class StubSwiftAsyncClient implements CommonSwiftAsyncClient {
    public ListenableFuture<Boolean> objectExists(String bucketName, String key) {
       return blobStore.blobExists(bucketName, key);
    }
-
 }
