@@ -32,7 +32,7 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
 import org.jclouds.logging.config.LoggingModule;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
@@ -89,7 +89,7 @@ public class AbiquoComputeServiceLiveTest extends BaseComputeServiceLiveTest
     @Override
     protected Module getSshModule()
     {
-        return new JschSshClientModule();
+        return new SshjSshClientModule();
     }
 
     @Override

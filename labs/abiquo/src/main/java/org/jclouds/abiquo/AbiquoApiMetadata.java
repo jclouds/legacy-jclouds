@@ -20,8 +20,8 @@
 package org.jclouds.abiquo;
 
 import static org.jclouds.Constants.PROPERTY_MAX_REDIRECTS;
-import static org.jclouds.abiquo.reference.AbiquoConstants.ASYNC_TASK_MONITOR_DELAY;
-import static org.jclouds.abiquo.reference.AbiquoConstants.CREDENTIAL_IS_TOKEN;
+import static org.jclouds.abiquo.config.AbiquoProperties.ASYNC_TASK_MONITOR_DELAY;
+import static org.jclouds.abiquo.config.AbiquoProperties.CREDENTIAL_IS_TOKEN;
 
 import java.net.URI;
 import java.util.Properties;

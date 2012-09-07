@@ -22,4 +22,8 @@ Copyright 2009-2011 jclouds, Inc.
 
 This product includes software developed at
 Abiquo Holdings S.L. (http://www.abiquo.com/).
-distributed under the GNU Lesser General Public License version 3
+
+The following Abiquo dependencies are distributed under
+the GNU Lesser General Public License version 3:
+  com.abiquo:api-model-transport
+  com.abiquo:am-model

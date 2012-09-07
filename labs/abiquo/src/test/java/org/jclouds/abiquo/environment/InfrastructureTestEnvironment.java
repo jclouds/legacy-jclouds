@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.jclouds.abiquo.AbiquoContext;
+import org.jclouds.abiquo.config.AbiquoEdition;
 import org.jclouds.abiquo.domain.config.License;
 import org.jclouds.abiquo.domain.enterprise.Enterprise;
 import org.jclouds.abiquo.domain.enterprise.Limits;
@@ -62,7 +63,6 @@ import org.jclouds.abiquo.predicates.infrastructure.RemoteServicePredicates;
 import org.jclouds.abiquo.predicates.infrastructure.StorageDeviceMetadataPredicates;
 import org.jclouds.abiquo.predicates.infrastructure.StoragePoolPredicates;
 import org.jclouds.abiquo.predicates.infrastructure.TierPredicates;
-import org.jclouds.abiquo.reference.AbiquoEdition;
 import org.jclouds.abiquo.util.Config;
 
 import com.abiquo.model.enumerator.HypervisorType;

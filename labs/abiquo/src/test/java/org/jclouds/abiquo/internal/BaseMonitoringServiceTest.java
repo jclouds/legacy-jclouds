@@ -19,7 +19,7 @@
 
 package org.jclouds.abiquo.internal;
 
-import static org.jclouds.abiquo.reference.AbiquoConstants.ASYNC_TASK_MONITOR_DELAY;
+import static org.jclouds.abiquo.config.AbiquoProperties.ASYNC_TASK_MONITOR_DELAY;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 

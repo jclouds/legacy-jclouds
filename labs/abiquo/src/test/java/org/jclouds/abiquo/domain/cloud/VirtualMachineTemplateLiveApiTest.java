@@ -54,12 +54,6 @@ public class VirtualMachineTemplateLiveApiTest extends BaseAbiquoApiLiveApiTest
         assertNotNull(category);
     }
 
-    public void testGetIcon()
-    {
-        String iconUrl = env.virtualMachine.getTemplate().getIconUrl();
-        assertNotNull(iconUrl);
-    }
-
     public void testRequestConversionToSameFormat()
     {
         try

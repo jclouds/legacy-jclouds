@@ -17,14 +17,29 @@
  * under the License.
  */
 
-package org.jclouds.abiquo.reference;
+package org.jclouds.abiquo.config;
+
+import org.jclouds.abiquo.features.services.MonitoringService;
 
 /**
- * The Abiquo Edition (Community or Enterprise).
+ * Configuration properties and constants used in Abiquo connections.
  * 
- * @author Francesc Montserrat
+ * @author Ignasi Barrera
  */
-public enum AbiquoEdition
+public interface AbiquoProperties
 {
-    ENTERPRISE, COMMUNITY;
+    /**
+     * Boolean property indicating if the provided credential is an api token.
+     * <p>
+     * Default value: false
+     */
+    public static final String CREDENTIAL_IS_TOKEN = "abiquo.credential-is-token";
+
+    /**
+     * The delay (in ms) used between requests by the {@link MonitoringService} when monitoring
+     * asynchronous task state.
+     * <p>
+     * Default value: 5000 ms
+     */
+    public static final String ASYNC_TASK_MONITOR_DELAY = "abiquo.monitor-delay";
 }

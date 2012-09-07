@@ -38,7 +38,7 @@ import javax.ws.rs.core.HttpHeaders;
 import org.jclouds.ContextBuilder;
 import org.jclouds.abiquo.AbiquoApiMetadata;
 import org.jclouds.abiquo.AbiquoContext;
-import org.jclouds.abiquo.reference.AbiquoConstants;
+import org.jclouds.abiquo.config.AbiquoProperties;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
@@ -79,7 +79,7 @@ public class AbiquoAuthenticationLiveApiTest
         String token = getAuthtenticationToken();
 
         Properties props = new Properties();
-        props.setProperty(AbiquoConstants.CREDENTIAL_IS_TOKEN, "true");
+        props.setProperty(AbiquoProperties.CREDENTIAL_IS_TOKEN, "true");
 
         // Create a new context that uses the generated token to perform the API calls
         AbiquoContext tokenContext = ContextBuilder.newBuilder(new AbiquoApiMetadata()) //
@@ -111,7 +111,7 @@ public class AbiquoAuthenticationLiveApiTest
         String token = getAuthtenticationToken() + "INVALID";
 
         Properties props = new Properties();
-        props.setProperty(AbiquoConstants.CREDENTIAL_IS_TOKEN, "true");
+        props.setProperty(AbiquoProperties.CREDENTIAL_IS_TOKEN, "true");
 
         // Create a new context that uses the generated token to perform the API calls
         AbiquoContext tokenContext = ContextBuilder.newBuilder(new AbiquoApiMetadata()) //

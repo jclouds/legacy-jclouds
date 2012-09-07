@@ -16,8 +16,9 @@
     
     <properties>
         <abiquo.version>2.1-SNAPSHOT</abiquo.version>
-        <test.abiquo.identity></test.abiquo.identity>
-        <test.abiquo.credential></test.abiquo.credential>
+        <test.abiquo.endpoint>http://localhost/api</test.abiquo.endpoint>
+        <test.abiquo.identity>FIXME</test.abiquo.identity>
+        <test.abiquo.credential>FIXME</test.abiquo.credential>
         <test.abiquo.api-version></test.abiquo.api-version>
         <test.abiquo.build-version></test.abiquo.build-version>
         <jclouds.osgi.export>org.jclouds.abiquo*;version="${project.version}"</jclouds.osgi.export>
@@ -112,7 +113,7 @@
         </dependency>
         <dependency>
             <groupId>org.jclouds.driver</groupId>
-            <artifactId>jclouds-jsch</artifactId>
+            <artifactId>jclouds-sshj</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
@@ -120,12 +121,6 @@
             <groupId>org.jclouds.driver</groupId>
             <artifactId>jclouds-slf4j</artifactId>
             <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.6.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -140,20 +135,6 @@
             <version>1.0.0</version>
             <scope>test</scope>
         </dependency>
-        <!-- 
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <version>6.0.1</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>junit</groupId>
-                    <artifactId>junit</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        -->
     </dependencies>
     
     <build>

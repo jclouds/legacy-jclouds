@@ -20,7 +20,7 @@
 package org.jclouds.abiquo.http.filters;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.abiquo.reference.AbiquoConstants.CREDENTIAL_IS_TOKEN;
+import static org.jclouds.abiquo.config.AbiquoProperties.CREDENTIAL_IS_TOKEN;
 
 import java.io.UnsupportedEncodingException;
 
