@@ -31,8 +31,13 @@ import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpRequest.Builder;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.openstack.swift.CopyObjectException;
+import org.jclouds.openstack.swift.reference.SwiftHeaders;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Strings;
 
 /**
  * 
@@ -40,6 +45,13 @@ import org.testng.annotations.Test;
  */
 @Test(groups = { "unit" })
 public class ParseSwiftErrorFromHttpResponseTest {
+
+   @Test
+   public void test404SetsCopyObjectException() {
+      assertCodeMakes("HEAD",
+            URI.create("http://host/v1/MossoCloudFS_7064cdb1d49d4dcba3c899ac33e8409d/adriancole-blobstore1/key"), 404,
+            "Not Found", "text/plain", "", "/bad/source/path", CopyObjectException.class);
+   }
 
    @Test
    public void test404SetsKeyNotFoundExceptionMosso() {
@@ -76,23 +88,33 @@ public class ParseSwiftErrorFromHttpResponseTest {
 
    private void assertCodeMakes(String method, URI uri, int statusCode, String message, String contentType,
          String content, Class<? extends Exception> expected) {
-
-      ParseSwiftErrorFromHttpResponse function = new ParseSwiftErrorFromHttpResponse();
-
-      HttpCommand command = createMock(HttpCommand.class);
-      HttpRequest request = HttpRequest.builder().method(method).endpoint(uri).build();
-      HttpResponse response = HttpResponse.builder().statusCode(statusCode).message(message).payload(content).build();
-      response.getPayload().getContentMetadata().setContentType(contentType);
-
-      expect(command.getCurrentRequest()).andReturn(request).atLeastOnce();
-      command.setException(classEq(expected));
-
-      replay(command);
-
-      function.handleError(command, response);
-
-      verify(command);
+      assertCodeMakes(method, uri, statusCode, message, contentType, content, "", expected);
    }
+
+   private void assertCodeMakes(String method, URI uri, int statusCode, String message, String contentType,
+	         String content, String copyObjectSourcePath, Class<? extends Exception> expected) {
+    ParseSwiftErrorFromHttpResponse function = new ParseSwiftErrorFromHttpResponse();
+
+    HttpCommand command = createMock(HttpCommand.class);
+    Builder<?> requestBuilder = HttpRequest.builder().method(method).endpoint(uri);
+    
+    if (!Strings.isNullOrEmpty(copyObjectSourcePath)) {
+      requestBuilder.addHeader(SwiftHeaders.OBJECT_COPY_FROM, copyObjectSourcePath);
+    }
+    
+    HttpRequest request = requestBuilder.build();
+    HttpResponse response = HttpResponse.builder().statusCode(statusCode).message(message).payload(content).build();
+    response.getPayload().getContentMetadata().setContentType(contentType);
+
+    expect(command.getCurrentRequest()).andReturn(request).atLeastOnce();
+    command.setException(classEq(expected));
+
+    replay(command);
+
+    function.handleError(command, response);
+
+    verify(command);	   
+ }
 
    public static Exception classEq(final Class<? extends Exception> in) {
       reportMatcher(new IArgumentMatcher() {
