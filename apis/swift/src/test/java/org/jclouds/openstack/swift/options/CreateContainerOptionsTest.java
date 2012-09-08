@@ -16,10 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.hpcloud.objectstorage.options;
+package org.jclouds.openstack.swift.options;
 
 import static org.testng.Assert.assertEquals;
 
+import org.jclouds.openstack.swift.options.CreateContainerOptions;
 import org.jclouds.openstack.swift.reference.SwiftHeaders;
 import org.testng.annotations.Test;
 

@@ -96,6 +96,7 @@ public class CloudFilesClientLiveTest extends CommonSwiftClientLiveTest<CloudFil
          Set<ContainerCDNMetadata> cdnMetadataList = getApi().listCDNContainers();
          assertTrue(cdnMetadataList.size() >= 1);
 
+         cdnMetadata = getApi().getCDNMetadata(containerNameWithCDN);
          final long initialTTL = cdnMetadata.getTTL();
          assertTrue(cdnMetadataList.contains(new ContainerCDNMetadata(containerNameWithCDN, true, initialTTL, cdnUri)));
 
