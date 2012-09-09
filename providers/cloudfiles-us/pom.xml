@@ -35,6 +35,7 @@
 
     <properties>
         <test.initializer>org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUSTestInitializer</test.initializer>
+        <test.blobstore.container-count>15</test.blobstore.container-count>
         <test.cloudfiles-us.endpoint>https://auth.api.rackspacecloud.com</test.cloudfiles-us.endpoint>
         <test.cloudfiles-us.api-version>1.0</test.cloudfiles-us.api-version>
         <test.cloudfiles-us.build-version></test.cloudfiles-us.build-version>
@@ -112,6 +113,7 @@
                                 <configuration>
                                     <threadCount>1</threadCount>
                                     <systemPropertyVariables>
+                                        <test.blobstore.container-count>${test.blobstore.container-count}</test.blobstore.container-count>
                                         <test.cloudfiles-us.endpoint>${test.cloudfiles-us.endpoint}</test.cloudfiles-us.endpoint>
                                         <test.cloudfiles-us.api-version>${test.cloudfiles-us.api-version}</test.cloudfiles-us.api-version>
                                         <test.cloudfiles-us.build-version>${test.cloudfiles-us.build-version}</test.cloudfiles-us.build-version>
