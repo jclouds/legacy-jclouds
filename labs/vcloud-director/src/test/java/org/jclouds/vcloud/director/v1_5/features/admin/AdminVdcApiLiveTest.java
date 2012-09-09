@@ -21,14 +21,12 @@ package org.jclouds.vcloud.director.v1_5.features.admin;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_REQ_LIVE;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.fail;
+import static org.testng.Assert.assertNull;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.domain.AdminVdc;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.features.MetadataApi;
 import org.jclouds.vcloud.director.v1_5.features.VdcApi;
@@ -36,6 +34,8 @@ import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorApiLiveTest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Tests behavior of {@link VdcApi}
@@ -67,7 +67,7 @@ public class AdminVdcApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    public void cleanUp() throws Exception {
       if (metadataKey != null) {
          try {
-            Task task = metadataApi.removeEntry(metadataKey);
+            Task task = metadataApi.remove(metadataKey);
             taskDoneEventually(task);
          } catch (VCloudDirectorException e) {
             logger.warn(e, "Error deleting metadata-value (perhaps it doesn't exist?); continuing...");
@@ -171,36 +171,33 @@ public class AdminVdcApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    public void testSetMetadata() throws Exception {
       metadataKey = name("key-");
       metadataValue = name("value-");
-      Metadata metadata = Metadata.builder().entry(MetadataEntry.builder().entry(metadataKey, metadataValue).build())
-               .build();
 
-      Task task = metadataApi.merge(metadata);
+      Task task = metadataApi.putAll(ImmutableMap.of(metadataKey, metadataValue));
+      
       assertTaskSucceeds(task);
 
-      MetadataValue modified = metadataApi.getValue(metadataKey);
-      Checks.checkMetadataValueFor("AdminVdc", modified, metadataValue);
-      Checks.checkMetadata(metadata);
+      String modified = metadataApi.get(metadataKey);
+      assertEquals(modified, metadataValue);
    }
 
    // TODO insufficient permissions to test
    @Test(description = "GET /admin/vdc/{id}/metadata/{key}", dependsOnMethods = { "testSetMetadata" }, enabled = false)
    public void testGetMetadataValue() throws Exception {
-      MetadataValue retrievedMetadataValue = metadataApi.getValue(metadataKey);
+      String retrievedMetadataValue = metadataApi.get(metadataKey);
 
-      Checks.checkMetadataValueFor("AdminVdc", retrievedMetadataValue, metadataValue);
+      assertEquals(retrievedMetadataValue, metadataValue);
    }
 
    // TODO insufficient permissions to test
    @Test(description = "PUT /admin/vdc/{id}/metadata/{key}", dependsOnMethods = { "testGetMetadataValue" }, enabled = false)
    public void testSetMetadataValue() throws Exception {
       metadataValue = name("value-");
-      MetadataValue newV = MetadataValue.builder().value(metadataValue).build();
 
-      Task task = metadataApi.putEntry(metadataKey, newV);
+      Task task = metadataApi.put(metadataKey, metadataValue);
       assertTaskSucceeds(task);
 
-      MetadataValue retrievedMetadataValue = metadataApi.getValue(metadataKey);
-      Checks.checkMetadataValueFor("AdminVdc", retrievedMetadataValue, metadataValue);
+      String retrievedMetadataValue = metadataApi.get(metadataKey);
+      assertEquals(retrievedMetadataValue, metadataValue);
    }
 
    // TODO insufficient permissions to test
@@ -208,14 +205,9 @@ public class AdminVdcApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    public void testRemoveMetadataValue() throws Exception {
       // TODO Remove dependency on other tests; make cleanUp remove a list of metadata entries?
 
-      Task task = metadataApi.removeEntry(metadataKey);
+      Task task = metadataApi.remove(metadataKey);
       assertTaskSucceeds(task);
 
-      try {
-         metadataApi.getValue(metadataKey);
-         fail("Retrieval of metadata value " + metadataKey + " should have fail after deletion");
-      } catch (VCloudDirectorException e) {
-         // success; should not be accessible
-      }
+      assertNull(metadataApi.get(metadataKey));
    }
 }

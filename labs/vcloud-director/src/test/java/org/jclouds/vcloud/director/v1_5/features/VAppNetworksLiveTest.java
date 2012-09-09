@@ -78,7 +78,7 @@ public class VAppNetworksLiveTest extends AbstractVAppApiLiveTest {
    protected void tidyUp() {
       if (key != null) {
          try {
-	         Task remove = vAppTemplateApi.getMetadataApi(vAppTemplateUrn).removeEntry(key);
+	         Task remove = vAppTemplateApi.getMetadataApi(vAppTemplateUrn).remove(key);
 	         taskDoneEventually(remove);
          } catch (Exception e) {
             logger.warn(e, "Error when deleting metadata entry '%s'", key);
@@ -187,29 +187,6 @@ public class VAppNetworksLiveTest extends AbstractVAppApiLiveTest {
              .info("modified")
              .networkConfigs(ImmutableSet.of(newVAppNetworkConfiguration))
              .build();
-   }
-
-   private void attachVmToVAppNetwork(Vm vm, String vAppNetworkName) {
-      Set<NetworkConnection> networkConnections = vmApi.getNetworkConnectionSection(vm.getId())
-               .getNetworkConnections();
-
-      NetworkConnectionSection section = NetworkConnectionSection.builder()
-               .info("info")
-               .primaryNetworkConnectionIndex(0)
-               .build();
-      
-      for (NetworkConnection networkConnection : networkConnections) {
-         NetworkConnection newNetworkConnection = networkConnection.toBuilder()
-                  .network(vAppNetworkName)
-                  .isConnected(true)
-                  .networkConnectionIndex(0)
-                  .ipAddressAllocationMode(IpAddressAllocationMode.POOL)
-                  .build();
-         
-         section = section.toBuilder().networkConnection(newNetworkConnection).build();
-      }
-      Task configureNetwork = vmApi.editNetworkConnectionSection(vm.getId(), section);
-      assertTaskSucceedsLong(configureNetwork);
    }
 
    private IpScope addNewIpScope() {

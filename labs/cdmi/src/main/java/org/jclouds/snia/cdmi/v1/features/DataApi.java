@@ -21,8 +21,8 @@ package org.jclouds.snia.cdmi.v1.features;
 import java.util.concurrent.TimeUnit;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.snia.cdmi.v1.domain.DataObject;
-import org.jclouds.snia.cdmi.v1.options.CreateDataObjectNonCDMIOptions;
 import org.jclouds.snia.cdmi.v1.options.CreateDataObjectOptions;
+import org.jclouds.snia.cdmi.v1.queryparams.DataObjectQueryParams;
 
 /**
  * Data Object Resource Operations
@@ -33,15 +33,83 @@ import org.jclouds.snia.cdmi.v1.options.CreateDataObjectOptions;
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface DataApi {
+	/**
+	 * get CDMI Data object
+	 * 
+	 * @param containerName
+	 *            containerName must end with a forward slash, /.
+	 * @param  dataObjectName
+	 *            dataObjectName must not end with a forward slash, /.           
+	 * @return DataObject
+	 *  <pre>
+	 *  Examples: 
+	 *  {@code
+	 *  dataObject = getDataObject("myContainer/","myDataObject");
+	 *  dataObject = getDataObject("parentContainer/childContainer/","myDataObject");
+	 *  }
+	 *  <pre>
+	 */
+	DataObject getDataObject(String containerName, String dataObjectName);
+	/**
+	 * get CDMI Data object
+	 * 
+	 * @param containerName
+	 *            containerName must end with a forward slash, /.
+	 * @param dataObjectName
+	 *            dataObjectName must not end with a forward slash, /. 
+	 * @param queryParams 
+	 *            enables getting only certain fields, metadata, value range
+	 * @return DataObject
+	 *  <pre>
+	 *  Examples: 
+	 *  {@code
+	 *  dataObject = getContainer("myContainer/","myDataObject",ContainerQueryParams.Builder.field("parentURI").field("objectName"));
+	 *  dataObject = getContainer("myContainer/","myDataObject",ContainerQueryParams.Builder.value(0,10));
+	 *  }
+	 *  <pre>
+	 */
+	DataObject getDataObject(String containerName, String dataObjectName,
+			DataObjectQueryParams queryParams);
+
+	/**
+	 * create CDMI Data object
+	 * 
+	 * @param containerName
+	 *            containerName must end with a forward slash, /.
+	 * @param dataObjectName
+	 *            dataObjectName must not end with a forward slash, /. 
+	 * @param options 
+	 *            enables defining the body i.e. metadata, mimetype, value
+	 * @return DataObject
+	 *  <pre>
+	 *  Examples: 
+	 *  {@code
+	 *  dataObject = createDataObject("myContainer/",
+	 *                                "myDataObject",
+	 *                                CreateDataObjectOptions.Builder
+	 *                                                    .value(value)
+	 *                                                    .mimetype("text/plain")
+	 *                                                    .metadata(pDataObjectMetaDataIn);
+	 *  }
+	 *  <pre>
+	 */	
 	DataObject createDataObject(String containerName, String dataObjectName,
 			CreateDataObjectOptions... options);
-	 
-	void createDataObjectNonCDMI(String containerName, String dataObjectName, 
-			CreateDataObjectNonCDMIOptions... options );
 
-	DataObject getDataObject(String containerName, String dataObjectName);
-
+	/**
+	 * delete CDMI Data object
+	 * 
+	 * @param containerName
+	 *            containerName must end with a forward slash, /.
+	 * @param  dataObjectName
+	 *            dataObjectName must not end with a forward slash, /.           
+	 *  <pre>
+	 *  Examples: 
+	 *  {@code
+	 *  deleteDataObject("myContainer/","myDataObject");
+	 *  }
+	 *  <pre>
+	 */
 	void deleteDataObject(String containerName, String dataObjectName);
-
 
 }

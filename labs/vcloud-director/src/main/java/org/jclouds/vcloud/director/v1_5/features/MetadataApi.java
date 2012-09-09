@@ -18,18 +18,18 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 
 /**
  * Provides synchronous access to {@link Metadata}.
  * 
  * @see MetadataAsyncApi
- * @author danikov
+ * @author danikov, Adrian Cole
  */
 public interface MetadataApi {
 
@@ -47,7 +47,7 @@ public interface MetadataApi {
        * 
        * @return the metadata value, or null if not found
        */
-      MetadataValue getValue(String key);
+      String get(String key);
    }
 
    @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
@@ -56,27 +56,30 @@ public interface MetadataApi {
       /**
        * Merges the metadata for a media with the information provided.
        * 
-       * @return a task. This operation is asynchronous and the user should monitor the returned
-       *         task status in order to check when it is completed.
+       * @return a task. This operation is asynchronous and the user should
+       *         monitor the returned task status in order to check when it is
+       *         completed.
        */
-      Task merge(Metadata metadata);
+      Task putAll(Map<String, String> metadata);
 
       /**
-       * Sets the metadata for the particular key for the media to the value provided. Note: this
-       * will replace any existing metadata information
+       * Sets the metadata for the particular key for the media to the value
+       * provided. Note: this will replace any existing metadata information
        * 
-       * @return a task. This operation is asynchronous and the user should monitor the returned
-       *         task status in order to check when it is completed.
+       * @return a task. This operation is asynchronous and the user should
+       *         monitor the returned task status in order to check when it is
+       *         completed.
        */
-      Task putEntry(String key, MetadataValue metadataValue);
+      Task put(String key, String value);
 
       /**
        * Deletes a metadata entry.
        * 
-       * @return a task. This operation is asynchronous and the user should monitor the returned
-       *         task status in order to check when it is completed.
+       * @return a task. This operation is asynchronous and the user should
+       *         monitor the returned task status in order to check when it is
+       *         completed.
        */
-      Task removeEntry(String key);
+      Task remove(String key);
 
    }
 }

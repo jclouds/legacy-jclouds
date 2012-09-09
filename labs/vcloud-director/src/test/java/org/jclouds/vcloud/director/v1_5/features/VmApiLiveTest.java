@@ -20,7 +20,6 @@ package org.jclouds.vcloud.director.v1_5.features;
 
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.CORRECT_VALUE_OBJECT_FMT;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.ENTITY_EQUAL;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.NOT_EMPTY_OBJECT_FMT;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_EQ;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.TASK_COMPLETE_TIMELY;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.MEDIA;
@@ -28,8 +27,6 @@ import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkGuestCustomiza
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadata;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadataFor;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadataKeyAbsentFor;
-import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadataValue;
-import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadataValueFor;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkNetworkConnectionSection;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkOperatingSystemSection;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkProductSectionList;
@@ -59,8 +56,6 @@ import org.jclouds.dmtf.ovf.ProductSection;
 import org.jclouds.vcloud.director.v1_5.AbstractVAppApiLiveTest;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.ProductSectionList;
 import org.jclouds.vcloud.director.v1_5.domain.RasdItemsList;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
@@ -73,14 +68,13 @@ import org.jclouds.vcloud.director.v1_5.domain.VmPendingQuestion;
 import org.jclouds.vcloud.director.v1_5.domain.VmQuestionAnswer;
 import org.jclouds.vcloud.director.v1_5.domain.VmQuestionAnswerChoice;
 import org.jclouds.vcloud.director.v1_5.domain.dmtf.RasdItem;
+import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConnection;
+import org.jclouds.vcloud.director.v1_5.domain.network.Network.FenceMode;
 import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConnection.IpAddressAllocationMode;
 import org.jclouds.vcloud.director.v1_5.domain.params.DeployVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.params.MediaInsertOrEjectParams;
-import org.jclouds.vcloud.director.v1_5.domain.params.RelocateParams;
 import org.jclouds.vcloud.director.v1_5.domain.params.UndeployVAppParams;
-import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecordType;
-import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecords;
 import org.jclouds.vcloud.director.v1_5.domain.section.GuestCustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.section.NetworkConnectionSection;
 import org.jclouds.vcloud.director.v1_5.domain.section.OperatingSystemSection;
@@ -92,7 +86,9 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
@@ -104,7 +100,7 @@ import com.google.common.collect.Sets;
 @Test(groups = { "live", "user" }, singleThreaded = true, testName = "VmApiLiveTest")
 public class VmApiLiveTest extends AbstractVAppApiLiveTest {
 
-   private MetadataValue metadataValue;
+   private String metadataValue;
    private String key;
    private boolean testUserCreated = false;
 
@@ -119,14 +115,6 @@ public class VmApiLiveTest extends AbstractVAppApiLiveTest {
 
    @AfterClass(alwaysRun = true, dependsOnMethods = { "cleanUpEnvironment" })
    public void cleanUp() {
-      if (adminContext != null && mediaUrn != null) {
-         try {
-            Task remove = context.getApi().getMediaApi().remove(mediaUrn);
-            taskDoneEventually(remove);
-         } catch (Exception e) {
-            logger.warn("Error when deleting media: %s", e.getMessage());
-         }
-      }
       if (adminContext != null && testUserCreated && userUrn != null) {
          try {
             adminContext.getApi().getUserApi().remove(userUrn);
@@ -150,6 +138,8 @@ public class VmApiLiveTest extends AbstractVAppApiLiveTest {
       // Check the required fields are set
       assertEquals(vm.isDeployed(), Boolean.FALSE,
                String.format(OBJ_FIELD_EQ, VM, "deployed", "FALSE", vm.isDeployed().toString()));
+      String vAppNetworkName = context.getApi().getNetworkApi().get(networkUrn).getName();
+      attachVmToVAppNetwork(vm, vAppNetworkName);
 
       // Check status
       assertVmStatus(vmUrn, Status.POWERED_OFF);
@@ -219,7 +209,7 @@ public class VmApiLiveTest extends AbstractVAppApiLiveTest {
 
       // The method under test
       Task reboot = vmApi.reboot(vmUrn);
-      assertTaskSucceedsLong(reboot);
+       assertTaskSucceedsLong(reboot);
 
       // Get the edited Vm
       vm = vmApi.get(vmUrn);
@@ -232,7 +222,7 @@ public class VmApiLiveTest extends AbstractVAppApiLiveTest {
    public void testShutdown() {
       // Power on Vm
       vm = powerOnVm(vmUrn);
-
+      
       // The method under test
       Task shutdown = vmApi.shutdown(vmUrn);
       assertTaskSucceedsLong(shutdown);
@@ -302,7 +292,7 @@ public class VmApiLiveTest extends AbstractVAppApiLiveTest {
    public void testPowerOffVm() {
       // Power on Vm
       vm = powerOnVm(vmUrn);
-
+      
       // The method under test
       // NB this will put the vm in partially powered off state
       Task powerOffVm = vmApi.powerOff(vmUrn);
@@ -313,16 +303,6 @@ public class VmApiLiveTest extends AbstractVAppApiLiveTest {
 
       // Check status
       assertVmStatus(vmUrn, Status.POWERED_OFF);
-   }
-
-   @Test(description = "POST /vApp/{id}/action/consolidate", dependsOnMethods = { "testDeployVm" })
-   public void testConsolidateVm() {
-      // Power on Vm
-      vm = powerOnVm(vmUrn);
-
-      // The method under test
-      Task consolidateVm = vmApi.consolidate(vmUrn);
-      assertTrue(retryTaskSuccess.apply(consolidateVm), String.format(TASK_COMPLETE_TIMELY, "consolidateVm"));
    }
 
    @Test(description = "POST /vApp/{id}/action/discardSuspendedState", dependsOnMethods = { "testDeployVm" })
@@ -344,20 +324,6 @@ public class VmApiLiveTest extends AbstractVAppApiLiveTest {
       // The method under test
       Task installVMwareTools = vmApi.installVMwareTools(vmUrn);
       assertTrue(retryTaskSuccess.apply(installVMwareTools), String.format(TASK_COMPLETE_TIMELY, "installVMwareTools"));
-   }
-
-   // NOTE This test is disabled, as it is not possible to look up datastores using the User API
-   @Test(description = "POST /vApp/{id}/action/relocate", dependsOnMethods = { "testGetVm" })
-   public void testRelocate() {
-      // Relocate to the last of the available datastores
-      QueryResultRecords records = context.getApi().getQueryApi().queryAll("datastore");
-      QueryResultRecordType datastore = Iterables.getLast(records.getRecords());
-      RelocateParams params = RelocateParams.builder().datastore(Reference.builder().href(datastore.getHref()).build())
-               .build();
-
-      // The method under test
-      Task relocate = vmApi.relocate(vmUrn, params);
-      assertTrue(retryTaskSuccess.apply(relocate), String.format(TASK_COMPLETE_TIMELY, "relocate"));
    }
 
    @Test(description = "POST /vApp/{id}/action/upgradeHardwareVersion", dependsOnMethods = { "testGetVm" })
@@ -414,24 +380,27 @@ public class VmApiLiveTest extends AbstractVAppApiLiveTest {
       assertEquals(modified, newSection, String.format(ENTITY_EQUAL, "GuestCustomizationSection"));
    }
 
-   // FIXME
-   // "Error: The requested operation on media "com.vmware.vcloud.entity.media:abfcb4b7-809f-4b50-a0aa-8c97bf09a5b0" is not supported in the current state."
-   @Test(description = "PUT /vApp/{id}/media/action/insertMedia", dependsOnMethods = { "testGetVm" })
-   public void testInsertMedia() {
-      // Setup media params from configured media id
-      MediaInsertOrEjectParams params = MediaInsertOrEjectParams.builder()
-               .media(Reference.builder().href(lazyGetMedia().getHref()).type(MEDIA).build()).build();
+	@Test(description = "PUT /vApp/{id}/media/action/insertMedia", dependsOnMethods = { "testGetVm" })
+	public void testInsertMedia() {
+		// Setup media params from configured media id
+		MediaInsertOrEjectParams params = MediaInsertOrEjectParams
+				.builder()
+				.media(Reference.builder().href(lazyGetMedia().getHref())
+						.type(MEDIA).build()).build();
 
-      // The method under test
-      Task insertMedia = vmApi.insertMedia(vmUrn, params);
-      assertTrue(retryTaskSuccess.apply(insertMedia), String.format(TASK_COMPLETE_TIMELY, "insertMedia"));
-   }
+		// The method under test
+		Task insertMediaTask = vmApi.insertMedia(vmUrn, params);
+		assertTrue(retryTaskSuccess.apply(insertMediaTask),
+				String.format(TASK_COMPLETE_TIMELY, "insertMedia"));
+	}
 
    @Test(description = "PUT /vApp/{id}/media/action/ejectMedia", dependsOnMethods = { "testInsertMedia" })
    public void testEjectMedia() {
+	   
       // Setup media params from configured media id
       MediaInsertOrEjectParams params = MediaInsertOrEjectParams.builder()
-               .media(Reference.builder().href(lazyGetMedia().getHref()).type(MEDIA).build()).build();
+               .media(Reference.builder()
+            		   .href(lazyGetMedia().getHref()).type(MEDIA).build()).build();
 
       // The method under test
       Task ejectMedia = vmApi.ejectMedia(vmUrn, params);
@@ -448,39 +417,47 @@ public class VmApiLiveTest extends AbstractVAppApiLiveTest {
       });
    }
 
-   // FIXME "Task error: Unable to perform this action. Contact your cloud administrator."
    @Test(description = "PUT /vApp/{id}/networkConnectionSection", dependsOnMethods = { "testEditGuestCustomizationSection" })
-   public void testEditNetworkConnectionSection() {
-      powerOffVm(vmUrn);
-      // Look up a network in the Vdc
-      Set<Reference> networks = vdc.getAvailableNetworks();
-      Reference network = Iterables.getLast(networks);
+	public void testEditNetworkConnectionSection() {
 
-      // Copy existing section and edit fields
-      NetworkConnectionSection oldSection = vmApi.getNetworkConnectionSection(vmUrn);
-      NetworkConnectionSection newSection = oldSection
-               .toBuilder()
-               .networkConnection(
-                        NetworkConnection.builder().ipAddressAllocationMode(IpAddressAllocationMode.DHCP.toString())
-                                 .network(network.getName()).build()).build();
+		// Look up a network in the Vdc
+		Set<Reference> networks = vdc.getAvailableNetworks();
+		Reference network = Iterables.getLast(networks);
 
-      // The method under test
-      Task editNetworkConnectionSection = vmApi.editNetworkConnectionSection(vmUrn, newSection);
-      assertTrue(retryTaskSuccess.apply(editNetworkConnectionSection),
-               String.format(TASK_COMPLETE_TIMELY, "editNetworkConnectionSection"));
+		// Copy existing section and edit fields
+		NetworkConnectionSection oldSection = vmApi
+				.getNetworkConnectionSection(vmUrn);
+		NetworkConnection newNetworkConnection = NetworkConnection.builder()
+				.network(network.getName()).networkConnectionIndex(1)
+				.ipAddressAllocationMode(IpAddressAllocationMode.DHCP).build();
+		NetworkConnectionSection newSection = oldSection.toBuilder()
+				.networkConnection(newNetworkConnection).build();
 
-      // Retrieve the modified section
-      NetworkConnectionSection modified = vmApi.getNetworkConnectionSection(vmUrn);
+		// The method under test
+		Task editNetworkConnectionSection = vmApi.editNetworkConnectionSection(
+				vmUrn, newSection);
+		assertTrue(retryTaskSuccess.apply(editNetworkConnectionSection),
+				String.format(TASK_COMPLETE_TIMELY,
+						"editNetworkConnectionSection"));
 
-      // Check the retrieved object is well formed
-      checkNetworkConnectionSection(modified);
+		// Retrieve the modified section
+		NetworkConnectionSection modified = vmApi
+				.getNetworkConnectionSection(vmUrn);
 
-      // Check the modified section has an extra network connection
-      assertEquals(modified.getNetworkConnections().size(), newSection.getNetworkConnections().size() + 1);
+		// Check the retrieved object is well formed
+		checkNetworkConnectionSection(modified);
 
-      // Check the section was modified correctly
-      assertEquals(modified, newSection, String.format(ENTITY_EQUAL, "NetworkConnectionSection"));
-   }
+		// Check the section was modified correctly
+		for (NetworkConnection connection : modified.getNetworkConnections()) {
+			if (connection.getNetwork().equals(
+					newNetworkConnection.getNetwork())) {
+				assertTrue(connection.getIpAddressAllocationMode().equals(
+						newNetworkConnection.getIpAddressAllocationMode()));
+				assertTrue(connection.getNetworkConnectionIndex() == newNetworkConnection
+						.getNetworkConnectionIndex());
+			}
+		}
+	}
 
    @Test(description = "GET /vApp/{id}/operatingSystemSection", dependsOnMethods = { "testGetVm" })
    public void testGetOperatingSystemSection() {
@@ -597,11 +574,10 @@ public class VmApiLiveTest extends AbstractVAppApiLiveTest {
       checkRuntimeInfoSection(section);
    }
 
-   // FIXME If still failing, consider escalating?
    @Test(description = "GET /vApp/{id}/screen", dependsOnMethods = { "testInstallVMwareTools" })
    public void testGetScreenImage() {
       // Power on Vm
-      vm = powerOnVm(vmUrn);
+      vm = powerOnVm(vmUrn); // we need to have a way to wait for complete bootstrap
 
       // The method under test
       byte[] image = vmApi.getScreenImage(vmUrn);
@@ -872,50 +848,53 @@ public class VmApiLiveTest extends AbstractVAppApiLiveTest {
    @Test(description = "PUT /vApp/{id}/metadata/{key}", dependsOnMethods = { "testGetVm" })
    public void testSetMetadataValue() {
       key = name("key-");
-      String value = name("value-");
-      metadataValue = MetadataValue.builder().value(value).build();
-      vmApi.getMetadataApi(vmUrn).putEntry(key, metadataValue);
+      metadataValue = name("value-");
+      //TODO: block!!
+      vmApi.getMetadataApi(vmUrn).put(key, metadataValue);
 
       // Retrieve the value, and assert it was set correctly
-      MetadataValue newMetadataValue = vmApi.getMetadataApi(vmUrn).getValue(key);
+      String newMetadataValue = vmApi.getMetadataApi(vmUrn).get(key);
 
       // Check the retrieved object is well formed
-      checkMetadataValueFor(VM, newMetadataValue, value);
+      assertEquals(newMetadataValue, metadataValue,
+            String.format(CORRECT_VALUE_OBJECT_FMT, "Value", "MetadataValue", metadataValue, newMetadataValue));
    }
 
-   @Test(description = "GET /vApp/{id}/metadata", dependsOnMethods = { "testSetMetadataValue" })
-   public void testGetMetadata() {
-      // Call the method being tested
-      Metadata metadata = vmApi.getMetadataApi(vmUrn).get();
+	@Test(description = "GET /vApp/{id}/metadata", dependsOnMethods = { "testSetMetadataValue" })
+	public void testGetMetadata() {
 
-      checkMetadata(metadata);
+		key = name("key-");
+		metadataValue = name("value-");
 
-      // Check requirements for this test
-      assertTrue(Iterables.isEmpty(metadata.getMetadataEntries()),
-               String.format(NOT_EMPTY_OBJECT_FMT, "MetadataEntry", "vm"));
-   }
+		vmApi.getMetadataApi(vmUrn).put(key, metadataValue);
+		// Call the method being tested
+		Metadata metadata = vmApi.getMetadataApi(vmUrn).get();
+
+		checkMetadata(metadata);
+		
+		// Check requirements for this test
+		assertTrue(metadata.containsValue(metadataValue), String.format(CORRECT_VALUE_OBJECT_FMT, "Value", "MetadataValue", metadata.get(key), metadataValue));
+	}
 
    @Test(description = "GET /vApp/{id}/metadata/{key}", dependsOnMethods = { "testGetMetadata" })
    public void testGetOrgMetadataValue() {
       key = name("key-");
-      String value = name("value-");
-      metadataValue = MetadataValue.builder().value(value).build();
-      vmApi.getMetadataApi(vmUrn).putEntry(key, metadataValue);
+      metadataValue = name("value-");
+
+      //TODO: block!!
+      vmApi.getMetadataApi(vmUrn).put(key, metadataValue);
 
       // Call the method being tested
-      MetadataValue metadataValue = vmApi.getMetadataApi(vmUrn).getValue(key);
-
-      String expected = metadataValue.getValue();
-
-      checkMetadataValue(metadataValue);
-      assertEquals(metadataValue.getValue(), expected,
-               String.format(CORRECT_VALUE_OBJECT_FMT, "Value", "MetadataValue", expected, metadataValue.getValue()));
+      String newMetadataValue = vmApi.getMetadataApi(vmUrn).get(key);
+      
+      assertEquals(newMetadataValue, metadataValue,
+            String.format(CORRECT_VALUE_OBJECT_FMT, "Value", "MetadataValue", metadataValue, newMetadataValue));
    }
 
    @Test(description = "DELETE /vApp/{id}/metadata/{key}", dependsOnMethods = { "testSetMetadataValue" })
    public void testRemoveMetadataEntry() {
       // Delete the entry
-      Task task = vmApi.getMetadataApi(vmUrn).removeEntry(key);
+      Task task = vmApi.getMetadataApi(vmUrn).remove(key);
       retryTaskSuccess.apply(task);
 
       // Confirm the entry has been removed
@@ -933,8 +912,7 @@ public class VmApiLiveTest extends AbstractVAppApiLiveTest {
       // Store a value, to be removed
       String key = name("key-");
       String value = name("value-");
-      Metadata addedMetadata = Metadata.builder().entry(MetadataEntry.builder().key(key).value(value).build()).build();
-      Task task = vmApi.getMetadataApi(vmUrn).merge(addedMetadata);
+      Task task = vmApi.getMetadataApi(vmUrn).putAll(ImmutableMap.of(key, value));
       retryTaskSuccess.apply(task);
 
       // Confirm the entry contains everything that was there, and everything that was being added

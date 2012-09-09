@@ -56,5 +56,5 @@ public interface VirtualInterfaceAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/servers/{server_id}/os-virtual-interfaces")
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<VirtualInterface>> listVirtualInterfacesForServer(@PathParam("server_id") String serverId);
+   ListenableFuture<? extends Set<? extends VirtualInterface>> listVirtualInterfacesForServer(@PathParam("server_id") String serverId);
 }

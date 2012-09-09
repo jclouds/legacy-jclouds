@@ -40,7 +40,7 @@ import com.google.common.collect.Iterables;
  * @author Adam Lowe
  */
 @Singleton
-public class LoadFloatingIpsForInstance extends CacheLoader<ZoneAndId, Iterable<FloatingIP>> {
+public class LoadFloatingIpsForInstance extends CacheLoader<ZoneAndId, Iterable<? extends FloatingIP>> {
    private final NovaApi api;
 
    @Inject
@@ -49,7 +49,7 @@ public class LoadFloatingIpsForInstance extends CacheLoader<ZoneAndId, Iterable<
    }
 
    @Override
-   public Iterable<FloatingIP> load(final ZoneAndId key) throws Exception {
+   public Iterable<? extends FloatingIP> load(final ZoneAndId key) throws Exception {
       String zone = key.getZone();
       Optional<? extends FloatingIPApi> ipApiOptional = api.getFloatingIPExtensionForZone(zone);
       if (ipApiOptional.isPresent()) {

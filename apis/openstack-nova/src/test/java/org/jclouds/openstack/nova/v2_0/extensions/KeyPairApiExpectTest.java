@@ -55,6 +55,7 @@ public class KeyPairApiExpectTest extends BaseNovaApiExpectTest {
 
       assertEquals(apiWhenServersExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
 
+      // NOTE this required a change to the KeyPair domain object toString method
       assertEquals(apiWhenServersExist.getKeyPairExtensionForZone("az-1.region-a.geo-1").get().listKeyPairs().toString(),
             new ParseKeyPairListTest().expected().toString());
    }

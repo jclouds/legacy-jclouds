@@ -33,6 +33,7 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.location.Provider;
+import org.jclouds.location.suppliers.ImplicitRegionIdSupplier;
 import org.jclouds.location.suppliers.RegionIdToURISupplier;
 import org.jclouds.openstack.internal.Authentication;
 import org.jclouds.openstack.keystone.v1_1.AuthenticationAsyncClient;
@@ -40,6 +41,7 @@ import org.jclouds.openstack.keystone.v1_1.AuthenticationClient;
 import org.jclouds.openstack.keystone.v1_1.domain.Auth;
 import org.jclouds.openstack.keystone.v1_1.handlers.RetryOnRenew;
 import org.jclouds.openstack.keystone.v1_1.suppliers.RegionIdToURIFromAuthForServiceSupplier;
+import org.jclouds.openstack.keystone.v1_1.suppliers.V1DefaultRegionIdSupplier;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -66,6 +68,8 @@ public class AuthenticationServiceModule extends AbstractModule {
       bindClientAndAsyncClient(binder(), AuthenticationClient.class, AuthenticationAsyncClient.class);
       install(new FactoryModuleBuilder().implement(RegionIdToURISupplier.class,
                RegionIdToURIFromAuthForServiceSupplier.class).build(RegionIdToURISupplier.Factory.class));
+      install(new FactoryModuleBuilder().implement(ImplicitRegionIdSupplier.class, V1DefaultRegionIdSupplier.class)
+               .build(V1DefaultRegionIdSupplier.Factory.class));
       bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(RetryOnRenew.class);
    }
 

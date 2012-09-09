@@ -20,8 +20,10 @@ package org.jclouds.openstack.swift;
 
 import static org.jclouds.openstack.swift.options.ListContainerOptions.Builder.underPath;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -274,6 +276,64 @@ public abstract class CommonSwiftClientLiveTest<C extends CommonSwiftClient> ext
       }
    }
 
+   @Test
+   public void testCopyObjectOperations() throws Exception {
+      String sourceContainer = getContainerName();
+      String sourceObject = "original.txt";
+      String sourcePath = "/" + sourceContainer + "/" + sourceObject;
+      String badSource = "badsource";
+      String destinationContainer = getContainerName();
+      String destinationObject = "copy.txt";
+      String destinationPath = "/" + destinationContainer + "/" + destinationObject;
+      String badDestination = "baddestination";
+      String data = "Hello World";
+      SwiftObject sourceSwiftObject = newSwiftObject(data, sourceObject);
+      
+      getApi().putObject(sourceContainer, sourceSwiftObject);
+
+      // test that not giving a destination name *doesn't* copy source name to the destination container with
+      // the source name but copy still returns success :(
+      assertTrue(getApi().copyObject(sourceContainer, sourceObject, destinationContainer, ""));
+      assertTrue(!getApi().objectExists(destinationContainer, sourceObject));
+      
+      // test copy works
+      assertTrue(getApi().copyObject(sourceContainer, sourceObject, destinationContainer, destinationObject));      
+      assertTrue(getApi().objectExists(destinationContainer, destinationObject));
+      
+      SwiftObject destinationSwiftObject = getApi().getObject(destinationContainer, destinationObject);
+      assertEquals(Strings2.toString(destinationSwiftObject.getPayload()), data);
+      
+      // test exception thrown on bad destination container
+      try {
+         assertFalse(getApi().copyObject(sourceContainer, sourceObject, badDestination, destinationObject));
+         fail("Expected CopyObjectException");
+      }
+      catch (CopyObjectException e) {
+         assertEquals(e.getSourcePath(), sourcePath);
+         assertEquals(e.getDestinationPath(), "/" + badDestination + "/" + destinationObject);
+      }
+
+      // test exception thrown on bad source container
+      try {
+          assertFalse(getApi().copyObject(badSource, sourceObject, destinationContainer, destinationObject));
+          fail("Expected CopyObjectException");
+       }
+       catch (CopyObjectException e) {
+          assertEquals(e.getSourcePath(), "/" + badSource + "/" + sourceObject);
+          assertEquals(e.getDestinationPath(), destinationPath);
+       }
+
+      // test exception thrown on bad source name
+      try {
+          assertFalse(getApi().copyObject(sourceContainer, badSource, destinationContainer, destinationObject));
+          fail("Expected CopyObjectException");
+       }
+       catch (CopyObjectException e) {
+          assertEquals(e.getSourcePath(), "/" + sourceContainer + "/" + badSource);
+          assertEquals(e.getDestinationPath(), destinationPath);
+       }
+   }
+   
    protected void testGetObjectContentType(SwiftObject getBlob) {
        String contentType = getBlob.getPayload().getContentMetadata().getContentType();
        assert contentType.startsWith("text/plain") || "application/x-www-form-urlencoded".equals(contentType): contentType;

@@ -29,6 +29,7 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.E
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.TASK_COMPLETE_TIMELY;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.URN_REQ_LIVE;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.CATALOG;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.MEDIA;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.NETWORK;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.ORG_NETWORK;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.USER;
@@ -245,7 +246,7 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
       networkUrn = emptyToNull(System.getProperty("test." + provider + ".network-id"));
 
       userUrn = emptyToNull(System.getProperty("test." + provider + ".user-id"));
-
+     
       org = context
                .getApi()
                .getOrgApi()
@@ -267,7 +268,6 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
                vAppTemplateUrn = vAppTemplate.getId();
                }
             }
-
          }
 
          if (networkUrn == null) {
@@ -354,11 +354,10 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
          public boolean apply(Vm input) {
             return input.getId() != null;
          }
-
       });
       
       if (optionalVm.isPresent()) {
-         Logger.CONSOLE.info("found vAppTemplate: %s", prettyVm.apply(optionalVm.get()));
+         Logger.CONSOLE.info("found vm: %s", prettyVm.apply(optionalVm.get()));
       } else {
          Logger.CONSOLE.warn("%s doesn't have any vm in org %s; vms: %s", context.getApi()
                   .getCurrentSession().getUser(), org.getName(), Iterables.transform(vms, prettyVm));
@@ -447,7 +446,52 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
       }
       return optionalNetwork;
    }
+   
+	public FluentIterable<Media> findAllEmptyMediaInOrg() {
+		vdc = context.getApi().getVdcApi().get(vdc.getId());
+		return FluentIterable
+				.from(vdc.getResourceEntities())
+				.filter(ReferencePredicates.<Reference> typeEquals(MEDIA))
+				.transform(new Function<Reference, Media>() {
 
+					@Override
+					public Media apply(Reference in) {
+						return context.getApi().getMediaApi()
+								.get(in.getHref());
+					}
+				}).filter(new Predicate<Media>() {
+
+					@Override
+					public boolean apply(Media input) {
+						return input.getSize() == 0;
+					}
+				});
+	}
+	
+	public void cleanUpVAppTemplateInOrg() {
+		FluentIterable<VAppTemplate> vAppTemplates = FluentIterable
+				.from(vdc.getResourceEntities())
+				.filter(ReferencePredicates
+						.<Reference> typeEquals(VAPP_TEMPLATE))
+				.transform(new Function<Reference, VAppTemplate>() {
+
+					@Override
+					public VAppTemplate apply(Reference in) {
+						return context.getApi().getVAppTemplateApi()
+								.get(in.getHref());
+					}
+				}).filter(Predicates.notNull());
+
+		Iterables.removeIf(vAppTemplates, new Predicate<VAppTemplate>() {
+
+			@Override
+			public boolean apply(VAppTemplate input) {
+				if(input.getName().startsWith("captured-") || input.getName().startsWith("uploaded-") || input.getName().startsWith("vappTemplateClone-"))
+					context.getApi().getVAppTemplateApi().remove(input.getHref());
+				return false;
+			}});
+	}	
+	
    protected Vdc lazyGetVdc() {
       if (vdc == null) {
          assertNotNull(vdcUrn, String.format(URN_REQ_LIVE, VDC));
@@ -508,9 +552,9 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
                assertTrue(retryTaskSuccess.apply(uploadTask), String.format(TASK_COMPLETE_TIMELY, "uploadTask"));
                media = context.getApi().getMediaApi().get(media.getId());
             }
-
             mediaUrn = media.getId();
-         }
+         } else 
+        	 media = context.getApi().getMediaApi().get(mediaUrn);
       }
       return media;
    }
@@ -676,10 +720,10 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
          }
       }
 
-      // Shutdown and power off the VApp if necessary
+      // power off the VApp if necessary
       if (vApp.getStatus() == Status.POWERED_ON) {
          try {
-            Task shutdownTask = vAppApi.shutdown(vAppUrn);
+            Task shutdownTask = vAppApi.powerOff(vAppUrn);
             taskDoneEventually(shutdownTask);
          } catch (Exception e) {
             // keep going; cleanup as much as possible

@@ -27,17 +27,19 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.snia.cdmi.v1.ObjectTypes;
+import org.jclouds.snia.cdmi.v1.binders.BindQueryParmsToSuffix;
 import org.jclouds.snia.cdmi.v1.domain.DataObject;
 import org.jclouds.snia.cdmi.v1.filters.BasicAuthenticationAndTenantId;
 import org.jclouds.snia.cdmi.v1.filters.StripExtraAcceptHeader;
-import org.jclouds.snia.cdmi.v1.options.CreateDataObjectNonCDMIOptions;
 import org.jclouds.snia.cdmi.v1.options.CreateDataObjectOptions;
+import org.jclouds.snia.cdmi.v1.queryparams.DataObjectQueryParams;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -51,56 +53,56 @@ import com.google.common.util.concurrent.ListenableFuture;
 @SkipEncoding({ '/', '=' })
 @RequestFilters({ BasicAuthenticationAndTenantId.class,
 		StripExtraAcceptHeader.class })
+@Headers(keys = "X-CDMI-Specification-Version", values = "{jclouds.api-version}")
 public interface DataAsyncApi {
 	/**
-	 * @see DataApi#getDataObject()
+	 * @see DataApi#getDataObject(String containerName, String dataObjectName)
 	 */
-	@Headers(keys = "X-CDMI-Specification-Version", values = "{jclouds.api-version}")
 	@GET
 	@Consumes({ ObjectTypes.DATAOBJECT, MediaType.APPLICATION_JSON })
 	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
-	@Path("/{containerName}/{dataObjectName}")
+	@Path("/{containerName}{dataObjectName}")
 	ListenableFuture<DataObject> getDataObject(
 			@PathParam("containerName") String containerName,
 			@PathParam("dataObjectName") String dataObjectName);
 
 	/**
-	 * @see DataApi#createDataObject
+	 * @see DataApi#getDataObject(String containerName, String dataObjectName,
+	 *      DataObjectQueryParams queryParams)
 	 */
-	@Headers(keys = "X-CDMI-Specification-Version", values = "{jclouds.api-version}")
+	@GET
+	@Consumes({ ObjectTypes.DATAOBJECT, MediaType.APPLICATION_JSON })
+	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
+	@Path("/{containerName}{dataObjectName}")
+	ListenableFuture<DataObject> getDataObject(
+			@PathParam("containerName") String containerName,
+			@PathParam("dataObjectName") String dataObjectName,
+			@BinderParam(BindQueryParmsToSuffix.class) DataObjectQueryParams queryParams);
+
+	/**
+	 * @see DataApi#createDataObject(String containerName, String
+	 *      dataObjectName, CreateDataObjectOptions... options)
+	 */
 	@PUT
 	@Consumes({ ObjectTypes.DATAOBJECT, MediaType.APPLICATION_JSON })
 	@Produces({ ObjectTypes.DATAOBJECT })
 	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
-	@Path("/{containerName}/{dataObjectName}")
+	@Path("/{containerName}{dataObjectName}")
 	ListenableFuture<DataObject> createDataObject(
 			@PathParam("containerName") String containerName,
 			@PathParam("dataObjectName") String dataObjectName,
 			CreateDataObjectOptions... options);
 
 	/**
-	 * @see DataApi#createDataObjectNonCDMI
+	 * @see DataApi#deleteDataObject(String containerName, String
+	 *      dataObjectName)
 	 */
-	@PUT
-	@Consumes({ "text/plain" })
-	@Produces({ "text/plain;charset=utf-8" })
-	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
-	@Path("/{containerName}/{dataObjectName}")
-	ListenableFuture<Void> createDataObjectNonCDMI(
-			@PathParam("containerName") String containerName,
-			@PathParam("dataObjectName") String dataObjectName,
-			CreateDataObjectNonCDMIOptions... options);
-
-	/**
-	 * @see DataApi#deleteDataObject()
-	 */
-	@Headers(keys = "X-CDMI-Specification-Version", values = "{jclouds.api-version}")
 	@DELETE
 	@Consumes(MediaType.TEXT_PLAIN)
 	// note: MediaType.APPLICATION_JSON work also, however without consumes
 	// jclouds throws null exception
 	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
-	@Path("/{containerName}/{dataObjectName}")
+	@Path("/{containerName}{dataObjectName}")
 	ListenableFuture<Void> deleteDataObject(
 			@PathParam("containerName") String containerName,
 			@PathParam("dataObjectName") String dataObjectName);

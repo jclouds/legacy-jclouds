@@ -33,7 +33,6 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.org.Org;
 import org.jclouds.vcloud.director.v1_5.domain.org.OrgList;
@@ -179,7 +178,7 @@ public class OrgApiExpectTest extends VCloudDirectorAdminApiExpectTest {
    @Test
    public void testGetOrgMetadataEntryHref() {
       VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, getMetadataValue, getMetadataValueResponse);
-      assertEquals(api.getOrgApi().getMetadataApi(orgHref).getValue("KEY"), metadataValue());
+      assertEquals(api.getOrgApi().getMetadataApi(orgHref).get("KEY"), "VALUE");
    }
    
    public static Org org() {
@@ -241,18 +240,6 @@ public class OrgApiExpectTest extends VCloudDirectorAdminApiExpectTest {
                   .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/metadata"))
                   .build())
             .entry("KEY", "VALUE")
-            .build();
-   }
-   
-   public static MetadataValue metadataValue() {
-      return MetadataValue.builder()
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/metadata/KEY"))
-            .link(Link.builder()
-                  .rel("up")
-                  .type("application/vnd.vmware.vcloud.metadata+xml")
-                  .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/metadata"))
-                  .build())
-            .value("VALUE")
             .build();
    }
 }

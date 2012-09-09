@@ -174,8 +174,13 @@ public class KeyPair {
    }
    
    protected ToStringHelper string() {
-      return Objects.toStringHelper(this)
-            .add("publicKey", publicKey).add("privateKey", privateKey).add("userId", userId).add("name", name).add("fingerprint", fingerprint);
+      return Objects.toStringHelper("")
+            .omitNullValues()
+            .add("public_key", publicKey)
+            .add("private_key", privateKey)
+            .add("user_id", userId)
+            .add("name", name)
+            .add("fingerprint", fingerprint);
    }
    
    @Override

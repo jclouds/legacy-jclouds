@@ -108,7 +108,7 @@ public class VolumeApiLiveTest extends BaseNovaApiLiveTest {
    @Test(dependsOnMethods = "testCreateVolume")
    public void testListVolumes() {
       if (volumeOption.isPresent()) {
-         Set<Volume> volumes = volumeOption.get().listVolumes();
+         Set<? extends Volume> volumes = volumeOption.get().listVolumes();
          assertNotNull(volumes);
          boolean foundIt = false;
          for (Volume vol : volumes) {
@@ -125,7 +125,7 @@ public class VolumeApiLiveTest extends BaseNovaApiLiveTest {
    @Test(dependsOnMethods = "testCreateVolume")
    public void testListVolumesInDetail() {
       if (volumeOption.isPresent()) {
-         Set<Volume> volumes = volumeOption.get().listVolumesInDetail();
+         Set<? extends Volume> volumes = volumeOption.get().listVolumesInDetail();
          assertNotNull(volumes);
          boolean foundIt = false;
          for (Volume vol : volumes) {
@@ -174,7 +174,7 @@ public class VolumeApiLiveTest extends BaseNovaApiLiveTest {
    @Test(dependsOnMethods = "testCreateSnapshot")
    public void testListSnapshots() {
       if (volumeOption.isPresent()) {
-         Set<VolumeSnapshot> snapshots = volumeOption.get().listSnapshots();
+         Set<? extends VolumeSnapshot> snapshots = volumeOption.get().listSnapshots();
          assertNotNull(snapshots);
          boolean foundIt = false;
          for (VolumeSnapshot snap : snapshots) {
@@ -193,7 +193,7 @@ public class VolumeApiLiveTest extends BaseNovaApiLiveTest {
    @Test(dependsOnMethods = "testCreateSnapshot")
    public void testListSnapshotsInDetail() {
       if (volumeOption.isPresent()) {
-         Set<VolumeSnapshot> snapshots = volumeOption.get().listSnapshotsInDetail();
+         Set<? extends VolumeSnapshot> snapshots = volumeOption.get().listSnapshotsInDetail();
          assertNotNull(snapshots);
          boolean foundIt = false;
          for (VolumeSnapshot snap : snapshots) {
@@ -225,7 +225,7 @@ public class VolumeApiLiveTest extends BaseNovaApiLiveTest {
          try {
             final String serverId = server_id = createServerInZone(zone).getId();
 
-            Set<VolumeAttachment> attachments = volumeOption.get().listAttachmentsOnServer(serverId);
+            Set<? extends VolumeAttachment> attachments = volumeOption.get().listAttachmentsOnServer(serverId);
             assertNotNull(attachments);
             final int before = attachments.size();
 

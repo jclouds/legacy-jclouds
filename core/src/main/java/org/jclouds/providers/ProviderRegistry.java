@@ -32,7 +32,7 @@ public class ProviderRegistry {
     providers.add(provider);
   }
 
-  public static void uRegisterProvider(ProviderMetadata provider) {
+  public static void unregisterProvider(ProviderMetadata provider) {
     providers.remove(provider);
   }
 

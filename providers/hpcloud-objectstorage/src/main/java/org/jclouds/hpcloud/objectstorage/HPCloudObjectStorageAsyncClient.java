@@ -23,16 +23,11 @@ import java.util.Set;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.HEAD;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.blobstore.functions.ReturnNullOnContainerNotFound;
 import org.jclouds.hpcloud.objectstorage.extensions.HPCloudCDNAsyncClient;
-import org.jclouds.hpcloud.objectstorage.functions.ParseContainerMetadataFromHeaders;
-import org.jclouds.hpcloud.objectstorage.options.CreateContainerOptions;
 import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.openstack.swift.CommonSwiftAsyncClient;
 import org.jclouds.openstack.swift.Storage;
@@ -44,10 +39,8 @@ import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SkipEncoding;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -68,24 +61,6 @@ import com.google.common.util.concurrent.ListenableFuture;
 @RequestFilters(AuthenticateRequest.class)
 @Endpoint(Storage.class)
 public interface HPCloudObjectStorageAsyncClient extends CommonSwiftAsyncClient {
-
-   /**
-    * @see HPCloudObjectStorageClient#getCDNMetadata(String)
-    */
-   @Beta
-   @HEAD
-   @ResponseParser(ParseContainerMetadataFromHeaders.class)
-   @ExceptionParser(ReturnNullOnContainerNotFound.class)
-   @Path("/{container}")
-   ListenableFuture<ContainerMetadata> getContainerMetadata(@PathParam("container") String container);
-
-   /**
-    * @see HPCloudObjectStorageClient#createContainer
-    */
-   @PUT
-   @Path("/{container}")
-   ListenableFuture<Boolean> createContainer(@PathParam("container") String container,
-            CreateContainerOptions... options);
 
    /**
     * @see org.jclouds.openstack.swift.CommonSwiftClient#listContainers

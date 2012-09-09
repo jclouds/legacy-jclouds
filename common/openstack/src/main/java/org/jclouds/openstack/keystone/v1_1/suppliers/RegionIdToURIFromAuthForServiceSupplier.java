@@ -22,12 +22,11 @@ import java.net.URI;
 import java.util.Collection;
 import java.util.Map;
 
-import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.suppliers.RegionIdToURISupplier;
-import org.jclouds.logging.Logger;
 import org.jclouds.openstack.keystone.v1_1.domain.Auth;
 import org.jclouds.openstack.keystone.v1_1.domain.Endpoint;
 import org.jclouds.openstack.keystone.v1_1.functions.EndpointToRegion;
@@ -39,29 +38,24 @@ import com.google.inject.assistedinject.Assisted;
 
 @Singleton
 public class RegionIdToURIFromAuthForServiceSupplier implements RegionIdToURISupplier {
-   @Resource
-   protected Logger logger = Logger.NULL;
 
    private final Supplier<Auth> auth;
    private final EndpointToSupplierURI endpointToSupplierURI;
    private final EndpointToRegion endpointToRegion;
    private final String apiType;
-   private final String apiVersion;
 
    @Inject
    public RegionIdToURIFromAuthForServiceSupplier(Supplier<Auth> auth, EndpointToSupplierURI endpointToSupplierURI,
             EndpointToRegion endpointToRegion, @Assisted("apiType") String apiType,
-            @Assisted("apiVersion") String apiVersion) {
+            @Nullable @Assisted("apiVersion") String apiVersion) {
       this.auth = auth;
       this.endpointToSupplierURI = endpointToSupplierURI;
       this.endpointToRegion = endpointToRegion;
       this.apiType = apiType;
-      this.apiVersion = apiVersion;
    }
 
    @Override
    public Map<String, Supplier<URI>> get() {
-      logger.trace("current version of keystone doesn't allow us to validate the apiVersion %s", apiVersion);
       Auth authResponse = auth.get();
       Collection<Endpoint> endpointsForService = authResponse.getServiceCatalog().get(apiType);
       Map<String, Endpoint> regionIdToEndpoint = Maps.uniqueIndex(endpointsForService, endpointToRegion);

@@ -19,7 +19,8 @@
 package org.jclouds.openstack.nova.v2_0.features;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
 
 import java.util.Set;
 
@@ -29,35 +30,57 @@ import org.jclouds.openstack.v2_0.features.ExtensionApi;
 import org.testng.annotations.Test;
 
 /**
- * Tests behavior of {@code ExtensionApi}
+ * Tests behavior of {@link ExtensionApi}
  * 
  * @author Adrian Cole
  */
 @Test(groups = "live", testName = "ExtensionApiLiveTest")
 public class ExtensionApiLiveTest extends BaseNovaApiLiveTest {
 
-   /**
-    * Tests the listing of Extensions (getExtension() is tested too!)
-    * 
-    * @throws Exception
-    */
-   @Test
-   public void testListExtensions() throws Exception {
-      for (String zoneId : novaContext.getApi().getConfiguredZones()) {
-         ExtensionApi api = novaContext.getApi().getExtensionApiForZone(zoneId);
-         Set<? extends Extension> response = api.listExtensions();
-         assert null != response;
-         assertTrue(response.size() >= 0);
-         for (Extension extension : response) {
-            Extension newDetails = api.getExtensionByAlias(extension.getId());
-            assertEquals(newDetails.getId(), extension.getId());
-            assertEquals(newDetails.getName(), extension.getName());
-            assertEquals(newDetails.getDescription(), extension.getDescription());
-            assertEquals(newDetails.getNamespace(), extension.getNamespace());
-            assertEquals(newDetails.getUpdated(), extension.getUpdated());
-            assertEquals(newDetails.getLinks(), extension.getLinks());
-         }
-      }
-   }
+    /**
+     * Tests the listing of Extensions.
+     * 
+     * @throws Exception
+     */
+    @Test(description = "GET /v${apiVersion}/{tenantId}/extensions")
+    public void testListExtensions() throws Exception {
+       for (String zoneId : zones) {
+          ExtensionApi api = novaContext.getApi().getExtensionApiForZone(zoneId);
+          Set<? extends Extension> response = api.listExtensions();
+          assertNotNull(response);
+          assertFalse(response.isEmpty());
+           for (Extension extension : response) {
+              assertNotNull(extension.getId());
+              assertNotNull(extension.getName());
+              assertNotNull(extension.getDescription());
+              assertNotNull(extension.getNamespace());
+              assertNotNull(extension.getUpdated());
+              assertNotNull(extension.getLinks());
+           }
+       }
+    }
+
+    /**
+     * Tests retrieval of Extensions using their alias.
+     * 
+     * @throws Exception
+     */
+    @Test(description = "GET /v${apiVersion}/{tenantId}/extensions/{alias}", dependsOnMethods = { "testListExtensions" })
+    public void testGetExtensionByAlias() throws Exception {
+       for (String zoneId : zones) {
+           ExtensionApi api = novaContext.getApi().getExtensionApiForZone(zoneId);
+           Set<? extends Extension> response = api.listExtensions();
+           for (Extension extension : response) {
+              Extension details = api.getExtensionByAlias(extension.getId());
+              assertNotNull(details);
+              assertEquals(details.getId(), extension.getId());
+              assertEquals(details.getName(), extension.getName());
+              assertEquals(details.getDescription(), extension.getDescription());
+              assertEquals(details.getNamespace(), extension.getNamespace());
+              assertEquals(details.getUpdated(), extension.getUpdated());
+              assertEquals(details.getLinks(), extension.getLinks());
+           }
+        }
+    }
 
 }
