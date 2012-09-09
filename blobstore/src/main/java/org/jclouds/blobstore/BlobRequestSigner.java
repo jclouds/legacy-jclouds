@@ -48,6 +48,16 @@ public interface BlobRequestSigner {
    HttpRequest signGetBlob(String container, String name);
 
    /**
+    * gets a signed request, including headers as necessary, to allow access to a blob
+    * from an external client for a limited period of time
+    *
+    * @param timeInSeconds
+    *           validity time in seconds for the generated request
+    * @see #signGetBlob(String, String)
+    */
+   HttpRequest signGetBlob(String container, String name, long timeInSeconds);
+
+   /**
     * @param options
     * @see #signGetBlob(String, String)
     */
@@ -84,4 +94,15 @@ public interface BlobRequestSigner {
     * @see BlobBuilder#forSigning
     */
    HttpRequest signPutBlob(String container, Blob blob);
+
+   /**
+    * gets a signed request, including headers as necessary, to upload a blob from an
+    * external client for a limited period of time
+    *
+    * @param timeInSeconds
+    *           validity time in seconds for the generated request
+    * @see BlobBuilder#forSigning
+    * @see BlobRequestSigner#signPutBlob
+    */
+   HttpRequest signPutBlob(String container, Blob blob, long timeInSeconds);
 }

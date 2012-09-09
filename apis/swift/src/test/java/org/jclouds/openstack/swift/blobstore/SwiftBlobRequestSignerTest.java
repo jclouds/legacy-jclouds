@@ -19,6 +19,7 @@
 package org.jclouds.openstack.swift.blobstore;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 
 import java.io.IOException;
 import java.util.Date;
