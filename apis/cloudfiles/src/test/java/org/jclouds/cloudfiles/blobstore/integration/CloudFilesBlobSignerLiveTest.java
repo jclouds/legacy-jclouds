@@ -40,6 +40,7 @@ public class CloudFilesBlobSignerLiveTest extends SwiftBlobSignerLiveTest {
       provider = "cloudfiles";
    }
 
+   @Test
    public void testSignGetUrlWithTime() throws InterruptedException, IOException {
       String name = "hello";
       String text = "fooooooooooooooooooooooo";
