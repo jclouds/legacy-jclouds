@@ -18,6 +18,7 @@
  */
 package org.jclouds.blobstore;
 
+import com.google.common.annotations.Beta;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobBuilder;
 import org.jclouds.blobstore.internal.RequestSigningUnsupported;
@@ -55,6 +56,7 @@ public interface BlobRequestSigner {
     *           validity time in seconds for the generated request
     * @see #signGetBlob(String, String)
     */
+   @Beta
    HttpRequest signGetBlob(String container, String name, long timeInSeconds);
 
    /**
@@ -104,5 +106,6 @@ public interface BlobRequestSigner {
     * @see BlobBuilder#forSigning
     * @see BlobRequestSigner#signPutBlob
     */
+   @Beta
    HttpRequest signPutBlob(String container, Blob blob, long timeInSeconds);
 }
