@@ -74,6 +74,7 @@ public abstract class CommonSwiftClientTest extends BaseAsyncClientTest<SwiftAsy
       }
    }
 
+   @Override
    protected ApiMetadata createApiMetadata() {
       return new SwiftApiMetadata().toBuilder().defaultModules(
                ImmutableSet.<Class<? extends Module>> of(StorageEndpointModule.class, SwiftRestClientModule.class,

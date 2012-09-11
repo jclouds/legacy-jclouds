@@ -16,25 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.cloudfiles.reference;
+package org.jclouds.cloudfiles.functions;
 
-import org.jclouds.openstack.swift.reference.SwiftHeaders;
+import com.google.common.base.Function;
+import org.jclouds.http.HttpResponse;
 
+import static com.google.common.collect.Iterables.getOnlyElement;
+import static org.jclouds.cloudfiles.reference.CloudFilesHeaders.ACCOUNT_TEMPORARY_URL_KEY;
 
 /**
- * Additional headers specified by Rackspace Cloud Files REST API.
- * 
- * @see <a href="http://www.rackspacecloud.com/cf-devguide-20090311.pdf" />
- * @author Adrian Cole
- * 
+ * @author Andrei Savu
  */
-public interface CloudFilesHeaders extends SwiftHeaders {
+public class ParseTemporaryUrlKeyFromHeaders implements Function<HttpResponse, String> {
 
-   public static final String ACCOUNT_TEMPORARY_URL_KEY = "X-Account-Meta-Temp-Url-Key";
-
-   public static final String CDN_ENABLED = "X-CDN-Enabled";
-   public static final String CDN_REFERRER_ACL = "X-Referrer-ACL ";
-   public static final String CDN_TTL = "X-TTL";
-   public static final String CDN_URI = "X-CDN-URI";
-   public static final String CDN_USER_AGENT_ACL = "X-User-Agent-ACL";
+   @Override
+   public String apply(HttpResponse httpResponse) {
+      return getOnlyElement(httpResponse.getHeaders().get(ACCOUNT_TEMPORARY_URL_KEY));
+   }
 }

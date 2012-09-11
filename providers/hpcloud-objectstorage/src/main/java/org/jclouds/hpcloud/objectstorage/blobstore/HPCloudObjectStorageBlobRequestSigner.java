@@ -19,7 +19,6 @@ import org.jclouds.openstack.swift.domain.SwiftObject;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 
 /**
- * 
  * @author Adrian Cole
  */
 @Singleton
@@ -42,7 +41,6 @@ public class HPCloudObjectStorageBlobRequestSigner implements BlobRequestSigner 
                GetOptions[].class);
       this.deleteMethod = HPCloudObjectStorageAsyncClient.class.getMethod("removeObject", String.class, String.class);
       this.createMethod = HPCloudObjectStorageAsyncClient.class.getMethod("putObject", String.class, SwiftObject.class);
-
    }
 
    @Override
@@ -51,8 +49,18 @@ public class HPCloudObjectStorageBlobRequestSigner implements BlobRequestSigner 
    }
 
    @Override
+   public HttpRequest signGetBlob(String container, String name, long timeInSeconds) {
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
    public HttpRequest signPutBlob(String container, Blob blob) {
       return cleanRequest(processor.createRequest(createMethod, container, blobToObject.apply(blob)));
+   }
+
+   @Override
+   public HttpRequest signPutBlob(String container, Blob blob, long timeInSeconds) {
+      throw new UnsupportedOperationException();
    }
 
    @Override

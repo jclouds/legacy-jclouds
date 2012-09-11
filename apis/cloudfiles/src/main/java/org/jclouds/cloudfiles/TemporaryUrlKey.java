@@ -16,25 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.cloudfiles.reference;
+package org.jclouds.cloudfiles;
 
-import org.jclouds.openstack.swift.reference.SwiftHeaders;
-
+import javax.inject.Qualifier;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Additional headers specified by Rackspace Cloud Files REST API.
- * 
- * @see <a href="http://www.rackspacecloud.com/cf-devguide-20090311.pdf" />
- * @author Adrian Cole
- * 
+ * Represents the key used for signing URLs that have temporary access to objects
+ *
+ * @see <a href="http://docs.openstack.org/developer/swift/misc.html#module-swift.common.middleware.tempurl" />
+ * @author Andrei Savu
  */
-public interface CloudFilesHeaders extends SwiftHeaders {
-
-   public static final String ACCOUNT_TEMPORARY_URL_KEY = "X-Account-Meta-Temp-Url-Key";
-
-   public static final String CDN_ENABLED = "X-CDN-Enabled";
-   public static final String CDN_REFERRER_ACL = "X-Referrer-ACL ";
-   public static final String CDN_TTL = "X-TTL";
-   public static final String CDN_URI = "X-CDN-URI";
-   public static final String CDN_USER_AGENT_ACL = "X-User-Agent-ACL";
+@Retention(value = RetentionPolicy.RUNTIME)
+@Target(value = { ElementType.TYPE, ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
+@Qualifier
+public @interface TemporaryUrlKey {
 }

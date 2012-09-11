@@ -33,7 +33,7 @@ import com.google.inject.Scopes;
 /**
  * Configures the {@link CloudFilesBlobStoreContext}; requires {@link SwiftAsyncBlobStore}
  * bound.
- * 
+ *
  * @author Adrian Cole
  */
 public class SwiftBlobStoreContextModule extends AbstractModule {
@@ -44,8 +44,10 @@ public class SwiftBlobStoreContextModule extends AbstractModule {
       bind(ConsistencyModel.class).toInstance(ConsistencyModel.STRICT);
       bind(AsyncBlobStore.class).to(SwiftAsyncBlobStore.class).in(Scopes.SINGLETON);
       bind(BlobStore.class).to(SwiftBlobStore.class).in(Scopes.SINGLETON);
-      bind(BlobRequestSigner.class).to(SwiftBlobRequestSigner.class);
+      configureRequestSigner();
    }
 
-
+   protected void configureRequestSigner() {
+      bind(BlobRequestSigner.class).to(SwiftBlobRequestSigner.class);
+   }
 }
