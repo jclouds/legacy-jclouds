@@ -36,6 +36,7 @@ import org.jclouds.blobstore.functions.ReturnNullOnContainerNotFound;
 import org.jclouds.cloudfiles.domain.ContainerCDNMetadata;
 import org.jclouds.cloudfiles.functions.ParseCdnUriFromHeaders;
 import org.jclouds.cloudfiles.functions.ParseContainerCDNMetadataFromHeaders;
+import org.jclouds.cloudfiles.functions.ParseTemporaryUrlKeyFromHeaders;
 import org.jclouds.cloudfiles.options.ListCdnContainerOptions;
 import org.jclouds.cloudfiles.reference.CloudFilesHeaders;
 import org.jclouds.openstack.filters.AuthenticateRequest;
@@ -57,7 +58,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * All commands return a ListenableFuture of the result from Cloud Files. Any exceptions incurred
  * during processing will be backend in an {@link ExecutionException} as documented in
  * {@link ListenableFuture#get()}.
- * 
+ *
  * @see CloudFilesClient
  * @see <a href="http://www.rackspacecloud.com/cf-devguide-20090812.pdf" />
  * @author Adrian Cole
@@ -130,4 +131,19 @@ public interface CloudFilesAsyncClient extends CommonSwiftAsyncClient {
    @Endpoint(CDNManagement.class)
    ListenableFuture<Boolean> disableCDN(@PathParam("container") String container);
 
+
+   /**
+    * @see CloudFilesClient#getTemporaryUrlKey
+    */
+   @HEAD
+   @Path("/")
+   @ResponseParser(ParseTemporaryUrlKeyFromHeaders.class)
+   ListenableFuture<String> getTemporaryUrlKey();
+
+   /**
+    * @see CloudFilesClient#setTemporaryUrlKey
+    */
+   @POST
+   @Path("/")
+   ListenableFuture<Void> setTemporaryUrlKey(@HeaderParam(CloudFilesHeaders.ACCOUNT_TEMPORARY_URL_KEY) String key);
 }

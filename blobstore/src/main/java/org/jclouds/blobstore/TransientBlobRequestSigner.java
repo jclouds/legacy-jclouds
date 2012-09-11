@@ -63,12 +63,22 @@ public class TransientBlobRequestSigner implements BlobRequestSigner {
    }
 
    @Override
+   public HttpRequest signGetBlob(String container, String name, long timeInSeconds) {
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
    public HttpRequest signPutBlob(String container, Blob blob) {
       HttpRequest request = HttpRequest.builder().method("PUT").endpoint(
                URI.create(String.format("%s/%s/%s", endpoint.get(), container, blob.getMetadata().getName()))).payload(
                blob.getPayload()).headers(
                contentMetadataCodec.toHeaders(blob.getMetadata().getContentMetadata())).build();
       return basicAuth.filter(request);
+   }
+
+   @Override
+   public HttpRequest signPutBlob(String container, Blob blob, long timeInSeconds) {
+      throw new UnsupportedOperationException();
    }
 
    @Override

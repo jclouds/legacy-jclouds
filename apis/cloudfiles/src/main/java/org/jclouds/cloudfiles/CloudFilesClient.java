@@ -34,9 +34,9 @@ import org.jclouds.openstack.swift.CommonSwiftClient;
  * <p/>
  * All commands return a Future of the result from Cloud Files. Any exceptions incurred during
  * processing will be backend in an {@link ExecutionException} as documented in {@link Future#get()}.
- * 
- * @see <a href="http://www.rackspacecloud.com/cf-devguide-20090812.pdf" />
+ *
  * @author Adrian Cole
+ * @see <a href="http://www.rackspacecloud.com/cf-devguide-20090812.pdf" />
  */
 @Timeout(duration = 120, timeUnit = TimeUnit.SECONDS)
 public interface CloudFilesClient extends CommonSwiftClient {
@@ -52,4 +52,24 @@ public interface CloudFilesClient extends CommonSwiftClient {
 
    boolean disableCDN(String container);
 
+   /**
+    * Retrieve the key used to generate Temporary object access URLs
+    *
+    * @see <a href="http://docs.rackspace.com/files/api/v1/cf-devguide/content/Set_Account_Metadata-d1a4460.html" />
+    * @return shared secret key
+    */
+   String getTemporaryUrlKey();
+
+   /**
+    * To create a Temporary URL you must first set a key as account metadata.
+    *
+    * Once the key is set, you should not change it while you still want others to be
+    * able to access your temporary URL. If you change it, the TempURL becomes invalid
+    * (within 60 seconds, which is the cache time for a key) and others will not be allowed
+    * to access it.
+    *
+    * @see <a href="http://docs.rackspace.com/files/api/v1/cf-devguide/content/Set_Account_Metadata-d1a4460.html" />
+    * @param temporaryUrlKey
+    */
+   void setTemporaryUrlKey(String temporaryUrlKey);
 }

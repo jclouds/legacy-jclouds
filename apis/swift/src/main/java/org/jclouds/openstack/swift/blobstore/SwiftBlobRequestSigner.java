@@ -37,12 +37,14 @@ import org.jclouds.openstack.swift.domain.SwiftObject;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 
 /**
- * 
+ *
  * @author Adrian Cole
  */
 @Singleton
 public class SwiftBlobRequestSigner implements BlobRequestSigner {
+
    private final RestAnnotationProcessor<CommonSwiftAsyncClient> processor;
+
    private final BlobToObject blobToObject;
    private final BlobToHttpGetOptions blob2HttpGetOptions;
 
@@ -54,13 +56,14 @@ public class SwiftBlobRequestSigner implements BlobRequestSigner {
    public SwiftBlobRequestSigner(RestAnnotationProcessor<CommonSwiftAsyncClient> processor, BlobToObject blobToObject,
             BlobToHttpGetOptions blob2HttpGetOptions) throws SecurityException, NoSuchMethodException {
       this.processor = checkNotNull(processor, "processor");
+
       this.blobToObject = checkNotNull(blobToObject, "blobToObject");
       this.blob2HttpGetOptions = checkNotNull(blob2HttpGetOptions, "blob2HttpGetOptions");
+
       this.getMethod = CommonSwiftAsyncClient.class.getMethod("getObject", String.class, String.class,
                GetOptions[].class);
       this.deleteMethod = CommonSwiftAsyncClient.class.getMethod("removeObject", String.class, String.class);
       this.createMethod = CommonSwiftAsyncClient.class.getMethod("putObject", String.class, SwiftObject.class);
-
    }
 
    @Override
@@ -69,8 +72,18 @@ public class SwiftBlobRequestSigner implements BlobRequestSigner {
    }
 
    @Override
+   public HttpRequest signGetBlob(String container, String name, long timeInSeconds) {
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
    public HttpRequest signPutBlob(String container, Blob blob) {
       return cleanRequest(processor.createRequest(createMethod, container, blobToObject.apply(blob)));
+   }
+
+   @Override
+   public HttpRequest signPutBlob(String container, Blob blob, long timeInSeconds) {
+      throw new UnsupportedOperationException();
    }
 
    @Override
