@@ -41,9 +41,6 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.inject.Provides;
-import org.jclouds.rest.HttpClient;
-import org.jclouds.rest.RequestSigner;
-import org.joda.time.Instant;
 
 /**
  * @author Adrian Cole
@@ -70,7 +67,7 @@ public class CloudFilesBlobStoreContextModule extends SwiftBlobStoreContextModul
    @Provides
    @TimeStamp
    protected Long unixEpochTimestampProvider() {
-      return Instant.now().getMillis() / 1000; /* in seconds */
+      return System.currentTimeMillis() / 1000; /* convert to seconds */
    }
 
    @Provides

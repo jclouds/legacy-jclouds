@@ -54,11 +54,6 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.jclouds.driver</groupId>
-      <artifactId>jclouds-joda</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.jclouds</groupId>
       <artifactId>jclouds-core</artifactId>
       <version>${project.version}</version>
