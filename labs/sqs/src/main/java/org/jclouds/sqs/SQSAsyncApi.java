@@ -43,6 +43,7 @@ import org.jclouds.sqs.xml.RegexListQueuesResponseHandler;
 import org.jclouds.sqs.xml.RegexMD5Handler;
 import org.jclouds.sqs.xml.RegexQueueHandler;
 
+import com.google.common.hash.HashCode;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -93,6 +94,6 @@ public interface SQSAsyncApi {
    @Path("/")
    @FormParams(keys = ACTION, values = "SendMessage")
    @ResponseParser(RegexMD5Handler.class)
-   ListenableFuture<byte[]> sendMessage(@EndpointParam URI queue, @FormParam("MessageBody") String message);
+   ListenableFuture<HashCode> sendMessage(@EndpointParam URI queue, @FormParam("MessageBody") String message);
 
 }

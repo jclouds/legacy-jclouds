@@ -28,6 +28,8 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ReturnStringIf2xx;
 
 import com.google.common.base.Function;
+import com.google.common.hash.HashCode;
+import com.google.common.hash.HashCodes;
 import com.google.inject.Singleton;
 
 /**
@@ -37,7 +39,7 @@ import com.google.inject.Singleton;
  * @author Adrian Cole
  */
 @Singleton
-public class RegexMD5Handler implements Function<HttpResponse, byte[]> {
+public class RegexMD5Handler implements Function<HttpResponse, HashCode> {
    Pattern pattern = Pattern.compile("<MD5OfMessageBody>([\\S&&[^<]]+)</MD5OfMessageBody>");
    private final ReturnStringIf2xx returnStringIf200;
 
@@ -47,13 +49,13 @@ public class RegexMD5Handler implements Function<HttpResponse, byte[]> {
    }
 
    @Override
-   public byte[] apply(HttpResponse response) {
-      byte[] value = null;
+   public HashCode apply(HttpResponse response) {
+      HashCode value = null;
       String content = returnStringIf200.apply(response);
       if (content != null) {
          Matcher matcher = pattern.matcher(content);
          if (matcher.find()) {
-            value = CryptoStreams.hex(matcher.group(1));
+            value = HashCodes.fromBytes(CryptoStreams.hex(matcher.group(1)));
          }
       }
       return value;

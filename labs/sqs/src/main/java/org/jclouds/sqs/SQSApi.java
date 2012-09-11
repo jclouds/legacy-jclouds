@@ -27,6 +27,8 @@ import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.sqs.options.CreateQueueOptions;
 import org.jclouds.sqs.options.ListQueuesOptions;
 
+import com.google.common.hash.HashCode;
+
 /**
  * Provides access to SQS via their REST API.
  * <p/>
@@ -123,5 +125,5 @@ public interface SQSApi {
     *           characters, see the preceding important note
     * @return md5 of the content sent
     */
-   byte[] sendMessage(URI queue, String message);
+   HashCode sendMessage(URI queue, String message);
 }

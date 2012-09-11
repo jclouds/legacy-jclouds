@@ -29,12 +29,14 @@ import java.util.Set;
 import java.util.SortedSet;
 
 import org.jclouds.aws.AWSResponseException;
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.sqs.internal.BaseSQSApiLiveTest;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Charsets;
 import com.google.common.collect.Sets;
+import com.google.common.hash.HashCode;
+import com.google.common.hash.Hashing;
 
 /**
  * Tests behavior of {@code SQSApi}
@@ -100,7 +102,7 @@ public class SQSApiLiveTest extends BaseSQSApiLiveTest {
    @Test(dependsOnMethods = "testCreateQueue")
    protected void testSendMessage() throws InterruptedException, IOException {
       String message = "hardyharhar";
-      byte[] md5 = CryptoStreams.md5(message.getBytes());
+      HashCode md5 = Hashing.md5().hashString(message, Charsets.UTF_8);
       for (URI queue : queues) {
          assertEquals(context.getApi().sendMessage(queue, message), md5);
       }
