@@ -20,6 +20,7 @@ package org.jclouds.virtualbox.config;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.concurrent.Future;
 
 import javax.inject.Singleton;
@@ -35,8 +36,10 @@ import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.LoginCredentials;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Strings;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableList;
 import com.google.common.io.Files;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -79,7 +82,7 @@ import com.google.inject.Provides;
 public class HardcodeLocalhostAsNodeMetadataSupplier extends AbstractModule {
 
    public static final String HOST_ID = "host";
-   public static final String HOSTNAME = System.getenv("HOSTNAME");
+   public static final String HOSTNAME = Strings.nullToEmpty(System.getenv("HOSTNAME"));
 
    /**
     * Lazy so that we don't hang up the injector reading a file
@@ -91,9 +94,7 @@ public class HardcodeLocalhostAsNodeMetadataSupplier extends AbstractModule {
 
          @Override
          public NodeMetadata get() {
-
             String privateKey = readRsaIdentity();
-
             return new NodeMetadataBuilder()
                                     .id(HOST_ID)
                                     .name("host installing virtualbox")
@@ -110,9 +111,9 @@ public class HardcodeLocalhostAsNodeMetadataSupplier extends AbstractModule {
                                                                    .description(HOSTNAME)
                                                                    .build())
                                     .credentials(LoginCredentials.builder()
-                                                                 .user(System.getProperty("user.name"))
-                                                                 .privateKey(privateKey)
-                                                                 .build())
+                                    		.user(System.getProperty("user.name"))
+                                    		.privateKey(privateKey)					 
+                                    		.build())
                                     .build();
          }
 
