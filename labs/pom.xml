@@ -61,5 +61,6 @@
        <module>fgcp</module>
        <module>fgcp-au</module>
        <module>fgcp-de</module>
+       <module>sqs</module>
     </modules>
 </project>
