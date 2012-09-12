@@ -21,6 +21,7 @@ package org.jclouds.virtualbox.functions;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
@@ -60,6 +61,8 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
    private final Supplier<VirtualBoxManager> manager;
    private final String workingDir;
    private final MachineUtils machineUtils;
+   
+   private final ReentrantLock lock = new ReentrantLock();
 
    @Inject
    public CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(Supplier<VirtualBoxManager> manager,
@@ -104,15 +107,13 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
       if (isLinkedClone)
          options.add(CloneOptions.Link);
 
-      // TODO snapshot name
-      ISnapshot currentSnapshot = new TakeSnapshotIfNotAlreadyAttached(manager, "snapshotName", "snapshotDesc", logger)
-               .apply(master);
-
-      // clone
-      IProgress progress = currentSnapshot.getMachine().cloneTo(clonedMachine, CloneMode.MachineState, options);
-
+      ISnapshot currentSnapshot = new TakeSnapshotIfNotAlreadyAttached(manager,
+            "snapshotName", "snapshotDesc", logger).apply(master);
+      IProgress progress = currentSnapshot.getMachine().cloneTo(clonedMachine,
+            CloneMode.MachineState, options);
       progress.waitForCompletion(-1);
-      logger.debug(String.format("Machine %s is cloned correctly", clonedMachine.getName()));
+      logger.debug(String.format("Machine %s is cloned correctly",
+            clonedMachine.getName()));
 
       // memory may not be the same as the master vm
       clonedMachine.setMemorySize(cloneSpec.getVmSpec().getMemory());

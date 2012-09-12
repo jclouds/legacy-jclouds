@@ -20,7 +20,6 @@ package org.jclouds.virtualbox;
 
 import static org.testng.Assert.assertEquals;
 
-import java.io.File;
 import java.net.URI;
 import java.net.URL;
 import java.util.Map;

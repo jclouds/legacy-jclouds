@@ -37,10 +37,10 @@
   <properties>
     <test.virtualbox.endpoint>http://localhost:18083/</test.virtualbox.endpoint>
     <test.virtualbox.api-version>4.1.4</test.virtualbox.api-version>
-    <test.virtualbox.build-version>4.1.8r75467</test.virtualbox.build-version>
+    <test.virtualbox.build-version>4.1.20r80170</test.virtualbox.build-version>
     <test.virtualbox.identity>administrator</test.virtualbox.identity>
-    <test.virtualbox.credential>12345</test.virtualbox.credential>
-    <test.virtualbox.template>imageId=test-ubuntu-11.10-i386,loginUser=toor:password,authenticateSudo=true</test.virtualbox.template>
+    <test.virtualbox.credential>CHANGE_ME</test.virtualbox.credential>
+    <test.virtualbox.template>osFamily=UBUNTU,osVersionMatches=12.04.1,os64Bit=true,osArchMatches=amd64,loginUser=toor:password,authenticateSudo=true</test.virtualbox.template>
     <jclouds.osgi.export>org.jclouds.virtualbox*;version="${project.version}"</jclouds.osgi.export>
     <jclouds.osgi.import>org.jclouds*;version="${project.version}",*</jclouds.osgi.import>
   </properties>
@@ -136,6 +136,7 @@
                 </goals>
                 <configuration>
                   <threadCount>1</threadCount>
+                  <parallel>false</parallel>
                   <systemPropertyVariables>
                     <test.virtualbox.endpoint>${test.virtualbox.endpoint}</test.virtualbox.endpoint>
                     <test.virtualbox.api-version>${test.virtualbox.api-version}</test.virtualbox.api-version>
