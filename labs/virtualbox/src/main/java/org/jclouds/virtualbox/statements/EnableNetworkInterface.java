@@ -63,9 +63,6 @@ public class EnableNetworkInterface implements Statement {
    }
 
    private List<Statement> getStatements(String iface) {
-      /*
-       * auto eth0
-       */
       List<Statement> statements = Lists.newArrayList();
       statements.add(exec(String.format("echo auto %s >> /etc/network/interfaces", iface))); //
       statements.add(exec(String.format("echo iface %s inet dhcp >> /etc/network/interfaces", iface))); //

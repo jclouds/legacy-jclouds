@@ -20,6 +20,8 @@ package org.jclouds.virtualbox.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_GUEST_CREDENTIAL;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_GUEST_IDENTITY;
 
 import java.util.List;
 
@@ -35,6 +37,7 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.logging.Logger;
 import org.jclouds.ssh.SshClient;
+import org.jclouds.virtualbox.VirtualBoxApiMetadata;
 import org.jclouds.virtualbox.domain.BridgedIf;
 import org.jclouds.virtualbox.statements.GetIPAddressFromMAC;
 import org.jclouds.virtualbox.statements.ScanNetworkWithPing;
@@ -82,10 +85,11 @@ public class IMachineToSshClient implements Function<IMachine, SshClient> {
 		String clientIpAddress = null;
 		String sshPort = "22";
 
-		// TODO: we need a way to align the default login credentials
-		// from the iso with the vmspec -> IMachineToNodeMetadata using YamlImage ?
+      String guestIdentity = VirtualBoxApiMetadata.defaultProperties().getProperty(VIRTUALBOX_GUEST_IDENTITY);
+      String guestCredential = VirtualBoxApiMetadata.defaultProperties().getProperty(VIRTUALBOX_GUEST_CREDENTIAL);
 		LoginCredentials loginCredentials = LoginCredentials.builder()
-				.user("toor").password("password").authenticateSudo(true)
+				.user(guestIdentity)
+				.password(guestCredential).authenticateSudo(true)
 				.build();
 
 		if (networkAdapter.getAttachmentType()
@@ -109,7 +113,7 @@ public class IMachineToSshClient implements Function<IMachine, SshClient> {
 			clientIpAddress = getIpAddressFromBridgedNIC(networkAdapter, network);
 		} else if (networkAdapter.getAttachmentType().equals(
                         NetworkAttachmentType.HostOnly)) {
-	             clientIpAddress = machineUtils.getIpAddressFromHostOnlyNIC(vm.getName());
+	             clientIpAddress = machineUtils.getIpAddressFromFirstNIC(vm.getName());
 		}
 		
 		checkNotNull(clientIpAddress, "clientIpAddress");

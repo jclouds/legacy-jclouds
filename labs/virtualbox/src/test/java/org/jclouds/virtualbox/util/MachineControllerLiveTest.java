@@ -77,21 +77,25 @@ public class MachineControllerLiveTest extends BaseVirtualBoxClientLiveTest {
                .cleanUpMode(CleanupMode.Full).controller(ideController).forceOverwrite(true).build();
 
       Injector injector = view.utils().injector();
-      Function<String, String> configProperties = injector.getInstance(ValueOfConfigurationKeyOrNull.class);
+      Function<String, String> configProperties = injector
+            .getInstance(ValueOfConfigurationKeyOrNull.class);
       IsoSpec isoSpec = IsoSpec
-               .builder()
-               .sourcePath(operatingSystemIso)
-               .installationScript(
-                        configProperties.apply(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE).replace("HOSTNAME",
-                                 instanceVmSpec.getVmName())).build();
+            .builder()
+            .sourcePath(operatingSystemIso)
+            .installationScript(
+                  configProperties.apply(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE)
+                        .replace("HOSTNAME", instanceVmSpec.getVmName()))
+            .build();
 
-      NetworkAdapter networkAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.NAT)
-               .tcpRedirectRule("127.0.0.1", 2222, "", 22).build();
-      NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(networkAdapter)
-               .build();
-
-      NetworkSpec networkSpec = NetworkSpec.builder().addNIC(networkInterfaceCard).build();
-      machineSpec = MasterSpec.builder().iso(isoSpec).vm(instanceVmSpec).network(networkSpec).build();
+      NetworkAdapter networkAdapter = NetworkAdapter.builder()
+            .networkAttachmentType(NetworkAttachmentType.HostOnly).build();
+      NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard
+            .builder().addNetworkAdapter(networkAdapter)
+            .addHostInterfaceName("vboxnet0").slot(0L).build();
+      NetworkSpec networkSpec = NetworkSpec.builder()
+            .addNIC(networkInterfaceCard).build();
+      machineSpec = MasterSpec.builder().iso(isoSpec).vm(instanceVmSpec)
+            .network(networkSpec).build();
    }
 
    @Test
@@ -106,8 +110,8 @@ public class MachineControllerLiveTest extends BaseVirtualBoxClientLiveTest {
    @Test(dependsOnMethods="testEnsureMachineisLaunchedAndSessionIsUnlocked")
    public void testEnsureMachineCanBePoweredOffMoreThanOneTimeAndSessionIsUnlocked() {
       ISession cloneMachineSession = machineController.ensureMachineHasPowerDown(instanceName);
-      cloneMachineSession = machineController.ensureMachineHasPowerDown(instanceName);
-      assertTrue(cloneMachineSession.getState() == SessionState.Unlocked);
+      SessionState state = cloneMachineSession.getState();
+      assertTrue(state.equals(SessionState.Unlocked));
    }
 
    private IMachine cloneFromMaster() {
