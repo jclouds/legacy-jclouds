@@ -42,7 +42,9 @@ import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.statements.InstallGuestAdditions;
 import org.jclouds.virtualbox.util.MachineController;
 import org.jclouds.virtualbox.util.MachineUtils;
+import org.virtualbox_4_1.DeviceType;
 import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.IMediumAttachment;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -88,19 +90,14 @@ public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
 
    @Override
    public IMachine apply(MasterSpec masterSpec) {
-
       VmSpec vmSpec = masterSpec.getVmSpec();
       IsoSpec isoSpec = masterSpec.getIsoSpec();
       String vmName = vmSpec.getVmName();
-
       IMachine vm = createAndRegisterMachineFromIsoIfNotAlreadyExists.apply(masterSpec);
-
       // Launch machine and wait for it to come online
       machineController.ensureMachineIsLaunched(vmName);
-
       String installationKeySequence = isoSpec.getInstallationKeySequence().replace("PRECONFIGURATION_URL",
                preconfigurationUrl);
-
       configureOsInstallationWithKeyboardSequence(vmName, installationKeySequence);
 
       // the OS installation is a long process: let's delay the check for ssh of 30 sec
@@ -111,11 +108,8 @@ public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
       }
 
       SshClient client = sshClientForIMachine.apply(vm);
-
       logger.debug(">> awaiting installation to finish node(%s)", vmName);
-
       checkState(sshResponds.apply(client), "timed out waiting for guest %s to be accessible via ssh", vmName);
-
       NodeMetadata nodeMetadata = imachineToNodeMetadata.apply(vm);
 
       logger.debug(">> awaiting post-installation actions on vm: %s", vmName);
@@ -129,9 +123,17 @@ public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
                new InstallGuestAdditions(vmSpec, version), RunScriptOptions.NONE);
       ExecResponse gaInstallationResponse = Futures.getUnchecked(execInstallGA);
       checkState(gaInstallationResponse.getExitStatus() == 0);
-
       machineController.ensureMachineIsShutdown(vmName);
-
+      Iterable<IMediumAttachment> mediumAttachments = Iterables.filter(vm.getMediumAttachmentsOfController("IDE Controller"),
+              new Predicate<IMediumAttachment>() {
+                 public boolean apply(IMediumAttachment in) {
+                    return in.getMedium() != null && in.getMedium().getDeviceType().equals(DeviceType.DVD);
+                 }
+              });
+      for (IMediumAttachment iMediumAttachment : mediumAttachments) {
+          machineUtils.writeLockMachineAndApply(vm.getName(), new DetachDistroMediumFromMachine(
+        		  iMediumAttachment.getController(), iMediumAttachment.getPort(), iMediumAttachment.getDevice()));
+   	}
       return vm;
    }
 

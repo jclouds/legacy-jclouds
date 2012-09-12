@@ -24,9 +24,6 @@ import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
 import static org.testng.Assert.assertTrue;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.jclouds.config.ValueOfConfigurationKeyOrNull;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
@@ -42,11 +39,12 @@ import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.functions.CloneAndRegisterMachineFromIMachineIfNotAlreadyExists;
 import org.jclouds.virtualbox.functions.CreateAndInstallVm;
 import org.jclouds.virtualbox.functions.IMachineToSshClient;
+import org.jclouds.virtualbox.functions.IpAddressesLoadingCache;
+import org.jclouds.virtualbox.util.MachineUtils;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.ISession;
 import org.virtualbox_4_1.NetworkAttachmentType;
 import org.virtualbox_4_1.StorageBus;
 
@@ -67,6 +65,7 @@ public class GuestAdditionsInstallerLiveTest extends BaseVirtualBoxClientLiveTes
    private Predicate<SshClient> sshResponds;
 
    private MasterSpec machineSpec;
+   private IpAddressesLoadingCache ipAddressesLoadingCache;
 
    @Override
    @BeforeClass(groups = "live")
@@ -118,21 +117,10 @@ public class GuestAdditionsInstallerLiveTest extends BaseVirtualBoxClientLiveTes
          sshResponds = injector.getInstance(SshResponds.class);
          checkState(sshResponds.apply(client), "timed out waiting for guest %s to be accessible via ssh",
                   machine.getName());
+         ipAddressesLoadingCache = injector.getInstance(IpAddressesLoadingCache.class);
+         
+         assertTrue(MachineUtils.isIpv4(ipAddressesLoadingCache.apply(machine.getName())));
 
-         assertTrue(machineUtils.sharedLockMachineAndApplyToSession(machine.getName(),
-                  new Function<ISession, Boolean>() {
-                     @Override
-                     public Boolean apply(ISession session) {
-                        String s = session.getMachine().getGuestPropertyValue("/VirtualBox/GuestInfo/Net/0/V4/IP");
-                        return isIpv4(s);
-                     }
-
-                     private boolean isIpv4(String s) {
-                        Pattern pattern = Pattern.compile(machineUtils.IP_V4_ADDRESS_PATTERN);
-                        Matcher matcher = pattern.matcher(s);
-                        return matcher.matches();
-                     }
-                  }));
       } finally {
          for (String vmNameOrId : ImmutableSet.of(machine.getName())) {
             machineController.ensureMachineHasPowerDown(vmNameOrId);

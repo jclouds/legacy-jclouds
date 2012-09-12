@@ -21,6 +21,7 @@ package org.jclouds.virtualbox.util;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,6 +38,7 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.util.Throwables2;
+import org.jclouds.virtualbox.functions.IpAddressesLoadingCache;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.ISession;
 import org.virtualbox_4_1.LockType;
@@ -69,12 +71,14 @@ public class MachineUtils {
 
    private final Supplier<VirtualBoxManager> manager;
    private final Factory scriptRunner;
+   private final IpAddressesLoadingCache ipAddressesLoadingCache;
 
    @Inject
-   public MachineUtils(Supplier<VirtualBoxManager> manager, RunScriptOnNode.Factory scriptRunner) {
-      super();
+   public MachineUtils(Supplier<VirtualBoxManager> manager, RunScriptOnNode.Factory scriptRunner,
+         IpAddressesLoadingCache ipAddressesLoadingCache) {
       this.manager = manager;
       this.scriptRunner = scriptRunner;
+      this.ipAddressesLoadingCache = ipAddressesLoadingCache;
    }
 
    public ListenableFuture<ExecResponse> runScriptOnNode(NodeMetadata metadata, Statement statement,
@@ -207,9 +211,18 @@ public class MachineUtils {
    private ISession lockSession(String machineId, LockType type, int retries) {
       int count = 0;
       ISession session;
+      IMachine immutableMachine = manager.get().getVBox().findMachine(machineId);
+
+      try {
+      session = manager.get().openMachineSession(immutableMachine);
+      if (session.getState().equals(SessionState.Locked)) 
+         return checkNotNull(session, "session"); 
+      } catch (Exception e) {
+         logger.debug("machine %s is not locked). Error: %s", immutableMachine.getName(), e.getMessage());
+      }
+      
       while (true) {
          try {
-            IMachine immutableMachine = manager.get().getVBox().findMachine(machineId);
             session = manager.get().getSessionObject();
             immutableMachine.lockMachine(session, type);
             break;
@@ -219,13 +232,13 @@ public class MachineUtils {
                return null;
             }
             count++;
-            logger.warn(e, "Could not lock machine (try %d of %d). Error: %s", count, retries, e.getMessage());
+            logger.debug("Could not lock machine (try %d of %d). Error: %s", count, retries, e.getMessage());
             if (count == retries) {
                throw new RuntimeException(String.format("error locking %s with %s lock: %s", machineId, type,
                         e.getMessage()), e);
             }
             try {
-               Thread.sleep(1000L);
+               Thread.sleep(count * 1000L);
             } catch (InterruptedException e1) {
             }
          }
@@ -265,70 +278,24 @@ public class MachineUtils {
                || e.getMessage().contains("Could not find a registered machine with UUID {");
    }
    
-   public String getIpAddressFromBridgedNIC(String machineName) {
-      String ip = "";
-      int attempt = 0;
-      while (!isIpv4(ip) && attempt < 10) {
-         ip = this.lockSessionOnMachineAndApply(machineName, LockType.Shared, new Function<ISession, String>() {
-            @Override
-            public String apply(ISession session) {
-               String ip = session.getMachine().getGuestPropertyValue("/VirtualBox/GuestInfo/Net/0/V4/IP");
-               return ip;
-            }
-         });
-         attempt++;
-         long sleepTime = 1000 * attempt;
-         logger.debug("Instance %s is still not ready. Attempt n:%d. Sleeping for %d millisec", machineName, attempt,
-                  sleepTime);
-         try {
-            Thread.sleep(sleepTime);
-         } catch (InterruptedException e) {
-            Throwables.propagate(e);
-         }
+   public String getIpAddressFromFirstNIC(String machineName) {
+      try {
+         return ipAddressesLoadingCache.get(machineName);
+      } catch (ExecutionException e) {
+         logger.error("Problem in using the ipAddressCache", e.getCause());
+         throw Throwables.propagate(e);
       }
-      return ip;
    }
+ 
 
-   private boolean isIpv4(String s) {
-      Pattern pattern = Pattern.compile(this.IP_V4_ADDRESS_PATTERN);
+   public static boolean isIpv4(String s) {
+      String IP_V4_ADDRESS_PATTERN = "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
+            + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
+            + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
+      Pattern pattern = Pattern.compile(IP_V4_ADDRESS_PATTERN);
       Matcher matcher = pattern.matcher(s);
       return matcher.matches();
    }
 
-   public String getIpAddressFromHostOnlyNIC(String machineName) {
-      // TODO using a caching mechanism to avoid to call every time this vboxmanage api call
-      String currentIp = "", previousIp = "1.1.1.1";
-      int attempt = 0, count = 0;
-      while(count < 5) { 
-         currentIp = "";
-         attempt = 0;
-         while (!isIpv4(currentIp) &&  attempt < 5) {
-            currentIp = this.lockSessionOnMachineAndApply(machineName, LockType.Shared, new Function<ISession, String>() {
-               @Override
-               public String apply(ISession session) {
-                  return session.getMachine().getGuestPropertyValue("/VirtualBox/GuestInfo/Net/0/V4/IP");
-               }
-            });
-            attempt++;
-         }
-         if(previousIp.equals(currentIp)) {
-            count++;
-            delayer(500l * (count + 1));
-         } else {
-            count = 0;
-            delayer(5000l);
-         }
-         previousIp = currentIp;
-      }
-      return currentIp;
-   }
-
-   private void delayer(long millisec) {
-      try {
-         Thread.sleep(millisec);
-      } catch (InterruptedException e) {
-         Throwables.propagate(e);
-      }
-   }   
 
 }

@@ -19,6 +19,9 @@
 
 package org.jclouds.virtualbox.compute.extensions;
 
+import java.util.concurrent.ExecutionException;
+
+import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.extensions.internal.BaseImageExtensionLiveTest;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
@@ -27,6 +30,22 @@ import com.google.inject.Module;
 
 @Test(groups = "live", singleThreaded = true, testName = "VirtualBoxImageExtensionLiveTest")
 public class VirtualBoxImageExtensionLiveTest extends BaseImageExtensionLiveTest {
+
+   @Override
+   public void testDeleteImage() {
+      // TODO
+   }
+
+   @Override
+   public void testCreateImage() throws RunNodesException,
+         InterruptedException, ExecutionException {
+      // TODO
+   }
+
+   @Override
+   public void testSpawnNodeFromImage() throws RunNodesException {
+      // TODO
+   }
 
    public VirtualBoxImageExtensionLiveTest() {
       provider = "virtualbox";
