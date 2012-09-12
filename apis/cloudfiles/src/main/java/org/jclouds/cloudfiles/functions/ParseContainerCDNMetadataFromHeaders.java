@@ -45,18 +45,26 @@ public class ParseContainerCDNMetadataFromHeaders implements
     * parses the http response headers to create a new {@link ContainerCDNMetadata} object.
     */
    public ContainerCDNMetadata apply(final HttpResponse from) {
-      String cdnUri = checkNotNull(from.getFirstHeaderOrNull(CloudFilesHeaders.CDN_URI),
-               CloudFilesHeaders.CDN_URI);
-      String cdnTTL = checkNotNull(from.getFirstHeaderOrNull(CloudFilesHeaders.CDN_TTL),
-               CloudFilesHeaders.CDN_TTL);
-      String cdnEnabled = checkNotNull(from.getFirstHeaderOrNull(CloudFilesHeaders.CDN_ENABLED),
-               CloudFilesHeaders.CDN_ENABLED);
+      String cdnEnabled = checkNotNull(from.getFirstHeaderOrNull(CloudFilesHeaders.CDN_ENABLED), CloudFilesHeaders.CDN_ENABLED);
+      String cdnLogRetention = checkNotNull(from.getFirstHeaderOrNull(CloudFilesHeaders.CDN_LOG_RETENTION), CloudFilesHeaders.CDN_LOG_RETENTION);
+      String cdnTTL = checkNotNull(from.getFirstHeaderOrNull(CloudFilesHeaders.CDN_TTL), CloudFilesHeaders.CDN_TTL);
+      String cdnUri = checkNotNull(from.getFirstHeaderOrNull(CloudFilesHeaders.CDN_URI), CloudFilesHeaders.CDN_URI);
+      String cdnSslUri = checkNotNull(from.getFirstHeaderOrNull(CloudFilesHeaders.CDN_SSL_URI), CloudFilesHeaders.CDN_SSL_URI);
+      String cdnStreamingUri = checkNotNull(from.getFirstHeaderOrNull(CloudFilesHeaders.CDN_STREAMING_URI), CloudFilesHeaders.CDN_STREAMING_URI);
+      
       if (cdnUri == null) {
          // CDN is not, and has never, been enabled for this container.
          return null;
-      } else {
-         return new ContainerCDNMetadata(request.getEndpoint().getPath(), Boolean
-                  .parseBoolean(cdnEnabled), Long.parseLong(cdnTTL), URI.create(cdnUri));
+      } 
+      else {
+         return new ContainerCDNMetadata(
+            request.getEndpoint().getPath(), 
+            Boolean.parseBoolean(cdnEnabled), 
+            Boolean.parseBoolean(cdnLogRetention), 
+            Long.parseLong(cdnTTL), 
+            URI.create(cdnUri),
+            URI.create(cdnSslUri),
+            URI.create(cdnStreamingUri));
       }
    }
 

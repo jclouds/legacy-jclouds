@@ -27,6 +27,7 @@ import java.util.Set;
 import org.jclouds.cloudfiles.domain.ContainerCDNMetadata;
 import org.jclouds.cloudfiles.options.ListCdnContainerOptions;
 import org.jclouds.openstack.swift.CommonSwiftClientLiveTest;
+import org.jclouds.openstack.swift.domain.ContainerMetadata;
 import org.jclouds.openstack.swift.domain.SwiftObject;
 import org.testng.annotations.Test;
 
@@ -80,16 +81,23 @@ public class CloudFilesClientLiveTest extends CommonSwiftClientLiveTest<CloudFil
          cdnMetadata = getApi().getCDNMetadata(containerNameWithCDN);
 
          assertTrue(cdnMetadata.isCDNEnabled());
-
          assertEquals(cdnMetadata.getCDNUri(), cdnUri);
          
+         // Test static website metadata
+         getApi().setCDNStaticWebsiteIndex(containerNameWithCDN, "index.html");
+         getApi().setCDNStaticWebsiteError(containerNameWithCDN, "error.html");
+         
+         ContainerMetadata containerMetadata = getApi().getContainerMetadata(containerNameWithCDN);
+         
+         assertEquals(containerMetadata.getMetadata().get("web-index"), "index.html");
+         assertEquals(containerMetadata.getMetadata().get("web-error"), "error.html");
          
          cdnMetadata = getApi().getCDNMetadata(containerNameWithoutCDN);
          assert cdnMetadata == null || !cdnMetadata.isCDNEnabled() : containerNameWithoutCDN
                   + " should not have metadata";
 
          assert getApi().getCDNMetadata("DoesNotExist") == null;
-
+         
          // List CDN metadata for containers, and ensure all CDN info is
          // available for enabled
          // container
@@ -97,9 +105,16 @@ public class CloudFilesClientLiveTest extends CommonSwiftClientLiveTest<CloudFil
          assertTrue(cdnMetadataList.size() >= 1);
 
          cdnMetadata = getApi().getCDNMetadata(containerNameWithCDN);
+         final boolean cdnEnabled = cdnMetadata.isCDNEnabled();
+         final boolean logRetention = cdnMetadata.isLogRetention();
          final long initialTTL = cdnMetadata.getTTL();
-         assertTrue(cdnMetadataList.contains(new ContainerCDNMetadata(containerNameWithCDN, true, initialTTL, cdnUri)));
+         final URI cdnSslUri = cdnMetadata.getCDNSslUri();
+         final URI cdnStreamingUri = cdnMetadata.getCDNStreamingUri();
+         assertTrue(cdnMetadataList.contains(new ContainerCDNMetadata(
+            containerNameWithCDN, cdnEnabled, logRetention, initialTTL, cdnUri, cdnSslUri, cdnStreamingUri)));
 
+         
+         
          // Test listing with options
          cdnMetadataList = getApi().listCDNContainers(ListCdnContainerOptions.Builder.enabledOnly());
          assertTrue(Iterables.all(cdnMetadataList, new Predicate<ContainerCDNMetadata>() {
@@ -113,10 +128,9 @@ public class CloudFilesClientLiveTest extends CommonSwiftClientLiveTest<CloudFil
                            containerNameWithCDN.substring(0, containerNameWithCDN.length() - 1)).maxResults(1));
          assertEquals(cdnMetadataList.size(), 1);
 
-         // Enable CDN with PUT for the same container, this time with a custom
-         // TTL
+         // Enable CDN with PUT for the same container, this time with a custom TTL and Log Retention
          long ttl = 4000;
-         getApi().enableCDN(containerNameWithCDN, ttl);
+         getApi().enableCDN(containerNameWithCDN, ttl, true);
 
          cdnMetadata = getApi().getCDNMetadata(containerNameWithCDN);
 
@@ -126,7 +140,7 @@ public class CloudFilesClientLiveTest extends CommonSwiftClientLiveTest<CloudFil
 
          // Check POST by updating TTL settings
          ttl = minimumTTL;
-         getApi().updateCDN(containerNameWithCDN, minimumTTL);
+         getApi().updateCDN(containerNameWithCDN, minimumTTL, false);
 
          cdnMetadata = getApi().getCDNMetadata(containerNameWithCDN);
          assertTrue(cdnMetadata.isCDNEnabled());
@@ -135,9 +149,15 @@ public class CloudFilesClientLiveTest extends CommonSwiftClientLiveTest<CloudFil
 
          // Confirm that minimum allowed value for TTL is 3600, lower values are
          // ignored.
-         getApi().updateCDN(containerNameWithCDN, 3599L);
+         getApi().updateCDN(containerNameWithCDN, 3599L, false);
          cdnMetadata = getApi().getCDNMetadata(containerNameWithCDN);
          assertEquals(cdnMetadata.getTTL(), 3599L);
+         
+         // Test purging an object from a CDN container
+         SwiftObject swiftObject = newSwiftObject("hello", "hello.txt");
+         getApi().putObject(containerNameWithCDN, swiftObject);
+         
+         assertTrue(getApi().purgeCDNObject(containerNameWithCDN, swiftObject.getInfo().getName()));
 
          // Disable CDN with POST
          assertTrue(getApi().disableCDN(containerNameWithCDN));
