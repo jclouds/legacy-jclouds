@@ -29,17 +29,22 @@ public class ContainerCDNMetadata implements Comparable<ContainerCDNMetadata> {
 
    private String name;
    private boolean cdn_enabled;
+   private boolean log_retention;
    private long ttl;
    private URI cdn_uri;
+   private URI cdn_ssl_uri;
+   private URI cdn_streaming_uri;
    private String referrer_acl;
    private String useragent_acl;
-   private boolean log_retention;
 
-   public ContainerCDNMetadata(String name, boolean cdnEnabled, long ttl, URI cdnUri) {
+   public ContainerCDNMetadata(String name, boolean cdnEnabled, boolean logRetention, long ttl, URI cdnUri, URI cdnSslUri, URI cdnStreamingUri) {
       this.name = name;
       this.cdn_enabled = cdnEnabled;
+      this.log_retention = logRetention;
       this.ttl = ttl;
       this.cdn_uri = cdnUri;
+      this.cdn_ssl_uri = cdnSslUri;
+      this.cdn_streaming_uri = cdnStreamingUri;
    }
 
    public ContainerCDNMetadata() {
@@ -53,16 +58,36 @@ public class ContainerCDNMetadata implements Comparable<ContainerCDNMetadata> {
       return name;
    }
 
-   public URI getCDNUri() {
-      return cdn_uri;
+   public boolean isCDNEnabled() {
+      return cdn_enabled;
+   }
+
+   public boolean isLogRetention() {
+      return log_retention;
    }
 
    public long getTTL() {
       return ttl;
    }
 
-   public boolean isCDNEnabled() {
-      return cdn_enabled;
+   public URI getCDNUri() {
+      return cdn_uri;
+   }
+
+   public URI getCDNSslUri() {
+      return cdn_ssl_uri;
+   }
+
+   public URI getCDNStreamingUri() {
+      return cdn_streaming_uri;
+   }
+
+   public String getReferrerACL() {
+      return referrer_acl;
+   }
+
+   public String getUseragentACL() {
+      return useragent_acl;
    }
 
    public int compareTo(ContainerCDNMetadata o) {
@@ -87,31 +112,21 @@ public class ContainerCDNMetadata implements Comparable<ContainerCDNMetadata> {
          return false;
       if (getClass() != obj.getClass())
          return false;
+      
       ContainerCDNMetadata other = (ContainerCDNMetadata) obj;
       if (cdn_uri == null) {
          if (other.cdn_uri != null)
             return false;
       } else if (!cdn_uri.equals(other.cdn_uri))
          return false;
+      
       return true;
-   }
-
-   public String getReferrerACL() {
-      return referrer_acl;
-   }
-
-   public String getUseragentACL() {
-      return useragent_acl;
-   }
-
-   public boolean isLogRetention() {
-      return log_retention;
    }
 
    @Override
    public String toString() {
       return String.format(
-               "[name=%s, cdn_uri=%s, cdn_enabled=%s, log_retention=%s, referrer_acl=%s, ttl=%s, useragent_acl=%s]",
-               name, cdn_uri, cdn_enabled, log_retention, referrer_acl, ttl, useragent_acl);
+               "[name=%s, cdn_enabled=%s, log_retention=%s, ttl=%s, cdn_uri=%s, cdn_ssl_uri=%s, cdn_streaming_uri=%s, referrer_acl=%s, useragent_acl=%s]",
+                 name, cdn_enabled, log_retention, ttl, cdn_uri, cdn_ssl_uri, cdn_streaming_uri, referrer_acl, useragent_acl);
    }
 }
