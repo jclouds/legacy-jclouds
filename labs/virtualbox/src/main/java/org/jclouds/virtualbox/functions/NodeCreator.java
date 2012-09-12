@@ -22,10 +22,13 @@ package org.jclouds.virtualbox.functions;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_GUEST_CREDENTIAL;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_GUEST_IDENTITY;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_NODE_NAME_SEPARATOR;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_NODE_PREFIX;
 
+import java.net.URI;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -39,7 +42,12 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.domain.LoginCredentials;
+import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.location.Provider;
+import org.jclouds.rest.annotations.Credential;
+import org.jclouds.rest.annotations.Identity;
 import org.jclouds.scriptbuilder.domain.Statements;
+import org.jclouds.virtualbox.VirtualBoxApiMetadata;
 import org.jclouds.virtualbox.config.VirtualBoxComputeServiceContextModule;
 import org.jclouds.virtualbox.domain.CloneSpec;
 import org.jclouds.virtualbox.domain.Master;
@@ -63,8 +71,10 @@ import org.virtualbox_4_1.NetworkAttachmentType;
 import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
@@ -84,29 +94,36 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
    private final MachineController machineController;
    private final Factory runScriptOnNodeFactory;
    private final Supplier<NodeMetadata> host;
-
-
+   private final Supplier<URI> providerSupplier;
+   private final String username;
+   private final String password;
+   private int ram = 512;
+   private final String guestIdentity = VirtualBoxApiMetadata.defaultProperties().getProperty(VIRTUALBOX_GUEST_IDENTITY);
+   private final String guestCredential = VirtualBoxApiMetadata.defaultProperties().getProperty(VIRTUALBOX_GUEST_CREDENTIAL);
+   
    @Inject
    public NodeCreator(Supplier<VirtualBoxManager> manager, Function<CloneSpec, IMachine> cloner,  Factory runScriptOnNodeFactory,
+            MachineUtils machineUtils, RunScriptOnNode.Factory scriptRunnerFactory, MachineController machineController,
             Supplier<NodeMetadata> host,
-            MachineUtils machineUtils, RunScriptOnNode.Factory scriptRunnerFactory, MachineController machineController) {
+            @Provider Supplier<URI> providerSupplier,
+            @Nullable @Identity String identity,
+            @Nullable @Credential String credential) {
       this.manager = manager;
       this.cloner = cloner;
       this.runScriptOnNodeFactory = checkNotNull(runScriptOnNodeFactory, "runScriptOnNodeFactory");
-      this.host = checkNotNull(host, "host");
-
       this.machineUtils = machineUtils;
       this.machineController = machineController;
+      this.host = checkNotNull(host, "host");
+      this.providerSupplier = checkNotNull(providerSupplier,
+            "endpoint to virtualbox websrvd is needed");
+      this.username = identity;
+      this.password = credential;
    }
 
    @Override
    public synchronized NodeAndInitialCredentials<IMachine> apply(NodeSpec nodeSpec) {
-
       checkNotNull(nodeSpec, "NodeSpec");
-
-      Master master = nodeSpec.getMaster();
-      checkNotNull(master, "Master");
-
+      Master master = checkNotNull(nodeSpec.getMaster(), "Master");
       if (master.getMachine().getCurrentSnapshot() != null) {
          ISession session;
          try {
@@ -119,40 +136,32 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
          session.unlockMachine();
       }
       String masterNameWithoutPrefix = master.getMachine().getName().replace(VIRTUALBOX_IMAGE_PREFIX, "");
-
       String cloneName = VIRTUALBOX_NODE_PREFIX + masterNameWithoutPrefix + VIRTUALBOX_NODE_NAME_SEPARATOR
                + nodeSpec.getTag() + VIRTUALBOX_NODE_NAME_SEPARATOR + nodeSpec.getName();
-
-      int ram = 512;
       if (nodeSpec.getTemplate() != null && nodeSpec.getTemplate().getHardware() != null
                && nodeSpec.getTemplate().getHardware().getRam() > 0) {
          ram = nodeSpec.getTemplate().getHardware().getRam();
       }
-      
-      VmSpec cloneVmSpec = VmSpec.builder().id(cloneName).name(cloneName).memoryMB(ram).cleanUpMode(CleanupMode.Full)
+      VmSpec cloneVmSpec = VmSpec.builder().id(cloneName).name(cloneName).memoryMB(ram)
+            .cleanUpMode(CleanupMode.Full)
                .forceOverwrite(true).build();
 
-      // CASE NAT + HOST-ONLY
-      NetworkAdapter natAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.NAT)
-               .build();
-      NetworkInterfaceCard natIfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(natAdapter).slot(1L).build();
+      // case 'vbox host is localhost': NAT + HOST-ONLY
+      NetworkSpec networkSpec = createNetworkSpecWhenVboxIsLocalhost();
+      Optional<NetworkInterfaceCard> optionalNatIfaceCard = Iterables.tryFind(
+            networkSpec.getNetworkInterfaceCards(),
+            new Predicate<NetworkInterfaceCard>() {
 
-      NetworkAdapter hostOnlyAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.HostOnly)
-               .build();
-
-      // create new hostOnly interface if needed, otherwise use the one already there with dhcp enabled ...
-      String hostOnlyIfName = getHostOnlyIfOrCreate();
-      
-      NetworkInterfaceCard hostOnlyIfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(hostOnlyAdapter)
-               .addHostInterfaceName(hostOnlyIfName).slot(0L).build();
-
-      NetworkSpec networkSpec = createNetworkSpecForHostOnlyNATNICs(natIfaceCard, hostOnlyIfaceCard);
-
+               @Override
+               public boolean apply(NetworkInterfaceCard nic) {
+                  return nic.getNetworkAdapter().getNetworkAttachmentType()
+                        .equals(NetworkAttachmentType.NAT);
+               }
+            });
       CloneSpec cloneSpec = CloneSpec.builder().linked(true).master(master.getMachine()).network(networkSpec)
                .vm(cloneVmSpec).build();
 
       IMachine cloned = cloner.apply(cloneSpec);
-
       machineController.ensureMachineIsLaunched(cloneVmSpec.getVmName());
 
       // IMachineToNodeMetadata produces the final ip's but these need to be set before so we build a
@@ -160,42 +169,55 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
       NodeMetadata partialNodeMetadata = buildPartialNodeMetadata(cloned);
 
       // see DeleteGShadowLock for a detailed explanation
-      machineUtils.runScriptOnNode(partialNodeMetadata, new DeleteGShadowLock(), RunScriptOptions.NONE);
+       machineUtils.runScriptOnNode(partialNodeMetadata, new DeleteGShadowLock(), RunScriptOptions.NONE);
 
-      // CASE NAT + HOST-ONLY
-      machineUtils.runScriptOnNode(partialNodeMetadata, new EnableNetworkInterface(natIfaceCard), RunScriptOptions.NONE);
-      
+      if(optionalNatIfaceCard.isPresent())
+         machineUtils.runScriptOnNode(partialNodeMetadata, new EnableNetworkInterface(optionalNatIfaceCard.get()), RunScriptOptions.NONE);
 
-      // TODO get credentials from somewhere else (they are also HC in
-      // IMachineToSshClient)
-      NodeAndInitialCredentials<IMachine> nodeAndInitialCredentials = new NodeAndInitialCredentials<IMachine>(cloned,
-               cloneName, LoginCredentials.builder().user("toor").password("password").authenticateSudo(true).build());
-
-      return nodeAndInitialCredentials;
+      return new NodeAndInitialCredentials<IMachine>(cloned,
+               cloneName, LoginCredentials.builder()
+               .user(guestIdentity)
+               .password(guestCredential)
+               .authenticateSudo(true)
+               .build());
    }
-   
+
    private NodeMetadata buildPartialNodeMetadata(IMachine clone) {
       NodeMetadataBuilder nodeMetadataBuilder = new NodeMetadataBuilder();
       nodeMetadataBuilder.id(clone.getName());
       nodeMetadataBuilder.status(VirtualBoxComputeServiceContextModule.toPortableNodeStatus.get(clone.getState()));
-      nodeMetadataBuilder.publicAddresses(ImmutableSet.of(machineUtils.getIpAddressFromHostOnlyNIC(clone.getName())));
-      
-      LoginCredentials loginCredentials = new LoginCredentials("toor", "password", null, true);
-      nodeMetadataBuilder.credentials(loginCredentials);
-      
+      nodeMetadataBuilder.publicAddresses(ImmutableSet.of(machineUtils.getIpAddressFromFirstNIC(clone.getName())));
+      LoginCredentials loginCredentials = new LoginCredentials(guestIdentity, guestCredential, null, true);
+      nodeMetadataBuilder.credentials(loginCredentials);    
       return  nodeMetadataBuilder.build();
    }
 
-   private NetworkSpec createNetworkSpecForHostOnlyNATNICs(NetworkInterfaceCard natIfaceCard,
-            NetworkInterfaceCard hostOnlyIfaceCard) {
-      return NetworkSpec.builder().addNIC(natIfaceCard).addNIC(hostOnlyIfaceCard).build();
+   private NetworkSpec createNetworkSpecWhenVboxIsLocalhost() {
+      NetworkAdapter natAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.NAT)
+            .build();      
+      NetworkInterfaceCard natIfaceCard = NetworkInterfaceCard.builder()
+            .addNetworkAdapter(natAdapter)
+            .slot(1L)
+            .build();
+      NetworkAdapter hostOnlyAdapter = NetworkAdapter.builder()
+            .networkAttachmentType(NetworkAttachmentType.HostOnly)
+               .build();
+      // create new hostOnly interface if needed, otherwise use the one already there with dhcp enabled ...
+      String hostOnlyIfName = getHostOnlyIfOrCreate();
+      NetworkInterfaceCard hostOnlyIfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(hostOnlyAdapter)
+               .addHostInterfaceName(hostOnlyIfName).slot(0L).build();      
+      return createNetworkSpecForHostOnlyNATNICs(natIfaceCard, hostOnlyIfaceCard);
    }
    
-   /**
-    * @return
-    */
+   private NetworkSpec createNetworkSpecForHostOnlyNATNICs(NetworkInterfaceCard natIfaceCard,
+            NetworkInterfaceCard hostOnlyIfaceCard) {
+      return NetworkSpec.builder()
+            .addNIC(natIfaceCard)
+            .addNIC(hostOnlyIfaceCard)
+            .build();
+   }
+
    private String getHostOnlyIfOrCreate() {     
-      
       IHostNetworkInterface availableHostInterfaceIf = returnExistingHostNetworkInterfaceWithDHCPenabledOrNull(manager
                .get().getVBox().getHost().getNetworkInterfaces());
       if (availableHostInterfaceIf==null) {
@@ -205,7 +227,6 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
       } else {
          return availableHostInterfaceIf.getName();
       }
-      
    }
 
    private void assignDHCPtoHostOnlyInterface(final String hostOnlyIfName) {
@@ -225,31 +246,37 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
       String dhcpNetmask = "255.255.255.0";
       String dhcpLowerIp = hostOnlyIfIpAddress.substring(0, hostOnlyIfIpAddress.lastIndexOf(".")) + ".2";
       String dhcpUpperIp = hostOnlyIfIpAddress.substring(0, hostOnlyIfIpAddress.lastIndexOf(".")) + ".253";
-      
+      NodeMetadata hostNodeMetadata = getHostNodeMetadata();
+
       ExecResponse response = runScriptOnNodeFactory
-               .create(host.get(),
+               .create(hostNodeMetadata,
                         Statements.exec(String
                                  .format("VBoxManage dhcpserver add --ifname %s --ip %s --netmask %s --lowerip %s --upperip %s --enable",
                                           hostOnlyIfName, dhcpIpAddress, dhcpNetmask, dhcpLowerIp, dhcpUpperIp)), runAsRoot(false).wrapInInitScript(false)).init().call();
       checkState(response.getExitStatus()==0);
-      /*
-      runScriptOnNodeFactory
-               .create(host.get(),
-                        Statements.exec(String.format("VBoxManage hostonlyif ipconfig %s --ip %s",
-                                 hostOnlyIfName, hostOnlyIfIpAddress)), runAsRoot(false).wrapInInitScript(false)).init().call();
-      */
    }
 
    private String createHostOnlyIf() {
       final String hostOnlyIfName;
+      NodeMetadata hostNodeMetadata = getHostNodeMetadata();
       ExecResponse createHostOnlyResponse = runScriptOnNodeFactory
-               .create(host.get(), Statements.exec("VBoxManage hostonlyif create"),
+               .create(hostNodeMetadata, Statements.exec("VBoxManage hostonlyif create"),
                         runAsRoot(false).wrapInInitScript(false)).init().call();
       String output = createHostOnlyResponse.getOutput();
       checkState(createHostOnlyResponse.getExitStatus()==0);
       checkState(output.contains("'"), "cannot create hostonlyif");
       hostOnlyIfName = output.substring(output.indexOf("'") + 1, output.lastIndexOf("'"));
       return hostOnlyIfName;
+   }
+
+   private NodeMetadata getHostNodeMetadata() {
+      NodeMetadata hostNodeMetadata = NodeMetadataBuilder
+            .fromNodeMetadata(host.get())
+            .credentials(LoginCredentials.builder().user(username).password(password).build())
+            .publicAddresses(
+                  ImmutableList.of(providerSupplier.get().getHost()))
+            .build();
+      return hostNodeMetadata;
    }
 
    private IHostNetworkInterface returnExistingHostNetworkInterfaceWithDHCPenabledOrNull(Iterable<IHostNetworkInterface> availableNetworkInterfaces) {

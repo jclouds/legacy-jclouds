@@ -119,7 +119,7 @@ public class BaseVirtualBoxClientLiveTest extends BaseComputeServiceContextLiveT
    protected LoadingCache<Image, Master> mastersCache;
 
    private final ExecutorService singleThreadExec = MoreExecutors.sameThreadExecutor();
-   private String masterVmName;
+   private String masterName;
    
 
    @Override
@@ -133,13 +133,13 @@ public class BaseVirtualBoxClientLiveTest extends BaseComputeServiceContextLiveT
    public void setupContext() {
       super.setupContext();
       view.utils().injector().injectMembers(this);
-
+      
       // try and get a master from the cache, this will initialize the config/download isos and
       // prepare everything IF a master is not available, subsequent calls should be pretty fast
       Template template = view.getComputeService().templateBuilder().build();
       checkNotNull(mastersCache.apply(template.getImage()));
 
-      masterVmName = VIRTUALBOX_IMAGE_PREFIX + template.getImage().getId();
+      masterName = VIRTUALBOX_IMAGE_PREFIX + template.getImage().getId();
       isosDir = workingDir + File.separator + "isos";
 
       hostVersion = Iterables.get(Splitter.on('r').split(view.utils().injector().getInstance(Key.get(String.class, BuildVersion.class))), 0);
@@ -173,8 +173,6 @@ public class BaseVirtualBoxClientLiveTest extends BaseComputeServiceContextLiveT
    }
 
    public MasterSpec getMasterSpecForTest() {
-      String masterName = "jclouds-image-0x0-" + template.getImageId();
-
       StorageController ideController = StorageController
                .builder()
                .name("IDE Controller")
@@ -220,7 +218,7 @@ public class BaseVirtualBoxClientLiveTest extends BaseComputeServiceContextLiveT
    protected void destroyMaster() {
       if (System.getProperty(DONT_DESTROY_MASTER) == null
                || !Boolean.parseBoolean(System.getProperty(DONT_DESTROY_MASTER))) {
-         undoVm(masterVmName);
+         undoVm(masterName);
       }
    }
 

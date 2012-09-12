@@ -24,22 +24,29 @@ import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
 
 import java.net.URI;
+import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.callables.RunScriptOnNode.Factory;
+import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.location.Provider;
 import org.jclouds.logging.Logger;
+import org.jclouds.scriptbuilder.domain.Statement;
+import org.jclouds.scriptbuilder.domain.StatementList;
 import org.jclouds.scriptbuilder.domain.Statements;
+import org.jclouds.virtualbox.functions.HardcodedHostToHostNodeMetadata;
 import org.jclouds.virtualbox.predicates.RetryIfSocketNotYetOpen;
 import org.virtualbox_4_1.SessionState;
 import org.virtualbox_4_1.VirtualBoxManager;
 
+import com.beust.jcommander.internal.Lists;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.net.HostAndPort;
@@ -57,43 +64,74 @@ public class StartVBoxIfNotAlreadyRunning implements Supplier<VirtualBoxManager>
    private final Supplier<URI> providerSupplier;
    private final Function<Supplier<NodeMetadata>, VirtualBoxManager> managerForNode;
    private transient VirtualBoxManager manager;
+   private final HardcodedHostToHostNodeMetadata hardcodedHostToHostNodeMetadata;
 
    // the functions and suppliers here are to ensure we don't do heavy i/o in injection
    @Inject
    public StartVBoxIfNotAlreadyRunning(Function<Supplier<NodeMetadata>, VirtualBoxManager> managerForNode,
             Factory runScriptOnNodeFactory, RetryIfSocketNotYetOpen socketTester, Supplier<NodeMetadata> host,
-            @Provider Supplier<URI> providerSupplier) {
+            @Provider Supplier<URI> providerSupplier,
+            HardcodedHostToHostNodeMetadata hardcodedHostToHostNodeMetadata) {
       this.runScriptOnNodeFactory = checkNotNull(runScriptOnNodeFactory, "runScriptOnNodeFactory");
       this.socketTester = checkNotNull(socketTester, "socketTester");
       this.socketTester.seconds(3L);
       this.host = checkNotNull(host, "host");
       this.providerSupplier = checkNotNull(providerSupplier, "endpoint to virtualbox websrvd is needed");
       this.managerForNode = checkNotNull(managerForNode, "managerForNode");
-      start();
+      this.hardcodedHostToHostNodeMetadata = hardcodedHostToHostNodeMetadata;
    }
 
+   @PostConstruct
    public synchronized void start() {
       URI provider = providerSupplier.get();
-      if (!socketTester.apply(HostAndPort.fromParts(provider.getHost(), provider.getPort()))) {
-         logger.debug("disabling password access");
-         runScriptOnNodeFactory.create(host.get(), Statements.exec("VBoxManage setproperty websrvauthlibrary null"),
-                  runAsRoot(false).wrapInInitScript(false)).init().call();
-         logger.debug(">> starting vboxwebsrv");
-         String vboxwebsrv = "vboxwebsrv -t 10000 -v -b";
-         runScriptOnNodeFactory.create(host.get(), Statements.exec(vboxwebsrv),
-                  runAsRoot(false).wrapInInitScript(false).blockOnComplete(false).nameTask("vboxwebsrv")).init().call();
-         
-         if (!socketTester.apply(HostAndPort.fromParts(provider.getHost(), provider.getPort()))){
-            throw new RuntimeException("could not connect to virtualbox");
-         }
+      NodeMetadata hostNodeMetadata = hardcodedHostToHostNodeMetadata.apply(host.get());
+      // kill previously started vboxwebsrv (possibly dirty session)
+      List<Statement> statements =      Lists.newArrayList();
+      statements.add(Statements.findPid("vboxwebsrv"));
+      statements.add(Statements.kill());
+      StatementList statementList = new StatementList(statements);
+      
+      if (socketTester.apply(HostAndPort.fromParts(provider.getHost(),
+            provider.getPort()))) {
+         logger.debug(String.format("shutting down previously started vboxwewbsrv at %s", provider));
+         ExecResponse execResponse = runScriptOnNodeFactory
+               .create(hostNodeMetadata, statementList, runAsRoot(false))
+               .init().call();
+         if(execResponse.getExitStatus()!=0)
+            throw new RuntimeException("Cannot execute jclouds");
       }
+      
+      logger.debug("disabling password access");
+      runScriptOnNodeFactory
+            .create(
+                  hostNodeMetadata,
+                  Statements
+                        .exec("VBoxManage setproperty websrvauthlibrary null"),
+                  runAsRoot(false).wrapInInitScript(false)).init().call();
+      logger.debug(">> starting vboxwebsrv");
+      String vboxwebsrv = "vboxwebsrv -t0 -v -b -H "
+            + providerSupplier.get().getHost();
+      runScriptOnNodeFactory
+            .create(
+                  hostNodeMetadata,
+                  Statements.exec(vboxwebsrv),
+                  runAsRoot(false).wrapInInitScript(false)
+                        .blockOnComplete(false).nameTask("vboxwebsrv")).init()
+            .call();
+
+      if (!socketTester.apply(HostAndPort.fromParts(provider.getHost(),
+            provider.getPort()))) {
+         throw new RuntimeException("could not connect to virtualbox");
+      }
+
       manager = managerForNode.apply(host);
       manager.connect(provider.toASCIIString(), "", "");
       if (logger.isDebugEnabled())
          if (manager.getSessionObject().getState() != SessionState.Unlocked)
-            logger.warn("manager is not in unlocked state " + manager.getSessionObject().getState());
+            logger.warn("manager is not in unlocked state "
+                  + manager.getSessionObject().getState());
    }
-
+   
    @Override
    public VirtualBoxManager get() {
       checkState(manager != null, "start not called");
