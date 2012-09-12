@@ -339,7 +339,7 @@ public abstract class CommonSwiftClientLiveTest<C extends CommonSwiftClient> ext
        assert contentType.startsWith("text/plain") || "application/x-www-form-urlencoded".equals(contentType): contentType;
    }
 
-   private SwiftObject newSwiftObject(String data, String key) throws IOException {
+   protected SwiftObject newSwiftObject(String data, String key) throws IOException {
       SwiftObject object = getApi().newSwiftObject();
       object.getInfo().setName(key);
       object.setPayload(data);
