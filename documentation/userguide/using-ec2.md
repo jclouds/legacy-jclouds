@@ -352,3 +352,12 @@ Set<Datapoint> datapoints = monitoringContext.getApi().getMetricStatisticsInRegi
                   "CPUUtilization", before, new Date(), 60, "Average");
 {% endhighlight %}
 
+## GovCloud
+To operate within a GovCloud instance, you will need to override the aws ec2 endpoint.
+For EC2:
+{% highlight java %}
+public static final String GOV_CLOUD_ENDPOINT = "https://ec2.us-gov-west-1.amazonaws.com";
+overrides.setProperty("aws-ec2.endpoint", GOV_CLOUD_ENDPOINT);
+{% endhighlight %}
+You can find GovCloud endpoints for other services here:
+http://docs.amazonwebservices.com/general/latest/gr/rande.html#govcloud_region
