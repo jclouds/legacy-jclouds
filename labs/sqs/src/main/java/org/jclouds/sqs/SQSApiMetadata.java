@@ -75,7 +75,7 @@ public class SQSApiMetadata extends BaseRestApiMetadata {
          .name("Amazon Simple Queue Service API")
          .identityName("Access Key ID")
          .credentialName("Secret Access Key")
-         .version("2009-02-01")
+         .version("2011-10-01")
          .defaultProperties(SQSApiMetadata.defaultProperties())
          .defaultEndpoint("https://sqs.us-east-1.amazonaws.com")
          .documentation(URI.create("http://docs.amazonwebservices.com/AWSSimpleQueueService/latest/APIReference"))

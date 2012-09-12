@@ -16,35 +16,36 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.sqs.xml;
+package org.jclouds.sqs.options;
 
-import org.jclouds.crypto.CryptoStreams;
-import org.jclouds.http.functions.ParseSax;
+import static org.jclouds.sqs.options.SendMessageOptions.Builder.delaySeconds;
+import static org.testng.Assert.assertEquals;
+
+import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
+ * Tests possible uses of SendMessageOptions and SendMessageOptions.Builder.*
  * 
- * @see <a href="http://docs.amazonwebservices.com/AWSSimpleQueueService/latest/APIReference/Query_QuerySendMessage.html"
- *      />
  * @author Adrian Cole
  */
-public class MD5Handler extends ParseSax.HandlerWithResult<byte[]> {
+public class SendMessageOptionsTest {
 
-   private StringBuilder currentText = new StringBuilder();
-   byte[] md5;
-
-   public byte[] getResult() {
-      return md5;
+   @Test
+   public void testDelaySeconds() {
+      SendMessageOptions options = new SendMessageOptions();
+      options.delaySeconds(3);
+      assertEquals(options.buildFormParameters().get("DelaySeconds"), ImmutableSet.of("3"));
    }
 
-   public void endElement(String uri, String name, String qName) {
-      if (qName.equals("MD5OfMessageBody")) {
-         String md5Hex = currentText.toString().trim();
-         this.md5 = CryptoStreams.hex(md5Hex);
-      }
-      currentText = new StringBuilder();
+   @Test
+   public void testDelaySecondsStatic() {
+      SendMessageOptions options = delaySeconds(3);
+      assertEquals(options.buildFormParameters().get("DelaySeconds"), ImmutableSet.of("3"));
    }
 
-   public void characters(char ch[], int start, int length) {
-      currentText.append(ch, start, length);
+   public void testNoDelaySeconds() {
+      delaySeconds(null);
    }
 }

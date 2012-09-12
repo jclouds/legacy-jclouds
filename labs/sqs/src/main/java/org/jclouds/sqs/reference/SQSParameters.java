@@ -21,7 +21,7 @@ package org.jclouds.sqs.reference;
 /**
  * Configuration properties and constants used in SQS connections.
  * 
- * @see <a href="http://docs.amazonwebservices.com/AWSSimpleQueueService/2009-02-01/APIReference/Query_QueryParams.html"
+ * @see <a href="http://docs.amazonwebservices.com/AWSSimpleQueueService/2011-10-01/APIReference/Query_QueryParams.html"
  *      />
  * @author Adrian Cole
  */
@@ -33,7 +33,7 @@ public interface SQSParameters {
    public static final String ACTION = "Action";
 
    /**
-    * The API version to use, as specified in the WSDL. For example: 2009-02-01.
+    * The API version to use, as specified in the WSDL. For example: 2011-10-01.
     */
    public static final String VERSION = "Version";
 

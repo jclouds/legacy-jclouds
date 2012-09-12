@@ -23,17 +23,18 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.Set;
 import java.util.SortedSet;
 
 import org.jclouds.aws.AWSResponseException;
 import org.jclouds.sqs.internal.BaseSQSApiLiveTest;
+import org.jclouds.sqs.options.ReceiveMessageOptions;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Charsets;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
@@ -71,9 +72,9 @@ public class SQSApiLiveTest extends BaseSQSApiLiveTest {
 
    public String createQueueInRegion(final String region, String queueName) throws InterruptedException {
       try {
-         SortedSet<URI> result = Sets.newTreeSet(context.getApi().listQueuesInRegion(region, queuePrefix(queueName)));
+         Set<URI> result = context.getApi().listQueuesInRegion(region, queuePrefix(queueName));
          if (result.size() >= 1) {
-            context.getApi().deleteQueue(result.last());
+            context.getApi().deleteQueue(Iterables.getLast(result));
             queueName += 1;// cannot recreate a queue within 60 seconds
          }
       } catch (Exception e) {
@@ -99,12 +100,21 @@ public class SQSApiLiveTest extends BaseSQSApiLiveTest {
       return queueName;
    }
 
+   String message = "hardyharhar";
+   HashCode md5 = Hashing.md5().hashString(message, Charsets.UTF_8);
+
    @Test(dependsOnMethods = "testCreateQueue")
-   protected void testSendMessage() throws InterruptedException, IOException {
-      String message = "hardyharhar";
-      HashCode md5 = Hashing.md5().hashString(message, Charsets.UTF_8);
+   protected void testSendMessage() {
       for (URI queue : queues) {
-         assertEquals(context.getApi().sendMessage(queue, message), md5);
+         assertEquals(context.getApi().sendMessage(queue, message).getMD5(), md5);
+      }
+   }
+
+   @Test(dependsOnMethods = "testSendMessage")
+   protected void testReceiveMessage() {
+      for (URI queue : queues) {
+         assertEquals(context.getApi().receiveMessage(queue, ReceiveMessageOptions.Builder.attribute("All")).getMD5(),
+               md5);
       }
    }
 
@@ -118,32 +128,6 @@ public class SQSApiLiveTest extends BaseSQSApiLiveTest {
             assertTrue(result.contains(finalQ), finalQ + " not in " + result);
          }
       });
-   }
-
-   private static final int INCONSISTENCY_WINDOW = 10000;
-
-   /**
-    * Due to eventual consistency, container commands may not return correctly
-    * immediately. Hence, we will try up to the inconsistency window to see if
-    * the assertion completes.
-    */
-   protected static void assertEventually(Runnable assertion) throws InterruptedException {
-      long start = System.currentTimeMillis();
-      AssertionError error = null;
-      for (int i = 0; i < 30; i++) {
-         try {
-            assertion.run();
-            if (i > 0)
-               System.err.printf("%d attempts and %dms asserting %s%n", i + 1, System.currentTimeMillis() - start,
-                     assertion.getClass().getSimpleName());
-            return;
-         } catch (AssertionError e) {
-            error = e;
-         }
-         Thread.sleep(INCONSISTENCY_WINDOW / 30);
-      }
-      if (error != null)
-         throw error;
    }
 
    @AfterTest

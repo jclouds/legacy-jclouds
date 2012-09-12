@@ -49,13 +49,8 @@ public class ListQueuesOptions extends BaseHttpRequestOptions {
     *           allowed.
     */
    public ListQueuesOptions queuePrefix(String prefix) {
-      //TODO validate
       formParameters.put("QueueNamePrefix", prefix);
       return this;
-   }
-
-   public String getRestorableBy() {
-      return getFirstFormOrNull("QueueNamePrefix");
    }
 
    public static class Builder {

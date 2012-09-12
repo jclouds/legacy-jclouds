@@ -18,56 +18,131 @@
  */
 package org.jclouds.sqs.options;
 
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.jclouds.http.options.BaseHttpRequestOptions;
 
+import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Multimap;
+
 /**
- * Contains options supported in the Form API for the CreateQueue operation. <h2>
- * Usage</h2> The recommended way to instantiate a CreateQueueOptions object is to statically import
- * CreateQueueOptions.Builder.* and invoke a static creation method followed by an instance mutator
- * (if needed):
- * <p/>
- * <code>
- * import static org.jclouds.sqs.options.CreateQueueOptions.Builder.*
- * <p/>
- * SQSApi connection = // get connection
- * Queue queue = connection.createQueueInRegion(defaultVisibilityTimeout("foo"));
- * <code>
+ * Options used to receive a message from a queue.
+ * 
+ * @see <a
+ *      href="http://docs.amazonwebservices.com/AWSSimpleQueueService/2011-10-01/APIReference/Query_QueryCreateQueue.html"
+ *      >docs</a>
  * 
  * @author Adrian Cole
- * @see <a
- *      href="http://docs.amazonwebservices.com/AWSSimpleQueueService/latest/APIReference/Query_QueryCreateQueue.html"
- *      />
  */
-public class CreateQueueOptions extends BaseHttpRequestOptions {
+public class CreateQueueOptions extends BaseHttpRequestOptions implements Cloneable {
+
+   private ImmutableMap.Builder<String, String> attributes = ImmutableMap.<String, String> builder();
 
    /**
-    * A default value for the queue's visibility timeout (30 seconds) is set when the queue is
-    * created. You can override this value with the DefaultVisibilityTimeout request parameter. For
-    * more information, see Visibility Timeout in the Amazon SQS Developer Guide.
+    * The duration (in seconds) that the received messages are hidden from
+    * subsequent retrieve requests after being retrieved by a CreateQueue
+    * request.
     * 
-    * @param seconds
-    *           The visibility timeout (in seconds) to use for this queue. 0 to 43200 (maximum 12
-    *           hours); Default: 30 seconds
+    * @param visibilityTimeout
+    *           Constraints: 0 to 43200 (maximum 12 hours)
+    * 
+    *           Default: The visibility timeout for the queue
     */
-   public CreateQueueOptions defaultVisibilityTimeout(int seconds) {
-      //TODO validate
-      formParameters.put("DefaultVisibilityTimeout", seconds+"");
+   public CreateQueueOptions visibilityTimeout(int visibilityTimeout) {
+      return attribute("VisibilityTimeout", visibilityTimeout + "");
+   }
+
+   /**
+    */
+   public CreateQueueOptions attributes(Map<String, String> attributes) {
+      this.attributes = ImmutableMap.<String, String> builder().putAll(attributes);
       return this;
    }
 
-   public String getRestorableBy() {
-      return getFirstFormOrNull("DefaultVisibilityTimeout");
+   /**
+    * @see #attributes
+    */
+   public CreateQueueOptions attribute(String name, String value) {
+      this.attributes.put(name, value);
+      return this;
    }
 
    public static class Builder {
 
       /**
-       * @see CreateQueueOptions#defaultVisibilityTimeout(int )
+       * @see CreateQueueOptions#visibilityTimeout
        */
-      public static CreateQueueOptions defaultVisibilityTimeout(int seconds) {
-         CreateQueueOptions options = new CreateQueueOptions();
-         return options.defaultVisibilityTimeout(seconds);
+      public static CreateQueueOptions visibilityTimeout(Integer visibilityTimeout) {
+         return new CreateQueueOptions().visibilityTimeout(visibilityTimeout);
       }
 
+      /**
+       * @see CreateQueueOptions#attribute
+       */
+      public static CreateQueueOptions attribute(String name, String value) {
+         return new CreateQueueOptions().attribute(name, value);
+      }
+
+      /**
+       * @see CreateQueueOptions#attributes
+       */
+      public static CreateQueueOptions attributes(Map<String, String> attributes) {
+         return new CreateQueueOptions().attributes(attributes);
+      }
+   }
+
+   @Override
+   public Multimap<String, String> buildFormParameters() {
+      Multimap<String, String> params = super.buildFormParameters();
+      ImmutableMap<String, String> attributes = this.attributes.build();
+      if (attributes.size() > 0) {
+         int nameIndex = 1;
+         for (Entry<String, String> attribute : attributes.entrySet()) {
+            params.put("Attribute." + nameIndex + ".Name", attribute.getKey());
+            params.put("Attribute." + nameIndex + ".Value", attribute.getValue());
+            nameIndex++;
+         }
+      }
+      return params;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(attributes);
+   }
+
+   @Override
+   public CreateQueueOptions clone() {
+      return new CreateQueueOptions().attributes(attributes.build());
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      CreateQueueOptions other = CreateQueueOptions.class.cast(obj);
+      return Objects.equal(this.attributes, other.attributes);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String toString() {
+      ImmutableMap<String, String> attributes = this.attributes.build();
+      return Objects.toStringHelper(this).omitNullValues().add("attributes", attributes.size() > 0 ? attributes : null)
+            .toString();
    }
 }

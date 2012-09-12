@@ -37,13 +37,19 @@ import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.VirtualHost;
+import org.jclouds.rest.annotations.XMLResponseParser;
+import org.jclouds.sqs.domain.Message;
+import org.jclouds.sqs.domain.MessageIdAndMD5;
 import org.jclouds.sqs.options.CreateQueueOptions;
 import org.jclouds.sqs.options.ListQueuesOptions;
+import org.jclouds.sqs.options.ReceiveMessageOptions;
+import org.jclouds.sqs.options.SendMessageOptions;
+import org.jclouds.sqs.xml.MessageHandler;
+import org.jclouds.sqs.xml.ReceiveMessageResponseHandler;
 import org.jclouds.sqs.xml.RegexListQueuesResponseHandler;
-import org.jclouds.sqs.xml.RegexMD5Handler;
+import org.jclouds.sqs.xml.RegexMessageIdAndMD5Handler;
 import org.jclouds.sqs.xml.RegexQueueHandler;
 
-import com.google.common.hash.HashCode;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -65,8 +71,18 @@ public interface SQSAsyncApi {
    @FormParams(keys = ACTION, values = "ListQueues")
    @ResponseParser(RegexListQueuesResponseHandler.class)
    ListenableFuture<Set<URI>> listQueuesInRegion(
+         @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+
+   /**
+    * @see SQSApi#listQueuesInRegion
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "ListQueues")
+   @ResponseParser(RegexListQueuesResponseHandler.class)
+   ListenableFuture<Set<URI>> listQueuesInRegion(
          @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
-         ListQueuesOptions... options);
+         ListQueuesOptions options);
 
    /**
     * @see SQSApi#createQueueInRegion
@@ -77,7 +93,18 @@ public interface SQSAsyncApi {
    @ResponseParser(RegexQueueHandler.class)
    ListenableFuture<URI> createQueueInRegion(
          @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
-         @FormParam("QueueName") String queueName, CreateQueueOptions... options);
+         @FormParam("QueueName") String queueName);
+
+   /**
+    * @see SQSApi#createQueueInRegion
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "CreateQueue")
+   @ResponseParser(RegexQueueHandler.class)
+   ListenableFuture<URI> createQueueInRegion(
+         @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
+         @FormParam("QueueName") String queueName, CreateQueueOptions options);
 
    /**
     * @see SQSApi#deleteQueue
@@ -93,7 +120,54 @@ public interface SQSAsyncApi {
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "SendMessage")
-   @ResponseParser(RegexMD5Handler.class)
-   ListenableFuture<HashCode> sendMessage(@EndpointParam URI queue, @FormParam("MessageBody") String message);
+   @ResponseParser(RegexMessageIdAndMD5Handler.class)
+   ListenableFuture<MessageIdAndMD5> sendMessage(@EndpointParam URI queue, @FormParam("MessageBody") String message);
+
+   /**
+    * @see SQSApi#sendMessage
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "SendMessage")
+   @ResponseParser(RegexMessageIdAndMD5Handler.class)
+   ListenableFuture<MessageIdAndMD5> sendMessage(@EndpointParam URI queue, @FormParam("MessageBody") String message,
+         SendMessageOptions options);
+
+   /**
+    * @see SQSApi#receiveMessage
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "ReceiveMessage")
+   @XMLResponseParser(MessageHandler.class)
+   ListenableFuture<Message> receiveMessage(@EndpointParam URI queue);
+
+   /**
+    * @see SQSApi#receiveMessage
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "ReceiveMessage")
+   @XMLResponseParser(MessageHandler.class)
+   ListenableFuture<Message> receiveMessage(@EndpointParam URI queue, ReceiveMessageOptions options);
+
+   /**
+    * @see SQSApi#receiveMessages
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "ReceiveMessage")
+   @XMLResponseParser(ReceiveMessageResponseHandler.class)
+   ListenableFuture<Set<Message>> receiveMessages(@EndpointParam URI queue, @FormParam("MaxNumberOfMessages") int max);
+
+   /**
+    * @see SQSApi#receiveMessages
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "ReceiveMessage")
+   @XMLResponseParser(ReceiveMessageResponseHandler.class)
+   ListenableFuture<Set<Message>> receiveMessages(@EndpointParam URI queue, @FormParam("MaxNumberOfMessages") int max,
+         ReceiveMessageOptions options);
 
 }

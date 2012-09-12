@@ -43,4 +43,29 @@ public class BaseSQSApiLiveTest extends BaseContextLiveTest<RestContext<SQSApi, 
       return SQSApiMetadata.CONTEXT_TOKEN;
    }
 
+   private static final int INCONSISTENCY_WINDOW = 10000;
+
+   /**
+    * Due to eventual consistency, container commands may not return correctly
+    * immediately. Hence, we will try up to the inconsistency window to see if
+    * the assertion completes.
+    */
+   protected static void assertEventually(Runnable assertion) throws InterruptedException {
+      long start = System.currentTimeMillis();
+      AssertionError error = null;
+      for (int i = 0; i < 30; i++) {
+         try {
+            assertion.run();
+            if (i > 0)
+               System.err.printf("%d attempts and %dms asserting %s%n", i + 1, System.currentTimeMillis() - start,
+                     assertion.getClass().getSimpleName());
+            return;
+         } catch (AssertionError e) {
+            error = e;
+         }
+         Thread.sleep(INCONSISTENCY_WINDOW / 30);
+      }
+      if (error != null)
+         throw error;
+   }
 }

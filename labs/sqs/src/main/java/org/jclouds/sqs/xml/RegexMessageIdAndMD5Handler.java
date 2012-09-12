@@ -26,9 +26,9 @@ import javax.inject.Inject;
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ReturnStringIf2xx;
+import org.jclouds.sqs.domain.MessageIdAndMD5;
 
 import com.google.common.base.Function;
-import com.google.common.hash.HashCode;
 import com.google.common.hash.HashCodes;
 import com.google.inject.Singleton;
 
@@ -39,26 +39,28 @@ import com.google.inject.Singleton;
  * @author Adrian Cole
  */
 @Singleton
-public class RegexMD5Handler implements Function<HttpResponse, HashCode> {
-   Pattern pattern = Pattern.compile("<MD5OfMessageBody>([\\S&&[^<]]+)</MD5OfMessageBody>");
+public class RegexMessageIdAndMD5Handler implements Function<HttpResponse, MessageIdAndMD5> {
+   Pattern pattern = Pattern.compile("<MessageId>([\\S&&[^<]]+)</MessageId>\\s*<MD5OfMessageBody>([\\S&&[^<]]+)</MD5OfMessageBody>", Pattern.DOTALL);
    private final ReturnStringIf2xx returnStringIf200;
 
    @Inject
-   RegexMD5Handler(ReturnStringIf2xx returnStringIf200) {
+   public RegexMessageIdAndMD5Handler(ReturnStringIf2xx returnStringIf200) {
       this.returnStringIf200 = returnStringIf200;
    }
 
    @Override
-   public HashCode apply(HttpResponse response) {
-      HashCode value = null;
+   public MessageIdAndMD5 apply(HttpResponse response) {
       String content = returnStringIf200.apply(response);
       if (content != null) {
          Matcher matcher = pattern.matcher(content);
          if (matcher.find()) {
-            value = HashCodes.fromBytes(CryptoStreams.hex(matcher.group(1)));
+            return MessageIdAndMD5.builder()
+                                  .id(matcher.group(1))
+                                  .md5(HashCodes.fromBytes(CryptoStreams.hex(matcher.group(2))))
+                                  .build();
          }
       }
-      return value;
+      return null;
    }
 
 }
