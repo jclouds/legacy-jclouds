@@ -20,6 +20,8 @@ package org.jclouds.sqs;
 
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AUTH_TAG;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_HEADER_TAG;
+import static org.jclouds.sqs.config.SQSProperties.CREATE_QUEUE_MAX_RETRIES;
+import static org.jclouds.sqs.config.SQSProperties.CREATE_QUEUE_RETRY_INTERVAL;
 
 import java.net.URI;
 import java.util.Properties;
@@ -62,6 +64,8 @@ public class SQSApiMetadata extends BaseRestApiMetadata {
    
    public static Properties defaultProperties() {
       Properties properties = BaseRestApiMetadata.defaultProperties();
+      properties.setProperty(CREATE_QUEUE_MAX_RETRIES, "60");
+      properties.setProperty(CREATE_QUEUE_RETRY_INTERVAL, "1000");
       properties.setProperty(PROPERTY_AUTH_TAG, "AWS");
       properties.setProperty(PROPERTY_HEADER_TAG, "amz");
       return properties;

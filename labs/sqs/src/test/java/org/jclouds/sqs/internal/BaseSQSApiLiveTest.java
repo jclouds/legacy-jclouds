@@ -18,11 +18,19 @@
  */
 package org.jclouds.sqs.internal;
 
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
+
+import java.net.URI;
+import java.util.Set;
+
 import org.jclouds.apis.BaseContextLiveTest;
 import org.jclouds.rest.RestContext;
 import org.jclouds.sqs.SQSApi;
 import org.jclouds.sqs.SQSApiMetadata;
 import org.jclouds.sqs.SQSAsyncApi;
+import org.jclouds.sqs.domain.Message;
 import org.testng.annotations.Test;
 
 import com.google.common.reflect.TypeToken;
@@ -37,10 +45,35 @@ public class BaseSQSApiLiveTest extends BaseContextLiveTest<RestContext<SQSApi, 
    public BaseSQSApiLiveTest() {
       provider = "sqs";
    }
-   
+
    @Override
    protected TypeToken<RestContext<SQSApi, SQSAsyncApi>> contextType() {
       return SQSApiMetadata.CONTEXT_TOKEN;
+   }
+
+   protected void assertNoMessages(final URI queue) throws InterruptedException {
+      assertEventually(new Runnable() {
+         public void run() {
+            Message message = api().receiveMessage(queue);
+            assertNull(message, "message: " + message + " left in queue " + queue);
+         }
+      });
+   }
+
+   protected void assertQueueInList(final String region, URI queue) throws InterruptedException {
+      final URI finalQ = queue;
+      assertEventually(new Runnable() {
+         public void run() {
+            Set<URI> result = api().listQueuesInRegion(region);
+            assertNotNull(result);
+            assert result.size() >= 1 : result;
+            assertTrue(result.contains(finalQ), finalQ + " not in " + result);
+         }
+      });
+   }
+
+   private SQSApi api() {
+      return context.getApi();
    }
 
    private static final int INCONSISTENCY_WINDOW = 10000;

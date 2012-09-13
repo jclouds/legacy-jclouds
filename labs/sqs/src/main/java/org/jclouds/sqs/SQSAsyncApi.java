@@ -22,6 +22,7 @@ import static org.jclouds.sqs.reference.SQSParameters.ACTION;
 import static org.jclouds.sqs.reference.SQSParameters.VERSION;
 
 import java.net.URI;
+import java.util.Map;
 import java.util.Set;
 
 import javax.ws.rs.FormParam;
@@ -32,18 +33,21 @@ import org.jclouds.Constants;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
+import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
+import org.jclouds.sqs.binders.BindAttributeNamesToIndexedFormParams;
 import org.jclouds.sqs.domain.Message;
 import org.jclouds.sqs.domain.MessageIdAndMD5;
 import org.jclouds.sqs.options.CreateQueueOptions;
 import org.jclouds.sqs.options.ListQueuesOptions;
 import org.jclouds.sqs.options.ReceiveMessageOptions;
 import org.jclouds.sqs.options.SendMessageOptions;
+import org.jclouds.sqs.xml.AttributesHandler;
 import org.jclouds.sqs.xml.MessageHandler;
 import org.jclouds.sqs.xml.ReceiveMessageResponseHandler;
 import org.jclouds.sqs.xml.RegexListQueuesResponseHandler;
@@ -115,6 +119,14 @@ public interface SQSAsyncApi {
    ListenableFuture<Void> deleteQueue(@EndpointParam URI queue);
 
    /**
+    * @see SQSApi#deleteMessage
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "DeleteMessage")
+   ListenableFuture<Void> deleteMessage(@EndpointParam URI queue, @FormParam("ReceiptHandle") String receiptHandle);
+
+   /**
     * @see SQSApi#sendMessage
     */
    @POST
@@ -150,6 +162,34 @@ public interface SQSAsyncApi {
    @FormParams(keys = ACTION, values = "ReceiveMessage")
    @XMLResponseParser(MessageHandler.class)
    ListenableFuture<Message> receiveMessage(@EndpointParam URI queue, ReceiveMessageOptions options);
+
+   /**
+    * @see SQSApi#getQueueAttributes(URI)
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = { ACTION, "AttributeName.1" }, values = { "GetQueueAttributes", "All" })
+   @XMLResponseParser(AttributesHandler.class)
+   ListenableFuture<Map<String, String>> getQueueAttributes(@EndpointParam URI queue);
+
+   /**
+    * @see SQSApi#getQueueAttributes(URI, Iterable)
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "GetQueueAttributes")
+   @XMLResponseParser(AttributesHandler.class)
+   ListenableFuture<Map<String, String>> getQueueAttributes(@EndpointParam URI queue,
+         @BinderParam(BindAttributeNamesToIndexedFormParams.class) Iterable<String> attributeNames);
+
+   /**
+    * @see SQSApi#setQueueAttribute
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "SetQueueAttributes")
+   ListenableFuture<Void> setQueueAttribute(@EndpointParam URI queue, @FormParam("Attribute.Name") String name,
+         @FormParam("Attribute.Value") String value);
 
    /**
     * @see SQSApi#receiveMessages

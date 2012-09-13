@@ -19,9 +19,16 @@
 package org.jclouds.sqs.config;
 
 import org.jclouds.aws.config.FormSigningRestClientModule;
+import org.jclouds.http.HttpErrorHandler;
+import org.jclouds.http.HttpRetryHandler;
+import org.jclouds.http.annotation.ClientError;
+import org.jclouds.http.annotation.Redirection;
+import org.jclouds.http.annotation.ServerError;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.sqs.SQSApi;
 import org.jclouds.sqs.SQSAsyncApi;
+import org.jclouds.sqs.handlers.ParseSQSErrorFromXmlContent;
+import org.jclouds.sqs.handlers.SQSErrorRetryHandler;
 
 import com.google.common.reflect.TypeToken;
 
@@ -35,6 +42,18 @@ public class SQSRestClientModule extends FormSigningRestClientModule<SQSApi, SQS
 
    public SQSRestClientModule() {
       super(TypeToken.of(SQSApi.class), TypeToken.of(SQSAsyncApi.class));
+   }
+
+   @Override
+   protected void bindErrorHandlers() {
+      bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(ParseSQSErrorFromXmlContent.class);
+      bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(ParseSQSErrorFromXmlContent.class);
+      bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(ParseSQSErrorFromXmlContent.class);
+   }
+
+   @Override
+   protected void bindRetryHandlers() {
+      bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(SQSErrorRetryHandler.class);
    }
 
 }

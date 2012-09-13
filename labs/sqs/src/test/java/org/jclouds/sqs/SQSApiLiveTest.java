@@ -19,18 +19,17 @@
 package org.jclouds.sqs;
 
 import static org.jclouds.sqs.options.ListQueuesOptions.Builder.queuePrefix;
+import static org.jclouds.sqs.options.ReceiveMessageOptions.Builder.attribute;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
 
 import java.net.URI;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 
-import org.jclouds.aws.AWSResponseException;
 import org.jclouds.sqs.internal.BaseSQSApiLiveTest;
-import org.jclouds.sqs.options.ReceiveMessageOptions;
-import org.testng.annotations.AfterTest;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Charsets;
@@ -55,7 +54,7 @@ public class SQSApiLiveTest extends BaseSQSApiLiveTest {
    }
 
    protected void listQueuesInRegion(String region) throws InterruptedException {
-      SortedSet<URI> allResults = Sets.newTreeSet(context.getApi().listQueuesInRegion(region));
+      SortedSet<URI> allResults = Sets.newTreeSet(api().listQueuesInRegion(region));
       assertNotNull(allResults);
       if (allResults.size() >= 1) {
          URI queue = allResults.last();
@@ -66,35 +65,17 @@ public class SQSApiLiveTest extends BaseSQSApiLiveTest {
    public static final String PREFIX = System.getProperty("user.name") + "-sqs";
 
    @Test
-   protected void testCreateQueue() throws InterruptedException {
-      createQueueInRegion(null, PREFIX + "1");
+   protected void testCanRecreateQueueGracefully() throws InterruptedException {
+      recreateQueueInRegion(PREFIX + "1", null);
+      recreateQueueInRegion(PREFIX + "1", null);
    }
 
-   public String createQueueInRegion(final String region, String queueName) throws InterruptedException {
-      try {
-         Set<URI> result = context.getApi().listQueuesInRegion(region, queuePrefix(queueName));
-         if (result.size() >= 1) {
-            context.getApi().deleteQueue(Iterables.getLast(result));
-            queueName += 1;// cannot recreate a queue within 60 seconds
-         }
-      } catch (Exception e) {
-
+   public String recreateQueueInRegion(String queueName, String region) throws InterruptedException {
+      Set<URI> result = api().listQueuesInRegion(region, queuePrefix(queueName));
+      if (result.size() >= 1) {
+         api().deleteQueue(Iterables.getLast(result));
       }
-      URI queue = null;
-      int tries = 0;
-      while (queue == null && tries < 5) {
-         try {
-            tries++;
-            queue = context.getApi().createQueueInRegion(region, queueName);
-         } catch (AWSResponseException e) {
-            queueName += "1";
-            if (e.getError().getCode().equals("AWS.SimpleQueueService.QueueDeletedRecently"))// TODO
-               // retry
-               // handler
-               continue;
-            throw e;
-         }
-      }
+      URI queue = api().createQueueInRegion(region, queueName);
       assertQueueInList(region, queue);
       queues.add(queue);
       return queueName;
@@ -103,35 +84,53 @@ public class SQSApiLiveTest extends BaseSQSApiLiveTest {
    String message = "hardyharhar";
    HashCode md5 = Hashing.md5().hashString(message, Charsets.UTF_8);
 
-   @Test(dependsOnMethods = "testCreateQueue")
+   @Test(dependsOnMethods = "testCanRecreateQueueGracefully")
+   protected void testGetQueueAttributes() {
+      for (URI queue : queues) {
+         Map<String, String> attributes = api().getQueueAttributes(queue);
+         assertEquals(api().getQueueAttributes(queue, attributes.keySet()), attributes);
+      }
+   }
+   @Test(dependsOnMethods = "testCanRecreateQueueGracefully")
+   protected void testSetQueueAttribute() {
+      for (URI queue : queues) {
+         api().setQueueAttribute(queue, "MaximumMessageSize", "1024");
+         assertEquals(api().getQueueAttributes(queue).get("MaximumMessageSize"), "1024");
+      }
+   }
+   @Test(dependsOnMethods = "testCanRecreateQueueGracefully")
    protected void testSendMessage() {
       for (URI queue : queues) {
-         assertEquals(context.getApi().sendMessage(queue, message).getMD5(), md5);
+         assertEquals(api().sendMessage(queue, message).getMD5(), md5);
       }
    }
 
    @Test(dependsOnMethods = "testSendMessage")
-   protected void testReceiveMessage() {
+   protected void testReceiveMessageWithoutHidingMessage() {
       for (URI queue : queues) {
-         assertEquals(context.getApi().receiveMessage(queue, ReceiveMessageOptions.Builder.attribute("All")).getMD5(),
-               md5);
+         assertEquals(api().receiveMessage(queue, attribute("All").visibilityTimeout(0)).getMD5(), md5);
       }
    }
 
-   private void assertQueueInList(final String region, URI queue) throws InterruptedException {
-      final URI finalQ = queue;
-      assertEventually(new Runnable() {
-         public void run() {
-            Set<URI> result = context.getApi().listQueuesInRegion(region);
-            assertNotNull(result);
-            assert result.size() >= 1 : result;
-            assertTrue(result.contains(finalQ), finalQ + " not in " + result);
-         }
-      });
+   @Test(dependsOnMethods = "testReceiveMessageWithoutHidingMessage")
+   protected void testDeleteMessage() throws InterruptedException {
+      for (URI queue : queues) {
+         String receiptHandle = api().receiveMessage(queue, attribute("None").visibilityTimeout(0)).getReceiptHandle();
+         api().deleteMessage(queue, receiptHandle);
+         assertNoMessages(queue);
+      }
    }
 
-   @AfterTest
-   public void shutdown() {
-      context.close();
+   @Override
+   @AfterClass(groups = "live")
+   protected void tearDownContext() {
+      for (URI queue : queues) {
+         api().deleteQueue(queue);
+      }
+      super.tearDownContext();
+   }
+
+   protected SQSApi api() {
+      return context.getApi();
    }
 }

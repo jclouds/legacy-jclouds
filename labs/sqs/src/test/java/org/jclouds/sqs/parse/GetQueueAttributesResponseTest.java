@@ -21,38 +21,38 @@ package org.jclouds.sqs.parse;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
+import java.util.Map;
 
-import org.jclouds.crypto.CryptoStreams;
-import org.jclouds.http.HttpResponse;
-import org.jclouds.http.functions.ReturnStringIf2xx;
-import org.jclouds.sqs.domain.MessageIdAndMD5;
-import org.jclouds.sqs.xml.RegexMessageIdAndMD5Handler;
+import org.jclouds.http.functions.BaseHandlerTest;
+import org.jclouds.sqs.xml.AttributesHandler;
 import org.testng.annotations.Test;
 
-import com.google.common.hash.HashCodes;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * @author Adrian Cole
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during
 // surefire
-@Test(groups = "unit", testName = "SendMessageResponseTest")
-public class SendMessageResponseTest {
+@Test(groups = "unit", testName = "GetQueueAttributesResponseTest")
+public class GetQueueAttributesResponseTest extends BaseHandlerTest {
 
    public void test() {
-      InputStream is = getClass().getResourceAsStream("/send_message.xml");
+      InputStream is = getClass().getResourceAsStream("/attributes.xml");
 
-      MessageIdAndMD5 expected = expected();
+      Map<String, String> expected = expected();
 
-      RegexMessageIdAndMD5Handler handler = new RegexMessageIdAndMD5Handler(new ReturnStringIf2xx());
-      MessageIdAndMD5 result = handler.apply(HttpResponse.builder().statusCode(200).payload(is).build());
+      AttributesHandler handler = injector.getInstance(AttributesHandler.class);
+      Map<String, String> result = factory.create(handler).parse(is);
 
       assertEquals(result.toString(), expected.toString());
 
    }
 
-   public MessageIdAndMD5 expected() {
-      return MessageIdAndMD5.builder().id("c332b2b0-b61f-42d3-8832-d03ebd89f68d")
-            .md5(HashCodes.fromBytes(CryptoStreams.hex("e32aedf2b2b25355d04b1507055532e6"))).build();
+   public Map<String, String> expected() {
+      return ImmutableMap.<String, String>builder()
+                         .put("VisibilityTimeout", "30")
+                         .put("DelaySeconds", "0")
+                         .build();
    }
 }

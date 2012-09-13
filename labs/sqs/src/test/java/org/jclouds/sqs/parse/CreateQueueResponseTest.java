@@ -16,38 +16,39 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.sqs.xml;
+package org.jclouds.sqs.parse;
 
+import static org.testng.Assert.assertEquals;
+
+import java.io.InputStream;
 import java.net.URI;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ReturnStringIf2xx;
-import org.jclouds.sqs.xml.internal.BaseRegexQueueHandler;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
+import org.jclouds.sqs.xml.RegexQueueHandler;
+import org.testng.annotations.Test;
 
 /**
- * 
- * @see <a href=
- *      "http://docs.amazonwebservices.com/AWSSimpleQueueService/latest/APIReference/Query_QueryListQueues.html"
- *      />
  * @author Adrian Cole
  */
-@Singleton
-public class RegexQueueHandler extends BaseRegexQueueHandler implements Function<HttpResponse, URI> {
-   private final ReturnStringIf2xx returnStringIf200;
+// NOTE:without testName, this will not call @Before* and fail w/NPE during
+// surefire
+@Test(groups = "unit", testName = "CreateQueueResponseTest")
+public class CreateQueueResponseTest {
 
-   @Inject
-   public RegexQueueHandler(ReturnStringIf2xx returnStringIf200) {
-      this.returnStringIf200 = returnStringIf200;
+   public void test() {
+      InputStream is = getClass().getResourceAsStream("/create_queue.xml");
+
+      URI expected = expected();
+
+      RegexQueueHandler handler = new RegexQueueHandler(new ReturnStringIf2xx());
+      URI result = handler.apply(HttpResponse.builder().statusCode(200).payload(is).build());
+
+      assertEquals(result.toString(), expected.toString());
+
    }
 
-   @Override
-   public URI apply(HttpResponse response) {
-      return Iterables.getOnlyElement(parse(returnStringIf200.apply(response)));
+   public URI expected() {
+      return URI.create("https://sqs.us-east-1.amazonaws.com/993194456877/adrian-sqs11");
    }
 }

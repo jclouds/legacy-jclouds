@@ -57,9 +57,7 @@ public class ReceiveMessageResponseTest extends BaseHandlerTest {
             .builder()
             .id("5fea7756-0ea4-451a-a703-a558b933e274")
             .receiptHandle(
-                  "MbZj6wDWli+JvwwJaBV+3dcjk2YW2vA3+STFFljTM8tJJg6HRG6PYSasuWXPJB+Cw" + "\n"
-                        + "        Lj1FjgXUv1uSj1gUPAWV66FU/WeR4mq2OKpEGYWbnLmpRCJVAyeMjeU5ZBdtcQ+QE" + "\n"
-                        + "        auMZc8ZRv37sIW2iJKq3M9MFx1YvV11A2x/KSbkJ0=")
+                  "+eXJYhj5rDr9cAe/9BuheT5fysi9BoqtEZSkO7IazVbNHg60eCCINxLqaSVv2pFHrWeWNpZwbleSkWRbCtZaQGgpOx/3cWJZiNSG1KKlJX4IOwISFvb3FwByMx4w0lnINeXzcw2VcKQXNrCatO9gdIiVPvJC3SCKatYM/7YTidtjqc8igrtYW2E2mHlCy3NXPCeXxP4tSvyEwIxpDAmMT7IF0mWvTHS6+JBUtFUsrmi61oIHlESNrD1OjdB1QQw+kdvJ6VbsntbJNNYKw+YqdqWNpZkiGQ8y1z9OdHsr1+4=")
             .md5(HashCodes.fromBytes(CryptoStreams.hex("fafb00f5732ab283681e124bf8747ed1")))
             .body("This is a test message")
             .addAttribute("SenderId", "195004372649")

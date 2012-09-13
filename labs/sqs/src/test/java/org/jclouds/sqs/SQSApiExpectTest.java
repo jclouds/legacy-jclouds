@@ -25,10 +25,13 @@ import java.net.URI;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.sqs.internal.BaseSQSApiExpectTest;
+import org.jclouds.sqs.parse.CreateQueueResponseTest;
+import org.jclouds.sqs.parse.GetQueueAttributesResponseTest;
 import org.jclouds.sqs.parse.ReceiveMessageResponseTest;
 import org.jclouds.sqs.parse.SendMessageResponseTest;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 /**
@@ -37,7 +40,30 @@ import com.google.common.collect.Iterables;
 @Test(groups = "unit", testName = "SQSApiExpectTest")
 public class SQSApiExpectTest extends BaseSQSApiExpectTest {
 
-   HttpRequest sendMessage = HttpRequest.builder()
+   public HttpRequest createQueue = HttpRequest.builder()
+         .method("POST")
+         .endpoint("https://sqs.us-east-1.amazonaws.com/")
+         .addHeader("Host", "sqs.us-east-1.amazonaws.com")
+         .addFormParam("Action", "CreateQueue")
+         .addFormParam("QueueName", "queueName")
+         .addFormParam("Signature", "I7tmwiCzJ9cvw79pmlz1rOILh2C2ZV6OpLk23JGx6AU%3D")
+         .addFormParam("SignatureMethod", "HmacSHA256")
+         .addFormParam("SignatureVersion", "2")
+         .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
+         .addFormParam("Version", "2011-10-01")
+         .addFormParam("AWSAccessKeyId", "identity").build();
+
+   public void testCreateQueueWhenResponseIs2xx() throws Exception {
+      
+      HttpResponse createQueueResponse = HttpResponse.builder().statusCode(200)
+            .payload(payloadFromResourceWithContentType("/create_queue.xml", "text/xml")).build();
+
+      SQSApi apiWhenExist = requestSendsResponse(createQueue, createQueueResponse);
+
+      assertEquals(apiWhenExist.createQueueInRegion(null, "queueName").toString(), new CreateQueueResponseTest().expected().toString());
+   }
+   
+   public HttpRequest sendMessage = HttpRequest.builder()
          .method("POST")
          .endpoint("https://sqs.us-east-1.amazonaws.com/993194456877/adrian-sqs11/")
          .addHeader("Host", "sqs.us-east-1.amazonaws.com")
@@ -61,7 +87,7 @@ public class SQSApiExpectTest extends BaseSQSApiExpectTest {
    }
    
 
-   HttpRequest receiveMessage = HttpRequest.builder()
+   public HttpRequest receiveMessage = HttpRequest.builder()
          .method("POST")
          .endpoint("https://sqs.us-east-1.amazonaws.com/993194456877/adrian-sqs11/")
          .addHeader("Host", "sqs.us-east-1.amazonaws.com")
@@ -86,7 +112,7 @@ public class SQSApiExpectTest extends BaseSQSApiExpectTest {
    }
    
 
-   HttpRequest receiveMessages = HttpRequest.builder()
+   public HttpRequest receiveMessages = HttpRequest.builder()
          .method("POST")
          .endpoint("https://sqs.us-east-1.amazonaws.com/993194456877/adrian-sqs11/")
          .addHeader("Host", "sqs.us-east-1.amazonaws.com")
@@ -110,4 +136,113 @@ public class SQSApiExpectTest extends BaseSQSApiExpectTest {
             apiWhenExist.receiveMessages(URI.create("https://sqs.us-east-1.amazonaws.com/993194456877/adrian-sqs11/"), 10)
                   .toString(), new ReceiveMessageResponseTest().expected().toString());
    }
+   
+   public HttpRequest deleteMessage = HttpRequest.builder()
+         .method("POST")
+         .endpoint("https://sqs.us-east-1.amazonaws.com/993194456877/adrian-sqs11/")
+         .addHeader("Host", "sqs.us-east-1.amazonaws.com")
+         .addFormParam("Action", "DeleteMessage")
+         .addFormParam("ReceiptHandle", "eXJYhj5rDr9cAe")
+         .addFormParam("Signature", "9%2FkuCc2i78gMsmul%2BRsOPcdQ1OLUKrItqgGIRRBJb8M%3D")
+         .addFormParam("SignatureMethod", "HmacSHA256")
+         .addFormParam("SignatureVersion", "2")
+         .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
+         .addFormParam("Version", "2011-10-01")
+         .addFormParam("AWSAccessKeyId", "identity").build();
+
+   public void testDeleteMessageWhenResponseIs2xx() throws Exception {
+
+      HttpResponse deleteMessageResponse = HttpResponse.builder()
+            .statusCode(200)
+            .payload(
+                  payloadFromStringWithContentType(
+                        "<DeleteMessageResponse><ResponseMetadata><RequestId>b5293cb5-d306-4a17-9048-b263635abe42</RequestId></ResponseMetadata></DeleteMessageResponse>",
+                        "text/xml")).build();
+
+      SQSApi apiWhenExist = requestSendsResponse(deleteMessage, deleteMessageResponse);
+
+      apiWhenExist.deleteMessage(URI.create("https://sqs.us-east-1.amazonaws.com/993194456877/adrian-sqs11/"),
+            "eXJYhj5rDr9cAe");
+   }
+
+   public HttpRequest getQueueAttributes = HttpRequest.builder()
+         .method("POST")
+         .endpoint("https://sqs.us-east-1.amazonaws.com/993194456877/adrian-sqs11/")
+         .addHeader("Host", "sqs.us-east-1.amazonaws.com")
+         .addFormParam("Action", "GetQueueAttributes")
+         .addFormParam("AttributeName.1", "All")
+         .addFormParam("Signature", "welFLn0TV6JlH6s6s60XZTJeJfFXGiXN4qNPrBx7aHc%3D")
+         .addFormParam("SignatureMethod", "HmacSHA256")
+         .addFormParam("SignatureVersion", "2")
+         .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
+         .addFormParam("Version", "2011-10-01")
+         .addFormParam("AWSAccessKeyId", "identity").build();
+
+   public void testGetQueueAttributesWhenResponseIs2xx() throws Exception {
+      
+      HttpResponse getQueueAttributesResponse = HttpResponse.builder().statusCode(200)
+            .payload(payloadFromResourceWithContentType("/attributes.xml", "text/xml")).build();
+
+      SQSApi apiWhenExist = requestSendsResponse(getQueueAttributes, getQueueAttributesResponse);
+
+      assertEquals(apiWhenExist.getQueueAttributes(URI.create("https://sqs.us-east-1.amazonaws.com/993194456877/adrian-sqs11/")).toString(), new GetQueueAttributesResponseTest().expected().toString());
+   }
+   
+   public HttpRequest getQueueAttributesSubset = HttpRequest.builder()
+         .method("POST")
+         .endpoint("https://sqs.us-east-1.amazonaws.com/993194456877/adrian-sqs11/")
+         .addHeader("Host", "sqs.us-east-1.amazonaws.com")
+         .addFormParam("Action", "GetQueueAttributes")
+         .addFormParam("AttributeName.1", "VisibilityTimeout")
+         .addFormParam("AttributeName.2", "DelaySeconds")
+         .addFormParam("Signature", "9KaiOOWWyFPTVMOnyHA3ZoXbPBPSD4AZ4q460UNMfDs%3D")
+         .addFormParam("SignatureMethod", "HmacSHA256")
+         .addFormParam("SignatureVersion", "2")
+         .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
+         .addFormParam("Version", "2011-10-01")
+         .addFormParam("AWSAccessKeyId", "identity").build();
+
+   public void testGetQueueAttributesSubsetWhenResponseIs2xx() throws Exception {
+      
+      HttpResponse getQueueAttributesSubsetResponse = HttpResponse.builder().statusCode(200)
+            .payload(payloadFromResourceWithContentType("/attributes.xml", "text/xml")).build();
+
+      SQSApi apiWhenExist = requestSendsResponse(getQueueAttributesSubset, getQueueAttributesSubsetResponse);
+
+      assertEquals(
+            apiWhenExist.getQueueAttributes(
+                  URI.create("https://sqs.us-east-1.amazonaws.com/993194456877/adrian-sqs11/"),
+                  ImmutableSet.of("VisibilityTimeout", "DelaySeconds")).toString(),
+            new GetQueueAttributesResponseTest().expected().toString());
+   }
+   
+   public HttpRequest setQueueAttribute = HttpRequest.builder()
+         .method("POST")
+         .endpoint("https://sqs.us-east-1.amazonaws.com/993194456877/adrian-sqs11/")
+         .addHeader("Host", "sqs.us-east-1.amazonaws.com")
+         .addFormParam("Action", "SetQueueAttributes")
+         .addFormParam("Attribute.Name", "MaximumMessageSize")
+         .addFormParam("Attribute.Value", "1")
+         .addFormParam("Signature", "ktBkQ3c%2FrwGcBSec0fkckfo73xmcoTuub5fxudM1qh0%3D")
+         .addFormParam("SignatureMethod", "HmacSHA256")
+         .addFormParam("SignatureVersion", "2")
+         .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
+         .addFormParam("Version", "2011-10-01")
+         .addFormParam("AWSAccessKeyId", "identity").build();
+
+   public void testSetQueueAttributeWhenResponseIs2xx() throws Exception {
+
+      HttpResponse setQueueAttributeResponse = HttpResponse.builder()
+            .statusCode(200)
+            .payload(
+                  payloadFromStringWithContentType(
+                        "<SetQueueAttributesResponse><ResponseMetadata><RequestId>b5293cb5-d306-4a17-9048-b263635abe42</RequestId></ResponseMetadata></SetQueueAttributesResponse>",
+                        "text/xml")).build();
+
+      SQSApi apiWhenExist = requestSendsResponse(setQueueAttribute, setQueueAttributeResponse);
+
+      apiWhenExist.setQueueAttribute(URI.create("https://sqs.us-east-1.amazonaws.com/993194456877/adrian-sqs11/"),
+            "MaximumMessageSize", "1");
+   }
+
 }

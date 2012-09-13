@@ -19,6 +19,7 @@
 package org.jclouds.sqs;
 
 import java.net.URI;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -61,27 +62,27 @@ public interface SQSApi {
    Set<URI> listQueuesInRegion(@Nullable String region, ListQueuesOptions options);
 
    /**
-    * 
     * The CreateQueue action creates a new queue.
-    * <p/>
+    * 
     * When you request CreateQueue, you provide a name for the queue. To
     * successfully create a new queue, you must provide a name that is unique
-    * within the scope of your own queues. If you provide the name of an
-    * existing queue, a new queue isn't created and an error isn't returned.
-    * Instead, the request succeeds and the queue URL for the existing queue is
-    * returned (for more information about queue URLs, see Queue and Message
-    * Identifiers in the Amazon SQS Developer Guide). Exception: if you provide
-    * a value for DefaultVisibilityTimeout that is different from the value for
-    * the existing queue, you receive an error.
-    * <h3>Note</h3>
+    * within the scope of your own queues.
+    * 
+    * <h4>Note</h4>
     * 
     * If you delete a queue, you must wait at least 60 seconds before creating a
     * queue with the same name.
-    * <p/>
-    * A default value for the queue's visibility timeout (30 seconds) is set
-    * when the queue is created. You can override this value with the
-    * DefaultVisibilityTimeout request parameter. For more information, see
-    * Visibility Timeout in the Amazon SQS Developer Guide.
+    * 
+    * If you provide the name of an existing queue, along with the exact names
+    * and values of all the queue's attributes, CreateQueue returns the queue
+    * URL for the existing queue. If the queue name, attribute names, or
+    * attribute values do not match an existing queue, CreateQueue returns an
+    * error.
+    * 
+    * <h4>Tip</h4>
+    * 
+    * Use GetQueueUrl to get a queue's URL. GetQueueUrl requires only the
+    * QueueName parameter.
     * 
     * @param region
     *           Queues are Region-specific.
@@ -89,29 +90,39 @@ public interface SQSApi {
     *           The name to use for the queue created. Constraints: Maximum 80
     *           characters; alphanumeric characters, hyphens (-), and
     *           underscores (_) are allowed.
-    * @param options
-    *           like the visibility timeout (in seconds) to use for this queue.
     */
+   // this will gracefully attempt to resolve name issues
+   @Timeout(duration = 61, timeUnit = TimeUnit.SECONDS)
    URI createQueueInRegion(@Nullable String region, String queueName);
 
+   /**
+    * same as {@link #createQueueInRegion(String, String)} except you can
+    * control options such as delay seconds.
+    * 
+    * @param options
+    *           options such as delay seconds
+    * @see #createQueueInRegion(String, String)
+    */
+   @Timeout(duration = 61, timeUnit = TimeUnit.SECONDS)
    URI createQueueInRegion(@Nullable String region, String queueName, CreateQueueOptions options);
 
    /**
     * The DeleteQueue action deletes the queue specified by the queue URL,
     * regardless of whether the queue is empty. If the specified queue does not
-    * exist, SQS returns a successful response. <h3>
-    * Caution</h3>
+    * exist, SQS returns a successful response.
+    * 
+    * <h4>Caution</h4>
     * 
     * Use DeleteQueue with care; once you delete your queue, any messages in the
     * queue are no longer available.
-    * <p/>
+    * 
     * When you delete a queue, the deletion process takes up to 60 seconds.
     * Requests you send involving that queue during the 60 seconds might
     * succeed. For example, a SendMessage request might succeed, but after the
     * 60 seconds, the queue and that message you sent no longer exist. Also,
     * when you delete a queue, you must wait at least 60 seconds before creating
     * a queue with the same name.
-    * <p/>
+    * 
     * We reserve the right to delete queues that have had no activity for more
     * than 30 days. For more information, see About SQS Queues in the Amazon SQS
     * Developer Guide.
@@ -122,36 +133,203 @@ public interface SQSApi {
    void deleteQueue(URI queue);
 
    /**
+    * The DeleteMessage action deletes the specified message from the specified
+    * queue. You specify the message by using the message's receipt handle and
+    * not the message ID you received when you sent the message. Even if the
+    * message is locked by another reader due to the visibility timeout setting,
+    * it is still deleted from the queue. If you leave a message in the queue
+    * for more than 4 days, SQS automatically deletes it.
+    * 
+    * <h4>Note</h4>
+    * 
+    * The receipt handle is associated with a specific instance of receiving the
+    * message. If you receive a message more than once, the receipt handle you
+    * get each time you receive the message is different. When you request
+    * DeleteMessage, if you don't provide the most recently received receipt
+    * handle for the message, the request will still succeed, but the message
+    * might not be deleted.
+    * 
+    * <h4>Important</h4>
+    * 
+    * It is possible you will receive a message even after you have deleted it.
+    * This might happen on rare occasions if one of the servers storing a copy
+    * of the message is unavailable when you request to delete the message. The
+    * copy remains on the server and might be returned to you again on a
+    * subsequent receive request. You should create your system to be idempotent
+    * so that receiving a particular message more than once is not a problem.
+    * 
+    * @param queue
+    *           the queue the message is in
+    * @param receiptHandle
+    *           The receipt handle associated with the message you want to
+    *           delete.
+    */
+   void deleteMessage(URI queue, String receiptHandle);
+
+   /**
     * The SendMessage action delivers a message to the specified queue. The
-    * maximum allowed message size is 8 KB.
-    * <p/>
-    * Important
-    * <p/>
+    * maximum allowed message size is 64 KB.
+    * 
+    * <h4>Important</h4>
+    * 
     * The following list shows the characters (in Unicode) allowed in your
     * message, according to the W3C XML specification (for more information, go
     * to http://www.w3.org/TR/REC-xml/#charsets). If you send any characters not
     * included in the list, your request will be rejected.
-    * <p/>
-    * #x9 | #xA | #xD | [#x20 to #xD7FF] | [#xE000 to #xFFFD] | [#x10000 to
-    * #x10FFFF]
+    * 
+    * 
+    * {@code #x9 | #xA | #xD | [#x20 to #xD7FF] | [#xE000 to #xFFFD] | [#x10000 to #x10FFFF]}
     * 
     * @param queue
     *           queue you want to send to
     * 
     * @param message
-    *           The message to send. Type: String maximum 8 KB in size. For a
-    *           list of allowed characters, see the preceding important note
-    * @return md5 of the content sent
+    *           Type: String maximum 64 KB in size. For a list of allowed
+    *           characters, see the preceding important note.
+    * @return id of the message and md5 of the content sent
     */
    MessageIdAndMD5 sendMessage(URI queue, String message);
 
+   /**
+    * same as {@link #sendMessage(URI, String)} except you can control options
+    * such as delay seconds.
+    * 
+    * @param options
+    *           options such as delay seconds
+    * @see #sendMessage(URI, String)
+    */
    MessageIdAndMD5 sendMessage(URI queue, String message, SendMessageOptions options);
 
+   /**
+    * The ReceiveMessage action retrieves one or more messages from the
+    * specified queue. The ReceiveMessage action does not delete the message
+    * after it is retrieved. To delete a message, you must use the DeleteMessage
+    * action. For more information about message deletion in the message life
+    * cycle, see Message Lifecycle.
+    * 
+    * <h4>Note</h4>
+    * 
+    * Due to the distributed nature of the queue, a weighted random set of
+    * machines is sampled on a ReceiveMessage call. That means only the messages
+    * on the sampled machines are returned. If the number of messages in the
+    * queue is small (less than 1000), it is likely you will get fewer messages
+    * than you requested per ReceiveMessage call. If the number of messages in
+    * the queue is extremely small, you might not receive any messages in a
+    * particular ReceiveMessage response; in which case you should repeat the
+    * request.
+    * 
+    * @param queue
+    *           from where you are receiving messages
+    * @return message including the receipt handle you can use to delete it
+    */
    Message receiveMessage(URI queue);
 
+   /**
+    * same as {@link #receiveMessage(URI)} except you can provide options like
+    * VisibilityTimeout parameter in your request, which will be applied to the
+    * messages that SQS returns in the response. If you do not include the
+    * parameter, the overall visibility timeout for the queue is used for the
+    * returned messages.
+    * 
+    * @param options
+    *           options such as VisibilityTimeout
+    * @see #receiveMessage(URI)
+    */
    Message receiveMessage(URI queue, ReceiveMessageOptions options);
 
+   /**
+    * same as {@link #receiveMessage(URI)} except you can receive multiple
+    * messages.
+    * 
+    * @param max
+    *           maximum messages to receive, current limit is 10
+    * @see #receiveMessage(URI)
+    */
    Set<Message> receiveMessages(URI queue, int max);
 
+   /**
+    * returns all attributes of a queue.
+    * 
+    * @param queue
+    *           queue to get the attributes of
+    */
+   Map<String, String> getQueueAttributes(URI queue);
+
+   /**
+    * The SetQueueAttributes action sets one attribute of a queue per request.
+    * When you change a queue's attributes, the change can take up to 60 seconds
+    * to propagate throughout the SQS system.
+    * 
+    * @param queue
+    *           queue to set the attribute on
+    * @param name
+    * 
+    *           The name of the attribute you want to set.
+    * 
+    *           VisibilityTimeout - The length of time (in seconds) that a
+    *           message received from a queue will be invisible to other
+    *           receiving components when they ask to receive messages. For more
+    *           information about VisibilityTimeout, see Visibility Timeout in
+    *           the Amazon SQS Developer Guide.
+    * 
+    *           Policy - The formal description of the permissions for a
+    *           resource. For more information about Policy, see Basic Policy
+    *           Structure in the Amazon SQS Developer Guide.
+    * 
+    *           MaximumMessageSize - The limit of how many bytes a message can
+    *           contain before Amazon SQS rejects it.
+    * 
+    *           MessageRetentionPeriod - The number of seconds Amazon SQS
+    *           retains a message.
+    * 
+    *           DelaySeconds - The time in seconds that the delivery of all
+    *           messages in the queue will be delayed.
+    * @param value
+    *           The value of the attribute you want to set. To delete a queue's
+    *           access control policy, set the policy to "".
+    * 
+    *           Constraints: Constraints are specific for each value.
+    * 
+    *           VisibilityTimeout - An integer from 0 to 43200 (12 hours). The
+    *           default for this attribute is 30 seconds.
+    * 
+    *           Policy - A valid form-url-encoded policy. For more information
+    *           about policy structure, see Basic Policy Structure in the Amazon
+    *           SQS Developer Guide. For more information about
+    *           form-url-encoding, see
+    *           http://www.w3.org/MarkUp/html-spec/html-spec_8.html#SEC8.2.1.
+    * 
+    *           MaximumMessageSize - An integer from 1024 bytes (1 KiB) up to
+    *           65536 bytes (64 KiB). The default for this attribute is 65536
+    *           (64 KiB).
+    * 
+    *           MessageRetentionPeriod - Integer representing seconds, from 60
+    *           (1 minute) to 1209600 (14 days). The default for this attribute
+    *           is 345600 (4 days).
+    * 
+    *           DelaySeconds - An integer from 0 to 900 (15 minutes). The
+    *           default for this attribute is 0.
+    */
+   void setQueueAttribute(URI queue, String name, String value);
+
+   /**
+    * returns some attributes of a queue.
+    * 
+    * @param queue
+    *           queue to get the attributes of
+    */
+   Map<String, String> getQueueAttributes(URI queue, Iterable<String> attributeNames);
+
+   /**
+    * same as {@link #receiveMessages(URI, int)} except you can provide options
+    * like VisibilityTimeout parameter in your request, which will be applied to
+    * the messages that SQS returns in the response. If you do not include the
+    * parameter, the overall visibility timeout for the queue is used for the
+    * returned messages.
+    * 
+    * @param options
+    *           options such as VisibilityTimeout
+    * @see #receiveMessages(URI, int)
+    */
    Set<Message> receiveMessages(URI queue, int max, ReceiveMessageOptions options);
 }
