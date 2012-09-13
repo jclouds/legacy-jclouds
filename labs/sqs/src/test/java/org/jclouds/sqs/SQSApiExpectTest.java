@@ -164,6 +164,36 @@ public class SQSApiExpectTest extends BaseSQSApiExpectTest {
       apiWhenExist.deleteMessage(URI.create("https://sqs.us-east-1.amazonaws.com/993194456877/adrian-sqs11/"),
             "eXJYhj5rDr9cAe");
    }
+   
+   
+   public HttpRequest changeMessageVisibility = HttpRequest.builder()
+         .method("POST")
+         .endpoint("https://sqs.us-east-1.amazonaws.com/993194456877/adrian-sqs11/")
+         .addHeader("Host", "sqs.us-east-1.amazonaws.com")
+         .addFormParam("Action", "ChangeMessageVisibility")
+         .addFormParam("ReceiptHandle", "eXJYhj5rDr9cAe")
+         .addFormParam("Signature", "gvmSHleGLkmszYU6aURCBImuec2k0O3pg3tAYhDvkNs%3D")
+         .addFormParam("SignatureMethod", "HmacSHA256")
+         .addFormParam("SignatureVersion", "2")
+         .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
+         .addFormParam("Version", "2011-10-01")
+         .addFormParam("VisibilityTimeout", "10")
+         .addFormParam("AWSAccessKeyId", "identity").build();
+
+   public void testChangeMessageVisibilityWhenResponseIs2xx() throws Exception {
+
+      HttpResponse changeMessageVisibilityResponse = HttpResponse.builder()
+            .statusCode(200)
+            .payload(
+                  payloadFromStringWithContentType(
+                        "<ChangeMessageVisibilityResponse><ResponseMetadata><RequestId>b5293cb5-d306-4a17-9048-b263635abe42</RequestId></ResponseMetadata></ChangeMessageVisibilityResponse>",
+                        "text/xml")).build();
+
+      SQSApi apiWhenExist = requestSendsResponse(changeMessageVisibility, changeMessageVisibilityResponse);
+
+      apiWhenExist.changeMessageVisibility(URI.create("https://sqs.us-east-1.amazonaws.com/993194456877/adrian-sqs11/"),
+            "eXJYhj5rDr9cAe", 10);
+   }
 
    public HttpRequest getQueueAttributes = HttpRequest.builder()
          .method("POST")

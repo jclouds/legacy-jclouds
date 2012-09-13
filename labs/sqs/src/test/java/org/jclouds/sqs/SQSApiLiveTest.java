@@ -22,6 +22,7 @@ import static org.jclouds.sqs.options.ListQueuesOptions.Builder.queuePrefix;
 import static org.jclouds.sqs.options.ReceiveMessageOptions.Builder.attribute;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
 
 import java.net.URI;
 import java.util.Map;
@@ -111,11 +112,26 @@ public class SQSApiLiveTest extends BaseSQSApiLiveTest {
          assertEquals(api().receiveMessage(queue, attribute("All").visibilityTimeout(0)).getMD5(), md5);
       }
    }
+  
+   String receiptHandle;
 
    @Test(dependsOnMethods = "testReceiveMessageWithoutHidingMessage")
+   protected void testChangeMessageVisibility() {
+      for (URI queue : queues) {
+         // start hiding it at 5 seconds
+         receiptHandle = api().receiveMessage(queue, attribute("None").visibilityTimeout(5)).getReceiptHandle();
+         // hidden message, so we can't see it
+         assertNull(api().receiveMessage(queue));
+         // this should unhide it
+         api().changeMessageVisibility(queue, receiptHandle, 0);
+         // so we can see it again
+         assertEquals(api().receiveMessage(queue, attribute("All").visibilityTimeout(0)).getMD5(), md5);
+      }
+   }
+
+   @Test(dependsOnMethods = "testChangeMessageVisibility")
    protected void testDeleteMessage() throws InterruptedException {
       for (URI queue : queues) {
-         String receiptHandle = api().receiveMessage(queue, attribute("None").visibilityTimeout(0)).getReceiptHandle();
          api().deleteMessage(queue, receiptHandle);
          assertNoMessages(queue);
       }

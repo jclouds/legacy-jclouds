@@ -127,6 +127,15 @@ public interface SQSAsyncApi {
    ListenableFuture<Void> deleteMessage(@EndpointParam URI queue, @FormParam("ReceiptHandle") String receiptHandle);
 
    /**
+    * @see SQSApi#changeMessageVisibility
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "ChangeMessageVisibility")
+   ListenableFuture<Void> changeMessageVisibility(@EndpointParam URI queue,
+         @FormParam("ReceiptHandle") String receiptHandle, @FormParam("VisibilityTimeout") int visibilityTimeout);
+
+   /**
     * @see SQSApi#sendMessage
     */
    @POST

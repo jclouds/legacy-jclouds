@@ -167,6 +167,48 @@ public interface SQSApi {
    void deleteMessage(URI queue, String receiptHandle);
 
    /**
+    * The ChangeMessageVisibility action changes the visibility timeout of a
+    * specified message in a queue to a new value. The maximum allowed timeout
+    * value you can set the value to is 12 hours. This means you can't extend
+    * the timeout of a message in an existing queue to more than a total
+    * visibility timeout of 12 hours. (For more information visibility timeout,
+    * see Visibility Timeout in the Amazon SQS Developer Guide.)
+    * 
+    * For example, let's say the timeout for the queue is 30 seconds, and you
+    * receive a message. Once you're 20 seconds into the timeout for that
+    * message (i.e., you have 10 seconds left), you extend it by 60 seconds by
+    * calling ChangeMessageVisibility with VisibilityTimeoutset to 60 seconds.
+    * You have then changed the remaining visibility timeout from 10 seconds to
+    * 60 seconds.
+    * 
+    * <h4>Important</h4>
+    * 
+    * If you attempt to set the VisibilityTimeout to an amount more than the
+    * maximum time left, Amazon SQS returns an error. It will not automatically
+    * recalculate and increase the timeout to the maximum time remaining.
+    * 
+    * <h4>Important</h4>
+    * 
+    * Unlike with a queue, when you change the visibility timeout for a specific
+    * message, that timeout value is applied immediately but is not saved in
+    * memory for that message. If you don't delete a message after it is
+    * received, the visibility timeout for the message the next time it is
+    * received reverts to the original timeout value, not the value you set with
+    * the ChangeMessageVisibility action.
+    * 
+    * @param queue
+    *           the queue the message is in
+    * @param receiptHandle
+    *           The receipt handle associated with the message whose visibility
+    *           timeout you want to change. This parameter is returned by the
+    *           ReceiveMessage action.
+    * @param visibilityTimeout
+    *           The new value for the message's visibility timeout (in seconds)
+    *           from 0 to 43200 (maximum 12 hours)
+    */
+   void changeMessageVisibility(URI queue, String receiptHandle, int visibilityTimeout);
+
+   /**
     * The SendMessage action delivers a message to the specified queue. The
     * maximum allowed message size is 64 KB.
     * 
