@@ -112,7 +112,7 @@ public class VolumeApiExpectTest extends BaseNovaApiExpectTest {
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             authenticatedGET().endpoint(endpoint)
                   .method("POST")
-                  .payload(payloadFromStringWithContentType("{\"volume\":{\"display_name\":\"jclouds-test-volume\",\"display_description\":\"description of test volume\",\"size\":1}}", MediaType.APPLICATION_JSON))
+                  .payload(payloadFromStringWithContentType("{\"volume\":{\"displayName\":\"jclouds-test-volume\",\"displayDescription\":\"description of test volume\",\"size\":1}}", MediaType.APPLICATION_JSON))
                   .build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/volume_details.json")).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
@@ -130,7 +130,7 @@ public class VolumeApiExpectTest extends BaseNovaApiExpectTest {
             authenticatedGET().endpoint(endpoint)
                .endpoint(endpoint)
                .method("POST")
-               .payload(payloadFromStringWithContentType("{\"volume\":{\"display_name\":\"jclouds-test-volume\",\"display_description\":\"description of test volume\",\"size\":1}}", MediaType.APPLICATION_JSON))
+               .payload(payloadFromStringWithContentType("{\"volume\":{\"displayName\":\"jclouds-test-volume\",\"displayDescription\":\"description of test volume\",\"size\":1}}", MediaType.APPLICATION_JSON))
                .build(),
             HttpResponse.builder().statusCode(404).payload(payloadFromResource("/volume_details.json")).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
