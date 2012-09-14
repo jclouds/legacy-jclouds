@@ -40,7 +40,7 @@ import com.google.inject.Singleton;
  */
 @Singleton
 public class RegexMessageIdAndMD5Handler implements Function<HttpResponse, MessageIdAndMD5> {
-   Pattern pattern = Pattern.compile("<MessageId>([\\S&&[^<]]+)</MessageId>\\s*<MD5OfMessageBody>([\\S&&[^<]]+)</MD5OfMessageBody>", Pattern.DOTALL);
+   private static final Pattern pattern = Pattern.compile("<MessageId>([\\S&&[^<]]+)</MessageId>\\s*<MD5OfMessageBody>([\\S&&[^<]]+)</MD5OfMessageBody>", Pattern.DOTALL);
    private final ReturnStringIf2xx returnStringIf200;
 
    @Inject

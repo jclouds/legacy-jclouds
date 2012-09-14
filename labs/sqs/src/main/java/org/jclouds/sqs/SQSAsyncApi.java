@@ -35,14 +35,20 @@ import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.EndpointParam;
+import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
+import org.jclouds.rest.annotations.Transform;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.sqs.binders.BindAttributeNamesToIndexedFormParams;
+import org.jclouds.sqs.domain.Action;
 import org.jclouds.sqs.domain.Message;
 import org.jclouds.sqs.domain.MessageIdAndMD5;
+import org.jclouds.sqs.domain.QueueAttributes;
+import org.jclouds.sqs.functions.MapToQueueAttributes;
 import org.jclouds.sqs.options.CreateQueueOptions;
 import org.jclouds.sqs.options.ListQueuesOptions;
 import org.jclouds.sqs.options.ReceiveMessageOptions;
@@ -53,6 +59,7 @@ import org.jclouds.sqs.xml.ReceiveMessageResponseHandler;
 import org.jclouds.sqs.xml.RegexListQueuesResponseHandler;
 import org.jclouds.sqs.xml.RegexMessageIdAndMD5Handler;
 import org.jclouds.sqs.xml.RegexQueueHandler;
+import org.jclouds.sqs.xml.ValueHandler;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -142,7 +149,8 @@ public interface SQSAsyncApi {
    @Path("/")
    @FormParams(keys = ACTION, values = "SendMessage")
    @ResponseParser(RegexMessageIdAndMD5Handler.class)
-   ListenableFuture<MessageIdAndMD5> sendMessage(@EndpointParam URI queue, @FormParam("MessageBody") String message);
+   ListenableFuture<? extends MessageIdAndMD5> sendMessage(@EndpointParam URI queue,
+         @FormParam("MessageBody") String message);
 
    /**
     * @see SQSApi#sendMessage
@@ -151,8 +159,8 @@ public interface SQSAsyncApi {
    @Path("/")
    @FormParams(keys = ACTION, values = "SendMessage")
    @ResponseParser(RegexMessageIdAndMD5Handler.class)
-   ListenableFuture<MessageIdAndMD5> sendMessage(@EndpointParam URI queue, @FormParam("MessageBody") String message,
-         SendMessageOptions options);
+   ListenableFuture<? extends MessageIdAndMD5> sendMessage(@EndpointParam URI queue,
+         @FormParam("MessageBody") String message, SendMessageOptions options);
 
    /**
     * @see SQSApi#receiveMessage
@@ -170,7 +178,7 @@ public interface SQSAsyncApi {
    @Path("/")
    @FormParams(keys = ACTION, values = "ReceiveMessage")
    @XMLResponseParser(MessageHandler.class)
-   ListenableFuture<Message> receiveMessage(@EndpointParam URI queue, ReceiveMessageOptions options);
+   ListenableFuture<? extends Message> receiveMessage(@EndpointParam URI queue, ReceiveMessageOptions options);
 
    /**
     * @see SQSApi#getQueueAttributes(URI)
@@ -178,8 +186,10 @@ public interface SQSAsyncApi {
    @POST
    @Path("/")
    @FormParams(keys = { ACTION, "AttributeName.1" }, values = { "GetQueueAttributes", "All" })
+   @Transform(MapToQueueAttributes.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @XMLResponseParser(AttributesHandler.class)
-   ListenableFuture<Map<String, String>> getQueueAttributes(@EndpointParam URI queue);
+   ListenableFuture<? extends QueueAttributes> getQueueAttributes(@EndpointParam URI queue);
 
    /**
     * @see SQSApi#getQueueAttributes(URI, Iterable)
@@ -190,6 +200,16 @@ public interface SQSAsyncApi {
    @XMLResponseParser(AttributesHandler.class)
    ListenableFuture<Map<String, String>> getQueueAttributes(@EndpointParam URI queue,
          @BinderParam(BindAttributeNamesToIndexedFormParams.class) Iterable<String> attributeNames);
+
+   /**
+    * @see SQSApi#getQueueAttribute
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "GetQueueAttributes")
+   @XMLResponseParser(ValueHandler.class)
+   ListenableFuture<String> getQueueAttribute(@EndpointParam URI queue,
+         @FormParam("AttributeName.1") String attributeName);
 
    /**
     * @see SQSApi#setQueueAttribute
@@ -207,7 +227,8 @@ public interface SQSAsyncApi {
    @Path("/")
    @FormParams(keys = ACTION, values = "ReceiveMessage")
    @XMLResponseParser(ReceiveMessageResponseHandler.class)
-   ListenableFuture<Set<Message>> receiveMessages(@EndpointParam URI queue, @FormParam("MaxNumberOfMessages") int max);
+   ListenableFuture<? extends Set<? extends Message>> receiveMessages(@EndpointParam URI queue,
+         @FormParam("MaxNumberOfMessages") int max);
 
    /**
     * @see SQSApi#receiveMessages
@@ -216,7 +237,24 @@ public interface SQSAsyncApi {
    @Path("/")
    @FormParams(keys = ACTION, values = "ReceiveMessage")
    @XMLResponseParser(ReceiveMessageResponseHandler.class)
-   ListenableFuture<Set<Message>> receiveMessages(@EndpointParam URI queue, @FormParam("MaxNumberOfMessages") int max,
-         ReceiveMessageOptions options);
+   ListenableFuture<? extends Set<? extends Message>> receiveMessages(@EndpointParam URI queue,
+         @FormParam("MaxNumberOfMessages") int max, ReceiveMessageOptions options);
+
+   /**
+    * @see SQSApi#addPermissionToAccount
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "AddPermission")
+   ListenableFuture<Void> addPermissionToAccount(@EndpointParam URI queue, @FormParam("Label") String label,
+         @FormParam("ActionName.1") Action permission, @FormParam("AWSAccountId.1") String accountId);
+
+   /**
+    * @see SQSApi#removePermission
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "RemovePermission")
+   ListenableFuture<Void> removePermission(@EndpointParam URI queue, @FormParam("Label") String label);
 
 }

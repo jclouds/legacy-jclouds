@@ -25,8 +25,10 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.sqs.domain.Action;
 import org.jclouds.sqs.domain.Message;
 import org.jclouds.sqs.domain.MessageIdAndMD5;
+import org.jclouds.sqs.domain.QueueAttributes;
 import org.jclouds.sqs.options.CreateQueueOptions;
 import org.jclouds.sqs.options.ListQueuesOptions;
 import org.jclouds.sqs.options.ReceiveMessageOptions;
@@ -209,6 +211,57 @@ public interface SQSApi {
    void changeMessageVisibility(URI queue, String receiptHandle, int visibilityTimeout);
 
    /**
+    * The AddPermission action adds a permission to a queue for a specific
+    * principal. This allows for sharing access to the queue.
+    * 
+    * When you create a queue, you have full control access rights for the
+    * queue. Only you (as owner of the queue) can grant or deny permissions to
+    * the queue. For more information about these permissions, see Shared Queues
+    * in the Amazon SQS Developer Guide.
+    * 
+    * Note
+    * 
+    * AddPermission writes an SQS-generated policy. If you want to write your
+    * own policy, use SetQueueAttributes to upload your policy.
+    * 
+    * @param queue
+    *           queue to change permissions on
+    * @param label
+    * 
+    *           The unique identification of the permission you're setting.
+    *           example: AliceSendMessage
+    * 
+    *           Constraints: Maximum 80 characters; alphanumeric characters,
+    *           hyphens (-), and underscores (_) are allowed.
+    * @param permission
+    *           The action you want to allow for the specified principal.
+    * @param accountId
+    *           The AWS account number of the principal who will be given
+    *           permission. The principal must have an AWS account, but does not
+    *           need to be signed up for Amazon SQS. For information about
+    *           locating the AWS account identification, see Your AWS
+    *           Identifiers in the Amazon SQS Developer Guide.
+    * 
+    *           Constraints: Valid 12-digit AWS account number, without hyphens
+    * 
+    */
+   void addPermissionToAccount(URI queue, String label, Action permission, String accountId);
+
+   /**
+    * The RemovePermission action revokes any permissions in the queue policy
+    * that matches the Label parameter. Only the owner of the queue can remove
+    * permissions.
+    * 
+    * @param queue
+    *           queue to change permissions on
+    * 
+    * @param label
+    *           The identification of the permission you want to remove. This is
+    *           the label you added in AddPermission. example: AliceSendMessage
+    */
+   void removePermission(URI queue, String label);
+
+   /**
     * The SendMessage action delivers a message to the specified queue. The
     * maximum allowed message size is 64 KB.
     * 
@@ -295,7 +348,7 @@ public interface SQSApi {
     * @param queue
     *           queue to get the attributes of
     */
-   Map<String, String> getQueueAttributes(URI queue);
+   QueueAttributes getQueueAttributes(URI queue);
 
    /**
     * The SetQueueAttributes action sets one attribute of a queue per request.
@@ -361,6 +414,14 @@ public interface SQSApi {
     *           queue to get the attributes of
     */
    Map<String, String> getQueueAttributes(URI queue, Iterable<String> attributeNames);
+
+   /**
+    * returns an attribute of a queue.
+    * 
+    * @param queue
+    *           queue to get the attributes of
+    */
+   String getQueueAttribute(URI queue, String attributeName);
 
    /**
     * same as {@link #receiveMessages(URI, int)} except you can provide options

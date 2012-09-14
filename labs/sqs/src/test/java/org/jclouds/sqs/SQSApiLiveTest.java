@@ -18,8 +18,11 @@
  */
 package org.jclouds.sqs;
 
+import static org.jclouds.concurrent.MoreExecutors.sameThreadExecutor;
+import static org.jclouds.providers.AnonymousProviderMetadata.forClientMappedToAsyncClientOnEndpoint;
 import static org.jclouds.sqs.options.ListQueuesOptions.Builder.queuePrefix;
 import static org.jclouds.sqs.options.ReceiveMessageOptions.Builder.attribute;
+import static org.jclouds.sqs.reference.SQSParameters.ACTION;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
@@ -28,16 +31,32 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.concurrent.TimeUnit;
 
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+
+import org.jclouds.ContextBuilder;
+import org.jclouds.concurrent.Timeout;
+import org.jclouds.concurrent.config.ExecutorServiceModule;
+import org.jclouds.rest.annotations.FormParams;
+import org.jclouds.rest.annotations.XMLResponseParser;
+import org.jclouds.sqs.domain.Action;
+import org.jclouds.sqs.domain.QueueAttributes;
 import org.jclouds.sqs.internal.BaseSQSApiLiveTest;
+import org.jclouds.sqs.xml.ValueHandler;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code SQSApi}
@@ -82,24 +101,69 @@ public class SQSApiLiveTest extends BaseSQSApiLiveTest {
       return queueName;
    }
 
-   String message = "hardyharhar";
-   HashCode md5 = Hashing.md5().hashString(message, Charsets.UTF_8);
-
    @Test(dependsOnMethods = "testCanRecreateQueueGracefully")
    protected void testGetQueueAttributes() {
       for (URI queue : queues) {
-         Map<String, String> attributes = api().getQueueAttributes(queue);
+         Map<String, String> attributes = api().getQueueAttributes(queue, ImmutableSet.of("All"));
          assertEquals(api().getQueueAttributes(queue, attributes.keySet()), attributes);
       }
    }
-   @Test(dependsOnMethods = "testCanRecreateQueueGracefully")
+
+   String message = "hardyharhar";
+   HashCode md5 = Hashing.md5().hashString(message, Charsets.UTF_8);
+
+   @Timeout(duration = 5, timeUnit = TimeUnit.SECONDS)
+   static interface AnonymousAttributesApi {
+      String getQueueArn();
+   }
+
+   static interface AnonymousAttributesAsyncApi {
+      @POST
+      @Path("/")
+      @FormParams(keys = { ACTION, "AttributeName.1" }, values = { "GetQueueAttributes", "QueueArn" })
+      @XMLResponseParser(ValueHandler.class)
+      ListenableFuture<String> getQueueArn();
+   }
+
+   @Test(dependsOnMethods = "testGetQueueAttributes")
+   protected void testAddAnonymousPermission() throws InterruptedException {
+      for (URI queue : queues) {
+         QueueAttributes attributes = api().getQueueAttributes(queue);
+         assertNoPermissions(queue);
+
+         String accountToAuthorize = getAccountToAuthorize(queue);
+         api().addPermissionToAccount(queue, "fubar", Action.GET_QUEUE_ATTRIBUTES, accountToAuthorize);
+
+         String policyForAuthorizationByAccount = assertPolicyPresent(queue);
+
+         String policyForAnonymous = policyForAuthorizationByAccount.replace("\"" + accountToAuthorize + "\"", "\"*\"");
+         api().setQueueAttribute(queue, "Policy", policyForAnonymous);
+
+         assertEquals(getAnonymousAttributesApi(queue).getQueueArn(), attributes.getQueueArn());
+      }
+   }
+
+   protected String getAccountToAuthorize(URI queue) {
+      return Iterables.get(Splitter.on('/').split(queue.getPath()), 1);
+   }
+
+   @Test(dependsOnMethods = "testAddAnonymousPermission")
+   protected void testRemovePermission() throws InterruptedException {
+      for (URI queue : queues) {
+         api().removePermission(queue, "fubar");
+         assertNoPermissions(queue);
+      }
+   }
+
+   @Test(dependsOnMethods = "testGetQueueAttributes")
    protected void testSetQueueAttribute() {
       for (URI queue : queues) {
          api().setQueueAttribute(queue, "MaximumMessageSize", "1024");
-         assertEquals(api().getQueueAttributes(queue).get("MaximumMessageSize"), "1024");
+         assertEquals(api().getQueueAttributes(queue).getMaximumMessageSize(), 1024);
       }
    }
-   @Test(dependsOnMethods = "testCanRecreateQueueGracefully")
+
+   @Test(dependsOnMethods = "testGetQueueAttributes")
    protected void testSendMessage() {
       for (URI queue : queues) {
          assertEquals(api().sendMessage(queue, message).getMD5(), md5);
@@ -112,7 +176,7 @@ public class SQSApiLiveTest extends BaseSQSApiLiveTest {
          assertEquals(api().receiveMessage(queue, attribute("All").visibilityTimeout(0)).getMD5(), md5);
       }
    }
-  
+
    String receiptHandle;
 
    @Test(dependsOnMethods = "testReceiveMessageWithoutHidingMessage")
@@ -149,4 +213,14 @@ public class SQSApiLiveTest extends BaseSQSApiLiveTest {
    protected SQSApi api() {
       return context.getApi();
    }
+
+   private AnonymousAttributesApi getAnonymousAttributesApi(URI queue) {
+      return ContextBuilder
+            .newBuilder(
+                  forClientMappedToAsyncClientOnEndpoint(AnonymousAttributesApi.class,
+                        AnonymousAttributesAsyncApi.class, queue.toASCIIString()))
+            .modules(ImmutableSet.<Module> of(new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor())))
+            .buildInjector().getInstance(AnonymousAttributesApi.class);
+   }
+
 }

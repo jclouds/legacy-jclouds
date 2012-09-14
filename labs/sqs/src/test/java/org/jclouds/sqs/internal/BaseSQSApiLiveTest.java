@@ -24,6 +24,7 @@ import static org.testng.Assert.assertTrue;
 
 import java.net.URI;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.jclouds.apis.BaseContextLiveTest;
 import org.jclouds.rest.RestContext;
@@ -49,6 +50,28 @@ public class BaseSQSApiLiveTest extends BaseContextLiveTest<RestContext<SQSApi, 
    @Override
    protected TypeToken<RestContext<SQSApi, SQSAsyncApi>> contextType() {
       return SQSApiMetadata.CONTEXT_TOKEN;
+   }
+
+   protected String assertPolicyPresent(final URI queue) throws InterruptedException {
+      final AtomicReference<String> policy = new AtomicReference<String>();
+      assertEventually(new Runnable() {
+         public void run() {
+            String policyForAuthorizationByAccount = api().getQueueAttribute(queue, "Policy");
+
+            assertNotNull(policyForAuthorizationByAccount);
+            policy.set(policyForAuthorizationByAccount);
+         }
+      });
+      return policy.get();
+   }
+
+   protected void assertNoPermissions(final URI queue) throws InterruptedException {
+      assertEventually(new Runnable() {
+         public void run() {
+            String policy = api().getQueueAttribute(queue, "Policy");
+            assertTrue(policy == null || policy.indexOf("\"Statement\":[]") != -1, policy);
+         }
+      });
    }
 
    protected void assertNoMessages(final URI queue) throws InterruptedException {

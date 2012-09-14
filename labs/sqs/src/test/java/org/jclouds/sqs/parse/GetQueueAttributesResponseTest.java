@@ -51,8 +51,16 @@ public class GetQueueAttributesResponseTest extends BaseHandlerTest {
 
    public Map<String, String> expected() {
       return ImmutableMap.<String, String>builder()
-                         .put("VisibilityTimeout", "30")
-                         .put("DelaySeconds", "0")
-                         .build();
+            .put("QueueArn", "arn:aws:sqs:us-east-1:993194456877:adrian-sqs1")
+            .put("ApproximateNumberOfMessages", "0")
+            .put("ApproximateNumberOfMessagesNotVisible", "0")
+            .put("ApproximateNumberOfMessagesDelayed", "0")
+            .put("CreatedTimestamp", "1347566436")
+            .put("LastModifiedTimestamp", "1347566436")
+            .put("VisibilityTimeout","30")
+            .put("MaximumMessageSize", "65536")
+            .put("MessageRetentionPeriod", "345600")
+            .put("DelaySeconds", "0")
+            .build();
    }
 }
