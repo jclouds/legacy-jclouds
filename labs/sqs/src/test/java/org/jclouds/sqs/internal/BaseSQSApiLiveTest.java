@@ -56,7 +56,7 @@ public class BaseSQSApiLiveTest extends BaseContextLiveTest<RestContext<SQSApi, 
       final AtomicReference<String> policy = new AtomicReference<String>();
       assertEventually(new Runnable() {
          public void run() {
-            String policyForAuthorizationByAccount = api().getQueueAttribute(queue, "Policy");
+            String policyForAuthorizationByAccount = api().getQueueApi().getAttribute(queue, "Policy");
 
             assertNotNull(policyForAuthorizationByAccount);
             policy.set(policyForAuthorizationByAccount);
@@ -68,7 +68,7 @@ public class BaseSQSApiLiveTest extends BaseContextLiveTest<RestContext<SQSApi, 
    protected void assertNoPermissions(final URI queue) throws InterruptedException {
       assertEventually(new Runnable() {
          public void run() {
-            String policy = api().getQueueAttribute(queue, "Policy");
+            String policy = api().getQueueApi().getAttribute(queue, "Policy");
             assertTrue(policy == null || policy.indexOf("\"Statement\":[]") != -1, policy);
          }
       });
@@ -77,7 +77,7 @@ public class BaseSQSApiLiveTest extends BaseContextLiveTest<RestContext<SQSApi, 
    protected void assertNoMessages(final URI queue) throws InterruptedException {
       assertEventually(new Runnable() {
          public void run() {
-            Message message = api().receiveMessage(queue);
+            Message message = api().getMessageApiForQueue(queue).receive();
             assertNull(message, "message: " + message + " left in queue " + queue);
          }
       });
@@ -87,7 +87,7 @@ public class BaseSQSApiLiveTest extends BaseContextLiveTest<RestContext<SQSApi, 
       final URI finalQ = queue;
       assertEventually(new Runnable() {
          public void run() {
-            Set<URI> result = api().listQueuesInRegion(region);
+            Set<URI> result = api().getQueueApiForRegion(region).list();
             assertNotNull(result);
             assert result.size() >= 1 : result;
             assertTrue(result.contains(finalQ), finalQ + " not in " + result);

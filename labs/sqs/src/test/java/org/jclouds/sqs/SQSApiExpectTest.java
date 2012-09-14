@@ -41,7 +41,9 @@ import com.google.common.collect.Iterables;
  */
 @Test(groups = "unit", testName = "SQSApiExpectTest")
 public class SQSApiExpectTest extends BaseSQSApiExpectTest {
-
+   
+   URI queue = URI.create("https://sqs.us-east-1.amazonaws.com/993194456877/adrian-sqs11/");
+   
    public HttpRequest createQueue = HttpRequest.builder()
          .method("POST")
          .endpoint("https://sqs.us-east-1.amazonaws.com/")
@@ -62,7 +64,8 @@ public class SQSApiExpectTest extends BaseSQSApiExpectTest {
 
       SQSApi apiWhenExist = requestSendsResponse(createQueue, createQueueResponse);
 
-      assertEquals(apiWhenExist.createQueueInRegion(null, "queueName").toString(), new CreateQueueResponseTest().expected().toString());
+      assertEquals(apiWhenExist.getQueueApi().create("queueName").toString(), new CreateQueueResponseTest().expected()
+            .toString());
    }
    
    public HttpRequest sendMessage = HttpRequest.builder()
@@ -85,7 +88,8 @@ public class SQSApiExpectTest extends BaseSQSApiExpectTest {
 
       SQSApi apiWhenExist = requestSendsResponse(sendMessage, sendMessageResponse);
 
-      assertEquals(apiWhenExist.sendMessage(URI.create("https://sqs.us-east-1.amazonaws.com/993194456877/adrian-sqs11/"), "hardyharhar").toString(), new SendMessageResponseTest().expected().toString());
+      assertEquals(apiWhenExist.getMessageApiForQueue(queue).send("hardyharhar").toString(),
+            new SendMessageResponseTest().expected().toString());
    }
    
 
@@ -108,9 +112,8 @@ public class SQSApiExpectTest extends BaseSQSApiExpectTest {
 
       SQSApi apiWhenExist = requestSendsResponse(receiveMessage, receiveMessageResponse);
 
-      assertEquals(
-            apiWhenExist.receiveMessage(URI.create("https://sqs.us-east-1.amazonaws.com/993194456877/adrian-sqs11/"))
-                  .toString(), Iterables.get(new ReceiveMessageResponseTest().expected(), 0).toString());
+      assertEquals(apiWhenExist.getMessageApiForQueue(queue).receive().toString(),
+            Iterables.get(new ReceiveMessageResponseTest().expected(), 0).toString());
    }
    
 
@@ -134,9 +137,8 @@ public class SQSApiExpectTest extends BaseSQSApiExpectTest {
 
       SQSApi apiWhenExist = requestSendsResponse(receiveMessages, receiveMessagesResponse);
 
-      assertEquals(
-            apiWhenExist.receiveMessages(URI.create("https://sqs.us-east-1.amazonaws.com/993194456877/adrian-sqs11/"), 10)
-                  .toString(), new ReceiveMessageResponseTest().expected().toString());
+      assertEquals(apiWhenExist.getMessageApiForQueue(queue).receive(10).toString(), new ReceiveMessageResponseTest()
+            .expected().toString());
    }
    
    public HttpRequest deleteMessage = HttpRequest.builder()
@@ -163,8 +165,7 @@ public class SQSApiExpectTest extends BaseSQSApiExpectTest {
 
       SQSApi apiWhenExist = requestSendsResponse(deleteMessage, deleteMessageResponse);
 
-      apiWhenExist.deleteMessage(URI.create("https://sqs.us-east-1.amazonaws.com/993194456877/adrian-sqs11/"),
-            "eXJYhj5rDr9cAe");
+      apiWhenExist.getMessageApiForQueue(queue).delete("eXJYhj5rDr9cAe");
    }
    
    
@@ -193,8 +194,7 @@ public class SQSApiExpectTest extends BaseSQSApiExpectTest {
 
       SQSApi apiWhenExist = requestSendsResponse(changeMessageVisibility, changeMessageVisibilityResponse);
 
-      apiWhenExist.changeMessageVisibility(URI.create("https://sqs.us-east-1.amazonaws.com/993194456877/adrian-sqs11/"),
-            "eXJYhj5rDr9cAe", 10);
+      apiWhenExist.getMessageApiForQueue(queue).changeVisibility("eXJYhj5rDr9cAe", 10);
    }
 
    public HttpRequest getQueueAttribute = HttpRequest.builder()
@@ -221,7 +221,7 @@ public class SQSApiExpectTest extends BaseSQSApiExpectTest {
 
       SQSApi apiWhenExist = requestSendsResponse(getQueueAttribute, getQueueAttributeResponse);
 
-      assertEquals(apiWhenExist.getQueueAttribute(URI.create("https://sqs.us-east-1.amazonaws.com/993194456877/adrian-sqs11/"), "VisibilityTimeout"), "30");
+      assertEquals(apiWhenExist.getQueueApi().getAttribute(queue, "VisibilityTimeout"), "30");
    }
    
    public HttpRequest getQueueAttributes = HttpRequest.builder()
@@ -244,7 +244,8 @@ public class SQSApiExpectTest extends BaseSQSApiExpectTest {
 
       SQSApi apiWhenExist = requestSendsResponse(getQueueAttributes, getQueueAttributesResponse);
 
-      assertEquals(apiWhenExist.getQueueAttributes(URI.create("https://sqs.us-east-1.amazonaws.com/993194456877/adrian-sqs11/")).toString(), new MapToQueueAttributesTest().expected().toString());
+      assertEquals(apiWhenExist.getQueueApi().getAttributes(queue).toString(), new MapToQueueAttributesTest()
+            .expected().toString());
    }
    
    public HttpRequest getQueueAttributesSubset = HttpRequest.builder()
@@ -268,10 +269,8 @@ public class SQSApiExpectTest extends BaseSQSApiExpectTest {
 
       SQSApi apiWhenExist = requestSendsResponse(getQueueAttributesSubset, getQueueAttributesSubsetResponse);
 
-      assertEquals(
-            apiWhenExist.getQueueAttributes(
-                  URI.create("https://sqs.us-east-1.amazonaws.com/993194456877/adrian-sqs11/"),
-                  ImmutableSet.of("VisibilityTimeout", "DelaySeconds")).toString(),
+      assertEquals(apiWhenExist.getQueueApi()
+            .getAttributes(queue, ImmutableSet.of("VisibilityTimeout", "DelaySeconds")).toString(),
             new GetQueueAttributesResponseTest().expected().toString());
    }
    
@@ -300,8 +299,7 @@ public class SQSApiExpectTest extends BaseSQSApiExpectTest {
 
       SQSApi apiWhenExist = requestSendsResponse(setQueueAttribute, setQueueAttributeResponse);
 
-      apiWhenExist.setQueueAttribute(URI.create("https://sqs.us-east-1.amazonaws.com/993194456877/adrian-sqs11/"),
-            "MaximumMessageSize", "1");
+      apiWhenExist.getQueueApi().setAttribute(queue, "MaximumMessageSize", "1");
    }
    
    public HttpRequest addPermission = HttpRequest.builder()
@@ -330,7 +328,7 @@ public class SQSApiExpectTest extends BaseSQSApiExpectTest {
 
       SQSApi apiWhenExist = requestSendsResponse(addPermission, addPermissionResponse);
 
-      apiWhenExist.addPermissionToAccount(URI.create("https://sqs.us-east-1.amazonaws.com/993194456877/adrian-sqs11/"), "testLabel", Action.RECEIVE_MESSAGE, "125074342641");
+      apiWhenExist.getPermissionApiForQueue(queue).addPermissionToAccount("testLabel", Action.RECEIVE_MESSAGE, "125074342641");
    }
    
    public HttpRequest removePermission = HttpRequest.builder()
@@ -357,6 +355,6 @@ public class SQSApiExpectTest extends BaseSQSApiExpectTest {
 
       SQSApi apiWhenExist = requestSendsResponse(removePermission, removePermissionResponse);
 
-      apiWhenExist.removePermission(URI.create("https://sqs.us-east-1.amazonaws.com/993194456877/adrian-sqs11/"), "testLabel");
+      apiWhenExist.getPermissionApiForQueue(queue).remove("testLabel");
    }
 }

@@ -18,6 +18,8 @@
  */
 package org.jclouds.sqs;
 
+import static com.google.common.collect.Iterables.get;
+import static com.google.common.collect.Iterables.getLast;
 import static org.jclouds.concurrent.MoreExecutors.sameThreadExecutor;
 import static org.jclouds.providers.AnonymousProviderMetadata.forClientMappedToAsyncClientOnEndpoint;
 import static org.jclouds.sqs.options.ListQueuesOptions.Builder.queuePrefix;
@@ -30,7 +32,6 @@ import static org.testng.Assert.assertNull;
 import java.net.URI;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.POST;
@@ -51,7 +52,6 @@ import org.testng.annotations.Test;
 import com.google.common.base.Charsets;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
@@ -74,10 +74,10 @@ public class SQSApiLiveTest extends BaseSQSApiLiveTest {
    }
 
    protected void listQueuesInRegion(String region) throws InterruptedException {
-      SortedSet<URI> allResults = Sets.newTreeSet(api().listQueuesInRegion(region));
+      Set<URI> allResults = api().getQueueApiForRegion(region).list();
       assertNotNull(allResults);
       if (allResults.size() >= 1) {
-         URI queue = allResults.last();
+         URI queue = getLast(allResults);
          assertQueueInList(region, queue);
       }
    }
@@ -91,11 +91,12 @@ public class SQSApiLiveTest extends BaseSQSApiLiveTest {
    }
 
    public String recreateQueueInRegion(String queueName, String region) throws InterruptedException {
-      Set<URI> result = api().listQueuesInRegion(region, queuePrefix(queueName));
+      QueueApi api = api().getQueueApiForRegion(region);
+      Set<URI> result = api.list(queuePrefix(queueName));
       if (result.size() >= 1) {
-         api().deleteQueue(Iterables.getLast(result));
+         api.delete(getLast(result));
       }
-      URI queue = api().createQueueInRegion(region, queueName);
+      URI queue = api.create(queueName);
       assertQueueInList(region, queue);
       queues.add(queue);
       return queueName;
@@ -104,8 +105,8 @@ public class SQSApiLiveTest extends BaseSQSApiLiveTest {
    @Test(dependsOnMethods = "testCanRecreateQueueGracefully")
    protected void testGetQueueAttributes() {
       for (URI queue : queues) {
-         Map<String, String> attributes = api().getQueueAttributes(queue, ImmutableSet.of("All"));
-         assertEquals(api().getQueueAttributes(queue, attributes.keySet()), attributes);
+         Map<String, String> attributes = api().getQueueApi().getAttributes(queue, ImmutableSet.of("All"));
+         assertEquals(api().getQueueApi().getAttributes(queue, attributes.keySet()), attributes);
       }
    }
 
@@ -128,29 +129,30 @@ public class SQSApiLiveTest extends BaseSQSApiLiveTest {
    @Test(dependsOnMethods = "testGetQueueAttributes")
    protected void testAddAnonymousPermission() throws InterruptedException {
       for (URI queue : queues) {
-         QueueAttributes attributes = api().getQueueAttributes(queue);
+         QueueAttributes attributes = api().getQueueApi().getAttributes(queue);
          assertNoPermissions(queue);
 
          String accountToAuthorize = getAccountToAuthorize(queue);
-         api().addPermissionToAccount(queue, "fubar", Action.GET_QUEUE_ATTRIBUTES, accountToAuthorize);
+         api().getPermissionApiForQueue(queue).addPermissionToAccount("fubar", Action.GET_QUEUE_ATTRIBUTES,
+               accountToAuthorize);
 
          String policyForAuthorizationByAccount = assertPolicyPresent(queue);
 
          String policyForAnonymous = policyForAuthorizationByAccount.replace("\"" + accountToAuthorize + "\"", "\"*\"");
-         api().setQueueAttribute(queue, "Policy", policyForAnonymous);
+         api().getQueueApi().setAttribute(queue, "Policy", policyForAnonymous);
 
          assertEquals(getAnonymousAttributesApi(queue).getQueueArn(), attributes.getQueueArn());
       }
    }
 
    protected String getAccountToAuthorize(URI queue) {
-      return Iterables.get(Splitter.on('/').split(queue.getPath()), 1);
+      return get(Splitter.on('/').split(queue.getPath()), 1);
    }
 
    @Test(dependsOnMethods = "testAddAnonymousPermission")
    protected void testRemovePermission() throws InterruptedException {
       for (URI queue : queues) {
-         api().removePermission(queue, "fubar");
+         api().getPermissionApiForQueue(queue).remove("fubar");
          assertNoPermissions(queue);
       }
    }
@@ -158,22 +160,22 @@ public class SQSApiLiveTest extends BaseSQSApiLiveTest {
    @Test(dependsOnMethods = "testGetQueueAttributes")
    protected void testSetQueueAttribute() {
       for (URI queue : queues) {
-         api().setQueueAttribute(queue, "MaximumMessageSize", "1024");
-         assertEquals(api().getQueueAttributes(queue).getMaximumMessageSize(), 1024);
+         api().getQueueApi().setAttribute(queue, "MaximumMessageSize", "1024");
+         assertEquals(api().getQueueApi().getAttributes(queue).getMaximumMessageSize(), 1024);
       }
    }
 
    @Test(dependsOnMethods = "testGetQueueAttributes")
    protected void testSendMessage() {
       for (URI queue : queues) {
-         assertEquals(api().sendMessage(queue, message).getMD5(), md5);
+         assertEquals(api().getMessageApiForQueue(queue).send(message).getMD5(), md5);
       }
    }
 
    @Test(dependsOnMethods = "testSendMessage")
    protected void testReceiveMessageWithoutHidingMessage() {
       for (URI queue : queues) {
-         assertEquals(api().receiveMessage(queue, attribute("All").visibilityTimeout(0)).getMD5(), md5);
+         assertEquals(api().getMessageApiForQueue(queue).receive(attribute("All").visibilityTimeout(0)).getMD5(), md5);
       }
    }
 
@@ -182,21 +184,22 @@ public class SQSApiLiveTest extends BaseSQSApiLiveTest {
    @Test(dependsOnMethods = "testReceiveMessageWithoutHidingMessage")
    protected void testChangeMessageVisibility() {
       for (URI queue : queues) {
+         MessageApi api = api().getMessageApiForQueue(queue);
          // start hiding it at 5 seconds
-         receiptHandle = api().receiveMessage(queue, attribute("None").visibilityTimeout(5)).getReceiptHandle();
+         receiptHandle = api.receive(attribute("None").visibilityTimeout(5)).getReceiptHandle();
          // hidden message, so we can't see it
-         assertNull(api().receiveMessage(queue));
+         assertNull(api.receive());
          // this should unhide it
-         api().changeMessageVisibility(queue, receiptHandle, 0);
+         api.changeVisibility(receiptHandle, 0);
          // so we can see it again
-         assertEquals(api().receiveMessage(queue, attribute("All").visibilityTimeout(0)).getMD5(), md5);
+         assertEquals(api.receive(attribute("All").visibilityTimeout(0)).getMD5(), md5);
       }
    }
 
    @Test(dependsOnMethods = "testChangeMessageVisibility")
    protected void testDeleteMessage() throws InterruptedException {
       for (URI queue : queues) {
-         api().deleteMessage(queue, receiptHandle);
+         api().getMessageApiForQueue(queue).delete(receiptHandle);
          assertNoMessages(queue);
       }
    }
@@ -205,7 +208,7 @@ public class SQSApiLiveTest extends BaseSQSApiLiveTest {
    @AfterClass(groups = "live")
    protected void tearDownContext() {
       for (URI queue : queues) {
-         api().deleteQueue(queue);
+         api().getQueueApi().delete(queue);
       }
       super.tearDownContext();
    }
