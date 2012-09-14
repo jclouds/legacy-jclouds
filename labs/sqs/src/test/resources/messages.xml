@@ -1,0 +1,35 @@
+<ReceiveMessageResponse>
+  <ReceiveMessageResult>
+    <Message>
+      <MessageId>
+        5fea7756-0ea4-451a-a703-a558b933e274
+      </MessageId>
+      <ReceiptHandle>+eXJYhj5rDr9cAe/9BuheT5fysi9BoqtEZSkO7IazVbNHg60eCCINxLqaSVv2pFHrWeWNpZwbleSkWRbCtZaQGgpOx/3cWJZiNSG1KKlJX4IOwISFvb3FwByMx4w0lnINeXzcw2VcKQXNrCatO9gdIiVPvJC3SCKatYM/7YTidtjqc8igrtYW2E2mHlCy3NXPCeXxP4tSvyEwIxpDAmMT7IF0mWvTHS6+JBUtFUsrmi61oIHlESNrD1OjdB1QQw+kdvJ6VbsntbJNNYKw+YqdqWNpZkiGQ8y1z9OdHsr1+4=</ReceiptHandle>
+      <MD5OfBody>
+        fafb00f5732ab283681e124bf8747ed1
+      </MD5OfBody>
+      <Body>This is a test message</Body>
+      <Attribute>
+        <Name>SenderId</Name>
+        <Value>195004372649</Value>
+      </Attribute>
+      <Attribute>
+        <Name>SentTimestamp</Name>
+        <Value>1238099229000</Value>
+      </Attribute>
+      <Attribute>
+        <Name>ApproximateReceiveCount</Name>
+        <Value>5</Value>
+      </Attribute>
+      <Attribute>
+        <Name>ApproximateFirstReceiveTimestamp</Name>
+        <Value>1250700979248</Value>
+      </Attribute>
+    </Message>
+  </ReceiveMessageResult>
+  <ResponseMetadata>
+    <RequestId>
+      b6633655-283d-45b4-aee4-4e84e0ae6afa
+    </RequestId>
+  </ResponseMetadata>
+</ReceiveMessageResponse>

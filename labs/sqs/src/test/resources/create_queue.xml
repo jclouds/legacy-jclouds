@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<CreateQueueResponse xmlns="http://queue.amazonaws.com/doc/2011-10-01/">
+	<CreateQueueResult>
+		<QueueUrl>https://sqs.us-east-1.amazonaws.com/993194456877/adrian-sqs11</QueueUrl>
+	</CreateQueueResult>
+	<ResponseMetadata>
+		<RequestId>86f9002d-531a-5868-a452-48e4293ae0a4</RequestId>
+	</ResponseMetadata>
+</CreateQueueResponse>

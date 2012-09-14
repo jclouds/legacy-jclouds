@@ -25,18 +25,19 @@ import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
 import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author Adrian Cole
  */
 @Test(groups = { "live" })
 public class SwiftBlobSignerLiveTest extends BaseBlobSignerLiveTest {
+
    @Override
    protected Properties setupProperties() {
       Properties props = super.setupProperties();
       setIfTestSystemPropertyPresent(props, KeystoneProperties.CREDENTIAL_TYPE);
       return props;
    }
-   
+
    public SwiftBlobSignerLiveTest() {
       provider = System.getProperty("test.swift.provider", "swift");
    }

@@ -38,7 +38,12 @@ public class RequestSigningUnsupported implements BlobRequestSigner {
    }
 
    @Override
-   public HttpRequest signPutBlob(String container, Blob blob) {
+   public HttpRequest signGetBlob(String container, String name, long timeInSeconds) {
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
+   public HttpRequest signGetBlob(String container, String name, GetOptions options) {
       throw new UnsupportedOperationException();
    }
 
@@ -48,7 +53,12 @@ public class RequestSigningUnsupported implements BlobRequestSigner {
    }
 
    @Override
-   public HttpRequest signGetBlob(String container, String name, GetOptions options) {
+   public HttpRequest signPutBlob(String container, Blob blob) {
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
+   public HttpRequest signPutBlob(String container, Blob blob, long timeInSeconds) {
       throw new UnsupportedOperationException();
    }
 

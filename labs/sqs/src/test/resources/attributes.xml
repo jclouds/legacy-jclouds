@@ -1,0 +1,12 @@
+<GetQueueAttributesResponse>
+	<GetQueueAttributesResult>
+		<Attribute>
+			<Name>VisibilityTimeout</Name>
+			<Value>30</Value>
+		</Attribute>
+		<Attribute>
+			<Name>DelaySeconds</Name>
+			<Value>0</Value>
+		</Attribute>
+	</GetQueueAttributesResult>
+</GetQueueAttributesResponse>

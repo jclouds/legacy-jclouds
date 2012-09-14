@@ -30,9 +30,18 @@ import org.jclouds.openstack.swift.reference.SwiftHeaders;
  */
 public interface CloudFilesHeaders extends SwiftHeaders {
 
+   public static final String ACCOUNT_TEMPORARY_URL_KEY = "X-Account-Meta-Temp-Url-Key";
+
    public static final String CDN_ENABLED = "X-CDN-Enabled";
-   public static final String CDN_REFERRER_ACL = "X-Referrer-ACL ";
+   public static final String CDN_LOG_RETENTION = "X-Log-Retention";
    public static final String CDN_TTL = "X-TTL";
    public static final String CDN_URI = "X-CDN-URI";
+   public static final String CDN_SSL_URI = "X-Cdn-Ssl-Uri";
+   public static final String CDN_STREAMING_URI = "X-Cdn-Streaming-Uri";
+   public static final String CDN_REFERRER_ACL = "X-Referrer-ACL ";
    public static final String CDN_USER_AGENT_ACL = "X-User-Agent-ACL";
+
+   public static final String CDN_CONTAINER_PURGE_OBJECT_EMAIL = "X-Purge-Email";
+   public static final String CDN_WEBSITE_INDEX = "X-Container-Meta-Web-Index";
+   public static final String CDN_WEBSITE_ERROR = "X-Container-Meta-Web-Error";
 }

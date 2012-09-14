@@ -64,7 +64,7 @@ public class StartVBoxIfNotAlreadyRunningLiveTest {
       replay(manager, runScriptOnNodeFactory, client);
 
       new StartVBoxIfNotAlreadyRunning((Function) Functions.constant(manager), runScriptOnNodeFactory, client,
-               Suppliers.ofInstance(host), Suppliers.ofInstance(provider)).start();
+               Suppliers.ofInstance(host), Suppliers.ofInstance(provider), null).start();
 
       verify(manager, runScriptOnNodeFactory, client);
 
@@ -84,26 +84,26 @@ public class StartVBoxIfNotAlreadyRunningLiveTest {
       
       expect(client.seconds(3)).andReturn(client);
       expect(client.apply(HostAndPort.fromParts(provider.getHost(), provider.getPort()))).andReturn(false).once().andReturn(true).once();
-      expect(
-               runScriptOnNodeFactory.create(host, Statements.exec("VBoxManage setproperty websrvauthlibrary null"),
+      expect(runScriptOnNodeFactory.create(host, 
+            Statements.exec("VBoxManage setproperty websrvauthlibrary null"),
                         runAsRoot(false).wrapInInitScript(false))).andReturn(runScriptOnNode);
       expect(runScriptOnNode.init()).andReturn(runScriptOnNode);
       expect(runScriptOnNode.call()).andReturn(new ExecResponse("", "", 0));
       
-      expect(
-               runScriptOnNodeFactory.create(host, Statements.exec("vboxwebsrv -t 10000 -v -b"), runAsRoot(false)
-                        .wrapInInitScript(false).blockOnComplete(false).nameTask("vboxwebsrv"))).andReturn(
-               runScriptOnNode);
+      expect(runScriptOnNodeFactory.create(host, 
+                     Statements.exec("vboxwebsrv -t 10000 -v -b -H localhost"), runAsRoot(false)
+                        .wrapInInitScript(false).blockOnComplete(false).nameTask("vboxwebsrv")))
+                        .andReturn(runScriptOnNode);
       
       expect(runScriptOnNode.init()).andReturn(runScriptOnNode);
       expect(runScriptOnNode.call()).andReturn(new ExecResponse("", "", 0));
-      
       manager.connect(provider.toASCIIString(), "", "");
+      expectLastCall().anyTimes();
 
       replay(manager, runScriptOnNodeFactory, runScriptOnNode, client);
       new StartVBoxIfNotAlreadyRunning((Function) Functions.constant(manager), runScriptOnNodeFactory, client,
-               Suppliers.ofInstance(host), Suppliers.ofInstance(provider));
+               Suppliers.ofInstance(host), Suppliers.ofInstance(provider), null);
+      
       verify(manager, runScriptOnNodeFactory, runScriptOnNode, client);
-
    }
 }
