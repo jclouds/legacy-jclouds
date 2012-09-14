@@ -33,6 +33,7 @@ import org.jclouds.openstack.swift.domain.ObjectInfo;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.Ordering;
 
 /**
  * Class ObjectInfoImpl
@@ -243,6 +244,6 @@ public class ObjectInfoImpl implements ObjectInfo {
 
    @Override
    public int compareTo(ObjectInfo other) {
-      return ComparisonChain.start().compare(name, other.getName()).compare(container, other.getContainer()).result();
+      return ComparisonChain.start().compare(name, other.getName()).compare(container, other.getContainer(), Ordering.natural().nullsLast()).result();
    }
 }
