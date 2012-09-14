@@ -1,0 +1,504 @@
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for org.jclouds.provider:cloudonestorage:bundle:1.2.0-SNAPSHOT
+[WARNING] 'parent.relativePath' of POM org.jclouds:jclouds-project:1.2.0-SNAPSHOT (/Users/adriancole/workspace/git/1.2.0/jclouds/project/pom.xml) points at org.jclouds:jclouds-multi instead of org.sonatype.oss:oss-parent, please verify your project structure @ org.jclouds:jclouds-project:1.2.0-SNAPSHOT, /Users/adriancole/workspace/git/1.2.0/jclouds/project/pom.xml, line 24, column 13
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building jclouds CloudOne Storage as a Service provider 1.2.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ cloudonestorage ---
+[INFO] Deleting /Users/adriancole/workspace/git/1.2.0/jclouds/providers/cloudonestorage/target
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-maven) @ cloudonestorage ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-banned-dependencies) @ cloudonestorage ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-java) @ cloudonestorage ---
+[INFO] 
+[INFO] --- maven-remote-resources-plugin:1.2:process (process-remote-resources) @ cloudonestorage ---
+[INFO] Setting property: classpath.resource.loader.class => 'org.codehaus.plexus.velocity.ContextClassLoaderResourceLoader'.
+[INFO] Setting property: velocimacro.messages.on => 'false'.
+[INFO] Setting property: resource.loader => 'classpath'.
+[INFO] Setting property: resource.manager.logwhenfound => 'false'.
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.2:resources (default-resources) @ cloudonestorage ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/1.2.0/jclouds/providers/cloudonestorage/src/main/clojure
+[INFO] Copying 1 resource
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3:compile (default-compile) @ cloudonestorage ---
+[INFO] Compiling 2 source files to /Users/adriancole/workspace/git/1.2.0/jclouds/providers/cloudonestorage/target/classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.2:testResources (default-testResources) @ cloudonestorage ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/1.2.0/jclouds/providers/cloudonestorage/src/test/clojure
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/1.2.0/jclouds/providers/cloudonestorage/src/test/resources
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3:testCompile (default-testCompile) @ cloudonestorage ---
+[INFO] Compiling 13 source files to /Users/adriancole/workspace/git/1.2.0/jclouds/providers/cloudonestorage/target/test-classes
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.5:test (default-test) @ cloudonestorage ---
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/1.2.0/jclouds/providers/cloudonestorage/target/surefire-reports
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running TestSuite
+Starting test testAllContains(org.jclouds.cloudonestorage.CloudOneStorageProviderTest)
+Starting test testInRestProperties(org.jclouds.cloudonestorage.CloudOneStorageProviderTest)
+Starting test testWithId(org.jclouds.cloudonestorage.CloudOneStorageProviderTest)
+Starting test testOfTypeContains(org.jclouds.cloudonestorage.CloudOneStorageProviderTest)
+[pool-2-thread-2] Test testWithId(org.jclouds.cloudonestorage.CloudOneStorageProviderTest) succeeded: 118ms
+Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
+[pool-2-thread-4] Test testOfTypeContains(org.jclouds.cloudonestorage.CloudOneStorageProviderTest) succeeded: 118ms
+Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
+[pool-2-thread-3] Test testAllContains(org.jclouds.cloudonestorage.CloudOneStorageProviderTest) succeeded: 120ms
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
+[pool-2-thread-1] Test testInRestProperties(org.jclouds.cloudonestorage.CloudOneStorageProviderTest) succeeded: 212ms
+Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
+Starting test testSupportedProviders(org.jclouds.cloudonestorage.ProvidersInPropertiesTest)
+[pool-3-thread-1] Test testSupportedProviders(org.jclouds.cloudonestorage.ProvidersInPropertiesTest) succeeded: 4ms
+Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
+Starting test testListDirectory(org.jclouds.cloudonestorage.CloudOneStorageAsyncClientTest)
+Starting test testReadFile(org.jclouds.cloudonestorage.CloudOneStorageAsyncClientTest)
+Starting test testGetSystemMetadata(org.jclouds.cloudonestorage.CloudOneStorageAsyncClientTest)
+Starting test testCreateFile(org.jclouds.cloudonestorage.CloudOneStorageAsyncClientTest)
+Starting test testDeletePath(org.jclouds.cloudonestorage.CloudOneStorageAsyncClientTest)
+[pool-4-thread-2] Test testReadFile(org.jclouds.cloudonestorage.CloudOneStorageAsyncClientTest) succeeded: 305ms
+Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
+Starting test testListDirectoriesOptions(org.jclouds.cloudonestorage.CloudOneStorageAsyncClientTest)
+[pool-4-thread-1] Test testListDirectory(org.jclouds.cloudonestorage.CloudOneStorageAsyncClientTest) succeeded: 318ms
+Test suite progress: tests succeeded: 7, failed: 0, skipped: 0.
+Starting test testCreateDirectory(org.jclouds.cloudonestorage.CloudOneStorageAsyncClientTest)
+[pool-4-thread-5] Test testDeletePath(org.jclouds.cloudonestorage.CloudOneStorageAsyncClientTest) succeeded: 320ms
+Test suite progress: tests succeeded: 8, failed: 0, skipped: 0.
+[pool-4-thread-3] Test testGetSystemMetadata(org.jclouds.cloudonestorage.CloudOneStorageAsyncClientTest) succeeded: 322ms
+Test suite progress: tests succeeded: 9, failed: 0, skipped: 0.
+Starting test testCreateFileOptions(org.jclouds.cloudonestorage.CloudOneStorageAsyncClientTest)
+Starting test testListDirectoryOptions(org.jclouds.cloudonestorage.CloudOneStorageAsyncClientTest)
+[pool-4-thread-2] Test testListDirectoriesOptions(org.jclouds.cloudonestorage.CloudOneStorageAsyncClientTest) succeeded: 29ms
+Test suite progress: tests succeeded: 10, failed: 0, skipped: 0.
+Starting test testIsPublic(org.jclouds.cloudonestorage.CloudOneStorageAsyncClientTest)
+[pool-4-thread-2] Test testIsPublic(org.jclouds.cloudonestorage.CloudOneStorageAsyncClientTest) succeeded: 5ms
+Test suite progress: tests succeeded: 11, failed: 0, skipped: 0.
+Starting test testCreateDirectoryOptions(org.jclouds.cloudonestorage.CloudOneStorageAsyncClientTest)
+[pool-4-thread-3] Test testListDirectoryOptions(org.jclouds.cloudonestorage.CloudOneStorageAsyncClientTest) succeeded: 7ms
+Test suite progress: tests succeeded: 12, failed: 0, skipped: 0.
+Starting test testUpdateFileOptions(org.jclouds.cloudonestorage.CloudOneStorageAsyncClientTest)
+[pool-4-thread-2] Test testCreateDirectoryOptions(org.jclouds.cloudonestorage.CloudOneStorageAsyncClientTest) succeeded: 32ms
+Test suite progress: tests succeeded: 13, failed: 0, skipped: 0.
+[pool-4-thread-1] Test testCreateDirectory(org.jclouds.cloudonestorage.CloudOneStorageAsyncClientTest) succeeded: 54msStarting test testNewObject(org.jclouds.cloudonestorage.CloudOneStorageAsyncClientTest)
+
+Test suite progress: tests succeeded: 14, failed: 0, skipped: 0.
+Starting test testListDirectories(org.jclouds.cloudonestorage.CloudOneStorageAsyncClientTest)
+[pool-4-thread-2] Test testNewObject(org.jclouds.cloudonestorage.CloudOneStorageAsyncClientTest) succeeded: 2ms
+Test suite progress: tests succeeded: 15, failed: 0, skipped: 0.
+Starting test testUpdateFile(org.jclouds.cloudonestorage.CloudOneStorageAsyncClientTest)
+[pool-4-thread-1] Test testListDirectories(org.jclouds.cloudonestorage.CloudOneStorageAsyncClientTest) succeeded: 10ms
+Test suite progress: tests succeeded: 16, failed: 0, skipped: 0.
+[pool-4-thread-2] Test testUpdateFile(org.jclouds.cloudonestorage.CloudOneStorageAsyncClientTest) succeeded: 460ms
+Test suite progress: tests succeeded: 17, failed: 0, skipped: 0.
+[pool-4-thread-5] Test testCreateFileOptions(org.jclouds.cloudonestorage.CloudOneStorageAsyncClientTest) succeeded: 494ms
+Test suite progress: tests succeeded: 18, failed: 0, skipped: 0.
+[pool-4-thread-3] Test testUpdateFileOptions(org.jclouds.cloudonestorage.CloudOneStorageAsyncClientTest) succeeded: 495ms
+Test suite progress: tests succeeded: 19, failed: 0, skipped: 0.
+[pool-4-thread-4] Test testCreateFile(org.jclouds.cloudonestorage.CloudOneStorageAsyncClientTest) succeeded: 838ms
+Test suite progress: tests succeeded: 20, failed: 0, skipped: 0.
+Tests run: 20, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.813 sec
+
+Results :
+
+Tests run: 20, Failures: 0, Errors: 0, Skipped: 0
+
+[INFO] 
+[INFO] --- clojure-maven-plugin:1.3.3:test (test-clojure) @ cloudonestorage ---
+
+Testing user
+
+Ran 0 tests containing 0 assertions.
+0 failures, 0 errors.
+[INFO] 
+[INFO] --- maven-bundle-plugin:2.3.4:bundle (default-bundle) @ cloudonestorage ---
+[INFO] 
+[INFO] --- maven-source-plugin:2.1.1:jar-no-fork (attach-sources) @ cloudonestorage ---
+[INFO] Building jar: /Users/adriancole/workspace/git/1.2.0/jclouds/providers/cloudonestorage/target/cloudonestorage-1.2.0-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- maven-javadoc-plugin:2.8:jar (javadoc) @ cloudonestorage ---
+[INFO] Skipping javadoc generation
+[INFO] 
+[INFO] --- maven-jar-plugin:2.3.1:test-jar (default) @ cloudonestorage ---
+[INFO] Building jar: /Users/adriancole/workspace/git/1.2.0/jclouds/providers/cloudonestorage/target/cloudonestorage-1.2.0-SNAPSHOT-tests.jar
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.5:test (integration) @ cloudonestorage ---
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/1.2.0/jclouds/providers/cloudonestorage/target/surefire-reports
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running TestSuite
+*** containers to test: [adriancole-blobstore0, adriancole-blobstore1, adriancole-blobstore2, adriancole-blobstore3, adriancole-blobstore4, adriancole-blobstore5, adriancole-blobstore6, adriancole-blobstore7, adriancole-blobstore8, adriancole-blobstore9]
+Starting test testCopyUrl(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobLiveTest)
+[pool-4-thread-1] Test testCopyUrl(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobLiveTest) succeeded: 18735ms
+Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
+Starting test testEntrySet(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testEntrySet(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageInputStreamMapIntegrationLiveTest) succeeded: 27950ms
+Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
+Starting test testPutAll(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testPutAll(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageInputStreamMapIntegrationLiveTest) succeeded: 13081ms
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
+Starting test testPutAllBytes(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testPutAllBytes(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageInputStreamMapIntegrationLiveTest) succeeded: 13102ms
+Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
+Starting test testPutAllFiles(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testPutAllFiles(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageInputStreamMapIntegrationLiveTest) succeeded: 12329ms
+Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
+Starting test testPutAllStrings(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testPutAllStrings(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageInputStreamMapIntegrationLiveTest) succeeded: 12436ms
+Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
+Starting test testPutMoreThanSingleListing(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testPutMoreThanSingleListing(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageInputStreamMapIntegrationLiveTest) succeeded: 37070ms
+Test suite progress: tests succeeded: 7, failed: 0, skipped: 0.
+Starting test testRemove(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testRemove(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageInputStreamMapIntegrationLiveTest) succeeded: 15774ms
+Test suite progress: tests succeeded: 8, failed: 0, skipped: 0.
+Starting test testValues(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testValues(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageInputStreamMapIntegrationLiveTest) succeeded: 11463ms
+Test suite progress: tests succeeded: 9, failed: 0, skipped: 0.
+Starting test testClear(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testClear(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageInputStreamMapIntegrationLiveTest) succeeded: 13194ms
+Test suite progress: tests succeeded: 10, failed: 0, skipped: 0.
+Starting test testContainsKey(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testContainsKey(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageInputStreamMapIntegrationLiveTest) succeeded: 12065ms
+Test suite progress: tests succeeded: 11, failed: 0, skipped: 0.
+Starting test testDirectory(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testDirectory(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageInputStreamMapIntegrationLiveTest) failed.
+Test suite progress: tests succeeded: 11, failed: 1, skipped: 0.
+Starting test testIsEmpty(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testIsEmpty(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageInputStreamMapIntegrationLiveTest) succeeded: 11868ms
+Test suite progress: tests succeeded: 12, failed: 1, skipped: 0.
+Starting test testKeySet(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testKeySet(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageInputStreamMapIntegrationLiveTest) succeeded: 11757ms
+Test suite progress: tests succeeded: 13, failed: 1, skipped: 0.
+Starting test testListContainer(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testListContainer(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageInputStreamMapIntegrationLiveTest) succeeded: 6573ms
+Test suite progress: tests succeeded: 14, failed: 1, skipped: 0.
+Starting test testSignGetUrl(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobSignerLiveTest)
+[pool-4-thread-1] Test testSignGetUrl(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobSignerLiveTest) succeeded: 11415ms
+Test suite progress: tests succeeded: 15, failed: 1, skipped: 0.
+Starting test testSignGetUrlOptions(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobSignerLiveTest)
+[pool-4-thread-1] Test testSignGetUrlOptions(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobSignerLiveTest) succeeded: 10679ms
+Test suite progress: tests succeeded: 16, failed: 1, skipped: 0.
+Starting test testSignPutUrl(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobSignerLiveTest)
+[pool-4-thread-1] Test testSignPutUrl(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobSignerLiveTest) succeeded: 7114ms
+Test suite progress: tests succeeded: 17, failed: 1, skipped: 0.
+Starting test testSignRemoveUrl(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobSignerLiveTest)
+[pool-4-thread-1] Test testSignRemoveUrl(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobSignerLiveTest) succeeded: 11900ms
+Test suite progress: tests succeeded: 18, failed: 1, skipped: 0.
+Starting test testListContainerMarker(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageContainerIntegrationLiveTest)
+[pool-4-thread-1] Test testListContainerMarker(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageContainerIntegrationLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 19, failed: 1, skipped: 0.
+Starting test testListContainerMaxResults(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageContainerIntegrationLiveTest)
+[pool-4-thread-1] Test testListContainerMaxResults(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageContainerIntegrationLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 20, failed: 1, skipped: 0.
+Starting test containerDoesntExist(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageContainerIntegrationLiveTest)
+[pool-4-thread-1] Test containerDoesntExist(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageContainerIntegrationLiveTest) succeeded: 816ms
+Test suite progress: tests succeeded: 21, failed: 1, skipped: 0.
+Starting test containerExists(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageContainerIntegrationLiveTest)
+[pool-4-thread-1] Test containerExists(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageContainerIntegrationLiveTest) succeeded: 6136ms
+Test suite progress: tests succeeded: 22, failed: 1, skipped: 0.
+Starting test deleteContainerIfEmpty(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageContainerIntegrationLiveTest)
+*** allocated new container adriancole-blobstore0...
+[pool-4-thread-1] Test deleteContainerIfEmpty(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageContainerIntegrationLiveTest) succeeded: 10854ms
+Test suite progress: tests succeeded: 23, failed: 1, skipped: 0.
+Starting test deleteContainerWithContents(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageContainerIntegrationLiveTest)
+*** allocated new container adriancole-blobstore1...
+[pool-4-thread-1] Test deleteContainerWithContents(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageContainerIntegrationLiveTest) succeeded: 17426ms
+Test suite progress: tests succeeded: 24, failed: 1, skipped: 0.
+Starting test testClearWhenContentsUnderPath(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageContainerIntegrationLiveTest)
+[pool-4-thread-1] Test testClearWhenContentsUnderPath(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageContainerIntegrationLiveTest) succeeded: 58297ms
+Test suite progress: tests succeeded: 25, failed: 1, skipped: 0.
+Starting test testDirectory(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageContainerIntegrationLiveTest)
+[pool-4-thread-1] Test testDirectory(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageContainerIntegrationLiveTest) succeeded: 77083ms
+Test suite progress: tests succeeded: 26, failed: 1, skipped: 0.
+Starting test testListContainer(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageContainerIntegrationLiveTest)
+[pool-4-thread-1] Test testListContainer(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageContainerIntegrationLiveTest) succeeded: 61047ms
+Test suite progress: tests succeeded: 27, failed: 1, skipped: 0.
+Starting test testListContainerPrefix(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageContainerIntegrationLiveTest)
+[pool-4-thread-1] Test testListContainerPrefix(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageContainerIntegrationLiveTest) succeeded: 100155ms
+Test suite progress: tests succeeded: 28, failed: 1, skipped: 0.
+Starting test testListRootUsesDelimiter(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageContainerIntegrationLiveTest)
+[pool-4-thread-1] Test testListRootUsesDelimiter(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageContainerIntegrationLiveTest) succeeded: 97492ms
+Test suite progress: tests succeeded: 29, failed: 1, skipped: 0.
+Starting test testPutTwiceIsOkAndDoesntOverwrite(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageContainerIntegrationLiveTest)
+[pool-4-thread-1] Test testPutTwiceIsOkAndDoesntOverwrite(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageContainerIntegrationLiveTest) succeeded: 18783ms
+Test suite progress: tests succeeded: 30, failed: 1, skipped: 0.
+Starting test testWithDetails(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageContainerIntegrationLiveTest)
+[pool-4-thread-1] Test testWithDetails(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageContainerIntegrationLiveTest) succeeded: 11637ms
+Test suite progress: tests succeeded: 31, failed: 1, skipped: 0.
+Starting test testPublicAccess(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageContainerLiveTest)
+*** allocated new container adriancole-blobstore9...
+*** allocated new container adriancole-blobstore913...
+[pool-4-thread-1] Test testPublicAccess(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageContainerLiveTest) succeeded: 14254ms
+Test suite progress: tests succeeded: 32, failed: 1, skipped: 0.
+Starting test containerDoesntExist(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageServiceIntegrationLiveTest)
+[pool-4-thread-1] Test containerDoesntExist(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageServiceIntegrationLiveTest) succeeded: 366ms
+Test suite progress: tests succeeded: 33, failed: 1, skipped: 0.
+Starting test testAllLocations(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageServiceIntegrationLiveTest)
+*** allocated new container adriancole-blobstore2...
+ >> creating container in location [id=cloudonestorage, scope=PROVIDER, description=https://cloudonestorage.peer1.com, parent=null, iso3166Codes=[US-GA, US-TX], metadata={}]
+ << call complete.. checking
+*** allocated new container adriancole-blobstore215...
+[pool-4-thread-1] Test testAllLocations(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageServiceIntegrationLiveTest) succeeded: 8859ms
+Test suite progress: tests succeeded: 34, failed: 1, skipped: 0.
+Starting test testGetAssignableLocations(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageServiceIntegrationLiveTest)
+location [id=cloudonestorage, scope=PROVIDER, description=https://cloudonestorage.peer1.com, parent=null, iso3166Codes=[US-GA, US-TX], metadata={}]
+[pool-4-thread-1] Test testGetAssignableLocations(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageServiceIntegrationLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 35, failed: 1, skipped: 0.
+Starting test testPutObjectStream(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobIntegrationLiveTest)
+[pool-4-thread-1] Test testPutObjectStream(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobIntegrationLiveTest) succeeded: 9503ms
+Test suite progress: tests succeeded: 36, failed: 1, skipped: 0.
+Starting test blobNotFound(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobIntegrationLiveTest)
+[pool-4-thread-1] Test blobNotFound(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobIntegrationLiveTest) succeeded: 6832ms
+Test suite progress: tests succeeded: 37, failed: 1, skipped: 0.
+Starting test deleteObject(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobIntegrationLiveTest)
+[pool-4-thread-1] Test deleteObject(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobIntegrationLiveTest) succeeded: 12780ms
+Test suite progress: tests succeeded: 38, failed: 1, skipped: 0.
+Starting test deleteObjectNoContainer(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobIntegrationLiveTest)
+[pool-4-thread-1] Test deleteObjectNoContainer(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobIntegrationLiveTest) succeeded: 3193ms
+Test suite progress: tests succeeded: 39, failed: 1, skipped: 0.
+Starting test deleteObjectNotFound(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobIntegrationLiveTest)
+[pool-4-thread-1] Test deleteObjectNotFound(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobIntegrationLiveTest) succeeded: 10336ms
+Test suite progress: tests succeeded: 40, failed: 1, skipped: 0.
+Starting test testBigFileGets(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobIntegrationLiveTest)
+[pool-4-thread-1] Test testBigFileGets(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobIntegrationLiveTest) succeeded: 56392ms
+Test suite progress: tests succeeded: 41, failed: 1, skipped: 0.
+Starting test testPutFileParallel(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobIntegrationLiveTest)
+[pool-4-thread-1] Test testPutFileParallel(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobIntegrationLiveTest) succeeded: 37474ms
+Test suite progress: tests succeeded: 42, failed: 1, skipped: 0.
+Starting test testPutObject(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobIntegrationLiveTest)
+[pool-4-thread-1] Test testPutObject(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobIntegrationLiveTest) succeeded: 39813ms
+Test suite progress: tests succeeded: 43, failed: 1, skipped: 0.
+Starting test testPutObject(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobIntegrationLiveTest)
+[pool-4-thread-1] Test testPutObject(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobIntegrationLiveTest) succeeded: 11384ms
+Test suite progress: tests succeeded: 44, failed: 1, skipped: 0.
+Starting test testPutObject(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobIntegrationLiveTest)
+[pool-4-thread-1] Test testPutObject(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobIntegrationLiveTest) succeeded: 10889ms
+Test suite progress: tests succeeded: 45, failed: 1, skipped: 0.
+Starting test testCreateDirectory(org.jclouds.cloudonestorage.CloudOneStorageClientLiveTest)
+[pool-4-thread-1] Test testCreateDirectory(org.jclouds.cloudonestorage.CloudOneStorageClientLiveTest) succeeded: 7641ms
+Test suite progress: tests succeeded: 46, failed: 1, skipped: 0.
+Starting test testListDirectorys(org.jclouds.cloudonestorage.CloudOneStorageClientLiveTest)
+[pool-4-thread-1] Test testListDirectorys(org.jclouds.cloudonestorage.CloudOneStorageClientLiveTest) succeeded: 380ms
+Test suite progress: tests succeeded: 47, failed: 1, skipped: 0.
+Starting test testListOptions(org.jclouds.cloudonestorage.CloudOneStorageClientLiveTest)
+confirmed deletion after 3005ms
+created string; 419ms
+confirmed deletion after 3386ms
+created string; 584ms
+confirmed deletion after 3033ms
+created string; 461ms
+[pool-4-thread-1] Test testListOptions(org.jclouds.cloudonestorage.CloudOneStorageClientLiveTest) succeeded: 11664ms
+Test suite progress: tests succeeded: 48, failed: 1, skipped: 0.
+Starting test testFileOperations(org.jclouds.cloudonestorage.CloudOneStorageClientLiveTest)
+creating
+confirmed deletion after 3002ms
+created string; 459ms
+overwriting
+confirmed deletion after 759ms
+created string; 465ms
+upload/delete/create attempt 1 type stream
+confirmed deletion after 749ms
+created string; 444ms
+confirmed deletion after 760ms
+confirmed deletion after 2998ms
+created string; 440ms
+upload/delete/create attempt 2 type stream
+confirmed deletion after 781ms
+created string; 463ms
+confirmed deletion after 766ms
+confirmed deletion after 2976ms
+created string; 451ms
+upload/delete/create attempt 3 type stream
+confirmed deletion after 770ms
+created string; 1392ms
+confirmed deletion after 753ms
+confirmed deletion after 3042ms
+created string; 482ms
+upload/delete/create attempt 4 type stream
+confirmed deletion after 738ms
+created string; 523ms
+confirmed deletion after 758ms
+confirmed deletion after 2986ms
+created string; 481ms
+upload/delete/create attempt 5 type stream
+confirmed deletion after 809ms
+created string; 464ms
+confirmed deletion after 754ms
+confirmed deletion after 3076ms
+created string; 464ms
+upload/delete/create attempt 6 type stream
+confirmed deletion after 755ms
+created string; 425ms
+confirmed deletion after 2087ms
+confirmed deletion after 12917ms
+created string; 1576ms
+upload/delete/create attempt 7 type stream
+confirmed deletion after 1624ms
+created string; 477ms
+confirmed deletion after 780ms
+confirmed deletion after 3181ms
+created string; 470ms
+upload/delete/create attempt 8 type stream
+confirmed deletion after 761ms
+created string; 449ms
+confirmed deletion after 769ms
+confirmed deletion after 2962ms
+created string; 469ms
+upload/delete/create attempt 9 type stream
+confirmed deletion after 764ms
+created string; 451ms
+confirmed deletion after 1126ms
+confirmed deletion after 3007ms
+created string; 448ms
+upload/delete/create attempt 10 type stream
+confirmed deletion after 785ms
+created string; 491ms
+confirmed deletion after 788ms
+confirmed deletion after 3010ms
+created string; 544ms
+upload/delete/create attempt 1 type string
+confirmed deletion after 771ms
+created string; 525ms
+confirmed deletion after 747ms
+confirmed deletion after 3117ms
+created string; 436ms
+upload/delete/create attempt 2 type string
+confirmed deletion after 739ms
+created string; 446ms
+confirmed deletion after 784ms
+confirmed deletion after 3027ms
+created string; 457ms
+upload/delete/create attempt 3 type string
+confirmed deletion after 782ms
+created string; 448ms
+confirmed deletion after 756ms
+confirmed deletion after 3306ms
+created string; 461ms
+upload/delete/create attempt 4 type string
+confirmed deletion after 906ms
+created string; 439ms
+confirmed deletion after 780ms
+confirmed deletion after 2965ms
+created string; 585ms
+upload/delete/create attempt 5 type string
+confirmed deletion after 772ms
+created string; 434ms
+confirmed deletion after 747ms
+confirmed deletion after 2994ms
+created string; 463ms
+upload/delete/create attempt 6 type string
+confirmed deletion after 735ms
+created string; 462ms
+confirmed deletion after 778ms
+confirmed deletion after 2966ms
+created string; 462ms
+upload/delete/create attempt 7 type string
+confirmed deletion after 787ms
+created string; 474ms
+confirmed deletion after 752ms
+confirmed deletion after 3372ms
+created string; 537ms
+upload/delete/create attempt 8 type string
+confirmed deletion after 769ms
+created string; 538ms
+confirmed deletion after 788ms
+confirmed deletion after 3024ms
+created string; 504ms
+upload/delete/create attempt 9 type string
+confirmed deletion after 757ms
+created string; 448ms
+confirmed deletion after 764ms
+confirmed deletion after 2979ms
+created string; 448ms
+upload/delete/create attempt 10 type string
+confirmed deletion after 750ms
+created string; 449ms
+confirmed deletion after 754ms
+confirmed deletion after 3110ms
+created string; 462ms
+[pool-4-thread-1] Test testFileOperations(org.jclouds.cloudonestorage.CloudOneStorageClientLiveTest) succeeded: 172237ms
+Test suite progress: tests succeeded: 49, failed: 1, skipped: 0.
+Starting test testContains(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobMapIntegrationLiveTest)
+[pool-4-thread-1] Test testContains(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobMapIntegrationLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 50, failed: 1, skipped: 0.
+Starting test testEntrySet(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobMapIntegrationLiveTest)
+[pool-4-thread-1] Test testEntrySet(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobMapIntegrationLiveTest) succeeded: 25701ms
+Test suite progress: tests succeeded: 51, failed: 1, skipped: 0.
+Starting test testPut(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobMapIntegrationLiveTest)
+[pool-4-thread-1] Test testPut(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobMapIntegrationLiveTest) succeeded: 14494ms
+Test suite progress: tests succeeded: 52, failed: 1, skipped: 0.
+Starting test testPutAll(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobMapIntegrationLiveTest)
+[pool-4-thread-1] Test testPutAll(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobMapIntegrationLiveTest) succeeded: 12055ms
+Test suite progress: tests succeeded: 53, failed: 1, skipped: 0.
+Starting test testPutMoreThanSingleListing(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobMapIntegrationLiveTest)
+[pool-4-thread-1] Test testPutMoreThanSingleListing(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobMapIntegrationLiveTest) succeeded: 34493ms
+Test suite progress: tests succeeded: 54, failed: 1, skipped: 0.
+Starting test testRemove(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobMapIntegrationLiveTest)
+[pool-4-thread-1] Test testRemove(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobMapIntegrationLiveTest) succeeded: 15458ms
+Test suite progress: tests succeeded: 55, failed: 1, skipped: 0.
+Starting test testValues(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobMapIntegrationLiveTest)
+[pool-4-thread-1] Test testValues(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobMapIntegrationLiveTest) succeeded: 16411ms
+Test suite progress: tests succeeded: 56, failed: 1, skipped: 0.
+Starting test testClear(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobMapIntegrationLiveTest)
+[pool-4-thread-1] Test testClear(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobMapIntegrationLiveTest) succeeded: 13144ms
+Test suite progress: tests succeeded: 57, failed: 1, skipped: 0.
+Starting test testContainsKey(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobMapIntegrationLiveTest)
+[pool-4-thread-1] Test testContainsKey(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobMapIntegrationLiveTest) succeeded: 11228ms
+Test suite progress: tests succeeded: 58, failed: 1, skipped: 0.
+Starting test testDirectory(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobMapIntegrationLiveTest)
+[pool-4-thread-1] Test testDirectory(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobMapIntegrationLiveTest) failed.
+Test suite progress: tests succeeded: 58, failed: 2, skipped: 0.
+Starting test testIsEmpty(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobMapIntegrationLiveTest)
+[pool-4-thread-1] Test testIsEmpty(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobMapIntegrationLiveTest) succeeded: 10808ms
+Test suite progress: tests succeeded: 59, failed: 2, skipped: 0.
+Starting test testKeySet(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobMapIntegrationLiveTest)
+[pool-4-thread-1] Test testKeySet(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobMapIntegrationLiveTest) succeeded: 11416ms
+Test suite progress: tests succeeded: 60, failed: 2, skipped: 0.
+Starting test testListContainer(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobMapIntegrationLiveTest)
+[pool-4-thread-1] Test testListContainer(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobMapIntegrationLiveTest) succeeded: 7669ms
+Test suite progress: tests succeeded: 61, failed: 2, skipped: 0.
+Tests run: 63, Failures: 2, Errors: 0, Skipped: 0, Time elapsed: 1,551.843 sec <<< FAILURE!
+
+Results :
+
+Failed tests: 
+  testDirectory(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageInputStreamMapIntegrationLiveTest)
+  testDirectory(org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageBlobMapIntegrationLiveTest)
+
+Tests run: 63, Failures: 2, Errors: 0, Skipped: 0
+
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 26:27.554s
+[INFO] Finished at: Sat Oct 15 10:55:03 PDT 2011
+[INFO] Final Memory: 19M/125M
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:2.5:test (integration) on project cloudonestorage: There are test failures.
+[ERROR] 
+[ERROR] Please refer to /Users/adriancole/workspace/git/1.2.0/jclouds/providers/cloudonestorage/target/surefire-reports for the individual test results.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

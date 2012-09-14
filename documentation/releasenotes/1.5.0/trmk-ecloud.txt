@@ -1,0 +1,752 @@
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for org.jclouds.provider:trmk-ecloud:bundle:1.5.0-SNAPSHOT
+[WARNING] 'parent.relativePath' of POM org.jclouds:jclouds-project:1.5.0-SNAPSHOT (/Users/adriancole/workspace/git/jclouds/project/pom.xml) points at org.jclouds:jclouds-multi instead of org.sonatype.oss:oss-parent, please verify your project structure @ org.jclouds:jclouds-project:1.5.0-SNAPSHOT, /Users/adriancole/workspace/git/jclouds/project/pom.xml, line 24, column 13
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building jclouds Terremark Enterprise Cloud provider 1.5.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ trmk-ecloud ---
+[INFO] Deleting /Users/adriancole/workspace/git/jclouds/providers/trmk-ecloud/target
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-maven) @ trmk-ecloud ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-banned-dependencies) @ trmk-ecloud ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-java) @ trmk-ecloud ---
+[INFO] 
+[INFO] --- maven-remote-resources-plugin:1.2.1:process (process-remote-resources) @ trmk-ecloud ---
+[INFO] 
+[INFO] --- maven-resources-plugin:2.5:resources (default-resources) @ trmk-ecloud ---
+[debug] execute contextualize
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/jclouds/providers/trmk-ecloud/src/main/clojure
+[INFO] Copying 1 resource
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3.2:compile (default-compile) @ trmk-ecloud ---
+[INFO] Compiling 19 source files to /Users/adriancole/workspace/git/jclouds/providers/trmk-ecloud/target/classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.5:testResources (default-testResources) @ trmk-ecloud ---
+[debug] execute contextualize
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/jclouds/providers/trmk-ecloud/src/test/clojure
+[INFO] Copying 5 resources
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3.2:testCompile (default-testCompile) @ trmk-ecloud ---
+[INFO] Compiling 14 source files to /Users/adriancole/workspace/git/jclouds/providers/trmk-ecloud/target/test-classes
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.12:test (default-test) @ trmk-ecloud ---
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/jclouds/providers/trmk-ecloud/target/surefire-reports
+[INFO] Using configured provider org.apache.maven.surefire.testng.TestNGProvider
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running TestSuite
+Configuring TestNG with: org.apache.maven.surefire.testng.conf.TestNGMapConfigurator@43b09468
+Starting test test(org.jclouds.trmk.ecloud.compute.functions.TerremarkECloudParseOsFromVAppTemplateNameTest)
+;[pool-2-thread-1] Test test(org.jclouds.trmk.ecloud.compute.functions.TerremarkECloudParseOsFromVAppTemplateNameTest) succeeded: 627ms
+Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
+Starting test testlistDataCentersInOrg(org.jclouds.trmk.ecloud.features.DataCenterOperationsAsyncClientTest)
+Starting test testlistDataCenters(org.jclouds.trmk.ecloud.features.DataCenterOperationsAsyncClientTest)
+[pool-3-thread-2] Test testlistDataCentersInOrg(org.jclouds.trmk.ecloud.features.DataCenterOperationsAsyncClientTest) succeeded: 63ms
+Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
+[pool-3-thread-1] Test testlistDataCenters(org.jclouds.trmk.ecloud.features.DataCenterOperationsAsyncClientTest) succeeded: 55ms
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
+Starting test testgetTagNameToUsageCount(org.jclouds.trmk.ecloud.features.TagOperationsAsyncClientTest)
+Starting test testgetTagNameToUsageCountInOrg(org.jclouds.trmk.ecloud.features.TagOperationsAsyncClientTest)
+[pool-4-thread-2] Test testgetTagNameToUsageCountInOrg(org.jclouds.trmk.ecloud.features.TagOperationsAsyncClientTest) succeeded: 9ms
+Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
+[pool-4-thread-1] Test testgetTagNameToUsageCount(org.jclouds.trmk.ecloud.features.TagOperationsAsyncClientTest) succeeded: 22ms
+Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
+Starting test testActivatePublicIpInVDC(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest)
+[pool-5-thread-1] Test testActivatePublicIpInVDC(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest) succeeded: 15ms
+Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
+Starting test testAddInternetServiceToExistingIp(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest)
+[pool-5-thread-1] Test testAddInternetServiceToExistingIp(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest) succeeded: 62ms
+Test suite progress: tests succeeded: 7, failed: 0, skipped: 0.
+Starting test testAddInternetServiceToExistingIpOptions(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest)
+[pool-5-thread-1] Test testAddInternetServiceToExistingIpOptions(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest) succeeded: 3ms
+Test suite progress: tests succeeded: 8, failed: 0, skipped: 0.
+Starting test testAddNode(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest)
+[pool-5-thread-1] Test testAddNode(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest) succeeded: 9ms
+Test suite progress: tests succeeded: 9, failed: 0, skipped: 0.
+Starting test testAddNodeOptions(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest)
+[pool-5-thread-1] Test testAddNodeOptions(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest) succeeded: 3ms
+Test suite progress: tests succeeded: 10, failed: 0, skipped: 0.
+Starting test testCatalog(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest)
+[pool-5-thread-1] Test testCatalog(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest) succeeded: 2ms
+Test suite progress: tests succeeded: 11, failed: 0, skipped: 0.
+Starting test testConfigureNodeNoDescription(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest)
+[pool-5-thread-1] Test testConfigureNodeNoDescription(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest) succeeded: 56ms
+Test suite progress: tests succeeded: 12, failed: 0, skipped: 0.
+Starting test testConfigureNodeWithDescription(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest)
+[pool-5-thread-1] Test testConfigureNodeWithDescription(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest) succeeded: 4ms
+Test suite progress: tests succeeded: 13, failed: 0, skipped: 0.
+Starting test testDelete(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest)
+[pool-5-thread-1] Test testDelete(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest) succeeded: 5ms
+Test suite progress: tests succeeded: 14, failed: 0, skipped: 0.
+Starting test testDeleteInternetService(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest)
+[pool-5-thread-1] Test testDeleteInternetService(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest) succeeded: 9ms
+Test suite progress: tests succeeded: 15, failed: 0, skipped: 0.
+Starting test testDeleteKeyPair(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest)
+[pool-5-thread-1] Test testDeleteKeyPair(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest) succeeded: 2ms
+Test suite progress: tests succeeded: 16, failed: 0, skipped: 0.
+Starting test testDeleteNode(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest)
+[pool-5-thread-1] Test testDeleteNode(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest) succeeded: 2ms
+Test suite progress: tests succeeded: 17, failed: 0, skipped: 0.
+Starting test testFindNetworkInOrgVDCNamed(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest)
+[pool-5-thread-1] Test testFindNetworkInOrgVDCNamed(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest) succeeded: 15ms
+Test suite progress: tests succeeded: 18, failed: 0, skipped: 0.
+Starting test testGetAllInternetServices(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest)
+[pool-5-thread-1] Test testGetAllInternetServices(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest) succeeded: 14ms
+Test suite progress: tests succeeded: 19, failed: 0, skipped: 0.
+Starting test testGetCustomizationOptionsOfCatalogItem(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest)
+[pool-5-thread-1] Test testGetCustomizationOptionsOfCatalogItem(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest) succeeded: 6ms
+Test suite progress: tests succeeded: 20, failed: 0, skipped: 0.
+Starting test testGetExtendedInfo(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest)
+[pool-5-thread-1] Test testGetExtendedInfo(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest) succeeded: 14ms
+Test suite progress: tests succeeded: 21, failed: 0, skipped: 0.
+Starting test testGetInternetService(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest)
+[pool-5-thread-1] Test testGetInternetService(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest) succeeded: 2ms
+Test suite progress: tests succeeded: 22, failed: 0, skipped: 0.
+Starting test testGetKeyPair(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest)
+[pool-5-thread-1] Test testGetKeyPair(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest) succeeded: 13ms
+Test suite progress: tests succeeded: 23, failed: 0, skipped: 0.
+Starting test testGetKeyPairInOrg(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest)
+[pool-5-thread-1] Test testGetKeyPairInOrg(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest) succeeded: 30ms
+Test suite progress: tests succeeded: 24, failed: 0, skipped: 0.
+Starting test testGetNode(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest)
+[pool-5-thread-1] Test testGetNode(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest) succeeded: 2ms
+Test suite progress: tests succeeded: 25, failed: 0, skipped: 0.
+Starting test testGetNodes(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest)
+[pool-5-thread-1] Test testGetNodes(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest) succeeded: 6ms
+Test suite progress: tests succeeded: 26, failed: 0, skipped: 0.
+Starting test testGetVDC(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest)
+[pool-5-thread-1] Test testGetVDC(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest) succeeded: 7ms
+Test suite progress: tests succeeded: 27, failed: 0, skipped: 0.
+Starting test testInstantiateVAppTemplateInVDCURI(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest)
+[pool-5-thread-1] Test testInstantiateVAppTemplateInVDCURI(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest) succeeded: 37ms
+Test suite progress: tests succeeded: 28, failed: 0, skipped: 0.
+Starting test testInstantiateVAppTemplateInVDCURIOptions(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest)
+[pool-5-thread-1] Test testInstantiateVAppTemplateInVDCURIOptions(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest) succeeded: 8ms
+Test suite progress: tests succeeded: 29, failed: 0, skipped: 0.
+Starting test testListKeyPairsInOrg(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest)
+[pool-5-thread-1] Test testListKeyPairsInOrg(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest) succeeded: 4ms
+Test suite progress: tests succeeded: 30, failed: 0, skipped: 0.
+Starting test testListKeyPairsInOrgNotFound(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest)
+[pool-5-thread-1] Test testListKeyPairsInOrgNotFound(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest) succeeded: 0ms
+Test suite progress: tests succeeded: 31, failed: 0, skipped: 0.
+Starting test testListOrgs(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest)
+[pool-5-thread-1] Test testListOrgs(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest) succeeded: 1ms
+Test suite progress: tests succeeded: 32, failed: 0, skipped: 0.
+Starting test testNetwork(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest)
+[pool-5-thread-1] Test testNetwork(org.jclouds.trmk.ecloud.TerremarkECloudAsyncClientTest) succeeded: 2ms
+Test suite progress: tests succeeded: 33, failed: 0, skipped: 0.
+Starting test testAllContains(org.jclouds.trmk.ecloud.TerremarkECloudProviderTest)
+Starting test testOfApiContains(org.jclouds.trmk.ecloud.TerremarkECloudProviderTest)
+[pool-6-thread-1] Test testAllContains(org.jclouds.trmk.ecloud.TerremarkECloudProviderTest) succeeded: 3ms
+Test suite progress: tests succeeded: 34, failed: 0, skipped: 0.
+[pool-6-thread-2] Test testOfApiContains(org.jclouds.trmk.ecloud.TerremarkECloudProviderTest) succeeded: 4ms
+Test suite progress: tests succeeded: 35, failed: 0, skipped: 0.
+Starting test testWithId(org.jclouds.trmk.ecloud.TerremarkECloudProviderTest)
+Starting test testTransformableToContains(org.jclouds.trmk.ecloud.TerremarkECloudProviderTest)
+[pool-6-thread-4] Test testWithId(org.jclouds.trmk.ecloud.TerremarkECloudProviderTest) succeeded: 2ms
+Test suite progress: tests succeeded: 36, failed: 0, skipped: 0.
+[pool-6-thread-3] Test testTransformableToContains(org.jclouds.trmk.ecloud.TerremarkECloudProviderTest) succeeded: 6ms
+Test suite progress: tests succeeded: 37, failed: 0, skipped: 0.
+Starting test testApplyInputStream(org.jclouds.trmk.ecloud.xml.ECloudOrgHandlerTest)
+[pool-7-thread-1] Test testApplyInputStream(org.jclouds.trmk.ecloud.xml.ECloudOrgHandlerTest) succeeded: 8ms
+Test suite progress: tests succeeded: 38, failed: 0, skipped: 0.
+Starting test testApplyInputStream(org.jclouds.trmk.ecloud.xml.TagNameToUsageCountHandlerTest)
+[pool-8-thread-1] Test testApplyInputStream(org.jclouds.trmk.ecloud.xml.TagNameToUsageCountHandlerTest) succeeded: 3ms
+Test suite progress: tests succeeded: 39, failed: 0, skipped: 0.
+Tests run: 39, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.027 sec
+
+Results :
+
+Tests run: 39, Failures: 0, Errors: 0, Skipped: 0
+
+[INFO] 
+[INFO] --- clojure-maven-plugin:1.3.9:test (test-clojure) @ trmk-ecloud ---
+
+Testing com.theoryinpractise.clojure.testrunner
+
+Ran 0 tests containing 0 assertions.
+0 failures, 0 errors.
+[INFO] 
+[INFO] --- maven-bundle-plugin:2.3.7:bundle (default-bundle) @ trmk-ecloud ---
+[INFO] 
+[INFO] --- maven-source-plugin:2.1.2:jar-no-fork (attach-sources) @ trmk-ecloud ---
+[INFO] META-INF already added, skipping
+[INFO] META-INF already added, skipping
+[INFO] META-INF/LICENSE.txt already added, skipping
+[INFO] META-INF/NOTICE.txt already added, skipping
+[INFO] Building jar: /Users/adriancole/workspace/git/jclouds/providers/trmk-ecloud/target/trmk-ecloud-1.5.0-SNAPSHOT-sources.jar
+[INFO] META-INF already added, skipping
+[INFO] META-INF already added, skipping
+[INFO] META-INF/LICENSE.txt already added, skipping
+[INFO] META-INF/NOTICE.txt already added, skipping
+[INFO] 
+[INFO] --- maven-javadoc-plugin:2.8.1:jar (javadoc) @ trmk-ecloud ---
+[INFO] Skipping javadoc generation
+[INFO] 
+[INFO] --- maven-jar-plugin:2.4:test-jar (default) @ trmk-ecloud ---
+[INFO] Building jar: /Users/adriancole/workspace/git/jclouds/providers/trmk-ecloud/target/trmk-ecloud-1.5.0-SNAPSHOT-tests.jar
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.12:test (integration) @ trmk-ecloud ---
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/jclouds/providers/trmk-ecloud/target/surefire-reports
+[INFO] Using configured provider org.apache.maven.surefire.testng.TestNGProvider
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running TestSuite
+Configuring TestNG with: org.apache.maven.surefire.testng.conf.TestNGMapConfigurator@52b2a2d8
+Starting test testCompareSizes(org.jclouds.trmk.ecloud.compute.TerremarkECloudComputeServiceLiveTest)
+[TestNG] Test testCompareSizes(org.jclouds.trmk.ecloud.compute.TerremarkECloudComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 0, failed: 1, skipped: 0.
+Starting test testCorrectAuthException(org.jclouds.trmk.ecloud.compute.TerremarkECloudComputeServiceLiveTest)
+[TestNG] Test testCorrectAuthException(org.jclouds.trmk.ecloud.compute.TerremarkECloudComputeServiceLiveTest) succeeded: 998ms
+Test suite progress: tests succeeded: 1, failed: 1, skipped: 0.
+Starting test testCreateAndRunAService(org.jclouds.trmk.ecloud.compute.TerremarkECloudComputeServiceLiveTest)
+[TestNG] Test testCreateAndRunAService(org.jclouds.trmk.ecloud.compute.TerremarkECloudComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 1, failed: 2, skipped: 0.
+Starting test testGetAssignableLocations(org.jclouds.trmk.ecloud.compute.TerremarkECloudComputeServiceLiveTest)
+[TestNG] Test testGetAssignableLocations(org.jclouds.trmk.ecloud.compute.TerremarkECloudComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 1, failed: 3, skipped: 0.
+Starting test testImagesCache(org.jclouds.trmk.ecloud.compute.TerremarkECloudComputeServiceLiveTest)
+[TestNG] Test testImagesCache(org.jclouds.trmk.ecloud.compute.TerremarkECloudComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 1, failed: 4, skipped: 0.
+Starting test testListSizes(org.jclouds.trmk.ecloud.compute.TerremarkECloudComputeServiceLiveTest)
+[TestNG] Test testListSizes(org.jclouds.trmk.ecloud.compute.TerremarkECloudComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 1, failed: 5, skipped: 0.
+Starting test testOptionToNotBlock(org.jclouds.trmk.ecloud.compute.TerremarkECloudComputeServiceLiveTest)
+[TestNG] Test testOptionToNotBlock(org.jclouds.trmk.ecloud.compute.TerremarkECloudComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 1, failed: 6, skipped: 0.
+Starting test setServiceDefaults(org.jclouds.trmk.ecloud.compute.TerremarkECloudComputeServiceLiveTest)
+[TestNG] Test setServiceDefaults(org.jclouds.trmk.ecloud.compute.TerremarkECloudComputeServiceLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 2, failed: 6, skipped: 0.
+Starting test testDestroyNodes(org.jclouds.trmk.ecloud.compute.TerremarkECloudComputeServiceLiveTest)
+[TestNG] Test testDestroyNodes(org.jclouds.trmk.ecloud.compute.TerremarkECloudComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 7, skipped: 0.
+Starting test testListImages(org.jclouds.trmk.ecloud.compute.TerremarkECloudComputeServiceLiveTest)
+[TestNG] Test testListImages(org.jclouds.trmk.ecloud.compute.TerremarkECloudComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 8, skipped: 0.
+Starting test testListNodes(org.jclouds.trmk.ecloud.compute.TerremarkECloudComputeServiceLiveTest)
+[TestNG] Test testListNodes(org.jclouds.trmk.ecloud.compute.TerremarkECloudComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 9, skipped: 0.
+Starting test testCorrectExceptionRunningNodesNotFound(org.jclouds.trmk.ecloud.compute.TerremarkECloudComputeServiceLiveTest)
+[TestNG] Test testCorrectExceptionRunningNodesNotFound(org.jclouds.trmk.ecloud.compute.TerremarkECloudComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 10, skipped: 0.
+Starting test testCompareSizes(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testCompareSizes(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 11, skipped: 0.
+Starting test testFromTemplate(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testFromTemplate(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 12, skipped: 0.
+Starting test testGetAssignableLocations(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testGetAssignableLocations(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 13, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 14, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 15, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 16, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 17, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 18, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 19, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 20, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 21, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 22, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 23, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 24, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 25, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 26, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 27, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 28, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 29, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 30, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 31, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 32, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 33, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 34, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 35, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 36, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 37, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 38, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 39, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 40, skipped: 0.
+Starting test testTemplateBuilderCanUseImageId(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanUseImageId(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 41, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 42, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 43, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 44, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 45, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 46, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 47, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 48, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 49, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 50, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 51, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 52, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 53, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 54, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 55, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 56, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 57, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 58, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 59, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 60, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 61, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 62, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 63, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 64, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 65, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 66, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 67, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 68, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 69, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 70, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 71, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 72, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 73, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 74, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 75, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 76, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 77, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 78, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 79, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 80, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 81, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 82, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 83, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 84, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 85, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 86, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 87, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 88, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 89, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 90, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 91, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 92, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 93, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 94, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 95, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 96, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 97, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 98, skipped: 0.
+Starting test testTemplateBuilderWithImageIdSpecified(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderWithImageIdSpecified(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 99, skipped: 0.
+Starting test testTemplateBuilderWithLoginUserSpecified(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderWithLoginUserSpecified(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 100, skipped: 0.
+Starting test testDefaultTemplateBuilder(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest)
+[TestNG] Test testDefaultTemplateBuilder(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 101, skipped: 0.
+[TestNG] Test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.trmk.ecloud.compute.TerremarkECloudComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 101, skipped: 1.
+[TestNG] Test testCreateTwoNodesWithRunScript(org.jclouds.trmk.ecloud.compute.TerremarkECloudComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 101, skipped: 2.
+[TestNG] Test testTemplateMatch(org.jclouds.trmk.ecloud.compute.TerremarkECloudComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 101, skipped: 3.
+[TestNG] Test testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired(org.jclouds.trmk.ecloud.compute.TerremarkECloudComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 101, skipped: 4.
+[TestNG] Test testCredentialsCache(org.jclouds.trmk.ecloud.compute.TerremarkECloudComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 101, skipped: 5.
+[TestNG] Test testGet(org.jclouds.trmk.ecloud.compute.TerremarkECloudComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 101, skipped: 6.
+[TestNG] Test testReboot(org.jclouds.trmk.ecloud.compute.TerremarkECloudComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 101, skipped: 7.
+[TestNG] Test testSuspendResume(org.jclouds.trmk.ecloud.compute.TerremarkECloudComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 101, skipped: 8.
+[TestNG] Test testGetNodesWithDetails(org.jclouds.trmk.ecloud.compute.TerremarkECloudComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 101, skipped: 9.
+Starting test testListDataCentersInOrg(org.jclouds.trmk.ecloud.features.DataCenterOperationsClientLiveTest)
+[TestNG] Test testListDataCentersInOrg(org.jclouds.trmk.ecloud.features.DataCenterOperationsClientLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 102, skipped: 9.
+Starting test testListTagsInOrg(org.jclouds.trmk.ecloud.features.TagOperationsClientLiveTest)
+[TestNG] Test testListTagsInOrg(org.jclouds.trmk.ecloud.features.TagOperationsClientLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 103, skipped: 9.
+Starting test testCatalog(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest)
+[TestNG] Test testCatalog(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 103, skipped: 10.
+Starting test testCreateInternetServiceMonitorDisabled(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest)
+[TestNG] Test testCreateInternetServiceMonitorDisabled(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 103, skipped: 11.
+Starting test testDefaultTasksList(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest)
+[TestNG] Test testDefaultTasksList(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 103, skipped: 12.
+Starting test testDefaultVDC(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest)
+[TestNG] Test testDefaultVDC(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 103, skipped: 13.
+Starting test testFindCatalogItem(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest)
+[TestNG] Test testFindCatalogItem(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 103, skipped: 14.
+Starting test testFindVAppTemplate(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest)
+[TestNG] Test testFindVAppTemplate(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 103, skipped: 15.
+Starting test testGetAllInternetServices(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest)
+[TestNG] Test testGetAllInternetServices(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 103, skipped: 16.
+Starting test testGetCatalogItem(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest)
+[TestNG] Test testGetCatalogItem(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 103, skipped: 17.
+Starting test testGetConfigCustomizationOptions(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest)
+[TestNG] Test testGetConfigCustomizationOptions(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 103, skipped: 18.
+Starting test testGetPublicIpsAssociatedWithVDC(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest)
+[TestNG] Test testGetPublicIpsAssociatedWithVDC(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 103, skipped: 19.
+Starting test testGetTask(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest)
+[TestNG] Test testGetTask(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 103, skipped: 20.
+Starting test testGetVApp(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest)
+[TestNG] Test testGetVApp(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 103, skipped: 21.
+Starting test testGetVAppTemplate(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest)
+[TestNG] Test testGetVAppTemplate(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 103, skipped: 22.
+Starting test testGetVDCNetwork(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest)
+[TestNG] Test testGetVDCNetwork(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 103, skipped: 23.
+Starting test testInstantiateAndPowerOn(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest)
+[TestNG] Test testInstantiateAndPowerOn(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 103, skipped: 24.
+Starting test testKeysList(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest)
+[TestNG] Test testKeysList(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 103, skipped: 25.
+Starting test testOrg(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest)
+[TestNG] Test testOrg(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 103, skipped: 26.
+Starting test testPropertiesCanOverrideDefaultCatalog(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest)
+[TestNG] Test testPropertiesCanOverrideDefaultCatalog(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 103, skipped: 27.
+Starting test testPropertiesCanOverrideDefaultNetwork(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest)
+[TestNG] Test testPropertiesCanOverrideDefaultNetwork(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 103, skipped: 28.
+Starting test testPropertiesCanOverrideDefaultOrg(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest)
+[TestNG] Test testPropertiesCanOverrideDefaultOrg(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 103, skipped: 29.
+Starting test testPropertiesCanOverrideDefaultTasksList(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest)
+[TestNG] Test testPropertiesCanOverrideDefaultTasksList(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 103, skipped: 30.
+Starting test testPropertiesCanOverrideDefaultVDC(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest)
+[TestNG] Test testPropertiesCanOverrideDefaultVDC(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 103, skipped: 31.
+[TestNG] Test testAddInternetService(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 103, skipped: 32.
+[TestNG] Test testCloneVApp(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 103, skipped: 33.
+[TestNG] Test testPublicIp(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 103, skipped: 34.
+[TestNG] Test testConfigureNode(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 103, skipped: 35.
+[TestNG] Test testLifeCycle(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 103, skipped: 36.
+[TestNG] Test testConfigure(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 103, skipped: 37.
+Tests run: 143, Failures: 104, Errors: 0, Skipped: 37, Time elapsed: 11.669 sec <<< FAILURE!
+
+Results :
+
+Failed tests:   testCompareSizes(org.jclouds.trmk.ecloud.compute.TerremarkECloudComputeServiceLiveTest): request: POST https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/login HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized
+  testCreateAndRunAService(org.jclouds.trmk.ecloud.compute.TerremarkECloudComputeServiceLiveTest): request: POST https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/login HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized
+  testGetAssignableLocations(org.jclouds.trmk.ecloud.compute.TerremarkECloudComputeServiceLiveTest): request: POST https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/login HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized
+  testImagesCache(org.jclouds.trmk.ecloud.compute.TerremarkECloudComputeServiceLiveTest): request: POST https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/login HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized
+  testListSizes(org.jclouds.trmk.ecloud.compute.TerremarkECloudComputeServiceLiveTest): request: POST https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/login HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized
+  testOptionToNotBlock(org.jclouds.trmk.ecloud.compute.TerremarkECloudComputeServiceLiveTest): request: POST https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/login HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized
+  testDestroyNodes(org.jclouds.trmk.ecloud.compute.TerremarkECloudComputeServiceLiveTest): request: POST https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/login HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized
+  testListImages(org.jclouds.trmk.ecloud.compute.TerremarkECloudComputeServiceLiveTest): request: POST https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/login HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized
+  testListNodes(org.jclouds.trmk.ecloud.compute.TerremarkECloudComputeServiceLiveTest): request: POST https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/login HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized
+  testCorrectExceptionRunningNodesNotFound(org.jclouds.trmk.ecloud.compute.TerremarkECloudComputeServiceLiveTest): (..)
+  testCompareSizes(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): request: POST https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/login HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized
+  testFromTemplate(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): request: POST https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/login HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized
+  testGetAssignableLocations(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): request: POST https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/login HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized
+  testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): request: POST https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/login HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized
+  testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): request: POST https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/login HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized
+  testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): request: POST https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/login HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized
+  testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): request: POST https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/login HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized
+  testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): request: POST https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/login HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized
+  testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): request: POST https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/login HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized
+  testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): request: POST https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/login HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized
+  testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): request: POST https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/login HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized
+  testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): request: POST https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/login HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized
+  testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): request: POST https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/login HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized
+  testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): request: POST https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/login HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized
+  testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): request: POST https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/login HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized
+  testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): request: POST https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/login HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized
+  testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): request: POST https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/login HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized
+  testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): request: POST https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/login HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized
+  testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): request: POST https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/login HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized
+  testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): request: POST https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/login HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized
+  testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): request: POST https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/login HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized
+  testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): request: POST https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/login HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized
+  testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): request: POST https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/login HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized
+  testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): request: POST https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/login HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized
+  testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): request: POST https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/login HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized
+  testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): request: POST https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/login HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized
+  testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): request: POST https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/login HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized
+  testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): request: POST https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/login HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized
+  testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): request: POST https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/login HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized
+  testTemplateBuilderCanFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): request: POST https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/login HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized
+  testTemplateBuilderCanUseImageId(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): request: POST https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/login HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): (..)
+  testTemplateBuilderWithImageIdSpecified(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): request: POST https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/login HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized
+  testTemplateBuilderWithLoginUserSpecified(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): request: POST https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/login HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized
+  testDefaultTemplateBuilder(org.jclouds.trmk.ecloud.compute.TerremarkECloudTemplateBuilderLiveTest): request: POST https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/login HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized
+  testListDataCentersInOrg(org.jclouds.trmk.ecloud.features.DataCenterOperationsClientLiveTest)
+  testListTagsInOrg(org.jclouds.trmk.ecloud.features.TagOperationsClientLiveTest)
+  setupContext(org.jclouds.trmk.ecloud.TerremarkECloudClientLiveTest): Guice configuration errors:(..)
+
+Tests run: 143, Failures: 104, Errors: 0, Skipped: 37
+
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 29.604s
+[INFO] Finished at: Tue Apr 24 03:49:40 PDT 2012
+[INFO] Final Memory: 22M/265M
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:2.12:test (integration) on project trmk-ecloud: There are test failures.
+[ERROR] 
+[ERROR] Please refer to /Users/adriancole/workspace/git/jclouds/providers/trmk-ecloud/target/surefire-reports for the individual test results.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

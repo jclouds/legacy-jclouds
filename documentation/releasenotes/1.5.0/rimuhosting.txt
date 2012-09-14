@@ -1,0 +1,539 @@
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for org.jclouds.provider:rimuhosting:bundle:1.5.0-SNAPSHOT
+[WARNING] 'parent.relativePath' of POM org.jclouds:jclouds-project:1.5.0-SNAPSHOT (/Users/adriancole/workspace/git/jclouds/project/pom.xml) points at org.jclouds:jclouds-multi instead of org.sonatype.oss:oss-parent, please verify your project structure @ org.jclouds:jclouds-project:1.5.0-SNAPSHOT, /Users/adriancole/workspace/git/jclouds/project/pom.xml, line 24, column 13
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building jclouds RimuHosting provider 1.5.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ rimuhosting ---
+[INFO] Deleting /Users/adriancole/workspace/git/jclouds/providers/rimuhosting/target
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-maven) @ rimuhosting ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-banned-dependencies) @ rimuhosting ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-java) @ rimuhosting ---
+[INFO] 
+[INFO] --- maven-remote-resources-plugin:1.2.1:process (process-remote-resources) @ rimuhosting ---
+[INFO] 
+[INFO] --- maven-resources-plugin:2.5:resources (default-resources) @ rimuhosting ---
+[debug] execute contextualize
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/jclouds/providers/rimuhosting/src/main/clojure
+[INFO] Copying 1 resource
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3.2:compile (default-compile) @ rimuhosting ---
+[INFO] Compiling 56 source files to /Users/adriancole/workspace/git/jclouds/providers/rimuhosting/target/classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.5:testResources (default-testResources) @ rimuhosting ---
+[debug] execute contextualize
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/jclouds/providers/rimuhosting/src/test/clojure
+[INFO] Copying 2 resources
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3.2:testCompile (default-testCompile) @ rimuhosting ---
+[INFO] Compiling 7 source files to /Users/adriancole/workspace/git/jclouds/providers/rimuhosting/target/test-classes
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.12:test (default-test) @ rimuhosting ---
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/jclouds/providers/rimuhosting/target/surefire-reports
+[INFO] Using configured provider org.apache.maven.surefire.testng.TestNGProvider
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running TestSuite
+Configuring TestNG with: org.apache.maven.surefire.testng.conf.TestNGMapConfigurator@42704baa
+Starting test testCancelled(org.jclouds.rimuhosting.miro.functions.ParseServerFromJsonResponseTest)
+Starting test testAllStatusCovered(org.jclouds.rimuhosting.miro.compute.config.RimuHostingComputeServiceContextModuleTest)
+[pool-2-thread-2] Test testAllStatusCovered(org.jclouds.rimuhosting.miro.compute.config.RimuHostingComputeServiceContextModuleTest) succeeded: 4ms
+Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
+[pool-2-thread-1] Test testCancelled(org.jclouds.rimuhosting.miro.functions.ParseServerFromJsonResponseTest) succeeded: 162ms
+Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
+Starting test testCreateServer(org.jclouds.rimuhosting.miro.RimuHostingAsyncClientTest)
+Starting test testGetServerList(org.jclouds.rimuhosting.miro.RimuHostingAsyncClientTest)
+[pool-3-thread-2] Test testGetServerList(org.jclouds.rimuhosting.miro.RimuHostingAsyncClientTest) succeeded: 38ms
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
+[pool-3-thread-1] Test testCreateServer(org.jclouds.rimuhosting.miro.RimuHostingAsyncClientTest) succeeded: 43ms
+Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
+Starting test testAllContains(org.jclouds.rimuhosting.miro.RimuHostingProviderTest)
+[pool-4-thread-1] Test testAllContains(org.jclouds.rimuhosting.miro.RimuHostingProviderTest) succeeded: 2ms
+Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
+Starting test testOfApiContains(org.jclouds.rimuhosting.miro.RimuHostingProviderTest)
+[pool-4-thread-2] Test testOfApiContains(org.jclouds.rimuhosting.miro.RimuHostingProviderTest) succeeded: 4ms
+Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
+Starting test testTransformableToContains(org.jclouds.rimuhosting.miro.RimuHostingProviderTest)
+Starting test testWithId(org.jclouds.rimuhosting.miro.RimuHostingProviderTest)
+[pool-4-thread-4] Test testWithId(org.jclouds.rimuhosting.miro.RimuHostingProviderTest) succeeded: 1ms
+Test suite progress: tests succeeded: 7, failed: 0, skipped: 0.
+[pool-4-thread-3] Test testTransformableToContains(org.jclouds.rimuhosting.miro.RimuHostingProviderTest) succeeded: 2ms
+Test suite progress: tests succeeded: 8, failed: 0, skipped: 0.
+Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.871 sec
+
+Results :
+
+Tests run: 8, Failures: 0, Errors: 0, Skipped: 0
+
+[INFO] 
+[INFO] --- clojure-maven-plugin:1.3.9:test (test-clojure) @ rimuhosting ---
+
+Testing com.theoryinpractise.clojure.testrunner
+
+Ran 0 tests containing 0 assertions.
+0 failures, 0 errors.
+[INFO] 
+[INFO] --- maven-bundle-plugin:2.3.7:bundle (default-bundle) @ rimuhosting ---
+[INFO] 
+[INFO] --- maven-source-plugin:2.1.2:jar-no-fork (attach-sources) @ rimuhosting ---
+[INFO] META-INF already added, skipping
+[INFO] META-INF already added, skipping
+[INFO] META-INF/LICENSE.txt already added, skipping
+[INFO] META-INF/NOTICE.txt already added, skipping
+[INFO] Building jar: /Users/adriancole/workspace/git/jclouds/providers/rimuhosting/target/rimuhosting-1.5.0-SNAPSHOT-sources.jar
+[INFO] META-INF already added, skipping
+[INFO] META-INF already added, skipping
+[INFO] META-INF/LICENSE.txt already added, skipping
+[INFO] META-INF/NOTICE.txt already added, skipping
+[INFO] 
+[INFO] --- maven-javadoc-plugin:2.8.1:jar (javadoc) @ rimuhosting ---
+[INFO] Skipping javadoc generation
+[INFO] 
+[INFO] --- maven-jar-plugin:2.4:test-jar (default) @ rimuhosting ---
+[INFO] Building jar: /Users/adriancole/workspace/git/jclouds/providers/rimuhosting/target/rimuhosting-1.5.0-SNAPSHOT-tests.jar
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.12:test (integration) @ rimuhosting ---
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/jclouds/providers/rimuhosting/target/surefire-reports
+[INFO] Using configured provider org.apache.maven.surefire.testng.TestNGProvider
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running TestSuite
+Configuring TestNG with: org.apache.maven.surefire.testng.conf.TestNGMapConfigurator@5a77a7f9
+SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+Starting test testImages(org.jclouds.rimuhosting.miro.RimuHostingClientLiveTest)
+Starting test setServiceDefaults(org.jclouds.rimuhosting.miro.compute.RimuHostingComputeServiceLiveTest)
+[TestNG] Test setServiceDefaults(org.jclouds.rimuhosting.miro.compute.RimuHostingComputeServiceLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
+Starting test testCompareSizes(org.jclouds.rimuhosting.miro.compute.RimuHostingComputeServiceLiveTest)
+[TestNG] Test testImages(org.jclouds.rimuhosting.miro.RimuHostingClientLiveTest) failed.
+Test suite progress: tests succeeded: 1, failed: 1, skipped: 0.
+Starting test testLifeCycle(org.jclouds.rimuhosting.miro.RimuHostingClientLiveTest)
+Apr 24, 2012 3:11:38 AM org.jclouds.compute.internal.BaseComputeServiceLiveTest testCompareSizes
+INFO: smallest [id=MIRO4B, providerId=MIRO4B, name=null, processors=[[cores=1.0, speed=1.0]], ram=1150, volumes=[[id=null, type=LOCAL, size=4.0, device=null, durable=true, isBootDevice=true]], hypervisor=null, supportsImage=ALWAYS_TRUE, tags=[]]
+Apr 24, 2012 3:11:38 AM org.jclouds.compute.internal.BaseComputeServiceLiveTest testCompareSizes
+INFO: fastest [id=MIRO1B, providerId=MIRO1B, name=null, processors=[[cores=1.0, speed=1.0]], ram=160, volumes=[[id=null, type=LOCAL, size=4.0, device=null, durable=true, isBootDevice=true]], hypervisor=null, supportsImage=ALWAYS_TRUE, tags=[]]
+Apr 24, 2012 3:11:38 AM org.jclouds.compute.internal.BaseComputeServiceLiveTest testCompareSizes
+INFO: biggest [id=MIRO4B, providerId=MIRO4B, name=null, processors=[[cores=1.0, speed=1.0]], ram=1150, volumes=[[id=null, type=LOCAL, size=4.0, device=null, durable=true, isBootDevice=true]], hypervisor=null, supportsImage=ALWAYS_TRUE, tags=[]]
+[TestNG] Test testCompareSizes(org.jclouds.rimuhosting.miro.compute.RimuHostingComputeServiceLiveTest) succeeded: 1632ms
+Test suite progress: tests succeeded: 2, failed: 1, skipped: 0.
+Starting test testCorrectAuthException(org.jclouds.rimuhosting.miro.compute.RimuHostingComputeServiceLiveTest)
+[TestNG] Test testCorrectAuthException(org.jclouds.rimuhosting.miro.compute.RimuHostingComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 2, skipped: 0.
+Starting test testCreateAndRunAService(org.jclouds.rimuhosting.miro.compute.RimuHostingComputeServiceLiveTest)
+[TestNG] Test testCreateAndRunAService(org.jclouds.rimuhosting.miro.compute.RimuHostingComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 3, skipped: 0.
+Starting test testGetAssignableLocations(org.jclouds.rimuhosting.miro.compute.RimuHostingComputeServiceLiveTest)
+Apr 24, 2012 3:11:41 AM org.jclouds.compute.internal.BaseComputeServiceLiveTest testGetAssignableLocations
+WARNING: location [id=DCAUCKLAND, scope=ZONE, description=Auckland, parent=rimuhosting, iso3166Codes=[NZ-AUK], metadata={}]
+Apr 24, 2012 3:11:41 AM org.jclouds.compute.internal.BaseComputeServiceLiveTest testGetAssignableLocations
+WARNING: location [id=DCBRISBANE, scope=ZONE, description=Brisbane, parent=rimuhosting, iso3166Codes=[], metadata={}]
+Apr 24, 2012 3:11:41 AM org.jclouds.compute.internal.BaseComputeServiceLiveTest testGetAssignableLocations
+WARNING: location [id=DCLONDON, scope=ZONE, description=London, parent=rimuhosting, iso3166Codes=[GB-LND], metadata={}]
+Apr 24, 2012 3:11:41 AM org.jclouds.compute.internal.BaseComputeServiceLiveTest testGetAssignableLocations
+WARNING: location [id=DCDALLAS, scope=ZONE, description=Dallas, parent=rimuhosting, iso3166Codes=[US-TX], metadata={}]
+Apr 24, 2012 3:11:41 AM org.jclouds.compute.internal.BaseComputeServiceLiveTest testGetAssignableLocations
+WARNING: location [id=DCDALLAS2, scope=ZONE, description=Dallas (#2), parent=rimuhosting, iso3166Codes=[], metadata={}]
+Apr 24, 2012 3:11:41 AM org.jclouds.compute.internal.BaseComputeServiceLiveTest testGetAssignableLocations
+WARNING: location [id=DCNY, scope=ZONE, description=New York, parent=rimuhosting, iso3166Codes=[], metadata={}]
+Apr 24, 2012 3:11:41 AM org.jclouds.compute.internal.BaseComputeServiceLiveTest testGetAssignableLocations
+WARNING: location [id=DCNEWCASTLE, scope=ZONE, description=Newcastle, AU, parent=rimuhosting, iso3166Codes=[], metadata={}]
+Apr 24, 2012 3:11:41 AM org.jclouds.compute.internal.BaseComputeServiceLiveTest testGetAssignableLocations
+WARNING: location [id=DCLONDON2, scope=ZONE, description=Stratford, UK, parent=rimuhosting, iso3166Codes=[], metadata={}]
+Apr 24, 2012 3:11:41 AM org.jclouds.compute.internal.BaseComputeServiceLiveTest testGetAssignableLocations
+WARNING: location [id=DCSYDNEY, scope=ZONE, description=Sydney, parent=rimuhosting, iso3166Codes=[AU-NSW], metadata={}]
+[TestNG] Test testGetAssignableLocations(org.jclouds.rimuhosting.miro.compute.RimuHostingComputeServiceLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 3, failed: 3, skipped: 0.
+Starting test testImagesCache(org.jclouds.rimuhosting.miro.compute.RimuHostingComputeServiceLiveTest)
+[TestNG] Test testImagesCache(org.jclouds.rimuhosting.miro.compute.RimuHostingComputeServiceLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 4, failed: 3, skipped: 0.
+Starting test testListImages(org.jclouds.rimuhosting.miro.compute.RimuHostingComputeServiceLiveTest)
+[TestNG] Test testListImages(org.jclouds.rimuhosting.miro.compute.RimuHostingComputeServiceLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 5, failed: 3, skipped: 0.
+Starting test testListSizes(org.jclouds.rimuhosting.miro.compute.RimuHostingComputeServiceLiveTest)
+[TestNG] Test testListSizes(org.jclouds.rimuhosting.miro.compute.RimuHostingComputeServiceLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 6, failed: 3, skipped: 0.
+Starting test testOptionToNotBlock(org.jclouds.rimuhosting.miro.compute.RimuHostingComputeServiceLiveTest)
+[TestNG] Test testOptionToNotBlock(org.jclouds.rimuhosting.miro.compute.RimuHostingComputeServiceLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 7, failed: 3, skipped: 0.
+Starting test testCorrectExceptionRunningNodesNotFound(org.jclouds.rimuhosting.miro.compute.RimuHostingComputeServiceLiveTest)
+[TestNG] Test testCorrectExceptionRunningNodesNotFound(org.jclouds.rimuhosting.miro.compute.RimuHostingComputeServiceLiveTest) succeeded: 797ms
+Test suite progress: tests succeeded: 8, failed: 3, skipped: 0.
+Starting test testDefaultTemplateBuilder(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testDefaultTemplateBuilder(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 1122ms
+Test suite progress: tests succeeded: 9, failed: 3, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 10, failed: 3, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 10, failed: 4, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 11, failed: 4, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 12, failed: 4, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 13, failed: 4, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 14, failed: 4, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 15, failed: 4, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 16, failed: 4, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 17, failed: 4, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 18, failed: 4, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 19, failed: 4, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 20, failed: 4, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 21, failed: 4, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 22, failed: 4, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 23, failed: 4, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 24, failed: 4, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 25, failed: 4, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 26, failed: 4, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 27, failed: 4, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 28, failed: 4, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 29, failed: 4, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 30, failed: 4, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 31, failed: 4, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 32, failed: 4, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 33, failed: 4, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 34, failed: 4, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 35, failed: 4, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 36, failed: 4, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 37, failed: 4, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 38, failed: 4, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 39, failed: 4, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 40, failed: 4, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 41, failed: 4, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 42, failed: 4, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 43, failed: 4, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 44, failed: 4, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 45, failed: 4, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 45, failed: 5, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 46, failed: 5, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 47, failed: 5, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 48, failed: 5, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 49, failed: 5, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 50, failed: 5, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 51, failed: 5, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 52, failed: 5, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 53, failed: 5, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 54, failed: 5, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 55, failed: 5, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 56, failed: 5, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 57, failed: 5, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 58, failed: 5, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 59, failed: 5, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 60, failed: 5, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 61, failed: 5, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 62, failed: 5, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 63, failed: 5, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 64, failed: 5, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 65, failed: 5, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 66, failed: 5, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 67, failed: 5, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 68, failed: 5, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 69, failed: 5, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 70, failed: 5, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 71, failed: 5, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 72, failed: 5, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 73, failed: 5, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 74, failed: 5, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 75, failed: 5, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 76, failed: 5, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 76, failed: 6, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 77, failed: 6, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 78, failed: 6, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 78, failed: 7, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 79, failed: 7, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 79, failed: 8, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 80, failed: 8, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 80, failed: 9, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 3ms
+Test suite progress: tests succeeded: 81, failed: 9, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 81, failed: 10, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 10ms
+Test suite progress: tests succeeded: 82, failed: 10, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 83, failed: 10, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 83, failed: 11, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 84, failed: 11, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 85, failed: 11, skipped: 0.
+Starting test testTemplateBuilder(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilder(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 85, failed: 12, skipped: 0.
+Starting test testTemplateBuilderWithLoginUserSpecified(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderWithLoginUserSpecified(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 85, failed: 13, skipped: 0.
+Starting test testCompareSizes(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+smallest [id=MIRO4B, providerId=MIRO4B, name=null, processors=[[cores=1.0, speed=1.0]], ram=1150, volumes=[[id=null, type=LOCAL, size=4.0, device=null, durable=true, isBootDevice=true]], hypervisor=null, supportsImage=ALWAYS_TRUE, tags=[]]
+fastest [id=MIRO1B, providerId=MIRO1B, name=null, processors=[[cores=1.0, speed=1.0]], ram=160, volumes=[[id=null, type=LOCAL, size=4.0, device=null, durable=true, isBootDevice=true]], hypervisor=null, supportsImage=ALWAYS_TRUE, tags=[]]
+biggest [id=MIRO4B, providerId=MIRO4B, name=null, processors=[[cores=1.0, speed=1.0]], ram=1150, volumes=[[id=null, type=LOCAL, size=4.0, device=null, durable=true, isBootDevice=true]], hypervisor=null, supportsImage=ALWAYS_TRUE, tags=[]]
+[TestNG] Test testCompareSizes(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 5ms
+Test suite progress: tests succeeded: 86, failed: 13, skipped: 0.
+Starting test testTemplateBuilderCanUseImageId(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanUseImageId(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 1118ms
+Test suite progress: tests succeeded: 87, failed: 13, skipped: 0.
+Starting test testFromTemplate(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testFromTemplate(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 87, failed: 14, skipped: 0.
+Starting test testTemplateBuilderWithImageIdSpecified(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderWithImageIdSpecified(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 2568ms
+Test suite progress: tests succeeded: 88, failed: 14, skipped: 0.
+Starting test testGetAssignableLocations(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest)
+location [id=DCAUCKLAND, scope=ZONE, description=Auckland, parent=rimuhosting, iso3166Codes=[NZ-AUK], metadata={}]
+location [id=DCBRISBANE, scope=ZONE, description=Brisbane, parent=rimuhosting, iso3166Codes=[], metadata={}]
+location [id=DCLONDON, scope=ZONE, description=London, parent=rimuhosting, iso3166Codes=[GB-LND], metadata={}]
+location [id=DCDALLAS, scope=ZONE, description=Dallas, parent=rimuhosting, iso3166Codes=[US-TX], metadata={}]
+location [id=DCDALLAS2, scope=ZONE, description=Dallas (#2), parent=rimuhosting, iso3166Codes=[], metadata={}]
+location [id=DCNY, scope=ZONE, description=New York, parent=rimuhosting, iso3166Codes=[], metadata={}]
+location [id=DCNEWCASTLE, scope=ZONE, description=Newcastle, AU, parent=rimuhosting, iso3166Codes=[], metadata={}]
+location [id=DCLONDON2, scope=ZONE, description=Stratford, UK, parent=rimuhosting, iso3166Codes=[], metadata={}]
+location [id=DCSYDNEY, scope=ZONE, description=Sydney, parent=rimuhosting, iso3166Codes=[AU-NSW], metadata={}]
+[TestNG] Test testGetAssignableLocations(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 89, failed: 14, skipped: 0.
+Starting test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.rimuhosting.miro.compute.RimuHostingComputeServiceLiveTest)
+[TestNG] Test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.rimuhosting.miro.compute.RimuHostingComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 89, failed: 15, skipped: 0.
+Starting test testCreateTwoNodesWithRunScript(org.jclouds.rimuhosting.miro.compute.RimuHostingComputeServiceLiveTest)
+[TestNG] Test testCreateTwoNodesWithRunScript(org.jclouds.rimuhosting.miro.compute.RimuHostingComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 89, failed: 16, skipped: 0.
+Starting test testTemplateMatch(org.jclouds.rimuhosting.miro.compute.RimuHostingComputeServiceLiveTest)
+[TestNG] Test testTemplateMatch(org.jclouds.rimuhosting.miro.compute.RimuHostingComputeServiceLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 90, failed: 16, skipped: 0.
+[TestNG] Test testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired(org.jclouds.rimuhosting.miro.compute.RimuHostingComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 90, failed: 16, skipped: 1.
+[TestNG] Test testCredentialsCache(org.jclouds.rimuhosting.miro.compute.RimuHostingComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 90, failed: 16, skipped: 2.
+[TestNG] Test testGet(org.jclouds.rimuhosting.miro.compute.RimuHostingComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 90, failed: 16, skipped: 3.
+[TestNG] Test testReboot(org.jclouds.rimuhosting.miro.compute.RimuHostingComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 90, failed: 16, skipped: 4.
+[TestNG] Test testSuspendResume(org.jclouds.rimuhosting.miro.compute.RimuHostingComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 90, failed: 16, skipped: 5.
+[TestNG] Test testGetNodesWithDetails(org.jclouds.rimuhosting.miro.compute.RimuHostingComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 90, failed: 16, skipped: 6.
+[TestNG] Test testListNodes(org.jclouds.rimuhosting.miro.compute.RimuHostingComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 90, failed: 16, skipped: 7.
+[TestNG] Test testDestroyNodes(org.jclouds.rimuhosting.miro.compute.RimuHostingComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 90, failed: 16, skipped: 8.
+[TestNG] Test testLifeCycle(org.jclouds.rimuhosting.miro.RimuHostingClientLiveTest) succeeded: 438313ms
+Test suite progress: tests succeeded: 91, failed: 16, skipped: 8.
+Starting test testPricingPlans(org.jclouds.rimuhosting.miro.RimuHostingClientLiveTest)
+[TestNG] Test testPricingPlans(org.jclouds.rimuhosting.miro.RimuHostingClientLiveTest) succeeded: 369ms
+Test suite progress: tests succeeded: 92, failed: 16, skipped: 8.
+Tests run: 116, Failures: 16, Errors: 0, Skipped: 8, Time elapsed: 442.205 sec <<< FAILURE!
+
+Results :
+
+Failed tests:   testImages(org.jclouds.rimuhosting.miro.RimuHostingClientLiveTest): lenny not found expected:<true> but was:<false>
+  testCorrectAuthException(org.jclouds.rimuhosting.miro.compute.RimuHostingComputeServiceLiveTest): (..)
+  testCreateAndRunAService(org.jclouds.rimuhosting.miro.compute.RimuHostingComputeServiceLiveTest): Object 'rimuhosting.jcloudss' doesn't match dns naming constraints. Reason: Should have lowercase ASCII letters, numbers, or dashes.
+  testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCanFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest): no image matched predicate: And(nullEqualToIsParentOrIsGrandparentOfCurrentLocation(),And(osFamily(ubuntu),osVersion(^10.10$),os64Bit(false)))
+  testTemplateBuilderCanFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest): no image matched predicate: And(nullEqualToIsParentOrIsGrandparentOfCurrentLocation(),And(osFamily(debian),osVersion(^5.0$),os64Bit(false)))
+  testTemplateBuilderCanFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest): no image matched predicate: And(nullEqualToIsParentOrIsGrandparentOfCurrentLocation(),And(osFamily(ubuntu),osVersion(^11.04$),os64Bit(false)))
+  testTemplateBuilderCanFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest): no image matched predicate: And(nullEqualToIsParentOrIsGrandparentOfCurrentLocation(),And(osFamily(ubuntu),osVersion(^10.10$),os64Bit(true)))
+  testTemplateBuilderCanFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest): no image matched predicate: And(nullEqualToIsParentOrIsGrandparentOfCurrentLocation(),And(osFamily(ubuntu),osVersion(^11.04$),os64Bit(true)))
+  testTemplateBuilderCanFind(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest): no image matched predicate: And(nullEqualToIsParentOrIsGrandparentOfCurrentLocation(),And(osFamily(debian),osVersion(^5.0$),os64Bit(true)))
+  testTemplateBuilder(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest): expected:<11.04> but was:<11.10>
+  testTemplateBuilderWithLoginUserSpecified(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest): expected:<[user=foo, passwordPresent=true, privateKeyPresent=false, shouldAuthenticateSudo=true]> but was:<null>
+  testFromTemplate(org.jclouds.rimuhosting.miro.compute.RimuHostingTemplateBuilderLiveTest): no image matched predicate: And(nullEqualToIsParentOrIsGrandparentOfCurrentLocation(),And(osFamily(ubuntu),osName(ubuntu1110.64),osDescription(Ubuntu 11.10 64-bit (Oneiric Ocelot)),osVersion(11.10),os64Bit(true)),imageName(Ubuntu 11.10 64-bit (Oneiric Ocelot)),imageDescription(^Ubuntu 11.10 64-bit (Oneiric Ocelot)$))
+  testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.rimuhosting.miro.compute.RimuHostingComputeServiceLiveTest): Object 'rimuhosting.jcloudsr' doesn't match dns naming constraints. Reason: Should have lowercase ASCII letters, numbers, or dashes.
+  testCreateTwoNodesWithRunScript(org.jclouds.rimuhosting.miro.compute.RimuHostingComputeServiceLiveTest): Object 'rimuhosting.jclouds' doesn't match dns naming constraints. Reason: Should have lowercase ASCII letters, numbers, or dashes.
+
+Tests run: 116, Failures: 16, Errors: 0, Skipped: 8
+
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 7:37.723s
+[INFO] Finished at: Tue Apr 24 03:18:56 PDT 2012
+[INFO] Final Memory: 22M/265M
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:2.12:test (integration) on project rimuhosting: There are test failures.
+[ERROR] 
+[ERROR] Please refer to /Users/adriancole/workspace/git/jclouds/providers/rimuhosting/target/surefire-reports for the individual test results.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

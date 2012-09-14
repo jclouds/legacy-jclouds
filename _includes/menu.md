@@ -1,0 +1,6 @@
+* [Home](/)
+* [Documentation](/documentation/)
+* [Supported Clouds](/documentation/reference/supported-providers)
+* [Community](/documentation/reference/apps-that-use-jclouds)
+* [Development](/documentation/devguides/)
+* [Events](http://www.meetup.com/jclouds/events/calendar/)

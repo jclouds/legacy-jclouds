@@ -1,0 +1,16 @@
+-------------------------------------------------------------------------------
+Test set: TestSuite
+-------------------------------------------------------------------------------
+Tests run: 155, Failures: 2, Errors: 0, Skipped: 0, Time elapsed: 2,812.292 sec <<< FAILURE!
+testIncidentalResourcesGetCleanedUpOnlyOnLastInstanceDestroyNode(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest)  Time elapsed: 108.048 sec  <<< FAILURE!
+java.lang.AssertionError: Sets differ: expected [] but got [[region=us-east-1, id=sg-95d20ffd, name=jclouds#ec2-incidental#us-east-1, ownerId=993194456877, description=jclouds#ec2-incidental#us-east-1, ipPermissions=[[fromPort=-1, toPort=-1, userIdGroupPairs={993194456877=[jclouds#ec2-incidental#us-east-1]}, groupIds=[], ipProtocol=icmp, ipRanges=[]], [fromPort=1, toPort=65535, userIdGroupPairs={993194456877=[jclouds#ec2-incidental#us-east-1]}, groupIds=[], ipProtocol=tcp, ipRanges=[]], [fromPort=1, toPort=65535, userIdGroupPairs={993194456877=[jclouds#ec2-incidental#us-east-1]}, groupIds=[], ipProtocol=udp, ipRanges=[]], [fromPort=22, toPort=22, userIdGroupPairs={}, groupIds=[], ipProtocol=tcp, ipRanges=[0.0.0.0/0]]]]]
+	at org.testng.Assert.fail(Assert.java:89)
+	at org.testng.Assert.assertEquals(Assert.java:694)
+	at org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest.runIncidentalResourcesGetCleanedUpOnlyOnLastInstanceDestroy(AWSEC2ComputeServiceLiveTest.java:306)
+	at org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest.testIncidentalResourcesGetCleanedUpOnlyOnLastInstanceDestroyNode(AWSEC2ComputeServiceLiveTest.java:216)
+testIncidentalResourcesGetCleanedUpOnlyOnLastInstanceDestroyNodesMatching(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest)  Time elapsed: 165.753 sec  <<< FAILURE!
+java.lang.AssertionError: Sets differ: expected [] but got [[region=us-east-1, id=sg-e3c21f8b, name=jclouds#ec2-incidental#us-east-1, ownerId=993194456877, description=jclouds#ec2-incidental#us-east-1, ipPermissions=[[fromPort=-1, toPort=-1, userIdGroupPairs={993194456877=[jclouds#ec2-incidental#us-east-1]}, groupIds=[], ipProtocol=icmp, ipRanges=[]], [fromPort=1, toPort=65535, userIdGroupPairs={993194456877=[jclouds#ec2-incidental#us-east-1]}, groupIds=[], ipProtocol=tcp, ipRanges=[]], [fromPort=1, toPort=65535, userIdGroupPairs={993194456877=[jclouds#ec2-incidental#us-east-1]}, groupIds=[], ipProtocol=udp, ipRanges=[]], [fromPort=22, toPort=22, userIdGroupPairs={}, groupIds=[], ipProtocol=tcp, ipRanges=[0.0.0.0/0]]]]]
+	at org.testng.Assert.fail(Assert.java:89)
+	at org.testng.Assert.assertEquals(Assert.java:694)
+	at org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest.runIncidentalResourcesGetCleanedUpOnlyOnLastInstanceDestroy(AWSEC2ComputeServiceLiveTest.java:306)
+	at org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest.testIncidentalResourcesGetCleanedUpOnlyOnLastInstanceDestroyNodesMatching(AWSEC2ComputeServiceLiveTest.java:228)

@@ -1,0 +1,711 @@
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for org.jclouds.provider:savvis-symphonyvpdc:bundle:1.2.0-SNAPSHOT
+[WARNING] 'parent.relativePath' of POM org.jclouds:jclouds-project:1.2.0-SNAPSHOT (/Users/adriancole/workspace/git/1.2.0/jclouds/project/pom.xml) points at org.jclouds:jclouds-multi instead of org.sonatype.oss:oss-parent, please verify your project structure @ org.jclouds:jclouds-project:1.2.0-SNAPSHOT, /Users/adriancole/workspace/git/1.2.0/jclouds/project/pom.xml, line 24, column 13
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building jclouds savvis-vpdc vpdc 1.2.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ savvis-symphonyvpdc ---
+[INFO] Deleting /Users/adriancole/workspace/git/1.2.0/jclouds/providers/savvis-symphonyvpdc/target
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-maven) @ savvis-symphonyvpdc ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-banned-dependencies) @ savvis-symphonyvpdc ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-java) @ savvis-symphonyvpdc ---
+[INFO] 
+[INFO] --- maven-remote-resources-plugin:1.2:process (process-remote-resources) @ savvis-symphonyvpdc ---
+[INFO] Setting property: classpath.resource.loader.class => 'org.codehaus.plexus.velocity.ContextClassLoaderResourceLoader'.
+[INFO] Setting property: velocimacro.messages.on => 'false'.
+[INFO] Setting property: resource.loader => 'classpath'.
+[INFO] Setting property: resource.manager.logwhenfound => 'false'.
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.2:resources (default-resources) @ savvis-symphonyvpdc ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/1.2.0/jclouds/providers/savvis-symphonyvpdc/src/main/clojure
+[INFO] Copying 2 resources
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3:compile (default-compile) @ savvis-symphonyvpdc ---
+[INFO] Compiling 70 source files to /Users/adriancole/workspace/git/1.2.0/jclouds/providers/savvis-symphonyvpdc/target/classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.2:testResources (default-testResources) @ savvis-symphonyvpdc ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/1.2.0/jclouds/providers/savvis-symphonyvpdc/src/test/clojure
+[INFO] Copying 30 resources
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3:testCompile (default-testCompile) @ savvis-symphonyvpdc ---
+[INFO] Compiling 29 source files to /Users/adriancole/workspace/git/1.2.0/jclouds/providers/savvis-symphonyvpdc/target/test-classes
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.5:test (default-test) @ savvis-symphonyvpdc ---
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/1.2.0/jclouds/providers/savvis-symphonyvpdc/target/surefire-reports
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running TestSuite
+Starting test testPowerOffVM(org.jclouds.savvis.vpdc.features.VMAsyncClientTest)
+Starting test testCloneVApp(org.jclouds.savvis.vpdc.features.VMAsyncClientTest)
+Starting test testPowerOnVM(org.jclouds.savvis.vpdc.features.VMAsyncClientTest)
+Starting test testAddVMIntoVDCURI(org.jclouds.savvis.vpdc.features.VMAsyncClientTest)
+Starting test testRemoveVM(org.jclouds.savvis.vpdc.features.VMAsyncClientTest)
+[pool-2-thread-5] Test testRemoveVM(org.jclouds.savvis.vpdc.features.VMAsyncClientTest) succeeded: 653ms
+Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
+[pool-2-thread-2] Test testPowerOffVM(org.jclouds.savvis.vpdc.features.VMAsyncClientTest) succeeded: 656ms
+Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
+[pool-2-thread-3] Test testPowerOnVM(org.jclouds.savvis.vpdc.features.VMAsyncClientTest) succeeded: 659ms
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
+Starting test testAddMultipleVMsIntoVDCURI(org.jclouds.savvis.vpdc.features.VMAsyncClientTest)
+Starting test testRemoveVMFromVDC(org.jclouds.savvis.vpdc.features.VMAsyncClientTest)
+Starting test testAddMultipleVMsIntoVDC(org.jclouds.savvis.vpdc.features.VMAsyncClientTest)
+[pool-2-thread-5] Test testRemoveVMFromVDC(org.jclouds.savvis.vpdc.features.VMAsyncClientTest) succeeded: 223ms
+Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
+Starting test testCaptureVApp(org.jclouds.savvis.vpdc.features.VMAsyncClientTest)
+[pool-2-thread-1] Test testCloneVApp(org.jclouds.savvis.vpdc.features.VMAsyncClientTest) succeeded: 1020ms
+Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
+Starting test testAddVMIntoVDC(org.jclouds.savvis.vpdc.features.VMAsyncClientTest)
+[pool-2-thread-5] Test testCaptureVApp(org.jclouds.savvis.vpdc.features.VMAsyncClientTest) succeeded: 83ms
+Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
+[pool-2-thread-2] Test testAddMultipleVMsIntoVDCURI(org.jclouds.savvis.vpdc.features.VMAsyncClientTest) succeeded: 327ms
+Test suite progress: tests succeeded: 7, failed: 0, skipped: 0.
+[pool-2-thread-3] Test testAddMultipleVMsIntoVDC(org.jclouds.savvis.vpdc.features.VMAsyncClientTest) succeeded: 292ms
+Test suite progress: tests succeeded: 8, failed: 0, skipped: 0.
+[pool-2-thread-1] Test testAddVMIntoVDC(org.jclouds.savvis.vpdc.features.VMAsyncClientTest) succeeded: 26ms
+Test suite progress: tests succeeded: 9, failed: 0, skipped: 0.
+[pool-2-thread-4] Test testAddVMIntoVDCURI(org.jclouds.savvis.vpdc.features.VMAsyncClientTest) succeeded: 1044ms
+Test suite progress: tests succeeded: 10, failed: 0, skipped: 0.
+Starting test testNetworkWhenOrgNull(org.jclouds.savvis.vpdc.features.BrowsingAsyncClientTest)
+Starting test testVMWithPowerState(org.jclouds.savvis.vpdc.features.BrowsingAsyncClientTest)
+Starting test testVMVDC(org.jclouds.savvis.vpdc.features.BrowsingAsyncClientTest)
+Starting test testOrgNull(org.jclouds.savvis.vpdc.features.BrowsingAsyncClientTest)
+Starting test testVDCWhenOrgNull(org.jclouds.savvis.vpdc.features.BrowsingAsyncClientTest)
+[pool-2-thread-2] Test testVMVDC(org.jclouds.savvis.vpdc.features.BrowsingAsyncClientTest) succeeded: 289ms
+Test suite progress: tests succeeded: 11, failed: 0, skipped: 0.
+Starting test testVDC(org.jclouds.savvis.vpdc.features.BrowsingAsyncClientTest)
+[pool-2-thread-2] Test testVDC(org.jclouds.savvis.vpdc.features.BrowsingAsyncClientTest) succeeded: 3ms
+Test suite progress: tests succeeded: 12, failed: 0, skipped: 0.
+Starting test testOrg(org.jclouds.savvis.vpdc.features.BrowsingAsyncClientTest)
+[pool-2-thread-1] Test testVDCWhenOrgNull(org.jclouds.savvis.vpdc.features.BrowsingAsyncClientTest) succeeded: 291ms
+Test suite progress: tests succeeded: 13, failed: 0, skipped: 0.
+Starting test testVMWhenOrgNull(org.jclouds.savvis.vpdc.features.BrowsingAsyncClientTest)
+[pool-2-thread-2] Test testOrg(org.jclouds.savvis.vpdc.features.BrowsingAsyncClientTest) succeeded: 27ms
+Test suite progress: tests succeeded: 14, failed: 0, skipped: 0.
+Starting test testListFirewallRules(org.jclouds.savvis.vpdc.features.BrowsingAsyncClientTest)
+[pool-2-thread-3] Test testOrgNull(org.jclouds.savvis.vpdc.features.BrowsingAsyncClientTest) succeeded: 322ms
+Test suite progress: tests succeeded: 15, failed: 0, skipped: 0.
+Starting test testNetwork(org.jclouds.savvis.vpdc.features.BrowsingAsyncClientTest)
+[pool-2-thread-5] Test testNetworkWhenOrgNull(org.jclouds.savvis.vpdc.features.BrowsingAsyncClientTest) succeeded: 370ms
+Test suite progress: tests succeeded: 16, failed: 0, skipped: 0.
+Starting test testVM(org.jclouds.savvis.vpdc.features.BrowsingAsyncClientTest)
+[pool-2-thread-2] Test testListFirewallRules(org.jclouds.savvis.vpdc.features.BrowsingAsyncClientTest) succeeded: 16ms
+Test suite progress: tests succeeded: 17, failed: 0, skipped: 0.
+[pool-2-thread-3] Test testNetwork(org.jclouds.savvis.vpdc.features.BrowsingAsyncClientTest) succeeded: 12ms
+Test suite progress: tests succeeded: 18, failed: 0, skipped: 0.
+[pool-2-thread-1] Test testVMWhenOrgNull(org.jclouds.savvis.vpdc.features.BrowsingAsyncClientTest) succeeded: 36ms
+Test suite progress: tests succeeded: 19, failed: 0, skipped: 0.
+[pool-2-thread-5] Test testVM(org.jclouds.savvis.vpdc.features.BrowsingAsyncClientTest) succeeded: 4ms
+Test suite progress: tests succeeded: 20, failed: 0, skipped: 0.
+Starting test testGetTask(org.jclouds.savvis.vpdc.features.BrowsingAsyncClientTest)
+[pool-2-thread-2] Test testGetTask(org.jclouds.savvis.vpdc.features.BrowsingAsyncClientTest) succeeded: 3ms
+Test suite progress: tests succeeded: 21, failed: 0, skipped: 0.
+Starting test test405MakesIllegalArgumentException(org.jclouds.savvis.vpdc.handlers.VPDCErrorHandlerTest)
+Starting test test400MakesIllegalArgumentException(org.jclouds.savvis.vpdc.handlers.VPDCErrorHandlerTest)
+Starting test test403MakesAuthorizationException(org.jclouds.savvis.vpdc.handlers.VPDCErrorHandlerTest)
+Starting test test409MakesIllegalStateException(org.jclouds.savvis.vpdc.handlers.VPDCErrorHandlerTest)
+[pool-2-thread-4] Test testVMWithPowerState(org.jclouds.savvis.vpdc.features.BrowsingAsyncClientTest) succeeded: 501ms
+Test suite progress: tests succeeded: 22, failed: 0, skipped: 0.
+Starting test test404MakesResourceNotFoundException(org.jclouds.savvis.vpdc.handlers.VPDCErrorHandlerTest)
+[pool-2-thread-2] Test test405MakesIllegalArgumentException(org.jclouds.savvis.vpdc.handlers.VPDCErrorHandlerTest) succeeded: 228ms
+Test suite progress: tests succeeded: 23, failed: 0, skipped: 0.
+Starting test test401MakesAuthorizationException(org.jclouds.savvis.vpdc.handlers.VPDCErrorHandlerTest)
+[pool-2-thread-3] Test test409MakesIllegalStateException(org.jclouds.savvis.vpdc.handlers.VPDCErrorHandlerTest) succeeded: 200ms
+Test suite progress: tests succeeded: 24, failed: 0, skipped: 0.
+Starting test testSavvis(org.jclouds.savvis.vpdc.xml.OrgListHandlerTest)
+[pool-2-thread-1] Test test400MakesIllegalArgumentException(org.jclouds.savvis.vpdc.handlers.VPDCErrorHandlerTest) succeeded: 211ms
+Test suite progress: tests succeeded: 25, failed: 0, skipped: 0.
+[pool-2-thread-5] Test test403MakesAuthorizationException(org.jclouds.savvis.vpdc.handlers.VPDCErrorHandlerTest) succeeded: 221ms
+Test suite progress: tests succeeded: 26, failed: 0, skipped: 0.
+[pool-2-thread-4] Test test404MakesResourceNotFoundException(org.jclouds.savvis.vpdc.handlers.VPDCErrorHandlerTest) succeeded: 146ms
+Test suite progress: tests succeeded: 27, failed: 0, skipped: 0.
+[pool-2-thread-2] Test test401MakesAuthorizationException(org.jclouds.savvis.vpdc.handlers.VPDCErrorHandlerTest) succeeded: 56ms
+Test suite progress: tests succeeded: 28, failed: 0, skipped: 0.
+[pool-2-thread-3] Test testSavvis(org.jclouds.savvis.vpdc.xml.OrgListHandlerTest) succeeded: 154ms
+Test suite progress: tests succeeded: 29, failed: 0, skipped: 0.
+Starting test test(org.jclouds.savvis.vpdc.binders.BindVMSpecsToXmlPayloadTest)
+[pool-2-thread-3] Test test(org.jclouds.savvis.vpdc.binders.BindVMSpecsToXmlPayloadTest) succeeded: 50ms
+Test suite progress: tests succeeded: 30, failed: 0, skipped: 0.
+Starting test testPowerOnVMVDC(org.jclouds.savvis.vpdc.features.ServiceManagementAsyncClientTest)
+Starting test testPowerOffVMVDC(org.jclouds.savvis.vpdc.features.ServiceManagementAsyncClientTest)
+Starting test testPowerOffVM(org.jclouds.savvis.vpdc.features.ServiceManagementAsyncClientTest)
+Starting test testPowerOnVM(org.jclouds.savvis.vpdc.features.ServiceManagementAsyncClientTest)
+[pool-2-thread-4] Test testPowerOffVM(org.jclouds.savvis.vpdc.features.ServiceManagementAsyncClientTest) succeeded: 25ms
+Test suite progress: tests succeeded: 31, failed: 0, skipped: 0.
+[pool-2-thread-2] Test testPowerOffVMVDC(org.jclouds.savvis.vpdc.features.ServiceManagementAsyncClientTest) succeeded: 46ms
+Test suite progress: tests succeeded: 32, failed: 0, skipped: 0.
+[pool-2-thread-5] Test testPowerOnVM(org.jclouds.savvis.vpdc.features.ServiceManagementAsyncClientTest) succeeded: 113ms
+Test suite progress: tests succeeded: 33, failed: 0, skipped: 0.
+[pool-2-thread-1] Test testPowerOnVMVDC(org.jclouds.savvis.vpdc.features.ServiceManagementAsyncClientTest) succeeded: 145ms
+Test suite progress: tests succeeded: 34, failed: 0, skipped: 0.
+Starting test test(org.jclouds.savvis.vpdc.binders.BindFirewallRuleToXmlPayloadTest)
+Starting test test(org.jclouds.savvis.vpdc.xml.VDCHandlerTest)
+Starting test testSaved(org.jclouds.savvis.vpdc.xml.VDCHandlerTest)
+[pool-2-thread-2] Test test(org.jclouds.savvis.vpdc.binders.BindFirewallRuleToXmlPayloadTest) succeeded: 23ms
+Test suite progress: tests succeeded: 35, failed: 0, skipped: 0.
+Starting test test1net(org.jclouds.savvis.vpdc.xml.VDCHandlerTest)
+[pool-2-thread-5] Test testSaved(org.jclouds.savvis.vpdc.xml.VDCHandlerTest) succeeded: 45ms
+Test suite progress: tests succeeded: 36, failed: 0, skipped: 0.
+Starting test testFailed(org.jclouds.savvis.vpdc.xml.VDCHandlerTest)
+[pool-2-thread-2] Test test1net(org.jclouds.savvis.vpdc.xml.VDCHandlerTest) succeeded: 26ms
+Test suite progress: tests succeeded: 37, failed: 0, skipped: 0.
+Starting test test(org.jclouds.savvis.vpdc.xml.FirewallServiceHandlerTest)
+[pool-2-thread-5] Test testFailed(org.jclouds.savvis.vpdc.xml.VDCHandlerTest) succeeded: 3ms
+Test suite progress: tests succeeded: 38, failed: 0, skipped: 0.
+Starting test test(org.jclouds.savvis.vpdc.xml.NetworkHandlerTest)
+[pool-2-thread-2] Test test(org.jclouds.savvis.vpdc.xml.FirewallServiceHandlerTest) succeeded: 6ms
+Test suite progress: tests succeeded: 39, failed: 0, skipped: 0.
+Starting test testNat(org.jclouds.savvis.vpdc.xml.NetworkHandlerTest)
+[pool-2-thread-5] Test test(org.jclouds.savvis.vpdc.xml.NetworkHandlerTest) succeeded: 6ms
+Test suite progress: tests succeeded: 40, failed: 0, skipped: 0.
+Starting test tesWhenNoVAppsInNetworkSetsAllZerosToGatewayAndNetmask(org.jclouds.savvis.vpdc.xml.NetworkHandlerTest)
+[pool-2-thread-2] Test testNat(org.jclouds.savvis.vpdc.xml.NetworkHandlerTest) succeeded: 3ms
+Test suite progress: tests succeeded: 41, failed: 0, skipped: 0.
+Starting test test(org.jclouds.savvis.vpdc.binders.BindCaptureVAppTemplateToXmlPayloadTest)
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><CaptureVAppParams xmlns="http://schemas.api.sandbox.symphonyVPDC.savvis.net/vpdci" name="CaptureTemplate"><Description>Save Template</Description><Source href="https://api.symphonyvpdc.savvis.net/vpdc/v1.0/org/100000.0/vdc/2736/vApp/1001"/></CaptureVAppParams>
+[pool-2-thread-5] Test tesWhenNoVAppsInNetworkSetsAllZerosToGatewayAndNetmask(org.jclouds.savvis.vpdc.xml.NetworkHandlerTest) succeeded: 3ms
+Test suite progress: tests succeeded: 42, failed: 0, skipped: 0.
+[pool-2-thread-2] Test test(org.jclouds.savvis.vpdc.binders.BindCaptureVAppTemplateToXmlPayloadTest) succeeded: 16ms
+Test suite progress: tests succeeded: 43, failed: 0, skipped: 0.
+Starting test test(org.jclouds.savvis.vpdc.xml.NetworkConnectionSectionHandlerTest)
+Starting test testApply(org.jclouds.savvis.vpdc.filters.SetVCloudTokenCookieTest)
+[pool-2-thread-2] Test testApply(org.jclouds.savvis.vpdc.filters.SetVCloudTokenCookieTest) succeeded: 6ms
+Test suite progress: tests succeeded: 44, failed: 0, skipped: 0.
+Starting test testSavvis(org.jclouds.savvis.vpdc.xml.OrgHandlerTest)
+[pool-2-thread-5] Test test(org.jclouds.savvis.vpdc.xml.NetworkConnectionSectionHandlerTest) succeeded: 9ms
+Test suite progress: tests succeeded: 45, failed: 0, skipped: 0.
+Starting test testOrgWithoutVDC(org.jclouds.savvis.vpdc.xml.OrgHandlerTest)
+[pool-2-thread-1] Test test(org.jclouds.savvis.vpdc.xml.VDCHandlerTest) succeeded: 140ms
+Test suite progress: tests succeeded: 46, failed: 0, skipped: 0.
+Starting test test(org.jclouds.savvis.vpdc.xml.NetworkConfigSectionHandlerTest)
+[pool-2-thread-2] Test testSavvis(org.jclouds.savvis.vpdc.xml.OrgHandlerTest) succeeded: 99ms
+Test suite progress: tests succeeded: 47, failed: 0, skipped: 0.
+Starting test testVCloud1_0(org.jclouds.savvis.vpdc.xml.VMHandlerTest)
+[pool-2-thread-1] Test test(org.jclouds.savvis.vpdc.xml.NetworkConfigSectionHandlerTest) succeeded: 62ms
+Test suite progress: tests succeeded: 48, failed: 0, skipped: 0.
+Starting test test(org.jclouds.savvis.vpdc.binders.BindCloneVAppToXmlPayloadTest)
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><CloneVAppParams xmlns="http://www.vmware.com/vcloud/v0.8" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" deploy="true" name="clonedvm" powerOn="true" xsi:schemaLocation="http://www.vmware.com/vcloud/v0.8 https://api.symphonyvpdc.savvis.net/ns/vcloud.xsd"><Description>VM Tier01</Description><VApp href="https://api.symphonyvpdc.savvis.net/vpdc/v1.0/org/100000.0/vdc/2736/vApp/" type="application/vnd.vmware.vcloud.vApp+xml"/></CloneVAppParams>
+[pool-2-thread-1] Test test(org.jclouds.savvis.vpdc.binders.BindCloneVAppToXmlPayloadTest) succeeded: 4ms
+Test suite progress: tests succeeded: 49, failed: 0, skipped: 0.
+[pool-2-thread-5] Test testOrgWithoutVDC(org.jclouds.savvis.vpdc.xml.OrgHandlerTest) succeeded: 78ms
+Test suite progress: tests succeeded: 50, failed: 0, skipped: 0.
+[pool-2-thread-2] Test testVCloud1_0(org.jclouds.savvis.vpdc.xml.VMHandlerTest) succeeded: 48ms
+Test suite progress: tests succeeded: 51, failed: 0, skipped: 0.
+Starting test testDeleteFirewallRule(org.jclouds.savvis.vpdc.features.FirewallAsyncClientTest)
+Starting test testAddFirewallRule(org.jclouds.savvis.vpdc.features.FirewallAsyncClientTest)
+[pool-2-thread-4] Test testAddFirewallRule(org.jclouds.savvis.vpdc.features.FirewallAsyncClientTest) succeeded: 62ms
+Test suite progress: tests succeeded: 52, failed: 0, skipped: 0.
+[pool-2-thread-3] Test testDeleteFirewallRule(org.jclouds.savvis.vpdc.features.FirewallAsyncClientTest) succeeded: 68ms
+Test suite progress: tests succeeded: 53, failed: 0, skipped: 0.
+Starting test testError(org.jclouds.savvis.vpdc.xml.TaskHandlerTest)
+Starting test testUnsupported(org.jclouds.savvis.vpdc.xml.TaskHandlerTest)
+Starting test testQueued(org.jclouds.savvis.vpdc.xml.TaskHandlerTest)
+Starting test testVMDKSuccess(org.jclouds.savvis.vpdc.xml.TaskHandlerTest)
+Starting test testFailed(org.jclouds.savvis.vpdc.xml.TaskHandlerTest)
+[pool-3-thread-5] Test testVMDKSuccess(org.jclouds.savvis.vpdc.xml.TaskHandlerTest) succeeded: 34ms
+Test suite progress: tests succeeded: 54, failed: 0, skipped: 0.
+Starting test testRunning(org.jclouds.savvis.vpdc.xml.TaskHandlerTest)
+[pool-3-thread-2] Test testQueued(org.jclouds.savvis.vpdc.xml.TaskHandlerTest) succeeded: 39ms
+Test suite progress: tests succeeded: 55, failed: 0, skipped: 0.
+Starting test testVAppSuccess(org.jclouds.savvis.vpdc.xml.TaskHandlerTest)
+[pool-3-thread-5] Test testRunning(org.jclouds.savvis.vpdc.xml.TaskHandlerTest) succeeded: 4ms
+Test suite progress: tests succeeded: 56, failed: 0, skipped: 0.
+[pool-3-thread-1] Test testError(org.jclouds.savvis.vpdc.xml.TaskHandlerTest) succeeded: 62ms
+Test suite progress: tests succeeded: 57, failed: 0, skipped: 0.
+[pool-3-thread-3] Test testUnsupported(org.jclouds.savvis.vpdc.xml.TaskHandlerTest) succeeded: 67ms
+Test suite progress: tests succeeded: 58, failed: 0, skipped: 0.
+[pool-3-thread-4] Test testFailed(org.jclouds.savvis.vpdc.xml.TaskHandlerTest) succeeded: 50ms
+Test suite progress: tests succeeded: 59, failed: 0, skipped: 0.
+[pool-3-thread-2] Test testVAppSuccess(org.jclouds.savvis.vpdc.xml.TaskHandlerTest) succeeded: 11ms
+Test suite progress: tests succeeded: 60, failed: 0, skipped: 0.
+Starting test testSync(org.jclouds.savvis.vpdc.VPDCAsyncClientTest)
+[pool-4-thread-2] Test testSync(org.jclouds.savvis.vpdc.VPDCAsyncClientTest) succeeded: 28ms
+Test suite progress: tests succeeded: 61, failed: 0, skipped: 0.
+Starting test testAsync(org.jclouds.savvis.vpdc.VPDCAsyncClientTest)
+[pool-4-thread-1] Test testAsync(org.jclouds.savvis.vpdc.VPDCAsyncClientTest) succeeded: 10ms
+Test suite progress: tests succeeded: 62, failed: 0, skipped: 0.
+Starting test testInRestProperties(org.jclouds.savvis.vpdc.SavvisSymphonyVPDCProviderTest)
+Starting test testWithId(org.jclouds.savvis.vpdc.SavvisSymphonyVPDCProviderTest)
+Starting test testAllContains(org.jclouds.savvis.vpdc.SavvisSymphonyVPDCProviderTest)
+Starting test testOfTypeContains(org.jclouds.savvis.vpdc.SavvisSymphonyVPDCProviderTest)
+[pool-5-thread-2] Test testWithId(org.jclouds.savvis.vpdc.SavvisSymphonyVPDCProviderTest) succeeded: 16ms
+Test suite progress: tests succeeded: 63, failed: 0, skipped: 0.
+[pool-5-thread-3] Test testAllContains(org.jclouds.savvis.vpdc.SavvisSymphonyVPDCProviderTest) succeeded: 2ms
+Test suite progress: tests succeeded: 64, failed: 0, skipped: 0.
+[pool-5-thread-1] Test testInRestProperties(org.jclouds.savvis.vpdc.SavvisSymphonyVPDCProviderTest) succeeded: 42ms
+Test suite progress: tests succeeded: 65, failed: 0, skipped: 0.
+[pool-5-thread-4] Test testOfTypeContains(org.jclouds.savvis.vpdc.SavvisSymphonyVPDCProviderTest) succeeded: 8ms
+Test suite progress: tests succeeded: 66, failed: 0, skipped: 0.
+Tests run: 66, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 6.969 sec
+
+Results :
+
+Tests run: 66, Failures: 0, Errors: 0, Skipped: 0
+
+[INFO] 
+[INFO] --- clojure-maven-plugin:1.3.3:test (test-clojure) @ savvis-symphonyvpdc ---
+
+Testing user
+
+Ran 0 tests containing 0 assertions.
+0 failures, 0 errors.
+[INFO] 
+[INFO] --- maven-bundle-plugin:2.3.4:bundle (default-bundle) @ savvis-symphonyvpdc ---
+[INFO] 
+[INFO] --- maven-source-plugin:2.1.1:jar-no-fork (attach-sources) @ savvis-symphonyvpdc ---
+[INFO] Building jar: /Users/adriancole/workspace/git/1.2.0/jclouds/providers/savvis-symphonyvpdc/target/savvis-symphonyvpdc-1.2.0-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- maven-javadoc-plugin:2.8:jar (javadoc) @ savvis-symphonyvpdc ---
+[INFO] Skipping javadoc generation
+[INFO] 
+[INFO] --- maven-jar-plugin:2.3.1:test-jar (default) @ savvis-symphonyvpdc ---
+[INFO] Building jar: /Users/adriancole/workspace/git/1.2.0/jclouds/providers/savvis-symphonyvpdc/target/savvis-symphonyvpdc-1.2.0-SNAPSHOT-tests.jar
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.5:test (integration) @ savvis-symphonyvpdc ---
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/1.2.0/jclouds/providers/savvis-symphonyvpdc/target/surefire-reports
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running TestSuite
+Starting test testAddFirewallRule(org.jclouds.savvis.vpdc.features.FirewallClientLiveTest)
+[pool-2-thread-1] Test testAddFirewallRule(org.jclouds.savvis.vpdc.features.FirewallClientLiveTest) failed.
+Test suite progress: tests succeeded: 0, failed: 1, skipped: 0.
+[pool-2-thread-1] Test testDeleteFirewallRule(org.jclouds.savvis.vpdc.features.FirewallClientLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 1, skipped: 1.
+Starting test testCreateVirtualMachine(org.jclouds.savvis.vpdc.features.VMClientLiveTest)
+[pool-2-thread-1] Test testCreateVirtualMachine(org.jclouds.savvis.vpdc.features.VMClientLiveTest) failed.
+Test suite progress: tests succeeded: 0, failed: 2, skipped: 1.
+[pool-2-thread-1] Test testCloneVApp(org.jclouds.savvis.vpdc.features.VMClientLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 2, skipped: 2.
+[pool-2-thread-1] Test testZCreateMultipleVMs(org.jclouds.savvis.vpdc.features.VMClientLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 2, skipped: 3.
+Starting test testCompareSizes(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+smallest [id=[name= null, operatingSystem=[osType=RHEL, arch=null, description=Red Hat Enterprise Linux 5.x 32bit, family=rhel, is64Bit=false, name=rhel5Guest, version=5], processorCount=1, memoryInGig=2, networkTierName=null, bootDeviceName=/, bootDriveSize=25, dataDriveDeviceNameToSizeInGig={/data01=25}], providerId=[name= null, operatingSystem=[osType=RHEL, arch=null, description=Red Hat Enterprise Linux 5.x 32bit, family=rhel, is64Bit=false, name=rhel5Guest, version=5], processorCount=1, memoryInGig=2, networkTierName=null, bootDeviceName=/, bootDriveSize=25, dataDriveDeviceNameToSizeInGig={/data01=25}], name=null, processors=[[cores=1.0, speed=3.0]], ram=2048, volumes=[[id=null, type=LOCAL, size=25.0, device=/, durable=true, isBootDevice=true], [id=null, type=LOCAL, size=25.0, device=/data01, durable=true, isBootDevice=false]], supportsImage=ALWAYS_TRUE, tags=[]]
+fastest [id=[name= null, operatingSystem=[osType=RHEL, arch=null, description=Red Hat Enterprise Linux 5.x 32bit, family=rhel, is64Bit=false, name=rhel5Guest, version=5], processorCount=1, memoryInGig=2, networkTierName=null, bootDeviceName=/, bootDriveSize=25, dataDriveDeviceNameToSizeInGig={/data01=25}], providerId=[name= null, operatingSystem=[osType=RHEL, arch=null, description=Red Hat Enterprise Linux 5.x 32bit, family=rhel, is64Bit=false, name=rhel5Guest, version=5], processorCount=1, memoryInGig=2, networkTierName=null, bootDeviceName=/, bootDriveSize=25, dataDriveDeviceNameToSizeInGig={/data01=25}], name=null, processors=[[cores=1.0, speed=3.0]], ram=2048, volumes=[[id=null, type=LOCAL, size=25.0, device=/, durable=true, isBootDevice=true], [id=null, type=LOCAL, size=25.0, device=/data01, durable=true, isBootDevice=false]], supportsImage=ALWAYS_TRUE, tags=[]]
+biggest [id=[name= null, operatingSystem=[osType=RHEL, arch=null, description=Red Hat Enterprise Linux 5.x 32bit, family=rhel, is64Bit=false, name=rhel5Guest, version=5], processorCount=1, memoryInGig=2, networkTierName=null, bootDeviceName=/, bootDriveSize=25, dataDriveDeviceNameToSizeInGig={/data01=25}], providerId=[name= null, operatingSystem=[osType=RHEL, arch=null, description=Red Hat Enterprise Linux 5.x 32bit, family=rhel, is64Bit=false, name=rhel5Guest, version=5], processorCount=1, memoryInGig=2, networkTierName=null, bootDeviceName=/, bootDriveSize=25, dataDriveDeviceNameToSizeInGig={/data01=25}], name=null, processors=[[cores=1.0, speed=3.0]], ram=2048, volumes=[[id=null, type=LOCAL, size=25.0, device=/, durable=true, isBootDevice=true], [id=null, type=LOCAL, size=25.0, device=/data01, durable=true, isBootDevice=false]], supportsImage=ALWAYS_TRUE, tags=[]]
+[pool-2-thread-1] Test testCompareSizes(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 2232935ms
+Test suite progress: tests succeeded: 1, failed: 2, skipped: 3.
+Starting test testFromTemplate(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testFromTemplate(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 546933ms
+Test suite progress: tests succeeded: 2, failed: 2, skipped: 3.
+Starting test testGetAssignableLocations(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+location [id=VM-Tier01, scope=NETWORK, description=VM-Tier01, parent=4753, iso3166Codes=[], metadata={}]
+location [id=VM-Tier02, scope=NETWORK, description=VM-Tier02, parent=4753, iso3166Codes=[], metadata={}]
+location [id=VM-Tier03, scope=NETWORK, description=VM-Tier03, parent=4753, iso3166Codes=[], metadata={}]
+location [id=VM-Tier01, scope=NETWORK, description=VM-Tier01, parent=4758, iso3166Codes=[], metadata={}]
+location [id=VM-Tier01, scope=NETWORK, description=VM-Tier01, parent=4761, iso3166Codes=[], metadata={}]
+location [id=VM-Tier01, scope=NETWORK, description=VM-Tier01, parent=4961, iso3166Codes=[], metadata={}]
+location [id=VM-Tier02, scope=NETWORK, description=VM-Tier02, parent=4961, iso3166Codes=[], metadata={}]
+location [id=VM-Tier03, scope=NETWORK, description=VM-Tier03, parent=4961, iso3166Codes=[], metadata={}]
+location [id=VM-Tier01, scope=NETWORK, description=VM-Tier01, parent=4963, iso3166Codes=[], metadata={}]
+location [id=VM-Tier01, scope=NETWORK, description=VM-Tier01, parent=5005, iso3166Codes=[], metadata={}]
+location [id=VM-Tier02, scope=NETWORK, description=VM-Tier02, parent=5005, iso3166Codes=[], metadata={}]
+location [id=VM-Tier03, scope=NETWORK, description=VM-Tier03, parent=5005, iso3166Codes=[], metadata={}]
+[pool-2-thread-1] Test testGetAssignableLocations(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 560928ms
+Test suite progress: tests succeeded: 3, failed: 2, skipped: 3.
+Starting test testTemplateBuilderCanFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+location [id=VM-Tier01, scope=NETWORK, description=VM-Tier01, parent=5041, iso3166Codes=[], metadata={}]
+location [id=VM-Tier01, scope=NETWORK, description=VM-Tier01, parent=5158, iso3166Codes=[], metadata={}]
+location [id=VM-Tier02, scope=NETWORK, description=VM-Tier02, parent=5158, iso3166Codes=[], metadata={}]
+location [id=VM-Tier03, scope=NETWORK, description=VM-Tier03, parent=5158, iso3166Codes=[], metadata={}]
+location [id=VM-Tier01, scope=NETWORK, description=VM-Tier01, parent=5159, iso3166Codes=[], metadata={}]
+location [id=VM-Tier02, scope=NETWORK, description=VM-Tier02, parent=5159, iso3166Codes=[], metadata={}]
+location [id=VM-Tier03, scope=NETWORK, description=VM-Tier03, parent=5159, iso3166Codes=[], metadata={}]
+location [id=VM-Tier01, scope=NETWORK, description=VM-Tier01, parent=5169, iso3166Codes=[], metadata={}]
+location [id=VM-Tier02, scope=NETWORK, description=VM-Tier02, parent=5169, iso3166Codes=[], metadata={}]
+location [id=VM-Tier03, scope=NETWORK, description=VM-Tier03, parent=5169, iso3166Codes=[], metadata={}]
+location [id=VM-Tier01, scope=NETWORK, description=VM-Tier01, parent=5472, iso3166Codes=[], metadata={}]
+location [id=VM-Tier02, scope=NETWORK, description=VM-Tier02, parent=5472, iso3166Codes=[], metadata={}]
+location [id=VM-Tier03, scope=NETWORK, description=VM-Tier03, parent=5472, iso3166Codes=[], metadata={}]
+location [id=VM-Tier01, scope=NETWORK, description=VM-Tier01, parent=5473, iso3166Codes=[], metadata={}]
+location [id=VM-Tier02, scope=NETWORK, description=VM-Tier02, parent=5473, iso3166Codes=[], metadata={}]
+location [id=VM-Tier03, scope=NETWORK, description=VM-Tier03, parent=5473, iso3166Codes=[], metadata={}]
+location [id=VM-Tier01, scope=NETWORK, description=VM-Tier01, parent=5631, iso3166Codes=[], metadata={}]
+location [id=VM-Tier02, scope=NETWORK, description=VM-Tier02, parent=5631, iso3166Codes=[], metadata={}]
+location [id=VM-Tier03, scope=NETWORK, description=VM-Tier03, parent=5631, iso3166Codes=[], metadata={}]
+location [id=VM-Tier01, scope=NETWORK, description=VM-Tier01, parent=5634, iso3166Codes=[], metadata={}]
+location [id=VM-Tier02, scope=NETWORK, description=VM-Tier02, parent=5634, iso3166Codes=[], metadata={}]
+location [id=VM-Tier03, scope=NETWORK, description=VM-Tier03, parent=5634, iso3166Codes=[], metadata={}]
+location [id=VM-Tier01, scope=NETWORK, description=VM-Tier01, parent=5657, iso3166Codes=[], metadata={}]
+location [id=VM-Tier02, scope=NETWORK, description=VM-Tier02, parent=5657, iso3166Codes=[], metadata={}]
+location [id=VM-Tier03, scope=NETWORK, description=VM-Tier03, parent=5657, iso3166Codes=[], metadata={}]
+location [id=VM-Tier01, scope=NETWORK, description=VM-Tier01, parent=5732, iso3166Codes=[], metadata={}]
+location [id=VM-Tier01, scope=NETWORK, description=VM-Tier01, parent=5735, iso3166Codes=[], metadata={}]
+location [id=VM-Tier02, scope=NETWORK, description=VM-Tier02, parent=5735, iso3166Codes=[], metadata={}]
+location [id=VM-Tier03, scope=NETWORK, description=VM-Tier03, parent=5735, iso3166Codes=[], metadata={}]
+location [id=VM-Tier01, scope=NETWORK, description=VM-Tier01, parent=7959, iso3166Codes=[], metadata={}]
+location [id=VM-Tier02, scope=NETWORK, description=VM-Tier02, parent=7959, iso3166Codes=[], metadata={}]
+location [id=VM-Tier03, scope=NETWORK, description=VM-Tier03, parent=7959, iso3166Codes=[], metadata={}]
+location [id=VM-Tier01, scope=NETWORK, description=VM-Tier01, parent=7975, iso3166Codes=[], metadata={}]
+location [id=VM-Tier01, scope=NETWORK, description=VM-Tier01, parent=7976, iso3166Codes=[], metadata={}]
+location [id=VM-Tier01, scope=NETWORK, description=VM-Tier01, parent=7977, iso3166Codes=[], metadata={}]
+location [id=VM-Tier01, scope=NETWORK, description=VM-Tier01, parent=8039, iso3166Codes=[], metadata={}]
+location [id=VM-Tier01, scope=NETWORK, description=VM-Tier01, parent=8469, iso3166Codes=[], metadata={}]
+location [id=VM-Tier02, scope=NETWORK, description=VM-Tier02, parent=8469, iso3166Codes=[], metadata={}]
+location [id=VM-Tier03, scope=NETWORK, description=VM-Tier03, parent=8469, iso3166Codes=[], metadata={}]
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 553262ms
+Test suite progress: tests succeeded: 4, failed: 2, skipped: 3.
+Starting test testTemplateBuilderCanFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 569209ms
+Test suite progress: tests succeeded: 5, failed: 2, skipped: 3.
+Starting test testTemplateBuilderCanFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 550520ms
+Test suite progress: tests succeeded: 6, failed: 2, skipped: 3.
+Starting test testTemplateBuilderCanFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 618399ms
+Test suite progress: tests succeeded: 7, failed: 2, skipped: 3.
+Starting test testTemplateBuilderCanUseImageId(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanUseImageId(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 1109031ms
+Test suite progress: tests succeeded: 8, failed: 2, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 532008ms
+Test suite progress: tests succeeded: 9, failed: 2, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 526806ms
+Test suite progress: tests succeeded: 10, failed: 2, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 521144ms
+Test suite progress: tests succeeded: 11, failed: 2, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 514984ms
+Test suite progress: tests succeeded: 12, failed: 2, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 570491ms
+Test suite progress: tests succeeded: 13, failed: 2, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 551652ms
+Test suite progress: tests succeeded: 14, failed: 2, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 558794ms
+Test suite progress: tests succeeded: 15, failed: 2, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 557732ms
+Test suite progress: tests succeeded: 16, failed: 2, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 555470ms
+Test suite progress: tests succeeded: 17, failed: 2, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 555061ms
+Test suite progress: tests succeeded: 18, failed: 2, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 575672ms
+Test suite progress: tests succeeded: 19, failed: 2, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 571527ms
+Test suite progress: tests succeeded: 20, failed: 2, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 557351ms
+Test suite progress: tests succeeded: 21, failed: 2, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 581403ms
+Test suite progress: tests succeeded: 22, failed: 2, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 662755ms
+Test suite progress: tests succeeded: 23, failed: 2, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 694507ms
+Test suite progress: tests succeeded: 24, failed: 2, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 622293ms
+Test suite progress: tests succeeded: 25, failed: 2, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 545967ms
+Test suite progress: tests succeeded: 26, failed: 2, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 524932ms
+Test suite progress: tests succeeded: 27, failed: 2, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 529948ms
+Test suite progress: tests succeeded: 28, failed: 2, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 521437ms
+Test suite progress: tests succeeded: 29, failed: 2, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 519921ms
+Test suite progress: tests succeeded: 30, failed: 2, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 522204ms
+Test suite progress: tests succeeded: 31, failed: 2, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 577979ms
+Test suite progress: tests succeeded: 32, failed: 2, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 567571ms
+Test suite progress: tests succeeded: 33, failed: 2, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 556079ms
+Test suite progress: tests succeeded: 34, failed: 2, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 563389ms
+Test suite progress: tests succeeded: 35, failed: 2, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 568177ms
+Test suite progress: tests succeeded: 36, failed: 2, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 567771ms
+Test suite progress: tests succeeded: 37, failed: 2, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 592100ms
+Test suite progress: tests succeeded: 38, failed: 2, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 559314ms
+Test suite progress: tests succeeded: 39, failed: 2, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 556934ms
+Test suite progress: tests succeeded: 40, failed: 2, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 550156ms
+Test suite progress: tests succeeded: 41, failed: 2, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 557734ms
+Test suite progress: tests succeeded: 42, failed: 2, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 579873ms
+Test suite progress: tests succeeded: 43, failed: 2, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 587681ms
+Test suite progress: tests succeeded: 44, failed: 2, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 582294ms
+Test suite progress: tests succeeded: 45, failed: 2, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 45, failed: 3, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 574264ms
+Test suite progress: tests succeeded: 46, failed: 3, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 571370ms
+Test suite progress: tests succeeded: 47, failed: 3, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 568834ms
+Test suite progress: tests succeeded: 48, failed: 3, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 545350ms
+Test suite progress: tests succeeded: 49, failed: 3, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 593215ms
+Test suite progress: tests succeeded: 50, failed: 3, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 601190ms
+Test suite progress: tests succeeded: 51, failed: 3, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 555790ms
+Test suite progress: tests succeeded: 52, failed: 3, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 582180ms
+Test suite progress: tests succeeded: 53, failed: 3, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 582348ms
+Test suite progress: tests succeeded: 54, failed: 3, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 588260ms
+Test suite progress: tests succeeded: 55, failed: 3, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 615658ms
+Test suite progress: tests succeeded: 56, failed: 3, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 571140ms
+Test suite progress: tests succeeded: 57, failed: 3, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 587408ms
+Test suite progress: tests succeeded: 58, failed: 3, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 582654ms
+Test suite progress: tests succeeded: 59, failed: 3, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 591784ms
+Test suite progress: tests succeeded: 60, failed: 3, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 588216ms
+Test suite progress: tests succeeded: 61, failed: 3, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 633096ms
+Test suite progress: tests succeeded: 62, failed: 3, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 595072ms
+Test suite progress: tests succeeded: 63, failed: 3, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 623586ms
+Test suite progress: tests succeeded: 64, failed: 3, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 585100ms
+Test suite progress: tests succeeded: 65, failed: 3, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 545970ms
+Test suite progress: tests succeeded: 66, failed: 3, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 542349ms
+Test suite progress: tests succeeded: 67, failed: 3, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 589448ms
+Test suite progress: tests succeeded: 68, failed: 3, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 550422ms
+Test suite progress: tests succeeded: 69, failed: 3, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 587378ms
+Test suite progress: tests succeeded: 70, failed: 3, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 577003ms
+Test suite progress: tests succeeded: 71, failed: 3, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 588225ms
+Test suite progress: tests succeeded: 72, failed: 3, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 584368ms
+Test suite progress: tests succeeded: 73, failed: 3, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 612579ms
+Test suite progress: tests succeeded: 74, failed: 3, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 589159ms
+Test suite progress: tests succeeded: 75, failed: 3, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 583434ms
+Test suite progress: tests succeeded: 76, failed: 3, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 583127ms
+Test suite progress: tests succeeded: 77, failed: 3, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 592001ms
+Test suite progress: tests succeeded: 78, failed: 3, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 593164ms
+Test suite progress: tests succeeded: 79, failed: 3, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 617751ms
+Test suite progress: tests succeeded: 80, failed: 3, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 607251ms
+Test suite progress: tests succeeded: 81, failed: 3, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 583455ms
+Test suite progress: tests succeeded: 82, failed: 3, skipped: 3.
+Starting test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) succeeded: 546891ms
+Test suite progress: tests succeeded: 83, failed: 3, skipped: 3.
+Starting test testDefaultTemplateBuilder(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testDefaultTemplateBuilder(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 83, failed: 4, skipped: 3.
+Starting test testGetFirewallRules(org.jclouds.savvis.vpdc.features.BrowsingClientLiveTest)
+[pool-2-thread-1] Test testGetFirewallRules(org.jclouds.savvis.vpdc.features.BrowsingClientLiveTest) failed.
+Test suite progress: tests succeeded: 83, failed: 5, skipped: 3.
+Starting test testNetwork(org.jclouds.savvis.vpdc.features.BrowsingClientLiveTest)
+[pool-2-thread-1] Test testNetwork(org.jclouds.savvis.vpdc.features.BrowsingClientLiveTest) failed.
+Test suite progress: tests succeeded: 83, failed: 6, skipped: 3.
+Starting test testOrg(org.jclouds.savvis.vpdc.features.BrowsingClientLiveTest)
+[pool-2-thread-1] Test testOrg(org.jclouds.savvis.vpdc.features.BrowsingClientLiveTest) failed.
+Test suite progress: tests succeeded: 83, failed: 7, skipped: 3.
+Starting test testVDC(org.jclouds.savvis.vpdc.features.BrowsingClientLiveTest)
+[pool-2-thread-1] Test testVDC(org.jclouds.savvis.vpdc.features.BrowsingClientLiveTest) failed.
+Test suite progress: tests succeeded: 83, failed: 8, skipped: 3.
+Starting test testVM(org.jclouds.savvis.vpdc.features.BrowsingClientLiveTest)
+[pool-2-thread-1] Test testVM(org.jclouds.savvis.vpdc.features.BrowsingClientLiveTest) failed.
+Test suite progress: tests succeeded: 83, failed: 9, skipped: 3.
+Starting test testLifeCycle(org.jclouds.savvis.vpdc.features.ServiceManagementClientLiveTest)
+[pool-2-thread-1] Test testLifeCycle(org.jclouds.savvis.vpdc.features.ServiceManagementClientLiveTest) failed.
+Test suite progress: tests succeeded: 83, failed: 10, skipped: 3.
+Exception in thread "user thread 806" java.lang.IllegalStateException: interrupted calling get() on [[method=LoginAsyncClient.login, request=POST https://api.symphonyvpdc.savvis.net/vpdc/v1.0/login HTTP/1.1]], so could not run listeners
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:66)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: java.lang.InterruptedException
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer.doAcquireSharedInterruptibly(AbstractQueuedSynchronizer.java:979)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer.acquireSharedInterruptibly(AbstractQueuedSynchronizer.java:1281)
+	at java.util.concurrent.FutureTask$Sync.innerGet(FutureTask.java:218)
+	at java.util.concurrent.FutureTask.get(FutureTask.java:83)
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.get(ExecutorServiceModule.java:237)
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:59)
+	... 3 more
+Caused by: java.util.concurrent.ExecutionException: task submitted from the following trace
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.ensureCauseHasSubmissionTrace(ExecutorServiceModule.java:270)
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.get(ExecutorServiceModule.java:241)
+	... 4 more
+Exception in thread "user thread 804" java.lang.IllegalStateException: interrupted calling get() on [[method=LoginAsyncClient.login, request=POST https://api.symphonyvpdc.savvis.net/vpdc/v1.0/login HTTP/1.1]], so could not run listeners
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:66)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: java.lang.InterruptedException
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer.doAcquireSharedInterruptibly(AbstractQueuedSynchronizer.java:979)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer.acquireSharedInterruptibly(AbstractQueuedSynchronizer.java:1281)
+	at java.util.concurrent.FutureTask$Sync.innerGet(FutureTask.java:218)
+	at java.util.concurrent.FutureTask.get(FutureTask.java:83)
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.get(ExecutorServiceModule.java:237)
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:59)
+	... 3 more
+Caused by: java.util.concurrent.ExecutionException: task submitted from the following trace
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.ensureCauseHasSubmissionTrace(ExecutorServiceModule.java:270)
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.get(ExecutorServiceModule.java:241)
+	... 4 more
+Exception in thread "user thread 805" java.lang.IllegalStateException: interrupted calling get() on [[method=LoginAsyncClient.login, request=POST https://api.symphonyvpdc.savvis.net/vpdc/v1.0/login HTTP/1.1]], so could not run listeners
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:66)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: java.lang.InterruptedException
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer.doAcquireSharedInterruptibly(AbstractQueuedSynchronizer.java:979)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer.acquireSharedInterruptibly(AbstractQueuedSynchronizer.java:1281)
+	at java.util.concurrent.FutureTask$Sync.innerGet(FutureTask.java:218)
+	at java.util.concurrent.FutureTask.get(FutureTask.java:83)
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.get(ExecutorServiceModule.java:237)
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:59)
+	... 3 more
+Caused by: java.util.concurrent.ExecutionException: task submitted from the following trace
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.ensureCauseHasSubmissionTrace(ExecutorServiceModule.java:270)
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.get(ExecutorServiceModule.java:241)
+	... 4 more
+Tests run: 96, Failures: 10, Errors: 0, Skipped: 3, Time elapsed: 51,599.433 sec <<< FAILURE!
+
+Results :
+
+Failed tests: 
+  testAddFirewallRule(org.jclouds.savvis.vpdc.features.FirewallClientLiveTest)
+  testCreateVirtualMachine(org.jclouds.savvis.vpdc.features.VMClientLiveTest)
+  testTemplateBuilderCannotFind(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+  testDefaultTemplateBuilder(org.jclouds.savvis.vpdc.compute.VPDCTemplateBuilderLiveTest)
+  testGetFirewallRules(org.jclouds.savvis.vpdc.features.BrowsingClientLiveTest)
+  testNetwork(org.jclouds.savvis.vpdc.features.BrowsingClientLiveTest)
+  testOrg(org.jclouds.savvis.vpdc.features.BrowsingClientLiveTest)
+  testVDC(org.jclouds.savvis.vpdc.features.BrowsingClientLiveTest)
+  testVM(org.jclouds.savvis.vpdc.features.BrowsingClientLiveTest)
+  testLifeCycle(org.jclouds.savvis.vpdc.features.ServiceManagementClientLiveTest)
+
+Tests run: 96, Failures: 10, Errors: 0, Skipped: 3
+
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 14:20:54.029s
+[INFO] Finished at: Sun Oct 16 00:45:12 PDT 2011
+[INFO] Final Memory: 18M/125M
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:2.5:test (integration) on project savvis-symphonyvpdc: There are test failures.
+[ERROR] 
+[ERROR] Please refer to /Users/adriancole/workspace/git/1.2.0/jclouds/providers/savvis-symphonyvpdc/target/surefire-reports for the individual test results.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

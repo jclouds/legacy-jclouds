@@ -1,0 +1,115 @@
+-------------------------------------------------------------------------------
+Test set: TestSuite
+-------------------------------------------------------------------------------
+Tests run: 148, Failures: 8, Errors: 0, Skipped: 0, Time elapsed: 1,652.918 sec <<< FAILURE!
+testDescribeSpotPriceHistoryInRegion(org.jclouds.aws.ec2.services.SpotInstanceClientLiveTest)  Time elapsed: 0.892 sec  <<< FAILURE!
+java.lang.AssertionError: [region=us-east-1, instanceType=cc2.8xlarge, productDescription=Linux/UNIX, spotPrice=0.54, timestamp=Wed Dec 21 20:32:20 PST 2011]
+	at org.jclouds.aws.ec2.services.SpotInstanceClientLiveTest.testDescribeSpotPriceHistoryInRegion(SpotInstanceClientLiveTest.java:148)
+
+testFastestTemplateBuilder(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)  Time elapsed: 0.006 sec  <<< FAILURE!
+java.lang.AssertionError: expected:<12.04> but was:<10.04>
+	at org.testng.Assert.fail(Assert.java:89)
+	at org.testng.Assert.failNotEquals(Assert.java:480)
+	at org.testng.Assert.assertEquals(Assert.java:118)
+	at org.testng.Assert.assertEquals(Assert.java:171)
+	at org.testng.Assert.assertEquals(Assert.java:181)
+	at org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest.testFastestTemplateBuilder(AWSEC2TemplateBuilderLiveTest.java:187)
+
+testTemplateBuilderM1SMALLWithDescriptionPrecise(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)  Time elapsed: 0.032 sec  <<< FAILURE!
+java.lang.AssertionError: expected:<12.04> but was:<11.04>
+	at org.testng.Assert.fail(Assert.java:89)
+	at org.testng.Assert.failNotEquals(Assert.java:480)
+	at org.testng.Assert.assertEquals(Assert.java:118)
+	at org.testng.Assert.assertEquals(Assert.java:171)
+	at org.testng.Assert.assertEquals(Assert.java:181)
+	at org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest.testTemplateBuilderM1SMALLWithDescriptionPrecise(AWSEC2TemplateBuilderLiveTest.java:91)
+
+testUbuntuInstanceStoreGoesM1SmallPrecise(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)  Time elapsed: 0.02 sec  <<< FAILURE!
+java.lang.AssertionError: expected:<12.04> but was:<11.04>
+	at org.testng.Assert.fail(Assert.java:89)
+	at org.testng.Assert.failNotEquals(Assert.java:480)
+	at org.testng.Assert.assertEquals(Assert.java:118)
+	at org.testng.Assert.assertEquals(Assert.java:171)
+	at org.testng.Assert.assertEquals(Assert.java:181)
+	at org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest.testUbuntuInstanceStoreGoesM1SmallPrecise(AWSEC2TemplateBuilderLiveTest.java:110)
+
+testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)  Time elapsed: 0.006 sec  <<< FAILURE!
+org.testng.TestException: 
+Method org.jclouds.compute.BaseTemplateBuilderLiveTest.testTemplateBuilderCannotFind(org.jclouds.compute.domain.OsFamilyVersion64Bit) should have thrown an exception of class java.util.NoSuchElementException
+	at org.testng.internal.Invoker.handleInvocationResults(Invoker.java:1442)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:722)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+	at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+	at org.testng.TestRunner.privateRun(TestRunner.java:749)
+	at org.testng.TestRunner.run(TestRunner.java:600)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+	at org.testng.SuiteRunner.access$000(SuiteRunner.java:34)
+	at org.testng.SuiteRunner$SuiteWorker.run(SuiteRunner.java:351)
+	at org.testng.internal.thread.ThreadUtil$CountDownLatchedRunnable.run(ThreadUtil.java:147)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+
+testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)  Time elapsed: 0.005 sec  <<< FAILURE!
+org.testng.TestException: 
+Method org.jclouds.compute.BaseTemplateBuilderLiveTest.testTemplateBuilderCannotFind(org.jclouds.compute.domain.OsFamilyVersion64Bit) should have thrown an exception of class java.util.NoSuchElementException
+	at org.testng.internal.Invoker.handleInvocationResults(Invoker.java:1442)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:722)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+	at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+	at org.testng.TestRunner.privateRun(TestRunner.java:749)
+	at org.testng.TestRunner.run(TestRunner.java:600)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+	at org.testng.SuiteRunner.access$000(SuiteRunner.java:34)
+	at org.testng.SuiteRunner$SuiteWorker.run(SuiteRunner.java:351)
+	at org.testng.internal.thread.ThreadUtil$CountDownLatchedRunnable.run(ThreadUtil.java:147)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+
+testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)  Time elapsed: 0.006 sec  <<< FAILURE!
+org.testng.TestException: 
+Method org.jclouds.compute.BaseTemplateBuilderLiveTest.testTemplateBuilderCannotFind(org.jclouds.compute.domain.OsFamilyVersion64Bit) should have thrown an exception of class java.util.NoSuchElementException
+	at org.testng.internal.Invoker.handleInvocationResults(Invoker.java:1442)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:722)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+	at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+	at org.testng.TestRunner.privateRun(TestRunner.java:749)
+	at org.testng.TestRunner.run(TestRunner.java:600)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+	at org.testng.SuiteRunner.access$000(SuiteRunner.java:34)
+	at org.testng.SuiteRunner$SuiteWorker.run(SuiteRunner.java:351)
+	at org.testng.internal.thread.ThreadUtil$CountDownLatchedRunnable.run(ThreadUtil.java:147)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+
+testTemplateBuilderCannotFind(org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderLiveTest)  Time elapsed: 0.006 sec  <<< FAILURE!
+org.testng.TestException: 
+Method org.jclouds.compute.BaseTemplateBuilderLiveTest.testTemplateBuilderCannotFind(org.jclouds.compute.domain.OsFamilyVersion64Bit) should have thrown an exception of class java.util.NoSuchElementException
+	at org.testng.internal.Invoker.handleInvocationResults(Invoker.java:1442)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:722)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+	at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+	at org.testng.TestRunner.privateRun(TestRunner.java:749)
+	at org.testng.TestRunner.run(TestRunner.java:600)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+	at org.testng.SuiteRunner.access$000(SuiteRunner.java:34)
+	at org.testng.SuiteRunner$SuiteWorker.run(SuiteRunner.java:351)
+	at org.testng.internal.thread.ThreadUtil$CountDownLatchedRunnable.run(ThreadUtil.java:147)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+

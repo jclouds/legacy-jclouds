@@ -1,0 +1,622 @@
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for org.jclouds.provider:skalicloud-sdg-my:bundle:1.5.0-SNAPSHOT
+[WARNING] 'parent.relativePath' of POM org.jclouds:jclouds-project:1.5.0-SNAPSHOT (/Users/adriancole/workspace/git/jclouds/project/pom.xml) points at org.jclouds:jclouds-multi instead of org.sonatype.oss:oss-parent, please verify your project structure @ org.jclouds:jclouds-project:1.5.0-SNAPSHOT, /Users/adriancole/workspace/git/jclouds/project/pom.xml, line 24, column 13
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building jclouds SkaliCloud Malaysia provider 1.5.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ skalicloud-sdg-my ---
+[INFO] Deleting /Users/adriancole/workspace/git/jclouds/providers/skalicloud-sdg-my/target
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-maven) @ skalicloud-sdg-my ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-banned-dependencies) @ skalicloud-sdg-my ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-java) @ skalicloud-sdg-my ---
+[INFO] 
+[INFO] --- maven-remote-resources-plugin:1.2.1:process (process-remote-resources) @ skalicloud-sdg-my ---
+[INFO] 
+[INFO] --- maven-resources-plugin:2.5:resources (default-resources) @ skalicloud-sdg-my ---
+[debug] execute contextualize
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/jclouds/providers/skalicloud-sdg-my/src/main/clojure
+[INFO] Copying 2 resources
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3.2:compile (default-compile) @ skalicloud-sdg-my ---
+[INFO] Compiling 1 source file to /Users/adriancole/workspace/git/jclouds/providers/skalicloud-sdg-my/target/classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.5:testResources (default-testResources) @ skalicloud-sdg-my ---
+[debug] execute contextualize
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/jclouds/providers/skalicloud-sdg-my/src/test/clojure
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/jclouds/providers/skalicloud-sdg-my/src/test/resources
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3.2:testCompile (default-testCompile) @ skalicloud-sdg-my ---
+[INFO] Compiling 4 source files to /Users/adriancole/workspace/git/jclouds/providers/skalicloud-sdg-my/target/test-classes
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.12:test (default-test) @ skalicloud-sdg-my ---
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/jclouds/providers/skalicloud-sdg-my/target/surefire-reports
+[INFO] Using configured provider org.apache.maven.surefire.testng.TestNGProvider
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running org.jclouds.skalicloud.SkaliCloudMalaysiaProviderTest
+Configuring TestNG with: org.apache.maven.surefire.testng.conf.TestNGMapConfigurator@17592174
+Starting test testAllContains(org.jclouds.skalicloud.SkaliCloudMalaysiaProviderTest)
+[pool-2-thread-1] Test testAllContains(org.jclouds.skalicloud.SkaliCloudMalaysiaProviderTest) succeeded: 8ms
+Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
+Starting test testOfApiContains(org.jclouds.skalicloud.SkaliCloudMalaysiaProviderTest)
+Starting test testTransformableToContains(org.jclouds.skalicloud.SkaliCloudMalaysiaProviderTest)
+Starting test testWithId(org.jclouds.skalicloud.SkaliCloudMalaysiaProviderTest)
+[pool-2-thread-2] Test testOfApiContains(org.jclouds.skalicloud.SkaliCloudMalaysiaProviderTest) succeeded: 7ms
+Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
+[pool-2-thread-4] Test testWithId(org.jclouds.skalicloud.SkaliCloudMalaysiaProviderTest) succeeded: 3ms
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
+[pool-2-thread-3] Test testTransformableToContains(org.jclouds.skalicloud.SkaliCloudMalaysiaProviderTest) succeeded: 9ms
+Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.884 sec
+
+Results :
+
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0
+
+[INFO] 
+[INFO] --- clojure-maven-plugin:1.3.9:test (test-clojure) @ skalicloud-sdg-my ---
+
+Testing com.theoryinpractise.clojure.testrunner
+
+Ran 0 tests containing 0 assertions.
+0 failures, 0 errors.
+[INFO] 
+[INFO] --- maven-bundle-plugin:2.3.7:bundle (default-bundle) @ skalicloud-sdg-my ---
+[INFO] 
+[INFO] --- maven-source-plugin:2.1.2:jar-no-fork (attach-sources) @ skalicloud-sdg-my ---
+[INFO] META-INF already added, skipping
+[INFO] META-INF already added, skipping
+[INFO] META-INF/LICENSE.txt already added, skipping
+[INFO] META-INF/NOTICE.txt already added, skipping
+[INFO] Building jar: /Users/adriancole/workspace/git/jclouds/providers/skalicloud-sdg-my/target/skalicloud-sdg-my-1.5.0-SNAPSHOT-sources.jar
+[INFO] META-INF already added, skipping
+[INFO] META-INF already added, skipping
+[INFO] META-INF/LICENSE.txt already added, skipping
+[INFO] META-INF/NOTICE.txt already added, skipping
+[INFO] 
+[INFO] --- maven-javadoc-plugin:2.8.1:jar (javadoc) @ skalicloud-sdg-my ---
+[INFO] Skipping javadoc generation
+[INFO] 
+[INFO] --- maven-jar-plugin:2.4:test-jar (default) @ skalicloud-sdg-my ---
+[INFO] Building jar: /Users/adriancole/workspace/git/jclouds/providers/skalicloud-sdg-my/target/skalicloud-sdg-my-1.5.0-SNAPSHOT-tests.jar
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.12:test (integration) @ skalicloud-sdg-my ---
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/jclouds/providers/skalicloud-sdg-my/target/surefire-reports
+[INFO] Using configured provider org.apache.maven.surefire.testng.TestNGProvider
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running TestSuite
+Configuring TestNG with: org.apache.maven.surefire.testng.conf.TestNGMapConfigurator@74b2002f
+Starting test testCompareSizes(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+Starting test setServiceDefaults(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaComputeServiceLiveTest)
+[TestNG] Test setServiceDefaults(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaComputeServiceLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
+Starting test testCompareSizes(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaComputeServiceLiveTest)
+[TestNG] Test testCompareSizes(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 1, failed: 1, skipped: 0.
+Starting test testFromTemplate(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testFromTemplate(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 1, failed: 2, skipped: 0.
+Starting test testGetAssignableLocations(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+location [id=skalicloud-sdg-my, scope=PROVIDER, description=https://api.sdg-my.skalicloud.com, parent=null, iso3166Codes=[MY-10], metadata={}]
+[TestNG] Test testGetAssignableLocations(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) succeeded: 7ms
+Test suite progress: tests succeeded: 2, failed: 2, skipped: 0.
+[TestNG] Test testCompareSizes(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 3, skipped: 0.
+Starting test testCorrectAuthException(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaComputeServiceLiveTest)
+Starting test testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 4, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+Starting test testCreateDrive(org.jclouds.skalicloud.SkaliCloudMalaysiaClientLiveTest)
+[TestNG] Test testCreateDrive(org.jclouds.skalicloud.SkaliCloudMalaysiaClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 4, skipped: 1.
+Starting test testGetDrive(org.jclouds.skalicloud.SkaliCloudMalaysiaClientLiveTest)
+[TestNG] Test testGetDrive(org.jclouds.skalicloud.SkaliCloudMalaysiaClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 4, skipped: 2.
+Starting test testGetServer(org.jclouds.skalicloud.SkaliCloudMalaysiaClientLiveTest)
+[TestNG] Test testGetServer(org.jclouds.skalicloud.SkaliCloudMalaysiaClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 4, skipped: 3.
+Starting test testListDriveInfo(org.jclouds.skalicloud.SkaliCloudMalaysiaClientLiveTest)
+[TestNG] Test testListDriveInfo(org.jclouds.skalicloud.SkaliCloudMalaysiaClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 4, skipped: 4.
+Starting test testListDrives(org.jclouds.skalicloud.SkaliCloudMalaysiaClientLiveTest)
+[TestNG] Test testListDrives(org.jclouds.skalicloud.SkaliCloudMalaysiaClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 4, skipped: 5.
+Starting test testListServers(org.jclouds.skalicloud.SkaliCloudMalaysiaClientLiveTest)
+[TestNG] Test testListServers(org.jclouds.skalicloud.SkaliCloudMalaysiaClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 4, skipped: 6.
+Starting test testWeCanReadAndWriteToDrive(org.jclouds.skalicloud.SkaliCloudMalaysiaClientLiveTest)
+[TestNG] Test testWeCanReadAndWriteToDrive(org.jclouds.skalicloud.SkaliCloudMalaysiaClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 4, skipped: 7.
+Starting test testListServerInfo(org.jclouds.skalicloud.SkaliCloudMalaysiaClientLiveTest)
+[TestNG] Test testListServerInfo(org.jclouds.skalicloud.SkaliCloudMalaysiaClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 4, skipped: 8.
+[TestNG] Test testSetDriveData(org.jclouds.skalicloud.SkaliCloudMalaysiaClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 4, skipped: 9.
+[TestNG] Test testWeCopyADriveContentsViaGzip(org.jclouds.skalicloud.SkaliCloudMalaysiaClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 4, skipped: 10.
+[TestNG] Test testCreateAndStartServer(org.jclouds.skalicloud.SkaliCloudMalaysiaClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 4, skipped: 11.
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 5, skipped: 11.
+[TestNG] Test testConnectivity(org.jclouds.skalicloud.SkaliCloudMalaysiaClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 5, skipped: 12.
+Starting test testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testLifeCycle(org.jclouds.skalicloud.SkaliCloudMalaysiaClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 5, skipped: 13.
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 6, skipped: 13.
+[TestNG] Test testSetServerConfiguration(org.jclouds.skalicloud.SkaliCloudMalaysiaClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 6, skipped: 14.
+[TestNG] Test testDestroyServer(org.jclouds.skalicloud.SkaliCloudMalaysiaClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 6, skipped: 15.
+Starting test testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testDestroyDrive(org.jclouds.skalicloud.SkaliCloudMalaysiaClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 6, skipped: 16.
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 7, skipped: 16.
+Starting test testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 8, skipped: 16.
+Starting test testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 9, skipped: 16.
+Starting test testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 10, skipped: 16.
+Starting test testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 11, skipped: 16.
+Starting test testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 12, skipped: 16.
+Starting test testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 13, skipped: 16.
+Starting test testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 14, skipped: 16.
+Starting test testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 15, skipped: 16.
+Starting test testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 16, skipped: 16.
+Starting test testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 17, skipped: 16.
+Starting test testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 18, skipped: 16.
+Starting test testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 19, skipped: 16.
+Starting test testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 20, skipped: 16.
+Starting test testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 21, skipped: 16.
+Starting test testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 22, skipped: 16.
+Starting test testTemplateBuilderCanUseImageId(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanUseImageId(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 23, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 24, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 25, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 26, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 27, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 28, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 29, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 30, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 31, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 32, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 33, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 34, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 35, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 36, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 37, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 38, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 39, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 40, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 41, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 42, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 43, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 44, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 45, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 46, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 47, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 48, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 49, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 50, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 51, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 52, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 53, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 54, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 55, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 56, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 57, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 58, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 59, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 60, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 61, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 62, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 63, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 64, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 65, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 66, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 67, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 68, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 69, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 70, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 71, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 72, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 73, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 74, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 75, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 76, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 77, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 78, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 79, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 80, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 81, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 82, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 83, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 84, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 85, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 86, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 87, skipped: 16.
+Starting test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 88, skipped: 16.
+Starting test testTemplateBuilderWithImageIdSpecified(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderWithImageIdSpecified(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 89, skipped: 16.
+Starting test testTemplateBuilderWithLoginUserSpecified(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+Apr 24, 2012 3:20:02 AM org.jclouds.logging.jdk.JDKLogger logWarn
+WARNING: hostname was api.sdg-my.skalicloud.com while session was api.sdg-my.skalicloud.com
+[TestNG] Test testCorrectAuthException(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 90, skipped: 16.
+Starting test testCreateAndRunAService(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaComputeServiceLiveTest)
+Apr 24, 2012 3:20:03 AM org.jclouds.logging.jdk.JDKLogger logWarn
+WARNING: hostname was api.sdg-my.skalicloud.com while session was api.sdg-my.skalicloud.com
+Apr 24, 2012 3:20:04 AM org.jclouds.logging.jdk.JDKLogger logWarn
+WARNING: hostname was api.sdg-my.skalicloud.com while session was api.sdg-my.skalicloud.com
+[TestNG] Test testCreateAndRunAService(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 91, skipped: 16.
+Starting test testGetAssignableLocations(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaComputeServiceLiveTest)
+Apr 24, 2012 3:20:04 AM org.jclouds.compute.internal.BaseComputeServiceLiveTest testGetAssignableLocations
+WARNING: location [id=skalicloud-sdg-my, scope=PROVIDER, description=https://api.sdg-my.skalicloud.com, parent=null, iso3166Codes=[MY-10], metadata={}]
+[TestNG] Test testGetAssignableLocations(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaComputeServiceLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 3, failed: 91, skipped: 16.
+Starting test testImagesCache(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaComputeServiceLiveTest)
+[TestNG] Test testImagesCache(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 3, failed: 92, skipped: 16.
+Starting test testListImages(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaComputeServiceLiveTest)
+[TestNG] Test testListImages(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 3, failed: 93, skipped: 16.
+Starting test testListSizes(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaComputeServiceLiveTest)
+[TestNG] Test testListSizes(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaComputeServiceLiveTest) succeeded: 11ms
+Test suite progress: tests succeeded: 4, failed: 93, skipped: 16.
+Starting test testOptionToNotBlock(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaComputeServiceLiveTest)
+[TestNG] Test testOptionToNotBlock(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaComputeServiceLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 5, failed: 93, skipped: 16.
+Starting test testCorrectExceptionRunningNodesNotFound(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaComputeServiceLiveTest)
+Apr 24, 2012 3:20:05 AM org.jclouds.logging.jdk.JDKLogger logWarn
+WARNING: hostname was api.sdg-my.skalicloud.com while session was api.sdg-my.skalicloud.com
+[TestNG] Test testCorrectExceptionRunningNodesNotFound(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaComputeServiceLiveTest) succeeded: 1049ms
+Test suite progress: tests succeeded: 6, failed: 93, skipped: 16.
+[TestNG] Test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 6, failed: 93, skipped: 17.
+[TestNG] Test testCreateTwoNodesWithRunScript(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 6, failed: 93, skipped: 18.
+[TestNG] Test testTemplateMatch(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 6, failed: 93, skipped: 19.
+[TestNG] Test testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 6, failed: 93, skipped: 20.
+[TestNG] Test testCredentialsCache(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 6, failed: 93, skipped: 21.
+[TestNG] Test testGet(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 6, failed: 93, skipped: 22.
+[TestNG] Test testReboot(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 6, failed: 93, skipped: 23.
+[TestNG] Test testSuspendResume(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 6, failed: 93, skipped: 24.
+[TestNG] Test testGetNodesWithDetails(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 6, failed: 93, skipped: 25.
+[TestNG] Test testListNodes(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 6, failed: 93, skipped: 26.
+[TestNG] Test testDestroyNodes(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 6, failed: 93, skipped: 27.
+Apr 24, 2012 3:20:06 AM org.jclouds.logging.jdk.JDKLogger logWarn
+WARNING: hostname was api.sdg-my.skalicloud.com while session was api.sdg-my.skalicloud.com
+Apr 24, 2012 3:20:07 AM org.jclouds.logging.jdk.JDKLogger logWarn
+WARNING: hostname was api.sdg-my.skalicloud.com while session was api.sdg-my.skalicloud.com
+Apr 24, 2012 3:20:08 AM org.jclouds.logging.jdk.JDKLogger logWarn
+WARNING: hostname was api.sdg-my.skalicloud.com while session was api.sdg-my.skalicloud.com
+Apr 24, 2012 3:20:10 AM org.jclouds.logging.jdk.JDKLogger logWarn
+WARNING: hostname was api.sdg-my.skalicloud.com while session was api.sdg-my.skalicloud.com
+Apr 24, 2012 3:20:11 AM org.jclouds.logging.jdk.JDKLogger logWarn
+WARNING: hostname was api.sdg-my.skalicloud.com while session was api.sdg-my.skalicloud.com
+Apr 24, 2012 3:20:12 AM org.jclouds.logging.jdk.JDKLogger logWarn
+WARNING: hostname was api.sdg-my.skalicloud.com while session was api.sdg-my.skalicloud.com
+Apr 24, 2012 3:20:13 AM org.jclouds.logging.jdk.JDKLogger logWarn
+WARNING: hostname was api.sdg-my.skalicloud.com while session was api.sdg-my.skalicloud.com
+Apr 24, 2012 3:20:14 AM org.jclouds.logging.jdk.JDKLogger logWarn
+WARNING: hostname was api.sdg-my.skalicloud.com while session was api.sdg-my.skalicloud.com
+Apr 24, 2012 3:20:15 AM org.jclouds.logging.jdk.JDKLogger logWarn
+WARNING: hostname was api.sdg-my.skalicloud.com while session was api.sdg-my.skalicloud.com
+[TestNG] Test testTemplateBuilderWithLoginUserSpecified(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 94, skipped: 27.
+Starting test testDefaultTemplateBuilder(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest)
+[TestNG] Test testDefaultTemplateBuilder(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 95, skipped: 27.
+Tests run: 130, Failures: 96, Errors: 0, Skipped: 28, Time elapsed: 32.613 sec <<< FAILURE!
+
+Results :
+
+Failed tests:   testCompareSizes(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): org.jclouds.elasticstack.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testFromTemplate(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): org.jclouds.elasticstack.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testCompareSizes(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaComputeServiceLiveTest): org.jclouds.elasticstack.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): org.jclouds.elasticstack.domain.DriveInfo cannot be cast to java.lang.Comparable
+  setupContext(org.jclouds.skalicloud.SkaliCloudMalaysiaClientLiveTest): org.jclouds.elasticstack.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): org.jclouds.elasticstack.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): org.jclouds.elasticstack.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): org.jclouds.elasticstack.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): org.jclouds.elasticstack.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): org.jclouds.elasticstack.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): org.jclouds.elasticstack.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): org.jclouds.elasticstack.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): org.jclouds.elasticstack.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): org.jclouds.elasticstack.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): org.jclouds.elasticstack.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): org.jclouds.elasticstack.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): org.jclouds.elasticstack.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): org.jclouds.elasticstack.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): org.jclouds.elasticstack.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): org.jclouds.elasticstack.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): org.jclouds.elasticstack.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): org.jclouds.elasticstack.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testTemplateBuilderCanFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): org.jclouds.elasticstack.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testTemplateBuilderCanUseImageId(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): org.jclouds.elasticstack.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): (..)
+  testTemplateBuilderWithImageIdSpecified(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): org.jclouds.elasticstack.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testCorrectAuthException(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaComputeServiceLiveTest): (..)
+  testCreateAndRunAService(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaComputeServiceLiveTest): org.jclouds.elasticstack.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testImagesCache(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaComputeServiceLiveTest): org.jclouds.elasticstack.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testListImages(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaComputeServiceLiveTest): org.jclouds.elasticstack.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testTemplateBuilderWithLoginUserSpecified(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): org.jclouds.elasticstack.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testDefaultTemplateBuilder(org.jclouds.skalicloud.compute.SkaliCloudMalaysiaTemplateBuilderLiveTest): org.jclouds.elasticstack.domain.DriveInfo cannot be cast to java.lang.Comparable
+
+Tests run: 130, Failures: 96, Errors: 0, Skipped: 28
+
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 45.772s
+[INFO] Finished at: Tue Apr 24 03:20:16 PDT 2012
+[INFO] Final Memory: 22M/265M
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:2.12:test (integration) on project skalicloud-sdg-my: There are test failures.
+[ERROR] 
+[ERROR] Please refer to /Users/adriancole/workspace/git/jclouds/providers/skalicloud-sdg-my/target/surefire-reports for the individual test results.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

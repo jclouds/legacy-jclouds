@@ -1,0 +1,271 @@
+
+body {
+font-family:verdana, arial, sans-serif;
+font-size:.68em;
+background:#FFF;
+color:#FFF;
+margin:0;
+padding:0;
+}
+
+p {
+line-height:1.2em;
+margin:0;
+padding:8px 0;
+}
+
+h1 {
+font-family:arial, sans-serif;
+letter-spacing:.1em;
+}
+
+h2 {
+font-size:120%;
+margin:0;
+padding:16px 0 4px;
+}
+
+h3 {
+font-size:100%;
+margin:0;
+padding:8px 0 4px;
+}
+
+h4 {
+font-size:100%;
+font-style:italic;
+margin:0;
+padding:6px 0 2px;
+}
+
+h5 {
+font-size:100%;
+font-weight:400;
+font-style:italic;
+margin:0;
+padding:4px 0 2px;
+}
+
+img {
+border:0;
+}
+
+a {
+outline:none;
+}
+
+ul {
+margin:6px 0 0 12px;
+padding:0;
+}
+
+ul li {
+list-style-type:square;
+margin:0 0 8px;
+padding:0;
+}
+
+ol {
+margin:6px 0 0 18px;
+padding:0;
+}
+
+ol li {
+margin:0 0 8px;
+padding:0;
+}
+
+#main {
+width:1080px;
+margin-left:auto;
+margin-right:auto;
+background:#FFF;
+color:#FFF;
+}
+
+#links, #footer {
+margin-left:auto;
+margin-right:auto;
+height:26px;
+font-size:94%;
+text-transform:uppercase;
+padding:10px 21px 0 19px;
+}
+
+#links {
+text-align:right;
+}
+
+#footer {
+text-align:center;
+}
+
+#links a, #footer a {
+text-decoration:none;
+}
+
+#links a:hover,#footer a:hover {
+text-decoration:underline;
+}
+
+#logo {
+margin-left:auto;
+margin-right:auto;
+width:1060px;
+height:100px;
+text-align:left;
+background:#FFF url(jcloudslogo.jpg) no-repeat;
+}
+
+#menu {
+height:42px;
+width:1060px;
+margin-left:auto;
+margin-right:auto;
+}
+
+#menu li {
+float:left;
+margin:0;
+padding:0;
+}
+
+#menu li a {
+display:block;
+float:left;
+height:37px;
+text-decoration:none;
+text-transform:uppercase;
+padding:3px 19px 2px;
+}
+
+#content {
+margin-left:auto;
+margin-right:auto;
+width:1060px;
+height:auto;
+overflow:hidden;
+padding:0;
+}
+
+#column1 {
+width:210px;
+float:right;
+padding:16px 0 15px;
+}
+
+#column2 {
+width:820px;
+float:left;
+padding:12px 3px 15px 19px;
+}
+
+#column2 h1 {
+border-bottom:1px solid;
+font-size:150%;
+text-transform:uppercase;
+font-weight:400;
+margin:0 0 12px;
+padding:6px 0 4px;
+}
+
+.sidebaritem a,#column2 a,.sidebaritem a:hover,#column2 a:hover {
+text-decoration:none;
+border-bottom:1px dashed;
+padding:0 0 2px;
+}
+
+.sidebaritem a:hover,#column2 a:hover {
+border-bottom:1px solid;
+}
+
+form {
+margin-top:0;
+}
+
+div.row {
+clear:both;
+width:448px;
+}
+
+div.row span.formlabel {
+float:left;
+width:150px;
+text-align:left;
+}
+
+div.row span.forminput {
+float:right;
+text-align:right;
+}
+
+div.spacer {
+clear:both;
+width:80px;
+}
+
+input,textarea {
+width:259px;
+font-family:verdana, arial, sans-serif;
+border:1px solid;
+font-size:100%;
+background:#FFF;
+color:#165872;
+border-color:#165872;
+margin:2px;
+}
+
+.submit {
+font-family:verdana, arial, sans-serif;
+border:1px solid;
+width:70px;
+height:22px;
+cursor:pointer;
+font-size:100%;
+}
+
+pre {
+font-family:'Droid Sans Mono', sans-serif;
+overflow:auto;
+overflow-y:visible;
+width:100%;
+}
+
+code {
+font-family:'Droid Sans Mono', sans-serif;
+}
+
+#links,#footer,#menu,#menu li a {
+background:#FFF;
+color:#165872;
+border-color:#FFF;
+}
+
+#links a,#footer a,#links a:hover,#footer a:hover {
+background:transparent;
+color:#165872;
+}
+
+h1,#column2 h1 {
+background:transparent;
+color:#165872;
+border-color:#E6EFF8;
+}
+
+#content,#column2 a,#column2 a:hover {
+background:transparent;
+color:#677185;
+}
+
+#menu ul,.sbilinks ul {
+margin:0 auto;
+}
+
+#column2 p a,#column2 p a:hover {
+padding:0;
+}
+
+#menu li a:hover, #column1 li a:hover {
+background:#FFF;
+color:#F79C88;
+}

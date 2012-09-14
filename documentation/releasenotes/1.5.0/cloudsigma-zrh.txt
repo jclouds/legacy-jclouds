@@ -1,0 +1,1014 @@
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for org.jclouds.provider:cloudsigma-zrh:bundle:1.5.0-SNAPSHOT
+[WARNING] 'parent.relativePath' of POM org.jclouds:jclouds-project:1.5.0-SNAPSHOT (/Users/adriancole/workspace/git/jclouds/project/pom.xml) points at org.jclouds:jclouds-multi instead of org.sonatype.oss:oss-parent, please verify your project structure @ org.jclouds:jclouds-project:1.5.0-SNAPSHOT, /Users/adriancole/workspace/git/jclouds/project/pom.xml, line 24, column 13
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building jclouds CloudSigma provider 1.5.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ cloudsigma-zrh ---
+[INFO] Deleting /Users/adriancole/workspace/git/jclouds/providers/cloudsigma-zrh/target
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-maven) @ cloudsigma-zrh ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-banned-dependencies) @ cloudsigma-zrh ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-java) @ cloudsigma-zrh ---
+[INFO] 
+[INFO] --- maven-remote-resources-plugin:1.2.1:process (process-remote-resources) @ cloudsigma-zrh ---
+[INFO] 
+[INFO] --- maven-resources-plugin:2.5:resources (default-resources) @ cloudsigma-zrh ---
+[debug] execute contextualize
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/jclouds/providers/cloudsigma-zrh/src/main/clojure
+[INFO] Copying 1 resource
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3.2:compile (default-compile) @ cloudsigma-zrh ---
+[INFO] Compiling 1 source file to /Users/adriancole/workspace/git/jclouds/providers/cloudsigma-zrh/target/classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.5:testResources (default-testResources) @ cloudsigma-zrh ---
+[debug] execute contextualize
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/jclouds/providers/cloudsigma-zrh/src/test/clojure
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/jclouds/providers/cloudsigma-zrh/src/test/resources
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3.2:testCompile (default-testCompile) @ cloudsigma-zrh ---
+[INFO] Compiling 4 source files to /Users/adriancole/workspace/git/jclouds/providers/cloudsigma-zrh/target/test-classes
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.12:test (default-test) @ cloudsigma-zrh ---
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/jclouds/providers/cloudsigma-zrh/target/surefire-reports
+[INFO] Using configured provider org.apache.maven.surefire.testng.TestNGProvider
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running org.jclouds.cloudsigma.CloudSigmaZurichProviderTest
+Configuring TestNG with: org.apache.maven.surefire.testng.conf.TestNGMapConfigurator@1cf11404
+Starting test testAllContains(org.jclouds.cloudsigma.CloudSigmaZurichProviderTest)
+Starting test testTransformableToContains(org.jclouds.cloudsigma.CloudSigmaZurichProviderTest)
+Starting test testWithId(org.jclouds.cloudsigma.CloudSigmaZurichProviderTest)
+Starting test testOfApiContains(org.jclouds.cloudsigma.CloudSigmaZurichProviderTest)
+[pool-2-thread-2] Test testOfApiContains(org.jclouds.cloudsigma.CloudSigmaZurichProviderTest) succeeded: 8ms
+Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
+[pool-2-thread-1] Test testAllContains(org.jclouds.cloudsigma.CloudSigmaZurichProviderTest) succeeded: 16ms
+Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
+[pool-2-thread-4] Test testWithId(org.jclouds.cloudsigma.CloudSigmaZurichProviderTest) succeeded: 17ms
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
+[pool-2-thread-3] Test testTransformableToContains(org.jclouds.cloudsigma.CloudSigmaZurichProviderTest) succeeded: 24ms
+Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.808 sec
+
+Results :
+
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0
+
+[INFO] 
+[INFO] --- clojure-maven-plugin:1.3.9:test (test-clojure) @ cloudsigma-zrh ---
+
+Testing com.theoryinpractise.clojure.testrunner
+
+Ran 0 tests containing 0 assertions.
+0 failures, 0 errors.
+[INFO] 
+[INFO] --- maven-bundle-plugin:2.3.7:bundle (default-bundle) @ cloudsigma-zrh ---
+[WARNING] Bundle org.jclouds.provider:cloudsigma-zrh:bundle:1.5.0-SNAPSHOT : Split package org/jclouds/cloudsigma
+Use directive -split-package:=(merge-first|merge-last|error|first) on Export/Private Package instruction to get rid of this warning
+Package found in   [Jar:., Jar:cloudsigma]
+Reference from     /Users/adriancole/.m2/repository/org/jclouds/api/cloudsigma/1.5.0-SNAPSHOT/cloudsigma-1.5.0-SNAPSHOT.jar
+Classpath          [Jar:., Jar:cloudsigma, Jar:jclouds-compute, Jar:oauth, Jar:aopalliance, Jar:jersey-core, Jar:guice-assistedinject, Jar:guice, Jar:rocoto, Jar:javax.inject, Jar:jsr250-api, Jar:gson, Jar:guava, Jar:jsr305, Jar:jclouds-scriptbuilder, Jar:jclouds-core, Jar:clojure, Jar:tools.logging, Jar:core.incubator]
+[INFO] 
+[INFO] --- maven-source-plugin:2.1.2:jar-no-fork (attach-sources) @ cloudsigma-zrh ---
+[INFO] META-INF already added, skipping
+[INFO] META-INF already added, skipping
+[INFO] META-INF/LICENSE.txt already added, skipping
+[INFO] META-INF/NOTICE.txt already added, skipping
+[INFO] Building jar: /Users/adriancole/workspace/git/jclouds/providers/cloudsigma-zrh/target/cloudsigma-zrh-1.5.0-SNAPSHOT-sources.jar
+[INFO] META-INF already added, skipping
+[INFO] META-INF already added, skipping
+[INFO] META-INF/LICENSE.txt already added, skipping
+[INFO] META-INF/NOTICE.txt already added, skipping
+[INFO] 
+[INFO] --- maven-javadoc-plugin:2.8.1:jar (javadoc) @ cloudsigma-zrh ---
+[INFO] Skipping javadoc generation
+[INFO] 
+[INFO] --- maven-jar-plugin:2.4:test-jar (default) @ cloudsigma-zrh ---
+[INFO] Building jar: /Users/adriancole/workspace/git/jclouds/providers/cloudsigma-zrh/target/cloudsigma-zrh-1.5.0-SNAPSHOT-tests.jar
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.12:test (integration) @ cloudsigma-zrh ---
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/jclouds/providers/cloudsigma-zrh/target/surefire-reports
+[INFO] Using configured provider org.apache.maven.surefire.testng.TestNGProvider
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running TestSuite
+Configuring TestNG with: org.apache.maven.surefire.testng.conf.TestNGMapConfigurator@522a4983
+Starting test testCompareSizes(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+Starting test setServiceDefaults(org.jclouds.cloudsigma.compute.CloudSigmaZurichComputeServiceLiveTest)
+[TestNG] Test setServiceDefaults(org.jclouds.cloudsigma.compute.CloudSigmaZurichComputeServiceLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
+Starting test testCompareSizes(org.jclouds.cloudsigma.compute.CloudSigmaZurichComputeServiceLiveTest)
+[TestNG] Test testCompareSizes(org.jclouds.cloudsigma.compute.CloudSigmaZurichComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 1, failed: 1, skipped: 0.
+Starting test testCorrectAuthException(org.jclouds.cloudsigma.compute.CloudSigmaZurichComputeServiceLiveTest)
+Starting test testCreateAndDestroyVLAN(org.jclouds.cloudsigma.CloudSigmaZurichClientLiveTest)
+[TestNG] Test testCreateAndDestroyVLAN(org.jclouds.cloudsigma.CloudSigmaZurichClientLiveTest) skipped.
+Test suite progress: tests succeeded: 1, failed: 1, skipped: 1.
+Starting test testCreateDrive(org.jclouds.cloudsigma.CloudSigmaZurichClientLiveTest)
+[TestNG] Test testCreateDrive(org.jclouds.cloudsigma.CloudSigmaZurichClientLiveTest) skipped.
+Test suite progress: tests succeeded: 1, failed: 1, skipped: 2.
+Starting test testGetDrive(org.jclouds.cloudsigma.CloudSigmaZurichClientLiveTest)
+[TestNG] Test testGetDrive(org.jclouds.cloudsigma.CloudSigmaZurichClientLiveTest) skipped.
+Test suite progress: tests succeeded: 1, failed: 1, skipped: 3.
+Starting test testGetProfileInfo(org.jclouds.cloudsigma.CloudSigmaZurichClientLiveTest)
+[TestNG] Test testGetProfileInfo(org.jclouds.cloudsigma.CloudSigmaZurichClientLiveTest) skipped.
+Test suite progress: tests succeeded: 1, failed: 1, skipped: 4.
+Starting test testGetServer(org.jclouds.cloudsigma.CloudSigmaZurichClientLiveTest)
+[TestNG] Test testGetServer(org.jclouds.cloudsigma.CloudSigmaZurichClientLiveTest) skipped.
+Test suite progress: tests succeeded: 1, failed: 1, skipped: 5.
+Starting test testGetStaticIP(org.jclouds.cloudsigma.CloudSigmaZurichClientLiveTest)
+[TestNG] Test testGetStaticIP(org.jclouds.cloudsigma.CloudSigmaZurichClientLiveTest) skipped.
+Test suite progress: tests succeeded: 1, failed: 1, skipped: 6.
+Starting test testGetVLAN(org.jclouds.cloudsigma.CloudSigmaZurichClientLiveTest)
+[TestNG] Test testGetVLAN(org.jclouds.cloudsigma.CloudSigmaZurichClientLiveTest) skipped.
+Test suite progress: tests succeeded: 1, failed: 1, skipped: 7.
+Starting test testListDriveInfo(org.jclouds.cloudsigma.CloudSigmaZurichClientLiveTest)
+[TestNG] Test testListDriveInfo(org.jclouds.cloudsigma.CloudSigmaZurichClientLiveTest) skipped.
+Test suite progress: tests succeeded: 1, failed: 1, skipped: 8.
+Starting test testListDrives(org.jclouds.cloudsigma.CloudSigmaZurichClientLiveTest)
+[TestNG] Test testListDrives(org.jclouds.cloudsigma.CloudSigmaZurichClientLiveTest) skipped.
+Test suite progress: tests succeeded: 1, failed: 1, skipped: 9.
+Starting test testListServerInfo(org.jclouds.cloudsigma.CloudSigmaZurichClientLiveTest)
+[TestNG] Test testListServerInfo(org.jclouds.cloudsigma.CloudSigmaZurichClientLiveTest) skipped.
+Test suite progress: tests succeeded: 1, failed: 1, skipped: 10.
+Starting test testListServers(org.jclouds.cloudsigma.CloudSigmaZurichClientLiveTest)
+[TestNG] Test testListServers(org.jclouds.cloudsigma.CloudSigmaZurichClientLiveTest) skipped.
+Test suite progress: tests succeeded: 1, failed: 1, skipped: 11.
+Starting test testListStandardCds(org.jclouds.cloudsigma.CloudSigmaZurichClientLiveTest)
+[TestNG] Test testListStandardCds(org.jclouds.cloudsigma.CloudSigmaZurichClientLiveTest) skipped.
+Test suite progress: tests succeeded: 1, failed: 1, skipped: 12.
+Starting test testListStandardDrives(org.jclouds.cloudsigma.CloudSigmaZurichClientLiveTest)
+[TestNG] Test testListStandardDrives(org.jclouds.cloudsigma.CloudSigmaZurichClientLiveTest) skipped.
+Test suite progress: tests succeeded: 1, failed: 1, skipped: 13.
+Starting test testListStandardImages(org.jclouds.cloudsigma.CloudSigmaZurichClientLiveTest)
+[TestNG] Test testListStandardImages(org.jclouds.cloudsigma.CloudSigmaZurichClientLiveTest) skipped.
+Test suite progress: tests succeeded: 1, failed: 1, skipped: 14.
+Starting test testListStaticIPInfo(org.jclouds.cloudsigma.CloudSigmaZurichClientLiveTest)
+[TestNG] Test testListStaticIPInfo(org.jclouds.cloudsigma.CloudSigmaZurichClientLiveTest) skipped.
+Test suite progress: tests succeeded: 1, failed: 1, skipped: 15.
+Starting test testListStaticIPs(org.jclouds.cloudsigma.CloudSigmaZurichClientLiveTest)
+[TestNG] Test testListStaticIPs(org.jclouds.cloudsigma.CloudSigmaZurichClientLiveTest) skipped.
+Test suite progress: tests succeeded: 1, failed: 1, skipped: 16.
+Starting test testListVLANInfo(org.jclouds.cloudsigma.CloudSigmaZurichClientLiveTest)
+[TestNG] Test testListVLANInfo(org.jclouds.cloudsigma.CloudSigmaZurichClientLiveTest) skipped.
+Test suite progress: tests succeeded: 1, failed: 1, skipped: 17.
+Starting test testListVLANs(org.jclouds.cloudsigma.CloudSigmaZurichClientLiveTest)
+[TestNG] Test testListVLANs(org.jclouds.cloudsigma.CloudSigmaZurichClientLiveTest) skipped.
+Test suite progress: tests succeeded: 1, failed: 1, skipped: 18.
+[TestNG] Test testSetDriveData(org.jclouds.cloudsigma.CloudSigmaZurichClientLiveTest) skipped.
+Test suite progress: tests succeeded: 1, failed: 1, skipped: 19.
+[TestNG] Test testCreateAndDestroyStaticIP(org.jclouds.cloudsigma.CloudSigmaZurichClientLiveTest) skipped.
+Test suite progress: tests succeeded: 1, failed: 1, skipped: 20.
+[TestNG] Test testCreateAndStartServer(org.jclouds.cloudsigma.CloudSigmaZurichClientLiveTest) skipped.
+Test suite progress: tests succeeded: 1, failed: 1, skipped: 21.
+[TestNG] Test testConnectivity(org.jclouds.cloudsigma.CloudSigmaZurichClientLiveTest) skipped.
+Test suite progress: tests succeeded: 1, failed: 1, skipped: 22.
+[TestNG] Test testLifeCycle(org.jclouds.cloudsigma.CloudSigmaZurichClientLiveTest) skipped.
+Test suite progress: tests succeeded: 1, failed: 1, skipped: 23.
+[TestNG] Test testSetServerConfiguration(org.jclouds.cloudsigma.CloudSigmaZurichClientLiveTest) skipped.
+Test suite progress: tests succeeded: 1, failed: 1, skipped: 24.
+[TestNG] Test testDestroyServer(org.jclouds.cloudsigma.CloudSigmaZurichClientLiveTest) skipped.
+Test suite progress: tests succeeded: 1, failed: 1, skipped: 25.
+[TestNG] Test testDestroyDrive(org.jclouds.cloudsigma.CloudSigmaZurichClientLiveTest) skipped.
+Test suite progress: tests succeeded: 1, failed: 1, skipped: 26.
+[TestNG] Test testCompareSizes(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 1, failed: 2, skipped: 26.
+Starting test testFromTemplate(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testCorrectAuthException(org.jclouds.cloudsigma.compute.CloudSigmaZurichComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 1, failed: 3, skipped: 26.
+Starting test testCreateAndRunAService(org.jclouds.cloudsigma.compute.CloudSigmaZurichComputeServiceLiveTest)
+[TestNG] Test testCreateAndRunAService(org.jclouds.cloudsigma.compute.CloudSigmaZurichComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 1, failed: 4, skipped: 26.
+Starting test testGetAssignableLocations(org.jclouds.cloudsigma.compute.CloudSigmaZurichComputeServiceLiveTest)
+Apr 23, 2012 11:14:16 PM org.jclouds.compute.internal.BaseComputeServiceLiveTest testGetAssignableLocations
+WARNING: location [id=cloudsigma-zrh, scope=PROVIDER, description=https://api.zrh.cloudsigma.com, parent=null, iso3166Codes=[CH-ZH], metadata={}]
+[TestNG] Test testGetAssignableLocations(org.jclouds.cloudsigma.compute.CloudSigmaZurichComputeServiceLiveTest) succeeded: 9ms
+Test suite progress: tests succeeded: 2, failed: 4, skipped: 26.
+Starting test testImagesCache(org.jclouds.cloudsigma.compute.CloudSigmaZurichComputeServiceLiveTest)
+[TestNG] Test testFromTemplate(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 5, skipped: 26.
+Starting test testGetAssignableLocations(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+location [id=cloudsigma-zrh, scope=PROVIDER, description=https://api.zrh.cloudsigma.com, parent=null, iso3166Codes=[CH-ZH], metadata={}]
+[TestNG] Test testGetAssignableLocations(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 3, failed: 5, skipped: 26.
+Starting test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testImagesCache(org.jclouds.cloudsigma.compute.CloudSigmaZurichComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 3, failed: 6, skipped: 26.
+Starting test testListImages(org.jclouds.cloudsigma.compute.CloudSigmaZurichComputeServiceLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 3, failed: 7, skipped: 26.
+Starting test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testListImages(org.jclouds.cloudsigma.compute.CloudSigmaZurichComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 3, failed: 8, skipped: 26.
+Starting test testListSizes(org.jclouds.cloudsigma.compute.CloudSigmaZurichComputeServiceLiveTest)
+[TestNG] Test testListSizes(org.jclouds.cloudsigma.compute.CloudSigmaZurichComputeServiceLiveTest) succeeded: 9ms
+Test suite progress: tests succeeded: 4, failed: 8, skipped: 26.
+Starting test testOptionToNotBlock(org.jclouds.cloudsigma.compute.CloudSigmaZurichComputeServiceLiveTest)
+[TestNG] Test testOptionToNotBlock(org.jclouds.cloudsigma.compute.CloudSigmaZurichComputeServiceLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 5, failed: 8, skipped: 26.
+Starting test testStartNodeWithSSD(org.jclouds.cloudsigma.compute.CloudSigmaZurichComputeServiceLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 5, failed: 9, skipped: 26.
+Starting test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 5, failed: 10, skipped: 26.
+Starting test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testStartNodeWithSSD(org.jclouds.cloudsigma.compute.CloudSigmaZurichComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 5, failed: 11, skipped: 26.
+Starting test testCorrectExceptionRunningNodesNotFound(org.jclouds.cloudsigma.compute.CloudSigmaZurichComputeServiceLiveTest)
+[TestNG] Test testCorrectExceptionRunningNodesNotFound(org.jclouds.cloudsigma.compute.CloudSigmaZurichComputeServiceLiveTest) succeeded: 1059ms
+Test suite progress: tests succeeded: 6, failed: 11, skipped: 26.
+[TestNG] Test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.cloudsigma.compute.CloudSigmaZurichComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 6, failed: 11, skipped: 27.
+[TestNG] Test testCreateTwoNodesWithRunScript(org.jclouds.cloudsigma.compute.CloudSigmaZurichComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 6, failed: 11, skipped: 28.
+[TestNG] Test testTemplateMatch(org.jclouds.cloudsigma.compute.CloudSigmaZurichComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 6, failed: 11, skipped: 29.
+[TestNG] Test testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired(org.jclouds.cloudsigma.compute.CloudSigmaZurichComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 6, failed: 11, skipped: 30.
+[TestNG] Test testCredentialsCache(org.jclouds.cloudsigma.compute.CloudSigmaZurichComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 6, failed: 11, skipped: 31.
+[TestNG] Test testGet(org.jclouds.cloudsigma.compute.CloudSigmaZurichComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 6, failed: 11, skipped: 32.
+[TestNG] Test testReboot(org.jclouds.cloudsigma.compute.CloudSigmaZurichComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 6, failed: 11, skipped: 33.
+[TestNG] Test testSuspendResume(org.jclouds.cloudsigma.compute.CloudSigmaZurichComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 6, failed: 11, skipped: 34.
+[TestNG] Test testGetNodesWithDetails(org.jclouds.cloudsigma.compute.CloudSigmaZurichComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 6, failed: 11, skipped: 35.
+[TestNG] Test testListNodes(org.jclouds.cloudsigma.compute.CloudSigmaZurichComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 6, failed: 11, skipped: 36.
+[TestNG] Test testDestroyNodes(org.jclouds.cloudsigma.compute.CloudSigmaZurichComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 6, failed: 11, skipped: 37.
+Exception in thread "user thread 88" java.lang.IllegalStateException: interrupted calling get() on [[method=CloudSigmaAsyncClient.getDriveInfo, request=GET https://api.zrh.cloudsigma.com/drives/2e0e94f2-6354-4d6c-9970-fc25563cb288/info HTTP/1.1]], so could not run listeners
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:66)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: java.lang.InterruptedException
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer.doAcquireSharedInterruptibly(AbstractQueuedSynchronizer.java:979)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer.acquireSharedInterruptibly(AbstractQueuedSynchronizer.java:1281)
+	at java.util.concurrent.FutureTask$Sync.innerGet(FutureTask.java:218)
+	at java.util.concurrent.FutureTask.get(FutureTask.java:83)
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.get(ExecutorServiceModule.java:237)
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:59)
+	... 3 more
+Caused by: java.util.concurrent.ExecutionException: task submitted from the following trace
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.ensureCauseHasSubmissionTrace(ExecutorServiceModule.java:270)
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.get(ExecutorServiceModule.java:241)
+	... 4 more
+Exception in thread "user thread 100" java.lang.IllegalStateException: interrupted calling get() on [[method=CloudSigmaAsyncClient.getDriveInfo, request=GET https://api.zrh.cloudsigma.com/drives/7913d558-da11-4894-9120-8ad4602c95e9/info HTTP/1.1]], so could not run listeners
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:66)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: java.lang.InterruptedException
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer.doAcquireSharedInterruptibly(AbstractQueuedSynchronizer.java:979)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer.acquireSharedInterruptibly(AbstractQueuedSynchronizer.java:1281)
+	at java.util.concurrent.FutureTask$Sync.innerGet(FutureTask.java:218)
+	at java.util.concurrent.FutureTask.get(FutureTask.java:83)
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.get(ExecutorServiceModule.java:237)
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:59)
+	... 3 more
+Caused by: java.util.concurrent.ExecutionException: task submitted from the following trace
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.ensureCauseHasSubmissionTrace(ExecutorServiceModule.java:270)
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.get(ExecutorServiceModule.java:241)
+	... 4 more
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 12, skipped: 37.
+Starting test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 13, skipped: 37.
+Starting test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 14, skipped: 37.
+Starting test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 15, skipped: 37.
+Starting test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 16, skipped: 37.
+Starting test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 17, skipped: 37.
+Starting test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 18, skipped: 37.
+Starting test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 19, skipped: 37.
+Starting test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 20, skipped: 37.
+Starting test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 21, skipped: 37.
+Starting test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 22, skipped: 37.
+Starting test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 23, skipped: 37.
+Starting test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 24, skipped: 37.
+Starting test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 25, skipped: 37.
+Starting test testTemplateBuilderCanUseImageId(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanUseImageId(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 26, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 27, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 28, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 29, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 30, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 31, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 32, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 33, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 34, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 35, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 36, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 37, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 38, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 39, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 40, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 41, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 42, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 43, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 44, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 45, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 46, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 47, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 48, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 49, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 50, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 51, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 52, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 53, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 54, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 55, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 56, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 57, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 58, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 59, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 60, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 61, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 62, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 63, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 64, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 65, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 66, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 67, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 68, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 69, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 70, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 71, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 72, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 73, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 74, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 75, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 76, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 77, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 78, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 79, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 80, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 81, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 82, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 83, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 84, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 85, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 86, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 87, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 88, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 89, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 90, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 91, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 92, skipped: 37.
+Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 93, skipped: 37.
+Starting test testTemplateBuilderWithImageIdSpecified(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderWithImageIdSpecified(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 94, skipped: 37.
+Starting test testTemplateBuilderWithLoginUserSpecified(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+Apr 23, 2012 11:35:56 PM org.jclouds.logging.jdk.JDKLogger logWarn
+WARNING: error finding drive 0611be3f-0607-4b3c-8bad-a0af392d928a: java.lang.reflect.UndeclaredThrowableException
+com.google.common.util.concurrent.UncheckedExecutionException: java.lang.reflect.UndeclaredThrowableException
+	at com.google.common.cache.LocalCache$Segment.get(LocalCache.java:2256)
+	at com.google.common.cache.LocalCache.get(LocalCache.java:3980)
+	at com.google.common.cache.LocalCache.getOrLoad(LocalCache.java:3984)
+	at com.google.common.cache.LocalCache$LocalLoadingCache.get(LocalCache.java:4868)
+	at com.google.common.cache.LocalCache$LocalLoadingCache.getUnchecked(LocalCache.java:4874)
+	at org.jclouds.cloudsigma.compute.CloudSigmaComputeServiceAdapter$3.apply(CloudSigmaComputeServiceAdapter.java:180)
+	at org.jclouds.cloudsigma.compute.CloudSigmaComputeServiceAdapter$3.apply(CloudSigmaComputeServiceAdapter.java:175)
+	at org.jclouds.concurrent.FutureIterables.transformParallel(FutureIterables.java:98)
+	at org.jclouds.concurrent.FutureIterables.transformParallel(FutureIterables.java:86)
+	at org.jclouds.cloudsigma.compute.CloudSigmaComputeServiceAdapter.listImages(CloudSigmaComputeServiceAdapter.java:174)
+	at org.jclouds.compute.config.ComputeServiceAdapterContextModule$2.get(ComputeServiceAdapterContextModule.java:116)
+	at org.jclouds.compute.config.ComputeServiceAdapterContextModule$2.get(ComputeServiceAdapterContextModule.java:112)
+	at org.jclouds.collect.TransformingSetSupplier.get(TransformingSetSupplier.java:47)
+	at org.jclouds.collect.TransformingSetSupplier.get(TransformingSetSupplier.java:36)
+	at org.jclouds.compute.config.BaseComputeServiceContextModule$9.get(BaseComputeServiceContextModule.java:247)
+	at org.jclouds.compute.config.BaseComputeServiceContextModule$9.get(BaseComputeServiceContextModule.java:244)
+	at org.jclouds.rest.suppliers.SetAndThrowAuthorizationExceptionSupplier.get(SetAndThrowAuthorizationExceptionSupplier.java:49)
+	at org.jclouds.concurrent.RetryOnTimeOutExceptionSupplier.get(RetryOnTimeOutExceptionSupplier.java:47)
+	at org.jclouds.util.Suppliers2$ExpiringMemoizingSupplier.get(Suppliers2.java:130)
+	at org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.get(MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.java:64)
+	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.getImages(TemplateBuilderImpl.java:737)
+	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.build(TemplateBuilderImpl.java:612)
+	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.build(TemplateBuilderImpl.java:606)
+	at org.jclouds.compute.internal.BaseTemplateBuilderLiveTest.tryOverrideUsingPropertyKey(BaseTemplateBuilderLiveTest.java:274)
+	at org.jclouds.compute.internal.BaseTemplateBuilderLiveTest.testTemplateBuilderWithLoginUserSpecified(BaseTemplateBuilderLiveTest.java:252)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:701)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:893)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1218)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:758)
+	at org.testng.TestRunner.run(TestRunner.java:613)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.access$000(SuiteRunner.java:37)
+	at org.testng.SuiteRunner$SuiteWorker.run(SuiteRunner.java:368)
+	at org.testng.internal.thread.ThreadUtil$2.call(ThreadUtil.java:64)
+	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: java.lang.reflect.UndeclaredThrowableException
+	at $Proxy70.getDriveInfo(Unknown Source)
+	at org.jclouds.cloudsigma.compute.config.CloudSigmaComputeServiceContextModule$GetDrive.load(CloudSigmaComputeServiceContextModule.java:121)
+	at org.jclouds.cloudsigma.compute.config.CloudSigmaComputeServiceContextModule$GetDrive.load(CloudSigmaComputeServiceContextModule.java:110)
+	at com.google.common.cache.LocalCache$LoadingValueReference.loadFuture(LocalCache.java:3579)
+	at com.google.common.cache.LocalCache$Segment.loadSync(LocalCache.java:2372)
+	at com.google.common.cache.LocalCache$Segment.lockedGetOrLoad(LocalCache.java:2335)
+	at com.google.common.cache.LocalCache$Segment.get(LocalCache.java:2250)
+	... 45 more
+Caused by: java.util.concurrent.TimeoutException: Timeout waiting for task.
+	at com.google.common.util.concurrent.AbstractFuture$Sync.get(AbstractFuture.java:259)
+	at com.google.common.util.concurrent.AbstractFuture.get(AbstractFuture.java:91)
+	at org.jclouds.concurrent.ExceptionParsingListenableFuture.get(ExceptionParsingListenableFuture.java:76)
+	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:159)
+	... 52 more
+Apr 23, 2012 11:36:57 PM org.jclouds.logging.jdk.JDKLogger logWarn
+WARNING: error finding drive 08c7babe-d3dc-408b-b76f-bebae998e9ce: java.lang.reflect.UndeclaredThrowableException
+com.google.common.util.concurrent.UncheckedExecutionException: java.lang.reflect.UndeclaredThrowableException
+	at com.google.common.cache.LocalCache$Segment.get(LocalCache.java:2256)
+	at com.google.common.cache.LocalCache.get(LocalCache.java:3980)
+	at com.google.common.cache.LocalCache.getOrLoad(LocalCache.java:3984)
+	at com.google.common.cache.LocalCache$LocalLoadingCache.get(LocalCache.java:4868)
+	at com.google.common.cache.LocalCache$LocalLoadingCache.getUnchecked(LocalCache.java:4874)
+	at org.jclouds.cloudsigma.compute.CloudSigmaComputeServiceAdapter$3.apply(CloudSigmaComputeServiceAdapter.java:180)
+	at org.jclouds.cloudsigma.compute.CloudSigmaComputeServiceAdapter$3.apply(CloudSigmaComputeServiceAdapter.java:175)
+	at org.jclouds.concurrent.FutureIterables.transformParallel(FutureIterables.java:98)
+	at org.jclouds.concurrent.FutureIterables.transformParallel(FutureIterables.java:86)
+	at org.jclouds.cloudsigma.compute.CloudSigmaComputeServiceAdapter.listImages(CloudSigmaComputeServiceAdapter.java:174)
+	at org.jclouds.compute.config.ComputeServiceAdapterContextModule$2.get(ComputeServiceAdapterContextModule.java:116)
+	at org.jclouds.compute.config.ComputeServiceAdapterContextModule$2.get(ComputeServiceAdapterContextModule.java:112)
+	at org.jclouds.collect.TransformingSetSupplier.get(TransformingSetSupplier.java:47)
+	at org.jclouds.collect.TransformingSetSupplier.get(TransformingSetSupplier.java:36)
+	at org.jclouds.compute.config.BaseComputeServiceContextModule$9.get(BaseComputeServiceContextModule.java:247)
+	at org.jclouds.compute.config.BaseComputeServiceContextModule$9.get(BaseComputeServiceContextModule.java:244)
+	at org.jclouds.rest.suppliers.SetAndThrowAuthorizationExceptionSupplier.get(SetAndThrowAuthorizationExceptionSupplier.java:49)
+	at org.jclouds.concurrent.RetryOnTimeOutExceptionSupplier.get(RetryOnTimeOutExceptionSupplier.java:47)
+	at org.jclouds.util.Suppliers2$ExpiringMemoizingSupplier.get(Suppliers2.java:130)
+	at org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.get(MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.java:64)
+	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.getImages(TemplateBuilderImpl.java:737)
+	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.build(TemplateBuilderImpl.java:612)
+	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.build(TemplateBuilderImpl.java:606)
+	at org.jclouds.compute.internal.BaseTemplateBuilderLiveTest.tryOverrideUsingPropertyKey(BaseTemplateBuilderLiveTest.java:274)
+	at org.jclouds.compute.internal.BaseTemplateBuilderLiveTest.testTemplateBuilderWithLoginUserSpecified(BaseTemplateBuilderLiveTest.java:252)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:701)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:893)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1218)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:758)
+	at org.testng.TestRunner.run(TestRunner.java:613)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.access$000(SuiteRunner.java:37)
+	at org.testng.SuiteRunner$SuiteWorker.run(SuiteRunner.java:368)
+	at org.testng.internal.thread.ThreadUtil$2.call(ThreadUtil.java:64)
+	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: java.lang.reflect.UndeclaredThrowableException
+	at $Proxy70.getDriveInfo(Unknown Source)
+	at org.jclouds.cloudsigma.compute.config.CloudSigmaComputeServiceContextModule$GetDrive.load(CloudSigmaComputeServiceContextModule.java:121)
+	at org.jclouds.cloudsigma.compute.config.CloudSigmaComputeServiceContextModule$GetDrive.load(CloudSigmaComputeServiceContextModule.java:110)
+	at com.google.common.cache.LocalCache$LoadingValueReference.loadFuture(LocalCache.java:3579)
+	at com.google.common.cache.LocalCache$Segment.loadSync(LocalCache.java:2372)
+	at com.google.common.cache.LocalCache$Segment.lockedGetOrLoad(LocalCache.java:2335)
+	at com.google.common.cache.LocalCache$Segment.get(LocalCache.java:2250)
+	... 45 more
+Caused by: java.util.concurrent.TimeoutException: Timeout waiting for task.
+	at com.google.common.util.concurrent.AbstractFuture$Sync.get(AbstractFuture.java:259)
+	at com.google.common.util.concurrent.AbstractFuture.get(AbstractFuture.java:91)
+	at org.jclouds.concurrent.ExceptionParsingListenableFuture.get(ExceptionParsingListenableFuture.java:76)
+	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:159)
+	... 52 more
+Apr 23, 2012 11:38:18 PM org.jclouds.logging.jdk.JDKLogger logWarn
+WARNING: error finding drive 21a3ce26-f0a6-4ff7-aed6-7027e3bef6ac: java.lang.reflect.UndeclaredThrowableException
+com.google.common.util.concurrent.UncheckedExecutionException: java.lang.reflect.UndeclaredThrowableException
+	at com.google.common.cache.LocalCache$Segment.get(LocalCache.java:2256)
+	at com.google.common.cache.LocalCache.get(LocalCache.java:3980)
+	at com.google.common.cache.LocalCache.getOrLoad(LocalCache.java:3984)
+	at com.google.common.cache.LocalCache$LocalLoadingCache.get(LocalCache.java:4868)
+	at com.google.common.cache.LocalCache$LocalLoadingCache.getUnchecked(LocalCache.java:4874)
+	at org.jclouds.cloudsigma.compute.CloudSigmaComputeServiceAdapter$3.apply(CloudSigmaComputeServiceAdapter.java:180)
+	at org.jclouds.cloudsigma.compute.CloudSigmaComputeServiceAdapter$3.apply(CloudSigmaComputeServiceAdapter.java:175)
+	at org.jclouds.concurrent.FutureIterables.transformParallel(FutureIterables.java:98)
+	at org.jclouds.concurrent.FutureIterables.transformParallel(FutureIterables.java:86)
+	at org.jclouds.cloudsigma.compute.CloudSigmaComputeServiceAdapter.listImages(CloudSigmaComputeServiceAdapter.java:174)
+	at org.jclouds.compute.config.ComputeServiceAdapterContextModule$2.get(ComputeServiceAdapterContextModule.java:116)
+	at org.jclouds.compute.config.ComputeServiceAdapterContextModule$2.get(ComputeServiceAdapterContextModule.java:112)
+	at org.jclouds.collect.TransformingSetSupplier.get(TransformingSetSupplier.java:47)
+	at org.jclouds.collect.TransformingSetSupplier.get(TransformingSetSupplier.java:36)
+	at org.jclouds.compute.config.BaseComputeServiceContextModule$9.get(BaseComputeServiceContextModule.java:247)
+	at org.jclouds.compute.config.BaseComputeServiceContextModule$9.get(BaseComputeServiceContextModule.java:244)
+	at org.jclouds.rest.suppliers.SetAndThrowAuthorizationExceptionSupplier.get(SetAndThrowAuthorizationExceptionSupplier.java:49)
+	at org.jclouds.concurrent.RetryOnTimeOutExceptionSupplier.get(RetryOnTimeOutExceptionSupplier.java:47)
+	at org.jclouds.util.Suppliers2$ExpiringMemoizingSupplier.get(Suppliers2.java:130)
+	at org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.get(MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.java:64)
+	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.getImages(TemplateBuilderImpl.java:737)
+	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.build(TemplateBuilderImpl.java:612)
+	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.build(TemplateBuilderImpl.java:606)
+	at org.jclouds.compute.internal.BaseTemplateBuilderLiveTest.tryOverrideUsingPropertyKey(BaseTemplateBuilderLiveTest.java:274)
+	at org.jclouds.compute.internal.BaseTemplateBuilderLiveTest.testTemplateBuilderWithLoginUserSpecified(BaseTemplateBuilderLiveTest.java:252)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:701)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:893)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1218)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:758)
+	at org.testng.TestRunner.run(TestRunner.java:613)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.access$000(SuiteRunner.java:37)
+	at org.testng.SuiteRunner$SuiteWorker.run(SuiteRunner.java:368)
+	at org.testng.internal.thread.ThreadUtil$2.call(ThreadUtil.java:64)
+	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: java.lang.reflect.UndeclaredThrowableException
+	at $Proxy70.getDriveInfo(Unknown Source)
+	at org.jclouds.cloudsigma.compute.config.CloudSigmaComputeServiceContextModule$GetDrive.load(CloudSigmaComputeServiceContextModule.java:121)
+	at org.jclouds.cloudsigma.compute.config.CloudSigmaComputeServiceContextModule$GetDrive.load(CloudSigmaComputeServiceContextModule.java:110)
+	at com.google.common.cache.LocalCache$LoadingValueReference.loadFuture(LocalCache.java:3579)
+	at com.google.common.cache.LocalCache$Segment.loadSync(LocalCache.java:2372)
+	at com.google.common.cache.LocalCache$Segment.lockedGetOrLoad(LocalCache.java:2335)
+	at com.google.common.cache.LocalCache$Segment.get(LocalCache.java:2250)
+	... 45 more
+Caused by: java.util.concurrent.TimeoutException: Timeout waiting for task.
+	at com.google.common.util.concurrent.AbstractFuture$Sync.get(AbstractFuture.java:259)
+	at com.google.common.util.concurrent.AbstractFuture.get(AbstractFuture.java:91)
+	at org.jclouds.concurrent.ExceptionParsingListenableFuture.get(ExceptionParsingListenableFuture.java:76)
+	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:159)
+	... 52 more
+Apr 23, 2012 11:39:35 PM org.jclouds.logging.jdk.JDKLogger logWarn
+WARNING: error finding drive 2e0e94f2-6354-4d6c-9970-fc25563cb288: java.lang.reflect.UndeclaredThrowableException
+com.google.common.util.concurrent.UncheckedExecutionException: java.lang.reflect.UndeclaredThrowableException
+	at com.google.common.cache.LocalCache$Segment.get(LocalCache.java:2256)
+	at com.google.common.cache.LocalCache.get(LocalCache.java:3980)
+	at com.google.common.cache.LocalCache.getOrLoad(LocalCache.java:3984)
+	at com.google.common.cache.LocalCache$LocalLoadingCache.get(LocalCache.java:4868)
+	at com.google.common.cache.LocalCache$LocalLoadingCache.getUnchecked(LocalCache.java:4874)
+	at org.jclouds.cloudsigma.compute.CloudSigmaComputeServiceAdapter$3.apply(CloudSigmaComputeServiceAdapter.java:180)
+	at org.jclouds.cloudsigma.compute.CloudSigmaComputeServiceAdapter$3.apply(CloudSigmaComputeServiceAdapter.java:175)
+	at org.jclouds.concurrent.FutureIterables.transformParallel(FutureIterables.java:98)
+	at org.jclouds.concurrent.FutureIterables.transformParallel(FutureIterables.java:86)
+	at org.jclouds.cloudsigma.compute.CloudSigmaComputeServiceAdapter.listImages(CloudSigmaComputeServiceAdapter.java:174)
+	at org.jclouds.compute.config.ComputeServiceAdapterContextModule$2.get(ComputeServiceAdapterContextModule.java:116)
+	at org.jclouds.compute.config.ComputeServiceAdapterContextModule$2.get(ComputeServiceAdapterContextModule.java:112)
+	at org.jclouds.collect.TransformingSetSupplier.get(TransformingSetSupplier.java:47)
+	at org.jclouds.collect.TransformingSetSupplier.get(TransformingSetSupplier.java:36)
+	at org.jclouds.compute.config.BaseComputeServiceContextModule$9.get(BaseComputeServiceContextModule.java:247)
+	at org.jclouds.compute.config.BaseComputeServiceContextModule$9.get(BaseComputeServiceContextModule.java:244)
+	at org.jclouds.rest.suppliers.SetAndThrowAuthorizationExceptionSupplier.get(SetAndThrowAuthorizationExceptionSupplier.java:49)
+	at org.jclouds.concurrent.RetryOnTimeOutExceptionSupplier.get(RetryOnTimeOutExceptionSupplier.java:47)
+	at org.jclouds.util.Suppliers2$ExpiringMemoizingSupplier.get(Suppliers2.java:130)
+	at org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.get(MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.java:64)
+	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.getImages(TemplateBuilderImpl.java:737)
+	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.build(TemplateBuilderImpl.java:612)
+	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.build(TemplateBuilderImpl.java:606)
+	at org.jclouds.compute.internal.BaseTemplateBuilderLiveTest.tryOverrideUsingPropertyKey(BaseTemplateBuilderLiveTest.java:274)
+	at org.jclouds.compute.internal.BaseTemplateBuilderLiveTest.testTemplateBuilderWithLoginUserSpecified(BaseTemplateBuilderLiveTest.java:252)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:701)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:893)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1218)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:758)
+	at org.testng.TestRunner.run(TestRunner.java:613)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.access$000(SuiteRunner.java:37)
+	at org.testng.SuiteRunner$SuiteWorker.run(SuiteRunner.java:368)
+	at org.testng.internal.thread.ThreadUtil$2.call(ThreadUtil.java:64)
+	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: java.lang.reflect.UndeclaredThrowableException
+	at $Proxy70.getDriveInfo(Unknown Source)
+	at org.jclouds.cloudsigma.compute.config.CloudSigmaComputeServiceContextModule$GetDrive.load(CloudSigmaComputeServiceContextModule.java:121)
+	at org.jclouds.cloudsigma.compute.config.CloudSigmaComputeServiceContextModule$GetDrive.load(CloudSigmaComputeServiceContextModule.java:110)
+	at com.google.common.cache.LocalCache$LoadingValueReference.loadFuture(LocalCache.java:3579)
+	at com.google.common.cache.LocalCache$Segment.loadSync(LocalCache.java:2372)
+	at com.google.common.cache.LocalCache$Segment.lockedGetOrLoad(LocalCache.java:2335)
+	at com.google.common.cache.LocalCache$Segment.get(LocalCache.java:2250)
+	... 45 more
+Caused by: java.util.concurrent.TimeoutException: Timeout waiting for task.
+	at com.google.common.util.concurrent.AbstractFuture$Sync.get(AbstractFuture.java:259)
+	at com.google.common.util.concurrent.AbstractFuture.get(AbstractFuture.java:91)
+	at org.jclouds.concurrent.ExceptionParsingListenableFuture.get(ExceptionParsingListenableFuture.java:76)
+	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:159)
+	... 52 more
+Apr 23, 2012 11:41:02 PM org.jclouds.logging.jdk.JDKLogger logError
+SEVERE: Cannot retry after server error, command has exceeded retry limit 5: [method=CloudSigmaAsyncClient.getDriveInfo, request=GET https://api.zrh.cloudsigma.com/drives/0611be3f-0607-4b3c-8bad-a0af392d928a/info HTTP/1.1]
+Apr 23, 2012 11:42:03 PM org.jclouds.logging.jdk.JDKLogger logError
+SEVERE: Cannot retry after server error, command has exceeded retry limit 5: [method=CloudSigmaAsyncClient.getDriveInfo, request=GET https://api.zrh.cloudsigma.com/drives/08c7babe-d3dc-408b-b76f-bebae998e9ce/info HTTP/1.1]
+Apr 23, 2012 11:42:09 PM org.jclouds.logging.jdk.JDKLogger logWarn
+WARNING: error finding drive 7913d558-da11-4894-9120-8ad4602c95e9: java.lang.reflect.UndeclaredThrowableException
+com.google.common.util.concurrent.UncheckedExecutionException: java.lang.reflect.UndeclaredThrowableException
+	at com.google.common.cache.LocalCache$Segment.get(LocalCache.java:2256)
+	at com.google.common.cache.LocalCache.get(LocalCache.java:3980)
+	at com.google.common.cache.LocalCache.getOrLoad(LocalCache.java:3984)
+	at com.google.common.cache.LocalCache$LocalLoadingCache.get(LocalCache.java:4868)
+	at com.google.common.cache.LocalCache$LocalLoadingCache.getUnchecked(LocalCache.java:4874)
+	at org.jclouds.cloudsigma.compute.CloudSigmaComputeServiceAdapter$3.apply(CloudSigmaComputeServiceAdapter.java:180)
+	at org.jclouds.cloudsigma.compute.CloudSigmaComputeServiceAdapter$3.apply(CloudSigmaComputeServiceAdapter.java:175)
+	at org.jclouds.concurrent.FutureIterables.transformParallel(FutureIterables.java:98)
+	at org.jclouds.concurrent.FutureIterables.transformParallel(FutureIterables.java:86)
+	at org.jclouds.cloudsigma.compute.CloudSigmaComputeServiceAdapter.listImages(CloudSigmaComputeServiceAdapter.java:174)
+	at org.jclouds.compute.config.ComputeServiceAdapterContextModule$2.get(ComputeServiceAdapterContextModule.java:116)
+	at org.jclouds.compute.config.ComputeServiceAdapterContextModule$2.get(ComputeServiceAdapterContextModule.java:112)
+	at org.jclouds.collect.TransformingSetSupplier.get(TransformingSetSupplier.java:47)
+	at org.jclouds.collect.TransformingSetSupplier.get(TransformingSetSupplier.java:36)
+	at org.jclouds.compute.config.BaseComputeServiceContextModule$9.get(BaseComputeServiceContextModule.java:247)
+	at org.jclouds.compute.config.BaseComputeServiceContextModule$9.get(BaseComputeServiceContextModule.java:244)
+	at org.jclouds.rest.suppliers.SetAndThrowAuthorizationExceptionSupplier.get(SetAndThrowAuthorizationExceptionSupplier.java:49)
+	at org.jclouds.concurrent.RetryOnTimeOutExceptionSupplier.get(RetryOnTimeOutExceptionSupplier.java:47)
+	at org.jclouds.util.Suppliers2$ExpiringMemoizingSupplier.get(Suppliers2.java:130)
+	at org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.get(MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.java:64)
+	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.getImages(TemplateBuilderImpl.java:737)
+	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.build(TemplateBuilderImpl.java:612)
+	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.build(TemplateBuilderImpl.java:606)
+	at org.jclouds.compute.internal.BaseTemplateBuilderLiveTest.tryOverrideUsingPropertyKey(BaseTemplateBuilderLiveTest.java:274)
+	at org.jclouds.compute.internal.BaseTemplateBuilderLiveTest.testTemplateBuilderWithLoginUserSpecified(BaseTemplateBuilderLiveTest.java:252)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:701)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:893)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1218)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:758)
+	at org.testng.TestRunner.run(TestRunner.java:613)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.access$000(SuiteRunner.java:37)
+	at org.testng.SuiteRunner$SuiteWorker.run(SuiteRunner.java:368)
+	at org.testng.internal.thread.ThreadUtil$2.call(ThreadUtil.java:64)
+	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: java.lang.reflect.UndeclaredThrowableException
+	at $Proxy70.getDriveInfo(Unknown Source)
+	at org.jclouds.cloudsigma.compute.config.CloudSigmaComputeServiceContextModule$GetDrive.load(CloudSigmaComputeServiceContextModule.java:121)
+	at org.jclouds.cloudsigma.compute.config.CloudSigmaComputeServiceContextModule$GetDrive.load(CloudSigmaComputeServiceContextModule.java:110)
+	at com.google.common.cache.LocalCache$LoadingValueReference.loadFuture(LocalCache.java:3579)
+	at com.google.common.cache.LocalCache$Segment.loadSync(LocalCache.java:2372)
+	at com.google.common.cache.LocalCache$Segment.lockedGetOrLoad(LocalCache.java:2335)
+	at com.google.common.cache.LocalCache$Segment.get(LocalCache.java:2250)
+	... 45 more
+Caused by: java.util.concurrent.TimeoutException: Timeout waiting for task.
+	at com.google.common.util.concurrent.AbstractFuture$Sync.get(AbstractFuture.java:259)
+	at com.google.common.util.concurrent.AbstractFuture.get(AbstractFuture.java:91)
+	at org.jclouds.concurrent.ExceptionParsingListenableFuture.get(ExceptionParsingListenableFuture.java:76)
+	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:159)
+	... 52 more
+Apr 23, 2012 11:43:23 PM org.jclouds.logging.jdk.JDKLogger logError
+SEVERE: Cannot retry after server error, command has exceeded retry limit 5: [method=CloudSigmaAsyncClient.getDriveInfo, request=GET https://api.zrh.cloudsigma.com/drives/21a3ce26-f0a6-4ff7-aed6-7027e3bef6ac/info HTTP/1.1]
+Apr 23, 2012 11:44:40 PM org.jclouds.logging.jdk.JDKLogger logError
+SEVERE: Cannot retry after server error, command has exceeded retry limit 5: [method=CloudSigmaAsyncClient.getDriveInfo, request=GET https://api.zrh.cloudsigma.com/drives/2e0e94f2-6354-4d6c-9970-fc25563cb288/info HTTP/1.1]
+Exception in thread "user thread 9" [TestNG] Test testTemplateBuilderWithLoginUserSpecified(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 95, skipped: 37.
+java.lang.IllegalStateException: interrupted calling get() on [[method=CloudSigmaAsyncClient.getDriveInfo, request=GET https://api.zrh.cloudsigma.com/drives/7913d558-da11-4894-9120-8ad4602c95e9/info HTTP/1.1]], so could not run listeners
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:66)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: java.lang.InterruptedException
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer.doAcquireSharedInterruptibly(AbstractQueuedSynchronizer.java:979)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer.acquireSharedInterruptibly(AbstractQueuedSynchronizer.java:1281)
+	at java.util.concurrent.FutureTask$Sync.innerGet(FutureTask.java:218)
+	at java.util.concurrent.FutureTask.get(FutureTask.java:83)
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.get(ExecutorServiceModule.java:237)
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:59)
+	... 3 more
+Caused by: java.util.concurrent.ExecutionException: task submitted from the following trace
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.ensureCauseHasSubmissionTrace(ExecutorServiceModule.java:270)
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.get(ExecutorServiceModule.java:241)
+	... 4 more
+Starting test testDefaultTemplateBuilder(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest)
+[TestNG] Test testDefaultTemplateBuilder(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 96, skipped: 37.
+Tests run: 141, Failures: 97, Errors: 0, Skipped: 38, Time elapsed: 2,729.068 sec <<< FAILURE!
+
+Results :
+
+Failed tests:   testCompareSizes(org.jclouds.cloudsigma.compute.CloudSigmaZurichComputeServiceLiveTest): org.jclouds.cloudsigma.domain.DriveInfo cannot be cast to java.lang.Comparable
+  setupContext(org.jclouds.cloudsigma.CloudSigmaZurichClientLiveTest): org.jclouds.cloudsigma.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testCompareSizes(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): org.jclouds.cloudsigma.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testCorrectAuthException(org.jclouds.cloudsigma.compute.CloudSigmaZurichComputeServiceLiveTest): (..)
+  testCreateAndRunAService(org.jclouds.cloudsigma.compute.CloudSigmaZurichComputeServiceLiveTest): org.jclouds.cloudsigma.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testFromTemplate(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): org.jclouds.cloudsigma.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testImagesCache(org.jclouds.cloudsigma.compute.CloudSigmaZurichComputeServiceLiveTest): org.jclouds.cloudsigma.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): org.jclouds.cloudsigma.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testListImages(org.jclouds.cloudsigma.compute.CloudSigmaZurichComputeServiceLiveTest): org.jclouds.cloudsigma.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): org.jclouds.cloudsigma.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): org.jclouds.cloudsigma.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testStartNodeWithSSD(org.jclouds.cloudsigma.compute.CloudSigmaZurichComputeServiceLiveTest): org.jclouds.cloudsigma.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): org.jclouds.cloudsigma.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): org.jclouds.cloudsigma.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): org.jclouds.cloudsigma.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): org.jclouds.cloudsigma.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): org.jclouds.cloudsigma.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): org.jclouds.cloudsigma.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): org.jclouds.cloudsigma.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): org.jclouds.cloudsigma.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): org.jclouds.cloudsigma.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): org.jclouds.cloudsigma.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): org.jclouds.cloudsigma.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): org.jclouds.cloudsigma.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): org.jclouds.cloudsigma.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): org.jclouds.cloudsigma.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testTemplateBuilderCanUseImageId(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): org.jclouds.cloudsigma.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): (..)
+  testTemplateBuilderWithImageIdSpecified(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): org.jclouds.cloudsigma.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testTemplateBuilderWithLoginUserSpecified(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): org.jclouds.cloudsigma.domain.DriveInfo cannot be cast to java.lang.Comparable
+  testDefaultTemplateBuilder(org.jclouds.cloudsigma.compute.CloudSigmaZurichTemplateBuilderLiveTest): org.jclouds.cloudsigma.domain.DriveInfo cannot be cast to java.lang.Comparable
+
+Tests run: 141, Failures: 97, Errors: 0, Skipped: 38
+
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 45:42.657s
+[INFO] Finished at: Mon Apr 23 23:45:05 PDT 2012
+[INFO] Final Memory: 20M/265M
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:2.12:test (integration) on project cloudsigma-zrh: There are test failures.
+[ERROR] 
+[ERROR] Please refer to /Users/adriancole/workspace/git/jclouds/providers/cloudsigma-zrh/target/surefire-reports for the individual test results.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
