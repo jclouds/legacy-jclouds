@@ -32,66 +32,86 @@ import org.jclouds.openstack.keystone.v2_0.domain.Token;
 import org.jclouds.openstack.keystone.v2_0.domain.User;
 import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.openstack.keystone.v2_0.internal.BaseKeystoneApiLiveTest;
+import org.jclouds.rest.AuthorizationException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Iterables;
 
 /**
- * Tests TokenApi
+ * Tests {@link TokenApi}.
  * 
  * @author Adam Lowe
  */
 @Test(groups = "live", testName = "TokenApiLiveTest", singleThreaded = true)
 public class TokenApiLiveTest extends BaseKeystoneApiLiveTest {
 
-   protected String token;
+    protected String token;
 
-   // Get the token currently in use (there's currently no listTokens())
-   @BeforeMethod
-   public void grabToken() {
-      AuthenticateRequest ar = keystoneContext.getUtils().getInjector().getInstance(AuthenticateRequest.class);
-      HttpRequest test = ar.filter(HttpRequest.builder().method("GET").endpoint(context.getProviderMetadata().getEndpoint()).build());
-      token = Iterables.getOnlyElement(test.getHeaders().get("X-Auth-Token"));
-   }
+    /** Gets the token currently in use (there's currently no {@code listTokens()}). */
+    @BeforeMethod
+    public void grabToken() {
+        AuthenticateRequest ar = keystoneContext.getUtils().getInjector().getInstance(AuthenticateRequest.class);
+        HttpRequest test = ar.filter(HttpRequest.builder().method("GET").endpoint(context.getProviderMetadata().getEndpoint()).build());
+        token = Iterables.getOnlyElement(test.getHeaders().get("X-Auth-Token"));
+    }
 
-   public void testToken() {
+    @Test(description = "GET /v2.0/tokens/{token}")
+    public void testGetToken() {
+        try {
+            Optional<? extends TokenApi> api = keystoneContext.getApi().getTokenApi();
+            if (api.isPresent()) {
+                TokenApi tokenApi = api.get();
 
-      TokenApi api = keystoneContext.getApi().getTokenApi().get();
-      assertTrue(api.isValid(token));
-      Token result = api.get(token);
-      assertNotNull(result);
-      assertEquals(result.getId(), token);
-      assertNotNull(result.getTenant());
+                Token result = tokenApi.get(token);
+                assertNotNull(result);
+                assertEquals(result.getId(), token);
+                assertNotNull(result.getTenant());
 
-      User user = api.getUserOfToken(token);
-      assertNotNull(user);
-      assertNotNull(user.getId());
-      assertNotNull(user.getName());
+                assertNull(tokenApi.get("thisisnotarealtoken!"));
 
-   }
+                User user = tokenApi.getUserOfToken(token);
+                assertNotNull(user);
+                assertNotNull(user.getId());
+                assertNotNull(user.getName());
+            }
+        } catch (AuthorizationException ae) {
+            // Ignore, some Keystone implementations treat this as Admin only
+        }
+    }
 
-   public void testInvalidToken() {
+    @Test(description = "HEAD /v2.0/tokens/{token}")
+    public void testValidToken() {
+        try {
+            Optional<? extends TokenApi> api = keystoneContext.getApi().getTokenApi();
+            if (api.isPresent()) {
+                TokenApi tokenApi = api.get();
 
-      TokenApi api = keystoneContext.getApi().getTokenApi().get();
-      assertFalse(api.isValid("thisisnotarealtoken!"));
-      assertNull(api.get("thisisnotarealtoken!"));
+                assertTrue(tokenApi.isValid(token));
 
-   }
+                assertFalse(tokenApi.isValid("thisisnotarealtoken"));
+            }
+        } catch (AuthorizationException ae) {
+            // Ignore, some Keystone implementations treat this as Admin only
+        }
+    }
 
-   public void testTokenEndpoints() {
+    @Test(description = "GET /v2.0/tokens/{token}/endpoints")
+    public void testTokenEndpoints() {
+        try {
+            Optional<? extends TokenApi> api = keystoneContext.getApi().getTokenApi();
+            if (api.isPresent()) {
+                TokenApi tokenApi = api.get();
 
-      TokenApi api = keystoneContext.getApi().getTokenApi().get();
-      Set<? extends Endpoint> endpoints = api.listEndpointsForToken(token);
-      assertNotNull(endpoints);
-      assertFalse(endpoints.isEmpty());
+                Set<? extends Endpoint> endpoints = tokenApi.listEndpointsForToken(token);
+                assertNotNull(endpoints);
+                assertFalse(endpoints.isEmpty());
 
-   }
-
-   public void testInvalidTokenEndpoints() {
-
-      TokenApi api = keystoneContext.getApi().getTokenApi().get();
-      assertTrue(api.listEndpointsForToken("thisisnotarealtoken!").isEmpty());
-
-   }
+                assertTrue(tokenApi.listEndpointsForToken("thisisnotarealtoken!").isEmpty());
+            }
+        } catch (AuthorizationException ae) {
+            // Ignore, some Keystone implementations treat this as Admin only
+        }
+    }
 }

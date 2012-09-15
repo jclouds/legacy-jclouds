@@ -24,6 +24,7 @@ import java.net.URI;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.naming.AuthenticationException;
 
 import org.jclouds.internal.ClassMethodArgsAndReturnVal;
 import org.jclouds.openstack.v2_0.domain.Extension;
@@ -69,14 +70,14 @@ public class PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensio
 	     } else if (input.getArgs() != null && input.getArgs().length == 1) {
 	        if (Iterables.any(extensions.getUnchecked(checkNotNull(input.getArgs()[0], "arg[0] in %s", input).toString()),
 	              ExtensionPredicates.namespaceOrAliasEquals(namespace, aliases.get(namespace))))
-	           return Optional.of(input.getReturnVal());
+               return Optional.of(input.getReturnVal());
          } else {
             throw new RuntimeException(String.format("expecting zero or one args %s", input));
          }
          return Optional.absent();
       } else {
          // No extension annotation, should check whether to return absent
-	     return Optional.of(input.getReturnVal());
+         return Optional.of(input.getReturnVal());
       }
    }
 
