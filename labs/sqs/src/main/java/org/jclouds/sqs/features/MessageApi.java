@@ -16,23 +16,27 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.sqs;
+package org.jclouds.sqs.features;
 
 import java.net.URI;
-import java.util.Set;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.sqs.domain.BatchResult;
 import org.jclouds.sqs.domain.Message;
 import org.jclouds.sqs.domain.MessageIdAndMD5;
 import org.jclouds.sqs.options.ReceiveMessageOptions;
 import org.jclouds.sqs.options.SendMessageOptions;
 
+import com.google.common.collect.Table;
+
 /**
  * Provides access to SQS via their REST API.
  * <p/>
  * 
- * @see SQSAsyncApi
+ * @see MessageAsyncApi
  * @author Adrian Cole
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
@@ -71,6 +75,40 @@ public interface MessageApi {
     *           delete.
     */
    void delete(String receiptHandle);
+
+   /**
+    * Currently, you can send up to 10 {@link #delete} requests.
+    * 
+    * <h4>Example usage</h4>
+    * 
+    * <pre>
+    * BatchResult<String> results = api.delete(ImmutableMap.<String, String>builder()
+    *                                  .put("id1", "handle1")
+    *                                  .put("id2", "handle2")
+    *                                  .build());
+    * 
+    * if (results.keySet().equals(ImmutableSet.of("id", "id2"))
+    *    // all ok
+    * else
+    *   results.getErrors();
+    * </pre>
+    * 
+    * @param idReceiptHandle
+    *           id for correlating the result to receipt handle
+    * @return result that contains success or errors of the operation
+    * @see #delete(String)
+    */
+   BatchResult<String> delete(Map<String, String> idReceiptHandle);
+
+   /**
+    * Same as {@link #delete(Map)}, except that we generate numeric ids starting
+    * with {@code 1}
+    * 
+    * @param receiptHandles
+    *           receipt handles to delete
+    * @see #delete(Map)
+    */
+   BatchResult<String> delete(Iterable<String> receiptHandles);
 
    /**
     * The ChangeMessageVisibility action changes the visibility timeout of a
@@ -115,6 +153,77 @@ public interface MessageApi {
    void changeVisibility(String receiptHandle, int visibilityTimeout);
 
    /**
+    * Currently, you can send up to 10 {@link #changeVisibility} requests.
+    * 
+    * action. <h4>Example usage</h4>
+    * 
+    * <pre>
+    * BatchResult<String> results = api.changeVisibility(ImmutableTable.<String, String, Integer>builder()
+    *                                  .put("id1", "handle1", 45)
+    *                                  .put("id2", "handle2", 10)
+    *                                  .build());
+    * 
+    * if (results.keySet().equals(ImmutableSet.of("id", "id2"))
+    *    // all ok
+    * else
+    *   results.getErrors();
+    * </pre>
+    * 
+    * @param idReceiptHandleVisibilityTimeout
+    *           id for correlating the result, receipt handle, and visibility
+    *           timeout
+    * @return result that contains success or errors of the operation
+    * @see #changeVisibility(String, int)
+    */
+   BatchResult<String> changeVisibility(Table<String, String, Integer> idReceiptHandleVisibilityTimeout);
+
+   /**
+    * Same as {@link #changeVisibility(Table)}, except that we generate numeric
+    * ids starting with {@code 1}
+    * 
+    * @param receiptHandleVisibilityTimeout
+    *           receipt handle to visibility timeout
+    * @see #changeVisibility(Table)
+    */
+   BatchResult<? extends MessageIdAndMD5> changeVisibility(Map<String, Integer> receiptHandleVisibilityTimeout);
+
+   /**
+    * Currently, you can send up to 10 {@link #changeVisibility} requests.
+    * 
+    * action. <h4>Example usage</h4>
+    * 
+    * <pre>
+    * BatchResult<String> results = api.changeVisibility(ImmutableMap.<String, String>builder()
+    *                                  .put("id1", "handle1")
+    *                                  .put("id2", "handle2")
+    *                                  .build(), 45);
+    * 
+    * if (results.keySet().equals(ImmutableSet.of("id", "id2"))
+    *    // all ok
+    * else
+    *   results.getErrors();
+    * </pre>
+    * 
+    * @param idReceiptHandle
+    *           id for correlating the result to receipt handle
+    * @param visibilityTimeout
+    *           The new value for the message's visibility timeout (in seconds).
+    * @return result that contains success or errors of the operation
+    * @see #changeVisibility(String, int)
+    */
+   BatchResult<String> changeVisibility(Map<String, String> idReceiptHandle, int visibilityTimeout);
+
+   /**
+    * Same as {@link #changeVisibility(Map, int)}, except that we generate
+    * numeric ids starting with {@code 1}
+    * 
+    * @param receiptHandles
+    *           receipt handles to change visibility
+    * @see #changeVisibility(Map, int)
+    */
+   BatchResult<String> changeVisibility(Iterable<String> receiptHandles, int visibilityTimeout);
+
+   /**
     * The SendMessage action delivers a message to the specified queue. The
     * maximum allowed message size is 64 KB.
     * 
@@ -137,6 +246,107 @@ public interface MessageApi {
     * @return id of the message and md5 of the content sent
     */
    MessageIdAndMD5 send(String message);
+
+   /**
+    * Same as {@link #send(Map)} except you can set a delay for each message in
+    * the request.
+    * 
+    * <h4>Example usage</h4>
+    * 
+    * <pre>
+    * BatchResult<? extends MessageIdAndMD5> results = api.sendWithDelays(ImmutableTable.<String, String, Integer>builder()
+    *                                  .put("id1", "test message one", 1)
+    *                                  .put("id2", "test message two", 10)
+    *                                  .build());
+    * 
+    * if (results.keySet().equals(ImmutableSet.of("id", "id2"))
+    *    // all ok
+    * else
+    *   results.getErrors();
+    * </pre>
+    * 
+    * @param idMessageBodyDelaySeconds
+    *           id for correlating the result, message body, and delay seconds
+    * 
+    * @return result that contains success or errors of the operation
+    * @see #send(String, SendMessageOptions)
+    */
+   BatchResult<? extends MessageIdAndMD5> sendWithDelays(Table<String, String, Integer> idMessageBodyDelaySeconds);
+
+   /**
+    * Same as {@link #sendWithDelays(Table)}, except that we generate numeric
+    * ids starting with {@code 1}
+    * 
+    * @param messageBodyDelaySeconds
+    *           message body to the delay desired
+    * @see #sendWithDelays(Table)
+    */
+   BatchResult<? extends MessageIdAndMD5> sendWithDelays(Map<String, Integer> messageBodyDelaySeconds);
+
+   /**
+    * Same as {@link #send(Map)} except you set a delay for all messages in the
+    * request
+    * 
+    * @param delaySeconds
+    *           The number of seconds to delay a specific message. Messages with
+    *           a positive DelaySeconds value become available for processing
+    *           after the delay time is finished.
+    * 
+    * @see #send(String, SendMessageOptions)
+    */
+   BatchResult<? extends MessageIdAndMD5> sendWithDelay(Map<String, String> idMessageBody, int delaySeconds);
+
+   /**
+    * Same as {@link #sendWithDelay(Map, int)}, except that we generate numeric
+    * ids starting with {@code 1}
+    * 
+    * @param messageBodies
+    *           message bodies to send
+    * @see #sendWithDelay(Map, int)
+    */
+   BatchResult<? extends MessageIdAndMD5> sendWithDelay(Iterable<String> messageBodies, int delaySeconds);
+
+   /**
+    * The SendMessageBatch action delivers up to ten messages to the specified
+    * queue. The maximum allowed individual message size is 64 KiB (65,536
+    * bytes).
+    * 
+    * The maximum total payload size (i.e., the sum of all a batch's individual
+    * message lengths) is also 64 KiB (65,536 bytes).
+    * 
+    * Currently, you can send up to 10 {@link #send} requests.
+    * 
+    * action. <h4>Example usage</h4>
+    * 
+    * <pre>
+    * BatchResult<? extends MessageIdAndMD5> results = api.send(ImmutableMap.<String, String>builder()
+    *                                  .put("id1", "test message one")
+    *                                  .put("id2", "test message two")
+    *                                  .build());
+    * 
+    * if (results.keySet().equals(ImmutableSet.of("id", "id2"))
+    *    // all ok
+    * else
+    *   results.getErrors();
+    * </pre>
+    * 
+    * @param idMessageBody
+    *           id for correlating the result to message body
+    * 
+    * @return result that contains success or errors of the operation
+    * @see #send(String)
+    */
+   BatchResult<? extends MessageIdAndMD5> send(Map<String, String> idMessageBody);
+
+   /**
+    * Same as {@link #send(Map)}, except that we generate numeric ids starting
+    * with {@code 1}
+    * 
+    * @param messageBodies
+    *           message bodies to send
+    * @see #send(Map)
+    */
+   BatchResult<? extends MessageIdAndMD5> send(Iterable<String> messageBodies);
 
    /**
     * same as {@link #sendMessage(URI, String)} except you can control options
@@ -192,7 +402,7 @@ public interface MessageApi {
     *           maximum messages to receive, current limit is 10
     * @see #receive(URI)
     */
-   Set<Message> receive(int max);
+   List<Message> receive(int max);
 
    /**
     * same as {@link #receive(URI, int)} except you can provide options like
@@ -205,5 +415,5 @@ public interface MessageApi {
     *           options such as VisibilityTimeout
     * @see #receive(URI, int)
     */
-   Set<Message> receive(int max, ReceiveMessageOptions options);
+   List<Message> receive(int max, ReceiveMessageOptions options);
 }

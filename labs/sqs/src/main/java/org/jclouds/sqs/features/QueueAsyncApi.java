@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.sqs;
+package org.jclouds.sqs.features;
 
 import static org.jclouds.sqs.reference.SQSParameters.ACTION;
 import static org.jclouds.sqs.reference.SQSParameters.VERSION;
@@ -41,6 +41,7 @@ import org.jclouds.rest.annotations.Transform;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.sqs.binders.BindAttributeNamesToIndexedFormParams;
 import org.jclouds.sqs.domain.QueueAttributes;
 import org.jclouds.sqs.functions.MapToQueueAttributes;
@@ -65,7 +66,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface QueueAsyncApi {
 
    /**
-    * @see SQSApi#list
+    * @see QueueApi#list
     */
    @POST
    @Path("/")
@@ -74,7 +75,7 @@ public interface QueueAsyncApi {
    ListenableFuture<Set<URI>> list();
 
    /**
-    * @see SQSApi#list
+    * @see QueueApi#list(ListQueuesOptions)
     */
    @POST
    @Path("/")
@@ -83,7 +84,7 @@ public interface QueueAsyncApi {
    ListenableFuture<Set<URI>> list(ListQueuesOptions options);
 
    /**
-    * @see SQSApi#create
+    * @see QueueApi#create
     */
    @POST
    @Path("/")
@@ -92,7 +93,7 @@ public interface QueueAsyncApi {
    ListenableFuture<URI> create(@FormParam("QueueName") String queueName);
 
    /**
-    * @see SQSApi#create
+    * @see QueueApi#create
     */
    @POST
    @Path("/")
@@ -101,15 +102,16 @@ public interface QueueAsyncApi {
    ListenableFuture<URI> create(@FormParam("QueueName") String queueName, CreateQueueOptions options);
 
    /**
-    * @see SQSApi#delete
+    * @see QueueApi#delete
     */
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DeleteQueue")
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    ListenableFuture<Void> delete(@EndpointParam URI queue);
 
    /**
-    * @see SQSApi#getAttributes(URI)
+    * @see QueueApi#getAttributes(URI)
     */
    @POST
    @Path("/")
@@ -120,7 +122,7 @@ public interface QueueAsyncApi {
    ListenableFuture<? extends QueueAttributes> getAttributes(@EndpointParam URI queue);
 
    /**
-    * @see SQSApi#getAttributes(URI, Iterable)
+    * @see QueueApi#getAttributes(URI, Iterable)
     */
    @POST
    @Path("/")
@@ -130,7 +132,7 @@ public interface QueueAsyncApi {
          @BinderParam(BindAttributeNamesToIndexedFormParams.class) Iterable<String> attributeNames);
 
    /**
-    * @see SQSApi#getAttribute
+    * @see QueueApi#getAttribute
     */
    @POST
    @Path("/")
@@ -139,7 +141,7 @@ public interface QueueAsyncApi {
    ListenableFuture<String> getAttribute(@EndpointParam URI queue, @FormParam("AttributeName.1") String attributeName);
 
    /**
-    * @see SQSApi#setAttribute
+    * @see QueueApi#setAttribute
     */
    @POST
    @Path("/")

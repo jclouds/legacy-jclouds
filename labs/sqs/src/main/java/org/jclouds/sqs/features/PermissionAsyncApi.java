@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.sqs;
+package org.jclouds.sqs.features;
 
 import static org.jclouds.sqs.reference.SQSParameters.ACTION;
 import static org.jclouds.sqs.reference.SQSParameters.VERSION;
@@ -46,7 +46,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface PermissionAsyncApi {
 
    /**
-    * @see SQSApi#addPermissionToAccount
+    * @see PermissionApi#addPermissionToAccount
     */
    @POST
    @Path("/")
@@ -55,7 +55,7 @@ public interface PermissionAsyncApi {
          @FormParam("ActionName.1") Action permission, @FormParam("AWSAccountId.1") String accountId);
 
    /**
-    * @see SQSApi#remove
+    * @see PermissionApi#remove
     */
    @POST
    @Path("/")

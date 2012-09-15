@@ -16,26 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.sqs.xml;
+package org.jclouds.sqs.binders;
 
-import javax.inject.Inject;
+import org.jclouds.aws.binders.BindMapToIndexedFormParams;
 
 /**
- * @see <a href=
- *      "http://docs.amazonwebservices.com/AWSSimpleQueueService/2011-10-01/APIReference/Query_QueryGetQueueAttributes.html"
- *      />
- * 
  * @author Adrian Cole
  */
-public class ValueHandler extends TextFromSingleElementHandler<String> {
-   @Inject
-   protected ValueHandler(String elementName) {
-      super("Value");
-   }
+public class BindDeleteMessageBatchRequestEntryToIndexedFormParams extends BindMapToIndexedFormParams {
 
-   @Override
-   public String apply(String in) {
-      return in;
+   protected BindDeleteMessageBatchRequestEntryToIndexedFormParams() {
+      super("DeleteMessageBatchRequestEntry.%d.Id", "DeleteMessageBatchRequestEntry.%d.ReceiptHandle");
    }
-
 }

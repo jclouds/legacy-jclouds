@@ -20,22 +20,21 @@ package org.jclouds.sqs.xml;
 
 import javax.inject.Inject;
 
+import org.jclouds.sqs.domain.MessageIdAndMD5;
+
 /**
- * @see <a href=
- *      "http://docs.amazonwebservices.com/AWSSimpleQueueService/2011-10-01/APIReference/Query_QueryGetQueueAttributes.html"
- *      />
+ * @see <a
+ *      href="http://docs.amazonwebservices.com/AWSSimpleQueueService/latest/APIReference/Query_QuerySendMessageBatch.html"
+ *      >docs</a>
  * 
  * @author Adrian Cole
  */
-public class ValueHandler extends TextFromSingleElementHandler<String> {
-   @Inject
-   protected ValueHandler(String elementName) {
-      super("Value");
-   }
+public class SendMessageBatchResponseHandler extends BatchResponseHandler<MessageIdAndMD5> {
 
-   @Override
-   public String apply(String in) {
-      return in;
+   @Inject
+   protected SendMessageBatchResponseHandler(SendMessageBatchResultEntryHandler resultHandler,
+         BatchErrorHandler errorHandler) {
+      super("SendMessageBatchResultEntry", resultHandler, errorHandler);
    }
 
 }

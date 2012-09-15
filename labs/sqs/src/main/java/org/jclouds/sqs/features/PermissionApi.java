@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.sqs;
+package org.jclouds.sqs.features;
 
 import java.util.concurrent.TimeUnit;
 
@@ -27,7 +27,7 @@ import org.jclouds.sqs.domain.Action;
  * Provides access to SQS via their REST API.
  * <p/>
  * 
- * @see SQSAsyncApi
+ * @see PermissionAsyncApi
  * @author Adrian Cole
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)

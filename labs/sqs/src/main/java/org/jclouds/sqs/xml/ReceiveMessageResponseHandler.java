@@ -20,15 +20,15 @@ package org.jclouds.sqs.xml;
 
 import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
-import java.util.Set;
+import java.util.List;
 
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.sqs.domain.Message;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
 import com.google.inject.Inject;
 
 /**
@@ -38,11 +38,11 @@ import com.google.inject.Inject;
  * 
  * @author Adrian Cole
  */
-public class ReceiveMessageResponseHandler extends ParseSax.HandlerForGeneratedRequestWithResult<Set<Message>> {
+public class ReceiveMessageResponseHandler extends ParseSax.HandlerForGeneratedRequestWithResult<List<Message>> {
 
    private final MessageHandler messageHandler;
 
-   private Builder<Message> messages = ImmutableSet.<Message> builder();
+   private Builder<Message> messages = ImmutableList.<Message> builder();
 
    private boolean inMessages;
 
@@ -52,7 +52,7 @@ public class ReceiveMessageResponseHandler extends ParseSax.HandlerForGeneratedR
    }
 
    @Override
-   public Set<Message> getResult() {
+   public List<Message> getResult() {
       return messages.build();
    }
 

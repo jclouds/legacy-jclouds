@@ -16,39 +16,31 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.sqs.internal;
+package org.jclouds.sqs.xml;
 
-import java.net.URI;
+import java.util.Map;
 
-import org.jclouds.date.DateService;
-import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.internal.BaseRestApiExpectTest;
-import org.jclouds.sqs.config.SQSRestClientModule;
+import javax.inject.Inject;
 
-import com.google.inject.Module;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 
 /**
+ * @see <a href=
+ *      "http://docs.amazonwebservices.com/AWSSimpleQueueService/latest/APIReference/Query_QueryDeleteMessageBatch.html"
+ *      />
  * 
  * @author Adrian Cole
  */
-public class BaseSQSExpectTest<T> extends BaseRestApiExpectTest<T> {
-   protected URI queue = URI.create("https://sqs.us-east-1.amazonaws.com/993194456877/adrian-sqs11/");
-
-   public BaseSQSExpectTest() {
-      provider = "sqs";
-   }
-
-   @ConfiguresRestClient
-   private static final class TestSQSRestClientModule extends SQSRestClientModule {
-
-      @Override
-      protected String provideTimeStamp(final DateService dateService) {
-         return "2009-11-08T15:54:08.897Z";
-      }
+public class IdHandler extends TextFromSingleElementHandler<Map.Entry<String, String>> {
+   @Inject
+   protected IdHandler(String elementName) {
+      super("Id");
    }
 
    @Override
-   protected Module createModule() {
-      return new TestSQSRestClientModule();
+   public Map.Entry<String, String> apply(String in) {
+      return Iterables.getOnlyElement(ImmutableMap.of(in, in).entrySet());
    }
+
 }

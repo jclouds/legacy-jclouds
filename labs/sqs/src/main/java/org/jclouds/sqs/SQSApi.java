@@ -28,6 +28,9 @@ import org.jclouds.location.Region;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
+import org.jclouds.sqs.features.MessageApi;
+import org.jclouds.sqs.features.PermissionApi;
+import org.jclouds.sqs.features.QueueApi;
 
 import com.google.common.annotations.Beta;
 import com.google.inject.Provides;

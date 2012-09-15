@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.sqs;
+package org.jclouds.sqs.features;
 
 import java.net.URI;
 import java.util.Map;
@@ -32,7 +32,7 @@ import org.jclouds.sqs.options.ListQueuesOptions;
  * Provides access to SQS via their REST API.
  * <p/>
  * 
- * @see SQSAsyncApi
+ * @see QueueAsyncApi
  * @author Adrian Cole
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)

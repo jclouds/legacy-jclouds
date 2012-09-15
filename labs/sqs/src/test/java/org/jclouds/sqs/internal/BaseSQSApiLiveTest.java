@@ -18,12 +18,15 @@
  */
 package org.jclouds.sqs.internal;
 
+import static com.google.common.collect.Iterables.getLast;
+import static org.jclouds.sqs.options.ListQueuesOptions.Builder.queuePrefix;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 import java.net.URI;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.jclouds.apis.BaseContextLiveTest;
@@ -32,9 +35,13 @@ import org.jclouds.sqs.SQSApi;
 import org.jclouds.sqs.SQSApiMetadata;
 import org.jclouds.sqs.SQSAsyncApi;
 import org.jclouds.sqs.domain.Message;
+import org.jclouds.sqs.features.QueueApi;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.Sets;
 import com.google.common.reflect.TypeToken;
+import com.google.common.util.concurrent.Uninterruptibles;
 
 /**
  * 
@@ -43,8 +50,24 @@ import com.google.common.reflect.TypeToken;
 @Test(groups = "live")
 public class BaseSQSApiLiveTest extends BaseContextLiveTest<RestContext<SQSApi, SQSAsyncApi>> {
 
+   protected String prefix = System.getProperty("user.name") + "-sqs";
+
    public BaseSQSApiLiveTest() {
       provider = "sqs";
+   }
+
+   protected Set<URI> queues = Sets.newHashSet();
+
+   protected String recreateQueueInRegion(String queueName, String region) {
+      QueueApi api = api().getQueueApiForRegion(region);
+      Set<URI> result = api.list(queuePrefix(queueName));
+      if (result.size() >= 1) {
+         api.delete(getLast(result));
+      }
+      URI queue = api.create(queueName);
+      assertQueueInList(region, queue);
+      queues.add(queue);
+      return queueName;
    }
 
    @Override
@@ -52,7 +75,7 @@ public class BaseSQSApiLiveTest extends BaseContextLiveTest<RestContext<SQSApi, 
       return SQSApiMetadata.CONTEXT_TOKEN;
    }
 
-   protected String assertPolicyPresent(final URI queue) throws InterruptedException {
+   protected String assertPolicyPresent(final URI queue) {
       final AtomicReference<String> policy = new AtomicReference<String>();
       assertEventually(new Runnable() {
          public void run() {
@@ -65,7 +88,7 @@ public class BaseSQSApiLiveTest extends BaseContextLiveTest<RestContext<SQSApi, 
       return policy.get();
    }
 
-   protected void assertNoPermissions(final URI queue) throws InterruptedException {
+   protected void assertNoPermissions(final URI queue) {
       assertEventually(new Runnable() {
          public void run() {
             String policy = api().getQueueApi().getAttribute(queue, "Policy");
@@ -74,7 +97,7 @@ public class BaseSQSApiLiveTest extends BaseContextLiveTest<RestContext<SQSApi, 
       });
    }
 
-   protected void assertNoMessages(final URI queue) throws InterruptedException {
+   protected void assertNoMessages(final URI queue) {
       assertEventually(new Runnable() {
          public void run() {
             Message message = api().getMessageApiForQueue(queue).receive();
@@ -83,7 +106,7 @@ public class BaseSQSApiLiveTest extends BaseContextLiveTest<RestContext<SQSApi, 
       });
    }
 
-   protected void assertQueueInList(final String region, URI queue) throws InterruptedException {
+   protected void assertQueueInList(final String region, URI queue) {
       final URI finalQ = queue;
       assertEventually(new Runnable() {
          public void run() {
@@ -95,10 +118,6 @@ public class BaseSQSApiLiveTest extends BaseContextLiveTest<RestContext<SQSApi, 
       });
    }
 
-   private SQSApi api() {
-      return context.getApi();
-   }
-
    private static final int INCONSISTENCY_WINDOW = 10000;
 
    /**
@@ -106,7 +125,7 @@ public class BaseSQSApiLiveTest extends BaseContextLiveTest<RestContext<SQSApi, 
     * immediately. Hence, we will try up to the inconsistency window to see if
     * the assertion completes.
     */
-   protected static void assertEventually(Runnable assertion) throws InterruptedException {
+   protected static void assertEventually(Runnable assertion) {
       long start = System.currentTimeMillis();
       AssertionError error = null;
       for (int i = 0; i < 30; i++) {
@@ -119,9 +138,23 @@ public class BaseSQSApiLiveTest extends BaseContextLiveTest<RestContext<SQSApi, 
          } catch (AssertionError e) {
             error = e;
          }
-         Thread.sleep(INCONSISTENCY_WINDOW / 30);
+         Uninterruptibles.sleepUninterruptibly(INCONSISTENCY_WINDOW / 30, TimeUnit.MILLISECONDS);
       }
       if (error != null)
          throw error;
    }
+
+   @Override
+   @AfterClass(groups = "live")
+   protected void tearDownContext() {
+      for (URI queue : queues) {
+         api().getQueueApi().delete(queue);
+      }
+      super.tearDownContext();
+   }
+
+   protected SQSApi api() {
+      return context.getApi();
+   }
+
 }

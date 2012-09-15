@@ -29,6 +29,9 @@ import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
+import org.jclouds.sqs.features.MessageAsyncApi;
+import org.jclouds.sqs.features.PermissionAsyncApi;
+import org.jclouds.sqs.features.QueueAsyncApi;
 
 import com.google.common.annotations.Beta;
 import com.google.inject.Provides;

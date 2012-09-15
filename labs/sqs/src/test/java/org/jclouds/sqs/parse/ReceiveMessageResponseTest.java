@@ -21,7 +21,7 @@ package org.jclouds.sqs.parse;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
-import java.util.Set;
+import java.util.List;
 
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.functions.BaseHandlerTest;
@@ -29,7 +29,7 @@ import org.jclouds.sqs.domain.Message;
 import org.jclouds.sqs.xml.ReceiveMessageResponseHandler;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableList;
 import com.google.common.hash.HashCodes;
 
 /**
@@ -43,17 +43,17 @@ public class ReceiveMessageResponseTest extends BaseHandlerTest {
    public void test() {
       InputStream is = getClass().getResourceAsStream("/messages.xml");
 
-      Set<Message> expected = expected();
+      List<Message> expected = expected();
 
       ReceiveMessageResponseHandler handler = injector.getInstance(ReceiveMessageResponseHandler.class);
-      Set<Message> result = factory.create(handler).parse(is);
+      List<Message> result = factory.create(handler).parse(is);
 
       assertEquals(result.toString(), expected.toString());
 
    }
 
-   public Set<Message> expected() {
-      return ImmutableSet.of(Message
+   public List<Message> expected() {
+      return ImmutableList.of(Message
             .builder()
             .id("5fea7756-0ea4-451a-a703-a558b933e274")
             .receiptHandle(

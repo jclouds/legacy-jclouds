@@ -21,21 +21,16 @@ package org.jclouds.sqs.xml;
 import javax.inject.Inject;
 
 /**
- * @see <a href=
- *      "http://docs.amazonwebservices.com/AWSSimpleQueueService/2011-10-01/APIReference/Query_QueryGetQueueAttributes.html"
- *      />
+ * @see <a
+ *      href="http://docs.amazonwebservices.com/AWSSimpleQueueService/latest/APIReference/Query_QueryChangeMessageVisibilityBatch.html"
+ *      >docs</a>
  * 
  * @author Adrian Cole
  */
-public class ValueHandler extends TextFromSingleElementHandler<String> {
+public class ChangeMessageVisibilityBatchResponseHandler extends BatchResponseHandler<String> {
    @Inject
-   protected ValueHandler(String elementName) {
-      super("Value");
-   }
-
-   @Override
-   public String apply(String in) {
-      return in;
+   protected ChangeMessageVisibilityBatchResponseHandler(IdHandler resultHandler, BatchErrorHandler errorHandler) {
+      super("ChangeMessageVisibilityBatchResultEntry", resultHandler, errorHandler);
    }
 
 }
