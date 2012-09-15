@@ -19,7 +19,7 @@
     under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-queue" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.jclouds</groupId>
@@ -27,28 +27,36 @@
         <version>1.5.0-SNAPSHOT</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
-    <groupId>org.jclouds.labs</groupId>
-    <artifactId>sqs</artifactId>
-    <name>jcloud sqs api</name>
-    <description>jclouds components to access an implementation of Simple Queue Service</description>
+    <groupId>org.jclouds.provider</groupId>
+    <artifactId>aws-sqs</artifactId>
+    <name>jclouds Amazon Simple Queue Service provider</name>
+    <description>Simple Queue Service implementation targeted to Amazon Web Services</description>
     <packaging>bundle</packaging>
 
     <properties>
-        <test.sqs.endpoint>https://sqs.us-east-1.amazonaws.com</test.sqs.endpoint>
-        <test.sqs.api-version>2011-10-01</test.sqs.api-version>
-        <test.sqs.build-version></test.sqs.build-version>
-        <test.sqs.identity>${test.aws.identity}</test.sqs.identity>
-        <test.sqs.credential>${test.aws.credential}</test.sqs.credential>
+        <test.aws-sqs.endpoint>https://sqs.us-east-1.amazonaws.com</test.aws-sqs.endpoint>
+        <test.aws-sqs.api-version>2011-10-01</test.aws-sqs.api-version>
+        <test.aws-sqs.build-version></test.aws-sqs.build-version>
+        <test.aws-sqs.identity>${test.aws.identity}</test.aws-sqs.identity>
+        <test.aws-sqs.credential>${test.aws.credential}</test.aws-sqs.credential>
 
-        <jclouds.osgi.export>org.jclouds.sqs*;version="${project.version}"</jclouds.osgi.export>
-        <jclouds.osgi.import>org.jclouds*;version="${project.version}",*</jclouds.osgi.import>
+      <jclouds.osgi.export>org.jclouds.aws.sqs*;version="${project.version}"</jclouds.osgi.export>
+      <jclouds.osgi.import>org.jclouds*;version="${project.version}",*</jclouds.osgi.import>
     </properties>
 
     <dependencies>
         <dependency>
-            <groupId>org.jclouds.common</groupId>
-            <artifactId>aws-common</artifactId>
+            <groupId>org.jclouds.api</groupId>
+            <artifactId>sqs</artifactId>
             <version>${project.version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.api</groupId>
+            <artifactId>sqs</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jclouds</groupId>
@@ -59,8 +67,14 @@
         </dependency>
         <dependency>
             <groupId>org.jclouds.driver</groupId>
-            <artifactId>jclouds-log4j</artifactId>
+            <artifactId>jclouds-slf4j</artifactId>
             <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.0.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -82,11 +96,11 @@
                                 </goals>
                                 <configuration>
                                     <systemPropertyVariables>
-                                        <test.sqs.endpoint>${test.sqs.endpoint}</test.sqs.endpoint>
-                                        <test.sqs.api-version>${test.sqs.api-version}</test.sqs.api-version>
-                                        <test.sqs.build-version>${test.sqs.build-version}</test.sqs.build-version>
-                                        <test.sqs.identity>${test.sqs.identity}</test.sqs.identity>
-                                        <test.sqs.credential>${test.sqs.credential}</test.sqs.credential>
+                                        <test.aws-sqs.endpoint>${test.aws-sqs.endpoint}</test.aws-sqs.endpoint>
+                                        <test.aws-sqs.api-version>${test.aws-sqs.api-version}</test.aws-sqs.api-version>
+                                        <test.aws-sqs.build-version>${test.aws-sqs.build-version}</test.aws-sqs.build-version>
+                                        <test.aws-sqs.identity>${test.aws-sqs.identity}</test.aws-sqs.identity>
+                                        <test.aws-sqs.credential>${test.aws-sqs.credential}</test.aws-sqs.credential>
                                     </systemPropertyVariables>
                                 </configuration>
                             </execution>
