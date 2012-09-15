@@ -151,7 +151,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          assertEquals(instance.getKeyName(), group);
 
          // make sure we made our dummy group and also let in the user's group
-         assertEquals(Sets.newTreeSet(instance.getGroupIds()), ImmutableSortedSet.<String> of("jclouds#" + group + "#"
+         assertEquals(Sets.newTreeSet(instance.getGroupNames()), ImmutableSortedSet.<String> of("jclouds#" + group + "#"
                   + instance.getRegion(), group));
 
          // make sure our dummy group has no rules

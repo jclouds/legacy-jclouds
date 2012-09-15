@@ -31,7 +31,7 @@ import org.jclouds.ec2.domain.RootDeviceType;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.javax.annotation.Nullable;
 
-import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -241,13 +241,13 @@ public class AWSRunningInstance extends RunningInstance {
       }
 
       @Override
-      public Builder groupId(String groupId) {
-         return Builder.class.cast(super.groupId(groupId));
+      public Builder groupName(String groupName) {
+         return Builder.class.cast(super.groupName(groupName));
       }
 
       @Override
-      public Builder groupIds(Iterable<String> groupIds) {
-         return Builder.class.cast(super.groupIds(groupIds));
+      public Builder groupNames(Iterable<String> groupNames) {
+         return Builder.class.cast(super.groupNames(groupNames));
       }
 
       @Override
@@ -364,74 +364,10 @@ public class AWSRunningInstance extends RunningInstance {
    }
 
    @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = super.hashCode();
-      result = prime * result + ((placementGroup == null) ? 0 : placementGroup.hashCode());
-      result = prime * result + ((productCodes == null) ? 0 : productCodes.hashCode());
-      result = prime * result + ((spotInstanceRequestId == null) ? 0 : spotInstanceRequestId.hashCode());
-      result = prime * result + ((subnetId == null) ? 0 : subnetId.hashCode());
-      result = prime * result + ((vpcId == null) ? 0 : vpcId.hashCode());
-      result = prime * result + ((hypervisor == null) ? 0 : hypervisor.hashCode());
-      result = prime * result + ((tags == null) ? 0 : tags.hashCode());
-      return result;
-   }
-
-   @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (!super.equals(obj))
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      AWSRunningInstance other = (AWSRunningInstance) obj;
-      if (placementGroup == null) {
-         if (other.placementGroup != null)
-            return false;
-      } else if (!placementGroup.equals(other.placementGroup))
-         return false;
-      if (productCodes == null) {
-         if (other.productCodes != null)
-            return false;
-      } else if (!productCodes.equals(other.productCodes))
-         return false;
-      if (spotInstanceRequestId == null) {
-         if (other.spotInstanceRequestId != null)
-            return false;
-      } else if (!spotInstanceRequestId.equals(other.spotInstanceRequestId))
-         return false;
-      if (subnetId == null) {
-         if (other.subnetId != null)
-            return false;
-      } else if (!subnetId.equals(other.subnetId))
-         return false;
-      if (vpcId == null) {
-         if (other.vpcId != null)
-            return false;
-      } else if (!vpcId.equals(other.vpcId))
-         return false;
-      if (tags == null) {
-         if (other.tags != null)
-            return false;
-      } else if (!tags.equals(other.tags))
-         return false;
-      if (!Objects.equal(hypervisor, other.hypervisor))
-         return false;
-      return true;
-   }
-
-   @Override
-   public String toString() {
-      return "[region=" + region + ", availabilityZone=" + availabilityZone + ", instanceId=" + instanceId
-               + ", instanceState=" + rawState + ", instanceType=" + instanceType + ", virtualizationType="
-               + virtualizationType + ", imageId=" + imageId + ", ipAddress=" + ipAddress + ", dnsName=" + dnsName
-               + ", privateIpAddress=" + privateIpAddress + ", privateDnsName=" + privateDnsName + ", keyName="
-               + keyName + ", platform=" + platform + ", launchTime=" + launchTime + ", rootDeviceName="
-               + rootDeviceName + ", rootDeviceType=" + rootDeviceType + ", ebsBlockDevices=" + ebsBlockDevices
-               + ", monitoringState=" + monitoringState + ", placementGroup=" + placementGroup + ", productCodes="
-               + productCodes + ", spotInstanceRequestId=" + spotInstanceRequestId + ", subnetId=" + subnetId
-               + ", hypervisor=" + hypervisor + ", vpcId=" + vpcId + ", tags=" + tags + "]";
+   protected ToStringHelper string() {
+      return super.string().add("monitoringState", monitoringState).add("placementGroup", placementGroup)
+               .add("subnetId", subnetId).add("spotInstanceRequestId", spotInstanceRequestId).add("vpcId", vpcId)
+               .add("hypervisor", hypervisor).add("tags", tags);
    }
 
 }

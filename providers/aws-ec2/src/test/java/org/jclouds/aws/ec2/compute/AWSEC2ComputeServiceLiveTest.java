@@ -187,7 +187,7 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
          }
 
          // make sure we made our dummy group and also let in the user's group
-         assertEquals(newTreeSet(instance.getGroupIds()), ImmutableSortedSet.<String> of("jclouds#" + group, group));
+         assertEquals(newTreeSet(instance.getGroupNames()), ImmutableSortedSet.<String> of("jclouds#" + group, group));
 
          // make sure our dummy group has no rules
          SecurityGroup secgroup = getOnlyElement(securityGroupClient.describeSecurityGroupsInRegion(instance

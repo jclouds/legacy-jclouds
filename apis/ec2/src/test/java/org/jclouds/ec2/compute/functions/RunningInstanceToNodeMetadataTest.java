@@ -241,13 +241,13 @@ public class RunningInstanceToNodeMetadataTest {
    public void testGroupNameIsSetWhenCustomKeyNameIsSetAndSecurityGroupIsGenerated() {
       checkGroupName(RunningInstance.builder().instanceId("id").imageId("image").instanceType("m1.small")
               .instanceState(InstanceState.RUNNING).rawState("running").region("us-east-1").keyName("custom-key")
-              .groupId("jclouds#groupname").build());
+              .groupName("jclouds#groupname").build());
    }
 
    @Test
    public void testGroupNameIsSetWhenCustomSecurityGroupIsSetAndKeyNameIsGenerated() {
       checkGroupName(RunningInstance.builder().instanceId("id").imageId("image").instanceType("m1.small")
-              .instanceState(InstanceState.RUNNING).rawState("running").region("us-east-1").groupId("custom-sec")
+              .instanceState(InstanceState.RUNNING).rawState("running").region("us-east-1").groupName("custom-sec")
               .keyName("jclouds#groupname#23").build());
    }
 
