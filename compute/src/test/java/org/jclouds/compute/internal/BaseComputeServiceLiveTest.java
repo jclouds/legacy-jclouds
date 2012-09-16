@@ -645,7 +645,9 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
    }
 
    protected void createAndRunAServiceInGroup(String group) throws RunNodesException {
-      ImmutableMap<String, String> userMetadata = ImmutableMap.<String, String> of("Name", group);
+      // note that some cloud providers do not support mixed case tag names
+      ImmutableMap<String, String> userMetadata = ImmutableMap.<String, String> of("name", group);
+      
       ImmutableSet<String> tags = ImmutableSet. of(group);
       Stopwatch watch = new Stopwatch().start();
       NodeMetadata node = getOnlyElement(client.createNodesInGroup(group, 1,
