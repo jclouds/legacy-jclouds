@@ -23,12 +23,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.collect.IterableWithMarkers;
 import org.jclouds.http.functions.ReturnTrueOn404;
 import org.jclouds.rest.ResourceNotFoundException;
 
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
 /**
@@ -36,11 +36,11 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 @Singleton
-public class ReturnEmptyListOnNotFoundOr404 implements Function<Exception, Object> {
+public class ReturnEmptyIterableWithMarkerOnNotFoundOr404 implements Function<Exception, Object> {
    private final ReturnTrueOn404 rto404;
 
    @Inject
-   private ReturnEmptyListOnNotFoundOr404(ReturnTrueOn404 rto404) {
+   private ReturnEmptyIterableWithMarkerOnNotFoundOr404(ReturnTrueOn404 rto404) {
       this.rto404 = checkNotNull(rto404, "rto404");
    }
 
@@ -48,9 +48,9 @@ public class ReturnEmptyListOnNotFoundOr404 implements Function<Exception, Objec
       Iterable<ResourceNotFoundException> throwables = Iterables.filter(Throwables.getCausalChain(from),
                ResourceNotFoundException.class);
       if (Iterables.size(throwables) >= 1) {
-         return ImmutableList.of();
+         return IterableWithMarkers.EMPTY;
       } else if (rto404.apply(from)) {
-         return ImmutableList.of();
+         return IterableWithMarkers.EMPTY;
       }
       throw Throwables.propagate(from);
    }

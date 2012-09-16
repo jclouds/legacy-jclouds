@@ -20,8 +20,6 @@ package org.jclouds.rest.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Set;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 

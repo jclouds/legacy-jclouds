@@ -26,6 +26,7 @@ import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Utilities for using {@link IterableWithMarker}s.
@@ -34,6 +35,9 @@ import com.google.common.base.Optional;
  */
 @Beta
 public class IterableWithMarkers {
+   
+   @SuppressWarnings("rawtypes")
+   public static final IterableWithMarker EMPTY = from(ImmutableSet.of());
 
    /**
     * Returns a paginated iterable containing the given elements and null marker.

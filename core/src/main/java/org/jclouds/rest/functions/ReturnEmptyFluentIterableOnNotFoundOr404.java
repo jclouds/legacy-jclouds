@@ -28,7 +28,8 @@ import org.jclouds.rest.ResourceNotFoundException;
 
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 /**
@@ -36,11 +37,11 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 @Singleton
-public class ReturnEmptyListOnNotFoundOr404 implements Function<Exception, Object> {
+public class ReturnEmptyFluentIterableOnNotFoundOr404 implements Function<Exception, Object> {
    private final ReturnTrueOn404 rto404;
 
    @Inject
-   private ReturnEmptyListOnNotFoundOr404(ReturnTrueOn404 rto404) {
+   private ReturnEmptyFluentIterableOnNotFoundOr404(ReturnTrueOn404 rto404) {
       this.rto404 = checkNotNull(rto404, "rto404");
    }
 
@@ -48,9 +49,9 @@ public class ReturnEmptyListOnNotFoundOr404 implements Function<Exception, Objec
       Iterable<ResourceNotFoundException> throwables = Iterables.filter(Throwables.getCausalChain(from),
                ResourceNotFoundException.class);
       if (Iterables.size(throwables) >= 1) {
-         return ImmutableList.of();
+         return FluentIterable.from(ImmutableSet.of());
       } else if (rto404.apply(from)) {
-         return ImmutableList.of();
+         return FluentIterable.from(ImmutableSet.of());
       }
       throw Throwables.propagate(from);
    }
