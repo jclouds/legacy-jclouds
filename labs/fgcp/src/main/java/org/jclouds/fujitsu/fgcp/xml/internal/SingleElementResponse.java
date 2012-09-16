@@ -25,5 +25,5 @@ package org.jclouds.fujitsu.fgcp.xml.internal;
  */
 public interface SingleElementResponse {
 
-    Object getElement();
+   Object getElement();
 }

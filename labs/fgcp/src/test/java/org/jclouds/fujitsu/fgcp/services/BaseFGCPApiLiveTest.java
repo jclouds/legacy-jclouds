@@ -35,50 +35,50 @@ import com.google.inject.Module;
  */
 public class BaseFGCPApiLiveTest extends BaseComputeServiceContextLiveTest {
 
-    protected RestContext<FGCPApi, FGCPAsyncApi> fgcpContext;
+   protected RestContext<FGCPApi, FGCPAsyncApi> fgcpContext;
 
-    public BaseFGCPApiLiveTest() {
-        provider = "fgcp";
-    }
+   public BaseFGCPApiLiveTest() {
+      provider = "fgcp";
+   }
 
-    @Override
-    protected Properties setupProperties() {
-        Properties overrides = super.setupProperties();
+   @Override
+   protected Properties setupProperties() {
+      Properties overrides = super.setupProperties();
 
-        String proxy = System.getenv("http_proxy");
-        if (proxy != null) {
+      String proxy = System.getenv("http_proxy");
+      if (proxy != null) {
 
-            String[] parts = proxy.split("http://|:|@");
+         String[] parts = proxy.split("http://|:|@");
 
-            overrides.setProperty(Constants.PROPERTY_PROXY_HOST,
-                    parts[parts.length - 2]);
-            overrides.setProperty(Constants.PROPERTY_PROXY_PORT,
-                    parts[parts.length - 1]);
+         overrides.setProperty(Constants.PROPERTY_PROXY_HOST,
+               parts[parts.length - 2]);
+         overrides.setProperty(Constants.PROPERTY_PROXY_PORT,
+               parts[parts.length - 1]);
 
-            if (parts.length >= 4) {
-                overrides.setProperty(Constants.PROPERTY_PROXY_USER,
-                        parts[parts.length - 4]);
-                overrides.setProperty(Constants.PROPERTY_PROXY_PASSWORD,
-                        parts[parts.length - 3]);
-            }
-        }
+         if (parts.length >= 4) {
+            overrides.setProperty(Constants.PROPERTY_PROXY_USER,
+                  parts[parts.length - 4]);
+            overrides.setProperty(Constants.PROPERTY_PROXY_PASSWORD,
+                  parts[parts.length - 3]);
+         }
+      }
 
-        // enables peer verification using the CAs bundled with the JRE (or
-        // value of javax.net.ssl.trustStore if set)
-        overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "false");
+      // enables peer verification using the CAs bundled with the JRE (or
+      // value of javax.net.ssl.trustStore if set)
+      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "false");
 
-        return overrides;
-    }
+      return overrides;
+   }
 
-    @BeforeGroups(groups = { "integration", "live" })
-    @Override
-    public void setupContext() {
-        super.setupContext();
-        fgcpContext = view.unwrap();
-    }
+   @BeforeGroups(groups = { "integration", "live" })
+   @Override
+   public void setupContext() {
+      super.setupContext();
+      fgcpContext = view.unwrap();
+   }
 
-    @Override
-    protected Module getSshModule() {
-        return new SshjSshClientModule();
-    }
+   @Override
+   protected Module getSshModule() {
+      return new SshjSshClientModule();
+   }
 }

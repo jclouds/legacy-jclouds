@@ -59,187 +59,187 @@ import com.google.common.collect.Iterables;
  */
 @Singleton
 public class VServerMetadataToNodeMetadata implements
-        Function<VServerMetadata, NodeMetadata> {
+      Function<VServerMetadata, NodeMetadata> {
 
-    public static final Map<VServerStatus, Status> vServerToStatus = ImmutableMap
-            .<VServerStatus, Status> builder()
-            .put(VServerStatus.DEPLOYING, Status.PENDING)
-            .put(VServerStatus.RUNNING, Status.RUNNING)
-            .put(VServerStatus.STOPPING, Status.PENDING)
-            .put(VServerStatus.STOPPED, Status.SUSPENDED)
-            .put(VServerStatus.STARTING, Status.PENDING)
-            .put(VServerStatus.FAILOVER, Status.RUNNING)
-            .put(VServerStatus.UNEXPECTED_STOP, Status.SUSPENDED)
-            .put(VServerStatus.RESTORING, Status.PENDING)
-            .put(VServerStatus.BACKUP_ING, Status.PENDING)
-            .put(VServerStatus.ERROR, Status.ERROR)
-            .put(VServerStatus.START_ERROR, Status.ERROR)
-            .put(VServerStatus.STOP_ERROR, Status.ERROR)
-            .put(VServerStatus.CHANGE_TYPE, Status.PENDING)
-            .put(VServerStatus.REGISTERING, Status.PENDING)
-            .put(VServerStatus.UNRECOGNIZED, Status.UNRECOGNIZED).build();
+   public static final Map<VServerStatus, Status> vServerToStatus = ImmutableMap
+         .<VServerStatus, Status> builder()
+         .put(VServerStatus.DEPLOYING, Status.PENDING)
+         .put(VServerStatus.RUNNING, Status.RUNNING)
+         .put(VServerStatus.STOPPING, Status.PENDING)
+         .put(VServerStatus.STOPPED, Status.SUSPENDED)
+         .put(VServerStatus.STARTING, Status.PENDING)
+         .put(VServerStatus.FAILOVER, Status.RUNNING)
+         .put(VServerStatus.UNEXPECTED_STOP, Status.SUSPENDED)
+         .put(VServerStatus.RESTORING, Status.PENDING)
+         .put(VServerStatus.BACKUP_ING, Status.PENDING)
+         .put(VServerStatus.ERROR, Status.ERROR)
+         .put(VServerStatus.START_ERROR, Status.ERROR)
+         .put(VServerStatus.STOP_ERROR, Status.ERROR)
+         .put(VServerStatus.CHANGE_TYPE, Status.PENDING)
+         .put(VServerStatus.REGISTERING, Status.PENDING)
+         .put(VServerStatus.UNRECOGNIZED, Status.UNRECOGNIZED).build();
 
-    @Resource
-    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
-    protected Logger logger = Logger.NULL;
+   @Resource
+   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
+   protected Logger logger = Logger.NULL;
 
-    protected final Supplier<Set<? extends Location>> locations;
-    protected final Supplier<Set<? extends Image>> images;
-    protected final Supplier<Set<? extends Hardware>> hardwares;
-    protected final GroupNamingConvention nodeNamingConvention;
+   protected final Supplier<Set<? extends Location>> locations;
+   protected final Supplier<Set<? extends Image>> images;
+   protected final Supplier<Set<? extends Hardware>> hardwares;
+   protected final GroupNamingConvention nodeNamingConvention;
 
-    private static class FindImageForVServer implements Predicate<Image> {
-        private final VServer server;
+   private static class FindImageForVServer implements Predicate<Image> {
+      private final VServer server;
 
-        private FindImageForVServer(VServer server) {
-            this.server = server;
-        }
+      private FindImageForVServer(VServer server) {
+         this.server = server;
+      }
 
-        @Override
-        public boolean apply(Image input) {
-            return input.getId().equals(server.getDiskimageId());
-        }
-    }
+      @Override
+      public boolean apply(Image input) {
+         return input.getId().equals(server.getDiskimageId());
+      }
+   }
 
-    protected Image parseImage(VServer from) {
-        try {
-            return Iterables.find(images.get(), new FindImageForVServer(from));
-        } catch (NoSuchElementException e) {
-            logger.warn("could not find a matching image for server %s", from);
-        }
-        return null;
-    }
+   protected Image parseImage(VServer from) {
+      try {
+         return Iterables.find(images.get(), new FindImageForVServer(from));
+      } catch (NoSuchElementException e) {
+         logger.warn("could not find a matching image for server %s", from);
+      }
+      return null;
+   }
 
-    private static class FindHardwareForServerType implements
-            Predicate<Hardware> {
-        private final String type;
+   private static class FindHardwareForServerType implements
+         Predicate<Hardware> {
+      private final String type;
 
-        private FindHardwareForServerType(String type) {
-            this.type = type;
-        }
+      private FindHardwareForServerType(String type) {
+         this.type = type;
+      }
 
-        @Override
-        public boolean apply(Hardware input) {
-            return input.getName().equals(type);
-        }
-    }
+      @Override
+      public boolean apply(Hardware input) {
+         return input.getName().equals(type);
+      }
+   }
 
-    protected Hardware parseHardware(String from) {
-        try {
-            return Iterables.find(hardwares.get(),
-                    new FindHardwareForServerType(from));
-        } catch (NoSuchElementException e) {
-            logger.warn(
-                    "could not find a matching hardware for server type %s",
-                    from);
-        }
-        return null;
-    }
+   protected Hardware parseHardware(String from) {
+      try {
+         return Iterables.find(hardwares.get(),
+               new FindHardwareForServerType(from));
+      } catch (NoSuchElementException e) {
+         logger.warn(
+               "could not find a matching hardware for server type %s",
+               from);
+      }
+      return null;
+   }
 
-    private static class FindLocationForVServer implements Predicate<Location> {
-        private final VServerWithVNICs server;
+   private static class FindLocationForVServer implements Predicate<Location> {
+      private final VServerWithVNICs server;
 
-        private FindLocationForVServer(VServerWithVNICs server) {
-            this.server = server;
-        }
+      private FindLocationForVServer(VServerWithVNICs server) {
+         this.server = server;
+      }
 
-        @Override
-        public boolean apply(Location input) {
-            return input.getId().equals(
-                    Iterables.getLast(server.getVnics()).getNetworkId());
-        }
-    }
+      @Override
+      public boolean apply(Location input) {
+         return input.getId().equals(
+               Iterables.getLast(server.getVnics()).getNetworkId());
+      }
+   }
 
-    protected Location parseLocation(VServerWithVNICs from) {
-        try {
-            return Iterables.find(locations.get(), new FindLocationForVServer(
-                    from));
-        } catch (NoSuchElementException e) {
-            logger.warn("could not find a matching realm for server %s", from);
-        }
-        return null;
-    }
+   protected Location parseLocation(VServerWithVNICs from) {
+      try {
+         return Iterables.find(locations.get(), new FindLocationForVServer(
+               from));
+      } catch (NoSuchElementException e) {
+         logger.warn("could not find a matching realm for server %s", from);
+      }
+      return null;
+   }
 
-    @Inject
-    VServerMetadataToNodeMetadata(
-            @Memoized Supplier<Set<? extends Location>> locations,
-            @Memoized Supplier<Set<? extends Image>> images,
-            @Memoized Supplier<Set<? extends Hardware>> hardwares,
-            GroupNamingConvention.Factory namingConvention) {
-        this.images = checkNotNull(images, "images");
-        this.locations = checkNotNull(locations, "locations");
-        this.hardwares = checkNotNull(hardwares, "hardwares");
-        this.nodeNamingConvention = checkNotNull(namingConvention,
-                "namingConvention").createWithoutPrefix();
-    }
+   @Inject
+   VServerMetadataToNodeMetadata(
+         @Memoized Supplier<Set<? extends Location>> locations,
+         @Memoized Supplier<Set<? extends Image>> images,
+         @Memoized Supplier<Set<? extends Hardware>> hardwares,
+         GroupNamingConvention.Factory namingConvention) {
+      this.images = checkNotNull(images, "images");
+      this.locations = checkNotNull(locations, "locations");
+      this.hardwares = checkNotNull(hardwares, "hardwares");
+      this.nodeNamingConvention = checkNotNull(namingConvention,
+            "namingConvention").createWithoutPrefix();
+   }
 
-    @Override
-    public NodeMetadata apply(VServerMetadata from) {
-        NodeMetadataBuilder builder = new NodeMetadataBuilder();
+   @Override
+   public NodeMetadata apply(VServerMetadata from) {
+      NodeMetadataBuilder builder = new NodeMetadataBuilder();
 
-        builder.ids(from.getId());
-        builder.name(from.getName());
-        builder.group(nodeNamingConvention.groupInUniqueNameOrNull(from
-                .getName()));
-        if (from.getStatus() == null)
-            System.out.println("status null for: " + from.getId() + ": "
-                    + from.getName());
+      builder.ids(from.getId());
+      builder.name(from.getName());
+      builder.group(nodeNamingConvention.groupInUniqueNameOrNull(from
+            .getName()));
+      if (from.getStatus() == null)
+         System.out.println("status null for: " + from.getId() + ": "
+               + from.getName());
 
-        builder.status(vServerToStatus.get(from.getStatus()));
-        builder.privateAddresses(ImmutableSet.<String> of());
-        builder.publicAddresses(ImmutableSet.<String> of());
+      builder.status(vServerToStatus.get(from.getStatus()));
+      builder.privateAddresses(ImmutableSet.<String> of());
+      builder.publicAddresses(ImmutableSet.<String> of());
 
-        //
-        // if (from.getIps() != null) {
-        //
-        // builder.publicAddresses(Collections2.transform(from.getIps(),
-        // new Function<PublicIP, String>() {
-        //
-        // @Override
-        // public String apply(PublicIP input) {
-        // return input.getAddress();
-        // }
-        //
-        // }));
-        // }
+      //
+      // if (from.getIps() != null) {
+      //
+      // builder.publicAddresses(Collections2.transform(from.getIps(),
+      // new Function<PublicIP, String>() {
+      //
+      // @Override
+      // public String apply(PublicIP input) {
+      // return input.getAddress();
+      // }
+      //
+      // }));
+      // }
 
-        if (from.getServer() != null) {
+      if (from.getServer() != null) {
 
-            builder.imageId(from.getServer().getDiskimageId());
-            builder.hardware(parseHardware(from.getServer().getType()));
+         builder.imageId(from.getServer().getDiskimageId());
+         builder.hardware(parseHardware(from.getServer().getType()));
 
-            LoginCredentials.Builder credentialsBuilder = LoginCredentials
-                    .builder().password(from.getInitialPassword());
+         LoginCredentials.Builder credentialsBuilder = LoginCredentials
+               .builder().password(from.getInitialPassword());
 
-            Image image = parseImage(from.getServer());
-            // image will not be found if server was created a while back and
-            // the image has since been destroyed or discontinued (like an old
-            // CentOS version)
-            if (image != null) {
+         Image image = parseImage(from.getServer());
+         // image will not be found if server was created a while back and
+         // the image has since been destroyed or discontinued (like an old
+         // CentOS version)
+         if (image != null) {
 
-                builder.operatingSystem(image.getOperatingSystem());
-                String user = image.getDefaultCredentials().getUser();
-                credentialsBuilder.identity(user);
+            builder.operatingSystem(image.getOperatingSystem());
+            String user = image.getDefaultCredentials().getUser();
+            credentialsBuilder.identity(user);
+         }
+
+         builder.credentials(credentialsBuilder.build());
+
+         if (from.getServer() instanceof VServerWithVNICs) {
+
+            VServerWithVNICs server = (VServerWithVNICs) from.getServer();
+            builder.location(parseLocation(server));
+            List<String> ips = new ArrayList<String>();
+            if (server.getVnics() != null && server.getVnics().iterator().next().getPrivateIp() != null) {
+               ips.add(server.getVnics().iterator().next().getPrivateIp());
             }
+            builder.privateAddresses(ips);
+         }
+      }
+      if (from.getTemplate() != null) {
+         // when creating a new node
+         builder.location(from.getTemplate().getLocation());
+      }
 
-            builder.credentials(credentialsBuilder.build());
-
-            if (from.getServer() instanceof VServerWithVNICs) {
-
-                VServerWithVNICs server = (VServerWithVNICs) from.getServer();
-                builder.location(parseLocation(server));
-                List<String> ips = new ArrayList<String>();
-                if (server.getVnics() != null && server.getVnics().iterator().next().getPrivateIp() != null) {
-                    ips.add(server.getVnics().iterator().next().getPrivateIp());
-                }
-                builder.privateAddresses(ips);
-            }
-        }
-        if (from.getTemplate() != null) {
-            // when creating a new node
-            builder.location(from.getTemplate().getLocation());
-        }
-
-        return builder.build();
-    }
+      return builder.build();
+   }
 }

@@ -37,13 +37,13 @@ import com.google.common.collect.ImmutableSet;
  */
 @XmlRootElement(name = "GetEventLogResponse")
 public class GetEventLogResponse extends SetWithStatusResponse<EventLog> {
-    @XmlElementWrapper(name = "eventlogs")
-    @XmlElement(name = "eventlog")
-    private Set<EventLog> logs = new LinkedHashSet<EventLog>();
+   @XmlElementWrapper(name = "eventlogs")
+   @XmlElement(name = "eventlog")
+   private Set<EventLog> logs = new LinkedHashSet<EventLog>();
 
-    @Override
-    protected Set<EventLog> delegate() {
-        return logs == null ? ImmutableSet.<EventLog> of() : Collections
-                .unmodifiableSet(logs);
-    }
+   @Override
+   protected Set<EventLog> delegate() {
+      return logs == null ? ImmutableSet.<EventLog> of() : Collections
+            .unmodifiableSet(logs);
+   }
 }

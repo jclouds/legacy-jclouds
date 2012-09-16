@@ -32,102 +32,102 @@ import com.google.common.collect.ImmutableSet;
  */
 @XmlRootElement(name = "fw")
 public class Firewall {
-    private NAT nat;
-    private Set<Direction> directions = new LinkedHashSet<Direction>();
-    private String log;
-    private String status;
-    private String category;
-    private String latestVersion;
-    private String comment;
-    private boolean firmUpdateExist;
-    private boolean configUpdateExist;
-    private String backout;
-    private String updateDate;
-    private String currentVersion;
+   private NAT nat;
+   private Set<Direction> directions = new LinkedHashSet<Direction>();
+   private String log;
+   private String status;
+   private String category;
+   private String latestVersion;
+   private String comment;
+   private boolean firmUpdateExist;
+   private boolean configUpdateExist;
+   private String backout;
+   private String updateDate;
+   private String currentVersion;
 
-    /**
-     * @return the nat
-     */
-    public NAT getNat() {
-        return nat;
-    }
+   /**
+    * @return the nat
+    */
+   public NAT getNat() {
+      return nat;
+   }
 
-    /**
-     * @return the directions
-     */
-    public Set<Direction> getDirections() {
-        return directions == null ? ImmutableSet.<Direction> of()
-                : ImmutableSet.copyOf(directions);
-    }
+   /**
+    * @return the directions
+    */
+   public Set<Direction> getDirections() {
+      return directions == null ? ImmutableSet.<Direction> of()
+            : ImmutableSet.copyOf(directions);
+   }
 
-    /**
-     * @return the log
-     */
-    public String getLog() {
-        return log;
-    }
+   /**
+    * @return the log
+    */
+   public String getLog() {
+      return log;
+   }
 
-    /**
-     * @return the status
-     */
-    public String getStatus() {
-        return status;
-    }
+   /**
+    * @return the status
+    */
+   public String getStatus() {
+      return status;
+   }
 
-    /**
-     * @return the category
-     */
-    public String getCategory() {
-        return category;
-    }
+   /**
+    * @return the category
+    */
+   public String getCategory() {
+      return category;
+   }
 
-    /**
-     * @return the latestVersion
-     */
-    public String getLatestVersion() {
-        return latestVersion;
-    }
+   /**
+    * @return the latestVersion
+    */
+   public String getLatestVersion() {
+      return latestVersion;
+   }
 
-    /**
-     * @return the comment
-     */
-    public String getComment() {
-        return comment;
-    }
+   /**
+    * @return the comment
+    */
+   public String getComment() {
+      return comment;
+   }
 
-    /**
-     * @return the firmUpdateExist
-     */
-    public boolean getFirmUpdateExist() {
-        return firmUpdateExist;
-    }
+   /**
+    * @return the firmUpdateExist
+    */
+   public boolean getFirmUpdateExist() {
+      return firmUpdateExist;
+   }
 
-    /**
-     * @return the configUpdateExist
-     */
-    public boolean getConfigUpdateExist() {
-        return configUpdateExist;
-    }
+   /**
+    * @return the configUpdateExist
+    */
+   public boolean getConfigUpdateExist() {
+      return configUpdateExist;
+   }
 
-    /**
-     * @return the backout
-     */
-    public String getBackout() {
-        return backout;
-    }
+   /**
+    * @return the backout
+    */
+   public String getBackout() {
+      return backout;
+   }
 
-    /**
-     * @return the updateDate
-     */
-    public String getUpdateDate() {
-        return updateDate;
-    }
+   /**
+    * @return the updateDate
+    */
+   public String getUpdateDate() {
+      return updateDate;
+   }
 
-    /**
-     * @return the currentVersion
-     */
-    public String getCurrentVersion() {
-        return currentVersion;
-    }
+   /**
+    * @return the currentVersion
+    */
+   public String getCurrentVersion() {
+      return currentVersion;
+   }
 
 }

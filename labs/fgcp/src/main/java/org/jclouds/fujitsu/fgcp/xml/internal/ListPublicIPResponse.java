@@ -39,32 +39,32 @@ import com.google.common.collect.ImmutableSet;
  */
 @XmlRootElement(name = "ListPublicIPResponse")
 public class ListPublicIPResponse extends
-        MapWithStatusResponse<PublicIP, String> implements
-        SingleElementResponse {
-    @XmlElementWrapper(name = "publicips")
-    @XmlElement(name = "publicip")
-    private Set<PublicIPWithSystemId> ips;
+      MapWithStatusResponse<PublicIP, String> implements
+      SingleElementResponse {
+   @XmlElementWrapper(name = "publicips")
+   @XmlElement(name = "publicip")
+   private Set<PublicIPWithSystemId> ips;
 
-    @Override
-    public String toString() {
-        return getElement().toString();
-    }
+   @Override
+   public String toString() {
+      return getElement().toString();
+   }
 
-    @Override
-    protected Map<PublicIP, String> delegate() {
-        Builder<PublicIP, String> returnVal = ImmutableMap.builder();
-        if (ips != null) {
+   @Override
+   protected Map<PublicIP, String> delegate() {
+      Builder<PublicIP, String> returnVal = ImmutableMap.builder();
+      if (ips != null) {
 
-            for (PublicIPWithSystemId ip : ips) {
-                returnVal.put(ip, ip.getVsysId());
-            }
-        }
-        return returnVal.build();
-    }
+         for (PublicIPWithSystemId ip : ips) {
+            returnVal.put(ip, ip.getVsysId());
+         }
+      }
+      return returnVal.build();
+   }
 
-    @Override
-    public Set<? extends PublicIP> getElement() {
-        return ips == null ? ImmutableSet.<PublicIP> of() : Collections
-                .unmodifiableSet(ips);
-    }
+   @Override
+   public Set<? extends PublicIP> getElement() {
+      return ips == null ? ImmutableSet.<PublicIP> of() : Collections
+            .unmodifiableSet(ips);
+   }
 }

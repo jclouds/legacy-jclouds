@@ -38,36 +38,36 @@ import com.google.common.base.Function;
  */
 @Singleton
 public class DiskImageToOperatingSystem implements
-        Function<DiskImage, OperatingSystem> {
+      Function<DiskImage, OperatingSystem> {
 
-    private static final Pattern OS_VERSION_PATTERN = Pattern
-            .compile("^.*?(\\d.*)\\s(32|64).*$");
+   private static final Pattern OS_VERSION_PATTERN = Pattern
+         .compile("^.*?(\\d.*)\\s(32|64).*$");
 
-    @Override
-    public OperatingSystem apply(DiskImage image) {
-        checkNotNull(image, "disk image");
+   @Override
+   public OperatingSystem apply(DiskImage image) {
+      checkNotNull(image, "disk image");
 
-        // convert to short name rhel to accommodate ComputeServiceUtils
-        // conventions
-        String shortOsName = image.getOsName().replace(
-                "Red Hat Enterprise Linux", "rhel");
-        OsFamily osFamily = ComputeServiceUtils
-                .parseOsFamilyOrUnrecognized(shortOsName);
-        OperatingSystem.Builder builder = OperatingSystem.builder();
+      // convert to short name rhel to accommodate ComputeServiceUtils
+      // conventions
+      String shortOsName = image.getOsName().replace(
+            "Red Hat Enterprise Linux", "rhel");
+      OsFamily osFamily = ComputeServiceUtils
+            .parseOsFamilyOrUnrecognized(shortOsName);
+      OperatingSystem.Builder builder = OperatingSystem.builder();
 
-        builder.name(image.getOsName());
-        builder.family(osFamily);
-        builder.is64Bit(image.getOsName().contains("64bit")
-                || image.getOsName().contains("64 bit")
-                || image.getOsName().contains("x64"));
-        // OsType returns guest type (hvm, pv), which aws-ec2 is mapping to arch
-        builder.arch(image.getOsType());
-        Matcher m = OS_VERSION_PATTERN.matcher(image.getOsName());
-        if (m.matches()) {
-            builder.version(m.group(1));
-        }
-        builder.description(image.getOsName());
+      builder.name(image.getOsName());
+      builder.family(osFamily);
+      builder.is64Bit(image.getOsName().contains("64bit")
+            || image.getOsName().contains("64 bit")
+            || image.getOsName().contains("x64"));
+      // OsType returns guest type (hvm, pv), which aws-ec2 is mapping to arch
+      builder.arch(image.getOsType());
+      Matcher m = OS_VERSION_PATTERN.matcher(image.getOsName());
+      if (m.matches()) {
+         builder.version(m.group(1));
+      }
+      builder.description(image.getOsName());
 
-        return builder.build();
-    }
+      return builder.build();
+   }
 }

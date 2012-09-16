@@ -35,27 +35,27 @@ import org.jclouds.fujitsu.fgcp.domain.VServerWithDetails;
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface VirtualServerApi {
 
-    void start(String id);
+   void start(String id);
 
-    void stop(String id);
+   void stop(String id);
 
-    void stopForcefully(String id);
+   void stopForcefully(String id);
 
-    void destroy(String id);
+   void destroy(String id);
 
-    VServer get(String id);
+   VServer get(String id);
 
-    VServerWithDetails getDetails(String id);
+   VServerWithDetails getDetails(String id);
 
-    void update(String id, String name, String value);
+   void update(String id, String name, String value);
 
-    VServerStatus getStatus(String id);
+   VServerStatus getStatus(String id);
 
-    String getInitialPassword(String id);
+   String getInitialPassword(String id);
 
-    void attachDisk(String serverId, String diskId);
+   void attachDisk(String serverId, String diskId);
 
-    Set<PerformanceInfo> getPerformanceInformation(String id, String interval);
+   Set<PerformanceInfo> getPerformanceInformation(String id, String interval);
 
-    void registerAsPrivateDiskImage(String xml);
+   void registerAsPrivateDiskImage(String xml);
 }

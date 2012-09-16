@@ -37,16 +37,16 @@ import com.google.common.base.Function;
 @Singleton
 public class ResourceIdToSystemId implements Function<String, String> {
 
-    @Override
-    public String apply(String id) {
-        checkNotNull(id, "resource id");
+   @Override
+   public String apply(String id) {
+      checkNotNull(id, "resource id");
 
-        Pattern pattern = Pattern.compile("^(\\w+-\\w+)\\b.*");
-        Matcher matcher = pattern.matcher((String) id);
+      Pattern pattern = Pattern.compile("^(\\w+-\\w+)\\b.*");
+      Matcher matcher = pattern.matcher((String) id);
 
-        checkArgument(matcher.find(),
-                "no valid resource id found: " + id.toString());
+      checkArgument(matcher.find(),
+            "no valid resource id found: " + id.toString());
 
-        return matcher.group(1);
-    }
+      return matcher.group(1);
+   }
 }

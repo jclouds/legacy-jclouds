@@ -18,9 +18,9 @@
  */
 package org.jclouds.fujitsu.fgcp.xml.internal;
 
-import com.google.common.collect.ForwardingMap;
-
 import javax.xml.bind.annotation.XmlElement;
+
+import com.google.common.collect.ForwardingMap;
 
 /**
  * Special base class extending (forwardable) Map with fields for the elements
@@ -32,27 +32,27 @@ import javax.xml.bind.annotation.XmlElement;
  * @author Dies Koper
  */
 public abstract class MapWithStatusResponse<K, V> extends ForwardingMap<K, V>
-        implements StatusQuerable {
-    @XmlElement(required = true)
-    private String responseMessage;
-    @XmlElement(required = true)
-    private String responseStatus;
+      implements StatusQuerable {
+   @XmlElement(required = true)
+   private String responseMessage;
+   @XmlElement(required = true)
+   private String responseStatus;
 
-    public String getResponseMessage() {
-        return responseMessage;
-    }
+   public String getResponseMessage() {
+      return responseMessage;
+   }
 
-    public String getResponseStatus() {
-        return responseStatus;
-    }
+   public String getResponseStatus() {
+      return responseStatus;
+   }
 
-    public boolean isError() {
-        return !"SUCCESS".equals(responseStatus);
-    }
+   public boolean isError() {
+      return !"SUCCESS".equals(responseStatus);
+   }
 
-    @Override
-    public String toString() {
-        return "StatusResponse{" + "responseMessage='" + responseMessage + '\''
-                + ", responseStatus='" + responseStatus + '\'' + '}';
-    }
+   @Override
+   public String toString() {
+      return "StatusResponse{" + "responseMessage='" + responseMessage + '\''
+            + ", responseStatus='" + responseStatus + '\'' + '}';
+   }
 }

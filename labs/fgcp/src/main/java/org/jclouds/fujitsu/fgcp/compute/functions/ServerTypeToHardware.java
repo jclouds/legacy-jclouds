@@ -39,30 +39,30 @@ import com.google.common.collect.Iterables;
  */
 @Singleton
 public class ServerTypeToHardware implements Function<ServerType, Hardware> {
-    private final CPUToProcessor cpuToProcessor;
-    private final DiskToVolume diskToVolume;
+   private final CPUToProcessor cpuToProcessor;
+   private final DiskToVolume diskToVolume;
 
-    @Inject
-    public ServerTypeToHardware(CPUToProcessor cpuToProcessor,
-            DiskToVolume diskToVolume) {
-        this.cpuToProcessor = checkNotNull(cpuToProcessor);
-        this.diskToVolume = checkNotNull(diskToVolume);
-    }
+   @Inject
+   public ServerTypeToHardware(CPUToProcessor cpuToProcessor,
+         DiskToVolume diskToVolume) {
+      this.cpuToProcessor = checkNotNull(cpuToProcessor);
+      this.diskToVolume = checkNotNull(diskToVolume);
+   }
 
-    @Override
-    public Hardware apply(ServerType from) {
-        checkNotNull(from, "ServerType");
-        HardwareBuilder builder = new HardwareBuilder();
+   @Override
+   public Hardware apply(ServerType from) {
+      checkNotNull(from, "ServerType");
+      HardwareBuilder builder = new HardwareBuilder();
 
-        builder.ids(from.getId());
-        builder.name(from.getName());
-        builder.ram((int) (1000d * Double.valueOf(from.getMemory().getSize())));
-        builder.processor(cpuToProcessor.apply(from.getCpu()));
-        builder.supportsImage(Predicates.<Image> alwaysTrue());
-        // all servers are 64bit. The OS however may be 32 bit.
-        builder.is64Bit(true);
-        builder.volumes(Iterables.transform(from.getDisks(), diskToVolume));
+      builder.ids(from.getId());
+      builder.name(from.getName());
+      builder.ram((int) (1000d * Double.valueOf(from.getMemory().getSize())));
+      builder.processor(cpuToProcessor.apply(from.getCpu()));
+      builder.supportsImage(Predicates.<Image> alwaysTrue());
+      // all servers are 64bit. The OS however may be 32 bit.
+      builder.is64Bit(true);
+      builder.volumes(Iterables.transform(from.getDisks(), diskToVolume));
 
-        return builder.build();
-    }
+      return builder.build();
+   }
 }

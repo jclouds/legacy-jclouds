@@ -30,17 +30,17 @@ import org.jclouds.fujitsu.fgcp.domain.VDisk;
  */
 @XmlRootElement(name = "GetVDiskAttributesResponse")
 public class GetVDiskAttributesResponse extends StatusResponse implements
-        SingleElementResponse {
-    @XmlElement(required = true)
-    private VDisk vdisk;
+      SingleElementResponse {
+   @XmlElement(required = true)
+   private VDisk vdisk;
 
-    @Override
-    public String toString() {
-        return getElement().toString();
-    }
+   @Override
+   public String toString() {
+      return getElement().toString();
+   }
 
-    @Override
-    public Object getElement() {
-        return vdisk;
-    }
+   @Override
+   public Object getElement() {
+      return vdisk;
+   }
 }

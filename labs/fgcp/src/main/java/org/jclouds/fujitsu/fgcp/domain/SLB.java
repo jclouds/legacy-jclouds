@@ -32,169 +32,169 @@ import com.google.common.collect.ImmutableSet;
  */
 @XmlRootElement(name = "slb")
 public class SLB extends BuiltinServer {
-    private String ipAddress;
+   private String ipAddress;
 
-    private Set<IntermediateCACert> ccacerts = new LinkedHashSet<IntermediateCACert>();
+   private Set<IntermediateCACert> ccacerts = new LinkedHashSet<IntermediateCACert>();
 
-    private Set<ServerCert> servercerts = new LinkedHashSet<ServerCert>();
+   private Set<ServerCert> servercerts = new LinkedHashSet<ServerCert>();
 
-    private Set<Group> groups;
+   private Set<Group> groups;
 
-    private String srcType;
+   private String srcType;
 
-    private String srcPort;
+   private String srcPort;
 
-    private String status;
+   private String status;
 
-    private ErrorStatistics errorStatistics;
+   private ErrorStatistics errorStatistics;
 
-    private LoadStatistics loadStatistics;
+   private LoadStatistics loadStatistics;
 
-    private String category;
+   private String category;
 
-    private String latestVersion;
+   private String latestVersion;
 
-    private String comment;
+   private String comment;
 
-    private boolean firmUpdateExist;
+   private boolean firmUpdateExist;
 
-    private boolean configUpdateExist;
+   private boolean configUpdateExist;
 
-    private boolean backout;
+   private boolean backout;
 
-    private String updateDate;
+   private String updateDate;
 
-    private String currentVersion;
+   private String currentVersion;
 
-    private String webAccelerator;
+   private String webAccelerator;
 
-    /**
-     * @return the ipAddress
-     */
-    public String getIpAddress() {
-        return ipAddress;
-    }
+   /**
+    * @return the ipAddress
+    */
+   public String getIpAddress() {
+      return ipAddress;
+   }
 
-    /**
-     * @return the ccacerts
-     */
-    public Set<IntermediateCACert> getCcacerts() {
-        return ccacerts == null ? ImmutableSet.<IntermediateCACert> of()
-                : ImmutableSet.copyOf(ccacerts);
-    }
+   /**
+    * @return the ccacerts
+    */
+   public Set<IntermediateCACert> getCcacerts() {
+      return ccacerts == null ? ImmutableSet.<IntermediateCACert> of()
+            : ImmutableSet.copyOf(ccacerts);
+   }
 
-    /**
-     * @return the servercerts
-     */
-    public Set<ServerCert> getServercerts() {
-        return servercerts == null ? ImmutableSet.<ServerCert> of()
-                : ImmutableSet.copyOf(servercerts);
-    }
+   /**
+    * @return the servercerts
+    */
+   public Set<ServerCert> getServercerts() {
+      return servercerts == null ? ImmutableSet.<ServerCert> of()
+            : ImmutableSet.copyOf(servercerts);
+   }
 
-    /**
-     * @return the groups
-     */
-    public Set<Group> getGroups() {
-        return groups == null ? ImmutableSet.<Group> of() : ImmutableSet
-                .copyOf(groups);
-    }
+   /**
+    * @return the groups
+    */
+   public Set<Group> getGroups() {
+      return groups == null ? ImmutableSet.<Group> of() : ImmutableSet
+            .copyOf(groups);
+   }
 
-    /**
-     * @return the srcType
-     */
-    public String getSrcType() {
-        return srcType;
-    }
+   /**
+    * @return the srcType
+    */
+   public String getSrcType() {
+      return srcType;
+   }
 
-    /**
-     * @return the srcPort
-     */
-    public String getSrcPort() {
-        return srcPort;
-    }
+   /**
+    * @return the srcPort
+    */
+   public String getSrcPort() {
+      return srcPort;
+   }
 
-    /**
-     * @return the status
-     */
-    public String getStatus() {
-        return status;
-    }
+   /**
+    * @return the status
+    */
+   public String getStatus() {
+      return status;
+   }
 
-    /**
-     * @return the errorStatistics
-     */
-    public ErrorStatistics getErrorStatistics() {
-        return errorStatistics;
-    }
+   /**
+    * @return the errorStatistics
+    */
+   public ErrorStatistics getErrorStatistics() {
+      return errorStatistics;
+   }
 
-    /**
-     * @return the loadStatistics
-     */
-    public LoadStatistics getLoadStatistics() {
-        return loadStatistics;
-    }
+   /**
+    * @return the loadStatistics
+    */
+   public LoadStatistics getLoadStatistics() {
+      return loadStatistics;
+   }
 
-    /**
-     * @return the category
-     */
-    public String getCategory() {
-        return category;
-    }
+   /**
+    * @return the category
+    */
+   public String getCategory() {
+      return category;
+   }
 
-    /**
-     * @return the latestVersion
-     */
-    public String getLatestVersion() {
-        return latestVersion;
-    }
+   /**
+    * @return the latestVersion
+    */
+   public String getLatestVersion() {
+      return latestVersion;
+   }
 
-    /**
-     * @return the comment
-     */
-    public String getComment() {
-        return comment;
-    }
+   /**
+    * @return the comment
+    */
+   public String getComment() {
+      return comment;
+   }
 
-    /**
-     * @return the firmUpdateExist
-     */
-    public boolean getFirmUpdateExist() {
-        return firmUpdateExist;
-    }
+   /**
+    * @return the firmUpdateExist
+    */
+   public boolean getFirmUpdateExist() {
+      return firmUpdateExist;
+   }
 
-    /**
-     * @return the configUpdateExist
-     */
-    public boolean getConfigUpdateExist() {
-        return configUpdateExist;
-    }
+   /**
+    * @return the configUpdateExist
+    */
+   public boolean getConfigUpdateExist() {
+      return configUpdateExist;
+   }
 
-    /**
-     * @return the backout
-     */
-    public boolean getBackout() {
-        return backout;
-    }
+   /**
+    * @return the backout
+    */
+   public boolean getBackout() {
+      return backout;
+   }
 
-    /**
-     * @return the updateDate
-     */
-    public String getUpdateDate() {
-        return updateDate;
-    }
+   /**
+    * @return the updateDate
+    */
+   public String getUpdateDate() {
+      return updateDate;
+   }
 
-    /**
-     * @return the currentVersion
-     */
-    public String getCurrentVersion() {
-        return currentVersion;
-    }
+   /**
+    * @return the currentVersion
+    */
+   public String getCurrentVersion() {
+      return currentVersion;
+   }
 
-    /**
-     * @return the webAccelerator
-     */
-    public String getWebAccelerator() {
-        return webAccelerator;
-    }
+   /**
+    * @return the webAccelerator
+    */
+   public String getWebAccelerator() {
+      return webAccelerator;
+   }
 
 }

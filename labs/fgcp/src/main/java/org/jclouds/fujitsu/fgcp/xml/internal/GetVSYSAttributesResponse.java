@@ -30,17 +30,17 @@ import org.jclouds.fujitsu.fgcp.domain.VSystem;
  */
 @XmlRootElement(name = "GetVSYSAttributesResponse")
 public class GetVSYSAttributesResponse extends StatusResponse implements
-        SingleElementResponse {
-    @XmlElement(name = "vsys")
-    private VSystem system;
+      SingleElementResponse {
+   @XmlElement(name = "vsys")
+   private VSystem system;
 
-    @Override
-    public String toString() {
-        return getElement().toString();
-    }
+   @Override
+   public String toString() {
+      return getElement().toString();
+   }
 
-    @Override
-    public Object getElement() {
-        return system;
-    }
+   @Override
+   public Object getElement() {
+      return system;
+   }
 }

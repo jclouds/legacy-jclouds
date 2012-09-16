@@ -30,48 +30,51 @@ import org.jclouds.providers.internal.BaseProviderMetadata;
  */
 public class FGCPAUProviderMetadata extends FGCPProviderMetadata {
 
-    public static Builder builder() {
-        return new Builder();
-    }
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 1735901960026547803L;
 
-    public FGCPAUProviderMetadata() {
-        super(builder());
-    }
+   public static Builder builder() {
+      return new Builder();
+   }
 
-    public FGCPAUProviderMetadata(Builder builder) {
-        super(builder);
-    }
+   public FGCPAUProviderMetadata() {
+      super(builder());
+   }
 
-    @Override
-    public Builder toBuilder() {
-        return builder().fromProviderMetadata(this);
-    }
+   public FGCPAUProviderMetadata(Builder builder) {
+      super(builder);
+   }
 
-    public static class Builder extends BaseProviderMetadata.Builder {
+   @Override
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
 
-        protected Builder() {
-            id("fgcp-au")
-                    .name("Fujitsu Global Cloud Platform (FGCP) - AU")
-                    .apiMetadata(new FGCPApiMetadata())
-                    .homepage(
-                            URI.create("http://www.fujitsu.com/global/solutions/cloud/solutions/global-cloud-platform/index.html"))
-                    .console(URI.create("http://globalcloud.fujitsu.com.au"))
-                    .defaultProperties(FGCPApiMetadata.defaultProperties())
-                    .iso3166Codes("AU-NSW")
-                    .endpoint(
-                            "https://api.globalcloud.fujitsu.com.au/ovissapi/endpoint")
-                    .defaultProperties(FGCPProviderMetadata.defaultProperties());
-        }
+   public static class Builder extends BaseProviderMetadata.Builder {
 
-        @Override
-        public FGCPAUProviderMetadata build() {
-            return new FGCPAUProviderMetadata(this);
-        }
+      protected Builder() {
+         id("fgcp-au")
+               .name("Fujitsu Global Cloud Platform (FGCP) - AU")
+               .apiMetadata(new FGCPApiMetadata())
+               .homepage(
+                     URI.create("http://www.fujitsu.com/global/solutions/cloud/solutions/global-cloud-platform/index.html"))
+               .console(URI.create("http://globalcloud.fujitsu.com.au"))
+               .defaultProperties(FGCPApiMetadata.defaultProperties())
+               .iso3166Codes("AU-NSW")
+               .endpoint(
+                     "https://api.globalcloud.fujitsu.com.au/ovissapi/endpoint")
+               .defaultProperties(FGCPProviderMetadata.defaultProperties());
+      }
 
-        @Override
-        public Builder fromProviderMetadata(ProviderMetadata in) {
-            super.fromProviderMetadata(in);
-            return this;
-        }
-    }
+      @Override
+      public FGCPAUProviderMetadata build() {
+         return new FGCPAUProviderMetadata(this);
+      }
+
+      @Override
+      public Builder fromProviderMetadata(ProviderMetadata in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
+   }
 }

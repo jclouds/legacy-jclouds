@@ -58,79 +58,79 @@ import com.google.common.util.concurrent.ListenableFuture;
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface BuiltinServerAsyncApi {
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "StartEFM")
-    ListenableFuture<Void> start(
-            @BinderParam(BindAlsoToSystemId.class) @QueryParam("efmId") String id);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "StartEFM")
+   ListenableFuture<Void> start(
+         @BinderParam(BindAlsoToSystemId.class) @QueryParam("efmId") String id);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "StopEFM")
-    ListenableFuture<Void> stop(
-            @BinderParam(BindAlsoToSystemId.class) @QueryParam("efmId") String id);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "StopEFM")
+   ListenableFuture<Void> stop(
+         @BinderParam(BindAlsoToSystemId.class) @QueryParam("efmId") String id);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "DestroyEFM")
-    ListenableFuture<Void> destroy(
-            @BinderParam(BindAlsoToSystemId.class) @QueryParam("efmId") String id);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "DestroyEFM")
+   ListenableFuture<Void> destroy(
+         @BinderParam(BindAlsoToSystemId.class) @QueryParam("efmId") String id);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "BackupEFM")
-    ListenableFuture<Void> backup(
-            @BinderParam(BindAlsoToSystemId.class) @QueryParam("efmId") String id);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "BackupEFM")
+   ListenableFuture<Void> backup(
+         @BinderParam(BindAlsoToSystemId.class) @QueryParam("efmId") String id);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "RestoreEFM")
-    ListenableFuture<Void> restore(
-            @BinderParam(BindAlsoToSystemId.class) @QueryParam("efmId") String id,
-            @QueryParam("backupId") String backupId);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "RestoreEFM")
+   ListenableFuture<Void> restore(
+         @BinderParam(BindAlsoToSystemId.class) @QueryParam("efmId") String id,
+         @QueryParam("backupId") String backupId);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "ListEFMBackup")
-    ListenableFuture<Set<BuiltinServerBackup>> listBackups(
-            @BinderParam(BindAlsoToSystemId.class) @QueryParam("efmId") String id);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "ListEFMBackup")
+   ListenableFuture<Set<BuiltinServerBackup>> listBackups(
+         @BinderParam(BindAlsoToSystemId.class) @QueryParam("efmId") String id);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "DestroyEFMBackup")
-    ListenableFuture<Void> destroyBackup(
-            @BinderParam(BindAlsoToSystemId.class) @QueryParam("efmId") String id,
-            @QueryParam("backupId") String backupId);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "DestroyEFMBackup")
+   ListenableFuture<Void> destroyBackup(
+         @BinderParam(BindAlsoToSystemId.class) @QueryParam("efmId") String id,
+         @QueryParam("backupId") String backupId);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "GetEFMAttributes")
-    @Transform(SingleElementResponseToElement.class)
-    ListenableFuture<BuiltinServer> get(
-            @BinderParam(BindAlsoToSystemId.class) @QueryParam("efmId") String id);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "GetEFMAttributes")
+   @Transform(SingleElementResponseToElement.class)
+   ListenableFuture<BuiltinServer> get(
+         @BinderParam(BindAlsoToSystemId.class) @QueryParam("efmId") String id);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "UpdateEFMAttribute")
-    ListenableFuture<Void> update(
-            @BinderParam(BindAlsoToSystemId.class) @QueryParam("efmId") String id,
-            @QueryParam("attributeName") String name,
-            @QueryParam("attributeValue") String value);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "UpdateEFMAttribute")
+   ListenableFuture<Void> update(
+         @BinderParam(BindAlsoToSystemId.class) @QueryParam("efmId") String id,
+         @QueryParam("attributeName") String name,
+         @QueryParam("attributeValue") String value);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "GetEFMStatus")
-    @Transform(SingleElementResponseToElement.class)
-    ListenableFuture<BuiltinServerStatus> getStatus(
-            @BinderParam(BindAlsoToSystemId.class) @QueryParam("efmId") String id);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "GetEFMStatus")
+   @Transform(SingleElementResponseToElement.class)
+   ListenableFuture<BuiltinServerStatus> getStatus(
+         @BinderParam(BindAlsoToSystemId.class) @QueryParam("efmId") String id);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "GetEFMConfiguration")
-    @Transform(SingleElementResponseToElement.class)
-    ListenableFuture<BuiltinServer> getConfiguration(
-            @BinderParam(BindAlsoToSystemId.class) @QueryParam("efmId") String id,
-            @QueryParam("configurationName") BuiltinServerConfiguration configuration);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "GetEFMConfiguration")
+   @Transform(SingleElementResponseToElement.class)
+   ListenableFuture<BuiltinServer> getConfiguration(
+         @BinderParam(BindAlsoToSystemId.class) @QueryParam("efmId") String id,
+         @QueryParam("configurationName") BuiltinServerConfiguration configuration);
 
 //  @POST
 //  @JAXBResponseParser
@@ -138,8 +138,8 @@ public interface BuiltinServerAsyncApi {
 //  @Transform(SingleElementResponseToElement.class)
 //  ListenableFuture<Set<Rule>> getUpdateDetails(String id);
 
-    // ListenableFuture<Void>
-    // updateConfiguration(@BinderParam(BindAlsoToSystemId.class)
-    // @QueryParam("efmId") String id, xml?);
-//    EFM_UPDATE,         getUpdateStatus(String id);
+   // ListenableFuture<Void>
+   // updateConfiguration(@BinderParam(BindAlsoToSystemId.class)
+   // @QueryParam("efmId") String id, xml?);
+//   EFM_UPDATE,       getUpdateStatus(String id);
 }

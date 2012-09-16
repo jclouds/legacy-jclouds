@@ -18,12 +18,20 @@
  */
 package org.jclouds.fujitsu.fgcp.services;
 
-import org.jclouds.concurrent.Timeout;
-import org.jclouds.fujitsu.fgcp.domain.*;
-
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
+import org.jclouds.concurrent.Timeout;
+import org.jclouds.fujitsu.fgcp.domain.AddressRange;
+import org.jclouds.fujitsu.fgcp.domain.DiskImage;
+import org.jclouds.fujitsu.fgcp.domain.EventLog;
+import org.jclouds.fujitsu.fgcp.domain.Information;
+import org.jclouds.fujitsu.fgcp.domain.PublicIP;
+import org.jclouds.fujitsu.fgcp.domain.ServerType;
+import org.jclouds.fujitsu.fgcp.domain.UsageInfo;
+import org.jclouds.fujitsu.fgcp.domain.VSystem;
+import org.jclouds.fujitsu.fgcp.domain.VSystemDescriptor;
 
 /**
  * API relating to the virtual data center.
@@ -33,43 +41,43 @@ import java.util.concurrent.TimeUnit;
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface VirtualDCApi {
 
-    String createVirtualSystem(String descriptorId, String name);
+   String createVirtualSystem(String descriptorId, String name);
 
-    Set<VSystem> listVirtualSystems();
+   Set<VSystem> listVirtualSystems();
 
-    // according to the manual it takes a 'String diskImageId' but value seems
-    // to be ignored
-    Set<ServerType> listServerTypes();
+   // according to the manual it takes a 'String diskImageId' but value seems
+   // to be ignored
+   Set<ServerType> listServerTypes();
 
-    Set<DiskImage> listDiskImages();
+   Set<DiskImage> listDiskImages();
 
-    Set<DiskImage> listDiskImages(String serverCategory,
-            String vsysDescriptorId);
+   Set<DiskImage> listDiskImages(String serverCategory,
+         String vsysDescriptorId);
 
-    Map<PublicIP, String> listPublicIPs();
+   Map<PublicIP, String> listPublicIPs();
 
-    void addAddressRange(String pipFrom, String pipTo);
+   void addAddressRange(String pipFrom, String pipTo);
 
-    void createAddressPool(String pipFrom, String pipTo);
+   void createAddressPool(String pipFrom, String pipTo);
 
-    void deleteAddressRange(String pipFrom, String pipTo);
+   void deleteAddressRange(String pipFrom, String pipTo);
 
-    Set<AddressRange> getAddressRange();
+   Set<AddressRange> getAddressRange();
 
-    Set<VSystemDescriptor> listVSYSDescriptor();
+   Set<VSystemDescriptor> listVSYSDescriptor();
 
-    Set<VSystemDescriptor> listVSYSDescriptor(String keyword, int estimateFrom,
-            int estimateTo);
+   Set<VSystemDescriptor> listVSYSDescriptor(String keyword, int estimateFrom,
+         int estimateTo);
 
-    Set<EventLog> getEventLogs(boolean all);
+   Set<EventLog> getEventLogs(boolean all);
 
-    Set<EventLog> getEventLogs();
+   Set<EventLog> getEventLogs();
 
-    Set<Information> getInformation(boolean all);
+   Set<Information> getInformation(boolean all);
 
-    Set<Information> getInformation();
+   Set<Information> getInformation();
 
-    Set<UsageInfo> getSystemUsage();
+   Set<UsageInfo> getSystemUsage();
 
-    Set<UsageInfo> getSystemUsage(String systemIds);
+   Set<UsageInfo> getSystemUsage(String systemIds);
 }

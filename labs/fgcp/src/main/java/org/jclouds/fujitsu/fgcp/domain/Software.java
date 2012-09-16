@@ -26,78 +26,78 @@ import com.google.common.base.Objects;
  * @author Dies Koper
  */
 public class Software {
-    private String name;
+   private String name;
 
-    private String id;
+   private String id;
 
-    private String category;
+   private String category;
 
-    private String version;
+   private String version;
 
-    private String officialVersion;
+   private String officialVersion;
 
-    private String patch;
+   private String patch;
 
-    private String license;
+   private String license;
 
-    private String support;
+   private String support;
 
-    public String getName() {
-        return name;
-    }
+   public String getName() {
+      return name;
+   }
 
-    public String getId() {
-        return id;
-    }
+   public String getId() {
+      return id;
+   }
 
-    public String getCategory() {
-        return category;
-    }
+   public String getCategory() {
+      return category;
+   }
 
-    public String getVersion() {
-        return version;
-    }
+   public String getVersion() {
+      return version;
+   }
 
-    public String getOfficialVersion() {
-        return officialVersion;
-    }
+   public String getOfficialVersion() {
+      return officialVersion;
+   }
 
-    public String getPatch() {
-        return patch;
-    }
+   public String getPatch() {
+      return patch;
+   }
 
-    public String getLicense() {
-        return license;
-    }
+   public String getLicense() {
+      return license;
+   }
 
-    public String getSupport() {
-        return support;
-    }
+   public String getSupport() {
+      return support;
+   }
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(id);
-    }
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(id);
+   }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Software that = Software.class.cast(obj);
-        return Objects.equal(this.id, that.id);
-    }
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      Software that = Software.class.cast(obj);
+      return Objects.equal(this.id, that.id);
+   }
 
-    @Override
-    public String toString() {
-        return Objects.toStringHelper(this).omitNullValues().add("id", id)
-                .add("name", name).add("category", category)
-                .add("version", version)
-                .add("officialVersion", officialVersion)
-                .add("support", support).add("patch", patch)
-                .add("license", license).toString();
-    }
+   @Override
+   public String toString() {
+      return Objects.toStringHelper(this).omitNullValues().add("id", id)
+            .add("name", name).add("category", category)
+            .add("version", version)
+            .add("officialVersion", officialVersion)
+            .add("support", support).add("patch", patch)
+            .add("license", license).toString();
+   }
 }

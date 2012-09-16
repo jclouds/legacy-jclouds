@@ -18,10 +18,10 @@
  */
 package org.jclouds.fujitsu.fgcp.xml.internal;
 
-import org.jclouds.fujitsu.fgcp.domain.DiskImage;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.jclouds.fujitsu.fgcp.domain.DiskImage;
 
 /**
  * Wrapper for GetDiskImageAttributesResponse.
@@ -30,17 +30,17 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "GetDiskImageAttributesResponse")
 public class GetDiskImageAttributesResponse extends StatusResponse implements
-        SingleElementResponse {
-    @XmlElement(name = "diskimage")
-    private DiskImage diskImage;
+      SingleElementResponse {
+   @XmlElement(name = "diskimage")
+   private DiskImage diskImage;
 
-    @Override
-    public String toString() {
-        return getElement().toString();
-    }
+   @Override
+   public String toString() {
+      return getElement().toString();
+   }
 
-    @Override
-    public DiskImage getElement() {
-        return diskImage;
-    }
+   @Override
+   public DiskImage getElement() {
+      return diskImage;
+   }
 }

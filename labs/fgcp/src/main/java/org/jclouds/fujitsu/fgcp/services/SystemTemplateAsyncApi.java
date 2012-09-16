@@ -52,30 +52,30 @@ import com.google.common.util.concurrent.ListenableFuture;
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface SystemTemplateAsyncApi {
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "GetVSYSDescriptorConfiguration")
-    @Transform(SingleElementResponseToElement.class)
-    ListenableFuture<VSystemDescriptor> get(
-            @QueryParam("vsysDescriptorId") String id);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "GetVSYSDescriptorConfiguration")
+   @Transform(SingleElementResponseToElement.class)
+   ListenableFuture<VSystemDescriptor> get(
+         @QueryParam("vsysDescriptorId") String id);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "UpdateVSYSDescriptorAttribute")
-    ListenableFuture<Void> update(@QueryParam("vsysDescriptorId") String id,
-            @QueryParam("updateLcId") String localeId,
-            @QueryParam("attributeName") String name,
-            @QueryParam("attributeValue") String value);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "UpdateVSYSDescriptorAttribute")
+   ListenableFuture<Void> update(@QueryParam("vsysDescriptorId") String id,
+         @QueryParam("updateLcId") String localeId,
+         @QueryParam("attributeName") String name,
+         @QueryParam("attributeValue") String value);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "UnregisterVSYSDescriptor")
-    ListenableFuture<Void> deregister(
-            @QueryParam("vsysDescriptorId") String id);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "UnregisterVSYSDescriptor")
+   ListenableFuture<Void> deregister(
+         @QueryParam("vsysDescriptorId") String id);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "UnregisterPrivateVSYSDescriptor")
-    ListenableFuture<Void> deregisterPrivateTemplate(
-            @QueryParam("vsysDescriptorId") String id);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "UnregisterPrivateVSYSDescriptor")
+   ListenableFuture<Void> deregisterPrivateTemplate(
+         @QueryParam("vsysDescriptorId") String id);
 }

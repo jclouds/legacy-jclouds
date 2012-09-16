@@ -37,14 +37,14 @@ import com.google.common.collect.ImmutableSet;
  */
 @XmlRootElement(name = "GetAddressRangeResponse")
 public class GetAddressRangeResponse extends
-        SetWithStatusResponse<AddressRange> {
-    @XmlElementWrapper(name = "addressranges")
-    @XmlElement(name = "addressrange")
-    private Set<AddressRange> ranges = new LinkedHashSet<AddressRange>();
+      SetWithStatusResponse<AddressRange> {
+   @XmlElementWrapper(name = "addressranges")
+   @XmlElement(name = "addressrange")
+   private Set<AddressRange> ranges = new LinkedHashSet<AddressRange>();
 
-    @Override
-    protected Set<AddressRange> delegate() {
-        return ranges == null ? ImmutableSet.<AddressRange> of() : Collections
-                .unmodifiableSet(ranges);
-    }
+   @Override
+   protected Set<AddressRange> delegate() {
+      return ranges == null ? ImmutableSet.<AddressRange> of() : Collections
+            .unmodifiableSet(ranges);
+   }
 }

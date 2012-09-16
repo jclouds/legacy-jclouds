@@ -18,7 +18,6 @@
  */
 package org.jclouds.fujitsu.fgcp.services;
 
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.Consumes;
@@ -55,58 +54,58 @@ import com.google.common.util.concurrent.ListenableFuture;
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface AdditionalDiskAsyncApi {
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "GetVDiskStatus")
-    @Transform(SingleElementResponseToElement.class)
-    ListenableFuture<VDiskStatus> getStatus(
-            @BinderParam(BindAlsoToSystemId.class) @QueryParam("vdiskId") String id);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "GetVDiskStatus")
+   @Transform(SingleElementResponseToElement.class)
+   ListenableFuture<VDiskStatus> getStatus(
+         @BinderParam(BindAlsoToSystemId.class) @QueryParam("vdiskId") String id);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "GetVDiskAttributes")
-    @Transform(SingleElementResponseToElement.class)
-    ListenableFuture<VDisk> get(
-            @BinderParam(BindAlsoToSystemId.class) @QueryParam("vdiskId") String id);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "GetVDiskAttributes")
+   @Transform(SingleElementResponseToElement.class)
+   ListenableFuture<VDisk> get(
+         @BinderParam(BindAlsoToSystemId.class) @QueryParam("vdiskId") String id);
 
-    @GET
-    @QueryParams(keys = "Action", values = "UpdateVDiskAttribute")
-    ListenableFuture<Void> update(
-            @BinderParam(BindAlsoToSystemId.class) @QueryParam("vdiskId") String id,
-            @QueryParam("attributeName") String name,
-            @QueryParam("attributeValue") String value);
+   @GET
+   @QueryParams(keys = "Action", values = "UpdateVDiskAttribute")
+   ListenableFuture<Void> update(
+         @BinderParam(BindAlsoToSystemId.class) @QueryParam("vdiskId") String id,
+         @QueryParam("attributeName") String name,
+         @QueryParam("attributeValue") String value);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "BackupVDisk")
-    ListenableFuture<Void> backup(
-            @BinderParam(BindAlsoToSystemId.class) @QueryParam("vdiskId") String id);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "BackupVDisk")
+   ListenableFuture<Void> backup(
+         @BinderParam(BindAlsoToSystemId.class) @QueryParam("vdiskId") String id);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "RestoreVDisk")
-    ListenableFuture<Void> restore(@QueryParam("vsysId") String systemId,
-            @QueryParam("backupId") String backupId);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "RestoreVDisk")
+   ListenableFuture<Void> restore(@QueryParam("vsysId") String systemId,
+         @QueryParam("backupId") String backupId);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "DestroyVDisk")
-    ListenableFuture<Void> destroy(
-            @BinderParam(BindAlsoToSystemId.class) @QueryParam("vdiskId") String id);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "DestroyVDisk")
+   ListenableFuture<Void> destroy(
+         @BinderParam(BindAlsoToSystemId.class) @QueryParam("vdiskId") String id);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "DetachVDisk")
-    ListenableFuture<Void> detach(
-            @BinderParam(BindAlsoToSystemId.class) @QueryParam("vdiskId") String diskId,
-            @QueryParam("vserverId") String serverId);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "DetachVDisk")
+   ListenableFuture<Void> detach(
+         @BinderParam(BindAlsoToSystemId.class) @QueryParam("vdiskId") String diskId,
+         @QueryParam("vserverId") String serverId);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "DestroyVDiskBackup")
-    ListenableFuture<Void> destroyBackup(@QueryParam("vsysId") String sysId,
-            @QueryParam("backupId") String backupId);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "DestroyVDiskBackup")
+   ListenableFuture<Void> destroyBackup(@QueryParam("vsysId") String sysId,
+         @QueryParam("backupId") String backupId);
 
-    // Set<> listBackups(String sysId);
+   // Set<> listBackups(String sysId);
 
 }

@@ -66,55 +66,55 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 @Singleton
 public class SystemAndNetworkSegmentToLocationSupplier implements
-        LocationsSupplier {
+      LocationsSupplier {
 
-    private final RegionToProviderOrJustProvider regionProvider;
-    private FGCPAsyncApi api;
+   private final RegionToProviderOrJustProvider regionProvider;
+   private FGCPAsyncApi api;
 
-    @Inject
-    SystemAndNetworkSegmentToLocationSupplier(
-            RegionToProviderOrJustProvider regionProvider, FGCPAsyncApi api) {
-        this.regionProvider = checkNotNull(regionProvider,
-                "regionToProviderOrJustProvider");
-        this.api = checkNotNull(api, "api");
-    }
+   @Inject
+   SystemAndNetworkSegmentToLocationSupplier(
+         RegionToProviderOrJustProvider regionProvider, FGCPAsyncApi api) {
+      this.regionProvider = checkNotNull(regionProvider,
+            "regionToProviderOrJustProvider");
+      this.api = checkNotNull(api, "api");
+   }
 
-    @Override
-    public Set<Location> get() {
-        Builder<Location> locations = ImmutableSet.builder();
-        try {
-            List<ListenableFuture<VSystemWithDetails>> futures = new ArrayList<ListenableFuture<VSystemWithDetails>>();
-            for (VSystem system : api.getVirtualDCApi().listVirtualSystems()
-                    .get()) {
+   @Override
+   public Set<Location> get() {
+      Builder<Location> locations = ImmutableSet.builder();
+      try {
+         List<ListenableFuture<VSystemWithDetails>> futures = new ArrayList<ListenableFuture<VSystemWithDetails>>();
+         for (VSystem system : api.getVirtualDCApi().listVirtualSystems()
+               .get()) {
 
-                futures.add(api.getVirtualSystemApi()
-                        .getDetails(system.getId()));
+            futures.add(api.getVirtualSystemApi()
+                  .getDetails(system.getId()));
+         }
+         for (VSystemWithDetails system : Futures.successfulAsList(futures)
+               .get()) {
+
+            Location systemLocation = new LocationBuilder()
+                  .scope(LocationScope.SYSTEM)
+                  .parent(Iterables.getOnlyElement(regionProvider.get()))
+                  .description(system.getName()).id(system.getId())
+                  .build();
+
+            for (VNet net : system.getNetworks()) {
+
+               locations.add(new LocationBuilder()
+                     .scope(LocationScope.NETWORK)
+                     .parent(systemLocation)
+                     .description(
+                           net.getNetworkId().replaceFirst(
+                                 ".+(DMZ|SECURE.)", "\\1"))
+                     .id(net.getNetworkId()).build());
             }
-            for (VSystemWithDetails system : Futures.successfulAsList(futures)
-                    .get()) {
-
-                Location systemLocation = new LocationBuilder()
-                        .scope(LocationScope.SYSTEM)
-                        .parent(Iterables.getOnlyElement(regionProvider.get()))
-                        .description(system.getName()).id(system.getId())
-                        .build();
-
-                for (VNet net : system.getNetworks()) {
-
-                    locations.add(new LocationBuilder()
-                            .scope(LocationScope.NETWORK)
-                            .parent(systemLocation)
-                            .description(
-                                    net.getNetworkId().replaceFirst(
-                                            ".+(DMZ|SECURE.)", "\\1"))
-                            .id(net.getNetworkId()).build());
-                }
-            }
-        } catch (InterruptedException e) {
-            throw Throwables.propagate(e);
-        } catch (ExecutionException e) {
-            throw Throwables.propagate(e);
-        }
-        return locations.build();
-    }
+         }
+      } catch (InterruptedException e) {
+         throw Throwables.propagate(e);
+      } catch (ExecutionException e) {
+         throw Throwables.propagate(e);
+      }
+      return locations.build();
+   }
 }

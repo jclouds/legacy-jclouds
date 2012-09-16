@@ -35,32 +35,32 @@ import org.jclouds.rest.annotations.Delegate;
  * @author Dies Koper
  */
 public interface FGCPAsyncApi {
-    public final static String VERSION = "2012-02-18";
+   public final static String VERSION = "2012-02-18";
 
-    @Delegate
-    VirtualDCAsyncApi getVirtualDCApi();
+   @Delegate
+   VirtualDCAsyncApi getVirtualDCApi();
 
-    @Delegate
-    VirtualSystemAsyncApi getVirtualSystemApi();
+   @Delegate
+   VirtualSystemAsyncApi getVirtualSystemApi();
 
-    @Delegate
-    VirtualServerAsyncApi getVirtualServerApi();
+   @Delegate
+   VirtualServerAsyncApi getVirtualServerApi();
 
-    @Delegate
-    AdditionalDiskAsyncApi getAdditionalDiskApi();
+   @Delegate
+   AdditionalDiskAsyncApi getAdditionalDiskApi();
 
-    @Delegate
-    SystemTemplateAsyncApi getSystemTemplateApi();
+   @Delegate
+   SystemTemplateAsyncApi getSystemTemplateApi();
 
-    @Delegate
-    DiskImageAsyncApi getDiskImageApi();
+   @Delegate
+   DiskImageAsyncApi getDiskImageApi();
 
-    @Delegate
-    FirewallAsyncApi getFirewallApi();
+   @Delegate
+   FirewallAsyncApi getFirewallApi();
 
-    @Delegate
-    LoadBalancerAsyncApi getLoadBalancerApi();
+   @Delegate
+   LoadBalancerAsyncApi getLoadBalancerApi();
 
-    @Delegate
-    PublicIPAddressAsyncApi getPublicIPAddressApi();
+   @Delegate
+   PublicIPAddressAsyncApi getPublicIPAddressApi();
 }

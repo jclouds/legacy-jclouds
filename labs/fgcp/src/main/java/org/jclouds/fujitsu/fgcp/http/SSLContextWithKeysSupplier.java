@@ -45,27 +45,27 @@ import com.google.common.base.Supplier;
  */
 @Singleton
 public class SSLContextWithKeysSupplier implements Supplier<SSLContext> {
-    private SSLContext sc;
+   private SSLContext sc;
 
-    @Inject
-    SSLContextWithKeysSupplier(KeyStore keyStore,
-            @Credential String keyStorePassword, HttpUtils utils,
-            TrustAllCerts trustAllCerts) throws NoSuchAlgorithmException,
-            KeyStoreException, UnrecoverableKeyException,
-            KeyManagementException {
+   @Inject
+   SSLContextWithKeysSupplier(KeyStore keyStore,
+         @Credential String keyStorePassword, HttpUtils utils,
+         TrustAllCerts trustAllCerts) throws NoSuchAlgorithmException,
+         KeyStoreException, UnrecoverableKeyException,
+         KeyManagementException {
 
-        TrustManager[] trustManager = null;
-        if (utils.trustAllCerts()) {
-            trustManager = new TrustManager[] { trustAllCerts };
-        }
-        KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
-        kmf.init(keyStore, keyStorePassword.toCharArray());
-        sc = SSLContext.getInstance("TLS");
-        sc.init(kmf.getKeyManagers(), trustManager, new SecureRandom());
-    }
+      TrustManager[] trustManager = null;
+      if (utils.trustAllCerts()) {
+         trustManager = new TrustManager[] { trustAllCerts };
+      }
+      KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
+      kmf.init(keyStore, keyStorePassword.toCharArray());
+      sc = SSLContext.getInstance("TLS");
+      sc.init(kmf.getKeyManagers(), trustManager, new SecureRandom());
+   }
 
-    @Override
-    public SSLContext get() {
-        return sc;
-    }
+   @Override
+   public SSLContext get() {
+      return sc;
+   }
 }

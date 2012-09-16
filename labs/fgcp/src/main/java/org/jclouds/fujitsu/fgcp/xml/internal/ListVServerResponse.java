@@ -37,13 +37,13 @@ import com.google.common.collect.ImmutableSet;
  */
 @XmlRootElement(name = "ListVServerResponse")
 public class ListVServerResponse extends SetWithStatusResponse<VServer> {
-    @XmlElementWrapper(name = "vservers")
-    @XmlElement(name = "vserver")
-    private Set<VServer> servers = new LinkedHashSet<VServer>();
+   @XmlElementWrapper(name = "vservers")
+   @XmlElement(name = "vserver")
+   private Set<VServer> servers = new LinkedHashSet<VServer>();
 
-    @Override
-    protected Set<VServer> delegate() {
-        return servers == null ? ImmutableSet.<VServer> of() : Collections
-                .unmodifiableSet(servers);
-    }
+   @Override
+   protected Set<VServer> delegate() {
+      return servers == null ? ImmutableSet.<VServer> of() : Collections
+            .unmodifiableSet(servers);
+   }
 }

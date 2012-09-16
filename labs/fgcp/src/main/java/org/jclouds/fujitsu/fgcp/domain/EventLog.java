@@ -29,71 +29,71 @@ import com.google.common.base.Objects;
  */
 @XmlRootElement(name = "errorlog")
 public class EventLog {
-    private String title;
-    private String message;
-    private String startDate;
-    private String expiry;
-    private String entryDate;
+   private String title;
+   private String message;
+   private String startDate;
+   private String expiry;
+   private String entryDate;
 
-    /**
-     * @return the title
-     */
-    public String getTitle() {
-        return title;
-    }
+   /**
+    * @return the title
+    */
+   public String getTitle() {
+      return title;
+   }
 
-    /**
-     * @return the message
-     */
-    public String getMessage() {
-        return message;
-    }
+   /**
+    * @return the message
+    */
+   public String getMessage() {
+      return message;
+   }
 
-    /**
-     * @return the startDate
-     */
-    public String getStartDate() {
-        return startDate;
-    }
+   /**
+    * @return the startDate
+    */
+   public String getStartDate() {
+      return startDate;
+   }
 
-    /**
-     * @return the expiry
-     */
-    public String getExpiry() {
-        return expiry;
-    }
+   /**
+    * @return the expiry
+    */
+   public String getExpiry() {
+      return expiry;
+   }
 
-    /**
-     * @return the entryDate
-     */
-    public String getEntryDate() {
-        return entryDate;
-    }
+   /**
+    * @return the entryDate
+    */
+   public String getEntryDate() {
+      return entryDate;
+   }
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(entryDate, message, title);
-    }
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(entryDate, message, title);
+   }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        EventLog that = EventLog.class.cast(obj);
-        return Objects.equal(this.entryDate, that.entryDate)
-                && Objects.equal(this.message, that.message)
-                && Objects.equal(this.title, that.title);
-    }
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      EventLog that = EventLog.class.cast(obj);
+      return Objects.equal(this.entryDate, that.entryDate)
+            && Objects.equal(this.message, that.message)
+            && Objects.equal(this.title, that.title);
+   }
 
-    @Override
-    public String toString() {
-        return Objects.toStringHelper(this).omitNullValues()
-                .add("entryDate", entryDate).add("title", title)
-                .add("message", message).add("startDate", startDate)
-                .add("expiry", expiry).toString();
-    }
+   @Override
+   public String toString() {
+      return Objects.toStringHelper(this).omitNullValues()
+            .add("entryDate", entryDate).add("title", title)
+            .add("message", message).add("startDate", startDate)
+            .add("expiry", expiry).toString();
+   }
 }
