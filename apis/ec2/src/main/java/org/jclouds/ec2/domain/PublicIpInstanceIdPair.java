@@ -42,8 +42,12 @@ public class PublicIpInstanceIdPair implements Comparable<PublicIpInstanceIdPair
    }
 
    /**
-    * Elastic IP addresses are tied to a Region and cannot be mapped across Regions.
+    * To be removed in jclouds 1.6 <h4>Warning</h4>
+    * 
+    * Especially on EC2 clones that may not support regions, this value is fragile. Consider
+    * alternate means to determine context.
     */
+   @Deprecated
    public String getRegion() {
       return region;
    }

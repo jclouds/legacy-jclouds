@@ -75,12 +75,16 @@ public class Snapshot implements Comparable<Snapshot> {
    }
 
    /**
-    * Snapshots are tied to Regions and can only be used for volumes within the same Region.
+    * To be removed in jclouds 1.6 <h4>Warning</h4>
+    * 
+    * Especially on EC2 clones that may not support regions, this value is fragile. Consider
+    * alternate means to determine context.
     */
+   @Deprecated
    public String getRegion() {
       return region;
    }
-
+   
    /**
     * The ID of the snapshot.
     */

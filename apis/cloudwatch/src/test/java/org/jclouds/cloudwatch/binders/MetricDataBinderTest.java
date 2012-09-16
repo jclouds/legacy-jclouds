@@ -60,7 +60,6 @@ public class MetricDataBinderTest {
                                            .statisticValues(ss)
                                            .dimension(new Dimension("TestDimension", "FAKE"))
                                            .unit(Unit.COUNT)
-                                           .value(2)
                                            .build();
 
       HttpRequest request = binder.bindToRequest(request(), ImmutableSet.of(metricDatum));
@@ -73,8 +72,7 @@ public class MetricDataBinderTest {
                                 "&MetricData.member.1.StatisticValues.Minimum=1.0" +
                                 "&MetricData.member.1.StatisticValues.SampleCount=4.0" +
                                 "&MetricData.member.1.StatisticValues.Sum=10.0" +
-                                "&MetricData.member.1.Unit=" + Unit.COUNT.toString() +
-                                "&MetricData.member.1.Value=2.0");
+                                "&MetricData.member.1.Unit=" + Unit.COUNT.toString());
    }
 
    public void testMetricWithMultipleDimensions() throws Exception {
