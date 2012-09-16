@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.cloudfiles;
+package org.jclouds.openstack.swift;
 
 import javax.inject.Qualifier;
 import java.lang.annotation.ElementType;
