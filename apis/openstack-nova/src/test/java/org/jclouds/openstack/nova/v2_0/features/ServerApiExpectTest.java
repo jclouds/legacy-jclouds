@@ -28,9 +28,13 @@ import org.jclouds.openstack.nova.v2_0.NovaApi;
 import org.jclouds.openstack.nova.v2_0.internal.BaseNovaApiExpectTest;
 import org.jclouds.openstack.nova.v2_0.options.CreateServerOptions;
 import org.jclouds.openstack.nova.v2_0.parse.ParseCreatedServerTest;
+import org.jclouds.openstack.nova.v2_0.parse.ParseMetadataItemTest;
+import org.jclouds.openstack.nova.v2_0.parse.ParseMetadataListTest;
+import org.jclouds.openstack.nova.v2_0.parse.ParseMetadataUpdateTest;
 import org.jclouds.openstack.nova.v2_0.parse.ParseServerListTest;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 
@@ -271,4 +275,307 @@ public class ServerApiExpectTest extends BaseNovaApiExpectTest {
       }
    }
 
+   public void testListMetadataWhenResponseIs2xx() throws Exception {
+      String serverId = "123";
+      
+      HttpRequest listMetadata = HttpRequest
+            .builder()
+            .method("GET")
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/" + serverId + "/metadata")
+            .addHeader("Accept", "application/json")
+            .addHeader("X-Auth-Token", authToken).build();
+        
+      HttpResponse listMetadataResponse = HttpResponse.builder().statusCode(200)
+              .payload(payloadFromResource("/metadata_list.json")).build();
+      
+      
+      NovaApi apiWhenServerExists = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
+               responseWithKeystoneAccess, listMetadata, listMetadataResponse);
+
+      assertEquals(apiWhenServerExists.getServerApiForZone("az-1.region-a.geo-1").listMetadata(serverId).toString(),  
+             new ParseMetadataListTest().expected().toString());
+   }
+   
+   public void testListMetadataWhenResponseIs404() throws Exception {
+      String serverId = "123";
+      HttpRequest listMetadata = HttpRequest
+            .builder()
+            .method("GET")
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/" + serverId + "/metadata")
+            .addHeader("Accept", "*/*")
+            .addHeader("X-Auth-Token", authToken)
+            .build();
+
+      HttpResponse listMetadataResponse = HttpResponse.builder().statusCode(404).build();
+
+      NovaApi apiWhenServerExists = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
+               responseWithKeystoneAccess, listMetadata, listMetadataResponse);
+
+      try {
+    	 apiWhenServerExists.getServerApiForZone("az-1.region-a.geo-1").listMetadata(serverId);
+         fail("Expected an exception.");
+      } catch (Exception e) {
+         ;
+      }
+   }
+
+   public void testSetMetadataWhenResponseIs2xx() throws Exception {
+      String serverId = "123";
+      ImmutableMap<String, String> metadata = new ImmutableMap.Builder<String, String>()
+              .put("Server Label", "Web Head 1")
+              .put("Image Version", "2.1")
+              .build();
+
+      HttpRequest setMetadata = HttpRequest
+            .builder()
+            .method("PUT")
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/" + serverId + "/metadata")
+            .addHeader("Accept", "application/json")
+            .addHeader("X-Auth-Token", authToken)
+            .payload(payloadFromStringWithContentType("{\"metadata\":{\"Server Label\":\"Web Head 1\",\"Image Version\":\"2.1\"}}","application/json"))
+            .build();
+
+      HttpResponse setMetadataResponse = HttpResponse.builder().statusCode(200)
+              .payload(payloadFromResource("/metadata_list.json")).build();
+      
+      NovaApi apiWhenServerExists = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
+               responseWithKeystoneAccess, setMetadata, setMetadataResponse);
+
+      assertEquals(apiWhenServerExists.getServerApiForZone("az-1.region-a.geo-1").setMetadata(serverId, metadata).toString(),  
+             new ParseMetadataListTest().expected().toString());
+   }
+
+   public void testSetMetadataWhenResponseIs404() throws Exception {
+      String serverId = "123";
+      ImmutableMap<String, String> metadata = new ImmutableMap.Builder<String, String>()
+              .put("Server Label", "Web Head 1")
+              .put("Image Version", "2.1")
+              .build();
+      
+      HttpRequest setMetadata = HttpRequest
+            .builder()
+            .method("PUT")
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/" + serverId + "/metadata")
+            .addHeader("Accept", "*/*")
+            .addHeader("X-Auth-Token", authToken)
+            .payload(payloadFromStringWithContentType("{\"metadata\":{\"Server Label\":\"Web Head 1\",\"Image Version\":\"2.1\"}}","application/json"))
+            .build();
+
+      HttpResponse setMetadataResponse = HttpResponse.builder().statusCode(404).build();
+
+      NovaApi apiWhenServerExists = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
+               responseWithKeystoneAccess, setMetadata, setMetadataResponse);
+
+      try {
+    	 apiWhenServerExists.getServerApiForZone("az-1.region-a.geo-1").setMetadata(serverId, metadata);
+         fail("Expected an exception.");
+      } catch (Exception e) {
+         ;
+      }
+   }
+
+   public void testUpdateMetadataWhenResponseIs2xx() throws Exception {
+      String serverId = "123";
+      ImmutableMap<String, String> metadata = new ImmutableMap.Builder<String, String>()
+              .put("Server Label", "Web Head 2")
+              .put("Server Description", "Simple Server")
+              .build();
+
+      HttpRequest setMetadata = HttpRequest
+            .builder()
+            .method("POST")
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/" + serverId + "/metadata")
+            .addHeader("Accept", "application/json")
+            .addHeader("X-Auth-Token", authToken)
+            .payload(payloadFromStringWithContentType("{\"metadata\":{\"Server Label\":\"Web Head 2\",\"Server Description\":\"Simple Server\"}}","application/json"))
+            .build();
+
+      HttpResponse setMetadataResponse = HttpResponse.builder().statusCode(200)
+              .payload(payloadFromResource("/metadata_updated.json")).build();
+      
+      NovaApi apiWhenServerExists = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
+               responseWithKeystoneAccess, setMetadata, setMetadataResponse);
+
+      assertEquals(apiWhenServerExists.getServerApiForZone("az-1.region-a.geo-1").updateMetadata(serverId, metadata).toString(),  
+             new ParseMetadataUpdateTest().expected().toString());
+   }
+
+   public void testUpdateMetadataWhenResponseIs404() throws Exception {
+      String serverId = "123";
+      ImmutableMap<String, String> metadata = new ImmutableMap.Builder<String, String>()
+              .put("Server Label", "Web Head 2")
+              .put("Server Description", "Simple Server")
+              .build();
+
+      HttpRequest setMetadata = HttpRequest
+            .builder()
+            .method("POST")
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/" + serverId + "/metadata")
+            .addHeader("Accept", "application/json")
+            .addHeader("X-Auth-Token", authToken)
+            .payload(payloadFromStringWithContentType("{\"metadata\":{\"Server Label\":\"Web Head 2\",\"Server Description\":\"Simple Server\"}}","application/json"))
+            .build();
+
+      HttpResponse setMetadataResponse = HttpResponse.builder().statusCode(404)
+              .payload(payloadFromResource("/metadata_updated.json")).build();
+
+      NovaApi apiWhenServerExists = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
+               responseWithKeystoneAccess, setMetadata, setMetadataResponse);
+
+      try {
+    	 apiWhenServerExists.getServerApiForZone("az-1.region-a.geo-1").setMetadata(serverId, metadata);
+         fail("Expected an exception.");
+      } catch (Exception e) {
+         ;
+      }
+   }
+
+   public void testGetMetadataItemWhenResponseIs2xx() throws Exception {
+      String serverId = "123";
+      String key = "Server%20Label";
+
+      HttpRequest getMetadataItem = HttpRequest
+            .builder()
+            .method("GET")
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/" + serverId + "/metadata/" + key)
+            .addHeader("Accept", "application/json")
+            .addHeader("X-Auth-Token", authToken)
+            .build();
+
+      HttpResponse getMetadataItemResponse = HttpResponse.builder().statusCode(200)
+              .payload(payloadFromResource("/metadata_item.json")).build();
+      
+      NovaApi apiWhenServerExists = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
+               responseWithKeystoneAccess, getMetadataItem, getMetadataItemResponse);
+
+      assertEquals(apiWhenServerExists.getServerApiForZone("az-1.region-a.geo-1").getMetadataItem(serverId, "Server Label").toString(),  
+             new ParseMetadataItemTest().expected().toString());
+   }
+
+   public void testGetMetadataItemWhenResponseIs404() throws Exception {
+      String serverId = "123";
+      ImmutableMap<String, String> metadata = new ImmutableMap.Builder<String, String>()
+              .put("Server Label", "Web Head 1")
+              .build();
+
+      HttpRequest setMetadata = HttpRequest
+            .builder()
+            .method("GET")
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/" + serverId + "/metadata")
+            .addHeader("Accept", "application/json")
+            .addHeader("X-Auth-Token", authToken)
+            .payload(payloadFromStringWithContentType("{\"metadata\":{\"Server Label\":\"Web Head 2\",\"Server Description\":\"Simple Server\"}}","application/json"))
+            .build();
+
+      HttpResponse setMetadataResponse = HttpResponse.builder().statusCode(404)
+              .payload(payloadFromResource("/metadata_updated.json")).build();
+
+      NovaApi apiWhenServerExists = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
+               responseWithKeystoneAccess, setMetadata, setMetadataResponse);
+
+      try {
+    	 apiWhenServerExists.getServerApiForZone("az-1.region-a.geo-1").setMetadata(serverId, metadata);
+         fail("Expected an exception.");
+      } catch (Exception e) {
+         ;
+      }
+   }
+
+   public void testSetMetadataItemWhenResponseIs2xx() throws Exception {
+      String serverId = "123";
+      ImmutableMap<String, String> metadata = new ImmutableMap.Builder<String, String>()
+              .put("Server Label", "Web Head 2")
+              .put("Server Description", "Simple Server")
+              .build();
+
+      HttpRequest setMetadata = HttpRequest
+            .builder()
+            .method("POST")
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/" + serverId + "/metadata")
+            .addHeader("Accept", "application/json")
+            .addHeader("X-Auth-Token", authToken)
+            .payload(payloadFromStringWithContentType("{\"metadata\":{\"Server Label\":\"Web Head 2\",\"Server Description\":\"Simple Server\"}}","application/json"))
+            .build();
+
+      HttpResponse setMetadataResponse = HttpResponse.builder().statusCode(200)
+              .payload(payloadFromResource("/metadata_updated.json")).build();
+      
+      NovaApi apiWhenServerExists = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
+               responseWithKeystoneAccess, setMetadata, setMetadataResponse);
+
+      assertEquals(apiWhenServerExists.getServerApiForZone("az-1.region-a.geo-1").updateMetadata(serverId, metadata).toString(),  
+             new ParseMetadataUpdateTest().expected().toString());
+   }
+
+   public void testSetMetadataItemWhenResponseIs404() throws Exception {
+      String serverId = "123";
+      ImmutableMap<String, String> metadata = new ImmutableMap.Builder<String, String>()
+              .put("Server Label", "Web Head 2")
+              .put("Server Description", "Simple Server")
+              .build();
+
+      HttpRequest setMetadata = HttpRequest
+            .builder()
+            .method("POST")
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/" + serverId + "/metadata")
+            .addHeader("Accept", "application/json")
+            .addHeader("X-Auth-Token", authToken)
+            .payload(payloadFromStringWithContentType("{\"metadata\":{\"Server Label\":\"Web Head 2\",\"Server Description\":\"Simple Server\"}}","application/json"))
+            .build();
+
+      HttpResponse setMetadataResponse = HttpResponse.builder().statusCode(404)
+              .payload(payloadFromResource("/metadata_updated.json")).build();
+
+      NovaApi apiWhenServerExists = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
+               responseWithKeystoneAccess, setMetadata, setMetadataResponse);
+
+      try {
+    	 apiWhenServerExists.getServerApiForZone("az-1.region-a.geo-1").setMetadata(serverId, metadata);
+         fail("Expected an exception.");
+      } catch (Exception e) {
+         ;
+      }
+   }
+
+   public void testDeleteMetadataItemWhenResponseIs2xx() throws Exception {
+      String serverId = "123";
+      String key = "Server%20Label";
+
+      HttpRequest setMetadataItem = HttpRequest
+            .builder()
+            .method("DELETE")
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/" + serverId + "/metadata/" + key)
+            .addHeader("Accept", "*/*")
+            .addHeader("X-Auth-Token", authToken)
+            .build();
+
+      HttpResponse setMetadataItemResponse = HttpResponse.builder().statusCode(204).build();
+      
+      NovaApi apiWhenServerExists = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
+               responseWithKeystoneAccess, setMetadataItem, setMetadataItemResponse);
+
+      apiWhenServerExists.getServerApiForZone("az-1.region-a.geo-1").deleteMetadataItem(serverId, key);
+
+   }
+
+   public void testDeleteMetadataItemWhenResponseIs404() throws Exception {
+      String serverId = "123";
+      String key = "Server%20Label";
+
+      HttpRequest deleteMetadataItem = HttpRequest
+            .builder()
+            .method("DELETE")
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/" + serverId + "/metadata/" + key)
+            .addHeader("Accept", "*/*")
+            .addHeader("X-Auth-Token", authToken)
+            .build();
+
+      HttpResponse deleteMetadataItemResponse = HttpResponse.builder().statusCode(404).build();
+
+      NovaApi apiWhenServerExists = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
+               responseWithKeystoneAccess, deleteMetadataItem, deleteMetadataItemResponse);
+
+      apiWhenServerExists.getServerApiForZone("az-1.region-a.geo-1").deleteMetadataItem(serverId, key);
+
+   }
 }

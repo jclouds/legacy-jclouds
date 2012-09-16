@@ -18,6 +18,7 @@
  */
 package org.jclouds.openstack.nova.v2_0.features;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.collect.PagedIterable;
@@ -26,6 +27,7 @@ import org.jclouds.openstack.keystone.v2_0.domain.PaginatedCollection;
 import org.jclouds.openstack.nova.v2_0.domain.Image;
 import org.jclouds.openstack.v2_0.domain.Resource;
 import org.jclouds.openstack.v2_0.options.PaginationOptions;
+
 
 /**
  * Provides synchronous access to Images.
@@ -75,5 +77,71 @@ public interface ImageApi {
     * @return server or null if not found
     */
    void delete(String id);
+   
+   /**
+    * List all metadata for an image.
+    * 
+    * @param id
+    *           id of the image
+    * @return the metadata as a Map<String, String> 
+    */
+   Map<String, String> listMetadata(String id);
+
+   /**
+    * Sets the metadata for an image.
+    * 
+    * @param id
+    *           id of the image
+    * @param metadata
+    *           a Map containing the metadata
+    * @return the metadata as a Map<String, String> 
+    */
+   Map<String, String> setMetadata(String id, Map<String, String> metadata);
+
+   /**
+    * Update the metadata for a server.
+    * 
+    * @param id
+    *           id of the image
+    * @param metadata
+    *           a Map containing the metadata
+    * @return the metadata as a Map<String, String> 
+    */
+   Map<String, String> updateMetadata(String id, Map<String, String> metadata);
+   
+   /**
+    * Update the metadata for an image.
+    * 
+    * @param id
+    *           id of the image
+    * @param metadata
+    *           a Map containing the metadata
+    * @return the metadata as a Map<String, String> 
+    */
+   Map<String, String> getMetadataItem(String id, String key);
+
+   
+   /**
+    * Set a metadata item for an image.
+    * 
+    * @param id
+    *           id of the image
+    * @param key
+    *           the name of the metadata item
+    * @param value
+    *           the value of the metadata item
+    * @return the metadata as a Map<String, String> 
+    */
+   Map<String, String> setMetadataItem(String id, String key, String value);
+
+   /**
+    * Delete a metadata item from an image.
+    * 
+    * @param id
+    *           id of the image
+    * @param key
+    *           the name of the metadata item
+    */
+   void deleteMetadataItem(String id, String key);
 
 }
