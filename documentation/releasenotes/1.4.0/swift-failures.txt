@@ -1,0 +1,288 @@
+-------------------------------------------------------------------------------
+Test set: TestSuite
+-------------------------------------------------------------------------------
+Tests run: 200, Failures: 2, Errors: 0, Skipped: 198, Time elapsed: 12.406 sec <<< FAILURE!
+setUpResourcesForAllThreads(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerLiveTest)  Time elapsed: 0 sec  <<< FAILURE!
+org.jclouds.rest.AuthorizationException: command: GET https://region-a.geo-1.objects.hpcloudsvc.com/auth/v1.0 HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized; content: [<html>
+ <head>
+  <title>401 Unauthorized</title>
+ </head>
+ <body>
+  <h1>401 Unauthorized</h1>
+  This server could not verify that you are authorized to access the document you requested. Either you supplied the wrong credentials (e.g., bad password), or your browser does not understand how to supply the credentials required.<br /><br />
+ </body>
+</html>]
+	at org.jclouds.openstack.swift.handlers.ParseSwiftErrorFromHttpResponse.handleError(ParseSwiftErrorFromHttpResponse.java:59)
+	at org.jclouds.http.handlers.DelegatingErrorHandler.handleError(DelegatingErrorHandler.java:69)
+	at org.jclouds.http.internal.BaseHttpCommandExecutorService$HttpResponseCallable.shouldContinue(BaseHttpCommandExecutorService.java:191)
+	at org.jclouds.http.internal.BaseHttpCommandExecutorService$HttpResponseCallable.call(BaseHttpCommandExecutorService.java:161)
+	at org.jclouds.http.internal.BaseHttpCommandExecutorService$HttpResponseCallable.call(BaseHttpCommandExecutorService.java:130)
+	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribingExecutorService.submit(ExecutorServiceModule.java:184)
+	at org.jclouds.http.internal.BaseHttpCommandExecutorService.submit(BaseHttpCommandExecutorService.java:127)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at com.google.inject.internal.DelegatingInvocationHandler.invoke(DelegatingInvocationHandler.java:37)
+	at $Proxy53.submit(Unknown Source)
+	at org.jclouds.http.TransformingHttpCommandExecutorServiceImpl.submit(TransformingHttpCommandExecutorServiceImpl.java:54)
+	at org.jclouds.http.TransformingHttpCommandImpl.execute(TransformingHttpCommandImpl.java:73)
+	at org.jclouds.rest.internal.AsyncRestClientProxy.createListenableFutureForHttpRequestMappedToMethodAndArgs(AsyncRestClientProxy.java:198)
+	at org.jclouds.rest.internal.AsyncRestClientProxy.invoke(AsyncRestClientProxy.java:134)
+	at $Proxy60.authenticate(Unknown Source)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:137)
+	at $Proxy61.authenticate(Unknown Source)
+	at org.jclouds.openstack.config.OpenStackAuthenticationModule$GetAuthenticationResponse$1.apply(OpenStackAuthenticationModule.java:100)
+	at org.jclouds.openstack.config.OpenStackAuthenticationModule$GetAuthenticationResponse$1.apply(OpenStackAuthenticationModule.java:96)
+	at org.jclouds.concurrent.RetryOnTimeOutExceptionFunction.apply(RetryOnTimeOutExceptionFunction.java:49)
+	at com.google.common.cache.CacheLoader$FunctionToCacheLoader.load(CacheLoader.java:119)
+	at com.google.common.cache.LocalCache$LoadingValueReference.loadFuture(LocalCache.java:3568)
+	at com.google.common.cache.LocalCache$Segment.loadSync(LocalCache.java:2350)
+	at com.google.common.cache.LocalCache$Segment.lockedGetOrLoad(LocalCache.java:2313)
+	at com.google.common.cache.LocalCache$Segment.get(LocalCache.java:2228)
+	at com.google.common.cache.LocalCache.get(LocalCache.java:3965)
+	at com.google.common.cache.LocalCache.getOrLoad(LocalCache.java:3969)
+	at com.google.common.cache.LocalCache$LocalManualCache.get(LocalCache.java:4829)
+	at com.google.common.cache.LocalCache$LocalManualCache.getUnchecked(LocalCache.java:4834)
+	at org.jclouds.openstack.config.OpenStackAuthenticationModule$3.get(OpenStackAuthenticationModule.java:127)
+	at org.jclouds.openstack.config.OpenStackAuthenticationModule$3.get(OpenStackAuthenticationModule.java:124)
+	at org.jclouds.openstack.functions.URIFromAuthenticationResponseForService.get(URIFromAuthenticationResponseForService.java:48)
+	at org.jclouds.openstack.functions.URIFromAuthenticationResponseForService.get(URIFromAuthenticationResponseForService.java:31)
+	at org.jclouds.rest.internal.RestAnnotationProcessor.getEndpointFor(RestAnnotationProcessor.java:778)
+	at org.jclouds.rest.internal.RestAnnotationProcessor.createRequest(RestAnnotationProcessor.java:425)
+	at org.jclouds.rest.internal.AsyncRestClientProxy.createListenableFutureForHttpRequestMappedToMethodAndArgs(AsyncRestClientProxy.java:187)
+	at org.jclouds.rest.internal.AsyncRestClientProxy.invoke(AsyncRestClientProxy.java:134)
+	at $Proxy77.listContainers(Unknown Source)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:137)
+	at $Proxy78.listContainers(Unknown Source)
+	at org.jclouds.openstack.swift.blobstore.SwiftBlobStore.list(SwiftBlobStore.java:100)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at com.google.inject.internal.DelegatingInvocationHandler.invoke(DelegatingInvocationHandler.java:37)
+	at $Proxy70.list(Unknown Source)
+	at org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest.deleteEverything(BaseBlobStoreIntegrationTest.java:181)
+	at org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest.createContainersSharedByAllThreads(BaseBlobStoreIntegrationTest.java:135)
+	at org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest.setUpResourcesForAllThreads(BaseBlobStoreIntegrationTest.java:93)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeConfigurationMethod(Invoker.java:543)
+	at org.testng.internal.Invoker.invokeConfigurations(Invoker.java:212)
+	at org.testng.internal.Invoker.invokeConfigurations(Invoker.java:138)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:277)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:53)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:87)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1137)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1062)
+	at org.testng.TestNG.run(TestNG.java:974)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:70)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:158)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:98)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:111)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray(ReflectionUtils.java:164)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:110)
+	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
+	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
+Caused by: org.jclouds.http.HttpResponseException: command: GET https://region-a.geo-1.objects.hpcloudsvc.com/auth/v1.0 HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized; content: [<html>
+ <head>
+  <title>401 Unauthorized</title>
+ </head>
+ <body>
+  <h1>401 Unauthorized</h1>
+  This server could not verify that you are authorized to access the document you requested. Either you supplied the wrong credentials (e.g., bad password), or your browser does not understand how to supply the credentials required.<br /><br />
+ </body>
+</html>]
+	at org.jclouds.openstack.swift.handlers.ParseSwiftErrorFromHttpResponse.handleError(ParseSwiftErrorFromHttpResponse.java:56)
+	at org.jclouds.http.handlers.DelegatingErrorHandler.handleError(DelegatingErrorHandler.java:69)
+	at org.jclouds.http.internal.BaseHttpCommandExecutorService$HttpResponseCallable.shouldContinue(BaseHttpCommandExecutorService.java:191)
+	at org.jclouds.http.internal.BaseHttpCommandExecutorService$HttpResponseCallable.call(BaseHttpCommandExecutorService.java:161)
+	at org.jclouds.http.internal.BaseHttpCommandExecutorService$HttpResponseCallable.call(BaseHttpCommandExecutorService.java:130)
+	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: org.jclouds.http.HttpResponseException: command: GET https://region-a.geo-1.objects.hpcloudsvc.com/auth/v1.0 HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized; content: [<html>
+ <head>
+  <title>401 Unauthorized</title>
+ </head>
+ <body>
+  <h1>401 Unauthorized</h1>
+  This server could not verify that you are authorized to access the document you requested. Either you supplied the wrong credentials (e.g., bad password), or your browser does not understand how to supply the credentials required.<br /><br />
+ </body>
+</html>]
+	at org.jclouds.openstack.swift.handlers.ParseSwiftErrorFromHttpResponse.handleError(ParseSwiftErrorFromHttpResponse.java:56)
+	at org.jclouds.http.handlers.DelegatingErrorHandler.handleError(DelegatingErrorHandler.java:69)
+	at org.jclouds.http.internal.BaseHttpCommandExecutorService$HttpResponseCallable.shouldContinue(BaseHttpCommandExecutorService.java:191)
+	at org.jclouds.http.internal.BaseHttpCommandExecutorService$HttpResponseCallable.call(BaseHttpCommandExecutorService.java:161)
+	at org.jclouds.http.internal.BaseHttpCommandExecutorService$HttpResponseCallable.call(BaseHttpCommandExecutorService.java:130)
+	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+setUpResourcesForAllThreads(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerLiveTest)  Time elapsed: 0 sec  <<< FAILURE!
+org.jclouds.rest.AuthorizationException: command: GET https://region-a.geo-1.objects.hpcloudsvc.com/auth/v1.0 HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized; content: [<html>
+ <head>
+  <title>401 Unauthorized</title>
+ </head>
+ <body>
+  <h1>401 Unauthorized</h1>
+  This server could not verify that you are authorized to access the document you requested. Either you supplied the wrong credentials (e.g., bad password), or your browser does not understand how to supply the credentials required.<br /><br />
+ </body>
+</html>]
+	at org.jclouds.openstack.swift.handlers.ParseSwiftErrorFromHttpResponse.handleError(ParseSwiftErrorFromHttpResponse.java:59)
+	at org.jclouds.http.handlers.DelegatingErrorHandler.handleError(DelegatingErrorHandler.java:69)
+	at org.jclouds.http.internal.BaseHttpCommandExecutorService$HttpResponseCallable.shouldContinue(BaseHttpCommandExecutorService.java:191)
+	at org.jclouds.http.internal.BaseHttpCommandExecutorService$HttpResponseCallable.call(BaseHttpCommandExecutorService.java:161)
+	at org.jclouds.http.internal.BaseHttpCommandExecutorService$HttpResponseCallable.call(BaseHttpCommandExecutorService.java:130)
+	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribingExecutorService.submit(ExecutorServiceModule.java:184)
+	at org.jclouds.http.internal.BaseHttpCommandExecutorService.submit(BaseHttpCommandExecutorService.java:127)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at com.google.inject.internal.DelegatingInvocationHandler.invoke(DelegatingInvocationHandler.java:37)
+	at $Proxy53.submit(Unknown Source)
+	at org.jclouds.http.TransformingHttpCommandExecutorServiceImpl.submit(TransformingHttpCommandExecutorServiceImpl.java:54)
+	at org.jclouds.http.TransformingHttpCommandImpl.execute(TransformingHttpCommandImpl.java:73)
+	at org.jclouds.rest.internal.AsyncRestClientProxy.createListenableFutureForHttpRequestMappedToMethodAndArgs(AsyncRestClientProxy.java:198)
+	at org.jclouds.rest.internal.AsyncRestClientProxy.invoke(AsyncRestClientProxy.java:134)
+	at $Proxy60.authenticate(Unknown Source)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:137)
+	at $Proxy61.authenticate(Unknown Source)
+	at org.jclouds.openstack.config.OpenStackAuthenticationModule$GetAuthenticationResponse$1.apply(OpenStackAuthenticationModule.java:100)
+	at org.jclouds.openstack.config.OpenStackAuthenticationModule$GetAuthenticationResponse$1.apply(OpenStackAuthenticationModule.java:96)
+	at org.jclouds.concurrent.RetryOnTimeOutExceptionFunction.apply(RetryOnTimeOutExceptionFunction.java:49)
+	at com.google.common.cache.CacheLoader$FunctionToCacheLoader.load(CacheLoader.java:119)
+	at com.google.common.cache.LocalCache$LoadingValueReference.loadFuture(LocalCache.java:3568)
+	at com.google.common.cache.LocalCache$Segment.loadSync(LocalCache.java:2350)
+	at com.google.common.cache.LocalCache$Segment.lockedGetOrLoad(LocalCache.java:2313)
+	at com.google.common.cache.LocalCache$Segment.get(LocalCache.java:2228)
+	at com.google.common.cache.LocalCache.get(LocalCache.java:3965)
+	at com.google.common.cache.LocalCache.getOrLoad(LocalCache.java:3969)
+	at com.google.common.cache.LocalCache$LocalManualCache.get(LocalCache.java:4829)
+	at com.google.common.cache.LocalCache$LocalManualCache.getUnchecked(LocalCache.java:4834)
+	at org.jclouds.openstack.config.OpenStackAuthenticationModule$3.get(OpenStackAuthenticationModule.java:127)
+	at org.jclouds.openstack.config.OpenStackAuthenticationModule$3.get(OpenStackAuthenticationModule.java:124)
+	at org.jclouds.openstack.functions.URIFromAuthenticationResponseForService.get(URIFromAuthenticationResponseForService.java:48)
+	at org.jclouds.openstack.functions.URIFromAuthenticationResponseForService.get(URIFromAuthenticationResponseForService.java:31)
+	at org.jclouds.rest.internal.RestAnnotationProcessor.getEndpointFor(RestAnnotationProcessor.java:778)
+	at org.jclouds.rest.internal.RestAnnotationProcessor.createRequest(RestAnnotationProcessor.java:425)
+	at org.jclouds.rest.internal.AsyncRestClientProxy.createListenableFutureForHttpRequestMappedToMethodAndArgs(AsyncRestClientProxy.java:187)
+	at org.jclouds.rest.internal.AsyncRestClientProxy.invoke(AsyncRestClientProxy.java:134)
+	at $Proxy77.listContainers(Unknown Source)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:137)
+	at $Proxy78.listContainers(Unknown Source)
+	at org.jclouds.openstack.swift.blobstore.SwiftBlobStore.list(SwiftBlobStore.java:100)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at com.google.inject.internal.DelegatingInvocationHandler.invoke(DelegatingInvocationHandler.java:37)
+	at $Proxy70.list(Unknown Source)
+	at org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest.deleteEverything(BaseBlobStoreIntegrationTest.java:181)
+	at org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest.createContainersSharedByAllThreads(BaseBlobStoreIntegrationTest.java:135)
+	at org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest.setUpResourcesForAllThreads(BaseBlobStoreIntegrationTest.java:93)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeConfigurationMethod(Invoker.java:543)
+	at org.testng.internal.Invoker.invokeConfigurations(Invoker.java:212)
+	at org.testng.internal.Invoker.invokeConfigurations(Invoker.java:138)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:277)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:53)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:87)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1137)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1062)
+	at org.testng.TestNG.run(TestNG.java:974)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:70)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:158)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:98)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:111)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray(ReflectionUtils.java:164)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:110)
+	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
+	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
+Caused by: org.jclouds.http.HttpResponseException: command: GET https://region-a.geo-1.objects.hpcloudsvc.com/auth/v1.0 HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized; content: [<html>
+ <head>
+  <title>401 Unauthorized</title>
+ </head>
+ <body>
+  <h1>401 Unauthorized</h1>
+  This server could not verify that you are authorized to access the document you requested. Either you supplied the wrong credentials (e.g., bad password), or your browser does not understand how to supply the credentials required.<br /><br />
+ </body>
+</html>]
+	at org.jclouds.openstack.swift.handlers.ParseSwiftErrorFromHttpResponse.handleError(ParseSwiftErrorFromHttpResponse.java:56)
+	at org.jclouds.http.handlers.DelegatingErrorHandler.handleError(DelegatingErrorHandler.java:69)
+	at org.jclouds.http.internal.BaseHttpCommandExecutorService$HttpResponseCallable.shouldContinue(BaseHttpCommandExecutorService.java:191)
+	at org.jclouds.http.internal.BaseHttpCommandExecutorService$HttpResponseCallable.call(BaseHttpCommandExecutorService.java:161)
+	at org.jclouds.http.internal.BaseHttpCommandExecutorService$HttpResponseCallable.call(BaseHttpCommandExecutorService.java:130)
+	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: org.jclouds.http.HttpResponseException: command: GET https://region-a.geo-1.objects.hpcloudsvc.com/auth/v1.0 HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized; content: [<html>
+ <head>
+  <title>401 Unauthorized</title>
+ </head>
+ <body>
+  <h1>401 Unauthorized</h1>
+  This server could not verify that you are authorized to access the document you requested. Either you supplied the wrong credentials (e.g., bad password), or your browser does not understand how to supply the credentials required.<br /><br />
+ </body>
+</html>]
+	at org.jclouds.openstack.swift.handlers.ParseSwiftErrorFromHttpResponse.handleError(ParseSwiftErrorFromHttpResponse.java:56)
+	at org.jclouds.http.handlers.DelegatingErrorHandler.handleError(DelegatingErrorHandler.java:69)
+	at org.jclouds.http.internal.BaseHttpCommandExecutorService$HttpResponseCallable.shouldContinue(BaseHttpCommandExecutorService.java:191)
+	at org.jclouds.http.internal.BaseHttpCommandExecutorService$HttpResponseCallable.call(BaseHttpCommandExecutorService.java:161)
+	at org.jclouds.http.internal.BaseHttpCommandExecutorService$HttpResponseCallable.call(BaseHttpCommandExecutorService.java:130)
+	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)

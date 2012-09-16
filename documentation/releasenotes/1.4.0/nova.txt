@@ -1,0 +1,504 @@
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for org.jclouds.api:nova:bundle:1.4.0-SNAPSHOT
+[WARNING] 'parent.relativePath' of POM org.jclouds:jclouds-project:1.4.0-SNAPSHOT (/Users/adriancole/workspace/git/1.4.x/jclouds/project/pom.xml) points at org.jclouds:jclouds-multi instead of org.sonatype.oss:oss-parent, please verify your project structure @ org.jclouds:jclouds-project:1.4.0-SNAPSHOT, /Users/adriancole/workspace/git/1.4.x/jclouds/project/pom.xml, line 24, column 13
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building jcloud nova api 1.4.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ nova ---
+[INFO] Deleting /Users/adriancole/workspace/git/1.4.x/jclouds/apis/nova/target
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-maven) @ nova ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-banned-dependencies) @ nova ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-java) @ nova ---
+[INFO] 
+[INFO] --- maven-remote-resources-plugin:1.2:process (process-remote-resources) @ nova ---
+[INFO] Setting property: classpath.resource.loader.class => 'org.codehaus.plexus.velocity.ContextClassLoaderResourceLoader'.
+[INFO] Setting property: velocimacro.messages.on => 'false'.
+[INFO] Setting property: resource.loader => 'classpath'.
+[INFO] Setting property: resource.manager.logwhenfound => 'false'.
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.2:resources (default-resources) @ nova ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/1.4.x/jclouds/apis/nova/src/main/clojure
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/1.4.x/jclouds/apis/nova/src/main/resources
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3:compile (default-compile) @ nova ---
+[INFO] Compiling 34 source files to /Users/adriancole/workspace/git/1.4.x/jclouds/apis/nova/target/classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.2:testResources (default-testResources) @ nova ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/1.4.x/jclouds/apis/nova/src/test/clojure
+[INFO] Copying 20 resources
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3:testCompile (default-testCompile) @ nova ---
+[INFO] Compiling 27 source files to /Users/adriancole/workspace/git/1.4.x/jclouds/apis/nova/target/test-classes
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.10:test (default-test) @ nova ---
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/1.4.x/jclouds/apis/nova/target/surefire-reports
+[INFO] Using configured provider org.apache.maven.surefire.testng.TestNGProvider
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running TestSuite
+Starting test testAllStatusCovered(org.jclouds.openstack.nova.compute.config.NovaComputeServiceContextModuleTest)
+[pool-2-thread-1] Test testAllStatusCovered(org.jclouds.openstack.nova.compute.config.NovaComputeServiceContextModuleTest) succeeded: 29ms
+Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
+Starting test testAddPayloadToRequestMapOfStringStringHttpRequest(org.jclouds.openstack.nova.options.CreateServerOptionsTest)
+Starting test testWithAdminPass(org.jclouds.openstack.nova.options.CreateServerOptionsTest)
+Starting test testWithFile(org.jclouds.openstack.nova.options.CreateServerOptionsTest)
+Starting test testWithFileStatic(org.jclouds.openstack.nova.options.CreateServerOptionsTest)
+Starting test testWithMetadata(org.jclouds.openstack.nova.options.CreateServerOptionsTest)
+[pool-3-thread-5] Test testWithMetadata(org.jclouds.openstack.nova.options.CreateServerOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
+Starting test testWithSecurityGroup(org.jclouds.openstack.nova.options.CreateServerOptionsTest)
+[pool-3-thread-5] Test testWithSecurityGroup(org.jclouds.openstack.nova.options.CreateServerOptionsTest) succeeded: 311ms
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
+[pool-3-thread-4] Test testWithFileStatic(org.jclouds.openstack.nova.options.CreateServerOptionsTest) succeeded: 330ms
+Starting test testWithSecurityGroups(org.jclouds.openstack.nova.options.CreateServerOptionsTest)
+Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
+Starting test test(org.jclouds.openstack.nova.compute.functions.FlavorToHardwareTest)
+[pool-3-thread-5] Test testWithSecurityGroups(org.jclouds.openstack.nova.options.CreateServerOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
+Starting test testChangesSince(org.jclouds.openstack.nova.options.ListOptionsTest)
+[pool-3-thread-3] Test testWithFile(org.jclouds.openstack.nova.options.CreateServerOptionsTest) succeeded: 336ms
+Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
+Starting test testChangesSinceStatic(org.jclouds.openstack.nova.options.ListOptionsTest)
+[pool-3-thread-2] Test testWithAdminPass(org.jclouds.openstack.nova.options.CreateServerOptionsTest) succeeded: 338ms
+Test suite progress: tests succeeded: 7, failed: 0, skipped: 0.
+Starting test testMaxResults(org.jclouds.openstack.nova.options.ListOptionsTest)
+[pool-3-thread-1] Test testAddPayloadToRequestMapOfStringStringHttpRequest(org.jclouds.openstack.nova.options.CreateServerOptionsTest) succeeded: 367ms
+Test suite progress: tests succeeded: 8, failed: 0, skipped: 0.
+[pool-3-thread-3] Test testChangesSinceStatic(org.jclouds.openstack.nova.options.ListOptionsTest) succeeded: 10ms
+Test suite progress: tests succeeded: 9, failed: 0, skipped: 0.
+Starting test testStartAt(org.jclouds.openstack.nova.options.ListOptionsTest)
+[pool-3-thread-3] Test testStartAt(org.jclouds.openstack.nova.options.ListOptionsTest) succeeded: 1ms
+Starting test testMaxResultsStatic(org.jclouds.openstack.nova.options.ListOptionsTest)
+Test suite progress: tests succeeded: 10, failed: 0, skipped: 0.
+Starting test testStartAtStatic(org.jclouds.openstack.nova.options.ListOptionsTest)
+[pool-3-thread-3] Test testStartAtStatic(org.jclouds.openstack.nova.options.ListOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 11, failed: 0, skipped: 0.
+Starting test testWithDetails(org.jclouds.openstack.nova.options.ListOptionsTest)
+[pool-3-thread-3] Test testWithDetails(org.jclouds.openstack.nova.options.ListOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 12, failed: 0, skipped: 0.
+Starting test testWithDetailsStatic(org.jclouds.openstack.nova.options.ListOptionsTest)
+[pool-3-thread-3] Test testWithDetailsStatic(org.jclouds.openstack.nova.options.ListOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 13, failed: 0, skipped: 0.
+Starting test testApplyWhereImageNotFound(org.jclouds.openstack.nova.compute.functions.NovaImageToImageTest)
+[pool-3-thread-2] Test testMaxResults(org.jclouds.openstack.nova.options.ListOptionsTest) succeeded: 25ms
+Test suite progress: tests succeeded: 14, failed: 0, skipped: 0.
+Starting test testApplyInputStreamDetails(org.jclouds.openstack.nova.functions.ParseAddressesFromJsonResponseTest)
+[pool-3-thread-5] Test testChangesSince(org.jclouds.openstack.nova.options.ListOptionsTest) succeeded: 49ms
+Test suite progress: tests succeeded: 15, failed: 0, skipped: 0.
+Starting test testApplyInputStream(org.jclouds.openstack.nova.functions.ParseFaultFromJsonResponseTest)
+[pool-3-thread-5] Test testApplyInputStream(org.jclouds.openstack.nova.functions.ParseFaultFromJsonResponseTest) succeeded: 14ms
+Test suite progress: tests succeeded: 16, failed: 0, skipped: 0.
+Starting test testHandler(org.jclouds.openstack.nova.functions.ParseFaultFromJsonResponseTest)
+[pool-3-thread-5] Test testHandler(org.jclouds.openstack.nova.functions.ParseFaultFromJsonResponseTest) succeeded: 0ms
+Test suite progress: tests succeeded: 17, failed: 0, skipped: 0.
+Starting test testParseFlavorFromJsonResponseTest(org.jclouds.openstack.nova.functions.ParseFlavorFromJsonResponseTest)
+[pool-3-thread-5] Test testParseFlavorFromJsonResponseTest(org.jclouds.openstack.nova.functions.ParseFlavorFromJsonResponseTest) succeeded: 84ms
+Test suite progress: tests succeeded: 18, failed: 0, skipped: 0.
+Starting test testApplyInputStream(org.jclouds.openstack.nova.functions.ParseFlavorListFromJsonResponseTest)
+[pool-3-thread-5] Test testApplyInputStream(org.jclouds.openstack.nova.functions.ParseFlavorListFromJsonResponseTest) succeeded: 4ms
+Test suite progress: tests succeeded: 19, failed: 0, skipped: 0.
+[pool-3-thread-4] Test test(org.jclouds.openstack.nova.compute.functions.FlavorToHardwareTest) succeeded: 156ms
+Test suite progress: tests succeeded: 20, failed: 0, skipped: 0.
+Starting test testApplyInputStreamDetails(org.jclouds.openstack.nova.functions.ParseImageFromJsonResponseTest)
+[pool-3-thread-1] Test testMaxResultsStatic(org.jclouds.openstack.nova.options.ListOptionsTest) succeeded: 156ms
+Test suite progress: tests succeeded: 21, failed: 0, skipped: 0.
+Starting test testApplyInputStream(org.jclouds.openstack.nova.functions.ParseImageListFromJsonResponseTest)
+Starting test testApplyInputStreamDetails(org.jclouds.openstack.nova.functions.ParseFlavorListFromJsonResponseTest)
+[pool-3-thread-2] Test testApplyInputStreamDetails(org.jclouds.openstack.nova.functions.ParseAddressesFromJsonResponseTest) succeeded: 145ms
+Test suite progress: tests succeeded: 22, failed: 0, skipped: 0.
+Starting test testApplyInputStreamDetails(org.jclouds.openstack.nova.functions.ParseImageListFromJsonResponseTest)
+[pool-3-thread-5] Test testApplyInputStreamDetails(org.jclouds.openstack.nova.functions.ParseFlavorListFromJsonResponseTest) succeeded: 7ms
+Test suite progress: tests succeeded: 23, failed: 0, skipped: 0.
+Starting test testPrivate(org.jclouds.openstack.nova.functions.ParseInetAddressListFromJsonResponseTest)
+[pool-3-thread-5] Test testPrivate(org.jclouds.openstack.nova.functions.ParseInetAddressListFromJsonResponseTest) succeeded: 2ms
+Test suite progress: tests succeeded: 24, failed: 0, skipped: 0.
+Starting test testPublic(org.jclouds.openstack.nova.functions.ParseInetAddressListFromJsonResponseTest)
+[pool-3-thread-5] Test testPublic(org.jclouds.openstack.nova.functions.ParseInetAddressListFromJsonResponseTest) succeeded: 2ms
+Test suite progress: tests succeeded: 25, failed: 0, skipped: 0.
+Starting test testApplyInputStreamDetails(org.jclouds.openstack.nova.functions.ParseServerFromJsonNoAddressesResponseTest)
+[pool-3-thread-1] Test testApplyInputStream(org.jclouds.openstack.nova.functions.ParseImageListFromJsonResponseTest) succeeded: 42ms
+Test suite progress: tests succeeded: 26, failed: 0, skipped: 0.
+Starting test testApplyInputStreamDetails(org.jclouds.openstack.nova.functions.ParseServerFromJsonResponseDiabloTest)
+[pool-3-thread-4] Test testApplyInputStreamDetails(org.jclouds.openstack.nova.functions.ParseImageFromJsonResponseTest) succeeded: 70ms
+Test suite progress: tests succeeded: 27, failed: 0, skipped: 0.
+Starting test testApplyInputStreamDetails(org.jclouds.openstack.nova.functions.ParseServerFromJsonResponseTest)
+[pool-3-thread-2] Test testApplyInputStreamDetails(org.jclouds.openstack.nova.functions.ParseImageListFromJsonResponseTest) succeeded: 66ms
+Test suite progress: tests succeeded: 28, failed: 0, skipped: 0.
+Starting test testApplyInputStream(org.jclouds.openstack.nova.functions.ParseServerListFromJsonResponseTest)
+[pool-3-thread-2] Test testApplyInputStream(org.jclouds.openstack.nova.functions.ParseServerListFromJsonResponseTest) succeeded: 21ms
+Test suite progress: tests succeeded: 29, failed: 0, skipped: 0.
+Starting test testApplyInputStreamDetails(org.jclouds.openstack.nova.functions.ParseServerListFromJsonResponseTest)
+[pool-3-thread-2] Test testApplyInputStreamDetails(org.jclouds.openstack.nova.functions.ParseServerListFromJsonResponseTest) succeeded: 4ms
+Test suite progress: tests succeeded: 30, failed: 0, skipped: 0.
+Starting test testAddPayloadToRequestMapOfStringStringHttpRequest(org.jclouds.openstack.nova.options.RebuildServerOptionsTest)
+[pool-3-thread-2] Test testAddPayloadToRequestMapOfStringStringHttpRequest(org.jclouds.openstack.nova.options.RebuildServerOptionsTest) succeeded: 12ms
+Test suite progress: tests succeeded: 31, failed: 0, skipped: 0.
+Starting test testWithServer(org.jclouds.openstack.nova.options.RebuildServerOptionsTest)
+[pool-3-thread-2] Test testWithServer(org.jclouds.openstack.nova.options.RebuildServerOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 32, failed: 0, skipped: 0.
+Starting test testWithServerStatic(org.jclouds.openstack.nova.options.RebuildServerOptionsTest)
+[pool-3-thread-2] Test testWithServerStatic(org.jclouds.openstack.nova.options.RebuildServerOptionsTest) succeeded: 21ms
+Test suite progress: tests succeeded: 33, failed: 0, skipped: 0.
+Starting test testAllKnownStatusesIsRecognized(org.jclouds.openstack.nova.domain.ServerStatusTest)
+[pool-3-thread-2] Test testAllKnownStatusesIsRecognized(org.jclouds.openstack.nova.domain.ServerStatusTest) succeeded: 10ms
+Test suite progress: tests succeeded: 34, failed: 0, skipped: 0.
+Starting test testProgressDoesntAffectEquals(org.jclouds.openstack.nova.domain.ServerTest)
+[pool-3-thread-2] Test testProgressDoesntAffectEquals(org.jclouds.openstack.nova.domain.ServerTest) succeeded: 0ms
+Test suite progress: tests succeeded: 35, failed: 0, skipped: 0.
+Starting test testStatusDoesntAffectEquals(org.jclouds.openstack.nova.domain.ServerTest)
+[pool-3-thread-2] Test testStatusDoesntAffectEquals(org.jclouds.openstack.nova.domain.ServerTest) succeeded: 0ms
+Test suite progress: tests succeeded: 36, failed: 0, skipped: 0.
+Starting test testApplyWhereImageAndHardwareFound(org.jclouds.openstack.nova.compute.functions.ServerToNodeMetadataTest)
+[pool-3-thread-3] Test testApplyWhereImageNotFound(org.jclouds.openstack.nova.compute.functions.NovaImageToImageTest) succeeded: 358ms
+Test suite progress: tests succeeded: 37, failed: 0, skipped: 0.
+Starting test testApplyWhereImageAndHardwareNotFound(org.jclouds.openstack.nova.compute.functions.ServerToNodeMetadataTest)
+[pool-3-thread-5] Test testApplyInputStreamDetails(org.jclouds.openstack.nova.functions.ParseServerFromJsonNoAddressesResponseTest) succeeded: 192ms
+Test suite progress: tests succeeded: 38, failed: 0, skipped: 0.
+Starting test testApplyWhereImageFoundAndHardwareNotFound(org.jclouds.openstack.nova.compute.functions.ServerToNodeMetadataTest)
+[pool-3-thread-3] Test testApplyWhereImageAndHardwareNotFound(org.jclouds.openstack.nova.compute.functions.ServerToNodeMetadataTest) succeeded: 14ms
+Test suite progress: tests succeeded: 39, failed: 0, skipped: 0.
+[pool-3-thread-1] Test testApplyInputStreamDetails(org.jclouds.openstack.nova.functions.ParseServerFromJsonResponseDiabloTest) succeeded: 188ms
+Test suite progress: tests succeeded: 40, failed: 0, skipped: 0.
+[pool-3-thread-4] Test testApplyInputStreamDetails(org.jclouds.openstack.nova.functions.ParseServerFromJsonResponseTest) succeeded: 198ms
+Test suite progress: tests succeeded: 41, failed: 0, skipped: 0.
+[pool-3-thread-5] Test testApplyWhereImageFoundAndHardwareNotFound(org.jclouds.openstack.nova.compute.functions.ServerToNodeMetadataTest) succeeded: 92ms
+Test suite progress: tests succeeded: 42, failed: 0, skipped: 0.
+[pool-3-thread-2] Test testApplyWhereImageAndHardwareFound(org.jclouds.openstack.nova.compute.functions.ServerToNodeMetadataTest) succeeded: 201ms
+Test suite progress: tests succeeded: 43, failed: 0, skipped: 0.
+Starting test testChangeAdminPass(org.jclouds.openstack.nova.NovaAsyncClientTest)
+[pool-4-thread-1] Test testChangeAdminPass(org.jclouds.openstack.nova.NovaAsyncClientTest) succeeded: 189ms
+Test suite progress: tests succeeded: 44, failed: 0, skipped: 0.
+Starting test testChangeServerName(org.jclouds.openstack.nova.NovaAsyncClientTest)
+[pool-4-thread-1] Test testChangeServerName(org.jclouds.openstack.nova.NovaAsyncClientTest) succeeded: 51ms
+Test suite progress: tests succeeded: 45, failed: 0, skipped: 0.
+Starting test testConfirmResize(org.jclouds.openstack.nova.NovaAsyncClientTest)
+[pool-4-thread-1] Test testConfirmResize(org.jclouds.openstack.nova.NovaAsyncClientTest) succeeded: 11ms
+Test suite progress: tests succeeded: 46, failed: 0, skipped: 0.
+Starting test testCreateImageWithIpGroup(org.jclouds.openstack.nova.NovaAsyncClientTest)
+[pool-4-thread-1] Test testCreateImageWithIpGroup(org.jclouds.openstack.nova.NovaAsyncClientTest) succeeded: 10ms
+Test suite progress: tests succeeded: 47, failed: 0, skipped: 0.
+Starting test testCreateServer(org.jclouds.openstack.nova.NovaAsyncClientTest)
+[pool-4-thread-1] Test testCreateServer(org.jclouds.openstack.nova.NovaAsyncClientTest) succeeded: 15ms
+Test suite progress: tests succeeded: 48, failed: 0, skipped: 0.
+Starting test testCreateServerWithAdminPass(org.jclouds.openstack.nova.NovaAsyncClientTest)
+[pool-4-thread-1] Test testCreateServerWithAdminPass(org.jclouds.openstack.nova.NovaAsyncClientTest) succeeded: 16ms
+Test suite progress: tests succeeded: 49, failed: 0, skipped: 0.
+Starting test testCreateServerWithFile(org.jclouds.openstack.nova.NovaAsyncClientTest)
+[pool-4-thread-1] Test testCreateServerWithFile(org.jclouds.openstack.nova.NovaAsyncClientTest) succeeded: 3ms
+Test suite progress: tests succeeded: 50, failed: 0, skipped: 0.
+Starting test testCreateServerWithKeyName(org.jclouds.openstack.nova.NovaAsyncClientTest)
+[pool-4-thread-1] Test testCreateServerWithKeyName(org.jclouds.openstack.nova.NovaAsyncClientTest) succeeded: 3ms
+Test suite progress: tests succeeded: 51, failed: 0, skipped: 0.
+Starting test testCreateServerWithMetadata(org.jclouds.openstack.nova.NovaAsyncClientTest)
+[pool-4-thread-1] Test testCreateServerWithMetadata(org.jclouds.openstack.nova.NovaAsyncClientTest) succeeded: 3ms
+Test suite progress: tests succeeded: 52, failed: 0, skipped: 0.
+Starting test testDeleteImage(org.jclouds.openstack.nova.NovaAsyncClientTest)
+[pool-4-thread-1] Test testDeleteImage(org.jclouds.openstack.nova.NovaAsyncClientTest) succeeded: 29ms
+Test suite progress: tests succeeded: 53, failed: 0, skipped: 0.
+Starting test testDeleteServer(org.jclouds.openstack.nova.NovaAsyncClientTest)
+[pool-4-thread-1] Test testDeleteServer(org.jclouds.openstack.nova.NovaAsyncClientTest) succeeded: 5ms
+Test suite progress: tests succeeded: 54, failed: 0, skipped: 0.
+Starting test testDeleteServerByUUID(org.jclouds.openstack.nova.NovaAsyncClientTest)
+[pool-4-thread-1] Test testDeleteServerByUUID(org.jclouds.openstack.nova.NovaAsyncClientTest) succeeded: 2ms
+Test suite progress: tests succeeded: 55, failed: 0, skipped: 0.
+Starting test testGetFlavor(org.jclouds.openstack.nova.NovaAsyncClientTest)
+[pool-4-thread-1] Test testGetFlavor(org.jclouds.openstack.nova.NovaAsyncClientTest) succeeded: 23ms
+Test suite progress: tests succeeded: 56, failed: 0, skipped: 0.
+Starting test testGetFlavorByUUID(org.jclouds.openstack.nova.NovaAsyncClientTest)
+[pool-4-thread-1] Test testGetFlavorByUUID(org.jclouds.openstack.nova.NovaAsyncClientTest) succeeded: 2ms
+Test suite progress: tests succeeded: 57, failed: 0, skipped: 0.
+Starting test testGetFloatingIP(org.jclouds.openstack.nova.NovaAsyncClientTest)
+[pool-4-thread-1] Test testGetFloatingIP(org.jclouds.openstack.nova.NovaAsyncClientTest) succeeded: 3ms
+Test suite progress: tests succeeded: 58, failed: 0, skipped: 0.
+Starting test testGetImage(org.jclouds.openstack.nova.NovaAsyncClientTest)
+[pool-4-thread-1] Test testGetImage(org.jclouds.openstack.nova.NovaAsyncClientTest) succeeded: 2ms
+Test suite progress: tests succeeded: 59, failed: 0, skipped: 0.
+Starting test testGetImageByUUID(org.jclouds.openstack.nova.NovaAsyncClientTest)
+[pool-4-thread-1] Test testGetImageByUUID(org.jclouds.openstack.nova.NovaAsyncClientTest) succeeded: 2ms
+Test suite progress: tests succeeded: 60, failed: 0, skipped: 0.
+Starting test testGetSecurityGroup(org.jclouds.openstack.nova.NovaAsyncClientTest)
+[pool-4-thread-1] Test testGetSecurityGroup(org.jclouds.openstack.nova.NovaAsyncClientTest) succeeded: 3ms
+Test suite progress: tests succeeded: 61, failed: 0, skipped: 0.
+Starting test testGetServer(org.jclouds.openstack.nova.NovaAsyncClientTest)
+[pool-4-thread-1] Test testGetServer(org.jclouds.openstack.nova.NovaAsyncClientTest) succeeded: 2ms
+Test suite progress: tests succeeded: 62, failed: 0, skipped: 0.
+Starting test testGetServerByUUID(org.jclouds.openstack.nova.NovaAsyncClientTest)
+[pool-4-thread-1] Test testGetServerByUUID(org.jclouds.openstack.nova.NovaAsyncClientTest) succeeded: 2ms
+Test suite progress: tests succeeded: 63, failed: 0, skipped: 0.
+Starting test testListAddresses(org.jclouds.openstack.nova.NovaAsyncClientTest)
+[pool-4-thread-1] Test testListAddresses(org.jclouds.openstack.nova.NovaAsyncClientTest) succeeded: 3ms
+Test suite progress: tests succeeded: 64, failed: 0, skipped: 0.
+Starting test testListFlavors(org.jclouds.openstack.nova.NovaAsyncClientTest)
+[pool-4-thread-1] Test testListFlavors(org.jclouds.openstack.nova.NovaAsyncClientTest) succeeded: 4ms
+Test suite progress: tests succeeded: 65, failed: 0, skipped: 0.
+Starting test testListFlavorsDetail(org.jclouds.openstack.nova.NovaAsyncClientTest)
+[pool-4-thread-1] Test testListFlavorsDetail(org.jclouds.openstack.nova.NovaAsyncClientTest) succeeded: 9ms
+Test suite progress: tests succeeded: 66, failed: 0, skipped: 0.
+Starting test testListFlavorsDetailOptions(org.jclouds.openstack.nova.NovaAsyncClientTest)
+[pool-4-thread-1] Test testListFlavorsDetailOptions(org.jclouds.openstack.nova.NovaAsyncClientTest) succeeded: 2ms
+Test suite progress: tests succeeded: 67, failed: 0, skipped: 0.
+Starting test testListFlavorsOptions(org.jclouds.openstack.nova.NovaAsyncClientTest)
+[pool-4-thread-1] Test testListFlavorsOptions(org.jclouds.openstack.nova.NovaAsyncClientTest) succeeded: 4ms
+Test suite progress: tests succeeded: 68, failed: 0, skipped: 0.
+Starting test testListFloatingIPs(org.jclouds.openstack.nova.NovaAsyncClientTest)
+[pool-4-thread-1] Test testListFloatingIPs(org.jclouds.openstack.nova.NovaAsyncClientTest) succeeded: 3ms
+Test suite progress: tests succeeded: 69, failed: 0, skipped: 0.
+Starting test testListImages(org.jclouds.openstack.nova.NovaAsyncClientTest)
+[pool-4-thread-1] Test testListImages(org.jclouds.openstack.nova.NovaAsyncClientTest) succeeded: 3ms
+Test suite progress: tests succeeded: 70, failed: 0, skipped: 0.
+Starting test testListImagesDetail(org.jclouds.openstack.nova.NovaAsyncClientTest)
+[pool-4-thread-1] Test testListImagesDetail(org.jclouds.openstack.nova.NovaAsyncClientTest) succeeded: 6ms
+Test suite progress: tests succeeded: 71, failed: 0, skipped: 0.
+Starting test testListImagesDetailOptions(org.jclouds.openstack.nova.NovaAsyncClientTest)
+[pool-4-thread-1] Test testListImagesDetailOptions(org.jclouds.openstack.nova.NovaAsyncClientTest) succeeded: 5ms
+Test suite progress: tests succeeded: 72, failed: 0, skipped: 0.
+Starting test testListImagesOptions(org.jclouds.openstack.nova.NovaAsyncClientTest)
+[pool-4-thread-1] Test testListImagesOptions(org.jclouds.openstack.nova.NovaAsyncClientTest) succeeded: 3ms
+Test suite progress: tests succeeded: 73, failed: 0, skipped: 0.
+Starting test testListPrivateAddresses(org.jclouds.openstack.nova.NovaAsyncClientTest)
+[pool-4-thread-1] Test testListPrivateAddresses(org.jclouds.openstack.nova.NovaAsyncClientTest) succeeded: 3ms
+Test suite progress: tests succeeded: 74, failed: 0, skipped: 0.
+Starting test testListPublicAddresses(org.jclouds.openstack.nova.NovaAsyncClientTest)
+[pool-4-thread-1] Test testListPublicAddresses(org.jclouds.openstack.nova.NovaAsyncClientTest) succeeded: 2ms
+Test suite progress: tests succeeded: 75, failed: 0, skipped: 0.
+Starting test testListSecurityGroups(org.jclouds.openstack.nova.NovaAsyncClientTest)
+[pool-4-thread-1] Test testListSecurityGroups(org.jclouds.openstack.nova.NovaAsyncClientTest) succeeded: 3ms
+Test suite progress: tests succeeded: 76, failed: 0, skipped: 0.
+Starting test testListServers(org.jclouds.openstack.nova.NovaAsyncClientTest)
+[pool-4-thread-1] Test testListServers(org.jclouds.openstack.nova.NovaAsyncClientTest) succeeded: 3ms
+Test suite progress: tests succeeded: 77, failed: 0, skipped: 0.
+Starting test testListServersDetail(org.jclouds.openstack.nova.NovaAsyncClientTest)
+[pool-4-thread-1] Test testListServersDetail(org.jclouds.openstack.nova.NovaAsyncClientTest) succeeded: 30ms
+Test suite progress: tests succeeded: 78, failed: 0, skipped: 0.
+Starting test testListServersOptions(org.jclouds.openstack.nova.NovaAsyncClientTest)
+[pool-4-thread-1] Test testListServersOptions(org.jclouds.openstack.nova.NovaAsyncClientTest) succeeded: 2ms
+Test suite progress: tests succeeded: 79, failed: 0, skipped: 0.
+Starting test testReboot(org.jclouds.openstack.nova.NovaAsyncClientTest)
+[pool-4-thread-1] Test testReboot(org.jclouds.openstack.nova.NovaAsyncClientTest) succeeded: 4ms
+Test suite progress: tests succeeded: 80, failed: 0, skipped: 0.
+Starting test testRebuildServer(org.jclouds.openstack.nova.NovaAsyncClientTest)
+[pool-4-thread-1] Test testRebuildServer(org.jclouds.openstack.nova.NovaAsyncClientTest) succeeded: 23ms
+Test suite progress: tests succeeded: 81, failed: 0, skipped: 0.
+Starting test testRebuildServerWithImage(org.jclouds.openstack.nova.NovaAsyncClientTest)
+[pool-4-thread-1] Test testRebuildServerWithImage(org.jclouds.openstack.nova.NovaAsyncClientTest) succeeded: 3ms
+Test suite progress: tests succeeded: 82, failed: 0, skipped: 0.
+Starting test testResize(org.jclouds.openstack.nova.NovaAsyncClientTest)
+[pool-4-thread-1] Test testResize(org.jclouds.openstack.nova.NovaAsyncClientTest) succeeded: 5ms
+Test suite progress: tests succeeded: 83, failed: 0, skipped: 0.
+Starting test testRevertResize(org.jclouds.openstack.nova.NovaAsyncClientTest)
+[pool-4-thread-1] Test testRevertResize(org.jclouds.openstack.nova.NovaAsyncClientTest) succeeded: 3ms
+Test suite progress: tests succeeded: 84, failed: 0, skipped: 0.
+Tests run: 84, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 6.762 sec
+
+Results :
+
+Tests run: 84, Failures: 0, Errors: 0, Skipped: 0
+
+[INFO] 
+[INFO] --- clojure-maven-plugin:1.3.8:test (test-clojure) @ nova ---
+
+Testing com.theoryinpractise.clojure.testrunner
+
+Ran 0 tests containing 0 assertions.
+0 failures, 0 errors.
+[INFO] 
+[INFO] --- maven-bundle-plugin:2.3.4:bundle (default-bundle) @ nova ---
+[INFO] 
+[INFO] --- maven-source-plugin:2.1.1:jar-no-fork (attach-sources) @ nova ---
+[INFO] Building jar: /Users/adriancole/workspace/git/1.4.x/jclouds/apis/nova/target/nova-1.4.0-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- maven-javadoc-plugin:2.8:jar (javadoc) @ nova ---
+[INFO] Skipping javadoc generation
+[INFO] 
+[INFO] --- maven-jar-plugin:2.3.1:test-jar (default) @ nova ---
+[INFO] Building jar: /Users/adriancole/workspace/git/1.4.x/jclouds/apis/nova/target/nova-1.4.0-SNAPSHOT-tests.jar
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.10:test (integration) @ nova ---
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/1.4.x/jclouds/apis/nova/target/surefire-reports
+[INFO] Using configured provider org.apache.maven.surefire.testng.TestNGProvider
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running TestSuite
+Starting test testCreateServer(org.jclouds.openstack.nova.NovaClientLiveTest)
+Starting test setServiceDefaults(org.jclouds.openstack.nova.compute.NovaComputeServiceLiveTest)
+[TestNG] Test setServiceDefaults(org.jclouds.openstack.nova.compute.NovaComputeServiceLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
+Starting test testCompareSizes(org.jclouds.openstack.nova.compute.NovaComputeServiceLiveTest)
+[TestNG] Test testCreateServer(org.jclouds.openstack.nova.NovaClientLiveTest) failed.
+Test suite progress: tests succeeded: 1, failed: 1, skipped: 0.
+[TestNG] Test testCompareSizes(org.jclouds.openstack.nova.compute.NovaComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 1, failed: 2, skipped: 0.
+Starting test testGetFlavorDetailsNotFound(org.jclouds.openstack.nova.NovaClientLiveTest)
+Starting test testCorrectAuthException(org.jclouds.openstack.nova.compute.NovaComputeServiceLiveTest)
+[TestNG] Test testGetFlavorDetailsNotFound(org.jclouds.openstack.nova.NovaClientLiveTest) failed.
+Test suite progress: tests succeeded: 1, failed: 3, skipped: 0.
+Starting test testGetFlavorsDetail(org.jclouds.openstack.nova.NovaClientLiveTest)
+[TestNG] Test testGetFlavorsDetail(org.jclouds.openstack.nova.NovaClientLiveTest) failed.
+Test suite progress: tests succeeded: 1, failed: 4, skipped: 0.
+Starting test testGetImageDetailsNotFound(org.jclouds.openstack.nova.NovaClientLiveTest)
+[TestNG] Test testGetImageDetailsNotFound(org.jclouds.openstack.nova.NovaClientLiveTest) failed.
+Test suite progress: tests succeeded: 1, failed: 5, skipped: 0.
+Starting test testGetImagesDetail(org.jclouds.openstack.nova.NovaClientLiveTest)
+[TestNG] Test testCorrectAuthException(org.jclouds.openstack.nova.compute.NovaComputeServiceLiveTest) succeeded: 615ms
+Test suite progress: tests succeeded: 2, failed: 5, skipped: 0.
+Starting test testCreateAndRunAService(org.jclouds.openstack.nova.compute.NovaComputeServiceLiveTest)
+[TestNG] Test testGetImagesDetail(org.jclouds.openstack.nova.NovaClientLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 6, skipped: 0.
+Starting test testGetServerDetailsNotFound(org.jclouds.openstack.nova.NovaClientLiveTest)
+[TestNG] Test testGetServerDetailsNotFound(org.jclouds.openstack.nova.NovaClientLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 7, skipped: 0.
+Starting test testGetServersDetail(org.jclouds.openstack.nova.NovaClientLiveTest)
+[TestNG] Test testCreateAndRunAService(org.jclouds.openstack.nova.compute.NovaComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 8, skipped: 0.
+Starting test testGetAssignableLocations(org.jclouds.openstack.nova.compute.NovaComputeServiceLiveTest)
+[TestNG] Test testGetAssignableLocations(org.jclouds.openstack.nova.compute.NovaComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 9, skipped: 0.
+Starting test testImagesCache(org.jclouds.openstack.nova.compute.NovaComputeServiceLiveTest)
+[TestNG] Test testImagesCache(org.jclouds.openstack.nova.compute.NovaComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 10, skipped: 0.
+Starting test testListImages(org.jclouds.openstack.nova.compute.NovaComputeServiceLiveTest)
+[TestNG] Test testListImages(org.jclouds.openstack.nova.compute.NovaComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 11, skipped: 0.
+Starting test testListSizes(org.jclouds.openstack.nova.compute.NovaComputeServiceLiveTest)
+[TestNG] Test testListSizes(org.jclouds.openstack.nova.compute.NovaComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 12, skipped: 0.
+Starting test testOptionToNotBlock(org.jclouds.openstack.nova.compute.NovaComputeServiceLiveTest)
+[TestNG] Test testGetServersDetail(org.jclouds.openstack.nova.NovaClientLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 13, skipped: 0.
+Starting test testListFlavorsDetail(org.jclouds.openstack.nova.NovaClientLiveTest)
+[TestNG] Test testListFlavorsDetail(org.jclouds.openstack.nova.NovaClientLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 14, skipped: 0.
+Starting test testListImages(org.jclouds.openstack.nova.NovaClientLiveTest)
+[TestNG] Test testOptionToNotBlock(org.jclouds.openstack.nova.compute.NovaComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 15, skipped: 0.
+Starting test testAssignability(org.jclouds.openstack.nova.compute.NovaComputeServiceLiveTest)
+[TestNG] Test testListImages(org.jclouds.openstack.nova.NovaClientLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 16, skipped: 0.
+Starting test testListImagesDetail(org.jclouds.openstack.nova.NovaClientLiveTest)
+[TestNG] Test testAssignability(org.jclouds.openstack.nova.compute.NovaComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 17, skipped: 0.
+Starting test testCorrectExceptionRunningNodesNotFound(org.jclouds.openstack.nova.compute.NovaComputeServiceLiveTest)
+[TestNG] Test testListImagesDetail(org.jclouds.openstack.nova.NovaClientLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 18, skipped: 0.
+Starting test testListServers(org.jclouds.openstack.nova.NovaClientLiveTest)
+[TestNG] Test testCorrectExceptionRunningNodesNotFound(org.jclouds.openstack.nova.compute.NovaComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 19, skipped: 0.
+[TestNG] Test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.openstack.nova.compute.NovaComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 19, skipped: 1.
+[TestNG] Test testCreateTwoNodesWithRunScript(org.jclouds.openstack.nova.compute.NovaComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 19, skipped: 2.
+[TestNG] Test testTemplateMatch(org.jclouds.openstack.nova.compute.NovaComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 19, skipped: 3.
+[TestNG] Test testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired(org.jclouds.openstack.nova.compute.NovaComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 19, skipped: 4.
+[TestNG] Test testCredentialsCache(org.jclouds.openstack.nova.compute.NovaComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 19, skipped: 5.
+[TestNG] Test testGet(org.jclouds.openstack.nova.compute.NovaComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 19, skipped: 6.
+[TestNG] Test testReboot(org.jclouds.openstack.nova.compute.NovaComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 19, skipped: 7.
+[TestNG] Test testSuspendResume(org.jclouds.openstack.nova.compute.NovaComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 19, skipped: 8.
+[TestNG] Test testGetNodesWithDetails(org.jclouds.openstack.nova.compute.NovaComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 19, skipped: 9.
+[TestNG] Test testListNodes(org.jclouds.openstack.nova.compute.NovaComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 19, skipped: 10.
+[TestNG] Test testDestroyNodes(org.jclouds.openstack.nova.compute.NovaComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 19, skipped: 11.
+[TestNG] Test testListServers(org.jclouds.openstack.nova.NovaClientLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 20, skipped: 11.
+Starting test testListServersDetail(org.jclouds.openstack.nova.NovaClientLiveTest)
+[TestNG] Test testListServersDetail(org.jclouds.openstack.nova.NovaClientLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 21, skipped: 11.
+Starting test testListFlavors(org.jclouds.openstack.nova.NovaClientLiveTest)
+[TestNG] Test testListFlavors(org.jclouds.openstack.nova.NovaClientLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 22, skipped: 11.
+[TestNG] Test testChangePassword(org.jclouds.openstack.nova.NovaClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 22, skipped: 12.
+[TestNG] Test testRenameServer(org.jclouds.openstack.nova.NovaClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 22, skipped: 13.
+[TestNG] Test testServerDetails(org.jclouds.openstack.nova.NovaClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 22, skipped: 14.
+[TestNG] Test testCreateImage(org.jclouds.openstack.nova.NovaClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 22, skipped: 15.
+[TestNG] Test testRebuildServer(org.jclouds.openstack.nova.NovaClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 22, skipped: 16.
+[TestNG] Test testRebootHard(org.jclouds.openstack.nova.NovaClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 22, skipped: 17.
+[TestNG] Test testRebootSoft(org.jclouds.openstack.nova.NovaClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 22, skipped: 18.
+[TestNG] Test testConfirmResize(org.jclouds.openstack.nova.NovaClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 22, skipped: 19.
+[TestNG] Test testRevertResize(org.jclouds.openstack.nova.NovaClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 22, skipped: 20.
+[TestNG] Test deleteServer2(org.jclouds.openstack.nova.NovaClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 22, skipped: 21.
+[TestNG] Test testDeleteImage(org.jclouds.openstack.nova.NovaClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 22, skipped: 22.
+[TestNG] Test deleteServer1(org.jclouds.openstack.nova.NovaClientLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 22, skipped: 23.
+Tests run: 47, Failures: 22, Errors: 0, Skipped: 23, Time elapsed: 6.717 sec <<< FAILURE!
+
+Results :
+
+Failed tests:   testCreateServer(org.jclouds.openstack.nova.NovaClientLiveTest): command: GET https://az-2.region-a.geo-1.compute.hpcloudsvc.com/v1.1 HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized; content: [<html>
+  testCompareSizes(org.jclouds.openstack.nova.compute.NovaComputeServiceLiveTest): command: GET https://az-2.region-a.geo-1.compute.hpcloudsvc.com/v1.1 HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized; content: [<html>
+  testGetFlavorDetailsNotFound(org.jclouds.openstack.nova.NovaClientLiveTest): command: GET https://az-2.region-a.geo-1.compute.hpcloudsvc.com/v1.1 HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized; content: [<html>
+  testGetFlavorsDetail(org.jclouds.openstack.nova.NovaClientLiveTest): command: GET https://az-2.region-a.geo-1.compute.hpcloudsvc.com/v1.1 HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized; content: [<html>
+  testGetImageDetailsNotFound(org.jclouds.openstack.nova.NovaClientLiveTest): command: GET https://az-2.region-a.geo-1.compute.hpcloudsvc.com/v1.1 HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized; content: [<html>
+  testGetImagesDetail(org.jclouds.openstack.nova.NovaClientLiveTest): command: GET https://az-2.region-a.geo-1.compute.hpcloudsvc.com/v1.1 HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized; content: [<html>
+  testGetServerDetailsNotFound(org.jclouds.openstack.nova.NovaClientLiveTest): command: GET https://az-2.region-a.geo-1.compute.hpcloudsvc.com/v1.1 HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized; content: [<html>
+  testCreateAndRunAService(org.jclouds.openstack.nova.compute.NovaComputeServiceLiveTest): command: GET https://az-2.region-a.geo-1.compute.hpcloudsvc.com/v1.1 HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized; content: [<html>
+  testGetAssignableLocations(org.jclouds.openstack.nova.compute.NovaComputeServiceLiveTest): command: GET https://az-2.region-a.geo-1.compute.hpcloudsvc.com/v1.1 HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized; content: [<html>
+  testImagesCache(org.jclouds.openstack.nova.compute.NovaComputeServiceLiveTest): command: GET https://az-2.region-a.geo-1.compute.hpcloudsvc.com/v1.1 HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized; content: [<html>
+  testListImages(org.jclouds.openstack.nova.compute.NovaComputeServiceLiveTest): command: GET https://az-2.region-a.geo-1.compute.hpcloudsvc.com/v1.1 HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized; content: [<html>
+  testListSizes(org.jclouds.openstack.nova.compute.NovaComputeServiceLiveTest): command: GET https://az-2.region-a.geo-1.compute.hpcloudsvc.com/v1.1 HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized; content: [<html>
+  testGetServersDetail(org.jclouds.openstack.nova.NovaClientLiveTest): command: GET https://az-2.region-a.geo-1.compute.hpcloudsvc.com/v1.1 HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized; content: [<html>
+  testListFlavorsDetail(org.jclouds.openstack.nova.NovaClientLiveTest): command: GET https://az-2.region-a.geo-1.compute.hpcloudsvc.com/v1.1 HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized; content: [<html>
+  testOptionToNotBlock(org.jclouds.openstack.nova.compute.NovaComputeServiceLiveTest): command: GET https://az-2.region-a.geo-1.compute.hpcloudsvc.com/v1.1 HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized; content: [<html>
+  testListImages(org.jclouds.openstack.nova.NovaClientLiveTest): command: GET https://az-2.region-a.geo-1.compute.hpcloudsvc.com/v1.1 HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized; content: [<html>
+  testAssignability(org.jclouds.openstack.nova.compute.NovaComputeServiceLiveTest): Guice creation errors:
+  testListImagesDetail(org.jclouds.openstack.nova.NovaClientLiveTest): command: GET https://az-2.region-a.geo-1.compute.hpcloudsvc.com/v1.1 HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized; content: [<html>
+  testCorrectExceptionRunningNodesNotFound(org.jclouds.openstack.nova.compute.NovaComputeServiceLiveTest): 
+  testListServers(org.jclouds.openstack.nova.NovaClientLiveTest): command: GET https://az-2.region-a.geo-1.compute.hpcloudsvc.com/v1.1 HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized; content: [<html>
+  testListServersDetail(org.jclouds.openstack.nova.NovaClientLiveTest): command: GET https://az-2.region-a.geo-1.compute.hpcloudsvc.com/v1.1 HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized; content: [<html>
+  testListFlavors(org.jclouds.openstack.nova.NovaClientLiveTest): command: GET https://az-2.region-a.geo-1.compute.hpcloudsvc.com/v1.1 HTTP/1.1 failed with response: HTTP/1.1 401 Unauthorized; content: [<html>
+
+Tests run: 47, Failures: 22, Errors: 0, Skipped: 23
+
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 50.203s
+[INFO] Finished at: Mon Mar 12 22:57:45 PDT 2012
+[INFO] Final Memory: 22M/265M
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:2.10:test (integration) on project nova: There are test failures.
+[ERROR] 
+[ERROR] Please refer to /Users/adriancole/workspace/git/1.4.x/jclouds/apis/nova/target/surefire-reports for the individual test results.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
