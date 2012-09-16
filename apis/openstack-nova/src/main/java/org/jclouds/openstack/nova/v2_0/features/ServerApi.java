@@ -96,7 +96,7 @@ public interface ServerApi {
     *           id of the server
     * @return True if successful, False otherwise
     */
-   Boolean delete(String id);
+   boolean delete(String id);
   
    /**
     * Start a server
