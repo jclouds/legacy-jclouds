@@ -249,8 +249,8 @@ public class NovaComputeServiceAdapter implements
    @Override
    public void resumeNode(String id) {
       ZoneAndId zoneAndId = ZoneAndId.fromSlashEncoded(id);
-      if (novaApi.getAdminActionsExtensionForZone(zoneAndId.getZone()).isPresent()) {
-         novaApi.getAdminActionsExtensionForZone(zoneAndId.getZone()).get().resume(zoneAndId.getId());
+      if (novaApi.getServerAdminExtensionForZone(zoneAndId.getZone()).isPresent()) {
+         novaApi.getServerAdminExtensionForZone(zoneAndId.getZone()).get().resume(zoneAndId.getId());
       }
       throw new UnsupportedOperationException("resume requires installation of the Admin Actions extension");
    }
@@ -258,8 +258,8 @@ public class NovaComputeServiceAdapter implements
    @Override
    public void suspendNode(String id) {
       ZoneAndId zoneAndId = ZoneAndId.fromSlashEncoded(id);
-      if (novaApi.getAdminActionsExtensionForZone(zoneAndId.getZone()).isPresent()) {
-         novaApi.getAdminActionsExtensionForZone(zoneAndId.getZone()).get().suspend(zoneAndId.getId());
+      if (novaApi.getServerAdminExtensionForZone(zoneAndId.getZone()).isPresent()) {
+         novaApi.getServerAdminExtensionForZone(zoneAndId.getZone()).get().suspend(zoneAndId.getId());
       }
       throw new UnsupportedOperationException("suspend requires installation of the Admin Actions extension");
    }

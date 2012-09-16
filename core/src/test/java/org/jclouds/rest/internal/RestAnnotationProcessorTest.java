@@ -499,6 +499,12 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       @QueryParams(keys = { "foo", "fooble" }, values = { "bar", "baz" })
       public void foo3(@QueryParam("robbie") String robbie) {
       }
+      
+      @FOO
+      @Path("/")
+      @QueryParams(keys = { "foo", "fooble" }, values = { "bar", "baz" })
+      public void foo3Nullable(@Nullable @QueryParam("robbie") String robbie) {
+      }
    }
 
    public void testUnEncodeQuery() {
@@ -535,6 +541,25 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       assertEquals(request.getEndpoint().getHost(), "localhost");
       assertEquals(request.getEndpoint().getPath(), "/");
       assertEquals(request.getEndpoint().getQuery(), "x-ms-version=2009-07-17&foo=bar&fooble=baz&robbie=wonder");
+      assertEquals(request.getMethod(), "FOO");
+   }
+   
+   @Test
+   public void testNiceNPEQueryParam() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = TestQuery.class.getMethod("foo3", String.class);
+      try {
+         factory(TestPath.class).createRequest(method, (String) null);
+      } catch (NullPointerException e) {
+         assertEquals(e.getMessage(), "param{robbie} for method TestQuery.foo3");
+      }
+   }
+
+   public void testNoNPEOnQueryParamWithNullable() throws SecurityException, NoSuchMethodException {
+      Method method = TestQuery.class.getMethod("foo3Nullable", String.class);
+      HttpRequest request = factory(TestPath.class).createRequest(method, (String) null);
+      assertEquals(request.getEndpoint().getHost(), "localhost");
+      assertEquals(request.getEndpoint().getPath(), "/");
+      assertEquals(request.getEndpoint().getQuery(), "foo=bar&fooble=baz");
       assertEquals(request.getMethod(), "FOO");
    }
 
@@ -578,7 +603,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, "foo", "application/octet-stream", false);
    }
-
+   
    public void testHttpRequestWithOnlyContentType() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TestPayloadParamVarargs.class.getMethod("post", HttpRequestOptions.class);
       HttpRequest request = factory(TestPayloadParamVarargs.class).createRequest(method, new TestHttpRequestOptions().payload("fooya"));
@@ -1397,6 +1422,11 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       @Path("/{path}")
       public void onePath(@PathParam("path") String path) {
       }
+      
+      @GET
+      @Path("/{path}")
+      public void onePathNullable(@Nullable @PathParam("path") String path) {
+      }
 
       @GET
       @Path("/{path1}/{path2}")
@@ -1435,7 +1465,17 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       public void onePathParamExtractorMethod(String path) {
       }
    }
-
+   
+   @Test
+   public void testNiceNPEPathParam() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = TestPath.class.getMethod("onePath", String.class);
+      try {
+         factory(TestPath.class).createRequest(method, (String) null);
+      } catch (NullPointerException e) {
+         assertEquals(e.getMessage(), "param{path} for method TestPath.onePath");
+      }
+   }
+   
    @Test
    public void testPathParamExtractor() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TestPath.class.getMethod("onePathParamExtractor", String.class);
@@ -1462,7 +1502,17 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
    }
-
+   
+   @Test
+   public void testNiceNPEMatrixParam() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = TestPath.class.getMethod("oneMatrixParamExtractor", String.class);
+      try {
+         factory(TestPath.class).createRequest(method, (String) null);
+      } catch (NullPointerException e) {
+         assertEquals(e.getMessage(), "param{one} for method TestPath.oneMatrixParamExtractor");
+      }
+   }
+   
    @Test
    public void testFormParamExtractor() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TestPath.class.getMethod("oneFormParamExtractor", String.class);
@@ -1471,7 +1521,17 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, "one=l", "application/x-www-form-urlencoded", false);
    }
-
+   
+   @Test
+   public void testNiceNPEFormParam() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = TestPath.class.getMethod("oneFormParamExtractor", String.class);
+      try {
+         factory(TestPath.class).createRequest(method, (String) null);
+      } catch (NullPointerException e) {
+         assertEquals(e.getMessage(), "param{one} for method TestPath.oneFormParamExtractor");
+      }
+   }
+   
    @Test
    public void testParamExtractorMethod() throws SecurityException, NoSuchMethodException {
       Method method = TestPath.class.getMethod("onePathParamExtractorMethod", String.class);
