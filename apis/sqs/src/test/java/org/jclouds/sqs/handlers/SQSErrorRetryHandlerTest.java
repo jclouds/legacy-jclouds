@@ -64,7 +64,8 @@ public class SQSErrorRetryHandlerTest {
       Stopwatch watch = new Stopwatch().start();
       assertTrue(retry.shouldRetryRequestOnError(command, response, error));
       assertEquals(command.getFailureCount(), 60);
-      assertTrue(watch.stop().elapsedTime(TimeUnit.MILLISECONDS) >= 100);
+      // allow for slightly inaccurate system timers
+      assertTrue(watch.stop().elapsedTime(TimeUnit.MILLISECONDS) >= 98);
    }
    
 
