@@ -35,6 +35,17 @@ import com.google.common.collect.ImmutableSet;
  */
 @Beta
 public class PagedIterables {
+   
+   @SuppressWarnings("rawtypes")
+   public static final PagedIterable EMPTY = new PagedIterable() {
+
+      @Override
+      public Iterator<IterableWithMarker> iterator() {
+         return ImmutableSet.of(IterableWithMarkers.EMPTY).iterator();
+      }
+
+   };
+   
    /**
     * @param only
     *           the only page of data

@@ -43,38 +43,38 @@ import com.google.common.collect.Iterables;
 @Singleton
 public class DiskImageToImage implements Function<DiskImage, Image> {
 
-    private final DiskImageToOperatingSystem diskImageToOperatingSystem;
-    private final RegionToProviderOrJustProvider regionSupplier;
+   private final DiskImageToOperatingSystem diskImageToOperatingSystem;
+   private final RegionToProviderOrJustProvider regionSupplier;
 
-    @Inject
-    public DiskImageToImage(
-            DiskImageToOperatingSystem diskImageToOperatingSystem,
-            RegionToProviderOrJustProvider locationSupplier) {
-        this.diskImageToOperatingSystem = checkNotNull(
-                diskImageToOperatingSystem, "diskImageToOperatingSystem");
-        this.regionSupplier = checkNotNull(locationSupplier, "locationProvider");
-    }
+   @Inject
+   public DiskImageToImage(
+         DiskImageToOperatingSystem diskImageToOperatingSystem,
+         RegionToProviderOrJustProvider locationSupplier) {
+      this.diskImageToOperatingSystem = checkNotNull(
+            diskImageToOperatingSystem, "diskImageToOperatingSystem");
+      this.regionSupplier = checkNotNull(locationSupplier, "locationProvider");
+   }
 
-    @Override
-    public Image apply(DiskImage from) {
-        checkNotNull(from, "disk image");
+   @Override
+   public Image apply(DiskImage from) {
+      checkNotNull(from, "disk image");
 
-        ImageBuilder builder = new ImageBuilder();
+      ImageBuilder builder = new ImageBuilder();
 
-        builder.ids(from.getId());
-        builder.name(from.getName());
-        builder.description(from.getDescription());
-        builder.location(Iterables.getOnlyElement(regionSupplier.get()));
-        // in fgcp, if the image is listed it is available
-        builder.status(Status.AVAILABLE);
+      builder.ids(from.getId());
+      builder.name(from.getName());
+      builder.description(from.getDescription());
+      builder.location(Iterables.getOnlyElement(regionSupplier.get()));
+      // in fgcp, if the image is listed it is available
+      builder.status(Status.AVAILABLE);
 
-        OperatingSystem os = diskImageToOperatingSystem.apply(from);
-        builder.operatingSystem(os);
-        String user = os.getFamily() == OsFamily.WINDOWS ? "Administrator"
-                : "root";
-        builder.defaultCredentials(LoginCredentials.builder().identity(user)
-                .noPassword().build());
+      OperatingSystem os = diskImageToOperatingSystem.apply(from);
+      builder.operatingSystem(os);
+      String user = os.getFamily() == OsFamily.WINDOWS ? "Administrator"
+            : "root";
+      builder.defaultCredentials(LoginCredentials.builder().identity(user)
+            .noPassword().build());
 
-        return builder.build();
-    }
+      return builder.build();
+   }
 }

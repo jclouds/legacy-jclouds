@@ -55,14 +55,14 @@ public class VirtualInterfaceApiLiveTest extends BaseNovaApiLiveTest {
          Server testServer = null;
          try {
             testServer = createServerInZone(zone);
-            Set<? extends VirtualInterface> results = apiOption.get().listVirtualInterfacesForServer(testServer.getId());
+            Set<? extends VirtualInterface> results = apiOption.get().listOnServer(testServer.getId()).toImmutableSet();
             for (VirtualInterface vif : results) {
                assertNotNull(vif.getId());
                assertNotNull(vif.getMacAddress());
             }
          } finally {
             if (testServer != null) {
-               novaContext.getApi().getServerApiForZone(zone).deleteServer(testServer.getId());
+               novaContext.getApi().getServerApiForZone(zone).delete(testServer.getId());
             }
          }
    }

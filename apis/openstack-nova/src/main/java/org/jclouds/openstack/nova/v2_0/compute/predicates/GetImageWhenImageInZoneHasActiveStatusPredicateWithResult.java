@@ -35,7 +35,6 @@ import org.jclouds.predicates.PredicateWithResult;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 
 /**
  * @author David Alves
@@ -89,7 +88,7 @@ public final class GetImageWhenImageInZoneHasActiveStatusPredicateWithResult imp
    }
 
    public org.jclouds.openstack.nova.v2_0.domain.Image findImage(final ZoneAndId zoneAndId) {
-      return Iterables.tryFind(api.getImageApiForZone(zoneAndId.getZone()).listImagesInDetail(),
+      return api.getImageApiForZone(zoneAndId.getZone()).listInDetail().concat().firstMatch(
                new Predicate<org.jclouds.openstack.nova.v2_0.domain.Image>() {
                   @Override
                   public boolean apply(org.jclouds.openstack.nova.v2_0.domain.Image input) {

@@ -34,18 +34,18 @@ import com.google.common.base.Function;
 @Singleton
 public class ResourceIdToFirewallId implements Function<String, String> {
 
-    private ResourceIdToSystemId toSystemId;
+   private ResourceIdToSystemId toSystemId;
 
-    @Inject
-    private ResourceIdToFirewallId(ResourceIdToSystemId resourceIdToSystemId) {
-        this.toSystemId = checkNotNull(resourceIdToSystemId,
-                "resourceIdToSystemId");
-    }
+   @Inject
+   private ResourceIdToFirewallId(ResourceIdToSystemId resourceIdToSystemId) {
+      this.toSystemId = checkNotNull(resourceIdToSystemId,
+            "resourceIdToSystemId");
+   }
 
-    @Override
-    public String apply(String id) {
-        checkNotNull(id, "resource id");
+   @Override
+   public String apply(String id) {
+      checkNotNull(id, "resource id");
 
-        return toSystemId.apply(id) + "-S-0001";
-    }
+      return toSystemId.apply(id) + "-S-0001";
+   }
 }

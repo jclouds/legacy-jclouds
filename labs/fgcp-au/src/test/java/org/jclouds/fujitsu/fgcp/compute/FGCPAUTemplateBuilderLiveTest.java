@@ -30,14 +30,14 @@ import com.google.common.collect.ImmutableSet;
  */
 @Test(groups = "live", enabled = true, singleThreaded = true, testName = "FGCPAUTemplateBuilderLiveTest")
 public class FGCPAUTemplateBuilderLiveTest extends
-        FGCPBaseTemplateBuilderLiveTest {
+      FGCPBaseTemplateBuilderLiveTest {
 
-    public FGCPAUTemplateBuilderLiveTest() {
-        provider = "fgcp-au";
-    }
+   public FGCPAUTemplateBuilderLiveTest() {
+      provider = "fgcp-au";
+   }
 
-    @Override
-    protected Set<String> getIso3166Codes() {
-        return ImmutableSet.<String> of("AU-NSW");
-    }
+   @Override
+   protected Set<String> getIso3166Codes() {
+      return ImmutableSet.<String> of("AU-NSW");
+   }
 }

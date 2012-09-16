@@ -64,9 +64,9 @@ public class ImageApiExpectTest extends BaseGlanceApiExpectTest {
       GlanceApi apiWhenExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, list, listResponse);
 
-      assertEquals(apiWhenExist.getConfiguredRegions(), ImmutableSet.of("az-1.region-a.geo-1"));
+      assertEquals(apiWhenExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
 
-      assertEquals(apiWhenExist.getImageApiForRegion("az-1.region-a.geo-1").list().toString(),
+      assertEquals(apiWhenExist.getImageApiForZone("az-1.region-a.geo-1").list().concat().toString(),
             new ParseImagesTest().expected().toString());
    }
 
@@ -81,7 +81,7 @@ public class ImageApiExpectTest extends BaseGlanceApiExpectTest {
       GlanceApi apiWhenNoExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, list, listResponse);
 
-      assertTrue(apiWhenNoExist.getImageApiForRegion("az-1.region-a.geo-1").list().isEmpty());
+      assertTrue(apiWhenNoExist.getImageApiForZone("az-1.region-a.geo-1").list().concat().isEmpty());
    }
 
    public void testListInDetailWhenResponseIs2xx() throws Exception {
@@ -97,9 +97,9 @@ public class ImageApiExpectTest extends BaseGlanceApiExpectTest {
       GlanceApi apiWhenExistInDetail = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, listInDetail, listInDetailResponse);
 
-      assertEquals(apiWhenExistInDetail.getConfiguredRegions(), ImmutableSet.of("az-1.region-a.geo-1"));
+      assertEquals(apiWhenExistInDetail.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
 
-      assertEquals(apiWhenExistInDetail.getImageApiForRegion("az-1.region-a.geo-1").listInDetail().toString(),
+      assertEquals(apiWhenExistInDetail.getImageApiForZone("az-1.region-a.geo-1").listInDetail().concat().toString(),
             new ParseImagesInDetailTest().expected().toString());
    }
 
@@ -115,7 +115,7 @@ public class ImageApiExpectTest extends BaseGlanceApiExpectTest {
       GlanceApi apiWhenNoExistInDetail = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, listInDetail, listInDetailResponse);
 
-      assertTrue(apiWhenNoExistInDetail.getImageApiForRegion("az-1.region-a.geo-1").listInDetail().isEmpty());
+      assertTrue(apiWhenNoExistInDetail.getImageApiForZone("az-1.region-a.geo-1").listInDetail().concat().isEmpty());
    }
 
    public void testShowWhenResponseIs2xx() throws Exception {
@@ -131,9 +131,9 @@ public class ImageApiExpectTest extends BaseGlanceApiExpectTest {
       GlanceApi apiWhenExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, show, showResponse);
 
-      assertEquals(apiWhenExist.getConfiguredRegions(), ImmutableSet.of("az-1.region-a.geo-1"));
+      assertEquals(apiWhenExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
 
-      assertEquals(apiWhenExist.getImageApiForRegion("az-1.region-a.geo-1").show("fcc451d0-f6e4-4824-ad8f-70ec12326d07").toString(),
+      assertEquals(apiWhenExist.getImageApiForZone("az-1.region-a.geo-1").get("fcc451d0-f6e4-4824-ad8f-70ec12326d07").toString(),
             new ParseImageDetailsFromHeadersTest().expected().toString());
    }
 
@@ -148,7 +148,7 @@ public class ImageApiExpectTest extends BaseGlanceApiExpectTest {
       GlanceApi apiWhenNoExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, show, showResponse);
 
-      assertNull(apiWhenNoExist.getImageApiForRegion("az-1.region-a.geo-1").show("fcc451d0-f6e4-4824-ad8f-70ec12326d07"));
+      assertNull(apiWhenNoExist.getImageApiForZone("az-1.region-a.geo-1").get("fcc451d0-f6e4-4824-ad8f-70ec12326d07"));
    }
    
 
@@ -163,9 +163,9 @@ public class ImageApiExpectTest extends BaseGlanceApiExpectTest {
       GlanceApi apiWhenExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, get, getResponse);
 
-      assertEquals(apiWhenExist.getConfiguredRegions(), ImmutableSet.of("az-1.region-a.geo-1"));
+      assertEquals(apiWhenExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
 
-      assertEquals(Strings2.toStringAndClose(apiWhenExist.getImageApiForRegion("az-1.region-a.geo-1").getAsStream("fcc451d0-f6e4-4824-ad8f-70ec12326d07")),
+      assertEquals(Strings2.toStringAndClose(apiWhenExist.getImageApiForZone("az-1.region-a.geo-1").getAsStream("fcc451d0-f6e4-4824-ad8f-70ec12326d07")),
                "foo");
    }
 
@@ -180,7 +180,7 @@ public class ImageApiExpectTest extends BaseGlanceApiExpectTest {
       GlanceApi apiWhenNoExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, get, getResponse);
 
-      assertNull(apiWhenNoExist.getImageApiForRegion("az-1.region-a.geo-1").getAsStream("fcc451d0-f6e4-4824-ad8f-70ec12326d07"));
+      assertNull(apiWhenNoExist.getImageApiForZone("az-1.region-a.geo-1").getAsStream("fcc451d0-f6e4-4824-ad8f-70ec12326d07"));
    }
 
    public void testCreateWhenResponseIs2xx() throws Exception {
@@ -197,9 +197,9 @@ public class ImageApiExpectTest extends BaseGlanceApiExpectTest {
       GlanceApi apiWhenExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, get, createResponse);
 
-      assertEquals(apiWhenExist.getConfiguredRegions(), ImmutableSet.of("az-1.region-a.geo-1"));
+      assertEquals(apiWhenExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
 
-      assertEquals(apiWhenExist.getImageApiForRegion("az-1.region-a.geo-1").create("test", new StringPayload("somedata")),
+      assertEquals(apiWhenExist.getImageApiForZone("az-1.region-a.geo-1").create("test", new StringPayload("somedata")),
             new ParseImageDetailsTest().expected());
    }
 
@@ -218,9 +218,9 @@ public class ImageApiExpectTest extends BaseGlanceApiExpectTest {
       GlanceApi apiWhenExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, get, createResponse);
 
-      assertEquals(apiWhenExist.getConfiguredRegions(), ImmutableSet.of("az-1.region-a.geo-1"));
+      assertEquals(apiWhenExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
 
-      apiWhenExist.getImageApiForRegion("az-1.region-a.geo-1").create("test", new StringPayload("somedata"));
+      apiWhenExist.getImageApiForZone("az-1.region-a.geo-1").create("test", new StringPayload("somedata"));
    }
 
    public void testReserveWhenResponseIs2xx() throws Exception {
@@ -236,9 +236,9 @@ public class ImageApiExpectTest extends BaseGlanceApiExpectTest {
       GlanceApi apiWhenExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, get, createResponse);
 
-      assertEquals(apiWhenExist.getConfiguredRegions(), ImmutableSet.of("az-1.region-a.geo-1"));
+      assertEquals(apiWhenExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
 
-      assertEquals(apiWhenExist.getImageApiForRegion("az-1.region-a.geo-1").reserve("test"), new ParseImageDetailsTest().expected());
+      assertEquals(apiWhenExist.getImageApiForZone("az-1.region-a.geo-1").reserve("test"), new ParseImageDetailsTest().expected());
    }
 
    @Test(expectedExceptions = AuthorizationException.class)
@@ -255,9 +255,9 @@ public class ImageApiExpectTest extends BaseGlanceApiExpectTest {
       GlanceApi apiWhenExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, get, createResponse);
 
-      assertEquals(apiWhenExist.getConfiguredRegions(), ImmutableSet.of("az-1.region-a.geo-1"));
+      assertEquals(apiWhenExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
 
-      apiWhenExist.getImageApiForRegion("az-1.region-a.geo-1").reserve("test");
+      apiWhenExist.getImageApiForZone("az-1.region-a.geo-1").reserve("test");
    }
    
    public void testUpdateMetadataWhenResponseIs2xx() throws Exception {
@@ -282,9 +282,9 @@ public class ImageApiExpectTest extends BaseGlanceApiExpectTest {
       GlanceApi apiWhenExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, get, updateResponse);
 
-      assertEquals(apiWhenExist.getConfiguredRegions(), ImmutableSet.of("az-1.region-a.geo-1"));
+      assertEquals(apiWhenExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
 
-      assertEquals(apiWhenExist.getImageApiForRegion("az-1.region-a.geo-1")
+      assertEquals(apiWhenExist.getImageApiForZone("az-1.region-a.geo-1")
             .update("fcc451d0-f6e4-4824-ad8f-70ec12326d07",
                   UpdateImageOptions.Builder.name("newname"),
                   UpdateImageOptions.Builder.isPublic(true),
@@ -313,9 +313,9 @@ public class ImageApiExpectTest extends BaseGlanceApiExpectTest {
       GlanceApi apiWhenExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, get, updateResponse);
 
-      assertEquals(apiWhenExist.getConfiguredRegions(), ImmutableSet.of("az-1.region-a.geo-1"));
+      assertEquals(apiWhenExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
 
-      apiWhenExist.getImageApiForRegion("az-1.region-a.geo-1")
+      apiWhenExist.getImageApiForZone("az-1.region-a.geo-1")
             .update("fcc451d0-f6e4-4824-ad8f-70ec12326d07",
                   UpdateImageOptions.Builder.name("newname"),
                   UpdateImageOptions.Builder.isPublic(true));
@@ -336,9 +336,9 @@ public class ImageApiExpectTest extends BaseGlanceApiExpectTest {
       GlanceApi apiWhenExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, get, updateResponse);
 
-      assertEquals(apiWhenExist.getConfiguredRegions(), ImmutableSet.of("az-1.region-a.geo-1"));
+      assertEquals(apiWhenExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
 
-      assertEquals(apiWhenExist.getImageApiForRegion("az-1.region-a.geo-1").upload("fcc451d0-f6e4-4824-ad8f-70ec12326d07",
+      assertEquals(apiWhenExist.getImageApiForZone("az-1.region-a.geo-1").upload("fcc451d0-f6e4-4824-ad8f-70ec12326d07",
             new StringPayload("somenewdata")), new ParseImageDetailsTest().expected());
    }
 
@@ -360,9 +360,9 @@ public class ImageApiExpectTest extends BaseGlanceApiExpectTest {
       GlanceApi apiWhenExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, get, updateResponse);
 
-      assertEquals(apiWhenExist.getConfiguredRegions(), ImmutableSet.of("az-1.region-a.geo-1"));
+      assertEquals(apiWhenExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
 
-      assertEquals(apiWhenExist.getImageApiForRegion("az-1.region-a.geo-1").upload("fcc451d0-f6e4-4824-ad8f-70ec12326d07",
+      assertEquals(apiWhenExist.getImageApiForZone("az-1.region-a.geo-1").upload("fcc451d0-f6e4-4824-ad8f-70ec12326d07",
             new StringPayload("somenewdata"), UpdateImageOptions.Builder.name("anothernewname")), new ParseImageDetailsTest().expected());
    }
 
@@ -383,9 +383,9 @@ public class ImageApiExpectTest extends BaseGlanceApiExpectTest {
       GlanceApi apiWhenExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, get, updateResponse);
 
-      assertEquals(apiWhenExist.getConfiguredRegions(), ImmutableSet.of("az-1.region-a.geo-1"));
+      assertEquals(apiWhenExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
 
-      apiWhenExist.getImageApiForRegion("az-1.region-a.geo-1").upload("fcc451d0-f6e4-4824-ad8f-70ec12326d07",
+      apiWhenExist.getImageApiForZone("az-1.region-a.geo-1").upload("fcc451d0-f6e4-4824-ad8f-70ec12326d07",
             new StringPayload("somenewdata"), UpdateImageOptions.Builder.name("anothernewname"));
    }
 
@@ -399,9 +399,9 @@ public class ImageApiExpectTest extends BaseGlanceApiExpectTest {
       GlanceApi apiWhenExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, get, getResponse);
 
-      assertEquals(apiWhenExist.getConfiguredRegions(), ImmutableSet.of("az-1.region-a.geo-1"));
+      assertEquals(apiWhenExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
 
-      assertTrue(apiWhenExist.getImageApiForRegion("az-1.region-a.geo-1").delete("fcc451d0-f6e4-4824-ad8f-70ec12326d07"));
+      assertTrue(apiWhenExist.getImageApiForZone("az-1.region-a.geo-1").delete("fcc451d0-f6e4-4824-ad8f-70ec12326d07"));
    }
 
    public void testDeleteWhenResponseIs4xx() throws Exception {
@@ -415,8 +415,8 @@ public class ImageApiExpectTest extends BaseGlanceApiExpectTest {
       GlanceApi apiWhenExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, get, getResponse);
 
-      assertEquals(apiWhenExist.getConfiguredRegions(), ImmutableSet.of("az-1.region-a.geo-1"));
+      assertEquals(apiWhenExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
 
-      assertFalse(apiWhenExist.getImageApiForRegion("az-1.region-a.geo-1").delete("fcc451d0-f6e4-4824-ad8f-70ec12326d07"));
+      assertFalse(apiWhenExist.getImageApiForZone("az-1.region-a.geo-1").delete("fcc451d0-f6e4-4824-ad8f-70ec12326d07"));
    }
 }

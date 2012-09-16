@@ -37,164 +37,164 @@ import com.google.common.collect.ImmutableSet;
  */
 @XmlRootElement(name = "diskimage")
 public class DiskImage {
-    @XmlElement(name = "diskimageId")
-    private String id;
+   @XmlElement(name = "diskimageId")
+   private String id;
 
-    @XmlElement(name = "diskimageName")
-    private String name;
+   @XmlElement(name = "diskimageName")
+   private String name;
 
-    private int size;
+   private int size;
 
-    private String osName;
+   private String osName;
 
-    private String osType;
+   private String osType;
 
-    private String creatorName;
+   private String creatorName;
 
-    private String registrant;
+   private String registrant;
 
-    private String licenseInfo;
+   private String licenseInfo;
 
-    private String description;
+   private String description;
 
-    @XmlElementWrapper(name = "softwares")
-    @XmlElement(name = "software")
-    private Set<Software> software = new LinkedHashSet<Software>();
+   @XmlElementWrapper(name = "softwares")
+   @XmlElement(name = "software")
+   private Set<Software> software = new LinkedHashSet<Software>();
 
-    public String getId() {
-        return id;
-    }
+   public String getId() {
+      return id;
+   }
 
-    public int getSize() {
-        return size;
-    }
+   public int getSize() {
+      return size;
+   }
 
-    public String getOsName() {
-        return osName;
-    }
+   public String getOsName() {
+      return osName;
+   }
 
-    public String getOsType() {
-        return osType;
-    }
+   public String getOsType() {
+      return osType;
+   }
 
-    public String getCreatorName() {
-        return creatorName;
-    }
+   public String getCreatorName() {
+      return creatorName;
+   }
 
-    public String getRegistrant() {
-        return registrant;
-    }
+   public String getRegistrant() {
+      return registrant;
+   }
 
-    public String getLicenseInfo() {
-        return licenseInfo;
-    }
+   public String getLicenseInfo() {
+      return licenseInfo;
+   }
 
-    public String getDescription() {
-        return description;
-    }
+   public String getDescription() {
+      return description;
+   }
 
-    public String getName() {
-        return name;
-    }
+   public String getName() {
+      return name;
+   }
 
-    public Set<Software> getSoftware() {
-        return software == null ? ImmutableSet.<Software> of() : ImmutableSet
-                .copyOf(software);
-    }
+   public Set<Software> getSoftware() {
+      return software == null ? ImmutableSet.<Software> of() : ImmutableSet
+            .copyOf(software);
+   }
 
-    public static Builder builder() {
-        return new Builder();
-    }
+   public static Builder builder() {
+      return new Builder();
+   }
 
-    public static class Builder {
-        private String id;
-        private String name;
-        private int size;
-        private String osName;
-        private String osType;
-        private String creatorName;
-        private String registrant;
-        private String licenseInfo;
-        private String description;
-        private Set<Software> software;
+   public static class Builder {
+      private String id;
+      private String name;
+      private int size;
+      private String osName;
+      private String osType;
+      private String creatorName;
+      private String registrant;
+      private String licenseInfo;
+      private String description;
+      private Set<Software> software;
 
-        public Builder id(String id) {
-            this.id = id;
-            return this;
-        }
+      public Builder id(String id) {
+         this.id = id;
+         return this;
+      }
 
-        public Builder name(String name) {
-            this.name = name;
-            return this;
-        }
+      public Builder name(String name) {
+         this.name = name;
+         return this;
+      }
 
-        public Builder osName(String osName) {
-            this.osName = osName;
-            return this;
-        }
+      public Builder osName(String osName) {
+         this.osName = osName;
+         return this;
+      }
 
-        public Builder osType(String osType) {
-            this.osType = osType;
-            return this;
-        }
+      public Builder osType(String osType) {
+         this.osType = osType;
+         return this;
+      }
 
-        public Builder creatorName(String creatorName) {
-            this.creatorName = creatorName;
-            return this;
-        }
+      public Builder creatorName(String creatorName) {
+         this.creatorName = creatorName;
+         return this;
+      }
 
-        public Builder registrant(String registrant) {
-            this.registrant = registrant;
-            return this;
-        }
+      public Builder registrant(String registrant) {
+         this.registrant = registrant;
+         return this;
+      }
 
-        public Builder description(String description) {
-            this.description = description;
-            return this;
-        }
+      public Builder description(String description) {
+         this.description = description;
+         return this;
+      }
 
-        public DiskImage build() {
-            DiskImage image = new DiskImage();
+      public DiskImage build() {
+         DiskImage image = new DiskImage();
 
-            image.id = id;
-            image.name = name;
-            image.size = size;
-            image.osName = osName;
-            image.osType = osType;
-            image.creatorName = creatorName;
-            image.registrant = registrant;
-            image.licenseInfo = licenseInfo;
-            image.description = description;
-            image.software = software;
+         image.id = id;
+         image.name = name;
+         image.size = size;
+         image.osName = osName;
+         image.osType = osType;
+         image.creatorName = creatorName;
+         image.registrant = registrant;
+         image.licenseInfo = licenseInfo;
+         image.description = description;
+         image.software = software;
 
-            return image;
-        }
-    }
+         return image;
+      }
+   }
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(id);
-    }
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(id);
+   }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        DiskImage that = DiskImage.class.cast(obj);
-        return Objects.equal(this.id, that.id);
-    }
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      DiskImage that = DiskImage.class.cast(obj);
+      return Objects.equal(this.id, that.id);
+   }
 
-    @Override
-    public String toString() {
-        return Objects.toStringHelper(this).omitNullValues().add("id", id)
-                .add("name", name).add("osName", osName).add("osType", osType)
-                .add("size", size).add("creatorName", creatorName)
-                .add("description", description)
-                .add("licenseInfo", licenseInfo).add("registrant", registrant)
-                .add("software", software).toString();
-    }
+   @Override
+   public String toString() {
+      return Objects.toStringHelper(this).omitNullValues().add("id", id)
+            .add("name", name).add("osName", osName).add("osType", osType)
+            .add("size", size).add("creatorName", creatorName)
+            .add("description", description)
+            .add("licenseInfo", licenseInfo).add("registrant", registrant)
+            .add("software", software).toString();
+   }
 }

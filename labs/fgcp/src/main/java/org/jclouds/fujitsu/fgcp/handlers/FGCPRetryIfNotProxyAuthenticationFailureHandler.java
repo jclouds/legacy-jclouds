@@ -18,13 +18,14 @@
  */
 package org.jclouds.fujitsu.fgcp.handlers;
 
-import com.google.inject.Singleton;
+import javax.annotation.Resource;
+
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.logging.Logger;
 
-import javax.annotation.Resource;
+import com.google.inject.Singleton;
 
 /**
  * Created by IntelliJ IDEA.
@@ -33,15 +34,15 @@ import javax.annotation.Resource;
  */
 @Singleton
 public class FGCPRetryIfNotProxyAuthenticationFailureHandler implements
-        HttpRetryHandler {
-    @Resource
-    protected Logger logger = Logger.NULL;
+      HttpRetryHandler {
+   @Resource
+   protected Logger logger = Logger.NULL;
 
-    @Override
-    public boolean shouldRetryRequest(HttpCommand command, HttpResponse response) {
-        int statusCode = response.getStatusCode();
-        System.out.println("Response status code: " + statusCode);
-        logger.error("StatusCode", statusCode);
-        return true;
-    }
+   @Override
+   public boolean shouldRetryRequest(HttpCommand command, HttpResponse response) {
+      int statusCode = response.getStatusCode();
+      System.out.println("Response status code: " + statusCode);
+      logger.error("StatusCode", statusCode);
+      return true;
+   }
 }

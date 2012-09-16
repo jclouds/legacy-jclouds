@@ -32,13 +32,13 @@ import org.jclouds.fujitsu.fgcp.domain.PublicIPStatus;
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface PublicIPAddressApi {
 
-    void attach(String systemId, String ip);
+   void attach(String systemId, String ip);
 
-    void detach(String systemId, String ip);
+   void detach(String systemId, String ip);
 
-    void free(String systemId, String ip);
+   void free(String systemId, String ip);
 
-    PublicIPStatus getStatus(String ip);
+   PublicIPStatus getStatus(String ip);
 
-    PublicIP get(String ip);
+   PublicIP get(String ip);
 }

@@ -28,168 +28,168 @@ import com.google.common.base.Objects;
  * @author Dies Koper
  */
 public class Policy implements Comparable<Policy> {
-    private int id;
+   private int id;
 
-    private String src;
+   private String src;
 
-    private PolicyType srcType;
+   private PolicyType srcType;
 
-    private String srcPort;
+   private String srcPort;
 
-    private Service dstService;
+   private Service dstService;
 
-    private String dst;
+   private String dst;
 
-    private PolicyType dstType;
+   private PolicyType dstType;
 
-    private String dstPort;
+   private String dstPort;
 
-    private Protocol protocol;
+   private Protocol protocol;
 
-    private Action action;
+   private Action action;
 
-    private Log log;
+   private Log log;
 
-    enum Service {
-        NONE, WSUS, DNS, NTP, @XmlEnumValue("yum")
-        YUM, KMS, @XmlEnumValue("Symantec")
-        SYMANTEC, RHUI
-    }
+   enum Service {
+      NONE, WSUS, DNS, NTP, @XmlEnumValue("yum")
+      YUM, KMS, @XmlEnumValue("Symantec")
+      SYMANTEC, RHUI
+   }
 
-    enum PolicyType {IP, FQDN, FQDNF}
+   enum PolicyType {IP, FQDN, FQDNF}
 
-    enum Protocol {
-        @XmlEnumValue("tcp")
-        TCP, @XmlEnumValue("udp")
-        UDP, @XmlEnumValue("tcp-udp")
-        TCP_UDP, @XmlEnumValue("icmp")
-        ICMP
-    }
+   enum Protocol {
+      @XmlEnumValue("tcp")
+      TCP, @XmlEnumValue("udp")
+      UDP, @XmlEnumValue("tcp-udp")
+      TCP_UDP, @XmlEnumValue("icmp")
+      ICMP
+   }
 
-    enum Action {
-        @XmlEnumValue("Accept")
-        ACCEPT, @XmlEnumValue("Deny")
-        DENY
-    }
+   enum Action {
+      @XmlEnumValue("Accept")
+      ACCEPT, @XmlEnumValue("Deny")
+      DENY
+   }
 
-    enum Log {
-        @XmlEnumValue("On")
-        ON, @XmlEnumValue("Off")
-        OFF
-    }
+   enum Log {
+      @XmlEnumValue("On")
+      ON, @XmlEnumValue("Off")
+      OFF
+   }
 
-    /**
-     * @return the id
-     */
-    public int getId() {
-        return id;
-    }
+   /**
+    * @return the id
+    */
+   public int getId() {
+      return id;
+   }
 
-    /**
-     * @return the src
-     */
-    public String getSrc() {
-        return src;
-    }
+   /**
+    * @return the src
+    */
+   public String getSrc() {
+      return src;
+   }
 
-    /**
-     * @return the srcType
-     */
-    public PolicyType getSrcType() {
-        return srcType;
-    }
+   /**
+    * @return the srcType
+    */
+   public PolicyType getSrcType() {
+      return srcType;
+   }
 
-    /**
-     * @return the srcPort
-     */
-    public String getSrcPort() {
-        return srcPort;
-    }
+   /**
+    * @return the srcPort
+    */
+   public String getSrcPort() {
+      return srcPort;
+   }
 
-    /**
-     * @return the dstService
-     */
-    public Service getDstService() {
-        return dstService;
-    }
+   /**
+    * @return the dstService
+    */
+   public Service getDstService() {
+      return dstService;
+   }
 
-    /**
-     * @return the dst
-     */
-    public String getDst() {
-        return dst;
-    }
+   /**
+    * @return the dst
+    */
+   public String getDst() {
+      return dst;
+   }
 
-    /**
-     * @return the dstType
-     */
-    public PolicyType getDstType() {
-        return dstType;
-    }
+   /**
+    * @return the dstType
+    */
+   public PolicyType getDstType() {
+      return dstType;
+   }
 
-    /**
-     * @return the dstPort
-     */
-    public String getDstPort() {
-        return dstPort;
-    }
+   /**
+    * @return the dstPort
+    */
+   public String getDstPort() {
+      return dstPort;
+   }
 
-    /**
-     * @return the protocol
-     */
-    public Protocol getProtocol() {
-        return protocol;
-    }
+   /**
+    * @return the protocol
+    */
+   public Protocol getProtocol() {
+      return protocol;
+   }
 
-    /**
-     * @return the action
-     */
-    public Action getAction() {
-        return action;
-    }
+   /**
+    * @return the action
+    */
+   public Action getAction() {
+      return action;
+   }
 
-    /**
-     * @return the log
-     */
-    public Log getLog() {
-        return log;
-    }
+   /**
+    * @return the log
+    */
+   public Log getLog() {
+      return log;
+   }
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(id);
-    }
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(id);
+   }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Policy that = Policy.class.cast(obj);
-        return Objects.equal(this.id, that.id);
-    }
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      Policy that = Policy.class.cast(obj);
+      return Objects.equal(this.id, that.id);
+   }
 
-    @Override
-    public String toString() {
-        return Objects.toStringHelper(this).omitNullValues()
-                .add("id", id)
-                .add("src", src)
-                .add("srcType", srcType)
-                .add("srcPort", srcPort)
-                .add("dstService", dstService)
-                .add("dst", dst)
-                .add("dstType", dstType)
-                .add("dstPort", dstPort)
-                .add("protocol", protocol)
-                .add("action", action)
-                .add("log", log).toString();
-    }
+   @Override
+   public String toString() {
+      return Objects.toStringHelper(this).omitNullValues()
+            .add("id", id)
+            .add("src", src)
+            .add("srcType", srcType)
+            .add("srcPort", srcPort)
+            .add("dstService", dstService)
+            .add("dst", dst)
+            .add("dstType", dstType)
+            .add("dstPort", dstPort)
+            .add("protocol", protocol)
+            .add("action", action)
+            .add("log", log).toString();
+   }
 
-    @Override
-    public int compareTo(Policy o) {
-        return id - o.id;
-    }
+   @Override
+   public int compareTo(Policy o) {
+      return id - o.id;
+   }
 }

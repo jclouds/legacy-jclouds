@@ -47,9 +47,9 @@ public class ImageApiLiveTest extends BaseGlanceApiLiveTest {
 
    @Test
    public void testList() throws Exception {
-      for (String zoneId : glanceContext.getApi().getConfiguredRegions()) {
-         ImageApi api = glanceContext.getApi().getImageApiForRegion(zoneId);
-         Set<? extends Image> response = api.list(ListImageOptions.Builder.limit(100));
+      for (String zoneId : glanceContext.getApi().getConfiguredZones()) {
+         ImageApi api = glanceContext.getApi().getImageApiForZone(zoneId);
+         Set<? extends Image> response = api.list().concat().toImmutableSet();
          assert null != response;
          for (Image image : response) {
             checkImage(image);
@@ -65,13 +65,13 @@ public class ImageApiLiveTest extends BaseGlanceApiLiveTest {
 
    @Test
    public void testListInDetail() throws Exception {
-      for (String zoneId : glanceContext.getApi().getConfiguredRegions()) {
-         ImageApi api = glanceContext.getApi().getImageApiForRegion(zoneId);
-         Set<? extends ImageDetails> response = api.listInDetail();
+      for (String zoneId : glanceContext.getApi().getConfiguredZones()) {
+         ImageApi api = glanceContext.getApi().getImageApiForZone(zoneId);
+         Set<? extends ImageDetails> response = api.listInDetail().concat().toImmutableSet();
          assert null != response;
          for (ImageDetails image : response) {
             checkImage(image);
-            ImageDetails newDetails = api.show(image.getId());
+            ImageDetails newDetails = api.get(image.getId());
             checkImageDetails(newDetails);
             checkImageDetailsEqual(image, newDetails);
          }
@@ -93,8 +93,8 @@ public class ImageApiLiveTest extends BaseGlanceApiLiveTest {
    @Test
    public void testCreateUpdateAndDeleteImage() {
       StringPayload imageData = new StringPayload("This isn't really an image!");
-      for (String zoneId : glanceContext.getApi().getConfiguredRegions()) {
-         ImageApi api = glanceContext.getApi().getImageApiForRegion(zoneId);
+      for (String zoneId : glanceContext.getApi().getConfiguredZones()) {
+         ImageApi api = glanceContext.getApi().getImageApiForZone(zoneId);
          ImageDetails details = api.create("jclouds-live-test", imageData, diskFormat(DiskFormat.RAW), containerFormat(ContainerFormat.BARE));
          assertEquals(details.getName(), "jclouds-live-test");
          assertEquals(details.getSize().get().longValue(), imageData.getRawContent().length());
@@ -103,7 +103,9 @@ public class ImageApiLiveTest extends BaseGlanceApiLiveTest {
          assertEquals(details.getName(), "jclouds-live-test2");
          assertEquals(details.getMinDisk(), 10);
          
-         Image fromListing = Iterables.getOnlyElement(api.list(ListImageOptions.Builder.name("jclouds-live-test2"), ListImageOptions.Builder.limit(2), ListImageOptions.Builder.containerFormat(ContainerFormat.BARE)));
+         Image fromListing = api.list(
+                  ListImageOptions.Builder.containerFormat(ContainerFormat.BARE).name("jclouds-live-test2").limit(2))
+                  .get(0);
          assertEquals(fromListing.getId(), details.getId());
          assertEquals(fromListing.getSize(), details.getSize());
 
@@ -118,8 +120,8 @@ public class ImageApiLiveTest extends BaseGlanceApiLiveTest {
    @Test
    public void testReserveUploadAndDeleteImage() {
       StringPayload imageData = new StringPayload("This isn't an image!");
-      for (String zoneId : glanceContext.getApi().getConfiguredRegions()) {
-         ImageApi api = glanceContext.getApi().getImageApiForRegion(zoneId);
+      for (String zoneId : glanceContext.getApi().getConfiguredZones()) {
+         ImageApi api = glanceContext.getApi().getImageApiForZone(zoneId);
          ImageDetails details = api.reserve("jclouds-live-res-test", diskFormat(DiskFormat.RAW), containerFormat(ContainerFormat.BARE));
          assertEquals(details.getName(), "jclouds-live-res-test");
  
@@ -128,7 +130,7 @@ public class ImageApiLiveTest extends BaseGlanceApiLiveTest {
          assertEquals(details.getSize().get().longValue(), imageData.getRawContent().length());
          assertEquals(details.getMinDisk(), 10);
 
-         Image fromListing = Iterables.getOnlyElement(api.list(ListImageOptions.Builder.name("jclouds-live-res-test2"), ListImageOptions.Builder.limit(2), ListImageOptions.Builder.containerFormat(ContainerFormat.BARE)));
+         Image fromListing = Iterables.getOnlyElement(api.list(ListImageOptions.Builder.name("jclouds-live-res-test2").limit(2).containerFormat(ContainerFormat.BARE)));
          assertEquals(fromListing.getId(), details.getId());
          assertEquals(fromListing.getSize(), details.getSize());
 

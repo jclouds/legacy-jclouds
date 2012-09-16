@@ -28,39 +28,39 @@ import com.google.common.base.Objects;
  * @author Dies Koper
  */
 public class Memory implements Comparable<Memory> {
-    @XmlElement(name = "memorySize")
-    private double size;
+   @XmlElement(name = "memorySize")
+   private double size;
 
-    public double getSize() {
-        return size;
-    }
+   public double getSize() {
+      return size;
+   }
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(size);
-    }
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(size);
+   }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Memory that = Memory.class.cast(obj);
-        return Objects.equal(this.size, that.size);
-    }
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      Memory that = Memory.class.cast(obj);
+      return Objects.equal(this.size, that.size);
+   }
 
-    @Override
-    public String toString() {
-        return Objects.toStringHelper(this).omitNullValues().add("size", size)
-                .toString();
-    }
+   @Override
+   public String toString() {
+      return Objects.toStringHelper(this).omitNullValues().add("size", size)
+            .toString();
+   }
 
-    @Override
-    public int compareTo(Memory o) {
-        return Double.compare(size, o.size);
-    }
+   @Override
+   public int compareTo(Memory o) {
+      return Double.compare(size, o.size);
+   }
 
 }

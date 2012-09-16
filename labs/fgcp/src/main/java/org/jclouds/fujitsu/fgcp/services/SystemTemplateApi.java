@@ -32,12 +32,12 @@ import org.jclouds.fujitsu.fgcp.domain.VSystemDescriptor;
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface SystemTemplateApi {
 
-    VSystemDescriptor get(String id);
+   VSystemDescriptor get(String id);
 
-    void update(String id, String localeId, String name, String value);
+   void update(String id, String localeId, String name, String value);
 
-    void deregister(String id);
+   void deregister(String id);
 
-    void deregisterPrivateTemplate(String id);
+   void deregisterPrivateTemplate(String id);
 
 }

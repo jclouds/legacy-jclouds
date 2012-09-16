@@ -106,12 +106,12 @@ public class AllocateAndAddFloatingIpToNodeExpectTest extends BaseNovaComputeSer
                                  "{\"badRequest\": {\"message\": \"AddressLimitExceeded: Address quota exceeded. You cannot allocate any more addresses\", \"code\": 400}}",
                                  "application/json")).build();
 
-      HttpRequest listFloatingIPs = HttpRequest.builder().method("GET").endpoint(
+      HttpRequest list = HttpRequest.builder().method("GET").endpoint(
                URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-floating-ips")).headers(
                ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
                         authToken).build()).build();
 
-      HttpResponse listFloatingIPsResponseForUnassigned = HttpResponse.builder().statusCode(200).payload(
+      HttpResponse listResponseForUnassigned = HttpResponse.builder().statusCode(200).payload(
                payloadFromResource("/floatingip_list.json")).build();
 
       HttpRequest addFloatingIPRequest = addFloatingIPForAddress("10.0.0.5");
@@ -120,8 +120,8 @@ public class AllocateAndAddFloatingIpToNodeExpectTest extends BaseNovaComputeSer
                ImmutableMap.<HttpRequest, HttpResponse> builder().put(keystoneAuthWithUsernameAndPasswordAndTenantName,
                         responseWithKeystoneAccess).put(extensionsOfNovaRequest, extensionsOfNovaResponse).put(
                         allocateFloatingIP, allocateFloatingIPResponse)
-                        .put(addFloatingIPRequest, addFloatingIPResponse).put(listFloatingIPs,
-                                 listFloatingIPsResponseForUnassigned).build()).getContext().utils().injector()
+                        .put(addFloatingIPRequest, addFloatingIPResponse).put(list,
+                                 listResponseForUnassigned).build()).getContext().utils().injector()
                .getInstance(AllocateAndAddFloatingIpToNode.class);
 
       AtomicReference<NodeMetadata> nodeRef = new AtomicReference<NodeMetadata>(node);

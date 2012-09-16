@@ -31,9 +31,9 @@ import org.jclouds.fujitsu.fgcp.domain.DiskImage;
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface DiskImageApi {
 
-    DiskImage get(String id);
+   DiskImage get(String id);
 
-    void update(String diskImageId, String localeId, String name, String value);
+   void update(String diskImageId, String localeId, String name, String value);
 
-    void deregister(String id);
+   void deregister(String id);
 }

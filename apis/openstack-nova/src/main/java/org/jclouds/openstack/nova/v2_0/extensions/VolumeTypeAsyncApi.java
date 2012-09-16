@@ -19,7 +19,6 @@
 package org.jclouds.openstack.nova.v2_0.extensions;
 
 import java.util.Map;
-import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -46,11 +45,13 @@ import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.Unwrap;
 import org.jclouds.rest.annotations.WrapWith;
 import org.jclouds.rest.binders.BindToJsonPayload;
+import org.jclouds.rest.functions.ReturnEmptyFluentIterableOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnEmptyMapOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
+import com.google.common.annotations.Beta;
+import com.google.common.collect.FluentIterable;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -59,6 +60,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adam Lowe
  * @see VolumeTypeApi
  */
+@Beta
 @Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.VOLUME_TYPES)
 @SkipEncoding({'/', '='})
 @RequestFilters(AuthenticateRequest.class)
@@ -67,58 +69,58 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface VolumeTypeAsyncApi {
 
    /**
-    * @see VolumeTypeApi#listVolumeTypes
+    * @see VolumeTypeApi#list
     */
    @GET
    @SelectJson("volume_types")
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<? extends Set<? extends VolumeType>> listVolumeTypes();
+   @ExceptionParser(ReturnEmptyFluentIterableOnNotFoundOr404.class)
+   ListenableFuture<? extends FluentIterable<? extends VolumeType>> list();
 
 
    /**
-    * @see VolumeTypeApi#getVolumeType
+    * @see VolumeTypeApi#get
     */
    @GET
    @Path("/{id}")
    @SelectJson("volume_type")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<? extends VolumeType> getVolumeType(@PathParam("id") String id);
+   ListenableFuture<? extends VolumeType> get(@PathParam("id") String id);
 
    /**
-    * @see VolumeTypeApi#createVolumeType
+    * @see VolumeTypeApi#create
     */
    @POST
    @SelectJson("volume_type")
    @Produces(MediaType.APPLICATION_JSON)
    @WrapWith("volume_type")
-   ListenableFuture<? extends VolumeType> createVolumeType(@PayloadParam("name") String name, CreateVolumeTypeOptions... options);
+   ListenableFuture<? extends VolumeType> create(@PayloadParam("name") String name, CreateVolumeTypeOptions... options);
 
    /**
-    * @see VolumeTypeApi#deleteVolumeType
+    * @see VolumeTypeApi#delete
     */
    @DELETE
    @Path("/{id}")
    @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
-   ListenableFuture<Boolean> deleteVolumeType(@PathParam("id") String id);
+   ListenableFuture<Boolean> delete(@PathParam("id") String id);
 
    /**
-    * @see VolumeTypeApi#getAllExtraSpecs(String)
+    * @see VolumeTypeApi#getExtraSpecs(String)
     */
    @GET
    @SelectJson("extra_specs")
    @Path("/{id}/extra_specs")
    @ExceptionParser(ReturnEmptyMapOnNotFoundOr404.class)
-   ListenableFuture<Map<String, String>> getAllExtraSpecs(@PathParam("id") String id);
+   ListenableFuture<Map<String, String>> getExtraSpecs(@PathParam("id") String id);
 
    /**
-    * @see VolumeTypeApi#setAllExtraSpecs(String, java.util.Map)
+    * @see VolumeTypeApi#updateExtraSpecs(String, java.util.Map)
     */
    @POST
    @Path("/{id}/extra_specs")
    @Produces(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
    @MapBinder(BindToJsonPayload.class)
-   ListenableFuture<Boolean> setAllExtraSpecs(@PathParam("id") String id, @PayloadParam("extra_specs") Map<String, String> specs);
+   ListenableFuture<Boolean> updateExtraSpecs(@PathParam("id") String id, @PayloadParam("extra_specs") Map<String, String> specs);
 
    /**
     * @see VolumeTypeApi#getExtraSpec(String, String)
@@ -130,14 +132,14 @@ public interface VolumeTypeAsyncApi {
    ListenableFuture<String> getExtraSpec(@PathParam("id") String id, @PathParam("key") String key);
 
    /**
-    * @see VolumeTypeApi#setExtraSpec(String, String, String)
+    * @see VolumeTypeApi#updateExtraSpec(String, String, String)
     */
    @PUT
    @Path("/{id}/extra_specs/{key}")
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("%7B\"{key}\":\"{value}\"%7D")
    @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
-   ListenableFuture<Boolean> setExtraSpec(@PathParam("id") String id,
+   ListenableFuture<Boolean> updateExtraSpec(@PathParam("id") String id,
                                           @PathParam("key") @PayloadParam("key") String key,
                                           @PayloadParam("value") String value);
 

@@ -18,7 +18,6 @@
  */
 package org.jclouds.openstack.nova.v2_0.extensions;
 
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
@@ -28,6 +27,9 @@ import org.jclouds.openstack.nova.v2_0.domain.SecurityGroupRule;
 import org.jclouds.openstack.v2_0.ServiceType;
 import org.jclouds.openstack.v2_0.services.Extension;
 
+import com.google.common.annotations.Beta;
+import com.google.common.collect.FluentIterable;
+
 /**
  * Provides synchronous access to Security Groups.
  * <p/>
@@ -35,6 +37,7 @@ import org.jclouds.openstack.v2_0.services.Extension;
  * @see SecurityGroupAsyncApi
  * @author Jeremy Daggett
  */
+@Beta
 @Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.SECURITY_GROUPS)
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface SecurityGroupApi {
@@ -42,44 +45,44 @@ public interface SecurityGroupApi {
    /**
     * List all Security Groups.
     * 
-    * @return all Floating IPs
+    * @return all Security Groups
     */
-   Set<? extends SecurityGroup> listSecurityGroups();
+   FluentIterable<? extends SecurityGroup> list();
 
    /**
     * Get a specific Security Group
     * 
     * @return a specific Security Group
     */
-   SecurityGroup getSecurityGroup(String id);
+   SecurityGroup get(String id);
 
    /**
     * Create a Security Group
     * 
     * @return a new Security Group
     */
-   SecurityGroup createSecurityGroupWithNameAndDescription(String name, String description);
+   SecurityGroup createWithDescription(String name, String description);
 
    /**
     * Delete a Security Group.
     * 
     * @return
     */
-   Boolean deleteSecurityGroup(String id);
+   boolean delete(String id);
 
    /**
     * Create a Security Group Rule.
     * 
     * @return a new Security Group Rule
     */
-   SecurityGroupRule createSecurityGroupRuleAllowingCidrBlock(String parentGroup, Ingress ingress, String sourceCidr);
+   SecurityGroupRule createRuleAllowingCidrBlock(String parentGroup, Ingress ingress, String sourceCidr);
 
    /**
     * Create a Security Group Rule.
     * 
     * @return a new Security Group Rule
     */
-   SecurityGroupRule createSecurityGroupRuleAllowingSecurityGroupId(String parentGroup, Ingress ingress,
+   SecurityGroupRule createRuleAllowingSecurityGroupId(String parentGroup, Ingress ingress,
             String sourceCidr);
 
    /**
@@ -87,6 +90,6 @@ public interface SecurityGroupApi {
     * 
     * @return
     */
-   Boolean deleteSecurityGroupRule(String id);
+   Boolean deleteRule(String id);
 
 }

@@ -20,6 +20,9 @@ package org.jclouds.snia.cdmi.v1;
 
 import java.util.concurrent.TimeUnit;
 
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.snia.cdmi.v1.features.ContainerApi;
@@ -48,18 +51,20 @@ public interface CDMIApi {
     * Provides synchronous access to Container Object Resource Operations.
     */
    @Delegate
-   ContainerApi getContainerApi();
+   ContainerApi getApi();
 
    /**
     * Provides synchronous access to Data Object Resource Operations.
     */
    @Delegate
-   DataApi getDataApi();
-   
+   @Path("/{containerName}")
+   DataApi getDataApiForContainer(@PathParam("containerName") String containerName);
+
    /**
     * Provides synchronous access to Data Object Resource Operations.
     */
    @Delegate
-   DataNonCDMIContentTypeApi getDataNonCDMIContentTypeApi();
+   @Path("/{containerName}")
+   DataNonCDMIContentTypeApi getDataNonCDMIContentTypeApiForContainer(@PathParam("containerName") String containerName);
 
 }

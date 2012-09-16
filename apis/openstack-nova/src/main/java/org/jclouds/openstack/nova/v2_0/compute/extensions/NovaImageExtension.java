@@ -84,7 +84,7 @@ public class NovaImageExtension implements ImageExtension {
    @Override
    public ImageTemplate buildImageTemplateFromNode(String name, final String id) {
       ZoneAndId zoneAndId = ZoneAndId.fromSlashEncoded(id);
-      Server server = novaApi.getServerApiForZone(zoneAndId.getZone()).getServer(zoneAndId.getId());
+      Server server = novaApi.getServerApiForZone(zoneAndId.getZone()).get(zoneAndId.getId());
       if (server == null)
          throw new NoSuchElementException("Cannot find server with id: " + zoneAndId);
       CloneImageTemplate template = new ImageTemplateBuilder.CloneImageTemplateBuilder().nodeId(id).name(name).build();
@@ -119,7 +119,7 @@ public class NovaImageExtension implements ImageExtension {
    public boolean deleteImage(String id) {
       ZoneAndId zoneAndId = ZoneAndId.fromSlashEncoded(id);
       try {
-         this.novaApi.getImageApiForZone(zoneAndId.getZone()).deleteImage(zoneAndId.getId());
+         this.novaApi.getImageApiForZone(zoneAndId.getZone()).delete(zoneAndId.getId());
       } catch (Exception e) {
          return false;
       }

@@ -58,91 +58,91 @@ import com.google.common.util.concurrent.ListenableFuture;
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface VirtualServerAsyncApi {
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "StartVServer")
-    ListenableFuture<Void> start(
-            @BinderParam(BindAlsoToSystemId.class) @QueryParam("vserverId") String id);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "StartVServer")
+   ListenableFuture<Void> start(
+         @BinderParam(BindAlsoToSystemId.class) @QueryParam("vserverId") String id);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "StopVServer")
-    ListenableFuture<Void> stop(
-            @BinderParam(BindAlsoToSystemId.class) @QueryParam("vserverId") String id);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "StopVServer")
+   ListenableFuture<Void> stop(
+         @BinderParam(BindAlsoToSystemId.class) @QueryParam("vserverId") String id);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = { "Action", "force" }, values = { "StopVServer", "true" })
-    ListenableFuture<Void> stopForcefully(
-            @BinderParam(BindAlsoToSystemId.class) @QueryParam("vserverId") String id);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = { "Action", "force" }, values = { "StopVServer", "true" })
+   ListenableFuture<Void> stopForcefully(
+         @BinderParam(BindAlsoToSystemId.class) @QueryParam("vserverId") String id);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "DestroyVServer")
-    ListenableFuture<Void> destroy(
-            @BinderParam(BindAlsoToSystemId.class) @QueryParam("vserverId") String id);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "DestroyVServer")
+   ListenableFuture<Void> destroy(
+         @BinderParam(BindAlsoToSystemId.class) @QueryParam("vserverId") String id);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "GetVServerAttributes")
-    @Transform(SingleElementResponseToElement.class)
-    ListenableFuture<VServer> get(
-            @BinderParam(BindAlsoToSystemId.class) @QueryParam("vserverId") String id);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "GetVServerAttributes")
+   @Transform(SingleElementResponseToElement.class)
+   ListenableFuture<VServer> get(
+         @BinderParam(BindAlsoToSystemId.class) @QueryParam("vserverId") String id);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "GetVServerConfiguration")
-    @Transform(SingleElementResponseToElement.class)
-    ListenableFuture<VServerWithDetails> getDetails(
-            @BinderParam(BindAlsoToSystemId.class) @QueryParam("vserverId") String id);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "GetVServerConfiguration")
+   @Transform(SingleElementResponseToElement.class)
+   ListenableFuture<VServerWithDetails> getDetails(
+         @BinderParam(BindAlsoToSystemId.class) @QueryParam("vserverId") String id);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "UpdateVServerAttribute")
-    ListenableFuture<Void> update(
-            @BinderParam(BindAlsoToSystemId.class) @QueryParam("vserverId") String id,
-            @QueryParam("attributeName") String name,
-            @QueryParam("attributeValue") String value);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "UpdateVServerAttribute")
+   ListenableFuture<Void> update(
+         @BinderParam(BindAlsoToSystemId.class) @QueryParam("vserverId") String id,
+         @QueryParam("attributeName") String name,
+         @QueryParam("attributeValue") String value);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "GetVServerStatus")
-    // @Transform(StringToVServerStatus.class)
-    @Transform(SingleElementResponseToElement.class)
-    ListenableFuture<VServerStatus> getStatus(
-            @BinderParam(BindAlsoToSystemId.class) @QueryParam("vserverId") String id);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "GetVServerStatus")
+   // @Transform(StringToVServerStatus.class)
+   @Transform(SingleElementResponseToElement.class)
+   ListenableFuture<VServerStatus> getStatus(
+         @BinderParam(BindAlsoToSystemId.class) @QueryParam("vserverId") String id);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "GetVServerInitialPassword")
-    @Transform(SingleElementResponseToElement.class)
-    ListenableFuture<String> getInitialPassword(
-            @BinderParam(BindAlsoToSystemId.class) @QueryParam("vserverId") String id);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "GetVServerInitialPassword")
+   @Transform(SingleElementResponseToElement.class)
+   ListenableFuture<String> getInitialPassword(
+         @BinderParam(BindAlsoToSystemId.class) @QueryParam("vserverId") String id);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "AttachVDisk")
-    ListenableFuture<Void> attachDisk(
-            @BinderParam(BindAlsoToSystemId.class) @QueryParam("vserverId") String serverId,
-            @QueryParam("vdiskId") String diskId);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "AttachVDisk")
+   ListenableFuture<Void> attachDisk(
+         @BinderParam(BindAlsoToSystemId.class) @QueryParam("vserverId") String serverId,
+         @QueryParam("vdiskId") String diskId);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "GetPerformanceInformation")
-    ListenableFuture<Set<PerformanceInfo>> getPerformanceInformation(
-            @BinderParam(BindAlsoToSystemId.class) @QueryParam("serverId") String id,
-            @QueryParam("interval") String interval);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "GetPerformanceInformation")
+   ListenableFuture<Set<PerformanceInfo>> getPerformanceInformation(
+         @BinderParam(BindAlsoToSystemId.class) @QueryParam("serverId") String id,
+         @QueryParam("interval") String interval);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "GetPerformanceInformation")
-    ListenableFuture<Set<PerformanceInfo>> getPerformanceInformation(
-            @BinderParam(BindAlsoToSystemId.class) @QueryParam("serverId") String id,
-            @QueryParam("dataType") String dataType,
-            @QueryParam("interval") String interval);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "GetPerformanceInformation")
+   ListenableFuture<Set<PerformanceInfo>> getPerformanceInformation(
+         @BinderParam(BindAlsoToSystemId.class) @QueryParam("serverId") String id,
+         @QueryParam("dataType") String dataType,
+         @QueryParam("interval") String interval);
 
-    @POST
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "RegisterPrivateDiskImage")
-    ListenableFuture<Void> registerAsPrivateDiskImage(String xml);
+   @POST
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "RegisterPrivateDiskImage")
+   ListenableFuture<Void> registerAsPrivateDiskImage(String xml);
 }

@@ -40,45 +40,45 @@ import com.google.common.collect.ImmutableSet;
 public class KeyPairApiExpectTest extends BaseNovaApiExpectTest {
 
    public void testListKeyPairsWhenResponseIs2xx() throws Exception {
-      HttpRequest listKeyPairs = HttpRequest
+      HttpRequest list = HttpRequest
             .builder()
             .method("GET")
             .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-keypairs")
             .addHeader("Accept", "application/json")
             .addHeader("X-Auth-Token", authToken).build();
 
-      HttpResponse listKeyPairsResponse = HttpResponse.builder().statusCode(200)
+      HttpResponse listResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/keypair_list.json")).build();
 
       NovaApi apiWhenServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
-            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, listKeyPairs, listKeyPairsResponse);
+            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, list, listResponse);
 
       assertEquals(apiWhenServersExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
 
       // NOTE this required a change to the KeyPair domain object toString method
-      assertEquals(apiWhenServersExist.getKeyPairExtensionForZone("az-1.region-a.geo-1").get().listKeyPairs().toString(),
+      assertEquals(apiWhenServersExist.getKeyPairExtensionForZone("az-1.region-a.geo-1").get().list().toString(),
             new ParseKeyPairListTest().expected().toString());
    }
 
    public void testListKeyPairsWhenResponseIs404() throws Exception {
-      HttpRequest listKeyPairs = HttpRequest
+      HttpRequest list = HttpRequest
             .builder()
             .method("GET")
             .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-keypairs")
             .addHeader("Accept", "application/json")
             .addHeader("X-Auth-Token", authToken).build();
 
-      HttpResponse listKeyPairsResponse = HttpResponse.builder().statusCode(404).build();
+      HttpResponse listResponse = HttpResponse.builder().statusCode(404).build();
 
       NovaApi apiWhenNoServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
-            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, listKeyPairs, listKeyPairsResponse);
+            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, list, listResponse);
 
-      assertTrue(apiWhenNoServersExist.getKeyPairExtensionForZone("az-1.region-a.geo-1").get().listKeyPairs().isEmpty());
+      assertTrue(apiWhenNoServersExist.getKeyPairExtensionForZone("az-1.region-a.geo-1").get().list().isEmpty());
 
    }
 
    public void testCreateKeyPair() throws Exception {
-      HttpRequest createKeyPair = HttpRequest
+      HttpRequest create = HttpRequest
             .builder()
             .method("POST")
             .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-keypairs")
@@ -87,19 +87,19 @@ public class KeyPairApiExpectTest extends BaseNovaApiExpectTest {
             .payload(payloadFromStringWithContentType("{\"keypair\":{\"name\":\"testkeypair\"}}", "application/json"))
             .build();
 
-      HttpResponse createKeyPairResponse = HttpResponse.builder().statusCode(200)
+      HttpResponse createResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/keypair_created.json")).build();
 
       NovaApi apiWhenServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
-            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, createKeyPair, createKeyPairResponse);
+            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, create, createResponse);
 
-      assertEquals(apiWhenServersExist.getKeyPairExtensionForZone("az-1.region-a.geo-1").get().createKeyPair("testkeypair")
+      assertEquals(apiWhenServersExist.getKeyPairExtensionForZone("az-1.region-a.geo-1").get().create("testkeypair")
             .toString(), new ParseKeyPairTest().expected().toString());
 
    }
 
    public void testCreateKeyPairWithPublicKey() throws Exception {
-      HttpRequest createKeyPair = HttpRequest
+      HttpRequest create = HttpRequest
             .builder()
             .method("POST")
             .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-keypairs")
@@ -110,35 +110,35 @@ public class KeyPairApiExpectTest extends BaseNovaApiExpectTest {
                         "{\"keypair\":{\"name\":\"testkeypair\",\"public_key\":\"ssh-rsa AAAXB3NzaC1yc2EAAAADAQABAAAAgQDFNyGjgs6c9akgmZ2ou/fJf7Pdrc23hC95/gM/33OrG4GZABACE4DTioa/PGN+7rHv9YUavUCtXrWayhGniKq/wCuI5fo5TO4AmDNv7/sCGHIHFumADSIoLx0vFhGJIetXEWxL9r0lfFC7//6yZM2W3KcGjbMtlPXqBT9K9PzdyQ== nova@nv-aw2az1-api0001\n\"}}",
                         "application/json")).build();
 
-      HttpResponse createKeyPairResponse = HttpResponse.builder().statusCode(200)
+      HttpResponse createResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/keypair_created.json")).build();
 
       NovaApi apiWhenServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
-            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, createKeyPair, createKeyPairResponse);
+            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, create, createResponse);
 
       assertEquals(
             apiWhenServersExist
                   .getKeyPairExtensionForZone("az-1.region-a.geo-1")
                   .get()
-                  .createKeyPairWithPublicKey(
+                  .createWithPublicKey(
                         "testkeypair",
                         "ssh-rsa AAAXB3NzaC1yc2EAAAADAQABAAAAgQDFNyGjgs6c9akgmZ2ou/fJf7Pdrc23hC95/gM/33OrG4GZABACE4DTioa/PGN+7rHv9YUavUCtXrWayhGniKq/wCuI5fo5TO4AmDNv7/sCGHIHFumADSIoLx0vFhGJIetXEWxL9r0lfFC7//6yZM2W3KcGjbMtlPXqBT9K9PzdyQ== nova@nv-aw2az1-api0001\n")
                   .toString(), new ParseKeyPairTest().expected().toString());
    }
 
    public void testDeleteKeyPair() throws Exception {
-      HttpRequest deleteKeyPair = HttpRequest
+      HttpRequest delete = HttpRequest
             .builder()
             .method("DELETE")
             .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-keypairs/testkeypair")
             .addHeader("Accept", "*/*")
             .addHeader("X-Auth-Token", authToken).build();
 
-      HttpResponse deleteKeyPairResponse = HttpResponse.builder().statusCode(202).build();
+      HttpResponse deleteResponse = HttpResponse.builder().statusCode(202).build();
 
       NovaApi apiWhenServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
-            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, deleteKeyPair, deleteKeyPairResponse);
+            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, delete, deleteResponse);
 
-      assertTrue(apiWhenServersExist.getKeyPairExtensionForZone("az-1.region-a.geo-1").get().deleteKeyPair("testkeypair"));
+      assertTrue(apiWhenServersExist.getKeyPairExtensionForZone("az-1.region-a.geo-1").get().delete("testkeypair"));
    }
 }

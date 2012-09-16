@@ -42,7 +42,7 @@ public class HPCloudObjectStorageApiMetadata extends SwiftKeystoneApiMetadata {
    /** The serialVersionUID */
    private static final long serialVersionUID = 820062881469203616L;
    
-   public static final TypeToken<RestContext<HPCloudObjectStorageClient, HPCloudObjectStorageAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<HPCloudObjectStorageClient, HPCloudObjectStorageAsyncClient>>() {
+   public static final TypeToken<RestContext<HPCloudObjectStorageApi, HPCloudObjectStorageAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<HPCloudObjectStorageApi, HPCloudObjectStorageAsyncApi>>() {
       private static final long serialVersionUID = -5070937833892503232L;
    };
 
@@ -70,7 +70,7 @@ public class HPCloudObjectStorageApiMetadata extends SwiftKeystoneApiMetadata {
 
    public static class Builder extends SwiftKeystoneApiMetadata.Builder {
       protected Builder(){
-         super(HPCloudObjectStorageClient.class, HPCloudObjectStorageAsyncClient.class);
+         super(HPCloudObjectStorageApi.class, HPCloudObjectStorageAsyncApi.class);
          id("hpcloud-objectstorage")
          .endpointName("identity service url ending in /v2.0/")
          .defaultEndpoint("https://region-a.geo-1.identity.hpcloudsvc.com:35357/v2.0/")

@@ -11,19 +11,19 @@ import com.google.common.collect.ImmutableSet;
 
 public class VServerWithVNICs extends VServer {
 
-    @XmlElementWrapper(name = "vnics")
-    @XmlElement(name = "vnic")
-    protected Set<VNIC> vnics = new LinkedHashSet<VNIC>();
+   @XmlElementWrapper(name = "vnics")
+   @XmlElement(name = "vnic")
+   protected Set<VNIC> vnics = new LinkedHashSet<VNIC>();
 
-    public Set<VNIC> getVnics() {
-        return vnics == null ? ImmutableSet.<VNIC> of() : ImmutableSet
-                .copyOf(vnics);
-    }
+   public Set<VNIC> getVnics() {
+      return vnics == null ? ImmutableSet.<VNIC> of() : ImmutableSet
+            .copyOf(vnics);
+   }
 
-    @Override
-    public String toString() {
-        return Objects.toStringHelper(this).omitNullValues().add("id", id)
-                .add("name", name).add("type", type).add("creator", creator)
-                .add("diskimageId", diskimageId).add("vnics", vnics).toString();
-    }
+   @Override
+   public String toString() {
+      return Objects.toStringHelper(this).omitNullValues().add("id", id)
+            .add("name", name).add("type", type).add("creator", creator)
+            .add("diskimageId", diskimageId).add("vnics", vnics).toString();
+   }
 }

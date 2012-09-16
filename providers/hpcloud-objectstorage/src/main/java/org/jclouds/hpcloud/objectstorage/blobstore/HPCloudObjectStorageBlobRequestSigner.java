@@ -11,7 +11,7 @@ import javax.inject.Singleton;
 import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
-import org.jclouds.hpcloud.objectstorage.HPCloudObjectStorageAsyncClient;
+import org.jclouds.hpcloud.objectstorage.HPCloudObjectStorageAsyncApi;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.openstack.swift.blobstore.functions.BlobToObject;
@@ -23,7 +23,7 @@ import org.jclouds.rest.internal.RestAnnotationProcessor;
  */
 @Singleton
 public class HPCloudObjectStorageBlobRequestSigner implements BlobRequestSigner {
-   private final RestAnnotationProcessor<HPCloudObjectStorageAsyncClient> processor;
+   private final RestAnnotationProcessor<HPCloudObjectStorageAsyncApi> processor;
    private final BlobToObject blobToObject;
    private final BlobToHttpGetOptions blob2HttpGetOptions;
 
@@ -32,15 +32,15 @@ public class HPCloudObjectStorageBlobRequestSigner implements BlobRequestSigner 
    private final Method createMethod;
 
    @Inject
-   public HPCloudObjectStorageBlobRequestSigner(RestAnnotationProcessor<HPCloudObjectStorageAsyncClient> processor, BlobToObject blobToObject,
+   public HPCloudObjectStorageBlobRequestSigner(RestAnnotationProcessor<HPCloudObjectStorageAsyncApi> processor, BlobToObject blobToObject,
             BlobToHttpGetOptions blob2HttpGetOptions) throws SecurityException, NoSuchMethodException {
       this.processor = checkNotNull(processor, "processor");
       this.blobToObject = checkNotNull(blobToObject, "blobToObject");
       this.blob2HttpGetOptions = checkNotNull(blob2HttpGetOptions, "blob2HttpGetOptions");
-      this.getMethod = HPCloudObjectStorageAsyncClient.class.getMethod("getObject", String.class, String.class,
+      this.getMethod = HPCloudObjectStorageAsyncApi.class.getMethod("getObject", String.class, String.class,
                GetOptions[].class);
-      this.deleteMethod = HPCloudObjectStorageAsyncClient.class.getMethod("removeObject", String.class, String.class);
-      this.createMethod = HPCloudObjectStorageAsyncClient.class.getMethod("putObject", String.class, SwiftObject.class);
+      this.deleteMethod = HPCloudObjectStorageAsyncApi.class.getMethod("removeObject", String.class, String.class);
+      this.createMethod = HPCloudObjectStorageAsyncApi.class.getMethod("putObject", String.class, SwiftObject.class);
    }
 
    @Override

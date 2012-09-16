@@ -73,5 +73,6 @@
         <module>trystack-nova</module>
         <module>rackspace-cloudservers-us</module>
         <module>rackspace-cloudservers-uk</module>
+        <module>aws-sqs</module>
     </modules>
 </project>

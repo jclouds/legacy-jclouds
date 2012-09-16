@@ -37,14 +37,14 @@ import com.google.common.collect.ImmutableSet;
  */
 @XmlRootElement(name = "GetPerformanceInformationResponse")
 public class GetPerformanceInformationResponse extends
-        SetWithStatusResponse<PerformanceInfo> {
-    @XmlElementWrapper(name = "performanceinfos")
-    @XmlElement(name = "performanceinfo")
-    private Set<PerformanceInfo> stats = new LinkedHashSet<PerformanceInfo>();
+      SetWithStatusResponse<PerformanceInfo> {
+   @XmlElementWrapper(name = "performanceinfos")
+   @XmlElement(name = "performanceinfo")
+   private Set<PerformanceInfo> stats = new LinkedHashSet<PerformanceInfo>();
 
-    @Override
-    protected Set<PerformanceInfo> delegate() {
-        return stats == null ? ImmutableSet.<PerformanceInfo> of()
-                : Collections.unmodifiableSet(stats);
-    }
+   @Override
+   protected Set<PerformanceInfo> delegate() {
+      return stats == null ? ImmutableSet.<PerformanceInfo> of()
+            : Collections.unmodifiableSet(stats);
+   }
 }

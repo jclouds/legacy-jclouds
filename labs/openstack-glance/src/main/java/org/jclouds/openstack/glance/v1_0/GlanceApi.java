@@ -23,8 +23,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.location.Region;
-import org.jclouds.location.functions.RegionToEndpoint;
+import org.jclouds.location.Zone;
+import org.jclouds.location.functions.ZoneToEndpoint;
 import org.jclouds.openstack.glance.v1_0.features.ImageApi;
 import org.jclouds.openstack.v2_0.features.ExtensionApi;
 import org.jclouds.rest.annotations.Delegate;
@@ -44,23 +44,23 @@ import com.google.inject.Provides;
 public interface GlanceApi {
    /**
     * 
-    * @return the Region codes configured
+    * @return the Zone codes configured
     */
    @Provides
-   @Region
-   Set<String> getConfiguredRegions();
+   @Zone
+   Set<String> getConfiguredZones();
 
    /**
     * Provides synchronous access to Extension features.
     */
    @Delegate
-   ExtensionApi getExtensionApiForRegion(
-         @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region);
+   ExtensionApi getExtensionApiForZone(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
    /**
     * Provides synchronous access to Image features.
     */
    @Delegate
-   ImageApi getImageApiForRegion(@EndpointParam(parser = RegionToEndpoint.class) @Nullable String region);
+   ImageApi getImageApiForZone(@EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
 }

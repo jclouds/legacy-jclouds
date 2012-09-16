@@ -28,7 +28,7 @@ import org.jclouds.apis.ApiMetadata;
 import org.jclouds.openstack.glance.v1_0.config.GlanceRestClientModule;
 import org.jclouds.openstack.keystone.v2_0.config.CredentialTypes;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule;
-import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule.RegionModule;
+import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule.ZoneModule;
 import org.jclouds.openstack.v2_0.ServiceType;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
@@ -86,7 +86,7 @@ public class GlanceApiMetadata extends BaseRestApiMetadata {
          .defaultProperties(GlanceApiMetadata.defaultProperties())
          .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
                                      .add(KeystoneAuthenticationModule.class)
-                                     .add(RegionModule.class)
+                                     .add(ZoneModule.class)
                                      .add(GlanceRestClientModule.class).build());
       }
       

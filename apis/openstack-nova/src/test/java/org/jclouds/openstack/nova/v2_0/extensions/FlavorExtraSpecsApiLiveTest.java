@@ -64,7 +64,7 @@ public class FlavorExtraSpecsApiLiveTest extends BaseNovaApiLiveTest {
    public void tearDown() {
       if (apiOption.isPresent() && testFlavor != null) {
          for(String key : testSpecs.keySet()) {
-            assertTrue(apiOption.get().deleteExtraSpec(testFlavor.getId(), key));
+            assertTrue(apiOption.get().deleteMetadataKey(testFlavor.getId(), key));
          }
       }
       super.tearDown();
@@ -73,15 +73,15 @@ public class FlavorExtraSpecsApiLiveTest extends BaseNovaApiLiveTest {
    public void testCreateExtraSpecs() {
       if (apiOption.isPresent()) {
          FlavorExtraSpecsApi api = apiOption.get();
-         testFlavor = Iterables.getLast(flavorApi.listFlavors());
-         Map<String, String> before = api.getAllExtraSpecs(testFlavor.getId());
+         testFlavor = Iterables.getLast(flavorApi.list().concat());
+         Map<String, String> before = api.getMetadata(testFlavor.getId());
          assertNotNull(before);
          Map<String, String> specs = Maps.newHashMap(before);
          specs.putAll(testSpecs);
-         assertTrue(api.setAllExtraSpecs(testFlavor.getId(), specs));
-         assertEquals(api.getAllExtraSpecs(testFlavor.getId()), specs);
+         assertTrue(api.updateMetadata(testFlavor.getId(), specs));
+         assertEquals(api.getMetadata(testFlavor.getId()), specs);
          for (Map.Entry<String, String> entry : specs.entrySet()) {
-            assertEquals(api.getExtraSpec(testFlavor.getId(), entry.getKey()), entry.getValue());
+            assertEquals(api.getMetadataKey(testFlavor.getId(), entry.getKey()), entry.getValue());
          }
       }
    }
@@ -91,13 +91,13 @@ public class FlavorExtraSpecsApiLiveTest extends BaseNovaApiLiveTest {
       if (apiOption.isPresent()) {
          FlavorExtraSpecsApi api = apiOption.get();
          for (String key : testSpecs.keySet()) {
-            assertTrue(api.getAllExtraSpecs(testFlavor.getId()).containsKey(key));
+            assertTrue(api.getMetadata(testFlavor.getId()).containsKey(key));
          }
-         for (Resource flavor : flavorApi.listFlavors()) {
-            Map<String, String> specs = api.getAllExtraSpecs(flavor.getId());
+         for (Resource flavor : flavorApi.list().concat()) {
+            Map<String, String> specs = api.getMetadata(flavor.getId());
             assertNotNull(specs);
             for (Map.Entry<String, String> entry : specs.entrySet()) {
-               assertEquals(api.getExtraSpec(flavor.getId(), entry.getKey()), entry.getValue());
+               assertEquals(api.getMetadataKey(flavor.getId(), entry.getKey()), entry.getValue());
             }
          }
       }
@@ -108,16 +108,16 @@ public class FlavorExtraSpecsApiLiveTest extends BaseNovaApiLiveTest {
       if (apiOption.isPresent()) {
          FlavorExtraSpecsApi api = apiOption.get();
          for (String key : testSpecs.keySet()) {
-            assertTrue(api.setExtraSpec(testFlavor.getId(), key, "new value"));
+            assertTrue(api.updateMetadataEntry(testFlavor.getId(), key, "new value"));
          }
          for (String key : testSpecs.keySet()) {
-            assertEquals(api.getExtraSpec(testFlavor.getId(), key), "new value");
+            assertEquals(api.getMetadataKey(testFlavor.getId(), key), "new value");
          }
-         for (Resource flavor : flavorApi.listFlavors()) {
-            Map<String, String> specs = api.getAllExtraSpecs(flavor.getId());
+         for (Resource flavor : flavorApi.list().concat()) {
+            Map<String, String> specs = api.getMetadata(flavor.getId());
             assertNotNull(specs);
             for (Map.Entry<String, String> entry : specs.entrySet()) {
-               assertEquals(api.getExtraSpec(flavor.getId(), entry.getKey()), entry.getValue());
+               assertEquals(api.getMetadataKey(flavor.getId(), entry.getKey()), entry.getValue());
             }
          }
       }

@@ -65,11 +65,11 @@ public class VolumeTypeApiLiveTest extends BaseNovaApiLiveTest {
       if (volumeTypeOption.isPresent()) {
          if (testVolumeType != null) {
             final String id = testVolumeType.getId();
-            assertTrue(volumeTypeOption.get().deleteVolumeType(id));
+            assertTrue(volumeTypeOption.get().delete(id));
             assertTrue(new RetryablePredicate<VolumeTypeApi>(new Predicate<VolumeTypeApi>() {
                @Override
                public boolean apply(VolumeTypeApi volumeApi) {
-                  return volumeApi.getVolumeType(id) == null;
+                  return volumeApi.get(id) == null;
                }
             }, 5 * 1000L).apply(volumeTypeOption.get()));
          }
@@ -79,50 +79,50 @@ public class VolumeTypeApiLiveTest extends BaseNovaApiLiveTest {
 
    public void testCreateVolumeType() {
       if (volumeTypeOption.isPresent()) {
-         testVolumeType = volumeTypeOption.get().createVolumeType(
+         testVolumeType = volumeTypeOption.get().create(
                "jclouds-test-1", CreateVolumeTypeOptions.Builder.specs(ImmutableMap.of("test", "value1")));
          assertTrue(new RetryablePredicate<VolumeTypeApi>(new Predicate<VolumeTypeApi>() {
             @Override
             public boolean apply(VolumeTypeApi volumeTypeApi) {
-               return volumeTypeApi.getVolumeType(testVolumeType.getId()) != null;
+               return volumeTypeApi.get(testVolumeType.getId()) != null;
             }
          }, 180 * 1000L).apply(volumeTypeOption.get()));
 
-         assertEquals(volumeTypeOption.get().getVolumeType(testVolumeType.getId()).getName(), "jclouds-test-1");
-         assertEquals(volumeTypeOption.get().getVolumeType(testVolumeType.getId()).getExtraSpecs(), ImmutableMap.of("test", "value1"));
+         assertEquals(volumeTypeOption.get().get(testVolumeType.getId()).getName(), "jclouds-test-1");
+         assertEquals(volumeTypeOption.get().get(testVolumeType.getId()).getExtraSpecs(), ImmutableMap.of("test", "value1"));
       }
    }
 
    @Test(dependsOnMethods = "testCreateVolumeType")
    public void testListVolumeTypes() {
       if (volumeTypeOption.isPresent()) {
-         Set<? extends VolumeType> volumeTypes = volumeTypeOption.get().listVolumeTypes();
+         Set<? extends VolumeType> volumeTypes = volumeTypeOption.get().list().toImmutableSet();
          assertNotNull(volumeTypes);
          boolean foundIt = false;
          for (VolumeType vt : volumeTypes) {
-            VolumeType details = volumeTypeOption.get().getVolumeType(vt.getId());
+            VolumeType details = volumeTypeOption.get().get(vt.getId());
             assertNotNull(details);
             if (Objects.equal(details.getId(), testVolumeType.getId())) {
                foundIt = true;
             }
          }
-         assertTrue(foundIt, "Failed to find the volume type we created in listVolumeTypes() response");
+         assertTrue(foundIt, "Failed to find the volume type we created in list() response");
       }
    }
 
    @Test(dependsOnMethods = "testCreateVolumeType")
    public void testExtraSpecs() {
       if (volumeTypeOption.isPresent()) {
-         assertEquals(volumeTypeOption.get().getAllExtraSpecs(testVolumeType.getId()), ImmutableMap.of("test", "value1"));
+         assertEquals(volumeTypeOption.get().getExtraSpecs(testVolumeType.getId()), ImmutableMap.of("test", "value1"));
          assertEquals(volumeTypeOption.get().getExtraSpec(testVolumeType.getId(), "test"),  "value1");
-         assertTrue(volumeTypeOption.get().setAllExtraSpecs(testVolumeType.getId(), ImmutableMap.of("test1", "wibble")));
+         assertTrue(volumeTypeOption.get().updateExtraSpecs(testVolumeType.getId(), ImmutableMap.of("test1", "wibble")));
       }
    }
 
    @Test(dependsOnMethods = "testCreateVolumeType")
    public void testUpdateIndividualSpec() {
       if (volumeTypeOption.isPresent()) {
-         assertTrue(volumeTypeOption.get().setExtraSpec(testVolumeType.getId(), "test1", "freddy"));
+         assertTrue(volumeTypeOption.get().updateExtraSpec(testVolumeType.getId(), "test1", "freddy"));
          assertEquals(volumeTypeOption.get().getExtraSpec(testVolumeType.getId(), "test1"), "freddy");
       }
    }

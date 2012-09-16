@@ -30,128 +30,128 @@ import org.testng.annotations.Test;
 @Test(groups = "unit", testName = "AdditionalDiskApiExpectTest", singleThreaded = true)
 public class AdditionalDiskApiExpectTest extends BaseFGCPRestApiExpectTest {
 
-    public void testGet() {
-        HttpRequest request = buildGETWithQuery("Action=GetVDiskAttributes"
-                + "&vdiskId=CONTRACT-VSYS00001-D-0001"
-                + "&vsysId=CONTRACT-VSYS00001");
-        HttpResponse response = HttpResponse
-                .builder()
-                .statusCode(200)
-                .payload(
-                        payloadFromResource("/GetVDiskAttributes-response.xml"))
-                .build();
+   public void testGet() {
+      HttpRequest request = buildGETWithQuery("Action=GetVDiskAttributes"
+            + "&vdiskId=CONTRACT-VSYS00001-D-0001"
+            + "&vsysId=CONTRACT-VSYS00001");
+      HttpResponse response = HttpResponse
+            .builder()
+            .statusCode(200)
+            .payload(
+                  payloadFromResource("/GetVDiskAttributes-response.xml"))
+            .build();
 
-        AdditionalDiskApi api = requestSendsResponse(request, response)
-                .getAdditionalDiskApi();
+      AdditionalDiskApi api = requestSendsResponse(request, response)
+            .getAdditionalDiskApi();
 
-        assertEquals(api.get("CONTRACT-VSYS00001-D-0001").getSize(), 10.0);
-    }
+      assertEquals(api.get("CONTRACT-VSYS00001-D-0001").getSize(), 10.0);
+   }
 
-    public void testGetStatus() {
-        HttpRequest request = buildGETWithQuery("Action=GetVDiskStatus"
-                + "&vdiskId=CONTRACT-VSYS00001-S-0001"
-                + "&vsysId=CONTRACT-VSYS00001");
-        HttpResponse response = HttpResponse
-                .builder()
-                .statusCode(200)
-                .payload(
-                        payloadFromResource("/GetVDiskStatus-response.xml"))
-                .build();
+   public void testGetStatus() {
+      HttpRequest request = buildGETWithQuery("Action=GetVDiskStatus"
+            + "&vdiskId=CONTRACT-VSYS00001-S-0001"
+            + "&vsysId=CONTRACT-VSYS00001");
+      HttpResponse response = HttpResponse
+            .builder()
+            .statusCode(200)
+            .payload(
+                  payloadFromResource("/GetVDiskStatus-response.xml"))
+            .build();
 
-        AdditionalDiskApi api = requestSendsResponse(request, response)
-                .getAdditionalDiskApi();
+      AdditionalDiskApi api = requestSendsResponse(request, response)
+            .getAdditionalDiskApi();
 
-        // api is returning STOPPED which is not a documented status. Documentation error?
-//        assertEquals(api.getStatus("CONTRACT-VSYS00001-S-0001"), VDiskStatus.STOPPED);
-    }
+      // api is returning STOPPED which is not a documented status. Documentation error?
+//      assertEquals(api.getStatus("CONTRACT-VSYS00001-S-0001"), VDiskStatus.STOPPED);
+   }
 
-    public void testUpdate() {
-        HttpRequest request = buildGETWithQuery("Action=UpdateVDiskAttribute"
-                + "&vdiskId=CONTRACT-VSYS00001-D-0001"
-                + "&attributeValue=new-name" + "&attributeName=updateName"
-                + "&vsysId=CONTRACT-VSYS00001");
-        HttpResponse response = HttpResponse
-                .builder()
-                .statusCode(200)
-                .payload(
-                        payloadFromResource("/UpdateVDiskAttribute-response.xml"))
-                .build();
+   public void testUpdate() {
+      HttpRequest request = buildGETWithQuery("Action=UpdateVDiskAttribute"
+            + "&vdiskId=CONTRACT-VSYS00001-D-0001"
+            + "&attributeValue=new-name" + "&attributeName=updateName"
+            + "&vsysId=CONTRACT-VSYS00001");
+      HttpResponse response = HttpResponse
+            .builder()
+            .statusCode(200)
+            .payload(
+                  payloadFromResource("/UpdateVDiskAttribute-response.xml"))
+            .build();
 
-        AdditionalDiskApi api = requestSendsResponse(request, response)
-                .getAdditionalDiskApi();
+      AdditionalDiskApi api = requestSendsResponse(request, response)
+            .getAdditionalDiskApi();
 
-        api.update("CONTRACT-VSYS00001-D-0001", "updateName", "new-name");
-    }
+      api.update("CONTRACT-VSYS00001-D-0001", "updateName", "new-name");
+   }
 
-    public void testDestroy() {
-        HttpRequest request = buildGETWithQuery("Action=DestroyVDisk"
-                + "&vdiskId=CONTRACT-VSYS00001-D-0001"
-                + "&vsysId=CONTRACT-VSYS00001");
-        HttpResponse response = HttpResponse.builder().statusCode(200)
-                .payload(payloadFromResource("/DestroyVDisk-response.xml"))
-                .build();
+   public void testDestroy() {
+      HttpRequest request = buildGETWithQuery("Action=DestroyVDisk"
+            + "&vdiskId=CONTRACT-VSYS00001-D-0001"
+            + "&vsysId=CONTRACT-VSYS00001");
+      HttpResponse response = HttpResponse.builder().statusCode(200)
+            .payload(payloadFromResource("/DestroyVDisk-response.xml"))
+            .build();
 
-        AdditionalDiskApi api = requestSendsResponse(request, response)
-                .getAdditionalDiskApi();
+      AdditionalDiskApi api = requestSendsResponse(request, response)
+            .getAdditionalDiskApi();
 
-        api.destroy("CONTRACT-VSYS00001-D-0001");
-    }
+      api.destroy("CONTRACT-VSYS00001-D-0001");
+   }
 
-    public void testBackup() {
-        HttpRequest request = buildGETWithQuery("Action=BackupVDisk"
-                + "&vdiskId=CONTRACT-VSYS00001-D-0001"
-                + "&vsysId=CONTRACT-VSYS00001");
-        HttpResponse response = HttpResponse.builder().statusCode(200)
-                .payload(payloadFromResource("/BackupVDisk-response.xml"))
-                .build();
+   public void testBackup() {
+      HttpRequest request = buildGETWithQuery("Action=BackupVDisk"
+            + "&vdiskId=CONTRACT-VSYS00001-D-0001"
+            + "&vsysId=CONTRACT-VSYS00001");
+      HttpResponse response = HttpResponse.builder().statusCode(200)
+            .payload(payloadFromResource("/BackupVDisk-response.xml"))
+            .build();
 
-        AdditionalDiskApi api = requestSendsResponse(request, response)
-                .getAdditionalDiskApi();
+      AdditionalDiskApi api = requestSendsResponse(request, response)
+            .getAdditionalDiskApi();
 
-        api.backup("CONTRACT-VSYS00001-D-0001");
-    }
+      api.backup("CONTRACT-VSYS00001-D-0001");
+   }
 
-    public void testRestore() {
-        HttpRequest request = buildGETWithQuery("Action=RestoreVDisk"
-                + "&vsysId=CONTRACT-VSYS00001"
-                + "&backupId=003");
-        HttpResponse response = HttpResponse.builder().statusCode(200)
-                .payload(payloadFromResource("/RestoreVDisk-response.xml"))
-                .build();
+   public void testRestore() {
+      HttpRequest request = buildGETWithQuery("Action=RestoreVDisk"
+            + "&vsysId=CONTRACT-VSYS00001"
+            + "&backupId=003");
+      HttpResponse response = HttpResponse.builder().statusCode(200)
+            .payload(payloadFromResource("/RestoreVDisk-response.xml"))
+            .build();
 
-        AdditionalDiskApi api = requestSendsResponse(request, response)
-                .getAdditionalDiskApi();
+      AdditionalDiskApi api = requestSendsResponse(request, response)
+            .getAdditionalDiskApi();
 
-        api.restore("CONTRACT-VSYS00001", "003");
-    }
+      api.restore("CONTRACT-VSYS00001", "003");
+   }
 
-    public void testDetach() {
-        HttpRequest request = buildGETWithQuery("Action=DetachVDisk"
-                + "&vdiskId=CONTRACT-VSYS00001-D-0001"
-                + "&vserverId=CONTRACT-VSYS00001-S-0006"
-                + "&vsysId=CONTRACT-VSYS00001");
-        HttpResponse response = HttpResponse.builder().statusCode(200)
-                .payload(payloadFromResource("/DetachVDisk-response.xml"))
-                .build();
+   public void testDetach() {
+      HttpRequest request = buildGETWithQuery("Action=DetachVDisk"
+            + "&vdiskId=CONTRACT-VSYS00001-D-0001"
+            + "&vserverId=CONTRACT-VSYS00001-S-0006"
+            + "&vsysId=CONTRACT-VSYS00001");
+      HttpResponse response = HttpResponse.builder().statusCode(200)
+            .payload(payloadFromResource("/DetachVDisk-response.xml"))
+            .build();
 
-        AdditionalDiskApi api = requestSendsResponse(request, response)
-                .getAdditionalDiskApi();
+      AdditionalDiskApi api = requestSendsResponse(request, response)
+            .getAdditionalDiskApi();
 
-        api.detach("CONTRACT-VSYS00001-D-0001", "CONTRACT-VSYS00001-S-0006");
-    }
+      api.detach("CONTRACT-VSYS00001-D-0001", "CONTRACT-VSYS00001-S-0006");
+   }
 
-    public void testDestroyBackup() {
-        HttpRequest request = buildGETWithQuery("Action=DestroyVDiskBackup"
-                + "&vsysId=CONTRACT-VSYS00001"
-                + "&backupId=003");
-        HttpResponse response = HttpResponse.builder().statusCode(200)
-                .payload(payloadFromResource("/DestroyVDiskBackup-response.xml"))
-                .build();
+   public void testDestroyBackup() {
+      HttpRequest request = buildGETWithQuery("Action=DestroyVDiskBackup"
+            + "&vsysId=CONTRACT-VSYS00001"
+            + "&backupId=003");
+      HttpResponse response = HttpResponse.builder().statusCode(200)
+            .payload(payloadFromResource("/DestroyVDiskBackup-response.xml"))
+            .build();
 
-        AdditionalDiskApi api = requestSendsResponse(request, response)
-                .getAdditionalDiskApi();
+      AdditionalDiskApi api = requestSendsResponse(request, response)
+            .getAdditionalDiskApi();
 
-        api.destroyBackup("CONTRACT-VSYS00001", "003");
-    }
+      api.destroyBackup("CONTRACT-VSYS00001", "003");
+   }
 
 }

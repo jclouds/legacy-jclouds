@@ -18,11 +18,11 @@
  */
 package org.jclouds.fujitsu.fgcp.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.common.base.CaseFormat;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Possible statuses of a virtual server.
@@ -31,24 +31,24 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 @XmlRootElement(name = "vserverStatus")
 public enum VServerStatus {
-    DEPLOYING, RUNNING, STOPPING, STOPPED, STARTING, FAILOVER, UNEXPECTED_STOP, RESTORING, BACKUP_ING, ERROR, START_ERROR, STOP_ERROR, CHANGE_TYPE, REGISTERING, UNRECOGNIZED;
+   DEPLOYING, RUNNING, STOPPING, STOPPED, STARTING, FAILOVER, UNEXPECTED_STOP, RESTORING, BACKUP_ING, ERROR, START_ERROR, STOP_ERROR, CHANGE_TYPE, REGISTERING, UNRECOGNIZED;
 
-    public String value() {
-        return (CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name()));
-    }
+   public String value() {
+      return (CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name()));
+   }
 
-    @Override
-    public String toString() {
-        return value();
-    }
+   @Override
+   public String toString() {
+      return value();
+   }
 
-    public static VServerStatus fromValue(String status) {
-        try {
-            return valueOf(CaseFormat.UPPER_CAMEL
-                    .to(CaseFormat.UPPER_UNDERSCORE,
-                            checkNotNull(status, "status")));
-        } catch (IllegalArgumentException e) {
-            return UNRECOGNIZED;
-        }
-    }
+   public static VServerStatus fromValue(String status) {
+      try {
+         return valueOf(CaseFormat.UPPER_CAMEL
+               .to(CaseFormat.UPPER_UNDERSCORE,
+                     checkNotNull(status, "status")));
+      } catch (IllegalArgumentException e) {
+         return UNRECOGNIZED;
+      }
+   }
 }

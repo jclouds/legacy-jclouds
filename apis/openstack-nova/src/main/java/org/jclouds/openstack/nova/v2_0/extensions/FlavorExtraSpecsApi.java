@@ -22,10 +22,10 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.openstack.v2_0.ServiceType;
 import org.jclouds.openstack.v2_0.services.Extension;
-import org.jclouds.rest.annotations.RequestFilters;
+
+import com.google.common.annotations.Beta;
 
 /**
  * Provide access to extra metadata for Nova flavors.
@@ -35,9 +35,9 @@ import org.jclouds.rest.annotations.RequestFilters;
  * @see org.jclouds.openstack.nova.v2_0.features.FlavorApi
  * @see org.jclouds.openstack.nova.v2_0.extensions.FlavorExtraSpecsAsyncApi
  */
+@Beta
 @Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.FLAVOR_EXTRA_SPECS)
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
-@RequestFilters(AuthenticateRequest.class)
 public interface FlavorExtraSpecsApi {
 
    /**
@@ -45,7 +45,7 @@ public interface FlavorExtraSpecsApi {
     *
     * @return the set of extra metadata for the flavor
     */
-   Map<String, String> getAllExtraSpecs(String flavorId);
+   Map<String, String> getMetadata(String flavorId);
 
    /**
     * Creates or updates the extra specs for a given flavor
@@ -53,7 +53,7 @@ public interface FlavorExtraSpecsApi {
     * @param flavorId the id of the flavor to modify
     * @param specs    the extra specs to apply
     */
-   Boolean setAllExtraSpecs(String flavorId, Map<String, String> specs);
+   Boolean updateMetadata(String flavorId, Map<String, String> specs);
 
    /**
     * Return a single extra spec value
@@ -61,7 +61,7 @@ public interface FlavorExtraSpecsApi {
     * @param flavorId the id of the flavor to modify
     * @param key      the extra spec key to retrieve
     */
-   String getExtraSpec(String flavorId, String key);
+   String getMetadataKey(String flavorId, String key);
 
    /**
     * Creates or updates a single extra spec value
@@ -70,7 +70,7 @@ public interface FlavorExtraSpecsApi {
     * @param key      the extra spec key (when creating ensure this does not include whitespace or other difficult characters)
     * @param value    the value to associate with the key
     */
-   Boolean setExtraSpec(String flavorId, String key, String value);
+   Boolean updateMetadataEntry(String flavorId, String key, String value);
 
    /**
     * Deletes an extra spec
@@ -78,6 +78,6 @@ public interface FlavorExtraSpecsApi {
     * @param flavorId the id of the flavor to modify
     * @param key      the extra spec key to delete
     */
-   Boolean deleteExtraSpec(String flavorId, String key);
+   Boolean deleteMetadataKey(String flavorId, String key);
 
 }

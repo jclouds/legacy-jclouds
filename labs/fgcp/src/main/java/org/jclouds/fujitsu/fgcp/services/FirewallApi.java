@@ -32,6 +32,6 @@ import org.jclouds.fujitsu.fgcp.domain.Rule;
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface FirewallApi extends BuiltinServerApi {
 
-    Set<Rule> getNATConfiguration(String id);
-    
+   Set<Rule> getNATConfiguration(String id);
+   
 }

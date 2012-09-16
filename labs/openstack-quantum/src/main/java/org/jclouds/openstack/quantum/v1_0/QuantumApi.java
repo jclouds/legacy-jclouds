@@ -26,8 +26,7 @@ import javax.ws.rs.PathParam;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.location.Region;
-import org.jclouds.location.functions.RegionToEndpoint;
+import org.jclouds.location.Zone;
 import org.jclouds.location.functions.ZoneToEndpoint;
 import org.jclouds.openstack.quantum.v1_0.features.NetworkApi;
 import org.jclouds.openstack.quantum.v1_0.features.PortApi;
@@ -48,30 +47,30 @@ import com.google.inject.Provides;
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface QuantumApi {
    /**
-    * @return the Region codes configured
+    * @return the Zone codes configured
     */
    @Provides
-   @Region
-   Set<String> getConfiguredRegions();
+   @Zone
+   Set<String> getConfiguredZones();
 
    /**
     * Provides synchronous access to Extension features.
     */
    @Delegate
-   ExtensionApi getExtensionApiForRegion(
-         @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region);
+   ExtensionApi getExtensionApiForZone(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
    /**
     * Provides synchronous access to Network features.
     */
    @Delegate
-   NetworkApi getNetworkApiForRegion(@EndpointParam(parser = RegionToEndpoint.class) @Nullable String region);
+   NetworkApi getNetworkApiForZone(@EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
    /**
     * Provides synchronous access to Port features.
     */
    @Delegate
    @Path("/networks/{net}")
-   PortApi getPortApiForRegionAndNetwork(@EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+   PortApi getPortApiForZoneAndNetwork(@EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone,
                                                @PathParam("net") String networkId);
 }

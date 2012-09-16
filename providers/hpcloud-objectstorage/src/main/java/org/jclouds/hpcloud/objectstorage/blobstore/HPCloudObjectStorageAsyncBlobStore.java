@@ -35,8 +35,8 @@ import org.jclouds.blobstore.util.BlobUtils;
 import org.jclouds.collect.Memoized;
 import org.jclouds.concurrent.Futures;
 import org.jclouds.domain.Location;
-import org.jclouds.hpcloud.objectstorage.HPCloudObjectStorageAsyncClient;
-import org.jclouds.hpcloud.objectstorage.HPCloudObjectStorageClient;
+import org.jclouds.hpcloud.objectstorage.HPCloudObjectStorageAsyncApi;
+import org.jclouds.hpcloud.objectstorage.HPCloudObjectStorageApi;
 import org.jclouds.hpcloud.objectstorage.blobstore.functions.EnableCDNAndCache;
 import org.jclouds.openstack.swift.blobstore.SwiftAsyncBlobStore;
 import org.jclouds.openstack.swift.blobstore.functions.BlobStoreListContainerOptionsToListContainerOptions;
@@ -57,22 +57,22 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 @Singleton
 public class HPCloudObjectStorageAsyncBlobStore extends SwiftAsyncBlobStore {
-   private final EnableCDNAndCache enableCDNAndCache;
+   private final EnableCDNAndCache enableAndCache;
 
    @Inject
    protected HPCloudObjectStorageAsyncBlobStore(BlobStoreContext context, BlobUtils blobUtils,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, Supplier<Location> defaultLocation,
-            @Memoized Supplier<Set<? extends Location>> locations, HPCloudObjectStorageClient sync, HPCloudObjectStorageAsyncClient async,
+            @Memoized Supplier<Set<? extends Location>> locations, HPCloudObjectStorageApi sync, HPCloudObjectStorageAsyncApi async,
             ContainerToResourceMetadata container2ResourceMd,
             BlobStoreListContainerOptionsToListContainerOptions container2ContainerListOptions,
             ContainerToResourceList container2ResourceList, ObjectToBlob object2Blob, BlobToObject blob2Object,
             ObjectToBlobMetadata object2BlobMd, BlobToHttpGetOptions blob2ObjectGetOptions,
-            Provider<FetchBlobMetadata> fetchBlobMetadataProvider, EnableCDNAndCache enableCDNAndCache,
+            Provider<FetchBlobMetadata> fetchBlobMetadataProvider, EnableCDNAndCache enableAndCache,
             Provider<AsyncMultipartUploadStrategy> multipartUploadStrategy) {
       super(context, blobUtils, service, defaultLocation, locations, sync, async, container2ResourceMd,
                container2ContainerListOptions, container2ResourceList, object2Blob, blob2Object, object2BlobMd,
                blob2ObjectGetOptions, fetchBlobMetadataProvider, multipartUploadStrategy);
-      this.enableCDNAndCache = enableCDNAndCache;
+      this.enableAndCache = enableAndCache;
    }
 
    @Override
@@ -86,7 +86,7 @@ public class HPCloudObjectStorageAsyncBlobStore extends SwiftAsyncBlobStore {
             @Override
             public Boolean apply(Boolean input) {
                if (Boolean.TRUE.equals(input)) {
-                  return enableCDNAndCache.apply(container) != null;
+                  return enableAndCache.apply(container) != null;
                }
                return false;
             }

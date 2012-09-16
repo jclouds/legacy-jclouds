@@ -67,7 +67,7 @@ public class FindSecurityGroupWithNameAndReturnTrue implements Predicate<AtomicR
 
       logger.trace("looking for security group %s", securityGroupInZone.slashEncode());
       try {
-         SecurityGroup returnVal = Iterables.find(api.get().listSecurityGroups(), new Predicate<SecurityGroup>() {
+         SecurityGroup returnVal = Iterables.find(api.get().list(), new Predicate<SecurityGroup>() {
 
             @Override
             public boolean apply(SecurityGroup input) {

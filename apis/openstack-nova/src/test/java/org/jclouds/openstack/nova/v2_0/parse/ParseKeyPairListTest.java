@@ -18,9 +18,6 @@
  */
 package org.jclouds.openstack.nova.v2_0.parse;
 
-import java.util.Map;
-import java.util.Set;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
 
@@ -28,11 +25,12 @@ import org.jclouds.json.BaseItemParserTest;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.openstack.nova.v2_0.config.NovaParserModule;
 import org.jclouds.openstack.nova.v2_0.domain.KeyPair;
-import org.jclouds.rest.annotations.SelectJson;
+import org.jclouds.openstack.nova.v2_0.functions.internal.ParseKeyPairs;
+import org.jclouds.rest.annotations.ResponseParser;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -41,7 +39,7 @@ import com.google.inject.Injector;
  * @author Michael Arnold
  */
 @Test(groups = "unit", testName = "ParseKeyPairListTest")
-public class ParseKeyPairListTest extends BaseItemParserTest<Set<Map<String, KeyPair>>> {
+public class ParseKeyPairListTest extends BaseItemParserTest<FluentIterable<? extends KeyPair>> {
 
    @Override
    public String resource() {
@@ -49,26 +47,20 @@ public class ParseKeyPairListTest extends BaseItemParserTest<Set<Map<String, Key
    }
 
    @Override
-   @SelectJson("keypairs")
+   @ResponseParser(ParseKeyPairs.class)
    @Consumes(MediaType.APPLICATION_JSON)
-   public Set<Map<String, KeyPair>> expected() {
-      Map<String, KeyPair> kp1 = Maps.newHashMap();
-      kp1.put(
-            "keypair",
+   public FluentIterable<? extends KeyPair> expected() {
+      return FluentIterable.from(ImmutableSet.of(
             KeyPair
                   .builder()
                   .publicKey(
                         "ssh-rsa AAAXB3NzaC1yc2EAAAADAQABAAAAgQCy9EC3O7Ff80vPEfAHDQob61PGwcpYc5KE7tEZnZhrB9n0NyHPRm0E0M+ls3fcTa04HDi+R0DzmRwoyhHQJyI658v8kWZZcuvFjKCcsgsSh/dzdX0xTreLIzSOzt5U7RnZYfshP5cmxtF99yrEY3M/swdin0L+fXsTSkR1B42STQ== nova@nv-aw2az1-api0001")
-                  .name("default").fingerprint("ab:0c:f4:f3:54:c0:5d:3f:ed:62:ad:d3:94:7c:79:7c").build());
-      Map<String, KeyPair> kp2 = Maps.newHashMap();
-      kp2.put(
-            "keypair",
+                  .name("default").fingerprint("ab:0c:f4:f3:54:c0:5d:3f:ed:62:ad:d3:94:7c:79:7c").build(),
             KeyPair
                   .builder()
                   .publicKey(
                         "ssh-rsa AAAXB3NzaC1yc2EAAAADAQABAAAAgQDFNyGjgs6c9akgmZ2ou/fJf7Pdrc23hC95/gM/33OrG4GZABACE4DTioa/PGN+7rHv9YUavUCtXrWayhGniKq/wCuI5fo5TO4AmDNv7/sCGHIHFumADSIoLx0vFhGJIetXEWxL9r0lfFC7//6yZM2W3KcGjbMtlPXqBT9K9PzdyQ== nova@nv-aw2az1-api0001")
-                  .name("testkeypair").fingerprint("d2:1f:c9:2b:d8:90:77:5f:15:64:27:e3:9f:77:1d:e4").build());
-      return ImmutableSet.of(kp1, kp2);
+                  .name("testkeypair").fingerprint("d2:1f:c9:2b:d8:90:77:5f:15:64:27:e3:9f:77:1d:e4").build()));
    }
 
    protected Injector injector() {

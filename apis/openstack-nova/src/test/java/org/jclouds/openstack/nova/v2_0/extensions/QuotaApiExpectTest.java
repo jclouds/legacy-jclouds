@@ -28,7 +28,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.openstack.nova.v2_0.domain.Quotas;
+import org.jclouds.openstack.nova.v2_0.domain.Quota;
 import org.jclouds.openstack.nova.v2_0.internal.BaseNovaApiExpectTest;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.testng.annotations.Test;
@@ -48,7 +48,7 @@ public class QuotaApiExpectTest extends BaseNovaApiExpectTest {
             authenticatedGET().endpoint(endpoint).build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/quotas.json")).build()).getQuotaExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertEquals(api.getQuotasForTenant("demo"), getTestQuotas());
+      assertEquals(api.getByTenant("demo"), getTestQuotas());
    }
 
    public void testGetQuotasFailsTenantNotFound() throws Exception {
@@ -57,7 +57,7 @@ public class QuotaApiExpectTest extends BaseNovaApiExpectTest {
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             authenticatedGET().endpoint(endpoint).build(),
             HttpResponse.builder().statusCode(404).build()).getQuotaExtensionForZone("az-1.region-a.geo-1").get();
-      assertNull(api.getQuotasForTenant("demo"));
+      assertNull(api.getByTenant("demo"));
    }
 
    public void testGetDefaultQuotas() throws Exception {
@@ -67,7 +67,7 @@ public class QuotaApiExpectTest extends BaseNovaApiExpectTest {
             authenticatedGET().endpoint(endpoint).build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/quotas.json")).build()).getQuotaExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertEquals(api.getDefaultQuotasForTenant("demo"), getTestQuotas());
+      assertEquals(api.getDefaultsForTenant("demo"), getTestQuotas());
    }
 
    public void testGetDefaultQuotasFailsTenantNotFound() throws Exception {
@@ -76,7 +76,7 @@ public class QuotaApiExpectTest extends BaseNovaApiExpectTest {
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             authenticatedGET().endpoint(endpoint).build(),
             HttpResponse.builder().statusCode(404).build()).getQuotaExtensionForZone("az-1.region-a.geo-1").get();
-      assertNull(api.getDefaultQuotasForTenant("demo"));
+      assertNull(api.getDefaultsForTenant("demo"));
    }
 
 
@@ -90,7 +90,7 @@ public class QuotaApiExpectTest extends BaseNovaApiExpectTest {
                   .build(),
             HttpResponse.builder().statusCode(200).build()).getQuotaExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertTrue(api.updateQuotasForTenant("demo", getTestQuotas()));
+      assertTrue(api.updateQuotaOfTenant(getTestQuotas(), "demo"));
    }
 
    @Test(expectedExceptions = ResourceNotFoundException.class)
@@ -104,11 +104,11 @@ public class QuotaApiExpectTest extends BaseNovaApiExpectTest {
                   .build(),
             HttpResponse.builder().statusCode(404).build()).getQuotaExtensionForZone("az-1.region-a.geo-1").get();
 
-      api.updateQuotasForTenant("demo", getTestQuotas());
+      api.updateQuotaOfTenant(getTestQuotas(), "demo");
    }
 
-   public static Quotas getTestQuotas() {
-      return Quotas.builder()
+   public static Quota getTestQuotas() {
+      return Quota.builder()
             .metadataItems(128)
             .injectedFileContentBytes(10240)
             .injectedFiles(5)

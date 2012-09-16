@@ -53,88 +53,88 @@ import com.google.inject.TypeLiteral;
  * @author Dies Koper
  */
 public class FGCPComputeServiceContextModule
-        extends
-        ComputeServiceAdapterContextModule<VServerMetadata, ServerType, DiskImage, Location> {
+      extends
+      ComputeServiceAdapterContextModule<VServerMetadata, ServerType, DiskImage, Location> {
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    @Override
-    protected void configure() {
-        super.configure();
-        // installDependencies();
+   @SuppressWarnings({ "unchecked", "rawtypes" })
+   @Override
+   protected void configure() {
+      super.configure();
+      // installDependencies();
 
-        bind(
-                new TypeLiteral<ComputeServiceAdapter<VServerMetadata, ServerType, DiskImage, Location>>() {
-                }).to(FGCPComputeServiceAdapter.class);
+      bind(
+            new TypeLiteral<ComputeServiceAdapter<VServerMetadata, ServerType, DiskImage, Location>>() {
+            }).to(FGCPComputeServiceAdapter.class);
 
-        // the following bind functions that map FGCP domain specific resources
-        // to jclouds'
-        bind(new TypeLiteral<Function<VServerMetadata, NodeMetadata>>() {
-        }).to(VServerMetadataToNodeMetadata.class);
-        bind(new TypeLiteral<Function<DiskImage, Image>>() {
-        }).to(DiskImageToImage.class);
-        bind(new TypeLiteral<Function<DiskImage, OperatingSystem>>() {
-        }).to(DiskImageToOperatingSystem.class);
-        bind(new TypeLiteral<Function<ServerType, Hardware>>() {
-        }).to(ServerTypeToHardware.class);
-        bind(new TypeLiteral<Function<Disk, Volume>>() {
-        }).to(DiskToVolume.class);
-        bind(new TypeLiteral<Function<CPU, Processor>>() {
-        }).to(CPUToProcessor.class);
+      // the following bind functions that map FGCP domain specific resources
+      // to jclouds'
+      bind(new TypeLiteral<Function<VServerMetadata, NodeMetadata>>() {
+      }).to(VServerMetadataToNodeMetadata.class);
+      bind(new TypeLiteral<Function<DiskImage, Image>>() {
+      }).to(DiskImageToImage.class);
+      bind(new TypeLiteral<Function<DiskImage, OperatingSystem>>() {
+      }).to(DiskImageToOperatingSystem.class);
+      bind(new TypeLiteral<Function<ServerType, Hardware>>() {
+      }).to(ServerTypeToHardware.class);
+      bind(new TypeLiteral<Function<Disk, Volume>>() {
+      }).to(DiskToVolume.class);
+      bind(new TypeLiteral<Function<CPU, Processor>>() {
+      }).to(CPUToProcessor.class);
 
-        // we aren't converting hardware from a provider-specific type
-        bind(new TypeLiteral<Function<Location, Location>>() {
-        }).to((Class) IdentityFunction.class);
-        bind(new TypeLiteral<Function<Hardware, Hardware>>() {
-        }).to((Class) IdentityFunction.class);
+      // we aren't converting hardware from a provider-specific type
+      bind(new TypeLiteral<Function<Location, Location>>() {
+      }).to((Class) IdentityFunction.class);
+      bind(new TypeLiteral<Function<Hardware, Hardware>>() {
+      }).to((Class) IdentityFunction.class);
 
-        bind(TemplateOptions.class).to(FGCPTemplateOptions.class);
+      bind(TemplateOptions.class).to(FGCPTemplateOptions.class);
 
 
-        // bind(new TypeLiteral<Predicate<String>>() {
-        // }).to((Class) ServerStopped.class);
+      // bind(new TypeLiteral<Predicate<String>>() {
+      // }).to((Class) ServerStopped.class);
 
-        // need to look into the following later for to map (create) jclouds'
-        // location to FGCP.
-        // see LocationScope:
-        // PROVIDER: FGCP
-        // REGION: country?/country+state?
-        // ZONE: virtual DC: contractId
-        // NETWORK: VSYS? DMZ/SECURE1/SECURE2?
-        // RACK: N/A?
-        // HOST: N/A?
-        // there are no locations except the provider
-        // bind(new TypeLiteral<Supplier<Location>>() {
-        // }).to(OnlyLocationOrFirstZone.class);
+      // need to look into the following later for to map (create) jclouds'
+      // location to FGCP.
+      // see LocationScope:
+      // PROVIDER: FGCP
+      // REGION: country?/country+state?
+      // ZONE: virtual DC: contractId
+      // NETWORK: VSYS? DMZ/SECURE1/SECURE2?
+      // RACK: N/A?
+      // HOST: N/A?
+      // there are no locations except the provider
+      // bind(new TypeLiteral<Supplier<Location>>() {
+      // }).to(OnlyLocationOrFirstZone.class);
 
-        // install(new FGCPBindComputeStrategiesByClass());
-        // install(new FGCPBindComputeSuppliersByClass());
-        // bind(ReviseParsedImage.class).to(AWSEC2ReviseParsedImage.class);
-        // bind(CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class).to(
-        // CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions.class);
-        // bind(EC2HardwareSupplier.class).to(AWSEC2HardwareSupplier.class);
-        // bind(EC2TemplateBuilderImpl.class).to(AWSEC2TemplateBuilderImpl.class);
-        // bind(EC2GetNodeMetadataStrategy.class).to(AWSEC2GetNodeMetadataStrategy.class);
-        // bind(InstancePresent.class).to(AWSEC2InstancePresent.class);
-        // bind(EC2CreateNodesInGroupThenAddToSet.class).to(AWSEC2CreateNodesInGroupThenAddToSet.class);
-        // bind(RunningInstanceToNodeMetadata.class).to(AWSRunningInstanceToNodeMetadata.class);
-    }
+      // install(new FGCPBindComputeStrategiesByClass());
+      // install(new FGCPBindComputeSuppliersByClass());
+      // bind(ReviseParsedImage.class).to(AWSEC2ReviseParsedImage.class);
+      // bind(CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class).to(
+      // CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions.class);
+      // bind(EC2HardwareSupplier.class).to(AWSEC2HardwareSupplier.class);
+      // bind(EC2TemplateBuilderImpl.class).to(AWSEC2TemplateBuilderImpl.class);
+      // bind(EC2GetNodeMetadataStrategy.class).to(AWSEC2GetNodeMetadataStrategy.class);
+      // bind(InstancePresent.class).to(AWSEC2InstancePresent.class);
+      // bind(EC2CreateNodesInGroupThenAddToSet.class).to(AWSEC2CreateNodesInGroupThenAddToSet.class);
+      // bind(RunningInstanceToNodeMetadata.class).to(AWSRunningInstanceToNodeMetadata.class);
+   }
 
-    // @Provides
-    // @Singleton
-    // @Named("SECURITY")
-    // protected Predicate<String> provideServerStopped(ServerStopped
-    // serverStopped, Timeouts timeouts) {
-    // return new RetryablePredicate<String>(serverStopped,
-    // timeouts.nodeSuspended);
-    // }
+   // @Provides
+   // @Singleton
+   // @Named("SECURITY")
+   // protected Predicate<String> provideServerStopped(ServerStopped
+   // serverStopped, Timeouts timeouts) {
+   // return new RetryablePredicate<String>(serverStopped,
+   // timeouts.nodeSuspended);
+   // }
 
-    protected void installDependencies() {
-        // install(new FGCPComputeServiceDependenciesModule());
-    }
+   protected void installDependencies() {
+      // install(new FGCPComputeServiceDependenciesModule());
+   }
 
-    /*
-     * @Override protected TemplateBuilder provideTemplate(Injector injector,
-     * TemplateBuilder template) { return
-     * template.osFamily(CENTOS).os64Bit(true); }
-     */
+   /*
+    * @Override protected TemplateBuilder provideTemplate(Injector injector,
+    * TemplateBuilder template) { return
+    * template.osFamily(CENTOS).os64Bit(true); }
+    */
 }

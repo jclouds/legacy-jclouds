@@ -30,17 +30,17 @@ import org.jclouds.fujitsu.fgcp.domain.PublicIPStatus;
  */
 @XmlRootElement(name = "GetPublicIPStatusResponse")
 public class GetPublicIPStatusResponse extends StatusResponse implements
-        SingleElementResponse {
-    @XmlElement(required = true)
-    private PublicIPStatus publicipStatus;
+      SingleElementResponse {
+   @XmlElement(required = true)
+   private PublicIPStatus publicipStatus;
 
-    @Override
-    public String toString() {
-        return publicipStatus.toString();
-    }
+   @Override
+   public String toString() {
+      return publicipStatus.toString();
+   }
 
-    @Override
-    public Object getElement() {
-        return publicipStatus;
-    }
+   @Override
+   public Object getElement() {
+      return publicipStatus;
+   }
 }

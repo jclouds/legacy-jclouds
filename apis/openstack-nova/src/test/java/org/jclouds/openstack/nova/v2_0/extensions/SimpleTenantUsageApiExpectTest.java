@@ -58,7 +58,7 @@ public class SimpleTenantUsageApiExpectTest extends BaseNovaApiExpectTest {
                   .payload(payloadFromResource("/simple_tenant_usages.json")).build())
             .getSimpleTenantUsageExtensionForZone("az-1.region-a.geo-1").get();
       
-      Set<? extends SimpleTenantUsage> results = api.listTenantUsages();
+      Set<? extends SimpleTenantUsage> results = api.list().toImmutableSet();
       
       SimpleTenantUsage usage = Iterables.getOnlyElement(results);
       assertEquals(usage.getTenantId(), "f8535069c3fb404cb61c873b1a0b4921");
@@ -84,7 +84,7 @@ public class SimpleTenantUsageApiExpectTest extends BaseNovaApiExpectTest {
                   .payload(payloadFromResource("/simple_tenant_usage.json")).build())
             .getSimpleTenantUsageExtensionForZone("az-1.region-a.geo-1").get();
 
-      SimpleTenantUsage usage = api.getTenantUsage("test-1234");
+      SimpleTenantUsage usage = api.get("test-1234");
       assertEquals(usage.getTenantId(), "f8535069c3fb404cb61c873b1a0b4921");
       
       SimpleTenantUsage expected = SimpleTenantUsage.builder().tenantId("f8535069c3fb404cb61c873b1a0b4921").totalHours(4.833333333333333E-7).totalLocalGbUsage(1.933333333333333E-05)

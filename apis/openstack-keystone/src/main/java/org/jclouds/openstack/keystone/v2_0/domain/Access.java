@@ -23,6 +23,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.beans.ConstructorProperties;
 import java.util.Set;
 
+import org.jclouds.javax.annotation.Nullable;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
@@ -105,10 +107,10 @@ public class Access implements Comparable<Access> {
    @ConstructorProperties({
          "token", "user", "serviceCatalog"
    })
-   protected Access(Token token, User user, Set<Service> serviceCatalog) {
+   protected Access(Token token, User user, @Nullable Set<Service> serviceCatalog) {
       this.token = checkNotNull(token, "token");
       this.user = checkNotNull(user, "user");
-      this.serviceCatalog = ImmutableSet.copyOf(checkNotNull(serviceCatalog, "serviceCatalog"));
+      this.serviceCatalog = serviceCatalog == null ? ImmutableSet.<Service>of() : ImmutableSet.copyOf(serviceCatalog);
    }
 
    /**

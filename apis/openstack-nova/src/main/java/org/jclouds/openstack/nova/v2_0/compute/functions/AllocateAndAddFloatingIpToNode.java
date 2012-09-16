@@ -86,7 +86,7 @@ public class AllocateAndAddFloatingIpToNode implements
       } catch (InsufficientResourcesException e) {
          logger.trace("<< [%s] allocating a new floating ip for node(%s)", e.getMessage(), node.getId());
          logger.trace(">> searching for existing, unassigned floating ip for node(%s)", node.getId());
-         ArrayList<FloatingIP> unassignedIps = Lists.newArrayList(Iterables.filter(floatingIpApi.listFloatingIPs(),
+         ArrayList<FloatingIP> unassignedIps = Lists.newArrayList(Iterables.filter(floatingIpApi.list(),
                   new Predicate<FloatingIP>() {
 
                      @Override
@@ -101,7 +101,7 @@ public class AllocateAndAddFloatingIpToNode implements
       }
       logger.debug(">> adding floatingIp(%s) to node(%s)", ip.getIp(), node.getId());
 
-      floatingIpApi.addFloatingIPToServer(ip.getIp(), node.getProviderId());
+      floatingIpApi.addToServer(ip.getIp(), node.getProviderId());
       input.set(NodeMetadataBuilder.fromNodeMetadata(node).publicAddresses(ImmutableSet.of(ip.getIp())).build());
       floatingIpCache.invalidate(ZoneAndId.fromSlashEncoded(node.getId()));
       return input;

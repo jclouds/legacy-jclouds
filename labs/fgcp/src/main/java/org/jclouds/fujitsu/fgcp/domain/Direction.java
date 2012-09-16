@@ -32,82 +32,82 @@ import com.google.common.collect.ImmutableSet;
  * @author Dies Koper
  */
 public class Direction {
-    private String from;
-    private String to;
-    private Set<Policy> policies = new LinkedHashSet<Policy>();
-    private Acceptable acceptable;
-    private Prefix prefix;
-    private int maxPolicyNum;
+   private String from;
+   private String to;
+   private Set<Policy> policies = new LinkedHashSet<Policy>();
+   private Acceptable acceptable;
+   private Prefix prefix;
+   private int maxPolicyNum;
 
-    enum Acceptable {OK, NG}
-    enum Prefix {free, src, dst, proto, srcport, dstport, action, rule, tab}
+   enum Acceptable {OK, NG}
+   enum Prefix {free, src, dst, proto, srcport, dstport, action, rule, tab}
 
-    /**
-     * @return the from
-     */
-    public String getFrom() {
-        return from;
-    }
+   /**
+    * @return the from
+    */
+   public String getFrom() {
+      return from;
+   }
 
-    /**
-     * @return the to
-     */
-    public String getTo() {
-        return to;
-    }
+   /**
+    * @return the to
+    */
+   public String getTo() {
+      return to;
+   }
 
-    /**
-     * @return the policies
-     */
-    public Set<Policy> getPolicies() {
-        return policies == null ? ImmutableSet.<Policy> of() : ImmutableSet
-                .copyOf(policies);
-    }
+   /**
+    * @return the policies
+    */
+   public Set<Policy> getPolicies() {
+      return policies == null ? ImmutableSet.<Policy> of() : ImmutableSet
+            .copyOf(policies);
+   }
 
-    /**
-     * @return the acceptable
-     */
-    public Acceptable getAcceptable() {
-        return acceptable;
-    }
+   /**
+    * @return the acceptable
+    */
+   public Acceptable getAcceptable() {
+      return acceptable;
+   }
 
-    /**
-     * @return the prefix
-     */
-    public Prefix getPrefix() {
-        return prefix;
-    }
+   /**
+    * @return the prefix
+    */
+   public Prefix getPrefix() {
+      return prefix;
+   }
 
-    /**
-     * @return the maxPolicyNum
-     */
-    public int getMaxPolicyNum() {
-        return maxPolicyNum;
-    }
+   /**
+    * @return the maxPolicyNum
+    */
+   public int getMaxPolicyNum() {
+      return maxPolicyNum;
+   }
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(from, to);
-    }
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(from, to);
+   }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Direction that = Direction.class.cast(obj);
-        return Objects.equal(this.from, that.from)
-                && Objects.equal(this.to, that.to);
-    }
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      Direction that = Direction.class.cast(obj);
+      return Objects.equal(this.from, that.from)
+            && Objects.equal(this.to, that.to);
+   }
 
-    @Override
-    public String toString() {
-        return Objects.toStringHelper(this).omitNullValues().add("from", from)
-                .add("to", to).add("prefix", prefix).add("policies", policies)
-                .add("maxPolicyNum", maxPolicyNum)
-                .add("acceptable", acceptable).toString();
-    }
+   @Override
+   public String toString() {
+      return Objects.toStringHelper(this).omitNullValues().add("from", from)
+            .add("to", to).add("prefix", prefix).add("policies", policies)
+            .add("maxPolicyNum", maxPolicyNum)
+            .add("acceptable", acceptable).toString();
+   }
 }

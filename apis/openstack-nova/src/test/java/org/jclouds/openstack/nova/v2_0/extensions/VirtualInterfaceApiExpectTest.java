@@ -47,7 +47,7 @@ public class VirtualInterfaceApiExpectTest extends BaseNovaApiExpectTest {
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/virtual_interfaces_list.json")).build()
       ).getVirtualInterfaceExtensionForZone("az-1.region-a.geo-1").get();
 
-      VirtualInterface vif = Iterables.getOnlyElement(api.listVirtualInterfacesForServer("1"));
+      VirtualInterface vif = Iterables.getOnlyElement(api.listOnServer("1"));
       assertEquals(vif.getId(), "02315827-b05c-4668-9c05-75c68838074a");
       assertEquals(vif.getMacAddress(), "fa:16:3e:09:71:34");
    }
@@ -61,6 +61,6 @@ public class VirtualInterfaceApiExpectTest extends BaseNovaApiExpectTest {
             HttpResponse.builder().statusCode(404).build()
       ).getVirtualInterfaceExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertTrue(api.listVirtualInterfacesForServer("1").isEmpty());
+      assertTrue(api.listOnServer("1").isEmpty());
    }
 }

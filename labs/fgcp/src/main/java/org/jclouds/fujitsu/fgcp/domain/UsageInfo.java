@@ -35,60 +35,60 @@ import com.google.common.collect.ImmutableSet;
  */
 @XmlRootElement(name = "usageinfo")
 public class UsageInfo {
-    @XmlElement(name = "vsysId")
-    private String systemId;
-    @XmlElement(name = "vsysName")
-    private String systemName;
+   @XmlElement(name = "vsysId")
+   private String systemId;
+   @XmlElement(name = "vsysName")
+   private String systemName;
 
-    @XmlElementWrapper(name = "products")
-    @XmlElement(name = "product")
-    private Set<Product> products = new LinkedHashSet<Product>();
+   @XmlElementWrapper(name = "products")
+   @XmlElement(name = "product")
+   private Set<Product> products = new LinkedHashSet<Product>();
 
-    /**
-     * @return the systemId
-     */
-    public String getSystemId() {
-        return systemId;
-    }
+   /**
+    * @return the systemId
+    */
+   public String getSystemId() {
+      return systemId;
+   }
 
-    /**
-     * @return the systemName
-     */
-    public String getSystemName() {
-        return systemName;
-    }
+   /**
+    * @return the systemName
+    */
+   public String getSystemName() {
+      return systemName;
+   }
 
-    /**
-     * @return the products
-     */
-    public Set<Product> getProducts() {
-        return products == null ? ImmutableSet.<Product> of() : ImmutableSet
-                .copyOf(products);
-    }
+   /**
+    * @return the products
+    */
+   public Set<Product> getProducts() {
+      return products == null ? ImmutableSet.<Product> of() : ImmutableSet
+            .copyOf(products);
+   }
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(systemId, systemName, products);
-    }
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(systemId, systemName, products);
+   }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        UsageInfo that = UsageInfo.class.cast(obj);
-        return Objects.equal(this.systemId, that.systemId)
-                && Objects.equal(this.systemName, that.systemName)
-                && Objects.equal(this.products, that.products);
-    }
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      UsageInfo that = UsageInfo.class.cast(obj);
+      return Objects.equal(this.systemId, that.systemId)
+            && Objects.equal(this.systemName, that.systemName)
+            && Objects.equal(this.products, that.products);
+   }
 
-    @Override
-    public String toString() {
-        return Objects.toStringHelper(this).omitNullValues()
-                .add("systemId", systemId).add("systemName", systemName)
-                .add("products", products).toString();
-    }
+   @Override
+   public String toString() {
+      return Objects.toStringHelper(this).omitNullValues()
+            .add("systemId", systemId).add("systemName", systemName)
+            .add("products", products).toString();
+   }
 }

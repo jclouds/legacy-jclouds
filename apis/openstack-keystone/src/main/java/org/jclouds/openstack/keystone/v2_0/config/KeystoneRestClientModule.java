@@ -143,7 +143,7 @@ public class KeystoneRestClientModule<S extends KeystoneApi, A extends KeystoneA
             .build(CacheLoader.from(Suppliers.memoize(new Supplier<Set<? extends Extension>>() {
                @Override
                public Set<? extends Extension> get() {
-                  return keystoneApi.get().getExtensionApi().listExtensions();
+                  return keystoneApi.get().getExtensionApi().list();
                }
             })));
    }

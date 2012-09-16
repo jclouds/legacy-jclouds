@@ -22,23 +22,15 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.fujitsu.fgcp.FGCPAsyncApi;
-import org.jclouds.fujitsu.fgcp.binders.BindAlsoToSystemId;
 import org.jclouds.fujitsu.fgcp.compute.functions.SingleElementResponseToElement;
-import org.jclouds.fujitsu.fgcp.domain.BuiltinServer;
-import org.jclouds.fujitsu.fgcp.domain.BuiltinServerBackup;
-import org.jclouds.fujitsu.fgcp.domain.BuiltinServerConfiguration;
-import org.jclouds.fujitsu.fgcp.domain.BuiltinServerStatus;
 import org.jclouds.fujitsu.fgcp.domain.Rule;
 import org.jclouds.fujitsu.fgcp.filters.RequestAuthenticator;
 import org.jclouds.fujitsu.fgcp.reference.RequestParameters;
-import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.PayloadParams;
 import org.jclouds.rest.annotations.QueryParams;
@@ -60,20 +52,20 @@ import com.google.common.util.concurrent.ListenableFuture;
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface FirewallAsyncApi extends BuiltinServerAsyncApi {
 
-    @POST
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "GetEFMConfiguration")
-    @Transform(SingleElementResponseToElement.class)
-    ListenableFuture<Set<Rule>> getNATConfiguration(String id);
+   @POST
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "GetEFMConfiguration")
+   @Transform(SingleElementResponseToElement.class)
+   ListenableFuture<Set<Rule>> getNATConfiguration(String id);
 
-    /*
-    FW_NAT_RULE,        getNATConfiguration(String id)
+   /*
+   FW_NAT_RULE,      getNATConfiguration(String id)
 
-    FW_DNS,         getDNSConfiguration(String id)
-    FW_POLICY,          getPolicyConfiguration(String id)
+   FW_DNS,       getDNSConfiguration(String id)
+   FW_POLICY,        getPolicyConfiguration(String id)
 
-    FW_LOG,         getFirewallLogs(String id);
-    FW_LIMIT_POLICY,
+   FW_LOG,       getFirewallLogs(String id);
+   FW_LIMIT_POLICY,
 
-     */
+    */
 }

@@ -35,25 +35,25 @@ import com.google.common.collect.ImmutableSet;
  */
 @XmlRootElement(name = "vserver")
 public class VServerWithDetails extends VServerWithVNICs {
-    @XmlElementWrapper(name = "vdisks")
-    @XmlElement(name = "vdisk")
-    protected Set<VDisk> vdisks = new LinkedHashSet<VDisk>();
-    protected Image image;
+   @XmlElementWrapper(name = "vdisks")
+   @XmlElement(name = "vdisk")
+   protected Set<VDisk> vdisks = new LinkedHashSet<VDisk>();
+   protected Image image;
 
-    public Set<VDisk> getVdisks() {
-        return vdisks == null ? ImmutableSet.<VDisk> of() : ImmutableSet
-                .copyOf(vdisks);
-    }
+   public Set<VDisk> getVdisks() {
+      return vdisks == null ? ImmutableSet.<VDisk> of() : ImmutableSet
+            .copyOf(vdisks);
+   }
 
-    public Image getImage() {
-        return image;
-    }
+   public Image getImage() {
+      return image;
+   }
 
-    @Override
-    public String toString() {
-        return Objects.toStringHelper(this).omitNullValues().add("id", id)
-                .add("name", name).add("type", type).add("creator", creator)
-                .add("diskimageId", diskimageId).add("vdisks", vdisks)
-                .add("vnics", vnics).add("image", image).toString();
-    }
+   @Override
+   public String toString() {
+      return Objects.toStringHelper(this).omitNullValues().add("id", id)
+            .add("name", name).add("type", type).add("creator", creator)
+            .add("diskimageId", diskimageId).add("vdisks", vdisks)
+            .add("vnics", vnics).add("image", image).toString();
+   }
 }

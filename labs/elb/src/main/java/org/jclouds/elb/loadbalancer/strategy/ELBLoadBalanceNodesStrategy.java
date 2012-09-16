@@ -82,7 +82,7 @@ public class ELBLoadBalanceNodesStrategy implements LoadBalanceNodesStrategy {
 
       logger.debug(">> creating loadBalancer(%s) in zones(%s)", name, zonesDesired);
       try {
-         String dnsName = api.getLoadBalancerApiForRegion(region).createLoadBalancerListeningInAvailabilityZones(
+         String dnsName = api.getLoadBalancerApiForRegion(region).createListeningInAvailabilityZones(
                   name,
                   ImmutableSet.of(Listener.builder().port(loadBalancerPort).instancePort(instancePort)
                            .protocol(Protocol.valueOf(protocol)).build()), zonesDesired);

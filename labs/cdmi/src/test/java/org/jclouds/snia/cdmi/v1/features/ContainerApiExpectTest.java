@@ -36,30 +36,24 @@ import com.google.common.collect.ImmutableMultimap;
  */
 @Test(groups = "unit", testName = "ContainerAsyncApiTest")
 public class ContainerApiExpectTest extends BaseCDMIApiExpectTest {
-   
+
    public void testGetContainerWhenResponseIs2xx() throws Exception {
 
-      HttpRequest getContainer = HttpRequest.builder()
-            .method("GET")
-            .endpoint("http://localhost:8080/MyContainer/")
-            .headers(ImmutableMultimap.<String, String> builder()
-                        .put("X-CDMI-Specification-Version", "1.0.1")
+      HttpRequest get = HttpRequest
+               .builder()
+               .method("GET")
+               .endpoint("http://localhost:8080/MyContainer/")
+               .headers(ImmutableMultimap.<String, String> builder().put("X-CDMI-Specification-Version", "1.0.1")
                         .put("TID", "tenantId")
                         .put("Authorization", "Basic " + CryptoStreams.base64("username:password".getBytes()))
-                        .put("Accept", "application/cdmi-container")
-                        .build())
-            .build();
-      
-      HttpResponse getContainerResponse = HttpResponse.builder()
-            .statusCode(200)
-            .payload(payloadFromResource("/container.json"))
-            .build();
+                        .put("Accept", "application/cdmi-container").build()).build();
 
-      CDMIApi apiWhenContainersExist = requestSendsResponse(getContainer, getContainerResponse);
+      HttpResponse getResponse = HttpResponse.builder().statusCode(200).payload(payloadFromResource("/container.json"))
+               .build();
 
-      assertEquals(
-            apiWhenContainersExist.getContainerApi().getContainer("MyContainer/"),
-            new ParseContainerTest().expected());
+      CDMIApi apiWhenContainersExist = requestSendsResponse(get, getResponse);
+
+      assertEquals(apiWhenContainersExist.getApi().get("MyContainer/"), new ParseContainerTest().expected());
    }
-   
+
 }

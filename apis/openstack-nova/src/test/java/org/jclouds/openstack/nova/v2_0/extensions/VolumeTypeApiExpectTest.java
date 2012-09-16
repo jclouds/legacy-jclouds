@@ -57,7 +57,7 @@ public class VolumeTypeApiExpectTest extends BaseNovaApiExpectTest {
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/volume_type_list.json")).build()
       ).getVolumeTypeExtensionForZone("az-1.region-a.geo-1").get();
 
-      Set<? extends VolumeType> types = api.listVolumeTypes();
+      Set<? extends VolumeType> types = api.list().toImmutableSet();
       assertEquals(types, ImmutableSet.of(testVolumeType()));
    }
 
@@ -70,7 +70,7 @@ public class VolumeTypeApiExpectTest extends BaseNovaApiExpectTest {
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/volume_type.json")).build()
       ).getVolumeTypeExtensionForZone("az-1.region-a.geo-1").get();
 
-      VolumeType type = api.getVolumeType("8");
+      VolumeType type = api.get("8");
       assertEquals(type, testVolumeType());
    }
 
@@ -83,7 +83,7 @@ public class VolumeTypeApiExpectTest extends BaseNovaApiExpectTest {
             HttpResponse.builder().statusCode(404).build()
       ).getVolumeTypeExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertNull(api.getVolumeType("8"));
+      assertNull(api.get("8"));
    }
 
    public void testCreateVolumeType() {
@@ -97,7 +97,7 @@ public class VolumeTypeApiExpectTest extends BaseNovaApiExpectTest {
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/volume_type.json")).build()
       ).getVolumeTypeExtensionForZone("az-1.region-a.geo-1").get();
 
-      VolumeType type = api.createVolumeType("jclouds-test-1");
+      VolumeType type = api.create("jclouds-test-1");
       assertEquals(type, testVolumeType());
    }
 
@@ -112,7 +112,7 @@ public class VolumeTypeApiExpectTest extends BaseNovaApiExpectTest {
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/volume_type.json")).build()
       ).getVolumeTypeExtensionForZone("az-1.region-a.geo-1").get();
 
-      VolumeType type = api.createVolumeType("jclouds-test-1", CreateVolumeTypeOptions.NONE);
+      VolumeType type = api.create("jclouds-test-1", CreateVolumeTypeOptions.NONE);
       assertEquals(type, testVolumeType());
    }
 
@@ -127,7 +127,7 @@ public class VolumeTypeApiExpectTest extends BaseNovaApiExpectTest {
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/volume_type.json")).build()
       ).getVolumeTypeExtensionForZone("az-1.region-a.geo-1").get();
 
-      VolumeType type = api.createVolumeType("jclouds-test-1", CreateVolumeTypeOptions.Builder.specs(ImmutableMap.of("x", "y")));
+      VolumeType type = api.create("jclouds-test-1", CreateVolumeTypeOptions.Builder.specs(ImmutableMap.of("x", "y")));
       assertEquals(type, testVolumeType());
    }
 
@@ -140,7 +140,7 @@ public class VolumeTypeApiExpectTest extends BaseNovaApiExpectTest {
             HttpResponse.builder().statusCode(200).build()
       ).getVolumeTypeExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertTrue(api.deleteVolumeType("8"));
+      assertTrue(api.delete("8"));
    }
 
    public void testDeleteVolumeTypeFailNotFound() {
@@ -152,7 +152,7 @@ public class VolumeTypeApiExpectTest extends BaseNovaApiExpectTest {
             HttpResponse.builder().statusCode(404).build()
       ).getVolumeTypeExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertFalse(api.deleteVolumeType("8"));
+      assertFalse(api.delete("8"));
    }
 
    public void testGetAllExtraSpecs() {
@@ -164,7 +164,7 @@ public class VolumeTypeApiExpectTest extends BaseNovaApiExpectTest {
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/volume_type_extra_specs.json")).build()
       ).getVolumeTypeExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertEquals(api.getAllExtraSpecs("9"), ImmutableMap.of("test", "value1"));
+      assertEquals(api.getExtraSpecs("9"), ImmutableMap.of("test", "value1"));
    }
 
    public void testGetAllExtraSpecsFailNotFound() {
@@ -176,7 +176,7 @@ public class VolumeTypeApiExpectTest extends BaseNovaApiExpectTest {
             HttpResponse.builder().statusCode(404).build()
       ).getVolumeTypeExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertTrue(api.getAllExtraSpecs("9").isEmpty());
+      assertTrue(api.getExtraSpecs("9").isEmpty());
    }
 
    public void testSetAllExtraSpecs() {
@@ -190,7 +190,7 @@ public class VolumeTypeApiExpectTest extends BaseNovaApiExpectTest {
             HttpResponse.builder().statusCode(200).build()
       ).getVolumeTypeExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertTrue(api.setAllExtraSpecs("9", ImmutableMap.of("test1", "somevalue")));
+      assertTrue(api.updateExtraSpecs("9", ImmutableMap.of("test1", "somevalue")));
    }
 
    public void testSetExtraSpec() {
@@ -204,7 +204,7 @@ public class VolumeTypeApiExpectTest extends BaseNovaApiExpectTest {
             HttpResponse.builder().statusCode(200).build()
       ).getVolumeTypeExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertTrue(api.setExtraSpec("5", "test1", "somevalue"));
+      assertTrue(api.updateExtraSpec("5", "test1", "somevalue"));
    }
 
    public void testGetExtraSpec() {

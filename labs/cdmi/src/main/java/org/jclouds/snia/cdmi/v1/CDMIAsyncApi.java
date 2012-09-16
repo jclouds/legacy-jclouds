@@ -18,9 +18,13 @@
  */
 package org.jclouds.snia.cdmi.v1;
 
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.snia.cdmi.v1.features.ContainerAsyncApi;
 import org.jclouds.snia.cdmi.v1.features.DataAsyncApi;
+import org.jclouds.snia.cdmi.v1.features.DataNonCDMIContentTypeAsyncApi;
 import org.jclouds.snia.cdmi.v1.features.DomainAsyncApi;
 
 /**
@@ -43,18 +47,21 @@ public interface CDMIAsyncApi {
     * Provides asynchronous access to Container Object Resource Operations.
     */
    @Delegate
-   ContainerAsyncApi getContainerApi();
+   ContainerAsyncApi getApi();
 
    /**
     * Provides asynchronous access to Data Object Resource Operations.
     */
    @Delegate
-   DataAsyncApi getDataApi();
+   @Path("/{containerName}")
+   DataAsyncApi getDataApiForContainer(@PathParam("containerName") String containerName);
 
    /**
     * Provides asynchronous access to Data Object Resource Operations.
     */
    @Delegate
-   DataAsyncApi getDataNonCDMIContentTypeApi();
-   
+   @Path("/{containerName}")
+   DataNonCDMIContentTypeAsyncApi getDataNonCDMIContentTypeApiForContainer(
+            @PathParam("containerName") String containerName);
+
 }

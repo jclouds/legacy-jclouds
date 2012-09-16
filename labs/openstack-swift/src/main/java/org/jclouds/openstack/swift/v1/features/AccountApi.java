@@ -18,13 +18,10 @@
  */
 package org.jclouds.openstack.swift.v1.features;
 
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.openstack.swift.v1.domain.AccountMetadata;
-import org.jclouds.openstack.swift.v1.domain.ContainerMetadata;
-import org.jclouds.openstack.swift.v1.options.ListContainersOptions;
+import org.jclouds.openstack.swift.v1.domain.Account;
 
 /**
  * Storage Account Services
@@ -37,26 +34,12 @@ import org.jclouds.openstack.swift.v1.options.ListContainersOptions;
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface AccountApi {
+   
    /**
     * Retrieve Account Metadata
     * 
     * @return account metadata including container count and bytes used
     */
-   AccountMetadata getAccountMetadata();
-
-   /**
-    * @see #listContainers(ListContainersOptions)
-    */
-   Set<? extends ContainerMetadata> listContainers();
-
-   /**
-    * retrieve a list of existing storage containers ordered by name. The sort order for the name is
-    * based on a binary comparison, a single built-in collating sequence that compares string data
-    * using SQLite's memcmp() function, regardless of text encoding.
-    * 
-    * @param options
-    * @return a list of existing storage containers ordered by name.
-    */
-   Set<? extends ContainerMetadata> listContainers(ListContainersOptions options);
+   Account get();
 
 }

@@ -19,9 +19,9 @@
 package org.jclouds.openstack.glance.v1_0.features;
 
 import java.io.InputStream;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.collect.PagedIterable;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.io.Payload;
 import org.jclouds.javax.annotation.Nullable;
@@ -30,6 +30,7 @@ import org.jclouds.openstack.glance.v1_0.domain.ImageDetails;
 import org.jclouds.openstack.glance.v1_0.options.CreateImageOptions;
 import org.jclouds.openstack.glance.v1_0.options.ListImageOptions;
 import org.jclouds.openstack.glance.v1_0.options.UpdateImageOptions;
+import org.jclouds.openstack.keystone.v2_0.domain.PaginatedCollection;
 
 /**
  * Image Services
@@ -41,21 +42,31 @@ import org.jclouds.openstack.glance.v1_0.options.UpdateImageOptions;
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface ImageApi {
-   /**
-    * Returns a set of brief metadata about images
-    */
-   Set<? extends Image> list(ListImageOptions... options);
 
    /**
-    * Returns a set of detailed metadata about images
+    * List all images (IDs, names, links)
+    * 
+    * @return all images (IDs, names, links)
     */
-   Set<? extends ImageDetails> listInDetail(ListImageOptions... options);
+   PagedIterable<? extends Image> list();
+
+   PaginatedCollection<? extends Image> list(ListImageOptions options);
+
+   /**
+    * List all images (all details)
+    * 
+    * @return all images (all details)
+    */
+   PagedIterable<? extends ImageDetails> listInDetail();
+
+   PaginatedCollection<? extends ImageDetails> listInDetail(ListImageOptions options);
+
 
    /**
     * Return metadata about an image with id
     */
    @Nullable
-   ImageDetails show(String id);
+   ImageDetails get(String id);
 
    /**
     * Return image data for image with id
@@ -104,5 +115,5 @@ public interface ImageApi {
     *
     * @return true if successful
     */
-   Boolean delete(String id);
+   boolean delete(String id);
 }

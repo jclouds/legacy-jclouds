@@ -20,7 +20,6 @@ package org.jclouds.openstack.nova.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.beans.ConstructorProperties;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;

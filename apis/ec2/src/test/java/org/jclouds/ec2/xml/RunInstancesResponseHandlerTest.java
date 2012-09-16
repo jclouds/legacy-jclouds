@@ -65,19 +65,19 @@ public class RunInstancesResponseHandlerTest extends BaseEC2HandlerTest {
       Reservation<? extends RunningInstance> expected = new Reservation<RunningInstance>(defaultRegion, ImmutableSet
                .of("default"), ImmutableSet.of(
 
-      new RunningInstance.Builder().region(defaultRegion).groupId("default").amiLaunchIndex("0")
+      new RunningInstance.Builder().region(defaultRegion).groupName("default").amiLaunchIndex("0")
                .imageId("ami-60a54009").instanceId("i-2ba64342").instanceState(InstanceState.PENDING).rawState(
                         "pending").instanceType(InstanceType.M1_SMALL).keyName("example-key-name").launchTime(
                         dateService.iso8601DateParse("2007-08-07T11:51:50.000Z"))// MonitoringState.ENABLED,
                .availabilityZone("us-east-1b").build(),
 
-      new RunningInstance.Builder().region(defaultRegion).groupId("default").amiLaunchIndex("1")
+      new RunningInstance.Builder().region(defaultRegion).groupName("default").amiLaunchIndex("1")
                .imageId("ami-60a54009").instanceId("i-2bc64242").instanceState(InstanceState.PENDING).rawState(
                         "pending").instanceType(InstanceType.M1_SMALL).keyName("example-key-name").launchTime(
                         dateService.iso8601DateParse("2007-08-07T11:51:50.000Z"))// MonitoringState.ENABLED,
                .availabilityZone("us-east-1b").build(),
 
-      new RunningInstance.Builder().region(defaultRegion).groupId("default").amiLaunchIndex("2")
+      new RunningInstance.Builder().region(defaultRegion).groupName("default").amiLaunchIndex("2")
                .imageId("ami-60a54009").instanceId("i-2be64332").instanceState(InstanceState.PENDING).rawState(
                         "pending").instanceType(InstanceType.M1_SMALL).keyName("example-key-name").launchTime(
                         dateService.iso8601DateParse("2007-08-07T11:51:50.000Z"))// MonitoringState.ENABLED,
@@ -96,9 +96,9 @@ public class RunInstancesResponseHandlerTest extends BaseEC2HandlerTest {
       InputStream is = getClass().getResourceAsStream("/run_instances_cloudbridge.xml");
 
       Reservation<? extends RunningInstance> expected = new Reservation<RunningInstance>(defaultRegion, ImmutableSet
-               .of("default"), ImmutableSet.of(
+               .of("jclouds#greenqloud-computeblock"), ImmutableSet.of(
 
-      new RunningInstance.Builder().region(defaultRegion).groupId("jclouds#greenqloud-computeblock").amiLaunchIndex("0")
+      new RunningInstance.Builder().region(defaultRegion).groupName("jclouds#greenqloud-computeblock").amiLaunchIndex("0")
                .imageId("qmi-9ac92558").instanceId("i-01b0dac3").instanceState(InstanceState.PENDING).rawState(
                         "pending").instanceType(InstanceType.M1_SMALL).keyName("jclouds#greenqloud-computeblock#35")
                         .launchTime(dateService.iso8601DateParse("2012-06-15T19:06:35.000+00:00"))

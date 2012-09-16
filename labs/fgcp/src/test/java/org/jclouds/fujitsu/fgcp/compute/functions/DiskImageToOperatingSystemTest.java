@@ -11,7 +11,6 @@ import java.util.List;
 
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
-import org.jclouds.fujitsu.fgcp.compute.functions.DiskImageToOperatingSystem;
 import org.jclouds.fujitsu.fgcp.domain.DiskImage;
 import org.jclouds.fujitsu.fgcp.domain.DiskImage.Builder;
 import org.testng.annotations.Test;
@@ -21,143 +20,143 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "unit", testName = "DiskImageToOperatingSystemTest")
 public class DiskImageToOperatingSystemTest {
-    // Operating Systems available JAN 2012 (taken from osName)
-    private static final List<String> operatingSystems = Arrays.asList(
-            // JP
-            "CentOS 5.6 32bit (English)",
-            "CentOS 5.6 64bit (English)",
-            "Red Hat Enterprise Linux 5.5 32bit (Japanese)",
-            "Red Hat Enterprise Linux 5.5 64bit (Japanese)",
-            "Windows Server 2003 R2 EE 32bit SP2 (日本語版) サポート付",
-            "Windows Server 2003 R2 EE 32bit SP2 (日本語版)",
-            "Windows Server 2008 R2 EE 64bit (日本語版) サポート付",
-            "Windows Server 2008 R2 EE 64bit (日本語版)",
-            "Windows Server 2008 R2 SE 64bit (日本語版)  サポート付",
-            "Windows Server 2008 R2 SE 64bit (日本語版)",
-            "Windows Server 2008 SE 32bit SP2 (日本語版) サポート付",
-            "Windows Server 2008 SE 32bit SP2 (日本語版)",
-            // AU
-            "CentOS 5.4 64bit (English)", "CentOS 5.4 32bit (English)",
-            "Windows Server 2008 R2 SE 64bit (English)",
-            "Windows Server 2008 R2 EE 64bit (English)");
+   // Operating Systems available JAN 2012 (taken from osName)
+   private static final List<String> operatingSystems = Arrays.asList(
+         // JP
+         "CentOS 5.6 32bit (English)",
+         "CentOS 5.6 64bit (English)",
+         "Red Hat Enterprise Linux 5.5 32bit (Japanese)",
+         "Red Hat Enterprise Linux 5.5 64bit (Japanese)",
+         "Windows Server 2003 R2 EE 32bit SP2 (日本語版) サポート付",
+         "Windows Server 2003 R2 EE 32bit SP2 (日本語版)",
+         "Windows Server 2008 R2 EE 64bit (日本語版) サポート付",
+         "Windows Server 2008 R2 EE 64bit (日本語版)",
+         "Windows Server 2008 R2 SE 64bit (日本語版)  サポート付",
+         "Windows Server 2008 R2 SE 64bit (日本語版)",
+         "Windows Server 2008 SE 32bit SP2 (日本語版) サポート付",
+         "Windows Server 2008 SE 32bit SP2 (日本語版)",
+         // AU
+         "CentOS 5.4 64bit (English)", "CentOS 5.4 32bit (English)",
+         "Windows Server 2008 R2 SE 64bit (English)",
+         "Windows Server 2008 R2 EE 64bit (English)");
 
-    @Test
-    public void testConversion() {
-        for (String description : operatingSystems) {
-            Builder builder = DiskImage.builder();
-            builder.osName(description);
-            builder.osType("hvm");
-            builder.creatorName("creator");
-            builder.registrant("registrant");
-            builder.description("description");
-            builder.id("ABCDEFGH");
-            DiskImage image = builder.build();
+   @Test
+   public void testConversion() {
+      for (String description : operatingSystems) {
+         Builder builder = DiskImage.builder();
+         builder.osName(description);
+         builder.osType("hvm");
+         builder.creatorName("creator");
+         builder.registrant("registrant");
+         builder.description("description");
+         builder.id("ABCDEFGH");
+         DiskImage image = builder.build();
 
-            OperatingSystem os = new DiskImageToOperatingSystem().apply(image);
+         OperatingSystem os = new DiskImageToOperatingSystem().apply(image);
 
-            assertNotNull(os, description);
-            assertNotNull(os.getFamily(), description);
-            assertFalse(os.getFamily().equals(OsFamily.UNRECOGNIZED),
-                    "OsFamily not recognised: " + description);
-            assertNotNull(os.getVersion(), "Version not recognised: "
-                    + description);
-            assertEquals(os.getName(), description);
-            assertEquals(os.getDescription(), description);
-            assertNotNull(os.getArch(), description);
-        }
-    }
+         assertNotNull(os, description);
+         assertNotNull(os.getFamily(), description);
+         assertFalse(os.getFamily().equals(OsFamily.UNRECOGNIZED),
+               "OsFamily not recognised: " + description);
+         assertNotNull(os.getVersion(), "Version not recognised: "
+               + description);
+         assertEquals(os.getName(), description);
+         assertEquals(os.getDescription(), description);
+         assertNotNull(os.getArch(), description);
+      }
+   }
 
-    @Test
-    public void testOsFamilyUnrecognized() {
-        DiskImage image = DiskImage.builder()
-                .osName("not a known operating system").build();
+   @Test
+   public void testOsFamilyUnrecognized() {
+      DiskImage image = DiskImage.builder()
+            .osName("not a known operating system").build();
 
-        OperatingSystem os = new DiskImageToOperatingSystem().apply(image);
+      OperatingSystem os = new DiskImageToOperatingSystem().apply(image);
 
-        assertNotNull(os);
-        assertEquals(os.getFamily(), OsFamily.UNRECOGNIZED);
-    }
+      assertNotNull(os);
+      assertEquals(os.getFamily(), OsFamily.UNRECOGNIZED);
+   }
 
-    @Test
-    public void test64BitsWithSpace() {
-        DiskImage image = DiskImage.builder().osName("a (64 bit) os").build();
+   @Test
+   public void test64BitsWithSpace() {
+      DiskImage image = DiskImage.builder().osName("a (64 bit) os").build();
 
-        OperatingSystem os = new DiskImageToOperatingSystem().apply(image);
+      OperatingSystem os = new DiskImageToOperatingSystem().apply(image);
 
-        assertNotNull(os);
-        assertTrue(os.is64Bit());
-    }
+      assertNotNull(os);
+      assertTrue(os.is64Bit());
+   }
 
-    @Test
-    public void test64BitsNoSpace() {
-        DiskImage image = DiskImage.builder().osName("a (64bit) os").build();
+   @Test
+   public void test64BitsNoSpace() {
+      DiskImage image = DiskImage.builder().osName("a (64bit) os").build();
 
-        OperatingSystem os = new DiskImageToOperatingSystem().apply(image);
+      OperatingSystem os = new DiskImageToOperatingSystem().apply(image);
 
-        assertNotNull(os);
-        assertTrue(os.is64Bit());
-    }
+      assertNotNull(os);
+      assertTrue(os.is64Bit());
+   }
 
-    @Test
-    public void test32BitsNoSpace() {
-        DiskImage image = DiskImage.builder().osName("a (32bit) os").build();
+   @Test
+   public void test32BitsNoSpace() {
+      DiskImage image = DiskImage.builder().osName("a (32bit) os").build();
 
-        OperatingSystem os = new DiskImageToOperatingSystem().apply(image);
+      OperatingSystem os = new DiskImageToOperatingSystem().apply(image);
 
-        assertNotNull(os);
-        assertFalse(os.is64Bit());
-    }
+      assertNotNull(os);
+      assertFalse(os.is64Bit());
+   }
 
-    @Test
-    public void testx64NoSpace() {
-        DiskImage image = DiskImage.builder().osName("a (x64) os").build();
+   @Test
+   public void testx64NoSpace() {
+      DiskImage image = DiskImage.builder().osName("a (x64) os").build();
 
-        OperatingSystem os = new DiskImageToOperatingSystem().apply(image);
+      OperatingSystem os = new DiskImageToOperatingSystem().apply(image);
 
-        assertNotNull(os);
-        assertTrue(os.is64Bit());
-    }
+      assertNotNull(os);
+      assertTrue(os.is64Bit());
+   }
 
-    @Test
-    public void testWindowsVersion() {
-        DiskImage image = DiskImage.builder()
-                .osName("Windows Server 2008 R2 SE 64 bit").build();
+   @Test
+   public void testWindowsVersion() {
+      DiskImage image = DiskImage.builder()
+            .osName("Windows Server 2008 R2 SE 64 bit").build();
 
-        OperatingSystem os = new DiskImageToOperatingSystem().apply(image);
+      OperatingSystem os = new DiskImageToOperatingSystem().apply(image);
 
-        assertNotNull(os);
-        assertEquals(os.getVersion(), "2008 R2 SE");
-    }
+      assertNotNull(os);
+      assertEquals(os.getVersion(), "2008 R2 SE");
+   }
 
-    @Test
-    public void testCentOSVersion() {
-        DiskImage image = DiskImage.builder()
-                .osName("CentOS 6.2 64bit (English)").build();
+   @Test
+   public void testCentOSVersion() {
+      DiskImage image = DiskImage.builder()
+            .osName("CentOS 6.2 64bit (English)").build();
 
-        OperatingSystem os = new DiskImageToOperatingSystem().apply(image);
+      OperatingSystem os = new DiskImageToOperatingSystem().apply(image);
 
-        assertNotNull(os);
-        assertEquals(os.getVersion(), "6.2");
-    }
+      assertNotNull(os);
+      assertEquals(os.getVersion(), "6.2");
+   }
 
-    @Test
-    public void testUnrecognizedOsVersion() {
-        DiskImage image = DiskImage.builder()
-                .osName("Windows Server 2099 (256 bit)").build();
+   @Test
+   public void testUnrecognizedOsVersion() {
+      DiskImage image = DiskImage.builder()
+            .osName("Windows Server 2099 (256 bit)").build();
 
-        OperatingSystem os = new DiskImageToOperatingSystem().apply(image);
+      OperatingSystem os = new DiskImageToOperatingSystem().apply(image);
 
-        assertNotNull(os);
-        assertNull(os.getVersion());
-    }
+      assertNotNull(os);
+      assertNull(os.getVersion());
+   }
 
-    @Test
-    public void testOsVersionMissing() {
-        DiskImage image = DiskImage.builder().osName("asd Server").build();
+   @Test
+   public void testOsVersionMissing() {
+      DiskImage image = DiskImage.builder().osName("asd Server").build();
 
-        OperatingSystem os = new DiskImageToOperatingSystem().apply(image);
-        assertNotNull(os);
-        assertNull(os.getVersion(), "os.getVersion(): \'" + os.getVersion()
-                + "\'");
-    }
+      OperatingSystem os = new DiskImageToOperatingSystem().apply(image);
+      assertNotNull(os);
+      assertNull(os.getVersion(), "os.getVersion(): \'" + os.getVersion()
+            + "\'");
+   }
 }

@@ -28,57 +28,57 @@ import com.google.common.base.Objects;
  * @author Dies Koper
  */
 public class VServer {
-    @XmlElement(name = "vserverId")
-    protected String id;
-    @XmlElement(name = "vserverName")
-    protected String name;
-    @XmlElement(name = "vserverType")
-    protected String type;
-    protected String diskimageId;
-    protected String creator;
+   @XmlElement(name = "vserverId")
+   protected String id;
+   @XmlElement(name = "vserverName")
+   protected String name;
+   @XmlElement(name = "vserverType")
+   protected String type;
+   protected String diskimageId;
+   protected String creator;
 
-    public String getId() {
-        return id;
-    }
+   public String getId() {
+      return id;
+   }
 
-    public String getName() {
-        return name;
-    }
+   public String getName() {
+      return name;
+   }
 
-    public String getType() {
-        return type;
-    }
+   public String getType() {
+      return type;
+   }
 
-    public String getDiskimageId() {
-        return diskimageId;
-    }
+   public String getDiskimageId() {
+      return diskimageId;
+   }
 
-    public String getCreator() {
-        return creator;
-    }
+   public String getCreator() {
+      return creator;
+   }
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(id);
-    }
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(id);
+   }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        VServer that = VServer.class.cast(obj);
-        return Objects.equal(this.id, that.id);
-    }
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      VServer that = VServer.class.cast(obj);
+      return Objects.equal(this.id, that.id);
+   }
 
-    @Override
-    public String toString() {
-        return Objects.toStringHelper(this).omitNullValues().add("id", id)
-                .add("name", name).add("type", type).add("creator", creator)
-                .add("diskimageId", diskimageId).toString();
-    }
+   @Override
+   public String toString() {
+      return Objects.toStringHelper(this).omitNullValues().add("id", id)
+            .add("name", name).add("type", type).add("creator", creator)
+            .add("diskimageId", diskimageId).toString();
+   }
 
 }

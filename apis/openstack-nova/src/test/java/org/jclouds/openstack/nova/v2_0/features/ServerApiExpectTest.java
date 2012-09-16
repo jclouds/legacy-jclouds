@@ -58,7 +58,7 @@ public class ServerApiExpectTest extends BaseNovaApiExpectTest {
 
       assertEquals(apiWhenServersExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
 
-      assertEquals(apiWhenServersExist.getServerApiForZone("az-1.region-a.geo-1").listServers().toString(),
+      assertEquals(apiWhenServersExist.getServerApiForZone("az-1.region-a.geo-1").list().concat().toString(),
             new ParseServerListTest().expected().toString());
    }
 
@@ -75,7 +75,7 @@ public class ServerApiExpectTest extends BaseNovaApiExpectTest {
       NovaApi apiWhenNoServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, listServers, listServersResponse);
 
-      assertTrue(apiWhenNoServersExist.getServerApiForZone("az-1.region-a.geo-1").listServers().isEmpty());
+      assertTrue(apiWhenNoServersExist.getServerApiForZone("az-1.region-a.geo-1").list().concat().isEmpty());
    }
 
    public void testCreateServerWhenResponseIs202() throws Exception {
@@ -96,7 +96,7 @@ public class ServerApiExpectTest extends BaseNovaApiExpectTest {
       NovaApi apiWithNewServer = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, createServer, createServerResponse);
 
-      assertEquals(apiWithNewServer.getServerApiForZone("az-1.region-a.geo-1").createServer("test-e92", "1241", "100").toString(),
+      assertEquals(apiWithNewServer.getServerApiForZone("az-1.region-a.geo-1").create("test-e92", "1241", "100").toString(),
               new ParseCreatedServerTest().expected().toString());
    }
 
@@ -120,7 +120,7 @@ public class ServerApiExpectTest extends BaseNovaApiExpectTest {
       NovaApi apiWithNewServer = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, createServer, createServerResponse);
 
-      assertEquals(apiWithNewServer.getServerApiForZone("az-1.region-a.geo-1").createServer("test-e92", "1241",
+      assertEquals(apiWithNewServer.getServerApiForZone("az-1.region-a.geo-1").create("test-e92", "1241",
                "100", new CreateServerOptions().securityGroupNames("group1", "group2")).toString(),
               new ParseCreatedServerTest().expected().toString());
    }
@@ -196,7 +196,7 @@ public class ServerApiExpectTest extends BaseNovaApiExpectTest {
       NovaApi apiWhenServerExists = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
                responseWithKeystoneAccess, stopServer, stopServerResponse);
 
-      apiWhenServerExists.getServerApiForZone("az-1.region-a.geo-1").stopServer(serverId);
+      apiWhenServerExists.getServerApiForZone("az-1.region-a.geo-1").stop(serverId);
    }
    
    public void testStopServerWhenResponseIs404() throws Exception {
@@ -218,7 +218,7 @@ public class ServerApiExpectTest extends BaseNovaApiExpectTest {
                responseWithKeystoneAccess, stopServer, stopServerResponse);
 
       try {
-         apiWhenServerExists.getServerApiForZone("az-1.region-a.geo-1").stopServer(serverId);
+         apiWhenServerExists.getServerApiForZone("az-1.region-a.geo-1").stop(serverId);
          fail("Expected an exception.");
       } catch (Exception e) {
          ;
@@ -243,7 +243,7 @@ public class ServerApiExpectTest extends BaseNovaApiExpectTest {
       NovaApi apiWhenServerExists = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
                responseWithKeystoneAccess, startServer, startServerResponse);
 
-      apiWhenServerExists.getServerApiForZone("az-1.region-a.geo-1").startServer(serverId);
+      apiWhenServerExists.getServerApiForZone("az-1.region-a.geo-1").start(serverId);
    }
    
    public void testStartServerWhenResponseIs404() throws Exception {
@@ -264,7 +264,7 @@ public class ServerApiExpectTest extends BaseNovaApiExpectTest {
                responseWithKeystoneAccess, startServer, startServerResponse);
 
       try {
-         apiWhenServerExists.getServerApiForZone("az-1.region-a.geo-1").startServer(serverId);
+         apiWhenServerExists.getServerApiForZone("az-1.region-a.geo-1").start(serverId);
          fail("Expected an exception.");
       } catch (Exception e) {
          ;

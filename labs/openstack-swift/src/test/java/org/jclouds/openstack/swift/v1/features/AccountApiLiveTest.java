@@ -21,10 +21,7 @@ package org.jclouds.openstack.swift.v1.features;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
-import java.util.Set;
-
-import org.jclouds.openstack.swift.v1.domain.AccountMetadata;
-import org.jclouds.openstack.swift.v1.domain.ContainerMetadata;
+import org.jclouds.openstack.swift.v1.domain.Account;
 import org.jclouds.openstack.swift.v1.internal.BaseSwiftApiLiveTest;
 import org.testng.annotations.Test;
 
@@ -38,24 +35,11 @@ public class AccountApiLiveTest extends BaseSwiftApiLiveTest {
    public void testGetAccountMetadata() throws Exception {
       for (String regionId : swiftContext.getApi().getConfiguredRegions()) {
          AccountApi api = swiftContext.getApi().getAccountApiForRegion(regionId);
-         AccountMetadata account = api.getAccountMetadata();
+         Account account = api.get();
          assertNotNull(account);
          assertTrue(account.getContainerCount() >= 0);
          assertTrue(account.getBytesUsed() >= 0);
       }
    }
 
-   @Test
-   public void testListContainers() throws Exception {
-      for (String regionId : swiftContext.getApi().getConfiguredRegions()) {
-         AccountApi api = swiftContext.getApi().getAccountApiForRegion(regionId);
-         Set<? extends ContainerMetadata> response = api.listContainers();
-         assertNotNull(response);
-         for (ContainerMetadata container : response) {
-            assertNotNull(container.getName());
-            assertTrue(container.getCount() >= 0);
-            assertTrue(container.getBytes() >= 0);
-         }
-      }
-   }
 }

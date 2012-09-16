@@ -31,8 +31,8 @@ import org.testng.annotations.Test;
 @Test(groups = "live", enabled = true, singleThreaded = true, testName = "HttpInternalsLiveTest")
 public class HttpInternalsLiveTest extends BaseFGCPApiLiveTest {
 
-    @Test
-    public void testTrustedSSLContext() {
-    	assertNotNull(context.utils().injector().getInstance(JavaUrlHttpCommandExecutorService.class).sslContextSupplier);
-    }
+   @Test
+   public void testTrustedSSLContext() {
+   	assertNotNull(context.utils().injector().getInstance(JavaUrlHttpCommandExecutorService.class).sslContextSupplier);
+   }
 }

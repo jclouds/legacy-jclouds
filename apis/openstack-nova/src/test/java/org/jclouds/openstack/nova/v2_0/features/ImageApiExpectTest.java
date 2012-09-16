@@ -40,39 +40,39 @@ import com.google.common.collect.ImmutableSet;
 @Test(groups = "unit", testName = "ImageAsyncApiTest")
 public class ImageApiExpectTest extends BaseNovaApiExpectTest {
    public void testListImagesWhenResponseIs2xx() throws Exception {
-      HttpRequest listImages = HttpRequest
+      HttpRequest list = HttpRequest
             .builder()
             .method("GET")
             .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/images")
             .addHeader("Accept", "application/json")
             .addHeader("X-Auth-Token", authToken).build();
 
-      HttpResponse listImagesResponse = HttpResponse.builder().statusCode(200)
+      HttpResponse listResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/image_list.json")).build();
 
       NovaApi apiWhenImagesExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
-            responseWithKeystoneAccess, listImages, listImagesResponse);
+            responseWithKeystoneAccess, list, listResponse);
 
       assertEquals(apiWhenImagesExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
 
-      assertEquals(apiWhenImagesExist.getImageApiForZone("az-1.region-a.geo-1").listImages().toString(),
+      assertEquals(apiWhenImagesExist.getImageApiForZone("az-1.region-a.geo-1").list().concat().toString(),
             new ParseImageListTest().expected().toString());
    }
 
    public void testListImagesWhenReponseIs404IsEmpty() throws Exception {
-      HttpRequest listImages = HttpRequest
+      HttpRequest list = HttpRequest
             .builder()
             .method("GET")
             .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/images")
             .addHeader("Accept", "application/json")
             .addHeader("X-Auth-Token", authToken).build();
 
-      HttpResponse listImagesResponse = HttpResponse.builder().statusCode(404).build();
+      HttpResponse listResponse = HttpResponse.builder().statusCode(404).build();
 
       NovaApi apiWhenNoServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
-            responseWithKeystoneAccess, listImages, listImagesResponse);
+            responseWithKeystoneAccess, list, listResponse);
 
-      assertTrue(apiWhenNoServersExist.getImageApiForZone("az-1.region-a.geo-1").listImages().isEmpty());
+      assertTrue(apiWhenNoServersExist.getImageApiForZone("az-1.region-a.geo-1").list().concat().isEmpty());
    }
 
    public void testGetImageWhenResponseIs2xx() throws Exception {
@@ -91,7 +91,7 @@ public class ImageApiExpectTest extends BaseNovaApiExpectTest {
             responseWithKeystoneAccess, getImage, getImageResponse);
 
       assertEquals(
-            apiWhenImagesExist.getImageApiForZone("az-1.region-a.geo-1").getImage("52415800-8b69-11e0-9b19-734f5736d2a2")
+            apiWhenImagesExist.getImageApiForZone("az-1.region-a.geo-1").get("52415800-8b69-11e0-9b19-734f5736d2a2")
                   .toString(), new ParseImageTest().expected().toString());
    }
 
@@ -108,7 +108,7 @@ public class ImageApiExpectTest extends BaseNovaApiExpectTest {
       NovaApi apiWhenNoImagesExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, getImage, getImageResponse);
 
-      assertNull(apiWhenNoImagesExist.getImageApiForZone("az-1.region-a.geo-1").getImage(
+      assertNull(apiWhenNoImagesExist.getImageApiForZone("az-1.region-a.geo-1").get(
             "52415800-8b69-11e0-9b19-734f5736d2a2"));
 
    }

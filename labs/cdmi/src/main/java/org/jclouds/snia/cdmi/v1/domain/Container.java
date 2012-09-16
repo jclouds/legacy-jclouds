@@ -33,87 +33,80 @@ import com.google.common.collect.ImmutableSet;
  */
 public class Container extends CDMIObject {
 
-	public static Builder<?> builder() {
-		return new ConcreteBuilder();
-	}
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
+   }
 
-	@Override
-	public Builder<?> toBuilder() {
-		return builder().fromContainer(this);
-	}
+   @Override
+   public Builder<?> toBuilder() {
+      return builder().fromContainer(this);
+   }
 
-	public static class Builder<B extends Builder<B>> extends
-			CDMIObject.Builder<B> {
+   public static class Builder<B extends Builder<B>> extends CDMIObject.Builder<B> {
 
-		private Set<String> children = ImmutableSet.of();
+      private Set<String> children = ImmutableSet.of();
 
-		/**
-		 * @see Container#getChildren()
-		 */
-		public B children(String... children) {
-			return children(ImmutableSet.copyOf(checkNotNull(children,
-					"children")));
-		}
+      /**
+       * @see Container#getChildren()
+       */
+      public B children(String... children) {
+         return children(ImmutableSet.copyOf(checkNotNull(children, "children")));
+      }
 
-		/**
-		 * @see Container#getChildren()
-		 */
-		public B children(Set<String> children) {
-			this.children = ImmutableSet.copyOf(checkNotNull(children,
-					"children"));
-			return self();
-		}
+      /**
+       * @see Container#getChildren()
+       */
+      public B children(Set<String> children) {
+         this.children = ImmutableSet.copyOf(checkNotNull(children, "children"));
+         return self();
+      }
 
+      @Override
+      public Container build() {
+         return new Container(this);
+      }
 
-		@Override
-		public Container build() {
-			return new Container(this);
-		}
+      public B fromContainer(Container in) {
+         return fromCDMIObject(in).children(in.getChildren());
+         // .metadata(in.getMetadata());
+      }
+   }
 
-		public B fromContainer(Container in) {
-			return fromCDMIObject(in).children(in.getChildren());
-			// .metadata(in.getMetadata());
-		}
-	}
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
 
-	private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
-	}
+   private final Set<String> children;
 
-	private final Set<String> children;
+   protected Container(Builder<?> builder) {
+      super(builder);
+      this.children = ImmutableSet.copyOf(checkNotNull(builder.children, "children"));
+   }
 
-	protected Container(Builder<?> builder) {
-		super(builder);
-		this.children = ImmutableSet.copyOf(checkNotNull(builder.children,
-				"children"));
-	}
+   /**
+    * Names of the children objects in the container object. Child container objects end with "/".
+    */
+   public Set<String> getChildren() {
+      return children;
+   }
 
-	/**
-	 * Names of the children objects in the container object. Child container
-	 * objects end with "/".
-	 */
-	public Set<String> getChildren() {
-		return children;
-	}
+   @Override
+   public boolean equals(Object o) {
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
+         return false;
+      Container that = Container.class.cast(o);
+      return super.equals(that) && equal(this.children, that.children);
+   }
 
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(super.hashCode(), children);
+   }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (o == null || getClass() != o.getClass())
-			return false;
-		Container that = Container.class.cast(o);
-		return super.equals(that) && equal(this.children, that.children);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hashCode(super.hashCode(), children);
-	}
-
-	@Override
-	public ToStringHelper string() {
-		return super.string().add("children", children);
-	}
+   @Override
+   public ToStringHelper string() {
+      return super.string().add("children", children);
+   }
 
 }

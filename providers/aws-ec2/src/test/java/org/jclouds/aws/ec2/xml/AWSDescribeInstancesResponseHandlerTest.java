@@ -31,7 +31,6 @@ import org.jclouds.ec2.domain.Attachment;
 import org.jclouds.ec2.domain.BlockDevice;
 import org.jclouds.ec2.domain.Hypervisor;
 import org.jclouds.ec2.domain.InstanceState;
-import org.jclouds.ec2.domain.InstanceType;
 import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.domain.RootDeviceType;
 import org.jclouds.ec2.domain.RunningInstance;
@@ -71,44 +70,13 @@ public class AWSDescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest 
       assert dateService != null;
    }
 
-   public void testWhenRunning() throws UnknownHostException {
-
-      Set<Reservation<AWSRunningInstance>> contents = ImmutableSet.of(
-              new Reservation<AWSRunningInstance>(defaultRegion, ImmutableSet.of("adriancole.ec2ingress"), ImmutableSet.of(
-                      new AWSRunningInstance.Builder()
-                          .region(defaultRegion)
-                          .groupId("adriancole.ec2ingress")
-                          .amiLaunchIndex("0")
-                          .dnsName("ec2-174-129-81-68.compute-1.amazonaws.com")
-                          .imageId("ami-82e4b5c7")
-                          .instanceId("i-0799056f")
-                          .instanceState(InstanceState.RUNNING)
-                          .rawState("running")
-                          .instanceType(InstanceType.M1_SMALL)
-                          .ipAddress("174.129.81.68")
-                          .kernelId("aki-a71cf9ce")
-                          .keyName("adriancole.ec21")
-                          .launchTime(dateService.iso8601DateParse("2009-11-09T03:00:34.000Z"))
-                          .monitoringState(MonitoringState.DISABLED)
-                          .availabilityZone("us-east-1c")
-                          .virtualizationType("paravirtual")
-                          .privateDnsName("ip-10-243-42-70.ec2.internal")
-                          .privateIpAddress("10.243.42.70")
-                          .ramdiskId("ari-a51cf9cc")
-                          .rootDeviceType(RootDeviceType.INSTANCE_STORE)
-                          .hypervisor(Hypervisor.XEN)
-                          .build()),
-                  "993194456877", null, "r-a3c508cb"));
-
-      Set<Reservation<? extends RunningInstance>> result = parseAWSRunningInstances("/describe_instances_running.xml");
-
-      assertEquals(result.toString(), contents.toString());
-   }
 
    public void testWhenRunningLatest() throws UnknownHostException {
-      Set<Reservation<AWSRunningInstance>> contents = ImmutableSet.of(new Reservation<AWSRunningInstance>(
-            defaultRegion, ImmutableSet.of("jclouds#ec2-s#us-east-1"), ImmutableSet.of(
-                  new AWSRunningInstance.Builder()
+      Set<Reservation<AWSRunningInstance>> contents = ImmutableSet.of(Reservation.<AWSRunningInstance>builder()
+               .region(defaultRegion)
+               .reservationId("r-0f4c2160")
+               .groupName("jclouds#zkclustertest#us-east-1")
+               .instance(AWSRunningInstance.builder()
                         .region(defaultRegion)
                         .instanceId("i-911444f0")
                         .imageId("ami-63be790a")
@@ -135,8 +103,8 @@ public class AWSDescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest 
                               new BlockDevice("vol-5829fc32", Attachment.Status.ATTACHED, dateService
                                     .iso8601DateParse("2011-08-16T13:41:19.000Z"), true))
                         .hypervisor(Hypervisor.XEN)
-                        .virtualizationType("paravirtual").build(),//
-                  new AWSRunningInstance.Builder()
+                        .virtualizationType("paravirtual").build())
+               .instance(AWSRunningInstance.builder()
                         .region(defaultRegion)
                         .instanceId("i-931444f2")
                         .imageId("ami-63be790a")
@@ -162,7 +130,7 @@ public class AWSDescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest 
                               new BlockDevice("vol-5029fc3a", Attachment.Status.ATTACHED, dateService
                                     .iso8601DateParse("2011-08-16T13:41:19.000Z"), true))
                         .hypervisor(Hypervisor.XEN)
-                        .virtualizationType("paravirtual").build()), defaultRegion, defaultRegion, defaultRegion));
+                        .virtualizationType("paravirtual").build()).build());
 
       Set<Reservation<? extends RunningInstance>> result = parseAWSRunningInstances("/describe_instances_latest.xml");
 
@@ -173,76 +141,6 @@ public class AWSDescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest 
       parseAWSRunningInstances("/describe_instances_1.xml");
       parseAWSRunningInstances("/describe_instances_2.xml");
       parseAWSRunningInstances("/describe_instances_3.xml");
-   }
-
-   public void testApplyInputStream() {
-      Set<Reservation<AWSRunningInstance>> contents = ImmutableSet.of(new Reservation<AWSRunningInstance>(
-            defaultRegion, ImmutableSet.of("default"), ImmutableSet.of(
-                  new AWSRunningInstance.Builder().region(defaultRegion).groupId("default").amiLaunchIndex("23")
-                        .dnsName("ec2-72-44-33-4.compute-1.amazonaws.com").imageId("ami-6ea54007")
-                        .instanceId("i-28a64341").instanceState(InstanceState.RUNNING).rawState("running")
-                        .instanceType(InstanceType.M1_LARGE).kernelId("aki-ba3adfd3").keyName("example-key-name")
-                        .launchTime(dateService.iso8601DateParse("2007-08-07T11:54:42.000Z"))
-                        .monitoringState(MonitoringState.DISABLED).availabilityZone("us-east-1b")
-                        .virtualizationType("paravirtual").privateDnsName("10-251-50-132.ec2.internal")
-                        .productCode("774F4FF8").ramdiskId("ari-badbad00")
-                        .hypervisor(Hypervisor.XEN)
-                        .rootDeviceType(RootDeviceType.INSTANCE_STORE).build(),
-                  new AWSRunningInstance.Builder().region(defaultRegion).groupId("default").amiLaunchIndex("23")
-                        .dnsName("ec2-72-44-33-6.compute-1.amazonaws.com").imageId("ami-6ea54007")
-                        .instanceId("i-28a64435").instanceState(InstanceState.RUNNING).rawState("running")
-                        .instanceType(InstanceType.M1_LARGE).kernelId("aki-ba3adfd3").keyName("example-key-name")
-                        .launchTime(dateService.iso8601DateParse("2007-08-07T11:54:42.000Z"))
-                        .monitoringState(MonitoringState.DISABLED).availabilityZone("us-east-1b")
-                        .virtualizationType("paravirtual").privateDnsName("10-251-50-134.ec2.internal")
-                        .productCode("774F4FF8").ramdiskId("ari-badbad00")
-                        .hypervisor(Hypervisor.XEN)
-                        .rootDeviceType(RootDeviceType.INSTANCE_STORE).build()), "UYY3TLBUXIEON5NQVUUX6OMPWBZIQNFM",
-            null, "r-44a5402d"));
-
-      Set<Reservation<? extends RunningInstance>> result = parseAWSRunningInstances("/describe_instances.xml");
-
-      assertEquals(result.toString(), contents.toString());
-   }
-
-   public void testEBS() throws UnknownHostException {
-
-      Set<Reservation<AWSRunningInstance>> contents = ImmutableSet.of(new Reservation<AWSRunningInstance>(
-            defaultRegion, ImmutableSet.of("adriancole.ec2ebsingress"), ImmutableSet
-                  .of(new AWSRunningInstance.Builder()
-                        .region(defaultRegion)
-                        .groupId("adriancole.ec2ebsingress")
-                        .amiLaunchIndex("0")
-                        .dnsName("ec2-75-101-203-146.compute-1.amazonaws.com")
-                        .imageId("ami-849875ed")
-                        .instanceId("i-e564438d")
-                        .instanceState(InstanceState.RUNNING)
-                        .rawState("running")
-                        .instanceType(InstanceType.M1_SMALL)
-                        .ipAddress("75.101.203.146")
-                        .kernelId("aki-a71cf9ce")
-                        .keyName("adriancole.ec2ebs1")
-                        .launchTime(dateService.iso8601DateParse("2009-12-30T04:06:23.000Z"))
-                        .monitoringState(MonitoringState.DISABLED)
-                        .availabilityZone("us-east-1b")
-                        .placementGroup("placement")
-                        .virtualizationType("hvm")
-                        .privateDnsName("domU-12-31-39-09-CE-53.compute-1.internal")
-                        .privateIpAddress("10.210.209.157")
-                        .ramdiskId("ari-a51cf9cc")
-                        .hypervisor(Hypervisor.XEN)
-                        .rootDeviceType(RootDeviceType.EBS)
-                        .rootDeviceName("/dev/sda1")
-                        .hypervisor(Hypervisor.XEN)
-                        .device(
-                              "/dev/sda1",
-                              new BlockDevice("vol-dc6ca8b5", Attachment.Status.ATTACHED, dateService
-                                    .iso8601DateParse("2009-12-30T04:06:29.000Z"), true)).build()), "993194456877",
-            null, "r-596dd731"));
-
-      Set<Reservation<? extends RunningInstance>> result = parseAWSRunningInstances("/describe_instances_ebs.xml");
-
-      assertEquals(result.toString(), contents.toString());
    }
 
    static ParseSax<Set<Reservation<? extends RunningInstance>>> createParser() {

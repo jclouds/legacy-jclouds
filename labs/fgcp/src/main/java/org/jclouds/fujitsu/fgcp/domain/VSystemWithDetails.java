@@ -36,45 +36,45 @@ import com.google.common.collect.ImmutableSet;
  */
 @XmlRootElement(name = "vsys")
 public class VSystemWithDetails extends VSystem {
-    @XmlElementWrapper(name = "vservers")
-    @XmlElement(name = "vserver")
-    private Set<VServerWithVNICs> servers = new LinkedHashSet<VServerWithVNICs>();
-    @XmlElementWrapper(name = "vdisks")
-    @XmlElement(name = "vdisk")
-    private Set<VDisk> disks = new LinkedHashSet<VDisk>();
-    @XmlElementWrapper(name = "publicips")
-    @XmlElement(name = "publicip")
-    private Set<PublicIP> publicips = new LinkedHashSet<PublicIP>();
-    @XmlElementWrapper(name = "vnets")
-    @XmlElement(name = "vnet")
-    private Set<VNet> networks = new LinkedHashSet<VNet>();
+   @XmlElementWrapper(name = "vservers")
+   @XmlElement(name = "vserver")
+   private Set<VServerWithVNICs> servers = new LinkedHashSet<VServerWithVNICs>();
+   @XmlElementWrapper(name = "vdisks")
+   @XmlElement(name = "vdisk")
+   private Set<VDisk> disks = new LinkedHashSet<VDisk>();
+   @XmlElementWrapper(name = "publicips")
+   @XmlElement(name = "publicip")
+   private Set<PublicIP> publicips = new LinkedHashSet<PublicIP>();
+   @XmlElementWrapper(name = "vnets")
+   @XmlElement(name = "vnet")
+   private Set<VNet> networks = new LinkedHashSet<VNet>();
 
-    public Set<VServerWithVNICs> getServers() {
-        return servers == null ? ImmutableSet.<VServerWithVNICs> of() : ImmutableSet
-                .copyOf(servers);
-    }
+   public Set<VServerWithVNICs> getServers() {
+      return servers == null ? ImmutableSet.<VServerWithVNICs> of() : ImmutableSet
+            .copyOf(servers);
+   }
 
-    public Set<VDisk> getDisks() {
-        return disks == null ? ImmutableSet.<VDisk> of() : ImmutableSet
-                .copyOf(disks);
-    }
+   public Set<VDisk> getDisks() {
+      return disks == null ? ImmutableSet.<VDisk> of() : ImmutableSet
+            .copyOf(disks);
+   }
 
-    public Set<PublicIP> getPublicips() {
-        return publicips == null ? ImmutableSet.<PublicIP> of() : ImmutableSet
-                .copyOf(publicips);
-    }
+   public Set<PublicIP> getPublicips() {
+      return publicips == null ? ImmutableSet.<PublicIP> of() : ImmutableSet
+            .copyOf(publicips);
+   }
 
-    public Set<VNet> getNetworks() {
-        return networks == null ? ImmutableSet.<VNet> of() : ImmutableSet
-                .copyOf(networks);
-    }
+   public Set<VNet> getNetworks() {
+      return networks == null ? ImmutableSet.<VNet> of() : ImmutableSet
+            .copyOf(networks);
+   }
 
-    @Override
-    public String toString() {
-        return Objects.toStringHelper(this).omitNullValues().add("id", id)
-                .add("name", name).add("creator", creator)
-                .add("template", template).add("description", description)
-                .add("disks", disks).add("networks", networks)
-                .add("publicips", publicips).add("servers", servers).toString();
-    }
+   @Override
+   public String toString() {
+      return Objects.toStringHelper(this).omitNullValues().add("id", id)
+            .add("name", name).add("creator", creator)
+            .add("template", template).add("description", description)
+            .add("disks", disks).add("networks", networks)
+            .add("publicips", publicips).add("servers", servers).toString();
+   }
 }

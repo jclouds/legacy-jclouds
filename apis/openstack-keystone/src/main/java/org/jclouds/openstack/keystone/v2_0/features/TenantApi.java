@@ -18,11 +18,13 @@
  */
 package org.jclouds.openstack.keystone.v2_0.features;
 
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.collect.PagedIterable;
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.openstack.keystone.v2_0.domain.PaginatedCollection;
 import org.jclouds.openstack.keystone.v2_0.domain.Tenant;
+import org.jclouds.openstack.v2_0.options.PaginationOptions;
 
 /**
  * Provides synchronous access to the KeyStone Tenant API.
@@ -40,7 +42,9 @@ public interface TenantApi {
    /**
     * The operation returns a list of tenants which the current token provides access to.
     */
-   Set<? extends Tenant> list();
+   PagedIterable<? extends Tenant> list();
+
+   PaginatedCollection<? extends Tenant> list(PaginationOptions options);
 
    /**
     * Retrieve information about a tenant, by tenant ID

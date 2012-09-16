@@ -20,16 +20,16 @@ package org.jclouds.openstack.nova.v2_0.options;
 
 import java.util.Date;
 
-import org.jclouds.openstack.v2_0.options.BaseListOptions;
+import org.jclouds.openstack.v2_0.options.PaginationOptions;
 
 /**
  * Options used to control the amount of detail in the request.
  * 
- * @see BaseListOptions
+ * @see PaginationOptions
  * @see <a href="http://wiki.openstack.org/OpenStackAPI_1-1" />
  * @author Adrian Cole
  */
-public class ListOptions extends BaseListOptions {
+public class ListOptions extends PaginationOptions {
 
    public static final ListOptions NONE = new ListOptions();
 
@@ -56,8 +56,8 @@ public class ListOptions extends BaseListOptions {
     * {@inheritDoc}
     */
    @Override
-   public ListOptions maxResults(int limit) {
-      super.maxResults(limit);
+   public ListOptions limit(int limit) {
+      super.limit(limit);
       return this;
 
    }
@@ -66,8 +66,8 @@ public class ListOptions extends BaseListOptions {
     * {@inheritDoc}
     */
    @Override
-   public ListOptions startAt(long offset) {
-      super.startAt(offset);
+   public ListOptions marker(String marker) {
+      super.marker(marker);
       return this;
    }
 
@@ -82,23 +82,23 @@ public class ListOptions extends BaseListOptions {
       }
 
       /**
-       * @see BaseListOptions#startAt(long)
+       * @see PaginationOptions#marker(String)
        */
-      public static ListOptions startAt(long prefix) {
+      public static ListOptions marker(String marker) {
          ListOptions options = new ListOptions();
-         return options.startAt(prefix);
+         return options.marker(marker);
       }
 
       /**
-       * @see BaseListOptions#maxResults(long)
+       * @see PaginationOptions#limit(long)
        */
       public static ListOptions maxResults(int maxKeys) {
          ListOptions options = new ListOptions();
-         return options.maxResults(maxKeys);
+         return options.limit(maxKeys);
       }
 
       /**
-       * @see BaseListOptions#changesSince(Date)
+       * @see PaginationOptions#changesSince(Date)
        */
       public static ListOptions changesSince(Date since) {
          ListOptions options = new ListOptions();

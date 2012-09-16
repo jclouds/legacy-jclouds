@@ -40,60 +40,63 @@ import com.google.inject.Module;
  */
 public class FGCPApiMetadata extends BaseRestApiMetadata {
 
-    @Override
-    public Builder toBuilder() {
-        return new Builder().fromApiMetadata(this);
-    }
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -8430912756058292588L;
 
-    public FGCPApiMetadata() {
-        this(new Builder());
-    }
+   @Override
+   public Builder toBuilder() {
+      return new Builder().fromApiMetadata(this);
+   }
 
-    protected FGCPApiMetadata(Builder builder) {
-        super(builder);
-    }
+   public FGCPApiMetadata() {
+      this(new Builder());
+   }
 
-    public static Properties defaultProperties() {
-        Properties properties = BaseRestApiMetadata.defaultProperties();
-        // enables peer verification using the CAs bundled with the JRE (or
-        // value of javax.net.ssl.trustStore if set)
-        properties.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "false");
-        // properties.setProperty("jclouds.ssh.max-retries", "5");
-        // properties.setProperty("jclouds.ssh.retry-auth", "true");
-        return properties;
-    }
+   protected FGCPApiMetadata(Builder builder) {
+      super(builder);
+   }
 
-    public static class Builder extends BaseRestApiMetadata.Builder {
+   public static Properties defaultProperties() {
+      Properties properties = BaseRestApiMetadata.defaultProperties();
+      // enables peer verification using the CAs bundled with the JRE (or
+      // value of javax.net.ssl.trustStore if set)
+      properties.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "false");
+      // properties.setProperty("jclouds.ssh.max-retries", "5");
+      // properties.setProperty("jclouds.ssh.retry-auth", "true");
+      return properties;
+   }
 
-        protected Builder() {
-            super(FGCPApi.class, FGCPAsyncApi.class);
-            id("fgcp")
-                    .name("Fujitsu Global Cloud Platform (FGCP)")
-                    .identityName("User certificate (PEM file)")
-                    .credentialName("User certificate password")
-                    .documentation(
-                            URI.create("https://globalcloud.fujitsu.com.au/portala/ctrl/aboutSopManual"))
-                    .version(FGCPAsyncApi.VERSION)
-                    .defaultEndpoint(
-                            "https://api.globalcloud.fujitsu.com.au/ovissapi/endpoint")
-                    .defaultProperties(FGCPApiMetadata.defaultProperties())
-                    .view(TypeToken.of(ComputeServiceContext.class))
-                    .defaultModules(
-                            ImmutableSet.<Class<? extends Module>> of(
-                                    FGCPComputeServiceContextModule.class,
-                                    FGCPRestClientModule.class));
-        }
+   public static class Builder extends BaseRestApiMetadata.Builder {
 
-        @Override
-        public FGCPApiMetadata build() {
-            return new FGCPApiMetadata(this);
-        }
+      protected Builder() {
+         super(FGCPApi.class, FGCPAsyncApi.class);
+         id("fgcp")
+               .name("Fujitsu Global Cloud Platform (FGCP)")
+               .identityName("User certificate (PEM file)")
+               .credentialName("User certificate password")
+               .documentation(
+                     URI.create("https://globalcloud.fujitsu.com.au/portala/ctrl/aboutSopManual"))
+               .version(FGCPAsyncApi.VERSION)
+               .defaultEndpoint(
+                     "https://api.globalcloud.fujitsu.com.au/ovissapi/endpoint")
+               .defaultProperties(FGCPApiMetadata.defaultProperties())
+               .view(TypeToken.of(ComputeServiceContext.class))
+               .defaultModules(
+                     ImmutableSet.<Class<? extends Module>> of(
+                           FGCPComputeServiceContextModule.class,
+                           FGCPRestClientModule.class));
+      }
 
-        @Override
-        public Builder fromApiMetadata(ApiMetadata in) {
-            super.fromApiMetadata(in);
-            return this;
-        }
+      @Override
+      public FGCPApiMetadata build() {
+         return new FGCPApiMetadata(this);
+      }
 
-    }
+      @Override
+      public Builder fromApiMetadata(ApiMetadata in) {
+         super.fromApiMetadata(in);
+         return this;
+      }
+
+   }
 }

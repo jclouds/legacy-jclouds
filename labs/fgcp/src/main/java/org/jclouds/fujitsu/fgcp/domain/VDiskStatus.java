@@ -18,11 +18,11 @@
  */
 package org.jclouds.fujitsu.fgcp.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.common.base.CaseFormat;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Possible statuses of an attachable virtual disk.
@@ -32,24 +32,24 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @XmlRootElement(name = "vdiskStatus")
 public enum VDiskStatus {
 
-    NORMAL, BACKUP_ING, DEPLOYING, DETACHING, ATTACHING, RESTORING, ERROR, UNRECOGNIZED;
+   NORMAL, BACKUP_ING, DEPLOYING, DETACHING, ATTACHING, RESTORING, ERROR, UNRECOGNIZED;
 
-    public String value() {
-        return (CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name()));
-    }
+   public String value() {
+      return (CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name()));
+   }
 
-    @Override
-    public String toString() {
-        return value();
-    }
+   @Override
+   public String toString() {
+      return value();
+   }
 
-    public static VDiskStatus fromValue(String status) {
-        try {
-            return valueOf(CaseFormat.UPPER_CAMEL
-                    .to(CaseFormat.UPPER_UNDERSCORE,
-                            checkNotNull(status, "status")));
-        } catch (IllegalArgumentException e) {
-            return UNRECOGNIZED;
-        }
-    }
+   public static VDiskStatus fromValue(String status) {
+      try {
+         return valueOf(CaseFormat.UPPER_CAMEL
+               .to(CaseFormat.UPPER_UNDERSCORE,
+                     checkNotNull(status, "status")));
+      } catch (IllegalArgumentException e) {
+         return UNRECOGNIZED;
+      }
+   }
 }

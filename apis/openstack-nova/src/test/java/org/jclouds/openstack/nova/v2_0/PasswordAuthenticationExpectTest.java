@@ -56,7 +56,7 @@ public class PasswordAuthenticationExpectTest extends BaseNovaApiExpectTest {
 
       assertEquals(apiWhenServersExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
 
-      assertEquals(apiWhenServersExist.getServerApiForZone("az-1.region-a.geo-1").listServers().toString(),
+      assertEquals(apiWhenServersExist.getServerApiForZone("az-1.region-a.geo-1").list().concat().toString(),
             new ParseServerListTest().expected().toString());
    }
 

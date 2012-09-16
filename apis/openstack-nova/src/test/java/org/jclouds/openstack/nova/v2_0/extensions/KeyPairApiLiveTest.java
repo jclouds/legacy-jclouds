@@ -20,12 +20,11 @@ package org.jclouds.openstack.nova.v2_0.extensions;
 
 import static org.testng.Assert.assertNotNull;
 
-import java.util.Map;
-import java.util.Set;
-
 import org.jclouds.openstack.nova.v2_0.domain.KeyPair;
 import org.jclouds.openstack.nova.v2_0.internal.BaseNovaApiLiveTest;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.FluentIterable;
 
 /**
  * Tests behavior of {@code KeyPairApi}
@@ -38,7 +37,7 @@ public class KeyPairApiLiveTest extends BaseNovaApiLiveTest {
    public void testListKeyPairs() throws Exception {
       for (String zoneId : novaContext.getApi().getConfiguredZones()) {
          KeyPairApi api = novaContext.getApi().getKeyPairExtensionForZone(zoneId).get();
-         Set<? extends Map<String, ? extends KeyPair>> keyPairsList = api.listKeyPairs();
+         FluentIterable<? extends KeyPair> keyPairsList = api.list();
          assertNotNull(keyPairsList);
       }
    }
@@ -49,11 +48,11 @@ public class KeyPairApiLiveTest extends BaseNovaApiLiveTest {
          KeyPairApi api = novaContext.getApi().getKeyPairExtensionForZone(zoneId).get();
          KeyPair keyPair = null;
          try {
-            keyPair = api.createKeyPair(KEYPAIR_NAME);
+            keyPair = api.create(KEYPAIR_NAME);
             assertNotNull(keyPair);
          } finally {
             if (keyPair != null) {
-               api.deleteKeyPair(KEYPAIR_NAME);
+               api.delete(KEYPAIR_NAME);
             }
          }
       }
@@ -67,11 +66,11 @@ public class KeyPairApiLiveTest extends BaseNovaApiLiveTest {
          KeyPairApi api = novaContext.getApi().getKeyPairExtensionForZone(zoneId).get();
          KeyPair keyPair = null;
          try {
-            keyPair = api.createKeyPairWithPublicKey(KEYPAIR_NAME, PUBLIC_KEY);
+            keyPair = api.createWithPublicKey(KEYPAIR_NAME, PUBLIC_KEY);
             assertNotNull(keyPair);
          } finally {
             if (keyPair != null) {
-               api.deleteKeyPair(KEYPAIR_NAME);
+               api.delete(KEYPAIR_NAME);
             }
          }
       }

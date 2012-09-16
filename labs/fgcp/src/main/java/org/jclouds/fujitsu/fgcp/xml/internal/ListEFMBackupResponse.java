@@ -37,14 +37,14 @@ import com.google.common.collect.ImmutableSet;
  */
 @XmlRootElement(name = "ListEFMBackupResponse")
 public class ListEFMBackupResponse extends
-        SetWithStatusResponse<BuiltinServerBackup> {
-    @XmlElementWrapper(name = "backups")
-    @XmlElement(name = "backup")
-    private Set<BuiltinServerBackup> backup = new LinkedHashSet<BuiltinServerBackup>();
+      SetWithStatusResponse<BuiltinServerBackup> {
+   @XmlElementWrapper(name = "backups")
+   @XmlElement(name = "backup")
+   private Set<BuiltinServerBackup> backup = new LinkedHashSet<BuiltinServerBackup>();
 
-    @Override
-    protected Set<BuiltinServerBackup> delegate() {
-        return backup == null ? ImmutableSet.<BuiltinServerBackup> of()
-                : Collections.unmodifiableSet(backup);
-    }
+   @Override
+   protected Set<BuiltinServerBackup> delegate() {
+      return backup == null ? ImmutableSet.<BuiltinServerBackup> of()
+            : Collections.unmodifiableSet(backup);
+   }
 }

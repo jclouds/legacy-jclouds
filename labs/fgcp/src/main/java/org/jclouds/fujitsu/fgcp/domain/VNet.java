@@ -30,32 +30,32 @@ import com.google.common.base.Objects;
 @XmlRootElement(name = "vnet")
 public class VNet {
 
-    private String networkId;
+   private String networkId;
 
-    public String getNetworkId() {
-        return networkId;
-    }
+   public String getNetworkId() {
+      return networkId;
+   }
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(networkId);
-    }
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(networkId);
+   }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        VNet that = VNet.class.cast(obj);
-        return Objects.equal(this.networkId, that.networkId);
-    }
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      VNet that = VNet.class.cast(obj);
+      return Objects.equal(this.networkId, that.networkId);
+   }
 
-    @Override
-    public String toString() {
-        return Objects.toStringHelper(this).add("networkId", networkId)
-                .toString();
-    }
+   @Override
+   public String toString() {
+      return Objects.toStringHelper(this).add("networkId", networkId)
+            .toString();
+   }
 }

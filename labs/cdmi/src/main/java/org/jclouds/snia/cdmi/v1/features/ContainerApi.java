@@ -35,80 +35,83 @@ import org.jclouds.snia.cdmi.v1.queryparams.ContainerQueryParams;
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface ContainerApi {
 
-	/**
-	 * get CDMI Container
-	 * 
-	 * @param containerName
-	 *            containerName must end with a forward slash, /.
-	 * @return Container
-	 *  <pre>
-	 *  Examples: 
-	 *  {@code
-	 *  container = getContainer("myContainer/");
-	 *  container = getContainer("parentContainer/childContainer/");
-	 *  }
-	 *  <pre>
-	 */
-	Container getContainer(String containerName);
+   /**
+    * get CDMI Container
+    * 
+    * @param containerName
+    *           containerName must end with a forward slash, /.
+    * @return Container
+    * 
+    *         <pre>
+    *  Examples: 
+    *  {@code
+    *  container = get("myContainer/");
+    *  container = get("parentContainer/childContainer/");
+    * }
+    * 
+    *         <pre>
+    */
+   Container get(String containerName);
 
-	/**
-	 * get CDMI Container
-	 * 
-	 * @param containerName
-	 * @param queryParams
-	 *            enables getting only certain fields, metadata, children range
-	 * @return Container
-	 * <pre>
-	 * Examples: 
-	 * {@code
-	 * container = getContainer("myContainer/",ContainerQueryParams.Builder.mimetype("text/plain").field("objectName"))
-	 * container = getContainer("myContainer/",ContainerQueryParams.Builder.metadata().field("objectName"))
-	 * }
-	 * </pre>
-	 * @see ContainerQueryParams 
-	 */
-	Container getContainer(String containerName,
-			ContainerQueryParams queryParams);
+   /**
+    * get CDMI Container
+    * 
+    * @param containerName
+    * @param queryParams
+    *           enables getting only certain fields, metadata, children range
+    * @return Container
+    * 
+    *         <pre>
+    * Examples: 
+    * {@code
+    * container = get("myContainer/",ContainerQueryParams.Builder.mimetype("text/plain").field("objectName"))
+    * container = get("myContainer/",ContainerQueryParams.Builder.metadata().field("objectName"))
+    * }
+    * </pre>
+    * @see ContainerQueryParams
+    */
+   Container get(String containerName, ContainerQueryParams queryParams);
 
-	/**
-	 * Create CDMI Container
-	 * 
-	 * @param containerName
-	 *            containerName must end with a forward slash, /.
-	 * @return Container
-	 *  <pre>
-	 *  Examples: 
-	 *  {@code
-	 *  container = createContainer("myContainer/");
-	 *  container = createContainer("parentContainer/childContainer/");
-	 *  }
-	 *  </pre>
-	 */
-	Container createContainer(String containerName);
+   /**
+    * Create CDMI Container
+    * 
+    * @param containerName
+    *           containerName must end with a forward slash, /.
+    * @return Container
+    * 
+    *         <pre>
+    *  Examples: 
+    *  {@code
+    *  container = create("myContainer/");
+    *  container = create("parentContainer/childContainer/");
+    *  }
+    * </pre>
+    */
+   Container create(String containerName);
 
-	/**
-	 * Create CDMI Container
-	 * 
-	 * @param containerName
-	 * @param options
-	 *            enables adding metadata
-	 * @return Container
-	 *  <pre>
-	 *  Examples: 
-	 *  {@code
-	 *  container = createContainer("myContainer/",CreateContainerOptions.Builder..metadata(metaDataIn));
-	 *  }
-	 *  </pre>
-	 * @see CreateContainerOptions
-	 */
-	Container createContainer(String containerName,
-			CreateContainerOptions... options);
+   /**
+    * Create CDMI Container
+    * 
+    * @param containerName
+    * @param options
+    *           enables adding metadata
+    * @return Container
+    * 
+    *         <pre>
+    *  Examples: 
+    *  {@code
+    *  container = create("myContainer/",CreateContainerOptions.Builder..metadata(metaDataIn));
+    *  }
+    * </pre>
+    * @see CreateContainerOptions
+    */
+   Container create(String containerName, CreateContainerOptions... options);
 
-	/**
-	 * Delete CDMI Container
-	 * 
-	 * @param containerName
-	 */
-	void deleteContainer(String containerName);
+   /**
+    * Delete CDMI Container
+    * 
+    * @param containerName
+    */
+   void delete(String containerName);
 
 }

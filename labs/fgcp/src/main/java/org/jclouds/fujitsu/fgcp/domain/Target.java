@@ -26,101 +26,101 @@ import com.google.common.base.Objects;
  * @author Dies Koper
  */
 public class Target {
-    private String serverId;
+   private String serverId;
 
-    private String serverName;
+   private String serverName;
 
-    private String ipAddress;
+   private String ipAddress;
 
-    private String port1;
+   private String port1;
 
-    private String port2;
+   private String port2;
 
-    private String status;
+   private String status;
 
-    private String now;
+   private String now;
 
-    private String peak;
+   private String peak;
 
-    /**
-     * @return the serverId
-     */
-    public String getServerId() {
-        return serverId;
-    }
+   /**
+    * @return the serverId
+    */
+   public String getServerId() {
+      return serverId;
+   }
 
-    /**
-     * @return the serverName
-     */
-    public String getServerName() {
-        return serverName;
-    }
+   /**
+    * @return the serverName
+    */
+   public String getServerName() {
+      return serverName;
+   }
 
-    /**
-     * @return the ipAddress
-     */
-    public String getIpAddress() {
-        return ipAddress;
-    }
+   /**
+    * @return the ipAddress
+    */
+   public String getIpAddress() {
+      return ipAddress;
+   }
 
-    /**
-     * @return the port1
-     */
-    public String getPort1() {
-        return port1;
-    }
+   /**
+    * @return the port1
+    */
+   public String getPort1() {
+      return port1;
+   }
 
-    /**
-     * @return the port2
-     */
-    public String getPort2() {
-        return port2;
-    }
+   /**
+    * @return the port2
+    */
+   public String getPort2() {
+      return port2;
+   }
 
-    /**
-     * @return the status
-     */
-    public String getStatus() {
-        return status;
-    }
+   /**
+    * @return the status
+    */
+   public String getStatus() {
+      return status;
+   }
 
-    /**
-     * @return the now
-     */
-    public String getNow() {
-        return now;
-    }
+   /**
+    * @return the now
+    */
+   public String getNow() {
+      return now;
+   }
 
-    /**
-     * @return the peak
-     */
-    public String getPeak() {
-        return peak;
-    }
+   /**
+    * @return the peak
+    */
+   public String getPeak() {
+      return peak;
+   }
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(serverId);
-    }
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(serverId);
+   }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Target that = Target.class.cast(obj);
-        return Objects.equal(this.serverId, that.serverId);
-    }
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      Target that = Target.class.cast(obj);
+      return Objects.equal(this.serverId, that.serverId);
+   }
 
-    @Override
-    public String toString() {
-        return Objects.toStringHelper(this).omitNullValues()
-                .add("serverId", serverId).add("serverName", serverName)
-                .add("ipAddress", ipAddress).add("port1", port1)
-                .add("port2", port2).add("status", status).add("now", now)
-                .add("peak", peak).toString();
-    }
+   @Override
+   public String toString() {
+      return Objects.toStringHelper(this).omitNullValues()
+            .add("serverId", serverId).add("serverName", serverName)
+            .add("ipAddress", ipAddress).add("port1", port1)
+            .add("port2", port2).add("status", status).add("now", now)
+            .add("peak", peak).toString();
+   }
 }

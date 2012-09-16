@@ -70,7 +70,7 @@ public class DescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest {
 
       Set<Reservation<RunningInstance>> contents = ImmutableSet.of(new Reservation<RunningInstance>(defaultRegion,
                ImmutableSet.of("adriancole.ec2ingress"), ImmutableSet.of(new RunningInstance.Builder().region(
-                        defaultRegion).groupId("adriancole.ec2ingress").amiLaunchIndex("0").dnsName(
+                        defaultRegion).groupName("adriancole.ec2ingress").amiLaunchIndex("0").dnsName(
                         "ec2-174-129-81-68.compute-1.amazonaws.com").imageId("ami-82e4b5c7").instanceId("i-0799056f")
                         .instanceState(InstanceState.RUNNING).rawState("running").instanceType(InstanceType.M1_SMALL)
                         .ipAddress("174.129.81.68").kernelId("aki-a71cf9ce").keyName("adriancole.ec21").launchTime(
@@ -83,7 +83,7 @@ public class DescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest {
 
       Set<Reservation<? extends RunningInstance>> result = parseRunningInstances("/describe_instances_running.xml");
 
-      assertEquals(result, contents);
+      assertEquals(result.toString(), contents.toString());
       assertEquals(get(get(result, 0), 0).getInstanceState(), InstanceState.RUNNING);
       assertEquals(get(get(result, 0), 0).getRawState(), "running");
 
@@ -91,7 +91,7 @@ public class DescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest {
 
    public void testApplyInputStream() {
       Set<Reservation<RunningInstance>> contents = ImmutableSet.of(new Reservation<RunningInstance>(defaultRegion,
-               ImmutableSet.of("default"), ImmutableSet.of(new RunningInstance.Builder().region(defaultRegion).groupId(
+               ImmutableSet.of("default"), ImmutableSet.of(new RunningInstance.Builder().region(defaultRegion).groupName(
                         "default").amiLaunchIndex("23").dnsName("ec2-72-44-33-4.compute-1.amazonaws.com").imageId(
                         "ami-6ea54007").instanceId("i-28a64341").instanceState(InstanceState.RUNNING).rawState(
                         "running").instanceType(InstanceType.M1_LARGE).kernelId("aki-ba3adfd3").keyName(
@@ -101,7 +101,7 @@ public class DescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest {
                                  "10-251-50-132.ec2.internal")// product codes
                         // ImmutableSet.of("774F4FF8")
                         .ramdiskId("ari-badbad00").rootDeviceType(RootDeviceType.INSTANCE_STORE).build(),
-                        new RunningInstance.Builder().region(defaultRegion).groupId("default").amiLaunchIndex("23")
+                        new RunningInstance.Builder().region(defaultRegion).groupName("default").amiLaunchIndex("23")
                                  .dnsName("ec2-72-44-33-6.compute-1.amazonaws.com").imageId("ami-6ea54007").instanceId(
                                           "i-28a64435").instanceState(InstanceState.RUNNING).rawState("running")
                                  .instanceType(InstanceType.M1_LARGE).kernelId("aki-ba3adfd3").keyName(
@@ -116,7 +116,7 @@ public class DescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest {
 
       Set<Reservation<? extends RunningInstance>> result = parseRunningInstances("/describe_instances.xml");
 
-      assertEquals(result, contents);
+      assertEquals(result.toString(), contents.toString());
       assertEquals(get(get(result, 0), 0).getInstanceState(), InstanceState.RUNNING);
       assertEquals(get(get(result, 0), 0).getRawState(), "running");
 
@@ -126,7 +126,7 @@ public class DescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest {
 
       Set<Reservation<RunningInstance>> contents = ImmutableSet.of(new Reservation<RunningInstance>(defaultRegion,
                ImmutableSet.of("adriancole.ec2ebsingress"), ImmutableSet.of(new RunningInstance.Builder().region(
-                        defaultRegion).groupId("adriancole.ec2ebsingress").amiLaunchIndex("0").dnsName(
+                        defaultRegion).groupName("adriancole.ec2ebsingress").amiLaunchIndex("0").dnsName(
                         "ec2-75-101-203-146.compute-1.amazonaws.com").imageId("ami-849875ed").instanceId("i-e564438d")
                         .instanceState(InstanceState.RUNNING).rawState("running").instanceType(InstanceType.M1_SMALL)
                         .ipAddress("75.101.203.146").kernelId("aki-a71cf9ce")
@@ -145,7 +145,7 @@ public class DescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest {
 
       Set<Reservation<? extends RunningInstance>> result = parseRunningInstances("/describe_instances_ebs.xml");
 
-      assertEquals(result, contents);
+      assertEquals(result.toString(), contents.toString());
       assertEquals(get(get(result, 0), 0).getInstanceState(), InstanceState.RUNNING);
       assertEquals(get(get(result, 0), 0).getRawState(), "running");
    }

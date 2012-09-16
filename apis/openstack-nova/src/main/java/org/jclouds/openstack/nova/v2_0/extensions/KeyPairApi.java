@@ -18,14 +18,15 @@
  */
 package org.jclouds.openstack.nova.v2_0.extensions;
 
-import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.nova.v2_0.domain.KeyPair;
 import org.jclouds.openstack.v2_0.ServiceType;
 import org.jclouds.openstack.v2_0.services.Extension;
+
+import com.google.common.annotations.Beta;
+import com.google.common.collect.FluentIterable;
 
 /**
  * Provides synchronous access to Security Groups.
@@ -34,6 +35,7 @@ import org.jclouds.openstack.v2_0.services.Extension;
  * @see KeyPairAsyncApi
  * @author Jeremy Daggett
  */
+@Beta
 @Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.KEYPAIRS)
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface KeyPairApi {
@@ -43,27 +45,27 @@ public interface KeyPairApi {
     * 
     * @return all Key Pairs
     */
-   Set<? extends Map<String, ? extends KeyPair>> listKeyPairs();
+   FluentIterable<? extends KeyPair> list();
 
    /**
     * Create a Key Pair.
     * 
     * @return a Key Pair
     */
-   KeyPair createKeyPair(String name);
+   KeyPair create(String name);
 
    /**
     * Create a Key Pair with a public key.
     * 
     * @return a Key Pair with a public key.
     */
-   KeyPair createKeyPairWithPublicKey(String name, String publicKey);
+   KeyPair createWithPublicKey(String name, String publicKey);
 
    /**
     * Delete a Key Pairs.
     * 
     * @return
     */
-   Boolean deleteKeyPair(String name);
+   boolean delete(String name);
 
 }

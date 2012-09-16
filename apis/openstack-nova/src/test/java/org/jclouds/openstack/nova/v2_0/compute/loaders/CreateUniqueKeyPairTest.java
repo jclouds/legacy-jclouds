@@ -56,7 +56,7 @@ public class CreateUniqueKeyPairTest {
       
       expect(api.getKeyPairExtensionForZone("zone")).andReturn(optKeyApi).atLeastOnce();
 
-      expect(keyApi.createKeyPair("group-1")).andReturn(pair);
+      expect(keyApi.create("group-1")).andReturn(pair);
 
       replay(api, keyApi);
 
@@ -88,9 +88,9 @@ public class CreateUniqueKeyPairTest {
       expect(api.getKeyPairExtensionForZone("zone")).andReturn((Optional) Optional.of(keyApi)).atLeastOnce();
 
       expect(uniqueIdSupplier.get()).andReturn("1");
-      expect(keyApi.createKeyPair("group-1")).andThrow(new IllegalStateException());
+      expect(keyApi.create("group-1")).andThrow(new IllegalStateException());
       expect(uniqueIdSupplier.get()).andReturn("2");
-      expect(keyApi.createKeyPair("group-2")).andReturn(pair);
+      expect(keyApi.create("group-2")).andReturn(pair);
 
       replay(api, keyApi, uniqueIdSupplier);
 

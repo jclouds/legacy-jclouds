@@ -65,10 +65,10 @@ public class HostAdministrationApiLiveTest extends BaseNovaApiLiveTest {
    public void testListAndGet() throws Exception {
       if (optApi.isPresent()) {
          HostAdministrationApi api = optApi.get();
-         Set<? extends Host> hosts = api.listHosts();
+         Set<? extends Host> hosts = api.list().toImmutableSet();
          assertNotNull(hosts);
          for (Host host : hosts) {
-            for (HostResourceUsage usage : api.getHostResourceUsage(host.getName())) {
+            for (HostResourceUsage usage : api.listResourceUsage(host.getName())) {
                assertEquals(usage.getHost(), host.getName());
                assertNotNull(usage);
             }
@@ -80,10 +80,10 @@ public class HostAdministrationApiLiveTest extends BaseNovaApiLiveTest {
    public void testEnableDisable() throws Exception {
       if (optApi.isPresent()) {
          HostAdministrationApi api = optApi.get();
-         Host host = Iterables.find(api.listHosts(), isComputeHost);
+         Host host = Iterables.find(api.list(), isComputeHost);
 
-         assertTrue(api.disableHost(host.getName()));
-         assertTrue(api.enableHost(host.getName()));
+         assertTrue(api.disable(host.getName()));
+         assertTrue(api.enable(host.getName()));
       }
    }
 
@@ -91,9 +91,9 @@ public class HostAdministrationApiLiveTest extends BaseNovaApiLiveTest {
    public void testMaintenanceMode() throws Exception {
       if (optApi.isPresent()) {
          HostAdministrationApi api = optApi.get();
-         Host host = Iterables.find(api.listHosts(), isComputeHost);
-         assertTrue(api.startHostMaintenance(host.getName()));
-         assertTrue(api.stopHostMaintenance(host.getName()));
+         Host host = Iterables.find(api.list(), isComputeHost);
+         assertTrue(api.startMaintenance(host.getName()));
+         assertTrue(api.stopMaintenance(host.getName()));
       }
    }
 
@@ -101,8 +101,8 @@ public class HostAdministrationApiLiveTest extends BaseNovaApiLiveTest {
    public void testReboot() throws Exception {
       if (optApi.isPresent()) {
          HostAdministrationApi api = optApi.get();
-         Host host = Iterables.find(api.listHosts(), isComputeHost);
-         assertTrue(api.rebootHost(host.getName()));
+         Host host = Iterables.find(api.list(), isComputeHost);
+         assertTrue(api.reboot(host.getName()));
       }
    }
 
@@ -110,9 +110,9 @@ public class HostAdministrationApiLiveTest extends BaseNovaApiLiveTest {
    public void testShutdownAndStartup() throws Exception {
       if (optApi.isPresent()) {
          HostAdministrationApi api = optApi.get();
-         Host host = Iterables.find(api.listHosts(), isComputeHost);
-         assertTrue(api.shutdownHost(host.getName()));
-         assertTrue(api.startupHost(host.getName()));
+         Host host = Iterables.find(api.list(), isComputeHost);
+         assertTrue(api.shutdown(host.getName()));
+         assertTrue(api.startup(host.getName()));
       }
    }
 }
