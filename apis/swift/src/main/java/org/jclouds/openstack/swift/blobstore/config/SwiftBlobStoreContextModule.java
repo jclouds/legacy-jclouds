@@ -18,7 +18,9 @@
  */
 package org.jclouds.openstack.swift.blobstore.config;
 
+import com.google.common.base.Supplier;
 import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.blobstore.BlobStore;
@@ -34,6 +36,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
 import org.jclouds.openstack.swift.extensions.TemporaryUrlKeyApi;
 import org.jclouds.openstack.swift.extensions.TemporaryUrlKeyAsyncApi;
+import org.jclouds.openstack.swift.suppliers.ReturnOrFetchTemporaryUrlKey;
 
 import java.util.UUID;
 
@@ -53,18 +56,6 @@ public class SwiftBlobStoreContextModule extends AbstractModule {
       return System.currentTimeMillis() / 1000; /* convert to seconds */
    }
 
-   @Provides
-   @TemporaryUrlKey
-   protected String temporaryUrlKeyProvider(TemporaryUrlKeyApi client) {
-      String key = client.getTemporaryUrlKey();
-      if (key == null) {
-         client.setTemporaryUrlKey(UUID.randomUUID().toString());
-         return client.getTemporaryUrlKey();
-      }
-      return key;
-   }
-
-
    @Override
    protected void configure() {
       install(new BlobStoreMapModule());
@@ -72,6 +63,12 @@ public class SwiftBlobStoreContextModule extends AbstractModule {
       bind(AsyncBlobStore.class).to(SwiftAsyncBlobStore.class).in(Scopes.SINGLETON);
       bind(BlobStore.class).to(SwiftBlobStore.class).in(Scopes.SINGLETON);
       bind(BlobRequestSigner.class).to(SwiftBlobRequestSigner.class);
+      configureTemporaryUrlExtension();
+   }
+
+   protected void configureTemporaryUrlExtension() {
       bindClientAndAsyncClient(binder(), TemporaryUrlKeyApi.class, TemporaryUrlKeyAsyncApi.class);
+      bind(new TypeLiteral<Supplier<String>>() {
+      }).annotatedWith(TemporaryUrlKey.class).to(ReturnOrFetchTemporaryUrlKey.class);
    }
 }

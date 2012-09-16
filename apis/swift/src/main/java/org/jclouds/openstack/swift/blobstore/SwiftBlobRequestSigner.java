@@ -30,6 +30,7 @@ import java.security.InvalidKeyException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.inject.Provider;
 import org.jclouds.blobstore.BlobRequestSigner;
@@ -57,7 +58,7 @@ public class SwiftBlobRequestSigner implements BlobRequestSigner {
    private final Crypto crypto;
 
    private final Provider<Long> unixEpochTimestampProvider;
-   private final Provider<String> temporaryUrlKeyProvider;
+   private final Supplier<String> temporaryUrlKeySupplier;
 
    private final BlobToObject blobToObject;
    private final BlobToHttpGetOptions blob2HttpGetOptions;
@@ -69,12 +70,12 @@ public class SwiftBlobRequestSigner implements BlobRequestSigner {
    @Inject
    public SwiftBlobRequestSigner(RestAnnotationProcessor<CommonSwiftAsyncClient> processor, BlobToObject blobToObject,
                                  BlobToHttpGetOptions blob2HttpGetOptions, Crypto crypto, @TimeStamp Provider<Long> unixEpochTimestampProvider,
-                                 @TemporaryUrlKey Provider<String> temporaryUrlKeyProvider) throws SecurityException, NoSuchMethodException {
+                                 @TemporaryUrlKey Supplier<String> temporaryUrlKeySupplier) throws SecurityException, NoSuchMethodException {
       this.processor = checkNotNull(processor, "processor");
       this.crypto = checkNotNull(crypto, "crypto");
 
       this.unixEpochTimestampProvider = checkNotNull(unixEpochTimestampProvider, "unixEpochTimestampProvider");
-      this.temporaryUrlKeyProvider = checkNotNull(temporaryUrlKeyProvider, "temporaryUrlKeyProvider");
+      this.temporaryUrlKeySupplier = checkNotNull(temporaryUrlKeySupplier, "temporaryUrlKeyProvider");
 
       this.blobToObject = checkNotNull(blobToObject, "blobToObject");
       this.blob2HttpGetOptions = checkNotNull(blob2HttpGetOptions, "blob2HttpGetOptions");
@@ -121,7 +122,7 @@ public class SwiftBlobRequestSigner implements BlobRequestSigner {
       HttpRequest.Builder builder = request.toBuilder();
       builder.filters(filter(request.getFilters(), instanceOf(AuthenticateRequest.class)));
 
-      String key = temporaryUrlKeyProvider.get();
+      String key = temporaryUrlKeySupplier.get();
       if (key == null) {
          throw new UnsupportedOperationException();
       }
