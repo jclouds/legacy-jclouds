@@ -16,28 +16,28 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.swift.blobstore.integration;
+package org.jclouds.openstack.swift.functions;
 
-import org.jclouds.blobstore.integration.internal.BaseBlobSignerLiveTest;
-import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
-import org.testng.annotations.Test;
+import com.google.common.base.Function;
+import com.google.common.collect.Multimap;
+import org.jclouds.http.HttpResponse;
+import org.jclouds.openstack.swift.reference.SwiftHeaders;
 
-import java.util.Properties;
+import static com.google.common.collect.Iterables.getOnlyElement;
+import static org.jclouds.openstack.swift.reference.SwiftHeaders.ACCOUNT_TEMPORARY_URL_KEY;
 
 /**
- * @author Adrian Cole
+ * @author Andrei Savu
  */
-@Test(groups = {"live"})
-public class SwiftBlobSignerLiveTest extends BaseBlobSignerLiveTest {
+public class ParseTemporaryUrlKeyFromHeaders implements Function<HttpResponse, String> {
 
    @Override
-   protected Properties setupProperties() {
-      Properties props = super.setupProperties();
-      setIfTestSystemPropertyPresent(props, KeystoneProperties.CREDENTIAL_TYPE);
-      return props;
-   }
-
-   public SwiftBlobSignerLiveTest() {
-      provider = System.getProperty("test.swift.provider", "swift");
+   public String apply(HttpResponse httpResponse) {
+      Multimap<String, String> headers = httpResponse.getHeaders();
+      if (headers.containsKey(ACCOUNT_TEMPORARY_URL_KEY)) {
+         return getOnlyElement(headers.get(ACCOUNT_TEMPORARY_URL_KEY));
+      } else {
+         return null;
+      }
    }
 }

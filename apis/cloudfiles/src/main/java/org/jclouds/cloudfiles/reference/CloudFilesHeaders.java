@@ -30,8 +30,6 @@ import org.jclouds.openstack.swift.reference.SwiftHeaders;
  */
 public interface CloudFilesHeaders extends SwiftHeaders {
 
-   public static final String ACCOUNT_TEMPORARY_URL_KEY = "X-Account-Meta-Temp-Url-Key";
-
    public static final String CDN_ENABLED = "X-CDN-Enabled";
    public static final String CDN_LOG_RETENTION = "X-Log-Retention";
    public static final String CDN_TTL = "X-TTL";

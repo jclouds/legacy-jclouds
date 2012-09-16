@@ -16,21 +16,34 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.cloudfiles.functions;
+package org.jclouds.openstack.swift.suppliers;
 
-import com.google.common.base.Function;
-import org.jclouds.http.HttpResponse;
+import com.google.common.base.Supplier;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import org.jclouds.openstack.swift.extensions.TemporaryUrlKeyApi;
 
-import static com.google.common.collect.Iterables.getOnlyElement;
-import static org.jclouds.cloudfiles.reference.CloudFilesHeaders.ACCOUNT_TEMPORARY_URL_KEY;
+import java.util.UUID;
 
-/**
- * @author Andrei Savu
- */
-public class ParseTemporaryUrlKeyFromHeaders implements Function<HttpResponse, String> {
+import static com.google.common.base.Preconditions.checkNotNull;
+
+@Singleton
+public class ReturnOrFetchTemporaryUrlKey implements Supplier<String> {
+
+   private TemporaryUrlKeyApi client;
+
+   @Inject
+   public ReturnOrFetchTemporaryUrlKey(TemporaryUrlKeyApi client) {
+      this.client = checkNotNull(client, "client");
+   }
 
    @Override
-   public String apply(HttpResponse httpResponse) {
-      return getOnlyElement(httpResponse.getHeaders().get(ACCOUNT_TEMPORARY_URL_KEY));
+   public String get() {
+      String key = client.getTemporaryUrlKey();
+      if (key == null) {
+         client.setTemporaryUrlKey(UUID.randomUUID().toString());
+         return client.getTemporaryUrlKey();
+      }
+      return key;
    }
 }
