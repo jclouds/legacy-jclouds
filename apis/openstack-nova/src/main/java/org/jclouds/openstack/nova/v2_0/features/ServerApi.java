@@ -22,8 +22,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import javax.ws.rs.PathParam;
-
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.nova.v2_0.domain.RebootType;
 import org.jclouds.openstack.nova.v2_0.domain.Server;
@@ -31,8 +29,6 @@ import org.jclouds.openstack.nova.v2_0.domain.ServerCreated;
 import org.jclouds.openstack.nova.v2_0.options.CreateServerOptions;
 import org.jclouds.openstack.nova.v2_0.options.RebuildServerOptions;
 import org.jclouds.openstack.v2_0.domain.Resource;
-
-import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Provides synchronous access to Server.

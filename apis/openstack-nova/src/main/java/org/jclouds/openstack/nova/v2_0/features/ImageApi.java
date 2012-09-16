@@ -22,27 +22,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.nova.v2_0.domain.Image;
 import org.jclouds.openstack.v2_0.domain.Resource;
-import org.jclouds.rest.annotations.ExceptionParser;
-import org.jclouds.rest.annotations.MapBinder;
-import org.jclouds.rest.annotations.Payload;
-import org.jclouds.rest.annotations.PayloadParam;
-import org.jclouds.rest.annotations.SelectJson;
-import org.jclouds.rest.binders.BindToJsonPayload;
-import org.jclouds.rest.functions.ReturnEmptyMapOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
-
-import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Provides synchronous access to Images.

@@ -18,7 +18,6 @@
  */
 package org.jclouds.openstack.nova.v2_0.features;
 
-import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 
@@ -37,7 +36,6 @@ import org.jclouds.openstack.nova.v2_0.domain.RebootType;
 import org.jclouds.openstack.nova.v2_0.domain.Server;
 import org.jclouds.openstack.nova.v2_0.domain.ServerCreated;
 import org.jclouds.openstack.nova.v2_0.functions.ParseImageIdFromLocationHeader;
-import org.jclouds.openstack.nova.v2_0.functions.ParseMetadataItemFromHttpResponse;
 import org.jclouds.openstack.nova.v2_0.options.CreateServerOptions;
 import org.jclouds.openstack.nova.v2_0.options.RebuildServerOptions;
 import org.jclouds.openstack.v2_0.domain.Resource;
