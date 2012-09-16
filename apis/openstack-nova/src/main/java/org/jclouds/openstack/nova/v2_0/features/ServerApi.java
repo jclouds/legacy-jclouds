@@ -18,8 +18,11 @@
  */
 package org.jclouds.openstack.nova.v2_0.features;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
+import javax.ws.rs.PathParam;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.nova.v2_0.domain.RebootType;
@@ -28,6 +31,8 @@ import org.jclouds.openstack.nova.v2_0.domain.ServerCreated;
 import org.jclouds.openstack.nova.v2_0.options.CreateServerOptions;
 import org.jclouds.openstack.nova.v2_0.options.RebuildServerOptions;
 import org.jclouds.openstack.v2_0.domain.Resource;
+
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Provides synchronous access to Server.
@@ -185,5 +190,71 @@ public interface ServerApi {
     * @return ID of the new / updated image
     */
    String createImageFromServer(String name, String id);
+   
+   /**
+    * List all metadata for a server.
+    * 
+    * @param id
+    *           id of the server
+    *                      
+    * @return the metadata as a Map<String, String> 
+    */
+   Map<String, String> listMetadata(String id);
+
+   /**
+    * Set the metadata for a server.
+    * 
+    * @param id
+    *           id of the server
+    * @param metadata
+    *           a Map containing the metadata
+    * @return the metadata as a Map<String, String> 
+    */
+   Map<String, String> setMetadata(String id, Map<String, String> metadata);
+   
+   /**
+    * Update the metadata for a server.
+    * 
+    * @param id
+    *           id of the server
+    * @param metadata
+    *           a Map containing the metadata
+    * @return the metadata as a Map<String, String> 
+    */
+   Map<String, String> updateMetadata(String id, Map<String, String> metadata);
+   
+   /**
+    * Update the metadata for a server.
+    * 
+    * @param id
+    *           id of the image
+    * @param metadata
+    *           a Map containing the metadata
+    * @return the metadata as a Map<String, String> 
+    */
+   Map<String, String> getMetadataItem(String id, String key);
+
+   /**
+    * Set a metadata item for a server.
+    * 
+    * @param id
+    *           id of the image
+    * @param key
+    *           the name of the metadata item
+    * @param value
+    *           the value of the metadata item
+    * @return the metadata as a Map<String, String> 
+    */
+   Map<String, String> setMetadataItem(String id, String key, String value);
+
+   /**
+    * Delete a metadata item from a server.
+    * 
+    * @param id
+    *           id of the image
+    * @param key
+    *           the name of the metadata item
+    */
+   void deleteMetadataItem(String id, String key);
 
 }
