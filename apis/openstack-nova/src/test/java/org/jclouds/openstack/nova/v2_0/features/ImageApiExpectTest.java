@@ -272,112 +272,91 @@ public class ImageApiExpectTest extends BaseNovaApiExpectTest {
    }
 
    public void testGetMetadataItemWhenResponseIs2xx() throws Exception {
-      String serverId = "123";
-      String key = "Server%20Label";
+      String imageId = "52415800-8b69-11e0-9b19-734f5736d2a2";
+      String key = "Image%20Version";
 
       HttpRequest getMetadataItem = HttpRequest
             .builder()
             .method("GET")
-            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/" + serverId + "/metadata/" + key)
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/images/" + imageId + "/metadata/" + key)
             .addHeader("Accept", "application/json")
             .addHeader("X-Auth-Token", authToken)
             .build();
 
       HttpResponse getMetadataItemResponse = HttpResponse.builder().statusCode(200)
-              .payload(payloadFromResource("/metadata_item.json")).build();
+              .payload(payloadFromString("{\"metadata\":{\"Image Version\":\"2.5\"}}")).build();
       
       NovaApi apiWhenServerExists = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
                responseWithKeystoneAccess, getMetadataItem, getMetadataItemResponse);
 
-      assertEquals(apiWhenServerExists.getImageApiForZone("az-1.region-a.geo-1").getMetadataItem(serverId, "Server Label").toString(),  
-             new ParseMetadataItemTest().expected().toString());
+      System.out.println(apiWhenServerExists.getImageApiForZone("az-1.region-a.geo-1").getMetadataItem(imageId, "Image Version").toString());
+      assertEquals(apiWhenServerExists.getImageApiForZone("az-1.region-a.geo-1").getMetadataItem(imageId, "Image Version").toString(),  
+             "{Image Version=2.5}");
    }
 
    public void testGetMetadataItemWhenResponseIs404() throws Exception {
-      String serverId = "123";
-      ImmutableMap<String, String> metadata = new ImmutableMap.Builder<String, String>()
-              .put("Server Label", "Web Head 1")
-              .build();
+      String imageId = "52415800-8b69-11e0-9b19-734f5736d2a2";
+      String key = "Image%20Version";
 
-      HttpRequest setMetadata = HttpRequest
+      HttpRequest getMetadata = HttpRequest
             .builder()
             .method("GET")
-            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/" + serverId + "/metadata")
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/images/" + imageId + "/metadata/" + key)
             .addHeader("Accept", "application/json")
             .addHeader("X-Auth-Token", authToken)
-            .payload(payloadFromStringWithContentType("{\"metadata\":{\"Server Label\":\"Web Head 2\",\"Server Description\":\"Simple Server\"}}","application/json"))
             .build();
 
-      HttpResponse setMetadataResponse = HttpResponse.builder().statusCode(404)
-              .payload(payloadFromResource("/metadata_updated.json")).build();
+      HttpResponse getMetadataResponse = HttpResponse.builder().statusCode(404)
+              .payload(payloadFromStringWithContentType("{\"metadata\":{\"Image Version\":\"2.5\"}}", "application/json")).build();
 
-      NovaApi apiWhenServerExists = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
-               responseWithKeystoneAccess, setMetadata, setMetadataResponse);
+      NovaApi apiWhenImageExists = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
+               responseWithKeystoneAccess, getMetadata, getMetadataResponse);
 
-      try {
-    	 apiWhenServerExists.getImageApiForZone("az-1.region-a.geo-1").setMetadata(serverId, metadata);
-         fail("Expected an exception.");
-      } catch (Exception e) {
-         ;
-      }
+      assertNull(apiWhenImageExists.getImageApiForZone("az-1.region-a.geo-1").getMetadataItem(imageId, key));
    }
 
    public void testSetMetadataItemWhenResponseIs2xx() throws Exception {
-      String serverId = "123";
-      ImmutableMap<String, String> metadata = new ImmutableMap.Builder<String, String>()
-              .put("Server Label", "Web Head 2")
-              .put("Server Description", "Simple Server")
-              .build();
+      String imageId = "52415800-8b69-11e0-9b19-734f5736d2a2";
+      String key = "Image%20Version";
 
-      HttpRequest setMetadata = HttpRequest
+      HttpRequest setMetadataItem = HttpRequest
             .builder()
-            .method("POST")
-            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/images/" + serverId + "/metadata")
+            .method("PUT")
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/images/" + imageId + "/metadata/" + key)
             .addHeader("Accept", "application/json")
             .addHeader("X-Auth-Token", authToken)
-            .payload(payloadFromStringWithContentType("{\"metadata\":{\"Server Label\":\"Web Head 2\",\"Server Description\":\"Simple Server\"}}","application/json"))
+            .payload(payloadFromStringWithContentType("{\"metadata\":{\"Image Version\":\"2.5\"}}", "application/json"))
             .build();
 
-      HttpResponse setMetadataResponse = HttpResponse.builder().statusCode(200)
-              .payload(payloadFromResource("/metadata_updated.json")).build();
+      HttpResponse setMetadataItemResponse = HttpResponse.builder().statusCode(200)
+              .payload(payloadFromStringWithContentType("{\"metadata\":{\"Image Version\":\"2.5\"}}", "application/json")).build();
       
       NovaApi apiWhenServerExists = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
-               responseWithKeystoneAccess, setMetadata, setMetadataResponse);
-
-      assertEquals(apiWhenServerExists.getImageApiForZone("az-1.region-a.geo-1").updateMetadata(serverId, metadata).toString(),  
-             new ParseMetadataUpdateTest().expected().toString());
+               responseWithKeystoneAccess, setMetadataItem, setMetadataItemResponse);
+      
+      assertEquals(apiWhenServerExists.getImageApiForZone("az-1.region-a.geo-1").setMetadataItem(imageId, key, "2.5").toString(),  
+             "Image Version=2.5");
    }
 
    public void testSetMetadataItemWhenResponseIs404() throws Exception {
       String imageId = "52415800-8b69-11e0-9b19-734f5736d2a2";
       String key = "Image%20Version";
 
-      String serverId = "123";
-      ImmutableMap<String, String> metadata = new ImmutableMap.Builder<String, String>()
-              .put("Server Label", "Web Head 2")
-              .build();
-
-      HttpRequest setMetadata = HttpRequest
+      HttpRequest setMetadataItem = HttpRequest
             .builder()
-            .method("POST")
-            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/images/" + imageId + "/metadata")
+            .method("PUT")
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/images/" + imageId + "/metadata/" + key)
             .addHeader("Accept", "application/json")
             .addHeader("X-Auth-Token", authToken)
-            .payload(payloadFromStringWithContentType("{\"metadata\":{\"Server Label\":\"Web Head 2\",\"Server Description\":\"Simple Server\"}}","application/json"))
             .build();
 
-      HttpResponse setMetadataResponse = HttpResponse.builder().statusCode(404)
-              .payload(payloadFromResource("/metadata_updated.json")).build();
+      HttpResponse setMetadataItemResponse = HttpResponse.builder().statusCode(404).build();
 
       NovaApi apiWhenServerExists = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
-               responseWithKeystoneAccess, setMetadata, setMetadataResponse);
+               responseWithKeystoneAccess, setMetadataItem, setMetadataItemResponse);
 
-      try {
-    	 apiWhenServerExists.getImageApiForZone("az-1.region-a.geo-1").setMetadata(serverId, metadata);
-         fail("Expected an exception.");
-      } catch (Exception e) {
-         ;
-      }
+      assertNull(apiWhenServerExists.getImageApiForZone("az-1.region-a.geo-1").setMetadataItem(imageId, key, "2.5"));
+
    }
 
    public void testDeleteMetadataItemWhenResponseIs2xx() throws Exception {
