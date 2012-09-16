@@ -50,7 +50,7 @@ import org.jclouds.ssh.SshClient;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.AfterGroups;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
@@ -67,10 +67,8 @@ import com.google.inject.Guice;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "ElasticStackClientLiveTest")
-public class ElasticStackClientLiveTest
-      extends
-      BaseComputeServiceContextLiveTest {
-   
+public class ElasticStackClientLiveTest extends BaseComputeServiceContextLiveTest {
+
    public ElasticStackClientLiveTest() {
       provider = "elasticstack";
    }
@@ -84,23 +82,19 @@ public class ElasticStackClientLiveTest
    protected Predicate<DriveInfo> driveNotClaimed;
    protected String imageId;
 
-   @BeforeGroups(groups = { "integration", "live" })
    @Override
+   @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
-      cloudStackContext = view.unwrap();
+      imageId = view.getComputeService().templateBuilder().build().getImage().getId();
          
-      client = cloudStackContext.getApi();
+      client = view.unwrap(ElasticStackApiMetadata.CONTEXT_TOKEN).getApi();
       driveNotClaimed = new RetryablePredicate<DriveInfo>(Predicates.not(new DriveClaimed(client)), maxDriveImageTime,
                1, TimeUnit.SECONDS);
       socketTester = new RetryablePredicate<HostAndPort>(new InetSocketAddressConnect(), maxDriveImageTime, 1,
                TimeUnit.SECONDS);
-      
-      if (template == null || template.getImageId() == null) {
-         imageId = view.getComputeService().templateBuilder().build().getImage().getId();
-      }
    }
-
+   
    @Test
    public void testListServers() throws Exception {
       Set<String> servers = client.listServers();
