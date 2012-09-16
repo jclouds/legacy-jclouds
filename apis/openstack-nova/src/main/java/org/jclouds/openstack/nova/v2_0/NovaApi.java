@@ -156,7 +156,7 @@ public interface NovaApi {
     * Provides synchronous access to Server Admin Actions features.
     */
    @Delegate
-   Optional<? extends ServerAdminApi> getAdminActionsExtensionForZone(
+   Optional<? extends ServerAdminApi> getServerAdminExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
  
    /**

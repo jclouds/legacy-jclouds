@@ -52,7 +52,7 @@ public class AdminActionsApiExpectTest extends BaseNovaApiExpectTest {
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "suspend").build(),
             HttpResponse.builder().statusCode(202).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
       assertTrue(api.suspend("1"));
    }
@@ -64,7 +64,7 @@ public class AdminActionsApiExpectTest extends BaseNovaApiExpectTest {
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "suspend").build(),
             HttpResponse.builder().statusCode(404).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
       assertFalse(api.suspend("1"));
    }
@@ -77,7 +77,7 @@ public class AdminActionsApiExpectTest extends BaseNovaApiExpectTest {
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "suspend").build(),
             HttpResponse.builder().statusCode(403).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
       api.suspend("1");
    }
@@ -89,7 +89,7 @@ public class AdminActionsApiExpectTest extends BaseNovaApiExpectTest {
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "resume").build(),
             HttpResponse.builder().statusCode(202).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
       assertTrue(api.resume("1"));
    }
@@ -101,7 +101,7 @@ public class AdminActionsApiExpectTest extends BaseNovaApiExpectTest {
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "resume").build(),
             HttpResponse.builder().statusCode(404).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
       assertFalse(api.resume("1"));
    }
@@ -114,7 +114,7 @@ public class AdminActionsApiExpectTest extends BaseNovaApiExpectTest {
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "resume").build(),
             HttpResponse.builder().statusCode(403).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
       api.resume("1");
    }
@@ -126,7 +126,7 @@ public class AdminActionsApiExpectTest extends BaseNovaApiExpectTest {
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "lock").build(),
             HttpResponse.builder().statusCode(202).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
       assertTrue(api.lock("1"));
    }
@@ -138,7 +138,7 @@ public class AdminActionsApiExpectTest extends BaseNovaApiExpectTest {
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "lock").build(),
             HttpResponse.builder().statusCode(404).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
       assertFalse(api.lock("1"));
    }
@@ -150,7 +150,7 @@ public class AdminActionsApiExpectTest extends BaseNovaApiExpectTest {
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "unlock").build(),
             HttpResponse.builder().statusCode(202).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
       assertTrue(api.unlock("1"));
    }
@@ -162,7 +162,7 @@ public class AdminActionsApiExpectTest extends BaseNovaApiExpectTest {
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "unlock").build(),
             HttpResponse.builder().statusCode(404).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
       assertFalse(api.unlock("1"));
    }
@@ -174,7 +174,7 @@ public class AdminActionsApiExpectTest extends BaseNovaApiExpectTest {
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "pause").build(),
             HttpResponse.builder().statusCode(202).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
       assertTrue(api.pause("1"));
    }
@@ -186,7 +186,7 @@ public class AdminActionsApiExpectTest extends BaseNovaApiExpectTest {
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "pause").build(),
             HttpResponse.builder().statusCode(404).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
       assertFalse(api.pause("1"));
    }
@@ -198,7 +198,7 @@ public class AdminActionsApiExpectTest extends BaseNovaApiExpectTest {
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "unpause").build(),
             HttpResponse.builder().statusCode(202).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
       assertTrue(api.unpause("1"));
    }
@@ -210,7 +210,7 @@ public class AdminActionsApiExpectTest extends BaseNovaApiExpectTest {
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "unpause").build(),
             HttpResponse.builder().statusCode(404).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
       assertFalse(api.unpause("1"));
    }
@@ -222,7 +222,7 @@ public class AdminActionsApiExpectTest extends BaseNovaApiExpectTest {
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "migrate").build(),
             HttpResponse.builder().statusCode(202).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
       assertTrue(api.migrate("1"));
    }
@@ -235,7 +235,7 @@ public class AdminActionsApiExpectTest extends BaseNovaApiExpectTest {
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "migrate").build(),
             HttpResponse.builder().statusCode(404).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
       assertFalse(api.migrate("1"));
    }
@@ -247,7 +247,7 @@ public class AdminActionsApiExpectTest extends BaseNovaApiExpectTest {
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "resetNetwork").build(),
             HttpResponse.builder().statusCode(202).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
       assertTrue(api.resetNetwork("1"));
    }
@@ -259,7 +259,7 @@ public class AdminActionsApiExpectTest extends BaseNovaApiExpectTest {
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "resetNetwork").build(),
             HttpResponse.builder().statusCode(404).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
       assertFalse(api.resetNetwork("1"));
    }
@@ -271,7 +271,7 @@ public class AdminActionsApiExpectTest extends BaseNovaApiExpectTest {
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "injectNetworkInfo").build(),
             HttpResponse.builder().statusCode(202).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
       assertTrue(api.injectNetworkInfo("1"));
    }
@@ -283,7 +283,7 @@ public class AdminActionsApiExpectTest extends BaseNovaApiExpectTest {
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "injectNetworkInfo").build(),
             HttpResponse.builder().statusCode(404).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
       assertFalse(api.injectNetworkInfo("1"));
    }
@@ -295,7 +295,7 @@ public class AdminActionsApiExpectTest extends BaseNovaApiExpectTest {
             authenticatedGET().endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/1/action").method("POST")
                   .payload(payloadFromStringWithContentType("{\"createBackup\":{\"backup_type\":\"weekly\",\"rotation\":3,\"name\":\"mybackup\",\"metadata\":{\"some\":\"data or other\"}}}", MediaType.APPLICATION_JSON)).build(),
             HttpResponse.builder().statusCode(202).addHeader("Location", "http://172.16.89.149:8774/v2/images/1976b3b3-409a-468d-b16c-a9172c341b46").build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
       String imageId = api.createBackup("1", "mybackup", BackupType.WEEKLY, 3, CreateBackupOfServerOptions.Builder.metadata(ImmutableMap.of("some", "data or other")));
       assertEquals(imageId, "1976b3b3-409a-468d-b16c-a9172c341b46");
@@ -310,7 +310,7 @@ public class AdminActionsApiExpectTest extends BaseNovaApiExpectTest {
             authenticatedGET().endpoint(endpoint).method("POST")
                   .payload(payloadFromStringWithContentType("{\"createBackup\":{\"backup_type\":\"weekly\",\"rotation\":3,\"name\":\"mybackup\",\"metadata\":{\"some\":\"data or other\"}}}", MediaType.APPLICATION_JSON)).build(),
             HttpResponse.builder().statusCode(404).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
       api.createBackup("1", "mybackup", BackupType.WEEKLY, 3, CreateBackupOfServerOptions.Builder.metadata(ImmutableMap.of("some", "data or other")));
    }
@@ -323,7 +323,7 @@ public class AdminActionsApiExpectTest extends BaseNovaApiExpectTest {
             standardActionRequestBuilderVoidResponse(endpoint, "GONNAOVERWRITE")
                   .payload(payloadFromStringWithContentType("{\"os-migrateLive\":{\"host\":\"bighost\",\"block_migration\":true,\"disk_over_commit\":false}}", MediaType.APPLICATION_JSON)).build(),
             HttpResponse.builder().statusCode(202).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
       assertTrue(api.liveMigrate("1", "bighost", true, false));
    }
@@ -336,7 +336,7 @@ public class AdminActionsApiExpectTest extends BaseNovaApiExpectTest {
             standardActionRequestBuilderVoidResponse(endpoint, "GONNAOVERWRITE")
                   .payload(payloadFromStringWithContentType("{\"os-migrateLive\":{\"host\":\"bighost\",\"block_migration\":true,\"disk_over_commit\":false}}", MediaType.APPLICATION_JSON)).build(),
             HttpResponse.builder().statusCode(404).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
       assertFalse(api.liveMigrate("1", "bighost", true, false));
    }

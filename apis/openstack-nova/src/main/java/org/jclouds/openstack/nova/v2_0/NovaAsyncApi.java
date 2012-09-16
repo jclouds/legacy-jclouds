@@ -155,7 +155,7 @@ public interface NovaAsyncApi {
     * Provides asynchronous access to Server Admin Actions features.
     */
    @Delegate
-   Optional<? extends ServerAdminAsyncApi> getAdminActionsExtensionForZone(
+   Optional<? extends ServerAdminAsyncApi> getServerAdminExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
    /**
