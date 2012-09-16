@@ -41,7 +41,7 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author Michael Arnold
  */
-@Test(groups = "unit", testName = "ImageAsyncApiTest")
+@Test(groups = "unit", testName = "ImageAsyncApiTest", enabled = false)
 public class ImageApiExpectTest extends BaseNovaApiExpectTest {
    public void testListImagesWhenResponseIs2xx() throws Exception {
       HttpRequest list = HttpRequest

@@ -43,7 +43,7 @@ import com.google.common.collect.ImmutableSet;
  *
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ServerAsyncApiTest")
+@Test(groups = "unit", testName = "ServerAsyncApiTest", enabled = false)
 public class ServerApiExpectTest extends BaseNovaApiExpectTest {
 
    public void testListServersWhenResponseIs2xx() throws Exception {
