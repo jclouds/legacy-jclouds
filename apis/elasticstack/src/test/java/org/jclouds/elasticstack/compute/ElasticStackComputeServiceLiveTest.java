@@ -24,13 +24,12 @@ import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.inject.Module;
 
 /**
  * @author Adrian Cole
  */
-@Test(groups = "live")
+@Test(groups = "live", testName = "ElasticStackComputeServiceLiveTest")
 public class ElasticStackComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
    public ElasticStackComputeServiceLiveTest() {
@@ -42,13 +41,6 @@ public class ElasticStackComputeServiceLiveTest extends BaseComputeServiceLiveTe
       return new SshjSshClientModule();
    }
 
-   // elasticstack does not support metadata
-   @Override
-   protected void checkUserMetadataInNodeEquals(NodeMetadata node, ImmutableMap<String, String> userMetadata) {
-      assert node.getUserMetadata().equals(ImmutableMap.<String, String> of()) : String.format(
-            "node userMetadata did not match %s %s", userMetadata, node);
-   }
-
    @Override
    public void testOptionToNotBlock() {
       // start call is blocking anyway.
@@ -56,6 +48,6 @@ public class ElasticStackComputeServiceLiveTest extends BaseComputeServiceLiveTe
 
    protected void checkResponseEqualsHostname(ExecResponse execResponse, NodeMetadata node1) {
       // hostname is not predictable based on node metadata
-      assert execResponse.getOutput().trim().equals("ubuntu");
+      assert execResponse.getOutput().trim().equals("ubuntu") : execResponse.getOutput();
    }
 }
