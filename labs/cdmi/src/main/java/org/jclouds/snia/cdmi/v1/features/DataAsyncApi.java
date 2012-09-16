@@ -51,60 +51,48 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see <a href="http://www.snia.org/cdmi">api doc</a>
  */
 @SkipEncoding({ '/', '=' })
-@RequestFilters({ BasicAuthenticationAndTenantId.class,
-		StripExtraAcceptHeader.class })
+@RequestFilters({ BasicAuthenticationAndTenantId.class, StripExtraAcceptHeader.class })
 @Headers(keys = "X-CDMI-Specification-Version", values = "{jclouds.api-version}")
 public interface DataAsyncApi {
-	/**
-	 * @see DataApi#getDataObject(String containerName, String dataObjectName)
-	 */
-	@GET
-	@Consumes({ ObjectTypes.DATAOBJECT, MediaType.APPLICATION_JSON })
-	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
-	@Path("/{containerName}{dataObjectName}")
-	ListenableFuture<DataObject> getDataObject(
-			@PathParam("containerName") String containerName,
-			@PathParam("dataObjectName") String dataObjectName);
+   /**
+    * @see DataApi#get(String dataObjectName)
+    */
+   @GET
+   @Consumes({ ObjectTypes.DATAOBJECT, MediaType.APPLICATION_JSON })
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Path("/{dataObjectName}")
+   ListenableFuture<DataObject> get(@PathParam("dataObjectName") String dataObjectName);
 
-	/**
-	 * @see DataApi#getDataObject(String containerName, String dataObjectName,
-	 *      DataObjectQueryParams queryParams)
-	 */
-	@GET
-	@Consumes({ ObjectTypes.DATAOBJECT, MediaType.APPLICATION_JSON })
-	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
-	@Path("/{containerName}{dataObjectName}")
-	ListenableFuture<DataObject> getDataObject(
-			@PathParam("containerName") String containerName,
-			@PathParam("dataObjectName") String dataObjectName,
-			@BinderParam(BindQueryParmsToSuffix.class) DataObjectQueryParams queryParams);
+   /**
+    * @see DataApi#get(String dataObjectName, DataObjectQueryParams queryParams)
+    */
+   @GET
+   @Consumes({ ObjectTypes.DATAOBJECT, MediaType.APPLICATION_JSON })
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Path("/{dataObjectName}")
+   ListenableFuture<DataObject> get(@PathParam("dataObjectName") String dataObjectName,
+            @BinderParam(BindQueryParmsToSuffix.class) DataObjectQueryParams queryParams);
 
-	/**
-	 * @see DataApi#createDataObject(String containerName, String
-	 *      dataObjectName, CreateDataObjectOptions... options)
-	 */
-	@PUT
-	@Consumes({ ObjectTypes.DATAOBJECT, MediaType.APPLICATION_JSON })
-	@Produces({ ObjectTypes.DATAOBJECT })
-	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
-	@Path("/{containerName}{dataObjectName}")
-	ListenableFuture<DataObject> createDataObject(
-			@PathParam("containerName") String containerName,
-			@PathParam("dataObjectName") String dataObjectName,
-			CreateDataObjectOptions... options);
+   /**
+    * @see DataApi#create(String dataObjectName, CreateDataObjectOptions... options)
+    */
+   @PUT
+   @Consumes({ ObjectTypes.DATAOBJECT, MediaType.APPLICATION_JSON })
+   @Produces({ ObjectTypes.DATAOBJECT })
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Path("/{dataObjectName}")
+   ListenableFuture<DataObject> create(@PathParam("dataObjectName") String dataObjectName,
+            CreateDataObjectOptions... options);
 
-	/**
-	 * @see DataApi#deleteDataObject(String containerName, String
-	 *      dataObjectName)
-	 */
-	@DELETE
-	@Consumes(MediaType.TEXT_PLAIN)
-	// note: MediaType.APPLICATION_JSON work also, however without consumes
-	// jclouds throws null exception
-	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
-	@Path("/{containerName}{dataObjectName}")
-	ListenableFuture<Void> deleteDataObject(
-			@PathParam("containerName") String containerName,
-			@PathParam("dataObjectName") String dataObjectName);
+   /**
+    * @see DataApi#delete(String dataObjectName)
+    */
+   @DELETE
+   @Consumes(MediaType.TEXT_PLAIN)
+   // note: MediaType.APPLICATION_JSON work also, however without consumes
+   // jclouds throws null exception
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Path("/{dataObjectName}")
+   ListenableFuture<Void> delete(@PathParam("dataObjectName") String dataObjectName);
 
 }

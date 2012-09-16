@@ -30,17 +30,16 @@ import com.google.common.base.Function;
  * 
  * @author Kenneth Nagin
  */
-public class ParseObjectFromHeadersAndHttpContent implements
-		Function<HttpResponse, Payload>,
-		InvocationContext<ParseObjectFromHeadersAndHttpContent> {
+public class ParseObjectFromHeadersAndHttpContent implements Function<HttpResponse, Payload>,
+         InvocationContext<ParseObjectFromHeadersAndHttpContent> {
 
-	public Payload apply(HttpResponse from) {
-		Payload object = from.getPayload();
-		return object;
-	}
+   public Payload apply(HttpResponse from) {
+      Payload object = from.getPayload();
+      return object;
+   }
 
-	@Override
-	public ParseObjectFromHeadersAndHttpContent setContext(HttpRequest request) {
-		return this;
-	}
+   @Override
+   public ParseObjectFromHeadersAndHttpContent setContext(HttpRequest request) {
+      return this;
+   }
 }

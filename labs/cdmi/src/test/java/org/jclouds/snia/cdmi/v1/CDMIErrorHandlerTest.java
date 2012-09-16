@@ -44,29 +44,30 @@ public class CDMIErrorHandlerTest {
 
    @Test
    public void test404SetsKeyNotFoundExceptionMosso() {
-      assertCodeMakes("HEAD", URI
-               .create("http://host/v1/MossoCloudFS_7064cdb1d49d4dcba3c899ac33e8409d/adriancole-blobstore1/key"), 404,
-               "Not Found", "", KeyNotFoundException.class);
+      assertCodeMakes("HEAD",
+               URI.create("http://host/v1/MossoCloudFS_7064cdb1d49d4dcba3c899ac33e8409d/adriancole-blobstore1/key"),
+               404, "Not Found", "", KeyNotFoundException.class);
    }
 
    @Test
    public void test404SetsKeyNotFoundExceptionCDMI() {
-      assertCodeMakes("HEAD", URI
-               .create("http://67.202.39.175:8080/v1/AUTH_7064cdb1d49d4dcba3c899ac33e8409d/adriancole-blobstore1/key"),
+      assertCodeMakes(
+               "HEAD",
+               URI.create("http://67.202.39.175:8080/v1/AUTH_7064cdb1d49d4dcba3c899ac33e8409d/adriancole-blobstore1/key"),
                404, "Not Found", "", KeyNotFoundException.class);
    }
 
    @Test
    public void test404SetsContainerNotFoundExceptionMosso() {
-      assertCodeMakes("HEAD", URI
-               .create("http://host/v1/MossoCloudFS_7064cdb1d49d4dcba3c899ac33e8409d/adriancole-blobstore1"), 404,
+      assertCodeMakes("HEAD",
+               URI.create("http://host/v1/MossoCloudFS_7064cdb1d49d4dcba3c899ac33e8409d/adriancole-blobstore1"), 404,
                "Not Found", "", ContainerNotFoundException.class);
    }
 
    @Test
    public void test404SetsContainerNotFoundExceptionCDMI() {
-      assertCodeMakes("HEAD", URI
-               .create("http://67.202.39.175:8080/v1/AUTH_7064cdb1d49d4dcba3c899ac33e8409d/adriancole-blobstore1"),
+      assertCodeMakes("HEAD",
+               URI.create("http://67.202.39.175:8080/v1/AUTH_7064cdb1d49d4dcba3c899ac33e8409d/adriancole-blobstore1"),
                404, "Not Found", "", ContainerNotFoundException.class);
    }
 

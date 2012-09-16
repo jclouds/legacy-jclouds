@@ -66,14 +66,9 @@ public class CDMIApiMetadata extends BaseRestApiMetadata {
 
       protected Builder() {
          super(CDMIApi.class, CDMIAsyncApi.class);
-                  id("cdmi")
-                  .name("SNIA CDMI API")
-                  .identityName("tenantId:user")
-                  .credentialName("password")
-                  .documentation(URI.create("http://www.snia.org/cdmi"))
-                  .version("1.0.1")
-                  .defaultEndpoint("http://localhost:8080")
-                  .defaultProperties(CDMIApiMetadata.defaultProperties())
+         id("cdmi").name("SNIA CDMI API").identityName("tenantId:user").credentialName("password")
+                  .documentation(URI.create("http://www.snia.org/cdmi")).version("1.0.1")
+                  .defaultEndpoint("http://localhost:8080").defaultProperties(CDMIApiMetadata.defaultProperties())
                   .defaultModules(ImmutableSet.<Class<? extends Module>> of(CDMIRestClientModule.class));
       }
 

@@ -31,10 +31,9 @@ import org.jclouds.snia.cdmi.v1.filters.StripExtraAcceptHeader;
  * @author Adrian Cole
  * @see <a href="http://www.snia.org/cdmi">api doc</a>
  */
-@SkipEncoding( { '/', '=' })
-@RequestFilters( { BasicAuthenticationAndTenantId.class, StripExtraAcceptHeader.class })
-@Headers(keys="X-CDMI-Specification-Version", values = "{jclouds.api-version}")
+@SkipEncoding({ '/', '=' })
+@RequestFilters({ BasicAuthenticationAndTenantId.class, StripExtraAcceptHeader.class })
+@Headers(keys = "X-CDMI-Specification-Version", values = "{jclouds.api-version}")
 public interface DomainAsyncApi {
-
 
 }
