@@ -18,9 +18,9 @@
  */
 package org.jclouds.openstack.v2_0.options;
 
-import static org.jclouds.openstack.v2_0.options.BaseListOptions.Builder.changesSince;
-import static org.jclouds.openstack.v2_0.options.BaseListOptions.Builder.maxResults;
-import static org.jclouds.openstack.v2_0.options.BaseListOptions.Builder.startAt;
+import static org.jclouds.openstack.v2_0.options.PaginationOptions.Builder.changesSince;
+import static org.jclouds.openstack.v2_0.options.PaginationOptions.Builder.limit;
+import static org.jclouds.openstack.v2_0.options.PaginationOptions.Builder.marker;
 import static org.testng.Assert.assertEquals;
 
 import java.util.Date;
@@ -34,44 +34,44 @@ import com.google.common.collect.ImmutableList;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit")
-public class BaseListOptionsTest {
+@Test(groups = "unit", testName = "PaginationOptionsTest")
+public class PaginationOptionsTest {
 
    public void testChangesSince() {
       Date ifModifiedSince = new Date();
-      BaseListOptions options = new BaseListOptions().changesSince(ifModifiedSince);
-      assertEquals(ImmutableList.of(ifModifiedSince.getTime() / 1000 + ""), options
-               .buildQueryParameters().get("changes-since"));
+      PaginationOptions options = new PaginationOptions().changesSince(ifModifiedSince);
+      assertEquals(ImmutableList.of(ifModifiedSince.getTime() / 1000 + ""),
+               options.buildQueryParameters().get("changes-since"));
    }
 
-   public void testStartAt() {
-      long offset = 1;
-      BaseListOptions options = new BaseListOptions().startAt(offset);
-      assertEquals(ImmutableList.of("1"), options.buildQueryParameters().get("offset"));
+   public void testMarker() {
+      String marker = "52415800-8b69-11e0-9b19-734f6f006e54";
+      PaginationOptions options = new PaginationOptions().marker(marker);
+      assertEquals(ImmutableList.of(marker), options.buildQueryParameters().get("marker"));
    }
 
    public void testMaxResults() {
       int limit = 1;
-      BaseListOptions options = new BaseListOptions().maxResults(limit);
+      PaginationOptions options = new PaginationOptions().limit(limit);
       assertEquals(ImmutableList.of("1"), options.buildQueryParameters().get("limit"));
    }
 
    public void testChangesSinceStatic() {
       Date ifModifiedSince = new Date();
-      BaseListOptions options = changesSince(ifModifiedSince);
-      assertEquals(ImmutableList.of(ifModifiedSince.getTime() / 1000 + ""), options
-               .buildQueryParameters().get("changes-since"));
+      PaginationOptions options = changesSince(ifModifiedSince);
+      assertEquals(ImmutableList.of(ifModifiedSince.getTime() / 1000 + ""),
+               options.buildQueryParameters().get("changes-since"));
    }
 
-   public void testStartAtStatic() {
-      long offset = 1;
-      BaseListOptions options = startAt(offset);
-      assertEquals(ImmutableList.of("1"), options.buildQueryParameters().get("offset"));
+   public void testMarkerStatic() {
+      String marker = "52415800-8b69-11e0-9b19-734f6f006e54";
+      PaginationOptions options = marker(marker);
+      assertEquals(ImmutableList.of(marker), options.buildQueryParameters().get("marker"));
    }
 
    public void testMaxResultsStatic() {
       int limit = 1;
-      BaseListOptions options = maxResults(limit);
+      PaginationOptions options = limit(limit);
       assertEquals(ImmutableList.of("1"), options.buildQueryParameters().get("limit"));
    }
 }

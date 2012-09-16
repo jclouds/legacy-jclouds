@@ -19,14 +19,14 @@
 package org.jclouds.hpcloud.objectstorage.extensions;
 
 import java.net.URI;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.hpcloud.objectstorage.domain.ContainerCDNMetadata;
+import org.jclouds.hpcloud.objectstorage.domain.CDNContainer;
 import org.jclouds.hpcloud.objectstorage.options.ListCDNContainerOptions;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.FluentIterable;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -36,30 +36,28 @@ import com.google.common.util.concurrent.ListenableFuture;
  * All commands return a ListenableFuture of the result. Any exceptions incurred during processing
  * will be backend in an {@link java.util.concurrent.ExecutionException} as documented in {@link ListenableFuture#get()}.
  * 
- * @see org.jclouds.hpcloud.objectstorage.HPCloudObjectStorageClient
+ * @see org.jclouds.hpcloud.objectstorage.HPCloudObjectStorageApi
  * @see <a href="https://manage.hpcloud.com/pages/build/docs/objectstorage-lvs/api">HP Cloud Object
  *      Storage API</a>
+ * @see CDNContainerAsyncApi
  * @author Jeremy Daggett
  */
+@Beta
 @Timeout(duration = 120, timeUnit = TimeUnit.SECONDS)
-public interface HPCloudCDNClient  {
-
-   @Beta
-   Set<ContainerCDNMetadata> listCDNContainers(ListCDNContainerOptions... options);
-
-   @Beta
-   ContainerCDNMetadata getCDNMetadata(String container);
-
-   @Beta
-   URI enableCDN(String container, long ttl);
-
-   @Beta
-   URI enableCDN(String container);
-
-   @Beta
-   URI updateCDN(String container, long ttl);
+public interface CDNContainerApi  {
    
-   @Beta
-   boolean disableCDN(String container);
+   FluentIterable<CDNContainer> list();
+   
+   FluentIterable<CDNContainer> list(ListCDNContainerOptions options);
+
+   CDNContainer get(String container);
+
+   URI enable(String container, long ttl);
+
+   URI enable(String container);
+
+   URI update(String container, long ttl);
+   
+   boolean disable(String container);
 
 }

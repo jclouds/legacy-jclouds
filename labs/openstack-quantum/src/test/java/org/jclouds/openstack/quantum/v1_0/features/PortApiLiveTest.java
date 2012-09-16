@@ -44,13 +44,13 @@ import com.google.common.collect.Iterables;
 public class PortApiLiveTest extends BaseQuantumApiLiveTest {
 
    public void testListPorts() {
-      for (String regionId : quantumContext.getApi().getConfiguredRegions()) {
-         NetworkApi netApi = quantumContext.getApi().getNetworkApiForRegion(regionId);
-         Set<? extends Reference> nets = netApi.listReferences();
+      for (String zoneId : quantumContext.getApi().getConfiguredZones()) {
+         NetworkApi netApi = quantumContext.getApi().getNetworkApiForZone(zoneId);
+         Set<? extends Reference> nets = netApi.listReferences().toImmutableSet();
          for(Reference net : nets) {
-            PortApi portApi = quantumContext.getApi().getPortApiForRegionAndNetwork(regionId, net.getId());
-            Set<? extends Reference> portRefs = portApi.listReferences();
-            Set<? extends Port> ports = portApi.list();
+            PortApi portApi = quantumContext.getApi().getPortApiForZoneAndNetwork(zoneId, net.getId());
+            Set<? extends Reference> portRefs = portApi.listReferences().toImmutableSet();
+            Set<? extends Port> ports = portApi.list().toImmutableSet();
             
             assertEquals(portRefs.size(), ports.size());
             for (Port port : ports) {
@@ -61,11 +61,11 @@ public class PortApiLiveTest extends BaseQuantumApiLiveTest {
    }
 
    public void testCreateUpdateAndDeletePort() {
-      for (String regionId : quantumContext.getApi().getConfiguredRegions()) {
-         NetworkApi netApi = quantumContext.getApi().getNetworkApiForRegion(regionId);
+      for (String zoneId : quantumContext.getApi().getConfiguredZones()) {
+         NetworkApi netApi = quantumContext.getApi().getNetworkApiForZone(zoneId);
          Reference net = netApi.create("jclouds-port-test");
          assertNotNull(net);
-         PortApi portApi = quantumContext.getApi().getPortApiForRegionAndNetwork(regionId, net.getId());
+         PortApi portApi = quantumContext.getApi().getPortApiForZoneAndNetwork(zoneId, net.getId());
 
          Reference portRef = portApi.create();
          assertNotNull(portRef);
@@ -109,12 +109,12 @@ public class PortApiLiveTest extends BaseQuantumApiLiveTest {
 
    @Test(enabled=false) // assuming attachmentId matters in the wild
    public void testAttachAndDetachPort() {
-      for (String regionId : quantumContext.getApi().getConfiguredRegions()) {
-         NetworkApi netApi = quantumContext.getApi().getNetworkApiForRegion(regionId);
+      for (String zoneId : quantumContext.getApi().getConfiguredZones()) {
+         NetworkApi netApi = quantumContext.getApi().getNetworkApiForZone(zoneId);
          Reference net = netApi.create("jclouds-attach-test");
          assertNotNull(net);
 
-         PortApi portApi = quantumContext.getApi().getPortApiForRegionAndNetwork(regionId, net.getId());
+         PortApi portApi = quantumContext.getApi().getPortApiForZoneAndNetwork(zoneId, net.getId());
 
          Reference port = portApi.create();
          assertNotNull(port);

@@ -18,8 +18,6 @@
  */
 package org.jclouds.openstack.nova.v2_0.extensions;
 
-import java.util.Set;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
@@ -46,8 +44,10 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.SkipEncoding;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnEmptyFluentIterableOnNotFoundOr404;
 
+import com.google.common.annotations.Beta;
+import com.google.common.collect.FluentIterable;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -60,6 +60,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see <a href="http://nova.openstack.org/api_ext" />
  * @see <a href="http://nova.openstack.org/api/nova.api.openstack.compute.contrib.hosts.html" />
  */
+@Beta
 @Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.HOSTS)
 @SkipEncoding({'/', '='})
 @RequestFilters(AuthenticateRequest.class)
@@ -68,83 +69,83 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface HostAdministrationAsyncApi {
 
    /**
-    * @see HostAdministrationApi#listHosts()
+    * @see HostAdministrationApi#list()
     */
    @GET
    @SelectJson("hosts")
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<? extends Set<? extends Host>> listHosts();
+   @ExceptionParser(ReturnEmptyFluentIterableOnNotFoundOr404.class)
+   ListenableFuture<? extends FluentIterable<? extends Host>> list();
 
    /**
-    * @see HostAdministrationApi#getHostResourceUsage(String)
+    * @see HostAdministrationApi#listResourceUsage(String)
     */
    @GET
    @Path("/{id}")
    @SelectJson("host")
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<? extends Set<? extends HostResourceUsage>> getHostResourceUsage(@PathParam("id") String hostId);
+   @ExceptionParser(ReturnEmptyFluentIterableOnNotFoundOr404.class)
+   ListenableFuture<? extends FluentIterable<? extends HostResourceUsage>> listResourceUsage(@PathParam("id") String hostId);
 
    /**
-    * @see HostAdministrationApi#enableHost(String)
+    * @see HostAdministrationApi#enable(String)
     */
    @PUT
    @Produces(MediaType.APPLICATION_JSON)
    @Path("/{id}")
    @Payload("{\"status\":\"enable\"}")
    @ResponseParser(StatusEnabledResponseParser.class)
-   ListenableFuture<Boolean> enableHost(@PathParam("id") String hostId);
+   ListenableFuture<Boolean> enable(@PathParam("id") String hostId);
 
    /**
-    * @see HostAdministrationApi#disableHost(String) 
+    * @see HostAdministrationApi#disable(String) 
     */
    @PUT
    @Produces(MediaType.APPLICATION_JSON)
    @Path("/{id}")
    @Payload("{\"status\":\"disable\"}")
    @ResponseParser(StatusDisabledResponseParser.class)
-   ListenableFuture<Boolean> disableHost(@PathParam("id") String hostId);
+   ListenableFuture<Boolean> disable(@PathParam("id") String hostId);
 
    /**
-    * @see HostAdministrationApi#startHostMaintenance(String)
+    * @see HostAdministrationApi#startMaintenance(String)
     */
    @PUT
    @Produces(MediaType.APPLICATION_JSON)
    @Path("/{id}")
    @Payload("{\"maintenance_mode\":\"enable\"}")
    @ResponseParser(MaintenanceModeEnabledResponseParser.class)
-   ListenableFuture<Boolean> startHostMaintenance(@PathParam("id") String hostId);
+   ListenableFuture<Boolean> startMaintenance(@PathParam("id") String hostId);
 
    /**
-    * @see HostAdministrationApi#stopHostMaintenance(String)
+    * @see HostAdministrationApi#stopMaintenance(String)
     */
    @PUT
    @Produces(MediaType.APPLICATION_JSON)
    @Path("/{id}")
    @Payload("{\"maintenance_mode\":\"disable\"}")
    @ResponseParser(MaintenanceModeDisabledResponseParser.class)
-   ListenableFuture<Boolean> stopHostMaintenance(@PathParam("id") String hostId);
+   ListenableFuture<Boolean> stopMaintenance(@PathParam("id") String hostId);
 
    /**
-    * @see HostAdministrationApi#startupHost(String)
+    * @see HostAdministrationApi#startup(String)
     */
    @GET
    @Path("/{id}/startup")
    @ResponseParser(PowerIsStartupResponseParser.class)
-   ListenableFuture<Boolean> startupHost(@PathParam("id") String hostId);
+   ListenableFuture<Boolean> startup(@PathParam("id") String hostId);
 
    /**
-    * @see HostAdministrationApi#shutdownHost(String)
+    * @see HostAdministrationApi#shutdown(String)
     */
    @GET
    @Path("/{id}/shutdown")
    @ResponseParser(PowerIsShutdownResponseParser.class)
-   ListenableFuture<Boolean> shutdownHost(@PathParam("id") String hostId);
+   ListenableFuture<Boolean> shutdown(@PathParam("id") String hostId);
 
    /**
-    * @see HostAdministrationApi#rebootHost(String)
+    * @see HostAdministrationApi#reboot(String)
     */
    @GET
    @Path("/{id}/reboot")
    @ResponseParser(PowerIsRebootResponseParser.class)
-   ListenableFuture<Boolean> rebootHost(@PathParam("id") String hostId);
+   ListenableFuture<Boolean> reboot(@PathParam("id") String hostId);
 }

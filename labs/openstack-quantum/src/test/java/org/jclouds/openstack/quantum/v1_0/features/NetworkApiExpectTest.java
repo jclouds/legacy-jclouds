@@ -53,9 +53,9 @@ public class NetworkApiExpectTest extends BaseQuantumApiExpectTest {
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
             authenticatedGET().endpoint(endpoint + "/tenants/3456/networks").build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResourceWithContentType("/list_network_refs.json", APPLICATION_JSON)).build())
-            .getNetworkApiForRegion("region-a.geo-1");
+            .getNetworkApiForZone("region-a.geo-1");
       
-      Set<? extends Reference> nets = api.listReferences();
+      Set<? extends Reference> nets = api.listReferences().toImmutableSet();
       assertEquals(nets, listOfNetworkRefs());
    }
 
@@ -64,7 +64,7 @@ public class NetworkApiExpectTest extends BaseQuantumApiExpectTest {
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
             authenticatedGET().endpoint(endpoint + "/tenants/3456/networks").build(),
             HttpResponse.builder().statusCode(404).build())
-            .getNetworkApiForRegion("region-a.geo-1");
+            .getNetworkApiForZone("region-a.geo-1");
 
       assertTrue(api.listReferences().isEmpty());
    }
@@ -74,9 +74,9 @@ public class NetworkApiExpectTest extends BaseQuantumApiExpectTest {
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
             authenticatedGET().endpoint(endpoint + "/tenants/3456/networks/detail").build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResourceWithContentType("/list_networks.json", APPLICATION_JSON)).build())
-            .getNetworkApiForRegion("region-a.geo-1");
+            .getNetworkApiForZone("region-a.geo-1");
 
-      Set<? extends Network> nets = api.list();
+      Set<? extends Network> nets = api.list().toImmutableSet();
       assertEquals(nets, listOfNetworks());
    }
 
@@ -85,7 +85,7 @@ public class NetworkApiExpectTest extends BaseQuantumApiExpectTest {
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
             authenticatedGET().endpoint(endpoint + "/tenants/3456/networks/detail").build(),
             HttpResponse.builder().statusCode(404).build())
-            .getNetworkApiForRegion("region-a.geo-1");
+            .getNetworkApiForZone("region-a.geo-1");
 
       assertTrue(api.list().isEmpty());
    }
@@ -95,7 +95,7 @@ public class NetworkApiExpectTest extends BaseQuantumApiExpectTest {
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
             authenticatedGET().endpoint(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a").build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResourceWithContentType("/network.json", APPLICATION_JSON)).build())
-            .getNetworkApiForRegion("region-a.geo-1");
+            .getNetworkApiForZone("region-a.geo-1");
 
       Network net = api.get("16dba3bc-f3fa-4775-afdc-237e12c72f6a");
       assertEquals(net, new ParseNetworkTest().expected());
@@ -106,7 +106,7 @@ public class NetworkApiExpectTest extends BaseQuantumApiExpectTest {
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
             authenticatedGET().endpoint(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a").build(),
             HttpResponse.builder().statusCode(404).build())
-            .getNetworkApiForRegion("region-a.geo-1");
+            .getNetworkApiForZone("region-a.geo-1");
 
       assertNull(api.get("16dba3bc-f3fa-4775-afdc-237e12c72f6a"));
    }
@@ -116,7 +116,7 @@ public class NetworkApiExpectTest extends BaseQuantumApiExpectTest {
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
             authenticatedGET().endpoint(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/detail").build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResourceWithContentType("/network_details.json", APPLICATION_JSON)).build())
-            .getNetworkApiForRegion("region-a.geo-1");
+            .getNetworkApiForZone("region-a.geo-1");
 
       NetworkDetails net = api.getDetails("16dba3bc-f3fa-4775-afdc-237e12c72f6a");
       assertEquals(net, new ParseNetworkDetailsTest().expected());
@@ -127,7 +127,7 @@ public class NetworkApiExpectTest extends BaseQuantumApiExpectTest {
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
             authenticatedGET().endpoint(endpoint + "/tenants/3456/networks/16dba3bc-f3fa-4775-afdc-237e12c72f6a/detail").build(),
             HttpResponse.builder().statusCode(404).build())
-            .getNetworkApiForRegion("region-a.geo-1");
+            .getNetworkApiForZone("region-a.geo-1");
 
       assertNull(api.getDetails("16dba3bc-f3fa-4775-afdc-237e12c72f6a"));
    }
@@ -138,7 +138,7 @@ public class NetworkApiExpectTest extends BaseQuantumApiExpectTest {
             authenticatedGET().endpoint(endpoint + "/tenants/3456/networks").method("POST")
                   .payload(payloadFromStringWithContentType("{\"network\":{\"name\":\"another-test\"}}", MediaType.APPLICATION_JSON)).build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromStringWithContentType("{\"network\":{\"id\":\"12345\"}}", APPLICATION_JSON)).build())
-            .getNetworkApiForRegion("region-a.geo-1");
+            .getNetworkApiForZone("region-a.geo-1");
 
       Reference net = api.create("another-test");
       assertEquals(net, Reference.builder().id("12345").build());
@@ -151,7 +151,7 @@ public class NetworkApiExpectTest extends BaseQuantumApiExpectTest {
             authenticatedGET().endpoint(endpoint + "/tenants/3456/networks").method("POST")
                   .payload(payloadFromStringWithContentType("{\"network\":{\"name\":\"another-test\"}}", MediaType.APPLICATION_JSON)).build(),
             HttpResponse.builder().statusCode(401).build())
-            .getNetworkApiForRegion("region-a.geo-1");
+            .getNetworkApiForZone("region-a.geo-1");
 
       api.create("another-test");
    }
@@ -162,7 +162,7 @@ public class NetworkApiExpectTest extends BaseQuantumApiExpectTest {
             authenticatedGET().endpoint(endpoint + "/tenants/3456/networks/12345").method("PUT")
                   .payload(payloadFromStringWithContentType("{\"network\":{\"name\":\"another-test\"}}", MediaType.APPLICATION_JSON)).build(),
             HttpResponse.builder().statusCode(200).build())
-            .getNetworkApiForRegion("region-a.geo-1");
+            .getNetworkApiForZone("region-a.geo-1");
 
       assertTrue(api.rename("12345", "another-test"));
    }
@@ -174,7 +174,7 @@ public class NetworkApiExpectTest extends BaseQuantumApiExpectTest {
             authenticatedGET().endpoint(endpoint + "/tenants/3456/networks/12345").method("PUT")
                   .payload(payloadFromStringWithContentType("{\"network\":{\"name\":\"another-test\"}}", MediaType.APPLICATION_JSON)).build(),
             HttpResponse.builder().statusCode(404).build())
-            .getNetworkApiForRegion("region-a.geo-1");
+            .getNetworkApiForZone("region-a.geo-1");
 
       api.rename("12345", "another-test");
    }
@@ -184,7 +184,7 @@ public class NetworkApiExpectTest extends BaseQuantumApiExpectTest {
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
             authenticatedGET().endpoint(endpoint + "/tenants/3456/networks/12345").method("DELETE").build(),
             HttpResponse.builder().statusCode(200).build())
-            .getNetworkApiForRegion("region-a.geo-1");
+            .getNetworkApiForZone("region-a.geo-1");
 
       assertTrue(api.delete("12345"));
    }
@@ -195,7 +195,7 @@ public class NetworkApiExpectTest extends BaseQuantumApiExpectTest {
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
             authenticatedGET().endpoint(endpoint + "/tenants/3456/networks/12345").method("DELETE").build(),
             HttpResponse.builder().statusCode(403).build())
-            .getNetworkApiForRegion("region-a.geo-1");
+            .getNetworkApiForZone("region-a.geo-1");
 
       api.delete("12345");
    }

@@ -21,8 +21,6 @@ package org.jclouds.openstack.keystone.v2_0;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.location.functions.ZoneToEndpoint;
 import org.jclouds.openstack.keystone.v2_0.domain.ApiMetadata;
 import org.jclouds.openstack.keystone.v2_0.features.ServiceApi;
 import org.jclouds.openstack.keystone.v2_0.features.TenantApi;
@@ -30,7 +28,6 @@ import org.jclouds.openstack.keystone.v2_0.features.TokenApi;
 import org.jclouds.openstack.keystone.v2_0.features.UserApi;
 import org.jclouds.openstack.v2_0.features.ExtensionApi;
 import org.jclouds.rest.annotations.Delegate;
-import org.jclouds.rest.annotations.EndpointParam;
 
 import com.google.common.base.Optional;
 

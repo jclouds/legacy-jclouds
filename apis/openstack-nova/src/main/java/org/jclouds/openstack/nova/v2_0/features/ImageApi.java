@@ -18,12 +18,14 @@
  */
 package org.jclouds.openstack.nova.v2_0.features;
 
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.collect.PagedIterable;
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.openstack.keystone.v2_0.domain.PaginatedCollection;
 import org.jclouds.openstack.nova.v2_0.domain.Image;
 import org.jclouds.openstack.v2_0.domain.Resource;
+import org.jclouds.openstack.v2_0.options.PaginationOptions;
 
 /**
  * Provides synchronous access to Images.
@@ -43,14 +45,18 @@ public interface ImageApi {
     * 
     * @return all images (IDs, names, links)
     */
-   Set<? extends Resource> listImages();
+   PagedIterable<? extends Resource> list();
+
+   PaginatedCollection<? extends Resource> list(PaginationOptions options);
 
    /**
     * List all images (all details)
     * 
     * @return all images (all details)
     */
-   Set<? extends Image> listImagesInDetail();
+   PagedIterable<? extends Image> listInDetail();
+
+   PaginatedCollection<? extends Image> listInDetail(PaginationOptions options);
 
    /**
     * List details of the specified image
@@ -59,7 +65,7 @@ public interface ImageApi {
     *           id of the server
     * @return server or null if not found
     */
-   Image getImage(String id);
+   Image get(String id);
 
    /**
     * Delete the specified image
@@ -68,6 +74,6 @@ public interface ImageApi {
     *           id of the image
     * @return server or null if not found
     */
-   void deleteImage(String id);
+   void delete(String id);
 
 }

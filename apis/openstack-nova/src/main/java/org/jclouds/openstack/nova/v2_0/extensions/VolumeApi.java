@@ -18,7 +18,6 @@
  */
 package org.jclouds.openstack.nova.v2_0.extensions;
 
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
@@ -30,13 +29,18 @@ import org.jclouds.openstack.nova.v2_0.options.CreateVolumeSnapshotOptions;
 import org.jclouds.openstack.v2_0.ServiceType;
 import org.jclouds.openstack.v2_0.services.Extension;
 
+import com.google.common.annotations.Beta;
+import com.google.common.collect.FluentIterable;
+
 /**
  * Provides synchronous access to Volumes.
  * <p/>
  * 
+ * @see VolumeAsyncApi
  * @see org.jclouds.openstack.nova.v2_0.extensions.VolumeAsyncApi
  * @author Adam Lowe
  */
+@Beta
 @Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.VOLUMES)
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface VolumeApi {
@@ -45,42 +49,42 @@ public interface VolumeApi {
     *
     * @return the list of snapshots
     */
-   Set<? extends Volume> listVolumes();
+   FluentIterable<? extends Volume> list();
 
    /**
     * Returns a detailed list of volumes.
     *
     * @return the list of volumes.
     */
-   Set<? extends Volume> listVolumesInDetail();
+   FluentIterable<? extends Volume> listInDetail();
 
    /**
     * Return data about the given volume.
     *
     * @return details of a specific snapshot.
     */
-   Volume getVolume(String volumeId);
+   Volume get(String volumeId);
 
    /**
     * Creates a new Snapshot
     *
     * @return the new Snapshot
     */
-   Volume createVolume(int sizeGB, CreateVolumeOptions... options);
+   Volume create(int sizeGB, CreateVolumeOptions... options);
 
    /**
     * Delete a snapshot.
     *
     * @return true if successful
     */
-   Boolean deleteVolume(String volumeId);
+   boolean delete(String volumeId);
    
    /**
     * List volume attachments for a given instance.
     * 
     * @return all Floating IPs
     */
-   Set<? extends VolumeAttachment> listAttachmentsOnServer(String serverId);
+   FluentIterable<? extends VolumeAttachment> listAttachmentsOnServer(String serverId);
 
    /**
     * Get a specific attached volume.
@@ -108,14 +112,14 @@ public interface VolumeApi {
     *
     * @return the list of snapshots
     */
-   Set<? extends VolumeSnapshot> listSnapshots();
+   FluentIterable<? extends VolumeSnapshot> listSnapshots();
 
    /**
     * Returns a summary list of snapshots.
     *
     * @return the list of snapshots
     */
-   Set<? extends VolumeSnapshot> listSnapshotsInDetail();
+   FluentIterable<? extends VolumeSnapshot> listSnapshotsInDetail();
 
    /**
     * Return data about the given snapshot.
@@ -136,6 +140,6 @@ public interface VolumeApi {
     *
     * @return true if successful
     */
-   Boolean deleteSnapshot(String snapshotId);
+   boolean deleteSnapshot(String snapshotId);
    
 }

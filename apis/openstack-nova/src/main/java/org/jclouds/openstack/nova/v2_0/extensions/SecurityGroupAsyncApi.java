@@ -18,8 +18,6 @@
  */
 package org.jclouds.openstack.nova.v2_0.extensions;
 
-import java.util.Set;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -43,10 +41,12 @@ import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.SkipEncoding;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnEmptyFluentIterableOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
+import com.google.common.annotations.Beta;
+import com.google.common.collect.FluentIterable;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -60,33 +60,34 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see <a href="http://nova.openstack.org/api_ext" />
  * @see <a href="http://wiki.openstack.org/os-security-groups" />
  */
+@Beta
 @Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.SECURITY_GROUPS)
 @SkipEncoding( { '/', '=' })
 @RequestFilters(AuthenticateRequest.class)
 public interface SecurityGroupAsyncApi {
 
    /**
-    * @see SecurityGroupApi#listSecurityGroups
+    * @see SecurityGroupApi#list
     */
    @GET
    @SelectJson("security_groups")
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/os-security-groups")
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<? extends Set<? extends SecurityGroup>> listSecurityGroups();
+   @ExceptionParser(ReturnEmptyFluentIterableOnNotFoundOr404.class)
+   ListenableFuture<? extends FluentIterable<? extends SecurityGroup>> list();
 
    /**
-    * @see SecurityGroupApi#getSecurityGroup
+    * @see SecurityGroupApi#get
     */
    @GET
    @Path("/os-security-groups/{id}")
    @SelectJson("security_group")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<? extends SecurityGroup> getSecurityGroup(@PathParam("id") String id);
+   ListenableFuture<? extends SecurityGroup> get(@PathParam("id") String id);
 
    /**
-    * @see SecurityGroupApi#createSecurityGroupWithNameAndDescription
+    * @see SecurityGroupApi#createWithDescription
     */
    @POST
    @Path("/os-security-groups")
@@ -95,20 +96,20 @@ public interface SecurityGroupAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("%7B\"security_group\":%7B\"name\":\"{name}\",\"description\":\"{description}\"%7D%7D")
-   ListenableFuture<? extends SecurityGroup> createSecurityGroupWithNameAndDescription(@PayloadParam("name") String name,
+   ListenableFuture<? extends SecurityGroup> createWithDescription(@PayloadParam("name") String name,
             @PayloadParam("description") String description);
 
    /**
-    * @see SecurityGroupApi#deleteSecurityGroup
+    * @see SecurityGroupApi#delete
     */
    @DELETE
    @Path("/os-security-groups/{id}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Boolean> deleteSecurityGroup(@PathParam("id") String id);
+   ListenableFuture<Boolean> delete(@PathParam("id") String id);
 
    /**
-    * @see SecurityGroupApi#createSecurityGroupRuleAllowingCidrBlock
+    * @see SecurityGroupApi#createRuleAllowingCidrBlock
     */
    @POST
    @Path("/os-security-group-rules")
@@ -117,7 +118,7 @@ public interface SecurityGroupAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
    @MapBinder(BindSecurityGroupRuleToJsonPayload.class)
-   ListenableFuture<? extends SecurityGroupRule> createSecurityGroupRuleAllowingCidrBlock(
+   ListenableFuture<? extends SecurityGroupRule> createRuleAllowingCidrBlock(
             @PayloadParam("parent_group_id") String parent_group_id, Ingress ip_protocol,
             @PayloadParam("cidr") String cidr);
 
@@ -131,17 +132,17 @@ public interface SecurityGroupAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
    @MapBinder(BindSecurityGroupRuleToJsonPayload.class)
-   ListenableFuture<? extends SecurityGroupRule> createSecurityGroupRuleAllowingSecurityGroupId(
+   ListenableFuture<? extends SecurityGroupRule> createRuleAllowingSecurityGroupId(
             @PayloadParam("parent_group_id") String parent_group_id, Ingress ip_protocol,
             @PayloadParam("group_id") String group_id);
 
    /**
-    * @see SecurityGroupApi#deleteSecurityGroupRule
+    * @see SecurityGroupApi#deleteRule
     */
    @DELETE
    @Path("/os-security-group-rules/{security_group_rule_ID}")
    @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
    @Consumes
-   ListenableFuture<Boolean> deleteSecurityGroupRule(@PathParam("security_group_rule_ID") String security_group_rule_ID);
+   ListenableFuture<Boolean> deleteRule(@PathParam("security_group_rule_ID") String security_group_rule_ID);
 
 }

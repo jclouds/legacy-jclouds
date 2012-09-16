@@ -68,7 +68,7 @@ public class CreateUniqueKeyPair extends CacheLoader<ZoneAndName, KeyPair> {
       KeyPair keyPair = null;
       while (keyPair == null) {
          try {
-            keyPair = api.get().createKeyPair(namingConvention.createWithoutPrefix().uniqueNameForGroup(prefix));
+            keyPair = api.get().create(namingConvention.createWithoutPrefix().uniqueNameForGroup(prefix));
          } catch (IllegalStateException e) {
 
          }

@@ -50,22 +50,22 @@ public class PasswordAuthenticationExpectTest extends BaseSwiftApiExpectTest {
    }
 
    public void testListContainersWhenResponseIs2xx() throws Exception {
-      HttpRequest listContainers = HttpRequest
+      HttpRequest list = HttpRequest
             .builder()
             .method("GET")
             .endpoint("https://objects.jclouds.org/v1.0/40806637803162/?format=json")
             .addHeader("Accept", "application/json")
             .addHeader("X-Auth-Token", authToken).build();
 
-      HttpResponse listContainersResponse = HttpResponse.builder().statusCode(200)
+      HttpResponse listResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/container_list.json")).build();
 
       SwiftApi apiWhenContainersExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
-            responseWithKeystoneAccess, listContainers, listContainersResponse);
+            responseWithKeystoneAccess, list, listResponse);
 
       assertEquals(apiWhenContainersExist.getConfiguredRegions(), ImmutableSet.of("region-a.geo-1"));
 
-      assertEquals(apiWhenContainersExist.getAccountApiForRegion("region-a.geo-1").listContainers().toString(),
+      assertEquals(apiWhenContainersExist.getContainerApiForRegion("region-a.geo-1").list().toString(),
             new ParseContainerListTest().expected().toString());
    }
 

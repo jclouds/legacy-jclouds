@@ -19,22 +19,22 @@
 package org.jclouds.openstack.swift.v1.functions;
 
 import org.jclouds.http.HttpResponse;
-import org.jclouds.openstack.swift.v1.domain.AccountMetadata;
+import org.jclouds.openstack.swift.v1.domain.Account;
 
 import com.google.common.base.Function;
 
 /**
- * This parses {@link AccountMetadata} from HTTP headers.
+ * This parses {@link Account} from HTTP headers.
  * 
  * @author James Murty
  */
-public class ParseAccountMetadataResponseFromHeaders implements Function<HttpResponse, AccountMetadata> {
+public class ParseAccountMetadataResponseFromHeaders implements Function<HttpResponse, Account> {
 
    /**
-    * parses the http response headers to create a new {@link AccountMetadata} object.
+    * parses the http response headers to create a new {@link Account} object.
     */
-   public AccountMetadata apply(HttpResponse from) {
-      return AccountMetadata.builder()
+   public Account apply(HttpResponse from) {
+      return Account.builder()
                .bytesUsed(Long.parseLong(from.getFirstHeaderOrNull("X-Account-Bytes-Used")))
                .containerCount(Integer.parseInt(from.getFirstHeaderOrNull("X-Account-Container-Count")))
                .build();

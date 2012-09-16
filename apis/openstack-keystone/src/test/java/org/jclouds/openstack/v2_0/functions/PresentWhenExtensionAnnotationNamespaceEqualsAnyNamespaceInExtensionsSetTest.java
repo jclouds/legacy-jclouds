@@ -5,13 +5,10 @@ import static org.testng.Assert.assertEquals;
 import java.net.URI;
 import java.util.Set;
 
-import javax.inject.Named;
-
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.internal.ClassMethodArgsAndReturnVal;
 import org.jclouds.openstack.v2_0.ServiceType;
 import org.jclouds.openstack.v2_0.domain.Extension;
-import org.jclouds.openstack.v2_0.functions.PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensionsSet;
 import org.jclouds.rest.annotations.Delegate;
 import org.testng.annotations.Test;
 

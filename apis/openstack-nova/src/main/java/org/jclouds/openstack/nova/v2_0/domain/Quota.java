@@ -32,7 +32,7 @@ import com.google.common.base.Objects.ToStringHelper;
  * 
  * @see org.jclouds.openstack.nova.v2_0.extensions.QuotaApi
 */
-public class Quotas {
+public class Quota {
 
    public static Builder<?> builder() { 
       return new ConcreteBuilder();
@@ -60,7 +60,7 @@ public class Quotas {
       protected int keyPairs;
    
       /** 
-       * @see Quotas#getId()
+       * @see Quota#getId()
        */
       public T id(String id) {
          this.id = id;
@@ -68,7 +68,7 @@ public class Quotas {
       }
 
       /** 
-       * @see Quotas#getMetadataItems()
+       * @see Quota#getMetadataItems()
        */
       public T metadataItems(int metadataItems) {
          this.metadataItems = metadataItems;
@@ -76,7 +76,7 @@ public class Quotas {
       }
 
       /** 
-       * @see Quotas#getInjectedFileContentBytes()
+       * @see Quota#getInjectedFileContentBytes()
        */
       public T injectedFileContentBytes(int injectedFileContentBytes) {
          this.injectedFileContentBytes = injectedFileContentBytes;
@@ -84,7 +84,7 @@ public class Quotas {
       }
 
       /** 
-       * @see Quotas#getVolumes()
+       * @see Quota#getVolumes()
        */
       public T volumes(int volumes) {
          this.volumes = volumes;
@@ -92,7 +92,7 @@ public class Quotas {
       }
 
       /** 
-       * @see Quotas#getGigabytes()
+       * @see Quota#getGigabytes()
        */
       public T gigabytes(int gigabytes) {
          this.gigabytes = gigabytes;
@@ -100,7 +100,7 @@ public class Quotas {
       }
 
       /** 
-       * @see Quotas#getRam()
+       * @see Quota#getRam()
        */
       public T ram(int ram) {
          this.ram = ram;
@@ -108,7 +108,7 @@ public class Quotas {
       }
 
       /** 
-       * @see Quotas#getFloatingIps()
+       * @see Quota#getFloatingIps()
        */
       public T floatingIps(int floatingIps) {
          this.floatingIps = floatingIps;
@@ -116,7 +116,7 @@ public class Quotas {
       }
 
       /** 
-       * @see Quotas#getInstances()
+       * @see Quota#getInstances()
        */
       public T instances(int instances) {
          this.instances = instances;
@@ -124,7 +124,7 @@ public class Quotas {
       }
 
       /** 
-       * @see Quotas#getInjectedFiles()
+       * @see Quota#getInjectedFiles()
        */
       public T injectedFiles(int injectedFiles) {
          this.injectedFiles = injectedFiles;
@@ -132,7 +132,7 @@ public class Quotas {
       }
 
       /** 
-       * @see Quotas#getCores()
+       * @see Quota#getCores()
        */
       public T cores(int cores) {
          this.cores = cores;
@@ -140,7 +140,7 @@ public class Quotas {
       }
 
       /** 
-       * @see Quotas#getSecurityGroups()
+       * @see Quota#getSecurityGroups()
        */
       public T securityGroups(int securityGroups) {
          this.securityGroups = securityGroups;
@@ -148,7 +148,7 @@ public class Quotas {
       }
 
       /** 
-       * @see Quotas#getSecurityGroupRules()
+       * @see Quota#getSecurityGroupRules()
        */
       public T securityGroupRules(int securityGroupRules) {
          this.securityGroupRules = securityGroupRules;
@@ -156,18 +156,18 @@ public class Quotas {
       }
 
       /** 
-       * @see Quotas#getKeyPairs()
+       * @see Quota#getKeyPairs()
        */
       public T keyPairs(int keyPairs) {
          this.keyPairs = keyPairs;
          return self();
       }
 
-      public Quotas build() {
-         return new Quotas(id, metadataItems, injectedFileContentBytes, volumes, gigabytes, ram, floatingIps, instances, injectedFiles, cores, securityGroups, securityGroupRules, keyPairs);
+      public Quota build() {
+         return new Quota(id, metadataItems, injectedFileContentBytes, volumes, gigabytes, ram, floatingIps, instances, injectedFiles, cores, securityGroups, securityGroupRules, keyPairs);
       }
       
-      public T fromQuotas(Quotas in) {
+      public T fromQuotas(Quota in) {
          return this
                   .id(in.getId())
                   .metadataItems(in.getMetadataItems())
@@ -216,7 +216,7 @@ public class Quotas {
    @ConstructorProperties({
       "id", "metadata_items", "injected_file_content_bytes", "volumes", "gigabytes", "ram", "floating_ips", "instances", "injected_files", "cores", "security_groups", "security_group_rules", "key_pairs"
    })
-   protected Quotas(String id, int metadataItems, int injectedFileContentBytes, int volumes, int gigabytes, int ram, int floatingIps, int instances, int injectedFiles, int cores, int securityGroups, int securityGroupRules, int keyPairs) {
+   protected Quota(String id, int metadataItems, int injectedFileContentBytes, int volumes, int gigabytes, int ram, int floatingIps, int instances, int injectedFiles, int cores, int securityGroups, int securityGroupRules, int keyPairs) {
       this.id = checkNotNull(id, "id");
       this.metadataItems = metadataItems;
       this.injectedFileContentBytes = injectedFileContentBytes;
@@ -329,7 +329,7 @@ public class Quotas {
    public boolean equals(Object obj) {
       if (this == obj) return true;
       if (obj == null || getClass() != obj.getClass()) return false;
-      Quotas that = Quotas.class.cast(obj);
+      Quota that = Quota.class.cast(obj);
       return Objects.equal(this.id, that.id)
                && Objects.equal(this.metadataItems, that.metadataItems)
                && Objects.equal(this.injectedFileContentBytes, that.injectedFileContentBytes)

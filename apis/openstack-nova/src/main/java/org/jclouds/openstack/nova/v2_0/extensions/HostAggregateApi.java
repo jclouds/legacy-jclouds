@@ -19,15 +19,15 @@
 package org.jclouds.openstack.nova.v2_0.extensions;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.openstack.nova.v2_0.domain.HostAggregate;
 import org.jclouds.openstack.v2_0.ServiceType;
 import org.jclouds.openstack.v2_0.services.Extension;
-import org.jclouds.rest.annotations.RequestFilters;
+
+import com.google.common.annotations.Beta;
+import com.google.common.collect.FluentIterable;
 
 /**
  * Provide access to Host Aggregates in Nova (alias "OS-AGGREGATES")
@@ -37,29 +37,29 @@ import org.jclouds.rest.annotations.RequestFilters;
  * @see <a href="http://nova.openstack.org/api_ext/ext_aggregates.html"/>
  * @see <a href="http://wiki.openstack.org/host-aggregates"/>
  */
+@Beta
 @Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.AGGREGATES)
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
-@RequestFilters(AuthenticateRequest.class)
 public interface HostAggregateApi {
 
    /**
     * @return the set of host aggregates.
     */
-   Set<? extends HostAggregate> listAggregates();
+   FluentIterable<? extends HostAggregate> list();
 
    /**
     * Retrieves the details of an aggregate, hosts and metadata included.
     *
     * @return the details of the aggregate requested.
     */
-   HostAggregate getAggregate(String id);
+   HostAggregate get(String id);
 
    /**
     * Creates an aggregate, given its name and availability zone.
     * 
     * @return the newly created Aggregate
     */
-   HostAggregate createAggregate(String name, String availabilityZone);
+   HostAggregate createInAvailabilityZone(String name, String availabilityZone);
 
    /**
     * Updates the name of an aggregate.
@@ -74,7 +74,7 @@ public interface HostAggregateApi {
    /**
     * Removes an aggregate.
     */
-   Boolean deleteAggregate(String id);
+   Boolean delete(String id);
 
    /**
     * Adds a host to an aggregate

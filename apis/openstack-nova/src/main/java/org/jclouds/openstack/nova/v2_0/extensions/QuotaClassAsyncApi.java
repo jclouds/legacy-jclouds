@@ -18,8 +18,6 @@
  */
 package org.jclouds.openstack.nova.v2_0.extensions;
 
-import java.util.concurrent.TimeUnit;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
@@ -28,7 +26,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.openstack.nova.v2_0.domain.QuotaClass;
 import org.jclouds.openstack.v2_0.ServiceType;
@@ -41,6 +38,7 @@ import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.binders.BindToJsonPayload;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
+import com.google.common.annotations.Beta;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -51,29 +49,29 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see <a href="http://nova.openstack.org/api/nova.api.openstack.compute.contrib.quota_classes.html"/>
  * @see <a href="http://wiki.openstack.org/QuotaClass"/>
  */
+@Beta
 @Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.QUOTA_CLASSES)
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 @RequestFilters(AuthenticateRequest.class)
 @Path("/os-quota-class-sets")
 public interface QuotaClassAsyncApi {
 
    /**
-    * @see QuotaClassApi#getQuotaClass
+    * @see QuotaClassApi#get
     */
    @GET
    @SelectJson("quota_class_set")
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/{id}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<? extends QuotaClass> getQuotaClass(@PathParam("id") String id);
+   ListenableFuture<? extends QuotaClass> get(@PathParam("id") String id);
 
    /**
-    * @see QuotaClassApi#updateQuotaClass
+    * @see QuotaClassApi#update
     */
    @PUT
    @Path("/{id}")
    @Produces(MediaType.APPLICATION_JSON)
    @MapBinder(BindToJsonPayload.class)
-   ListenableFuture<Boolean> updateQuotaClass(@PathParam("id") String id, @PayloadParam("quota_class_set") QuotaClass quotas);
+   ListenableFuture<Boolean> update(@PathParam("id") String id, @PayloadParam("quota_class_set") QuotaClass quotas);
 
 }

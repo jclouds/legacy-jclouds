@@ -82,9 +82,9 @@ public class BaseNovaApiLiveTest extends BaseComputeServiceContextLiveTest {
    
    protected Server createServerInZone(String zoneId) {
       ServerApi serverApi = novaContext.getApi().getServerApiForZone(zoneId);
-      ServerCreated server = serverApi.createServer("test", imageIdForZone(zoneId), flavorRefForZone(zoneId));
+      ServerCreated server = serverApi.create("test", imageIdForZone(zoneId), flavorRefForZone(zoneId));
       blockUntilServerInState(server.getId(), serverApi, Status.ACTIVE);
-      return serverApi.getServer(server.getId());
+      return serverApi.get(server.getId());
    }
 
    /** 
@@ -93,10 +93,10 @@ public class BaseNovaApiLiveTest extends BaseComputeServiceContextLiveTest {
     */
    protected void blockUntilServerInState(String serverId, ServerApi api, Status status) {
       Server currentDetails = null;
-      for (currentDetails = api.getServer(serverId); currentDetails.getStatus() != status ||
+      for (currentDetails = api.get(serverId); currentDetails.getStatus() != status ||
            (currentDetails.getExtendedStatus().isPresent() && currentDetails.getExtendedStatus().get().getTaskState() != null);
            currentDetails = api
-            .getServer(serverId)) {
+            .get(serverId)) {
          System.out.printf("blocking on status %s%n%s%n", status, currentDetails);
          try {
             Thread.sleep(5 * 1000);
@@ -108,12 +108,12 @@ public class BaseNovaApiLiveTest extends BaseComputeServiceContextLiveTest {
    
    protected String imageIdForZone(String zoneId) {
       ImageApi imageApi = novaContext.getApi().getImageApiForZone(zoneId);
-      return Iterables.getLast(imageApi.listImages()).getId();
+      return Iterables.getLast(imageApi.list().concat()).getId();
    }
 
    protected String flavorRefForZone(String zoneId) {
       FlavorApi flavorApi = novaContext.getApi().getFlavorApiForZone(zoneId);
-      return DEFAULT_FLAVOR_ORDERING.min(flavorApi.listFlavorsInDetail()).getId();
+      return DEFAULT_FLAVOR_ORDERING.min(flavorApi.listInDetail().concat()).getId();
    }
 
    static final Ordering<Flavor> DEFAULT_FLAVOR_ORDERING = new Ordering<Flavor>() {

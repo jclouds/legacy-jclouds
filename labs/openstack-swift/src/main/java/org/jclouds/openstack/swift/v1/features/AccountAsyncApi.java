@@ -18,25 +18,15 @@
  */
 package org.jclouds.openstack.swift.v1.features;
 
-import java.util.Set;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
 import javax.ws.rs.Path;
-import javax.ws.rs.core.MediaType;
 
 import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
-import org.jclouds.openstack.swift.v1.domain.AccountMetadata;
-import org.jclouds.openstack.swift.v1.domain.ContainerMetadata;
+import org.jclouds.openstack.swift.v1.domain.Account;
 import org.jclouds.openstack.swift.v1.functions.ParseAccountMetadataResponseFromHeaders;
-import org.jclouds.openstack.swift.v1.options.ListContainersOptions;
-import org.jclouds.rest.annotations.ExceptionParser;
-import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SkipEncoding;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -54,30 +44,11 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface AccountAsyncApi {
 
    /**
-    * @see AccountApi#getAccountMetadata
+    * @see AccountApi#get
     */
    @HEAD
    @ResponseParser(ParseAccountMetadataResponseFromHeaders.class)
    @Path("/")
-   ListenableFuture<? extends AccountMetadata> getAccountMetadata();
+   ListenableFuture<? extends Account> get();
 
-   /**
-    * @see AccountApi#listContainers()
-    */
-   @GET
-   @Consumes(MediaType.APPLICATION_JSON)
-   @QueryParams(keys = "format", values = "json")
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   @Path("/")
-   ListenableFuture<? extends Set<? extends ContainerMetadata>> listContainers();
-
-   /**
-    * @see AccountApi#listContainers(ListContainersOptions)
-    */
-   @GET
-   @Consumes(MediaType.APPLICATION_JSON)
-   @QueryParams(keys = "format", values = "json")
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   @Path("/")
-   ListenableFuture<? extends Set<? extends ContainerMetadata>> listContainers(ListContainersOptions options);
 }

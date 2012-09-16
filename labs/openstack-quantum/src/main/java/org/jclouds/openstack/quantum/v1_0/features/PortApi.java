@@ -18,7 +18,6 @@
  */
 package org.jclouds.openstack.quantum.v1_0.features;
 
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
@@ -26,6 +25,8 @@ import org.jclouds.openstack.quantum.v1_0.domain.Attachment;
 import org.jclouds.openstack.quantum.v1_0.domain.Port;
 import org.jclouds.openstack.quantum.v1_0.domain.PortDetails;
 import org.jclouds.openstack.quantum.v1_0.domain.Reference;
+
+import com.google.common.collect.FluentIterable;
 
 /**
  * Provides synchronous access to Port operations on the openstack quantum API.
@@ -44,12 +45,12 @@ public interface PortApi {
    /**
     * Returns the list of all ports currently defined in Quantum for the requested network
     */
-   Set<? extends Reference> listReferences();
+   FluentIterable<? extends Reference> listReferences();
 
    /**
     * Returns the set of ports currently defined in Quantum for the requested network.
     */
-   Set<? extends Port> list();
+   FluentIterable<? extends Port> list();
 
    /**
     * Returns a specific port.

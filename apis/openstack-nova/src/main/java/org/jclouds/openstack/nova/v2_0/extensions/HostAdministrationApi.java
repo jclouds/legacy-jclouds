@@ -18,7 +18,6 @@
  */
 package org.jclouds.openstack.nova.v2_0.extensions;
 
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
@@ -27,6 +26,9 @@ import org.jclouds.openstack.nova.v2_0.domain.HostResourceUsage;
 import org.jclouds.openstack.v2_0.ServiceType;
 import org.jclouds.openstack.v2_0.services.Extension;
 
+import com.google.common.annotations.Beta;
+import com.google.common.collect.FluentIterable;
+
 /**
  * Provides asynchronous access to Host Administration features via the REST API.
  * <p/>
@@ -34,6 +36,7 @@ import org.jclouds.openstack.v2_0.services.Extension;
  * @author Adam Lowe
  * @see HostAdministrationAsyncApi
  */
+@Beta
 @Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.HOSTS)
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface HostAdministrationApi {
@@ -43,28 +46,28 @@ public interface HostAdministrationApi {
     *
     * @return the usage information
     */
-   Set<? extends Host> listHosts();
+   FluentIterable<? extends Host> list();
 
    /**
     * Retrieves the physical/usage resource on a specific host
     *
     * @return the usage information
     */
-   Set<? extends HostResourceUsage> getHostResourceUsage(String hostId);
+   FluentIterable<? extends HostResourceUsage> listResourceUsage(String hostId);
 
    /**
     * Allow the specified host to accept new instances.
     *
     * @return true if successful
     */
-   Boolean enableHost(String hostId);
+   boolean enable(String hostId);
 
    /**
     * Prevent the specified host from accepting new instances.
     *
     * @return true if successful
     */
-   Boolean disableHost(String hostId);
+   boolean disable(String hostId);
 
    /**
     * Start host maintenance window.
@@ -73,34 +76,34 @@ public interface HostAdministrationApi {
     *
     * @return true if successful
     */
-   Boolean startHostMaintenance(String hostId);
+   boolean startMaintenance(String hostId);
 
    /**
     * Stop host maintenance window.
     *
     * @return true if successful
     */
-   Boolean stopHostMaintenance(String hostId);
+   boolean stopMaintenance(String hostId);
 
    /**
     * Startup a host.
     *
     * @return true if successful
     */
-   Boolean startupHost(String hostId);
+   boolean startup(String hostId);
 
    /**
     * Shutdown a host.
     *
     * @return true if successful
     */
-   Boolean shutdownHost(String hostId);
+   boolean shutdown(String hostId);
 
    /**
     * Reboot a host.
     *
     * @return true if successful
     */
-   Boolean rebootHost(String hostId);
+   boolean reboot(String hostId);
 
 }

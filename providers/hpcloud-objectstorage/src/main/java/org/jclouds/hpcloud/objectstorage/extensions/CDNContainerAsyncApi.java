@@ -19,7 +19,6 @@
 package org.jclouds.hpcloud.objectstorage.extensions;
 
 import java.net.URI;
-import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -32,10 +31,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.blobstore.functions.ReturnNullOnContainerNotFound;
-import org.jclouds.hpcloud.objectstorage.HPCloudObjectStorageClient;
-import org.jclouds.hpcloud.objectstorage.domain.ContainerCDNMetadata;
+import org.jclouds.hpcloud.objectstorage.HPCloudObjectStorageApi;
+import org.jclouds.hpcloud.objectstorage.domain.CDNContainer;
+import org.jclouds.hpcloud.objectstorage.functions.ParseCDNContainerFromHeaders;
 import org.jclouds.hpcloud.objectstorage.functions.ParseCDNUriFromHeaders;
-import org.jclouds.hpcloud.objectstorage.functions.ParseContainerCDNMetadataFromHeaders;
 import org.jclouds.hpcloud.objectstorage.options.ListCDNContainerOptions;
 import org.jclouds.hpcloud.objectstorage.reference.HPCloudObjectStorageHeaders;
 import org.jclouds.hpcloud.services.HPExtensionCDN;
@@ -47,84 +46,99 @@ import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SkipEncoding;
+import org.jclouds.rest.functions.ReturnEmptyFluentIterableOnNotFoundOr404;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.FluentIterable;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Provides asynchronous access to HP Cloud Object Storage via the REST API.
  * 
- * <p/>All commands return a ListenableFuture of the result. Any exceptions incurred
- * during processing will be backend in an {@link java.util.concurrent.ExecutionException} as documented in
+ * <p/>
+ * All commands return a ListenableFuture of the result. Any exceptions incurred during processing
+ * will be backend in an {@link java.util.concurrent.ExecutionException} as documented in
  * {@link ListenableFuture#get()}.
  * 
- * @see HPCloudObjectStorageClient
- * @see <a href="https://manage.hpcloud.com/pages/build/docs/objectstorage-lvs/api">HP Cloud Object Storage API</a>
+ * @see HPCloudObjectStorageApi
+ * @see <a href="https://manage.hpcloud.com/pages/build/docs/objectstorage-lvs/api">HP Cloud Object
+ *      Storage API</a>
  * @author Jeremy Daggett
  */
 @SkipEncoding('/')
 @RequestFilters(AuthenticateRequest.class)
 @Endpoint(HPExtensionCDN.class)
-public interface HPCloudCDNAsyncClient {
-
+public interface CDNContainerAsyncApi {
    /**
-    * @see HPCloudObjectStorageClient#listCDNContainers(ListCDNContainerOptions...)
+    * @see HPCloudObjectStorageApi#list()
     */
    @Beta
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "format", values = "json")
+   @ExceptionParser(ReturnEmptyFluentIterableOnNotFoundOr404.class)
    @Path("/")
-   ListenableFuture<? extends Set<ContainerCDNMetadata>> listCDNContainers(ListCDNContainerOptions... options);
-   
+   ListenableFuture<FluentIterable<CDNContainer>> list();
+
    /**
-    * @see HPCloudObjectStorageClient#getCDNMetadata(String)
+    * @see HPCloudObjectStorageApi#list(ListCDNContainerOptions)
+    */
+   @Beta
+   @GET
+   @Consumes(MediaType.APPLICATION_JSON)
+   @QueryParams(keys = "format", values = "json")
+   @ExceptionParser(ReturnEmptyFluentIterableOnNotFoundOr404.class)
+   @Path("/")
+   ListenableFuture<FluentIterable<CDNContainer>> list(ListCDNContainerOptions options);
+
+   /**
+    * @see HPCloudObjectStorageApi#get(String)
     */
    @Beta
    @HEAD
-   @ResponseParser(ParseContainerCDNMetadataFromHeaders.class)
+   @ResponseParser(ParseCDNContainerFromHeaders.class)
    @ExceptionParser(ReturnNullOnContainerNotFound.class)
    @Path("/{container}")
-   ListenableFuture<ContainerCDNMetadata> getCDNMetadata(@PathParam("container") String container);
+   ListenableFuture<CDNContainer> get(@PathParam("container") String container);
 
    /**
-    * @see HPCloudObjectStorageClient#enableCDN(String, long)
+    * @see HPCloudObjectStorageApi#enable(String, long)
     */
    @Beta
    @PUT
    @Path("/{container}")
    @Headers(keys = HPCloudObjectStorageHeaders.CDN_ENABLED, values = "True")
    @ResponseParser(ParseCDNUriFromHeaders.class)
-   ListenableFuture<URI> enableCDN(@PathParam("container") String container,
-                                   @HeaderParam(HPCloudObjectStorageHeaders.CDN_TTL) long ttl);
+   ListenableFuture<URI> enable(@PathParam("container") String container,
+            @HeaderParam(HPCloudObjectStorageHeaders.CDN_TTL) long ttl);
 
    /**
-    * @see HPCloudObjectStorageClient#enableCDN(String)
+    * @see HPCloudObjectStorageApi#enable(String)
     */
    @Beta
    @PUT
    @Path("/{container}")
    @Headers(keys = HPCloudObjectStorageHeaders.CDN_ENABLED, values = "True")
    @ResponseParser(ParseCDNUriFromHeaders.class)
-   ListenableFuture<URI> enableCDN(@PathParam("container") String container);
+   ListenableFuture<URI> enable(@PathParam("container") String container);
 
    /**
-    * @see HPCloudObjectStorageClient#updateCDN(String, long)
+    * @see HPCloudObjectStorageApi#update(String, long)
     */
    @Beta
    @POST
    @Path("/{container}")
    @ResponseParser(ParseCDNUriFromHeaders.class)
-   ListenableFuture<URI> updateCDN(@PathParam("container") String container,
-                                   @HeaderParam(HPCloudObjectStorageHeaders.CDN_TTL) long ttl);
+   ListenableFuture<URI> update(@PathParam("container") String container,
+            @HeaderParam(HPCloudObjectStorageHeaders.CDN_TTL) long ttl);
 
    /**
-    * @see HPCloudObjectStorageClient#disableCDN(String)
+    * @see HPCloudObjectStorageApi#disable(String)
     */
    @Beta
    @PUT
    @Path("/{container}")
    @Headers(keys = HPCloudObjectStorageHeaders.CDN_ENABLED, values = "False")
-   ListenableFuture<Boolean> disableCDN(@PathParam("container") String container);
+   ListenableFuture<Boolean> disable(@PathParam("container") String container);
 
 }

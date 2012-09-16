@@ -73,6 +73,7 @@ public class SwiftRestClientModule<S extends SwiftApi, A extends SwiftAsyncApi> 
          .put(ObjectApi.class, ObjectAsyncApi.class)
          .build();
 
+   @SuppressWarnings("unchecked")
    public SwiftRestClientModule() {
       super(TypeToken.class.cast(TypeToken.of(SwiftApi.class)), TypeToken.class.cast(TypeToken.of(SwiftAsyncApi.class)), DELEGATE_MAP);
    }
@@ -102,7 +103,7 @@ public class SwiftRestClientModule<S extends SwiftApi, A extends SwiftAsyncApi> 
             .build(new CacheLoader<String, Set<? extends Extension>>() {
                @Override
                public Set<? extends Extension> load(String key) throws Exception {
-                  return swiftApi.get().getExtensionApiForRegion(key).listExtensions();
+                  return swiftApi.get().getExtensionApiForRegion(key).list();
                }
             });
    }

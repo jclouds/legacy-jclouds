@@ -44,7 +44,7 @@ public class ServerApiLiveTest extends BaseNovaApiLiveTest {
     public void testListServers() throws Exception {
        for (String zoneId : zones) {
           ServerApi api = novaContext.getApi().getServerApiForZone(zoneId);
-          Set<? extends Resource> response = api.listServers();
+          Set<? extends Resource> response = api.list().concat().toImmutableSet();
           assertNotNull(response);
           assertFalse(response.isEmpty());
           assert null != response;
@@ -59,7 +59,7 @@ public class ServerApiLiveTest extends BaseNovaApiLiveTest {
     public void testListServersInDetail() throws Exception {
        for (String zoneId : zones) {
           ServerApi api = novaContext.getApi().getServerApiForZone(zoneId);
-          Set<? extends Server> response = api.listServersInDetail();
+          Set<? extends Server> response = api.listInDetail().concat().toImmutableSet();
           assertNotNull(response);
           assertFalse(response.isEmpty());
           for (Server server : response) {
@@ -72,9 +72,9 @@ public class ServerApiLiveTest extends BaseNovaApiLiveTest {
     public void testGetServerById() throws Exception {
        for (String zoneId : zones) {
           ServerApi api = novaContext.getApi().getServerApiForZone(zoneId);
-          Set<? extends Resource> response = api.listServers();
+          Set<? extends Resource> response = api.list().concat().toImmutableSet();
           for (Resource server : response) {
-             Server details = api.getServer(server.getId());
+             Server details = api.get(server.getId());
              assertEquals(details.getId(), server.getId());
              assertEquals(details.getName(), server.getName());
              assertEquals(details.getLinks(), server.getLinks());

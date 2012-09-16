@@ -21,11 +21,11 @@ package org.jclouds.openstack.nova.v2_0.extensions;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.openstack.nova.v2_0.domain.QuotaClass;
 import org.jclouds.openstack.v2_0.ServiceType;
 import org.jclouds.openstack.v2_0.services.Extension;
-import org.jclouds.rest.annotations.RequestFilters;
+
+import com.google.common.annotations.Beta;
 
 /**
  * Provides synchronous access to Quota Classes via the REST API.
@@ -37,21 +37,21 @@ import org.jclouds.rest.annotations.RequestFilters;
  * @see <a href="http://nova.openstack.org/api/nova.api.openstack.compute.contrib.quota_classes.html"/>
  * @see <a href="http://wiki.openstack.org/QuotaClass"/>
  */
+@Beta
 @Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.QUOTA_CLASSES)
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
-@RequestFilters(AuthenticateRequest.class)
 public interface QuotaClassApi {
 
    /**
     * @return the quota settings for the tenant
     */
-   QuotaClass getQuotaClass(String id);
+   QuotaClass get(String id);
 
    /**
     * Update the quotas for a given tenant
     *
     * @return true if successful
     */
-   Boolean updateQuotaClass(String id, QuotaClass quotas);
+   boolean update(String id, QuotaClass quotas);
 
 }

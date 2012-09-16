@@ -41,76 +41,78 @@ import org.jclouds.rest.annotations.WrapWith;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
 
+import com.google.common.annotations.Beta;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Provide access to Admin Server Actions via REST API
  *
  * @author Adam Lowe
- * @see org.jclouds.openstack.nova.v2_0.extensions.AdminActionsApi
+ * @see org.jclouds.openstack.nova.v2_0.extensions.ServerAdminApi
  */
+@Beta
 @Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.ADMIN_ACTIONS)
 @SkipEncoding( { '/', '=' })
 @RequestFilters(AuthenticateRequest.class)
 @Path("/servers/{id}/action")
-public interface AdminActionsAsyncApi {
+public interface ServerAdminAsyncApi {
 
    /**
-    * @see AdminActionsApi#suspendServer(String)
+    * @see ServerAdminApi#suspend(String)
     */
    @POST
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("{\"suspend\":null}")
    @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
-   ListenableFuture<Boolean> suspendServer(@PathParam("id") String id);
+   ListenableFuture<Boolean> suspend(@PathParam("id") String id);
 
    /**
-    * @see AdminActionsApi#resumeServer(String)
+    * @see ServerAdminApi#resume(String)
     */
    @POST
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("{\"resume\":null}")
    @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
-   ListenableFuture<Boolean> resumeServer(@PathParam("id") String id);
+   ListenableFuture<Boolean> resume(@PathParam("id") String id);
 
    /**
-    * @see AdminActionsApi#migrateServer(String)
+    * @see ServerAdminApi#migrate(String)
     */
    @POST
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("{\"migrate\":null}")
    @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
-   ListenableFuture<Boolean> migrateServer(@PathParam("id") String id);
+   ListenableFuture<Boolean> migrate(@PathParam("id") String id);
 
    /**
-    * @see AdminActionsApi#suspendServer(String)
+    * @see ServerAdminApi#lock(String)
     */
    @POST
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("{\"lock\":null}")
    @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
-   ListenableFuture<Boolean> lockServer(@PathParam("id") String id);
+   ListenableFuture<Boolean> lock(@PathParam("id") String id);
 
    /**
-    * @see AdminActionsApi#unlockServer(String)
+    * @see ServerAdminApi#unlock(String)
     */
    @POST
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("{\"unlock\":null}")
    @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
-   ListenableFuture<Boolean> unlockServer(@PathParam("id") String id);
+   ListenableFuture<Boolean> unlock(@PathParam("id") String id);
 
    /**
-    * @see AdminActionsApi#resetNetworkOfServer(String)
+    * @see ServerAdminApi#resetNetwork(String)
     */
    @POST
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("{\"resetNetwork\":null}")
    @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
-   ListenableFuture<Boolean> resetNetworkOfServer(@PathParam("id") String id);
+   ListenableFuture<Boolean> resetNetwork(@PathParam("id") String id);
 
    /**
-    * @see AdminActionsApi#createBackupOfServer
+    * @see ServerAdminApi#createBackup
     */
    @POST
    @Consumes(MediaType.APPLICATION_JSON)
@@ -118,47 +120,47 @@ public interface AdminActionsAsyncApi {
    @WrapWith("createBackup")
    @ExceptionParser(MapHttp4xxCodesToExceptions.class)
    @ResponseParser(ParseImageIdFromLocationHeader.class)
-   ListenableFuture<String> createBackupOfServer(@PathParam("id") String id,
+   ListenableFuture<String> createBackup(@PathParam("id") String id,
                                                   @PayloadParam("name") String imageName,
                                                   @PayloadParam("backup_type") BackupType backupType,
                                                   @PayloadParam("rotation") int rotation,
                                                   CreateBackupOfServerOptions... options);
 
    /**
-    * @see AdminActionsApi#pauseServer(String)
+    * @see ServerAdminApi#pause(String)
     */
    @POST
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("{\"pause\":null}")
    @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
-   ListenableFuture<Boolean> pauseServer(@PathParam("id") String id);
+   ListenableFuture<Boolean> pause(@PathParam("id") String id);
 
    /**
-    * @see AdminActionsApi#unpauseServer(String)
+    * @see ServerAdminApi#unpause(String)
     */
    @POST
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("{\"unpause\":null}")
    @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
-   ListenableFuture<Boolean> unpauseServer(@PathParam("id") String id);
+   ListenableFuture<Boolean> unpause(@PathParam("id") String id);
 
    /**
-    * @see AdminActionsApi#suspendServer(String)
+    * @see ServerAdminApi#injectNetworkInfo(String)
     */
    @POST
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("{\"injectNetworkInfo\":null}")
    @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
-   ListenableFuture<Boolean> injectNetworkInfoIntoServer(@PathParam("id") String id);
+   ListenableFuture<Boolean> injectNetworkInfo(@PathParam("id") String id);
 
    /**
-    * @see AdminActionsApi#migrateServer(String)
+    * @see ServerAdminApi#liveMigrate(String)
     */
    @POST
    @Produces(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
    @WrapWith("os-migrateLive")
-   ListenableFuture<Boolean> liveMigrateServer(@PathParam("id") String id,
+   ListenableFuture<Boolean> liveMigrate(@PathParam("id") String id,
                                                @PayloadParam("host") String host,
                                                @PayloadParam("block_migration") boolean blockMigration,
                                                @PayloadParam("disk_over_commit") boolean diskOverCommit);

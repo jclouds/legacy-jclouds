@@ -18,13 +18,14 @@
  */
 package org.jclouds.openstack.quantum.v1_0.features;
 
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.quantum.v1_0.domain.Network;
 import org.jclouds.openstack.quantum.v1_0.domain.NetworkDetails;
 import org.jclouds.openstack.quantum.v1_0.domain.Reference;
+
+import com.google.common.collect.FluentIterable;
 
 /**
  * Provides synchronous access to Network operations on the openstack quantum API.
@@ -44,12 +45,12 @@ public interface NetworkApi {
     * Returns the list of all networks currently defined in Quantum for the current tenant. The list provides the unique
     * identifier of each network configured for the tenant.
     */
-   Set<? extends Reference> listReferences();
+   FluentIterable<? extends Reference> listReferences();
 
    /**
     * Returns all networks currently defined in Quantum for the current tenant.
     */
-   Set<? extends Network> list();
+   FluentIterable<? extends Network> list();
 
    /**
     * Returns the specific network.

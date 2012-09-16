@@ -21,11 +21,11 @@ package org.jclouds.openstack.nova.v2_0.extensions;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
-import org.jclouds.openstack.nova.v2_0.domain.Quotas;
+import org.jclouds.openstack.nova.v2_0.domain.Quota;
 import org.jclouds.openstack.v2_0.ServiceType;
 import org.jclouds.openstack.v2_0.services.Extension;
-import org.jclouds.rest.annotations.RequestFilters;
+
+import com.google.common.annotations.Beta;
 
 /**
  * The quotas extension enables limiters placed on the resources used per tenant (project) for virtual instances. It is
@@ -38,26 +38,26 @@ import org.jclouds.rest.annotations.RequestFilters;
  * @see QuotaAsyncApi
  * @see <a href="http://nova.openstack.org/api_ext/ext_quotas.html"/>
  */
+@Beta
 @Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.QUOTAS)
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
-@RequestFilters(AuthenticateRequest.class)
 public interface QuotaApi {
 
    /**
     * @return the quota settings for the tenant
     */
-   Quotas getQuotasForTenant(String tenantId);
+   Quota getByTenant(String tenantId);
 
    /**
     * Update the quotas for a given tenant
     *
     * @return true if successful
     */
-   Boolean updateQuotasForTenant(String tenantId, Quotas quotas);
+   boolean updateQuotaOfTenant(Quota quota, String tenantId);
 
    /**
     * @return the set of default quotas for the tenant
     */
-   Quotas getDefaultQuotasForTenant(String tenantId);
+   Quota getDefaultsForTenant(String tenantId);
 
 }

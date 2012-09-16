@@ -61,7 +61,7 @@ public class RemoveFloatingIpFromNodeAndDeallocate implements Function<ZoneAndId
       FloatingIPApi floatingIpApi = novaApi.getFloatingIPExtensionForZone(id.getZone()).get();
       for (FloatingIP ip : floatingIpCache.getUnchecked(id)) {
          logger.debug(">> removing floatingIp(%s) from node(%s)", ip, id);
-         floatingIpApi.removeFloatingIPFromServer(ip.getIp(), id.getId());
+         floatingIpApi.removeFromServer(ip.getIp(), id.getId());
          logger.debug(">> deallocating floatingIp(%s)", ip);
          floatingIpApi.deallocate(ip.getId());
       }

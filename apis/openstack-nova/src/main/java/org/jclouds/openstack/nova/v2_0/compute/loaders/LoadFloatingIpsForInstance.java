@@ -30,7 +30,6 @@ import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.cache.CacheLoader;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 
 /**
  * Each zone may or may not have the floating ip function present. In order to safely proceed, we
@@ -53,7 +52,7 @@ public class LoadFloatingIpsForInstance extends CacheLoader<ZoneAndId, Iterable<
       String zone = key.getZone();
       Optional<? extends FloatingIPApi> ipApiOptional = api.getFloatingIPExtensionForZone(zone);
       if (ipApiOptional.isPresent()) {
-         return Iterables.filter(ipApiOptional.get().listFloatingIPs(),
+         return ipApiOptional.get().list().filter(
                   new Predicate<FloatingIP>() {
                      @Override
                      public boolean apply(FloatingIP input) {

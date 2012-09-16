@@ -32,8 +32,8 @@ import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.openstack.nova.v2_0.NovaApi;
 import org.jclouds.openstack.nova.v2_0.NovaAsyncApi;
-import org.jclouds.openstack.nova.v2_0.extensions.AdminActionsApi;
-import org.jclouds.openstack.nova.v2_0.extensions.AdminActionsAsyncApi;
+import org.jclouds.openstack.nova.v2_0.extensions.ServerAdminApi;
+import org.jclouds.openstack.nova.v2_0.extensions.ServerAdminAsyncApi;
 import org.jclouds.openstack.nova.v2_0.extensions.ExtensionNamespaces;
 import org.jclouds.openstack.nova.v2_0.extensions.FlavorExtraSpecsApi;
 import org.jclouds.openstack.nova.v2_0.extensions.FlavorExtraSpecsAsyncApi;
@@ -106,7 +106,7 @@ public class NovaRestClientModule<S extends NovaApi, A extends NovaAsyncApi> ext
          .put(VolumeApi.class, VolumeAsyncApi.class)
          .put(VirtualInterfaceApi.class, VirtualInterfaceAsyncApi.class)
          .put(ServerWithSecurityGroupsApi.class, ServerWithSecurityGroupsAsyncApi.class)
-         .put(AdminActionsApi.class, AdminActionsAsyncApi.class)
+         .put(ServerAdminApi.class, ServerAdminAsyncApi.class)
          .put(HostAggregateApi.class, HostAggregateAsyncApi.class)
          .put(FlavorExtraSpecsApi.class, FlavorExtraSpecsAsyncApi.class)
          .put(QuotaApi.class, QuotaAsyncApi.class)
@@ -114,6 +114,7 @@ public class NovaRestClientModule<S extends NovaApi, A extends NovaAsyncApi> ext
          .put(VolumeTypeApi.class, VolumeTypeAsyncApi.class)
          .build();
    
+   @SuppressWarnings("unchecked")
    public NovaRestClientModule() {
       super(TypeToken.class.cast(TypeToken.of(NovaApi.class)), TypeToken.class.cast(TypeToken.of(NovaAsyncApi.class)), DELEGATE_MAP);
    }
@@ -172,7 +173,7 @@ public class NovaRestClientModule<S extends NovaApi, A extends NovaAsyncApi> ext
             .build(new CacheLoader<String, Set<? extends Extension>>() {
                @Override
                public Set<? extends Extension> load(String key) throws Exception {
-                  return novaApi.get().getExtensionApiForZone(key).listExtensions();
+                  return novaApi.get().getExtensionApiForZone(key).list();
                }
             });
    }

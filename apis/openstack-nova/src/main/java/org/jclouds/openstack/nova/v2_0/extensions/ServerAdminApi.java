@@ -26,59 +26,62 @@ import org.jclouds.openstack.nova.v2_0.options.CreateBackupOfServerOptions;
 import org.jclouds.openstack.v2_0.ServiceType;
 import org.jclouds.openstack.v2_0.services.Extension;
 
+import com.google.common.annotations.Beta;
+
 /**
  * Provide additional actions for servers:
  * 'suspend', 'resume', 'migrate', 'lock', 'unlock', 'resetNetwork', 'createBackup', 'pause', 'migrateLive',
  * 'injectNetworkInfo', 'unpause'
  *
  * @author Adam Lowe
- * @see org.jclouds.openstack.nova.v2_0.extensions.AdminActionsAsyncApi
+ * @see org.jclouds.openstack.nova.v2_0.extensions.ServerAdminAsyncApi
  */
+@Beta
 @Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.ADMIN_ACTIONS)
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
-public interface AdminActionsApi {
+public interface ServerAdminApi {
 
    /**
     * Suspend a server.
     *
     * @param id id of the server
     */
-   Boolean suspendServer(String id);
+   Boolean suspend(String id);
 
    /**
     * Resume a server.
     *
     * @param id id of the server
     */
-   Boolean resumeServer(String id);
+   Boolean resume(String id);
 
    /**
     * Migrate a server.
     *
     * @param id id of the server
     */
-   Boolean migrateServer(String id);
+   Boolean migrate(String id);
 
    /**
     * Lock a server.
     *
     * @param id id of the server
     */
-   Boolean lockServer(String id);
+   Boolean lock(String id);
 
    /**
     * Unlock a server.
     *
     * @param id id of the server
     */
-   Boolean unlockServer(String id);
+   Boolean unlock(String id);
 
    /**
     * Reset network of a server.
     *
     * @param id id of the server
     */
-   Boolean resetNetworkOfServer(String id);
+   Boolean resetNetwork(String id);
 
    /**
     * Create backup of a server.
@@ -90,21 +93,21 @@ public interface AdminActionsApi {
     * @param options    optional rotation and/or metadata parameters
     * @return the id of the newly created image
     */
-   String createBackupOfServer(String id, String imageName, BackupType backupType, int rotation, CreateBackupOfServerOptions... options);
+   String createBackup(String id, String imageName, BackupType backupType, int rotation, CreateBackupOfServerOptions... options);
 
    /**
     * Pause a server.
     *
     * @param id id of the server
     */
-   Boolean pauseServer(String id);
+   Boolean pause(String id);
 
    /**
     * Unpause a server.
     *
     * @param id id of the server
     */
-   Boolean unpauseServer(String id);
+   Boolean unpause(String id);
 
 
    /**
@@ -112,12 +115,12 @@ public interface AdminActionsApi {
     *
     * @param id id of the server
     */
-   Boolean liveMigrateServer(String id, String host, boolean blockMigration, boolean diskOverCommit);
+   Boolean liveMigrate(String id, String host, boolean blockMigration, boolean diskOverCommit);
 
    /**
     * Inject network info into a server.
     *
     * @param id id of the server
     */
-   Boolean injectNetworkInfoIntoServer(String id);
+   Boolean injectNetworkInfo(String id);
 }

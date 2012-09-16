@@ -28,30 +28,26 @@ import org.jclouds.http.options.BaseHttpRequestOptions;
 /**
  * Options used to control paginated results (aka list commands).
  * 
- * @see <a href="http://docs.rackspacecloud.com/servers/api/cs-devguide-latest.pdf" />
+ * @see <a href=
+ *      "http://docs.openstack.org/api/openstack-compute/2/content/Paginated_Collections-d1e664.html"
+ *      />
  * @author Adrian Cole
  */
-public class BaseListOptions extends BaseHttpRequestOptions {
-   public static final BaseListOptions NONE = new BaseListOptions();
-
+public class PaginationOptions extends BaseHttpRequestOptions {
    /**
     * Only return objects changed since this time.
     */
-   public BaseListOptions changesSince(Date ifModifiedSince) {
-      this.queryParameters.put("changes-since", checkNotNull(ifModifiedSince, "ifModifiedSince")
-               .getTime()
-               / 1000 + "");
+   public PaginationOptions changesSince(Date ifModifiedSince) {
+      this.queryParameters.put("changes-since", checkNotNull(ifModifiedSince, "ifModifiedSince").getTime() / 1000 + "");
       return this;
    }
 
    /**
-    * Indicates where to begin listing. The list will only include objects that occur after the
-    * offset. This is convenient for pagination: To get the next page of results use the last result
-    * number of the current page + current page offset as the offset.
+    * The marker parameter is the ID of the last item in the previous list. Items are sorted by
+    * create time in descending order. When a create time is not available they are sorted by ID.
     */
-   public BaseListOptions startAt(long offset) {
-      checkState(offset >= 0, "offset must be >= 0");
-      queryParameters.put("offset", Long.toString(checkNotNull(offset, "offset")));
+   public PaginationOptions marker(String marker) {
+      queryParameters.put("marker", checkNotNull(marker, "marker"));
       return this;
    }
 
@@ -63,7 +59,7 @@ public class BaseListOptions extends BaseHttpRequestOptions {
     * <p/>
     * Note that list operations never return itemNotFound (404) faults.
     */
-   public BaseListOptions maxResults(int limit) {
+   public PaginationOptions limit(int limit) {
       checkState(limit >= 0, "limit must be >= 0");
       checkState(limit <= 10000, "limit must be <= 10000");
       queryParameters.put("limit", Integer.toString(limit));
@@ -73,26 +69,26 @@ public class BaseListOptions extends BaseHttpRequestOptions {
    public static class Builder {
 
       /**
-       * @see BaseListOptions#startAt(long)
+       * @see PaginationOptions#marker(String)
        */
-      public static BaseListOptions startAt(long prefix) {
-         BaseListOptions options = new BaseListOptions();
-         return options.startAt(prefix);
+      public static PaginationOptions marker(String marker) {
+         PaginationOptions options = new PaginationOptions();
+         return options.marker(marker);
       }
 
       /**
-       * @see BaseListOptions#maxResults
+       * @see PaginationOptions#limit
        */
-      public static BaseListOptions maxResults(int maxKeys) {
-         BaseListOptions options = new BaseListOptions();
-         return options.maxResults(maxKeys);
+      public static PaginationOptions limit(int limit) {
+         PaginationOptions options = new PaginationOptions();
+         return options.limit(limit);
       }
 
       /**
-       * @see BaseListOptions#changesSince(Date)
+       * @see PaginationOptions#changesSince(Date)
        */
-      public static BaseListOptions changesSince(Date since) {
-         BaseListOptions options = new BaseListOptions();
+      public static PaginationOptions changesSince(Date since) {
+         PaginationOptions options = new PaginationOptions();
          return options.changesSince(since);
       }
 

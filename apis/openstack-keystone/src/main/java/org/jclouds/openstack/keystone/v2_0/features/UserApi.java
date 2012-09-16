@@ -21,9 +21,12 @@ package org.jclouds.openstack.keystone.v2_0.features;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.collect.PagedIterable;
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.openstack.keystone.v2_0.domain.PaginatedCollection;
 import org.jclouds.openstack.keystone.v2_0.domain.Role;
 import org.jclouds.openstack.keystone.v2_0.domain.User;
+import org.jclouds.openstack.v2_0.options.PaginationOptions;
 
 import com.google.common.annotations.Beta;
 
@@ -48,7 +51,9 @@ public interface UserApi {
     * 
     * @return the list of users
     */
-   Set<? extends User> list();
+   PagedIterable<? extends User> list();
+
+   PaginatedCollection<? extends User> list(PaginationOptions options);
 
    /**
     * Retrieve information about a user, by user ID

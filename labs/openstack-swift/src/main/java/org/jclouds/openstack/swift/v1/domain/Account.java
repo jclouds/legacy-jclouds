@@ -12,7 +12,7 @@ import com.google.common.base.Objects.ToStringHelper;
  * @author Adrian Cole
  * @see <a href="http://docs.openstack.org/api/openstack-object-storage/1.0/content/retrieve-account-metadata.html">api doc</a>
  */
-public class AccountMetadata {
+public class Account {
 
    public static Builder builder() {
       return new Builder();
@@ -27,7 +27,7 @@ public class AccountMetadata {
       protected long bytesUsed;
 
       /**
-       * @see AccountMetadata#getContainerCount()
+       * @see Account#getContainerCount()
        */
       public Builder containerCount(int containerCount) {
          this.containerCount = containerCount;
@@ -35,18 +35,18 @@ public class AccountMetadata {
       }
 
       /**
-       * @see AccountMetadata#getBytesUsed()
+       * @see Account#getBytesUsed()
        */
       public Builder bytesUsed(long bytesUsed) {
          this.bytesUsed = bytesUsed;
          return this;
       }
 
-      public AccountMetadata build() {
-         return new AccountMetadata(containerCount, bytesUsed);
+      public Account build() {
+         return new Account(containerCount, bytesUsed);
       }
 
-      public Builder fromAccountMetadata(AccountMetadata from) {
+      public Builder fromAccountMetadata(Account from) {
          return containerCount(from.getContainerCount()).bytesUsed(from.getBytesUsed());
       }
    }
@@ -55,7 +55,7 @@ public class AccountMetadata {
    protected long bytesUsed;
 
    @ConstructorProperties({"containerCount", "bytesUsed"})
-   protected AccountMetadata(int containerCount, long bytesUsed) {
+   protected Account(int containerCount, long bytesUsed) {
       this.containerCount = containerCount;
       this.bytesUsed = bytesUsed;
    }
@@ -80,8 +80,8 @@ public class AccountMetadata {
       if (this == object) {
          return true;
       }
-      if (object instanceof AccountMetadata) {
-         final AccountMetadata other = AccountMetadata.class.cast(object);
+      if (object instanceof Account) {
+         final Account other = Account.class.cast(object);
          return equal(getContainerCount(), other.getContainerCount()) && equal(getBytesUsed(), other.getBytesUsed());
       } else {
          return false;

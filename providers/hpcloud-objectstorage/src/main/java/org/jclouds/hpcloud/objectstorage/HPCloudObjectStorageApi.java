@@ -18,15 +18,18 @@
  */
 package org.jclouds.hpcloud.objectstorage;
 
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.hpcloud.objectstorage.extensions.HPCloudCDNClient;
+import org.jclouds.hpcloud.objectstorage.extensions.CDNContainerApi;
+import org.jclouds.location.Region;
 import org.jclouds.openstack.swift.CommonSwiftClient;
 import org.jclouds.rest.annotations.Delegate;
 
 import com.google.common.base.Optional;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.inject.Provides;
 
 /**
  * Provides synchronous access to HP Cloud Object Storage via the REST API.
@@ -36,17 +39,24 @@ import com.google.common.util.concurrent.ListenableFuture;
  * will be backend in an {@link java.util.concurrent.ExecutionException} as documented in
  * {@link ListenableFuture#get()}.
  * 
- * @see org.jclouds.hpcloud.objectstorage.HPCloudObjectStorageClient
+ * @see HPCloudObjectStorageAsyncApi
  * @see <a href="https://manage.hpcloud.com/pages/build/docs/objectstorage-lvs/api">HP Cloud Object
  *      Storage API</a>
  * @author Jeremy Daggett
  */
 @Timeout(duration = 120, timeUnit = TimeUnit.SECONDS)
-public interface HPCloudObjectStorageClient extends CommonSwiftClient {
+public interface HPCloudObjectStorageApi extends CommonSwiftClient {
+   /**
+    * 
+    * @return the Region codes configured
+    */
+   @Provides
+   @Region
+   Set<String> getConfiguredRegions();
 
    /**
     * Provides synchronous access to CDN features.
     */
    @Delegate
-   Optional<HPCloudCDNClient> getCDNExtension();
+   Optional<CDNContainerApi> getCDNExtension();
 }

@@ -48,7 +48,7 @@ public class QuotaClassApiExpectTest extends BaseNovaApiExpectTest {
             authenticatedGET().endpoint(endpoint).build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/quota_class.json")).build()).getQuotaClassExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertEquals(api.getQuotaClass("jcloudstestquotas"), getTestQuotas());
+      assertEquals(api.get("jcloudstestquotas"), getTestQuotas());
    }
 
    public void testGetQuotasFailsTenantNotFound() throws Exception {
@@ -57,7 +57,7 @@ public class QuotaClassApiExpectTest extends BaseNovaApiExpectTest {
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             authenticatedGET().endpoint(endpoint).build(),
             HttpResponse.builder().statusCode(404).build()).getQuotaClassExtensionForZone("az-1.region-a.geo-1").get();
-      assertNull(api.getQuotaClass("jcloudstestquotas"));
+      assertNull(api.get("jcloudstestquotas"));
    }
 
    public void testUpdateQuotas() throws Exception {
@@ -70,7 +70,7 @@ public class QuotaClassApiExpectTest extends BaseNovaApiExpectTest {
                   .build(),
             HttpResponse.builder().statusCode(200).build()).getQuotaClassExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertTrue(api.updateQuotaClass("myclass", getTestQuotas()));
+      assertTrue(api.update("myclass", getTestQuotas()));
    }
 
    @Test(expectedExceptions = ResourceNotFoundException.class)
@@ -84,7 +84,7 @@ public class QuotaClassApiExpectTest extends BaseNovaApiExpectTest {
                   .build(),
             HttpResponse.builder().statusCode(404).build()).getQuotaClassExtensionForZone("az-1.region-a.geo-1").get();
 
-      api.updateQuotaClass("jcloudstestquotas", getTestQuotas());
+      api.update("jcloudstestquotas", getTestQuotas());
    }
 
    public static QuotaClass getTestQuotas() {

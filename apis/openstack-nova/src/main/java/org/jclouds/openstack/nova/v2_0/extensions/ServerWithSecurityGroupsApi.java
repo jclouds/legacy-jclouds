@@ -25,6 +25,8 @@ import org.jclouds.openstack.nova.v2_0.domain.ServerWithSecurityGroups;
 import org.jclouds.openstack.v2_0.ServiceType;
 import org.jclouds.openstack.v2_0.services.Extension;
 
+import com.google.common.annotations.Beta;
+
 /**
  * Provides synchronous access to Server details including security group, referred to as the CREATESERVEREXT extension
  * in the nova documentation
@@ -37,6 +39,7 @@ import org.jclouds.openstack.v2_0.services.Extension;
  * @see ServerWithSecurityGroupsAsyncApi
  * @see <a href="http://nova.openstack.org/api/nova.api.openstack.compute.contrib.createserverext.html"/>
  */
+@Beta
 @Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.CREATESERVEREXT)
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface ServerWithSecurityGroupsApi {
@@ -47,6 +50,6 @@ public interface ServerWithSecurityGroupsApi {
     * @param id id of the server
     * @return server or null if not found
     */
-   ServerWithSecurityGroups getServer(String id);
+   ServerWithSecurityGroups get(String id);
 
 }

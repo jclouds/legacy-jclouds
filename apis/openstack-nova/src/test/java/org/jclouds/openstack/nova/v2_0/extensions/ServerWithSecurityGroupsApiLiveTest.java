@@ -56,8 +56,8 @@ public class ServerWithSecurityGroupsApiLiveTest extends BaseNovaApiLiveTest {
    public void testGetServer() {
       if (apiOption.isPresent()) {
 
-         for (Resource server : serverApi.listServers()) {
-            ServerWithSecurityGroups serverWithGroups = apiOption.get().getServer(server.getId());
+         for (Resource server : serverApi.list().concat()) {
+            ServerWithSecurityGroups serverWithGroups = apiOption.get().get(server.getId());
             assertEquals(serverWithGroups.getId(), server.getId());
             assertEquals(serverWithGroups.getName(), server.getName());
             assertNotNull(serverWithGroups.getSecurityGroupNames());
@@ -68,12 +68,12 @@ public class ServerWithSecurityGroupsApiLiveTest extends BaseNovaApiLiveTest {
          try {
             testServer = createServerInZone(zone);
             
-            ServerWithSecurityGroups results = apiOption.get().getServer(testServer.getId());
+            ServerWithSecurityGroups results = apiOption.get().get(testServer.getId());
             assertEquals(results.getId(), testServer.getId());
             assertEquals(results.getSecurityGroupNames(), ImmutableSet.of("default"));
          } finally {
             if (testServer != null) {
-               serverApi.deleteServer(testServer.getId());
+               serverApi.delete(testServer.getId());
             }
          }
       }

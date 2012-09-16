@@ -27,7 +27,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.hpcloud.objectstorage.extensions.HPCloudCDNAsyncClient;
+import org.jclouds.hpcloud.objectstorage.extensions.CDNContainerAsyncApi;
+import org.jclouds.location.Region;
 import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.openstack.swift.CommonSwiftAsyncClient;
 import org.jclouds.openstack.swift.Storage;
@@ -43,6 +44,7 @@ import org.jclouds.rest.annotations.SkipEncoding;
 
 import com.google.common.base.Optional;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.inject.Provides;
 
 /**
  * Provides asynchronous access to HP Cloud Object Storage via the REST API.
@@ -52,7 +54,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * will be backend in an {@link java.util.concurrent.ExecutionException} as documented in
  * {@link ListenableFuture#get()}.
  * 
- * @see HPCloudObjectStorageClient
+ * @see HPCloudObjectStorageApi
  * @see <a href="https://manage.hpcloud.com/pages/build/docs/objectstorage-lvs/api">HP Cloud Object
  *      Storage API</a>
  * @author Jeremy Daggett
@@ -60,7 +62,14 @@ import com.google.common.util.concurrent.ListenableFuture;
 @SkipEncoding('/')
 @RequestFilters(AuthenticateRequest.class)
 @Endpoint(Storage.class)
-public interface HPCloudObjectStorageAsyncClient extends CommonSwiftAsyncClient {
+public interface HPCloudObjectStorageAsyncApi extends CommonSwiftAsyncClient {
+   /**
+    * 
+    * @return the Region codes configured
+    */
+   @Provides
+   @Region
+   Set<String> getConfiguredRegions();
 
    /**
     * @see org.jclouds.openstack.swift.CommonSwiftClient#listContainers
@@ -80,9 +89,9 @@ public interface HPCloudObjectStorageAsyncClient extends CommonSwiftAsyncClient 
    ListenableFuture<Boolean> deleteContainerIfEmpty(@PathParam("container") String container);
 
    /**
-    * Provides synchronous access to CDN features.
+    * Provides asynchronous access to CDN features.
     */
    @Delegate
-   Optional<HPCloudCDNAsyncClient> getCDNExtension();
+   Optional<CDNContainerAsyncApi> getCDNExtension();
 
 }

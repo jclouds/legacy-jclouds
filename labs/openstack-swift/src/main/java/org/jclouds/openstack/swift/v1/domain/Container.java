@@ -19,14 +19,14 @@ import com.google.common.base.Objects.ToStringHelper;
  *      href="http://docs.openstack.org/api/openstack-object-storage/1.0/content/s_listcontainers.html">api
  *      doc</a>
  */
-public class ContainerMetadata implements Comparable<ContainerMetadata> {
+public class Container implements Comparable<Container> {
 
    public static Builder builder() {
       return new Builder();
    }
 
    public Builder toBuilder() {
-      return builder().fromAccountMetadata(this);
+      return builder().fromContainer(this);
    }
 
    public static class Builder {
@@ -35,7 +35,7 @@ public class ContainerMetadata implements Comparable<ContainerMetadata> {
       protected int bytes;
 
       /**
-       * @see ContainerMetadata#getName()
+       * @see Container#getName()
        */
       public Builder name(String name) {
          this.name = checkNotNull(name, "name");
@@ -43,7 +43,7 @@ public class ContainerMetadata implements Comparable<ContainerMetadata> {
       }
 
       /**
-       * @see ContainerMetadata#getCount()
+       * @see Container#getCount()
        */
       public Builder count(int count) {
          this.count = count;
@@ -51,18 +51,18 @@ public class ContainerMetadata implements Comparable<ContainerMetadata> {
       }
 
       /**
-       * @see ContainerMetadata#getBytes()
+       * @see Container#getBytes()
        */
       public Builder bytes(int bytes) {
          this.bytes = bytes;
          return this;
       }
 
-      public ContainerMetadata build() {
-         return new ContainerMetadata(name, count, bytes);
+      public Container build() {
+         return new Container(name, count, bytes);
       }
 
-      public Builder fromAccountMetadata(ContainerMetadata from) {
+      public Builder fromContainer(Container from) {
          return name(from.getName()).count(from.getCount()).bytes(from.getBytes());
       }
    }
@@ -72,7 +72,7 @@ public class ContainerMetadata implements Comparable<ContainerMetadata> {
    protected int bytes;
 
    @ConstructorProperties({"name", "count", "bytes"})
-   protected ContainerMetadata(String name, int count, int bytes) {
+   protected Container(String name, int count, int bytes) {
       this.name = checkNotNull(name, "name");
       this.count = count;
       this.bytes = bytes;
@@ -106,8 +106,8 @@ public class ContainerMetadata implements Comparable<ContainerMetadata> {
       if (this == object) {
          return true;
       }
-      if (object instanceof ContainerMetadata) {
-         final ContainerMetadata other = ContainerMetadata.class.cast(object);
+      if (object instanceof Container) {
+         final Container other = Container.class.cast(object);
          return equal(getName(), other.getName()) && equal(getCount(), other.getCount())
                   && equal(getBytes(), other.getBytes());
       } else {
@@ -130,7 +130,7 @@ public class ContainerMetadata implements Comparable<ContainerMetadata> {
    }
 
    @Override
-   public int compareTo(ContainerMetadata that) {
+   public int compareTo(Container that) {
       if (that == null)
          return 1;
       if (this == that)
