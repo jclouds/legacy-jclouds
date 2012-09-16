@@ -32,10 +32,12 @@ import org.jclouds.fujitsu.fgcp.domain.ServerType;
 import org.jclouds.fujitsu.fgcp.domain.UsageInfo;
 import org.jclouds.fujitsu.fgcp.domain.VSystem;
 import org.jclouds.fujitsu.fgcp.domain.VSystemDescriptor;
+import org.jclouds.javax.annotation.Nullable;
 
 /**
  * API relating to the virtual data center.
  * 
+ * @see VirtualDCAsyncApi
  * @author Dies Koper
  */
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
@@ -51,8 +53,7 @@ public interface VirtualDCApi {
 
    Set<DiskImage> listDiskImages();
 
-   Set<DiskImage> listDiskImages(String serverCategory,
-         String vsysDescriptorId);
+   Set<DiskImage> listDiskImages(@Nullable String serverCategory, String vsysDescriptorId);
 
    Map<PublicIP, String> listPublicIPs();
 

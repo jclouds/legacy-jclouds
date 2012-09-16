@@ -41,6 +41,7 @@ import org.jclouds.fujitsu.fgcp.domain.VSystem;
 import org.jclouds.fujitsu.fgcp.domain.VSystemDescriptor;
 import org.jclouds.fujitsu.fgcp.filters.RequestAuthenticator;
 import org.jclouds.fujitsu.fgcp.reference.RequestParameters;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.PayloadParams;
 import org.jclouds.rest.annotations.QueryParams;
@@ -102,7 +103,7 @@ public interface VirtualDCAsyncApi {
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "ListDiskImage")
    ListenableFuture<Set<DiskImage>> listDiskImages(
-         @QueryParam("serverCategory") String serverCategory,
+         @Nullable @QueryParam("serverCategory") String serverCategory,
          @QueryParam("vsysDescriptorId") String vsysDescriptorId);
 
    /**
