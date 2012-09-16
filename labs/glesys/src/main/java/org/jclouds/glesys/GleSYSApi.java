@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.glesys.features.ArchiveApi;
 import org.jclouds.glesys.features.DomainApi;
-import org.jclouds.glesys.features.EmailApi;
+import org.jclouds.glesys.features.EmailAccountApi;
 import org.jclouds.glesys.features.IpApi;
 import org.jclouds.glesys.features.ServerApi;
 import org.jclouds.rest.annotations.Delegate;
@@ -67,6 +67,6 @@ public interface GleSYSApi {
     * Provides synchronous access to E-Mail features.
     */
    @Delegate
-   EmailApi getEmailApi();
+   EmailAccountApi getEmailAccountApi();
 
 }

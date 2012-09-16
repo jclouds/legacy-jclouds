@@ -31,7 +31,7 @@ import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.json.internal.GsonWrapper;
 
 import com.google.common.base.Function;
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
 import com.google.inject.TypeLiteral;
@@ -40,7 +40,7 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 @Singleton
-public class ParseTemplatesFromHttpResponse implements Function<HttpResponse, Set<OSTemplate>> {
+public class ParseTemplatesFromHttpResponse implements Function<HttpResponse, FluentIterable<OSTemplate>> {
    private final ParseFirstJsonValueNamed<Map<String, Set<OSTemplate>>> parser;
 
    @Inject
@@ -50,10 +50,10 @@ public class ParseTemplatesFromHttpResponse implements Function<HttpResponse, Se
       }, "templates");
    }
 
-   public Set<OSTemplate> apply(HttpResponse response) {
+   public FluentIterable<OSTemplate> apply(HttpResponse response) {
       checkNotNull(response, "response");
       Map<String, Set<OSTemplate>> toParse = parser.apply(response);
       checkNotNull(toParse, "parsed result from %s", response);
-      return ImmutableSet.copyOf(Iterables.concat(toParse.values()));
+      return FluentIterable.from(Iterables.concat(toParse.values()));
    }
 }

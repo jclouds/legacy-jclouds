@@ -24,87 +24,87 @@ import org.jclouds.http.options.BaseHttpRequestOptions;
  * 
  * @author Adam Lowe
  */
-public class EditServerOptions extends BaseHttpRequestOptions {
+public class UpdateServerOptions extends BaseHttpRequestOptions {
 
    public static class Builder {
       /**
-       * @see org.jclouds.glesys.options.EditServerOptions#diskSizeGB
+       * @see org.jclouds.glesys.options.UpdateServerOptions#diskSizeGB
        */
-      public static EditServerOptions disksizeGB(int disksizeGB) {
-         return new EditServerOptions().diskSizeGB(disksizeGB);
+      public static UpdateServerOptions disksizeGB(int disksizeGB) {
+         return new UpdateServerOptions().diskSizeGB(disksizeGB);
       }
       
       /**
-       * @see org.jclouds.glesys.options.EditServerOptions#memorySizeMB
+       * @see org.jclouds.glesys.options.UpdateServerOptions#memorySizeMB
        */
-      public static EditServerOptions memorysizeMB(int memorysizeMB) {
-         return new EditServerOptions().memorySizeMB(memorysizeMB);
+      public static UpdateServerOptions memorysizeMB(int memorysizeMB) {
+         return new UpdateServerOptions().memorySizeMB(memorysizeMB);
       }
 
       /**
-       * @see org.jclouds.glesys.options.EditServerOptions#cpuCores
+       * @see org.jclouds.glesys.options.UpdateServerOptions#cpuCores
        */
-      public static EditServerOptions cpucores(int cpucores) {
-         EditServerOptions options = new EditServerOptions();
+      public static UpdateServerOptions cpucores(int cpucores) {
+         UpdateServerOptions options = new UpdateServerOptions();
          return options.cpuCores(cpucores);
       }
 
       /**
-       * @see org.jclouds.glesys.options.EditServerOptions#transferGB
+       * @see org.jclouds.glesys.options.UpdateServerOptions#transferGB
        */
-      public static EditServerOptions transferGB(int transferGB) {
-         return new EditServerOptions().transferGB(transferGB);
+      public static UpdateServerOptions transferGB(int transferGB) {
+         return new UpdateServerOptions().transferGB(transferGB);
       }
       
       /**
-       * @see org.jclouds.glesys.options.EditServerOptions#hostname
+       * @see org.jclouds.glesys.options.UpdateServerOptions#hostname
        */
-      public static EditServerOptions hostname(String hostname) {
-         EditServerOptions options = new EditServerOptions();
+      public static UpdateServerOptions hostname(String hostname) {
+         UpdateServerOptions options = new UpdateServerOptions();
          return options.hostname(hostname);
       }
 
       /**
-       * @see org.jclouds.glesys.options.EditServerOptions#description
+       * @see org.jclouds.glesys.options.UpdateServerOptions#description
        */
-      public static EditServerOptions description(String description) {
-         EditServerOptions options = new EditServerOptions();
+      public static UpdateServerOptions description(String description) {
+         UpdateServerOptions options = new UpdateServerOptions();
          return options.description(description);
       }
    }
 
    /** Configure the size of the disk, in GB, of the server */
-   public EditServerOptions diskSizeGB(int diskSizeGB) {
+   public UpdateServerOptions diskSizeGB(int diskSizeGB) {
       formParameters.put("disksize", Integer.toString(diskSizeGB));
       return this;
    }
 
    /** Configure the amount of RAM, in MB, allocated to the server */
-   public EditServerOptions memorySizeMB(int memorySizeMB) {
+   public UpdateServerOptions memorySizeMB(int memorySizeMB) {
       formParameters.put("memorysize", Integer.toString(memorySizeMB));
       return this;
    }
 
    /** Configure the number of CPU cores allocated to the server */
-   public EditServerOptions cpuCores(int cpucores) {
+   public UpdateServerOptions cpuCores(int cpucores) {
       formParameters.put("cpucores", Integer.toString(cpucores));
       return this;
    }
 
    /** Configure the transfer setting for the server */
-   public EditServerOptions transferGB(int transferGB) {
+   public UpdateServerOptions transferGB(int transferGB) {
       formParameters.put("transfer", Integer.toString(transferGB));
       return this;
    }
 
    /** Configure the host name of the server (must be unique within the GleSYS account) */
-   public EditServerOptions hostname(String hostname) {
+   public UpdateServerOptions hostname(String hostname) {
       formParameters.put("hostname", hostname);
       return this;
    }
 
    /** Configure the description of the server */
-   public EditServerOptions description(String description) {
+   public UpdateServerOptions description(String description) {
       formParameters.put("description", description);
       return this;
    }

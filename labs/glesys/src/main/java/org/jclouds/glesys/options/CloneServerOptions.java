@@ -21,7 +21,7 @@ package org.jclouds.glesys.options;
 /**
  * @author Adam Lowe
  */
-public class CloneServerOptions extends EditServerOptions {
+public class CloneServerOptions extends UpdateServerOptions {
    public static class Builder {
       /**
        * @see org.jclouds.glesys.options.CloneServerOptions#diskSizeGB
@@ -52,7 +52,7 @@ public class CloneServerOptions extends EditServerOptions {
       }
 
       /**
-       * @see org.jclouds.glesys.options.EditServerOptions#description
+       * @see org.jclouds.glesys.options.UpdateServerOptions#description
        */
       public static CloneServerOptions description(String description) {
          return CloneServerOptions.class.cast(new CloneServerOptions().description(description));

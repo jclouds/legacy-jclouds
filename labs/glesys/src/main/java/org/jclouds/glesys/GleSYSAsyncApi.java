@@ -20,7 +20,7 @@ package org.jclouds.glesys;
 
 import org.jclouds.glesys.features.ArchiveAsyncApi;
 import org.jclouds.glesys.features.DomainAsyncApi;
-import org.jclouds.glesys.features.EmailAsyncApi;
+import org.jclouds.glesys.features.EmailAccountAsyncApi;
 import org.jclouds.glesys.features.IpAsyncApi;
 import org.jclouds.glesys.features.ServerAsyncApi;
 import org.jclouds.rest.annotations.Delegate;
@@ -63,6 +63,6 @@ public interface GleSYSAsyncApi {
     * Provides asynchronous access to E-Mail features.
     */
    @Delegate
-   EmailAsyncApi getEmailApi();
+   EmailAccountAsyncApi getEmailAccountApi();
    
 }

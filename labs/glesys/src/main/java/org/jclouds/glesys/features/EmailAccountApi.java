@@ -18,7 +18,6 @@
  */
 package org.jclouds.glesys.features;
 
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
@@ -26,39 +25,41 @@ import org.jclouds.glesys.domain.EmailAccount;
 import org.jclouds.glesys.domain.EmailAlias;
 import org.jclouds.glesys.domain.EmailOverview;
 import org.jclouds.glesys.options.CreateAccountOptions;
-import org.jclouds.glesys.options.EditAccountOptions;
+import org.jclouds.glesys.options.UpdateAccountOptions;
+
+import com.google.common.collect.FluentIterable;
 
 /**
  * Provides synchronous access to E-Mail requests.
  * <p/>
  *
  * @author Adam Lowe
- * @see org.jclouds.glesys.features.EmailAsyncApi
+ * @see org.jclouds.glesys.features.EmailAccountAsyncApi
  * @see <a href="https://customer.glesys.com/api.php" />
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
-public interface EmailApi {
+public interface EmailAccountApi {
 
    /**
     * Get a summary of e-mail accounts associated with this Glesys account
     *
     * @return the relevant summary data
     */
-   EmailOverview getEmailOverview();
+   EmailOverview getOverview();
 
    /**
     * Get the set of detailed information about e-mail accounts
     *
     * @return the relevant set of details
     */
-   Set<EmailAccount> listAccounts(String domain);
+   FluentIterable<EmailAccount> listDomain(String domain);
 
    /**
     * Get the set of details about e-mail aliases
     *
     * @return the relevant set of details
     */
-   Set<EmailAlias> listAliases(String domain);
+   FluentIterable<EmailAlias> listAliasesInDomain(String domain);
 
    /**
     * Create a new e-mail account
@@ -66,16 +67,16 @@ public interface EmailApi {
     * @param accountAddress the e-mail address to use (the domain should already exist)
     * @param password       the password to use for the mailbox
     * @param options        optional parameters
-    * @see DomainApi#addDomain
+    * @see DomainApi#create
     */
-   EmailAccount createAccount(String accountAddress, String password, CreateAccountOptions... options);
+   EmailAccount createWithPassword(String accountAddress, String password, CreateAccountOptions... options);
 
    /**
     * Create an e-mail alias for an e-mail account
     *
     * @param aliasAddress   the address to use for the alias  (the domain should already exist)
     * @param toEmailAddress the existing e-mail account address the alias should forward to
-    * @see DomainApi#addDomain
+    * @see DomainApi#create
     */
    EmailAlias createAlias(String aliasAddress, String toEmailAddress);
 
@@ -85,7 +86,7 @@ public interface EmailApi {
     * @param accountAddress the existing e-mail account address
     * @param options        optional parameters
     */
-   EmailAccount editAccount(String accountAddress, EditAccountOptions... options);
+   EmailAccount update(String accountAddress, UpdateAccountOptions... options);
 
    /**
     * Adjust (re-target) an e-mail alias
@@ -93,7 +94,7 @@ public interface EmailApi {
     * @param aliasAddress   the existing alias e-mail address
     * @param toEmailAddress the existing e-mail account address the alias should forward to
     */
-   EmailAlias editAlias(String aliasAddress, String toEmailAddress);
+   EmailAlias updateAlias(String aliasAddress, String toEmailAddress);
 
    /**
     * Delete an e-mail account or alias

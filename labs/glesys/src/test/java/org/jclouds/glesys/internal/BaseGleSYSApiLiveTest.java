@@ -56,11 +56,11 @@ public class BaseGleSYSApiLiveTest extends BaseComputeServiceContextLiveTest {
 
    protected void createDomain(String domain) {
       final DomainApi api = gleContext.getApi().getDomainApi();
-      int before = api.listDomains().size();
-      api.addDomain(domain);
+      int before = api.list().size();
+      api.create(domain);
       RetryablePredicate<Integer> result = new RetryablePredicate<Integer>(new Predicate<Integer>() {
          public boolean apply(Integer value) {
-            return api.listDomains().size() == value;
+            return api.list().size() == value;
          }
       }, 30, 1, TimeUnit.SECONDS);
 

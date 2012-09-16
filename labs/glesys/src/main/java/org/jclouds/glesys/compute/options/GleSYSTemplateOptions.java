@@ -70,7 +70,7 @@ public class GleSYSTemplateOptions extends TemplateOptions implements Cloneable 
 
    /**
     * 
-    * @see ServerApi#createServerWithHostnameAndRootPassword
+    * @see ServerApi#createWithHostnameAndRootPassword
     * @see InetAddresses#isInetAddress
     */
    public TemplateOptions ip(String ip) {

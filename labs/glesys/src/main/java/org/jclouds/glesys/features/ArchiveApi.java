@@ -18,12 +18,13 @@
  */
 package org.jclouds.glesys.features;
 
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.glesys.domain.Archive;
 import org.jclouds.glesys.domain.ArchiveAllowedArguments;
+
+import com.google.common.collect.FluentIterable;
 
 /**
  * Provides synchronous access to Archive requests.
@@ -39,7 +40,7 @@ public interface ArchiveApi {
    /**
     * Lists all active disks on this account.
     */
-   Set<Archive> listArchives();
+   FluentIterable<Archive> list();
 
    /**
     * Get detailed information about an archive volume.
@@ -47,7 +48,7 @@ public interface ArchiveApi {
     * @param username the username associated with the archive
     * @return the archive information or null if not found
     */
-   Archive getArchive(String username);
+   Archive get(String username);
 
    /**
     * Create a new backup volume.
@@ -57,14 +58,14 @@ public interface ArchiveApi {
     * @param password the new password
     * @param size     the new size required in GB
     */
-   Archive createArchive(String username, String password, int size);
+   Archive createWithCredentialsAndSize(String username, String password, int size);
 
    /**
     * Delete an archive volume. All files on the volume
     *
     * @param username the username associated with the archive
     */
-   void deleteArchive(String username);
+   void delete(String username);
 
    /**
     * Resize an archive volume. It is only possible to upgrade the size of the disk. Downgrading is currently not
@@ -72,9 +73,9 @@ public interface ArchiveApi {
     * Then delete the old volume.
     *
     * @param username the username associated with the archive
-    * @param size     the new size required, see #getArchiveAllowedArguments for valid values
+    * @param size     the new size required, see #getAllowedArguments for valid values
     */
-   Archive resizeArchive(String username, int size);
+   Archive resize(String username, int size);
 
    /**
     * Change the password for an archive user.
@@ -82,11 +83,11 @@ public interface ArchiveApi {
     * @param username the archive username
     * @param password the new password
     */
-   Archive changeArchivePassword(String username, String password);
+   Archive changePassword(String username, String password);
 
    /**
     * Lists the allowed arguments for some of the functions in this module such as archive size.
     */
-   ArchiveAllowedArguments getArchiveAllowedArguments();
+   ArchiveAllowedArguments getAllowedArguments();
 
 }

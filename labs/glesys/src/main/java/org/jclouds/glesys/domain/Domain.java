@@ -60,7 +60,7 @@ public class Domain {
       protected int minimum;
 
       /**
-       * @see Domain#getDomainName()
+       * @see Domain#getName()
        */
       public T domainName(String domainName) {
          this.domainName = checkNotNull(domainName, "domainName");
@@ -152,7 +152,7 @@ public class Domain {
       }
 
       public T fromDomain(Domain in) {
-         return this.domainName(in.getDomainName())
+         return this.domainName(in.getName())
                .createTime(in.getCreateTime())
                .recordCount(in.getRecordCount())
                .useGlesysNameServer(in.isUseGlesysNameServer())
@@ -207,7 +207,7 @@ public class Domain {
    /**
     * @return the domain name, ex. "jclouds.org"
     */
-   public String getDomainName() {
+   public String getName() {
       return this.domainName;
    }
 

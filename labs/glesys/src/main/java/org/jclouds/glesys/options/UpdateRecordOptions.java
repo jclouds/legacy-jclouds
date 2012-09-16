@@ -21,54 +21,59 @@ package org.jclouds.glesys.options;
 /**
  * @author Adam Lowe
  */
-public class EditRecordOptions extends AddRecordOptions {
+public class UpdateRecordOptions extends AddRecordOptions {
 
    public static class Builder {
       /**
-       * @see EditRecordOptions#host
+       * @see UpdateRecordOptions#host
        */
-      public static EditRecordOptions host(String host) {
-         return new EditRecordOptions().host(host);
+      public static UpdateRecordOptions host(String host) {
+         return new UpdateRecordOptions().host(host);
       }
 
       /**
-       * @see EditRecordOptions#type
+       * @see UpdateRecordOptions#type
        */
-      public static EditRecordOptions type(String type) {
-         return new EditRecordOptions().type(type);
+      public static UpdateRecordOptions type(String type) {
+         return new UpdateRecordOptions().type(type);
       }
 
       /**
-       * @see EditRecordOptions#data
+       * @see UpdateRecordOptions#data
        */
-      public static EditRecordOptions data(String data) {
-         return new EditRecordOptions().data(data);
+      public static UpdateRecordOptions data(String data) {
+         return new UpdateRecordOptions().data(data);
       }
 
       /**
-       * @see EditRecordOptions#ttl
+       * @see UpdateRecordOptions#ttl
        */
-      public static EditRecordOptions ttl(int ttl) {
-         return EditRecordOptions.class.cast(new EditRecordOptions().ttl(ttl));
+      public static UpdateRecordOptions ttl(int ttl) {
+         return UpdateRecordOptions.class.cast(new UpdateRecordOptions().ttl(ttl));
       }
    }
 
 
    /** Configure the hostname attached to this record */
-   public EditRecordOptions host(String host) {
+   public UpdateRecordOptions host(String host) {
       formParameters.put("host", host);
       return this;
    }
 
    /** Configure the type of record, ex. "A", "CNAME" or "MX"  */
-   public EditRecordOptions type(String type) {
+   public UpdateRecordOptions type(String type) {
       formParameters.put("type", type);
       return this;
    }
 
    /** Set the content of this record (depending on type, for an "A" record this would be an ip address) */
-   public EditRecordOptions data(String data) {
+   public UpdateRecordOptions data(String data) {
       formParameters.put("data", data);
       return this;
+   }
+
+   @Override
+   public UpdateRecordOptions ttl(int ttl) {
+      return UpdateRecordOptions.class.cast(super.ttl(ttl));
    }
 }

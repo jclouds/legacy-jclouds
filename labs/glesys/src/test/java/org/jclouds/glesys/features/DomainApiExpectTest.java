@@ -30,7 +30,8 @@ import org.jclouds.glesys.domain.Domain;
 import org.jclouds.glesys.domain.DomainRecord;
 import org.jclouds.glesys.internal.BaseGleSYSApiExpectTest;
 import org.jclouds.glesys.options.AddDomainOptions;
-import org.jclouds.glesys.options.EditRecordOptions;
+import org.jclouds.glesys.options.DomainOptions;
+import org.jclouds.glesys.options.UpdateRecordOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.ResourceNotFoundException;
@@ -57,8 +58,8 @@ public class DomainApiExpectTest extends BaseGleSYSApiExpectTest {
       Domain expected =
             Domain.builder().domainName("testglesys.jclouds.org").createTime(dateService.iso8601SecondsDateParse("2012-01-31T12:19:03+01:00")).build();
 
-      Domain actual = Iterables.getOnlyElement(api.listDomains());
-      assertEquals(expected.getDomainName(), actual.getDomainName());
+      Domain actual = Iterables.getOnlyElement(api.list());
+      assertEquals(expected.getName(), actual.getName());
       assertEquals(expected.getCreateTime(), actual.getCreateTime());
    }
 
@@ -69,7 +70,7 @@ public class DomainApiExpectTest extends BaseGleSYSApiExpectTest {
                        .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build(),
             HttpResponse.builder().statusCode(404).build()).getDomainApi();
 
-      assertTrue(api.listDomains().isEmpty());
+      assertTrue(api.list().isEmpty());
    }
 
    public void testListDomainRecordsWhenResponseIs2xx() throws Exception {
@@ -112,7 +113,7 @@ public class DomainApiExpectTest extends BaseGleSYSApiExpectTest {
                        .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build(),
             HttpResponse.builder().statusCode(404).build()).getDomainApi();
 
-      assertTrue(api.listDomains().isEmpty());
+      assertTrue(api.list().isEmpty());
    }
 
    public void testAddDomainRecordsWhenResponseIs2xx() throws Exception {
@@ -128,7 +129,7 @@ public class DomainApiExpectTest extends BaseGleSYSApiExpectTest {
                   .payload(payloadFromResourceWithContentType("/domain_record.json", MediaType.APPLICATION_JSON)).build())
             .getDomainApi();
 
-      assertEquals(api.addRecord("jclouds.org", "jclouds.org", "A", ""), recordInDomainRecord());
+      assertEquals(api.createRecord("jclouds.org", "jclouds.org", "A", ""), recordInDomainRecord());
    }
 
    protected DomainRecord recordInDomainRecord() {
@@ -147,10 +148,10 @@ public class DomainApiExpectTest extends BaseGleSYSApiExpectTest {
                        .addFormParam("data", "").build(),
             HttpResponse.builder().statusCode(404).build()).getDomainApi();
 
-      api.addRecord("jclouds.org", "jclouds.org", "A", "");
+      api.createRecord("jclouds.org", "jclouds.org", "A", "");
    }
 
-   public void testEditDomainRecordsWhenResponseIs2xx() throws Exception {
+   public void testUpdateDomainRecordsWhenResponseIs2xx() throws Exception {
       DomainApi api = requestSendsResponse(
             HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/domain/updaterecord/format/json")
                        .addHeader("Accept", "application/json")
@@ -162,11 +163,11 @@ public class DomainApiExpectTest extends BaseGleSYSApiExpectTest {
                   .payload(payloadFromResourceWithContentType("/domain_record.json", MediaType.APPLICATION_JSON)).build())
             .getDomainApi();
 
-      assertEquals(api.editRecord("256151", EditRecordOptions.Builder.host("somehost"), EditRecordOptions.Builder.ttl(1800)), recordInDomainRecord());
+      assertEquals(api.updateRecord("256151", UpdateRecordOptions.Builder.host("somehost").ttl(1800)), recordInDomainRecord());
    }
 
    @Test(expectedExceptions = ResourceNotFoundException.class)
-   public void testEditDomainRecordsWhenResponseIs4xx() throws Exception {
+   public void testUpdateDomainRecordsWhenResponseIs4xx() throws Exception {
       DomainApi api = requestSendsResponse(
                HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/domain/updaterecord/format/json")
                           .addHeader("Accept", "application/json")
@@ -176,7 +177,7 @@ public class DomainApiExpectTest extends BaseGleSYSApiExpectTest {
                           .addFormParam("ttl", "1800").build(),
             HttpResponse.builder().statusCode(404).build()).getDomainApi();
 
-      api.editRecord("256151", EditRecordOptions.Builder.host("somehost"), EditRecordOptions.Builder.ttl(1800));
+      api.updateRecord("256151", UpdateRecordOptions.Builder.host("somehost").ttl(1800));
    }
 
    public void testDeleteDomainRecordsWhenResponseIs2xx() throws Exception {
@@ -212,7 +213,7 @@ public class DomainApiExpectTest extends BaseGleSYSApiExpectTest {
                   .payload(payloadFromResourceWithContentType("/domain_details.json", MediaType.APPLICATION_JSON)).build())
             .getDomainApi();
 
-      assertEquals(api.getDomain("cl66666_x"), domainInDomainDetails());
+      assertEquals(api.get("cl66666_x"), domainInDomainDetails());
    }
 
 
@@ -225,7 +226,7 @@ public class DomainApiExpectTest extends BaseGleSYSApiExpectTest {
             HttpResponse.builder().statusCode(404).build())
             .getDomainApi();
 
-      assertNull(api.getDomain("cl66666_x"));
+      assertNull(api.get("cl66666_x"));
    }
 
    protected Domain domainInDomainDetails() {
@@ -242,7 +243,7 @@ public class DomainApiExpectTest extends BaseGleSYSApiExpectTest {
                   .payload(payloadFromResourceWithContentType("/domain_details.json", MediaType.APPLICATION_JSON)).build())
             .getDomainApi();
 
-      assertEquals(api.addDomain("cl66666_x"), domainInDomainDetails());
+      assertEquals(api.create("cl66666_x"), domainInDomainDetails());
    }
 
    public void testAddDomainWithOptsWhenResponseIs2xx() throws Exception {
@@ -264,32 +265,34 @@ public class DomainApiExpectTest extends BaseGleSYSApiExpectTest {
       AddDomainOptions options = (AddDomainOptions) AddDomainOptions.Builder.primaryNameServer("ns1.somewhere.x")
             .expire(1).minimum(1).refresh(1).responsiblePerson("Tester").retry(1).ttl(1);
 
-      assertEquals(api.addDomain("cl66666_x", options), domainInDomainDetails());
+      assertEquals(api.create("cl66666_x", options), domainInDomainDetails());
    }
 
-   public void testEditDomainWhenResponseIs2xx() throws Exception {
+   public void testUpdateDomainWhenResponseIs2xx() throws Exception {
       DomainApi api = requestSendsResponse(
             HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/domain/edit/format/json")
                        .addHeader("Accept", "application/json")
                        .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
-                       .addFormParam("domainname", "x").build(),
+                       .addFormParam("domainname", "x")
+                       .addFormParam("expire", "1").build(),
             HttpResponse.builder().statusCode(200)
                   .payload(payloadFromResourceWithContentType("/domain_details.json", MediaType.APPLICATION_JSON)).build())
             .getDomainApi();
 
-      assertEquals(api.editDomain("x"), domainInDomainDetails());
+      assertEquals(api.update("x", DomainOptions.Builder.expire(1)), domainInDomainDetails());
    }
 
    @Test(expectedExceptions = {ResourceNotFoundException.class})
-   public void testEditDomainWhenResponseIs4xxThrows() throws Exception {
+   public void testUpdateDomainWhenResponseIs4xxThrows() throws Exception {
       DomainApi api = requestSendsResponse(
             HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/domain/edit/format/json")
                        .addHeader("Accept", "application/json")
                        .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
-                       .addFormParam("domainname", "x").build(),
+                       .addFormParam("domainname", "x")
+                       .addFormParam("expire", "1").build(),
             HttpResponse.builder().statusCode(404).build()).getDomainApi();
 
-      api.editDomain("x");
+      api.update("x", DomainOptions.Builder.expire(1));
    }
 
    public void testDeleteDomainWhenResponseIs2xx() throws Exception {
@@ -299,7 +302,7 @@ public class DomainApiExpectTest extends BaseGleSYSApiExpectTest {
                        .addFormParam("domainname", "x").build(),
             HttpResponse.builder().statusCode(200).build()).getDomainApi();
 
-      api.deleteDomain("x");
+      api.delete("x");
    }
 
    @Test(expectedExceptions = {ResourceNotFoundException.class})
@@ -310,6 +313,6 @@ public class DomainApiExpectTest extends BaseGleSYSApiExpectTest {
                        .addFormParam("domainname", "x").build(),
             HttpResponse.builder().statusCode(404).build()).getDomainApi();
 
-      api.deleteDomain("x");
+      api.delete("x");
    }
 }

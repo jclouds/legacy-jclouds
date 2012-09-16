@@ -49,7 +49,7 @@ public class ArchiveAllowedArguments {
       protected List<Integer> archiveSizes = ImmutableList.of();
 
       /**
-       * @see ArchiveAllowedArguments#getArchiveSizes()
+       * @see ArchiveAllowedArguments#getSizes()
        */
       public T archiveSizes(List<Integer> archiveSizes) {
          this.archiveSizes = ImmutableList.copyOf(checkNotNull(archiveSizes, "archiveSizes"));
@@ -65,7 +65,7 @@ public class ArchiveAllowedArguments {
       }
 
       public T fromArchiveAllowedArguments(ArchiveAllowedArguments in) {
-         return this.archiveSizes(in.getArchiveSizes());
+         return this.archiveSizes(in.getSizes());
       }
    }
 
@@ -88,7 +88,7 @@ public class ArchiveAllowedArguments {
    /**
     * @return the list of allowed archive sizes, in GB
     */
-   public List<Integer> getArchiveSizes() {
+   public List<Integer> getSizes() {
       return this.archiveSizes;
    }
 

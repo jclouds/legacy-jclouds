@@ -132,7 +132,7 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
                                                 // and set if present
 
       logger.debug(">> creating new Server spec(%s) name(%s) options(%s)", spec, name, createServerOptions);
-      ServerDetails result = api.getServerApi().createServerWithHostnameAndRootPassword(spec, name, password,
+      ServerDetails result = api.getServerApi().createWithHostnameAndRootPassword(spec, name, password,
             createServerOptions);
       logger.trace("<< server(%s)", result.getId());
 
@@ -163,7 +163,7 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
       Set<OSTemplate> images = listImages();
 
       for (Entry<String, AllowedArgumentsForCreateServer> platformToArgs : api.getServerApi()
-            .getAllowedArgumentsForCreateServerByPlatform().entrySet())
+            .getAllowedArgumentsForCreateByPlatform().entrySet())
          for (String datacenter : platformToArgs.getValue().getDataCenters())
             for (int diskSizeGB : platformToArgs.getValue().getDiskSizesInGB())
                for (int cpuCores : platformToArgs.getValue().getCpuCoreOptions())
@@ -192,7 +192,7 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
 
    @Override
    public Set<OSTemplate> listImages() {
-      return api.getServerApi().listTemplates();
+      return api.getServerApi().listTemplates().toImmutableSet();
    }
    
    // cheat until we have a getTemplate command
@@ -210,10 +210,10 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
    
    @Override
    public Iterable<ServerDetails> listNodes() {
-      return Iterables2.concreteCopy(transformParallel(api.getServerApi().listServers(), new Function<Server, Future<? extends ServerDetails>>() {
+      return Iterables2.concreteCopy(transformParallel(api.getServerApi().list(), new Function<Server, Future<? extends ServerDetails>>() {
          @Override
          public Future<ServerDetails> apply(Server from) {
-            return aapi.getServerApi().getServerDetails(from.getId());
+            return aapi.getServerApi().get(from.getId());
          }
 
       }, userThreads, null, logger, "server details"));
@@ -222,7 +222,7 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
    @Override
    public Set<String> listLocations() {
       return ImmutableSet.copyOf(Iterables.concat(Iterables.transform(api.getServerApi()
-            .getAllowedArgumentsForCreateServerByPlatform().values(),
+            .getAllowedArgumentsForCreateByPlatform().values(),
             new Function<AllowedArgumentsForCreateServer, Set<String>>() {
 
                @Override
@@ -235,7 +235,7 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
 
    @Override
    public ServerDetails getNode(String id) {
-      return api.getServerApi().getServerDetails(id);
+      return api.getServerApi().get(id);
    }
 
    @Override
@@ -245,7 +245,7 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
          @Override
          public boolean apply(String arg0) {
             try {
-               api.getServerApi().destroyServer(arg0, DestroyServerOptions.Builder.discardIp());
+               api.getServerApi().destroy(arg0, DestroyServerOptions.Builder.discardIp());
                return true;
             } catch (IllegalStateException e) {
                return false;
@@ -257,16 +257,16 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
 
    @Override
    public void rebootNode(String id) {
-      api.getServerApi().rebootServer(id);
+      api.getServerApi().reboot(id);
    }
 
    @Override
    public void resumeNode(String id) {
-      api.getServerApi().startServer(id);
+      api.getServerApi().start(id);
    }
 
    @Override
    public void suspendNode(String id) {
-      api.getServerApi().stopServer(id);
+      api.getServerApi().stop(id);
    }
 }

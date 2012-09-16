@@ -18,8 +18,6 @@
  */
 package org.jclouds.glesys.features;
 
-import java.util.Set;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -35,9 +33,10 @@ import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnEmptyFluentIterableOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
+import com.google.common.collect.FluentIterable;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -57,8 +56,8 @@ public interface IpAsyncApi {
    @Path("/ip/listfree/ipversion/{ipversion}/datacenter/{datacenter}/platform/{platform}/format/json")
    @Consumes(MediaType.APPLICATION_JSON)
    @SelectJson("ipaddresses")
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<String>> listFree(@PathParam("ipversion") int ipversion,
+   @ExceptionParser(ReturnEmptyFluentIterableOnNotFoundOr404.class)
+   ListenableFuture<FluentIterable<String>> listFree(@PathParam("ipversion") int ipversion,
                                           @PathParam("datacenter") String datacenter,
                                           @PathParam("platform") String platform);
 
@@ -81,54 +80,54 @@ public interface IpAsyncApi {
    ListenableFuture<IpDetails> release(@FormParam("ipaddress") String ipAddress);
 
    /**
-    * @see IpApi#listIps
+    * @see IpApi#list
     */
    @GET
    @Path("/ip/listown/format/json")
    @Consumes(MediaType.APPLICATION_JSON)
    @SelectJson("iplist")
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<IpDetails>> listIps(ListIpOptions... options);
+   @ExceptionParser(ReturnEmptyFluentIterableOnNotFoundOr404.class)
+   ListenableFuture<FluentIterable<IpDetails>> list(ListIpOptions... options);
 
    /**
-    * @see IpApi#getIp
+    * @see IpApi#get
     */
    @GET
    @Path("/ip/details/ipaddress/{ipaddress}/format/json")
    @SelectJson("details")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<IpDetails> getIp(@PathParam("ipaddress") String ipAddress);
+   ListenableFuture<IpDetails> get(@PathParam("ipaddress") String ipAddress);
 
    /**
-    * @see IpApi#addIpToServer
+    * @see IpApi#addToServer
     */
    @POST
    @Path("/ip/add/format/json")
    @SelectJson("details")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<IpDetails> addIpToServer(@FormParam("ipaddress") String ipAddress,
+   ListenableFuture<IpDetails> addToServer(@FormParam("ipaddress") String ipAddress,
                                              @FormParam("serverid") String serverId);
 
    /**
-    * @see IpApi#removeIpFromServer
+    * @see IpApi#removeFromServer
     */
    @POST
    @Path("/ip/remove/format/json")
    @SelectJson("details")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<IpDetails> removeIpFromServer(@FormParam("ipaddress") String ipAddress,
+   ListenableFuture<IpDetails> removeFromServer(@FormParam("ipaddress") String ipAddress,
                                                   @FormParam("serverid") String serverId);
 
    /**
-    * @see IpApi#removeIpFromServer
+    * @see IpApi#removeFromServer
     */
    @POST
    @FormParams(keys = "release", values = "true")
    @Path("/ip/remove/format/json")
    @SelectJson("details")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<IpDetails> removeIpFromServerAndRelease(@FormParam("ipaddress") String ipAddress,
+   ListenableFuture<IpDetails> removeFromServerAndRelease(@FormParam("ipaddress") String ipAddress,
                                                             @FormParam("serverid") String serverId);
 
    /**

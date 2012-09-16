@@ -19,7 +19,6 @@
 package org.jclouds.glesys.features;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
@@ -35,10 +34,11 @@ import org.jclouds.glesys.domain.ServerStatus;
 import org.jclouds.glesys.options.CloneServerOptions;
 import org.jclouds.glesys.options.CreateServerOptions;
 import org.jclouds.glesys.options.DestroyServerOptions;
-import org.jclouds.glesys.options.EditServerOptions;
+import org.jclouds.glesys.options.UpdateServerOptions;
 import org.jclouds.glesys.options.ServerStatusOptions;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.FluentIterable;
 
 /**
  * Provides synchronous access to Server.
@@ -57,7 +57,7 @@ public interface ServerApi {
     *
     * @return an account's associated server objects.
     */
-   Set<Server> listServers();
+   FluentIterable<Server> list();
 
    /**
     * Get detailed information about a server such as hostname, hardware
@@ -67,7 +67,7 @@ public interface ServerApi {
     * @param id id of the server
     * @return server or null if not found
     */
-   ServerDetails getServerDetails(String id);
+   ServerDetails get(String id);
 
    /**
     * Get detailed information about a server status including up-time and
@@ -77,7 +77,7 @@ public interface ServerApi {
     * @param options optional parameters
     * @return the status of the server or null if not found
     */
-   ServerStatus getServerStatus(String id, ServerStatusOptions... options);
+   ServerStatus getStatus(String id, ServerStatusOptions... options);
 
    /**
     * Get detailed information about a server's limits (for OpenVZ only).
@@ -86,7 +86,7 @@ public interface ServerApi {
     * @param id id of the server
     * @return the requested information about the server or null if not found
     */
-   Map<String, ServerLimit> getServerLimits(String id);
+   Map<String, ServerLimit> getLimits(String id);
 
    /**
     * Get information about how to connect to a server via VNC
@@ -101,14 +101,14 @@ public interface ServerApi {
     *
     * @return the set of information about each template
     */
-   Set<OSTemplate> listTemplates();
+   FluentIterable<OSTemplate> listTemplates();
 
    /**
     * Get information about valid arguments to #createServer for each platform
     *
     * @return a map of argument lists, keyed on platform
     */
-   Map<String, AllowedArgumentsForCreateServer> getAllowedArgumentsForCreateServerByPlatform();
+   Map<String, AllowedArgumentsForCreateServer> getAllowedArgumentsForCreateByPlatform();
 
    /**
     * Reset the fail count for a server limit (for OpenVZ only).
@@ -116,35 +116,35 @@ public interface ServerApi {
     * @param id   id of the server
     * @param type the type of limit to reset
     */
-   Map<String, ServerLimit> resetServerLimit(String id, String type);
+   Map<String, ServerLimit> resetLimit(String id, String type);
 
    /**
     * Reboot a server
     *
     * @param id id of the server
     */
-   ServerDetails rebootServer(String id);
+   ServerDetails reboot(String id);
 
    /**
     * Start a server
     *
     * @param id id of the server
     */
-   ServerDetails startServer(String id);
+   ServerDetails start(String id);
 
    /**
     * Stop a server
     *
     * @param id id of the server
     */
-   ServerDetails stopServer(String id);
+   ServerDetails stop(String id);
 
    /**
     * hard stop a server
     *
     * @param id id of the server
     */
-   ServerDetails hardStopServer(String id);
+   ServerDetails hardStop(String id);
 
    /**
     * Create a new server
@@ -154,16 +154,16 @@ public interface ServerApi {
     * @param options      optional settings ex. description
     */
    @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
-   ServerDetails createServerWithHostnameAndRootPassword(ServerSpec serverSpec, String hostname, String rootPassword,
+   ServerDetails createWithHostnameAndRootPassword(ServerSpec serverSpec, String hostname, String rootPassword,
          CreateServerOptions... options);
 
    /**
-    * Edit the configuration of a server
+    * Update the configuration of a server
     *
     * @param serverid the serverId of the server to edit
     * @param options  the settings to change
     */
-   ServerDetails editServer(String serverid, EditServerOptions... options);
+   ServerDetails update(String serverid, UpdateServerOptions options);
 
    /**
     * Clone a server
@@ -173,7 +173,7 @@ public interface ServerApi {
     * @param options  the settings to change
     */
    @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
-   ServerDetails cloneServer(String serverid, String hostname, CloneServerOptions... options);
+   ServerDetails clone(String serverid, String hostname, CloneServerOptions... options);
 
    /**
     * Destroy a server
@@ -181,7 +181,7 @@ public interface ServerApi {
     * @param id     the id of the server
     * @param keepIp if DestroyServerOptions.keepIp(true) the servers ip will be retained for use in your GleSYS account
     */
-   ServerDetails destroyServer(String id, DestroyServerOptions keepIp);
+   ServerDetails destroy(String id, DestroyServerOptions keepIp);
 
    /**
     * Reset the root password of a server

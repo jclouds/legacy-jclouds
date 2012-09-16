@@ -31,14 +31,15 @@ import org.jclouds.glesys.domain.DomainRecord;
 import org.jclouds.glesys.options.AddDomainOptions;
 import org.jclouds.glesys.options.AddRecordOptions;
 import org.jclouds.glesys.options.DomainOptions;
-import org.jclouds.glesys.options.EditRecordOptions;
+import org.jclouds.glesys.options.UpdateRecordOptions;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnEmptyFluentIterableOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
+import com.google.common.collect.FluentIterable;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -53,50 +54,50 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface DomainAsyncApi {
 
    /**
-    * @see org.jclouds.glesys.features.DomainApi#listDomains
+    * @see org.jclouds.glesys.features.DomainApi#list
     */
    @POST
    @Path("/domain/list/format/json")
    @SelectJson("domains")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<Domain>> listDomains();
+   @ExceptionParser(ReturnEmptyFluentIterableOnNotFoundOr404.class)
+   ListenableFuture<FluentIterable<Domain>> list();
 
    /**
-    * @see org.jclouds.glesys.features.DomainApi#getDomain
+    * @see org.jclouds.glesys.features.DomainApi#get
     */
    @POST
    @Path("/domain/details/format/json")
    @SelectJson("domain")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Domain> getDomain(@FormParam("domainname") String name);
+   ListenableFuture<Domain> get(@FormParam("domainname") String name);
 
    /**
-    * @see DomainApi#addDomain
+    * @see DomainApi#create
     */
    @POST
    @Path("/domain/add/format/json")
    @SelectJson("domain")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Domain> addDomain(@FormParam("domainname") String name, AddDomainOptions... options);
+   ListenableFuture<Domain> create(@FormParam("domainname") String name, AddDomainOptions... options);
 
    /**
-    * @see DomainApi#editDomain
+    * @see DomainApi#update
     */
    @POST
    @Path("/domain/edit/format/json")
    @SelectJson("domain")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Domain> editDomain(@FormParam("domainname") String domain, DomainOptions... options);
+   ListenableFuture<Domain> update(@FormParam("domainname") String domain, DomainOptions options);
 
 
    /**
-    * @see DomainApi#deleteDomain
+    * @see DomainApi#delete
     */
    @POST
    @Path("/domain/delete/format/json")
-   ListenableFuture<Void> deleteDomain(@FormParam("domainname") String domain);
+   ListenableFuture<Void> delete(@FormParam("domainname") String domain);
 
    /**
     * @see DomainApi#listRecords
@@ -108,24 +109,24 @@ public interface DomainAsyncApi {
    ListenableFuture<Set<DomainRecord>> listRecords(@FormParam("domainname") String domain);
 
    /**
-    * @see DomainApi#addRecord
+    * @see DomainApi#createRecord
     */
    @POST
    @Path("/domain/addrecord/format/json")
    @SelectJson("record")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<DomainRecord> addRecord(@FormParam("domainname") String domain, @FormParam("host") String host,
+   ListenableFuture<DomainRecord> createRecord(@FormParam("domainname") String domain, @FormParam("host") String host,
                                     @FormParam("type") String type, @FormParam("data") String data,
                                     AddRecordOptions... options);
 
    /**
-    * @see DomainApi#editRecord
+    * @see DomainApi#updateRecord
     */
    @POST
    @Path("/domain/updaterecord/format/json")
    @SelectJson("record")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<DomainRecord> editRecord(@FormParam("recordid") String record_id, EditRecordOptions... options);
+   ListenableFuture<DomainRecord> updateRecord(@FormParam("recordid") String record_id, UpdateRecordOptions options);
 
    /**
     * @see DomainApi#deleteRecord

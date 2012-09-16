@@ -26,8 +26,8 @@ import org.jclouds.glesys.features.ArchiveApi;
 import org.jclouds.glesys.features.ArchiveAsyncApi;
 import org.jclouds.glesys.features.DomainApi;
 import org.jclouds.glesys.features.DomainAsyncApi;
-import org.jclouds.glesys.features.EmailApi;
-import org.jclouds.glesys.features.EmailAsyncApi;
+import org.jclouds.glesys.features.EmailAccountApi;
+import org.jclouds.glesys.features.EmailAccountAsyncApi;
 import org.jclouds.glesys.features.IpApi;
 import org.jclouds.glesys.features.IpAsyncApi;
 import org.jclouds.glesys.features.ServerApi;
@@ -60,7 +60,7 @@ public class GleSYSRestClientModule extends RestClientModule<GleSYSApi, GleSYSAs
          .put(IpApi.class, IpAsyncApi.class)//
          .put(ArchiveApi.class, ArchiveAsyncApi.class)//
          .put(DomainApi.class, DomainAsyncApi.class)//
-         .put(EmailApi.class, EmailAsyncApi.class)//
+         .put(EmailAccountApi.class, EmailAccountAsyncApi.class)//
          .build();
 
    public GleSYSRestClientModule() {

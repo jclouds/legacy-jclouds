@@ -19,7 +19,6 @@
 package org.jclouds.glesys.features;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.SortedMap;
 
 import javax.ws.rs.Consumes;
@@ -42,7 +41,7 @@ import org.jclouds.glesys.functions.ParseTemplatesFromHttpResponse;
 import org.jclouds.glesys.options.CloneServerOptions;
 import org.jclouds.glesys.options.CreateServerOptions;
 import org.jclouds.glesys.options.DestroyServerOptions;
-import org.jclouds.glesys.options.EditServerOptions;
+import org.jclouds.glesys.options.UpdateServerOptions;
 import org.jclouds.glesys.options.ServerStatusOptions;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.ExceptionParser;
@@ -52,9 +51,10 @@ import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SelectJson;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnEmptyFluentIterableOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
+import com.google.common.collect.FluentIterable;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -70,17 +70,17 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface ServerAsyncApi {
 
    /**
-    * @see ServerApi#listServers
+    * @see ServerApi#list
     */
    @POST
    @Path("/server/list/format/json")
    @SelectJson("servers")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<Server>> listServers();
+   @ExceptionParser(ReturnEmptyFluentIterableOnNotFoundOr404.class)
+   ListenableFuture<FluentIterable<Server>> list();
 
    /**
-    * @see ServerApi#getServerDetails
+    * @see ServerApi#get
     */
    @POST
    @Path("/server/details/format/json")
@@ -88,27 +88,27 @@ public interface ServerAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @FormParams(keys = "includestate", values = "true")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<ServerDetails> getServerDetails(@FormParam("serverid") String id);
+   ListenableFuture<ServerDetails> get(@FormParam("serverid") String id);
 
    /**
-    * @see ServerApi#getServerStatus
+    * @see ServerApi#getStatus
     */
    @POST
    @Path("/server/status/format/json")
    @SelectJson("server")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<ServerStatus> getServerStatus(@FormParam("serverid") String id, ServerStatusOptions... options);
+   ListenableFuture<ServerStatus> getStatus(@FormParam("serverid") String id, ServerStatusOptions... options);
 
    /**
-    * @see ServerApi#getServerLimits
+    * @see ServerApi#getLimits
     */
    @POST
    @Path("/server/limits/format/json")
    @SelectJson("limits")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<SortedMap<String, ServerLimit>> getServerLimits(@FormParam("serverid") String id);
+   ListenableFuture<SortedMap<String, ServerLimit>> getLimits(@FormParam("serverid") String id);
 
    /**
     * @see ServerApi#getConsole
@@ -121,13 +121,13 @@ public interface ServerAsyncApi {
    ListenableFuture<Console> getConsole(@FormParam("serverid") String id);
 
    /**
-    * @see ServerApi#getAllowedArgumentsForCreateServerByPlatform
+    * @see ServerApi#getAllowedArgumentsForCreateByPlatform
     */
    @GET
    @Path("/server/allowedarguments/format/json")
    @SelectJson("argumentslist")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Map<String, AllowedArgumentsForCreateServer>> getAllowedArgumentsForCreateServerByPlatform();
+   ListenableFuture<Map<String, AllowedArgumentsForCreateServer>> getAllowedArgumentsForCreateByPlatform();
 
    /**
     * @see ServerApi#listTemplates
@@ -135,92 +135,93 @@ public interface ServerAsyncApi {
    @GET
    @Path("/server/templates/format/json")
    @ResponseParser(ParseTemplatesFromHttpResponse.class)
+   @ExceptionParser(ReturnEmptyFluentIterableOnNotFoundOr404.class)
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Set<OSTemplate>> listTemplates();
+   ListenableFuture<FluentIterable<OSTemplate>> listTemplates();
 
    /**
-    * @see ServerApi#stopServer
+    * @see ServerApi#stop
     */
    @POST
    @Path("/server/resetlimit/format/json")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<SortedMap<String, ServerLimit>> resetServerLimit(@FormParam("serverid") String id,
+   ListenableFuture<SortedMap<String, ServerLimit>> resetLimit(@FormParam("serverid") String id,
          @FormParam("type") String type);
 
    /**
-    * @see ServerApi#rebootServer
+    * @see ServerApi#reboot
     */
    @POST
    @SelectJson("server")
    @Path("/server/reboot/format/json")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<ServerDetails> rebootServer(@FormParam("serverid") String id);
+   ListenableFuture<ServerDetails> reboot(@FormParam("serverid") String id);
 
    /**
-    * @see ServerApi#startServer
+    * @see ServerApi#start
     */
    @POST
    @SelectJson("server")
    @Path("/server/start/format/json")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<ServerDetails> startServer(@FormParam("serverid") String id);
+   ListenableFuture<ServerDetails> start(@FormParam("serverid") String id);
 
    /**
-    * @see ServerApi#stopServer
+    * @see ServerApi#stop
     */
    @POST
    @SelectJson("server")
    @Path("/server/stop/format/json")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<ServerDetails> stopServer(@FormParam("serverid") String id);
+   ListenableFuture<ServerDetails> stop(@FormParam("serverid") String id);
 
    /**
-    * @see ServerApi#hardStopServer
+    * @see ServerApi#hardStop
     */
    @POST
    @SelectJson("server")
    @Path("/server/stop/format/json")
    @FormParams(keys = "type", values = "hard")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<ServerDetails> hardStopServer(@FormParam("serverid") String id);
+   ListenableFuture<ServerDetails> hardStop(@FormParam("serverid") String id);
 
    /**
-    * @see ServerApi#createServerWithHostnameAndRootPassword
+    * @see ServerApi#createWithHostnameAndRootPassword
     */
    @POST
    @SelectJson("server")
    @Path("/server/create/format/json")
    @Consumes(MediaType.APPLICATION_JSON)
    @MapBinder(CreateServerOptions.class)
-   ListenableFuture<ServerDetails> createServerWithHostnameAndRootPassword(ServerSpec serverSpec,
+   ListenableFuture<ServerDetails> createWithHostnameAndRootPassword(ServerSpec serverSpec,
          @PayloadParam("hostname") String hostname, @PayloadParam("rootpassword") String rootPassword,
          CreateServerOptions... options);
 
    /**
-    * @see ServerApi#cloneServer
+    * @see ServerApi#clone
     */
    @POST
    @Path("/server/clone/format/json")
    @SelectJson("server")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<ServerDetails> cloneServer(@FormParam("serverid") String serverid,
+   ListenableFuture<ServerDetails> clone(@FormParam("serverid") String serverid,
          @FormParam("hostname") String hostname, CloneServerOptions... options);
 
    /**
-    * @see ServerApi#editServer
+    * @see ServerApi#update
     */
    @POST
    @Path("/server/edit/format/json")
    @SelectJson("server")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<ServerDetails> editServer(@FormParam("serverid") String serverid, EditServerOptions... options);
+   ListenableFuture<ServerDetails> update(@FormParam("serverid") String serverid, UpdateServerOptions options);
 
    /**
-    * @see ServerApi#destroyServer
+    * @see ServerApi#destroy
     */
    @POST
    @Path("/server/destroy/format/json")
-   ListenableFuture<Void> destroyServer(@FormParam("serverid") String id, DestroyServerOptions keepIp);
+   ListenableFuture<Void> destroy(@FormParam("serverid") String id, DestroyServerOptions keepIp);
 
    /**
     * @see ServerApi#resetPassword

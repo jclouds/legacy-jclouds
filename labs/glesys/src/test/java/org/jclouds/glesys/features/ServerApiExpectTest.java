@@ -45,7 +45,7 @@ import org.jclouds.glesys.internal.BaseGleSYSApiExpectTest;
 import org.jclouds.glesys.options.CloneServerOptions;
 import org.jclouds.glesys.options.CreateServerOptions;
 import org.jclouds.glesys.options.DestroyServerOptions;
-import org.jclouds.glesys.options.EditServerOptions;
+import org.jclouds.glesys.options.UpdateServerOptions;
 import org.jclouds.glesys.options.ServerStatusOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
@@ -72,7 +72,7 @@ public class ServerApiExpectTest extends BaseGleSYSApiExpectTest {
             HttpResponse.builder().statusCode(204).payload(payloadFromResource("/server_list.json")).build()).getServerApi();
       Server expected = Server.builder().id("vz1541880").hostname("mammamia").datacenter("Falkenberg").platform("OpenVZ").build();
 
-      assertEquals(api.listServers(), ImmutableSet.<Server>of(expected));
+      assertEquals(api.list().toImmutableSet(), ImmutableSet.<Server>of(expected));
    }
 
    public void testListServersWhenReponseIs404IsEmpty() {
@@ -82,7 +82,7 @@ public class ServerApiExpectTest extends BaseGleSYSApiExpectTest {
                        .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build(),
             HttpResponse.builder().statusCode(404).build()).getServerApi();
 
-      assertTrue(api.listServers().isEmpty());
+      assertTrue(api.list().isEmpty());
    }
 
    public void testGetAllowedArgumentsWhenResponseIs2xx() throws Exception {
@@ -117,7 +117,7 @@ public class ServerApiExpectTest extends BaseGleSYSApiExpectTest {
             .build();
       expected.put("Xen", xen);
       expected.put("OpenVZ", openvz);
-      assertEquals(api.getAllowedArgumentsForCreateServerByPlatform(), expected);
+      assertEquals(api.getAllowedArgumentsForCreateByPlatform(), expected);
    }
 
    public void testGetTemplatesWhenResponseIs2xx() throws Exception {
@@ -147,7 +147,7 @@ public class ServerApiExpectTest extends BaseGleSYSApiExpectTest {
          expectedBuilder.add(OSTemplate.builder().name(name).minDiskSize(20).minMemSize(1024).os("windows").platform("Xen").build());
       }
 
-      assertEquals(api.listTemplates(), expectedBuilder.build());
+      assertEquals(api.listTemplates().toImmutableSet(), expectedBuilder.build());
    }
 
    public void testGetServerDetailsWhenResponseIs2xx() throws Exception {
@@ -159,7 +159,7 @@ public class ServerApiExpectTest extends BaseGleSYSApiExpectTest {
                        .addFormParam("serverid", "xm3276891").build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/server_details.json")).build()).getServerApi();
 
-      ServerDetails actual = api.getServerDetails("xm3276891");
+      ServerDetails actual = api.get("xm3276891");
       assertEquals(actual.toString(), expectedServerDetails().toString());
    }
 
@@ -181,7 +181,7 @@ public class ServerApiExpectTest extends BaseGleSYSApiExpectTest {
                        .addFormParam("serverid", "xm3276891").build(),
             HttpResponse.builder().statusCode(404).build()).getServerApi();
 
-      assertNull(api.getServerDetails("xm3276891"));
+      assertNull(api.get("xm3276891"));
    }
 
    @Test
@@ -206,7 +206,7 @@ public class ServerApiExpectTest extends BaseGleSYSApiExpectTest {
             .templateName("Ubuntu 11.04 64-bit").description("description").cpuCores(1).memorySizeMB(128).diskSizeGB(5).transferGB(50).cost(cost).build();
 
       assertEquals(
-            api.createServerWithHostnameAndRootPassword(
+            api.createWithHostnameAndRootPassword(
                   ServerSpec.builder().datacenter("Falkenberg").platform("OpenVZ").templateName("Ubuntu 32-bit")
                         .diskSizeGB(5).memorySizeMB(512).cpuCores(1).transferGB(50).build(), "jclouds-test", "password").toString(),
             expected.toString());
@@ -233,13 +233,13 @@ public class ServerApiExpectTest extends BaseGleSYSApiExpectTest {
       CreateServerOptions options = CreateServerOptions.Builder.description("Description-of-server").ip("10.0.0.1");
 
 
-      assertEquals(api.createServerWithHostnameAndRootPassword(ServerSpec.builder().datacenter("Falkenberg")
+      assertEquals(api.createWithHostnameAndRootPassword(ServerSpec.builder().datacenter("Falkenberg")
             .platform("OpenVZ").templateName("Ubuntu 32-bit").diskSizeGB(5).memorySizeMB(512).cpuCores(1).transferGB(50)
             .build(), "jclouds-test", "password", options), expectedServerDetails());
    }
 
    @Test
-   public void testEditServerWhenResponseIs2xx() throws Exception {
+   public void testUpdateServerWhenResponseIs2xx() throws Exception {
       ServerApi api = requestSendsResponse(
             HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/server/edit/format/json")
                        .addHeader("Accept", "application/json")
@@ -249,12 +249,11 @@ public class ServerApiExpectTest extends BaseGleSYSApiExpectTest {
                        .addFormParam("hostname", "new-hostname").build(),
             HttpResponse.builder().statusCode(206).build()).getServerApi();
 
-      api.editServer("xm3276891", EditServerOptions.Builder.description("this is a different description!"),
-            EditServerOptions.Builder.hostname("new-hostname"));
+      api.update("xm3276891", UpdateServerOptions.Builder.description("this is a different description!").hostname("new-hostname"));
    }
 
    @Test
-   public void testEditServerWithOptsWhenResponseIs2xx() throws Exception {
+   public void testUpdateServerWithOptsWhenResponseIs2xx() throws Exception {
       ServerApi api = requestSendsResponse(
             HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/server/edit/format/json")
                        .addHeader("Accept", "application/json")
@@ -267,10 +266,10 @@ public class ServerApiExpectTest extends BaseGleSYSApiExpectTest {
                        .addFormParam("hostname", "jclouds-test").build(),
             HttpResponse.builder().statusCode(200).build()).getServerApi();
 
-      EditServerOptions options =
-            EditServerOptions.Builder.description("Description-of-server").diskSizeGB(1).memorySizeMB(512).cpuCores(1).hostname("jclouds-test");
+      UpdateServerOptions options =
+            UpdateServerOptions.Builder.description("Description-of-server").diskSizeGB(1).memorySizeMB(512).cpuCores(1).hostname("jclouds-test");
 
-      api.editServer("xm3276891", options);
+      api.update("xm3276891", options);
    }
 
    @Test
@@ -283,7 +282,7 @@ public class ServerApiExpectTest extends BaseGleSYSApiExpectTest {
                        .addFormParam("hostname", "hostname1").build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/server_details.json")).build()).getServerApi();
 
-      assertEquals(api.cloneServer("xm3276891", "hostname1"), expectedServerDetails());
+      assertEquals(api.clone("xm3276891", "hostname1"), expectedServerDetails());
    }
 
    @Test
@@ -301,7 +300,7 @@ public class ServerApiExpectTest extends BaseGleSYSApiExpectTest {
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/server_details.json")).build()).getServerApi();
       CloneServerOptions options = (CloneServerOptions) CloneServerOptions.Builder.description("Description-of-server").diskSizeGB(1).memorySizeMB(512).cpuCores(1);
 
-      assertEquals(api.cloneServer("xm3276891", "hostname1", options), expectedServerDetails());
+      assertEquals(api.clone("xm3276891", "hostname1", options), expectedServerDetails());
    }
 
    @Test(expectedExceptions = {ResourceNotFoundException.class})
@@ -314,7 +313,7 @@ public class ServerApiExpectTest extends BaseGleSYSApiExpectTest {
                        .addFormParam("hostname", "hostname1").build(),
             HttpResponse.builder().statusCode(404).build()).getServerApi();
 
-      api.cloneServer("xm3276891", "hostname1");
+      api.clone("xm3276891", "hostname1");
    }
 
    public void testGetServerStatusWhenResponseIs2xx() throws Exception {
@@ -326,7 +325,7 @@ public class ServerApiExpectTest extends BaseGleSYSApiExpectTest {
             HttpResponse.builder().statusCode(206).payload(payloadFromResource("/server_status.json")).build())
             .getServerApi();
 
-      assertEquals(api.getServerStatus("xm3276891"), expectedServerStatus());
+      assertEquals(api.getStatus("xm3276891"), expectedServerStatus());
    }
 
    public void testGetServerStatusWithOptsWhenResponseIs2xx() throws Exception {
@@ -339,7 +338,7 @@ public class ServerApiExpectTest extends BaseGleSYSApiExpectTest {
             HttpResponse.builder().statusCode(206).payload(payloadFromResource("/server_status.json")).build())
             .getServerApi();
 
-      assertEquals(api.getServerStatus("server321", ServerStatusOptions.Builder.state()), expectedServerStatus());
+      assertEquals(api.getStatus("server321", ServerStatusOptions.Builder.state()), expectedServerStatus());
    }
 
    public void testGetServerStatusWhenResponseIs4xx() throws Exception {
@@ -352,7 +351,7 @@ public class ServerApiExpectTest extends BaseGleSYSApiExpectTest {
             HttpResponse.builder().statusCode(404).build())
             .getServerApi();
 
-      assertNull(api.getServerStatus("server321", ServerStatusOptions.Builder.state()));
+      assertNull(api.getStatus("server321", ServerStatusOptions.Builder.state()));
    }
 
    public void testGetServerLimitsWhenResponseIs2xx() throws Exception {
@@ -364,7 +363,7 @@ public class ServerApiExpectTest extends BaseGleSYSApiExpectTest {
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/server_limits.json")).build())
             .getServerApi();
 
-      api.getServerLimits("server321");
+      api.getLimits("server321");
    }
 
    public void testGetConsoleWhenResponseIs2xx() throws Exception {
@@ -402,7 +401,7 @@ public class ServerApiExpectTest extends BaseGleSYSApiExpectTest {
             HttpResponse.builder().statusCode(200).build())
             .getServerApi();
 
-      api.startServer("server777");
+      api.start("server777");
    }
 
    @Test(expectedExceptions = {AuthorizationException.class})
@@ -415,7 +414,7 @@ public class ServerApiExpectTest extends BaseGleSYSApiExpectTest {
             HttpResponse.builder().statusCode(401).build())
             .getServerApi();
 
-      api.startServer("server777");
+      api.start("server777");
    }
 
    public void testStopServerWhenResponseIs2xx() throws Exception {
@@ -427,7 +426,7 @@ public class ServerApiExpectTest extends BaseGleSYSApiExpectTest {
             HttpResponse.builder().statusCode(200).build())
             .getServerApi();
 
-      api.stopServer("server777");
+      api.stop("server777");
    }
 
    public void testHardStopServerWhenResponseIs2xx() throws Exception {
@@ -440,7 +439,7 @@ public class ServerApiExpectTest extends BaseGleSYSApiExpectTest {
             HttpResponse.builder().statusCode(200).build())
             .getServerApi();
 
-      api.hardStopServer("server777");
+      api.hardStop("server777");
    }
 
    @Test(expectedExceptions = {AuthorizationException.class})
@@ -453,7 +452,7 @@ public class ServerApiExpectTest extends BaseGleSYSApiExpectTest {
             HttpResponse.builder().statusCode(401).build())
             .getServerApi();
 
-      api.stopServer("server777");
+      api.stop("server777");
    }
 
    public void testRebootServerWhenResponseIs2xx() throws Exception {
@@ -465,7 +464,7 @@ public class ServerApiExpectTest extends BaseGleSYSApiExpectTest {
             HttpResponse.builder().statusCode(200).build())
             .getServerApi();
 
-      api.rebootServer("server777");
+      api.reboot("server777");
    }
 
    @Test(expectedExceptions = {AuthorizationException.class})
@@ -478,7 +477,7 @@ public class ServerApiExpectTest extends BaseGleSYSApiExpectTest {
             HttpResponse.builder().statusCode(401).build())
             .getServerApi();
 
-      api.rebootServer("server777");
+      api.reboot("server777");
    }
 
    public void testDestroyServerWhenResponseIs2xx() throws Exception {
@@ -490,7 +489,7 @@ public class ServerApiExpectTest extends BaseGleSYSApiExpectTest {
             HttpResponse.builder().statusCode(200).build())
             .getServerApi();
 
-      api.destroyServer("server777", DestroyServerOptions.Builder.keepIp());
+      api.destroy("server777", DestroyServerOptions.Builder.keepIp());
    }
 
    @Test(expectedExceptions = {AuthorizationException.class})
@@ -503,7 +502,7 @@ public class ServerApiExpectTest extends BaseGleSYSApiExpectTest {
             HttpResponse.builder().statusCode(401).build())
             .getServerApi();
 
-      api.destroyServer("server777", DestroyServerOptions.Builder.discardIp());
+      api.destroy("server777", DestroyServerOptions.Builder.discardIp());
    }
 
    public void testResourceUsageWhenResponseIs2xx() throws Exception {

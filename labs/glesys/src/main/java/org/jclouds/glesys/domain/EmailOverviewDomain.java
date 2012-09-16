@@ -51,7 +51,7 @@ public class EmailOverviewDomain {
       protected int aliases;
 
       /**
-       * @see EmailOverviewDomain#getDomain()
+       * @see EmailOverviewDomain#get()
        */
       public T domain(String domain) {
          this.domain = checkNotNull(domain, "domain");
@@ -79,7 +79,7 @@ public class EmailOverviewDomain {
       }
 
       public T fromEmailOverviewDomain(EmailOverviewDomain in) {
-         return this.domain(in.getDomain()).accounts(in.getAccounts()).aliases(in.getAliases());
+         return this.domain(in.get()).accounts(in.getAccounts()).aliases(in.getAliases());
       }
    }
 
@@ -104,7 +104,7 @@ public class EmailOverviewDomain {
    }
 
    /** @return the domain name */
-   public String getDomain() {
+   public String get() {
       return this.domain;
    }
 

@@ -29,7 +29,7 @@ import org.jclouds.glesys.domain.Domain;
 import org.jclouds.glesys.domain.DomainRecord;
 import org.jclouds.glesys.internal.BaseGleSYSApiLiveTest;
 import org.jclouds.glesys.options.DomainOptions;
-import org.jclouds.glesys.options.EditRecordOptions;
+import org.jclouds.glesys.options.UpdateRecordOptions;
 import org.jclouds.predicates.RetryablePredicate;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
@@ -54,7 +54,7 @@ public class DomainApiLiveTest extends BaseGleSYSApiLiveTest {
       domainCounter = new RetryablePredicate<Integer>(
             new Predicate<Integer>() {
                public boolean apply(Integer value) {
-                  return api.listDomains().size() == value;
+                  return api.list().size() == value;
                }
             }, 30, 1, TimeUnit.SECONDS);
       recordCounter = new RetryablePredicate<Integer>(
@@ -65,7 +65,7 @@ public class DomainApiLiveTest extends BaseGleSYSApiLiveTest {
             }, 30, 1, TimeUnit.SECONDS);
 
       try {
-         api.deleteDomain(testDomain);
+         api.delete(testDomain);
       } catch (Exception ex) {
       }
       
@@ -74,8 +74,8 @@ public class DomainApiLiveTest extends BaseGleSYSApiLiveTest {
 
    @AfterGroups(groups = {"live"})
    public void tearDownContext() {
-      int before = api.listDomains().size();
-      api.deleteDomain(testDomain);
+      int before = api.list().size();
+      api.delete(testDomain);
       assertTrue(domainCounter.apply(before - 1));
    
       super.tearDownContext();
@@ -87,16 +87,16 @@ public class DomainApiLiveTest extends BaseGleSYSApiLiveTest {
 
    @Test
    public void testGetDomain() throws Exception {
-      Domain domain = api.getDomain(testDomain);
+      Domain domain = api.get(testDomain);
       assertNotNull(domain);
-      assertEquals(domain.getDomainName(), testDomain);
+      assertEquals(domain.getName(), testDomain);
       assertNotNull(domain.getCreateTime());
    }
    
    @Test
-   public void testEditDomain() throws Exception {
-      api.editDomain(testDomain, DomainOptions.Builder.responsiblePerson("another-tester.jclouds.org."));
-      Domain domain = api.getDomain(testDomain);
+   public void testUpdateDomain() throws Exception {
+      api.update(testDomain, DomainOptions.Builder.responsiblePerson("another-tester.jclouds.org."));
+      Domain domain = api.get(testDomain);
       assertEquals(domain.getResponsiblePerson(), "another-tester.jclouds.org.");
    }
 
@@ -104,7 +104,7 @@ public class DomainApiLiveTest extends BaseGleSYSApiLiveTest {
    public void testCreateRecord() throws Exception {
       int before = api.listRecords(testDomain).size();
 
-      api.addRecord(testDomain, "test", "A", "127.0.0.1");
+      api.createRecord(testDomain, "test", "A", "127.0.0.1");
 
       assertTrue(recordCounter.apply(before + 1));
 
@@ -117,10 +117,10 @@ public class DomainApiLiveTest extends BaseGleSYSApiLiveTest {
    }
 
    @Test
-   public void testEditRecord() throws Exception {
+   public void testUpdateRecord() throws Exception {
       int before = api.listRecords(testDomain).size();
 
-      api.addRecord(testDomain, "testeditbefore", "A", "127.0.0.1");
+      api.createRecord(testDomain, "testeditbefore", "A", "127.0.0.1");
 
       assertTrue(recordCounter.apply(before + 1));
 
@@ -135,7 +135,7 @@ public class DomainApiLiveTest extends BaseGleSYSApiLiveTest {
 
       assertNotNull(recordId);
 
-      api.editRecord(recordId, EditRecordOptions.Builder.host("testeditafter"));
+      api.updateRecord(recordId, UpdateRecordOptions.Builder.host("testeditafter"));
 
       boolean found = false;
       for(DomainRecord record : api.listRecords(testDomain)) {

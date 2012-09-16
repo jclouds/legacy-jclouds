@@ -58,7 +58,7 @@ public class IpApiExpectTest extends BaseGleSYSApiExpectTest {
             .nameServers("79.99.4.100", "79.99.4.101")
             .cost(Cost.builder().amount(2.0).currency("EUR").timePeriod("month").build());
 
-      assertEquals(api.listIps().toString(), ImmutableSet.of(
+      assertEquals(api.list().toString(), ImmutableSet.of(
             builder.ptr("31-192-230-68-static.serverhotell.net.").address("31.192.230.68").serverId(null).build(),
             builder.ptr("31-192-231-148-static.serverhotell.net.").address("31.192.231.148").serverId("vz1609110").build()).toString());
    }
@@ -70,7 +70,7 @@ public class IpApiExpectTest extends BaseGleSYSApiExpectTest {
                        .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build(),
             HttpResponse.builder().statusCode(404).build()).getIpApi();
 
-      assertTrue(api.listIps().isEmpty());
+      assertTrue(api.list().isEmpty());
    }
 
    public void testGetIpDetailsWhenResponseIs2xx() {
@@ -81,7 +81,7 @@ public class IpApiExpectTest extends BaseGleSYSApiExpectTest {
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/ip_get_details.json")).build())
             .getIpApi();
 
-      assertEquals(api.getIp("31.192.227.113"), getIpInIpDetails());
+      assertEquals(api.get("31.192.227.113"), getIpInIpDetails());
    }
 
    protected IpDetails getIpInIpDetails() {
@@ -100,7 +100,7 @@ public class IpApiExpectTest extends BaseGleSYSApiExpectTest {
                        .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build(),
             HttpResponse.builder().statusCode(404).build()).getIpApi();
 
-      assertEquals(api.getIp("31.192.227.37"), null);
+      assertEquals(api.get("31.192.227.37"), null);
    }
 
    public void testTakeWhenResponseIs2xx() {
@@ -159,7 +159,7 @@ public class IpApiExpectTest extends BaseGleSYSApiExpectTest {
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/ip_list_free.json")).build())
             .getIpApi();
 
-      assertEquals(api.listFree(4, "Falkenberg", "OpenVZ"), ParseIpAddressFromResponseTest.EXPECTED_IPS);
+      assertEquals(api.listFree(4, "Falkenberg", "OpenVZ").toImmutableSet(), ParseIpAddressFromResponseTest.EXPECTED_IPS);
    }
 
    public void testListFreeWhenResponseIs404ReturnsEmptySet() {
@@ -170,7 +170,7 @@ public class IpApiExpectTest extends BaseGleSYSApiExpectTest {
             HttpResponse.builder().statusCode(404).build())
             .getIpApi();
 
-      assertEquals(api.listFree(6, "Falkenberg", "OpenVZ"), emptySet());
+      assertEquals(api.listFree(6, "Falkenberg", "OpenVZ").toImmutableSet(), emptySet());
    }
 
    public void testAddWhenResponseIs2xx() {
@@ -183,7 +183,7 @@ public class IpApiExpectTest extends BaseGleSYSApiExpectTest {
             HttpResponse.builder().statusCode(200).build())
             .getIpApi();
 
-      api.addIpToServer("31.192.227.37", "vz1946889");
+      api.addToServer("31.192.227.37", "vz1946889");
    }
 
    @Test(expectedExceptions = AuthorizationException.class)
@@ -196,7 +196,7 @@ public class IpApiExpectTest extends BaseGleSYSApiExpectTest {
                        .addFormParam("serverid", "vz1946889").build(),
             HttpResponse.builder().statusCode(401).build())
             .getIpApi();
-      api.addIpToServer("31.192.227.37", "vz1946889");
+      api.addToServer("31.192.227.37", "vz1946889");
    }
 
    public void testRemoveWhenResponseIs2xx() {
@@ -209,7 +209,7 @@ public class IpApiExpectTest extends BaseGleSYSApiExpectTest {
             HttpResponse.builder().statusCode(200).build())
             .getIpApi();
 
-      api.removeIpFromServer("31.192.227.37", "vz1946889");
+      api.removeFromServer("31.192.227.37", "vz1946889");
    }
 
    @Test(expectedExceptions = HttpResponseException.class)
@@ -223,7 +223,7 @@ public class IpApiExpectTest extends BaseGleSYSApiExpectTest {
             HttpResponse.builder().statusCode(400).build())
             .getIpApi();
 
-      api.removeIpFromServer("31.192.227.37", "vz1946889");
+      api.removeFromServer("31.192.227.37", "vz1946889");
    }
 
    public void testRemoveAndReleaseWhenResponseIs2xx() {
@@ -237,7 +237,7 @@ public class IpApiExpectTest extends BaseGleSYSApiExpectTest {
             HttpResponse.builder().statusCode(200).build())
             .getIpApi();
 
-      api.removeIpFromServerAndRelease("31.192.227.37", "vz1946889");
+      api.removeFromServerAndRelease("31.192.227.37", "vz1946889");
    }
 
    @Test(expectedExceptions = HttpResponseException.class)
@@ -252,7 +252,7 @@ public class IpApiExpectTest extends BaseGleSYSApiExpectTest {
             HttpResponse.builder().statusCode(400).build())
             .getIpApi();
 
-      api.removeIpFromServerAndRelease("31.192.227.37", "vz1946889");
+      api.removeFromServerAndRelease("31.192.227.37", "vz1946889");
    }
 
    public void testSetPrtWhenResponseIs2xx() {

@@ -62,7 +62,7 @@ public class DomainRecord {
       }
 
       /**
-       * @see DomainRecord#getDomainname()
+       * @see DomainRecord#getname()
        */
       public T domainname(String domainname) {
          this.domainname = checkNotNull(domainname, "domainname");
@@ -107,7 +107,7 @@ public class DomainRecord {
 
       public T fromDomainRecord(DomainRecord in) {
          return this.id(in.getId())
-               .domainname(in.getDomainname())
+               .domainname(in.getname())
                .host(in.getHost())
                .type(in.getType())
                .data(in.getData())
@@ -152,7 +152,7 @@ public class DomainRecord {
    /**
     * @return the zone content of the record
     */
-   public String getDomainname() {
+   public String getname() {
       return this.domainname;
    }
 

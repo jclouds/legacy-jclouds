@@ -18,12 +18,13 @@
  */
 package org.jclouds.glesys.features;
 
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.glesys.domain.IpDetails;
 import org.jclouds.glesys.options.ListIpOptions;
+
+import com.google.common.collect.FluentIterable;
 
 /**
  * Provides synchronous access to IP Addresses.
@@ -43,7 +44,7 @@ public interface IpApi {
     * @param platform   the platform
     * @return a set of free IP addresses
     */
-   Set<String> listFree(int ipVersion, String datacenter, String platform);
+   FluentIterable<String> listFree(int ipVersion, String datacenter, String platform);
 
    /**
     * Take a free IP address and add it to this account. You can list free IP addresses with the function listFree().
@@ -67,7 +68,7 @@ public interface IpApi {
     * @param options options to filter the results (by IPV4/6, serverId, etc)
     * @return the set of IP addresses
     */
-   Set<IpDetails> listIps(ListIpOptions... options);
+   FluentIterable<IpDetails> list(ListIpOptions... options);
 
    /**
     * Get details about the given IP address such as gateway and netmask. Different details are available
@@ -76,7 +77,7 @@ public interface IpApi {
     * @param ipAddress the ip address
     * @return details about the given IP address
     */
-   IpDetails getIp(String ipAddress);
+   IpDetails get(String ipAddress);
 
    /**
     * Add an IP address to an server. The IP has to be free, but reserved to this account. You are able to list such addresses
@@ -87,27 +88,27 @@ public interface IpApi {
     * @param ipAddress the IP address to remove
     * @param serverId  the server to add the IP address to
     */
-   IpDetails addIpToServer(String ipAddress, String serverId);
+   IpDetails addToServer(String ipAddress, String serverId);
 
    /**
     * Remove an IP address from a server. This does not release it back to GleSYS pool of free ips. The address will be
     * kept on the account so that you can use it for other servers or the same server at a later time. To completely remove
-    * the IP address from this account, use removeIpFromServerAndRelease to do so
+    * the IP address from this account, use removeFromServerAndRelease to do so
     *
     * @param ipAddress the IP address to remove
     * @param serverId  the server to remove the IP address from
-    * @see #removeIpFromServerAndRelease
+    * @see #removeFromServerAndRelease
     */
-   IpDetails removeIpFromServer(String ipAddress, String serverId);
+   IpDetails removeFromServer(String ipAddress, String serverId);
 
    /**
     * Remove an IP address from a server and release it back to GleSYS pool of free ips.
     *
     * @param ipAddress the IP address to remove
     * @param serverId  the server to remove the IP address from
-    * @see #removeIpFromServer
+    * @see #removeFromServer
     */
-   IpDetails removeIpFromServerAndRelease(String ipAddress, String serverId);
+   IpDetails removeFromServerAndRelease(String ipAddress, String serverId);
 
    /**
     * Sets PTR data for an IP. Use ip/listown or ip/details to get current PTR data

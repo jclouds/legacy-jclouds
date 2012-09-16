@@ -22,7 +22,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
-import java.util.List;
+import java.util.Set;
 
 import org.jclouds.glesys.domain.Archive;
 import org.jclouds.glesys.domain.ArchiveAllowedArguments;
@@ -33,8 +33,8 @@ import org.jclouds.http.HttpResponseException;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Tests parsing of {@code ArchiveAsyncApi}
@@ -52,10 +52,10 @@ public class ArchiveApiExpectTest extends BaseGleSYSApiExpectTest {
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/archive_list.json")).build())
             .getArchiveApi();
 
-      List<Archive> expected = ImmutableList.of(
+      Set<Archive> expected = ImmutableSet.of(
             Archive.builder().username("xxxxx_test1").freeSize("20 GB").totalSize("30 GB").locked(false).build());
 
-      assertEquals(api.listArchives(), expected);
+      assertEquals(api.list().toImmutableSet(), expected);
    }
 
    public void testListArchivesWhenResponseIs4xxReturnsEmpty() {
@@ -65,7 +65,7 @@ public class ArchiveApiExpectTest extends BaseGleSYSApiExpectTest {
                        .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build(),
             HttpResponse.builder().statusCode(404).build()).getArchiveApi();
 
-      assertTrue(api.listArchives().isEmpty());
+      assertTrue(api.list().isEmpty());
    }
 
    public void testArchiveDetailsWhenResponseIs2xx() throws Exception {
@@ -77,7 +77,7 @@ public class ArchiveApiExpectTest extends BaseGleSYSApiExpectTest {
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/archive_details.json")).build())
             .getArchiveApi();
 
-      assertEquals(api.getArchive("xxxxxx_test1"), detailsInArchiveDetails());
+      assertEquals(api.get("xxxxxx_test1"), detailsInArchiveDetails());
    }
 
    private Archive detailsInArchiveDetails() {
@@ -92,7 +92,7 @@ public class ArchiveApiExpectTest extends BaseGleSYSApiExpectTest {
                        .addFormParam("username", "xxxxxx_test1").build(),
             HttpResponse.builder().statusCode(404).build())
             .getArchiveApi();
-      assertNull(api.getArchive("xxxxxx_test1"));
+      assertNull(api.get("xxxxxx_test1"));
    }
 
    public void testCreateArchiveWhenResponseIs2xx() throws Exception {
@@ -105,7 +105,7 @@ public class ArchiveApiExpectTest extends BaseGleSYSApiExpectTest {
                              .put("size", "5")
                              .put("password", "somepass").build()).build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/archive_details.json")).build()).getArchiveApi();
-      assertEquals(api.createArchive("xxxxxx_test1", "somepass", 5), detailsInArchiveDetails());
+      assertEquals(api.createWithCredentialsAndSize("xxxxxx_test1", "somepass", 5), detailsInArchiveDetails());
    }
 
    public void testDeleteArchiveWhenResponseIs2xx() throws Exception {
@@ -115,7 +115,7 @@ public class ArchiveApiExpectTest extends BaseGleSYSApiExpectTest {
                        .addFormParam("username", "xxxxxx_test1").build(),
             HttpResponse.builder().statusCode(200).build()).getArchiveApi();
 
-      api.deleteArchive("xxxxxx_test1");
+      api.delete("xxxxxx_test1");
    }
 
    @Test(expectedExceptions = {HttpResponseException.class})
@@ -125,7 +125,7 @@ public class ArchiveApiExpectTest extends BaseGleSYSApiExpectTest {
                        .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
                        .addFormParam("username", "xxxxxx_test1").build(),
             HttpResponse.builder().statusCode(402).build()).getArchiveApi();
-      api.deleteArchive("xxxxxx_test1");
+      api.delete("xxxxxx_test1");
    }
 
    public void testResizeArchiveWhenResponseIs2xx() throws Exception {
@@ -137,7 +137,7 @@ public class ArchiveApiExpectTest extends BaseGleSYSApiExpectTest {
                        .addFormParam("size", "5").build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/archive_details.json")).build()).getArchiveApi();
 
-      assertEquals(api.resizeArchive("username1", 5), detailsInArchiveDetails());
+      assertEquals(api.resize("username1", 5), detailsInArchiveDetails());
    }
 
    @Test(expectedExceptions = {ResourceNotFoundException.class})
@@ -150,7 +150,7 @@ public class ArchiveApiExpectTest extends BaseGleSYSApiExpectTest {
                        .addFormParam("size", "5").build(),
             HttpResponse.builder().statusCode(404).build()).getArchiveApi();
 
-      api.resizeArchive("username1", 5);
+      api.resize("username1", 5);
    }
 
    public void testChangeArchivePasswordWhenResponseIs2xx() throws Exception {
@@ -163,7 +163,7 @@ public class ArchiveApiExpectTest extends BaseGleSYSApiExpectTest {
                        .addFormParam("password", "newpass").build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/archive_details.json")).build()).getArchiveApi();
       
-      assertEquals(api.changeArchivePassword("username", "newpass"), detailsInArchiveDetails());
+      assertEquals(api.changePassword("username", "newpass"), detailsInArchiveDetails());
    }
 
    @Test(expectedExceptions = {ResourceNotFoundException.class})
@@ -177,7 +177,7 @@ public class ArchiveApiExpectTest extends BaseGleSYSApiExpectTest {
                   .addFormParam("password", "newpass").build(),
             HttpResponse.builder().statusCode(404).build()).getArchiveApi();
 
-      api.changeArchivePassword("username", "newpass");
+      api.changePassword("username", "newpass");
    }
 
    public void testGetArchiveAllowedArgumentsWhenResponseIs2xx() throws Exception {
@@ -189,7 +189,7 @@ public class ArchiveApiExpectTest extends BaseGleSYSApiExpectTest {
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/archive_allowed_arguments.json")).build()).getArchiveApi();
       ArchiveAllowedArguments expected = ArchiveAllowedArguments.builder().archiveSizes(10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 350, 375, 400, 425, 450, 475, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000).build();
 
-      assertEquals(api.getArchiveAllowedArguments(), expected);
+      assertEquals(api.getAllowedArguments(), expected);
    }
 
    public void testGetArchiveAllowedArguments4xxWhenResponseIs2xx() throws Exception {
@@ -200,6 +200,6 @@ public class ArchiveApiExpectTest extends BaseGleSYSApiExpectTest {
                   .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build(),
             HttpResponse.builder().statusCode(404).build()).getArchiveApi();
 
-      assertNull(api.getArchiveAllowedArguments());
+      assertNull(api.getAllowedArguments());
    }
 }

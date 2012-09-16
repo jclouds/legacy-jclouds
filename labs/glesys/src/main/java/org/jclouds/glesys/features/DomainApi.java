@@ -27,7 +27,9 @@ import org.jclouds.glesys.domain.DomainRecord;
 import org.jclouds.glesys.options.AddDomainOptions;
 import org.jclouds.glesys.options.AddRecordOptions;
 import org.jclouds.glesys.options.DomainOptions;
-import org.jclouds.glesys.options.EditRecordOptions;
+import org.jclouds.glesys.options.UpdateRecordOptions;
+
+import com.google.common.collect.FluentIterable;
 
 /**
  * Provides synchronous access to Domain requests.
@@ -45,14 +47,14 @@ public interface DomainApi {
     *
     * @return an account's associated domain objects.
     */
-   Set<Domain> listDomains();
+   FluentIterable<Domain> list();
 
    /**
     * Get a specific domain.
     *
     * @return the requested domain object.
     */
-   Domain getDomain(String domain);
+   Domain get(String domain);
 
    /**
     * Add a domain to the Glesys dns-system
@@ -61,23 +63,23 @@ public interface DomainApi {
     * @param options optional parameters
     * @return information about the added domain
     */
-   Domain addDomain(String domain, AddDomainOptions... options);
+   Domain create(String domain, AddDomainOptions... options);
 
    /**
-    * Edit a domain to the Glesys dns-system
+    * Update a domain to the Glesys dns-system
     *
     * @param domain  the name of the domain to add.
     * @param options optional parameters
     * @return information about the modified domain
     */
-   Domain editDomain(String domain, DomainOptions... options);
+   Domain update(String domain, DomainOptions options);
 
    /**
     * Remove a domain to the Glesys dns-system
     *
     * @param domain the name of the domain to remove
     */
-   void deleteDomain(String domain);
+   void delete(String domain);
 
    /**
     * Retrieve the DNS records for a given domain
@@ -92,7 +94,7 @@ public interface DomainApi {
     * @param domain  the domain to add the record to
     * @param options optional settings for the record
     */
-   DomainRecord addRecord(String domain, String host, String type, String data, AddRecordOptions... options);
+   DomainRecord createRecord(String domain, String host, String type, String data, AddRecordOptions... options);
 
    /**
     * Modify a specific DNS Record
@@ -101,7 +103,7 @@ public interface DomainApi {
     * @param options  the settings to change
     * @see #listRecords to retrieve the necessary ids
     */
-   DomainRecord editRecord(String recordId, EditRecordOptions... options);
+   DomainRecord updateRecord(String recordId, UpdateRecordOptions options);
 
    /**
     * Delete a DNS record

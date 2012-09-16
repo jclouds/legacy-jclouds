@@ -51,15 +51,15 @@ public class ArchiveApiLiveTest extends BaseGleSYSApiLiveTest {
       archiveCounter = new RetryablePredicate<Integer>(
             new Predicate<Integer>() {
                public boolean apply(Integer value){
-                  return api.listArchives().size() == value;
+                  return api.list().size() == value;
                }
             }, 30, 1, TimeUnit.SECONDS);
    }
    
    @AfterClass(groups = { "integration", "live" })
    protected void tearDownContext() {
-      int before = api.listArchives().size();
-      api.deleteArchive(archiveUser);
+      int before = api.list().size();
+      api.delete(archiveUser);
       assertTrue(archiveCounter.apply(before - 1));
 
       super.tearDownContext();
@@ -71,12 +71,12 @@ public class ArchiveApiLiveTest extends BaseGleSYSApiLiveTest {
 
    @Test
    public void testAllowedArguments() throws Exception {
-      ArchiveAllowedArguments args = api.getArchiveAllowedArguments();
+      ArchiveAllowedArguments args = api.getAllowedArguments();
       assertNotNull(args);
-      assertNotNull(args.getArchiveSizes());
-      assertTrue(args.getArchiveSizes().size() > 0);
+      assertNotNull(args.getSizes());
+      assertTrue(args.getSizes().size() > 0);
       
-      for (int size : args.getArchiveSizes()) {
+      for (int size : args.getSizes()) {
          assertTrue(size > 0);
       }
    }
@@ -84,37 +84,37 @@ public class ArchiveApiLiveTest extends BaseGleSYSApiLiveTest {
    @Test
    public void testCreateArchive() throws Exception {
       try {
-         api.deleteArchive(archiveUser);
+         api.delete(archiveUser);
       } catch(Exception ex) {
       }
       
-      int before = api.listArchives().size();
+      int before = api.list().size();
       
-      api.createArchive(archiveUser, "password", 10);
+      api.createWithCredentialsAndSize(archiveUser, "password", 10);
 
       assertTrue(archiveCounter.apply(before + 1));
    }
 
    @Test(dependsOnMethods = "testCreateArchive")
    public void testArchiveDetails() throws Exception {
-      Archive details = api.getArchive(archiveUser);
+      Archive details = api.get(archiveUser);
       assertEquals(details.getUsername(), archiveUser);
    }
 
    @Test(dependsOnMethods = "testCreateArchive")
    public void testChangePassword() throws Exception {
-      api.changeArchivePassword(archiveUser, "newpassword");      
+      api.changePassword(archiveUser, "newpassword");      
       // TODO assert something useful!
    }
 
    @Test(dependsOnMethods = "testCreateArchive")
    public void testResizeArchive() throws Exception {
-      api.resizeArchive(archiveUser, 20);
+      api.resize(archiveUser, 20);
 
       assertTrue(new RetryablePredicate<String>(
             new Predicate<String>() {
                public boolean apply(String value){
-                  return api.getArchive(archiveUser) != null && value.equals(api.getArchive(archiveUser).getTotalSize());
+                  return api.get(archiveUser) != null && value.equals(api.get(archiveUser).getTotalSize());
                }
             }, 30, 1, TimeUnit.SECONDS).apply("20 GB"));
    }

@@ -23,7 +23,6 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.glesys.domain.AllowedArgumentsForCreateServer;
@@ -38,14 +37,15 @@ import org.jclouds.glesys.domain.ServerStatus;
 import org.jclouds.glesys.internal.BaseGleSYSApiWithAServerLiveTest;
 import org.jclouds.glesys.options.CloneServerOptions;
 import org.jclouds.glesys.options.DestroyServerOptions;
-import org.jclouds.glesys.options.EditServerOptions;
 import org.jclouds.glesys.options.ServerStatusOptions;
+import org.jclouds.glesys.options.UpdateServerOptions;
 import org.jclouds.predicates.RetryablePredicate;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.FluentIterable;
 
 /**
  * Tests behavior of {@code ServerApi}
@@ -65,7 +65,7 @@ public class ServerApiLiveTest extends BaseGleSYSApiWithAServerLiveTest {
    @AfterGroups(groups = {"live"})
    public void deleteExtraServer() {
       if (testServerId2 != null) {
-         api.destroyServer(testServerId2, DestroyServerOptions.Builder.discardIp());
+         api.destroy(testServerId2, DestroyServerOptions.Builder.discardIp());
       }
    }
 
@@ -79,7 +79,7 @@ public class ServerApiLiveTest extends BaseGleSYSApiWithAServerLiveTest {
    
    @Test
    public void testAllowedArguments() throws Exception {
-      Map<String,AllowedArgumentsForCreateServer> templates = api.getAllowedArgumentsForCreateServerByPlatform();
+      Map<String,AllowedArgumentsForCreateServer> templates = api.getAllowedArgumentsForCreateByPlatform();
       
       assertTrue(templates.containsKey("OpenVZ"));
       assertTrue(templates.containsKey("Xen"));
@@ -101,7 +101,7 @@ public class ServerApiLiveTest extends BaseGleSYSApiWithAServerLiveTest {
    }
    
    public void testListTemplates() throws Exception {
-      Set<OSTemplate> oSTemplates = api.listTemplates();
+      FluentIterable<OSTemplate> oSTemplates = api.listTemplates();
 
       for(OSTemplate oSTemplate : oSTemplates) {
          checkTemplate(oSTemplate);
@@ -119,12 +119,12 @@ public class ServerApiLiveTest extends BaseGleSYSApiWithAServerLiveTest {
     }
    
    public void testListServers() throws Exception {
-      Set<Server> response = api.listServers();
+      FluentIterable<Server> response = api.list();
       assertNotNull(response);
       assertTrue(response.size() > 0);
 
       for (Server server : response) {
-         ServerDetails newDetails = api.getServerDetails(server.getId());
+         ServerDetails newDetails = api.get(server.getId());
          assertEquals(newDetails.getId(), server.getId());
          assertEquals(newDetails.getHostname(), server.getHostname());
          assertEquals(newDetails.getPlatform(), server.getPlatform());
@@ -134,7 +134,7 @@ public class ServerApiLiveTest extends BaseGleSYSApiWithAServerLiveTest {
    }
 
    public void testServerDetails() throws Exception {
-      ServerDetails details = api.getServerDetails(serverId);
+      ServerDetails details = api.get(serverId);
       checkServer(details);
       assertEquals("Ubuntu 10.04 LTS 32-bit", details.getTemplateName());
       assertEquals("Falkenberg", details.getDatacenter());
@@ -146,22 +146,22 @@ public class ServerApiLiveTest extends BaseGleSYSApiWithAServerLiveTest {
    }
 
    public void testServerStatus() throws Exception {
-      ServerStatus newStatus = api.getServerStatus(serverId);
+      ServerStatus newStatus = api.getStatus(serverId);
       checkStatus(newStatus);
    }
 
-   public void testEditServer() throws Exception {
-      ServerDetails edited = api.editServer(serverId, EditServerOptions.Builder.description("this is a different description!"));
+   public void testUpdateServer() throws Exception {
+      ServerDetails edited = api.update(serverId, UpdateServerOptions.Builder.description("this is a different description!"));
       assertEquals(edited.getDescription(), "this is a different description!");
 
-      edited = api.editServer(serverId, EditServerOptions.Builder.description("another description!"), EditServerOptions.Builder.hostname("host-name1"));
+      edited = api.update(serverId, UpdateServerOptions.Builder.description("another description!").hostname("host-name1"));
       assertEquals(edited.getDescription(), "another description!");
       assertEquals(edited.getHostname(), "host-name1");
 
       edited = api.resetPassword(serverId, "anotherpass");
       assertEquals(edited.getHostname(), "host-name1");
 
-      edited = api.editServer(serverId, EditServerOptions.Builder.hostname(hostName));
+      edited = api.update(serverId, UpdateServerOptions.Builder.hostname(hostName));
       assertEquals(edited.getHostname(), hostName);
    }
 
@@ -169,7 +169,7 @@ public class ServerApiLiveTest extends BaseGleSYSApiWithAServerLiveTest {
    public void testRebootServer() throws Exception {
       assertTrue(serverStatusChecker.apply(Server.State.RUNNING));
 
-      api.rebootServer(serverId);
+      api.reboot(serverId);
       
       assertTrue(serverStatusChecker.apply(Server.State.RUNNING));
    }
@@ -178,17 +178,17 @@ public class ServerApiLiveTest extends BaseGleSYSApiWithAServerLiveTest {
    public void testStopAndStartServer() throws Exception {
       assertTrue(serverStatusChecker.apply(Server.State.RUNNING));
 
-      api.stopServer(serverId);
+      api.stop(serverId);
 
       assertTrue(serverStatusChecker.apply(Server.State.STOPPED));
 
-      api.startServer(serverId);
+      api.start(serverId);
 
       assertTrue(serverStatusChecker.apply(Server.State.RUNNING));
    }
 
    public void testServerLimits() throws Exception {
-      Map<String, ServerLimit> limits = api.getServerLimits(serverId);
+      Map<String, ServerLimit> limits = api.getLimits(serverId);
       assertNotNull(limits);
       for (Map.Entry<String, ServerLimit> entry : limits.entrySet()) {
          assertNotNull(entry.getKey());
@@ -204,7 +204,7 @@ public class ServerApiLiveTest extends BaseGleSYSApiWithAServerLiveTest {
 
    public void testResourceUsage() throws Exception {
       // test server has only been in existence for less than a minute - check all servers
-      for (Server server : api.listServers()) {
+      for (Server server : api.list()) {
          ResourceUsage usage = api.getResourceUsage(server.getId(), "diskioread", "minute");
          assertEquals(usage.getInfo().getResource(), "diskioread");
          assertEquals(usage.getInfo().getResolution(), "minute");
@@ -226,7 +226,7 @@ public class ServerApiLiveTest extends BaseGleSYSApiWithAServerLiveTest {
    // takes a few minutes and requires an extra server (used 1 already)
    @Test(enabled=false)
    public void testCloneServer() throws Exception {
-      ServerDetails testServer2 = api.cloneServer(serverId, testHostName2, CloneServerOptions.Builder.cpucores(1));
+      ServerDetails testServer2 = api.clone(serverId, testHostName2, CloneServerOptions.Builder.cpucores(1));
 
       assertNotNull(testServer2.getId());
       assertEquals(testServer2.getHostname(), "jclouds-test2");
@@ -237,19 +237,19 @@ public class ServerApiLiveTest extends BaseGleSYSApiWithAServerLiveTest {
       RetryablePredicate<Server.State> cloneChecker = new ServerStatusChecker(api, testServerId2, 300, 10, TimeUnit.SECONDS);
       assertTrue(cloneChecker.apply(Server.State.STOPPED));
 
-      api.startServer(testServer2.getId());
+      api.start(testServer2.getId());
 
       // TODO ServerStatus==STOPPED suggests the previous call to start should have worked
       cloneChecker = new RetryablePredicate<Server.State>(
             new Predicate<Server.State>() {
 
                public boolean apply(Server.State value) {
-                  ServerStatus status = api.getServerStatus(testServerId2, ServerStatusOptions.Builder.state());
+                  ServerStatus status = api.getStatus(testServerId2, ServerStatusOptions.Builder.state());
                   if (status.getState() == value) {
                      return true;
                   }
 
-                  api.startServer(testServerId2);
+                  api.start(testServerId2);
                   return false;
                }
 

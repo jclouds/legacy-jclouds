@@ -61,7 +61,7 @@ public class EmailOverview {
       }
 
       /**
-       * @see EmailOverview#getDomains()
+       * @see EmailOverview#gets()
        */
       public T domains(Set<EmailOverviewDomain> domains) {
          this.domains = ImmutableSet.copyOf(checkNotNull(domains, "domains"));
@@ -77,7 +77,7 @@ public class EmailOverview {
       }
 
       public T fromEmailOverview(EmailOverview in) {
-         return this.summary(in.getSummary()).domains(in.getDomains());
+         return this.summary(in.getSummary()).domains(in.gets());
       }
    }
 
@@ -109,7 +109,7 @@ public class EmailOverview {
    /**
     * @return the set of detailed information about the e-mail addresses and aliases for each domain
     */
-   public Set<EmailOverviewDomain> getDomains() {
+   public Set<EmailOverviewDomain> gets() {
       return this.domains;
    }
 

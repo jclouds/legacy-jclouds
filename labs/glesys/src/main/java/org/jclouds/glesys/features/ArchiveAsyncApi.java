@@ -18,8 +18,6 @@
  */
 package org.jclouds.glesys.features;
 
-import java.util.Set;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -33,9 +31,10 @@ import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnEmptyFluentIterableOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
+import com.google.common.collect.FluentIterable;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -50,67 +49,67 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface ArchiveAsyncApi {
 
    /**
-    * @see ArchiveApi#listArchives
+    * @see ArchiveApi#list
     */
    @POST
    @Path("/archive/list/format/json")
    @SelectJson("archives")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<Archive>> listArchives();
+   @ExceptionParser(ReturnEmptyFluentIterableOnNotFoundOr404.class)
+   ListenableFuture<FluentIterable<Archive>> list();
 
    /**
-    * @see ArchiveApi#getArchive
+    * @see ArchiveApi#get
     */
    @POST
    @Path("/archive/details/format/json")
    @SelectJson("details")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Archive> getArchive(@FormParam("username") String username);
+   ListenableFuture<Archive> get(@FormParam("username") String username);
 
    /**
-    * @see ArchiveApi#createArchive
+    * @see ArchiveApi#createWithCredentialsAndSize
     */
    @POST
    @Path("/archive/create/format/json")
    @SelectJson("details")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Archive> createArchive(@FormParam("username") String username, @FormParam("password") String password,
+   ListenableFuture<Archive> createWithCredentialsAndSize(@FormParam("username") String username, @FormParam("password") String password,
                                         @FormParam("size")int size);
 
    /**
-    * @see ArchiveApi#deleteArchive
+    * @see ArchiveApi#delete
     */
    @POST
    @Path("/archive/delete/format/json")
-   ListenableFuture<Void> deleteArchive(@FormParam("username") String username);
+   ListenableFuture<Void> delete(@FormParam("username") String username);
 
    /**
-    * @see ArchiveApi#resizeArchive
+    * @see ArchiveApi#resize
     */
    @POST
    @Path("/archive/resize/format/json")
    @SelectJson("details")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Archive> resizeArchive(@FormParam("username") String username, @FormParam("size") int size);
+   ListenableFuture<Archive> resize(@FormParam("username") String username, @FormParam("size") int size);
    /**
-    * @see ArchiveApi#changeArchivePassword
+    * @see ArchiveApi#changePassword
     */
    @POST
    @Path("/archive/changepassword/format/json")
    @SelectJson("details")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Archive> changeArchivePassword(@FormParam("username") String username, @FormParam("password") String password);
+   ListenableFuture<Archive> changePassword(@FormParam("username") String username, @FormParam("password") String password);
 
    /**
-    * @see org.jclouds.glesys.features.ArchiveApi#getArchiveAllowedArguments
+    * @see org.jclouds.glesys.features.ArchiveApi#getAllowedArguments
     */
    @GET
    @Path("/archive/allowedarguments/format/json")
    @SelectJson("argumentslist")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<ArchiveAllowedArguments> getArchiveAllowedArguments();
+   ListenableFuture<ArchiveAllowedArguments> getAllowedArguments();
 
 }

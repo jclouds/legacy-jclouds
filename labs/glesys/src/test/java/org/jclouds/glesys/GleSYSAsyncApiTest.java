@@ -50,15 +50,15 @@ public class GleSYSAsyncApiTest extends BaseAsyncApiTest<GleSYSAsyncApi> {
    public void testSync() throws SecurityException, NoSuchMethodException, InterruptedException, ExecutionException {
       assert syncApi.getServerApi() != null;
       assert syncApi.getIpApi() != null;
-      assert syncApi.getArchiveApi() != null;
       assert syncApi.getDomainApi() != null;
+      assert syncApi.getArchiveApi() != null;
    }
 
    public void testAsync() throws SecurityException, NoSuchMethodException, InterruptedException, ExecutionException {
       assert asyncApi.getServerApi() != null;
       assert asyncApi.getIpApi() != null;
-      assert asyncApi.getArchiveApi() != null;
       assert asyncApi.getDomainApi() != null;
+      assert asyncApi.getArchiveApi() != null;
    }
 
    @Override

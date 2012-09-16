@@ -69,17 +69,17 @@ public class BaseGleSYSApiWithAServerLiveTest extends BaseGleSYSApiLiveTest {
    @AfterGroups(groups = {"integration", "live"})
    @Override
    public final void tearDownContext() {
-      gleContext.getApi().getServerApi().destroyServer(serverId, DestroyServerOptions.Builder.discardIp());
+      gleContext.getApi().getServerApi().destroy(serverId, DestroyServerOptions.Builder.discardIp());
       super.tearDownContext();
    }
 
    protected void createDomain(String domain) {
       final DomainApi api = gleContext.getApi().getDomainApi();
-      int before = api.listDomains().size();
-      api.addDomain(domain);
+      int before = api.list().size();
+      api.create(domain);
       RetryablePredicate<Integer> result = new RetryablePredicate<Integer>(new Predicate<Integer>() {
          public boolean apply(Integer value) {
-            return api.listDomains().size() == value;
+            return api.list().size() == value;
          }
       }, 30, 1, TimeUnit.SECONDS);
 
@@ -89,7 +89,7 @@ public class BaseGleSYSApiWithAServerLiveTest extends BaseGleSYSApiLiveTest {
    protected ServerStatusChecker createServer(String hostName) {
       ServerApi api = gleContext.getApi().getServerApi();
 
-      ServerDetails testServer = api.createServerWithHostnameAndRootPassword(
+      ServerDetails testServer = api.createWithHostnameAndRootPassword(
             ServerSpec.builder().datacenter("Falkenberg").platform("OpenVZ").templateName("Ubuntu 10.04 LTS 32-bit")
                   .diskSizeGB(5).memorySizeMB(512).cpuCores(1).transferGB(50).build(), hostName, UUID.randomUUID()
                   .toString().replace("-",""));
@@ -117,7 +117,7 @@ public class BaseGleSYSApiWithAServerLiveTest extends BaseGleSYSApiLiveTest {
          super(new Predicate<Server.State>() {
 
             public boolean apply(Server.State value) {
-               ServerStatus status = api.getServerStatus(serverId, ServerStatusOptions.Builder.state());
+               ServerStatus status = api.getStatus(serverId, ServerStatusOptions.Builder.state());
                return status.getState() == value;
             }
 

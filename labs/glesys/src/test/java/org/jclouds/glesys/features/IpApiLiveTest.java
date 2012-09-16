@@ -33,6 +33,7 @@ import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
@@ -61,13 +62,13 @@ public class IpApiLiveTest extends BaseGleSYSApiWithAServerLiveTest {
 
    @Test
    public void testListFree() throws Exception {
-      Set<String> freeIps = api.listFree(4, "Falkenberg", "Xen");
+      FluentIterable<String> freeIps = api.listFree(4, "Falkenberg", "Xen");
       assertFalse(freeIps.isEmpty());
    }
 
    @Test
    public void reserveIp() throws Exception {
-      Set<String> openVzIps = api.listFree(4, "Falkenberg", "OpenVZ");
+      FluentIterable<String> openVzIps = api.listFree(4, "Falkenberg", "OpenVZ");
       assertFalse(openVzIps.isEmpty());
       reservedIp = api.take(Iterables.get(openVzIps, 0));
       assertTrue(reservedIp.isReserved());
@@ -86,21 +87,21 @@ public class IpApiLiveTest extends BaseGleSYSApiWithAServerLiveTest {
 
    @Test(dependsOnMethods = "reserveIp")
    public void testList() throws Exception {
-      Set<IpDetails> ownIps = api.listIps();
+      FluentIterable<IpDetails> ownIps = api.list();
       assertTrue(ownIps.contains(reservedIp));
-      ownIps = api.listIps(ListIpOptions.Builder.datacenter(reservedIp.getDatacenter()));
+      ownIps = api.list(ListIpOptions.Builder.datacenter(reservedIp.getDatacenter()));
       assertTrue(ownIps.contains(reservedIp));
-      ownIps = api.listIps(ListIpOptions.Builder.platform(reservedIp.getPlatform()));
+      ownIps = api.list(ListIpOptions.Builder.platform(reservedIp.getPlatform()));
       assertTrue(ownIps.contains(reservedIp));
-      ownIps = api.listIps(ListIpOptions.Builder.ipVersion(reservedIp.getVersion()));
+      ownIps = api.list(ListIpOptions.Builder.ipVersion(reservedIp.getVersion()));
       assertTrue(ownIps.contains(reservedIp));
 
-      ownIps = api.listIps(ListIpOptions.Builder.datacenter(reservedIp.getDatacenter()),
+      ownIps = api.list(ListIpOptions.Builder.datacenter(reservedIp.getDatacenter()),
             ListIpOptions.Builder.platform(reservedIp.getPlatform()),
             ListIpOptions.Builder.ipVersion(reservedIp.getVersion()));
       assertTrue(ownIps.contains(reservedIp));
 
-      ownIps = api.listIps(ListIpOptions.Builder.serverId("xmthisisnotaserverid"));
+      ownIps = api.list(ListIpOptions.Builder.serverId("xmthisisnotaserverid"));
       assertTrue(ownIps.isEmpty());
    }
    
@@ -115,20 +116,20 @@ public class IpApiLiveTest extends BaseGleSYSApiWithAServerLiveTest {
    
    @Test
    public void testGetOpenVZDetails() throws Exception {
-      Set<String> openVzIps = api.listFree(4, "Falkenberg", "OpenVZ");
+      FluentIterable<String> openVzIps = api.listFree(4, "Falkenberg", "OpenVZ");
       assertFalse(openVzIps.isEmpty());
       String openVzIp = openVzIps.iterator().next();
-      IpDetails ipDetails = api.getIp(openVzIp);
+      IpDetails ipDetails = api.get(openVzIp);
       checkOpenVZDefailsInFalkenberg(ipDetails);
       assertEquals(ipDetails.getAddress(), openVzIp);
    }
 
    @Test
    public void testGetXenDetails() throws Exception {
-      Set<String> xenVzIps = api.listFree(4, "Falkenberg", "Xen");
+      FluentIterable<String> xenVzIps = api.listFree(4, "Falkenberg", "Xen");
       assertFalse(xenVzIps.isEmpty());
       String xenIp = xenVzIps.iterator().next();
-      IpDetails ipDetails = api.getIp(xenIp);
+      IpDetails ipDetails = api.get(xenIp);
       assertEquals(ipDetails.getDatacenter(), "Falkenberg");
       assertEquals(ipDetails.getPlatform(), "Xen");
       assertEquals(ipDetails.getVersion(), 4);
@@ -145,7 +146,7 @@ public class IpApiLiveTest extends BaseGleSYSApiWithAServerLiveTest {
       IpDetails original = reservedIp;
 
       IpDetails modified = api.setPtr(reservedIp.getAddress(), "wibble.");
-      IpDetails modified2 = api.getIp(reservedIp.getAddress());
+      IpDetails modified2 = api.get(reservedIp.getAddress());
 
       assertEquals(modified.getPtr(), "wibble.");
       assertEquals(modified2, modified);
@@ -157,16 +158,16 @@ public class IpApiLiveTest extends BaseGleSYSApiWithAServerLiveTest {
 
    @Test(dependsOnMethods = "reserveIp")
    public void testAddRemove() throws Exception {
-      IpDetails added = api.addIpToServer(reservedIp.getAddress(), serverId);
+      IpDetails added = api.addToServer(reservedIp.getAddress(), serverId);
 
       assertEquals(added.getAddress(), reservedIp.getAddress());
       assertEquals(added.getPtr(), reservedIp.getPtr());
       assertEquals(added.getServerId(), serverId);
       
-      IpDetails again = api.getIp(reservedIp.getAddress());
+      IpDetails again = api.get(reservedIp.getAddress());
       assertEquals(again, added);
 
-      IpDetails removed = api.removeIpFromServer(reservedIp.getAddress(), serverId);
+      IpDetails removed = api.removeFromServer(reservedIp.getAddress(), serverId);
       assertEquals(removed, added.toBuilder().serverId(null).build());
 
       assertEquals(removed, reservedIp);
@@ -175,11 +176,11 @@ public class IpApiLiveTest extends BaseGleSYSApiWithAServerLiveTest {
       openVzIps.remove(reservedIp.getAddress());
       assertFalse(openVzIps.isEmpty());
       
-      added = api.addIpToServer(reservedIp.getAddress(), serverId);
+      added = api.addToServer(reservedIp.getAddress(), serverId);
       
       assertEquals(added.getServerId(), serverId);
 
-      removed = api.removeIpFromServerAndRelease(reservedIp.getAddress(), serverId);
+      removed = api.removeFromServerAndRelease(reservedIp.getAddress(), serverId);
       
       assertNull(removed.getServerId());
       assertFalse(removed.isReserved());
