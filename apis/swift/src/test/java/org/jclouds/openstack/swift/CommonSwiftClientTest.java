@@ -46,12 +46,16 @@ import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code BindSwiftObjectMetadataToRequest}
- * 
+ *
  * @author Adrian Cole
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
-@Test(groups = "unit", testName = "SwiftClientTest")
+@Test(groups = "unit", testName = "CommonSwiftClientTest")
 public abstract class CommonSwiftClientTest extends BaseAsyncClientTest<SwiftAsyncClient> {
+
+   public static final long UNIX_EPOCH_TIMESTAMP = 123456789L;
+
+   public static final String TEMPORARY_URL_KEY = "get-or-set-X-Account-Meta-Temp-Url-Key";
 
    @Override
    protected TypeLiteral<RestAnnotationProcessor<SwiftAsyncClient>> createTypeLiteral() {
@@ -74,11 +78,23 @@ public abstract class CommonSwiftClientTest extends BaseAsyncClientTest<SwiftAsy
       }
    }
 
+   public static class FixedSwiftBlobStoreContextModule extends SwiftBlobStoreContextModule {
+      @Override
+      protected Long unixEpochTimestampProvider() {
+         return UNIX_EPOCH_TIMESTAMP;
+      }
+
+      @Override
+      protected String temporaryUrlKeyProvider(CommonSwiftClient client) {
+         return TEMPORARY_URL_KEY;
+      }
+   }
+
    @Override
    protected ApiMetadata createApiMetadata() {
       return new SwiftApiMetadata().toBuilder().defaultModules(
-               ImmutableSet.<Class<? extends Module>> of(StorageEndpointModule.class, SwiftRestClientModule.class,
-                        SwiftBlobStoreContextModule.class)).build();
+          ImmutableSet.<Class<? extends Module>>of(StorageEndpointModule.class, SwiftRestClientModule.class,
+              FixedSwiftBlobStoreContextModule.class)).build();
    }
 
    @Override

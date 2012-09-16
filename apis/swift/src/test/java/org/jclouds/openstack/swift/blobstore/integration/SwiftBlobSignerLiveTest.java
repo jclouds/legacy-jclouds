@@ -18,17 +18,16 @@
  */
 package org.jclouds.openstack.swift.blobstore.integration;
 
-import java.util.Properties;
-
 import org.jclouds.blobstore.integration.internal.BaseBlobSignerLiveTest;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
 import org.testng.annotations.Test;
 
+import java.util.Properties;
+
 /**
- *
  * @author Adrian Cole
  */
-@Test(groups = { "live" })
+@Test(groups = {"live"})
 public class SwiftBlobSignerLiveTest extends BaseBlobSignerLiveTest {
 
    @Override
