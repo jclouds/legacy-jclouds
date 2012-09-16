@@ -18,11 +18,16 @@
  */
 package org.jclouds.openstack.swift.blobstore.config;
 
+import com.google.inject.Provides;
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.config.BlobStoreMapModule;
+import org.jclouds.date.TimeStamp;
+import org.jclouds.openstack.swift.CommonSwiftClient;
+import org.jclouds.openstack.swift.SwiftClient;
+import org.jclouds.openstack.swift.TemporaryUrlKey;
 import org.jclouds.openstack.swift.blobstore.SwiftAsyncBlobStore;
 import org.jclouds.openstack.swift.blobstore.SwiftBlobRequestSigner;
 import org.jclouds.openstack.swift.blobstore.SwiftBlobStore;
@@ -37,6 +42,19 @@ import com.google.inject.Scopes;
  * @author Adrian Cole
  */
 public class SwiftBlobStoreContextModule extends AbstractModule {
+
+   @Provides
+   @TimeStamp
+   protected Long unixEpochTimestampProvider() {
+      return System.currentTimeMillis() / 1000; /* convert to seconds */
+   }
+
+   @Provides
+   @TemporaryUrlKey
+   protected String temporaryUrlKeyProvider(CommonSwiftClient client) {
+      return client.getTemporaryUrlKey();
+   }
+
 
    @Override
    protected void configure() {

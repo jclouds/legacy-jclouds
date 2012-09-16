@@ -19,6 +19,7 @@
 package org.jclouds.openstack.swift.blobstore;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 
 import java.io.IOException;
 import java.util.Date;
@@ -43,8 +44,7 @@ public class SwiftBlobRequestSignerTest extends CommonSwiftClientTest {
    private BlobRequestSigner signer;
    private Factory blobFactory;
 
-   public void testSignGetBlob() throws ArrayIndexOutOfBoundsException, SecurityException, IllegalArgumentException,
-            NoSuchMethodException, IOException {
+   public void testSignGetBlob() throws Exception {
       HttpRequest request = signer.signGetBlob("container", "name");
 
       assertRequestLineEquals(request, "GET http://storage/container/name HTTP/1.1");
@@ -54,19 +54,18 @@ public class SwiftBlobRequestSignerTest extends CommonSwiftClientTest {
       assertEquals(request.getFilters().size(), 0);
    }
 
-   public void testSignRemoveBlob() throws ArrayIndexOutOfBoundsException, SecurityException, IllegalArgumentException,
-            NoSuchMethodException, IOException {
-      HttpRequest request = signer.signRemoveBlob("container", "name");
+   public void testSignGetBlobWithTime() {
+      HttpRequest request = signer.signGetBlob("container", "name", 120);
 
-      assertRequestLineEquals(request, "DELETE http://storage/container/name HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "X-Auth-Token: testtoken\n");
+      assertRequestLineEquals(request, "GET http://storage/container/name?" +
+          "temp_url_sig=4759d99d13c826bba0af2c9f0c526ca53c95abaf&temp_url_expires=123456909 HTTP/1.1");
+      assertFalse(request.getHeaders().containsKey("X-Auth-Token"));
       assertPayloadEquals(request, null, null, false);
 
       assertEquals(request.getFilters().size(), 0);
    }
 
-   public void testSignPutBlob() throws ArrayIndexOutOfBoundsException, SecurityException, IllegalArgumentException,
-            NoSuchMethodException, IOException {
+   public void testSignPutBlob() throws Exception {
       Blob blob = blobFactory.create(null);
       blob.getMetadata().setName("name");
       blob.setPayload("");
@@ -80,6 +79,37 @@ public class SwiftBlobRequestSignerTest extends CommonSwiftClientTest {
       assertRequestLineEquals(request, "PUT http://storage/container/name HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "X-Auth-Token: testtoken\n");
       assertContentHeadersEqual(request, "text/plain", null, null, null, (long) 2l, new byte[] { 0, 2, 4, 8 }, new Date(1000));
+
+      assertEquals(request.getFilters().size(), 0);
+   }
+
+   public void testSignPutBlobWithTime() throws Exception {
+      Blob blob = blobFactory.create(null);
+
+      blob.getMetadata().setName("name");
+      blob.setPayload("");
+      blob.getPayload().getContentMetadata().setContentLength(2l);
+      blob.getPayload().getContentMetadata().setContentMD5(new byte[]{0, 2, 4, 8});
+      blob.getPayload().getContentMetadata().setContentType("text/plain");
+      blob.getPayload().getContentMetadata().setExpires(new Date(1000));
+
+      HttpRequest request = signer.signPutBlob("container", blob, 120 /* seconds */);
+
+      assertRequestLineEquals(request, "PUT http://storage/container/name?" +
+          "temp_url_sig=490690286130adac9e7144d85b320a00b1bf9e2b&temp_url_expires=123456909 HTTP/1.1");
+
+      assertFalse(request.getHeaders().containsKey("X-Auth-Token"));
+      assertContentHeadersEqual(request, "text/plain", null, null, null, (long) 2l, new byte[]{0, 2, 4, 8}, new Date(1000));
+
+      assertEquals(request.getFilters().size(), 0);
+   }
+
+   public void testSignRemoveBlob() throws Exception {
+      HttpRequest request = signer.signRemoveBlob("container", "name");
+
+      assertRequestLineEquals(request, "DELETE http://storage/container/name HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "X-Auth-Token: testtoken\n");
+      assertPayloadEquals(request, null, null, false);
 
       assertEquals(request.getFilters().size(), 0);
    }
