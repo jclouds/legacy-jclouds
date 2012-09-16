@@ -18,17 +18,26 @@
  */
 package org.jclouds.openstack.swift.blobstore.config;
 
+import com.google.inject.Provides;
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.config.BlobStoreMapModule;
+import org.jclouds.date.TimeStamp;
+import org.jclouds.openstack.swift.TemporaryUrlKey;
 import org.jclouds.openstack.swift.blobstore.SwiftAsyncBlobStore;
 import org.jclouds.openstack.swift.blobstore.SwiftBlobRequestSigner;
 import org.jclouds.openstack.swift.blobstore.SwiftBlobStore;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
+import org.jclouds.openstack.swift.extensions.TemporaryUrlKeyApi;
+import org.jclouds.openstack.swift.extensions.TemporaryUrlKeyAsyncApi;
+
+import java.util.UUID;
+
+import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
 
 /**
  * Configures the {@link CloudFilesBlobStoreContext}; requires {@link SwiftAsyncBlobStore}
@@ -38,16 +47,31 @@ import com.google.inject.Scopes;
  */
 public class SwiftBlobStoreContextModule extends AbstractModule {
 
+   @Provides
+   @TimeStamp
+   protected Long unixEpochTimestampProvider() {
+      return System.currentTimeMillis() / 1000; /* convert to seconds */
+   }
+
+   @Provides
+   @TemporaryUrlKey
+   protected String temporaryUrlKeyProvider(TemporaryUrlKeyApi client) {
+      String key = client.getTemporaryUrlKey();
+      if (key == null) {
+         client.setTemporaryUrlKey(UUID.randomUUID().toString());
+         return client.getTemporaryUrlKey();
+      }
+      return key;
+   }
+
+
    @Override
    protected void configure() {
       install(new BlobStoreMapModule());
       bind(ConsistencyModel.class).toInstance(ConsistencyModel.STRICT);
       bind(AsyncBlobStore.class).to(SwiftAsyncBlobStore.class).in(Scopes.SINGLETON);
       bind(BlobStore.class).to(SwiftBlobStore.class).in(Scopes.SINGLETON);
-      configureRequestSigner();
-   }
-
-   protected void configureRequestSigner() {
       bind(BlobRequestSigner.class).to(SwiftBlobRequestSigner.class);
+      bindClientAndAsyncClient(binder(), TemporaryUrlKeyApi.class, TemporaryUrlKeyAsyncApi.class);
    }
 }

@@ -25,6 +25,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -54,6 +55,7 @@ import org.jclouds.openstack.swift.functions.ParseContainerMetadataFromHeaders;
 import org.jclouds.openstack.swift.functions.ParseObjectFromHeadersAndHttpContent;
 import org.jclouds.openstack.swift.functions.ParseObjectInfoFromHeaders;
 import org.jclouds.openstack.swift.functions.ParseObjectInfoListFromJsonResponse;
+import org.jclouds.openstack.swift.functions.ParseTemporaryUrlKeyFromHeaders;
 import org.jclouds.openstack.swift.functions.ReturnTrueOn404FalseOn409;
 import org.jclouds.openstack.swift.options.CreateContainerOptions;
 import org.jclouds.openstack.swift.options.ListContainerOptions;
@@ -248,5 +250,4 @@ public interface CommonSwiftAsyncClient {
    @Headers(keys = "X-Object-Manifest", values="{container}/{name}")
    ListenableFuture<String> putObjectManifest(@PathParam("container") String container,
                                               @PathParam("name") String name);
-
 }

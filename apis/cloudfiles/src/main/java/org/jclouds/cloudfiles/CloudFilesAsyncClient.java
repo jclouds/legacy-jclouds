@@ -39,7 +39,6 @@ import org.jclouds.cloudfiles.binders.BindIterableToHeadersWithPurgeCDNObjectEma
 import org.jclouds.cloudfiles.domain.ContainerCDNMetadata;
 import org.jclouds.cloudfiles.functions.ParseCdnUriFromHeaders;
 import org.jclouds.cloudfiles.functions.ParseContainerCDNMetadataFromHeaders;
-import org.jclouds.cloudfiles.functions.ParseTemporaryUrlKeyFromHeaders;
 import org.jclouds.cloudfiles.options.ListCdnContainerOptions;
 import org.jclouds.cloudfiles.reference.CloudFilesHeaders;
 import org.jclouds.openstack.filters.AuthenticateRequest;
@@ -202,19 +201,4 @@ public interface CloudFilesAsyncClient extends CommonSwiftAsyncClient {
    @Headers(keys = CloudFilesHeaders.CDN_WEBSITE_ERROR, values = "{error}")
    ListenableFuture<Boolean> setCDNStaticWebsiteError(@PathParam("container") String container,
                                                       @PathParam("error") String error);
-
-   /**
-    * @see CloudFilesClient#getTemporaryUrlKey
-    */
-   @HEAD
-   @Path("/")
-   @ResponseParser(ParseTemporaryUrlKeyFromHeaders.class)
-   ListenableFuture<String> getTemporaryUrlKey();
-
-   /**
-    * @see CloudFilesClient#setTemporaryUrlKey
-    */
-   @POST
-   @Path("/")
-   ListenableFuture<Void> setTemporaryUrlKey(@HeaderParam(CloudFilesHeaders.ACCOUNT_TEMPORARY_URL_KEY) String key);
 }

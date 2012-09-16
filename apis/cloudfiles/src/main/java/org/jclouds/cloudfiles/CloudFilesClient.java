@@ -105,25 +105,4 @@ public interface CloudFilesClient extends CommonSwiftClient {
     * http://docs.rackspace.com/files/api/v1/cf-devguide/content/Set_Error_Pages_for_Static_Website-dle4005.html
     */
    boolean setCDNStaticWebsiteError(String container, String error);
-
-   /**
-    * Retrieve the key used to generate Temporary object access URLs
-    *
-    * @see <a href="http://docs.rackspace.com/files/api/v1/cf-devguide/content/Set_Account_Metadata-d1a4460.html" />
-    * @return shared secret key
-    */
-   String getTemporaryUrlKey();
-
-   /**
-    * To create a Temporary URL you must first set a key as account metadata.
-    *
-    * Once the key is set, you should not change it while you still want others to be
-    * able to access your temporary URL. If you change it, the TempURL becomes invalid
-    * (within 60 seconds, which is the cache time for a key) and others will not be allowed
-    * to access it.
-    *
-    * @see <a href="http://docs.rackspace.com/files/api/v1/cf-devguide/content/Set_Account_Metadata-d1a4460.html" />
-    * @param temporaryUrlKey
-    */
-   void setTemporaryUrlKey(String temporaryUrlKey);
 }

@@ -18,9 +18,8 @@
  */
 package org.jclouds.cloudfiles.blobstore.integration;
 
-import org.jclouds.cloudfiles.CloudFilesApiMetadata;
-import org.jclouds.cloudfiles.CloudFilesClient;
 import org.jclouds.openstack.swift.blobstore.integration.SwiftBlobLiveTest;
+import org.jclouds.openstack.swift.extensions.TemporaryUrlKeyApi;
 import org.testng.annotations.Test;
 
 import java.util.UUID;
@@ -33,12 +32,13 @@ import static org.testng.Assert.assertNotNull;
  */
 @Test(groups = {"live"})
 public class CloudFilesBlobLiveTest extends SwiftBlobLiveTest {
+
    public CloudFilesBlobLiveTest() {
       provider = "cloudfiles";
    }
 
    public void testGetAndSetTemporaryUrlKey() {
-      CloudFilesClient client = view.unwrap(CloudFilesApiMetadata.CONTEXT_TOKEN).getApi();
+      TemporaryUrlKeyApi client = view.utils().injector().getInstance(TemporaryUrlKeyApi.class);
 
       String currentSecretKey = client.getTemporaryUrlKey();
       assertNotNull(currentSecretKey);
