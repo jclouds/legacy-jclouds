@@ -21,7 +21,6 @@ package org.jclouds.sqs.parse;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
-import java.util.List;
 
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.functions.BaseHandlerTest;
@@ -29,6 +28,7 @@ import org.jclouds.sqs.domain.Message;
 import org.jclouds.sqs.xml.ReceiveMessageResponseHandler;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.hash.HashCodes;
 
@@ -43,17 +43,17 @@ public class ReceiveMessageResponseTest extends BaseHandlerTest {
    public void test() {
       InputStream is = getClass().getResourceAsStream("/messages.xml");
 
-      List<Message> expected = expected();
+      FluentIterable<Message> expected = expected();
 
       ReceiveMessageResponseHandler handler = injector.getInstance(ReceiveMessageResponseHandler.class);
-      List<Message> result = factory.create(handler).parse(is);
+      FluentIterable<Message> result = factory.create(handler).parse(is);
 
       assertEquals(result.toString(), expected.toString());
 
    }
 
-   public List<Message> expected() {
-      return ImmutableList.of(Message
+   public FluentIterable<Message> expected() {
+      return FluentIterable.from(ImmutableList.of(Message
             .builder()
             .id("5fea7756-0ea4-451a-a703-a558b933e274")
             .receiptHandle(
@@ -63,6 +63,6 @@ public class ReceiveMessageResponseTest extends BaseHandlerTest {
             .addAttribute("SenderId", "195004372649")
             .addAttribute("SentTimestamp", "1238099229000")
             .addAttribute("ApproximateReceiveCount", "5")
-            .addAttribute("ApproximateFirstReceiveTimestamp", "1250700979248").build());
+            .addAttribute("ApproximateFirstReceiveTimestamp", "1250700979248").build()));
    }
 }

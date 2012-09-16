@@ -114,7 +114,7 @@ public class BulkMessageApiLiveTest extends BaseSQSApiLiveTest {
       // you are not guaranteed to get all messages in the same request
       Set<Message> messages = Sets.newLinkedHashSet();
       while (messages.size() != idPayload.size())
-         messages.addAll(api.receive(idPayload.size(), attribute("None").visibilityTimeout(5)));
+         messages.addAll(api.receive(idPayload.size(), attribute("None").visibilityTimeout(5)).toImmutableSet());
       return messages;
    }
 

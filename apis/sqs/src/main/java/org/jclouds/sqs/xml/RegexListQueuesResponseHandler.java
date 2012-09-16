@@ -19,7 +19,6 @@
 package org.jclouds.sqs.xml;
 
 import java.net.URI;
-import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -29,6 +28,7 @@ import org.jclouds.http.functions.ReturnStringIf2xx;
 import org.jclouds.sqs.xml.internal.BaseRegexQueueHandler;
 
 import com.google.common.base.Function;
+import com.google.common.collect.FluentIterable;
 
 /**
  * 
@@ -38,7 +38,7 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 @Singleton
-public class RegexListQueuesResponseHandler extends BaseRegexQueueHandler implements Function<HttpResponse, Set<URI>> {
+public class RegexListQueuesResponseHandler extends BaseRegexQueueHandler implements Function<HttpResponse, FluentIterable<URI>> {
    private final ReturnStringIf2xx returnStringIf200;
 
    @Inject
@@ -47,7 +47,7 @@ public class RegexListQueuesResponseHandler extends BaseRegexQueueHandler implem
    }
 
    @Override
-   public Set<URI> apply(HttpResponse response) {
+   public FluentIterable<URI> apply(HttpResponse response) {
       return parse(returnStringIf200.apply(response));
    }
 

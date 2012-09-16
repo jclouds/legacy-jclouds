@@ -18,12 +18,12 @@
  */
 package org.jclouds.cloudwatch.domain;
 
-import java.util.Set;
+import java.util.Iterator;
 
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.ForwardingSet;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -33,12 +33,12 @@ import com.google.common.collect.ImmutableSet;
  *
  * @author Jeremy Whitlock
  */
-public class GetMetricStatisticsResponse extends ForwardingSet<Datapoint> {
+public class GetMetricStatisticsResponse extends FluentIterable<Datapoint> {
 
-   private final Set<Datapoint> datapoints;
+   private final Iterable<Datapoint> datapoints;
    private final String label;
 
-   public GetMetricStatisticsResponse(@Nullable Set<Datapoint> datapoints, String label) {
+   public GetMetricStatisticsResponse(@Nullable Iterable<Datapoint> datapoints, String label) {
       // Default to an empty set
       if (datapoints == null) {
          this.datapoints = ImmutableSet.<Datapoint>of();
@@ -90,8 +90,8 @@ public class GetMetricStatisticsResponse extends ForwardingSet<Datapoint> {
    }
 
    @Override
-   protected Set<Datapoint> delegate() {
-      return datapoints;
+   public Iterator<Datapoint> iterator() {
+      return datapoints.iterator();
    }
 
 }

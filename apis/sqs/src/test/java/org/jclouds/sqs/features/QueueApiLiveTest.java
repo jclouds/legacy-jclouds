@@ -24,11 +24,11 @@ import static org.testng.Assert.assertNotNull;
 
 import java.net.URI;
 import java.util.Map;
-import java.util.Set;
 
 import org.jclouds.sqs.internal.BaseSQSApiLiveTest;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -48,7 +48,7 @@ public class QueueApiLiveTest extends BaseSQSApiLiveTest {
    }
 
    protected void listQueuesInRegion(String region) throws InterruptedException {
-      Set<URI> allResults = api().getQueueApiForRegion(region).list();
+      FluentIterable<URI> allResults = api().getQueueApiForRegion(region).list();
       assertNotNull(allResults);
       if (allResults.size() >= 1) {
          URI queue = getLast(allResults);

@@ -19,7 +19,6 @@
 package org.jclouds.sqs.features;
 
 import java.net.URI;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -30,6 +29,7 @@ import org.jclouds.sqs.domain.MessageIdAndMD5;
 import org.jclouds.sqs.options.ReceiveMessageOptions;
 import org.jclouds.sqs.options.SendMessageOptions;
 
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Table;
 
 /**
@@ -402,7 +402,7 @@ public interface MessageApi {
     *           maximum messages to receive, current limit is 10
     * @see #receive(URI)
     */
-   List<Message> receive(int max);
+   FluentIterable<Message> receive(int max);
 
    /**
     * same as {@link #receive(URI, int)} except you can provide options like
@@ -415,5 +415,5 @@ public interface MessageApi {
     *           options such as VisibilityTimeout
     * @see #receive(URI, int)
     */
-   List<Message> receive(int max, ReceiveMessageOptions options);
+   FluentIterable<Message> receive(int max, ReceiveMessageOptions options);
 }

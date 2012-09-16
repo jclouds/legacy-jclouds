@@ -19,13 +19,13 @@
 package org.jclouds.sqs.xml.internal;
 
 import java.net.URI;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.inject.Singleton;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 
@@ -40,7 +40,7 @@ import com.google.common.collect.ImmutableSet.Builder;
 public class BaseRegexQueueHandler {
    protected final Pattern pattern = Pattern.compile("<QueueUrl>(https://[\\S&&[^<]]+)</QueueUrl>");
 
-   public Set<URI> parse(String in) {
+   public FluentIterable<URI> parse(String in) {
       Builder<URI> queues = ImmutableSet.<URI> builder();
       Matcher matcher = pattern.matcher(in);
       while (matcher.find()) {
@@ -48,7 +48,7 @@ public class BaseRegexQueueHandler {
          if (!Strings.isNullOrEmpty(uriText))
             queues.add(URI.create(uriText));
       }
-      return queues.build();
+      return FluentIterable.from(queues.build());
    }
 
 }

@@ -23,7 +23,6 @@ import static org.jclouds.sqs.reference.SQSParameters.VERSION;
 
 import java.net.URI;
 import java.util.Map;
-import java.util.Set;
 
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
@@ -52,6 +51,7 @@ import org.jclouds.sqs.xml.RegexListQueuesResponseHandler;
 import org.jclouds.sqs.xml.RegexQueueHandler;
 import org.jclouds.sqs.xml.ValueHandler;
 
+import com.google.common.collect.FluentIterable;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -72,7 +72,7 @@ public interface QueueAsyncApi {
    @Path("/")
    @FormParams(keys = ACTION, values = "ListQueues")
    @ResponseParser(RegexListQueuesResponseHandler.class)
-   ListenableFuture<Set<URI>> list();
+   ListenableFuture<FluentIterable<URI>> list();
 
    /**
     * @see QueueApi#list(ListQueuesOptions)
@@ -81,7 +81,7 @@ public interface QueueAsyncApi {
    @Path("/")
    @FormParams(keys = ACTION, values = "ListQueues")
    @ResponseParser(RegexListQueuesResponseHandler.class)
-   ListenableFuture<Set<URI>> list(ListQueuesOptions options);
+   ListenableFuture<FluentIterable<URI>> list(ListQueuesOptions options);
 
    /**
     * @see QueueApi#create

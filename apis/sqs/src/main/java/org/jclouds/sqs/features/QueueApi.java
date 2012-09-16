@@ -20,13 +20,14 @@ package org.jclouds.sqs.features;
 
 import java.net.URI;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.sqs.domain.QueueAttributes;
 import org.jclouds.sqs.options.CreateQueueOptions;
 import org.jclouds.sqs.options.ListQueuesOptions;
+
+import com.google.common.collect.FluentIterable;
 
 /**
  * Provides access to SQS via their REST API.
@@ -53,9 +54,9 @@ public interface QueueApi {
     *      "http://docs.amazonwebservices.com/AWSSimpleQueueService/2011-10-01/APIReference/Query_QueryListQueues.html"
     *      />
     */
-   Set<URI> list();
+   FluentIterable<URI> list();
 
-   Set<URI> list(ListQueuesOptions options);
+   FluentIterable<URI> list(ListQueuesOptions options);
 
    /**
     * The CreateQueue action creates a new queue.

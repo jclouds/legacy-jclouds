@@ -21,7 +21,6 @@ package org.jclouds.sqs.features;
 import static org.jclouds.sqs.reference.SQSParameters.ACTION;
 import static org.jclouds.sqs.reference.SQSParameters.VERSION;
 
-import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.FormParam;
@@ -56,6 +55,7 @@ import org.jclouds.sqs.xml.ReceiveMessageResponseHandler;
 import org.jclouds.sqs.xml.RegexMessageIdAndMD5Handler;
 import org.jclouds.sqs.xml.SendMessageBatchResponseHandler;
 
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Table;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -260,7 +260,7 @@ public interface MessageAsyncApi {
    @Path("/")
    @FormParams(keys = ACTION, values = "ReceiveMessage")
    @XMLResponseParser(ReceiveMessageResponseHandler.class)
-   ListenableFuture<? extends List<? extends Message>> receive(@FormParam("MaxNumberOfMessages") int max);
+   ListenableFuture<? extends FluentIterable<? extends Message>> receive(@FormParam("MaxNumberOfMessages") int max);
 
    /**
     * @see MessageApi#receive(int, ReceiveMessageOptions)
@@ -269,7 +269,7 @@ public interface MessageAsyncApi {
    @Path("/")
    @FormParams(keys = ACTION, values = "ReceiveMessage")
    @XMLResponseParser(ReceiveMessageResponseHandler.class)
-   ListenableFuture<? extends List<? extends Message>> receive(@FormParam("MaxNumberOfMessages") int max,
+   ListenableFuture<? extends FluentIterable<? extends Message>> receive(@FormParam("MaxNumberOfMessages") int max,
          ReceiveMessageOptions options);
 
 }

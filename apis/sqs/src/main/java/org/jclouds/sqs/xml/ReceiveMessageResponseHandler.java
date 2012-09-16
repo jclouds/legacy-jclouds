@@ -20,13 +20,12 @@ package org.jclouds.sqs.xml;
 
 import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
-import java.util.List;
-
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.sqs.domain.Message;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.inject.Inject;
@@ -38,7 +37,7 @@ import com.google.inject.Inject;
  * 
  * @author Adrian Cole
  */
-public class ReceiveMessageResponseHandler extends ParseSax.HandlerForGeneratedRequestWithResult<List<Message>> {
+public class ReceiveMessageResponseHandler extends ParseSax.HandlerForGeneratedRequestWithResult<FluentIterable<Message>> {
 
    private final MessageHandler messageHandler;
 
@@ -52,8 +51,8 @@ public class ReceiveMessageResponseHandler extends ParseSax.HandlerForGeneratedR
    }
 
    @Override
-   public List<Message> getResult() {
-      return messages.build();
+   public FluentIterable<Message> getResult() {
+      return FluentIterable.from(messages.build());
    }
 
    @Override

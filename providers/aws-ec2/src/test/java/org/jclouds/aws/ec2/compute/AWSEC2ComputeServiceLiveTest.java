@@ -38,10 +38,10 @@ import org.jclouds.aws.ec2.domain.MonitoringState;
 import org.jclouds.aws.ec2.services.AWSSecurityGroupClient;
 import org.jclouds.cloudwatch.CloudWatchApi;
 import org.jclouds.cloudwatch.CloudWatchAsyncApi;
-import org.jclouds.cloudwatch.domain.Datapoint;
 import org.jclouds.cloudwatch.domain.Dimension;
 import org.jclouds.cloudwatch.domain.EC2Constants;
 import org.jclouds.cloudwatch.domain.GetMetricStatistics;
+import org.jclouds.cloudwatch.domain.GetMetricStatisticsResponse;
 import org.jclouds.cloudwatch.domain.Statistics;
 import org.jclouds.cloudwatch.domain.Unit;
 import org.jclouds.compute.domain.ExecResponse;
@@ -170,7 +170,7 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
                .modules(setupModules()).build();
 
          try {
-            Set<Datapoint> datapoints = monitoringContext.getApi().getMetricApiForRegion(instance.getRegion())
+            GetMetricStatisticsResponse datapoints = monitoringContext.getApi().getMetricApiForRegion(instance.getRegion())
                      .getMetricStatistics(GetMetricStatistics.builder()
                                                              .dimension(new Dimension(EC2Constants.Dimension.INSTANCE_ID, instance.getId()))
                                                              .unit(Unit.PERCENT)

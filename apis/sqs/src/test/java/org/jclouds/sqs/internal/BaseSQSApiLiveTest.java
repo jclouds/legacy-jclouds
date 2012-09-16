@@ -39,6 +39,7 @@ import org.jclouds.sqs.features.QueueApi;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Sets;
 import com.google.common.reflect.TypeToken;
 import com.google.common.util.concurrent.Uninterruptibles;
@@ -60,7 +61,7 @@ public class BaseSQSApiLiveTest extends BaseContextLiveTest<RestContext<SQSApi, 
 
    protected String recreateQueueInRegion(String queueName, String region) {
       QueueApi api = api().getQueueApiForRegion(region);
-      Set<URI> result = api.list(queuePrefix(queueName));
+      FluentIterable<URI> result = api.list(queuePrefix(queueName));
       if (result.size() >= 1) {
          api.delete(getLast(result));
       }
@@ -110,7 +111,7 @@ public class BaseSQSApiLiveTest extends BaseContextLiveTest<RestContext<SQSApi, 
       final URI finalQ = queue;
       assertEventually(new Runnable() {
          public void run() {
-            Set<URI> result = api().getQueueApiForRegion(region).list();
+            FluentIterable<URI> result = api().getQueueApiForRegion(region).list();
             assertNotNull(result);
             assert result.size() >= 1 : result;
             assertTrue(result.contains(finalQ), finalQ + " not in " + result);
