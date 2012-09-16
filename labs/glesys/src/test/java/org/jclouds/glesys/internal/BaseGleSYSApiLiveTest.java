@@ -23,8 +23,8 @@ import static org.testng.Assert.assertTrue;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
-import org.jclouds.glesys.GleSYSAsyncApi;
 import org.jclouds.glesys.GleSYSApi;
+import org.jclouds.glesys.GleSYSAsyncApi;
 import org.jclouds.glesys.features.DomainApi;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;

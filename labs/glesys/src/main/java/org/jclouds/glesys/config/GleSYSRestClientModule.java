@@ -20,18 +20,18 @@ package org.jclouds.glesys.config;
 
 import java.util.Map;
 
-import org.jclouds.glesys.GleSYSAsyncApi;
 import org.jclouds.glesys.GleSYSApi;
-import org.jclouds.glesys.features.ArchiveAsyncApi;
+import org.jclouds.glesys.GleSYSAsyncApi;
 import org.jclouds.glesys.features.ArchiveApi;
-import org.jclouds.glesys.features.DomainAsyncApi;
+import org.jclouds.glesys.features.ArchiveAsyncApi;
 import org.jclouds.glesys.features.DomainApi;
-import org.jclouds.glesys.features.EmailAsyncApi;
+import org.jclouds.glesys.features.DomainAsyncApi;
 import org.jclouds.glesys.features.EmailApi;
-import org.jclouds.glesys.features.IpAsyncApi;
+import org.jclouds.glesys.features.EmailAsyncApi;
 import org.jclouds.glesys.features.IpApi;
-import org.jclouds.glesys.features.ServerAsyncApi;
+import org.jclouds.glesys.features.IpAsyncApi;
 import org.jclouds.glesys.features.ServerApi;
+import org.jclouds.glesys.features.ServerAsyncApi;
 import org.jclouds.glesys.handlers.GleSYSErrorHandler;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpRetryHandler;
