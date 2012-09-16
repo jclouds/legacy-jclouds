@@ -49,13 +49,14 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
       this.description = description;
       this.ipPermissions = ipPermissions;
    }
-
+   
    /**
-    * Security groups are not copied across Regions. Instances within the Region
-    * cannot communicate with instances outside the Region using group-based
-    * firewall rules. Traffic from instances in another Region is seen as WAN
-    * bandwidth.
+    * To be removed in jclouds 1.6 <h4>Warning</h4>
+    * 
+    * Especially on EC2 clones that may not support regions, this value is fragile. Consider
+    * alternate means to determine context.
     */
+   @Deprecated
    public String getRegion() {
       return region;
    }
