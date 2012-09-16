@@ -1205,17 +1205,26 @@ public class RestAnnotationProcessor<T> {
 
    protected Optional<?> getParamValue(Method method, Object[] args, Set<Annotation> extractors,
             Entry<Integer, Set<Annotation>> entry, String paramKey) {
-      Object arg = args[entry.getKey()];
-      if (arg == null && containsNullable(method.getParameterAnnotations()[entry.getKey()]))
-         return Optional.absent();
-
-      checkNotNull(arg, "param{%s} for method %s.%s", paramKey, method.getDeclaringClass().getSimpleName(),
-               method.getName());
-      if (extractors != null && extractors.size() > 0) {
+      Integer argIndex = entry.getKey();
+      Object arg = args[argIndex];
+      if (extractors != null && extractors.size() > 0 && checkPresentOrNullable(method, paramKey, argIndex, arg)) {
          ParamParser extractor = (ParamParser) extractors.iterator().next();
-         return Optional.of(injector.getInstance(extractor.value()).apply(arg));
+         // ParamParsers can deal with nullable parameters
+         arg = injector.getInstance(extractor.value()).apply(arg);
       }
-      return Optional.of(arg);
+      checkPresentOrNullable(method, paramKey, argIndex, arg);
+      return Optional.fromNullable(arg);
+   }
+
+   private static boolean checkPresentOrNullable(Method method, String paramKey, Integer argIndex, Object arg) {
+      if (arg == null && !argNullable(method, argIndex))
+         throw new NullPointerException(String.format("param{%s} for method %s.%s", paramKey, method
+                  .getDeclaringClass().getSimpleName(), method.getName()));
+      return true;
+   }
+
+   private static boolean argNullable(Method method, Integer argIndex) {
+      return containsNullable(method.getParameterAnnotations()[argIndex]);
    }
 
    private static final Predicate<Annotation> NULLABLE = new Predicate<Annotation>() {
