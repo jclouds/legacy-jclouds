@@ -57,17 +57,17 @@ public interface FloatingIPApi {
    /**
     * Allocate a Floating IP address
     * 
-    * @return a newly allocated FloatingIP
+    * @return a newly created FloatingIP
     */
-   FloatingIP allocate();
+   FloatingIP create();
 
    /**
-    * Deallocate a Floating IP address
+    * Decreate a Floating IP address
     * 
     * @param id
     *           the Floating IP id
     */
-   void deallocate(String id);
+   void delete(String id);
 
    /**
     * Add a Floating IP address to a Server

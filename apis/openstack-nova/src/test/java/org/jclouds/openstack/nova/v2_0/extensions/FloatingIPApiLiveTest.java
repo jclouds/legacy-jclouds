@@ -68,13 +68,13 @@ public class FloatingIPApiLiveTest extends BaseNovaApiLiveTest {
    }
 
    @Test
-   public void testAllocateAndDeallocateFloatingIPs() throws Exception {
+   public void testAllocateAndDecreateFloatingIPs() throws Exception {
       for (String zoneId : novaContext.getApi().getConfiguredZones()) {
          Optional<? extends FloatingIPApi> apiOption = novaContext.getApi().getFloatingIPExtensionForZone(zoneId);
          if (!apiOption.isPresent())
             continue;
          FloatingIPApi api = apiOption.get();
-         FloatingIP floatingIP = api.allocate();
+         FloatingIP floatingIP = api.create();
          assertNotNull(floatingIP);
 
          Set<? extends FloatingIP> response = api.list().toImmutableSet();
@@ -85,7 +85,7 @@ public class FloatingIPApiLiveTest extends BaseNovaApiLiveTest {
          }
          assertTrue(ipInSet);
 
-         api.deallocate(floatingIP.getId());
+         api.delete(floatingIP.getId());
 
          response = api.list().toImmutableSet();
          ipInSet = false;
@@ -107,7 +107,7 @@ public class FloatingIPApiLiveTest extends BaseNovaApiLiveTest {
          FloatingIPApi api = apiOption.get();
          ServerApi serverApi = novaContext.getApi().getServerApiForZone(zoneId);
          Server server = createServerInZone(zoneId);
-         FloatingIP floatingIP = api.allocate();
+         FloatingIP floatingIP = api.create();
          assertNotNull(floatingIP);
          try {
             api.addToServer(floatingIP.getIp(), server.getId());

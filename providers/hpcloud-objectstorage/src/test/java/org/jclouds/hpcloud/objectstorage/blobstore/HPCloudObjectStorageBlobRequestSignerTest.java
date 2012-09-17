@@ -44,7 +44,7 @@ import com.google.common.collect.ImmutableMultimap;
 public class HPCloudObjectStorageBlobRequestSignerTest extends BaseHPCloudObjectStorageBlobStoreExpectTest {
 
    Map<HttpRequest, HttpResponse> requestResponseMap = ImmutableMap.<HttpRequest, HttpResponse> builder().put(
-            keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess).build();
+            keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess).build();
 
    public void testSignGetBlob() {
 

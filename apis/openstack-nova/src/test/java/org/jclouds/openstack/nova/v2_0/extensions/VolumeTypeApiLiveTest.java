@@ -28,7 +28,7 @@ import org.jclouds.openstack.nova.v2_0.domain.VolumeType;
 import org.jclouds.openstack.nova.v2_0.internal.BaseNovaApiLiveTest;
 import org.jclouds.openstack.nova.v2_0.options.CreateVolumeTypeOptions;
 import org.jclouds.predicates.RetryablePredicate;
-import org.testng.annotations.AfterGroups;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
@@ -59,9 +59,10 @@ public class VolumeTypeApiLiveTest extends BaseNovaApiLiveTest {
       volumeTypeOption = novaContext.getApi().getVolumeTypeExtensionForZone(zone);
    }
 
-   @AfterGroups(groups = "live")
+
+   @AfterClass(groups = { "integration", "live" })
    @Override
-   protected void tearDown() {
+   protected void tearDownContext() {
       if (volumeTypeOption.isPresent()) {
          if (testVolumeType != null) {
             final String id = testVolumeType.getId();
@@ -74,7 +75,7 @@ public class VolumeTypeApiLiveTest extends BaseNovaApiLiveTest {
             }, 5 * 1000L).apply(volumeTypeOption.get()));
          }
       }
-      super.tearDown();
+      super.tearDownContext();
    }
 
    public void testCreateVolumeType() {

@@ -31,8 +31,8 @@ import org.jclouds.openstack.nova.v2_0.internal.BaseNovaApiLiveTest;
 import org.jclouds.openstack.nova.v2_0.options.CreateVolumeOptions;
 import org.jclouds.openstack.nova.v2_0.options.CreateVolumeSnapshotOptions;
 import org.jclouds.predicates.RetryablePredicate;
-import org.testng.annotations.AfterGroups;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Objects;
@@ -54,7 +54,7 @@ public class VolumeApiLiveTest extends BaseNovaApiLiveTest {
    private Volume testVolume;
    private VolumeSnapshot testSnapshot;
 
-   @BeforeGroups(groups = { "integration", "live" })
+   @BeforeClass(groups = {"integration", "live"})
    @Override
    public void setupContext() {
       super.setupContext();
@@ -62,9 +62,9 @@ public class VolumeApiLiveTest extends BaseNovaApiLiveTest {
       volumeOption = novaContext.getApi().getVolumeExtensionForZone(zone);
    }
 
-   @AfterGroups(groups = "live", alwaysRun = true)
+   @AfterClass(groups = { "integration", "live" })
    @Override
-   protected void tearDown() {
+   protected void tearDownContext() {
       if (volumeOption.isPresent()) {
          if (testSnapshot != null) {
             final String snapshotId = testSnapshot.getId();
@@ -87,7 +87,7 @@ public class VolumeApiLiveTest extends BaseNovaApiLiveTest {
             }, 180 * 1000L).apply(volumeOption.get()));
          }
       }
-      super.tearDown();
+      super.tearDownContext();
    }
 
    public void testCreateVolume() {

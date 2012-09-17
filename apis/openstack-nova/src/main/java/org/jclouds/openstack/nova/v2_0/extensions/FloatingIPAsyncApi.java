@@ -84,7 +84,7 @@ public interface FloatingIPAsyncApi {
    ListenableFuture<? extends FloatingIP> get(@PathParam("id") String id);
 
    /**
-    * @see FloatingIPApi#allocate
+    * @see FloatingIPApi#create
     */
    @POST
    @Path("/os-floating-ips")
@@ -93,16 +93,16 @@ public interface FloatingIPAsyncApi {
    @Produces(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Payload("{}")
-   ListenableFuture<? extends FloatingIP> allocate();
+   ListenableFuture<? extends FloatingIP> create();
 
    /**
-    * @see FloatingIPApi#deallocate
+    * @see FloatingIPApi#delete
     */
    @DELETE
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Path("/os-floating-ips/{id}")
-   ListenableFuture<Void> deallocate(@PathParam("id") String id);
+   ListenableFuture<Void> delete(@PathParam("id") String id);
 
    /**
     * @see FloatingIPApi#addToServer

@@ -28,8 +28,8 @@ import java.util.Set;
 import org.jclouds.openstack.nova.v2_0.domain.Host;
 import org.jclouds.openstack.nova.v2_0.domain.HostAggregate;
 import org.jclouds.openstack.nova.v2_0.internal.BaseNovaApiLiveTest;
-import org.testng.annotations.AfterGroups;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Optional;
@@ -49,7 +49,7 @@ public class HostAggregateApiLiveTest extends BaseNovaApiLiveTest {
 
    private HostAggregate testAggregate;
 
-   @BeforeGroups(groups = {"integration", "live"})
+   @BeforeClass(groups = {"integration", "live"})
    @Override
    public void setupContext() {
       super.setupContext();
@@ -58,13 +58,13 @@ public class HostAggregateApiLiveTest extends BaseNovaApiLiveTest {
       hostAdminOption = novaContext.getApi().getHostAdministrationExtensionForZone(zone);
    }
 
+   @AfterClass(groups = { "integration", "live" })
    @Override
-   @AfterGroups(groups = {"integration", "live"})
-   public void tearDown() {
+   protected void tearDownContext() {
       if (testAggregate != null) {
          assertTrue(apiOption.get().delete(testAggregate.getId()));
       }
-      super.tearDown();
+      super.tearDownContext();
    }
 
    public void testCreateAggregate() {

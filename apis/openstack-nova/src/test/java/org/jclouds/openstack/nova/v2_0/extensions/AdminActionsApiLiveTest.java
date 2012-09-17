@@ -33,9 +33,9 @@ import org.jclouds.openstack.nova.v2_0.internal.BaseNovaApiLiveTest;
 import org.jclouds.openstack.nova.v2_0.options.CreateBackupOfServerOptions;
 import org.jclouds.openstack.v2_0.features.ExtensionApi;
 import org.testng.SkipException;
-import org.testng.annotations.AfterGroups;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Optional;
@@ -60,7 +60,7 @@ public class AdminActionsApiLiveTest extends BaseNovaApiLiveTest {
    private String testServerId;
    private String backupImageId;
 
-   @BeforeGroups(groups = { "integration", "live" })
+   @BeforeClass(groups = {"integration", "live"})
    @Override
    public void setupContext() {
       super.setupContext();
@@ -74,9 +74,9 @@ public class AdminActionsApiLiveTest extends BaseNovaApiLiveTest {
       }
    }
 
-   @AfterGroups(groups = "live", alwaysRun = true)
+   @AfterClass(groups = { "integration", "live" })
    @Override
-   protected void tearDown() {
+   protected void tearDownContext() {
       if (apiOption.isPresent()) {
          if (testServerId != null) {
             assertTrue(novaContext.getApi().getServerApiForZone(zone).delete(testServerId));
@@ -85,7 +85,7 @@ public class AdminActionsApiLiveTest extends BaseNovaApiLiveTest {
             imageApi.delete(backupImageId);
          }
       }
-      super.tearDown();
+      super.tearDownContext();
    }
 
    protected void skipOnAdminExtensionAbsent() {

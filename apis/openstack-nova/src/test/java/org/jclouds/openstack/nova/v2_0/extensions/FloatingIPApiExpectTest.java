@@ -133,7 +133,7 @@ public class FloatingIPApiExpectTest extends BaseNovaApiExpectTest {
    }
 
    public void testAllocateWhenResponseIs2xx() throws Exception {
-      HttpRequest allocateFloatingIP = HttpRequest
+      HttpRequest createFloatingIP = HttpRequest
             .builder()
             .method("POST")
             .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-floating-ips")
@@ -141,20 +141,20 @@ public class FloatingIPApiExpectTest extends BaseNovaApiExpectTest {
             .addHeader("X-Auth-Token", authToken)
             .payload(payloadFromStringWithContentType("{}", "application/json")).build();
 
-      HttpResponse allocateFloatingIPResponse = HttpResponse.builder().statusCode(200)
+      HttpResponse createFloatingIPResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/floatingip_details.json")).build();
 
       NovaApi apiWhenFloatingIPsExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
-            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, allocateFloatingIP,
-            allocateFloatingIPResponse);
+            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, createFloatingIP,
+            createFloatingIPResponse);
 
-      assertEquals(apiWhenFloatingIPsExist.getFloatingIPExtensionForZone("az-1.region-a.geo-1").get().allocate().toString(),
+      assertEquals(apiWhenFloatingIPsExist.getFloatingIPExtensionForZone("az-1.region-a.geo-1").get().create().toString(),
             new ParseFloatingIPTest().expected().toString());
 
    }
 
    public void testAllocateWhenResponseIs404() throws Exception {
-      HttpRequest allocateFloatingIP = HttpRequest
+      HttpRequest createFloatingIP = HttpRequest
             .builder()
             .method("POST")
             .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-floating-ips")
@@ -162,13 +162,13 @@ public class FloatingIPApiExpectTest extends BaseNovaApiExpectTest {
             .addHeader("X-Auth-Token", authToken)
             .payload(payloadFromStringWithContentType("{}", "application/json")).build();
 
-      HttpResponse allocateFloatingIPResponse = HttpResponse.builder().statusCode(404).build();
+      HttpResponse createFloatingIPResponse = HttpResponse.builder().statusCode(404).build();
 
       NovaApi apiWhenNoServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
-            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, allocateFloatingIP,
-            allocateFloatingIPResponse);
+            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, createFloatingIP,
+            createFloatingIPResponse);
 
-      assertNull(apiWhenNoServersExist.getFloatingIPExtensionForZone("az-1.region-a.geo-1").get().allocate());
+      assertNull(apiWhenNoServersExist.getFloatingIPExtensionForZone("az-1.region-a.geo-1").get().create());
    }
 
 }

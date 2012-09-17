@@ -82,7 +82,7 @@ public class AllocateAndAddFloatingIpToNode implements
       FloatingIP ip = null;
       try {
          logger.debug(">> allocating or reassigning floating ip for node(%s)", node.getId());
-         ip = floatingIpApi.allocate();
+         ip = floatingIpApi.create();
       } catch (InsufficientResourcesException e) {
          logger.trace("<< [%s] allocating a new floating ip for node(%s)", e.getMessage(), node.getId());
          logger.trace(">> searching for existing, unassigned floating ip for node(%s)", node.getId());

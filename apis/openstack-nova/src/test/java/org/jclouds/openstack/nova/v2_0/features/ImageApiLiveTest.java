@@ -65,8 +65,8 @@ public class ImageApiLiveTest extends BaseNovaApiLiveTest {
             assertNotNull(image.getName());
             assertNotNull(image.getLinks());
             assertNotNull(image.getCreated());
-            assertTrue(image.getMinDisk() > 0);
-            assertTrue(image.getMinRam() > 0);
+            // image.getMinDisk() can be zero
+            // image.getMinRam() can be zero
             assertTrue(image.getProgress() >= 0 && image.getProgress() <= 100);
             assertNotNull(image.getStatus());
             // image.getServer() can be null
