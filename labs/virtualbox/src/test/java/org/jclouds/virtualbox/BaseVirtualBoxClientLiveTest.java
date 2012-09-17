@@ -25,6 +25,7 @@ import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTA
 
 import java.io.File;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -53,6 +54,7 @@ import org.jclouds.virtualbox.functions.IMachineToVmSpec;
 import org.jclouds.virtualbox.functions.admin.UnregisterMachineIfExistsAndDeleteItsMedia;
 import org.jclouds.virtualbox.util.MachineController;
 import org.jclouds.virtualbox.util.MachineUtils;
+import org.jclouds.virtualbox.util.NetworkUtils;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeClass;
@@ -71,6 +73,7 @@ import com.google.common.base.Supplier;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.util.concurrent.Uninterruptibles;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
@@ -103,6 +106,9 @@ public class BaseVirtualBoxClientLiveTest extends BaseComputeServiceContextLiveT
 
    @Inject
    protected MachineUtils machineUtils;
+   
+   @Inject
+   protected NetworkUtils networkUtils;
 
    protected String hostVersion;
    protected String operatingSystemIso;
@@ -155,10 +161,7 @@ public class BaseVirtualBoxClientLiveTest extends BaseComputeServiceContextLiveT
          int attempts = 0;
          while (attempts < 10 && !vm.getSessionState().equals(SessionState.Unlocked)) {
             attempts++;
-            try {
-               Thread.sleep(200l);
-            } catch (InterruptedException e) {
-            }
+            Uninterruptibles.sleepUninterruptibly(200, TimeUnit.MILLISECONDS);
          }
          machineUtils.applyForMachine(vmNameOrId, new UnregisterMachineIfExistsAndDeleteItsMedia(vmSpec));
 

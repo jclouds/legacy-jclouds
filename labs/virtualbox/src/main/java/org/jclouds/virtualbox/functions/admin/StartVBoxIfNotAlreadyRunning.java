@@ -85,22 +85,8 @@ public class StartVBoxIfNotAlreadyRunning implements Supplier<VirtualBoxManager>
    public synchronized void start() {
       URI provider = providerSupplier.get();
       NodeMetadata hostNodeMetadata = hardcodedHostToHostNodeMetadata.apply(host.get());
-      // kill previously started vboxwebsrv (possibly dirty session)
-      List<Statement> statements =      Lists.newArrayList();
-      statements.add(Statements.findPid("vboxwebsrv"));
-      statements.add(Statements.kill());
-      StatementList statementList = new StatementList(statements);
-      
-      if (socketTester.apply(HostAndPort.fromParts(provider.getHost(),
-            provider.getPort()))) {
-         logger.debug(String.format("shutting down previously started vboxwewbsrv at %s", provider));
-         ExecResponse execResponse = runScriptOnNodeFactory
-               .create(hostNodeMetadata, statementList, runAsRoot(false))
-               .init().call();
-         if(execResponse.getExitStatus()!=0)
-            throw new RuntimeException("Cannot execute jclouds");
-      }
-      
+      cleanUpHost(provider, hostNodeMetadata);
+     
       logger.debug("disabling password access");
       runScriptOnNodeFactory
             .create(
@@ -130,6 +116,24 @@ public class StartVBoxIfNotAlreadyRunning implements Supplier<VirtualBoxManager>
          if (manager.getSessionObject().getState() != SessionState.Unlocked)
             logger.warn("manager is not in unlocked state "
                   + manager.getSessionObject().getState());
+   }
+
+   private void cleanUpHost(URI provider, NodeMetadata hostNodeMetadata) {
+      // kill previously started vboxwebsrv (possibly dirty session)
+      List<Statement> statements = Lists.newArrayList();
+      statements.add(Statements.findPid("vboxwebsrv"));
+      statements.add(Statements.kill());
+      StatementList statementList = new StatementList(statements);
+      
+      if (socketTester.apply(HostAndPort.fromParts(provider.getHost(),
+            provider.getPort()))) {
+         logger.debug(String.format("shutting down previously started vboxwewbsrv at %s", provider));
+         ExecResponse execResponse = runScriptOnNodeFactory
+               .create(hostNodeMetadata, statementList, runAsRoot(false))
+               .init().call();
+         if(execResponse.getExitStatus()!=0)
+            throw new RuntimeException("Cannot execute jclouds");
+      }
    }
    
    @Override
