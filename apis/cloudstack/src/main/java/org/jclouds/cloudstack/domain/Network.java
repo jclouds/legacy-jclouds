@@ -78,7 +78,7 @@ public class Network {
       protected String VLAN;
       protected TrafficType trafficType;
       protected String zoneId;
-      protected String tags;
+      protected Set<String> tags = ImmutableSortedSet.of();
       protected boolean securityGroupEnabled;
       protected Set<? extends NetworkService> services = ImmutableSortedSet.of();
 
@@ -302,7 +302,7 @@ public class Network {
       /**
        * @see Network#getTags()
        */
-      public T tags(String tags) {
+      public T tags(Set<String> tags) {
          this.tags = tags;
          return self();
       }
@@ -397,7 +397,7 @@ public class Network {
    private final String VLAN;
    private final TrafficType trafficType;
    private final String zoneId;
-   private final String tags;
+   private final Set<String> tags;
    private final boolean securityGroupEnabled;
    private final Set<? extends NetworkService> services;
 
@@ -411,7 +411,7 @@ public class Network {
                      @Nullable String networkOfferingDisplayText, @Nullable String networkOfferingId, @Nullable String networkOfferingName,
                      @Nullable String related, @Nullable String startIP, @Nullable String name, @Nullable String state,
                      @Nullable GuestIPType guestIPType, @Nullable String VLAN, @Nullable TrafficType trafficType,
-                     @Nullable String zoneId, @Nullable String tags, boolean securityGroupEnabled, Set<? extends NetworkService> services) {
+                     @Nullable String zoneId, @Nullable Set<String> tags, boolean securityGroupEnabled, Set<? extends NetworkService> services) {
       this.id = checkNotNull(id, "id");
       this.account = account;
       this.broadcastDomainType = broadcastDomainType;
@@ -661,7 +661,7 @@ public class Network {
     * @return the tags for the Network
     */
    @Nullable
-   public String getTags() {
+   public Set<String> getTags() {
       return this.tags;
    }
 
