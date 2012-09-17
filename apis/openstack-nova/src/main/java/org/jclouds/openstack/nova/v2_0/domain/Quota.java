@@ -68,7 +68,7 @@ public class Quota {
       }
 
       /** 
-       * @see Quota#getMetadataItems()
+       * @see Quota#getMetadatas()
        */
       public T metadataItems(int metadataItems) {
          this.metadataItems = metadataItems;
@@ -170,7 +170,7 @@ public class Quota {
       public T fromQuotas(Quota in) {
          return this
                   .id(in.getId())
-                  .metadataItems(in.getMetadataItems())
+                  .metadataItems(in.getMetadatas())
                   .injectedFileContentBytes(in.getInjectedFileContentBytes())
                   .volumes(in.getVolumes())
                   .gigabytes(in.getGigabytes())
@@ -242,7 +242,7 @@ public class Quota {
    /**
     * The limit of the number of metadata items for the tenant
     */
-   public int getMetadataItems() {
+   public int getMetadatas() {
       return this.metadataItems;
    }
 

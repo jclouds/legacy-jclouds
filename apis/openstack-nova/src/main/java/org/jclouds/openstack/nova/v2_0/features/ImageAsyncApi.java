@@ -34,14 +34,15 @@ import org.jclouds.collect.PagedIterable;
 import org.jclouds.openstack.keystone.v2_0.domain.PaginatedCollection;
 import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.openstack.keystone.v2_0.functions.ReturnEmptyPaginatedCollectionOnNotFoundOr404;
+import org.jclouds.openstack.nova.v2_0.binders.BindMetadataToJsonPayload;
 import org.jclouds.openstack.nova.v2_0.domain.Image;
+import org.jclouds.openstack.nova.v2_0.functions.internal.OnlyMetadataValueOrNull;
 import org.jclouds.openstack.nova.v2_0.functions.internal.ParseImageDetails;
 import org.jclouds.openstack.nova.v2_0.functions.internal.ParseImages;
 import org.jclouds.openstack.v2_0.domain.Resource;
 import org.jclouds.openstack.v2_0.options.PaginationOptions;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.MapBinder;
-import org.jclouds.rest.annotations.Payload;
 import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
@@ -129,14 +130,14 @@ public interface ImageAsyncApi {
    ListenableFuture<Void> delete(@PathParam("id") String id);
    
    /**
-    * @see ImageApi#listMetadata
+    * @see ImageApi#getMetadata
     */
    @GET
    @SelectJson("metadata")
    @Path("/images/{id}/metadata")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptyMapOnNotFoundOr404.class)
-   ListenableFuture<Map<String, String>> listMetadata(@PathParam("id") String id);
+   ListenableFuture<Map<String, String>> getMetadata(@PathParam("id") String id);
 
    /**
     * @see ImageApi#setMetadata
@@ -163,34 +164,34 @@ public interface ImageAsyncApi {
    ListenableFuture<? extends Map<String, String>> updateMetadata(@PathParam("id") String id, @PayloadParam("metadata") Map<String, String> metadata);
 
    /**
-    * @see ImageApi#getMetadataItem
+    * @see ImageApi#getMetadata
     */
    @GET
-   @SelectJson("metadata")
    @Path("/images/{id}/metadata/{key}")
    @Consumes(MediaType.APPLICATION_JSON)
+   @ResponseParser(OnlyMetadataValueOrNull.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<? extends Map<String, String>> getMetadataItem(@PathParam("id") String id, @PathParam("key") String key);
+   ListenableFuture<String> getMetadata(@PathParam("id") String id, @PathParam("key") String key);
    
    /**
-    * @see ImageApi#setMetadataItem
+    * @see ImageApi#updateMetadata
     */
    @PUT
-   @SelectJson("metadata")
    @Path("/images/{id}/metadata/{key}")
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnEmptyMapOnNotFoundOr404.class)
-   @Payload("%7B\"metadata\":%7B\"{key}\":\"{value}\"%7D%7D")
-   ListenableFuture<? extends Map<String, String>> setMetadataItem(@PathParam("id") String id, @PathParam("key") String key, @PathParam("value") String value);
+   @ResponseParser(OnlyMetadataValueOrNull.class)
+   @MapBinder(BindMetadataToJsonPayload.class)
+   ListenableFuture<String> updateMetadata(@PathParam("id") String id,
+            @PathParam("key") @PayloadParam("key") String key, @PathParam("value") @PayloadParam("value") String value);
 
    
    /**
-    * @see ImageApi#deleteMetadataItem
+    * @see ImageApi#deleteMetadata
     */
    @DELETE
    @Consumes
    @Path("/images/{id}/metadata/{key}")
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
-   ListenableFuture<Void> deleteMetadataItem(@PathParam("id") String id, @PathParam("key") String key);
+   ListenableFuture<Void> deleteMetadata(@PathParam("id") String id, @PathParam("key") String key);
 }

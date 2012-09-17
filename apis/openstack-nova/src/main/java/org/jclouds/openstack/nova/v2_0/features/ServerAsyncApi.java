@@ -34,10 +34,12 @@ import org.jclouds.collect.PagedIterable;
 import org.jclouds.openstack.keystone.v2_0.domain.PaginatedCollection;
 import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.openstack.keystone.v2_0.functions.ReturnEmptyPaginatedCollectionOnNotFoundOr404;
+import org.jclouds.openstack.nova.v2_0.binders.BindMetadataToJsonPayload;
 import org.jclouds.openstack.nova.v2_0.domain.RebootType;
 import org.jclouds.openstack.nova.v2_0.domain.Server;
 import org.jclouds.openstack.nova.v2_0.domain.ServerCreated;
 import org.jclouds.openstack.nova.v2_0.functions.ParseImageIdFromLocationHeader;
+import org.jclouds.openstack.nova.v2_0.functions.internal.OnlyMetadataValueOrNull;
 import org.jclouds.openstack.nova.v2_0.functions.internal.ParseServerDetails;
 import org.jclouds.openstack.nova.v2_0.functions.internal.ParseServers;
 import org.jclouds.openstack.nova.v2_0.options.CreateServerOptions;
@@ -69,8 +71,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * <p/>
  * 
  * @see ServerApi
- * @see <a href=
- *      "http://docs.openstack.org/api/openstack-compute/1.1/content/Servers-d1e2073.html"
+ * @see <a href= "http://docs.openstack.org/api/openstack-compute/1.1/content/Servers-d1e2073.html"
  *      />
  * @author Adrian Cole
  */
@@ -120,7 +121,6 @@ public interface ServerAsyncApi {
    @ExceptionParser(ReturnEmptyPaginatedCollectionOnNotFoundOr404.class)
    ListenableFuture<? extends PaginatedCollection<? extends Server>> listInDetail(PaginationOptions options);
 
-
    /**
     * @see ServerApi#get
     */
@@ -159,7 +159,7 @@ public interface ServerAsyncApi {
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("{\"os-stop\":null}")
    ListenableFuture<Void> stop(@PathParam("id") String id);
-   
+
    /**
     * @see ServerApi#reboot
     */
@@ -209,7 +209,7 @@ public interface ServerAsyncApi {
    @Path("/servers")
    @MapBinder(CreateServerOptions.class)
    ListenableFuture<ServerCreated> create(@PayloadParam("name") String name, @PayloadParam("imageRef") String imageRef,
-         @PayloadParam("flavorRef") String flavorRef, CreateServerOptions... options);
+            @PayloadParam("flavorRef") String flavorRef, CreateServerOptions... options);
 
    /**
     * @see ServerApi#rebuild
@@ -253,15 +253,15 @@ public interface ServerAsyncApi {
    ListenableFuture<String> createImageFromServer(@PayloadParam("name") String name, @PathParam("id") String id);
 
    /**
-    * @see ServerApi#listMetadata
+    * @see ServerApi#getMetadata
     */
    @GET
    @SelectJson("metadata")
    @Path("/servers/{id}/metadata")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptyMapOnNotFoundOr404.class)
-   ListenableFuture<? extends Map<String, String>> listMetadata(@PathParam("id") String id);
-   
+   ListenableFuture<? extends Map<String, String>> getMetadata(@PathParam("id") String id);
+
    /**
     * @see ServerApi#setMetadata
     */
@@ -272,7 +272,8 @@ public interface ServerAsyncApi {
    @Produces(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptyMapOnNotFoundOr404.class)
    @MapBinder(BindToJsonPayload.class)
-   ListenableFuture<? extends Map<String, String>> setMetadata(@PathParam("id") String id, @PayloadParam("metadata") Map<String, String> metadata);
+   ListenableFuture<? extends Map<String, String>> setMetadata(@PathParam("id") String id,
+            @PayloadParam("metadata") Map<String, String> metadata);
 
    /**
     * @see ServerApi#updateMetadata
@@ -284,37 +285,38 @@ public interface ServerAsyncApi {
    @Produces(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptyMapOnNotFoundOr404.class)
    @MapBinder(BindToJsonPayload.class)
-   ListenableFuture<? extends Map<String, String>> updateMetadata(@PathParam("id") String id, @PayloadParam("metadata") Map<String, String> metadata);
-   
-   /**
-    * @see ServerApi#getMetadataItem
-    */
-   @GET
-   @SelectJson("metadata")
-   @Path("/servers/{id}/metadata/{key}")
-   @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<? extends Map<String, String>> getMetadataItem(@PathParam("id") String id, @PathParam("key") String key);
+   ListenableFuture<? extends Map<String, String>> updateMetadata(@PathParam("id") String id,
+            @PayloadParam("metadata") Map<String, String> metadata);
 
    /**
-    * @see ServerApi#setMetadataItem
+    * @see ServerApi#getMetadata
+    */
+   @GET
+   @Path("/servers/{id}/metadata/{key}")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ResponseParser(OnlyMetadataValueOrNull.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<String> getMetadata(@PathParam("id") String id, @PathParam("key") String key);
+
+   /**
+    * @see ServerApi#updateMetadata
     */
    @PUT
-   @SelectJson("metadata")
    @Path("/servers/{id}/metadata/{key}")
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnEmptyMapOnNotFoundOr404.class)
-   @Payload("%7B\"metadata\":%7B\"{key}\":\"{value}\"%7D%7D")
-   ListenableFuture<? extends Map<String, String>> setMetadataItem(@PathParam("id") String id, @PathParam("key") String key, @PathParam("value") String value);
+   @ResponseParser(OnlyMetadataValueOrNull.class)
+   @MapBinder(BindMetadataToJsonPayload.class)
+   ListenableFuture<String> updateMetadata(@PathParam("id") String id,
+            @PathParam("key") @PayloadParam("key") String key, @PathParam("value") @PayloadParam("value") String value);
 
    /**
-    * @see ServerApi#deleteMetadataItem
+    * @see ServerApi#deleteMetadata
     */
    @DELETE
    @Consumes
    @Path("/servers/{id}/metadata/{key}")
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
-   ListenableFuture<Void> deleteMetadataItem(@PathParam("id") String id, @PathParam("key") String key);
+   ListenableFuture<Void> deleteMetadata(@PathParam("id") String id, @PathParam("key") String key);
 
 }

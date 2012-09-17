@@ -71,7 +71,7 @@ public class QuotaApiLiveTest extends BaseNovaApiLiveTest {
          Quota modified = before.toBuilder()
                .cores(before.getCores() - 1)
                .instances(before.getInstances() - 1)
-               .metadataItems(before.getMetadataItems() - 1)
+               .metadataItems(before.getMetadatas() - 1)
                .ram(before.getRam() - 1)
                .volumes(before.getVolumes() - 1)
                .build();

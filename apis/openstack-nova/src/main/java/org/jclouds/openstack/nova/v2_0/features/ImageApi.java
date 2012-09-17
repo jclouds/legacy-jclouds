@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.collect.PagedIterable;
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.openstack.keystone.v2_0.domain.PaginatedCollection;
 import org.jclouds.openstack.nova.v2_0.domain.Image;
 import org.jclouds.openstack.v2_0.domain.Resource;
@@ -84,7 +85,7 @@ public interface ImageApi {
     *           id of the image
     * @return the metadata as a Map<String, String> 
     */
-   Map<String, String> listMetadata(String id);
+   Map<String, String> getMetadata(String id);
 
    /**
     * Sets the metadata for an image.
@@ -115,9 +116,10 @@ public interface ImageApi {
     *           id of the image
     * @param metadata
     *           a Map containing the metadata
-    * @return the metadata as a Map<String, String> 
+    * @return the value or null if not present
     */
-   Map<String, String> getMetadataItem(String id, String key);
+   @Nullable
+   String getMetadata(String id, String key);
 
    
    /**
@@ -129,9 +131,9 @@ public interface ImageApi {
     *           the name of the metadata item
     * @param value
     *           the value of the metadata item
-    * @return the metadata as a Map<String, String> 
+    * @return the value you updated
     */
-   Map<String, String> setMetadataItem(String id, String key, String value);
+   String updateMetadata(String id, String key, String value);
 
    /**
     * Delete a metadata item from an image.
@@ -141,6 +143,6 @@ public interface ImageApi {
     * @param key
     *           the name of the metadata item
     */
-   void deleteMetadataItem(String id, String key);
+   void deleteMetadata(String id, String key);
 
 }
