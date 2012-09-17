@@ -30,7 +30,7 @@ import org.jclouds.aws.ec2.domain.Tag;
 import org.jclouds.aws.ec2.util.TagFilters;
 import org.jclouds.aws.ec2.util.TagFilters.ResourceType;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
-import org.testng.annotations.AfterGroups;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -69,9 +69,11 @@ public class TagClientLiveTest extends BaseComputeServiceContextLiveTest {
       }
    }
 
-   @AfterGroups(groups = { "live" })
-   public void deleteSecurityGroup() {
+   @Override
+   @AfterClass(groups = { "integration", "live" })
+   protected void tearDownContext() {
        view.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getSecurityGroupServices().deleteSecurityGroupInRegionById(null, testGroup);
+       super.tearDownContext();
    }
 
    public static final String PREFIX = System.getProperty("user.name") + "-ec2";

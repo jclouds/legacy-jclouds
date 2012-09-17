@@ -130,7 +130,8 @@ public class DescribeSecurityGroupsResponseHandler extends
             this.ipProtocol = null;
             this.ipRanges = Sets.newLinkedHashSet();
          } else if (inIpPermissions && !inIpRanges && inGroups) {
-            this.groups.put(userId, userIdGroupName);
+            if (userId != null && userIdGroupName != null)
+               this.groups.put(userId, userIdGroupName);
             this.userId = null;
             this.userIdGroupName = null;
          } else if (!inIpPermissions && !inIpRanges && !inGroups) {

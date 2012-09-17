@@ -63,7 +63,7 @@ import com.google.inject.Module;
  */
 @Test(groups = "live", singleThreaded = true, testName = "PlacementGroupClientLiveTest")
 public class PlacementGroupClientLiveTest extends BaseComputeServiceContextLiveTest {
-   ArrayList<String> supportedRegions = newArrayList(Region.US_EAST_1, Region.EU_WEST_1);
+   ArrayList<String> supportedRegions = newArrayList(Region.US_EAST_1, Region.US_WEST_2, Region.EU_WEST_1);
 
    public PlacementGroupClientLiveTest() {
       provider = "aws-ec2";

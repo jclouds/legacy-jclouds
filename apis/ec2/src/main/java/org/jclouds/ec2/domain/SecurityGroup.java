@@ -31,7 +31,7 @@ import org.jclouds.javax.annotation.Nullable;
  *      />
  * @author Adrian Cole
  */
-public class SecurityGroup implements Comparable<SecurityGroup> {
+public class SecurityGroup {
 
    private final String region;
    private final String id;
@@ -59,13 +59,6 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
    @Deprecated
    public String getRegion() {
       return region;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public int compareTo(SecurityGroup o) {
-      return (this == o) ? 0 : getName().compareTo(o.getName());
    }
 
    /**

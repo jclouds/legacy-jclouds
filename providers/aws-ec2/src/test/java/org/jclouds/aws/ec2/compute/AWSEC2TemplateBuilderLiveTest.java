@@ -171,7 +171,7 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
 
       Template defaultTemplate = view.getComputeService().templateBuilder().build();
       assert (defaultTemplate.getImage().getProviderId().startsWith("ami-")) : defaultTemplate;
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "pv-2012.03.3");
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "pv-2012.09.rc-0");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.AMZN_LINUX);
       assertEquals(defaultTemplate.getImage().getUserMetadata().get("rootDeviceType"), "ebs");
@@ -186,7 +186,7 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
       Template defaultTemplate = view.getComputeService().templateBuilder().osFamily(OsFamily.AMZN_LINUX)
             .imageMatches(EC2ImagePredicates.rootDeviceType(RootDeviceType.INSTANCE_STORE)).build();
       assert (defaultTemplate.getImage().getProviderId().startsWith("ami-")) : defaultTemplate;
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "pv-2012.03.3");
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "pv-2012.09.rc-0");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.AMZN_LINUX);
       assertEquals(defaultTemplate.getImage().getUserMetadata().get("rootDeviceType"), "instance-store");
@@ -201,7 +201,7 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
             .build();
       assert (fastestTemplate.getImage().getProviderId().startsWith("ami-")) : fastestTemplate;
       assertEquals(fastestTemplate.getHardware().getProviderId(), InstanceType.HI1_4XLARGE);
-      assertEquals(fastestTemplate.getImage().getOperatingSystem().getVersion(), "pv-2012.03.3");
+      assertEquals(fastestTemplate.getImage().getOperatingSystem().getVersion(), "pv-2012.09.rc-0");
       assertEquals(fastestTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(fastestTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.AMZN_LINUX);
       assertEquals(fastestTemplate.getImage().getUserMetadata().get("rootDeviceType"), "instance-store");
