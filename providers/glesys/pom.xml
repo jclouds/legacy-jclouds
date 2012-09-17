@@ -27,7 +27,7 @@
     <version>1.5.0-SNAPSHOT</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
-  <groupId>org.jclouds.labs</groupId>
+  <groupId>org.jclouds.provider</groupId>
   <artifactId>glesys</artifactId>
   <name>jclouds GleSYS core</name>
   <description>jclouds components to access GleSYS</description>

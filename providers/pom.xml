@@ -74,5 +74,6 @@
         <module>rackspace-cloudservers-us</module>
         <module>rackspace-cloudservers-uk</module>
         <module>aws-sqs</module>
+        <module>glesys</module>
     </modules>
 </project>
