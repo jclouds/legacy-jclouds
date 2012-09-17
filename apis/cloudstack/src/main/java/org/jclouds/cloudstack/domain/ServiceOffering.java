@@ -26,11 +26,8 @@ import java.util.Set;
 
 import org.jclouds.javax.annotation.Nullable;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -63,12 +60,11 @@ public class ServiceOffering implements Comparable<ServiceOffering> {
       protected boolean haSupport;
       protected StorageType storageType;
       protected boolean defaultUse;
-      protected String hostTags;
       protected boolean systemOffering;
       protected boolean cpuUseLimited;
       protected long networkRate;
       protected boolean systemVmType;
-      private Set<String> tags = ImmutableSet.of();
+      protected ImmutableSet.Builder<String> tags = ImmutableSet.<String>builder();
 
       /**
        * @see ServiceOffering#getId()
@@ -161,24 +157,24 @@ public class ServiceOffering implements Comparable<ServiceOffering> {
       /**
        * @see ServiceOffering#getTags()
        */
-      public T tags(Set<String> tags) {
-         this.tags = ImmutableSet.copyOf(checkNotNull(tags, "tags"));
+      public T tags(Iterable<String> tags) {
+         this.tags = ImmutableSet.<String>builder().addAll(tags);
          return self();
       }
-
+      
+      /**
+       * @see ServiceOffering#getTags()
+       */
+      public T tag(String tag) {
+         this.tags.add(tag);
+         return self();
+      }
+      
       /**
        * @see ServiceOffering#isDefaultUse()
        */
       public T defaultUse(boolean defaultUse) {
          this.defaultUse = defaultUse;
-         return self();
-      }
-
-      /**
-       * @see ServiceOffering#getHostTags()
-       */
-      public T hostTags(String hostTags) {
-         this.hostTags = hostTags;
          return self();
       }
 
@@ -216,7 +212,7 @@ public class ServiceOffering implements Comparable<ServiceOffering> {
 
       public ServiceOffering build() {
          return new ServiceOffering(id, name, displayText, created, domain, domainId, cpuNumber, cpuSpeed, memory, haSupport, storageType,
-               Joiner.on(",").join(tags), defaultUse, hostTags, systemOffering, cpuUseLimited, networkRate, systemVmType);
+               tags.build(), defaultUse, systemOffering, cpuUseLimited, networkRate, systemVmType);
       }
 
       public T fromServiceOffering(ServiceOffering in) {
@@ -234,7 +230,6 @@ public class ServiceOffering implements Comparable<ServiceOffering> {
                .storageType(in.getStorageType())
                .tags(in.getTags())
                .defaultUse(in.isDefaultUse())
-               .hostTags(in.getHostTags())
                .systemOffering(in.isSystemOffering())
                .cpuUseLimited(in.isCpuUseLimited())
                .networkRate(in.getNetworkRate())
@@ -262,19 +257,18 @@ public class ServiceOffering implements Comparable<ServiceOffering> {
    private final StorageType storageType;
    private final Set<String> tags;
    private final boolean defaultUse;
-   private final String hostTags;
    private final boolean systemOffering;
    private final boolean cpuUseLimited;
    private final long networkRate;
    private final boolean systemVmType;
 
    @ConstructorProperties({
-         "id", "name", "displaytext", "created", "domain", "domainid", "cpunumber", "cpuspeed", "memory", "offerha", "storagetype", "tags", "defaultuse", "hosttags", "issystem", "limitcpuuse", "networkrate", "systemvmtype"
+         "id", "name", "displaytext", "created", "domain", "domainid", "cpunumber", "cpuspeed", "memory", "offerha", "storagetype", "tags", "defaultuse", "issystem", "limitcpuuse", "networkrate", "systemvmtype"
    })
    protected ServiceOffering(String id, @Nullable String name, @Nullable String displayText, @Nullable Date created,
                              @Nullable String domain, @Nullable String domainId, int cpuNumber, int cpuSpeed, int memory,
-                             boolean haSupport, @Nullable StorageType storageType, @Nullable String tags, boolean defaultUse,
-                             @Nullable String hostTags, boolean systemOffering, boolean cpuUseLimited, long networkRate, boolean systemVmType) {
+                             boolean haSupport, @Nullable StorageType storageType, @Nullable Iterable<String> tags, boolean defaultUse,
+                             boolean systemOffering, boolean cpuUseLimited, long networkRate, boolean systemVmType) {
       this.id = checkNotNull(id, "id");
       this.name = name;
       this.displayText = displayText;
@@ -286,10 +280,8 @@ public class ServiceOffering implements Comparable<ServiceOffering> {
       this.memory = memory;
       this.haSupport = haSupport;
       this.storageType = storageType;
-      this.tags = !(Strings.emptyToNull(tags) == null) ? ImmutableSet.copyOf(Splitter.on(',').split(tags))
-               : ImmutableSet.<String> of();
+      this.tags = tags != null ? ImmutableSet.copyOf(tags) : ImmutableSet.<String> of();
       this.defaultUse = defaultUse;
-      this.hostTags = hostTags;
       this.systemOffering = systemOffering;
       this.cpuUseLimited = cpuUseLimited;
       this.networkRate = networkRate;
@@ -390,14 +382,6 @@ public class ServiceOffering implements Comparable<ServiceOffering> {
    }
 
    /**
-    * @return the host tag for the service offering
-    */
-   @Nullable
-   public String getHostTags() {
-      return this.hostTags;
-   }
-
-   /**
     * @return whether this is a system vm offering
     */
    public boolean isSystemOffering() {
@@ -427,7 +411,7 @@ public class ServiceOffering implements Comparable<ServiceOffering> {
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(id, name, displayText, created, domain, domainId, cpuNumber, cpuSpeed, memory, haSupport, storageType, tags, defaultUse, hostTags, systemOffering, cpuUseLimited, networkRate, systemVmType);
+      return Objects.hashCode(id, name, displayText, created, domain, domainId, cpuNumber, cpuSpeed, memory, haSupport, storageType, tags, defaultUse, systemOffering, cpuUseLimited, networkRate, systemVmType);
    }
 
    @Override
@@ -448,7 +432,6 @@ public class ServiceOffering implements Comparable<ServiceOffering> {
             && Objects.equal(this.storageType, that.storageType)
             && Objects.equal(this.getTags(), that.getTags())
             && Objects.equal(this.defaultUse, that.defaultUse)
-            && Objects.equal(this.hostTags, that.hostTags)
             && Objects.equal(this.systemOffering, that.systemOffering)
             && Objects.equal(this.cpuUseLimited, that.cpuUseLimited)
             && Objects.equal(this.networkRate, that.networkRate)
@@ -460,7 +443,7 @@ public class ServiceOffering implements Comparable<ServiceOffering> {
             .add("id", id).add("name", name).add("displayText", displayText).add("created", created).add("domain", domain)
             .add("domainId", domainId).add("cpuNumber", cpuNumber).add("cpuSpeed", cpuSpeed).add("memory", memory)
             .add("haSupport", haSupport).add("storageType", storageType).add("tags", getTags()).add("defaultUse", defaultUse)
-            .add("hostTags", hostTags).add("systemOffering", systemOffering).add("cpuUseLimited", cpuUseLimited)
+            .add("systemOffering", systemOffering).add("cpuUseLimited", cpuUseLimited)
             .add("networkRate", networkRate).add("systemVmType", systemVmType);
    }
 

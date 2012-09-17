@@ -30,6 +30,7 @@ import org.jclouds.javax.annotation.Nullable;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
 
 /**
@@ -78,7 +79,7 @@ public class Network {
       protected String VLAN;
       protected TrafficType trafficType;
       protected String zoneId;
-      protected String tags;
+      protected ImmutableSet.Builder<String> tags = ImmutableSet.<String>builder();
       protected boolean securityGroupEnabled;
       protected Set<? extends NetworkService> services = ImmutableSortedSet.of();
 
@@ -302,10 +303,19 @@ public class Network {
       /**
        * @see Network#getTags()
        */
-      public T tags(String tags) {
-         this.tags = tags;
+      public T tags(Iterable<String> tags) {
+         this.tags = ImmutableSet.<String>builder().addAll(tags);
          return self();
       }
+      
+      /**
+       * @see Network#getTags()
+       */
+      public T tag(String tag) {
+         this.tags.add(tag);
+         return self();
+      }
+      
 
       /**
        * @see Network#isSecurityGroupEnabled()
@@ -324,7 +334,7 @@ public class Network {
       }
 
       public Network build() {
-         return new Network(id, account, broadcastDomainType, broadcastURI, displayText, DNS1, DNS2, domain, domainId, endIP, gateway, isDefault, isShared, isSystem, netmask, networkDomain, networkOfferingAvailability, networkOfferingDisplayText, networkOfferingId, networkOfferingName, related, startIP, name, state, guestIPType, VLAN, trafficType, zoneId, tags, securityGroupEnabled, services);
+         return new Network(id, account, broadcastDomainType, broadcastURI, displayText, DNS1, DNS2, domain, domainId, endIP, gateway, isDefault, isShared, isSystem, netmask, networkDomain, networkOfferingAvailability, networkOfferingDisplayText, networkOfferingId, networkOfferingName, related, startIP, name, state, guestIPType, VLAN, trafficType, zoneId, tags.build(), securityGroupEnabled, services);
       }
 
       public T fromNetwork(Network in) {
@@ -397,7 +407,7 @@ public class Network {
    private final String VLAN;
    private final TrafficType trafficType;
    private final String zoneId;
-   private final String tags;
+   private final Set<String> tags;
    private final boolean securityGroupEnabled;
    private final Set<? extends NetworkService> services;
 
@@ -411,7 +421,7 @@ public class Network {
                      @Nullable String networkOfferingDisplayText, @Nullable String networkOfferingId, @Nullable String networkOfferingName,
                      @Nullable String related, @Nullable String startIP, @Nullable String name, @Nullable String state,
                      @Nullable GuestIPType guestIPType, @Nullable String VLAN, @Nullable TrafficType trafficType,
-                     @Nullable String zoneId, @Nullable String tags, boolean securityGroupEnabled, Set<? extends NetworkService> services) {
+                     @Nullable String zoneId, @Nullable Iterable<String> tags, boolean securityGroupEnabled, Set<? extends NetworkService> services) {
       this.id = checkNotNull(id, "id");
       this.account = account;
       this.broadcastDomainType = broadcastDomainType;
@@ -440,7 +450,7 @@ public class Network {
       this.VLAN = VLAN;
       this.trafficType = trafficType;
       this.zoneId = zoneId;
-      this.tags = tags;
+      this.tags = tags != null ? ImmutableSet.copyOf(tags) : ImmutableSet.<String> of();
       this.securityGroupEnabled = securityGroupEnabled;
       this.services = ImmutableSortedSet.copyOf(services);
    }
@@ -660,8 +670,7 @@ public class Network {
    /**
     * @return the tags for the Network
     */
-   @Nullable
-   public String getTags() {
+   public Set<String> getTags() {
       return this.tags;
    }
 

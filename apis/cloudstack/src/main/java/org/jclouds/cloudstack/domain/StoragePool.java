@@ -22,12 +22,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.beans.ConstructorProperties;
 import java.util.Date;
+import java.util.Set;
 
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Represents a storage pool in CloudStack
@@ -102,7 +104,7 @@ public class StoragePool implements Comparable<StoragePool> {
       protected String id;
       protected String name;
       protected String path;
-      protected String tags;
+      protected ImmutableSet.Builder<String> tags = ImmutableSet.<String>builder();
       protected StoragePool.State state;
       protected StoragePool.Type type;
       protected String zoneId;
@@ -143,10 +145,18 @@ public class StoragePool implements Comparable<StoragePool> {
       }
 
       /**
-       * @see StoragePool#getTags()
+       * @see DiskOffering#getTags()
        */
-      public T tags(String tags) {
-         this.tags = tags;
+      public T tags(Iterable<String> tags) {
+         this.tags = ImmutableSet.<String>builder().addAll(tags);
+         return self();
+      }
+      
+      /**
+       * @see DiskOffering#getTags()
+       */
+      public T tag(String tag) {
+         this.tags.add(tag);
          return self();
       }
 
@@ -263,7 +273,7 @@ public class StoragePool implements Comparable<StoragePool> {
       }
 
       public StoragePool build() {
-         return new StoragePool(id, name, path, tags, state, type, zoneId, zoneName, podId, podName, clusterId, clusterName, created, diskSizeAllocated, diskSizeTotal, ipAddress, jobId, jobStatus);
+         return new StoragePool(id, name, path, tags.build(), state, type, zoneId, zoneName, podId, podName, clusterId, clusterName, created, diskSizeAllocated, diskSizeTotal, ipAddress, jobId, jobStatus);
       }
 
       public T fromStoragePool(StoragePool in) {
@@ -299,7 +309,7 @@ public class StoragePool implements Comparable<StoragePool> {
    private final String id;
    private final String name;
    private final String path;
-   private final String tags;
+   private final Set<String> tags;
    private final StoragePool.State state;
    private final StoragePool.Type type;
    private final String zoneId;
@@ -318,11 +328,15 @@ public class StoragePool implements Comparable<StoragePool> {
    @ConstructorProperties({
          "id", "name", "path", "tags", "state", "type", "zoneid", "zonename", "podid", "podname", "clusterid", "clustername", "created", "disksizeallocated", "disksizetotal", "ipaddress", "jobid", "jobstatus"
    })
-   protected StoragePool(String id, @Nullable String name, @Nullable String path, @Nullable String tags, @Nullable StoragePool.State state, @Nullable StoragePool.Type type, @Nullable String zoneId, @Nullable String zoneName, @Nullable String podId, @Nullable String podName, @Nullable String clusterId, @Nullable String clusterName, @Nullable Date created, long diskSizeAllocated, long diskSizeTotal, @Nullable String ipAddress, @Nullable String jobId, @Nullable String jobStatus) {
+   protected StoragePool(String id, @Nullable String name, @Nullable String path, @Nullable Iterable<String> tags,
+            @Nullable StoragePool.State state, @Nullable StoragePool.Type type, @Nullable String zoneId,
+            @Nullable String zoneName, @Nullable String podId, @Nullable String podName, @Nullable String clusterId,
+            @Nullable String clusterName, @Nullable Date created, long diskSizeAllocated, long diskSizeTotal,
+            @Nullable String ipAddress, @Nullable String jobId, @Nullable String jobStatus) {
       this.id = checkNotNull(id, "id");
       this.name = name;
       this.path = path;
-      this.tags = tags;
+      this.tags = tags != null ? ImmutableSet.copyOf(tags) : ImmutableSet.<String> of();
       this.state = state;
       this.type = type;
       this.zoneId = zoneId;
@@ -353,8 +367,7 @@ public class StoragePool implements Comparable<StoragePool> {
       return this.path;
    }
 
-   @Nullable
-   public String getTags() {
+   public Set<String> getTags() {
       return this.tags;
    }
 
