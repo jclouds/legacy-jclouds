@@ -64,3 +64,9 @@ distributed in the Public Domain
 This product includes software developed at Hewlett-Packard
 Copyright (c) 2011-2012 Hewlett-Packard Development Company, L.P
 
+This product includes software developed at Cloudsoft
+Copyright (c) 2011-2012 Cloudsoft Corporation, Ltd.
+
+This product includes software developed at MuleSoft
+Copyright (c) 2012 MuleSoft Inc.
+
