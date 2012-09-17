@@ -18,9 +18,11 @@
  */
 
 package org.jclouds.virtualbox.util;
+
 import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
+import static org.testng.AssertJUnit.assertTrue;
 
 import org.jclouds.config.ValueOfConfigurationKeyOrNull;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
@@ -35,20 +37,17 @@ import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.functions.CloneAndRegisterMachineFromIMachineIfNotAlreadyExists;
 import org.jclouds.virtualbox.functions.CreateAndInstallVm;
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.ISession;
-import org.virtualbox_4_1.LockType;
 import org.virtualbox_4_1.NetworkAttachmentType;
 import org.virtualbox_4_1.SessionState;
 import org.virtualbox_4_1.StorageBus;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Function;
-import com.google.common.collect.ImmutableSet;
 import com.google.inject.Injector;
 
 @Test(groups = "live", testName = "MachineControllerLiveTest")
@@ -62,62 +61,134 @@ public class MachineUtilsLiveTest extends BaseVirtualBoxClientLiveTest {
    public void setupContext() {
       super.setupContext();
       instanceName = VIRTUALBOX_IMAGE_PREFIX
-               + CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, getClass().getSimpleName());
+            + CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, getClass().getSimpleName());
 
       StorageController ideController = StorageController
-               .builder()
-               .name("IDE Controller")
-               .bus(StorageBus.IDE)
-               .attachISO(0, 0, operatingSystemIso)
-               .attachHardDisk(
-                        HardDisk.builder().diskpath(adminDisk(instanceName)).controllerPort(0).deviceSlot(1)
-                                 .autoDelete(true).build()).attachISO(1, 1, guestAdditionsIso).build();
+            .builder()
+            .name("IDE Controller")
+            .bus(StorageBus.IDE)
+            .attachISO(0, 0, operatingSystemIso)
+            .attachHardDisk(
+                  HardDisk.builder().diskpath(adminDisk(instanceName)).controllerPort(0).deviceSlot(1).autoDelete(true)
+                        .build()).attachISO(1, 1, guestAdditionsIso).build();
 
       VmSpec instanceVmSpec = VmSpec.builder().id(instanceName).name(instanceName).osTypeId("").memoryMB(512)
-               .cleanUpMode(CleanupMode.Full).controller(ideController).forceOverwrite(true).build();
+            .cleanUpMode(CleanupMode.Full).controller(ideController).forceOverwrite(true).build();
 
       Injector injector = view.utils().injector();
       Function<String, String> configProperties = injector.getInstance(ValueOfConfigurationKeyOrNull.class);
       IsoSpec isoSpec = IsoSpec
-               .builder()
-               .sourcePath(operatingSystemIso)
-               .installationScript(
-                        configProperties.apply(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE).replace("HOSTNAME",
-                                 instanceVmSpec.getVmName())).build();
+            .builder()
+            .sourcePath(operatingSystemIso)
+            .installationScript(
+                  configProperties.apply(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE).replace("HOSTNAME",
+                        instanceVmSpec.getVmName())).build();
 
       NetworkAdapter networkAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.NAT)
-               .tcpRedirectRule("127.0.0.1", 2222, "", 22).build();
+            .tcpRedirectRule("127.0.0.1", 2222, "", 22).build();
       NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(networkAdapter)
-               .build();
+            .build();
 
       NetworkSpec networkSpec = NetworkSpec.builder().addNIC(networkInterfaceCard).build();
       machineSpec = MasterSpec.builder().iso(isoSpec).vm(instanceVmSpec).network(networkSpec).build();
    }
 
-   @Test
-   public void lockSessionOnMachine() {
-      IMachine machine = cloneFromMaster();
-      ISession session = machineUtils.lockSessionOnMachineAndApply(instanceName, LockType.Shared,
-               new Function<ISession, ISession>() {
+   @Test(description = "write lock is acquired and released correctly")
+   public void writeLockSessionOnMachine() {
+      final IMachine clone = cloneFromMaster();
+      ISession session = machineUtils.writeLockMachineAndApplyToSession(clone.getName(),
+            new Function<ISession, ISession>() {
+               @Override
+               public ISession apply(ISession session) {
+                  assertTrue(session.getMachine().getName().equals(clone.getName()));
+                  return session;
+               }
+            });
+      checkState(session.getState().equals(SessionState.Unlocked));
+      undoVm(clone.getName());
+   }
 
+   @Test(dependsOnMethods="writeLockSessionOnMachine", description = "shared lock is acquired and released correctly")
+   public void sharedLockSessionOnMachine() {
+      final IMachine clone = cloneFromMaster();
+      ISession session = machineUtils.sharedLockMachineAndApplyToSession(clone.getName(),
+            new Function<ISession, ISession>() {
+               @Override
+               public ISession apply(ISession session) {
+                  assertTrue(session.getMachine().getName().equals(clone.getName()));
+                  return session;
+               }
+            });
+      checkState(session.getState().equals(SessionState.Unlocked));
+      undoVm(clone.getName());
+   }
+
+   @Test(dependsOnMethods="sharedLockSessionOnMachine", description = "shared lock can be acquired after a write lock")
+   public void sharedLockCanBeAcquiredAfterWriteLockSessionOnMachine() {
+      final IMachine clone = cloneFromMaster();
+      try {
+         ISession writeSession = machineUtils.writeLockMachineAndApplyToSession(clone.getName(),
+               new Function<ISession, ISession>() {
                   @Override
-                  public ISession apply(ISession session) {
-                     return session;
+                  public ISession apply(ISession writeSession) {
+                     checkState(writeSession.getState().equals(SessionState.Locked));
+                     //ISession sharedSession = sharedSession(clone);
+                     return writeSession;
                   }
                });
-      checkState(session.getState().equals(SessionState.Unlocked));       
-      machine = manager.get().getVBox().findMachine(instanceName);
-      undoVm(instanceName);
-
+         checkState(writeSession.getState().equals(SessionState.Unlocked));
+      } finally {
+         undoVm(clone.getName());
+      }
    }
-   
+
+   private ISession sharedSession(final IMachine clone) {
+      ISession sharedSession = machineUtils.sharedLockMachineAndApplyToSession(clone.getName(),
+            new Function<ISession, ISession>() {
+               @Override
+               public ISession apply(ISession sharedSession) {
+                  checkState(sharedSession.getState().equals(SessionState.Locked));
+                  assertTrue(sharedSession.getMachine().getName().equals(clone.getName()));
+                  return sharedSession;
+               }
+            });
+      return sharedSession;
+   }
+
+   @Test(dependsOnMethods="sharedLockCanBeAcquiredAfterWriteLockSessionOnMachine", description = "write lock cannot be acquired after a shared lock")
+   public void writeLockCannotBeAcquiredAfterSharedLockSessionOnMachine() {
+      final IMachine clone = cloneFromMaster();
+      try {
+         ISession sharedSession = machineUtils.sharedLockMachineAndApplyToSession(clone.getName(),
+               new Function<ISession, ISession>() {
+                  @Override
+                  public ISession apply(ISession sharedSession) {
+                     checkState(sharedSession.getState().equals(SessionState.Locked));
+                     return sharedSession;
+                  }
+               });
+         checkState(sharedSession.getState().equals(SessionState.Unlocked));
+         ISession writeSession = machineUtils.writeLockMachineAndApplyToSession(clone.getName(),
+               new Function<ISession, ISession>() {
+                  @Override
+                  public ISession apply(ISession writeSession) {
+                     checkState(writeSession.getState().equals(SessionState.Locked));
+                     assertTrue(writeSession.getMachine().getName().equals(clone.getName()));
+                     return writeSession;
+                  }
+               });
+         checkState(writeSession.getState().equals(SessionState.Unlocked));
+      } finally {
+         undoVm(clone.getName());
+      }
+   }
 
    private IMachine cloneFromMaster() {
       IMachine source = getVmWithGuestAdditionsInstalled();
       CloneSpec cloneSpec = CloneSpec.builder().vm(machineSpec.getVmSpec()).network(machineSpec.getNetworkSpec())
-               .master(source).linked(true).build();
+            .master(source).linked(true).build();
       return new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(manager, workingDir, machineUtils)
-               .apply(cloneSpec);
+            .apply(cloneSpec);
    }
 
    private IMachine getVmWithGuestAdditionsInstalled() {
@@ -129,14 +200,5 @@ public class MachineUtilsLiveTest extends BaseVirtualBoxClientLiveTest {
          // already created
          return manager.get().getVBox().findMachine(masterSpecForTest.getVmSpec().getVmId());
       }
-   }
-
-   @Override
-   @AfterClass(groups = "live")
-   protected void tearDown() throws Exception {
-      for (String vmName : ImmutableSet.of(instanceName)) {
-         undoVm(vmName);
-      }
-      super.tearDown();
    }
 }

@@ -50,6 +50,8 @@ public interface VirtualBoxConstants {
    public static final String VIRTUALBOX_MACHINE_CREDENTIAL = "jclouds.virtualbox.credential";
 
    public static final String VIRTUALBOX_MACHINE_LOCATION = "jclouds.virtualbox.location";
+   
+   public static final String VIRTUALBOX_GUEST_MEMORY = "jclouds.virtualbox.guest.memory";
 
    public static final String VIRTUALBOX_HOST_ID = "jclouds.virtualbox.hostid";
 
@@ -62,7 +64,7 @@ public interface VirtualBoxConstants {
    
    public static final String VIRTUALBOX_PROVIDER = "virtualbox";
    
-   public static final String VIRTUALBOX_GUEST_IDENTITY = "jclouds.virtualbox.guest.identity";
-   public static final String VIRTUALBOX_GUEST_CREDENTIAL = "jclouds.virtualbox.guest.credential";
-
+   public static final String GUEST_OS_PASSWORD = "guestPassword";
+   
+   public static final String GUEST_OS_USER = "guestUser";
 }

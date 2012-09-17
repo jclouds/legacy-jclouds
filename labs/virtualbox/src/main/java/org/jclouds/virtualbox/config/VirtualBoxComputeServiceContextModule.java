@@ -236,4 +236,5 @@ public class VirtualBoxComputeServiceContextModule extends
    protected Map<MachineState, Image.Status> toPortableImageStatus() {
       return toPortableImageStatus;
    }
+
 }

@@ -19,36 +19,24 @@
 package org.jclouds.virtualbox.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_GUEST_CREDENTIAL;
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_GUEST_IDENTITY;
-
-import java.util.List;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.GUEST_OS_PASSWORD;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.GUEST_OS_USER;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.compute.callables.RunScriptOnNode;
-import org.jclouds.compute.domain.ExecResponse;
-import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.logging.Logger;
 import org.jclouds.ssh.SshClient;
-import org.jclouds.virtualbox.VirtualBoxApiMetadata;
-import org.jclouds.virtualbox.domain.BridgedIf;
-import org.jclouds.virtualbox.statements.GetIPAddressFromMAC;
-import org.jclouds.virtualbox.statements.ScanNetworkWithPing;
-import org.jclouds.virtualbox.util.MachineUtils;
+import org.jclouds.virtualbox.util.NetworkUtils;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.INetworkAdapter;
 import org.virtualbox_4_1.NetworkAttachmentType;
 
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
-import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
 import com.google.common.net.HostAndPort;
 import com.google.inject.Inject;
@@ -61,36 +49,30 @@ public class IMachineToSshClient implements Function<IMachine, SshClient> {
 	protected Logger logger = Logger.NULL;
 
 	private final SshClient.Factory sshClientFactory;
-	private final RunScriptOnNode.Factory scriptRunnerFactory;
-	private final Supplier<NodeMetadata> hostSupplier;
-	private final MachineUtils machineUtils;
-
+	private final NetworkUtils networkUtils;
+	
 	@Inject
 	public IMachineToSshClient(SshClient.Factory sshClientFactory,
-			RunScriptOnNode.Factory scriptRunnerFactory,
-			Supplier<NodeMetadata> hostSupplier, MachineUtils machineUtils) {
+	      NetworkUtils networkUtils) {
 		this.sshClientFactory = sshClientFactory;
-		this.scriptRunnerFactory = scriptRunnerFactory;
-		this.hostSupplier = hostSupplier;
-		this.machineUtils = machineUtils;
+		this.networkUtils = networkUtils;
 	}
 
 	@Override
-	public SshClient apply(final IMachine vm) {
-		INetworkAdapter networkAdapter = vm.getNetworkAdapter(0L);
+   public SshClient apply(final IMachine vm) {
+      INetworkAdapter networkAdapter = vm.getNetworkAdapter(0L);
 
-		SshClient client = null;
-		checkNotNull(networkAdapter);
+      SshClient client = null;
+      checkNotNull(networkAdapter);
 
-		String clientIpAddress = null;
-		String sshPort = "22";
+      String clientIpAddress = null;
+      String sshPort = "22";
+      String guestIdentity = vm.getExtraData(GUEST_OS_USER);
+      String guestCredential = vm.getExtraData(GUEST_OS_PASSWORD);
 
-      String guestIdentity = VirtualBoxApiMetadata.defaultProperties().getProperty(VIRTUALBOX_GUEST_IDENTITY);
-      String guestCredential = VirtualBoxApiMetadata.defaultProperties().getProperty(VIRTUALBOX_GUEST_CREDENTIAL);
-		LoginCredentials loginCredentials = LoginCredentials.builder()
-				.user(guestIdentity)
-				.password(guestCredential).authenticateSudo(true)
-				.build();
+      LoginCredentials loginCredentials = LoginCredentials.builder()
+            .user(guestIdentity).password(guestCredential)
+            .authenticateSudo(true).build();
 
 		if (networkAdapter.getAttachmentType()
 				.equals(NetworkAttachmentType.NAT)) {
@@ -109,11 +91,10 @@ public class IMachineToSshClient implements Function<IMachine, SshClient> {
 			}
 		} else if (networkAdapter.getAttachmentType().equals(
 				NetworkAttachmentType.Bridged)) {
-			String network = "1.1.1.1";
-			clientIpAddress = getIpAddressFromBridgedNIC(networkAdapter, network);
+			clientIpAddress = networkUtils.getIpAddressFromNicSlot(vm.getName(), networkAdapter.getSlot());
 		} else if (networkAdapter.getAttachmentType().equals(
                         NetworkAttachmentType.HostOnly)) {
-	             clientIpAddress = machineUtils.getIpAddressFromFirstNIC(vm.getName());
+	             clientIpAddress = networkUtils.getIpAddressFromNicSlot(vm.getName(), networkAdapter.getSlot());
 		}
 		
 		checkNotNull(clientIpAddress, "clientIpAddress");
@@ -124,28 +105,4 @@ public class IMachineToSshClient implements Function<IMachine, SshClient> {
 		return client;
 	}
 
-	private String getIpAddressFromBridgedNIC(INetworkAdapter networkAdapter,
-			String network) {
-		// RetrieveActiveBridgedInterfaces
-		List<BridgedIf> activeBridgedInterfaces = new RetrieveActiveBridgedInterfaces(scriptRunnerFactory).apply(hostSupplier.get());
-		BridgedIf activeBridgedIf = checkNotNull(Iterables.get(activeBridgedInterfaces, 0), "activeBridgedInterfaces");
-		network = activeBridgedIf.getIpAddress();
-		
-		// scan ip
-		RunScriptOnNode ipScanRunScript = scriptRunnerFactory.create(
-				hostSupplier.get(), new ScanNetworkWithPing(network),
-				RunScriptOptions.NONE);
-		ExecResponse execResponse = ipScanRunScript.init().call();
-		checkState(execResponse.getExitStatus() == 0);
-
-		// retrieve ip from mac
-		RunScriptOnNode getIpFromMACAddressRunScript = scriptRunnerFactory
-				.create(hostSupplier.get(), new GetIPAddressFromMAC(
-						networkAdapter.getMACAddress()),
-						RunScriptOptions.NONE);
-		ExecResponse ipExecResponse = getIpFromMACAddressRunScript.init()
-				.call();
-		checkState(ipExecResponse.getExitStatus() == 0);
-		return checkNotNull(ipExecResponse.getOutput(), "ipAddress");
-	}
 }

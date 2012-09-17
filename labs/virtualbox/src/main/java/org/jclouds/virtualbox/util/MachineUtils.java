@@ -21,9 +21,7 @@ package org.jclouds.virtualbox.util;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-import java.util.concurrent.ExecutionException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
@@ -48,8 +46,8 @@ import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
-import com.google.common.base.Throwables;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.Uninterruptibles;
 import com.google.inject.Inject;
 
 /**
@@ -61,6 +59,8 @@ import com.google.inject.Inject;
 @Singleton
 public class MachineUtils {
    
+   
+
    public final String IP_V4_ADDRESS_PATTERN = "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
             + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
             + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
@@ -71,14 +71,13 @@ public class MachineUtils {
 
    private final Supplier<VirtualBoxManager> manager;
    private final Factory scriptRunner;
-   private final IpAddressesLoadingCache ipAddressesLoadingCache;
+   
 
    @Inject
    public MachineUtils(Supplier<VirtualBoxManager> manager, RunScriptOnNode.Factory scriptRunner,
          IpAddressesLoadingCache ipAddressesLoadingCache) {
       this.manager = manager;
       this.scriptRunner = scriptRunner;
-      this.ipAddressesLoadingCache = ipAddressesLoadingCache;
    }
 
    public ListenableFuture<ExecResponse> runScriptOnNode(NodeMetadata metadata, Statement statement,
@@ -183,7 +182,7 @@ public class MachineUtils {
     * <p/>
     * Unlocks the machine before returning.
     * 
-    * Tries to obtain a lock 5 times before giving up waiting 1 sec between tries. When no machine
+    * Tries to obtain a lock 15 times before giving up waiting 1 sec between tries. When no machine
     * is found null is returned.
     * 
     * @param type
@@ -196,30 +195,27 @@ public class MachineUtils {
     */
    protected <T> T lockSessionOnMachineAndApply(String machineId, LockType type, Function<ISession, T> function) {
       int retries = 15;
-      ISession session = lockSession(machineId, type, retries);
+      ISession session = checkNotNull(lockSession(machineId, type, retries), "session");
       try {
          return function.apply(session);
       } catch (VBoxException e) {
          throw new RuntimeException(String.format("error applying %s to %s with %s lock: %s", function, machineId,
                   type, e.getMessage()), e);
       } finally {
-         if (session != null && session.getState().equals(SessionState.Locked))
-         session.unlockMachine();
+         if (session.getState().equals(SessionState.Locked)) {
+            session.unlockMachine();
+            while (!session.getState().equals(SessionState.Unlocked)) {
+               logger.debug("Session not unlocked - wait ...");
+               Uninterruptibles.sleepUninterruptibly(1, TimeUnit.SECONDS);
+            }
+         }
       }
    }
 
    private ISession lockSession(String machineId, LockType type, int retries) {
       int count = 0;
-      ISession session;
       IMachine immutableMachine = manager.get().getVBox().findMachine(machineId);
-
-      try {
-      session = manager.get().openMachineSession(immutableMachine);
-      if (session.getState().equals(SessionState.Locked)) 
-         return checkNotNull(session, "session"); 
-      } catch (Exception e) {
-         logger.debug("machine %s is not locked). Error: %s", immutableMachine.getName(), e.getMessage());
-      }
+      ISession session = null;
       
       while (true) {
          try {
@@ -237,10 +233,7 @@ public class MachineUtils {
                throw new RuntimeException(String.format("error locking %s with %s lock: %s", machineId, type,
                         e.getMessage()), e);
             }
-            try {
-               Thread.sleep(count * 1000L);
-            } catch (InterruptedException e1) {
-            }
+            Uninterruptibles.sleepUninterruptibly(1, TimeUnit.SECONDS);
          }
       }
       checkState(session.getState().equals(SessionState.Locked));
@@ -278,24 +271,4 @@ public class MachineUtils {
                || e.getMessage().contains("Could not find a registered machine with UUID {");
    }
    
-   public String getIpAddressFromFirstNIC(String machineName) {
-      try {
-         return ipAddressesLoadingCache.get(machineName);
-      } catch (ExecutionException e) {
-         logger.error("Problem in using the ipAddressCache", e.getCause());
-         throw Throwables.propagate(e);
-      }
-   }
- 
-
-   public static boolean isIpv4(String s) {
-      String IP_V4_ADDRESS_PATTERN = "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
-            + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
-            + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
-      Pattern pattern = Pattern.compile(IP_V4_ADDRESS_PATTERN);
-      Matcher matcher = pattern.matcher(s);
-      return matcher.matches();
-   }
-
-
 }

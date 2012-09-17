@@ -30,7 +30,7 @@ import static org.testng.Assert.assertEquals;
 
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.virtualbox.config.VirtualBoxComputeServiceContextModule;
-import org.jclouds.virtualbox.util.MachineUtils;
+import org.jclouds.virtualbox.util.NetworkUtils;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.INATEngine;
@@ -64,18 +64,18 @@ public class IMachineToNodeMetadataTest {
       expect(natEng.getRedirects()).andReturn(ImmutableList.of("0,1,127.0.0.1,2222,,22"));
 
       INetworkAdapter hostOnly = createNiceMock(INetworkAdapter.class);
-      MachineUtils machineUtils = createNiceMock(MachineUtils.class);
+      NetworkUtils networkUtils = createNiceMock(NetworkUtils.class);
 
-      replay(vm, nat, natEng, hostOnly, machineUtils);
+      replay(vm, nat, natEng, hostOnly, networkUtils);
 
       NodeMetadata node = new IMachineToNodeMetadata(VirtualBoxComputeServiceContextModule.toPortableNodeStatus,
-               machineUtils).apply(vm);
+            networkUtils).apply(vm);
 
       assertEquals(MASTER_NAME, node.getName());
       assertEquals(1, node.getPrivateAddresses().size());
       assertEquals(1, node.getPublicAddresses().size());
       assertEquals("127.0.0.1", Iterables.get(node.getPublicAddresses(), 0));
-      assertEquals(MastersLoadingCache.MASTER_PORT, node.getLoginPort());
+      assertEquals(NetworkUtils.MASTER_PORT, node.getLoginPort());
       assertEquals("", node.getGroup());
    }
 
@@ -103,12 +103,12 @@ public class IMachineToNodeMetadataTest {
       expect(nat.getNatDriver()).andReturn(natEng).anyTimes();
       expect(natEng.getHostIP()).andReturn("127.0.0.1").once();
       expect(natEng.getRedirects()).andReturn(ImmutableList.of("0,1,127.0.0.1,3000,,22"));
-      MachineUtils machineUtils = createNiceMock(MachineUtils.class);
+      NetworkUtils networkUtils = createNiceMock(NetworkUtils.class);
 
-      replay(vm, nat, natEng, hostOnly, machineUtils);
+      replay(vm, nat, natEng, hostOnly, networkUtils);
 
       NodeMetadata node = new IMachineToNodeMetadata(VirtualBoxComputeServiceContextModule.toPortableNodeStatus,
-               machineUtils).apply(vm);
+            networkUtils).apply(vm);
 
       assertEquals(name, node.getName());
       assertEquals(group, node.getGroup());
