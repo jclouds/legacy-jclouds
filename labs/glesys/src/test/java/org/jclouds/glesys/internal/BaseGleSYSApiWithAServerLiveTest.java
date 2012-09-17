@@ -36,8 +36,8 @@ import org.jclouds.glesys.features.ServerApi;
 import org.jclouds.glesys.options.DestroyServerOptions;
 import org.jclouds.glesys.options.ServerStatusOptions;
 import org.jclouds.predicates.RetryablePredicate;
-import org.testng.annotations.AfterGroups;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
@@ -50,25 +50,24 @@ import com.google.common.base.Predicate;
 @Test(groups = "live", singleThreaded = true)
 public class BaseGleSYSApiWithAServerLiveTest extends BaseGleSYSApiLiveTest {
    protected String serverId;
-   protected String hostName = "test-server-jclouds";
    protected ServerStatusChecker serverStatusChecker;
 
    public BaseGleSYSApiWithAServerLiveTest() {
       provider = "glesys";
    }
 
-   @BeforeGroups(groups = { "integration", "live" })
+   @BeforeClass(groups = { "integration", "live" })
    @Override
-   public final void setupContext() {
+   public void setupContext() {
       assertNull(serverId, "This method should be called EXACTLY once per run");
       super.setupContext();
       serverStatusChecker = createServer(hostName);
       serverId = serverStatusChecker.getServerId();
    }
 
-   @AfterGroups(groups = {"integration", "live"})
+   @AfterClass(groups = { "integration", "live" })
    @Override
-   public final void tearDownContext() {
+   public void tearDownContext() {
       gleContext.getApi().getServerApi().destroy(serverId, DestroyServerOptions.Builder.discardIp());
       super.tearDownContext();
    }
@@ -98,7 +97,7 @@ public class BaseGleSYSApiWithAServerLiveTest extends BaseGleSYSApiLiveTest {
       assertEquals(testServer.getHostname(), hostName);
       assertFalse(testServer.getIps().isEmpty());
 
-      ServerStatusChecker runningServerCounter = new ServerStatusChecker(api, testServer.getId(), 180, 10,
+      ServerStatusChecker runningServerCounter = new ServerStatusChecker(api, testServer.getId(), 300, 10,
             TimeUnit.SECONDS);
 
       assertTrue(runningServerCounter.apply(Server.State.RUNNING));

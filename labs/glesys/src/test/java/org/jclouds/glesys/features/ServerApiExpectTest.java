@@ -166,7 +166,7 @@ public class ServerApiExpectTest extends BaseGleSYSApiExpectTest {
    public static ServerDetails expectedServerDetails() {
       Ip ip = Ip.builder().version4().ip("31.192.231.254").version4().cost(2.0).currency("EUR").build();
       Cost cost = Cost.builder().amount(10.22).currency("EUR").timePeriod("month").build();
-      return ServerDetails.builder().id("vz1840356").transferGB(50).hostname("test-email-jclouds").cpuCores(1).memorySizeMB(512)
+      return ServerDetails.builder().id("vz1840356").transferGB(50).hostname("glesys-s").cpuCores(1).memorySizeMB(512)
             .diskSizeGB(5).datacenter("Falkenberg").description("glesys-s-6dd").platform("OpenVZ")
             .templateName("Ubuntu 10.04 LTS 32-bit").state(Server.State.RUNNING).cost(cost).ips(ip).build();
    }

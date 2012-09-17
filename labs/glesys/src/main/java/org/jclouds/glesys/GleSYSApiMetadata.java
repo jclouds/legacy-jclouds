@@ -78,6 +78,7 @@ public class GleSYSApiMetadata extends BaseRestApiMetadata {
          .credentialName("API Key")
          .documentation(URI.create("https://customer.glesys.com/api.php"))
          .version("1")
+         .buildVersion("3.5.0")
          .defaultEndpoint("https://api.glesys.com")
          .defaultProperties(GleSYSApiMetadata.defaultProperties())
          .view(TypeToken.of(ComputeServiceContext.class))

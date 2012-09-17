@@ -29,8 +29,8 @@ import java.util.Set;
 import org.jclouds.glesys.domain.IpDetails;
 import org.jclouds.glesys.internal.BaseGleSYSApiWithAServerLiveTest;
 import org.jclouds.glesys.options.ListIpOptions;
-import org.testng.annotations.AfterGroups;
-import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.FluentIterable;
@@ -39,22 +39,29 @@ import com.google.common.collect.Sets;
 
 /**
  * Tests behavior of {@code IpApi}
- *
+ * 
  * @author Adrian Cole, Mattias Holmqvist
  */
 @Test(groups = "live", testName = "IpApiLiveTest", singleThreaded = true)
 public class IpApiLiveTest extends BaseGleSYSApiWithAServerLiveTest {
+   public IpApiLiveTest() {
+      hostName = hostName + "-ip";
+   }
 
-   @BeforeMethod
-   public void setupApi() {
+   @BeforeClass(groups = { "integration", "live" })
+   @Override
+   public void setupContext() {
+      super.setupContext();
       api = gleContext.getApi().getIpApi();
    }
 
-   @AfterGroups(groups = {"live"})
-   public void releaseIp() {
+   @AfterClass(groups = { "integration", "live" })
+   @Override
+   public void tearDownContext() {
       if (reservedIp != null) {
          api.release(reservedIp.getAddress());
       }
+      super.tearDownContext();
    }
 
    private IpApi api;
@@ -80,7 +87,7 @@ public class IpApiLiveTest extends BaseGleSYSApiWithAServerLiveTest {
       IpDetails details = api.release(reservedIp.getAddress());
       assertEquals(details.getAddress(), reservedIp.getAddress());
       assertFalse(details.isReserved());
-      
+
       // reserve an address again!
       reserveIp();
    }
@@ -97,14 +104,14 @@ public class IpApiLiveTest extends BaseGleSYSApiWithAServerLiveTest {
       assertTrue(ownIps.contains(reservedIp));
 
       ownIps = api.list(ListIpOptions.Builder.datacenter(reservedIp.getDatacenter()),
-            ListIpOptions.Builder.platform(reservedIp.getPlatform()),
-            ListIpOptions.Builder.ipVersion(reservedIp.getVersion()));
+               ListIpOptions.Builder.platform(reservedIp.getPlatform()),
+               ListIpOptions.Builder.ipVersion(reservedIp.getVersion()));
       assertTrue(ownIps.contains(reservedIp));
 
       ownIps = api.list(ListIpOptions.Builder.serverId("xmthisisnotaserverid"));
       assertTrue(ownIps.isEmpty());
    }
-   
+
    private void checkOpenVZDefailsInFalkenberg(IpDetails ipDetails) {
       assertEquals(ipDetails.getDatacenter(), "Falkenberg");
       assertEquals(ipDetails.getPlatform(), "OpenVZ");
@@ -113,7 +120,7 @@ public class IpApiLiveTest extends BaseGleSYSApiWithAServerLiveTest {
       // broadcast, gateway and netmask are null for OpenVZ
       assertFalse(ipDetails.getNameServers().isEmpty());
    }
-   
+
    @Test
    public void testGetOpenVZDetails() throws Exception {
       FluentIterable<String> openVzIps = api.listFree(4, "Falkenberg", "OpenVZ");
@@ -150,11 +157,11 @@ public class IpApiLiveTest extends BaseGleSYSApiWithAServerLiveTest {
 
       assertEquals(modified.getPtr(), "wibble.");
       assertEquals(modified2, modified);
-      
+
       reservedIp = api.resetPtr(reservedIp.getAddress());
-      
+
       assertEquals(reservedIp, original);
-  }
+   }
 
    @Test(dependsOnMethods = "reserveIp")
    public void testAddRemove() throws Exception {
@@ -163,7 +170,7 @@ public class IpApiLiveTest extends BaseGleSYSApiWithAServerLiveTest {
       assertEquals(added.getAddress(), reservedIp.getAddress());
       assertEquals(added.getPtr(), reservedIp.getPtr());
       assertEquals(added.getServerId(), serverId);
-      
+
       IpDetails again = api.get(reservedIp.getAddress());
       assertEquals(again, added);
 
@@ -175,17 +182,16 @@ public class IpApiLiveTest extends BaseGleSYSApiWithAServerLiveTest {
       Set<String> openVzIps = Sets.newHashSet(api.listFree(4, "Falkenberg", "OpenVZ"));
       openVzIps.remove(reservedIp.getAddress());
       assertFalse(openVzIps.isEmpty());
-      
+
       added = api.addToServer(reservedIp.getAddress(), serverId);
-      
+
       assertEquals(added.getServerId(), serverId);
 
       removed = api.removeFromServerAndRelease(reservedIp.getAddress(), serverId);
-      
+
       assertNull(removed.getServerId());
       assertFalse(removed.isReserved());
-      
-      
+
       // reserve an address again!
       reserveIp();
    }

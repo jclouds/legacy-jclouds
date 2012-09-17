@@ -28,7 +28,7 @@ import org.jclouds.glesys.GleSYSAsyncApi;
 import org.jclouds.glesys.features.DomainApi;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
@@ -40,6 +40,7 @@ import com.google.common.base.Predicate;
  */
 @Test(groups = "live")
 public class BaseGleSYSApiLiveTest extends BaseComputeServiceContextLiveTest {
+   protected String hostName = System.getProperty("user.name").replace('.','-').toLowerCase();
 
    protected RestContext<GleSYSApi, GleSYSAsyncApi> gleContext;
 
@@ -47,7 +48,7 @@ public class BaseGleSYSApiLiveTest extends BaseComputeServiceContextLiveTest {
       provider = "glesys";
    }
 
-   @BeforeGroups(groups = { "integration", "live" })
+   @BeforeClass(groups = { "integration", "live" })
    @Override
    public void setupContext() {
       super.setupContext();

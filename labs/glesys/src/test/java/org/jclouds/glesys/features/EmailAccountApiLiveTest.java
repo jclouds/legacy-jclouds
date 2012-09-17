@@ -29,12 +29,12 @@ import org.jclouds.glesys.domain.EmailAccount;
 import org.jclouds.glesys.domain.EmailAlias;
 import org.jclouds.glesys.domain.EmailOverview;
 import org.jclouds.glesys.domain.EmailOverviewDomain;
-import org.jclouds.glesys.internal.BaseGleSYSApiWithAServerLiveTest;
+import org.jclouds.glesys.internal.BaseGleSYSApiLiveTest;
 import org.jclouds.glesys.options.CreateAccountOptions;
 import org.jclouds.glesys.options.UpdateAccountOptions;
 import org.jclouds.predicates.RetryablePredicate;
-import org.testng.annotations.AfterGroups;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
@@ -43,40 +43,45 @@ import com.google.common.collect.Iterables;
 
 /**
  * Tests behavior of {@code EmailAccountApi}
- *
+ * 
  * @author Adam Lowe
  */
 @Test(groups = "live", testName = "EmailAccountApiLiveTest", singleThreaded = true)
-public class EmailAccountApiLiveTest extends BaseGleSYSApiWithAServerLiveTest {
+public class EmailAccountApiLiveTest extends BaseGleSYSApiLiveTest {
+   public EmailAccountApiLiveTest() {
+      hostName = hostName + "-email";
+   }
 
-   @BeforeGroups(groups = {"live"})
-   public void setupDomains() {
-      testDomain = identity + ".test.jclouds.org";
+   @BeforeClass(groups = { "integration", "live" })
+   @Override
+   public void setupContext() {
+      super.setupContext();
+      testDomain = hostName + ".test.jclouds.org";
       api = gleContext.getApi().getEmailAccountApi();
+      deleteAll();
 
       createDomain(testDomain);
 
-      emailAccountCounter = new RetryablePredicate<Integer>(
-            new Predicate<Integer>() {
-               public boolean apply(Integer value) {
-                  return api.listDomain(testDomain).size() == value;
-               }
-            }, 180, 5, TimeUnit.SECONDS);
+      emailAccountCounter = new RetryablePredicate<Integer>(new Predicate<Integer>() {
+         public boolean apply(Integer value) {
+            return api.listDomain(testDomain).size() == value;
+         }
+      }, 180, 5, TimeUnit.SECONDS);
 
       assertTrue(emailAccountCounter.apply(0));
-      
-      try {
-         api.delete("test2@" + testDomain);
-      } catch(Exception e) {
-      }
+
    }
 
-   @AfterGroups(groups = {"live"})
-   public void tearDownDomains() {
+   @AfterClass(groups = { "integration", "live" })
+   @Override
+   public void tearDownContext() {
+      deleteAll();
+      super.tearDownContext();
+   }
+
+   private void deleteAll() {
       api.delete("test@" + testDomain);
       api.delete("test1@" + testDomain);
-      assertTrue(emailAccountCounter.apply(0));
-      gleContext.getApi().getEmailAccountApi().delete(testDomain);
    }
 
    private EmailAccountApi api;
@@ -85,8 +90,8 @@ public class EmailAccountApiLiveTest extends BaseGleSYSApiWithAServerLiveTest {
 
    @Test
    public void testCreateEmail() {
-      api.createWithPassword("test@" + testDomain, "password",
-            CreateAccountOptions.Builder.antiVirus(true).autorespond(true).autorespondMessage("out of office"));
+      api.createWithPassword("test@" + testDomain, "password", CreateAccountOptions.Builder.antiVirus(true)
+               .autorespond(true).autorespondMessage("out of office"));
 
       assertTrue(emailAccountCounter.apply(1));
 
@@ -105,14 +110,14 @@ public class EmailAccountApiLiveTest extends BaseGleSYSApiWithAServerLiveTest {
 
       EmailAlias aliasFromList = Iterables.getOnlyElement(api.listAliasesInDomain(testDomain));
       assertEquals(aliasFromList, alias);
-      
+
       EmailOverview overview = api.getOverview();
       assertTrue(overview.getSummary().getAliases() == 1);
 
       alias = api.updateAlias("test2@" + testDomain, "test1@" + testDomain);
       overview = api.getOverview();
       assertTrue(overview.getSummary().getAliases() == 1);
-      
+
       aliasFromList = Iterables.getOnlyElement(api.listAliasesInDomain(testDomain));
       assertEquals(aliasFromList, alias);
 

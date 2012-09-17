@@ -255,8 +255,7 @@ public class EmailAccountApiExpectTest extends BaseGleSYSApiExpectTest {
       api.delete("test2@jclouds.org");
    }
 
-   @Test(expectedExceptions = {ResourceNotFoundException.class})
-   public void testDeleteWhenResponseIs4xxThrows() throws Exception {
+   public void testDeleteWhenResponseIs4xxOk() throws Exception {
       EmailAccountApi api = requestSendsResponse(
             HttpRequest.builder().method("POST").endpoint("https://api.glesys.com/email/delete/format/json")
                        .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")

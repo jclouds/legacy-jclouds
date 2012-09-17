@@ -30,6 +30,7 @@ import org.jclouds.glesys.domain.EmailOverview;
 import org.jclouds.glesys.options.CreateAccountOptions;
 import org.jclouds.glesys.options.UpdateAccountOptions;
 import org.jclouds.http.filters.BasicAuthentication;
+import org.jclouds.http.functions.ReturnTrueOn404;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
@@ -121,6 +122,7 @@ public interface EmailAccountAsyncApi {
     */
    @POST
    @Path("/email/delete/format/json")
+   @ExceptionParser(ReturnTrueOn404.class)
    ListenableFuture<Boolean> delete(@FormParam("email") String accountAddress);
 
 }

@@ -20,8 +20,10 @@ package org.jclouds.glesys.compute;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.compute.util.ComputeServiceUtils.metadataAndTagsAsCommaDelimitedValue;
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -47,6 +49,7 @@ import org.jclouds.compute.domain.internal.VolumeImpl;
 import org.jclouds.compute.predicates.ImagePredicates;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
+import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.glesys.GleSYSApi;
@@ -64,7 +67,9 @@ import org.jclouds.logging.Logger;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.util.Iterables2;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Function;
+import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
@@ -115,8 +120,12 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
       CreateServerOptions createServerOptions = new CreateServerOptions();
       createServerOptions.ip(templateOptions.getIp());
 
-      createServerOptions.description(name); // TODO: add to templateOptions and
-                                             // set if present
+      Map<String, String> md = metadataAndTagsAsCommaDelimitedValue(template.getOptions());
+      if (md.size() > 0) {
+         String description = Joiner.on('\n').withKeyValueSeparator("=").join(md);
+         // TODO: get glesys to stop stripping out equals and commas!
+         createServerOptions.description(CryptoStreams.hex(description.getBytes(Charsets.UTF_8)));
+      }
 
       ServerSpec.Builder<?> builder = ServerSpec.builder();
       builder.datacenter(template.getLocation().getId());

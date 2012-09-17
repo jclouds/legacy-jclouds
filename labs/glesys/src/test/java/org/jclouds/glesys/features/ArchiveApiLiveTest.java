@@ -29,7 +29,7 @@ import org.jclouds.glesys.domain.ArchiveAllowedArguments;
 import org.jclouds.glesys.internal.BaseGleSYSApiLiveTest;
 import org.jclouds.predicates.RetryablePredicate;
 import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
@@ -42,7 +42,7 @@ import com.google.common.base.Predicate;
 @Test(groups = "live", testName = "ArchiveApiLiveTest", singleThreaded = true)
 public class ArchiveApiLiveTest extends BaseGleSYSApiLiveTest {
 
-   @BeforeGroups(groups = {"live"})
+   @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
       

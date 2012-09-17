@@ -42,6 +42,10 @@ public class GleSYSTypeAdapters {
 
       @Override
       public Server.State read(JsonReader reader) throws IOException {
+         if (reader.peek() == JsonToken.NULL) {
+            reader.nextNull();
+            return Server.State.UNRECOGNIZED;
+         }
          return Server.State.fromValue(reader.nextString());
       }
    }

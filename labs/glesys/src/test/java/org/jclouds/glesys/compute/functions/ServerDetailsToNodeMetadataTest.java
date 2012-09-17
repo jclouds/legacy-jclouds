@@ -79,9 +79,9 @@ public class ServerDetailsToNodeMetadataTest extends BaseGleSYSComputeServiceExp
             actual.toString(),
             new NodeMetadataBuilder()
                   .ids("vz1840356")
-                  .name("test-email-jclouds")
-                  .hostname("test-email-jclouds")
-                  .group("glesys-s")
+                  .name("glesys-s")
+                  .hostname("glesys-s")
+                  .group("glesys")
                   .imageId("Ubuntu 10.04 LTS 32-bit")
                   .operatingSystem(
                         OperatingSystem.builder().name("Ubuntu 10.04 LTS 32-bit").family(OsFamily.UBUNTU).version("10.04")

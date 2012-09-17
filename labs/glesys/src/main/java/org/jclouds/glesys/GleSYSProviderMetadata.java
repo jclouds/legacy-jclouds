@@ -62,7 +62,7 @@ public class GleSYSProviderMetadata extends BaseProviderMetadata {
       properties.setProperty(PROPERTY_ZONE + ".Falkenberg." + ISO3166_CODES, "SE-N");
       properties.setProperty(PROPERTY_ZONE + ".New York City." + ISO3166_CODES, "US-NY");
       properties.setProperty(PROPERTY_ZONE + ".Stockholm." + ISO3166_CODES, "SE-AB");
-      properties.setProperty(TEMPLATE, "minRam=512,osFamily=UBUNTU,hypervisorMatches=OpenVZ,osVersionMatches=1[012].[01][04],os64Bit=true,locationId=Falkenberg");
+      properties.setProperty(TEMPLATE, "osFamily=UBUNTU,osVersionMatches=1[012].[01][04],os64Bit=true,minRam=768");
       return properties;
    }
 

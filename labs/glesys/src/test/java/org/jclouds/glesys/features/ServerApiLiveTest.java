@@ -40,7 +40,8 @@ import org.jclouds.glesys.options.DestroyServerOptions;
 import org.jclouds.glesys.options.ServerStatusOptions;
 import org.jclouds.glesys.options.UpdateServerOptions;
 import org.jclouds.predicates.RetryablePredicate;
-import org.testng.annotations.AfterGroups;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -57,16 +58,21 @@ import com.google.common.collect.FluentIterable;
 public class ServerApiLiveTest extends BaseGleSYSApiWithAServerLiveTest {
    public static final String testHostName2 = "jclouds-test2";
    
-   @BeforeMethod
-   public void setupApi() {
+   @BeforeClass(groups = { "integration", "live" })
+   @Override
+   public void setupContext() {
+      hostName = hostName + "-server";
+      super.setupContext();
       api = gleContext.getApi().getServerApi();
    }
 
-   @AfterGroups(groups = {"live"})
-   public void deleteExtraServer() {
+   @AfterClass(groups = { "integration", "live" })
+   @Override
+   public void tearDownContext() {
       if (testServerId2 != null) {
          api.destroy(testServerId2, DestroyServerOptions.Builder.discardIp());
       }
+      super.tearDownContext();
    }
 
    private ServerApi api;
@@ -205,13 +211,20 @@ public class ServerApiLiveTest extends BaseGleSYSApiWithAServerLiveTest {
    public void testResourceUsage() throws Exception {
       // test server has only been in existence for less than a minute - check all servers
       for (Server server : api.list()) {
-         ResourceUsage usage = api.getResourceUsage(server.getId(), "diskioread", "minute");
-         assertEquals(usage.getInfo().getResource(), "diskioread");
-         assertEquals(usage.getInfo().getResolution(), "minute");
+         try {
+            ResourceUsage usage = api.getResourceUsage(server.getId(), "diskioread", "minute");
+            assertEquals(usage.getInfo().getResource(), "diskioread");
+            assertEquals(usage.getInfo().getResolution(), "minute");
+         } catch (UnsupportedOperationException e) {
 
-         usage = api.getResourceUsage(server.getId(), "cpuusage", "minute");
-         assertEquals(usage.getInfo().getResource(), "cpuusage");
-         assertEquals(usage.getInfo().getResolution(), "minute");
+         }
+         try {
+            ResourceUsage usage = api.getResourceUsage(server.getId(), "cpuusage", "minute");
+            assertEquals(usage.getInfo().getResource(), "cpuusage");
+            assertEquals(usage.getInfo().getResolution(), "minute");
+         } catch (UnsupportedOperationException e) {
+
+         }
       }
    }
 

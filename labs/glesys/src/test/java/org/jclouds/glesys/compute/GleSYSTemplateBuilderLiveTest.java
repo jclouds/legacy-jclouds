@@ -70,8 +70,8 @@ public class GleSYSTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
                return input.version.equals("") || input.version.equals("5") || input.version.equals("5.5")
                      || input.version.equals("5.0") || input.version.equals("6.0");
             case WINDOWS:
-               return input.version.equals("") || input.version.equals("2008")
-                     || (input.version.equals("2008 R2") && input.is64Bit);
+               return (input.version.equals("") || input.version.equals("2008")
+                     || input.version.equals("2008 R2")) && input.is64Bit;
             default:
                return false;
             }
@@ -83,13 +83,13 @@ public class GleSYSTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
    @Test
    public void testDefaultTemplateBuilder() throws IOException {
       Template defaultTemplate = view.getComputeService().templateBuilder().build();
-      assertEquals(defaultTemplate.getImage().getId(), "Ubuntu 12.04 LTS 64-bit");
+      assertEquals(defaultTemplate.getImage().getId(), "Ubuntu 12.04 x64");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "12.04");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
-      assertEquals(defaultTemplate.getHardware().getRam(), 512);
-      assertEquals(defaultTemplate.getHardware().getHypervisor(), "OpenVZ");
+      assertEquals(defaultTemplate.getHardware().getRam(), 768);
+      assertEquals(defaultTemplate.getHardware().getHypervisor(), "Xen");
       assertEquals(getSpace(defaultTemplate.getHardware()), 5.0d);
       assertEquals(defaultTemplate.getHardware().getVolumes().get(0).getType(), Volume.Type.LOCAL);
       // test that we bound the correct templateoptions in guice
