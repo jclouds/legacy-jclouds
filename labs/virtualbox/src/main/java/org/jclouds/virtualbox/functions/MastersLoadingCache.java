@@ -50,6 +50,7 @@ import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.location.Provider;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.annotations.BuildVersion;
@@ -68,6 +69,7 @@ import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.domain.YamlImage;
 import org.jclouds.virtualbox.functions.admin.PreseedCfgServer;
 import org.jclouds.virtualbox.predicates.RetryIfSocketNotYetOpen;
+import org.jclouds.virtualbox.util.NetworkUtils;
 import org.testng.collections.Lists;
 import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
@@ -76,6 +78,7 @@ import org.virtualbox_4_1.StorageBus;
 import org.virtualbox_4_1.VBoxException;
 import org.virtualbox_4_1.VirtualBoxManager;
 
+import com.google.common.base.CaseFormat;
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
@@ -97,9 +100,6 @@ import com.google.common.net.HostAndPort;
  */
 @Singleton
 public class MastersLoadingCache extends AbstractLoadingCache<Image, Master> {
-
-	// TODO parameterize
-	public static final int MASTER_PORT = 2222;
 
 	@Resource
 	@Named(ComputeServiceConstants.COMPUTE_LOGGER)
@@ -197,18 +197,17 @@ public class MastersLoadingCache extends AbstractLoadingCache<Image, Master> {
                   server.start(preconfigurationUrl, currentImage.preseed_cfg);
                }
             } catch (URISyntaxException e1) {
+               logger.error("Cannot start the preseed server", e);
                throw e;
             }
 				
 				MasterSpec masterSpec = buildMasterSpecFromYaml(currentImage,
 						vmName);
-				
-				// create the master machine if it can't be found
 				masterMachine = masterCreatorAndInstaller.apply(masterSpec);
-				// build the master
 				master = Master.builder().machine(masterMachine)
 						.spec(masterSpec).build();
 			} else {
+			   logger.error("Problem during master creation", e);
 				throw e;
 			}
 		} finally {
@@ -241,15 +240,16 @@ public class MastersLoadingCache extends AbstractLoadingCache<Image, Master> {
 				.attachISO(0, 0, localIsoUrl).attachHardDisk(hardDisk)
 				.attachISO(1, 0, guestAdditionsIso).build();
 
-		VmSpec vmSpecification = VmSpec.builder().id(currentImage.id)
-				.name(vmName).memoryMB(512).osTypeId("")
+      VmSpec vmSpecification = VmSpec.builder().id(currentImage.id)
+				.name(vmName).memoryMB(512).osTypeId(getOsTypeId(currentImage.os_family, currentImage.os_64bit))
 				.controller(ideController).forceOverwrite(true)
+				.guestUser(currentImage.username).guestPassword(currentImage.credential)
 				.cleanUpMode(CleanupMode.Full).build();
 
 		NetworkAdapter networkAdapter = NetworkAdapter
 				.builder()
 				.networkAttachmentType(NetworkAttachmentType.NAT)
-				.tcpRedirectRule(providerSupplier.get().getHost(), MASTER_PORT,
+				.tcpRedirectRule(providerSupplier.get().getHost(), NetworkUtils.MASTER_PORT,
 						"", 22).build();
 
 		NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard
@@ -257,7 +257,7 @@ public class MastersLoadingCache extends AbstractLoadingCache<Image, Master> {
 
 		NetworkSpec networkSpec = NetworkSpec.builder()
 				.addNIC(networkInterfaceCard).build();
-
+      		
 		return MasterSpec
 				.builder()
 				.vm(vmSpecification)
@@ -267,10 +267,12 @@ public class MastersLoadingCache extends AbstractLoadingCache<Image, Master> {
 						.installationScript(
 								installationKeySequence.replace("HOSTNAME",
 										vmSpecification.getVmName())).build())
-				.network(networkSpec).build();
+				.network(networkSpec)
+				.credentials(new LoginCredentials(currentImage.username, currentImage.credential, null, true))
+				.build();
 	}
 
-	@Override
+   @Override
 	public synchronized Master getIfPresent(Object key) {
 		checkArgument(key instanceof Image,
 				"this cache is for entries who's keys are Images");
@@ -315,4 +317,8 @@ public class MastersLoadingCache extends AbstractLoadingCache<Image, Master> {
       return file.getAbsolutePath();
    }
 
+   private String getOsTypeId(String os_family, boolean os_64bit) {
+      String osFamily = CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, os_family);
+      return os_64bit ? osFamily + "_64" : osFamily;
+   }
 }

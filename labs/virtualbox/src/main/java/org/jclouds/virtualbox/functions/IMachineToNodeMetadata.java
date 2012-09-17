@@ -19,6 +19,8 @@
 
 package org.jclouds.virtualbox.functions;
 
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.GUEST_OS_PASSWORD;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.GUEST_OS_USER;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_NODE_NAME_SEPARATOR;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_NODE_PREFIX;
 
@@ -37,7 +39,7 @@ import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.logging.Logger;
-import org.jclouds.virtualbox.util.MachineUtils;
+import org.jclouds.virtualbox.util.NetworkUtils;
 import org.testng.collections.Lists;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.INetworkAdapter;
@@ -58,12 +60,13 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
    protected Logger logger = Logger.NULL;
    
    private final Map<MachineState, Status> toPortableNodeStatus;
-   private final MachineUtils machineUtils;
+   private final NetworkUtils networkUtils;
 
    @Inject
-   public IMachineToNodeMetadata(Map<MachineState, NodeMetadata.Status> toPortableNodeStatus, MachineUtils machineUtils) {
+   public IMachineToNodeMetadata(Map<MachineState, NodeMetadata.Status> toPortableNodeStatus, 
+         NetworkUtils networkUtils) {
       this.toPortableNodeStatus = toPortableNodeStatus;
-      this.machineUtils = machineUtils;
+      this.networkUtils = networkUtils;
    }
    
    @Override
@@ -95,8 +98,10 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
          nodeState = Status.UNRECOGNIZED;
       nodeMetadataBuilder.status(nodeState);
       nodeMetadataBuilder = getIpAddresses(vm, nodeMetadataBuilder);
-      
-      LoginCredentials loginCredentials = new LoginCredentials("toor", "password", null, true);
+
+      String guestOsUser = vm.getExtraData(GUEST_OS_USER);
+      String guestOsPassword = vm.getExtraData(GUEST_OS_PASSWORD);
+      LoginCredentials loginCredentials = new LoginCredentials(guestOsUser, guestOsPassword, null, true);
       nodeMetadataBuilder.credentials(loginCredentials);
 
       return nodeMetadataBuilder.build();
@@ -104,7 +109,7 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
    
    private NodeMetadataBuilder getIpAddresses(IMachine vm, NodeMetadataBuilder nodeMetadataBuilder) {
       List<String> publicIpAddresses = Lists.newArrayList();
-
+      List<String> privateIpAddresses = Lists.newArrayList();
       for(long slot = 0; slot < 4; slot ++) {
          INetworkAdapter adapter = vm.getNetworkAdapter(slot);
          if(adapter != null) {
@@ -123,16 +128,15 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
                      publicIpAddresses.add(hostAddress);
                      nodeMetadataBuilder.loginPort(inPort);
                   }
-                  //privateIpAddresses.add((NodeCreator.VMS_NETWORK + ipTermination) + "");
                }
-               // TODO this could be a public and private address
             } else if (adapter.getAttachmentType() == NetworkAttachmentType.Bridged) {
-               String clientIpAddress = machineUtils.getIpAddressFromFirstNIC(vm.getName());
-               //privateIpAddresses.add(clientIpAddress);
-               publicIpAddresses.add(clientIpAddress);
+               // TODO quick test first
+               String clientIpAddress = networkUtils.getIpAddressFromNicSlot(vm.getName(), adapter.getSlot());
+               privateIpAddresses.add(clientIpAddress);
 
             } else if (adapter.getAttachmentType() == NetworkAttachmentType.HostOnly) {
-               String clientIpAddress = machineUtils.getIpAddressFromFirstNIC(vm.getName());
+               // TODO quick test first
+               String clientIpAddress = networkUtils.getIpAddressFromNicSlot(vm.getName(), adapter.getSlot());
                publicIpAddresses.add(clientIpAddress);
             }
          }

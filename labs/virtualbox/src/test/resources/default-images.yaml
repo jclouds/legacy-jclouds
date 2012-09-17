@@ -143,6 +143,8 @@ images:
       os_64bit: true
       iso: http://releases.ubuntu.com/12.04/ubuntu-12.04.1-server-amd64.iso
       iso_md5: a8c667e871f48f3a662f3fbf1c3ddb17
+      username: toor
+      credential: password
       keystroke_sequence: |
                 <Esc><Esc><Enter> 
                 /install/vmlinuz noapic preseed/url=http://10.0.2.2:8080/src/test/resources/preseed.cfg 

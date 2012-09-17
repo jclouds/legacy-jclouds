@@ -62,7 +62,7 @@ public interface VirtualBoxConstants {
    
    public static final String VIRTUALBOX_PROVIDER = "virtualbox";
    
-   public static final String VIRTUALBOX_GUEST_IDENTITY = "jclouds.virtualbox.guest.identity";
-   public static final String VIRTUALBOX_GUEST_CREDENTIAL = "jclouds.virtualbox.guest.credential";
-
+   public static final String GUEST_OS_PASSWORD = "guestPassword";
+   
+   public static final String GUEST_OS_USER = "guestUser";
 }
