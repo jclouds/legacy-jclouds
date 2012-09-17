@@ -19,6 +19,8 @@
 
 package org.jclouds.virtualbox.functions;
 
+import java.util.concurrent.TimeUnit;
+
 import org.jclouds.logging.Logger;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IProgress;
@@ -30,6 +32,7 @@ import org.virtualbox_4_1.VirtualBoxManager;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
+import com.google.common.util.concurrent.Uninterruptibles;
 
 /**
  * @author Andrea Turli
@@ -93,7 +96,7 @@ public class TakeSnapshotIfNotAlreadyAttached implements Function<IMachine, ISna
                                  snapshotName, snapshotDesc, machine.getName());
                         throw Throwables.propagate(e);
                      }
-                     Thread.sleep(1000L);
+                     Uninterruptibles.sleepUninterruptibly(1, TimeUnit.SECONDS);
                      continue;
                   }
                   logger.error(e, "Problem creating snapshot %s (description: %s) from machine %s", snapshotName,

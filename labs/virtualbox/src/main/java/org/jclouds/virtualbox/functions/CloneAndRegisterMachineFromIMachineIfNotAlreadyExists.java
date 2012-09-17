@@ -19,9 +19,11 @@
 
 package org.jclouds.virtualbox.functions;
 
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.GUEST_OS_PASSWORD;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.GUEST_OS_USER;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.locks.ReentrantLock;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
@@ -62,8 +64,6 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
    private final String workingDir;
    private final MachineUtils machineUtils;
    
-   private final ReentrantLock lock = new ReentrantLock();
-
    @Inject
    public CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(Supplier<VirtualBoxManager> manager,
             @Named(VirtualBoxConstants.VIRTUALBOX_WORKINGDIR) String workingDir, MachineUtils machineUtils) {
@@ -125,6 +125,13 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
       for (NetworkInterfaceCard networkInterfaceCard : networkSpec.getNetworkInterfaceCards()) {
          new AttachNicToMachine(vmSpec.getVmName(), machineUtils).apply(networkInterfaceCard);
       }
+      
+      // set only once the creds for this machine, same coming from its master
+      logger.debug(">> storing guest credentials on vm %s as extra data", clonedMachine.getName());
+      String masterUsername = master.getExtraData(GUEST_OS_USER);
+      String masterPassword = master.getExtraData(GUEST_OS_PASSWORD);
+      clonedMachine.setExtraData(GUEST_OS_USER, masterUsername);
+      clonedMachine.setExtraData(GUEST_OS_PASSWORD, masterPassword);
 
       return clonedMachine;
    }
