@@ -52,7 +52,7 @@ public class IgnoreNullIterableTypeAdapterFactory implements TypeAdapterFactory 
       return (TypeAdapter<T>) newIterableAdapter(elementAdapter);
    }
 
-   private <E> TypeAdapter<Iterable<E>> newIterableAdapter(final TypeAdapter<E> elementAdapter) {
+   protected <E> TypeAdapter<Iterable<E>> newIterableAdapter(final TypeAdapter<E> elementAdapter) {
       return new TypeAdapter<Iterable<E>>() {
          public void write(JsonWriter out, Iterable<E> value) throws IOException {
             out.beginArray();
@@ -63,7 +63,7 @@ public class IgnoreNullIterableTypeAdapterFactory implements TypeAdapterFactory 
          }
 
          public Iterable<E> read(JsonReader in) throws IOException {
-                                                                 in.beginArray();
+            in.beginArray();
             Builder<E> builder = ImmutableList.<E>builder();
             while (in.hasNext()) {
                E element = elementAdapter.read(in);

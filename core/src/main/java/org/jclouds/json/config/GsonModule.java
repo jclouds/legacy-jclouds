@@ -102,10 +102,10 @@ public class GsonModule extends AbstractModule {
       builder.registerTypeAdapter(byte[].class, byteArrayAdapter.nullSafe());
       builder.registerTypeAdapter(JsonBall.class, jsonAdapter.nullSafe());
       builder.registerTypeAdapterFactory(optional);
+      builder.registerTypeAdapterFactory(iterable);
       builder.registerTypeAdapterFactory(set);
       builder.registerTypeAdapterFactory(map);
       builder.registerTypeAdapterFactory(multimap);
-      builder.registerTypeAdapterFactory(iterable);
       builder.registerTypeAdapterFactory(fluentIterable);
 
       AnnotationConstructorNamingStrategy deserializationPolicy =

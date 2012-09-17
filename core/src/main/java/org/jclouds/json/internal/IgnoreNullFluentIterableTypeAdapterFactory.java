@@ -53,7 +53,7 @@ public class IgnoreNullFluentIterableTypeAdapterFactory implements TypeAdapterFa
       return (TypeAdapter<T>) newFluentIterableAdapter(elementAdapter);
    }
 
-   private <E> TypeAdapter<FluentIterable<E>> newFluentIterableAdapter(final TypeAdapter<E> elementAdapter) {
+   protected <E> TypeAdapter<FluentIterable<E>> newFluentIterableAdapter(final TypeAdapter<E> elementAdapter) {
       return new TypeAdapter<FluentIterable<E>>() {
          public void write(JsonWriter out, FluentIterable<E> value) throws IOException {
             out.beginArray();
