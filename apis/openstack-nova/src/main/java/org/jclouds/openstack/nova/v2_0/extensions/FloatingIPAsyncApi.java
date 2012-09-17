@@ -18,8 +18,6 @@
  */
 package org.jclouds.openstack.nova.v2_0.extensions;
 
-import java.util.Set;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -40,9 +38,11 @@ import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.SkipEncoding;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnEmptyFluentIterableOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
+import com.google.common.annotations.Beta;
+import com.google.common.collect.FluentIterable;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -57,33 +57,34 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see <a href="http://nova.openstack.org/api_ext" />
  * @see <a href="http://wiki.openstack.org/os_api_floating_ip"/>
  */
+@Beta
 @Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.FLOATING_IPS)
 @SkipEncoding( { '/', '=' })
 @RequestFilters(AuthenticateRequest.class)
 public interface FloatingIPAsyncApi {
 
    /**
-    * @see FloatingIPApi#listFloatingIPs
+    * @see FloatingIPApi#list
     */
    @GET
    @Path("/os-floating-ips")
    @SelectJson("floating_ips")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<? extends Set<? extends FloatingIP>> listFloatingIPs();
+   @ExceptionParser(ReturnEmptyFluentIterableOnNotFoundOr404.class)
+   ListenableFuture<? extends FluentIterable<? extends FloatingIP>> list();
 
    /**
-    * @see FloatingIPApi#getFloatingIP
+    * @see FloatingIPApi#get
     */
    @GET
    @Path("/os-floating-ips/{id}")
    @SelectJson("floating_ip")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<? extends FloatingIP> getFloatingIP(@PathParam("id") String id);
+   ListenableFuture<? extends FloatingIP> get(@PathParam("id") String id);
 
    /**
-    * @see FloatingIPApi#allocate
+    * @see FloatingIPApi#create
     */
    @POST
    @Path("/os-floating-ips")
@@ -92,37 +93,37 @@ public interface FloatingIPAsyncApi {
    @Produces(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Payload("{}")
-   ListenableFuture<? extends FloatingIP> allocate();
+   ListenableFuture<? extends FloatingIP> create();
 
    /**
-    * @see FloatingIPApi#deallocate
+    * @see FloatingIPApi#delete
     */
    @DELETE
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Path("/os-floating-ips/{id}")
-   ListenableFuture<Void> deallocate(@PathParam("id") String id);
+   ListenableFuture<Void> delete(@PathParam("id") String id);
 
    /**
-    * @see FloatingIPApi#addFloatingIPToServer
+    * @see FloatingIPApi#addToServer
     */
    @POST
    @Path("/servers/{server}/action")
    @Consumes
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("%7B\"addFloatingIp\":%7B\"address\":\"{address}\"%7D%7D")
-   ListenableFuture<Void> addFloatingIPToServer(@PayloadParam("address") String address,
+   ListenableFuture<Void> addToServer(@PayloadParam("address") String address,
             @PathParam("server") String serverId);
 
    /**
-    * @see FloatingIPApi#removeFloatingIPFromServer
+    * @see FloatingIPApi#removeFromServer
     */
    @POST
    @Path("/servers/{server}/action")
    @Consumes
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("%7B\"removeFloatingIp\":%7B\"address\":\"{address}\"%7D%7D")
-   ListenableFuture<Void> removeFloatingIPFromServer(@PayloadParam("address") String address,
+   ListenableFuture<Void> removeFromServer(@PayloadParam("address") String address,
             @PathParam("server") String serverId);
 
 }

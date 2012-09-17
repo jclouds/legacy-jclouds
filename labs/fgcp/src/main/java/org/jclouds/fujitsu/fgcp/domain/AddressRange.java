@@ -28,30 +28,30 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "addressrange")
 public class AddressRange {
-    private String range;
+   private String range;
 
-    private String from;
+   private String from;
 
-    private String to;
+   private String to;
 
-    /**
-     * @return the range
-     */
-    public String getRange() {
-        return range;
-    }
+   /**
+    * @return the range
+    */
+   public String getRange() {
+      return range;
+   }
 
-    /**
-     * @return the from
-     */
-    public String getFrom() {
-        return from;
-    }
+   /**
+    * @return the from
+    */
+   public String getFrom() {
+      return from;
+   }
 
-    /**
-     * @return the to
-     */
-    public String getTo() {
-        return to;
-    }
+   /**
+    * @return the to
+    */
+   public String getTo() {
+      return to;
+   }
 }

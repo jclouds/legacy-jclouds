@@ -33,77 +33,77 @@ import org.testng.annotations.Test;
 @Test(groups = "unit", testName = "PublicIPAddressApiExpectTest", singleThreaded = true)
 public class PublicIPAddressApiExpectTest extends BaseFGCPRestApiExpectTest {
 
-    public void testAttach() {
-        HttpRequest request = buildGETWithQuery("Action=AttachPublicIP"
-                + "&vsysId=CONTRACT-VSYS00001"
-                + "&publicIp=123.45.67.89");
-        HttpResponse response = HttpResponse.builder().statusCode(200)
-                .payload(payloadFromResource("/AttachPublicIP-response.xml"))
-                .build();
+   public void testAttach() {
+      HttpRequest request = buildGETWithQuery("Action=AttachPublicIP"
+            + "&vsysId=CONTRACT-VSYS00001"
+            + "&publicIp=123.45.67.89");
+      HttpResponse response = HttpResponse.builder().statusCode(200)
+            .payload(payloadFromResource("/AttachPublicIP-response.xml"))
+            .build();
 
-        PublicIPAddressApi api = requestSendsResponse(request, response)
-                .getPublicIPAddressApi();
+      PublicIPAddressApi api = requestSendsResponse(request, response)
+            .getPublicIPAddressApi();
 
-        api.attach("CONTRACT-VSYS00001", "123.45.67.89");
-    }
+      api.attach("CONTRACT-VSYS00001", "123.45.67.89");
+   }
 
-    public void testDetach() {
-        HttpRequest request = buildGETWithQuery("Action=DetachPublicIP"
-                + "&vsysId=CONTRACT-VSYS00001"
-                + "&publicIp=123.45.67.89");
-        HttpResponse response = HttpResponse.builder().statusCode(200)
-                .payload(payloadFromResource("/DetachPublicIP-response.xml"))
-                .build();
+   public void testDetach() {
+      HttpRequest request = buildGETWithQuery("Action=DetachPublicIP"
+            + "&vsysId=CONTRACT-VSYS00001"
+            + "&publicIp=123.45.67.89");
+      HttpResponse response = HttpResponse.builder().statusCode(200)
+            .payload(payloadFromResource("/DetachPublicIP-response.xml"))
+            .build();
 
-        PublicIPAddressApi api = requestSendsResponse(request, response)
-                .getPublicIPAddressApi();
+      PublicIPAddressApi api = requestSendsResponse(request, response)
+            .getPublicIPAddressApi();
 
-        api.detach("CONTRACT-VSYS00001", "123.45.67.89");
-    }
+      api.detach("CONTRACT-VSYS00001", "123.45.67.89");
+   }
 
-    public void testFree() {
-        HttpRequest request = buildGETWithQuery("Action=FreePublicIP"
-                + "&vsysId=CONTRACT-VSYS00001"
-                + "&publicIp=123.45.67.89");
-        HttpResponse response = HttpResponse.builder().statusCode(200)
-                .payload(payloadFromResource("/FreePublicIP-response.xml"))
-                .build();
+   public void testFree() {
+      HttpRequest request = buildGETWithQuery("Action=FreePublicIP"
+            + "&vsysId=CONTRACT-VSYS00001"
+            + "&publicIp=123.45.67.89");
+      HttpResponse response = HttpResponse.builder().statusCode(200)
+            .payload(payloadFromResource("/FreePublicIP-response.xml"))
+            .build();
 
-        PublicIPAddressApi api = requestSendsResponse(request, response)
-                .getPublicIPAddressApi();
+      PublicIPAddressApi api = requestSendsResponse(request, response)
+            .getPublicIPAddressApi();
 
-        api.free("CONTRACT-VSYS00001", "123.45.67.89");
-    }
+      api.free("CONTRACT-VSYS00001", "123.45.67.89");
+   }
 
-    public void testGetStatus() {
-        HttpRequest request = buildGETWithQuery("Action=GetPublicIPStatus"
-                + "&publicIp=123.45.67.89");
-        HttpResponse response = HttpResponse.builder().statusCode(200)
-                .payload(payloadFromResource("/GetPublicIPStatus-response.xml"))
-                .build();
+   public void testGetStatus() {
+      HttpRequest request = buildGETWithQuery("Action=GetPublicIPStatus"
+            + "&publicIp=123.45.67.89");
+      HttpResponse response = HttpResponse.builder().statusCode(200)
+            .payload(payloadFromResource("/GetPublicIPStatus-response.xml"))
+            .build();
 
-        PublicIPAddressApi api = requestSendsResponse(request, response)
-                .getPublicIPAddressApi();
+      PublicIPAddressApi api = requestSendsResponse(request, response)
+            .getPublicIPAddressApi();
 
-        PublicIPStatus status = api.getStatus("123.45.67.89");
-        assertEquals(status, PublicIPStatus.ATTACHED);
-    }
+      PublicIPStatus status = api.getStatus("123.45.67.89");
+      assertEquals(status, PublicIPStatus.ATTACHED);
+   }
 
-    public void testGet() {
-        HttpRequest request = buildGETWithQuery("Action=GetPublicIPAttributes"
-                + "&publicIp=123.45.67.89");
-        HttpResponse response = HttpResponse.builder().statusCode(200)
-                .payload(payloadFromResource("/GetPublicIPAttributes-response.xml"))
-                .build();
+   public void testGet() {
+      HttpRequest request = buildGETWithQuery("Action=GetPublicIPAttributes"
+            + "&publicIp=123.45.67.89");
+      HttpResponse response = HttpResponse.builder().statusCode(200)
+            .payload(payloadFromResource("/GetPublicIPAttributes-response.xml"))
+            .build();
 
-        PublicIPAddressApi api = requestSendsResponse(request, response)
-                .getPublicIPAddressApi();
+      PublicIPAddressApi api = requestSendsResponse(request, response)
+            .getPublicIPAddressApi();
 
-        PublicIP ip = api.get("123.45.67.89");
+      PublicIP ip = api.get("123.45.67.89");
 
-        assertNotNull(ip, "ip");
-        assertEquals(ip.getAddress(), "123.45.67.89");
-        assertEquals(ip.getVersion(), PublicIP.Version.IPv4);
-    }
+      assertNotNull(ip, "ip");
+      assertEquals(ip.getAddress(), "123.45.67.89");
+      assertEquals(ip.getVersion(), PublicIP.Version.IPv4);
+   }
 
 }

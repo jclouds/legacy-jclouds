@@ -67,8 +67,18 @@ public class AzureBlobRequestSigner implements BlobRequestSigner {
    }
 
    @Override
+   public HttpRequest signGetBlob(String container, String name, long timeInSeconds) {
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
    public HttpRequest signPutBlob(String container, Blob blob) {
       return cleanRequest(processor.createRequest(createMethod, container, blobToBlob.apply(blob)));
+   }
+
+   @Override
+   public HttpRequest signPutBlob(String container, Blob blob, long timeInSeconds) {
+      throw new UnsupportedOperationException();
    }
 
    @Override

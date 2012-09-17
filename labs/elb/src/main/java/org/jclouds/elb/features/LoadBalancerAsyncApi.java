@@ -45,6 +45,8 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.Transform;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
+import org.jclouds.rest.functions.ReturnEmptyIterableWithMarkerOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnEmptyPagedIterableOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
@@ -63,47 +65,47 @@ import com.google.common.util.concurrent.ListenableFuture;
 @VirtualHost
 public interface LoadBalancerAsyncApi {
    /**
-    * @see LoadBalancerApi#createLoadBalancerListeningInAvailabilityZones()
+    * @see LoadBalancerApi#createListeningInAvailabilityZones()
     */
    @POST
    @Path("/")
    @XMLResponseParser(CreateLoadBalancerResponseHandler.class)
    @FormParams(keys = ACTION, values = "CreateLoadBalancer")
-   ListenableFuture<String> createLoadBalancerListeningInAvailabilityZones(@FormParam("LoadBalancerName") String name,
+   ListenableFuture<String> createListeningInAvailabilityZones(@FormParam("LoadBalancerName") String name,
              @BinderParam(BindListenersToFormParams.class) Listener listeners,
              @BinderParam(BindAvailabilityZonesToIndexedFormParams.class) Iterable<String> availabilityZones);
     
    /**
-    * @see LoadBalancerApi#createLoadBalancerListeningInAvailabilityZones()
+    * @see LoadBalancerApi#createListeningInAvailabilityZones()
     */
    @POST
    @Path("/")
    @XMLResponseParser(CreateLoadBalancerResponseHandler.class)
    @FormParams(keys = ACTION, values = "CreateLoadBalancer")
-   ListenableFuture<String> createLoadBalancerListeningInAvailabilityZones(@FormParam("LoadBalancerName") String name,
+   ListenableFuture<String> createListeningInAvailabilityZones(@FormParam("LoadBalancerName") String name,
             @BinderParam(BindListenersToFormParams.class) Iterable<Listener> listeners,
             @BinderParam(BindAvailabilityZonesToIndexedFormParams.class) Iterable<String> availabilityZones);
 
    /**
-    * @see LoadBalancerApi#createLoadBalancerListeningInSubnetAssignedToSecurityGroups()
+    * @see LoadBalancerApi#createListeningInSubnetAssignedToSecurityGroups()
     */
    @POST
    @Path("/")
    @XMLResponseParser(CreateLoadBalancerResponseHandler.class)
    @FormParams(keys = ACTION, values = "CreateLoadBalancer")
-   ListenableFuture<String> createLoadBalancerListeningInSubnetAssignedToSecurityGroups(
+   ListenableFuture<String> createListeningInSubnetAssignedToSecurityGroups(
             @FormParam("LoadBalancerName") String name,
             @FormParam("Subnets.member.1") String subnetId,
             @BinderParam(BindSecurityGroupsToIndexedFormParams.class) Iterable<String> securityGroupIds);
    
    /**
-    * @see LoadBalancerApi#createLoadBalancerListeningInSubnetsAssignedToSecurityGroups()
+    * @see LoadBalancerApi#createListeningInSubnetsAssignedToSecurityGroups()
     */
    @POST
    @Path("/")
    @XMLResponseParser(CreateLoadBalancerResponseHandler.class)
    @FormParams(keys = ACTION, values = "CreateLoadBalancer")
-   ListenableFuture<String> createLoadBalancerListeningInSubnetsAssignedToSecurityGroups(
+   ListenableFuture<String> createListeningInSubnetsAssignedToSecurityGroups(
             @FormParam("LoadBalancerName") String name,
             @BinderParam(BindSubnetsToIndexedFormParams.class) Iterable<String> subnetIds,
             @BinderParam(BindSecurityGroupsToIndexedFormParams.class) Iterable<String> securityGroupIds);
@@ -125,6 +127,7 @@ public interface LoadBalancerAsyncApi {
    @Path("/")
    @XMLResponseParser(DescribeLoadBalancersResultHandler.class)
    @Transform(LoadBalancersToPagedIterable.class)
+   @ExceptionParser(ReturnEmptyPagedIterableOnNotFoundOr404.class)
    @FormParams(keys = "Action", values = "DescribeLoadBalancers")
    ListenableFuture<PagedIterable<LoadBalancer>> list();
 
@@ -134,6 +137,7 @@ public interface LoadBalancerAsyncApi {
    @POST
    @Path("/")
    @XMLResponseParser(DescribeLoadBalancersResultHandler.class)
+   @ExceptionParser(ReturnEmptyIterableWithMarkerOnNotFoundOr404.class)
    @FormParams(keys = "Action", values = "DescribeLoadBalancers")
    ListenableFuture<IterableWithMarker<LoadBalancer>> list(ListLoadBalancersOptions options);
 

@@ -18,7 +18,7 @@
  */
 package org.jclouds.openstack.nova.v2_0.features;
 
-import java.util.Set;
+import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -30,14 +30,22 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.collect.PagedIterable;
+import org.jclouds.openstack.keystone.v2_0.domain.PaginatedCollection;
 import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
+import org.jclouds.openstack.keystone.v2_0.functions.ReturnEmptyPaginatedCollectionOnNotFoundOr404;
+import org.jclouds.openstack.nova.v2_0.binders.BindMetadataToJsonPayload;
 import org.jclouds.openstack.nova.v2_0.domain.RebootType;
 import org.jclouds.openstack.nova.v2_0.domain.Server;
 import org.jclouds.openstack.nova.v2_0.domain.ServerCreated;
 import org.jclouds.openstack.nova.v2_0.functions.ParseImageIdFromLocationHeader;
+import org.jclouds.openstack.nova.v2_0.functions.internal.OnlyMetadataValueOrNull;
+import org.jclouds.openstack.nova.v2_0.functions.internal.ParseServerDetails;
+import org.jclouds.openstack.nova.v2_0.functions.internal.ParseServers;
 import org.jclouds.openstack.nova.v2_0.options.CreateServerOptions;
 import org.jclouds.openstack.nova.v2_0.options.RebuildServerOptions;
 import org.jclouds.openstack.v2_0.domain.Resource;
+import org.jclouds.openstack.v2_0.options.PaginationOptions;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.Payload;
@@ -46,11 +54,15 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.SkipEncoding;
+import org.jclouds.rest.annotations.Transform;
 import org.jclouds.rest.annotations.Unwrap;
+import org.jclouds.rest.binders.BindToJsonPayload;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnEmptyMapOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnEmptyPagedIterableOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -59,8 +71,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * <p/>
  * 
  * @see ServerApi
- * @see <a href=
- *      "http://docs.openstack.org/api/openstack-compute/1.1/content/Servers-d1e2073.html"
+ * @see <a href= "http://docs.openstack.org/api/openstack-compute/1.1/content/Servers-d1e2073.html"
  *      />
  * @author Adrian Cole
  */
@@ -69,123 +80,145 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface ServerAsyncApi {
 
    /**
-    * @see ServerApi#listServers
+    * @see ServerApi#list()
     */
    @GET
-   @SelectJson("servers")
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/servers")
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<? extends Set<? extends Resource>> listServers();
+   @RequestFilters(AuthenticateRequest.class)
+   @ResponseParser(ParseServers.class)
+   @Transform(ParseServers.ToPagedIterable.class)
+   @ExceptionParser(ReturnEmptyPagedIterableOnNotFoundOr404.class)
+   ListenableFuture<? extends PagedIterable<? extends Resource>> list();
+
+   /** @see ServerApi#list(PaginationOptions) */
+   @GET
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Path("/servers")
+   @RequestFilters(AuthenticateRequest.class)
+   @ResponseParser(ParseServers.class)
+   @ExceptionParser(ReturnEmptyPaginatedCollectionOnNotFoundOr404.class)
+   ListenableFuture<? extends PaginatedCollection<? extends Resource>> list(PaginationOptions options);
 
    /**
-    * @see ServerApi#listServersInDetail
+    * @see ServerApi#listInDetail()
     */
    @GET
-   @SelectJson("servers")
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/servers/detail")
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<? extends Set<? extends Server>> listServersInDetail();
+   @RequestFilters(AuthenticateRequest.class)
+   @ResponseParser(ParseServerDetails.class)
+   @Transform(ParseServerDetails.ToPagedIterable.class)
+   @ExceptionParser(ReturnEmptyPagedIterableOnNotFoundOr404.class)
+   ListenableFuture<? extends PagedIterable<? extends Server>> listInDetail();
+
+   /** @see ServerApi#listInDetail(PaginationOptions) */
+   @GET
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Path("/servers/detail")
+   @RequestFilters(AuthenticateRequest.class)
+   @ResponseParser(ParseServerDetails.class)
+   @ExceptionParser(ReturnEmptyPaginatedCollectionOnNotFoundOr404.class)
+   ListenableFuture<? extends PaginatedCollection<? extends Server>> listInDetail(PaginationOptions options);
 
    /**
-    * @see ServerApi#getServer
+    * @see ServerApi#get
     */
    @GET
    @SelectJson("server")
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/servers/{id}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<? extends Server> getServer(@PathParam("id") String id);
+   ListenableFuture<? extends Server> get(@PathParam("id") String id);
 
    /**
-    * @see ServerApi#deleteServer
+    * @see ServerApi#delete
     */
    @DELETE
    @Consumes
    @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
    @Path("/servers/{id}")
-   ListenableFuture<Boolean> deleteServer(@PathParam("id") String id);
+   ListenableFuture<Boolean> delete(@PathParam("id") String id);
 
    /**
-    * @see ServerApi#startServer
+    * @see ServerApi#start
     */
    @POST
    @Path("/servers/{id}/action")
    @Consumes
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("{\"os-start\":null}")
-   ListenableFuture<Void> startServer(@PathParam("id") String id);
+   ListenableFuture<Void> start(@PathParam("id") String id);
 
    /**
-    * @see ServerApi#stopServer
+    * @see ServerApi#stop
     */
    @POST
    @Path("/servers/{id}/action")
    @Consumes
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("{\"os-stop\":null}")
-   ListenableFuture<Void> stopServer(@PathParam("id") String id);
-   
+   ListenableFuture<Void> stop(@PathParam("id") String id);
+
    /**
-    * @see ServerApi#rebootServer
+    * @see ServerApi#reboot
     */
    @POST
    @Path("/servers/{id}/action")
    @Consumes
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("%7B\"reboot\":%7B\"type\":\"{type}\"%7D%7D")
-   ListenableFuture<Void> rebootServer(@PathParam("id") String id, @PayloadParam("type") RebootType rebootType);
+   ListenableFuture<Void> reboot(@PathParam("id") String id, @PayloadParam("type") RebootType rebootType);
 
    /**
-    * @see ServerApi#resizeServer
+    * @see ServerApi#resize
     */
    @POST
    @Path("/servers/{id}/action")
    @Consumes
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("%7B\"resize\":%7B\"flavorRef\":{flavorId}%7D%7D")
-   ListenableFuture<Void> resizeServer(@PathParam("id") String id, @PayloadParam("flavorId") String flavorId);
+   ListenableFuture<Void> resize(@PathParam("id") String id, @PayloadParam("flavorId") String flavorId);
 
    /**
-    * @see ServerApi#confirmResizeServer
+    * @see ServerApi#confirmResize
     */
    @POST
    @Path("/servers/{id}/action")
    @Consumes
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("{\"confirmResize\":null}")
-   ListenableFuture<Void> confirmResizeServer(@PathParam("id") String id);
+   ListenableFuture<Void> confirmResize(@PathParam("id") String id);
 
    /**
-    * @see ServerApi#revertResizeServer
+    * @see ServerApi#revertResize
     */
    @POST
    @Path("/servers/{id}/action")
    @Consumes
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("{\"revertResize\":null}")
-   ListenableFuture<Void> revertResizeServer(@PathParam("id") String id);
+   ListenableFuture<Void> revertResize(@PathParam("id") String id);
 
    /**
-    * @see ServerApi#createServer
+    * @see ServerApi#create
     */
    @POST
    @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/servers")
    @MapBinder(CreateServerOptions.class)
-   ListenableFuture<ServerCreated> createServer(@PayloadParam("name") String name, @PayloadParam("imageRef") String imageRef,
-         @PayloadParam("flavorRef") String flavorRef, CreateServerOptions... options);
+   ListenableFuture<ServerCreated> create(@PayloadParam("name") String name, @PayloadParam("imageRef") String imageRef,
+            @PayloadParam("flavorRef") String flavorRef, CreateServerOptions... options);
 
    /**
-    * @see ServerApi#rebuildServer
+    * @see ServerApi#rebuild
     */
    @POST
    @Path("/servers/{id}/action")
    @Consumes
    @MapBinder(RebuildServerOptions.class)
-   ListenableFuture<Void> rebuildServer(@PathParam("id") String id, RebuildServerOptions... options);
+   ListenableFuture<Void> rebuild(@PathParam("id") String id, RebuildServerOptions... options);
 
    /**
     * @see ServerApi#changeAdminPass
@@ -198,14 +231,14 @@ public interface ServerAsyncApi {
    ListenableFuture<Void> changeAdminPass(@PathParam("id") String id, @PayloadParam("adminPass") String adminPass);
 
    /**
-    * @see ServerApi#renameServer
+    * @see ServerApi#rename
     */
    @PUT
    @Path("/servers/{id}")
    @Consumes
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("%7B\"server\":%7B\"name\":\"{name}\"%7D%7D")
-   ListenableFuture<Void> renameServer(@PathParam("id") String id, @PayloadParam("name") String newName);
+   ListenableFuture<Void> rename(@PathParam("id") String id, @PayloadParam("name") String newName);
 
    /**
     * @see ServerApi#createImageFromServer
@@ -218,5 +251,72 @@ public interface ServerAsyncApi {
    @ExceptionParser(MapHttp4xxCodesToExceptions.class)
    @ResponseParser(ParseImageIdFromLocationHeader.class)
    ListenableFuture<String> createImageFromServer(@PayloadParam("name") String name, @PathParam("id") String id);
+
+   /**
+    * @see ServerApi#getMetadata
+    */
+   @GET
+   @SelectJson("metadata")
+   @Path("/servers/{id}/metadata")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnEmptyMapOnNotFoundOr404.class)
+   ListenableFuture<? extends Map<String, String>> getMetadata(@PathParam("id") String id);
+
+   /**
+    * @see ServerApi#setMetadata
+    */
+   @PUT
+   @SelectJson("metadata")
+   @Path("/servers/{id}/metadata")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Produces(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnEmptyMapOnNotFoundOr404.class)
+   @MapBinder(BindToJsonPayload.class)
+   ListenableFuture<? extends Map<String, String>> setMetadata(@PathParam("id") String id,
+            @PayloadParam("metadata") Map<String, String> metadata);
+
+   /**
+    * @see ServerApi#updateMetadata
+    */
+   @POST
+   @SelectJson("metadata")
+   @Path("/servers/{id}/metadata")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Produces(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnEmptyMapOnNotFoundOr404.class)
+   @MapBinder(BindToJsonPayload.class)
+   ListenableFuture<? extends Map<String, String>> updateMetadata(@PathParam("id") String id,
+            @PayloadParam("metadata") Map<String, String> metadata);
+
+   /**
+    * @see ServerApi#getMetadata
+    */
+   @GET
+   @Path("/servers/{id}/metadata/{key}")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ResponseParser(OnlyMetadataValueOrNull.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<String> getMetadata(@PathParam("id") String id, @PathParam("key") String key);
+
+   /**
+    * @see ServerApi#updateMetadata
+    */
+   @PUT
+   @Path("/servers/{id}/metadata/{key}")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Produces(MediaType.APPLICATION_JSON)
+   @ResponseParser(OnlyMetadataValueOrNull.class)
+   @MapBinder(BindMetadataToJsonPayload.class)
+   ListenableFuture<String> updateMetadata(@PathParam("id") String id,
+            @PathParam("key") @PayloadParam("key") String key, @PathParam("value") @PayloadParam("value") String value);
+
+   /**
+    * @see ServerApi#deleteMetadata
+    */
+   @DELETE
+   @Consumes
+   @Path("/servers/{id}/metadata/{key}")
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   ListenableFuture<Void> deleteMetadata(@PathParam("id") String id, @PathParam("key") String key);
 
 }

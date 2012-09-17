@@ -20,12 +20,13 @@ package org.jclouds.fujitsu.fgcp.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.google.common.base.Function;
+import javax.inject.Singleton;
+
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.domain.VolumeBuilder;
 import org.jclouds.fujitsu.fgcp.domain.Disk;
 
-import javax.inject.Singleton;
+import com.google.common.base.Function;
 
 /**
  * Created by IntelliJ IDEA.
@@ -35,19 +36,19 @@ import javax.inject.Singleton;
 @Singleton
 public class DiskToVolume implements Function<Disk, Volume> {
 
-    @Override
-    public Volume apply(Disk disk) {
-        checkNotNull(disk, "disk");
+   @Override
+   public Volume apply(Disk disk) {
+      checkNotNull(disk, "disk");
 
-        VolumeBuilder builder = new VolumeBuilder();
+      VolumeBuilder builder = new VolumeBuilder();
 
-        builder.size(1000f * Float.valueOf(disk.getSize()));
-        // "Disk"'s are additional disks; they can't be booted disk(?)
-        builder.bootDevice(false);
-        builder.durable(true);
-        builder.type(Volume.Type.SAN);
-        builder.id("type: " + disk.getType() + " usage: " + disk.getUsage());
+      builder.size(1000f * Float.valueOf(disk.getSize()));
+      // "Disk"'s are additional disks; they can't be booted disk(?)
+      builder.bootDevice(false);
+      builder.durable(true);
+      builder.type(Volume.Type.SAN);
+      builder.id("type: " + disk.getType() + " usage: " + disk.getUsage());
 
-        return builder.build();
-    }
+      return builder.build();
+   }
 }

@@ -25,10 +25,10 @@ import org.jclouds.fujitsu.fgcp.xml.internal.SingleElementResponse;
 import com.google.common.base.Function;
 
 public class SingleElementResponseToElement implements
-        Function<SingleElementResponse, Object> {
+      Function<SingleElementResponse, Object> {
 
-    @Override
-    public Object apply(SingleElementResponse r) {
-        return checkNotNull(r, "response").getElement();
-    }
+   @Override
+   public Object apply(SingleElementResponse r) {
+      return checkNotNull(r, "response").getElement();
+   }
 }

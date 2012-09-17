@@ -19,7 +19,6 @@
 package org.jclouds.openstack.glance.v1_0.features;
 
 import java.io.InputStream;
-import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -33,20 +32,26 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.collect.PagedIterable;
 import org.jclouds.io.Payload;
 import org.jclouds.openstack.glance.v1_0.domain.Image;
 import org.jclouds.openstack.glance.v1_0.domain.ImageDetails;
 import org.jclouds.openstack.glance.v1_0.functions.ParseImageDetailsFromHeaders;
+import org.jclouds.openstack.glance.v1_0.functions.internal.ParseImageDetails;
+import org.jclouds.openstack.glance.v1_0.functions.internal.ParseImages;
 import org.jclouds.openstack.glance.v1_0.options.CreateImageOptions;
 import org.jclouds.openstack.glance.v1_0.options.ListImageOptions;
 import org.jclouds.openstack.glance.v1_0.options.UpdateImageOptions;
+import org.jclouds.openstack.keystone.v2_0.domain.PaginatedCollection;
 import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
+import org.jclouds.openstack.keystone.v2_0.functions.ReturnEmptyPaginatedCollectionOnNotFoundOr404;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.SkipEncoding;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
+import org.jclouds.rest.annotations.Transform;
+import org.jclouds.rest.functions.ReturnEmptyPagedIterableOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
@@ -65,34 +70,58 @@ import com.google.common.util.concurrent.ListenableFuture;
 @RequestFilters(AuthenticateRequest.class)
 public interface ImageAsyncApi {
 
+
    /**
-    * @see ImageApi#list
+    * @see ImageApi#list()
     */
    @GET
-   @SelectJson("images")
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/images")
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<? extends Set<? extends Image>> list(ListImageOptions... options);
-   
+   @RequestFilters(AuthenticateRequest.class)
+   @ResponseParser(ParseImages.class)
+   @Transform(ParseImages.ToPagedIterable.class)
+   @ExceptionParser(ReturnEmptyPagedIterableOnNotFoundOr404.class)
+   ListenableFuture<? extends PagedIterable<? extends Image>> list();
+
+   /** @see ImageApi#list(ListImageOptions) */
+   @GET
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Path("/images")
+   @RequestFilters(AuthenticateRequest.class)
+   @ResponseParser(ParseImages.class)
+   @ExceptionParser(ReturnEmptyPaginatedCollectionOnNotFoundOr404.class)
+   ListenableFuture<? extends PaginatedCollection<? extends Image>> list(ListImageOptions options);
+
    /**
-    * @see ImageApi#listInDetail
+    * @see ImageApi#listInDetail()
     */
    @GET
-   @SelectJson("images")
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/images/detail")
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<? extends Set<? extends ImageDetails>> listInDetail(ListImageOptions... options);
+   @RequestFilters(AuthenticateRequest.class)
+   @ResponseParser(ParseImageDetails.class)
+   @Transform(ParseImageDetails.ToPagedIterable.class)
+   @ExceptionParser(ReturnEmptyPagedIterableOnNotFoundOr404.class)
+   ListenableFuture<? extends PagedIterable<? extends ImageDetails>> listInDetail();
+
+   /** @see ImageApi#listInDetail(ListImageOptions) */
+   @GET
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Path("/images/detail")
+   @RequestFilters(AuthenticateRequest.class)
+   @ResponseParser(ParseImageDetails.class)
+   @ExceptionParser(ReturnEmptyPaginatedCollectionOnNotFoundOr404.class)
+   ListenableFuture<? extends PaginatedCollection<? extends ImageDetails>> listInDetail(ListImageOptions options);
+
    
    /**
-    * @see ImageApi#show
+    * @see ImageApi#get
     */
    @HEAD
    @Path("/images/{id}")
    @ResponseParser(ParseImageDetailsFromHeaders.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<ImageDetails> show(@PathParam("id") String id);
+   ListenableFuture<ImageDetails> get(@PathParam("id") String id);
    
    /**
     * @see ImageApi#getAsStream

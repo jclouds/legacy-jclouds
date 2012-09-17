@@ -18,8 +18,14 @@
  */
 package org.jclouds.openstack.swift.v1.features;
 
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+
+import org.jclouds.openstack.swift.v1.domain.Container;
 import org.jclouds.openstack.swift.v1.internal.BaseSwiftApiLiveTest;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.FluentIterable;
 
 /**
  * 
@@ -28,4 +34,17 @@ import org.testng.annotations.Test;
 @Test(groups = "live", testName = "ContainerApiLiveTest")
 public class ContainerApiLiveTest extends BaseSwiftApiLiveTest {
 
+   @Test
+   public void testListContainers() throws Exception {
+      for (String regionId : swiftContext.getApi().getConfiguredRegions()) {
+         ContainerApi api = swiftContext.getApi().getContainerApiForRegion(regionId);
+         FluentIterable<? extends Container> response = api.list();
+         assertNotNull(response);
+         for (Container container : response) {
+            assertNotNull(container.getName());
+            assertTrue(container.getCount() >= 0);
+            assertTrue(container.getBytes() >= 0);
+         }
+      }
+   }
 }

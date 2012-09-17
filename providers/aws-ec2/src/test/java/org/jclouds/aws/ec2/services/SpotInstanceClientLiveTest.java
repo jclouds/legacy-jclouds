@@ -41,7 +41,7 @@ import org.jclouds.aws.ec2.predicates.SpotInstanceRequestActive;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.ec2.domain.InstanceType;
 import org.jclouds.predicates.RetryablePredicate;
-import org.testng.annotations.AfterTest;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -160,8 +160,9 @@ public class SpotInstanceClientLiveTest  extends BaseComputeServiceContextLiveTe
 
    public static final String PREFIX = System.getProperty("user.name") + "ec2";
 
-   @AfterTest
-   public void shutdown() {
+   @Override
+   @AfterClass(groups = { "integration", "live" })
+   protected void tearDownContext() {
       if (requests != null) {
          for (SpotInstanceRequest request : requests)
             client.getSpotInstanceServices().cancelSpotInstanceRequestsInRegion(request.getRegion(), request.getId());
@@ -170,5 +171,6 @@ public class SpotInstanceClientLiveTest  extends BaseComputeServiceContextLiveTe
       if (instance != null) {
          client.getInstanceServices().terminateInstancesInRegion(instance.getRegion(), instance.getId());
       }
+      super.tearDownContext();
    }
 }

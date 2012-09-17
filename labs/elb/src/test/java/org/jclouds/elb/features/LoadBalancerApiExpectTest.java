@@ -24,6 +24,7 @@ import static org.testng.Assert.assertNull;
 
 import java.util.TimeZone;
 
+import org.jclouds.collect.IterableWithMarkers;
 import org.jclouds.elb.ELBApi;
 import org.jclouds.elb.domain.LoadBalancer;
 import org.jclouds.elb.internal.BaseELBApiExpectTest;
@@ -31,7 +32,6 @@ import org.jclouds.elb.parse.DescribeLoadBalancersResponseTest;
 import org.jclouds.elb.parse.GetLoadBalancerResponseTest;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.rest.ResourceNotFoundException;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -197,8 +197,6 @@ public class LoadBalancerApiExpectTest extends BaseELBApiExpectTest {
       assertEquals(ImmutableSet.copyOf(Iterables.concat(apiWhenExist.getLoadBalancerApiForRegion("eu-west-1").list())), ImmutableSet.of(lb1, lb2));
    }
    
-   // TODO: this should really be an empty set
-   @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testListWhenResponseIs404() throws Exception {
 
       HttpResponse listResponse = HttpResponse.builder().statusCode(404).build();
@@ -206,7 +204,8 @@ public class LoadBalancerApiExpectTest extends BaseELBApiExpectTest {
       ELBApi apiWhenDontExist = requestSendsResponse(
             list, listResponse);
 
-      apiWhenDontExist.getLoadBalancerApi().list();
+      assertEquals(apiWhenDontExist.getLoadBalancerApi().list().get(0), IterableWithMarkers.EMPTY);
+
    }
    
    public void testListWithOptionsWhenResponseIs2xx() throws Exception {

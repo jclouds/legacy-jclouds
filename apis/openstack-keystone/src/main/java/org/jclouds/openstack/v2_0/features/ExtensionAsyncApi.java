@@ -52,23 +52,23 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface ExtensionAsyncApi {
 
    /**
-    * @see ExtensionApi#listExtensions
+    * @see ExtensionApi#list
     */
    @GET
    @SelectJson("extensions")
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/extensions")
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<? extends Set<? extends Extension>> listExtensions();
+   ListenableFuture<? extends Set<? extends Extension>> list();
 
    /**
-    * @see ExtensionApi#getExtensionByAlias
+    * @see ExtensionApi#get
     */
    @GET
    @SelectJson("extension")
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/extensions/{alias}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<? extends Extension> getExtensionByAlias(@PathParam("alias") String id);
+   ListenableFuture<? extends Extension> get(@PathParam("alias") String id);
 
 }

@@ -46,17 +46,17 @@ import com.google.common.collect.Iterables;
 public class FindSecurityGroupWithNameAndReturnTrueExpectTest extends BaseNovaApiExpectTest {
 
    public void testUpdateReferenceWhenSecurityGroupListContainsGroupName() throws Exception {
-      HttpRequest listSecurityGroups = HttpRequest.builder().method("GET").endpoint(
+      HttpRequest list = HttpRequest.builder().method("GET").endpoint(
                URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-security-groups")).headers(
                ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
                         authToken).build()).build();
 
-      HttpResponse listSecurityGroupsResponse = HttpResponse.builder().statusCode(200).payload(
+      HttpResponse listResponse = HttpResponse.builder().statusCode(200).payload(
                payloadFromResource("/securitygroup_list.json")).build();
 
       NovaApi apiWhenSecurityGroupsExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
-               responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, listSecurityGroups,
-               listSecurityGroupsResponse);
+               responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, list,
+               listResponse);
 
       FindSecurityGroupWithNameAndReturnTrue predicate = new FindSecurityGroupWithNameAndReturnTrue(
                apiWhenSecurityGroupsExist);
@@ -74,17 +74,17 @@ public class FindSecurityGroupWithNameAndReturnTrueExpectTest extends BaseNovaAp
    }
 
    public void testDoesNotUpdateReferenceWhenSecurityGroupListMissingGroupName() throws Exception {
-      HttpRequest listSecurityGroups = HttpRequest.builder().method("GET").endpoint(
+      HttpRequest list = HttpRequest.builder().method("GET").endpoint(
                URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-security-groups")).headers(
                ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
                         authToken).build()).build();
 
-      HttpResponse listSecurityGroupsResponse = HttpResponse.builder().statusCode(200).payload(
+      HttpResponse listResponse = HttpResponse.builder().statusCode(200).payload(
                payloadFromResource("/securitygroup_list.json")).build();
 
       NovaApi apiWhenSecurityGroupsExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
-               responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, listSecurityGroups,
-               listSecurityGroupsResponse);
+               responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, list,
+               listResponse);
 
       FindSecurityGroupWithNameAndReturnTrue predicate = new FindSecurityGroupWithNameAndReturnTrue(
                apiWhenSecurityGroupsExist);

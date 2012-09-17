@@ -21,7 +21,7 @@ package org.jclouds.openstack.nova.v2_0.extensions;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
-import org.jclouds.openstack.nova.v2_0.domain.Quotas;
+import org.jclouds.openstack.nova.v2_0.domain.Quota;
 import org.jclouds.openstack.nova.v2_0.internal.BaseNovaApiLiveTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -50,14 +50,14 @@ public class QuotaApiLiveTest extends BaseNovaApiLiveTest {
 
    public void testGetQuotasForCurrentTenant() {
       if (apiOption.isPresent()) {
-         Quotas quota = apiOption.get().getQuotasForTenant(tenant);
+         Quota quota = apiOption.get().getByTenant(tenant);
          assertQuotasIsValid(quota);
       }
    }
 
    public void testGetDefaultQuotasForCurrentTenant() {
       if (apiOption.isPresent()) {
-         Quotas quota = apiOption.get().getDefaultQuotasForTenant(tenant);
+         Quota quota = apiOption.get().getDefaultsForTenant(tenant);
          assertQuotasIsValid(quota);
       }
    }
@@ -65,28 +65,28 @@ public class QuotaApiLiveTest extends BaseNovaApiLiveTest {
    public void testUpdateQuotasOfCurrentTenantThenReset() {
       if (apiOption.isPresent()) {
          QuotaApi api = apiOption.get();
-         Quotas before = api.getQuotasForTenant(tenant);
+         Quota before = api.getByTenant(tenant);
          assertQuotasIsValid(before);
 
-         Quotas modified = before.toBuilder()
+         Quota modified = before.toBuilder()
                .cores(before.getCores() - 1)
                .instances(before.getInstances() - 1)
-               .metadataItems(before.getMetadataItems() - 1)
+               .metadataItems(before.getMetadatas() - 1)
                .ram(before.getRam() - 1)
                .volumes(before.getVolumes() - 1)
                .build();
 
-         assertTrue(api.updateQuotasForTenant(tenant, modified));
+         assertTrue(api.updateQuotaOfTenant(modified, tenant));
 
-         assertEquals(api.getQuotasForTenant(tenant), modified);
+         assertEquals(api.getByTenant(tenant), modified);
 
-         assertTrue(api.updateQuotasForTenant(tenant, before));
+         assertTrue(api.updateQuotaOfTenant(before, tenant));
 
-         assertEquals(api.getQuotasForTenant(tenant), before);
+         assertEquals(api.getByTenant(tenant), before);
       }
    }
 
-   protected void assertQuotasIsValid(Quotas quota) {
+   protected void assertQuotasIsValid(Quota quota) {
       assertTrue(quota.getCores() > 0);
       assertTrue(quota.getFloatingIps() >= 0);
       assertTrue(quota.getGigabytes() > 0);

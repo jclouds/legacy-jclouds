@@ -52,11 +52,11 @@ public class FloatingIPApiLiveTest extends BaseNovaApiLiveTest {
          if (!apiOption.isPresent())
             continue;
          FloatingIPApi api = apiOption.get();
-         Set<? extends FloatingIP> response = api.listFloatingIPs();
+         Set<? extends FloatingIP> response = api.list().toImmutableSet();
          assert null != response;
          assertTrue(response.size() >= 0);
          for (FloatingIP ip : response) {
-            FloatingIP newDetails = api.getFloatingIP(ip.getId());
+            FloatingIP newDetails = api.get(ip.getId());
 
             assertEquals(newDetails.getId(), ip.getId());
             assertEquals(newDetails.getIp(), ip.getIp());
@@ -68,16 +68,16 @@ public class FloatingIPApiLiveTest extends BaseNovaApiLiveTest {
    }
 
    @Test
-   public void testAllocateAndDeallocateFloatingIPs() throws Exception {
+   public void testAllocateAndDecreateFloatingIPs() throws Exception {
       for (String zoneId : novaContext.getApi().getConfiguredZones()) {
          Optional<? extends FloatingIPApi> apiOption = novaContext.getApi().getFloatingIPExtensionForZone(zoneId);
          if (!apiOption.isPresent())
             continue;
          FloatingIPApi api = apiOption.get();
-         FloatingIP floatingIP = api.allocate();
+         FloatingIP floatingIP = api.create();
          assertNotNull(floatingIP);
 
-         Set<? extends FloatingIP> response = api.listFloatingIPs();
+         Set<? extends FloatingIP> response = api.list().toImmutableSet();
          boolean ipInSet = false;
          for (FloatingIP ip : response) {
             if (ip.getId().equals(floatingIP.getId()))
@@ -85,9 +85,9 @@ public class FloatingIPApiLiveTest extends BaseNovaApiLiveTest {
          }
          assertTrue(ipInSet);
 
-         api.deallocate(floatingIP.getId());
+         api.delete(floatingIP.getId());
 
-         response = api.listFloatingIPs();
+         response = api.list().toImmutableSet();
          ipInSet = false;
          for (FloatingIP ip : response) {
             if (ip.getId().equals(floatingIP.getId())) {
@@ -107,14 +107,14 @@ public class FloatingIPApiLiveTest extends BaseNovaApiLiveTest {
          FloatingIPApi api = apiOption.get();
          ServerApi serverApi = novaContext.getApi().getServerApiForZone(zoneId);
          Server server = createServerInZone(zoneId);
-         FloatingIP floatingIP = api.allocate();
+         FloatingIP floatingIP = api.create();
          assertNotNull(floatingIP);
          try {
-            api.addFloatingIPToServer(floatingIP.getIp(), server.getId());
+            api.addToServer(floatingIP.getIp(), server.getId());
             assertEventually(new ServerHasFloatingIP(serverApi, server.getId(), floatingIP.getIp()));
          } finally {
-            api.removeFloatingIPFromServer(floatingIP.getIp(), server.getId());
-            serverApi.deleteServer(server.getId());
+            api.removeFromServer(floatingIP.getIp(), server.getId());
+            serverApi.delete(server.getId());
          }
       }
    }
@@ -155,7 +155,7 @@ public class FloatingIPApiLiveTest extends BaseNovaApiLiveTest {
 
       public void run() {
          try {
-            Server server = api.getServer(serverId);
+            Server server = api.get(serverId);
             boolean ipInServerAddresses = false;
             Multimap<String, Address> addresses = server.getAddresses();
             for (Address address : addresses.values()) {

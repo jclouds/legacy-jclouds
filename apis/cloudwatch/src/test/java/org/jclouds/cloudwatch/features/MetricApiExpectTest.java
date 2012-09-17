@@ -33,6 +33,7 @@ import org.jclouds.cloudwatch.domain.Unit;
 import org.jclouds.cloudwatch.internal.BaseCloudWatchApiExpectTest;
 import org.jclouds.cloudwatch.options.GetMetricStatisticsOptions;
 import org.jclouds.cloudwatch.options.ListMetricsOptions;
+import org.jclouds.collect.IterableWithMarkers;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.ResourceNotFoundException;
@@ -76,8 +77,6 @@ public class MetricApiExpectTest extends BaseCloudWatchApiExpectTest {
             "[Metric{namespace=AWS/EC2, metricName=CPUUtilization, dimension=[Dimension{name=InstanceId, value=i-689fcf0f}]}]");
    }
 
-   // TODO: this should really be an empty set
-   @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testListMetricsWhenResponseIs404() throws Exception {
 
       HttpResponse listMetricsResponse = HttpResponse.builder().statusCode(404).build();
@@ -85,7 +84,7 @@ public class MetricApiExpectTest extends BaseCloudWatchApiExpectTest {
       CloudWatchApi apiWhenMetricsDontExist = requestSendsResponse(
             listMetrics, listMetricsResponse);
 
-      apiWhenMetricsDontExist.getMetricApiForRegion(null).list().get(0);
+      assertEquals(apiWhenMetricsDontExist.getMetricApiForRegion(null).list().get(0), IterableWithMarkers.EMPTY);
    }
    
    public void testListMetrics2PagesWhenResponseIs2xx() throws Exception {

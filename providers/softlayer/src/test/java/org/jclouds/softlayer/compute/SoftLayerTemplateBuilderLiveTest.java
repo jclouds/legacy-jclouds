@@ -63,7 +63,7 @@ public class SoftLayerTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTes
             // For each os-type both 32- and 64-bit are supported.
             switch (input.family) {
             case UBUNTU:
-               return input.version.equals("") || input.version.equals("10.04") || input.version.equals("8");
+               return input.version.equals("") || input.version.equals("10.04") || input.version.equals("12.04") || input.version.equals("8");
             case DEBIAN:
                return input.version.equals("") || input.version.matches("[56].0");
             case FEDORA:
@@ -85,7 +85,7 @@ public class SoftLayerTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTes
    @Test
    public void testDefaultTemplateBuilder() throws IOException {
       Template defaultTemplate = view.getComputeService().templateBuilder().build();
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "10.04");
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "12.04");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
@@ -212,6 +212,7 @@ public class SoftLayerTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTes
 
    @Override
    protected Set<String> getIso3166Codes() {
-      return ImmutableSet.<String> of("SG", "NL", "US-CA", "US-TX", "US-VA", "US-WA", "US-TX");
+      return ImmutableSet.<String> of("SG", "US-CA", "US-TX", "US-VA", "US-WA");
    }
+
 }

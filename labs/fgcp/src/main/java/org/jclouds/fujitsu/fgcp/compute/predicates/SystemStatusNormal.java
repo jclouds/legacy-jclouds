@@ -23,7 +23,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.fujitsu.fgcp.FGCPApi;
-import org.jclouds.fujitsu.fgcp.domain.VServerStatus;
 import org.jclouds.fujitsu.fgcp.domain.VSystemStatus;
 import org.jclouds.logging.Logger;
 
@@ -37,26 +36,26 @@ import com.google.common.base.Predicate;
 @Singleton
 public class SystemStatusNormal implements Predicate<String> {
 
-    private final FGCPApi api;
+   private final FGCPApi api;
 
-    @Resource
-    protected Logger logger = Logger.NULL;
+   @Resource
+   protected Logger logger = Logger.NULL;
 
-    @Inject
-    public SystemStatusNormal(FGCPApi api) {
-        this.api = api;
-    }
+   @Inject
+   public SystemStatusNormal(FGCPApi api) {
+      this.api = api;
+   }
 
-    public boolean apply(String systemId) {
-        logger.trace("looking for status on system %s", systemId);
+   public boolean apply(String systemId) {
+      logger.trace("looking for status on system %s", systemId);
 
-        VSystemStatus status = api.getVirtualSystemApi().getStatus(systemId);
-        logger.trace("looking for status on system %s: currently: %s",
-                systemId, status);
+      VSystemStatus status = api.getVirtualSystemApi().getStatus(systemId);
+      logger.trace("looking for status on system %s: currently: %s",
+            systemId, status);
 
-        if (status == VSystemStatus.ERROR)
-            throw new IllegalStateException("system in error: " + status);
-        return status == VSystemStatus.NORMAL;
-    }
+      if (status == VSystemStatus.ERROR)
+         throw new IllegalStateException("system in error: " + status);
+      return status == VSystemStatus.NORMAL;
+   }
 
 }

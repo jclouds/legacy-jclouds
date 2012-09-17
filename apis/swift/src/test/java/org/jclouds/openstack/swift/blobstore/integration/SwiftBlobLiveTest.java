@@ -19,10 +19,15 @@
 package org.jclouds.openstack.swift.blobstore.integration;
 
 import java.util.Properties;
+import java.util.UUID;
 
 import org.jclouds.blobstore.integration.internal.BaseBlobLiveTest;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
+import org.jclouds.openstack.swift.extensions.TemporaryUrlKeyApi;
 import org.testng.annotations.Test;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 /**
  * 

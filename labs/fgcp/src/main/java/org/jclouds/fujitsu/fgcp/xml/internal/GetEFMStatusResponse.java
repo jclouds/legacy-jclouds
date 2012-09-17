@@ -30,17 +30,17 @@ import org.jclouds.fujitsu.fgcp.domain.BuiltinServerStatus;
  */
 @XmlRootElement(name = "GetEFMStatusResponse")
 public class GetEFMStatusResponse extends StatusResponse implements
-        SingleElementResponse {
-    @XmlElement(required = true)
-    private BuiltinServerStatus efmStatus;
+      SingleElementResponse {
+   @XmlElement(required = true)
+   private BuiltinServerStatus efmStatus;
 
-    @Override
-    public String toString() {
-        return getElement().toString();
-    }
+   @Override
+   public String toString() {
+      return getElement().toString();
+   }
 
-    @Override
-    public Object getElement() {
-        return efmStatus;
-    }
+   @Override
+   public Object getElement() {
+      return efmStatus;
+   }
 }

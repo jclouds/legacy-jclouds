@@ -23,7 +23,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Set;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
@@ -32,7 +32,7 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
 /**
- * Eliminates null values when deserializing Sets
+ * Eliminates null values when deserializing Sets.
  * <p/>
  * Treats [null] as the empty set; [A, null] as [A]; etc.
  * 
@@ -52,7 +52,7 @@ public class IgnoreNullSetTypeAdapterFactory implements TypeAdapterFactory {
       return (TypeAdapter<T>) newSetAdapter(elementAdapter);
    }
 
-   private <E> TypeAdapter<Set<E>> newSetAdapter(final TypeAdapter<E> elementAdapter) {
+   protected <E> TypeAdapter<Set<E>> newSetAdapter(final TypeAdapter<E> elementAdapter) {
       return new TypeAdapter<Set<E>>() {
          public void write(JsonWriter out, Set<E> value) throws IOException {
             out.beginArray();
@@ -63,14 +63,15 @@ public class IgnoreNullSetTypeAdapterFactory implements TypeAdapterFactory {
          }
 
          public Set<E> read(JsonReader in) throws IOException {
-            Set<E> result = Sets.newLinkedHashSet();
+            ImmutableSet.Builder<E> result = ImmutableSet.<E> builder();
             in.beginArray();
             while (in.hasNext()) {
                E element = elementAdapter.read(in);
-               if (element != null) result.add(element);
+               if (element != null)
+                  result.add(element);
             }
             in.endArray();
-            return result;
+            return result.build();
          }
       }.nullSafe();
    }

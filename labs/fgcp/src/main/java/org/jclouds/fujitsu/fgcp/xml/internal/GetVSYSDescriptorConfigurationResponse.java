@@ -30,17 +30,17 @@ import org.jclouds.fujitsu.fgcp.domain.VSystemDescriptor;
  */
 @XmlRootElement(name = "GetVSYSDescriptorConfigurationResponse")
 public class GetVSYSDescriptorConfigurationResponse extends StatusResponse
-        implements SingleElementResponse {
-    @XmlElement
-    private VSystemDescriptor vsysdescriptor;
+      implements SingleElementResponse {
+   @XmlElement
+   private VSystemDescriptor vsysdescriptor;
 
-    @Override
-    public String toString() {
-        return getElement().toString();
-    }
+   @Override
+   public String toString() {
+      return getElement().toString();
+   }
 
-    @Override
-    public Object getElement() {
-        return vsysdescriptor;
-    }
+   @Override
+   public Object getElement() {
+      return vsysdescriptor;
+   }
 }

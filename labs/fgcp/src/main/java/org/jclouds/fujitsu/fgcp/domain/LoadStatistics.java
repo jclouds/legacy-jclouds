@@ -33,36 +33,36 @@ import com.google.common.collect.ImmutableSet;
  */
 @XmlRootElement(name = "loadstatistics")
 public class LoadStatistics {
-    private Set<Group> groups = new LinkedHashSet<Group>();
+   private Set<Group> groups = new LinkedHashSet<Group>();
 
-    /**
-     * @return the groups
-     */
-    public Set<Group> getGroups() {
-        return groups == null ? ImmutableSet.<Group> of() : ImmutableSet
-                .copyOf(groups);
-    }
+   /**
+    * @return the groups
+    */
+   public Set<Group> getGroups() {
+      return groups == null ? ImmutableSet.<Group> of() : ImmutableSet
+            .copyOf(groups);
+   }
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(groups);
-    }
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(groups);
+   }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        LoadStatistics that = LoadStatistics.class.cast(obj);
-        return Objects.equal(this.groups, that.groups);
-    }
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      LoadStatistics that = LoadStatistics.class.cast(obj);
+      return Objects.equal(this.groups, that.groups);
+   }
 
-    @Override
-    public String toString() {
-        return Objects.toStringHelper(this).omitNullValues()
-                .add("groups", groups).toString();
-    }
+   @Override
+   public String toString() {
+      return Objects.toStringHelper(this).omitNullValues()
+            .add("groups", groups).toString();
+   }
 }

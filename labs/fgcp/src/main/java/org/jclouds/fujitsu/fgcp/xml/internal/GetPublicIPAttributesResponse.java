@@ -26,7 +26,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.jclouds.fujitsu.fgcp.domain.PublicIP;
 
-
 import com.google.common.collect.Iterables;
 
 /**
@@ -36,18 +35,18 @@ import com.google.common.collect.Iterables;
  */
 @XmlRootElement(name = "GetPublicIPAttributesResponse")
 public class GetPublicIPAttributesResponse extends StatusResponse implements
-        SingleElementResponse {
-    @XmlElementWrapper(name = "publicips")
-    @XmlElement(name = "publicip")
-    private Set<PublicIP> publicIPs;
+      SingleElementResponse {
+   @XmlElementWrapper(name = "publicips")
+   @XmlElement(name = "publicip")
+   private Set<PublicIP> publicIPs;
 
-    @Override
-    public String toString() {
-        return getElement().toString();
-    }
+   @Override
+   public String toString() {
+      return getElement().toString();
+   }
 
-    @Override
-    public Object getElement() {
-        return Iterables.getOnlyElement(publicIPs);
-    }
+   @Override
+   public Object getElement() {
+      return Iterables.getOnlyElement(publicIPs);
+   }
 }

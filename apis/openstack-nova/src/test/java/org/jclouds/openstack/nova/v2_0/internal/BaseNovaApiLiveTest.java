@@ -33,9 +33,9 @@ import org.jclouds.openstack.nova.v2_0.domain.ServerCreated;
 import org.jclouds.openstack.nova.v2_0.features.FlavorApi;
 import org.jclouds.openstack.nova.v2_0.features.ImageApi;
 import org.jclouds.openstack.nova.v2_0.features.ServerApi;
+import org.jclouds.openstack.v2_0.domain.Resource;
 import org.jclouds.rest.RestContext;
-import org.testng.annotations.AfterGroups;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Throwables;
@@ -50,6 +50,7 @@ import com.google.common.collect.Ordering;
  */
 @Test(groups = "live")
 public class BaseNovaApiLiveTest extends BaseComputeServiceContextLiveTest {
+   protected String hostName = System.getProperty("user.name").replace('.','-').toLowerCase();
 
    public BaseNovaApiLiveTest() {
       provider = "openstack-nova";
@@ -58,12 +59,19 @@ public class BaseNovaApiLiveTest extends BaseComputeServiceContextLiveTest {
    protected Set<String> zones;
    protected RestContext<NovaApi, NovaAsyncApi> novaContext;
 
-   @BeforeGroups(groups = { "integration", "live" }, alwaysRun = true)
+   @BeforeClass(groups = { "integration", "live" })
    @Override
    public void setupContext() {
       super.setupContext();
       novaContext = view.unwrap();
       zones = novaContext.getApi().getConfiguredZones();
+      for (String zone : zones){
+         ServerApi api = novaContext.getApi().getServerApiForZone(zone);
+         for (Resource server : api.list().concat()){
+            if (server.getName().equals(hostName))
+               api.delete(server.getId());
+         }
+      }
    }
 
    @Override
@@ -74,17 +82,11 @@ public class BaseNovaApiLiveTest extends BaseComputeServiceContextLiveTest {
       return props;
    }
    
-   @AfterGroups(groups = "live")
-   protected void tearDown() {
-      if (novaContext != null)
-         novaContext.close();
-   }
-   
    protected Server createServerInZone(String zoneId) {
       ServerApi serverApi = novaContext.getApi().getServerApiForZone(zoneId);
-      ServerCreated server = serverApi.createServer("test", imageIdForZone(zoneId), flavorRefForZone(zoneId));
+      ServerCreated server = serverApi.create(hostName, imageIdForZone(zoneId), flavorRefForZone(zoneId));
       blockUntilServerInState(server.getId(), serverApi, Status.ACTIVE);
-      return serverApi.getServer(server.getId());
+      return serverApi.get(server.getId());
    }
 
    /** 
@@ -93,10 +95,9 @@ public class BaseNovaApiLiveTest extends BaseComputeServiceContextLiveTest {
     */
    protected void blockUntilServerInState(String serverId, ServerApi api, Status status) {
       Server currentDetails = null;
-      for (currentDetails = api.getServer(serverId); currentDetails.getStatus() != status ||
-           (currentDetails.getExtendedStatus().isPresent() && currentDetails.getExtendedStatus().get().getTaskState() != null);
-           currentDetails = api
-            .getServer(serverId)) {
+      for (currentDetails = api.get(serverId); currentDetails.getStatus() != status
+               || ((currentDetails.getExtendedStatus().isPresent() && currentDetails.getExtendedStatus().get()
+                        .getTaskState() != null)); currentDetails = api.get(serverId)) {
          System.out.printf("blocking on status %s%n%s%n", status, currentDetails);
          try {
             Thread.sleep(5 * 1000);
@@ -108,12 +109,12 @@ public class BaseNovaApiLiveTest extends BaseComputeServiceContextLiveTest {
    
    protected String imageIdForZone(String zoneId) {
       ImageApi imageApi = novaContext.getApi().getImageApiForZone(zoneId);
-      return Iterables.getLast(imageApi.listImages()).getId();
+      return Iterables.getLast(imageApi.list().concat()).getId();
    }
 
    protected String flavorRefForZone(String zoneId) {
       FlavorApi flavorApi = novaContext.getApi().getFlavorApiForZone(zoneId);
-      return DEFAULT_FLAVOR_ORDERING.min(flavorApi.listFlavorsInDetail()).getId();
+      return DEFAULT_FLAVOR_ORDERING.min(flavorApi.listInDetail().concat()).getId();
    }
 
    static final Ordering<Flavor> DEFAULT_FLAVOR_ORDERING = new Ordering<Flavor>() {

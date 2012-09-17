@@ -22,12 +22,11 @@ import org.jclouds.openstack.swift.blobstore.integration.SwiftBlobSignerLiveTest
 import org.testng.annotations.Test;
 
 /**
- * 
  * @author Adrian Cole
  */
-@Test(groups = { "live" })
+@Test(groups = {"live"})
 public class CloudFilesBlobSignerLiveTest extends SwiftBlobSignerLiveTest {
-   public CloudFilesBlobSignerLiveTest(){
+   public CloudFilesBlobSignerLiveTest() {
       provider = "cloudfiles";
    }
 }

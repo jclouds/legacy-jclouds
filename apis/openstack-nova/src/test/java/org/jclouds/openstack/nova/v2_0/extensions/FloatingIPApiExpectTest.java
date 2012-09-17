@@ -63,77 +63,77 @@ public class FloatingIPApiExpectTest extends BaseNovaApiExpectTest {
    }
 
    public void testListFloatingIPsWhenResponseIs2xx() throws Exception {
-      HttpRequest listFloatingIPs = HttpRequest
+      HttpRequest list = HttpRequest
             .builder()
             .method("GET")
             .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-floating-ips")
             .addHeader("Accept", "application/json")
             .addHeader("X-Auth-Token", authToken).build();
 
-      HttpResponse listFloatingIPsResponse = HttpResponse.builder().statusCode(200)
+      HttpResponse listResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/floatingip_list.json")).build();
 
       NovaApi apiWhenFloatingIPsExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
-            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, listFloatingIPs, listFloatingIPsResponse);
+            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, list, listResponse);
 
       assertEquals(apiWhenFloatingIPsExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
 
-      assertEquals(apiWhenFloatingIPsExist.getFloatingIPExtensionForZone("az-1.region-a.geo-1").get().listFloatingIPs()
+      assertEquals(apiWhenFloatingIPsExist.getFloatingIPExtensionForZone("az-1.region-a.geo-1").get().list()
             .toString(), new ParseFloatingIPListTest().expected().toString());
    }
 
    public void testListFloatingIPsWhenResponseIs404() throws Exception {
-      HttpRequest listFloatingIPs = HttpRequest
+      HttpRequest list = HttpRequest
             .builder()
             .method("GET")
             .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-floating-ips")
             .addHeader("Accept", "application/json")
             .addHeader("X-Auth-Token", authToken).build();
 
-      HttpResponse listFloatingIPsResponse = HttpResponse.builder().statusCode(404).build();
+      HttpResponse listResponse = HttpResponse.builder().statusCode(404).build();
 
       NovaApi apiWhenNoServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
-            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, listFloatingIPs, listFloatingIPsResponse);
+            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, list, listResponse);
 
-      assertTrue(apiWhenNoServersExist.getFloatingIPExtensionForZone("az-1.region-a.geo-1").get().listFloatingIPs().isEmpty());
+      assertTrue(apiWhenNoServersExist.getFloatingIPExtensionForZone("az-1.region-a.geo-1").get().list().isEmpty());
    }
 
    public void testGetFloatingIPWhenResponseIs2xx() throws Exception {
-      HttpRequest getFloatingIP = HttpRequest
+      HttpRequest get = HttpRequest
             .builder()
             .method("GET")
             .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-floating-ips/1")
             .addHeader("Accept", "application/json")
             .addHeader("X-Auth-Token", authToken).build();
 
-      HttpResponse getFloatingIPResponse = HttpResponse.builder().statusCode(200)
+      HttpResponse getResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/floatingip_details.json")).build();
 
       NovaApi apiWhenFloatingIPsExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
-            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, getFloatingIP, getFloatingIPResponse);
+            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, get, getResponse);
 
-      assertEquals(apiWhenFloatingIPsExist.getFloatingIPExtensionForZone("az-1.region-a.geo-1").get().getFloatingIP("1")
+      assertEquals(apiWhenFloatingIPsExist.getFloatingIPExtensionForZone("az-1.region-a.geo-1").get().get("1")
             .toString(), new ParseFloatingIPTest().expected().toString());
    }
 
    public void testGetFloatingIPWhenResponseIs404() throws Exception {
-      HttpRequest getFloatingIP = HttpRequest
+      HttpRequest get = HttpRequest
             .builder()
             .method("GET")
             .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-floating-ips/1")
             .addHeader("Accept", "application/json")
             .addHeader("X-Auth-Token", authToken).build();
 
-      HttpResponse getFloatingIPResponse = HttpResponse.builder().statusCode(404).build();
+      HttpResponse getResponse = HttpResponse.builder().statusCode(404).build();
 
       NovaApi apiWhenNoServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
-            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, getFloatingIP, getFloatingIPResponse);
+            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, get, getResponse);
 
-      assertNull(apiWhenNoServersExist.getFloatingIPExtensionForZone("az-1.region-a.geo-1").get().getFloatingIP("1"));
+      assertNull(apiWhenNoServersExist.getFloatingIPExtensionForZone("az-1.region-a.geo-1").get().get("1"));
    }
 
    public void testAllocateWhenResponseIs2xx() throws Exception {
-      HttpRequest allocateFloatingIP = HttpRequest
+      HttpRequest createFloatingIP = HttpRequest
             .builder()
             .method("POST")
             .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-floating-ips")
@@ -141,20 +141,20 @@ public class FloatingIPApiExpectTest extends BaseNovaApiExpectTest {
             .addHeader("X-Auth-Token", authToken)
             .payload(payloadFromStringWithContentType("{}", "application/json")).build();
 
-      HttpResponse allocateFloatingIPResponse = HttpResponse.builder().statusCode(200)
+      HttpResponse createFloatingIPResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/floatingip_details.json")).build();
 
       NovaApi apiWhenFloatingIPsExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
-            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, allocateFloatingIP,
-            allocateFloatingIPResponse);
+            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, createFloatingIP,
+            createFloatingIPResponse);
 
-      assertEquals(apiWhenFloatingIPsExist.getFloatingIPExtensionForZone("az-1.region-a.geo-1").get().allocate().toString(),
+      assertEquals(apiWhenFloatingIPsExist.getFloatingIPExtensionForZone("az-1.region-a.geo-1").get().create().toString(),
             new ParseFloatingIPTest().expected().toString());
 
    }
 
    public void testAllocateWhenResponseIs404() throws Exception {
-      HttpRequest allocateFloatingIP = HttpRequest
+      HttpRequest createFloatingIP = HttpRequest
             .builder()
             .method("POST")
             .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-floating-ips")
@@ -162,13 +162,13 @@ public class FloatingIPApiExpectTest extends BaseNovaApiExpectTest {
             .addHeader("X-Auth-Token", authToken)
             .payload(payloadFromStringWithContentType("{}", "application/json")).build();
 
-      HttpResponse allocateFloatingIPResponse = HttpResponse.builder().statusCode(404).build();
+      HttpResponse createFloatingIPResponse = HttpResponse.builder().statusCode(404).build();
 
       NovaApi apiWhenNoServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
-            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, allocateFloatingIP,
-            allocateFloatingIPResponse);
+            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, createFloatingIP,
+            createFloatingIPResponse);
 
-      assertNull(apiWhenNoServersExist.getFloatingIPExtensionForZone("az-1.region-a.geo-1").get().allocate());
+      assertNull(apiWhenNoServersExist.getFloatingIPExtensionForZone("az-1.region-a.geo-1").get().create());
    }
 
 }

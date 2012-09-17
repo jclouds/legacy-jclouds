@@ -38,33 +38,33 @@ import org.jclouds.rest.Binder;
 @Singleton
 public class BindAlsoToSystemId implements Binder {
 
-    /**
-     * 
-     * @param request
-     *            request where the query params will be set
-     * @param input
-     *            array of String params
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
+   /**
+    * 
+    * @param request
+    *         request where the query params will be set
+    * @param input
+    *         array of String params
+    */
+   @SuppressWarnings("unchecked")
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
 
-        checkNotNull(input);
-        checkArgument(
-                input instanceof String,
-                "this binder only applies to String arguments: "
-                        + input.getClass());
+      checkNotNull(input);
+      checkArgument(
+            input instanceof String,
+            "this binder only applies to String arguments: "
+                  + input.getClass());
 
-        Pattern pattern = Pattern.compile("^(\\w+-\\w+)\\b.*");
-        Matcher matcher = pattern.matcher((String) input);
+      Pattern pattern = Pattern.compile("^(\\w+-\\w+)\\b.*");
+      Matcher matcher = pattern.matcher((String) input);
 
-        checkArgument(matcher.find(),
-                "no valid resource id found to construct vsys id from: "
-                        + input.toString());
+      checkArgument(matcher.find(),
+            "no valid resource id found to construct vsys id from: "
+                  + input.toString());
 
-        Builder<?> builder = request.toBuilder();
-        builder.replaceQueryParam("vsysId", matcher.group(1));
+      Builder<?> builder = request.toBuilder();
+      builder.replaceQueryParam("vsysId", matcher.group(1));
 
-        return (R) builder.build();
-    }
+      return (R) builder.build();
+   }
 }

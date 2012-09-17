@@ -30,9 +30,11 @@ import java.util.Set;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.openstack.keystone.v2_0.KeystoneApi;
+import org.jclouds.openstack.keystone.v2_0.domain.PaginatedCollection;
 import org.jclouds.openstack.keystone.v2_0.domain.Role;
 import org.jclouds.openstack.keystone.v2_0.domain.User;
 import org.jclouds.openstack.keystone.v2_0.internal.BaseKeystoneRestApiExpectTest;
+import org.jclouds.openstack.v2_0.options.PaginationOptions;
 import org.jclouds.rest.AuthorizationException;
 import org.testng.annotations.Test;
 
@@ -43,31 +45,50 @@ import com.google.common.collect.ImmutableSet;
  *
  * @author Adam Lowe
  */
-@Test(testName = "UserApiExpectTest")
+@Test(singleThreaded = true, testName = "UserApiExpectTest")
 public class UserApiExpectTest extends BaseKeystoneRestApiExpectTest<KeystoneApi> {
    
    public UserApiExpectTest(){
       endpoint = "https://csnode.jclouds.org:35357";
    }
-
+   
+   Set<User> expectedUsers = ImmutableSet.of(
+            User.builder().name("nova").id("e021dfd758eb44a89f1c57c8ef3be8e2").build(),
+            User.builder().name("glance").id("3f6c1c9ba993495ead7d2eb2192e284f").build(),
+            User.builder().name("demo").id("667b2e1420604df8b67cd8ea57d4ee64").build(),
+            User.builder().name("admin").id("2b9b606181634ae9ac86fd95a8bc2cde").build()
+      );
+   
    public void testListUsers() {
       UserApi api = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
             authenticatedGET().endpoint(endpoint + "/v2.0/users").build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResourceWithContentType("/user_list.json", APPLICATION_JSON)).build())
             .getUserApi().get();
-      Set<? extends User> users = api.list();
+     
+      assertEquals(api.list().concat().toImmutableSet(), expectedUsers);
+   }
+   
+   public void testListUsersPage() {
+      UserApi api = requestsSendResponses(
+            keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
+            authenticatedGET().endpoint(endpoint + "/v2.0/users").build(),
+            HttpResponse.builder().statusCode(200).payload(payloadFromResourceWithContentType("/user_list.json", APPLICATION_JSON)).build())
+            .getUserApi().get();
+      PaginatedCollection<? extends User> users = api.list(new PaginationOptions());
       assertNotNull(users);
       assertFalse(users.isEmpty());
 
-      Set<User> expected = ImmutableSet.of(
-            User.builder().name("nova").id("e021dfd758eb44a89f1c57c8ef3be8e2").build(),
-            User.builder().name("glance").id("3f6c1c9ba993495ead7d2eb2192e284f").build(),
-            User.builder().name("demo").id("667b2e1420604df8b67cd8ea57d4ee64").build(),
-            User.builder().name("admin").id("2b9b606181634ae9ac86fd95a8bc2cde").build()
-      );
 
-      assertEquals(users, expected);
+      assertEquals(users.toImmutableSet(), expectedUsers);
+   }
+   
+   public void testListUsersNotFound() {
+      UserApi api = requestsSendResponses(
+            keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
+            authenticatedGET().endpoint(endpoint + "/v2.0/users").build(),
+            HttpResponse.builder().statusCode(404).build()).getUserApi().get();
+      assertEquals( api.list(new PaginationOptions()).size(), 0);
    }
 
    @Test(expectedExceptions = AuthorizationException.class)
@@ -76,7 +97,7 @@ public class UserApiExpectTest extends BaseKeystoneRestApiExpectTest<KeystoneApi
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
             authenticatedGET().endpoint(endpoint + "/v2.0/users").build(),
             HttpResponse.builder().statusCode(401).build()).getUserApi().get();
-      api.list();
+      api.list(new PaginationOptions());
    }
 
    public void testGetUser() {

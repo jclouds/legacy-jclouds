@@ -26,9 +26,13 @@ import java.util.Set;
 
 import org.jclouds.javax.annotation.Nullable;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 
 /**
@@ -44,7 +48,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
 
    public static class Builder {
       protected String region;
-      protected Set<String> groupIds = Sets.newLinkedHashSet();
+      protected Set<String> groupNames = Sets.newLinkedHashSet();
       protected String amiLaunchIndex;
       protected String dnsName;
       protected String imageId;
@@ -72,14 +76,14 @@ public class RunningInstance implements Comparable<RunningInstance> {
          return this;
       }
 
-      public Builder groupIds(Iterable<String> groupIds) {
-         this.groupIds = ImmutableSet.copyOf(checkNotNull(groupIds, "groupIds"));
+      public Builder groupNames(Iterable<String> groupNames) {
+         this.groupNames = ImmutableSet.copyOf(checkNotNull(groupNames, "groupNames"));
          return this;
       }
 
-      public Builder groupId(String groupId) {
-         if (groupId != null)
-            this.groupIds.add(groupId);
+      public Builder groupName(String groupName) {
+         if (groupName != null)
+            this.groupNames.add(groupName);
          return this;
       }
 
@@ -195,7 +199,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
       }
 
       public RunningInstance build() {
-         return new RunningInstance(region, groupIds, amiLaunchIndex, dnsName, imageId, instanceId, instanceState,
+         return new RunningInstance(region, groupNames, amiLaunchIndex, dnsName, imageId, instanceId, instanceState,
                   rawState, instanceType, ipAddress, kernelId, keyName, launchTime, availabilityZone,
                   virtualizationType, platform, privateDnsName, privateIpAddress, ramdiskId, reason, rootDeviceType,
                   rootDeviceName, ebsBlockDevices);
@@ -220,7 +224,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
    }
 
    protected final String region;
-   protected final Set<String> groupIds;
+   protected final Set<String> groupNames;
    protected final String amiLaunchIndex;
    @Nullable
    protected final String dnsName;
@@ -253,11 +257,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
    protected final String rootDeviceName;
    protected final Map<String, BlockDevice> ebsBlockDevices;
 
-   public int compareTo(RunningInstance o) {
-      return (this == o) ? 0 : getId().compareTo(o.getId());
-   }
-
-   protected RunningInstance(String region, Iterable<String> groupIds, @Nullable String amiLaunchIndex,
+   protected RunningInstance(String region, Iterable<String> groupNames, @Nullable String amiLaunchIndex,
             @Nullable String dnsName, String imageId, String instanceId, InstanceState instanceState, String rawState,
             String instanceType, @Nullable String ipAddress, @Nullable String kernelId, @Nullable String keyName,
             Date launchTime, String availabilityZone, String virtualizationType, @Nullable String platform,
@@ -286,12 +286,16 @@ public class RunningInstance implements Comparable<RunningInstance> {
       this.rootDeviceType = checkNotNull(rootDeviceType, "rootDeviceType for %s/%s", region, instanceId);
       this.rootDeviceName = rootDeviceName;
       this.ebsBlockDevices = ImmutableMap.copyOf(checkNotNull(ebsBlockDevices, "ebsBlockDevices for %s/%s", region, instanceId));
-      this.groupIds = ImmutableSet.copyOf(checkNotNull(groupIds, "groupIds for %s/%s", region, instanceId));
+      this.groupNames = ImmutableSet.copyOf(checkNotNull(groupNames, "groupNames for %s/%s", region, instanceId));
    }
 
    /**
-    * Instance Ids are scoped to the region.
+    * To be removed in jclouds 1.6 <h4>Warning</h4>
+    * 
+    * Especially on EC2 clones that may not support regions, this value is fragile. Consider
+    * alternate means to determine context.
     */
+   @Deprecated
    public String getRegion() {
       return region;
    }
@@ -444,159 +448,54 @@ public class RunningInstance implements Comparable<RunningInstance> {
    }
 
    /**
+    * @see #getGroupNames()
+    */
+   @Deprecated
+   public Set<String> getGroupIds() {
+      return getGroupNames();
+   }
+   
+   /**
     * Names of the security groups.
     */
-   public Set<String> getGroupIds() {
-      return groupIds;
+   public Set<String> getGroupNames() {
+      return groupNames;
    }
 
    @Override
+   public int compareTo(RunningInstance other) {
+      return ComparisonChain.start().compare(region, other.region).compare(instanceId, other.instanceId, Ordering.natural().nullsLast()).result();
+   }
+   
+   @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((amiLaunchIndex == null) ? 0 : amiLaunchIndex.hashCode());
-      result = prime * result + ((availabilityZone == null) ? 0 : availabilityZone.hashCode());
-      result = prime * result + ((dnsName == null) ? 0 : dnsName.hashCode());
-      result = prime * result + ((ebsBlockDevices == null) ? 0 : ebsBlockDevices.hashCode());
-      result = prime * result + ((groupIds == null) ? 0 : groupIds.hashCode());
-      result = prime * result + ((imageId == null) ? 0 : imageId.hashCode());
-      result = prime * result + ((instanceId == null) ? 0 : instanceId.hashCode());
-      result = prime * result + ((instanceType == null) ? 0 : instanceType.hashCode());
-      result = prime * result + ((ipAddress == null) ? 0 : ipAddress.hashCode());
-      result = prime * result + ((kernelId == null) ? 0 : kernelId.hashCode());
-      result = prime * result + ((keyName == null) ? 0 : keyName.hashCode());
-      result = prime * result + ((launchTime == null) ? 0 : launchTime.hashCode());
-      result = prime * result + ((platform == null) ? 0 : platform.hashCode());
-      result = prime * result + ((privateDnsName == null) ? 0 : privateDnsName.hashCode());
-      result = prime * result + ((privateIpAddress == null) ? 0 : privateIpAddress.hashCode());
-      result = prime * result + ((ramdiskId == null) ? 0 : ramdiskId.hashCode());
-      result = prime * result + ((region == null) ? 0 : region.hashCode());
-      result = prime * result + ((rootDeviceName == null) ? 0 : rootDeviceName.hashCode());
-      result = prime * result + ((rootDeviceType == null) ? 0 : rootDeviceType.hashCode());
-      result = prime * result + ((virtualizationType == null) ? 0 : virtualizationType.hashCode());
-      return result;
+      return Objects.hashCode(region, instanceId);
    }
 
    @Override
    public boolean equals(Object obj) {
       if (this == obj)
          return true;
-      if (obj == null)
+      if (obj == null || getClass() != obj.getClass())
          return false;
-      if (getClass() != obj.getClass())
-         return false;
-      RunningInstance other = (RunningInstance) obj;
-      if (amiLaunchIndex == null) {
-         if (other.amiLaunchIndex != null)
-            return false;
-      } else if (!amiLaunchIndex.equals(other.amiLaunchIndex))
-         return false;
-      if (availabilityZone == null) {
-         if (other.availabilityZone != null)
-            return false;
-      } else if (!availabilityZone.equals(other.availabilityZone))
-         return false;
-      if (dnsName == null) {
-         if (other.dnsName != null)
-            return false;
-      } else if (!dnsName.equals(other.dnsName))
-         return false;
-      if (ebsBlockDevices == null) {
-         if (other.ebsBlockDevices != null)
-            return false;
-      } else if (!ebsBlockDevices.equals(other.ebsBlockDevices))
-         return false;
-      if (groupIds == null) {
-         if (other.groupIds != null)
-            return false;
-      } else if (!groupIds.equals(other.groupIds))
-         return false;
-      if (imageId == null) {
-         if (other.imageId != null)
-            return false;
-      } else if (!imageId.equals(other.imageId))
-         return false;
-      if (instanceId == null) {
-         if (other.instanceId != null)
-            return false;
-      } else if (!instanceId.equals(other.instanceId))
-         return false;
-      if (instanceType == null) {
-         if (other.instanceType != null)
-            return false;
-      } else if (!instanceType.equals(other.instanceType))
-         return false;
-      if (ipAddress == null) {
-         if (other.ipAddress != null)
-            return false;
-      } else if (!ipAddress.equals(other.ipAddress))
-         return false;
-      if (kernelId == null) {
-         if (other.kernelId != null)
-            return false;
-      } else if (!kernelId.equals(other.kernelId))
-         return false;
-      if (keyName == null) {
-         if (other.keyName != null)
-            return false;
-      } else if (!keyName.equals(other.keyName))
-         return false;
-      if (launchTime == null) {
-         if (other.launchTime != null)
-            return false;
-      } else if (!launchTime.equals(other.launchTime))
-         return false;
-      if (platform == null) {
-         if (other.platform != null)
-            return false;
-      } else if (!platform.equals(other.platform))
-         return false;
-      if (privateDnsName == null) {
-         if (other.privateDnsName != null)
-            return false;
-      } else if (!privateDnsName.equals(other.privateDnsName))
-         return false;
-      if (privateIpAddress == null) {
-         if (other.privateIpAddress != null)
-            return false;
-      } else if (!privateIpAddress.equals(other.privateIpAddress))
-         return false;
-      if (ramdiskId == null) {
-         if (other.ramdiskId != null)
-            return false;
-      } else if (!ramdiskId.equals(other.ramdiskId))
-         return false;
-      if (region == null) {
-         if (other.region != null)
-            return false;
-      } else if (!region.equals(other.region))
-         return false;
-      if (rootDeviceName == null) {
-         if (other.rootDeviceName != null)
-            return false;
-      } else if (!rootDeviceName.equals(other.rootDeviceName))
-         return false;
-      if (rootDeviceType == null) {
-         if (other.rootDeviceType != null)
-            return false;
-      } else if (!rootDeviceType.equals(other.rootDeviceType))
-         return false;
-      if (virtualizationType == null) {
-         if (other.virtualizationType != null)
-            return false;
-      } else if (!virtualizationType.equals(other.virtualizationType))
-         return false;
-      return true;
+      RunningInstance that = RunningInstance.class.cast(obj);
+      return Objects.equal(this.region, that.region) && Objects.equal(this.instanceId, that.instanceId);
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this).omitNullValues().add("region", region)
+               .add("availabilityZone", availabilityZone).add("id", instanceId).add("state", rawState)
+               .add("type", instanceType).add("virtualizationType", virtualizationType).add("imageId", imageId)
+               .add("ipAddress", ipAddress).add("dnsName", dnsName).add("privateIpAddress", privateIpAddress)
+               .add("privateDnsName", privateDnsName).add("keyName", keyName).add("groupNames", groupNames)
+               .add("platform", platform).add("launchTime", launchTime).add("rootDeviceName", rootDeviceName)
+               .add("rootDeviceType", rootDeviceType).add("ebsBlockDevices", ebsBlockDevices);
    }
 
    @Override
    public String toString() {
-      return "[region=" + region + ", availabilityZone=" + availabilityZone + ", instanceId=" + instanceId
-               + ", instanceState=" + rawState + ", instanceType=" + instanceType + ", virtualizationType="
-               + virtualizationType + ", imageId=" + imageId + ", ipAddress=" + ipAddress + ", dnsName=" + dnsName
-               + ", privateIpAddress=" + privateIpAddress + ", privateDnsName=" + privateDnsName + ", keyName="
-               + keyName + ", groupIds=" + groupIds  + ", platform=" + platform + ", launchTime=" + launchTime + ", rootDeviceName="
-               + rootDeviceName + ", rootDeviceType=" + rootDeviceType + ", ebsBlockDevices=" + ebsBlockDevices + "]";
+      return string().toString();
    }
+
 
 }

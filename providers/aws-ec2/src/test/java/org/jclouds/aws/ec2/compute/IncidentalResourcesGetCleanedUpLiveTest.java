@@ -117,8 +117,8 @@ public class IncidentalResourcesGetCleanedUpLiveTest extends BaseComputeServiceC
          assertNotNull(instance1.getKeyName());
          assertEquals(instance1.getRegion(), instance2.getRegion(), "Nodes are not in the same region");
          assertEquals(instance1.getKeyName(), instance2.getKeyName(), "Nodes do not have same key-pair name");
-         assertEquals(instance1.getGroupIds(), instance2.getGroupIds(), "Nodes are not in the same group");
-         assertEquals(instance1.getGroupIds(), ImmutableSet.of(expectedSecurityGroupName), "Nodes are not in the expected security group");
+         assertEquals(instance1.getGroupNames(), instance2.getGroupNames(), "Nodes are not in the same group");
+         assertEquals(instance1.getGroupNames(), ImmutableSet.of(expectedSecurityGroupName), "Nodes are not in the expected security group");
 
          // Assert a single key-pair and security group has been created
          String expectedKeyPairName = instance1.getKeyName();

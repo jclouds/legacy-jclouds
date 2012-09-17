@@ -18,8 +18,6 @@
  */
 package org.jclouds.openstack.nova.v2_0.extensions;
 
-import java.util.Set;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -44,10 +42,12 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.WrapWith;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnEmptyFluentIterableOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
+import com.google.common.annotations.Beta;
+import com.google.common.collect.FluentIterable;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -57,6 +57,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see org.jclouds.openstack.nova.v2_0.extensions.VolumeAsyncApi
  * @author Adam Lowe
  */
+@Beta
 @Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.VOLUMES)
 @SkipEncoding({'/', '='})
 @RequestFilters(AuthenticateRequest.class)
@@ -70,8 +71,8 @@ public interface VolumeAsyncApi {
    @Path("/os-volumes")
    @SelectJson("volumes")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<? extends Set<? extends Volume>> listVolumes();
+   @ExceptionParser(ReturnEmptyFluentIterableOnNotFoundOr404.class)
+   ListenableFuture<? extends FluentIterable<? extends Volume>> list();
 
    /**
     * Returns a detailed list of volumes.
@@ -82,8 +83,8 @@ public interface VolumeAsyncApi {
    @Path("/os-volumes/detail")
    @SelectJson("volumes")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<? extends Set<? extends Volume>> listVolumesInDetail();
+   @ExceptionParser(ReturnEmptyFluentIterableOnNotFoundOr404.class)
+   ListenableFuture<? extends FluentIterable<? extends Volume>> listInDetail();
 
    /**
     * Return data about the given volume.
@@ -95,7 +96,7 @@ public interface VolumeAsyncApi {
    @SelectJson("volume")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<? extends Volume> getVolume(@PathParam("id") String volumeId);
+   ListenableFuture<? extends Volume> get(@PathParam("id") String volumeId);
 
    /**
     * Creates a new volume
@@ -108,7 +109,7 @@ public interface VolumeAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
    @MapBinder(CreateVolumeOptions.class)
-   ListenableFuture<? extends Volume> createVolume(@PayloadParam("size") int sizeGB, CreateVolumeOptions... options);
+   ListenableFuture<? extends Volume> create(@PayloadParam("size") int sizeGB, CreateVolumeOptions... options);
 
    /**
     * Delete a volume.
@@ -119,7 +120,7 @@ public interface VolumeAsyncApi {
    @Path("/os-volumes/{id}")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
-   ListenableFuture<Boolean> deleteVolume(@PathParam("id") String volumeId);
+   ListenableFuture<Boolean> delete(@PathParam("id") String volumeId);
    
    /**
     * List volume attachments for a given instance.
@@ -130,8 +131,8 @@ public interface VolumeAsyncApi {
    @Path("/servers/{server_id}/os-volume_attachments")
    @SelectJson("volumeAttachments")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<? extends Set<? extends VolumeAttachment>> listAttachmentsOnServer(@PathParam("server_id") String serverId);
+   @ExceptionParser(ReturnEmptyFluentIterableOnNotFoundOr404.class)
+   ListenableFuture<? extends FluentIterable<? extends VolumeAttachment>> listAttachmentsOnServer(@PathParam("server_id") String serverId);
 
    /**
     * Get a specific attached volume.
@@ -180,8 +181,8 @@ public interface VolumeAsyncApi {
    @Path("/os-snapshots")
    @SelectJson("snapshots")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<? extends Set<? extends VolumeSnapshot>> listSnapshots();
+   @ExceptionParser(ReturnEmptyFluentIterableOnNotFoundOr404.class)
+   ListenableFuture<? extends FluentIterable<? extends VolumeSnapshot>> listSnapshots();
 
    /**
     * Returns a summary list of snapshots.
@@ -192,8 +193,8 @@ public interface VolumeAsyncApi {
    @Path("/os-snapshots/detail")
    @SelectJson("snapshots")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<? extends Set<? extends VolumeSnapshot>> listSnapshotsInDetail();
+   @ExceptionParser(ReturnEmptyFluentIterableOnNotFoundOr404.class)
+   ListenableFuture<? extends FluentIterable<? extends VolumeSnapshot>> listSnapshotsInDetail();
 
    /**
     * Return data about the given snapshot.

@@ -41,6 +41,7 @@ import org.jclouds.fujitsu.fgcp.domain.VSystem;
 import org.jclouds.fujitsu.fgcp.domain.VSystemDescriptor;
 import org.jclouds.fujitsu.fgcp.filters.RequestAuthenticator;
 import org.jclouds.fujitsu.fgcp.reference.RequestParameters;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.PayloadParams;
 import org.jclouds.rest.annotations.QueryParams;
@@ -61,129 +62,129 @@ import com.google.common.util.concurrent.ListenableFuture;
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface VirtualDCAsyncApi {
 
-    // @POST
-    @GET
-    @JAXBResponseParser
-    // @XMLResponseParser(VSYSCreateHandler.class)
-    @QueryParams(keys = "Action", values = "CreateVSYS")
-    @Transform(SingleElementResponseToElement.class)
-    // @PayloadParams(keys = "Action", values = "CreateVSYS")
-    // @Produces(MediaType.TEXT_XML)
-    // @MapBinder(BindParamsToXmlPayload.class)
-    // ListenableFuture<String>
-    // createVirtualSystem(@PayloadParam("vsysDescriptorId") String
-    // vsysDescriptorId, @PayloadParam("vsysName") String vsysName);
-    ListenableFuture<String> createVirtualSystem(
-            @QueryParam("vsysDescriptorId") String descriptorId,
-            @QueryParam("vsysName") String name);
+   // @POST
+   @GET
+   @JAXBResponseParser
+   // @XMLResponseParser(VSYSCreateHandler.class)
+   @QueryParams(keys = "Action", values = "CreateVSYS")
+   @Transform(SingleElementResponseToElement.class)
+   // @PayloadParams(keys = "Action", values = "CreateVSYS")
+   // @Produces(MediaType.TEXT_XML)
+   // @MapBinder(BindParamsToXmlPayload.class)
+   // ListenableFuture<String>
+   // createVirtualSystem(@PayloadParam("vsysDescriptorId") String
+   // vsysDescriptorId, @PayloadParam("vsysName") String vsysName);
+   ListenableFuture<String> createVirtualSystem(
+         @QueryParam("vsysDescriptorId") String descriptorId,
+         @QueryParam("vsysName") String name);
 
-    @GET
-    @JAXBResponseParser
-    // @XMLResponseParser(VSYSListHandler.class)
-    @QueryParams(keys = "Action", values = "ListVSYS")
-    ListenableFuture<Set<VSystem>> listVirtualSystems();
+   @GET
+   @JAXBResponseParser
+   // @XMLResponseParser(VSYSListHandler.class)
+   @QueryParams(keys = "Action", values = "ListVSYS")
+   ListenableFuture<Set<VSystem>> listVirtualSystems();
 
-    @GET
-    @JAXBResponseParser
-    // according to the manual it takes a 'String diskImageId' but value seems
-    // to be ignored
-    @QueryParams(keys = { "Action", "diskImageId" }, values = {
-            "ListServerType", "dummy" })
-    // @XmlJavaTypeAdapter(SetOfServerTypesXMLAdapter.class)
-    // @XmlElement(type = ServerType.class)
-    ListenableFuture<Set<ServerType>> listServerTypes();
+   @GET
+   @JAXBResponseParser
+   // according to the manual it takes a 'String diskImageId' but value seems
+   // to be ignored
+   @QueryParams(keys = { "Action", "diskImageId" }, values = {
+         "ListServerType", "dummy" })
+   // @XmlJavaTypeAdapter(SetOfServerTypesXMLAdapter.class)
+   // @XmlElement(type = ServerType.class)
+   ListenableFuture<Set<ServerType>> listServerTypes();
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "ListDiskImage")
-    ListenableFuture<Set<DiskImage>> listDiskImages();
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "ListDiskImage")
+   ListenableFuture<Set<DiskImage>> listDiskImages();
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "ListDiskImage")
-    ListenableFuture<Set<DiskImage>> listDiskImages(
-            @QueryParam("serverCategory") String serverCategory,
-            @QueryParam("vsysDescriptorId") String vsysDescriptorId);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "ListDiskImage")
+   ListenableFuture<Set<DiskImage>> listDiskImages(
+         @Nullable @QueryParam("serverCategory") String serverCategory,
+         @QueryParam("vsysDescriptorId") String vsysDescriptorId);
 
-    /**
-     *
-     * @return
-     * @see VirtualSystemAsyncApi#listPublicIPs(String)
-     */
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "ListPublicIP")
-    ListenableFuture<Map<PublicIP, String>> listPublicIPs();
+   /**
+    *
+    * @return
+    * @see VirtualSystemAsyncApi#listPublicIPs(String)
+    */
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "ListPublicIP")
+   ListenableFuture<Map<PublicIP, String>> listPublicIPs();
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "AddAddressRange")
-    ListenableFuture<Void> addAddressRange(
-            @QueryParam("pipFrom") String pipFrom,
-            @QueryParam("pipTo") String pipTo);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "AddAddressRange")
+   ListenableFuture<Void> addAddressRange(
+         @QueryParam("pipFrom") String pipFrom,
+         @QueryParam("pipTo") String pipTo);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "CreateAddressPool")
-    ListenableFuture<Void> createAddressPool(
-            @QueryParam("pipFrom") String pipFrom,
-            @QueryParam("pipTo") String pipTo);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "CreateAddressPool")
+   ListenableFuture<Void> createAddressPool(
+         @QueryParam("pipFrom") String pipFrom,
+         @QueryParam("pipTo") String pipTo);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "DeleteAddressRange")
-    ListenableFuture<Void> deleteAddressRange(
-            @QueryParam("pipFrom") String pipFrom,
-            @QueryParam("pipTo") String pipTo);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "DeleteAddressRange")
+   ListenableFuture<Void> deleteAddressRange(
+         @QueryParam("pipFrom") String pipFrom,
+         @QueryParam("pipTo") String pipTo);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "GetAddressRange")
-    ListenableFuture<Set<AddressRange>> getAddressRange();
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "GetAddressRange")
+   ListenableFuture<Set<AddressRange>> getAddressRange();
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "ListVSYSDescriptor")
-    ListenableFuture<Set<VSystemDescriptor>> listVSYSDescriptor();
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "ListVSYSDescriptor")
+   ListenableFuture<Set<VSystemDescriptor>> listVSYSDescriptor();
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "ListVSYSDescriptor")
-    ListenableFuture<Set<VSystemDescriptor>> listVSYSDescriptor(
-            @QueryParam("keyword") String keyword,
-            @QueryParam("estimateFrom") int estimateFrom,
-            @QueryParam("estimateTo") int estimateTo);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "ListVSYSDescriptor")
+   ListenableFuture<Set<VSystemDescriptor>> listVSYSDescriptor(
+         @QueryParam("keyword") String keyword,
+         @QueryParam("estimateFrom") int estimateFrom,
+         @QueryParam("estimateTo") int estimateTo);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "GetEventLog")
-    ListenableFuture<Set<EventLog>> getEventLogs();
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "GetEventLog")
+   ListenableFuture<Set<EventLog>> getEventLogs();
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "GetEventLog")
-    ListenableFuture<Set<EventLog>> getEventLogs(@QueryParam("all") boolean all);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "GetEventLog")
+   ListenableFuture<Set<EventLog>> getEventLogs(@QueryParam("all") boolean all);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "GetInformation")
-    ListenableFuture<Set<Information>> getInformation();
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "GetInformation")
+   ListenableFuture<Set<Information>> getInformation();
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "GetInformation")
-    ListenableFuture<Set<Information>> getInformation(
-            @QueryParam("all") boolean all);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "GetInformation")
+   ListenableFuture<Set<Information>> getInformation(
+         @QueryParam("all") boolean all);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "GetSystemUsage")
-    ListenableFuture<Set<UsageInfo>> getSystemUsage();
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "GetSystemUsage")
+   ListenableFuture<Set<UsageInfo>> getSystemUsage();
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "GetSystemUsage")
-    ListenableFuture<Set<UsageInfo>> getSystemUsage(
-            @QueryParam("systemIds") String systemIds);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "GetSystemUsage")
+   ListenableFuture<Set<UsageInfo>> getSystemUsage(
+         @QueryParam("systemIds") String systemIds);
 
 }

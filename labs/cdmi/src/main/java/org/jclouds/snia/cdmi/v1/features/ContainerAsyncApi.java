@@ -26,6 +26,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.Headers;
@@ -39,6 +40,7 @@ import org.jclouds.snia.cdmi.v1.filters.BasicAuthenticationAndTenantId;
 import org.jclouds.snia.cdmi.v1.filters.StripExtraAcceptHeader;
 import org.jclouds.snia.cdmi.v1.options.CreateContainerOptions;
 import org.jclouds.snia.cdmi.v1.queryparams.ContainerQueryParams;
+
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -49,115 +51,111 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see <a href="http://www.snia.org/cdmi">api doc</a>
  */
 @SkipEncoding({ '/', '=' })
-@RequestFilters({ BasicAuthenticationAndTenantId.class,
-		StripExtraAcceptHeader.class })
+@RequestFilters({ BasicAuthenticationAndTenantId.class, StripExtraAcceptHeader.class })
 @Headers(keys = "X-CDMI-Specification-Version", values = "{jclouds.api-version}")
 public interface ContainerAsyncApi {
 
-	/**
-	 * get CDMI Container
-	 * 
-	 * @param containerName
-	 *            containerName must end with a forward slash, /.
-	 * @return Container
-	 * 
-	 * <pre>
-	 *  Examples: 
-	 *  {@code
-	 *  container = getContainer("myContainer/");
-	 *  container = getContainer("parentContainer/childContainer/");
-	 * }
-	 * 
-	 * <pre>
-	 */
-	@GET
-	@Consumes({ ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
-	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
-	@Path("/{containerName}")
-	ListenableFuture<Container> getContainer(
-			@PathParam("containerName") String containerName);
+   /**
+    * get CDMI Container
+    * 
+    * @param containerName
+    *           containerName must end with a forward slash, /.
+    * @return Container
+    * 
+    *         <pre>
+    *  Examples: 
+    *  {@code
+    *  container = get("myContainer/");
+    *  container = get("parentContainer/childContainer/");
+    * }
+    * 
+    *         <pre>
+    */
+   @GET
+   @Consumes({ ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Path("/{containerName}")
+   ListenableFuture<Container> get(@PathParam("containerName") String containerName);
 
-	/**
-	 * get CDMI Container
-	 * 
-	 * @param containerName
-	 * @param queryParams
-	 *            enables getting only certain fields, metadata, children range
-	 * @return Container
-	 * 
-	 * <pre>
-	 * Examples: 
-	 * {@code
-	 * container = getContainer("myContainer/",ContainerQueryParams.Builder.field("parentURI").field("objectName"))
-	 * container = getContainer("myContainer/",ContainerQueryParams.Builder.metadata().field("objectName"))
-	 * }
-	 * </pre>
-	 * @see ContainerQueryParams
-	 */
-	@GET
-	@Consumes({ ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
-	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
-	@Path("/{containerName}")
-	ListenableFuture<Container> getContainer(
-			@PathParam("containerName") String containerName,
-			@BinderParam(BindQueryParmsToSuffix.class) ContainerQueryParams queryParams);
+   /**
+    * get CDMI Container
+    * 
+    * @param containerName
+    * @param queryParams
+    *           enables getting only certain fields, metadata, children range
+    * @return Container
+    * 
+    *         <pre>
+    * Examples: 
+    * {@code
+    * container = get("myContainer/",ContainerQueryParams.Builder.field("parentURI").field("objectName"))
+    * container = get("myContainer/",ContainerQueryParams.Builder.metadata().field("objectName"))
+    * }
+    * </pre>
+    * @see ContainerQueryParams
+    */
+   @GET
+   @Consumes({ ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Path("/{containerName}")
+   ListenableFuture<Container> get(@PathParam("containerName") String containerName,
+            @BinderParam(BindQueryParmsToSuffix.class) ContainerQueryParams queryParams);
 
-	/**
-	 * Create CDMI Container
-	 * 
-	 * @param containerName
-	 *            containerName must end with a forward slash, /.
-	 * @return Container
-	 *  <pre>
-	 *  Examples: 
-	 *  {@code
-	 *  container = createContainer("myContainer/");
-	 *  container = createContainer("parentContainer/childContainer/");
-	 *  }
-	 *  </pre>
-	 */
-	@PUT
-	@Consumes({ ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
-	@Produces({ ObjectTypes.CONTAINER })
-	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
-	@Path("/{containerName}")
-	ListenableFuture<Container> createContainer(
-			@PathParam("containerName") String containerName);
+   /**
+    * Create CDMI Container
+    * 
+    * @param containerName
+    *           containerName must end with a forward slash, /.
+    * @return Container
+    * 
+    *         <pre>
+    *  Examples: 
+    *  {@code
+    *  container = create("myContainer/");
+    *  container = create("parentContainer/childContainer/");
+    *  }
+    * </pre>
+    */
+   @PUT
+   @Consumes({ ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
+   @Produces({ ObjectTypes.CONTAINER })
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Path("/{containerName}")
+   ListenableFuture<Container> create(@PathParam("containerName") String containerName);
 
-	/**
-	 * Create CDMI Container
-	 * 
-	 * @param containerName
-	 * @param options
-	 *            enables adding metadata
-	 * @return Container
-	 *  <pre>
-	 *  Examples: 
-	 *  {@code
-	 *  container = createContainer("myContainer/",CreateContainerOptions.Builder..metadata(metaDataIn));
-	 *  }
-	 *  </pre>
-	 * @see CreateContainerOptions
-	 */
-	@PUT
-	@Consumes({ ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
-	@Produces({ ObjectTypes.CONTAINER })
-	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
-	@Path("/{containerName}")
-	ListenableFuture<Container> createContainer(
-			@PathParam("containerName") String containerName,
-			CreateContainerOptions... options);
+   /**
+    * Create CDMI Container
+    * 
+    * @param containerName
+    * @param options
+    *           enables adding metadata
+    * @return Container
+    * 
+    *         <pre>
+    *  Examples: 
+    *  {@code
+    *  container = create("myContainer/",CreateContainerOptions.Builder..metadata(metaDataIn));
+    *  }
+    * </pre>
+    * @see CreateContainerOptions
+    */
+   @PUT
+   @Consumes({ ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
+   @Produces({ ObjectTypes.CONTAINER })
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Path("/{containerName}")
+   ListenableFuture<Container> create(@PathParam("containerName") String containerName,
+            CreateContainerOptions... options);
 
-	/**
-	 * Delete Container
-	 * 
-	 * @param containerName
-	 */
-	@DELETE
-	@Consumes(MediaType.APPLICATION_JSON)
-	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
-	@Path("/{containerName}")
-	ListenableFuture<Void> deleteContainer(
-			@PathParam("containerName") String containerName);
+   /**
+    * Delete Container
+    * 
+    * @param containerName
+    */
+   @DELETE
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Path("/{containerName}")
+   ListenableFuture<Void> delete(@PathParam("containerName") String containerName);
 
 }

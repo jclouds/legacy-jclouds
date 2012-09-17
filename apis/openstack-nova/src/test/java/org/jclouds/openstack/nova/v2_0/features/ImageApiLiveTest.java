@@ -42,7 +42,7 @@ public class ImageApiLiveTest extends BaseNovaApiLiveTest {
    public void testListImages() throws Exception {
       for (String zoneId : zones) {
          ImageApi api = novaContext.getApi().getImageApiForZone(zoneId);
-         Set<? extends Resource> response = api.listImages();
+         Set<? extends Resource> response = api.list().concat().toImmutableSet();
          assertNotNull(response);
          assertFalse(response.isEmpty());
          for (Resource image : response) {
@@ -57,7 +57,7 @@ public class ImageApiLiveTest extends BaseNovaApiLiveTest {
    public void testListImagesInDetail() throws Exception {
       for (String zoneId : novaContext.getApi().getConfiguredZones()) {
          ImageApi api = novaContext.getApi().getImageApiForZone(zoneId);
-         Set<? extends Image> response = api.listImagesInDetail();
+         Set<? extends Image> response = api.listInDetail().concat().toImmutableSet();
          assertNotNull(response);
          assertFalse(response.isEmpty());
          for (Image image : response) {
@@ -65,14 +65,14 @@ public class ImageApiLiveTest extends BaseNovaApiLiveTest {
             assertNotNull(image.getName());
             assertNotNull(image.getLinks());
             assertNotNull(image.getCreated());
-            assertTrue(image.getMinDisk() > 0);
-            assertTrue(image.getMinRam() > 0);
+            // image.getMinDisk() can be zero
+            // image.getMinRam() can be zero
             assertTrue(image.getProgress() >= 0 && image.getProgress() <= 100);
             assertNotNull(image.getStatus());
-            assertNotNull(image.getServer());
-            assertNotNull(image.getTenantId());
-            assertNotNull(image.getUpdated());
-            assertNotNull(image.getUserId());
+            // image.getServer() can be null
+            // image.getTenantId() can be null
+            // image.getUpdated() can be null
+            // image.getUserId() can be null
          }
       }
    }
@@ -81,9 +81,9 @@ public class ImageApiLiveTest extends BaseNovaApiLiveTest {
    public void testGetImageById() throws Exception {
       for (String zoneId : novaContext.getApi().getConfiguredZones()) {
          ImageApi api = novaContext.getApi().getImageApiForZone(zoneId);
-         Set<? extends Image> response = api.listImagesInDetail();
+         Set<? extends Image> response = api.listInDetail().concat().toImmutableSet();
          for (Image image : response) {
-            Image details = api.getImage(image.getId());
+            Image details = api.get(image.getId());
             assertNotNull(details);
             assertEquals(details.getId(), image.getId());
             assertEquals(details.getName(), image.getName());

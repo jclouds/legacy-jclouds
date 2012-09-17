@@ -20,11 +20,12 @@ package org.jclouds.fujitsu.fgcp.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.google.common.base.Function;
+import javax.inject.Singleton;
+
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.fujitsu.fgcp.domain.CPU;
 
-import javax.inject.Singleton;
+import com.google.common.base.Function;
 
 /**
  * Created by IntelliJ IDEA.
@@ -34,11 +35,11 @@ import javax.inject.Singleton;
 @Singleton
 public class CPUToProcessor implements Function<CPU, Processor> {
 
-    @Override
-    public Processor apply(CPU cpu) {
-        checkNotNull(cpu, "cpu");
+   @Override
+   public Processor apply(CPU cpu) {
+      checkNotNull(cpu, "cpu");
 
-        return new Processor(Double.valueOf(cpu.getCores()), Double.valueOf(cpu
-                .getSpeedPerCore()));
-    }
+      return new Processor(Double.valueOf(cpu.getCores()), Double.valueOf(cpu
+            .getSpeedPerCore()));
+   }
 }

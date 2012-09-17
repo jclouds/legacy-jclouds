@@ -20,40 +20,27 @@ package org.jclouds.blobstore.integration.internal;
 
 import static org.jclouds.blobstore.options.GetOptions.Builder.range;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.rest.AuthorizationException;
 import org.jclouds.util.Strings2;
+import org.testng.SkipException;
 import org.testng.annotations.Test;
+
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Tests integrated functionality of all signature commands.
  * <p/>
  * Each test uses a different container name, so it should be perfectly fine to run in parallel.
- * 
+ *
  * @author Adrian Cole
  */
-@Test(groups = { "live" })
+@Test(groups = {"live"})
 public class BaseBlobSignerLiveTest extends BaseBlobStoreIntegrationTest {
-
-   @Test
-   public void testSignRemoveUrl() throws Exception {
-      String name = "hello";
-      String text = "fooooooooooooooooooooooo";
-
-      Blob blob = view.getBlobStore().blobBuilder(name).payload(text).contentType("text/plain").build();
-      String container = getContainerName();
-      try {
-         view.getBlobStore().putBlob(container, blob);
-         assertConsistencyAwareContainerSize(container, 1);
-         HttpRequest request = view.getSigner().signRemoveBlob(container, name);
-         assertEquals(request.getFilters().size(), 0);
-         view.utils().http().invoke(request);
-         assert !view.getBlobStore().blobExists(container, name);
-      } finally {
-         returnContainer(container);
-      }
-   }
 
    @Test
    public void testSignGetUrl() throws Exception {
@@ -92,6 +79,34 @@ public class BaseBlobSignerLiveTest extends BaseBlobStoreIntegrationTest {
    }
 
    @Test
+   public void testSignGetUrlWithTime() throws InterruptedException, IOException {
+      String name = "hello";
+      String text = "fooooooooooooooooooooooo";
+
+      Blob blob = view.getBlobStore().blobBuilder(name).payload(text).contentType("text/plain").build();
+      String container = getContainerName();
+      try {
+         view.getBlobStore().putBlob(container, blob);
+         assertConsistencyAwareContainerSize(container, 1);
+         HttpRequest request = view.getSigner().signGetBlob(container, name, 3 /* seconds */);
+
+         assertEquals(request.getFilters().size(), 0);
+         assertEquals(Strings2.toString(view.utils().http().invoke(request).getPayload()), text);
+
+         TimeUnit.SECONDS.sleep(4);
+         try {
+            Strings2.toString(view.utils().http().invoke(request).getPayload());
+            fail("Temporary URL did not expire as expected");
+         } catch (AuthorizationException expected) {
+         }
+      } catch (UnsupportedOperationException ignore) {
+         throw new SkipException("signGetUrl with a time limit is not supported on " + provider);
+      } finally {
+         returnContainer(container);
+      }
+   }
+
+   @Test
    public void testSignPutUrl() throws Exception {
       String name = "hello";
       String text = "fooooooooooooooooooooooo";
@@ -108,4 +123,52 @@ public class BaseBlobSignerLiveTest extends BaseBlobStoreIntegrationTest {
       }
    }
 
+   @Test
+   public void testSignPutUrlWithTime() throws Exception {
+      String name = "hello";
+      String text = "fooooooooooooooooooooooo";
+
+      Blob blob = view.getBlobStore().blobBuilder(name).payload(text).contentType("text/plain").build();
+      String container = getContainerName();
+      try {
+         HttpRequest request = view.getSigner().signPutBlob(container, blob, 3 /* seconds */);
+         assertEquals(request.getFilters().size(), 0);
+
+         Strings2.toString(view.utils().http().invoke(request).getPayload());
+         assertConsistencyAwareContainerSize(container, 1);
+
+         view.getBlobStore().removeBlob(container, name);
+         assertConsistencyAwareContainerSize(container, 0);
+
+         TimeUnit.SECONDS.sleep(4);
+         try {
+            Strings2.toString(view.utils().http().invoke(request).getPayload());
+            fail("Temporary URL did not expire as expected");
+         } catch (AuthorizationException expected) {
+         }
+      } catch (UnsupportedOperationException ignore) {
+         throw new SkipException("signPutUrl with a time limit is not supported on " + provider);
+      } finally {
+         returnContainer(container);
+      }
+   }
+
+   @Test
+   public void testSignRemoveUrl() throws Exception {
+      String name = "hello";
+      String text = "fooooooooooooooooooooooo";
+
+      Blob blob = view.getBlobStore().blobBuilder(name).payload(text).contentType("text/plain").build();
+      String container = getContainerName();
+      try {
+         view.getBlobStore().putBlob(container, blob);
+         assertConsistencyAwareContainerSize(container, 1);
+         HttpRequest request = view.getSigner().signRemoveBlob(container, name);
+         assertEquals(request.getFilters().size(), 0);
+         view.utils().http().invoke(request);
+         assert !view.getBlobStore().blobExists(container, name);
+      } finally {
+         returnContainer(container);
+      }
+   }
 }

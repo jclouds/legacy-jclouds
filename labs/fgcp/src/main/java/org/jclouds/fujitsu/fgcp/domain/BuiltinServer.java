@@ -29,45 +29,45 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "efm")
 public class BuiltinServer {
-    @XmlElement(name = "efmId")
-    private String id;
-    @XmlElement(name = "efmType")
-    private BuiltinServerType builtinServerType;
-    @XmlElement(name = "efmName")
-    private String name;
-    private String creator;
-    private String slbVip;
-    private Firewall firewall;
-    private SLB loadbalancer;
+   @XmlElement(name = "efmId")
+   private String id;
+   @XmlElement(name = "efmType")
+   private BuiltinServerType builtinServerType;
+   @XmlElement(name = "efmName")
+   private String name;
+   private String creator;
+   private String slbVip;
+   private Firewall firewall;
+   private SLB loadbalancer;
 
-    public enum BuiltinServerType {FW, SLB}
+   public enum BuiltinServerType {FW, SLB}
 
-    public String getId() {
-        return id;
-    }
+   public String getId() {
+      return id;
+   }
 
-    public BuiltinServerType getType() {
-        return builtinServerType;
-    }
+   public BuiltinServerType getType() {
+      return builtinServerType;
+   }
 
-    public String getName() {
-        return name;
-    }
+   public String getName() {
+      return name;
+   }
 
-    public String getCreator() {
-        return creator;
-    }
+   public String getCreator() {
+      return creator;
+   }
 
-    public String getSlbVip() {
-        return slbVip;
-    }
+   public String getSlbVip() {
+      return slbVip;
+   }
 
-    public Firewall getFirewall() {
-        return firewall;
-    }
+   public Firewall getFirewall() {
+      return firewall;
+   }
 
-    public SLB getLoadbalancer() {
-        return loadbalancer;
-    }
+   public SLB getLoadbalancer() {
+      return loadbalancer;
+   }
 
 }

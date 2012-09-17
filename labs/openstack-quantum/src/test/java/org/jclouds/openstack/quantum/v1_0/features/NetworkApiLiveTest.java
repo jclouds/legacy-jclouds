@@ -41,9 +41,9 @@ import com.google.common.collect.ImmutableList;
 public class NetworkApiLiveTest extends BaseQuantumApiLiveTest {
 
    public void testListNetworks() {
-      for (String regionId : quantumContext.getApi().getConfiguredRegions()) {
-         Set<? extends Reference> ids = quantumContext.getApi().getNetworkApiForRegion(regionId).listReferences();
-         Set<? extends Network> networks = quantumContext.getApi().getNetworkApiForRegion(regionId).list();
+      for (String zoneId : quantumContext.getApi().getConfiguredZones()) {
+         Set<? extends Reference> ids = quantumContext.getApi().getNetworkApiForZone(zoneId).listReferences().toImmutableSet();
+         Set<? extends Network> networks = quantumContext.getApi().getNetworkApiForZone(zoneId).list().toImmutableSet();
          assertNotNull(ids);
          assertEquals(ids.size(), networks.size());
          for (Network network : networks) {
@@ -54,8 +54,8 @@ public class NetworkApiLiveTest extends BaseQuantumApiLiveTest {
    }
 
    public void testCreateUpdateAndDeleteNetwork() {
-      for (String regionId : quantumContext.getApi().getConfiguredRegions()) {
-         NetworkApi api = quantumContext.getApi().getNetworkApiForRegion(regionId);
+      for (String zoneId : quantumContext.getApi().getConfiguredZones()) {
+         NetworkApi api = quantumContext.getApi().getNetworkApiForZone(zoneId);
          Reference net = api.create("jclouds-test");
          assertNotNull(net);
 

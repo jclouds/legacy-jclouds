@@ -19,7 +19,6 @@
 package org.jclouds.fujitsu.fgcp.xml.internal;
 
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * Base class with fields for the elements that FGCP XML responses specify.
@@ -27,34 +26,34 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Dies Koper
  */
 public abstract class StatusResponse implements StatusQuerable {
-    @XmlElement(required = true)
-    private String responseMessage;
-    @XmlElement(required = true)
-    private String responseStatus;
+   @XmlElement(required = true)
+   private String responseMessage;
+   @XmlElement(required = true)
+   private String responseStatus;
 
-    public String getResponseMessage() {
-        return responseMessage;
-    }
+   public String getResponseMessage() {
+      return responseMessage;
+   }
 
-    public void setResponseMessage(String responseMessage) {
-        this.responseMessage = responseMessage;
-    }
+   public void setResponseMessage(String responseMessage) {
+      this.responseMessage = responseMessage;
+   }
 
-    public String getResponseStatus() {
-        return responseStatus;
-    }
+   public String getResponseStatus() {
+      return responseStatus;
+   }
 
-    public void setResponseStatus(String responseStatus) {
-        this.responseStatus = responseStatus;
-    }
+   public void setResponseStatus(String responseStatus) {
+      this.responseStatus = responseStatus;
+   }
 
-    public boolean isError() {
-        return !"SUCCESS".equals(responseStatus);
-    }
+   public boolean isError() {
+      return !"SUCCESS".equals(responseStatus);
+   }
 
-    @Override
-    public String toString() {
-        return "StatusResponse{" + "responseMessage='" + responseMessage + '\''
-                + ", responseStatus='" + responseStatus + '\'' + '}';
-    }
+   @Override
+   public String toString() {
+      return "StatusResponse{" + "responseMessage='" + responseMessage + '\''
+            + ", responseStatus='" + responseStatus + '\'' + '}';
+   }
 }

@@ -248,5 +248,4 @@ public interface CommonSwiftAsyncClient {
    @Headers(keys = "X-Object-Manifest", values="{container}/{name}")
    ListenableFuture<String> putObjectManifest(@PathParam("container") String container,
                                               @PathParam("name") String name);
-
 }

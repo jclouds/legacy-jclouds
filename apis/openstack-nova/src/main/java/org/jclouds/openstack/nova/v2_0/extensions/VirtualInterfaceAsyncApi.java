@@ -18,8 +18,6 @@
  */
 package org.jclouds.openstack.nova.v2_0.extensions;
 
-import java.util.Set;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -34,8 +32,10 @@ import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.SkipEncoding;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnEmptyFluentIterableOnNotFoundOr404;
 
+import com.google.common.annotations.Beta;
+import com.google.common.collect.FluentIterable;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -44,17 +44,18 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see VirtualInterfaceApi
  * @author Adam Lowe
  */
+@Beta
 @Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.VIRTUAL_INTERFACES)
 @SkipEncoding({'/', '='})
 @RequestFilters(AuthenticateRequest.class)
 public interface VirtualInterfaceAsyncApi {
    /**
-    * @see VirtualInterfaceApi#listVirtualInterfacesForServer(String)
+    * @see VirtualInterfaceApi#listOnServer(String)
     */
    @GET
    @SelectJson("virtual_interfaces")
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/servers/{server_id}/os-virtual-interfaces")
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<? extends Set<? extends VirtualInterface>> listVirtualInterfacesForServer(@PathParam("server_id") String serverId);
+   @ExceptionParser(ReturnEmptyFluentIterableOnNotFoundOr404.class)
+   ListenableFuture<? extends FluentIterable<? extends VirtualInterface>> listOnServer(@PathParam("server_id") String serverId);
 }

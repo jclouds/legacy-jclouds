@@ -24,12 +24,15 @@ package org.jclouds.openstack.swift.reference;
  */
 public interface SwiftHeaders {
 
+   public static final String ACCOUNT_TEMPORARY_URL_KEY = "X-Account-Meta-Temp-Url-Key";
    public static final String ACCOUNT_BYTES_USED = "X-Account-Bytes-Used";
    public static final String ACCOUNT_CONTAINER_COUNT = "X-Account-Container-Count";
+
    public static final String CONTAINER_BYTES_USED = "X-Container-Bytes-Used";
    public static final String CONTAINER_OBJECT_COUNT = "X-Container-Object-Count";
    public static final String CONTAINER_METADATA_PREFIX = "X-Container-Meta-";
    public static final String CONTAINER_DELETE_METADATA_PREFIX = "X-Remove-Container-Meta-";
+
    public static final String USER_METADATA_PREFIX = "X-Object-Meta-";
    public static final String OBJECT_COPY_FROM = "X-Copy-From";
    

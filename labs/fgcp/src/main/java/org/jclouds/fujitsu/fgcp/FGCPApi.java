@@ -40,30 +40,30 @@ import org.jclouds.rest.annotations.Delegate;
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface FGCPApi {
 
-    @Delegate
-    VirtualDCApi getVirtualDCApi();
+   @Delegate
+   VirtualDCApi getVirtualDCApi();
 
-    @Delegate
-    VirtualSystemApi getVirtualSystemApi();
+   @Delegate
+   VirtualSystemApi getVirtualSystemApi();
 
-    @Delegate
-    VirtualServerApi getVirtualServerApi();
+   @Delegate
+   VirtualServerApi getVirtualServerApi();
 
-    @Delegate
-    AdditionalDiskApi getAdditionalDiskApi();
+   @Delegate
+   AdditionalDiskApi getAdditionalDiskApi();
 
-    @Delegate
-    SystemTemplateApi getSystemTemplateApi();
+   @Delegate
+   SystemTemplateApi getSystemTemplateApi();
 
-    @Delegate
-    DiskImageApi getDiskImageApi();
+   @Delegate
+   DiskImageApi getDiskImageApi();
 
-    @Delegate
-    FirewallApi getFirewallApi();
+   @Delegate
+   FirewallApi getFirewallApi();
 
-    @Delegate
-    LoadBalancerApi getLoadBalancerApi();
+   @Delegate
+   LoadBalancerApi getLoadBalancerApi();
 
-    @Delegate
-    PublicIPAddressApi getPublicIPAddressApi();
+   @Delegate
+   PublicIPAddressApi getPublicIPAddressApi();
 }

@@ -18,8 +18,6 @@
  */
 package org.jclouds.openstack.nova.v2_0.extensions;
 
-import java.util.Set;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -34,9 +32,11 @@ import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.SkipEncoding;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnEmptyFluentIterableOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
+import com.google.common.annotations.Beta;
+import com.google.common.collect.FluentIterable;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -49,29 +49,30 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see <a href="http://nova.openstack.org/api_ext" />
  * @see <a href="http://nova.openstack.org/api/nova.api.openstack.compute.contrib.simple_tenant_usage.html" />
  */
+@Beta
 @Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.SIMPLE_TENANT_USAGE)
 @SkipEncoding({'/', '='})
 @RequestFilters(AuthenticateRequest.class)
 public interface SimpleTenantUsageAsyncApi {
 
    /**
-    * @see SimpleTenantUsageApi#listTenantUsages()
+    * @see SimpleTenantUsageApi#list()
     */
    @GET
    @Path("/os-simple-tenant-usage")
    @SelectJson("tenant_usages")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<? extends Set<? extends SimpleTenantUsage>> listTenantUsages();
+   @ExceptionParser(ReturnEmptyFluentIterableOnNotFoundOr404.class)
+   ListenableFuture<? extends FluentIterable<? extends SimpleTenantUsage>> list();
 
    /**
-    * @see SimpleTenantUsageApi#getTenantUsage(String)
+    * @see SimpleTenantUsageApi#get(String)
     */
    @GET
    @Path("/os-simple-tenant-usage/{id}")
    @SelectJson("tenant_usage")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<? extends SimpleTenantUsage> getTenantUsage(@PathParam("id") String tenantId);
+   ListenableFuture<? extends SimpleTenantUsage> get(@PathParam("id") String tenantId);
 
 }

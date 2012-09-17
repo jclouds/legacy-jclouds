@@ -27,8 +27,8 @@ import java.util.Map;
 import org.jclouds.openstack.nova.v2_0.features.FlavorApi;
 import org.jclouds.openstack.nova.v2_0.internal.BaseNovaApiLiveTest;
 import org.jclouds.openstack.v2_0.domain.Resource;
-import org.testng.annotations.AfterGroups;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Optional;
@@ -50,7 +50,7 @@ public class FlavorExtraSpecsApiLiveTest extends BaseNovaApiLiveTest {
    private Resource testFlavor;
    private Map<String, String> testSpecs = ImmutableMap.of("jclouds-test", "some data", "jclouds-test2", "more data!");
 
-   @BeforeGroups(groups = { "integration", "live" })
+   @BeforeClass(groups = {"integration", "live"})
    @Override
    public void setupContext() {
       super.setupContext();
@@ -59,29 +59,29 @@ public class FlavorExtraSpecsApiLiveTest extends BaseNovaApiLiveTest {
       apiOption = novaContext.getApi().getFlavorExtraSpecsExtensionForZone(zone);
    }
 
-   @AfterGroups(groups = "live")
+   @AfterClass(groups = { "integration", "live" })
    @Override
-   public void tearDown() {
+   protected void tearDownContext() {
       if (apiOption.isPresent() && testFlavor != null) {
          for(String key : testSpecs.keySet()) {
-            assertTrue(apiOption.get().deleteExtraSpec(testFlavor.getId(), key));
+            assertTrue(apiOption.get().deleteMetadataKey(testFlavor.getId(), key));
          }
       }
-      super.tearDown();
+      super.tearDownContext();
    }
 
    public void testCreateExtraSpecs() {
       if (apiOption.isPresent()) {
          FlavorExtraSpecsApi api = apiOption.get();
-         testFlavor = Iterables.getLast(flavorApi.listFlavors());
-         Map<String, String> before = api.getAllExtraSpecs(testFlavor.getId());
+         testFlavor = Iterables.getLast(flavorApi.list().concat());
+         Map<String, String> before = api.getMetadata(testFlavor.getId());
          assertNotNull(before);
          Map<String, String> specs = Maps.newHashMap(before);
          specs.putAll(testSpecs);
-         assertTrue(api.setAllExtraSpecs(testFlavor.getId(), specs));
-         assertEquals(api.getAllExtraSpecs(testFlavor.getId()), specs);
+         assertTrue(api.updateMetadata(testFlavor.getId(), specs));
+         assertEquals(api.getMetadata(testFlavor.getId()), specs);
          for (Map.Entry<String, String> entry : specs.entrySet()) {
-            assertEquals(api.getExtraSpec(testFlavor.getId(), entry.getKey()), entry.getValue());
+            assertEquals(api.getMetadataKey(testFlavor.getId(), entry.getKey()), entry.getValue());
          }
       }
    }
@@ -91,13 +91,13 @@ public class FlavorExtraSpecsApiLiveTest extends BaseNovaApiLiveTest {
       if (apiOption.isPresent()) {
          FlavorExtraSpecsApi api = apiOption.get();
          for (String key : testSpecs.keySet()) {
-            assertTrue(api.getAllExtraSpecs(testFlavor.getId()).containsKey(key));
+            assertTrue(api.getMetadata(testFlavor.getId()).containsKey(key));
          }
-         for (Resource flavor : flavorApi.listFlavors()) {
-            Map<String, String> specs = api.getAllExtraSpecs(flavor.getId());
+         for (Resource flavor : flavorApi.list().concat()) {
+            Map<String, String> specs = api.getMetadata(flavor.getId());
             assertNotNull(specs);
             for (Map.Entry<String, String> entry : specs.entrySet()) {
-               assertEquals(api.getExtraSpec(flavor.getId(), entry.getKey()), entry.getValue());
+               assertEquals(api.getMetadataKey(flavor.getId(), entry.getKey()), entry.getValue());
             }
          }
       }
@@ -108,16 +108,16 @@ public class FlavorExtraSpecsApiLiveTest extends BaseNovaApiLiveTest {
       if (apiOption.isPresent()) {
          FlavorExtraSpecsApi api = apiOption.get();
          for (String key : testSpecs.keySet()) {
-            assertTrue(api.setExtraSpec(testFlavor.getId(), key, "new value"));
+            assertTrue(api.updateMetadataEntry(testFlavor.getId(), key, "new value"));
          }
          for (String key : testSpecs.keySet()) {
-            assertEquals(api.getExtraSpec(testFlavor.getId(), key), "new value");
+            assertEquals(api.getMetadataKey(testFlavor.getId(), key), "new value");
          }
-         for (Resource flavor : flavorApi.listFlavors()) {
-            Map<String, String> specs = api.getAllExtraSpecs(flavor.getId());
+         for (Resource flavor : flavorApi.list().concat()) {
+            Map<String, String> specs = api.getMetadata(flavor.getId());
             assertNotNull(specs);
             for (Map.Entry<String, String> entry : specs.entrySet()) {
-               assertEquals(api.getExtraSpec(flavor.getId(), entry.getKey()), entry.getValue());
+               assertEquals(api.getMetadataKey(flavor.getId(), entry.getKey()), entry.getValue());
             }
          }
       }

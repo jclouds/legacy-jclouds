@@ -22,11 +22,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.beans.ConstructorProperties;
 import java.util.Date;
+import java.util.Set;
 
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Class NetworkOffering
@@ -57,7 +59,7 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
       protected TrafficType trafficType;
       protected GuestIPType guestIPType;
       protected int networkRate;
-      protected String tags;
+      protected ImmutableSet.Builder<String> tags = ImmutableSet.<String>builder();
 
       /**
        * @see NetworkOffering#getId()
@@ -146,17 +148,26 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
          this.networkRate = networkRate;
          return self();
       }
-
+      
       /**
        * @see NetworkOffering#getTags()
        */
-      public T tags(String tags) {
-         this.tags = tags;
+      public T tags(Iterable<String> tags) {
+         this.tags = ImmutableSet.<String>builder().addAll(tags);
          return self();
       }
+      
+      /**
+       * @see NetworkOffering#getTags()
+       */
+      public T tag(String tag) {
+         this.tags.add(tag);
+         return self();
+      }
+      
 
       public NetworkOffering build() {
-         return new NetworkOffering(id, name, displayText, created, availability, maxConnections, isDefault, supportsVLAN, trafficType, guestIPType, networkRate, tags);
+         return new NetworkOffering(id, name, displayText, created, availability, maxConnections, isDefault, supportsVLAN, trafficType, guestIPType, networkRate, tags.build());
       }
 
       public T fromNetworkOffering(NetworkOffering in) {
@@ -194,12 +205,12 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
    private final TrafficType trafficType;
    private final GuestIPType guestIPType;
    private final int networkRate;
-   private final String tags;
+   private final Set<String> tags;
 
    @ConstructorProperties({
          "id", "name", "displaytext", "created", "availability", "maxconnections", "isdefault", "specifyvlan", "traffictype", "guestiptype", "networkrate", "tags"
    })
-   protected NetworkOffering(String id, @Nullable String name, @Nullable String displayText, @Nullable Date created, @Nullable NetworkOfferingAvailabilityType availability, @Nullable Integer maxConnections, boolean isDefault, boolean supportsVLAN, @Nullable TrafficType trafficType, @Nullable GuestIPType guestIPType, int networkRate, @Nullable String tags) {
+   protected NetworkOffering(String id, @Nullable String name, @Nullable String displayText, @Nullable Date created, @Nullable NetworkOfferingAvailabilityType availability, @Nullable Integer maxConnections, boolean isDefault, boolean supportsVLAN, @Nullable TrafficType trafficType, @Nullable GuestIPType guestIPType, int networkRate, @Nullable Iterable<String> tags) {
       this.id = checkNotNull(id, "id");
       this.name = name;
       this.displayText = displayText;
@@ -211,7 +222,7 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
       this.trafficType = trafficType;
       this.guestIPType = guestIPType;
       this.networkRate = networkRate;
-      this.tags = tags;
+      this.tags = tags != null ? ImmutableSet.copyOf(tags) : ImmutableSet.<String> of();
    }
 
    /**
@@ -302,8 +313,7 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
    /**
     * @return the tags for the network offering
     */
-   @Nullable
-   public String getTags() {
+   public Set<String> getTags() {
       return this.tags;
    }
 

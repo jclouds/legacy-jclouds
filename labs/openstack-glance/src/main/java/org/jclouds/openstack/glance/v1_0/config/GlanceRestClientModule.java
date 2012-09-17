@@ -96,7 +96,7 @@ public class GlanceRestClientModule<S extends GlanceApi, A extends GlanceAsyncAp
             .build(new CacheLoader<String, Set<? extends Extension>>() {
                @Override
                public Set<? extends Extension> load(String key) throws Exception {
-                  return glanceApi.get().getExtensionApiForRegion(key).listExtensions();
+                  return glanceApi.get().getExtensionApiForZone(key).list();
                }
             });
    }

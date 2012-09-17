@@ -1,0 +1,2 @@
+<?xml version="1.0"?>
+<ListQueuesResponse xmlns="http://queue.amazonaws.com/doc/2011-10-01/"><ListQueuesResult><QueueUrl>https://eu-west-1.queue.amazonaws.com/993194456877/adriancole-sqs1</QueueUrl><QueueUrl>https://eu-west-1.queue.amazonaws.com/993194456877/adriancole-sqs111</QueueUrl></ListQueuesResult><ResponseMetadata><RequestId>313c81c8-e345-4c75-ad57-ce4d9d5ff35a</RequestId></ResponseMetadata></ListQueuesResponse>

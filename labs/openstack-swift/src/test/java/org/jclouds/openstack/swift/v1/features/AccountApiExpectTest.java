@@ -23,12 +23,9 @@ import static org.testng.Assert.assertEquals;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.swift.v1.SwiftApi;
-import org.jclouds.openstack.swift.v1.domain.AccountMetadata;
+import org.jclouds.openstack.swift.v1.domain.Account;
 import org.jclouds.openstack.swift.v1.internal.BaseSwiftApiExpectTest;
-import org.jclouds.openstack.swift.v1.parse.ParseContainerListTest;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
  * @author Adrian Cole
@@ -38,59 +35,23 @@ public class AccountApiExpectTest extends BaseSwiftApiExpectTest {
    
    public void testGetAccountMetadataWhenResponseIs2xx() throws Exception {
 
-      HttpRequest getAccountMetadata = HttpRequest
+      HttpRequest get = HttpRequest
             .builder()
             .method("HEAD")
             .endpoint("https://objects.jclouds.org/v1.0/40806637803162/")
             .addHeader("X-Auth-Token", authToken).build();
 
-      HttpResponse listContainersResponse = HttpResponse.builder().statusCode(204)
+      HttpResponse listResponse = HttpResponse.builder().statusCode(204)
             .addHeader("X-Account-Container-Count", "3")
             .addHeader("X-Account-Bytes-Used", "323479").build();
 
-      SwiftApi apiWhenContainersExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
-            responseWithKeystoneAccess, getAccountMetadata, listContainersResponse);
+      SwiftApi apiWhenExists = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+            responseWithKeystoneAccess, get, listResponse);
 
       assertEquals(
-            apiWhenContainersExist.getAccountApiForRegion("region-a.geo-1").getAccountMetadata(),
-            AccountMetadata.builder().containerCount(3).bytesUsed(323479).build());
+            apiWhenExists.getAccountApiForRegion("region-a.geo-1").get(),
+            Account.builder().containerCount(3).bytesUsed(323479).build());
    }
    
-   public void testListContainersWhenResponseIs2xx() throws Exception {
-
-      HttpRequest listContainers = HttpRequest
-            .builder()
-            .method("GET")
-            .endpoint("https://objects.jclouds.org/v1.0/40806637803162/?format=json")
-            .addHeader("Accept", "application/json")
-            .addHeader("X-Auth-Token", authToken).build();
-
-      HttpResponse listContainersResponse = HttpResponse.builder().statusCode(200)
-            .payload(payloadFromResource("/container_list.json")).build();
-
-      SwiftApi apiWhenContainersExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
-            responseWithKeystoneAccess, listContainers, listContainersResponse);
-
-      assertEquals(
-            apiWhenContainersExist.getAccountApiForRegion("region-a.geo-1").listContainers()
-                  .toString(), new ParseContainerListTest().expected().toString());
-   }
-
-   public void testListContainersWhenResponseIs404() throws Exception {
-      HttpRequest listContainers = HttpRequest
-            .builder()
-            .method("GET")
-            .endpoint("https://objects.jclouds.org/v1.0/40806637803162/?format=json")
-            .addHeader("Accept", "application/json")
-            .addHeader("X-Auth-Token", authToken).build();
-
-      HttpResponse listContainersResponse = HttpResponse.builder().statusCode(404).build();
-
-      SwiftApi apiWhenNoContainersExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
-            responseWithKeystoneAccess, listContainers, listContainersResponse);
-
-      assertEquals(apiWhenNoContainersExist.getAccountApiForRegion("region-a.geo-1").listContainers(), ImmutableSet.of());
-
-   }
 
 }

@@ -32,22 +32,22 @@ import com.google.common.collect.ImmutableSet;
  */
 @XmlRootElement(name = "errorstatistics")
 public class ErrorStatistics {
-    private Period period;
-    private Set<Group> groups = new LinkedHashSet<Group>();
+   private Period period;
+   private Set<Group> groups = new LinkedHashSet<Group>();
 
-    /**
-     * @return the period
-     */
-    public Period getPeriod() {
-        return period;
-    }
+   /**
+    * @return the period
+    */
+   public Period getPeriod() {
+      return period;
+   }
 
-    /**
-     * @return the groups
-     */
-    public Set<Group> getGroups() {
-        return groups == null ? ImmutableSet.<Group> of() : ImmutableSet
-                .copyOf(groups);
-    }
+   /**
+    * @return the groups
+    */
+   public Set<Group> getGroups() {
+      return groups == null ? ImmutableSet.<Group> of() : ImmutableSet
+            .copyOf(groups);
+   }
 
 }

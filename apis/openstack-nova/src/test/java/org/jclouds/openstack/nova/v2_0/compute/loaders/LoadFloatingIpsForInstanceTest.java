@@ -34,6 +34,7 @@ import org.jclouds.openstack.nova.v2_0.extensions.FloatingIPApi;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -49,7 +50,8 @@ public class LoadFloatingIpsForInstanceTest {
       FloatingIP testIp = FloatingIP.builder().id("1").ip("1.1.1.1").fixedIp("10.1.1.1").instanceId("i-blah").build();
 
       expect(api.getFloatingIPExtensionForZone("Zone")).andReturn((Optional) Optional.of(ipApi)).atLeastOnce();
-      expect(ipApi.listFloatingIPs()).andReturn((Set) ImmutableSet.<FloatingIP>of(testIp)).atLeastOnce();
+      expect(ipApi.list()).andReturn((FluentIterable) FluentIterable.from(ImmutableSet.<FloatingIP> of(testIp)))
+               .atLeastOnce();
 
       replay(api);
       replay(ipApi);
@@ -69,7 +71,8 @@ public class LoadFloatingIpsForInstanceTest {
 
       expect(api.getFloatingIPExtensionForZone("Zone")).andReturn((Optional) Optional.of(ipApi)).atLeastOnce();
 
-      expect(ipApi.listFloatingIPs()).andReturn((Set) ImmutableSet.<FloatingIP>of()).atLeastOnce();
+      expect(ipApi.list()).andReturn((FluentIterable) FluentIterable.from(ImmutableSet.<FloatingIP> of()))
+      .atLeastOnce();
 
       replay(api);
       replay(ipApi);
@@ -90,9 +93,8 @@ public class LoadFloatingIpsForInstanceTest {
 
       expect(api.getFloatingIPExtensionForZone("Zone")).andReturn((Optional) Optional.of(ipApi)).atLeastOnce();
 
-      expect(ipApi.listFloatingIPs()).andReturn(
-            (Set) ImmutableSet.<FloatingIP>of(FloatingIP.builder().id("1").ip("1.1.1.1").build()))
-            .atLeastOnce();
+      expect(ipApi.list()).andReturn((FluentIterable) FluentIterable.from(ImmutableSet.<FloatingIP> of(FloatingIP.builder().id("1").ip("1.1.1.1").build())))
+      .atLeastOnce();
 
       replay(api);
       replay(ipApi);

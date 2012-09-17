@@ -34,7 +34,6 @@
     <modules>
        <module>virtualbox</module>
        <module>vcloud-director</module>
-       <module>glesys</module>
        <module>opsource-servers</module>
        <module>elb</module>
        <module>aws-elb</module>
@@ -61,5 +60,6 @@
        <module>fgcp</module>
        <module>fgcp-au</module>
        <module>fgcp-de</module>
+       <module>abiquo</module>
     </modules>
 </project>

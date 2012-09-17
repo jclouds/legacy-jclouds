@@ -18,9 +18,22 @@
  */
 package org.jclouds.openstack.swift.v1.features;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.MediaType;
+
 import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
+import org.jclouds.openstack.swift.v1.domain.Container;
+import org.jclouds.openstack.swift.v1.options.ListContainersOptions;
+import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SkipEncoding;
+import org.jclouds.rest.functions.ReturnEmptyFluentIterableOnNotFoundOr404;
+
+import com.google.common.collect.FluentIterable;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Storage Container Services
@@ -35,4 +48,23 @@ import org.jclouds.rest.annotations.SkipEncoding;
 @RequestFilters(AuthenticateRequest.class)
 public interface ContainerAsyncApi {
 
+   /**
+    * @see ContainerApi#list()
+    */
+   @GET
+   @Consumes(MediaType.APPLICATION_JSON)
+   @QueryParams(keys = "format", values = "json")
+   @ExceptionParser(ReturnEmptyFluentIterableOnNotFoundOr404.class)
+   @Path("/")
+   ListenableFuture<? extends FluentIterable<? extends Container>> list();
+
+   /**
+    * @see ContainerApi#list(ListContainersOptions)
+    */
+   @GET
+   @Consumes(MediaType.APPLICATION_JSON)
+   @QueryParams(keys = "format", values = "json")
+   @ExceptionParser(ReturnEmptyFluentIterableOnNotFoundOr404.class)
+   @Path("/")
+   ListenableFuture<? extends FluentIterable<? extends Container>> list(ListContainersOptions options);
 }

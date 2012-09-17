@@ -29,92 +29,92 @@ import com.google.common.base.Objects;
  */
 @XmlRootElement(name = "ccacert")
 public class IntermediateCACert implements Comparable<IntermediateCACert> {
-    private int ccacertNum;
+   private int ccacertNum;
 
-    private String description;
+   private String description;
 
-    private String subject;
+   private String subject;
 
-    private String issuer;
+   private String issuer;
 
-    private String validity;
+   private String validity;
 
-    private String detail;
+   private String detail;
 
-    /**
-     * @return the ccacertNum
-     */
-    public int getCcacertNum() {
-        return ccacertNum;
-    }
+   /**
+    * @return the ccacertNum
+    */
+   public int getCcacertNum() {
+      return ccacertNum;
+   }
 
-    /**
-     * @return the description
-     */
-    public String getDescription() {
-        return description;
-    }
+   /**
+    * @return the description
+    */
+   public String getDescription() {
+      return description;
+   }
 
-    /**
-     * @return the subject
-     */
-    public String getSubject() {
-        return subject;
-    }
+   /**
+    * @return the subject
+    */
+   public String getSubject() {
+      return subject;
+   }
 
-    /**
-     * @return the issuer
-     */
-    public String getIssuer() {
-        return issuer;
-    }
+   /**
+    * @return the issuer
+    */
+   public String getIssuer() {
+      return issuer;
+   }
 
-    /**
-     * @return the validity
-     */
-    public String getValidity() {
-        return validity;
-    }
+   /**
+    * @return the validity
+    */
+   public String getValidity() {
+      return validity;
+   }
 
-    /**
-     * @return the detail
-     */
-    public String getDetail() {
-        return detail;
-    }
+   /**
+    * @return the detail
+    */
+   public String getDetail() {
+      return detail;
+   }
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(ccacertNum, issuer, subject, validity);
-    }
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(ccacertNum, issuer, subject, validity);
+   }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        IntermediateCACert that = IntermediateCACert.class.cast(obj);
-        return Objects.equal(this.ccacertNum, that.ccacertNum)
-                && Objects.equal(this.issuer, that.issuer)
-                && Objects.equal(this.subject, that.subject)
-                && Objects.equal(this.validity, that.validity);
-    }
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      IntermediateCACert that = IntermediateCACert.class.cast(obj);
+      return Objects.equal(this.ccacertNum, that.ccacertNum)
+            && Objects.equal(this.issuer, that.issuer)
+            && Objects.equal(this.subject, that.subject)
+            && Objects.equal(this.validity, that.validity);
+   }
 
-    @Override
-    public String toString() {
-        return Objects.toStringHelper(this).omitNullValues()
-                .add("ccacertNum", ccacertNum).add("issuer", issuer)
-                .add("subject", subject).add("validity", validity)
-                .add("description", description).add("detail", detail)
-                .toString();
-    }
+   @Override
+   public String toString() {
+      return Objects.toStringHelper(this).omitNullValues()
+            .add("ccacertNum", ccacertNum).add("issuer", issuer)
+            .add("subject", subject).add("validity", validity)
+            .add("description", description).add("detail", detail)
+            .toString();
+   }
 
-    @Override
-    public int compareTo(IntermediateCACert o) {
-        return ccacertNum - o.ccacertNum;
-    }
+   @Override
+   public int compareTo(IntermediateCACert o) {
+      return ccacertNum - o.ccacertNum;
+   }
 
 }

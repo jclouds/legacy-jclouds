@@ -36,7 +36,7 @@ import com.google.common.io.Closeables;
 public class SoftLayerExperimentLiveTest extends BaseComputeServiceContextLiveTest {
 
    public SoftLayerExperimentLiveTest() {
-      provider = "glesys";
+      provider = "softlayer";
    }
 
    @Test

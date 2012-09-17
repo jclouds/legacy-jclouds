@@ -36,38 +36,38 @@ import org.jclouds.fujitsu.fgcp.domain.BuiltinServerStatus;
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface BuiltinServerApi {
 
-    void start(String id);
+   void start(String id);
 
-    void stop(String id);
+   void stop(String id);
 
-    void destroy(String id);
+   void destroy(String id);
 
-    void backup(String id);
+   void backup(String id);
 
-    void restore(String id, String backupId);
+   void restore(String id, String backupId);
 
-    Set<BuiltinServerBackup> listBackups(String id);
+   Set<BuiltinServerBackup> listBackups(String id);
 
-    void destroyBackup(String id, String backupId);
+   void destroyBackup(String id, String backupId);
 
-    BuiltinServer get(String id);
+   BuiltinServer get(String id);
 
-    void update(String id, String name, String value);
+   void update(String id, String name, String value);
 
-    BuiltinServerStatus getStatus(String id);
+   BuiltinServerStatus getStatus(String id);
 
-    BuiltinServer getConfiguration(String id, BuiltinServerConfiguration configuration);
+   BuiltinServer getConfiguration(String id, BuiltinServerConfiguration configuration);
 
-    //    BuiltinServer getConfiguration(String id, BuiltinServerConfiguration configuration, ConfigurationRequest request);
-    // void updateConfiguration(String id, xml?);
-    /*
+   //   BuiltinServer getConfiguration(String id, BuiltinServerConfiguration configuration, ConfigurationRequest request);
+   // void updateConfiguration(String id, xml?);
+   /*
 getDNSConfiguration(String id)
 getNATConfiguration(String id)
 getPolicyConfiguration(String id)
 getLBConfiguration(String id)
 
-     *    UpdateEFMConfiguration
-    BuiltinServer getConfiguration(String id, BuiltinServerConfiguration configuration);
+    *   UpdateEFMConfiguration
+   BuiltinServer getConfiguration(String id, BuiltinServerConfiguration configuration);
 
-     */
+    */
 }

@@ -33,13 +33,13 @@ import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.config.BlobStoreMapModule;
-import org.jclouds.hpcloud.objectstorage.HPCloudObjectStorageClient;
+import org.jclouds.hpcloud.objectstorage.HPCloudObjectStorageApi;
 import org.jclouds.hpcloud.objectstorage.blobstore.HPCloudObjectStorageAsyncBlobStore;
 import org.jclouds.hpcloud.objectstorage.blobstore.HPCloudObjectStorageBlobRequestSigner;
 import org.jclouds.hpcloud.objectstorage.blobstore.HPCloudObjectStorageBlobStore;
 import org.jclouds.hpcloud.objectstorage.blobstore.functions.HPCloudObjectStorageObjectToBlobMetadata;
-import org.jclouds.hpcloud.objectstorage.domain.ContainerCDNMetadata;
-import org.jclouds.hpcloud.objectstorage.extensions.HPCloudCDNClient;
+import org.jclouds.hpcloud.objectstorage.domain.CDNContainer;
+import org.jclouds.hpcloud.objectstorage.extensions.CDNContainerApi;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.Logger;
 import org.jclouds.openstack.swift.blobstore.config.SwiftBlobStoreContextModule;
@@ -64,19 +64,19 @@ public class HPCloudObjectStorageBlobStoreContextModule extends SwiftBlobStoreCo
      @Resource
      protected Logger logger = Logger.NULL;
 
-     private final HPCloudObjectStorageClient client;
+     private final HPCloudObjectStorageApi client;
 
       @Inject
-      public GetCDNMetadata(HPCloudObjectStorageClient client) {
+      public GetCDNMetadata(HPCloudObjectStorageApi client) {
          this.client = client;
       }
 
       @Override
       public URI load(String container) {
-         Optional<HPCloudCDNClient> cdnExtension = client.getCDNExtension();
+         Optional<CDNContainerApi> cdnExtension = client.getCDNExtension();
          checkArgument(cdnExtension.isPresent(), "CDN is required, but the extension is not available!");
          try {
-            ContainerCDNMetadata md = cdnExtension.get().getCDNMetadata(container);
+            CDNContainer md = cdnExtension.get().get(container);
             return md != null ? md.getCDNUri() : null;
          } catch (HttpResponseException e) {
             // TODO: this is due to beta status
@@ -90,7 +90,7 @@ public class HPCloudObjectStorageBlobStoreContextModule extends SwiftBlobStoreCo
 
       @Override
       public String toString() {
-         return "getCDNMetadata()";
+         return "get()";
       }
    }
 

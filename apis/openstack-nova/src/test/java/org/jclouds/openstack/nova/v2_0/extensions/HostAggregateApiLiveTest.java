@@ -28,8 +28,8 @@ import java.util.Set;
 import org.jclouds.openstack.nova.v2_0.domain.Host;
 import org.jclouds.openstack.nova.v2_0.domain.HostAggregate;
 import org.jclouds.openstack.nova.v2_0.internal.BaseNovaApiLiveTest;
-import org.testng.annotations.AfterGroups;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Optional;
@@ -49,7 +49,7 @@ public class HostAggregateApiLiveTest extends BaseNovaApiLiveTest {
 
    private HostAggregate testAggregate;
 
-   @BeforeGroups(groups = {"integration", "live"})
+   @BeforeClass(groups = {"integration", "live"})
    @Override
    public void setupContext() {
       super.setupContext();
@@ -58,19 +58,19 @@ public class HostAggregateApiLiveTest extends BaseNovaApiLiveTest {
       hostAdminOption = novaContext.getApi().getHostAdministrationExtensionForZone(zone);
    }
 
+   @AfterClass(groups = { "integration", "live" })
    @Override
-   @AfterGroups(groups = {"integration", "live"})
-   public void tearDown() {
+   protected void tearDownContext() {
       if (testAggregate != null) {
-         assertTrue(apiOption.get().deleteAggregate(testAggregate.getId()));
+         assertTrue(apiOption.get().delete(testAggregate.getId()));
       }
-      super.tearDown();
+      super.tearDownContext();
    }
 
    public void testCreateAggregate() {
       if (apiOption.isPresent()) {
          // TODO assuming "nova" availability zone is present
-         testAggregate = apiOption.get().createAggregate("jclouds-test-a", "nova");
+         testAggregate = apiOption.get().createInAvailabilityZone("jclouds-test-a", "nova");
       }
    }
 
@@ -78,13 +78,13 @@ public class HostAggregateApiLiveTest extends BaseNovaApiLiveTest {
    public void testListAndGetAggregate() {
       if (apiOption.isPresent()) {
          HostAggregateApi api = apiOption.get();
-         Set<? extends HostAggregate> aggregates = api.listAggregates();
+         Set<? extends HostAggregate> aggregates = api.list().toImmutableSet();
          for (HostAggregate aggregate : aggregates) {
             assertNotNull(aggregate.getId());
             assertNotNull(aggregate.getName());
             assertNotNull(aggregate.getAvailabilityZone());
 
-            HostAggregate details = api.getAggregate(aggregate.getId());
+            HostAggregate details = api.get(aggregate.getId());
             assertEquals(details.getId(), aggregate.getId());
             assertEquals(details.getName(), aggregate.getName());
             assertEquals(details.getAvailabilityZone(), aggregate.getAvailabilityZone());
@@ -110,7 +110,7 @@ public class HostAggregateApiLiveTest extends BaseNovaApiLiveTest {
             }
 
             // Re-fetch to double-check
-            details = api.getAggregate(testAggregate.getId());
+            details = api.get(testAggregate.getId());
             for (String key : theMetaData.keySet()) {
                assertEquals(details.getMetadata().get(key), theMetaData.get(key));
             }
@@ -123,7 +123,7 @@ public class HostAggregateApiLiveTest extends BaseNovaApiLiveTest {
    public void testModifyHosts() {
       if (apiOption.isPresent() && hostAdminOption.isPresent()) {
          HostAggregateApi api = apiOption.get();
-         Host host = Iterables.getFirst(hostAdminOption.get().listHosts(), null);
+         Host host = Iterables.getFirst(hostAdminOption.get().list(), null);
          assertNotNull(host);
 
          String host_id = host.getName();
@@ -136,7 +136,7 @@ public class HostAggregateApiLiveTest extends BaseNovaApiLiveTest {
             assertEquals(details.getHosts(), ImmutableSet.of(host_id));
 
             // re-fetch to double-check
-            details = api.getAggregate(testAggregate.getId());
+            details = api.get(testAggregate.getId());
             assertEquals(details.getHosts(), ImmutableSet.of(host_id));
 
             // TODO wait until status of aggregate isn't CHANGING (hostAdministration.shutdown?)

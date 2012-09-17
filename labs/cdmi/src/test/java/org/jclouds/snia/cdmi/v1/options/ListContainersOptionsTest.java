@@ -40,6 +40,7 @@ public class ListContainersOptionsTest {
       assert HttpRequestOptions.class.isAssignableFrom(ListContainersOptions.class);
       assert !String.class.isAssignableFrom(ListContainersOptions.class);
    }
+
    @Test
    public void testNoOptionsQueryString() {
       HttpRequestOptions options = new ListContainersOptions();

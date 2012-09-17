@@ -23,6 +23,7 @@ import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.cloudstack.compute.config.CloudStackComputeServiceContextModule;
+import org.jclouds.cloudstack.config.CloudStackParserModule;
 import org.jclouds.cloudstack.config.CloudStackRestClientModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
@@ -91,7 +92,10 @@ public class CloudStackApiMetadata extends BaseRestApiMetadata {
          .version("2.2")
          .view(TypeToken.of(CloudStackContext.class))
          .defaultProperties(CloudStackApiMetadata.defaultProperties())
-         .defaultModules(ImmutableSet.<Class<? extends Module>>of(CloudStackRestClientModule.class, CloudStackComputeServiceContextModule.class));
+         .defaultModules(ImmutableSet.<Class<? extends Module>> builder()
+                                     .add(CloudStackParserModule.class)
+                                     .add(CloudStackRestClientModule.class)
+                                     .add(CloudStackComputeServiceContextModule.class).build());
       }
       
       @Override

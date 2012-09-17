@@ -34,43 +34,43 @@ import org.testng.annotations.Test;
 @Test(groups = "live", enabled = true, singleThreaded = true, testName = "VirtualDCApiLiveTest")
 public class VirtualDCApiLiveTest extends BaseFGCPApiLiveTest {
 
-    private VirtualDCApi api;
+   private VirtualDCApi api;
 
-    @BeforeGroups(groups = { "live" })
-    public void setupContext() {
-        super.setupContext();
-        api = fgcpContext.getApi().getVirtualDCApi();
-    }
+   @BeforeGroups(groups = { "live" })
+   public void setupContext() {
+      super.setupContext();
+      api = fgcpContext.getApi().getVirtualDCApi();
+   }
 
-    public void testListVirtualSystems() {
-/*        Properties overrides = setupProperties();
-        RestContext<FGCPClient, FGCPAsyncClientTest> context = new RestContextFactory().createContext(provider, ImmutableSet.<Module> of(new Log4JLoggingModule()),
-                overrides);*/
+   public void testListVirtualSystems() {
+/*      Properties overrides = setupProperties();
+      RestContext<FGCPClient, FGCPAsyncClientTest> context = new RestContextFactory().createContext(provider, ImmutableSet.<Module> of(new Log4JLoggingModule()),
+            overrides);*/
 
-        Set<VSystem> vsysSet = api.listVirtualSystems();
-        assertNotNull(vsysSet, "vsysSet");
-        assertTrue(vsysSet.size() > 0, "vsysSet.size() should be greater than 0");
-        for (VSystem vsys : vsysSet) {
-            System.out.println(vsys);
-        }
-    }
+      Set<VSystem> vsysSet = api.listVirtualSystems();
+      assertNotNull(vsysSet, "vsysSet");
+      assertTrue(vsysSet.size() > 0, "vsysSet.size() should be greater than 0");
+      for (VSystem vsys : vsysSet) {
+         System.out.println(vsys);
+      }
+   }
 
-/*    public void testCreateVirtualSystem() {
-        String vsysId = api.createVirtualSystem("abc", "def");
+/*   public void testCreateVirtualSystem() {
+      String vsysId = api.createVirtualSystem("abc", "def");
 
-        assertNotNull(vsysId, "vsysId");
-        assertFalse(vsysId.equals(""), "vsysId is empty (\"\")");
-        System.out.println("vsysId: " + vsysId);
-    }*/
+      assertNotNull(vsysId, "vsysId");
+      assertFalse(vsysId.equals(""), "vsysId is empty (\"\")");
+      System.out.println("vsysId: " + vsysId);
+   }*/
 
-    public void testListServerTypes() {
-        Set<ServerType> serverTypes = api.listServerTypes();
+   public void testListServerTypes() {
+      Set<ServerType> serverTypes = api.listServerTypes();
 
-        assertNotNull(serverTypes, "serverTypes");
-        assertTrue(serverTypes.size() == 4, "serverTypes.size should return 4, not " + serverTypes.size());
+      assertNotNull(serverTypes, "serverTypes");
+      assertTrue(serverTypes.size() == 4, "serverTypes.size should return 4, not " + serverTypes.size());
 
-//        System.out.println("listServerTypes: " + serverTypes);
-    }
+//      System.out.println("listServerTypes: " + serverTypes);
+   }
 
 
 

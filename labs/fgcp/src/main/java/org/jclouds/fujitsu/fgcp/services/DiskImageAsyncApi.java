@@ -51,23 +51,23 @@ import com.google.common.util.concurrent.ListenableFuture;
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface DiskImageAsyncApi {
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "GetDiskImageAttributes")
-    @Transform(SingleElementResponseToElement.class)
-    ListenableFuture<DiskImage> get(@QueryParam("diskImageId") String id);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "GetDiskImageAttributes")
+   @Transform(SingleElementResponseToElement.class)
+   ListenableFuture<DiskImage> get(@QueryParam("diskImageId") String id);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "UpdateDiskImageAttribute")
-    ListenableFuture<Void> update(
-            @QueryParam("diskImageId") String diskImageId,
-            @QueryParam("updateLcId") String localeId,
-            @QueryParam("attributeName") String name,
-            @QueryParam("attributeValue") String value);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "UpdateDiskImageAttribute")
+   ListenableFuture<Void> update(
+         @QueryParam("diskImageId") String diskImageId,
+         @QueryParam("updateLcId") String localeId,
+         @QueryParam("attributeName") String name,
+         @QueryParam("attributeValue") String value);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "UnregisterDiskImage")
-    ListenableFuture<Void> deregister(@QueryParam("diskImageId") String id);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "UnregisterDiskImage")
+   ListenableFuture<Void> deregister(@QueryParam("diskImageId") String id);
 }

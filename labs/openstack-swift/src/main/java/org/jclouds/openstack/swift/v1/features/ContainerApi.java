@@ -21,6 +21,10 @@ package org.jclouds.openstack.swift.v1.features;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.openstack.swift.v1.domain.Container;
+import org.jclouds.openstack.swift.v1.options.ListContainersOptions;
+
+import com.google.common.collect.FluentIterable;
 
 /**
  * Storage Container Services
@@ -33,5 +37,20 @@ import org.jclouds.concurrent.Timeout;
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface ContainerApi {
+
+   /**
+    * @see #list(ListContainersOptions)
+    */
+   FluentIterable<? extends Container> list();
+
+   /**
+    * retrieve a list of existing storage containers ordered by name. The sort order for the name is
+    * based on a binary comparison, a single built-in collating sequence that compares string data
+    * using SQLite's memcmp() function, regardless of text encoding.
+    * 
+    * @param options
+    * @return a list of existing storage containers ordered by name.
+    */
+   FluentIterable<? extends Container> list(ListContainersOptions options);
 
 }

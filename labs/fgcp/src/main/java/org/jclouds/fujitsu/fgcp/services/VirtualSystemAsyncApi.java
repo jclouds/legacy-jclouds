@@ -60,115 +60,115 @@ import com.google.common.util.concurrent.ListenableFuture;
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface VirtualSystemAsyncApi {
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "DestroyVSYS")
-    ListenableFuture<Void> destroy(@QueryParam("vsysId") String id);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "DestroyVSYS")
+   ListenableFuture<Void> destroy(@QueryParam("vsysId") String id);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "GetVSYSStatus")
-    @Transform(SingleElementResponseToElement.class)
-    ListenableFuture<VSystemStatus> getStatus(@QueryParam("vsysId") String id);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "GetVSYSStatus")
+   @Transform(SingleElementResponseToElement.class)
+   ListenableFuture<VSystemStatus> getStatus(@QueryParam("vsysId") String id);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "GetVSYSAttributes")
-    @Transform(SingleElementResponseToElement.class)
-    ListenableFuture<VSystem> get(@QueryParam("vsysId") String id);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "GetVSYSAttributes")
+   @Transform(SingleElementResponseToElement.class)
+   ListenableFuture<VSystem> get(@QueryParam("vsysId") String id);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "GetVSYSConfiguration")
-    @Transform(SingleElementResponseToElement.class)
-    ListenableFuture<VSystemWithDetails> getDetails(
-            @QueryParam("vsysId") String id);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "GetVSYSConfiguration")
+   @Transform(SingleElementResponseToElement.class)
+   ListenableFuture<VSystemWithDetails> getDetails(
+         @QueryParam("vsysId") String id);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "UpdateVSYSAttribute")
-    ListenableFuture<Void> update(@QueryParam("vsysId") String id,
-            @QueryParam("attributeName") String name,
-            @QueryParam("attributeValue") String value);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "UpdateVSYSAttribute")
+   ListenableFuture<Void> update(@QueryParam("vsysId") String id,
+         @QueryParam("attributeName") String name,
+         @QueryParam("attributeValue") String value);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "UpdateVSYSConfiguration")
-    ListenableFuture<Void> updateConfiguration(@QueryParam("vsysId") String id,
-            @QueryParam("configurationName") String name,
-            @QueryParam("configurationValue") String value);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "UpdateVSYSConfiguration")
+   ListenableFuture<Void> updateConfiguration(@QueryParam("vsysId") String id,
+         @QueryParam("configurationName") String name,
+         @QueryParam("configurationValue") String value);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "CreateVServer")
-    @Transform(SingleElementResponseToElement.class)
-    ListenableFuture<String> createServer(
-            @QueryParam("vserverName") String name,
-            @QueryParam("vserverType") String type,
-            @QueryParam("diskImageId") String diskImageId,
-            @BinderParam(BindAlsoToSystemId.class) @QueryParam("networkId") String networkId);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "CreateVServer")
+   @Transform(SingleElementResponseToElement.class)
+   ListenableFuture<String> createServer(
+         @QueryParam("vserverName") String name,
+         @QueryParam("vserverType") String type,
+         @QueryParam("diskImageId") String diskImageId,
+         @BinderParam(BindAlsoToSystemId.class) @QueryParam("networkId") String networkId);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "ListVServer")
-    ListenableFuture<Set<VServer>> listServers(@QueryParam("vsysId") String id);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "ListVServer")
+   ListenableFuture<Set<VServer>> listServers(@QueryParam("vsysId") String id);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "CreateVDisk")
-    @Transform(SingleElementResponseToElement.class)
-    ListenableFuture<String> createDisk(@QueryParam("vsysId") String id,
-            @QueryParam("vdiskName") String name, @QueryParam("size") int size);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "CreateVDisk")
+   @Transform(SingleElementResponseToElement.class)
+   ListenableFuture<String> createDisk(@QueryParam("vsysId") String id,
+         @QueryParam("vdiskName") String name, @QueryParam("size") int size);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "ListVDisk")
-    ListenableFuture<Set<VDisk>> listDisks(@QueryParam("vsysId") String id);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "ListVDisk")
+   ListenableFuture<Set<VDisk>> listDisks(@QueryParam("vsysId") String id);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "AllocatePublicIP")
-    ListenableFuture<Void> allocatePublicIP(@QueryParam("vsysId") String id);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "AllocatePublicIP")
+   ListenableFuture<Void> allocatePublicIP(@QueryParam("vsysId") String id);
 
-    /**
-     *
-     * @return
-     * @see VirtualDCAsyncApi#listPublicIPs()
-     */
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "ListPublicIP")
-    @Transform(SingleElementResponseToElement.class)
-    ListenableFuture<Set<PublicIP>> listPublicIPs(
-            @QueryParam("vsysId") String id);
+   /**
+    *
+    * @return
+    * @see VirtualDCAsyncApi#listPublicIPs()
+    */
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "ListPublicIP")
+   @Transform(SingleElementResponseToElement.class)
+   ListenableFuture<Set<PublicIP>> listPublicIPs(
+         @QueryParam("vsysId") String id);
 
-    @GET
-    @JAXBResponseParser
-    // SLB is the only built-in server that can currently be created so
-    // hard-code it
-    @QueryParams(keys = { "Action", "efmType" }, values = { "CreateEFM", "SLB" })
-    @Transform(SingleElementResponseToElement.class)
-    ListenableFuture<String> createBuiltinServer(
-            @QueryParam("efmName") String name,
-            @BinderParam(BindAlsoToSystemId.class) @QueryParam("networkId") String networkId);
+   @GET
+   @JAXBResponseParser
+   // SLB is the only built-in server that can currently be created so
+   // hard-code it
+   @QueryParams(keys = { "Action", "efmType" }, values = { "CreateEFM", "SLB" })
+   @Transform(SingleElementResponseToElement.class)
+   ListenableFuture<String> createBuiltinServer(
+         @QueryParam("efmName") String name,
+         @BinderParam(BindAlsoToSystemId.class) @QueryParam("networkId") String networkId);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "ListEFM")
-    ListenableFuture<Set<BuiltinServer>> listBuiltinServers(
-            @QueryParam("vsysId") String id, @QueryParam("efmType") String type);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "ListEFM")
+   ListenableFuture<Set<BuiltinServer>> listBuiltinServers(
+         @QueryParam("vsysId") String id, @QueryParam("efmType") String type);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "StandByConsole")
-    @Transform(SingleElementResponseToElement.class)
-    ListenableFuture<String> standByConsole(@QueryParam("vsysId") String id,
-            @QueryParam("networkId") String networkId);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "StandByConsole")
+   @Transform(SingleElementResponseToElement.class)
+   ListenableFuture<String> standByConsole(@QueryParam("vsysId") String id,
+         @QueryParam("networkId") String networkId);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "RegisterPrivateVSYSDescriptor")
-    ListenableFuture<Void> registerAsPrivateVSYSDescriptor(
-            @QueryParam("vsysId") String id,
-            @QueryParam("vsysDescriptorXMLFilePath") String vsysDescriptorXMLFilePath);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "RegisterPrivateVSYSDescriptor")
+   ListenableFuture<Void> registerAsPrivateVSYSDescriptor(
+         @QueryParam("vsysId") String id,
+         @QueryParam("vsysDescriptorXMLFilePath") String vsysDescriptorXMLFilePath);
 }

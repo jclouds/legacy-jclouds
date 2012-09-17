@@ -44,10 +44,8 @@ import org.jclouds.fujitsu.fgcp.compute.functions.ResourceIdToSystemId;
 import org.jclouds.fujitsu.fgcp.compute.predicates.ServerStopped;
 import org.jclouds.fujitsu.fgcp.compute.predicates.SystemStatusNormal;
 import org.jclouds.fujitsu.fgcp.compute.strategy.VServerMetadata.Builder;
-import org.jclouds.fujitsu.fgcp.domain.BuiltinServerConfiguration;
 import org.jclouds.fujitsu.fgcp.domain.DiskImage;
 import org.jclouds.fujitsu.fgcp.domain.ServerType;
-import org.jclouds.fujitsu.fgcp.domain.VServer;
 import org.jclouds.fujitsu.fgcp.domain.VServerStatus;
 import org.jclouds.fujitsu.fgcp.domain.VServerWithDetails;
 import org.jclouds.fujitsu.fgcp.domain.VServerWithVNICs;
@@ -59,7 +57,6 @@ import org.jclouds.predicates.RetryablePredicate;
 import com.google.common.base.Predicate;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -72,223 +69,223 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 @Singleton
 public class FGCPComputeServiceAdapter implements
-        ComputeServiceAdapter<VServerMetadata, ServerType, DiskImage, Location> {
+      ComputeServiceAdapter<VServerMetadata, ServerType, DiskImage, Location> {
 
-    @Resource
-    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
-    protected Logger logger = Logger.NULL;
+   @Resource
+   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
+   protected Logger logger = Logger.NULL;
 
-    private final FGCPApi api;
-    private final FGCPAsyncApi asyncApi;
-    protected Predicate<String> serverStopped = null;
-    protected Predicate<String> serverCreated = null;
-    protected Predicate<String> systemNormal = null;
-    protected ResourceIdToFirewallId toFirewallId = null;
-    protected ResourceIdToSystemId toSystemId = null;
+   private final FGCPApi api;
+   private final FGCPAsyncApi asyncApi;
+   protected Predicate<String> serverStopped = null;
+   protected Predicate<String> serverCreated = null;
+   protected Predicate<String> systemNormal = null;
+   protected ResourceIdToFirewallId toFirewallId = null;
+   protected ResourceIdToSystemId toSystemId = null;
 
-    @Inject
-    public FGCPComputeServiceAdapter(FGCPApi api, FGCPAsyncApi asyncApi,
-            ServerStopped serverStopped, SystemStatusNormal systemNormal,
-            Timeouts timeouts, ResourceIdToFirewallId toFirewallId,
-            ResourceIdToSystemId toSystemId) {
-        this.api = checkNotNull(api, "api");
-        this.asyncApi = checkNotNull(asyncApi, "asyncApi");
-        this.serverStopped = new RetryablePredicate<String>(
-                checkNotNull(serverStopped), timeouts.nodeSuspended);
-        this.serverCreated = new RetryablePredicate<String>(
-                checkNotNull(serverStopped), timeouts.nodeRunning);
-        this.systemNormal = new RetryablePredicate<String>(
-                checkNotNull(systemNormal), timeouts.nodeTerminated);
-        this.toFirewallId = checkNotNull(toFirewallId, "ResourceIdToFirewallId");
-        this.toSystemId = checkNotNull(toSystemId, "ResourceIdToSystemId");
-    }
+   @Inject
+   public FGCPComputeServiceAdapter(FGCPApi api, FGCPAsyncApi asyncApi,
+         ServerStopped serverStopped, SystemStatusNormal systemNormal,
+         Timeouts timeouts, ResourceIdToFirewallId toFirewallId,
+         ResourceIdToSystemId toSystemId) {
+      this.api = checkNotNull(api, "api");
+      this.asyncApi = checkNotNull(asyncApi, "asyncApi");
+      this.serverStopped = new RetryablePredicate<String>(
+            checkNotNull(serverStopped), timeouts.nodeSuspended);
+      this.serverCreated = new RetryablePredicate<String>(
+            checkNotNull(serverStopped), timeouts.nodeRunning);
+      this.systemNormal = new RetryablePredicate<String>(
+            checkNotNull(systemNormal), timeouts.nodeTerminated);
+      this.toFirewallId = checkNotNull(toFirewallId, "ResourceIdToFirewallId");
+      this.toSystemId = checkNotNull(toSystemId, "ResourceIdToSystemId");
+   }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public NodeAndInitialCredentials<VServerMetadata> createNodeWithGroupEncodedIntoName(
-            String group, String name, Template template) {
-        // Find vsys (how? create new? default to first found?)
-        // Target network DMZ/SECURE1/SECURE2 (how? default to DMZ?)
-        // Determine remaining params: [vserverType,diskImageId,networkId]
-        // what if no vsys exists yet? Location.AU(.contractId) creates 3? tier
-        // skeleton vsys and DMZ is picked?
-        String id = api.getVirtualSystemApi().createServer(name,
-                template.getHardware().getName(), template.getImage().getId(),
-                template.getLocation().getId());
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public NodeAndInitialCredentials<VServerMetadata> createNodeWithGroupEncodedIntoName(
+         String group, String name, Template template) {
+      // Find vsys (how? create new? default to first found?)
+      // Target network DMZ/SECURE1/SECURE2 (how? default to DMZ?)
+      // Determine remaining params: [vserverType,diskImageId,networkId]
+      // what if no vsys exists yet? Location.AU(.contractId) creates 3? tier
+      // skeleton vsys and DMZ is picked?
+      String id = api.getVirtualSystemApi().createServer(name,
+            template.getHardware().getName(), template.getImage().getId(),
+            template.getLocation().getId());
 
-        // wait until fully created (i.e. transitions to stopped status)
-        serverCreated.apply(id);
-        resumeNode(id);
-        VServerMetadata server = getNode(id);
+      // wait until fully created (i.e. transitions to stopped status)
+      serverCreated.apply(id);
+      resumeNode(id);
+      VServerMetadata server = getNode(id);
 
-        //do we need this?
-        server.setTemplate(template);
-        String user = template.getImage().getOperatingSystem().getFamily() == OsFamily.WINDOWS ? "Administrator"
-                : "root";
+      //do we need this?
+      server.setTemplate(template);
+      String user = template.getImage().getOperatingSystem().getFamily() == OsFamily.WINDOWS ? "Administrator"
+            : "root";
 
-        return new NodeAndInitialCredentials<VServerMetadata>(server,
-                id, LoginCredentials.builder().identity(user)
-                        .password(server.getInitialPassword()).build());
-    }
+      return new NodeAndInitialCredentials<VServerMetadata>(server,
+            id, LoginCredentials.builder().identity(user)
+                  .password(server.getInitialPassword()).build());
+   }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Iterable<ServerType> listHardwareProfiles() {
-        return api.getVirtualDCApi().listServerTypes();
-    }
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Iterable<ServerType> listHardwareProfiles() {
+      return api.getVirtualDCApi().listServerTypes();
+   }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Iterable<DiskImage> listImages() {
-        return api.getVirtualDCApi().listDiskImages();
-    }
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Iterable<DiskImage> listImages() {
+      return api.getVirtualDCApi().listDiskImages();
+   }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public DiskImage getImage(String id) {
-        return api.getDiskImageApi().get(id);
-    }
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public DiskImage getImage(String id) {
+      return api.getDiskImageApi().get(id);
+   }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Iterable<Location> listLocations() {
-        // Not using the adapter to determine locations
-        // see SystemAndNetworkSegmentToLocationSupplier
-        return ImmutableSet.<Location> of();
-    }
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Iterable<Location> listLocations() {
+      // Not using the adapter to determine locations
+      // see SystemAndNetworkSegmentToLocationSupplier
+      return ImmutableSet.<Location> of();
+   }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public VServerMetadata getNode(String id) {
-        Builder builder = VServerMetadata.builder();
-        builder.id(id);
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public VServerMetadata getNode(String id) {
+      Builder builder = VServerMetadata.builder();
+      builder.id(id);
 
-        List<ListenableFuture<?>> futures = new ArrayList<ListenableFuture<?>>();
+      List<ListenableFuture<?>> futures = new ArrayList<ListenableFuture<?>>();
 
-        futures.add(asyncApi.getVirtualServerApi().getDetails(id));
-        futures.add(asyncApi.getVirtualServerApi().getStatus(id));
-        futures.add(asyncApi.getVirtualServerApi().getInitialPassword(id));
-        // mapped public ips?
-        String fwId = toFirewallId.apply(id);
-//        futures.add(asyncApi.getBuiltinServerApi().getConfiguration(fwId,
-//                BuiltinServerConfiguration.SLB_RULE));
-        try {
-            List<Object> results = Futures.successfulAsList(futures).get();
-            VServerWithDetails server = (VServerWithDetails) results.get(0);
-            VServerStatus status = (VServerStatus) results.get(1);
-            System.out.println("getNode(" + id + ")'s getDetails: " + status +" - " + server);
-            if (server == null) {
-                server = api.getVirtualServerApi().getDetails(id);
-                System.out.println("getNode(" + id + ")'s getDetails(2) returns: " + server);
+      futures.add(asyncApi.getVirtualServerApi().getDetails(id));
+      futures.add(asyncApi.getVirtualServerApi().getStatus(id));
+      futures.add(asyncApi.getVirtualServerApi().getInitialPassword(id));
+      // mapped public ips?
+      String fwId = toFirewallId.apply(id);
+//      futures.add(asyncApi.getBuiltinServerApi().getConfiguration(fwId,
+//            BuiltinServerConfiguration.SLB_RULE));
+      try {
+         List<Object> results = Futures.successfulAsList(futures).get();
+         VServerWithDetails server = (VServerWithDetails) results.get(0);
+         VServerStatus status = (VServerStatus) results.get(1);
+         System.out.println("getNode(" + id + ")'s getDetails: " + status +" - " + server);
+         if (server == null) {
+            server = api.getVirtualServerApi().getDetails(id);
+            System.out.println("getNode(" + id + ")'s getDetails(2) returns: " + server);
+         }
+         builder.serverWithDetails(server);
+         builder.status(status == null ? VServerStatus.UNRECOGNIZED : status);
+//         System.out.println("status in adapter#getNode: " 
+//         + (VServerStatus) results.get(1) 
+//         +" for " 
+//         + server.getId());
+         builder.initialPassword((String) results.get(2));
+//         SLB slb = ((BuiltinServer) results.get(4)).;
+//         slb.
+      } catch (InterruptedException e) {
+         throw Throwables.propagate(e);
+      } catch (ExecutionException e) {
+         throw Throwables.propagate(e);
+      }
+      return builder.build();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Iterable<VServerMetadata> listNodes() {
+      ImmutableSet.Builder<VServerMetadata> servers = ImmutableSet
+            .<VServerMetadata> builder();
+
+      Set<VSystem> systems = api.getVirtualDCApi().listVirtualSystems();
+      List<ListenableFuture<VSystemWithDetails>> futures = new ArrayList<ListenableFuture<VSystemWithDetails>>();
+      for (VSystem system : systems) {
+
+         futures.add(asyncApi.getVirtualSystemApi().getDetails(
+               system.getId()));
+      }
+      try {
+         for (VSystemWithDetails system : Futures.successfulAsList(futures)
+               .get()) {
+
+            if (system != null) {
+
+               for (VServerWithVNICs server : system.getServers()) {
+
+                  // skip FW (S-0001) and SLBs (>0 for SLB)
+                  if (!server.getId().endsWith("-S-0001") && server.getVnics().iterator().next().getNicNo() == 0) {
+
+                     servers.add(getNode(server.getId()));
+//                    Builder builder = VServerMetadata.builder();
+//                    builder.server(server);
+//                    builder.status(VServerStatus.UNRECOGNIZED);
+//                    servers.add(builder.build());
+                  }
+               }
             }
-            builder.serverWithDetails(server);
-            builder.status(status == null ? VServerStatus.UNRECOGNIZED : status);
-//            System.out.println("status in adapter#getNode: " 
-//            + (VServerStatus) results.get(1) 
-//            +" for " 
-//            + server.getId());
-            builder.initialPassword((String) results.get(2));
-//            SLB slb = ((BuiltinServer) results.get(4)).;
-//            slb.
-        } catch (InterruptedException e) {
-            throw Throwables.propagate(e);
-        } catch (ExecutionException e) {
-            throw Throwables.propagate(e);
-        }
-        return builder.build();
-    }
+         }
+      } catch (InterruptedException e) {
+         throw Throwables.propagate(e);
+      } catch (ExecutionException e) {
+         throw Throwables.propagate(e);
+      }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Iterable<VServerMetadata> listNodes() {
-        ImmutableSet.Builder<VServerMetadata> servers = ImmutableSet
-                .<VServerMetadata> builder();
+      return servers.build();
+   }
 
-        Set<VSystem> systems = api.getVirtualDCApi().listVirtualSystems();
-        List<ListenableFuture<VSystemWithDetails>> futures = new ArrayList<ListenableFuture<VSystemWithDetails>>();
-        for (VSystem system : systems) {
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void destroyNode(String id) {
+      api.getVirtualServerApi().destroy(id);
+      // wait until fully destroyed
+      String systemId = toSystemId.apply(id);
+      systemNormal.apply(systemId);
+   }
 
-            futures.add(asyncApi.getVirtualSystemApi().getDetails(
-                    system.getId()));
-        }
-        try {
-            for (VSystemWithDetails system : Futures.successfulAsList(futures)
-                    .get()) {
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void rebootNode(String id) {
+      suspendNode(id);
+      // wait until fully stopped
+      serverStopped.apply(id);
+      resumeNode(id);
+   }
 
-                if (system != null) {
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void resumeNode(String id) {
+      api.getVirtualServerApi().start(id);
+   }
 
-                    for (VServerWithVNICs server : system.getServers()) {
-
-                        // skip FW (S-0001) and SLBs (>0 for SLB)
-                        if (!server.getId().endsWith("-S-0001") && server.getVnics().iterator().next().getNicNo() == 0) {
-
-                            servers.add(getNode(server.getId()));
-//                          Builder builder = VServerMetadata.builder();
-//                          builder.server(server);
-//                          builder.status(VServerStatus.UNRECOGNIZED);
-//                          servers.add(builder.build());
-                        }
-                    }
-                }
-            }
-        } catch (InterruptedException e) {
-            throw Throwables.propagate(e);
-        } catch (ExecutionException e) {
-            throw Throwables.propagate(e);
-        }
-
-        return servers.build();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void destroyNode(String id) {
-        api.getVirtualServerApi().destroy(id);
-        // wait until fully destroyed
-        String systemId = toSystemId.apply(id);
-        systemNormal.apply(systemId);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void rebootNode(String id) {
-        suspendNode(id);
-        // wait until fully stopped
-        serverStopped.apply(id);
-        resumeNode(id);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void resumeNode(String id) {
-        api.getVirtualServerApi().start(id);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void suspendNode(String id) {
-        api.getVirtualServerApi().stop(id);
-    }
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void suspendNode(String id) {
+      api.getVirtualServerApi().stop(id);
+   }
 }

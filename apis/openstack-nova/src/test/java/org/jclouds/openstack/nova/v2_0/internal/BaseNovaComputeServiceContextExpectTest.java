@@ -39,12 +39,12 @@ import com.google.inject.Module;
 public abstract class BaseNovaComputeServiceContextExpectTest<T> extends BaseNovaExpectTest<T> implements
          Function<ComputeServiceContext, T> {
    
-   protected final HttpRequest listImagesDetail = HttpRequest.builder().method("GET").endpoint(
+   protected final HttpRequest listDetail = HttpRequest.builder().method("GET").endpoint(
             URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/images/detail")).headers(
             ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
                      authToken).build()).build();
 
-   protected final HttpResponse listImagesDetailResponse = HttpResponse.builder().statusCode(200).payload(
+   protected final HttpResponse listDetailResponse = HttpResponse.builder().statusCode(200).payload(
             payloadFromResource("/image_list_detail.json")).build();
 
    protected final HttpRequest listFlavorsDetail = HttpRequest.builder().method("GET").endpoint(

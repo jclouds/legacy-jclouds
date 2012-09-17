@@ -39,140 +39,140 @@ import com.google.common.collect.ImmutableSet;
  */
 public class VServerMetadata {
 
-    protected VServer server;
-    protected String id;
-    protected String name;
-    protected Template template;
-    protected String initialPassword;
-    protected VServerStatus status = VServerStatus.UNRECOGNIZED;
-    protected Set<PublicIP> ips;
-    protected DiskImage image;
+   protected VServer server;
+   protected String id;
+   protected String name;
+   protected Template template;
+   protected String initialPassword;
+   protected VServerStatus status = VServerStatus.UNRECOGNIZED;
+   protected Set<PublicIP> ips;
+   protected DiskImage image;
 
-    public VServerMetadata(VServer server, String initialPassword,
-            VServerStatus status, DiskImage image, Set<PublicIP> publicIps) {
-        this.server = checkNotNull(server, "server");
-        this.initialPassword = initialPassword;
-        this.status = status;
-        this.image = image;
-        this.ips = publicIps;
-        id = server.getId();
-        name = server.getName();
-    }
+   public VServerMetadata(VServer server, String initialPassword,
+         VServerStatus status, DiskImage image, Set<PublicIP> publicIps) {
+      this.server = checkNotNull(server, "server");
+      this.initialPassword = initialPassword;
+      this.status = status;
+      this.image = image;
+      this.ips = publicIps;
+      id = server.getId();
+      name = server.getName();
+   }
 
-    public VServerMetadata(String id, String name, Template template,
-            VServerStatus status) {
-        this.id = checkNotNull(id, "id");
-        this.name = checkNotNull(name, "name");
-        this.template = checkNotNull(template, "template");
-        this.status = checkNotNull(status, "status");
-    }
+   public VServerMetadata(String id, String name, Template template,
+         VServerStatus status) {
+      this.id = checkNotNull(id, "id");
+      this.name = checkNotNull(name, "name");
+      this.template = checkNotNull(template, "template");
+      this.status = checkNotNull(status, "status");
+   }
 
-    public VServer getServer() {
-        return server;
-    }
+   public VServer getServer() {
+      return server;
+   }
 
-    public String getId() {
-        return id;
-    }
+   public String getId() {
+      return id;
+   }
 
-    public String getName() {
-        return name;
-    }
+   public String getName() {
+      return name;
+   }
 
-    public Template getTemplate() {
-        return template;
-    }
+   public Template getTemplate() {
+      return template;
+   }
 
-    public void setTemplate(Template template) {
-        this.template = template;
-    }
+   public void setTemplate(Template template) {
+      this.template = template;
+   }
 
-    public String getInitialPassword() {
-        return initialPassword;
-    }
+   public String getInitialPassword() {
+      return initialPassword;
+   }
 
-    public VServerStatus getStatus() {
-        return status;
-    }
+   public VServerStatus getStatus() {
+      return status;
+   }
 
-    public Set<PublicIP> getIps() {
-        return ips;
-    }
+   public Set<PublicIP> getIps() {
+      return ips;
+   }
 
-    public static Builder builder() {
-        return new Builder();
-    }
+   public static Builder builder() {
+      return new Builder();
+   }
 
-    public static class Builder {
-        private VServer server;
-        private VServerWithVNICs serverWithDetails;
-        private String id;
-        private String name;
-        private Template template;
-        private String initialPassword;
-        private VServerStatus status = VServerStatus.UNRECOGNIZED;
-        private Set<PublicIP> publicIps = ImmutableSet.of();
-        private DiskImage image;
+   public static class Builder {
+      private VServer server;
+      private VServerWithVNICs serverWithDetails;
+      private String id;
+      private String name;
+      private Template template;
+      private String initialPassword;
+      private VServerStatus status = VServerStatus.UNRECOGNIZED;
+      private Set<PublicIP> publicIps = ImmutableSet.of();
+      private DiskImage image;
 
-        public Builder id(String id) {
-            this.id = id;
-            return this;
-        }
+      public Builder id(String id) {
+         this.id = id;
+         return this;
+      }
 
-        public Builder name(String name) {
-            this.name = name;
-            return this;
-        }
+      public Builder name(String name) {
+         this.name = name;
+         return this;
+      }
 
-        public Builder template(Template template) {
-            this.template = template;
-            return this;
-        }
+      public Builder template(Template template) {
+         this.template = template;
+         return this;
+      }
 
-//        public Builder server(VServer server) {
-//            this.server = server;
-//            return this;
-//        }
+//      public Builder server(VServer server) {
+//         this.server = server;
+//         return this;
+//      }
 
-        public Builder serverWithDetails(VServerWithVNICs serverWithDetails) {
-            this.serverWithDetails = serverWithDetails;
-            return this;
-        }
+      public Builder serverWithDetails(VServerWithVNICs serverWithDetails) {
+         this.serverWithDetails = serverWithDetails;
+         return this;
+      }
 
-        public Builder initialPassword(String password) {
-            this.initialPassword = password;
-            return this;
-        }
+      public Builder initialPassword(String password) {
+         this.initialPassword = password;
+         return this;
+      }
 
-        public Builder status(VServerStatus status) {
-            this.status = status;
-            return this;
-        }
+      public Builder status(VServerStatus status) {
+         this.status = status;
+         return this;
+      }
 
-        public Builder image(DiskImage image) {
-            this.image = image;
-            return this;
-        }
+      public Builder image(DiskImage image) {
+         this.image = image;
+         return this;
+      }
 
-        public Builder publicIps(Set<PublicIP> publicIps) {
-            this.publicIps = publicIps;
-            return this;
-        }
+      public Builder publicIps(Set<PublicIP> publicIps) {
+         this.publicIps = publicIps;
+         return this;
+      }
 
-        public VServerMetadata build() {
-            if (initialPassword == null) initialPassword = "";
-            if (server != null) {
-                return new VServerMetadata(server, initialPassword, status,
-                        image, publicIps);
-            } else if (serverWithDetails != null) {
-                return new VServerMetadata(serverWithDetails, initialPassword,
-                        status, image, publicIps);
-            } else {
-                // sometimes these fields are null because the server is returning a verify error
-                if (id == null) id = "dummy-id";
-                if (name == null) name = "dummy-name";
-                return new VServerMetadata(id, name, template, status);
-            }
-        }
-    }
+      public VServerMetadata build() {
+         if (initialPassword == null) initialPassword = "";
+         if (server != null) {
+            return new VServerMetadata(server, initialPassword, status,
+                  image, publicIps);
+         } else if (serverWithDetails != null) {
+            return new VServerMetadata(serverWithDetails, initialPassword,
+                  status, image, publicIps);
+         } else {
+            // sometimes these fields are null because the server is returning a verify error
+            if (id == null) id = "dummy-id";
+            if (name == null) name = "dummy-name";
+            return new VServerMetadata(id, name, template, status);
+         }
+      }
+   }
 }

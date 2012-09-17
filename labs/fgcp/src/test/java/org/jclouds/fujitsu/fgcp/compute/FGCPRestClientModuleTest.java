@@ -18,15 +18,8 @@
  */
 package org.jclouds.fujitsu.fgcp.compute;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import org.jclouds.crypto.Crypto;
-import org.jclouds.fujitsu.fgcp.FGCPApiMetadata;
+import static org.testng.Assert.assertNotNull;
 
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
-
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.security.KeyStore;
@@ -34,9 +27,13 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.Scanner;
 
-import static org.testng.Assert.*;
+import org.jclouds.crypto.Crypto;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 /**
  * @author Dies Koper
@@ -44,55 +41,55 @@ import static org.testng.Assert.*;
 @Test(groups = "unit", testName = "FGCPRestClientModuleTest")
 public class FGCPRestClientModuleTest {
 
-    protected FGCPRestClientModule module;
-    protected Crypto crypto;
+   protected FGCPRestClientModule module;
+   protected Crypto crypto;
 
-    @BeforeTest
-    protected void createCrypto() {
-        Injector i = Guice.createInjector();
-        crypto = i.getInstance(Crypto.class);
-    }
+   @BeforeTest
+   protected void createCrypto() {
+      Injector i = Guice.createInjector();
+      crypto = i.getInstance(Crypto.class);
+   }
 
-    @BeforeTest
-    protected void createRestClientModule() {
-        Injector i = Guice.createInjector();
-        module = i.getInstance(FGCPRestClientModule.class);
-    }
+   @BeforeTest
+   protected void createRestClientModule() {
+      Injector i = Guice.createInjector();
+      module = i.getInstance(FGCPRestClientModule.class);
+   }
 
-    public void testKeyStoreAsPkcs12() throws IOException, InvalidKeySpecException, NoSuchAlgorithmException, KeyStoreException, CertificateException {
-        assertNotNull(crypto);
-        assertNotNull(module);
+   public void testKeyStoreAsPkcs12() throws IOException, InvalidKeySpecException, NoSuchAlgorithmException, KeyStoreException, CertificateException {
+      assertNotNull(crypto);
+      assertNotNull(module);
 
-        // self-signed dummy cert:
-        // keytool -genkey -alias test-fgcp -keyalg RSA -keysize 1024 -validity 5475 -dname "CN=localhost" -keystore jclouds-test-fgcp.p12 -storepass jcloudsjclouds -storetype pkcs12
-        String cert = "/certs/jclouds-test-fgcp.p12";
-        String keyPassword = "jcloudsjclouds";
+      // self-signed dummy cert:
+      // keytool -genkey -alias test-fgcp -keyalg RSA -keysize 1024 -validity 5475 -dname "CN=localhost" -keystore jclouds-test-fgcp.p12 -storepass jcloudsjclouds -storetype pkcs12
+      String cert = "/certs/jclouds-test-fgcp.p12";
+      String keyPassword = "jcloudsjclouds";
 
-        URL url = this.getClass().getResource(cert);
-        String certPath = url.getFile();
+      URL url = this.getClass().getResource(cert);
+      String certPath = url.getFile();
 
-        KeyStore ks = module.provideKeyStore(crypto, certPath, keyPassword);
+      KeyStore ks = module.provideKeyStore(crypto, certPath, keyPassword);
 
-        assertNotNull(ks.getCertificate("test-fgcp"), "cert with alias");
-    }
+      assertNotNull(ks.getCertificate("test-fgcp"), "cert with alias");
+   }
 
-/*    public void testKeyStoreAsPEM() throws IOException, InvalidKeySpecException, NoSuchAlgorithmException, KeyStoreException, CertificateException {
-        assertNotNull(crypto);
-        assertNotNull(module);
+/*   public void testKeyStoreAsPEM() throws IOException, InvalidKeySpecException, NoSuchAlgorithmException, KeyStoreException, CertificateException {
+      assertNotNull(crypto);
+      assertNotNull(module);
 
-        //openssl pkcs12 -nodes -in jclouds-test-fgcp.p12 -out jclouds-test-fgcp.pem
-//        String privKeyFilename = "D:\\UserCert.pem.pkcs12-nodes";//_nobags";
-        String cert = "/certs/jclouds-test-fgcp.pem";
-        String keyPassword = "jcloudsjclouds";
+      //openssl pkcs12 -nodes -in jclouds-test-fgcp.p12 -out jclouds-test-fgcp.pem
+//      String privKeyFilename = "D:\\UserCert.pem.pkcs12-nodes";//_nobags";
+      String cert = "/certs/jclouds-test-fgcp.pem";
+      String keyPassword = "jcloudsjclouds";
 
-        URL url = this.getClass().getResource(cert);
-        String certPath = url.getFile();
-        Scanner scanner = new Scanner(new File(certPath));
-        String content = scanner.useDelimiter("\\A").next();
+      URL url = this.getClass().getResource(cert);
+      String certPath = url.getFile();
+      Scanner scanner = new Scanner(new File(certPath));
+      String content = scanner.useDelimiter("\\A").next();
 
-        KeyStore ks = module.provideKeyStore(crypto, content, keyPassword);
+      KeyStore ks = module.provideKeyStore(crypto, content, keyPassword);
 
-        assertNotNull(ks.getCertificate("test-fgcp"), "cert with alias");
-    }
+      assertNotNull(ks.getCertificate("test-fgcp"), "cert with alias");
+   }
 */
 }

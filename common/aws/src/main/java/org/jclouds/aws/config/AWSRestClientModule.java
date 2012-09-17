@@ -20,6 +20,9 @@ package org.jclouds.aws.config;
 
 
 import java.util.Map;
+import java.util.Set;
+
+import javax.inject.Singleton;
 
 import org.jclouds.aws.handlers.AWSClientErrorRetryHandler;
 import org.jclouds.aws.handlers.ParseAWSErrorFromXmlContent;
@@ -31,7 +34,9 @@ import org.jclouds.http.annotation.ServerError;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
+import com.google.inject.Provides;
 
 
 /**
@@ -55,6 +60,13 @@ public abstract class AWSRestClientModule<S, A> extends RestClientModule<S, A> {
    protected AWSRestClientModule(TypeToken<S> syncClientType, TypeToken<A> asyncClientType,
             Map<Class<?>, Class<?>> sync2Async) {
       super(syncClientType, asyncClientType, sync2Async);
+   }
+   
+   @Provides
+   @ClientError
+   @Singleton
+   protected Set<String> provideRetryableCodes(){
+      return ImmutableSet.of("RequestTimeout", "OperationAborted", "SignatureDoesNotMatch");
    }
    
    @Override

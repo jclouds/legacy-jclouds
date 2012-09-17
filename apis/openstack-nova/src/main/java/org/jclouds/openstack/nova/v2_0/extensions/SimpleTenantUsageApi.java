@@ -18,13 +18,15 @@
  */
 package org.jclouds.openstack.nova.v2_0.extensions;
 
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.nova.v2_0.domain.SimpleTenantUsage;
 import org.jclouds.openstack.v2_0.ServiceType;
 import org.jclouds.openstack.v2_0.services.Extension;
+
+import com.google.common.annotations.Beta;
+import com.google.common.collect.FluentIterable;
 
 /**
  * Provides asynchronous access to Simple Tenant Usage via the REST API.
@@ -33,6 +35,7 @@ import org.jclouds.openstack.v2_0.services.Extension;
  * @author Adam Lowe
  * @see SimpleTenantUsageAsyncApi
  */
+@Beta
 @Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.SIMPLE_TENANT_USAGE)
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface SimpleTenantUsageApi {
@@ -42,12 +45,12 @@ public interface SimpleTenantUsageApi {
     *
     * @return the set of TenantUsage reports
     */
-   Set<? extends SimpleTenantUsage> listTenantUsages();
+   FluentIterable<? extends SimpleTenantUsage> list();
 
    /**
     * Retrieve tenant_usage for a specified tenant
     *
     * @return the requested tenant usage
     */
-   SimpleTenantUsage getTenantUsage(String tenantId);
+   SimpleTenantUsage get(String tenantId);
 }

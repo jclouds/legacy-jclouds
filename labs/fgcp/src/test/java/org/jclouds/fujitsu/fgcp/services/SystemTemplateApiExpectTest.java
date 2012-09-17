@@ -18,10 +18,8 @@
  */
 package org.jclouds.fujitsu.fgcp.services;
 
-import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
-import org.jclouds.fujitsu.fgcp.domain.VSystem;
 import org.jclouds.fujitsu.fgcp.domain.VSystemDescriptor;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
@@ -33,71 +31,71 @@ import org.testng.annotations.Test;
 @Test(groups = "unit", testName = "SystemTemplateApiExpectTest", singleThreaded = true)
 public class SystemTemplateApiExpectTest extends BaseFGCPRestApiExpectTest {
 
-    public void testGet() {
-        HttpRequest request = buildGETWithQuery("Action=GetVSYSDescriptorConfiguration"
-                + "&vsysDescriptorId=3-tier%20Skeleton");
-        HttpResponse response = HttpResponse
-                .builder()
-                .statusCode(200)
-                .payload(
-                        payloadFromResource("/GetVSYSDescriptorConfiguration-response.xml"))
-                .build();
-        SystemTemplateApi client = requestSendsResponse(request, response)
-                .getSystemTemplateApi();
+   public void testGet() {
+      HttpRequest request = buildGETWithQuery("Action=GetVSYSDescriptorConfiguration"
+            + "&vsysDescriptorId=3-tier%20Skeleton");
+      HttpResponse response = HttpResponse
+            .builder()
+            .statusCode(200)
+            .payload(
+                  payloadFromResource("/GetVSYSDescriptorConfiguration-response.xml"))
+            .build();
+      SystemTemplateApi client = requestSendsResponse(request, response)
+            .getSystemTemplateApi();
 
-        VSystemDescriptor desc = client.get("3-tier Skeleton");
-        assertNotNull(desc, "desc");
-//        assertEquals(desc.)
-    }
+      VSystemDescriptor desc = client.get("3-tier Skeleton");
+      assertNotNull(desc, "desc");
+//      assertEquals(desc.)
+   }
 
 
-    public void testUpdate() {
-        HttpRequest request = buildGETWithQuery("Action=UpdateVSYSDescriptorAttribute"
-                + "&vsysDescriptorId=3-tier%20Skeleton" + "&attributeName=updateName"
-                + "&updateLcId=en"
-                + "&attributeValue=new-name");
-        HttpResponse response = HttpResponse
-                .builder()
-                .statusCode(200)
-                .payload(
-                        payloadFromResource("/UpdateVSYSDescriptorAttribute-response.xml"))
-                .build();
+   public void testUpdate() {
+      HttpRequest request = buildGETWithQuery("Action=UpdateVSYSDescriptorAttribute"
+            + "&vsysDescriptorId=3-tier%20Skeleton" + "&attributeName=updateName"
+            + "&updateLcId=en"
+            + "&attributeValue=new-name");
+      HttpResponse response = HttpResponse
+            .builder()
+            .statusCode(200)
+            .payload(
+                  payloadFromResource("/UpdateVSYSDescriptorAttribute-response.xml"))
+            .build();
 
-        SystemTemplateApi api = requestSendsResponse(request, response)
-                .getSystemTemplateApi();
+      SystemTemplateApi api = requestSendsResponse(request, response)
+            .getSystemTemplateApi();
 
-        api.update("3-tier Skeleton", "en", "updateName", "new-name");
-    }
+      api.update("3-tier Skeleton", "en", "updateName", "new-name");
+   }
 
-    public void testDeregister() {
-        HttpRequest request = buildGETWithQuery("Action=UnregisterVSYSDescriptor"
-                + "&vsysDescriptorId=3-tier%20Skeleton");
-        HttpResponse response = HttpResponse
-                .builder()
-                .statusCode(200)
-                .payload(
-                        payloadFromResource("/UnregisterVSYSDescriptor-response.xml"))
-                .build();
+   public void testDeregister() {
+      HttpRequest request = buildGETWithQuery("Action=UnregisterVSYSDescriptor"
+            + "&vsysDescriptorId=3-tier%20Skeleton");
+      HttpResponse response = HttpResponse
+            .builder()
+            .statusCode(200)
+            .payload(
+                  payloadFromResource("/UnregisterVSYSDescriptor-response.xml"))
+            .build();
 
-        SystemTemplateApi api = requestSendsResponse(request, response)
-                .getSystemTemplateApi();
+      SystemTemplateApi api = requestSendsResponse(request, response)
+            .getSystemTemplateApi();
 
-        api.deregister("3-tier Skeleton");
-    }
+      api.deregister("3-tier Skeleton");
+   }
 
-    public void testDeregisterPrivateTemplate() {
-        HttpRequest request = buildGETWithQuery("Action=UnregisterPrivateVSYSDescriptor"
-                + "&vsysDescriptorId=3-tier%20Skeleton");
-        HttpResponse response = HttpResponse
-                .builder()
-                .statusCode(200)
-                .payload(
-                        payloadFromResource("/UnregisterPrivateVSYSDescriptor-response.xml"))
-                .build();
+   public void testDeregisterPrivateTemplate() {
+      HttpRequest request = buildGETWithQuery("Action=UnregisterPrivateVSYSDescriptor"
+            + "&vsysDescriptorId=3-tier%20Skeleton");
+      HttpResponse response = HttpResponse
+            .builder()
+            .statusCode(200)
+            .payload(
+                  payloadFromResource("/UnregisterPrivateVSYSDescriptor-response.xml"))
+            .build();
 
-        SystemTemplateApi api = requestSendsResponse(request, response)
-                .getSystemTemplateApi();
+      SystemTemplateApi api = requestSendsResponse(request, response)
+            .getSystemTemplateApi();
 
-        api.deregisterPrivateTemplate("3-tier Skeleton");
-    }
+      api.deregisterPrivateTemplate("3-tier Skeleton");
+   }
 }

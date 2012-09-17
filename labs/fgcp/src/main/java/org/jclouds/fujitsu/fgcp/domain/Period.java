@@ -25,37 +25,37 @@ package org.jclouds.fujitsu.fgcp.domain;
  * @author Dies Koper
  */
 public class Period {
-    private String current;
-    private String before;
-    private String today;
-    private String yesterday;
+   private String current;
+   private String before;
+   private String today;
+   private String yesterday;
 
-    /**
-     * @return the current
-     */
-    public String getCurrent() {
-        return current;
-    }
+   /**
+    * @return the current
+    */
+   public String getCurrent() {
+      return current;
+   }
 
-    /**
-     * @return the before
-     */
-    public String getBefore() {
-        return before;
-    }
+   /**
+    * @return the before
+    */
+   public String getBefore() {
+      return before;
+   }
 
-    /**
-     * @return the today
-     */
-    public String getToday() {
-        return today;
-    }
+   /**
+    * @return the today
+    */
+   public String getToday() {
+      return today;
+   }
 
-    /**
-     * @return the yesterday
-     */
-    public String getYesterday() {
-        return yesterday;
-    }
+   /**
+    * @return the yesterday
+    */
+   public String getYesterday() {
+      return yesterday;
+   }
 
 }

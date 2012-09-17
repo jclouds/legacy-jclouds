@@ -31,7 +31,7 @@ import org.jclouds.blobstore.strategy.internal.FetchBlobMetadata;
 import org.jclouds.blobstore.util.BlobUtils;
 import org.jclouds.collect.Memoized;
 import org.jclouds.domain.Location;
-import org.jclouds.hpcloud.objectstorage.HPCloudObjectStorageClient;
+import org.jclouds.hpcloud.objectstorage.HPCloudObjectStorageApi;
 import org.jclouds.hpcloud.objectstorage.blobstore.functions.EnableCDNAndCache;
 import org.jclouds.openstack.swift.blobstore.SwiftBlobStore;
 import org.jclouds.openstack.swift.blobstore.functions.BlobStoreListContainerOptionsToListContainerOptions;
@@ -51,21 +51,21 @@ import com.google.common.base.Supplier;
 @Singleton
 public class HPCloudObjectStorageBlobStore extends SwiftBlobStore {
 
-   private EnableCDNAndCache enableCDNAndCache;
+   private EnableCDNAndCache enableAndCache;
 
    @Inject
    protected HPCloudObjectStorageBlobStore(BlobStoreContext context, BlobUtils blobUtils,
             Supplier<Location> defaultLocation, @Memoized Supplier<Set<? extends Location>> locations,
-            HPCloudObjectStorageClient sync, ContainerToResourceMetadata container2ResourceMd,
+            HPCloudObjectStorageApi sync, ContainerToResourceMetadata container2ResourceMd,
             BlobStoreListContainerOptionsToListContainerOptions container2ContainerListOptions,
             ContainerToResourceList container2ResourceList, ObjectToBlob object2Blob, BlobToObject blob2Object,
             ObjectToBlobMetadata object2BlobMd, BlobToHttpGetOptions blob2ObjectGetOptions,
-            Provider<FetchBlobMetadata> fetchBlobMetadataProvider, EnableCDNAndCache enableCDNAndCache,
+            Provider<FetchBlobMetadata> fetchBlobMetadataProvider, EnableCDNAndCache enableAndCache,
             Provider<MultipartUploadStrategy> multipartUploadStrategy) {
       super(context, blobUtils, defaultLocation, locations, sync, container2ResourceMd, container2ContainerListOptions,
                container2ResourceList, object2Blob, blob2Object, object2BlobMd, blob2ObjectGetOptions,
                fetchBlobMetadataProvider, multipartUploadStrategy);
-      this.enableCDNAndCache = enableCDNAndCache;
+      this.enableAndCache = enableAndCache;
 
    }
 
@@ -75,7 +75,7 @@ public class HPCloudObjectStorageBlobStore extends SwiftBlobStore {
          return createContainerInLocation(location, container);
       } finally {
          if (options.isPublicRead())
-            enableCDNAndCache.apply(container);
+            enableAndCache.apply(container);
       }
    }
 

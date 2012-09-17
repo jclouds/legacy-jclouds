@@ -24,7 +24,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.json.BaseSetParserTest;
-import org.jclouds.openstack.swift.v1.domain.ContainerMetadata;
+import org.jclouds.openstack.swift.v1.domain.Container;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -34,7 +34,7 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "ParseContainerListTest")
-public class ParseContainerListTest extends BaseSetParserTest<ContainerMetadata> {
+public class ParseContainerListTest extends BaseSetParserTest<Container> {
 
    @Override
    public String resource() {
@@ -43,14 +43,14 @@ public class ParseContainerListTest extends BaseSetParserTest<ContainerMetadata>
 
    @Override
    @Consumes(MediaType.APPLICATION_JSON)
-   public Set<ContainerMetadata> expected() {
+   public Set<Container> expected() {
       return ImmutableSet
-            .of(ContainerMetadata.builder()
+            .of(Container.builder()
                   .name("test_container_1")
                   .count(2)
                   .bytes(78)
                   .build(),
-                ContainerMetadata.builder()
+                Container.builder()
                   .name("test_container_2")
                   .count(1)
                   .bytes(17)

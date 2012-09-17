@@ -33,6 +33,10 @@ import org.testng.annotations.Test;
 @Test(groups = "live")
 public class BaseSoftLayerClientLiveTest extends BaseComputeServiceContextLiveTest {
 
+   public BaseSoftLayerClientLiveTest() {
+      this.provider = "softlayer";
+   }
+
    protected RestContext<SoftLayerClient, SoftLayerAsyncClient> socontext;
 
    @BeforeGroups(groups = { "integration", "live" })

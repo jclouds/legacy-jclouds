@@ -18,8 +18,16 @@
  */
 package org.jclouds.openstack.swift.v1.features;
 
+import static org.testng.Assert.assertEquals;
+
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpResponse;
+import org.jclouds.openstack.swift.v1.SwiftApi;
 import org.jclouds.openstack.swift.v1.internal.BaseSwiftApiExpectTest;
+import org.jclouds.openstack.swift.v1.parse.ParseContainerListTest;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * 
@@ -27,5 +35,42 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "unit", testName = "ContainerAsyncApiTest")
 public class ContainerApiExpectTest extends BaseSwiftApiExpectTest {
+   public void testListContainersWhenResponseIs2xx() throws Exception {
+
+      HttpRequest list = HttpRequest
+            .builder()
+            .method("GET")
+            .endpoint("https://objects.jclouds.org/v1.0/40806637803162/?format=json")
+            .addHeader("Accept", "application/json")
+            .addHeader("X-Auth-Token", authToken).build();
+
+      HttpResponse listResponse = HttpResponse.builder().statusCode(200)
+            .payload(payloadFromResource("/container_list.json")).build();
+
+      SwiftApi apiWhenContainersExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+            responseWithKeystoneAccess, list, listResponse);
+
+      assertEquals(
+            apiWhenContainersExist.getContainerApiForRegion("region-a.geo-1").list()
+                  .toString(), new ParseContainerListTest().expected().toString());
+   }
+
+   public void testListContainersWhenResponseIs404() throws Exception {
+      HttpRequest list = HttpRequest
+            .builder()
+            .method("GET")
+            .endpoint("https://objects.jclouds.org/v1.0/40806637803162/?format=json")
+            .addHeader("Accept", "application/json")
+            .addHeader("X-Auth-Token", authToken).build();
+
+      HttpResponse listResponse = HttpResponse.builder().statusCode(404).build();
+
+      SwiftApi apiWhenNoContainersExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+            responseWithKeystoneAccess, list, listResponse);
+
+      assertEquals(apiWhenNoContainersExist.getContainerApiForRegion("region-a.geo-1").list().toImmutableSet(),
+               ImmutableSet.of());
+
+   }
 
 }

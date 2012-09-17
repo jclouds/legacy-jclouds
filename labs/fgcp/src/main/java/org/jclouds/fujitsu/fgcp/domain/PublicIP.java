@@ -36,59 +36,59 @@ import com.google.common.base.Objects;
  */
 public class PublicIP {
 
-    public static enum Version {
-        IPv4, IPv6, UNRECOGNIZED;
+   public static enum Version {
+      IPv4, IPv6, UNRECOGNIZED;
 
-        @Override
-        public String toString() {
-            return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL,
-                    name());
-        }
+      @Override
+      public String toString() {
+         return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL,
+               name());
+      }
 
-        public static Version fromValue(String version) {
-            try {
-                return valueOf(CaseFormat.UPPER_CAMEL.to(
-                        CaseFormat.UPPER_UNDERSCORE,
-                        checkNotNull(version, "version")));
-            } catch (IllegalArgumentException e) {
-                return UNRECOGNIZED;
-            }
-        }
+      public static Version fromValue(String version) {
+         try {
+            return valueOf(CaseFormat.UPPER_CAMEL.to(
+                  CaseFormat.UPPER_UNDERSCORE,
+                  checkNotNull(version, "version")));
+         } catch (IllegalArgumentException e) {
+            return UNRECOGNIZED;
+         }
+      }
 
-    }
+   }
 
-    protected String address;
-    @XmlElement(name = "v4v6Flag")
-    protected Version version;
+   protected String address;
+   @XmlElement(name = "v4v6Flag")
+   protected Version version;
 
-    public String getAddress() {
-        return address;
-    }
+   public String getAddress() {
+      return address;
+   }
 
-    public Version getVersion() {
-        return version;
-    }
+   public Version getVersion() {
+      return version;
+   }
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(address);
-    }
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(address);
+   }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        PublicIP that = PublicIP.class.cast(obj);
-        return Objects.equal(this.address, that.address);
-    }
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      PublicIP that = PublicIP.class.cast(obj);
+      return Objects.equal(this.address, that.address);
+   }
 
-    @Override
-    public String toString() {
-        return Objects.toStringHelper(this).omitNullValues()
-                .add("address", address).add("version", version).toString();
-    }
+   @Override
+   public String toString() {
+      return Objects.toStringHelper(this).omitNullValues()
+            .add("address", address).add("version", version).toString();
+   }
 }

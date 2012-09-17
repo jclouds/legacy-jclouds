@@ -22,7 +22,7 @@
 @XmlAccessorType(XmlAccessType.FIELD)
 package org.jclouds.fujitsu.fgcp.xml.internal;
 
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSchema;
 

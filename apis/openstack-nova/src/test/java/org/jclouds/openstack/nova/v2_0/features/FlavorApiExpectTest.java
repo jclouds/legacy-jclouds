@@ -56,7 +56,7 @@ public class FlavorApiExpectTest extends BaseNovaApiExpectTest {
 
       assertEquals(apiWhenFlavorsExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
 
-      assertEquals(apiWhenFlavorsExist.getFlavorApiForZone("az-1.region-a.geo-1").listFlavors().toString(),
+      assertEquals(apiWhenFlavorsExist.getFlavorApiForZone("az-1.region-a.geo-1").list().concat().toString(),
             new ParseFlavorListTest().expected().toString());
    }
 
@@ -73,7 +73,7 @@ public class FlavorApiExpectTest extends BaseNovaApiExpectTest {
       NovaApi apiWhenNoServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, listFlavors, listFlavorsResponse);
 
-      assertTrue(apiWhenNoServersExist.getFlavorApiForZone("az-1.region-a.geo-1").listFlavors().isEmpty());
+      assertTrue(apiWhenNoServersExist.getFlavorApiForZone("az-1.region-a.geo-1").list().concat().isEmpty());
    }
 
    // TODO: gson deserializer for Multimap
@@ -93,7 +93,7 @@ public class FlavorApiExpectTest extends BaseNovaApiExpectTest {
             responseWithKeystoneAccess, getFlavor, getFlavorResponse);
 
       assertEquals(
-            apiWhenFlavorsExist.getFlavorApiForZone("az-1.region-a.geo-1").getFlavor("52415800-8b69-11e0-9b19-734f1195ff37")
+            apiWhenFlavorsExist.getFlavorApiForZone("az-1.region-a.geo-1").get("52415800-8b69-11e0-9b19-734f1195ff37")
                   .toString(), new ParseFlavorTest().expected().toString());
    }
 
@@ -111,7 +111,7 @@ public class FlavorApiExpectTest extends BaseNovaApiExpectTest {
       NovaApi apiWhenNoFlavorsExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, getFlavor, getFlavorResponse);
 
-      assertNull(apiWhenNoFlavorsExist.getFlavorApiForZone("az-1.region-a.geo-1").getFlavor("123"));
+      assertNull(apiWhenNoFlavorsExist.getFlavorApiForZone("az-1.region-a.geo-1").get("123"));
 
    }
 

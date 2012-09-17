@@ -56,7 +56,7 @@ public class ExtensionApiExpectTest extends BaseNovaApiExpectTest {
 
       assertEquals(apiWhenExtensionsExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
 
-      assertEquals(apiWhenExtensionsExist.getExtensionApiForZone("az-1.region-a.geo-1").listExtensions().toString(),
+      assertEquals(apiWhenExtensionsExist.getExtensionApiForZone("az-1.region-a.geo-1").list().toString(),
             new ParseExtensionListTest().expected().toString());
    }
 
@@ -73,7 +73,7 @@ public class ExtensionApiExpectTest extends BaseNovaApiExpectTest {
       NovaApi apiWhenNoServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, listExtensions, listExtensionsResponse);
 
-      assertTrue(apiWhenNoServersExist.getExtensionApiForZone("az-1.region-a.geo-1").listExtensions().isEmpty());
+      assertTrue(apiWhenNoServersExist.getExtensionApiForZone("az-1.region-a.geo-1").list().isEmpty());
    }
 
    // TODO: gson deserializer for Multimap
@@ -92,7 +92,7 @@ public class ExtensionApiExpectTest extends BaseNovaApiExpectTest {
       NovaApi apiWhenExtensionsExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, getExtension, getExtensionResponse);
 
-      assertEquals(apiWhenExtensionsExist.getExtensionApiForZone("az-1.region-a.geo-1").getExtensionByAlias("RS-PIE")
+      assertEquals(apiWhenExtensionsExist.getExtensionApiForZone("az-1.region-a.geo-1").get("RS-PIE")
             .toString(), new ParseExtensionTest().expected().toString());
    }
 
@@ -110,7 +110,7 @@ public class ExtensionApiExpectTest extends BaseNovaApiExpectTest {
       NovaApi apiWhenNoExtensionsExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, getExtension, getExtensionResponse);
 
-      assertNull(apiWhenNoExtensionsExist.getExtensionApiForZone("az-1.region-a.geo-1").getExtensionByAlias("RS-PIE"));
+      assertNull(apiWhenNoExtensionsExist.getExtensionApiForZone("az-1.region-a.geo-1").get("RS-PIE"));
 
    }
 

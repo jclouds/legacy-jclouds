@@ -67,17 +67,17 @@ public class CreateSecurityGroupIfNeeded implements Function<ZoneSecurityGroupNa
       logger.debug(">> creating securityGroup %s", zoneSecurityGroupNameAndPorts);
       try {
 
-         SecurityGroup securityGroup = api.get().createSecurityGroupWithNameAndDescription(
+         SecurityGroup securityGroup = api.get().createWithDescription(
                   zoneSecurityGroupNameAndPorts.getName(), zoneSecurityGroupNameAndPorts.getName());
 
          logger.debug("<< created securityGroup(%s)", securityGroup);
          for (int port : zoneSecurityGroupNameAndPorts.getPorts()) {
             authorizeGroupToItselfAndAllIPsToTCPPort(api.get(), securityGroup, port);
          }
-         return new SecurityGroupInZone(api.get().getSecurityGroup(securityGroup.getId()), zoneId);
+         return new SecurityGroupInZone(api.get().get(securityGroup.getId()), zoneId);
       } catch (IllegalStateException e) {
          logger.trace("<< trying to find securityGroup(%s): %s", zoneSecurityGroupNameAndPorts, e.getMessage());
-         SecurityGroup group = find(api.get().listSecurityGroups(), nameEquals(zoneSecurityGroupNameAndPorts
+         SecurityGroup group = find(api.get().list(), nameEquals(zoneSecurityGroupNameAndPorts
                   .getName()));
          logger.debug("<< reused securityGroup(%s)", group.getId());
          return new SecurityGroupInZone(group, zoneId);
@@ -88,7 +88,7 @@ public class CreateSecurityGroupIfNeeded implements Function<ZoneSecurityGroupNa
             SecurityGroup securityGroup, int port) {
       // NOTE that permission to itself isn't supported on trystack!
       logger.debug(">> authorizing securityGroup(%s) permission to 0.0.0.0/0 on port %d", securityGroup, port);
-      securityGroupApi.createSecurityGroupRuleAllowingCidrBlock(securityGroup.getId(), Ingress.builder().ipProtocol(
+      securityGroupApi.createRuleAllowingCidrBlock(securityGroup.getId(), Ingress.builder().ipProtocol(
                IpProtocol.TCP).fromPort(port).toPort(port).build(), "0.0.0.0/0");
       logger.debug("<< authorized securityGroup(%s) permission to 0.0.0.0/0 on port %d", securityGroup, port);
 

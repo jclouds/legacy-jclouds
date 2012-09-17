@@ -28,7 +28,7 @@ import org.jclouds.openstack.v2_0.domain.Extension;
  * Provides asynchronous access to Extensions via their REST API.
  * <p/>
  * 
- * @see ExtensionApi
+ * @see ExtensionAsyncApi
  * @see <a href=
  *      "http://docs.openstack.org/api/openstack-compute/2/content/Extensions-d1e1444.html"
  *      />
@@ -42,7 +42,7 @@ public interface ExtensionApi {
     * 
     * @return all extensions
     */
-   Set<? extends Extension> listExtensions();
+   Set<? extends Extension> list();
 
    /**
     * Extensions may also be queried individually by their unique alias.
@@ -51,6 +51,6 @@ public interface ExtensionApi {
     *           id of the extension
     * @return extension or null if not found
     */
-   Extension getExtensionByAlias(String alias);
+   Extension get(String alias);
 
 }

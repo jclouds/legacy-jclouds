@@ -28,7 +28,7 @@ import org.testng.annotations.Test;
 public class FGCPDEProviderTest extends BaseProviderMetadataTest {
 
    public FGCPDEProviderTest() {
-      super(new FGCPDEProviderMetadata(), new FGCPApiMetadata());
+     super(new FGCPDEProviderMetadata(), new FGCPApiMetadata());
    }
 
 }

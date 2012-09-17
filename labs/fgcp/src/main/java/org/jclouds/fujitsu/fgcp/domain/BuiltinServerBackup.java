@@ -31,45 +31,45 @@ import com.google.common.base.Objects;
  */
 @XmlRootElement(name = "backup")
 public class BuiltinServerBackup {
-    @XmlElement(name = "backupId")
-    private String id;
-    @XmlElement(name = "backupTime")
-    private String time;
+   @XmlElement(name = "backupId")
+   private String id;
+   @XmlElement(name = "backupTime")
+   private String time;
 
-    /**
-     * @return the id
-     */
-    public String getId() {
-        return id;
-    }
+   /**
+    * @return the id
+    */
+   public String getId() {
+      return id;
+   }
 
-    /**
-     * @return the time
-     */
-    public String getTime() {
-        return time;
-    }
+   /**
+    * @return the time
+    */
+   public String getTime() {
+      return time;
+   }
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(id);
-    }
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(id);
+   }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        BuiltinServerBackup that = BuiltinServerBackup.class.cast(obj);
-        return Objects.equal(this.id, that.id);
-    }
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      BuiltinServerBackup that = BuiltinServerBackup.class.cast(obj);
+      return Objects.equal(this.id, that.id);
+   }
 
-    @Override
-    public String toString() {
-        return Objects.toStringHelper(this).omitNullValues().add("id", id)
-                .add("time", time).toString();
-    }
+   @Override
+   public String toString() {
+      return Objects.toStringHelper(this).omitNullValues().add("id", id)
+            .add("time", time).toString();
+   }
 }

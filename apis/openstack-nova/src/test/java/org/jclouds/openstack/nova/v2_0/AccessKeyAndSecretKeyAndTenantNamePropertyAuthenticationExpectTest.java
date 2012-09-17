@@ -37,7 +37,7 @@ import com.google.common.collect.ImmutableSet;
  * @see KeystoneProperties#CREDENTIAL_TYPE
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "AccessKeyAndSecretKeyAndTenantIdAuthenticationExpectTest")
+@Test(groups = "unit", testName = "AccessKeyAndSecretKeyAndTenantNamePropertyAuthenticationExpectTest")
 public class AccessKeyAndSecretKeyAndTenantNamePropertyAuthenticationExpectTest extends BaseNovaApiExpectTest {
    public AccessKeyAndSecretKeyAndTenantNamePropertyAuthenticationExpectTest() {
       identity = "identity";
@@ -70,7 +70,7 @@ public class AccessKeyAndSecretKeyAndTenantNamePropertyAuthenticationExpectTest 
 
       assertEquals(apiWhenServersExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
 
-      assertEquals(apiWhenServersExist.getServerApiForZone("az-1.region-a.geo-1").listServers().toString(),
+      assertEquals(apiWhenServersExist.getServerApiForZone("az-1.region-a.geo-1").list().concat().toString(),
             new ParseServerListTest().expected().toString());
    }
 

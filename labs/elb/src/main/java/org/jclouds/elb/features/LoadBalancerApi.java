@@ -39,16 +39,16 @@ import org.jclouds.javax.annotation.Nullable;
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface LoadBalancerApi {
 
-   String createLoadBalancerListeningInAvailabilityZones(String name, Iterable<Listener> listeners,
+   String createListeningInAvailabilityZones(String name, Iterable<Listener> listeners,
             Iterable<String> availabilityZones);
    
-   String createLoadBalancerListeningInAvailabilityZones(String name, Listener listeners,
+   String createListeningInAvailabilityZones(String name, Listener listeners,
             Iterable<String> availabilityZones);
 
-   String createLoadBalancerListeningInSubnetAssignedToSecurityGroups(String name, String subnetId,
+   String createListeningInSubnetAssignedToSecurityGroups(String name, String subnetId,
            Iterable<String> securityGroupIds);
    
-   String createLoadBalancerListeningInSubnetsAssignedToSecurityGroups(String name, Iterable<String> subnetIds,
+   String createListeningInSubnetsAssignedToSecurityGroups(String name, Iterable<String> subnetIds,
             Iterable<String> securityGroupIds);
 
 

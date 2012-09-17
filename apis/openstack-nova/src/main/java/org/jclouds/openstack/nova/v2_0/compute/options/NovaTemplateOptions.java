@@ -162,7 +162,7 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
    /**
     * <h3>Note</h3>
     * 
-    * This requires that {@link NovaApi#getFloatingIPExtensionForZone(String)} to return
+    * This requires that {@link NovaApi#getExtensionForZone(String)} to return
     * {@link Optional#isPresent present}
     * 
     * @return true if auto assignment of a floating ip to each vm is enabled

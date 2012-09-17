@@ -51,10 +51,10 @@ public class IgnoreNullMultimapTypeAdapterFactory implements TypeAdapterFactory 
       Type valueType = ((ParameterizedType) type).getActualTypeArguments()[1];
       TypeAdapter<?> keyAdapter = gson.getAdapter(TypeToken.get(keyType));
       TypeAdapter<?> valueAdapter = gson.getAdapter(TypeToken.get(valueType));
-      return (TypeAdapter<T>) newMapAdapter(keyAdapter, valueAdapter);
+      return (TypeAdapter<T>) newMultimapAdapter(keyAdapter, valueAdapter);
    }
 
-   private <K,V> TypeAdapter<Multimap<K, V>> newMapAdapter(final TypeAdapter<K> keyAdapter, final TypeAdapter<V> valueAdapter) {
+   protected <K,V> TypeAdapter<Multimap<K, V>> newMultimapAdapter(final TypeAdapter<K> keyAdapter, final TypeAdapter<V> valueAdapter) {
       return new TypeAdapter<Multimap<K, V>>() {
          public void write(JsonWriter out, Multimap<K, V> map) throws IOException {
             out.beginObject();

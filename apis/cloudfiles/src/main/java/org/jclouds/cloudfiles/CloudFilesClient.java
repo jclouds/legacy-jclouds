@@ -34,22 +34,75 @@ import org.jclouds.openstack.swift.CommonSwiftClient;
  * <p/>
  * All commands return a Future of the result from Cloud Files. Any exceptions incurred during
  * processing will be backend in an {@link ExecutionException} as documented in {@link Future#get()}.
- * 
- * @see <a href="http://www.rackspacecloud.com/cf-devguide-20090812.pdf" />
+ *
  * @author Adrian Cole
+ * @see <a href="http://www.rackspacecloud.com/cf-devguide-20090812.pdf" />
  */
 @Timeout(duration = 120, timeUnit = TimeUnit.SECONDS)
 public interface CloudFilesClient extends CommonSwiftClient {
+
+   /**
+    * See http://docs.rackspace.com/files/api/v1/cf-devguide/content/List_CDN-Enabled_Containers-d1e2414.html
+    */
    Set<ContainerCDNMetadata> listCDNContainers(ListCdnContainerOptions... options);
 
+   /**
+    * See http://docs.rackspace.com/files/api/v1/cf-devguide/content/List_CDN-Enabled_Container_Metadata-d1e2711.html
+    */
    ContainerCDNMetadata getCDNMetadata(String container);
 
+   /**
+    * See http://docs.rackspace.com/files/api/v1/cf-devguide/content/CDN-Enabled_Container-d1e2665.html
+    */
+   URI enableCDN(String container, long ttl, boolean logRetention);
+
+   /**
+    * See http://docs.rackspace.com/files/api/v1/cf-devguide/content/CDN-Enabled_Container-d1e2665.html
+    */
    URI enableCDN(String container, long ttl);
-
+   
+   /**
+    * See http://docs.rackspace.com/files/api/v1/cf-devguide/content/CDN-Enabled_Container-d1e2665.html
+    */
    URI enableCDN(String container);
+   
+   /**
+    * See http://docs.rackspace.com/files/api/v1/cf-devguide/content/Update_CDN-Enabled_Container_Metadata-d1e2787.html
+    */
+   URI updateCDN(String container, long ttl, boolean logRetention);
 
+   /**
+    * See http://docs.rackspace.com/files/api/v1/cf-devguide/content/Update_CDN-Enabled_Container_Metadata-d1e2787.html
+    */
+   URI updateCDN(String container, boolean logRetention);
+
+   /**
+    * See http://docs.rackspace.com/files/api/v1/cf-devguide/content/Update_CDN-Enabled_Container_Metadata-d1e2787.html
+    */
    URI updateCDN(String container, long ttl);
 
+   /**
+    * See http://docs.rackspace.com/files/api/v1/cf-devguide/content/CDN-Enabled_Container-d1e2665.html
+    */
    boolean disableCDN(String container);
+   
+   /**
+    * See http://docs.rackspace.com/files/api/v1/cf-devguide/content/Purge_CDN-Enabled_Objects-d1e3858.html
+    */
+   boolean purgeCDNObject(String container, String object, Iterable<String> emails);
+   
+   /**
+    * See http://docs.rackspace.com/files/api/v1/cf-devguide/content/Purge_CDN-Enabled_Objects-d1e3858.html
+    */
+   boolean purgeCDNObject(String container, String object);
 
+   /**
+    * http://docs.rackspace.com/files/api/v1/cf-devguide/content/Create_Static_Website-dle4000.html
+    */
+   boolean setCDNStaticWebsiteIndex(String container, String index);
+
+   /*
+    * http://docs.rackspace.com/files/api/v1/cf-devguide/content/Set_Error_Pages_for_Static_Website-dle4005.html
+    */
+   boolean setCDNStaticWebsiteError(String container, String error);
 }

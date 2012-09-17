@@ -36,7 +36,7 @@ import com.google.common.base.Optional;
  * 
  * @author Jeremy Daggett
  * @see <a href=
-      "http://docs.openstack.org/api/openstack-compute/1.1/content/Flavors-d1e4180.html"
+      "http://docs.openstack.org/api/openstack-compute/2/content/List_Flavors-d1e4188.html"
       />
 */
 public class Flavor extends Resource {

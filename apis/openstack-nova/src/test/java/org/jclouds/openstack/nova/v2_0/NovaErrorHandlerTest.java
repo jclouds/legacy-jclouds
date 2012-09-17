@@ -81,7 +81,7 @@ public class NovaErrorHandlerTest {
                URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/37936628937291/os-floating-ips"),
                400,
                "HTTP/1.1 400 Bad Request",
-               "{\"badRequest\": {\"message\": \"AddressLimitExceeded: Address quota exceeded. You cannot allocate any more addresses\", \"code\": 400}}",
+               "{\"badRequest\": {\"message\": \"AddressLimitExceeded: Address quota exceeded. You cannot create any more addresses\", \"code\": 400}}",
                InsufficientResourcesException.class);
    }
    

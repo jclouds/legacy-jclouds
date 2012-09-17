@@ -54,7 +54,7 @@ public class IgnoreNullMapTypeAdapterFactory implements TypeAdapterFactory {
       return (TypeAdapter<T>) newMapAdapter(keyAdapter, valueAdapter);
    }
 
-   private <K,V> TypeAdapter<Map<K, V>> newMapAdapter(final TypeAdapter<K> keyAdapter, final TypeAdapter<V> valueAdapter) {
+   protected <K,V> TypeAdapter<Map<K, V>> newMapAdapter(final TypeAdapter<K> keyAdapter, final TypeAdapter<V> valueAdapter) {
       return new TypeAdapter<Map<K, V>>() {
          public void write(JsonWriter out, Map<K, V> value) throws IOException {
             out.beginObject();

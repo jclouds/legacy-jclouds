@@ -21,8 +21,8 @@ package org.jclouds.openstack.glance.v1_0;
 import java.util.Set;
 
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.location.Region;
-import org.jclouds.location.functions.RegionToEndpoint;
+import org.jclouds.location.Zone;
+import org.jclouds.location.functions.ZoneToEndpoint;
 import org.jclouds.openstack.glance.v1_0.features.ImageAsyncApi;
 import org.jclouds.openstack.v2_0.features.ExtensionAsyncApi;
 import org.jclouds.rest.annotations.Delegate;
@@ -41,23 +41,23 @@ import com.google.inject.Provides;
 public interface GlanceAsyncApi {
    /**
     * 
-    * @return the Region codes configured
+    * @return the Zone codes configured
     */
    @Provides
-   @Region
-   Set<String> getConfiguredRegions();
+   @Zone
+   Set<String> getConfiguredZones();
 
    /**
     * Provides asynchronous access to Extension features.
     */
    @Delegate
-   ExtensionAsyncApi getExtensionApiForRegion(
-         @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region);
+   ExtensionAsyncApi getExtensionApiForZone(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
    /**
     * Provides asynchronous access to Image features.
     */
    @Delegate
-   ImageAsyncApi getImageApiForRegion(@EndpointParam(parser = RegionToEndpoint.class) @Nullable String region);
+   ImageAsyncApi getImageApiForZone(@EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
 }

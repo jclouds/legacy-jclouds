@@ -28,57 +28,57 @@ import com.google.common.base.Objects;
  * @author Dies Koper
  */
 public class Product {
-    @XmlElement(name = "productName")
-    private String name;
+   @XmlElement(name = "productName")
+   private String name;
 
-    private String unitName;
+   private String unitName;
 
-    private String usedPoints;
+   private String usedPoints;
 
-    /**
-     * @return the name
-     */
-    public String getName() {
-        return name;
-    }
+   /**
+    * @return the name
+    */
+   public String getName() {
+      return name;
+   }
 
-    /**
-     * @return the unitName
-     */
-    public String getUnitName() {
-        return unitName;
-    }
+   /**
+    * @return the unitName
+    */
+   public String getUnitName() {
+      return unitName;
+   }
 
-    /**
-     * @return the usedPoints
-     */
-    public String getUsedPoints() {
-        return usedPoints;
-    }
+   /**
+    * @return the usedPoints
+    */
+   public String getUsedPoints() {
+      return usedPoints;
+   }
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(name, unitName, usedPoints);
-    }
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(name, unitName, usedPoints);
+   }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Product that = Product.class.cast(obj);
-        return Objects.equal(this.name, that.name)
-                && Objects.equal(this.unitName, that.unitName)
-                && Objects.equal(this.usedPoints, that.usedPoints);
-    }
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      Product that = Product.class.cast(obj);
+      return Objects.equal(this.name, that.name)
+            && Objects.equal(this.unitName, that.unitName)
+            && Objects.equal(this.usedPoints, that.usedPoints);
+   }
 
-    @Override
-    public String toString() {
-        return Objects.toStringHelper(this).omitNullValues().add("name", name)
-                .add("unitName", unitName).add("usedPoints", usedPoints)
-                .toString();
-    }
+   @Override
+   public String toString() {
+      return Objects.toStringHelper(this).omitNullValues().add("name", name)
+            .add("unitName", unitName).add("usedPoints", usedPoints)
+            .toString();
+   }
 }

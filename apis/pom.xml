@@ -54,5 +54,6 @@
        <module>cloudsigma</module>
        <module>cloudstack</module>
        <module>rackspace-cloudidentity</module>
+       <module>sqs</module>
     </modules>
 </project>

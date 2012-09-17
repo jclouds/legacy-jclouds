@@ -60,16 +60,16 @@ public class QuotaClassApiLiveTest extends BaseNovaApiLiveTest {
                      .volumes(5)
                      .build();
 
-         assertTrue(api.updateQuotaClass(firstVersion.getId(), firstVersion));
+         assertTrue(api.update(firstVersion.getId(), firstVersion));
 
-         assertEquals(api.getQuotaClass(firstVersion.getId()), firstVersion);
+         assertEquals(api.get(firstVersion.getId()), firstVersion);
 
          // Change it again (since we may have run this test before and we can't delete the QuotaClass)
          QuotaClass secondVersion = firstVersion.toBuilder().ram(8192).build();
 
-         assertTrue(api.updateQuotaClass(secondVersion.getId(), secondVersion));
+         assertTrue(api.update(secondVersion.getId(), secondVersion));
 
-         assertEquals(api.getQuotaClass(secondVersion.getId()), secondVersion);
+         assertEquals(api.get(secondVersion.getId()), secondVersion);
       }
    }
 }

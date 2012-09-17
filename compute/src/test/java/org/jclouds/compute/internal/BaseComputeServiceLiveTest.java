@@ -348,8 +348,8 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
       // credentials aren't always the same
       // assertEquals(node1.getCredentials(), node2.getCredentials());
 
-      assertLocationSameOrChild(node1.getLocation(), template.getLocation());
-      assertLocationSameOrChild(node2.getLocation(), template.getLocation());
+      assertLocationSameOrChild(checkNotNull(node1.getLocation(), "location of %s", node1), template.getLocation());
+      assertLocationSameOrChild(checkNotNull(node2.getLocation(), "location of %s", node2), template.getLocation());
       checkImageIdMatchesTemplate(node1);
       checkImageIdMatchesTemplate(node2);
       checkOsMatchesTemplate(node1);
@@ -411,7 +411,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
       if (existingLocationIsAssignable)
          assertEquals(node.getLocation(), existingLocation);
       else
-         this.assertLocationSameOrChild(node.getLocation(), template.getLocation());
+         this.assertLocationSameOrChild(checkNotNull(node.getLocation(), "location of %s", node), template.getLocation());
       checkOsMatchesTemplate(node);
       this.nodes.add(node);
    }
@@ -502,7 +502,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
          NodeMetadata metadata = client.getNodeMetadata(node.getId());
          assertEquals(metadata.getProviderId(), node.getProviderId());
          assertEquals(metadata.getGroup(), node.getGroup());
-         assertLocationSameOrChild(metadata.getLocation(), template.getLocation());
+         assertLocationSameOrChild(checkNotNull(metadata.getLocation(), "location of %s", metadata), template.getLocation());
          checkImageIdMatchesTemplate(metadata);
          checkOsMatchesTemplate(metadata);
          assert (metadata.getStatus() == Status.RUNNING) : metadata;
@@ -645,7 +645,9 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
    }
 
    protected void createAndRunAServiceInGroup(String group) throws RunNodesException {
-      ImmutableMap<String, String> userMetadata = ImmutableMap.<String, String> of("Name", group);
+      // note that some cloud providers do not support mixed case tag names
+      ImmutableMap<String, String> userMetadata = ImmutableMap.<String, String> of("name", group);
+      
       ImmutableSet<String> tags = ImmutableSet. of(group);
       Stopwatch watch = new Stopwatch().start();
       NodeMetadata node = getOnlyElement(client.createNodesInGroup(group, 1,

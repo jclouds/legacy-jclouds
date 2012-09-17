@@ -25,12 +25,13 @@ import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
 
 /**
  * @author Adrian Cole
  */
-@Test(groups = "live")
+@Test(groups = "live", testName = "CloudSigmaComputeServiceLiveTest")
 public class CloudSigmaComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
    public CloudSigmaComputeServiceLiveTest() {
@@ -46,14 +47,21 @@ public class CloudSigmaComputeServiceLiveTest extends BaseComputeServiceLiveTest
    @Override
    protected void checkUserMetadataInNodeEquals(NodeMetadata node, ImmutableMap<String, String> userMetadata) {
       assert node.getUserMetadata().equals(ImmutableMap.<String, String> of()) : String.format(
-            "node userMetadata did not match %s %s", userMetadata, node);
+               "node userMetadata did not match %s %s", userMetadata, node);
    }
-   
+
+   // cloudsigma does not support tags
+   @Override
+   protected void checkTagsInNodeEquals(final NodeMetadata node, final ImmutableSet<String> tags) {
+      assert node.getTags().equals(ImmutableSet.<String> of()) : String.format("node tags did not match %s %s", tags,
+               node);
+   }
+
    protected void checkResponseEqualsHostname(ExecResponse execResponse, NodeMetadata node1) {
       // hostname is not predictable based on node metadata
       assert execResponse.getOutput().trim().equals("ubuntu");
    }
-   
+
    @Override
    public void testOptionToNotBlock() {
       // start call has to block until we have a pool of reserved pre-cloned drives.

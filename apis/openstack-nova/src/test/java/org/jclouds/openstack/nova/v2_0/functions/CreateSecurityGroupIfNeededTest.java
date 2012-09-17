@@ -44,7 +44,7 @@ import com.google.common.collect.ImmutableSet;
  */
 @Test(groups = "unit", testName = "CreateSecurityGroupIfNeededTest")
 public class CreateSecurityGroupIfNeededTest extends BaseNovaApiExpectTest {
-   HttpRequest createSecurityGroup = HttpRequest.builder().method("POST").endpoint(
+   HttpRequest create = HttpRequest.builder().method("POST").endpoint(
             URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-security-groups")).headers(
             ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
                      authToken).build())
@@ -61,13 +61,13 @@ public class CreateSecurityGroupIfNeededTest extends BaseNovaApiExpectTest {
       builder.put(extensionsOfNovaRequest, extensionsOfNovaResponse);
       int groupId = 2769;
 
-      HttpResponse createSecurityGroupResponse = HttpResponse.builder().statusCode(200)
+      HttpResponse createResponse = HttpResponse.builder().statusCode(200)
                .payload(
                         payloadFromStringWithContentType(
                                  String.format("{\"security_group\": {\"rules\": [], \"tenant_id\": \"37936628937291\", \"id\": %s, \"name\": \"jclouds_mygroup\", \"description\": \"jclouds_mygroup\"}}", groupId),
                                  "application/json; charset=UTF-8")).build();
 
-      builder.put(createSecurityGroup, createSecurityGroupResponse);
+      builder.put(create, createResponse);
       
       int ruleId = 10331;
       
@@ -138,23 +138,23 @@ public class CreateSecurityGroupIfNeededTest extends BaseNovaApiExpectTest {
       builder.put(keystoneAuthWithUsernameAndPasswordAndTenantName, responseWithKeystoneAccess);
       builder.put(extensionsOfNovaRequest, extensionsOfNovaResponse);
 
-      HttpResponse createSecurityGroupResponse = HttpResponse.builder().statusCode(400)
+      HttpResponse createResponse = HttpResponse.builder().statusCode(400)
                .payload(
                         payloadFromStringWithContentType(
                                  "{\"badRequest\": {\"message\": \"Security group test already exists\", \"code\": 400}}",
                                  "application/json; charset=UTF-8")).build();
 
-      builder.put(createSecurityGroup, createSecurityGroupResponse);
+      builder.put(create, createResponse);
           
-      HttpRequest listSecurityGroups = HttpRequest.builder().method("GET").endpoint(
+      HttpRequest list = HttpRequest.builder().method("GET").endpoint(
                URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-security-groups")).headers(
                ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
                         authToken).build()).build();
 
-      HttpResponse listSecurityGroupsResponse = HttpResponse.builder().statusCode(200).payload(
+      HttpResponse listResponse = HttpResponse.builder().statusCode(200).payload(
                payloadFromResource("/securitygroup_list_details_computeservice_typical.json")).build();
 
-      builder.put(listSecurityGroups, listSecurityGroupsResponse);
+      builder.put(list, listResponse);
 
       NovaApi apiWhenSecurityGroupsExist = requestsSendResponses(builder.build());
 

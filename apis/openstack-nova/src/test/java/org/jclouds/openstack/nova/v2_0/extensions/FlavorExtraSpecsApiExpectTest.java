@@ -50,7 +50,7 @@ public class FlavorExtraSpecsApiExpectTest extends BaseNovaApiExpectTest {
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/volume_type_extra_specs.json")).build()
       ).getFlavorExtraSpecsExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertEquals(api.getAllExtraSpecs("9"), ImmutableMap.of("test", "value1"));
+      assertEquals(api.getMetadata("9"), ImmutableMap.of("test", "value1"));
    }
 
    public void testGetAllExtraSpecsFailNotFound() {
@@ -62,7 +62,7 @@ public class FlavorExtraSpecsApiExpectTest extends BaseNovaApiExpectTest {
             HttpResponse.builder().statusCode(404).build()
       ).getFlavorExtraSpecsExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertTrue(api.getAllExtraSpecs("9").isEmpty());
+      assertTrue(api.getMetadata("9").isEmpty());
    }
 
    public void testSetAllExtraSpecs() {
@@ -76,7 +76,7 @@ public class FlavorExtraSpecsApiExpectTest extends BaseNovaApiExpectTest {
             HttpResponse.builder().statusCode(200).build()
       ).getFlavorExtraSpecsExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertTrue(api.setAllExtraSpecs("9", ImmutableMap.of("test1", "somevalue")));
+      assertTrue(api.updateMetadata("9", ImmutableMap.of("test1", "somevalue")));
    }
 
    public void testSetExtraSpec() {
@@ -90,7 +90,7 @@ public class FlavorExtraSpecsApiExpectTest extends BaseNovaApiExpectTest {
             HttpResponse.builder().statusCode(200).build()
       ).getFlavorExtraSpecsExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertTrue(api.setExtraSpec("5", "test1", "somevalue"));
+      assertTrue(api.updateMetadataEntry("5", "test1", "somevalue"));
    }
 
    public void testGetExtraSpec() {
@@ -102,7 +102,7 @@ public class FlavorExtraSpecsApiExpectTest extends BaseNovaApiExpectTest {
             HttpResponse.builder().statusCode(200).payload(payloadFromStringWithContentType("{\"test1\":\"another value\"}", MediaType.APPLICATION_JSON)).build()
       ).getFlavorExtraSpecsExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertEquals(api.getExtraSpec("5", "test1"), "another value");
+      assertEquals(api.getMetadataKey("5", "test1"), "another value");
    }
 
    public void testGetExtraSpecFailNotFound() {
@@ -114,7 +114,7 @@ public class FlavorExtraSpecsApiExpectTest extends BaseNovaApiExpectTest {
             HttpResponse.builder().statusCode(404).build()
       ).getFlavorExtraSpecsExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertNull(api.getExtraSpec("5", "test1"));
+      assertNull(api.getMetadataKey("5", "test1"));
    }
 
    public void testDeleteExtraSpec() {
@@ -126,7 +126,7 @@ public class FlavorExtraSpecsApiExpectTest extends BaseNovaApiExpectTest {
             HttpResponse.builder().statusCode(200).build()
       ).getFlavorExtraSpecsExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertTrue(api.deleteExtraSpec("5", "test1"));
+      assertTrue(api.deleteMetadataKey("5", "test1"));
    }
 
    public void testDeleteExtraSpecFailNotFound() {
@@ -138,7 +138,7 @@ public class FlavorExtraSpecsApiExpectTest extends BaseNovaApiExpectTest {
             HttpResponse.builder().statusCode(404).build()
       ).getFlavorExtraSpecsExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertFalse(api.deleteExtraSpec("5", "test1"));
+      assertFalse(api.deleteMetadataKey("5", "test1"));
    }
 
 }

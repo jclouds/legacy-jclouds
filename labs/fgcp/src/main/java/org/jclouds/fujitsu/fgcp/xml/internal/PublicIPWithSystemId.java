@@ -29,15 +29,15 @@ import org.jclouds.fujitsu.fgcp.domain.PublicIP;
  */
 @XmlRootElement(name = "publicip")
 public class PublicIPWithSystemId extends PublicIP {
-    private String vsysId;
+   private String vsysId;
 
-    public String getVsysId() {
-        return vsysId;
-    }
+   public String getVsysId() {
+      return vsysId;
+   }
 
-    @Override
-    public String toString() {
-        return "PublicIP{" + "address='" + address + '\'' + ", IP version='"
-                + version + '\'' + ", vsysId='" + vsysId + '\'' + '}';
-    }
+   @Override
+   public String toString() {
+      return "PublicIP{" + "address='" + address + '\'' + ", IP version='"
+            + version + '\'' + ", vsysId='" + vsysId + '\'' + '}';
+   }
 }

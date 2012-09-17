@@ -54,7 +54,7 @@ public class HostAggregateApiExpectTest extends BaseNovaApiExpectTest {
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/host_aggregate_list.json")).build())
             .getHostAggregateExtensionForZone("az-1.region-a.geo-1").get();
 
-      HostAggregate result = Iterables.getOnlyElement(api.listAggregates());
+      HostAggregate result = Iterables.getOnlyElement(api.list());
       assertEquals(result, exampleHostAggregate());
    }
 
@@ -66,7 +66,7 @@ public class HostAggregateApiExpectTest extends BaseNovaApiExpectTest {
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/host_aggregate_with_host_details.json")).build())
             .getHostAggregateExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertEquals(api.getAggregate("1"), exampleHostAggregateWithHost());
+      assertEquals(api.get("1"), exampleHostAggregateWithHost());
    }
 
    public void testGetFailNotFound() {
@@ -76,7 +76,7 @@ public class HostAggregateApiExpectTest extends BaseNovaApiExpectTest {
             authenticatedGET().endpoint(endpoint).build(),
             HttpResponse.builder().statusCode(404).build()).getHostAggregateExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertNull(api.getAggregate("1"));
+      assertNull(api.get("1"));
    }
 
    public void testCreateAggregate() {
@@ -89,7 +89,7 @@ public class HostAggregateApiExpectTest extends BaseNovaApiExpectTest {
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/host_aggregate_details.json")).build())
             .getHostAggregateExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertEquals(api.createAggregate("ubuntu1", "nova"), exampleHostAggregate());
+      assertEquals(api.createInAvailabilityZone("ubuntu1", "nova"), exampleHostAggregate());
    }
 
    public void testDeleteAggregate() {
@@ -99,7 +99,7 @@ public class HostAggregateApiExpectTest extends BaseNovaApiExpectTest {
             authenticatedGET().endpoint(endpoint).method("DELETE").build(),
             HttpResponse.builder().statusCode(200).build()).getHostAggregateExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertTrue(api.deleteAggregate("1"));
+      assertTrue(api.delete("1"));
    }
 
    public void testDeleteAggregateFailNotFound() {
@@ -109,7 +109,7 @@ public class HostAggregateApiExpectTest extends BaseNovaApiExpectTest {
             authenticatedGET().endpoint(endpoint).method("DELETE").build(),
             HttpResponse.builder().statusCode(404).build()).getHostAggregateExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertFalse(api.deleteAggregate("1"));
+      assertFalse(api.delete("1"));
    }
 
    public void testUpdateName() {

@@ -37,13 +37,13 @@ import com.google.common.collect.ImmutableSet;
  */
 @XmlRootElement(name = "ListVDiskResponse")
 public class ListVDiskResponse extends SetWithStatusResponse<VDisk> {
-    @XmlElementWrapper(name = "vdisks")
-    @XmlElement(name = "vdisk")
-    private Set<VDisk> disks = new LinkedHashSet<VDisk>();
+   @XmlElementWrapper(name = "vdisks")
+   @XmlElement(name = "vdisk")
+   private Set<VDisk> disks = new LinkedHashSet<VDisk>();
 
-    @Override
-    protected Set<VDisk> delegate() {
-        return disks == null ? ImmutableSet.<VDisk> of() : Collections
-                .unmodifiableSet(disks);
-    }
+   @Override
+   protected Set<VDisk> delegate() {
+      return disks == null ? ImmutableSet.<VDisk> of() : Collections
+            .unmodifiableSet(disks);
+   }
 }
