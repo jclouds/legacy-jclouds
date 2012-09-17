@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -31,30 +32,33 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
-import org.jclouds.virtualbox.util.MachineUtils;
+import org.jclouds.virtualbox.util.MachineNameOrIdAndNicSlot;
+import org.jclouds.virtualbox.util.NetworkUtils;
 import org.virtualbox_4_1.VirtualBoxManager;
 
+import com.google.common.base.Strings;
 import com.google.common.base.Supplier;
 import com.google.common.cache.AbstractLoadingCache;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Maps;
+import com.google.common.util.concurrent.Uninterruptibles;
 
 /**
  * A {@link LoadingCache} for ip addresses. If the requested ip address has been
  * previously extracted this returns it, if not it calls vbox api.
  * 
- * @author andrea turli
+ * @author Andrea Turli
  * 
  */
 @Singleton
 public class IpAddressesLoadingCache extends
-      AbstractLoadingCache<String, String> {
+      AbstractLoadingCache<MachineNameOrIdAndNicSlot, String> {
   
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   private final Map<String, String> masters = Maps.newHashMap();
+   private final Map<MachineNameOrIdAndNicSlot, String> masters = Maps.newHashMap();
    private final Supplier<VirtualBoxManager> manager;
 
    @Inject
@@ -63,33 +67,34 @@ public class IpAddressesLoadingCache extends
    }
 
    @Override
-   public synchronized String get(String idOrName) throws ExecutionException {
-      if (masters.containsKey(idOrName)) {
-         return masters.get(idOrName);
+   public synchronized String get(MachineNameOrIdAndNicSlot machineNameOrIdAndNicPort) throws ExecutionException {
+      if (masters.containsKey(machineNameOrIdAndNicPort)) {
+         return masters.get(machineNameOrIdAndNicPort);
       }
-     
-      String currentIp = "", previousIp = "";
-      int count = 0;
-      while (count < 3) {
-         currentIp = "";
-         while (!MachineUtils.isIpv4(currentIp)) {
-            currentIp = manager.get().getVBox().findMachine(idOrName)
-                  .getGuestPropertyValue("/VirtualBox/GuestInfo/Net/0/V4/IP");
+      String query = String.format("/VirtualBox/GuestInfo/Net/%s/V4/IP", machineNameOrIdAndNicPort.getSlotText());
+      String currentIp = "";
+         while (!NetworkUtils.isIpv4(currentIp)) {
+            currentIp = manager.get().getVBox().findMachine(machineNameOrIdAndNicPort.getMachineNameOrId())
+                  .getGuestPropertyValue(query);
+            if(!Strings.nullToEmpty(currentIp).isEmpty())
+               logger.debug("Found IP address %s for '%s' at slot %s", currentIp, 
+                     machineNameOrIdAndNicPort.getMachineNameOrId(),
+                     machineNameOrIdAndNicPort.getSlotText());
+            Uninterruptibles.sleepUninterruptibly(1, TimeUnit.SECONDS);
          }
 
-         if (previousIp.equals(currentIp)) {
-             count++;
-          }
-         previousIp = currentIp;
-      }
-
-      masters.put(idOrName, currentIp);
+      masters.put(machineNameOrIdAndNicPort, currentIp);
       return currentIp;
    }
 
    @Override
    public String getIfPresent(Object key) {
       return masters.get((String) key);
+   }
+
+   @Override
+   public void invalidate(Object key) {
+      masters.remove(key);
    }
 
 }

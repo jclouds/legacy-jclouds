@@ -87,12 +87,7 @@ public class InstallGuestAdditions implements Statement {
          statements.add(saveHttpResponseTo(download, "{tmp}{fs}", vboxGuestAdditionsIso));//
          statements.add(exec(String.format("mount -o loop {tmp}{fs}%s %s", vboxGuestAdditionsIso, mountPoint)));
       }
-      statements.add(exec(String.format("%s%s", mountPoint, "/VBoxLinuxAdditions.run"))); //
-      statements.add(exec("service vboxadd setup")); //
-      statements.add(exec("VBoxService")); //
-      statements.add(exec(String.format("echo VBoxService > /etc/rc.local"))); //
-      statements.add(exec(String.format("echo exit 0 >> /etc/rc.local"))); //
-      statements.add(exec(String.format("umount %s", mountPoint)));
+      statements.add(exec(String.format("%s%s", mountPoint, "/VBoxLinuxAdditions.run --nox11"))); //
       return statements;
    }
 

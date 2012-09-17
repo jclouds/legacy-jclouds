@@ -21,6 +21,8 @@ package org.jclouds.virtualbox.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import org.jclouds.domain.LoginCredentials;
+
 import com.google.common.base.Objects;
 
 /**
@@ -32,6 +34,7 @@ public class MasterSpec {
    private VmSpec vmSpec;
    private IsoSpec isoSpec;
    private NetworkSpec networkSpec;
+   private LoginCredentials loginCredentials;
 
    public static Builder builder() {
       return new Builder();
@@ -42,6 +45,7 @@ public class MasterSpec {
       private VmSpec vmSpec;
       private IsoSpec isoSpec;
       private NetworkSpec networkSpec;
+      private LoginCredentials loginCredentials;
 
       public Builder vm(VmSpec vmSpec) {
          this.vmSpec = vmSpec;
@@ -58,19 +62,25 @@ public class MasterSpec {
          return this;
       }
 
+      public Builder credentials(LoginCredentials loginCredentials) {
+         this.loginCredentials = loginCredentials;
+         return this;
+      }
+      
       public MasterSpec build() {
-         return new MasterSpec(vmSpec, isoSpec, networkSpec);
+         return new MasterSpec(vmSpec, isoSpec, networkSpec, loginCredentials);
       }
 
    }
 
-   private MasterSpec(VmSpec vmSpec, IsoSpec isoSpec, NetworkSpec networkSpec) {
+   private MasterSpec(VmSpec vmSpec, IsoSpec isoSpec, NetworkSpec networkSpec, LoginCredentials loginCredentials) {
       checkNotNull(vmSpec, "vmSpec");
       checkNotNull(isoSpec, "isoSpec");
       checkNotNull(networkSpec, "networkSpec");
       this.vmSpec = vmSpec;
       this.isoSpec = isoSpec;
       this.networkSpec = networkSpec;
+      this.loginCredentials = loginCredentials;
    }
 
    public VmSpec getVmSpec() {
@@ -83,6 +93,10 @@ public class MasterSpec {
 
    public NetworkSpec getNetworkSpec() {
       return networkSpec;
+   }
+   
+   public LoginCredentials getLoginCredentials() {
+      return loginCredentials;
    }
 
    @Override

@@ -89,7 +89,7 @@ public class UnregisterMachineIfExistsAndForceDeleteItsMedia implements Function
       if (!filteredMediaToBeDeleted.isEmpty()) {
          try {
             IProgress deletion = machine.delete(filteredMediaToBeDeleted);
-            deletion.waitForCompletion(-1);
+            deletion.waitForCompletion(100);
          } catch (Exception e) {
             logger.error(e, "Problem in deleting the media attached to %s", machine.getName());
             Throwables.propagate(e);

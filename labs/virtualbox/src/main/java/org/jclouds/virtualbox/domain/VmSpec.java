@@ -42,7 +42,7 @@ public class VmSpec {
    private final Set<StorageController> controllers;
    private final CleanupMode cleanupMode;
 
-   public VmSpec(String vmId, String vmName, String osTypeId, long memory, boolean forceOverwrite,
+   public VmSpec(String vmId, String vmName, String osTypeId, long memory, String guestUser, String guestPassword, boolean forceOverwrite,
             Set<StorageController> controllers, CleanupMode cleanupMode) {
       this.vmId = checkNotNull(vmId, "vmId");
       this.vmName = checkNotNull(vmName, "vmName");
@@ -67,6 +67,8 @@ public class VmSpec {
       private String osTypeId = "";
       private boolean forceOverwrite = true;
       private long memory;
+      private String guestUser;
+      private String guestPassword;
       private CleanupMode cleanUpMode;
 
       public Builder controller(StorageController controller) {
@@ -103,13 +105,24 @@ public class VmSpec {
          this.cleanUpMode = cleanupMode;
          return this;
       }
+      
+      public Builder guestUser(String guestUser) {
+         this.guestUser = guestUser;
+         return this;
+      }  
+      
+      public Builder guestPassword(String guestPassword) {
+         this.guestPassword = guestPassword;
+         return this;
+      }    
 
       public VmSpec build() {
          checkNotNull(name, "name");
          checkNotNull(id, "id");
          checkArgument(memory > 0, "Memory must be set");
-         return new VmSpec(id, name, osTypeId, memory, forceOverwrite, controllers, cleanUpMode);
+         return new VmSpec(id, name, osTypeId, memory, guestUser, guestPassword, forceOverwrite, controllers, cleanUpMode);
       }
+
    }
 
    public String getVmId() {
@@ -162,7 +175,8 @@ public class VmSpec {
    @Override
    public String toString() {
       return "VmSpecification{" + "vmName='" + vmName + '\'' + ", osTypeId='" + osTypeId + '\'' + ", memory='" + memory
-               + '\'' + ", vmId='" + vmId + '\'' + ", forceOverwrite=" + forceOverwrite + ", controllers="
-               + controllers + ", cleanupMode=" + cleanupMode + '}';
+            + '\'' + ", vmId='" + vmId + '\'' + '\''
+            + ", forceOverwrite=" + forceOverwrite + ", controllers="
+            + controllers + ", cleanupMode=" + cleanupMode + '}';
    }
 }

@@ -39,8 +39,7 @@ import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.functions.CloneAndRegisterMachineFromIMachineIfNotAlreadyExists;
 import org.jclouds.virtualbox.functions.CreateAndInstallVm;
 import org.jclouds.virtualbox.functions.IMachineToSshClient;
-import org.jclouds.virtualbox.functions.IpAddressesLoadingCache;
-import org.jclouds.virtualbox.util.MachineUtils;
+import org.jclouds.virtualbox.util.NetworkUtils;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.CleanupMode;
@@ -57,7 +56,7 @@ import com.google.inject.Injector;
 /**
  * @author Andrea Turli
  */
-@Test(groups = "live", singleThreaded = true, testName = "GuestAdditionsInstallerLiveTest")
+@Test(groups = "live", singleThreaded = true, testName = "GuestAdditionsInstallerLiveTest", enabled=false)
 public class GuestAdditionsInstallerLiveTest extends BaseVirtualBoxClientLiveTest {
 
    private Injector injector;
@@ -65,7 +64,6 @@ public class GuestAdditionsInstallerLiveTest extends BaseVirtualBoxClientLiveTes
    private Predicate<SshClient> sshResponds;
 
    private MasterSpec machineSpec;
-   private IpAddressesLoadingCache ipAddressesLoadingCache;
 
    @Override
    @BeforeClass(groups = "live")
@@ -117,9 +115,8 @@ public class GuestAdditionsInstallerLiveTest extends BaseVirtualBoxClientLiveTes
          sshResponds = injector.getInstance(SshResponds.class);
          checkState(sshResponds.apply(client), "timed out waiting for guest %s to be accessible via ssh",
                   machine.getName());
-         ipAddressesLoadingCache = injector.getInstance(IpAddressesLoadingCache.class);
          
-         assertTrue(MachineUtils.isIpv4(ipAddressesLoadingCache.apply(machine.getName())));
+         assertTrue(NetworkUtils.isIpv4(networkUtils.getIpAddressFromNicSlot(machine.getName(), 0l)));
 
       } finally {
          for (String vmNameOrId : ImmutableSet.of(machine.getName())) {

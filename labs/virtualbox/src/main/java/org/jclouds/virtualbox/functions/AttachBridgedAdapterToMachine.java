@@ -46,7 +46,7 @@ public class AttachBridgedAdapterToMachine implements Function<IMachine, Void> {
       iNetworkAdapter.setAdapterType(Am79C973);
       iNetworkAdapter.setMACAddress(networkInterfaceCard.getNetworkAdapter().getMacAddress());
       iNetworkAdapter.setBridgedInterface(networkInterfaceCard.getHostInterfaceName());
-      iNetworkAdapter.setEnabled(true);
+      iNetworkAdapter.setEnabled(networkInterfaceCard.isEnabled());
       machine.saveSettings();
       return null;
    }

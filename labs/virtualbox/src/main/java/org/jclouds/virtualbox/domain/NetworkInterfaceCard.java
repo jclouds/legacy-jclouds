@@ -28,12 +28,13 @@ public class NetworkInterfaceCard {
 	private final long slot;
 	private final NetworkAdapter networkAdapter;
 	private final String hostInterfaceName;
-
+	private final boolean enabled;
 	
-	public NetworkInterfaceCard(long slot, NetworkAdapter networkAdapter, String hostInterfaceName) {
+	public NetworkInterfaceCard(long slot, NetworkAdapter networkAdapter, String hostInterfaceName, boolean enabled) {
 		this.slot = checkNotNull(slot, "slot");
 		this.networkAdapter = checkNotNull(networkAdapter, "networkAdapter");
 		this.hostInterfaceName = hostInterfaceName;
+		this.enabled = enabled;
 	}
 
 	public static Builder builder() {
@@ -45,6 +46,7 @@ public class NetworkInterfaceCard {
 		private long slot = 0L;
 		private NetworkAdapter networkAdapter;
 		private String hostInterfaceName;
+		private boolean enabled = true;
 		
 		public Builder slot(long slot) {
 		      checkArgument(slot >= 0 && slot < 4, "must be 0, 1, 2, 3: %s", slot);
@@ -62,10 +64,16 @@ public class NetworkInterfaceCard {
 				String hostInterfaceName) {
 			this.hostInterfaceName = hostInterfaceName;
 			return this;
-		}		
+		}	
+		
+	    public Builder enabled(
+	          boolean enabled) {
+	         this.enabled = enabled;
+	         return this;
+	      }  
 		
 		public NetworkInterfaceCard build() {
-			return new NetworkInterfaceCard(slot, networkAdapter, hostInterfaceName);
+			return new NetworkInterfaceCard(slot, networkAdapter, hostInterfaceName, enabled);
 		}
 	}
 
@@ -79,7 +87,11 @@ public class NetworkInterfaceCard {
 	
 	public String getHostInterfaceName() {
 		return hostInterfaceName;
-	}		
+	}
+	
+	public boolean isEnabled() {
+      return enabled;
+   }
 	
 	@Override
 	public boolean equals(Object o) {
@@ -89,14 +101,15 @@ public class NetworkInterfaceCard {
 			NetworkInterfaceCard other = (NetworkInterfaceCard) o;
 			return Objects.equal(slot,
 					other.slot) &&
-					Objects.equal(networkAdapter, other.networkAdapter);
+					Objects.equal(networkAdapter, other.networkAdapter)
+					&& Objects.equal(enabled, other.enabled);
 		}
 		return false;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hashCode(slot, networkAdapter);
+		return Objects.hashCode(slot, networkAdapter, enabled);
 	}
 
 	@Override
@@ -104,6 +117,7 @@ public class NetworkInterfaceCard {
 		return "NetworkInterfaceCard{slot="+ 
 				slot + 
 				", networkAdapter=" + networkAdapter +
+				", enabled=" + enabled +
 				'}';
 	}
 
