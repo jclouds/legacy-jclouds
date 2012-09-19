@@ -20,12 +20,12 @@ package org.jclouds.virtualbox;
 
 import static org.jclouds.compute.config.ComputeServiceProperties.TEMPLATE;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_DEFAULT_DIR;
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_GUEST_CREDENTIAL;
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_GUEST_IDENTITY;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGES_DESCRIPTOR;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_PRECONFIGURATION_URL;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_WORKINGDIR;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_GUEST_MEMORY;
+
 
 import java.io.File;
 import java.net.URI;
@@ -74,22 +74,17 @@ public class VirtualBoxApiMetadata extends BaseApiMetadata {
                + "initrd=/install/initrd.gz -- <Enter>");
 
       String workingDir = System.getProperty("test.virtualbox.workingDir", VIRTUALBOX_DEFAULT_DIR);
-
       properties.put(VIRTUALBOX_WORKINGDIR, workingDir);
 
+      String ram = System.getProperty(VIRTUALBOX_GUEST_MEMORY, "1024");
+      properties.put(VIRTUALBOX_GUEST_MEMORY, ram);
+      
       String yamlDescriptor = System.getProperty("test.virtualbox.image.descriptor.yaml", VIRTUALBOX_WORKINGDIR
                + File.separator + "images.yaml");
 
       properties.put(VIRTUALBOX_IMAGES_DESCRIPTOR, yamlDescriptor);
-
       properties.put(VIRTUALBOX_PRECONFIGURATION_URL, "http://10.0.2.2:23232/preseed.cfg");
-      
-      properties.put(VIRTUALBOX_GUEST_IDENTITY, "toor");
-      properties.put(VIRTUALBOX_GUEST_CREDENTIAL, "password");
-      properties.setProperty(TEMPLATE, 
-            String.format("osFamily=UBUNTU,osVersionMatches=12.04.1,os64Bit=true,osArchMatches=amd64,loginUser=%s:%s,authenticateSudo=true", 
-                  properties.getProperty(VIRTUALBOX_GUEST_IDENTITY), 
-                  properties.getProperty(VIRTUALBOX_GUEST_CREDENTIAL)));
+      properties.setProperty(TEMPLATE, "osFamily=UBUNTU,osVersionMatches=12.04.1,os64Bit=true,osArchMatches=amd64"); 
       return properties;
    }
 

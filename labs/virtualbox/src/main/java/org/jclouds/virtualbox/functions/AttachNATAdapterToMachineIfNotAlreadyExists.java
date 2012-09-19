@@ -55,7 +55,7 @@ public class AttachNATAdapterToMachineIfNotAlreadyExists implements Function<IMa
                throw e;
          }
       }
-      iNetworkAdapter.setEnabled(true);
+      iNetworkAdapter.setEnabled(networkInterfaceCard.isEnabled());
       machine.saveSettings();
       return null;
    }
