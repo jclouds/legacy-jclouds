@@ -19,6 +19,9 @@
 package org.jclouds.sqs.features;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+
+import java.net.URI;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
@@ -36,6 +39,71 @@ import com.google.common.collect.ImmutableSet;
  */
 @Test(groups = "unit", testName = "QueueApiExpectTest")
 public class QueueApiExpectTest extends BaseSQSApiExpectTest {
+   public HttpRequest getQueueUrl = HttpRequest.builder()
+         .method("POST")
+         .endpoint("https://sqs.us-east-1.amazonaws.com/")
+         .addHeader("Host", "sqs.us-east-1.amazonaws.com")
+         .addFormParam("Action", "GetQueueUrl")
+         .addFormParam("QueueName", "queueName")
+         .addFormParam("Signature", "ZjHLpNl6NLqK%2BsqOyEFqEJMWGeOLuNBd3%2B0Z9RGPYWU%3D")
+         .addFormParam("SignatureMethod", "HmacSHA256")
+         .addFormParam("SignatureVersion", "2")
+         .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
+         .addFormParam("Version", "2011-10-01")
+         .addFormParam("AWSAccessKeyId", "identity").build();
+
+   public void testGetQueueUrlWhenResponseIs2xx() throws Exception {
+      
+      HttpResponse getQueueUrlResponse = HttpResponse.builder()
+            .statusCode(200)
+            .payload(payloadFromResourceWithContentType("/get_queue_url.xml", "text/xml")).build();
+
+
+      SQSApi apiWhenExist = requestSendsResponse(getQueueUrl, getQueueUrlResponse);
+
+      assertEquals(apiWhenExist.getQueueApi().get("queueName"), URI.create("http://sqs.us-east-1.amazonaws.com/123456789012/testQueue"));
+   }
+   
+   public HttpRequest getQueueUrlByOwner = HttpRequest.builder()
+         .method("POST")
+         .endpoint("https://sqs.us-east-1.amazonaws.com/")
+         .addHeader("Host", "sqs.us-east-1.amazonaws.com")
+         .addFormParam("Action", "GetQueueUrl")
+         .addFormParam("QueueName", "queueName")
+         .addFormParam("QueueOwnerAWSAccountId", "120908098979")
+         .addFormParam("Signature", "O0E%2B3jh2vN6bKqmb4%2FXPTHUmPO1iat9o8YnIFH463g8%3D")
+         .addFormParam("SignatureMethod", "HmacSHA256")
+         .addFormParam("SignatureVersion", "2")
+         .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
+         .addFormParam("Version", "2011-10-01")
+         .addFormParam("AWSAccessKeyId", "identity").build();
+
+   public void testGetQueueUrlByOwnerWhenResponseIs2xx() throws Exception {
+      
+      HttpResponse getQueueUrlResponse = HttpResponse.builder()
+            .statusCode(200)
+            .payload(payloadFromResourceWithContentType("/get_queue_url.xml", "text/xml")).build();
+
+
+      SQSApi apiWhenExist = requestSendsResponse(getQueueUrlByOwner, getQueueUrlResponse);
+
+      assertEquals(apiWhenExist.getQueueApi().getInAccount("queueName", "120908098979"), URI.create("http://sqs.us-east-1.amazonaws.com/123456789012/testQueue"));
+   }
+   
+   // when the queue doesn't exist, or you don't have access to it
+   public void testGetQueueUrlByOwnerWhenResponseIs400ReturnsNull() throws Exception {
+      
+      HttpResponse getQueueUrlResponse = HttpResponse.builder()
+            .statusCode(400)
+            .payload(
+                  payloadFromStringWithContentType(
+                        "<ErrorResponse><Error><Type>Sender</Type><Code>AWS.SimpleQueueService.NonExistentQueue</Code><Message>The specified queue does not exist or you do not have access to it.</Message><Detail/></Error><RequestId>194a169f-4483-5bb1-8cb6-5e4ac865909a</RequestId></ErrorResponse>",
+                        "text/xml")).build();
+
+      SQSApi apiWhenExist = requestSendsResponse(getQueueUrlByOwner, getQueueUrlResponse);
+
+      assertNull(apiWhenExist.getQueueApi().getInAccount("queueName", "120908098979"));
+   }
    
    public HttpRequest createQueue = HttpRequest.builder()
          .method("POST")

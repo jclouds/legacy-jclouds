@@ -18,6 +18,7 @@
  */
 package org.jclouds.sqs.internal;
 
+import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.getLast;
 import static org.jclouds.sqs.options.ListQueuesOptions.Builder.queuePrefix;
 import static org.testng.Assert.assertNotNull;
@@ -39,6 +40,7 @@ import org.jclouds.sqs.features.QueueApi;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Splitter;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Sets;
 import com.google.common.reflect.TypeToken;
@@ -58,6 +60,10 @@ public class BaseSQSApiLiveTest extends BaseContextLiveTest<RestContext<SQSApi, 
    }
 
    protected Set<URI> queues = Sets.newHashSet();
+
+   protected String getOwner(URI queue) {
+      return get(Splitter.on('/').split(queue.getPath()), 1);
+   }
 
    protected String recreateQueueInRegion(String queueName, String region) {
       QueueApi api = api().getQueueApiForRegion(region);

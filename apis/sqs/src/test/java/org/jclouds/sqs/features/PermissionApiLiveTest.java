@@ -18,7 +18,6 @@
  */
 package org.jclouds.sqs.features;
 
-import static com.google.common.collect.Iterables.get;
 import static org.jclouds.concurrent.MoreExecutors.sameThreadExecutor;
 import static org.jclouds.providers.AnonymousProviderMetadata.forClientMappedToAsyncClientOnEndpoint;
 import static org.jclouds.sqs.reference.SQSParameters.ACTION;
@@ -42,7 +41,6 @@ import org.jclouds.sqs.xml.ValueHandler;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Module;
@@ -84,7 +82,7 @@ public class PermissionApiLiveTest extends BaseSQSApiLiveTest {
          QueueAttributes attributes = api().getQueueApi().getAttributes(queue);
          assertNoPermissions(queue);
 
-         String accountToAuthorize = getAccountToAuthorize(queue);
+         String accountToAuthorize = getOwner(queue);
          api().getPermissionApiForQueue(queue).addPermissionToAccount("fubar", Action.GET_QUEUE_ATTRIBUTES,
                accountToAuthorize);
 
@@ -95,10 +93,6 @@ public class PermissionApiLiveTest extends BaseSQSApiLiveTest {
 
          assertEquals(getAnonymousAttributesApi(queue).getQueueArn(), attributes.getQueueArn());
       }
-   }
-
-   protected String getAccountToAuthorize(URI queue) {
-      return get(Splitter.on('/').split(queue.getPath()), 1);
    }
 
    @Test(dependsOnMethods = "testAddAnonymousPermission")

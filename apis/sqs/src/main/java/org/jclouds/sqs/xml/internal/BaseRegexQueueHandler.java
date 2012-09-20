@@ -38,7 +38,7 @@ import com.google.common.collect.ImmutableSet.Builder;
  */
 @Singleton
 public class BaseRegexQueueHandler {
-   protected final Pattern pattern = Pattern.compile("<QueueUrl>(https://[\\S&&[^<]]+)</QueueUrl>");
+   protected final Pattern pattern = Pattern.compile("<QueueUrl>(https?://[\\S&&[^<]]+)</QueueUrl>");
 
    public FluentIterable<URI> parse(String in) {
       Builder<URI> queues = ImmutableSet.<URI> builder();

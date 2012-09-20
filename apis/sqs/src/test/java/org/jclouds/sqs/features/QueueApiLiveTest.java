@@ -21,9 +21,11 @@ package org.jclouds.sqs.features;
 import static com.google.common.collect.Iterables.getLast;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.UUID;
 
 import org.jclouds.sqs.internal.BaseSQSApiLiveTest;
 import org.testng.annotations.Test;
@@ -55,13 +57,32 @@ public class QueueApiLiveTest extends BaseSQSApiLiveTest {
          assertQueueInList(region, queue);
       }
    }
-
+   
+   @Test
+   public void testGracefulNoQueue() throws InterruptedException {
+      assertNull(api().getQueueApi().get(UUID.randomUUID().toString()));
+   }
+   
    @Test
    public void testCanRecreateQueueGracefully() throws InterruptedException {
       recreateQueueInRegion(prefix, null);
       recreateQueueInRegion(prefix, null);
    }
 
+   @Test(dependsOnMethods = "testCanRecreateQueueGracefully")
+   public void testGet() {
+      for (URI queue : queues) {
+         assertEquals(queue, api().getQueueApi().get(prefix));
+      }
+   }
+
+   @Test(dependsOnMethods = "testCanRecreateQueueGracefully")
+   public void testGetInAccount() {
+      for (URI queue : queues) {
+         assertEquals(api().getQueueApi().getInAccount(prefix, getOwner(queue)), queue);
+      }
+   }
+   
    @Test(dependsOnMethods = "testCanRecreateQueueGracefully")
    public void testGetQueueAttributes() {
       for (URI queue : queues) {
