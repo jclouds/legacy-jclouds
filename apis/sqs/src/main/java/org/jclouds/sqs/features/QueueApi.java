@@ -57,6 +57,29 @@ public interface QueueApi {
    FluentIterable<URI> list();
 
    FluentIterable<URI> list(ListQueuesOptions options);
+   
+   /**
+    * The GetQueueUrl action returns the Uniform Resource Locater (URL) of a
+    * queue. This action provides a simple way to retrieve the URL of an SQS
+    * queue.
+    * 
+    * @param queueName
+    *           The name of an existing queue.
+    * @return uri of the queue or null if not found
+    */
+   URI get(String queueName);
+
+   /**
+    * like {@link #get(String)}, except specifying the owner of the queue.
+    * 
+    * To access a queue that belongs to another AWS account, use the
+    * QueueOwnerAWSAccountId parameter to specify the account ID of the queue's
+    * owner. The queue's owner must grant you permission to access the queue.
+    * 
+    * @param accountId
+    * @return The AWS account ID of the account that created the queue.
+    */
+   URI getInAccount(String queueName, String accountId);
 
    /**
     * The CreateQueue action creates a new queue.

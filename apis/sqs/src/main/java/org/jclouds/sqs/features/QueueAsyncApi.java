@@ -84,6 +84,27 @@ public interface QueueAsyncApi {
    ListenableFuture<FluentIterable<URI>> list(ListQueuesOptions options);
 
    /**
+    * @see QueueApi#get(String)
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "GetQueueUrl")
+   @ResponseParser(RegexQueueHandler.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<URI> get(@FormParam("QueueName") String queueName);
+
+   /**
+    * @see QueueApi#getInAccount
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "GetQueueUrl")
+   @ResponseParser(RegexQueueHandler.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<URI> getInAccount(@FormParam("QueueName") String queueName,
+         @FormParam("QueueOwnerAWSAccountId") String accountId);
+
+   /**
     * @see QueueApi#create
     */
    @POST
