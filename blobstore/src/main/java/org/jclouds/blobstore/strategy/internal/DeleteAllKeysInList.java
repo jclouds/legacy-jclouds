@@ -22,6 +22,7 @@ import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursi
 import static org.jclouds.concurrent.FutureIterables.awaitCompletion;
 
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
@@ -95,8 +96,11 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
       for (int i = 0; i < maxErrors; ) {
          // fetch partial directory listing
          try {
-            listing = Futures.getUnchecked(connection.list(containerName, options));
-         } catch (RuntimeException ee) {
+            listing = connection.list(containerName, options).get();
+         } catch (InterruptedException ie) {
+            Thread.currentThread().interrupt();
+            break;
+         } catch (ExecutionException ee) {
             ++i;
             if (i == maxErrors) {
                throw Throwables.propagate(ee.getCause());
