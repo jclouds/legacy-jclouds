@@ -62,7 +62,7 @@ public class S3Utils {
     */
    public static boolean deleteAndVerifyContainerGone(S3Client sync, String container) {
       sync.deleteBucketIfEmpty(container);
-      return sync.bucketExists(container);
+      return !sync.bucketExists(container);
    }
    
    private static final Predicate<Annotation> ANNOTATIONTYPE_BUCKET = new Predicate<Annotation>() {
