@@ -146,6 +146,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
+import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -192,17 +193,7 @@ public class RestAnnotationProcessor<T> {
    static final LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> methodToIndexOfParamToPartParamAnnotations = createMethodToIndexOfParamToAnnotation(PartParam.class);
    static final LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> methodToIndexOfParamToParamParserAnnotations = createMethodToIndexOfParamToAnnotation(ParamParser.class);
    
-   /**
-    * Shared for all types of rest clients. this is read-only in this class, and
-    * currently populated only by {@link SeedAnnotationCache}
-    * 
-    * @see SeedAnnotationCache
-    */
-   // TODO: change this to a private final LoadingCache<MethodKey, Method>
-   // supplied by guice. The CacheLoader<MethodKey, Method> can be refactored
-   // out from SeedAnnotationCache. Potentially, preseed the cache, but only if
-   // this is uncomplicated.
-   static final Map<MethodKey, Method> delegationMap = newHashMap();
+   final Cache<MethodKey, Method> delegationMap;
 
    static LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> createMethodToIndexOfParamToAnnotation(
             final Class<? extends Annotation> annotation) {
@@ -331,7 +322,7 @@ public class RestAnnotationProcessor<T> {
 
    @SuppressWarnings("unchecked")
    @Inject
-   public RestAnnotationProcessor(Injector injector, LoadingCache<Class<?>, Boolean> seedAnnotationCache,
+   public RestAnnotationProcessor(Injector injector, LoadingCache<Class<?>, Boolean> seedAnnotationCache, Cache<MethodKey, Method> delegationMap, 
             @ApiVersion String apiVersion, @BuildVersion String buildVersion, ParseSax.Factory parserFactory,
             HttpUtils utils, ContentMetadataCodec contentMetadataCodec, TypeLiteral<T> typeLiteral) throws ExecutionException {
       this.declaring = (Class<T>) typeLiteral.getRawType();
@@ -342,6 +333,7 @@ public class RestAnnotationProcessor<T> {
       this.uriBuilderProvider = injector.getProvider(UriBuilder.class);
       this.seedAnnotationCache = seedAnnotationCache;
       seedAnnotationCache.get(declaring);
+      this.delegationMap = delegationMap;
       if (declaring.isAnnotationPresent(SkipEncoding.class)) {
          skips = declaring.getAnnotation(SkipEncoding.class).value();
       } else {
@@ -351,8 +343,9 @@ public class RestAnnotationProcessor<T> {
       this.buildVersion = buildVersion;
    }
 
+   
    public Method getDelegateOrNull(Method in) {
-      return delegationMap.get(new MethodKey(in));
+      return delegationMap.getIfPresent(new MethodKey(in));
    }
 
    public static class MethodKey {

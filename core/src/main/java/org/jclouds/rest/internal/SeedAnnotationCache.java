@@ -19,7 +19,6 @@
 package org.jclouds.rest.internal;
 
 import static com.google.common.collect.Sets.difference;
-import static org.jclouds.rest.internal.RestAnnotationProcessor.delegationMap;
 import static org.jclouds.rest.internal.RestAnnotationProcessor.getHttpMethods;
 import static org.jclouds.rest.internal.RestAnnotationProcessor.methodToIndexOfParamToBinderParamAnnotation;
 import static org.jclouds.rest.internal.RestAnnotationProcessor.methodToIndexOfParamToEndpointAnnotations;
@@ -48,6 +47,7 @@ import org.jclouds.rest.RestContext;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.internal.RestAnnotationProcessor.MethodKey;
 
+import com.google.common.cache.Cache;
 import com.google.common.cache.CacheLoader;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
@@ -68,10 +68,12 @@ public class SeedAnnotationCache extends CacheLoader<Class<?>, Boolean> {
    protected Logger logger = Logger.NULL;
 
    protected final Injector injector;
+   protected final Cache<MethodKey, Method> delegationMap;
 
    @Inject
-   public SeedAnnotationCache(Injector injector) {
+   public SeedAnnotationCache(Injector injector, Cache<MethodKey, Method> delegationMap) {
       this.injector = injector;
+      this.delegationMap = delegationMap;
    }
 
    @Override

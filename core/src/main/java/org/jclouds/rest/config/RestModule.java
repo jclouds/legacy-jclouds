@@ -20,6 +20,7 @@ package org.jclouds.rest.config;
 
 import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
 
+import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -46,6 +47,7 @@ import org.jclouds.rest.HttpClient;
 import org.jclouds.rest.binders.BindToJsonPayloadWrappedWith;
 import org.jclouds.rest.internal.AsyncRestClientProxy;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
+import org.jclouds.rest.internal.RestAnnotationProcessor.MethodKey;
 import org.jclouds.rest.internal.SeedAnnotationCache;
 import org.jclouds.util.Maps2;
 import org.jclouds.util.Predicates2;
@@ -53,6 +55,7 @@ import org.jclouds.util.Predicates2;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -107,7 +110,19 @@ public class RestModule extends AbstractModule {
       }).to(FilterStringsBoundToInjectorByName.class);
       installLocations();
    }
-   
+
+   /**
+    * Shared for all types of rest clients. this is read-only in this class, and
+    * currently populated only by {@link SeedAnnotationCache}
+    * 
+    * @see SeedAnnotationCache
+    */
+   @Provides
+   @Singleton
+   protected Cache<MethodKey, Method> delegationMap(){
+      return CacheBuilder.newBuilder().build();
+   }
+
    @Provides
    @Singleton
    @Named("TIMEOUTS")
