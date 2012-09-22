@@ -19,8 +19,6 @@
 package org.jclouds.sqs.internal;
 
 import static com.google.common.collect.Iterables.get;
-import static com.google.common.collect.Iterables.getLast;
-import static org.jclouds.sqs.options.ListQueuesOptions.Builder.queuePrefix;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
@@ -67,9 +65,9 @@ public class BaseSQSApiLiveTest extends BaseContextLiveTest<RestContext<SQSApi, 
 
    protected String recreateQueueInRegion(String queueName, String region) {
       QueueApi api = api().getQueueApiForRegion(region);
-      FluentIterable<URI> result = api.list(queuePrefix(queueName));
-      if (result.size() >= 1) {
-         api.delete(getLast(result));
+      URI result = api.get(queueName);
+      if (result != null) {
+         api.delete(result);
       }
       URI queue = api.create(queueName);
       assertQueueInList(region, queue);
