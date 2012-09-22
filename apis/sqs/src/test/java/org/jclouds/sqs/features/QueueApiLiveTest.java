@@ -70,9 +70,16 @@ public class QueueApiLiveTest extends BaseSQSApiLiveTest {
    }
 
    @Test(dependsOnMethods = "testCanRecreateQueueGracefully")
+   public void testCreateQueueWhenAlreadyExistsReturnsURI() {
+      for (URI queue : queues) {
+         assertEquals(api().getQueueApi().create(prefix), queue);
+      }
+   }
+   
+   @Test(dependsOnMethods = "testCanRecreateQueueGracefully")
    public void testGet() {
       for (URI queue : queues) {
-         assertEquals(queue, api().getQueueApi().get(prefix));
+         assertEquals(api().getQueueApi().get(prefix), queue);
       }
    }
 

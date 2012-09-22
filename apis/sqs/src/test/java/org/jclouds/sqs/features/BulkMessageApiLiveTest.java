@@ -26,13 +26,13 @@ import java.net.URI;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.jclouds.sqs.SQS;
 import org.jclouds.sqs.domain.BatchResult;
 import org.jclouds.sqs.domain.Message;
 import org.jclouds.sqs.domain.MessageIdAndMD5;
 import org.jclouds.sqs.internal.BaseSQSApiLiveTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import org.testng.internal.annotations.Sets;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
@@ -111,11 +111,7 @@ public class BulkMessageApiLiveTest extends BaseSQSApiLiveTest {
    }
 
    protected Set<Message> collectMessages(MessageApi api) {
-      // you are not guaranteed to get all messages in the same request
-      Set<Message> messages = Sets.newLinkedHashSet();
-      while (messages.size() != idPayload.size())
-         messages.addAll(api.receive(idPayload.size(), attribute("None").visibilityTimeout(5)).toImmutableSet());
-      return messages;
+      return SQS.receiveAllAtRate(api, idPayload.size(), attribute("None").visibilityTimeout(5)).toImmutableSet();
    }
 
    @Test(dependsOnMethods = "testChangeMessageVisibility")
