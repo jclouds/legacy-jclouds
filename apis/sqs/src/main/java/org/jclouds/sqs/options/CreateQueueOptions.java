@@ -113,7 +113,7 @@ public class CreateQueueOptions extends BaseHttpRequestOptions implements Clonea
     */
    @Override
    public int hashCode() {
-      return Objects.hashCode(attributes);
+      return Objects.hashCode(attributes.build());
    }
 
    @Override
@@ -133,7 +133,7 @@ public class CreateQueueOptions extends BaseHttpRequestOptions implements Clonea
       if (getClass() != obj.getClass())
          return false;
       CreateQueueOptions other = CreateQueueOptions.class.cast(obj);
-      return Objects.equal(this.attributes, other.attributes);
+      return Objects.equal(this.attributes.build(), other.attributes.build());
    }
 
    /**

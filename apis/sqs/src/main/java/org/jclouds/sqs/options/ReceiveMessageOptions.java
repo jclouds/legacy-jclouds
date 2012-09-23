@@ -128,7 +128,7 @@ public class ReceiveMessageOptions extends BaseHttpRequestOptions implements Clo
     */
    @Override
    public int hashCode() {
-      return Objects.hashCode(visibilityTimeout, attributes);
+      return Objects.hashCode(visibilityTimeout, attributes.build());
    }
 
    @Override
@@ -149,7 +149,7 @@ public class ReceiveMessageOptions extends BaseHttpRequestOptions implements Clo
          return false;
       ReceiveMessageOptions other = ReceiveMessageOptions.class.cast(obj);
       return Objects.equal(this.visibilityTimeout, other.visibilityTimeout)
-            && Objects.equal(this.attributes, other.attributes);
+            && Objects.equal(this.attributes.build(), other.attributes.build());
    }
 
    /**
