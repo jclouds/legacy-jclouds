@@ -129,7 +129,7 @@ public class TaskApiLiveTest extends BaseVCloudDirectorApiLiveTest {
       assertTaskStatusEventually(task, Task.Status.RUNNING, ImmutableSet.of(Task.Status.ERROR, Task.Status.ABORTED));
 
       // Call the method being tested
-      taskApi.cancel(taskURI);
+      taskApi.cancel(task.getHref());
       assertTaskStatusEventually(task, Task.Status.CANCELED, ImmutableSet.of(Task.Status.ERROR, Task.Status.ABORTED, Task.Status.SUCCESS));
    }
 }

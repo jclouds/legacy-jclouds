@@ -104,6 +104,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+import com.google.common.util.concurrent.Uninterruptibles;
 
 /**
  * Tests behavior of the {@link VAppApi}.
@@ -297,8 +298,8 @@ public class VAppApiLiveTest extends AbstractVAppApiLiveTest {
    public void testShutdown() {
       // Power on VApp
       vApp = powerOnVApp(vAppUrn);
-
       vApp = vAppApi.get(vAppUrn);
+      Uninterruptibles.sleepUninterruptibly(3, TimeUnit.MINUTES);
       
       // The method under test
       Task shutdown = vAppApi.shutdown(vAppUrn);
