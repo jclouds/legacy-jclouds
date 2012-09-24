@@ -20,7 +20,7 @@ package org.jclouds.virtualbox.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.virtualbox_4_1.NATProtocol;
+import org.virtualbox_4_2.NATProtocol;
 
 import com.google.common.base.Objects;
 

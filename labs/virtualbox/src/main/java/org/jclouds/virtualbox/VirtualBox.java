@@ -19,7 +19,7 @@
 
 package org.jclouds.virtualbox;
 
-import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_2.VirtualBoxManager;
 
 public class VirtualBox {
 

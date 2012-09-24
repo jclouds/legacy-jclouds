@@ -31,17 +31,17 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.virtualbox.domain.ExecutionType;
 import org.jclouds.virtualbox.functions.LaunchMachineIfNotAlreadyRunning;
-import org.virtualbox_4_1.AdditionsFacilityStatus;
-import org.virtualbox_4_1.AdditionsFacilityType;
-import org.virtualbox_4_1.AdditionsRunLevelType;
-import org.virtualbox_4_1.IAdditionsFacility;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.IProgress;
-import org.virtualbox_4_1.ISession;
-import org.virtualbox_4_1.LockType;
-import org.virtualbox_4_1.MachineState;
-import org.virtualbox_4_1.SessionState;
-import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_2.AdditionsFacilityStatus;
+import org.virtualbox_4_2.AdditionsFacilityType;
+import org.virtualbox_4_2.AdditionsRunLevelType;
+import org.virtualbox_4_2.IAdditionsFacility;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.IProgress;
+import org.virtualbox_4_2.ISession;
+import org.virtualbox_4_2.LockType;
+import org.virtualbox_4_2.MachineState;
+import org.virtualbox_4_2.SessionState;
+import org.virtualbox_4_2.VirtualBoxManager;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
@@ -75,8 +75,8 @@ public class MachineController {
       this.machineUtils = machineUtils;
       this.executionType = executionType;
    }
-
-   public ISession ensureMachineIsLaunched(String vmName) {
+   
+   public ISession ensureMachineIsLaunchedWithoutGA(String vmName) {
       ISession session = null;
       IMachine machine = manager.get().getVBox().findMachine(vmName);
       while (!machine.getState().equals(MachineState.Running)) {
@@ -99,29 +99,54 @@ public class MachineController {
       }
       // for scancode
       Uninterruptibles.sleepUninterruptibly(5, TimeUnit.SECONDS);
-      
+      return checkNotNull(session, "session");
+   }
+
+   public ISession ensureMachineIsLaunched(String vmName) {
+      ISession session = null;
+      IMachine machine = manager.get().getVBox().findMachine(vmName);
+      while (!machine.getState().equals(MachineState.Running)) {
+         try {
+            session = machineUtils.applyForMachine(vmName,
+                  new LaunchMachineIfNotAlreadyRunning(manager.get(),
+                        executionType, ""));
+         } catch (RuntimeException e) {
+            if (e.getMessage()
+                  .contains(
+                        "org.virtualbox_4_1.VBoxException: VirtualBox error: The given session is busy (0x80BB0007)")) {
+               throw e;
+            } else if (e.getMessage().contains(
+                  "VirtualBox error: The object is not ready")) {
+               continue;
+            } else {
+               throw e;
+            }
+         }
+      }
+      Uninterruptibles.sleepUninterruptibly(3, TimeUnit.SECONDS);      
       String guestAdditionsInstalled = machineUtils.sharedLockMachineAndApplyToSession(vmName,
             new Function<ISession, String>() {
 
                @Override
                public String apply(ISession session) {
                   int attempts = 0;
-                  String guestAdditionsInstalled = null;
-                  while (!!session.getConsole().getGuest()
-                        .getAdditionsVersion().isEmpty() && attempts  < 3) {
-                     Uninterruptibles.sleepUninterruptibly(2, TimeUnit.SECONDS);
+                  String guestAdditionsInstalled = session.getConsole().getGuest()
+                        .getAdditionsVersion();
+                  while (guestAdditionsInstalled.isEmpty() && attempts < 5) {
+                     Uninterruptibles.sleepUninterruptibly(5, TimeUnit.SECONDS);
                      guestAdditionsInstalled = session.getConsole().getGuest()
                            .getAdditionsVersion();
                      attempts++;
                   }
+                  logger.debug("Found guestAdditions %s version at attempt %s", guestAdditionsInstalled, attempts);
                   return guestAdditionsInstalled;
                }
                
       });
+      logger.debug("Waiting for guest additions ready on %s ...", vmName);
       if(!Strings.nullToEmpty(guestAdditionsInstalled).isEmpty()) {
          waitVBoxServiceIsActive(vmName);
       }
-
       return checkNotNull(session, "session");
    }
 
@@ -239,38 +264,38 @@ public class MachineController {
        logger.debug("Machine session (%s) is %s", machine.getName(), machine.getSessionState());
    }
    
-   private void waitVBoxServiceIsActive(String vmName) {
+   private void waitVBoxServiceIsActive(final String vmName) {
       machineUtils.sharedLockMachineAndApplyToSession(vmName, new Function<ISession, Void>() {
 
          @Override
          public Void apply(ISession session) {
-            session.getConsole().getGuest().setStatisticsUpdateInterval(1l);
+            Uninterruptibles.sleepUninterruptibly(2, TimeUnit.SECONDS);
             while (!session.getConsole().getGuest().getAdditionsStatus(AdditionsRunLevelType.Userland)) {
+               System.err.println("waiting getAdditionsStatus ...");
                Uninterruptibles.sleepUninterruptibly(200, TimeUnit.MILLISECONDS);
             }
             
             List<IAdditionsFacility> facilities = session.getConsole().getGuest().getFacilities();
             while (facilities.size() != 4) {
                Uninterruptibles.sleepUninterruptibly(200, TimeUnit.MILLISECONDS);
+               System.err.println("waiting size ...");
                facilities = session.getConsole().getGuest().getFacilities();
             }
-            facilities = session.getConsole().getGuest().getFacilities();
-
+            
             Optional<IAdditionsFacility> vboxServiceFacility = Optional.absent();
             while (!vboxServiceFacility.isPresent()) {
-               vboxServiceFacility = Iterables.tryFind(session.getConsole().getGuest().getFacilities(),
+               Uninterruptibles.sleepUninterruptibly(2, TimeUnit.SECONDS);
+               facilities = session.getConsole().getGuest().getFacilities();
+               vboxServiceFacility = Iterables.tryFind(facilities,
                      new Predicate<IAdditionsFacility>() {
                         @Override
                         public boolean apply(IAdditionsFacility additionsFacility) {
-                           return additionsFacility.getType().equals(AdditionsFacilityType.VBoxService);
+                           return additionsFacility.getType().equals(AdditionsFacilityType.VBoxService) &&
+                                 additionsFacility.getStatus().equals(AdditionsFacilityStatus.Active);
                         };
                      });
             }
-
-            while(!vboxServiceFacility.get().getStatus().equals(AdditionsFacilityStatus.Active)) {
-               Uninterruptibles.sleepUninterruptibly(1, TimeUnit.SECONDS);
-            }
-            Uninterruptibles.sleepUninterruptibly(3, TimeUnit.SECONDS);
+            logger.debug("Guest Additions on %s are ready!", vmName);
             return null;
          }
       });

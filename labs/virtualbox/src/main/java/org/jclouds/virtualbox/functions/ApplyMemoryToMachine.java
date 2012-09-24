@@ -19,7 +19,7 @@
 
 package org.jclouds.virtualbox.functions;
 
-import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_2.IMachine;
 
 import com.google.common.base.Function;
 

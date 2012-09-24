@@ -51,15 +51,15 @@ import org.jclouds.virtualbox.functions.RetrieveActiveBridgedInterfaces;
 import org.jclouds.virtualbox.statements.EnableNetworkInterface;
 import org.jclouds.virtualbox.statements.GetIPAddressFromMAC;
 import org.jclouds.virtualbox.statements.ScanNetworkWithPing;
-import org.virtualbox_4_1.HostNetworkInterfaceType;
-import org.virtualbox_4_1.IDHCPServer;
-import org.virtualbox_4_1.IHostNetworkInterface;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.INetworkAdapter;
-import org.virtualbox_4_1.ISession;
-import org.virtualbox_4_1.LockType;
-import org.virtualbox_4_1.NetworkAttachmentType;
-import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_2.HostNetworkInterfaceType;
+import org.virtualbox_4_2.IDHCPServer;
+import org.virtualbox_4_2.IHostNetworkInterface;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.INetworkAdapter;
+import org.virtualbox_4_2.ISession;
+import org.virtualbox_4_2.LockType;
+import org.virtualbox_4_2.NetworkAttachmentType;
+import org.virtualbox_4_2.VirtualBoxManager;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -128,9 +128,26 @@ public class NetworkUtils {
       // create new hostOnly interface if needed, otherwise use the one already there with dhcp enabled ...
       String hostOnlyIfName = getHostOnlyIfOrCreate();
       NetworkInterfaceCard hostOnlyIfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(hostOnlyAdapter)
-               .addHostInterfaceName(hostOnlyIfName).slot(0L).build();      
+               .addHostInterfaceName(hostOnlyIfName)
+               .slot(0L)
+               .build();      
       return createNetworkSpecForHostOnlyNATNICs(natIfaceCard, hostOnlyIfaceCard);
    }
+   
+   public NetworkSpec createHostOnlyNIC(long port) {
+       NetworkAdapter hostOnlyAdapter = NetworkAdapter.builder()
+            .networkAttachmentType(NetworkAttachmentType.HostOnly)
+               .build();
+      // create new hostOnly interface if needed, otherwise use the one already there with dhcp enabled ...
+      String hostOnlyIfName = getHostOnlyIfOrCreate();
+      NetworkInterfaceCard hostOnlyIfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(hostOnlyAdapter)
+               .addHostInterfaceName(hostOnlyIfName)
+               .slot(port)
+               .build();
+      return NetworkSpec.builder()
+            .addNIC(hostOnlyIfaceCard)
+            .build();
+   }   
    
    public boolean enableNetworkInterface(NodeMetadata nodeMetadata, NetworkInterfaceCard networkInterfaceCard) {
       ExecResponse execResponse = null;
@@ -171,7 +188,8 @@ public class NetworkUtils {
       List<IHostNetworkInterface> availableNetworkInterfaces = manager.get().getVBox().getHost()
                .getNetworkInterfaces();
       
-      IHostNetworkInterface iHostNetworkInterfaceWithHostOnlyIfName = Iterables.getOnlyElement(Iterables.filter(availableNetworkInterfaces, new Predicate<IHostNetworkInterface>() {
+      IHostNetworkInterface iHostNetworkInterfaceWithHostOnlyIfName = 
+            Iterables.getOnlyElement(Iterables.filter(availableNetworkInterfaces, new Predicate<IHostNetworkInterface>() {
 
          @Override
          public boolean apply(IHostNetworkInterface iHostNetworkInterface) {
@@ -227,7 +245,8 @@ public class NetworkUtils {
     * @return
     */
    private Iterable<IHostNetworkInterface> filterAvailableNetworkInterfaceByHostOnlyAndDHCPenabled(Iterable<IHostNetworkInterface> availableNetworkInterfaces) {
-      Iterable<IHostNetworkInterface> filteredNetworkInterfaces = Iterables.filter(availableNetworkInterfaces, new Predicate<IHostNetworkInterface>() {
+      Iterable<IHostNetworkInterface> filteredNetworkInterfaces = 
+            Iterables.filter(availableNetworkInterfaces, new Predicate<IHostNetworkInterface>() {
          @Override
          public boolean apply(IHostNetworkInterface iHostNetworkInterface) {
             // this is an horrible workaround cause iHostNetworkInterface.getDhcpEnabled is working only for windows host
@@ -285,17 +304,21 @@ public class NetworkUtils {
       if(ip.equals(VIRTUALBOX_HOST_GATEWAY) || !isValidHostOnlyIpAddress(ip, slot, machine)) {
          // restart vm
          logger.debug("reset node (%s) to refresh guest properties.", vmNameOrId);
-         machineUtils.lockSessionOnMachineAndApply(vmNameOrId, LockType.Shared,
-               new Function<ISession, Void>() {
-                  @Override
-                  public Void apply(ISession session) {
-                     session.getConsole().reset();
-                     long time = 15;
-                     logger.debug("Waiting %s secs for the reset of (%s) ...", time, vmNameOrId);
-                     Uninterruptibles.sleepUninterruptibly(time, TimeUnit.SECONDS);
-                     return null;
-                  }
-               });
+         
+//         machineUtils.lockSessionOnMachineAndApply(vmNameOrId, LockType.Shared,
+//               new Function<ISession, Void>() {
+//                  @Override
+//                  public Void apply(ISession session) {
+//                     try {
+//                        session.getConsole().powerDown().wait(-1);
+//                        session.getConsole().powerUp().wait(-1);
+//                     } catch (InterruptedException e) {
+//                        // TODO Auto-generated catch block
+//                        e.printStackTrace();
+//                     }
+//                     return null;
+//                  }
+//               });
          return false;
       }
       return true;

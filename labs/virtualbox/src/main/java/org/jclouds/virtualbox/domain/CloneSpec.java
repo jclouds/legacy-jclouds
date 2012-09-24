@@ -21,7 +21,7 @@ package org.jclouds.virtualbox.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_2.IMachine;
 
 import com.google.common.base.Objects;
 

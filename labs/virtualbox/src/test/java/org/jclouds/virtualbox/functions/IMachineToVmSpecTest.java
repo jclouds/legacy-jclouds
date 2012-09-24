@@ -29,13 +29,13 @@ import org.jclouds.virtualbox.domain.IsoImage;
 import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
 import org.testng.annotations.Test;
-import org.virtualbox_4_1.DeviceType;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.IMedium;
-import org.virtualbox_4_1.IMediumAttachment;
-import org.virtualbox_4_1.IStorageController;
-import org.virtualbox_4_1.StorageBus;
-import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_2.DeviceType;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.IMedium;
+import org.virtualbox_4_2.IMediumAttachment;
+import org.virtualbox_4_2.IStorageController;
+import org.virtualbox_4_2.StorageBus;
+import org.virtualbox_4_2.VirtualBoxManager;
 
 import com.google.common.collect.Lists;
 

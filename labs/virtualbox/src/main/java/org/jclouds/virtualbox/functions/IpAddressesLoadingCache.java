@@ -34,7 +34,7 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.virtualbox.util.MachineNameOrIdAndNicSlot;
 import org.jclouds.virtualbox.util.NetworkUtils;
-import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_2.VirtualBoxManager;
 
 import com.google.common.base.Strings;
 import com.google.common.base.Supplier;
