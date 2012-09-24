@@ -27,6 +27,7 @@ import static org.easymock.EasyMock.verify;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
 
 import java.net.URI;
+import java.util.List;
 
 import org.jclouds.compute.callables.RunScriptOnNode;
 import org.jclouds.compute.callables.RunScriptOnNode.Factory;
@@ -34,12 +35,15 @@ import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
+import org.jclouds.scriptbuilder.domain.Statement;
+import org.jclouds.scriptbuilder.domain.StatementList;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.virtualbox.functions.HardcodedHostToHostNodeMetadata;
 import org.jclouds.virtualbox.predicates.RetryIfSocketNotYetOpen;
 import org.testng.annotations.Test;
 import org.virtualbox_4_2.VirtualBoxManager;
 
+import com.beust.jcommander.internal.Lists;
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.base.Suppliers;
@@ -62,13 +66,29 @@ public class StartVBoxIfNotAlreadyRunningLiveTest {
       expect(client.apply(HostAndPort.fromParts(provider.getHost(), provider.getPort()))).andReturn(true).anyTimes();
       manager.connect(provider.toASCIIString(), "", "");
       expectLastCall().anyTimes();
-
+      
+      List<Statement> statements = Lists.newArrayList();
+      statements.add(Statements.findPid("vboxwebsrv"));
+      statements.add(Statements.kill());
+      StatementList statementList = new StatementList(statements);
+      expect(runScriptOnNodeFactory.create(null, 
+            statementList,
+                        runAsRoot(false))).andReturn(runScriptOnNode);
+      expect(runScriptOnNode.init()).andReturn(runScriptOnNode);
+      expect(runScriptOnNode.call()).andReturn(new ExecResponse("", "", 0));
+     
       expect(runScriptOnNodeFactory.create(null, Statements
             .exec("VBoxManage setproperty websrvauthlibrary null"),
       runAsRoot(false).wrapInInitScript(false))).andReturn(runScriptOnNode);
       expect(runScriptOnNode.init()).andReturn(runScriptOnNode);
       expect(runScriptOnNode.call()).andReturn(new ExecResponse("", "", 0));
-            
+      
+      String vboxwebsrv = "vboxwebsrv -t0 -v -b -H localhost";
+      expect(runScriptOnNodeFactory.create(null, Statements.exec(vboxwebsrv),
+      runAsRoot(false).wrapInInitScript(false).blockOnComplete(false).nameTask("vboxwebsrv"))).andReturn(runScriptOnNode);
+      expect(runScriptOnNode.init()).andReturn(runScriptOnNode);
+      expect(runScriptOnNode.call()).andReturn(new ExecResponse("", "", 0));
+      
       replay(manager, runScriptOnNodeFactory, runScriptOnNode, client);
 
       new StartVBoxIfNotAlreadyRunning((Function) Functions.constant(manager), runScriptOnNodeFactory, client,

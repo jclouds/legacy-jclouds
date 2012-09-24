@@ -54,6 +54,10 @@ import org.virtualbox_4_2.IProgress;
 import org.virtualbox_4_2.ISnapshot;
 import org.virtualbox_4_2.VirtualBoxManager;
 
+<<<<<<< HEAD
+=======
+import com.beust.jcommander.internal.Lists;
+>>>>>>> d52cf89... issue 384: added support for virtualbox 4.2.0
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;

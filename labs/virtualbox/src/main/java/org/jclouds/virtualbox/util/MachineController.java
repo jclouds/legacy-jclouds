@@ -271,12 +271,14 @@ public class MachineController {
          public Void apply(ISession session) {
             Uninterruptibles.sleepUninterruptibly(3, TimeUnit.SECONDS);
             while (!session.getConsole().getGuest().getAdditionsStatus(AdditionsRunLevelType.Userland)) {
+               System.err.println("waiting getAdditionsStatus ...");
                Uninterruptibles.sleepUninterruptibly(200, TimeUnit.MILLISECONDS);
             }
             
             List<IAdditionsFacility> facilities = session.getConsole().getGuest().getFacilities();
             while (facilities.size() != 4) {
                Uninterruptibles.sleepUninterruptibly(200, TimeUnit.MILLISECONDS);
+               System.err.println("waiting size ...");
                facilities = session.getConsole().getGuest().getFacilities();
             }
             

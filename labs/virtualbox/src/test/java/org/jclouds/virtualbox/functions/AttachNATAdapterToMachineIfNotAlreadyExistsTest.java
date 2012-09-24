@@ -55,7 +55,7 @@ public class AttachNATAdapterToMachineIfNotAlreadyExistsTest {
 
 		expect(machine.getNetworkAdapter(slotId)).andReturn(iNetworkAdapter);
 		iNetworkAdapter.setAttachmentType(NAT);
-		expect(iNetworkAdapter.getNATEngine()).andReturn(natEngine).anyTimes();
+		expect(iNetworkAdapter.getNATEngine()).andReturn(natEngine);
 
 		List<String> redirects = new ArrayList<String>();
 		expect(natEngine.getRedirects()).andReturn(redirects);
@@ -86,10 +86,8 @@ public class AttachNATAdapterToMachineIfNotAlreadyExistsTest {
 
 		expect(machine.getNetworkAdapter(slotId)).andReturn(iNetworkAdapter);
 		iNetworkAdapter.setAttachmentType(NAT);
-		expect(iNetworkAdapter.getNATEngine()).andReturn(natEngine).anyTimes();
 
-		List<String> redirects = new ArrayList<String>();
-		expect(natEngine.getRedirects()).andReturn(redirects);
+		expect(iNetworkAdapter.getNATEngine()).andReturn(natEngine);
 
 		natEngine.addRedirect("TCP@127.0.0.1:2222->:22", TCP, "127.0.0.1",
 				2222, "", 22);
