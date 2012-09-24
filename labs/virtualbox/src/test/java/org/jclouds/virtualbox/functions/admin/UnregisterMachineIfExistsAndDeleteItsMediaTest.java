@@ -33,13 +33,13 @@ import org.jclouds.virtualbox.domain.HardDisk;
 import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
 import org.testng.annotations.Test;
-import org.virtualbox_4_1.CleanupMode;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.IMedium;
-import org.virtualbox_4_1.IProgress;
-import org.virtualbox_4_1.IVirtualBox;
-import org.virtualbox_4_1.StorageBus;
-import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_2.CleanupMode;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.IMedium;
+import org.virtualbox_4_2.IProgress;
+import org.virtualbox_4_2.IVirtualBox;
+import org.virtualbox_4_2.StorageBus;
+import org.virtualbox_4_2.VirtualBoxManager;
 
 @Test(groups = "unit", testName = "UnregisterMachineIfExistsTest")
 public class UnregisterMachineIfExistsAndDeleteItsMediaTest {

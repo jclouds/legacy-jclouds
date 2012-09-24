@@ -31,9 +31,9 @@ import org.jclouds.domain.LoginCredentials;
 import org.jclouds.logging.Logger;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.virtualbox.util.NetworkUtils;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.INetworkAdapter;
-import org.virtualbox_4_1.NetworkAttachmentType;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.INetworkAdapter;
+import org.virtualbox_4_2.NetworkAttachmentType;
 
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
@@ -76,10 +76,10 @@ public class IMachineToSshClient implements Function<IMachine, SshClient> {
 
 		if (networkAdapter.getAttachmentType()
 				.equals(NetworkAttachmentType.NAT)) {
-			for (String nameProtocolnumberAddressInboundPortGuestTargetport : networkAdapter
-					.getNatDriver().getRedirects()) {
+			for (String nameProtocolnumberAddressInboudportGuestTargetport : networkAdapter
+					.getNATEngine().getRedirects()) {
 				Iterable<String> stuff = Splitter.on(',').split(
-						nameProtocolnumberAddressInboundPortGuestTargetport);
+						nameProtocolnumberAddressInboudportGuestTargetport);
 				String protocolNumber = Iterables.get(stuff, 1);
 				String hostAddress = Iterables.get(stuff, 2);
 				String inboundPort = Iterables.get(stuff, 3);

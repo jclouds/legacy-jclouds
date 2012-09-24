@@ -18,8 +18,8 @@
  */
 package org.jclouds.virtualbox.util;
 
-import org.virtualbox_4_1.IMedium;
-import org.virtualbox_4_1.IMediumAttachment;
+import org.virtualbox_4_2.IMedium;
+import org.virtualbox_4_2.IMediumAttachment;
 
 import com.google.common.base.Function;
 

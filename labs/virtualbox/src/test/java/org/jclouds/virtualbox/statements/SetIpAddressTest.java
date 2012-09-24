@@ -25,7 +25,7 @@ import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.virtualbox.domain.NetworkAdapter;
 import org.jclouds.virtualbox.domain.NetworkInterfaceCard;
 import org.testng.annotations.Test;
-import org.virtualbox_4_1.NetworkAttachmentType;
+import org.virtualbox_4_2.NetworkAttachmentType;
 
 public class SetIpAddressTest {
 
