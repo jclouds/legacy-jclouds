@@ -25,17 +25,17 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.virtualbox_4_1.NATProtocol.TCP;
-import static org.virtualbox_4_1.NetworkAttachmentType.NAT;
+import static org.virtualbox_4_2.NATProtocol.TCP;
+import static org.virtualbox_4_2.NetworkAttachmentType.NAT;
 
 import org.jclouds.virtualbox.domain.NetworkAdapter;
 import org.jclouds.virtualbox.domain.NetworkInterfaceCard;
 import org.testng.annotations.Test;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.INATEngine;
-import org.virtualbox_4_1.INetworkAdapter;
-import org.virtualbox_4_1.NetworkAttachmentType;
-import org.virtualbox_4_1.VBoxException;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.INATEngine;
+import org.virtualbox_4_2.INetworkAdapter;
+import org.virtualbox_4_2.NetworkAttachmentType;
+import org.virtualbox_4_2.VBoxException;
 
 /**
  * @author Mattias Holmqvist, Andrea Turli
@@ -52,7 +52,7 @@ public class AttachNATAdapterToMachineIfNotAlreadyExistsTest {
 
 		expect(machine.getNetworkAdapter(slotId)).andReturn(iNetworkAdapter);
 		iNetworkAdapter.setAttachmentType(NAT);
-		expect(iNetworkAdapter.getNatDriver()).andReturn(natEngine);
+		expect(iNetworkAdapter.getNATEngine()).andReturn(natEngine);
 
 		natEngine.addRedirect("TCP@127.0.0.1:2222->:22", TCP, "127.0.0.1",
 				2222, "", 22);
@@ -81,7 +81,7 @@ public class AttachNATAdapterToMachineIfNotAlreadyExistsTest {
 
 		expect(machine.getNetworkAdapter(slotId)).andReturn(iNetworkAdapter);
 		iNetworkAdapter.setAttachmentType(NAT);
-		expect(iNetworkAdapter.getNatDriver()).andReturn(natEngine);
+		expect(iNetworkAdapter.getNATEngine()).andReturn(natEngine);
 
 		natEngine.addRedirect("TCP@127.0.0.1:2222->:22", TCP, "127.0.0.1",
 				2222, "", 22);

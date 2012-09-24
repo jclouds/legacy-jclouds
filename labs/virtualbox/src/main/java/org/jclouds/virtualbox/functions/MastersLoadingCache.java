@@ -71,12 +71,12 @@ import org.jclouds.virtualbox.functions.admin.PreseedCfgServer;
 import org.jclouds.virtualbox.predicates.RetryIfSocketNotYetOpen;
 import org.jclouds.virtualbox.util.NetworkUtils;
 import org.testng.collections.Lists;
-import org.virtualbox_4_1.CleanupMode;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.NetworkAttachmentType;
-import org.virtualbox_4_1.StorageBus;
-import org.virtualbox_4_1.VBoxException;
-import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_2.CleanupMode;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.NetworkAttachmentType;
+import org.virtualbox_4_2.StorageBus;
+import org.virtualbox_4_2.VBoxException;
+import org.virtualbox_4_2.VirtualBoxManager;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Function;

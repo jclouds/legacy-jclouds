@@ -26,8 +26,8 @@ import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
 import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
 import org.testng.annotations.Test;
-import org.virtualbox_4_1.CleanupMode;
-import org.virtualbox_4_1.StorageBus;
+import org.virtualbox_4_2.CleanupMode;
+import org.virtualbox_4_2.StorageBus;
 
 /**
  * @author Andrea Turli, David Alves

@@ -25,11 +25,11 @@ import static org.easymock.EasyMock.verify;
 
 import org.jclouds.virtualbox.domain.ExecutionType;
 import org.testng.annotations.Test;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.IProgress;
-import org.virtualbox_4_1.ISession;
-import org.virtualbox_4_1.SessionState;
-import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.IProgress;
+import org.virtualbox_4_2.ISession;
+import org.virtualbox_4_2.SessionState;
+import org.virtualbox_4_2.VirtualBoxManager;
 
 @Test(groups = "unit", testName = "LaunchMachineIfNotAlreadyRunningTest")
 public class LaunchMachineIfNotAlreadyRunningTest {

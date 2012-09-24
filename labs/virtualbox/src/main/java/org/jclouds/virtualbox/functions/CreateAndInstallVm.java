@@ -45,9 +45,9 @@ import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.statements.InstallGuestAdditions;
 import org.jclouds.virtualbox.util.MachineController;
 import org.jclouds.virtualbox.util.MachineUtils;
-import org.virtualbox_4_1.DeviceType;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.IMediumAttachment;
+import org.virtualbox_4_2.DeviceType;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.IMediumAttachment;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -98,7 +98,7 @@ public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
       String masterName = vmSpec.getVmName();
       IMachine masterMachine = createAndRegisterMachineFromIsoIfNotAlreadyExists.apply(masterSpec);
       // Launch machine and wait for it to come online
-      machineController.ensureMachineIsLaunched(masterName);
+      machineController.ensureMachineIsLaunchedWithoutGA(masterName);
       String installationKeySequence = isoSpec.getInstallationKeySequence().replace("PRECONFIGURATION_URL",
                preconfigurationUrl);
       

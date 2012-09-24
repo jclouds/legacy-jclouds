@@ -20,9 +20,9 @@
 package org.jclouds.virtualbox.functions;
 
 import org.jclouds.virtualbox.domain.DeviceDetails;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.IMedium;
-import org.virtualbox_4_1.VBoxException;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.IMedium;
+import org.virtualbox_4_2.VBoxException;
 
 import com.google.common.base.Function;
 

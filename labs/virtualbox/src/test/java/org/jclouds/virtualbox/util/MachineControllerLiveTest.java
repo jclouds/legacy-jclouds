@@ -39,12 +39,12 @@ import org.jclouds.virtualbox.functions.CreateAndInstallVm;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import org.virtualbox_4_1.CleanupMode;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.ISession;
-import org.virtualbox_4_1.NetworkAttachmentType;
-import org.virtualbox_4_1.SessionState;
-import org.virtualbox_4_1.StorageBus;
+import org.virtualbox_4_2.CleanupMode;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.ISession;
+import org.virtualbox_4_2.NetworkAttachmentType;
+import org.virtualbox_4_2.SessionState;
+import org.virtualbox_4_2.StorageBus;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Function;
@@ -54,8 +54,9 @@ import com.google.inject.Injector;
 @Test(groups = "live", testName = "MachineControllerLiveTest")
 public class MachineControllerLiveTest extends BaseVirtualBoxClientLiveTest {
 
-   private MasterSpec machineSpec;
+   private MasterSpec masterSpec;
    private String instanceName;
+   private IMachine clonedMachine;
 
    @Override
    @BeforeClass(groups = "live")
@@ -94,29 +95,23 @@ public class MachineControllerLiveTest extends BaseVirtualBoxClientLiveTest {
             .addHostInterfaceName("vboxnet0").slot(0L).build();
       NetworkSpec networkSpec = NetworkSpec.builder()
             .addNIC(networkInterfaceCard).build();
-      machineSpec = MasterSpec.builder().iso(isoSpec).vm(instanceVmSpec)
+      masterSpec = MasterSpec.builder().iso(isoSpec).vm(instanceVmSpec)
             .network(networkSpec).build();
+      clonedMachine = cloneFromMaster();
    }
 
    @Test
    public void testEnsureMachineisLaunchedAndSessionIsUnlocked() {
-      cloneFromMaster();
-      ISession cloneMachineSession = machineController.ensureMachineIsLaunched(instanceName);
+      ISession cloneMachineSession = machineController.ensureMachineIsLaunched(clonedMachine.getName());
       assertTrue(cloneMachineSession.getState() == SessionState.Unlocked);
-      cloneMachineSession = machineController.ensureMachineHasPowerDown(instanceName);
-      assertTrue(cloneMachineSession.getState() == SessionState.Unlocked);
-   }
-
-   @Test(dependsOnMethods="testEnsureMachineisLaunchedAndSessionIsUnlocked")
-   public void testEnsureMachineCanBePoweredOffMoreThanOneTimeAndSessionIsUnlocked() {
-      ISession cloneMachineSession = machineController.ensureMachineHasPowerDown(instanceName);
+      cloneMachineSession = machineController.ensureMachineHasPowerDown(clonedMachine.getName());
       SessionState state = cloneMachineSession.getState();
       assertTrue(state.equals(SessionState.Unlocked));
    }
 
    private IMachine cloneFromMaster() {
       IMachine source = getVmWithGuestAdditionsInstalled();
-      CloneSpec cloneSpec = CloneSpec.builder().vm(machineSpec.getVmSpec()).network(machineSpec.getNetworkSpec())
+      CloneSpec cloneSpec = CloneSpec.builder().vm(masterSpec.getVmSpec()).network(masterSpec.getNetworkSpec())
                .master(source).linked(true).build();
       return new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(manager, workingDir, machineUtils)
                .apply(cloneSpec);

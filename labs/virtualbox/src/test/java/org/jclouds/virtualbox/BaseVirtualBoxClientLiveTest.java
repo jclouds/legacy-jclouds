@@ -41,6 +41,7 @@ import org.jclouds.config.ValueOfConfigurationKeyOrNull;
 import org.jclouds.rest.annotations.BuildVersion;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.virtualbox.config.VirtualBoxConstants;
+import org.jclouds.virtualbox.domain.CloneSpec;
 import org.jclouds.virtualbox.domain.HardDisk;
 import org.jclouds.virtualbox.domain.IsoSpec;
 import org.jclouds.virtualbox.domain.Master;
@@ -50,6 +51,8 @@ import org.jclouds.virtualbox.domain.NetworkInterfaceCard;
 import org.jclouds.virtualbox.domain.NetworkSpec;
 import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
+import org.jclouds.virtualbox.functions.CloneAndRegisterMachineFromIMachineIfNotAlreadyExists;
+import org.jclouds.virtualbox.functions.CreateAndInstallVm;
 import org.jclouds.virtualbox.functions.IMachineToVmSpec;
 import org.jclouds.virtualbox.functions.admin.UnregisterMachineIfExistsAndDeleteItsMedia;
 import org.jclouds.virtualbox.util.MachineController;
@@ -59,13 +62,13 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import org.virtualbox_4_1.CleanupMode;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.NetworkAttachmentType;
-import org.virtualbox_4_1.SessionState;
-import org.virtualbox_4_1.StorageBus;
-import org.virtualbox_4_1.VBoxException;
-import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_2.CleanupMode;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.NetworkAttachmentType;
+import org.virtualbox_4_2.SessionState;
+import org.virtualbox_4_2.StorageBus;
+import org.virtualbox_4_2.VBoxException;
+import org.virtualbox_4_2.VirtualBoxManager;
 
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
@@ -125,8 +128,7 @@ public class BaseVirtualBoxClientLiveTest extends BaseComputeServiceContextLiveT
    protected LoadingCache<Image, Master> mastersCache;
 
    private final ExecutorService singleThreadExec = MoreExecutors.sameThreadExecutor();
-   private String masterName;
-   
+   private String masterName;   
 
    @Override
    protected Iterable<Module> setupModules() {

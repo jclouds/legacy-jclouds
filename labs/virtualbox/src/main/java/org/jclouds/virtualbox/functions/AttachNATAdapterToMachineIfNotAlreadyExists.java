@@ -19,13 +19,13 @@
 
 package org.jclouds.virtualbox.functions;
 
-import static org.virtualbox_4_1.NetworkAttachmentType.NAT;
+import static org.virtualbox_4_2.NetworkAttachmentType.NAT;
 
 import org.jclouds.virtualbox.domain.NetworkInterfaceCard;
 import org.jclouds.virtualbox.domain.RedirectRule;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.INetworkAdapter;
-import org.virtualbox_4_1.VBoxException;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.INetworkAdapter;
+import org.virtualbox_4_2.VBoxException;
 
 import com.google.common.base.Function;
 
@@ -48,7 +48,7 @@ public class AttachNATAdapterToMachineIfNotAlreadyExists implements Function<IMa
          try {
             String ruleName = String.format("%s@%s:%s->%s:%s",rule.getProtocol(), rule.getHost(), rule.getHostPort(), 
                      rule.getGuest(), rule.getGuestPort());
-            iNetworkAdapter.getNatDriver().addRedirect(ruleName, rule.getProtocol(), rule.getHost(), rule.getHostPort(),
+            iNetworkAdapter.getNATEngine().addRedirect(ruleName, rule.getProtocol(), rule.getHost(), rule.getHostPort(),
                      rule.getGuest(), rule.getGuestPort());
          } catch (VBoxException e) {
             if (!e.getMessage().contains("already exists"))

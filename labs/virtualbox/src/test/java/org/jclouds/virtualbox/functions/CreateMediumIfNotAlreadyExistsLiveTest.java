@@ -28,10 +28,11 @@ import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
 import org.jclouds.virtualbox.domain.ErrorCode;
 import org.jclouds.virtualbox.domain.HardDisk;
 import org.testng.annotations.Test;
-import org.virtualbox_4_1.DeviceType;
-import org.virtualbox_4_1.IMedium;
-import org.virtualbox_4_1.IProgress;
-import org.virtualbox_4_1.VBoxException;
+import org.virtualbox_4_2.AccessMode;
+import org.virtualbox_4_2.DeviceType;
+import org.virtualbox_4_2.IMedium;
+import org.virtualbox_4_2.IProgress;
+import org.virtualbox_4_2.VBoxException;
 
 /**
  * @author Mattias Holmqvist
@@ -43,7 +44,7 @@ public class CreateMediumIfNotAlreadyExistsLiveTest extends BaseVirtualBoxClient
       String path = System.getProperty("user.home") + "/jclouds-virtualbox-test/test-medium-1.vdi";
       HardDisk hardDisk = HardDisk.builder().diskpath(path).controllerPort(0).deviceSlot(0).build();
       IMedium iMedium = new CreateMediumIfNotAlreadyExists(manager, machineUtils, true).apply(hardDisk);
-      manager.get().getVBox().findMedium(path, DeviceType.HardDisk);
+      manager.get().getVBox().openMedium(path, DeviceType.HardDisk, AccessMode.ReadWrite, true);
       try {
          assertFileCanBeDeleted(path);
       } finally {
@@ -70,7 +71,7 @@ public class CreateMediumIfNotAlreadyExistsLiveTest extends BaseVirtualBoxClient
       HardDisk hardDisk = HardDisk.builder().diskpath(path).controllerPort(0).deviceSlot(0).build();
       new CreateMediumIfNotAlreadyExists(manager, machineUtils, true).apply(hardDisk);
       IMedium iMedium = new CreateMediumIfNotAlreadyExists(manager, machineUtils, true).apply(hardDisk);
-      manager.get().getVBox().findMedium(path, DeviceType.HardDisk);
+      manager.get().getVBox().openMedium(path, DeviceType.HardDisk, AccessMode.ReadWrite, true);
       try {
          assertFileCanBeDeleted(path);
       } finally {

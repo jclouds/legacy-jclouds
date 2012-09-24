@@ -28,7 +28,6 @@ import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_NODE_
 
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -48,13 +47,12 @@ import org.jclouds.virtualbox.domain.NodeSpec;
 import org.jclouds.virtualbox.domain.YamlImage;
 import org.jclouds.virtualbox.functions.admin.UnregisterMachineIfExistsAndForceDeleteItsMedia;
 import org.jclouds.virtualbox.util.MachineController;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.IProgress;
-import org.virtualbox_4_1.ISession;
-import org.virtualbox_4_1.MachineState;
-import org.virtualbox_4_1.SessionState;
-import org.virtualbox_4_1.VBoxException;
-import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.IProgress;
+import org.virtualbox_4_2.ISession;
+import org.virtualbox_4_2.MachineState;
+import org.virtualbox_4_2.VBoxException;
+import org.virtualbox_4_2.VirtualBoxManager;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -64,7 +62,6 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
-import com.google.common.util.concurrent.Uninterruptibles;
 import com.google.inject.Singleton;
 
 /**

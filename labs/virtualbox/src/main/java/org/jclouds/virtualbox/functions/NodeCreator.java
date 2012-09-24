@@ -44,6 +44,7 @@ import org.jclouds.logging.Logger;
 import org.jclouds.virtualbox.config.VirtualBoxComputeServiceContextModule;
 import org.jclouds.virtualbox.domain.CloneSpec;
 import org.jclouds.virtualbox.domain.Master;
+import org.jclouds.virtualbox.domain.NetworkAdapter;
 import org.jclouds.virtualbox.domain.NetworkInterfaceCard;
 import org.jclouds.virtualbox.domain.NetworkSpec;
 import org.jclouds.virtualbox.domain.NodeSpec;
@@ -52,13 +53,13 @@ import org.jclouds.virtualbox.statements.DeleteGShadowLock;
 import org.jclouds.virtualbox.util.MachineController;
 import org.jclouds.virtualbox.util.MachineUtils;
 import org.jclouds.virtualbox.util.NetworkUtils;
-import org.virtualbox_4_1.CleanupMode;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.IProgress;
-import org.virtualbox_4_1.ISession;
-import org.virtualbox_4_1.LockType;
-import org.virtualbox_4_1.NetworkAttachmentType;
-import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_2.CleanupMode;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.IProgress;
+import org.virtualbox_4_2.ISession;
+import org.virtualbox_4_2.LockType;
+import org.virtualbox_4_2.NetworkAttachmentType;
+import org.virtualbox_4_2.VirtualBoxManager;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
@@ -134,17 +135,19 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
             .forceOverwrite(true).build();
       
       // case 'vbox host is localhost': NAT + HOST-ONLY
-      NetworkSpec networkSpec = networkUtils.createNetworkSpecWhenVboxIsLocalhost();
-      Optional<NetworkInterfaceCard> optionalNatIfaceCard = Iterables.tryFind(
-            networkSpec.getNetworkInterfaceCards(),
-            new Predicate<NetworkInterfaceCard>() {
-
-               @Override
-               public boolean apply(NetworkInterfaceCard nic) {
-                  return nic.getNetworkAdapter().getNetworkAttachmentType()
-                        .equals(NetworkAttachmentType.NAT);
-               }
-            });
+//      NetworkSpec networkSpec = networkUtils.createNetworkSpecWhenVboxIsLocalhost();
+//      Optional<NetworkInterfaceCard> optionalNatIfaceCard = Iterables.tryFind(
+//            networkSpec.getNetworkInterfaceCards(),
+//            new Predicate<NetworkInterfaceCard>() {
+//
+//               @Override
+//               public boolean apply(NetworkInterfaceCard nic) {
+//                  return nic.getNetworkAdapter().getNetworkAttachmentType()
+//                        .equals(NetworkAttachmentType.NAT);
+//               }
+//            });
+      
+      NetworkSpec networkSpec = networkUtils.createHostOnlyNIC(0l); 
       CloneSpec cloneSpec = CloneSpec.builder().linked(true).master(master.getMachine()).network(networkSpec)
                .vm(cloneVmSpec).build();
 
@@ -158,11 +161,25 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
 
       // see DeleteGShadowLock for a detailed explanation
        machineUtils.runScriptOnNode(partialNodeMetadata, new DeleteGShadowLock(), RunScriptOptions.NONE);
+       
 
-      if(optionalNatIfaceCard.isPresent())
-         checkState(networkUtils.enableNetworkInterface(partialNodeMetadata, optionalNatIfaceCard.get()) == true, 
-         "cannot enable Nat Interface");
-      
+//      if(optionalNatIfaceCard.isPresent())
+//         checkState(networkUtils.enableNetworkInterface(partialNodeMetadata, optionalNatIfaceCard.get()) == true, 
+//         "cannot enable Nat Interface");
+       
+       NetworkAdapter natAdapter = NetworkAdapter.builder()
+             .networkAttachmentType(NetworkAttachmentType.NAT)
+             .build();
+       
+       NetworkInterfaceCard natIfaceCard = NetworkInterfaceCard.builder()
+             .addNetworkAdapter(natAdapter)
+             .slot(1L)
+             .build();
+       checkState(networkUtils.enableNetworkInterface(partialNodeMetadata, natIfaceCard) == true, "cannot enable Nat Interface");
+       machineController.ensureMachineIsShutdown(cloneVmSpec.getVmName());
+       
+       new AttachNicToMachine(cloneVmSpec.getVmName(), machineUtils).apply(natIfaceCard);
+       machineController.ensureMachineIsLaunched(cloneVmSpec.getVmName());
       LoginCredentials credentials = partialNodeMetadata.getCredentials();
       return new NodeAndInitialCredentials<IMachine>(cloned,
                cloneName, credentials);

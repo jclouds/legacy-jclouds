@@ -37,11 +37,11 @@ import org.jclouds.json.config.GsonModule;
 import org.jclouds.virtualbox.config.VirtualBoxComputeServiceContextModule;
 import org.jclouds.virtualbox.config.VirtualBoxConstants;
 import org.testng.annotations.Test;
-import org.virtualbox_4_1.IGuestOSType;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.IVirtualBox;
-import org.virtualbox_4_1.MachineState;
-import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_2.IGuestOSType;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.IVirtualBox;
+import org.virtualbox_4_2.MachineState;
+import org.virtualbox_4_2.VirtualBoxManager;
 
 import com.google.common.base.Suppliers;
 import com.google.inject.Guice;
