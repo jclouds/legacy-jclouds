@@ -25,6 +25,7 @@ import java.util.Arrays;
 
 import org.jclouds.abiquo.domain.cloud.VirtualAppliance;
 
+import com.abiquo.server.core.cloud.VirtualApplianceState;
 import com.google.common.base.Predicate;
 
 /**
@@ -44,6 +45,20 @@ public class VirtualAppliancePredicates
             public boolean apply(final VirtualAppliance virtualAppliance)
             {
                 return Arrays.asList(names).contains(virtualAppliance.getName());
+            }
+        };
+    }
+
+    public static Predicate<VirtualAppliance> state(final VirtualApplianceState... states)
+    {
+        checkNotNull(states, "states must be defined");
+
+        return new Predicate<VirtualAppliance>()
+        {
+            @Override
+            public boolean apply(final VirtualAppliance virtualAppliance)
+            {
+                return Arrays.asList(states).contains(virtualAppliance.getState());
             }
         };
     }

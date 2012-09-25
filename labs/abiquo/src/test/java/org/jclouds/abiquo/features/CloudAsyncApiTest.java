@@ -24,6 +24,8 @@ import static org.jclouds.abiquo.domain.DomainUtils.withHeader;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
+import javax.ws.rs.core.MediaType;
+
 import org.jclouds.abiquo.domain.CloudResources;
 import org.jclouds.abiquo.domain.EnterpriseResources;
 import org.jclouds.abiquo.domain.InfrastructureResources;
@@ -38,6 +40,7 @@ import org.jclouds.abiquo.functions.ReturnTaskReferenceOrNull;
 import org.jclouds.abiquo.functions.cloud.ReturnMovedVolume;
 import org.jclouds.http.functions.ParseXMLWithJAXB;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
+import org.jclouds.http.functions.ReturnStringIf2xx;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
@@ -800,6 +803,26 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi>
             VirtualMachineTaskDto.class, VirtualMachineTaskDto.BASE_MEDIA_TYPE, false);
 
         assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
+        assertSaxResponseParserClassEquals(method, null);
+        assertExceptionParserClassEquals(method, null);
+
+        checkFilters(request);
+    }
+
+    public void testGetVirtualAppliancePrice() throws SecurityException, NoSuchMethodException,
+        IOException
+    {
+        Method method =
+            CloudAsyncApi.class.getMethod("getVirtualAppliancePrice", VirtualApplianceDto.class);
+        GeneratedHttpRequest request =
+            processor.createRequest(method, CloudResources.virtualAppliancePut());
+
+        assertRequestLineEquals(request,
+            "GET http://localhost/api/cloud/virtualdatacenters/1/virtualappliances/1/action/price HTTP/1.1");
+        assertNonPayloadHeadersEqual(request, "Accept: " + MediaType.TEXT_PLAIN + "\n");
+        assertPayloadEquals(request, null, null, false);
+
+        assertResponseParserClassEquals(method, request, ReturnStringIf2xx.class);
         assertSaxResponseParserClassEquals(method, null);
         assertExceptionParserClassEquals(method, null);
 

@@ -117,6 +117,8 @@ public class CloudResources
             "http://localhost/api/cloud/virtualdatacenters/1/virtualappliances/1/action/undeploy"));
         virtualAppliance.addLink(new RESTLink("virtualmachines",
             "http://localhost/api/cloud/virtualdatacenters/1/virtualappliances/1/virtualmachines"));
+        virtualAppliance.addLink(new RESTLink("price",
+            "http://localhost/api/cloud/virtualdatacenters/1/virtualappliances/1/action/price"));
         return virtualAppliance;
     }
 
@@ -369,6 +371,8 @@ public class CloudResources
             "undeploy"));
         buffer.append(link("/cloud/virtualdatacenters/1/virtualappliances/1/virtualmachines",
             "virtualmachines"));
+        buffer
+            .append(link("/cloud/virtualdatacenters/1/virtualappliances/1/action/price", "price"));
         buffer.append("<error>0</error>");
         buffer.append("<highDisponibility>0</highDisponibility>");
         buffer.append("<id>1</id>");

@@ -359,6 +359,14 @@ public interface CloudApi
      */
     VirtualApplianceStateDto getVirtualApplianceState(VirtualApplianceDto virtualAppliance);
 
+    /**
+     * Gets the price of the given virtual appliance.
+     * 
+     * @param virtualAppliance The virtual appliance to get the price of.
+     * @return A <code>String</code> representation of the price of the virtual appliance.
+     */
+    String getVirtualAppliancePrice(VirtualApplianceDto virtualAppliance);
+
     /*********************** Virtual Machine ***********************/
 
     /**
