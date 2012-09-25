@@ -37,7 +37,6 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.blobstore.BlobStore;
@@ -56,13 +55,16 @@ import org.jclouds.filesystem.reference.FilesystemConstants;
 import org.jclouds.filesystem.utils.TestUtils;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.io.InputSuppliers;
+import org.jclouds.io.Payload;
 import org.jclouds.io.payloads.PhantomPayload;
 import org.jclouds.io.payloads.StringPayload;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Charsets;
 import com.google.common.io.ByteStreams;
+import com.google.common.io.CharStreams;
 import com.google.common.io.Closeables;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
@@ -730,39 +732,39 @@ public class FilesystemAsyncBlobStoreTest {
 
     public void testRanges() throws IOException {
         blobStore.createContainerInLocation(null, CONTAINER_NAME);
-        String payload = "abcdefgh";
-        InputStream is;
-        Blob blob = blobStore.blobBuilder("test").payload(new StringPayload(payload)).build();
+        String input = "abcdefgh";
+        Payload payload;
+        Blob blob = blobStore.blobBuilder("test").payload(new StringPayload(input)).build();
         blobStore.putBlob(CONTAINER_NAME, blob);
 
         GetOptions getOptionsRangeStartAt = new GetOptions();
         getOptionsRangeStartAt.startAt(1);
         Blob blobRangeStartAt = blobStore.getBlob(CONTAINER_NAME, blob.getMetadata().getName(), getOptionsRangeStartAt);
-        is = blobRangeStartAt.getPayload().getInput();
+        payload = blobRangeStartAt.getPayload();
         try {
-            assertEquals("bcdefgh", IOUtils.toString(is));
+            assertEquals(input.substring(1), CharStreams.toString(CharStreams.newReaderSupplier(payload, Charsets.UTF_8)));
         } finally {
-            Closeables.closeQuietly(is);
+            Closeables.closeQuietly(payload);
         }
 
         GetOptions getOptionsRangeTail = new GetOptions();
         getOptionsRangeTail.tail(3);
         Blob blobRangeTail = blobStore.getBlob(CONTAINER_NAME, blob.getMetadata().getName(), getOptionsRangeTail);
-        is = blobRangeTail.getPayload().getInput();
+        payload = blobRangeTail.getPayload();
         try {
-            assertEquals("fgh", IOUtils.toString(is));
+            assertEquals(input.substring(5), CharStreams.toString(CharStreams.newReaderSupplier(payload, Charsets.UTF_8)));
         } finally {
-            Closeables.closeQuietly(is);
+            Closeables.closeQuietly(payload);
         }
 
         GetOptions getOptionsFragment = new GetOptions();
         getOptionsFragment.range(4, 6);
         Blob blobFragment = blobStore.getBlob(CONTAINER_NAME, blob.getMetadata().getName(), getOptionsFragment);
-        is = blobFragment.getPayload().getInput();
+        payload = blobFragment.getPayload();
         try {
-            assertEquals("efg", IOUtils.toString(is));
+            assertEquals(input.substring(4, 7), CharStreams.toString(CharStreams.newReaderSupplier(payload, Charsets.UTF_8)));
         } finally {
-            Closeables.closeQuietly(is);
+            Closeables.closeQuietly(payload);
         }
     }
 
