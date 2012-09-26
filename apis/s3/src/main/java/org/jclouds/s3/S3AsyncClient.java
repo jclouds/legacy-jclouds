@@ -99,7 +99,7 @@ import com.google.inject.Provides;
  * All commands return a ListenableFuture of the result from S3. Any exceptions incurred during
  * processing will be backend in an {@link ExecutionException} as documented in
  * {@link ListenableFuture#get()}.
- * 
+ *
  * @author Adrian Cole
  * @author James Murty
  * @see S3Client
@@ -187,7 +187,6 @@ public interface S3AsyncClient {
     */
    @DELETE
    @Path("/")
-   @Endpoint(Bucket.class)
    @ExceptionParser(ReturnTrueOn404OrNotFoundFalseOnIllegalState.class)
    ListenableFuture<Boolean> deleteBucketIfEmpty(
             @Bucket @EndpointParam(parser = DefaultEndpointThenInvalidateRegion.class) @BinderParam(BindAsHostPrefixIfConfigured.class) @ParamValidators(BucketNameValidator.class) String bucketName);
@@ -197,12 +196,11 @@ public interface S3AsyncClient {
     */
    @HEAD
    @Path("/")
-   @Endpoint(Bucket.class)
    @QueryParams(keys = "max-keys", values = "0")
    @ExceptionParser(ReturnFalseOnContainerNotFound.class)
    ListenableFuture<Boolean> bucketExists(
-            @Bucket @BinderParam(BindAsHostPrefixIfConfigured.class) @ParamValidators(BucketNameValidator.class) String bucketName);
-   
+            @Bucket @EndpointParam(parser = AssignCorrectHostnameForBucket.class) @BinderParam(BindAsHostPrefixIfConfigured.class) @ParamValidators(BucketNameValidator.class) String bucketName);
+
 
    /**
     * @see S3Client#getBucketLocation
@@ -213,7 +211,7 @@ public interface S3AsyncClient {
    @Endpoint(Bucket.class)
    @XMLResponseParser(LocationConstraintHandler.class)
    ListenableFuture<String> getBucketLocation(
-            @Bucket @BinderParam(BindAsHostPrefixIfConfigured.class) @ParamValidators(BucketNameValidator.class) String bucketName);   
+            @Bucket @BinderParam(BindAsHostPrefixIfConfigured.class) @ParamValidators(BucketNameValidator.class) String bucketName);
 
    /**
     * @see S3Client#getBucketPayer
