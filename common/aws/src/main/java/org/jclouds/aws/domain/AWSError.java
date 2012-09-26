@@ -54,7 +54,8 @@ public class AWSError {
       if (getSignature() != null)
          sb.append(", signature='").append(getSignature()).append('\'');
       if (details.size() != 0)
-         sb.append(", context='").append(details.toString()).append('\'').append('}');
+         sb.append(", context='").append(details.toString()).append('\'');
+      sb.append('}');
       return sb.toString();
    }
 
