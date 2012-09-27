@@ -91,4 +91,28 @@ public class VirtualMachineTemplatePredicates
             }
         };
     }
+
+    public static Predicate<VirtualMachineTemplate> isShared()
+    {
+        return new Predicate<VirtualMachineTemplate>()
+        {
+            @Override
+            public boolean apply(final VirtualMachineTemplate input)
+            {
+                return input.unwrap().isShared();
+            }
+        };
+    }
+
+    public static Predicate<VirtualMachineTemplate> isInstance()
+    {
+        return new Predicate<VirtualMachineTemplate>()
+        {
+            @Override
+            public boolean apply(final VirtualMachineTemplate input)
+            {
+                return input.unwrap().searchLink("master") != null;
+            }
+        };
+    }
 }

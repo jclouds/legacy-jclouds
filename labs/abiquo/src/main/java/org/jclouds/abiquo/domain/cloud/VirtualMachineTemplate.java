@@ -32,6 +32,7 @@ import org.jclouds.abiquo.AbiquoAsyncApi;
 import org.jclouds.abiquo.domain.DomainWrapper;
 import org.jclouds.abiquo.domain.cloud.options.ConversionOptions;
 import org.jclouds.abiquo.domain.config.Category;
+import org.jclouds.abiquo.domain.config.CostCode;
 import org.jclouds.abiquo.domain.enterprise.Enterprise;
 import org.jclouds.abiquo.domain.infrastructure.Datacenter;
 import org.jclouds.abiquo.domain.infrastructure.Tier;
@@ -53,6 +54,7 @@ import com.abiquo.server.core.appslibrary.ConversionsDto;
 import com.abiquo.server.core.appslibrary.VirtualMachineTemplateDto;
 import com.abiquo.server.core.appslibrary.VirtualMachineTemplatePersistentDto;
 import com.abiquo.server.core.infrastructure.storage.VolumeManagementDto;
+import com.abiquo.server.core.pricing.CostCodeDto;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -317,7 +319,15 @@ public class VirtualMachineTemplate extends DomainWrapper<VirtualMachineTemplate
         return taskRef == null ? null : getTask(taskRef);
     }
 
+    public CostCode getCostCode()
+    {
+        Integer costcodeId = target.getIdFromLink(ParentLinkName.COST_CODE);
+        CostCodeDto costcode = context.getApi().getPricingApi().getCostCode(costcodeId);
+        return wrap(context, CostCode.class, costcode);
+    }
+
     // Delegate methods
+
     public int getCpuRequired()
     {
         return target.getCpuRequired();

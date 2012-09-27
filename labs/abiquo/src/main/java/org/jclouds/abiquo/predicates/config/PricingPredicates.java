@@ -23,19 +23,21 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Arrays;
 
+import org.jclouds.abiquo.domain.config.CostCode;
 import org.jclouds.abiquo.domain.config.Currency;
+import org.jclouds.abiquo.domain.config.PricingTemplate;
 
 import com.google.common.base.Predicate;
 
 /**
- * Container for {@link Currency} filters.
+ * Container for pricing related filters.
  * 
  * @author Ignasi Barrera
  * @author Susana Acedo
  */
-public class CurrencyPredicates
+public class PricingPredicates
 {
-    public static Predicate<Currency> name(final String... names)
+    public static Predicate<Currency> currency(final String... names)
     {
         checkNotNull(names, "names must be defined");
 
@@ -49,4 +51,31 @@ public class CurrencyPredicates
         };
     }
 
+    public static Predicate<CostCode> costCode(final String... names)
+    {
+        checkNotNull(names, "names must be defined");
+
+        return new Predicate<CostCode>()
+        {
+            @Override
+            public boolean apply(final CostCode costcode)
+            {
+                return Arrays.asList(names).contains(costcode.getName());
+            }
+        };
+    }
+
+    public static Predicate<PricingTemplate> pricingTemplate(final String... names)
+    {
+        checkNotNull(names, "names must be defined");
+
+        return new Predicate<PricingTemplate>()
+        {
+            @Override
+            public boolean apply(final PricingTemplate pricingTemplate)
+            {
+                return Arrays.asList(names).contains(pricingTemplate.getName());
+            }
+        };
+    }
 }

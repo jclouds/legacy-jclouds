@@ -31,10 +31,7 @@ import com.abiquo.server.core.pricing.CurrencyDto;
  * 
  * @author Ignasi Barrera
  * @author Susana Acedo
- * @see API: <a href="http://community.abiquo.com/display/ABI20/Currency+Resource">
- *      http://community.abiquo.com/display/ABI20/Currency+Resource</a>
  */
-
 public class Currency extends DomainWrapper<CurrencyDto>
 {
 
@@ -48,35 +45,17 @@ public class Currency extends DomainWrapper<CurrencyDto>
 
     // Domain operations
 
-    /**
-     * @see API: <a href=
-     *      "http://community.abiquo.com/display/ABI20/Currency+Resource#CurrencyResource-Deleteacurrency"
-     *      > http://community.abiquo.com/display/ABI20/Currency+Resource#CurrencyResource-
-     *      Deleteacurrency</a>
-     */
     public void delete()
     {
         context.getApi().getPricingApi().deleteCurrency(target);
         target = null;
     }
 
-    /**
-     * @see API: <a href=
-     *      "http://community.abiquo.com/display/ABI20/Currency+Resource#CurrencyResource-Createacurrency"
-     *      > http://community.abiquo.com/display/ABI20/Currency+Resource#CurrencyResource-
-     *      Createacurrency</a>
-     */
     public void save()
     {
         target = context.getApi().getPricingApi().createCurrency(target);
     }
 
-    /**
-     * @see API: <a href=
-     *      "http://community.abiquo.com/display/ABI20/Currency+Resource#CurrencyResource-Updateanexistingcurrency"
-     *      > http://community.abiquo.com/display/ABI20/Currency+Resource#CurrencyResource-
-     *      Updateanexistingcurrency</a>
-     */
     public void update()
     {
         target = context.getApi().getPricingApi().updateCurrency(target);
@@ -187,5 +166,4 @@ public class Currency extends DomainWrapper<CurrencyDto>
         return "Currency [id=" + getId() + ", name=" + getName() + ", symbol=" + getSymbol()
             + ", digits=" + getDigits() + "]";
     }
-
 }
