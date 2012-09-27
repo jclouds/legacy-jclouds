@@ -25,6 +25,7 @@ import java.util.Arrays;
 
 import org.jclouds.abiquo.domain.cloud.Volume;
 
+import com.abiquo.model.enumerator.VolumeState;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
@@ -85,5 +86,19 @@ public class VolumePredicates
     public static Predicate<Volume> lesserThanOrEquals(final long sizeInMb)
     {
         return Predicates.not(greaterThan(sizeInMb));
+    }
+
+    public static Predicate<Volume> state(final VolumeState... states)
+    {
+        checkNotNull(states, "states must be defined");
+
+        return new Predicate<Volume>()
+        {
+            @Override
+            public boolean apply(final Volume volume)
+            {
+                return Arrays.asList(states).contains(VolumeState.valueOf(volume.getState()));
+            }
+        };
     }
 }

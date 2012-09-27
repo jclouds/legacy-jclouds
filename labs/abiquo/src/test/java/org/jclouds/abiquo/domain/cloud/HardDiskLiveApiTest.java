@@ -23,7 +23,10 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 
 import org.jclouds.abiquo.internal.BaseAbiquoApiLiveApiTest;
+import org.testng.SkipException;
 import org.testng.annotations.Test;
+
+import com.abiquo.model.enumerator.HypervisorType;
 
 /**
  * Live integration tests for the {@link HardDisk} domain class.
@@ -37,6 +40,8 @@ public class HardDiskLiveApiTest extends BaseAbiquoApiLiveApiTest
 
     public void createHardDisk()
     {
+        skipIfUnsupported();
+
         hardDisk =
             HardDisk.builder(env.context.getApiContext(), env.virtualDatacenter).sizeInMb(64L)
                 .build();
@@ -51,6 +56,8 @@ public class HardDiskLiveApiTest extends BaseAbiquoApiLiveApiTest
     @Test(dependsOnMethods = "createHardDisk")
     public void deleteHardDisk()
     {
+        skipIfUnsupported();
+
         HardDisk hd = env.virtualDatacenter.getHardDisk(hardDisk.getId());
         assertNotNull(hd);
 
@@ -59,4 +66,11 @@ public class HardDiskLiveApiTest extends BaseAbiquoApiLiveApiTest
         assertNull(env.virtualDatacenter.getHardDisk(id));
     }
 
+    protected static void skipIfUnsupported()
+    {
+        if (!env.machine.getType().equals(HypervisorType.VMX_04))
+        {
+            throw new SkipException("Cannot perform this test because hard disk actions are not available for this hypervisor");
+        }
+    }
 }

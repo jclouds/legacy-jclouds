@@ -89,7 +89,8 @@ public class AbiquoRestClientModule extends RestClientModule<AbiquoApi, AbiquoAs
         .put(CloudApi.class, CloudAsyncApi.class) //
         .put(VirtualMachineTemplateApi.class, VirtualMachineTemplateAsyncApi.class) //
         .put(TaskApi.class, TaskAsyncApi.class) //
-        .put(EventApi.class, EventAsyncApi.class).put(PricingApi.class, PricingAsyncApi.class) //
+        .put(EventApi.class, EventAsyncApi.class) //
+        .put(PricingApi.class, PricingAsyncApi.class) //
         .build();
 
     public AbiquoRestClientModule()

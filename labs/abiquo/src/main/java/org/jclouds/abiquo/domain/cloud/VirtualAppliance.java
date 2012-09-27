@@ -24,8 +24,8 @@ import static com.google.common.collect.Iterables.filter;
 
 import java.util.List;
 
-import org.jclouds.abiquo.AbiquoAsyncApi;
 import org.jclouds.abiquo.AbiquoApi;
+import org.jclouds.abiquo.AbiquoAsyncApi;
 import org.jclouds.abiquo.domain.DomainWrapper;
 import org.jclouds.abiquo.domain.cloud.options.VirtualMachineOptions;
 import org.jclouds.abiquo.domain.enterprise.Enterprise;
@@ -293,6 +293,16 @@ public class VirtualAppliance extends DomainWrapper<VirtualApplianceDto>
             context.getApi().getCloudApi().undeployVirtualAppliance(unwrap(), force);
 
         return getTasks(response);
+    }
+
+    /**
+     * Returns a String message with the price info of the virtual appliance.
+     * 
+     * @return The price of the virtual appliance
+     */
+    public String getPrice()
+    {
+        return context.getApi().getCloudApi().getVirtualAppliancePrice(target);
     }
 
     // Builder

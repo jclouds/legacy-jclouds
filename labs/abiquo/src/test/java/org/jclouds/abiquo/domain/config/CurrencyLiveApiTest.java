@@ -24,7 +24,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 import org.jclouds.abiquo.internal.BaseAbiquoApiLiveApiTest;
-import org.jclouds.abiquo.predicates.config.CurrencyPredicates;
+import org.jclouds.abiquo.predicates.config.PricingPredicates;
 import org.testng.annotations.Test;
 
 /**
@@ -44,7 +44,7 @@ public class CurrencyLiveApiTest extends BaseAbiquoApiLiveApiTest
 
         Currency apiCurrency =
             env.context.getPricingService().findCurrency(
-                CurrencyPredicates.name(PREFIX + "test-currency"));
+                PricingPredicates.currency(PREFIX + "test-currency"));
         assertNotNull(apiCurrency);
         assertEquals(currency.getName(), apiCurrency.getName());
 
@@ -65,7 +65,7 @@ public class CurrencyLiveApiTest extends BaseAbiquoApiLiveApiTest
 
         Currency apiCurrency =
             env.context.getPricingService().findCurrency(
-                CurrencyPredicates.name(PREFIX + "t-currency-upd"));
+                PricingPredicates.currency(PREFIX + "t-currency-upd"));
 
         assertNotNull(apiCurrency);
         assertEquals(PREFIX + "t-currency-upd", apiCurrency.getName());
