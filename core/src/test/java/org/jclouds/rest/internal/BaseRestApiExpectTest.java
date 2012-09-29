@@ -73,7 +73,6 @@ import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.rest.RestApiMetadata;
 import org.jclouds.rest.config.CredentialStoreModule;
 import org.jclouds.util.Strings2;
-import org.testng.annotations.Test;
 import org.w3c.dom.Node;
 
 import com.google.common.annotations.Beta;

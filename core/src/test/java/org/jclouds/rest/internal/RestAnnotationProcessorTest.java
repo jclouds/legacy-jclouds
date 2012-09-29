@@ -43,6 +43,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -2476,6 +2477,10 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       @Provides
       Set<String> exception();
 
+      @Named("NoSuchElementException")
+      @Provides
+      Set<String> noSuchElementException();
+      
       @POST
       @Path("/")
       void oneForm(@PathParam("bucket") String path);
@@ -2497,7 +2502,12 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
    public void testProvidesWithGenericQualifiedAuthorizationException() throws SecurityException, NoSuchMethodException {
       injector.getInstance(AsyncClientFactory.class).create(TestClassForm.class).exception();
    }
-
+   
+   @Test(expectedExceptions = NoSuchElementException.class)
+   public void testProvidesWithGenericQualifiedNoSuchElementException() throws SecurityException, NoSuchMethodException {
+      injector.getInstance(AsyncClientFactory.class).create(TestClassForm.class).noSuchElementException();
+   }
+   
    @Test
    public void testBuildOneClassForm() throws SecurityException, NoSuchMethodException {
       Method oneForm = TestClassForm.class.getMethod("oneForm", String.class);
@@ -2664,7 +2674,13 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
                Set<String> exception() {
                   throw new AuthorizationException();
                }
-
+               
+               @Provides
+               @Named("NoSuchElementException")
+               Set<String> noSuchElementException() {
+                  throw new NoSuchElementException();
+               }
+               
             })).buildInjector();
       parserFactory = injector.getInstance(ParseSax.Factory.class);
       crypto = injector.getInstance(Crypto.class);

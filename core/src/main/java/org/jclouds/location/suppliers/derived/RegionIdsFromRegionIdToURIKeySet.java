@@ -18,6 +18,7 @@
  */
 package org.jclouds.location.suppliers.derived;
 
+import java.lang.reflect.UndeclaredThrowableException;
 import java.net.URI;
 import java.util.Map;
 import java.util.Set;
@@ -28,6 +29,7 @@ import org.jclouds.location.Region;
 import org.jclouds.location.suppliers.RegionIdsSupplier;
 
 import com.google.common.base.Supplier;
+import com.google.common.base.Throwables;
 import com.google.inject.Inject;
 
 /**
@@ -45,6 +47,10 @@ public class RegionIdsFromRegionIdToURIKeySet implements RegionIdsSupplier {
 
    @Override
    public Set<String> get() {
-      return regionIdToURISupplier.get().keySet();
+      try {
+         return regionIdToURISupplier.get().keySet();
+      } catch (UndeclaredThrowableException e) {
+         throw Throwables.propagate(e.getCause());
+      }
    }
 }
