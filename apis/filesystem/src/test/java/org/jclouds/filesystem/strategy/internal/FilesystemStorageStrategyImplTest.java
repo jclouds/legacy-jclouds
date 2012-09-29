@@ -44,6 +44,7 @@ import org.jclouds.filesystem.predicates.validators.internal.FilesystemBlobKeyVa
 import org.jclouds.filesystem.predicates.validators.internal.FilesystemContainerNameValidatorImpl;
 import org.jclouds.filesystem.utils.TestUtils;
 import org.jclouds.io.payloads.FilePayload;
+import org.jclouds.io.payloads.InputStreamPayload;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -347,17 +348,36 @@ public class FilesystemStorageStrategyImplTest {
    }
 
    public void testWritePayloadOnFile() throws IOException {
-      String blobKey;
-      File sourceFile;
-      FilePayload filePayload;
-
-      blobKey = TestUtils.createRandomBlobKey("writePayload-", ".img");
-      sourceFile = TestUtils.getImageForBlobPayload();
-      filePayload = new FilePayload(sourceFile);
+      String blobKey = TestUtils.createRandomBlobKey("writePayload-", ".img");
+      File sourceFile = TestUtils.getImageForBlobPayload();
+      FilePayload filePayload = new FilePayload(sourceFile);
       Blob blob = storageStrategy.newBlob(blobKey);
       blob.setPayload(filePayload);
+
       // write files
       storageStrategy.putBlob(CONTAINER_NAME, blob);
+
+      // verify that the files is equal
+      File blobFullPath = new File(TARGET_CONTAINER_NAME, blobKey);
+      InputSupplier<FileInputStream> expectedInput =
+            Files.newInputStreamSupplier(sourceFile);
+      InputSupplier<FileInputStream> actualInput =
+            Files.newInputStreamSupplier(blobFullPath);
+      assertTrue(ByteStreams.equal(expectedInput, actualInput),
+            "Files are not equal");
+   }
+
+   public void testWritePayloadOnFileInputStream() throws IOException {
+      String blobKey = TestUtils.createRandomBlobKey("writePayload-", ".img");
+      File sourceFile = TestUtils.getImageForBlobPayload();
+      InputStreamPayload fileInputStreamPayload = new InputStreamPayload(
+            new FileInputStream(sourceFile));
+      Blob blob = storageStrategy.newBlob(blobKey);
+      blob.setPayload(fileInputStreamPayload);
+
+      // write files
+      storageStrategy.putBlob(CONTAINER_NAME, blob);
+
       // verify that the files is equal
       File blobFullPath = new File(TARGET_CONTAINER_NAME, blobKey);
       InputSupplier<FileInputStream> expectedInput =
