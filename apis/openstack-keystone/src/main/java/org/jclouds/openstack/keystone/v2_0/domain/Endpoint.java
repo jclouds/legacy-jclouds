@@ -252,7 +252,7 @@ public class Endpoint {
    }
 
    protected ToStringHelper string() {
-      return Objects.toStringHelper(this)
+      return Objects.toStringHelper(this).omitNullValues()
             .add("versionId", versionId).add("region", region).add("publicURL", publicURL).add("internalURL", internalURL)
             .add("adminURL", adminURL).add("versionInfo", versionInfo).add("versionList", versionList).add("tenantId", tenantId);
    }
