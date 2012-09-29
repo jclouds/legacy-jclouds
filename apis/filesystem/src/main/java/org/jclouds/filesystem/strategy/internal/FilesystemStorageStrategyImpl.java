@@ -34,7 +34,7 @@ import javax.inject.Named;
 import javax.inject.Provider;
 
 import com.google.common.base.Throwables;
-import com.google.common.io.Closeables;
+import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 
 import org.apache.commons.io.FileUtils;
@@ -201,14 +201,13 @@ public class FilesystemStorageStrategyImpl implements LocalStorageStrategy {
       filesystemContainerNameValidator.validate(containerName);
       filesystemBlobKeyValidator.validate(blobKey);
       File outputFile = getFileForBlobKey(containerName, blobKey);
-      FileOutputStream output = null;
       try {
          Files.createParentDirs(outputFile);
          if (payload.getRawContent() instanceof File)
             Files.copy((File) payload.getRawContent(), outputFile);
          else {
-            output = new FileOutputStream(outputFile);
-            payload.writeTo(output);
+            payload = Payloads.newPayload(ByteStreams.toByteArray(payload));
+            Files.copy(payload, outputFile);
          }
          Payloads.calculateMD5(payload, crypto.md5());
          String eTag = CryptoStreams.hex(payload.getContentMetadata().getContentMD5());
@@ -219,7 +218,6 @@ public class FilesystemStorageStrategyImpl implements LocalStorageStrategy {
          }
          throw ex;
       } finally {
-         Closeables.closeQuietly(output);
          payload.release();
       }
    }
