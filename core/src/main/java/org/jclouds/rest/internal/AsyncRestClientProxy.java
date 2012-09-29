@@ -22,7 +22,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.NoSuchElementException;
 import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Resource;
@@ -49,12 +48,14 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.base.Throwables;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Binding;
+import com.google.inject.ConfigurationException;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -176,8 +177,10 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
          try {
             Annotation qualifier = Iterables.find(ImmutableList.copyOf(method.getAnnotations()), isQualifierPresent);
             return getInstanceOfTypeWithQualifier(genericReturnType, qualifier);
-         } catch (NoSuchElementException e) {
-            return getInstanceOfType(genericReturnType);
+         } catch (ProvisionException e) {
+            throw Throwables.propagate(e.getCause());
+         } catch (RuntimeException e) {
+            return instanceOfTypeOrPropagate(genericReturnType, e);
          }
       } catch (ProvisionException e) {
          AuthorizationException aex = Throwables2.getFirstThrowableOfType(e, AuthorizationException.class);
@@ -188,19 +191,23 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
    }
 
    // TODO: tidy
-   private Object getInstanceOfType(Type genericReturnType) {
-      // look for an existing binding
-      Binding<?> binding = injector.getExistingBinding(Key.get(genericReturnType));
-      if (binding != null)
-         return binding.getProvider().get();
+   private Object instanceOfTypeOrPropagate(Type genericReturnType, RuntimeException e) {
+      try {
+         // look for an existing binding
+         Binding<?> binding = injector.getExistingBinding(Key.get(genericReturnType));
+         if (binding != null)
+            return binding.getProvider().get();
 
-      // then, try looking via supplier
-      binding = injector.getExistingBinding(Key.get(Types.newParameterizedType(Supplier.class, genericReturnType)));
-      if (binding != null)
-         return Supplier.class.cast(binding.getProvider().get()).get();
+         // then, try looking via supplier
+         binding = injector.getExistingBinding(Key.get(Types.newParameterizedType(Supplier.class, genericReturnType)));
+         if (binding != null)
+            return Supplier.class.cast(binding.getProvider().get()).get();
 
-      // else try to create an instance
-      return injector.getInstance(Key.get(genericReturnType));
+         // else try to create an instance
+         return injector.getInstance(Key.get(genericReturnType));
+      } catch (ConfigurationException ce) {
+         throw e;
+      }
    }
 
    // TODO: tidy
