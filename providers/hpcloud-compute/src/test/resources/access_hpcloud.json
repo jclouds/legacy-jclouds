@@ -1,0 +1,225 @@
+{"access": {
+  "token": {
+    "expires": "2012-09-30T12:56:12.481Z",
+    "id": "HPAuth_e2b86593f73366704ed4f9e4441a2467f1a67568d5363e561a72f36a96da3b4a",
+    "tenant": {
+      "id": "37936628937291",
+      "name": "adrian@jclouds.org"
+    }
+  },
+  "user": {
+    "id": "54297837463082",
+    "name": "adrian@jclouds.org",
+    "roles": [
+      {
+        "id": "00000000004016",
+        "serviceId": "120",
+        "name": "netadmin",
+        "tenantId": "37936628937291"
+      },
+      {
+        "id": "00000000004025",
+        "serviceId": "120",
+        "name": "sysadmin",
+        "tenantId": "37936628937291"
+      },
+      {
+        "id": "00000000004014",
+        "serviceId": "150",
+        "name": "cdn-admin",
+        "tenantId": "37936628937291"
+      },
+      {
+        "id": "00000000004013",
+        "serviceId": "130",
+        "name": "block-admin",
+        "tenantId": "37936628937291"
+      },
+      {
+        "id": "00000000004022",
+        "serviceId": "110",
+        "name": "Admin",
+        "tenantId": "37936628937291"
+      },
+      {
+        "id": "00000000004016",
+        "serviceId": "120",
+        "name": "netadmin",
+        "tenantId": "37936628937291"
+      },
+      {
+        "id": "00000000004024",
+        "serviceId": "140",
+        "name": "user",
+        "tenantId": "37936628937291"
+      },
+      {
+        "id": "00000000004013",
+        "serviceId": "130",
+        "name": "block-admin",
+        "tenantId": "37936628937291"
+      },
+      {
+        "id": "00000000004003",
+        "serviceId": "100",
+        "name": "domainadmin"
+      },
+      {
+        "id": "00000000004025",
+        "serviceId": "120",
+        "name": "sysadmin",
+        "tenantId": "37936628937291"
+      },
+      {
+        "id": "00000000004024",
+        "serviceId": "140",
+        "name": "user",
+        "tenantId": "37936628937291"
+      },
+      {
+        "id": "00000000004004",
+        "serviceId": "100",
+        "name": "domainuser"
+      }
+    ]
+  },
+  "serviceCatalog": [
+    {
+      "name": "CDN",
+      "type": "hpext:cdn",
+      "endpoints": [{
+        "tenantId": "37936628937291",
+        "publicURL": "https:\/\/region-a.geo-1.cdnmgmt.hpcloudsvc.com\/v1.0\/AUTH_651c939f-04f0-4fbf-bd50-27f114ccaa15",
+        "region": "region-a.geo-1",
+        "versionId": "1.0",
+        "versionInfo": "https:\/\/region-a.geo-1.cdnmgmt.hpcloudsvc.com\/v1.0\/",
+        "versionList": "https:\/\/region-a.geo-1.cdnmgmt.hpcloudsvc.com\/"
+      }]
+    },
+    {
+      "name": "Object Storage",
+      "type": "object-store",
+      "endpoints": [{
+        "tenantId": "37936628937291",
+        "publicURL": "https:\/\/region-a.geo-1.objects.hpcloudsvc.com\/v1.0\/AUTH_651c939f-04f0-4fbf-bd50-27f114ccaa15",
+        "region": "region-a.geo-1",
+        "versionId": "1.0",
+        "versionInfo": "https:\/\/region-a.geo-1.objects.hpcloudsvc.com\/v1.0\/",
+        "versionList": "https:\/\/region-a.geo-1.objects.hpcloudsvc.com"
+      }]
+    },
+    {
+      "name": "Identity",
+      "type": "identity",
+      "endpoints": [
+        {
+          "publicURL": "https:\/\/region-b.geo-1.identity.hpcloudsvc.com:35357\/v2.0\/",
+          "region": "region-b.geo-1",
+          "versionId": "2.0",
+          "versionInfo": "https:\/\/region-b.geo-1.identity.hpcloudsvc.com:35357\/v2.0\/",
+          "versionList": "https:\/\/region-b.geo-1.identity.hpcloudsvc.com:35357"
+        },
+        {
+          "publicURL": "https:\/\/region-a.geo-1.identity.hpcloudsvc.com:35357\/v2.0\/",
+          "region": "region-a.geo-1",
+          "versionId": "2.0",
+          "versionInfo": "https:\/\/region-a.geo-1.identity.hpcloudsvc.com:35357\/v2.0\/",
+          "versionList": "https:\/\/region-a.geo-1.identity.hpcloudsvc.com:35357"
+        }
+      ]
+    },
+    {
+      "name": "Image Management",
+      "type": "image",
+      "endpoints": [
+        {
+          "tenantId": "37936628937291",
+          "publicURL": "https:\/\/glance2.uswest.hpcloud.net:9292\/v1.0",
+          "region": "az-2.region-a.geo-1",
+          "versionId": "1.0",
+          "versionInfo": "https:\/\/glance2.uswest.hpcloud.net:9292\/v1.0\/",
+          "versionList": "https:\/\/glance2.uswest.hpcloud.net:9292"
+        },
+        {
+          "tenantId": "37936628937291",
+          "publicURL": "https:\/\/glance3.uswest.hpcloud.net:9292\/v1.0",
+          "region": "az-3.region-a.geo-1",
+          "versionId": "1.0",
+          "versionInfo": "https:\/\/glance3.uswest.hpcloud.net:9292\/v1.0\/",
+          "versionList": "https:\/\/glance3.uswest.hpcloud.net:9292"
+        },
+        {
+          "tenantId": "37936628937291",
+          "publicURL": "https:\/\/glance1.uswest.hpcloud.net:9292\/v1.0",
+          "region": "az-1.region-a.geo-1",
+          "versionId": "1.0",
+          "versionInfo": "https:\/\/glance1.uswest.hpcloud.net:9292\/v1.0\/",
+          "versionList": "https:\/\/glance1.uswest.hpcloud.net:9292"
+        }
+      ]
+    },
+    {
+      "name": "Block Storage",
+      "type": "volume",
+      "endpoints": [
+        {
+          "tenantId": "37936628937291",
+          "publicURL": "https:\/\/az-1.region-a.geo-1.compute.hpcloudsvc.com\/v1.1\/37936628937291",
+          "region": "az-1.region-a.geo-1",
+          "versionId": "1.1",
+          "versionInfo": "https:\/\/az-1.region-a.geo-1.compute.hpcloudsvc.com\/v1.1\/",
+          "versionList": "https:\/\/az-1.region-a.geo-1.compute.hpcloudsvc.com"
+        },
+        {
+          "tenantId": "37936628937291",
+          "publicURL": "https:\/\/az-3.region-a.geo-1.compute.hpcloudsvc.com\/v1.1\/37936628937291",
+          "region": "az-3.region-a.geo-1",
+          "versionId": "1.1",
+          "versionInfo": "https:\/\/az-3.region-a.geo-1.compute.hpcloudsvc.com\/v1.1\/",
+          "versionList": "https:\/\/az-3.region-a.geo-1.compute.hpcloudsvc.com"
+        },
+        {
+          "tenantId": "37936628937291",
+          "publicURL": "https:\/\/az-2.region-a.geo-1.compute.hpcloudsvc.com\/v1.1\/37936628937291",
+          "region": "az-2.region-a.geo-1",
+          "versionId": "1.1",
+          "versionInfo": "https:\/\/az-2.region-a.geo-1.compute.hpcloudsvc.com\/v1.1\/",
+          "versionList": "https:\/\/az-2.region-a.geo-1.compute.hpcloudsvc.com"
+        }
+      ]
+    },
+    {
+      "name": "Compute",
+      "type": "compute",
+      "endpoints": [
+        {
+          "tenantId": "37936628937291",
+          "publicURL": "https:\/\/az-3.region-a.geo-1.compute.hpcloudsvc.com\/v1.1\/37936628937291",
+          "publicURL2": "https:\/\/az-3.region-a.geo-1.ec2-compute.hpcloudsvc.com\/services\/Cloud",
+          "region": "az-3.region-a.geo-1",
+          "versionId": "1.1",
+          "versionInfo": "https:\/\/az-3.region-a.geo-1.compute.hpcloudsvc.com\/v1.1\/",
+          "versionList": "https:\/\/az-3.region-a.geo-1.compute.hpcloudsvc.com"
+        },
+        {
+          "tenantId": "37936628937291",
+          "publicURL": "https:\/\/az-2.region-a.geo-1.compute.hpcloudsvc.com\/v1.1\/37936628937291",
+          "publicURL2": "https:\/\/az-2.region-a.geo-1.ec2-compute.hpcloudsvc.com\/services\/Cloud",
+          "region": "az-2.region-a.geo-1",
+          "versionId": "1.1",
+          "versionInfo": "https:\/\/az-2.region-a.geo-1.compute.hpcloudsvc.com\/v1.1\/",
+          "versionList": "https:\/\/az-2.region-a.geo-1.compute.hpcloudsvc.com"
+        },
+        {
+          "tenantId": "37936628937291",
+          "publicURL": "https:\/\/az-1.region-a.geo-1.compute.hpcloudsvc.com\/v1.1\/37936628937291",
+          "publicURL2": "https:\/\/az-1.region-a.geo-1.ec2-compute.hpcloudsvc.com\/services\/Cloud",
+          "region": "az-1.region-a.geo-1",
+          "versionId": "1.1",
+          "versionInfo": "https:\/\/az-1.region-a.geo-1.compute.hpcloudsvc.com\/v1.1\/",
+          "versionList": "https:\/\/az-1.region-a.geo-1.compute.hpcloudsvc.com"
+        }
+      ]
+    }
+  ]
+}}
