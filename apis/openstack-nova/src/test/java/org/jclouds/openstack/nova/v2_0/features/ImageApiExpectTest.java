@@ -57,7 +57,7 @@ public class ImageApiExpectTest extends BaseNovaApiExpectTest {
       NovaApi apiWhenImagesExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, list, listResponse);
 
-      assertEquals(apiWhenImagesExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
+      assertEquals(apiWhenImagesExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1", "az-2.region-a.geo-1", "az-3.region-a.geo-1"));
 
       assertEquals(apiWhenImagesExist.getImageApiForZone("az-1.region-a.geo-1").list().concat().toString(),
             new ParseImageListTest().expected().toString());

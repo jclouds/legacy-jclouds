@@ -18,8 +18,6 @@
  */
 package org.jclouds.openstack.nova.v2_0.internal;
 
-import java.util.Properties;
-
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.http.HttpRequest;
@@ -72,14 +70,6 @@ public class BaseNovaExpectTest<T> extends BaseRestApiExpectTest<T> {
       
       unmatchedExtensionsOfNovaResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/extension_list.json")).build();
-   }
-   
-   @Override
-   protected Properties setupProperties() {
-      Properties overrides = super.setupProperties();
-      // hpcloud or trystack
-      overrides.setProperty("jclouds.zones", "az-1.region-a.geo-1,RegionOne");
-      return overrides;
    }
 
    @Override

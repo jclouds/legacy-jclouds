@@ -54,7 +54,7 @@ public class FlavorApiExpectTest extends BaseNovaApiExpectTest {
       NovaApi apiWhenFlavorsExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, listFlavors, listFlavorsResponse);
 
-      assertEquals(apiWhenFlavorsExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
+      assertEquals(apiWhenFlavorsExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1", "az-2.region-a.geo-1", "az-3.region-a.geo-1"));
 
       assertEquals(apiWhenFlavorsExist.getFlavorApiForZone("az-1.region-a.geo-1").list().concat().toString(),
             new ParseFlavorListTest().expected().toString());

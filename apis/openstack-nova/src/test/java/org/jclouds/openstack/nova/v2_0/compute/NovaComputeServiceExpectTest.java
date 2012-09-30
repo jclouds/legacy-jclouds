@@ -26,6 +26,7 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -52,7 +53,17 @@ import com.google.inject.TypeLiteral;
  */
 @Test(groups = "unit", testName = "NovaComputeServiceExpectTest")
 public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTest {
-
+   
+   @Override
+   protected Properties setupProperties() {
+      Properties overrides = super.setupProperties();
+      // only specify limited zones so that we don't have to configure requests for multiple zones.
+      // since we are doing tests with keystone responses from hpcloud and also trystack, we have
+      // to whitelist one zone from each
+      overrides.setProperty("jclouds.zones", "az-1.region-a.geo-1,RegionOne");
+      return overrides;
+   }
+   
    public void testListLocationsWhenResponseIs2xx() throws Exception {
 
       Map<HttpRequest, HttpResponse> requestResponseMap = ImmutableMap.<HttpRequest, HttpResponse> builder()
@@ -316,4 +327,5 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
       // we don't have access to this private key
       assertEquals(node.getCredentials().getPrivateKey(), null);
    }
+
 }
