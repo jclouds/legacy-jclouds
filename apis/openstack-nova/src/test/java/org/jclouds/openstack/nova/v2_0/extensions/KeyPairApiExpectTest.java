@@ -53,7 +53,7 @@ public class KeyPairApiExpectTest extends BaseNovaApiExpectTest {
       NovaApi apiWhenServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, list, listResponse);
 
-      assertEquals(apiWhenServersExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
+      assertEquals(apiWhenServersExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1", "az-2.region-a.geo-1", "az-3.region-a.geo-1"));
 
       // NOTE this required a change to the KeyPair domain object toString method
       assertEquals(apiWhenServersExist.getKeyPairExtensionForZone("az-1.region-a.geo-1").get().list().toString(),

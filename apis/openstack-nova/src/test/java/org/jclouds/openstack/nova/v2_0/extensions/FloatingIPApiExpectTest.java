@@ -45,7 +45,7 @@ public class FloatingIPApiExpectTest extends BaseNovaApiExpectTest {
       NovaApi apiWhenExtensionNotInList = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse);
 
-      assertEquals(apiWhenExtensionNotInList.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
+      assertEquals(apiWhenExtensionNotInList.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1", "az-2.region-a.geo-1", "az-3.region-a.geo-1"));
 
       assertTrue(apiWhenExtensionNotInList.getFloatingIPExtensionForZone("az-1.region-a.geo-1").isPresent());
 
@@ -56,7 +56,7 @@ public class FloatingIPApiExpectTest extends BaseNovaApiExpectTest {
       NovaApi apiWhenExtensionNotInList = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, unmatchedExtensionsOfNovaResponse);
 
-      assertEquals(apiWhenExtensionNotInList.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
+      assertEquals(apiWhenExtensionNotInList.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1", "az-2.region-a.geo-1", "az-3.region-a.geo-1"));
 
       assertFalse(apiWhenExtensionNotInList.getFloatingIPExtensionForZone("az-1.region-a.geo-1").isPresent());
 
@@ -76,7 +76,7 @@ public class FloatingIPApiExpectTest extends BaseNovaApiExpectTest {
       NovaApi apiWhenFloatingIPsExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, list, listResponse);
 
-      assertEquals(apiWhenFloatingIPsExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
+      assertEquals(apiWhenFloatingIPsExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1", "az-2.region-a.geo-1", "az-3.region-a.geo-1"));
 
       assertEquals(apiWhenFloatingIPsExist.getFloatingIPExtensionForZone("az-1.region-a.geo-1").get().list()
             .toString(), new ParseFloatingIPListTest().expected().toString());

@@ -54,7 +54,7 @@ public class ExtensionApiExpectTest extends BaseNovaApiExpectTest {
       NovaApi apiWhenExtensionsExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, listExtensions, listExtensionsResponse);
 
-      assertEquals(apiWhenExtensionsExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
+      assertEquals(apiWhenExtensionsExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1", "az-2.region-a.geo-1", "az-3.region-a.geo-1"));
 
       assertEquals(apiWhenExtensionsExist.getExtensionApiForZone("az-1.region-a.geo-1").list().toString(),
             new ParseExtensionListTest().expected().toString());

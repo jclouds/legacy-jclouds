@@ -59,7 +59,7 @@ public class SecurityGroupApiExpectTest extends BaseNovaApiExpectTest {
                responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, list,
                listResponse);
 
-      assertEquals(apiWhenSecurityGroupsExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
+      assertEquals(apiWhenSecurityGroupsExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1", "az-2.region-a.geo-1", "az-3.region-a.geo-1"));
 
       assertEquals(apiWhenSecurityGroupsExist.getSecurityGroupExtensionForZone("az-1.region-a.geo-1").get()
                .list().toString(), new ParseSecurityGroupListTest().expected().toString());

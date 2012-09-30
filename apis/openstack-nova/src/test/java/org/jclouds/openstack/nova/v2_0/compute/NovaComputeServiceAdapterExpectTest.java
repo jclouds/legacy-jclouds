@@ -22,6 +22,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 import java.util.Map;
+import java.util.Properties;
 
 import org.jclouds.compute.ComputeServiceAdapter.NodeAndInitialCredentials;
 import org.jclouds.compute.ComputeServiceContext;
@@ -159,5 +160,13 @@ public class NovaComputeServiceAdapterExpectTest extends BaseNovaComputeServiceC
    @Override
    public Injector apply(ComputeServiceContext input) {
       return input.utils().injector();
+   }
+   
+   @Override
+   protected Properties setupProperties() {
+      Properties overrides = super.setupProperties();
+      // only specify one zone so that we don't have to configure requests for multiple zones
+      overrides.setProperty("jclouds.zones", "az-1.region-a.geo-1");
+      return overrides;
    }
 }
