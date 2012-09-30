@@ -1,0 +1,49 @@
+{
+    "access": {
+        "token": {
+            "expires": "2012-03-23T21:44:09",
+            "id": "Auth_4f173437e4b013bee56d1007",
+            "tenant": {
+                "id": "3456",
+                "name": "508151008"
+            }
+        },
+        "serviceCatalog": [{
+            "endpoints": [{
+                "adminURL": "https://nova-api.trystack.org:9774/v1.1/3456",
+                "region": "RegionOne",
+                "internalURL": "https://nova-api.trystack.org:9774/v1.1/3456",
+                "publicURL": "https://nova-api.trystack.org:9774/v1.1/3456"
+            }],
+            "type": "compute",
+            "name": "nova"
+        }, {
+            "endpoints": [{
+                "adminURL": "https://GLANCE_API_IS_NOT_DISCLOSED/v1.1/3456",
+                "region": "RegionOne",
+                "internalURL": "https://GLANCE_API_IS_NOT_DISCLOSED/v1.1/3456",
+                "publicURL": "https://GLANCE_API_IS_NOT_DISCLOSED/v1.1/3456"
+            }],
+            "type": "image",
+            "name": "glance"
+        }, {
+            "endpoints": [{
+                "adminURL": "https://nova-api.trystack.org:5443/v2.0",
+                "region": "RegionOne",
+                "internalURL": "https://keystone.thefreecloud.org:5000/v2.0",
+                "publicURL": "https://keystone.thefreecloud.org:5000/v2.0"
+            }],
+            "type": "identity",
+            "name": "keystone"
+        }],
+        "user": {
+            "id": "43",
+            "roles": [{
+                "tenantId": "3456",
+                "id": "2",
+                "name": "Member"
+            }],
+            "name": "508151008"
+        }
+    }
+}
