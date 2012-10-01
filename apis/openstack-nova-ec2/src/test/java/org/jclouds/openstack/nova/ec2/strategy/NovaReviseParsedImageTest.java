@@ -57,8 +57,8 @@ import com.google.inject.Guice;
 public class NovaReviseParsedImageTest {
 
    public void test() {
-
       Set<org.jclouds.compute.domain.Image> result = convertImages("/nova_ec2_images.xml");
+
       assertEquals(result.size(), 7);
 
       assertEquals(
@@ -70,7 +70,7 @@ public class NovaReviseParsedImageTest {
                               .description("Ubuntu Maverick 10.10 Server 64-bit 20111212").is64Bit(true)
                               .build())
                   .name("Ubuntu Maverick 10.10 Server 64-bit 20111212")
-                  .description("")
+                  .description("local (Ubuntu Maverick 10.10 Server 64-bit\n                20111212)")
                   .defaultCredentials(new LoginCredentials("root", false))
                   .id("us-east-1/ami-000004d6")
                   .providerId("ami-000004d6")
@@ -78,26 +78,29 @@ public class NovaReviseParsedImageTest {
                   .status(org.jclouds.compute.domain.Image.Status.AVAILABLE)
                   .backendStatus("available")
                   .userMetadata(
-                        ImmutableMap.of("owner", "", "rootDeviceType", "instance-store", "virtualizationType",
-                              "paravirtual", "hypervisor", "xen")).build().toString());
+                        ImmutableMap.of(
+                                "rootDeviceType", "instance-store",
+                                "virtualizationType", "paravirtual",
+                                "hypervisor", "xen"))
+                  .build().toString());
+
       assertEquals(Iterables.get(result, 4).getStatus(), org.jclouds.compute.domain.Image.Status.AVAILABLE);
    }
 
-   static Location defaultLocation = new LocationBuilder().scope(LocationScope.REGION).id("us-east-1").description(
-            "us-east-1").build();
+   static Location defaultLocation = new LocationBuilder().scope(LocationScope.REGION)
+														  .id("us-east-1")
+														  .description("us-east-1")
+														  .build();
 
    public static Set<org.jclouds.compute.domain.Image> convertImages(String resource) {
-
-      Map<OsFamily, Map<String, String>> map = new BaseComputeServiceContextModule() {
-      }.provideOsVersionMap(new ComputeServiceConstants.ReferenceData(), Guice.createInjector(new GsonModule())
-               .getInstance(Json.class));
+      Map<OsFamily, Map<String, String>> map = new BaseComputeServiceContextModule() { }
+		      .provideOsVersionMap(new ComputeServiceConstants.ReferenceData(), Guice.createInjector(new GsonModule()) .getInstance(Json.class));
 
       Set<Image> result = DescribeImagesResponseHandlerTest.parseImages(resource);
       EC2ImageParser parser = new EC2ImageParser(EC2ComputeServiceDependenciesModule.toPortableImageStatus,
-               new EC2PopulateDefaultLoginCredentialsForImageStrategy(), map, Suppliers
-                        .<Set<? extends Location>> ofInstance(ImmutableSet.<Location> of(defaultLocation)), Suppliers
-                        .ofInstance(defaultLocation), new NovaReviseParsedImage(new ImageToOperatingSystem(map)));
+               new EC2PopulateDefaultLoginCredentialsForImageStrategy(), map,
+               Suppliers.<Set<? extends Location>>ofInstance(ImmutableSet.<Location>of(defaultLocation)),
+               Suppliers.ofInstance(defaultLocation), new NovaReviseParsedImage(new ImageToOperatingSystem(map)));
       return Sets.newLinkedHashSet(Iterables.filter(Iterables.transform(result, parser), Predicates.notNull()));
    }
-
 }
