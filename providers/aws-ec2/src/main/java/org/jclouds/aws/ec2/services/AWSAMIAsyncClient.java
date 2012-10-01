@@ -26,35 +26,51 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
+import org.jclouds.aws.ec2.domain.AWSImage;
+import org.jclouds.aws.ec2.xml.AWSDescribeImagesResponseHandler;
 import org.jclouds.aws.ec2.xml.ProductCodesHandler;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.ec2.binders.BindProductCodesToIndexedFormParams;
+import org.jclouds.ec2.options.DescribeImagesOptions;
 import org.jclouds.ec2.services.AMIAsyncClient;
-import org.jclouds.ec2.services.AMIClient;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.EndpointParam;
+import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
+import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * Provides access to AMI Services.
- * <p/>
+ * Provides asynchronous access to AMI Services.
  * 
  * @author Adrian Cole
+ * @author Andrew Kennedy
  */
 @RequestFilters(FormSigner.class)
 @VirtualHost
 public interface AWSAMIAsyncClient extends AMIAsyncClient {
-   // TODO make AWSImage as it has product codes...
 
    /**
-    * @see AMIClient#getProductCodesForImageInRegion
+    * @see AWSAMIClient#describeImagesInRegion(String, DescribeImagesOptions...)
+    */
+   @Override
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "DescribeImages")
+   @XMLResponseParser(AWSDescribeImagesResponseHandler.class)
+   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   ListenableFuture<Set<AWSImage>> describeImagesInRegion(
+             @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
+             DescribeImagesOptions... options);
+
+   /**
+    * @see AWSAMIClient#getProductCodesForImageInRegion(String, String)
     */
    @POST
    @Path("/")
@@ -65,24 +81,22 @@ public interface AWSAMIAsyncClient extends AMIAsyncClient {
             @FormParam("ImageId") String imageId);
 
    /**
-    * @see AMIClient#addProductCodesToImageInRegion
+    * @see AWSAMIClient#addProductCodesToImageInRegion(String, Iterable, String)
     */
    @POST
    @Path("/")
-   @FormParams(keys = { ACTION, "OperationType", "Attribute" }, values = { "ModifyImageAttribute", "add",
-            "productCodes" })
+   @FormParams(keys = { ACTION, "OperationType", "Attribute" }, values = { "ModifyImageAttribute", "add", "productCodes" })
    ListenableFuture<Void> addProductCodesToImageInRegion(
             @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @BinderParam(BindProductCodesToIndexedFormParams.class) Iterable<String> productCodes,
             @FormParam("ImageId") String imageId);
 
    /**
-    * @see AMIClient#removeProductCodesToImageInRegion
+    * @see AWSAMIClient#removeProductCodesFromImageInRegion(String, Iterable, String)
     */
    @POST
    @Path("/")
-   @FormParams(keys = { ACTION, "OperationType", "Attribute" }, values = { "ModifyImageAttribute", "remove",
-            "productCodes" })
+   @FormParams(keys = { ACTION, "OperationType", "Attribute" }, values = { "ModifyImageAttribute", "remove", "productCodes" })
    ListenableFuture<Void> removeProductCodesFromImageInRegion(
             @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @BinderParam(BindProductCodesToIndexedFormParams.class) Iterable<String> productCodes,

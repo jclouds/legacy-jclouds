@@ -79,6 +79,7 @@ public class ImageBuilder extends ComputeMetadataBuilder {
       return ImageBuilder.class.cast(super.id(id));
    }
 
+   @Override
    public ImageBuilder tags(Iterable<String> tags) {
       return ImageBuilder.class.cast(super.tags(tags));
    }

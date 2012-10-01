@@ -1,0 +1,47 @@
+<?xml version="1.0" ?>
+<DescribeImagesResponse xmlns="http://ec2.amazonaws.com/doc/2009-04-04/">
+    <requestId>req-bfdac708-c6c4-48fb-9cba-be5bb0a05b49</requestId>
+    <imagesSet>
+        <item>
+            <description/>
+            <imageOwnerId/>
+            <isPublic>true</isPublic>
+            <imageId>aki-00000002</imageId>
+            <imageState>available</imageState>
+            <architecture/>
+            <imageLocation>None (cirros-0.3.0-x86_64-blank-kernel)</imageLocation>
+            <rootDeviceType>instance-store</rootDeviceType>
+            <rootDeviceName>/dev/sda1</rootDeviceName>
+            <imageType>kernel</imageType>
+            <name>cirros-0.3.0-x86_64-blank-kernel</name>
+        </item>
+        <item>
+            <description/>
+            <imageOwnerId/>
+            <isPublic>true</isPublic>
+            <imageId>ari-00000003</imageId>
+            <imageState>available</imageState>
+            <architecture/>
+            <imageLocation>None (cirros-0.3.0-x86_64-blank-ramdisk)</imageLocation>
+            <rootDeviceType>instance-store</rootDeviceType>
+            <rootDeviceName>/dev/sda1</rootDeviceName>
+            <imageType>ramdisk</imageType>
+            <name>cirros-0.3.0-x86_64-blank-ramdisk</name>
+        </item>
+        <item>
+            <name>cirros-0.3.0-x86_64-blank</name>
+            <imageOwnerId/>
+            <isPublic>true</isPublic>
+            <imageId>ami-00000001</imageId>
+            <imageState>available</imageState>
+            <rootDeviceType>instance-store</rootDeviceType>
+            <architecture/>
+            <imageLocation>None (cirros-0.3.0-x86_64-blank)</imageLocation>
+            <kernelId>aki-00000002</kernelId>
+            <ramdiskId>ari-00000003</ramdiskId>
+            <rootDeviceName>/dev/sda1</rootDeviceName>
+            <imageType>machine</imageType>
+            <description/>
+        </item>
+    </imagesSet>
+</DescribeImagesResponse>
