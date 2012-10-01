@@ -57,8 +57,8 @@ import com.google.inject.Guice;
 public class GreenQloudComputeReviseParsedImageTest {
 
    public void testParseGreenQloudImage() {
-
       Set<org.jclouds.compute.domain.Image> result = convertImages("/greenqloud_images.xml");
+
       assertEquals(result.size(), 9);
 
       assertEquals(
@@ -75,8 +75,11 @@ public class GreenQloudComputeReviseParsedImageTest {
                   .providerId("qmi-4e5b842f")
                   .location(defaultLocation)
                   .userMetadata(
-                        ImmutableMap.of("owner", "admin", "rootDeviceType", "ebs", "virtualizationType",
-                              "paravirtual", "hypervisor", "xen"))
+                        ImmutableMap.of(
+                              "owner", "admin",
+                              "rootDeviceType", "ebs",
+                              "virtualizationType", "paravirtual",
+                              "hypervisor", "xen"))
                   .status(org.jclouds.compute.domain.Image.Status.AVAILABLE).backendStatus("available").build().toString());
       assertEquals(Iterables.get(result, 0).getStatus(), org.jclouds.compute.domain.Image.Status.AVAILABLE);
 
@@ -94,9 +97,13 @@ public class GreenQloudComputeReviseParsedImageTest {
                   .providerId("qmi-9ac92558")
                   .location(defaultLocation)
                   .userMetadata(
-                        ImmutableMap.of("owner", "admin", "rootDeviceType", "ebs", "virtualizationType",
-                              "paravirtual", "hypervisor", "xen"))
+                        ImmutableMap.of(
+                              "owner", "admin",
+                              "rootDeviceType", "ebs",
+                              "virtualizationType", "paravirtual",
+                              "hypervisor", "xen"))
                   .status(org.jclouds.compute.domain.Image.Status.AVAILABLE).backendStatus("available").build().toString());
+
       assertEquals(Iterables.get(result, 1).getStatus(), org.jclouds.compute.domain.Image.Status.AVAILABLE);
       
       assertEquals(
@@ -113,8 +120,11 @@ public class GreenQloudComputeReviseParsedImageTest {
                   .providerId("qmi-33a467aa")
                   .location(defaultLocation)
                   .userMetadata(
-                        ImmutableMap.of("owner", "admin", "rootDeviceType", "ebs", "virtualizationType",
-                              "paravirtual", "hypervisor", "xen"))
+                        ImmutableMap.of(
+                              "owner", "admin",
+                              "rootDeviceType", "ebs",
+                              "virtualizationType", "paravirtual",
+                              "hypervisor", "xen"))
                   .status(org.jclouds.compute.domain.Image.Status.AVAILABLE).backendStatus("available").build().toString());               
          assertEquals(Iterables.get(result, 2).getStatus(), org.jclouds.compute.domain.Image.Status.AVAILABLE);
          
@@ -132,8 +142,11 @@ public class GreenQloudComputeReviseParsedImageTest {
                      .providerId("qmi-f2a9d2ba")
                      .location(defaultLocation)
                      .userMetadata(
-                           ImmutableMap.of("owner", "admin", "rootDeviceType", "ebs", "virtualizationType",
-                                 "paravirtual", "hypervisor", "xen"))
+                           ImmutableMap.of(
+                                 "owner", "admin",
+                                 "rootDeviceType", "ebs",
+                                 "virtualizationType", "paravirtual",
+                                 "hypervisor", "xen"))
                      .status(org.jclouds.compute.domain.Image.Status.AVAILABLE).backendStatus("available").build().toString());               
          assertEquals(Iterables.get(result, 3).getStatus(), org.jclouds.compute.domain.Image.Status.AVAILABLE);         
 
@@ -151,8 +164,11 @@ public class GreenQloudComputeReviseParsedImageTest {
                      .providerId("qmi-96f82145")
                      .location(defaultLocation)
                      .userMetadata(
-                           ImmutableMap.of("owner", "admin", "rootDeviceType", "ebs", "virtualizationType",
-                                 "paravirtual", "hypervisor", "xen"))
+                           ImmutableMap.of(
+                                 "owner", "admin",
+                                 "rootDeviceType", "ebs",
+                                 "virtualizationType", "paravirtual",
+                                 "hypervisor", "xen"))
                      .status(org.jclouds.compute.domain.Image.Status.AVAILABLE).backendStatus("available").build().toString());               
             assertEquals(Iterables.get(result, 4).getStatus(), org.jclouds.compute.domain.Image.Status.AVAILABLE);         
 
@@ -170,8 +186,11 @@ public class GreenQloudComputeReviseParsedImageTest {
                         .providerId("qmi-42e877f6")
                         .location(defaultLocation)
                         .userMetadata(
-                              ImmutableMap.of("owner", "admin", "rootDeviceType", "ebs", "virtualizationType",
-                                    "paravirtual", "hypervisor", "xen"))
+                              ImmutableMap.of(
+                                    "owner", "admin",
+                                    "rootDeviceType", "ebs",
+                                    "virtualizationType", "paravirtual",
+                                    "hypervisor", "xen"))
                         .status(org.jclouds.compute.domain.Image.Status.AVAILABLE).backendStatus("available").build().toString());               
             assertEquals(Iterables.get(result, 5).getStatus(), org.jclouds.compute.domain.Image.Status.AVAILABLE);      
 
@@ -189,8 +208,11 @@ public class GreenQloudComputeReviseParsedImageTest {
                            .providerId("qmi-eed8cea7")
                            .location(defaultLocation)
                            .userMetadata(
-                                 ImmutableMap.of("owner", "admin", "rootDeviceType", "ebs", "virtualizationType",
-                                       "paravirtual", "hypervisor", "xen"))
+                                 ImmutableMap.of(
+                                       "owner", "admin",
+                                       "rootDeviceType", "ebs",
+                                       "virtualizationType", "paravirtual",
+                                       "hypervisor", "xen"))
                            .status(org.jclouds.compute.domain.Image.Status.AVAILABLE).backendStatus("available").build().toString());
             assertEquals(Iterables.get(result, 6).getStatus(), org.jclouds.compute.domain.Image.Status.AVAILABLE);
 
@@ -209,8 +231,11 @@ public class GreenQloudComputeReviseParsedImageTest {
                         .providerId("qmi-fa4bdae0")
                         .location(defaultLocation)
                         .userMetadata(
-                              ImmutableMap.of("owner", "admin", "rootDeviceType", "ebs", "virtualizationType",
-                                    "paravirtual", "hypervisor", "xen"))
+                              ImmutableMap.of(
+                                    "owner", "admin",
+                                    "rootDeviceType", "ebs",
+                                    "virtualizationType", "paravirtual",
+                                    "hypervisor", "xen"))
                         .status(org.jclouds.compute.domain.Image.Status.AVAILABLE).backendStatus("available").build().toString());               
             assertEquals(Iterables.get(result, 7).getStatus(), org.jclouds.compute.domain.Image.Status.AVAILABLE);      
            
@@ -228,29 +253,30 @@ public class GreenQloudComputeReviseParsedImageTest {
                         .providerId("qmi-93271d32")
                         .location(defaultLocation)
                         .userMetadata(
-                              ImmutableMap.of("owner", "admin", "rootDeviceType", "ebs", "virtualizationType",
-                                    "paravirtual", "hypervisor", "xen"))
+                              ImmutableMap.of(
+                                    "owner", "admin",
+                                    "rootDeviceType", "ebs",
+                                    "virtualizationType", "paravirtual",
+                                    "hypervisor", "xen"))
                         .status(org.jclouds.compute.domain.Image.Status.AVAILABLE).backendStatus("available").build().toString());               
             assertEquals(Iterables.get(result, 8).getStatus(), org.jclouds.compute.domain.Image.Status.AVAILABLE);      
-
    }
 
-   static Location defaultLocation = new LocationBuilder().scope(LocationScope.REGION).id("us-east-1").description(
-            "us-east-1").build();
+   public static Location defaultLocation = new LocationBuilder().scope(LocationScope.REGION)
+												          .id("us-east-1")
+												          .description("us-east-1")
+												          .build();
 
    public static Set<org.jclouds.compute.domain.Image> convertImages(String resource) {
+      Map<OsFamily, Map<String, String>> map = new BaseComputeServiceContextModule() { }
+	        .provideOsVersionMap(new ComputeServiceConstants.ReferenceData(), Guice.createInjector(new GsonModule()).getInstance(Json.class));
 
-      Map<OsFamily, Map<String, String>> map = new BaseComputeServiceContextModule() {
-      }.provideOsVersionMap(new ComputeServiceConstants.ReferenceData(), Guice.createInjector(new GsonModule())
-               .getInstance(Json.class));
-
-      // note this method is what mandates the location id as us-east-1
+      // NOTE this method is what mandates the location id as us-east-1
       Set<Image> result = DescribeImagesResponseHandlerTest.parseImages(resource);
       EC2ImageParser parser = new EC2ImageParser(EC2ComputeServiceDependenciesModule.toPortableImageStatus,
-               new EC2PopulateDefaultLoginCredentialsForImageStrategy(), map, Suppliers
-                        .<Set<? extends Location>> ofInstance(ImmutableSet.<Location> of(defaultLocation)), Suppliers
-                        .ofInstance(defaultLocation), new GreenQloudComputeReviseParsedImage(map));
+               new EC2PopulateDefaultLoginCredentialsForImageStrategy(), map,
+                        Suppliers.<Set<? extends Location>>ofInstance(ImmutableSet.<Location>of(defaultLocation)),
+                        Suppliers.ofInstance(defaultLocation), new GreenQloudComputeReviseParsedImage(map));
       return Sets.newLinkedHashSet(Iterables.filter(Iterables.transform(result, parser), Predicates.notNull()));
    }
-
 }

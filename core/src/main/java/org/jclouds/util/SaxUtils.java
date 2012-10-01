@@ -22,12 +22,13 @@ import java.util.Map;
 
 import org.xml.sax.Attributes;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 
 /**
- * 
  * @author Adrian Cole
+ * @author Andrew Kennedy
  */
 public class SaxUtils {
 
@@ -48,11 +49,11 @@ public class SaxUtils {
 
    public static String currentOrNull(StringBuilder currentText) {
       String returnVal = currentText.toString().trim();
-      return returnVal.equals("") ? null : returnVal;
+      return Strings.emptyToNull(returnVal);
    }
 
    public static String currentOrNegative(StringBuilder currentText) {
-      String returnVal = currentText.toString().trim();
-      return returnVal.equals("") ? "-1" : returnVal;
+      String returnVal = currentOrNull(currentText);
+      return returnVal == null ? "-1" : returnVal;
    }
 }

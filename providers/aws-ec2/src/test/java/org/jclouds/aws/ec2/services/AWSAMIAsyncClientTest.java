@@ -24,13 +24,13 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 
+import org.jclouds.aws.ec2.xml.AWSDescribeImagesResponseHandler;
 import org.jclouds.aws.ec2.xml.ProductCodesHandler;
 import org.jclouds.ec2.options.CreateImageOptions;
 import org.jclouds.ec2.options.DescribeImagesOptions;
 import org.jclouds.ec2.options.RegisterImageBackedByEbsOptions;
 import org.jclouds.ec2.options.RegisterImageOptions;
 import org.jclouds.ec2.xml.BlockDeviceMappingHandler;
-import org.jclouds.ec2.xml.DescribeImagesResponseHandler;
 import org.jclouds.ec2.xml.ImageIdHandler;
 import org.jclouds.ec2.xml.PermissionHandler;
 import org.jclouds.http.HttpRequest;
@@ -103,7 +103,7 @@ public class AWSAMIAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSAMIAsync
             false);
    
       assertResponseParserClassEquals(method, request, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, DescribeImagesResponseHandler.class);
+      assertSaxResponseParserClassEquals(method, AWSDescribeImagesResponseHandler.class);
       assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
 
       checkFilters(request);
@@ -113,9 +113,11 @@ public class AWSAMIAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSAMIAsync
       Method method = AWSAMIAsyncClient.class.getMethod("describeImagesInRegion", String.class,
                DescribeImagesOptions[].class);
 
-      HttpRequest request = processor.createRequest(method, null, filters(
-               ImmutableMap.of("state", "available", "image-type", "machine")).executableBy("me").ownedBy("fred",
-               "nancy").imageIds("1", "2"));
+      HttpRequest request = processor.createRequest(method, null,
+            filters(ImmutableMap.of("state", "available", "image-type", "machine"))
+		            .executableBy("me")
+		            .ownedBy("fred", "nancy")
+		            .imageIds("1", "2"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -125,7 +127,7 @@ public class AWSAMIAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSAMIAsync
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, DescribeImagesResponseHandler.class);
+      assertSaxResponseParserClassEquals(method, AWSDescribeImagesResponseHandler.class);
       assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
 
       checkFilters(request);

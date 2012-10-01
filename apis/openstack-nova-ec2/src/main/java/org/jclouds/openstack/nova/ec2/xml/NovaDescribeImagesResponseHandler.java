@@ -43,6 +43,7 @@ public class NovaDescribeImagesResponseHandler extends DescribeImagesResponseHan
       super(defaultRegion);
    }
 
+   @Override
    public Set<Image> getResult() {
       return ImmutableSet.copyOf(Iterables.filter(contents, new Predicate<Image>() {
          @Override
