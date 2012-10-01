@@ -21,34 +21,47 @@ package org.jclouds.aws.ec2.services;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.aws.ec2.domain.AWSImage;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.ec2.options.DescribeImagesOptions;
 import org.jclouds.ec2.services.AMIClient;
 import org.jclouds.javax.annotation.Nullable;
 
 /**
- * Provides access to EC2 via their REST API.
- * <p/>
+ * Provides access to AMI Services.
  * 
  * @author Adrian Cole
+ * @author Andrew Kennedy
  */
 @Timeout(duration = 45, timeUnit = TimeUnit.SECONDS)
-public interface AWSAMIClient extends AMIClient{
-
+public interface AWSAMIClient extends AMIClient {
 
    /**
-    * Returns the Product Codes of an image.
+    * Returns information about AMIs, AKIs, and ARIs.
+    *
+    * This includes image type, product codes, architecture, and kernel and RAM disk IDs. Images
+    * available to you include public images, private images that you own, and private images owned
+    * by other users for which you have explicit launch permissions.
     * 
-    * @param region
-    *           AMIs are tied to the Region where its files are located within Amazon S3.
-    * @param imageId
-    *           The ID of the AMI for which an attribute will be described
-    * @see #describeImages
-    * @see #modifyImageAttribute
-    * @see #resetImageAttribute
-    * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeImageAttribute.html"
-    *      />
+    * @param region an AMI is tied to the Region within Amazon S3 where its files are located
+    *
+    * @see org.jclouds.ec2.services.InstanceClient#describeInstancesInRegion(String, String...)
+    * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeImages.html" />
     * @see DescribeImagesOptions
+    */
+   @Override
+   @Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
+   Set<AWSImage> describeImagesInRegion(@Nullable String region, DescribeImagesOptions... options);
+
+   /**
+    * Returns the {@code productCode}s of an AMI.
+    * 
+    * @param region an AMI is tied to the Region within Amazon S3 where its files are located
+    * @param imageId The ID of the AMI for which an attribute will be described
+    *
+    * @see #addProductCodesToImageInRegion(String, Iterable, String)
+    * @see #removeProductCodesFromImageInRegion(String, Iterable, String)
+    * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeImageAttribute.html" />
     */
    Set<String> getProductCodesForImageInRegion(@Nullable String region, String imageId);
 
@@ -56,37 +69,26 @@ public interface AWSAMIClient extends AMIClient{
    /**
     * Adds {@code productCode}s to an AMI.
     * 
-    * @param region
-    *           AMIs are tied to the Region where its files are located within Amazon S3.
-    * @param productCodes
-    *           Product Codes
-    * @param imageId
-    *           The AMI ID.
+    * @param region an AMI is tied to the Region within Amazon S3 where its files are located
+    * @param productCodes Product codes to be added to the AMI
+    * @param imageId The ID of the AMI for which an attribute will be described
     * 
-    * @see #removeProductCodesFromImage
-    * @see #describeImageAttribute
-    * @see #resetImageAttribute
-    * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-ModifyImageAttribute.html"
-    *      />
+    * @see #removeProductCodesFromImageInRegion(String, Iterable, String)
+    * @see #getProductCodesForImageInRegion(String, String)
+    * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-ModifyImageAttribute.html" />
     */
    void addProductCodesToImageInRegion(@Nullable String region, Iterable<String> productCodes, String imageId);
 
    /**
     * Removes {@code productCode}s from an AMI.
     * 
-    * @param region
-    *           AMIs are tied to the Region where its files are located within Amazon S3.
-    * @param productCodes
-    *           Product Codes
-    * @param imageId
-    *           The AMI ID.
-    * 
-    * @see #addProductCodesToImage
-    * @see #describeImageAttribute
-    * @see #resetImageAttribute
-    * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-ModifyImageAttribute.html"
-    *      />
+    * @param region an AMI is tied to the Region within Amazon S3 where its files are located
+    * @param productCodes Product codes to be removed from the AMI
+    * @param imageId The ID of the AMI for which an attribute will be described
+    *
+    * @see #addProductCodesToImageInRegion(String, Iterable, String)
+    * @see #getProductCodesForImageInRegion(String, String)
+    * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-ModifyImageAttribute.html" />
     */
-   void removeProductCodesFromImageInRegion(@Nullable String region, Iterable<String> productCodes,
-            String imageId);
+   void removeProductCodesFromImageInRegion(@Nullable String region, Iterable<String> productCodes, String imageId);
 }

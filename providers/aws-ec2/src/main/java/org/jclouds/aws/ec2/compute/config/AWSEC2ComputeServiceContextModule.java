@@ -38,6 +38,7 @@ import org.jclouds.aws.ec2.compute.strategy.AWSEC2ListNodesStrategy;
 import org.jclouds.aws.ec2.compute.strategy.AWSEC2ReviseParsedImage;
 import org.jclouds.aws.ec2.compute.strategy.CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions;
 import org.jclouds.aws.ec2.compute.suppliers.AWSEC2HardwareSupplier;
+import org.jclouds.aws.ec2.xml.AWSDescribeImagesResponseHandler;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.extensions.ImageExtension;
@@ -58,6 +59,7 @@ import org.jclouds.ec2.compute.strategy.EC2ListNodesStrategy;
 import org.jclouds.ec2.compute.strategy.ReviseParsedImage;
 import org.jclouds.ec2.compute.suppliers.EC2HardwareSupplier;
 import org.jclouds.ec2.compute.suppliers.RegionAndNameToImageSupplier;
+import org.jclouds.ec2.xml.DescribeImagesResponseHandler;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.suppliers.SetAndThrowAuthorizationExceptionSupplier;
 

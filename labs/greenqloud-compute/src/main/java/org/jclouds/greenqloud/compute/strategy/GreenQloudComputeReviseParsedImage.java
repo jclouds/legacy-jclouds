@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -41,7 +42,7 @@ import org.jclouds.logging.Logger;
 public class GreenQloudComputeReviseParsedImage implements ReviseParsedImage {
    public static final Pattern DEFAULT_PATTERN = Pattern.compile("(([^ ]*) ([0-9.]+) ?.*)");
 
-   @javax.annotation.Resource
+   @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
@@ -52,6 +53,7 @@ public class GreenQloudComputeReviseParsedImage implements ReviseParsedImage {
       this.osVersionMap = osVersionMap;
    }
 
+   @Override
    public void reviseParsedImage(org.jclouds.ec2.domain.Image from, ImageBuilder builder, OsFamily family,
             OperatingSystem.Builder osBuilder) {
       if (from.getDescription() != null)

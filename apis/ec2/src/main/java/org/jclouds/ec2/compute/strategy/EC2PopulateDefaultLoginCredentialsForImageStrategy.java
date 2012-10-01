@@ -63,13 +63,15 @@ public class EC2PopulateDefaultLoginCredentialsForImageStrategy extends ReturnCr
          } else if (resourceToAuthenticate instanceof org.jclouds.compute.domain.Image) {
             owner = org.jclouds.compute.domain.Image.class.cast(resourceToAuthenticate).getUserMetadata().get("owner");
          }
-         checkArgument(owner != null, "Resource must be an image (for EC2)");
-         // canonical/alestic images use the ubuntu user to login
-         if (owner.matches("063491364108|099720109477")) {
-            credentials.user("ubuntu");
-            // http://typepad.com/2010/09/introducing-amazon-linux-ami.html
-         } else if (owner.equals("137112412989")) {
-            credentials.user("ec2-user");
+         // If an owner is set, check if the username should be changed
+         if (owner != null) {
+	         if (owner.matches("063491364108|099720109477")) {
+		         // canonical/alestic images use the ubuntu user to login
+	            credentials.user("ubuntu");
+	         } else if (owner.equals("137112412989")) {
+	            // http://typepad.com/2010/09/introducing-amazon-linux-ami.html
+	            credentials.user("ec2-user");
+	         }
          }
       }
       return credentials.build();

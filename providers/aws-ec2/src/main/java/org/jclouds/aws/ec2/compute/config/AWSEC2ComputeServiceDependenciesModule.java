@@ -33,8 +33,10 @@ import javax.inject.Singleton;
 import org.jclouds.aws.ec2.compute.AWSEC2ComputeService;
 import org.jclouds.aws.ec2.compute.AWSEC2TemplateOptions;
 import org.jclouds.aws.ec2.compute.suppliers.CallForImages;
+import org.jclouds.aws.ec2.domain.AWSImage;
 import org.jclouds.aws.ec2.domain.PlacementGroup;
 import org.jclouds.aws.ec2.domain.RegionNameAndPublicKeyMaterial;
+import org.jclouds.aws.ec2.functions.AWSEC2ImageParser;
 import org.jclouds.aws.ec2.functions.CreatePlacementGroupIfNeeded;
 import org.jclouds.aws.ec2.functions.ImportOrReturnExistingKeypair;
 import org.jclouds.aws.ec2.predicates.PlacementGroupAvailable;
@@ -108,6 +110,8 @@ public class AWSEC2ComputeServiceDependenciesModule extends EC2ComputeServiceDep
       install(new FactoryModuleBuilder().build(CallForImages.Factory.class));
       bind(new TypeLiteral<Function<org.jclouds.ec2.domain.Image, Image>>() {
       }).to(EC2ImageParser.class);
+      bind(new TypeLiteral<Function<AWSImage, Image>>() {
+      }).to(AWSEC2ImageParser.class);
       bind(new TypeLiteral<ImageExtension>() {
       }).to(EC2ImageExtension.class);
       bind(new TypeLiteral<PredicateWithResult<String, Image>>() {
