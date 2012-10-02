@@ -18,38 +18,30 @@
  */
 package org.jclouds.aws.ec2.xml;
 
-import static org.jclouds.util.SaxUtils.currentOrNull;
-import static org.jclouds.util.SaxUtils.equalsOrSuffix;
-
-import java.util.Date;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Resource;
-import javax.inject.Inject;
-
+import com.google.common.base.Supplier;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import com.google.inject.Provider;
 import org.jclouds.aws.ec2.domain.AWSRunningInstance;
 import org.jclouds.aws.ec2.domain.MonitoringState;
 import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.date.DateCodec;
 import org.jclouds.date.DateCodecFactory;
-import org.jclouds.ec2.domain.Attachment;
-import org.jclouds.ec2.domain.BlockDevice;
-import org.jclouds.ec2.domain.Hypervisor;
-import org.jclouds.ec2.domain.InstanceState;
-import org.jclouds.ec2.domain.Reservation;
-import org.jclouds.ec2.domain.RootDeviceType;
-import org.jclouds.ec2.domain.RunningInstance;
+import org.jclouds.ec2.domain.*;
 import org.jclouds.http.functions.ParseSax.HandlerForGeneratedRequestWithResult;
 import org.jclouds.location.Region;
 import org.jclouds.logging.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-import com.google.common.base.Supplier;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.google.inject.Provider;
+import javax.annotation.Resource;
+import javax.inject.Inject;
+import java.util.Date;
+import java.util.Map;
+import java.util.Set;
+
+import static org.jclouds.util.SaxUtils.currentOrNull;
+import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
 /**
  * 
@@ -207,7 +199,10 @@ public abstract class BaseAWSReservationHandler<T> extends HandlerForGeneratedRe
          this.attachmentStatus = null;
          this.attachTime = null;
          this.deleteOnTermination = true;
-      }
+      } else if(equalsOrSuffix(qName, "ebsOptimized")) {
+         builder.ebsOptimized(Boolean.parseBoolean(currentText.toString().trim()));
+       }
+
       currentText = new StringBuilder();
    }
    

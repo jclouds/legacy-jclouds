@@ -35,17 +35,26 @@ import org.jclouds.ec2.domain.InstanceState;
 import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.domain.RootDeviceType;
 import org.jclouds.ec2.domain.RunningInstance;
+import com.google.common.base.Supplier;
+import com.google.common.collect.Sets;
+import com.google.inject.Provider;
+import org.jclouds.aws.util.AWSUtils;
+import org.jclouds.date.DateService;
+import org.jclouds.ec2.domain.*;
 import org.jclouds.ec2.domain.RunningInstance.Builder;
 import org.jclouds.http.functions.ParseSax.HandlerForGeneratedRequestWithResult;
 import org.jclouds.location.Region;
 import org.xml.sax.Attributes;
 
-import com.google.common.base.Supplier;
-import com.google.common.collect.Sets;
-import com.google.inject.Provider;
+import javax.annotation.Resource;
+import javax.inject.Inject;
+import java.util.Date;
+import java.util.Set;
+
+import static org.jclouds.util.SaxUtils.currentOrNull;
+import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
 /**
- * 
  * @author Adrian Cole
  */
 public abstract class BaseReservationHandler<T> extends HandlerForGeneratedRequestWithResult<T> {
@@ -183,6 +192,9 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
          this.attachmentStatus = null;
          this.attachTime = null;
          this.deleteOnTermination = true;
+      }
+      else if (equalsOrSuffix(qName, "ebsOptimized")) {
+         builder().ebsOptimized( Boolean.parseBoolean(currentText.toString().trim()) );
       }
       currentText = new StringBuilder();
    }

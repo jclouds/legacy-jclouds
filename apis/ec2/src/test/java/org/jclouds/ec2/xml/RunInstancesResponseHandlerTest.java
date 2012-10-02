@@ -18,13 +18,8 @@
  */
 package org.jclouds.ec2.xml;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.testng.Assert.assertEquals;
-
-import java.io.InputStream;
-
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import org.jclouds.date.DateService;
 import org.jclouds.ec2.domain.InstanceState;
 import org.jclouds.ec2.domain.InstanceType;
@@ -36,8 +31,10 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
+import java.io.InputStream;
+
+import static org.easymock.EasyMock.*;
+import static org.testng.Assert.assertEquals;
 
 /**
  * Tests behavior of {@code RunInstancesResponseHandler}
@@ -69,19 +66,25 @@ public class RunInstancesResponseHandlerTest extends BaseEC2HandlerTest {
                .imageId("ami-60a54009").instanceId("i-2ba64342").instanceState(InstanceState.PENDING).rawState(
                         "pending").instanceType(InstanceType.M1_SMALL).keyName("example-key-name").launchTime(
                         dateService.iso8601DateParse("2007-08-07T11:51:50.000Z"))// MonitoringState.ENABLED,
-               .availabilityZone("us-east-1b").build(),
+               .availabilityZone("us-east-1b")
+               .ebsOptimized(false)
+               .build(),
 
       new RunningInstance.Builder().region(defaultRegion).groupName("default").amiLaunchIndex("1")
                .imageId("ami-60a54009").instanceId("i-2bc64242").instanceState(InstanceState.PENDING).rawState(
                         "pending").instanceType(InstanceType.M1_SMALL).keyName("example-key-name").launchTime(
                         dateService.iso8601DateParse("2007-08-07T11:51:50.000Z"))// MonitoringState.ENABLED,
-               .availabilityZone("us-east-1b").build(),
+               .availabilityZone("us-east-1b")
+               .ebsOptimized(false)
+               .build(),
 
       new RunningInstance.Builder().region(defaultRegion).groupName("default").amiLaunchIndex("2")
                .imageId("ami-60a54009").instanceId("i-2be64332").instanceState(InstanceState.PENDING).rawState(
                         "pending").instanceType(InstanceType.M1_SMALL).keyName("example-key-name").launchTime(
                         dateService.iso8601DateParse("2007-08-07T11:51:50.000Z"))// MonitoringState.ENABLED,
-               .availabilityZone("us-east-1b").build())
+               .availabilityZone("us-east-1d")
+               .ebsOptimized(true)
+               .build())
 
       , "AIDADH4IGTRXXKCD", null, "r-47a5402e");
 

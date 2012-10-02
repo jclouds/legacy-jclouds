@@ -27,6 +27,20 @@
                     <attachTime>2008-05-07T12:51:50.000Z</attachTime>
                 </item>
             </attachmentSet>
+            <volumeType>standard</volumeType>
         </item>
+
+        <item>
+            <volumeId>vol-2a21e555</volumeId>
+            <size>200</size>
+            <snapshotId />
+            <availabilityZone>us-east-1b</availabilityZone>
+            <status>available</status>
+            <createTime>2009-12-28T05:42:53.000Z</createTime>
+            <attachmentSet />
+            <volumeType>io1</volumeType>
+            <iops>500</iops>
+        </item>
+
     </volumeSet>
 </DescribeVolumesResponse>

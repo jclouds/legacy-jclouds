@@ -6,4 +6,5 @@
     <availabilityZone>us-east-1a</availabilityZone>
     <status>creating</status>
     <createTime>2009-12-28T05:42:53.000Z</createTime>
+    <volumeType>standard</volumeType>
 </CreateVolumeResponse>

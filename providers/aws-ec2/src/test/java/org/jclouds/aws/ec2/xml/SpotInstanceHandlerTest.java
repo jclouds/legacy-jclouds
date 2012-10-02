@@ -18,19 +18,19 @@
  */
 package org.jclouds.aws.ec2.xml;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.testng.Assert.assertEquals;
-
-import java.io.InputStream;
-
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
+import com.google.common.collect.ImmutableList;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.TypeLiteral;
 import org.jclouds.aws.ec2.domain.LaunchSpecification;
 import org.jclouds.aws.ec2.domain.SpotInstanceRequest;
 import org.jclouds.aws.ec2.domain.SpotInstanceRequest.State;
 import org.jclouds.aws.ec2.domain.SpotInstanceRequest.Type;
 import org.jclouds.date.DateService;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
+import org.jclouds.ec2.domain.Volume;
 import org.jclouds.ec2.xml.BaseEC2HandlerTest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.config.SaxParserModule;
@@ -39,12 +39,10 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
-import com.google.common.collect.ImmutableList;
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.TypeLiteral;
+import java.io.InputStream;
+
+import static org.easymock.EasyMock.*;
+import static org.testng.Assert.assertEquals;
 
 /**
  * Tests behavior of {@code SpotInstanceHandler}
@@ -87,10 +85,12 @@ public class SpotInstanceHandlerTest extends BaseEC2HandlerTest {
             .state(State.OPEN)
             .rawState("open")
             .launchSpecification(
-                  LaunchSpecification.builder().imageId("ami-595a0a1c").securityGroupIdToName("sg-83e1c4ea", "default")
-                        .instanceType("m1.large").mapNewVolumeToDevice("/dev/sda1", 1, true)
-                        .mapEBSSnapshotToDevice("/dev/sda2", "snap-1ea27576", 1, true)
-                        .mapEphemeralDeviceToDevice("/dev/sda3", "vre1").monitoringEnabled(false).build())
+                    LaunchSpecification.builder().imageId("ami-595a0a1c").securityGroupIdToName("sg-83e1c4ea", "default")
+                            .instanceType("m1.large")
+                            .mapNewVolumeToDevice("/dev/sda1", 1, true, Volume.Type.STANDARD, null)
+                            .mapEBSSnapshotToDevice("/dev/sda2", "snap-1ea27576", 1, true, Volume.Type.STANDARD, null)
+                            .mapEphemeralDeviceToDevice("/dev/sda3", "vre1")
+                            .monitoringEnabled(false).build())
             .createTime(new SimpleDateFormatDateService().iso8601DateParse("2011-03-08T03:30:36.000Z"))
             .productDescription("Linux/UNIX").build();
       SpotInstanceHandler handler = injector.getInstance(SpotInstanceHandler.class);

@@ -18,8 +18,6 @@
  */
 package org.jclouds.aws.ec2.functions;
 
-import static org.testng.Assert.assertEquals;
-
 import org.jclouds.aws.ec2.domain.AWSRunningInstance;
 import org.jclouds.aws.ec2.domain.LaunchSpecification;
 import org.jclouds.aws.ec2.domain.MonitoringState;
@@ -29,7 +27,10 @@ import org.jclouds.aws.ec2.domain.SpotInstanceRequest.Type;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.ec2.domain.Hypervisor;
 import org.jclouds.ec2.domain.InstanceState;
+import org.jclouds.ec2.domain.Volume;
 import org.testng.annotations.Test;
+
+import static org.testng.Assert.assertEquals;
 
 /**
  * Tests behavior of {@code SpotInstanceRequestToAWSRunningInstance}
@@ -51,10 +52,12 @@ public class SpotInstanceRequestToAWSRunningInstanceTest {
             .state(State.OPEN)
             .rawState("open")
             .launchSpecification(
-                  LaunchSpecification.builder().imageId("ami-595a0a1c").securityGroupName("default")
-                        .instanceType("m1.large").mapNewVolumeToDevice("/dev/sda1", 1, true)
-                        .mapEBSSnapshotToDevice("/dev/sda2", "snap-1ea27576", 1, true)
-                        .mapEphemeralDeviceToDevice("/dev/sda3", "vre1").monitoringEnabled(false).build())
+                    LaunchSpecification.builder().imageId("ami-595a0a1c").securityGroupName("default")
+                            .instanceType("m1.large")
+                            .mapNewVolumeToDevice("/dev/sda1", 1, true, Volume.Type.STANDARD, null)
+                            .mapEBSSnapshotToDevice("/dev/sda2", "snap-1ea27576", 1, true, Volume.Type.STANDARD, null)
+                            .mapEphemeralDeviceToDevice("/dev/sda3", "vre1")
+                            .monitoringEnabled(false).build())
             .createTime(new SimpleDateFormatDateService().iso8601DateParse("2011-03-08T03:30:36.000Z"))
             .productDescription("Linux/UNIX")
             .tag("foo", "bar")

@@ -37,6 +37,14 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import org.jclouds.ec2.domain.*;
+import org.jclouds.javax.annotation.Nullable;
+
+import java.util.Date;
+import java.util.Map;
+import java.util.Set;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * 
@@ -251,12 +259,17 @@ public class AWSRunningInstance extends RunningInstance {
       }
 
       @Override
+      public Builder ebsOptimized( boolean value ) {
+          return Builder.class.cast(super.ebsOptimized(value));
+      }
+
+      @Override
       public AWSRunningInstance build() {
          return new AWSRunningInstance(region, securityGroupIdToNames, amiLaunchIndex, dnsName, imageId, instanceId,
                instanceState, rawState, instanceType, ipAddress, kernelId, keyName, launchTime, availabilityZone,
                virtualizationType, platform, privateDnsName, privateIpAddress, ramdiskId, reason, rootDeviceType,
                rootDeviceName, ebsBlockDevices, monitoringState, placementGroup, productCodes, subnetId,
-               spotInstanceRequestId, vpcId, hypervisor, tags);
+               spotInstanceRequestId, vpcId, hypervisor, tags, ebsOptimized);
       }
 
    }
@@ -282,11 +295,11 @@ public class AWSRunningInstance extends RunningInstance {
             String privateIpAddress, String ramdiskId, String reason, RootDeviceType rootDeviceType,
             String rootDeviceName, Map<String, BlockDevice> ebsBlockDevices, MonitoringState monitoringState,
             String placementGroup, Iterable<String> productCodes, String subnetId, String spotInstanceRequestId,
-            String vpcId, Hypervisor hypervisor, Map<String, String> tags) {
+            String vpcId, Hypervisor hypervisor, Map<String, String> tags, boolean ebsOptimized) {
       super(region, securityGroupIdToNames.values(), amiLaunchIndex, dnsName, imageId, instanceId, instanceState,
                rawState, instanceType, ipAddress, kernelId, keyName, launchTime, availabilityZone, virtualizationType,
                platform, privateDnsName, privateIpAddress, ramdiskId, reason, rootDeviceType, rootDeviceName,
-               ebsBlockDevices);
+               ebsBlockDevices, ebsOptimized);
       this.monitoringState = checkNotNull(monitoringState, "monitoringState");
       this.placementGroup = placementGroup;
       this.productCodes = ImmutableSet.copyOf(checkNotNull(productCodes, "productCodes"));

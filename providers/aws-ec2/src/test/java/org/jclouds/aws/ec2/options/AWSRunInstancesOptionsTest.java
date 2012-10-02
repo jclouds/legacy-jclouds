@@ -18,26 +18,17 @@
  */
 package org.jclouds.aws.ec2.options;
 
-import static org.jclouds.aws.ec2.options.AWSRunInstancesOptions.Builder.asType;
-import static org.jclouds.aws.ec2.options.AWSRunInstancesOptions.Builder.enableMonitoring;
-import static org.jclouds.aws.ec2.options.AWSRunInstancesOptions.Builder.withBlockDeviceMappings;
-import static org.jclouds.aws.ec2.options.AWSRunInstancesOptions.Builder.withKernelId;
-import static org.jclouds.aws.ec2.options.AWSRunInstancesOptions.Builder.withKeyName;
-import static org.jclouds.aws.ec2.options.AWSRunInstancesOptions.Builder.withRamdisk;
-import static org.jclouds.aws.ec2.options.AWSRunInstancesOptions.Builder.withSecurityGroup;
-import static org.jclouds.aws.ec2.options.AWSRunInstancesOptions.Builder.withSecurityGroupId;
-import static org.jclouds.aws.ec2.options.AWSRunInstancesOptions.Builder.withSubnetId;
-import static org.jclouds.aws.ec2.options.AWSRunInstancesOptions.Builder.withUserData;
-import static org.testng.Assert.assertEquals;
-
-import java.util.Collections;
-
+import com.google.common.collect.ImmutableSet;
 import org.jclouds.ec2.domain.BlockDeviceMapping;
 import org.jclouds.ec2.domain.InstanceType;
+import org.jclouds.ec2.domain.Volume;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSet;
+import java.util.Collections;
+
+import static org.jclouds.aws.ec2.options.AWSRunInstancesOptions.Builder.*;
+import static org.testng.Assert.assertEquals;
 
 /**
  * Tests possible uses of AWSRunInstancesOptions and AWSRunInstancesOptions.Builder.*
@@ -283,7 +274,7 @@ public class AWSRunInstancesOptionsTest {
 
    @Test
    public void testWithBlockDeviceMapping() {
-      BlockDeviceMapping mapping = new BlockDeviceMapping.MapNewVolumeToDevice("/dev/sda1", 120, true);
+      BlockDeviceMapping mapping = new BlockDeviceMapping.MapNewVolumeToDevice("/dev/sda1", 120, true, Volume.Type.STANDARD, null);
       AWSRunInstancesOptions options = new AWSRunInstancesOptions().withBlockDeviceMappings(ImmutableSet
                .<BlockDeviceMapping> of(mapping));
       assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.DeviceName"), Collections
@@ -302,7 +293,7 @@ public class AWSRunInstancesOptionsTest {
 
    @Test
    public void testWithBlockDeviceMappingStatic() {
-      BlockDeviceMapping mapping = new BlockDeviceMapping.MapNewVolumeToDevice("/dev/sda1", 120, true);
+      BlockDeviceMapping mapping = new BlockDeviceMapping.MapNewVolumeToDevice("/dev/sda1", 120, true, Volume.Type.STANDARD, null);
       AWSRunInstancesOptions options = withBlockDeviceMappings(ImmutableSet.<BlockDeviceMapping> of(mapping));
       assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.DeviceName"), Collections
                .singletonList("/dev/sda1"));

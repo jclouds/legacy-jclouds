@@ -18,21 +18,17 @@ s * Licensed to jclouds, Inc. (jclouds) under one or more
  */
 package org.jclouds.aws.ec2.xml;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.testng.Assert.assertEquals;
-
-import java.io.InputStream;
-
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.TypeLiteral;
 import org.jclouds.aws.ec2.domain.AWSRunningInstance;
 import org.jclouds.aws.ec2.domain.MonitoringState;
 import org.jclouds.date.DateService;
-import org.jclouds.ec2.domain.Hypervisor;
-import org.jclouds.ec2.domain.InstanceState;
-import org.jclouds.ec2.domain.InstanceType;
-import org.jclouds.ec2.domain.Reservation;
-import org.jclouds.ec2.domain.RunningInstance;
+import org.jclouds.ec2.domain.*;
 import org.jclouds.ec2.xml.BaseEC2HandlerTest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.config.SaxParserModule;
@@ -41,12 +37,10 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
-import com.google.common.collect.ImmutableList;
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.TypeLiteral;
+import java.io.InputStream;
+
+import static org.easymock.EasyMock.*;
+import static org.testng.Assert.assertEquals;
 
 /**
  * Tests behavior of {@code RunInstancesResponseHandler}
@@ -87,19 +81,20 @@ public class AWSRunInstancesResponseHandlerTest extends BaseEC2HandlerTest {
                         "ami-60a54009").instanceId("i-2ba64342").instanceState(InstanceState.PENDING).rawState(
                         "pending").instanceType(InstanceType.M1_SMALL).keyName("example-key-name").launchTime(
                         dateService.iso8601DateParse("2007-08-07T11:51:50.000Z")).hypervisor(Hypervisor.XEN)
-                        .monitoringState(MonitoringState.ENABLED).availabilityZone("us-east-1b").build())
+                        .monitoringState(MonitoringState.ENABLED).availabilityZone("us-east-1b").ebsOptimized(false).build())
                .instance(AWSRunningInstance.builder().region(defaultRegion).groupName("default").amiLaunchIndex("1").imageId(
                         "ami-60a54009").instanceId("i-2bc64242").instanceState(InstanceState.PENDING).rawState(
                         "pending").instanceType(InstanceType.M1_SMALL).keyName("example-key-name").launchTime(
                         dateService.iso8601DateParse("2007-08-07T11:51:50.000Z")).hypervisor(Hypervisor.XEN)
-                        .monitoringState(MonitoringState.ENABLED).availabilityZone("us-east-1b").build())
+                        .monitoringState(MonitoringState.ENABLED).availabilityZone("us-east-1b").ebsOptimized(false).build())
                .instance(AWSRunningInstance.builder().region(defaultRegion).groupName("default").amiLaunchIndex("2").imageId(
                         "ami-60a54009").instanceId("i-2be64332").instanceState(InstanceState.PENDING).rawState(
                         "pending").instanceType(InstanceType.M1_SMALL).keyName("example-key-name").launchTime(
                         dateService.iso8601DateParse("2007-08-07T11:51:50.000Z")).hypervisor(Hypervisor.XEN)
-                        .monitoringState(MonitoringState.ENABLED).availabilityZone("us-east-1b").build())
+                        .monitoringState(MonitoringState.ENABLED).availabilityZone("us-east-1d").ebsOptimized(true).build())
                .ownerId("AIDADH4IGTRXXKCD")
                .reservationId("r-47a5402e").build();
+
 
       AWSRunInstancesResponseHandler handler = injector.getInstance(AWSRunInstancesResponseHandler.class);
       addDefaultRegionToHandler(handler);

@@ -18,16 +18,15 @@
  */
 package org.jclouds.ec2.domain;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Sets.newHashSet;
+import com.google.common.base.CaseFormat;
+import com.google.common.collect.ImmutableSet;
+import org.jclouds.javax.annotation.Nullable;
 
 import java.util.Date;
 import java.util.Set;
 
-import org.jclouds.javax.annotation.Nullable;
-
-import com.google.common.base.CaseFormat;
-import com.google.common.collect.ImmutableSet;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Sets.newHashSet;
 
 /**
  * 
@@ -83,6 +82,28 @@ public class Volume implements Comparable<Volume> {
          }
       }
    }
+
+   public static enum Type {
+
+       STANDARD, IO1;
+
+       public String value() {
+           return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, name());
+       }
+
+       @Override
+       public String toString() {
+           return value();
+       }
+
+       public static Type fromValue(String type) {
+           try {
+               return valueOf(CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(type, "volumeType")));
+           } catch (IllegalArgumentException e) {
+               return STANDARD;
+           }
+       }
+   }
    
    public static Builder builder() {
       return new Builder();
@@ -98,6 +119,8 @@ public class Volume implements Comparable<Volume> {
       private Status status;
       private Date createTime;
       private Set<Attachment> attachments = ImmutableSet.of();
+      private Type volumeType = Type.STANDARD;
+      private Integer iops;
 
       public Builder region(String region) {
          this.region = region;
@@ -143,9 +166,19 @@ public class Volume implements Comparable<Volume> {
          this.attachments = ImmutableSet.copyOf(attachments);
          return this;
       }
+
+      public Builder volumeType(Type type) {
+         this.volumeType = type;
+         return this;
+      }
+
+      public Builder iops(Integer iops) {
+          this.iops = iops;
+          return this;
+      }
       
       public Volume build() {
-         return new Volume(region, id, size, snapshotId, availabilityZone, status, createTime, attachments);
+         return new Volume(region, id, size, snapshotId, availabilityZone, status, createTime, attachments, volumeType, iops);
       }      
    }
 
@@ -158,9 +191,12 @@ public class Volume implements Comparable<Volume> {
    private final Status status;
    private final Date createTime;
    private final Set<Attachment> attachments;
+   private final Type volumeType;
+   @Nullable
+   private final Integer iops;
 
    public Volume(String region, String id, int size, String snapshotId, String availabilityZone, Volume.Status status,
-            Date createTime, Iterable<Attachment> attachments) {
+            Date createTime, Iterable<Attachment> attachments, Type volumeType, Integer iops ) {
       this.region = checkNotNull(region, "region");
       this.id = id;
       this.size = size;
@@ -169,6 +205,8 @@ public class Volume implements Comparable<Volume> {
       this.status = status;
       this.createTime = createTime;
       this.attachments = ImmutableSet.copyOf(attachments);
+      this.volumeType = volumeType;
+      this.iops = iops;
    }
 
    /**
@@ -210,6 +248,14 @@ public class Volume implements Comparable<Volume> {
       return attachments;
    }
 
+   public Type getVolumeType() {
+      return volumeType;
+   }
+
+   public Integer getIops() {
+      return iops;
+   }
+
    @Override
    public int hashCode() {
       final int prime = 31;
@@ -222,6 +268,8 @@ public class Volume implements Comparable<Volume> {
       result = prime * result + size;
       result = prime * result + ((snapshotId == null) ? 0 : snapshotId.hashCode());
       result = prime * result + ((status == null) ? 0 : status.hashCode());
+      result = prime * result + ((volumeType == null) ? 0 : volumeType.hashCode());
+      result = prime * result + ((iops == null) ? 0 : iops.hashCode());
       return result;
    }
 
@@ -271,6 +319,17 @@ public class Volume implements Comparable<Volume> {
             return false;
       } else if (!status.equals(other.status))
          return false;
+      if (volumeType == null) {
+          if (other.volumeType != null)
+              return false;
+      } else if (!volumeType.equals(other.volumeType))
+          return false;
+      if (iops == null) {
+          if (other.iops != null)
+              return false;
+      } else if (!iops.equals(other.iops))
+          return false;
+
       return true;
    }
 
@@ -283,6 +342,6 @@ public class Volume implements Comparable<Volume> {
    public String toString() {
       return "Volume [attachments=" + attachments + ", availabilityZone=" + availabilityZone + ", createTime="
                + createTime + ", id=" + id + ", region=" + region + ", size=" + size + ", snapshotId=" + snapshotId
-               + ", status=" + status + "]";
+               + ", status=" + status + ", volumeType="+ volumeType +", iops="+iops+"]";
    }
 }

@@ -18,21 +18,21 @@
  */
 package org.jclouds.aws.ec2.domain;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedSet;
+import org.jclouds.ec2.domain.BlockDeviceMapping;
+import org.jclouds.ec2.domain.BlockDeviceMapping.MapEBSSnapshotToDevice;
+import org.jclouds.ec2.domain.BlockDeviceMapping.MapEphemeralDeviceToDevice;
+import org.jclouds.ec2.domain.BlockDeviceMapping.MapNewVolumeToDevice;
+import org.jclouds.ec2.domain.Volume;
+import org.jclouds.javax.annotation.Nullable;
 
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 
-import org.jclouds.ec2.domain.BlockDeviceMapping;
-import org.jclouds.ec2.domain.BlockDeviceMapping.MapEBSSnapshotToDevice;
-import org.jclouds.ec2.domain.BlockDeviceMapping.MapEphemeralDeviceToDevice;
-import org.jclouds.ec2.domain.BlockDeviceMapping.MapNewVolumeToDevice;
-import org.jclouds.javax.annotation.Nullable;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSortedSet;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * 
@@ -124,13 +124,13 @@ public class LaunchSpecification {
       }
 
       public Builder mapEBSSnapshotToDevice(String deviceName, String snapshotId, @Nullable Integer sizeInGib,
-            boolean deleteOnTermination) {
-         blockDeviceMappings.add(new MapEBSSnapshotToDevice(deviceName, snapshotId, sizeInGib, deleteOnTermination));
+            boolean deleteOnTermination, Volume.Type volumeType, @Nullable Integer iops) {
+         blockDeviceMappings.add(new MapEBSSnapshotToDevice(deviceName, snapshotId, sizeInGib, deleteOnTermination, volumeType, iops));
          return this;
       }
 
-      public Builder mapNewVolumeToDevice(String deviceName, int sizeInGib, boolean deleteOnTermination) {
-         blockDeviceMappings.add(new MapNewVolumeToDevice(deviceName, sizeInGib, deleteOnTermination));
+      public Builder mapNewVolumeToDevice(String deviceName, int sizeInGib, boolean deleteOnTermination, Volume.Type volumeType, @Nullable Integer iops) {
+         blockDeviceMappings.add(new MapNewVolumeToDevice(deviceName, sizeInGib, deleteOnTermination, volumeType, iops));
          return this;
       }
 

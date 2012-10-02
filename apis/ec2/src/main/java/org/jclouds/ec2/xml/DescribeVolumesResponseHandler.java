@@ -18,20 +18,21 @@
  */
 package org.jclouds.ec2.xml;
 
-import java.util.Set;
-
-import javax.inject.Inject;
-
+import com.google.common.collect.Sets;
 import org.jclouds.ec2.domain.Volume;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-import com.google.common.collect.Sets;
+import javax.inject.Inject;
+import java.util.Set;
 
 /**
+ * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeVolumes.html"  />
+ *
  * @author Adrian Cole
+ * @author Paolo Di Tommaso
  */
 public class DescribeVolumesResponseHandler extends ParseSax.HandlerWithResult<Set<Volume>> {
 
