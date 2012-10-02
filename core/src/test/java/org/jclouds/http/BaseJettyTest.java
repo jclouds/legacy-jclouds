@@ -115,7 +115,7 @@ public abstract class BaseJettyTest {
                   response.setContentType("text/plain");
                   response.setHeader("Content-MD5", md5);
                   response.setStatus(HttpServletResponse.SC_OK);
-                  copy(oneHundredOneConstitutions.getInput(), response.getOutputStream());
+                  copy(oneHundredOneConstitutions, response.getOutputStream());
                } else if (request.getMethod().equals("PUT")) {
                   if (request.getContentLength() > 0) {
                      response.setStatus(HttpServletResponse.SC_OK);

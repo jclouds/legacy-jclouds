@@ -58,13 +58,13 @@ import org.jclouds.io.InputSuppliers;
 import org.jclouds.io.Payload;
 import org.jclouds.io.payloads.PhantomPayload;
 import org.jclouds.io.payloads.StringPayload;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.ByteStreams;
-import com.google.common.io.CharStreams;
 import com.google.common.io.Closeables;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
@@ -742,7 +742,7 @@ public class FilesystemAsyncBlobStoreTest {
         Blob blobRangeStartAt = blobStore.getBlob(CONTAINER_NAME, blob.getMetadata().getName(), getOptionsRangeStartAt);
         payload = blobRangeStartAt.getPayload();
         try {
-            assertEquals(input.substring(1), CharStreams.toString(CharStreams.newReaderSupplier(payload, Charsets.UTF_8)));
+            assertEquals(input.substring(1), Strings2.toString(payload));
         } finally {
             Closeables.closeQuietly(payload);
         }
@@ -752,7 +752,7 @@ public class FilesystemAsyncBlobStoreTest {
         Blob blobRangeTail = blobStore.getBlob(CONTAINER_NAME, blob.getMetadata().getName(), getOptionsRangeTail);
         payload = blobRangeTail.getPayload();
         try {
-            assertEquals(input.substring(5), CharStreams.toString(CharStreams.newReaderSupplier(payload, Charsets.UTF_8)));
+            assertEquals(input.substring(5), Strings2.toString(payload));
         } finally {
             Closeables.closeQuietly(payload);
         }
@@ -762,7 +762,7 @@ public class FilesystemAsyncBlobStoreTest {
         Blob blobFragment = blobStore.getBlob(CONTAINER_NAME, blob.getMetadata().getName(), getOptionsFragment);
         payload = blobFragment.getPayload();
         try {
-            assertEquals(input.substring(4, 7), CharStreams.toString(CharStreams.newReaderSupplier(payload, Charsets.UTF_8)));
+            assertEquals(input.substring(4, 7), Strings2.toString(payload));
         } finally {
             Closeables.closeQuietly(payload);
         }

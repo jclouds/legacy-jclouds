@@ -111,7 +111,7 @@ public class AWSS3ClientLiveTest extends S3ClientLiveTest {
          String key = "constitution.txt";
          String uploadId = getApi().initiateMultipartUpload(containerName,
                   ObjectMetadataBuilder.create().key(key).contentMD5(oneHundredOneConstitutionsMD5).build());
-         byte[] buffer = toByteArray(oneHundredOneConstitutions.getInput());
+         byte[] buffer = toByteArray(oneHundredOneConstitutions);
          assertEquals(oneHundredOneConstitutionsLength, (long) buffer.length);
 
          Payload part1 = newByteArrayPayload(buffer);
@@ -153,7 +153,7 @@ public class AWSS3ClientLiveTest extends S3ClientLiveTest {
    public void testMultipartChunkedFileStream() throws IOException, InterruptedException {
       
       FileOutputStream fous = new FileOutputStream(new File("target/const.txt"));
-      ByteStreams.copy(oneHundredOneConstitutions.getInput(), fous);
+      ByteStreams.copy(oneHundredOneConstitutions, fous);
       fous.flush();
       fous.close();
       String containerName = getContainerName();
