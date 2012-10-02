@@ -154,6 +154,30 @@ public class NodePredicates {
    }
 
    /**
+    * Return nodes with the specific names Note: returns all nodes, regardless of the state.
+    * 
+    * @param names
+    *           names of the resources
+    * @return predicate
+    */
+   public static <T extends ComputeMetadata> Predicate<T> withNames(String... names) {
+      checkNotNull(names, "names must be defined");
+      final Set<String> search = ImmutableSet.copyOf(names);
+      
+      return new Predicate<T>() {
+         @Override
+         public boolean apply(T nodeMetadata) {
+            return search.contains(nodeMetadata.getName());
+         }
+
+         @Override
+         public String toString() {
+            return "withNames(" + search + ")";
+         }
+      };
+   }
+
+   /**
     * Return nodes with the specific ids Note: returns all nodes, regardless of the state.
     * 
     * @param ids
