@@ -37,6 +37,11 @@
         <test.hpcloud-objectstorage.endpoint>https://region-a.geo-1.identity.hpcloudsvc.com:35357/v2.0/</test.hpcloud-objectstorage.endpoint>
         <test.hpcloud-objectstorage.api-version>1.0</test.hpcloud-objectstorage.api-version>
         <test.hpcloud-objectstorage.build-version></test.hpcloud-objectstorage.build-version>
+        <!--
+            Identity must be tenantName:userName.  Note that the following
+            credentials are the HP Cloud username and password, not the access
+            key id and secret key.
+        -->
         <test.hpcloud-objectstorage.identity>FIXME_IDENTITY</test.hpcloud-objectstorage.identity>
         <test.hpcloud-objectstorage.credential>FIXME_CREDENTIAL</test.hpcloud-objectstorage.credential>
 
