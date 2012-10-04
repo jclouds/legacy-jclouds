@@ -93,7 +93,7 @@ public class SwiftBlobIntegrationLiveTest extends BaseBlobIntegrationTest {
     
    public void testMultipartChunkedFileStream() throws IOException, InterruptedException {
        FileOutputStream fous = new FileOutputStream(new File("target/const.txt"));
-       ByteStreams.copy(oneHundredOneConstitutions.getInput(), fous);
+       ByteStreams.copy(oneHundredOneConstitutions, fous);
        fous.flush();
        fous.close();
        String containerName = getContainerName();
