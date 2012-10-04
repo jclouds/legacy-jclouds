@@ -82,6 +82,14 @@ public class ContextBuilderTest {
       assertEquals(endpoint, URI.create("http://foo.service.com"));
    }
 
+  @Test
+  public void testContextName() {
+    ContextBuilder withNoName = testContextBuilder().endpoint("http://${jclouds.identity}.service.com").name("mytest")
+            .credentials("foo", "bar");
+    Context context = withNoName.build();
+    assertEquals(context.getName(), "mytest");
+  }
+
    @Test
    public void testProviderMetadataBoundWithCorrectEndpoint() {
       ContextBuilder withVariablesToReplace = testContextBuilder().endpoint("http://${jclouds.identity}.service.com")
