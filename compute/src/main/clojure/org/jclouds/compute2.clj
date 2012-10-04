@@ -349,7 +349,7 @@ Here's an example of creating and running a small linux node in the group webser
       [;; RunScriptOptions
          :override-login-credentials
          :override-login-user
-         :override-login-password :override-login-privateKey
+         :override-login-password :override-login-private-key
          :override-authenticate-sudo
          
          :name-task :run-as-root :wrap-in-init-script :block-on-complete
