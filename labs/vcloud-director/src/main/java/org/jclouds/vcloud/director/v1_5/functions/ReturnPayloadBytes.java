@@ -37,7 +37,7 @@ public class ReturnPayloadBytes implements Function<HttpResponse, byte[]> {
    @Override
    public byte[] apply(HttpResponse from) {
       try {
-         return ByteStreams.toByteArray(from.getPayload().getInput());
+         return ByteStreams.toByteArray(from.getPayload());
       } catch (IOException e) {
          throw Throwables.propagate(e);
       }
