@@ -25,6 +25,9 @@ import static org.easymock.EasyMock.verify;
 import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
+
 import org.jclouds.rest.ResourceNotFoundException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -69,6 +72,24 @@ public class BackoffExponentiallyAndRetryOnThrowableCacheLoaderTest {
          backoff.load("foo");
          assertTrue(false);
       } catch (ResourceNotFoundException e) {
+
+      }
+      verify(mock);
+   }
+
+   @Test
+   void testThrowsTimeoutException() throws Exception {
+      int attempts = 3;
+      BackoffExponentiallyAndRetryOnThrowableCacheLoader<String, Boolean> backoff = new BackoffExponentiallyAndRetryOnThrowableCacheLoader<String, Boolean>(
+               ResourceNotFoundException.class, 50l, 500l, attempts, mock);
+
+      expect(mock.load("foo")).andThrow(new ExecutionException(new TimeoutException()));
+
+      replay(mock);
+      try {
+         backoff.load("foo");
+         assertTrue(false);
+      } catch (TimeoutException e) {
 
       }
       verify(mock);
