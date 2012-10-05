@@ -18,17 +18,21 @@ s * Licensed to jclouds, Inc. (jclouds) under one or more
  */
 package org.jclouds.aws.ec2.xml;
 
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.TypeLiteral;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.testng.Assert.assertEquals;
+
+import java.io.InputStream;
+
 import org.jclouds.aws.ec2.domain.AWSRunningInstance;
 import org.jclouds.aws.ec2.domain.MonitoringState;
 import org.jclouds.date.DateService;
-import org.jclouds.ec2.domain.*;
+import org.jclouds.ec2.domain.Hypervisor;
+import org.jclouds.ec2.domain.InstanceState;
+import org.jclouds.ec2.domain.InstanceType;
+import org.jclouds.ec2.domain.Reservation;
+import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.ec2.xml.BaseEC2HandlerTest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.config.SaxParserModule;
@@ -37,10 +41,13 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import java.io.InputStream;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
+import com.google.common.collect.ImmutableList;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.TypeLiteral;
 
-import static org.easymock.EasyMock.*;
-import static org.testng.Assert.assertEquals;
 
 /**
  * Tests behavior of {@code RunInstancesResponseHandler}

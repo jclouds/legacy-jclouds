@@ -18,16 +18,18 @@
  */
 package org.jclouds.ec2.domain;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.ec2.domain.Volume.Type;
+
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.util.Preconditions2;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @see
- *   <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-BlockDeviceMappingItemType.html" />
- *   <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-EbsBlockDeviceType.html" />
+ *   <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-BlockDeviceMappingItemType.html" >The BlockDeviceMappingItemType data type</a>
+ *   <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-EbsBlockDeviceType.html" >The EbsBlockDeviceType data type</a>
  *
  *
  * @author Lili Nadar
@@ -45,7 +47,7 @@ public class BlockDeviceMapping implements Comparable<BlockDeviceMapping>{
       private Integer sizeInGib;
       private Boolean noDevice;
       private Boolean deleteOnTermination;
-      private Volume.Type volumeType;
+      private Type volumeType;
       private Integer iops;
 
       public Builder deviceName(String deviceName) {
@@ -78,7 +80,7 @@ public class BlockDeviceMapping implements Comparable<BlockDeviceMapping>{
          return this;
       }
 
-      public Builder volumeType( Volume.Type type ) {
+      public Builder volumeType( Type type ) {
           this.volumeType = type;
           return this;
       }
@@ -99,7 +101,7 @@ public class BlockDeviceMapping implements Comparable<BlockDeviceMapping>{
          this.sizeInGib = null;
          this.noDevice = null;
          this.deleteOnTermination = null;
-         this.volumeType = Volume.Type.STANDARD;
+         this.volumeType = Type.STANDARD;
          this.iops = null;
          return this;
       }
@@ -111,7 +113,7 @@ public class BlockDeviceMapping implements Comparable<BlockDeviceMapping>{
    private final Integer sizeInGib;
    private final Boolean noDevice;
    private final Boolean deleteOnTermination;
-   private final Volume.Type volumeType;
+   private final Type volumeType;
    private final Integer iops;
 
    // values expressed in GB
@@ -120,7 +122,7 @@ public class BlockDeviceMapping implements Comparable<BlockDeviceMapping>{
 
    BlockDeviceMapping(String deviceName, @Nullable String virtualName, @Nullable String snapshotId,
          @Nullable Integer sizeInGib, @Nullable Boolean noDevice, @Nullable Boolean deleteOnTermination,
-         Volume.Type volumeType, @Nullable Integer iops ) {
+         Type volumeType, @Nullable Integer iops ) {
 
       checkNotNull(deviceName, "deviceName cannot be null");
       Preconditions2.checkNotEmpty(deviceName, "the deviceName must be non-empty");
@@ -227,7 +229,7 @@ public class BlockDeviceMapping implements Comparable<BlockDeviceMapping>{
 
    public static class MapEBSSnapshotToDevice extends BlockDeviceMapping {
       public MapEBSSnapshotToDevice(String deviceName, String snapshotId, @Nullable Integer sizeInGib,
-            @Nullable Boolean deleteOnTermination, Volume.Type volumeType, @Nullable Integer iops) {
+            @Nullable Boolean deleteOnTermination, Type volumeType, @Nullable Integer iops) {
          super(deviceName, null, snapshotId, sizeInGib, null, deleteOnTermination, volumeType, iops);
          checkNotNull(snapshotId, "snapshotId cannot be null");
          Preconditions2.checkNotEmpty(snapshotId, "the snapshotId must be non-empty");
@@ -236,7 +238,7 @@ public class BlockDeviceMapping implements Comparable<BlockDeviceMapping>{
 
    public static class MapNewVolumeToDevice extends BlockDeviceMapping {
       public MapNewVolumeToDevice(String deviceName, Integer sizeInGib,
-            @Nullable Boolean deleteOnTermination, Volume.Type volumeType, @Nullable Integer iops) {
+            @Nullable Boolean deleteOnTermination, Type volumeType, @Nullable Integer iops) {
          super(deviceName, null, null, sizeInGib, null, deleteOnTermination, volumeType, iops);
          checkNotNull(sizeInGib, "sizeInGib cannot be null");
       }
@@ -244,7 +246,7 @@ public class BlockDeviceMapping implements Comparable<BlockDeviceMapping>{
 
    public static class MapEphemeralDeviceToDevice extends BlockDeviceMapping {
       public MapEphemeralDeviceToDevice(String deviceName, String virtualName) {
-         super(deviceName, virtualName, null, null, null, null, Volume.Type.STANDARD, null);
+         super(deviceName, virtualName, null, null, null, null, Type.STANDARD, null);
          checkNotNull(virtualName, "virtualName cannot be null");
          Preconditions2.checkNotEmpty(virtualName, "the virtualName must be non-empty");
       }
@@ -252,7 +254,7 @@ public class BlockDeviceMapping implements Comparable<BlockDeviceMapping>{
 
    public static class UnmapDeviceNamed extends BlockDeviceMapping {
       public UnmapDeviceNamed(String deviceName) {
-         super(deviceName, null, null, null, true, null, Volume.Type.STANDARD, null);
+         super(deviceName, null, null, null, true, null, Type.STANDARD, null);
       }
    }
 

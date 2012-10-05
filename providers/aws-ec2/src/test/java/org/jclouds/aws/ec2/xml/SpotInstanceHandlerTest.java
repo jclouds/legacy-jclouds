@@ -18,19 +18,19 @@
  */
 package org.jclouds.aws.ec2.xml;
 
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
-import com.google.common.collect.ImmutableList;
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.TypeLiteral;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.testng.Assert.assertEquals;
+
+import java.io.InputStream;
+
 import org.jclouds.aws.ec2.domain.LaunchSpecification;
 import org.jclouds.aws.ec2.domain.SpotInstanceRequest;
 import org.jclouds.aws.ec2.domain.SpotInstanceRequest.State;
 import org.jclouds.aws.ec2.domain.SpotInstanceRequest.Type;
 import org.jclouds.date.DateService;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
-import org.jclouds.ec2.domain.Volume;
 import org.jclouds.ec2.xml.BaseEC2HandlerTest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.config.SaxParserModule;
@@ -39,10 +39,14 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import java.io.InputStream;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
+import com.google.common.collect.ImmutableList;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.TypeLiteral;
 
-import static org.easymock.EasyMock.*;
-import static org.testng.Assert.assertEquals;
+import org.jclouds.ec2.domain.Volume;
 
 /**
  * Tests behavior of {@code SpotInstanceHandler}

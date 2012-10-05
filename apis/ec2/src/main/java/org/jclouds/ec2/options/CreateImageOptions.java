@@ -18,9 +18,9 @@
  */
 package org.jclouds.ec2.options;
 
-import org.jclouds.ec2.options.internal.BaseEC2RequestOptions;
-
 import static com.google.common.base.Preconditions.checkNotNull;
+
+import org.jclouds.ec2.options.internal.BaseEC2RequestOptions;
 
 /**
  * Contains options supported in the Form API for the CreateImage operation. <h2>
@@ -38,9 +38,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Adrian Cole
  * @author Paolo Di Tommaso
  *
- * @see <a
- *      href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-CreateImage.html"
- *      />
+ * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-CreateImage.html" >CreateImage</a>
+ *
  */
 public class CreateImageOptions extends BaseEC2RequestOptions {
    public static final CreateImageOptions NONE = new CreateImageOptions();

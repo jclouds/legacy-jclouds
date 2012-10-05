@@ -18,18 +18,20 @@
  */
 package org.jclouds.ec2.xml;
 
-import com.google.common.collect.Sets;
+import java.util.Set;
+
+import javax.inject.Inject;
+
 import org.jclouds.ec2.domain.Volume;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-import javax.inject.Inject;
-import java.util.Set;
+import com.google.common.collect.Sets;
 
 /**
- * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeVolumes.html"  />
+ * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeVolumes.html" >DescribeVolumes</a>
  *
  * @author Adrian Cole
  * @author Paolo Di Tommaso

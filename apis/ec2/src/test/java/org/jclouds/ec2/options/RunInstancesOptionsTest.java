@@ -18,17 +18,24 @@
  */
 package org.jclouds.ec2.options;
 
-import com.google.common.collect.ImmutableSet;
-import org.jclouds.ec2.domain.BlockDeviceMapping;
-import org.jclouds.ec2.domain.InstanceType;
-import org.jclouds.ec2.domain.Volume;
-import org.jclouds.http.options.HttpRequestOptions;
-import org.testng.annotations.Test;
+import static org.jclouds.ec2.options.RunInstancesOptions.Builder.asType;
+import static org.jclouds.ec2.options.RunInstancesOptions.Builder.withBlockDeviceMappings;
+import static org.jclouds.ec2.options.RunInstancesOptions.Builder.withKernelId;
+import static org.jclouds.ec2.options.RunInstancesOptions.Builder.withKeyName;
+import static org.jclouds.ec2.options.RunInstancesOptions.Builder.withRamdisk;
+import static org.jclouds.ec2.options.RunInstancesOptions.Builder.withSecurityGroup;
+import static org.jclouds.ec2.options.RunInstancesOptions.Builder.withUserData;
+import static org.testng.Assert.assertEquals;
+import static org.jclouds.ec2.domain.Volume.Type;
 
 import java.util.Collections;
 
-import static org.jclouds.ec2.options.RunInstancesOptions.Builder.*;
-import static org.testng.Assert.assertEquals;
+import org.jclouds.ec2.domain.BlockDeviceMapping;
+import org.jclouds.ec2.domain.InstanceType;
+import org.jclouds.http.options.HttpRequestOptions;
+import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Tests possible uses of RunInstancesOptions and RunInstancesOptions.Builder.*
@@ -206,7 +213,7 @@ public class RunInstancesOptionsTest {
 
    @Test
    public void testWithBlockDeviceMapping() {
-      BlockDeviceMapping mapping = new BlockDeviceMapping.MapNewVolumeToDevice("/dev/sda1", 120, true, Volume.Type.STANDARD, null);
+      BlockDeviceMapping mapping = new BlockDeviceMapping.MapNewVolumeToDevice("/dev/sda1", 120, true, Type.STANDARD, null);
       RunInstancesOptions options = new RunInstancesOptions().withBlockDeviceMappings(ImmutableSet
                .<BlockDeviceMapping> of(mapping));
       assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.DeviceName"), Collections
@@ -225,7 +232,7 @@ public class RunInstancesOptionsTest {
 
    @Test
    public void testWithBlockDeviceMappingStatic() {
-      BlockDeviceMapping mapping = new BlockDeviceMapping.MapNewVolumeToDevice("/dev/sda1", 120, true, Volume.Type.STANDARD, null);
+      BlockDeviceMapping mapping = new BlockDeviceMapping.MapNewVolumeToDevice("/dev/sda1", 120, true, Type.STANDARD, null);
       RunInstancesOptions options = withBlockDeviceMappings(ImmutableSet
                .<BlockDeviceMapping> of(mapping));
       assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.DeviceName"), Collections

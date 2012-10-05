@@ -18,6 +18,8 @@
  */
 package org.jclouds.aws.ec2.functions;
 
+import static org.testng.Assert.assertEquals;
+
 import org.jclouds.aws.ec2.domain.AWSRunningInstance;
 import org.jclouds.aws.ec2.domain.LaunchSpecification;
 import org.jclouds.aws.ec2.domain.MonitoringState;
@@ -29,8 +31,6 @@ import org.jclouds.ec2.domain.Hypervisor;
 import org.jclouds.ec2.domain.InstanceState;
 import org.jclouds.ec2.domain.Volume;
 import org.testng.annotations.Test;
-
-import static org.testng.Assert.assertEquals;
 
 /**
  * Tests behavior of {@code SpotInstanceRequestToAWSRunningInstance}

@@ -18,16 +18,17 @@
  */
 package org.jclouds.aws.ec2.binders;
 
-import com.google.common.collect.ImmutableMap;
-import org.jclouds.aws.ec2.domain.LaunchSpecification;
-import org.jclouds.ec2.domain.InstanceType;
-import org.jclouds.ec2.domain.Volume;
-import org.jclouds.encryption.internal.Base64;
-import org.testng.annotations.Test;
+import static org.testng.Assert.assertEquals;
+import static org.jclouds.ec2.domain.Volume.Type;
 
 import java.net.UnknownHostException;
 
-import static org.testng.Assert.assertEquals;
+import org.jclouds.aws.ec2.domain.LaunchSpecification;
+import org.jclouds.ec2.domain.InstanceType;
+import org.jclouds.encryption.internal.Base64;
+import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * @author Adrian Cole
@@ -39,7 +40,7 @@ public class BindLaunchSpecificationToFormParamsTest {
    @Test
    public void testApplyWithBlockDeviceMappings() throws UnknownHostException {
       LaunchSpecification spec = LaunchSpecification.builder().instanceType(InstanceType.T1_MICRO).imageId("ami-123")
-            .mapNewVolumeToDevice("/dev/sda1", 120, true, Volume.Type.STANDARD, null).build();
+            .mapNewVolumeToDevice("/dev/sda1", 120, true, Type.STANDARD, null).build();
 
       assertEquals(binder.apply(spec), ImmutableMap.of("LaunchSpecification.InstanceType", "t1.micro",
             "LaunchSpecification.ImageId", "ami-123", "LaunchSpecification.BlockDeviceMapping.1.DeviceName",

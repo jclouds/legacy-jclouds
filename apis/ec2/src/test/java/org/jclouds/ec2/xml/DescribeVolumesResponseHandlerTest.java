@@ -18,8 +18,14 @@
  */
 package org.jclouds.ec2.xml;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Sets;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.testng.Assert.assertEquals;
+
+import java.io.InputStream;
+import java.util.Set;
+
 import org.jclouds.date.DateService;
 import org.jclouds.ec2.domain.Attachment;
 import org.jclouds.ec2.domain.Volume;
@@ -27,11 +33,8 @@ import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
-import java.io.InputStream;
-import java.util.Set;
-
-import static org.easymock.EasyMock.*;
-import static org.testng.Assert.assertEquals;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Sets;
 
 /**
  * Tests behavior of {@code DescribeVolumesResponseHandler}
