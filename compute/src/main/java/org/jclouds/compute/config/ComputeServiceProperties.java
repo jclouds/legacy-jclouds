@@ -40,6 +40,12 @@ public interface ComputeServiceProperties {
    public static final String INIT_STATUS_INITIAL_PERIOD = "jclouds.compute.init-status.initial-period";
    public static final String INIT_STATUS_MAX_PERIOD = "jclouds.compute.init-status.max-period";
 
+   // The period in milliseconds between node updates when using the ComputeService
+   public static final String POLL_INITIAL_PERIOD = "jclouds.compute.poll-status.initial-period";
+
+   // The max period in milliseconds between node updates when using the ComputeService
+   public static final String POLL_MAX_PERIOD = "jclouds.compute.poll-status.max-period";
+
    /**
     * time in milliseconds to wait for an image to finish creating.
     * 
