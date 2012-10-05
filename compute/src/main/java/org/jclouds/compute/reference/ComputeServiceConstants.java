@@ -24,6 +24,8 @@ import static org.jclouds.compute.config.ComputeServiceProperties.IMAGE_ID;
 import static org.jclouds.compute.config.ComputeServiceProperties.IMAGE_LOGIN_USER;
 import static org.jclouds.compute.config.ComputeServiceProperties.INIT_STATUS_INITIAL_PERIOD;
 import static org.jclouds.compute.config.ComputeServiceProperties.INIT_STATUS_MAX_PERIOD;
+import static org.jclouds.compute.config.ComputeServiceProperties.POLL_INITIAL_PERIOD;
+import static org.jclouds.compute.config.ComputeServiceProperties.POLL_MAX_PERIOD;
 import static org.jclouds.compute.config.ComputeServiceProperties.OS_VERSION_MAP_JSON;
 import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_IMAGE_AVAILABLE;
 import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_IMAGE_DELETED;
@@ -40,6 +42,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.config.ComputeServiceProperties;
+import org.jclouds.predicates.RetryablePredicate;
 
 import com.google.common.base.Supplier;
 import com.google.inject.Inject;
@@ -52,7 +55,7 @@ public interface ComputeServiceConstants {
 
    public static final String COMPUTE_LOGGER = "jclouds.compute";
    public static final String LOCAL_PARTITION_GB_PATTERN = "disk_drive/%s/gb";
-
+   
    /**
     * @see ComputeServiceProperties#TIMEOUT_NODE_TERMINATED
     */
@@ -137,6 +140,17 @@ public interface ComputeServiceConstants {
       @Inject(optional = true)
       @Named(INIT_STATUS_MAX_PERIOD)
       public long initStatusMaxPeriod = 5000;
+   }
+
+   @Singleton
+   public static class PollPeriod {
+      @Inject(optional = true)
+      @Named(POLL_INITIAL_PERIOD)
+      public long pollInitialPeriod = RetryablePredicate.DEFAULT_PERIOD;
+
+      @Inject(optional = true)
+      @Named(POLL_MAX_PERIOD)
+      public long pollMaxPeriod = RetryablePredicate.DEFAULT_MAX_PERIOD;
    }
 
    @Singleton
