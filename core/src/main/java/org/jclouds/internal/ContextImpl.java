@@ -18,15 +18,12 @@
  */
 package org.jclouds.internal;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.net.URI;
-import java.util.Map;
-import java.util.Set;
-
-import javax.inject.Inject;
-
+import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.io.Closeables;
+import com.google.inject.Singleton;
 import org.jclouds.Context;
+import org.jclouds.annotations.Name;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
@@ -35,10 +32,12 @@ import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.rest.Utils;
 import org.jclouds.rest.annotations.Identity;
 
-import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.io.Closeables;
-import com.google.inject.Singleton;
+import javax.inject.Inject;
+import java.net.URI;
+import java.util.Map;
+import java.util.Set;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @author Adrian Cole
@@ -50,14 +49,16 @@ public class ContextImpl implements Context {
    private final String identity;
    private final Utils utils;
    private final Closer closer;
+   private final String name;
 
    @Inject
-   protected ContextImpl(ProviderMetadata providerMetadata, @Identity String identity, Utils utils, Closer closer) {
+   protected ContextImpl(@Name String name, ProviderMetadata providerMetadata, @Identity String identity, Utils utils, Closer closer) {
       this.providerMetadata = checkNotNull(providerMetadata, "providerMetadata");
       this.identity = checkNotNull(identity, "identity");
       this.utils = checkNotNull(utils, "utils");
       this.closer = checkNotNull(closer, "closer");
-   }
+      this.name = checkNotNull(name, "name");
+    }
 
    /**
     * {@inheritDoc}
@@ -75,7 +76,15 @@ public class ContextImpl implements Context {
       return providerMetadata;
    }
 
-   /**
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public String getName() {
+    return name;
+  }
+
+  /**
     * {@inheritDoc}
     */
    @Override

@@ -46,6 +46,12 @@ import com.google.inject.ImplementedBy;
 @ImplementedBy(ContextImpl.class)
 public interface Context extends Location, Closeable {
 
+  /**
+   * Identifies the Context.
+   * @return
+   */
+   String getName();
+
    /**
     * will be removed in jclouds 1.6
     * 
