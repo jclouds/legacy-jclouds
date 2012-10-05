@@ -41,6 +41,7 @@ import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.functions.TemplateOptionsToStatement;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.predicates.AtomicNodeRunning;
+import org.jclouds.compute.reference.ComputeServiceConstants.PollPeriod;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.compute.util.OpenSocketFinder;
 import org.jclouds.scriptbuilder.domain.Statement;
@@ -202,6 +203,7 @@ public class CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapTest {
       InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory = createMock(InitializeRunScriptOnNodeOrPlaceInBadMap.Factory.class);
       OpenSocketFinder openSocketFinder = createMock(OpenSocketFinder.class);
       Timeouts timeouts = new Timeouts();
+      PollPeriod period = new PollPeriod();
       Function<TemplateOptions, Statement> templateOptionsToStatement = new TemplateOptionsToStatement();
       Set<NodeMetadata> goodNodes = Sets.newLinkedHashSet();
       Map<NodeMetadata, Exception> badNodes = Maps.newLinkedHashMap();
@@ -213,10 +215,10 @@ public class CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapTest {
       GetNodeMetadataStrategy nodeClient = createMock(GetNodeMetadataStrategy.class);
       AtomicNodeRunning nodeRunning = new AtomicNodeRunning(nodeClient);
       Predicate<AtomicReference<NodeMetadata>> retryableNodeRunning = new ComputeServiceTimeoutsModule() {
-               public Predicate<AtomicReference<NodeMetadata>> nodeRunning(AtomicNodeRunning statusRunning, Timeouts timeouts) {
-                  return super.nodeRunning(statusRunning, timeouts);
+               public Predicate<AtomicReference<NodeMetadata>> nodeRunning(AtomicNodeRunning statusRunning, Timeouts timeouts, PollPeriod period) {
+                  return super.nodeRunning(statusRunning, timeouts, period);
                }
-            }.nodeRunning(nodeRunning, timeouts);
+            }.nodeRunning(nodeRunning, timeouts, period);
       AtomicReference<NodeMetadata> atomicNode = new AtomicReference<NodeMetadata>(pendingNode);
       
       // Simulate transient error: first call returns null; subsequent calls return the running node
