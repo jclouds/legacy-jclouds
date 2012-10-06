@@ -34,6 +34,7 @@ import static org.jclouds.virtualbox.util.MachineUtils.machineNotFoundException;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -70,7 +71,6 @@ import org.jclouds.virtualbox.domain.YamlImage;
 import org.jclouds.virtualbox.functions.admin.PreseedCfgServer;
 import org.jclouds.virtualbox.predicates.RetryIfSocketNotYetOpen;
 import org.jclouds.virtualbox.util.NetworkUtils;
-import org.testng.collections.Lists;
 import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.NetworkAttachmentType;
@@ -293,7 +293,7 @@ public class MastersLoadingCache extends AbstractLoadingCache<Image, Master> {
          throw new RuntimeException("could not connect to virtualbox");
       }
       File file = new File(isosDir, fileName);
-      List<Statement> statements = Lists.newArrayList();
+      List<Statement> statements = new ArrayList<Statement>();
       statements.add(Statements.saveHttpResponseTo(URI.create(httpUrl),
             isosDir, fileName));
       StatementList statementList = new StatementList(statements);
