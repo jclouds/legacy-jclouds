@@ -24,6 +24,7 @@ import static org.jclouds.virtualbox.config.VirtualBoxConstants.GUEST_OS_USER;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_NODE_NAME_SEPARATOR;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_NODE_PREFIX;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -40,7 +41,6 @@ import org.jclouds.domain.LoginCredentials;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.logging.Logger;
 import org.jclouds.virtualbox.util.NetworkUtils;
-import org.testng.collections.Lists;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.INetworkAdapter;
 import org.virtualbox_4_1.MachineState;
@@ -108,8 +108,8 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
    }
    
    private NodeMetadataBuilder getIpAddresses(IMachine vm, NodeMetadataBuilder nodeMetadataBuilder) {
-      List<String> publicIpAddresses = Lists.newArrayList();
-      List<String> privateIpAddresses = Lists.newArrayList();
+      List<String> publicIpAddresses = new ArrayList<String>();
+      List<String> privateIpAddresses = new ArrayList<String>();
       for(long slot = 0; slot < 4; slot ++) {
          INetworkAdapter adapter = vm.getNetworkAdapter(slot);
          if(adapter != null) {

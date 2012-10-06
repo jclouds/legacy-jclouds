@@ -22,13 +22,13 @@ package org.jclouds.virtualbox.statements;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.scriptbuilder.domain.Statements.exec;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.StatementList;
 import org.jclouds.virtualbox.domain.NetworkInterfaceCard;
-import org.testng.collections.Lists;
 
 /**
  * Up the network interface chosen
@@ -63,7 +63,7 @@ public class EnableNetworkInterface implements Statement {
    }
 
    private List<Statement> getStatements(String iface) {
-      List<Statement> statements = Lists.newArrayList();
+      List<Statement> statements = new ArrayList<Statement>();
       statements.add(exec(String.format("echo auto %s >> /etc/network/interfaces", iface))); //
       statements.add(exec(String.format("echo iface %s inet dhcp >> /etc/network/interfaces", iface))); //
       statements.add(exec("/etc/init.d/networking restart"));
