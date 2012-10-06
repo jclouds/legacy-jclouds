@@ -21,6 +21,7 @@ package org.jclouds.vcloud.director.v1_5.internal;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.annotations.Name;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.rest.RestContext;
@@ -45,9 +46,9 @@ public class VCloudDirectorContextImpl extends RestContextImpl<VCloudDirectorApi
    private final RestContext<VCloudDirectorAdminApi, VCloudDirectorAdminAsyncApi> adminContext;
 
    @Inject
-   VCloudDirectorContextImpl(ProviderMetadata providerMetadata, @Identity String identity, Utils utils, Closer closer,
+   VCloudDirectorContextImpl(@Name String name, ProviderMetadata providerMetadata, @Identity String identity, Utils utils, Closer closer,
             Injector injector, RestContext<VCloudDirectorAdminApi, VCloudDirectorAdminAsyncApi> adminContext) {
-      super(providerMetadata, identity, utils, closer, injector, TypeLiteral.get(VCloudDirectorApi.class),
+      super(name,  providerMetadata, identity, utils, closer, injector, TypeLiteral.get(VCloudDirectorApi.class),
                TypeLiteral.get(VCloudDirectorAsyncApi.class));
       this.adminContext = adminContext;
    }

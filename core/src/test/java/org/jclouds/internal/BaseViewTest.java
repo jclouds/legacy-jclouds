@@ -19,6 +19,7 @@
 package org.jclouds.internal;
 
 import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
@@ -36,10 +37,11 @@ import com.google.common.reflect.TypeToken;
  */
 @Test(groups = "unit", testName = "BaseViewTest")
 public class BaseViewTest {
+
    private static class Water extends ContextImpl {
 
       protected Water() {
-         super(createMock(ProviderMetadata.class), "identity", createMock(Utils.class), createMock(Closer.class));
+         super("water", createMock(ProviderMetadata.class), "identity", createMock(Utils.class), createMock(Closer.class));
       }
 
       @Override
@@ -55,7 +57,7 @@ public class BaseViewTest {
    private static class PeanutButter extends ContextImpl {
 
       protected PeanutButter() {
-         super(createMock(ProviderMetadata.class), "identity", createMock(Utils.class), createMock(Closer.class));
+         super("peanutbutter", createMock(ProviderMetadata.class), "identity", createMock(Utils.class), createMock(Closer.class));
       }
 
       @Override
