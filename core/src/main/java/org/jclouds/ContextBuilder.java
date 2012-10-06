@@ -259,9 +259,8 @@ public class ContextBuilder {
       ProviderMetadata providerMetadata = new UpdateProviderMetadataFromProperties(apiMetadata, this.providerMetadata).apply(expanded);
 
       //We use either the specified name (optional) or a hash of provider/api, endpoint, api version & identity. Hash is used to be something readable.
-      String name = this.name.isPresent() ? this.name.get() : String.valueOf(Objects.hashCode(providerMetadata.getId(), providerMetadata.getEndpoint() , apiVersion , identity.get()));
-
-      return buildInjector(name, providerMetadata, creds, modules);
+      return buildInjector(name.or(String.valueOf(Objects.hashCode(providerMetadata.getId(),
+              providerMetadata.getEndpoint() , apiVersion , identity.get()))), providerMetadata, creds, modules);
    }
 
    private static String getAndRemove(Properties expanded, String key) {
