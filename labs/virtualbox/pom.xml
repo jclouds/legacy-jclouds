@@ -42,7 +42,12 @@
     <test.virtualbox.credential>CHANGE_ME</test.virtualbox.credential>
     <test.virtualbox.template>osFamily=UBUNTU,osVersionMatches=12.04.1,os64Bit=true,osArchMatches=amd64,loginUser=toor:password,authenticateSudo=true</test.virtualbox.template>
     <jclouds.osgi.export>org.jclouds.virtualbox*;version="${project.version}"</jclouds.osgi.export>
-    <jclouds.osgi.import>org.jclouds*;version="${project.version}",*</jclouds.osgi.import>
+    <jclouds.osgi.import>
+      org.jclouds*;version="${project.version}",
+      org.eclipse.jetty*;version="[7.5,9)",
+      javax.servlet*;version="[2.5,3)",
+      *
+    </jclouds.osgi.import>
   </properties>
 
   <dependencies>
@@ -110,6 +115,7 @@
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
       <version>6.3.1</version>
+      <scope>test</scope>
       <exclusions>
         <exclusion>
           <artifactId>snakeyaml</artifactId>
