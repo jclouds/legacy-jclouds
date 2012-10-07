@@ -18,11 +18,11 @@
  */
 package org.jclouds.openstack.nova.v2_0;
 
+import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.testng.Assert.assertEquals;
 
 import java.util.Properties;
 
-import org.jclouds.Constants;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.nova.v2_0.internal.BaseNovaApiExpectTest;
@@ -31,13 +31,14 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * 
+ * Tests to ensure that we can pick the only endpoint of a service
+ *
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "OverrideApiVersionExpectTest")
-public class OverrideApiVersionExpectTest extends BaseNovaApiExpectTest {
+@Test(groups = "unit", testName = "EndpointIdIsRandomExpectTest")
+public class EndpointIdIsRandomExpectTest extends BaseNovaApiExpectTest {
 
-   public OverrideApiVersionExpectTest() {
+   public EndpointIdIsRandomExpectTest() {
       this.identity = "demo:demo";
       this.credential = "password";
    }
@@ -45,20 +46,21 @@ public class OverrideApiVersionExpectTest extends BaseNovaApiExpectTest {
    @Override
    protected Properties setupProperties() {
       Properties overrides = super.setupProperties();
-      overrides.setProperty(Constants.PROPERTY_ENDPOINT, "http://10.10.10.10:5000/v2.0/");
-      overrides.setProperty(provider + ".api-version", "bb3ce9ccdc5045909882688b90cc3ff0");
+      overrides.setProperty(PROPERTY_ENDPOINT, "http://10.10.10.10:5000/v2.0/");
       return overrides;
    }
 
    public void testVersionMatchOnConfiguredZonesWhenResponseIs2xx() {
-      
-      HttpRequest authenticate = HttpRequest.builder().method("POST")
+
+      HttpRequest authenticate = HttpRequest
+            .builder()
+            .method("POST")
             .endpoint("http://10.10.10.10:5000/v2.0/tokens")
             .addHeader("Accept", "application/json")
-            .payload(payloadFromStringWithContentType(
-                     "{\"auth\":{\"passwordCredentials\":{\"username\":\"demo\",\"password\":\"password\"},\"tenantName\":\"demo\"}}"
-                     , "application/json")).build();
-      
+            .payload(
+                  payloadFromStringWithContentType(
+                        "{\"auth\":{\"passwordCredentials\":{\"username\":\"demo\",\"password\":\"password\"},\"tenantName\":\"demo\"}}",
+                        "application/json")).build();
 
       HttpResponse authenticationResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResourceWithContentType("/access_version_uids.json", "application/json")).build();

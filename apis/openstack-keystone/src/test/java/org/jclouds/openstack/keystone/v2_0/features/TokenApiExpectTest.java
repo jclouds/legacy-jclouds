@@ -55,7 +55,7 @@ public class TokenApiExpectTest extends BaseKeystoneRestApiExpectTest<KeystoneAp
    public TokenApiExpectTest(){
       endpoint = "https://csnode.jclouds.org:35357";
    }
-   
+
    private DateService dateService = new SimpleDateFormatDateService();
 
    public void testGetToken() {
@@ -66,7 +66,7 @@ public class TokenApiExpectTest extends BaseKeystoneRestApiExpectTest<KeystoneAp
             .getTokenApi().get();
       Token token = api.get("sometokenorother");
       assertNotNull(token);
-      assertEquals(token, 
+      assertEquals(token,
             Token.builder().id("167eccdc790946969ced473732e8109b").expires(dateService.iso8601SecondsDateParse("2012-04-28T12:42:50Z"))
                   .tenant(Tenant.builder().id("4cea93f5464b4f1c921fb3e0461d72b5").name("demo").build()).build());
    }
@@ -88,7 +88,7 @@ public class TokenApiExpectTest extends BaseKeystoneRestApiExpectTest<KeystoneAp
             HttpResponse.builder().statusCode(500).build()).getTokenApi().get();
       api.get("sometokenorother");
    }
-   
+
    public void testGetUserOfToken() {
       TokenApi api = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
@@ -139,14 +139,14 @@ public class TokenApiExpectTest extends BaseKeystoneRestApiExpectTest<KeystoneAp
             HttpResponse.builder().statusCode(200).payload(payloadFromResourceWithContentType("/user_endpoints.json", APPLICATION_JSON)).build())
             .getTokenApi().get();
       Set<? extends Endpoint> endpoints = api.listEndpointsForToken("XXXXXX");
-      
+
       assertEquals(endpoints, ImmutableSet.of(
             Endpoint.builder().publicURL(URI.create("https://csnode.jclouds.org/v2.0/"))
                   .adminURL(URI.create("https://csnode.jclouds.org:35357/v2.0/"))
-                  .region("region-a.geo-1").versionId("2.0").build()
+                  .region("region-a.geo-1").id("2.0").versionId("2.0").build()
       ));
    }
-   
+
    @Test
    public void testGetEndpointsForTokenFailNotFound() {
       TokenApi api = requestsSendResponses(
@@ -157,5 +157,5 @@ public class TokenApiExpectTest extends BaseKeystoneRestApiExpectTest<KeystoneAp
       assertTrue(api.listEndpointsForToken("XXXXXX").isEmpty());
    }
 
-   
+
 }

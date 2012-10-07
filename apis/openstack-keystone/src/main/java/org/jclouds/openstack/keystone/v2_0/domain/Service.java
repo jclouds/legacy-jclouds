@@ -25,7 +25,6 @@ import java.util.Set;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.ForwardingSet;
 import com.google.common.collect.ImmutableSet;
 
@@ -38,7 +37,7 @@ import com.google.common.collect.ImmutableSet;
  * @see <a href="http://docs.openstack.org/api/openstack-typeentity-service/2.0/content/Identity-Service-Concepts-e1362.html"
 />
  */
-public class Service extends ForwardingSet<Endpoint> implements Comparable<Service> {
+public class Service extends ForwardingSet<Endpoint> {
 
    public static Builder<?> builder() {
       return new ConcreteBuilder();
@@ -53,7 +52,7 @@ public class Service extends ForwardingSet<Endpoint> implements Comparable<Servi
 
       protected String type;
       protected String name;
-      protected Set<Endpoint> endpoints = ImmutableSet.of();
+      protected ImmutableSet.Builder<Endpoint> endpoints = ImmutableSet.<Endpoint>builder();
 
       /**
        * @see Service#getType()
@@ -72,26 +71,38 @@ public class Service extends ForwardingSet<Endpoint> implements Comparable<Servi
       }
 
       /**
-       * @see Service#getEndpoints()
+       * @see Service#delegate()
        */
-      public T endpoints(Set<Endpoint> endpoints) {
-         this.endpoints = ImmutableSet.copyOf(checkNotNull(endpoints, "endpoints"));
+      public T endpoint(Endpoint endpoint) {
+         this.endpoints.add(endpoint);
          return self();
       }
 
+      /**
+       * @see Service#delegate()
+       */
+      public T endpoints(Iterable<Endpoint> endpoints) {
+         this.endpoints.addAll(endpoints);
+         return self();
+      }
+
+      /**
+       * @see #endpoints(Iterable)
+       */
+      @Deprecated
       public T endpoints(Endpoint... in) {
          return endpoints(ImmutableSet.copyOf(in));
       }
 
       public Service build() {
-         return new Service(type, name, endpoints);
+         return new Service(type, name, endpoints.build());
       }
 
       public T fromService(Service in) {
          return this
                .type(in.getType())
                .name(in.getName())
-               .endpoints(in.getEndpoints());
+               .endpoints(in);
       }
    }
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
@@ -131,8 +142,9 @@ public class Service extends ForwardingSet<Endpoint> implements Comparable<Servi
    }
 
    /**
-    * @return the endpoints assigned to the service
+    * Please use this as a Set
     */
+   @Deprecated
    public Set<Endpoint> getEndpoints() {
       return this.endpoints;
    }
@@ -153,21 +165,13 @@ public class Service extends ForwardingSet<Endpoint> implements Comparable<Servi
    }
 
    protected ToStringHelper string() {
-      return Objects.toStringHelper(this)
+      return Objects.toStringHelper(this).omitNullValues()
             .add("type", type).add("name", name).add("endpoints", endpoints);
    }
 
    @Override
    public String toString() {
       return string().toString();
-   }
-
-   @Override
-   public int compareTo(Service that) {
-      return ComparisonChain.start()
-                            .compare(this.type, that.type)
-                            .compare(this.name, that.name)
-                            .result();
    }
 
    @Override

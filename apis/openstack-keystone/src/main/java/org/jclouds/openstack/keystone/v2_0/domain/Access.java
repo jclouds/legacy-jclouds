@@ -27,16 +27,18 @@ import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.ForwardingSet;
 import com.google.common.collect.ImmutableSet;
 
 /**
  * TODO
  *
  * @author Adrian Cole
- * @see <a href="http://docs.openstack.org/api/openstack-identity-service/2.0/content/Service_API_Api_Operations.html"
-/>
+ * @see <a href=
+ *      "http://docs.openstack.org/api/openstack-identity-service/2.0/content/Identity-Service-Concepts-e1362.html"
+ *      />
  */
-public class Access implements Comparable<Access> {
+public class Access extends ForwardingSet<Service> implements Comparable<Access> {
 
    public static Builder<?> builder() {
       return new ConcreteBuilder();
@@ -46,12 +48,12 @@ public class Access implements Comparable<Access> {
       return new ConcreteBuilder().fromAccess(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected Token token;
       protected User user;
-      protected Set<Service> serviceCatalog = ImmutableSet.of();
+      protected ImmutableSet.Builder<Service> serviceCatalog = ImmutableSet.<Service> builder();
 
       /**
        * @see Access#getToken()
@@ -70,26 +72,44 @@ public class Access implements Comparable<Access> {
       }
 
       /**
-       * @see Access#getServiceCatalog()
+       * @see Access#delegate()
        */
-      public T serviceCatalog(Set<Service> serviceCatalog) {
-         this.serviceCatalog = ImmutableSet.copyOf(checkNotNull(serviceCatalog, "serviceCatalog"));
+      public T service(Service service) {
+         this.serviceCatalog.add(service);
          return self();
       }
 
+      /**
+       * @see Access#delegate()
+       */
+      public T services(Iterable<Service> serviceCatalog) {
+         this.serviceCatalog.addAll(serviceCatalog);
+         return self();
+      }
+
+      /**
+       * @see #services(Iterable)
+       */
+      @Deprecated
+      public T serviceCatalog(Set<Service> serviceCatalog) {
+         this.serviceCatalog.addAll(serviceCatalog);
+         return self();
+      }
+
+      /**
+       * @see #services(Iterable)
+       */
+      @Deprecated
       public T serviceCatalog(Service... in) {
          return serviceCatalog(ImmutableSet.copyOf(in));
       }
 
       public Access build() {
-         return new Access(token, user, serviceCatalog);
+         return new Access(token, user, serviceCatalog.build());
       }
 
       public T fromAccess(Access in) {
-         return this
-               .token(in.getToken())
-               .user(in.getUser())
-               .serviceCatalog(in.getServiceCatalog());
+         return this.token(in.getToken()).user(in.getUser()).services(in);
       }
    }
 
@@ -104,13 +124,11 @@ public class Access implements Comparable<Access> {
    private final User user;
    private final Set<Service> serviceCatalog;
 
-   @ConstructorProperties({
-         "token", "user", "serviceCatalog"
-   })
+   @ConstructorProperties({ "token", "user", "serviceCatalog" })
    protected Access(Token token, User user, @Nullable Set<Service> serviceCatalog) {
       this.token = checkNotNull(token, "token");
       this.user = checkNotNull(user, "user");
-      this.serviceCatalog = serviceCatalog == null ? ImmutableSet.<Service>of() : ImmutableSet.copyOf(serviceCatalog);
+      this.serviceCatalog = serviceCatalog == null ? ImmutableSet.<Service> of() : ImmutableSet.copyOf(serviceCatalog);
    }
 
    /**
@@ -128,8 +146,9 @@ public class Access implements Comparable<Access> {
    }
 
    /**
-    * TODO
+    * Please access the service catalog via normal collection mechanisms
     */
+   @Deprecated
    public Set<Service> getServiceCatalog() {
       return this.serviceCatalog;
    }
@@ -141,24 +160,25 @@ public class Access implements Comparable<Access> {
 
    @Override
    public boolean equals(Object obj) {
-      if (this == obj) return true;
-      if (obj == null || getClass() != obj.getClass()) return false;
+      if (this == obj)
+         return true;
+      if (obj == null || getClass() != obj.getClass())
+         return false;
       Access that = Access.class.cast(obj);
-      return Objects.equal(this.token, that.token)
-            && Objects.equal(this.user, that.user)
+      return Objects.equal(this.token, that.token) && Objects.equal(this.user, that.user)
             && Objects.equal(this.serviceCatalog, that.serviceCatalog);
    }
 
    protected ToStringHelper string() {
-      return Objects.toStringHelper(this)
-            .add("token", token).add("user", user).add("serviceCatalog", serviceCatalog);
+      return Objects.toStringHelper(this).omitNullValues().add("token", token).add("user", user)
+            .add("serviceCatalog", serviceCatalog);
    }
 
    @Override
    public String toString() {
       return string().toString();
    }
-   
+
    @Override
    public int compareTo(Access that) {
       if (that == null)
@@ -166,6 +186,11 @@ public class Access implements Comparable<Access> {
       if (this == that)
          return 0;
       return this.token.compareTo(that.token);
+   }
+
+   @Override
+   protected Set<Service> delegate() {
+      return serviceCatalog;
    }
 
 }

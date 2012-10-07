@@ -18,8 +18,6 @@
  */
 package org.jclouds.openstack.keystone.v2_0.parse;
 
-import java.net.URI;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
 
@@ -38,7 +36,7 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ParseAccessTest")
+@Test(groups = "unit", testName = "ParseRackspaceAccessTest")
 public class ParseRackspaceAccessTest extends BaseItemParserTest<Access> {
 
    @Override
@@ -50,64 +48,69 @@ public class ParseRackspaceAccessTest extends BaseItemParserTest<Access> {
    @SelectJson("access")
    @Consumes(MediaType.APPLICATION_JSON)
    public Access expected() {
-      return Access.builder().token(
-               Token.builder().expires(new SimpleDateFormatDateService().iso8601DateParse("2012-06-06T20:56:47.000-05:00"))
-                        .id("Auth_4f173437e4b013bee56d1007").tenant(
-                                 Tenant.builder().id("40806637803162").name("40806637803162").build())
-                        .build()).user(
-               User.builder().id("54321").name("joe").roles(
-                        Role.builder().id("3").name("identity:user-admin").description("User Admin Role.")
-                                 .build()).build()).serviceCatalog(
-
-               Service.builder().name("cloudDatabases").type("rax:database").endpoints(
-                        Endpoint.builder().tenantId("40806637803162").publicURL(
-                                 URI.create("https://dfw.databases.api.rackspacecloud.com/v1.0/40806637803162"))
-                                 .region("DFW").build(),
-                        Endpoint.builder().tenantId("40806637803162").publicURL(
-                                 URI.create("https://ord.databases.api.rackspacecloud.com/v1.0/40806637803162"))
-                                 .region("ORD").build()).build(),
-
-               Service.builder().name("cloudServers").type("compute").endpoints(
-                        Endpoint.builder().tenantId("40806637803162").publicURL(
-                                 URI.create("https://servers.api.rackspacecloud.com/v1.0/40806637803162"))
-                                 .versionId("1.0").versionInfo(URI.create("https://servers.api.rackspacecloud.com/v1.0"))
-                                 .versionList(URI.create("https://servers.api.rackspacecloud.com/")).build()).build(),
-
-               Service.builder().name("cloudFiles").type("object-store").endpoints(
-                        Endpoint.builder().tenantId("MossoCloudFS_dc1f419c-5059-4c87-a389-3f2e33a77b22").publicURL(
-                                 URI.create("https://storage101.dfw1.clouddrive.com/v1/MossoCloudFS_dc1f419c-5059-4c87-a389-3f2e33a77b22"))
-                                 .internalURL(
-                                 URI.create("https://snet-storage101.dfw1.clouddrive.com/v1/MossoCloudFS_dc1f419c-5059-4c87-a389-3f2e33a77b22"))
-                                 .region("DFW").build()).build(),
-                                 
-               Service.builder().name("cloudServersOpenStack").type("compute").endpoints(
-                        Endpoint.builder().tenantId("40806637803162").publicURL(
-                                 URI.create("https://dfw.servers.api.rackspacecloud.com/v2/40806637803162"))
-                                 .versionInfo(URI.create("https://dfw.servers.api.rackspacecloud.com/v2"))
-                                 .versionList(URI.create("https://dfw.servers.api.rackspacecloud.com/"))
-                                 .versionId("2")
-                                 .region("DFW").build()).build(),                 
-
-               Service.builder().name("cloudLoadBalancers").type("rax:load-balancer").endpoints(
-                        Endpoint.builder().tenantId("40806637803162").publicURL(
-                                 URI.create("https://ord.loadbalancers.api.rackspacecloud.com/v1.0/40806637803162"))
-                                 .region("ORD").build(),
-                        Endpoint.builder().tenantId("40806637803162").publicURL(
-                                 URI.create("https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/40806637803162"))
-                                 .region("DFW").build()).build(),
-                                 
-               Service.builder().name("cloudMonitoring").type("rax:monitor").endpoints(
-                        Endpoint.builder().tenantId("40806637803162").publicURL(
-                                 URI.create("https://monitoring.api.rackspacecloud.com/v1.0/40806637803162")).build()).build(),
-               
-               Service.builder().name("cloudDNS").type("dnsextension:dns").endpoints(
-                        Endpoint.builder().tenantId("40806637803162").publicURL(
-                                 URI.create("https://dns.api.rackspacecloud.com/v1.0/40806637803162")).build()).build(),   
-                                 
-               Service.builder().name("cloudFilesCDN").type("rax:object-cdn").endpoints(
-                        Endpoint.builder().tenantId("MossoCloudFS_dc1f419c-5059-4c87-a389-3f2e33a77b22").publicURL(
-                                 URI.create("https://cdn1.clouddrive.com/v1/MossoCloudFS_dc1f419c-5059-4c87-a389-3f2e33a77b22"))
-                                 .region("DFW").build()).build()
-            ).build();
+      return Access.builder()
+                   .token(Token.builder()
+                               .expires(new SimpleDateFormatDateService().iso8601DateParse("2012-06-06T20:56:47.000-05:00"))
+                               .id("Auth_4f173437e4b013bee56d1007")
+                               .tenant(Tenant.builder().id("40806637803162").name("40806637803162").build()).build())
+                   .user(User.builder()
+                             .id("54321")
+                             .name("joe")
+                             .role(Role.builder()
+                                       .id("3")
+                                       .name("identity:user-admin")
+                                       .description("User Admin Role.").build()).build())
+                   .service(Service.builder().name("cloudDatabases").type("rax:database")
+                                   .endpoint(Endpoint.builder()
+                                                     .tenantId("40806637803162")
+                                                     .publicURL("https://dfw.databases.api.rackspacecloud.com/v1.0/40806637803162")
+                                                     .region("DFW").build())
+                                   .endpoint(Endpoint.builder()
+                                                     .tenantId("40806637803162")
+                                                     .publicURL("https://ord.databases.api.rackspacecloud.com/v1.0/40806637803162")
+                                                     .region("ORD").build()).build())
+                   .service(Service.builder().name("cloudServers").type("compute")
+                                   .endpoint(Endpoint.builder()
+                                                     .tenantId("40806637803162")
+                                                     .publicURL("https://servers.api.rackspacecloud.com/v1.0/40806637803162")
+                                                     .versionId("1.0")
+                                                     .versionInfo("https://servers.api.rackspacecloud.com/v1.0")
+                                                     .versionList("https://servers.api.rackspacecloud.com/").build()).build())
+                   .service(Service.builder().name("cloudFiles").type("object-store")
+                                   .endpoint(Endpoint.builder()
+                                                     .tenantId("MossoCloudFS_dc1f419c-5059-4c87-a389-3f2e33a77b22")
+                                                     .publicURL("https://storage101.dfw1.clouddrive.com/v1/MossoCloudFS_dc1f419c-5059-4c87-a389-3f2e33a77b22")
+                                                     .internalURL("https://snet-storage101.dfw1.clouddrive.com/v1/MossoCloudFS_dc1f419c-5059-4c87-a389-3f2e33a77b22")
+                                                     .region("DFW").build()).build())
+                   .service(Service.builder().name("cloudServersOpenStack").type("compute")
+                                   .endpoint(Endpoint.builder()
+                                                     .tenantId("40806637803162")
+                                                     .publicURL("https://dfw.servers.api.rackspacecloud.com/v2/40806637803162")
+                                                     .versionInfo("https://dfw.servers.api.rackspacecloud.com/v2")
+                                                     .versionList("https://dfw.servers.api.rackspacecloud.com/")
+                                                     .versionId("2")
+                                                     .region("DFW").build()).build())
+                   .service(Service.builder().name("cloudLoadBalancers").type("rax:load-balancer")
+                                   .endpoint(Endpoint.builder()
+                                                     .tenantId("40806637803162")
+                                                     .publicURL("https://ord.loadbalancers.api.rackspacecloud.com/v1.0/40806637803162")
+                                                     .region("ORD").build())
+                                   .endpoint(Endpoint.builder()
+                                                     .tenantId("40806637803162")
+                                                     .publicURL("https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/40806637803162")
+                                                     .region("DFW").build()).build())
+                   .service(Service.builder().name("cloudMonitoring").type("rax:monitor")
+                                   .endpoint(Endpoint.builder()
+                                                     .tenantId("40806637803162")
+                                                     .publicURL("https://monitoring.api.rackspacecloud.com/v1.0/40806637803162").build()).build())
+                   .service(Service.builder().name("cloudDNS").type("dnsextension:dns")
+                                   .endpoint(Endpoint.builder()
+                                                     .tenantId("40806637803162")
+                                                     .publicURL("https://dns.api.rackspacecloud.com/v1.0/40806637803162").build()).build())
+                   .service(Service.builder().name("cloudFilesCDN").type("rax:object-cdn")
+                                   .endpoint(Endpoint.builder()
+                                                     .tenantId("MossoCloudFS_dc1f419c-5059-4c87-a389-3f2e33a77b22")
+                                                     .publicURL("https://cdn1.clouddrive.com/v1/MossoCloudFS_dc1f419c-5059-4c87-a389-3f2e33a77b22")
+                                                     .region("DFW").build()).build()).build();
    }
 }
