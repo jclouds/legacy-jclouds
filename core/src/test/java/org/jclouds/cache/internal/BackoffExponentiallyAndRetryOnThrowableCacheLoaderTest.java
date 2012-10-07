@@ -23,7 +23,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.testng.Assert.assertSame;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
@@ -70,7 +70,7 @@ public class BackoffExponentiallyAndRetryOnThrowableCacheLoaderTest {
       replay(mock);
       try {
          backoff.load("foo");
-         assertTrue(false);
+         fail();
       } catch (ResourceNotFoundException e) {
 
       }
@@ -88,7 +88,7 @@ public class BackoffExponentiallyAndRetryOnThrowableCacheLoaderTest {
       replay(mock);
       try {
          backoff.load("foo");
-         assertTrue(false);
+         fail();
       } catch (TimeoutException e) {
 
       }
