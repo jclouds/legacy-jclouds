@@ -23,7 +23,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import java.util.concurrent.Callable;
 
@@ -66,7 +66,7 @@ public class BackoffExponentiallyAndRetryOnThrowableCallableTest {
       replay(mock);
       try {
          backoff.call();
-         assertTrue(false);
+         fail();
       } catch (ResourceNotFoundException e) {
 
       }

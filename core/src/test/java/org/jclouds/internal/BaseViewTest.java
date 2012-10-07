@@ -21,8 +21,8 @@ package org.jclouds.internal;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.fail;
 
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.providers.ProviderMetadata;
@@ -89,7 +89,7 @@ public class BaseViewTest {
       assertNotEquals(wine.getBackendType(), TypeToken.of(PeanutButter.class));
       try {
          wine.unwrap(TypeToken.of(PeanutButter.class));
-         assertFalse(true);
+         fail();
       } catch (IllegalArgumentException e) {
          assertEquals(e.getMessage(), "backend type: org.jclouds.internal.BaseViewTest$Water not assignable from org.jclouds.internal.BaseViewTest$PeanutButter");
       }
