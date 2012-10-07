@@ -35,6 +35,8 @@ import org.jclouds.abiquo.domain.network.Network;
 import org.jclouds.abiquo.domain.network.UnmanagedNetwork;
 import org.jclouds.abiquo.domain.task.AsyncTask;
 import org.jclouds.abiquo.domain.util.LinkUtils;
+import org.jclouds.abiquo.features.services.MonitoringService;
+import org.jclouds.abiquo.monitor.VirtualMachineMonitor;
 import org.jclouds.abiquo.predicates.LinkPredicates;
 import org.jclouds.abiquo.reference.ValidationErrors;
 import org.jclouds.abiquo.reference.rest.ParentLinkName;
@@ -55,6 +57,8 @@ import com.abiquo.server.core.cloud.VirtualMachineTaskDto;
 import com.abiquo.server.core.cloud.VirtualMachineWithNodeExtendedDto;
 import com.abiquo.server.core.enterprise.EnterpriseDto;
 import com.abiquo.server.core.infrastructure.network.UnmanagedIpDto;
+import com.abiquo.server.core.infrastructure.network.VMNetworkConfigurationDto;
+import com.abiquo.server.core.infrastructure.network.VMNetworkConfigurationsDto;
 import com.abiquo.server.core.infrastructure.storage.DiskManagementDto;
 import com.abiquo.server.core.infrastructure.storage.DisksManagementDto;
 import com.abiquo.server.core.infrastructure.storage.DvdManagementDto;
@@ -492,13 +496,13 @@ public class VirtualMachine extends DomainWithTasksWrapper<VirtualMachineWithNod
         return setVolumes(true, volumes);
     }
 
-    public AsyncTask setNics(final List<Ip< ? , ? >> ips)
+    public AsyncTask setNics(final List< ? extends Ip< ? , ? >> ips)
     {
         // By default the network of the first ip will be used as a gateway
         return setNics(ips != null && !ips.isEmpty() ? ips.get(0).getNetwork() : null, ips, null);
     }
 
-    public AsyncTask setNics(final List<Ip< ? , ? >> ips,
+    public AsyncTask setNics(final List< ? extends Ip< ? , ? >> ips,
         final List<UnmanagedNetwork> unmanagetNetworks)
     {
         // By default the network of the first ip will be used as a gateway
@@ -515,18 +519,15 @@ public class VirtualMachine extends DomainWithTasksWrapper<VirtualMachineWithNod
         return setNics(gateway, ips, unmanagetNetworks);
     }
 
-    public AsyncTask setNics(final Network< ? > gatewayNetwork, final List<Ip< ? , ? >> ips)
+    public AsyncTask setNics(final Network< ? > gatewayNetwork,
+        final List< ? extends Ip< ? , ? >> ips)
     {
         return setNics(gatewayNetwork, ips, null);
     }
 
-    public AsyncTask setNics(final Network< ? > gatewayNetwork, final List<Ip< ? , ? >> ips,
-        final List<UnmanagedNetwork> unmanagetNetworks)
+    public AsyncTask setNics(final Network< ? > gatewayNetwork,
+        final List< ? extends Ip< ? , ? >> ips, final List<UnmanagedNetwork> unmanagetNetworks)
     {
-        RESTLink configLink =
-            checkNotNull(target.searchLink(ParentLinkName.NETWORK_CONFIGURATIONS),
-                ValidationErrors.MISSING_REQUIRED_LINK + ParentLinkName.NETWORK_CONFIGURATIONS);
-
         // Remove the gateway configuration and the current nics
         Iterables.removeIf(
             target.getLinks(),
@@ -562,11 +563,40 @@ public class VirtualMachine extends DomainWithTasksWrapper<VirtualMachineWithNod
             }
         }
 
-        // Set the new network configuration
-        if (gatewayNetwork != null)
+        AsyncTask task = update(true);
+        if (gatewayNetwork == null)
         {
-            target.addLink(new RESTLink(ParentLinkName.NETWORK_GATEWAY, configLink.getHref() + "/"
-                + gatewayNetwork.getId()));
+            return task;
+        }
+
+        // If there is a gateway network, we have to wait until the network configuration links are
+        // available
+        if (task != null)
+        {
+            VirtualMachineState originalState = target.getState();
+            VirtualMachineMonitor monitor =
+                context.getUtils().getInjector().getInstance(MonitoringService.class)
+                    .getVirtualMachineMonitor();
+            monitor.awaitState(originalState, this);
+        }
+
+        // Set the new network configuration
+
+        // Refresh virtual machine, to get the new configuration links
+        refresh();
+
+        VMNetworkConfigurationsDto configs =
+            context.getApi().getCloudApi().listNetworkConfigurations(target);
+
+        Iterables.removeIf(target.getLinks(), LinkPredicates.rel(ParentLinkName.NETWORK_GATEWAY));
+        for (VMNetworkConfigurationDto config : configs.getCollection())
+        {
+            if (config.getGateway().equalsIgnoreCase(gatewayNetwork.getGateway()))
+            {
+                target.addLink(new RESTLink(ParentLinkName.NETWORK_GATEWAY, config.getEditLink()
+                    .getHref()));
+                break;
+            }
         }
 
         return update(true);

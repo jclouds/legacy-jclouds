@@ -19,41 +19,68 @@
 
 package org.jclouds.abiquo.compute.functions;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.abiquo.domain.cloud.VirtualDatacenter;
 import org.jclouds.abiquo.domain.cloud.VirtualMachineTemplate;
+import org.jclouds.abiquo.domain.cloud.VirtualMachineTemplateWithZone;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.HardwareBuilder;
+import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.domain.VolumeBuilder;
 import org.jclouds.compute.predicates.ImagePredicates;
+import org.jclouds.domain.Location;
 
 import com.google.common.base.Function;
 
 /**
  * Transforms a {@link VirtualMachineTemplate} into an {@link Hardware}.
+ * <p>
+ * Each {@link Image} ({@link VirtualMachineTemplate}) will have one {@link Hardware} entity for
+ * each zone (scoped to a virtualization technology) supported by the image.
  * 
  * @author Ignasi Barrera
  */
 @Singleton
-public class VirtualMachineTemplateToHardware implements Function<VirtualMachineTemplate, Hardware>
+public class VirtualMachineTemplateWithZoneToHardware implements
+    Function<VirtualMachineTemplateWithZone, Hardware>
 {
     /** The default core speed, 2.0Ghz. */
     public static final double DEFAULT_CORE_SPEED = 2.0;
 
-    @Override
-    public Hardware apply(final VirtualMachineTemplate template)
+    private final Function<VirtualDatacenter, Location> virtualDatacenterToLocation;
+
+    @Inject
+    public VirtualMachineTemplateWithZoneToHardware(
+        final Function<VirtualDatacenter, Location> virtualDatacenterToLocation)
     {
+        this.virtualDatacenterToLocation =
+            checkNotNull(virtualDatacenterToLocation, "virtualDatacenterToLocation");
+    }
+
+    @Override
+    public Hardware apply(final VirtualMachineTemplateWithZone templateWithZone)
+    {
+        VirtualMachineTemplate template = templateWithZone.getTemplate();
+        VirtualDatacenter zone = templateWithZone.getZone();
+
         HardwareBuilder builder = new HardwareBuilder();
-        builder.ids(template.getId().toString());
+        builder.providerId(template.getId().toString());
+        builder.id(template.getId().toString() + "-" + zone.getId());
         builder.uri(template.getURI());
 
         builder.name(template.getName());
         builder.processor(new Processor(template.getCpuRequired(), DEFAULT_CORE_SPEED));
         builder.ram(template.getRamRequired());
 
-        // Currently we consider each template as a hardware profile
+        // Location information
+        builder.location(virtualDatacenterToLocation.apply(zone));
+        builder.hypervisor(zone.getHypervisorType().name());
         builder.supportsImage(ImagePredicates.idEquals(template.getId().toString()));
 
         VolumeBuilder volumeBuilder = new VolumeBuilder();

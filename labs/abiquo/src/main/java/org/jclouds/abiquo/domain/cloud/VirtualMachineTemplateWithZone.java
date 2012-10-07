@@ -16,38 +16,38 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.jclouds.abiquo.domain.cloud;
 
-package org.jclouds.abiquo.compute.exception;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Exception thrown when there are not enough resources in the infrastructure to deploy the desired
- * template.
+ * Wrapper to hold the information of a virtual machine template scoped to a concrete hypervisor
+ * type.
  * 
  * @author Ignasi Barrera
  */
-public class NotEnoughResourcesException extends RuntimeException
+public class VirtualMachineTemplateWithZone
 {
-    /** Serial UID. */
-    private static final long serialVersionUID = 1L;
+    private VirtualMachineTemplate template;
 
-    public NotEnoughResourcesException()
+    private VirtualDatacenter zone;
+
+    public VirtualMachineTemplateWithZone(final VirtualMachineTemplate template,
+        final VirtualDatacenter zone)
     {
         super();
+        this.template = checkNotNull(template, "template");
+        this.zone = checkNotNull(zone, "zone");
     }
 
-    public NotEnoughResourcesException(final String arg0, final Throwable arg1)
+    public VirtualMachineTemplate getTemplate()
     {
-        super(arg0, arg1);
+        return template;
     }
 
-    public NotEnoughResourcesException(final String arg0)
+    public VirtualDatacenter getZone()
     {
-        super(arg0);
-    }
-
-    public NotEnoughResourcesException(final Throwable arg0)
-    {
-        super(arg0);
+        return zone;
     }
 
 }
