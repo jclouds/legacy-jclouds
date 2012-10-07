@@ -27,7 +27,6 @@ import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Charsets;
-import com.google.common.io.CharStreams;
 import com.google.common.io.Resources;
 
 /**
@@ -40,8 +39,7 @@ public class AdminAccessTest {
       TestConfiguration.INSTANCE.reset();
       try {
          assertEquals(AdminAccess.standard().init(TestConfiguration.INSTANCE).render(OsFamily.UNIX),
-               CharStreams.toString(Resources.newReaderSupplier(Resources.getResource("test_adminaccess_standard.sh"),
-                     Charsets.UTF_8)));
+               Resources.toString(Resources.getResource("test_adminaccess_standard.sh"), Charsets.UTF_8));
       } finally {
          TestConfiguration.INSTANCE.reset();
       }
@@ -55,8 +53,7 @@ public class AdminAccessTest {
                      .adminPublicKey("fooPublicKey").adminUsername("foo")
                      .adminHome("/over/ridden/foo").build()
                      .init(TestConfiguration.INSTANCE).render(OsFamily.UNIX), 
-                     CharStreams.toString(Resources.newReaderSupplier(
-                     Resources.getResource("test_adminaccess_params.sh"), Charsets.UTF_8)));
+                     Resources.toString(Resources.getResource("test_adminaccess_params.sh"), Charsets.UTF_8));
 
       } finally {
          TestConfiguration.INSTANCE.reset();
@@ -71,8 +68,7 @@ public class AdminAccessTest {
                      .adminPublicKey("fooPublicKey").adminUsername("foo").adminFullName("JClouds Foo")
                      .adminHome("/over/ridden/foo").build()
                      .init(TestConfiguration.INSTANCE).render(OsFamily.UNIX),
-               CharStreams.toString(Resources.newReaderSupplier(
-                     Resources.getResource("test_adminaccess_params_and_fullname.sh"), Charsets.UTF_8)));
+               Resources.toString(Resources.getResource("test_adminaccess_params_and_fullname.sh"), Charsets.UTF_8));
 
       } finally {
          TestConfiguration.INSTANCE.reset();
@@ -86,8 +82,8 @@ public class AdminAccessTest {
          assertEquals(
                AdminAccess.builder().grantSudoToAdminUser(false).authorizeAdminPublicKey(true)
                      .installAdminPrivateKey(true).lockSsh(false).resetLoginPassword(false).build()
-                     .init(TestConfiguration.INSTANCE).render(OsFamily.UNIX), CharStreams.toString(Resources
-                     .newReaderSupplier(Resources.getResource("test_adminaccess_plainuser.sh"), Charsets.UTF_8)));
+                     .init(TestConfiguration.INSTANCE).render(OsFamily.UNIX),
+                     Resources.toString(Resources.getResource("test_adminaccess_plainuser.sh"), Charsets.UTF_8));
       } finally {
          TestConfiguration.INSTANCE.reset();
       }
