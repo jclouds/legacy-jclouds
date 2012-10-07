@@ -43,15 +43,13 @@ public class VirtualMachineStateToNodeState implements Function<VirtualMachineSt
             case ALLOCATED:
             case LOCKED:
             case CONFIGURED:
+            case NOT_ALLOCATED:
                 return Status.PENDING;
             case ON:
                 return Status.RUNNING;
             case OFF:
             case PAUSED:
                 return Status.SUSPENDED;
-            case NOT_ALLOCATED:
-                // TODO: What about nodes created but still not deployed?
-                return Status.TERMINATED;
             case UNKNOWN:
             default:
                 return Status.UNRECOGNIZED;

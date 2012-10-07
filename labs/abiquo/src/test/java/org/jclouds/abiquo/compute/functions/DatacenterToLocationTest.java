@@ -49,6 +49,6 @@ public class DatacenterToLocationTest
         Location location = function.apply(datacenter);
 
         assertEquals(location.getId(), "5");
-        assertEquals(location.getScope(), LocationScope.ZONE);
+        assertEquals(location.getScope(), LocationScope.REGION);
     }
 }

@@ -20,11 +20,13 @@
 package org.jclouds.abiquo.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.concat;
+import static com.google.common.collect.Iterables.transform;
 
-import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -35,16 +37,18 @@ import org.jclouds.abiquo.domain.cloud.VirtualAppliance;
 import org.jclouds.abiquo.domain.cloud.VirtualDatacenter;
 import org.jclouds.abiquo.domain.cloud.VirtualMachine;
 import org.jclouds.abiquo.domain.cloud.VirtualMachineTemplate;
+import org.jclouds.abiquo.domain.cloud.VirtualMachineTemplateWithZone;
 import org.jclouds.abiquo.domain.enterprise.Enterprise;
-import org.jclouds.abiquo.domain.enterprise.User;
 import org.jclouds.abiquo.domain.infrastructure.Datacenter;
+import org.jclouds.abiquo.domain.network.PublicIp;
 import org.jclouds.abiquo.features.services.AdministrationService;
 import org.jclouds.abiquo.features.services.CloudService;
 import org.jclouds.abiquo.features.services.MonitoringService;
 import org.jclouds.abiquo.monitor.VirtualMachineMonitor;
 import org.jclouds.abiquo.predicates.cloud.VirtualAppliancePredicates;
 import org.jclouds.abiquo.predicates.cloud.VirtualMachineTemplatePredicates;
-import org.jclouds.abiquo.predicates.infrastructure.DatacenterPredicates;
+import org.jclouds.abiquo.predicates.network.IpPredicates;
+import org.jclouds.collect.Memoized;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.Hardware;
@@ -55,7 +59,11 @@ import org.jclouds.logging.Logger;
 import org.jclouds.rest.RestContext;
 
 import com.abiquo.server.core.cloud.VirtualMachineState;
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
+import com.google.common.collect.Lists;
+import com.google.inject.Inject;
 
 /**
  * Defines the connection between the {@link AbiquoApi} implementation and the jclouds
@@ -66,7 +74,7 @@ import com.google.common.base.Predicate;
 @Singleton
 public class AbiquoComputeServiceAdapter
     implements
-    ComputeServiceAdapter<VirtualMachine, VirtualMachineTemplate, VirtualMachineTemplate, Datacenter>
+    ComputeServiceAdapter<VirtualMachine, VirtualMachineTemplateWithZone, VirtualMachineTemplate, VirtualDatacenter>
 {
     @Resource
     @Named(ComputeServiceConstants.COMPUTE_LOGGER)
@@ -80,19 +88,24 @@ public class AbiquoComputeServiceAdapter
 
     private final MonitoringService monitoringService;
 
-    private AbiquoComputeServiceHelper helper;
+    private final FindCompatibleVirtualDatacenters compatibleVirtualDatacenters;
+
+    private final Supplier<Map<Integer, Datacenter>> regionMap;
 
     @Inject
     public AbiquoComputeServiceAdapter(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
         final AdministrationService adminService, final CloudService cloudService,
-        final MonitoringService monitoringService, final AbiquoComputeServiceHelper helper)
+        final MonitoringService monitoringService,
+        final FindCompatibleVirtualDatacenters compatibleVirtualDatacenters,
+        @Memoized final Supplier<Map<Integer, Datacenter>> regionMap)
     {
-        super();
         this.context = checkNotNull(context, "context");
         this.adminService = checkNotNull(adminService, "adminService");
         this.cloudService = checkNotNull(cloudService, "cloudService");
         this.monitoringService = checkNotNull(monitoringService, "monitoringService");
-        this.helper = checkNotNull(helper, "helper");
+        this.compatibleVirtualDatacenters =
+            checkNotNull(compatibleVirtualDatacenters, "compatibleVirtualDatacenters");
+        this.regionMap = checkNotNull(regionMap, "regionMap");
     }
 
     @Override
@@ -100,23 +113,23 @@ public class AbiquoComputeServiceAdapter
         final String tag, final String name, final Template template)
     {
         AbiquoTemplateOptions options = template.getOptions().as(AbiquoTemplateOptions.class);
-
-        User user = adminService.getCurrentUser();
         Enterprise enterprise = adminService.getCurrentEnterprise();
 
+        // Get the region where the template is available
         Datacenter datacenter =
-            enterprise.findAllowedDatacenter(DatacenterPredicates.id(Integer.valueOf(template
-                .getLocation().getId())));
+            regionMap.get().get(Integer.valueOf(template.getImage().getLocation().getId()));
 
+        // Load the template
         VirtualMachineTemplate virtualMachineTemplate =
             enterprise.getTemplateInRepository(datacenter,
                 Integer.valueOf(template.getImage().getId()));
 
+        // Get the zone where the template will be deployed
         VirtualDatacenter vdc =
-            helper.getOrCreateVirtualDatacenter(user, enterprise, datacenter,
-                virtualMachineTemplate, options);
+            cloudService.getVirtualDatacenter(Integer.valueOf(template.getHardware().getLocation()
+                .getId()));
 
-        // Load the virtual appliance or create it
+        // Load the virtual appliance or create it if it does not exist
         VirtualAppliance vapp = vdc.findVirtualAppliance(VirtualAppliancePredicates.name(tag));
         if (vapp == null)
         {
@@ -137,24 +150,51 @@ public class AbiquoComputeServiceAdapter
         vm.save();
 
         // Once the virtual machine is created, override the default network settings if needed
-        helper.configureNetwork(vm, options.getGatewayNetwork(), options.getIps() == null ? null
-            : Arrays.asList(options.getIps()),
-            options.getUnmanagedIps() == null ? null : Arrays.asList(options.getUnmanagedIps()));
+        // If no public ip is available in the virtual datacenter, the virtual machine will be
+        // assigned by default an ip address in the default private VLAN for the virtual datacenter
+        PublicIp publicIp = vdc.findPurchasedPublicIp(IpPredicates.<PublicIp> notUsed());
+        if (publicIp != null)
+        {
+            List<PublicIp> ips = Lists.newArrayList();
+            ips.add(publicIp);
+            vm.setNics(ips);
+        }
 
-        VirtualMachineMonitor monitor = monitoringService.getVirtualMachineMonitor();
+        // This is an async operation, but jclouds already waits until the node is RUNNING, so there
+        // is no need to block here
         vm.deploy();
-        monitor.awaitCompletionDeploy(vm);
 
-        return new NodeAndInitialCredentials<VirtualMachine>(vm, vm.getId().toString(), template
-            .getImage().getDefaultCredentials());
+        return new NodeAndInitialCredentials<VirtualMachine>(vm, vm.getId().toString(), null);
     }
 
     @Override
-    public Iterable<VirtualMachineTemplate> listHardwareProfiles()
+    public Iterable<VirtualMachineTemplateWithZone> listHardwareProfiles()
     {
-        // Abiquo does not have the hardwre profiles concept. Users can consume CPU and RAM
-        // resources limited only by the Enterprise or Virtual datacenter limits.
-        return listImages();
+        // In Abiquo, images are scoped to a region (physical datacenter), and hardware profiles are
+        // scoped to a zone (a virtual datacenter in the region, with a concrete virtualization
+        // technology)
+
+        return concat(transform(listImages(),
+            new Function<VirtualMachineTemplate, Iterable<VirtualMachineTemplateWithZone>>()
+            {
+                @Override
+                public Iterable<VirtualMachineTemplateWithZone> apply(
+                    final VirtualMachineTemplate template)
+                {
+                    Iterable<VirtualDatacenter> compatibleZones =
+                        compatibleVirtualDatacenters.execute(template);
+
+                    return transform(compatibleZones,
+                        new Function<VirtualDatacenter, VirtualMachineTemplateWithZone>()
+                        {
+                            @Override
+                            public VirtualMachineTemplateWithZone apply(final VirtualDatacenter vdc)
+                            {
+                                return new VirtualMachineTemplateWithZone(template, vdc);
+                            }
+                        });
+                }
+            }));
     }
 
     @Override
@@ -172,17 +212,14 @@ public class AbiquoComputeServiceAdapter
     }
 
     @Override
-    public Iterable<Datacenter> listLocations()
+    public Iterable<VirtualDatacenter> listLocations()
     {
-        Enterprise enterprise = adminService.getCurrentEnterprise();
-        return enterprise.listAllowedDatacenters();
+        return cloudService.listVirtualDatacenters();
     }
 
     @Override
     public VirtualMachine getNode(final String id)
     {
-        // FIXME: Try to avoid calling the cloudService.findVirtualMachine. Navigate the hierarchy
-        // instead.
         return cloudService.findVirtualMachine(vmId(id));
     }
 
