@@ -30,7 +30,6 @@ import org.jclouds.scriptbuilder.domain.ShellToken;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Charsets;
-import com.google.common.io.CharStreams;
 import com.google.common.io.Resources;
 
 /**
@@ -44,7 +43,7 @@ public class ExportIpAddressForVMNamedTest {
 	.addStatement(interpret("echo {varl}FOUND_IP_ADDRESS{varr}{lf}"));
    	
    public void testUNIX() throws IOException {  	
-      assertEquals(exportIpAddressForVMNamedBuilder.render(OsFamily.UNIX), CharStreams.toString(Resources.newReaderSupplier(Resources
-               .getResource("test_export_ip_address_from_vm_named." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
+      assertEquals(exportIpAddressForVMNamedBuilder.render(OsFamily.UNIX), Resources.toString(Resources.getResource(
+               "test_export_ip_address_from_vm_named." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8));
    }
 }

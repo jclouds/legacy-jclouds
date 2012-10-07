@@ -29,7 +29,6 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.io.CharStreams;
 import com.google.common.io.Resources;
 
 /**
@@ -44,16 +43,16 @@ public class EnvBuilderTest {
 
    @Test
    public void testBuildSimpleWindows() throws MalformedURLException, IOException {
-      assertEquals(testScriptBuilder.build(OsFamily.WINDOWS), CharStreams.toString(Resources
-               .newReaderSupplier(Resources.getResource("test_env."
-                        + ShellToken.SH.to(OsFamily.WINDOWS)), Charsets.UTF_8)));
+      assertEquals(testScriptBuilder.build(OsFamily.WINDOWS),
+              Resources.toString(Resources.getResource("test_env."
+                        + ShellToken.SH.to(OsFamily.WINDOWS)), Charsets.UTF_8));
    }
 
    @Test
    public void testBuildSimpleUNIX() throws MalformedURLException, IOException {
-      assertEquals(testScriptBuilder.build(OsFamily.UNIX), CharStreams.toString(Resources
-               .newReaderSupplier(Resources.getResource("test_env."
-                        + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
+      assertEquals(testScriptBuilder.build(OsFamily.UNIX),
+               Resources.toString(Resources.getResource("test_env."
+                        + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8));
    }
 
    @Test

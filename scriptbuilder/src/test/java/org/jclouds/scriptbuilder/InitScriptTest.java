@@ -34,7 +34,6 @@ import org.testng.annotations.Test;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.io.CharStreams;
 import com.google.common.io.Resources;
 
 /**
@@ -54,15 +53,13 @@ public class InitScriptTest {
    public void testBuildSimpleWindows() throws MalformedURLException, IOException {
       assertEquals(
             testInitScript.render(OsFamily.WINDOWS),
-            CharStreams.toString(Resources.newReaderSupplier(
-                  Resources.getResource("test_init." + ShellToken.SH.to(OsFamily.WINDOWS)), Charsets.UTF_8)));
+            Resources.toString(Resources.getResource("test_init." + ShellToken.SH.to(OsFamily.WINDOWS)), Charsets.UTF_8));
    }
 
    public void testBuildSimpleUNIX() throws MalformedURLException, IOException {
       assertEquals(
             testInitScript.render(OsFamily.UNIX),
-            CharStreams.toString(Resources.newReaderSupplier(
-                  Resources.getResource("test_init." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
+            Resources.toString(Resources.getResource("test_init." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8));
    }
 
    public void testBuildEBS() throws MalformedURLException, IOException {
@@ -87,8 +84,7 @@ public class InitScriptTest {
                               "du -sk {varl}EBS_MOUNT_POINT{varr}", "echo size of source",
                               "du -sk {varl}IMAGE_DIR{varr}", "rm -rf {varl}IMAGE_DIR{varr}/*",
                               "umount {varl}EBS_MOUNT_POINT{varr}", "echo ----COMPLETE----")).build().render(OsFamily.UNIX),
-            CharStreams.toString(Resources.newReaderSupplier(
-                  Resources.getResource("test_ebs." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
+            Resources.toString(Resources.getResource("test_ebs." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8));
    }
 
    InitScript testCallInRun = InitScript.builder().name("testcall").init(exec("echo hello"))
@@ -98,8 +94,7 @@ public class InitScriptTest {
    public void testCallInRunUNIX() throws MalformedURLException, IOException {
       assertEquals(
             testCallInRun.render(OsFamily.UNIX),
-            CharStreams.toString(Resources.newReaderSupplier(
-                  Resources.getResource("test_init_script." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
+            Resources.toString(Resources.getResource("test_init_script." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8));
    }
 
 }

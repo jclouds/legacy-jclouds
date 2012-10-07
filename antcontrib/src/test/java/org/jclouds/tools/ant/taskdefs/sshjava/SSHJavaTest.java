@@ -39,7 +39,6 @@ import org.testng.annotations.Test;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
-import com.google.common.io.CharStreams;
 import com.google.common.io.Files;
 import com.google.common.io.Resources;
 
@@ -65,9 +64,8 @@ public class SSHJavaTest {
                .getCommandLine()), new File("build", "init.sh"), Charsets.UTF_8);
       task.remotedir=new File(task.remotebase, task.id);
       task.replaceAllTokensIn(new File("build"));
-      assertEquals(Files.toString(new File("build", "init.sh"), Charsets.UTF_8), CharStreams
-               .toString(Resources.newReaderSupplier(Resources.getResource("init.sh"),
-                        Charsets.UTF_8)));
+      assertEquals(Files.toString(new File("build", "init.sh"), Charsets.UTF_8),
+               Resources.toString(Resources.getResource("init.sh"), Charsets.UTF_8));
    }
 
    private Java populateTask(Java task) {
