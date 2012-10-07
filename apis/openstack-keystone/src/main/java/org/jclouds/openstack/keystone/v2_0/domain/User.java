@@ -27,6 +27,7 @@ import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.ForwardingSet;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -37,10 +38,10 @@ import com.google.common.collect.ImmutableSet;
  * tenant.
  *
  * @author Adrian Cole
- * @see <a href="http://docs.openstack.org/api/openstack-identity-service/2.0/content/Identity-Service-Concepts-e1362.html"
+ * @see <a href="http://docs.openstack.org/api/openstack-identity-service/2.0/content/Identity-User-Concepts-e1362.html"
  *      />
  */
-public class User {
+public class User extends ForwardingSet<Role> {
 
    public static Builder<?> builder() {
       return new ConcreteBuilder();
@@ -55,7 +56,7 @@ public class User {
 
       protected String id;
       protected String name;
-      protected Set<Role> roles = ImmutableSet.of();
+      protected ImmutableSet.Builder<Role> roles = ImmutableSet.<Role> builder();
 
       /**
        * @see User#getId()
@@ -74,26 +75,38 @@ public class User {
       }
 
       /**
-       * @see User#getRoles()
+       * @see User#delegate()
        */
-      public T roles(Set<Role> roles) {
-         this.roles = ImmutableSet.copyOf(checkNotNull(roles, "roles"));
+      public T role(Role role) {
+         this.roles.add(role);
          return self();
       }
 
+      /**
+       * @see User#delegate()
+       */
+      public T roles(Iterable<Role> roles) {
+         this.roles.addAll(roles);
+         return self();
+      }
+
+      /**
+       * @see #roles(Iterable)
+       */
+      @Deprecated
       public T roles(Role... in) {
          return roles(ImmutableSet.copyOf(in));
       }
 
       public User build() {
-         return new User(id, name, roles);
+         return new User(id, name, roles.build());
       }
 
       public T fromUser(User in) {
          return this
                .id(in.getId())
                .name(in.getName())
-               .roles(in.getRoles());
+               .roles(in);
       }
    }
 
@@ -114,7 +127,7 @@ public class User {
    protected User(String id, String name, @Nullable Set<Role> roles) {
       this.id = checkNotNull(id, "id");
       this.name = checkNotNull(name, "name");
-      this.roles = roles == null ? ImmutableSet.<Role>of() : ImmutableSet.copyOf(checkNotNull(roles, "roles"));
+      this.roles = roles == null ? ImmutableSet.<Role>of() : ImmutableSet.copyOf(roles);
    }
 
    /**
@@ -134,8 +147,10 @@ public class User {
    }
 
    /**
+    * Please use User as a Set
     * @return the roles assigned to the user
     */
+   @Deprecated
    public Set<Role> getRoles() {
       return this.roles;
    }
@@ -156,13 +171,18 @@ public class User {
    }
 
    protected ToStringHelper string() {
-      return Objects.toStringHelper(this)
+      return Objects.toStringHelper(this).omitNullValues()
             .add("id", id).add("name", name).add("roles", roles);
    }
 
    @Override
    public String toString() {
       return string().toString();
+   }
+
+   @Override
+   protected Set<Role> delegate() {
+      return roles;
    }
 
 }

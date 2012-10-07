@@ -195,7 +195,7 @@ public class Role {
    }
 
    protected ToStringHelper string() {
-      return Objects.toStringHelper(this)
+      return Objects.toStringHelper(this).omitNullValues()
             .add("id", id).add("name", name).add("description", description).add("serviceId", serviceId).add("tenantId", tenantId);
    }
 
