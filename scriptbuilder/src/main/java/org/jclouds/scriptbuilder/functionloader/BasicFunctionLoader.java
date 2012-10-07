@@ -19,7 +19,6 @@
 package org.jclouds.scriptbuilder.functionloader;
 
 import com.google.common.base.Charsets;
-import com.google.common.io.CharStreams;
 import com.google.common.io.Resources;
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.ShellToken;
@@ -46,9 +45,9 @@ public enum BasicFunctionLoader implements FunctionLoader {
    @Override
    public String loadFunction(String function, OsFamily family) throws FunctionNotFoundException {
       try {
-         return CharStreams.toString(Resources.newReaderSupplier(ClassLoadingUtils.loadResource(
+         return Resources.toString(ClassLoadingUtils.loadResource(
                   BasicFunctionLoader.class, String.format("/functions/%s.%s", function, ShellToken.SH.to(family))),
-                  Charsets.UTF_8));
+                  Charsets.UTF_8);
       } catch (IOException e) {
          throw new FunctionNotFoundException(function, family, e);
       }

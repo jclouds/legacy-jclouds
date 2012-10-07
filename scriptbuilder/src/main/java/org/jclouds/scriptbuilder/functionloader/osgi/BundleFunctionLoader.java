@@ -32,7 +32,6 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
 import com.google.common.base.Charsets;
-import com.google.common.io.CharStreams;
 import com.google.common.io.Resources;
 
 /**
@@ -93,8 +92,8 @@ public class BundleFunctionLoader implements FunctionLoader {
    @Override
    public String loadFunction(String function, OsFamily family) throws FunctionNotFoundException {
       try {
-         return CharStreams.toString(Resources.newReaderSupplier(bundleContext.getBundle().getResource(
-                  String.format("/functions/%s.%s", function, ShellToken.SH.to(family))), Charsets.UTF_8));
+         return Resources.toString(bundleContext.getBundle().getResource(
+                  String.format("/functions/%s.%s", function, ShellToken.SH.to(family))), Charsets.UTF_8);
       } catch (IOException e) {
          throw new FunctionNotFoundException(function, family, e);
       }

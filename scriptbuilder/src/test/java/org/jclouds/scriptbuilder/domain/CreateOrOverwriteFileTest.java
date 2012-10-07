@@ -27,7 +27,6 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
-import com.google.common.io.CharStreams;
 import com.google.common.io.Resources;
 
 /**
@@ -39,13 +38,13 @@ public class CreateOrOverwriteFileTest {
             "log_location STDOUT", String.format("chef_server_url \"%s\"", "http://localhost:4000")));
 
    public void testUNIX() throws IOException {
-      assertEquals(statement.render(OsFamily.UNIX), CharStreams.toString(Resources.newReaderSupplier(Resources
-               .getResource("client_rb_overwrite." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
+      assertEquals(statement.render(OsFamily.UNIX), Resources.toString(Resources
+               .getResource("client_rb_overwrite." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8));
    }
 
    public void testWINDOWS() throws IOException {
-      assertEquals(statement.render(OsFamily.WINDOWS), CharStreams.toString(Resources.newReaderSupplier(Resources
-               .getResource("client_rb_overwrite." + ShellToken.SH.to(OsFamily.WINDOWS)), Charsets.UTF_8)));
+      assertEquals(statement.render(OsFamily.WINDOWS), Resources.toString(Resources
+               .getResource("client_rb_overwrite." + ShellToken.SH.to(OsFamily.WINDOWS)), Charsets.UTF_8));
    }
 
 }
