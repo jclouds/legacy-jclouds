@@ -22,47 +22,55 @@ import org.jclouds.openstack.v2_0.ServiceType;
 
 /**
  * Configuration properties and constants used in Keystone connections.
- * 
+ *
  * @author Adrian Cole
  */
 public interface KeystoneProperties {
 
    /**
     * Type of credentials used to log into the auth service.
-    * 
+    *
     * <h3>valid values</h3>
     * <ul>
     * <li>apiAccessKeyCredentials</li>
     * <li>passwordCredentials</li>
     * </ul>
-    * 
+    *
     * @see CredentialTypes
-    * @see <a href="http://docs.openstack.org/api/openstack-identity-service/2.0/content/POST_authenticate_v2.0_tokens_Service_API_Api_Operations.html"
+    * @see <a href=
+    *      "http://docs.openstack.org/api/openstack-identity-service/2.0/content/POST_authenticate_v2.0_tokens_Service_API_Api_Operations.html"
     *      />
     */
    public static final String CREDENTIAL_TYPE = "jclouds.keystone.credential-type";
-   
+
    /**
-    * set this property to specify the tenant id of the authenticated user.  Cannot be used simultaneously with {@link #TENANT_NAME}
+    * set this property to specify the tenant id of the authenticated user.
+    * Cannot be used simultaneously with {@link #TENANT_NAME}
+    *
     * @see <a href="http://wiki.openstack.org/CLIAuth">openstack docs</a>
     */
    public static final String TENANT_ID = "jclouds.keystone.tenant-id";
-   
+
    /**
-    * set this property to specify the tenant name of the authenticated user.  Cannot be used simultaneously with {@link #TENANT_ID}
+    * set this property to specify the tenant name of the authenticated user.
+    * Cannot be used simultaneously with {@link #TENANT_ID}
+    *
     * @see <a href="http://wiki.openstack.org/CLIAuth">openstack docs</a>
     */
    public static final String TENANT_NAME = "jclouds.keystone.tenant-name";
-   
+
    /**
-    * set this property to {@code true} to designate that the service requires explicit specification of either {@link #TENANT_NAME} or {@link #TENANT_ID}
+    * set this property to {@code true} to designate that the service requires
+    * explicit specification of either {@link #TENANT_NAME} or
+    * {@link #TENANT_ID}
+    *
     * @see <a href="http://wiki.openstack.org/CLIAuth">openstack docs</a>
     */
    public static final String REQUIRES_TENANT = "jclouds.keystone.requires-tenant";
-   
+
    /**
     * type of the keystone service. ex. {@code compute}
-    * 
+    *
     * @see ServiceType
     */
    public static final String SERVICE_TYPE = "jclouds.keystone.service-type";

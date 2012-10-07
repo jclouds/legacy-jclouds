@@ -27,13 +27,15 @@ import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 
 /**
- * An network-accessible address, usually described by URL, where a service may be accessed. If
- * using an extension for templates, you can create an endpoint template, which represents the
- * templates of all the consumable services that are available across the regions.
+ * An network-accessible address, usually described by URL, where a service may
+ * be accessed. If using an extension for templates, you can create an endpoint
+ * template, which represents the templates of all the consumable services that
+ * are available across the regions.
  *
  * @author AdrianCole
- * @see <a href="http://docs.openstack.org/api/openstack-identity-service/2.0/content/Identity-Endpoint-Concepts-e1362.html"
-/>
+ * @see <a href=
+ *      "http://docs.openstack.org/api/openstack-identity-service/2.0/content/Identity-Endpoint-Concepts-e1362.html"
+ *      />
  */
 public class Endpoint {
 
@@ -45,9 +47,10 @@ public class Endpoint {
       return new ConcreteBuilder().fromEndpoint(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public static abstract class Builder<T extends Builder<T>> {
       protected abstract T self();
 
+      protected String id;
       protected String versionId;
       protected String region;
       protected URI publicURL;
@@ -56,6 +59,15 @@ public class Endpoint {
       protected String tenantId;
       protected URI versionInfo;
       protected URI versionList;
+
+
+      /**
+       * @see Endpoint#getId()
+       */
+      public T id(String id) {
+         this.id = id;
+         return self();
+      }
 
       /**
        * @see Endpoint#getVersionId()
@@ -114,6 +126,41 @@ public class Endpoint {
       }
 
       /**
+       * @see Endpoint#getPublicURL()
+       */
+      public T publicURL(String publicURL) {
+         return publicURL(URI.create(publicURL));
+      }
+
+      /**
+       * @see Endpoint#getInternalURL()
+       */
+      public T internalURL(String internalURL) {
+         return internalURL(URI.create(internalURL));
+      }
+
+      /**
+       * @see Endpoint#getAdminURL()
+       */
+      public T adminURL(String adminURL) {
+         return adminURL(URI.create(adminURL));
+      }
+
+      /**
+       * @see Endpoint#getVersionInfo()
+       */
+      public T versionInfo(String versionInfo) {
+         return versionInfo(URI.create(versionInfo));
+      }
+
+      /**
+       * @see Endpoint#getVersionList()
+       */
+      public T versionList(String versionList) {
+         return versionList(URI.create(versionList));
+      }
+
+      /**
        * @see Endpoint#getTenantId()
        */
       public T tenantId(String tenantId) {
@@ -122,19 +169,14 @@ public class Endpoint {
       }
 
       public Endpoint build() {
-         return new Endpoint(null, versionId, region, publicURL, internalURL, adminURL, versionInfo, versionList, null, tenantId);
+         return new Endpoint(id, versionId, region, publicURL, internalURL, adminURL, versionInfo, versionList, null,
+               tenantId);
       }
 
       public T fromEndpoint(Endpoint in) {
-         return this
-               .versionId(in.getVersionId())
-               .region(in.getRegion())
-               .publicURL(in.getPublicURL())
-               .internalURL(in.getInternalURL())
-               .adminURL(in.getAdminURL())
-               .versionInfo(in.getVersionInfo())
-               .versionList(in.getVersionList())
-               .tenantId(in.getTenantId());
+         return this.versionId(in.getVersionId()).region(in.getRegion()).publicURL(in.getPublicURL())
+               .internalURL(in.getInternalURL()).adminURL(in.getAdminURL()).versionInfo(in.getVersionInfo())
+               .versionList(in.getVersionList()).tenantId(in.getTenantId());
       }
    }
 
@@ -145,22 +187,26 @@ public class Endpoint {
       }
    }
 
-   private final String versionId;
+   private final String id;
+   private final String tenantId;
    private final String region;
    private final URI publicURL;
    private final URI internalURL;
    private final URI adminURL;
+
+   // fields not defined in
+   // https://github.com/openstack/keystone/blob/master/keystone/service.py
+   private final String versionId;
    private final URI versionInfo;
    private final URI versionList;
-   private final String tenantId;
 
-   @ConstructorProperties({
-         "id", "versionId", "region", "publicURL", "internalURL", "adminURL", "versionInfo", "versionList", "tenantName", "tenantId"
-   })
-   protected Endpoint(@Nullable String id, @Nullable String versionId, @Nullable String region, @Nullable URI publicURL,
-                      @Nullable URI internalURL, @Nullable URI adminURL, @Nullable URI versionInfo, @Nullable URI versionList,
-                      @Nullable String tenantName, @Nullable String tenantId) {
-      this.versionId = versionId != null ? versionId : id;
+   @ConstructorProperties({ "id", "versionId", "region", "publicURL", "internalURL", "adminURL", "versionInfo",
+         "versionList", "tenantName", "tenantId" })
+   protected Endpoint(@Nullable String id, @Nullable String versionId, @Nullable String region,
+         @Nullable URI publicURL, @Nullable URI internalURL, @Nullable URI adminURL, @Nullable URI versionInfo,
+         @Nullable URI versionList, @Nullable String tenantName, @Nullable String tenantId) {
+      this.id = id;
+      this.versionId = versionId;
       this.tenantId = tenantId != null ? tenantId : tenantName;
       this.region = region;
       this.publicURL = publicURL;
@@ -171,10 +217,26 @@ public class Endpoint {
    }
 
    /**
-    * When providing an ID, it is assumed that the endpoint exists in the current OpenStack
-    * deployment
+    * When providing an ID, it is assumed that the endpoint exists in the
+    * current OpenStack deployment
     *
-    * @return the versionId of the endpoint in the current OpenStack deployment, or null if not specified
+    * @return the id of the endpoint in the current OpenStack deployment, or
+    *         null if not specified
+    */
+   @Nullable
+   public String getId() {
+      return this.id;
+   }
+
+   /**
+    *
+    * <h4>Note</h4>
+    *
+    * This is not defined in <a href=
+    * "https://github.com/openstack/keystone/blob/master/keystone/service.py"
+    * >KeyStone</a>, rather only in <a href=
+    * "http://docs.rackspace.com/auth/api/v2.0/auth-client-devguide/content/Release_Notes-d1e140.html"
+    * >Rackspace</a>
     */
    @Nullable
    public String getVersionId() {
@@ -213,11 +275,31 @@ public class Endpoint {
       return this.adminURL;
    }
 
+   /**
+    *
+    * <h4>Note</h4>
+    *
+    * This is not defined in <a href=
+    * "https://github.com/openstack/keystone/blob/master/keystone/service.py"
+    * >KeyStone</a>, rather only in <a href=
+    * "http://docs.rackspace.com/auth/api/v2.0/auth-client-devguide/content/Release_Notes-d1e140.html"
+    * >Rackspace</a>
+    */
    @Nullable
    public URI getVersionInfo() {
       return this.versionInfo;
    }
 
+   /**
+    *
+    * <h4>Note</h4>
+    *
+    * This is not defined in <a href=
+    * "https://github.com/openstack/keystone/blob/master/keystone/service.py"
+    * >KeyStone</a>, rather only in <a href=
+    * "http://docs.rackspace.com/auth/api/v2.0/auth-client-devguide/content/Release_Notes-d1e140.html"
+    * >Rackspace</a>
+    */
    @Nullable
    public URI getVersionList() {
       return this.versionList;
@@ -233,28 +315,29 @@ public class Endpoint {
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(versionId, region, publicURL, internalURL, adminURL, versionInfo, versionList, tenantId);
+      return Objects.hashCode(id, versionId, region, publicURL, internalURL, adminURL, versionInfo, versionList,
+            tenantId);
    }
 
    @Override
    public boolean equals(Object obj) {
-      if (this == obj) return true;
-      if (obj == null || getClass() != obj.getClass()) return false;
+      if (this == obj)
+         return true;
+      if (obj == null || getClass() != obj.getClass())
+         return false;
       Endpoint that = Endpoint.class.cast(obj);
-      return Objects.equal(this.versionId, that.versionId)
-            && Objects.equal(this.region, that.region)
-            && Objects.equal(this.publicURL, that.publicURL)
-            && Objects.equal(this.internalURL, that.internalURL)
-            && Objects.equal(this.adminURL, that.adminURL)
-            && Objects.equal(this.versionInfo, that.versionInfo)
-            && Objects.equal(this.versionList, that.versionList)
+      return Objects.equal(this.id, that.id) && Objects.equal(this.versionId, that.versionId)
+            && Objects.equal(this.region, that.region) && Objects.equal(this.publicURL, that.publicURL)
+            && Objects.equal(this.internalURL, that.internalURL) && Objects.equal(this.adminURL, that.adminURL)
+            && Objects.equal(this.versionInfo, that.versionInfo) && Objects.equal(this.versionList, that.versionList)
             && Objects.equal(this.tenantId, that.tenantId);
    }
 
    protected ToStringHelper string() {
-      return Objects.toStringHelper(this).omitNullValues()
-            .add("versionId", versionId).add("region", region).add("publicURL", publicURL).add("internalURL", internalURL)
-            .add("adminURL", adminURL).add("versionInfo", versionInfo).add("versionList", versionList).add("tenantId", tenantId);
+      return Objects.toStringHelper(this).omitNullValues().add("id", id).add("versionId", versionId)
+            .add("region", region).add("publicURL", publicURL).add("internalURL", internalURL)
+            .add("adminURL", adminURL).add("versionInfo", versionInfo).add("versionList", versionList)
+            .add("tenantId", tenantId);
    }
 
    @Override

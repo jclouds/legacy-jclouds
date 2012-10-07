@@ -18,8 +18,6 @@
  */
 package org.jclouds.openstack.keystone.v2_0.parse;
 
-import java.net.URI;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
 
@@ -50,70 +48,67 @@ public class ParseAccessTest extends BaseItemParserTest<Access> {
    @SelectJson("access")
    @Consumes(MediaType.APPLICATION_JSON)
    public Access expected() {
-      return Access.builder().token(
-               Token.builder().expires(new SimpleDateFormatDateService().iso8601DateParse("2012-01-18T21:35:59.050Z"))
-                        .id("Auth_4f173437e4b013bee56d1007").tenant(
-                                 Tenant.builder().id("40806637803162").name("user@jclouds.org-default-tenant").build())
-                        .build()).user(
-               User.builder().id("36980896575174").name("user@jclouds.org").roles(
-                        Role.builder().id("00000000004022").serviceId("110").name("Admin").tenantId("40806637803162")
-                                 .build(),
-                        Role.builder().id("00000000004024").serviceId("140").name("user").tenantId("40806637803162")
-                                 .build(),
-                        Role.builder().id("00000000004004").serviceId("100").name("domainuser").build(),
-                        Role.builder().id("00000000004016").serviceId("120").name("netadmin")
-                                 .tenantId("40806637803162").build()).build()).serviceCatalog(
-
-               Service.builder().name("Object Storage").type("object-store").endpoints(
-                        Endpoint.builder().tenantId("40806637803162").publicURL(
-                                 URI.create("https://objects.jclouds.org/v1.0/40806637803162"))
-                                 .adminURL(URI.create("https://objects.jclouds.org/v1.0/"))
-                                 .region("region-a.geo-1").versionId("1.0").build()).build(),
-
-               Service.builder().name("Identity").type("identity").endpoints(
-                        Endpoint.builder().publicURL(URI.create("https://csnode.jclouds.org/v2.0/"))
-                                 .adminURL(URI.create("https://csnode.jclouds.org:35357/v2.0/"))
-                                 .region("region-a.geo-1").versionId("2.0").build()).build(),
-
-               Service.builder().name("Image Management").type("image").endpoints(
-                        Endpoint.builder().tenantId("40806637803162").publicURL(
-                                 URI.create("https://glance.jclouds.org:9292/v1.0")).region("az-1.region-a.geo-1")
-                                 .versionId("1.0").build()).build(),
-
-               Service.builder().name("Compute").type("compute").endpoints(
-                        Endpoint.builder()
-                                .tenantId("3456")
-                                .publicURL(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456"))
-                                .region("az-1.region-a.geo-1")
-                                .versionId("1.1")
-                                .versionInfo(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/"))
-                                .versionList(URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com")).build(),
-                        Endpoint.builder()
-                                .tenantId("3456")
-                                .publicURL(URI.create("https://az-2.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456"))
-                                .region("az-2.region-a.geo-1")
-                                .versionId("1.1")
-                                .versionInfo(URI.create("https://az-2.region-a.geo-1.compute.hpcloudsvc.com/v1.1/"))
-                                .versionList(URI.create("https://az-2.region-a.geo-1.compute.hpcloudsvc.com")).build(),
-                        Endpoint.builder()
-                                .tenantId("3456")
-                                .publicURL(URI.create("https://az-3.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456"))
-                                .region("az-3.region-a.geo-1")
-                                .versionId("1.1")
-                                .versionInfo(URI.create("https://az-3.region-a.geo-1.compute.hpcloudsvc.com/v1.1/"))
-                                .versionList(URI.create("https://az-3.region-a.geo-1.compute.hpcloudsvc.com")).build()).build(),
-
-            Service.builder().name("Quantum Service").type("network").endpoints(
-                  Endpoint.builder()
-                        .tenantId("3456")
-                        .publicURL(URI.create("https://csnode.jclouds.org:9696/v1.0/tenants/3456"))
-                        .internalURL(URI.create("https://csnode.jclouds.org:9696/v1.0/tenants/3456"))
-                        .adminURL(URI.create("https://csnode.jclouds.org:9696/v1.0"))
-                        .region("region-a.geo-1")
-                        .versionId("1.0").build()
-                     ).build())
-            
-            .build();
+      return Access.builder()
+                   .token(Token.builder()
+                               .expires(new SimpleDateFormatDateService().iso8601DateParse("2012-01-18T21:35:59.050Z"))
+                               .id("Auth_4f173437e4b013bee56d1007")
+                               .tenant(Tenant.builder().id("40806637803162").name("user@jclouds.org-default-tenant").build()).build())
+                   .user(User.builder()
+                             .id("36980896575174").name("user@jclouds.org")
+                             .role(Role.builder().id("00000000004022").serviceId("110").name("Admin").tenantId("40806637803162").build())
+                             .role(Role.builder().id("00000000004024").serviceId("140").name("user").tenantId("40806637803162").build())
+                             .role(Role.builder().id("00000000004004").serviceId("100").name("domainuser").build())
+                             .role(Role.builder().id("00000000004016").serviceId("120").name("netadmin").tenantId("40806637803162").build()).build())
+                   .service(Service.builder().name("Object Storage").type("object-store")
+                                   .endpoint(Endpoint.builder()
+                                                     .tenantId("40806637803162")
+                                                     .publicURL("https://objects.jclouds.org/v1.0/40806637803162")
+                                                     .adminURL("https://objects.jclouds.org/v1.0/")
+                                                     .id("1.0")
+                                                     .region("region-a.geo-1").build()).build())
+                   .service(Service.builder().name("Identity").type("identity")
+                                   .endpoint(Endpoint.builder()
+                                                     .publicURL("https://csnode.jclouds.org/v2.0/")
+                                                     .adminURL("https://csnode.jclouds.org:35357/v2.0/")
+                                                     .region("region-a.geo-1")
+                                                     .id("2.0")
+                                                     .versionId("2.0").build()).build())
+                   .service(Service.builder().name("Image Management").type("image")
+                                   .endpoint(Endpoint.builder()
+                                                     .tenantId("40806637803162")
+                                                     .publicURL("https://glance.jclouds.org:9292/v1.0")
+                                                     .region("az-1.region-a.geo-1")
+                                                     .id("1.0").build()).build())
+                   .service(Service.builder().name("Compute").type("compute")
+                                   .endpoint(Endpoint.builder()
+                                                     .tenantId("3456")
+                                                     .publicURL("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456")
+                                                     .region("az-1.region-a.geo-1")
+                                                     .versionId("1.1")
+                                                     .versionInfo("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/")
+                                                     .versionList("https://az-1.region-a.geo-1.compute.hpcloudsvc.com").build())
+                                   .endpoint(Endpoint.builder()
+                                                     .tenantId("3456")
+                                                     .publicURL("https://az-2.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456")
+                                                     .region("az-2.region-a.geo-1")
+                                                     .versionId("1.1")
+                                                     .versionInfo("https://az-2.region-a.geo-1.compute.hpcloudsvc.com/v1.1/")
+                                                     .versionList("https://az-2.region-a.geo-1.compute.hpcloudsvc.com").build())
+                                   .endpoint(Endpoint.builder()
+                                                     .tenantId("3456")
+                                                     .publicURL("https://az-3.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456")
+                                                     .region("az-3.region-a.geo-1")
+                                                     .versionId("1.1")
+                                                     .versionInfo("https://az-3.region-a.geo-1.compute.hpcloudsvc.com/v1.1/")
+                                                     .versionList("https://az-3.region-a.geo-1.compute.hpcloudsvc.com").build()).build())
+                   .service(Service.builder().name("Quantum Service").type("network")
+                                   .endpoint(Endpoint.builder()
+                                                     .tenantId("3456")
+                                                     .publicURL("https://csnode.jclouds.org:9696/v1.0/tenants/3456")
+                                                     .internalURL("https://csnode.jclouds.org:9696/v1.0/tenants/3456")
+                                                     .adminURL("https://csnode.jclouds.org:9696/v1.0")
+                                                     .region("region-a.geo-1")
+                                                     .versionId("1.0").build()).build()).build();
    }
 
 }
