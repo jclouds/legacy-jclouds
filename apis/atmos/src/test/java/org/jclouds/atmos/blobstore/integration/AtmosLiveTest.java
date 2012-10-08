@@ -32,6 +32,8 @@ public class AtmosLiveTest extends BaseBlobLiveTest {
    public AtmosLiveTest() {
       provider = "atmos";
    }
+            
+   @Override
    protected void checkMD5(String container, String name, byte[] md5) {
       // atmos does not support content-md5 yet
       assertEquals(view.getBlobStore().blobMetadata(container, name).getContentMetadata().getContentMD5(), null);
