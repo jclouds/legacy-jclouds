@@ -36,7 +36,7 @@ import org.testng.annotations.Test;
 import com.google.inject.TypeLiteral;
 
 /**
- * Tests behavior of {@code TransientBlobRequestSigner}
+ * Tests behavior of {@code LocalBlobRequestSigner}
  * 
  * @author Adrian Cole
  */
