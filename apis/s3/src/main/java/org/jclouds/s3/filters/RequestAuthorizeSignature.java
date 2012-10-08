@@ -80,7 +80,7 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
    private static final Set<String> SIGNED_PARAMETERS = ImmutableSet.of("acl", "torrent", "logging", "location", "policy",
             "requestPayment", "versioning", "versions", "versionId", "notification", "uploadId", "uploads",
             "partNumber", "website", "response-content-type", "response-content-language", "response-expires",
-            "response-cache-control", "response-content-disposition", "response-content-encoding");
+            "response-cache-control", "response-content-disposition", "response-content-encoding", "delete");
 
    private final SignatureWire signatureWire;
    private final String accessKey;
