@@ -49,6 +49,7 @@ import org.jclouds.util.Strings2;
 import org.jclouds.util.Throwables2;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Iterables;
@@ -306,7 +307,7 @@ public class AzureBlobClientLiveTest extends BaseBlobStoreIntegrationTest {
          assertEquals(((HttpResponseException) e.getCause()).getResponse().getStatusCode(), 422);
       }
 
-      ByteArrayInputStream bais = new ByteArrayInputStream(data.getBytes("UTF-8"));
+      ByteArrayInputStream bais = new ByteArrayInputStream(data.getBytes(Charsets.UTF_8));
       object = getApi().newBlob();
       object.getProperties().setName("chunked-object");
       object.setPayload(bais);
