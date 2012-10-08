@@ -40,6 +40,8 @@ import org.jclouds.logging.jdk.config.JDKLoggingModule;
 import org.jclouds.providers.AnonymousProviderMetadata;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.rest.annotations.ApiVersion;
+import org.jclouds.rest.annotations.Identity;
 import org.jclouds.rest.config.CredentialStoreModule;
 import org.testng.annotations.Test;
 
@@ -107,6 +109,24 @@ public class ContextBuilderTest {
       assertEquals(codes, ImmutableSet.<String> of());
    }
 
+   @Test
+   public void testProviderMetadataWithCredentialsSetViaProperty() {
+      Properties overrides = new Properties();
+      overrides.setProperty(Constants.PROPERTY_IDENTITY, "foo");
+      overrides.setProperty(Constants.PROPERTY_CREDENTIAL, "BAR");
+      ContextBuilder withCredsInProps = testContextBuilder().overrides(overrides);
+      String identity = withCredsInProps.buildInjector().getInstance(Key.get(String.class, Identity.class));
+      assertEquals(identity, "foo");
+   }
+   
+   @Test
+   public void testProviderMetadataWithVersionSetViaProperty() {
+      Properties overrides = new Properties();
+      overrides.setProperty(Constants.PROPERTY_API_VERSION, "1.1");
+      ContextBuilder withVersionInProps = testContextBuilder().overrides(overrides);
+      String version = withVersionInProps.buildInjector().getInstance(Key.get(String.class, ApiVersion.class));
+      assertEquals(version, "1.1");
+   }
    
    @Test
    public void testAddHttpModuleIfNotPresent() {
