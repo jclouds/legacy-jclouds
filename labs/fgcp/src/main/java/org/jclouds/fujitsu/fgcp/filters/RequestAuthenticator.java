@@ -20,7 +20,6 @@ package org.jclouds.fujitsu.fgcp.filters;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -57,6 +56,7 @@ import org.jclouds.rest.annotations.ApiVersion;
 import org.jclouds.rest.annotations.Credential;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Charsets;
 import com.google.common.collect.Multimap;
 
 /**
@@ -223,14 +223,8 @@ public class RequestAuthenticator implements HttpRequestFilter, RequestSigner {
 
       String signatureData = String.format("%s&%s&%s&%s", timezone, expires,
             signatureVersion, signatureMethod);
-      try {
-         String accessKeyId = Base64.encodeBytes(signatureData.getBytes("UTF-8"));
-         return accessKeyId.replace("\n", "\r\n");
-//         return CryptoStreams.base64(signatureData.getBytes("UTF-8")).;
-      } catch (UnsupportedEncodingException e) {
-         throw new RuntimeException(e); // should never happen as
-                                 // signatureData contains only ASCII
-      }
+      String accessKeyId = Base64.encodeBytes(signatureData.getBytes(Charsets.UTF_8));
+      return accessKeyId.replace("\n", "\r\n");
    }
 
    @Override

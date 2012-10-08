@@ -22,7 +22,6 @@ package org.jclouds.abiquo.http.filters;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
@@ -41,8 +40,7 @@ import org.testng.annotations.Test;
 public class AbiquoAuthenticationTest
 {
 
-    public void testBasicAuthentication() throws UnsupportedEncodingException,
-        NoSuchAlgorithmException, CertificateException
+    public void testBasicAuthentication() throws NoSuchAlgorithmException, CertificateException
     {
         HttpRequest request =
             HttpRequest.builder().method("GET").endpoint(URI.create("http://foo")).build();
@@ -60,8 +58,7 @@ public class AbiquoAuthenticationTest
     }
 
     @Test(expectedExceptions = NullPointerException.class)
-    public void testBasicAuthenticationWithoutIdentity() throws UnsupportedEncodingException,
-        NoSuchAlgorithmException, CertificateException
+    public void testBasicAuthenticationWithoutIdentity() throws NoSuchAlgorithmException, CertificateException
     {
         HttpRequest request =
             HttpRequest.builder().method("GET").endpoint(URI.create("http://foo")).build();
@@ -71,8 +68,7 @@ public class AbiquoAuthenticationTest
     }
 
     @Test(expectedExceptions = NullPointerException.class)
-    public void testBasicAuthenticationWithoutCredential() throws UnsupportedEncodingException,
-        NoSuchAlgorithmException, CertificateException
+    public void testBasicAuthenticationWithoutCredential() throws NoSuchAlgorithmException, CertificateException
     {
         HttpRequest request =
             HttpRequest.builder().method("GET").endpoint(URI.create("http://foo")).build();
@@ -81,8 +77,7 @@ public class AbiquoAuthenticationTest
         filter.filter(request);
     }
 
-    public void testTokenAuthentication() throws UnsupportedEncodingException,
-        NoSuchAlgorithmException, CertificateException
+    public void testTokenAuthentication() throws NoSuchAlgorithmException, CertificateException
     {
         HttpRequest request =
             HttpRequest.builder().method("GET").endpoint(URI.create("http://foo")).build();
