@@ -260,7 +260,7 @@ public class ContextBuilder {
 
       //We use either the specified name (optional) or a hash of provider/api, endpoint, api version & identity. Hash is used to be something readable.
       return buildInjector(name.or(String.valueOf(Objects.hashCode(providerMetadata.getId(),
-              providerMetadata.getEndpoint() , apiVersion , identity.get()))), providerMetadata, creds, modules);
+               providerMetadata.getEndpoint(), providerMetadata.getApiMetadata().getVersion(), creds.identity))), providerMetadata, creds, modules);
    }
 
    private static String getAndRemove(Properties expanded, String key) {
@@ -375,7 +375,7 @@ public class ContextBuilder {
    @SuppressWarnings( { "unchecked" })
    static Map<String, Object> propertiesPrefixedWithJcloudsApiOrProviderId(Properties properties, String apiId,
             String providerId) {
-      return Maps.filterKeys((Map) properties, containsPattern("^(jclouds|" + providerId + "|" + apiId
+      return Maps.filterKeys(Map.class.cast(properties), containsPattern("^(jclouds|" + providerId + "|" + apiId
                + ").*"));
    }
 
