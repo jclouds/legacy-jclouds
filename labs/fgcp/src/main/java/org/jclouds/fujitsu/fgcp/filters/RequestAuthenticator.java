@@ -26,6 +26,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Signature;
+import java.security.SignatureException;
 import java.security.UnrecoverableKeyException;
 import java.util.Calendar;
 import java.util.Locale;
@@ -203,10 +204,10 @@ public class RequestAuthenticator implements HttpRequestFilter, RequestSigner {
       String signed;
 
       try {
-         signer.update(stringToSign.getBytes("UTF-8"));
+         signer.update(stringToSign.getBytes(Charsets.UTF_8));
          signed = Base64.encodeBytes(signer.sign()).replace("\n", "\r\n");
 //         signed = CryptoStreams.base64(signer.sign());
-      } catch (Exception e) {
+      } catch (SignatureException e) {
          throw new HttpException("error signing request", e);
       }
       // if (signatureWire.enabled())

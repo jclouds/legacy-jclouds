@@ -79,6 +79,7 @@ import org.jclouds.rest.annotations.Identity;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.xml.XMLParser;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Provides;
@@ -348,7 +349,7 @@ public class FGCPRestClientModule extends
             @SuppressWarnings("unchecked")
             Collection<Certificate> certs = (Collection<Certificate>) cf
                   .generateCertificates(new ByteArrayInputStream(pemCerts
-                        .getBytes("UTF-8")));
+                        .getBytes(Charsets.UTF_8)));
             keyStore.load(null);
             keyStore.setKeyEntry("dummy", privateKey,
                   keyStorePassword.toCharArray(),

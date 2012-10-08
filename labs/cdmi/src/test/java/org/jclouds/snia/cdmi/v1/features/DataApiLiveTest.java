@@ -257,7 +257,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
          bytes = bos.toByteArray();
          // String.getBytes causes an exception CreateDataObjectOptions need to investigate byte
          // arrays
-         // bytes = value.getBytes("UTF-8");
+         // bytes = value.getBytes(Charsets.UTF_8);
          pCreateDataObjectOptions = CreateDataObjectOptions.Builder.value(bytes);
          dataObject = dataApi.create(dataObjectNameIn, pCreateDataObjectOptions);
          assertNotNull(dataObject);
