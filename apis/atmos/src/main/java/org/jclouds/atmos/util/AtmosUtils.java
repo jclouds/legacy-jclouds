@@ -31,6 +31,7 @@ import org.jclouds.atmos.domain.AtmosObject;
 import org.jclouds.atmos.filters.SignRequest;
 import org.jclouds.atmos.options.PutOptions;
 import org.jclouds.atmos.xml.ErrorHandler;
+import org.jclouds.blobstore.KeyAlreadyExistsException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.http.HttpCommand;
@@ -76,7 +77,7 @@ public class AtmosUtils {
       try {
          sync.createFile(container, object, options);
          
-      } catch(IllegalStateException e) {
+      } catch(KeyAlreadyExistsException e) {
          deleteAndEnsureGone(sync, path);
          sync.createFile(container, object, options);
       }

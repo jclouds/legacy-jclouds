@@ -35,7 +35,6 @@ import org.jclouds.atmos.functions.ParseObjectFromHeadersAndHttpContent;
 import org.jclouds.atmos.functions.ParseSystemMetadataFromHeaders;
 import org.jclouds.atmos.functions.ReturnEndpointIfAlreadyExists;
 import org.jclouds.atmos.functions.ReturnTrueIfGroupACLIsOtherRead;
-import org.jclouds.atmos.functions.ThrowIllegalStateExceptionOn400;
 import org.jclouds.atmos.options.ListOptions;
 import org.jclouds.atmos.options.PutOptions;
 import org.jclouds.blobstore.binders.BindBlobToMultipartFormTest;
@@ -173,7 +172,7 @@ public class AtmosAsyncClientTest extends BaseAsyncClientTest<AtmosAsyncClient> 
 
       assertResponseParserClassEquals(method, request, ParseURIFromListOrLocationHeaderIf20x.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ThrowIllegalStateExceptionOn400.class);
+      assertExceptionParserClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -191,7 +190,7 @@ public class AtmosAsyncClientTest extends BaseAsyncClientTest<AtmosAsyncClient> 
 
       assertResponseParserClassEquals(method, request, ParseURIFromListOrLocationHeaderIf20x.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ThrowIllegalStateExceptionOn400.class);
+      assertExceptionParserClassEquals(method, null);
 
       checkFilters(request);
    }

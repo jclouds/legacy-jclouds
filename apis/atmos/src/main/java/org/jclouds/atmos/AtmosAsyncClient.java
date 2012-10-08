@@ -45,7 +45,6 @@ import org.jclouds.atmos.functions.ParseSystemMetadataFromHeaders;
 import org.jclouds.atmos.functions.ParseUserMetadataFromHeaders;
 import org.jclouds.atmos.functions.ReturnEndpointIfAlreadyExists;
 import org.jclouds.atmos.functions.ReturnTrueIfGroupACLIsOtherRead;
-import org.jclouds.atmos.functions.ThrowIllegalStateExceptionOn400;
 import org.jclouds.atmos.options.ListOptions;
 import org.jclouds.atmos.options.PutOptions;
 import org.jclouds.blobstore.functions.ThrowContainerNotFoundOn404;
@@ -59,6 +58,7 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
+
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
@@ -117,7 +117,6 @@ public interface AtmosAsyncClient {
     */
    @POST
    @Path("/{parent}/{name}")
-   @ExceptionParser(ThrowIllegalStateExceptionOn400.class)
    @Consumes(MediaType.WILDCARD)
    ListenableFuture<URI> createFile(
             @PathParam("parent") String parent,
