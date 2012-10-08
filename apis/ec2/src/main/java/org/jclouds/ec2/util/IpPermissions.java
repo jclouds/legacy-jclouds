@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.jclouds.ec2.domain.IpPermission;
-import org.jclouds.ec2.domain.IpPermissionImpl;
 import org.jclouds.ec2.domain.IpProtocol;
 import org.jclouds.util.Maps2;
 
@@ -37,12 +36,12 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 
 /**
- * 
+ *
  * Shortcut to create ingress rules
- * 
+ *
  * @author Adrian Cole
  */
-public class IpPermissions extends IpPermissionImpl {
+public class IpPermissions extends IpPermission {
 
    protected IpPermissions(IpProtocol ipProtocol, int fromPort, int toPort,
          Multimap<String, String> userIdGroupPairs, Iterable<String> groupIds, Iterable<String> ipRanges) {
@@ -139,7 +138,7 @@ public class IpPermissions extends IpPermissionImpl {
       public ToPortSelection fromPort(int port) {
          return new ToPortSelection(getIpProtocol(), port);
       }
-      
+
       public ToSourceSelection port(int port) {
          return new ToSourceSelection(getIpProtocol(), port, port);
       }
