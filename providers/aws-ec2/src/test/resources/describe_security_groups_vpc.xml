@@ -1,0 +1,35 @@
+<DescribeSecurityGroupsResponse xmlns="http://ec2.amazonaws.com/doc/2011-05-15/">
+        <requestId>xxxxxxxxxxxxxxxx</requestId>
+        <securityGroupInfo>
+            <item>
+                <ownerId>123123123123</ownerId>
+                <groupId>sg-11111111</groupId>
+                <groupName>default</groupName>
+                <groupDescription>default VPC security group</groupDescription>
+                <vpcId>vpc-99999999</vpcId>
+                <ipPermissions>
+                    <item>
+                        <ipProtocol>-1</ipProtocol>
+                        <groups>
+                            <item>
+                                <userId>123123123123</userId>
+                                <groupId>sg-11111111</groupId>
+                            </item>
+                        </groups>
+                        <ipRanges/>
+                    </item>
+                </ipPermissions>
+                <ipPermissionsEgress>
+                    <item>
+                        <ipProtocol>-1</ipProtocol>
+                        <groups/>
+                        <ipRanges>
+                            <item>
+                                <cidrIp>0.0.0.0/0</cidrIp>
+                            </item>
+                        </ipRanges>
+                    </item>
+                </ipPermissionsEgress>
+            </item>
+    </securityGroupInfo>
+</DescribeSecurityGroupsResponse>
