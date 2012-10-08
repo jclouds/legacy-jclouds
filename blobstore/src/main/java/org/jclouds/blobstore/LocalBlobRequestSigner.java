@@ -36,19 +36,18 @@ import org.jclouds.location.Provider;
 import com.google.common.base.Supplier;
 
 /**
- * 
  * @author Adrian Cole
  */
 @Singleton
-public class TransientBlobRequestSigner implements BlobRequestSigner {
+public class LocalBlobRequestSigner implements BlobRequestSigner {
 
    private final BasicAuthentication basicAuth;
    private final BlobToHttpGetOptions blob2HttpGetOptions;
    private final Supplier<URI> endpoint;
    private final ContentMetadataCodec contentMetadataCodec;
-   
+
    @Inject
-   public TransientBlobRequestSigner(BasicAuthentication basicAuth, BlobToHttpGetOptions blob2HttpGetOptions, @Provider Supplier<URI> endpoint,
+   public LocalBlobRequestSigner(BasicAuthentication basicAuth, BlobToHttpGetOptions blob2HttpGetOptions, @Provider Supplier<URI> endpoint,
              ContentMetadataCodec contentMetadataCodec) {
       this.basicAuth = checkNotNull(basicAuth, "basicAuth");
       this.blob2HttpGetOptions = checkNotNull(blob2HttpGetOptions, "blob2HttpGetOptions");
