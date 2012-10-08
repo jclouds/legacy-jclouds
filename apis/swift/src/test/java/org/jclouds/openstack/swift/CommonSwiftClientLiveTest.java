@@ -49,6 +49,7 @@ import org.jclouds.openstack.swift.options.ListContainerOptions;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Charsets;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
@@ -247,7 +248,7 @@ public abstract class CommonSwiftClientLiveTest<C extends CommonSwiftClient> ext
          }
 
          // Test PUT chunked/streamed upload with data of "unknown" length
-         ByteArrayInputStream bais = new ByteArrayInputStream(data.getBytes("UTF-8"));
+         ByteArrayInputStream bais = new ByteArrayInputStream(data.getBytes(Charsets.UTF_8));
          SwiftObject blob = getApi().newSwiftObject();
          blob.getInfo().setName("chunked-object");
          blob.setPayload(bais);

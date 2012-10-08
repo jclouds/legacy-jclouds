@@ -130,7 +130,7 @@ public class DataNonCDMIContentTypeApiLiveTest extends BaseCDMIApiLiveTest {
 
          // exercise create data object with none cdmi put with payload byte array.
          value = "Hello CDMI World non-cdmi byte array";
-         bytes = value.getBytes("UTF-8");
+         bytes = value.getBytes(Charsets.UTF_8);
          payloadIn = new ByteArrayPayload(bytes);
          payloadIn.setContentMetadata(BaseMutableContentMetadata.fromContentMetadata(payloadIn.getContentMetadata()
                   .toBuilder().contentType(MediaType.PLAIN_TEXT_UTF_8.toString()).build()));

@@ -18,6 +18,8 @@
  */
 package org.jclouds.osgi;
 
+import com.google.common.base.Charsets;
+
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.apis.ApiRegistry;
 import org.jclouds.providers.ProviderMetadata;
@@ -158,7 +160,7 @@ public class MetadataBundleListener implements BundleListener {
 
     try {
       is = resource.openStream();
-      reader = new InputStreamReader(is, "UTF-8");
+      reader = new InputStreamReader(is, Charsets.UTF_8);
       bufferedReader = new BufferedReader(reader);
       String line;
       while ((line = bufferedReader.readLine()) != null) {
