@@ -22,8 +22,8 @@ import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.LocalAsyncBlobStore;
+import org.jclouds.blobstore.LocalBlobRequestSigner;
 import org.jclouds.blobstore.LocalStorageStrategy;
-import org.jclouds.blobstore.TransientBlobRequestSigner;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.config.BlobStoreMapModule;
 import org.jclouds.blobstore.config.BlobStoreObjectModule;
@@ -60,7 +60,7 @@ public class FilesystemBlobStoreContextModule extends AbstractModule {
       bind(BlobUtils.class).to(FileSystemBlobUtilsImpl.class);
       bind(FilesystemBlobKeyValidator.class).to(FilesystemBlobKeyValidatorImpl.class);
       bind(FilesystemContainerNameValidator.class).to(FilesystemContainerNameValidatorImpl.class);
-      bind(BlobRequestSigner.class).to(TransientBlobRequestSigner.class);
+      bind(BlobRequestSigner.class).to(LocalBlobRequestSigner.class);
    }
 
 }
