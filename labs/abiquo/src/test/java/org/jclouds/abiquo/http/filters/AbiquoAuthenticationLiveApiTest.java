@@ -27,7 +27,6 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.fail;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Properties;
@@ -142,7 +141,7 @@ public class AbiquoAuthenticationLiveApiTest
         fail("Token authentication should have failed");
     }
 
-    private String getAuthtenticationToken() throws UnsupportedEncodingException
+    private String getAuthtenticationToken()
     {
         String token = null;
 
