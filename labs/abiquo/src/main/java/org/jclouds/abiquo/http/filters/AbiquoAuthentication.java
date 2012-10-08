@@ -22,8 +22,6 @@ package org.jclouds.abiquo.http.filters;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.abiquo.config.AbiquoProperties.CREDENTIAL_IS_TOKEN;
 
-import java.io.UnsupportedEncodingException;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -37,6 +35,7 @@ import org.jclouds.rest.annotations.Credential;
 import org.jclouds.rest.annotations.Identity;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Charsets;
 
 /**
  * Authenticates using Basic Authentication or a generated token from previous API sessions.
@@ -68,28 +67,19 @@ public class AbiquoAuthentication implements HttpRequestFilter
     @Override
     public HttpRequest filter(final HttpRequest request) throws HttpException
     {
-        try
-        {
-            String header =
-                credentialIsToken ? tokenAuth(credential) : basicAuth(identity, credential);
-            return request
-                .toBuilder()
-                .replaceHeader(credentialIsToken ? HttpHeaders.COOKIE : HttpHeaders.AUTHORIZATION,
-                    header).build();
-        }
-        catch (UnsupportedEncodingException ex)
-        {
-            throw new HttpException(ex);
-        }
+        String header = credentialIsToken ? tokenAuth(credential) : basicAuth(identity, credential);
+        return request
+            .toBuilder()
+            .replaceHeader(credentialIsToken ? HttpHeaders.COOKIE : HttpHeaders.AUTHORIZATION,
+                header).build();
     }
 
     @VisibleForTesting
     static String basicAuth(final String user, final String password)
-        throws UnsupportedEncodingException
     {
         return "Basic "
             + CryptoStreams.base64(String.format("%s:%s", checkNotNull(user, "user"),
-                checkNotNull(password, "password")).getBytes("UTF-8"));
+                checkNotNull(password, "password")).getBytes(Charsets.UTF_8));
     }
 
     @VisibleForTesting
