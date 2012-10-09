@@ -41,13 +41,26 @@ public enum TemplateFilter {
     */
    SELF_EXECUTABLE,
    /**
+    * templates that have been registered/created by the owner that can be used
+    * to deploy a new VM - 3.x filter value.
+    */
+   SELFEXECUTABLE,
+   /**
+    * templates that have been granted to the calling user by another user
+    */
+   SHAREDEXECUTABLE,
+   /**
     * all templates that can be used to deploy a new VM
     */
    EXECUTABLE,
    /**
     * templates that are public
     */
-   COMMUNITY;
+   COMMUNITY,
+   /**
+    * All templates
+    */
+   ALL;
 
    @Override
    public String toString() {
