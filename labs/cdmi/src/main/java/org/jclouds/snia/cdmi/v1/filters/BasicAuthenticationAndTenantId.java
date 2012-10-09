@@ -42,6 +42,7 @@ public class BasicAuthenticationAndTenantId implements HttpRequestFilter {
    private final String tenantId;
    private final BasicAuthentication basicAuthentication;
 
+
    @Inject
    public BasicAuthenticationAndTenantId(@Identity String tenantIdAndUsername, @Credential String password,
             Crypto crypto) {

@@ -57,7 +57,8 @@ import com.google.common.net.MediaType;
 public class DataNonCDMIContentTypeApiLiveTest extends BaseCDMIApiLiveTest {
 	@Test
 	public void testCreateDataObjectsNonCDMI() throws Exception {
-
+		String serverType = System.getProperty("test.cdmi.serverType",
+				"openstack");
 		String containerName = "MyContainer" + System.currentTimeMillis() + "/";
 		String dataObjectNameIn = "dataobject.txt";
 		File tmpFileIn = new File("temp.txt");
@@ -73,126 +74,172 @@ public class DataNonCDMIContentTypeApiLiveTest extends BaseCDMIApiLiveTest {
 		pDataObjectMetaDataIn.put("dataObjectkey1", "value1");
 		pDataObjectMetaDataIn.put("dataObjectkey2", "value2");
 		pDataObjectMetaDataIn.put("dataObjectkey3", "value3");
-		
+
 		Payload payloadIn;
 		Payload payloadOut;
 		FileOutputStream fos;
-		
 
 		CreateContainerOptions pCreateContainerOptions = CreateContainerOptions.Builder
 				.metadata(pContainerMetaDataIn);
-		ContainerApi containerApi = cdmiContext.getApi()
-				.getContainerApi();
+		ContainerApi containerApi = cdmiContext.getApi().getContainerApi();
 		DataApi dataApi = cdmiContext.getApi().getDataApi();
-		DataNonCDMIContentTypeApi dataNonCDMIContentTypeApi = cdmiContext.getApi().getDataNonCDMIContentTypeApi();
+		DataNonCDMIContentTypeApi dataNonCDMIContentTypeApi = cdmiContext
+				.getApi().getDataNonCDMIContentTypeApi();
 		Logger.getAnonymousLogger().info("createContainer: " + containerName);
 		Container container = containerApi.createContainer(containerName,
 				pCreateContainerOptions);
 		try {
-			
+
 			assertNotNull(container);
-			System.out.println(container);
+			System.out.println("container: " + container);
 			container = containerApi.getContainer(containerName);
 			assertNotNull(container);
 			assertNotNull(container.getChildren());
 			assertEquals(container.getChildren().isEmpty(), true);
-			
-			// exercise create data object with none cdmi put with payload string.
-			value = "Hello CDMI World non-cdmi String";
-			dataNonCDMIContentTypeApi.createDataObject(containerName, dataObjectNameIn,
-					value);
-			payloadOut = dataNonCDMIContentTypeApi.getDataObjectValue(containerName, dataObjectNameIn);
-			assertNotNull(payloadOut);
-			assertEquals(CharStreams.toString(new InputStreamReader(payloadOut.getInput(), "UTF-8")),value);
-			
-			payloadIn = new StringPayload(value);
-			payloadIn.setContentMetadata(BaseMutableContentMetadata.fromContentMetadata(payloadIn.getContentMetadata().toBuilder()
-					.contentType(MediaType.PLAIN_TEXT_UTF_8.toString())
-					.build()));
-			dataNonCDMIContentTypeApi.createDataObject(containerName, dataObjectNameIn,
-					payloadIn);
 
-			payloadOut = dataNonCDMIContentTypeApi.getDataObjectValue(containerName, dataObjectNameIn);
+			// exercise create data object with none cdmi put with payload
+			// string.
+			value = "Hello CDMI World non-cdmi String";
+			dataNonCDMIContentTypeApi.createDataObject(containerName,
+					dataObjectNameIn, value);
+			payloadOut = dataNonCDMIContentTypeApi.getDataObjectValue(
+					containerName, dataObjectNameIn);
 			assertNotNull(payloadOut);
-			assertEquals(CharStreams.toString(new InputStreamReader(payloadOut.getInput(), "UTF-8")),value);
-			
-			dataObject = dataNonCDMIContentTypeApi.getDataObject(containerName, dataObjectNameIn, 
-					DataObjectQueryParams.Builder.field("parentURI"));
+			assertEquals(CharStreams.toString(new InputStreamReader(payloadOut
+					.getInput(), "UTF-8")), value);
+			payloadIn = new StringPayload(value);
+			payloadIn.setContentMetadata(BaseMutableContentMetadata
+					.fromContentMetadata(payloadIn.getContentMetadata()
+							.toBuilder()
+							.contentType(MediaType.PLAIN_TEXT_UTF_8.toString())
+							.build()));
+			dataNonCDMIContentTypeApi.createDataObject(containerName,
+					dataObjectNameIn, payloadIn);
+
+			payloadOut = dataNonCDMIContentTypeApi.getDataObjectValue(
+					containerName, dataObjectNameIn);
+			assertNotNull(payloadOut);
+			assertEquals(CharStreams.toString(new InputStreamReader(payloadOut
+					.getInput(), "UTF-8")), value);
+
+			if (serverType.matches("openstack")) { // openstack only returning
+													// payload for filtered
+													// queries
+				System.out.println("retrieving objectName with dataApi");
+				dataObject = dataApi.getDataObject(containerName,
+						dataObjectNameIn,
+						DataObjectQueryParams.Builder.field("objectName")
+								.field("objectType").field("mimetype"));
+			} else {
+				System.out
+						.println("retrieving objectName with dataNonCDMIContentTypeApi");
+				dataObject = dataNonCDMIContentTypeApi.getDataObject(
+						containerName, dataObjectNameIn,
+						DataObjectQueryParams.Builder.field("objectName")
+								.field("objectType").field("mimetype"));
+			}
 			assertNotNull(dataObject);
-			System.out.println(dataObject);			
-			assertEquals(dataObject.getParentURI(), "/" + containerName);
-			dataObject = dataNonCDMIContentTypeApi.getDataObject(containerName, dataObjectNameIn, 
-					DataObjectQueryParams.Builder.metadata()
-					.field("parentURI")
-					.field("objectName")
-					.field("objectType")
-					.field("mimetype"));
-			assertEquals(
-					Integer.parseInt(dataObject.getSystemMetadata().get(
-							"cdmi_size")), value.length());
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
-			assertEquals(dataObject.getParentURI(), "/" + containerName);
-			assertEquals(dataObject.getMimetype(),MediaType.PLAIN_TEXT_UTF_8.toString());
-			
+			assertEquals(dataObject.getMimetype(),
+					MediaType.PLAIN_TEXT_UTF_8.toString());
 
-			
-			dataNonCDMIContentTypeApi.deleteDataObject(containerName, dataObjectNameIn);
-			assertEquals(containerApi.getContainer(containerName)
-					.getChildren().contains(dataObjectNameIn), false);
+			if (!serverType.matches("openstack")) { // openstack not handling
+													// query filters, parent
+													// uri, or cdmi-size
 
-			// exercise create data object with none cdmi put with payload byte array.
+				System.out.println("retrieving parent URI");
+				dataObject = dataNonCDMIContentTypeApi.getDataObject(
+						containerName, dataObjectNameIn,
+						DataObjectQueryParams.Builder.field("parentURI"));
+				System.out.println("retrieved parent URI");
+
+				assertNotNull(dataObject);
+				System.out.println(dataObject);
+				assertEquals(dataObject.getParentURI(), "/" + containerName);
+				dataObject = dataNonCDMIContentTypeApi.getDataObject(
+						containerName,
+						dataObjectNameIn,
+						DataObjectQueryParams.Builder.metadata()
+								.field("parentURI").field("objectName")
+								.field("objectType").field("mimetype"));
+				assertEquals(
+						Integer.parseInt(dataObject.getSystemMetadata().get(
+								"cdmi_size")), value.length());
+				assertEquals(dataObject.getObjectName(), dataObjectNameIn);
+				assertEquals(dataObject.getObjectType(),
+						"application/cdmi-object");
+				assertEquals(dataObject.getParentURI(), "/" + containerName);
+				assertEquals(dataObject.getMimetype(),
+						MediaType.PLAIN_TEXT_UTF_8.toString());
+			}
+
+			dataNonCDMIContentTypeApi.deleteDataObject(containerName,
+					dataObjectNameIn);
+			assertEquals(containerApi.getContainer(containerName).getChildren()
+					.contains(dataObjectNameIn), false);
+
+			// exercise create data object with none cdmi put with payload byte
+			// array.
 			value = "Hello CDMI World non-cdmi byte array";
 			bytes = value.getBytes("UTF-8");
 			payloadIn = new ByteArrayPayload(bytes);
-			payloadIn.setContentMetadata(BaseMutableContentMetadata.fromContentMetadata(payloadIn.getContentMetadata().toBuilder()
-					.contentType(MediaType.PLAIN_TEXT_UTF_8.toString())
-					.build()));
-			dataNonCDMIContentTypeApi.createDataObject(containerName, dataObjectNameIn,
-					payloadIn);
+			payloadIn.setContentMetadata(BaseMutableContentMetadata
+					.fromContentMetadata(payloadIn.getContentMetadata()
+							.toBuilder()
+							.contentType(MediaType.PLAIN_TEXT_UTF_8.toString())
+							.build()));
+			dataNonCDMIContentTypeApi.createDataObject(containerName,
+					dataObjectNameIn, payloadIn);
 			System.out.println(containerApi.getContainer(containerName));
-			dataObject = dataApi.getDataObject(containerName,
-					dataObjectNameIn);
+			dataObject = dataApi.getDataObject(containerName, dataObjectNameIn);
 			assertNotNull(dataObject);
 			System.out.println(dataObject);
 			System.out.println("value: " + dataObject.getValueAsString());
 			assertEquals(dataObject.getValueAsString(), value);
 			assertEquals(new String(dataObject.getValueAsByteArray()), value);
 			assertEquals(dataObject.getUserMetadata().isEmpty(), true);
-			assertEquals(
-					Integer.parseInt(dataObject.getSystemMetadata().get(
-							"cdmi_size")), value.length());
+			if (dataObject.getSystemMetadata().get("cdmi_size") != null) { // openstack
+																			// not
+																			// returning
+																			// cdmi_size
+				assertEquals(
+						Integer.parseInt(dataObject.getSystemMetadata().get(
+								"cdmi_size")), value.length());
+			}
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
-			assertEquals(dataObject.getParentURI(), "/" + containerName);
-			assertEquals(containerApi.getContainer(containerName)
-					.getChildren().contains(dataObjectNameIn), true);
-			payloadOut = dataNonCDMIContentTypeApi.getDataObjectValue(containerName, dataObjectNameIn);
-			assertNotNull(payloadOut);
-			assertEquals(CharStreams.toString(new InputStreamReader(payloadOut.getInput(), "UTF-8")),value);
+			if (!serverType.matches("openstack")) { // openstack not handling
+													// parentURI properly
+				assertEquals(dataObject.getParentURI(), "/" + containerName);
+				assertEquals(containerApi.getContainer(containerName)
+						.getChildren().contains(dataObjectNameIn), true);
+				payloadOut = dataNonCDMIContentTypeApi.getDataObjectValue(
+						containerName, dataObjectNameIn);
+				assertNotNull(payloadOut);
+				assertEquals(CharStreams.toString(new InputStreamReader(
+						payloadOut.getInput(), "UTF-8")), value);
+			}
 
-			
-			
-			dataNonCDMIContentTypeApi.deleteDataObject(containerName, dataObjectNameIn);
-			assertEquals(containerApi.getContainer(containerName)
-					.getChildren().contains(dataObjectNameIn), false);
-			
-			
-			
+			dataNonCDMIContentTypeApi.deleteDataObject(containerName,
+					dataObjectNameIn);
+			assertEquals(containerApi.getContainer(containerName).getChildren()
+					.contains(dataObjectNameIn), false);
 
 			// exercise create data object with none cdmi put with payload file.
 			value = "Hello CDMI World non-cdmi File";
 			Files.write(value, tmpFileIn, Charsets.UTF_8);
 			payloadIn = new FilePayload(tmpFileIn);
-			payloadIn.setContentMetadata(BaseMutableContentMetadata.fromContentMetadata(payloadIn.getContentMetadata().toBuilder()
-					.contentType(MediaType.PLAIN_TEXT_UTF_8.toString())
-					.build()));
-			
-			dataNonCDMIContentTypeApi.createDataObject(containerName, dataObjectNameIn,
-					payloadIn);
+			payloadIn.setContentMetadata(BaseMutableContentMetadata
+					.fromContentMetadata(payloadIn.getContentMetadata()
+							.toBuilder()
+							.contentType(MediaType.PLAIN_TEXT_UTF_8.toString())
+							.build()));
+
+			dataNonCDMIContentTypeApi.createDataObject(containerName,
+					dataObjectNameIn, payloadIn);
 			System.out.println(containerApi.getContainer(containerName));
-			dataObject = dataApi.getDataObject(containerName,
-					dataObjectNameIn);
+			dataObject = dataApi.getDataObject(containerName, dataObjectNameIn);
 			assertNotNull(dataObject);
 			System.out.println(dataObject);
 			System.out.println("value: " + dataObject.getValueAsString());
@@ -201,217 +248,274 @@ public class DataNonCDMIContentTypeApiLiveTest extends BaseCDMIApiLiveTest {
 			assertEquals(true, Files.equal(tmpFileOut, tmpFileIn));
 			tmpFileOut.delete();
 			assertEquals(dataObject.getUserMetadata().isEmpty(), true);
-			System.out.println("My Metadata: "+dataObject.getUserMetadata());
-			assertEquals(
-					Integer.parseInt(dataObject.getSystemMetadata().get(
-							"cdmi_size")), value.length());
+			if (dataObject.getSystemMetadata().get("cdmi_size") != null) { // openstack
+																			// not
+																			// returning
+																			// cdmi_size
+				assertEquals(
+						Integer.parseInt(dataObject.getSystemMetadata().get(
+								"cdmi_size")), value.length());
+			}
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
-			assertEquals(dataObject.getParentURI(), "/" + containerName);
-			assertEquals(containerApi.getContainer(containerName)
-					.getChildren().contains(dataObjectNameIn), true);
-			
-			payloadOut = dataNonCDMIContentTypeApi.getDataObjectValue(containerName, dataObjectNameIn);
+			if (!serverType.matches("openstack")) { // openstack not handling
+													// parentURI properly
+				assertEquals(dataObject.getParentURI(), "/" + containerName);
+			}
+			assertEquals(containerApi.getContainer(containerName).getChildren()
+					.contains(dataObjectNameIn), true);
+
+			payloadOut = dataNonCDMIContentTypeApi.getDataObjectValue(
+					containerName, dataObjectNameIn);
 			assertNotNull(payloadOut);
-			//assertEquals(CharStreams.toString(new InputStreamReader(payloadOut.getInput(), "UTF-8")),value);
-			//byte[] _bytes = ByteStreams.toByteArray(payloadOut.getInput());
-			tmpFileOut = new File(Files.createTempDir(),"temp.txt");
+			// assertEquals(CharStreams.toString(new
+			// InputStreamReader(payloadOut.getInput(), "UTF-8")),value);
+			// byte[] _bytes = ByteStreams.toByteArray(payloadOut.getInput());
+			tmpFileOut = new File(Files.createTempDir(), "temp.txt");
 			fos = new FileOutputStream(tmpFileOut);
 			ByteStreams.copy(payloadOut.getInput(), fos);
 			fos.flush();
 			fos.close();
-			assertEquals(Files.equal(tmpFileOut, tmpFileIn),true);
+			assertEquals(Files.equal(tmpFileOut, tmpFileIn), true);
 			tmpFileOut.delete();
-			
-			dataNonCDMIContentTypeApi.deleteDataObject(containerName, dataObjectNameIn);
-			assertEquals(containerApi.getContainer(containerName)
-					.getChildren().contains(dataObjectNameIn), false);
 
-			// exercise create data object with none cdmi put with text file payload file.
+			dataNonCDMIContentTypeApi.deleteDataObject(containerName,
+					dataObjectNameIn);
+			assertEquals(containerApi.getContainer(containerName).getChildren()
+					.contains(dataObjectNameIn), false);
+
+			// exercise create data object with none cdmi put with text file
+			// payload file.
 			inFile = new File(System.getProperty("user.dir")
 					+ "/src/test/resources/container.json");
 			assertEquals(true, inFile.isFile());
 			payloadIn = new FilePayload(inFile);
-			payloadIn.setContentMetadata(BaseMutableContentMetadata.fromContentMetadata(payloadIn.getContentMetadata().toBuilder()
-					.contentType(MediaType.JSON_UTF_8.toString())
-					.build()));
-			
-			dataNonCDMIContentTypeApi.createDataObject(containerName, inFile.getName(),
-					payloadIn);
-			System.out.println(containerApi.getContainer(containerName));
-			dataObject = dataApi.getDataObject(containerName,
-					inFile.getName());
-			assertNotNull(dataObject);
-			System.out.println(dataObject);
-			//System.out.println("value: " + dataObject.getValueAsString());
-			//assertEquals(dataObject.getValueAsString(), value);
-			tmpFileOut = dataObject.getValueAsFile(Files.createTempDir());
-			assertEquals(true, Files.equal(tmpFileOut, inFile));
-			tmpFileOut.delete();
-			assertEquals(dataObject.getUserMetadata().isEmpty(), true);
-			//System.out.println("My Metadata: "+dataObject.getUserMetadata());
-			assertEquals(
-					Integer.parseInt(dataObject.getSystemMetadata().get(
-							"cdmi_size")), inFile.length());
-			assertEquals(dataObject.getObjectName(), inFile.getName());
-			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
-			assertEquals(dataObject.getParentURI(), "/" + containerName);
-			assertEquals(containerApi.getContainer(containerName)
-					.getChildren().contains(inFile.getName()), true);
-			dataApi.deleteDataObject(containerName, inFile.getName());
-			assertEquals(containerApi.getContainer(containerName)
-					.getChildren().contains(dataObjectNameIn), false);
-			
-			// exercise create data object with none cdmi put with text file payload file.
-			//inFile = new File(System.getProperty("user.dir")
-			//		+ "/src/test/resources/Jellyfish.jpg");  // takes too long when working from home
-			inFile = new File(System.getProperty("user.dir")
-					+ "/src/test/resources/yellow-flowers.jpg");
-			assertEquals(true, inFile.isFile());
-			payloadIn = new FilePayload(inFile);
-			payloadIn.setContentMetadata(BaseMutableContentMetadata.fromContentMetadata(payloadIn.getContentMetadata().toBuilder()
-					.contentType(MediaType.JPEG.toString())
-					.build()));			
-			dataNonCDMIContentTypeApi.createDataObject(containerName, inFile.getName(),
-					payloadIn);
-			System.out.println(containerApi.getContainer(containerName));
-			//note dataApi.getDataObject when the data object is not a string
-			payloadOut = dataNonCDMIContentTypeApi.getDataObjectValue(containerName, inFile.getName());
+			payloadIn.setContentMetadata(BaseMutableContentMetadata
+					.fromContentMetadata(payloadIn.getContentMetadata()
+							.toBuilder()
+							.contentType(MediaType.JSON_UTF_8.toString())
+							.build()));
+
+			dataNonCDMIContentTypeApi.createDataObject(containerName,
+					inFile.getName(), payloadIn);
+			payloadOut = dataNonCDMIContentTypeApi.getDataObjectValue(
+					containerName, inFile.getName());
 			assertNotNull(payloadOut);
-			tmpFileOut = new File(Files.createTempDir(),"temp.jpg");
+			tmpFileOut = new File(Files.createTempDir(), "temp.json");
 			fos = new FileOutputStream(tmpFileOut);
 			ByteStreams.copy(payloadOut.getInput(), fos);
 			fos.flush();
 			fos.close();
-			assertEquals(Files.equal(tmpFileOut, inFile),true);
+			assertEquals(Files.equal(tmpFileOut, inFile), true);
 			tmpFileOut.delete();
-			
-			assertEquals(containerApi.getContainer(containerName)
-					.getChildren().contains(inFile.getName()), true);
-			dataApi.deleteDataObject(containerName, inFile.getName());
-			assertEquals(containerApi.getContainer(containerName)
-					.getChildren().contains(inFile.getName()), false);
-			
 
-			// exercise create data object with none cdmi put with payload inputStream riginating from string.
+			System.out.println(containerApi.getContainer(containerName));
+
+			dataObject = dataApi.getDataObject(containerName, inFile.getName());
+			assertNotNull(dataObject);
+			System.out.println(dataObject);
+			assertEquals(dataObject.getUserMetadata().isEmpty(), true);
+			if (dataObject.getSystemMetadata().get("cdmi_size") != null) { // openstack
+																			// not
+																			// returning
+																			// cdmi_size
+				assertEquals(
+						Integer.parseInt(dataObject.getSystemMetadata().get(
+								"cdmi_size")), inFile.length());
+			}
+			assertEquals(dataObject.getObjectName(), inFile.getName());
+			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
+			if (!serverType.matches("openstack")) { // openstack not handling
+													// parentURI properly
+				assertEquals(dataObject.getParentURI(), "/" + containerName);
+			}
+			assertEquals(containerApi.getContainer(containerName).getChildren()
+					.contains(inFile.getName()), true);
+			dataApi.deleteDataObject(containerName, inFile.getName());
+			assertEquals(containerApi.getContainer(containerName).getChildren()
+					.contains(dataObjectNameIn), false);
+
+			// exercise create data object with none cdmi put with text file
+			// payload file.
+			// inFile = new File(System.getProperty("user.dir")
+			// + "/src/test/resources/Jellyfish.jpg"); // takes too long when
+			// working from home
+			inFile = new File(System.getProperty("user.dir")
+					+ "/src/test/resources/yellow-flowers.jpg");
+			assertEquals(true, inFile.isFile());
+			payloadIn = new FilePayload(inFile);
+			payloadIn.setContentMetadata(BaseMutableContentMetadata
+					.fromContentMetadata(payloadIn.getContentMetadata()
+							.toBuilder().contentType(MediaType.JPEG.toString())
+							.build()));
+			dataNonCDMIContentTypeApi.createDataObject(containerName,
+					inFile.getName(), payloadIn);
+			System.out.println(containerApi.getContainer(containerName));
+			// note dataApi.getDataObject when the data object is not a string
+			payloadOut = dataNonCDMIContentTypeApi.getDataObjectValue(
+					containerName, inFile.getName());
+			assertNotNull(payloadOut);
+			tmpFileOut = new File(Files.createTempDir(), "temp.jpg");
+			fos = new FileOutputStream(tmpFileOut);
+			ByteStreams.copy(payloadOut.getInput(), fos);
+			fos.flush();
+			fos.close();
+			assertEquals(Files.equal(tmpFileOut, inFile), true);
+			tmpFileOut.delete();
+
+			assertEquals(containerApi.getContainer(containerName).getChildren()
+					.contains(inFile.getName()), true);
+			dataApi.deleteDataObject(containerName, inFile.getName());
+			assertEquals(containerApi.getContainer(containerName).getChildren()
+					.contains(inFile.getName()), false);
+
+			// exercise create data object with none cdmi put with payload
+			// inputStream riginating from string.
 			value = "Hello CDMI World non-cdmi inputStream originating from string";
 			is = new ByteArrayInputStream(value.getBytes());
 			payloadIn = new InputStreamPayload(is);
-			payloadIn.setContentMetadata(BaseMutableContentMetadata.fromContentMetadata(payloadIn.getContentMetadata().toBuilder()
-					.contentType(MediaType.PLAIN_TEXT_UTF_8.toString())
-					.contentLength(new Long(value.length()))
-					.build()));
-			dataNonCDMIContentTypeApi.createDataObject(containerName, dataObjectNameIn,
-					payloadIn);
+			payloadIn.setContentMetadata(BaseMutableContentMetadata
+					.fromContentMetadata(payloadIn.getContentMetadata()
+							.toBuilder()
+							.contentType(MediaType.PLAIN_TEXT_UTF_8.toString())
+							.contentLength(new Long(value.length())).build()));
+			dataNonCDMIContentTypeApi.createDataObject(containerName,
+					dataObjectNameIn, payloadIn);
 			System.out.println(containerApi.getContainer(containerName));
-			dataObject = dataApi.getDataObject(containerName,
-					dataObjectNameIn);
+			dataObject = dataApi.getDataObject(containerName, dataObjectNameIn);
 			assertNotNull(dataObject);
 			System.out.println(dataObject);
 			System.out.println("value: " + dataObject.getValueAsString());
 			assertEquals(dataObject.getValueAsString(), value);
 			assertNotNull(dataObject.getValueAsInputSupplier());
-			assertEquals(CharStreams.toString(CharStreams.newReaderSupplier(dataObject
-					.getValueAsInputSupplier(Charsets.UTF_8),Charsets.UTF_8)), value);
+			assertEquals(CharStreams.toString(CharStreams.newReaderSupplier(
+					dataObject.getValueAsInputSupplier(Charsets.UTF_8),
+					Charsets.UTF_8)), value);
 			assertEquals(dataObject.getUserMetadata().isEmpty(), true);
-			System.out.println("My Metadata: "+dataObject.getUserMetadata());
-			assertEquals(
-					Integer.parseInt(dataObject.getSystemMetadata().get(
-							"cdmi_size")), value.length());
+			if (dataObject.getSystemMetadata().get("cdmi_size") != null) { // openstack
+																			// not
+																			// returning
+																			// cdmi_size
+				assertEquals(
+						Integer.parseInt(dataObject.getSystemMetadata().get(
+								"cdmi_size")), value.length());
+			}
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
-			assertEquals(dataObject.getParentURI(), "/" + containerName);
-			assertEquals(containerApi.getContainer(containerName)
-					.getChildren().contains(dataObjectNameIn), true);
-			dataNonCDMIContentTypeApi.deleteDataObject(containerName, dataObjectNameIn);
-			assertEquals(containerApi.getContainer(containerName)
-					.getChildren().contains(dataObjectNameIn), false);	
+			if (!serverType.matches("openstack")) { // openstack not handling
+													// parentURI properly
+				assertEquals(dataObject.getParentURI(), "/" + containerName);
+			}
+			assertEquals(containerApi.getContainer(containerName).getChildren()
+					.contains(dataObjectNameIn), true);
+			dataNonCDMIContentTypeApi.deleteDataObject(containerName,
+					dataObjectNameIn);
+			assertEquals(containerApi.getContainer(containerName).getChildren()
+					.contains(dataObjectNameIn), false);
 
-			// exercise create data object with none cdmi put with payload inputStream originating from jpeg file.			
+			// exercise create data object with none cdmi put with payload
+			// inputStream originating from jpeg file.
 			inFile = new File(System.getProperty("user.dir")
 					+ "/src/test/resources/yellow-flowers.jpg");
 			assertEquals(true, inFile.isFile());
 			FileInputStream fileInputStream = new FileInputStream(inFile);
 			payloadIn = new InputStreamPayload(fileInputStream);
-			payloadIn.setContentMetadata(BaseMutableContentMetadata.fromContentMetadata(payloadIn.getContentMetadata().toBuilder()
-					.contentType(MediaType.JPEG.toString())
-					.contentLength(new Long(inFile.length()))					
-					.build()));			
-			dataNonCDMIContentTypeApi.createDataObject(containerName, inFile.getName(),
-					payloadIn);
+			payloadIn.setContentMetadata(BaseMutableContentMetadata
+					.fromContentMetadata(payloadIn.getContentMetadata()
+							.toBuilder().contentType(MediaType.JPEG.toString())
+							.contentLength(new Long(inFile.length())).build()));
+			dataNonCDMIContentTypeApi.createDataObject(containerName,
+					inFile.getName(), payloadIn);
 			System.out.println(containerApi.getContainer(containerName));
-			payloadOut = dataNonCDMIContentTypeApi.getDataObjectValue(containerName, inFile.getName());
+			payloadOut = dataNonCDMIContentTypeApi.getDataObjectValue(
+					containerName, inFile.getName());
 			assertNotNull(payloadOut);
-			tmpFileOut = new File(Files.createTempDir(),"temp.jpg");
+			tmpFileOut = new File(Files.createTempDir(), "temp.jpg");
 			fos = new FileOutputStream(tmpFileOut);
 			ByteStreams.copy(payloadOut.getInput(), fos);
 			fos.flush();
 			fos.close();
-			assertEquals(Files.equal(tmpFileOut, inFile),true);
+			assertEquals(Files.equal(tmpFileOut, inFile), true);
 			tmpFileOut.delete();
-			
-			assertEquals(containerApi.getContainer(containerName)
-					.getChildren().contains(inFile.getName()), true);
+
+			assertEquals(containerApi.getContainer(containerName).getChildren()
+					.contains(inFile.getName()), true);
 			dataApi.deleteDataObject(containerName, inFile.getName());
-			assertEquals(containerApi.getContainer(containerName)
-					.getChildren().contains(inFile.getName()), false);			
+			assertEquals(containerApi.getContainer(containerName).getChildren()
+					.contains(inFile.getName()), false);
 
 			// exercise get with none cdmi get range.
 			value = "Hello CDMI World non-cdmi String";
 			payloadIn = new StringPayload(value);
-			payloadIn.setContentMetadata(BaseMutableContentMetadata.fromContentMetadata(payloadIn.getContentMetadata().toBuilder()
-					.contentType(MediaType.PLAIN_TEXT_UTF_8.toString())
-					.build()));
-			dataNonCDMIContentTypeApi.createDataObject(containerName, dataObjectNameIn,
-					payloadIn);
+			payloadIn.setContentMetadata(BaseMutableContentMetadata
+					.fromContentMetadata(payloadIn.getContentMetadata()
+							.toBuilder()
+							.contentType(MediaType.PLAIN_TEXT_UTF_8.toString())
+							.build()));
+			dataNonCDMIContentTypeApi.createDataObject(containerName,
+					dataObjectNameIn, payloadIn);
 
-			payloadOut = dataNonCDMIContentTypeApi.getDataObjectValue(containerName, dataObjectNameIn, "bytes=0-10");
+			payloadOut = dataNonCDMIContentTypeApi.getDataObjectValue(
+					containerName, dataObjectNameIn, "bytes=0-10");
 			assertNotNull(payloadOut);
-			assertEquals(CharStreams.toString(new InputStreamReader(payloadOut.getInput(), "UTF-8")),value.substring(0, 11));
-			assertEquals(payloadOut.getContentMetadata().getContentLength(),new Long(11));
-			
-			payloadOut = dataNonCDMIContentTypeApi.getDataObjectValue(containerName, dataObjectNameIn, "bytes=11-20");
+			assertEquals(CharStreams.toString(new InputStreamReader(payloadOut
+					.getInput(), "UTF-8")), value.substring(0, 11));
+			assertEquals(payloadOut.getContentMetadata().getContentLength(),
+					new Long(11));
+
+			payloadOut = dataNonCDMIContentTypeApi.getDataObjectValue(
+					containerName, dataObjectNameIn, "bytes=11-20");
 			assertNotNull(payloadOut);
-			assertEquals(CharStreams.toString(new InputStreamReader(payloadOut.getInput(), "UTF-8")),value.substring(11, 21));
-			assertEquals(payloadOut.getContentMetadata().getContentLength(),new Long(10));	
-			
-			dataNonCDMIContentTypeApi.deleteDataObject(containerName, dataObjectNameIn);
-			assertEquals(containerApi.getContainer(containerName)
-					.getChildren().contains(dataObjectNameIn), false);
+			assertEquals(CharStreams.toString(new InputStreamReader(payloadOut
+					.getInput(), "UTF-8")), value.substring(11, 21));
+			assertEquals(payloadOut.getContentMetadata().getContentLength(),
+					new Long(10));
+
+			dataNonCDMIContentTypeApi.deleteDataObject(containerName,
+					dataObjectNameIn);
+			assertEquals(containerApi.getContainer(containerName).getChildren()
+					.contains(dataObjectNameIn), false);
 
 			// exercise create data object with none cdmi partial.
 			// server does not actually support cdmi partial but
 			// trace allows me to see that request was constructed properly
 			value = "Hello CDMI World non-cdmi String";
 			payloadIn = new StringPayload(value);
-			payloadIn.setContentMetadata(BaseMutableContentMetadata.fromContentMetadata(payloadIn.getContentMetadata().toBuilder()
-					.contentType(MediaType.PLAIN_TEXT_UTF_8.toString())
-					.build()));
-			dataNonCDMIContentTypeApi.createDataObjectPartial(containerName, dataObjectNameIn,
-					payloadIn);
-			payloadOut = dataNonCDMIContentTypeApi.getDataObjectValue(containerName, dataObjectNameIn);
+			payloadIn.setContentMetadata(BaseMutableContentMetadata
+					.fromContentMetadata(payloadIn.getContentMetadata()
+							.toBuilder()
+							.contentType(MediaType.PLAIN_TEXT_UTF_8.toString())
+							.build()));
+			dataNonCDMIContentTypeApi.createDataObjectPartial(containerName,
+					dataObjectNameIn, payloadIn);
+			payloadOut = dataNonCDMIContentTypeApi.getDataObjectValue(
+					containerName, dataObjectNameIn);
 			assertNotNull(payloadOut);
-			System.out.println("payload "+payloadOut);
-			
-			dataNonCDMIContentTypeApi.createDataObjectPartial(containerName, dataObjectNameIn,
-					payloadIn);
-			payloadOut = dataNonCDMIContentTypeApi.getDataObjectValue(containerName, dataObjectNameIn);
+			System.out.println("payload " + payloadOut);
+
+			dataNonCDMIContentTypeApi.createDataObjectPartial(containerName,
+					dataObjectNameIn, payloadIn);
+			payloadOut = dataNonCDMIContentTypeApi.getDataObjectValue(
+					containerName, dataObjectNameIn);
 			assertNotNull(payloadOut);
-			System.out.println("payload "+payloadOut);
+			System.out.println("payload " + payloadOut);
 
-			
-			
-			dataNonCDMIContentTypeApi.createDataObject(containerName, dataObjectNameIn,
-					payloadIn);
+			dataNonCDMIContentTypeApi.createDataObject(containerName,
+					dataObjectNameIn, payloadIn);
 
-
-			payloadOut = dataNonCDMIContentTypeApi.getDataObjectValue(containerName, dataObjectNameIn);
+			payloadOut = dataNonCDMIContentTypeApi.getDataObjectValue(
+					containerName, dataObjectNameIn);
 			assertNotNull(payloadOut);
-			System.out.println("payload "+payloadOut);
-		
-	
+			System.out.println("payload " + payloadOut);
+
 		} finally {
 			tmpFileIn.delete();
+			for (String containerChild : containerApi.getContainer(
+					containerName).getChildren()) {
+				System.out.println("deleting: " + containerChild);
+				dataNonCDMIContentTypeApi.deleteDataObject(containerName,
+						containerChild);
+			}
 			containerApi.deleteContainer(containerName);
 
 		}

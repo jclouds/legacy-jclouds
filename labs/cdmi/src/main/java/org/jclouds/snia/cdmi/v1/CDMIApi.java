@@ -33,7 +33,7 @@ import org.jclouds.snia.cdmi.v1.features.DomainApi;
  * 
  * @see CDMIAsyncApi
  * @see <a href="http://www.snia.org/cdmi">api doc</a>
- * @author Adrian Cole
+ * @author Kenneth Nagin
  */
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface CDMIApi {
@@ -57,9 +57,12 @@ public interface CDMIApi {
    DataApi getDataApi();
    
    /**
-    * Provides synchronous access to Data Object Resource Operations.
+    * Provides synchronous access to Data Object Resource Operations using Non CDMI Content type.
     */
    @Delegate
    DataNonCDMIContentTypeApi getDataNonCDMIContentTypeApi();
+   
+
+
 
 }

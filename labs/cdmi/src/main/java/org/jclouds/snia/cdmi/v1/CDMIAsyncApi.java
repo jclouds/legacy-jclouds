@@ -21,6 +21,7 @@ package org.jclouds.snia.cdmi.v1;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.snia.cdmi.v1.features.ContainerAsyncApi;
 import org.jclouds.snia.cdmi.v1.features.DataAsyncApi;
+import org.jclouds.snia.cdmi.v1.features.DataNonCDMIContentTypeAsyncApi;
 import org.jclouds.snia.cdmi.v1.features.DomainAsyncApi;
 
 /**
@@ -29,32 +30,32 @@ import org.jclouds.snia.cdmi.v1.features.DomainAsyncApi;
  * 
  * @see CDMIApi
  * @see <a href="http://www.snia.org/cdmi">api doc</a>
- * @author Adrian Cole
+ * @author Kenneth Nagin
  */
 public interface CDMIAsyncApi {
 
-   /**
-    * Provides asynchronous access to Domain Object Resource Operations.
-    */
-   @Delegate
-   DomainAsyncApi getDomainApi();
+	/**
+	 * Provides asynchronous access to Domain Object Resource Operations.
+	 */
+	@Delegate
+	DomainAsyncApi getDomainApi();
 
-   /**
-    * Provides asynchronous access to Container Object Resource Operations.
-    */
-   @Delegate
-   ContainerAsyncApi getContainerApi();
+	/**
+	 * Provides asynchronous access to Container Object Resource Operations.
+	 */
+	@Delegate
+	ContainerAsyncApi getContainerApi();
 
-   /**
-    * Provides asynchronous access to Data Object Resource Operations.
-    */
-   @Delegate
-   DataAsyncApi getDataApi();
+	/**
+	 * Provides asynchronous access to Data Object Resource Operations.
+	 */
+	@Delegate
+	DataAsyncApi getDataApi();
 
-   /**
-    * Provides asynchronous access to Data Object Resource Operations.
-    */
-   @Delegate
-   DataAsyncApi getDataNonCDMIContentTypeApi();
-   
+	/**
+	 * Provides asynchronous access to Data Object Resource Operations using Non CDMI Content type.
+	 */
+	@Delegate
+	DataNonCDMIContentTypeAsyncApi getDataNonCDMIContentTypeApi();
+
 }
