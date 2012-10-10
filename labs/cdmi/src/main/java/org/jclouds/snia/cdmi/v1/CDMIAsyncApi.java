@@ -33,15 +33,15 @@ import org.jclouds.snia.cdmi.v1.features.DomainAsyncApi;
  * 
  * @see CDMIApi
  * @see <a href="http://www.snia.org/cdmi">api doc</a>
- * @author Adrian Cole
+ * @author Kenneth Nagin
  */
 public interface CDMIAsyncApi {
 
-   /**
-    * Provides asynchronous access to Domain Object Resource Operations.
-    */
-   @Delegate
-   DomainAsyncApi getDomainApi();
+	/**
+	 * Provides asynchronous access to Domain Object Resource Operations.
+	 */
+	@Delegate
+	DomainAsyncApi getDomainApi();
 
    /**
     * Provides asynchronous access to Container Object Resource Operations.

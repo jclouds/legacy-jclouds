@@ -39,7 +39,7 @@ import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.snia.cdmi.v1.binders.BindQueryParmsToSuffix;
 import org.jclouds.snia.cdmi.v1.domain.DataObject;
-import org.jclouds.snia.cdmi.v1.filters.BasicAuthenticationAndTenantId;
+import org.jclouds.snia.cdmi.v1.filters.AuthenticationFilterSwitch;
 import org.jclouds.snia.cdmi.v1.filters.StripExtraAcceptHeader;
 import org.jclouds.snia.cdmi.v1.functions.ParseObjectFromHeadersAndHttpContent;
 import org.jclouds.snia.cdmi.v1.queryparams.DataObjectQueryParams;
@@ -55,7 +55,8 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see <a href="http://www.snia.org/cdmi">api doc</a>
  */
 @SkipEncoding({ '/', '=' })
-@RequestFilters({ BasicAuthenticationAndTenantId.class, StripExtraAcceptHeader.class })
+@RequestFilters({ AuthenticationFilterSwitch.class,
+		StripExtraAcceptHeader.class})
 public interface DataNonCDMIContentTypeAsyncApi {
    /**
     * @see DataNonCDMIContentTypeApi#getValue(String dataObjectName)
