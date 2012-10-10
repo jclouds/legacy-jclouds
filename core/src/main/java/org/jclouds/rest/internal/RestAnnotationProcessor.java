@@ -169,7 +169,7 @@ import com.google.inject.util.Types;
 
 /**
  * Creates http methods based on annotations on a class or interface.
- * 
+ *
  * @author Adrian Cole
  */
 public class RestAnnotationProcessor<T> {
@@ -192,7 +192,7 @@ public class RestAnnotationProcessor<T> {
    static final LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> methodToIndexOfParamToPostParamAnnotations = createMethodToIndexOfParamToAnnotation(PayloadParam.class);
    static final LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> methodToIndexOfParamToPartParamAnnotations = createMethodToIndexOfParamToAnnotation(PartParam.class);
    static final LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> methodToIndexOfParamToParamParserAnnotations = createMethodToIndexOfParamToAnnotation(ParamParser.class);
-   
+
    final Cache<MethodKey, Method> delegationMap;
 
    static LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> createMethodToIndexOfParamToAnnotation(
@@ -322,7 +322,7 @@ public class RestAnnotationProcessor<T> {
 
    @SuppressWarnings("unchecked")
    @Inject
-   public RestAnnotationProcessor(Injector injector, LoadingCache<Class<?>, Boolean> seedAnnotationCache, Cache<MethodKey, Method> delegationMap, 
+   public RestAnnotationProcessor(Injector injector, LoadingCache<Class<?>, Boolean> seedAnnotationCache, Cache<MethodKey, Method> delegationMap,
             @ApiVersion String apiVersion, @BuildVersion String buildVersion, ParseSax.Factory parserFactory,
             HttpUtils utils, ContentMetadataCodec contentMetadataCodec, TypeLiteral<T> typeLiteral) throws ExecutionException {
       this.declaring = (Class<T>) typeLiteral.getRawType();
@@ -343,7 +343,7 @@ public class RestAnnotationProcessor<T> {
       this.buildVersion = buildVersion;
    }
 
-   
+
    public Method getDelegateOrNull(Method in) {
       return delegationMap.getIfPresent(new MethodKey(in));
    }
@@ -364,7 +364,7 @@ public class RestAnnotationProcessor<T> {
                && Objects.equal(this.name, that.name)
                && Objects.equal(this.parametersTypeHashCode, that.parametersTypeHashCode);
       }
-      
+
       private final String name;
       private final int parametersTypeHashCode;
       private final Class<?> declaringClass;
@@ -838,7 +838,7 @@ public class RestAnnotationProcessor<T> {
       Type returnVal = getReturnTypeForMethod(method);
       return getJsonParserKeyForMethodAnType(method, returnVal);
    }
-   
+
    @SuppressWarnings("unchecked")
    public static Key<? extends Function<HttpResponse, ?>> getJAXBParserKeyForMethod(Method method) {
        Type returnVal = getReturnTypeForMethod(method);
@@ -1334,4 +1334,10 @@ public class RestAnnotationProcessor<T> {
       return postParams;
    }
 
+   /**
+    * the class that is being processed
+    */
+   public Class<T> getDeclaring(){
+      return declaring;
+   }
 }

@@ -27,6 +27,7 @@ import java.util.Properties;
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.openstack.swift.blobstore.config.SwiftBlobStoreContextModule;
+import org.jclouds.openstack.swift.blobstore.config.TemporaryUrlExtensionModule.SwiftTemporaryUrlExtensionModule;
 import org.jclouds.openstack.swift.config.SwiftRestClientModule;
 import org.jclouds.openstack.swift.config.SwiftRestClientModule.StorageEndpointModule;
 import org.jclouds.rest.RestContext;
@@ -38,13 +39,13 @@ import com.google.inject.Module;
 
 /**
  * Implementation of {@link ApiMetadata} for OpenStack Swift
- * 
+ *
  * @author Adrian Cole
  */
 public class SwiftApiMetadata extends BaseRestApiMetadata {
    /** The serialVersionUID */
    private static final long serialVersionUID = 6725672099385580694L;
-   
+
    public static final TypeToken<RestContext<SwiftClient, SwiftAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<SwiftClient, SwiftAsyncClient>>() {
       private static final long serialVersionUID = -5070937833892503232L;
    };
@@ -81,7 +82,11 @@ public class SwiftApiMetadata extends BaseRestApiMetadata {
          .defaultProperties(SwiftApiMetadata.defaultProperties())
          .view(TypeToken.of(BlobStoreContext.class))
          .context(CONTEXT_TOKEN)
-         .defaultModules(ImmutableSet.<Class<? extends Module>>of(StorageEndpointModule.class, SwiftRestClientModule.class, SwiftBlobStoreContextModule.class));
+         .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
+                                     .add(StorageEndpointModule.class)
+                                     .add(SwiftRestClientModule.class)
+                                     .add(SwiftBlobStoreContextModule.class)
+                                     .add(SwiftTemporaryUrlExtensionModule.class).build());
       }
 
       @Override

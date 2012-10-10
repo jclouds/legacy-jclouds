@@ -19,18 +19,13 @@
 package org.jclouds.openstack.swift.blobstore.integration;
 
 import java.util.Properties;
-import java.util.UUID;
 
 import org.jclouds.blobstore.integration.internal.BaseBlobLiveTest;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
-import org.jclouds.openstack.swift.extensions.TemporaryUrlKeyApi;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-
 /**
- * 
+ *
  * @author James Murty
  * @author Adrian Cole
  */
@@ -42,7 +37,7 @@ public class SwiftBlobLiveTest extends BaseBlobLiveTest {
       setIfTestSystemPropertyPresent(props, KeystoneProperties.CREDENTIAL_TYPE);
       return props;
    }
-   
+
    public SwiftBlobLiveTest() {
       provider = System.getProperty("test.swift.provider", "swift");
    }
