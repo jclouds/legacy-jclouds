@@ -11,7 +11,7 @@ import com.google.common.reflect.TypeToken;
 import com.google.inject.Scopes;
 
 /**
- * 
+ *
  * @author Adrian Cole
  */
 @ConfiguresRestClient
@@ -21,9 +21,9 @@ public class SwiftKeystoneRestClientModule extends SwiftRestClientModule<SwiftKe
       super(TypeToken.of(SwiftKeystoneClient.class), TypeToken.of(SwiftKeystoneAsyncClient.class), ImmutableMap
                .<Class<?>, Class<?>> of());
    }
-   
+
    protected void bindResolvedClientsToCommonSwift() {
       bind(CommonSwiftClient.class).to(SwiftKeystoneClient.class).in(Scopes.SINGLETON);
       bind(CommonSwiftAsyncClient.class).to(SwiftKeystoneAsyncClient.class).in(Scopes.SINGLETON);
-   }
+  }
 }

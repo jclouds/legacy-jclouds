@@ -43,7 +43,7 @@ import com.google.inject.Provides;
 import com.google.inject.Scopes;
 
 /**
- * 
+ *
  * @author Adrian Cole
  */
 @ConfiguresRestClient
@@ -53,6 +53,7 @@ public class CloudFilesRestClientModule extends SwiftRestClientModule<CloudFiles
                .<Class<?>, Class<?>> of());
    }
 
+   @Override
    protected void bindResolvedClientsToCommonSwift() {
       bind(CommonSwiftClient.class).to(CloudFilesClient.class).in(Scopes.SINGLETON);
       bind(CommonSwiftAsyncClient.class).to(CloudFilesAsyncClient.class).in(Scopes.SINGLETON);

@@ -31,7 +31,6 @@ import java.util.concurrent.ExecutorService;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import javax.ws.rs.HeaderParam;
 
 import org.jclouds.Constants;
 import org.jclouds.blobstore.LocalAsyncBlobStore;
@@ -61,11 +60,10 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ListenableFuture;
-import org.jclouds.openstack.swift.reference.SwiftHeaders;
 
 /**
  * Implementation of {@link SwiftAsyncClient} which keeps all data in a local Map object.
- * 
+ *
  * @author Adrian Cole
  */
 @Singleton

@@ -29,6 +29,7 @@ import org.jclouds.openstack.keystone.v2_0.config.CredentialTypes;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule;
 import org.jclouds.openstack.services.ServiceType;
 import org.jclouds.openstack.swift.blobstore.config.SwiftBlobStoreContextModule;
+import org.jclouds.openstack.swift.blobstore.config.TemporaryUrlExtensionModule.SwiftKeystoneTemporaryUrlExtensionModule;
 import org.jclouds.openstack.swift.config.SwiftKeystoneRestClientModule;
 import org.jclouds.openstack.swift.config.SwiftRestClientModule.KeystoneStorageEndpointModule;
 import org.jclouds.rest.RestContext;
@@ -46,7 +47,7 @@ public class SwiftKeystoneApiMetadata extends SwiftApiMetadata {
 
    /** The serialVersionUID */
    private static final long serialVersionUID = 820062881469203616L;
-   
+
    public static final TypeToken<RestContext<SwiftKeystoneClient, SwiftKeystoneAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<SwiftKeystoneClient, SwiftKeystoneAsyncClient>>() {
       private static final long serialVersionUID = -5070937833892503232L;
    };
@@ -91,8 +92,12 @@ public class SwiftKeystoneApiMetadata extends SwiftApiMetadata {
                .defaultEndpoint("http://localhost:5000/v2.0/")
                .context(CONTEXT_TOKEN)
                .defaultProperties(SwiftKeystoneApiMetadata.defaultProperties())
-               .defaultModules(ImmutableSet.<Class<? extends Module>>of(KeystoneStorageEndpointModule.class, KeystoneAuthenticationModule.RegionModule.class,
-                     SwiftKeystoneRestClientModule.class, SwiftBlobStoreContextModule.class));
+               .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
+                                           .add(KeystoneStorageEndpointModule.class)
+                                           .add(KeystoneAuthenticationModule.RegionModule.class)
+                                           .add(SwiftKeystoneRestClientModule.class)
+                                           .add(SwiftBlobStoreContextModule.class)
+                                           .add(SwiftKeystoneTemporaryUrlExtensionModule.class).build());
       }
 
       @Override

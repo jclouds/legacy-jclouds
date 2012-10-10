@@ -23,16 +23,12 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Singleton;
 
-import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.cloudfiles.CloudFilesClient;
-import org.jclouds.openstack.swift.TemporaryUrlKey;
 import org.jclouds.cloudfiles.blobstore.CloudFilesAsyncBlobStore;
 import org.jclouds.cloudfiles.blobstore.CloudFilesBlobStore;
 import org.jclouds.cloudfiles.blobstore.functions.CloudFilesObjectToBlobMetadata;
 import org.jclouds.cloudfiles.domain.ContainerCDNMetadata;
-import org.jclouds.date.TimeStamp;
 import org.jclouds.openstack.swift.blobstore.SwiftAsyncBlobStore;
-import org.jclouds.openstack.swift.blobstore.SwiftBlobRequestSigner;
 import org.jclouds.openstack.swift.blobstore.SwiftBlobStore;
 import org.jclouds.openstack.swift.blobstore.config.SwiftBlobStoreContextModule;
 import org.jclouds.openstack.swift.blobstore.functions.ObjectToBlobMetadata;
@@ -70,6 +66,5 @@ public class CloudFilesBlobStoreContextModule extends SwiftBlobStoreContextModul
       bind(SwiftBlobStore.class).to(CloudFilesBlobStore.class);
       bind(SwiftAsyncBlobStore.class).to(CloudFilesAsyncBlobStore.class);
       bind(ObjectToBlobMetadata.class).to(CloudFilesObjectToBlobMetadata.class);
-      bind(BlobRequestSigner.class).to(SwiftBlobRequestSigner.class);
    }
 }

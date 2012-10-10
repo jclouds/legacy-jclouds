@@ -21,33 +21,32 @@ package org.jclouds.openstack.swift;
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
-import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
 
 import java.net.URI;
 import java.util.Properties;
 
 import javax.inject.Singleton;
 
-import com.google.common.base.Suppliers;
-import com.google.inject.*;
-import com.google.inject.util.Modules;
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.date.TimeStamp;
+import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.openstack.functions.URIFromAuthenticationResponseForService;
 import org.jclouds.openstack.internal.TestOpenStackAuthenticationModule;
 import org.jclouds.openstack.reference.AuthHeaders;
+import org.jclouds.openstack.swift.blobstore.SwiftBlobSigner;
 import org.jclouds.openstack.swift.blobstore.config.SwiftBlobStoreContextModule;
+import org.jclouds.openstack.swift.blobstore.config.TemporaryUrlExtensionModule;
 import org.jclouds.openstack.swift.config.SwiftRestClientModule;
-import org.jclouds.openstack.swift.extensions.TemporaryUrlKeyApi;
-import org.jclouds.openstack.swift.extensions.TemporaryUrlKeyAsyncApi;
-import org.jclouds.openstack.swift.suppliers.ReturnOrFetchTemporaryUrlKey;
 import org.jclouds.rest.internal.BaseAsyncClientTest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
+import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code BindSwiftObjectMetadataToRequest}
@@ -83,25 +82,34 @@ public abstract class CommonSwiftClientTest extends BaseAsyncClientTest<SwiftAsy
       }
    }
 
-   public static class StaticTimeAndTemporaryUrlKeyModule extends SwiftBlobStoreContextModule {
+   public static class StaticTimeAndTemporaryUrlKeyModule extends TemporaryUrlExtensionModule<SwiftAsyncClient> {
       @Override
       protected Long unixEpochTimestampProvider() {
          return UNIX_EPOCH_TIMESTAMP;
       }
 
       @Override
-      protected void configureTemporaryUrlExtension() {
-         bindClientAndAsyncClient(binder(), TemporaryUrlKeyApi.class, TemporaryUrlKeyAsyncApi.class);
+      protected void configure() {
+         bindTemporaryUrlKeyApi();
          bind(new TypeLiteral<Supplier<String>>() {
          }).annotatedWith(TemporaryUrlKey.class).toInstance(Suppliers.ofInstance(TEMPORARY_URL_KEY));
+      }
+
+      @Override
+      protected void bindRequestSigner() {
+         bind(BlobRequestSigner.class).to(new TypeLiteral<SwiftBlobSigner<SwiftAsyncClient>>() {
+         });
       }
    }
 
    @Override
    protected ApiMetadata createApiMetadata() {
-      return new SwiftApiMetadata().toBuilder().defaultModules(
-          ImmutableSet.<Class<? extends Module>>of(StorageEndpointModule.class, SwiftRestClientModule.class,
-              StaticTimeAndTemporaryUrlKeyModule.class)).build();
+      return new SwiftApiMetadata().toBuilder()
+                                   .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
+                                         .add(StorageEndpointModule.class)
+                                         .add(SwiftRestClientModule.class)
+                                         .add(SwiftBlobStoreContextModule.class)
+                                         .add(StaticTimeAndTemporaryUrlKeyModule.class).build()).build();
    }
 
    @Override

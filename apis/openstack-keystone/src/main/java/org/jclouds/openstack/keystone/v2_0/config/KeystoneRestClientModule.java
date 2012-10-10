@@ -73,7 +73,7 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 /**
  * Configures the Keystone connection.
- * 
+ *
  * @author Adam Lowe
  */
 @ConfiguresRestClient
@@ -88,6 +88,7 @@ public class KeystoneRestClientModule<S extends KeystoneApi, A extends KeystoneA
             .put(TenantApi.class, TenantAsyncApi.class)
             .build();
 
+   @SuppressWarnings("unchecked")
    public KeystoneRestClientModule() {
       super(TypeToken.class.cast(TypeToken.of(KeystoneApi.class)), TypeToken.class.cast(TypeToken.of(KeystoneAsyncApi.class)), DELEGATE_MAP);
    }
@@ -128,7 +129,7 @@ public class KeystoneRestClientModule<S extends KeystoneApi, A extends KeystoneA
       bind(ImplicitOptionalConverter.class).to(PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensionsSet.class);
       super.configure();
    }
-   
+
    @Provides
    @Singleton
    public Multimap<URI, URI> aliases() {

@@ -20,8 +20,6 @@ package org.jclouds.openstack.swift.blobstore;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Predicates.instanceOf;
-import static com.google.common.collect.Iterables.filter;
 import static org.jclouds.blobstore.util.BlobStoreUtils.cleanRequest;
 
 import java.lang.reflect.Method;
@@ -30,9 +28,6 @@ import java.security.InvalidKeyException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import com.google.common.base.Supplier;
-import com.google.common.base.Throwables;
-import com.google.inject.Provider;
 import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
@@ -40,21 +35,26 @@ import org.jclouds.crypto.Crypto;
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.options.GetOptions;
-import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.openstack.swift.CommonSwiftAsyncClient;
 import org.jclouds.openstack.swift.TemporaryUrlKey;
 import org.jclouds.openstack.swift.blobstore.functions.BlobToObject;
 import org.jclouds.openstack.swift.domain.SwiftObject;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 
+import com.google.common.base.Supplier;
+import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Provider;
+
 /**
  * @author Adrian Cole
  */
 @Singleton
-public class SwiftBlobRequestSigner implements BlobRequestSigner {
+public class SwiftBlobSigner<T extends CommonSwiftAsyncClient> implements BlobRequestSigner {
 
-   private final RestAnnotationProcessor<CommonSwiftAsyncClient> processor;
+   private final RestAnnotationProcessor<T> processor;
    private final Crypto crypto;
 
    private final Provider<Long> unixEpochTimestampProvider;
@@ -67,10 +67,18 @@ public class SwiftBlobRequestSigner implements BlobRequestSigner {
    private final Method deleteMethod;
    private final Method createMethod;
 
+   /**
+    * create a signer for this subtype of swift
+    *
+    * @param processor
+    *           bound to the current subclass of {@link CommonSwiftAsyncClient}
+    */
    @Inject
-   public SwiftBlobRequestSigner(RestAnnotationProcessor<CommonSwiftAsyncClient> processor, BlobToObject blobToObject,
-                                 BlobToHttpGetOptions blob2HttpGetOptions, Crypto crypto, @TimeStamp Provider<Long> unixEpochTimestampProvider,
-                                 @TemporaryUrlKey Supplier<String> temporaryUrlKeySupplier) throws SecurityException, NoSuchMethodException {
+   protected SwiftBlobSigner(BlobToObject blobToObject, BlobToHttpGetOptions blob2HttpGetOptions, Crypto crypto,
+         @TimeStamp Provider<Long> unixEpochTimestampProvider,
+         @TemporaryUrlKey Supplier<String> temporaryUrlKeySupplier,
+         RestAnnotationProcessor<T> processor)
+         throws SecurityException, NoSuchMethodException {
       this.processor = checkNotNull(processor, "processor");
       this.crypto = checkNotNull(crypto, "crypto");
 
@@ -80,10 +88,9 @@ public class SwiftBlobRequestSigner implements BlobRequestSigner {
       this.blobToObject = checkNotNull(blobToObject, "blobToObject");
       this.blob2HttpGetOptions = checkNotNull(blob2HttpGetOptions, "blob2HttpGetOptions");
 
-      this.getMethod = CommonSwiftAsyncClient.class.getMethod("getObject", String.class, String.class,
-          GetOptions[].class);
-      this.deleteMethod = CommonSwiftAsyncClient.class.getMethod("removeObject", String.class, String.class);
-      this.createMethod = CommonSwiftAsyncClient.class.getMethod("putObject", String.class, SwiftObject.class);
+      this.getMethod = processor.getDeclaring().getMethod("getObject", String.class, String.class, GetOptions[].class);
+      this.deleteMethod = processor.getDeclaring().getMethod("removeObject", String.class, String.class);
+      this.createMethod = processor.getDeclaring().getMethod("putObject", String.class, SwiftObject.class);
    }
 
    @Override
@@ -119,8 +126,7 @@ public class SwiftBlobRequestSigner implements BlobRequestSigner {
    }
 
    private HttpRequest signForTemporaryAccess(HttpRequest request, long timeInSeconds) {
-      HttpRequest.Builder builder = request.toBuilder();
-      builder.filters(filter(request.getFilters(), instanceOf(AuthenticateRequest.class)));
+      HttpRequest.Builder<?> builder = request.toBuilder().filters(ImmutableSet.<HttpRequestFilter>of());
 
       String key = temporaryUrlKeySupplier.get();
       if (key == null) {
@@ -128,8 +134,8 @@ public class SwiftBlobRequestSigner implements BlobRequestSigner {
       }
       long expiresInSeconds = unixEpochTimestampProvider.get() + timeInSeconds;
 
-      builder.addQueryParam("temp_url_sig", createSignature(key, createStringToSign(
-          request.getMethod().toUpperCase(), request, expiresInSeconds)));
+      builder.addQueryParam("temp_url_sig",
+            createSignature(key, createStringToSign(request.getMethod().toUpperCase(), request, expiresInSeconds)));
       builder.addQueryParam("temp_url_expires", "" + expiresInSeconds);
 
       return builder.build();
@@ -137,14 +143,12 @@ public class SwiftBlobRequestSigner implements BlobRequestSigner {
 
    private String createStringToSign(String method, HttpRequest request, long expiresInSeconds) {
       checkArgument(method.equalsIgnoreCase("GET") || method.equalsIgnoreCase("PUT"));
-      return String.format("%s\n%d\n%s", method.toUpperCase(), expiresInSeconds,
-          request.getEndpoint().getPath());
+      return String.format("%s\n%d\n%s", method.toUpperCase(), expiresInSeconds, request.getEndpoint().getPath());
    }
 
    private String createSignature(String key, String stringToSign) {
       try {
          return CryptoStreams.hex(crypto.hmacSHA1(key.getBytes()).doFinal(stringToSign.getBytes()));
-
       } catch (InvalidKeyException e) {
          throw Throwables.propagate(e);
       }
