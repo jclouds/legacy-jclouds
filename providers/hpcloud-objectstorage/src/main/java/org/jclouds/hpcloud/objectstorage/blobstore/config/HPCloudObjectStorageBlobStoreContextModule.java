@@ -29,13 +29,11 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.blobstore.AsyncBlobStore;
-import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.config.BlobStoreMapModule;
 import org.jclouds.hpcloud.objectstorage.HPCloudObjectStorageApi;
 import org.jclouds.hpcloud.objectstorage.blobstore.HPCloudObjectStorageAsyncBlobStore;
-import org.jclouds.hpcloud.objectstorage.blobstore.HPCloudObjectStorageBlobRequestSigner;
 import org.jclouds.hpcloud.objectstorage.blobstore.HPCloudObjectStorageBlobStore;
 import org.jclouds.hpcloud.objectstorage.blobstore.functions.HPCloudObjectStorageObjectToBlobMetadata;
 import org.jclouds.hpcloud.objectstorage.domain.CDNContainer;
@@ -53,7 +51,7 @@ import com.google.common.cache.LoadingCache;
 import com.google.inject.Provides;
 
 /**
- * 
+ *
  * @author Adrian Cole
  */
 public class HPCloudObjectStorageBlobStoreContextModule extends SwiftBlobStoreContextModule {
@@ -99,7 +97,7 @@ public class HPCloudObjectStorageBlobStoreContextModule extends SwiftBlobStoreCo
    protected LoadingCache<String, URI> cdnContainer(GetCDNMetadata loader) {
       return CacheBuilder.newBuilder().expireAfterWrite(30, TimeUnit.SECONDS).build(loader);
    }
-   
+
    @Override
    protected void configure() {
       install(new BlobStoreMapModule());
@@ -107,6 +105,5 @@ public class HPCloudObjectStorageBlobStoreContextModule extends SwiftBlobStoreCo
       bind(AsyncBlobStore.class).to(HPCloudObjectStorageAsyncBlobStore.class);
       bind(BlobStore.class).to(HPCloudObjectStorageBlobStore.class);
       bind(ObjectToBlobMetadata.class).to(HPCloudObjectStorageObjectToBlobMetadata.class);
-      bind(BlobRequestSigner.class).to(HPCloudObjectStorageBlobRequestSigner.class);
    }
 }

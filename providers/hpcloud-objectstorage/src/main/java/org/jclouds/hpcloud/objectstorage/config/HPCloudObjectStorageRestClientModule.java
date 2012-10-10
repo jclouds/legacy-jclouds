@@ -25,10 +25,10 @@ import java.util.Map;
 
 import javax.inject.Singleton;
 
-import org.jclouds.hpcloud.objectstorage.HPCloudObjectStorageAsyncApi;
 import org.jclouds.hpcloud.objectstorage.HPCloudObjectStorageApi;
-import org.jclouds.hpcloud.objectstorage.extensions.CDNContainerAsyncApi;
+import org.jclouds.hpcloud.objectstorage.HPCloudObjectStorageAsyncApi;
 import org.jclouds.hpcloud.objectstorage.extensions.CDNContainerApi;
+import org.jclouds.hpcloud.objectstorage.extensions.CDNContainerAsyncApi;
 import org.jclouds.hpcloud.services.HPExtensionCDN;
 import org.jclouds.hpcloud.services.HPExtensionServiceType;
 import org.jclouds.location.suppliers.RegionIdToURISupplier;
@@ -45,7 +45,7 @@ import com.google.inject.Provides;
 import com.google.inject.Scopes;
 
 /**
- * 
+ *
  * @author Adrian Cole
  */
 @ConfiguresRestClient
@@ -63,7 +63,7 @@ public class HPCloudObjectStorageRestClientModule extends
       bind(CommonSwiftClient.class).to(HPCloudObjectStorageApi.class).in(Scopes.SINGLETON);
       bind(CommonSwiftAsyncClient.class).to(HPCloudObjectStorageAsyncApi.class).in(Scopes.SINGLETON);
    }
-   
+
    @Provides
    @Singleton
    @HPExtensionCDN

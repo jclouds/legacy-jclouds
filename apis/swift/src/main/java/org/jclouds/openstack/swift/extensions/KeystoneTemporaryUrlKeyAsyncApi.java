@@ -16,21 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.swift.functions;
+package org.jclouds.openstack.swift.extensions;
 
-import static org.jclouds.openstack.swift.reference.SwiftHeaders.ACCOUNT_TEMPORARY_URL_KEY;
-
-import org.jclouds.http.HttpResponse;
-
-import com.google.common.base.Function;
+import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
+import org.jclouds.openstack.swift.Storage;
+import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.SkipEncoding;
 
 /**
- * @author Andrei Savu
+ * Only purpose is to override the auth filter with one that works in keystone
+ *
+ * @author Adrian Cole
+ * @see TemporaryUrlKeyApi
  */
-public class ParseTemporaryUrlKeyFromHeaders implements Function<HttpResponse, String> {
+@SkipEncoding('/')
+@RequestFilters(AuthenticateRequest.class)
+@Endpoint(Storage.class)
+public interface KeystoneTemporaryUrlKeyAsyncApi extends TemporaryUrlKeyAsyncApi {
 
-   @Override
-   public String apply(HttpResponse httpResponse) {
-      return httpResponse.getFirstHeaderOrNull(ACCOUNT_TEMPORARY_URL_KEY);
-   }
 }
