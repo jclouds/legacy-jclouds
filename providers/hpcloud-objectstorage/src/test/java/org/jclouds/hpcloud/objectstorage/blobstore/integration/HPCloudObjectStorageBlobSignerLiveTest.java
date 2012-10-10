@@ -18,7 +18,10 @@
  */
 package org.jclouds.hpcloud.objectstorage.blobstore.integration;
 
+import java.io.IOException;
+
 import org.jclouds.openstack.swift.blobstore.integration.SwiftBlobSignerLiveTest;
+import org.jclouds.rest.AuthorizationException;
 import org.testng.annotations.Test;
 
 /**
@@ -28,6 +31,22 @@ import org.testng.annotations.Test;
 public class HPCloudObjectStorageBlobSignerLiveTest extends SwiftBlobSignerLiveTest {
    public HPCloudObjectStorageBlobSignerLiveTest() {
       provider = "hpcloud-objectstorage";
+   }
+
+   // hp doesn't yet support time-bound request signing
+   // https://api-docs.hpcloud.com/hpcloud-object-storage/1.0/content/ch_object-storage-dev-overview.html
+   @Override
+   @Test(expectedExceptions = AuthorizationException.class)
+   public void testSignGetUrlWithTime() throws InterruptedException, IOException {
+      super.testSignGetUrlWithTime();
+   }
+
+   // hp doesn't yet support time-bound request signing
+   // https://api-docs.hpcloud.com/hpcloud-object-storage/1.0/content/ch_object-storage-dev-overview.html
+   @Override
+   @Test(expectedExceptions = AuthorizationException.class)
+   public void testSignPutUrlWithTime() throws Exception {
+      super.testSignPutUrlWithTime();
    }
 
 }

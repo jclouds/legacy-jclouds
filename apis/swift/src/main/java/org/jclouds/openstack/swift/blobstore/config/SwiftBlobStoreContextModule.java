@@ -18,43 +18,24 @@
  */
 package org.jclouds.openstack.swift.blobstore.config;
 
-import com.google.common.base.Supplier;
-import com.google.inject.Provides;
-import com.google.inject.TypeLiteral;
+
 import org.jclouds.blobstore.AsyncBlobStore;
-import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.config.BlobStoreMapModule;
-import org.jclouds.date.TimeStamp;
-import org.jclouds.openstack.swift.TemporaryUrlKey;
 import org.jclouds.openstack.swift.blobstore.SwiftAsyncBlobStore;
-import org.jclouds.openstack.swift.blobstore.SwiftBlobRequestSigner;
 import org.jclouds.openstack.swift.blobstore.SwiftBlobStore;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
-import org.jclouds.openstack.swift.extensions.TemporaryUrlKeyApi;
-import org.jclouds.openstack.swift.extensions.TemporaryUrlKeyAsyncApi;
-import org.jclouds.openstack.swift.suppliers.ReturnOrFetchTemporaryUrlKey;
-
-import java.util.UUID;
-
-import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
 
 /**
- * Configures the {@link CloudFilesBlobStoreContext}; requires {@link SwiftAsyncBlobStore}
- * bound.
+ * Configures the {@link CloudFilesBlobStoreContext}; requires
+ * {@link SwiftAsyncBlobStore} bound.
  *
  * @author Adrian Cole
  */
 public class SwiftBlobStoreContextModule extends AbstractModule {
-
-   @Provides
-   @TimeStamp
-   protected Long unixEpochTimestampProvider() {
-      return System.currentTimeMillis() / 1000; /* convert to seconds */
-   }
 
    @Override
    protected void configure() {
@@ -62,13 +43,5 @@ public class SwiftBlobStoreContextModule extends AbstractModule {
       bind(ConsistencyModel.class).toInstance(ConsistencyModel.STRICT);
       bind(AsyncBlobStore.class).to(SwiftAsyncBlobStore.class).in(Scopes.SINGLETON);
       bind(BlobStore.class).to(SwiftBlobStore.class).in(Scopes.SINGLETON);
-      bind(BlobRequestSigner.class).to(SwiftBlobRequestSigner.class);
-      configureTemporaryUrlExtension();
-   }
-
-   protected void configureTemporaryUrlExtension() {
-      bindClientAndAsyncClient(binder(), TemporaryUrlKeyApi.class, TemporaryUrlKeyAsyncApi.class);
-      bind(new TypeLiteral<Supplier<String>>() {
-      }).annotatedWith(TemporaryUrlKey.class).to(ReturnOrFetchTemporaryUrlKey.class);
    }
 }
