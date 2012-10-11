@@ -31,7 +31,8 @@ import org.jclouds.rest.annotations.Identity;
 /**
  * Authentication filter switch. This method decides the type of authentication
  * mechanism. Currently, support its for basic authentication with TID and
- * openstack keystone token authentication. The default is openstack keystone token authentication.
+ * openstack keystone token authentication. The default is openstack keystone
+ * token authentication.
  * 
  * @see org.jclouds.snia.cdmi.v1.filters.BasicAuthenticationAndTenantId
  * @see org.jclouds.snia.cdmi.v1.filters.OpenstackKeystoneAuthReqFilter
@@ -46,33 +47,31 @@ public class AuthenticationFilterSwitch implements HttpRequestFilter {
 	/*
 	 * AuthenticationFilterSwitch: decides which httpRequestFilter to use.
 	 * 
-	 * @param identity user's identify in form:
-	 * <pre>
-	 * <tenant>:<username>[?authType=[basicAuthTid|openstackKeystone] 
-	 * Defaults to basicAuthTid.  
+	 * @param identity user's identify in form: <pre>
+	 * <tenant>:<username>[?authType=[basicAuthTid|openstackKeystone] Defaults to
+	 * basicAuthTid.
+	 * <pre> 
 	 * Examples: 
-	 * {@code
-	 *    Admin:admin:?authType=openstackKeystone
-	 *    
-	 *    Admin:admin:?authType=basicAuthTid
-	 *    
-	 *    Test:tester    // this defaults to openstackKeystone
-	 * }
-	 * </pre>
+	 * {@code 
+	 * Admin:admin?authType=openstackKeystone
+	 * 
+	 * Admin:admin?authType=basicAuthTid
+	 * 
+	 * Test:tester // this defaults to openstackKeystone 
+	 * } </pre>
 	 * 
 	 * @param credential user's credenitial, i.e. password.
 	 * 
 	 * @param crypto
 	 */
 	@Inject
-	public AuthenticationFilterSwitch(@Identity String identity,
-			@Credential String password, Crypto crypto) {
+	public AuthenticationFilterSwitch(@Identity String identity, @Credential String password, Crypto crypto) {
 		String tenantAndUsername = identity;
-		String authType = "openstackKeystone";  // default to opentack keystone token authentication
+		String authType = "openstackKeystone"; // default to opentack keystone
+															// token authentication
 		int identityParamIndex = identity.indexOf('?');
 		if (identityParamIndex > -1) {
-			String keyValuePairs[] = identity.substring(identityParamIndex + 1)
-					.split("[,]+");
+			String keyValuePairs[] = identity.substring(identityParamIndex + 1).split("[,]+");
 			tenantAndUsername = identity.substring(0, identityParamIndex);
 			for (String pair : keyValuePairs) {
 				if (pair.startsWith("authType")) {
@@ -81,14 +80,11 @@ public class AuthenticationFilterSwitch implements HttpRequestFilter {
 			}
 		}
 		if (authType.matches("basicAuthTid")) {
-			httpRequestFilter = new BasicAuthenticationAndTenantId(
-					tenantAndUsername, password, crypto);
+			httpRequestFilter = new BasicAuthenticationAndTenantId(tenantAndUsername, password, crypto);
 		} else if (authType.matches("openstackKeystone")) {
-			httpRequestFilter = new OpenstackKeystoneAuthReqFilter(
-					tenantAndUsername, password);
+			httpRequestFilter = new OpenstackKeystoneAuthReqFilter(tenantAndUsername, password);
 		} else {
-			httpRequestFilter = new BasicAuthenticationAndTenantId(
-					tenantAndUsername, password, crypto);
+			httpRequestFilter = new BasicAuthenticationAndTenantId(tenantAndUsername, password, crypto);
 		}
 	}
 

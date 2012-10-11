@@ -68,46 +68,34 @@ public class OpenstackKeystoneAuthReqFilter implements HttpRequestFilter {
 	private final String credential;
 
 	@Inject
-	public OpenstackKeystoneAuthReqFilter(
-			@Identity String tenantNameAndUsername,
-			@Credential String credential) {
+	public OpenstackKeystoneAuthReqFilter(@Identity String tenantNameAndUsername, @Credential String credential) {
 		if (tenantNameAndUsername.indexOf(':') == -1) {
-			throw new AuthorizationException(String.format(
-					"Identity %s does not match format tenantName:username",
-					tenantNameAndUsername), null);
+			throw new AuthorizationException(String.format("Identity %s does not match format tenantName:username",
+						tenantNameAndUsername), null);
 		}
 		this.credential = credential;
-		this.tenant = tenantNameAndUsername.substring(0,
-				tenantNameAndUsername.indexOf(':'));
-		this.identity = tenantNameAndUsername.substring(tenantNameAndUsername
-				.indexOf(':') + 1);
+		this.tenant = tenantNameAndUsername.substring(0, tenantNameAndUsername.indexOf(':'));
+		this.identity = tenantNameAndUsername.substring(tenantNameAndUsername.indexOf(':') + 1);
 
 	}
 
 	private HttpRequest buildRequest(HttpRequest requestIn) {
 		if (tokenId == null) {
-			Iterable<Module> modules = ImmutableSet
-			.<Module> of(new SLF4JLoggingModule());
+			Iterable<Module> modules = ImmutableSet.<Module> of(new SLF4JLoggingModule());
 			String authPath = requestIn.getEndpoint().getPath().split("/")[1]; // first
-																				// path
-																				// element
-																				// is
-																				// version
+			// path
+			// element
+			// is
+			// version
 			cdmiReqPathIndex = authPath.length() + 2; // Index to cdmi request
-			String keystoneEndpoint = requestIn.getEndpoint().getScheme()
-					+ "://" + requestIn.getEndpoint().getHost() + ":"
-					+ requestIn.getEndpoint().getPort() + "/" + authPath;
-			ContextBuilder contextBuilder = ContextBuilder
-					.newBuilder("openstack-keystone");
-			RestContext<KeystoneApi, KeystoneAsyncApi> keystone = contextBuilder
-					.credentials(identity, credential)
-					.endpoint(keystoneEndpoint).modules(modules).build();
-			AuthenticationApi authenticationApi = keystone.utils().injector()
-					.getInstance(AuthenticationApi.class);
-			Access access = authenticationApi
-					.authenticateWithTenantNameAndCredentials(tenant,
-							PasswordCredentials.createWithUsernameAndPassword(
-									identity, credential));
+			String keystoneEndpoint = requestIn.getEndpoint().getScheme() + "://" + requestIn.getEndpoint().getHost()
+						+ ":" + requestIn.getEndpoint().getPort() + "/" + authPath;
+			ContextBuilder contextBuilder = ContextBuilder.newBuilder("openstack-keystone");
+			RestContext<KeystoneApi, KeystoneAsyncApi> keystone = contextBuilder.credentials(identity, credential)
+						.endpoint(keystoneEndpoint).modules(modules).build();
+			AuthenticationApi authenticationApi = keystone.utils().injector().getInstance(AuthenticationApi.class);
+			Access access = authenticationApi.authenticateWithTenantNameAndCredentials(tenant,
+						PasswordCredentials.createWithUsernameAndPassword(identity, credential));
 			// Parse out token and endpoint for requests to object-store
 			// object-store's request is almost the same as cdmi request,
 			// but cdmi and tenant id are appended to host:port:
@@ -118,10 +106,8 @@ public class OpenstackKeystoneAuthReqFilter implements HttpRequestFilter {
 			tenantId = "AUTH_" + token.getTenant().getId();
 			for (Service service : access.getServiceCatalog()) {
 				if (service.getType().matches("object-store")) {
-					URI uri = service.getEndpoints().iterator().next()
-							.getPublicURL();
-					cdmiEndpoint = uri.getScheme() + "://" + uri.getHost()
-							+ ":" + uri.getPort() + "/cdmi/" + tenantId;
+					URI uri = service.getEndpoints().iterator().next().getPublicURL();
+					cdmiEndpoint = uri.getScheme() + "://" + uri.getHost() + ":" + uri.getPort() + "/cdmi/" + tenantId;
 					break;
 				}
 
@@ -136,14 +122,11 @@ public class OpenstackKeystoneAuthReqFilter implements HttpRequestFilter {
 		// and append with remainder, i.e. container, dataObject, and
 		// queryString.
 		HttpRequest requestOut = requestIn
-				.toBuilder()
-				.replaceHeader("X-Auth-Token", tokenId)
-				.endpoint(
-						cdmiEndpoint
-								+ "/"
-								+ requestIn.getEndpoint().getPath()
-										.substring(cdmiReqPathIndex)
-								+ queryString).build();
+					.toBuilder()
+					.replaceHeader("X-Auth-Token", tokenId)
+					.endpoint(
+								cdmiEndpoint + "/" + requestIn.getEndpoint().getPath().substring(cdmiReqPathIndex)
+											+ queryString).build();
 		return requestOut;
 	}
 

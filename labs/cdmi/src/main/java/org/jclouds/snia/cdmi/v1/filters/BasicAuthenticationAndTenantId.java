@@ -31,7 +31,8 @@ import org.jclouds.rest.annotations.Credential;
 import org.jclouds.rest.annotations.Identity;
 
 /**
- * Uses Basic Authentication to sign the request, and adds the {@code TID} header.
+ * Uses Basic Authentication to sign the request, and adds the {@code TID}
+ * header.
  * 
  * @see <a href= "http://en.wikipedia.org/wiki/Basic_access_authentication" />
  * @author Adrian Cole
@@ -39,24 +40,23 @@ import org.jclouds.rest.annotations.Identity;
  */
 @Singleton
 public class BasicAuthenticationAndTenantId implements HttpRequestFilter {
-   private final String tenantId;
-   private final BasicAuthentication basicAuthentication;
+	private final String tenantId;
+	private final BasicAuthentication basicAuthentication;
 
+	@Inject
+	public BasicAuthenticationAndTenantId(@Identity String tenantIdAndUsername, @Credential String password,
+				Crypto crypto) {
+		if (tenantIdAndUsername.indexOf(':') == -1) {
+			throw new AuthorizationException(String.format("Identity %s does not match format tenantId:username",
+						tenantIdAndUsername), null);
+		}
+		this.tenantId = tenantIdAndUsername.substring(0, tenantIdAndUsername.indexOf(':'));
+		String username = tenantIdAndUsername.substring(tenantIdAndUsername.indexOf(':') + 1);
+		this.basicAuthentication = new BasicAuthentication(username, password, crypto);
+	}
 
-   @Inject
-   public BasicAuthenticationAndTenantId(@Identity String tenantIdAndUsername, @Credential String password,
-            Crypto crypto) {
-      if (tenantIdAndUsername.indexOf(':') == -1) {
-         throw new AuthorizationException(String.format("Identity %s does not match format tenantId:username",
-                  tenantIdAndUsername), null);
-      }
-      this.tenantId = tenantIdAndUsername.substring(0, tenantIdAndUsername.indexOf(':'));
-      String username = tenantIdAndUsername.substring(tenantIdAndUsername.indexOf(':') + 1);
-      this.basicAuthentication = new BasicAuthentication(username, password, crypto);
-   }
-
-   @Override
-   public HttpRequest filter(HttpRequest request) throws HttpException {
-      return basicAuthentication.filter(request.toBuilder().replaceHeader("TID", tenantId).build());
-   }
+	@Override
+	public HttpRequest filter(HttpRequest request) throws HttpException {
+		return basicAuthentication.filter(request.toBuilder().replaceHeader("TID", tenantId).build());
+	}
 }

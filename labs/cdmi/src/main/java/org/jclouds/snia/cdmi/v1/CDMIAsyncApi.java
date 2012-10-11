@@ -43,25 +43,25 @@ public interface CDMIAsyncApi {
 	@Delegate
 	DomainAsyncApi getDomainApi();
 
-   /**
-    * Provides asynchronous access to Container Object Resource Operations.
-    */
-   @Delegate
-   ContainerAsyncApi getApi();
+	/**
+	 * Provides asynchronous access to Container Object Resource Operations.
+	 */
+	@Delegate
+	ContainerAsyncApi getApi();
 
-   /**
-    * Provides asynchronous access to Data Object Resource Operations.
-    */
-   @Delegate
-   @Path("/{containerName}")
-   DataAsyncApi getDataApiForContainer(@PathParam("containerName") String containerName);
+	/**
+	 * Provides asynchronous access to Data Object Resource Operations.
+	 */
+	@Delegate
+	@Path("/{containerName}")
+	DataAsyncApi getDataApiForContainer(@PathParam("containerName") String containerName);
 
-   /**
-    * Provides asynchronous access to Data Object Resource Operations.
-    */
-   @Delegate
-   @Path("/{containerName}")
-   DataNonCDMIContentTypeAsyncApi getDataNonCDMIContentTypeApiForContainer(
-            @PathParam("containerName") String containerName);
+	/**
+	 * Provides asynchronous access to Data Object Resource Operations.
+	 */
+	@Delegate
+	@Path("/{containerName}")
+	DataNonCDMIContentTypeAsyncApi getDataNonCDMIContentTypeApiForContainer(
+				@PathParam("containerName") String containerName);
 
 }

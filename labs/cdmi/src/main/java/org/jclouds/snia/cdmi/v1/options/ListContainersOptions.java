@@ -24,55 +24,57 @@ import static com.google.common.base.Preconditions.checkState;
 import org.jclouds.http.options.BaseHttpRequestOptions;
 
 /**
- * Contains options supported in the REST API for the GET container operation. <h2>
+ * Contains options supported in the REST API for the GET container operation.
+ * <h2>
  */
 public class ListContainersOptions extends BaseHttpRequestOptions {
-   public static final ListContainersOptions NONE = new ListContainersOptions();
+	public static final ListContainersOptions NONE = new ListContainersOptions();
 
-   /**
-    * Given a string value x, return data names greater in value than the specified marker.
-    */
-   public ListContainersOptions marker(String marker) {
-      queryParameters.put("marker", checkNotNull(marker, "marker"));
-      return this;
-   }
+	/**
+	 * Given a string value x, return data names greater in value than the
+	 * specified marker.
+	 */
+	public ListContainersOptions marker(String marker) {
+		queryParameters.put("marker", checkNotNull(marker, "marker"));
+		return this;
+	}
 
-   public String getMarker() {
-      return getFirstQueryOrNull("marker");
-   }
+	public String getMarker() {
+		return getFirstQueryOrNull("marker");
+	}
 
-   /**
-    * For an integer value n, limits the number of results to n values.
-    */
-   public ListContainersOptions limit(int limit) {
-      checkState(limit >= 0, "limit must be >= 0");
-      checkState(limit <= 10000, "limit must be <= 10000");
-      queryParameters.put("limit", Integer.toString(limit));
-      return this;
-   }
+	/**
+	 * For an integer value n, limits the number of results to n values.
+	 */
+	public ListContainersOptions limit(int limit) {
+		checkState(limit >= 0, "limit must be >= 0");
+		checkState(limit <= 10000, "limit must be <= 10000");
+		queryParameters.put("limit", Integer.toString(limit));
+		return this;
+	}
 
-   public int getLimit() {
-      String val = getFirstQueryOrNull("limit");
-      return val != null ? Integer.valueOf(val) : 10000;
-   }
+	public int getLimit() {
+		String val = getFirstQueryOrNull("limit");
+		return val != null ? Integer.valueOf(val) : 10000;
+	}
 
-   public static class Builder {
+	public static class Builder {
 
-      /**
-       * @see ListContainersOptions#marker(String)
-       */
-      public static ListContainersOptions marker(String marker) {
-         ListContainersOptions options = new ListContainersOptions();
-         return options.marker(marker);
-      }
+		/**
+		 * @see ListContainersOptions#marker(String)
+		 */
+		public static ListContainersOptions marker(String marker) {
+			ListContainersOptions options = new ListContainersOptions();
+			return options.marker(marker);
+		}
 
-      /**
-       * @see ListContainersOptions#limit(int)
-       */
-      public static ListContainersOptions limit(int limit) {
-         ListContainersOptions options = new ListContainersOptions();
-         return options.limit(limit);
-      }
+		/**
+		 * @see ListContainersOptions#limit(int)
+		 */
+		public static ListContainersOptions limit(int limit) {
+			ListContainersOptions options = new ListContainersOptions();
+			return options.limit(limit);
+		}
 
-   }
+	}
 }

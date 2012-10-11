@@ -46,12 +46,15 @@ import com.google.common.io.CharStreams;
 import com.google.common.io.Files;
 
 /**
+ * Example setup: -Dtest.cdmi.identity=admin:Admin?authType=openstackKeystone
+ * -Dtest.cdmi.credential=passw0rd
+ * -Dtest.cdmi.endpoint=http://pds-stack2:5000/v2.0/
+ * 
  * @author Kenneth Nagin
  */
 @Test(groups = "live", testName = "DataApiLiveTest")
 public class DataApiLiveTest extends BaseCDMIApiLiveTest {
-	
-   
+
 	@Test
 	public void testCreateDataObjects() throws Exception {
 
@@ -77,13 +80,12 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 		pDataObjectMetaDataIn.put("dataObjectkey2", "value2");
 		pDataObjectMetaDataIn.put("dataObjectkey3", "value3");
 
-		CreateContainerOptions pCreateContainerOptions = CreateContainerOptions.Builder
-				.metadata(pContainerMetaDataIn);
+		CreateContainerOptions pCreateContainerOptions = CreateContainerOptions.Builder.metadata(pContainerMetaDataIn);
 
 		ContainerApi containerApi = cdmiContext.getApi().getApi();
 		DataApi dataApi = cdmiContext.getApi().getDataApiForContainer(containerName);
 		Logger.getAnonymousLogger().info("createContainer: " + containerName);
-	    Container container = containerApi.create(containerName, pCreateContainerOptions);
+		Container container = containerApi.create(containerName, pCreateContainerOptions);
 
 		try {
 
@@ -96,9 +98,8 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 
 			// exercise create data object with value mimetype and metadata
 			value = "Hello CDMI data object with value mimetype and metadata";
-			pCreateDataObjectOptions = CreateDataObjectOptions.Builder
-					.value(value).mimetype("text/plain")
-					.metadata(pDataObjectMetaDataIn);
+			pCreateDataObjectOptions = CreateDataObjectOptions.Builder.value(value).mimetype("text/plain")
+						.metadata(pDataObjectMetaDataIn);
 			dataObject = dataApi.create(containerName + dataObjectNameIn, pCreateDataObjectOptions);
 			assertNotNull(dataObject);
 			dataObject = dataApi.get(containerName + dataObjectNameIn);
@@ -113,32 +114,26 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 			while (keys.hasNext()) {
 				String key = keys.next();
 				assertEquals(dataObjectMetaDataOut.containsKey(key), true);
-				assertEquals(dataObjectMetaDataOut.get(key),
-						pDataObjectMetaDataIn.get(key));
+				assertEquals(dataObjectMetaDataOut.get(key), pDataObjectMetaDataIn.get(key));
 			}
 			// openstack does not return cdmi-size
-			if (dataObject.getSystemMetadata().get("cdmi_size") != null) { 
-				assertEquals(
-						Integer.parseInt(dataObject.getSystemMetadata().get(
-								"cdmi_size")), value.length());
+			if (dataObject.getSystemMetadata().get("cdmi_size") != null) {
+				assertEquals(Integer.parseInt(dataObject.getSystemMetadata().get("cdmi_size")), value.length());
 			}
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
 			System.out.println("parentURI: " + dataObject.getParentURI());
 			// assertEquals(dataObject.getParentURI(), "/" + containerName );
 			// openstack is display authorization string not container
-			assertEquals(containerApi.get(containerName).getChildren()
-					.contains(dataObjectNameIn), true);
+			assertEquals(containerApi.get(containerName).getChildren().contains(dataObjectNameIn), true);
 
 			dataApi.delete(containerName + dataObjectNameIn);
-			assertEquals(containerApi.get(containerName).getChildren()
-					.contains(dataObjectNameIn), false);
-			
+			assertEquals(containerApi.get(containerName).getChildren().contains(dataObjectNameIn), false);
+
 			// verify that options order does not matter
 			value = "Hello CDMI World3";
-			pCreateDataObjectOptions = CreateDataObjectOptions.Builder
-					.metadata(pDataObjectMetaDataIn).mimetype("text/plain")
-					.value(value);
+			pCreateDataObjectOptions = CreateDataObjectOptions.Builder.metadata(pDataObjectMetaDataIn)
+						.mimetype("text/plain").value(value);
 			dataObject = dataApi.create(containerName + dataObjectNameIn, pCreateDataObjectOptions);
 			assertNotNull(dataObject);
 			dataObject = dataApi.get(containerName + dataObjectNameIn);
@@ -153,30 +148,24 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 			while (keys.hasNext()) {
 				String key = keys.next();
 				assertEquals(dataObjectMetaDataOut.containsKey(key), true);
-				assertEquals(dataObjectMetaDataOut.get(key),
-						pDataObjectMetaDataIn.get(key));
+				assertEquals(dataObjectMetaDataOut.get(key), pDataObjectMetaDataIn.get(key));
 			}
-			// openstack does not return cdmi-size			
-			if (dataObject.getSystemMetadata().get("cdmi_size") != null) { 
-				assertEquals(
-						Integer.parseInt(dataObject.getSystemMetadata().get(
-								"cdmi_size")), value.length());
+			// openstack does not return cdmi-size
+			if (dataObject.getSystemMetadata().get("cdmi_size") != null) {
+				assertEquals(Integer.parseInt(dataObject.getSystemMetadata().get("cdmi_size")), value.length());
 			}
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
 			// assertEquals(dataObject.getParentURI(), "/" + containerName);
-			assertEquals(containerApi.get(containerName).getChildren()
-					.contains(dataObjectNameIn), true);
+			assertEquals(containerApi.get(containerName).getChildren().contains(dataObjectNameIn), true);
 			dataApi.delete(containerName + dataObjectNameIn);
-			assertEquals(containerApi.get(containerName).getChildren()
-					.contains(dataObjectNameIn), false);
+			assertEquals(containerApi.get(containerName).getChildren().contains(dataObjectNameIn), false);
 
 			// exercise create data object with empty metadata
 			value = "Hello CDMI World4";
 			pDataObjectMetaDataIn.clear();
-			pCreateDataObjectOptions = CreateDataObjectOptions.Builder
-					.value(value).mimetype("text/plain")
-					.metadata(pDataObjectMetaDataIn);
+			pCreateDataObjectOptions = CreateDataObjectOptions.Builder.value(value).mimetype("text/plain")
+						.metadata(pDataObjectMetaDataIn);
 			dataObject = dataApi.create(containerName + dataObjectNameIn, pCreateDataObjectOptions);
 			assertNotNull(dataObject);
 			dataObject = dataApi.get(containerName + dataObjectNameIn);
@@ -188,25 +177,20 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 			dataObjectMetaDataOut = dataObject.getUserMetadata();
 			assertNotNull(dataObjectMetaDataOut);
 			assertEquals(dataObjectMetaDataOut.isEmpty(), true);
-			// openstack does not return cdmi-size			
-			if (dataObject.getSystemMetadata().get("cdmi_size") != null) { 
-				assertEquals(
-						Integer.parseInt(dataObject.getSystemMetadata().get(
-								"cdmi_size")), value.length());
+			// openstack does not return cdmi-size
+			if (dataObject.getSystemMetadata().get("cdmi_size") != null) {
+				assertEquals(Integer.parseInt(dataObject.getSystemMetadata().get("cdmi_size")), value.length());
 			}
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
 			// assertEquals(dataObject.getParentURI(), "/" + containerName);
-			assertEquals(containerApi.get(containerName).getChildren()
-					.contains(dataObjectNameIn), true);
+			assertEquals(containerApi.get(containerName).getChildren().contains(dataObjectNameIn), true);
 			dataApi.delete(containerName + dataObjectNameIn);
-			assertEquals(containerApi.get(containerName).getChildren()
-					.contains(dataObjectNameIn), false);
+			assertEquals(containerApi.get(containerName).getChildren().contains(dataObjectNameIn), false);
 
 			// exercise create data object with null metadata
 			value = "Hello CDMI World5";
-			pCreateDataObjectOptions = CreateDataObjectOptions.Builder.value(
-					value).mimetype("text/plain");
+			pCreateDataObjectOptions = CreateDataObjectOptions.Builder.value(value).mimetype("text/plain");
 			dataObject = dataApi.create(containerName + dataObjectNameIn, pCreateDataObjectOptions);
 			assertNotNull(dataObject);
 			dataObject = dataApi.get(containerName + dataObjectNameIn);
@@ -219,23 +203,18 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 			assertNotNull(dataObjectMetaDataOut);
 			assertEquals(true, dataObjectMetaDataOut.isEmpty());
 			if (dataObject.getSystemMetadata().get("cdmi_size") != null) {
-				assertEquals(
-						Integer.parseInt(dataObject.getSystemMetadata().get(
-								"cdmi_size")), value.length());
+				assertEquals(Integer.parseInt(dataObject.getSystemMetadata().get("cdmi_size")), value.length());
 			}
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
 			// assertEquals(dataObject.getParentURI(), "/" + containerName);
-			assertEquals(containerApi.get(containerName).getChildren()
-					.contains(dataObjectNameIn), true);
+			assertEquals(containerApi.get(containerName).getChildren().contains(dataObjectNameIn), true);
 			dataApi.delete(containerName + dataObjectNameIn);
-			assertEquals(containerApi.get(containerName).getChildren()
-					.contains(dataObjectNameIn), false);
+			assertEquals(containerApi.get(containerName).getChildren().contains(dataObjectNameIn), false);
 
 			// exercise create data object with only value
 			value = "Hello CDMI World6";
-			pCreateDataObjectOptions = CreateDataObjectOptions.Builder
-					.value(value);
+			pCreateDataObjectOptions = CreateDataObjectOptions.Builder.value(value);
 			dataObject = dataApi.create(containerName + dataObjectNameIn, pCreateDataObjectOptions);
 			assertNotNull(dataObject);
 			dataObject = dataApi.get(containerName + dataObjectNameIn);
@@ -248,24 +227,19 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 			dataObjectMetaDataOut = dataObject.getUserMetadata();
 			assertNotNull(dataObjectMetaDataOut);
 			assertEquals(dataObjectMetaDataOut.isEmpty(), true);
-			if (dataObject.getSystemMetadata().get("cdmi_size") != null) { 
-				assertEquals(
-						Integer.parseInt(dataObject.getSystemMetadata().get(
-								"cdmi_size")), value.length());
+			if (dataObject.getSystemMetadata().get("cdmi_size") != null) {
+				assertEquals(Integer.parseInt(dataObject.getSystemMetadata().get("cdmi_size")), value.length());
 			}
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
 			// assertEquals(dataObject.getParentURI(), "/" + containerName);
-			assertEquals(containerApi.get(containerName).getChildren()
-					.contains(dataObjectNameIn), true);
+			assertEquals(containerApi.get(containerName).getChildren().contains(dataObjectNameIn), true);
 			dataApi.delete(containerName + dataObjectNameIn);
-			assertEquals(containerApi.get(containerName).getChildren()
-					.contains(dataObjectNameIn), false);
+			assertEquals(containerApi.get(containerName).getChildren().contains(dataObjectNameIn), false);
 
 			// exercise create data object with empty mimetype only
 			value = "";
-			pCreateDataObjectOptions = CreateDataObjectOptions.Builder
-					.mimetype(new String());
+			pCreateDataObjectOptions = CreateDataObjectOptions.Builder.mimetype(new String());
 			dataObject = dataApi.create(containerName + dataObjectNameIn, pCreateDataObjectOptions);
 			assertNotNull(dataObject);
 			dataObject = dataApi.get(containerName + dataObjectNameIn);
@@ -293,18 +267,14 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 			assertNotNull(dataObjectMetaDataOut);
 			assertEquals(dataObjectMetaDataOut.isEmpty(), true);
 			if (dataObject.getSystemMetadata().get("cdmi_size") != null) {
-				assertEquals(
-						Integer.parseInt(dataObject.getSystemMetadata().get(
-								"cdmi_size")), value.length());
+				assertEquals(Integer.parseInt(dataObject.getSystemMetadata().get("cdmi_size")), value.length());
 			}
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
 			// assertEquals(dataObject.getParentURI(), "/" + containerName);
-			assertEquals(containerApi.get(containerName).getChildren()
-					.contains(dataObjectNameIn), true);
+			assertEquals(containerApi.get(containerName).getChildren().contains(dataObjectNameIn), true);
 			dataApi.delete(containerName + dataObjectNameIn);
-			assertEquals(containerApi.get(containerName).getChildren()
-					.contains(dataObjectNameIn), false);
+			assertEquals(containerApi.get(containerName).getChildren().contains(dataObjectNameIn), false);
 
 			// exercise create data object with byte array
 			value = "Hello CDMI World 7";
@@ -314,8 +284,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 			// String.getBytes causes an exception CreateDataObjectOptions need
 			// to investigate byte arrays
 			// bytes = value.getBytes("UTF-8");
-			pCreateDataObjectOptions = CreateDataObjectOptions.Builder.value(
-					bytes).mimetype("text/plain");
+			pCreateDataObjectOptions = CreateDataObjectOptions.Builder.value(bytes).mimetype("text/plain");
 			dataObject = dataApi.create(containerName + dataObjectNameIn, pCreateDataObjectOptions);
 			assertNotNull(dataObject);
 			dataObject = dataApi.get(containerName + dataObjectNameIn);
@@ -325,25 +294,19 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 			assertEquals(dataObject.getValueAsString(), value);
 			assertEquals(new String(dataObject.getValueAsByteArray()), value);
 			if (dataObject.getSystemMetadata().get("cdmi_size") != null) {
-				assertEquals(
-						Integer.parseInt(dataObject.getSystemMetadata().get(
-								"cdmi_size")), value.length());
+				assertEquals(Integer.parseInt(dataObject.getSystemMetadata().get("cdmi_size")), value.length());
 			}
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
 			// assertEquals(dataObject.getParentURI(), "/" + containerName);
-			assertEquals(containerApi.get(containerName).getChildren()
-					.contains(dataObjectNameIn), true);
+			assertEquals(containerApi.get(containerName).getChildren().contains(dataObjectNameIn), true);
 			dataApi.delete(containerName + dataObjectNameIn);
-			assertEquals(containerApi.get(containerName).getChildren()
-					.contains(dataObjectNameIn), false);
+			assertEquals(containerApi.get(containerName).getChildren().contains(dataObjectNameIn), false);
 
 			// exercise create data object with an existing file
-			inFile = new File(System.getProperty("user.dir")
-					+ "/src/test/resources/container.json");
+			inFile = new File(System.getProperty("user.dir") + "/src/test/resources/container.json");
 			assertEquals(true, inFile.isFile());
-			pCreateDataObjectOptions = CreateDataObjectOptions.Builder.value(
-					inFile).mimetype("text/plain");
+			pCreateDataObjectOptions = CreateDataObjectOptions.Builder.value(inFile).mimetype("text/plain");
 			dataObject = dataApi.create(containerName + dataObjectNameIn, pCreateDataObjectOptions);
 			assertNotNull(dataObject);
 			dataObject = dataApi.get(containerName + dataObjectNameIn);
@@ -353,29 +316,23 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 			tmpFileOut = dataObject.getValueAsFile(Files.createTempDir());
 			assertEquals(true, Files.equal(tmpFileOut, inFile));
 			tmpFileOut.delete();
-			if (dataObject.getSystemMetadata().get("cdmi_size") != null) { 
-				assertEquals(
-						Integer.parseInt(dataObject.getSystemMetadata().get(
-								"cdmi_size")),
-						Files.toString(inFile, Charsets.UTF_8).length());
+			if (dataObject.getSystemMetadata().get("cdmi_size") != null) {
+				assertEquals(Integer.parseInt(dataObject.getSystemMetadata().get("cdmi_size")),
+							Files.toString(inFile, Charsets.UTF_8).length());
 			}
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
 			// assertEquals(dataObject.getParentURI(), "/" + containerName);
-			assertEquals(containerApi.get(containerName).getChildren()
-					.contains(dataObjectNameIn), true);
+			assertEquals(containerApi.get(containerName).getChildren().contains(dataObjectNameIn), true);
 			dataApi.delete(containerName + dataObjectNameIn);
-			assertEquals(containerApi.get(containerName).getChildren()
-					.contains(dataObjectNameIn), false);
-			
+			assertEquals(containerApi.get(containerName).getChildren().contains(dataObjectNameIn), false);
 
 			// exercise create data object with a temporary file that we create
 			// on the fly
 			// with default Charset
 			value = "Hello CDMI World 10";
 			Files.write(value, tmpFileIn, Charsets.UTF_8);
-			pCreateDataObjectOptions = CreateDataObjectOptions.Builder.value(
-					tmpFileIn).mimetype("text/plain");
+			pCreateDataObjectOptions = CreateDataObjectOptions.Builder.value(tmpFileIn).mimetype("text/plain");
 			dataObject = dataApi.create(containerName + dataObjectNameIn, pCreateDataObjectOptions);
 			assertNotNull(dataObject);
 			dataObject = dataApi.get(containerName + dataObjectNameIn);
@@ -387,26 +344,21 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 			assertEquals(true, Files.equal(tmpFileOut, tmpFileIn));
 			tmpFileOut.delete();
 			if (dataObject.getSystemMetadata().get("cdmi_size") != null) {
-				assertEquals(
-						Integer.parseInt(dataObject.getSystemMetadata().get(
-								"cdmi_size")), value.length());
+				assertEquals(Integer.parseInt(dataObject.getSystemMetadata().get("cdmi_size")), value.length());
 			}
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
 			// assertEquals(dataObject.getParentURI(), "/" + containerName);
-			assertEquals(containerApi.get(containerName).getChildren()
-					.contains(dataObjectNameIn), true);
+			assertEquals(containerApi.get(containerName).getChildren().contains(dataObjectNameIn), true);
 			dataApi.delete(containerName + dataObjectNameIn);
-			assertEquals(containerApi.get(containerName).getChildren()
-					.contains(dataObjectNameIn), false);
-			
+			assertEquals(containerApi.get(containerName).getChildren().contains(dataObjectNameIn), false);
 
 			// exercise create data object with a temporary file that we create
 			// on the fly
 			// specify charset UTF_8
 			Files.write(value, tmpFileIn, Charsets.UTF_8);
-			pCreateDataObjectOptions = CreateDataObjectOptions.Builder.value(
-					tmpFileIn, Charsets.UTF_8).mimetype("text/plain");
+			pCreateDataObjectOptions = CreateDataObjectOptions.Builder.value(tmpFileIn, Charsets.UTF_8).mimetype(
+						"text/plain");
 			dataObject = dataApi.create(containerName + dataObjectNameIn, pCreateDataObjectOptions);
 			assertNotNull(dataObject);
 			dataObject = dataApi.get(containerName + dataObjectNameIn);
@@ -418,25 +370,21 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 			assertEquals(true, Files.equal(tmpFileOut, tmpFileIn));
 			tmpFileOut.delete();
 			if (dataObject.getSystemMetadata().get("cdmi_size") != null) {
-				assertEquals(
-						Integer.parseInt(dataObject.getSystemMetadata().get(
-								"cdmi_size")), value.length());
+				assertEquals(Integer.parseInt(dataObject.getSystemMetadata().get("cdmi_size")), value.length());
 			}
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
 			// assertEquals(dataObject.getParentURI(), "/" + containerName);
-			assertEquals(containerApi.get(containerName).getChildren()
-					.contains(dataObjectNameIn), true);
+			assertEquals(containerApi.get(containerName).getChildren().contains(dataObjectNameIn), true);
 			dataApi.delete(containerName + dataObjectNameIn);
-			assertEquals(containerApi.get(containerName).getChildren()
-					.contains(dataObjectNameIn), false);
+			assertEquals(containerApi.get(containerName).getChildren().contains(dataObjectNameIn), false);
 
 			// exercise create data object with a temporary file that we create
 			// on the fly
 			// specify charset US_ASCII
 			Files.write(value, tmpFileIn, Charsets.US_ASCII);
-			pCreateDataObjectOptions = CreateDataObjectOptions.Builder.value(
-					tmpFileIn, Charsets.US_ASCII).mimetype("text/plain");
+			pCreateDataObjectOptions = CreateDataObjectOptions.Builder.value(tmpFileIn, Charsets.US_ASCII).mimetype(
+						"text/plain");
 			dataObject = dataApi.create(containerName + dataObjectNameIn, pCreateDataObjectOptions);
 			assertNotNull(dataObject);
 			dataObject = dataApi.get(containerName + dataObjectNameIn);
@@ -447,19 +395,15 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 			tmpFileOut = dataObject.getValueAsFile(Files.createTempDir());
 			assertEquals(true, Files.equal(tmpFileOut, tmpFileIn));
 			tmpFileOut.delete();
-			if (dataObject.getSystemMetadata().get("cdmi_size") != null) { 
-				assertEquals(
-						Integer.parseInt(dataObject.getSystemMetadata().get(
-								"cdmi_size")), value.length());
+			if (dataObject.getSystemMetadata().get("cdmi_size") != null) {
+				assertEquals(Integer.parseInt(dataObject.getSystemMetadata().get("cdmi_size")), value.length());
 			}
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
 			// assertEquals(dataObject.getParentURI(), "/" + containerName);
-			assertEquals(containerApi.get(containerName).getChildren()
-					.contains(dataObjectNameIn), true);
+			assertEquals(containerApi.get(containerName).getChildren().contains(dataObjectNameIn), true);
 			dataApi.delete(containerName + dataObjectNameIn);
-			assertEquals(containerApi.get(containerName).getChildren()
-					.contains(dataObjectNameIn), false);
+			assertEquals(containerApi.get(containerName).getChildren().contains(dataObjectNameIn), false);
 
 			// exercise create data object with a temporary file with multiple
 			// lines
@@ -467,8 +411,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 			Files.write("line1", tmpFileIn, Charsets.UTF_8);
 			Files.append("\nline2", tmpFileIn, Charsets.UTF_8);
 			Files.append("\nline3", tmpFileIn, Charsets.UTF_8);
-			pCreateDataObjectOptions = CreateDataObjectOptions.Builder.value(
-					tmpFileIn).mimetype("text/plain");
+			pCreateDataObjectOptions = CreateDataObjectOptions.Builder.value(tmpFileIn).mimetype("text/plain");
 			dataObject = dataApi.create(containerName + dataObjectNameIn, pCreateDataObjectOptions);
 			assertNotNull(dataObject);
 			dataObject = dataApi.get(containerName + dataObjectNameIn);
@@ -480,19 +423,15 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 			assertEquals(true, Files.equal(tmpFileOut, tmpFileIn));
 			tmpFileOut.delete();
 			if (dataObject.getSystemMetadata().get("cdmi_size") != null) {
-				assertEquals(
-						Integer.parseInt(dataObject.getSystemMetadata().get(
-								"cdmi_size")),
-						Files.toString(tmpFileIn, Charsets.UTF_8).length());
+				assertEquals(Integer.parseInt(dataObject.getSystemMetadata().get("cdmi_size")),
+							Files.toString(tmpFileIn, Charsets.UTF_8).length());
 			}
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
 			// assertEquals(dataObject.getParentURI(), "/" + containerName);
-			assertEquals(containerApi.get(containerName).getChildren()
-					.contains(dataObjectNameIn), true);
+			assertEquals(containerApi.get(containerName).getChildren().contains(dataObjectNameIn), true);
 			dataApi.delete(containerName + dataObjectNameIn);
-			assertEquals(containerApi.get(containerName).getChildren()
-					.contains(dataObjectNameIn), false);
+			assertEquals(containerApi.get(containerName).getChildren().contains(dataObjectNameIn), false);
 
 			// exercise create data object with a temporary file with multiple
 			// lines
@@ -500,8 +439,8 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 			Files.write("line1", tmpFileIn, Charsets.UTF_8);
 			Files.append("\nline2", tmpFileIn, Charsets.UTF_8);
 			Files.append("\nline3", tmpFileIn, Charsets.UTF_8);
-			pCreateDataObjectOptions = CreateDataObjectOptions.Builder.value(
-					new FileInputStream(tmpFileIn)).mimetype("text/plain");
+			pCreateDataObjectOptions = CreateDataObjectOptions.Builder.value(new FileInputStream(tmpFileIn)).mimetype(
+						"text/plain");
 			dataObject = dataApi.create(containerName + dataObjectNameIn, pCreateDataObjectOptions);
 			assertNotNull(dataObject);
 			dataObject = dataApi.get(containerName + dataObjectNameIn);
@@ -513,19 +452,15 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 			assertEquals(true, Files.equal(tmpFileOut, tmpFileIn));
 			tmpFileOut.delete();
 			if (dataObject.getSystemMetadata().get("cdmi_size") != null) {
-				assertEquals(
-						Integer.parseInt(dataObject.getSystemMetadata().get(
-								"cdmi_size")),
-						Files.toString(tmpFileIn, Charsets.UTF_8).length());
+				assertEquals(Integer.parseInt(dataObject.getSystemMetadata().get("cdmi_size")),
+							Files.toString(tmpFileIn, Charsets.UTF_8).length());
 			}
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
 			// assertEquals(dataObject.getParentURI(), "/" + containerName);
-			assertEquals(containerApi.get(containerName).getChildren()
-					.contains(dataObjectNameIn), true);
+			assertEquals(containerApi.get(containerName).getChildren().contains(dataObjectNameIn), true);
 			dataApi.delete(containerName + dataObjectNameIn);
-			assertEquals(containerApi.get(containerName).getChildren()
-					.contains(dataObjectNameIn), false);
+			assertEquals(containerApi.get(containerName).getChildren().contains(dataObjectNameIn), false);
 
 			// exercise create data object with a temporary file with multiple
 			// lines
@@ -533,13 +468,12 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 			Files.write("line1", tmpFileIn, Charsets.ISO_8859_1);
 			Files.append("\nline2", tmpFileIn, Charsets.ISO_8859_1);
 			Files.append("\nline3", tmpFileIn, Charsets.ISO_8859_1);
-			pCreateDataObjectOptions = CreateDataObjectOptions.Builder.value(
-					new FileInputStream(tmpFileIn), Charsets.ISO_8859_1)
-					.mimetype("text/plain");
+			pCreateDataObjectOptions = CreateDataObjectOptions.Builder.value(new FileInputStream(tmpFileIn),
+						Charsets.ISO_8859_1).mimetype("text/plain");
 			dataObject = dataApi.create(containerName + dataObjectNameIn, pCreateDataObjectOptions);
 			assertNotNull(dataObject);
 			dataObject = dataApi.get(containerName + dataObjectNameIn);
-			
+
 			assertNotNull(dataObject);
 			System.out.println(dataObject);
 			System.out.println("value: " + dataObject.getValueAsString());
@@ -548,28 +482,23 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 			assertEquals(true, Files.equal(tmpFileOut, tmpFileIn));
 			tmpFileOut.delete();
 			if (dataObject.getSystemMetadata().get("cdmi_size") != null) {
-				assertEquals(
-						Integer.parseInt(dataObject.getSystemMetadata().get(
-								"cdmi_size")),
-						Files.toString(tmpFileIn, Charsets.ISO_8859_1).length());
+				assertEquals(Integer.parseInt(dataObject.getSystemMetadata().get("cdmi_size")),
+							Files.toString(tmpFileIn, Charsets.ISO_8859_1).length());
 			}
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
 			// assertEquals(dataObject.getParentURI(), "/" + containerName);
-			assertEquals(containerApi.get(containerName).getChildren()
-					.contains(dataObjectNameIn), true);
+			assertEquals(containerApi.get(containerName).getChildren().contains(dataObjectNameIn), true);
 			dataApi.delete(containerName + dataObjectNameIn);
-			assertEquals(containerApi.get(containerName).getChildren()
-					.contains(dataObjectNameIn), false);
+			assertEquals(containerApi.get(containerName).getChildren().contains(dataObjectNameIn), false);
 
 			// exercise create data object with an inputstream
 			is = new ByteArrayInputStream(value.getBytes());
-			pCreateDataObjectOptions = CreateDataObjectOptions.Builder
-					.value(is).mimetype("text/plain");
+			pCreateDataObjectOptions = CreateDataObjectOptions.Builder.value(is).mimetype("text/plain");
 			dataObject = dataApi.create(containerName + dataObjectNameIn, pCreateDataObjectOptions);
 			assertNotNull(dataObject);
 			dataObject = dataApi.get(containerName + dataObjectNameIn);
-			
+
 			assertNotNull(dataObject);
 			System.out.println(dataObject);
 			System.out.println("value: " + dataObject.getValueAsString());
@@ -577,26 +506,20 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 			// in openstack must investigate
 			assertNotNull(dataObject.getValueAsInputSupplier());
 			assertEquals(CharStreams.toString(CharStreams.newReaderSupplier(
-					dataObject.getValueAsInputSupplier(Charsets.UTF_8),
-					Charsets.UTF_8)), value);
-			if (dataObject.getSystemMetadata().get("cdmi_size") != null) { 
-				assertEquals(
-						Integer.parseInt(dataObject.getSystemMetadata().get(
-								"cdmi_size")), value.length());
+						dataObject.getValueAsInputSupplier(Charsets.UTF_8), Charsets.UTF_8)), value);
+			if (dataObject.getSystemMetadata().get("cdmi_size") != null) {
+				assertEquals(Integer.parseInt(dataObject.getSystemMetadata().get("cdmi_size")), value.length());
 			}
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
 			// assertEquals(dataObject.getParentURI(), "/" + containerName);
-			assertEquals(containerApi.get(containerName).getChildren()
-					.contains(dataObjectNameIn), true);
+			assertEquals(containerApi.get(containerName).getChildren().contains(dataObjectNameIn), true);
 			dataApi.delete(containerName + dataObjectNameIn);
-			assertEquals(containerApi.get(containerName).getChildren()
-					.contains(dataObjectNameIn), false);
-			
+			assertEquals(containerApi.get(containerName).getChildren().contains(dataObjectNameIn), false);
+
 		} finally {
 			tmpFileIn.delete();
-			for (String containerChild : containerApi.get(
-					containerName).getChildren()) {
+			for (String containerChild : containerApi.get(containerName).getChildren()) {
 				System.out.println("deleting: " + containerChild);
 				dataApi.delete(containerName + containerChild);
 			}
@@ -614,8 +537,8 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 		String dataObjectNameIn = "dataobject08121.txt";
 		File tmpFileIn = new File("temp.txt");
 		String value;
-		if(!tmpFileIn.exists()) {
-			Files.touch(tmpFileIn);			
+		if (!tmpFileIn.exists()) {
+			Files.touch(tmpFileIn);
 		}
 		CreateDataObjectOptions pCreateDataObjectOptions;
 		DataObject dataObject;
@@ -627,16 +550,14 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 		pDataObjectMetaDataIn.put("dataObjectkey2", "value2");
 		pDataObjectMetaDataIn.put("dataObjectkey3", "value3");
 
-		CreateContainerOptions pCreateContainerOptions = CreateContainerOptions.Builder
-				.metadata(pContainerMetaDataIn);
-		//ContainerApi containerApi = cdmiContext.getApi().getContainerApi();
+		CreateContainerOptions pCreateContainerOptions = CreateContainerOptions.Builder.metadata(pContainerMetaDataIn);
+		// ContainerApi containerApi = cdmiContext.getApi().getContainerApi();
 		ContainerApi containerApi = cdmiContext.getApi().getApi();
-		//DataApi dataApi = cdmiContext.getApi().getDataApi();
+		// DataApi dataApi = cdmiContext.getApi().getDataApi();
 		DataApi dataApi = cdmiContext.getApi().getDataApiForContainer(containerName);
 		Logger.getAnonymousLogger().info("running tests on serverType: " + serverType);
 		Logger.getAnonymousLogger().info("createContainer: " + containerName);
-		Container container = containerApi.create(containerName,
-				pCreateContainerOptions);
+		Container container = containerApi.create(containerName, pCreateContainerOptions);
 		try {
 			assertNotNull(container);
 			System.out.println(container);
@@ -647,9 +568,8 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 
 			// exercise create data object with value mimetype and metadata
 			value = "Hello CDMI data object with value mimetype and metadata";
-			pCreateDataObjectOptions = CreateDataObjectOptions.Builder
-					.value(value).mimetype("text/plain")
-					.metadata(pDataObjectMetaDataIn);
+			pCreateDataObjectOptions = CreateDataObjectOptions.Builder.value(value).mimetype("text/plain")
+						.metadata(pDataObjectMetaDataIn);
 			dataObject = dataApi.create(containerName + dataObjectNameIn, pCreateDataObjectOptions);
 			assertNotNull(dataObject);
 			dataObject = dataApi.get(containerName + dataObjectNameIn);
@@ -664,34 +584,29 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 			while (keys.hasNext()) {
 				String key = keys.next();
 				assertEquals(dataObjectMetaDataOut.containsKey(key), true);
-				assertEquals(dataObjectMetaDataOut.get(key),
-						pDataObjectMetaDataIn.get(key));
+				assertEquals(dataObjectMetaDataOut.get(key), pDataObjectMetaDataIn.get(key));
 			}
-			if (dataObject.getSystemMetadata().get("cdmi_size") != null) { 
-				assertEquals(
-						Integer.parseInt(dataObject.getSystemMetadata().get(
-								"cdmi_size")), value.length());
+			if (dataObject.getSystemMetadata().get("cdmi_size") != null) {
+				assertEquals(Integer.parseInt(dataObject.getSystemMetadata().get("cdmi_size")), value.length());
 			}
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getObjectType(), "application/cdmi-object");
 			if (!serverType.matches("openstack")) {
 				assertEquals(dataObject.getParentURI(), "/" + containerName);
 			}
-			assertEquals(containerApi.get(containerName).getChildren()
-					.contains(dataObjectNameIn), true);
+			assertEquals(containerApi.get(containerName).getChildren().contains(dataObjectNameIn), true);
 			System.out.println("running query filter test.");
-			dataObject = dataApi.get(containerName + dataObjectNameIn,
-					DataObjectQueryParams.Builder.field("objectName"));
+			dataObject = dataApi.get(containerName + dataObjectNameIn, DataObjectQueryParams.Builder.field("objectName"));
 			assertNotNull(dataObject);
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			System.out.println(dataObject);
-			dataObject = dataApi.get(containerName + dataObjectNameIn,
-					DataObjectQueryParams.Builder.field("objectName").field("mimetype"));
+			dataObject = dataApi.get(containerName + dataObjectNameIn, DataObjectQueryParams.Builder.field("objectName")
+						.field("mimetype"));
 			assertNotNull(dataObject);
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getMimetype(), "text/plain");
 			dataObject = dataApi.get(containerName + dataObjectNameIn,
-					DataObjectQueryParams.Builder.metadata().field("objectName").field("mimetype"));
+						DataObjectQueryParams.Builder.metadata().field("objectName").field("mimetype"));
 			assertNotNull(dataObject);
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getMimetype(), "text/plain");
@@ -701,60 +616,46 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 			while (keys.hasNext()) {
 				String key = keys.next();
 				assertEquals(dataObjectMetaDataOut.containsKey(key), true);
-				assertEquals(dataObjectMetaDataOut.get(key),
-						pDataObjectMetaDataIn.get(key));
+				assertEquals(dataObjectMetaDataOut.get(key), pDataObjectMetaDataIn.get(key));
 			}
-			dataObject = dataApi.get(containerName + dataObjectNameIn,
-					DataObjectQueryParams.Builder.field("mimetype").metadata("dataObjectkey2").field("objectName"));
+			dataObject = dataApi.get(containerName + dataObjectNameIn, DataObjectQueryParams.Builder.field("mimetype")
+						.metadata("dataObjectkey2").field("objectName"));
 			assertNotNull(dataObject);
 			assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 			assertEquals(dataObject.getMimetype(), "text/plain");
 			dataObjectMetaDataOut = dataObject.getUserMetadata();
 			assertNotNull(dataObjectMetaDataOut);
-			assertEquals(dataObjectMetaDataOut.containsKey("dataObjectkey2"),true);
+			assertEquals(dataObjectMetaDataOut.containsKey("dataObjectkey2"), true);
 			assertEquals(dataObjectMetaDataOut.get("dataObjectkey2"), "value2");
-
-
-
 
 			if (!serverType.matches("openstack")) {
 				// openstack is returning parentURI == to authorization string!
-				// so all this fails				
+				// so all this fails
 				System.out.println("running parentURI tests.");
-				dataObject = dataApi.get(containerName + dataObjectNameIn,
-						DataObjectQueryParams.Builder.field("parentURI"));
+				dataObject = dataApi
+							.get(containerName + dataObjectNameIn, DataObjectQueryParams.Builder.field("parentURI"));
 				assertNotNull(dataObject);
 				System.out.println(dataObject);
-				assertEquals(dataObject.getParentURI(),container.getParentURI()+container.getObjectName());
-				dataObject = dataApi.get(
-						containerName + dataObjectNameIn,
-						DataObjectQueryParams.Builder.field("parentURI").field(
-								"objectName"));
+				assertEquals(dataObject.getParentURI(), container.getParentURI() + container.getObjectName());
+				dataObject = dataApi.get(containerName + dataObjectNameIn, DataObjectQueryParams.Builder.field("parentURI")
+							.field("objectName"));
 				assertNotNull(dataObject);
 				System.out.println(dataObject);
-				assertEquals(dataObject.getParentURI(),
-						container.getParentURI() + container.getObjectName());
+				assertEquals(dataObject.getParentURI(), container.getParentURI() + container.getObjectName());
 				assertEquals(dataObject.getObjectName(), dataObjectNameIn);
-				dataObject = dataApi.get(
-						containerName + dataObjectNameIn,
-						DataObjectQueryParams.Builder.field("parentURI")
-								.field("objectName").field("mimetype"));
+				dataObject = dataApi.get(containerName + dataObjectNameIn, DataObjectQueryParams.Builder.field("parentURI")
+							.field("objectName").field("mimetype"));
 				assertNotNull(dataObject);
 				System.out.println(dataObject);
-				assertEquals(dataObject.getParentURI(),
-						container.getParentURI() + container.getObjectName());
+				assertEquals(dataObject.getParentURI(), container.getParentURI() + container.getObjectName());
 				assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 				assertEquals(dataObject.getMimetype(), "text/plain");
 
-				dataObject = dataApi.get(
-						containerName + dataObjectNameIn,
-						DataObjectQueryParams.Builder.field("parentURI")
-								.field("objectName").field("mimetype")
-								.metadata());
+				dataObject = dataApi.get(containerName + dataObjectNameIn, DataObjectQueryParams.Builder.field("parentURI")
+							.field("objectName").field("mimetype").metadata());
 				assertNotNull(dataObject);
 				System.out.println(dataObject);
-				assertEquals(dataObject.getParentURI(),
-						container.getParentURI() + container.getObjectName());
+				assertEquals(dataObject.getParentURI(), container.getParentURI() + container.getObjectName());
 				assertEquals(dataObject.getObjectName(), dataObjectNameIn);
 				assertEquals(dataObject.getMimetype(), "text/plain");
 				dataObjectMetaDataOut = dataObject.getUserMetadata();
@@ -763,52 +664,54 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 				while (keys.hasNext()) {
 					String key = keys.next();
 					assertEquals(dataObjectMetaDataOut.containsKey(key), true);
-					assertEquals(dataObjectMetaDataOut.get(key),
-							pDataObjectMetaDataIn.get(key));
+					assertEquals(dataObjectMetaDataOut.get(key), pDataObjectMetaDataIn.get(key));
 				}
-				assertEquals(
-						Integer.parseInt(dataObject.getSystemMetadata().get(
-								"cdmi_size")), value.length());
-
-				dataObject = dataApi.get(
-						containerName + dataObjectNameIn,
-						DataObjectQueryParams.Builder.metadata("cdmi_size"));
-				assertNotNull(dataObject);
-				System.out.println(dataObject);
-				assertEquals(
-						Integer.parseInt(dataObject.getSystemMetadata().get(
-								"cdmi_size")), value.length());
+				assertEquals(Integer.parseInt(dataObject.getSystemMetadata().get("cdmi_size")), value.length());
 
 				dataObject = dataApi.get(containerName + dataObjectNameIn,
-								DataObjectQueryParams.Builder.field("mimetype")
-										.value());
+							DataObjectQueryParams.Builder.metadata("cdmi_size"));
+				assertNotNull(dataObject);
+				System.out.println(dataObject);
+				assertEquals(Integer.parseInt(dataObject.getSystemMetadata().get("cdmi_size")), value.length());
+
+				dataObject = dataApi.get(containerName + dataObjectNameIn, DataObjectQueryParams.Builder.field("mimetype")
+							.value());
 				assertNotNull(dataObject);
 				System.out.println(dataObject);
 				System.out.println(dataObject.getValueAsString());
 				assertEquals(dataObject.getMimetype(), "text/plain");
 				assertEquals(dataObject.getValueAsString(), value);
 
-				dataObject = dataApi.get(
-						containerName + dataObjectNameIn,
-						DataObjectQueryParams.Builder.field("mimetype").value(
-								0, 3));
+				dataObject = dataApi.get(containerName + dataObjectNameIn, DataObjectQueryParams.Builder.field("mimetype")
+							.value(0, 3));
 				assertNotNull(dataObject);
 				System.out.println(dataObject);
 				System.out.println(dataObject.getValueAsString());
 				assertEquals(dataObject.getMimetype(), "text/plain");
 				// value is SGVsbA==. This needs investigating to determine if
 				// this
-				// is problem with wss-sonas CDMI server or the jcloud client or must
+				// is problem with wss-sonas CDMI server or the jcloud client or
+				// must
 				// understanding of spec
+				// validate any query
+				dataObject = dataApi.get(containerName + dataObjectNameIn,
+							DataObjectQueryParams.Builder.any("query1=anything").field("objectName").any("anyQueryParam")
+										.field("mimetype").metadata());
+				assertNotNull(dataObject);
+				System.out.println(dataObject);
 
 				dataApi.delete(containerName + dataObjectNameIn);
-				assertEquals(containerApi.get(containerName)
-						.getChildren().contains(dataObjectNameIn), false);
+				assertEquals(containerApi.get(containerName).getChildren().contains(dataObjectNameIn), false);
 			}
+			// validate any query
+			dataObject = dataApi.get(containerName + dataObjectNameIn, DataObjectQueryParams.Builder
+						.any("query1=anything").field("objectName").any("anyQueryParam").field("mimetype").metadata());
+			assertNotNull(dataObject);
+			System.out.println(dataObject);
+
 		} finally {
 			tmpFileIn.delete();
-			for (String containerChild : containerApi.get(
-					containerName).getChildren()) {
+			for (String containerChild : containerApi.get(containerName).getChildren()) {
 				System.out.println("deleting: " + containerChild);
 				dataApi.delete(containerName + containerChild);
 			}

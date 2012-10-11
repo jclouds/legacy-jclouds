@@ -37,28 +37,28 @@ import com.google.common.reflect.TypeToken;
 @Test(groups = "live")
 public class BaseCDMIApiLiveTest extends BaseContextLiveTest<RestContext<CDMIApi, CDMIAsyncApi>> {
 
-   public BaseCDMIApiLiveTest() {
-      provider = "cdmi";
-   }
+	public BaseCDMIApiLiveTest() {
+		provider = "cdmi";
+	}
 
-   protected RestContext<CDMIApi, CDMIAsyncApi> cdmiContext;
+	protected RestContext<CDMIApi, CDMIAsyncApi> cdmiContext;
 
-   @BeforeGroups(groups = { "integration", "live" })
-   @Override
-   public void setupContext() {
-      super.setupContext();
-      cdmiContext = context;
-   }
+	@BeforeGroups(groups = { "integration", "live" })
+	@Override
+	public void setupContext() {
+		super.setupContext();
+		cdmiContext = context;
+	}
 
-   @AfterGroups(groups = "live")
-   protected void tearDown() {
-      if (cdmiContext != null)
-         cdmiContext.close();
-   }
+	@AfterGroups(groups = "live")
+	protected void tearDown() {
+		if (cdmiContext != null)
+			cdmiContext.close();
+	}
 
-   @Override
-   protected TypeToken<RestContext<CDMIApi, CDMIAsyncApi>> contextType() {
-      return CDMIApiMetadata.CONTEXT_TOKEN;
-   }
+	@Override
+	protected TypeToken<RestContext<CDMIApi, CDMIAsyncApi>> contextType() {
+		return CDMIApiMetadata.CONTEXT_TOKEN;
+	}
 
 }

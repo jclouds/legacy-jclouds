@@ -36,6 +36,9 @@ import org.jclouds.snia.cdmi.v1.queryparams.ContainerQueryParams;
 import org.testng.annotations.Test;
 
 /**
+ * Example Setup: -Dtest.cdmi.identity=admin:Admin?authType=openstackKeystone
+ * -Dtest.cdmi.credential=passw0rd
+ * -Dtest.cdmi.endpoint=http://pds-stack2:5000/v2.0/
  * 
  * @author Kenneth Nagin
  */
@@ -43,22 +46,20 @@ import org.testng.annotations.Test;
 @Test(groups = "live", testName = "ContainerApiLiveTest")
 public class ContainerApiLiveTest extends BaseCDMIApiLiveTest {
 
+	@Test
+	public void testCreateContainer() throws Exception {
+		String pContainerName = "MyContainer" + System.currentTimeMillis() + "/";
+		Integer containerDepth = new Integer(System.getProperty("test.cdmi.containerDepth", "2"));
+		Map<String, String> pContainerMetaDataIn = new HashMap<String, String>();
+		Iterator<String> keys;
+		pContainerMetaDataIn.put("containerkey1", "value1");
+		pContainerMetaDataIn.put("containerkey2", "value2");
+		pContainerMetaDataIn.put("containerkey3", "value3");
+		CreateContainerOptions pCreateContainerOptions = CreateContainerOptions.Builder.metadata(pContainerMetaDataIn);
+		ContainerApi api = cdmiContext.getApi().getApi();
 
-   @Test
-   public void testCreateContainer() throws Exception {
-      String pContainerName = "MyContainer" + System.currentTimeMillis() + "/";
-      Integer containerDepth = new Integer(System.getProperty(
-				"test.cdmi.containerDepth", "2"));
-      Map<String, String> pContainerMetaDataIn = new HashMap<String, String>();
-      Iterator<String> keys;
-      pContainerMetaDataIn.put("containerkey1", "value1");
-      pContainerMetaDataIn.put("containerkey2", "value2");
-      pContainerMetaDataIn.put("containerkey3", "value3");
-      CreateContainerOptions pCreateContainerOptions = CreateContainerOptions.Builder.metadata(pContainerMetaDataIn);
-      ContainerApi api = cdmiContext.getApi().getApi();
-
-      Logger.getAnonymousLogger().info("create: " + pContainerName);
-        Container container = api.create(pContainerName, pCreateContainerOptions);
+		Logger.getAnonymousLogger().info("create: " + pContainerName);
+		Container container = api.create(pContainerName, pCreateContainerOptions);
 		assertNotNull(container);
 		try {
 			System.out.println(container);
@@ -83,24 +84,20 @@ public class ContainerApiLiveTest extends BaseCDMIApiLiveTest {
 				System.out.println(key + ":" + value);
 			}
 			assertNotNull(container.getUserMetadata());
-			Map<String, String> pContainerMetaDataOut = container
-					.getUserMetadata();
+			Map<String, String> pContainerMetaDataOut = container.getUserMetadata();
 			keys = pContainerMetaDataIn.keySet().iterator();
 			while (keys.hasNext()) {
 				String key = keys.next();
 				assertEquals(pContainerMetaDataOut.containsKey(key), true);
-				assertEquals(pContainerMetaDataOut.get(key),
-						pContainerMetaDataIn.get(key));
+				assertEquals(pContainerMetaDataOut.get(key), pContainerMetaDataIn.get(key));
 			}
 			System.out.println("UserMetaData: " + container.getUserMetadata());
 			assertNotNull(container.getSystemMetadata());
-			System.out.println("SystemMetaData: "
-					+ container.getSystemMetadata());
+			System.out.println("SystemMetaData: " + container.getSystemMetadata());
 			assertNotNull(container.getACLMetadata());
 			// assertEquals(container.getACLMetadata().size(),3); openstack cdmi
 			// does not support ACL
-			List<Map<String, String>> aclMetadataOut = container
-					.getACLMetadata();
+			List<Map<String, String>> aclMetadataOut = container.getACLMetadata();
 			System.out.println("ACLMetaData: ");
 			for (Map<String, String> aclMap : aclMetadataOut) {
 				System.out.println(aclMap);
@@ -112,17 +109,13 @@ public class ContainerApiLiveTest extends BaseCDMIApiLiveTest {
 			if (containerDepth > 2) {
 				System.out.println("adding containers to container");
 				for (int i = 0; i < 10; i++) {
-					container = api.create(pContainerName
-							+ "childcontainer" + i + "/");
+					container = api.create(pContainerName + "childcontainer" + i + "/");
 					assertNotNull(container);
 					System.out.println(container);
 					assertEquals(container.getParentURI(), pContainerName);
-					assertEquals(container.getObjectName(), "childcontainer"
-							+ i + "/");
-					container = api.create(container.getParentURI()
-							+ container.getObjectName() + "grandchild/");
-					assertEquals(container.getParentURI(), pContainerName
-							+ "childcontainer" + i + "/");
+					assertEquals(container.getObjectName(), "childcontainer" + i + "/");
+					container = api.create(container.getParentURI() + container.getObjectName() + "grandchild/");
+					assertEquals(container.getParentURI(), pContainerName + "childcontainer" + i + "/");
 					assertEquals(container.getObjectName(), "grandchild/");
 					System.out.println(container);
 				}
@@ -133,38 +126,32 @@ public class ContainerApiLiveTest extends BaseCDMIApiLiveTest {
 			}
 
 		} finally {
-			Logger.getAnonymousLogger().info(
-					"deleteContainer: " + pContainerName);
-			for (String containerChild : api.get(pContainerName)
-					.getChildren()) {
+			Logger.getAnonymousLogger().info("deleteContainer: " + pContainerName);
+			for (String containerChild : api.get(pContainerName).getChildren()) {
 				System.out.println("Deleting " + containerChild);
 				api.delete(containerChild);
 			}
 			api.delete(pContainerName);
 			container = api.get("/");
 			System.out.println("root container: " + container);
-			assertEquals(container.getChildren().contains(pContainerName),
-					false);
+			assertEquals(container.getChildren().contains(pContainerName), false);
 		}
 
 	}
+
 	@Test
 	public void testGetContainer() throws Exception {
-		Integer containerDepth = new Integer(System.getProperty(
-				"containerDepth", "2"));
-		String pContainerName = "MyContainer" + System.currentTimeMillis()
-				+ "/";
+		Integer containerDepth = new Integer(System.getProperty("containerDepth", "2"));
+		String pContainerName = "MyContainer" + System.currentTimeMillis() + "/";
 		Map<String, String> pContainerMetaDataIn = new HashMap<String, String>();
 		Iterator<String> keys;
 		pContainerMetaDataIn.put("containerkey1", "value1");
 		pContainerMetaDataIn.put("containerkey2", "value2");
 		pContainerMetaDataIn.put("containerkey3", "value3");
-		CreateContainerOptions pCreateContainerOptions = CreateContainerOptions.Builder
-				.metadata(pContainerMetaDataIn);
+		CreateContainerOptions pCreateContainerOptions = CreateContainerOptions.Builder.metadata(pContainerMetaDataIn);
 		ContainerApi api = cdmiContext.getApi().getApi();
 
-		Container container = api.create(pContainerName,
-				pCreateContainerOptions);
+		Container container = api.create(pContainerName, pCreateContainerOptions);
 		assertNotNull(container);
 		try {
 			System.out.println(container);
@@ -189,22 +176,18 @@ public class ContainerApiLiveTest extends BaseCDMIApiLiveTest {
 				System.out.println(key + ":" + value);
 			}
 			assertNotNull(container.getUserMetadata());
-			Map<String, String> pContainerMetaDataOut = container
-					.getUserMetadata();
+			Map<String, String> pContainerMetaDataOut = container.getUserMetadata();
 			keys = pContainerMetaDataIn.keySet().iterator();
 			while (keys.hasNext()) {
 				String key = keys.next();
 				assertEquals(pContainerMetaDataOut.containsKey(key), true);
-				assertEquals(pContainerMetaDataOut.get(key),
-						pContainerMetaDataIn.get(key));
+				assertEquals(pContainerMetaDataOut.get(key), pContainerMetaDataIn.get(key));
 			}
 			System.out.println("UserMetaData: " + container.getUserMetadata());
 			assertNotNull(container.getSystemMetadata());
-			System.out.println("SystemMetaData: "
-					+ container.getSystemMetadata());
+			System.out.println("SystemMetaData: " + container.getSystemMetadata());
 			assertNotNull(container.getACLMetadata());
-			List<Map<String, String>> aclMetadataOut = container
-					.getACLMetadata();
+			List<Map<String, String>> aclMetadataOut = container.getACLMetadata();
 			System.out.println("ACLMetaData: ");
 			for (Map<String, String> aclMap : aclMetadataOut) {
 				System.out.println(aclMap);
@@ -212,82 +195,68 @@ public class ContainerApiLiveTest extends BaseCDMIApiLiveTest {
 			container = api.get("/");
 			System.out.println("root container: " + container);
 			assertEquals(container.getChildren().contains(pContainerName), true);
-			container = api.get(pContainerName,
-					ContainerQueryParams.Builder.field("parentURI"));
+			container = api.get(pContainerName, ContainerQueryParams.Builder.field("parentURI"));
 			assertNotNull(container);
 			// assertEquals(container.getParentURI(),"/");
 			System.out.println(container);
 
-			container = api.get(
-					pContainerName,
-					ContainerQueryParams.Builder.field("parentURI").field(
-							"objectName"));
+			container = api.get(pContainerName, ContainerQueryParams.Builder.field("parentURI").field("objectName"));
 			assertNotNull(container);
 			// assertEquals(container.getParentURI(),"/");
 			assertEquals(container.getObjectName(), pContainerName);
 
-			container = api.get(pContainerName,
-					ContainerQueryParams.Builder.metadata());
+			container = api.get(pContainerName, ContainerQueryParams.Builder.metadata());
 			assertNotNull(container);
 			pContainerMetaDataOut = container.getUserMetadata();
 			keys = pContainerMetaDataIn.keySet().iterator();
 			while (keys.hasNext()) {
 				String key = keys.next();
 				assertEquals(pContainerMetaDataOut.containsKey(key), true);
-				assertEquals(pContainerMetaDataOut.get(key),
-						pContainerMetaDataIn.get(key));
+				assertEquals(pContainerMetaDataOut.get(key), pContainerMetaDataIn.get(key));
 			}
 			System.out.println(container);
 
-			System.out
-					.println("GetContainerOptions.Builder.metadata(cdmi_acl)");
-			container = api.get(pContainerName,
-					ContainerQueryParams.Builder.metadata("cdmi_acl"));
+			System.out.println("GetContainerOptions.Builder.metadata(cdmi_acl)");
+			container = api.get(pContainerName, ContainerQueryParams.Builder.metadata("cdmi_acl"));
 			assertNotNull(container);
 			System.out.println(container);
 			assertNotNull(container.getACLMetadata());
 			// assertEquals(container.getACLMetadata().size(),3);
+			// validate the any query
+			container = api.get(pContainerName,
+						ContainerQueryParams.Builder.any("query1=abc").field("objectName").any("query2=anyQueryParam")
+									.metadata());
+			assertNotNull(container);
 
 			// openstack does not support containers within containers
 			if (containerDepth > 2) {
 				System.out.println("adding containers to container");
-				String firstParentURI = api.get(pContainerName)
-						.getObjectName();
+				String firstParentURI = api.get(pContainerName).getObjectName();
 				for (int i = 0; i < 10; i++) {
-					container = api.create(firstParentURI
-							+ "childcontainer" + i + "/");
+					container = api.create(firstParentURI + "childcontainer" + i + "/");
 					assertNotNull(container);
 					assertEquals(container.getParentURI(), pContainerName);
-					assertEquals(container.getObjectName(), "childcontainer"
-							+ i + "/");
-					container = api.create(container.getParentURI()
-							+ container.getObjectName() + "grandchild/",
-							pCreateContainerOptions);
-					assertEquals(container.getParentURI(), pContainerName
-							+ "childcontainer" + i + "/");
+					assertEquals(container.getObjectName(), "childcontainer" + i + "/");
+					container = api.create(container.getParentURI() + container.getObjectName() + "grandchild/",
+								pCreateContainerOptions);
+					assertEquals(container.getParentURI(), pContainerName + "childcontainer" + i + "/");
 					assertEquals(container.getObjectName(), "grandchild" + "/");
-					container = api.get(container.getParentURI(),
-							ContainerQueryParams.Builder.children());
-					assertEquals(container.getChildren().contains(
-							"grandchild" + "/"), true);
-					api.delete(firstParentURI + "childcontainer" + i
-							+ "/" + "grandchild" + "/");
+					container = api.get(container.getParentURI(), ContainerQueryParams.Builder.children());
+					assertEquals(container.getChildren().contains("grandchild" + "/"), true);
+					api.delete(firstParentURI + "childcontainer" + i + "/" + "grandchild" + "/");
 				}
-				container = api.get(pContainerName,
-						ContainerQueryParams.Builder.children());
+				container = api.get(pContainerName, ContainerQueryParams.Builder.children());
 				assertNotNull(container);
 				assertNotNull(container.getChildren());
 				assertEquals(container.getChildren().size(), 10);
-				container = api.get(pContainerName,
-						ContainerQueryParams.Builder.children(0, 3));
+				container = api.get(pContainerName, ContainerQueryParams.Builder.children(0, 3));
 				assertNotNull(container);
 				assertNotNull(container.getChildren());
 				assertEquals(container.getChildren().size(), 4);
 
-				container = api.get(
-						pContainerName,
-						ContainerQueryParams.Builder.field("parentURI")
-								.field("objectName").children().metadata());
+				container = api.get(pContainerName, ContainerQueryParams.Builder.field("parentURI").field("objectName")
+
+				.children().metadata());
 				assertNotNull(container);
 				assertNotNull(container.getChildren());
 				assertEquals(container.getChildren().size(), 10);
@@ -298,25 +267,19 @@ public class ContainerApiLiveTest extends BaseCDMIApiLiveTest {
 				for (String childName : container.getChildren()) {
 					api.delete(container.getObjectName() + childName);
 				}
-				assertEquals(
-						api.get(pContainerName,
-								ContainerQueryParams.Builder.children())
-								.getChildren().isEmpty(), true);
+				assertEquals(api.get(pContainerName, ContainerQueryParams.Builder.children()).getChildren().isEmpty(), true);
 			}
 
 		} finally {
-			Logger.getAnonymousLogger().info(
-					"deleteContainer: " + pContainerName);
-			for (String containerChild : api.get(pContainerName)
-					.getChildren()) {
+			Logger.getAnonymousLogger().info("deleteContainer: " + pContainerName);
+			for (String containerChild : api.get(pContainerName).getChildren()) {
 				System.out.println("deleting: " + containerChild);
 				api.delete(containerChild);
 			}
 			api.delete(pContainerName);
 			container = api.get("/");
 			System.out.println("root container: " + container);
-			assertEquals(container.getChildren().contains(pContainerName),
-					false);
+			assertEquals(container.getChildren().contains(pContainerName), false);
 		}
 	}
 }

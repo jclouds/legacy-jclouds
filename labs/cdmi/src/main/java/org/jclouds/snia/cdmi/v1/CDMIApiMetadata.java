@@ -37,52 +37,52 @@ import com.google.inject.Module;
  */
 public class CDMIApiMetadata extends BaseRestApiMetadata {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 6725672099385580694L;
+	/** The serialVersionUID */
+	private static final long serialVersionUID = 6725672099385580694L;
 
-   public static final TypeToken<RestContext<CDMIApi, CDMIAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<CDMIApi, CDMIAsyncApi>>() {
-      private static final long serialVersionUID = -5070937833892503232L;
-   };
+	public static final TypeToken<RestContext<CDMIApi, CDMIAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<CDMIApi, CDMIAsyncApi>>() {
+		private static final long serialVersionUID = -5070937833892503232L;
+	};
 
-   @Override
-   public Builder toBuilder() {
-      return new Builder().fromApiMetadata(this);
-   }
+	@Override
+	public Builder toBuilder() {
+		return new Builder().fromApiMetadata(this);
+	}
 
-   public CDMIApiMetadata() {
-      this(new Builder());
-   }
+	public CDMIApiMetadata() {
+		this(new Builder());
+	}
 
-   protected CDMIApiMetadata(Builder builder) {
-      super(builder);
-   }
+	protected CDMIApiMetadata(Builder builder) {
+		super(builder);
+	}
 
-   public static Properties defaultProperties() {
-      Properties properties = BaseRestApiMetadata.defaultProperties();
-      return properties;
-   }
+	public static Properties defaultProperties() {
+		Properties properties = BaseRestApiMetadata.defaultProperties();
+		return properties;
+	}
 
-   public static class Builder extends BaseRestApiMetadata.Builder {
+	public static class Builder extends BaseRestApiMetadata.Builder {
 
-      protected Builder() {
-         super(CDMIApi.class, CDMIAsyncApi.class);
-         id("cdmi").name("SNIA CDMI API").identityName("tenantId:user").credentialName("password")
-                  .documentation(URI.create("http://www.snia.org/cdmi")).version("1.0.1")
-                  .defaultEndpoint("http://localhost:8080").defaultProperties(CDMIApiMetadata.defaultProperties())
-                  .defaultModules(ImmutableSet.<Class<? extends Module>> of(CDMIRestClientModule.class));
-      }
+		protected Builder() {
+			super(CDMIApi.class, CDMIAsyncApi.class);
+			id("cdmi").name("SNIA CDMI API").identityName("tenantId:user").credentialName("password")
+					.documentation(URI.create("http://www.snia.org/cdmi")).version("1.0.1")
+					.defaultEndpoint("http://localhost:8080").defaultProperties(CDMIApiMetadata.defaultProperties())
+					.defaultModules(ImmutableSet.<Class<? extends Module>> of(CDMIRestClientModule.class));
+		}
 
-      @Override
-      public CDMIApiMetadata build() {
-         return new CDMIApiMetadata(this);
-      }
+		@Override
+		public CDMIApiMetadata build() {
+			return new CDMIApiMetadata(this);
+		}
 
-      @Override
-      public Builder fromApiMetadata(ApiMetadata in) {
-         super.fromApiMetadata(in);
-         return this;
-      }
+		@Override
+		public Builder fromApiMetadata(ApiMetadata in) {
+			super.fromApiMetadata(in);
+			return this;
+		}
 
-   }
+	}
 
 }

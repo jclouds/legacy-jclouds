@@ -32,7 +32,7 @@ import com.google.common.reflect.TypeToken;
 @Test(groups = "unit", testName = "CDMIApiMetadataTest")
 // public class CDMIApiMetadataTest extends BaseBlobStoreApiMetadataTest {
 public class CDMIApiMetadataTest extends BaseApiMetadataTest {
-   public CDMIApiMetadataTest() {
-      super(new CDMIApiMetadata(), ImmutableSet.<TypeToken<? extends View>> of());
-   }
+	public CDMIApiMetadataTest() {
+		super(new CDMIApiMetadata(), ImmutableSet.<TypeToken<? extends View>> of());
+	}
 }
