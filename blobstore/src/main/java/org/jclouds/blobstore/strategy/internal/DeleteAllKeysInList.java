@@ -93,7 +93,7 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
       Map<StorageMetadata, Exception> exceptions = Maps.newHashMap();
       PageSet<? extends StorageMetadata> listing;
       int maxErrors = 3; // TODO parameterize
-      for (int i = 0; i < maxErrors; ) {
+      for (int numErrors = 0; numErrors < maxErrors; ) {
          // fetch partial directory listing
          try {
             listing = connection.list(containerName, options).get();
@@ -101,11 +101,11 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
             Thread.currentThread().interrupt();
             break;
          } catch (ExecutionException ee) {
-            ++i;
-            if (i == maxErrors) {
+            ++numErrors;
+            if (numErrors == maxErrors) {
                throw Throwables.propagate(ee.getCause());
             }
-            retryHandler.imposeBackoffExponentialDelay(i, message);
+            retryHandler.imposeBackoffExponentialDelay(numErrors, message);
             continue;
          }
 
@@ -155,8 +155,8 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
 
          exceptions = awaitCompletion(responses, userExecutor, maxTime, logger, message);
          if (!exceptions.isEmpty()) {
-            ++i;
-            retryHandler.imposeBackoffExponentialDelay(i, message);
+            ++numErrors;
+            retryHandler.imposeBackoffExponentialDelay(numErrors, message);
             continue;
          }
 
@@ -165,6 +165,12 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
             break;
          }
          options = options.afterMarker(marker);
+
+         // Reset numErrors if we execute a successful iteration.  This ensures
+         // that we only try an unsuccessful operation maxErrors times but
+         // allow progress with directories containing many blobs in the face
+         // of some failures.
+         numErrors = 0;
       }
       if (!exceptions.isEmpty())
          throw new BlobRuntimeException(String.format("error %s: %s", message, exceptions));
