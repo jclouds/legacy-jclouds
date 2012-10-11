@@ -60,7 +60,8 @@ public class HPCloudObjectStorageBlobSignerExpectTest extends BaseBlobSignerExpe
    @Override
    protected HttpRequest getBlobWithTime() {
       return HttpRequest.builder().method("GET")
-            .endpoint("https://objects.jclouds.org/v1.0/40806637803162/container/name?temp_url_sig=fd9b09acbc3ce71182240503c803dda4902098a9&temp_url_expires=123456792").build();
+            .endpoint("https://objects.jclouds.org/v1.0/40806637803162/container/name?temp_url_sig=40806637803162%3Aidentity%3Ada88bc31122f0d0806b1c7bf71cd3af5c5d5b94c&temp_url_expires=123456792")
+            .addHeader("X-Auth-Token", "Auth_4f173437e4b013bee56d1007").build();
    }
 
    @Override
@@ -80,7 +81,8 @@ public class HPCloudObjectStorageBlobSignerExpectTest extends BaseBlobSignerExpe
    @Override
    protected HttpRequest putBlobWithTime() {
       return HttpRequest.builder().method("PUT")
-            .endpoint("https://objects.jclouds.org/v1.0/40806637803162/container/name?temp_url_sig=72e5f6ebafab2b3da0586198797e58fb7478211e&temp_url_expires=123456792").build();
+            .endpoint("https://objects.jclouds.org/v1.0/40806637803162/container/name?temp_url_sig=40806637803162%3Aidentity%3Ac90269245ab0a316d5ea5e654d4c2a975fb4bf77&temp_url_expires=123456792")
+            .addHeader("X-Auth-Token", "Auth_4f173437e4b013bee56d1007").build();
    }
 
    @Override

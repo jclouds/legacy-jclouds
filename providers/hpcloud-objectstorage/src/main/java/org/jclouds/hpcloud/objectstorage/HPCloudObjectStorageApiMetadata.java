@@ -25,11 +25,11 @@ import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.blobstore.BlobRequestSigner;
+import org.jclouds.hpcloud.objectstorage.blobstore.HPCloudObjectStorageBlobRequestSigner;
 import org.jclouds.hpcloud.objectstorage.blobstore.config.HPCloudObjectStorageBlobStoreContextModule;
 import org.jclouds.hpcloud.objectstorage.config.HPCloudObjectStorageRestClientModule;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule.RegionModule;
 import org.jclouds.openstack.swift.SwiftKeystoneApiMetadata;
-import org.jclouds.openstack.swift.blobstore.SwiftBlobSigner;
 import org.jclouds.openstack.swift.blobstore.config.TemporaryUrlExtensionModule;
 import org.jclouds.openstack.swift.config.SwiftRestClientModule.KeystoneStorageEndpointModule;
 import org.jclouds.openstack.swift.extensions.KeystoneTemporaryUrlKeyAsyncApi;
@@ -39,7 +39,6 @@ import org.jclouds.rest.RestContext;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 /**
  * Implementation of {@link org.jclouds.providers.ProviderMetadata} for HP Cloud Services Object Storage
  *
@@ -115,8 +114,7 @@ public class HPCloudObjectStorageApiMetadata extends SwiftKeystoneApiMetadata {
 
       @Override
       protected void bindRequestSigner() {
-         bind(BlobRequestSigner.class).to(new TypeLiteral<SwiftBlobSigner<HPCloudObjectStorageAsyncApi>>() {
-         });
+         bind(BlobRequestSigner.class).to(HPCloudObjectStorageBlobRequestSigner.class);
       }
 
       @Override
