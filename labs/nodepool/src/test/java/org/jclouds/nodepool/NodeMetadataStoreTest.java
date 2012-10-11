@@ -25,7 +25,6 @@ import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
@@ -42,12 +41,13 @@ import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.nodepool.config.NodePoolProperties;
 import org.jclouds.nodepool.internal.NodeMetadataStore;
-import org.jclouds.util.Strings2;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.io.Files;
 import com.google.inject.Injector;
 
 /**
@@ -94,8 +94,8 @@ public class NodeMetadataStoreTest {
    public void testStore() throws FileNotFoundException, IOException {
       store.store(nodeMeta1, templateOptions, "testgroup");
       store.store(nodeMeta2, templateOptions, "testgroup");
-      String readJSon = Strings2.toStringAndClose(new FileInputStream(baseDir + File.separator + "nodes"
-               + File.separator + nodeMeta1.getId()));
+      String readJSon = Files.toString(new File(baseDir + File.separator + "nodes"
+               + File.separator + nodeMeta1.getId()), Charsets.UTF_8);
       assertEquals(readJSon, "{\"group\":\"testgroup\",\"tags\":[\"tag1\",\"tag2\"],"
                + "\"userMetadata\":{\"testmetakey\":\"testmetavalue\",\"testmetakey2\":\"testmetavalue2\"},"
                + "\"user\":\"testuser\",\"password\":\"testpass\",\"privateKey\":\"pk\",\"authenticateSudo\":true}");

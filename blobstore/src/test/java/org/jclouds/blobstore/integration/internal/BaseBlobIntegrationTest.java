@@ -31,7 +31,6 @@ import static org.testng.Assert.assertNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -68,12 +67,12 @@ import org.jclouds.io.Payloads;
 import org.jclouds.io.WriteTo;
 import org.jclouds.io.payloads.StreamingPayload;
 import org.jclouds.logging.Logger;
-import org.jclouds.util.Strings2;
 import org.testng.ITestContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Throwables;
@@ -482,10 +481,10 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
 
    @DataProvider(name = "putTests")
    public Object[][] createData1() throws IOException {
+      File file = new File("pom.xml");
+      String realObject = Files.toString(file, Charsets.UTF_8);
 
-      String realObject = Strings2.toStringAndClose(new FileInputStream("pom.xml"));
-
-      return new Object[][] { { "file", "text/xml", new File("pom.xml"), realObject },
+      return new Object[][] { { "file", "text/xml", file, realObject },
                { "string", "text/xml", realObject, realObject },
                { "bytes", "application/octet-stream", realObject.getBytes(), realObject } };
    }
