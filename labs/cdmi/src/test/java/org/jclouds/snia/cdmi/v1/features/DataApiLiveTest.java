@@ -46,8 +46,7 @@ import com.google.common.io.CharStreams;
 import com.google.common.io.Files;
 
 /**
- * Example setup: -Dtest.cdmi.identity=admin:Admin?authType=openstackKeystone
- * -Dtest.cdmi.credential=passw0rd
+ * Example setup: -Dtest.cdmi.identity=admin:Admin?authType=openstackKeystone -Dtest.cdmi.credential=passw0rd
  * -Dtest.cdmi.endpoint=http://pds-stack2:5000/v2.0/
  * 
  * @author Kenneth Nagin
@@ -688,26 +687,18 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 				System.out.println(dataObject);
 				System.out.println(dataObject.getValueAsString());
 				assertEquals(dataObject.getMimetype(), "text/plain");
-				// value is SGVsbA==. This needs investigating to determine if
-				// this
-				// is problem with wss-sonas CDMI server or the jcloud client or
-				// must
-				// understanding of spec
-				// validate any query
-				dataObject = dataApi.get(containerName + dataObjectNameIn,
-							DataObjectQueryParams.Builder.any("query1=anything").field("objectName").any("anyQueryParam")
-										.field("mimetype").metadata());
-				assertNotNull(dataObject);
+				// value is SGVsbA==. This needs investigating to determine if this is problem with wss-sonas CDMI server or
+				// the jcloud client or
+				// must understanding of spec
 				System.out.println(dataObject);
-
-				dataApi.delete(containerName + dataObjectNameIn);
-				assertEquals(containerApi.get(containerName).getChildren().contains(dataObjectNameIn), false);
 			}
-			// validate any query
+			// validate any query: allows user to indicate special handling with any query.
 			dataObject = dataApi.get(containerName + dataObjectNameIn, DataObjectQueryParams.Builder
 						.any("query1=anything").field("objectName").any("anyQueryParam").field("mimetype").metadata());
 			assertNotNull(dataObject);
 			System.out.println(dataObject);
+			dataApi.delete(containerName + dataObjectNameIn);
+			assertEquals(containerApi.get(containerName).getChildren().contains(dataObjectNameIn), false);
 
 		} finally {
 			tmpFileIn.delete();
