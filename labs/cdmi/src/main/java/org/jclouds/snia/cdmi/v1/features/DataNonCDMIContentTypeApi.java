@@ -84,8 +84,7 @@ public interface DataNonCDMIContentTypeApi {
 	 * @param dataObjectName
 	 *           dataObjectName must not end with a forward slash, /.
 	 * @param queryParams
-	 *           enables specifying additional information when retrieving
-	 *           payload
+	 *           enables specifying additional information when retrieving payload
 	 * @return DataObjectNonCDMIContentType
 	 * 
 	 *         <pre>
@@ -121,6 +120,29 @@ public interface DataNonCDMIContentTypeApi {
 	DataObject get(String dataObjectName, DataObjectQueryParams queryParams);
 
 	/**
+	 * get CDMI Data object
+	 * 
+	 * @param containerName
+	 *           containerName must end with a forward slash, /.
+	 * @param dataObjectName
+	 *           dataObjectName must not end with a forward slash, /.
+	 * @param range
+	 *           a valid ranges-specifier (see RFC2616 Section 14.35.1)
+	 * @param queryParams
+	 *           enables getting only certain fields, metadata, value range, any
+	 * @return DataObjectNonCDMIContentType
+	 * 
+	 *         <pre>
+	 *  Examples: 
+	 *  {@code
+	 *  dataObject = get("myDataObject","bytes=0-10");
+	 * }
+	 * 
+	 *         <pre>
+	 */
+	Payload getValue(String dataObjectName, String range, DataObjectQueryParams queryParams);
+
+	/**
 	 * create CDMI Data object Non CDMI Content Type
 	 * 
 	 * @param containerName
@@ -128,8 +150,7 @@ public interface DataNonCDMIContentTypeApi {
 	 * @param dataObjectName
 	 *           dataObjectName must not end with a forward slash, /.
 	 * @param payload
-	 *           enables defining the body's payload i.e. file, inputStream,
-	 *           String, ByteArray
+	 *           enables defining the body's payload i.e. file, inputStream, String, ByteArray
 	 * 
 	 *           <pre>
 	 *  Examples: 
@@ -155,17 +176,15 @@ public interface DataNonCDMIContentTypeApi {
 	void create(String dataObjectName, Payload payload);
 
 	/**
-	 * create CDMI Data object partial Non CDMI Content Type Only part of the
-	 * object is contained in the payload and the X-CDMI-Partial header flag is
-	 * set to true
+	 * create CDMI Data object partial Non CDMI Content Type Only part of the object is contained in the payload and the
+	 * X-CDMI-Partial header flag is set to true
 	 * 
 	 * 
 	 * 
 	 * @param dataObjectName
 	 *           dataObjectName must not end with a forward slash, /.
 	 * @param payload
-	 *           enables defining the body's payload i.e. file, inputStream,
-	 *           String, ByteArray
+	 *           enables defining the body's payload i.e. file, inputStream, String, ByteArray
 	 * 
 	 *           <pre>
 	 *  Examples: 

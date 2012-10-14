@@ -52,10 +52,8 @@ import com.google.common.io.Files;
 import com.google.common.net.MediaType;
 
 /**
- * Example setup: -Dtest.cdmi.identity=admin:Admin?authType=openstackKeystone
- * -Dtest.cdmi.credential=passw0rd
- * -Dtest.cdmi.endpoint=http://pds-stack2:5000/v2.0/
- * -Dtest.cdmi.serverType=openstack
+ * Example setup: -Dtest.cdmi.identity=admin:Admin?authType=openstackKeystone -Dtest.cdmi.credential=passw0rd
+ * -Dtest.cdmi.endpoint=http://pds-stack2:5000/v2.0/ -Dtest.cdmi.serverType=openstack
  * 
  * @author Kenneth Nagin
  */
@@ -333,8 +331,7 @@ public class DataNonCDMIContentTypeApiLiveTest extends BaseCDMIApiLiveTest {
 			dataNonCDMIContentTypeApi.delete(containerName + dataObjectNameIn);
 			assertEquals(containerApi.get(containerName).getChildren().contains(dataObjectNameIn), false);
 
-			// exercise create data object with none cdmi put with payload
-			// inputStream originating from jpeg file.
+			// exercise create data object with none cdmi put with payload inputStream originating from jpeg file.
 			inFile = new File(System.getProperty("user.dir") + "/src/test/resources/yellow-flowers.jpg");
 			assertEquals(true, inFile.isFile());
 			FileInputStream fileInputStream = new FileInputStream(inFile);
@@ -353,9 +350,7 @@ public class DataNonCDMIContentTypeApiLiveTest extends BaseCDMIApiLiveTest {
 			assertEquals(Files.equal(tmpFileOut, inFile), true);
 			tmpFileOut.delete();
 
-			// get payload with any queryParms
-			// on openstack returns payload and allows user to indicate special
-			// handling.
+			// get payload with any queryParms on openstack returns payload and allows user to indicate special handling.
 			if (serverType.matches("openstack")) {
 				payloadOut = dataNonCDMIContentTypeApi.getValue(containerName + inFile.getName(),
 							DataObjectQueryParams.Builder.any("query1=anything").field("objectName").any("anyQueryParam")
@@ -392,6 +387,18 @@ public class DataNonCDMIContentTypeApiLiveTest extends BaseCDMIApiLiveTest {
 			assertEquals(CharStreams.toString(new InputStreamReader(payloadOut.getInput(), "UTF-8")),
 						value.substring(11, 21));
 			assertEquals(payloadOut.getContentMetadata().getContentLength(), new Long(10));
+			// get payload with any queryParms on openstack returns payload and allows user to indicate special handling.
+			if (serverType.matches("openstack")) {
+
+				payloadOut = dataNonCDMIContentTypeApi.getValue(containerName + dataObjectNameIn, "bytes=11-20",
+							DataObjectQueryParams.Builder.any("query1=byteQuery").field("objectName").any("anyQueryParam")
+										.field("mimetype").metadata());
+
+				assertNotNull(payloadOut);
+				assertEquals(CharStreams.toString(new InputStreamReader(payloadOut.getInput(), "UTF-8")),
+							value.substring(11, 21));
+				assertEquals(payloadOut.getContentMetadata().getContentLength(), new Long(10));
+			}
 
 			dataNonCDMIContentTypeApi.delete(containerName + dataObjectNameIn);
 			assertEquals(containerApi.get(containerName).getChildren().contains(dataObjectNameIn), false);
