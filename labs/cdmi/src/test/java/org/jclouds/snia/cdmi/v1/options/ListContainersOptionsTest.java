@@ -28,70 +28,71 @@ import org.jclouds.http.options.HttpRequestOptions;
 import org.testng.annotations.Test;
 
 /**
- * Tests possible uses of ListContainerOptions and ListContainerOptions.Builder.*
+ * Tests possible uses of ListContainerOptions and
+ * ListContainerOptions.Builder.*
  * 
  * @author Adrian Cole
  */
 @Test(testName = "ListContainersOptionsTest")
 public class ListContainersOptionsTest {
 
-   @Test
-   public void testAssignability() {
-      assert HttpRequestOptions.class.isAssignableFrom(ListContainersOptions.class);
-      assert !String.class.isAssignableFrom(ListContainersOptions.class);
-   }
+	@Test
+	public void testAssignability() {
+		assert HttpRequestOptions.class.isAssignableFrom(ListContainersOptions.class);
+		assert !String.class.isAssignableFrom(ListContainersOptions.class);
+	}
 
-   @Test
-   public void testNoOptionsQueryString() {
-      HttpRequestOptions options = new ListContainersOptions();
-      assertEquals(options.buildQueryParameters().size(), 0);
-   }
+	@Test
+	public void testNoOptionsQueryString() {
+		HttpRequestOptions options = new ListContainersOptions();
+		assertEquals(options.buildQueryParameters().size(), 0);
+	}
 
-   @Test
-   public void testMarker() {
-      ListContainersOptions options = new ListContainersOptions();
-      options.marker("test");
-      assertEquals(options.buildQueryParameters().get("marker"), Collections.singletonList("test"));
-   }
+	@Test
+	public void testMarker() {
+		ListContainersOptions options = new ListContainersOptions();
+		options.marker("test");
+		assertEquals(options.buildQueryParameters().get("marker"), Collections.singletonList("test"));
+	}
 
-   @Test
-   public void testNullMarker() {
-      ListContainersOptions options = new ListContainersOptions();
-      assertEquals(options.buildQueryParameters().get("marker"), Collections.EMPTY_LIST);
-   }
+	@Test
+	public void testNullMarker() {
+		ListContainersOptions options = new ListContainersOptions();
+		assertEquals(options.buildQueryParameters().get("marker"), Collections.EMPTY_LIST);
+	}
 
-   @Test
-   public void testMarkerStatic() {
-      ListContainersOptions options = marker("test");
-      assertEquals(options.buildQueryParameters().get("marker"), Collections.singletonList("test"));
-   }
+	@Test
+	public void testMarkerStatic() {
+		ListContainersOptions options = marker("test");
+		assertEquals(options.buildQueryParameters().get("marker"), Collections.singletonList("test"));
+	}
 
-   @Test(expectedExceptions = NullPointerException.class)
-   public void testMarkerNPE() {
-      marker(null);
-   }
+	@Test(expectedExceptions = NullPointerException.class)
+	public void testMarkerNPE() {
+		marker(null);
+	}
 
-   @Test
-   public void testLimit() {
-      ListContainersOptions options = new ListContainersOptions();
-      options.limit(1000);
-      assertEquals(options.buildQueryParameters().get("limit"), Collections.singletonList("1000"));
-   }
+	@Test
+	public void testLimit() {
+		ListContainersOptions options = new ListContainersOptions();
+		options.limit(1000);
+		assertEquals(options.buildQueryParameters().get("limit"), Collections.singletonList("1000"));
+	}
 
-   @Test
-   public void testNullLimit() {
-      ListContainersOptions options = new ListContainersOptions();
-      assertEquals(options.buildQueryParameters().get("limit"), Collections.EMPTY_LIST);
-   }
+	@Test
+	public void testNullLimit() {
+		ListContainersOptions options = new ListContainersOptions();
+		assertEquals(options.buildQueryParameters().get("limit"), Collections.EMPTY_LIST);
+	}
 
-   @Test
-   public void testLimitStatic() {
-      ListContainersOptions options = limit(1000);
-      assertEquals(options.buildQueryParameters().get("limit"), Collections.singletonList("1000"));
-   }
+	@Test
+	public void testLimitStatic() {
+		ListContainersOptions options = limit(1000);
+		assertEquals(options.buildQueryParameters().get("limit"), Collections.singletonList("1000"));
+	}
 
-   @Test(expectedExceptions = IllegalStateException.class)
-   public void testLimitNegative() {
-      limit(-1);
-   }
+	@Test(expectedExceptions = IllegalStateException.class)
+	public void testLimitNegative() {
+		limit(-1);
+	}
 }

@@ -36,35 +36,35 @@ import org.jclouds.snia.cdmi.v1.features.DomainApi;
  * 
  * @see CDMIAsyncApi
  * @see <a href="http://www.snia.org/cdmi">api doc</a>
- * @author Adrian Cole
+ * @author Kenneth Nagin
  */
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface CDMIApi {
 
-   /**
-    * Provides synchronous access to Domain Object Resource Operations.
-    */
-   @Delegate
-   DomainApi getDomainApi();
+	/**
+	 * Provides synchronous access to Domain Object Resource Operations.
+	 */
+	@Delegate
+	DomainApi getDomainApi();
 
-   /**
-    * Provides synchronous access to Container Object Resource Operations.
-    */
-   @Delegate
-   ContainerApi getApi();
+	/**
+	 * Provides synchronous access to Container Object Resource Operations.
+	 */
+	@Delegate
+	ContainerApi getApi();
 
-   /**
-    * Provides synchronous access to Data Object Resource Operations.
-    */
-   @Delegate
-   @Path("/{containerName}")
-   DataApi getDataApiForContainer(@PathParam("containerName") String containerName);
+	/**
+	 * Provides synchronous access to Data Object Resource Operations.
+	 */
+	@Delegate
+	@Path("/{containerName}")
+	DataApi getDataApiForContainer(@PathParam("containerName") String containerName);
 
-   /**
-    * Provides synchronous access to Data Object Resource Operations.
-    */
-   @Delegate
-   @Path("/{containerName}")
-   DataNonCDMIContentTypeApi getDataNonCDMIContentTypeApiForContainer(@PathParam("containerName") String containerName);
-
+	/**
+	 * Provides synchronous access to Data Object Resource Operations using Non
+	 * CDMI Content type.
+	 */
+	@Delegate
+	@Path("/{containerName}")
+	DataNonCDMIContentTypeApi getDataNonCDMIContentTypeApiForContainer(@PathParam("containerName") String containerName);
 }

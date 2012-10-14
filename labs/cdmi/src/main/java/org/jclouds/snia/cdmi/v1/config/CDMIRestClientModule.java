@@ -37,30 +37,29 @@ import org.jclouds.snia.cdmi.v1.features.DataNonCDMIContentTypeAsyncApi;
 import org.jclouds.snia.cdmi.v1.features.DomainApi;
 import org.jclouds.snia.cdmi.v1.features.DomainAsyncApi;
 import org.jclouds.snia.cdmi.v1.handlers.CDMIErrorHandler;
-
 import com.google.common.collect.ImmutableMap;
 
 /**
  * Configures the CDMI connection.
  * 
- * @author Adrian Cole
+ * @author Kenneth Nagin
  */
 @ConfiguresRestClient
 public class CDMIRestClientModule extends RestClientModule<CDMIApi, CDMIAsyncApi> {
 
-   public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()
-            .put(DomainApi.class, DomainAsyncApi.class).put(ContainerApi.class, ContainerAsyncApi.class)
-            .put(DataApi.class, DataAsyncApi.class)
-            .put(DataNonCDMIContentTypeApi.class, DataNonCDMIContentTypeAsyncApi.class).build();
+	public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()
+				.put(DomainApi.class, DomainAsyncApi.class).put(ContainerApi.class, ContainerAsyncApi.class)
+				.put(DataApi.class, DataAsyncApi.class)
+				.put(DataNonCDMIContentTypeApi.class, DataNonCDMIContentTypeAsyncApi.class).build();
 
-   public CDMIRestClientModule() {
-      super(DELEGATE_MAP);
-   }
+	public CDMIRestClientModule() {
+		super(DELEGATE_MAP);
+	}
 
-   @Override
-   protected void bindErrorHandlers() {
-      bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(CDMIErrorHandler.class);
-      bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(CDMIErrorHandler.class);
-      bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(CDMIErrorHandler.class);
-   }
+	@Override
+	protected void bindErrorHandlers() {
+		bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(CDMIErrorHandler.class);
+		bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(CDMIErrorHandler.class);
+		bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(CDMIErrorHandler.class);
+	}
 }

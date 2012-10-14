@@ -28,20 +28,21 @@ import org.jclouds.rest.Binder;
 import org.jclouds.snia.cdmi.v1.queryparams.CDMIObjectQueryParams;
 
 /**
- * This binding solves the problem jax-rs encoding ? ; : which some servers can not handle
+ * This binding solves the problem jax-rs encoding ? ; : which some servers can
+ * not handle
  * 
  * @author Kenneth Nagin
  */
 @Singleton
 public class BindQueryParmsToSuffix implements Binder {
-   @SuppressWarnings("unchecked")
-   @Override
-   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
-      checkArgument(checkNotNull(input, "input") instanceof CDMIObjectQueryParams,
-               "this binder is only valid for CDMIObjectQueryParams!");
-      checkNotNull(request, "request");
-      String queryParams = input.toString();
-      return (R) request.toBuilder().endpoint(request.getEndpoint() + "?" + queryParams).build();
-   }
+	@SuppressWarnings("unchecked")
+	@Override
+	public <R extends HttpRequest> R bindToRequest(R request, Object input) {
+		checkArgument(checkNotNull(input, "input") instanceof CDMIObjectQueryParams,
+					"this binder is only valid for CDMIObjectQueryParams!");
+		checkNotNull(request, "request");
+		String queryParams = input.toString();
+		return (R) request.toBuilder().endpoint(request.getEndpoint() + "?" + queryParams).build();
+	}
 
 }

@@ -42,77 +42,76 @@ import org.testng.annotations.Test;
 @Test(groups = "unit", testName = "CDMIErrorHandlerTest")
 public class CDMIErrorHandlerTest {
 
-   @Test
-   public void test404SetsKeyNotFoundExceptionMosso() {
-      assertCodeMakes("HEAD",
-               URI.create("http://host/v1/MossoCloudFS_7064cdb1d49d4dcba3c899ac33e8409d/adriancole-blobstore1/key"),
-               404, "Not Found", "", KeyNotFoundException.class);
-   }
+	@Test
+	public void test404SetsKeyNotFoundExceptionMosso() {
+		assertCodeMakes("HEAD",
+				URI.create("http://host/v1/MossoCloudFS_7064cdb1d49d4dcba3c899ac33e8409d/adriancole-blobstore1/key"), 404,
+				"Not Found", "", KeyNotFoundException.class);
+	}
 
-   @Test
-   public void test404SetsKeyNotFoundExceptionCDMI() {
-      assertCodeMakes(
-               "HEAD",
-               URI.create("http://67.202.39.175:8080/v1/AUTH_7064cdb1d49d4dcba3c899ac33e8409d/adriancole-blobstore1/key"),
-               404, "Not Found", "", KeyNotFoundException.class);
-   }
+	@Test
+	public void test404SetsKeyNotFoundExceptionCDMI() {
+		assertCodeMakes("HEAD",
+				URI.create("http://67.202.39.175:8080/v1/AUTH_7064cdb1d49d4dcba3c899ac33e8409d/adriancole-blobstore1/key"),
+				404, "Not Found", "", KeyNotFoundException.class);
+	}
 
-   @Test
-   public void test404SetsContainerNotFoundExceptionMosso() {
-      assertCodeMakes("HEAD",
-               URI.create("http://host/v1/MossoCloudFS_7064cdb1d49d4dcba3c899ac33e8409d/adriancole-blobstore1"), 404,
-               "Not Found", "", ContainerNotFoundException.class);
-   }
+	@Test
+	public void test404SetsContainerNotFoundExceptionMosso() {
+		assertCodeMakes("HEAD",
+				URI.create("http://host/v1/MossoCloudFS_7064cdb1d49d4dcba3c899ac33e8409d/adriancole-blobstore1"), 404,
+				"Not Found", "", ContainerNotFoundException.class);
+	}
 
-   @Test
-   public void test404SetsContainerNotFoundExceptionCDMI() {
-      assertCodeMakes("HEAD",
-               URI.create("http://67.202.39.175:8080/v1/AUTH_7064cdb1d49d4dcba3c899ac33e8409d/adriancole-blobstore1"),
-               404, "Not Found", "", ContainerNotFoundException.class);
-   }
+	@Test
+	public void test404SetsContainerNotFoundExceptionCDMI() {
+		assertCodeMakes("HEAD",
+				URI.create("http://67.202.39.175:8080/v1/AUTH_7064cdb1d49d4dcba3c899ac33e8409d/adriancole-blobstore1"),
+				404, "Not Found", "", ContainerNotFoundException.class);
+	}
 
-   private void assertCodeMakes(String method, URI uri, int statusCode, String message, String content,
-            Class<? extends Exception> expected) {
-      assertCodeMakes(method, uri, statusCode, message, "text/plain", content, expected);
-   }
+	private void assertCodeMakes(String method, URI uri, int statusCode, String message, String content,
+			Class<? extends Exception> expected) {
+		assertCodeMakes(method, uri, statusCode, message, "text/plain", content, expected);
+	}
 
-   private void assertCodeMakes(String method, URI uri, int statusCode, String message, String contentType,
-            String content, Class<? extends Exception> expected) {
+	private void assertCodeMakes(String method, URI uri, int statusCode, String message, String contentType,
+			String content, Class<? extends Exception> expected) {
 
-      CDMIErrorHandler function = new CDMIErrorHandler();
+		CDMIErrorHandler function = new CDMIErrorHandler();
 
-      HttpCommand command = createMock(HttpCommand.class);
-      HttpRequest request = HttpRequest.builder().method(method).endpoint(uri).build();
-      HttpResponse response = HttpResponse.builder().statusCode(statusCode).message(message).payload(content).build();
-      response.getPayload().getContentMetadata().setContentType(contentType);
+		HttpCommand command = createMock(HttpCommand.class);
+		HttpRequest request = HttpRequest.builder().method(method).endpoint(uri).build();
+		HttpResponse response = HttpResponse.builder().statusCode(statusCode).message(message).payload(content).build();
+		response.getPayload().getContentMetadata().setContentType(contentType);
 
-      expect(command.getCurrentRequest()).andReturn(request).atLeastOnce();
-      command.setException(classEq(expected));
+		expect(command.getCurrentRequest()).andReturn(request).atLeastOnce();
+		command.setException(classEq(expected));
 
-      replay(command);
+		replay(command);
 
-      function.handleError(command, response);
+		function.handleError(command, response);
 
-      verify(command);
-   }
+		verify(command);
+	}
 
-   public static Exception classEq(final Class<? extends Exception> in) {
-      reportMatcher(new IArgumentMatcher() {
+	public static Exception classEq(final Class<? extends Exception> in) {
+		reportMatcher(new IArgumentMatcher() {
 
-         @Override
-         public void appendTo(StringBuffer buffer) {
-            buffer.append("classEq(");
-            buffer.append(in);
-            buffer.append(")");
-         }
+			@Override
+			public void appendTo(StringBuffer buffer) {
+				buffer.append("classEq(");
+				buffer.append(in);
+				buffer.append(")");
+			}
 
-         @Override
-         public boolean matches(Object arg) {
-            return arg.getClass() == in;
-         }
+			@Override
+			public boolean matches(Object arg) {
+				return arg.getClass() == in;
+			}
 
-      });
-      return null;
-   }
+		});
+		return null;
+	}
 
 }

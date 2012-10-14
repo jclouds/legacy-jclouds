@@ -25,9 +25,9 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 
 /**
- * current CDMI spec doesn't indicate the form of the response. It would be nice, if it could take 2
- * {@code Accept} headers. Until then, let's strip off the mediaType header, which we use to ensure
- * responses are parsed with json.
+ * current CDMI spec doesn't indicate the form of the response. It would be
+ * nice, if it could take 2 {@code Accept} headers. Until then, let's strip off
+ * the mediaType header, which we use to ensure responses are parsed with json.
  * 
  * @author Adrian Cole
  * 
@@ -35,8 +35,8 @@ import org.jclouds.http.HttpRequestFilter;
 @Singleton
 public class StripExtraAcceptHeader implements HttpRequestFilter {
 
-   @Override
-   public HttpRequest filter(HttpRequest request) throws HttpException {
-      return request.toBuilder().replaceHeader("Accept", request.getFirstHeaderOrNull("Accept")).build();
-   }
+	@Override
+	public HttpRequest filter(HttpRequest request) throws HttpException {
+		return request.toBuilder().replaceHeader("Accept", request.getFirstHeaderOrNull("Accept")).build();
+	}
 }

@@ -33,7 +33,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 public class BaseCDMIAsyncApiExpectTest extends BaseCDMIExpectTest<CDMIAsyncApi> {
-   public CDMIAsyncApi createClient(Function<HttpRequest, HttpResponse> fn, Module module, Properties props) {
-      return createInjector(fn, module, props).getInstance(CDMIAsyncApi.class);
-   }
+	public CDMIAsyncApi createClient(Function<HttpRequest, HttpResponse> fn, Module module, Properties props) {
+		return createInjector(fn, module, props).getInstance(CDMIAsyncApi.class);
+	}
 }
