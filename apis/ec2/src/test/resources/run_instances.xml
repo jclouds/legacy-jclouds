@@ -48,6 +48,7 @@
         <state>enabled</state>
       </monitoring>
       <hypervisor>xen</hypervisor>
+      <ebsOptimized>false</ebsOptimized>
     </item>
     <item>
       <instanceId>i-2be64332</instanceId>
@@ -63,12 +64,13 @@
       <instanceType>m1.small</instanceType>
       <launchTime>2007-08-07T11:51:50.000Z</launchTime>
       <placement>
-		  <availabilityZone>us-east-1b</availabilityZone>
+		  <availabilityZone>us-east-1d</availabilityZone>
       </placement>
       <monitoring>
         <state>enabled</state>
       </monitoring>
       <hypervisor>xen</hypervisor>
+      <ebsOptimized>true</ebsOptimized>
     </item>
   </instancesSet>
 </RunInstancesResponse>

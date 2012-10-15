@@ -46,6 +46,8 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.TypeLiteral;
 
+import org.jclouds.ec2.domain.Volume;
+
 /**
  * Tests behavior of {@code SpotInstanceHandler}
  * 
@@ -87,10 +89,12 @@ public class SpotInstanceHandlerTest extends BaseEC2HandlerTest {
             .state(State.OPEN)
             .rawState("open")
             .launchSpecification(
-                  LaunchSpecification.builder().imageId("ami-595a0a1c").securityGroupIdToName("sg-83e1c4ea", "default")
-                        .instanceType("m1.large").mapNewVolumeToDevice("/dev/sda1", 1, true)
-                        .mapEBSSnapshotToDevice("/dev/sda2", "snap-1ea27576", 1, true)
-                        .mapEphemeralDeviceToDevice("/dev/sda3", "vre1").monitoringEnabled(false).build())
+                    LaunchSpecification.builder().imageId("ami-595a0a1c").securityGroupIdToName("sg-83e1c4ea", "default")
+                            .instanceType("m1.large")
+                            .mapNewVolumeToDevice("/dev/sda1", 1, true, Volume.Type.STANDARD, null)
+                            .mapEBSSnapshotToDevice("/dev/sda2", "snap-1ea27576", 1, true, Volume.Type.STANDARD, null)
+                            .mapEphemeralDeviceToDevice("/dev/sda3", "vre1")
+                            .monitoringEnabled(false).build())
             .createTime(new SimpleDateFormatDateService().iso8601DateParse("2011-03-08T03:30:36.000Z"))
             .productDescription("Linux/UNIX").build();
       SpotInstanceHandler handler = injector.getInstance(SpotInstanceHandler.class);

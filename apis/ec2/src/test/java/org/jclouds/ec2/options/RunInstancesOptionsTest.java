@@ -26,6 +26,7 @@ import static org.jclouds.ec2.options.RunInstancesOptions.Builder.withRamdisk;
 import static org.jclouds.ec2.options.RunInstancesOptions.Builder.withSecurityGroup;
 import static org.jclouds.ec2.options.RunInstancesOptions.Builder.withUserData;
 import static org.testng.Assert.assertEquals;
+import static org.jclouds.ec2.domain.Volume.Type;
 
 import java.util.Collections;
 
@@ -212,7 +213,7 @@ public class RunInstancesOptionsTest {
 
    @Test
    public void testWithBlockDeviceMapping() {
-      BlockDeviceMapping mapping = new BlockDeviceMapping.MapNewVolumeToDevice("/dev/sda1", 120, true);
+      BlockDeviceMapping mapping = new BlockDeviceMapping.MapNewVolumeToDevice("/dev/sda1", 120, true, Type.STANDARD, null);
       RunInstancesOptions options = new RunInstancesOptions().withBlockDeviceMappings(ImmutableSet
                .<BlockDeviceMapping> of(mapping));
       assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.DeviceName"), Collections
@@ -231,7 +232,7 @@ public class RunInstancesOptionsTest {
 
    @Test
    public void testWithBlockDeviceMappingStatic() {
-      BlockDeviceMapping mapping = new BlockDeviceMapping.MapNewVolumeToDevice("/dev/sda1", 120, true);
+      BlockDeviceMapping mapping = new BlockDeviceMapping.MapNewVolumeToDevice("/dev/sda1", 120, true, Type.STANDARD, null);
       RunInstancesOptions options = withBlockDeviceMappings(ImmutableSet
                .<BlockDeviceMapping> of(mapping));
       assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.DeviceName"), Collections

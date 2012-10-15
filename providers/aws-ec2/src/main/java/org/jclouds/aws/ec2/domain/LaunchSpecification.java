@@ -19,6 +19,7 @@
 package org.jclouds.aws.ec2.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.ec2.domain.Volume.Type;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -124,13 +125,13 @@ public class LaunchSpecification {
       }
 
       public Builder mapEBSSnapshotToDevice(String deviceName, String snapshotId, @Nullable Integer sizeInGib,
-            boolean deleteOnTermination) {
-         blockDeviceMappings.add(new MapEBSSnapshotToDevice(deviceName, snapshotId, sizeInGib, deleteOnTermination));
+            boolean deleteOnTermination, Type volumeType, @Nullable Integer iops) {
+         blockDeviceMappings.add(new MapEBSSnapshotToDevice(deviceName, snapshotId, sizeInGib, deleteOnTermination, volumeType, iops));
          return this;
       }
 
-      public Builder mapNewVolumeToDevice(String deviceName, int sizeInGib, boolean deleteOnTermination) {
-         blockDeviceMappings.add(new MapNewVolumeToDevice(deviceName, sizeInGib, deleteOnTermination));
+      public Builder mapNewVolumeToDevice(String deviceName, int sizeInGib, boolean deleteOnTermination, Type volumeType, @Nullable Integer iops) {
+         blockDeviceMappings.add(new MapNewVolumeToDevice(deviceName, sizeInGib, deleteOnTermination, volumeType, iops));
          return this;
       }
 

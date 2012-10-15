@@ -44,8 +44,9 @@ import com.google.common.base.Supplier;
 import com.google.common.collect.Sets;
 import com.google.inject.Provider;
 
+
+
 /**
- * 
  * @author Adrian Cole
  */
 public abstract class BaseReservationHandler<T> extends HandlerForGeneratedRequestWithResult<T> {
@@ -183,6 +184,9 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
          this.attachmentStatus = null;
          this.attachTime = null;
          this.deleteOnTermination = true;
+      }
+      else if (equalsOrSuffix(qName, "ebsOptimized")) {
+         builder().ebsOptimized( Boolean.parseBoolean(currentText.toString().trim()) );
       }
       currentText = new StringBuilder();
    }

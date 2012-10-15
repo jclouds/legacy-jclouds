@@ -36,6 +36,7 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 
+
 /**
  * Tests behavior of {@code CreateVolumeResponseHandler}
  * 
@@ -52,7 +53,7 @@ public class CreateVolumeResponseHandlerTest extends BaseEC2HandlerTest {
       Volume expected = new Volume(Region.US_EAST_1, "vol-2a21e543", 1, null,
             "us-east-1a", Volume.Status.CREATING, dateService
                         .iso8601DateParse("2009-12-28T05:42:53.000Z"), Sets
-                        .<Attachment> newLinkedHashSet());
+                        .<Attachment> newLinkedHashSet(), Volume.Type.STANDARD, null );
 
       CreateVolumeResponseHandler handler = injector.getInstance(CreateVolumeResponseHandler.class);
       addDefaultRegionToHandler(handler);

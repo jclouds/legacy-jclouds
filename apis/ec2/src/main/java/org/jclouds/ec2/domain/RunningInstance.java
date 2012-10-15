@@ -37,9 +37,11 @@ import com.google.common.collect.Sets;
 
 /**
  * 
- * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-RunningInstancesItemType.html"
- *      />
+ * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-RunningInstancesItemType.html">The RunningInstancesItemType data type</a>
+ *
  * @author Adrian Cole
+ * @author Paolo Di Tommaso
+ *
  */
 public class RunningInstance implements Comparable<RunningInstance> {
    public static Builder builder() {
@@ -70,6 +72,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
       protected RootDeviceType rootDeviceType = RootDeviceType.INSTANCE_STORE;
       protected String rootDeviceName;
       protected Map<String, BlockDevice> ebsBlockDevices = Maps.newLinkedHashMap();
+      protected boolean ebsOptimized;
 
       public Builder region(String region) {
          this.region = region;
@@ -198,11 +201,16 @@ public class RunningInstance implements Comparable<RunningInstance> {
          return this;
       }
 
+      public Builder ebsOptimized(boolean value) {
+          this.ebsOptimized = value;
+          return this;
+      }
+
       public RunningInstance build() {
          return new RunningInstance(region, groupNames, amiLaunchIndex, dnsName, imageId, instanceId, instanceState,
                   rawState, instanceType, ipAddress, kernelId, keyName, launchTime, availabilityZone,
                   virtualizationType, platform, privateDnsName, privateIpAddress, ramdiskId, reason, rootDeviceType,
-                  rootDeviceName, ebsBlockDevices);
+                  rootDeviceName, ebsBlockDevices, ebsOptimized);
       }
 
       public String getDnsName() {
@@ -256,6 +264,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
    @Nullable
    protected final String rootDeviceName;
    protected final Map<String, BlockDevice> ebsBlockDevices;
+   protected final boolean ebsOptimized;
 
    protected RunningInstance(String region, Iterable<String> groupNames, @Nullable String amiLaunchIndex,
             @Nullable String dnsName, String imageId, String instanceId, InstanceState instanceState, String rawState,
@@ -263,7 +272,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
             Date launchTime, String availabilityZone, String virtualizationType, @Nullable String platform,
             @Nullable String privateDnsName, @Nullable String privateIpAddress, @Nullable String ramdiskId,
             @Nullable String reason, RootDeviceType rootDeviceType, @Nullable String rootDeviceName,
-            Map<String, BlockDevice> ebsBlockDevices) {
+            Map<String, BlockDevice> ebsBlockDevices, boolean ebsOptimized) {
       this.region = checkNotNull(region, "region");
       this.amiLaunchIndex = amiLaunchIndex; // nullable on runinstances.
       this.dnsName = dnsName; // nullable on runinstances.
@@ -287,6 +296,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
       this.rootDeviceName = rootDeviceName;
       this.ebsBlockDevices = ImmutableMap.copyOf(checkNotNull(ebsBlockDevices, "ebsBlockDevices for %s/%s", region, instanceId));
       this.groupNames = ImmutableSet.copyOf(checkNotNull(groupNames, "groupNames for %s/%s", region, instanceId));
+      this.ebsOptimized = ebsOptimized;
    }
 
    /**
@@ -462,6 +472,10 @@ public class RunningInstance implements Comparable<RunningInstance> {
       return groupNames;
    }
 
+   public boolean getEbsOptimized() {
+        return ebsOptimized;
+   }
+
    @Override
    public int compareTo(RunningInstance other) {
       return ComparisonChain.start().compare(region, other.region).compare(instanceId, other.instanceId, Ordering.natural().nullsLast()).result();
@@ -489,7 +503,8 @@ public class RunningInstance implements Comparable<RunningInstance> {
                .add("ipAddress", ipAddress).add("dnsName", dnsName).add("privateIpAddress", privateIpAddress)
                .add("privateDnsName", privateDnsName).add("keyName", keyName).add("groupNames", groupNames)
                .add("platform", platform).add("launchTime", launchTime).add("rootDeviceName", rootDeviceName)
-               .add("rootDeviceType", rootDeviceType).add("ebsBlockDevices", ebsBlockDevices);
+               .add("rootDeviceType", rootDeviceType).add("ebsBlockDevices", ebsBlockDevices)
+               .add("ebsOptimized", ebsOptimized);
    }
 
    @Override

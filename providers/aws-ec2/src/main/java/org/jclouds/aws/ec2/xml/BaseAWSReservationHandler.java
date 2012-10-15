@@ -51,6 +51,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Provider;
 
+
 /**
  * 
  * @author Adrian Cole
@@ -207,7 +208,10 @@ public abstract class BaseAWSReservationHandler<T> extends HandlerForGeneratedRe
          this.attachmentStatus = null;
          this.attachTime = null;
          this.deleteOnTermination = true;
-      }
+      } else if(equalsOrSuffix(qName, "ebsOptimized")) {
+         builder.ebsOptimized(Boolean.parseBoolean(currentText.toString().trim()));
+       }
+
       currentText = new StringBuilder();
    }
    

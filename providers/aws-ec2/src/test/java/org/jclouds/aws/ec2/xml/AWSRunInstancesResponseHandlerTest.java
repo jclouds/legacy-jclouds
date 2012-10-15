@@ -48,6 +48,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.TypeLiteral;
 
+
 /**
  * Tests behavior of {@code RunInstancesResponseHandler}
  * 
@@ -87,19 +88,20 @@ public class AWSRunInstancesResponseHandlerTest extends BaseEC2HandlerTest {
                         "ami-60a54009").instanceId("i-2ba64342").instanceState(InstanceState.PENDING).rawState(
                         "pending").instanceType(InstanceType.M1_SMALL).keyName("example-key-name").launchTime(
                         dateService.iso8601DateParse("2007-08-07T11:51:50.000Z")).hypervisor(Hypervisor.XEN)
-                        .monitoringState(MonitoringState.ENABLED).availabilityZone("us-east-1b").build())
+                        .monitoringState(MonitoringState.ENABLED).availabilityZone("us-east-1b").ebsOptimized(false).build())
                .instance(AWSRunningInstance.builder().region(defaultRegion).groupName("default").amiLaunchIndex("1").imageId(
                         "ami-60a54009").instanceId("i-2bc64242").instanceState(InstanceState.PENDING).rawState(
                         "pending").instanceType(InstanceType.M1_SMALL).keyName("example-key-name").launchTime(
                         dateService.iso8601DateParse("2007-08-07T11:51:50.000Z")).hypervisor(Hypervisor.XEN)
-                        .monitoringState(MonitoringState.ENABLED).availabilityZone("us-east-1b").build())
+                        .monitoringState(MonitoringState.ENABLED).availabilityZone("us-east-1b").ebsOptimized(false).build())
                .instance(AWSRunningInstance.builder().region(defaultRegion).groupName("default").amiLaunchIndex("2").imageId(
                         "ami-60a54009").instanceId("i-2be64332").instanceState(InstanceState.PENDING).rawState(
                         "pending").instanceType(InstanceType.M1_SMALL).keyName("example-key-name").launchTime(
                         dateService.iso8601DateParse("2007-08-07T11:51:50.000Z")).hypervisor(Hypervisor.XEN)
-                        .monitoringState(MonitoringState.ENABLED).availabilityZone("us-east-1b").build())
+                        .monitoringState(MonitoringState.ENABLED).availabilityZone("us-east-1d").ebsOptimized(true).build())
                .ownerId("AIDADH4IGTRXXKCD")
                .reservationId("r-47a5402e").build();
+
 
       AWSRunInstancesResponseHandler handler = injector.getInstance(AWSRunInstancesResponseHandler.class);
       addDefaultRegionToHandler(handler);

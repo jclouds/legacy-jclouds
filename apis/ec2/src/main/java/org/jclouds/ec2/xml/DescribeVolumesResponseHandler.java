@@ -31,7 +31,10 @@ import org.xml.sax.SAXException;
 import com.google.common.collect.Sets;
 
 /**
+ * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeVolumes.html" >DescribeVolumes</a>
+ *
  * @author Adrian Cole
+ * @author Paolo Di Tommaso
  */
 public class DescribeVolumesResponseHandler extends ParseSax.HandlerWithResult<Set<Volume>> {
 

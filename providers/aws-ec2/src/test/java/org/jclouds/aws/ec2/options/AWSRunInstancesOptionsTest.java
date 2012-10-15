@@ -29,6 +29,7 @@ import static org.jclouds.aws.ec2.options.AWSRunInstancesOptions.Builder.withSec
 import static org.jclouds.aws.ec2.options.AWSRunInstancesOptions.Builder.withSubnetId;
 import static org.jclouds.aws.ec2.options.AWSRunInstancesOptions.Builder.withUserData;
 import static org.testng.Assert.assertEquals;
+import static org.jclouds.ec2.domain.Volume.Type;
 
 import java.util.Collections;
 
@@ -283,7 +284,7 @@ public class AWSRunInstancesOptionsTest {
 
    @Test
    public void testWithBlockDeviceMapping() {
-      BlockDeviceMapping mapping = new BlockDeviceMapping.MapNewVolumeToDevice("/dev/sda1", 120, true);
+      BlockDeviceMapping mapping = new BlockDeviceMapping.MapNewVolumeToDevice("/dev/sda1", 120, true, Type.STANDARD, null);
       AWSRunInstancesOptions options = new AWSRunInstancesOptions().withBlockDeviceMappings(ImmutableSet
                .<BlockDeviceMapping> of(mapping));
       assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.DeviceName"), Collections
@@ -302,7 +303,7 @@ public class AWSRunInstancesOptionsTest {
 
    @Test
    public void testWithBlockDeviceMappingStatic() {
-      BlockDeviceMapping mapping = new BlockDeviceMapping.MapNewVolumeToDevice("/dev/sda1", 120, true);
+      BlockDeviceMapping mapping = new BlockDeviceMapping.MapNewVolumeToDevice("/dev/sda1", 120, true, Type.STANDARD, null);
       AWSRunInstancesOptions options = withBlockDeviceMappings(ImmutableSet.<BlockDeviceMapping> of(mapping));
       assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.DeviceName"), Collections
                .singletonList("/dev/sda1"));

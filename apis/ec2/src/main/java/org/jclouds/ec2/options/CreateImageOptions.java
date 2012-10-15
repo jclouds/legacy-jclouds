@@ -36,9 +36,10 @@ import org.jclouds.ec2.options.internal.BaseEC2RequestOptions;
  * <code>
  * 
  * @author Adrian Cole
- * @see <a
- *      href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/index.html?ApiReference-form-CreateImage.html"
- *      />
+ * @author Paolo Di Tommaso
+ *
+ * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-CreateImage.html" >CreateImage</a>
+ *
  */
 public class CreateImageOptions extends BaseEC2RequestOptions {
    public static final CreateImageOptions NONE = new CreateImageOptions();

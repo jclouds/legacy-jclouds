@@ -22,6 +22,7 @@ import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static org.jclouds.ec2.domain.Volume.Type;
 
 import java.util.List;
 import java.util.Map;
@@ -43,6 +44,8 @@ import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.primitives.Bytes;
+
+
 
 /**
  * Contains options supported in the {@code ComputeService#runNode} operation on
@@ -179,14 +182,27 @@ public class EC2TemplateOptions extends TemplateOptions implements Cloneable {
 
    public EC2TemplateOptions mapEBSSnapshotToDeviceName(String deviceName, String snapshotId,
          @Nullable Integer sizeInGib, boolean deleteOnTermination) {
-      blockDeviceMappings.add(new MapEBSSnapshotToDevice(deviceName, snapshotId, sizeInGib, deleteOnTermination));
+      blockDeviceMappings.add(new MapEBSSnapshotToDevice(deviceName, snapshotId, sizeInGib, deleteOnTermination, Type.STANDARD, null));
       return this;
    }
 
+    public EC2TemplateOptions mapEBSSnapshotToDeviceName(String deviceName, String snapshotId,
+                                                         @Nullable Integer sizeInGib, boolean deleteOnTermination,
+                                                         Type volumeType, Integer iops ) {
+        blockDeviceMappings.add(new MapEBSSnapshotToDevice(deviceName, snapshotId, sizeInGib, deleteOnTermination, volumeType, iops));
+        return this;
+    }
+
    public EC2TemplateOptions mapNewVolumeToDeviceName(String deviceName, int sizeInGib, boolean deleteOnTermination) {
-      blockDeviceMappings.add(new MapNewVolumeToDevice(deviceName, sizeInGib, deleteOnTermination));
+      blockDeviceMappings.add(new MapNewVolumeToDevice(deviceName, sizeInGib, deleteOnTermination, Type.STANDARD, null));
       return this;
    }
+
+    public EC2TemplateOptions mapNewVolumeToDeviceName(String deviceName, int sizeInGib, boolean deleteOnTermination,
+                                                        Type volumeType, Integer iops) {
+        blockDeviceMappings.add(new MapNewVolumeToDevice(deviceName, sizeInGib, deleteOnTermination, volumeType, iops));
+        return this;
+    }
 
    public EC2TemplateOptions mapEphemeralDeviceToDeviceName(String deviceName, String virtualName) {
       blockDeviceMappings.add(new MapEphemeralDeviceToDevice(deviceName, virtualName));

@@ -47,6 +47,7 @@ import com.google.common.collect.Sets;
 /**
  * 
  * @author Adrian Cole
+ * @author Paolo Di Tommaso
  */
 public class CreateVolumeResponseHandler extends ParseSax.HandlerForGeneratedRequestWithResult<Volume> {
    protected final DateCodec dateCodec;
@@ -79,6 +80,9 @@ public class CreateVolumeResponseHandler extends ParseSax.HandlerForGeneratedReq
    protected String device;
    protected Attachment.Status attachmentStatus;
    protected Date attachTime;
+
+   protected Volume.Type volumeType = Volume.Type.STANDARD;
+   protected Integer iops;
 
    protected boolean inAttachmentSet;
 
@@ -142,11 +146,18 @@ public class CreateVolumeResponseHandler extends ParseSax.HandlerForGeneratedReq
          }
 
       }
+      else if( qName.equals("volumeType") ) {
+          volumeType = Volume.Type.fromValue(currentText.toString().trim());
+      }
+      else if( qName.equals("iops") ) {
+          iops = Integer.parseInt(currentText.toString().trim());
+      }
+
       currentText = new StringBuilder();
    }
 
    private Volume newVolume() {
-      Volume volume = new Volume(region, id, size, snapshotId, availabilityZone, volumeStatus, createTime, attachments);
+      Volume volume = new Volume(region, id, size, snapshotId, availabilityZone, volumeStatus, createTime, attachments, volumeType, iops);
       id = null;
       size = 0;
       snapshotId = null;
@@ -154,6 +165,8 @@ public class CreateVolumeResponseHandler extends ParseSax.HandlerForGeneratedReq
       volumeStatus = null;
       createTime = null;
       attachments = Sets.newLinkedHashSet();
+      volumeType = Volume.Type.STANDARD;
+      iops = null;
       return volume;
    }
 
