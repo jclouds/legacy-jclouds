@@ -38,6 +38,7 @@ import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -152,8 +153,8 @@ public class GetPathLiveTest {
          new File(tmpDirectory).mkdirs();
          GetPath.main(uriKey, tmpDirectory);
          for (Entry<String, String> entry : fiveStrings.entrySet()) {
-            assertEquals(Files.toString(new File(tmpDirectory,
-                     entry.getKey())), entry.getValue());
+            assertEquals(Files.toString(new File(tmpDirectory, entry.getKey()),
+                  Charsets.UTF_8), entry.getValue());
          }
       }
 
