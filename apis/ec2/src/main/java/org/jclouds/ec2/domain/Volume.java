@@ -38,6 +38,10 @@ import com.google.common.collect.ImmutableSet;
  */
 public class Volume implements Comparable<Volume> {
 
+   public Builder toBuilder() {
+      return builder().fromVolume(this);
+   }
+   
    /**
     * Specifies whether the instance's Amazon EBS volumes are stopped or terminated when the
     * instance is shut down.
@@ -146,7 +150,13 @@ public class Volume implements Comparable<Volume> {
       
       public Volume build() {
          return new Volume(region, id, size, snapshotId, availabilityZone, status, createTime, attachments);
-      }      
+      }
+
+      public Builder fromVolume(Volume in) {
+         return region(in.region).id(in.id).size(in.size).snapshotId(in.snapshotId)
+                  .availabilityZone(in.availabilityZone).status(in.status).createTime(in.createTime)
+                  .attachments(in.attachments);
+      }
    }
 
    private final String region;
