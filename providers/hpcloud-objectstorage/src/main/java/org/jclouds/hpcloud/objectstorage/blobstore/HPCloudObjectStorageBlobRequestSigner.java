@@ -21,6 +21,7 @@ package org.jclouds.hpcloud.objectstorage.blobstore;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.instanceOf;
+import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.Iterables.filter;
 import static org.jclouds.blobstore.util.BlobStoreUtils.cleanRequest;
 
@@ -142,7 +143,9 @@ public class HPCloudObjectStorageBlobRequestSigner implements BlobRequestSigner 
 
    private HttpRequest signForTemporaryAccess(HttpRequest request, long timeInSeconds) {
       HttpRequest.Builder builder = request.toBuilder();
-      builder.filters(filter(request.getFilters(), instanceOf(AuthenticateRequest.class)));
+      // HP Cloud does not use X-Auth-Token for temporary signed URLs and
+      // leaking this allows clients arbitrary privileges until token timeout.
+      builder.filters(filter(request.getFilters(), not(instanceOf(AuthenticateRequest.class))));
 
       long expiresInSeconds = unixEpochTimestampProvider.get() + timeInSeconds;
       String signature = createSignature(secretKey, createStringToSign(
