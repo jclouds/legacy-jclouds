@@ -21,6 +21,7 @@
 package org.jclouds.vsphere.compute;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Throwables.propagate;
 import static org.jclouds.vsphere.config.VSphereConstants.CLONING;
 import static org.jclouds.vsphere.config.VSphereConstants.VSPHERE_PREFIX;
@@ -55,9 +56,12 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
+import com.google.common.primitives.Longs;
 import com.vmware.vim25.FileFault;
 import com.vmware.vim25.InvalidDatastore;
 import com.vmware.vim25.InvalidName;
@@ -103,11 +107,27 @@ public class VSphereComputeServiceAdapter implements
    @Override
    public NodeAndInitialCredentials<VirtualMachine> createNodeWithGroupEncodedIntoName(String tag, String name,
             Template template) {
+      String templateNameOrId = template.getImage().getId();
+      VirtualMachine master = getMaster(templateNameOrId);
+      
+      
+      Optional<ResourcePool> optionalResourcePool = tryFindResourcePool(rootFolder);
+      Optional<HostSystem> optionalHost = tryFindHost(rootFolder);
+      
+      checkState(optionalHost.isPresent(), " there is not an available host on this rootFolder " + rootFolder);
+      HostSystem host = optionalHost.get();
 
-      VirtualMachine master = getVMwareTemplate(template.getImage().getId(), rootFolder);
-      ResourcePool resourcePool = checkNotNull(tryFindResourcePool(rootFolder), "resourcePool");
-      HostSystem host = checkNotNull(tryFindHost(rootFolder), "host");
-      Datastore datastore = checkNotNull(tryFindDatastore(rootFolder), "datastore");
+      checkState(optionalHost.isPresent(), " there is not an available host on this rootFolder " + rootFolder);
+      ResourcePool resourcePool = optionalResourcePool.get();
+
+      Set<Datastore> availableDatastores = fetchDatastores(rootFolder);
+      
+      Ordering<Datastore> byCapacityOrdering = new Ordering<Datastore>() {
+         public int compare(Datastore left, Datastore right) {
+            return Longs.compare(left.getSummary().getCapacity(), right.getSummary().getCapacity());
+         }
+      };
+      Datastore datastore = checkNotNull(getDatastoreByPolicy(availableDatastores, byCapacityOrdering), "datastore");
       
       try {
          markTemplateAsVirtualMachine(master, resourcePool, host);
@@ -144,24 +164,53 @@ public class VSphereComputeServiceAdapter implements
       return nodeAndInitialCredentials;
    }
 
+   private VirtualMachine getMaster(String templateNameOrId) {
+      Optional<VirtualMachine> optionalVm = tryFindVm(templateNameOrId, rootFolder);
+      checkState(optionalVm.isPresent(), 
+            String.format("there is not an available vm '%s' on rootFolder '%s'", templateNameOrId, rootFolder));
+      checkState(isVMwareTemplate(optionalVm.get()), 
+            String.format("there is not an available vm '%s' on rootFolder '%s'", templateNameOrId, rootFolder));
+      return optionalVm.get();
+   }
+
+   private Datastore getDatastoreByPolicy(Set<Datastore> availableDatastores, Ordering<Datastore> policy) {
+      Datastore datastore = policy.max(availableDatastores);
+      return datastore;
+   }
+
    @Override
-   public Iterable<VirtualMachine> listNodes() {
+   public FluentIterable<VirtualMachine> listNodes() {
       Folder nodesFolder = serviceInstance.get().getRootFolder();
-      Iterable<VirtualMachine> vms = ImmutableSet.<VirtualMachine> of();
+      ManagedEntity[] managedEntities = null;
       try {
-         ManagedEntity[] managedEntities =  new InventoryNavigator(nodesFolder).searchManagedEntities("VirtualMachine");
-         vms =  Iterables.transform(Arrays.asList(managedEntities), new Function<ManagedEntity, VirtualMachine>() {
-            public VirtualMachine apply(ManagedEntity input) {
-               return (VirtualMachine) input;
-            }
-         });
-         return vms;
+         managedEntities = new InventoryNavigator(nodesFolder).searchManagedEntities("VirtualMachine");
       } catch (Exception e) {
          logger.error("Can't find vm", e);
-         propagate(e);
-      }     
-      return vms;
-   }   
+         throw propagate(e);
+      }
+      return FluentIterable.from(Arrays.asList(managedEntities)).transform(
+            new Function<ManagedEntity, VirtualMachine>() {
+               public VirtualMachine apply(ManagedEntity input) {
+                  return (VirtualMachine) input;
+               }
+            });
+      }
+      
+//      Iterable<VirtualMachine> vms = ImmutableSet.<VirtualMachine> of();
+//      try {
+//         ManagedEntity[] managedEntities =  new InventoryNavigator(nodesFolder).searchManagedEntities("VirtualMachine");
+//         vms =  Iterables.transform(Arrays.asList(managedEntities), new Function<ManagedEntity, VirtualMachine>() {
+//            public VirtualMachine apply(ManagedEntity input) {
+//               return (VirtualMachine) input;
+//            }
+//         });
+//         return vms;
+//      } catch (Exception e) {
+//         logger.error("Can't find vm", e);
+//         propagate(e);
+//      }     
+//      return vms;
+//   }   
 
    @Override
    public Iterable<Hardware> listHardwareProfiles() {
@@ -179,9 +228,10 @@ public class VSphereComputeServiceAdapter implements
 
    @Override
    public Iterable<Image> listImages() {
-      Iterable<VirtualMachine> nodes = listNodes();
-      Iterable<VirtualMachine> templates = Iterables.filter(nodes, new IsTemplatePredicate());
-      return Iterables.transform(templates, virtualMachineToImage);
+//      Iterable<VirtualMachine> nodes = listNodes();
+//      Iterable<VirtualMachine> templates = Iterables.filter(nodes, new IsTemplatePredicate());
+//      return Iterables.transform(templates, virtualMachineToImage);
+      return listNodes().filter(new IsTemplatePredicate()).transform(virtualMachineToImage);
    }
 
    @Override
@@ -192,7 +242,10 @@ public class VSphereComputeServiceAdapter implements
 
    @Override
    public VirtualMachine getNode(String vmName) {
-      return getVM(vmName, rootFolder);
+      Optional<VirtualMachine> optionalVm = tryFindVm(vmName, rootFolder);
+      checkState(optionalVm.isPresent(), 
+            String.format("there is not an available vm %s on this rootFolder %s", vmName, rootFolder));
+      return optionalVm.get();
    }
 
    @Override
@@ -266,7 +319,9 @@ public class VSphereComputeServiceAdapter implements
 
    @Override
    public Image getImage(String imageName) {
-      return virtualMachineToImage.apply(getVMwareTemplate(imageName, rootFolder));
+      VirtualMachine node = getNode(imageName);
+      checkState(new IsTemplatePredicate().apply(node), "cannot find an image called " + imageName);
+      return virtualMachineToImage.apply(node);
    }
 
    private VirtualMachine cloneMaster(VirtualMachine master, String tag, String name, VirtualMachineCloneSpec cloneSpec) {
@@ -293,7 +348,7 @@ public class VSphereComputeServiceAdapter implements
       return clonedName;
    }
 
-   private HostSystem tryFindHost(Folder folder) {
+   private Optional<HostSystem> tryFindHost(Folder folder) {
       Iterable<HostSystem> hosts = ImmutableSet.<HostSystem> of();
       try {
          ManagedEntity[] hostEntities = new InventoryNavigator(folder).searchManagedEntities("HostSystem");
@@ -302,15 +357,14 @@ public class VSphereComputeServiceAdapter implements
                return (HostSystem) input;
             }
          });
-         Optional<HostSystem> optionalResourcePool = Iterables.tryFind(hosts, Predicates.notNull());
-         return optionalResourcePool.orNull();
       } catch (Exception e) {
          logger.error("Problem in finding a valid host", e);
+         throw propagate(e);
       }
-      return null;
+      return Iterables.tryFind(hosts, Predicates.notNull());
    }
 
-   private ResourcePool tryFindResourcePool(Folder folder) {
+   private Optional<ResourcePool> tryFindResourcePool(Folder folder) {
       Iterable<ResourcePool> resourcePools = ImmutableSet.<ResourcePool> of();
       try {
          ManagedEntity[] resourcePoolEntities = new InventoryNavigator(folder).searchManagedEntities("ResourcePool");
@@ -319,70 +373,79 @@ public class VSphereComputeServiceAdapter implements
                return (ResourcePool) input;
             }
          });
-         Optional<ResourcePool> optionalResourcePool = Iterables.tryFind(resourcePools, Predicates.notNull());
-         return optionalResourcePool.orNull();
       } catch (Exception e) {
          logger.error("Problem in finding a valid resource pool", e);
+         throw propagate(e);
       }
-      return null;
+      return Iterables.tryFind(resourcePools, Predicates.notNull());
    }
    
-   private Datastore tryFindDatastore(Folder folder) {
-      Datastore datastore = null;
-
+   private Set<Datastore> fetchDatastores(Folder folder) {
       try {
          ManagedEntity[] datacenterEntities = new InventoryNavigator(folder).searchManagedEntities("Datacenter");
-         Iterable<Datacenter> datacenters =  Iterables.transform(Arrays.asList(datacenterEntities), new Function<ManagedEntity, Datacenter>() {
-            public Datacenter apply(ManagedEntity input) {
-               return (Datacenter) input;
-            }
-         });
+         FluentIterable<Datacenter> datacenters = FluentIterable.from(Arrays.asList(datacenterEntities)).transform(
+               new Function<ManagedEntity, Datacenter>() {
+                  public Datacenter apply(ManagedEntity input) {
+                     return (Datacenter) input;
+                  }
+               });
+         Set<Datastore> datastores = Sets.newLinkedHashSet();
          for (Datacenter datacenter : datacenters) {
-            for (Datastore d : datacenter.getDatastores()) {
-               long max = d.getSummary().getCapacity();
-               datastore = d;
-               if(d.getSummary().getCapacity() > max) {
-                  max = d.getSummary().getCapacity();
-                  datastore = d;
-               }
-            }
+            Datastore[] datastoresArray = datacenter.getDatastores();
+            datastores.addAll(Arrays.asList(datastoresArray));
          }
+         return datastores;
       } catch (Exception e) {
          logger.error("Problem in finding a datastore", e);
+         throw propagate(e);
       }
-      checkNotNull(datastore, "datastore");
-      return datastore;
    }
 
-   private VirtualMachine getVM(String vmName, Folder nodesFolder) {
-      VirtualMachine vm = null;
+//      try {
+//         ManagedEntity[] datacenterEntities = new InventoryNavigator(folder).searchManagedEntities("Datacenter");
+//         Iterable<Datacenter> datacenters =  Iterables.transform(Arrays.asList(datacenterEntities), new Function<ManagedEntity, Datacenter>() {
+//            public Datacenter apply(ManagedEntity input) {
+//               return (Datacenter) input;
+//            }
+//         });
+//         for (Datacenter datacenter : datacenters) {
+//            for (Datastore d : datacenter.getDatastores()) {
+//               long max = d.getSummary().getCapacity();
+//               datastore = d;
+//               if(d.getSummary().getCapacity() > max) {
+//                  max = d.getSummary().getCapacity();
+//                  datastore = d;
+//               }
+//            }
+//         }
+//      } catch (Exception e) {
+//         logger.error("Problem in finding a datastore", e);
+//         throw propagate(e);
+//      }
+//      checkNotNull(datastore, "datastore");
+//      return datastore;
+//   }
+
+   private Optional<VirtualMachine> tryFindVm(String vmName, Folder nodesFolder) {
       try {
-         vm = (VirtualMachine) new InventoryNavigator(nodesFolder).searchManagedEntity("VirtualMachine", vmName);
+         return Optional.of(((VirtualMachine) new InventoryNavigator(nodesFolder).searchManagedEntity("VirtualMachine", vmName)));
       } catch (Exception e) {
          logger.error("Can't find vm", e);
-         propagate(e);
+         throw propagate(e);
       }
-      return vm;
    }
    
-   private VirtualMachine getVMwareTemplate(String imageName, Folder rootFolder) {
-      VirtualMachine image = null;
-      try {
-         VirtualMachine node = getNode(imageName);
-         if(new IsTemplatePredicate().apply(node))
-            image = node;
-      } catch(NullPointerException e) {
-         logger.error("cannot find an image called " + imageName, e);
-         throw e;
-      }
-      return checkNotNull(image, "image");
+   private boolean isVMwareTemplate(VirtualMachine vm) {
+      return vm.getConfig().isTemplate();
    }   
 
    private void markVirtualMachineAsTemplate(VirtualMachine vm) throws VmConfigFault, InvalidState, RuntimeFault,
             RemoteException {
+      // during createNodeWithGroup, a thread can change from vm -> template and another thread can find a wrong status
+      // the vm
       lock.lock();
       try {
-         if (!vm.getConfig().isTemplate())
+         if (!isVMwareTemplate(vm))
             vm.markAsTemplate();
       } finally {
          lock.unlock();
@@ -392,6 +455,8 @@ public class VSphereComputeServiceAdapter implements
    private void markTemplateAsVirtualMachine(VirtualMachine master, ResourcePool resourcePool, HostSystem host)
             throws VmConfigFault, FileFault, InvalidState, InvalidDatastore, RuntimeFault, RemoteException,
             InvalidName, SnapshotFault, TaskInProgress, InterruptedException {
+      // during createNodeWithGroup, a thread can change from vm -> template and another thread can find a wrong status
+      // the vm
       lock.lock();
       try {
          if (master.getConfig().isTemplate())
