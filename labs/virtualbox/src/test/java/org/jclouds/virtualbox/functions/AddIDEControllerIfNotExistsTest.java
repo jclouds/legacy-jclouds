@@ -27,10 +27,10 @@ import static org.easymock.EasyMock.verify;
 
 import org.jclouds.virtualbox.domain.StorageController;
 import org.testng.annotations.Test;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.IStorageController;
-import org.virtualbox_4_1.StorageBus;
-import org.virtualbox_4_1.VBoxException;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.IStorageController;
+import org.virtualbox_4_2.StorageBus;
+import org.virtualbox_4_2.VBoxException;
 
 /**
  * @author Adrian Cole

@@ -36,7 +36,7 @@ import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
 import org.jclouds.virtualbox.functions.IMachineToSshClient;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
-import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_2.IMachine;
 
 import com.google.common.collect.Iterables;
 

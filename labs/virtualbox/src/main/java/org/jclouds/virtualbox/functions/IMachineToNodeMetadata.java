@@ -41,10 +41,11 @@ import org.jclouds.domain.LoginCredentials;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.logging.Logger;
 import org.jclouds.virtualbox.util.NetworkUtils;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.INetworkAdapter;
-import org.virtualbox_4_1.MachineState;
-import org.virtualbox_4_1.NetworkAttachmentType;
+import org.testng.collections.Lists;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.INetworkAdapter;
+import org.virtualbox_4_2.MachineState;
+import org.virtualbox_4_2.NetworkAttachmentType;
 
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
@@ -114,10 +115,10 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
          INetworkAdapter adapter = vm.getNetworkAdapter(slot);
          if(adapter != null) {
             if (adapter.getAttachmentType() == NetworkAttachmentType.NAT) {
-               String hostIP = adapter.getNatDriver().getHostIP();
+               String hostIP = adapter.getNATEngine().getHostIP();
                if(!hostIP.isEmpty())
                   publicIpAddresses.add(hostIP);
-               for (String nameProtocolnumberAddressInboudportGuestTargetport : adapter.getNatDriver().getRedirects()) {
+               for (String nameProtocolnumberAddressInboudportGuestTargetport : adapter.getNATEngine().getRedirects()) {
                   Iterable<String> stuff = Splitter.on(',').split(nameProtocolnumberAddressInboudportGuestTargetport);
                   String protocolNumber = Iterables.get(stuff, 1);
                   String hostAddress = Iterables.get(stuff, 2);

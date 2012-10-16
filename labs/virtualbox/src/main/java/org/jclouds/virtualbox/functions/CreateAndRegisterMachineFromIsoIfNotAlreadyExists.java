@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.virtualbox.util.MachineUtils.machineNotFoundException;
 
 import java.io.File;
+import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -42,14 +43,15 @@ import org.jclouds.virtualbox.domain.NetworkSpec;
 import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.util.MachineUtils;
-import org.virtualbox_4_1.AccessMode;
-import org.virtualbox_4_1.DeviceType;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.IMedium;
-import org.virtualbox_4_1.IVirtualBox;
-import org.virtualbox_4_1.VBoxException;
-import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_2.AccessMode;
+import org.virtualbox_4_2.DeviceType;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.IMedium;
+import org.virtualbox_4_2.IVirtualBox;
+import org.virtualbox_4_2.VBoxException;
+import org.virtualbox_4_2.VirtualBoxManager;
 
+import com.beust.jcommander.internal.Lists;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 
@@ -95,10 +97,12 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Functi
 
    private IMachine createMachine(IVirtualBox vBox, MasterSpec masterSpec) {
       VmSpec vmSpec = masterSpec.getVmSpec();
-      String settingsFile = vBox.composeMachineFilename(vmSpec.getVmName(), workingDir);
+      String flags = "";
+      List<String> groups = Lists.newArrayList();
+      String group = "";
+      String settingsFile = manager.get().getVBox().composeMachineFilename(vmSpec.getVmName(), group , flags , workingDir);
 
-      IMachine newMachine = vBox.createMachine(settingsFile, vmSpec.getVmName(), vmSpec.getOsTypeId(),
-               vmSpec.getVmId(), vmSpec.isForceOverwrite());
+      IMachine newMachine = vBox.createMachine(settingsFile, vmSpec.getVmName(), groups, vmSpec.getOsTypeId(), flags);
       
       manager.get().getVBox().registerMachine(newMachine);
       ensureConfiguration(masterSpec);

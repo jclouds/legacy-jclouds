@@ -24,7 +24,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Collections;
 import java.util.Set;
 
-import org.virtualbox_4_1.NATProtocol;
+import org.virtualbox_4_2.NATProtocol;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;

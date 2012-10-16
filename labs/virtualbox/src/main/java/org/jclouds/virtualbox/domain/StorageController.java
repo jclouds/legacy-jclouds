@@ -25,8 +25,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.jclouds.javax.annotation.Nullable;
-import org.virtualbox_4_1.DeviceType;
-import org.virtualbox_4_1.StorageBus;
+import org.virtualbox_4_2.DeviceType;
+import org.virtualbox_4_2.StorageBus;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Predicate;

@@ -22,7 +22,6 @@ package org.jclouds.virtualbox.functions;
 import static org.easymock.EasyMock.anyLong;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.createNiceMock;
-import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
@@ -32,16 +31,17 @@ import org.jclouds.virtualbox.domain.HardDisk;
 import org.jclouds.virtualbox.util.MachineUtils;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import org.virtualbox_4_1.DeviceType;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.IMedium;
-import org.virtualbox_4_1.IMediumAttachment;
-import org.virtualbox_4_1.IProgress;
-import org.virtualbox_4_1.ISession;
-import org.virtualbox_4_1.IVirtualBox;
-import org.virtualbox_4_1.LockType;
-import org.virtualbox_4_1.VBoxException;
-import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_2.AccessMode;
+import org.virtualbox_4_2.DeviceType;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.IMedium;
+import org.virtualbox_4_2.IMediumAttachment;
+import org.virtualbox_4_2.IProgress;
+import org.virtualbox_4_2.ISession;
+import org.virtualbox_4_2.IVirtualBox;
+import org.virtualbox_4_2.LockType;
+import org.virtualbox_4_2.VBoxException;
+import org.virtualbox_4_2.VirtualBoxManager;
 
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
@@ -74,14 +74,14 @@ public class CreateMediumIfNotAlreadyExistsTest {
       IProgress progress = createNiceMock(IProgress.class);
 
       StringBuilder errorBuilder = new StringBuilder();
-      errorBuilder.append("org.virtualbox_4_1.VBoxException: VirtualBox error: ");
-      errorBuilder.append("Could not find an open hard disk with location ");
+      errorBuilder.append("org.virtualbox_4_2.VBoxException: VirtualBox error: ");
+      errorBuilder.append("Could not find file for the medium ");
       errorBuilder.append("'/Users/johndoe/jclouds-virtualbox-test/testadmin.vdi' (0x80BB0001)");
       String errorMessage = errorBuilder.toString();
       expect(manager.getVBox()).andReturn(vBox).anyTimes();
 
       VBoxException notFoundException = new VBoxException(createNiceMock(Throwable.class), errorMessage);
-      expect(vBox.findMedium(eq(adminDiskPath), eq(DeviceType.HardDisk))).andThrow(notFoundException);
+      expect(vBox.openMedium(adminDiskPath, DeviceType.HardDisk, AccessMode.ReadWrite, false)).andThrow(notFoundException);
       expect(vBox.createHardDisk(diskFormat, adminDiskPath)).andReturn(medium);
       expect(medium.createBaseStorage(anyLong(), anyLong())).andReturn(progress);
       //expect(machineUtils.writeLockMachineAndApply(anyString(), new DetachDistroMediumFromMachine(anyString(), anyInt() , anyInt()))).andReturn().anyTimes();
@@ -108,7 +108,7 @@ public class CreateMediumIfNotAlreadyExistsTest {
       IProgress progress = createNiceMock(IProgress.class);
 
       expect(manager.getVBox()).andReturn(vBox).anyTimes();
-      expect(vBox.findMedium(adminDiskPath, DeviceType.HardDisk)).andReturn(medium);
+      expect(vBox.openMedium(adminDiskPath, DeviceType.HardDisk, AccessMode.ReadWrite, false)).andReturn(medium);
 
       expect(medium.deleteStorage()).andReturn(progress);
       expect(vBox.createHardDisk(diskFormat, adminDiskPath)).andReturn(newHardDisk);
@@ -140,7 +140,7 @@ public class CreateMediumIfNotAlreadyExistsTest {
       IProgress progress = createNiceMock(IProgress.class);
 
       expect(manager.getVBox()).andReturn(vBox).anyTimes();
-      expect(vBox.findMedium(adminDiskPath, DeviceType.HardDisk)).andReturn(medium);
+      expect(vBox.openMedium(adminDiskPath, DeviceType.HardDisk, AccessMode.ReadWrite, false)).andReturn(medium);
 
       String oldMachineId = "a1e03931-29f3-4370-ada3-9547b1009212";
       String oldMachineName = "oldMachine";
@@ -154,7 +154,7 @@ public class CreateMediumIfNotAlreadyExistsTest {
       ISession detachSession = createNiceMock(ISession.class);
 
       StringBuilder errorBuilder = new StringBuilder();
-      errorBuilder.append("org.virtualbox_4_1.VBoxException: VirtualBox error: ");
+      errorBuilder.append("org.virtualbox_4_2.VBoxException: VirtualBox error: ");
       errorBuilder.append("Cannot delete storage: medium '/Users/adriancole/jclouds-virtualbox-test/testadmin.vdi ");
       errorBuilder.append("is still attached to the following 1 virtual machine(s): ");
       errorBuilder.append(oldMachineId + " (0x80BB000C)");
@@ -207,7 +207,7 @@ public class CreateMediumIfNotAlreadyExistsTest {
       IProgress progress = createNiceMock(IProgress.class);
 
       expect(manager.getVBox()).andReturn(vBox).anyTimes();
-      expect(vBox.findMedium(adminDiskPath, DeviceType.HardDisk)).andReturn(medium);
+      expect(vBox.openMedium(adminDiskPath, DeviceType.HardDisk, AccessMode.ReadWrite, false)).andReturn(medium);
 
       replay(manager, machine, vBox, medium, newHardDisk, progress, machineUtils);
 
@@ -232,7 +232,7 @@ public class CreateMediumIfNotAlreadyExistsTest {
       expect(manager.getVBox()).andReturn(vBox).anyTimes();
 
       VBoxException notFoundException = new VBoxException(createNiceMock(Throwable.class), errorMessage);
-      expect(vBox.findMedium(adminDiskPath, DeviceType.HardDisk)).andThrow(notFoundException);
+      expect(vBox.openMedium(adminDiskPath, DeviceType.HardDisk, AccessMode.ReadWrite, false)).andThrow(notFoundException);
       expect(vBox.createHardDisk(diskFormat, adminDiskPath)).andReturn(medium);
       expect(medium.createBaseStorage(anyLong(), anyLong())).andReturn(progress);
 

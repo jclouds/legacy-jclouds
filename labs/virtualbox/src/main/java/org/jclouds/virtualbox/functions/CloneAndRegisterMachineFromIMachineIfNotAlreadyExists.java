@@ -36,14 +36,15 @@ import org.jclouds.virtualbox.domain.NetworkInterfaceCard;
 import org.jclouds.virtualbox.domain.NetworkSpec;
 import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.util.MachineUtils;
-import org.virtualbox_4_1.CloneMode;
-import org.virtualbox_4_1.CloneOptions;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.IProgress;
-import org.virtualbox_4_1.ISnapshot;
-import org.virtualbox_4_1.VBoxException;
-import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_2.CloneMode;
+import org.virtualbox_4_2.CloneOptions;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.IProgress;
+import org.virtualbox_4_2.ISnapshot;
+import org.virtualbox_4_2.VBoxException;
+import org.virtualbox_4_2.VirtualBoxManager;
 
+import com.beust.jcommander.internal.Lists;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.inject.Inject;
@@ -96,13 +97,14 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
       NetworkSpec networkSpec = cloneSpec.getNetworkSpec();
       boolean isLinkedClone = cloneSpec.isLinked();
       IMachine master = cloneSpec.getMaster();
-      String settingsFile = manager.get().getVBox().composeMachineFilename(vmSpec.getVmName(), workingDir);
+      String flags = "";
+      List<String> groups = Lists.newArrayList();
+      String group = "";
+      String settingsFile = manager.get().getVBox().composeMachineFilename(vmSpec.getVmName(), group , flags , workingDir);
       IMachine clonedMachine = manager
                .get()
                .getVBox()
-               .createMachine(settingsFile, vmSpec.getVmName(), vmSpec.getOsTypeId(), vmSpec.getVmId(),
-                        vmSpec.isForceOverwrite());
-
+               .createMachine(settingsFile, vmSpec.getVmName(), groups, vmSpec.getOsTypeId(), flags);
       List<CloneOptions> options = new ArrayList<CloneOptions>();
       if (isLinkedClone)
          options.add(CloneOptions.Link);

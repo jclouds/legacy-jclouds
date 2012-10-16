@@ -32,11 +32,11 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.virtualbox.config.VirtualBoxComputeServiceContextModule;
 import org.jclouds.virtualbox.util.NetworkUtils;
 import org.testng.annotations.Test;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.INATEngine;
-import org.virtualbox_4_1.INetworkAdapter;
-import org.virtualbox_4_1.MachineState;
-import org.virtualbox_4_1.NetworkAttachmentType;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.INATEngine;
+import org.virtualbox_4_2.INetworkAdapter;
+import org.virtualbox_4_2.MachineState;
+import org.virtualbox_4_2.NetworkAttachmentType;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -59,7 +59,7 @@ public class IMachineToNodeMetadataTest {
       expect(vm.getNetworkAdapter(eq(0l))).andReturn(nat).once();
       expect(vm.getNetworkAdapter(eq(1l))).andReturn(null).once();
       expect(nat.getAttachmentType()).andReturn(NetworkAttachmentType.NAT).once();
-      expect(nat.getNatDriver()).andReturn(natEng).anyTimes();
+      expect(nat.getNATEngine()).andReturn(natEng).anyTimes();
       expect(natEng.getHostIP()).andReturn("127.0.0.1").once();
       expect(natEng.getRedirects()).andReturn(ImmutableList.of("0,1,127.0.0.1,2222,,22"));
 
@@ -100,7 +100,7 @@ public class IMachineToNodeMetadataTest {
       expect(vm.getNetworkAdapter(eq(0l))).andReturn(nat).once();
       expect(vm.getNetworkAdapter(eq(1l))).andReturn(hostOnly).once();
       expect(nat.getAttachmentType()).andReturn(NetworkAttachmentType.NAT).once();
-      expect(nat.getNatDriver()).andReturn(natEng).anyTimes();
+      expect(nat.getNATEngine()).andReturn(natEng).anyTimes();
       expect(natEng.getHostIP()).andReturn("127.0.0.1").once();
       expect(natEng.getRedirects()).andReturn(ImmutableList.of("0,1,127.0.0.1,3000,,22"));
       NetworkUtils networkUtils = createNiceMock(NetworkUtils.class);

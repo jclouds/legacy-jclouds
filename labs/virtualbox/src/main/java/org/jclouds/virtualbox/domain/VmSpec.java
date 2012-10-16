@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.virtualbox_4_1.CleanupMode;
+import org.virtualbox_4_2.CleanupMode;
 
 import com.google.common.base.Objects;
 
