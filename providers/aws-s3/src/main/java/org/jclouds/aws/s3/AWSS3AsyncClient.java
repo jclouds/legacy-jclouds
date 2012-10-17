@@ -21,6 +21,7 @@ package org.jclouds.aws.s3;
 import static org.jclouds.blobstore.attr.BlobScopes.CONTAINER;
 
 import java.util.Map;
+import java.util.Set;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
@@ -31,6 +32,7 @@ import javax.ws.rs.QueryParam;
 
 import org.jclouds.aws.s3.binders.BindObjectMetadataToRequest;
 import org.jclouds.aws.s3.binders.BindPartIdsAndETagsToRequest;
+import org.jclouds.aws.s3.binders.BindSetAsPayloadToRequest;
 import org.jclouds.aws.s3.functions.ETagFromHttpResponseViaRegex;
 import org.jclouds.aws.s3.functions.ObjectMetadataKey;
 import org.jclouds.aws.s3.functions.UploadIdFromHttpResponseViaRegex;
@@ -111,5 +113,15 @@ public interface AWSS3AsyncClient extends S3AsyncClient {
             @Bucket @EndpointParam(parser = AssignCorrectHostnameForBucket.class) @BinderParam(BindAsHostPrefixIfConfigured.class) @ParamValidators(BucketNameValidator.class) String bucketName,
             @PathParam("key") String key, @QueryParam("uploadId") String uploadId,
             @BinderParam(BindPartIdsAndETagsToRequest.class) Map<Integer, String> parts);
+
+   /**
+    * @see AWSS3Client#deleteMultipleObjects
+    */
+   @POST
+   @Path("/")
+   @QueryParams(keys = "delete")
+   ListenableFuture<Void> deleteMultipleObjects(
+       @Bucket @EndpointParam(parser = AssignCorrectHostnameForBucket.class) @BinderParam(BindAsHostPrefixIfConfigured.class) @ParamValidators(BucketNameValidator.class) String bucketName,
+       @BinderParam(BindSetAsPayloadToRequest.class) Set<String> keys);
 
 }
