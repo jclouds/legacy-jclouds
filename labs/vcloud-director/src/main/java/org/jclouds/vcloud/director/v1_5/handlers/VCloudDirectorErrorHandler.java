@@ -20,6 +20,7 @@ package org.jclouds.vcloud.director.v1_5.handlers;
 
 import static org.jclouds.http.HttpUtils.closeClientButKeepContentStream;
 
+import java.io.ByteArrayInputStream;
 import javax.inject.Singleton;
 import javax.xml.bind.JAXB;
 
@@ -27,7 +28,6 @@ import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
-import org.jclouds.io.InputSuppliers;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
@@ -58,7 +58,7 @@ public class VCloudDirectorErrorHandler implements HttpErrorHandler {
       // Try to create a VCloudDirectorException from XML payload, if it exists
       if (response.getPayload() != null && response.getPayload().getContentMetadata().getContentType().startsWith(VCloudDirectorMediaType.ERROR)) {
 	      try {
-	         Error error = JAXB.unmarshal(InputSuppliers.of(data).getInput(), Error.class);
+	         Error error = JAXB.unmarshal(new ByteArrayInputStream(data), Error.class);
 	         exception = new VCloudDirectorException(error);
 	         message = error.getMessage();
 	      } catch (Exception e) {

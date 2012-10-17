@@ -50,7 +50,6 @@ import javax.inject.Singleton;
 import org.jclouds.Constants;
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.io.ContentMetadata;
-import org.jclouds.io.InputSuppliers;
 import org.jclouds.io.MutableContentMetadata;
 import org.jclouds.io.Payload;
 import org.jclouds.io.PayloadEnclosing;
@@ -304,17 +303,9 @@ public class HttpUtils {
          if (message.getPayload().getContentMetadata().getContentLength() != null)
             logger.debug("%s %s: %s", prefix, CONTENT_LENGTH, message.getPayload().getContentMetadata()
                   .getContentLength());
-         if (message.getPayload().getContentMetadata().getContentMD5() != null)
-            try {
-               logger.debug(
-                     "%s %s: %s",
-                     prefix,
-                     "Content-MD5",
-                     CryptoStreams.base64Encode(InputSuppliers.of(message.getPayload().getContentMetadata()
-                           .getContentMD5())));
-            } catch (IOException e) {
-               logger.warn(e, " error getting md5 for %s", message);
-            }
+         byte[] md5 = message.getPayload().getContentMetadata().getContentMD5();
+         if (md5 != null)
+            logger.debug("%s %s: %s", prefix, "Content-MD5", CryptoStreams.base64(md5));
          if (message.getPayload().getContentMetadata().getContentDisposition() != null)
             logger.debug("%s %s: %s", prefix, "Content-Disposition", message.getPayload().getContentMetadata()
                   .getContentDisposition());

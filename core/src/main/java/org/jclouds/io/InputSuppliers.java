@@ -82,11 +82,8 @@ public class InputSuppliers {
       };
    }
 
-   public static InputSupplier<? extends InputStream> of(byte[] in) {
-      return ByteStreams.newInputStreamSupplier(checkNotNull(in, "in"));
-   }
-
    public static InputSupplier<? extends InputStream> of(String in) {
-      return of(checkNotNull(in, "in").getBytes(Charsets.UTF_8));
+      byte[] bytes = checkNotNull(in, "in").getBytes(Charsets.UTF_8);
+      return ByteStreams.newInputStreamSupplier(bytes);
    }
 }
