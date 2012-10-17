@@ -195,7 +195,7 @@ public abstract class BaseHttpCommandExecutorServiceIntegrationTest extends Base
          payload.getContentMetadata().setContentMD5(digest);
          Multimap<String, String> headers = client.postPayloadAndReturnHeaders("", payload);
          assertEquals(headers.get("x-Content-MD5"),
-               Collections.singleton(CryptoStreams.base64Encode(InputSuppliers.of(digest))));
+               Collections.singleton(CryptoStreams.base64(digest)));
          payload.release();
       } finally {
          if (os != null)
