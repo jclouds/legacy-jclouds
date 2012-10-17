@@ -55,16 +55,17 @@ public class BindSetAsPayloadToRequest implements Binder {
       Set<String> keys = (Set<String>) input;
       checkArgument(keys.size() > 0, "the set of keys is empty");
 
-      StringBuilder content = new StringBuilder();
-      content.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Delete><Quiet>" + QUIET + "</Quiet>");
+      StringBuilder builder = new StringBuilder();
+      builder.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Delete><Quiet>" + QUIET + "</Quiet>");
       for (String key : keys) {
-         content.append(String.format("<Object><Key>%s</Key></Object>", key));
+         builder.append(String.format("<Object><Key>%s</Key></Object>", key));
       }
-      content.append("</Delete>");
+      builder.append("</Delete>");
 
-      Payload payload = Payloads.newStringPayload(content.toString());
+      final String content = builder.toString();
+      Payload payload = Payloads.newStringPayload(content);
       payload.getContentMetadata().setContentType(MediaType.TEXT_XML);
-      payload.getContentMetadata().setContentMD5(CryptoStreams.md5(content.toString().getBytes()));
+      payload.getContentMetadata().setContentMD5(CryptoStreams.md5(content.getBytes()));
 
       request.setPayload(payload);
       return request;
