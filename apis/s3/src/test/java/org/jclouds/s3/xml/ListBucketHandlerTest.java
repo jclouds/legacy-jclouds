@@ -26,6 +26,7 @@ import java.util.TreeSet;
 
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.DateService;
+import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.BaseHandlerTest;
@@ -36,7 +37,6 @@ import org.jclouds.s3.domain.ObjectMetadata;
 import org.jclouds.s3.domain.ObjectMetadataBuilder;
 import org.jclouds.s3.domain.internal.ListBucketResponseImpl;
 import org.jclouds.util.Strings2;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -51,21 +51,19 @@ import com.google.common.collect.ImmutableList;
 public class ListBucketHandlerTest extends BaseHandlerTest {
    public static final String listBucketWithPrefixAppsSlash = "<ListBucketResult xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"><Name>adriancole.org.jclouds.s3.amazons3testdelimiter</Name><Prefix>apps/</Prefix><Marker></Marker><MaxKeys>1000</MaxKeys><IsTruncated>false</IsTruncated><Contents><Key>apps/0</Key><LastModified>2009-05-07T18:27:08.000Z</LastModified><ETag>&quot;c82e6a0025c31c5de5947fda62ac51ab&quot;</ETag><Size>8</Size><Owner><ID>e1a5f66a480ca99a4fdfe8e318c3020446c9989d7004e7778029fbcc5d990fa0</ID><DisplayName>ferncam</DisplayName></Owner><StorageClass>STANDARD</StorageClass></Contents><Contents><Key>apps/1</Key><LastModified>2009-05-07T18:27:09.000Z</LastModified><ETag>&quot;944fab2c5a9a6bacf07db5e688310d7a&quot;</ETag><Size>8</Size><Owner><ID>e1a5f66a480ca99a4fdfe8e318c3020446c9989d7004e7778029fbcc5d990fa0</ID><DisplayName>ferncam</DisplayName></Owner><StorageClass>STANDARD</StorageClass></Contents><Contents><Key>apps/2</Key><LastModified>2009-05-07T18:27:09.000Z</LastModified><ETag>&quot;a227b8888045c8fd159fb495214000f0&quot;</ETag><Size>8</Size><Owner><ID>e1a5f66a480ca99a4fdfe8e318c3020446c9989d7004e7778029fbcc5d990fa0</ID><DisplayName>ferncam</DisplayName></Owner><StorageClass>STANDARD</StorageClass></Contents><Contents><Key>apps/3</Key><LastModified>2009-05-07T18:27:09.000Z</LastModified><ETag>&quot;c9caa76c3dec53e2a192608ce73eef03&quot;</ETag><Size>8</Size><Owner><ID>e1a5f66a480ca99a4fdfe8e318c3020446c9989d7004e7778029fbcc5d990fa0</ID><DisplayName>ferncam</DisplayName></Owner><StorageClass>STANDARD</StorageClass></Contents><Contents><Key>apps/4</Key><LastModified>2009-05-07T18:27:09.000Z</LastModified><ETag>&quot;1ce5d0dcc6154a647ea90c7bdf82a224&quot;</ETag><Size>8</Size><Owner><ID>e1a5f66a480ca99a4fdfe8e318c3020446c9989d7004e7778029fbcc5d990fa0</ID><DisplayName>ferncam</DisplayName></Owner><StorageClass>STANDARD</StorageClass></Contents><Contents><Key>apps/5</Key><LastModified>2009-05-07T18:27:09.000Z</LastModified><ETag>&quot;79433524d87462ee05708a8ef894ed55&quot;</ETag><Size>8</Size><Owner><ID>e1a5f66a480ca99a4fdfe8e318c3020446c9989d7004e7778029fbcc5d990fa0</ID><DisplayName>ferncam</DisplayName></Owner><StorageClass>STANDARD</StorageClass></Contents><Contents><Key>apps/6</Key><LastModified>2009-05-07T18:27:10.000Z</LastModified><ETag>&quot;dd00a060b28ddca8bc5a21a49e306f67&quot;</ETag><Size>8</Size><Owner><ID>e1a5f66a480ca99a4fdfe8e318c3020446c9989d7004e7778029fbcc5d990fa0</ID><DisplayName>ferncam</DisplayName></Owner><StorageClass>STANDARD</StorageClass></Contents><Contents><Key>apps/7</Key><LastModified>2009-05-07T18:27:10.000Z</LastModified><ETag>&quot;8cd06eca6e819a927b07a285d750b100&quot;</ETag><Size>8</Size><Owner><ID>e1a5f66a480ca99a4fdfe8e318c3020446c9989d7004e7778029fbcc5d990fa0</ID><DisplayName>ferncam</DisplayName></Owner><StorageClass>STANDARD</StorageClass></Contents><Contents><Key>apps/8</Key><LastModified>2009-05-07T18:27:10.000Z</LastModified><ETag>&quot;174495094d0633b92cbe46603eee6bad&quot;</ETag><Size>8</Size><Owner><ID>e1a5f66a480ca99a4fdfe8e318c3020446c9989d7004e7778029fbcc5d990fa0</ID><DisplayName>ferncam</DisplayName></Owner><StorageClass>STANDARD</StorageClass></Contents><Contents><Key>apps/9</Key><LastModified>2009-05-07T18:27:10.000Z</LastModified><ETag>&quot;cd8a19b26fea8a827276df0ad11c580d&quot;</ETag><Size>8</Size><Owner><ID>e1a5f66a480ca99a4fdfe8e318c3020446c9989d7004e7778029fbcc5d990fa0</ID><DisplayName>ferncam</DisplayName></Owner><StorageClass>STANDARD</StorageClass></Contents></ListBucketResult>";
    public static final String listBucketWithSlashDelimiterAndCommonPrefixApps = "<ListBucketResult xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"> <Delimiter>/</Delimiter> <CommonPrefixes><Prefix>apps/</Prefix></CommonPrefixes></ListBucketResult>";
-   private DateService dateService;
-
-   @BeforeTest
-   @Override
-   protected void setUpInjector() {
-      super.setUpInjector();
-      dateService = injector.getInstance(DateService.class);
-      assert dateService != null;
-   }
+   private DateService dateService = new SimpleDateFormatDateService();
 
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/list_bucket.xml");
 
       ListBucketResponse result = createParser().parse(is);
 
+      ListBucketResponse expected = expected();
+
+      assertEquals(result.toString(), expected.toString());
+   }
+
+   public ListBucketResponse expected() {
       CanonicalUser owner = new CanonicalUser("e1a5f66a480ca99a4fdfe8e318c3020446c9989d7004e7778029fbcc5d990fa0",
                "ferncam");
       String bucket = "adriancole.org.jclouds.aws.s3.amazons3testdelimiter";
@@ -111,8 +109,7 @@ public class ListBucketHandlerTest extends BaseHandlerTest {
                                  "\"cd8a19b26fea8a827276df0ad11c580d\"").owner(owner).contentMD5(
                                  CryptoStreams.hex("cd8a19b26fea8a827276df0ad11c580d")).contentLength(8l).build()),
                "apps/", null, null, 1000, null, false, new TreeSet<String>());
-
-      assertEquals(result.toString(), expected.toString());
+      return expected;
    }
 
    ParseSax<ListBucketResponse> createParser() {
