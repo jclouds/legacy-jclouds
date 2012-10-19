@@ -41,7 +41,7 @@ import org.jclouds.http.options.BaseHttpRequestOptions;
  *      href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTBucketGET.html?"
  *      />
  */
-public class ListBucketOptions extends BaseHttpRequestOptions {
+public class ListBucketOptions extends BaseHttpRequestOptions implements Cloneable {
    public static final ListBucketOptions NONE = new ListBucketOptions();
 
    /**
@@ -137,5 +137,12 @@ public class ListBucketOptions extends BaseHttpRequestOptions {
          return options.delimiter(delimiter);
       }
 
+   }
+
+   @Override
+   public ListBucketOptions clone() {
+      ListBucketOptions newOptions = new ListBucketOptions();
+      newOptions.queryParameters.putAll(queryParameters);
+      return newOptions;
    }
 }
