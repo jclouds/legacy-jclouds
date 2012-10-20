@@ -32,6 +32,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.functions.PollNodeRunning;
 import org.jclouds.compute.predicates.AtomicImageAvailable;
 import org.jclouds.compute.predicates.AtomicImageDeleted;
 import org.jclouds.compute.predicates.AtomicNodeRunning;
@@ -43,9 +44,12 @@ import org.jclouds.compute.reference.ComputeServiceConstants.PollPeriod;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.predicates.RetryablePredicate;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
+import com.google.inject.name.Names;
 
 /**
  * 
@@ -120,7 +124,8 @@ public class ComputeServiceTimeoutsModule extends AbstractModule {
    
    @Override
    protected void configure() {
-
+      bind(new TypeLiteral<Function<AtomicReference<NodeMetadata>, AtomicReference<NodeMetadata>>>() {
+      }).annotatedWith(Names.named(TIMEOUT_NODE_RUNNING)).to(PollNodeRunning.class);
    }
 
    /**
