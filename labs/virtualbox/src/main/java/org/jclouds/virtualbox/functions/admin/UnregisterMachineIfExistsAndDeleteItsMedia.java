@@ -41,7 +41,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.transform;
 
-import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -62,6 +61,7 @@ import org.virtualbox_4_1.VBoxException;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 @Singleton
@@ -79,7 +79,7 @@ public class UnregisterMachineIfExistsAndDeleteItsMedia implements Function<IMac
 
    @Override
    public Void apply(IMachine machine) {
-      List<IMedium> mediaToBeDeleted = Collections.emptyList();
+      List<IMedium> mediaToBeDeleted = ImmutableList.of();
       try {
          mediaToBeDeleted = machine.unregister(vmSpec.getCleanupMode());
       } catch (VBoxException e) {

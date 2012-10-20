@@ -24,12 +24,11 @@ import static org.jclouds.openstack.swift.options.ListContainerOptions.Builder.u
 import static org.jclouds.openstack.swift.options.ListContainerOptions.Builder.withPrefix;
 import static org.testng.Assert.assertEquals;
 
-import java.util.Collections;
-
 import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.openstack.swift.reference.SwiftConstants;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 
 /**
@@ -49,7 +48,7 @@ public class ListContainerOptionsTest {
    public void testPrefix() {
       ListContainerOptions options = new ListContainerOptions();
       options.withPrefix("test");
-      assertEquals(options.buildQueryParameters().get(SwiftConstants.PREFIX), Collections.singletonList("test"));
+      assertEquals(options.buildQueryParameters().get(SwiftConstants.PREFIX), ImmutableList.of("test"));
    }
 
    @Test
@@ -64,7 +63,7 @@ public class ListContainerOptionsTest {
       options.withPrefix("test");
       Multimap<String, String> map = options.buildQueryParameters();
       assertEquals(map.size(), 1);
-      assertEquals(map.get("prefix"), Collections.singletonList("test"));
+      assertEquals(map.get("prefix"), ImmutableList.of("test"));
    }
 
    @Test
@@ -73,8 +72,8 @@ public class ListContainerOptionsTest {
       options.withPrefix("test").maxResults(1);
       Multimap<String, String> map = options.buildQueryParameters();
       assertEquals(map.size(), 2);
-      assertEquals(map.get("prefix"), Collections.singletonList("test"));
-      assertEquals(map.get("limit"), Collections.singletonList("1"));
+      assertEquals(map.get("prefix"), ImmutableList.of("test"));
+      assertEquals(map.get("limit"), ImmutableList.of("1"));
    }
 
    @Test
@@ -83,21 +82,21 @@ public class ListContainerOptionsTest {
       options.withPrefix("/cloudfiles/test").underPath("/");
       Multimap<String, String> map = options.buildQueryParameters();
       assertEquals(map.size(), 2);
-      assertEquals(map.get("prefix"), Collections.singletonList("/cloudfiles/test"));
-      assertEquals(map.get("path"), Collections.singletonList("/"));
+      assertEquals(map.get("prefix"), ImmutableList.of("/cloudfiles/test"));
+      assertEquals(map.get("path"), ImmutableList.of("/"));
 
    }
 
    @Test
    public void testNullPrefix() {
       ListContainerOptions options = new ListContainerOptions();
-      assertEquals(options.buildQueryParameters().get(SwiftConstants.PREFIX), Collections.EMPTY_LIST);
+      assertEquals(options.buildQueryParameters().get(SwiftConstants.PREFIX), ImmutableList.of());
    }
 
    @Test
    public void testPrefixStatic() {
       ListContainerOptions options = withPrefix("test");
-      assertEquals(options.buildQueryParameters().get(SwiftConstants.PREFIX), Collections.singletonList("test"));
+      assertEquals(options.buildQueryParameters().get(SwiftConstants.PREFIX), ImmutableList.of("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
@@ -109,19 +108,19 @@ public class ListContainerOptionsTest {
    public void testMarker() {
       ListContainerOptions options = new ListContainerOptions();
       options.afterMarker("test");
-      assertEquals(options.buildQueryParameters().get(SwiftConstants.MARKER), Collections.singletonList("test"));
+      assertEquals(options.buildQueryParameters().get(SwiftConstants.MARKER), ImmutableList.of("test"));
    }
 
    @Test
    public void testNullMarker() {
       ListContainerOptions options = new ListContainerOptions();
-      assertEquals(options.buildQueryParameters().get(SwiftConstants.MARKER), Collections.EMPTY_LIST);
+      assertEquals(options.buildQueryParameters().get(SwiftConstants.MARKER), ImmutableList.of());
    }
 
    @Test
    public void testMarkerStatic() {
       ListContainerOptions options = afterMarker("test");
-      assertEquals(options.buildQueryParameters().get(SwiftConstants.MARKER), Collections.singletonList("test"));
+      assertEquals(options.buildQueryParameters().get(SwiftConstants.MARKER), ImmutableList.of("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
@@ -133,19 +132,19 @@ public class ListContainerOptionsTest {
    public void testMaxKeys() {
       ListContainerOptions options = new ListContainerOptions();
       options.maxResults(1000);
-      assertEquals(options.buildQueryParameters().get(SwiftConstants.LIMIT), Collections.singletonList("1000"));
+      assertEquals(options.buildQueryParameters().get(SwiftConstants.LIMIT), ImmutableList.of("1000"));
    }
 
    @Test
    public void testNullMaxKeys() {
       ListContainerOptions options = new ListContainerOptions();
-      assertEquals(options.buildQueryParameters().get(SwiftConstants.LIMIT), Collections.EMPTY_LIST);
+      assertEquals(options.buildQueryParameters().get(SwiftConstants.LIMIT), ImmutableList.of());
    }
 
    @Test
    public void testMaxKeysStatic() {
       ListContainerOptions options = maxResults(1000);
-      assertEquals(options.buildQueryParameters().get(SwiftConstants.LIMIT), Collections.singletonList("1000"));
+      assertEquals(options.buildQueryParameters().get(SwiftConstants.LIMIT), ImmutableList.of("1000"));
    }
 
    @Test(expectedExceptions = IllegalStateException.class)
@@ -157,19 +156,19 @@ public class ListContainerOptionsTest {
    public void testPath() {
       ListContainerOptions options = new ListContainerOptions();
       options.underPath("test");
-      assertEquals(options.buildQueryParameters().get(SwiftConstants.PATH), Collections.singletonList("test"));
+      assertEquals(options.buildQueryParameters().get(SwiftConstants.PATH), ImmutableList.of("test"));
    }
 
    @Test
    public void testNullPath() {
       ListContainerOptions options = new ListContainerOptions();
-      assertEquals(options.buildQueryParameters().get(SwiftConstants.PATH), Collections.EMPTY_LIST);
+      assertEquals(options.buildQueryParameters().get(SwiftConstants.PATH), ImmutableList.of());
    }
 
    @Test
    public void testPathStatic() {
       ListContainerOptions options = underPath("test");
-      assertEquals(options.buildQueryParameters().get(SwiftConstants.PATH), Collections.singletonList("test"));
+      assertEquals(options.buildQueryParameters().get(SwiftConstants.PATH), ImmutableList.of("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)

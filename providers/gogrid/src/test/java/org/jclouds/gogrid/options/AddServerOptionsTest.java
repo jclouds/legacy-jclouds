@@ -22,7 +22,7 @@ import static org.jclouds.gogrid.options.AddServerOptions.Builder.asSandboxType;
 import static org.jclouds.gogrid.options.AddServerOptions.Builder.withDescription;
 import static org.testng.Assert.assertEquals;
 
-import java.util.Collections;
+import com.google.common.collect.ImmutableList;
 
 import org.jclouds.http.options.HttpRequestOptions;
 import org.testng.annotations.Test;
@@ -46,8 +46,8 @@ public class AddServerOptionsTest {
    public void testWithDescription() {
       AddServerOptions options = new AddServerOptions();
       options.withDescription("test");
-      assertEquals(options.buildQueryParameters().get("description"), Collections
-               .singletonList("test"));
+      assertEquals(options.buildQueryParameters().get("description"),
+               ImmutableList.of("test"));
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
@@ -75,21 +75,21 @@ public class AddServerOptionsTest {
       String description = builder.toString();
 
       options.withDescription(description);
-      assertEquals(options.buildQueryParameters().get("description"), Collections
-               .singletonList(description));
+      assertEquals(options.buildQueryParameters().get("description"),
+               ImmutableList.of(description));
    }
 
    @Test
    public void testNullWithDescription() {
       AddServerOptions options = new AddServerOptions();
-      assertEquals(options.buildQueryParameters().get("description"), Collections.EMPTY_LIST);
+      assertEquals(options.buildQueryParameters().get("description"), ImmutableList.of());
    }
 
    @Test
    public void testWithDescriptionStatic() {
       AddServerOptions options = withDescription("test");
-      assertEquals(options.buildQueryParameters().get("description"), Collections
-               .singletonList("test"));
+      assertEquals(options.buildQueryParameters().get("description"),
+               ImmutableList.of("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
@@ -101,15 +101,15 @@ public class AddServerOptionsTest {
    public void testAsSandboxType() {
       AddServerOptions options = new AddServerOptions();
       options.asSandboxType();
-      assertEquals(options.buildQueryParameters().get("isSandbox"), Collections
-               .singletonList("true"));
+      assertEquals(options.buildQueryParameters().get("isSandbox"),
+               ImmutableList.of("true"));
    }
 
    @Test
    public void testAsSandboxTypeStatic() {
       AddServerOptions options = asSandboxType();
-      assertEquals(options.buildQueryParameters().get("isSandbox"), Collections
-               .singletonList("true"));
+      assertEquals(options.buildQueryParameters().get("isSandbox"),
+               ImmutableList.of("true"));
    }
 
 }

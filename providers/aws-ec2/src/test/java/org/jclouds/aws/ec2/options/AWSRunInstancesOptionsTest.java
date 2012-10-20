@@ -30,13 +30,12 @@ import static org.jclouds.aws.ec2.options.AWSRunInstancesOptions.Builder.withSub
 import static org.jclouds.aws.ec2.options.AWSRunInstancesOptions.Builder.withUserData;
 import static org.testng.Assert.assertEquals;
 
-import java.util.Collections;
-
 import org.jclouds.ec2.domain.BlockDeviceMapping;
 import org.jclouds.ec2.domain.InstanceType;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -56,19 +55,19 @@ public class AWSRunInstancesOptionsTest {
    public void testWithKeyName() {
       AWSRunInstancesOptions options = new AWSRunInstancesOptions();
       options.withKeyName("test");
-      assertEquals(options.buildFormParameters().get("KeyName"), Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("KeyName"), ImmutableList.of("test"));
    }
 
    @Test
    public void testNullWithKeyName() {
       AWSRunInstancesOptions options = new AWSRunInstancesOptions();
-      assertEquals(options.buildFormParameters().get("KeyName"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("KeyName"), ImmutableList.of());
    }
 
    @Test
    public void testWithKeyNameStatic() {
       AWSRunInstancesOptions options = withKeyName("test");
-      assertEquals(options.buildFormParameters().get("KeyName"), Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("KeyName"), ImmutableList.of("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
@@ -80,19 +79,19 @@ public class AWSRunInstancesOptionsTest {
    public void testWithSecurityGroup() {
       AWSRunInstancesOptions options = new AWSRunInstancesOptions();
       options.withSecurityGroup("test");
-      assertEquals(options.buildFormParameters().get("SecurityGroup.1"), Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("SecurityGroup.1"), ImmutableList.of("test"));
    }
 
    @Test
    public void testNullWithSecurityGroup() {
       AWSRunInstancesOptions options = new AWSRunInstancesOptions();
-      assertEquals(options.buildFormParameters().get("SecurityGroup"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("SecurityGroup"), ImmutableList.of());
    }
 
    @Test
    public void testWithSecurityGroupStatic() {
       AWSRunInstancesOptions options = withSecurityGroup("test");
-      assertEquals(options.buildFormParameters().get("SecurityGroup.1"), Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("SecurityGroup.1"), ImmutableList.of("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
@@ -105,19 +104,19 @@ public class AWSRunInstancesOptionsTest {
    public void testWithSecurityGroupId() {
       AWSRunInstancesOptions options = new AWSRunInstancesOptions();
       options.withSecurityGroupId("test");
-      assertEquals(options.buildFormParameters().get("SecurityGroupId.1"), Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("SecurityGroupId.1"), ImmutableList.of("test"));
    }
 
    @Test
    public void testNullWithSecurityGroupId() {
       AWSRunInstancesOptions options = new AWSRunInstancesOptions();
-      assertEquals(options.buildFormParameters().get("SecurityGroupId"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("SecurityGroupId"), ImmutableList.of());
    }
 
    @Test
    public void testWithSecurityGroupIdStatic() {
       AWSRunInstancesOptions options = withSecurityGroupId("test");
-      assertEquals(options.buildFormParameters().get("SecurityGroupId.1"), Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("SecurityGroupId.1"), ImmutableList.of("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
@@ -128,26 +127,26 @@ public class AWSRunInstancesOptionsTest {
    @Test
    public void testNullWithAdditionalInfo() {
       AWSRunInstancesOptions options = new AWSRunInstancesOptions();
-      assertEquals(options.buildFormParameters().get("AdditionalInfo"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("AdditionalInfo"), ImmutableList.of());
    }
 
    @Test
    public void testWithUserData() {
       AWSRunInstancesOptions options = new AWSRunInstancesOptions();
       options.withUserData("test".getBytes());
-      assertEquals(options.buildFormParameters().get("UserData"), Collections.singletonList("dGVzdA=="));
+      assertEquals(options.buildFormParameters().get("UserData"), ImmutableList.of("dGVzdA=="));
    }
 
    @Test
    public void testNullWithUserData() {
       AWSRunInstancesOptions options = new AWSRunInstancesOptions();
-      assertEquals(options.buildFormParameters().get("UserData"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("UserData"), ImmutableList.of());
    }
 
    @Test
    public void testWithUserDataStatic() {
       AWSRunInstancesOptions options = withUserData("test".getBytes());
-      assertEquals(options.buildFormParameters().get("UserData"), Collections.singletonList("dGVzdA=="));
+      assertEquals(options.buildFormParameters().get("UserData"), ImmutableList.of("dGVzdA=="));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
@@ -164,19 +163,19 @@ public class AWSRunInstancesOptionsTest {
    public void testWithInstanceType() {
       AWSRunInstancesOptions options = new AWSRunInstancesOptions();
       options.asType(InstanceType.C1_XLARGE);
-      assertEquals(options.buildFormParameters().get("InstanceType"), Collections.singletonList("c1.xlarge"));
+      assertEquals(options.buildFormParameters().get("InstanceType"), ImmutableList.of("c1.xlarge"));
    }
 
    @Test
    public void testNullWithInstanceType() {
       AWSRunInstancesOptions options = new AWSRunInstancesOptions();
-      assertEquals(options.buildFormParameters().get("InstanceType"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("InstanceType"), ImmutableList.of());
    }
 
    @Test
    public void testWithInstanceTypeStatic() {
       AWSRunInstancesOptions options = asType(InstanceType.C1_XLARGE);
-      assertEquals(options.buildFormParameters().get("InstanceType"), Collections.singletonList("c1.xlarge"));
+      assertEquals(options.buildFormParameters().get("InstanceType"), ImmutableList.of("c1.xlarge"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
@@ -188,19 +187,19 @@ public class AWSRunInstancesOptionsTest {
    public void testWithKernelId() {
       AWSRunInstancesOptions options = new AWSRunInstancesOptions();
       options.withKernelId("test");
-      assertEquals(options.buildFormParameters().get("KernelId"), Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("KernelId"), ImmutableList.of("test"));
    }
 
    @Test
    public void testNullWithKernelId() {
       AWSRunInstancesOptions options = new AWSRunInstancesOptions();
-      assertEquals(options.buildFormParameters().get("KernelId"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("KernelId"), ImmutableList.of());
    }
 
    @Test
    public void testWithKernelIdStatic() {
       AWSRunInstancesOptions options = withKernelId("test");
-      assertEquals(options.buildFormParameters().get("KernelId"), Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("KernelId"), ImmutableList.of("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
@@ -212,38 +211,38 @@ public class AWSRunInstancesOptionsTest {
    public void testWithMonitoringEnabled() {
       AWSRunInstancesOptions options = new AWSRunInstancesOptions();
       options.enableMonitoring();
-      assertEquals(options.buildFormParameters().get("Monitoring.Enabled"), Collections.singletonList("true"));
+      assertEquals(options.buildFormParameters().get("Monitoring.Enabled"), ImmutableList.of("true"));
    }
 
    @Test
    public void testNullWithMonitoringEnabled() {
       AWSRunInstancesOptions options = new AWSRunInstancesOptions();
-      assertEquals(options.buildFormParameters().get("Monitoring.Enabled"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("Monitoring.Enabled"), ImmutableList.of());
    }
 
    @Test
    public void testWithMonitoringEnabledStatic() {
       AWSRunInstancesOptions options = enableMonitoring();
-      assertEquals(options.buildFormParameters().get("Monitoring.Enabled"), Collections.singletonList("true"));
+      assertEquals(options.buildFormParameters().get("Monitoring.Enabled"), ImmutableList.of("true"));
    }
 
    @Test
    public void testWithSubnetId() {
       AWSRunInstancesOptions options = new AWSRunInstancesOptions();
       options.withSubnetId("test");
-      assertEquals(options.buildFormParameters().get("SubnetId"), Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("SubnetId"), ImmutableList.of("test"));
    }
 
    @Test
    public void testNullWithSubnetId() {
       AWSRunInstancesOptions options = new AWSRunInstancesOptions();
-      assertEquals(options.buildFormParameters().get("SubnetId"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("SubnetId"), ImmutableList.of());
    }
 
    @Test
    public void testWithSubnetIdStatic() {
       AWSRunInstancesOptions options = withSubnetId("test");
-      assertEquals(options.buildFormParameters().get("SubnetId"), Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("SubnetId"), ImmutableList.of("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
@@ -255,19 +254,19 @@ public class AWSRunInstancesOptionsTest {
    public void testWithRamdisk() {
       AWSRunInstancesOptions options = new AWSRunInstancesOptions();
       options.withRamdisk("test");
-      assertEquals(options.buildFormParameters().get("RamdiskId"), Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("RamdiskId"), ImmutableList.of("test"));
    }
 
    @Test
    public void testNullWithRamdisk() {
       AWSRunInstancesOptions options = new AWSRunInstancesOptions();
-      assertEquals(options.buildFormParameters().get("RamdiskId"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("RamdiskId"), ImmutableList.of());
    }
 
    @Test
    public void testWithRamdiskStatic() {
       AWSRunInstancesOptions options = withRamdisk("test");
-      assertEquals(options.buildFormParameters().get("RamdiskId"), Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("RamdiskId"), ImmutableList.of("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
@@ -278,7 +277,7 @@ public class AWSRunInstancesOptionsTest {
    @Test
    public void testNullWithVirtualName() {
       AWSRunInstancesOptions options = new AWSRunInstancesOptions();
-      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.VirtualName"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.VirtualName"), ImmutableList.of());
    }
 
    @Test
@@ -286,30 +285,30 @@ public class AWSRunInstancesOptionsTest {
       BlockDeviceMapping mapping = new BlockDeviceMapping.MapNewVolumeToDevice("/dev/sda1", 120, true);
       AWSRunInstancesOptions options = new AWSRunInstancesOptions().withBlockDeviceMappings(ImmutableSet
                .<BlockDeviceMapping> of(mapping));
-      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.DeviceName"), Collections
-               .singletonList("/dev/sda1"));
-      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.Ebs.VolumeSize"), Collections
-               .singletonList("120"));
-      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.Ebs.DeleteOnTermination"), Collections
-               .singletonList("true"));
+      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.DeviceName"),
+               ImmutableList.of("/dev/sda1"));
+      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.Ebs.VolumeSize"),
+               ImmutableList.of("120"));
+      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.Ebs.DeleteOnTermination"),
+               ImmutableList.of("true"));
    }
 
    @Test
    public void testNullWithBlockDeviceMapping() {
       AWSRunInstancesOptions options = new AWSRunInstancesOptions();
-      assertEquals(options.buildFormParameters().get("BlockDeviceMapping"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("BlockDeviceMapping"), ImmutableList.of());
    }
 
    @Test
    public void testWithBlockDeviceMappingStatic() {
       BlockDeviceMapping mapping = new BlockDeviceMapping.MapNewVolumeToDevice("/dev/sda1", 120, true);
       AWSRunInstancesOptions options = withBlockDeviceMappings(ImmutableSet.<BlockDeviceMapping> of(mapping));
-      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.DeviceName"), Collections
-               .singletonList("/dev/sda1"));
-      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.Ebs.VolumeSize"), Collections
-               .singletonList("120"));
-      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.Ebs.DeleteOnTermination"), Collections
-               .singletonList("true"));
+      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.DeviceName"),
+               ImmutableList.of("/dev/sda1"));
+      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.Ebs.VolumeSize"),
+               ImmutableList.of("120"));
+      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.Ebs.DeleteOnTermination"),
+               ImmutableList.of("true"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)

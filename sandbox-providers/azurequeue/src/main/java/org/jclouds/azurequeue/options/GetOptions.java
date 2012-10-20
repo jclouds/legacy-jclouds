@@ -20,8 +20,6 @@ package org.jclouds.azurequeue.options;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import java.util.Collections;
-
 import org.jclouds.http.options.BaseHttpRequestOptions;
 
 /**
@@ -51,7 +49,7 @@ public class GetOptions extends BaseHttpRequestOptions {
     */
    public GetOptions maxMessages(int count) {
       checkArgument(count > 0&& count <= 32, "count must be a positive number; max 32");
-      queryParameters.replaceValues("numofmessages", Collections.singletonList(count + ""));
+      queryParameters.replaceValues("numofmessages", ImmutableList.of(count + ""));
       return this;
    }
 
@@ -62,7 +60,7 @@ public class GetOptions extends BaseHttpRequestOptions {
    public GetOptions visibilityTimeout(int timeout) {
       checkArgument(timeout > 0 && timeout <= 2 * 60 * 60,
                "timeout is in seconds; must be positive and maximum 2 hours");
-      queryParameters.replaceValues("visibilitytimeout", Collections.singletonList(timeout + ""));
+      queryParameters.replaceValues("visibilitytimeout", ImmutableList.of(timeout + ""));
       return this;
    }
 

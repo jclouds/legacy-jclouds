@@ -24,12 +24,11 @@ import static org.jclouds.s3.options.ListBucketOptions.Builder.maxResults;
 import static org.jclouds.s3.options.ListBucketOptions.Builder.withPrefix;
 import static org.testng.Assert.assertEquals;
 
-import java.util.Collections;
-
 import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.s3.reference.S3Constants;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 
 /**
@@ -49,8 +48,8 @@ public class ListBucketOptionsTest {
    public void testPrefix() {
       ListBucketOptions options = new ListBucketOptions();
       options.withPrefix("test");
-      assertEquals(options.buildQueryParameters().get(S3Constants.PREFIX), Collections
-               .singletonList("test"));
+      assertEquals(options.buildQueryParameters().get(S3Constants.PREFIX),
+               ImmutableList.of("test"));
    }
 
    @Test
@@ -65,7 +64,7 @@ public class ListBucketOptionsTest {
       options.withPrefix("test");
       Multimap<String, String> map = options.buildQueryParameters();
       assertEquals(map.size(), 1);
-      assertEquals(map.get("prefix"), Collections.singletonList("test"));
+      assertEquals(map.get("prefix"), ImmutableList.of("test"));
    }
 
    @Test
@@ -74,8 +73,8 @@ public class ListBucketOptionsTest {
       options.withPrefix("test").maxResults(1);
       Multimap<String, String> map = options.buildQueryParameters();
       assertEquals(map.size(), 2);
-      assertEquals(map.get("prefix"), Collections.singletonList("test"));
-      assertEquals(map.get("max-keys"), Collections.singletonList("1"));
+      assertEquals(map.get("prefix"), ImmutableList.of("test"));
+      assertEquals(map.get("max-keys"), ImmutableList.of("1"));
    }
 
    @Test
@@ -84,22 +83,22 @@ public class ListBucketOptionsTest {
       options.withPrefix("/test").delimiter("/");
       Multimap<String, String> map = options.buildQueryParameters();
       assertEquals(map.size(), 2);
-      assertEquals(map.get("prefix"), Collections.singletonList("/test"));
-      assertEquals(map.get("delimiter"), Collections.singletonList("/"));
+      assertEquals(map.get("prefix"), ImmutableList.of("/test"));
+      assertEquals(map.get("delimiter"), ImmutableList.of("/"));
 
    }
 
    @Test
    public void testNullPrefix() {
       ListBucketOptions options = new ListBucketOptions();
-      assertEquals(options.buildQueryParameters().get(S3Constants.PREFIX), Collections.EMPTY_LIST);
+      assertEquals(options.buildQueryParameters().get(S3Constants.PREFIX), ImmutableList.of());
    }
 
    @Test
    public void testPrefixStatic() {
       ListBucketOptions options = withPrefix("test");
-      assertEquals(options.buildQueryParameters().get(S3Constants.PREFIX), Collections
-               .singletonList("test"));
+      assertEquals(options.buildQueryParameters().get(S3Constants.PREFIX),
+               ImmutableList.of("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
@@ -111,21 +110,21 @@ public class ListBucketOptionsTest {
    public void testMarker() {
       ListBucketOptions options = new ListBucketOptions();
       options.afterMarker("test");
-      assertEquals(options.buildQueryParameters().get(S3Constants.MARKER), Collections
-               .singletonList("test"));
+      assertEquals(options.buildQueryParameters().get(S3Constants.MARKER),
+               ImmutableList.of("test"));
    }
 
    @Test
    public void testNullMarker() {
       ListBucketOptions options = new ListBucketOptions();
-      assertEquals(options.buildQueryParameters().get(S3Constants.MARKER), Collections.EMPTY_LIST);
+      assertEquals(options.buildQueryParameters().get(S3Constants.MARKER), ImmutableList.of());
    }
 
    @Test
    public void testMarkerStatic() {
       ListBucketOptions options = afterMarker("test");
-      assertEquals(options.buildQueryParameters().get(S3Constants.MARKER), Collections
-               .singletonList("test"));
+      assertEquals(options.buildQueryParameters().get(S3Constants.MARKER),
+               ImmutableList.of("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
@@ -137,21 +136,21 @@ public class ListBucketOptionsTest {
    public void testMaxKeys() {
       ListBucketOptions options = new ListBucketOptions();
       options.maxResults(1000);
-      assertEquals(options.buildQueryParameters().get(S3Constants.MAX_KEYS), Collections
-               .singletonList("1000"));
+      assertEquals(options.buildQueryParameters().get(S3Constants.MAX_KEYS),
+               ImmutableList.of("1000"));
    }
 
    @Test
    public void testNullMaxKeys() {
       ListBucketOptions options = new ListBucketOptions();
-      assertEquals(options.buildQueryParameters().get(S3Constants.MAX_KEYS), Collections.EMPTY_LIST);
+      assertEquals(options.buildQueryParameters().get(S3Constants.MAX_KEYS), ImmutableList.of());
    }
 
    @Test
    public void testMaxKeysStatic() {
       ListBucketOptions options = maxResults(1000);
-      assertEquals(options.buildQueryParameters().get(S3Constants.MAX_KEYS), Collections
-               .singletonList("1000"));
+      assertEquals(options.buildQueryParameters().get(S3Constants.MAX_KEYS),
+               ImmutableList.of("1000"));
    }
 
    @Test(expectedExceptions = IllegalStateException.class)
@@ -163,22 +162,22 @@ public class ListBucketOptionsTest {
    public void testDelimiter() {
       ListBucketOptions options = new ListBucketOptions();
       options.delimiter("test");
-      assertEquals(options.buildQueryParameters().get(S3Constants.DELIMITER), Collections
-               .singletonList("test"));
+      assertEquals(options.buildQueryParameters().get(S3Constants.DELIMITER),
+               ImmutableList.of("test"));
    }
 
    @Test
    public void testNullDelimiter() {
       ListBucketOptions options = new ListBucketOptions();
       assertEquals(options.buildQueryParameters().get(S3Constants.DELIMITER),
-               Collections.EMPTY_LIST);
+               ImmutableList.of());
    }
 
    @Test
    public void testDelimiterStatic() {
       ListBucketOptions options = delimiter("test");
-      assertEquals(options.buildQueryParameters().get(S3Constants.DELIMITER), Collections
-               .singletonList("test"));
+      assertEquals(options.buildQueryParameters().get(S3Constants.DELIMITER),
+               ImmutableList.of("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)

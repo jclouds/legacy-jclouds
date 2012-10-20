@@ -131,7 +131,7 @@ public class Resource {
    protected Resource(Builder<?> builder) {
       this.href = builder.href;
       this.type = builder.type;
-      this.links = builder.links == null ? Collections.<Link>emptySet() : builder.links;
+      this.links = builder.links == null ? ImmutableSet.<Link>of() : builder.links;
    }
    
    protected Resource() {

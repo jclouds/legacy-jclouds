@@ -21,7 +21,7 @@ package org.jclouds.ec2.options;
 import static org.jclouds.ec2.options.CreateSnapshotOptions.Builder.withDescription;
 import static org.testng.Assert.assertEquals;
 
-import java.util.Collections;
+import com.google.common.collect.ImmutableList;
 
 import org.jclouds.http.options.HttpRequestOptions;
 import org.testng.annotations.Test;
@@ -43,21 +43,21 @@ public class CreateSnapshotOptionsTest {
    public void testWithDescription() {
       CreateSnapshotOptions options = new CreateSnapshotOptions();
       options.withDescription("test");
-      assertEquals(options.buildFormParameters().get("Description"), Collections
-               .singletonList("test"));
+      assertEquals(options.buildFormParameters().get("Description"),
+               ImmutableList.of("test"));
    }
 
    @Test
    public void testNullWithDescription() {
       CreateSnapshotOptions options = new CreateSnapshotOptions();
-      assertEquals(options.buildFormParameters().get("Description"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("Description"), ImmutableList.of());
    }
 
    @Test
    public void testWithDescriptionStatic() {
       CreateSnapshotOptions options = withDescription("test");
-      assertEquals(options.buildFormParameters().get("Description"), Collections
-               .singletonList("test"));
+      assertEquals(options.buildFormParameters().get("Description"),
+               ImmutableList.of("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)

@@ -23,7 +23,6 @@ import static com.google.common.base.Preconditions.checkState;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -38,6 +37,7 @@ import org.jclouds.util.Strings2;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -109,7 +109,7 @@ public class JsonNodeMetadataStore implements NodeMetadataStore {
    @Override
    public Set<NodeMetadata> loadAll(Set<NodeMetadata> backendNodes) {
       if (backendNodes == null || backendNodes.isEmpty()) {
-         return Collections.emptySet();
+         return ImmutableSet.of();
       }
       final Set<NodeMetadata> loadedSet = Sets.newLinkedHashSet();
       for (NodeMetadata input : backendNodes) {

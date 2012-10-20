@@ -23,8 +23,6 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.testng.Assert.assertEquals;
 
-import java.util.Collections;
-
 import javax.inject.Provider;
 import javax.ws.rs.core.MediaType;
 
@@ -37,6 +35,7 @@ import org.jclouds.http.HttpResponse;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
 import com.google.inject.Guice;
 
 /**
@@ -86,7 +85,7 @@ public class ParseBlobFromHeadersAndHttpContentTest {
 
       Blob object = callable.apply(response);
       assertEquals(object.getPayload().getContentMetadata().getContentLength(), Long.valueOf(10485760));
-      assertEquals(object.getAllHeaders().get("Content-Range"), Collections.singletonList("0-10485759/20232760"));
+      assertEquals(object.getAllHeaders().get("Content-Range"), ImmutableList.of("0-10485759/20232760"));
 
    }
 

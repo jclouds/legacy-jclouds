@@ -22,7 +22,7 @@ import static org.jclouds.ec2.options.DetachVolumeOptions.Builder.fromDevice;
 import static org.jclouds.ec2.options.DetachVolumeOptions.Builder.fromInstance;
 import static org.testng.Assert.assertEquals;
 
-import java.util.Collections;
+import com.google.common.collect.ImmutableList;
 
 import org.jclouds.http.options.HttpRequestOptions;
 import org.testng.annotations.Test;
@@ -44,19 +44,19 @@ public class DetachVolumeOptionsTest {
    public void testFromDevice() {
       DetachVolumeOptions options = new DetachVolumeOptions();
       options.fromDevice("test");
-      assertEquals(options.buildFormParameters().get("Device"), Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("Device"), ImmutableList.of("test"));
    }
 
    @Test
    public void testNullFromDevice() {
       DetachVolumeOptions options = new DetachVolumeOptions();
-      assertEquals(options.buildFormParameters().get("Device"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("Device"), ImmutableList.of());
    }
 
    @Test
    public void testFromDeviceStatic() {
       DetachVolumeOptions options = fromDevice("test");
-      assertEquals(options.buildFormParameters().get("Device"), Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("Device"), ImmutableList.of("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
@@ -68,21 +68,21 @@ public class DetachVolumeOptionsTest {
    public void testFromInstance() {
       DetachVolumeOptions options = new DetachVolumeOptions();
       options.fromInstance("test");
-      assertEquals(options.buildFormParameters().get("InstanceId"), Collections
-               .singletonList("test"));
+      assertEquals(options.buildFormParameters().get("InstanceId"),
+               ImmutableList.of("test"));
    }
 
    @Test
    public void testNullFromInstance() {
       DetachVolumeOptions options = new DetachVolumeOptions();
-      assertEquals(options.buildFormParameters().get("InstanceId"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("InstanceId"), ImmutableList.of());
    }
 
    @Test
    public void testFromInstanceStatic() {
       DetachVolumeOptions options = fromInstance("test");
-      assertEquals(options.buildFormParameters().get("InstanceId"), Collections
-               .singletonList("test"));
+      assertEquals(options.buildFormParameters().get("InstanceId"),
+               ImmutableList.of("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)

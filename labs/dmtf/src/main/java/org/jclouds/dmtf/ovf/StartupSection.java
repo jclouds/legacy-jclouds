@@ -21,7 +21,6 @@ package org.jclouds.dmtf.ovf;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Collections;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -94,7 +93,7 @@ public class StartupSection extends SectionType {
 
    public StartupSection(Builder<?> builder) {
       super(builder);
-      this.items = (items != null) ? ImmutableList.<StartupSectionItem>copyOf(builder.items) : Collections.<StartupSectionItem>emptyList();
+      this.items = (items != null) ? ImmutableList.<StartupSectionItem>copyOf(builder.items) : ImmutableList.<StartupSectionItem>of();
    }
 
    /**

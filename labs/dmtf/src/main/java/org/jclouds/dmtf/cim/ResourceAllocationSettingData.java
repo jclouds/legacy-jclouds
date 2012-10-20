@@ -24,7 +24,6 @@ import static org.jclouds.dmtf.DMTFConstants.CIM_RASD_NS;
 import static org.jclouds.dmtf.DMTFConstants.OVF_NS;
 
 import java.math.BigInteger;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -584,8 +583,8 @@ public class ResourceAllocationSettingData {
       this.virtualQuantity = builder.virtualQuantity;
       this.virtualQuantityUnits = builder.virtualQuantityUnits;
       this.weight = builder.weight;
-      this.connections = builder.connections != null ? ImmutableSet.copyOf(builder.connections) : Collections.<CimString>emptySet();
-      this.hostResources = builder.hostResources != null ? ImmutableSet.copyOf(builder.hostResources) : Collections.<CimString>emptySet();
+      this.connections = builder.connections != null ? ImmutableSet.copyOf(builder.connections) : ImmutableSet.<CimString>of();
+      this.hostResources = builder.hostResources != null ? ImmutableSet.copyOf(builder.hostResources) : ImmutableSet.<CimString>of();
    }
 
    protected ResourceAllocationSettingData() {

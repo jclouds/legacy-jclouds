@@ -28,8 +28,6 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
-import java.util.Collections;
-
 import org.jclouds.vcloud.director.v1_5.domain.AdminCatalog;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
@@ -44,6 +42,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 /**
@@ -127,7 +126,7 @@ public class AdminCatalogApiLiveTest extends BaseVCloudDirectorApiLiveTest {
          owner = catalogApi.getOwner(catalog.getId());
          Checks.checkOwner(owner);
          assertTrue(
-                  equal(owner.toBuilder().links(Collections.<Link> emptySet()).build(),
+                  equal(owner.toBuilder().links(ImmutableSet.<Link> of()).build(),
                            newOwner.toBuilder().user(newOwner.getUser()).build()),
                   String.format(OBJ_FIELD_UPDATABLE, CATALOG, "owner"));
       } finally {
