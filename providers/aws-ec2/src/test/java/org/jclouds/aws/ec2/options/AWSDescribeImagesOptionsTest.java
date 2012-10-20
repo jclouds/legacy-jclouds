@@ -24,11 +24,10 @@ import static org.jclouds.aws.ec2.options.AWSDescribeImagesOptions.Builder.image
 import static org.jclouds.aws.ec2.options.AWSDescribeImagesOptions.Builder.ownedBy;
 import static org.testng.Assert.assertEquals;
 
-import java.util.Collections;
-
 import org.jclouds.http.options.HttpRequestOptions;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 
@@ -49,19 +48,19 @@ public class AWSDescribeImagesOptionsTest {
    public void testExecutableBy() {
       AWSDescribeImagesOptions options = new AWSDescribeImagesOptions();
       options.executableBy("test");
-      assertEquals(options.buildFormParameters().get("ExecutableBy"), Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("ExecutableBy"), ImmutableList.of("test"));
    }
 
    @Test
    public void testNullExecutableBy() {
       AWSDescribeImagesOptions options = new AWSDescribeImagesOptions();
-      assertEquals(options.buildFormParameters().get("ExecutableBy"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("ExecutableBy"), ImmutableList.of());
    }
 
    @Test
    public void testExecutableByStatic() {
       AWSDescribeImagesOptions options = executableBy("test");
-      assertEquals(options.buildFormParameters().get("ExecutableBy"), Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("ExecutableBy"), ImmutableList.of("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
@@ -73,27 +72,27 @@ public class AWSDescribeImagesOptionsTest {
    public void testOwners() {
       AWSDescribeImagesOptions options = new AWSDescribeImagesOptions();
       options.ownedBy("test");
-      assertEquals(options.buildFormParameters().get("Owner.1"), Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("Owner.1"), ImmutableList.of("test"));
    }
 
    @Test
    public void testMultipleOwners() {
       AWSDescribeImagesOptions options = new AWSDescribeImagesOptions();
       options.ownedBy("test", "trouble");
-      assertEquals(options.buildFormParameters().get("Owner.1"), Collections.singletonList("test"));
-      assertEquals(options.buildFormParameters().get("Owner.2"), Collections.singletonList("trouble"));
+      assertEquals(options.buildFormParameters().get("Owner.1"), ImmutableList.of("test"));
+      assertEquals(options.buildFormParameters().get("Owner.2"), ImmutableList.of("trouble"));
    }
 
    @Test
    public void testNullOwners() {
       AWSDescribeImagesOptions options = new AWSDescribeImagesOptions();
-      assertEquals(options.buildFormParameters().get("Owner.1"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("Owner.1"), ImmutableList.of());
    }
 
    @Test
    public void testOwnersStatic() {
       AWSDescribeImagesOptions options = ownedBy("test");
-      assertEquals(options.buildFormParameters().get("Owner.1"), Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("Owner.1"), ImmutableList.of("test"));
    }
 
    public void testNoOwners() {
@@ -104,27 +103,27 @@ public class AWSDescribeImagesOptionsTest {
    public void testImageIds() {
       AWSDescribeImagesOptions options = new AWSDescribeImagesOptions();
       options.imageIds("test");
-      assertEquals(options.buildFormParameters().get("ImageId.1"), Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("ImageId.1"), ImmutableList.of("test"));
    }
 
    @Test
    public void testMultipleImageIds() {
       AWSDescribeImagesOptions options = new AWSDescribeImagesOptions();
       options.imageIds("test", "trouble");
-      assertEquals(options.buildFormParameters().get("ImageId.1"), Collections.singletonList("test"));
-      assertEquals(options.buildFormParameters().get("ImageId.2"), Collections.singletonList("trouble"));
+      assertEquals(options.buildFormParameters().get("ImageId.1"), ImmutableList.of("test"));
+      assertEquals(options.buildFormParameters().get("ImageId.2"), ImmutableList.of("trouble"));
    }
 
    @Test
    public void testNullImageIds() {
       AWSDescribeImagesOptions options = new AWSDescribeImagesOptions();
-      assertEquals(options.buildFormParameters().get("ImageId.1"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("ImageId.1"), ImmutableList.of());
    }
 
    @Test
    public void testImageIdsStatic() {
       AWSDescribeImagesOptions options = imageIds("test");
-      assertEquals(options.buildFormParameters().get("ImageId.1"), Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("ImageId.1"), ImmutableList.of("test"));
    }
 
    public void testNoImageIds() {
@@ -139,12 +138,12 @@ public class AWSDescribeImagesOptionsTest {
    }
 
    private void testMapFilters(AWSDescribeImagesOptions options) {
-      assertEquals(options.buildFormParameters().get("Filter.1.Name"), Collections.singletonList("is-public"));
-      assertEquals(options.buildFormParameters().get("Filter.1.Value.1"), Collections.singletonList("true"));
-      assertEquals(options.buildFormParameters().get("Filter.2.Name"), Collections.singletonList("architecture"));
-      assertEquals(options.buildFormParameters().get("Filter.2.Value.1"), Collections.singletonList("x86_64"));
-      assertEquals(options.buildFormParameters().get("Filter.3.Name"), Collections.singletonList("platform"));
-      assertEquals(options.buildFormParameters().get("Filter.3.Value.1"), Collections.singletonList("windows"));
+      assertEquals(options.buildFormParameters().get("Filter.1.Name"), ImmutableList.of("is-public"));
+      assertEquals(options.buildFormParameters().get("Filter.1.Value.1"), ImmutableList.of("true"));
+      assertEquals(options.buildFormParameters().get("Filter.2.Name"), ImmutableList.of("architecture"));
+      assertEquals(options.buildFormParameters().get("Filter.2.Value.1"), ImmutableList.of("x86_64"));
+      assertEquals(options.buildFormParameters().get("Filter.3.Name"), ImmutableList.of("platform"));
+      assertEquals(options.buildFormParameters().get("Filter.3.Value.1"), ImmutableList.of("windows"));
    }
 
    @Test
@@ -163,12 +162,12 @@ public class AWSDescribeImagesOptionsTest {
    }
 
    private void testMultimapFilters(AWSDescribeImagesOptions options) {
-      assertEquals(options.buildFormParameters().get("Filter.1.Name"), Collections.singletonList("is-public"));
-      assertEquals(options.buildFormParameters().get("Filter.1.Value.1"), Collections.singletonList("true"));
-      assertEquals(options.buildFormParameters().get("Filter.2.Name"), Collections.singletonList("architecture"));
-      assertEquals(options.buildFormParameters().get("Filter.2.Value.1"), Collections.singletonList("x86_64"));
-      assertEquals(options.buildFormParameters().get("Filter.3.Name"), Collections.singletonList("platform"));
-      assertEquals(options.buildFormParameters().get("Filter.3.Value.1"), Collections.singletonList("windows"));
+      assertEquals(options.buildFormParameters().get("Filter.1.Name"), ImmutableList.of("is-public"));
+      assertEquals(options.buildFormParameters().get("Filter.1.Value.1"), ImmutableList.of("true"));
+      assertEquals(options.buildFormParameters().get("Filter.2.Name"), ImmutableList.of("architecture"));
+      assertEquals(options.buildFormParameters().get("Filter.2.Value.1"), ImmutableList.of("x86_64"));
+      assertEquals(options.buildFormParameters().get("Filter.3.Name"), ImmutableList.of("platform"));
+      assertEquals(options.buildFormParameters().get("Filter.3.Value.1"), ImmutableList.of("windows"));
    }
 
    @Test

@@ -18,7 +18,6 @@
  */
 package org.jclouds.glesys.features;
 
-import static java.util.Collections.emptySet;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
@@ -170,7 +169,7 @@ public class IpApiExpectTest extends BaseGleSYSApiExpectTest {
             HttpResponse.builder().statusCode(404).build())
             .getIpApi();
 
-      assertEquals(api.listFree(6, "Falkenberg", "OpenVZ").toImmutableSet(), emptySet());
+      assertEquals(api.listFree(6, "Falkenberg", "OpenVZ").toImmutableSet(), ImmutableSet.of());
    }
 
    public void testAddWhenResponseIs2xx() {

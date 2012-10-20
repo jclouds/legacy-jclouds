@@ -22,8 +22,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.scriptbuilder.domain.Statements.appendFile;
 import static org.jclouds.scriptbuilder.domain.Statements.exec;
 
-import java.util.Collections;
-
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.StatementList;
@@ -51,7 +49,7 @@ public class InstallRSAPrivateKey implements Statement {
 
    @Override
    public Iterable<String> functionDependencies(OsFamily family) {
-      return Collections.emptyList();
+      return ImmutableList.of();
    }
 
    @Override

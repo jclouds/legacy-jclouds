@@ -21,7 +21,6 @@ package org.jclouds.vcloud.director.v1_5.domain.params;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -170,7 +169,7 @@ public class ControlAccessParams {
     * Required on create and edit if {@link #isSharedToEveryone()} is false.
     */
    public List<AccessSetting> getAccessSettings() {
-      return accessSettings == null ? Collections.<AccessSetting>emptyList() : accessSettings;
+      return accessSettings == null ? ImmutableList.<AccessSetting>of() : accessSettings;
    }
 
    @Override

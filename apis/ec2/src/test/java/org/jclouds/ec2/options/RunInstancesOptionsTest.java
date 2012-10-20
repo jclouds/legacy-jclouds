@@ -27,13 +27,12 @@ import static org.jclouds.ec2.options.RunInstancesOptions.Builder.withSecurityGr
 import static org.jclouds.ec2.options.RunInstancesOptions.Builder.withUserData;
 import static org.testng.Assert.assertEquals;
 
-import java.util.Collections;
-
 import org.jclouds.ec2.domain.BlockDeviceMapping;
 import org.jclouds.ec2.domain.InstanceType;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -53,19 +52,19 @@ public class RunInstancesOptionsTest {
    public void testWithKeyName() {
       RunInstancesOptions options = new RunInstancesOptions();
       options.withKeyName("test");
-      assertEquals(options.buildFormParameters().get("KeyName"), Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("KeyName"), ImmutableList.of("test"));
    }
 
    @Test
    public void testNullWithKeyName() {
       RunInstancesOptions options = new RunInstancesOptions();
-      assertEquals(options.buildFormParameters().get("KeyName"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("KeyName"), ImmutableList.of());
    }
 
    @Test
    public void testWithKeyNameStatic() {
       RunInstancesOptions options = withKeyName("test");
-      assertEquals(options.buildFormParameters().get("KeyName"), Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("KeyName"), ImmutableList.of("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
@@ -77,19 +76,19 @@ public class RunInstancesOptionsTest {
    public void testWithSecurityGroup() {
       RunInstancesOptions options = new RunInstancesOptions();
       options.withSecurityGroup("test");
-      assertEquals(options.buildFormParameters().get("SecurityGroup.1"), Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("SecurityGroup.1"), ImmutableList.of("test"));
    }
 
    @Test
    public void testNullWithSecurityGroup() {
       RunInstancesOptions options = new RunInstancesOptions();
-      assertEquals(options.buildFormParameters().get("SecurityGroup"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("SecurityGroup"), ImmutableList.of());
    }
 
    @Test
    public void testWithSecurityGroupStatic() {
       RunInstancesOptions options = withSecurityGroup("test");
-      assertEquals(options.buildFormParameters().get("SecurityGroup.1"), Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("SecurityGroup.1"), ImmutableList.of("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
@@ -100,26 +99,26 @@ public class RunInstancesOptionsTest {
    @Test
    public void testNullWithAdditionalInfo() {
       RunInstancesOptions options = new RunInstancesOptions();
-      assertEquals(options.buildFormParameters().get("AdditionalInfo"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("AdditionalInfo"), ImmutableList.of());
    }
 
    @Test
    public void testWithUserData() {
       RunInstancesOptions options = new RunInstancesOptions();
       options.withUserData("test".getBytes());
-      assertEquals(options.buildFormParameters().get("UserData"), Collections.singletonList("dGVzdA=="));
+      assertEquals(options.buildFormParameters().get("UserData"), ImmutableList.of("dGVzdA=="));
    }
 
    @Test
    public void testNullWithUserData() {
       RunInstancesOptions options = new RunInstancesOptions();
-      assertEquals(options.buildFormParameters().get("UserData"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("UserData"), ImmutableList.of());
    }
 
    @Test
    public void testWithUserDataStatic() {
       RunInstancesOptions options = withUserData("test".getBytes());
-      assertEquals(options.buildFormParameters().get("UserData"), Collections.singletonList("dGVzdA=="));
+      assertEquals(options.buildFormParameters().get("UserData"), ImmutableList.of("dGVzdA=="));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
@@ -136,19 +135,19 @@ public class RunInstancesOptionsTest {
    public void testWithInstanceType() {
       RunInstancesOptions options = new RunInstancesOptions();
       options.asType(InstanceType.C1_XLARGE);
-      assertEquals(options.buildFormParameters().get("InstanceType"), Collections.singletonList("c1.xlarge"));
+      assertEquals(options.buildFormParameters().get("InstanceType"), ImmutableList.of("c1.xlarge"));
    }
 
    @Test
    public void testNullWithInstanceType() {
       RunInstancesOptions options = new RunInstancesOptions();
-      assertEquals(options.buildFormParameters().get("InstanceType"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("InstanceType"), ImmutableList.of());
    }
 
    @Test
    public void testWithInstanceTypeStatic() {
       RunInstancesOptions options = asType(InstanceType.C1_XLARGE);
-      assertEquals(options.buildFormParameters().get("InstanceType"), Collections.singletonList("c1.xlarge"));
+      assertEquals(options.buildFormParameters().get("InstanceType"), ImmutableList.of("c1.xlarge"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
@@ -160,19 +159,19 @@ public class RunInstancesOptionsTest {
    public void testWithKernelId() {
       RunInstancesOptions options = new RunInstancesOptions();
       options.withKernelId("test");
-      assertEquals(options.buildFormParameters().get("KernelId"), Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("KernelId"), ImmutableList.of("test"));
    }
 
    @Test
    public void testNullWithKernelId() {
       RunInstancesOptions options = new RunInstancesOptions();
-      assertEquals(options.buildFormParameters().get("KernelId"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("KernelId"), ImmutableList.of());
    }
 
    @Test
    public void testWithKernelIdStatic() {
       RunInstancesOptions options = withKernelId("test");
-      assertEquals(options.buildFormParameters().get("KernelId"), Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("KernelId"), ImmutableList.of("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
@@ -184,19 +183,19 @@ public class RunInstancesOptionsTest {
    public void testWithRamdisk() {
       RunInstancesOptions options = new RunInstancesOptions();
       options.withRamdisk("test");
-      assertEquals(options.buildFormParameters().get("RamdiskId"), Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("RamdiskId"), ImmutableList.of("test"));
    }
 
    @Test
    public void testNullWithRamdisk() {
       RunInstancesOptions options = new RunInstancesOptions();
-      assertEquals(options.buildFormParameters().get("RamdiskId"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("RamdiskId"), ImmutableList.of());
    }
 
    @Test
    public void testWithRamdiskStatic() {
       RunInstancesOptions options = withRamdisk("test");
-      assertEquals(options.buildFormParameters().get("RamdiskId"), Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("RamdiskId"), ImmutableList.of("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
@@ -207,7 +206,7 @@ public class RunInstancesOptionsTest {
    @Test
    public void testNullWithVirtualName() {
       RunInstancesOptions options = new RunInstancesOptions();
-      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.VirtualName"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.VirtualName"), ImmutableList.of());
    }
 
    @Test
@@ -215,18 +214,18 @@ public class RunInstancesOptionsTest {
       BlockDeviceMapping mapping = new BlockDeviceMapping.MapNewVolumeToDevice("/dev/sda1", 120, true);
       RunInstancesOptions options = new RunInstancesOptions().withBlockDeviceMappings(ImmutableSet
                .<BlockDeviceMapping> of(mapping));
-      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.DeviceName"), Collections
-               .singletonList("/dev/sda1"));
-      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.Ebs.VolumeSize"), Collections
-               .singletonList("120"));
-      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.Ebs.DeleteOnTermination"), Collections
-               .singletonList("true"));
+      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.DeviceName"),
+               ImmutableList.of("/dev/sda1"));
+      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.Ebs.VolumeSize"),
+               ImmutableList.of("120"));
+      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.Ebs.DeleteOnTermination"),
+               ImmutableList.of("true"));
    }
 
    @Test
    public void testNullWithBlockDeviceMapping() {
       RunInstancesOptions options = new RunInstancesOptions();
-      assertEquals(options.buildFormParameters().get("BlockDeviceMapping"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("BlockDeviceMapping"), ImmutableList.of());
    }
 
    @Test
@@ -234,12 +233,12 @@ public class RunInstancesOptionsTest {
       BlockDeviceMapping mapping = new BlockDeviceMapping.MapNewVolumeToDevice("/dev/sda1", 120, true);
       RunInstancesOptions options = withBlockDeviceMappings(ImmutableSet
                .<BlockDeviceMapping> of(mapping));
-      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.DeviceName"), Collections
-               .singletonList("/dev/sda1"));
-      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.Ebs.VolumeSize"), Collections
-               .singletonList("120"));
-      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.Ebs.DeleteOnTermination"), Collections
-               .singletonList("true"));
+      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.DeviceName"),
+               ImmutableList.of("/dev/sda1"));
+      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.Ebs.VolumeSize"),
+               ImmutableList.of("120"));
+      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.Ebs.DeleteOnTermination"),
+               ImmutableList.of("true"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)

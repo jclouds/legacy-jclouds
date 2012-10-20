@@ -22,7 +22,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.scriptbuilder.domain.Statements.interpret;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -115,7 +114,7 @@ public class AppendFile implements Statement {
 
    @Override
    public Iterable<String> functionDependencies(OsFamily family) {
-      return Collections.emptyList();
+      return ImmutableList.of();
    }
 
    @Override

@@ -22,7 +22,6 @@ import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.dmtf.DMTFConstants.CIM_NS;
 
-import java.util.Collections;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -185,7 +184,7 @@ public class ProductSection extends SectionType {
       this.productUrl = builder.productUrl;
       this.vendorUrl = builder.vendorUrl;
       this.appUrl = builder.appUrl;
-      this.properties = builder.properties != null ? ImmutableSet.copyOf(checkNotNull(builder.properties, "properties")) : Collections.<ProductSectionProperty>emptySet();
+      this.properties = builder.properties != null ? ImmutableSet.copyOf(checkNotNull(builder.properties, "properties")) : ImmutableSet.<ProductSectionProperty>of();
    }
    
    private ProductSection() {

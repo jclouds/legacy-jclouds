@@ -22,7 +22,7 @@ import static org.jclouds.openstack.swift.v1.options.ListContainersOptions.Build
 import static org.jclouds.openstack.swift.v1.options.ListContainersOptions.Builder.marker;
 import static org.testng.Assert.assertEquals;
 
-import java.util.Collections;
+import com.google.common.collect.ImmutableList;
 
 import org.jclouds.http.options.HttpRequestOptions;
 import org.testng.annotations.Test;
@@ -50,19 +50,19 @@ public class ListContainersOptionsTest {
    public void testMarker() {
       ListContainersOptions options = new ListContainersOptions();
       options.marker("test");
-      assertEquals(options.buildQueryParameters().get("marker"), Collections.singletonList("test"));
+      assertEquals(options.buildQueryParameters().get("marker"), ImmutableList.of("test"));
    }
 
    @Test
    public void testNullMarker() {
       ListContainersOptions options = new ListContainersOptions();
-      assertEquals(options.buildQueryParameters().get("marker"), Collections.EMPTY_LIST);
+      assertEquals(options.buildQueryParameters().get("marker"), ImmutableList.of());
    }
 
    @Test
    public void testMarkerStatic() {
       ListContainersOptions options = marker("test");
-      assertEquals(options.buildQueryParameters().get("marker"), Collections.singletonList("test"));
+      assertEquals(options.buildQueryParameters().get("marker"), ImmutableList.of("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
@@ -74,19 +74,19 @@ public class ListContainersOptionsTest {
    public void testLimit() {
       ListContainersOptions options = new ListContainersOptions();
       options.limit(1000);
-      assertEquals(options.buildQueryParameters().get("limit"), Collections.singletonList("1000"));
+      assertEquals(options.buildQueryParameters().get("limit"), ImmutableList.of("1000"));
    }
 
    @Test
    public void testNullLimit() {
       ListContainersOptions options = new ListContainersOptions();
-      assertEquals(options.buildQueryParameters().get("limit"), Collections.EMPTY_LIST);
+      assertEquals(options.buildQueryParameters().get("limit"), ImmutableList.of());
    }
 
    @Test
    public void testLimitStatic() {
       ListContainersOptions options = limit(1000);
-      assertEquals(options.buildQueryParameters().get("limit"), Collections.singletonList("1000"));
+      assertEquals(options.buildQueryParameters().get("limit"), ImmutableList.of("1000"));
    }
 
    @Test(expectedExceptions = IllegalStateException.class)

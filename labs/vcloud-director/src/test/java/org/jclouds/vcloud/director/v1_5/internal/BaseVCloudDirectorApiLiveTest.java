@@ -46,7 +46,6 @@ import static org.testng.Assert.fail;
 
 import java.net.URI;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Random;
 import java.util.Set;
@@ -602,7 +601,7 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
    protected boolean taskDoneEventually(Task task) {
       TaskApi taskApi = context.getApi().getTaskApi();
       TaskStatusEquals predicate = new TaskStatusEquals(taskApi, ImmutableSet.of(Task.Status.ABORTED,
-               Task.Status.CANCELED, Task.Status.ERROR, Task.Status.SUCCESS), Collections.<Task.Status> emptySet());
+               Task.Status.CANCELED, Task.Status.ERROR, Task.Status.SUCCESS), ImmutableSet.<Task.Status> of());
       RetryablePredicate<Task> retryablePredicate = new RetryablePredicate<Task>(predicate,
                LONG_TASK_TIMEOUT_SECONDS * 1000L);
       return retryablePredicate.apply(task);

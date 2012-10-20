@@ -21,7 +21,7 @@ package org.jclouds.sqs.options;
 import static org.jclouds.sqs.options.ListQueuesOptions.Builder.queuePrefix;
 import static org.testng.Assert.assertEquals;
 
-import java.util.Collections;
+import com.google.common.collect.ImmutableList;
 
 import org.jclouds.http.options.HttpRequestOptions;
 import org.testng.annotations.Test;
@@ -43,21 +43,19 @@ public class ListQueuesOptionsTest {
    public void testPrefix() {
       ListQueuesOptions options = new ListQueuesOptions();
       options.queuePrefix("test");
-      assertEquals(options.buildFormParameters().get("QueueNamePrefix"), Collections
-               .singletonList("test"));
+      assertEquals(options.buildFormParameters().get("QueueNamePrefix"), ImmutableList.of("test"));
    }
 
    @Test
    public void testNullPrefix() {
       ListQueuesOptions options = new ListQueuesOptions();
-      assertEquals(options.buildFormParameters().get("QueueNamePrefix"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("QueueNamePrefix"), ImmutableList.of());
    }
 
    @Test
    public void testPrefixStatic() {
       ListQueuesOptions options = queuePrefix("test");
-      assertEquals(options.buildFormParameters().get("QueueNamePrefix"), Collections
-               .singletonList("test"));
+      assertEquals(options.buildFormParameters().get("QueueNamePrefix"), ImmutableList.of("test"));
    }
 
    public void testNoPrefix() {

@@ -44,7 +44,6 @@ import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 import java.net.URISyntaxException;
-import java.util.Collections;
 import java.util.Set;
 
 import org.jclouds.io.Payloads;
@@ -67,6 +66,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 /**
@@ -185,7 +185,7 @@ public class MediaApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    public void testGetMediaOwner() {
       Owner directOwner = mediaApi.getOwner(media.getId());
       assertEquals(owner.toBuilder().user(owner.getUser()).build(),
-               directOwner.toBuilder().links(Collections.<Link> emptySet()).build(), String.format(
+               directOwner.toBuilder().links(ImmutableSet.<Link> of()).build(), String.format(
                         GETTER_RETURNS_SAME_OBJ, "getOwner()", "owner", "media.getOwner()", owner.toString(),
                         directOwner.toString()));
 
