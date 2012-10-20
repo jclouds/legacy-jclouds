@@ -22,13 +22,14 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
+
+import com.google.common.collect.ImmutableSet;
 
 import org.jclouds.cloudloadbalancers.domain.LoadBalancer;
 import org.jclouds.cloudloadbalancers.domain.LoadBalancerRequest;
@@ -71,7 +72,7 @@ public class NodeClientLiveTest extends BaseCloudLoadBalancersClientLiveTest {
          String region = lb.getRegion();
          Logger.getAnonymousLogger().info("starting node on loadbalancer " + lb.getId() + " in region " + region);
          Set<Node> newNodes = client.getNodeClient(region).createNodesInLoadBalancer(
-                  Collections.<NodeRequest> singleton(NodeRequest.builder().address("192.168.1.2").port(8080).build()),
+                  ImmutableSet.<NodeRequest> of(NodeRequest.builder().address("192.168.1.2").port(8080).build()),
                   lb.getId());
 
          for (Node n : newNodes) {

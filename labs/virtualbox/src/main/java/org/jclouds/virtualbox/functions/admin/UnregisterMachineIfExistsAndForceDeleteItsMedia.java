@@ -40,7 +40,6 @@ package org.jclouds.virtualbox.functions.admin;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.transform;
 
-import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -59,6 +58,7 @@ import org.virtualbox_4_1.VBoxException;
 
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 @Singleton
@@ -70,7 +70,7 @@ public class UnregisterMachineIfExistsAndForceDeleteItsMedia implements Function
 
    @Override
    public Void apply(IMachine machine) {
-      List<IMedium> mediaToBeDeleted = Collections.emptyList();
+      List<IMedium> mediaToBeDeleted = ImmutableList.of();
       try {
          mediaToBeDeleted = machine.unregister(CleanupMode.Full);
       } catch (VBoxException e) {

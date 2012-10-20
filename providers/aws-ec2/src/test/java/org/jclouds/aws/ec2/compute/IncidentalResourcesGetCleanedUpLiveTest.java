@@ -21,7 +21,6 @@ package org.jclouds.aws.ec2.compute;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
-import java.util.Collections;
 import java.util.Set;
 
 import org.jclouds.aws.ec2.AWSEC2ApiMetadata;
@@ -157,8 +156,8 @@ public class IncidentalResourcesGetCleanedUpLiveTest extends BaseComputeServiceC
             done = securityGroupsAfterDestroyAll.isEmpty() && keyPairsAfterDestroyAll.isEmpty();
          } while (!done && stopwatch.elapsedMillis() < TIMEOUT_MS);
 
-         assertEquals(securityGroupsAfterDestroyAll, Collections.emptySet());
-         assertEquals(keyPairsAfterDestroyAll, Collections.emptySet());
+         assertEquals(securityGroupsAfterDestroyAll, ImmutableSet.of());
+         assertEquals(keyPairsAfterDestroyAll, ImmutableSet.of());
          
       } finally {
          view.getComputeService().destroyNodesMatching(NodePredicates.inGroup(group));

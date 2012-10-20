@@ -22,7 +22,6 @@ import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
-import java.util.Collections;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -207,7 +206,7 @@ public class CaptureVAppParams extends ParamsType {
     * </ul>
     */
    public Set<SectionType> getSections() {
-      return sections != null ? ImmutableSet.copyOf(sections) : Collections.<SectionType>emptySet();
+      return sections != null ? ImmutableSet.copyOf(sections) : ImmutableSet.<SectionType>of();
    }
 
    @Override

@@ -21,7 +21,7 @@ package org.jclouds.gogrid.options;
 import static org.jclouds.gogrid.options.SaveImageOptions.Builder.withDescription;
 import static org.testng.Assert.assertEquals;
 
-import java.util.Collections;
+import com.google.common.collect.ImmutableList;
 
 import org.jclouds.http.options.HttpRequestOptions;
 import org.testng.annotations.Test;
@@ -45,8 +45,8 @@ public class SaveImageOptionsTest {
    public void testWithDescription() {
       SaveImageOptions options = new SaveImageOptions();
       options.withDescription("test");
-      assertEquals(options.buildQueryParameters().get("description"), Collections
-               .singletonList("test"));
+      assertEquals(options.buildQueryParameters().get("description"),
+               ImmutableList.of("test"));
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
@@ -74,21 +74,21 @@ public class SaveImageOptionsTest {
       String description = builder.toString();
 
       options.withDescription(description);
-      assertEquals(options.buildQueryParameters().get("description"), Collections
-               .singletonList(description));
+      assertEquals(options.buildQueryParameters().get("description"),
+               ImmutableList.of(description));
    }
 
    @Test
    public void testNullWithDescription() {
       SaveImageOptions options = new SaveImageOptions();
-      assertEquals(options.buildQueryParameters().get("description"), Collections.EMPTY_LIST);
+      assertEquals(options.buildQueryParameters().get("description"), ImmutableList.of());
    }
 
    @Test
    public void testWithDescriptionStatic() {
       SaveImageOptions options = withDescription("test");
-      assertEquals(options.buildQueryParameters().get("description"), Collections
-               .singletonList("test"));
+      assertEquals(options.buildQueryParameters().get("description"),
+               ImmutableList.of("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)

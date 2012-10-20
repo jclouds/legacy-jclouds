@@ -26,7 +26,7 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.U
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
-import java.util.Collections;
+import com.google.common.collect.ImmutableSet;
 
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
@@ -89,7 +89,7 @@ public class AdminNetworkApiLiveTest extends BaseVCloudDirectorApiLiveTest {
       
       OrgNetwork oldNetwork = Network.<OrgNetwork>toSubType(network)
             .toBuilder()
-            .tasks(Collections.<Task>emptySet())
+            .tasks(ImmutableSet.<Task>of())
             .build();
       
       OrgNetwork editNetwork = getMutatedOrgNetwork(oldNetwork);
@@ -153,7 +153,7 @@ public class AdminNetworkApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    
    private static OrgNetwork getMutatedOrgNetwork(OrgNetwork network) {
        OrgNetwork.Builder<?> networkBuilder = OrgNetwork.builder().fromNetwork(network)
-             .tasks(Collections.<Task>emptySet())
+             .tasks(ImmutableSet.<Task>of())
 //           .name("new "+network.getName())
           .description("new "+network.getDescription())
           .configuration(getMutatedNetworkConfiguration(network.getConfiguration()));

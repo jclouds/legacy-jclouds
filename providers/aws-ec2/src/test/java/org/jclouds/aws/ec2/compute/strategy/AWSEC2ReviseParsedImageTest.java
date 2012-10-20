@@ -20,7 +20,6 @@ package org.jclouds.aws.ec2.compute.strategy;
 
 import static org.testng.Assert.assertEquals;
 
-import java.util.Collections;
 import java.util.Map;
 
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
@@ -38,6 +37,8 @@ import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Guice;
 
 public class AWSEC2ReviseParsedImageTest {
@@ -94,13 +95,13 @@ public class AWSEC2ReviseParsedImageTest {
         Image.ImageState imageState = Image.ImageState.AVAILABLE;
         Image.ImageType imageType = Image.ImageType.MACHINE;
         boolean isPublic = true;
-        Iterable<String> productCodes = Collections.emptySet();
+        Iterable<String> productCodes = ImmutableSet.of();
         String kernelId = "";
         String platform = "";
         String ramdiskId = "";
         RootDeviceType rootDeviceType = RootDeviceType.EBS;
         String rootDeviceName = "";
-        Map<String, Image.EbsBlockDevice> ebsBlockDevices = Collections.emptyMap();
+        Map<String, Image.EbsBlockDevice> ebsBlockDevices = ImmutableMap.of();
         VirtualizationType virtualizationType = VirtualizationType.HVM;
         Hypervisor hypervisor = Hypervisor.XEN;
         Image from = new Image(region, architecture, imageName, description, imageId, imageOwnerId + "/" + imageName, imageOwnerId, imageState, "available", imageType, isPublic, productCodes, kernelId, platform, ramdiskId, rootDeviceType, rootDeviceName, ebsBlockDevices, virtualizationType, hypervisor);

@@ -24,9 +24,9 @@ import static org.jclouds.aws.ec2.options.DescribeSpotPriceHistoryOptions.Builde
 import static org.jclouds.aws.ec2.options.DescribeSpotPriceHistoryOptions.Builder.to;
 import static org.testng.Assert.assertEquals;
 
-import java.util.Collections;
 import java.util.Date;
 
+import com.google.common.collect.ImmutableList;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.testng.annotations.Test;
 
@@ -48,13 +48,13 @@ public class DescribeSpotPriceHistoryOptionsTest {
    public void testDescription() {
       DescribeSpotPriceHistoryOptions options = new DescribeSpotPriceHistoryOptions();
       options.productDescription("test");
-      assertEquals(options.buildFormParameters().get("ProductDescription"), Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("ProductDescription"), ImmutableList.of("test"));
    }
 
    @Test
    public void testDescriptionStatic() {
       DescribeSpotPriceHistoryOptions options = productDescription("test");
-      assertEquals(options.buildFormParameters().get("ProductDescription"), Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("ProductDescription"), ImmutableList.of("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
@@ -66,13 +66,13 @@ public class DescribeSpotPriceHistoryOptionsTest {
    public void testInstanceType() {
       DescribeSpotPriceHistoryOptions options = new DescribeSpotPriceHistoryOptions();
       options.instanceType("test");
-      assertEquals(options.buildFormParameters().get("InstanceType.1"), Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("InstanceType.1"), ImmutableList.of("test"));
    }
 
    @Test
    public void testInstanceTypeStatic() {
       DescribeSpotPriceHistoryOptions options = instanceType("test");
-      assertEquals(options.buildFormParameters().get("InstanceType.1"), Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("InstanceType.1"), ImmutableList.of("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
@@ -84,7 +84,7 @@ public class DescribeSpotPriceHistoryOptionsTest {
    public void testFrom() {
       DescribeSpotPriceHistoryOptions options = new DescribeSpotPriceHistoryOptions();
       options.from(test);
-      assertEquals(options.buildFormParameters().get("StartTime"), Collections.singletonList("1970-05-23T21:21:18.910Z"));
+      assertEquals(options.buildFormParameters().get("StartTime"), ImmutableList.of("1970-05-23T21:21:18.910Z"));
    }
 
    Date test = new Date(12345678910l);
@@ -92,7 +92,7 @@ public class DescribeSpotPriceHistoryOptionsTest {
    @Test
    public void testFromStatic() {
       DescribeSpotPriceHistoryOptions options = from(test);
-      assertEquals(options.buildFormParameters().get("StartTime"), Collections.singletonList("1970-05-23T21:21:18.910Z"));
+      assertEquals(options.buildFormParameters().get("StartTime"), ImmutableList.of("1970-05-23T21:21:18.910Z"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
@@ -104,13 +104,13 @@ public class DescribeSpotPriceHistoryOptionsTest {
    public void testTo() {
       DescribeSpotPriceHistoryOptions options = new DescribeSpotPriceHistoryOptions();
       options.to(test);
-      assertEquals(options.buildFormParameters().get("EndTime"), Collections.singletonList("1970-05-23T21:21:18.910Z"));
+      assertEquals(options.buildFormParameters().get("EndTime"), ImmutableList.of("1970-05-23T21:21:18.910Z"));
    }
 
    @Test
    public void testToStatic() {
       DescribeSpotPriceHistoryOptions options = to(test);
-      assertEquals(options.buildFormParameters().get("EndTime"), Collections.singletonList("1970-05-23T21:21:18.910Z"));
+      assertEquals(options.buildFormParameters().get("EndTime"), ImmutableList.of("1970-05-23T21:21:18.910Z"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)

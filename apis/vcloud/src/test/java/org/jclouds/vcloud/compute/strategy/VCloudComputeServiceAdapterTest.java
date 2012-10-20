@@ -3,7 +3,6 @@ package org.jclouds.vcloud.compute.strategy;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
-import java.util.Collections;
 
 import org.jclouds.compute.ComputeService;
 import org.jclouds.http.HttpRequest;
@@ -69,6 +68,6 @@ public class VCloudComputeServiceAdapterTest extends BaseVCloudComputeServiceExp
 
       Iterable<VAppTemplate> hardwareProfiles = adapter.listHardwareProfiles();
       
-      assertEquals(ImmutableSet.copyOf(hardwareProfiles), Collections.emptySet());
+      assertEquals(ImmutableSet.copyOf(hardwareProfiles), ImmutableSet.of());
    }
 }

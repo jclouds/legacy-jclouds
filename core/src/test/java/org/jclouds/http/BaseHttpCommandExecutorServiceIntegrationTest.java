@@ -45,6 +45,7 @@ import org.jclouds.util.Throwables2;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 import com.google.common.io.Closeables;
 
@@ -195,7 +196,7 @@ public abstract class BaseHttpCommandExecutorServiceIntegrationTest extends Base
          payload.getContentMetadata().setContentMD5(digest);
          Multimap<String, String> headers = client.postPayloadAndReturnHeaders("", payload);
          assertEquals(headers.get("x-Content-MD5"),
-               Collections.singleton(CryptoStreams.base64(digest)));
+               ImmutableList.of(CryptoStreams.base64(digest)));
          payload.release();
       } finally {
          if (os != null)
@@ -235,7 +236,7 @@ public abstract class BaseHttpCommandExecutorServiceIntegrationTest extends Base
       Payload payload = Payloads.newStringPayload("foo");
       payload.getContentMetadata().setContentDisposition("attachment; filename=photo.jpg");
       Multimap<String, String> headers = client.postPayloadAndReturnHeaders("", payload);
-      assertEquals(headers.get("x-Content-Disposition"), Collections.singleton("attachment; filename=photo.jpg"));
+      assertEquals(headers.get("x-Content-Disposition"), ImmutableList.of("attachment; filename=photo.jpg"));
       payload.release();
    }
 
@@ -244,7 +245,7 @@ public abstract class BaseHttpCommandExecutorServiceIntegrationTest extends Base
       Payload payload = Payloads.newStringPayload("foo");
       payload.getContentMetadata().setContentEncoding("gzip");
       Multimap<String, String> headers = client.postPayloadAndReturnHeaders("", payload);
-      assertEquals(headers.get("x-Content-Encoding"), Collections.singleton("gzip"));
+      assertEquals(headers.get("x-Content-Encoding"), ImmutableList.of("gzip"));
       payload.release();
    }
 
@@ -253,7 +254,7 @@ public abstract class BaseHttpCommandExecutorServiceIntegrationTest extends Base
       Payload payload = Payloads.newStringPayload("foo");
       payload.getContentMetadata().setContentLanguage("mi, en");
       Multimap<String, String> headers = client.postPayloadAndReturnHeaders("", payload);
-      assertEquals(headers.get("x-Content-Language"), Collections.singleton("mi, en"));
+      assertEquals(headers.get("x-Content-Language"), ImmutableList.of("mi, en"));
       payload.release();
    }
 

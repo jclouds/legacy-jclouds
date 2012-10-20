@@ -22,7 +22,7 @@ import static org.jclouds.ec2.options.CreateImageOptions.Builder.noReboot;
 import static org.jclouds.ec2.options.CreateImageOptions.Builder.withDescription;
 import static org.testng.Assert.assertEquals;
 
-import java.util.Collections;
+import com.google.common.collect.ImmutableList;
 
 import org.jclouds.http.options.HttpRequestOptions;
 import org.testng.annotations.Test;
@@ -44,21 +44,21 @@ public class CreateImageOptionsTest {
    public void testWithDescription() {
       CreateImageOptions options = new CreateImageOptions();
       options.withDescription("test");
-      assertEquals(options.buildFormParameters().get("Description"), Collections
-               .singletonList("test"));
+      assertEquals(options.buildFormParameters().get("Description"),
+               ImmutableList.of("test"));
    }
 
    @Test
    public void testNullWithDescription() {
       CreateImageOptions options = new CreateImageOptions();
-      assertEquals(options.buildFormParameters().get("Description"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("Description"), ImmutableList.of());
    }
 
    @Test
    public void testWithDescriptionStatic() {
       CreateImageOptions options = withDescription("test");
-      assertEquals(options.buildFormParameters().get("Description"), Collections
-               .singletonList("test"));
+      assertEquals(options.buildFormParameters().get("Description"),
+               ImmutableList.of("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
@@ -70,13 +70,13 @@ public class CreateImageOptionsTest {
    public void testNoReboot() {
       CreateImageOptions options = new CreateImageOptions();
       options.noReboot();
-      assertEquals(options.buildFormParameters().get("NoReboot"), Collections.singletonList("true"));
+      assertEquals(options.buildFormParameters().get("NoReboot"), ImmutableList.of("true"));
    }
 
    @Test
    public void testNoRebootStatic() {
       CreateImageOptions options = noReboot();
-      assertEquals(options.buildFormParameters().get("NoReboot"), Collections.singletonList("true"));
+      assertEquals(options.buildFormParameters().get("NoReboot"), ImmutableList.of("true"));
    }
 
 }

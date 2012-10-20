@@ -21,7 +21,7 @@ package org.jclouds.deltacloud.options;
 import static org.jclouds.deltacloud.options.CreateInstanceOptions.Builder.named;
 import static org.testng.Assert.assertEquals;
 
-import java.util.Collections;
+import com.google.common.collect.ImmutableList;
 
 import org.jclouds.http.options.HttpRequestOptions;
 import org.testng.annotations.Test;
@@ -43,19 +43,19 @@ public class CreateInstanceOptionsTest {
    public void testWithNamed() {
       CreateInstanceOptions options = new CreateInstanceOptions();
       options.named("test");
-      assertEquals(options.buildFormParameters().get("name"), Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("name"), ImmutableList.of("test"));
    }
 
    @Test
    public void testNullWithNamed() {
       CreateInstanceOptions options = new CreateInstanceOptions();
-      assertEquals(options.buildFormParameters().get("name"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("name"), ImmutableList.of());
    }
 
    @Test
    public void testWithNamedStatic() {
       CreateInstanceOptions options = named("test");
-      assertEquals(options.buildFormParameters().get("name"), Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("name"), ImmutableList.of("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)

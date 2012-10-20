@@ -43,7 +43,6 @@ import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
 import java.net.URI;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -1087,7 +1086,7 @@ public class RestAnnotationProcessor<T> {
    }
 
    private static List<String> getAcceptHeadersOrNull(Method method) {
-      List<String> accept = Collections.emptyList();
+      List<String> accept = ImmutableList.of();
       if (method.getDeclaringClass().isAnnotationPresent(Consumes.class)) {
          Consumes header = method.getDeclaringClass().getAnnotation(Consumes.class);
          accept = asList(header.value());

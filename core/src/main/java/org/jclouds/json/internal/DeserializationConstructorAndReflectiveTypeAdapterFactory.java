@@ -68,8 +68,8 @@ import com.google.gson.stream.JsonWriter;
  *    new ExtractSerializedName(), new ExtractNamed());
  * 
  * deserializationStrategy = new AnnotationConstructorNamingStrategy(
- *    Collections.singleton(javax.inject.Inject.class),
- *    Collections.singleton(new ExtractNamed()));
+ *    ImmutableSet.of(javax.inject.Inject.class),
+ *    ImmutableSet.of(new ExtractNamed()));
  *    
  * factory = new DeserializationConstructorAndReflectiveTypeAdapterFactory(new ConstructorConstructor(),
  *      serializationStrategy, Excluder.DEFAULT, deserializationStrategy);

@@ -33,6 +33,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Task.Status;
 import org.jclouds.vcloud.director.v1_5.features.TaskApi;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 /**
@@ -51,7 +52,7 @@ public class TaskStatusEquals implements Predicate<Task> {
    private Collection<Status> failingStatuses;
 
    public TaskStatusEquals(TaskApi taskApi, Status expectedStatus, Set<Status> failingStatuses) {
-      this(taskApi, Collections.singleton(expectedStatus), failingStatuses);
+      this(taskApi, ImmutableSet.of(expectedStatus), failingStatuses);
    }
 
    public TaskStatusEquals(TaskApi taskApi, Set<Status> expectedStatuses, Set<Status> failingStatuses) {

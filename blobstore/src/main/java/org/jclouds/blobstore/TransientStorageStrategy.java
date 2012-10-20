@@ -22,7 +22,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,6 +34,7 @@ import javax.ws.rs.core.UriBuilder;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimaps;
 
 import org.jclouds.blobstore.domain.Blob;
@@ -191,8 +191,8 @@ public class TransientStorageStrategy implements LocalStorageStrategy {
       blob.getMetadata().setETag(eTag);
       // Set HTTP headers to match metadata
       blob.getAllHeaders().replaceValues(HttpHeaders.LAST_MODIFIED,
-               Collections.singleton(dateService.rfc822DateFormat(blob.getMetadata().getLastModified())));
-      blob.getAllHeaders().replaceValues(HttpHeaders.ETAG, Collections.singleton(eTag));
+               ImmutableList.of(dateService.rfc822DateFormat(blob.getMetadata().getLastModified())));
+      blob.getAllHeaders().replaceValues(HttpHeaders.ETAG, ImmutableList.of(eTag));
       copyPayloadHeadersToBlob(payload, blob);
       blob.getAllHeaders().putAll(Multimaps.forMap(blob.getMetadata().getUserMetadata()));
       return blob;

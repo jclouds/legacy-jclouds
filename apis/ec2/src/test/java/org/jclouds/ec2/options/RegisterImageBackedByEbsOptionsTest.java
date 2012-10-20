@@ -28,12 +28,11 @@ import static org.jclouds.ec2.options.RegisterImageBackedByEbsOptions.Builder.wi
 import static org.jclouds.ec2.options.RegisterImageBackedByEbsOptions.Builder.withRamdisk;
 import static org.testng.Assert.assertEquals;
 
-import java.util.Collections;
-
 import org.jclouds.ec2.domain.Image.Architecture;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
 
 /**
@@ -54,21 +53,21 @@ public class RegisterImageBackedByEbsOptionsTest {
    public void testWithDescription() {
       RegisterImageBackedByEbsOptions options = new RegisterImageBackedByEbsOptions();
       options.withDescription("test");
-      assertEquals(options.buildFormParameters().get("Description"), Collections
-               .singletonList("test"));
+      assertEquals(options.buildFormParameters().get("Description"),
+               ImmutableList.of("test"));
    }
 
    @Test
    public void testNullWithDescription() {
       RegisterImageBackedByEbsOptions options = new RegisterImageBackedByEbsOptions();
-      assertEquals(options.buildFormParameters().get("Description"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("Description"), ImmutableList.of());
    }
 
    @Test
    public void testWithDescriptionStatic() {
       RegisterImageBackedByEbsOptions options = withDescription("test");
-      assertEquals(options.buildFormParameters().get("Description"), Collections
-               .singletonList("test"));
+      assertEquals(options.buildFormParameters().get("Description"),
+               ImmutableList.of("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
@@ -80,21 +79,21 @@ public class RegisterImageBackedByEbsOptionsTest {
    public void testWithArchitecture() {
       RegisterImageBackedByEbsOptions options = new RegisterImageBackedByEbsOptions();
       options.asArchitecture(Architecture.I386);
-      assertEquals(options.buildFormParameters().get("Architecture"), Collections
-               .singletonList("i386"));
+      assertEquals(options.buildFormParameters().get("Architecture"),
+               ImmutableList.of("i386"));
    }
 
    @Test
    public void testNullWithArchitecture() {
       RegisterImageBackedByEbsOptions options = new RegisterImageBackedByEbsOptions();
-      assertEquals(options.buildFormParameters().get("Architecture"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("Architecture"), ImmutableList.of());
    }
 
    @Test
    public void testWithArchitectureStatic() {
       RegisterImageBackedByEbsOptions options = asArchitecture(Architecture.I386);
-      assertEquals(options.buildFormParameters().get("Architecture"), Collections
-               .singletonList("i386"));
+      assertEquals(options.buildFormParameters().get("Architecture"),
+               ImmutableList.of("i386"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
@@ -106,19 +105,19 @@ public class RegisterImageBackedByEbsOptionsTest {
    public void testWithKernelId() {
       RegisterImageBackedByEbsOptions options = new RegisterImageBackedByEbsOptions();
       options.withKernelId("test");
-      assertEquals(options.buildFormParameters().get("KernelId"), Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("KernelId"), ImmutableList.of("test"));
    }
 
    @Test
    public void testNullWithKernelId() {
       RegisterImageBackedByEbsOptions options = new RegisterImageBackedByEbsOptions();
-      assertEquals(options.buildFormParameters().get("KernelId"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("KernelId"), ImmutableList.of());
    }
 
    @Test
    public void testWithKernelIdStatic() {
       RegisterImageBackedByEbsOptions options = withKernelId("test");
-      assertEquals(options.buildFormParameters().get("KernelId"), Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("KernelId"), ImmutableList.of("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
@@ -130,21 +129,21 @@ public class RegisterImageBackedByEbsOptionsTest {
    public void testWithRamdisk() {
       RegisterImageBackedByEbsOptions options = new RegisterImageBackedByEbsOptions();
       options.withRamdisk("test");
-      assertEquals(options.buildFormParameters().get("RamdiskId"), Collections
-               .singletonList("test"));
+      assertEquals(options.buildFormParameters().get("RamdiskId"),
+               ImmutableList.of("test"));
    }
 
    @Test
    public void testNullWithRamdisk() {
       RegisterImageBackedByEbsOptions options = new RegisterImageBackedByEbsOptions();
-      assertEquals(options.buildFormParameters().get("RamdiskId"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("RamdiskId"), ImmutableList.of());
    }
 
    @Test
    public void testWithRamdiskStatic() {
       RegisterImageBackedByEbsOptions options = withRamdisk("test");
-      assertEquals(options.buildFormParameters().get("RamdiskId"), Collections
-               .singletonList("test"));
+      assertEquals(options.buildFormParameters().get("RamdiskId"),
+               ImmutableList.of("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)

@@ -19,7 +19,6 @@
 package org.jclouds.demo.tweetstore.functions;
 
 import java.net.URI;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -67,7 +66,7 @@ public class ServiceToStoredTweetStatuses implements Function<String, Iterable<S
          StoredTweetStatus result = new StoredTweetStatus(service, host, container, null, null,
                   null, e.getMessage());
          logger.error(e, "Error listing service %s", service);
-         return Collections.singletonList(result);
+         return ImmutableList.of(result);
       }
 
    }
