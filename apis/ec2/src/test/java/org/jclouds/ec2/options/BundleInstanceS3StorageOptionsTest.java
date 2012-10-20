@@ -18,10 +18,10 @@
  */
 package org.jclouds.ec2.options;
 
-import static java.util.Collections.EMPTY_LIST;
-import static java.util.Collections.singleton;
 import static org.jclouds.ec2.options.BundleInstanceS3StorageOptions.Builder.bucketOwnedBy;
 import static org.testng.Assert.assertEquals;
+
+import com.google.common.collect.ImmutableList;
 
 import org.jclouds.http.options.HttpRequestOptions;
 import org.testng.annotations.Test;
@@ -44,26 +44,26 @@ public class BundleInstanceS3StorageOptionsTest {
    public void testBucketOwnedBy() {
       BundleInstanceS3StorageOptions options = new BundleInstanceS3StorageOptions();
       options.bucketOwnedBy("test");
-      assertEquals(options.buildFormParameters().get("Storage.S3.AWSAccessKeyId"), singleton("test"));
+      assertEquals(options.buildFormParameters().get("Storage.S3.AWSAccessKeyId"), ImmutableList.of("test"));
    }
 
    @Test(expectedExceptions = IllegalStateException.class)
    public void testNullBucketOwnedByNotInjected() {
       BundleInstanceS3StorageOptions options = new BundleInstanceS3StorageOptions();
-      assertEquals(options.buildFormParameters().get("Storage.S3.AWSAccessKeyId"), EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("Storage.S3.AWSAccessKeyId"), ImmutableList.of());
    }
 
    @Test
    public void testNullBucketOwnedBy() {
       BundleInstanceS3StorageOptions options = new BundleInstanceS3StorageOptions();
       options.currentAwsAccessKeyId = "foo";
-      assertEquals(options.buildFormParameters().get("Storage.S3.AWSAccessKeyId"), singleton("foo"));
+      assertEquals(options.buildFormParameters().get("Storage.S3.AWSAccessKeyId"), ImmutableList.of("foo"));
    }
 
    @Test
    public void testBucketOwnedByStatic() {
       BundleInstanceS3StorageOptions options = bucketOwnedBy("test");
-      assertEquals(options.buildFormParameters().get("Storage.S3.AWSAccessKeyId"), singleton("test"));
+      assertEquals(options.buildFormParameters().get("Storage.S3.AWSAccessKeyId"), ImmutableList.of("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)

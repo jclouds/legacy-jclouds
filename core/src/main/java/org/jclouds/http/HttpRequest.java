@@ -26,7 +26,6 @@ import static org.jclouds.io.Payloads.newUrlEncodedFormPayload;
 import static org.jclouds.util.Multimaps2.replaceEntries;
 
 import java.net.URI;
-import java.util.Collections;
 import java.util.List;
 
 import org.jclouds.io.Payload;
@@ -35,6 +34,7 @@ import org.jclouds.javax.annotation.Nullable;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
@@ -138,7 +138,7 @@ public class HttpRequest extends HttpMessage {
       private T replaceQuery(Multimap<String, String> map) {
          URI oldURI = endpoint;
          String query = makeQueryLine(map, null, Chars.toArray(skips.build()));
-         endpoint = new UriBuilderImpl().uri(oldURI).replaceQuery(query).buildFromEncodedMap(Collections.EMPTY_MAP);
+         endpoint = new UriBuilderImpl().uri(oldURI).replaceQuery(query).buildFromEncodedMap(ImmutableMap.<String, Object>of());
          return self();
       }
 
@@ -150,7 +150,7 @@ public class HttpRequest extends HttpMessage {
          checkNotNull(endpoint, "endpoint");
          checkNotNull(path, "path");
          URI oldURI = endpoint;
-         endpoint = new UriBuilderImpl().uri(oldURI).replacePath(path).buildFromEncodedMap(Collections.EMPTY_MAP);
+         endpoint = new UriBuilderImpl().uri(oldURI).replacePath(path).buildFromEncodedMap(ImmutableMap.<String, Object>of());
          return self();
       }
       

@@ -21,7 +21,6 @@ package org.jclouds.cloudstack.compute.strategy;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
-import java.util.Collections;
 import java.util.Map;
 
 import org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions;
@@ -36,7 +35,7 @@ import com.google.common.collect.ImmutableSet;
 @Test(singleThreaded = true, testName="OptionsConverterTest")
 public class OptionsConverterTest {
 
-   private static final Map<String,Network> EMPTY_NETWORKS_MAP = Collections.<String, Network>emptyMap();
+   private static final Map<String,Network> EMPTY_NETWORKS_MAP = ImmutableMap.<String, Network>of();
    private static final String ZONE_ID = "2";
    private final NetworkService firewallServiceWithStaticNat
       = NetworkService.builder().name("Firewall").capabilities(ImmutableMap.of("StaticNat", "true")).build();

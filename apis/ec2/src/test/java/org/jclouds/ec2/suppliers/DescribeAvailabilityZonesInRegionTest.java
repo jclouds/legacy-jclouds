@@ -23,7 +23,6 @@ import static org.easymock.classextension.EasyMock.createControl;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -59,10 +58,10 @@ public class DescribeAvailabilityZonesInRegionTest {
 
       expect(client.getAvailabilityZoneAndRegionServices()).andStubReturn(regionClient);
       expect(regionClient.describeAvailabilityZonesInRegion("accessibleRegion1")).andReturn(
-               Collections.singleton(info1));
+               ImmutableSet.of(info1));
       expect(regionClient.describeAvailabilityZonesInRegion("inaccessibleRegion")).andThrow(exception);
       expect(regionClient.describeAvailabilityZonesInRegion("accessibleRegion2")).andReturn(
-               Collections.singleton(info2));
+               ImmutableSet.of(info2));
       expect(info1.getZone()).andStubReturn("zone1");
       expect(info2.getZone()).andStubReturn("zone2");
 
@@ -113,14 +112,14 @@ public class DescribeAvailabilityZonesInRegionTest {
 
       expect(client.getAvailabilityZoneAndRegionServices()).andStubReturn(regionClient);
       expect(regionClient.describeAvailabilityZonesInRegion("emptyRegion")).andReturn(
-               Collections.<AvailabilityZoneInfo> emptySet());
+               ImmutableSet.<AvailabilityZoneInfo> of());
 
       Set<String> regions = ImmutableSet.of("emptyRegion");
       control.replay();
 
       DescribeAvailabilityZonesInRegion regionIdToZoneId = new DescribeAvailabilityZonesInRegion(client, Suppliers
                .ofInstance(regions));
-      assertEquals(regionIdToZoneId.get(), Collections.<String, String> emptyMap());
+      assertEquals(regionIdToZoneId.get(), ImmutableMap.<String, String> of());
       control.verify();
    }
 }

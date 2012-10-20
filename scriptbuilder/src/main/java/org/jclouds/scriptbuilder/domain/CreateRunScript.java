@@ -28,7 +28,6 @@ import static org.jclouds.scriptbuilder.domain.Statements.createOrOverwriteFile;
 import static org.jclouds.scriptbuilder.domain.Statements.exec;
 import static org.jclouds.scriptbuilder.domain.Statements.interpret;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -40,8 +39,8 @@ import com.google.common.base.Function;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.ImmutableList.Builder;
+import com.google.common.collect.Iterables;
 
 /**
  * Creates a run script
@@ -83,7 +82,7 @@ public class CreateRunScript extends StatementList {
 
       @Override
       public Iterable<String> functionDependencies(OsFamily family) {
-         return Collections.emptyList();
+         return ImmutableList.of();
       }
 
       @Override
@@ -95,7 +94,7 @@ public class CreateRunScript extends StatementList {
 
    @Override
    public Iterable<String> functionDependencies(OsFamily family) {
-      return Collections.emptyList();
+      return ImmutableList.of();
    }
 
    @Override

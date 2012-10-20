@@ -26,7 +26,6 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.USER;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
-import java.util.Collections;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
@@ -39,6 +38,8 @@ import org.jclouds.vcloud.director.v1_5.domain.User;
 import org.jclouds.vcloud.director.v1_5.internal.VCloudDirectorAdminApiExpectTest;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.net.HttpHeaders;
 
 /**
@@ -251,7 +252,7 @@ public class UserApiExpectTest extends VCloudDirectorAdminApiExpectTest {
                .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/role/ff1e0c91-1288-3664-82b7-a6fa303af4d1"))
                .build())
             .password("password")
-            .groups(Collections.<Reference>emptyList())
+            .groups(ImmutableList.<Reference>of())
             .build();
    }
    

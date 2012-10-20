@@ -22,8 +22,6 @@ import static org.jclouds.simpledb.options.ListDomainsOptions.Builder.maxNumberO
 import static org.jclouds.simpledb.options.ListDomainsOptions.Builder.nextToken;
 import static org.testng.Assert.assertEquals;
 
-import java.util.Collections;
-
 import org.jclouds.http.options.HttpRequestOptions;
 import org.testng.annotations.Test;
 
@@ -44,19 +42,19 @@ public class ListDomainsOptionsTest {
    public void testNextToken() {
       ListDomainsOptions options = new ListDomainsOptions();
       options.nextToken("test");
-      assertEquals(options.buildFormParameters().get("NextToken"), Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("NextToken"), ImmutableList.of("test"));
    }
 
    @Test
    public void testNullNextToken() {
       ListDomainsOptions options = new ListDomainsOptions();
-      assertEquals(options.buildFormParameters().get("NextToken"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("NextToken"), ImmutableList.of());
    }
 
    @Test
    public void testNextTokenStatic() {
       ListDomainsOptions options = nextToken("test");
-      assertEquals(options.buildFormParameters().get("NextToken"), Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("NextToken"), ImmutableList.of("test"));
    }
 
    public void testInvalidMaxNumberOfDomainsZero() {
@@ -71,19 +69,19 @@ public class ListDomainsOptionsTest {
    public void testMaxNumberOfDomains() {
       ListDomainsOptions options = new ListDomainsOptions();
       options.maxNumberOfDomains(1);
-      assertEquals(options.buildFormParameters().get("MaxNumberOfDomains"), Collections.singletonList("1"));
+      assertEquals(options.buildFormParameters().get("MaxNumberOfDomains"), ImmutableList.of("1"));
    }
 
    @Test
    public void testNullMaxNumberOfDomains() {
       ListDomainsOptions options = new ListDomainsOptions();
-      assertEquals(options.buildFormParameters().get("MaxNumberOfDomains"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("MaxNumberOfDomains"), ImmutableList.of());
    }
 
    @Test
    public void testMaxNumberOfDomainsStatic() {
       ListDomainsOptions options = maxNumberOfDomains(1);
-      assertEquals(options.buildFormParameters().get("MaxNumberOfDomains"), Collections.singletonList("1"));
+      assertEquals(options.buildFormParameters().get("MaxNumberOfDomains"), ImmutableList.of("1"));
    }
 
 }

@@ -23,7 +23,7 @@ import static org.jclouds.ec2.options.DescribeImagesOptions.Builder.imageIds;
 import static org.jclouds.ec2.options.DescribeImagesOptions.Builder.ownedBy;
 import static org.testng.Assert.assertEquals;
 
-import java.util.Collections;
+import com.google.common.collect.ImmutableList;
 
 import org.jclouds.http.options.HttpRequestOptions;
 import org.testng.annotations.Test;
@@ -45,21 +45,21 @@ public class DescribeImagesOptionsTest {
    public void testExecutableBy() {
       DescribeImagesOptions options = new DescribeImagesOptions();
       options.executableBy("test");
-      assertEquals(options.buildFormParameters().get("ExecutableBy"), Collections
-               .singletonList("test"));
+      assertEquals(options.buildFormParameters().get("ExecutableBy"),
+               ImmutableList.of("test"));
    }
 
    @Test
    public void testNullExecutableBy() {
       DescribeImagesOptions options = new DescribeImagesOptions();
-      assertEquals(options.buildFormParameters().get("ExecutableBy"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("ExecutableBy"), ImmutableList.of());
    }
 
    @Test
    public void testExecutableByStatic() {
       DescribeImagesOptions options = executableBy("test");
-      assertEquals(options.buildFormParameters().get("ExecutableBy"), Collections
-               .singletonList("test"));
+      assertEquals(options.buildFormParameters().get("ExecutableBy"),
+               ImmutableList.of("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
@@ -71,28 +71,28 @@ public class DescribeImagesOptionsTest {
    public void testOwners() {
       DescribeImagesOptions options = new DescribeImagesOptions();
       options.ownedBy("test");
-      assertEquals(options.buildFormParameters().get("Owner.1"), Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("Owner.1"), ImmutableList.of("test"));
    }
 
    @Test
    public void testMultipleOwners() {
       DescribeImagesOptions options = new DescribeImagesOptions();
       options.ownedBy("test", "trouble");
-      assertEquals(options.buildFormParameters().get("Owner.1"), Collections.singletonList("test"));
-      assertEquals(options.buildFormParameters().get("Owner.2"), Collections
-               .singletonList("trouble"));
+      assertEquals(options.buildFormParameters().get("Owner.1"), ImmutableList.of("test"));
+      assertEquals(options.buildFormParameters().get("Owner.2"),
+               ImmutableList.of("trouble"));
    }
 
    @Test
    public void testNullOwners() {
       DescribeImagesOptions options = new DescribeImagesOptions();
-      assertEquals(options.buildFormParameters().get("Owner.1"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("Owner.1"), ImmutableList.of());
    }
 
    @Test
    public void testOwnersStatic() {
       DescribeImagesOptions options = ownedBy("test");
-      assertEquals(options.buildFormParameters().get("Owner.1"), Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("Owner.1"), ImmutableList.of("test"));
    }
 
    public void testNoOwners() {
@@ -103,31 +103,31 @@ public class DescribeImagesOptionsTest {
    public void testImageIds() {
       DescribeImagesOptions options = new DescribeImagesOptions();
       options.imageIds("test");
-      assertEquals(options.buildFormParameters().get("ImageId.1"), Collections
-               .singletonList("test"));
+      assertEquals(options.buildFormParameters().get("ImageId.1"),
+               ImmutableList.of("test"));
    }
 
    @Test
    public void testMultipleImageIds() {
       DescribeImagesOptions options = new DescribeImagesOptions();
       options.imageIds("test", "trouble");
-      assertEquals(options.buildFormParameters().get("ImageId.1"), Collections
-               .singletonList("test"));
-      assertEquals(options.buildFormParameters().get("ImageId.2"), Collections
-               .singletonList("trouble"));
+      assertEquals(options.buildFormParameters().get("ImageId.1"),
+               ImmutableList.of("test"));
+      assertEquals(options.buildFormParameters().get("ImageId.2"),
+               ImmutableList.of("trouble"));
    }
 
    @Test
    public void testNullImageIds() {
       DescribeImagesOptions options = new DescribeImagesOptions();
-      assertEquals(options.buildFormParameters().get("ImageId.1"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("ImageId.1"), ImmutableList.of());
    }
 
    @Test
    public void testImageIdsStatic() {
       DescribeImagesOptions options = imageIds("test");
-      assertEquals(options.buildFormParameters().get("ImageId.1"), Collections
-               .singletonList("test"));
+      assertEquals(options.buildFormParameters().get("ImageId.1"),
+               ImmutableList.of("test"));
    }
 
    public void testNoImageIds() {
