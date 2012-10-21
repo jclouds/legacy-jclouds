@@ -33,7 +33,7 @@ import org.jclouds.abiquo.domain.cloud.VirtualAppliance;
 import org.jclouds.abiquo.domain.cloud.VirtualDatacenter;
 import org.jclouds.abiquo.domain.cloud.VirtualMachine;
 import org.jclouds.abiquo.domain.cloud.VirtualMachineTemplate;
-import org.jclouds.abiquo.domain.cloud.VirtualMachineTemplateWithZone;
+import org.jclouds.abiquo.domain.cloud.VirtualMachineTemplateInVirtualDatacenter;
 import org.jclouds.abiquo.domain.network.ExternalIp;
 import org.jclouds.abiquo.domain.network.Ip;
 import org.jclouds.abiquo.domain.network.PrivateIp;
@@ -157,13 +157,13 @@ public class VirtualMachineToNodeMetadataTest
         return templateToImage;
     }
 
-    private VirtualMachineTemplateWithZoneToHardware templateToHardware()
+    private VirtualMachineTemplateInVirtualDatacenterToHardware templateToHardware()
     {
-        VirtualMachineTemplateWithZoneToHardware virtualMachineTemplateToHardware =
-            EasyMock.createMock(VirtualMachineTemplateWithZoneToHardware.class);
+        VirtualMachineTemplateInVirtualDatacenterToHardware virtualMachineTemplateToHardware =
+            EasyMock.createMock(VirtualMachineTemplateInVirtualDatacenterToHardware.class);
 
         expect(
-            virtualMachineTemplateToHardware.apply(anyObject(VirtualMachineTemplateWithZone.class)))
+            virtualMachineTemplateToHardware.apply(anyObject(VirtualMachineTemplateInVirtualDatacenter.class)))
             .andReturn(hardware);
 
         replay(virtualMachineTemplateToHardware);

@@ -37,7 +37,7 @@ import org.jclouds.abiquo.domain.cloud.VirtualAppliance;
 import org.jclouds.abiquo.domain.cloud.VirtualDatacenter;
 import org.jclouds.abiquo.domain.cloud.VirtualMachine;
 import org.jclouds.abiquo.domain.cloud.VirtualMachineTemplate;
-import org.jclouds.abiquo.domain.cloud.VirtualMachineTemplateWithZone;
+import org.jclouds.abiquo.domain.cloud.VirtualMachineTemplateInVirtualDatacenter;
 import org.jclouds.abiquo.domain.enterprise.Enterprise;
 import org.jclouds.abiquo.domain.infrastructure.Datacenter;
 import org.jclouds.abiquo.domain.network.PublicIp;
@@ -74,7 +74,7 @@ import com.google.inject.Inject;
 @Singleton
 public class AbiquoComputeServiceAdapter
     implements
-    ComputeServiceAdapter<VirtualMachine, VirtualMachineTemplateWithZone, VirtualMachineTemplate, VirtualDatacenter>
+    ComputeServiceAdapter<VirtualMachine, VirtualMachineTemplateInVirtualDatacenter, VirtualMachineTemplate, VirtualDatacenter>
 {
     @Resource
     @Named(ComputeServiceConstants.COMPUTE_LOGGER)
@@ -168,29 +168,29 @@ public class AbiquoComputeServiceAdapter
     }
 
     @Override
-    public Iterable<VirtualMachineTemplateWithZone> listHardwareProfiles()
+    public Iterable<VirtualMachineTemplateInVirtualDatacenter> listHardwareProfiles()
     {
         // In Abiquo, images are scoped to a region (physical datacenter), and hardware profiles are
         // scoped to a zone (a virtual datacenter in the region, with a concrete virtualization
         // technology)
 
         return concat(transform(listImages(),
-            new Function<VirtualMachineTemplate, Iterable<VirtualMachineTemplateWithZone>>()
+            new Function<VirtualMachineTemplate, Iterable<VirtualMachineTemplateInVirtualDatacenter>>()
             {
                 @Override
-                public Iterable<VirtualMachineTemplateWithZone> apply(
+                public Iterable<VirtualMachineTemplateInVirtualDatacenter> apply(
                     final VirtualMachineTemplate template)
                 {
                     Iterable<VirtualDatacenter> compatibleZones =
                         compatibleVirtualDatacenters.execute(template);
 
                     return transform(compatibleZones,
-                        new Function<VirtualDatacenter, VirtualMachineTemplateWithZone>()
+                        new Function<VirtualDatacenter, VirtualMachineTemplateInVirtualDatacenter>()
                         {
                             @Override
-                            public VirtualMachineTemplateWithZone apply(final VirtualDatacenter vdc)
+                            public VirtualMachineTemplateInVirtualDatacenter apply(final VirtualDatacenter vdc)
                             {
-                                return new VirtualMachineTemplateWithZone(template, vdc);
+                                return new VirtualMachineTemplateInVirtualDatacenter(template, vdc);
                             }
                         });
                 }

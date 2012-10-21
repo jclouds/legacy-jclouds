@@ -32,7 +32,7 @@ import javax.inject.Singleton;
 import org.jclouds.abiquo.domain.cloud.VirtualDatacenter;
 import org.jclouds.abiquo.domain.cloud.VirtualMachine;
 import org.jclouds.abiquo.domain.cloud.VirtualMachineTemplate;
-import org.jclouds.abiquo.domain.cloud.VirtualMachineTemplateWithZone;
+import org.jclouds.abiquo.domain.cloud.VirtualMachineTemplateInVirtualDatacenter;
 import org.jclouds.abiquo.domain.network.Ip;
 import org.jclouds.abiquo.domain.network.PrivateIp;
 import org.jclouds.compute.domain.Hardware;
@@ -62,7 +62,7 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
 
     private final VirtualMachineTemplateToImage virtualMachineTemplateToImage;
 
-    private final VirtualMachineTemplateWithZoneToHardware virtualMachineTemplateToHardware;
+    private final VirtualMachineTemplateInVirtualDatacenterToHardware virtualMachineTemplateToHardware;
 
     private final VirtualMachineStateToNodeState virtualMachineStateToNodeState;
 
@@ -71,7 +71,7 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
     @Inject
     public VirtualMachineToNodeMetadata(
         final VirtualMachineTemplateToImage virtualMachineTemplateToImage,
-        final VirtualMachineTemplateWithZoneToHardware virtualMachineTemplateToHardware,
+        final VirtualMachineTemplateInVirtualDatacenterToHardware virtualMachineTemplateToHardware,
         final VirtualMachineStateToNodeState virtualMachineStateToNodeState,
         final Function<VirtualDatacenter, Location> virtualDatacenterToLocation)
     {
@@ -110,7 +110,7 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
         // Hardware details
         Hardware defaultHardware =
             virtualMachineTemplateToHardware
-                .apply(new VirtualMachineTemplateWithZone(template, vdc));
+                .apply(new VirtualMachineTemplateInVirtualDatacenter(template, vdc));
 
         Hardware hardware =
             HardwareBuilder
@@ -118,7 +118,7 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
                 .ram(vm.getRam())
                 .processors(
                     Lists.newArrayList(new Processor(vm.getCpu(),
-                        VirtualMachineTemplateWithZoneToHardware.DEFAULT_CORE_SPEED))) //
+                        VirtualMachineTemplateInVirtualDatacenterToHardware.DEFAULT_CORE_SPEED))) //
                 .build();
 
         builder.hardware(hardware);

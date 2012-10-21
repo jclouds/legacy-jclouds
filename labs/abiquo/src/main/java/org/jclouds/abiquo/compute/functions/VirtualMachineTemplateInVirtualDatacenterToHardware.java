@@ -26,7 +26,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.abiquo.domain.cloud.VirtualDatacenter;
 import org.jclouds.abiquo.domain.cloud.VirtualMachineTemplate;
-import org.jclouds.abiquo.domain.cloud.VirtualMachineTemplateWithZone;
+import org.jclouds.abiquo.domain.cloud.VirtualMachineTemplateInVirtualDatacenter;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Image;
@@ -47,8 +47,8 @@ import com.google.common.base.Function;
  * @author Ignasi Barrera
  */
 @Singleton
-public class VirtualMachineTemplateWithZoneToHardware implements
-    Function<VirtualMachineTemplateWithZone, Hardware>
+public class VirtualMachineTemplateInVirtualDatacenterToHardware implements
+    Function<VirtualMachineTemplateInVirtualDatacenter, Hardware>
 {
     /** The default core speed, 2.0Ghz. */
     public static final double DEFAULT_CORE_SPEED = 2.0;
@@ -56,7 +56,7 @@ public class VirtualMachineTemplateWithZoneToHardware implements
     private final Function<VirtualDatacenter, Location> virtualDatacenterToLocation;
 
     @Inject
-    public VirtualMachineTemplateWithZoneToHardware(
+    public VirtualMachineTemplateInVirtualDatacenterToHardware(
         final Function<VirtualDatacenter, Location> virtualDatacenterToLocation)
     {
         this.virtualDatacenterToLocation =
@@ -64,14 +64,15 @@ public class VirtualMachineTemplateWithZoneToHardware implements
     }
 
     @Override
-    public Hardware apply(final VirtualMachineTemplateWithZone templateWithZone)
+    public Hardware apply(
+        final VirtualMachineTemplateInVirtualDatacenter templateInVirtualDatacenter)
     {
-        VirtualMachineTemplate template = templateWithZone.getTemplate();
-        VirtualDatacenter zone = templateWithZone.getZone();
+        VirtualMachineTemplate template = templateInVirtualDatacenter.getTemplate();
+        VirtualDatacenter virtualDatacenter = templateInVirtualDatacenter.getZone();
 
         HardwareBuilder builder = new HardwareBuilder();
         builder.providerId(template.getId().toString());
-        builder.id(template.getId().toString() + "-" + zone.getId());
+        builder.id(template.getId().toString() + "/" + virtualDatacenter.getId());
         builder.uri(template.getURI());
 
         builder.name(template.getName());
@@ -79,8 +80,8 @@ public class VirtualMachineTemplateWithZoneToHardware implements
         builder.ram(template.getRamRequired());
 
         // Location information
-        builder.location(virtualDatacenterToLocation.apply(zone));
-        builder.hypervisor(zone.getHypervisorType().name());
+        builder.location(virtualDatacenterToLocation.apply(virtualDatacenter));
+        builder.hypervisor(virtualDatacenter.getHypervisorType().name());
         builder.supportsImage(ImagePredicates.idEquals(template.getId().toString()));
 
         VolumeBuilder volumeBuilder = new VolumeBuilder();
