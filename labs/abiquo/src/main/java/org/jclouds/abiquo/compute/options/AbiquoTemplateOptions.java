@@ -19,9 +19,6 @@
 
 package org.jclouds.abiquo.compute.options;
 
-import org.jclouds.abiquo.domain.network.Ip;
-import org.jclouds.abiquo.domain.network.Network;
-import org.jclouds.abiquo.domain.network.UnmanagedNetwork;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.options.TemplateOptions;
 
@@ -43,14 +40,6 @@ public class AbiquoTemplateOptions extends TemplateOptions implements Cloneable
 
     private String vncPassword;
 
-    private String virtualDatacenter;
-
-    private Ip< ? , ? >[] ips;
-
-    private UnmanagedNetwork[] unmanagedIps;
-
-    private Network< ? > gatewayNetwork;
-
     @Override
     public TemplateOptions clone()
     {
@@ -69,8 +58,6 @@ public class AbiquoTemplateOptions extends TemplateOptions implements Cloneable
             options.overrideCores(overrideCores);
             options.overrideRam(overrideRam);
             options.vncPassword(vncPassword);
-            options.virtualDatacenter(virtualDatacenter);
-            options.ips(ips);
         }
     }
 
@@ -124,71 +111,6 @@ public class AbiquoTemplateOptions extends TemplateOptions implements Cloneable
         return vncPassword;
     }
 
-    /**
-     * Set the virtual datacenter where the virtual machine must be deployed.
-     * 
-     * @return The template options with the virtual machine must be deployed.
-     */
-    public AbiquoTemplateOptions virtualDatacenter(final String virtualDatacenter)
-    {
-        this.virtualDatacenter = virtualDatacenter;
-        return this;
-    }
-
-    public String getVirtualDatacenter()
-    {
-        return virtualDatacenter;
-    }
-
-    /**
-     * Set the ip addresses for the virtual machine.
-     * 
-     * @return The template options with the ip addresses configuration.
-     */
-    public AbiquoTemplateOptions ips(final Ip< ? , ? >... ips)
-    {
-        this.ips = ips;
-        return this;
-    }
-
-    public Ip< ? , ? >[] getIps()
-    {
-        return ips;
-    }
-
-    /**
-     * Set the ip addresses that must be selected from unmanaged networks.
-     * 
-     * @return The template options with the ip addresses that must be selected from unmanaged
-     *         networks.
-     */
-    public AbiquoTemplateOptions unmanagedIps(final UnmanagedNetwork... unmanagedIps)
-    {
-        this.unmanagedIps = unmanagedIps;
-        return this;
-    }
-
-    public UnmanagedNetwork[] getUnmanagedIps()
-    {
-        return unmanagedIps;
-    }
-
-    /**
-     * Set the gateway network for the virtual machine.
-     * 
-     * @return The template options with the gateway network configuration.
-     */
-    public AbiquoTemplateOptions gatewayNetwork(final Network< ? > gatewayNetwork)
-    {
-        this.gatewayNetwork = gatewayNetwork;
-        return this;
-    }
-
-    public Network< ? > getGatewayNetwork()
-    {
-        return gatewayNetwork;
-    }
-
     public static class Builder
     {
         /**
@@ -216,42 +138,6 @@ public class AbiquoTemplateOptions extends TemplateOptions implements Cloneable
         {
             AbiquoTemplateOptions options = new AbiquoTemplateOptions();
             return options.vncPassword(vncPassword);
-        }
-
-        /**
-         * @see AbiquoTemplateOptions#virtualDatacenter(String)
-         */
-        public static AbiquoTemplateOptions virtualDatacenter(final String virtualDatacenter)
-        {
-            AbiquoTemplateOptions options = new AbiquoTemplateOptions();
-            return options.virtualDatacenter(virtualDatacenter);
-        }
-
-        /**
-         * @see AbiquoTemplateOptions#ips(Ip...)
-         */
-        public static AbiquoTemplateOptions ips(final Ip< ? , ? >... ips)
-        {
-            AbiquoTemplateOptions options = new AbiquoTemplateOptions();
-            return options.ips(ips);
-        }
-
-        /**
-         * @see AbiquoTemplateOptions#unmanagedIps(UnmanagedNetwork...)
-         */
-        public AbiquoTemplateOptions unmanagedIps(final UnmanagedNetwork... unmanagedIps)
-        {
-            AbiquoTemplateOptions options = new AbiquoTemplateOptions();
-            return options.unmanagedIps(unmanagedIps);
-        }
-
-        /**
-         * @see AbiquoTemplateOptions#gatewayNetwork(Network)
-         */
-        public static AbiquoTemplateOptions gatewayNetwork(final Network< ? > gatewayNetwork)
-        {
-            AbiquoTemplateOptions options = new AbiquoTemplateOptions();
-            return options.gatewayNetwork(gatewayNetwork);
         }
     }
 }

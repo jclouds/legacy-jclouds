@@ -19,27 +19,49 @@
 
 package org.jclouds.abiquo.compute.functions;
 
-import java.net.URI;
+import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.net.URI;
+import java.util.Map;
+
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.abiquo.domain.cloud.VirtualMachineTemplate;
+import org.jclouds.abiquo.domain.infrastructure.Datacenter;
+import org.jclouds.abiquo.reference.rest.ParentLinkName;
+import org.jclouds.collect.Memoized;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.Image.Status;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.domain.Location;
 
 import com.abiquo.model.rest.RESTLink;
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 
 /**
  * Transforms a {@link VirtualMachineTemplate} into an {@link Image}.
+ * <p>
+ * Images are scoped to a region (physical datacenter).
  * 
  * @author Ignasi Barrera
  */
 @Singleton
 public class VirtualMachineTemplateToImage implements Function<VirtualMachineTemplate, Image>
 {
+    private final Function<Datacenter, Location> datacenterToLocation;
+
+    private final Supplier<Map<Integer, Datacenter>> regionMap;
+
+    @Inject
+    public VirtualMachineTemplateToImage(final Function<Datacenter, Location> datacenterToLocation,
+        @Memoized final Supplier<Map<Integer, Datacenter>> reginoMap)
+    {
+        this.datacenterToLocation = checkNotNull(datacenterToLocation, "datacenterToLocation");
+        this.regionMap = checkNotNull(reginoMap, "reginoMap");
+    }
 
     @Override
     public Image apply(final VirtualMachineTemplate template)
@@ -49,6 +71,11 @@ public class VirtualMachineTemplateToImage implements Function<VirtualMachineTem
         builder.name(template.getName());
         builder.description(template.getDescription());
 
+        // Location information
+        Datacenter region =
+            regionMap.get().get(template.unwrap().getIdFromLink(ParentLinkName.DATACENTER));
+        builder.location(datacenterToLocation.apply(region));
+
         // Only conversions have a status
         builder.status(Status.AVAILABLE);
         builder.backendStatus(Status.AVAILABLE.name()); // Abiquo images do not have a status
@@ -57,9 +84,10 @@ public class VirtualMachineTemplateToImage implements Function<VirtualMachineTem
         builder.uri(downloadLink == null ? null : URI.create(downloadLink.getHref()));
 
         // TODO: Operating system not implemented in Abiquo Templates
+        // TODO: Image credentials still not present in Abiquo template metadata
+        // Will be added in Abiquo 2.4: http://jira.abiquo.com/browse/ABICLOUDPREMIUM-3647
         builder.operatingSystem(OperatingSystem.builder().description(template.getName()).build());
-        // TODO: image credentials
+
         return builder.build();
     }
-
 }

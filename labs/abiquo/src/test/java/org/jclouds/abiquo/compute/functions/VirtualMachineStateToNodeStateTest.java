@@ -44,7 +44,7 @@ public class VirtualMachineStateToNodeStateTest
         assertEquals(function.apply(VirtualMachineState.ON), Status.RUNNING);
         assertEquals(function.apply(VirtualMachineState.OFF), Status.SUSPENDED);
         assertEquals(function.apply(VirtualMachineState.PAUSED), Status.SUSPENDED);
-        assertEquals(function.apply(VirtualMachineState.NOT_ALLOCATED), Status.TERMINATED);
+        assertEquals(function.apply(VirtualMachineState.NOT_ALLOCATED), Status.PENDING);
         assertEquals(function.apply(VirtualMachineState.UNKNOWN), Status.UNRECOGNIZED);
     }
 }

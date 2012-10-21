@@ -19,23 +19,33 @@
 
 package org.jclouds.abiquo.compute.functions;
 
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.jclouds.abiquo.domain.DomainWrapper.wrap;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
 import java.net.URI;
+import java.util.Collections;
+import java.util.Map;
 
 import org.easymock.EasyMock;
 import org.jclouds.abiquo.AbiquoApi;
 import org.jclouds.abiquo.AbiquoAsyncApi;
 import org.jclouds.abiquo.domain.cloud.VirtualMachineTemplate;
+import org.jclouds.abiquo.domain.infrastructure.Datacenter;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.domain.Location;
 import org.jclouds.rest.RestContext;
 import org.testng.annotations.Test;
 
 import com.abiquo.model.rest.RESTLink;
 import com.abiquo.server.core.appslibrary.VirtualMachineTemplateDto;
+import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 
 /**
  * Unit tests for the {@link VirtualMachineTemplateToImage} class.
@@ -49,16 +59,22 @@ public class VirtualMachineTemplateToImageTest
     public void testVirtualMachineTemplateToImage()
     {
         RestContext<AbiquoApi, AbiquoAsyncApi> context = EasyMock.createMock(RestContext.class);
-        VirtualMachineTemplateToImage function = new VirtualMachineTemplateToImage();
+        Function<Datacenter, Location> dcToLocation = mockDatacenterToLocation();
+        Supplier<Map<Integer, Datacenter>> regionMap = mockRegionMap();
+        VirtualMachineTemplateToImage function =
+            new VirtualMachineTemplateToImage(dcToLocation, regionMap);
 
-        // VirtualMachineTemplate domain object does not have a builder, it is read only
         VirtualMachineTemplateDto dto = new VirtualMachineTemplateDto();
         dto.setId(5);
         dto.setName("Template");
         dto.setDescription("Template description");
         dto.addLink(new RESTLink("diskfile", "http://foo/bar"));
+        dto.addLink(new RESTLink("datacenter", "http://foo/bar/4"));
 
         Image image = function.apply(wrap(context, VirtualMachineTemplate.class, dto));
+
+        verify(regionMap);
+        verify(dcToLocation);
 
         assertEquals(image.getId(), dto.getId().toString());
         assertEquals(image.getName(), dto.getName());
@@ -72,15 +88,21 @@ public class VirtualMachineTemplateToImageTest
     public void testConvertWithoutDownloadLink()
     {
         RestContext<AbiquoApi, AbiquoAsyncApi> context = EasyMock.createMock(RestContext.class);
-        VirtualMachineTemplateToImage function = new VirtualMachineTemplateToImage();
+        Function<Datacenter, Location> dcToLocation = mockDatacenterToLocation();
+        Supplier<Map<Integer, Datacenter>> regionMap = mockRegionMap();
+        VirtualMachineTemplateToImage function =
+            new VirtualMachineTemplateToImage(dcToLocation, regionMap);
 
-        // VirtualMachineTemplate domain object does not have a builder, it is read only
         VirtualMachineTemplateDto dto = new VirtualMachineTemplateDto();
         dto.setId(5);
         dto.setName("Template");
         dto.setDescription("Template description");
+        dto.addLink(new RESTLink("datacenter", "http://foo/bar/4"));
 
         Image image = function.apply(wrap(context, VirtualMachineTemplate.class, dto));
+
+        verify(regionMap);
+        verify(dcToLocation);
 
         assertNull(image.getUri());
     }
@@ -90,10 +112,30 @@ public class VirtualMachineTemplateToImageTest
     public void testConvertWithoutId()
     {
         RestContext<AbiquoApi, AbiquoAsyncApi> context = EasyMock.createMock(RestContext.class);
-        VirtualMachineTemplateToImage function = new VirtualMachineTemplateToImage();
+        Function<Datacenter, Location> dcToLocation = mockDatacenterToLocation();
+        Supplier<Map<Integer, Datacenter>> regionMap = mockRegionMap();
+        VirtualMachineTemplateToImage function =
+            new VirtualMachineTemplateToImage(dcToLocation, regionMap);
 
-        // VirtualMachineTemplate domain object does not have a builder, it is read only
         VirtualMachineTemplateDto dto = new VirtualMachineTemplateDto();
         function.apply(wrap(context, VirtualMachineTemplate.class, dto));
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Function<Datacenter, Location> mockDatacenterToLocation()
+    {
+        Function<Datacenter, Location> mock = EasyMock.createMock(Function.class);
+        expect(mock.apply(anyObject(Datacenter.class))).andReturn(null);
+        replay(mock);
+        return mock;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Supplier<Map<Integer, Datacenter>> mockRegionMap()
+    {
+        Supplier<Map<Integer, Datacenter>> mock = EasyMock.createMock(Supplier.class);
+        expect(mock.get()).andReturn(Collections.EMPTY_MAP);
+        replay(mock);
+        return mock;
     }
 }

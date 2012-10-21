@@ -32,7 +32,7 @@ import javax.inject.Singleton;
 import org.jclouds.abiquo.domain.cloud.VirtualDatacenter;
 import org.jclouds.abiquo.domain.cloud.VirtualMachine;
 import org.jclouds.abiquo.domain.cloud.VirtualMachineTemplate;
-import org.jclouds.abiquo.domain.infrastructure.Datacenter;
+import org.jclouds.abiquo.domain.cloud.VirtualMachineTemplateInVirtualDatacenter;
 import org.jclouds.abiquo.domain.network.Ip;
 import org.jclouds.abiquo.domain.network.PrivateIp;
 import org.jclouds.compute.domain.Hardware;
@@ -41,12 +41,13 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.Processor;
+import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
-import org.jclouds.rest.AuthorizationException;
 
 import com.abiquo.server.core.cloud.VirtualMachineState;
 import com.google.common.base.Function;
 import com.google.common.base.Predicates;
+import com.google.common.collect.Lists;
 
 /**
  * Links a {@link VirtualMachine} object to a {@link NodeMetadata} one.
@@ -61,18 +62,18 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
 
     private final VirtualMachineTemplateToImage virtualMachineTemplateToImage;
 
-    private final VirtualMachineTemplateToHardware virtualMachineTemplateToHardware;
+    private final VirtualMachineTemplateInVirtualDatacenterToHardware virtualMachineTemplateToHardware;
 
     private final VirtualMachineStateToNodeState virtualMachineStateToNodeState;
 
-    private final DatacenterToLocation datacenterToLocation;
+    private final Function<VirtualDatacenter, Location> virtualDatacenterToLocation;
 
     @Inject
     public VirtualMachineToNodeMetadata(
         final VirtualMachineTemplateToImage virtualMachineTemplateToImage,
-        final VirtualMachineTemplateToHardware virtualMachineTemplateToHardware,
+        final VirtualMachineTemplateInVirtualDatacenterToHardware virtualMachineTemplateToHardware,
         final VirtualMachineStateToNodeState virtualMachineStateToNodeState,
-        final DatacenterToLocation datacenterToLocation)
+        final Function<VirtualDatacenter, Location> virtualDatacenterToLocation)
     {
         this.virtualMachineTemplateToImage =
             checkNotNull(virtualMachineTemplateToImage, "virtualMachineTemplateToImage");
@@ -80,7 +81,8 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
             checkNotNull(virtualMachineTemplateToHardware, "virtualMachineTemplateToHardware");
         this.virtualMachineStateToNodeState =
             checkNotNull(virtualMachineStateToNodeState, "virtualMachineStateToNodeState");
-        this.datacenterToLocation = checkNotNull(datacenterToLocation, "datacenterToLocation");
+        this.virtualDatacenterToLocation =
+            checkNotNull(virtualDatacenterToLocation, "virtualDatacenterToLocation");
     }
 
     @Override
@@ -92,19 +94,12 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
         builder.name(vm.getNameLabel());
         builder.group(vm.getVirtualAppliance().getName());
 
-        // TODO: builder.credentials() (http://jira.abiquo.com/browse/ABICLOUDPREMIUM-3647)
-        VirtualDatacenter vdc = vm.getVirtualDatacenter();
+        // TODO: Node credentials still not present in Abiquo template metadata
+        // Will be added in Abiquo 2.4: http://jira.abiquo.com/browse/ABICLOUDPREMIUM-3647
 
         // Location details
-        try
-        {
-            Datacenter datacenter = vdc.getDatacenter();
-            builder.location(datacenterToLocation.apply(datacenter));
-        }
-        catch (AuthorizationException ex)
-        {
-            logger.debug("User does not have permissions to see the location of the node");
-        }
+        VirtualDatacenter vdc = vm.getVirtualDatacenter();
+        builder.location(virtualDatacenterToLocation.apply(vdc));
 
         // Image details
         VirtualMachineTemplate template = vm.getTemplate();
@@ -113,18 +108,19 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
         builder.operatingSystem(image.getOperatingSystem());
 
         // Hardware details
-        Hardware defaultHardware = virtualMachineTemplateToHardware.apply(template);
+        Hardware defaultHardware =
+            virtualMachineTemplateToHardware
+                .apply(new VirtualMachineTemplateInVirtualDatacenter(template, vdc));
+
         Hardware hardware =
-            new HardwareBuilder() //
-                .ids(defaultHardware.getId()) //
-                .uri(defaultHardware.getUri()) //
-                .name(defaultHardware.getName()) //
-                .supportsImage(defaultHardware.supportsImage()) //
-                .ram(vm.getRam()) //
-                .hypervisor(vdc.getHypervisorType().name()) //
-                .processor(
-                    new Processor(vm.getCpu(), VirtualMachineTemplateToHardware.DEFAULT_CORE_SPEED)) //
+            HardwareBuilder
+                .fromHardware(defaultHardware)
+                .ram(vm.getRam())
+                .processors(
+                    Lists.newArrayList(new Processor(vm.getCpu(),
+                        VirtualMachineTemplateInVirtualDatacenterToHardware.DEFAULT_CORE_SPEED))) //
                 .build();
+
         builder.hardware(hardware);
 
         // Networking configuration
