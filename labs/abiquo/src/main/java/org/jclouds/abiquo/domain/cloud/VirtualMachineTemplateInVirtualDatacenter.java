@@ -26,13 +26,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * 
  * @author Ignasi Barrera
  */
-public class VirtualMachineTemplateWithZone
+public class VirtualMachineTemplateInVirtualDatacenter
 {
     private VirtualMachineTemplate template;
 
     private VirtualDatacenter zone;
 
-    public VirtualMachineTemplateWithZone(final VirtualMachineTemplate template,
+    public VirtualMachineTemplateInVirtualDatacenter(final VirtualMachineTemplate template,
         final VirtualDatacenter zone)
     {
         super();
