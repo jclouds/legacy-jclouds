@@ -19,40 +19,62 @@
 
 package org.jclouds.abiquo.compute.functions;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.Map;
+
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.abiquo.domain.cloud.VirtualDatacenter;
 import org.jclouds.abiquo.domain.infrastructure.Datacenter;
+import org.jclouds.abiquo.reference.rest.ParentLinkName;
+import org.jclouds.collect.Memoized;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
 
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * Converts a {@link Datacenter} to a {@link Location} one.
+ * Converts a {@link VirtualDatacenter} to a {@link Location} one.
  * <p>
- * Physical datacenters will be considered regions.
+ * Virtual datacenters will be considered zones, since images will be deployed in a virtual
+ * datacenter. Each zone will be scoped into a physical datacenter (region).
  * 
  * @author Ignasi Barrera
  */
 @Singleton
-public class DatacenterToLocation implements Function<Datacenter, Location>
+public class VirtualDatacenterToLocation implements Function<VirtualDatacenter, Location>
 {
+    private final Function<Datacenter, Location> datacenterToLocation;
+
+    private final Supplier<Map<Integer, Datacenter>> regionMap;
+
+    @Inject
+    public VirtualDatacenterToLocation(final Function<Datacenter, Location> datacenterToLocation,
+        @Memoized final Supplier<Map<Integer, Datacenter>> regionMap)
+    {
+        this.datacenterToLocation = checkNotNull(datacenterToLocation, "datacenterToLocation");
+        this.regionMap = checkNotNull(regionMap, "regionMap");
+    }
 
     @Override
-    public Location apply(final Datacenter datacenter)
+    public Location apply(final VirtualDatacenter vdc)
     {
         LocationBuilder builder = new LocationBuilder();
-        builder.id(datacenter.getId().toString());
-        builder.description(datacenter.getName() + " [" + datacenter.getLocation() + "]");
+        builder.id(vdc.getId().toString());
+        builder.description(vdc.getName());
         builder.metadata(ImmutableMap.<String, Object> of());
-        builder.scope(LocationScope.REGION);
+        builder.scope(LocationScope.ZONE);
         builder.iso3166Codes(ImmutableSet.<String> of());
 
-        builder.parent(new LocationBuilder().scope(LocationScope.PROVIDER).id("abiquo")
-            .description("abiquo").build());
+        Datacenter parent =
+            regionMap.get().get(vdc.unwrap().getIdFromLink(ParentLinkName.DATACENTER));
+        builder.parent(datacenterToLocation.apply(parent));
 
         return builder.build();
     }

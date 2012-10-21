@@ -25,11 +25,14 @@ import static com.google.common.collect.Iterables.transform;
 import java.util.Arrays;
 import java.util.List;
 
+import org.jclouds.abiquo.domain.cloud.Conversion;
 import org.jclouds.abiquo.domain.cloud.VirtualDatacenter;
+import org.jclouds.abiquo.domain.cloud.VirtualMachineTemplate;
 import org.jclouds.abiquo.domain.infrastructure.Datacenter;
 import org.jclouds.abiquo.reference.ValidationErrors;
 import org.jclouds.abiquo.reference.rest.ParentLinkName;
 
+import com.abiquo.model.enumerator.ConversionState;
 import com.abiquo.model.enumerator.HypervisorType;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -98,6 +101,35 @@ public class VirtualDatacenterPredicates
                         ValidationErrors.MISSING_REQUIRED_LINK);
 
                 return ids.contains(datacenterId);
+            }
+        };
+    }
+
+    /**
+     * Check if the given template type is compatible with the given virtual datacenter type taking
+     * into account the conversions of the template.
+     * 
+     * @param template The template to check.
+     * @return Predicate to check if the template or its conversions are compatibles with the given
+     *         virtual datacenter.
+     */
+    public static Predicate<VirtualDatacenter> compatibleWithTemplateOrConversions(
+        final VirtualMachineTemplate template)
+    {
+        return new Predicate<VirtualDatacenter>()
+        {
+            @Override
+            public boolean apply(final VirtualDatacenter vdc)
+            {
+                HypervisorType type = vdc.getHypervisorType();
+                boolean compatible = type.isCompatible(template.getDiskFormatType());
+                if (!compatible)
+                {
+                    List<Conversion> compatibleConversions =
+                        template.listConversions(type, ConversionState.FINISHED);
+                    compatible = compatibleConversions != null && !compatibleConversions.isEmpty();
+                }
+                return compatible;
             }
         };
     }

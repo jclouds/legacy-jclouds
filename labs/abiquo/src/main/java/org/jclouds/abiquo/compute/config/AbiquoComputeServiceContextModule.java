@@ -20,13 +20,16 @@
 package org.jclouds.abiquo.compute.config;
 
 import org.jclouds.abiquo.compute.functions.DatacenterToLocation;
-import org.jclouds.abiquo.compute.functions.VirtualMachineTemplateToHardware;
+import org.jclouds.abiquo.compute.functions.VirtualDatacenterToLocation;
 import org.jclouds.abiquo.compute.functions.VirtualMachineTemplateToImage;
+import org.jclouds.abiquo.compute.functions.VirtualMachineTemplateInVirtualDatacenterToHardware;
 import org.jclouds.abiquo.compute.functions.VirtualMachineToNodeMetadata;
 import org.jclouds.abiquo.compute.options.AbiquoTemplateOptions;
 import org.jclouds.abiquo.compute.strategy.AbiquoComputeServiceAdapter;
+import org.jclouds.abiquo.domain.cloud.VirtualDatacenter;
 import org.jclouds.abiquo.domain.cloud.VirtualMachine;
 import org.jclouds.abiquo.domain.cloud.VirtualMachineTemplate;
+import org.jclouds.abiquo.domain.cloud.VirtualMachineTemplateInVirtualDatacenter;
 import org.jclouds.abiquo.domain.infrastructure.Datacenter;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
@@ -49,7 +52,7 @@ import com.google.inject.TypeLiteral;
  */
 public class AbiquoComputeServiceContextModule
     extends
-    ComputeServiceAdapterContextModule<VirtualMachine, VirtualMachineTemplate, VirtualMachineTemplate, Datacenter>
+    ComputeServiceAdapterContextModule<VirtualMachine, VirtualMachineTemplateInVirtualDatacenter, VirtualMachineTemplate, VirtualDatacenter>
 {
 
     @Override
@@ -57,7 +60,7 @@ public class AbiquoComputeServiceContextModule
     {
         super.configure();
         bind(
-            new TypeLiteral<ComputeServiceAdapter<VirtualMachine, VirtualMachineTemplate, VirtualMachineTemplate, Datacenter>>()
+            new TypeLiteral<ComputeServiceAdapter<VirtualMachine, VirtualMachineTemplateInVirtualDatacenter, VirtualMachineTemplate, VirtualDatacenter>>()
             {
             }).to(AbiquoComputeServiceAdapter.class);
         bind(new TypeLiteral<Function<VirtualMachine, NodeMetadata>>()
@@ -66,15 +69,18 @@ public class AbiquoComputeServiceContextModule
         bind(new TypeLiteral<Function<VirtualMachineTemplate, Image>>()
         {
         }).to(VirtualMachineTemplateToImage.class);
-        bind(new TypeLiteral<Function<VirtualMachineTemplate, Hardware>>()
+        bind(new TypeLiteral<Function<VirtualMachineTemplateInVirtualDatacenter, Hardware>>()
         {
-        }).to(VirtualMachineTemplateToHardware.class);
+        }).to(VirtualMachineTemplateInVirtualDatacenterToHardware.class);
         bind(new TypeLiteral<Function<Datacenter, Location>>()
         {
         }).to(DatacenterToLocation.class);
+        bind(new TypeLiteral<Function<VirtualDatacenter, Location>>()
+        {
+        }).to(VirtualDatacenterToLocation.class);
         bind(ImplicitLocationSupplier.class).to(OnlyLocationOrFirstZone.class).in(Scopes.SINGLETON);
         bind(TemplateOptions.class).to(AbiquoTemplateOptions.class);
-        install(new LocationsFromComputeServiceAdapterModule<VirtualMachine, VirtualMachineTemplate, VirtualMachineTemplate, Datacenter>()
+        install(new LocationsFromComputeServiceAdapterModule<VirtualMachine, VirtualMachineTemplateInVirtualDatacenter, VirtualMachineTemplate, VirtualDatacenter>()
         {
         });
     }

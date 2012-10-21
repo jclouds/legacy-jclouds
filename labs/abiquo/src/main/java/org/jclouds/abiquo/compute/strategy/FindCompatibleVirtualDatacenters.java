@@ -17,34 +17,21 @@
  * under the License.
  */
 
-package org.jclouds.abiquo.suppliers;
+package org.jclouds.abiquo.compute.strategy;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import org.jclouds.abiquo.compute.strategy.internal.FindCompatibleVirtualDatacentersForImageAndConversions;
+import org.jclouds.abiquo.domain.cloud.VirtualDatacenter;
+import org.jclouds.abiquo.domain.cloud.VirtualMachineTemplate;
 
-import javax.inject.Inject;
-
-import org.jclouds.abiquo.domain.enterprise.Enterprise;
-
-import com.google.common.base.Supplier;
+import com.google.inject.ImplementedBy;
 
 /**
- * Gets the current enterprise.
+ * Finds all virtual datacenters where the given {@link VirtualMachineTemplate} can be deployed.
  * 
  * @author Ignasi Barrera
  */
-public class GetCurrentEnterprise implements Supplier<Enterprise>
+@ImplementedBy(FindCompatibleVirtualDatacentersForImageAndConversions.class)
+public interface FindCompatibleVirtualDatacenters
 {
-    private final GetCurrentUser currentUserSupplier;
-
-    @Inject
-    public GetCurrentEnterprise(final GetCurrentUser currentUserSupplier)
-    {
-        this.currentUserSupplier = checkNotNull(currentUserSupplier, "currentUserSupplier");
-    }
-
-    @Override
-    public Enterprise get()
-    {
-        return currentUserSupplier.get().getEnterprise();
-    }
+    Iterable<VirtualDatacenter> execute(VirtualMachineTemplate template);
 }
