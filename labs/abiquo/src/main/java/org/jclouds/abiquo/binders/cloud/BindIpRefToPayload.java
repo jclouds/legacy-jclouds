@@ -39,27 +39,23 @@ import com.abiquo.server.core.infrastructure.network.AbstractIpDto;
  * @author Ignasi Barrera
  */
 @Singleton
-public class BindIpRefToPayload extends BindToXMLPayload
-{
-    @Inject
-    public BindIpRefToPayload(final XMLParser xmlParser)
-    {
-        super(xmlParser);
-    }
+public class BindIpRefToPayload extends BindToXMLPayload {
+   @Inject
+   public BindIpRefToPayload(final XMLParser xmlParser) {
+      super(xmlParser);
+   }
 
-    @Override
-    public <R extends HttpRequest> R bindToRequest(final R request, final Object input)
-    {
-        checkArgument(checkNotNull(input, "input") instanceof AbstractIpDto,
+   @Override
+   public <R extends HttpRequest> R bindToRequest(final R request, final Object input) {
+      checkArgument(checkNotNull(input, "input") instanceof AbstractIpDto,
             "this binder is only valid for AbstractIpDto objects");
 
-        AbstractIpDto ip = (AbstractIpDto) input;
-        RESTLink selfLink =
-            checkNotNull(ip.searchLink("self"), "AbstractIpDto must have an self link");
+      AbstractIpDto ip = (AbstractIpDto) input;
+      RESTLink selfLink = checkNotNull(ip.searchLink("self"), "AbstractIpDto must have an self link");
 
-        LinksDto refs = new LinksDto();
-        refs.addLink(new RESTLink(selfLink.getTitle(), selfLink.getHref()));
+      LinksDto refs = new LinksDto();
+      refs.addLink(new RESTLink(selfLink.getTitle(), selfLink.getHref()));
 
-        return super.bindToRequest(request, refs);
-    }
+      return super.bindToRequest(request, refs);
+   }
 }

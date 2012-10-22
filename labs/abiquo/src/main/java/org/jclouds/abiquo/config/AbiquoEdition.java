@@ -24,7 +24,6 @@ package org.jclouds.abiquo.config;
  * 
  * @author Francesc Montserrat
  */
-public enum AbiquoEdition
-{
-    ENTERPRISE, COMMUNITY;
+public enum AbiquoEdition {
+   ENTERPRISE, COMMUNITY;
 }

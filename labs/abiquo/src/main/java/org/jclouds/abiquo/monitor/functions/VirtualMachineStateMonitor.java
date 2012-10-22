@@ -36,36 +36,30 @@ import com.google.common.base.Function;
  * @author Ignasi Barrera
  * @see MonitoringService
  */
-public class VirtualMachineStateMonitor implements Function<VirtualMachine, MonitorStatus>
-{
-    @Resource
-    private Logger logger = Logger.NULL;
+public class VirtualMachineStateMonitor implements Function<VirtualMachine, MonitorStatus> {
+   @Resource
+   private Logger logger = Logger.NULL;
 
-    private VirtualMachineState expectedState;
+   private VirtualMachineState expectedState;
 
-    public VirtualMachineStateMonitor(final VirtualMachineState expectedState)
-    {
-        super();
-        this.expectedState = checkNotNull(expectedState, "expectedState");
-    }
+   public VirtualMachineStateMonitor(final VirtualMachineState expectedState) {
+      super();
+      this.expectedState = checkNotNull(expectedState, "expectedState");
+   }
 
-    @Override
-    public MonitorStatus apply(final VirtualMachine virtualMachine)
-    {
-        checkNotNull(virtualMachine, "virtualMachine");
+   @Override
+   public MonitorStatus apply(final VirtualMachine virtualMachine) {
+      checkNotNull(virtualMachine, "virtualMachine");
 
-        try
-        {
-            VirtualMachineState state = virtualMachine.getState();
-            return state == expectedState ? MonitorStatus.DONE : MonitorStatus.CONTINUE;
-        }
-        catch (Exception ex)
-        {
-            logger.warn(ex, "exception thrown while monitoring %s on %s, returning CONTINUE",
-                virtualMachine, getClass().getName());
+      try {
+         VirtualMachineState state = virtualMachine.getState();
+         return state == expectedState ? MonitorStatus.DONE : MonitorStatus.CONTINUE;
+      } catch (Exception ex) {
+         logger.warn(ex, "exception thrown while monitoring %s on %s, returning CONTINUE", virtualMachine, getClass()
+               .getName());
 
-            return MonitorStatus.CONTINUE;
+         return MonitorStatus.CONTINUE;
 
-        }
-    }
+      }
+   }
 }

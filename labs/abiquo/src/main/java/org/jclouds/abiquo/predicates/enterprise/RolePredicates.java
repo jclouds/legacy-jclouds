@@ -32,19 +32,15 @@ import com.google.common.base.Predicate;
  * 
  * @author Ignasi Barrera
  */
-public class RolePredicates
-{
-    public static Predicate<Role> name(final String... names)
-    {
-        checkNotNull(names, "names must be defined");
+public class RolePredicates {
+   public static Predicate<Role> name(final String... names) {
+      checkNotNull(names, "names must be defined");
 
-        return new Predicate<Role>()
-        {
-            @Override
-            public boolean apply(final Role role)
-            {
-                return Arrays.asList(names).contains(role.getName());
-            }
-        };
-    }
+      return new Predicate<Role>() {
+         @Override
+         public boolean apply(final Role role) {
+            return Arrays.asList(names).contains(role.getName());
+         }
+      };
+   }
 }

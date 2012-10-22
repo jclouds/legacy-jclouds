@@ -49,167 +49,141 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Ignasi Barrera
  * @author Francesc Montserrat
- * @see API: <a href="http://community.abiquo.com/display/ABI20/Public+Network+Resource">
- *      http://community.abiquo.com/display/ABI20/Public+Network+Resource</a>
+ * @see API: <a
+ *      href="http://community.abiquo.com/display/ABI20/Public+Network+Resource"
+ *      > http://community.abiquo.com/display/ABI20/Public+Network+Resource</a>
  */
 @EnterpriseEdition
-public class PublicNetwork extends Network<PublicIp>
-{
-    /** The datacenter where the network belongs. */
-    private Datacenter datacenter;
+public class PublicNetwork extends Network<PublicIp> {
+   /** The datacenter where the network belongs. */
+   private Datacenter datacenter;
 
-    /**
-     * Constructor to be used only by the builder.
-     */
-    protected PublicNetwork(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-        final VLANNetworkDto target)
-    {
-        super(context, target);
-    }
+   /**
+    * Constructor to be used only by the builder.
+    */
+   protected PublicNetwork(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final VLANNetworkDto target) {
+      super(context, target);
+   }
 
-    /**
-     * @see API: <a href=
-     *      "http://community.abiquo.com/display/ABI20/Public+Network+Resource#PublicNetworkResource-DeleteaPublicNetwork"
-     *      >
-     *      http://community.abiquo.com/display/ABI20/Public+Network+Resource#PublicNetworkResource
-     *      -DeleteaPublicNetwork</a>
-     */
-    @Override
-    public void delete()
-    {
-        context.getApi().getInfrastructureApi().deleteNetwork(target);
-        target = null;
-    }
+   /**
+    * @see API: <a href=
+    *      "http://community.abiquo.com/display/ABI20/Public+Network+Resource#PublicNetworkResource-DeleteaPublicNetwork"
+    *      > http://community.abiquo.com/display/ABI20/Public+Network+Resource#
+    *      PublicNetworkResource -DeleteaPublicNetwork</a>
+    */
+   @Override
+   public void delete() {
+      context.getApi().getInfrastructureApi().deleteNetwork(target);
+      target = null;
+   }
 
-    /**
-     * @see API: <a href=
-     *      "http://community.abiquo.com/display/ABI20/Public+Network+Resource#PublicNetworkResource-CreateanewPublicNetwork"
-     *      >
-     *      http://community.abiquo.com/display/ABI20/Public+Network+Resource#PublicNetworkResource
-     *      -CreateanewPublicNetwork</a>
-     */
-    @Override
-    public void save()
-    {
-        target =
-            context.getApi().getInfrastructureApi().createNetwork(datacenter.unwrap(), target);
-    }
+   /**
+    * @see API: <a href=
+    *      "http://community.abiquo.com/display/ABI20/Public+Network+Resource#PublicNetworkResource-CreateanewPublicNetwork"
+    *      > http://community.abiquo.com/display/ABI20/Public+Network+Resource#
+    *      PublicNetworkResource -CreateanewPublicNetwork</a>
+    */
+   @Override
+   public void save() {
+      target = context.getApi().getInfrastructureApi().createNetwork(datacenter.unwrap(), target);
+   }
 
-    /**
-     * @see API: <a href=
-     *      "http://community.abiquo.com/display/ABI20/Public+Network+Resource#PublicNetworkResource-UpdateaPublicNetwork"
-     *      >
-     *      http://community.abiquo.com/display/ABI20/Public+Network+Resource#PublicNetworkResource
-     *      -UpdateaPublicNetwork</a>
-     */
-    @Override
-    public void update()
-    {
-        target = context.getApi().getInfrastructureApi().updateNetwork(target);
-    }
+   /**
+    * @see API: <a href=
+    *      "http://community.abiquo.com/display/ABI20/Public+Network+Resource#PublicNetworkResource-UpdateaPublicNetwork"
+    *      > http://community.abiquo.com/display/ABI20/Public+Network+Resource#
+    *      PublicNetworkResource -UpdateaPublicNetwork</a>
+    */
+   @Override
+   public void update() {
+      target = context.getApi().getInfrastructureApi().updateNetwork(target);
+   }
 
-    /**
-     * @see API: <a href=
-     *      "http://community.abiquo.com/display/ABI20/Public+IPs+Resource#PublicIPsResource-ReturnthelistofIPsforaPublicNetwork"
-     *      > http://community.abiquo.com/display/ABI20/Public+IPs+Resource#PublicIPsResource-
-     *      ReturnthelistofIPsforaPublicNetwork</a>
-     */
-    @Override
-    public List<PublicIp> listIps(final IpOptions options)
-    {
-        PublicIpsDto ips =
-            context.getApi().getInfrastructureApi().listPublicIps(target, options);
-        return wrap(context, PublicIp.class, ips.getCollection());
-    }
+   /**
+    * @see API: <a href=
+    *      "http://community.abiquo.com/display/ABI20/Public+IPs+Resource#PublicIPsResource-ReturnthelistofIPsforaPublicNetwork"
+    *      > http://community.abiquo.com/display/ABI20/Public+IPs+Resource#
+    *      PublicIPsResource- ReturnthelistofIPsforaPublicNetwork</a>
+    */
+   @Override
+   public List<PublicIp> listIps(final IpOptions options) {
+      PublicIpsDto ips = context.getApi().getInfrastructureApi().listPublicIps(target, options);
+      return wrap(context, PublicIp.class, ips.getCollection());
+   }
 
-    @Override
-    public PublicIp getIp(final Integer id)
-    {
-        PublicIpDto ip = context.getApi().getInfrastructureApi().getPublicIp(target, id);
-        return wrap(context, PublicIp.class, ip);
-    }
+   @Override
+   public PublicIp getIp(final Integer id) {
+      PublicIpDto ip = context.getApi().getInfrastructureApi().getPublicIp(target, id);
+      return wrap(context, PublicIp.class, ip);
+   }
 
-    // Parent access
+   // Parent access
 
-    public Datacenter getDatacenter()
-    {
-        RESTLink link =
-            checkNotNull(target.searchLink(ParentLinkName.DATACENTER),
-                ValidationErrors.MISSING_REQUIRED_LINK + " " + ParentLinkName.DATACENTER);
+   public Datacenter getDatacenter() {
+      RESTLink link = checkNotNull(target.searchLink(ParentLinkName.DATACENTER), ValidationErrors.MISSING_REQUIRED_LINK
+            + " " + ParentLinkName.DATACENTER);
 
-        ExtendedUtils utils = (ExtendedUtils) context.getUtils();
-        HttpResponse response = utils.getAbiquoHttpClient().get(link);
+      ExtendedUtils utils = (ExtendedUtils) context.getUtils();
+      HttpResponse response = utils.getAbiquoHttpClient().get(link);
 
-        ParseXMLWithJAXB<DatacenterDto> parser =
-            new ParseXMLWithJAXB<DatacenterDto>(utils.getXml(),
-                TypeLiteral.get(DatacenterDto.class));
+      ParseXMLWithJAXB<DatacenterDto> parser = new ParseXMLWithJAXB<DatacenterDto>(utils.getXml(),
+            TypeLiteral.get(DatacenterDto.class));
 
-        datacenter = wrap(context, Datacenter.class, parser.apply(response));
-        return datacenter;
-    }
+      datacenter = wrap(context, Datacenter.class, parser.apply(response));
+      return datacenter;
+   }
 
-    // Builder
+   // Builder
 
-    public static Builder builder(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-        final Datacenter datacenter)
-    {
-        return new Builder(context, datacenter);
-    }
+   public static Builder builder(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final Datacenter datacenter) {
+      return new Builder(context, datacenter);
+   }
 
-    public static class Builder extends NetworkBuilder<Builder>
-    {
-        private Datacenter datacenter;
+   public static class Builder extends NetworkBuilder<Builder> {
+      private Datacenter datacenter;
 
-        public Builder(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-            final Datacenter datacenter)
-        {
-            super(context);
-            checkNotNull(datacenter, ValidationErrors.NULL_RESOURCE + Datacenter.class);
-            checkNotNull(datacenter, ValidationErrors.NULL_RESOURCE + Enterprise.class);
-            this.datacenter = datacenter;
-            this.context = context;
-        }
+      public Builder(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final Datacenter datacenter) {
+         super(context);
+         checkNotNull(datacenter, ValidationErrors.NULL_RESOURCE + Datacenter.class);
+         checkNotNull(datacenter, ValidationErrors.NULL_RESOURCE + Enterprise.class);
+         this.datacenter = datacenter;
+         this.context = context;
+      }
 
-        public Builder datacenter(final Datacenter datacenter)
-        {
-            this.datacenter = datacenter;
-            return this;
-        }
+      public Builder datacenter(final Datacenter datacenter) {
+         this.datacenter = datacenter;
+         return this;
+      }
 
-        public PublicNetwork build()
-        {
-            VLANNetworkDto dto = new VLANNetworkDto();
-            dto.setName(name);
-            dto.setTag(tag);
-            dto.setGateway(gateway);
-            dto.setAddress(address);
-            dto.setMask(mask);
-            dto.setPrimaryDNS(primaryDNS);
-            dto.setSecondaryDNS(secondaryDNS);
-            dto.setSufixDNS(sufixDNS);
-            dto.setDefaultNetwork(defaultNetwork);
-            dto.setUnmanaged(false);
-            dto.setType(NetworkType.PUBLIC);
+      public PublicNetwork build() {
+         VLANNetworkDto dto = new VLANNetworkDto();
+         dto.setName(name);
+         dto.setTag(tag);
+         dto.setGateway(gateway);
+         dto.setAddress(address);
+         dto.setMask(mask);
+         dto.setPrimaryDNS(primaryDNS);
+         dto.setSecondaryDNS(secondaryDNS);
+         dto.setSufixDNS(sufixDNS);
+         dto.setDefaultNetwork(defaultNetwork);
+         dto.setUnmanaged(false);
+         dto.setType(NetworkType.PUBLIC);
 
-            PublicNetwork network = new PublicNetwork(context, dto);
-            network.datacenter = datacenter;
+         PublicNetwork network = new PublicNetwork(context, dto);
+         network.datacenter = datacenter;
 
-            return network;
-        }
+         return network;
+      }
 
-        public static Builder fromPublicNetwork(final PublicNetwork in)
-        {
-            return PublicNetwork.builder(in.context, in.datacenter).name(in.getName())
-                .tag(in.getTag()).gateway(in.getGateway()).address(in.getAddress())
-                .mask(in.getMask()).primaryDNS(in.getPrimaryDNS())
-                .secondaryDNS(in.getSecondaryDNS()).sufixDNS(in.getSufixDNS())
-                .defaultNetwork(in.getDefaultNetwork());
-        }
-    }
+      public static Builder fromPublicNetwork(final PublicNetwork in) {
+         return PublicNetwork.builder(in.context, in.datacenter).name(in.getName()).tag(in.getTag())
+               .gateway(in.getGateway()).address(in.getAddress()).mask(in.getMask()).primaryDNS(in.getPrimaryDNS())
+               .secondaryDNS(in.getSecondaryDNS()).sufixDNS(in.getSufixDNS()).defaultNetwork(in.getDefaultNetwork());
+      }
+   }
 
-    @Override
-    public String toString()
-    {
-        return "Public " + super.toString();
-    }
+   @Override
+   public String toString() {
+      return "Public " + super.toString();
+   }
 }

@@ -35,57 +35,49 @@ import com.google.common.collect.Iterables;
  * @author Ignasi Barrera
  */
 @Test(groups = "ucs", testName = "BladeLiveUcsTest")
-public class BladeLiveUcsTest extends BaseAbiquoApiLiveApiTest
-{
-    Blade blade;
+public class BladeLiveUcsTest extends BaseAbiquoApiLiveApiTest {
+   Blade blade;
 
-    public void testFindAvailableVirtualSwitch()
-    {
-        String vswitch = blade.getAvailableVirtualSwitches().get(0);
-        String found = blade.findAvailableVirtualSwitch(vswitch);
-        assertEquals(found, vswitch);
-    }
+   public void testFindAvailableVirtualSwitch() {
+      String vswitch = blade.getAvailableVirtualSwitches().get(0);
+      String found = blade.findAvailableVirtualSwitch(vswitch);
+      assertEquals(found, vswitch);
+   }
 
-    public void testGetRack()
-    {
-        ManagedRack rack = blade.getRack();
-        assertNotNull(rack);
-        assertEquals(rack.getId(), env.ucsRack.getId());
-    }
+   public void testGetRack() {
+      ManagedRack rack = blade.getRack();
+      assertNotNull(rack);
+      assertEquals(rack.getId(), env.ucsRack.getId());
+   }
 
-    public void testListBlades()
-    {
-        Iterable<Blade> blades = env.ucsRack.listMachines();
-        assertTrue(Iterables.size(blades) > 0);
-    }
+   public void testListBlades() {
+      Iterable<Blade> blades = env.ucsRack.listMachines();
+      assertTrue(Iterables.size(blades) > 0);
+   }
 
-    public void testGetLogicServer()
-    {
-        LogicServer logicServer = blade.getLogicServer();
-        assertNotNull(logicServer);
-        assertNotNull(logicServer.getName());
-    }
+   public void testGetLogicServer() {
+      LogicServer logicServer = blade.getLogicServer();
+      assertNotNull(logicServer);
+      assertNotNull(logicServer.getName());
+   }
 
-    public void testLedOn()
-    {
-        blade.ledOn();
-        BladeLocatorLed led = blade.getLocatorLed();
-        assertNotNull(led);
-        assertEquals(led.getAdminStatus(), "on");
-    }
+   public void testLedOn() {
+      blade.ledOn();
+      BladeLocatorLed led = blade.getLocatorLed();
+      assertNotNull(led);
+      assertEquals(led.getAdminStatus(), "on");
+   }
 
-    public void testLedOff()
-    {
-        blade.ledOff();
-        BladeLocatorLed led = blade.getLocatorLed();
-        assertNotNull(led);
-        assertEquals(led.getAdminStatus(), "off");
-    }
+   public void testLedOff() {
+      blade.ledOff();
+      BladeLocatorLed led = blade.getLocatorLed();
+      assertNotNull(led);
+      assertEquals(led.getAdminStatus(), "off");
+   }
 
-    @BeforeClass
-    public void setup()
-    {
-        blade = env.ucsRack.listMachines().get(0);
-        assertNotNull(blade);
-    }
+   @BeforeClass
+   public void setup() {
+      blade = env.ucsRack.listMachines().get(0);
+      assertNotNull(blade);
+   }
 }

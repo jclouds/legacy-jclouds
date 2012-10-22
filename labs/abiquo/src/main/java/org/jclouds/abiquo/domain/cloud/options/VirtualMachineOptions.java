@@ -27,41 +27,34 @@ import org.jclouds.http.options.BaseHttpRequestOptions;
  * 
  * @author Alessia Prete
  */
-public class VirtualMachineOptions extends BaseHttpRequestOptions
-{
-    public static Builder builder()
-    {
-        return new Builder();
-    }
+public class VirtualMachineOptions extends BaseHttpRequestOptions {
+   public static Builder builder() {
+      return new Builder();
+   }
 
-    @Override
-    protected Object clone() throws CloneNotSupportedException
-    {
-        VirtualMachineOptions options = new VirtualMachineOptions();
-        options.queryParameters.putAll(queryParameters);
-        return options;
-    }
+   @Override
+   protected Object clone() throws CloneNotSupportedException {
+      VirtualMachineOptions options = new VirtualMachineOptions();
+      options.queryParameters.putAll(queryParameters);
+      return options;
+   }
 
-    public static class Builder extends BaseFilterOptionsBuilder<Builder>
-    {
-        private Boolean force;
+   public static class Builder extends BaseFilterOptionsBuilder<Builder> {
+      private Boolean force;
 
-        public Builder force(final Boolean force)
-        {
-            this.force = force;
-            return this;
-        }
+      public Builder force(final Boolean force) {
+         this.force = force;
+         return this;
+      }
 
-        public VirtualMachineOptions build()
-        {
-            VirtualMachineOptions options = new VirtualMachineOptions();
+      public VirtualMachineOptions build() {
+         VirtualMachineOptions options = new VirtualMachineOptions();
 
-            if (force != null)
-            {
-                options.queryParameters.put("force", String.valueOf(force));
-            }
+         if (force != null) {
+            options.queryParameters.put("force", String.valueOf(force));
+         }
 
-            return addFilterOptions(options);
-        }
-    }
+         return addFilterOptions(options);
+      }
+   }
 }

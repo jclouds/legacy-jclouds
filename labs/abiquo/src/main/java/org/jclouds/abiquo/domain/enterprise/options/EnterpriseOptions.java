@@ -27,106 +27,89 @@ import org.jclouds.http.options.BaseHttpRequestOptions;
  * 
  * @author Francesc Montserrat
  */
-public class EnterpriseOptions extends BaseHttpRequestOptions
-{
-    public static Builder builder()
-    {
-        return new Builder();
-    }
+public class EnterpriseOptions extends BaseHttpRequestOptions {
+   public static Builder builder() {
+      return new Builder();
+   }
 
-    @Override
-    protected Object clone() throws CloneNotSupportedException
-    {
-        EnterpriseOptions options = new EnterpriseOptions();
-        options.queryParameters.putAll(queryParameters);
-        return options;
-    }
+   @Override
+   protected Object clone() throws CloneNotSupportedException {
+      EnterpriseOptions options = new EnterpriseOptions();
+      options.queryParameters.putAll(queryParameters);
+      return options;
+   }
 
-    public static class Builder extends BaseFilterOptionsBuilder<Builder>
-    {
-        private String idPricingTemplate;
+   public static class Builder extends BaseFilterOptionsBuilder<Builder> {
+      private String idPricingTemplate;
 
-        private Boolean included;
+      private Boolean included;
 
-        private String filter;
+      private String filter;
 
-        private Integer page;
+      private Integer page;
 
-        private Integer results;
+      private Integer results;
 
-        private Boolean network;
+      private Boolean network;
 
-        public Builder pricingTemplate(final String idPricingTemplate)
-        {
-            this.idPricingTemplate = idPricingTemplate;
-            return this;
-        }
+      public Builder pricingTemplate(final String idPricingTemplate) {
+         this.idPricingTemplate = idPricingTemplate;
+         return this;
+      }
 
-        public Builder included(final boolean included)
-        {
-            this.included = included;
-            return this;
-        }
+      public Builder included(final boolean included) {
+         this.included = included;
+         return this;
+      }
 
-        public Builder filter(final String filter)
-        {
-            this.filter = filter;
-            return this;
-        }
+      public Builder filter(final String filter) {
+         this.filter = filter;
+         return this;
+      }
 
-        public Builder network(final boolean network)
-        {
-            this.network = network;
-            return this;
-        }
+      public Builder network(final boolean network) {
+         this.network = network;
+         return this;
+      }
 
-        public Builder page(final int page)
-        {
-            this.page = page;
-            return this;
-        }
+      public Builder page(final int page) {
+         this.page = page;
+         return this;
+      }
 
-        public Builder results(final int results)
-        {
-            this.results = results;
-            return this;
-        }
+      public Builder results(final int results) {
+         this.results = results;
+         return this;
+      }
 
-        public EnterpriseOptions build()
-        {
-            EnterpriseOptions options = new EnterpriseOptions();
+      public EnterpriseOptions build() {
+         EnterpriseOptions options = new EnterpriseOptions();
 
-            if (idPricingTemplate != null)
-            {
-                options.queryParameters.put("idPricingTemplate", String.valueOf(idPricingTemplate));
-            }
+         if (idPricingTemplate != null) {
+            options.queryParameters.put("idPricingTemplate", String.valueOf(idPricingTemplate));
+         }
 
-            if (included != null)
-            {
-                options.queryParameters.put("included", String.valueOf(included));
-            }
+         if (included != null) {
+            options.queryParameters.put("included", String.valueOf(included));
+         }
 
-            if (filter != null)
-            {
-                options.queryParameters.put("filter", String.valueOf(filter));
-            }
+         if (filter != null) {
+            options.queryParameters.put("filter", String.valueOf(filter));
+         }
 
-            if (page != null)
-            {
-                options.queryParameters.put("page", String.valueOf(page));
-            }
+         if (page != null) {
+            options.queryParameters.put("page", String.valueOf(page));
+         }
 
-            if (results != null)
-            {
-                options.queryParameters.put("numResults", String.valueOf(results));
-            }
+         if (results != null) {
+            options.queryParameters.put("numResults", String.valueOf(results));
+         }
 
-            if (network != null)
-            {
-                options.queryParameters.put("network", String.valueOf(network));
-            }
+         if (network != null) {
+            options.queryParameters.put("network", String.valueOf(network));
+         }
 
-            return addFilterOptions(options);
-        }
-    }
+         return addFilterOptions(options);
+      }
+   }
 }

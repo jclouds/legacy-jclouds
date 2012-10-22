@@ -38,37 +38,31 @@ import com.google.inject.Singleton;
  * @see MonitoringService
  */
 @Singleton
-public class VirtualMachineDeployMonitor implements Function<VirtualMachine, MonitorStatus>
-{
-    @Resource
-    private Logger logger = Logger.NULL;
+public class VirtualMachineDeployMonitor implements Function<VirtualMachine, MonitorStatus> {
+   @Resource
+   private Logger logger = Logger.NULL;
 
-    @Override
-    public MonitorStatus apply(final VirtualMachine virtualMachine)
-    {
-        checkNotNull(virtualMachine, "virtualMachine");
+   @Override
+   public MonitorStatus apply(final VirtualMachine virtualMachine) {
+      checkNotNull(virtualMachine, "virtualMachine");
 
-        try
-        {
-            VirtualMachineState state = virtualMachine.getState();
+      try {
+         VirtualMachineState state = virtualMachine.getState();
 
-            switch (state)
-            {
-                case NOT_ALLOCATED:
-                case UNKNOWN:
-                    return MonitorStatus.FAILED;
-                case ON:
-                    return MonitorStatus.DONE;
-                default:
-                    return MonitorStatus.CONTINUE;
-            }
-        }
-        catch (Exception ex)
-        {
-            logger.warn(ex, "exception thrown while monitoring %s on %s, returning CONTINUE",
-                virtualMachine, getClass().getName());
+         switch (state) {
+            case NOT_ALLOCATED:
+            case UNKNOWN:
+               return MonitorStatus.FAILED;
+            case ON:
+               return MonitorStatus.DONE;
+            default:
+               return MonitorStatus.CONTINUE;
+         }
+      } catch (Exception ex) {
+         logger.warn(ex, "exception thrown while monitoring %s on %s, returning CONTINUE", virtualMachine, getClass()
+               .getName());
 
-            return MonitorStatus.CONTINUE;
-        }
-    }
+         return MonitorStatus.CONTINUE;
+      }
+   }
 }

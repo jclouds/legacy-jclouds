@@ -31,26 +31,21 @@ import com.abiquo.model.rest.RESTLink;
  * @author Ignasi Barrera
  */
 @Test(groups = "unit", testName = "BindLinkToPathTest")
-public class BindLinkToPathTest
-{
-    @Test(expectedExceptions = NullPointerException.class)
-    public void testGetNewEnpointNullInput()
-    {
-        BindLinkToPath binder = new BindLinkToPath();
-        binder.getNewEndpoint(null, null);
-    }
+public class BindLinkToPathTest {
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testGetNewEnpointNullInput() {
+      BindLinkToPath binder = new BindLinkToPath();
+      binder.getNewEndpoint(null, null);
+   }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
-    public void testGetNewEnpointInvalidInput()
-    {
-        BindLinkToPath binder = new BindLinkToPath();
-        binder.getNewEndpoint(null, new Object());
-    }
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testGetNewEnpointInvalidInput() {
+      BindLinkToPath binder = new BindLinkToPath();
+      binder.getNewEndpoint(null, new Object());
+   }
 
-    public void testGetNewEnpoint()
-    {
-        BindLinkToPath binder = new BindLinkToPath();
-        assertEquals(binder.getNewEndpoint(null, new RESTLink("edit", "http://foo/bar")),
-            "http://foo/bar");
-    }
+   public void testGetNewEnpoint() {
+      BindLinkToPath binder = new BindLinkToPath();
+      assertEquals(binder.getNewEndpoint(null, new RESTLink("edit", "http://foo/bar")), "http://foo/bar");
+   }
 }

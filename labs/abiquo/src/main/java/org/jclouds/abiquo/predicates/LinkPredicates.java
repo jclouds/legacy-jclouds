@@ -31,31 +31,24 @@ import com.google.common.base.Predicate;
  * 
  * @author Ignasi Barrera
  */
-public class LinkPredicates
-{
-    public static Predicate<RESTLink> rel(final String... rels)
-    {
-        checkNotNull(rels, "rels must be defined");
+public class LinkPredicates {
+   public static Predicate<RESTLink> rel(final String... rels) {
+      checkNotNull(rels, "rels must be defined");
 
-        return new Predicate<RESTLink>()
-        {
-            @Override
-            public boolean apply(final RESTLink link)
-            {
-                return Arrays.asList(rels).contains(link.getRel());
-            }
-        };
-    }
+      return new Predicate<RESTLink>() {
+         @Override
+         public boolean apply(final RESTLink link) {
+            return Arrays.asList(rels).contains(link.getRel());
+         }
+      };
+   }
 
-    public static Predicate<RESTLink> isNic()
-    {
-        return new Predicate<RESTLink>()
-        {
-            @Override
-            public boolean apply(final RESTLink link)
-            {
-                return link.getRel().matches("^nic[0-9]+$");
-            }
-        };
-    }
+   public static Predicate<RESTLink> isNic() {
+      return new Predicate<RESTLink>() {
+         @Override
+         public boolean apply(final RESTLink link) {
+            return link.getRel().matches("^nic[0-9]+$");
+         }
+      };
+   }
 }

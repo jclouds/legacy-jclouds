@@ -75,198 +75,184 @@ import com.google.common.io.Resources;
  * 
  * @author Ignasi Barrera
  */
-public class InfrastructureTestEnvironment implements TestEnvironment
-{
-    /** The rest context. */
-    public AbiquoContext context;
+public class InfrastructureTestEnvironment implements TestEnvironment {
+   /** The rest context. */
+   public AbiquoContext context;
 
-    // Environment data made public so tests can use them easily
+   // Environment data made public so tests can use them easily
 
-    public AdministrationService administrationService;
+   public AdministrationService administrationService;
 
-    public InfrastructureApi infrastructureApi;
+   public InfrastructureApi infrastructureApi;
 
-    public EnterpriseApi enterpriseApi;
+   public EnterpriseApi enterpriseApi;
 
-    public AdminApi adminApi;
+   public AdminApi adminApi;
 
-    public ConfigApi configApi;
+   public ConfigApi configApi;
 
-    // Resources
+   // Resources
 
-    public License license;
+   public License license;
 
-    public Datacenter datacenter;
+   public Datacenter datacenter;
 
-    public PublicNetwork publicNetwork;
+   public PublicNetwork publicNetwork;
 
-    public ExternalNetwork externalNetwork;
+   public ExternalNetwork externalNetwork;
 
-    public UnmanagedNetwork unmanagedNetwork;
+   public UnmanagedNetwork unmanagedNetwork;
 
-    public List<RemoteService> remoteServices;
+   public List<RemoteService> remoteServices;
 
-    public Rack rack;
+   public Rack rack;
 
-    public Machine machine;
+   public Machine machine;
 
-    public Enterprise enterprise;
+   public Enterprise enterprise;
 
-    public StorageDevice storageDevice;
+   public StorageDevice storageDevice;
 
-    public StoragePool storagePool;
+   public StoragePool storagePool;
 
-    public Tier tier;
+   public Tier tier;
 
-    public User user;
+   public User user;
 
-    public User enterpriseAdmin;
+   public User enterpriseAdmin;
 
-    public Role role;
+   public Role role;
 
-    public Role anotherRole;
+   public Role anotherRole;
 
-    public ManagedRack ucsRack;
+   public ManagedRack ucsRack;
 
-    public InfrastructureTestEnvironment(final AbiquoContext context)
-    {
-        super();
-        this.context = context;
-        this.administrationService = context.getAdministrationService();
-        this.context = context;
-        this.enterpriseApi = context.getApiContext().getApi().getEnterpriseApi();
-        this.infrastructureApi = context.getApiContext().getApi().getInfrastructureApi();
-        this.adminApi = context.getApiContext().getApi().getAdminApi();
-        this.configApi = context.getApiContext().getApi().getConfigApi();
-    }
+   public InfrastructureTestEnvironment(final AbiquoContext context) {
+      super();
+      this.context = context;
+      this.administrationService = context.getAdministrationService();
+      this.context = context;
+      this.enterpriseApi = context.getApiContext().getApi().getEnterpriseApi();
+      this.infrastructureApi = context.getApiContext().getApi().getInfrastructureApi();
+      this.adminApi = context.getApiContext().getApi().getAdminApi();
+      this.configApi = context.getApiContext().getApi().getConfigApi();
+   }
 
-    @Override
-    public void setup() throws Exception
-    {
-        // Configuration
-        createLicense();
+   @Override
+   public void setup() throws Exception {
+      // Configuration
+      createLicense();
 
-        // Intrastructure
-        createDatacenter();
-        createRack();
-        createMachine();
-        createStorageDevice();
-        createStoragePool();
-        createPublicNetwork();
+      // Intrastructure
+      createDatacenter();
+      createRack();
+      createMachine();
+      createStorageDevice();
+      createStoragePool();
+      createPublicNetwork();
 
-        // Enterprise
-        createEnterprise();
-        createRoles();
-        createUsers();
+      // Enterprise
+      createEnterprise();
+      createRoles();
+      createUsers();
 
-        // Networking
-        createExternalNetwork();
-        createUnmanagedNetwork();
-    }
+      // Networking
+      createExternalNetwork();
+      createUnmanagedNetwork();
+   }
 
-    @Override
-    public void tearDown() throws Exception
-    {
-        deleteUsers();
+   @Override
+   public void tearDown() throws Exception {
+      deleteUsers();
 
-        deleteRole(role);
-        deleteRole(anotherRole);
+      deleteRole(role);
+      deleteRole(anotherRole);
 
-        deleteUnmanagedNetwork();
-        deleteExternalNetwork();
-        deletePublicNetwork();
-        deleteStoragePool();
-        deleteStorageDevice();
-        deleteMachine();
-        deleteUcsRack();
-        deleteRack();
-        deleteDatacenter();
-        deleteEnterprise();
+      deleteUnmanagedNetwork();
+      deleteExternalNetwork();
+      deletePublicNetwork();
+      deleteStoragePool();
+      deleteStorageDevice();
+      deleteMachine();
+      deleteUcsRack();
+      deleteRack();
+      deleteDatacenter();
+      deleteEnterprise();
 
-        deleteLicense();
-    }
+      deleteLicense();
+   }
 
-    // Setup
+   // Setup
 
-    protected void createLicense() throws IOException
-    {
-        license = License.builder(context.getApiContext(), readLicense()).build();
+   protected void createLicense() throws IOException {
+      license = License.builder(context.getApiContext(), readLicense()).build();
 
-        license.add();
-        assertNotNull(license.getId());
-    }
+      license.add();
+      assertNotNull(license.getId());
+   }
 
-    protected void createDatacenter()
-    {
-        // Assume a monolithic install
-        URI endpoint = URI.create(context.getApiContext().getProviderMetadata().getEndpoint());
-        String remoteServicesAddress = endpoint.getHost();
+   protected void createDatacenter() {
+      // Assume a monolithic install
+      URI endpoint = URI.create(context.getApiContext().getProviderMetadata().getEndpoint());
+      String remoteServicesAddress = endpoint.getHost();
 
-        datacenter =
-            Datacenter.builder(context.getApiContext()).name(randomName()).location("Honolulu")
-                .remoteServices(remoteServicesAddress, AbiquoEdition.ENTERPRISE).build();
-        datacenter.save();
-        assertNotNull(datacenter.getId());
+      datacenter = Datacenter.builder(context.getApiContext()).name(randomName()).location("Honolulu")
+            .remoteServices(remoteServicesAddress, AbiquoEdition.ENTERPRISE).build();
+      datacenter.save();
+      assertNotNull(datacenter.getId());
 
-        remoteServices = datacenter.listRemoteServices();
-        assertEquals(remoteServices.size(), 7);
-    }
+      remoteServices = datacenter.listRemoteServices();
+      assertEquals(remoteServices.size(), 7);
+   }
 
-    protected void createMachine()
-    {
-        String ip = Config.get("abiquo.hypervisor.address");
-        HypervisorType type = HypervisorType.valueOf(Config.get("abiquo.hypervisor.type"));
-        String user = Config.get("abiquo.hypervisor.user");
-        String pass = Config.get("abiquo.hypervisor.pass");
+   protected void createMachine() {
+      String ip = Config.get("abiquo.hypervisor.address");
+      HypervisorType type = HypervisorType.valueOf(Config.get("abiquo.hypervisor.type"));
+      String user = Config.get("abiquo.hypervisor.user");
+      String pass = Config.get("abiquo.hypervisor.pass");
 
-        machine = datacenter.discoverSingleMachine(ip, type, user, pass);
+      machine = datacenter.discoverSingleMachine(ip, type, user, pass);
 
-        String vswitch =
-            machine.findAvailableVirtualSwitch(Config.get("abiquo.hypervisor.vswitch"));
-        machine.setVirtualSwitch(vswitch);
+      String vswitch = machine.findAvailableVirtualSwitch(Config.get("abiquo.hypervisor.vswitch"));
+      machine.setVirtualSwitch(vswitch);
 
-        Datastore datastore = machine.findDatastore(Config.get("abiquo.hypervisor.datastore"));
-        datastore.setEnabled(true);
+      Datastore datastore = machine.findDatastore(Config.get("abiquo.hypervisor.datastore"));
+      datastore.setEnabled(true);
 
-        machine.setRack(rack);
-        machine.save();
-        assertNotNull(machine.getId());
-    }
+      machine.setRack(rack);
+      machine.save();
+      assertNotNull(machine.getId());
+   }
 
-    protected void createRack()
-    {
-        rack = Rack.builder(context.getApiContext(), datacenter).name(PREFIX + "Aloha").build();
-        rack.save();
-        assertNotNull(rack.getId());
-    }
+   protected void createRack() {
+      rack = Rack.builder(context.getApiContext(), datacenter).name(PREFIX + "Aloha").build();
+      rack.save();
+      assertNotNull(rack.getId());
+   }
 
-    public void createUcsRack()
-    {
-        String ip = Config.get("abiquo.ucs.address");
-        Integer port = Integer.parseInt(Config.get("abiquo.ucs.port"));
-        String user = Config.get("abiquo.ucs.user");
-        String pass = Config.get("abiquo.ucs.pass");
+   public void createUcsRack() {
+      String ip = Config.get("abiquo.ucs.address");
+      Integer port = Integer.parseInt(Config.get("abiquo.ucs.port"));
+      String user = Config.get("abiquo.ucs.user");
+      String pass = Config.get("abiquo.ucs.pass");
 
-        ucsRack =
-            ManagedRack.builder(context.getApiContext(), datacenter).ipAddress(ip).port(port)
-                .user(user).name("ucs rack").password(pass).build();
+      ucsRack = ManagedRack.builder(context.getApiContext(), datacenter).ipAddress(ip).port(port).user(user)
+            .name("ucs rack").password(pass).build();
 
-        ucsRack.save();
-        assertNotNull(ucsRack.getId());
-    }
+      ucsRack.save();
+      assertNotNull(ucsRack.getId());
+   }
 
-    protected void createStorageDevice()
-    {
-        String ip = Config.get("abiquo.storage.address");
-        String type = Config.get("abiquo.storage.type");
-        String user = Config.get("abiquo.storage.user");
-        String pass = Config.get("abiquo.storage.pass");
+   protected void createStorageDevice() {
+      String ip = Config.get("abiquo.storage.address");
+      String type = Config.get("abiquo.storage.type");
+      String user = Config.get("abiquo.storage.user");
+      String pass = Config.get("abiquo.storage.pass");
 
-        List<StorageDeviceMetadata> devices = datacenter.listSupportedStorageDevices();
-        StorageDeviceMetadata metadata =
-            Iterables.find(devices, StorageDeviceMetadataPredicates.type(type));
+      List<StorageDeviceMetadata> devices = datacenter.listSupportedStorageDevices();
+      StorageDeviceMetadata metadata = Iterables.find(devices, StorageDeviceMetadataPredicates.type(type));
 
-        storageDevice = StorageDevice.builder(context.getApiContext(), datacenter) //
+      storageDevice = StorageDevice.builder(context.getApiContext(), datacenter) //
             .name(PREFIX + "Storage Device")//
             .type(type)//
             .managementIp(ip).managementPort(metadata.getDefaultManagementPort())//
@@ -275,257 +261,211 @@ public class InfrastructureTestEnvironment implements TestEnvironment
             .password(pass) //
             .build();
 
-        storageDevice.save();
-        assertNotNull(storageDevice.getId());
-    }
+      storageDevice.save();
+      assertNotNull(storageDevice.getId());
+   }
 
-    protected void createStoragePool()
-    {
-        String pool = Config.get("abiquo.storage.pool");
+   protected void createStoragePool() {
+      String pool = Config.get("abiquo.storage.pool");
 
-        storagePool = storageDevice.findRemoteStoragePool(StoragePoolPredicates.name(pool));
-        tier = datacenter.findTier(TierPredicates.name("Default Tier 1"));
+      storagePool = storageDevice.findRemoteStoragePool(StoragePoolPredicates.name(pool));
+      tier = datacenter.findTier(TierPredicates.name("Default Tier 1"));
 
-        storagePool.setTier(tier);
-        storagePool.save();
+      storagePool.setTier(tier);
+      storagePool.save();
 
-        assertNotNull(storagePool.getUUID());
-    }
+      assertNotNull(storagePool.getUUID());
+   }
 
-    protected void createUsers()
-    {
-        Role userRole = administrationService.findRole(RolePredicates.name("USER"));
-        Role enterpriseAdminRole =
-            administrationService.findRole(RolePredicates.name("ENTERPRISE_ADMIN"));
+   protected void createUsers() {
+      Role userRole = administrationService.findRole(RolePredicates.name("USER"));
+      Role enterpriseAdminRole = administrationService.findRole(RolePredicates.name("ENTERPRISE_ADMIN"));
 
-        user =
-            User.builder(context.getApiContext(), enterprise, userRole)
-                .name(randomName(), randomName()).nick("jclouds").authType("ABIQUO")
-                .description(randomName()).email(randomName() + "@abiquo.com").locale("en_US")
-                .password("user").build();
+      user = User.builder(context.getApiContext(), enterprise, userRole).name(randomName(), randomName())
+            .nick("jclouds").authType("ABIQUO").description(randomName()).email(randomName() + "@abiquo.com")
+            .locale("en_US").password("user").build();
 
-        user.save();
-        assertNotNull(user.getId());
-        assertEquals(userRole.getId(), user.getRole().getId());
+      user.save();
+      assertNotNull(user.getId());
+      assertEquals(userRole.getId(), user.getRole().getId());
 
-        enterpriseAdmin =
-            User.builder(context.getApiContext(), enterprise, enterpriseAdminRole)
-                .name(randomName(), randomName()).nick("jclouds-admin").authType("ABIQUO")
-                .description(randomName()).email(randomName() + "@abiquo.com").locale("en_US")
-                .password("admin").build();
+      enterpriseAdmin = User.builder(context.getApiContext(), enterprise, enterpriseAdminRole)
+            .name(randomName(), randomName()).nick("jclouds-admin").authType("ABIQUO").description(randomName())
+            .email(randomName() + "@abiquo.com").locale("en_US").password("admin").build();
 
-        enterpriseAdmin.save();
-        assertNotNull(enterpriseAdmin.getId());
-        assertEquals(enterpriseAdminRole.getId(), enterpriseAdmin.getRole().getId());
-    }
+      enterpriseAdmin.save();
+      assertNotNull(enterpriseAdmin.getId());
+      assertEquals(enterpriseAdminRole.getId(), enterpriseAdmin.getRole().getId());
+   }
 
-    protected void createRoles()
-    {
-        role = Role.builder(context.getApiContext()).name(randomName()).blocked(false).build();
-        role.save();
+   protected void createRoles() {
+      role = Role.builder(context.getApiContext()).name(randomName()).blocked(false).build();
+      role.save();
 
-        anotherRole = Role.Builder.fromRole(role).build();
-        anotherRole.setName("Another role");
-        anotherRole.save();
+      anotherRole = Role.Builder.fromRole(role).build();
+      anotherRole.setName("Another role");
+      anotherRole.save();
 
-        assertNotNull(role.getId());
-        assertNotNull(anotherRole.getId());
-    }
+      assertNotNull(role.getId());
+      assertNotNull(anotherRole.getId());
+   }
 
-    protected void createEnterprise()
-    {
-        enterprise = Enterprise.builder(context.getApiContext()).name(randomName()).build();
-        enterprise.save();
-        assertNotNull(enterprise.getId());
-        Limits limits = enterprise.allowDatacenter(datacenter);
-        assertNotNull(limits);
-    }
+   protected void createEnterprise() {
+      enterprise = Enterprise.builder(context.getApiContext()).name(randomName()).build();
+      enterprise.save();
+      assertNotNull(enterprise.getId());
+      Limits limits = enterprise.allowDatacenter(datacenter);
+      assertNotNull(limits);
+   }
 
-    protected void createPublicNetwork()
-    {
-        publicNetwork =
-            PublicNetwork.builder(context.getApiContext(), datacenter).name("PublicNetwork")
-                .gateway("80.80.80.1").address("80.80.80.0").mask(24).tag(5).build();
-        publicNetwork.save();
-        assertNotNull(publicNetwork.getId());
-    }
+   protected void createPublicNetwork() {
+      publicNetwork = PublicNetwork.builder(context.getApiContext(), datacenter).name("PublicNetwork")
+            .gateway("80.80.80.1").address("80.80.80.0").mask(24).tag(5).build();
+      publicNetwork.save();
+      assertNotNull(publicNetwork.getId());
+   }
 
-    protected void createExternalNetwork()
-    {
-        externalNetwork =
-            ExternalNetwork.builder(context.getApiContext(), datacenter, enterprise)
-                .name("ExternalNetwork").gateway("10.0.0.1").address("10.0.0.0").mask(24).tag(7)
-                .build();
-        externalNetwork.save();
-        assertNotNull(externalNetwork.getId());
-    }
+   protected void createExternalNetwork() {
+      externalNetwork = ExternalNetwork.builder(context.getApiContext(), datacenter, enterprise)
+            .name("ExternalNetwork").gateway("10.0.0.1").address("10.0.0.0").mask(24).tag(7).build();
+      externalNetwork.save();
+      assertNotNull(externalNetwork.getId());
+   }
 
-    protected void createUnmanagedNetwork()
-    {
-        unmanagedNetwork =
-            UnmanagedNetwork.builder(context.getApiContext(), datacenter, enterprise)
-                .name("UnmanagedNetwork").gateway("10.0.1.1").address("10.0.1.0").mask(24).tag(8)
-                .build();
-        unmanagedNetwork.save();
-        assertNotNull(unmanagedNetwork.getId());
-    }
+   protected void createUnmanagedNetwork() {
+      unmanagedNetwork = UnmanagedNetwork.builder(context.getApiContext(), datacenter, enterprise)
+            .name("UnmanagedNetwork").gateway("10.0.1.1").address("10.0.1.0").mask(24).tag(8).build();
+      unmanagedNetwork.save();
+      assertNotNull(unmanagedNetwork.getId());
+   }
 
-    // Tear down
+   // Tear down
 
-    protected void deleteUnmanagedNetwork()
-    {
-        if (unmanagedNetwork != null)
-        {
-            Integer id = unmanagedNetwork.getId();
-            unmanagedNetwork.delete();
-            assertNull(datacenter.getNetwork(id));
-        }
-    }
+   protected void deleteUnmanagedNetwork() {
+      if (unmanagedNetwork != null) {
+         Integer id = unmanagedNetwork.getId();
+         unmanagedNetwork.delete();
+         assertNull(datacenter.getNetwork(id));
+      }
+   }
 
-    protected void deleteExternalNetwork()
-    {
-        if (externalNetwork != null)
-        {
-            Integer id = externalNetwork.getId();
-            externalNetwork.delete();
-            assertNull(datacenter.getNetwork(id));
-        }
-    }
+   protected void deleteExternalNetwork() {
+      if (externalNetwork != null) {
+         Integer id = externalNetwork.getId();
+         externalNetwork.delete();
+         assertNull(datacenter.getNetwork(id));
+      }
+   }
 
-    protected void deletePublicNetwork()
-    {
-        if (publicNetwork != null)
-        {
-            Integer id = publicNetwork.getId();
-            publicNetwork.delete();
-            assertNull(datacenter.getNetwork(id));
-        }
-    }
+   protected void deletePublicNetwork() {
+      if (publicNetwork != null) {
+         Integer id = publicNetwork.getId();
+         publicNetwork.delete();
+         assertNull(datacenter.getNetwork(id));
+      }
+   }
 
-    protected void deleteUsers()
-    {
-        if (user != null)
-        {
-            String nick = user.getNick();
-            user.delete();
-            // Nick is unique in an enterprise
-            assertNull(enterprise.findUser(UserPredicates.nick(nick)));
-        }
+   protected void deleteUsers() {
+      if (user != null) {
+         String nick = user.getNick();
+         user.delete();
+         // Nick is unique in an enterprise
+         assertNull(enterprise.findUser(UserPredicates.nick(nick)));
+      }
 
-        if (enterpriseAdmin != null)
-        {
-            String nick = enterpriseAdmin.getNick();
-            enterpriseAdmin.delete();
-            // Nick is unique in an enterprise
-            assertNull(enterprise.findUser(UserPredicates.nick(nick)));
-        }
-    }
+      if (enterpriseAdmin != null) {
+         String nick = enterpriseAdmin.getNick();
+         enterpriseAdmin.delete();
+         // Nick is unique in an enterprise
+         assertNull(enterprise.findUser(UserPredicates.nick(nick)));
+      }
+   }
 
-    protected void deleteRole(final Role role)
-    {
-        if (role != null)
-        {
-            Integer roleId = role.getId();
-            role.delete();
-            assertNull(adminApi.getRole(roleId));
-        }
-    }
+   protected void deleteRole(final Role role) {
+      if (role != null) {
+         Integer roleId = role.getId();
+         role.delete();
+         assertNull(adminApi.getRole(roleId));
+      }
+   }
 
-    protected void deleteStoragePool()
-    {
-        if (storagePool != null)
-        {
-            String idStoragePool = storagePool.getUUID();
-            storagePool.delete();
-            assertNull(infrastructureApi.getStoragePool(storageDevice.unwrap(), idStoragePool));
-        }
+   protected void deleteStoragePool() {
+      if (storagePool != null) {
+         String idStoragePool = storagePool.getUUID();
+         storagePool.delete();
+         assertNull(infrastructureApi.getStoragePool(storageDevice.unwrap(), idStoragePool));
+      }
 
-    }
+   }
 
-    protected void deleteStorageDevice()
-    {
-        if (storageDevice != null)
-        {
-            Integer idStorageDevice = storageDevice.getId();
-            storageDevice.delete();
-            assertNull(infrastructureApi.getStorageDevice(datacenter.unwrap(), idStorageDevice));
-        }
-    }
+   protected void deleteStorageDevice() {
+      if (storageDevice != null) {
+         Integer idStorageDevice = storageDevice.getId();
+         storageDevice.delete();
+         assertNull(infrastructureApi.getStorageDevice(datacenter.unwrap(), idStorageDevice));
+      }
+   }
 
-    protected void deleteMachine()
-    {
-        if (machine != null && rack != null)
-        {
-            Integer idMachine = machine.getId();
-            machine.delete();
-            assertNull(infrastructureApi.getMachine(rack.unwrap(), idMachine));
-        }
-    }
+   protected void deleteMachine() {
+      if (machine != null && rack != null) {
+         Integer idMachine = machine.getId();
+         machine.delete();
+         assertNull(infrastructureApi.getMachine(rack.unwrap(), idMachine));
+      }
+   }
 
-    protected void deleteRack()
-    {
-        if (rack != null && datacenter != null)
-        {
-            Integer idRack = rack.getId();
-            rack.delete();
-            assertNull(infrastructureApi.getRack(datacenter.unwrap(), idRack));
-        }
-    }
+   protected void deleteRack() {
+      if (rack != null && datacenter != null) {
+         Integer idRack = rack.getId();
+         rack.delete();
+         assertNull(infrastructureApi.getRack(datacenter.unwrap(), idRack));
+      }
+   }
 
-    protected void deleteUcsRack()
-    {
-        if (ucsRack != null && datacenter != null)
-        {
-            Integer idRack = ucsRack.getId();
-            ucsRack.delete();
-            assertNull(infrastructureApi.getManagedRack(datacenter.unwrap(), idRack));
-        }
-    }
+   protected void deleteUcsRack() {
+      if (ucsRack != null && datacenter != null) {
+         Integer idRack = ucsRack.getId();
+         ucsRack.delete();
+         assertNull(infrastructureApi.getManagedRack(datacenter.unwrap(), idRack));
+      }
+   }
 
-    protected void deleteDatacenter()
-    {
-        if (datacenter != null)
-        {
-            // Remove limits first
-            enterprise.prohibitDatacenter(datacenter);
+   protected void deleteDatacenter() {
+      if (datacenter != null) {
+         // Remove limits first
+         enterprise.prohibitDatacenter(datacenter);
 
-            Integer idDatacenter = datacenter.getId();
-            datacenter.delete(); // Abiquo API will delete remote services too
-            assertNull(infrastructureApi.getDatacenter(idDatacenter));
-        }
-    }
+         Integer idDatacenter = datacenter.getId();
+         datacenter.delete(); // Abiquo API will delete remote services too
+         assertNull(infrastructureApi.getDatacenter(idDatacenter));
+      }
+   }
 
-    protected void deleteEnterprise()
-    {
-        if (enterprise != null)
-        {
-            Integer idEnterprise = enterprise.getId();
-            enterprise.delete();
-            assertNull(enterpriseApi.getEnterprise(idEnterprise));
-        }
-    }
+   protected void deleteEnterprise() {
+      if (enterprise != null) {
+         Integer idEnterprise = enterprise.getId();
+         enterprise.delete();
+         assertNull(enterpriseApi.getEnterprise(idEnterprise));
+      }
+   }
 
-    protected void deleteLicense()
-    {
-        license.remove();
-    }
+   protected void deleteLicense() {
+      license.remove();
+   }
 
-    protected static String randomName()
-    {
-        return PREFIX + UUID.randomUUID().toString().substring(0, 12);
-    }
+   protected static String randomName() {
+      return PREFIX + UUID.randomUUID().toString().substring(0, 12);
+   }
 
-    // Utility methods
+   // Utility methods
 
-    public static String readLicense() throws IOException
-    {
-        URL url = CloudTestEnvironment.class.getResource("/license/expired");
+   public static String readLicense() throws IOException {
+      URL url = CloudTestEnvironment.class.getResource("/license/expired");
 
-        return Resources.toString(url, Charset.defaultCharset());
-    }
+      return Resources.toString(url, Charset.defaultCharset());
+   }
 
-    public RemoteService findRemoteService(final RemoteServiceType type)
-    {
-        return find(remoteServices, RemoteServicePredicates.type(type));
-    }
+   public RemoteService findRemoteService(final RemoteServiceType type) {
+      return find(remoteServices, RemoteServicePredicates.type(type));
+   }
 }

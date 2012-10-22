@@ -24,38 +24,38 @@ package org.jclouds.abiquo.domain.exception;
  * 
  * @author Ignasi Barrera
  */
-public class BuilderException extends RuntimeException
-{
-    private static final long serialVersionUID = 1L;
+public class BuilderException extends RuntimeException {
+   private static final long serialVersionUID = 1L;
 
-    /**
-     * Creates a {@link BuilderException} with the given message.
-     * 
-     * @param message The message.
-     */
-    public BuilderException(String message)
-    {
-        super(message);
-    }
+   /**
+    * Creates a {@link BuilderException} with the given message.
+    * 
+    * @param message
+    *           The message.
+    */
+   public BuilderException(String message) {
+      super(message);
+   }
 
-    /**
-     * Creates a {@link BuilderException} with the given cause.
-     * 
-     * @param cause The cause.
-     */
-    public BuilderException(Throwable cause)
-    {
-        super(cause);
-    }
+   /**
+    * Creates a {@link BuilderException} with the given cause.
+    * 
+    * @param cause
+    *           The cause.
+    */
+   public BuilderException(Throwable cause) {
+      super(cause);
+   }
 
-    /**
-     * Creates a {@link BuilderException} with the given message and cause.
-     * 
-     * @param message The message.
-     * @param cause The cause.
-     */
-    public BuilderException(String message, Throwable cause)
-    {
-        super(message, cause);
-    }
+   /**
+    * Creates a {@link BuilderException} with the given message and cause.
+    * 
+    * @param message
+    *           The message.
+    * @param cause
+    *           The cause.
+    */
+   public BuilderException(String message, Throwable cause) {
+      super(message, cause);
+   }
 }

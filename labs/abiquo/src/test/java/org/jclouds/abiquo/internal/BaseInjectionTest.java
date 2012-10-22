@@ -40,32 +40,27 @@ import com.google.inject.Module;
  * @author Ignasi Barrera
  */
 @Test(groups = "unit", testName = "BaseEventServiceTest")
-public class BaseInjectionTest
-{
-    protected Injector injector;
+public class BaseInjectionTest {
+   protected Injector injector;
 
-    @BeforeClass
-    public void setup()
-    {
-        injector = ContextBuilder.newBuilder(new AbiquoApiMetadata()) //
+   @BeforeClass
+   public void setup() {
+      injector = ContextBuilder.newBuilder(new AbiquoApiMetadata()) //
             .credentials("identity", "credential") //
             .modules(ImmutableSet.<Module> of(new NullLoggingModule())) //
             .overrides(buildProperties()) //
             .build(AbiquoContext.class).getUtils().getInjector();
-    }
+   }
 
-    protected Properties buildProperties()
-    {
-        return new Properties();
-    }
+   protected Properties buildProperties() {
+      return new Properties();
+   }
 
-    @AfterClass
-    public void tearDown() throws Exception
-    {
-        if (injector != null)
-        {
-            injector.getInstance(Closer.class).close();
-        }
-    }
+   @AfterClass
+   public void tearDown() throws Exception {
+      if (injector != null) {
+         injector.getInstance(Closer.class).close();
+      }
+   }
 
 }

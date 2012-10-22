@@ -38,22 +38,19 @@ import com.google.common.collect.ImmutableSet;
  * @author Ignasi Barrera
  */
 @Singleton
-public class DatacenterToLocation implements Function<Datacenter, Location>
-{
+public class DatacenterToLocation implements Function<Datacenter, Location> {
 
-    @Override
-    public Location apply(final Datacenter datacenter)
-    {
-        LocationBuilder builder = new LocationBuilder();
-        builder.id(datacenter.getId().toString());
-        builder.description(datacenter.getName() + " [" + datacenter.getLocation() + "]");
-        builder.metadata(ImmutableMap.<String, Object> of());
-        builder.scope(LocationScope.REGION);
-        builder.iso3166Codes(ImmutableSet.<String> of());
+   @Override
+   public Location apply(final Datacenter datacenter) {
+      LocationBuilder builder = new LocationBuilder();
+      builder.id(datacenter.getId().toString());
+      builder.description(datacenter.getName() + " [" + datacenter.getLocation() + "]");
+      builder.metadata(ImmutableMap.<String, Object> of());
+      builder.scope(LocationScope.REGION);
+      builder.iso3166Codes(ImmutableSet.<String> of());
 
-        builder.parent(new LocationBuilder().scope(LocationScope.PROVIDER).id("abiquo")
-            .description("abiquo").build());
+      builder.parent(new LocationBuilder().scope(LocationScope.PROVIDER).id("abiquo").description("abiquo").build());
 
-        return builder.build();
-    }
+      return builder.build();
+   }
 }

@@ -31,37 +31,31 @@ import com.abiquo.server.core.infrastructure.storage.StorageDeviceMetadataDto;
  * 
  * @author Ignasi Barrera
  */
-public class StorageDeviceMetadata extends DomainWrapper<StorageDeviceMetadataDto>
-{
-    /**
-     * Constructor to be used only by the builder.
-     */
-    protected StorageDeviceMetadata(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-        final StorageDeviceMetadataDto target)
-    {
-        super(context, target);
-    }
+public class StorageDeviceMetadata extends DomainWrapper<StorageDeviceMetadataDto> {
+   /**
+    * Constructor to be used only by the builder.
+    */
+   protected StorageDeviceMetadata(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
+         final StorageDeviceMetadataDto target) {
+      super(context, target);
+   }
 
-    // Delegate methods
+   // Delegate methods
 
-    public String getType()
-    {
-        return target.getType();
-    }
+   public String getType() {
+      return target.getType();
+   }
 
-    public int getDefaultManagementPort()
-    {
-        return target.getDefaultManagementPort();
-    }
+   public int getDefaultManagementPort() {
+      return target.getDefaultManagementPort();
+   }
 
-    public int getDefaultIscsiPort()
-    {
-        return target.getDefaultIscsiPort();
-    }
+   public int getDefaultIscsiPort() {
+      return target.getDefaultIscsiPort();
+   }
 
-    public boolean requiresAuthentication()
-    {
-        return target.isRequiresAuthentication();
-    }
+   public boolean requiresAuthentication() {
+      return target.isRequiresAuthentication();
+   }
 
 }

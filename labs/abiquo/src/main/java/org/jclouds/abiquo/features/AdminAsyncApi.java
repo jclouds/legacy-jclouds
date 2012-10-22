@@ -60,94 +60,90 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Ignasi Barrera
  * @author Francesc Montserrat
  */
-@RequestFilters({AbiquoAuthentication.class, AppendApiVersionToMediaType.class})
-public interface AdminAsyncApi
-{
-    /*********************** Login ***********************/
+@RequestFilters({ AbiquoAuthentication.class, AppendApiVersionToMediaType.class })
+public interface AdminAsyncApi {
+   /*********************** Login ***********************/
 
-    /**
-     * @see AdminApi#getCurrentUser()
-     */
-    @GET
-    @Path("/login")
-    @Consumes(UserDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<UserDto> getCurrentUser();
+   /**
+    * @see AdminApi#getCurrentUser()
+    */
+   @GET
+   @Path("/login")
+   @Consumes(UserDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<UserDto> getCurrentUser();
 
-    /*********************** Role ***********************/
+   /*********************** Role ***********************/
 
-    /**
-     * @see AdminApi#listRoles()
-     */
-    @GET
-    @Path("/admin/roles")
-    @Consumes(RolesDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<RolesDto> listRoles();
+   /**
+    * @see AdminApi#listRoles()
+    */
+   @GET
+   @Path("/admin/roles")
+   @Consumes(RolesDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<RolesDto> listRoles();
 
-    /**
-     * @see AdminApi#listRoles(Enterprise enterprise)
-     */
-    @GET
-    @Path("/admin/roles")
-    @Consumes(RolesDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<RolesDto> listRoles(
-        @QueryParam("identerprise") @ParamParser(ParseEnterpriseId.class) final EnterpriseDto enterprise);
+   /**
+    * @see AdminApi#listRoles(Enterprise enterprise)
+    */
+   @GET
+   @Path("/admin/roles")
+   @Consumes(RolesDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<RolesDto> listRoles(
+         @QueryParam("identerprise") @ParamParser(ParseEnterpriseId.class) final EnterpriseDto enterprise);
 
-    /**
-     * @see AdminApi#getRole(UserDto)
-     */
-    @GET
-    @Consumes(RoleDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-    ListenableFuture<RoleDto> getRole(
-        @EndpointLink("role") @BinderParam(BindToPath.class) UserDto user);
+   /**
+    * @see AdminApi#getRole(UserDto)
+    */
+   @GET
+   @Consumes(RoleDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<RoleDto> getRole(@EndpointLink("role") @BinderParam(BindToPath.class) UserDto user);
 
-    /**
-     * @see AdminApi#getRole(Integer)
-     */
-    @GET
-    @Path("/admin/roles/{role}")
-    @Consumes(RoleDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-    ListenableFuture<RoleDto> getRole(@PathParam("role") Integer roleId);
+   /**
+    * @see AdminApi#getRole(Integer)
+    */
+   @GET
+   @Path("/admin/roles/{role}")
+   @Consumes(RoleDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<RoleDto> getRole(@PathParam("role") Integer roleId);
 
-    /**
-     * @see AdminApi#deleteRole(RoleDto)
-     */
-    @DELETE
-    ListenableFuture<Void> deleteRole(
-        @EndpointLink("edit") @BinderParam(BindToPath.class) RoleDto role);
+   /**
+    * @see AdminApi#deleteRole(RoleDto)
+    */
+   @DELETE
+   ListenableFuture<Void> deleteRole(@EndpointLink("edit") @BinderParam(BindToPath.class) RoleDto role);
 
-    /**
-     * @see AdminApi#updateRole(RoleDto)
-     */
-    @PUT
-    @Produces(RoleDto.BASE_MEDIA_TYPE)
-    @Consumes(RoleDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<RoleDto> updateRole(
-        @EndpointLink("edit") @BinderParam(BindToXMLPayloadAndPath.class) RoleDto role);
+   /**
+    * @see AdminApi#updateRole(RoleDto)
+    */
+   @PUT
+   @Produces(RoleDto.BASE_MEDIA_TYPE)
+   @Consumes(RoleDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<RoleDto> updateRole(@EndpointLink("edit") @BinderParam(BindToXMLPayloadAndPath.class) RoleDto role);
 
-    /**
-     * @see AdminApi#createRole(RoleDto)
-     */
-    @POST
-    @Path("/admin/roles")
-    @Produces(RoleDto.BASE_MEDIA_TYPE)
-    @Consumes(RoleDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<RoleDto> createRole(@BinderParam(BindToXMLPayload.class) RoleDto role);
+   /**
+    * @see AdminApi#createRole(RoleDto)
+    */
+   @POST
+   @Path("/admin/roles")
+   @Produces(RoleDto.BASE_MEDIA_TYPE)
+   @Consumes(RoleDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<RoleDto> createRole(@BinderParam(BindToXMLPayload.class) RoleDto role);
 
-    /**
-     * @see AdminApi#listPrivileges(RoleDto)
-     */
-    @GET
-    @Consumes(PrivilegesDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<PrivilegesDto> listPrivileges(
-        @EndpointLink("privileges") @BinderParam(BindToPath.class) RoleDto role);
+   /**
+    * @see AdminApi#listPrivileges(RoleDto)
+    */
+   @GET
+   @Consumes(PrivilegesDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<PrivilegesDto> listPrivileges(
+         @EndpointLink("privileges") @BinderParam(BindToPath.class) RoleDto role);
 }

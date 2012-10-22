@@ -50,102 +50,82 @@ import com.google.common.eventbus.EventBus;
  * @author Ignasi Barrera
  */
 @Singleton
-public class BaseVirtualMachineMonitor extends BaseMonitoringService implements
-    VirtualMachineMonitor
-{
-    @VisibleForTesting
-    protected VirtualMachineDeployMonitor deployMonitor;
+public class BaseVirtualMachineMonitor extends BaseMonitoringService implements VirtualMachineMonitor {
+   @VisibleForTesting
+   protected VirtualMachineDeployMonitor deployMonitor;
 
-    @VisibleForTesting
-    protected VirtualMachineUndeployMonitor undeployMonitor;
+   @VisibleForTesting
+   protected VirtualMachineUndeployMonitor undeployMonitor;
 
-    @Inject
-    public BaseVirtualMachineMonitor(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-        @Named(PROPERTY_SCHEDULER_THREADS) final ScheduledExecutorService scheduler,
-        @Named(ASYNC_TASK_MONITOR_DELAY) final Long pollingDelay, final EventBus eventBus,
-        final VirtualMachineDeployMonitor deployMonitor,
-        final VirtualMachineUndeployMonitor undeployMonitor)
-    {
-        super(context, scheduler, pollingDelay, eventBus);
-        this.deployMonitor = checkNotNull(deployMonitor, "deployMonitor");
-        this.undeployMonitor = checkNotNull(undeployMonitor, "undeployMonitor");
-    }
+   @Inject
+   public BaseVirtualMachineMonitor(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
+         @Named(PROPERTY_SCHEDULER_THREADS) final ScheduledExecutorService scheduler,
+         @Named(ASYNC_TASK_MONITOR_DELAY) final Long pollingDelay, final EventBus eventBus,
+         final VirtualMachineDeployMonitor deployMonitor, final VirtualMachineUndeployMonitor undeployMonitor) {
+      super(context, scheduler, pollingDelay, eventBus);
+      this.deployMonitor = checkNotNull(deployMonitor, "deployMonitor");
+      this.undeployMonitor = checkNotNull(undeployMonitor, "undeployMonitor");
+   }
 
-    @Override
-    public void awaitCompletionDeploy(final VirtualMachine... vms)
-    {
-        awaitCompletion(deployMonitor, vms);
-    }
+   @Override
+   public void awaitCompletionDeploy(final VirtualMachine... vms) {
+      awaitCompletion(deployMonitor, vms);
+   }
 
-    @Override
-    public void monitorDeploy(final VirtualMachine... vms)
-    {
-        monitor(deployMonitor, vms);
-    }
+   @Override
+   public void monitorDeploy(final VirtualMachine... vms) {
+      monitor(deployMonitor, vms);
+   }
 
-    @Override
-    public void awaitCompletionDeploy(final Long maxWait, final TimeUnit timeUnit,
-        final VirtualMachine... vms)
-    {
-        awaitCompletion(maxWait, timeUnit, deployMonitor, vms);
-    }
+   @Override
+   public void awaitCompletionDeploy(final Long maxWait, final TimeUnit timeUnit, final VirtualMachine... vms) {
+      awaitCompletion(maxWait, timeUnit, deployMonitor, vms);
+   }
 
-    @Override
-    public void monitorDeploy(final Long maxWait, final TimeUnit timeUnit,
-        final VirtualMachine... vms)
-    {
-        monitor(maxWait, timeUnit, deployMonitor, vms);
-    }
+   @Override
+   public void monitorDeploy(final Long maxWait, final TimeUnit timeUnit, final VirtualMachine... vms) {
+      monitor(maxWait, timeUnit, deployMonitor, vms);
+   }
 
-    @Override
-    public void awaitCompletionUndeploy(final VirtualMachine... vms)
-    {
-        awaitCompletion(undeployMonitor, vms);
-    }
+   @Override
+   public void awaitCompletionUndeploy(final VirtualMachine... vms) {
+      awaitCompletion(undeployMonitor, vms);
+   }
 
-    @Override
-    public void monitorUndeploy(final VirtualMachine... vms)
-    {
-        monitor(undeployMonitor, vms);
-    }
+   @Override
+   public void monitorUndeploy(final VirtualMachine... vms) {
+      monitor(undeployMonitor, vms);
+   }
 
-    @Override
-    public void awaitCompletionUndeploy(final Long maxWait, final TimeUnit timeUnit,
-        final VirtualMachine... vms)
-    {
-        awaitCompletion(maxWait, timeUnit, undeployMonitor, vms);
-    }
+   @Override
+   public void awaitCompletionUndeploy(final Long maxWait, final TimeUnit timeUnit, final VirtualMachine... vms) {
+      awaitCompletion(maxWait, timeUnit, undeployMonitor, vms);
+   }
 
-    @Override
-    public void monitorUndeploy(final Long maxWait, final TimeUnit timeUnit,
-        final VirtualMachine... vms)
-    {
-        monitor(maxWait, timeUnit, undeployMonitor, vms);
-    }
+   @Override
+   public void monitorUndeploy(final Long maxWait, final TimeUnit timeUnit, final VirtualMachine... vms) {
+      monitor(maxWait, timeUnit, undeployMonitor, vms);
+   }
 
-    @Override
-    public void awaitState(final VirtualMachineState state, final VirtualMachine... vms)
-    {
-        awaitCompletion(new VirtualMachineStateMonitor(state), vms);
-    }
+   @Override
+   public void awaitState(final VirtualMachineState state, final VirtualMachine... vms) {
+      awaitCompletion(new VirtualMachineStateMonitor(state), vms);
+   }
 
-    @Override
-    public void monitorState(final VirtualMachineState state, final VirtualMachine... vms)
-    {
-        monitor(new VirtualMachineStateMonitor(state), vms);
-    }
+   @Override
+   public void monitorState(final VirtualMachineState state, final VirtualMachine... vms) {
+      monitor(new VirtualMachineStateMonitor(state), vms);
+   }
 
-    @Override
-    public void awaitState(final Long maxWait, final TimeUnit timeUnit,
-        final VirtualMachineState state, final VirtualMachine... vms)
-    {
-        awaitCompletion(maxWait, timeUnit, new VirtualMachineStateMonitor(state), vms);
-    }
+   @Override
+   public void awaitState(final Long maxWait, final TimeUnit timeUnit, final VirtualMachineState state,
+         final VirtualMachine... vms) {
+      awaitCompletion(maxWait, timeUnit, new VirtualMachineStateMonitor(state), vms);
+   }
 
-    @Override
-    public void monitorState(final Long maxWait, final TimeUnit timeUnit,
-        final VirtualMachineState state, final VirtualMachine... vms)
-    {
-        monitor(maxWait, timeUnit, new VirtualMachineStateMonitor(state), vms);
-    }
+   @Override
+   public void monitorState(final Long maxWait, final TimeUnit timeUnit, final VirtualMachineState state,
+         final VirtualMachine... vms) {
+      monitor(maxWait, timeUnit, new VirtualMachineStateMonitor(state), vms);
+   }
 }

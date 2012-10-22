@@ -83,131 +83,103 @@ import com.google.inject.Singleton;
  * @author Ignasi Barrera
  */
 @ConfiguresRestClient
-public class AbiquoRestClientModule extends RestClientModule<AbiquoApi, AbiquoAsyncApi>
-{
-    public static final Map<Class< ? >, Class< ? >> DELEGATE_MAP = ImmutableMap
-        .<Class< ? >, Class< ? >> builder() //
-        .put(InfrastructureApi.class, InfrastructureAsyncApi.class) //
-        .put(EnterpriseApi.class, EnterpriseAsyncApi.class) //
-        .put(AdminApi.class, AdminAsyncApi.class) //
-        .put(ConfigApi.class, ConfigAsyncApi.class) //
-        .put(CloudApi.class, CloudAsyncApi.class) //
-        .put(VirtualMachineTemplateApi.class, VirtualMachineTemplateAsyncApi.class) //
-        .put(TaskApi.class, TaskAsyncApi.class) //
-        .put(EventApi.class, EventAsyncApi.class) //
-        .put(PricingApi.class, PricingAsyncApi.class) //
-        .build();
+public class AbiquoRestClientModule extends RestClientModule<AbiquoApi, AbiquoAsyncApi> {
+   public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder() //
+         .put(InfrastructureApi.class, InfrastructureAsyncApi.class) //
+         .put(EnterpriseApi.class, EnterpriseAsyncApi.class) //
+         .put(AdminApi.class, AdminAsyncApi.class) //
+         .put(ConfigApi.class, ConfigAsyncApi.class) //
+         .put(CloudApi.class, CloudAsyncApi.class) //
+         .put(VirtualMachineTemplateApi.class, VirtualMachineTemplateAsyncApi.class) //
+         .put(TaskApi.class, TaskAsyncApi.class) //
+         .put(EventApi.class, EventAsyncApi.class) //
+         .put(PricingApi.class, PricingAsyncApi.class) //
+         .build();
 
-    public AbiquoRestClientModule()
-    {
-        super(DELEGATE_MAP);
-    }
+   public AbiquoRestClientModule() {
+      super(DELEGATE_MAP);
+   }
 
-    @Override
-    protected void bindAsyncClient()
-    {
-        super.bindAsyncClient();
-        BinderUtils.bindAsyncClient(binder(), AbiquoHttpAsyncClient.class);
-    }
+   @Override
+   protected void bindAsyncClient() {
+      super.bindAsyncClient();
+      BinderUtils.bindAsyncClient(binder(), AbiquoHttpAsyncClient.class);
+   }
 
-    @Override
-    protected void bindClient()
-    {
-        super.bindClient();
-        BinderUtils.bindClient(binder(), AbiquoHttpClient.class, AbiquoHttpAsyncClient.class,
-            ImmutableMap.<Class< ? >, Class< ? >> of(AbiquoHttpClient.class,
-                AbiquoHttpAsyncClient.class));
-    }
+   @Override
+   protected void bindClient() {
+      super.bindClient();
+      BinderUtils.bindClient(binder(), AbiquoHttpClient.class, AbiquoHttpAsyncClient.class,
+            ImmutableMap.<Class<?>, Class<?>> of(AbiquoHttpClient.class, AbiquoHttpAsyncClient.class));
+   }
 
-    @Override
-    protected void configure()
-    {
-        super.configure();
-        bind(Utils.class).to(ExtendedUtils.class);
-    }
+   @Override
+   protected void configure() {
+      super.configure();
+      bind(Utils.class).to(ExtendedUtils.class);
+   }
 
-    @Override
-    protected void bindErrorHandlers()
-    {
-        bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(AbiquoErrorHandler.class);
-        bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(AbiquoErrorHandler.class);
-        bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(AbiquoErrorHandler.class);
-    }
+   @Override
+   protected void bindErrorHandlers() {
+      bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(AbiquoErrorHandler.class);
+      bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(AbiquoErrorHandler.class);
+      bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(AbiquoErrorHandler.class);
+   }
 
-    @Provides
-    @Singleton
-    @Memoized
-    public Supplier<User> getCurrentUser(
-        final AtomicReference<AuthorizationException> authException,
-        @Named(PROPERTY_SESSION_INTERVAL) final long seconds,
-        final RestContext<AbiquoApi, AbiquoAsyncApi> context)
-    {
-        return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException,
-            new Supplier<User>()
-            {
-                @Override
-                public User get()
-                {
-                    return wrap(context, User.class, context.getApi().getAdminApi()
-                        .getCurrentUser());
-                }
+   @Provides
+   @Singleton
+   @Memoized
+   public Supplier<User> getCurrentUser(final AtomicReference<AuthorizationException> authException,
+         @Named(PROPERTY_SESSION_INTERVAL) final long seconds, final RestContext<AbiquoApi, AbiquoAsyncApi> context) {
+      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException, new Supplier<User>() {
+         @Override
+         public User get() {
+            return wrap(context, User.class, context.getApi().getAdminApi().getCurrentUser());
+         }
+      }, seconds, TimeUnit.SECONDS);
+   }
+
+   @Provides
+   @Singleton
+   @Memoized
+   public Supplier<Enterprise> getCurrentEnterprise(final AtomicReference<AuthorizationException> authException,
+         @Named(PROPERTY_SESSION_INTERVAL) final long seconds, final @Memoized Supplier<User> currentUser) {
+      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException,
+            new Supplier<Enterprise>() {
+               @Override
+               public Enterprise get() {
+                  return currentUser.get().getEnterprise();
+               }
             }, seconds, TimeUnit.SECONDS);
-    }
+   }
 
-    @Provides
-    @Singleton
-    @Memoized
-    public Supplier<Enterprise> getCurrentEnterprise(
-        final AtomicReference<AuthorizationException> authException,
-        @Named(PROPERTY_SESSION_INTERVAL) final long seconds,
-        final @Memoized Supplier<User> currentUser)
-    {
-        return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException,
-            new Supplier<Enterprise>()
-            {
-                @Override
-                public Enterprise get()
-                {
-                    return currentUser.get().getEnterprise();
-                }
-            }, seconds, TimeUnit.SECONDS);
-    }
-
-    @Provides
-    @Singleton
-    @Memoized
-    public Supplier<Map<Integer, Datacenter>> getAvailableRegionsIndexedById(
-        final AtomicReference<AuthorizationException> authException,
-        @Named(PROPERTY_SESSION_INTERVAL) final long seconds,
-        @Memoized final Supplier<Enterprise> currentEnterprise)
-    {
-        Supplier<Map<Integer, Datacenter>> availableRegionsMapSupplier =
-            Suppliers2.compose(new Function<List<Datacenter>, Map<Integer, Datacenter>>()
-            {
-                @Override
-                public Map<Integer, Datacenter> apply(final List<Datacenter> datacenters)
-                {
-                    // Index available regions by id
-                    return Maps.uniqueIndex(datacenters, new Function<Datacenter, Integer>()
-                    {
-                        @Override
-                        public Integer apply(final Datacenter input)
-                        {
-                            return input.getId();
-                        }
-                    });
-                }
-            }, new Supplier<List<Datacenter>>()
-            {
-                @Override
-                public List<Datacenter> get()
-                {
-                    // Get the list of regions available for the user's tenant
-                    return currentEnterprise.get().listAllowedDatacenters();
-                }
+   @Provides
+   @Singleton
+   @Memoized
+   public Supplier<Map<Integer, Datacenter>> getAvailableRegionsIndexedById(
+         final AtomicReference<AuthorizationException> authException,
+         @Named(PROPERTY_SESSION_INTERVAL) final long seconds, @Memoized final Supplier<Enterprise> currentEnterprise) {
+      Supplier<Map<Integer, Datacenter>> availableRegionsMapSupplier = Suppliers2.compose(
+            new Function<List<Datacenter>, Map<Integer, Datacenter>>() {
+               @Override
+               public Map<Integer, Datacenter> apply(final List<Datacenter> datacenters) {
+                  // Index available regions by id
+                  return Maps.uniqueIndex(datacenters, new Function<Datacenter, Integer>() {
+                     @Override
+                     public Integer apply(final Datacenter input) {
+                        return input.getId();
+                     }
+                  });
+               }
+            }, new Supplier<List<Datacenter>>() {
+               @Override
+               public List<Datacenter> get() {
+                  // Get the list of regions available for the user's tenant
+                  return currentEnterprise.get().listAllowedDatacenters();
+               }
             });
 
-        return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException,
+      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException,
             availableRegionsMapSupplier, seconds, TimeUnit.SECONDS);
-    }
+   }
 }

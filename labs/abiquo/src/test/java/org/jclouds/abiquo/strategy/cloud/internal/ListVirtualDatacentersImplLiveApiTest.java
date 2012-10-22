@@ -37,57 +37,45 @@ import org.testng.annotations.Test;
  * @author Ignasi Barrera
  */
 @Test(groups = "api", testName = "ListVirtualDatacentersImplLiveApiTest")
-public class ListVirtualDatacentersImplLiveApiTest extends BaseAbiquoStrategyLiveApiTest
-{
-    private ListVirtualDatacentersImpl strategy;
+public class ListVirtualDatacentersImplLiveApiTest extends BaseAbiquoStrategyLiveApiTest {
+   private ListVirtualDatacentersImpl strategy;
 
-    @Override
-    @BeforeClass(groups = "api")
-    protected void setupStrategy()
-    {
-        this.strategy =
-            env.context.getUtils().getInjector().getInstance(ListVirtualDatacentersImpl.class);
-    }
+   @Override
+   @BeforeClass(groups = "api")
+   protected void setupStrategy() {
+      this.strategy = env.context.getUtils().getInjector().getInstance(ListVirtualDatacentersImpl.class);
+   }
 
-    public void testExecute()
-    {
-        Iterable<VirtualDatacenter> vdcs = strategy.execute();
-        assertNotNull(vdcs);
-        assertTrue(size(vdcs) > 0);
-    }
+   public void testExecute() {
+      Iterable<VirtualDatacenter> vdcs = strategy.execute();
+      assertNotNull(vdcs);
+      assertTrue(size(vdcs) > 0);
+   }
 
-    public void testExecutePredicateWithoutResults()
-    {
-        Iterable<VirtualDatacenter> vdcs =
-            strategy.execute(VirtualDatacenterPredicates.name("UNEXISTING"));
-        assertNotNull(vdcs);
-        assertEquals(size(vdcs), 0);
-    }
+   public void testExecutePredicateWithoutResults() {
+      Iterable<VirtualDatacenter> vdcs = strategy.execute(VirtualDatacenterPredicates.name("UNEXISTING"));
+      assertNotNull(vdcs);
+      assertEquals(size(vdcs), 0);
+   }
 
-    public void testExecutePredicateWithResults()
-    {
-        Iterable<VirtualDatacenter> vdcs =
-            strategy.execute(VirtualDatacenterPredicates.name(env.virtualDatacenter.getName()));
-        assertNotNull(vdcs);
-        assertEquals(size(vdcs), 1);
-    }
+   public void testExecutePredicateWithResults() {
+      Iterable<VirtualDatacenter> vdcs = strategy.execute(VirtualDatacenterPredicates.name(env.virtualDatacenter
+            .getName()));
+      assertNotNull(vdcs);
+      assertEquals(size(vdcs), 1);
+   }
 
-    public void testExecutePredicateOptionsWithResults()
-    {
-        Iterable<VirtualDatacenter> vdcs =
-            strategy.execute(VirtualDatacenterOptions.builder()
-                .datacenterId(env.datacenter.getId()).enterpriseId(env.defaultEnterprise.getId())
-                .build());
-        assertNotNull(vdcs);
-        assertEquals(size(vdcs), 1);
-    }
+   public void testExecutePredicateOptionsWithResults() {
+      Iterable<VirtualDatacenter> vdcs = strategy.execute(VirtualDatacenterOptions.builder()
+            .datacenterId(env.datacenter.getId()).enterpriseId(env.defaultEnterprise.getId()).build());
+      assertNotNull(vdcs);
+      assertEquals(size(vdcs), 1);
+   }
 
-    public void testExecutePredicateOptionsWithoutResults()
-    {
-        Iterable<VirtualDatacenter> vdcs =
-            strategy.execute(VirtualDatacenterOptions.builder()
-                .enterpriseId(env.enterprise.getId()).build());
-        assertNotNull(vdcs);
-        assertEquals(size(vdcs), 0);
-    }
+   public void testExecutePredicateOptionsWithoutResults() {
+      Iterable<VirtualDatacenter> vdcs = strategy.execute(VirtualDatacenterOptions.builder()
+            .enterpriseId(env.enterprise.getId()).build());
+      assertNotNull(vdcs);
+      assertEquals(size(vdcs), 0);
+   }
 }

@@ -41,316 +41,261 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 
 /**
- * Adds high level functionality to {@link MachineDto}. This class defines common methods for
- * unmanaged {@link Machine} and managed {@link Blade} physical machines.
+ * Adds high level functionality to {@link MachineDto}. This class defines
+ * common methods for unmanaged {@link Machine} and managed {@link Blade}
+ * physical machines.
  * 
  * @author Ignasi Barrera
  * @author Francesc Montserrat
- * @see API: <a href="http://community.abiquo.com/display/ABI20/MachineResource">
+ * @see API: <a
+ *      href="http://community.abiquo.com/display/ABI20/MachineResource">
  *      http://community.abiquo.com/display/ABI20/MachineResource</a>
  */
-public abstract class AbstractPhysicalMachine extends DomainWrapper<MachineDto>
-{
-    /** The default virtual ram used in MB. */
-    protected static final int DEFAULT_VRAM_USED = 1;
+public abstract class AbstractPhysicalMachine extends DomainWrapper<MachineDto> {
+   /** The default virtual ram used in MB. */
+   protected static final int DEFAULT_VRAM_USED = 1;
 
-    /** The default virtual cpu used in MB. */
-    protected static final int DEFAULT_VCPU_USED = 1;
+   /** The default virtual cpu used in MB. */
+   protected static final int DEFAULT_VCPU_USED = 1;
 
-    /** List of available virtual switches provided by discover operation **/
-    protected List<String> virtualSwitches;
+   /** List of available virtual switches provided by discover operation **/
+   protected List<String> virtualSwitches;
 
-    /**
-     * Constructor to be used only by the builder.
-     */
-    protected AbstractPhysicalMachine(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-        final MachineDto target)
-    {
-        super(context, target);
-        extractVirtualSwitches();
-    }
+   /**
+    * Constructor to be used only by the builder.
+    */
+   protected AbstractPhysicalMachine(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final MachineDto target) {
+      super(context, target);
+      extractVirtualSwitches();
+   }
 
-    public void delete()
-    {
-        context.getApi().getInfrastructureApi().deleteMachine(target);
-        target = null;
-    }
+   public void delete() {
+      context.getApi().getInfrastructureApi().deleteMachine(target);
+      target = null;
+   }
 
-    public void update()
-    {
-        target = context.getApi().getInfrastructureApi().updateMachine(target);
-    }
+   public void update() {
+      target = context.getApi().getInfrastructureApi().updateMachine(target);
+   }
 
-    public MachineState check()
-    {
-        MachineStateDto dto =
-            context.getApi().getInfrastructureApi().checkMachineState(target, true);
-        MachineState state = dto.getState();
-        target.setState(state);
-        return state;
-    }
+   public MachineState check() {
+      MachineStateDto dto = context.getApi().getInfrastructureApi().checkMachineState(target, true);
+      MachineState state = dto.getState();
+      target.setState(state);
+      return state;
+   }
 
-    public MachineIpmiState checkIpmi()
-    {
-        MachineIpmiStateDto dto =
-            context.getApi().getInfrastructureApi().checkMachineIpmiState(target);
-        return dto.getState();
-    }
+   public MachineIpmiState checkIpmi() {
+      MachineIpmiStateDto dto = context.getApi().getInfrastructureApi().checkMachineIpmiState(target);
+      return dto.getState();
+   }
 
-    // Children access
+   // Children access
 
-    public List<Datastore> getDatastores()
-    {
-        return wrap(context, Datastore.class, target.getDatastores().getCollection());
-    }
+   public List<Datastore> getDatastores() {
+      return wrap(context, Datastore.class, target.getDatastores().getCollection());
+   }
 
-    public Datastore findDatastore(final String name)
-    {
-        return find(getDatastores(), DatastorePredicates.name(name), null);
-    }
+   public Datastore findDatastore(final String name) {
+      return find(getDatastores(), DatastorePredicates.name(name), null);
+   }
 
-    // Delegate methods
+   // Delegate methods
 
-    public Integer getId()
-    {
-        return target.getId();
-    }
+   public Integer getId() {
+      return target.getId();
+   }
 
-    public String getIp()
-    {
-        return target.getIp();
-    }
+   public String getIp() {
+      return target.getIp();
+   }
 
-    public String getIpmiIp()
-    {
-        return target.getIpmiIP();
-    }
+   public String getIpmiIp() {
+      return target.getIpmiIP();
+   }
 
-    public String getIpmiPassword()
-    {
-        return target.getIpmiPassword();
-    }
+   public String getIpmiPassword() {
+      return target.getIpmiPassword();
+   }
 
-    public Integer getIpmiPort()
-    {
-        return target.getIpmiPort();
-    }
+   public Integer getIpmiPort() {
+      return target.getIpmiPort();
+   }
 
-    public String getIpmiUser()
-    {
-        return target.getIpmiUser();
-    }
+   public String getIpmiUser() {
+      return target.getIpmiUser();
+   }
 
-    public String getIpService()
-    {
-        return target.getIpService();
-    }
+   public String getIpService() {
+      return target.getIpService();
+   }
 
-    public String getName()
-    {
-        return target.getName();
-    }
+   public String getName() {
+      return target.getName();
+   }
 
-    public String getPassword()
-    {
-        return target.getPassword();
-    }
+   public String getPassword() {
+      return target.getPassword();
+   }
 
-    public Integer getPort()
-    {
-        return target.getPort();
-    }
+   public Integer getPort() {
+      return target.getPort();
+   }
 
-    public MachineState getState()
-    {
-        return target.getState();
-    }
+   public MachineState getState() {
+      return target.getState();
+   }
 
-    public HypervisorType getType()
-    {
-        return target.getType();
-    }
+   public HypervisorType getType() {
+      return target.getType();
+   }
 
-    public String getUser()
-    {
-        return target.getUser();
-    }
+   public String getUser() {
+      return target.getUser();
+   }
 
-    public Integer getVirtualCpuCores()
-    {
-        return target.getVirtualCpuCores();
-    }
+   public Integer getVirtualCpuCores() {
+      return target.getVirtualCpuCores();
+   }
 
-    public Integer getVirtualCpusUsed()
-    {
-        return target.getVirtualCpusUsed();
-    }
+   public Integer getVirtualCpusUsed() {
+      return target.getVirtualCpusUsed();
+   }
 
-    public Integer getVirtualRamInMb()
-    {
-        return target.getVirtualRamInMb();
-    }
+   public Integer getVirtualRamInMb() {
+      return target.getVirtualRamInMb();
+   }
 
-    public Integer getVirtualRamUsedInMb()
-    {
-        return target.getVirtualRamUsedInMb();
-    }
+   public Integer getVirtualRamUsedInMb() {
+      return target.getVirtualRamUsedInMb();
+   }
 
-    public String getVirtualSwitch()
-    {
-        return target.getVirtualSwitch();
-    }
+   public String getVirtualSwitch() {
+      return target.getVirtualSwitch();
+   }
 
-    public void setDatastores(final List<Datastore> datastores)
-    {
-        DatastoresDto datastoresDto = new DatastoresDto();
-        datastoresDto.getCollection().addAll(DomainWrapper.unwrap(datastores));
-        target.setDatastores(datastoresDto);
-    }
+   public void setDatastores(final List<Datastore> datastores) {
+      DatastoresDto datastoresDto = new DatastoresDto();
+      datastoresDto.getCollection().addAll(DomainWrapper.unwrap(datastores));
+      target.setDatastores(datastoresDto);
+   }
 
-    public void setDescription(final String description)
-    {
-        target.setDescription(description);
-    }
+   public void setDescription(final String description) {
+      target.setDescription(description);
+   }
 
-    public void setIp(final String ip)
-    {
-        target.setIp(ip);
-    }
+   public void setIp(final String ip) {
+      target.setIp(ip);
+   }
 
-    public void setIpmiIp(final String ipmiIp)
-    {
-        target.setIpmiIP(ipmiIp);
-    }
+   public void setIpmiIp(final String ipmiIp) {
+      target.setIpmiIP(ipmiIp);
+   }
 
-    public void setIpmiPassword(final String ipmiPassword)
-    {
-        target.setIpmiPassword(ipmiPassword);
-    }
+   public void setIpmiPassword(final String ipmiPassword) {
+      target.setIpmiPassword(ipmiPassword);
+   }
 
-    public void setIpmiPort(final Integer ipmiPort)
-    {
-        target.setIpmiPort(ipmiPort);
-    }
+   public void setIpmiPort(final Integer ipmiPort) {
+      target.setIpmiPort(ipmiPort);
+   }
 
-    public void setIpmiUser(final String ipmiUser)
-    {
-        target.setIpmiUser(ipmiUser);
-    }
+   public void setIpmiUser(final String ipmiUser) {
+      target.setIpmiUser(ipmiUser);
+   }
 
-    public void setIpService(final String ipService)
-    {
-        target.setIpService(ipService);
-    }
+   public void setIpService(final String ipService) {
+      target.setIpService(ipService);
+   }
 
-    public void setName(final String name)
-    {
-        target.setName(name);
-    }
+   public void setName(final String name) {
+      target.setName(name);
+   }
 
-    public void setPassword(final String password)
-    {
-        target.setPassword(password);
-    }
+   public void setPassword(final String password) {
+      target.setPassword(password);
+   }
 
-    public void setPort(final Integer port)
-    {
-        target.setPort(port);
-    }
+   public void setPort(final Integer port) {
+      target.setPort(port);
+   }
 
-    public void setState(final MachineState state)
-    {
-        target.setState(state);
-    }
+   public void setState(final MachineState state) {
+      target.setState(state);
+   }
 
-    public void setType(final HypervisorType type)
-    {
-        target.setType(type);
-    }
+   public void setType(final HypervisorType type) {
+      target.setType(type);
+   }
 
-    public void setUser(final String user)
-    {
-        target.setUser(user);
-    }
+   public void setUser(final String user) {
+      target.setUser(user);
+   }
 
-    public void setVirtualCpuCores(final Integer virtualCpuCores)
-    {
-        target.setVirtualCpuCores(virtualCpuCores);
-    }
+   public void setVirtualCpuCores(final Integer virtualCpuCores) {
+      target.setVirtualCpuCores(virtualCpuCores);
+   }
 
-    public void setVirtualCpusUsed(final Integer virtualCpusUsed)
-    {
-        target.setVirtualCpusUsed(virtualCpusUsed);
-    }
+   public void setVirtualCpusUsed(final Integer virtualCpusUsed) {
+      target.setVirtualCpusUsed(virtualCpusUsed);
+   }
 
-    public void setVirtualRamInMb(final Integer virtualRamInMb)
-    {
-        target.setVirtualRamInMb(virtualRamInMb);
-    }
+   public void setVirtualRamInMb(final Integer virtualRamInMb) {
+      target.setVirtualRamInMb(virtualRamInMb);
+   }
 
-    public void setVirtualRamUsedInMb(final Integer virtualRamUsedInMb)
-    {
-        target.setVirtualRamUsedInMb(virtualRamUsedInMb);
-    }
+   public void setVirtualRamUsedInMb(final Integer virtualRamUsedInMb) {
+      target.setVirtualRamUsedInMb(virtualRamUsedInMb);
+   }
 
-    public void setVirtualSwitch(final String virtualSwitch)
-    {
-        target.setVirtualSwitch(virtualSwitch);
-    }
+   public void setVirtualSwitch(final String virtualSwitch) {
+      target.setVirtualSwitch(virtualSwitch);
+   }
 
-    public String getDescription()
-    {
-        return target.getDescription();
-    }
+   public String getDescription() {
+      return target.getDescription();
+   }
 
-    // Aux operations
+   // Aux operations
 
-    /**
-     * Converts the tokenized String provided by the node collector API to a list of Strings and
-     * stores it at the attribute switches.
-     */
-    protected void extractVirtualSwitches()
-    {
-        StringTokenizer st = new StringTokenizer(getVirtualSwitch(), "/");
-        this.virtualSwitches = Lists.newArrayList();
+   /**
+    * Converts the tokenized String provided by the node collector API to a list
+    * of Strings and stores it at the attribute switches.
+    */
+   protected void extractVirtualSwitches() {
+      StringTokenizer st = new StringTokenizer(getVirtualSwitch(), "/");
+      this.virtualSwitches = Lists.newArrayList();
 
-        while (st.hasMoreTokens())
-        {
-            this.virtualSwitches.add(st.nextToken());
-        }
+      while (st.hasMoreTokens()) {
+         this.virtualSwitches.add(st.nextToken());
+      }
 
-        if (virtualSwitches.size() > 0)
-        {
-            this.setVirtualSwitch(virtualSwitches.get(0));
-        }
-    }
+      if (virtualSwitches.size() > 0) {
+         this.setVirtualSwitch(virtualSwitches.get(0));
+      }
+   }
 
-    /**
-     * Returns the virtual switches available. One of them needs to be selected.
-     */
-    public List<String> getAvailableVirtualSwitches()
-    {
-        return virtualSwitches;
-    }
+   /**
+    * Returns the virtual switches available. One of them needs to be selected.
+    */
+   public List<String> getAvailableVirtualSwitches() {
+      return virtualSwitches;
+   }
 
-    public String findAvailableVirtualSwitch(final String vswitch)
-    {
-        return find(virtualSwitches, Predicates.equalTo(vswitch));
-    }
+   public String findAvailableVirtualSwitch(final String vswitch) {
+      return find(virtualSwitches, Predicates.equalTo(vswitch));
+   }
 
-    @Override
-    public String toString()
-    {
-        return "Machine [id=" + getId() + ", ip=" + getIp() + ", ipmiIp=" + getIpmiIp()
-            + ", ipmiPassword=" + getIpmiPassword() + ", ipmiPort=" + getIpmiPort() + ", ipmiUser="
-            + getIpmiUser() + ", ipService=" + getIpService() + ", name=" + getName()
-            + ", password=" + getPassword() + ", port=" + getPort() + ", state=" + getState()
-            + ", type=" + getType() + ", user=" + getUser() + ", virtualCpuCores="
-            + getVirtualCpuCores() + ", virtualCpusUsed=" + getVirtualCpusUsed()
-            + ", getVirtualRamInMb()=" + getVirtualRamInMb() + ", virtualRamUsedInMb="
-            + getVirtualRamUsedInMb() + ", virtualSwitch=" + getVirtualSwitch() + ", description="
-            + getDescription() + ", availableVirtualSwitches=" + getAvailableVirtualSwitches()
-            + "]";
-    }
+   @Override
+   public String toString() {
+      return "Machine [id=" + getId() + ", ip=" + getIp() + ", ipmiIp=" + getIpmiIp() + ", ipmiPassword="
+            + getIpmiPassword() + ", ipmiPort=" + getIpmiPort() + ", ipmiUser=" + getIpmiUser() + ", ipService="
+            + getIpService() + ", name=" + getName() + ", password=" + getPassword() + ", port=" + getPort()
+            + ", state=" + getState() + ", type=" + getType() + ", user=" + getUser() + ", virtualCpuCores="
+            + getVirtualCpuCores() + ", virtualCpusUsed=" + getVirtualCpusUsed() + ", getVirtualRamInMb()="
+            + getVirtualRamInMb() + ", virtualRamUsedInMb=" + getVirtualRamUsedInMb() + ", virtualSwitch="
+            + getVirtualSwitch() + ", description=" + getDescription() + ", availableVirtualSwitches="
+            + getAvailableVirtualSwitches() + "]";
+   }
 
 }

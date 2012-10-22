@@ -38,273 +38,239 @@ import com.abiquo.server.core.pricing.PricingTierDto;
  * @author Ignasi Barrera
  * @author Susana Acedo
  */
-public class PricingResources
-{
+public class PricingResources {
 
-    public static CurrencyDto currencyPost()
-    {
-        CurrencyDto currency = new CurrencyDto();
-        currency.setName("yuan");
-        currency.setSymbol("DUMMY");
-        currency.setDigits(3);
-        return currency;
-    }
+   public static CurrencyDto currencyPost() {
+      CurrencyDto currency = new CurrencyDto();
+      currency.setName("yuan");
+      currency.setSymbol("DUMMY");
+      currency.setDigits(3);
+      return currency;
+   }
 
-    public static CurrencyDto currencyPut()
-    {
-        CurrencyDto currency = new CurrencyDto();
-        currency.setName("yuan");
-        currency.setSymbol("DUMMY");
-        currency.setDigits(3);
-        currency.setId(1);
-        currency.addLink(new RESTLink("edit", "http://localhost/api/config/currencies/1"));
-        return currency;
-    }
+   public static CurrencyDto currencyPut() {
+      CurrencyDto currency = new CurrencyDto();
+      currency.setName("yuan");
+      currency.setSymbol("DUMMY");
+      currency.setDigits(3);
+      currency.setId(1);
+      currency.addLink(new RESTLink("edit", "http://localhost/api/config/currencies/1"));
+      return currency;
+   }
 
-    public static String currencyPostPayload()
-    {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append("<currency>");
-        buffer.append("<symbol>DUMMY</symbol>");
-        buffer.append("<digits>3</digits>");
-        buffer.append("<name>yuan</name>");
-        buffer.append("</currency>");
-        return buffer.toString();
-    }
+   public static String currencyPostPayload() {
+      StringBuffer buffer = new StringBuffer();
+      buffer.append("<currency>");
+      buffer.append("<symbol>DUMMY</symbol>");
+      buffer.append("<digits>3</digits>");
+      buffer.append("<name>yuan</name>");
+      buffer.append("</currency>");
+      return buffer.toString();
+   }
 
-    public static String currencyPutPayload()
-    {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append("<currency>");
-        buffer.append(link("/config/currencies/1", "edit"));
-        buffer.append("<symbol>DUMMY</symbol>");
-        buffer.append("<digits>3</digits>");
-        buffer.append("<id>1</id>");
-        buffer.append("<name>yuan</name>");
-        buffer.append("</currency>");
-        return buffer.toString();
-    }
+   public static String currencyPutPayload() {
+      StringBuffer buffer = new StringBuffer();
+      buffer.append("<currency>");
+      buffer.append(link("/config/currencies/1", "edit"));
+      buffer.append("<symbol>DUMMY</symbol>");
+      buffer.append("<digits>3</digits>");
+      buffer.append("<id>1</id>");
+      buffer.append("<name>yuan</name>");
+      buffer.append("</currency>");
+      return buffer.toString();
+   }
 
-    public static Object costcodePost()
-    {
-        CostCodeDto costcode = new CostCodeDto();
-        costcode.setName("cost code");
-        costcode.setDescription("description");
-        return costcode;
-    }
+   public static Object costcodePost() {
+      CostCodeDto costcode = new CostCodeDto();
+      costcode.setName("cost code");
+      costcode.setDescription("description");
+      return costcode;
+   }
 
-    public static Object costcodePut()
-    {
-        CostCodeDto costcode = new CostCodeDto();
-        costcode.setName("cost code");
-        costcode.setDescription("description");
-        costcode.setId(1);
-        costcode.addLink(new RESTLink("edit", "http://localhost/api/config/costcodes/1"));
-        return costcode;
-    }
+   public static Object costcodePut() {
+      CostCodeDto costcode = new CostCodeDto();
+      costcode.setName("cost code");
+      costcode.setDescription("description");
+      costcode.setId(1);
+      costcode.addLink(new RESTLink("edit", "http://localhost/api/config/costcodes/1"));
+      return costcode;
+   }
 
-    public static String costcodePostPayload()
-    {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append("<costCode>");
-        buffer.append("<name>cost code</name>");
-        buffer.append("<description>description</description>");
-        buffer.append("</costCode>");
-        return buffer.toString();
-    }
+   public static String costcodePostPayload() {
+      StringBuffer buffer = new StringBuffer();
+      buffer.append("<costCode>");
+      buffer.append("<name>cost code</name>");
+      buffer.append("<description>description</description>");
+      buffer.append("</costCode>");
+      return buffer.toString();
+   }
 
-    public static String costcodePutPayload()
-    {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append("<costCode>");
-        buffer.append(link("/config/costcodes/1", "edit"));
-        buffer.append("<description>description</description>");
-        buffer.append("<id>1</id>");
-        buffer.append("<name>cost code</name>");
-        buffer.append("</costCode>");
-        return buffer.toString();
-    }
+   public static String costcodePutPayload() {
+      StringBuffer buffer = new StringBuffer();
+      buffer.append("<costCode>");
+      buffer.append(link("/config/costcodes/1", "edit"));
+      buffer.append("<description>description</description>");
+      buffer.append("<id>1</id>");
+      buffer.append("<name>cost code</name>");
+      buffer.append("</costCode>");
+      return buffer.toString();
+   }
 
-    public static Object pricingtemplatePost()
-    {
-        PricingTemplateDto pricingtemplate = new PricingTemplateDto();
-        pricingtemplate.setName("pricing template");
-        pricingtemplate.setDescription("pt_description");
-        pricingtemplate.setHdGB(new BigDecimal(0));
-        pricingtemplate.setStandingChargePeriod(new BigDecimal(0));
-        pricingtemplate.setVlan(new BigDecimal(0));
-        pricingtemplate.setChargingPeriod(1);
-        pricingtemplate.setMinimumChargePeriod(new BigDecimal(0));
-        pricingtemplate.setShowChangesBefore(true);
-        pricingtemplate.setShowMinimumCharge(false);
-        pricingtemplate.setMinimumCharge(2);
-        pricingtemplate.setPublicIp(new BigDecimal(0));
-        pricingtemplate.setVcpu(new BigDecimal(0));
-        pricingtemplate.setMemoryGB(new BigDecimal(0));
-        pricingtemplate.setDefaultTemplate(true);
-        pricingtemplate
-            .addLink(new RESTLink("currency", "http://localhost/api/config/currencies/1"));
-        return pricingtemplate;
-    }
+   public static Object pricingtemplatePost() {
+      PricingTemplateDto pricingtemplate = new PricingTemplateDto();
+      pricingtemplate.setName("pricing template");
+      pricingtemplate.setDescription("pt_description");
+      pricingtemplate.setHdGB(new BigDecimal(0));
+      pricingtemplate.setStandingChargePeriod(new BigDecimal(0));
+      pricingtemplate.setVlan(new BigDecimal(0));
+      pricingtemplate.setChargingPeriod(1);
+      pricingtemplate.setMinimumChargePeriod(new BigDecimal(0));
+      pricingtemplate.setShowChangesBefore(true);
+      pricingtemplate.setShowMinimumCharge(false);
+      pricingtemplate.setMinimumCharge(2);
+      pricingtemplate.setPublicIp(new BigDecimal(0));
+      pricingtemplate.setVcpu(new BigDecimal(0));
+      pricingtemplate.setMemoryGB(new BigDecimal(0));
+      pricingtemplate.setDefaultTemplate(true);
+      pricingtemplate.addLink(new RESTLink("currency", "http://localhost/api/config/currencies/1"));
+      return pricingtemplate;
+   }
 
-    public static Object pricingtemplatePut()
-    {
-        PricingTemplateDto pricingtemplate = new PricingTemplateDto();
-        pricingtemplate.setName("pricing template");
-        pricingtemplate.setDescription("pt_description");
-        pricingtemplate.setHdGB(new BigDecimal(0));
-        pricingtemplate.setStandingChargePeriod(new BigDecimal(0));
-        pricingtemplate.setVlan(new BigDecimal(0));
-        pricingtemplate.setChargingPeriod(1);
-        pricingtemplate.setMinimumChargePeriod(new BigDecimal(0));
-        pricingtemplate.setShowChangesBefore(true);
-        pricingtemplate.setShowMinimumCharge(false);
-        pricingtemplate.setMinimumCharge(2);
-        pricingtemplate.setPublicIp(new BigDecimal(0));
-        pricingtemplate.setVcpu(new BigDecimal(0));
-        pricingtemplate.setMemoryGB(new BigDecimal(0));
-        pricingtemplate.setDefaultTemplate(true);
-        pricingtemplate
-            .addLink(new RESTLink("currency", "http://localhost/api/config/currencies/1"));
-        pricingtemplate.setId(1);
-        pricingtemplate.addLink(new RESTLink("edit",
-            "http://localhost/api/config/pricingtemplates/1"));
-        return pricingtemplate;
-    }
+   public static Object pricingtemplatePut() {
+      PricingTemplateDto pricingtemplate = new PricingTemplateDto();
+      pricingtemplate.setName("pricing template");
+      pricingtemplate.setDescription("pt_description");
+      pricingtemplate.setHdGB(new BigDecimal(0));
+      pricingtemplate.setStandingChargePeriod(new BigDecimal(0));
+      pricingtemplate.setVlan(new BigDecimal(0));
+      pricingtemplate.setChargingPeriod(1);
+      pricingtemplate.setMinimumChargePeriod(new BigDecimal(0));
+      pricingtemplate.setShowChangesBefore(true);
+      pricingtemplate.setShowMinimumCharge(false);
+      pricingtemplate.setMinimumCharge(2);
+      pricingtemplate.setPublicIp(new BigDecimal(0));
+      pricingtemplate.setVcpu(new BigDecimal(0));
+      pricingtemplate.setMemoryGB(new BigDecimal(0));
+      pricingtemplate.setDefaultTemplate(true);
+      pricingtemplate.addLink(new RESTLink("currency", "http://localhost/api/config/currencies/1"));
+      pricingtemplate.setId(1);
+      pricingtemplate.addLink(new RESTLink("edit", "http://localhost/api/config/pricingtemplates/1"));
+      return pricingtemplate;
+   }
 
-    public static String pricingtemplatePostPayload()
-    {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append("<pricingTemplate>");
-        buffer.append("<name>pricing template</name>");
-        buffer.append("<description>pt_description</description>");
-        buffer.append("<hdGB>0</hdGB>");
-        buffer.append("<standingChargePeriod>0</standingChargePeriod>");
-        buffer.append("<vlan>0</vlan>");
-        buffer.append("<chargingPeriod>1</chargingPeriod>");
-        buffer.append("<minimumChargePeriod>0</minimumChargePeriod>");
-        buffer.append("<showChangesBefore>true</showChangesBefore>");
-        buffer.append("<showMinimumCharge>false</showMinimumCharge>");
-        buffer.append("<minimumCharge>2</minimumCharge>");
-        buffer.append("<memoryGB>0</memoryGB>");
-        buffer.append("<publicIp>0</publicIp>");
-        buffer.append("<vcpu>0</vcpu>");
-        buffer.append("<memoryMB>0</memoryMB>");
-        buffer.append("<defaultTemplate>true</defaultTemplate>");
-        buffer.append("<link href='http://localhost/api/config/currencies/1' rel='currency'/>");
-        buffer.append("</pricingTemplate>");
-        return buffer.toString();
-    }
+   public static String pricingtemplatePostPayload() {
+      StringBuffer buffer = new StringBuffer();
+      buffer.append("<pricingTemplate>");
+      buffer.append("<name>pricing template</name>");
+      buffer.append("<description>pt_description</description>");
+      buffer.append("<hdGB>0</hdGB>");
+      buffer.append("<standingChargePeriod>0</standingChargePeriod>");
+      buffer.append("<vlan>0</vlan>");
+      buffer.append("<chargingPeriod>1</chargingPeriod>");
+      buffer.append("<minimumChargePeriod>0</minimumChargePeriod>");
+      buffer.append("<showChangesBefore>true</showChangesBefore>");
+      buffer.append("<showMinimumCharge>false</showMinimumCharge>");
+      buffer.append("<minimumCharge>2</minimumCharge>");
+      buffer.append("<memoryGB>0</memoryGB>");
+      buffer.append("<publicIp>0</publicIp>");
+      buffer.append("<vcpu>0</vcpu>");
+      buffer.append("<memoryMB>0</memoryMB>");
+      buffer.append("<defaultTemplate>true</defaultTemplate>");
+      buffer.append("<link href='http://localhost/api/config/currencies/1' rel='currency'/>");
+      buffer.append("</pricingTemplate>");
+      return buffer.toString();
+   }
 
-    public static String pricingtemplatePutPayload()
-    {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append("<pricingTemplate>");
-        buffer.append("<name>pricing template</name>");
-        buffer.append("<description>pt_description</description>");
-        buffer.append("<hdGB>0</hdGB>");
-        buffer.append("<standingChargePeriod>0</standingChargePeriod>");
-        buffer.append("<vlan>0</vlan>");
-        buffer.append("<chargingPeriod>1</chargingPeriod>");
-        buffer.append("<minimumChargePeriod>0</minimumChargePeriod>");
-        buffer.append("<showChangesBefore>true</showChangesBefore>");
-        buffer.append("<showMinimumCharge>false</showMinimumCharge>");
-        buffer.append("<minimumCharge>2</minimumCharge>");
-        buffer.append("<memoryGB>0</memoryGB>");
-        buffer.append("<publicIp>0</publicIp>");
-        buffer.append("<vcpu>0</vcpu>");
-        buffer.append("<memoryMB>0</memoryMB>");
-        buffer.append("<defaultTemplate>true</defaultTemplate>");
-        buffer.append("<link href='http://localhost/api/config/currencies/1' rel='currency'/>");
-        buffer.append("<id>1</id>");
-        buffer.append(link("/config/pricingtemplates/1", "edit"));
-        buffer.append("</pricingTemplate>");
-        return buffer.toString();
-    }
+   public static String pricingtemplatePutPayload() {
+      StringBuffer buffer = new StringBuffer();
+      buffer.append("<pricingTemplate>");
+      buffer.append("<name>pricing template</name>");
+      buffer.append("<description>pt_description</description>");
+      buffer.append("<hdGB>0</hdGB>");
+      buffer.append("<standingChargePeriod>0</standingChargePeriod>");
+      buffer.append("<vlan>0</vlan>");
+      buffer.append("<chargingPeriod>1</chargingPeriod>");
+      buffer.append("<minimumChargePeriod>0</minimumChargePeriod>");
+      buffer.append("<showChangesBefore>true</showChangesBefore>");
+      buffer.append("<showMinimumCharge>false</showMinimumCharge>");
+      buffer.append("<minimumCharge>2</minimumCharge>");
+      buffer.append("<memoryGB>0</memoryGB>");
+      buffer.append("<publicIp>0</publicIp>");
+      buffer.append("<vcpu>0</vcpu>");
+      buffer.append("<memoryMB>0</memoryMB>");
+      buffer.append("<defaultTemplate>true</defaultTemplate>");
+      buffer.append("<link href='http://localhost/api/config/currencies/1' rel='currency'/>");
+      buffer.append("<id>1</id>");
+      buffer.append(link("/config/pricingtemplates/1", "edit"));
+      buffer.append("</pricingTemplate>");
+      return buffer.toString();
+   }
 
-    public static Object costcodecurrencyPut()
-    {
-        CostCodeCurrencyDto costcodecurrency = new CostCodeCurrencyDto();
-        costcodecurrency.addLink(new RESTLink("edit",
-            "http://localhost/api/config/costcodes/1/currencies"));
-        costcodecurrency.addLink(new RESTLink("currency",
-            "http://localhost/api/config/currencies/1"));
-        costcodecurrency.setPrice(new BigDecimal("300"));
-        CostCodeCurrenciesDto costcodecurrencies = new CostCodeCurrenciesDto();
-        costcodecurrencies.add(costcodecurrency);
-        return costcodecurrencies;
-    }
+   public static Object costcodecurrencyPut() {
+      CostCodeCurrencyDto costcodecurrency = new CostCodeCurrencyDto();
+      costcodecurrency.addLink(new RESTLink("edit", "http://localhost/api/config/costcodes/1/currencies"));
+      costcodecurrency.addLink(new RESTLink("currency", "http://localhost/api/config/currencies/1"));
+      costcodecurrency.setPrice(new BigDecimal("300"));
+      CostCodeCurrenciesDto costcodecurrencies = new CostCodeCurrenciesDto();
+      costcodecurrencies.add(costcodecurrency);
+      return costcodecurrencies;
+   }
 
-    public static String costcodecurrencyPutPayload()
-    {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append("<costCodeCurrencies>");
-        buffer.append("<costCodeCurrency>");
-        buffer.append("<price>300</price>");
-        buffer
-            .append("<link href='http://localhost/api/config/costcodes/1/currencies' rel='edit'/>");
-        buffer.append("<link href='http://localhost/api/config/currencies/1' rel='currency'/>");
-        buffer.append("</costCodeCurrency>");
+   public static String costcodecurrencyPutPayload() {
+      StringBuffer buffer = new StringBuffer();
+      buffer.append("<costCodeCurrencies>");
+      buffer.append("<costCodeCurrency>");
+      buffer.append("<price>300</price>");
+      buffer.append("<link href='http://localhost/api/config/costcodes/1/currencies' rel='edit'/>");
+      buffer.append("<link href='http://localhost/api/config/currencies/1' rel='currency'/>");
+      buffer.append("</costCodeCurrency>");
 
-        buffer.append("</costCodeCurrencies>");
-        return buffer.toString();
-    }
+      buffer.append("</costCodeCurrencies>");
+      return buffer.toString();
+   }
 
-    public static Object pricingCostcodePut()
-    {
-        PricingCostCodeDto pricingcostcode = new PricingCostCodeDto();
-        pricingcostcode.setId(1);
-        pricingcostcode.setPrice(new BigDecimal("400"));
-        pricingcostcode
-            .addLink(new RESTLink("costcode", "http://localhost/api/config/costcodes/1"));
-        pricingcostcode.addLink(new RESTLink("pricingtemplate",
-            "http://localhost/api/config/pricingtemplates/1"));
-        pricingcostcode.addLink(new RESTLink("edit",
-            "http://localhost/api/config/pricingtemplates/1/costcodes/1"));
-        return pricingcostcode;
-    }
+   public static Object pricingCostcodePut() {
+      PricingCostCodeDto pricingcostcode = new PricingCostCodeDto();
+      pricingcostcode.setId(1);
+      pricingcostcode.setPrice(new BigDecimal("400"));
+      pricingcostcode.addLink(new RESTLink("costcode", "http://localhost/api/config/costcodes/1"));
+      pricingcostcode.addLink(new RESTLink("pricingtemplate", "http://localhost/api/config/pricingtemplates/1"));
+      pricingcostcode.addLink(new RESTLink("edit", "http://localhost/api/config/pricingtemplates/1/costcodes/1"));
+      return pricingcostcode;
+   }
 
-    public static String pricingCostCodePutPayload()
-    {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append("<pricingCostCode>");
-        buffer.append("<link href='http://localhost/api/config/costcodes/1' rel='costcode'/>");
-        buffer
-            .append("<link href='http://localhost/api/config/pricingtemplates/1' rel='pricingtemplate'/>");
-        buffer.append("<price>400</price>");
-        buffer.append("<id>1</id>");
-        buffer.append(link("/config/pricingtemplates/1/costcodes/1", "edit"));
-        buffer.append("</pricingCostCode>");
-        return buffer.toString();
-    }
+   public static String pricingCostCodePutPayload() {
+      StringBuffer buffer = new StringBuffer();
+      buffer.append("<pricingCostCode>");
+      buffer.append("<link href='http://localhost/api/config/costcodes/1' rel='costcode'/>");
+      buffer.append("<link href='http://localhost/api/config/pricingtemplates/1' rel='pricingtemplate'/>");
+      buffer.append("<price>400</price>");
+      buffer.append("<id>1</id>");
+      buffer.append(link("/config/pricingtemplates/1/costcodes/1", "edit"));
+      buffer.append("</pricingCostCode>");
+      return buffer.toString();
+   }
 
-    public static Object pricingTierPut()
-    {
-        PricingTierDto pricingtier = new PricingTierDto();
-        pricingtier.setId(1);
-        pricingtier.setPrice(new BigDecimal("600"));
-        pricingtier.addLink(new RESTLink("tier",
-            "http://localhost/api/admin/datacenters/1/storage/tiers/2"));
-        pricingtier.addLink(new RESTLink("pricingtemplate",
-            "http://localhost/api/config/pricingtemplates/1"));
-        pricingtier.addLink(new RESTLink("edit",
-            "http://localhost/api/config/pricingtemplates/1/tiers/2"));
-        return pricingtier;
-    }
+   public static Object pricingTierPut() {
+      PricingTierDto pricingtier = new PricingTierDto();
+      pricingtier.setId(1);
+      pricingtier.setPrice(new BigDecimal("600"));
+      pricingtier.addLink(new RESTLink("tier", "http://localhost/api/admin/datacenters/1/storage/tiers/2"));
+      pricingtier.addLink(new RESTLink("pricingtemplate", "http://localhost/api/config/pricingtemplates/1"));
+      pricingtier.addLink(new RESTLink("edit", "http://localhost/api/config/pricingtemplates/1/tiers/2"));
+      return pricingtier;
+   }
 
-    public static String pricingTierPutPayload()
-    {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append("<pricingTier>");
-        buffer
-            .append("<link href='http://localhost/api/admin/datacenters/1/storage/tiers/2' rel='tier'/>");
-        buffer
-            .append("<link href='http://localhost/api/config/pricingtemplates/1' rel='pricingtemplate'/>");
-        buffer.append("<price>600</price>");
-        buffer.append("<id>1</id>");
-        buffer.append(link("/config/pricingtemplates/1/tiers/2", "edit"));
-        buffer.append("</pricingTier>");
-        return buffer.toString();
-    }
+   public static String pricingTierPutPayload() {
+      StringBuffer buffer = new StringBuffer();
+      buffer.append("<pricingTier>");
+      buffer.append("<link href='http://localhost/api/admin/datacenters/1/storage/tiers/2' rel='tier'/>");
+      buffer.append("<link href='http://localhost/api/config/pricingtemplates/1' rel='pricingtemplate'/>");
+      buffer.append("<price>600</price>");
+      buffer.append("<id>1</id>");
+      buffer.append(link("/config/pricingtemplates/1/tiers/2", "edit"));
+      buffer.append("</pricingTier>");
+      return buffer.toString();
+   }
 
 }

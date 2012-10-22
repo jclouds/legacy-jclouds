@@ -31,6 +31,5 @@ import com.google.inject.ImplementedBy;
  * @author Ignasi Barrera
  */
 @ImplementedBy(ListPrivilegesImpl.class)
-public interface ListPrivileges extends ListRootEntities<Privilege>
-{
+public interface ListPrivileges extends ListRootEntities<Privilege> {
 }

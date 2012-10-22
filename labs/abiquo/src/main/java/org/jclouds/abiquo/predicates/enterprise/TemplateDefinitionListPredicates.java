@@ -33,19 +33,15 @@ import com.google.common.base.Predicate;
  * @author Ignasi Barrera
  * @author Francesc Montserrat
  */
-public class TemplateDefinitionListPredicates
-{
-    public static Predicate<TemplateDefinitionList> name(final String... names)
-    {
-        checkNotNull(names, "names must be defined");
+public class TemplateDefinitionListPredicates {
+   public static Predicate<TemplateDefinitionList> name(final String... names) {
+      checkNotNull(names, "names must be defined");
 
-        return new Predicate<TemplateDefinitionList>()
-        {
-            @Override
-            public boolean apply(final TemplateDefinitionList templateList)
-            {
-                return Arrays.asList(names).contains(templateList.getName());
-            }
-        };
-    }
+      return new Predicate<TemplateDefinitionList>() {
+         @Override
+         public boolean apply(final TemplateDefinitionList templateList) {
+            return Arrays.asList(names).contains(templateList.getName());
+         }
+      };
+   }
 }

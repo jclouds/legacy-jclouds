@@ -44,78 +44,60 @@ import com.google.common.collect.Iterables;
  * @author Ignasi Barrera
  */
 @Test(groups = "unit", testName = "FeatureCoverageTest")
-public class FeatureCoverageTest
-{
-    /** A collection with all async api classes. */
-    private Collection<Class< ? >> featureClasses;
+public class FeatureCoverageTest {
+   /** A collection with all async api classes. */
+   private Collection<Class<?>> featureClasses;
 
-    @BeforeMethod
-    public void setup()
-    {
-        featureClasses = new ArrayList<Class< ? >>();
-        featureClasses.addAll(AbiquoRestClientModule.DELEGATE_MAP.values());
-        featureClasses.add(AbiquoHttpAsyncClient.class);
-    }
+   @BeforeMethod
+   public void setup() {
+      featureClasses = new ArrayList<Class<?>>();
+      featureClasses.addAll(AbiquoRestClientModule.DELEGATE_MAP.values());
+      featureClasses.add(AbiquoHttpAsyncClient.class);
+   }
 
-    public void testAllFeaturesHaveTest() throws ClassNotFoundException
-    {
-        List<String> missingTests = new ArrayList<String>();
+   public void testAllFeaturesHaveTest() throws ClassNotFoundException {
+      List<String> missingTests = new ArrayList<String>();
 
-        for (Class< ? > featureClass : featureClasses)
-        {
-            try
-            {
-                Class< ? > testClass = loadTestClass(featureClass);
-                Iterable<String> testMethodNames = methodNames(testClass);
+      for (Class<?> featureClass : featureClasses) {
+         try {
+            Class<?> testClass = loadTestClass(featureClass);
+            Iterable<String> testMethodNames = methodNames(testClass);
 
-                for (Method method : featureClass.getMethods())
-                {
-                    if (!hasTest(testMethodNames, method))
-                    {
-                        missingTests.add(method.getDeclaringClass().getSimpleName() + "."
-                            + method.getName());
-                    }
-                }
+            for (Method method : featureClass.getMethods()) {
+               if (!hasTest(testMethodNames, method)) {
+                  missingTests.add(method.getDeclaringClass().getSimpleName() + "." + method.getName());
+               }
             }
-            catch (ClassNotFoundException ex)
-            {
-                fail("Missing tests for class: " + featureClass.getName());
-            }
-        }
+         } catch (ClassNotFoundException ex) {
+            fail("Missing tests for class: " + featureClass.getName());
+         }
+      }
 
-        assertTrue(missingTests.isEmpty(), "Missing tests: " + Joiner.on(", ").join(missingTests));
-    }
+      assertTrue(missingTests.isEmpty(), "Missing tests: " + Joiner.on(", ").join(missingTests));
+   }
 
-    private Class< ? > loadTestClass(final Class< ? > featureClass) throws ClassNotFoundException
-    {
-        String testClassName = featureClass.getName() + "Test";
-        return Thread.currentThread().getContextClassLoader().loadClass(testClassName);
-    }
+   private Class<?> loadTestClass(final Class<?> featureClass) throws ClassNotFoundException {
+      String testClassName = featureClass.getName() + "Test";
+      return Thread.currentThread().getContextClassLoader().loadClass(testClassName);
+   }
 
-    private static Iterable<String> methodNames(final Class< ? > clazz)
-    {
-        return Iterables.transform(Arrays.asList(clazz.getMethods()),
-            new Function<Method, String>()
-            {
-                @Override
-                public String apply(final Method input)
-                {
-                    return input.getName();
-                }
-            });
-    }
+   private static Iterable<String> methodNames(final Class<?> clazz) {
+      return Iterables.transform(Arrays.asList(clazz.getMethods()), new Function<Method, String>() {
+         @Override
+         public String apply(final Method input) {
+            return input.getName();
+         }
+      });
+   }
 
-    private static boolean hasTest(final Iterable<String> testMethodNames, final Method method)
-    {
-        String testMethod = Iterables.find(testMethodNames, new Predicate<String>()
-        {
-            @Override
-            public boolean apply(final String input)
-            {
-                return input.toLowerCase().contains(method.getName().toLowerCase());
-            }
-        }, null);
+   private static boolean hasTest(final Iterable<String> testMethodNames, final Method method) {
+      String testMethod = Iterables.find(testMethodNames, new Predicate<String>() {
+         @Override
+         public boolean apply(final String input) {
+            return input.toLowerCase().contains(method.getName().toLowerCase());
+         }
+      }, null);
 
-        return testMethod != null;
-    }
+      return testMethod != null;
+   }
 }

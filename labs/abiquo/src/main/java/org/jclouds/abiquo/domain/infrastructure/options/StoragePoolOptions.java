@@ -29,43 +29,36 @@ import org.jclouds.http.options.BaseHttpRequestOptions;
  */
 
 @EnterpriseEdition
-public class StoragePoolOptions extends BaseHttpRequestOptions
-{
-    public static Builder builder()
-    {
-        return new Builder();
-    }
+public class StoragePoolOptions extends BaseHttpRequestOptions {
+   public static Builder builder() {
+      return new Builder();
+   }
 
-    @Override
-    protected Object clone() throws CloneNotSupportedException
-    {
-        StoragePoolOptions options = new StoragePoolOptions();
-        options.queryParameters.putAll(queryParameters);
-        return options;
-    }
+   @Override
+   protected Object clone() throws CloneNotSupportedException {
+      StoragePoolOptions options = new StoragePoolOptions();
+      options.queryParameters.putAll(queryParameters);
+      return options;
+   }
 
-    public static class Builder
-    {
-        private Boolean sync;
+   public static class Builder {
+      private Boolean sync;
 
-        /**
-         * Set the optional sync param.
-         */
-        public Builder sync(final boolean sync)
-        {
-            this.sync = sync;
-            return this;
-        }
+      /**
+       * Set the optional sync param.
+       */
+      public Builder sync(final boolean sync) {
+         this.sync = sync;
+         return this;
+      }
 
-        public StoragePoolOptions build()
-        {
-            StoragePoolOptions options = new StoragePoolOptions();
-            if (sync != null)
-            {
-                options.queryParameters.put("sync", sync.toString());
-            }
+      public StoragePoolOptions build() {
+         StoragePoolOptions options = new StoragePoolOptions();
+         if (sync != null) {
+            options.queryParameters.put("sync", sync.toString());
+         }
 
-            return options;
-        }
-    }
+         return options;
+      }
+   }
 }

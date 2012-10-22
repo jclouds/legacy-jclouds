@@ -39,33 +39,29 @@ import com.google.inject.TypeLiteral;
  * @author Ignasi Barrera
  */
 @Test(groups = "unit", testName = "AbiquoHttpAsyncClientTest")
-public class AbiquoHttpAsyncClientTest extends BaseAbiquoAsyncApiTest<AbiquoHttpAsyncClient>
-{
-    public void testGet() throws SecurityException, NoSuchMethodException, IOException
-    {
-        RESTLink link = new RESTLink("edit", "http://foo/bar");
-        link.setType(DatacentersDto.BASE_MEDIA_TYPE);
+public class AbiquoHttpAsyncClientTest extends BaseAbiquoAsyncApiTest<AbiquoHttpAsyncClient> {
+   public void testGet() throws SecurityException, NoSuchMethodException, IOException {
+      RESTLink link = new RESTLink("edit", "http://foo/bar");
+      link.setType(DatacentersDto.BASE_MEDIA_TYPE);
 
-        Method method = AbiquoHttpAsyncClient.class.getMethod("get", RESTLink.class);
-        GeneratedHttpRequest request = processor.createRequest(method, link);
+      Method method = AbiquoHttpAsyncClient.class.getMethod("get", RESTLink.class);
+      GeneratedHttpRequest request = processor.createRequest(method, link);
 
-        assertRequestLineEquals(request, "GET http://foo/bar HTTP/1.1");
-        assertNonPayloadHeadersEqual(request, "Accept: " + DatacentersDto.BASE_MEDIA_TYPE + "\n");
-        assertPayloadEquals(request, null, null, false);
+      assertRequestLineEquals(request, "GET http://foo/bar HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Accept: " + DatacentersDto.BASE_MEDIA_TYPE + "\n");
+      assertPayloadEquals(request, null, null, false);
 
-        assertResponseParserClassEquals(method, request, IdentityFunction.class);
-        assertSaxResponseParserClassEquals(method, null);
-        assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+      assertResponseParserClassEquals(method, request, IdentityFunction.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
 
-        checkFilters(request);
-    }
+      checkFilters(request);
+   }
 
-    @Override
-    protected TypeLiteral<RestAnnotationProcessor<AbiquoHttpAsyncClient>> createTypeLiteral()
-    {
-        return new TypeLiteral<RestAnnotationProcessor<AbiquoHttpAsyncClient>>()
-        {
-        };
-    }
+   @Override
+   protected TypeLiteral<RestAnnotationProcessor<AbiquoHttpAsyncClient>> createTypeLiteral() {
+      return new TypeLiteral<RestAnnotationProcessor<AbiquoHttpAsyncClient>>() {
+      };
+   }
 
 }

@@ -33,24 +33,20 @@ import com.abiquo.server.core.enterprise.EnterprisePropertiesDto;
  * @author Ignasi Barrera
  */
 @Test(groups = "api", testName = "EnterprisePropertiesLiveApiTest")
-public class EnterprisePropertiesLiveApiTest extends BaseAbiquoApiLiveApiTest
-{
+public class EnterprisePropertiesLiveApiTest extends BaseAbiquoApiLiveApiTest {
 
-    public void testUpdate()
-    {
-        EnterpriseProperties properties =
-            env.administrationService.getEnterpriseProperties(env.enterprise);
+   public void testUpdate() {
+      EnterpriseProperties properties = env.administrationService.getEnterpriseProperties(env.enterprise);
 
-        Integer size = properties.getProperties().size();
-        properties.getProperties().put("Prop", "Value");
-        properties.update();
+      Integer size = properties.getProperties().size();
+      properties.getProperties().put("Prop", "Value");
+      properties.update();
 
-        // Recover the updated properties
-        EnterprisePropertiesDto updated =
-            env.enterpriseApi.getEnterpriseProperties(env.enterprise.unwrap());
+      // Recover the updated properties
+      EnterprisePropertiesDto updated = env.enterpriseApi.getEnterpriseProperties(env.enterprise.unwrap());
 
-        assertEquals(updated.getProperties().size(), size + 1);
-        assertTrue(updated.getProperties().containsKey("Prop"));
-        assertTrue(updated.getProperties().containsValue("Value"));
-    }
+      assertEquals(updated.getProperties().size(), size + 1);
+      assertTrue(updated.getProperties().containsKey("Prop"));
+      assertTrue(updated.getProperties().containsValue("Value"));
+   }
 }

@@ -33,40 +33,33 @@ import com.abiquo.model.transport.AcceptedRequestDto;
 import com.google.inject.TypeLiteral;
 
 /**
- * Return an {@link AcceptedRequestDto} representing the asynchronous task or <code>null</code> if
- * the operation completed synchronously.
+ * Return an {@link AcceptedRequestDto} representing the asynchronous task or
+ * <code>null</code> if the operation completed synchronously.
  * <p>
  * Operations that generate asynchronous tasks will return one of the following:
  * <ul>
  * <li>204 if the operation completed synchronously</li>
- * <li>202 with the asynchronous task reference in the body if the operation has been submitted and
- * will be executed asynchronously</li>
+ * <li>202 with the asynchronous task reference in the body if the operation has
+ * been submitted and will be executed asynchronously</li>
  * </ul>
  * 
  * @author Ignasi Barrera
  */
 @Singleton
-public class ReturnTaskReferenceOrNull extends ParseXMLWithJAXB<AcceptedRequestDto<String>>
-{
-    @Inject
-    public ReturnTaskReferenceOrNull(final XMLParser xml,
-        final TypeLiteral<AcceptedRequestDto<String>> type)
-    {
-        super(xml, type);
-    }
+public class ReturnTaskReferenceOrNull extends ParseXMLWithJAXB<AcceptedRequestDto<String>> {
+   @Inject
+   public ReturnTaskReferenceOrNull(final XMLParser xml, final TypeLiteral<AcceptedRequestDto<String>> type) {
+      super(xml, type);
+   }
 
-    @Override
-    public AcceptedRequestDto<String> apply(final HttpResponse from)
-    {
-        if (from.getStatusCode() == Status.NO_CONTENT.getStatusCode())
-        {
-            releasePayload(from);
-            return null;
-        }
-        else
-        {
-            return super.apply(from);
-        }
-    }
+   @Override
+   public AcceptedRequestDto<String> apply(final HttpResponse from) {
+      if (from.getStatusCode() == Status.NO_CONTENT.getStatusCode()) {
+         releasePayload(from);
+         return null;
+      } else {
+         return super.apply(from);
+      }
+   }
 
 }

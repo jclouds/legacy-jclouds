@@ -41,30 +41,25 @@ import com.abiquo.server.core.infrastructure.network.VLANNetworkDto;
  * @author Ignasi Barrera
  */
 @Singleton
-public class BindUnmanagedIpRefToPayload extends BindToXMLPayload
-{
-    @Inject
-    public BindUnmanagedIpRefToPayload(final XMLParser xmlParser)
-    {
-        super(xmlParser);
-    }
+public class BindUnmanagedIpRefToPayload extends BindToXMLPayload {
+   @Inject
+   public BindUnmanagedIpRefToPayload(final XMLParser xmlParser) {
+      super(xmlParser);
+   }
 
-    @Override
-    public <R extends HttpRequest> R bindToRequest(final R request, final Object input)
-    {
-        checkArgument(checkNotNull(input, "input") instanceof VLANNetworkDto,
+   @Override
+   public <R extends HttpRequest> R bindToRequest(final R request, final Object input) {
+      checkArgument(checkNotNull(input, "input") instanceof VLANNetworkDto,
             "this binder is only valid for VLANNetworkDto objects");
 
-        VLANNetworkDto network = (VLANNetworkDto) input;
-        checkArgument(network.getType() == NetworkType.UNMANAGED,
-            "this binder is only valid for UNMANAGED networks");
+      VLANNetworkDto network = (VLANNetworkDto) input;
+      checkArgument(network.getType() == NetworkType.UNMANAGED, "this binder is only valid for UNMANAGED networks");
 
-        RESTLink ipsLink =
-            checkNotNull(network.searchLink("ips"), "VLANNetworkDto must have an ips link");
+      RESTLink ipsLink = checkNotNull(network.searchLink("ips"), "VLANNetworkDto must have an ips link");
 
-        LinksDto refs = new LinksDto();
-        refs.addLink(new RESTLink("unmanagedip", ipsLink.getHref()));
+      LinksDto refs = new LinksDto();
+      refs.addLink(new RESTLink("unmanagedip", ipsLink.getHref()));
 
-        return super.bindToRequest(request, refs);
-    }
+      return super.bindToRequest(request, refs);
+   }
 }

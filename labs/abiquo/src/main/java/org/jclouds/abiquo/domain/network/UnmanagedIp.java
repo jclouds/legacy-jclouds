@@ -42,48 +42,40 @@ import com.google.inject.TypeLiteral;
  * @author Ignasi Barrera
  * @author Francesc Montserrat
  */
-public class UnmanagedIp extends AbstractPublicIp<UnmanagedIpDto, UnmanagedNetwork>
-{
-    /**
-     * Constructor to be used only by the builder.
-     */
-    protected UnmanagedIp(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-        final UnmanagedIpDto target)
-    {
-        super(context, target);
-    }
+public class UnmanagedIp extends AbstractPublicIp<UnmanagedIpDto, UnmanagedNetwork> {
+   /**
+    * Constructor to be used only by the builder.
+    */
+   protected UnmanagedIp(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final UnmanagedIpDto target) {
+      super(context, target);
+   }
 
-    // Domain operations
+   // Domain operations
 
-    @Override
-    public UnmanagedNetwork getNetwork()
-    {
-        RESTLink link =
-            checkNotNull(target.searchLink(ParentLinkName.UNMANAGED_NETWORK),
-                ValidationErrors.MISSING_REQUIRED_LINK + " " + ParentLinkName.UNMANAGED_NETWORK);
+   @Override
+   public UnmanagedNetwork getNetwork() {
+      RESTLink link = checkNotNull(target.searchLink(ParentLinkName.UNMANAGED_NETWORK),
+            ValidationErrors.MISSING_REQUIRED_LINK + " " + ParentLinkName.UNMANAGED_NETWORK);
 
-        ExtendedUtils utils = (ExtendedUtils) context.getUtils();
-        HttpResponse response = utils.getAbiquoHttpClient().get(link);
+      ExtendedUtils utils = (ExtendedUtils) context.getUtils();
+      HttpResponse response = utils.getAbiquoHttpClient().get(link);
 
-        ParseXMLWithJAXB<VLANNetworkDto> parser =
-            new ParseXMLWithJAXB<VLANNetworkDto>(utils.getXml(),
-                TypeLiteral.get(VLANNetworkDto.class));
+      ParseXMLWithJAXB<VLANNetworkDto> parser = new ParseXMLWithJAXB<VLANNetworkDto>(utils.getXml(),
+            TypeLiteral.get(VLANNetworkDto.class));
 
-        return wrap(context, UnmanagedNetwork.class, parser.apply(response));
-    }
+      return wrap(context, UnmanagedNetwork.class, parser.apply(response));
+   }
 
-    @Override
-    public NetworkType getNetworkType()
-    {
-        return NetworkType.UNMANAGED;
-    }
+   @Override
+   public NetworkType getNetworkType() {
+      return NetworkType.UNMANAGED;
+   }
 
-    @Override
-    public String toString()
-    {
-        return "UnmanagedIp [networkType=" + getNetworkType() + ", available=" + isAvailable()
-            + ", quarantine=" + isQuarantine() + ", id=" + getId() + ", ip=" + getIp() + ", mac="
-            + getMac() + ", name=" + getName() + ", networkName=" + getNetworkName() + "]";
-    }
+   @Override
+   public String toString() {
+      return "UnmanagedIp [networkType=" + getNetworkType() + ", available=" + isAvailable() + ", quarantine="
+            + isQuarantine() + ", id=" + getId() + ", ip=" + getIp() + ", mac=" + getMac() + ", name=" + getName()
+            + ", networkName=" + getNetworkName() + "]";
+   }
 
 }

@@ -50,364 +50,333 @@ import com.google.common.collect.Lists;
 /**
  * Represents a virtual appliance.
  * <p>
- * A virtual appliance is a logic container for virtual machines that together make an appliance.
+ * A virtual appliance is a logic container for virtual machines that together
+ * make an appliance.
  * 
  * @author Ignasi Barrera
  * @author Francesc Montserrat
- * @see API: <a href="http://community.abiquo.com/display/ABI20/Virtual+Appliance+Resource">
+ * @see API: <a
+ *      href="http://community.abiquo.com/display/ABI20/Virtual+Appliance+Resource"
+ *      >
  *      http://community.abiquo.com/display/ABI20/Virtual+Appliance+Resource</a>
  */
-public class VirtualAppliance extends DomainWrapper<VirtualApplianceDto>
-{
-    /** The virtual datacenter where the virtual appliance belongs. */
-    private VirtualDatacenter virtualDatacenter;
+public class VirtualAppliance extends DomainWrapper<VirtualApplianceDto> {
+   /** The virtual datacenter where the virtual appliance belongs. */
+   private VirtualDatacenter virtualDatacenter;
 
-    /**
-     * Constructor to be used only by the builder.
-     */
-    protected VirtualAppliance(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-        final VirtualApplianceDto target)
-    {
-        super(context, target);
-    }
+   /**
+    * Constructor to be used only by the builder.
+    */
+   protected VirtualAppliance(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final VirtualApplianceDto target) {
+      super(context, target);
+   }
 
-    // Domain operations
+   // Domain operations
 
-    /**
-     * Deletes the virtual appliance.
-     */
-    public void delete()
-    {
-        context.getApi().getCloudApi().deleteVirtualAppliance(target);
-        target = null;
-    }
+   /**
+    * Deletes the virtual appliance.
+    */
+   public void delete() {
+      context.getApi().getCloudApi().deleteVirtualAppliance(target);
+      target = null;
+   }
 
-    /**
-     * Creates the virtual appliance in the selected virtual datacenter.
-     */
-    public void save()
-    {
-        target =
-            context.getApi().getCloudApi()
-                .createVirtualAppliance(virtualDatacenter.unwrap(), target);
-    }
+   /**
+    * Creates the virtual appliance in the selected virtual datacenter.
+    */
+   public void save() {
+      target = context.getApi().getCloudApi().createVirtualAppliance(virtualDatacenter.unwrap(), target);
+   }
 
-    /**
-     * Updates the virtual appliance information when some of its properties have changed.
-     */
-    public void update()
-    {
-        target = context.getApi().getCloudApi().updateVirtualAppliance(target);
-    }
+   /**
+    * Updates the virtual appliance information when some of its properties have
+    * changed.
+    */
+   public void update() {
+      target = context.getApi().getCloudApi().updateVirtualAppliance(target);
+   }
 
-    // Parent access
+   // Parent access
 
-    /**
-     * Gets the virtual datacenter where the virtual appliance belongs to.
-     * 
-     * @resturn The virtual datacenter where the virtual appliance belongs to.
-     * @see API: <a href=
-     *      "http://community.abiquo.com/display/ABI20/Virtual+Datacenter+Resource#VirtualDatacenterResource-RetrieveaVirtualDatacenter"
-     *      > http://community.abiquo.com/display/ABI20/Virtual+Datacenter+Resource#
-     *      VirtualDatacenterResource-RetrieveaVirtualDatacenter</a>
-     */
-    public VirtualDatacenter getVirtualDatacenter()
-    {
-        Integer virtualDatacenterId = target.getIdFromLink(ParentLinkName.VIRTUAL_DATACENTER);
-        VirtualDatacenterDto dto =
-            context.getApi().getCloudApi().getVirtualDatacenter(virtualDatacenterId);
-        virtualDatacenter = wrap(context, VirtualDatacenter.class, dto);
-        return virtualDatacenter;
-    }
+   /**
+    * Gets the virtual datacenter where the virtual appliance belongs to.
+    * 
+    * @resturn The virtual datacenter where the virtual appliance belongs to.
+    * @see API: <a href=
+    *      "http://community.abiquo.com/display/ABI20/Virtual+Datacenter+Resource#VirtualDatacenterResource-RetrieveaVirtualDatacenter"
+    *      > http://community.abiquo.com/display/ABI20/Virtual+Datacenter+
+    *      Resource# VirtualDatacenterResource-RetrieveaVirtualDatacenter</a>
+    */
+   public VirtualDatacenter getVirtualDatacenter() {
+      Integer virtualDatacenterId = target.getIdFromLink(ParentLinkName.VIRTUAL_DATACENTER);
+      VirtualDatacenterDto dto = context.getApi().getCloudApi().getVirtualDatacenter(virtualDatacenterId);
+      virtualDatacenter = wrap(context, VirtualDatacenter.class, dto);
+      return virtualDatacenter;
+   }
 
-    /**
-     * Gets the enterprise where the virtual appliance belongs to.
-     * 
-     * @return The enterprise where the virtual appliance belongs to.
-     * @see API: <a href=
-     *      "http://community.abiquo.com/display/ABI20/Enterprise+Resource#EnterpriseResource-RetrieveaEnterprise"
-     *      > http://community.abiquo.com/display/ABI20/Enterprise+Resource#EnterpriseResource-
-     *      RetrieveaEnterprise</a>
-     */
-    public Enterprise getEnterprise()
-    {
-        Integer enterpriseId = target.getIdFromLink(ParentLinkName.ENTERPRISE);
-        EnterpriseDto dto = context.getApi().getEnterpriseApi().getEnterprise(enterpriseId);
-        return wrap(context, Enterprise.class, dto);
-    }
+   /**
+    * Gets the enterprise where the virtual appliance belongs to.
+    * 
+    * @return The enterprise where the virtual appliance belongs to.
+    * @see API: <a href=
+    *      "http://community.abiquo.com/display/ABI20/Enterprise+Resource#EnterpriseResource-RetrieveaEnterprise"
+    *      > http://community.abiquo.com/display/ABI20/Enterprise+Resource#
+    *      EnterpriseResource- RetrieveaEnterprise</a>
+    */
+   public Enterprise getEnterprise() {
+      Integer enterpriseId = target.getIdFromLink(ParentLinkName.ENTERPRISE);
+      EnterpriseDto dto = context.getApi().getEnterpriseApi().getEnterprise(enterpriseId);
+      return wrap(context, Enterprise.class, dto);
+   }
 
-    /**
-     * Gets the current state of the virtual appliance.
-     * 
-     * @return The current state of the virtual appliance.
-     */
-    public VirtualApplianceState getState()
-    {
-        VirtualApplianceStateDto stateDto =
-            context.getApi().getCloudApi().getVirtualApplianceState(target);
-        return stateDto.getPower();
-    }
+   /**
+    * Gets the current state of the virtual appliance.
+    * 
+    * @return The current state of the virtual appliance.
+    */
+   public VirtualApplianceState getState() {
+      VirtualApplianceStateDto stateDto = context.getApi().getCloudApi().getVirtualApplianceState(target);
+      return stateDto.getPower();
+   }
 
-    // Children access
+   // Children access
 
-    /**
-     * Gets the list of virtual machines in the virtual appliance.
-     * 
-     * @return The list of virtual machines in the virtual appliance.
-     * @see API: <a href=
-     *      "http://community.abiquo.com/display/ABI18/Virtual+Machine+Resource#VirtualMachineResource-RetrievethelistofVirtualMachines."
-     *      >
-     *      http://community.abiquo.com/display/ABI18/Virtual+Machine+Resource#VirtualMachineResource
-     *      -RetrievethelistofVirtualMachines.</a>
-     */
-    public List<VirtualMachine> listVirtualMachines()
-    {
-        return listVirtualMachines(VirtualMachineOptions.builder().disablePagination().build());
-    }
+   /**
+    * Gets the list of virtual machines in the virtual appliance.
+    * 
+    * @return The list of virtual machines in the virtual appliance.
+    * @see API: <a href=
+    *      "http://community.abiquo.com/display/ABI18/Virtual+Machine+Resource#VirtualMachineResource-RetrievethelistofVirtualMachines."
+    *      > http://community.abiquo.com/display/ABI18/Virtual+Machine+Resource#
+    *      VirtualMachineResource -RetrievethelistofVirtualMachines.</a>
+    */
+   public List<VirtualMachine> listVirtualMachines() {
+      return listVirtualMachines(VirtualMachineOptions.builder().disablePagination().build());
+   }
 
-    /**
-     * Gets the list of virtual machines in the virtual appliance.
-     * 
-     * @return The list of virtual machines in the virtual appliance.
-     * @see API: <a href=
-     *      "http://community.abiquo.com/display/ABI18/Virtual+Machine+Resource#VirtualMachineResource-RetrievethelistofVirtualMachines."
-     *      >
-     *      http://community.abiquo.com/display/ABI18/Virtual+Machine+Resource#VirtualMachineResource
-     *      -RetrievethelistofVirtualMachines.</a>
-     */
-    public List<VirtualMachine> listVirtualMachines(final VirtualMachineOptions options)
-    {
-        VirtualMachinesWithNodeExtendedDto vms =
-            context.getApi().getCloudApi().listVirtualMachines(target, options);
-        return wrap(context, VirtualMachine.class, vms.getCollection());
-    }
+   /**
+    * Gets the list of virtual machines in the virtual appliance.
+    * 
+    * @return The list of virtual machines in the virtual appliance.
+    * @see API: <a href=
+    *      "http://community.abiquo.com/display/ABI18/Virtual+Machine+Resource#VirtualMachineResource-RetrievethelistofVirtualMachines."
+    *      > http://community.abiquo.com/display/ABI18/Virtual+Machine+Resource#
+    *      VirtualMachineResource -RetrievethelistofVirtualMachines.</a>
+    */
+   public List<VirtualMachine> listVirtualMachines(final VirtualMachineOptions options) {
+      VirtualMachinesWithNodeExtendedDto vms = context.getApi().getCloudApi().listVirtualMachines(target, options);
+      return wrap(context, VirtualMachine.class, vms.getCollection());
+   }
 
-    /**
-     * Gets the list of virtual machines in the virtual appliance matching the given filter.
-     * 
-     * @param filter The filter to apply.
-     * @return The list of virtual machines in the virtual appliance matching the given filter.
-     */
-    public List<VirtualMachine> listVirtualMachines(final Predicate<VirtualMachine> filter)
-    {
-        return Lists.newLinkedList(filter(listVirtualMachines(), filter));
-    }
+   /**
+    * Gets the list of virtual machines in the virtual appliance matching the
+    * given filter.
+    * 
+    * @param filter
+    *           The filter to apply.
+    * @return The list of virtual machines in the virtual appliance matching the
+    *         given filter.
+    */
+   public List<VirtualMachine> listVirtualMachines(final Predicate<VirtualMachine> filter) {
+      return Lists.newLinkedList(filter(listVirtualMachines(), filter));
+   }
 
-    /**
-     * Gets a single virtual machine in the virtual appliance matching the given filter.
-     * 
-     * @param filter The filter to apply.
-     * @return The virtual machine or <code>null</code> if none matched the given filter.
-     */
-    public VirtualMachine findVirtualMachine(final Predicate<VirtualMachine> filter)
-    {
-        return Iterables.getFirst(filter(listVirtualMachines(), filter), null);
-    }
+   /**
+    * Gets a single virtual machine in the virtual appliance matching the given
+    * filter.
+    * 
+    * @param filter
+    *           The filter to apply.
+    * @return The virtual machine or <code>null</code> if none matched the given
+    *         filter.
+    */
+   public VirtualMachine findVirtualMachine(final Predicate<VirtualMachine> filter) {
+      return Iterables.getFirst(filter(listVirtualMachines(), filter), null);
+   }
 
-    /**
-     * Gets a concrete virtual machine in the virtual appliance.
-     * 
-     * @param id The id of the virtual machine.
-     * @return The requested virtual machine.
-     */
-    public VirtualMachine getVirtualMachine(final Integer id)
-    {
-        VirtualMachineWithNodeExtendedDto vm =
-            context.getApi().getCloudApi().getVirtualMachine(target, id);
-        return wrap(context, VirtualMachine.class, vm);
-    }
+   /**
+    * Gets a concrete virtual machine in the virtual appliance.
+    * 
+    * @param id
+    *           The id of the virtual machine.
+    * @return The requested virtual machine.
+    */
+   public VirtualMachine getVirtualMachine(final Integer id) {
+      VirtualMachineWithNodeExtendedDto vm = context.getApi().getCloudApi().getVirtualMachine(target, id);
+      return wrap(context, VirtualMachine.class, vm);
+   }
 
-    // Actions
+   // Actions
 
-    /**
-     * Deploys the virtual appliance.
-     * <p>
-     * This method will start the deployment of all the virtual machines in the virtual appliance,
-     * and will return an {@link AsyncTask} reference for each deployment operation. The deployment
-     * will finish when all individual tasks finish.
-     * 
-     * @return The list of tasks corresponding to the deploy process of each virtual machine in the
-     *         appliance.
-     */
-    public AsyncTask[] deploy()
-    {
-        return deploy(false);
-    }
+   /**
+    * Deploys the virtual appliance.
+    * <p>
+    * This method will start the deployment of all the virtual machines in the
+    * virtual appliance, and will return an {@link AsyncTask} reference for each
+    * deployment operation. The deployment will finish when all individual tasks
+    * finish.
+    * 
+    * @return The list of tasks corresponding to the deploy process of each
+    *         virtual machine in the appliance.
+    */
+   public AsyncTask[] deploy() {
+      return deploy(false);
+   }
 
-    /**
-     * Deploys the virtual appliance.
-     * <p>
-     * This method will start the deployment of all the virtual machines in the virtual appliance,
-     * and will return an {@link AsyncTask} reference for each deploy operation. The deployment will
-     * finish when all individual tasks finish.
-     * 
-     * @param forceEnterpriseSoftLimits Boolean indicating if the deployment must be executed even
-     *            if the enterprise soft limits are reached.
-     * @return The list of tasks corresponding to the deploy process of each virtual machine in the
-     *         appliance.
-     */
-    public AsyncTask[] deploy(final boolean forceEnterpriseSoftLimits)
-    {
-        VirtualMachineTaskDto force = new VirtualMachineTaskDto();
-        force.setForceEnterpriseSoftLimits(forceEnterpriseSoftLimits);
+   /**
+    * Deploys the virtual appliance.
+    * <p>
+    * This method will start the deployment of all the virtual machines in the
+    * virtual appliance, and will return an {@link AsyncTask} reference for each
+    * deploy operation. The deployment will finish when all individual tasks
+    * finish.
+    * 
+    * @param forceEnterpriseSoftLimits
+    *           Boolean indicating if the deployment must be executed even if
+    *           the enterprise soft limits are reached.
+    * @return The list of tasks corresponding to the deploy process of each
+    *         virtual machine in the appliance.
+    */
+   public AsyncTask[] deploy(final boolean forceEnterpriseSoftLimits) {
+      VirtualMachineTaskDto force = new VirtualMachineTaskDto();
+      force.setForceEnterpriseSoftLimits(forceEnterpriseSoftLimits);
 
-        AcceptedRequestDto<String> response =
-            context.getApi().getCloudApi().deployVirtualAppliance(unwrap(), force);
+      AcceptedRequestDto<String> response = context.getApi().getCloudApi().deployVirtualAppliance(unwrap(), force);
 
-        return getTasks(response);
-    }
+      return getTasks(response);
+   }
 
-    /**
-     * Undeploys the virtual appliance.
-     * <p>
-     * This method will start the undeploy of all the virtual machines in the virtual appliance, and
-     * will return an {@link AsyncTask} reference for each undeploy operation. The undeploy will
-     * finish when all individual tasks finish.
-     * 
-     * @return The list of tasks corresponding to the undeploy process of each virtual machine in
-     *         the appliance.
-     */
-    public AsyncTask[] undeploy()
-    {
-        return undeploy(false);
-    }
+   /**
+    * Undeploys the virtual appliance.
+    * <p>
+    * This method will start the undeploy of all the virtual machines in the
+    * virtual appliance, and will return an {@link AsyncTask} reference for each
+    * undeploy operation. The undeploy will finish when all individual tasks
+    * finish.
+    * 
+    * @return The list of tasks corresponding to the undeploy process of each
+    *         virtual machine in the appliance.
+    */
+   public AsyncTask[] undeploy() {
+      return undeploy(false);
+   }
 
-    /**
-     * Undeploys the virtual appliance.
-     * <p>
-     * This method will start the undeploy of all the virtual machines in the virtual appliance, and
-     * will return an {@link AsyncTask} reference for each undeploy operation. The undeploy will
-     * finish when all individual tasks finish.
-     * 
-     * @param forceUndeploy Boolean flag to force the undeploy even if the virtual appliance
-     *            contains imported virtual machines.
-     * @return The list of tasks corresponding to the undeploy process of each virtual machine in
-     *         the appliance.
-     */
-    public AsyncTask[] undeploy(final boolean forceUndeploy)
-    {
-        VirtualMachineTaskDto force = new VirtualMachineTaskDto();
-        force.setForceUndeploy(forceUndeploy);
+   /**
+    * Undeploys the virtual appliance.
+    * <p>
+    * This method will start the undeploy of all the virtual machines in the
+    * virtual appliance, and will return an {@link AsyncTask} reference for each
+    * undeploy operation. The undeploy will finish when all individual tasks
+    * finish.
+    * 
+    * @param forceUndeploy
+    *           Boolean flag to force the undeploy even if the virtual appliance
+    *           contains imported virtual machines.
+    * @return The list of tasks corresponding to the undeploy process of each
+    *         virtual machine in the appliance.
+    */
+   public AsyncTask[] undeploy(final boolean forceUndeploy) {
+      VirtualMachineTaskDto force = new VirtualMachineTaskDto();
+      force.setForceUndeploy(forceUndeploy);
 
-        AcceptedRequestDto<String> response =
-            context.getApi().getCloudApi().undeployVirtualAppliance(unwrap(), force);
+      AcceptedRequestDto<String> response = context.getApi().getCloudApi().undeployVirtualAppliance(unwrap(), force);
 
-        return getTasks(response);
-    }
+      return getTasks(response);
+   }
 
-    /**
-     * Returns a String message with the price info of the virtual appliance.
-     * 
-     * @return The price of the virtual appliance
-     */
-    public String getPrice()
-    {
-        return context.getApi().getCloudApi().getVirtualAppliancePrice(target);
-    }
+   /**
+    * Returns a String message with the price info of the virtual appliance.
+    * 
+    * @return The price of the virtual appliance
+    */
+   public String getPrice() {
+      return context.getApi().getCloudApi().getVirtualAppliancePrice(target);
+   }
 
-    // Builder
+   // Builder
 
-    public static Builder builder(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-        final VirtualDatacenter virtualDatacenter)
-    {
-        return new Builder(context, virtualDatacenter);
-    }
+   public static Builder builder(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
+         final VirtualDatacenter virtualDatacenter) {
+      return new Builder(context, virtualDatacenter);
+   }
 
-    public static class Builder
-    {
-        private RestContext<AbiquoApi, AbiquoAsyncApi> context;
+   public static class Builder {
+      private RestContext<AbiquoApi, AbiquoAsyncApi> context;
 
-        private String name;
+      private String name;
 
-        private VirtualDatacenter virtualDatacenter;
+      private VirtualDatacenter virtualDatacenter;
 
-        public Builder(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-            final VirtualDatacenter virtualDatacenter)
-        {
-            super();
-            checkNotNull(virtualDatacenter, ValidationErrors.NULL_RESOURCE
-                + VirtualDatacenter.class);
-            this.virtualDatacenter = virtualDatacenter;
-            this.context = context;
-        }
+      public Builder(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final VirtualDatacenter virtualDatacenter) {
+         super();
+         checkNotNull(virtualDatacenter, ValidationErrors.NULL_RESOURCE + VirtualDatacenter.class);
+         this.virtualDatacenter = virtualDatacenter;
+         this.context = context;
+      }
 
-        public Builder name(final String name)
-        {
-            this.name = name;
-            return this;
-        }
+      public Builder name(final String name) {
+         this.name = name;
+         return this;
+      }
 
-        public Builder virtualDatacenter(final VirtualDatacenter virtualDatacenter)
-        {
-            checkNotNull(virtualDatacenter, ValidationErrors.NULL_RESOURCE
-                + VirtualDatacenter.class);
-            this.virtualDatacenter = virtualDatacenter;
-            return this;
-        }
+      public Builder virtualDatacenter(final VirtualDatacenter virtualDatacenter) {
+         checkNotNull(virtualDatacenter, ValidationErrors.NULL_RESOURCE + VirtualDatacenter.class);
+         this.virtualDatacenter = virtualDatacenter;
+         return this;
+      }
 
-        public VirtualAppliance build()
-        {
-            VirtualApplianceDto dto = new VirtualApplianceDto();
-            dto.setName(name);
+      public VirtualAppliance build() {
+         VirtualApplianceDto dto = new VirtualApplianceDto();
+         dto.setName(name);
 
-            VirtualAppliance virtualAppliance = new VirtualAppliance(context, dto);
-            virtualAppliance.virtualDatacenter = virtualDatacenter;
+         VirtualAppliance virtualAppliance = new VirtualAppliance(context, dto);
+         virtualAppliance.virtualDatacenter = virtualDatacenter;
 
-            return virtualAppliance;
-        }
+         return virtualAppliance;
+      }
 
-        public static Builder fromVirtualAppliance(final VirtualAppliance in)
-        {
-            return VirtualAppliance.builder(in.context, in.virtualDatacenter).name(in.getName());
-        }
-    }
+      public static Builder fromVirtualAppliance(final VirtualAppliance in) {
+         return VirtualAppliance.builder(in.context, in.virtualDatacenter).name(in.getName());
+      }
+   }
 
-    // Delegate methods
+   // Delegate methods
 
-    public int getError()
-    {
-        return target.getError();
-    }
+   public int getError() {
+      return target.getError();
+   }
 
-    public int getHighDisponibility()
-    {
-        return target.getHighDisponibility();
-    }
+   public int getHighDisponibility() {
+      return target.getHighDisponibility();
+   }
 
-    public Integer getId()
-    {
-        return target.getId();
-    }
+   public Integer getId() {
+      return target.getId();
+   }
 
-    public String getName()
-    {
-        return target.getName();
-    }
+   public String getName() {
+      return target.getName();
+   }
 
-    public int getPublicApp()
-    {
-        return target.getPublicApp();
-    }
+   public int getPublicApp() {
+      return target.getPublicApp();
+   }
 
-    public void setHighDisponibility(final int highDisponibility)
-    {
-        target.setHighDisponibility(highDisponibility);
-    }
+   public void setHighDisponibility(final int highDisponibility) {
+      target.setHighDisponibility(highDisponibility);
+   }
 
-    public void setName(final String name)
-    {
-        target.setName(name);
-    }
+   public void setName(final String name) {
+      target.setName(name);
+   }
 
-    public void setPublicApp(final int publicApp)
-    {
-        target.setPublicApp(publicApp);
-    }
+   public void setPublicApp(final int publicApp) {
+      target.setPublicApp(publicApp);
+   }
 
-    @Override
-    public String toString()
-    {
-        return "VirtualAppliance [id=" + getId() + ", name=" + getName() + "]";
-    }
+   @Override
+   public String toString() {
+      return "VirtualAppliance [id=" + getId() + ", name=" + getName() + "]";
+   }
 
 }

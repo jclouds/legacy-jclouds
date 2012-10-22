@@ -31,38 +31,30 @@ import com.abiquo.server.core.infrastructure.network.AbstractInfrastructureIpDto
  * @author Ignasi Barrera
  * @author Francesc Montserrat
  */
-public abstract class AbstractPublicIp<T extends AbstractInfrastructureIpDto, N extends Network< ? >>
-    extends Ip<T, N>
-{
-    /**
-     * Constructor to be used only by the builder.
-     */
-    protected AbstractPublicIp(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-        final T target)
-    {
-        super(context, target);
-    }
+public abstract class AbstractPublicIp<T extends AbstractInfrastructureIpDto, N extends Network<?>> extends Ip<T, N> {
+   /**
+    * Constructor to be used only by the builder.
+    */
+   protected AbstractPublicIp(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final T target) {
+      super(context, target);
+   }
 
-    // Delegate methods
+   // Delegate methods
 
-    public boolean isAvailable()
-    {
-        return target.isAvailable();
-    }
+   public boolean isAvailable() {
+      return target.isAvailable();
+   }
 
-    public boolean isQuarantine()
-    {
-        return target.isQuarantine();
-    }
+   public boolean isQuarantine() {
+      return target.isQuarantine();
+   }
 
-    public void setAvailable(final boolean available)
-    {
-        target.setAvailable(available);
-    }
+   public void setAvailable(final boolean available) {
+      target.setAvailable(available);
+   }
 
-    public void setQuarantine(final boolean quarantine)
-    {
-        target.setQuarantine(quarantine);
-    }
+   public void setQuarantine(final boolean quarantine) {
+      target.setQuarantine(quarantine);
+   }
 
 }

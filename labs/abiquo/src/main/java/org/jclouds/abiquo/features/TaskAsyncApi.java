@@ -48,26 +48,25 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Ignasi Barrera
  * @author Francesc Montserrat
  */
-@RequestFilters({AbiquoAuthentication.class, AppendApiVersionToMediaType.class})
-public interface TaskAsyncApi
-{
-    /*********************** Task ***********************/
+@RequestFilters({ AbiquoAuthentication.class, AppendApiVersionToMediaType.class })
+public interface TaskAsyncApi {
+   /*********************** Task ***********************/
 
-    /**
-     * @see TaskApi#getTask(RESTLink)
-     */
-    @GET
-    @Consumes(TaskDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    @ExceptionParser(ReturnNullOn303.class)
-    ListenableFuture<TaskDto> getTask(@BinderParam(BindLinkToPath.class) RESTLink link);
+   /**
+    * @see TaskApi#getTask(RESTLink)
+    */
+   @GET
+   @Consumes(TaskDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOn303.class)
+   ListenableFuture<TaskDto> getTask(@BinderParam(BindLinkToPath.class) RESTLink link);
 
-    /**
-     * @see TaskApi#listTasks(SingleResourceTransportDto)
-     */
-    @GET
-    @Consumes(TasksDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    <T extends SingleResourceTransportDto> ListenableFuture<TasksDto> listTasks(
-        @EndpointLink("tasks") @BinderParam(BindToPath.class) T dto);
+   /**
+    * @see TaskApi#listTasks(SingleResourceTransportDto)
+    */
+   @GET
+   @Consumes(TasksDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   <T extends SingleResourceTransportDto> ListenableFuture<TasksDto> listTasks(
+         @EndpointLink("tasks") @BinderParam(BindToPath.class) T dto);
 }

@@ -32,7 +32,6 @@ import com.google.inject.ImplementedBy;
  * @author Ignasi Barrera
  */
 @ImplementedBy(ListAttachedNicsImpl.class)
-public interface ListAttachedNics extends ListEntities<Ip< ? , ? >, VirtualMachine>
-{
+public interface ListAttachedNics extends ListEntities<Ip<?, ?>, VirtualMachine> {
 
 }

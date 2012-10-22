@@ -40,84 +40,72 @@ import com.google.common.collect.Iterables;
  * @author Francesc Montserrat
  */
 @Test(groups = "ucs", testName = "ManagedRackLiveUcsTest")
-public class ManagedRackLiveUcsTest extends BaseAbiquoApiLiveApiTest
-{
-    private LogicServer logicServer;
+public class ManagedRackLiveUcsTest extends BaseAbiquoApiLiveApiTest {
+   private LogicServer logicServer;
 
-    private Organization organization;
+   private Organization organization;
 
-    public void testUpdate()
-    {
-        env.ucsRack.setShortDescription("Updated description");
-        env.ucsRack.update();
+   public void testUpdate() {
+      env.ucsRack.setShortDescription("Updated description");
+      env.ucsRack.update();
 
-        // Recover the updated rack
-        UcsRackDto updated =
-            env.infrastructureApi.getManagedRack(env.datacenter.unwrap(), env.ucsRack.getId());
+      // Recover the updated rack
+      UcsRackDto updated = env.infrastructureApi.getManagedRack(env.datacenter.unwrap(), env.ucsRack.getId());
 
-        assertEquals(updated.getShortDescription(), "Updated description");
-    }
+      assertEquals(updated.getShortDescription(), "Updated description");
+   }
 
-    public void testListManagedRacks()
-    {
-        Iterable<ManagedRack> racks = env.datacenter.listManagedRacks();
-        assertEquals(Iterables.size(racks), 1);
+   public void testListManagedRacks() {
+      Iterable<ManagedRack> racks = env.datacenter.listManagedRacks();
+      assertEquals(Iterables.size(racks), 1);
 
-        racks = env.datacenter.listManagedRacks(ManagedRackPredicates.name(env.ucsRack.getName()));
-        assertEquals(Iterables.size(racks), 1);
-    }
+      racks = env.datacenter.listManagedRacks(ManagedRackPredicates.name(env.ucsRack.getName()));
+      assertEquals(Iterables.size(racks), 1);
+   }
 
-    public void testFindRack()
-    {
-        ManagedRack rack =
-            env.datacenter.findManagedRack(ManagedRackPredicates.name(env.ucsRack.getName()));
-        assertNotNull(rack);
+   public void testFindRack() {
+      ManagedRack rack = env.datacenter.findManagedRack(ManagedRackPredicates.name(env.ucsRack.getName()));
+      assertNotNull(rack);
 
-        rack =
-            env.datacenter.findManagedRack(ManagedRackPredicates.name(env.ucsRack.getName()
-                + "FAIL"));
-        assertNull(rack);
-    }
+      rack = env.datacenter.findManagedRack(ManagedRackPredicates.name(env.ucsRack.getName() + "FAIL"));
+      assertNull(rack);
+   }
 
-    public void testCloneLogicServer()
-    {
-        List<LogicServer> originals = env.ucsRack.listServiceProfiles();
-        assertNotNull(originals);
-        assertTrue(originals.size() > 0);
-        LogicServer original = originals.get(0);
+   public void testCloneLogicServer() {
+      List<LogicServer> originals = env.ucsRack.listServiceProfiles();
+      assertNotNull(originals);
+      assertTrue(originals.size() > 0);
+      LogicServer original = originals.get(0);
 
-        List<Organization> organizations = env.ucsRack.listOrganizations();
-        assertNotNull(organizations);
-        assertTrue(organizations.size() > 0);
-        organization = organizations.get(0);
+      List<Organization> organizations = env.ucsRack.listOrganizations();
+      assertNotNull(organizations);
+      assertTrue(organizations.size() > 0);
+      organization = organizations.get(0);
 
-        env.ucsRack.cloneLogicServer(original, organization, "jclouds");
+      env.ucsRack.cloneLogicServer(original, organization, "jclouds");
 
-        logicServer =
-            env.ucsRack.findServiceProfile(LogicServerPredicates.name(organization.getDn() + "/"
-                + "ls-jclouds"));
-        assertNotNull(logicServer);
+      logicServer = env.ucsRack
+            .findServiceProfile(LogicServerPredicates.name(organization.getDn() + "/" + "ls-jclouds"));
+      assertNotNull(logicServer);
 
-        String name = logicServer.getName();
-        assertEquals(name.substring(name.length() - 7, name.length()), "jclouds");
-    }
+      String name = logicServer.getName();
+      assertEquals(name.substring(name.length() - 7, name.length()), "jclouds");
+   }
 
-    @Test(dependsOnMethods = "testCloneLogicServer")
-    public void testListFsms()
-    {
-        List<Fsm> fsms = env.ucsRack.listFsm(logicServer.getName());
-        assertNotNull(fsms);
-        assertTrue(fsms.size() > 0);
-    }
+   @Test(dependsOnMethods = "testCloneLogicServer")
+   public void testListFsms() {
+      List<Fsm> fsms = env.ucsRack.listFsm(logicServer.getName());
+      assertNotNull(fsms);
+      assertTrue(fsms.size() > 0);
+   }
 
-    @Test(dependsOnMethods = {"testCloneLogicServer", "testListFsms"})
-    public void testDeleteLogicServer()
-    {
-        String name = logicServer.getName();
+   @Test(dependsOnMethods = { "testCloneLogicServer", "testListFsms" })
+   public void testDeleteLogicServer() {
+      String name = logicServer.getName();
 
-        env.ucsRack.deleteLogicServer(logicServer);
+      env.ucsRack.deleteLogicServer(logicServer);
 
-        LogicServer profile = env.ucsRack.findServiceProfile(LogicServerPredicates.name(name));
-        assertNull(profile);
-    }
+      LogicServer profile = env.ucsRack.findServiceProfile(LogicServerPredicates.name(name));
+      assertNull(profile);
+   }
 }

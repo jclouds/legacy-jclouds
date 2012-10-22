@@ -75,351 +75,342 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Ignasi Barrera
  * @author Francesc Montserrat
  */
-@RequestFilters({AbiquoAuthentication.class, AppendApiVersionToMediaType.class})
+@RequestFilters({ AbiquoAuthentication.class, AppendApiVersionToMediaType.class })
 @Path("/admin")
-public interface EnterpriseAsyncApi
-{
-    /*********************** Enterprise ***********************/
+public interface EnterpriseAsyncApi {
+   /*********************** Enterprise ***********************/
 
-    /**
-     * @see EnterpriseApi#listEnterprises()
-     */
-    @GET
-    @Path("/enterprises")
-    @Consumes(EnterprisesDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<EnterprisesDto> listEnterprises();
+   /**
+    * @see EnterpriseApi#listEnterprises()
+    */
+   @GET
+   @Path("/enterprises")
+   @Consumes(EnterprisesDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<EnterprisesDto> listEnterprises();
 
-    /**
-     * @see EnterpriseApi#listEnterprises(EnterpriseOptions)
-     */
-    @GET
-    @Path("/enterprises")
-    @Consumes(EnterprisesDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<EnterprisesDto> listEnterprises(EnterpriseOptions options);
+   /**
+    * @see EnterpriseApi#listEnterprises(EnterpriseOptions)
+    */
+   @GET
+   @Path("/enterprises")
+   @Consumes(EnterprisesDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<EnterprisesDto> listEnterprises(EnterpriseOptions options);
 
-    /**
-     * @see EnterpriseApi#listEnterprises(DatacenterDto, EnterpriseOptions)
-     */
-    @GET
-    @Consumes(EnterprisesDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<EnterprisesDto> listEnterprises(
-        @EndpointLink("enterprises") @BinderParam(BindToPath.class) DatacenterDto datacenter,
-        EnterpriseOptions options);
+   /**
+    * @see EnterpriseApi#listEnterprises(DatacenterDto, EnterpriseOptions)
+    */
+   @GET
+   @Consumes(EnterprisesDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<EnterprisesDto> listEnterprises(
+         @EndpointLink("enterprises") @BinderParam(BindToPath.class) DatacenterDto datacenter, EnterpriseOptions options);
 
-    /**
-     * @see EnterpriseApi#createEnterprise(EnterpriseDto)
-     */
-    @POST
-    @Path("/enterprises")
-    @Produces(EnterpriseDto.BASE_MEDIA_TYPE)
-    @Consumes(EnterpriseDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<EnterpriseDto> createEnterprise(
-        @BinderParam(BindToXMLPayload.class) EnterpriseDto enterprise);
+   /**
+    * @see EnterpriseApi#createEnterprise(EnterpriseDto)
+    */
+   @POST
+   @Path("/enterprises")
+   @Produces(EnterpriseDto.BASE_MEDIA_TYPE)
+   @Consumes(EnterpriseDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<EnterpriseDto> createEnterprise(@BinderParam(BindToXMLPayload.class) EnterpriseDto enterprise);
 
-    /**
-     * @see EnterpriseApi#getEnterprise(Integer)
-     */
-    @GET
-    @Path("/enterprises/{enterprise}")
-    @Consumes(EnterpriseDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-    ListenableFuture<EnterpriseDto> getEnterprise(@PathParam("enterprise") Integer enterpriseId);
+   /**
+    * @see EnterpriseApi#getEnterprise(Integer)
+    */
+   @GET
+   @Path("/enterprises/{enterprise}")
+   @Consumes(EnterpriseDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<EnterpriseDto> getEnterprise(@PathParam("enterprise") Integer enterpriseId);
 
-    /**
-     * @see EnterpriseApi#updateEnterprise(EnterpriseDto)
-     */
-    @PUT
-    @Produces(EnterpriseDto.BASE_MEDIA_TYPE)
-    @Consumes(EnterpriseDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<EnterpriseDto> updateEnterprise(
-        @EndpointLink("edit") @BinderParam(BindToXMLPayloadAndPath.class) EnterpriseDto enterprise);
+   /**
+    * @see EnterpriseApi#updateEnterprise(EnterpriseDto)
+    */
+   @PUT
+   @Produces(EnterpriseDto.BASE_MEDIA_TYPE)
+   @Consumes(EnterpriseDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<EnterpriseDto> updateEnterprise(
+         @EndpointLink("edit") @BinderParam(BindToXMLPayloadAndPath.class) EnterpriseDto enterprise);
 
-    /**
-     * @see EnterpriseApi#deleteEnterprise(EnterpriseDto)
-     */
-    @DELETE
-    ListenableFuture<Void> deleteEnterprise(
-        @EndpointLink("edit") @BinderParam(BindToPath.class) EnterpriseDto enterprise);
+   /**
+    * @see EnterpriseApi#deleteEnterprise(EnterpriseDto)
+    */
+   @DELETE
+   ListenableFuture<Void> deleteEnterprise(@EndpointLink("edit") @BinderParam(BindToPath.class) EnterpriseDto enterprise);
 
-    /**
-     * @see EnterpriseApi#listAllowedDatacenters(Integer)
-     */
-    @GET
-    @Path("/datacenters")
-    @Consumes(DatacentersDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<DatacentersDto> listAllowedDatacenters(
-        @QueryParam("idEnterprise") Integer enterpriseId);
+   /**
+    * @see EnterpriseApi#listAllowedDatacenters(Integer)
+    */
+   @GET
+   @Path("/datacenters")
+   @Consumes(DatacentersDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<DatacentersDto> listAllowedDatacenters(@QueryParam("idEnterprise") Integer enterpriseId);
 
-    /**
-     * @see EnterpriseApi#listVirtualDatacenters(EnterpriseDto)
-     */
-    @GET
-    @Consumes(VirtualDatacentersDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<VirtualDatacentersDto> listVirtualDatacenters(
-        @EndpointLink("cloud/virtualdatacenters") @BinderParam(BindToPath.class) EnterpriseDto enterprise);
+   /**
+    * @see EnterpriseApi#listVirtualDatacenters(EnterpriseDto)
+    */
+   @GET
+   @Consumes(VirtualDatacentersDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<VirtualDatacentersDto> listVirtualDatacenters(
+         @EndpointLink("cloud/virtualdatacenters") @BinderParam(BindToPath.class) EnterpriseDto enterprise);
 
-    /*********************** Enterprise Properties ***********************/
+   /*********************** Enterprise Properties ***********************/
 
-    /**
-     * @see EnterpriseApi#getEnterpriseProperties(EnterpriseDto)
-     */
-    @EnterpriseEdition
-    @GET
-    @Consumes(EnterprisePropertiesDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<EnterprisePropertiesDto> getEnterpriseProperties(
-        @EndpointLink("properties") @BinderParam(BindToPath.class) EnterpriseDto enterprise);
+   /**
+    * @see EnterpriseApi#getEnterpriseProperties(EnterpriseDto)
+    */
+   @EnterpriseEdition
+   @GET
+   @Consumes(EnterprisePropertiesDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<EnterprisePropertiesDto> getEnterpriseProperties(
+         @EndpointLink("properties") @BinderParam(BindToPath.class) EnterpriseDto enterprise);
 
-    /**
-     * @see EnterpriseApi#updateEnterpriseProperties(EnterprisePropertiesDto)
-     */
-    @EnterpriseEdition
-    @PUT
-    @Produces(EnterprisePropertiesDto.BASE_MEDIA_TYPE)
-    @Consumes(EnterprisePropertiesDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<EnterprisePropertiesDto> updateEnterpriseProperties(
-        @EndpointLink("edit") @BinderParam(BindToXMLPayloadAndPath.class) EnterprisePropertiesDto properties);
+   /**
+    * @see EnterpriseApi#updateEnterpriseProperties(EnterprisePropertiesDto)
+    */
+   @EnterpriseEdition
+   @PUT
+   @Produces(EnterprisePropertiesDto.BASE_MEDIA_TYPE)
+   @Consumes(EnterprisePropertiesDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<EnterprisePropertiesDto> updateEnterpriseProperties(
+         @EndpointLink("edit") @BinderParam(BindToXMLPayloadAndPath.class) EnterprisePropertiesDto properties);
 
-    /*********************** Enterprise Limits ***********************/
+   /*********************** Enterprise Limits ***********************/
 
-    /**
-     * @see EnterpriseApi#createLimits(EnterpriseDto, DatacenterDto, DatacenterLimitsDto)
-     */
-    @POST
-    @Produces(DatacenterLimitsDto.BASE_MEDIA_TYPE)
-    @Consumes(DatacenterLimitsDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<DatacenterLimitsDto> createLimits(
-        @EndpointLink("limits") @BinderParam(BindToPath.class) final EnterpriseDto enterprise,
-        @QueryParam("datacenter") @ParamParser(ParseDatacenterId.class) final DatacenterDto datacenter,
-        @BinderParam(BindToXMLPayload.class) DatacenterLimitsDto limits);
+   /**
+    * @see EnterpriseApi#createLimits(EnterpriseDto, DatacenterDto,
+    *      DatacenterLimitsDto)
+    */
+   @POST
+   @Produces(DatacenterLimitsDto.BASE_MEDIA_TYPE)
+   @Consumes(DatacenterLimitsDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<DatacenterLimitsDto> createLimits(
+         @EndpointLink("limits") @BinderParam(BindToPath.class) final EnterpriseDto enterprise,
+         @QueryParam("datacenter") @ParamParser(ParseDatacenterId.class) final DatacenterDto datacenter,
+         @BinderParam(BindToXMLPayload.class) DatacenterLimitsDto limits);
 
-    /**
-     * @see EnterpriseApi#getLimits(EnterpriseDto, DatacenterDto)
-     */
-    @GET
-    @Consumes(DatacentersLimitsDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-    ListenableFuture<DatacentersLimitsDto> getLimits(
-        @EndpointLink("limits") @BinderParam(BindToPath.class) final EnterpriseDto enterprise,
-        @QueryParam("datacenter") @ParamParser(ParseDatacenterId.class) final DatacenterDto datacenter);
+   /**
+    * @see EnterpriseApi#getLimits(EnterpriseDto, DatacenterDto)
+    */
+   @GET
+   @Consumes(DatacentersLimitsDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<DatacentersLimitsDto> getLimits(
+         @EndpointLink("limits") @BinderParam(BindToPath.class) final EnterpriseDto enterprise,
+         @QueryParam("datacenter") @ParamParser(ParseDatacenterId.class) final DatacenterDto datacenter);
 
-    /**
-     * @see EnterpriseApi#updateLimits(DatacenterLimitsDto)
-     */
-    @PUT
-    @Produces(DatacenterLimitsDto.BASE_MEDIA_TYPE)
-    @Consumes(DatacenterLimitsDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<DatacenterLimitsDto> updateLimits(
-        @EndpointLink("edit") @BinderParam(BindToXMLPayloadAndPath.class) DatacenterLimitsDto limits);
+   /**
+    * @see EnterpriseApi#updateLimits(DatacenterLimitsDto)
+    */
+   @PUT
+   @Produces(DatacenterLimitsDto.BASE_MEDIA_TYPE)
+   @Consumes(DatacenterLimitsDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<DatacenterLimitsDto> updateLimits(
+         @EndpointLink("edit") @BinderParam(BindToXMLPayloadAndPath.class) DatacenterLimitsDto limits);
 
-    /**
-     * @see EnterpriseApi#deleteLimits(DatacenterLimitsDto)
-     */
-    @DELETE
-    ListenableFuture<Void> deleteLimits(
-        @EndpointLink("edit") @BinderParam(BindToPath.class) DatacenterLimitsDto limits);
+   /**
+    * @see EnterpriseApi#deleteLimits(DatacenterLimitsDto)
+    */
+   @DELETE
+   ListenableFuture<Void> deleteLimits(@EndpointLink("edit") @BinderParam(BindToPath.class) DatacenterLimitsDto limits);
 
-    /**
-     * @see EnterpriseApi#listLimits(EnterpriseDto)
-     */
-    @GET
-    @Consumes(DatacentersLimitsDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<DatacentersLimitsDto> listLimits(
-        @EndpointLink("limits") @BinderParam(BindToPath.class) EnterpriseDto enterprise);
+   /**
+    * @see EnterpriseApi#listLimits(EnterpriseDto)
+    */
+   @GET
+   @Consumes(DatacentersLimitsDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<DatacentersLimitsDto> listLimits(
+         @EndpointLink("limits") @BinderParam(BindToPath.class) EnterpriseDto enterprise);
 
-    /*********************** User ***********************/
+   /*********************** User ***********************/
 
-    /**
-     * @see EnterpriseApi#listUsers(EnterpriseDto)
-     */
-    @GET
-    @Consumes(UsersDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<UsersDto> listUsers(
-        @EndpointLink("users") @BinderParam(BindToPath.class) EnterpriseDto enterprise);
+   /**
+    * @see EnterpriseApi#listUsers(EnterpriseDto)
+    */
+   @GET
+   @Consumes(UsersDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<UsersDto> listUsers(@EndpointLink("users") @BinderParam(BindToPath.class) EnterpriseDto enterprise);
 
-    /**
-     * @see EnterpriseApi#getUser(EnterpriseDto, Integer)
-     */
-    @GET
-    @Consumes(UserDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-    ListenableFuture<UserDto> getUser(
-        @EndpointLink("users") @BinderParam(BindToPath.class) EnterpriseDto enterprise,
-        @BinderParam(AppendToPath.class) Integer userId);
+   /**
+    * @see EnterpriseApi#getUser(EnterpriseDto, Integer)
+    */
+   @GET
+   @Consumes(UserDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<UserDto> getUser(@EndpointLink("users") @BinderParam(BindToPath.class) EnterpriseDto enterprise,
+         @BinderParam(AppendToPath.class) Integer userId);
 
-    /**
-     * @see EnterpriseApi#createUser(EnterpriseDto)
-     */
-    @POST
-    @Produces(UserDto.BASE_MEDIA_TYPE)
-    @Consumes(UserDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<UserDto> createUser(
-        @EndpointLink("users") @BinderParam(BindToPath.class) EnterpriseDto enterprise,
-        @BinderParam(BindToXMLPayload.class) UserDto user);
+   /**
+    * @see EnterpriseApi#createUser(EnterpriseDto)
+    */
+   @POST
+   @Produces(UserDto.BASE_MEDIA_TYPE)
+   @Consumes(UserDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<UserDto> createUser(@EndpointLink("users") @BinderParam(BindToPath.class) EnterpriseDto enterprise,
+         @BinderParam(BindToXMLPayload.class) UserDto user);
 
-    /**
-     * @see EnterpriseApi#updateUser(UserDto)
-     */
-    @PUT
-    @Produces(UserDto.BASE_MEDIA_TYPE)
-    @Consumes(UserDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<UserDto> updateUser(
-        @EndpointLink("edit") @BinderParam(BindToXMLPayloadAndPath.class) UserDto user);
+   /**
+    * @see EnterpriseApi#updateUser(UserDto)
+    */
+   @PUT
+   @Produces(UserDto.BASE_MEDIA_TYPE)
+   @Consumes(UserDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<UserDto> updateUser(@EndpointLink("edit") @BinderParam(BindToXMLPayloadAndPath.class) UserDto user);
 
-    /**
-     * @see EnterpriseApi#deleteUser(UserDto)
-     */
-    @DELETE
-    ListenableFuture<Void> deleteUser(
-        @EndpointLink("edit") @BinderParam(BindToPath.class) UserDto user);
+   /**
+    * @see EnterpriseApi#deleteUser(UserDto)
+    */
+   @DELETE
+   ListenableFuture<Void> deleteUser(@EndpointLink("edit") @BinderParam(BindToPath.class) UserDto user);
 
-    /**
-     * @see EnterpriseApi#listVirtualMachines(UserDto)
-     */
-    @GET
-    @Consumes(VirtualMachinesWithNodeExtendedDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<VirtualMachinesWithNodeExtendedDto> listVirtualMachines(
-        @EndpointLink("virtualmachines") @BinderParam(BindToPath.class) final UserDto user);
+   /**
+    * @see EnterpriseApi#listVirtualMachines(UserDto)
+    */
+   @GET
+   @Consumes(VirtualMachinesWithNodeExtendedDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<VirtualMachinesWithNodeExtendedDto> listVirtualMachines(
+         @EndpointLink("virtualmachines") @BinderParam(BindToPath.class) final UserDto user);
 
-    /*********************** Datacenter Repository ***********************/
+   /*********************** Datacenter Repository ***********************/
 
-    /**
-     * @see EnterpriseApi#getDatacenterRepository(EnterpriseDto, Integer)
-     */
-    @GET
-    @Consumes(DatacenterRepositoryDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-    ListenableFuture<UserDto> getDatacenterRepository(
-        @EndpointLink("datacenterrepositories") @BinderParam(BindToPath.class) EnterpriseDto enterprise,
-        @BinderParam(AppendToPath.class) Integer datacenterRepositoryId);
+   /**
+    * @see EnterpriseApi#getDatacenterRepository(EnterpriseDto, Integer)
+    */
+   @GET
+   @Consumes(DatacenterRepositoryDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<UserDto> getDatacenterRepository(
+         @EndpointLink("datacenterrepositories") @BinderParam(BindToPath.class) EnterpriseDto enterprise,
+         @BinderParam(AppendToPath.class) Integer datacenterRepositoryId);
 
-    /**
-     * @see EnterpriseApi#refreshTemplateRepository(Integer, Integer)
-     */
-    @PUT
-    @Path("/enterprises/{enterprise}/datacenterrepositories/{datacenterrepository}/actions/refresh")
-    ListenableFuture<Void> refreshTemplateRepository(@PathParam("enterprise") Integer enterpriseId,
-        @PathParam("datacenterrepository") Integer datacenterRepositoryId);
+   /**
+    * @see EnterpriseApi#refreshTemplateRepository(Integer, Integer)
+    */
+   @PUT
+   @Path("/enterprises/{enterprise}/datacenterrepositories/{datacenterrepository}/actions/refresh")
+   ListenableFuture<Void> refreshTemplateRepository(@PathParam("enterprise") Integer enterpriseId,
+         @PathParam("datacenterrepository") Integer datacenterRepositoryId);
 
-    /*********************** External Network ***********************/
+   /*********************** External Network ***********************/
 
-    /**
-     * @see EnterpriseApi#listExternalNetworks(EnterpriseDto)
-     */
-    @EnterpriseEdition
-    @GET
-    @Consumes(VLANNetworksDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<VLANNetworksDto> listExternalNetworks(
-        @EndpointLink("externalnetworks") @BinderParam(BindToPath.class) EnterpriseDto enterprise);
+   /**
+    * @see EnterpriseApi#listExternalNetworks(EnterpriseDto)
+    */
+   @EnterpriseEdition
+   @GET
+   @Consumes(VLANNetworksDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<VLANNetworksDto> listExternalNetworks(
+         @EndpointLink("externalnetworks") @BinderParam(BindToPath.class) EnterpriseDto enterprise);
 
-    /*********************** Cloud ***********************/
+   /*********************** Cloud ***********************/
 
-    /**
-     * @see EnterpriseApi#listVirtualAppliances(EnterpriseDto)
-     */
-    @GET
-    @Consumes(VirtualAppliancesDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<VirtualAppliancesDto> listVirtualAppliances(
-        @EndpointLink("virtualappliances") @BinderParam(BindToPath.class) final EnterpriseDto enterprise);
+   /**
+    * @see EnterpriseApi#listVirtualAppliances(EnterpriseDto)
+    */
+   @GET
+   @Consumes(VirtualAppliancesDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<VirtualAppliancesDto> listVirtualAppliances(
+         @EndpointLink("virtualappliances") @BinderParam(BindToPath.class) final EnterpriseDto enterprise);
 
-    /**
-     * @see EnterpriseApi#listVirtualMachines(EnterpriseDto)
-     */
-    @GET
-    @Consumes(VirtualMachinesWithNodeExtendedDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<VirtualMachinesWithNodeExtendedDto> listVirtualMachines(
-        @EndpointLink("virtualmachines") @BinderParam(BindToPath.class) EnterpriseDto enterprise);
+   /**
+    * @see EnterpriseApi#listVirtualMachines(EnterpriseDto)
+    */
+   @GET
+   @Consumes(VirtualMachinesWithNodeExtendedDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<VirtualMachinesWithNodeExtendedDto> listVirtualMachines(
+         @EndpointLink("virtualmachines") @BinderParam(BindToPath.class) EnterpriseDto enterprise);
 
-    /*********************** Machine ***********************/
+   /*********************** Machine ***********************/
 
-    /**
-     * @see EnterpriseApi#listVirtualMachines(EnterpriseDto)
-     */
-    @GET
-    @Consumes(MachinesDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<MachinesDto> listReservedMachines(
-        @EndpointLink("reservedmachines") @BinderParam(BindToPath.class) EnterpriseDto enterprise);
+   /**
+    * @see EnterpriseApi#listVirtualMachines(EnterpriseDto)
+    */
+   @GET
+   @Consumes(MachinesDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<MachinesDto> listReservedMachines(
+         @EndpointLink("reservedmachines") @BinderParam(BindToPath.class) EnterpriseDto enterprise);
 
-    /*********************** Template definition list ***********************/
+   /*********************** Template definition list ***********************/
 
-    /**
-     * @see EnterpriseApi#listTemplateDefinitionLists(EnterpriseDto)
-     */
-    @GET
-    @Consumes(TemplateDefinitionListsDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<TemplateDefinitionListsDto> listTemplateDefinitionLists(
-        @EndpointLink("appslib/templateDefinitionLists") @BinderParam(BindToPath.class) EnterpriseDto enterprise);
+   /**
+    * @see EnterpriseApi#listTemplateDefinitionLists(EnterpriseDto)
+    */
+   @GET
+   @Consumes(TemplateDefinitionListsDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<TemplateDefinitionListsDto> listTemplateDefinitionLists(
+         @EndpointLink("appslib/templateDefinitionLists") @BinderParam(BindToPath.class) EnterpriseDto enterprise);
 
-    /**
-     * @see EnterpriseApi#createTemplateDefinitionList(EnterpriseDto, TemplateDefinitionListDto)
-     */
-    @POST
-    @Produces(TemplateDefinitionListDto.BASE_MEDIA_TYPE)
-    @Consumes(TemplateDefinitionListDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<TemplateDefinitionListDto> createTemplateDefinitionList(
-        @EndpointLink("appslib/templateDefinitionLists") @BinderParam(BindToPath.class) EnterpriseDto enterprise,
-        @BinderParam(BindToXMLPayload.class) TemplateDefinitionListDto templateList);
+   /**
+    * @see EnterpriseApi#createTemplateDefinitionList(EnterpriseDto,
+    *      TemplateDefinitionListDto)
+    */
+   @POST
+   @Produces(TemplateDefinitionListDto.BASE_MEDIA_TYPE)
+   @Consumes(TemplateDefinitionListDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<TemplateDefinitionListDto> createTemplateDefinitionList(
+         @EndpointLink("appslib/templateDefinitionLists") @BinderParam(BindToPath.class) EnterpriseDto enterprise,
+         @BinderParam(BindToXMLPayload.class) TemplateDefinitionListDto templateList);
 
-    /**
-     * @see EnterpriseApi#updateTemplateDefinitionList(TemplateDefinitionListDto)
-     */
-    @PUT
-    @Produces(TemplateDefinitionListDto.BASE_MEDIA_TYPE)
-    @Consumes(TemplateDefinitionListDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<TemplateDefinitionListDto> updateTemplateDefinitionList(
-        @EndpointLink("edit") @BinderParam(BindToXMLPayloadAndPath.class) TemplateDefinitionListDto templateList);
+   /**
+    * @see EnterpriseApi#updateTemplateDefinitionList(TemplateDefinitionListDto)
+    */
+   @PUT
+   @Produces(TemplateDefinitionListDto.BASE_MEDIA_TYPE)
+   @Consumes(TemplateDefinitionListDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<TemplateDefinitionListDto> updateTemplateDefinitionList(
+         @EndpointLink("edit") @BinderParam(BindToXMLPayloadAndPath.class) TemplateDefinitionListDto templateList);
 
-    /**
-     * @see EnterpriseApi#deleteTemplateDefinitionList(EnterpriseDto)
-     */
-    @DELETE
-    ListenableFuture<Void> deleteTemplateDefinitionList(
-        @EndpointLink("edit") @BinderParam(BindToPath.class) TemplateDefinitionListDto templateList);
+   /**
+    * @see EnterpriseApi#deleteTemplateDefinitionList(EnterpriseDto)
+    */
+   @DELETE
+   ListenableFuture<Void> deleteTemplateDefinitionList(
+         @EndpointLink("edit") @BinderParam(BindToPath.class) TemplateDefinitionListDto templateList);
 
-    /**
-     * @see EnterpriseApi#getTemplateDefinitionList(EnterpriseDto, Integer)
-     */
-    @GET
-    @Consumes(TemplateDefinitionListDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-    ListenableFuture<TemplateDefinitionListsDto> getTemplateDefinitionList(
-        @EndpointLink("appslib/templateDefinitionLists") @BinderParam(BindToPath.class) EnterpriseDto enterprise,
-        @BinderParam(AppendToPath.class) Integer templateListId);
+   /**
+    * @see EnterpriseApi#getTemplateDefinitionList(EnterpriseDto, Integer)
+    */
+   @GET
+   @Consumes(TemplateDefinitionListDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<TemplateDefinitionListsDto> getTemplateDefinitionList(
+         @EndpointLink("appslib/templateDefinitionLists") @BinderParam(BindToPath.class) EnterpriseDto enterprise,
+         @BinderParam(AppendToPath.class) Integer templateListId);
 
-    /**
-     * @see EnterpriseApi#getTemplateDefinitionList(EnterpriseDto, Integer)
-     */
-    @GET
-    @Consumes(TemplatesStateDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<TemplatesStateDto> listTemplateListStatus(
-        @EndpointLink("repositoryStatus") @BinderParam(BindToPath.class) TemplateDefinitionListDto templateList,
-        @QueryParam("datacenterId") @ParamParser(ParseDatacenterId.class) DatacenterDto datacenter);
+   /**
+    * @see EnterpriseApi#getTemplateDefinitionList(EnterpriseDto, Integer)
+    */
+   @GET
+   @Consumes(TemplatesStateDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<TemplatesStateDto> listTemplateListStatus(
+         @EndpointLink("repositoryStatus") @BinderParam(BindToPath.class) TemplateDefinitionListDto templateList,
+         @QueryParam("datacenterId") @ParamParser(ParseDatacenterId.class) DatacenterDto datacenter);
 }

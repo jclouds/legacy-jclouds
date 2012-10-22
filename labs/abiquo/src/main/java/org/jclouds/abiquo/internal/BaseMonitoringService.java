@@ -59,277 +59,240 @@ import com.google.inject.Inject;
  * @author Francesc Montserrat
  */
 @Singleton
-public class BaseMonitoringService implements MonitoringService
-{
-    @VisibleForTesting
-    protected RestContext<AbiquoApi, AbiquoAsyncApi> context;
+public class BaseMonitoringService implements MonitoringService {
+   @VisibleForTesting
+   protected RestContext<AbiquoApi, AbiquoAsyncApi> context;
 
-    /** The scheduler used to perform monitoring tasks. */
-    @VisibleForTesting
-    protected ScheduledExecutorService scheduler;
+   /** The scheduler used to perform monitoring tasks. */
+   @VisibleForTesting
+   protected ScheduledExecutorService scheduler;
 
-    @VisibleForTesting
-    protected Long pollingDelay;
+   @VisibleForTesting
+   protected Long pollingDelay;
 
-    /**
-     * The event bus used to dispatch monitoring events.
-     * <p>
-     * A sync bus is used by default, to prevent deadlocks when using the
-     * {@link BlockingEventHandler}.
-     */
-    @VisibleForTesting
-    protected EventBus eventBus;
+   /**
+    * The event bus used to dispatch monitoring events.
+    * <p>
+    * A sync bus is used by default, to prevent deadlocks when using the
+    * {@link BlockingEventHandler}.
+    */
+   @VisibleForTesting
+   protected EventBus eventBus;
 
-    @Resource
-    private Logger logger = Logger.NULL;
+   @Resource
+   private Logger logger = Logger.NULL;
 
-    @Inject
-    public BaseMonitoringService(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-        @Named(PROPERTY_SCHEDULER_THREADS) final ScheduledExecutorService scheduler,
-        @Named(ASYNC_TASK_MONITOR_DELAY) final Long pollingDelay, final EventBus eventBus)
-    {
-        this.context = checkNotNull(context, "context");
-        this.scheduler = checkNotNull(scheduler, "scheduler");
-        this.pollingDelay = checkNotNull(pollingDelay, "pollingDelay");
-        this.eventBus = checkNotNull(eventBus, "eventBus");
-    }
+   @Inject
+   public BaseMonitoringService(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
+         @Named(PROPERTY_SCHEDULER_THREADS) final ScheduledExecutorService scheduler,
+         @Named(ASYNC_TASK_MONITOR_DELAY) final Long pollingDelay, final EventBus eventBus) {
+      this.context = checkNotNull(context, "context");
+      this.scheduler = checkNotNull(scheduler, "scheduler");
+      this.pollingDelay = checkNotNull(pollingDelay, "pollingDelay");
+      this.eventBus = checkNotNull(eventBus, "eventBus");
+   }
 
-    /*************** Generic monitoring methods ***************/
+   /*************** Generic monitoring methods ***************/
 
-    @Override
-    public <T> void awaitCompletion(final Function<T, MonitorStatus> completeCondition,
-        final T... objects)
-    {
-        awaitCompletion(null, null, completeCondition, objects);
-    }
+   @Override
+   public <T> void awaitCompletion(final Function<T, MonitorStatus> completeCondition, final T... objects) {
+      awaitCompletion(null, null, completeCondition, objects);
+   }
 
-    @Override
-    public <T> void awaitCompletion(final Long maxWait, final TimeUnit timeUnit,
-        final Function<T, MonitorStatus> completeCondition, final T... objects)
-    {
-        checkNotNull(completeCondition, "completeCondition");
+   @Override
+   public <T> void awaitCompletion(final Long maxWait, final TimeUnit timeUnit,
+         final Function<T, MonitorStatus> completeCondition, final T... objects) {
+      checkNotNull(completeCondition, "completeCondition");
 
-        if (objects != null && objects.length > 0)
-        {
-            BlockingEventHandler<T> blockingHandler = new BlockingEventHandler<T>(logger, objects);
-            register(blockingHandler);
+      if (objects != null && objects.length > 0) {
+         BlockingEventHandler<T> blockingHandler = new BlockingEventHandler<T>(logger, objects);
+         register(blockingHandler);
 
-            monitor(maxWait, timeUnit, completeCondition, objects);
-            blockingHandler.lock();
+         monitor(maxWait, timeUnit, completeCondition, objects);
+         blockingHandler.lock();
 
-            unregister(blockingHandler);
-        }
-    }
+         unregister(blockingHandler);
+      }
+   }
 
-    @Override
-    public <T> void monitor(final Function<T, MonitorStatus> completeCondition, final T... objects)
-    {
-        monitor(null, null, completeCondition, objects);
-    }
+   @Override
+   public <T> void monitor(final Function<T, MonitorStatus> completeCondition, final T... objects) {
+      monitor(null, null, completeCondition, objects);
+   }
 
-    @Override
-    public <T> void monitor(final Long maxWait, final TimeUnit timeUnit,
-        final Function<T, MonitorStatus> completeCondition, final T... objects)
-    {
-        checkNotNull(completeCondition, "completeCondition");
-        if (maxWait != null)
-        {
-            checkNotNull(timeUnit, "timeUnit");
-        }
+   @Override
+   public <T> void monitor(final Long maxWait, final TimeUnit timeUnit,
+         final Function<T, MonitorStatus> completeCondition, final T... objects) {
+      checkNotNull(completeCondition, "completeCondition");
+      if (maxWait != null) {
+         checkNotNull(timeUnit, "timeUnit");
+      }
 
-        if (objects != null && objects.length > 0)
-        {
-            for (T object : objects)
-            {
-                AsyncMonitor<T> monitor = new AsyncMonitor<T>(object, completeCondition);
-                monitor.startMonitoring(maxWait);
-            }
-        }
-    }
+      if (objects != null && objects.length > 0) {
+         for (T object : objects) {
+            AsyncMonitor<T> monitor = new AsyncMonitor<T>(object, completeCondition);
+            monitor.startMonitoring(maxWait);
+         }
+      }
+   }
 
-    @Override
-    public <T extends AbstractEventHandler< ? >> void register(final T handler)
-    {
-        logger.debug("registering event handler %s", handler);
-        eventBus.register(handler);
-    }
+   @Override
+   public <T extends AbstractEventHandler<?>> void register(final T handler) {
+      logger.debug("registering event handler %s", handler);
+      eventBus.register(handler);
+   }
 
-    @Override
-    public <T extends AbstractEventHandler< ? >> void unregister(final T handler)
-    {
-        logger.debug("unregistering event handler %s", handler);
-        eventBus.unregister(handler);
-    }
+   @Override
+   public <T extends AbstractEventHandler<?>> void unregister(final T handler) {
+      logger.debug("unregistering event handler %s", handler);
+      eventBus.unregister(handler);
+   }
 
-    /*************** Delegating monitors ***************/
+   /*************** Delegating monitors ***************/
 
-    @Override
-    public VirtualMachineMonitor getVirtualMachineMonitor()
-    {
-        return checkNotNull(
-            context.getUtils().getInjector().getInstance(VirtualMachineMonitor.class),
+   @Override
+   public VirtualMachineMonitor getVirtualMachineMonitor() {
+      return checkNotNull(context.getUtils().getInjector().getInstance(VirtualMachineMonitor.class),
             "virtualMachineMonitor");
-    }
+   }
 
-    @Override
-    public VirtualApplianceMonitor getVirtualApplianceMonitor()
-    {
-        return checkNotNull(
-            context.getUtils().getInjector().getInstance(VirtualApplianceMonitor.class),
+   @Override
+   public VirtualApplianceMonitor getVirtualApplianceMonitor() {
+      return checkNotNull(context.getUtils().getInjector().getInstance(VirtualApplianceMonitor.class),
             "virtualApplianceMonitor");
-    }
+   }
 
-    @Override
-    public AsyncTaskMonitor getAsyncTaskMonitor()
-    {
-        return checkNotNull(context.getUtils().getInjector().getInstance(AsyncTaskMonitor.class),
-            "asyncTaskMonitor");
-    }
+   @Override
+   public AsyncTaskMonitor getAsyncTaskMonitor() {
+      return checkNotNull(context.getUtils().getInjector().getInstance(AsyncTaskMonitor.class), "asyncTaskMonitor");
+   }
 
-    @Override
-    public ConversionMonitor getConversionMonitor()
-    {
-        return checkNotNull(context.getUtils().getInjector().getInstance(ConversionMonitor.class),
-            "conversionMonitor");
-    }
+   @Override
+   public ConversionMonitor getConversionMonitor() {
+      return checkNotNull(context.getUtils().getInjector().getInstance(ConversionMonitor.class), "conversionMonitor");
+   }
 
-    /**
-     * Performs the periodical monitoring tasks.
-     * 
-     * @author Ignasi Barrera
-     * @param <T> The type of the object being monitored.
-     */
-    @VisibleForTesting
-    class AsyncMonitor<T> implements Runnable
-    {
-        /** The object being monitored. */
-        private T monitoredObject;
+   /**
+    * Performs the periodical monitoring tasks.
+    * 
+    * @author Ignasi Barrera
+    * @param <T>
+    *           The type of the object being monitored.
+    */
+   @VisibleForTesting
+   class AsyncMonitor<T> implements Runnable {
+      /** The object being monitored. */
+      private T monitoredObject;
 
-        /** The function used to monitor the target object. */
-        private Function<T, MonitorStatus> completeCondition;
+      /** The function used to monitor the target object. */
+      private Function<T, MonitorStatus> completeCondition;
 
-        /**
-         * The future representing the monitoring job. Needed to be able to cancel it when monitor
-         * finishes.
-         */
-        private Future< ? > future;
+      /**
+       * The future representing the monitoring job. Needed to be able to cancel
+       * it when monitor finishes.
+       */
+      private Future<?> future;
 
-        /** The timeout for this monitor. */
-        private Long timeout;
+      /** The timeout for this monitor. */
+      private Long timeout;
 
-        public AsyncMonitor(final T monitoredObject,
-            final Function<T, MonitorStatus> completeCondition)
-        {
-            super();
-            this.monitoredObject = checkNotNull(monitoredObject, "monitoredObject");
-            this.completeCondition = checkNotNull(completeCondition, "completeCondition");
-        }
+      public AsyncMonitor(final T monitoredObject, final Function<T, MonitorStatus> completeCondition) {
+         super();
+         this.monitoredObject = checkNotNull(monitoredObject, "monitoredObject");
+         this.completeCondition = checkNotNull(completeCondition, "completeCondition");
+      }
 
-        /**
-         * Starts the monitoring job with the given timeout.
-         * 
-         * @param maxWait The timeout.
-         */
-        public void startMonitoring(final Long maxWait)
-        {
-            future =
-                scheduler.scheduleWithFixedDelay(this, 0L, pollingDelay, TimeUnit.MILLISECONDS);
-            timeout = maxWait == null ? null : System.currentTimeMillis() + maxWait;
-            logger.debug("started monitor job for %s with %s timeout", monitoredObject,
-                timeout == null ? "no" : String.valueOf(timeout));
-        }
+      /**
+       * Starts the monitoring job with the given timeout.
+       * 
+       * @param maxWait
+       *           The timeout.
+       */
+      public void startMonitoring(final Long maxWait) {
+         future = scheduler.scheduleWithFixedDelay(this, 0L, pollingDelay, TimeUnit.MILLISECONDS);
+         timeout = maxWait == null ? null : System.currentTimeMillis() + maxWait;
+         logger.debug("started monitor job for %s with %s timeout", monitoredObject,
+               timeout == null ? "no" : String.valueOf(timeout));
+      }
 
-        /**
-         * Stops the monitoring job, if running.
-         */
-        public void stopMonitoring()
-        {
-            logger.debug("stopping monitor job for %s", monitoredObject);
+      /**
+       * Stops the monitoring job, if running.
+       */
+      public void stopMonitoring() {
+         logger.debug("stopping monitor job for %s", monitoredObject);
 
-            try
-            {
-                if (future != null && !future.isCancelled() && !future.isDone())
-                {
-                    // Do not force future cancel. Let it finish gracefully
-                    logger.debug("cancelling future");
-                    future.cancel(false);
-                }
+         try {
+            if (future != null && !future.isCancelled() && !future.isDone()) {
+               // Do not force future cancel. Let it finish gracefully
+               logger.debug("cancelling future");
+               future.cancel(false);
             }
-            catch (Exception ex)
-            {
-                logger.warn(ex, "failed to stop monitor job for %s", monitoredObject);
-            }
-        }
+         } catch (Exception ex) {
+            logger.warn(ex, "failed to stop monitor job for %s", monitoredObject);
+         }
+      }
 
-        /**
-         * Checks if the monitor has timed out.
-         */
-        public boolean isTimeout()
-        {
-            return timeout != null && timeout < System.currentTimeMillis();
-        }
+      /**
+       * Checks if the monitor has timed out.
+       */
+      public boolean isTimeout() {
+         return timeout != null && timeout < System.currentTimeMillis();
+      }
 
-        @Override
-        public void run()
-        {
-            // Do not use Thread.interrupted() since it will clear the interrupted flag
-            // and subsequent calls to it may not return the appropriate value
-            if (Thread.currentThread().isInterrupted())
-            {
-                // If the thread as already been interrupted, just stop monitoring the task and
-                // return
-                stopMonitoring();
-                return;
-            }
+      @Override
+      public void run() {
+         // Do not use Thread.interrupted() since it will clear the interrupted
+         // flag
+         // and subsequent calls to it may not return the appropriate value
+         if (Thread.currentThread().isInterrupted()) {
+            // If the thread as already been interrupted, just stop monitoring
+            // the task and
+            // return
+            stopMonitoring();
+            return;
+         }
 
-            MonitorStatus status = completeCondition.apply(monitoredObject);
-            logger.debug("monitored object %s status %s", monitoredObject, status.name());
+         MonitorStatus status = completeCondition.apply(monitoredObject);
+         logger.debug("monitored object %s status %s", monitoredObject, status.name());
 
-            switch (status)
-            {
-                case DONE:
-                    stopMonitoring();
-                    logger.debug("publishing COMPLETED event");
-                    eventBus.post(new CompletedEvent<T>(monitoredObject));
-                    break;
-                case FAILED:
-                    stopMonitoring();
-                    logger.debug("publishing FAILED event");
-                    eventBus.post(new FailedEvent<T>(monitoredObject));
-                    break;
-                case CONTINUE:
-                default:
-                    if (isTimeout())
-                    {
-                        logger.warn("monitor for object %s timed out. Shutting down monitor.",
-                            monitoredObject);
-                        stopMonitoring();
-                        logger.debug("publishing TIMEOUT event");
-                        eventBus.post(new TimeoutEvent<T>(monitoredObject));
-                    }
-                    break;
-            }
-        }
+         switch (status) {
+            case DONE:
+               stopMonitoring();
+               logger.debug("publishing COMPLETED event");
+               eventBus.post(new CompletedEvent<T>(monitoredObject));
+               break;
+            case FAILED:
+               stopMonitoring();
+               logger.debug("publishing FAILED event");
+               eventBus.post(new FailedEvent<T>(monitoredObject));
+               break;
+            case CONTINUE:
+            default:
+               if (isTimeout()) {
+                  logger.warn("monitor for object %s timed out. Shutting down monitor.", monitoredObject);
+                  stopMonitoring();
+                  logger.debug("publishing TIMEOUT event");
+                  eventBus.post(new TimeoutEvent<T>(monitoredObject));
+               }
+               break;
+         }
+      }
 
-        public T getMonitoredObject()
-        {
-            return monitoredObject;
-        }
+      public T getMonitoredObject() {
+         return monitoredObject;
+      }
 
-        public Function<T, MonitorStatus> getCompleteCondition()
-        {
-            return completeCondition;
-        }
+      public Function<T, MonitorStatus> getCompleteCondition() {
+         return completeCondition;
+      }
 
-        public Future< ? > getFuture()
-        {
-            return future;
-        }
+      public Future<?> getFuture() {
+         return future;
+      }
 
-        public Long getTimeout()
-        {
-            return timeout;
-        }
-    }
+      public Long getTimeout() {
+         return timeout;
+      }
+   }
 
 }

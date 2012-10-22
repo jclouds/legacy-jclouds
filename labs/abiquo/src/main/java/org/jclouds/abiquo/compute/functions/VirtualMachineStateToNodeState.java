@@ -32,27 +32,24 @@ import com.google.common.base.Function;
  * @author Ignasi Barrera
  */
 @Singleton
-public class VirtualMachineStateToNodeState implements Function<VirtualMachineState, Status>
-{
+public class VirtualMachineStateToNodeState implements Function<VirtualMachineState, Status> {
 
-    @Override
-    public Status apply(final VirtualMachineState state)
-    {
-        switch (state)
-        {
-            case ALLOCATED:
-            case LOCKED:
-            case CONFIGURED:
-            case NOT_ALLOCATED:
-                return Status.PENDING;
-            case ON:
-                return Status.RUNNING;
-            case OFF:
-            case PAUSED:
-                return Status.SUSPENDED;
-            case UNKNOWN:
-            default:
-                return Status.UNRECOGNIZED;
-        }
-    }
+   @Override
+   public Status apply(final VirtualMachineState state) {
+      switch (state) {
+         case ALLOCATED:
+         case LOCKED:
+         case CONFIGURED:
+         case NOT_ALLOCATED:
+            return Status.PENDING;
+         case ON:
+            return Status.RUNNING;
+         case OFF:
+         case PAUSED:
+            return Status.SUSPENDED;
+         case UNKNOWN:
+         default:
+            return Status.UNRECOGNIZED;
+      }
+   }
 }

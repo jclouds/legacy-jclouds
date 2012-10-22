@@ -50,141 +50,119 @@ import com.abiquo.server.core.enterprise.EnterpriseDto;
  * @author Ignasi Barrera
  */
 @Test(groups = "api", testName = "EnterpriseLiveApiTest")
-public class EnterpriseLiveApiTest extends BaseAbiquoApiLiveApiTest
-{
-    private Enterprise enterprise;
+public class EnterpriseLiveApiTest extends BaseAbiquoApiLiveApiTest {
+   private Enterprise enterprise;
 
-    private Limits limits;
+   private Limits limits;
 
-    @BeforeClass
-    public void setupEnterprise()
-    {
-        enterprise = Enterprise.Builder.fromEnterprise(env.enterprise).build();
-        enterprise.setName(PREFIX + "-enterprise-test");
-        enterprise.save();
+   @BeforeClass
+   public void setupEnterprise() {
+      enterprise = Enterprise.Builder.fromEnterprise(env.enterprise).build();
+      enterprise.setName(PREFIX + "-enterprise-test");
+      enterprise.save();
 
-        limits = enterprise.allowDatacenter(env.datacenter);
-        assertNotNull(limits);
+      limits = enterprise.allowDatacenter(env.datacenter);
+      assertNotNull(limits);
 
-        DatacentersLimitsDto limitsDto =
-            env.enterpriseApi.getLimits(enterprise.unwrap(), env.datacenter.unwrap());
-        assertNotNull(limitsDto);
-        assertEquals(limitsDto.getCollection().size(), 1);
-    }
+      DatacentersLimitsDto limitsDto = env.enterpriseApi.getLimits(enterprise.unwrap(), env.datacenter.unwrap());
+      assertNotNull(limitsDto);
+      assertEquals(limitsDto.getCollection().size(), 1);
+   }
 
-    @AfterClass
-    public void tearDownEnterprise()
-    {
-        enterprise.prohibitDatacenter(env.datacenter);
+   @AfterClass
+   public void tearDownEnterprise() {
+      enterprise.prohibitDatacenter(env.datacenter);
 
-        try
-        {
-            // If a datacenter is not allowed, the limits for it can not be retrieved
-            env.enterpriseApi.getLimits(enterprise.unwrap(), env.datacenter.unwrap());
-        }
-        catch (AbiquoException ex)
-        {
-            assertHasError(ex, Status.CONFLICT, "ENTERPRISE-10");
-        }
+      try {
+         // If a datacenter is not allowed, the limits for it can not be
+         // retrieved
+         env.enterpriseApi.getLimits(enterprise.unwrap(), env.datacenter.unwrap());
+      } catch (AbiquoException ex) {
+         assertHasError(ex, Status.CONFLICT, "ENTERPRISE-10");
+      }
 
-        List<Datacenter> allowed = enterprise.listAllowedDatacenters();
-        assertNotNull(allowed);
-        assertTrue(allowed.isEmpty());
+      List<Datacenter> allowed = enterprise.listAllowedDatacenters();
+      assertNotNull(allowed);
+      assertTrue(allowed.isEmpty());
 
-        enterprise.delete();
-    }
+      enterprise.delete();
+   }
 
-    public void testUpdate()
-    {
-        enterprise.setName("Updated Enterprise");
-        enterprise.update();
+   public void testUpdate() {
+      enterprise.setName("Updated Enterprise");
+      enterprise.update();
 
-        // Recover the updated enterprise
-        EnterpriseDto updated = env.enterpriseApi.getEnterprise(enterprise.getId());
+      // Recover the updated enterprise
+      EnterpriseDto updated = env.enterpriseApi.getEnterprise(enterprise.getId());
 
-        assertEquals(updated.getName(), "Updated Enterprise");
-    }
+      assertEquals(updated.getName(), "Updated Enterprise");
+   }
 
-    public void testCreateRepeated()
-    {
-        Enterprise repeated = Builder.fromEnterprise(enterprise).build();
+   public void testCreateRepeated() {
+      Enterprise repeated = Builder.fromEnterprise(enterprise).build();
 
-        try
-        {
-            repeated.save();
-            fail("Should not be able to create enterprises with the same name");
-        }
-        catch (AbiquoException ex)
-        {
-            assertHasError(ex, Status.CONFLICT, "ENTERPRISE-4");
-        }
-    }
+      try {
+         repeated.save();
+         fail("Should not be able to create enterprises with the same name");
+      } catch (AbiquoException ex) {
+         assertHasError(ex, Status.CONFLICT, "ENTERPRISE-4");
+      }
+   }
 
-    public void testAllowTwiceWorks()
-    {
-        // Allow the datacenter again and check that the configuration has not changed
-        Limits limits = enterprise.allowDatacenter(env.datacenter);
-        assertNotNull(limits);
+   public void testAllowTwiceWorks() {
+      // Allow the datacenter again and check that the configuration has not
+      // changed
+      Limits limits = enterprise.allowDatacenter(env.datacenter);
+      assertNotNull(limits);
 
-        DatacentersLimitsDto limitsDto =
-            env.enterpriseApi.getLimits(enterprise.unwrap(), env.datacenter.unwrap());
-        assertNotNull(limitsDto);
-        assertEquals(limitsDto.getCollection().size(), 1);
-    }
+      DatacentersLimitsDto limitsDto = env.enterpriseApi.getLimits(enterprise.unwrap(), env.datacenter.unwrap());
+      assertNotNull(limitsDto);
+      assertEquals(limitsDto.getCollection().size(), 1);
+   }
 
-    public void testListLimits()
-    {
-        List<Limits> allLimits = enterprise.listLimits();
-        assertNotNull(allLimits);
-        assertEquals(allLimits.size(), 1);
-    }
+   public void testListLimits() {
+      List<Limits> allLimits = enterprise.listLimits();
+      assertNotNull(allLimits);
+      assertEquals(allLimits.size(), 1);
+   }
 
-    public void testUpdateInvalidLimits()
-    {
-        // CPU soft remains to 0 => conflict because hard is smaller
-        limits.setCpuCountHardLimit(2);
+   public void testUpdateInvalidLimits() {
+      // CPU soft remains to 0 => conflict because hard is smaller
+      limits.setCpuCountHardLimit(2);
 
-        try
-        {
-            limits.update();
-        }
-        catch (AbiquoException ex)
-        {
-            assertHasError(ex, Status.BAD_REQUEST, "CONSTR-LIMITRANGE");
-        }
-    }
+      try {
+         limits.update();
+      } catch (AbiquoException ex) {
+         assertHasError(ex, Status.BAD_REQUEST, "CONSTR-LIMITRANGE");
+      }
+   }
 
-    public void testUpdateLimits()
-    {
-        limits.setCpuCountLimits(4, 5);
-        limits.update();
+   public void testUpdateLimits() {
+      limits.setCpuCountLimits(4, 5);
+      limits.update();
 
-        DatacentersLimitsDto limitsDto =
-            env.enterpriseApi.getLimits(enterprise.unwrap(), env.datacenter.unwrap());
-        assertNotNull(limitsDto);
-        assertEquals(limitsDto.getCollection().size(), 1);
-        assertEquals(limitsDto.getCollection().get(0).getCpuCountHardLimit(), 5);
-        assertEquals(limitsDto.getCollection().get(0).getCpuCountSoftLimit(), 4);
-    }
+      DatacentersLimitsDto limitsDto = env.enterpriseApi.getLimits(enterprise.unwrap(), env.datacenter.unwrap());
+      assertNotNull(limitsDto);
+      assertEquals(limitsDto.getCollection().size(), 1);
+      assertEquals(limitsDto.getCollection().get(0).getCpuCountHardLimit(), 5);
+      assertEquals(limitsDto.getCollection().get(0).getCpuCountSoftLimit(), 4);
+   }
 
-    public void testListAllowedDatacenters()
-    {
-        List<Datacenter> allowed = enterprise.listAllowedDatacenters();
+   public void testListAllowedDatacenters() {
+      List<Datacenter> allowed = enterprise.listAllowedDatacenters();
 
-        assertNotNull(allowed);
-        assertFalse(allowed.isEmpty());
-        assertEquals(allowed.get(0).getId(), env.datacenter.getId());
-    }
+      assertNotNull(allowed);
+      assertFalse(allowed.isEmpty());
+      assertEquals(allowed.get(0).getId(), env.datacenter.getId());
+   }
 
-    public void testListVirtualMachines()
-    {
-        List<VirtualMachine> machines = env.defaultEnterprise.listVirtualMachines();
-        assertTrue(machines.size() > 0);
-    }
+   public void testListVirtualMachines() {
+      List<VirtualMachine> machines = env.defaultEnterprise.listVirtualMachines();
+      assertTrue(machines.size() > 0);
+   }
 
-    public void testListVirtualAppliances()
-    {
-        List<VirtualAppliance> vapps = env.defaultEnterprise.listVirtualAppliances();
-        assertTrue(vapps.size() > 0);
-    }
+   public void testListVirtualAppliances() {
+      List<VirtualAppliance> vapps = env.defaultEnterprise.listVirtualAppliances();
+      assertTrue(vapps.size() > 0);
+   }
 }

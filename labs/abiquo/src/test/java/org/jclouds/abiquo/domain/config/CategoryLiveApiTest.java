@@ -33,43 +33,37 @@ import org.testng.annotations.Test;
  * @author Francesc Montserrat
  */
 @Test(groups = "api", testName = "CategoryLiveApiTest")
-public class CategoryLiveApiTest extends BaseAbiquoApiLiveApiTest
-{
-    public void testCreateAndGet()
-    {
-        Category category =
-            Category.builder(env.context.getApiContext()).name(PREFIX + "-test-category").build();
-        category.save();
+public class CategoryLiveApiTest extends BaseAbiquoApiLiveApiTest {
+   public void testCreateAndGet() {
+      Category category = Category.builder(env.context.getApiContext()).name(PREFIX + "-test-category").build();
+      category.save();
 
-        Category apiCategory =
-            env.context.getAdministrationService().findCategory(
-                CategoryPredicates.name(PREFIX + "-test-category"));
-        assertNotNull(apiCategory);
-        assertEquals(category.getName(), apiCategory.getName());
+      Category apiCategory = env.context.getAdministrationService().findCategory(
+            CategoryPredicates.name(PREFIX + "-test-category"));
+      assertNotNull(apiCategory);
+      assertEquals(category.getName(), apiCategory.getName());
 
-        apiCategory.delete();
-    }
+      apiCategory.delete();
+   }
 
-    @Test(dependsOnMethods = "testCreateAndGet")
-    public void testUpdate()
-    {
-        Iterable<Category> categories = env.context.getAdministrationService().listCategories();
-        assertNotNull(categories);
+   @Test(dependsOnMethods = "testCreateAndGet")
+   public void testUpdate() {
+      Iterable<Category> categories = env.context.getAdministrationService().listCategories();
+      assertNotNull(categories);
 
-        Category category = categories.iterator().next();
-        String name = category.getName();
+      Category category = categories.iterator().next();
+      String name = category.getName();
 
-        category.setName(PREFIX + "-test-category-updated");
-        category.update();
+      category.setName(PREFIX + "-test-category-updated");
+      category.update();
 
-        Category apiCategory =
-            env.context.getAdministrationService().findCategory(
-                CategoryPredicates.name(PREFIX + "-test-category-updated"));
+      Category apiCategory = env.context.getAdministrationService().findCategory(
+            CategoryPredicates.name(PREFIX + "-test-category-updated"));
 
-        assertNotNull(apiCategory);
-        assertEquals(PREFIX + "-test-category-updated", apiCategory.getName());
+      assertNotNull(apiCategory);
+      assertEquals(PREFIX + "-test-category-updated", apiCategory.getName());
 
-        category.setName(name);
-        category.update();
-    }
+      category.setName(name);
+      category.update();
+   }
 }

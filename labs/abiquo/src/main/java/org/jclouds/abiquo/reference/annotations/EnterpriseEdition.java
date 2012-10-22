@@ -23,13 +23,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * Indicates that the annotated element will access Abiquo Enterprise Edition functionallity. If the
- * target Abiquo Cloud platform is a Community Edition version, the invocation of the method may
- * have unexpected results.
+ * Indicates that the annotated element will access Abiquo Enterprise Edition
+ * functionallity. If the target Abiquo Cloud platform is a Community Edition
+ * version, the invocation of the method may have unexpected results.
  * 
  * @author Ignasi Barrera
  */
 @Retention(RetentionPolicy.RUNTIME)
-public @interface EnterpriseEdition
-{
+public @interface EnterpriseEdition {
 }

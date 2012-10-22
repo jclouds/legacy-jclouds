@@ -43,82 +43,70 @@ import com.google.inject.Module;
  * 
  * @author Ignasi Barrera
  */
-public class AbiquoApiMetadata extends BaseRestApiMetadata
-{
-    /** Serial UID. */
-    private static final long serialVersionUID = -8355533493674898171L;
+public class AbiquoApiMetadata extends BaseRestApiMetadata {
+   /** Serial UID. */
+   private static final long serialVersionUID = -8355533493674898171L;
 
-    /** The token describing the rest api context. */
-    public static final TypeToken<RestContext<AbiquoApi, AbiquoAsyncApi>> CONTEXT_TOKEN =
-        new TypeToken<RestContext<AbiquoApi, AbiquoAsyncApi>>()
-        {
-            private static final long serialVersionUID = -5070937833892503232L;
-        };
+   /** The token describing the rest api context. */
+   public static final TypeToken<RestContext<AbiquoApi, AbiquoAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<AbiquoApi, AbiquoAsyncApi>>() {
+      private static final long serialVersionUID = -5070937833892503232L;
+   };
 
-    public AbiquoApiMetadata()
-    {
-        this(new Builder());
-    }
+   public AbiquoApiMetadata() {
+      this(new Builder());
+   }
 
-    protected AbiquoApiMetadata(final Builder builder)
-    {
-        super(builder);
-    }
+   protected AbiquoApiMetadata(final Builder builder) {
+      super(builder);
+   }
 
-    public static Properties defaultProperties()
-    {
-        Properties properties = BaseRestApiMetadata.defaultProperties();
-        // By default redirects will be handled in the domain objects
-        properties.setProperty(PROPERTY_MAX_REDIRECTS, "0");
-        // The default polling delay between AsyncTask monitor requests
-        properties.setProperty(ASYNC_TASK_MONITOR_DELAY, "5000");
-        // By default the provided credential is not a token
-        properties.setProperty(CREDENTIAL_IS_TOKEN, "false");
-        return properties;
-    }
+   public static Properties defaultProperties() {
+      Properties properties = BaseRestApiMetadata.defaultProperties();
+      // By default redirects will be handled in the domain objects
+      properties.setProperty(PROPERTY_MAX_REDIRECTS, "0");
+      // The default polling delay between AsyncTask monitor requests
+      properties.setProperty(ASYNC_TASK_MONITOR_DELAY, "5000");
+      // By default the provided credential is not a token
+      properties.setProperty(CREDENTIAL_IS_TOKEN, "false");
+      return properties;
+   }
 
-    @Override
-    public Builder toBuilder()
-    {
-        return new Builder().fromApiMetadata(this);
-    }
+   @Override
+   public Builder toBuilder() {
+      return new Builder().fromApiMetadata(this);
+   }
 
-    public static class Builder extends BaseRestApiMetadata.Builder
-    {
-        private static final String DOCUMENTATION_ROOT = "http://community.abiquo.com/display/ABI"
+   public static class Builder extends BaseRestApiMetadata.Builder {
+      private static final String DOCUMENTATION_ROOT = "http://community.abiquo.com/display/ABI"
             + CharMatcher.DIGIT.retainFrom(AbiquoAsyncApi.API_VERSION);
 
-        protected Builder()
-        {
-            super(AbiquoApi.class, AbiquoAsyncApi.class);
-            id("abiquo")
-                .name("Abiquo API")
-                .identityName("API Username")
-                .credentialName("API Password")
-                .documentation(URI.create(DOCUMENTATION_ROOT + "/API+Reference"))
-                .defaultEndpoint("http://localhost/api")
-                .version(AbiquoAsyncApi.API_VERSION)
-                .buildVersion(AbiquoAsyncApi.BUILD_VERSION)
-                .view(TypeToken.of(AbiquoContext.class))
-                .defaultProperties(AbiquoApiMetadata.defaultProperties())
-                .defaultModules(
-                    ImmutableSet.<Class< ? extends Module>> of(AbiquoRestClientModule.class,
-                        AbiquoComputeServiceContextModule.class,
-                        ScheduledExecutorServiceModule.class));
-        }
+      protected Builder() {
+         super(AbiquoApi.class, AbiquoAsyncApi.class);
+         id("abiquo")
+               .name("Abiquo API")
+               .identityName("API Username")
+               .credentialName("API Password")
+               .documentation(URI.create(DOCUMENTATION_ROOT + "/API+Reference"))
+               .defaultEndpoint("http://localhost/api")
+               .version(AbiquoAsyncApi.API_VERSION)
+               .buildVersion(AbiquoAsyncApi.BUILD_VERSION)
+               .view(TypeToken.of(AbiquoContext.class))
+               .defaultProperties(AbiquoApiMetadata.defaultProperties())
+               .defaultModules(
+                     ImmutableSet.<Class<? extends Module>> of(AbiquoRestClientModule.class,
+                           AbiquoComputeServiceContextModule.class, ScheduledExecutorServiceModule.class));
+      }
 
-        @Override
-        public AbiquoApiMetadata build()
-        {
-            return new AbiquoApiMetadata(this);
-        }
+      @Override
+      public AbiquoApiMetadata build() {
+         return new AbiquoApiMetadata(this);
+      }
 
-        @Override
-        public Builder fromApiMetadata(final ApiMetadata in)
-        {
-            super.fromApiMetadata(in);
-            return this;
-        }
-    }
+      @Override
+      public Builder fromApiMetadata(final ApiMetadata in) {
+         super.fromApiMetadata(in);
+         return this;
+      }
+   }
 
 }

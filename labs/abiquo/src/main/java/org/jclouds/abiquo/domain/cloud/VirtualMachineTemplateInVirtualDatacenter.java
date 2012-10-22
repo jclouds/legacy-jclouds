@@ -21,33 +21,28 @@ package org.jclouds.abiquo.domain.cloud;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Wrapper to hold the information of a virtual machine template scoped to a concrete hypervisor
- * type.
+ * Wrapper to hold the information of a virtual machine template scoped to a
+ * concrete hypervisor type.
  * 
  * @author Ignasi Barrera
  */
-public class VirtualMachineTemplateInVirtualDatacenter
-{
-    private VirtualMachineTemplate template;
+public class VirtualMachineTemplateInVirtualDatacenter {
+   private VirtualMachineTemplate template;
 
-    private VirtualDatacenter zone;
+   private VirtualDatacenter zone;
 
-    public VirtualMachineTemplateInVirtualDatacenter(final VirtualMachineTemplate template,
-        final VirtualDatacenter zone)
-    {
-        super();
-        this.template = checkNotNull(template, "template");
-        this.zone = checkNotNull(zone, "zone");
-    }
+   public VirtualMachineTemplateInVirtualDatacenter(final VirtualMachineTemplate template, final VirtualDatacenter zone) {
+      super();
+      this.template = checkNotNull(template, "template");
+      this.zone = checkNotNull(zone, "zone");
+   }
 
-    public VirtualMachineTemplate getTemplate()
-    {
-        return template;
-    }
+   public VirtualMachineTemplate getTemplate() {
+      return template;
+   }
 
-    public VirtualDatacenter getZone()
-    {
-        return zone;
-    }
+   public VirtualDatacenter getZone() {
+      return zone;
+   }
 
 }

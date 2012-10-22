@@ -49,45 +49,43 @@ import com.google.common.base.Supplier;
  * @author Ignasi Barrera
  */
 @Singleton
-public class VirtualMachineTemplateToImage implements Function<VirtualMachineTemplate, Image>
-{
-    private final Function<Datacenter, Location> datacenterToLocation;
+public class VirtualMachineTemplateToImage implements Function<VirtualMachineTemplate, Image> {
+   private final Function<Datacenter, Location> datacenterToLocation;
 
-    private final Supplier<Map<Integer, Datacenter>> regionMap;
+   private final Supplier<Map<Integer, Datacenter>> regionMap;
 
-    @Inject
-    public VirtualMachineTemplateToImage(final Function<Datacenter, Location> datacenterToLocation,
-        @Memoized final Supplier<Map<Integer, Datacenter>> reginoMap)
-    {
-        this.datacenterToLocation = checkNotNull(datacenterToLocation, "datacenterToLocation");
-        this.regionMap = checkNotNull(reginoMap, "reginoMap");
-    }
+   @Inject
+   public VirtualMachineTemplateToImage(final Function<Datacenter, Location> datacenterToLocation,
+         @Memoized final Supplier<Map<Integer, Datacenter>> reginoMap) {
+      this.datacenterToLocation = checkNotNull(datacenterToLocation, "datacenterToLocation");
+      this.regionMap = checkNotNull(reginoMap, "reginoMap");
+   }
 
-    @Override
-    public Image apply(final VirtualMachineTemplate template)
-    {
-        ImageBuilder builder = new ImageBuilder();
-        builder.ids(template.getId().toString());
-        builder.name(template.getName());
-        builder.description(template.getDescription());
+   @Override
+   public Image apply(final VirtualMachineTemplate template) {
+      ImageBuilder builder = new ImageBuilder();
+      builder.ids(template.getId().toString());
+      builder.name(template.getName());
+      builder.description(template.getDescription());
 
-        // Location information
-        Datacenter region =
-            regionMap.get().get(template.unwrap().getIdFromLink(ParentLinkName.DATACENTER));
-        builder.location(datacenterToLocation.apply(region));
+      // Location information
+      Datacenter region = regionMap.get().get(template.unwrap().getIdFromLink(ParentLinkName.DATACENTER));
+      builder.location(datacenterToLocation.apply(region));
 
-        // Only conversions have a status
-        builder.status(Status.AVAILABLE);
-        builder.backendStatus(Status.AVAILABLE.name()); // Abiquo images do not have a status
+      // Only conversions have a status
+      builder.status(Status.AVAILABLE);
+      builder.backendStatus(Status.AVAILABLE.name()); // Abiquo images do not
+                                                      // have a status
 
-        RESTLink downloadLink = template.unwrap().searchLink("diskfile");
-        builder.uri(downloadLink == null ? null : URI.create(downloadLink.getHref()));
+      RESTLink downloadLink = template.unwrap().searchLink("diskfile");
+      builder.uri(downloadLink == null ? null : URI.create(downloadLink.getHref()));
 
-        // TODO: Operating system not implemented in Abiquo Templates
-        // TODO: Image credentials still not present in Abiquo template metadata
-        // Will be added in Abiquo 2.4: http://jira.abiquo.com/browse/ABICLOUDPREMIUM-3647
-        builder.operatingSystem(OperatingSystem.builder().description(template.getName()).build());
+      // TODO: Operating system not implemented in Abiquo Templates
+      // TODO: Image credentials still not present in Abiquo template metadata
+      // Will be added in Abiquo 2.4:
+      // http://jira.abiquo.com/browse/ABICLOUDPREMIUM-3647
+      builder.operatingSystem(OperatingSystem.builder().description(template.getName()).build());
 
-        return builder.build();
-    }
+      return builder.build();
+   }
 }

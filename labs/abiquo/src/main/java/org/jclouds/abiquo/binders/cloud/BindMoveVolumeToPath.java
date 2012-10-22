@@ -33,20 +33,17 @@ import com.abiquo.server.core.infrastructure.storage.VolumeManagementDto;
  * 
  * @author Ignasi Barrera
  */
-public class BindMoveVolumeToPath extends BindToPath
-{
+public class BindMoveVolumeToPath extends BindToPath {
 
-    @Override
-    protected String getNewEndpoint(final GeneratedHttpRequest gRequest, final Object input)
-    {
-        checkArgument(checkNotNull(input, "input") instanceof VolumeManagementDto,
+   @Override
+   protected String getNewEndpoint(final GeneratedHttpRequest gRequest, final Object input) {
+      checkArgument(checkNotNull(input, "input") instanceof VolumeManagementDto,
             "this binder is only valid for VolumeManagementDto objects");
 
-        VolumeManagementDto volume = (VolumeManagementDto) input;
-        RESTLink editLink =
-            checkNotNull(volume.getEditLink(), "VolumeManagementDto must have an edit link");
+      VolumeManagementDto volume = (VolumeManagementDto) input;
+      RESTLink editLink = checkNotNull(volume.getEditLink(), "VolumeManagementDto must have an edit link");
 
-        return editLink.getHref() + "/action/move";
-    }
+      return editLink.getHref() + "/action/move";
+   }
 
 }

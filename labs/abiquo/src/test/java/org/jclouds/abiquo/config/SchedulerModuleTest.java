@@ -36,11 +36,9 @@ import com.google.inject.name.Names;
  * @author Ignasi Barrera
  */
 @Test(groups = "unit", testName = "SchedulerModuleTest")
-public class SchedulerModuleTest extends BaseInjectionTest
-{
-    public void testScheduledExecutorIsProvided()
-    {
-        assertNotNull(injector.getInstance(Key.get(ScheduledExecutorService.class,
+public class SchedulerModuleTest extends BaseInjectionTest {
+   public void testScheduledExecutorIsProvided() {
+      assertNotNull(injector.getInstance(Key.get(ScheduledExecutorService.class,
             Names.named(Constants.PROPERTY_SCHEDULER_THREADS))));
-    }
+   }
 }

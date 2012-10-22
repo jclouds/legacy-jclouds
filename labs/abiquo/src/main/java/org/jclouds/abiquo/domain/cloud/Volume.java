@@ -42,209 +42,183 @@ import com.abiquo.server.core.infrastructure.storage.VolumeManagementDto;
  * Adds high level functionality to {@link VolumeManagementDto}.
  * 
  * @author Ignasi Barrera
- * @see API: <a href="http://community.abiquo.com/display/ABI20/Volume+Resource">
+ * @see API: <a
+ *      href="http://community.abiquo.com/display/ABI20/Volume+Resource">
  *      http://community.abiquo.com/display/ABI20/Volume+Resource</a>
  */
 @EnterpriseEdition
-public class Volume extends DomainWrapper<VolumeManagementDto>
-{
-    /** The default state for folumes. */
-    public static final VolumeState DEFAULT_STATE = VolumeState.DETACHED;
+public class Volume extends DomainWrapper<VolumeManagementDto> {
+   /** The default state for folumes. */
+   public static final VolumeState DEFAULT_STATE = VolumeState.DETACHED;
 
-    /** The virtual datacenter where the volume belongs. */
-    private VirtualDatacenter virtualDatacenter;
+   /** The virtual datacenter where the volume belongs. */
+   private VirtualDatacenter virtualDatacenter;
 
-    /** The tier where the volume belongs. */
-    private Tier tier;
+   /** The tier where the volume belongs. */
+   private Tier tier;
 
-    /**
-     * Constructor to be used only by the builder.
-     */
-    protected Volume(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final VolumeManagementDto target)
-    {
-        super(context, target);
-    }
+   /**
+    * Constructor to be used only by the builder.
+    */
+   protected Volume(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final VolumeManagementDto target) {
+      super(context, target);
+   }
 
-    // Domain operations
+   // Domain operations
 
-    public void delete()
-    {
-        context.getApi().getCloudApi().deleteVolume(target);
-        target = null;
-    }
+   public void delete() {
+      context.getApi().getCloudApi().deleteVolume(target);
+      target = null;
+   }
 
-    public void save()
-    {
-        target = context.getApi().getCloudApi().createVolume(virtualDatacenter.unwrap(), target);
-    }
+   public void save() {
+      target = context.getApi().getCloudApi().createVolume(virtualDatacenter.unwrap(), target);
+   }
 
-    public AsyncTask update()
-    {
-        AcceptedRequestDto<String> taskRef = context.getApi().getCloudApi().updateVolume(target);
-        return taskRef == null ? null : getTask(taskRef);
-    }
+   public AsyncTask update() {
+      AcceptedRequestDto<String> taskRef = context.getApi().getCloudApi().updateVolume(target);
+      return taskRef == null ? null : getTask(taskRef);
+   }
 
-    // Parent access
+   // Parent access
 
-    /**
-     * @see API: <a href=
-     *      "http://community.abiquo.com/display/ABI20/Virtual+Datacenter+Resource#VirtualDatacenterResource-RetrieveaVirtualDatacenter"
-     *      > http://community.abiquo.com/display/ABI20/Virtual+Datacenter+Resource#
-     *      VirtualDatacenterResource-RetrieveaVirtualDatacenter</a>
-     */
-    public VirtualDatacenter getVirtualDatacenter()
-    {
-        Integer virtualDatacenterId = target.getIdFromLink(ParentLinkName.VIRTUAL_DATACENTER);
-        VirtualDatacenterDto dto =
-            context.getApi().getCloudApi().getVirtualDatacenter(virtualDatacenterId);
-        virtualDatacenter = wrap(context, VirtualDatacenter.class, dto);
-        return virtualDatacenter;
-    }
+   /**
+    * @see API: <a href=
+    *      "http://community.abiquo.com/display/ABI20/Virtual+Datacenter+Resource#VirtualDatacenterResource-RetrieveaVirtualDatacenter"
+    *      > http://community.abiquo.com/display/ABI20/Virtual+Datacenter+
+    *      Resource# VirtualDatacenterResource-RetrieveaVirtualDatacenter</a>
+    */
+   public VirtualDatacenter getVirtualDatacenter() {
+      Integer virtualDatacenterId = target.getIdFromLink(ParentLinkName.VIRTUAL_DATACENTER);
+      VirtualDatacenterDto dto = context.getApi().getCloudApi().getVirtualDatacenter(virtualDatacenterId);
+      virtualDatacenter = wrap(context, VirtualDatacenter.class, dto);
+      return virtualDatacenter;
+   }
 
-    /**
-     * TODO javadoc link
-     */
-    public Tier getTier()
-    {
-        Integer tierId = target.getIdFromLink(ParentLinkName.TIER);
-        TierDto dto =
-            context.getApi().getCloudApi().getStorageTier(virtualDatacenter.unwrap(), tierId);
-        tier = wrap(context, Tier.class, dto);
-        return tier;
-    }
+   /**
+    * TODO javadoc link
+    */
+   public Tier getTier() {
+      Integer tierId = target.getIdFromLink(ParentLinkName.TIER);
+      TierDto dto = context.getApi().getCloudApi().getStorageTier(virtualDatacenter.unwrap(), tierId);
+      tier = wrap(context, Tier.class, dto);
+      return tier;
+   }
 
-    // Actions
+   // Actions
 
-    /**
-     * Move the volume to the given virtual datacenter.
-     * 
-     * @param newVirtualDatacenter The destination virtual datacenter.
-     */
-    public void moveTo(final VirtualDatacenter newVirtualDatacenter)
-    {
-        target =
-            context.getApi().getCloudApi().moveVolume(unwrap(), newVirtualDatacenter.unwrap());
-    }
+   /**
+    * Move the volume to the given virtual datacenter.
+    * 
+    * @param newVirtualDatacenter
+    *           The destination virtual datacenter.
+    */
+   public void moveTo(final VirtualDatacenter newVirtualDatacenter) {
+      target = context.getApi().getCloudApi().moveVolume(unwrap(), newVirtualDatacenter.unwrap());
+   }
 
-    // Builder
+   // Builder
 
-    public static Builder builder(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-        final VirtualDatacenter virtualDatacenter, final Tier tier)
-    {
-        return new Builder(context, virtualDatacenter, tier);
-    }
+   public static Builder builder(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
+         final VirtualDatacenter virtualDatacenter, final Tier tier) {
+      return new Builder(context, virtualDatacenter, tier);
+   }
 
-    public static class Builder
-    {
-        private RestContext<AbiquoApi, AbiquoAsyncApi> context;
+   public static class Builder {
+      private RestContext<AbiquoApi, AbiquoAsyncApi> context;
 
-        private String name;
+      private String name;
 
-        private String description;
+      private String description;
 
-        private Long sizeInMb;
+      private Long sizeInMb;
 
-        private VirtualDatacenter virtualDatacenter;
+      private VirtualDatacenter virtualDatacenter;
 
-        private Tier tier;
+      private Tier tier;
 
-        public Builder(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final VirtualDatacenter virtualDatacenter,
-            final Tier tier)
-        {
-            super();
-            checkNotNull(virtualDatacenter, ValidationErrors.NULL_RESOURCE
-                + VirtualDatacenter.class);
-            checkNotNull(tier, ValidationErrors.NULL_RESOURCE + Tier.class);
-            this.context = context;
-            this.virtualDatacenter = virtualDatacenter;
-            this.tier = tier;
-        }
+      public Builder(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final VirtualDatacenter virtualDatacenter,
+            final Tier tier) {
+         super();
+         checkNotNull(virtualDatacenter, ValidationErrors.NULL_RESOURCE + VirtualDatacenter.class);
+         checkNotNull(tier, ValidationErrors.NULL_RESOURCE + Tier.class);
+         this.context = context;
+         this.virtualDatacenter = virtualDatacenter;
+         this.tier = tier;
+      }
 
-        public Builder name(final String name)
-        {
-            this.name = name;
-            return this;
-        }
+      public Builder name(final String name) {
+         this.name = name;
+         return this;
+      }
 
-        public Builder description(final String description)
-        {
-            this.description = description;
-            return this;
-        }
+      public Builder description(final String description) {
+         this.description = description;
+         return this;
+      }
 
-        public Builder sizeInMb(final long sizeInMb)
-        {
-            this.sizeInMb = sizeInMb;
-            return this;
-        }
+      public Builder sizeInMb(final long sizeInMb) {
+         this.sizeInMb = sizeInMb;
+         return this;
+      }
 
-        public Volume build()
-        {
-            VolumeManagementDto dto = new VolumeManagementDto();
-            dto.setName(name);
-            dto.setDescription(description);
-            dto.setSizeInMB(sizeInMb);
-            dto.setState(DEFAULT_STATE.name());
+      public Volume build() {
+         VolumeManagementDto dto = new VolumeManagementDto();
+         dto.setName(name);
+         dto.setDescription(description);
+         dto.setSizeInMB(sizeInMb);
+         dto.setState(DEFAULT_STATE.name());
 
-            RESTLink link = tier.unwrap().searchLink("self");
-            checkNotNull(link, ValidationErrors.MISSING_REQUIRED_LINK);
-            dto.addLink(new RESTLink("tier", link.getHref()));
+         RESTLink link = tier.unwrap().searchLink("self");
+         checkNotNull(link, ValidationErrors.MISSING_REQUIRED_LINK);
+         dto.addLink(new RESTLink("tier", link.getHref()));
 
-            Volume volume = new Volume(context, dto);
-            volume.virtualDatacenter = virtualDatacenter;
-            volume.tier = tier;
+         Volume volume = new Volume(context, dto);
+         volume.virtualDatacenter = virtualDatacenter;
+         volume.tier = tier;
 
-            return volume;
-        }
-    }
+         return volume;
+      }
+   }
 
-    // Delegate methods
+   // Delegate methods
 
-    public Integer getId()
-    {
-        return target.getId();
-    }
+   public Integer getId() {
+      return target.getId();
+   }
 
-    public String getState()
-    {
-        return target.getState();
-    }
+   public String getState() {
+      return target.getState();
+   }
 
-    public String getName()
-    {
-        return target.getName();
-    }
+   public String getName() {
+      return target.getName();
+   }
 
-    public void setName(final String name)
-    {
-        target.setName(name);
-    }
+   public void setName(final String name) {
+      target.setName(name);
+   }
 
-    public long getSizeInMB()
-    {
-        return target.getSizeInMB();
-    }
+   public long getSizeInMB() {
+      return target.getSizeInMB();
+   }
 
-    public void setSizeInMB(final long sizeInMB)
-    {
-        target.setSizeInMB(sizeInMB);
-    }
+   public void setSizeInMB(final long sizeInMB) {
+      target.setSizeInMB(sizeInMB);
+   }
 
-    public String getDescription()
-    {
-        return target.getDescription();
-    }
+   public String getDescription() {
+      return target.getDescription();
+   }
 
-    public void setDescription(final String description)
-    {
-        target.setDescription(description);
-    }
+   public void setDescription(final String description) {
+      target.setDescription(description);
+   }
 
-    @Override
-    public String toString()
-    {
-        return "Volume [id=" + getId() + ", state=" + getState() + ", name=" + getName()
-            + ", sizeInMB=" + getSizeInMB() + ", description=" + getDescription() + "]";
-    }
+   @Override
+   public String toString() {
+      return "Volume [id=" + getId() + ", state=" + getState() + ", name=" + getName() + ", sizeInMB=" + getSizeInMB()
+            + ", description=" + getDescription() + "]";
+   }
 
 }

@@ -38,14 +38,12 @@ import com.google.common.util.concurrent.ListenableFuture;
  * 
  * @author Ignasi Barrera
  */
-@RequestFilters({AbiquoAuthentication.class, AppendApiVersionToMediaType.class})
-public interface AbiquoHttpAsyncClient
-{
-    /**
-     * @see AbiquoHttpClient#get(RESTLink)
-     */
-    @GET
-    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-    public ListenableFuture<HttpResponse> get(
-        @BinderParam(BindLinkToPathAndAcceptHeader.class) final RESTLink link);
+@RequestFilters({ AbiquoAuthentication.class, AppendApiVersionToMediaType.class })
+public interface AbiquoHttpAsyncClient {
+   /**
+    * @see AbiquoHttpClient#get(RESTLink)
+    */
+   @GET
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   public ListenableFuture<HttpResponse> get(@BinderParam(BindLinkToPathAndAcceptHeader.class) final RESTLink link);
 }

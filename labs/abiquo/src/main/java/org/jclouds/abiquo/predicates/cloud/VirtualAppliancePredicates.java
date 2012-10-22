@@ -33,33 +33,26 @@ import com.google.common.base.Predicate;
  * 
  * @author Serafín Sedano
  */
-public class VirtualAppliancePredicates
-{
-    public static Predicate<VirtualAppliance> name(final String... names)
-    {
-        checkNotNull(names, "names must be defined");
+public class VirtualAppliancePredicates {
+   public static Predicate<VirtualAppliance> name(final String... names) {
+      checkNotNull(names, "names must be defined");
 
-        return new Predicate<VirtualAppliance>()
-        {
-            @Override
-            public boolean apply(final VirtualAppliance virtualAppliance)
-            {
-                return Arrays.asList(names).contains(virtualAppliance.getName());
-            }
-        };
-    }
+      return new Predicate<VirtualAppliance>() {
+         @Override
+         public boolean apply(final VirtualAppliance virtualAppliance) {
+            return Arrays.asList(names).contains(virtualAppliance.getName());
+         }
+      };
+   }
 
-    public static Predicate<VirtualAppliance> state(final VirtualApplianceState... states)
-    {
-        checkNotNull(states, "states must be defined");
+   public static Predicate<VirtualAppliance> state(final VirtualApplianceState... states) {
+      checkNotNull(states, "states must be defined");
 
-        return new Predicate<VirtualAppliance>()
-        {
-            @Override
-            public boolean apply(final VirtualAppliance virtualAppliance)
-            {
-                return Arrays.asList(states).contains(virtualAppliance.getState());
-            }
-        };
-    }
+      return new Predicate<VirtualAppliance>() {
+         @Override
+         public boolean apply(final VirtualAppliance virtualAppliance) {
+            return Arrays.asList(states).contains(virtualAppliance.getState());
+         }
+      };
+   }
 }

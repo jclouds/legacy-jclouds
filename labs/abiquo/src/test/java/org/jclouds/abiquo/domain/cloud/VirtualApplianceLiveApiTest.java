@@ -39,70 +39,58 @@ import com.abiquo.server.core.cloud.VirtualApplianceState;
  * @author Francesc Montserrat
  */
 @Test(groups = "api", testName = "VirtualApplianceLiveApiTest")
-public class VirtualApplianceLiveApiTest extends BaseAbiquoApiLiveApiTest
-{
+public class VirtualApplianceLiveApiTest extends BaseAbiquoApiLiveApiTest {
 
-    public void testUpdate()
-    {
-        env.virtualAppliance.setName("Virtual AppAloha updated");
-        env.virtualAppliance.update();
+   public void testUpdate() {
+      env.virtualAppliance.setName("Virtual AppAloha updated");
+      env.virtualAppliance.update();
 
-        // Recover the updated virtual appliance
-        VirtualApplianceDto updated =
-            env.cloudApi.getVirtualAppliance(env.virtualDatacenter.unwrap(),
-                env.virtualAppliance.getId());
+      // Recover the updated virtual appliance
+      VirtualApplianceDto updated = env.cloudApi.getVirtualAppliance(env.virtualDatacenter.unwrap(),
+            env.virtualAppliance.getId());
 
-        assertEquals(updated.getName(), "Virtual AppAloha updated");
-    }
+      assertEquals(updated.getName(), "Virtual AppAloha updated");
+   }
 
-    public void testCreateRepeated()
-    {
-        VirtualAppliance repeated =
-            VirtualAppliance.Builder.fromVirtualAppliance(env.virtualAppliance).build();
+   public void testCreateRepeated() {
+      VirtualAppliance repeated = VirtualAppliance.Builder.fromVirtualAppliance(env.virtualAppliance).build();
 
-        repeated.save();
+      repeated.save();
 
-        List<VirtualApplianceDto> virtualAppliances =
-            env.cloudApi.listVirtualAppliances(env.virtualDatacenter.unwrap()).getCollection();
+      List<VirtualApplianceDto> virtualAppliances = env.cloudApi.listVirtualAppliances(env.virtualDatacenter.unwrap())
+            .getCollection();
 
-        assertEquals(virtualAppliances.size(), 2);
-        repeated.delete();
-    }
+      assertEquals(virtualAppliances.size(), 2);
+      repeated.delete();
+   }
 
-    public void testGetState()
-    {
-        assertEquals(env.virtualAppliance.getState(), VirtualApplianceState.NOT_DEPLOYED);
-    }
+   public void testGetState() {
+      assertEquals(env.virtualAppliance.getState(), VirtualApplianceState.NOT_DEPLOYED);
+   }
 
-    public void testListVirtualMachinesReturnsAll()
-    {
-        List<VirtualMachine> vms = new ArrayList<VirtualMachine>();
+   public void testListVirtualMachinesReturnsAll() {
+      List<VirtualMachine> vms = new ArrayList<VirtualMachine>();
 
-        // Pagination by default is set to 25 items per page, so create a few more to verify that
-        // all are returned when listing
-        int numVms = 30;
+      // Pagination by default is set to 25 items per page, so create a few more
+      // to verify that
+      // all are returned when listing
+      int numVms = 30;
 
-        for (int i = 0; i < numVms; i++)
-        {
-            VirtualMachine vm =
-                VirtualMachine.Builder.fromVirtualMachine(env.virtualMachine).build();
-            vm.save();
-            vms.add(vm);
-        }
+      for (int i = 0; i < numVms; i++) {
+         VirtualMachine vm = VirtualMachine.Builder.fromVirtualMachine(env.virtualMachine).build();
+         vm.save();
+         vms.add(vm);
+      }
 
-        try
-        {
-            Iterable<VirtualMachine> all = env.virtualAppliance.listVirtualMachines();
+      try {
+         Iterable<VirtualMachine> all = env.virtualAppliance.listVirtualMachines();
 
-            assertNotNull(all);
-            assertTrue(size(all) >= numVms);
-        }
-        finally
-        {
-            for (VirtualMachine vm : vms)
-            {
-                vm.delete();
-            }
-        }
-    }
+         assertNotNull(all);
+         assertTrue(size(all) >= numVms);
+      } finally {
+         for (VirtualMachine vm : vms) {
+            vm.delete();
+         }
+      }
+   }
 }

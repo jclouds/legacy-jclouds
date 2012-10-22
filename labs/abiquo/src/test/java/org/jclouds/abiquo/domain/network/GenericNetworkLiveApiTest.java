@@ -39,55 +39,46 @@ import com.abiquo.model.enumerator.NetworkType;
  * @author Ignasi Barrera
  */
 @Test(groups = "api", testName = "GenericNetworkLiveApiTest")
-public class GenericNetworkLiveApiTest extends BaseAbiquoApiLiveApiTest
-{
-    public void testListDatacenterNetworks()
-    {
-        // Make sure all network types are listed
-        List<Network< ? >> networks = env.datacenter.listNetworks();
-        assertNotNull(networks);
-        assertEquals(networks.size(), 3);
-    }
+public class GenericNetworkLiveApiTest extends BaseAbiquoApiLiveApiTest {
+   public void testListDatacenterNetworks() {
+      // Make sure all network types are listed
+      List<Network<?>> networks = env.datacenter.listNetworks();
+      assertNotNull(networks);
+      assertEquals(networks.size(), 3);
+   }
 
-    public void testListPublicNetworks()
-    {
-        List<Network< ? >> networks = env.datacenter.listNetworks(NetworkType.PUBLIC);
-        assertNotNull(networks);
-        assertEquals(networks.size(), 1);
+   public void testListPublicNetworks() {
+      List<Network<?>> networks = env.datacenter.listNetworks(NetworkType.PUBLIC);
+      assertNotNull(networks);
+      assertEquals(networks.size(), 1);
 
-        // Make sure it can be converted
-        networks.get(0).toPublicNetwork();
-    }
+      // Make sure it can be converted
+      networks.get(0).toPublicNetwork();
+   }
 
-    public void testListExternaletworks()
-    {
-        List<Network< ? >> networks = env.datacenter.listNetworks(NetworkType.EXTERNAL);
-        assertNotNull(networks);
-        assertEquals(networks.size(), 1);
+   public void testListExternaletworks() {
+      List<Network<?>> networks = env.datacenter.listNetworks(NetworkType.EXTERNAL);
+      assertNotNull(networks);
+      assertEquals(networks.size(), 1);
 
-        // Make sure it can be converted
-        networks.get(0).toExternalNetwork();
-    }
+      // Make sure it can be converted
+      networks.get(0).toExternalNetwork();
+   }
 
-    public void testListUnmanagedNetworks()
-    {
-        List<Network< ? >> networks = env.datacenter.listNetworks(NetworkType.UNMANAGED);
-        assertNotNull(networks);
-        assertEquals(networks.size(), 1);
+   public void testListUnmanagedNetworks() {
+      List<Network<?>> networks = env.datacenter.listNetworks(NetworkType.UNMANAGED);
+      assertNotNull(networks);
+      assertEquals(networks.size(), 1);
 
-        // Make sure it can be converted
-        networks.get(0).toUnmanagedNetwork();
-    }
+      // Make sure it can be converted
+      networks.get(0).toUnmanagedNetwork();
+   }
 
-    public void testListPrivateNetworks()
-    {
-        try
-        {
-            env.datacenter.listNetworks(NetworkType.INTERNAL);
-        }
-        catch (AbiquoException ex)
-        {
-            assertHasError(ex, Status.BAD_REQUEST, "QUERY-1");
-        }
-    }
+   public void testListPrivateNetworks() {
+      try {
+         env.datacenter.listNetworks(NetworkType.INTERNAL);
+      } catch (AbiquoException ex) {
+         assertHasError(ex, Status.BAD_REQUEST, "QUERY-1");
+      }
+   }
 }

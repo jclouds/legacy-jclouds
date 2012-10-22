@@ -27,30 +27,24 @@ import org.jclouds.rest.RestContext;
 
 import com.abiquo.server.core.pricing.CostCodeCurrencyDto;
 
-public class CostCodeCurrency extends DomainWrapper<CostCodeCurrencyDto>
-{
+public class CostCodeCurrency extends DomainWrapper<CostCodeCurrencyDto> {
 
-    protected CostCodeCurrency(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-        final CostCodeCurrencyDto target)
-    {
-        super(context, target);
-    }
+   protected CostCodeCurrency(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final CostCodeCurrencyDto target) {
+      super(context, target);
+   }
 
-    // Delegate methods
+   // Delegate methods
 
-    public Integer getId()
-    {
-        return target.getId();
-    }
+   public Integer getId() {
+      return target.getId();
+   }
 
-    public BigDecimal getPrice()
-    {
-        return target.getPrice();
-    }
+   public BigDecimal getPrice() {
+      return target.getPrice();
+   }
 
-    @Override
-    public String toString()
-    {
-        return "CostCodeCurrency [id=" + getId() + ", price=" + getPrice() + "]";
-    }
+   @Override
+   public String toString() {
+      return "CostCodeCurrency [id=" + getId() + ", price=" + getPrice() + "]";
+   }
 }

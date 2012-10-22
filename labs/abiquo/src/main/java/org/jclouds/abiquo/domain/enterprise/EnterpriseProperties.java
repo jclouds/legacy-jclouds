@@ -34,55 +34,52 @@ import com.abiquo.server.core.enterprise.EnterprisePropertiesDto;
  * Adds high level functionality to {@link EnterprisePropertiesDto}.
  * 
  * @author Francesc Montserrat
- * @see API: <a href="http://community.abiquo.com/display/ABI20/Enterprise+Properties+Resource">
- *      http://community.abiquo.com/display/ABI20/Enterprise+Properties+Resource</a>
+ * @see API: <a href=
+ *      "http://community.abiquo.com/display/ABI20/Enterprise+Properties+Resource"
+ *      >
+ *      http://community.abiquo.com/display/ABI20/Enterprise+Properties+Resource
+ *      </a>
  */
 @EnterpriseEdition
-public class EnterpriseProperties extends DomainWrapper<EnterprisePropertiesDto>
-{
-    /**
-     * Constructor to be used only by the builder.
-     */
-    protected EnterpriseProperties(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-        final EnterprisePropertiesDto target)
-    {
-        super(context, target);
-    }
+public class EnterpriseProperties extends DomainWrapper<EnterprisePropertiesDto> {
+   /**
+    * Constructor to be used only by the builder.
+    */
+   protected EnterpriseProperties(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
+         final EnterprisePropertiesDto target) {
+      super(context, target);
+   }
 
-    // Domain operations
-    /**
-     * @see API: <a href=
-     *      "http://community.abiquo.com/display/ABI20/Enterprise+Properties+Resource#EnterprisePropertiesResource-UpdatesthepropertiesforanEnterprise"
-     *      > http://community.abiquo.com/display/ABI20/Enterprise+Properties+Resource#
-     *      EnterprisePropertiesResource-UpdatesthepropertiesforanEnterprise</a>
-     */
-    public void update()
-    {
-        target = context.getApi().getEnterpriseApi().updateEnterpriseProperties(target);
-    }
+   // Domain operations
+   /**
+    * @see API: <a href=
+    *      "http://community.abiquo.com/display/ABI20/Enterprise+Properties+Resource#EnterprisePropertiesResource-UpdatesthepropertiesforanEnterprise"
+    *      > http://community.abiquo.com/display/ABI20/Enterprise+Properties+
+    *      Resource#
+    *      EnterprisePropertiesResource-UpdatesthepropertiesforanEnterprise</a>
+    */
+   public void update() {
+      target = context.getApi().getEnterpriseApi().updateEnterpriseProperties(target);
+   }
 
-    // Parent access
-    /**
-     * @see API: <a href=
-     *      "http://community.abiquo.com/display/ABI20/Enterprise+Resource#EnterpriseResource-RetrieveaEnterprise"
-     *      > http://community.abiquo.com/display/ABI20/Enterprise+Resource#EnterpriseResource-
-     *      RetrieveaEnterprise</a>
-     */
-    public Enterprise getEnterprise()
-    {
-        Integer enterpriseId = target.getIdFromLink(ParentLinkName.ENTERPRISE);
-        return wrap(context, Enterprise.class, context.getApi().getEnterpriseApi()
-            .getEnterprise(enterpriseId));
-    }
+   // Parent access
+   /**
+    * @see API: <a href=
+    *      "http://community.abiquo.com/display/ABI20/Enterprise+Resource#EnterpriseResource-RetrieveaEnterprise"
+    *      > http://community.abiquo.com/display/ABI20/Enterprise+Resource#
+    *      EnterpriseResource- RetrieveaEnterprise</a>
+    */
+   public Enterprise getEnterprise() {
+      Integer enterpriseId = target.getIdFromLink(ParentLinkName.ENTERPRISE);
+      return wrap(context, Enterprise.class, context.getApi().getEnterpriseApi().getEnterprise(enterpriseId));
+   }
 
-    // Delegate methods
-    public Map<String, String> getProperties()
-    {
-        return target.getProperties();
-    }
+   // Delegate methods
+   public Map<String, String> getProperties() {
+      return target.getProperties();
+   }
 
-    public void setProperties(final Map<String, String> properties)
-    {
-        target.setProperties(properties);
-    }
+   public void setProperties(final Map<String, String> properties) {
+      target.setProperties(properties);
+   }
 }

@@ -36,38 +36,31 @@ import org.testng.annotations.Test;
  * @author Ignasi Barrera
  */
 @Test(groups = "api", testName = "ListVirtualAppliancesImplLiveApiTest")
-public class ListVirtualAppliancesImplLiveApiTest extends BaseAbiquoStrategyLiveApiTest
-{
-    private ListVirtualAppliancesImpl strategy;
+public class ListVirtualAppliancesImplLiveApiTest extends BaseAbiquoStrategyLiveApiTest {
+   private ListVirtualAppliancesImpl strategy;
 
-    @Override
-    @BeforeClass(groups = "api")
-    protected void setupStrategy()
-    {
-        this.strategy =
-            env.context.getUtils().getInjector().getInstance(ListVirtualAppliancesImpl.class);
-    }
+   @Override
+   @BeforeClass(groups = "api")
+   protected void setupStrategy() {
+      this.strategy = env.context.getUtils().getInjector().getInstance(ListVirtualAppliancesImpl.class);
+   }
 
-    public void testExecute()
-    {
-        Iterable<VirtualAppliance> vapps = strategy.execute();
-        assertNotNull(vapps);
-        assertTrue(size(vapps) > 0);
-    }
+   public void testExecute() {
+      Iterable<VirtualAppliance> vapps = strategy.execute();
+      assertNotNull(vapps);
+      assertTrue(size(vapps) > 0);
+   }
 
-    public void testExecutePredicateWithoutResults()
-    {
-        Iterable<VirtualAppliance> vapps =
-            strategy.execute(VirtualAppliancePredicates.name("UNEXISTING"));
-        assertNotNull(vapps);
-        assertEquals(size(vapps), 0);
-    }
+   public void testExecutePredicateWithoutResults() {
+      Iterable<VirtualAppliance> vapps = strategy.execute(VirtualAppliancePredicates.name("UNEXISTING"));
+      assertNotNull(vapps);
+      assertEquals(size(vapps), 0);
+   }
 
-    public void testExecutePredicateWithResults()
-    {
-        Iterable<VirtualAppliance> vapps =
-            strategy.execute(VirtualAppliancePredicates.name(env.virtualAppliance.getName()));
-        assertNotNull(vapps);
-        assertEquals(size(vapps), 1);
-    }
+   public void testExecutePredicateWithResults() {
+      Iterable<VirtualAppliance> vapps = strategy.execute(VirtualAppliancePredicates.name(env.virtualAppliance
+            .getName()));
+      assertNotNull(vapps);
+      assertEquals(size(vapps), 1);
+   }
 }

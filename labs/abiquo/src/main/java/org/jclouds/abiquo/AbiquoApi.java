@@ -42,60 +42,59 @@ import org.jclouds.rest.annotations.Delegate;
  * @author Ignasi Barrera
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
-public interface AbiquoApi
-{
-    /**
-     * Provides synchronous access to Admin features.
-     */
-    @Delegate
-    AdminApi getAdminApi();
+public interface AbiquoApi {
+   /**
+    * Provides synchronous access to Admin features.
+    */
+   @Delegate
+   AdminApi getAdminApi();
 
-    /**
-     * Provides synchronous access to Infrastructure features.
-     */
-    @Delegate
-    InfrastructureApi getInfrastructureApi();
+   /**
+    * Provides synchronous access to Infrastructure features.
+    */
+   @Delegate
+   InfrastructureApi getInfrastructureApi();
 
-    /**
-     * Provides synchronous access to Cloud features.
-     */
-    @Delegate
-    CloudApi getCloudApi();
+   /**
+    * Provides synchronous access to Cloud features.
+    */
+   @Delegate
+   CloudApi getCloudApi();
 
-    /**
-     * Provides synchronous access to Apps library features.
-     */
-    @Delegate
-    VirtualMachineTemplateApi getVirtualMachineTemplateApi();
+   /**
+    * Provides synchronous access to Apps library features.
+    */
+   @Delegate
+   VirtualMachineTemplateApi getVirtualMachineTemplateApi();
 
-    /**
-     * Provides synchronous access to Enterprise features.
-     */
-    @Delegate
-    EnterpriseApi getEnterpriseApi();
+   /**
+    * Provides synchronous access to Enterprise features.
+    */
+   @Delegate
+   EnterpriseApi getEnterpriseApi();
 
-    /**
-     * Provides synchronous access to configuration features.
-     */
-    @Delegate
-    ConfigApi getConfigApi();
+   /**
+    * Provides synchronous access to configuration features.
+    */
+   @Delegate
+   ConfigApi getConfigApi();
 
-    /**
-     * Provides synchronous access to task asynchronous features.
-     */
-    @Delegate
-    TaskApi getTaskApi();
+   /**
+    * Provides synchronous access to task asynchronous features.
+    */
+   @Delegate
+   TaskApi getTaskApi();
 
-    /**
-     * Provides synchronous access to Event features.
-     */
-    @Delegate
-    EventApi getEventApi();
+   /**
+    * Provides synchronous access to Event features.
+    */
+   @Delegate
+   EventApi getEventApi();
 
-    /**
-     * Provides synchronous access to Pricing features.
-     */
-    @Delegate
-    PricingApi getPricingApi();
+   /**
+    * Provides synchronous access to Pricing features.
+    */
+   @Delegate
+   PricingApi getPricingApi();
 
 }

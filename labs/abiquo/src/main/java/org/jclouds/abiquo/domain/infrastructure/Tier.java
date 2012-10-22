@@ -38,10 +38,10 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 /**
- * Adds high level functionality to {@link TierDto}. The Tier Resource offers the functionality of
- * managing the logic of QoS volume management. These are only logical levels of QoS and the real
- * QoS (networking speed, volume replication, availability) must be configured manually in the
- * infrastructure.
+ * Adds high level functionality to {@link TierDto}. The Tier Resource offers
+ * the functionality of managing the logic of QoS volume management. These are
+ * only logical levels of QoS and the real QoS (networking speed, volume
+ * replication, availability) must be configured manually in the infrastructure.
  * 
  * @author Ignasi Barrera
  * @author Francesc Montserrat
@@ -49,139 +49,129 @@ import com.google.common.collect.Lists;
  *      http://community.abiquo.com/display/ABI20/TierResource</a>
  */
 @EnterpriseEdition
-public class Tier extends DomainWrapper<TierDto>
-{
-    /** The datacenter where the tier belongs. */
-    private Datacenter datacenter;
+public class Tier extends DomainWrapper<TierDto> {
+   /** The datacenter where the tier belongs. */
+   private Datacenter datacenter;
 
-    /**
-     * Constructor to be used only by the builder.
-     */
-    protected Tier(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final TierDto target)
-    {
-        super(context, target);
-    }
+   /**
+    * Constructor to be used only by the builder.
+    */
+   protected Tier(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final TierDto target) {
+      super(context, target);
+   }
 
-    // Domain operations
+   // Domain operations
 
-    /**
-     * Update tier information in the server with the data from this tier.
-     * 
-     * @see API: <a
-     *      href="http://community.abiquo.com/display/ABI20/TierResource#TierResource-Updateatier">
-     *      http://community.abiquo.com/display/ABI20/TierResource#TierResource-Updateatier</a>
-     */
-    public void update()
-    {
-        target = context.getApi().getInfrastructureApi().updateTier(target);
-    }
+   /**
+    * Update tier information in the server with the data from this tier.
+    * 
+    * @see API: <a href=
+    *      "http://community.abiquo.com/display/ABI20/TierResource#TierResource-Updateatier"
+    *      >
+    *      http://community.abiquo.com/display/ABI20/TierResource#TierResource-
+    *      Updateatier</a>
+    */
+   public void update() {
+      target = context.getApi().getInfrastructureApi().updateTier(target);
+   }
 
-    /**
-     * Retrieve the list of storage pools in this tier.
-     * 
-     * @see API: <a href=
-     *      "http://community.abiquo.com/display/ABI20/StoragePoolResource#StoragePoolResource-Retrievestoragepools"
-     *      > http://community.abiquo.com/display/ABI20/StoragePoolResource#StoragePoolResource-
-     *      Retrievestoragepools</a>
-     * @return List of storage pools in this tier.
-     */
-    public List<StoragePool> listStoragePools()
-    {
-        StoragePoolsDto storagePools =
-            context.getApi().getInfrastructureApi().listStoragePools(target);
-        return wrap(context, StoragePool.class, storagePools.getCollection());
-    }
+   /**
+    * Retrieve the list of storage pools in this tier.
+    * 
+    * @see API: <a href=
+    *      "http://community.abiquo.com/display/ABI20/StoragePoolResource#StoragePoolResource-Retrievestoragepools"
+    *      > http://community.abiquo.com/display/ABI20/StoragePoolResource#
+    *      StoragePoolResource- Retrievestoragepools</a>
+    * @return List of storage pools in this tier.
+    */
+   public List<StoragePool> listStoragePools() {
+      StoragePoolsDto storagePools = context.getApi().getInfrastructureApi().listStoragePools(target);
+      return wrap(context, StoragePool.class, storagePools.getCollection());
+   }
 
-    /**
-     * Retrieve a filtered list of storage pools in this tier.
-     * 
-     * @param filter Filter to be applied to the list.
-     * @see API: <a href=
-     *      "http://community.abiquo.com/display/ABI20/StoragePoolResource#StoragePoolResource-Retrievestoragepools"
-     *      > http://community.abiquo.com/display/ABI20/StoragePoolResource#StoragePoolResource-
-     *      Retrievestoragepools</a>
-     * @return Filtered list of storage pools in this tier.
-     */
-    public List<StoragePool> listStoragePools(final Predicate<StoragePool> filter)
-    {
-        return Lists.newLinkedList(filter(listStoragePools(), filter));
-    }
+   /**
+    * Retrieve a filtered list of storage pools in this tier.
+    * 
+    * @param filter
+    *           Filter to be applied to the list.
+    * @see API: <a href=
+    *      "http://community.abiquo.com/display/ABI20/StoragePoolResource#StoragePoolResource-Retrievestoragepools"
+    *      > http://community.abiquo.com/display/ABI20/StoragePoolResource#
+    *      StoragePoolResource- Retrievestoragepools</a>
+    * @return Filtered list of storage pools in this tier.
+    */
+   public List<StoragePool> listStoragePools(final Predicate<StoragePool> filter) {
+      return Lists.newLinkedList(filter(listStoragePools(), filter));
+   }
 
-    /**
-     * Retrieve the first storage pool matching the filter within the list of pools in this tier.
-     * 
-     * @param filter Filter to be applied to the list.
-     * @see API: <a href=
-     *      "http://community.abiquo.com/display/ABI20/StoragePoolResource#StoragePoolResource-Retrievestoragepools"
-     *      > http://community.abiquo.com/display/ABI20/StoragePoolResource#StoragePoolResource-
-     *      Retrievestoragepools</a>
-     * @return First storage pool matching the filter or <code>null</code> if there is none.
-     */
-    public StoragePool findStoragePool(final Predicate<StoragePool> filter)
-    {
-        return Iterables.getFirst(filter(listStoragePools(), filter), null);
-    }
+   /**
+    * Retrieve the first storage pool matching the filter within the list of
+    * pools in this tier.
+    * 
+    * @param filter
+    *           Filter to be applied to the list.
+    * @see API: <a href=
+    *      "http://community.abiquo.com/display/ABI20/StoragePoolResource#StoragePoolResource-Retrievestoragepools"
+    *      > http://community.abiquo.com/display/ABI20/StoragePoolResource#
+    *      StoragePoolResource- Retrievestoragepools</a>
+    * @return First storage pool matching the filter or <code>null</code> if
+    *         there is none.
+    */
+   public StoragePool findStoragePool(final Predicate<StoragePool> filter) {
+      return Iterables.getFirst(filter(listStoragePools(), filter), null);
+   }
 
-    // Parent access
+   // Parent access
 
-    /**
-     * Retrieve the datacenter where this tier is.
-     * 
-     * @see API: <a href=
-     *      "http://community.abiquo.com/display/ABI20/DatacenterResource#DatacenterResource-Retrieveadatacenter"
-     *      > http://community.abiquo.com/display/ABI20/DatacenterResource#DatacenterResource-
-     *      Retrieveadatacenter</a>
-     */
-    public Datacenter getDatacenter()
-    {
-        Integer datacenterId = target.getIdFromLink(ParentLinkName.DATACENTER);
-        DatacenterDto dto = context.getApi().getInfrastructureApi().getDatacenter(datacenterId);
-        datacenter = wrap(context, Datacenter.class, dto);
-        return datacenter;
-    }
+   /**
+    * Retrieve the datacenter where this tier is.
+    * 
+    * @see API: <a href=
+    *      "http://community.abiquo.com/display/ABI20/DatacenterResource#DatacenterResource-Retrieveadatacenter"
+    *      > http://community.abiquo.com/display/ABI20/DatacenterResource#
+    *      DatacenterResource- Retrieveadatacenter</a>
+    */
+   public Datacenter getDatacenter() {
+      Integer datacenterId = target.getIdFromLink(ParentLinkName.DATACENTER);
+      DatacenterDto dto = context.getApi().getInfrastructureApi().getDatacenter(datacenterId);
+      datacenter = wrap(context, Datacenter.class, dto);
+      return datacenter;
+   }
 
-    // Delegate methods
+   // Delegate methods
 
-    public String getDescription()
-    {
-        return target.getDescription();
-    }
+   public String getDescription() {
+      return target.getDescription();
+   }
 
-    public boolean getEnabled()
-    {
-        return target.getEnabled();
-    }
+   public boolean getEnabled() {
+      return target.getEnabled();
+   }
 
-    public Integer getId()
-    {
-        return target.getId();
-    }
+   public Integer getId() {
+      return target.getId();
+   }
 
-    public String getName()
-    {
-        return target.getName();
-    }
+   public String getName() {
+      return target.getName();
+   }
 
-    public void setDescription(final String description)
-    {
-        target.setDescription(description);
-    }
+   public void setDescription(final String description) {
+      target.setDescription(description);
+   }
 
-    public void setEnabled(final boolean enabled)
-    {
-        target.setEnabled(enabled);
-    }
+   public void setEnabled(final boolean enabled) {
+      target.setEnabled(enabled);
+   }
 
-    public void setName(final String name)
-    {
-        target.setName(name);
-    }
+   public void setName(final String name) {
+      target.setName(name);
+   }
 
-    @Override
-    public String toString()
-    {
-        return "Tier [id=" + getId() + ", description=" + getDescription() + ", enabled="
-            + getEnabled() + ", name=" + getName() + "]";
-    }
+   @Override
+   public String toString() {
+      return "Tier [id=" + getId() + ", description=" + getDescription() + ", enabled=" + getEnabled() + ", name="
+            + getName() + "]";
+   }
 
 }

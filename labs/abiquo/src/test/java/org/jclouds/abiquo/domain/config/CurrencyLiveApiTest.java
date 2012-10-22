@@ -33,44 +33,38 @@ import org.testng.annotations.Test;
  * @author Susana Acedo
  */
 @Test(groups = "api", testName = "CurrencyLiveApiTest")
-public class CurrencyLiveApiTest extends BaseAbiquoApiLiveApiTest
-{
-    public void testCreateAndGet()
-    {
-        Currency currency =
-            Currency.builder(env.context.getApiContext()).name(PREFIX + "test-currency")
-                .symbol("test-$").digits(2).build();
-        currency.save();
+public class CurrencyLiveApiTest extends BaseAbiquoApiLiveApiTest {
+   public void testCreateAndGet() {
+      Currency currency = Currency.builder(env.context.getApiContext()).name(PREFIX + "test-currency").symbol("test-$")
+            .digits(2).build();
+      currency.save();
 
-        Currency apiCurrency =
-            env.context.getPricingService().findCurrency(
-                PricingPredicates.currency(PREFIX + "test-currency"));
-        assertNotNull(apiCurrency);
-        assertEquals(currency.getName(), apiCurrency.getName());
+      Currency apiCurrency = env.context.getPricingService().findCurrency(
+            PricingPredicates.currency(PREFIX + "test-currency"));
+      assertNotNull(apiCurrency);
+      assertEquals(currency.getName(), apiCurrency.getName());
 
-        apiCurrency.delete();
-    }
+      apiCurrency.delete();
+   }
 
-    @Test(dependsOnMethods = "testCreateAndGet")
-    public void testUpdate()
-    {
-        Iterable<Currency> currencies = env.context.getPricingService().listCurrencies();
-        assertNotNull(currencies);
+   @Test(dependsOnMethods = "testCreateAndGet")
+   public void testUpdate() {
+      Iterable<Currency> currencies = env.context.getPricingService().listCurrencies();
+      assertNotNull(currencies);
 
-        Currency currency = currencies.iterator().next();
-        String name = currency.getName();
+      Currency currency = currencies.iterator().next();
+      String name = currency.getName();
 
-        currency.setName(PREFIX + "t-currency-upd");
-        currency.update();
+      currency.setName(PREFIX + "t-currency-upd");
+      currency.update();
 
-        Currency apiCurrency =
-            env.context.getPricingService().findCurrency(
-                PricingPredicates.currency(PREFIX + "t-currency-upd"));
+      Currency apiCurrency = env.context.getPricingService().findCurrency(
+            PricingPredicates.currency(PREFIX + "t-currency-upd"));
 
-        assertNotNull(apiCurrency);
-        assertEquals(PREFIX + "t-currency-upd", apiCurrency.getName());
+      assertNotNull(apiCurrency);
+      assertEquals(PREFIX + "t-currency-upd", apiCurrency.getName());
 
-        currency.setName(name);
-        currency.update();
-    }
+      currency.setName(name);
+      currency.update();
+   }
 }

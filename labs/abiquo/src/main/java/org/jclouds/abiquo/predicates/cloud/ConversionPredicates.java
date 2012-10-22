@@ -36,63 +36,50 @@ import com.google.common.base.Predicate;
  * 
  * @author Francesc Montserrat
  */
-public class ConversionPredicates
-{
+public class ConversionPredicates {
 
-    public static Predicate<Conversion> sourceFormat(final DiskFormatType... formats)
-    {
-        checkNotNull(formats, "formats must be defined");
+   public static Predicate<Conversion> sourceFormat(final DiskFormatType... formats) {
+      checkNotNull(formats, "formats must be defined");
 
-        return new Predicate<Conversion>()
-        {
-            @Override
-            public boolean apply(final Conversion conversion)
-            {
-                return Arrays.asList(formats).contains(conversion.getSourceFormat());
-            }
-        };
-    }
+      return new Predicate<Conversion>() {
+         @Override
+         public boolean apply(final Conversion conversion) {
+            return Arrays.asList(formats).contains(conversion.getSourceFormat());
+         }
+      };
+   }
 
-    public static Predicate<Conversion> targetFormat(final DiskFormatType... formats)
-    {
-        checkNotNull(formats, "formats must be defined");
+   public static Predicate<Conversion> targetFormat(final DiskFormatType... formats) {
+      checkNotNull(formats, "formats must be defined");
 
-        return new Predicate<Conversion>()
-        {
-            @Override
-            public boolean apply(final Conversion conversion)
-            {
-                return Arrays.asList(formats).contains(conversion.getTargetFormat());
-            }
-        };
-    }
+      return new Predicate<Conversion>() {
+         @Override
+         public boolean apply(final Conversion conversion) {
+            return Arrays.asList(formats).contains(conversion.getTargetFormat());
+         }
+      };
+   }
 
-    public static Predicate<Conversion> state(final ConversionState... states)
-    {
-        checkNotNull(states, "states must be defined");
+   public static Predicate<Conversion> state(final ConversionState... states) {
+      checkNotNull(states, "states must be defined");
 
-        return new Predicate<Conversion>()
-        {
-            @Override
-            public boolean apply(final Conversion conversion)
-            {
-                return Arrays.asList(states).contains(conversion.getState());
-            }
-        };
-    }
+      return new Predicate<Conversion>() {
+         @Override
+         public boolean apply(final Conversion conversion) {
+            return Arrays.asList(states).contains(conversion.getState());
+         }
+      };
+   }
 
-    public static Predicate<Conversion> compatible(final HypervisorType type)
-    {
-        checkNotNull(type, "type must be defined");
+   public static Predicate<Conversion> compatible(final HypervisorType type) {
+      checkNotNull(type, "type must be defined");
 
-        return new Predicate<Conversion>()
-        {
-            @Override
-            public boolean apply(final Conversion conversion)
-            {
-                return type.isCompatible(conversion.getTargetFormat());
-            }
-        };
-    }
+      return new Predicate<Conversion>() {
+         @Override
+         public boolean apply(final Conversion conversion) {
+            return type.isCompatible(conversion.getTargetFormat());
+         }
+      };
+   }
 
 }

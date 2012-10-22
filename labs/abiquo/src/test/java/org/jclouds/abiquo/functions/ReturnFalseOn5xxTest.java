@@ -37,75 +37,65 @@ import com.google.common.base.Function;
  * @author Ignasi Barrera
  */
 @Test(groups = "unit", testName = "ReturnFalseOn5xxTest")
-public class ReturnFalseOn5xxTest
-{
-    public void testReturnOriginalExceptionIfNotHttpResponseException()
-    {
-        Function<Exception, Object> function = new ReturnFalseOn5xx();
-        RuntimeException exception = new RuntimeException();
+public class ReturnFalseOn5xxTest {
+   public void testReturnOriginalExceptionIfNotHttpResponseException() {
+      Function<Exception, Object> function = new ReturnFalseOn5xx();
+      RuntimeException exception = new RuntimeException();
 
-        try
-        {
-            function.apply(exception);
-        }
-        catch (Exception ex)
-        {
-            assertEquals(ex, exception);
-        }
-    }
+      try {
+         function.apply(exception);
+      } catch (Exception ex) {
+         assertEquals(ex, exception);
+      }
+   }
 
-    public void testReturnFalseIf5xx()
-    {
-        Function<Exception, Object> function = new ReturnFalseOn5xx();
-        HttpResponse response = EasyMock.createMock(HttpResponse.class);
-        HttpResponseException exception = EasyMock.createMock(HttpResponseException.class);
+   public void testReturnFalseIf5xx() {
+      Function<Exception, Object> function = new ReturnFalseOn5xx();
+      HttpResponse response = EasyMock.createMock(HttpResponse.class);
+      HttpResponseException exception = EasyMock.createMock(HttpResponseException.class);
 
-        // Status code is called twice
-        expect(response.getStatusCode()).andReturn(503);
-        expect(response.getStatusCode()).andReturn(503);
-        // Get response gets called twice
-        expect(exception.getResponse()).andReturn(response);
-        expect(exception.getResponse()).andReturn(response);
-        // Get cause is called to determine the root cause
-        expect(exception.getCause()).andReturn(null);
+      // Status code is called twice
+      expect(response.getStatusCode()).andReturn(503);
+      expect(response.getStatusCode()).andReturn(503);
+      // Get response gets called twice
+      expect(exception.getResponse()).andReturn(response);
+      expect(exception.getResponse()).andReturn(response);
+      // Get cause is called to determine the root cause
+      expect(exception.getCause()).andReturn(null);
 
-        replay(response);
-        replay(exception);
+      replay(response);
+      replay(exception);
 
-        assertEquals(function.apply(exception), false);
+      assertEquals(function.apply(exception), false);
 
-        verify(response);
-        verify(exception);
-    }
+      verify(response);
+      verify(exception);
+   }
 
-    public void testReturnExceptionIfNot5xx()
-    {
-        Function<Exception, Object> function = new ReturnFalseOn5xx();
-        HttpResponse response = EasyMock.createMock(HttpResponse.class);
-        HttpResponseException exception = EasyMock.createMock(HttpResponseException.class);
+   public void testReturnExceptionIfNot5xx() {
+      Function<Exception, Object> function = new ReturnFalseOn5xx();
+      HttpResponse response = EasyMock.createMock(HttpResponse.class);
+      HttpResponseException exception = EasyMock.createMock(HttpResponseException.class);
 
-        // Status code is called twice
-        expect(response.getStatusCode()).andReturn(600);
-        expect(response.getStatusCode()).andReturn(600);
-        // Get response gets called twice
-        expect(exception.getResponse()).andReturn(response);
-        expect(exception.getResponse()).andReturn(response);
-        // Get cause is called to determine the root cause
-        expect(exception.getCause()).andReturn(null);
+      // Status code is called twice
+      expect(response.getStatusCode()).andReturn(600);
+      expect(response.getStatusCode()).andReturn(600);
+      // Get response gets called twice
+      expect(exception.getResponse()).andReturn(response);
+      expect(exception.getResponse()).andReturn(response);
+      // Get cause is called to determine the root cause
+      expect(exception.getCause()).andReturn(null);
 
-        replay(response);
-        replay(exception);
+      replay(response);
+      replay(exception);
 
-        try
-        {
-            function.apply(exception);
-        }
-        catch (Exception ex)
-        {
-            assertEquals(ex, exception);
-        }
+      try {
+         function.apply(exception);
+      } catch (Exception ex) {
+         assertEquals(ex, exception);
+      }
 
-        verify(response);
-        verify(exception);
-    }
+      verify(response);
+      verify(exception);
+   }
 }

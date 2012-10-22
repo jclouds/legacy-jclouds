@@ -22,19 +22,19 @@ package org.jclouds.abiquo.environment;
 /**
  * Base class fot test environment populators.
  * <p>
- * This class should be used to populate and clean the test environment used in live tests.
+ * This class should be used to populate and clean the test environment used in
+ * live tests.
  * 
  * @author Ignasi Barrera
  */
-public interface TestEnvironment
-{
-    /**
-     * Builds the test environment.
-     */
-    public void setup() throws Exception;
+public interface TestEnvironment {
+   /**
+    * Builds the test environment.
+    */
+   public void setup() throws Exception;
 
-    /**
-     * Cleans the test environment.
-     */
-    public void tearDown() throws Exception;
+   /**
+    * Cleans the test environment.
+    */
+   public void tearDown() throws Exception;
 }

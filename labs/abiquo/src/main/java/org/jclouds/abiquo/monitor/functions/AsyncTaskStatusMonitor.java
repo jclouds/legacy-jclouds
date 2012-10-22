@@ -36,40 +36,34 @@ import com.google.common.base.Function;
  * @author Ignasi Barrera
  */
 @Singleton
-public class AsyncTaskStatusMonitor implements Function<AsyncTask, MonitorStatus>
-{
-    @Resource
-    protected Logger logger = Logger.NULL;
+public class AsyncTaskStatusMonitor implements Function<AsyncTask, MonitorStatus> {
+   @Resource
+   protected Logger logger = Logger.NULL;
 
-    @Override
-    public MonitorStatus apply(final AsyncTask asyncTask)
-    {
-        checkNotNull(asyncTask, "asyncTask");
+   @Override
+   public MonitorStatus apply(final AsyncTask asyncTask) {
+      checkNotNull(asyncTask, "asyncTask");
 
-        try
-        {
-            asyncTask.refresh();
+      try {
+         asyncTask.refresh();
 
-            switch (asyncTask.getState())
-            {
-                case ABORTED:
-                case FINISHED_UNSUCCESSFULLY:
-                    return MonitorStatus.FAILED;
-                case FINISHED_SUCCESSFULLY:
-                    return MonitorStatus.DONE;
-                case STARTED:
-                case PENDING:
-                    return MonitorStatus.CONTINUE;
-                default:
-                    throw new IllegalStateException("Unsupported task status");
-            }
-        }
-        catch (Exception ex)
-        {
-            logger.warn(ex, "exception thrown while monitoring %s on %s, returning CONTINUE",
-                asyncTask, getClass().getName());
+         switch (asyncTask.getState()) {
+            case ABORTED:
+            case FINISHED_UNSUCCESSFULLY:
+               return MonitorStatus.FAILED;
+            case FINISHED_SUCCESSFULLY:
+               return MonitorStatus.DONE;
+            case STARTED:
+            case PENDING:
+               return MonitorStatus.CONTINUE;
+            default:
+               throw new IllegalStateException("Unsupported task status");
+         }
+      } catch (Exception ex) {
+         logger.warn(ex, "exception thrown while monitoring %s on %s, returning CONTINUE", asyncTask, getClass()
+               .getName());
 
-            return MonitorStatus.CONTINUE;
-        }
-    }
+         return MonitorStatus.CONTINUE;
+      }
+   }
 }

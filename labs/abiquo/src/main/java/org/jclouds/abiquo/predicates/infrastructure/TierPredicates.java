@@ -33,19 +33,15 @@ import com.google.common.base.Predicate;
  * @author Ignasi Barrera
  * @author Francesc Montserrat
  */
-public class TierPredicates
-{
-    public static Predicate<Tier> name(final String... names)
-    {
-        checkNotNull(names, "names must be defined");
+public class TierPredicates {
+   public static Predicate<Tier> name(final String... names) {
+      checkNotNull(names, "names must be defined");
 
-        return new Predicate<Tier>()
-        {
-            @Override
-            public boolean apply(final Tier tier)
-            {
-                return Arrays.asList(names).contains(tier.getName());
-            }
-        };
-    }
+      return new Predicate<Tier>() {
+         @Override
+         public boolean apply(final Tier tier) {
+            return Arrays.asList(names).contains(tier.getName());
+         }
+      };
+   }
 }

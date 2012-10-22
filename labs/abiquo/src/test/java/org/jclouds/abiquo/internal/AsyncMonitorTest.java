@@ -51,473 +51,426 @@ import com.google.common.eventbus.Subscribe;
  * @author Ignasi Barrera
  */
 @Test(groups = "unit", testName = "AsyncMonitorTest")
-public class AsyncMonitorTest
-{
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public void testStartMonitoringWithoutTimeout()
-    {
-        ScheduledFuture mockFuture = EasyMock.createMock(ScheduledFuture.class);
-        ScheduledExecutorService schedulerMock =
-            EasyMock.createMock(ScheduledExecutorService.class);
-        expect(
+public class AsyncMonitorTest {
+   @SuppressWarnings({ "rawtypes", "unchecked" })
+   public void testStartMonitoringWithoutTimeout() {
+      ScheduledFuture mockFuture = EasyMock.createMock(ScheduledFuture.class);
+      ScheduledExecutorService schedulerMock = EasyMock.createMock(ScheduledExecutorService.class);
+      expect(
             schedulerMock.scheduleWithFixedDelay(anyObject(Runnable.class), anyLong(), anyLong(),
-                anyObject(TimeUnit.class))).andReturn(mockFuture);
+                  anyObject(TimeUnit.class))).andReturn(mockFuture);
 
-        replay(mockFuture);
-        replay(schedulerMock);
+      replay(mockFuture);
+      replay(schedulerMock);
 
-        AsyncMonitor<Object> monitor =
-            mockMonitor(schedulerMock, new Object(), mockFunction(MonitorStatus.DONE),
-                new EventBus());
+      AsyncMonitor<Object> monitor = mockMonitor(schedulerMock, new Object(), mockFunction(MonitorStatus.DONE),
+            new EventBus());
 
-        assertNull(monitor.getFuture());
-        assertNull(monitor.getTimeout());
+      assertNull(monitor.getFuture());
+      assertNull(monitor.getTimeout());
 
-        monitor.startMonitoring(null);
+      monitor.startMonitoring(null);
 
-        assertNotNull(monitor.getFuture());
-        assertNull(monitor.getTimeout());
+      assertNotNull(monitor.getFuture());
+      assertNull(monitor.getTimeout());
 
-        verify(mockFuture);
-        verify(schedulerMock);
-    }
+      verify(mockFuture);
+      verify(schedulerMock);
+   }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public void testStartMonitoringWithTimeout()
-    {
-        ScheduledFuture mockFuture = EasyMock.createMock(ScheduledFuture.class);
-        ScheduledExecutorService schedulerMock =
-            EasyMock.createMock(ScheduledExecutorService.class);
-        expect(
+   @SuppressWarnings({ "rawtypes", "unchecked" })
+   public void testStartMonitoringWithTimeout() {
+      ScheduledFuture mockFuture = EasyMock.createMock(ScheduledFuture.class);
+      ScheduledExecutorService schedulerMock = EasyMock.createMock(ScheduledExecutorService.class);
+      expect(
             schedulerMock.scheduleWithFixedDelay(anyObject(Runnable.class), anyLong(), anyLong(),
-                anyObject(TimeUnit.class))).andReturn(mockFuture);
+                  anyObject(TimeUnit.class))).andReturn(mockFuture);
 
-        replay(mockFuture);
-        replay(schedulerMock);
+      replay(mockFuture);
+      replay(schedulerMock);
 
-        AsyncMonitor<Object> monitor =
-            mockMonitor(schedulerMock, new Object(), mockFunction(MonitorStatus.DONE),
-                new EventBus());
+      AsyncMonitor<Object> monitor = mockMonitor(schedulerMock, new Object(), mockFunction(MonitorStatus.DONE),
+            new EventBus());
 
-        assertNull(monitor.getFuture());
-        assertNull(monitor.getTimeout());
+      assertNull(monitor.getFuture());
+      assertNull(monitor.getTimeout());
 
-        monitor.startMonitoring(100L);
+      monitor.startMonitoring(100L);
 
-        assertNotNull(monitor.getFuture());
-        assertNotNull(monitor.getTimeout());
-        assertTrue(monitor.getTimeout() > 100L);
+      assertNotNull(monitor.getFuture());
+      assertNotNull(monitor.getTimeout());
+      assertTrue(monitor.getTimeout() > 100L);
 
-        verify(mockFuture);
-        verify(schedulerMock);
-    }
+      verify(mockFuture);
+      verify(schedulerMock);
+   }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public void testIsTimeoutWhenNullTimeout()
-    {
-        ScheduledFuture mockFuture = EasyMock.createMock(ScheduledFuture.class);
-        ScheduledExecutorService schedulerMock =
-            EasyMock.createMock(ScheduledExecutorService.class);
-        expect(
+   @SuppressWarnings({ "rawtypes", "unchecked" })
+   public void testIsTimeoutWhenNullTimeout() {
+      ScheduledFuture mockFuture = EasyMock.createMock(ScheduledFuture.class);
+      ScheduledExecutorService schedulerMock = EasyMock.createMock(ScheduledExecutorService.class);
+      expect(
             schedulerMock.scheduleWithFixedDelay(anyObject(Runnable.class), anyLong(), anyLong(),
-                anyObject(TimeUnit.class))).andReturn(mockFuture);
+                  anyObject(TimeUnit.class))).andReturn(mockFuture);
 
-        replay(mockFuture);
-        replay(schedulerMock);
+      replay(mockFuture);
+      replay(schedulerMock);
 
-        AsyncMonitor<Object> monitor =
-            mockMonitor(schedulerMock, new Object(), mockFunction(MonitorStatus.DONE),
-                new EventBus());
+      AsyncMonitor<Object> monitor = mockMonitor(schedulerMock, new Object(), mockFunction(MonitorStatus.DONE),
+            new EventBus());
 
-        assertNull(monitor.getFuture());
-        assertNull(monitor.getTimeout());
+      assertNull(monitor.getFuture());
+      assertNull(monitor.getTimeout());
 
-        monitor.startMonitoring(null);
-        assertNotNull(monitor.getFuture());
-        assertNull(monitor.getTimeout());
-        assertFalse(monitor.isTimeout());
+      monitor.startMonitoring(null);
+      assertNotNull(monitor.getFuture());
+      assertNull(monitor.getTimeout());
+      assertFalse(monitor.isTimeout());
 
-        verify(mockFuture);
-        verify(schedulerMock);
-    }
+      verify(mockFuture);
+      verify(schedulerMock);
+   }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public void testIsTimeoutReturnsFalseWhenNotFinished()
-    {
-        ScheduledFuture mockFuture = EasyMock.createMock(ScheduledFuture.class);
-        ScheduledExecutorService schedulerMock =
-            EasyMock.createMock(ScheduledExecutorService.class);
-        expect(
+   @SuppressWarnings({ "rawtypes", "unchecked" })
+   public void testIsTimeoutReturnsFalseWhenNotFinished() {
+      ScheduledFuture mockFuture = EasyMock.createMock(ScheduledFuture.class);
+      ScheduledExecutorService schedulerMock = EasyMock.createMock(ScheduledExecutorService.class);
+      expect(
             schedulerMock.scheduleWithFixedDelay(anyObject(Runnable.class), anyLong(), anyLong(),
-                anyObject(TimeUnit.class))).andReturn(mockFuture);
+                  anyObject(TimeUnit.class))).andReturn(mockFuture);
 
-        replay(mockFuture);
-        replay(schedulerMock);
+      replay(mockFuture);
+      replay(schedulerMock);
 
-        AsyncMonitor<Object> monitor =
-            mockMonitor(schedulerMock, new Object(), mockFunction(MonitorStatus.DONE),
-                new EventBus());
+      AsyncMonitor<Object> monitor = mockMonitor(schedulerMock, new Object(), mockFunction(MonitorStatus.DONE),
+            new EventBus());
 
-        assertNull(monitor.getFuture());
-        assertNull(monitor.getTimeout());
+      assertNull(monitor.getFuture());
+      assertNull(monitor.getTimeout());
 
-        monitor.startMonitoring(60000L);
-        assertNotNull(monitor.getFuture());
-        assertNotNull(monitor.getTimeout());
-        assertFalse(monitor.isTimeout());
+      monitor.startMonitoring(60000L);
+      assertNotNull(monitor.getFuture());
+      assertNotNull(monitor.getTimeout());
+      assertFalse(monitor.isTimeout());
 
-        verify(mockFuture);
-        verify(schedulerMock);
-    }
+      verify(mockFuture);
+      verify(schedulerMock);
+   }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public void testIsTimeoutReturnsTrueWhenFinished() throws InterruptedException
-    {
-        ScheduledFuture mockFuture = EasyMock.createMock(ScheduledFuture.class);
-        ScheduledExecutorService schedulerMock =
-            EasyMock.createMock(ScheduledExecutorService.class);
-        expect(
+   @SuppressWarnings({ "rawtypes", "unchecked" })
+   public void testIsTimeoutReturnsTrueWhenFinished() throws InterruptedException {
+      ScheduledFuture mockFuture = EasyMock.createMock(ScheduledFuture.class);
+      ScheduledExecutorService schedulerMock = EasyMock.createMock(ScheduledExecutorService.class);
+      expect(
             schedulerMock.scheduleWithFixedDelay(anyObject(Runnable.class), anyLong(), anyLong(),
-                anyObject(TimeUnit.class))).andReturn(mockFuture);
+                  anyObject(TimeUnit.class))).andReturn(mockFuture);
 
-        replay(mockFuture);
-        replay(schedulerMock);
+      replay(mockFuture);
+      replay(schedulerMock);
 
-        AsyncMonitor<Object> monitor =
-            mockMonitor(schedulerMock, new Object(), mockFunction(MonitorStatus.DONE),
-                new EventBus());
+      AsyncMonitor<Object> monitor = mockMonitor(schedulerMock, new Object(), mockFunction(MonitorStatus.DONE),
+            new EventBus());
 
-        assertNull(monitor.getFuture());
-        assertNull(monitor.getTimeout());
+      assertNull(monitor.getFuture());
+      assertNull(monitor.getTimeout());
 
-        monitor.startMonitoring(1L);
-        Thread.sleep(2L);
-        assertNotNull(monitor.getFuture());
-        assertNotNull(monitor.getTimeout());
-        assertTrue(monitor.isTimeout());
+      monitor.startMonitoring(1L);
+      Thread.sleep(2L);
+      assertNotNull(monitor.getFuture());
+      assertNotNull(monitor.getTimeout());
+      assertTrue(monitor.isTimeout());
 
-        verify(mockFuture);
-        verify(schedulerMock);
-    }
+      verify(mockFuture);
+      verify(schedulerMock);
+   }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public void testStopMonitoringWhenFutureIsCancelled()
-    {
-        ScheduledFuture mockFuture = EasyMock.createMock(ScheduledFuture.class);
-        expect(mockFuture.isCancelled()).andReturn(true);
+   @SuppressWarnings({ "rawtypes", "unchecked" })
+   public void testStopMonitoringWhenFutureIsCancelled() {
+      ScheduledFuture mockFuture = EasyMock.createMock(ScheduledFuture.class);
+      expect(mockFuture.isCancelled()).andReturn(true);
 
-        ScheduledExecutorService schedulerMock =
-            EasyMock.createMock(ScheduledExecutorService.class);
-        expect(
+      ScheduledExecutorService schedulerMock = EasyMock.createMock(ScheduledExecutorService.class);
+      expect(
             schedulerMock.scheduleWithFixedDelay(anyObject(Runnable.class), anyLong(), anyLong(),
-                anyObject(TimeUnit.class))).andReturn(mockFuture);
+                  anyObject(TimeUnit.class))).andReturn(mockFuture);
 
-        replay(mockFuture);
-        replay(schedulerMock);
+      replay(mockFuture);
+      replay(schedulerMock);
 
-        AsyncMonitor<Object> monitor =
-            mockMonitor(schedulerMock, new Object(), mockFunction(MonitorStatus.DONE),
-                new EventBus());
+      AsyncMonitor<Object> monitor = mockMonitor(schedulerMock, new Object(), mockFunction(MonitorStatus.DONE),
+            new EventBus());
 
-        assertNull(monitor.getFuture());
-        assertNull(monitor.getTimeout());
+      assertNull(monitor.getFuture());
+      assertNull(monitor.getTimeout());
 
-        monitor.startMonitoring(null);
-        assertNotNull(monitor.getFuture());
-        assertNull(monitor.getTimeout());
+      monitor.startMonitoring(null);
+      assertNotNull(monitor.getFuture());
+      assertNull(monitor.getTimeout());
 
-        monitor.stopMonitoring();
+      monitor.stopMonitoring();
 
-        verify(mockFuture);
-        verify(schedulerMock);
-    }
+      verify(mockFuture);
+      verify(schedulerMock);
+   }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public void testStopMonitoringWhenFutureIsDone()
-    {
-        ScheduledFuture mockFuture = EasyMock.createMock(ScheduledFuture.class);
-        expect(mockFuture.isCancelled()).andReturn(false);
-        expect(mockFuture.isDone()).andReturn(true);
+   @SuppressWarnings({ "rawtypes", "unchecked" })
+   public void testStopMonitoringWhenFutureIsDone() {
+      ScheduledFuture mockFuture = EasyMock.createMock(ScheduledFuture.class);
+      expect(mockFuture.isCancelled()).andReturn(false);
+      expect(mockFuture.isDone()).andReturn(true);
 
-        ScheduledExecutorService schedulerMock =
-            EasyMock.createMock(ScheduledExecutorService.class);
-        expect(
+      ScheduledExecutorService schedulerMock = EasyMock.createMock(ScheduledExecutorService.class);
+      expect(
             schedulerMock.scheduleWithFixedDelay(anyObject(Runnable.class), anyLong(), anyLong(),
-                anyObject(TimeUnit.class))).andReturn(mockFuture);
+                  anyObject(TimeUnit.class))).andReturn(mockFuture);
 
-        replay(mockFuture);
-        replay(schedulerMock);
+      replay(mockFuture);
+      replay(schedulerMock);
 
-        AsyncMonitor<Object> monitor =
-            mockMonitor(schedulerMock, new Object(), mockFunction(MonitorStatus.DONE),
-                new EventBus());
+      AsyncMonitor<Object> monitor = mockMonitor(schedulerMock, new Object(), mockFunction(MonitorStatus.DONE),
+            new EventBus());
 
-        assertNull(monitor.getFuture());
-        assertNull(monitor.getTimeout());
+      assertNull(monitor.getFuture());
+      assertNull(monitor.getTimeout());
 
-        monitor.startMonitoring(null);
-        assertNotNull(monitor.getFuture());
-        assertNull(monitor.getTimeout());
+      monitor.startMonitoring(null);
+      assertNotNull(monitor.getFuture());
+      assertNull(monitor.getTimeout());
 
-        monitor.stopMonitoring();
+      monitor.stopMonitoring();
 
-        verify(mockFuture);
-        verify(schedulerMock);
-    }
+      verify(mockFuture);
+      verify(schedulerMock);
+   }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public void testStopMonitoringWhenFutureIsNotComplete()
-    {
-        ScheduledFuture mockFuture = EasyMock.createMock(ScheduledFuture.class);
-        expect(mockFuture.isCancelled()).andReturn(false);
-        expect(mockFuture.isDone()).andReturn(false);
-        expect(mockFuture.cancel(false)).andReturn(true);
+   @SuppressWarnings({ "rawtypes", "unchecked" })
+   public void testStopMonitoringWhenFutureIsNotComplete() {
+      ScheduledFuture mockFuture = EasyMock.createMock(ScheduledFuture.class);
+      expect(mockFuture.isCancelled()).andReturn(false);
+      expect(mockFuture.isDone()).andReturn(false);
+      expect(mockFuture.cancel(false)).andReturn(true);
 
-        ScheduledExecutorService schedulerMock =
-            EasyMock.createMock(ScheduledExecutorService.class);
-        expect(
+      ScheduledExecutorService schedulerMock = EasyMock.createMock(ScheduledExecutorService.class);
+      expect(
             schedulerMock.scheduleWithFixedDelay(anyObject(Runnable.class), anyLong(), anyLong(),
-                anyObject(TimeUnit.class))).andReturn(mockFuture);
+                  anyObject(TimeUnit.class))).andReturn(mockFuture);
 
-        replay(mockFuture);
-        replay(schedulerMock);
+      replay(mockFuture);
+      replay(schedulerMock);
 
-        AsyncMonitor<Object> monitor =
-            mockMonitor(schedulerMock, new Object(), mockFunction(MonitorStatus.DONE),
-                new EventBus());
+      AsyncMonitor<Object> monitor = mockMonitor(schedulerMock, new Object(), mockFunction(MonitorStatus.DONE),
+            new EventBus());
 
-        assertNull(monitor.getFuture());
-        assertNull(monitor.getTimeout());
+      assertNull(monitor.getFuture());
+      assertNull(monitor.getTimeout());
 
-        monitor.startMonitoring(null);
-        assertNotNull(monitor.getFuture());
-        assertNull(monitor.getTimeout());
+      monitor.startMonitoring(null);
+      assertNotNull(monitor.getFuture());
+      assertNull(monitor.getTimeout());
 
-        monitor.stopMonitoring();
+      monitor.stopMonitoring();
 
-        verify(mockFuture);
-        verify(schedulerMock);
-    }
+      verify(mockFuture);
+      verify(schedulerMock);
+   }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public void testMonitorAndDone()
-    {
-        ScheduledFuture mockFuture = EasyMock.createMock(ScheduledFuture.class);
-        expect(mockFuture.isCancelled()).andReturn(true);
+   @SuppressWarnings({ "rawtypes", "unchecked" })
+   public void testMonitorAndDone() {
+      ScheduledFuture mockFuture = EasyMock.createMock(ScheduledFuture.class);
+      expect(mockFuture.isCancelled()).andReturn(true);
 
-        ScheduledExecutorService schedulerMock =
-            EasyMock.createMock(ScheduledExecutorService.class);
-        expect(
+      ScheduledExecutorService schedulerMock = EasyMock.createMock(ScheduledExecutorService.class);
+      expect(
             schedulerMock.scheduleWithFixedDelay(anyObject(Runnable.class), anyLong(), anyLong(),
-                anyObject(TimeUnit.class))).andReturn(mockFuture);
+                  anyObject(TimeUnit.class))).andReturn(mockFuture);
 
-        replay(mockFuture);
-        replay(schedulerMock);
+      replay(mockFuture);
+      replay(schedulerMock);
 
-        CoutingEventHandler handler = new CoutingEventHandler();
-        EventBus eventBus = new EventBus();
-        eventBus.register(handler);
+      CoutingEventHandler handler = new CoutingEventHandler();
+      EventBus eventBus = new EventBus();
+      eventBus.register(handler);
 
-        AsyncMonitor<Object> monitor =
-            mockMonitor(schedulerMock, new Object(), mockFunction(MonitorStatus.DONE), eventBus);
+      AsyncMonitor<Object> monitor = mockMonitor(schedulerMock, new Object(), mockFunction(MonitorStatus.DONE),
+            eventBus);
 
-        assertNull(monitor.getFuture());
-        assertNull(monitor.getTimeout());
+      assertNull(monitor.getFuture());
+      assertNull(monitor.getTimeout());
 
-        monitor.startMonitoring(null);
-        assertNotNull(monitor.getFuture());
-        assertNull(monitor.getTimeout());
+      monitor.startMonitoring(null);
+      assertNotNull(monitor.getFuture());
+      assertNull(monitor.getTimeout());
 
-        monitor.run();
-        assertEquals(handler.numCompletes, 1);
-        assertEquals(handler.numFailures, 0);
-        assertEquals(handler.numTimeouts, 0);
+      monitor.run();
+      assertEquals(handler.numCompletes, 1);
+      assertEquals(handler.numFailures, 0);
+      assertEquals(handler.numTimeouts, 0);
 
-        verify(mockFuture);
-        verify(schedulerMock);
-    }
+      verify(mockFuture);
+      verify(schedulerMock);
+   }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public void testMonitorAndFail()
-    {
-        ScheduledFuture mockFuture = EasyMock.createMock(ScheduledFuture.class);
-        expect(mockFuture.isCancelled()).andReturn(true);
+   @SuppressWarnings({ "rawtypes", "unchecked" })
+   public void testMonitorAndFail() {
+      ScheduledFuture mockFuture = EasyMock.createMock(ScheduledFuture.class);
+      expect(mockFuture.isCancelled()).andReturn(true);
 
-        ScheduledExecutorService schedulerMock =
-            EasyMock.createMock(ScheduledExecutorService.class);
-        expect(
+      ScheduledExecutorService schedulerMock = EasyMock.createMock(ScheduledExecutorService.class);
+      expect(
             schedulerMock.scheduleWithFixedDelay(anyObject(Runnable.class), anyLong(), anyLong(),
-                anyObject(TimeUnit.class))).andReturn(mockFuture);
+                  anyObject(TimeUnit.class))).andReturn(mockFuture);
 
-        replay(mockFuture);
-        replay(schedulerMock);
+      replay(mockFuture);
+      replay(schedulerMock);
 
-        CoutingEventHandler handler = new CoutingEventHandler();
-        EventBus eventBus = new EventBus();
-        eventBus.register(handler);
+      CoutingEventHandler handler = new CoutingEventHandler();
+      EventBus eventBus = new EventBus();
+      eventBus.register(handler);
 
-        AsyncMonitor<Object> monitor =
-            mockMonitor(schedulerMock, new Object(), mockFunction(MonitorStatus.FAILED), eventBus);
+      AsyncMonitor<Object> monitor = mockMonitor(schedulerMock, new Object(), mockFunction(MonitorStatus.FAILED),
+            eventBus);
 
-        assertNull(monitor.getFuture());
-        assertNull(monitor.getTimeout());
+      assertNull(monitor.getFuture());
+      assertNull(monitor.getTimeout());
 
-        monitor.startMonitoring(null);
-        assertNotNull(monitor.getFuture());
-        assertNull(monitor.getTimeout());
+      monitor.startMonitoring(null);
+      assertNotNull(monitor.getFuture());
+      assertNull(monitor.getTimeout());
 
-        monitor.run();
-        assertEquals(handler.numCompletes, 0);
-        assertEquals(handler.numFailures, 1);
-        assertEquals(handler.numTimeouts, 0);
+      monitor.run();
+      assertEquals(handler.numCompletes, 0);
+      assertEquals(handler.numFailures, 1);
+      assertEquals(handler.numTimeouts, 0);
 
-        verify(mockFuture);
-        verify(schedulerMock);
-    }
+      verify(mockFuture);
+      verify(schedulerMock);
+   }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public void testMonitorAndContinueWithoutTimeout()
-    {
-        ScheduledFuture mockFuture = EasyMock.createMock(ScheduledFuture.class);
-        ScheduledExecutorService schedulerMock =
-            EasyMock.createMock(ScheduledExecutorService.class);
-        expect(
+   @SuppressWarnings({ "rawtypes", "unchecked" })
+   public void testMonitorAndContinueWithoutTimeout() {
+      ScheduledFuture mockFuture = EasyMock.createMock(ScheduledFuture.class);
+      ScheduledExecutorService schedulerMock = EasyMock.createMock(ScheduledExecutorService.class);
+      expect(
             schedulerMock.scheduleWithFixedDelay(anyObject(Runnable.class), anyLong(), anyLong(),
-                anyObject(TimeUnit.class))).andReturn(mockFuture);
+                  anyObject(TimeUnit.class))).andReturn(mockFuture);
 
-        replay(mockFuture);
-        replay(schedulerMock);
+      replay(mockFuture);
+      replay(schedulerMock);
 
-        CoutingEventHandler handler = new CoutingEventHandler();
-        EventBus eventBus = new EventBus();
-        eventBus.register(handler);
+      CoutingEventHandler handler = new CoutingEventHandler();
+      EventBus eventBus = new EventBus();
+      eventBus.register(handler);
 
-        AsyncMonitor<Object> monitor =
-            mockMonitor(schedulerMock, new Object(), mockFunction(MonitorStatus.CONTINUE), eventBus);
+      AsyncMonitor<Object> monitor = mockMonitor(schedulerMock, new Object(), mockFunction(MonitorStatus.CONTINUE),
+            eventBus);
 
-        assertNull(monitor.getFuture());
-        assertNull(monitor.getTimeout());
+      assertNull(monitor.getFuture());
+      assertNull(monitor.getTimeout());
 
-        monitor.startMonitoring(null);
-        assertNotNull(monitor.getFuture());
-        assertNull(monitor.getTimeout());
+      monitor.startMonitoring(null);
+      assertNotNull(monitor.getFuture());
+      assertNull(monitor.getTimeout());
 
-        monitor.run();
-        assertEquals(handler.numCompletes, 0);
-        assertEquals(handler.numFailures, 0);
-        assertEquals(handler.numTimeouts, 0);
+      monitor.run();
+      assertEquals(handler.numCompletes, 0);
+      assertEquals(handler.numFailures, 0);
+      assertEquals(handler.numTimeouts, 0);
 
-        verify(mockFuture);
-        verify(schedulerMock);
-    }
+      verify(mockFuture);
+      verify(schedulerMock);
+   }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public void testMonitorAndContinueWithtTimeout() throws InterruptedException
-    {
-        ScheduledFuture mockFuture = EasyMock.createMock(ScheduledFuture.class);
-        expect(mockFuture.isCancelled()).andReturn(true);
+   @SuppressWarnings({ "rawtypes", "unchecked" })
+   public void testMonitorAndContinueWithtTimeout() throws InterruptedException {
+      ScheduledFuture mockFuture = EasyMock.createMock(ScheduledFuture.class);
+      expect(mockFuture.isCancelled()).andReturn(true);
 
-        ScheduledExecutorService schedulerMock =
-            EasyMock.createMock(ScheduledExecutorService.class);
-        expect(
+      ScheduledExecutorService schedulerMock = EasyMock.createMock(ScheduledExecutorService.class);
+      expect(
             schedulerMock.scheduleWithFixedDelay(anyObject(Runnable.class), anyLong(), anyLong(),
-                anyObject(TimeUnit.class))).andReturn(mockFuture);
+                  anyObject(TimeUnit.class))).andReturn(mockFuture);
 
-        replay(mockFuture);
-        replay(schedulerMock);
+      replay(mockFuture);
+      replay(schedulerMock);
 
-        CoutingEventHandler handler = new CoutingEventHandler();
-        EventBus eventBus = new EventBus();
-        eventBus.register(handler);
+      CoutingEventHandler handler = new CoutingEventHandler();
+      EventBus eventBus = new EventBus();
+      eventBus.register(handler);
 
-        AsyncMonitor<Object> monitor =
-            mockMonitor(schedulerMock, new Object(), mockFunction(MonitorStatus.CONTINUE), eventBus);
+      AsyncMonitor<Object> monitor = mockMonitor(schedulerMock, new Object(), mockFunction(MonitorStatus.CONTINUE),
+            eventBus);
 
-        assertNull(monitor.getFuture());
-        assertNull(monitor.getTimeout());
+      assertNull(monitor.getFuture());
+      assertNull(monitor.getTimeout());
 
-        monitor.startMonitoring(1L);
-        assertNotNull(monitor.getFuture());
-        assertNotNull(monitor.getTimeout());
+      monitor.startMonitoring(1L);
+      assertNotNull(monitor.getFuture());
+      assertNotNull(monitor.getTimeout());
 
-        Thread.sleep(2L);
-        monitor.run();
-        assertEquals(handler.numCompletes, 0);
-        assertEquals(handler.numFailures, 0);
-        assertEquals(handler.numTimeouts, 1);
+      Thread.sleep(2L);
+      monitor.run();
+      assertEquals(handler.numCompletes, 0);
+      assertEquals(handler.numFailures, 0);
+      assertEquals(handler.numTimeouts, 1);
 
-        verify(mockFuture);
-        verify(schedulerMock);
-    }
+      verify(mockFuture);
+      verify(schedulerMock);
+   }
 
-    @Test(expectedExceptions = NullPointerException.class)
-    public void testCreateMonitorWithNullObject()
-    {
-        mockMonitor(null, null, new Function<Object, MonitorStatus>()
-        {
-            @Override
-            public MonitorStatus apply(final Object input)
-            {
-                return MonitorStatus.DONE;
-            }
-        }, new EventBus());
-    }
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testCreateMonitorWithNullObject() {
+      mockMonitor(null, null, new Function<Object, MonitorStatus>() {
+         @Override
+         public MonitorStatus apply(final Object input) {
+            return MonitorStatus.DONE;
+         }
+      }, new EventBus());
+   }
 
-    @Test(expectedExceptions = NullPointerException.class)
-    public void testCreateMonitorWithNullFunction()
-    {
-        mockMonitor(null, new Object(), null, new EventBus());
-    }
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testCreateMonitorWithNullFunction() {
+      mockMonitor(null, new Object(), null, new EventBus());
+   }
 
-    @SuppressWarnings("unchecked")
-    private AsyncMonitor<Object> mockMonitor(final ScheduledExecutorService scheduler,
-        final Object object, final Function<Object, MonitorStatus> function, final EventBus eventBus)
-    {
-        BaseMonitoringService monitorService =
-            new BaseMonitoringService(EasyMock.createMock(RestContext.class),
-                scheduler,
-                100L,
-                eventBus);
+   @SuppressWarnings("unchecked")
+   private AsyncMonitor<Object> mockMonitor(final ScheduledExecutorService scheduler, final Object object,
+         final Function<Object, MonitorStatus> function, final EventBus eventBus) {
+      BaseMonitoringService monitorService = new BaseMonitoringService(EasyMock.createMock(RestContext.class),
+            scheduler, 100L, eventBus);
 
-        return monitorService.new AsyncMonitor<Object>(object, function);
-    }
+      return monitorService.new AsyncMonitor<Object>(object, function);
+   }
 
-    private Function<Object, MonitorStatus> mockFunction(final MonitorStatus status)
-    {
-        return new Function<Object, MonitorStatus>()
-        {
-            @Override
-            public MonitorStatus apply(final Object input)
-            {
-                return status;
-            }
-        };
-    }
+   private Function<Object, MonitorStatus> mockFunction(final MonitorStatus status) {
+      return new Function<Object, MonitorStatus>() {
+         @Override
+         public MonitorStatus apply(final Object input) {
+            return status;
+         }
+      };
+   }
 
-    private static class CoutingEventHandler
-    {
-        public int numCompletes = 0;
+   private static class CoutingEventHandler {
+      public int numCompletes = 0;
 
-        public int numFailures = 0;
+      public int numFailures = 0;
 
-        public int numTimeouts = 0;
+      public int numTimeouts = 0;
 
-        @Subscribe
-        @SuppressWarnings("unused")
-        public void handle(final MonitorEvent< ? > event)
-        {
-            switch (event.getType())
-            {
-                case COMPLETED:
-                    numCompletes++;
-                    break;
-                case FAILED:
-                    numFailures++;
-                    break;
-                case TIMEOUT:
-                    numTimeouts++;
-                    break;
-            }
-        }
-    }
+      @Subscribe
+      @SuppressWarnings("unused")
+      public void handle(final MonitorEvent<?> event) {
+         switch (event.getType()) {
+            case COMPLETED:
+               numCompletes++;
+               break;
+            case FAILED:
+               numFailures++;
+               break;
+            case TIMEOUT:
+               numTimeouts++;
+               break;
+         }
+      }
+   }
 }

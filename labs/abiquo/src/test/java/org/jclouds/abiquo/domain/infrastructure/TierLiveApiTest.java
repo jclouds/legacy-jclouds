@@ -35,33 +35,30 @@ import com.google.common.collect.Iterables;
  * @author Francesc Montserrat
  */
 @Test(groups = "api", testName = "TierLiveApiTest")
-public class TierLiveApiTest extends BaseAbiquoApiLiveApiTest
-{
+public class TierLiveApiTest extends BaseAbiquoApiLiveApiTest {
 
-    public void testUpdate()
-    {
-        Tier tier = env.datacenter.listTiers().get(0);
-        assertNotNull(tier);
+   public void testUpdate() {
+      Tier tier = env.datacenter.listTiers().get(0);
+      assertNotNull(tier);
 
-        String previousName = tier.getName();
-        tier.setName("Updated tier");
-        tier.update();
+      String previousName = tier.getName();
+      tier.setName("Updated tier");
+      tier.update();
 
-        // Recover the updated tier
-        Tier updated = env.datacenter.findTier(TierPredicates.name("Updated tier"));
-        assertEquals(updated.getName(), "Updated tier");
+      // Recover the updated tier
+      Tier updated = env.datacenter.findTier(TierPredicates.name("Updated tier"));
+      assertEquals(updated.getName(), "Updated tier");
 
-        // Set original name
-        tier.setName(previousName);
-        tier.update();
-    }
+      // Set original name
+      tier.setName(previousName);
+      tier.update();
+   }
 
-    public void testListTiers()
-    {
-        Iterable<Tier> tiers = env.datacenter.listTiers();
-        assertEquals(Iterables.size(tiers), 4);
+   public void testListTiers() {
+      Iterable<Tier> tiers = env.datacenter.listTiers();
+      assertEquals(Iterables.size(tiers), 4);
 
-        tiers = env.datacenter.listTiers(TierPredicates.name("FAIL"));
-        assertEquals(Iterables.size(tiers), 0);
-    }
+      tiers = env.datacenter.listTiers(TierPredicates.name("FAIL"));
+      assertEquals(Iterables.size(tiers), 0);
+   }
 }

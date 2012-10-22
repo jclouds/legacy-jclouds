@@ -40,60 +40,50 @@ import com.google.common.base.Predicates;
  * @author Francesc Montserrat
  */
 @Test(groups = "api", testName = "ListPropertiesImplLiveApiTest")
-public class ListPropertiesImplLiveApiTest extends BaseAbiquoStrategyLiveApiTest
-{
-    private ListPropertiesImpl strategy;
+public class ListPropertiesImplLiveApiTest extends BaseAbiquoStrategyLiveApiTest {
+   private ListPropertiesImpl strategy;
 
-    @Override
-    @BeforeClass(groups = "api")
-    protected void setupStrategy()
-    {
-        this.strategy = env.context.getUtils().getInjector().getInstance(ListPropertiesImpl.class);
-    }
+   @Override
+   @BeforeClass(groups = "api")
+   protected void setupStrategy() {
+      this.strategy = env.context.getUtils().getInjector().getInstance(ListPropertiesImpl.class);
+   }
 
-    public void testExecute()
-    {
-        Iterable<SystemProperty> properties = strategy.execute();
-        assertNotNull(properties);
-        assertTrue(size(properties) > 0);
-    }
+   public void testExecute() {
+      Iterable<SystemProperty> properties = strategy.execute();
+      assertNotNull(properties);
+      assertTrue(size(properties) > 0);
+   }
 
-    public void testExecuteWithOptions()
-    {
-        PropertyOptions options = PropertyOptions.builder().component("client").build();
+   public void testExecuteWithOptions() {
+      PropertyOptions options = PropertyOptions.builder().component("client").build();
 
-        Iterable<SystemProperty> properties = strategy.execute(options);
-        assertNotNull(properties);
-        assertTrue(size(properties) > 0);
-    }
+      Iterable<SystemProperty> properties = strategy.execute(options);
+      assertNotNull(properties);
+      assertTrue(size(properties) > 0);
+   }
 
-    public void testExecutePredicateWithoutResults()
-    {
-        Iterable<SystemProperty> properties =
-            strategy.execute(SystemPropertyPredicates.name("Cloud color"));
-        assertNotNull(properties);
-        assertEquals(size(properties), 0);
-    }
+   public void testExecutePredicateWithoutResults() {
+      Iterable<SystemProperty> properties = strategy.execute(SystemPropertyPredicates.name("Cloud color"));
+      assertNotNull(properties);
+      assertEquals(size(properties), 0);
+   }
 
-    public void testExecutePredicateWithResults()
-    {
-        Iterable<SystemProperty> properties =
-            strategy.execute(SystemPropertyPredicates
-                .name("client.applibrary.ovfpackagesDownloadingProgressUpdateInterval"));
-        assertNotNull(properties);
-        assertEquals(size(properties), 1);
-    }
+   public void testExecutePredicateWithResults() {
+      Iterable<SystemProperty> properties = strategy.execute(SystemPropertyPredicates
+            .name("client.applibrary.ovfpackagesDownloadingProgressUpdateInterval"));
+      assertNotNull(properties);
+      assertEquals(size(properties), 1);
+   }
 
-    public void testExecuteNotPredicateWithResults()
-    {
-        Iterable<SystemProperty> properties =
-            strategy.execute(Predicates.not(SystemPropertyPredicates
-                .name("client.applibrary.ovfpackagesDownloadingProgressUpdateInterval")));
+   public void testExecuteNotPredicateWithResults() {
+      Iterable<SystemProperty> properties = strategy.execute(Predicates.not(SystemPropertyPredicates
+            .name("client.applibrary.ovfpackagesDownloadingProgressUpdateInterval")));
 
-        Iterable<SystemProperty> allProperties = strategy.execute();
+      Iterable<SystemProperty> allProperties = strategy.execute();
 
-        assertNotNull(properties);
-        assertNotNull(allProperties);
-        assertEquals(size(properties), size(allProperties) - 1);
-    }
+      assertNotNull(properties);
+      assertNotNull(allProperties);
+      assertEquals(size(properties), size(allProperties) - 1);
+   }
 }

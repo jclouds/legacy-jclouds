@@ -32,47 +32,37 @@ import com.google.common.base.Predicate;
  * 
  * @author Ignasi Barrera
  */
-public class DatacenterPredicates
-{
-    public static Predicate<Datacenter> id(final Integer... ids)
-    {
-        checkNotNull(ids, "ids must be defined");
+public class DatacenterPredicates {
+   public static Predicate<Datacenter> id(final Integer... ids) {
+      checkNotNull(ids, "ids must be defined");
 
-        return new Predicate<Datacenter>()
-        {
-            @Override
-            public boolean apply(final Datacenter datacenter)
-            {
-                return Arrays.asList(ids).contains(datacenter.getId());
-            }
-        };
-    }
+      return new Predicate<Datacenter>() {
+         @Override
+         public boolean apply(final Datacenter datacenter) {
+            return Arrays.asList(ids).contains(datacenter.getId());
+         }
+      };
+   }
 
-    public static Predicate<Datacenter> name(final String... names)
-    {
-        checkNotNull(names, "names must be defined");
+   public static Predicate<Datacenter> name(final String... names) {
+      checkNotNull(names, "names must be defined");
 
-        return new Predicate<Datacenter>()
-        {
-            @Override
-            public boolean apply(final Datacenter datacenter)
-            {
-                return Arrays.asList(names).contains(datacenter.getName());
-            }
-        };
-    }
+      return new Predicate<Datacenter>() {
+         @Override
+         public boolean apply(final Datacenter datacenter) {
+            return Arrays.asList(names).contains(datacenter.getName());
+         }
+      };
+   }
 
-    public static Predicate<Datacenter> location(final String... locations)
-    {
-        checkNotNull(locations, "locations must be defined");
+   public static Predicate<Datacenter> location(final String... locations) {
+      checkNotNull(locations, "locations must be defined");
 
-        return new Predicate<Datacenter>()
-        {
-            @Override
-            public boolean apply(final Datacenter datacenter)
-            {
-                return Arrays.asList(locations).contains(datacenter.getLocation());
-            }
-        };
-    }
+      return new Predicate<Datacenter>() {
+         @Override
+         public boolean apply(final Datacenter datacenter) {
+            return Arrays.asList(locations).contains(datacenter.getLocation());
+         }
+      };
+   }
 }

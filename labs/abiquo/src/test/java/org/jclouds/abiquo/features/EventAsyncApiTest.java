@@ -37,29 +37,25 @@ import com.google.inject.TypeLiteral;
  * @author Vivien Mahé
  */
 @Test(groups = "unit", testName = "EventAsyncApiTest")
-public class EventAsyncApiTest extends BaseAbiquoAsyncApiTest<EventAsyncApi>
-{
-    public void testListEvents() throws SecurityException, NoSuchMethodException, IOException
-    {
-        Method method = EventAsyncApi.class.getMethod("listEvents");
-        GeneratedHttpRequest request = processor.createRequest(method);
+public class EventAsyncApiTest extends BaseAbiquoAsyncApiTest<EventAsyncApi> {
+   public void testListEvents() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = EventAsyncApi.class.getMethod("listEvents");
+      GeneratedHttpRequest request = processor.createRequest(method);
 
-        assertRequestLineEquals(request, "GET http://localhost/api/events HTTP/1.1");
-        assertNonPayloadHeadersEqual(request, "Accept: " + EventsDto.BASE_MEDIA_TYPE + "\n");
-        assertPayloadEquals(request, null, null, false);
+      assertRequestLineEquals(request, "GET http://localhost/api/events HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Accept: " + EventsDto.BASE_MEDIA_TYPE + "\n");
+      assertPayloadEquals(request, null, null, false);
 
-        assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
-        assertSaxResponseParserClassEquals(method, null);
-        assertExceptionParserClassEquals(method, null);
+      assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
 
-        checkFilters(request);
-    }
+      checkFilters(request);
+   }
 
-    @Override
-    protected TypeLiteral<RestAnnotationProcessor<EventAsyncApi>> createTypeLiteral()
-    {
-        return new TypeLiteral<RestAnnotationProcessor<EventAsyncApi>>()
-        {
-        };
-    }
+   @Override
+   protected TypeLiteral<RestAnnotationProcessor<EventAsyncApi>> createTypeLiteral() {
+      return new TypeLiteral<RestAnnotationProcessor<EventAsyncApi>>() {
+      };
+   }
 }

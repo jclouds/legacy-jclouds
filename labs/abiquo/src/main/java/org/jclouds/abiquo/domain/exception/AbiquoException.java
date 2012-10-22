@@ -38,91 +38,80 @@ import com.google.common.collect.Lists;
  * @author Francesc Montserrat
  * @author Ignasi Barrera
  */
-public class AbiquoException extends RuntimeException
-{
-    /** Serial UID. */
-    private static final long serialVersionUID = 1L;
+public class AbiquoException extends RuntimeException {
+   /** Serial UID. */
+   private static final long serialVersionUID = 1L;
 
-    /** The HTTP statuc. */
-    private Status httpStatus;
+   /** The HTTP statuc. */
+   private Status httpStatus;
 
-    /** The errors. */
-    private ErrorsDto errors;
+   /** The errors. */
+   private ErrorsDto errors;
 
-    public AbiquoException(final Status httpStatus, final ErrorsDto errors)
-    {
-        super();
-        this.httpStatus = httpStatus;
-        this.errors = errors;
-    }
+   public AbiquoException(final Status httpStatus, final ErrorsDto errors) {
+      super();
+      this.httpStatus = httpStatus;
+      this.errors = errors;
+   }
 
-    /**
-     * Check if there is an error with the given code.
-     */
-    public boolean hasError(final String code)
-    {
-        return any(errors.getCollection(), code(code));
-    }
+   /**
+    * Check if there is an error with the given code.
+    */
+   public boolean hasError(final String code) {
+      return any(errors.getCollection(), code(code));
+   }
 
-    /**
-     * Find the first error with the given code.
-     */
-    public ErrorDto findError(final String code)
-    {
-        return find(errors.getCollection(), code(code), null);
-    }
+   /**
+    * Find the first error with the given code.
+    */
+   public ErrorDto findError(final String code) {
+      return find(errors.getCollection(), code(code), null);
+   }
 
-    /**
-     * Find all errors with the given code.
-     */
-    public List<ErrorDto> findErrors(final String code)
-    {
-        return Lists.newLinkedList(filter(errors.getCollection(), code(code)));
-    }
+   /**
+    * Find all errors with the given code.
+    */
+   public List<ErrorDto> findErrors(final String code) {
+      return Lists.newLinkedList(filter(errors.getCollection(), code(code)));
+   }
 
-    /**
-     * Get the number of errors.
-     */
-    public int numErrors()
-    {
-        return errors.getCollection().size();
-    }
+   /**
+    * Get the number of errors.
+    */
+   public int numErrors() {
+      return errors.getCollection().size();
+   }
 
-    /**
-     * Get the list of all errors.
-     */
-    public List<ErrorDto> getErrors()
-    {
-        return errors.getCollection();
-    }
+   /**
+    * Get the list of all errors.
+    */
+   public List<ErrorDto> getErrors() {
+      return errors.getCollection();
+   }
 
-    /**
-     * Get the HTTP status code.
-     */
-    public int getHttpStatusCode()
-    {
-        return httpStatus.getStatusCode();
-    }
+   /**
+    * Get the HTTP status code.
+    */
+   public int getHttpStatusCode() {
+      return httpStatus.getStatusCode();
+   }
 
-    /**
-     * Get the HTTP status name.
-     */
-    public String getHttpStatusName()
-    {
-        return httpStatus.getReasonPhrase();
-    }
+   /**
+    * Get the HTTP status name.
+    */
+   public String getHttpStatusName() {
+      return httpStatus.getReasonPhrase();
+   }
 
-    /**
-     * Get the HTTP status.
-     */
-    public Status getHttpStatus()
-    {
-        return httpStatus;
-    }
+   /**
+    * Get the HTTP status.
+    */
+   public Status getHttpStatus() {
+      return httpStatus;
+   }
 
-    @Override
-    public String getMessage()
-    {
-        return errors.toString();
-    }
+   @Override
+   public String getMessage() {
+      return errors.toString();
+   }
 }

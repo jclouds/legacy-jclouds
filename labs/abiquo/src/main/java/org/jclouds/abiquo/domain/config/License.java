@@ -19,7 +19,6 @@
 
 package org.jclouds.abiquo.domain.config;
 
-
 import org.jclouds.abiquo.AbiquoAsyncApi;
 import org.jclouds.abiquo.AbiquoApi;
 import org.jclouds.abiquo.domain.DomainWrapper;
@@ -35,108 +34,90 @@ import com.abiquo.server.core.config.LicenseDto;
  * @author Francesc Montserrat
  */
 @EnterpriseEdition
-public class License extends DomainWrapper<LicenseDto>
-{
-    /**
-     * Constructor to be used only by the builder.
-     */
-    protected License(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final LicenseDto target)
-    {
-        super(context, target);
-    }
+public class License extends DomainWrapper<LicenseDto> {
+   /**
+    * Constructor to be used only by the builder.
+    */
+   protected License(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final LicenseDto target) {
+      super(context, target);
+   }
 
-    // Domain operations
+   // Domain operations
 
-    public void remove()
-    {
-        context.getApi().getConfigApi().removeLicense(target);
-        target = null;
-    }
+   public void remove() {
+      context.getApi().getConfigApi().removeLicense(target);
+      target = null;
+   }
 
-    public void add()
-    {
-        target = context.getApi().getConfigApi().addLicense(target);
-    }
+   public void add() {
+      target = context.getApi().getConfigApi().addLicense(target);
+   }
 
-    // Builder
+   // Builder
 
-    public static Builder builder(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final String code)
-    {
-        return new Builder(context, code);
-    }
+   public static Builder builder(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final String code) {
+      return new Builder(context, code);
+   }
 
-    public static class Builder
-    {
-        private RestContext<AbiquoApi, AbiquoAsyncApi> context;
+   public static class Builder {
+      private RestContext<AbiquoApi, AbiquoAsyncApi> context;
 
-        private String code;
+      private String code;
 
-        public Builder(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final String code)
-        {
-            super();
-            this.context = context;
-            this.code = code;
-        }
+      public Builder(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final String code) {
+         super();
+         this.context = context;
+         this.code = code;
+      }
 
-        public Builder code(final String code)
-        {
-            this.code = code;
-            return this;
-        }
+      public Builder code(final String code) {
+         this.code = code;
+         return this;
+      }
 
-        public License build()
-        {
-            LicenseDto dto = new LicenseDto();
-            dto.setCode(code);
+      public License build() {
+         LicenseDto dto = new LicenseDto();
+         dto.setCode(code);
 
-            License license = new License(context, dto);
-            return license;
-        }
+         License license = new License(context, dto);
+         return license;
+      }
 
-        public static Builder fromLicense(final License in)
-        {
-            return License.builder(in.context, in.getCode());
-        }
-    }
+      public static Builder fromLicense(final License in) {
+         return License.builder(in.context, in.getCode());
+      }
+   }
 
-    // Delegate methods
+   // Delegate methods
 
-    public String getCode()
-    {
-        return target.getCode();
-    }
+   public String getCode() {
+      return target.getCode();
+   }
 
-    public String getCustomerId()
-    {
-        return target.getCustomerid();
-    }
+   public String getCustomerId() {
+      return target.getCustomerid();
+   }
 
-    public String getEnabledIp()
-    {
-        return target.getEnabledip();
-    }
+   public String getEnabledIp() {
+      return target.getEnabledip();
+   }
 
-    public String getExpiration()
-    {
-        return target.getExpiration();
-    }
+   public String getExpiration() {
+      return target.getExpiration();
+   }
 
-    public Integer getId()
-    {
-        return target.getId();
-    }
+   public Integer getId() {
+      return target.getId();
+   }
 
-    public Integer getNumCores()
-    {
-        return target.getNumcores();
-    }
+   public Integer getNumCores() {
+      return target.getNumcores();
+   }
 
-    @Override
-    public String toString()
-    {
-        return "License [id=" + getId() + ", code=" + getCode() + ", customerId=" + getCustomerId()
-            + ", enabledIp=" + getEnabledIp() + ", expiration=" + getExpiration() + ", numCores="
-            + getNumCores() + "]";
-    }
+   @Override
+   public String toString() {
+      return "License [id=" + getId() + ", code=" + getCode() + ", customerId=" + getCustomerId() + ", enabledIp="
+            + getEnabledIp() + ", expiration=" + getExpiration() + ", numCores=" + getNumCores() + "]";
+   }
 
 }

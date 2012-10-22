@@ -34,85 +34,66 @@ import com.google.common.base.Predicate;
  * 
  * @author Francesc Montserrat
  */
-public class VirtualMachineTemplatePredicates
-{
-    public static Predicate<VirtualMachineTemplate> id(final Integer... ids)
-    {
-        checkNotNull(ids, "ids must be defined");
+public class VirtualMachineTemplatePredicates {
+   public static Predicate<VirtualMachineTemplate> id(final Integer... ids) {
+      checkNotNull(ids, "ids must be defined");
 
-        return new Predicate<VirtualMachineTemplate>()
-        {
-            @Override
-            public boolean apply(final VirtualMachineTemplate template)
-            {
-                return Arrays.asList(ids).contains(template.getId());
-            }
-        };
-    }
+      return new Predicate<VirtualMachineTemplate>() {
+         @Override
+         public boolean apply(final VirtualMachineTemplate template) {
+            return Arrays.asList(ids).contains(template.getId());
+         }
+      };
+   }
 
-    public static Predicate<VirtualMachineTemplate> name(final String... names)
-    {
-        checkNotNull(names, "names must be defined");
+   public static Predicate<VirtualMachineTemplate> name(final String... names) {
+      checkNotNull(names, "names must be defined");
 
-        return new Predicate<VirtualMachineTemplate>()
-        {
-            @Override
-            public boolean apply(final VirtualMachineTemplate template)
-            {
-                return Arrays.asList(names).contains(template.getName());
-            }
-        };
-    }
+      return new Predicate<VirtualMachineTemplate>() {
+         @Override
+         public boolean apply(final VirtualMachineTemplate template) {
+            return Arrays.asList(names).contains(template.getName());
+         }
+      };
+   }
 
-    public static Predicate<VirtualMachineTemplate> diskFormat(final DiskFormatType... formats)
-    {
-        checkNotNull(formats, "formats must be defined");
+   public static Predicate<VirtualMachineTemplate> diskFormat(final DiskFormatType... formats) {
+      checkNotNull(formats, "formats must be defined");
 
-        return new Predicate<VirtualMachineTemplate>()
-        {
-            @Override
-            public boolean apply(final VirtualMachineTemplate template)
-            {
-                return Arrays.asList(formats).contains(template.getDiskFormatType());
-            }
-        };
-    }
+      return new Predicate<VirtualMachineTemplate>() {
+         @Override
+         public boolean apply(final VirtualMachineTemplate template) {
+            return Arrays.asList(formats).contains(template.getDiskFormatType());
+         }
+      };
+   }
 
-    public static Predicate<VirtualMachineTemplate> compatible(final HypervisorType type)
-    {
-        checkNotNull(type, "type must be defined");
+   public static Predicate<VirtualMachineTemplate> compatible(final HypervisorType type) {
+      checkNotNull(type, "type must be defined");
 
-        return new Predicate<VirtualMachineTemplate>()
-        {
-            @Override
-            public boolean apply(final VirtualMachineTemplate template)
-            {
-                return type.isCompatible(template.getDiskFormatType());
-            }
-        };
-    }
+      return new Predicate<VirtualMachineTemplate>() {
+         @Override
+         public boolean apply(final VirtualMachineTemplate template) {
+            return type.isCompatible(template.getDiskFormatType());
+         }
+      };
+   }
 
-    public static Predicate<VirtualMachineTemplate> isShared()
-    {
-        return new Predicate<VirtualMachineTemplate>()
-        {
-            @Override
-            public boolean apply(final VirtualMachineTemplate input)
-            {
-                return input.unwrap().isShared();
-            }
-        };
-    }
+   public static Predicate<VirtualMachineTemplate> isShared() {
+      return new Predicate<VirtualMachineTemplate>() {
+         @Override
+         public boolean apply(final VirtualMachineTemplate input) {
+            return input.unwrap().isShared();
+         }
+      };
+   }
 
-    public static Predicate<VirtualMachineTemplate> isInstance()
-    {
-        return new Predicate<VirtualMachineTemplate>()
-        {
-            @Override
-            public boolean apply(final VirtualMachineTemplate input)
-            {
-                return input.unwrap().searchLink("master") != null;
-            }
-        };
-    }
+   public static Predicate<VirtualMachineTemplate> isInstance() {
+      return new Predicate<VirtualMachineTemplate>() {
+         @Override
+         public boolean apply(final VirtualMachineTemplate input) {
+            return input.unwrap().searchLink("master") != null;
+         }
+      };
+   }
 }

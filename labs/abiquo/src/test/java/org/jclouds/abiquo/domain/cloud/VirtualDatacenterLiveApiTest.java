@@ -49,161 +49,133 @@ import com.abiquo.server.core.cloud.VirtualDatacenterDto;
  * @author Francesc Montserrat
  */
 @Test(groups = "api", testName = "VirtualDatacenterLiveApiTest")
-public class VirtualDatacenterLiveApiTest extends BaseAbiquoApiLiveApiTest
-{
-    private VirtualMachineTemplate template;
+public class VirtualDatacenterLiveApiTest extends BaseAbiquoApiLiveApiTest {
+   private VirtualMachineTemplate template;
 
-    public void testUpdate()
-    {
-        env.virtualDatacenter.setName("Aloha updated");
-        env.virtualDatacenter.update();
+   public void testUpdate() {
+      env.virtualDatacenter.setName("Aloha updated");
+      env.virtualDatacenter.update();
 
-        // Recover the updated virtual datacenter
-        VirtualDatacenterDto updated =
-            env.cloudApi.getVirtualDatacenter(env.virtualDatacenter.getId());
+      // Recover the updated virtual datacenter
+      VirtualDatacenterDto updated = env.cloudApi.getVirtualDatacenter(env.virtualDatacenter.getId());
 
-        assertEquals(updated.getName(), "Aloha updated");
-    }
+      assertEquals(updated.getName(), "Aloha updated");
+   }
 
-    public void testCreateRepeated()
-    {
-        PrivateNetwork newnet =
-            PrivateNetwork.builder(env.context.getApiContext()).name("Newnet").gateway("10.0.0.1")
-                .address("10.0.0.0").mask(24).build();
+   public void testCreateRepeated() {
+      PrivateNetwork newnet = PrivateNetwork.builder(env.context.getApiContext()).name("Newnet").gateway("10.0.0.1")
+            .address("10.0.0.0").mask(24).build();
 
-        VirtualDatacenter repeated =
-            Builder.fromVirtualDatacenter(env.virtualDatacenter).network(newnet).build();
+      VirtualDatacenter repeated = Builder.fromVirtualDatacenter(env.virtualDatacenter).network(newnet).build();
 
-        repeated.save();
+      repeated.save();
 
-        List<VirtualDatacenterDto> virtualDatacenters =
-            env.cloudApi.listVirtualDatacenters(VirtualDatacenterOptions.builder().build())
-                .getCollection();
+      List<VirtualDatacenterDto> virtualDatacenters = env.cloudApi.listVirtualDatacenters(
+            VirtualDatacenterOptions.builder().build()).getCollection();
 
-        assertEquals(virtualDatacenters.size(), 2);
-        assertEquals(virtualDatacenters.get(0).getName(), virtualDatacenters.get(1).getName());
-        repeated.delete();
-    }
+      assertEquals(virtualDatacenters.size(), 2);
+      assertEquals(virtualDatacenters.get(0).getName(), virtualDatacenters.get(1).getName());
+      repeated.delete();
+   }
 
-    public void testCreateFromEnterprise()
-    {
-        Enterprise enterprise =
-            env.enterpriseAdminContext.getAdministrationService().getCurrentUser().getEnterprise();
-        assertNotNull(enterprise);
+   public void testCreateFromEnterprise() {
+      Enterprise enterprise = env.enterpriseAdminContext.getAdministrationService().getCurrentUser().getEnterprise();
+      assertNotNull(enterprise);
 
-        List<Datacenter> datacenters = enterprise.listAllowedDatacenters();
-        assertNotNull(datacenters);
-        assertTrue(size(datacenters) > 0);
+      List<Datacenter> datacenters = enterprise.listAllowedDatacenters();
+      assertNotNull(datacenters);
+      assertTrue(size(datacenters) > 0);
 
-        Datacenter datacenter = datacenters.get(0);
+      Datacenter datacenter = datacenters.get(0);
 
-        List<HypervisorType> hypervisors = datacenter.listAvailableHypervisors();
-        assertNotNull(datacenters);
-        assertTrue(size(datacenters) > 0);
+      List<HypervisorType> hypervisors = datacenter.listAvailableHypervisors();
+      assertNotNull(datacenters);
+      assertTrue(size(datacenters) > 0);
 
-        HypervisorType hypervisor = hypervisors.get(0);
+      HypervisorType hypervisor = hypervisors.get(0);
 
-        PrivateNetwork network =
-            PrivateNetwork.builder(env.enterpriseAdminContext.getApiContext())
-                .name("DefaultNetwork").gateway("192.168.1.1").address("192.168.1.0").mask(24)
-                .build();
+      PrivateNetwork network = PrivateNetwork.builder(env.enterpriseAdminContext.getApiContext())
+            .name("DefaultNetwork").gateway("192.168.1.1").address("192.168.1.0").mask(24).build();
 
-        VirtualDatacenter virtualDatacenter =
-            VirtualDatacenter
-                .builder(env.enterpriseAdminContext.getApiContext(), datacenters.get(0), enterprise)
-                .name(PREFIX + "Plain Virtual Aloha from ENT").cpuCountLimits(18, 20)
-                .hdLimitsInMb(279172872, 279172872).publicIpsLimits(2, 2).ramLimits(19456, 20480)
-                .storageLimits(289910292, 322122547).vlansLimits(1, 2).hypervisorType(hypervisor)
-                .network(network).build();
+      VirtualDatacenter virtualDatacenter = VirtualDatacenter
+            .builder(env.enterpriseAdminContext.getApiContext(), datacenters.get(0), enterprise)
+            .name(PREFIX + "Plain Virtual Aloha from ENT").cpuCountLimits(18, 20).hdLimitsInMb(279172872, 279172872)
+            .publicIpsLimits(2, 2).ramLimits(19456, 20480).storageLimits(289910292, 322122547).vlansLimits(1, 2)
+            .hypervisorType(hypervisor).network(network).build();
 
-        virtualDatacenter.save();
-        assertNotNull(virtualDatacenter.getId());
+      virtualDatacenter.save();
+      assertNotNull(virtualDatacenter.getId());
 
-        virtualDatacenter.delete();
-    }
+      virtualDatacenter.delete();
+   }
 
-    public void testCreateFromVirtualDatacenter()
-    {
-        HypervisorType hypervisor = env.virtualDatacenter.getHypervisorType();
+   public void testCreateFromVirtualDatacenter() {
+      HypervisorType hypervisor = env.virtualDatacenter.getHypervisorType();
 
-        Enterprise enterprise = env.user.getEnterprise();
-        assertNotNull(enterprise);
+      Enterprise enterprise = env.user.getEnterprise();
+      assertNotNull(enterprise);
 
-        Datacenter datacenter = env.virtualDatacenter.getDatacenter();
-        assertNotNull(datacenter);
+      Datacenter datacenter = env.virtualDatacenter.getDatacenter();
+      assertNotNull(datacenter);
 
-        PrivateNetwork network =
-            PrivateNetwork.builder(env.plainUserContext.getApiContext()).name("DefaultNetwork")
-                .gateway("192.168.1.1").address("192.168.1.0").mask(24).build();
+      PrivateNetwork network = PrivateNetwork.builder(env.plainUserContext.getApiContext()).name("DefaultNetwork")
+            .gateway("192.168.1.1").address("192.168.1.0").mask(24).build();
 
-        VirtualDatacenter virtualDatacenter =
-            VirtualDatacenter.builder(env.context.getApiContext(), datacenter, enterprise)
-                .name(PREFIX + "Plain Virtual Aloha from VDC").cpuCountLimits(18, 20)
-                .hdLimitsInMb(279172872, 279172872).publicIpsLimits(2, 2).ramLimits(19456, 20480)
-                .storageLimits(289910292, 322122547).vlansLimits(1, 2).hypervisorType(hypervisor)
-                .network(network).build();
+      VirtualDatacenter virtualDatacenter = VirtualDatacenter
+            .builder(env.context.getApiContext(), datacenter, enterprise).name(PREFIX + "Plain Virtual Aloha from VDC")
+            .cpuCountLimits(18, 20).hdLimitsInMb(279172872, 279172872).publicIpsLimits(2, 2).ramLimits(19456, 20480)
+            .storageLimits(289910292, 322122547).vlansLimits(1, 2).hypervisorType(hypervisor).network(network).build();
 
-        virtualDatacenter.save();
-        assertNotNull(virtualDatacenter.getId());
+      virtualDatacenter.save();
+      assertNotNull(virtualDatacenter.getId());
 
-        virtualDatacenter.delete();
-    }
+      virtualDatacenter.delete();
+   }
 
-    public void testPurchaseIp()
-    {
-        PublicIp publicIp = env.virtualDatacenter.listAvailablePublicIps().get(0);
-        assertNotNull(publicIp);
-        env.virtualDatacenter.purchasePublicIp(publicIp);
+   public void testPurchaseIp() {
+      PublicIp publicIp = env.virtualDatacenter.listAvailablePublicIps().get(0);
+      assertNotNull(publicIp);
+      env.virtualDatacenter.purchasePublicIp(publicIp);
 
-        PublicIp apiIp =
-            env.virtualDatacenter.findPurchasedPublicIp(IpPredicates.<PublicIp> address(publicIp
-                .getIp()));
-        assertNotNull(apiIp);
+      PublicIp apiIp = env.virtualDatacenter.findPurchasedPublicIp(IpPredicates.<PublicIp> address(publicIp.getIp()));
+      assertNotNull(apiIp);
 
-        env.virtualDatacenter.releaseePublicIp(apiIp);
-        apiIp =
-            env.virtualDatacenter.findPurchasedPublicIp(IpPredicates.<PublicIp> address(publicIp
-                .getIp()));
-        assertNull(apiIp);
-    }
+      env.virtualDatacenter.releaseePublicIp(apiIp);
+      apiIp = env.virtualDatacenter.findPurchasedPublicIp(IpPredicates.<PublicIp> address(publicIp.getIp()));
+      assertNull(apiIp);
+   }
 
-    public void testGetDefaultNetwork()
-    {
-        PrivateNetwork network = env.virtualDatacenter.getDefaultNetwork().toPrivateNetwork();
+   public void testGetDefaultNetwork() {
+      PrivateNetwork network = env.virtualDatacenter.getDefaultNetwork().toPrivateNetwork();
 
-        assertNotNull(network);
-        assertEquals(network.getName(), env.privateNetwork.getName());
-        assertEquals(network.getType(), env.privateNetwork.getType());
-    }
+      assertNotNull(network);
+      assertEquals(network.getName(), env.privateNetwork.getName());
+      assertEquals(network.getType(), env.privateNetwork.getType());
+   }
 
-    public void testGetAvailableTemplates()
-    {
-        List<VirtualMachineTemplate> templates = env.virtualDatacenter.listAvailableTemplates();
-        assertNotNull(templates);
-        assertFalse(templates.isEmpty());
+   public void testGetAvailableTemplates() {
+      List<VirtualMachineTemplate> templates = env.virtualDatacenter.listAvailableTemplates();
+      assertNotNull(templates);
+      assertFalse(templates.isEmpty());
 
-        template = templates.get(0);
-    }
+      template = templates.get(0);
+   }
 
-    @Test(dependsOnMethods = "testGetAvailableTemplates")
-    public void testFindAvailableTemplate()
-    {
-        VirtualMachineTemplate templateFound =
-            env.virtualDatacenter.findAvailableTemplate(VirtualMachineTemplatePredicates
-                .id(template.getId()));
+   @Test(dependsOnMethods = "testGetAvailableTemplates")
+   public void testFindAvailableTemplate() {
+      VirtualMachineTemplate templateFound = env.virtualDatacenter
+            .findAvailableTemplate(VirtualMachineTemplatePredicates.id(template.getId()));
 
-        assertNotNull(template);
-        assertNotNull(templateFound);
-        assertEquals(templateFound.getId(), template.getId());
-    }
+      assertNotNull(template);
+      assertNotNull(templateFound);
+      assertEquals(templateFound.getId(), template.getId());
+   }
 
-    @Test(dependsOnMethods = "testGetAvailableTemplates")
-    public void testGetAvailableTemplate()
-    {
-        VirtualMachineTemplate templateFound =
-            env.virtualDatacenter.getAvailableTemplate(template.getId());
-        assertNotNull(templateFound);
-        assertEquals(templateFound.getId(), template.getId());
-    }
+   @Test(dependsOnMethods = "testGetAvailableTemplates")
+   public void testGetAvailableTemplate() {
+      VirtualMachineTemplate templateFound = env.virtualDatacenter.getAvailableTemplate(template.getId());
+      assertNotNull(templateFound);
+      assertEquals(templateFound.getId(), template.getId());
+   }
 
 }
