@@ -37,82 +37,64 @@ import com.google.common.base.Function;
  * @author Sergi Castro
  */
 @Test(groups = "unit", testName = "ConversionStatusMonitorTest")
-public class ConversionStatusMonitorTest
-{
+public class ConversionStatusMonitorTest {
 
-    @Test(expectedExceptions = NullPointerException.class)
-    public void testInvalidNullArgument()
-    {
-        Function<Conversion, MonitorStatus> function = new ConversionStatusMonitor();
-        function.apply(null);
-    }
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testInvalidNullArgument() {
+      Function<Conversion, MonitorStatus> function = new ConversionStatusMonitor();
+      function.apply(null);
+   }
 
-    public void testReturnDone()
-    {
-        ConversionState[] states = {ConversionState.FINISHED};
+   public void testReturnDone() {
+      ConversionState[] states = { ConversionState.FINISHED };
 
-        checkStatesReturn(new MockConversion(), new ConversionStatusMonitor(), states,
-            MonitorStatus.DONE);
-    }
+      checkStatesReturn(new MockConversion(), new ConversionStatusMonitor(), states, MonitorStatus.DONE);
+   }
 
-    public void testReturnFail()
-    {
-        ConversionState[] states = {ConversionState.FAILED};
+   public void testReturnFail() {
+      ConversionState[] states = { ConversionState.FAILED };
 
-        checkStatesReturn(new MockConversion(), new ConversionStatusMonitor(), states,
-            MonitorStatus.FAILED);
-    }
+      checkStatesReturn(new MockConversion(), new ConversionStatusMonitor(), states, MonitorStatus.FAILED);
+   }
 
-    public void testReturnContinue()
-    {
-        ConversionState[] states = {ConversionState.ENQUEUED};
+   public void testReturnContinue() {
+      ConversionState[] states = { ConversionState.ENQUEUED };
 
-        checkStatesReturn(new MockConversion(), new ConversionStatusMonitor(), states,
-            MonitorStatus.CONTINUE);
+      checkStatesReturn(new MockConversion(), new ConversionStatusMonitor(), states, MonitorStatus.CONTINUE);
 
-        checkStatesReturn(new MockConversionFailing(), new ConversionStatusMonitor(), states,
-            MonitorStatus.CONTINUE);
-    }
+      checkStatesReturn(new MockConversionFailing(), new ConversionStatusMonitor(), states, MonitorStatus.CONTINUE);
+   }
 
-    private void checkStatesReturn(final MockConversion task,
-        final Function<Conversion, MonitorStatus> function, final ConversionState[] states,
-        final MonitorStatus expectedStatus)
-    {
-        for (ConversionState state : states)
-        {
-            task.setState(state);
-            assertEquals(function.apply(task), expectedStatus);
-        }
-    }
+   private void checkStatesReturn(final MockConversion task, final Function<Conversion, MonitorStatus> function,
+         final ConversionState[] states, final MonitorStatus expectedStatus) {
+      for (ConversionState state : states) {
+         task.setState(state);
+         assertEquals(function.apply(task), expectedStatus);
+      }
+   }
 
-    private static class MockConversion extends Conversion
-    {
-        @SuppressWarnings("unchecked")
-        public MockConversion()
-        {
-            super(EasyMock.createMock(RestContext.class), new ConversionDto());
-        }
+   private static class MockConversion extends Conversion {
+      @SuppressWarnings("unchecked")
+      public MockConversion() {
+         super(EasyMock.createMock(RestContext.class), new ConversionDto());
+      }
 
-        @Override
-        public void refresh()
-        {
-            // Do not perform any API call
-        }
+      @Override
+      public void refresh() {
+         // Do not perform any API call
+      }
 
-        public void setState(final ConversionState state)
-        {
-            target.setState(state);
-        }
-    }
+      public void setState(final ConversionState state) {
+         target.setState(state);
+      }
+   }
 
-    private static class MockConversionFailing extends MockConversion
-    {
-        @Override
-        public void refresh()
-        {
-            throw new RuntimeException("This mock class always fails to refresh");
-        }
+   private static class MockConversionFailing extends MockConversion {
+      @Override
+      public void refresh() {
+         throw new RuntimeException("This mock class always fails to refresh");
+      }
 
-    }
+   }
 
 }

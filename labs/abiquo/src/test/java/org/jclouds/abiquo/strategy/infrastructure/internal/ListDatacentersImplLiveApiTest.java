@@ -36,37 +36,30 @@ import org.testng.annotations.Test;
  * @author Ignasi Barrera
  */
 @Test(groups = "api", testName = "ListDatacentersImplLiveApiTest")
-public class ListDatacentersImplLiveApiTest extends BaseAbiquoStrategyLiveApiTest
-{
-    private ListDatacentersImpl strategy;
+public class ListDatacentersImplLiveApiTest extends BaseAbiquoStrategyLiveApiTest {
+   private ListDatacentersImpl strategy;
 
-    @Override
-    @BeforeClass(groups = "api")
-    protected void setupStrategy()
-    {
-        this.strategy = env.context.getUtils().getInjector().getInstance(ListDatacentersImpl.class);
-    }
+   @Override
+   @BeforeClass(groups = "api")
+   protected void setupStrategy() {
+      this.strategy = env.context.getUtils().getInjector().getInstance(ListDatacentersImpl.class);
+   }
 
-    public void testExecute()
-    {
-        Iterable<Datacenter> datacenters = strategy.execute();
-        assertNotNull(datacenters);
-        assertTrue(size(datacenters) > 0);
-    }
+   public void testExecute() {
+      Iterable<Datacenter> datacenters = strategy.execute();
+      assertNotNull(datacenters);
+      assertTrue(size(datacenters) > 0);
+   }
 
-    public void testExecutePredicateWithoutResults()
-    {
-        Iterable<Datacenter> datacenters =
-            strategy.execute(DatacenterPredicates.name("UNEXISTING"));
-        assertNotNull(datacenters);
-        assertEquals(size(datacenters), 0);
-    }
+   public void testExecutePredicateWithoutResults() {
+      Iterable<Datacenter> datacenters = strategy.execute(DatacenterPredicates.name("UNEXISTING"));
+      assertNotNull(datacenters);
+      assertEquals(size(datacenters), 0);
+   }
 
-    public void testExecutePredicateWithResults()
-    {
-        Iterable<Datacenter> datacenters =
-            strategy.execute(DatacenterPredicates.name(env.datacenter.getName()));
-        assertNotNull(datacenters);
-        assertEquals(size(datacenters), 1);
-    }
+   public void testExecutePredicateWithResults() {
+      Iterable<Datacenter> datacenters = strategy.execute(DatacenterPredicates.name(env.datacenter.getName()));
+      assertNotNull(datacenters);
+      assertEquals(size(datacenters), 1);
+   }
 }

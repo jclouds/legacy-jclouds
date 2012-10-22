@@ -33,77 +33,63 @@ import com.google.common.base.Function;
  * @author Ignasi Barrera
  */
 @Test(groups = "unit", testName = "BaseMonitoringServiceTest")
-public class BaseMonitoringServiceTest extends BaseInjectionTest
-{
-    public void testAllPropertiesInjected()
-    {
-        BaseMonitoringService service =
-            (BaseMonitoringService) injector.getInstance(MonitoringService.class);
+public class BaseMonitoringServiceTest extends BaseInjectionTest {
+   public void testAllPropertiesInjected() {
+      BaseMonitoringService service = (BaseMonitoringService) injector.getInstance(MonitoringService.class);
 
-        assertNotNull(service.context);
-        assertNotNull(service.scheduler);
-        assertNotNull(service.pollingDelay);
-        assertNotNull(service.eventBus);
-    }
+      assertNotNull(service.context);
+      assertNotNull(service.scheduler);
+      assertNotNull(service.pollingDelay);
+      assertNotNull(service.eventBus);
+   }
 
-    @Test(expectedExceptions = NullPointerException.class)
-    public void testAwaitCompletionWithNullFunction()
-    {
-        monitoringService().awaitCompletion(null, new Object[] {});
-    }
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testAwaitCompletionWithNullFunction() {
+      monitoringService().awaitCompletion(null, new Object[] {});
+   }
 
-    public void testAwaitCompletionWithoutTasks()
-    {
-        BaseMonitoringService service = monitoringService();
+   public void testAwaitCompletionWithoutTasks() {
+      BaseMonitoringService service = monitoringService();
 
-        service.awaitCompletion(new MockMonitor());
-        service.awaitCompletion(new MockMonitor(), (Object[]) null);
-        service.awaitCompletion(new MockMonitor(), new Object[] {});
-    }
+      service.awaitCompletion(new MockMonitor());
+      service.awaitCompletion(new MockMonitor(), (Object[]) null);
+      service.awaitCompletion(new MockMonitor(), new Object[] {});
+   }
 
-    @Test(expectedExceptions = NullPointerException.class)
-    public void testMonitorWithNullCompleteCondition()
-    {
-        monitoringService().monitor(null, (Object[]) null);
-    }
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testMonitorWithNullCompleteCondition() {
+      monitoringService().monitor(null, (Object[]) null);
+   }
 
-    public void testMonitorWithoutTasks()
-    {
-        monitoringService().monitor(new MockMonitor());
-    }
+   public void testMonitorWithoutTasks() {
+      monitoringService().monitor(new MockMonitor());
+   }
 
-    public void testDelegateToVirtualMachineMonitor()
-    {
-        assertNotNull(monitoringService().getVirtualMachineMonitor());
-    }
+   public void testDelegateToVirtualMachineMonitor() {
+      assertNotNull(monitoringService().getVirtualMachineMonitor());
+   }
 
-    public void testDelegateToVirtualApplianceMonitor()
-    {
-        assertNotNull(monitoringService().getVirtualApplianceMonitor());
-    }
+   public void testDelegateToVirtualApplianceMonitor() {
+      assertNotNull(monitoringService().getVirtualApplianceMonitor());
+   }
 
-    public void testDelegateToAsyncTaskMonitor()
-    {
-        assertNotNull(monitoringService().getAsyncTaskMonitor());
-    }
+   public void testDelegateToAsyncTaskMonitor() {
+      assertNotNull(monitoringService().getAsyncTaskMonitor());
+   }
 
-    public void testDelegateToConversioMonitor()
-    {
-        assertNotNull(monitoringService().getConversionMonitor());
-    }
+   public void testDelegateToConversioMonitor() {
+      assertNotNull(monitoringService().getConversionMonitor());
+   }
 
-    private BaseMonitoringService monitoringService()
-    {
-        return injector.getInstance(BaseMonitoringService.class);
-    }
+   private BaseMonitoringService monitoringService() {
+      return injector.getInstance(BaseMonitoringService.class);
+   }
 
-    private static class MockMonitor implements Function<Object, MonitorStatus>
-    {
-        @Override
-        public MonitorStatus apply(final Object object)
-        {
-            return MonitorStatus.DONE;
-        }
-    }
+   private static class MockMonitor implements Function<Object, MonitorStatus> {
+      @Override
+      public MonitorStatus apply(final Object object) {
+         return MonitorStatus.DONE;
+      }
+   }
 
 }

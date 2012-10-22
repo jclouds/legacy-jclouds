@@ -42,48 +42,40 @@ import com.google.inject.TypeLiteral;
  * @author Ignasi Barrera
  * @author Francesc Montserrat
  */
-public class ExternalIp extends AbstractPublicIp<ExternalIpDto, ExternalNetwork>
-{
-    /**
-     * Constructor to be used only by the builder.
-     */
-    protected ExternalIp(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-        final ExternalIpDto target)
-    {
-        super(context, target);
-    }
+public class ExternalIp extends AbstractPublicIp<ExternalIpDto, ExternalNetwork> {
+   /**
+    * Constructor to be used only by the builder.
+    */
+   protected ExternalIp(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final ExternalIpDto target) {
+      super(context, target);
+   }
 
-    // Domain operations
+   // Domain operations
 
-    @Override
-    public ExternalNetwork getNetwork()
-    {
-        RESTLink link =
-            checkNotNull(target.searchLink(ParentLinkName.EXTERNAL_NETWORK),
-                ValidationErrors.MISSING_REQUIRED_LINK + " " + ParentLinkName.EXTERNAL_NETWORK);
+   @Override
+   public ExternalNetwork getNetwork() {
+      RESTLink link = checkNotNull(target.searchLink(ParentLinkName.EXTERNAL_NETWORK),
+            ValidationErrors.MISSING_REQUIRED_LINK + " " + ParentLinkName.EXTERNAL_NETWORK);
 
-        ExtendedUtils utils = (ExtendedUtils) context.getUtils();
-        HttpResponse response = utils.getAbiquoHttpClient().get(link);
+      ExtendedUtils utils = (ExtendedUtils) context.getUtils();
+      HttpResponse response = utils.getAbiquoHttpClient().get(link);
 
-        ParseXMLWithJAXB<VLANNetworkDto> parser =
-            new ParseXMLWithJAXB<VLANNetworkDto>(utils.getXml(),
-                TypeLiteral.get(VLANNetworkDto.class));
+      ParseXMLWithJAXB<VLANNetworkDto> parser = new ParseXMLWithJAXB<VLANNetworkDto>(utils.getXml(),
+            TypeLiteral.get(VLANNetworkDto.class));
 
-        return wrap(context, ExternalNetwork.class, parser.apply(response));
-    }
+      return wrap(context, ExternalNetwork.class, parser.apply(response));
+   }
 
-    @Override
-    public NetworkType getNetworkType()
-    {
-        return NetworkType.EXTERNAL;
-    }
+   @Override
+   public NetworkType getNetworkType() {
+      return NetworkType.EXTERNAL;
+   }
 
-    @Override
-    public String toString()
-    {
-        return "ExternalIp [networkType=" + getNetworkType() + ", available=" + isAvailable()
-            + ", quarantine=" + isQuarantine() + ", id=" + getId() + ", ip=" + getIp() + ", mac="
-            + getMac() + ", name=" + getName() + ", networkName=" + getNetworkName() + "]";
-    }
+   @Override
+   public String toString() {
+      return "ExternalIp [networkType=" + getNetworkType() + ", available=" + isAvailable() + ", quarantine="
+            + isQuarantine() + ", id=" + getId() + ", ip=" + getIp() + ", mac=" + getMac() + ", name=" + getName()
+            + ", networkName=" + getNetworkName() + "]";
+   }
 
 }

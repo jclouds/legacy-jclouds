@@ -33,19 +33,15 @@ import com.google.common.base.Predicate;
  * @author Ignasi Barrera
  * @author Francesc Montserrat
  */
-public class ManagedRackPredicates
-{
-    public static Predicate<ManagedRack> name(final String... names)
-    {
-        checkNotNull(names, "names must be defined");
+public class ManagedRackPredicates {
+   public static Predicate<ManagedRack> name(final String... names) {
+      checkNotNull(names, "names must be defined");
 
-        return new Predicate<ManagedRack>()
-        {
-            @Override
-            public boolean apply(final ManagedRack rack)
-            {
-                return Arrays.asList(names).contains(rack.getName());
-            }
-        };
-    }
+      return new Predicate<ManagedRack>() {
+         @Override
+         public boolean apply(final ManagedRack rack) {
+            return Arrays.asList(names).contains(rack.getName());
+         }
+      };
+   }
 }

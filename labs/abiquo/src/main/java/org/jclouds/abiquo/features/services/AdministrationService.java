@@ -43,199 +43,206 @@ import com.google.inject.ImplementedBy;
  * @author Francesc Montserrat
  */
 @ImplementedBy(BaseAdministrationService.class)
-public interface AdministrationService
-{
-    /*********************** Datacenter ***********************/
+public interface AdministrationService {
+   /*********************** Datacenter ***********************/
 
-    /**
-     * Get the list of all datacenters.
-     */
-    Iterable<Datacenter> listDatacenters();
+   /**
+    * Get the list of all datacenters.
+    */
+   Iterable<Datacenter> listDatacenters();
 
-    /**
-     * Get the list of datacenters matching the given filter.
-     */
-    Iterable<Datacenter> listDatacenters(final Predicate<Datacenter> filter);
+   /**
+    * Get the list of datacenters matching the given filter.
+    */
+   Iterable<Datacenter> listDatacenters(final Predicate<Datacenter> filter);
 
-    /**
-     * Get the first datacenter that matches the given filter or <code>null</code> if none is found.
-     */
-    Datacenter findDatacenter(final Predicate<Datacenter> filter);
+   /**
+    * Get the first datacenter that matches the given filter or
+    * <code>null</code> if none is found.
+    */
+   Datacenter findDatacenter(final Predicate<Datacenter> filter);
 
-    /**
-     * Get the datacenter with the given id.
-     */
-    Datacenter getDatacenter(final Integer datacenterId);
+   /**
+    * Get the datacenter with the given id.
+    */
+   Datacenter getDatacenter(final Integer datacenterId);
 
-    /**
-     * Get the list of datacenters with the given ids.
-     */
-    Iterable<Datacenter> getDatacenters(final List<Integer> datacenterIds);
+   /**
+    * Get the list of datacenters with the given ids.
+    */
+   Iterable<Datacenter> getDatacenters(final List<Integer> datacenterIds);
 
-    /*********************** Machine ***********************/
+   /*********************** Machine ***********************/
 
-    /**
-     * Get the list of all machines in the infrastructure.
-     */
-    public Iterable<Machine> listMachines();
+   /**
+    * Get the list of all machines in the infrastructure.
+    */
+   public Iterable<Machine> listMachines();
 
-    /**
-     * Get the list of all machines in the infrastructure matching the given filter.
-     */
-    public Iterable<Machine> listMachines(Predicate<Machine> filter);
+   /**
+    * Get the list of all machines in the infrastructure matching the given
+    * filter.
+    */
+   public Iterable<Machine> listMachines(Predicate<Machine> filter);
 
-    /**
-     * Get the first machine in the infrastructure that matches the given filter.
-     */
-    public Machine findMachine(Predicate<Machine> filter);
+   /**
+    * Get the first machine in the infrastructure that matches the given filter.
+    */
+   public Machine findMachine(Predicate<Machine> filter);
 
-    /*********************** Enterprise ***********************/
+   /*********************** Enterprise ***********************/
 
-    /**
-     * Get the list of all enterprises.
-     */
-    Iterable<Enterprise> listEnterprises();
+   /**
+    * Get the list of all enterprises.
+    */
+   Iterable<Enterprise> listEnterprises();
 
-    /**
-     * Get the list of enterprises matching the given filter.
-     */
-    Iterable<Enterprise> listEnterprises(final Predicate<Enterprise> filter);
+   /**
+    * Get the list of enterprises matching the given filter.
+    */
+   Iterable<Enterprise> listEnterprises(final Predicate<Enterprise> filter);
 
-    /**
-     * Get the first enterprises that matches the given filter or <code>null</code> if none is
-     * found.
-     */
-    Enterprise findEnterprise(final Predicate<Enterprise> filter);
+   /**
+    * Get the first enterprises that matches the given filter or
+    * <code>null</code> if none is found.
+    */
+   Enterprise findEnterprise(final Predicate<Enterprise> filter);
 
-    /**
-     * Get the enterprise with the given id.
-     */
-    Enterprise getEnterprise(final Integer enterpriseId);
+   /**
+    * Get the enterprise with the given id.
+    */
+   Enterprise getEnterprise(final Integer enterpriseId);
 
-    /*********************** Enterprise Properties ***********************/
-    /**
-     * Get the properties of an enterprise.
-     */
-    EnterpriseProperties getEnterpriseProperties(final Enterprise enterprise);
+   /*********************** Enterprise Properties ***********************/
+   /**
+    * Get the properties of an enterprise.
+    */
+   EnterpriseProperties getEnterpriseProperties(final Enterprise enterprise);
 
-    /*********************** Role ***********************/
+   /*********************** Role ***********************/
 
-    /**
-     * Get the list of global roles.
-     */
-    Iterable<Role> listRoles();
+   /**
+    * Get the list of global roles.
+    */
+   Iterable<Role> listRoles();
 
-    /**
-     * Get the list of roles matching the given filter.
-     */
-    Iterable<Role> listRoles(final Predicate<Role> filter);
+   /**
+    * Get the list of roles matching the given filter.
+    */
+   Iterable<Role> listRoles(final Predicate<Role> filter);
 
-    /**
-     * Get the first role that matches the given filter or <code>null</code> if none is found.
-     */
-    Role findRole(final Predicate<Role> filter);
+   /**
+    * Get the first role that matches the given filter or <code>null</code> if
+    * none is found.
+    */
+   Role findRole(final Predicate<Role> filter);
 
-    /**
-     * Get the role with the given id.
-     */
-    Role getRole(final Integer roleId);
+   /**
+    * Get the role with the given id.
+    */
+   Role getRole(final Integer roleId);
 
-    /*********************** Privilege ***********************/
+   /*********************** Privilege ***********************/
 
-    /**
-     * Get the list of global privileges.
-     */
-    Iterable<Privilege> listPrivileges();
+   /**
+    * Get the list of global privileges.
+    */
+   Iterable<Privilege> listPrivileges();
 
-    /**
-     * Get the list of privileges matching the given filter.
-     */
-    Iterable<Privilege> listPrivileges(final Predicate<Privilege> filter);
+   /**
+    * Get the list of privileges matching the given filter.
+    */
+   Iterable<Privilege> listPrivileges(final Predicate<Privilege> filter);
 
-    /**
-     * Get the first privilege that matches the given filter or <code>null</code> if none is found.
-     */
-    Privilege findPrivilege(final Predicate<Privilege> filter);
+   /**
+    * Get the first privilege that matches the given filter or <code>null</code>
+    * if none is found.
+    */
+   Privilege findPrivilege(final Predicate<Privilege> filter);
 
-    /*********************** User ***********************/
+   /*********************** User ***********************/
 
-    /**
-     * Get the current user.
-     */
-    User getCurrentUser();
+   /**
+    * Get the current user.
+    */
+   User getCurrentUser();
 
-    /**
-     * Get the enterprise of the current user.
-     */
-    Enterprise getCurrentEnterprise();
+   /**
+    * Get the enterprise of the current user.
+    */
+   Enterprise getCurrentEnterprise();
 
-    /*********************** License ***********************/
+   /*********************** License ***********************/
 
-    /**
-     * Get the list of all licenses.
-     */
-    Iterable<License> listLicenses();
+   /**
+    * Get the list of all licenses.
+    */
+   Iterable<License> listLicenses();
 
-    /**
-     * Get the list of all active/inactive licenses.
-     * 
-     * @param active Defines if searching for active (<code>true</code>) or inactive (
-     *            <code>false</code>) licenses.
-     */
-    Iterable<License> listLicenses(boolean active);
+   /**
+    * Get the list of all active/inactive licenses.
+    * 
+    * @param active
+    *           Defines if searching for active (<code>true</code>) or inactive
+    *           ( <code>false</code>) licenses.
+    */
+   Iterable<License> listLicenses(boolean active);
 
-    /**
-     * Get the list of licenses matching the given filter.
-     */
-    Iterable<License> listLicenses(final Predicate<License> filter);
+   /**
+    * Get the list of licenses matching the given filter.
+    */
+   Iterable<License> listLicenses(final Predicate<License> filter);
 
-    /**
-     * Get the first license that matches the given filter or <code>null</code> if none is found.
-     */
-    License findLicense(final Predicate<License> filter);
+   /**
+    * Get the first license that matches the given filter or <code>null</code>
+    * if none is found.
+    */
+   License findLicense(final Predicate<License> filter);
 
-    /*********************** System Properties ***********************/
+   /*********************** System Properties ***********************/
 
-    /**
-     * Get the list of system properties.
-     */
-    Iterable<SystemProperty> listSystemProperties();
+   /**
+    * Get the list of system properties.
+    */
+   Iterable<SystemProperty> listSystemProperties();
 
-    /**
-     * Get the list of system properties matching the given filter.
-     */
-    Iterable<SystemProperty> listSystemProperties(final Predicate<SystemProperty> filter);
+   /**
+    * Get the list of system properties matching the given filter.
+    */
+   Iterable<SystemProperty> listSystemProperties(final Predicate<SystemProperty> filter);
 
-    /**
-     * Get the first system property that matches the given filter or <code>null</code> if none is
-     * found.
-     */
-    SystemProperty findSystemProperty(final Predicate<SystemProperty> filter);
+   /**
+    * Get the first system property that matches the given filter or
+    * <code>null</code> if none is found.
+    */
+   SystemProperty findSystemProperty(final Predicate<SystemProperty> filter);
 
-    /**
-     * Get the system property with the give name or <code>null</code> if none is found.
-     */
-    SystemProperty getSystemProperty(String name);
+   /**
+    * Get the system property with the give name or <code>null</code> if none is
+    * found.
+    */
+   SystemProperty getSystemProperty(String name);
 
-    /**
-     * Get the list of system properties with options.
-     */
-    Iterable<SystemProperty> listSystemProperties(String component);
+   /**
+    * Get the list of system properties with options.
+    */
+   Iterable<SystemProperty> listSystemProperties(String component);
 
-    /*********************** Category ***********************/
+   /*********************** Category ***********************/
 
-    /**
-     * Get the list of categories.
-     */
-    Iterable<Category> listCategories();
+   /**
+    * Get the list of categories.
+    */
+   Iterable<Category> listCategories();
 
-    /**
-     * Get the list of categories matching the given filter.
-     */
-    Iterable<Category> listCategories(final Predicate<Category> filter);
+   /**
+    * Get the list of categories matching the given filter.
+    */
+   Iterable<Category> listCategories(final Predicate<Category> filter);
 
-    /**
-     * Get the first categories that matches the given filter or <code>null</code> if none is found.
-     */
-    Category findCategory(final Predicate<Category> filter);
+   /**
+    * Get the first categories that matches the given filter or
+    * <code>null</code> if none is found.
+    */
+   Category findCategory(final Predicate<Category> filter);
 }

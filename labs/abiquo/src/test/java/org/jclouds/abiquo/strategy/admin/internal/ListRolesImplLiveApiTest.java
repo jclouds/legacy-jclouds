@@ -36,35 +36,30 @@ import org.testng.annotations.Test;
  * @author Ignasi Barrera
  */
 @Test(groups = "api", testName = "ListRolesImplLiveApiTest")
-public class ListRolesImplLiveApiTest extends BaseAbiquoStrategyLiveApiTest
-{
-    private ListRolesImpl strategy;
+public class ListRolesImplLiveApiTest extends BaseAbiquoStrategyLiveApiTest {
+   private ListRolesImpl strategy;
 
-    @Override
-    @BeforeClass(groups = "api")
-    protected void setupStrategy()
-    {
-        this.strategy = env.context.getUtils().getInjector().getInstance(ListRolesImpl.class);
-    }
+   @Override
+   @BeforeClass(groups = "api")
+   protected void setupStrategy() {
+      this.strategy = env.context.getUtils().getInjector().getInstance(ListRolesImpl.class);
+   }
 
-    public void testExecute()
-    {
-        Iterable<Role> roles = strategy.execute();
-        assertNotNull(roles);
-        assertTrue(size(roles) > 0);
-    }
+   public void testExecute() {
+      Iterable<Role> roles = strategy.execute();
+      assertNotNull(roles);
+      assertTrue(size(roles) > 0);
+   }
 
-    public void testExecutePredicateWithoutResults()
-    {
-        Iterable<Role> roles = strategy.execute(RolePredicates.name("UNEXISTING"));
-        assertNotNull(roles);
-        assertEquals(size(roles), 0);
-    }
+   public void testExecutePredicateWithoutResults() {
+      Iterable<Role> roles = strategy.execute(RolePredicates.name("UNEXISTING"));
+      assertNotNull(roles);
+      assertEquals(size(roles), 0);
+   }
 
-    public void testExecutePredicateWithResults()
-    {
-        Iterable<Role> roles = strategy.execute(RolePredicates.name(env.role.getName()));
-        assertNotNull(roles);
-        assertEquals(size(roles), 1);
-    }
+   public void testExecutePredicateWithResults() {
+      Iterable<Role> roles = strategy.execute(RolePredicates.name(env.role.getName()));
+      assertNotNull(roles);
+      assertEquals(size(roles), 1);
+   }
 }

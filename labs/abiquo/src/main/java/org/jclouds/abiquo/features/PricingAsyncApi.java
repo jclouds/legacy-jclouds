@@ -62,256 +62,243 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Ignasi Barrera
  * @author Susana Acedo
  */
-@RequestFilters({AbiquoAuthentication.class, AppendApiVersionToMediaType.class})
+@RequestFilters({ AbiquoAuthentication.class, AppendApiVersionToMediaType.class })
 @Path("/config")
-public interface PricingAsyncApi
-{
-    /*********************** Currency ********************** */
+public interface PricingAsyncApi {
+   /*********************** Currency ********************** */
 
-    /**
-     * @see ConfigApi#listCurrencies()
-     */
-    @GET
-    @Path("/currencies")
-    @Consumes(CurrenciesDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<CurrenciesDto> listCurrencies();
+   /**
+    * @see ConfigApi#listCurrencies()
+    */
+   @GET
+   @Path("/currencies")
+   @Consumes(CurrenciesDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<CurrenciesDto> listCurrencies();
 
-    /**
-     * @see ConfigApi#getCurrency(Integer)
-     */
-    @GET
-    @Path("/currencies/{currency}")
-    @Consumes(CurrencyDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-    ListenableFuture<CurrencyDto> getCurrency(@PathParam("currency") Integer currencyId);
+   /**
+    * @see ConfigApi#getCurrency(Integer)
+    */
+   @GET
+   @Path("/currencies/{currency}")
+   @Consumes(CurrencyDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<CurrencyDto> getCurrency(@PathParam("currency") Integer currencyId);
 
-    /**
-     * @see ConfigApi#createCurrency(CurrencyDto)
-     */
-    @POST
-    @Path("/currencies")
-    @Produces(CurrencyDto.BASE_MEDIA_TYPE)
-    @Consumes(CurrencyDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<CurrencyDto> createCurrency(
-        @BinderParam(BindToXMLPayload.class) CurrencyDto currency);
+   /**
+    * @see ConfigApi#createCurrency(CurrencyDto)
+    */
+   @POST
+   @Path("/currencies")
+   @Produces(CurrencyDto.BASE_MEDIA_TYPE)
+   @Consumes(CurrencyDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<CurrencyDto> createCurrency(@BinderParam(BindToXMLPayload.class) CurrencyDto currency);
 
-    /**
-     * @see ConfigApi#updateCurrency(CurrencyDto)
-     */
-    @PUT
-    @Produces(CurrencyDto.BASE_MEDIA_TYPE)
-    @Consumes(CurrencyDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<CurrencyDto> updateCurrency(
-        @EndpointLink("edit") @BinderParam(BindToXMLPayloadAndPath.class) CurrencyDto currency);
+   /**
+    * @see ConfigApi#updateCurrency(CurrencyDto)
+    */
+   @PUT
+   @Produces(CurrencyDto.BASE_MEDIA_TYPE)
+   @Consumes(CurrencyDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<CurrencyDto> updateCurrency(
+         @EndpointLink("edit") @BinderParam(BindToXMLPayloadAndPath.class) CurrencyDto currency);
 
-    /**
-     * @see ConfigApi#deleteCurrency(CurrencyDto)
-     */
-    @DELETE
-    ListenableFuture<Void> deleteCurrency(
-        @EndpointLink("edit") @BinderParam(BindToPath.class) CurrencyDto currency);
+   /**
+    * @see ConfigApi#deleteCurrency(CurrencyDto)
+    */
+   @DELETE
+   ListenableFuture<Void> deleteCurrency(@EndpointLink("edit") @BinderParam(BindToPath.class) CurrencyDto currency);
 
-    /*********************** CostCode ********************** */
+   /*********************** CostCode ********************** */
 
-    /**
-     * @see PricingApi#listCostCodes()
-     */
-    @GET
-    @Path("/costcodes")
-    @Consumes(CostCodesDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<CostCodesDto> listCostCodes();
+   /**
+    * @see PricingApi#listCostCodes()
+    */
+   @GET
+   @Path("/costcodes")
+   @Consumes(CostCodesDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<CostCodesDto> listCostCodes();
 
-    /**
-     * @see PricingApi#getCostCode(Integer)
-     */
-    @GET
-    @Path("/costcodes/{costcode}")
-    @Consumes(CostCodeDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-    ListenableFuture<CostCodeDto> getCostCode(@PathParam("costcode") Integer costcodeId);
+   /**
+    * @see PricingApi#getCostCode(Integer)
+    */
+   @GET
+   @Path("/costcodes/{costcode}")
+   @Consumes(CostCodeDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<CostCodeDto> getCostCode(@PathParam("costcode") Integer costcodeId);
 
-    /**
-     * @see PricingApi#createCostCode(CostCodeDto)
-     */
-    @POST
-    @Path("/costcodes")
-    @Produces(CostCodeDto.BASE_MEDIA_TYPE)
-    @Consumes(CostCodeDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<CostCodeDto> createCostCode(
-        @BinderParam(BindToXMLPayload.class) CostCodeDto costcode);
+   /**
+    * @see PricingApi#createCostCode(CostCodeDto)
+    */
+   @POST
+   @Path("/costcodes")
+   @Produces(CostCodeDto.BASE_MEDIA_TYPE)
+   @Consumes(CostCodeDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<CostCodeDto> createCostCode(@BinderParam(BindToXMLPayload.class) CostCodeDto costcode);
 
-    /**
-     * @see PricingApi#updateCostCode(CostCodeDto)
-     */
-    @PUT
-    @Produces(CostCodeDto.BASE_MEDIA_TYPE)
-    @Consumes(CostCodeDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<CostCodeDto> updateCostCode(
-        @EndpointLink("edit") @BinderParam(BindToXMLPayloadAndPath.class) CostCodeDto costcode);
+   /**
+    * @see PricingApi#updateCostCode(CostCodeDto)
+    */
+   @PUT
+   @Produces(CostCodeDto.BASE_MEDIA_TYPE)
+   @Consumes(CostCodeDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<CostCodeDto> updateCostCode(
+         @EndpointLink("edit") @BinderParam(BindToXMLPayloadAndPath.class) CostCodeDto costcode);
 
-    /**
-     * @see PricingApi#deleteCostCode(CostCodeDto)
-     */
-    @DELETE
-    ListenableFuture<Void> deleteCostCode(
-        @EndpointLink("edit") @BinderParam(BindToPath.class) CostCodeDto costcode);
+   /**
+    * @see PricingApi#deleteCostCode(CostCodeDto)
+    */
+   @DELETE
+   ListenableFuture<Void> deleteCostCode(@EndpointLink("edit") @BinderParam(BindToPath.class) CostCodeDto costcode);
 
-    /*********************** PricingTemplate ********************** */
+   /*********************** PricingTemplate ********************** */
 
-    /**
-     * @see PricingApi#listPricingTemplates()
-     */
-    @GET
-    @Path("/pricingtemplates")
-    @Consumes(PricingTemplatesDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<PricingTemplatesDto> listPricingTemplates();
+   /**
+    * @see PricingApi#listPricingTemplates()
+    */
+   @GET
+   @Path("/pricingtemplates")
+   @Consumes(PricingTemplatesDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<PricingTemplatesDto> listPricingTemplates();
 
-    /**
-     * @see PricingApi#getPricingTemplate(Integer)
-     */
-    @GET
-    @Path("/pricingtemplates/{pricingtemplate}")
-    @Consumes(PricingTemplateDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-    ListenableFuture<PricingTemplateDto> getPricingTemplate(
-        @PathParam("pricingtemplate") Integer pricingTemplateId);
+   /**
+    * @see PricingApi#getPricingTemplate(Integer)
+    */
+   @GET
+   @Path("/pricingtemplates/{pricingtemplate}")
+   @Consumes(PricingTemplateDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<PricingTemplateDto> getPricingTemplate(@PathParam("pricingtemplate") Integer pricingTemplateId);
 
-    /**
-     * @see PricingApi#createPricingTemplate(PricingTemplateDto)
-     */
-    @POST
-    @Path("/pricingtemplates")
-    @Produces(PricingTemplateDto.BASE_MEDIA_TYPE)
-    @Consumes(PricingTemplateDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<PricingTemplateDto> createPricingTemplate(
-        @BinderParam(BindToXMLPayload.class) PricingTemplateDto pricingtemplate);
+   /**
+    * @see PricingApi#createPricingTemplate(PricingTemplateDto)
+    */
+   @POST
+   @Path("/pricingtemplates")
+   @Produces(PricingTemplateDto.BASE_MEDIA_TYPE)
+   @Consumes(PricingTemplateDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<PricingTemplateDto> createPricingTemplate(
+         @BinderParam(BindToXMLPayload.class) PricingTemplateDto pricingtemplate);
 
-    /**
-     * @see PricingApi#updatePricingTemplate(PricingTemplateDto)
-     */
-    @PUT
-    @Produces(PricingTemplateDto.BASE_MEDIA_TYPE)
-    @Consumes(PricingTemplateDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<PricingTemplateDto> updatePricingTemplate(
-        @EndpointLink("edit") @BinderParam(BindToXMLPayloadAndPath.class) PricingTemplateDto pricingtemplate);
+   /**
+    * @see PricingApi#updatePricingTemplate(PricingTemplateDto)
+    */
+   @PUT
+   @Produces(PricingTemplateDto.BASE_MEDIA_TYPE)
+   @Consumes(PricingTemplateDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<PricingTemplateDto> updatePricingTemplate(
+         @EndpointLink("edit") @BinderParam(BindToXMLPayloadAndPath.class) PricingTemplateDto pricingtemplate);
 
-    /**
-     * @see PricingApi#deletePricingTemplate(PricingTemplateDto)
-     */
-    @DELETE
-    ListenableFuture<Void> deletePricingTemplate(
-        @EndpointLink("edit") @BinderParam(BindToPath.class) PricingTemplateDto pricingtemplate);
+   /**
+    * @see PricingApi#deletePricingTemplate(PricingTemplateDto)
+    */
+   @DELETE
+   ListenableFuture<Void> deletePricingTemplate(
+         @EndpointLink("edit") @BinderParam(BindToPath.class) PricingTemplateDto pricingtemplate);
 
-    /*********************** CostCodeCurrency ********************** */
+   /*********************** CostCodeCurrency ********************** */
 
-    /**
-     * @see PricingApi#getCostCodeCurrency(Integer)
-     */
-    @GET
-    @Path("/costcodes/{costcode}/currencies")
-    @Consumes(CostCodeCurrenciesDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-    ListenableFuture<CostCodeCurrenciesDto> getCostCodeCurrencies(
-        @PathParam("costcode") Integer costcodeId, @QueryParam("idCurrency") Integer currencyId);
+   /**
+    * @see PricingApi#getCostCodeCurrency(Integer)
+    */
+   @GET
+   @Path("/costcodes/{costcode}/currencies")
+   @Consumes(CostCodeCurrenciesDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<CostCodeCurrenciesDto> getCostCodeCurrencies(@PathParam("costcode") Integer costcodeId,
+         @QueryParam("idCurrency") Integer currencyId);
 
-    /**
-     * @see PricingApi#updateCostCodeCurrencies(CostCodeCurrenciesDto)
-     */
-    @PUT
-    @Path("/costcodes/{costcode}/currencies")
-    @Produces(CostCodeCurrenciesDto.BASE_MEDIA_TYPE)
-    @Consumes(CostCodeCurrenciesDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<CostCodeCurrenciesDto> updateCostCodeCurrencies(
-        @PathParam("costcode") Integer costcodeId,
-        @BinderParam(BindToXMLPayload.class) CostCodeCurrenciesDto costcodecurrencies);
+   /**
+    * @see PricingApi#updateCostCodeCurrencies(CostCodeCurrenciesDto)
+    */
+   @PUT
+   @Path("/costcodes/{costcode}/currencies")
+   @Produces(CostCodeCurrenciesDto.BASE_MEDIA_TYPE)
+   @Consumes(CostCodeCurrenciesDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<CostCodeCurrenciesDto> updateCostCodeCurrencies(@PathParam("costcode") Integer costcodeId,
+         @BinderParam(BindToXMLPayload.class) CostCodeCurrenciesDto costcodecurrencies);
 
-    /*********************** PricingCostCode ********************** */
+   /*********************** PricingCostCode ********************** */
 
-    /**
-     * @see PricingApi#getPricingCostCodes(Integer)
-     */
-    @GET
-    @Path("/pricingtemplates/{pricingtemplate}/costcodes")
-    @Consumes(PricingCostCodesDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-    ListenableFuture<PricingCostCodesDto> getPricingCostCodes(
-        @PathParam("pricingtemplate") Integer pricingTemplateId);
+   /**
+    * @see PricingApi#getPricingCostCodes(Integer)
+    */
+   @GET
+   @Path("/pricingtemplates/{pricingtemplate}/costcodes")
+   @Consumes(PricingCostCodesDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<PricingCostCodesDto> getPricingCostCodes(@PathParam("pricingtemplate") Integer pricingTemplateId);
 
-    /**
-     * @see PricingApi#getPricingCostCode(Integer)
-     */
-    @GET
-    @Path("/pricingtemplates/{pricingtemplate}/costcodes/{costcode}")
-    @Consumes(PricingCostCodeDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-    ListenableFuture<PricingCostCodeDto> getPricingCostCode(
-        @PathParam("pricingtemplate") Integer pricingTemplateId,
-        @PathParam("costcode") Integer pricingCostcodeId);
+   /**
+    * @see PricingApi#getPricingCostCode(Integer)
+    */
+   @GET
+   @Path("/pricingtemplates/{pricingtemplate}/costcodes/{costcode}")
+   @Consumes(PricingCostCodeDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<PricingCostCodeDto> getPricingCostCode(@PathParam("pricingtemplate") Integer pricingTemplateId,
+         @PathParam("costcode") Integer pricingCostcodeId);
 
-    /**
-     * @see PricingApi#updatePricingCostCode(PricingCostCodeDto)
-     */
-    @PUT
-    @Path("/pricingtemplates/{pricingtemplate}/costcodes/{costcode}")
-    @Produces(PricingCostCodeDto.BASE_MEDIA_TYPE)
-    @Consumes(PricingCostCodeDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<PricingCostCodeDto> updatePricingCostCode(
-        @EndpointLink("edit") @BinderParam(BindToXMLPayloadAndPath.class) PricingCostCodeDto pricingcostcode,
-        @PathParam("pricingtemplate") Integer pricingTemplateId,
-        @PathParam("costcode") Integer pricingCostcodeId);
+   /**
+    * @see PricingApi#updatePricingCostCode(PricingCostCodeDto)
+    */
+   @PUT
+   @Path("/pricingtemplates/{pricingtemplate}/costcodes/{costcode}")
+   @Produces(PricingCostCodeDto.BASE_MEDIA_TYPE)
+   @Consumes(PricingCostCodeDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<PricingCostCodeDto> updatePricingCostCode(
+         @EndpointLink("edit") @BinderParam(BindToXMLPayloadAndPath.class) PricingCostCodeDto pricingcostcode,
+         @PathParam("pricingtemplate") Integer pricingTemplateId, @PathParam("costcode") Integer pricingCostcodeId);
 
-    /*********************** PricingTier ********************** */
+   /*********************** PricingTier ********************** */
 
-    /**
-     * @see PricingApi#getPricingTiers(Integer)
-     */
-    @GET
-    @Path("/pricingtemplates/{pricingtemplate}/tiers")
-    @Consumes(PricingTiersDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-    ListenableFuture<PricingTiersDto> getPricingTiers(
-        @PathParam("pricingtemplate") Integer pricingTemplateId);
+   /**
+    * @see PricingApi#getPricingTiers(Integer)
+    */
+   @GET
+   @Path("/pricingtemplates/{pricingtemplate}/tiers")
+   @Consumes(PricingTiersDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<PricingTiersDto> getPricingTiers(@PathParam("pricingtemplate") Integer pricingTemplateId);
 
-    /**
-     * @see PricingApi#getPricingTier(Integer)
-     */
-    @GET
-    @Path("/pricingtemplates/{pricingtemplate}/tiers/{tier}")
-    @Consumes(PricingTierDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-    ListenableFuture<PricingTierDto> getPricingTier(
-        @PathParam("pricingtemplate") Integer pricingTemplateId,
-        @PathParam("tier") Integer pricingTierId);
+   /**
+    * @see PricingApi#getPricingTier(Integer)
+    */
+   @GET
+   @Path("/pricingtemplates/{pricingtemplate}/tiers/{tier}")
+   @Consumes(PricingTierDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<PricingTierDto> getPricingTier(@PathParam("pricingtemplate") Integer pricingTemplateId,
+         @PathParam("tier") Integer pricingTierId);
 
-    /**
-     * @see PricingApi#updatePricingTier(PricingTierDto)
-     */
-    @PUT
-    @Path("/pricingtemplates/{pricingtemplate}/tiers/{tier}")
-    @Produces(PricingTierDto.BASE_MEDIA_TYPE)
-    @Consumes(PricingTierDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<PricingTierDto> updatePricingTier(
-        @EndpointLink("edit") @BinderParam(BindToXMLPayloadAndPath.class) PricingTierDto pricingtier,
-        @PathParam("pricingtemplate") Integer pricingTemplateId,
-        @PathParam("tier") Integer pricingTierId);
+   /**
+    * @see PricingApi#updatePricingTier(PricingTierDto)
+    */
+   @PUT
+   @Path("/pricingtemplates/{pricingtemplate}/tiers/{tier}")
+   @Produces(PricingTierDto.BASE_MEDIA_TYPE)
+   @Consumes(PricingTierDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<PricingTierDto> updatePricingTier(
+         @EndpointLink("edit") @BinderParam(BindToXMLPayloadAndPath.class) PricingTierDto pricingtier,
+         @PathParam("pricingtemplate") Integer pricingTemplateId, @PathParam("tier") Integer pricingTierId);
 }

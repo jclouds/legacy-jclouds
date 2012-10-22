@@ -37,49 +37,39 @@ import com.google.common.collect.Iterables;
  * @author Francesc Montserrat
  */
 @Test(groups = "api", testName = "StorageDeviceLiveApiTest")
-public class StorageDeviceLiveApiTest extends BaseAbiquoApiLiveApiTest
-{
+public class StorageDeviceLiveApiTest extends BaseAbiquoApiLiveApiTest {
 
-    public void testUpdate()
-    {
-        env.storageDevice.setName("Updated storage device");
-        env.storageDevice.update();
+   public void testUpdate() {
+      env.storageDevice.setName("Updated storage device");
+      env.storageDevice.update();
 
-        // Recover the updated storage device
-        StorageDeviceDto updated =
-            env.infrastructureApi.getStorageDevice(env.datacenter.unwrap(),
-                env.storageDevice.getId());
+      // Recover the updated storage device
+      StorageDeviceDto updated = env.infrastructureApi.getStorageDevice(env.datacenter.unwrap(),
+            env.storageDevice.getId());
 
-        assertEquals(updated.getName(), "Updated storage device");
-    }
+      assertEquals(updated.getName(), "Updated storage device");
+   }
 
-    public void testListStorageDevices()
-    {
-        Iterable<StorageDevice> storageDevices = env.datacenter.listStorageDevices();
-        assertEquals(Iterables.size(storageDevices), 1);
+   public void testListStorageDevices() {
+      Iterable<StorageDevice> storageDevices = env.datacenter.listStorageDevices();
+      assertEquals(Iterables.size(storageDevices), 1);
 
-        storageDevices =
-            env.datacenter.listStorageDevices(StorageDevicePredicates.name(env.storageDevice
-                .getName()));
-        assertEquals(Iterables.size(storageDevices), 1);
+      storageDevices = env.datacenter.listStorageDevices(StorageDevicePredicates.name(env.storageDevice.getName()));
+      assertEquals(Iterables.size(storageDevices), 1);
 
-        storageDevices =
-            env.datacenter.listStorageDevices(StorageDevicePredicates.name(env.storageDevice
-                .getName() + "FAIL"));
-        assertEquals(Iterables.size(storageDevices), 0);
-    }
+      storageDevices = env.datacenter.listStorageDevices(StorageDevicePredicates.name(env.storageDevice.getName()
+            + "FAIL"));
+      assertEquals(Iterables.size(storageDevices), 0);
+   }
 
-    public void testFindStorageDevice()
-    {
-        StorageDevice storageDevice =
-            env.datacenter.findStorageDevice(StorageDevicePredicates.name(env.storageDevice
-                .getName()));
-        assertNotNull(storageDevice);
+   public void testFindStorageDevice() {
+      StorageDevice storageDevice = env.datacenter.findStorageDevice(StorageDevicePredicates.name(env.storageDevice
+            .getName()));
+      assertNotNull(storageDevice);
 
-        storageDevice =
-            env.datacenter.findStorageDevice(StorageDevicePredicates.name(env.storageDevice
-                .getName() + "FAIL"));
-        assertNull(storageDevice);
-    }
+      storageDevice = env.datacenter.findStorageDevice(StorageDevicePredicates.name(env.storageDevice.getName()
+            + "FAIL"));
+      assertNull(storageDevice);
+   }
 
 }

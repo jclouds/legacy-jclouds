@@ -48,76 +48,60 @@ import com.google.common.eventbus.EventBus;
  * @author Ignasi Barrera
  */
 @Singleton
-public class BaseVirtualApplianceMonitor extends BaseMonitoringService implements
-    VirtualApplianceMonitor
-{
-    @VisibleForTesting
-    protected VirtualApplianceDeployMonitor deployMonitor;
+public class BaseVirtualApplianceMonitor extends BaseMonitoringService implements VirtualApplianceMonitor {
+   @VisibleForTesting
+   protected VirtualApplianceDeployMonitor deployMonitor;
 
-    @VisibleForTesting
-    protected VirtualApplianceUndeployMonitor undeployMonitor;
+   @VisibleForTesting
+   protected VirtualApplianceUndeployMonitor undeployMonitor;
 
-    @Inject
-    public BaseVirtualApplianceMonitor(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-        @Named(PROPERTY_SCHEDULER_THREADS) final ScheduledExecutorService scheduler,
-        @Named(ASYNC_TASK_MONITOR_DELAY) final Long pollingDelay, final EventBus eventBus,
-        final VirtualApplianceDeployMonitor deployMonitor,
-        final VirtualApplianceUndeployMonitor undeployMonitor)
-    {
-        super(context, scheduler, pollingDelay, eventBus);
-        this.deployMonitor = checkNotNull(deployMonitor, "deployMonitor");
-        this.undeployMonitor = checkNotNull(undeployMonitor, "undeployMonitor");
-    }
+   @Inject
+   public BaseVirtualApplianceMonitor(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
+         @Named(PROPERTY_SCHEDULER_THREADS) final ScheduledExecutorService scheduler,
+         @Named(ASYNC_TASK_MONITOR_DELAY) final Long pollingDelay, final EventBus eventBus,
+         final VirtualApplianceDeployMonitor deployMonitor, final VirtualApplianceUndeployMonitor undeployMonitor) {
+      super(context, scheduler, pollingDelay, eventBus);
+      this.deployMonitor = checkNotNull(deployMonitor, "deployMonitor");
+      this.undeployMonitor = checkNotNull(undeployMonitor, "undeployMonitor");
+   }
 
-    @Override
-    public void awaitCompletionDeploy(final VirtualAppliance... vapps)
-    {
-        awaitCompletion(deployMonitor, vapps);
-    }
+   @Override
+   public void awaitCompletionDeploy(final VirtualAppliance... vapps) {
+      awaitCompletion(deployMonitor, vapps);
+   }
 
-    @Override
-    public void monitorDeploy(final VirtualAppliance... vapps)
-    {
-        monitor(deployMonitor, vapps);
-    }
+   @Override
+   public void monitorDeploy(final VirtualAppliance... vapps) {
+      monitor(deployMonitor, vapps);
+   }
 
-    @Override
-    public void awaitCompletionDeploy(final Long maxWait, final TimeUnit timeUnit,
-        final VirtualAppliance... vapps)
-    {
-        awaitCompletion(maxWait, timeUnit, deployMonitor, vapps);
-    }
+   @Override
+   public void awaitCompletionDeploy(final Long maxWait, final TimeUnit timeUnit, final VirtualAppliance... vapps) {
+      awaitCompletion(maxWait, timeUnit, deployMonitor, vapps);
+   }
 
-    @Override
-    public void monitorDeploy(final Long maxWait, final TimeUnit timeUnit,
-        final VirtualAppliance... vapps)
-    {
-        monitor(maxWait, timeUnit, deployMonitor, vapps);
-    }
+   @Override
+   public void monitorDeploy(final Long maxWait, final TimeUnit timeUnit, final VirtualAppliance... vapps) {
+      monitor(maxWait, timeUnit, deployMonitor, vapps);
+   }
 
-    @Override
-    public void awaitCompletionUndeploy(final VirtualAppliance... vapps)
-    {
-        awaitCompletion(undeployMonitor, vapps);
-    }
+   @Override
+   public void awaitCompletionUndeploy(final VirtualAppliance... vapps) {
+      awaitCompletion(undeployMonitor, vapps);
+   }
 
-    @Override
-    public void monitorUndeploy(final VirtualAppliance... vapps)
-    {
-        monitor(undeployMonitor, vapps);
-    }
+   @Override
+   public void monitorUndeploy(final VirtualAppliance... vapps) {
+      monitor(undeployMonitor, vapps);
+   }
 
-    @Override
-    public void awaitCompletionUndeploy(final Long maxWait, final TimeUnit timeUnit,
-        final VirtualAppliance... vapps)
-    {
-        awaitCompletion(maxWait, timeUnit, undeployMonitor, vapps);
-    }
+   @Override
+   public void awaitCompletionUndeploy(final Long maxWait, final TimeUnit timeUnit, final VirtualAppliance... vapps) {
+      awaitCompletion(maxWait, timeUnit, undeployMonitor, vapps);
+   }
 
-    @Override
-    public void monitorUndeploy(final Long maxWait, final TimeUnit timeUnit,
-        final VirtualAppliance... vapps)
-    {
-        monitor(maxWait, timeUnit, undeployMonitor, vapps);
-    }
+   @Override
+   public void monitorUndeploy(final Long maxWait, final TimeUnit timeUnit, final VirtualAppliance... vapps) {
+      monitor(maxWait, timeUnit, undeployMonitor, vapps);
+   }
 }

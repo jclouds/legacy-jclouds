@@ -34,71 +34,56 @@ import com.google.common.base.Predicates;
  * 
  * @author Ignasi Barrera
  */
-public class VolumePredicates
-{
-    public static Predicate<Volume> name(final String... names)
-    {
-        checkNotNull(names, "names must be defined");
+public class VolumePredicates {
+   public static Predicate<Volume> name(final String... names) {
+      checkNotNull(names, "names must be defined");
 
-        return new Predicate<Volume>()
-        {
-            @Override
-            public boolean apply(final Volume volume)
-            {
-                return Arrays.asList(names).contains(volume.getName());
-            }
-        };
-    }
+      return new Predicate<Volume>() {
+         @Override
+         public boolean apply(final Volume volume) {
+            return Arrays.asList(names).contains(volume.getName());
+         }
+      };
+   }
 
-    public static Predicate<Volume> greaterThan(final long sizeInMb)
-    {
-        checkNotNull(sizeInMb, "sizeInMb must be defined");
+   public static Predicate<Volume> greaterThan(final long sizeInMb) {
+      checkNotNull(sizeInMb, "sizeInMb must be defined");
 
-        return new Predicate<Volume>()
-        {
-            @Override
-            public boolean apply(final Volume volume)
-            {
-                return volume.getSizeInMB() > sizeInMb;
-            }
-        };
-    }
+      return new Predicate<Volume>() {
+         @Override
+         public boolean apply(final Volume volume) {
+            return volume.getSizeInMB() > sizeInMb;
+         }
+      };
+   }
 
-    public static Predicate<Volume> greaterThanOrEqual(final long sizeInMb)
-    {
-        checkNotNull(sizeInMb, "sizeInMb must be defined");
+   public static Predicate<Volume> greaterThanOrEqual(final long sizeInMb) {
+      checkNotNull(sizeInMb, "sizeInMb must be defined");
 
-        return new Predicate<Volume>()
-        {
-            @Override
-            public boolean apply(final Volume volume)
-            {
-                return volume.getSizeInMB() >= sizeInMb;
-            }
-        };
-    }
+      return new Predicate<Volume>() {
+         @Override
+         public boolean apply(final Volume volume) {
+            return volume.getSizeInMB() >= sizeInMb;
+         }
+      };
+   }
 
-    public static Predicate<Volume> lesserThan(final long sizeInMb)
-    {
-        return Predicates.not(greaterThanOrEqual(sizeInMb));
-    }
+   public static Predicate<Volume> lesserThan(final long sizeInMb) {
+      return Predicates.not(greaterThanOrEqual(sizeInMb));
+   }
 
-    public static Predicate<Volume> lesserThanOrEquals(final long sizeInMb)
-    {
-        return Predicates.not(greaterThan(sizeInMb));
-    }
+   public static Predicate<Volume> lesserThanOrEquals(final long sizeInMb) {
+      return Predicates.not(greaterThan(sizeInMb));
+   }
 
-    public static Predicate<Volume> state(final VolumeState... states)
-    {
-        checkNotNull(states, "states must be defined");
+   public static Predicate<Volume> state(final VolumeState... states) {
+      checkNotNull(states, "states must be defined");
 
-        return new Predicate<Volume>()
-        {
-            @Override
-            public boolean apply(final Volume volume)
-            {
-                return Arrays.asList(states).contains(VolumeState.valueOf(volume.getState()));
-            }
-        };
-    }
+      return new Predicate<Volume>() {
+         @Override
+         public boolean apply(final Volume volume) {
+            return Arrays.asList(states).contains(VolumeState.valueOf(volume.getState()));
+         }
+      };
+   }
 }

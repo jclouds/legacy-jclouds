@@ -19,7 +19,6 @@
 
 package org.jclouds.abiquo.domain.network;
 
-
 import org.jclouds.abiquo.AbiquoAsyncApi;
 import org.jclouds.abiquo.AbiquoApi;
 import org.jclouds.abiquo.domain.DomainWrapper;
@@ -32,35 +31,32 @@ import com.abiquo.server.core.infrastructure.network.NicDto;
  * 
  * @author Ignasi Barrera
  * @author Francesc Montserrat
- * @see API: <a href="http://community.abiquo.com/display/ABI20/VirtualMachineNetworkConfiguration">
- *      http://community.abiquo.com/display/ABI20/VirtualMachineNetworkConfiguration</a>
+ * @see API: <a href=
+ *      "http://community.abiquo.com/display/ABI20/VirtualMachineNetworkConfiguration"
+ *      > http://community.abiquo.com/display/ABI20/
+ *      VirtualMachineNetworkConfiguration</a>
  */
-public class Nic extends DomainWrapper<NicDto>
-{
-    /**
-     * Constructor to be used only by the builder (if any).
-     */
-    protected Nic(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final NicDto target)
-    {
-        super(context, target);
-    }
+public class Nic extends DomainWrapper<NicDto> {
+   /**
+    * Constructor to be used only by the builder (if any).
+    */
+   protected Nic(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final NicDto target) {
+      super(context, target);
+   }
 
-    // Parent access
+   // Parent access
 
-    // Delegate methods
+   // Delegate methods
 
-    public Integer getId()
-    {
-        return target.getId();
-    }
+   public Integer getId() {
+      return target.getId();
+   }
 
-    public String getIp()
-    {
-        return target.getIp();
-    }
+   public String getIp() {
+      return target.getIp();
+   }
 
-    public String getMac()
-    {
-        return target.getMac();
-    }
+   public String getMac() {
+      return target.getMac();
+   }
 }

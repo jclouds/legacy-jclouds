@@ -27,56 +27,47 @@ import com.abiquo.model.enumerator.HypervisorType;
 /**
  * Available options to filter virtual machine template conversions
  */
-public class ConversionOptions extends BaseHttpRequestOptions
-{
+public class ConversionOptions extends BaseHttpRequestOptions {
 
-    public static Builder builder()
-    {
-        return new Builder();
-    }
+   public static Builder builder() {
+      return new Builder();
+   }
 
-    @Override
-    protected Object clone() throws CloneNotSupportedException
-    {
-        ConversionOptions options = new ConversionOptions();
-        options.queryParameters.putAll(queryParameters);
-        return options;
-    }
+   @Override
+   protected Object clone() throws CloneNotSupportedException {
+      ConversionOptions options = new ConversionOptions();
+      options.queryParameters.putAll(queryParameters);
+      return options;
+   }
 
-    public static class Builder
-    {
-        private HypervisorType hypervisorType;
+   public static class Builder {
+      private HypervisorType hypervisorType;
 
-        private ConversionState conversionState;
+      private ConversionState conversionState;
 
-        /** Only conversions compatible with this hypervisor */
-        public Builder hypervisorType(final HypervisorType hypervisorType)
-        {
-            this.hypervisorType = hypervisorType;
-            return this;
-        }
+      /** Only conversions compatible with this hypervisor */
+      public Builder hypervisorType(final HypervisorType hypervisorType) {
+         this.hypervisorType = hypervisorType;
+         return this;
+      }
 
-        /** Only conversions with the provided state */
-        public Builder conversionState(final ConversionState conversionState)
-        {
-            this.conversionState = conversionState;
-            return this;
-        }
+      /** Only conversions with the provided state */
+      public Builder conversionState(final ConversionState conversionState) {
+         this.conversionState = conversionState;
+         return this;
+      }
 
-        public ConversionOptions build()
-        {
-            ConversionOptions options = new ConversionOptions();
+      public ConversionOptions build() {
+         ConversionOptions options = new ConversionOptions();
 
-            if (hypervisorType != null)
-            {
-                options.queryParameters.put("hypervisor", hypervisorType.name());
-            }
-            if (conversionState != null)
-            {
-                options.queryParameters.put("state", conversionState.name());
-            }
+         if (hypervisorType != null) {
+            options.queryParameters.put("hypervisor", hypervisorType.name());
+         }
+         if (conversionState != null) {
+            options.queryParameters.put("state", conversionState.name());
+         }
 
-            return options;
-        }
-    }
+         return options;
+      }
+   }
 }

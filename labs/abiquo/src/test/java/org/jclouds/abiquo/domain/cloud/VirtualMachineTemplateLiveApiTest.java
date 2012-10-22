@@ -38,34 +38,26 @@ import org.testng.annotations.Test;
  * @author Francesc Montserrat
  */
 @Test(groups = "api", testName = "VirtualMachineTemplateLiveApiTest")
-public class VirtualMachineTemplateLiveApiTest extends BaseAbiquoApiLiveApiTest
-{
+public class VirtualMachineTemplateLiveApiTest extends BaseAbiquoApiLiveApiTest {
 
-    public void testGetParent()
-    {
-        Datacenter datacenter = env.virtualMachine.getTemplate().getDatacenter();
-        assertNotNull(datacenter);
-        assertEquals(datacenter.getId(), env.datacenter.getId());
-    }
+   public void testGetParent() {
+      Datacenter datacenter = env.virtualMachine.getTemplate().getDatacenter();
+      assertNotNull(datacenter);
+      assertEquals(datacenter.getId(), env.datacenter.getId());
+   }
 
-    public void testGetCategory()
-    {
-        Category category = env.virtualMachine.getTemplate().getCategory();
-        assertNotNull(category);
-    }
+   public void testGetCategory() {
+      Category category = env.virtualMachine.getTemplate().getCategory();
+      assertNotNull(category);
+   }
 
-    public void testRequestConversionToSameFormat()
-    {
-        try
-        {
-            env.virtualMachine.getTemplate().requestConversion(
-                env.virtualMachine.getTemplate().getDiskFormatType());
-            fail("Should not be able to create create a conversion to the base format");
-        }
-        catch (AbiquoException ex)
-        {
-            assertHasError(ex, Status.CONFLICT, "CONVERSION-3");
-        }
-    }
+   public void testRequestConversionToSameFormat() {
+      try {
+         env.virtualMachine.getTemplate().requestConversion(env.virtualMachine.getTemplate().getDiskFormatType());
+         fail("Should not be able to create create a conversion to the base format");
+      } catch (AbiquoException ex) {
+         assertHasError(ex, Status.CONFLICT, "CONVERSION-3");
+      }
+   }
 
 }

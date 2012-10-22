@@ -24,11 +24,9 @@ package org.jclouds.abiquo.events.monitor;
  * 
  * @author Ignasi Barrera
  */
-public class TimeoutEvent<T> extends MonitorEvent<T>
-{
-    public TimeoutEvent(final T target)
-    {
-        super(MonitorEvent.Type.TIMEOUT, target);
-    }
+public class TimeoutEvent<T> extends MonitorEvent<T> {
+   public TimeoutEvent(final T target) {
+      super(MonitorEvent.Type.TIMEOUT, target);
+   }
 
 }

@@ -31,7 +31,6 @@ import com.google.inject.ImplementedBy;
  * @author Susana Acedo
  */
 @ImplementedBy(ListCostCodesImpl.class)
-public interface ListCostCodes extends ListRootEntities<CostCode>
-{
+public interface ListCostCodes extends ListRootEntities<CostCode> {
 
 }

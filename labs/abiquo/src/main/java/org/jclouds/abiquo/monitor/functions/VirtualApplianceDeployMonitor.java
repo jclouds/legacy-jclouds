@@ -32,44 +32,39 @@ import com.abiquo.server.core.cloud.VirtualApplianceState;
 import com.google.common.base.Function;
 
 /**
- * This class takes care of monitoring the a deploy of a {@link VirtualAppliance}.
+ * This class takes care of monitoring the a deploy of a
+ * {@link VirtualAppliance}.
  * 
  * @author Serafin Sedano
  */
 @Singleton
-public class VirtualApplianceDeployMonitor implements Function<VirtualAppliance, MonitorStatus>
-{
-    @Resource
-    protected Logger logger = Logger.NULL;
+public class VirtualApplianceDeployMonitor implements Function<VirtualAppliance, MonitorStatus> {
+   @Resource
+   protected Logger logger = Logger.NULL;
 
-    @Override
-    public MonitorStatus apply(final VirtualAppliance virtualAppliance)
-    {
-        checkNotNull(virtualAppliance, "virtualAppliance");
+   @Override
+   public MonitorStatus apply(final VirtualAppliance virtualAppliance) {
+      checkNotNull(virtualAppliance, "virtualAppliance");
 
-        try
-        {
-            VirtualApplianceState state = virtualAppliance.getState();
+      try {
+         VirtualApplianceState state = virtualAppliance.getState();
 
-            switch (state)
-            {
-                case UNKNOWN:
-                case NEEDS_SYNC:
-                case NOT_DEPLOYED:
-                    return MonitorStatus.FAILED;
-                case DEPLOYED:
-                    return MonitorStatus.DONE;
-                case LOCKED:
-                default:
-                    return MonitorStatus.CONTINUE;
-            }
-        }
-        catch (Exception ex)
-        {
-            logger.warn(ex, "exception thrown while monitoring %s on %s, returning CONTINUE",
-                virtualAppliance, getClass().getName());
+         switch (state) {
+            case UNKNOWN:
+            case NEEDS_SYNC:
+            case NOT_DEPLOYED:
+               return MonitorStatus.FAILED;
+            case DEPLOYED:
+               return MonitorStatus.DONE;
+            case LOCKED:
+            default:
+               return MonitorStatus.CONTINUE;
+         }
+      } catch (Exception ex) {
+         logger.warn(ex, "exception thrown while monitoring %s on %s, returning CONTINUE", virtualAppliance, getClass()
+               .getName());
 
-            return MonitorStatus.CONTINUE;
-        }
-    }
+         return MonitorStatus.CONTINUE;
+      }
+   }
 }

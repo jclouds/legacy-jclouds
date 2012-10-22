@@ -37,67 +37,51 @@ import com.google.common.collect.Iterables;
  * @author Francesc Montserrat
  */
 @Test(groups = "api", testName = "StoragePoolLiveApiTest")
-public class StoragePoolLiveApiTest extends BaseAbiquoApiLiveApiTest
-{
-    public void testGetDevice()
-    {
-        StorageDevice device = env.storagePool.getStorageDevice();
-        assertNotNull(device);
-        assertEquals(device.getId(), env.storageDevice.getId());
-    }
+public class StoragePoolLiveApiTest extends BaseAbiquoApiLiveApiTest {
+   public void testGetDevice() {
+      StorageDevice device = env.storagePool.getStorageDevice();
+      assertNotNull(device);
+      assertEquals(device.getId(), env.storageDevice.getId());
+   }
 
-    public void testUpdate()
-    {
-        try
-        {
-            Tier tier3 = env.datacenter.findTier(TierPredicates.name("Default Tier 3"));
-            assertNotNull(tier3);
-            env.storagePool.setTier(tier3);
-            env.storagePool.update();
+   public void testUpdate() {
+      try {
+         Tier tier3 = env.datacenter.findTier(TierPredicates.name("Default Tier 3"));
+         assertNotNull(tier3);
+         env.storagePool.setTier(tier3);
+         env.storagePool.update();
 
-            assertEquals(env.storagePool.getTier().getName(), "Default Tier 3");
-        }
-        finally
-        {
-            // Restore the original tier
-            env.storagePool.setTier(env.tier);
-            env.storagePool.update();
-            assertEquals(env.storagePool.getTier().getId(), env.tier.getId());
-        }
-    }
+         assertEquals(env.storagePool.getTier().getName(), "Default Tier 3");
+      } finally {
+         // Restore the original tier
+         env.storagePool.setTier(env.tier);
+         env.storagePool.update();
+         assertEquals(env.storagePool.getTier().getId(), env.tier.getId());
+      }
+   }
 
-    public void testListStoragePool()
-    {
-        Iterable<StoragePool> storagePools = env.storageDevice.listStoragePools();
-        assertEquals(Iterables.size(storagePools), 1);
+   public void testListStoragePool() {
+      Iterable<StoragePool> storagePools = env.storageDevice.listStoragePools();
+      assertEquals(Iterables.size(storagePools), 1);
 
-        storagePools =
-            env.storageDevice
-                .listStoragePools(StoragePoolPredicates.name(env.storagePool.getName()));
-        assertEquals(Iterables.size(storagePools), 1);
+      storagePools = env.storageDevice.listStoragePools(StoragePoolPredicates.name(env.storagePool.getName()));
+      assertEquals(Iterables.size(storagePools), 1);
 
-        storagePools =
-            env.storageDevice.listStoragePools(StoragePoolPredicates.name(env.storagePool.getName()
-                + "FAIL"));
-        assertEquals(Iterables.size(storagePools), 0);
-    }
+      storagePools = env.storageDevice.listStoragePools(StoragePoolPredicates.name(env.storagePool.getName() + "FAIL"));
+      assertEquals(Iterables.size(storagePools), 0);
+   }
 
-    public void testFindStoragePool()
-    {
-        StoragePool storagePool =
-            env.storageDevice
-                .findStoragePool(StoragePoolPredicates.name(env.storagePool.getName()));
-        assertNotNull(storagePool);
+   public void testFindStoragePool() {
+      StoragePool storagePool = env.storageDevice
+            .findStoragePool(StoragePoolPredicates.name(env.storagePool.getName()));
+      assertNotNull(storagePool);
 
-        storagePool =
-            env.storageDevice.findStoragePool(StoragePoolPredicates.name(env.storagePool.getName()
-                + "FAIL"));
-        assertNull(storagePool);
-    }
+      storagePool = env.storageDevice.findStoragePool(StoragePoolPredicates.name(env.storagePool.getName() + "FAIL"));
+      assertNull(storagePool);
+   }
 
-    public void testRefreshStoragePool()
-    {
-        env.storagePool.refresh();
-    }
+   public void testRefreshStoragePool() {
+      env.storagePool.refresh();
+   }
 
 }

@@ -30,13 +30,11 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
  * @author Ignasi Barrera
  */
 @Singleton
-public class BindSupportedDevicesLinkToPath extends BindToPath
-{
+public class BindSupportedDevicesLinkToPath extends BindToPath {
 
-    @Override
-    protected String getNewEndpoint(final GeneratedHttpRequest gRequest, final Object input)
-    {
-        return super.getNewEndpoint(gRequest, input) + "/action/supported";
-    }
+   @Override
+   protected String getNewEndpoint(final GeneratedHttpRequest gRequest, final Object input) {
+      return super.getNewEndpoint(gRequest, input) + "/action/supported";
+   }
 
 }

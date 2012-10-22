@@ -33,20 +33,16 @@ import com.google.common.base.Predicate;
  * @author Ignasi Barrera
  * @author Francesc Montserrat
  */
-public class SystemPropertyPredicates
-{
-    public static Predicate<SystemProperty> name(final String... names)
-    {
-        checkNotNull(names, "names must be defined");
+public class SystemPropertyPredicates {
+   public static Predicate<SystemProperty> name(final String... names) {
+      checkNotNull(names, "names must be defined");
 
-        return new Predicate<SystemProperty>()
-        {
-            @Override
-            public boolean apply(final SystemProperty property)
-            {
-                return Arrays.asList(names).contains(property.getName());
-            }
-        };
-    }
+      return new Predicate<SystemProperty>() {
+         @Override
+         public boolean apply(final SystemProperty property) {
+            return Arrays.asList(names).contains(property.getName());
+         }
+      };
+   }
 
 }

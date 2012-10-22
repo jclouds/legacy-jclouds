@@ -24,14 +24,13 @@ package org.jclouds.abiquo.reference;
  * 
  * @author Francesc Montserrat
  */
-public class ValidationErrors
-{
-    public static final String NULL_RESOURCE = "The resource should be assigned to a ";
+public class ValidationErrors {
+   public static final String NULL_RESOURCE = "The resource should be assigned to a ";
 
-    public static final String MISSING_REQUIRED_FIELD = "Missing required field ";
+   public static final String MISSING_REQUIRED_FIELD = "Missing required field ";
 
-    public static final String MISSING_REQUIRED_LINK = "Missing required link ";
+   public static final String MISSING_REQUIRED_LINK = "Missing required link ";
 
-    public static final String INVALID_NETWORK_TYPE = "Invalid network type ";
+   public static final String INVALID_NETWORK_TYPE = "Invalid network type ";
 
 }

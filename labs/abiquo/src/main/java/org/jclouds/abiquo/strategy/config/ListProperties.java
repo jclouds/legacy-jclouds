@@ -32,7 +32,6 @@ import com.google.inject.ImplementedBy;
  * @author Francesc Montserrat
  */
 @ImplementedBy(ListPropertiesImpl.class)
-public interface ListProperties extends ListRootEntities<SystemProperty>
-{
-    public Iterable<SystemProperty> execute(PropertyOptions options);
+public interface ListProperties extends ListRootEntities<SystemProperty> {
+   public Iterable<SystemProperty> execute(PropertyOptions options);
 }

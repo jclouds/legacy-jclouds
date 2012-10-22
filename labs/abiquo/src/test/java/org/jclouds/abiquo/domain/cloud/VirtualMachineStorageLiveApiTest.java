@@ -39,121 +39,111 @@ import org.testng.annotations.Test;
  * @author Francesc Montserrat
  */
 @Test(groups = "api", testName = "VirtualMachineStorageLiveApiTest")
-public class VirtualMachineStorageLiveApiTest extends BaseAbiquoApiLiveApiTest
-{
-    private Volume volume;
+public class VirtualMachineStorageLiveApiTest extends BaseAbiquoApiLiveApiTest {
+   private Volume volume;
 
-    private HardDisk hardDisk;
+   private HardDisk hardDisk;
 
-    public void testAttachVolumes()
-    {
-        volume = createVolume();
+   public void testAttachVolumes() {
+      volume = createVolume();
 
-        // Since the virtual machine is not deployed, this should not generate a task
-        AsyncTask task = env.virtualMachine.attachVolumes(volume);
-        assertNull(task);
+      // Since the virtual machine is not deployed, this should not generate a
+      // task
+      AsyncTask task = env.virtualMachine.attachVolumes(volume);
+      assertNull(task);
 
-        List<Volume> attached = env.virtualMachine.listAttachedVolumes();
-        assertEquals(attached.size(), 1);
-        assertEquals(attached.get(0).getId(), volume.getId());
-    }
+      List<Volume> attached = env.virtualMachine.listAttachedVolumes();
+      assertEquals(attached.size(), 1);
+      assertEquals(attached.get(0).getId(), volume.getId());
+   }
 
-    @Test(dependsOnMethods = "testAttachVolumes")
-    public void detachVolume()
-    {
-        env.virtualMachine.detachVolumes(volume);
-        List<Volume> attached = env.virtualMachine.listAttachedVolumes();
-        assertTrue(attached.isEmpty());
-    }
+   @Test(dependsOnMethods = "testAttachVolumes")
+   public void detachVolume() {
+      env.virtualMachine.detachVolumes(volume);
+      List<Volume> attached = env.virtualMachine.listAttachedVolumes();
+      assertTrue(attached.isEmpty());
+   }
 
-    @Test(dependsOnMethods = "detachVolume")
-    public void detachAllVolumes()
-    {
-        // Since the virtual machine is not deployed, this should not generate a task
-        AsyncTask task = env.virtualMachine.attachVolumes(volume);
-        assertNull(task);
+   @Test(dependsOnMethods = "detachVolume")
+   public void detachAllVolumes() {
+      // Since the virtual machine is not deployed, this should not generate a
+      // task
+      AsyncTask task = env.virtualMachine.attachVolumes(volume);
+      assertNull(task);
 
-        env.virtualMachine.detachAllVolumes();
-        List<Volume> attached = env.virtualMachine.listAttachedVolumes();
-        assertTrue(attached.isEmpty());
+      env.virtualMachine.detachAllVolumes();
+      List<Volume> attached = env.virtualMachine.listAttachedVolumes();
+      assertTrue(attached.isEmpty());
 
-        deleteVolume(volume);
-    }
+      deleteVolume(volume);
+   }
 
-    public void testAttachHardDisks()
-    {
-        hardDisk = createHardDisk();
+   public void testAttachHardDisks() {
+      hardDisk = createHardDisk();
 
-        // Since the virtual machine is not deployed, this should not generate a task
-        AsyncTask task = env.virtualMachine.attachHardDisks(hardDisk);
-        assertNull(task);
+      // Since the virtual machine is not deployed, this should not generate a
+      // task
+      AsyncTask task = env.virtualMachine.attachHardDisks(hardDisk);
+      assertNull(task);
 
-        List<HardDisk> attached = env.virtualMachine.listAttachedHardDisks();
-        assertEquals(attached.size(), 1);
-        assertEquals(attached.get(0).getId(), hardDisk.getId());
-    }
+      List<HardDisk> attached = env.virtualMachine.listAttachedHardDisks();
+      assertEquals(attached.size(), 1);
+      assertEquals(attached.get(0).getId(), hardDisk.getId());
+   }
 
-    @Test(dependsOnMethods = "testAttachHardDisks")
-    public void detachHardDisk()
-    {
-        env.virtualMachine.detachHardDisks(hardDisk);
-        List<HardDisk> attached = env.virtualMachine.listAttachedHardDisks();
-        assertTrue(attached.isEmpty());
-    }
+   @Test(dependsOnMethods = "testAttachHardDisks")
+   public void detachHardDisk() {
+      env.virtualMachine.detachHardDisks(hardDisk);
+      List<HardDisk> attached = env.virtualMachine.listAttachedHardDisks();
+      assertTrue(attached.isEmpty());
+   }
 
-    @Test(dependsOnMethods = "detachHardDisk")
-    public void detachAllHardDisks()
-    {
-        // Since the virtual machine is not deployed, this should not generate a task
-        AsyncTask task = env.virtualMachine.attachHardDisks(hardDisk);
-        assertNull(task);
+   @Test(dependsOnMethods = "detachHardDisk")
+   public void detachAllHardDisks() {
+      // Since the virtual machine is not deployed, this should not generate a
+      // task
+      AsyncTask task = env.virtualMachine.attachHardDisks(hardDisk);
+      assertNull(task);
 
-        env.virtualMachine.detachAllHardDisks();
-        List<HardDisk> attached = env.virtualMachine.listAttachedHardDisks();
-        assertTrue(attached.isEmpty());
+      env.virtualMachine.detachAllHardDisks();
+      List<HardDisk> attached = env.virtualMachine.listAttachedHardDisks();
+      assertTrue(attached.isEmpty());
 
-        deleteHardDisk(hardDisk);
-    }
+      deleteHardDisk(hardDisk);
+   }
 
-    private Volume createVolume()
-    {
-        Tier tier = env.virtualDatacenter.findStorageTier(TierPredicates.name(env.tier.getName()));
+   private Volume createVolume() {
+      Tier tier = env.virtualDatacenter.findStorageTier(TierPredicates.name(env.tier.getName()));
 
-        Volume volume =
-            Volume.builder(env.context.getApiContext(), env.virtualDatacenter, tier)
-                .name(PREFIX + "Hawaian volume").sizeInMb(32).build();
-        volume.save();
+      Volume volume = Volume.builder(env.context.getApiContext(), env.virtualDatacenter, tier)
+            .name(PREFIX + "Hawaian volume").sizeInMb(32).build();
+      volume.save();
 
-        assertNotNull(volume.getId());
-        assertNotNull(env.virtualDatacenter.getVolume(volume.getId()));
+      assertNotNull(volume.getId());
+      assertNotNull(env.virtualDatacenter.getVolume(volume.getId()));
 
-        return volume;
-    }
+      return volume;
+   }
 
-    private void deleteVolume(final Volume volume)
-    {
-        Integer id = volume.getId();
-        volume.delete();
-        assertNull(env.virtualDatacenter.getVolume(id));
-    }
+   private void deleteVolume(final Volume volume) {
+      Integer id = volume.getId();
+      volume.delete();
+      assertNull(env.virtualDatacenter.getVolume(id));
+   }
 
-    private HardDisk createHardDisk()
-    {
-        HardDisk hardDisk =
-            HardDisk.builder(env.context.getApiContext(), env.virtualDatacenter).sizeInMb(64L)
-                .build();
-        hardDisk.save();
+   private HardDisk createHardDisk() {
+      HardDisk hardDisk = HardDisk.builder(env.context.getApiContext(), env.virtualDatacenter).sizeInMb(64L).build();
+      hardDisk.save();
 
-        assertNotNull(hardDisk.getId());
-        assertNotNull(hardDisk.getSequence());
+      assertNotNull(hardDisk.getId());
+      assertNotNull(hardDisk.getSequence());
 
-        return hardDisk;
-    }
+      return hardDisk;
+   }
 
-    private void deleteHardDisk(final HardDisk hardDisk)
-    {
-        Integer id = hardDisk.getId();
-        hardDisk.delete();
-        assertNull(env.virtualDatacenter.getHardDisk(id));
-    }
+   private void deleteHardDisk(final HardDisk hardDisk) {
+      Integer id = hardDisk.getId();
+      hardDisk.delete();
+      assertNull(env.virtualDatacenter.getHardDisk(id));
+   }
 }

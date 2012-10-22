@@ -36,52 +36,39 @@ import com.google.common.collect.Iterables;
  * @author Ignasi Barrera
  */
 @Singleton
-public class ReturnFalseIfNotAvailable implements Function<Exception, Object>
-{
-    @Override
-    public Object apply(final Exception from)
-    {
-        Throwable exception =
-            Iterables.find(Throwables.getCausalChain(from), isNotAvailableException(from), null);
+public class ReturnFalseIfNotAvailable implements Function<Exception, Object> {
+   @Override
+   public Object apply(final Exception from) {
+      Throwable exception = Iterables.find(Throwables.getCausalChain(from), isNotAvailableException(from), null);
 
-        if (exception != null)
-        {
-            if (exception instanceof HttpResponseException)
-            {
-                HttpResponseException responseException = (HttpResponseException) exception;
-                HttpResponse response = responseException.getResponse();
+      if (exception != null) {
+         if (exception instanceof HttpResponseException) {
+            HttpResponseException responseException = (HttpResponseException) exception;
+            HttpResponse response = responseException.getResponse();
 
-                if (response != null && response.getStatusCode() >= 500
-                    && response.getStatusCode() < 600)
-                {
-                    return false;
-                }
+            if (response != null && response.getStatusCode() >= 500 && response.getStatusCode() < 600) {
+               return false;
             }
-            else
-            {
-                // Will enter here when exception is a ResourceNotFoundException
-                return false;
-            }
-        }
+         } else {
+            // Will enter here when exception is a ResourceNotFoundException
+            return false;
+         }
+      }
 
-        throw Throwables.propagate(from);
-    }
+      throw Throwables.propagate(from);
+   }
 
-    private static Predicate<Throwable> isNotAvailableException(final Throwable exception)
-    {
-        return new Predicate<Throwable>()
-        {
-            @Override
-            public boolean apply(final Throwable input)
-            {
-                boolean notAvailable =
-                    input instanceof HttpResponseException
-                        && ((HttpResponseException) input).getResponse() != null;
+   private static Predicate<Throwable> isNotAvailableException(final Throwable exception) {
+      return new Predicate<Throwable>() {
+         @Override
+         public boolean apply(final Throwable input) {
+            boolean notAvailable = input instanceof HttpResponseException
+                  && ((HttpResponseException) input).getResponse() != null;
 
-                notAvailable |= input instanceof ResourceNotFoundException;
+            notAvailable |= input instanceof ResourceNotFoundException;
 
-                return notAvailable;
-            }
-        };
-    }
+            return notAvailable;
+         }
+      };
+   }
 }

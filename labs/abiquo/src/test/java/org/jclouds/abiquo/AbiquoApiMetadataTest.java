@@ -34,21 +34,18 @@ import org.testng.annotations.Test;
  * @author Ignasi Barrera
  */
 @Test(groups = "unit", testName = "AbiquoApiMetadataTest")
-public class AbiquoApiMetadataTest extends BaseComputeServiceApiMetadataTest
-{
+public class AbiquoApiMetadataTest extends BaseComputeServiceApiMetadataTest {
 
-    public AbiquoApiMetadataTest()
-    {
-        super(new AbiquoApiMetadata());
-    }
+   public AbiquoApiMetadataTest() {
+      super(new AbiquoApiMetadata());
+   }
 
-    public void testAbiquoApiRegistered()
-    {
-        ApiMetadata api = Apis.withId("abiquo");
+   public void testAbiquoApiRegistered() {
+      ApiMetadata api = Apis.withId("abiquo");
 
-        assertNotNull(api);
-        assertTrue(api instanceof AbiquoApiMetadata);
-        assertEquals(api.getId(), "abiquo");
-    }
+      assertNotNull(api);
+      assertTrue(api instanceof AbiquoApiMetadata);
+      assertEquals(api.getId(), "abiquo");
+   }
 
 }

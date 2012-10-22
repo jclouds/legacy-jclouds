@@ -33,37 +33,46 @@ import com.google.inject.ImplementedBy;
  * @author Ignasi Barrera
  */
 @ImplementedBy(BaseAsyncTaskMonitor.class)
-public interface AsyncTaskMonitor extends MonitoringService
-{
-    /**
-     * Monitor the given {@link AsyncTask}s and block until they finishe.
-     * 
-     * @param tasks The {@link AsyncTask}s to monitor.
-     */
-    void awaitCompletion(final AsyncTask... tasks);
+public interface AsyncTaskMonitor extends MonitoringService {
+   /**
+    * Monitor the given {@link AsyncTask}s and block until they finishe.
+    * 
+    * @param tasks
+    *           The {@link AsyncTask}s to monitor.
+    */
+   void awaitCompletion(final AsyncTask... tasks);
 
-    /**
-     * Monitor the given {@link AsyncTask}s and populate an event when they finish.
-     * 
-     * @param tasks The {@link AsyncTask}s to monitor.
-     */
-    public void monitor(final AsyncTask... tasks);
+   /**
+    * Monitor the given {@link AsyncTask}s and populate an event when they
+    * finish.
+    * 
+    * @param tasks
+    *           The {@link AsyncTask}s to monitor.
+    */
+   public void monitor(final AsyncTask... tasks);
 
-    /**
-     * Monitor the given {@link AsyncTask}s and block until they finish.
-     * 
-     * @param maxWait The maximum time to wait.
-     * @param timeUnit The time unit for the maxWait parameter.
-     * @param tasks The {@link AsyncTask}s to monitor.
-     */
-    void awaitCompletion(final Long maxWait, final TimeUnit timeUnit, final AsyncTask... tasks);
+   /**
+    * Monitor the given {@link AsyncTask}s and block until they finish.
+    * 
+    * @param maxWait
+    *           The maximum time to wait.
+    * @param timeUnit
+    *           The time unit for the maxWait parameter.
+    * @param tasks
+    *           The {@link AsyncTask}s to monitor.
+    */
+   void awaitCompletion(final Long maxWait, final TimeUnit timeUnit, final AsyncTask... tasks);
 
-    /**
-     * Monitor the given {@link AsyncTask}s and populate an event when they finish.
-     * 
-     * @param maxWait The maximum time to wait.
-     * @param timeUnit The time unit for the maxWait parameter.
-     * @param tasks The {@link AsyncTask}s to monitor.
-     */
-    public void monitor(final Long maxWait, final TimeUnit timeUnit, final AsyncTask... tasks);
+   /**
+    * Monitor the given {@link AsyncTask}s and populate an event when they
+    * finish.
+    * 
+    * @param maxWait
+    *           The maximum time to wait.
+    * @param timeUnit
+    *           The time unit for the maxWait parameter.
+    * @param tasks
+    *           The {@link AsyncTask}s to monitor.
+    */
+   public void monitor(final Long maxWait, final TimeUnit timeUnit, final AsyncTask... tasks);
 }

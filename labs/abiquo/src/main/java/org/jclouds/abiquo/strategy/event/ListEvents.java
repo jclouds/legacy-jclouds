@@ -32,7 +32,6 @@ import com.google.inject.ImplementedBy;
  * @author Vivien Mahé
  */
 @ImplementedBy(ListEventsImpl.class)
-public interface ListEvents extends ListRootEntities<Event>
-{
-    Iterable<Event> execute(EventOptions options);
+public interface ListEvents extends ListRootEntities<Event> {
+   Iterable<Event> execute(EventOptions options);
 }

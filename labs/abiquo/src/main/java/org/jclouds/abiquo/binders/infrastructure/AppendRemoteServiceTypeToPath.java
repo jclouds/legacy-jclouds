@@ -29,26 +29,24 @@ import org.jclouds.http.HttpRequest;
 /**
  * Append the {@link RemoteServiceType} service to the request URI.
  * <p>
- * This method assumes that the input object is a {@link RemoteServiceType} enumeration.
+ * This method assumes that the input object is a {@link RemoteServiceType}
+ * enumeration.
  * 
  * @author Ignasi Barrera
  */
 @Singleton
-public class AppendRemoteServiceTypeToPath extends AppendToPath
-{
-    private ParseRemoteServiceType parser;
+public class AppendRemoteServiceTypeToPath extends AppendToPath {
+   private ParseRemoteServiceType parser;
 
-    @Inject
-    public AppendRemoteServiceTypeToPath(final ParseRemoteServiceType parser)
-    {
-        super();
-        this.parser = parser;
-    }
+   @Inject
+   public AppendRemoteServiceTypeToPath(final ParseRemoteServiceType parser) {
+      super();
+      this.parser = parser;
+   }
 
-    @Override
-    protected <R extends HttpRequest> String getValue(final R request, final Object input)
-    {
-        return parser.apply(input);
-    }
+   @Override
+   protected <R extends HttpRequest> String getValue(final R request, final Object input) {
+      return parser.apply(input);
+   }
 
 }

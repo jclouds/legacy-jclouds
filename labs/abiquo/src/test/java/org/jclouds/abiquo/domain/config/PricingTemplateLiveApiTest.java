@@ -46,101 +46,86 @@ import com.abiquo.model.enumerator.PricingPeriod;
  * @author Susana Acedo
  */
 @Test(groups = "api", testName = "PricingTemplateLiveApiTest")
-public class PricingTemplateLiveApiTest extends BaseAbiquoApiLiveApiTest
-{
-    private PricingTemplate pricingTemplate;
+public class PricingTemplateLiveApiTest extends BaseAbiquoApiLiveApiTest {
+   private PricingTemplate pricingTemplate;
 
-    private Currency currency;
+   private Currency currency;
 
-    private CostCode costcode;
+   private CostCode costcode;
 
-    private BigDecimal zero = new BigDecimal(0);
+   private BigDecimal zero = new BigDecimal(0);
 
-    @BeforeClass
-    public void setupPricingTemplate()
-    {
-        Iterable<Currency> currencies = env.context.getPricingService().listCurrencies();
-        currency = currencies.iterator().next();
+   @BeforeClass
+   public void setupPricingTemplate() {
+      Iterable<Currency> currencies = env.context.getPricingService().listCurrencies();
+      currency = currencies.iterator().next();
 
-        costcode =
-            CostCode.builder(env.context.getApiContext()).name(PREFIX + "test-costcode")
-                .description("description").build();
+      costcode = CostCode.builder(env.context.getApiContext()).name(PREFIX + "test-costcode")
+            .description("description").build();
 
-        costcode.save();
+      costcode.save();
 
-        pricingTemplate =
-            PricingTemplate.builder(env.context.getApiContext(), currency).name("pricing_template")
-                .description("description").hdGB(zero).standingChargePeriod(zero).vlan(zero)
-                .chargingPeriod(PricingPeriod.MONTH).minimumChargePeriod(zero)
-                .showChangesBefore(true).showMinimumCharge(false).minimumCharge(PricingPeriod.WEEK)
-                .publicIp(zero).vcpu(zero).memoryGB(zero).defaultTemplate(true)
-                .lastUpdate(new Date()).build();
+      pricingTemplate = PricingTemplate.builder(env.context.getApiContext(), currency).name("pricing_template")
+            .description("description").hdGB(zero).standingChargePeriod(zero).vlan(zero)
+            .chargingPeriod(PricingPeriod.MONTH).minimumChargePeriod(zero).showChangesBefore(true)
+            .showMinimumCharge(false).minimumCharge(PricingPeriod.WEEK).publicIp(zero).vcpu(zero).memoryGB(zero)
+            .defaultTemplate(true).lastUpdate(new Date()).build();
 
-        pricingTemplate.save();
-    }
+      pricingTemplate.save();
+   }
 
-    @AfterClass
-    public void tearDownPricingTemplate()
-    {
-        pricingTemplate.delete();
-        costcode.delete();
-    }
+   @AfterClass
+   public void tearDownPricingTemplate() {
+      pricingTemplate.delete();
+      costcode.delete();
+   }
 
-    public void testCreateRepeated()
-    {
-        PricingTemplate repeated =
-            PricingTemplate.Builder.fromPricingTemplate(pricingTemplate).build();
+   public void testCreateRepeated() {
+      PricingTemplate repeated = PricingTemplate.Builder.fromPricingTemplate(pricingTemplate).build();
 
-        try
-        {
-            repeated.save();
-            fail("Should not be able to create pricingtemplates with the same name");
-        }
-        catch (AbiquoException ex)
-        {
-            assertHasError(ex, Status.CONFLICT, "PRICINGTEMPLATE-2");
-        }
-    }
+      try {
+         repeated.save();
+         fail("Should not be able to create pricingtemplates with the same name");
+      } catch (AbiquoException ex) {
+         assertHasError(ex, Status.CONFLICT, "PRICINGTEMPLATE-2");
+      }
+   }
 
-    public void testUpdate()
-    {
-        pricingTemplate.setName(PREFIX + "pt-updated");
-        pricingTemplate.update();
+   public void testUpdate() {
+      pricingTemplate.setName(PREFIX + "pt-updated");
+      pricingTemplate.update();
 
-        PricingTemplate apiPricingTemplate =
-            env.context.getPricingService().findPricingTemplate(
-                PricingPredicates.pricingTemplate(PREFIX + "pt-updated"));
+      PricingTemplate apiPricingTemplate = env.context.getPricingService().findPricingTemplate(
+            PricingPredicates.pricingTemplate(PREFIX + "pt-updated"));
 
-        assertNotNull(apiPricingTemplate);
-        assertEquals(PREFIX + "pt-updated", apiPricingTemplate.getName());
+      assertNotNull(apiPricingTemplate);
+      assertEquals(PREFIX + "pt-updated", apiPricingTemplate.getName());
 
-    }
+   }
 
-    // when a pricing template is created, pricing cost codes for each existent cost code are also
-    // created with price 0
-    public void getPricingCostCodes()
-    {
-        Collection<PricingCostCode> pricingCostCodes =
-            env.context.getPricingService().getPricingCostCodes(pricingTemplate.getId());
-        assertEquals(pricingCostCodes.size(), 1);
-        assertNotNull(pricingCostCodes);
-        for (PricingCostCode pc : pricingCostCodes)
-        {
-            assertEquals(pc.getPrice().compareTo(zero), 0);
-        }
-    }
+   // when a pricing template is created, pricing cost codes for each existent
+   // cost code are also
+   // created with price 0
+   public void getPricingCostCodes() {
+      Collection<PricingCostCode> pricingCostCodes = env.context.getPricingService().getPricingCostCodes(
+            pricingTemplate.getId());
+      assertEquals(pricingCostCodes.size(), 1);
+      assertNotNull(pricingCostCodes);
+      for (PricingCostCode pc : pricingCostCodes) {
+         assertEquals(pc.getPrice().compareTo(zero), 0);
+      }
+   }
 
-    // when a pricing template is created, pricing tiers are also created with price 0
-    public void getPricingTiers()
-    {
-        Collection<PricingTier> pricingTiers =
+   // when a pricing template is created, pricing tiers are also created with
+   // price 0
+   public void getPricingTiers() {
+      Collection<PricingTier> pricingTiers =
 
-        env.context.getPricingService().getPricingTiers(pricingTemplate.getId());
-        assertEquals(pricingTiers.size(), 4);
-        assertNotNull(pricingTiers);
-        for (PricingTier pt : pricingTiers)
-        {
-            assertEquals(pt.getPrice().compareTo(zero), 0);
-        }
-    }
+      env.context.getPricingService().getPricingTiers(pricingTemplate.getId());
+      assertEquals(pricingTiers.size(), 4);
+      assertNotNull(pricingTiers);
+      for (PricingTier pt : pricingTiers) {
+         assertEquals(pt.getPrice().compareTo(zero), 0);
+      }
+   }
 }

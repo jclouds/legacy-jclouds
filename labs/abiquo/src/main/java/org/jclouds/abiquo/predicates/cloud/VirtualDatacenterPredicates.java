@@ -43,94 +43,75 @@ import com.google.common.collect.Lists;
  * 
  * @author Ignasi Barrera
  */
-public class VirtualDatacenterPredicates
-{
-    public static Predicate<VirtualDatacenter> name(final String... names)
-    {
-        checkNotNull(names, "names must be defined");
+public class VirtualDatacenterPredicates {
+   public static Predicate<VirtualDatacenter> name(final String... names) {
+      checkNotNull(names, "names must be defined");
 
-        return new Predicate<VirtualDatacenter>()
-        {
-            @Override
-            public boolean apply(final VirtualDatacenter virtualDatacenter)
-            {
-                return Arrays.asList(names).contains(virtualDatacenter.getName());
+      return new Predicate<VirtualDatacenter>() {
+         @Override
+         public boolean apply(final VirtualDatacenter virtualDatacenter) {
+            return Arrays.asList(names).contains(virtualDatacenter.getName());
+         }
+      };
+   }
+
+   public static Predicate<VirtualDatacenter> type(final HypervisorType... types) {
+      checkNotNull(types, "types must be defined");
+
+      return new Predicate<VirtualDatacenter>() {
+         @Override
+         public boolean apply(final VirtualDatacenter virtualDatacenter) {
+            return Arrays.asList(types).contains(virtualDatacenter.getHypervisorType());
+         }
+      };
+   }
+
+   public static Predicate<VirtualDatacenter> datacenter(final Datacenter... datacenters) {
+      checkNotNull(datacenters, "datacenters must be defined");
+
+      final List<Integer> ids = Lists.newArrayList(transform(Arrays.asList(datacenters),
+            new Function<Datacenter, Integer>() {
+               @Override
+               public Integer apply(final Datacenter input) {
+                  return input.getId();
+               }
+            }));
+
+      return new Predicate<VirtualDatacenter>() {
+         @Override
+         public boolean apply(final VirtualDatacenter virtualDatacenter) {
+            // Avoid using the getDatacenter() method since it will generate an
+            // unnecessary API
+            // call. We can get the ID from the datacenter link.
+            Integer datacenterId = checkNotNull(virtualDatacenter.unwrap().getIdFromLink(ParentLinkName.DATACENTER),
+                  ValidationErrors.MISSING_REQUIRED_LINK);
+
+            return ids.contains(datacenterId);
+         }
+      };
+   }
+
+   /**
+    * Check if the given template type is compatible with the given virtual
+    * datacenter type taking into account the conversions of the template.
+    * 
+    * @param template
+    *           The template to check.
+    * @return Predicate to check if the template or its conversions are
+    *         compatibles with the given virtual datacenter.
+    */
+   public static Predicate<VirtualDatacenter> compatibleWithTemplateOrConversions(final VirtualMachineTemplate template) {
+      return new Predicate<VirtualDatacenter>() {
+         @Override
+         public boolean apply(final VirtualDatacenter vdc) {
+            HypervisorType type = vdc.getHypervisorType();
+            boolean compatible = type.isCompatible(template.getDiskFormatType());
+            if (!compatible) {
+               List<Conversion> compatibleConversions = template.listConversions(type, ConversionState.FINISHED);
+               compatible = compatibleConversions != null && !compatibleConversions.isEmpty();
             }
-        };
-    }
-
-    public static Predicate<VirtualDatacenter> type(final HypervisorType... types)
-    {
-        checkNotNull(types, "types must be defined");
-
-        return new Predicate<VirtualDatacenter>()
-        {
-            @Override
-            public boolean apply(final VirtualDatacenter virtualDatacenter)
-            {
-                return Arrays.asList(types).contains(virtualDatacenter.getHypervisorType());
-            }
-        };
-    }
-
-    public static Predicate<VirtualDatacenter> datacenter(final Datacenter... datacenters)
-    {
-        checkNotNull(datacenters, "datacenters must be defined");
-
-        final List<Integer> ids =
-            Lists.newArrayList(transform(Arrays.asList(datacenters),
-                new Function<Datacenter, Integer>()
-                {
-                    @Override
-                    public Integer apply(final Datacenter input)
-                    {
-                        return input.getId();
-                    }
-                }));
-
-        return new Predicate<VirtualDatacenter>()
-        {
-            @Override
-            public boolean apply(final VirtualDatacenter virtualDatacenter)
-            {
-                // Avoid using the getDatacenter() method since it will generate an unnecessary API
-                // call. We can get the ID from the datacenter link.
-                Integer datacenterId =
-                    checkNotNull(virtualDatacenter.unwrap()
-                        .getIdFromLink(ParentLinkName.DATACENTER),
-                        ValidationErrors.MISSING_REQUIRED_LINK);
-
-                return ids.contains(datacenterId);
-            }
-        };
-    }
-
-    /**
-     * Check if the given template type is compatible with the given virtual datacenter type taking
-     * into account the conversions of the template.
-     * 
-     * @param template The template to check.
-     * @return Predicate to check if the template or its conversions are compatibles with the given
-     *         virtual datacenter.
-     */
-    public static Predicate<VirtualDatacenter> compatibleWithTemplateOrConversions(
-        final VirtualMachineTemplate template)
-    {
-        return new Predicate<VirtualDatacenter>()
-        {
-            @Override
-            public boolean apply(final VirtualDatacenter vdc)
-            {
-                HypervisorType type = vdc.getHypervisorType();
-                boolean compatible = type.isCompatible(template.getDiskFormatType());
-                if (!compatible)
-                {
-                    List<Conversion> compatibleConversions =
-                        template.listConversions(type, ConversionState.FINISHED);
-                    compatible = compatibleConversions != null && !compatibleConversions.isEmpty();
-                }
-                return compatible;
-            }
-        };
-    }
+            return compatible;
+         }
+      };
+   }
 }

@@ -41,30 +41,27 @@ import com.google.inject.Inject;
  * @author Susana Acedo
  */
 @Singleton
-public class ListCostCodesImpl implements ListCostCodes
-{
-    // This strategy does not have still an Executor instance because the current methods call
-    // single api methods
+public class ListCostCodesImpl implements ListCostCodes {
+   // This strategy does not have still an Executor instance because the current
+   // methods call
+   // single api methods
 
-    protected final RestContext<AbiquoApi, AbiquoAsyncApi> context;
+   protected final RestContext<AbiquoApi, AbiquoAsyncApi> context;
 
-    @Inject
-    ListCostCodesImpl(final RestContext<AbiquoApi, AbiquoAsyncApi> context)
-    {
-        this.context = context;
-    }
+   @Inject
+   ListCostCodesImpl(final RestContext<AbiquoApi, AbiquoAsyncApi> context) {
+      this.context = context;
+   }
 
-    @Override
-    public Iterable<CostCode> execute()
-    {
-        CostCodesDto result = context.getApi().getPricingApi().listCostCodes();
-        return wrap(context, CostCode.class, result.getCollection());
-    }
+   @Override
+   public Iterable<CostCode> execute() {
+      CostCodesDto result = context.getApi().getPricingApi().listCostCodes();
+      return wrap(context, CostCode.class, result.getCollection());
+   }
 
-    @Override
-    public Iterable<CostCode> execute(final Predicate<CostCode> selector)
-    {
-        return filter(execute(), selector);
-    }
+   @Override
+   public Iterable<CostCode> execute(final Predicate<CostCode> selector) {
+      return filter(execute(), selector);
+   }
 
 }

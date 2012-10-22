@@ -55,98 +55,87 @@ import com.google.common.collect.Lists;
  * @author Ignasi Barrera
  */
 @Singleton
-public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, NodeMetadata>
-{
-    @Resource
-    protected Logger logger = Logger.NULL;
+public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, NodeMetadata> {
+   @Resource
+   protected Logger logger = Logger.NULL;
 
-    private final VirtualMachineTemplateToImage virtualMachineTemplateToImage;
+   private final VirtualMachineTemplateToImage virtualMachineTemplateToImage;
 
-    private final VirtualMachineTemplateInVirtualDatacenterToHardware virtualMachineTemplateToHardware;
+   private final VirtualMachineTemplateInVirtualDatacenterToHardware virtualMachineTemplateToHardware;
 
-    private final VirtualMachineStateToNodeState virtualMachineStateToNodeState;
+   private final VirtualMachineStateToNodeState virtualMachineStateToNodeState;
 
-    private final Function<VirtualDatacenter, Location> virtualDatacenterToLocation;
+   private final Function<VirtualDatacenter, Location> virtualDatacenterToLocation;
 
-    @Inject
-    public VirtualMachineToNodeMetadata(
-        final VirtualMachineTemplateToImage virtualMachineTemplateToImage,
-        final VirtualMachineTemplateInVirtualDatacenterToHardware virtualMachineTemplateToHardware,
-        final VirtualMachineStateToNodeState virtualMachineStateToNodeState,
-        final Function<VirtualDatacenter, Location> virtualDatacenterToLocation)
-    {
-        this.virtualMachineTemplateToImage =
-            checkNotNull(virtualMachineTemplateToImage, "virtualMachineTemplateToImage");
-        this.virtualMachineTemplateToHardware =
-            checkNotNull(virtualMachineTemplateToHardware, "virtualMachineTemplateToHardware");
-        this.virtualMachineStateToNodeState =
-            checkNotNull(virtualMachineStateToNodeState, "virtualMachineStateToNodeState");
-        this.virtualDatacenterToLocation =
-            checkNotNull(virtualDatacenterToLocation, "virtualDatacenterToLocation");
-    }
+   @Inject
+   public VirtualMachineToNodeMetadata(final VirtualMachineTemplateToImage virtualMachineTemplateToImage,
+         final VirtualMachineTemplateInVirtualDatacenterToHardware virtualMachineTemplateToHardware,
+         final VirtualMachineStateToNodeState virtualMachineStateToNodeState,
+         final Function<VirtualDatacenter, Location> virtualDatacenterToLocation) {
+      this.virtualMachineTemplateToImage = checkNotNull(virtualMachineTemplateToImage, "virtualMachineTemplateToImage");
+      this.virtualMachineTemplateToHardware = checkNotNull(virtualMachineTemplateToHardware,
+            "virtualMachineTemplateToHardware");
+      this.virtualMachineStateToNodeState = checkNotNull(virtualMachineStateToNodeState,
+            "virtualMachineStateToNodeState");
+      this.virtualDatacenterToLocation = checkNotNull(virtualDatacenterToLocation, "virtualDatacenterToLocation");
+   }
 
-    @Override
-    public NodeMetadata apply(final VirtualMachine vm)
-    {
-        NodeMetadataBuilder builder = new NodeMetadataBuilder();
-        builder.ids(vm.getId().toString());
-        builder.uri(vm.getURI());
-        builder.name(vm.getNameLabel());
-        builder.group(vm.getVirtualAppliance().getName());
+   @Override
+   public NodeMetadata apply(final VirtualMachine vm) {
+      NodeMetadataBuilder builder = new NodeMetadataBuilder();
+      builder.ids(vm.getId().toString());
+      builder.uri(vm.getURI());
+      builder.name(vm.getNameLabel());
+      builder.group(vm.getVirtualAppliance().getName());
 
-        // TODO: Node credentials still not present in Abiquo template metadata
-        // Will be added in Abiquo 2.4: http://jira.abiquo.com/browse/ABICLOUDPREMIUM-3647
+      // TODO: Node credentials still not present in Abiquo template metadata
+      // Will be added in Abiquo 2.4:
+      // http://jira.abiquo.com/browse/ABICLOUDPREMIUM-3647
 
-        // Location details
-        VirtualDatacenter vdc = vm.getVirtualDatacenter();
-        builder.location(virtualDatacenterToLocation.apply(vdc));
+      // Location details
+      VirtualDatacenter vdc = vm.getVirtualDatacenter();
+      builder.location(virtualDatacenterToLocation.apply(vdc));
 
-        // Image details
-        VirtualMachineTemplate template = vm.getTemplate();
-        Image image = virtualMachineTemplateToImage.apply(template);
-        builder.imageId(image.getId().toString());
-        builder.operatingSystem(image.getOperatingSystem());
+      // Image details
+      VirtualMachineTemplate template = vm.getTemplate();
+      Image image = virtualMachineTemplateToImage.apply(template);
+      builder.imageId(image.getId().toString());
+      builder.operatingSystem(image.getOperatingSystem());
 
-        // Hardware details
-        Hardware defaultHardware =
-            virtualMachineTemplateToHardware
-                .apply(new VirtualMachineTemplateInVirtualDatacenter(template, vdc));
+      // Hardware details
+      Hardware defaultHardware = virtualMachineTemplateToHardware.apply(new VirtualMachineTemplateInVirtualDatacenter(
+            template, vdc));
 
-        Hardware hardware =
-            HardwareBuilder
-                .fromHardware(defaultHardware)
-                .ram(vm.getRam())
-                .processors(
-                    Lists.newArrayList(new Processor(vm.getCpu(),
+      Hardware hardware = HardwareBuilder
+            .fromHardware(defaultHardware)
+            .ram(vm.getRam())
+            .processors(
+                  Lists.newArrayList(new Processor(vm.getCpu(),
                         VirtualMachineTemplateInVirtualDatacenterToHardware.DEFAULT_CORE_SPEED))) //
-                .build();
+            .build();
 
-        builder.hardware(hardware);
+      builder.hardware(hardware);
 
-        // Networking configuration
-        List<Ip< ? , ? >> nics = vm.listAttachedNics();
-        builder.privateAddresses(ips(filter(nics, Predicates.instanceOf(PrivateIp.class))));
-        builder.publicAddresses(ips(filter(nics,
-            Predicates.not(Predicates.instanceOf(PrivateIp.class)))));
+      // Networking configuration
+      List<Ip<?, ?>> nics = vm.listAttachedNics();
+      builder.privateAddresses(ips(filter(nics, Predicates.instanceOf(PrivateIp.class))));
+      builder.publicAddresses(ips(filter(nics, Predicates.not(Predicates.instanceOf(PrivateIp.class)))));
 
-        // Node state
-        VirtualMachineState state = vm.getState();
-        builder.status(virtualMachineStateToNodeState.apply(state));
-        builder.backendStatus(state.name());
+      // Node state
+      VirtualMachineState state = vm.getState();
+      builder.status(virtualMachineStateToNodeState.apply(state));
+      builder.backendStatus(state.name());
 
-        return builder.build();
-    }
+      return builder.build();
+   }
 
-    private static Iterable<String> ips(final Iterable<Ip< ? , ? >> nics)
-    {
-        return transform(nics, new Function<Ip< ? , ? >, String>()
-        {
-            @Override
-            public String apply(final Ip< ? , ? > nic)
-            {
-                return nic.getIp();
-            }
-        });
-    }
+   private static Iterable<String> ips(final Iterable<Ip<?, ?>> nics) {
+      return transform(nics, new Function<Ip<?, ?>, String>() {
+         @Override
+         public String apply(final Ip<?, ?> nic) {
+            return nic.getIp();
+         }
+      });
+   }
 
 }

@@ -33,48 +33,38 @@ import com.google.common.base.Predicate;
  * 
  * @author Ignasi Barrera
  */
-public class VirtualMachinePredicates
-{
-    public static Predicate<VirtualMachine> internalName(final String... internalName)
-    {
-        checkNotNull(internalName, "names must be defined");
+public class VirtualMachinePredicates {
+   public static Predicate<VirtualMachine> internalName(final String... internalName) {
+      checkNotNull(internalName, "names must be defined");
 
-        return new Predicate<VirtualMachine>()
-        {
-            @Override
-            public boolean apply(final VirtualMachine virtualMachine)
-            {
-                return Arrays.asList(internalName).contains(virtualMachine.getInternalName());
-            }
-        };
-    }
+      return new Predicate<VirtualMachine>() {
+         @Override
+         public boolean apply(final VirtualMachine virtualMachine) {
+            return Arrays.asList(internalName).contains(virtualMachine.getInternalName());
+         }
+      };
+   }
 
-    public static Predicate<VirtualMachine> nameLabel(final String... nameLabels)
-    {
-        checkNotNull(nameLabels, "names must be defined");
+   public static Predicate<VirtualMachine> nameLabel(final String... nameLabels) {
+      checkNotNull(nameLabels, "names must be defined");
 
-        return new Predicate<VirtualMachine>()
-        {
-            @Override
-            public boolean apply(final VirtualMachine virtualMachine)
-            {
-                return Arrays.asList(nameLabels).contains(virtualMachine.getNameLabel());
-            }
-        };
-    }
+      return new Predicate<VirtualMachine>() {
+         @Override
+         public boolean apply(final VirtualMachine virtualMachine) {
+            return Arrays.asList(nameLabels).contains(virtualMachine.getNameLabel());
+         }
+      };
+   }
 
-    public static Predicate<VirtualMachine> state(final VirtualMachineState... states)
-    {
-        checkNotNull(states, "states must be defined");
+   public static Predicate<VirtualMachine> state(final VirtualMachineState... states) {
+      checkNotNull(states, "states must be defined");
 
-        return new Predicate<VirtualMachine>()
-        {
-            @Override
-            public boolean apply(final VirtualMachine virtualMachine)
-            {
-                // The getState() method will generate an API call
-                return Arrays.asList(states).contains(virtualMachine.getState());
-            }
-        };
-    }
+      return new Predicate<VirtualMachine>() {
+         @Override
+         public boolean apply(final VirtualMachine virtualMachine) {
+            // The getState() method will generate an API call
+            return Arrays.asList(states).contains(virtualMachine.getState());
+         }
+      };
+   }
 }

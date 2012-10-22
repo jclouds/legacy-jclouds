@@ -32,20 +32,16 @@ import com.google.common.base.Predicate;
  * 
  * @author Ignasi Barrera
  */
-public class PrivilegePredicates
-{
-    public static Predicate<Privilege> name(final String... names)
-    {
-        checkNotNull(names, "names must be defined");
+public class PrivilegePredicates {
+   public static Predicate<Privilege> name(final String... names) {
+      checkNotNull(names, "names must be defined");
 
-        return new Predicate<Privilege>()
-        {
-            @Override
-            public boolean apply(final Privilege privilege)
-            {
-                return Arrays.asList(names).contains(privilege.getName());
-            }
-        };
-    }
+      return new Predicate<Privilege>() {
+         @Override
+         public boolean apply(final Privilege privilege) {
+            return Arrays.asList(names).contains(privilege.getName());
+         }
+      };
+   }
 
 }

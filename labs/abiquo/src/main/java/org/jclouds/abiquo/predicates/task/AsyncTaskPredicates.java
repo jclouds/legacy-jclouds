@@ -33,19 +33,15 @@ import com.google.common.base.Predicate;
  * 
  * @author Ignasi Barrera
  */
-public class AsyncTaskPredicates
-{
-    public static Predicate<AsyncTask> state(final TaskState... states)
-    {
-        checkNotNull(states, "states must be defined");
+public class AsyncTaskPredicates {
+   public static Predicate<AsyncTask> state(final TaskState... states) {
+      checkNotNull(states, "states must be defined");
 
-        return new Predicate<AsyncTask>()
-        {
-            @Override
-            public boolean apply(final AsyncTask task)
-            {
-                return Arrays.asList(states).contains(task.getState());
-            }
-        };
-    }
+      return new Predicate<AsyncTask>() {
+         @Override
+         public boolean apply(final AsyncTask task) {
+            return Arrays.asList(states).contains(task.getState());
+         }
+      };
+   }
 }

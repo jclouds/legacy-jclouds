@@ -39,36 +39,28 @@ import com.abiquo.server.core.infrastructure.network.VLANNetworkDto;
  * @author Ignasi Barrera
  */
 @Test(groups = "unit", testName = "BindNetworkRefToPayloadTest")
-public class BindNetworkRefToPayloadTest
-{
+public class BindNetworkRefToPayloadTest {
 
-    @Test(expectedExceptions = NullPointerException.class)
-    public void testInvalidNullInput()
-    {
-        BindNetworkRefToPayload binder = new BindNetworkRefToPayload(new JAXBParser("false"));
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
-        binder.bindToRequest(request, null);
-    }
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testInvalidNullInput() {
+      BindNetworkRefToPayload binder = new BindNetworkRefToPayload(new JAXBParser("false"));
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
+      binder.bindToRequest(request, null);
+   }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
-    public void testInvalidTypeInput()
-    {
-        BindNetworkRefToPayload binder = new BindNetworkRefToPayload(new JAXBParser("false"));
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
-        binder.bindToRequest(request, new Object());
-    }
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testInvalidTypeInput() {
+      BindNetworkRefToPayload binder = new BindNetworkRefToPayload(new JAXBParser("false"));
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
+      binder.bindToRequest(request, new Object());
+   }
 
-    public void testBindNetworkRef() throws IOException
-    {
-        VLANNetworkDto network = NetworkResources.privateNetworkPut();
-        BindNetworkRefToPayload binder = new BindNetworkRefToPayload(new JAXBParser("false"));
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
-        request = binder.bindToRequest(request, network);
-        assertPayloadEquals(request.getPayload(), withHeader("<links><link href=\""
-            + network.getEditLink().getHref() + "\" rel=\"internalnetwork\"/></links>"),
-            LinksDto.class);
-    }
+   public void testBindNetworkRef() throws IOException {
+      VLANNetworkDto network = NetworkResources.privateNetworkPut();
+      BindNetworkRefToPayload binder = new BindNetworkRefToPayload(new JAXBParser("false"));
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
+      request = binder.bindToRequest(request, network);
+      assertPayloadEquals(request.getPayload(), withHeader("<links><link href=\"" + network.getEditLink().getHref()
+            + "\" rel=\"internalnetwork\"/></links>"), LinksDto.class);
+   }
 }

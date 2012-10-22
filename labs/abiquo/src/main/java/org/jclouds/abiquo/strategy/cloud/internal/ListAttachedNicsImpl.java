@@ -57,82 +57,60 @@ import com.google.inject.TypeLiteral;
  * @author Ignasi Barrera
  */
 @Singleton
-public class ListAttachedNicsImpl implements ListAttachedNics
-{
-    protected final RestContext<AbiquoApi, AbiquoAsyncApi> context;
+public class ListAttachedNicsImpl implements ListAttachedNics {
+   protected final RestContext<AbiquoApi, AbiquoAsyncApi> context;
 
-    protected final ExtendedUtils extendedUtils;
+   protected final ExtendedUtils extendedUtils;
 
-    @Inject
-    public ListAttachedNicsImpl(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-        final ExtendedUtils extendedUtils)
-    {
-        this.context = checkNotNull(context, "context");
-        this.extendedUtils = checkNotNull(extendedUtils, "extendedUtils");
-    }
+   @Inject
+   public ListAttachedNicsImpl(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final ExtendedUtils extendedUtils) {
+      this.context = checkNotNull(context, "context");
+      this.extendedUtils = checkNotNull(extendedUtils, "extendedUtils");
+   }
 
-    @Override
-    public Iterable<Ip< ? , ? >> execute(final VirtualMachine parent)
-    {
-        parent.refresh();
-        Iterable<RESTLink> nicLinks = LinkUtils.filterNicLinks(parent.unwrap().getLinks());
-        return listIps(nicLinks);
-    }
+   @Override
+   public Iterable<Ip<?, ?>> execute(final VirtualMachine parent) {
+      parent.refresh();
+      Iterable<RESTLink> nicLinks = LinkUtils.filterNicLinks(parent.unwrap().getLinks());
+      return listIps(nicLinks);
+   }
 
-    @Override
-    public Iterable<Ip< ? , ? >> execute(final VirtualMachine parent,
-        final Predicate<Ip< ? , ? >> selector)
-    {
-        return filter(execute(parent), selector);
-    }
+   @Override
+   public Iterable<Ip<?, ?>> execute(final VirtualMachine parent, final Predicate<Ip<?, ?>> selector) {
+      return filter(execute(parent), selector);
+   }
 
-    private Iterable<Ip< ? , ? >> listIps(final Iterable<RESTLink> nicLinks)
-    {
-        return transform(nicLinks, new Function<RESTLink, Ip< ? , ? >>()
-        {
-            @Override
-            public Ip< ? , ? > apply(final RESTLink input)
-            {
-                HttpResponse response = extendedUtils.getAbiquoHttpClient().get(input);
+   private Iterable<Ip<?, ?>> listIps(final Iterable<RESTLink> nicLinks) {
+      return transform(nicLinks, new Function<RESTLink, Ip<?, ?>>() {
+         @Override
+         public Ip<?, ?> apply(final RESTLink input) {
+            HttpResponse response = extendedUtils.getAbiquoHttpClient().get(input);
 
-                if (input.getType().equals(PrivateIpDto.BASE_MEDIA_TYPE))
-                {
-                    ParseXMLWithJAXB<PrivateIpDto> parser =
-                        new ParseXMLWithJAXB<PrivateIpDto>(extendedUtils.getXml(), TypeLiteral
-                            .get(PrivateIpDto.class));
+            if (input.getType().equals(PrivateIpDto.BASE_MEDIA_TYPE)) {
+               ParseXMLWithJAXB<PrivateIpDto> parser = new ParseXMLWithJAXB<PrivateIpDto>(extendedUtils.getXml(),
+                     TypeLiteral.get(PrivateIpDto.class));
 
-                    return wrap(context, PrivateIp.class, parser.apply(response));
-                }
-                else if (input.getType().equals(PublicIpDto.BASE_MEDIA_TYPE))
-                {
-                    ParseXMLWithJAXB<PublicIpDto> parser =
-                        new ParseXMLWithJAXB<PublicIpDto>(extendedUtils.getXml(), TypeLiteral
-                            .get(PublicIpDto.class));
+               return wrap(context, PrivateIp.class, parser.apply(response));
+            } else if (input.getType().equals(PublicIpDto.BASE_MEDIA_TYPE)) {
+               ParseXMLWithJAXB<PublicIpDto> parser = new ParseXMLWithJAXB<PublicIpDto>(extendedUtils.getXml(),
+                     TypeLiteral.get(PublicIpDto.class));
 
-                    return wrap(context, PublicIp.class, parser.apply(response));
-                }
-                else if (input.getType().equals(ExternalIpDto.BASE_MEDIA_TYPE))
-                {
-                    ParseXMLWithJAXB<ExternalIpDto> parser =
-                        new ParseXMLWithJAXB<ExternalIpDto>(extendedUtils.getXml(), TypeLiteral
-                            .get(ExternalIpDto.class));
+               return wrap(context, PublicIp.class, parser.apply(response));
+            } else if (input.getType().equals(ExternalIpDto.BASE_MEDIA_TYPE)) {
+               ParseXMLWithJAXB<ExternalIpDto> parser = new ParseXMLWithJAXB<ExternalIpDto>(extendedUtils.getXml(),
+                     TypeLiteral.get(ExternalIpDto.class));
 
-                    return wrap(context, ExternalIp.class, parser.apply(response));
-                }
-                else if (input.getType().equals(UnmanagedIpDto.BASE_MEDIA_TYPE))
-                {
-                    ParseXMLWithJAXB<UnmanagedIpDto> parser =
-                        new ParseXMLWithJAXB<UnmanagedIpDto>(extendedUtils.getXml(), TypeLiteral
-                            .get(UnmanagedIpDto.class));
+               return wrap(context, ExternalIp.class, parser.apply(response));
+            } else if (input.getType().equals(UnmanagedIpDto.BASE_MEDIA_TYPE)) {
+               ParseXMLWithJAXB<UnmanagedIpDto> parser = new ParseXMLWithJAXB<UnmanagedIpDto>(extendedUtils.getXml(),
+                     TypeLiteral.get(UnmanagedIpDto.class));
 
-                    return wrap(context, UnmanagedIp.class, parser.apply(response));
-                }
-                else
-                {
-                    throw new IllegalArgumentException("Unsupported media type: " + input.getType());
-                }
+               return wrap(context, UnmanagedIp.class, parser.apply(response));
+            } else {
+               throw new IllegalArgumentException("Unsupported media type: " + input.getType());
             }
-        });
-    }
+         }
+      });
+   }
 
 }

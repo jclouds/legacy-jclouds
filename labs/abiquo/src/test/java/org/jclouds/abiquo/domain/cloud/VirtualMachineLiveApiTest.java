@@ -45,98 +45,81 @@ import com.abiquo.server.core.cloud.VirtualMachineState;
  * @author Francesc Montserrat
  */
 @Test(groups = "api", testName = "VirtualMachineLiveApiTest")
-public class VirtualMachineLiveApiTest extends BaseAbiquoApiLiveApiTest
-{
-    public void testHasDataFromNode()
-    {
-        assertNotNull(env.virtualMachine.getNameLabel());
-        assertNotNull(env.virtualMachine.getInternalName());
-        assertNotNull(env.virtualMachine.getOwnerName());
-    }
+public class VirtualMachineLiveApiTest extends BaseAbiquoApiLiveApiTest {
+   public void testHasDataFromNode() {
+      assertNotNull(env.virtualMachine.getNameLabel());
+      assertNotNull(env.virtualMachine.getInternalName());
+      assertNotNull(env.virtualMachine.getOwnerName());
+   }
 
-    public void testUpdateInfoFromNode()
-    {
-        env.virtualMachine.setNameLabel(PREFIX + "-label-updated");
-        env.virtualMachine.update();
-        env.virtualMachine.refresh();
+   public void testUpdateInfoFromNode() {
+      env.virtualMachine.setNameLabel(PREFIX + "-label-updated");
+      env.virtualMachine.update();
+      env.virtualMachine.refresh();
 
-        assertEquals(env.virtualMachine.getNameLabel(), PREFIX + "-label-updated");
-    }
+      assertEquals(env.virtualMachine.getNameLabel(), PREFIX + "-label-updated");
+   }
 
-    public void testGetTasks()
-    {
-        List<AsyncTask> tasks = env.virtualMachine.listTasks();
-        assertNotNull(tasks);
-    }
+   public void testGetTasks() {
+      List<AsyncTask> tasks = env.virtualMachine.listTasks();
+      assertNotNull(tasks);
+   }
 
-    public void testGetState()
-    {
-        VirtualMachineState state = env.virtualMachine.getState();
-        assertEquals(state, VirtualMachineState.NOT_ALLOCATED);
-    }
+   public void testGetState() {
+      VirtualMachineState state = env.virtualMachine.getState();
+      assertEquals(state, VirtualMachineState.NOT_ALLOCATED);
+   }
 
-    public void testIsPersistent()
-    {
-        assertFalse(env.virtualMachine.isPersistent());
-    }
+   public void testIsPersistent() {
+      assertFalse(env.virtualMachine.isPersistent());
+   }
 
-    public void testGetVirtualAppliance()
-    {
-        VirtualAppliance vapp = env.virtualMachine.getVirtualAppliance();
-        assertNotNull(vapp);
-        assertEquals(vapp.getId(), env.virtualAppliance.getId());
-    }
+   public void testGetVirtualAppliance() {
+      VirtualAppliance vapp = env.virtualMachine.getVirtualAppliance();
+      assertNotNull(vapp);
+      assertEquals(vapp.getId(), env.virtualAppliance.getId());
+   }
 
-    public void testRebootVirtualMachineFailsWhenNotAllocated()
-    {
-        // Since the virtual machine is not deployed, this should not generate a task
+   public void testRebootVirtualMachineFailsWhenNotAllocated() {
+      // Since the virtual machine is not deployed, this should not generate a
+      // task
 
-        try
-        {
-            env.virtualMachine.reboot();
-            fail("Reboot should have failed for the NOT_ALLOCATED virtual machine");
-        }
-        catch (AbiquoException ex)
-        {
-            assertHasError(ex, Status.CONFLICT, "VM-11");
-        }
-    }
+      try {
+         env.virtualMachine.reboot();
+         fail("Reboot should have failed for the NOT_ALLOCATED virtual machine");
+      } catch (AbiquoException ex) {
+         assertHasError(ex, Status.CONFLICT, "VM-11");
+      }
+   }
 
-    public void testUpdateForcingLimits()
-    {
-        int originalHard = env.virtualDatacenter.getCpuCountHardLimit();
-        int originalSoft = env.virtualDatacenter.getCpuCountSoftLimit();
+   public void testUpdateForcingLimits() {
+      int originalHard = env.virtualDatacenter.getCpuCountHardLimit();
+      int originalSoft = env.virtualDatacenter.getCpuCountSoftLimit();
 
-        env.virtualDatacenter.setCpuCountHardLimit(10);
-        env.virtualDatacenter.setCpuCountSoftLimit(5);
-        env.virtualDatacenter.update();
+      env.virtualDatacenter.setCpuCountHardLimit(10);
+      env.virtualDatacenter.setCpuCountSoftLimit(5);
+      env.virtualDatacenter.update();
 
-        try
-        {
-            VirtualMachine vm = env.virtualAppliance.getVirtualMachine(env.virtualMachine.getId());
-            vm.setCpu(7);
-            AsyncTask task = vm.update(true);
+      try {
+         VirtualMachine vm = env.virtualAppliance.getVirtualMachine(env.virtualMachine.getId());
+         vm.setCpu(7);
+         AsyncTask task = vm.update(true);
 
-            assertNull(task);
-            assertEquals(vm.getCpu(), 7);
-        }
-        finally
-        {
-            env.virtualDatacenter.setCpuCountHardLimit(originalHard);
-            env.virtualDatacenter.setCpuCountSoftLimit(originalSoft);
-            env.virtualDatacenter.update();
-        }
-    }
+         assertNull(task);
+         assertEquals(vm.getCpu(), 7);
+      } finally {
+         env.virtualDatacenter.setCpuCountHardLimit(originalHard);
+         env.virtualDatacenter.setCpuCountSoftLimit(originalSoft);
+         env.virtualDatacenter.update();
+      }
+   }
 
-    public void testAttachDvd()
-    {
-        VirtualMachine vm =
-            VirtualMachine.Builder.fromVirtualMachine(env.virtualMachine).dvd(true).build();
-        vm.save();
+   public void testAttachDvd() {
+      VirtualMachine vm = VirtualMachine.Builder.fromVirtualMachine(env.virtualMachine).dvd(true).build();
+      vm.save();
 
-        VirtualMachineDto updated =
-            env.cloudApi.getVirtualMachine(env.virtualAppliance.unwrap(), vm.getId());
+      VirtualMachineDto updated = env.cloudApi.getVirtualMachine(env.virtualAppliance.unwrap(), vm.getId());
 
-        assertNotNull(updated.getDvd());
-    }
+      assertNotNull(updated.getDvd());
+   }
 }

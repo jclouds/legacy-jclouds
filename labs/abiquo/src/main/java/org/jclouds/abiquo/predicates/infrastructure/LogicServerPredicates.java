@@ -32,19 +32,15 @@ import com.google.common.base.Predicate;
  * 
  * @author Francesc Montserrat
  */
-public class LogicServerPredicates
-{
-    public static Predicate<LogicServer> name(final String... names)
-    {
-        checkNotNull(names, "names must be defined");
+public class LogicServerPredicates {
+   public static Predicate<LogicServer> name(final String... names) {
+      checkNotNull(names, "names must be defined");
 
-        return new Predicate<LogicServer>()
-        {
-            @Override
-            public boolean apply(final LogicServer logicServer)
-            {
-                return Arrays.asList(names).contains(logicServer.getName());
-            }
-        };
-    }
+      return new Predicate<LogicServer>() {
+         @Override
+         public boolean apply(final LogicServer logicServer) {
+            return Arrays.asList(names).contains(logicServer.getName());
+         }
+      };
+   }
 }

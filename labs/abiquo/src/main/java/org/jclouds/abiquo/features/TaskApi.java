@@ -38,23 +38,24 @@ import com.abiquo.server.core.task.TasksDto;
  * @author Francesc Montserrat
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
-public interface TaskApi
-{
-    /*********************** Task ***********************/
+public interface TaskApi {
+   /*********************** Task ***********************/
 
-    /**
-     * Get a task from its link.
-     * 
-     * @param link The link of the task.
-     * @return The task.
-     */
-    TaskDto getTask(final RESTLink link);
+   /**
+    * Get a task from its link.
+    * 
+    * @param link
+    *           The link of the task.
+    * @return The task.
+    */
+   TaskDto getTask(final RESTLink link);
 
-    /**
-     * Get the list of tasks of the given object.
-     * 
-     * @param dto The object.
-     * @return The list of tasks for the given object.
-     */
-    <T extends SingleResourceTransportDto> TasksDto listTasks(T dto);
+   /**
+    * Get the list of tasks of the given object.
+    * 
+    * @param dto
+    *           The object.
+    * @return The list of tasks for the given object.
+    */
+   <T extends SingleResourceTransportDto> TasksDto listTasks(T dto);
 }

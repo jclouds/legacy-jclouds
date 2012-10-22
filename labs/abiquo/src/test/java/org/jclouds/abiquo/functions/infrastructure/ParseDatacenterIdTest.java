@@ -32,35 +32,30 @@ import com.google.common.base.Function;
  * @author Francesc Montserrat
  */
 @Test(groups = "unit", testName = "ParseDatacenterIdTest")
-public class ParseDatacenterIdTest
-{
-    @Test(expectedExceptions = NullPointerException.class)
-    public void testInvalidNullInput()
-    {
-        Function<Object, String> parser = new ParseDatacenterId();
-        parser.apply(null);
-    }
+public class ParseDatacenterIdTest {
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testInvalidNullInput() {
+      Function<Object, String> parser = new ParseDatacenterId();
+      parser.apply(null);
+   }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
-    public void testInvalidInputType()
-    {
-        Function<Object, String> parser = new ParseDatacenterId();
-        parser.apply(new Object());
-    }
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testInvalidInputType() {
+      Function<Object, String> parser = new ParseDatacenterId();
+      parser.apply(new Object());
+   }
 
-    @Test(expectedExceptions = NullPointerException.class)
-    public void testInvalidId()
-    {
-        Function<Object, String> parser = new ParseDatacenterId();
-        parser.apply(new DatacenterDto());
-    }
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testInvalidId() {
+      Function<Object, String> parser = new ParseDatacenterId();
+      parser.apply(new DatacenterDto());
+   }
 
-    public void testValidId()
-    {
-        Function<Object, String> parser = new ParseDatacenterId();
+   public void testValidId() {
+      Function<Object, String> parser = new ParseDatacenterId();
 
-        DatacenterDto datacenter = new DatacenterDto();
-        datacenter.setId(5);
-        assertEquals(parser.apply(datacenter), "5");
-    }
+      DatacenterDto datacenter = new DatacenterDto();
+      datacenter.setId(5);
+      assertEquals(parser.apply(datacenter), "5");
+   }
 }

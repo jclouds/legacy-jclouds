@@ -26,59 +26,50 @@ import org.jclouds.http.options.BaseHttpRequestOptions;
  * 
  * @author Francesc Montserrat
  */
-public class VirtualDatacenterOptions extends BaseHttpRequestOptions
-{
-    public static Builder builder()
-    {
-        return new Builder();
-    }
+public class VirtualDatacenterOptions extends BaseHttpRequestOptions {
+   public static Builder builder() {
+      return new Builder();
+   }
 
-    @Override
-    protected Object clone() throws CloneNotSupportedException
-    {
-        VirtualDatacenterOptions options = new VirtualDatacenterOptions();
-        options.queryParameters.putAll(queryParameters);
-        return options;
-    }
+   @Override
+   protected Object clone() throws CloneNotSupportedException {
+      VirtualDatacenterOptions options = new VirtualDatacenterOptions();
+      options.queryParameters.putAll(queryParameters);
+      return options;
+   }
 
-    public static class Builder
-    {
-        private Integer datacenterId;
+   public static class Builder {
+      private Integer datacenterId;
 
-        private Integer enterpriseId;
+      private Integer enterpriseId;
 
-        /**
-         * Set the optional datacenter.
-         */
-        public Builder datacenterId(final int datacenterId)
-        {
-            this.datacenterId = datacenterId;
-            return this;
-        }
+      /**
+       * Set the optional datacenter.
+       */
+      public Builder datacenterId(final int datacenterId) {
+         this.datacenterId = datacenterId;
+         return this;
+      }
 
-        /**
-         * Set the optional enterprise.
-         */
-        public Builder enterpriseId(final int enterpriseId)
-        {
-            this.enterpriseId = enterpriseId;
-            return this;
-        }
+      /**
+       * Set the optional enterprise.
+       */
+      public Builder enterpriseId(final int enterpriseId) {
+         this.enterpriseId = enterpriseId;
+         return this;
+      }
 
-        public VirtualDatacenterOptions build()
-        {
-            VirtualDatacenterOptions options = new VirtualDatacenterOptions();
+      public VirtualDatacenterOptions build() {
+         VirtualDatacenterOptions options = new VirtualDatacenterOptions();
 
-            if (datacenterId != null)
-            {
-                options.queryParameters.put("datacenter", datacenterId.toString());
-            }
+         if (datacenterId != null) {
+            options.queryParameters.put("datacenter", datacenterId.toString());
+         }
 
-            if (enterpriseId != null)
-            {
-                options.queryParameters.put("enterprise", enterpriseId.toString());
-            }
-            return options;
-        }
-    }
+         if (enterpriseId != null) {
+            options.queryParameters.put("enterprise", enterpriseId.toString());
+         }
+         return options;
+      }
+   }
 }

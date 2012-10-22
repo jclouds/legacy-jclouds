@@ -34,57 +34,44 @@ import com.google.common.base.Predicate;
  * 
  * @author Francesc Montserrat
  */
-public class IpPredicates
-{
-    public static <T extends Ip< ? , ? >> Predicate<T> name(final String... names)
-    {
-        checkNotNull(names, "names must be defined");
+public class IpPredicates {
+   public static <T extends Ip<?, ?>> Predicate<T> name(final String... names) {
+      checkNotNull(names, "names must be defined");
 
-        return new Predicate<T>()
-        {
-            @Override
-            public boolean apply(final T address)
-            {
-                return Arrays.asList(names).contains(address.getName());
-            }
-        };
-    }
+      return new Predicate<T>() {
+         @Override
+         public boolean apply(final T address) {
+            return Arrays.asList(names).contains(address.getName());
+         }
+      };
+   }
 
-    public static <T extends Ip< ? , ? >> Predicate<T> address(final String... addresses)
-    {
-        checkNotNull(addresses, "addresses must be defined");
+   public static <T extends Ip<?, ?>> Predicate<T> address(final String... addresses) {
+      checkNotNull(addresses, "addresses must be defined");
 
-        return new Predicate<T>()
-        {
-            @Override
-            public boolean apply(final T address)
-            {
-                return Arrays.asList(addresses).contains(address.getIp());
-            }
-        };
-    }
+      return new Predicate<T>() {
+         @Override
+         public boolean apply(final T address) {
+            return Arrays.asList(addresses).contains(address.getIp());
+         }
+      };
+   }
 
-    public static <T extends AbstractPublicIp< ? , ? >> Predicate<T> available()
-    {
-        return new Predicate<T>()
-        {
-            @Override
-            public boolean apply(final T address)
-            {
-                return address.isAvailable();
-            }
-        };
-    }
+   public static <T extends AbstractPublicIp<?, ?>> Predicate<T> available() {
+      return new Predicate<T>() {
+         @Override
+         public boolean apply(final T address) {
+            return address.isAvailable();
+         }
+      };
+   }
 
-    public static <T extends Ip< ? , ? >> Predicate<T> notUsed()
-    {
-        return new Predicate<T>()
-        {
-            @Override
-            public boolean apply(final T address)
-            {
-                return address.unwrap().searchLink("virtualmachine") == null;
-            }
-        };
-    }
+   public static <T extends Ip<?, ?>> Predicate<T> notUsed() {
+      return new Predicate<T>() {
+         @Override
+         public boolean apply(final T address) {
+            return address.unwrap().searchLink("virtualmachine") == null;
+         }
+      };
+   }
 }

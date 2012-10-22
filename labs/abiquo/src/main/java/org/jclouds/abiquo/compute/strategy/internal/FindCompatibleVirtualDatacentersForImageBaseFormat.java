@@ -41,54 +41,49 @@ import com.abiquo.server.core.infrastructure.DatacenterDto;
 import com.google.common.base.Predicate;
 
 /**
- * Implementation for the {@link FindCompatibleVirtualDatacenters} strategy to be used in
- * homogeneous datacenters.
+ * Implementation for the {@link FindCompatibleVirtualDatacenters} strategy to
+ * be used in homogeneous datacenters.
  * <p>
- * For providers that only have one hypervisor technology in the physical datacenter and use
- * compatible images, there is no need to check if the images have conversions to other formats.
+ * For providers that only have one hypervisor technology in the physical
+ * datacenter and use compatible images, there is no need to check if the images
+ * have conversions to other formats.
  * <p>
  * This strategy will only consider the base disk format of the image.
  * 
  * @author Ignasi Barrera
  */
 @Singleton
-public class FindCompatibleVirtualDatacentersForImageBaseFormat implements
-    FindCompatibleVirtualDatacenters
-{
-    private final RestContext<AbiquoApi, AbiquoAsyncApi> context;
+public class FindCompatibleVirtualDatacentersForImageBaseFormat implements FindCompatibleVirtualDatacenters {
+   private final RestContext<AbiquoApi, AbiquoAsyncApi> context;
 
-    private final CloudService cloudService;
+   private final CloudService cloudService;
 
-    @Inject
-    public FindCompatibleVirtualDatacentersForImageBaseFormat(
-        final RestContext<AbiquoApi, AbiquoAsyncApi> context, final CloudService cloudService)
-    {
-        this.context = checkNotNull(context, "context");
-        this.cloudService = checkNotNull(cloudService, "cloudService");
-    }
+   @Inject
+   public FindCompatibleVirtualDatacentersForImageBaseFormat(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
+         final CloudService cloudService) {
+      this.context = checkNotNull(context, "context");
+      this.cloudService = checkNotNull(cloudService, "cloudService");
+   }
 
-    @Override
-    public Iterable<VirtualDatacenter> execute(final VirtualMachineTemplate template)
-    {
-        // Build the transport object with the available information to avoid making an unnecessary
-        // call to the target API (we only need the id of the datacenter, and it is present in the
-        // link).
-        DatacenterDto datacenterDto = new DatacenterDto();
-        datacenterDto.setId(template.unwrap().getIdFromLink(ParentLinkName.DATACENTER_REPOSITORY));
-        Datacenter datacenter = wrap(context, Datacenter.class, datacenterDto);
+   @Override
+   public Iterable<VirtualDatacenter> execute(final VirtualMachineTemplate template) {
+      // Build the transport object with the available information to avoid
+      // making an unnecessary call to the target API (we only need the id of
+      // the datacenter, and it is present in the link).
+      DatacenterDto datacenterDto = new DatacenterDto();
+      datacenterDto.setId(template.unwrap().getIdFromLink(ParentLinkName.DATACENTER_REPOSITORY));
+      Datacenter datacenter = wrap(context, Datacenter.class, datacenterDto);
 
-        Iterable<VirtualDatacenter> vdcs =
-            cloudService.listVirtualDatacenters(VirtualDatacenterPredicates.datacenter(datacenter));
+      Iterable<VirtualDatacenter> vdcs = cloudService.listVirtualDatacenters(VirtualDatacenterPredicates
+            .datacenter(datacenter));
 
-        return filter(vdcs, new Predicate<VirtualDatacenter>()
-        {
-            @Override
-            public boolean apply(final VirtualDatacenter vdc)
-            {
-                HypervisorType type = vdc.getHypervisorType();
-                return type.isCompatible(template.getDiskFormatType());
-            }
-        });
-    }
+      return filter(vdcs, new Predicate<VirtualDatacenter>() {
+         @Override
+         public boolean apply(final VirtualDatacenter vdc) {
+            HypervisorType type = vdc.getHypervisorType();
+            return type.isCompatible(template.getDiskFormatType());
+         }
+      });
+   }
 
 }

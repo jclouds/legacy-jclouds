@@ -44,99 +44,85 @@ import org.testng.annotations.Test;
  * @author Susana Acedo
  */
 @Test(groups = "api", testName = "CostCodeLiveApiTest")
-public class CostCodeLiveApiTest extends BaseAbiquoApiLiveApiTest
-{
-    private CostCode costcode;
+public class CostCodeLiveApiTest extends BaseAbiquoApiLiveApiTest {
+   private CostCode costcode;
 
-    private Currency currency;
+   private Currency currency;
 
-    private CostCodePrice costcodeprice;
+   private CostCodePrice costcodeprice;
 
-    private List<CostCodePrice> defaultPrices;
+   private List<CostCodePrice> defaultPrices;
 
-    @BeforeClass
-    public void setupCostCode()
-    {
-        currency =
-            Currency.builder(env.context.getApiContext()).name(PREFIX + "test-currency")
-                .symbol("test-$").digits(2).build();
-        currency.save();
+   @BeforeClass
+   public void setupCostCode() {
+      currency = Currency.builder(env.context.getApiContext()).name(PREFIX + "test-currency").symbol("test-$")
+            .digits(2).build();
+      currency.save();
 
-        costcode =
-            CostCode.builder(env.context.getApiContext()).name(PREFIX + "test-costcode")
-                .description("description").build();
+      costcode = CostCode.builder(env.context.getApiContext()).name(PREFIX + "test-costcode")
+            .description("description").build();
 
-        costcode.save();
-    }
+      costcode.save();
+   }
 
-    @AfterClass
-    public void tearDownCostCode()
-    {
-        currency.delete();
-        costcode.delete();
-    }
+   @AfterClass
+   public void tearDownCostCode() {
+      currency.delete();
+      costcode.delete();
+   }
 
-    public void testCreateRepeated()
-    {
-        CostCode repeated = CostCode.Builder.fromCostCode(costcode).build();
+   public void testCreateRepeated() {
+      CostCode repeated = CostCode.Builder.fromCostCode(costcode).build();
 
-        try
-        {
-            repeated.save();
-            fail("Should not be able to create costcodes with the same name");
-        }
-        catch (AbiquoException ex)
-        {
-            assertHasError(ex, Status.CONFLICT, "COSTCODE-2");
-        }
-    }
+      try {
+         repeated.save();
+         fail("Should not be able to create costcodes with the same name");
+      } catch (AbiquoException ex) {
+         assertHasError(ex, Status.CONFLICT, "COSTCODE-2");
+      }
+   }
 
-    public void testUpdate()
-    {
-        costcode.setName(PREFIX + "costcode-updated");
-        costcode.update();
+   public void testUpdate() {
+      costcode.setName(PREFIX + "costcode-updated");
+      costcode.update();
 
-        CostCode apiCostCode =
-            env.context.getPricingService().findCostCode(
-                PricingPredicates.costCode(PREFIX + "costcode-updated"));
+      CostCode apiCostCode = env.context.getPricingService().findCostCode(
+            PricingPredicates.costCode(PREFIX + "costcode-updated"));
 
-        assertNotNull(apiCostCode);
-        assertEquals(PREFIX + "costcode-updated", apiCostCode.getName());
+      assertNotNull(apiCostCode);
+      assertEquals(PREFIX + "costcode-updated", apiCostCode.getName());
 
-    }
+   }
 
-    public void testCreateCostCodewithDefaultPrices()
-    {
-        CostCode costcode2 =
-            CostCode.builder(env.context.getApiContext()).name(PREFIX + "ccdefaultprice")
-                .description("description").build();
+   public void testCreateCostCodewithDefaultPrices() {
+      CostCode costcode2 = CostCode.builder(env.context.getApiContext()).name(PREFIX + "ccdefaultprice")
+            .description("description").build();
 
-        costcodeprice = new CostCodePrice(currency, new BigDecimal(100));
-        this.defaultPrices = new ArrayList<CostCodePrice>();
-        defaultPrices.add(costcodeprice);
-        costcode2.setDefaultPrices(defaultPrices);
-        // When a cost code is created it is also created a costcodecurrency with price 0 and after
-        // that if a list of prices(CostCodePrice) has been sent this costcode is updated with the
-        // new price
-        costcode2.save();
+      costcodeprice = new CostCodePrice(currency, new BigDecimal(100));
+      this.defaultPrices = new ArrayList<CostCodePrice>();
+      defaultPrices.add(costcodeprice);
+      costcode2.setDefaultPrices(defaultPrices);
+      // When a cost code is created it is also created a costcodecurrency with
+      // price 0 and after
+      // that if a list of prices(CostCodePrice) has been sent this costcode is
+      // updated with the
+      // new price
+      costcode2.save();
 
-        // check that costcode has been created
-        CostCode apiCostCode =
-            env.context.getPricingService().findCostCode(
-                PricingPredicates.costCode(PREFIX + "ccdefaultprice"));
+      // check that costcode has been created
+      CostCode apiCostCode = env.context.getPricingService().findCostCode(
+            PricingPredicates.costCode(PREFIX + "ccdefaultprice"));
 
-        assertNotNull(apiCostCode);
-        assertEquals(PREFIX + "ccdefaultprice", apiCostCode.getName());
+      assertNotNull(apiCostCode);
+      assertEquals(PREFIX + "ccdefaultprice", apiCostCode.getName());
 
-        // check that the price has been modified in the
-        Iterable<CostCodeCurrency> costcodecurrencies =
-            env.context.getPricingService().getCostCodeCurrencies(costcode2.getId(),
-                currency.getId());
-        for (CostCodeCurrency costcodecurrency : costcodecurrencies)
-        {
-            assertEquals(costcodecurrency.getPrice().compareTo(new BigDecimal(100)), 0);
-        }
+      // check that the price has been modified in the
+      Iterable<CostCodeCurrency> costcodecurrencies = env.context.getPricingService().getCostCodeCurrencies(
+            costcode2.getId(), currency.getId());
+      for (CostCodeCurrency costcodecurrency : costcodecurrencies) {
+         assertEquals(costcodecurrency.getPrice().compareTo(new BigDecimal(100)), 0);
+      }
 
-        costcode2.delete();
-    }
+      costcode2.delete();
+   }
 }

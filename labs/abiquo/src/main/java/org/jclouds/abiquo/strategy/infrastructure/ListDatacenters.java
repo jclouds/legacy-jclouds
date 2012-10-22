@@ -33,7 +33,6 @@ import com.google.inject.ImplementedBy;
  * @author Ignasi Barrera
  */
 @ImplementedBy(ListDatacentersImpl.class)
-public interface ListDatacenters extends ListRootEntities<Datacenter>
-{
-    Iterable<Datacenter> execute(List<Integer> datacenterIds);
+public interface ListDatacenters extends ListRootEntities<Datacenter> {
+   Iterable<Datacenter> execute(List<Integer> datacenterIds);
 }

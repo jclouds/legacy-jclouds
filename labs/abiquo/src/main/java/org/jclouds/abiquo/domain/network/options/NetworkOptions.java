@@ -28,54 +28,45 @@ import com.abiquo.model.enumerator.NetworkType;
  * 
  * @author Francesc Montserrat
  */
-public class NetworkOptions extends BaseHttpRequestOptions
-{
-    public static Builder builder()
-    {
-        return new Builder();
-    }
+public class NetworkOptions extends BaseHttpRequestOptions {
+   public static Builder builder() {
+      return new Builder();
+   }
 
-    @Override
-    protected Object clone() throws CloneNotSupportedException
-    {
-        NetworkOptions options = new NetworkOptions();
-        options.queryParameters.putAll(queryParameters);
-        return options;
-    }
+   @Override
+   protected Object clone() throws CloneNotSupportedException {
+      NetworkOptions options = new NetworkOptions();
+      options.queryParameters.putAll(queryParameters);
+      return options;
+   }
 
-    public static class Builder
-    {
-        private NetworkType type;
+   public static class Builder {
+      private NetworkType type;
 
-        private Boolean all;
+      private Boolean all;
 
-        public Builder type(final NetworkType type)
-        {
-            this.type = type;
-            return this;
-        }
+      public Builder type(final NetworkType type) {
+         this.type = type;
+         return this;
+      }
 
-        public Builder all(final boolean all)
-        {
-            this.all = all;
-            return this;
-        }
+      public Builder all(final boolean all) {
+         this.all = all;
+         return this;
+      }
 
-        public NetworkOptions build()
-        {
-            NetworkOptions options = new NetworkOptions();
+      public NetworkOptions build() {
+         NetworkOptions options = new NetworkOptions();
 
-            if (type != null)
-            {
-                options.queryParameters.put("type", String.valueOf(type));
-            }
+         if (type != null) {
+            options.queryParameters.put("type", String.valueOf(type));
+         }
 
-            if (all != null)
-            {
-                options.queryParameters.put("all", String.valueOf(all));
-            }
+         if (all != null) {
+            options.queryParameters.put("all", String.valueOf(all));
+         }
 
-            return options;
-        }
-    }
+         return options;
+      }
+   }
 }

@@ -32,8 +32,6 @@ import com.google.inject.ImplementedBy;
  * @author Ignasi Barrera
  */
 @ImplementedBy(ListVirtualMachineTemplatesImpl.class)
-public interface ListVirtualMachineTemplates extends
-    ListEntities<VirtualMachineTemplate, Enterprise>
-{
+public interface ListVirtualMachineTemplates extends ListEntities<VirtualMachineTemplate, Enterprise> {
 
 }

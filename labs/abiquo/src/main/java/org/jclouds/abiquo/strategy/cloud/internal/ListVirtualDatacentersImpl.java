@@ -56,77 +56,64 @@ import com.google.inject.Inject;
  * @author Francesc Montserrat
  */
 @Singleton
-public class ListVirtualDatacentersImpl implements ListVirtualDatacenters
-{
-    protected final RestContext<AbiquoApi, AbiquoAsyncApi> context;
+public class ListVirtualDatacentersImpl implements ListVirtualDatacenters {
+   protected final RestContext<AbiquoApi, AbiquoAsyncApi> context;
 
-    protected final ExecutorService userExecutor;
+   protected final ExecutorService userExecutor;
 
-    @Resource
-    protected Logger logger = Logger.NULL;
+   @Resource
+   protected Logger logger = Logger.NULL;
 
-    @Inject(optional = true)
-    @Named(Constants.PROPERTY_REQUEST_TIMEOUT)
-    protected Long maxTime;
+   @Inject(optional = true)
+   @Named(Constants.PROPERTY_REQUEST_TIMEOUT)
+   protected Long maxTime;
 
-    @Inject
-    ListVirtualDatacentersImpl(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-        @Named(Constants.PROPERTY_USER_THREADS) final ExecutorService userExecutor)
-    {
-        this.context = checkNotNull(context, "context");
-        this.userExecutor = checkNotNull(userExecutor, "userExecutor");
-    }
+   @Inject
+   ListVirtualDatacentersImpl(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
+         @Named(Constants.PROPERTY_USER_THREADS) final ExecutorService userExecutor) {
+      this.context = checkNotNull(context, "context");
+      this.userExecutor = checkNotNull(userExecutor, "userExecutor");
+   }
 
-    @Override
-    public Iterable<VirtualDatacenter> execute()
-    {
-        VirtualDatacenterOptions virtualDatacenterOptions =
-            VirtualDatacenterOptions.builder().build();
+   @Override
+   public Iterable<VirtualDatacenter> execute() {
+      VirtualDatacenterOptions virtualDatacenterOptions = VirtualDatacenterOptions.builder().build();
 
-        return execute(virtualDatacenterOptions);
-    }
+      return execute(virtualDatacenterOptions);
+   }
 
-    @Override
-    public Iterable<VirtualDatacenter> execute(final Predicate<VirtualDatacenter> selector)
-    {
-        return filter(execute(), selector);
-    }
+   @Override
+   public Iterable<VirtualDatacenter> execute(final Predicate<VirtualDatacenter> selector) {
+      return filter(execute(), selector);
+   }
 
-    @Override
-    public Iterable<VirtualDatacenter> execute(
-        final VirtualDatacenterOptions virtualDatacenterOptions)
-    {
-        VirtualDatacentersDto result =
-            context.getApi().getCloudApi().listVirtualDatacenters(virtualDatacenterOptions);
-        return wrap(context, VirtualDatacenter.class, result.getCollection());
-    }
+   @Override
+   public Iterable<VirtualDatacenter> execute(final VirtualDatacenterOptions virtualDatacenterOptions) {
+      VirtualDatacentersDto result = context.getApi().getCloudApi().listVirtualDatacenters(virtualDatacenterOptions);
+      return wrap(context, VirtualDatacenter.class, result.getCollection());
+   }
 
-    @Override
-    public Iterable<VirtualDatacenter> execute(final Predicate<VirtualDatacenter> selector,
-        final VirtualDatacenterOptions virtualDatacenterOptions)
-    {
-        return filter(execute(virtualDatacenterOptions), selector);
-    }
+   @Override
+   public Iterable<VirtualDatacenter> execute(final Predicate<VirtualDatacenter> selector,
+         final VirtualDatacenterOptions virtualDatacenterOptions) {
+      return filter(execute(virtualDatacenterOptions), selector);
+   }
 
-    @Override
-    public Iterable<VirtualDatacenter> execute(final List<Integer> virtualDatacenterIds)
-    {
-        // Find virtual datacenters in concurrent requests
-        return listConcurrentVirtualDatacenters(virtualDatacenterIds);
-    }
+   @Override
+   public Iterable<VirtualDatacenter> execute(final List<Integer> virtualDatacenterIds) {
+      // Find virtual datacenters in concurrent requests
+      return listConcurrentVirtualDatacenters(virtualDatacenterIds);
+   }
 
-    private Iterable<VirtualDatacenter> listConcurrentVirtualDatacenters(final List<Integer> ids)
-    {
-        Iterable<VirtualDatacenterDto> vdcs =
-            transformParallel(ids, new Function<Integer, Future< ? extends VirtualDatacenterDto>>()
-            {
-                @Override
-                public Future<VirtualDatacenterDto> apply(final Integer input)
-                {
-                    return context.getAsyncApi().getCloudApi().getVirtualDatacenter(input);
-                }
+   private Iterable<VirtualDatacenter> listConcurrentVirtualDatacenters(final List<Integer> ids) {
+      Iterable<VirtualDatacenterDto> vdcs = transformParallel(ids,
+            new Function<Integer, Future<? extends VirtualDatacenterDto>>() {
+               @Override
+               public Future<VirtualDatacenterDto> apply(final Integer input) {
+                  return context.getAsyncApi().getCloudApi().getVirtualDatacenter(input);
+               }
             }, userExecutor, maxTime, logger, "getting virtual datacenters");
 
-        return DomainWrapper.wrap(context, VirtualDatacenter.class, Lists.newArrayList(vdcs));
-    }
+      return DomainWrapper.wrap(context, VirtualDatacenter.class, Lists.newArrayList(vdcs));
+   }
 }

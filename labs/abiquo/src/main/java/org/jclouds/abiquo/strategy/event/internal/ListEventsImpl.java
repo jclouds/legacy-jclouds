@@ -33,37 +33,33 @@ import com.abiquo.server.core.event.EventsDto;
 import com.google.common.base.Predicate;
 import com.google.inject.Inject;
 
-public class ListEventsImpl implements ListEvents
-{
-    // This strategy does not have still an Executor instance because the current methods call
-    // single api methods
+public class ListEventsImpl implements ListEvents {
+   // This strategy does not have still an Executor instance because the current
+   // methods call
+   // single api methods
 
-    protected final RestContext<AbiquoApi, AbiquoAsyncApi> context;
+   protected final RestContext<AbiquoApi, AbiquoAsyncApi> context;
 
-    @Inject
-    ListEventsImpl(final RestContext<AbiquoApi, AbiquoAsyncApi> context)
-    {
-        this.context = context;
-    }
+   @Inject
+   ListEventsImpl(final RestContext<AbiquoApi, AbiquoAsyncApi> context) {
+      this.context = context;
+   }
 
-    @Override
-    public Iterable<Event> execute()
-    {
-        EventsDto result = context.getApi().getEventApi().listEvents();
-        return wrap(context, Event.class, result.getCollection());
-    }
+   @Override
+   public Iterable<Event> execute() {
+      EventsDto result = context.getApi().getEventApi().listEvents();
+      return wrap(context, Event.class, result.getCollection());
+   }
 
-    @Override
-    public Iterable<Event> execute(final EventOptions options)
-    {
-        EventsDto result = context.getApi().getEventApi().listEvents(options);
-        return wrap(context, Event.class, result.getCollection());
-    }
+   @Override
+   public Iterable<Event> execute(final EventOptions options) {
+      EventsDto result = context.getApi().getEventApi().listEvents(options);
+      return wrap(context, Event.class, result.getCollection());
+   }
 
-    @Override
-    public Iterable<Event> execute(final Predicate<Event> selector)
-    {
-        return filter(execute(), selector);
-    }
+   @Override
+   public Iterable<Event> execute(final Predicate<Event> selector) {
+      return filter(execute(), selector);
+   }
 
 }

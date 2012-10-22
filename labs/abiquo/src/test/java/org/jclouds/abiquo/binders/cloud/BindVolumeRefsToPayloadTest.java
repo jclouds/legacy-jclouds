@@ -39,57 +39,44 @@ import com.abiquo.server.core.infrastructure.storage.VolumeManagementDto;
  * @author Ignasi Barrera
  */
 @Test(groups = "unit", testName = "BindVolumeRefsToPayloadTest")
-public class BindVolumeRefsToPayloadTest
-{
+public class BindVolumeRefsToPayloadTest {
 
-    @Test(expectedExceptions = NullPointerException.class)
-    public void testInvalidNullInput()
-    {
-        BindVolumeRefsToPayload binder = new BindVolumeRefsToPayload(new JAXBParser("false"));
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
-        binder.bindToRequest(request, null);
-    }
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testInvalidNullInput() {
+      BindVolumeRefsToPayload binder = new BindVolumeRefsToPayload(new JAXBParser("false"));
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
+      binder.bindToRequest(request, null);
+   }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
-    public void testInvalidTypeInput()
-    {
-        BindVolumeRefsToPayload binder = new BindVolumeRefsToPayload(new JAXBParser("false"));
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
-        binder.bindToRequest(request, new Object());
-    }
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testInvalidTypeInput() {
+      BindVolumeRefsToPayload binder = new BindVolumeRefsToPayload(new JAXBParser("false"));
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
+      binder.bindToRequest(request, new Object());
+   }
 
-    public void testBindEmptyArray() throws IOException
-    {
-        BindVolumeRefsToPayload binder = new BindVolumeRefsToPayload(new JAXBParser("false"));
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
-        request = binder.bindToRequest(request, new VolumeManagementDto[] {});
-        assertPayloadEquals(request.getPayload(), withHeader("<links/>"), LinksDto.class);
-    }
+   public void testBindEmptyArray() throws IOException {
+      BindVolumeRefsToPayload binder = new BindVolumeRefsToPayload(new JAXBParser("false"));
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
+      request = binder.bindToRequest(request, new VolumeManagementDto[] {});
+      assertPayloadEquals(request.getPayload(), withHeader("<links/>"), LinksDto.class);
+   }
 
-    public void testBindSingleVolume() throws IOException
-    {
-        VolumeManagementDto volume = CloudResources.volumePut();
-        BindVolumeRefsToPayload binder = new BindVolumeRefsToPayload(new JAXBParser("false"));
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
-        request = binder.bindToRequest(request, new VolumeManagementDto[] {volume});
-        assertPayloadEquals(request.getPayload(), withHeader("<links><link href=\""
-            + volume.getEditLink().getHref() + "\" rel=\"" + binder.getRelToUse(volume)
-            + "\"/></links>"), LinksDto.class);
-    }
+   public void testBindSingleVolume() throws IOException {
+      VolumeManagementDto volume = CloudResources.volumePut();
+      BindVolumeRefsToPayload binder = new BindVolumeRefsToPayload(new JAXBParser("false"));
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
+      request = binder.bindToRequest(request, new VolumeManagementDto[] { volume });
+      assertPayloadEquals(request.getPayload(), withHeader("<links><link href=\"" + volume.getEditLink().getHref()
+            + "\" rel=\"" + binder.getRelToUse(volume) + "\"/></links>"), LinksDto.class);
+   }
 
-    public void testBindMultipleVolumes() throws IOException
-    {
-        VolumeManagementDto volume = CloudResources.volumePut();
-        BindVolumeRefsToPayload binder = new BindVolumeRefsToPayload(new JAXBParser("false"));
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
-        request = binder.bindToRequest(request, new VolumeManagementDto[] {volume, volume});
-        assertPayloadEquals(request.getPayload(), withHeader("<links><link href=\""
-            + volume.getEditLink().getHref() + "\" rel=\"" + binder.getRelToUse(volume)
-            + "\"/></links>"), LinksDto.class);
-    }
+   public void testBindMultipleVolumes() throws IOException {
+      VolumeManagementDto volume = CloudResources.volumePut();
+      BindVolumeRefsToPayload binder = new BindVolumeRefsToPayload(new JAXBParser("false"));
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
+      request = binder.bindToRequest(request, new VolumeManagementDto[] { volume, volume });
+      assertPayloadEquals(request.getPayload(), withHeader("<links><link href=\"" + volume.getEditLink().getHref()
+            + "\" rel=\"" + binder.getRelToUse(volume) + "\"/></links>"), LinksDto.class);
+   }
 }

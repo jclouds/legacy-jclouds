@@ -45,123 +45,132 @@ import com.abiquo.server.core.enterprise.PrivilegesDto;
  * @author Francesc Montserrat
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
-public interface ConfigApi
-{
-    /*********************** License ***********************/
+public interface ConfigApi {
+   /*********************** License ***********************/
 
-    /**
-     * List all licenses.
-     * 
-     * @return The list of licenses.
-     */
-    @EnterpriseEdition
-    LicensesDto listLicenses();
+   /**
+    * List all licenses.
+    * 
+    * @return The list of licenses.
+    */
+   @EnterpriseEdition
+   LicensesDto listLicenses();
 
-    /**
-     * List all active/inactive licenses.
-     * 
-     * @param options Optional query params.
-     * @return The list of licenses.
-     */
-    @EnterpriseEdition
-    LicensesDto listLicenses(LicenseOptions options);
+   /**
+    * List all active/inactive licenses.
+    * 
+    * @param options
+    *           Optional query params.
+    * @return The list of licenses.
+    */
+   @EnterpriseEdition
+   LicensesDto listLicenses(LicenseOptions options);
 
-    /**
-     * Add a new license.
-     * 
-     * @param license The license to add.
-     * @return The added license.
-     */
-    @EnterpriseEdition
-    LicenseDto addLicense(LicenseDto license);
+   /**
+    * Add a new license.
+    * 
+    * @param license
+    *           The license to add.
+    * @return The added license.
+    */
+   @EnterpriseEdition
+   LicenseDto addLicense(LicenseDto license);
 
-    /**
-     * Removes an existing license.
-     * 
-     * @param license The license to delete.
-     */
-    @EnterpriseEdition
-    void removeLicense(LicenseDto license);
+   /**
+    * Removes an existing license.
+    * 
+    * @param license
+    *           The license to delete.
+    */
+   @EnterpriseEdition
+   void removeLicense(LicenseDto license);
 
-    /*********************** Privilege ***********************/
+   /*********************** Privilege ***********************/
 
-    /**
-     * List all privileges in the system.
-     * 
-     * @return The list of privileges.
-     */
-    PrivilegesDto listPrivileges();
+   /**
+    * List all privileges in the system.
+    * 
+    * @return The list of privileges.
+    */
+   PrivilegesDto listPrivileges();
 
-    /**
-     * Get the given privilege.
-     * 
-     * @param privilegeId The id of the privilege.
-     * @return The privilege or <code>null</code> if it does not exist.
-     */
-    PrivilegeDto getPrivilege(Integer privilegeId);
+   /**
+    * Get the given privilege.
+    * 
+    * @param privilegeId
+    *           The id of the privilege.
+    * @return The privilege or <code>null</code> if it does not exist.
+    */
+   PrivilegeDto getPrivilege(Integer privilegeId);
 
-    /*********************** System Properties ***********************/
+   /*********************** System Properties ***********************/
 
-    /**
-     * List all system properties.
-     * 
-     * @return The list of properties.
-     */
-    SystemPropertiesDto listSystemProperties();
+   /**
+    * List all system properties.
+    * 
+    * @return The list of properties.
+    */
+   SystemPropertiesDto listSystemProperties();
 
-    /**
-     * List properties with options.
-     * 
-     * @param options Optional query params.
-     * @return The list of system properties.
-     */
-    SystemPropertiesDto listSystemProperties(PropertyOptions options);
+   /**
+    * List properties with options.
+    * 
+    * @param options
+    *           Optional query params.
+    * @return The list of system properties.
+    */
+   SystemPropertiesDto listSystemProperties(PropertyOptions options);
 
-    /**
-     * Updates a system property.
-     * 
-     * @param property The new attributes for the system property.
-     * @return The updated system property.
-     */
-    SystemPropertyDto updateSystemProperty(SystemPropertyDto property);
+   /**
+    * Updates a system property.
+    * 
+    * @param property
+    *           The new attributes for the system property.
+    * @return The updated system property.
+    */
+   SystemPropertyDto updateSystemProperty(SystemPropertyDto property);
 
-    /*********************** Category ***********************/
+   /*********************** Category ***********************/
 
-    /**
-     * List all categories.
-     * 
-     * @return The list of categories.
-     */
-    CategoriesDto listCategories();
+   /**
+    * List all categories.
+    * 
+    * @return The list of categories.
+    */
+   CategoriesDto listCategories();
 
-    /**
-     * Get the given category.
-     * 
-     * @param categoryId The id of the category.
-     * @return The category or <code>null</code> if it does not exist.
-     */
-    CategoryDto getCategory(Integer categoryId);
+   /**
+    * Get the given category.
+    * 
+    * @param categoryId
+    *           The id of the category.
+    * @return The category or <code>null</code> if it does not exist.
+    */
+   CategoryDto getCategory(Integer categoryId);
 
-    /**
-     * Create a new category.
-     * 
-     * @param icon The category to be created.
-     * @return The created category.
-     */
-    CategoryDto createCategory(CategoryDto category);
+   /**
+    * Create a new category.
+    * 
+    * @param icon
+    *           The category to be created.
+    * @return The created category.
+    */
+   CategoryDto createCategory(CategoryDto category);
 
-    /**
-     * Updates an existing category.
-     * 
-     * @param category The new attributes for the category.
-     * @return The updated category.
-     */
-    CategoryDto updateCategory(CategoryDto category);
+   /**
+    * Updates an existing category.
+    * 
+    * @param category
+    *           The new attributes for the category.
+    * @return The updated category.
+    */
+   CategoryDto updateCategory(CategoryDto category);
 
-    /**
-     * Deletes an existing category.
-     * 
-     * @param icon The category to delete.
-     */
-    void deleteCategory(CategoryDto category);
+   /**
+    * Deletes an existing category.
+    * 
+    * @param icon
+    *           The category to delete.
+    */
+   void deleteCategory(CategoryDto category);
 }

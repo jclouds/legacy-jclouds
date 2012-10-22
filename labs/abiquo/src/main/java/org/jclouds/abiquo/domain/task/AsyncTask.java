@@ -39,77 +39,63 @@ import com.abiquo.server.core.task.enums.TaskType;
  * 
  * @author Francesc Montserrat
  */
-public class AsyncTask extends DomainWrapper<TaskDto>
-{
-    /**
-     * Constructor to be used only by the builder.
-     */
-    protected AsyncTask(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-        final TaskDto target)
-    {
-        super(context, target);
-    }
+public class AsyncTask extends DomainWrapper<TaskDto> {
+   /**
+    * Constructor to be used only by the builder.
+    */
+   protected AsyncTask(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final TaskDto target) {
+      super(context, target);
+   }
 
-    // Domain operations
+   // Domain operations
 
-    /**
-     * Refresh the state of the task.
-     */
-    public void refresh()
-    {
-        RESTLink self =
-            checkNotNull(target.searchLink("self"), ValidationErrors.MISSING_REQUIRED_LINK + "self");
+   /**
+    * Refresh the state of the task.
+    */
+   public void refresh() {
+      RESTLink self = checkNotNull(target.searchLink("self"), ValidationErrors.MISSING_REQUIRED_LINK + "self");
 
-        target = context.getApi().getTaskApi().getTask(self);
-    }
+      target = context.getApi().getTaskApi().getTask(self);
+   }
 
-    // Children access
+   // Children access
 
-    /**
-     * Get the individual jobs that compose the current task.
-     */
-    public List<AsyncJob> getJobs()
-    {
-        return wrap(context, AsyncJob.class, target.getJobs().getCollection());
-    }
+   /**
+    * Get the individual jobs that compose the current task.
+    */
+   public List<AsyncJob> getJobs() {
+      return wrap(context, AsyncJob.class, target.getJobs().getCollection());
+   }
 
-    // Delegate methods
+   // Delegate methods
 
-    public String getOwnerId()
-    {
-        return target.getOwnerId();
-    }
+   public String getOwnerId() {
+      return target.getOwnerId();
+   }
 
-    public TaskState getState()
-    {
-        return target.getState();
-    }
+   public TaskState getState() {
+      return target.getState();
+   }
 
-    public String getTaskId()
-    {
-        return target.getTaskId();
-    }
+   public String getTaskId() {
+      return target.getTaskId();
+   }
 
-    public long getTimestamp()
-    {
-        return target.getTimestamp();
-    }
+   public long getTimestamp() {
+      return target.getTimestamp();
+   }
 
-    public TaskType getType()
-    {
-        return target.getType();
-    }
+   public TaskType getType() {
+      return target.getType();
+   }
 
-    public String getUserId()
-    {
-        return target.getUserId();
-    }
+   public String getUserId() {
+      return target.getUserId();
+   }
 
-    @Override
-    public String toString()
-    {
-        return "AsyncTask [taskId=" + getTaskId() + ", ownerId=" + getOwnerId() + ", timestamp="
-            + getTimestamp() + ", userId=" + getUserId() + ", state=" + getState() + ", type="
-            + getType() + "]";
-    }
+   @Override
+   public String toString() {
+      return "AsyncTask [taskId=" + getTaskId() + ", ownerId=" + getOwnerId() + ", timestamp=" + getTimestamp()
+            + ", userId=" + getUserId() + ", state=" + getState() + ", type=" + getType() + "]";
+   }
 }

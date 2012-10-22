@@ -43,103 +43,88 @@ import com.google.inject.TypeLiteral;
  * @author Francesc Montserrat
  */
 @Test(groups = "unit", testName = "TaskAsyncApiTest")
-public class TaskAsyncApiTest extends BaseAbiquoAsyncApiTest<TaskAsyncApi>
-{
-    /*********************** Task ***********************/
+public class TaskAsyncApiTest extends BaseAbiquoAsyncApiTest<TaskAsyncApi> {
+   /*********************** Task ***********************/
 
-    public void testGetTaskVirtualMachine() throws SecurityException, NoSuchMethodException,
-        IOException
-    {
-        Method method = TaskAsyncApi.class.getMethod("getTask", RESTLink.class);
-        GeneratedHttpRequest request =
-            processor
-                .createRequest(
-                    method,
-                    new RESTLink("task",
+   public void testGetTaskVirtualMachine() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = TaskAsyncApi.class.getMethod("getTask", RESTLink.class);
+      GeneratedHttpRequest request = processor
+            .createRequest(
+                  method,
+                  new RESTLink(
+                        "task",
                         "http://localhost/api/cloud/virtualdatacenters/1/virtualappliances/1/virtualmachines/1/tasks/169f1877-5f17-4f62-9563-974001295c54"));
 
-        assertRequestLineEquals(
+      assertRequestLineEquals(
             request,
             "GET http://localhost/api/cloud/virtualdatacenters/1/virtualappliances/1/virtualmachines/1/tasks/169f1877-5f17-4f62-9563-974001295c54 HTTP/1.1");
-        assertNonPayloadHeadersEqual(request, "Accept: " + TaskDto.BASE_MEDIA_TYPE + "\n");
-        assertPayloadEquals(request, null, null, false);
+      assertNonPayloadHeadersEqual(request, "Accept: " + TaskDto.BASE_MEDIA_TYPE + "\n");
+      assertPayloadEquals(request, null, null, false);
 
-        assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
-        assertSaxResponseParserClassEquals(method, null);
-        assertExceptionParserClassEquals(method, ReturnNullOn303.class);
+      assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnNullOn303.class);
 
-        checkFilters(request);
-    }
+      checkFilters(request);
+   }
 
-    public void testListTasksVirtualMachine() throws SecurityException, NoSuchMethodException,
-        IOException
-    {
-        Method method = TaskAsyncApi.class.getMethod("listTasks", SingleResourceTransportDto.class);
-        GeneratedHttpRequest request =
-            processor.createRequest(method, CloudResources.virtualMachinePut());
+   public void testListTasksVirtualMachine() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = TaskAsyncApi.class.getMethod("listTasks", SingleResourceTransportDto.class);
+      GeneratedHttpRequest request = processor.createRequest(method, CloudResources.virtualMachinePut());
 
-        assertRequestLineEquals(
-            request,
+      assertRequestLineEquals(request,
             "GET http://localhost/api/cloud/virtualdatacenters/1/virtualappliances/1/virtualmachines/1/tasks HTTP/1.1");
-        assertNonPayloadHeadersEqual(request, "Accept: " + TasksDto.BASE_MEDIA_TYPE + "\n");
-        assertPayloadEquals(request, null, null, false);
+      assertNonPayloadHeadersEqual(request, "Accept: " + TasksDto.BASE_MEDIA_TYPE + "\n");
+      assertPayloadEquals(request, null, null, false);
 
-        assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
-        assertSaxResponseParserClassEquals(method, null);
-        assertExceptionParserClassEquals(method, null);
+      assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
 
-        checkFilters(request);
-    }
+      checkFilters(request);
+   }
 
-    public void testGetTaskVirtualMachineTemplate() throws SecurityException,
-        NoSuchMethodException, IOException
-    {
-        Method method = TaskAsyncApi.class.getMethod("getTask", RESTLink.class);
-        GeneratedHttpRequest request =
-            processor
-                .createRequest(
-                    method,
-                    new RESTLink("task",
+   public void testGetTaskVirtualMachineTemplate() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = TaskAsyncApi.class.getMethod("getTask", RESTLink.class);
+      GeneratedHttpRequest request = processor
+            .createRequest(
+                  method,
+                  new RESTLink(
+                        "task",
                         "http://localhost/api/admin/enterprises/1/datacenterrepositories/1/virtualmachinetemplates/1/tasks/169f1877-5f17-4f62-9563-974001295c54"));
 
-        assertRequestLineEquals(
+      assertRequestLineEquals(
             request,
             "GET http://localhost/api/admin/enterprises/1/datacenterrepositories/1/virtualmachinetemplates/1/tasks/169f1877-5f17-4f62-9563-974001295c54 HTTP/1.1");
-        assertNonPayloadHeadersEqual(request, "Accept: " + TaskDto.BASE_MEDIA_TYPE + "\n");
-        assertPayloadEquals(request, null, null, false);
+      assertNonPayloadHeadersEqual(request, "Accept: " + TaskDto.BASE_MEDIA_TYPE + "\n");
+      assertPayloadEquals(request, null, null, false);
 
-        assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
-        assertSaxResponseParserClassEquals(method, null);
-        assertExceptionParserClassEquals(method, ReturnNullOn303.class);
+      assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnNullOn303.class);
 
-        checkFilters(request);
-    }
+      checkFilters(request);
+   }
 
-    public void testListTasksVirtualMachineTemplate() throws SecurityException,
-        NoSuchMethodException, IOException
-    {
-        Method method = TaskAsyncApi.class.getMethod("listTasks", SingleResourceTransportDto.class);
-        GeneratedHttpRequest request =
-            processor.createRequest(method, TemplateResources.virtualMachineTemplatePut());
+   public void testListTasksVirtualMachineTemplate() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = TaskAsyncApi.class.getMethod("listTasks", SingleResourceTransportDto.class);
+      GeneratedHttpRequest request = processor.createRequest(method, TemplateResources.virtualMachineTemplatePut());
 
-        assertRequestLineEquals(
-            request,
+      assertRequestLineEquals(request,
             "GET http://localhost/api/admin/enterprises/1/datacenterrepositories/1/virtualmachinetemplates/1/tasks HTTP/1.1");
-        assertNonPayloadHeadersEqual(request, "Accept: " + TasksDto.BASE_MEDIA_TYPE + "\n");
-        assertPayloadEquals(request, null, null, false);
+      assertNonPayloadHeadersEqual(request, "Accept: " + TasksDto.BASE_MEDIA_TYPE + "\n");
+      assertPayloadEquals(request, null, null, false);
 
-        assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
-        assertSaxResponseParserClassEquals(method, null);
-        assertExceptionParserClassEquals(method, null);
+      assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
 
-        checkFilters(request);
-    }
+      checkFilters(request);
+   }
 
-    @Override
-    protected TypeLiteral<RestAnnotationProcessor<TaskAsyncApi>> createTypeLiteral()
-    {
-        return new TypeLiteral<RestAnnotationProcessor<TaskAsyncApi>>()
-        {
-        };
-    }
+   @Override
+   protected TypeLiteral<RestAnnotationProcessor<TaskAsyncApi>> createTypeLiteral() {
+      return new TypeLiteral<RestAnnotationProcessor<TaskAsyncApi>>() {
+      };
+   }
 }

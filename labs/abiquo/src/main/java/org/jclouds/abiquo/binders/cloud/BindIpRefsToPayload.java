@@ -40,36 +40,29 @@ import com.abiquo.server.core.infrastructure.network.AbstractIpDto;
  * @author Ignasi Barrera
  */
 @Singleton
-public class BindIpRefsToPayload extends BindToXMLPayload
-{
-    @Inject
-    public BindIpRefsToPayload(final XMLParser xmlParser)
-    {
-        super(xmlParser);
-    }
+public class BindIpRefsToPayload extends BindToXMLPayload {
+   @Inject
+   public BindIpRefsToPayload(final XMLParser xmlParser) {
+      super(xmlParser);
+   }
 
-    @Override
-    public <R extends HttpRequest> R bindToRequest(final R request, final Object input)
-    {
-        checkArgument(checkNotNull(input, "input") instanceof AbstractIpDto[],
+   @Override
+   public <R extends HttpRequest> R bindToRequest(final R request, final Object input) {
+      checkArgument(checkNotNull(input, "input") instanceof AbstractIpDto[],
             "this binder is only valid for AbstractIpDto arrays");
 
-        AbstractIpDto[] ips = (AbstractIpDto[]) input;
-        LinksDto refs = new LinksDto();
+      AbstractIpDto[] ips = (AbstractIpDto[]) input;
+      LinksDto refs = new LinksDto();
 
-        for (AbstractIpDto ip : ips)
-        {
-            RESTLink selfLink =
-                checkNotNull(LinkUtils.getSelfLink(ip),
-                    "AbstractIpDto must have an edit or self link");
-            if (refs.searchLinkByHref(selfLink.getHref()) == null)
-            {
-                RESTLink ref = new RESTLink(selfLink.getTitle(), selfLink.getHref());
-                ref.setType(selfLink.getType());
-                refs.addLink(ref);
-            }
-        }
+      for (AbstractIpDto ip : ips) {
+         RESTLink selfLink = checkNotNull(LinkUtils.getSelfLink(ip), "AbstractIpDto must have an edit or self link");
+         if (refs.searchLinkByHref(selfLink.getHref()) == null) {
+            RESTLink ref = new RESTLink(selfLink.getTitle(), selfLink.getHref());
+            ref.setType(selfLink.getType());
+            refs.addLink(ref);
+         }
+      }
 
-        return super.bindToRequest(request, refs);
-    }
+      return super.bindToRequest(request, refs);
+   }
 }

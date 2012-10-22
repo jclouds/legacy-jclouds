@@ -37,41 +37,33 @@ import org.testng.annotations.Test;
  * @author Ignasi Barrera
  */
 @Test(groups = "api", testName = "ListVirtualMachineTemplatesImplLiveApiTest")
-public class ListVirtualMachineTemplatesImplLiveApiTest extends BaseAbiquoStrategyLiveApiTest
-{
-    private ListVirtualMachineTemplatesImpl strategy;
+public class ListVirtualMachineTemplatesImplLiveApiTest extends BaseAbiquoStrategyLiveApiTest {
+   private ListVirtualMachineTemplatesImpl strategy;
 
-    @Override
-    @BeforeClass(groups = "api")
-    protected void setupStrategy()
-    {
-        this.strategy =
-            env.context.getUtils().getInjector().getInstance(ListVirtualMachineTemplatesImpl.class);
-    }
+   @Override
+   @BeforeClass(groups = "api")
+   protected void setupStrategy() {
+      this.strategy = env.context.getUtils().getInjector().getInstance(ListVirtualMachineTemplatesImpl.class);
+   }
 
-    public void testExecute()
-    {
-        Iterable<VirtualMachineTemplate> templates = strategy.execute(env.defaultEnterprise);
-        assertNotNull(templates);
-        assertTrue(size(templates) > 0);
-    }
+   public void testExecute() {
+      Iterable<VirtualMachineTemplate> templates = strategy.execute(env.defaultEnterprise);
+      assertNotNull(templates);
+      assertTrue(size(templates) > 0);
+   }
 
-    public void testExecutePredicateWithoutResults()
-    {
-        Iterable<VirtualMachineTemplate> templates =
-            strategy.execute(env.defaultEnterprise,
-                VirtualMachineTemplatePredicates.name("UNEXISTING"));
-        assertNotNull(templates);
-        assertEquals(size(templates), 0);
-    }
+   public void testExecutePredicateWithoutResults() {
+      Iterable<VirtualMachineTemplate> templates = strategy.execute(env.defaultEnterprise,
+            VirtualMachineTemplatePredicates.name("UNEXISTING"));
+      assertNotNull(templates);
+      assertEquals(size(templates), 0);
+   }
 
-    public void testExecutePredicateWithResults()
-    {
-        Iterable<VirtualMachineTemplate> templates =
-            strategy.execute(env.defaultEnterprise,
-                VirtualMachineTemplatePredicates.name(env.template.getName()));
-        assertNotNull(templates);
-        // Repository can have multiple templates with the same name
-        assertTrue(size(templates) > 0);
-    }
+   public void testExecutePredicateWithResults() {
+      Iterable<VirtualMachineTemplate> templates = strategy.execute(env.defaultEnterprise,
+            VirtualMachineTemplatePredicates.name(env.template.getName()));
+      assertNotNull(templates);
+      // Repository can have multiple templates with the same name
+      assertTrue(size(templates) > 0);
+   }
 }

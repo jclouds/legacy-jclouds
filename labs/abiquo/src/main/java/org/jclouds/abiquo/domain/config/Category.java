@@ -19,7 +19,6 @@
 
 package org.jclouds.abiquo.domain.config;
 
-
 import org.jclouds.abiquo.AbiquoAsyncApi;
 import org.jclouds.abiquo.AbiquoApi;
 import org.jclouds.abiquo.domain.DomainWrapper;
@@ -32,155 +31,139 @@ import com.abiquo.server.core.appslibrary.CategoryDto;
  * 
  * @author Ignasi Barrera
  * @author Francesc Montserrat
- * @see API: <a href="http://community.abiquo.com/display/ABI20/Category+Resource">
+ * @see API: <a
+ *      href="http://community.abiquo.com/display/ABI20/Category+Resource">
  *      http://community.abiquo.com/display/ABI20/Category+Resource</a>
  */
 
-public class Category extends DomainWrapper<CategoryDto>
-{
-    /** The default value for the default category flag. */
-    private static final boolean DEFAULT_DEFAULT_CATEGORY = false;
+public class Category extends DomainWrapper<CategoryDto> {
+   /** The default value for the default category flag. */
+   private static final boolean DEFAULT_DEFAULT_CATEGORY = false;
 
-    /** The default value for the erasable flag. */
-    private static final boolean DEFAULT_ERASABLE = true;
+   /** The default value for the erasable flag. */
+   private static final boolean DEFAULT_ERASABLE = true;
 
-    /**
-     * Constructor to be used only by the builder. This resource cannot be created.
-     */
-    private Category(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final CategoryDto target)
-    {
-        super(context, target);
-    }
+   /**
+    * Constructor to be used only by the builder. This resource cannot be
+    * created.
+    */
+   private Category(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final CategoryDto target) {
+      super(context, target);
+   }
 
-    // Domain operations
+   // Domain operations
 
-    /**
-     * @see API: <a
-     *      href="http://community.abiquo.com/display/ABI20/Category+Resource#CategoryResource-Deleteacategory">
-     *      http://community.abiquo.com/display/ABI20/Category+Resource#CategoryResource-Deleteacategory</a>
-     */
-    public void delete()
-    {
-        context.getApi().getConfigApi().deleteCategory(target);
-        target = null;
-    }
+   /**
+    * @see API: <a href=
+    *      "http://community.abiquo.com/display/ABI20/Category+Resource#CategoryResource-Deleteacategory"
+    *      > http://community.abiquo.com/display/ABI20/Category+Resource#
+    *      CategoryResource-Deleteacategory</a>
+    */
+   public void delete() {
+      context.getApi().getConfigApi().deleteCategory(target);
+      target = null;
+   }
 
-    /**
-     * @see API: <a
-     *      href="http://community.abiquo.com/display/ABI20/Category+Resource#CategoryResource-Createacategory">
-     *      http://community.abiquo.com/display/ABI20/Category+Resource#CategoryResource-Createacategory</a>
-     */
-    public void save()
-    {
-        target = context.getApi().getConfigApi().createCategory(target);
-    }
+   /**
+    * @see API: <a href=
+    *      "http://community.abiquo.com/display/ABI20/Category+Resource#CategoryResource-Createacategory"
+    *      > http://community.abiquo.com/display/ABI20/Category+Resource#
+    *      CategoryResource-Createacategory</a>
+    */
+   public void save() {
+      target = context.getApi().getConfigApi().createCategory(target);
+   }
 
-    /**
-     * @see API: <a
-     *      href="http://community.abiquo.com/display/ABI20/Category+Resource#CategoryResource-Updateanexistingcategory">
-     *      http://community.abiquo.com/display/ABI20/Category+Resource#CategoryResource-Updateanexistingcategory</a>
-     */
-    public void update()
-    {
-        target = context.getApi().getConfigApi().updateCategory(target);
-    }
+   /**
+    * @see API: <a href=
+    *      "http://community.abiquo.com/display/ABI20/Category+Resource#CategoryResource-Updateanexistingcategory"
+    *      > http://community.abiquo.com/display/ABI20/Category+Resource#
+    *      CategoryResource-Updateanexistingcategory</a>
+    */
+   public void update() {
+      target = context.getApi().getConfigApi().updateCategory(target);
+   }
 
-    // Builder
+   // Builder
 
-    public static Builder builder(final RestContext<AbiquoApi, AbiquoAsyncApi> context)
-    {
-        return new Builder(context);
-    }
+   public static Builder builder(final RestContext<AbiquoApi, AbiquoAsyncApi> context) {
+      return new Builder(context);
+   }
 
-    public static class Builder
-    {
-        private RestContext<AbiquoApi, AbiquoAsyncApi> context;
+   public static class Builder {
+      private RestContext<AbiquoApi, AbiquoAsyncApi> context;
 
-        private String name;
+      private String name;
 
-        private Boolean erasable = DEFAULT_ERASABLE;
+      private Boolean erasable = DEFAULT_ERASABLE;
 
-        private Boolean defaultCategory = DEFAULT_DEFAULT_CATEGORY;
+      private Boolean defaultCategory = DEFAULT_DEFAULT_CATEGORY;
 
-        public Builder(final RestContext<AbiquoApi, AbiquoAsyncApi> context)
-        {
-            super();
-            this.context = context;
-        }
+      public Builder(final RestContext<AbiquoApi, AbiquoAsyncApi> context) {
+         super();
+         this.context = context;
+      }
 
-        public Builder name(final String name)
-        {
-            this.name = name;
-            return this;
-        }
+      public Builder name(final String name) {
+         this.name = name;
+         return this;
+      }
 
-        public Builder defaultCategory(final boolean defaultCategory)
-        {
-            this.defaultCategory = defaultCategory;
-            return this;
-        }
+      public Builder defaultCategory(final boolean defaultCategory) {
+         this.defaultCategory = defaultCategory;
+         return this;
+      }
 
-        public Builder erasable(final boolean erasable)
-        {
-            this.erasable = erasable;
-            return this;
-        }
+      public Builder erasable(final boolean erasable) {
+         this.erasable = erasable;
+         return this;
+      }
 
-        public Category build()
-        {
-            CategoryDto dto = new CategoryDto();
-            dto.setErasable(erasable);
-            dto.setDefaultCategory(defaultCategory);
-            dto.setName(name);
-            Category category = new Category(context, dto);
+      public Category build() {
+         CategoryDto dto = new CategoryDto();
+         dto.setErasable(erasable);
+         dto.setDefaultCategory(defaultCategory);
+         dto.setName(name);
+         Category category = new Category(context, dto);
 
-            return category;
-        }
+         return category;
+      }
 
-        public static Builder fromCategory(final Category in)
-        {
-            Builder builder =
-                Category.builder(in.context).name(in.getName()).erasable(in.isErasable())
-                    .defaultCategory(in.isDefaultCategory());
+      public static Builder fromCategory(final Category in) {
+         Builder builder = Category.builder(in.context).name(in.getName()).erasable(in.isErasable())
+               .defaultCategory(in.isDefaultCategory());
 
-            return builder;
-        }
-    }
+         return builder;
+      }
+   }
 
-    // Delegate methods
+   // Delegate methods
 
-    public Integer getId()
-    {
-        return target.getId();
-    }
+   public Integer getId() {
+      return target.getId();
+   }
 
-    public String getName()
-    {
-        return target.getName();
-    }
+   public String getName() {
+      return target.getName();
+   }
 
-    public boolean isDefaultCategory()
-    {
-        return target.isDefaultCategory();
-    }
+   public boolean isDefaultCategory() {
+      return target.isDefaultCategory();
+   }
 
-    public boolean isErasable()
-    {
-        return target.isErasable();
-    }
+   public boolean isErasable() {
+      return target.isErasable();
+   }
 
-    public void setDefaultCategory(final boolean defaultCategory)
-    {
-        target.setDefaultCategory(defaultCategory);
-    }
+   public void setDefaultCategory(final boolean defaultCategory) {
+      target.setDefaultCategory(defaultCategory);
+   }
 
-    public void setErasable(final boolean erasable)
-    {
-        target.setErasable(erasable);
-    }
+   public void setErasable(final boolean erasable) {
+      target.setErasable(erasable);
+   }
 
-    public void setName(final String name)
-    {
-        target.setName(name);
-    }
+   public void setName(final String name) {
+      target.setName(name);
+   }
 }

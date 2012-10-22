@@ -39,45 +39,40 @@ import com.abiquo.server.core.infrastructure.network.VLANNetworkDto;
  * @author Ignasi Barrera
  */
 @Singleton
-public class BindNetworkRefToPayload extends BindToXMLPayload
-{
-    @Inject
-    public BindNetworkRefToPayload(final XMLParser xmlParser)
-    {
-        super(xmlParser);
-    }
+public class BindNetworkRefToPayload extends BindToXMLPayload {
+   @Inject
+   public BindNetworkRefToPayload(final XMLParser xmlParser) {
+      super(xmlParser);
+   }
 
-    @Override
-    public <R extends HttpRequest> R bindToRequest(final R request, final Object input)
-    {
-        checkArgument(checkNotNull(input, "input") instanceof VLANNetworkDto,
+   @Override
+   public <R extends HttpRequest> R bindToRequest(final R request, final Object input) {
+      checkArgument(checkNotNull(input, "input") instanceof VLANNetworkDto,
             "this binder is only valid for VLANNetworkDto objects");
 
-        VLANNetworkDto network = (VLANNetworkDto) input;
-        RESTLink editLink =
-            checkNotNull(network.getEditLink(), "VLANNetworkDto must have an edit link");
+      VLANNetworkDto network = (VLANNetworkDto) input;
+      RESTLink editLink = checkNotNull(network.getEditLink(), "VLANNetworkDto must have an edit link");
 
-        LinksDto refs = new LinksDto();
-        switch (network.getType())
-        {
-            case INTERNAL:
-                refs.addLink(new RESTLink("internalnetwork", editLink.getHref()));
-                break;
-            case EXTERNAL:
-                refs.addLink(new RESTLink("externalnetwork", editLink.getHref()));
-                break;
-            case PUBLIC:
-                refs.addLink(new RESTLink("publicnetwork", editLink.getHref()));
-                break;
-            case UNMANAGED:
-                refs.addLink(new RESTLink("unmanagednetwork", editLink.getHref()));
-                break;
-            default:
-                // TODO: EXTERNAL_UNMANAGED network type
-                throw new IllegalArgumentException("Unsupported network type");
-        }
+      LinksDto refs = new LinksDto();
+      switch (network.getType()) {
+         case INTERNAL:
+            refs.addLink(new RESTLink("internalnetwork", editLink.getHref()));
+            break;
+         case EXTERNAL:
+            refs.addLink(new RESTLink("externalnetwork", editLink.getHref()));
+            break;
+         case PUBLIC:
+            refs.addLink(new RESTLink("publicnetwork", editLink.getHref()));
+            break;
+         case UNMANAGED:
+            refs.addLink(new RESTLink("unmanagednetwork", editLink.getHref()));
+            break;
+         default:
+            // TODO: EXTERNAL_UNMANAGED network type
+            throw new IllegalArgumentException("Unsupported network type");
+      }
 
-        return super.bindToRequest(request, refs);
-    }
+      return super.bindToRequest(request, refs);
+   }
 
 }

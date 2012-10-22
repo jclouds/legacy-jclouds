@@ -32,7 +32,6 @@ import com.google.inject.ImplementedBy;
  * @author Ignasi Barrera
  */
 @ImplementedBy(ListVirtualMachinesImpl.class)
-public interface ListVirtualMachines extends ListRootEntities<VirtualMachine>
-{
-    Iterable<VirtualMachine> execute(VirtualMachineOptions options);
+public interface ListVirtualMachines extends ListRootEntities<VirtualMachine> {
+   Iterable<VirtualMachine> execute(VirtualMachineOptions options);
 }

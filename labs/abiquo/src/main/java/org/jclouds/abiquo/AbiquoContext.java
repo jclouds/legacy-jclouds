@@ -32,59 +32,62 @@ import org.jclouds.rest.RestContext;
 import com.google.inject.ImplementedBy;
 
 /**
- * Abiquo {@link ComputeServiceContext} implementation to expose high level Abiquo functionalities.
+ * Abiquo {@link ComputeServiceContext} implementation to expose high level
+ * Abiquo functionalities.
  * 
  * @author Ignasi Barrera
  */
 @ImplementedBy(AbiquoContextImpl.class)
-public interface AbiquoContext extends ComputeServiceContext
-{
-    /**
-     * Returns the Abiquo API context, providing direct access to the Abiquo Rest API.
-     * 
-     * @return The Abiquo API context.
-     */
-    RestContext<AbiquoApi, AbiquoAsyncApi> getApiContext();
+public interface AbiquoContext extends ComputeServiceContext {
+   /**
+    * Returns the Abiquo API context, providing direct access to the Abiquo Rest
+    * API.
+    * 
+    * @return The Abiquo API context.
+    */
+   RestContext<AbiquoApi, AbiquoAsyncApi> getApiContext();
 
-    /**
-     * Returns the administration service.
-     * <p>
-     * This service provides an entry point to infrastructure administration tasks.
-     */
-    AdministrationService getAdministrationService();
+   /**
+    * Returns the administration service.
+    * <p>
+    * This service provides an entry point to infrastructure administration
+    * tasks.
+    */
+   AdministrationService getAdministrationService();
 
-    /**
-     * Returns the cloud service.
-     * <p>
-     * This service provides an entry point to cloud management tasks.
-     */
-    CloudService getCloudService();
+   /**
+    * Returns the cloud service.
+    * <p>
+    * This service provides an entry point to cloud management tasks.
+    */
+   CloudService getCloudService();
 
-    /**
-     * Returns the search service.
-     * <p>
-     * This service provides an entry point to listing and filtering tasks.
-     */
-    SearchService getSearchService();
+   /**
+    * Returns the search service.
+    * <p>
+    * This service provides an entry point to listing and filtering tasks.
+    */
+   SearchService getSearchService();
 
-    /**
-     * Returns the monitoring service.
-     * <p>
-     * This service provides an entry point to asynchronous task monitoring tasks.
-     */
-    MonitoringService getMonitoringService();
+   /**
+    * Returns the monitoring service.
+    * <p>
+    * This service provides an entry point to asynchronous task monitoring
+    * tasks.
+    */
+   MonitoringService getMonitoringService();
 
-    /**
-     * Returns the event service.
-     * <p>
-     * This service provides an entry point to event management tasks.
-     */
-    EventService getEventService();
+   /**
+    * Returns the event service.
+    * <p>
+    * This service provides an entry point to event management tasks.
+    */
+   EventService getEventService();
 
-    /**
-     * Returns the pricing service.
-     * <p>
-     * This service provides an entry point to pricing management tasks.
-     */
-    PricingService getPricingService();
+   /**
+    * Returns the pricing service.
+    * <p>
+    * This service provides an entry point to pricing management tasks.
+    */
+   PricingService getPricingService();
 }

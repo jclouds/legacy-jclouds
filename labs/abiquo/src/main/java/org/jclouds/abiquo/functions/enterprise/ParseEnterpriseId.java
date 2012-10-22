@@ -33,15 +33,13 @@ import com.google.common.base.Function;
  * @author Francesc Montserrat
  */
 @Singleton
-public class ParseEnterpriseId implements Function<Object, String>
-{
-    @Override
-    public String apply(final Object input)
-    {
-        checkArgument(checkNotNull(input, "input") instanceof EnterpriseDto,
+public class ParseEnterpriseId implements Function<Object, String> {
+   @Override
+   public String apply(final Object input) {
+      checkArgument(checkNotNull(input, "input") instanceof EnterpriseDto,
             "This parser is only valid for EnterpriseDto objects");
 
-        return ((EnterpriseDto) input).getId().toString();
-    }
+      return ((EnterpriseDto) input).getId().toString();
+   }
 
 }

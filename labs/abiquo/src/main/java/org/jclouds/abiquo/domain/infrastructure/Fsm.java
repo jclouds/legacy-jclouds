@@ -19,7 +19,6 @@
 
 package org.jclouds.abiquo.domain.infrastructure;
 
-
 import org.jclouds.abiquo.AbiquoAsyncApi;
 import org.jclouds.abiquo.AbiquoApi;
 import org.jclouds.abiquo.domain.DomainWrapper;
@@ -37,48 +36,40 @@ import com.abiquo.server.core.infrastructure.FsmDto;
  *      http://community.abiquo.com/display/ABI20/Rack+Resource</a>
  */
 @EnterpriseEdition
-public class Fsm extends DomainWrapper<FsmDto>
-{
-    /**
-     * Constructor to be used only by the builder.
-     */
-    protected Fsm(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final FsmDto target)
-    {
-        super(context, target);
-    }
+public class Fsm extends DomainWrapper<FsmDto> {
+   /**
+    * Constructor to be used only by the builder.
+    */
+   protected Fsm(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final FsmDto target) {
+      super(context, target);
+   }
 
-    // Delegate Methods
+   // Delegate Methods
 
-    public String getDescription()
-    {
-        return target.getDescription();
-    }
+   public String getDescription() {
+      return target.getDescription();
+   }
 
-    public String getDn()
-    {
-        return target.getDn();
-    }
+   public String getDn() {
+      return target.getDn();
+   }
 
-    public String getError()
-    {
-        return target.getError();
-    }
+   public String getError() {
+      return target.getError();
+   }
 
-    public String getProgress()
-    {
-        return target.getProgress();
-    }
+   public String getProgress() {
+      return target.getProgress();
+   }
 
-    public String getStatus()
-    {
-        return target.getStatus();
-    }
+   public String getStatus() {
+      return target.getStatus();
+   }
 
-    @Override
-    public String toString()
-    {
-        return "Fsm [Dn=" + getDn() + ", Description=" + getDescription() + ", Error=" + getError()
-            + ", Progress=" + getProgress() + ", Status=" + getStatus() + "]";
-    }
+   @Override
+   public String toString() {
+      return "Fsm [Dn=" + getDn() + ", Description=" + getDescription() + ", Error=" + getError() + ", Progress="
+            + getProgress() + ", Status=" + getStatus() + "]";
+   }
 
 }

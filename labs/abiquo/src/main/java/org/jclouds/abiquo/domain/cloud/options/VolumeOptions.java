@@ -29,41 +29,34 @@ import org.jclouds.http.options.BaseHttpRequestOptions;
  * @author Ignasi Barrera
  */
 @EnterpriseEdition
-public class VolumeOptions extends BaseHttpRequestOptions
-{
-    public static Builder builder()
-    {
-        return new Builder();
-    }
+public class VolumeOptions extends BaseHttpRequestOptions {
+   public static Builder builder() {
+      return new Builder();
+   }
 
-    @Override
-    protected Object clone() throws CloneNotSupportedException
-    {
-        VolumeOptions options = new VolumeOptions();
-        options.queryParameters.putAll(queryParameters);
-        return options;
-    }
+   @Override
+   protected Object clone() throws CloneNotSupportedException {
+      VolumeOptions options = new VolumeOptions();
+      options.queryParameters.putAll(queryParameters);
+      return options;
+   }
 
-    public static class Builder extends BaseFilterOptionsBuilder<Builder>
-    {
-        private Boolean onlyAvailable;
+   public static class Builder extends BaseFilterOptionsBuilder<Builder> {
+      private Boolean onlyAvailable;
 
-        public Builder onlyAvailable(final boolean onlyAvailable)
-        {
-            this.onlyAvailable = onlyAvailable;
-            return this;
-        }
+      public Builder onlyAvailable(final boolean onlyAvailable) {
+         this.onlyAvailable = onlyAvailable;
+         return this;
+      }
 
-        public VolumeOptions build()
-        {
-            VolumeOptions options = new VolumeOptions();
+      public VolumeOptions build() {
+         VolumeOptions options = new VolumeOptions();
 
-            if (onlyAvailable != null)
-            {
-                options.queryParameters.put("available", String.valueOf(onlyAvailable));
-            }
+         if (onlyAvailable != null) {
+            options.queryParameters.put("available", String.valueOf(onlyAvailable));
+         }
 
-            return addFilterOptions(options);
-        }
-    }
+         return addFilterOptions(options);
+      }
+   }
 }

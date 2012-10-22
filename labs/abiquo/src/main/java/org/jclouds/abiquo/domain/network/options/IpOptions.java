@@ -27,41 +27,34 @@ import org.jclouds.http.options.BaseHttpRequestOptions;
  * 
  * @author Francesc Montserrat
  */
-public class IpOptions extends BaseHttpRequestOptions
-{
-    public static Builder builder()
-    {
-        return new Builder();
-    }
+public class IpOptions extends BaseHttpRequestOptions {
+   public static Builder builder() {
+      return new Builder();
+   }
 
-    @Override
-    protected Object clone() throws CloneNotSupportedException
-    {
-        IpOptions options = new IpOptions();
-        options.queryParameters.putAll(queryParameters);
-        return options;
-    }
+   @Override
+   protected Object clone() throws CloneNotSupportedException {
+      IpOptions options = new IpOptions();
+      options.queryParameters.putAll(queryParameters);
+      return options;
+   }
 
-    public static class Builder extends BaseFilterOptionsBuilder<Builder>
-    {
-        private Boolean free;
+   public static class Builder extends BaseFilterOptionsBuilder<Builder> {
+      private Boolean free;
 
-        public Builder free(final boolean free)
-        {
-            this.free = free;
-            return this;
-        }
+      public Builder free(final boolean free) {
+         this.free = free;
+         return this;
+      }
 
-        public IpOptions build()
-        {
-            IpOptions options = new IpOptions();
+      public IpOptions build() {
+         IpOptions options = new IpOptions();
 
-            if (free != null)
-            {
-                options.queryParameters.put("free", String.valueOf(free));
-            }
+         if (free != null) {
+            options.queryParameters.put("free", String.valueOf(free));
+         }
 
-            return addFilterOptions(options);
-        }
-    }
+         return addFilterOptions(options);
+      }
+   }
 }

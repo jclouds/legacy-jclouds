@@ -37,82 +37,64 @@ import com.google.common.base.Function;
  * @author Serafin Sedano
  */
 @Test(groups = "unit", testName = "AsyncTaskStatusMonitorTest")
-public class AsyncTaskStatusMonitorTest
-{
+public class AsyncTaskStatusMonitorTest {
 
-    @Test(expectedExceptions = NullPointerException.class)
-    public void testInvalidNullArgument()
-    {
-        Function<AsyncTask, MonitorStatus> function = new AsyncTaskStatusMonitor();
-        function.apply(null);
-    }
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testInvalidNullArgument() {
+      Function<AsyncTask, MonitorStatus> function = new AsyncTaskStatusMonitor();
+      function.apply(null);
+   }
 
-    public void testReturnDone()
-    {
-        TaskState[] states = {TaskState.FINISHED_SUCCESSFULLY};
+   public void testReturnDone() {
+      TaskState[] states = { TaskState.FINISHED_SUCCESSFULLY };
 
-        checkStatesReturn(new MockAsyncTask(), new AsyncTaskStatusMonitor(), states,
-            MonitorStatus.DONE);
-    }
+      checkStatesReturn(new MockAsyncTask(), new AsyncTaskStatusMonitor(), states, MonitorStatus.DONE);
+   }
 
-    public void testReturnFail()
-    {
-        TaskState[] states = {TaskState.ABORTED, TaskState.FINISHED_UNSUCCESSFULLY};
+   public void testReturnFail() {
+      TaskState[] states = { TaskState.ABORTED, TaskState.FINISHED_UNSUCCESSFULLY };
 
-        checkStatesReturn(new MockAsyncTask(), new AsyncTaskStatusMonitor(), states,
-            MonitorStatus.FAILED);
-    }
+      checkStatesReturn(new MockAsyncTask(), new AsyncTaskStatusMonitor(), states, MonitorStatus.FAILED);
+   }
 
-    public void testReturnContinue()
-    {
-        TaskState[] states = {TaskState.STARTED, TaskState.PENDING};
+   public void testReturnContinue() {
+      TaskState[] states = { TaskState.STARTED, TaskState.PENDING };
 
-        checkStatesReturn(new MockAsyncTask(), new AsyncTaskStatusMonitor(), states,
-            MonitorStatus.CONTINUE);
+      checkStatesReturn(new MockAsyncTask(), new AsyncTaskStatusMonitor(), states, MonitorStatus.CONTINUE);
 
-        checkStatesReturn(new MockAsyncTaskFailing(), new AsyncTaskStatusMonitor(), states,
-            MonitorStatus.CONTINUE);
-    }
+      checkStatesReturn(new MockAsyncTaskFailing(), new AsyncTaskStatusMonitor(), states, MonitorStatus.CONTINUE);
+   }
 
-    private void checkStatesReturn(final MockAsyncTask task,
-        final Function<AsyncTask, MonitorStatus> function, final TaskState[] states,
-        final MonitorStatus expectedStatus)
-    {
-        for (TaskState state : states)
-        {
-            task.setState(state);
-            assertEquals(function.apply(task), expectedStatus);
-        }
-    }
+   private void checkStatesReturn(final MockAsyncTask task, final Function<AsyncTask, MonitorStatus> function,
+         final TaskState[] states, final MonitorStatus expectedStatus) {
+      for (TaskState state : states) {
+         task.setState(state);
+         assertEquals(function.apply(task), expectedStatus);
+      }
+   }
 
-    private static class MockAsyncTask extends AsyncTask
-    {
-        @SuppressWarnings("unchecked")
-        public MockAsyncTask()
-        {
-            super(EasyMock.createMock(RestContext.class), new TaskDto());
-        }
+   private static class MockAsyncTask extends AsyncTask {
+      @SuppressWarnings("unchecked")
+      public MockAsyncTask() {
+         super(EasyMock.createMock(RestContext.class), new TaskDto());
+      }
 
-        @Override
-        public void refresh()
-        {
-            // Do not perform any API call
-        }
+      @Override
+      public void refresh() {
+         // Do not perform any API call
+      }
 
-        public void setState(final TaskState state)
-        {
-            target.setState(state);
-        }
-    }
+      public void setState(final TaskState state) {
+         target.setState(state);
+      }
+   }
 
-    private static class MockAsyncTaskFailing extends MockAsyncTask
-    {
-        @Override
-        public void refresh()
-        {
-            throw new RuntimeException("This mock class always fails to refresh");
-        }
+   private static class MockAsyncTaskFailing extends MockAsyncTask {
+      @Override
+      public void refresh() {
+         throw new RuntimeException("This mock class always fails to refresh");
+      }
 
-    }
+   }
 
 }

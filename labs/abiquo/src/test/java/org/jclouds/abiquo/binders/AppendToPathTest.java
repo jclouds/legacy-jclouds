@@ -32,32 +32,25 @@ import org.testng.annotations.Test;
  * @author Ignasi Barrera
  */
 @Test(groups = "unit", testName = "AppendToPathTest")
-public class AppendToPathTest
-{
-    @Test(expectedExceptions = NullPointerException.class)
-    public void testInvalidNullInput()
-    {
-        AppendToPath binder = new AppendToPath();
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
-        binder.bindToRequest(request, null);
-    }
+public class AppendToPathTest {
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testInvalidNullInput() {
+      AppendToPath binder = new AppendToPath();
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
+      binder.bindToRequest(request, null);
+   }
 
-    public void testBindString()
-    {
-        AppendToPath binder = new AppendToPath();
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
-        HttpRequest newRequest = binder.bindToRequest(request, "expanded/path");
-        assertEquals(newRequest.getRequestLine(), "GET http://localhost/expanded/path HTTP/1.1");
-    }
+   public void testBindString() {
+      AppendToPath binder = new AppendToPath();
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
+      HttpRequest newRequest = binder.bindToRequest(request, "expanded/path");
+      assertEquals(newRequest.getRequestLine(), "GET http://localhost/expanded/path HTTP/1.1");
+   }
 
-    public void testBindNumber()
-    {
-        AppendToPath binder = new AppendToPath();
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
-        HttpRequest newRequest = binder.bindToRequest(request, 57);
-        assertEquals(newRequest.getRequestLine(), "GET http://localhost/57 HTTP/1.1");
-    }
+   public void testBindNumber() {
+      AppendToPath binder = new AppendToPath();
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
+      HttpRequest newRequest = binder.bindToRequest(request, 57);
+      assertEquals(newRequest.getRequestLine(), "GET http://localhost/57 HTTP/1.1");
+   }
 }

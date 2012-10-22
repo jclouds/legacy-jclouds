@@ -31,7 +31,6 @@ import com.google.inject.ImplementedBy;
  * @author Ignasi Barrera
  */
 @ImplementedBy(ListMachinesImpl.class)
-public interface ListMachines extends ListRootEntities<Machine>
-{
+public interface ListMachines extends ListRootEntities<Machine> {
 
 }

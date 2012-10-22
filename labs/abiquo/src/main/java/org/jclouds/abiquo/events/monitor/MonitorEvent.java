@@ -26,53 +26,45 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * 
  * @author Ignasi Barrera
  */
-public class MonitorEvent<T>
-{
-    /**
-     * The type of the event.
-     */
-    public static enum Type
-    {
-        COMPLETED, FAILED, TIMEOUT;
-    }
+public class MonitorEvent<T> {
+   /**
+    * The type of the event.
+    */
+   public static enum Type {
+      COMPLETED, FAILED, TIMEOUT;
+   }
 
-    /** The type of the event. */
-    private Type type;
+   /** The type of the event. */
+   private Type type;
 
-    /** The target object being monitored. */
-    private T target;
+   /** The target object being monitored. */
+   private T target;
 
-    public MonitorEvent(final Type type, final T target)
-    {
-        super();
-        this.type = checkNotNull(type, "type");
-        this.target = checkNotNull(target, "target");
-    }
+   public MonitorEvent(final Type type, final T target) {
+      super();
+      this.type = checkNotNull(type, "type");
+      this.target = checkNotNull(target, "target");
+   }
 
-    public Type getType()
-    {
-        return type;
-    }
+   public Type getType() {
+      return type;
+   }
 
-    public void setType(final Type type)
-    {
-        this.type = type;
-    }
+   public void setType(final Type type) {
+      this.type = type;
+   }
 
-    public T getTarget()
-    {
-        return target;
-    }
+   public T getTarget() {
+      return target;
+   }
 
-    public void setTarget(final T target)
-    {
-        this.target = target;
-    }
+   public void setTarget(final T target) {
+      this.target = target;
+   }
 
-    @Override
-    public String toString()
-    {
-        return "MonitorEvent [type=" + type + ", target=" + target + "]";
-    }
+   @Override
+   public String toString() {
+      return "MonitorEvent [type=" + type + ", target=" + target + "]";
+   }
 
 }

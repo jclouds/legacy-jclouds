@@ -53,119 +53,98 @@ import com.google.common.collect.Iterables;
  * @author Francesc Montserrat
  */
 @Singleton
-public class BaseCloudService implements CloudService
-{
-    @VisibleForTesting
-    protected RestContext<AbiquoApi, AbiquoAsyncApi> context;
+public class BaseCloudService implements CloudService {
+   @VisibleForTesting
+   protected RestContext<AbiquoApi, AbiquoAsyncApi> context;
 
-    @VisibleForTesting
-    protected final ListVirtualDatacenters listVirtualDatacenters;
+   @VisibleForTesting
+   protected final ListVirtualDatacenters listVirtualDatacenters;
 
-    @VisibleForTesting
-    protected ListVirtualAppliances listVirtualAppliances;
+   @VisibleForTesting
+   protected ListVirtualAppliances listVirtualAppliances;
 
-    @VisibleForTesting
-    protected ListVirtualMachines listVirtualMachines;
+   @VisibleForTesting
+   protected ListVirtualMachines listVirtualMachines;
 
-    @Inject
-    protected BaseCloudService(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-        final ListVirtualDatacenters listVirtualDatacenters,
-        final ListVirtualAppliances listVirtualAppliances,
-        final ListVirtualMachines listVirtualMachines)
-    {
-        this.context = checkNotNull(context, "context");
-        this.listVirtualDatacenters =
-            checkNotNull(listVirtualDatacenters, "listVirtualDatacenters");
-        this.listVirtualAppliances = checkNotNull(listVirtualAppliances, "listVirtualAppliances");
-        this.listVirtualMachines = checkNotNull(listVirtualMachines, "listVirtualMachines");
-    }
+   @Inject
+   protected BaseCloudService(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
+         final ListVirtualDatacenters listVirtualDatacenters, final ListVirtualAppliances listVirtualAppliances,
+         final ListVirtualMachines listVirtualMachines) {
+      this.context = checkNotNull(context, "context");
+      this.listVirtualDatacenters = checkNotNull(listVirtualDatacenters, "listVirtualDatacenters");
+      this.listVirtualAppliances = checkNotNull(listVirtualAppliances, "listVirtualAppliances");
+      this.listVirtualMachines = checkNotNull(listVirtualMachines, "listVirtualMachines");
+   }
 
-    /*********************** Virtual Datacenter ********************** */
+   /*********************** Virtual Datacenter ********************** */
 
-    @Override
-    public Iterable<VirtualDatacenter> listVirtualDatacenters()
-    {
-        return listVirtualDatacenters.execute();
-    }
+   @Override
+   public Iterable<VirtualDatacenter> listVirtualDatacenters() {
+      return listVirtualDatacenters.execute();
+   }
 
-    @Override
-    public Iterable<VirtualDatacenter> listVirtualDatacenters(final Enterprise enterprise)
-    {
-        checkNotNull(enterprise, ValidationErrors.NULL_RESOURCE + Enterprise.class);
-        checkNotNull(enterprise.getId(), ValidationErrors.MISSING_REQUIRED_FIELD + " id in "
-            + Enterprise.class);
+   @Override
+   public Iterable<VirtualDatacenter> listVirtualDatacenters(final Enterprise enterprise) {
+      checkNotNull(enterprise, ValidationErrors.NULL_RESOURCE + Enterprise.class);
+      checkNotNull(enterprise.getId(), ValidationErrors.MISSING_REQUIRED_FIELD + " id in " + Enterprise.class);
 
-        VirtualDatacenterOptions options =
-            VirtualDatacenterOptions.builder().enterpriseId(enterprise.getId()).build();
+      VirtualDatacenterOptions options = VirtualDatacenterOptions.builder().enterpriseId(enterprise.getId()).build();
 
-        return listVirtualDatacenters.execute(options);
-    }
+      return listVirtualDatacenters.execute(options);
+   }
 
-    @Override
-    public Iterable<VirtualDatacenter> listVirtualDatacenters(
-        final Predicate<VirtualDatacenter> filter)
-    {
-        return listVirtualDatacenters.execute(filter);
-    }
+   @Override
+   public Iterable<VirtualDatacenter> listVirtualDatacenters(final Predicate<VirtualDatacenter> filter) {
+      return listVirtualDatacenters.execute(filter);
+   }
 
-    @Override
-    public VirtualDatacenter getVirtualDatacenter(final Integer virtualDatacenterId)
-    {
-        VirtualDatacenterDto virtualDatacenter =
-            context.getApi().getCloudApi().getVirtualDatacenter(virtualDatacenterId);
-        return wrap(context, VirtualDatacenter.class, virtualDatacenter);
-    }
+   @Override
+   public VirtualDatacenter getVirtualDatacenter(final Integer virtualDatacenterId) {
+      VirtualDatacenterDto virtualDatacenter = context.getApi().getCloudApi().getVirtualDatacenter(virtualDatacenterId);
+      return wrap(context, VirtualDatacenter.class, virtualDatacenter);
+   }
 
-    @Override
-    public Iterable<VirtualDatacenter> getVirtualDatacenters(
-        final List<Integer> virtualDatacenterIds)
-    {
-        return listVirtualDatacenters.execute(virtualDatacenterIds);
-    }
+   @Override
+   public Iterable<VirtualDatacenter> getVirtualDatacenters(final List<Integer> virtualDatacenterIds) {
+      return listVirtualDatacenters.execute(virtualDatacenterIds);
+   }
 
-    @Override
-    public VirtualDatacenter findVirtualDatacenter(final Predicate<VirtualDatacenter> filter)
-    {
-        return Iterables.getFirst(listVirtualDatacenters(filter), null);
-    }
+   @Override
+   public VirtualDatacenter findVirtualDatacenter(final Predicate<VirtualDatacenter> filter) {
+      return Iterables.getFirst(listVirtualDatacenters(filter), null);
+   }
 
-    /*********************** Virtual Appliance ********************** */
+   /*********************** Virtual Appliance ********************** */
 
-    @Override
-    public Iterable<VirtualAppliance> listVirtualAppliances()
-    {
-        return listVirtualAppliances.execute();
-    }
+   @Override
+   public Iterable<VirtualAppliance> listVirtualAppliances() {
+      return listVirtualAppliances.execute();
+   }
 
-    @Override
-    public Iterable<VirtualAppliance> listVirtualAppliances(final Predicate<VirtualAppliance> filter)
-    {
-        return listVirtualAppliances.execute(filter);
-    }
+   @Override
+   public Iterable<VirtualAppliance> listVirtualAppliances(final Predicate<VirtualAppliance> filter) {
+      return listVirtualAppliances.execute(filter);
+   }
 
-    @Override
-    public VirtualAppliance findVirtualAppliance(final Predicate<VirtualAppliance> filter)
-    {
-        return Iterables.getFirst(listVirtualAppliances(filter), null);
-    }
+   @Override
+   public VirtualAppliance findVirtualAppliance(final Predicate<VirtualAppliance> filter) {
+      return Iterables.getFirst(listVirtualAppliances(filter), null);
+   }
 
-    /*********************** Virtual Machine ********************** */
+   /*********************** Virtual Machine ********************** */
 
-    @Override
-    public Iterable<VirtualMachine> listVirtualMachines()
-    {
-        return listVirtualMachines.execute();
-    }
+   @Override
+   public Iterable<VirtualMachine> listVirtualMachines() {
+      return listVirtualMachines.execute();
+   }
 
-    @Override
-    public Iterable<VirtualMachine> listVirtualMachines(final Predicate<VirtualMachine> filter)
-    {
-        return listVirtualMachines.execute(filter);
-    }
+   @Override
+   public Iterable<VirtualMachine> listVirtualMachines(final Predicate<VirtualMachine> filter) {
+      return listVirtualMachines.execute(filter);
+   }
 
-    @Override
-    public VirtualMachine findVirtualMachine(final Predicate<VirtualMachine> filter)
-    {
-        return Iterables.getFirst(listVirtualMachines(filter), null);
-    }
+   @Override
+   public VirtualMachine findVirtualMachine(final Predicate<VirtualMachine> filter) {
+      return Iterables.getFirst(listVirtualMachines(filter), null);
+   }
 }

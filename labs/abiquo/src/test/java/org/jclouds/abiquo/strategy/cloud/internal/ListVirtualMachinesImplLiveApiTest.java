@@ -39,71 +39,57 @@ import org.testng.annotations.Test;
  * @author Ignasi Barrera
  */
 @Test(groups = "api", testName = "ListVirtualMachinesImplLiveApiTest")
-public class ListVirtualMachinesImplLiveApiTest extends BaseAbiquoStrategyLiveApiTest
-{
-    private ListVirtualMachinesImpl strategy;
+public class ListVirtualMachinesImplLiveApiTest extends BaseAbiquoStrategyLiveApiTest {
+   private ListVirtualMachinesImpl strategy;
 
-    @Override
-    @BeforeClass(groups = "api")
-    protected void setupStrategy()
-    {
-        this.strategy =
-            env.context.getUtils().getInjector().getInstance(ListVirtualMachinesImpl.class);
-    }
+   @Override
+   @BeforeClass(groups = "api")
+   protected void setupStrategy() {
+      this.strategy = env.context.getUtils().getInjector().getInstance(ListVirtualMachinesImpl.class);
+   }
 
-    public void testExecute()
-    {
-        Iterable<VirtualMachine> vms = strategy.execute();
-        assertNotNull(vms);
-        assertTrue(size(vms) > 0);
-    }
+   public void testExecute() {
+      Iterable<VirtualMachine> vms = strategy.execute();
+      assertNotNull(vms);
+      assertTrue(size(vms) > 0);
+   }
 
-    public void testExecutePredicateWithoutResults()
-    {
-        Iterable<VirtualMachine> vms =
-            strategy.execute(VirtualMachinePredicates.internalName("UNEXISTING"));
-        assertNotNull(vms);
-        assertEquals(size(vms), 0);
-    }
+   public void testExecutePredicateWithoutResults() {
+      Iterable<VirtualMachine> vms = strategy.execute(VirtualMachinePredicates.internalName("UNEXISTING"));
+      assertNotNull(vms);
+      assertEquals(size(vms), 0);
+   }
 
-    public void testExecutePredicateWithResults()
-    {
-        Iterable<VirtualMachine> vms =
-            strategy.execute(VirtualMachinePredicates.internalName(env.virtualMachine
-                .getInternalName()));
-        assertNotNull(vms);
-        assertEquals(size(vms), 1);
-    }
+   public void testExecutePredicateWithResults() {
+      Iterable<VirtualMachine> vms = strategy.execute(VirtualMachinePredicates.internalName(env.virtualMachine
+            .getInternalName()));
+      assertNotNull(vms);
+      assertEquals(size(vms), 1);
+   }
 
-    public void testExecuteWhenExceedsPagination()
-    {
-        List<VirtualMachine> vms = new ArrayList<VirtualMachine>();
+   public void testExecuteWhenExceedsPagination() {
+      List<VirtualMachine> vms = new ArrayList<VirtualMachine>();
 
-        // Pagination by default is set to 25 items per page, so create a few more to verify that
-        // all are returned when listing
-        int numVms = 30;
+      // Pagination by default is set to 25 items per page, so create a few more
+      // to verify that
+      // all are returned when listing
+      int numVms = 30;
 
-        for (int i = 0; i < numVms; i++)
-        {
-            VirtualMachine vm =
-                VirtualMachine.Builder.fromVirtualMachine(env.virtualMachine).build();
-            vm.save();
-            vms.add(vm);
-        }
+      for (int i = 0; i < numVms; i++) {
+         VirtualMachine vm = VirtualMachine.Builder.fromVirtualMachine(env.virtualMachine).build();
+         vm.save();
+         vms.add(vm);
+      }
 
-        try
-        {
-            Iterable<VirtualMachine> all = strategy.execute();
+      try {
+         Iterable<VirtualMachine> all = strategy.execute();
 
-            assertNotNull(all);
-            assertTrue(size(all) >= numVms);
-        }
-        finally
-        {
-            for (VirtualMachine vm : vms)
-            {
-                vm.delete();
-            }
-        }
-    }
+         assertNotNull(all);
+         assertTrue(size(all) >= numVms);
+      } finally {
+         for (VirtualMachine vm : vms) {
+            vm.delete();
+         }
+      }
+   }
 }

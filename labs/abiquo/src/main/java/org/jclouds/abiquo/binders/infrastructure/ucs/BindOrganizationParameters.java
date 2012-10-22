@@ -30,25 +30,23 @@ import org.jclouds.rest.Binder;
 import com.abiquo.server.core.infrastructure.OrganizationDto;
 
 /**
- * Binds organization query parameters to request. This method assumes that the input object is a
- * {@link OrganizationDto}.
+ * Binds organization query parameters to request. This method assumes that the
+ * input object is a {@link OrganizationDto}.
  * 
  * @author Francesc Montserrat
  * @author Ignasi Barrera
  */
 @Singleton
-public class BindOrganizationParameters implements Binder
-{
+public class BindOrganizationParameters implements Binder {
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public <R extends HttpRequest> R bindToRequest(final R request, final Object input)
-    {
-        checkArgument(checkNotNull(input, "input") instanceof OrganizationDto,
+   @SuppressWarnings("unchecked")
+   @Override
+   public <R extends HttpRequest> R bindToRequest(final R request, final Object input) {
+      checkArgument(checkNotNull(input, "input") instanceof OrganizationDto,
             "this binder is only valid for OrganizationDto objects");
 
-        OrganizationDto org = (OrganizationDto) input;
+      OrganizationDto org = (OrganizationDto) input;
 
-        return (R) request.toBuilder().addQueryParam("org", org.getDn()).build();
-    }
+      return (R) request.toBuilder().addQueryParam("org", org.getDn()).build();
+   }
 }

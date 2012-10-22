@@ -25,43 +25,36 @@ import java.math.BigDecimal;
  * 
  * @author Susana Acedo
  */
-public class CostCodePrice
-{
-    private Currency currency;
+public class CostCodePrice {
+   private Currency currency;
 
-    private BigDecimal price;
+   private BigDecimal price;
 
-    public CostCodePrice(final Currency currency, final BigDecimal price)
-    {
-        super();
-        this.currency = currency;
-        this.price = price;
-    }
+   public CostCodePrice(final Currency currency, final BigDecimal price) {
+      super();
+      this.currency = currency;
+      this.price = price;
+   }
 
-    public Currency getCurrency()
-    {
-        return currency;
-    }
+   public Currency getCurrency() {
+      return currency;
+   }
 
-    public void setCurrency(final Currency currency)
-    {
-        this.currency = currency;
-    }
+   public void setCurrency(final Currency currency) {
+      this.currency = currency;
+   }
 
-    public BigDecimal getPrice()
-    {
-        return price;
-    }
+   public BigDecimal getPrice() {
+      return price;
+   }
 
-    public void setPrice(final BigDecimal price)
-    {
-        this.price = price;
-    }
+   public void setPrice(final BigDecimal price) {
+      this.price = price;
+   }
 
-    @Override
-    public String toString()
-    {
-        return "CostCodePrice [currency=" + currency + ", price=" + price + "]";
-    }
+   @Override
+   public String toString() {
+      return "CostCodePrice [currency=" + currency + ", price=" + price + "]";
+   }
 
 }

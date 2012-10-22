@@ -37,37 +37,32 @@ import com.abiquo.model.transport.SingleResourceTransportDto;
  * 
  * @author Ignasi Barrera
  */
-public abstract class BindRefsToPayload extends BindToXMLPayload
-{
-    @Inject
-    public BindRefsToPayload(final XMLParser xmlParser)
-    {
-        super(xmlParser);
-    }
+public abstract class BindRefsToPayload extends BindToXMLPayload {
+   @Inject
+   public BindRefsToPayload(final XMLParser xmlParser) {
+      super(xmlParser);
+   }
 
-    protected abstract String getRelToUse(final Object input);
+   protected abstract String getRelToUse(final Object input);
 
-    @Override
-    public <R extends HttpRequest> R bindToRequest(final R request, final Object input)
-    {
-        checkArgument(checkNotNull(input, "input") instanceof SingleResourceTransportDto[],
+   @Override
+   public <R extends HttpRequest> R bindToRequest(final R request, final Object input) {
+      checkArgument(checkNotNull(input, "input") instanceof SingleResourceTransportDto[],
             "this binder is only valid for SingleResourceTransportDto arrays");
 
-        SingleResourceTransportDto[] dtos = (SingleResourceTransportDto[]) input;
-        LinksDto refs = new LinksDto();
+      SingleResourceTransportDto[] dtos = (SingleResourceTransportDto[]) input;
+      LinksDto refs = new LinksDto();
 
-        for (SingleResourceTransportDto dto : dtos)
-        {
-            RESTLink editLink = checkNotNull(dto.getEditLink(), "entity must have an edit link");
+      for (SingleResourceTransportDto dto : dtos) {
+         RESTLink editLink = checkNotNull(dto.getEditLink(), "entity must have an edit link");
 
-            // Do not add repeated references
-            if (refs.searchLinkByHref(editLink.getHref()) == null)
-            {
-                refs.addLink(new RESTLink(getRelToUse(input), editLink.getHref()));
-            }
-        }
+         // Do not add repeated references
+         if (refs.searchLinkByHref(editLink.getHref()) == null) {
+            refs.addLink(new RESTLink(getRelToUse(input), editLink.getHref()));
+         }
+      }
 
-        return super.bindToRequest(request, refs);
-    }
+      return super.bindToRequest(request, refs);
+   }
 
 }

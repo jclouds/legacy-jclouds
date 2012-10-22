@@ -45,134 +45,110 @@ import com.abiquo.server.core.infrastructure.network.PublicIpsDto;
  * @author Ignasi Barrera
  */
 @Test(groups = "api", testName = "PublicNetworkLiveApiTest")
-public class PublicNetworkLiveApiTest extends BaseAbiquoApiLiveApiTest
-{
-    private PublicNetwork publicNetwork;
+public class PublicNetworkLiveApiTest extends BaseAbiquoApiLiveApiTest {
+   private PublicNetwork publicNetwork;
 
-    @BeforeClass
-    public void setupNetwork()
-    {
-        publicNetwork = createNetwork(env.publicNetwork, PREFIX + "-publicnetwork-test");
-    }
+   @BeforeClass
+   public void setupNetwork() {
+      publicNetwork = createNetwork(env.publicNetwork, PREFIX + "-publicnetwork-test");
+   }
 
-    @AfterClass
-    public void tearDownNetwork()
-    {
-        publicNetwork.delete();
-    }
+   @AfterClass
+   public void tearDownNetwork() {
+      publicNetwork.delete();
+   }
 
-    public void testListIps()
-    {
-        PublicIpsDto ipsDto =
-            env.context.getApiContext().getApi().getInfrastructureApi()
-                .listPublicIps(publicNetwork.unwrap(), IpOptions.builder().limit(1).build());
-        int totalIps = ipsDto.getTotalSize();
+   public void testListIps() {
+      PublicIpsDto ipsDto = env.context.getApiContext().getApi().getInfrastructureApi()
+            .listPublicIps(publicNetwork.unwrap(), IpOptions.builder().limit(1).build());
+      int totalIps = ipsDto.getTotalSize();
 
-        List<PublicIp> ips = publicNetwork.listIps();
+      List<PublicIp> ips = publicNetwork.listIps();
 
-        assertEquals(ips.size(), totalIps);
-    }
+      assertEquals(ips.size(), totalIps);
+   }
 
-    public void testListIpsWithOptions()
-    {
-        List<PublicIp> ips = publicNetwork.listIps(IpOptions.builder().limit(5).build());
-        assertEquals(ips.size(), 5);
-    }
+   public void testListIpsWithOptions() {
+      List<PublicIp> ips = publicNetwork.listIps(IpOptions.builder().limit(5).build());
+      assertEquals(ips.size(), 5);
+   }
 
-    public void testListUnusedIps()
-    {
-        PublicIpsDto ipsDto =
-            env.context.getApiContext().getApi().getInfrastructureApi()
-                .listPublicIps(publicNetwork.unwrap(), IpOptions.builder().limit(1).build());
-        int totalIps = ipsDto.getTotalSize();
+   public void testListUnusedIps() {
+      PublicIpsDto ipsDto = env.context.getApiContext().getApi().getInfrastructureApi()
+            .listPublicIps(publicNetwork.unwrap(), IpOptions.builder().limit(1).build());
+      int totalIps = ipsDto.getTotalSize();
 
-        List<PublicIp> ips = publicNetwork.listUnusedIps();
-        assertEquals(ips.size(), totalIps);
-    }
+      List<PublicIp> ips = publicNetwork.listUnusedIps();
+      assertEquals(ips.size(), totalIps);
+   }
 
-    public void testUpdateBasicInfo()
-    {
-        publicNetwork.setName("Public network Updated");
-        publicNetwork.setPrimaryDNS("8.8.8.8");
-        publicNetwork.setSecondaryDNS("8.8.8.8");
-        publicNetwork.update();
+   public void testUpdateBasicInfo() {
+      publicNetwork.setName("Public network Updated");
+      publicNetwork.setPrimaryDNS("8.8.8.8");
+      publicNetwork.setSecondaryDNS("8.8.8.8");
+      publicNetwork.update();
 
-        assertEquals(publicNetwork.getName(), "Public network Updated");
-        assertEquals(publicNetwork.getPrimaryDNS(), "8.8.8.8");
-        assertEquals(publicNetwork.getSecondaryDNS(), "8.8.8.8");
+      assertEquals(publicNetwork.getName(), "Public network Updated");
+      assertEquals(publicNetwork.getPrimaryDNS(), "8.8.8.8");
+      assertEquals(publicNetwork.getSecondaryDNS(), "8.8.8.8");
 
-        // Refresh the public network
-        PublicNetwork pn = env.datacenter.getNetwork(publicNetwork.getId()).toPublicNetwork();
+      // Refresh the public network
+      PublicNetwork pn = env.datacenter.getNetwork(publicNetwork.getId()).toPublicNetwork();
 
-        assertEquals(pn.getId(), publicNetwork.getId());
-        assertEquals(pn.getName(), "Public network Updated");
-        assertEquals(pn.getPrimaryDNS(), "8.8.8.8");
-        assertEquals(pn.getSecondaryDNS(), "8.8.8.8");
-    }
+      assertEquals(pn.getId(), publicNetwork.getId());
+      assertEquals(pn.getName(), "Public network Updated");
+      assertEquals(pn.getPrimaryDNS(), "8.8.8.8");
+      assertEquals(pn.getSecondaryDNS(), "8.8.8.8");
+   }
 
-    public void testUpdateReadOnlyFields()
-    {
-        PublicNetwork toUpdate = createNetwork(publicNetwork, PREFIX + "-pubtoupdate-test");
+   public void testUpdateReadOnlyFields() {
+      PublicNetwork toUpdate = createNetwork(publicNetwork, PREFIX + "-pubtoupdate-test");
 
-        try
-        {
-            toUpdate.setTag(20);
-            toUpdate.setAddress("80.81.81.0");
-            toUpdate.setMask(16);
-            toUpdate.update();
+      try {
+         toUpdate.setTag(20);
+         toUpdate.setAddress("80.81.81.0");
+         toUpdate.setMask(16);
+         toUpdate.update();
 
-            fail("Tag field should not be editable");
-        }
-        catch (AbiquoException ex)
-        {
-            assertHasError(ex, Status.CONFLICT, "VLAN-19");
-        }
-        finally
-        {
-            toUpdate.delete();
-        }
-    }
+         fail("Tag field should not be editable");
+      } catch (AbiquoException ex) {
+         assertHasError(ex, Status.CONFLICT, "VLAN-19");
+      } finally {
+         toUpdate.delete();
+      }
+   }
 
-    public void testUpdateWithInvalidValues()
-    {
-        PublicNetwork toUpdate = createNetwork(publicNetwork, PREFIX + "-pubtoupdate-test");
+   public void testUpdateWithInvalidValues() {
+      PublicNetwork toUpdate = createNetwork(publicNetwork, PREFIX + "-pubtoupdate-test");
 
-        try
-        {
-            toUpdate.setMask(60);
-            toUpdate.update();
+      try {
+         toUpdate.setMask(60);
+         toUpdate.update();
 
-            fail("Invalid mask value");
-        }
-        catch (AbiquoException ex)
-        {
-            assertHasError(ex, Status.BAD_REQUEST, "CONSTR-MAX");
-        }
-        finally
-        {
-            toUpdate.delete();
-        }
-    }
+         fail("Invalid mask value");
+      } catch (AbiquoException ex) {
+         assertHasError(ex, Status.BAD_REQUEST, "CONSTR-MAX");
+      } finally {
+         toUpdate.delete();
+      }
+   }
 
-    public void testGetDatacenter()
-    {
-        assertEquals(publicNetwork.getDatacenter().getId(), env.datacenter.getId());
-    }
+   public void testGetDatacenter() {
+      assertEquals(publicNetwork.getDatacenter().getId(), env.datacenter.getId());
+   }
 
-    public void testGetNetworkFromIp()
-    {
-        PublicIp ip = publicNetwork.findIp(IpPredicates.<PublicIp> notUsed());
-        PublicNetwork network = ip.getNetwork();
+   public void testGetNetworkFromIp() {
+      PublicIp ip = publicNetwork.findIp(IpPredicates.<PublicIp> notUsed());
+      PublicNetwork network = ip.getNetwork();
 
-        assertEquals(network.getId(), publicNetwork.getId());
-    }
+      assertEquals(network.getId(), publicNetwork.getId());
+   }
 
-    private PublicNetwork createNetwork(final PublicNetwork from, final String name)
-    {
-        PublicNetwork network = PublicNetwork.Builder.fromPublicNetwork(from).build();
-        network.setName(name);
-        network.save();
-        assertNotNull(network.getId());
-        return network;
-    }
+   private PublicNetwork createNetwork(final PublicNetwork from, final String name) {
+      PublicNetwork network = PublicNetwork.Builder.fromPublicNetwork(from).build();
+      network.setName(name);
+      network.save();
+      assertNotNull(network.getId());
+      return network;
+   }
 }

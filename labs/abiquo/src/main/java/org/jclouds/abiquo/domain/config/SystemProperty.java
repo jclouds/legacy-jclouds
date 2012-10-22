@@ -19,7 +19,6 @@
 
 package org.jclouds.abiquo.domain.config;
 
-
 import org.jclouds.abiquo.AbiquoAsyncApi;
 import org.jclouds.abiquo.AbiquoApi;
 import org.jclouds.abiquo.domain.DomainWrapper;
@@ -32,53 +31,49 @@ import com.abiquo.server.core.config.SystemPropertyDto;
  * 
  * @author Ignasi Barrera
  * @author Francesc Montserrat
- * @see API: <a href="http://community.abiquo.com/display/ABI20/System+Property+resource">
- *      http://community.abiquo.com/display/ABI20/System+Property+resource</a>
+ * @see API: <a
+ *      href="http://community.abiquo.com/display/ABI20/System+Property+resource"
+ *      > http://community.abiquo.com/display/ABI20/System+Property+resource</a>
  */
 
-public class SystemProperty extends DomainWrapper<SystemPropertyDto>
-{
-    /**
-     * Constructor to be used only by the builder. This resource cannot be created.
-     */
-    private SystemProperty(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final SystemPropertyDto target)
-    {
-        super(context, target);
-    }
+public class SystemProperty extends DomainWrapper<SystemPropertyDto> {
+   /**
+    * Constructor to be used only by the builder. This resource cannot be
+    * created.
+    */
+   private SystemProperty(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final SystemPropertyDto target) {
+      super(context, target);
+   }
 
-    // Domain operations
+   // Domain operations
 
-    /**
-     * @see API: <a
-     *      href="http://community.abiquo.com/display/ABI20/System+Property+resource#SystemPropertyresource-ModifyanexistingSystemProperty">
-     *      http://community.abiquo.com/display/ABI20/System+Property+resource#SystemPropertyresource-ModifyanexistingSystemProperty</a>
-     */
-    public void update()
-    {
-        target = context.getApi().getConfigApi().updateSystemProperty(target);
-    }
+   /**
+    * @see API: <a href=
+    *      "http://community.abiquo.com/display/ABI20/System+Property+resource#SystemPropertyresource-ModifyanexistingSystemProperty"
+    *      > http://community.abiquo.com/display/ABI20/System+Property+resource#
+    *      SystemPropertyresource-ModifyanexistingSystemProperty</a>
+    */
+   public void update() {
+      target = context.getApi().getConfigApi().updateSystemProperty(target);
+   }
 
-    // Delegate methods
+   // Delegate methods
 
-    public String getName()
-    {
-        return target.getName();
-    }
+   public String getName() {
+      return target.getName();
+   }
 
-    public String getValue()
-    {
-        return target.getValue();
-    }
+   public String getValue() {
+      return target.getValue();
+   }
 
-    public void setValue(final String value)
-    {
-        target.setValue(value);
-    }
+   public void setValue(final String value) {
+      target.setValue(value);
+   }
 
-    @Override
-    public String toString()
-    {
-        return "SystemPorperty [getName()=" + getName() + ", getValue()=" + getValue() + "]";
-    }
+   @Override
+   public String toString() {
+      return "SystemPorperty [getName()=" + getName() + ", getValue()=" + getValue() + "]";
+   }
 
 }

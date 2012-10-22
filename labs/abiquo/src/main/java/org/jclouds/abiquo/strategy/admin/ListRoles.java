@@ -31,7 +31,6 @@ import com.google.inject.ImplementedBy;
  * @author Ignasi Barrera
  */
 @ImplementedBy(ListRolesImpl.class)
-public interface ListRoles extends ListRootEntities<Role>
-{
+public interface ListRoles extends ListRootEntities<Role> {
 
 }

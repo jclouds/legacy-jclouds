@@ -41,30 +41,27 @@ import com.google.inject.Inject;
  * @author Susana Acedo
  */
 @Singleton
-public class ListCurrenciesImpl implements ListCurrencies
-{
-    // This strategy does not have still an Executor instance because the current methods call
-    // single api methods
+public class ListCurrenciesImpl implements ListCurrencies {
+   // This strategy does not have still an Executor instance because the current
+   // methods call
+   // single api methods
 
-    protected final RestContext<AbiquoApi, AbiquoAsyncApi> context;
+   protected final RestContext<AbiquoApi, AbiquoAsyncApi> context;
 
-    @Inject
-    ListCurrenciesImpl(final RestContext<AbiquoApi, AbiquoAsyncApi> context)
-    {
-        this.context = context;
-    }
+   @Inject
+   ListCurrenciesImpl(final RestContext<AbiquoApi, AbiquoAsyncApi> context) {
+      this.context = context;
+   }
 
-    @Override
-    public Iterable<Currency> execute()
-    {
-        CurrenciesDto result = context.getApi().getPricingApi().listCurrencies();
-        return wrap(context, Currency.class, result.getCollection());
-    }
+   @Override
+   public Iterable<Currency> execute() {
+      CurrenciesDto result = context.getApi().getPricingApi().listCurrencies();
+      return wrap(context, Currency.class, result.getCollection());
+   }
 
-    @Override
-    public Iterable<Currency> execute(final Predicate<Currency> selector)
-    {
-        return filter(execute(), selector);
-    }
+   @Override
+   public Iterable<Currency> execute(final Predicate<Currency> selector) {
+      return filter(execute(), selector);
+   }
 
 }

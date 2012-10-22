@@ -34,16 +34,13 @@ import com.abiquo.model.rest.RESTLink;
  * @author Francesc Montserrat
  */
 @Singleton
-public class BindLinkToPath extends BindToPath
-{
+public class BindLinkToPath extends BindToPath {
 
-    @Override
-    protected String getNewEndpoint(final GeneratedHttpRequest gRequest, final Object input)
-    {
-        checkArgument(checkNotNull(input, "input") instanceof RESTLink,
-            "this binder is only valid for RESTLink objects");
+   @Override
+   protected String getNewEndpoint(final GeneratedHttpRequest gRequest, final Object input) {
+      checkArgument(checkNotNull(input, "input") instanceof RESTLink, "this binder is only valid for RESTLink objects");
 
-        return ((RESTLink) input).getHref();
-    }
+      return ((RESTLink) input).getHref();
+   }
 
 }

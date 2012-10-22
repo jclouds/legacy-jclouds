@@ -34,43 +34,37 @@ import com.abiquo.model.enumerator.HypervisorType;
  * @author Ignasi Barrera
  */
 @Test(groups = "api", testName = "HardDiskLiveApiTest")
-public class HardDiskLiveApiTest extends BaseAbiquoApiLiveApiTest
-{
-    private HardDisk hardDisk;
+public class HardDiskLiveApiTest extends BaseAbiquoApiLiveApiTest {
+   private HardDisk hardDisk;
 
-    public void createHardDisk()
-    {
-        skipIfUnsupported();
+   public void createHardDisk() {
+      skipIfUnsupported();
 
-        hardDisk =
-            HardDisk.builder(env.context.getApiContext(), env.virtualDatacenter).sizeInMb(64L)
-                .build();
-        hardDisk.save();
+      hardDisk = HardDisk.builder(env.context.getApiContext(), env.virtualDatacenter).sizeInMb(64L).build();
+      hardDisk.save();
 
-        assertNotNull(hardDisk.getId());
-        assertNotNull(hardDisk.getSequence());
+      assertNotNull(hardDisk.getId());
+      assertNotNull(hardDisk.getSequence());
 
-        assertNotNull(env.virtualDatacenter.getHardDisk(hardDisk.getId()));
-    }
+      assertNotNull(env.virtualDatacenter.getHardDisk(hardDisk.getId()));
+   }
 
-    @Test(dependsOnMethods = "createHardDisk")
-    public void deleteHardDisk()
-    {
-        skipIfUnsupported();
+   @Test(dependsOnMethods = "createHardDisk")
+   public void deleteHardDisk() {
+      skipIfUnsupported();
 
-        HardDisk hd = env.virtualDatacenter.getHardDisk(hardDisk.getId());
-        assertNotNull(hd);
+      HardDisk hd = env.virtualDatacenter.getHardDisk(hardDisk.getId());
+      assertNotNull(hd);
 
-        Integer id = hd.getId();
-        hardDisk.delete();
-        assertNull(env.virtualDatacenter.getHardDisk(id));
-    }
+      Integer id = hd.getId();
+      hardDisk.delete();
+      assertNull(env.virtualDatacenter.getHardDisk(id));
+   }
 
-    protected static void skipIfUnsupported()
-    {
-        if (!env.machine.getType().equals(HypervisorType.VMX_04))
-        {
-            throw new SkipException("Cannot perform this test because hard disk actions are not available for this hypervisor");
-        }
-    }
+   protected static void skipIfUnsupported() {
+      if (!env.machine.getType().equals(HypervisorType.VMX_04)) {
+         throw new SkipException(
+               "Cannot perform this test because hard disk actions are not available for this hypervisor");
+      }
+   }
 }

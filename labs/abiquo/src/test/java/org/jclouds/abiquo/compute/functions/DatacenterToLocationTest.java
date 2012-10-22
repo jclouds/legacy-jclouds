@@ -36,19 +36,17 @@ import org.testng.annotations.Test;
  * @author Ignasi Barrera
  */
 @Test(groups = "unit", testName = "DatacenterToLocationTest")
-public class DatacenterToLocationTest
-{
-    @SuppressWarnings("unchecked")
-    public void testDatacenterToLocation()
-    {
-        RestContext<AbiquoApi, AbiquoAsyncApi> context = EasyMock.createMock(RestContext.class);
-        DatacenterToLocation function = new DatacenterToLocation();
+public class DatacenterToLocationTest {
+   @SuppressWarnings("unchecked")
+   public void testDatacenterToLocation() {
+      RestContext<AbiquoApi, AbiquoAsyncApi> context = EasyMock.createMock(RestContext.class);
+      DatacenterToLocation function = new DatacenterToLocation();
 
-        Datacenter datacenter = Datacenter.builder(context).name("dc").location("New York").build();
-        datacenter.unwrap().setId(5);
-        Location location = function.apply(datacenter);
+      Datacenter datacenter = Datacenter.builder(context).name("dc").location("New York").build();
+      datacenter.unwrap().setId(5);
+      Location location = function.apply(datacenter);
 
-        assertEquals(location.getId(), "5");
-        assertEquals(location.getScope(), LocationScope.REGION);
-    }
+      assertEquals(location.getId(), "5");
+      assertEquals(location.getScope(), LocationScope.REGION);
+   }
 }

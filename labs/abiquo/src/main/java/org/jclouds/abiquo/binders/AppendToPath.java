@@ -34,23 +34,20 @@ import org.jclouds.rest.Binder;
  * @author Ignasi Barrera
  */
 @Singleton
-public class AppendToPath implements Binder
-{
-    @SuppressWarnings("unchecked")
-    @Override
-    public <R extends HttpRequest> R bindToRequest(final R request, final Object input)
-    {
-        // Append the parameter to the request URI
-        String valueToAppend = getValue(request, checkNotNull(input, "input"));
-        URI path = URI.create(request.getEndpoint().toString() + "/" + valueToAppend);
-        return (R) request.toBuilder().endpoint(path).build();
-    }
+public class AppendToPath implements Binder {
+   @SuppressWarnings("unchecked")
+   @Override
+   public <R extends HttpRequest> R bindToRequest(final R request, final Object input) {
+      // Append the parameter to the request URI
+      String valueToAppend = getValue(request, checkNotNull(input, "input"));
+      URI path = URI.create(request.getEndpoint().toString() + "/" + valueToAppend);
+      return (R) request.toBuilder().endpoint(path).build();
+   }
 
-    /**
-     * Get the value that will be appended to the request URI.
-     */
-    protected <R extends HttpRequest> String getValue(final R request, final Object input)
-    {
-        return input.toString();
-    }
+   /**
+    * Get the value that will be appended to the request URI.
+    */
+   protected <R extends HttpRequest> String getValue(final R request, final Object input) {
+      return input.toString();
+   }
 }

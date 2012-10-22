@@ -44,102 +44,87 @@ import com.abiquo.server.core.infrastructure.storage.VolumeManagementDto;
  * @author Ignasi Barrera
  */
 @Test(groups = "api", testName = "VolumeLiveApiTest")
-public class VolumeLiveApiTest extends BaseAbiquoApiLiveApiTest
-{
-    public void testCreateVolume()
-    {
-        // We need the vdc-relative tier
-        Tier tier = env.virtualDatacenter.findStorageTier(TierPredicates.name(env.tier.getName()));
+public class VolumeLiveApiTest extends BaseAbiquoApiLiveApiTest {
+   public void testCreateVolume() {
+      // We need the vdc-relative tier
+      Tier tier = env.virtualDatacenter.findStorageTier(TierPredicates.name(env.tier.getName()));
 
-        Volume volume =
-            Volume.builder(env.context.getApiContext(), env.virtualDatacenter, tier)
-                .name(PREFIX + "Hawaian volume").sizeInMb(32).build();
-        volume.save();
+      Volume volume = Volume.builder(env.context.getApiContext(), env.virtualDatacenter, tier)
+            .name(PREFIX + "Hawaian volume").sizeInMb(32).build();
+      volume.save();
 
-        assertNotNull(volume.getId());
-        assertNotNull(env.virtualDatacenter.getVolume(volume.getId()));
-    }
+      assertNotNull(volume.getId());
+      assertNotNull(env.virtualDatacenter.getVolume(volume.getId()));
+   }
 
-    @Test(dependsOnMethods = "testCreateVolume")
-    public void testFilterVolumes()
-    {
-        VolumeOptions validOptions = VolumeOptions.builder().has("hawa").build();
-        VolumeOptions invalidOptions = VolumeOptions.builder().has("cacatua").build();
+   @Test(dependsOnMethods = "testCreateVolume")
+   public void testFilterVolumes() {
+      VolumeOptions validOptions = VolumeOptions.builder().has("hawa").build();
+      VolumeOptions invalidOptions = VolumeOptions.builder().has("cacatua").build();
 
-        List<VolumeManagementDto> volumes =
-            env.cloudApi.listVolumes(env.virtualDatacenter.unwrap(), validOptions).getCollection();
+      List<VolumeManagementDto> volumes = env.cloudApi.listVolumes(env.virtualDatacenter.unwrap(), validOptions)
+            .getCollection();
 
-        assertEquals(volumes.size(), 1);
+      assertEquals(volumes.size(), 1);
 
-        volumes =
-            env.cloudApi.listVolumes(env.virtualDatacenter.unwrap(), invalidOptions)
-                .getCollection();
+      volumes = env.cloudApi.listVolumes(env.virtualDatacenter.unwrap(), invalidOptions).getCollection();
 
-        assertEquals(volumes.size(), 0);
-    }
+      assertEquals(volumes.size(), 0);
+   }
 
-    @Test(dependsOnMethods = "testFilterVolumes")
-    public void testUpdateVolume()
-    {
-        Volume volume =
-            env.virtualDatacenter.findVolume(VolumePredicates.name(PREFIX + "Hawaian volume"));
-        assertNotNull(volume);
+   @Test(dependsOnMethods = "testFilterVolumes")
+   public void testUpdateVolume() {
+      Volume volume = env.virtualDatacenter.findVolume(VolumePredicates.name(PREFIX + "Hawaian volume"));
+      assertNotNull(volume);
 
-        volume.setName("Hawaian volume updated");
-        AsyncTask task = volume.update();
-        assertNull(task);
+      volume.setName("Hawaian volume updated");
+      AsyncTask task = volume.update();
+      assertNull(task);
 
-        // Reload the volume to check
-        Volume updated = env.virtualDatacenter.getVolume(volume.getId());
-        assertEquals(updated.getName(), "Hawaian volume updated");
-    }
+      // Reload the volume to check
+      Volume updated = env.virtualDatacenter.getVolume(volume.getId());
+      assertEquals(updated.getName(), "Hawaian volume updated");
+   }
 
-    @Test(dependsOnMethods = "testUpdateVolume")
-    public void testMoveVolume()
-    {
-        // Create the new virtual datacenter
-        PrivateNetwork network =
-            PrivateNetwork.builder(env.context.getApiContext()).name("DefaultNetwork")
-                .gateway("192.168.1.1").address("192.168.1.0").mask(24).build();
+   @Test(dependsOnMethods = "testUpdateVolume")
+   public void testMoveVolume() {
+      // Create the new virtual datacenter
+      PrivateNetwork network = PrivateNetwork.builder(env.context.getApiContext()).name("DefaultNetwork")
+            .gateway("192.168.1.1").address("192.168.1.0").mask(24).build();
 
-        VirtualDatacenter newVdc =
-            VirtualDatacenter.builder(env.context.getApiContext(), env.datacenter, env.enterprise)
-                .name("New VDC").network(network).hypervisorType(env.machine.getType()).build();
-        newVdc.save();
-        assertNotNull(newVdc.getId());
+      VirtualDatacenter newVdc = VirtualDatacenter.builder(env.context.getApiContext(), env.datacenter, env.enterprise)
+            .name("New VDC").network(network).hypervisorType(env.machine.getType()).build();
+      newVdc.save();
+      assertNotNull(newVdc.getId());
 
-        Volume volume =
-            env.virtualDatacenter.findVolume(VolumePredicates.name("Hawaian volume updated"));
-        assertNotNull(volume);
+      Volume volume = env.virtualDatacenter.findVolume(VolumePredicates.name("Hawaian volume updated"));
+      assertNotNull(volume);
 
-        volume.moveTo(newVdc);
+      volume.moveTo(newVdc);
 
-        // Check that the underlying Dto has been updated to the new VDC
-        assertTrue(volume.unwrap().getEditLink().getHref()
-            .startsWith(newVdc.unwrap().getEditLink().getHref()));
+      // Check that the underlying Dto has been updated to the new VDC
+      assertTrue(volume.unwrap().getEditLink().getHref().startsWith(newVdc.unwrap().getEditLink().getHref()));
 
-        // Move it back to the original VDC
-        volume.moveTo(env.virtualDatacenter);
+      // Move it back to the original VDC
+      volume.moveTo(env.virtualDatacenter);
 
-        // Check that the underlying Dto has been updated to the new VDC
-        assertTrue(volume.unwrap().getEditLink().getHref()
+      // Check that the underlying Dto has been updated to the new VDC
+      assertTrue(volume.unwrap().getEditLink().getHref()
             .startsWith(env.virtualDatacenter.unwrap().getEditLink().getHref()));
 
-        // Tear down the virtual datacenter
-        newVdc.delete();
-    }
+      // Tear down the virtual datacenter
+      newVdc.delete();
+   }
 
-    @Test(dependsOnMethods = "testMoveVolume")
-    public void testDeleteVolume()
-    {
-        Volume volume =
-            env.virtualDatacenter.findVolume(VolumePredicates.name("Hawaian volume updated"));
-        assertNotNull(volume);
+   @Test(dependsOnMethods = "testMoveVolume")
+   public void testDeleteVolume() {
+      Volume volume = env.virtualDatacenter.findVolume(VolumePredicates.name("Hawaian volume updated"));
+      assertNotNull(volume);
 
-        Integer id = volume.getId();
-        volume.delete();
+      Integer id = volume.getId();
+      volume.delete();
 
-        assertNull(env.virtualDatacenter.getVolume(id));
-    }
+      assertNull(env.virtualDatacenter.getVolume(id));
+   }
 
 }

@@ -41,30 +41,27 @@ import com.google.inject.Inject;
  * @author Francesc Montserrat
  */
 @Singleton
-public class ListRolesImpl implements ListRoles
-{
-    // This strategy does not have still an Executor instance because the current methods call
-    // single api methods
+public class ListRolesImpl implements ListRoles {
+   // This strategy does not have still an Executor instance because the current
+   // methods call
+   // single api methods
 
-    protected final RestContext<AbiquoApi, AbiquoAsyncApi> context;
+   protected final RestContext<AbiquoApi, AbiquoAsyncApi> context;
 
-    @Inject
-    ListRolesImpl(final RestContext<AbiquoApi, AbiquoAsyncApi> context)
-    {
-        this.context = context;
-    }
+   @Inject
+   ListRolesImpl(final RestContext<AbiquoApi, AbiquoAsyncApi> context) {
+      this.context = context;
+   }
 
-    @Override
-    public Iterable<Role> execute()
-    {
-        RolesDto result = context.getApi().getAdminApi().listRoles();
-        return wrap(context, Role.class, result.getCollection());
-    }
+   @Override
+   public Iterable<Role> execute() {
+      RolesDto result = context.getApi().getAdminApi().listRoles();
+      return wrap(context, Role.class, result.getCollection());
+   }
 
-    @Override
-    public Iterable<Role> execute(final Predicate<Role> selector)
-    {
-        return filter(execute(), selector);
-    }
+   @Override
+   public Iterable<Role> execute(final Predicate<Role> selector) {
+      return filter(execute(), selector);
+   }
 
 }

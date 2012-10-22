@@ -33,49 +33,40 @@ import com.abiquo.am.model.TemplateStatusEnumType;
  * @author Ignasi Barrera
  * @author Francesc Montserrat
  */
-public class TemplateState extends DomainWrapper<TemplateStateDto>
-{
-    /**
-     * Constructor to be used only by the builder.
-     */
-    protected TemplateState(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-        final TemplateStateDto target)
-    {
-        super(context, target);
-    }
+public class TemplateState extends DomainWrapper<TemplateStateDto> {
+   /**
+    * Constructor to be used only by the builder.
+    */
+   protected TemplateState(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final TemplateStateDto target) {
+      super(context, target);
+   }
 
-    // Domain operations
+   // Domain operations
 
-    public Double getDownloadingProgress()
-    {
-        return target.getDownloadingProgress();
-    }
+   public Double getDownloadingProgress() {
+      return target.getDownloadingProgress();
+   }
 
-    public String getErrorCause()
-    {
-        return target.getErrorCause();
-    }
+   public String getErrorCause() {
+      return target.getErrorCause();
+   }
 
-    public String getMasterOvf()
-    {
-        return target.getMasterOvf();
-    }
+   public String getMasterOvf() {
+      return target.getMasterOvf();
+   }
 
-    public String getOvfId()
-    {
-        return target.getOvfId();
-    }
+   public String getOvfId() {
+      return target.getOvfId();
+   }
 
-    public TemplateStatusEnumType getStatus()
-    {
-        return target.getStatus();
-    }
+   public TemplateStatusEnumType getStatus() {
+      return target.getStatus();
+   }
 
-    @Override
-    public String toString()
-    {
-        return "TemplateState [getDownloadingProgress()=" + getDownloadingProgress()
-            + ", getErrorCause()=" + getErrorCause() + ", getMasterOvf()=" + getMasterOvf()
-            + ", getOvfId()=" + getOvfId() + ", getStatus()=" + getStatus() + "]";
-    }
+   @Override
+   public String toString() {
+      return "TemplateState [getDownloadingProgress()=" + getDownloadingProgress() + ", getErrorCause()="
+            + getErrorCause() + ", getMasterOvf()=" + getMasterOvf() + ", getOvfId()=" + getOvfId() + ", getStatus()="
+            + getStatus() + "]";
+   }
 }

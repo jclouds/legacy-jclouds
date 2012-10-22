@@ -28,51 +28,43 @@ import org.jclouds.http.options.BaseHttpRequestOptions;
  * @author Francesc Montserrat
  */
 @EnterpriseEdition
-public class LicenseOptions extends BaseHttpRequestOptions
-{
-    public static Builder builder()
-    {
-        return new Builder();
-    }
+public class LicenseOptions extends BaseHttpRequestOptions {
+   public static Builder builder() {
+      return new Builder();
+   }
 
-    @Override
-    protected Object clone() throws CloneNotSupportedException
-    {
-        LicenseOptions options = new LicenseOptions();
-        options.queryParameters.putAll(queryParameters);
-        return options;
-    }
+   @Override
+   protected Object clone() throws CloneNotSupportedException {
+      LicenseOptions options = new LicenseOptions();
+      options.queryParameters.putAll(queryParameters);
+      return options;
+   }
 
-    public static class Builder
-    {
-        private Boolean active;
+   public static class Builder {
+      private Boolean active;
 
-        /**
-         * Search active licenses
-         */
-        public Builder active(final boolean active)
-        {
-            this.active = active;
-            return this;
-        }
+      /**
+       * Search active licenses
+       */
+      public Builder active(final boolean active) {
+         this.active = active;
+         return this;
+      }
 
-        /**
-         * Search inaactive licenses
-         */
-        public Builder inactive(final boolean inactive)
-        {
-            this.active = !inactive;
-            return this;
-        }
+      /**
+       * Search inaactive licenses
+       */
+      public Builder inactive(final boolean inactive) {
+         this.active = !inactive;
+         return this;
+      }
 
-        public LicenseOptions build()
-        {
-            LicenseOptions options = new LicenseOptions();
-            if (active != null)
-            {
-                options.queryParameters.put("active", active.toString());
-            }
-            return options;
-        }
-    }
+      public LicenseOptions build() {
+         LicenseOptions options = new LicenseOptions();
+         if (active != null) {
+            options.queryParameters.put("active", active.toString());
+         }
+         return options;
+      }
+   }
 }

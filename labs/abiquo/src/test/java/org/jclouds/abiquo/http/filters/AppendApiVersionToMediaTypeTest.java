@@ -44,267 +44,231 @@ import com.google.common.collect.Multimap;
  * @author Ignasi Barrera
  */
 @Test(groups = "unit", testName = "AppendApiVersionToMediaTypeTest")
-public class AppendApiVersionToMediaTypeTest
-{
+public class AppendApiVersionToMediaTypeTest {
 
-    public void testAppendVersionToNonPayloadHeadersWithoutHeaders()
-    {
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://foo")).build();
+   public void testAppendVersionToNonPayloadHeadersWithoutHeaders() {
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://foo")).build();
 
-        AppendApiVersionToMediaType filter =
-            new AppendApiVersionToMediaType(new AppendApiVersionToAbiquoMimeType(AbiquoAsyncApi.API_VERSION));
+      AppendApiVersionToMediaType filter = new AppendApiVersionToMediaType(new AppendApiVersionToAbiquoMimeType(
+            AbiquoAsyncApi.API_VERSION));
 
-        HttpRequest filtered = filter.appendVersionToNonPayloadHeaders(request);
+      HttpRequest filtered = filter.appendVersionToNonPayloadHeaders(request);
 
-        assertTrue(filtered.getHeaders().get(HttpHeaders.ACCEPT).isEmpty());
-    }
+      assertTrue(filtered.getHeaders().get(HttpHeaders.ACCEPT).isEmpty());
+   }
 
-    public void testAppendVersionToNonPayloadHeadersWithStandardMediaType()
-    {
-        Multimap<String, String> headers = LinkedHashMultimap.<String, String> create();
-        headers.put(HttpHeaders.ACCEPT, "application/xml");
+   public void testAppendVersionToNonPayloadHeadersWithStandardMediaType() {
+      Multimap<String, String> headers = LinkedHashMultimap.<String, String> create();
+      headers.put(HttpHeaders.ACCEPT, "application/xml");
 
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://foo")).headers(headers)
-                .build();
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://foo")).headers(headers)
+            .build();
 
-        AppendApiVersionToMediaType filter =
-            new AppendApiVersionToMediaType(new AppendApiVersionToAbiquoMimeType(AbiquoAsyncApi.API_VERSION));
+      AppendApiVersionToMediaType filter = new AppendApiVersionToMediaType(new AppendApiVersionToAbiquoMimeType(
+            AbiquoAsyncApi.API_VERSION));
 
-        HttpRequest filtered = filter.appendVersionToNonPayloadHeaders(request);
+      HttpRequest filtered = filter.appendVersionToNonPayloadHeaders(request);
 
-        Collection<String> contentType = filtered.getHeaders().get(HttpHeaders.ACCEPT);
-        assertEquals(contentType.size(), 1);
-        assertEquals(contentType.iterator().next(), "application/xml");
-    }
+      Collection<String> contentType = filtered.getHeaders().get(HttpHeaders.ACCEPT);
+      assertEquals(contentType.size(), 1);
+      assertEquals(contentType.iterator().next(), "application/xml");
+   }
 
-    public void testAppendVersionToNonPayloadHeadersWithVersionInMediaType()
-    {
-        Multimap<String, String> headers = LinkedHashMultimap.<String, String> create();
-        headers.put(HttpHeaders.ACCEPT, "application/vnd.abiquo.racks+xml;version=2.1-SNAPSHOT");
+   public void testAppendVersionToNonPayloadHeadersWithVersionInMediaType() {
+      Multimap<String, String> headers = LinkedHashMultimap.<String, String> create();
+      headers.put(HttpHeaders.ACCEPT, "application/vnd.abiquo.racks+xml;version=2.1-SNAPSHOT");
 
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://foo")).headers(headers)
-                .build();
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://foo")).headers(headers)
+            .build();
 
-        AppendApiVersionToMediaType filter =
-            new AppendApiVersionToMediaType(new AppendApiVersionToAbiquoMimeType(AbiquoAsyncApi.API_VERSION));
+      AppendApiVersionToMediaType filter = new AppendApiVersionToMediaType(new AppendApiVersionToAbiquoMimeType(
+            AbiquoAsyncApi.API_VERSION));
 
-        HttpRequest filtered = filter.appendVersionToNonPayloadHeaders(request);
+      HttpRequest filtered = filter.appendVersionToNonPayloadHeaders(request);
 
-        Collection<String> contentType = filtered.getHeaders().get(HttpHeaders.ACCEPT);
-        assertEquals(contentType.size(), 1);
-        assertEquals(contentType.iterator().next(),
-            "application/vnd.abiquo.racks+xml;version=2.1-SNAPSHOT");
-    }
+      Collection<String> contentType = filtered.getHeaders().get(HttpHeaders.ACCEPT);
+      assertEquals(contentType.size(), 1);
+      assertEquals(contentType.iterator().next(), "application/vnd.abiquo.racks+xml;version=2.1-SNAPSHOT");
+   }
 
-    public void testAppendVersionToNonPayloadHeadersWithoutVersionInMediaType()
-    {
-        Multimap<String, String> headers = LinkedHashMultimap.<String, String> create();
-        headers.put(HttpHeaders.ACCEPT, "application/vnd.abiquo.racks+xml");
+   public void testAppendVersionToNonPayloadHeadersWithoutVersionInMediaType() {
+      Multimap<String, String> headers = LinkedHashMultimap.<String, String> create();
+      headers.put(HttpHeaders.ACCEPT, "application/vnd.abiquo.racks+xml");
 
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://foo")).headers(headers)
-                .build();
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://foo")).headers(headers)
+            .build();
 
-        AppendApiVersionToMediaType filter =
-            new AppendApiVersionToMediaType(new AppendApiVersionToAbiquoMimeType(AbiquoAsyncApi.API_VERSION));
+      AppendApiVersionToMediaType filter = new AppendApiVersionToMediaType(new AppendApiVersionToAbiquoMimeType(
+            AbiquoAsyncApi.API_VERSION));
 
-        HttpRequest filtered = filter.appendVersionToNonPayloadHeaders(request);
+      HttpRequest filtered = filter.appendVersionToNonPayloadHeaders(request);
 
-        Collection<String> accept = filtered.getHeaders().get(HttpHeaders.ACCEPT);
-        assertEquals(accept.size(), 1);
-        assertEquals(accept.iterator().next(), "application/vnd.abiquo.racks+xml;version="
-            + AbiquoAsyncApi.API_VERSION);
-    }
+      Collection<String> accept = filtered.getHeaders().get(HttpHeaders.ACCEPT);
+      assertEquals(accept.size(), 1);
+      assertEquals(accept.iterator().next(), "application/vnd.abiquo.racks+xml;version=" + AbiquoAsyncApi.API_VERSION);
+   }
 
-    public void testAppendVersionToPayloadHeadersWithoutPayload()
-    {
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://foo")).build();
+   public void testAppendVersionToPayloadHeadersWithoutPayload() {
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://foo")).build();
 
-        AppendApiVersionToMediaType filter =
-            new AppendApiVersionToMediaType(new AppendApiVersionToAbiquoMimeType(AbiquoAsyncApi.API_VERSION));
+      AppendApiVersionToMediaType filter = new AppendApiVersionToMediaType(new AppendApiVersionToAbiquoMimeType(
+            AbiquoAsyncApi.API_VERSION));
 
-        HttpRequest filtered = filter.appendVersionToPayloadHeaders(request);
+      HttpRequest filtered = filter.appendVersionToPayloadHeaders(request);
 
-        assertNull(filtered.getPayload());
-    }
+      assertNull(filtered.getPayload());
+   }
 
-    public void testAppendVersionToPayloadHeadersWithStandardPayload()
-    {
-        Payload payload = Payloads.newByteArrayPayload(new byte[] {});
-        payload.getContentMetadata().setContentType("application/xml");
+   public void testAppendVersionToPayloadHeadersWithStandardPayload() {
+      Payload payload = Payloads.newByteArrayPayload(new byte[] {});
+      payload.getContentMetadata().setContentType("application/xml");
 
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://foo")).payload(payload)
-                .build();
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://foo")).payload(payload)
+            .build();
 
-        AppendApiVersionToMediaType filter =
-            new AppendApiVersionToMediaType(new AppendApiVersionToAbiquoMimeType(AbiquoAsyncApi.API_VERSION));
+      AppendApiVersionToMediaType filter = new AppendApiVersionToMediaType(new AppendApiVersionToAbiquoMimeType(
+            AbiquoAsyncApi.API_VERSION));
 
-        HttpRequest filtered = filter.appendVersionToPayloadHeaders(request);
+      HttpRequest filtered = filter.appendVersionToPayloadHeaders(request);
 
-        assertEquals(filtered.getPayload().getContentMetadata().getContentType(), "application/xml");
-    }
+      assertEquals(filtered.getPayload().getContentMetadata().getContentType(), "application/xml");
+   }
 
-    public void testAppendVersionToPayloadHeadersWithDefaultPayload()
-    {
-        Payload payload = Payloads.newByteArrayPayload(new byte[] {});
+   public void testAppendVersionToPayloadHeadersWithDefaultPayload() {
+      Payload payload = Payloads.newByteArrayPayload(new byte[] {});
 
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://foo")).payload(payload)
-                .build();
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://foo")).payload(payload)
+            .build();
 
-        AppendApiVersionToMediaType filter =
-            new AppendApiVersionToMediaType(new AppendApiVersionToAbiquoMimeType(AbiquoAsyncApi.API_VERSION));
+      AppendApiVersionToMediaType filter = new AppendApiVersionToMediaType(new AppendApiVersionToAbiquoMimeType(
+            AbiquoAsyncApi.API_VERSION));
 
-        HttpRequest filtered = filter.appendVersionToPayloadHeaders(request);
+      HttpRequest filtered = filter.appendVersionToPayloadHeaders(request);
 
-        assertEquals(filtered.getPayload().getContentMetadata().getContentType(),
-            "application/unknown");
-    }
+      assertEquals(filtered.getPayload().getContentMetadata().getContentType(), "application/unknown");
+   }
 
-    public void testAppendVersionToPayloadHeadersWithVersionInPayload()
-    {
-        Payload payload = Payloads.newByteArrayPayload(new byte[] {});
-        payload.getContentMetadata().setContentType(
+   public void testAppendVersionToPayloadHeadersWithVersionInPayload() {
+      Payload payload = Payloads.newByteArrayPayload(new byte[] {});
+      payload.getContentMetadata().setContentType("application/vnd.abiquo.racks+xml;version=1.8.5");
+
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://foo")).payload(payload)
+            .build();
+
+      AppendApiVersionToMediaType filter = new AppendApiVersionToMediaType(new AppendApiVersionToAbiquoMimeType(
+            AbiquoAsyncApi.API_VERSION));
+
+      HttpRequest filtered = filter.appendVersionToPayloadHeaders(request);
+
+      assertEquals(filtered.getPayload().getContentMetadata().getContentType(),
             "application/vnd.abiquo.racks+xml;version=1.8.5");
+   }
 
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://foo")).payload(payload)
-                .build();
+   public void testAppendVersionToPayloadHeadersWithoutVersionInPayload() {
+      Payload payload = Payloads.newByteArrayPayload(new byte[] {});
+      payload.getContentMetadata().setContentType("application/vnd.abiquo.racks+xml");
 
-        AppendApiVersionToMediaType filter =
-            new AppendApiVersionToMediaType(new AppendApiVersionToAbiquoMimeType(AbiquoAsyncApi.API_VERSION));
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://foo")).payload(payload)
+            .build();
 
-        HttpRequest filtered = filter.appendVersionToPayloadHeaders(request);
+      AppendApiVersionToMediaType filter = new AppendApiVersionToMediaType(new AppendApiVersionToAbiquoMimeType(
+            AbiquoAsyncApi.API_VERSION));
 
-        assertEquals(filtered.getPayload().getContentMetadata().getContentType(),
-            "application/vnd.abiquo.racks+xml;version=1.8.5");
-    }
+      HttpRequest filtered = filter.appendVersionToPayloadHeaders(request);
 
-    public void testAppendVersionToPayloadHeadersWithoutVersionInPayload()
-    {
-        Payload payload = Payloads.newByteArrayPayload(new byte[] {});
-        payload.getContentMetadata().setContentType("application/vnd.abiquo.racks+xml");
-
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://foo")).payload(payload)
-                .build();
-
-        AppendApiVersionToMediaType filter =
-            new AppendApiVersionToMediaType(new AppendApiVersionToAbiquoMimeType(AbiquoAsyncApi.API_VERSION));
-
-        HttpRequest filtered = filter.appendVersionToPayloadHeaders(request);
-
-        assertEquals(filtered.getPayload().getContentMetadata().getContentType(),
+      assertEquals(filtered.getPayload().getContentMetadata().getContentType(),
             "application/vnd.abiquo.racks+xml;version=" + AbiquoAsyncApi.API_VERSION);
-    }
+   }
 
-    public void testFilterWithAcceptAndContentTypeWithVersion()
-    {
-        Payload payload = Payloads.newByteArrayPayload(new byte[] {});
-        payload.getContentMetadata().setContentType(
+   public void testFilterWithAcceptAndContentTypeWithVersion() {
+      Payload payload = Payloads.newByteArrayPayload(new byte[] {});
+      payload.getContentMetadata().setContentType("application/vnd.abiquo.racks+xml;version=2.1-SNAPSHOT");
+
+      Multimap<String, String> headers = LinkedHashMultimap.<String, String> create();
+      headers.put(HttpHeaders.ACCEPT, "application/vnd.abiquo.racks+xml;version=2.1-SNAPSHOT");
+
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://foo")).headers(headers)
+            .payload(payload).build();
+
+      AppendApiVersionToMediaType filter = new AppendApiVersionToMediaType(new AppendApiVersionToAbiquoMimeType(
+            AbiquoAsyncApi.API_VERSION));
+
+      HttpRequest filtered = filter.filter(request);
+
+      Collection<String> accept = filtered.getHeaders().get(HttpHeaders.ACCEPT);
+      assertEquals(accept.size(), 1);
+      assertEquals(accept.iterator().next(), "application/vnd.abiquo.racks+xml;version=2.1-SNAPSHOT");
+
+      assertEquals(filtered.getPayload().getContentMetadata().getContentType(),
             "application/vnd.abiquo.racks+xml;version=2.1-SNAPSHOT");
+   }
 
-        Multimap<String, String> headers = LinkedHashMultimap.<String, String> create();
-        headers.put(HttpHeaders.ACCEPT, "application/vnd.abiquo.racks+xml;version=2.1-SNAPSHOT");
+   public void testFilterWithAcceptAndContentTypeWithoutVersion() {
+      Payload payload = Payloads.newByteArrayPayload(new byte[] {});
+      payload.getContentMetadata().setContentType("application/vnd.abiquo.racks+xml");
 
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://foo")).headers(headers)
-                .payload(payload).build();
+      Multimap<String, String> headers = LinkedHashMultimap.<String, String> create();
+      headers.put(HttpHeaders.ACCEPT, "application/vnd.abiquo.racks+xml");
 
-        AppendApiVersionToMediaType filter =
-            new AppendApiVersionToMediaType(new AppendApiVersionToAbiquoMimeType(AbiquoAsyncApi.API_VERSION));
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://foo")).headers(headers)
+            .payload(payload).build();
 
-        HttpRequest filtered = filter.filter(request);
+      AppendApiVersionToMediaType filter = new AppendApiVersionToMediaType(new AppendApiVersionToAbiquoMimeType(
+            AbiquoAsyncApi.API_VERSION));
 
-        Collection<String> accept = filtered.getHeaders().get(HttpHeaders.ACCEPT);
-        assertEquals(accept.size(), 1);
-        assertEquals(accept.iterator().next(),
-            "application/vnd.abiquo.racks+xml;version=2.1-SNAPSHOT");
+      HttpRequest filtered = filter.filter(request);
 
-        assertEquals(filtered.getPayload().getContentMetadata().getContentType(),
-            "application/vnd.abiquo.racks+xml;version=2.1-SNAPSHOT");
-    }
+      Collection<String> accept = filtered.getHeaders().get(HttpHeaders.ACCEPT);
+      assertEquals(accept.size(), 1);
+      assertEquals(accept.iterator().next(), "application/vnd.abiquo.racks+xml;version=" + AbiquoAsyncApi.API_VERSION);
 
-    public void testFilterWithAcceptAndContentTypeWithoutVersion()
-    {
-        Payload payload = Payloads.newByteArrayPayload(new byte[] {});
-        payload.getContentMetadata().setContentType("application/vnd.abiquo.racks+xml");
-
-        Multimap<String, String> headers = LinkedHashMultimap.<String, String> create();
-        headers.put(HttpHeaders.ACCEPT, "application/vnd.abiquo.racks+xml");
-
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://foo")).headers(headers)
-                .payload(payload).build();
-
-        AppendApiVersionToMediaType filter =
-            new AppendApiVersionToMediaType(new AppendApiVersionToAbiquoMimeType(AbiquoAsyncApi.API_VERSION));
-
-        HttpRequest filtered = filter.filter(request);
-
-        Collection<String> accept = filtered.getHeaders().get(HttpHeaders.ACCEPT);
-        assertEquals(accept.size(), 1);
-        assertEquals(accept.iterator().next(), "application/vnd.abiquo.racks+xml;version="
-            + AbiquoAsyncApi.API_VERSION);
-
-        assertEquals(filtered.getPayload().getContentMetadata().getContentType(),
+      assertEquals(filtered.getPayload().getContentMetadata().getContentType(),
             "application/vnd.abiquo.racks+xml;version=" + AbiquoAsyncApi.API_VERSION);
-    }
+   }
 
-    public void testFilterWithversionInAccept()
-    {
-        Payload payload = Payloads.newByteArrayPayload(new byte[] {});
-        payload.getContentMetadata().setContentType("application/vnd.abiquo.racks+xml");
+   public void testFilterWithversionInAccept() {
+      Payload payload = Payloads.newByteArrayPayload(new byte[] {});
+      payload.getContentMetadata().setContentType("application/vnd.abiquo.racks+xml");
 
-        Multimap<String, String> headers = LinkedHashMultimap.<String, String> create();
-        headers.put(HttpHeaders.ACCEPT, "application/vnd.abiquo.racks+xml;version=1.8.5");
+      Multimap<String, String> headers = LinkedHashMultimap.<String, String> create();
+      headers.put(HttpHeaders.ACCEPT, "application/vnd.abiquo.racks+xml;version=1.8.5");
 
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://foo")).headers(headers)
-                .payload(payload).build();
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://foo")).headers(headers)
+            .payload(payload).build();
 
-        AppendApiVersionToMediaType filter =
-            new AppendApiVersionToMediaType(new AppendApiVersionToAbiquoMimeType(AbiquoAsyncApi.API_VERSION));
+      AppendApiVersionToMediaType filter = new AppendApiVersionToMediaType(new AppendApiVersionToAbiquoMimeType(
+            AbiquoAsyncApi.API_VERSION));
 
-        HttpRequest filtered = filter.filter(request);
+      HttpRequest filtered = filter.filter(request);
 
-        Collection<String> accept = filtered.getHeaders().get(HttpHeaders.ACCEPT);
-        assertEquals(accept.size(), 1);
-        assertEquals(accept.iterator().next(), "application/vnd.abiquo.racks+xml;version=1.8.5");
+      Collection<String> accept = filtered.getHeaders().get(HttpHeaders.ACCEPT);
+      assertEquals(accept.size(), 1);
+      assertEquals(accept.iterator().next(), "application/vnd.abiquo.racks+xml;version=1.8.5");
 
-        assertEquals(filtered.getPayload().getContentMetadata().getContentType(),
+      assertEquals(filtered.getPayload().getContentMetadata().getContentType(),
             "application/vnd.abiquo.racks+xml;version=" + AbiquoAsyncApi.API_VERSION);
-    }
+   }
 
-    public void testFilterWithversionInContentType()
-    {
-        Payload payload = Payloads.newByteArrayPayload(new byte[] {});
-        payload.getContentMetadata().setContentType(
+   public void testFilterWithversionInContentType() {
+      Payload payload = Payloads.newByteArrayPayload(new byte[] {});
+      payload.getContentMetadata().setContentType("application/vnd.abiquo.racks+xml;version=1.8.5");
+
+      Multimap<String, String> headers = LinkedHashMultimap.<String, String> create();
+      headers.put(HttpHeaders.ACCEPT, "application/vnd.abiquo.racks+xml");
+
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://foo")).headers(headers)
+            .payload(payload).build();
+
+      AppendApiVersionToMediaType filter = new AppendApiVersionToMediaType(new AppendApiVersionToAbiquoMimeType(
+            AbiquoAsyncApi.API_VERSION));
+
+      HttpRequest filtered = filter.filter(request);
+
+      Collection<String> accept = filtered.getHeaders().get(HttpHeaders.ACCEPT);
+      assertEquals(accept.size(), 1);
+      assertEquals(accept.iterator().next(), "application/vnd.abiquo.racks+xml;version=" + AbiquoAsyncApi.API_VERSION);
+
+      assertEquals(filtered.getPayload().getContentMetadata().getContentType(),
             "application/vnd.abiquo.racks+xml;version=1.8.5");
-
-        Multimap<String, String> headers = LinkedHashMultimap.<String, String> create();
-        headers.put(HttpHeaders.ACCEPT, "application/vnd.abiquo.racks+xml");
-
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://foo")).headers(headers)
-                .payload(payload).build();
-
-        AppendApiVersionToMediaType filter =
-            new AppendApiVersionToMediaType(new AppendApiVersionToAbiquoMimeType(AbiquoAsyncApi.API_VERSION));
-
-        HttpRequest filtered = filter.filter(request);
-
-        Collection<String> accept = filtered.getHeaders().get(HttpHeaders.ACCEPT);
-        assertEquals(accept.size(), 1);
-        assertEquals(accept.iterator().next(), "application/vnd.abiquo.racks+xml;version="
-            + AbiquoAsyncApi.API_VERSION);
-
-        assertEquals(filtered.getPayload().getContentMetadata().getContentType(),
-            "application/vnd.abiquo.racks+xml;version=1.8.5");
-    }
+   }
 }

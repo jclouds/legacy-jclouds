@@ -30,13 +30,11 @@ import org.testng.annotations.Test;
  * @author Vivien Mahé
  */
 @Test(groups = "unit", testName = "BaseEventServiceTest")
-public class BaseEventServiceTest extends BaseInjectionTest
-{
-    public void testAllPropertiesInjected()
-    {
-        BaseEventService service = (BaseEventService) injector.getInstance(EventService.class);
+public class BaseEventServiceTest extends BaseInjectionTest {
+   public void testAllPropertiesInjected() {
+      BaseEventService service = (BaseEventService) injector.getInstance(EventService.class);
 
-        assertNotNull(service.context);
-        assertNotNull(service.listEvents);
-    }
+      assertNotNull(service.context);
+      assertNotNull(service.listEvents);
+   }
 }

@@ -31,7 +31,6 @@ import com.google.inject.ImplementedBy;
  * @author Susana Acedo
  */
 @ImplementedBy(ListPricingTemplatesImpl.class)
-public interface ListPricingTemplates extends ListRootEntities<PricingTemplate>
-{
+public interface ListPricingTemplates extends ListRootEntities<PricingTemplate> {
 
 }

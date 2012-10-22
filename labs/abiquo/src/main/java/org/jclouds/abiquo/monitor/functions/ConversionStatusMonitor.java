@@ -36,38 +36,32 @@ import com.google.common.base.Function;
  * @author Sergi Castro
  */
 @Singleton
-public class ConversionStatusMonitor implements Function<Conversion, MonitorStatus>
-{
-    @Resource
-    protected Logger logger = Logger.NULL;
+public class ConversionStatusMonitor implements Function<Conversion, MonitorStatus> {
+   @Resource
+   protected Logger logger = Logger.NULL;
 
-    @Override
-    public MonitorStatus apply(final Conversion conversion)
-    {
-        checkNotNull(conversion, "conversion");
+   @Override
+   public MonitorStatus apply(final Conversion conversion) {
+      checkNotNull(conversion, "conversion");
 
-        try
-        {
-            conversion.refresh();
+      try {
+         conversion.refresh();
 
-            switch (conversion.getState())
-            {
-                case ENQUEUED:
-                    return MonitorStatus.CONTINUE;
-                case FAILED:
-                    return MonitorStatus.FAILED;
-                case FINISHED:
-                    return MonitorStatus.DONE;
-                default:
-                    throw new IllegalStateException("Unsupported conversion status");
-            }
-        }
-        catch (Exception ex)
-        {
-            logger.warn(ex, "exception thrown while monitoring %s on %s, returning CONTINUE",
-                conversion, getClass().getName());
+         switch (conversion.getState()) {
+            case ENQUEUED:
+               return MonitorStatus.CONTINUE;
+            case FAILED:
+               return MonitorStatus.FAILED;
+            case FINISHED:
+               return MonitorStatus.DONE;
+            default:
+               throw new IllegalStateException("Unsupported conversion status");
+         }
+      } catch (Exception ex) {
+         logger.warn(ex, "exception thrown while monitoring %s on %s, returning CONTINUE", conversion, getClass()
+               .getName());
 
-            return MonitorStatus.CONTINUE;
-        }
-    }
+         return MonitorStatus.CONTINUE;
+      }
+   }
 }

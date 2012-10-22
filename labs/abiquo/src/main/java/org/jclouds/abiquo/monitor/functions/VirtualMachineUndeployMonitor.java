@@ -33,53 +33,46 @@ import com.abiquo.server.core.cloud.VirtualMachineState;
 import com.google.common.base.Function;
 
 /**
- * This class takes care of monitoring the a undeploy of a {@link VirtualMachine}.
+ * This class takes care of monitoring the a undeploy of a
+ * {@link VirtualMachine}.
  * 
  * @author Serafin Sedano
  */
 @Singleton
-public class VirtualMachineUndeployMonitor implements Function<VirtualMachine, MonitorStatus>
-{
-    @Resource
-    protected Logger logger = Logger.NULL;
+public class VirtualMachineUndeployMonitor implements Function<VirtualMachine, MonitorStatus> {
+   @Resource
+   protected Logger logger = Logger.NULL;
 
-    @Override
-    public MonitorStatus apply(final VirtualMachine virtualMachine)
-    {
-        checkNotNull(virtualMachine, "virtualMachine");
+   @Override
+   public MonitorStatus apply(final VirtualMachine virtualMachine) {
+      checkNotNull(virtualMachine, "virtualMachine");
 
-        try
-        {
-            VirtualMachineState state = virtualMachine.getState();
+      try {
+         VirtualMachineState state = virtualMachine.getState();
 
-            // This state may be reached if the undeploy process fails and a rollback is done
-            if (state.existsInHypervisor())
-            {
-                return MonitorStatus.FAILED;
-            }
+         // This state may be reached if the undeploy process fails and a
+         // rollback is done
+         if (state.existsInHypervisor()) {
+            return MonitorStatus.FAILED;
+         }
 
-            switch (state)
-            {
-                case UNKNOWN:
-                    return MonitorStatus.FAILED;
-                case NOT_ALLOCATED:
-                    return MonitorStatus.DONE;
-                default:
-                    return MonitorStatus.CONTINUE;
-            }
-        }
-        catch (ResourceNotFoundException nfe)
-        {
-            logger.warn("virtual machine %s not found, assuming it was undeployed successfully, "
-                + "stop monitor with DONE", virtualMachine);
-            return MonitorStatus.DONE;
-        }
-        catch (Exception ex)
-        {
-            logger.warn(ex, "exception thrown while monitoring %s on %s, returning CONTINUE",
-                virtualMachine, getClass().getName());
+         switch (state) {
+            case UNKNOWN:
+               return MonitorStatus.FAILED;
+            case NOT_ALLOCATED:
+               return MonitorStatus.DONE;
+            default:
+               return MonitorStatus.CONTINUE;
+         }
+      } catch (ResourceNotFoundException nfe) {
+         logger.warn("virtual machine %s not found, assuming it was undeployed successfully, "
+               + "stop monitor with DONE", virtualMachine);
+         return MonitorStatus.DONE;
+      } catch (Exception ex) {
+         logger.warn(ex, "exception thrown while monitoring %s on %s, returning CONTINUE", virtualMachine, getClass()
+               .getName());
 
-            return MonitorStatus.CONTINUE;
-        }
-    }
+         return MonitorStatus.CONTINUE;
+      }
+   }
 }
