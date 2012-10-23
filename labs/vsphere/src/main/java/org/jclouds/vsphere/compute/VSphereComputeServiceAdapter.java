@@ -51,9 +51,11 @@ import org.jclouds.vsphere.VSphereApiMetadata;
 import org.jclouds.vsphere.functions.MasterToVirtualMachineCloneSpec;
 import org.jclouds.vsphere.functions.VirtualMachineToImage;
 import org.jclouds.vsphere.predicates.IsTemplatePredicate;
+import org.jclouds.vsphere.utils.VirtualMachines;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
 import com.google.common.collect.FluentIterable;
@@ -65,12 +67,13 @@ import com.google.common.primitives.Longs;
 import com.vmware.vim25.FileFault;
 import com.vmware.vim25.InvalidDatastore;
 import com.vmware.vim25.InvalidName;
+import com.vmware.vim25.InvalidProperty;
 import com.vmware.vim25.InvalidState;
 import com.vmware.vim25.RuntimeFault;
 import com.vmware.vim25.SnapshotFault;
 import com.vmware.vim25.TaskInProgress;
+import com.vmware.vim25.VimFault;
 import com.vmware.vim25.VirtualMachineCloneSpec;
-import com.vmware.vim25.VirtualMachinePowerState;
 import com.vmware.vim25.VmConfigFault;
 import com.vmware.vim25.mo.Datacenter;
 import com.vmware.vim25.mo.Datastore;
@@ -107,18 +110,15 @@ public class VSphereComputeServiceAdapter implements
    @Override
    public NodeAndInitialCredentials<VirtualMachine> createNodeWithGroupEncodedIntoName(String tag, String name,
             Template template) {
-      String templateNameOrId = template.getImage().getId();
-      VirtualMachine master = getMaster(templateNameOrId);
+      VirtualMachine master = getMaster(template.getImage().getName());
       
-      
-      Optional<ResourcePool> optionalResourcePool = tryFindResourcePool(rootFolder);
-      Optional<HostSystem> optionalHost = tryFindHost(rootFolder);
-      
+      Optional<ResourcePool> optionalResourcePool = tryFindManagedEntity(rootFolder, ResourcePool.class);
+      checkState(optionalResourcePool.isPresent(), " there is not an available host on this rootFolder " + rootFolder);
+      ResourcePool resourcePool = optionalResourcePool.get();
+
+      Optional<HostSystem> optionalHost = tryFindManagedEntity(rootFolder, HostSystem.class);
       checkState(optionalHost.isPresent(), " there is not an available host on this rootFolder " + rootFolder);
       HostSystem host = optionalHost.get();
-
-      checkState(optionalHost.isPresent(), " there is not an available host on this rootFolder " + rootFolder);
-      ResourcePool resourcePool = optionalResourcePool.get();
 
       Set<Datastore> availableDatastores = fetchDatastores(rootFolder);
       
@@ -144,12 +144,7 @@ public class VSphereComputeServiceAdapter implements
                VSphereApiMetadata.defaultProperties().getProperty(CLONING)).apply(master);
       
       VirtualMachine cloned = null;
-      try {
-         cloned = cloneMaster(master, tag, name, cloneSpec);
-      } catch (Exception e) {
-         logger.error("Can't clone vm " + master.getName(), e);
-         throw propagate(e);
-      }
+      cloned = cloneMaster(master, tag, name, cloneSpec);
       
       try {
          markVirtualMachineAsTemplate(master);
@@ -160,16 +155,17 @@ public class VSphereComputeServiceAdapter implements
       
       NodeAndInitialCredentials<VirtualMachine> nodeAndInitialCredentials = 
             new NodeAndInitialCredentials<VirtualMachine>(cloned, cloned.getName(), 
-            LoginCredentials.builder().user("toor").password("password").authenticateSudo(true).build());
+            LoginCredentials.builder().user(template.getOptions().getLoginUser())
+               .password(template.getOptions().getLoginPassword()).authenticateSudo(true).build());
       return nodeAndInitialCredentials;
    }
 
-   private VirtualMachine getMaster(String templateNameOrId) {
-      Optional<VirtualMachine> optionalVm = tryFindVm(templateNameOrId, rootFolder);
+   private VirtualMachine getMaster(String templateName) {
+      Optional<VirtualMachine> optionalVm = tryFindVmByName(rootFolder, templateName);
       checkState(optionalVm.isPresent(), 
-            String.format("there is not an available vm '%s' on rootFolder '%s'", templateNameOrId, rootFolder));
-      checkState(isVMwareTemplate(optionalVm.get()), 
-            String.format("there is not an available vm '%s' on rootFolder '%s'", templateNameOrId, rootFolder));
+            String.format("there is not an available vm '%s' on rootFolder '%s'", templateName, rootFolder));
+      checkState(VirtualMachines.isTemplate(optionalVm.get()), 
+            String.format("there is not an available vm '%s' on rootFolder '%s'", templateName, rootFolder));
       return optionalVm.get();
    }
 
@@ -179,38 +175,10 @@ public class VSphereComputeServiceAdapter implements
    }
 
    @Override
-   public FluentIterable<VirtualMachine> listNodes() {
-      Folder nodesFolder = serviceInstance.get().getRootFolder();
-      ManagedEntity[] managedEntities = null;
-      try {
-         managedEntities = new InventoryNavigator(nodesFolder).searchManagedEntities("VirtualMachine");
-      } catch (Exception e) {
-         logger.error("Can't find vm", e);
-         throw propagate(e);
+   public Iterable<VirtualMachine> listNodes() {
+      Folder folder = serviceInstance.get().getRootFolder();
+      return listManagedEntities(folder, VirtualMachine.class);
       }
-      return FluentIterable.from(Arrays.asList(managedEntities)).transform(
-            new Function<ManagedEntity, VirtualMachine>() {
-               public VirtualMachine apply(ManagedEntity input) {
-                  return (VirtualMachine) input;
-               }
-            });
-      }
-      
-//      Iterable<VirtualMachine> vms = ImmutableSet.<VirtualMachine> of();
-//      try {
-//         ManagedEntity[] managedEntities =  new InventoryNavigator(nodesFolder).searchManagedEntities("VirtualMachine");
-//         vms =  Iterables.transform(Arrays.asList(managedEntities), new Function<ManagedEntity, VirtualMachine>() {
-//            public VirtualMachine apply(ManagedEntity input) {
-//               return (VirtualMachine) input;
-//            }
-//         });
-//         return vms;
-//      } catch (Exception e) {
-//         logger.error("Can't find vm", e);
-//         propagate(e);
-//      }     
-//      return vms;
-//   }   
 
    @Override
    public Iterable<Hardware> listHardwareProfiles() {
@@ -228,10 +196,7 @@ public class VSphereComputeServiceAdapter implements
 
    @Override
    public Iterable<Image> listImages() {
-//      Iterable<VirtualMachine> nodes = listNodes();
-//      Iterable<VirtualMachine> templates = Iterables.filter(nodes, new IsTemplatePredicate());
-//      return Iterables.transform(templates, virtualMachineToImage);
-      return listNodes().filter(new IsTemplatePredicate()).transform(virtualMachineToImage);
+      return FluentIterable.from(listNodes()).filter(new IsTemplatePredicate()).transform(virtualMachineToImage);
    }
 
    @Override
@@ -242,7 +207,7 @@ public class VSphereComputeServiceAdapter implements
 
    @Override
    public VirtualMachine getNode(String vmName) {
-      Optional<VirtualMachine> optionalVm = tryFindVm(vmName, rootFolder);
+      Optional<VirtualMachine> optionalVm = tryFindVmByName(rootFolder, vmName);
       checkState(optionalVm.isPresent(), 
             String.format("there is not an available vm %s on this rootFolder %s", vmName, rootFolder));
       return optionalVm.get();
@@ -250,30 +215,37 @@ public class VSphereComputeServiceAdapter implements
 
    @Override
    public void destroyNode(String vmName) {
-      VirtualMachine virtualMachine = getNode(vmName); 
+      VirtualMachine virtualMachine = getNode(vmName);
       try {
          Task powerOffTask = virtualMachine.powerOffVM_Task();
-         if (powerOffTask.waitForTask().equals(Task.SUCCESS))
+         if (manageTask(powerOffTask))
             logger.debug(String.format("VM %s powered off", vmName));
-         else 
-            logger.debug(String.format("VM %s could not be powered off", vmName));
-         
-         Task destroyTask = virtualMachine.destroy_Task();
-         if (destroyTask.waitForTask().equals(Task.SUCCESS))
-            logger.debug(String.format("VM %s destroyed", vmName));
-         else 
-            logger.debug(String.format("VM %s could not be destroyed", vmName));
-      } catch (Exception e) {
-         logger.error("Can't destroy vm " + vmName, e);
+      } catch (RuntimeFault e) {
          throw propagate(e);
-      } 
-  
+      } catch (RemoteException e) {
+         throw propagate(e);
+      } catch (InterruptedException e) {
+         throw propagate(e);
+      }
+
+      try {
+         Task destroyTask = virtualMachine.destroy_Task();
+         if (manageTask(destroyTask))
+            logger.debug(String.format("VM %s destroyed", vmName));
+      } catch (VimFault e) {
+         throw propagate(e);
+      } catch (RuntimeFault e) {
+         throw propagate(e);
+      } catch (RemoteException e) {
+         throw propagate(e);
+      } catch (InterruptedException e) {
+         throw propagate(e);
+      }
    }
 
    @Override
    public void rebootNode(String vmName) {
       VirtualMachine virtualMachine = getNode(vmName); 
-
       try {
          virtualMachine.rebootGuest();
       } catch (Exception e) {
@@ -285,20 +257,15 @@ public class VSphereComputeServiceAdapter implements
 
    @Override
    public void resumeNode(String vmName) {
-      VirtualMachine virtualMachine = getNode(vmName); 
-
-      if(virtualMachine.getRuntime().getPowerState().equals(VirtualMachinePowerState.poweredOff)) {
-         try {
-            Task task = virtualMachine.powerOnVM_Task(null);
-            if (task.waitForTask().equals(Task.SUCCESS))
-               logger.debug(virtualMachine.getName() + " resumed");
-         } catch (Exception e) {
-            logger.error("Can't resume vm " + vmName, e);
-            throw propagate(e);
-         }
-
-      } else
-         logger.debug(vmName + " can't be resumed");
+      VirtualMachine virtualMachine = getNode(vmName);
+      try {
+         Task task = virtualMachine.powerOnVM_Task(null);
+         if(manageTask(task))
+            logger.debug(virtualMachine.getName() + " resumed");
+      } catch (Exception e) {
+         logger.error("Can't resume vm " + vmName, e);
+         throw propagate(e);
+      }
    }
 
    @Override
@@ -307,10 +274,8 @@ public class VSphereComputeServiceAdapter implements
 
       try {
          Task task = virtualMachine.suspendVM_Task();
-         if (task.waitForTask().equals(Task.SUCCESS))
+         if(manageTask(task))
             logger.debug(vmName + " suspended");
-         else
-            logger.debug(vmName + " can't be suspended");
       } catch (Exception e) {
          logger.error("Can't suspend vm " + vmName, e);
          throw propagate(e);
@@ -329,55 +294,16 @@ public class VSphereComputeServiceAdapter implements
       try {
          String clonedName = createName(tag, name);
          Task task = master.cloneVM_Task((Folder) master.getParent(), clonedName, cloneSpec);
-         String result = task.waitForTask();
-         if (result.equals(Task.SUCCESS)) {
+         if(manageTask(task))
             cloned = (VirtualMachine) new InventoryNavigator((Folder) master.getParent()).searchManagedEntity("VirtualMachine", clonedName);
-         } else {
-            String errorMessage = task.getTaskInfo().getError().getLocalizedMessage();
-            logger.error(errorMessage);
-         }
       } catch (Exception e) {
-         logger.error("Can't clone vm", e);
          throw propagate(e);
       } 
       return checkNotNull(cloned, "cloned");
    }
 
    private String createName(String tag, String name) {
-      String clonedName = VSPHERE_PREFIX + tag + VSPHERE_SEPARATOR + name;
-      return clonedName;
-   }
-
-   private Optional<HostSystem> tryFindHost(Folder folder) {
-      Iterable<HostSystem> hosts = ImmutableSet.<HostSystem> of();
-      try {
-         ManagedEntity[] hostEntities = new InventoryNavigator(folder).searchManagedEntities("HostSystem");
-         hosts =  Iterables.transform(Arrays.asList(hostEntities), new Function<ManagedEntity, HostSystem>() {
-            public HostSystem apply(ManagedEntity input) {
-               return (HostSystem) input;
-            }
-         });
-      } catch (Exception e) {
-         logger.error("Problem in finding a valid host", e);
-         throw propagate(e);
-      }
-      return Iterables.tryFind(hosts, Predicates.notNull());
-   }
-
-   private Optional<ResourcePool> tryFindResourcePool(Folder folder) {
-      Iterable<ResourcePool> resourcePools = ImmutableSet.<ResourcePool> of();
-      try {
-         ManagedEntity[] resourcePoolEntities = new InventoryNavigator(folder).searchManagedEntities("ResourcePool");
-         resourcePools =  Iterables.transform(Arrays.asList(resourcePoolEntities), new Function<ManagedEntity, ResourcePool>() {
-            public ResourcePool apply(ManagedEntity input) {
-               return (ResourcePool) input;
-            }
-         });
-      } catch (Exception e) {
-         logger.error("Problem in finding a valid resource pool", e);
-         throw propagate(e);
-      }
-      return Iterables.tryFind(resourcePools, Predicates.notNull());
+      return VSPHERE_PREFIX + tag + VSPHERE_SEPARATOR + name;
    }
    
    private Set<Datastore> fetchDatastores(Folder folder) {
@@ -389,10 +315,10 @@ public class VSphereComputeServiceAdapter implements
                      return (Datacenter) input;
                   }
                });
+          
          Set<Datastore> datastores = Sets.newLinkedHashSet();
          for (Datacenter datacenter : datacenters) {
-            Datastore[] datastoresArray = datacenter.getDatastores();
-            datastores.addAll(Arrays.asList(datastoresArray));
+            Iterables.addAll(datastores, Arrays.asList(datacenter.getDatastores()));
          }
          return datastores;
       } catch (Exception e) {
@@ -401,43 +327,14 @@ public class VSphereComputeServiceAdapter implements
       }
    }
 
-//      try {
-//         ManagedEntity[] datacenterEntities = new InventoryNavigator(folder).searchManagedEntities("Datacenter");
-//         Iterable<Datacenter> datacenters =  Iterables.transform(Arrays.asList(datacenterEntities), new Function<ManagedEntity, Datacenter>() {
-//            public Datacenter apply(ManagedEntity input) {
-//               return (Datacenter) input;
-//            }
-//         });
-//         for (Datacenter datacenter : datacenters) {
-//            for (Datastore d : datacenter.getDatastores()) {
-//               long max = d.getSummary().getCapacity();
-//               datastore = d;
-//               if(d.getSummary().getCapacity() > max) {
-//                  max = d.getSummary().getCapacity();
-//                  datastore = d;
-//               }
-//            }
-//         }
-//      } catch (Exception e) {
-//         logger.error("Problem in finding a datastore", e);
-//         throw propagate(e);
-//      }
-//      checkNotNull(datastore, "datastore");
-//      return datastore;
-//   }
+   private Optional<VirtualMachine> tryFindVmByName(Folder folder, final String vmName) {
+      return FluentIterable.from(listManagedEntities(folder, VirtualMachine.class)).filter(new Predicate<VirtualMachine>() {
 
-   private Optional<VirtualMachine> tryFindVm(String vmName, Folder nodesFolder) {
-      try {
-         return Optional.of(((VirtualMachine) new InventoryNavigator(nodesFolder).searchManagedEntity("VirtualMachine", vmName)));
-      } catch (Exception e) {
-         logger.error("Can't find vm", e);
-         throw propagate(e);
-      }
+         @Override
+         public boolean apply(VirtualMachine input) {
+            return input.getName().equals(vmName);
+         }}).first();
    }
-   
-   private boolean isVMwareTemplate(VirtualMachine vm) {
-      return vm.getConfig().isTemplate();
-   }   
 
    private void markVirtualMachineAsTemplate(VirtualMachine vm) throws VmConfigFault, InvalidState, RuntimeFault,
             RemoteException {
@@ -445,7 +342,7 @@ public class VSphereComputeServiceAdapter implements
       // the vm
       lock.lock();
       try {
-         if (!isVMwareTemplate(vm))
+         if (!VirtualMachines.isTemplate(vm))
             vm.markAsTemplate();
       } finally {
          lock.unlock();
@@ -466,4 +363,47 @@ public class VSphereComputeServiceAdapter implements
       }
    }
 
+   private <T> Optional<T> tryFindManagedEntity(Folder folder, final Class<T> managedEntityClass) {
+      Iterable<T> managedEntities = listManagedEntities(folder, managedEntityClass);
+      return Iterables.tryFind(managedEntities, Predicates.notNull());
+   }
+
+   private <T> Iterable<T> listManagedEntities(Folder folder, final Class<T> managedEntityClass) {
+      Iterable<T> managedEntities = ImmutableSet.<T> of();
+      String managedEntityName = managedEntityClass.getSimpleName();
+         try {
+            managedEntities =  
+                  Iterables.transform(
+                        Arrays.asList(new InventoryNavigator(folder).searchManagedEntities(managedEntityName)), 
+                        new Function<ManagedEntity, T>() {
+                           public T apply(ManagedEntity input) {
+                              return managedEntityClass.cast(input);
+                           }
+                        });
+         } catch (InvalidProperty e) {
+            logger.error(String.format("Problem in finding a valid %s", managedEntityName), e);
+            throw propagate(e);
+         } catch (RuntimeFault e) {
+            logger.error(String.format("Problem in finding a valid %s", managedEntityName), e);
+            throw propagate(e);
+         } catch (RemoteException e) {
+            logger.error(String.format("Problem in finding a valid %s", managedEntityName), e);
+            throw propagate(e);
+         }
+      return managedEntities;
+   }
+   
+   private boolean manageTask(Task task)
+         throws RuntimeFault, RemoteException, InterruptedException, InvalidProperty {
+      if (!task.waitForTask().equals(Task.SUCCESS)) {
+         String message = task.getTaskInfo().getError().getLocalizedMessage();
+         logErrorAndthrowRuntimeException(message);
+      }
+      return true;
+   }
+   
+   private void logErrorAndthrowRuntimeException(String message) {
+      logger.debug(message);
+      throw new RuntimeException(message);
+   }
 }

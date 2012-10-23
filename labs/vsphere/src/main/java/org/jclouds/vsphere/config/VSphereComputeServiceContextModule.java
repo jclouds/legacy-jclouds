@@ -32,12 +32,11 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.domain.Location;
 import org.jclouds.functions.IdentityFunction;
-import org.jclouds.ssh.SshClient;
 import org.jclouds.vsphere.compute.VSphereComputeServiceAdapter;
 import org.jclouds.vsphere.functions.CreateAndConnectVSphereClient;
 import org.jclouds.vsphere.functions.VirtualMachineToImage;
+import org.jclouds.vsphere.functions.VirtualMachineToIpAddress;
 import org.jclouds.vsphere.functions.VirtualMachineToNodeMetadata;
-import org.jclouds.vsphere.functions.VirtualMachineToSshClient;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
@@ -75,8 +74,8 @@ public class VSphereComputeServiceContextModule extends
       
       bind(new TypeLiteral<Function<VirtualMachine, NodeMetadata>>() {
       }).to(VirtualMachineToNodeMetadata.class);
-      bind(new TypeLiteral<Function<VirtualMachine, SshClient>>() {
-      }).to(VirtualMachineToSshClient.class);
+      bind(new TypeLiteral<Function<VirtualMachine, String>>() {
+      }).to(VirtualMachineToIpAddress.class);
       bind(new TypeLiteral<Function<VirtualMachine, Image>>() {
       }).to(VirtualMachineToImage.class);
    }

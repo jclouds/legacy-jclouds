@@ -30,14 +30,16 @@ import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.vsphere.BaseVSphereClientLiveTest;
-import org.jclouds.vsphere.functions.VirtualMachineToSshClient;
+import org.jclouds.vsphere.functions.VirtualMachineToIpAddress;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Iterables;
+import com.google.common.net.HostAndPort;
 import com.vmware.vim25.mo.VirtualMachine;
 
 @Test(groups = "live", singleThreaded = true, testName = "VSphereComputeServiceAdapterLiveTest")
@@ -52,7 +54,9 @@ public class VSphereComputeServiceAdapterLiveTest extends BaseVSphereClientLiveT
    public void testCreatedNodeHasExpectedNameAndWeCanConnectViaSsh() {
       String group = "foo";
       String name = "foo-ef4";
-      Template template = view.getComputeService().templateBuilder().build();
+      Template template = view.getComputeService().templateBuilder()
+            .options(TemplateOptions.Builder.overrideLoginUser("toor").overrideLoginPassword("password"))
+            .build();
       machine = adapter.createNodeWithGroupEncodedIntoName(group, name, template);
       assertNotNull(machine);
       assertTrue(machine.getNode().getName().contains(group));
@@ -61,7 +65,8 @@ public class VSphereComputeServiceAdapterLiveTest extends BaseVSphereClientLiveT
    }
 
    protected void doConnectViaSsh(VirtualMachine machine, LoginCredentials creds) {
-      SshClient ssh = view.utils().injector().getInstance(VirtualMachineToSshClient.class).apply(machine);
+      String ipAddress = view.utils().injector().getInstance(VirtualMachineToIpAddress.class).apply(machine);
+      SshClient ssh = view.utils().sshFactory().create(HostAndPort.fromParts(ipAddress, 22), creds);
       try {
          ssh.connect();
          ExecResponse hello = ssh.exec("echo hello");
@@ -91,7 +96,6 @@ public class VSphereComputeServiceAdapterLiveTest extends BaseVSphereClientLiveT
    @Override
    protected void tearDown() throws Exception {
       if (machine != null) {
-         adapter.suspendNode(machine.getNodeId() + "");
          adapter.destroyNode(machine.getNodeId() + "");
       }
       super.tearDown();

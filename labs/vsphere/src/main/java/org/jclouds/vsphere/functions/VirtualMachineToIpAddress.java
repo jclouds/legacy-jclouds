@@ -27,39 +27,25 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.domain.LoginCredentials;
 import org.jclouds.logging.Logger;
 import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.ssh.SshClient;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
-import com.google.common.net.HostAndPort;
-import com.google.inject.Inject;
 import com.vmware.vim25.VirtualMachinePowerState;
 import com.vmware.vim25.VirtualMachineToolsStatus;
 import com.vmware.vim25.mo.VirtualMachine;
-
 @Singleton
-public class VirtualMachineToSshClient implements Function<VirtualMachine, SshClient> {
+public class VirtualMachineToIpAddress implements Function<VirtualMachine, String> {
 
 	@Resource
 	@Named(ComputeServiceConstants.COMPUTE_LOGGER)
 	protected Logger logger = Logger.NULL;
 
-	private final SshClient.Factory sshClientFactory;
-
-	@Inject
-	public VirtualMachineToSshClient(SshClient.Factory sshClientFactory) {
-		this.sshClientFactory = sshClientFactory;
-	}
-
 	@Override
-	public SshClient apply(final VirtualMachine vm) {
-		SshClient client = null;
+	public String apply(final VirtualMachine vm) {
 		String clientIpAddress = vm.getGuest().getIpAddress();
-		String sshPort = "22";
 		while(!vm.getGuest().getToolsStatus().equals(VirtualMachineToolsStatus.toolsOk) || clientIpAddress.isEmpty()) {
 			int timeoutValue = 1000, timeoutUnits = 500;
 			RetryablePredicate<String> tester = new RetryablePredicate<String>(
@@ -74,15 +60,8 @@ public class VirtualMachineToSshClient implements Function<VirtualMachine, SshCl
 				passed = tester.apply(clientIpAddress);
 			}
 		}
-		LoginCredentials loginCredentials = LoginCredentials.builder()
-				.user("toor").password("password").authenticateSudo(true)
-				.build();
-		checkNotNull(clientIpAddress, "clientIpAddress");
-		client = sshClientFactory.create(
-				HostAndPort.fromParts(clientIpAddress, Integer.parseInt(sshPort)),
-				loginCredentials);
-		checkNotNull(client);
-		return client;
+
+		return checkNotNull(clientIpAddress, "clientIpAddress");
 	}
 	
 	Predicate<String> ipAddressTester = new Predicate<String>() {

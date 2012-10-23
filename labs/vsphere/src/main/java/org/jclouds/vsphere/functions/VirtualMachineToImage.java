@@ -56,7 +56,6 @@ public class VirtualMachineToImage implements Function<VirtualMachine, Image> {
       
       if (from == null)
          return null;
-      //String guestFamily = from.getConfig().getGuestFullName();
       // TODO every template should contain this annotation ...
       String annotation =  from.getConfig().getAnnotation();
       OsFamily family = parseOsFamilyOrUnrecognized(annotation);
