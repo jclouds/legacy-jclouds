@@ -56,13 +56,13 @@ import com.google.inject.Provides;
  */
 public class HPCloudObjectStorageBlobStoreContextModule extends SwiftBlobStoreContextModule {
 
-     @Beta
-     @Singleton
-     public static final class GetCDNMetadata extends CacheLoader<String, URI> {
-     @Resource
-     protected Logger logger = Logger.NULL;
+   @Beta
+   @Singleton
+   public static final class GetCDNMetadata extends CacheLoader<String, URI> {
+      @Resource
+      protected Logger logger = Logger.NULL;
 
-     private final HPCloudObjectStorageApi client;
+      private final HPCloudObjectStorageApi client;
 
       @Inject
       public GetCDNMetadata(HPCloudObjectStorageApi client) {
