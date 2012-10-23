@@ -98,7 +98,11 @@ public class FutureIterables {
             Future<? extends T> to = function.apply(from);
             responses.put(from, to);
          }
-         exceptions = awaitCompletion(responses, exec, maxTime, logger, logPrefix);
+         try {
+            exceptions = awaitCompletion(responses, exec, maxTime, logger, logPrefix);
+         } catch (TimeoutException te) {
+            throw propagate(te);
+         }
          if (exceptions.size() > 0 && !any(exceptions.values(), containsThrowable(AuthorizationException.class))) {
             fromIterable = exceptions.keySet();
             retryHandler.imposeBackoffExponentialDelay(delayStart, 2, i + 1, maxRetries,
@@ -116,7 +120,7 @@ public class FutureIterables {
    }
    
    public static <T> Map<T, Exception> awaitCompletion(Map<T, ? extends Future<?>> responses, ExecutorService exec,
-         @Nullable Long maxTime, final Logger logger, final String logPrefix) {
+         @Nullable Long maxTime, final Logger logger, final String logPrefix) throws TimeoutException {
       final ConcurrentMap<T, Exception> errorMap = newConcurrentMap();
       if (responses.size() == 0)
          return errorMap;
@@ -150,7 +154,12 @@ public class FutureIterables {
       }
       try {
          if (maxTime != null) {
-            doneSignal.await(maxTime, TimeUnit.MILLISECONDS);
+            if (!doneSignal.await(maxTime, TimeUnit.MILLISECONDS)) {
+               String message = message(logPrefix, total, complete.get(), errors.get(), start);
+               TimeoutException te = new TimeoutException(message);
+               logger.error(te, message);
+               throw te;
+            }
          } else {
             doneSignal.await();
          }
@@ -163,11 +172,10 @@ public class FutureIterables {
             String message = message(logPrefix, total, complete.get(), errors.get(), start);
             logger.trace(message);
          }
-      } catch (InterruptedException e) {
+      } catch (InterruptedException ie) {
          String message = message(logPrefix, total, complete.get(), errors.get(), start);
-         TimeoutException exception = new TimeoutException(message);
-         logger.error(exception, message);
-         propagate(exception);
+         logger.error(ie, message);
+         throw propagate(ie);
       }
       return errorMap;
    }
