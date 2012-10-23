@@ -588,7 +588,7 @@ public class VirtualMachine {
                             @Nullable VirtualMachine.State state, @Nullable String templateDisplayText, @Nullable String templateId,
                             @Nullable String templateName, @Nullable String zoneId, @Nullable String zoneName, @Nullable Set<NIC> nics,
                             @Nullable String hypervisor, @Nullable Set<SecurityGroup> securityGroups) {
-      Preconditions.checkArgument(Strings.isNullOrEmpty(cpuUsed) || cpuUsed.matches("^[0-9\\.\\-]+%$"), "cpuUsed value should be a decimal number followed by %");
+      Preconditions.checkArgument(Strings.isNullOrEmpty(cpuUsed) || cpuUsed.matches("^[0-9\\.|,\\-]+%$"), "cpuUsed value should be a decimal number followed by %");
       this.id = checkNotNull(id, "id");
       this.account = account;
       this.cpuCount = cpuCount;
