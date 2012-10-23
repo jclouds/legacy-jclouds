@@ -32,11 +32,13 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.domain.Location;
 import org.jclouds.functions.IdentityFunction;
+import org.jclouds.ssh.SshClient;
 import org.jclouds.vsphere.compute.VSphereComputeServiceAdapter;
 import org.jclouds.vsphere.functions.CreateAndConnectVSphereClient;
 import org.jclouds.vsphere.functions.VirtualMachineToImage;
 import org.jclouds.vsphere.functions.VirtualMachineToIpAddress;
 import org.jclouds.vsphere.functions.VirtualMachineToNodeMetadata;
+import org.jclouds.vsphere.functions.VirtualMachineToSshClient;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;

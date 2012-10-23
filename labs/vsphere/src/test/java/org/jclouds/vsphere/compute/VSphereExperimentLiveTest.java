@@ -67,7 +67,7 @@ public class VSphereExperimentLiveTest extends BaseVSphereClientLiveTest {
 
    @Test
    public void testLaunchCluster() throws RunNodesException {
-      int numNodes = 3;
+      int numNodes = 5;
       final String clusterName = "test-launch-cluster";
       Set<? extends NodeMetadata> nodes = context.getComputeService().createNodesInGroup(clusterName, numNodes,
                TemplateOptions.Builder.overrideLoginUser("toor").overrideLoginPassword("password"));

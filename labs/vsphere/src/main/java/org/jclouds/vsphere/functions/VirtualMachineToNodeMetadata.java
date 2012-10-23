@@ -85,8 +85,10 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
 		String clientIpAddress = Strings.nullToEmpty(vm.getGuest()
 				.getIpAddress());
 		boolean passed = false;
-		if (!vm.getGuest().getToolsStatus()
-				.equals(VirtualMachineToolsStatus.toolsNotInstalled)) {
+		if (vm.getGuest().getToolsStatus()
+				.equals(VirtualMachineToolsStatus.toolsNotInstalled))
+			logger.debug("No VMware tools installed");
+		else {
 			int timeoutValue = 1000, timeoutUnits = 500;
 			RetryablePredicate<String> tester = new RetryablePredicate<String>(
 					ipAddressTester, timeoutValue, timeoutUnits,

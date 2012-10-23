@@ -282,6 +282,11 @@ public class VSphereComputeServiceAdapter implements
       }
    }
 
+   private void logErrorAndthrowRuntimeException(String message) {
+      logger.debug(message);
+      throw new RuntimeException(message);
+   }
+
    @Override
    public Image getImage(String imageName) {
       VirtualMachine node = getNode(imageName);
@@ -400,10 +405,5 @@ public class VSphereComputeServiceAdapter implements
          logErrorAndthrowRuntimeException(message);
       }
       return true;
-   }
-   
-   private void logErrorAndthrowRuntimeException(String message) {
-      logger.debug(message);
-      throw new RuntimeException(message);
    }
 }
