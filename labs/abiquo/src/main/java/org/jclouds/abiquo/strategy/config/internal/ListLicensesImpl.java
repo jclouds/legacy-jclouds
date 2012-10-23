@@ -42,37 +42,33 @@ import com.google.inject.Inject;
  * @author Francesc Montserrat
  */
 @Singleton
-public class ListLicensesImpl implements ListLicenses
-{
-    // This strategy does not have still an Executor instance because the current methods call
-    // single api methods
+public class ListLicensesImpl implements ListLicenses {
+   // This strategy does not have still an Executor instance because the current
+   // methods call
+   // single api methods
 
-    protected final RestContext<AbiquoApi, AbiquoAsyncApi> context;
+   protected final RestContext<AbiquoApi, AbiquoAsyncApi> context;
 
-    @Inject
-    ListLicensesImpl(final RestContext<AbiquoApi, AbiquoAsyncApi> context)
-    {
-        this.context = context;
-    }
+   @Inject
+   ListLicensesImpl(final RestContext<AbiquoApi, AbiquoAsyncApi> context) {
+      this.context = context;
+   }
 
-    @Override
-    public Iterable<License> execute()
-    {
-        LicensesDto result = context.getApi().getConfigApi().listLicenses();
-        return wrap(context, License.class, result.getCollection());
-    }
+   @Override
+   public Iterable<License> execute() {
+      LicensesDto result = context.getApi().getConfigApi().listLicenses();
+      return wrap(context, License.class, result.getCollection());
+   }
 
-    @Override
-    public Iterable<License> execute(final LicenseOptions options)
-    {
-        LicensesDto result = context.getApi().getConfigApi().listLicenses(options);
-        return wrap(context, License.class, result.getCollection());
-    }
+   @Override
+   public Iterable<License> execute(final LicenseOptions options) {
+      LicensesDto result = context.getApi().getConfigApi().listLicenses(options);
+      return wrap(context, License.class, result.getCollection());
+   }
 
-    @Override
-    public Iterable<License> execute(final Predicate<License> selector)
-    {
-        return filter(execute(), selector);
-    }
+   @Override
+   public Iterable<License> execute(final Predicate<License> selector) {
+      return filter(execute(), selector);
+   }
 
 }

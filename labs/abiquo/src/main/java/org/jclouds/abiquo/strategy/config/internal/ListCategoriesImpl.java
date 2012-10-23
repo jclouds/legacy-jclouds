@@ -41,30 +41,27 @@ import com.google.inject.Inject;
  * @author Francesc Montserrat
  */
 @Singleton
-public class ListCategoriesImpl implements ListCategories
-{
-    // This strategy does not have still an Executor instance because the current methods call
-    // single api methods
+public class ListCategoriesImpl implements ListCategories {
+   // This strategy does not have still an Executor instance because the current
+   // methods call
+   // single api methods
 
-    protected final RestContext<AbiquoApi, AbiquoAsyncApi> context;
+   protected final RestContext<AbiquoApi, AbiquoAsyncApi> context;
 
-    @Inject
-    ListCategoriesImpl(final RestContext<AbiquoApi, AbiquoAsyncApi> context)
-    {
-        this.context = context;
-    }
+   @Inject
+   ListCategoriesImpl(final RestContext<AbiquoApi, AbiquoAsyncApi> context) {
+      this.context = context;
+   }
 
-    @Override
-    public Iterable<Category> execute()
-    {
-        CategoriesDto result = context.getApi().getConfigApi().listCategories();
-        return wrap(context, Category.class, result.getCollection());
-    }
+   @Override
+   public Iterable<Category> execute() {
+      CategoriesDto result = context.getApi().getConfigApi().listCategories();
+      return wrap(context, Category.class, result.getCollection());
+   }
 
-    @Override
-    public Iterable<Category> execute(final Predicate<Category> selector)
-    {
-        return filter(execute(), selector);
-    }
+   @Override
+   public Iterable<Category> execute(final Predicate<Category> selector) {
+      return filter(execute(), selector);
+   }
 
 }

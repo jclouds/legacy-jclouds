@@ -35,47 +35,37 @@ import com.google.common.base.Predicate;
  * @author Ignasi Barrera
  * @author Susana Acedo
  */
-public class PricingPredicates
-{
-    public static Predicate<Currency> currency(final String... names)
-    {
-        checkNotNull(names, "names must be defined");
+public class PricingPredicates {
+   public static Predicate<Currency> currency(final String... names) {
+      checkNotNull(names, "names must be defined");
 
-        return new Predicate<Currency>()
-        {
-            @Override
-            public boolean apply(final Currency currency)
-            {
-                return Arrays.asList(names).contains(currency.getName());
-            }
-        };
-    }
+      return new Predicate<Currency>() {
+         @Override
+         public boolean apply(final Currency currency) {
+            return Arrays.asList(names).contains(currency.getName());
+         }
+      };
+   }
 
-    public static Predicate<CostCode> costCode(final String... names)
-    {
-        checkNotNull(names, "names must be defined");
+   public static Predicate<CostCode> costCode(final String... names) {
+      checkNotNull(names, "names must be defined");
 
-        return new Predicate<CostCode>()
-        {
-            @Override
-            public boolean apply(final CostCode costcode)
-            {
-                return Arrays.asList(names).contains(costcode.getName());
-            }
-        };
-    }
+      return new Predicate<CostCode>() {
+         @Override
+         public boolean apply(final CostCode costcode) {
+            return Arrays.asList(names).contains(costcode.getName());
+         }
+      };
+   }
 
-    public static Predicate<PricingTemplate> pricingTemplate(final String... names)
-    {
-        checkNotNull(names, "names must be defined");
+   public static Predicate<PricingTemplate> pricingTemplate(final String... names) {
+      checkNotNull(names, "names must be defined");
 
-        return new Predicate<PricingTemplate>()
-        {
-            @Override
-            public boolean apply(final PricingTemplate pricingTemplate)
-            {
-                return Arrays.asList(names).contains(pricingTemplate.getName());
-            }
-        };
-    }
+      return new Predicate<PricingTemplate>() {
+         @Override
+         public boolean apply(final PricingTemplate pricingTemplate) {
+            return Arrays.asList(names).contains(pricingTemplate.getName());
+         }
+      };
+   }
 }

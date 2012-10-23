@@ -35,34 +35,27 @@ import com.abiquo.server.core.infrastructure.MachineDto;
  * @author Ignasi Barrera
  */
 @Test(groups = "unit", testName = "AppendMachineIdToPathTest")
-public class AppendMachineIdToPathTest
-{
-    @Test(expectedExceptions = NullPointerException.class)
-    public void testGetValueWithNullInput()
-    {
-        AppendMachineIdToPath binder = new AppendMachineIdToPath(new ParseMachineId());
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
-        binder.getValue(request, null);
-    }
+public class AppendMachineIdToPathTest {
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testGetValueWithNullInput() {
+      AppendMachineIdToPath binder = new AppendMachineIdToPath(new ParseMachineId());
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
+      binder.getValue(request, null);
+   }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
-    public void testGetValueWithInvalidInput()
-    {
-        AppendMachineIdToPath binder = new AppendMachineIdToPath(new ParseMachineId());
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
-        binder.getValue(request, new Object());
-    }
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testGetValueWithInvalidInput() {
+      AppendMachineIdToPath binder = new AppendMachineIdToPath(new ParseMachineId());
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
+      binder.getValue(request, new Object());
+   }
 
-    public void testGetValue()
-    {
-        AppendMachineIdToPath binder = new AppendMachineIdToPath(new ParseMachineId());
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
+   public void testGetValue() {
+      AppendMachineIdToPath binder = new AppendMachineIdToPath(new ParseMachineId());
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
 
-        MachineDto machine = new MachineDto();
-        machine.setId(5);
-        assertEquals(binder.getValue(request, machine), "5");
-    }
+      MachineDto machine = new MachineDto();
+      machine.setId(5);
+      assertEquals(binder.getValue(request, machine), "5");
+   }
 }

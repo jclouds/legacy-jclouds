@@ -32,7 +32,6 @@ import com.google.inject.ImplementedBy;
  * @author Ignasi Barrera
  */
 @ImplementedBy(ListLicensesImpl.class)
-public interface ListLicenses extends ListRootEntities<License>
-{
-    public Iterable<License> execute(LicenseOptions options);
+public interface ListLicenses extends ListRootEntities<License> {
+   public Iterable<License> execute(LicenseOptions options);
 }

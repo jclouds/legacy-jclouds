@@ -26,59 +26,50 @@ import org.jclouds.http.options.BaseHttpRequestOptions;
  * 
  * @author Francesc Montserrat
  */
-public class MachineOptions extends BaseHttpRequestOptions
-{
-    public static Builder builder()
-    {
-        return new Builder();
-    }
+public class MachineOptions extends BaseHttpRequestOptions {
+   public static Builder builder() {
+      return new Builder();
+   }
 
-    @Override
-    protected Object clone() throws CloneNotSupportedException
-    {
-        MachineOptions options = new MachineOptions();
-        options.queryParameters.putAll(queryParameters);
-        return options;
-    }
+   @Override
+   protected Object clone() throws CloneNotSupportedException {
+      MachineOptions options = new MachineOptions();
+      options.queryParameters.putAll(queryParameters);
+      return options;
+   }
 
-    public static class Builder
-    {
-        private Integer port;
+   public static class Builder {
+      private Integer port;
 
-        private Boolean sync;
+      private Boolean sync;
 
-        /**
-         * Set the optional hypervisor port.
-         */
-        public Builder port(final int port)
-        {
-            this.port = port;
-            return this;
-        }
+      /**
+       * Set the optional hypervisor port.
+       */
+      public Builder port(final int port) {
+         this.port = port;
+         return this;
+      }
 
-        /**
-         * Set the optional sync param.
-         */
-        public Builder sync(final boolean sync)
-        {
-            this.sync = sync;
-            return this;
-        }
+      /**
+       * Set the optional sync param.
+       */
+      public Builder sync(final boolean sync) {
+         this.sync = sync;
+         return this;
+      }
 
-        public MachineOptions build()
-        {
-            MachineOptions options = new MachineOptions();
-            if (port != null)
-            {
-                options.queryParameters.put("port", port.toString());
-            }
+      public MachineOptions build() {
+         MachineOptions options = new MachineOptions();
+         if (port != null) {
+            options.queryParameters.put("port", port.toString());
+         }
 
-            if (sync != null)
-            {
-                options.queryParameters.put("sync", sync.toString());
-            }
+         if (sync != null) {
+            options.queryParameters.put("sync", sync.toString());
+         }
 
-            return options;
-        }
-    }
+         return options;
+      }
+   }
 }

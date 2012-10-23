@@ -33,20 +33,17 @@ import com.abiquo.server.core.infrastructure.storage.VolumeManagementDto;
  * @author Ignasi Barrera
  */
 @Singleton
-public class ReturnMovedVolume extends ReturnMovedResource<VolumeManagementDto>
-{
-    private ReturnMoveVolumeReference parser;
+public class ReturnMovedVolume extends ReturnMovedResource<VolumeManagementDto> {
+   private ReturnMoveVolumeReference parser;
 
-    @Inject
-    public ReturnMovedVolume(final ReturnMoveVolumeReference parser)
-    {
-        super();
-        this.parser = parser;
-    }
+   @Inject
+   public ReturnMovedVolume(final ReturnMoveVolumeReference parser) {
+      super();
+      this.parser = parser;
+   }
 
-    @Override
-    protected VolumeManagementDto getMovedEntity(final HttpResponse response)
-    {
-        return parser.apply(response).getVolume();
-    }
+   @Override
+   protected VolumeManagementDto getMovedEntity(final HttpResponse response) {
+      return parser.apply(response).getVolume();
+   }
 }

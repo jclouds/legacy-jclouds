@@ -40,57 +40,48 @@ import com.google.common.collect.ImmutableList;
  * @author Ignasi Barrera
  */
 @Test(groups = "unit", testName = "BindSupportedDevicesLinkToPathTest")
-public class BindSupportedDevicesLinkToPathTest
-{
-    @Test(expectedExceptions = NullPointerException.class)
-    public void testGetNewEnpointNullInput()
-    {
-        BindSupportedDevicesLinkToPath binder = new BindSupportedDevicesLinkToPath();
-        binder.getNewEndpoint(null, null);
-    }
+public class BindSupportedDevicesLinkToPathTest {
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testGetNewEnpointNullInput() {
+      BindSupportedDevicesLinkToPath binder = new BindSupportedDevicesLinkToPath();
+      binder.getNewEndpoint(null, null);
+   }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
-    public void testGetNewEnpointInvalidInput()
-    {
-        BindSupportedDevicesLinkToPath binder = new BindSupportedDevicesLinkToPath();
-        binder.getNewEndpoint(null, new Object());
-    }
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testGetNewEnpointInvalidInput() {
+      BindSupportedDevicesLinkToPath binder = new BindSupportedDevicesLinkToPath();
+      binder.getNewEndpoint(null, new Object());
+   }
 
-    public void testGetNewEnpoint() throws Exception
-    {
-        DatacenterDto datacenter = new DatacenterDto();
-        datacenter.addLink(new RESTLink("devices", "http://foo/bar"));
+   public void testGetNewEnpoint() throws Exception {
+      DatacenterDto datacenter = new DatacenterDto();
+      datacenter.addLink(new RESTLink("devices", "http://foo/bar"));
 
-        BindSupportedDevicesLinkToPath binder = new BindSupportedDevicesLinkToPath();
+      BindSupportedDevicesLinkToPath binder = new BindSupportedDevicesLinkToPath();
 
-        Method withEndpointLink =
-            InfrastructureAsyncApi.class.getMethod("listSupportedStorageDevices",
-                DatacenterDto.class);
+      Method withEndpointLink = InfrastructureAsyncApi.class.getMethod("listSupportedStorageDevices",
+            DatacenterDto.class);
 
-        GeneratedHttpRequest request =
-            GeneratedHttpRequest.builder().declaring(InfrastructureAsyncApi.class)
-                .javaMethod(withEndpointLink).args(ImmutableList.<Object> of(datacenter))
-                .method(HttpMethod.GET).endpoint(URI.create("http://foo/bar")).build();
+      GeneratedHttpRequest request = GeneratedHttpRequest.builder().declaring(InfrastructureAsyncApi.class)
+            .javaMethod(withEndpointLink).args(ImmutableList.<Object> of(datacenter)).method(HttpMethod.GET)
+            .endpoint(URI.create("http://foo/bar")).build();
 
-        assertEquals(binder.getNewEndpoint(request, datacenter), "http://foo/bar/action/supported");
-    }
+      assertEquals(binder.getNewEndpoint(request, datacenter), "http://foo/bar/action/supported");
+   }
 
-    @Test(expectedExceptions = NullPointerException.class)
-    public void testGetNewEnpointWithoutLink() throws Exception
-    {
-        DatacenterDto datacenter = new DatacenterDto();
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testGetNewEnpointWithoutLink() throws Exception {
+      DatacenterDto datacenter = new DatacenterDto();
 
-        BindSupportedDevicesLinkToPath binder = new BindSupportedDevicesLinkToPath();
+      BindSupportedDevicesLinkToPath binder = new BindSupportedDevicesLinkToPath();
 
-        Method withEndpointLink =
-            InfrastructureAsyncApi.class.getMethod("listSupportedStorageDevices",
-                DatacenterDto.class);
+      Method withEndpointLink = InfrastructureAsyncApi.class.getMethod("listSupportedStorageDevices",
+            DatacenterDto.class);
 
-        GeneratedHttpRequest request =
-            GeneratedHttpRequest.builder().declaring(InfrastructureAsyncApi.class)
-                .javaMethod(withEndpointLink).args(ImmutableList.<Object> of(datacenter))
-                .method(HttpMethod.GET).endpoint(URI.create("http://foo/bar")).build();
+      GeneratedHttpRequest request = GeneratedHttpRequest.builder().declaring(InfrastructureAsyncApi.class)
+            .javaMethod(withEndpointLink).args(ImmutableList.<Object> of(datacenter)).method(HttpMethod.GET)
+            .endpoint(URI.create("http://foo/bar")).build();
 
-        assertEquals(binder.getNewEndpoint(request, datacenter), "http://foo/bar/action/supported");
-    }
+      assertEquals(binder.getNewEndpoint(request, datacenter), "http://foo/bar/action/supported");
+   }
 }

@@ -46,151 +46,137 @@ import com.google.inject.TypeLiteral;
  * @author Francesc Montserrat
  */
 @Test(groups = "unit", testName = "AdminAsyncApiTest")
-public class AdminAsyncApiTest extends BaseAbiquoAsyncApiTest<AdminAsyncApi>
-{
-    /*********************** Role ***********************/
+public class AdminAsyncApiTest extends BaseAbiquoAsyncApiTest<AdminAsyncApi> {
+   /*********************** Role ***********************/
 
-    public void testListRoles() throws SecurityException, NoSuchMethodException, IOException
-    {
-        Method method = AdminAsyncApi.class.getMethod("listRoles");
-        GeneratedHttpRequest request = processor.createRequest(method);
+   public void testListRoles() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = AdminAsyncApi.class.getMethod("listRoles");
+      GeneratedHttpRequest request = processor.createRequest(method);
 
-        assertRequestLineEquals(request, "GET http://localhost/api/admin/roles HTTP/1.1");
-        assertNonPayloadHeadersEqual(request, "Accept: " + RolesDto.BASE_MEDIA_TYPE + "\n");
-        assertPayloadEquals(request, null, null, false);
+      assertRequestLineEquals(request, "GET http://localhost/api/admin/roles HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Accept: " + RolesDto.BASE_MEDIA_TYPE + "\n");
+      assertPayloadEquals(request, null, null, false);
 
-        assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
-        assertSaxResponseParserClassEquals(method, null);
-        assertExceptionParserClassEquals(method, null);
+      assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
 
-        checkFilters(request);
-    }
+      checkFilters(request);
+   }
 
-    public void testGetRoleFromUser() throws SecurityException, NoSuchMethodException, IOException
-    {
-        Method method = AdminAsyncApi.class.getMethod("getRole", UserDto.class);
-        GeneratedHttpRequest request =
-            processor.createRequest(method, EnterpriseResources.userPut());
+   public void testGetRoleFromUser() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = AdminAsyncApi.class.getMethod("getRole", UserDto.class);
+      GeneratedHttpRequest request = processor.createRequest(method, EnterpriseResources.userPut());
 
-        assertRequestLineEquals(request, "GET http://localhost/api/admin/roles/1 HTTP/1.1");
-        assertNonPayloadHeadersEqual(request, "Accept: " + RoleDto.BASE_MEDIA_TYPE + "\n");
-        assertPayloadEquals(request, null, null, false);
+      assertRequestLineEquals(request, "GET http://localhost/api/admin/roles/1 HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Accept: " + RoleDto.BASE_MEDIA_TYPE + "\n");
+      assertPayloadEquals(request, null, null, false);
 
-        assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
-        assertSaxResponseParserClassEquals(method, null);
-        assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+      assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
 
-        checkFilters(request);
-    }
+      checkFilters(request);
+   }
 
-    public void testCreateRole() throws SecurityException, NoSuchMethodException, IOException
-    {
-        Method method = AdminAsyncApi.class.getMethod("createRole", RoleDto.class);
-        GeneratedHttpRequest request = processor.createRequest(method, AdminResources.rolePost());
+   public void testCreateRole() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = AdminAsyncApi.class.getMethod("createRole", RoleDto.class);
+      GeneratedHttpRequest request = processor.createRequest(method, AdminResources.rolePost());
 
-        assertRequestLineEquals(request, "POST http://localhost/api/admin/roles HTTP/1.1");
-        assertNonPayloadHeadersEqual(request, "Accept: " + RoleDto.BASE_MEDIA_TYPE + "\n");
-        assertPayloadEquals(request, withHeader(AdminResources.rolePostPayload()), RoleDto.class,
+      assertRequestLineEquals(request, "POST http://localhost/api/admin/roles HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Accept: " + RoleDto.BASE_MEDIA_TYPE + "\n");
+      assertPayloadEquals(request, withHeader(AdminResources.rolePostPayload()), RoleDto.class,
             RoleDto.BASE_MEDIA_TYPE, false);
 
-        assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
-        assertSaxResponseParserClassEquals(method, null);
-        assertExceptionParserClassEquals(method, null);
+      assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
 
-        checkFilters(request);
-    }
+      checkFilters(request);
+   }
 
-    public void testDeleteRole() throws SecurityException, NoSuchMethodException
-    {
-        Method method = AdminAsyncApi.class.getMethod("deleteRole", RoleDto.class);
-        GeneratedHttpRequest request = processor.createRequest(method, AdminResources.rolePut());
+   public void testDeleteRole() throws SecurityException, NoSuchMethodException {
+      Method method = AdminAsyncApi.class.getMethod("deleteRole", RoleDto.class);
+      GeneratedHttpRequest request = processor.createRequest(method, AdminResources.rolePut());
 
-        assertRequestLineEquals(request, "DELETE http://localhost/api/admin/roles/1 HTTP/1.1");
-        assertNonPayloadHeadersEqual(request, "");
-        assertPayloadEquals(request, null, null, false);
+      assertRequestLineEquals(request, "DELETE http://localhost/api/admin/roles/1 HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "");
+      assertPayloadEquals(request, null, null, false);
 
-        assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
-        assertSaxResponseParserClassEquals(method, null);
-        assertExceptionParserClassEquals(method, null);
+      assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
 
-        checkFilters(request);
-    }
+      checkFilters(request);
+   }
 
-    public void testUpdateRole() throws SecurityException, NoSuchMethodException, IOException
-    {
-        Method method = AdminAsyncApi.class.getMethod("updateRole", RoleDto.class);
-        GeneratedHttpRequest request = processor.createRequest(method, AdminResources.rolePut());
+   public void testUpdateRole() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = AdminAsyncApi.class.getMethod("updateRole", RoleDto.class);
+      GeneratedHttpRequest request = processor.createRequest(method, AdminResources.rolePut());
 
-        assertRequestLineEquals(request, "PUT http://localhost/api/admin/roles/1 HTTP/1.1");
-        assertNonPayloadHeadersEqual(request, "Accept: " + RoleDto.BASE_MEDIA_TYPE + "\n");
-        assertPayloadEquals(request, withHeader(AdminResources.rolePutPayload()), RoleDto.class,
-            RoleDto.BASE_MEDIA_TYPE, false);
+      assertRequestLineEquals(request, "PUT http://localhost/api/admin/roles/1 HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Accept: " + RoleDto.BASE_MEDIA_TYPE + "\n");
+      assertPayloadEquals(request, withHeader(AdminResources.rolePutPayload()), RoleDto.class, RoleDto.BASE_MEDIA_TYPE,
+            false);
 
-        assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
-        assertSaxResponseParserClassEquals(method, null);
-        assertExceptionParserClassEquals(method, null);
+      assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
 
-        checkFilters(request);
-    }
+      checkFilters(request);
+   }
 
-    public void testGetRoleById() throws SecurityException, NoSuchMethodException, IOException
-    {
-        Method method = AdminAsyncApi.class.getMethod("getRole", Integer.class);
-        GeneratedHttpRequest request = processor.createRequest(method, 1);
+   public void testGetRoleById() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = AdminAsyncApi.class.getMethod("getRole", Integer.class);
+      GeneratedHttpRequest request = processor.createRequest(method, 1);
 
-        assertRequestLineEquals(request, "GET http://localhost/api/admin/roles/1 HTTP/1.1");
-        assertNonPayloadHeadersEqual(request, "Accept: " + RoleDto.BASE_MEDIA_TYPE + "\n");
-        assertPayloadEquals(request, null, null, false);
+      assertRequestLineEquals(request, "GET http://localhost/api/admin/roles/1 HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Accept: " + RoleDto.BASE_MEDIA_TYPE + "\n");
+      assertPayloadEquals(request, null, null, false);
 
-        assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
-        assertSaxResponseParserClassEquals(method, null);
-        assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+      assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
 
-        checkFilters(request);
-    }
+      checkFilters(request);
+   }
 
-    public void testListPrivilegesByRoles() throws SecurityException, NoSuchMethodException,
-        IOException
-    {
-        Method method = AdminAsyncApi.class.getMethod("listPrivileges", RoleDto.class);
-        GeneratedHttpRequest request = processor.createRequest(method, AdminResources.rolePut());
+   public void testListPrivilegesByRoles() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = AdminAsyncApi.class.getMethod("listPrivileges", RoleDto.class);
+      GeneratedHttpRequest request = processor.createRequest(method, AdminResources.rolePut());
 
-        assertRequestLineEquals(request,
-            "GET http://localhost/api/admin/roles/1/action/privileges HTTP/1.1");
-        assertNonPayloadHeadersEqual(request, "Accept: " + PrivilegesDto.BASE_MEDIA_TYPE + "\n");
-        assertPayloadEquals(request, null, null, false);
+      assertRequestLineEquals(request, "GET http://localhost/api/admin/roles/1/action/privileges HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Accept: " + PrivilegesDto.BASE_MEDIA_TYPE + "\n");
+      assertPayloadEquals(request, null, null, false);
 
-        assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
-        assertSaxResponseParserClassEquals(method, null);
-        assertExceptionParserClassEquals(method, null);
+      assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
 
-        checkFilters(request);
-    }
+      checkFilters(request);
+   }
 
-    /*********************** Current User **********************/
+   /*********************** Current User **********************/
 
-    public void testGetCurrentUser() throws SecurityException, NoSuchMethodException, IOException
-    {
-        Method method = AdminAsyncApi.class.getMethod("getCurrentUser");
-        GeneratedHttpRequest request = processor.createRequest(method, 1);
+   public void testGetCurrentUser() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = AdminAsyncApi.class.getMethod("getCurrentUser");
+      GeneratedHttpRequest request = processor.createRequest(method, 1);
 
-        assertRequestLineEquals(request, "GET http://localhost/api/login HTTP/1.1");
-        assertNonPayloadHeadersEqual(request, "Accept: " + UserDto.BASE_MEDIA_TYPE + "\n");
-        assertPayloadEquals(request, null, null, false);
+      assertRequestLineEquals(request, "GET http://localhost/api/login HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Accept: " + UserDto.BASE_MEDIA_TYPE + "\n");
+      assertPayloadEquals(request, null, null, false);
 
-        assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
-        assertSaxResponseParserClassEquals(method, null);
-        assertExceptionParserClassEquals(method, null);
+      assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
 
-        checkFilters(request);
-    }
+      checkFilters(request);
+   }
 
-    @Override
-    protected TypeLiteral<RestAnnotationProcessor<AdminAsyncApi>> createTypeLiteral()
-    {
-        return new TypeLiteral<RestAnnotationProcessor<AdminAsyncApi>>()
-        {
-        };
-    }
+   @Override
+   protected TypeLiteral<RestAnnotationProcessor<AdminAsyncApi>> createTypeLiteral() {
+      return new TypeLiteral<RestAnnotationProcessor<AdminAsyncApi>>() {
+      };
+   }
 
 }

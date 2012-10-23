@@ -26,39 +26,32 @@ import org.jclouds.http.options.BaseHttpRequestOptions;
  * 
  * @author Francesc Montserrat
  */
-public class DatacenterOptions extends BaseHttpRequestOptions
-{
-    public static Builder builder()
-    {
-        return new Builder();
-    }
+public class DatacenterOptions extends BaseHttpRequestOptions {
+   public static Builder builder() {
+      return new Builder();
+   }
 
-    @Override
-    protected Object clone() throws CloneNotSupportedException
-    {
-        DatacenterOptions options = new DatacenterOptions();
-        options.queryParameters.putAll(queryParameters);
-        return options;
-    }
+   @Override
+   protected Object clone() throws CloneNotSupportedException {
+      DatacenterOptions options = new DatacenterOptions();
+      options.queryParameters.putAll(queryParameters);
+      return options;
+   }
 
-    public static class Builder
-    {
-        private String ip;
+   public static class Builder {
+      private String ip;
 
-        public Builder ip(final String ip)
-        {
-            this.ip = ip;
-            return this;
-        }
+      public Builder ip(final String ip) {
+         this.ip = ip;
+         return this;
+      }
 
-        public DatacenterOptions build()
-        {
-            DatacenterOptions options = new DatacenterOptions();
-            if (ip != null)
-            {
-                options.queryParameters.put("ip", ip);
-            }
-            return options;
-        }
-    }
+      public DatacenterOptions build() {
+         DatacenterOptions options = new DatacenterOptions();
+         if (ip != null) {
+            options.queryParameters.put("ip", ip);
+         }
+         return options;
+      }
+   }
 }

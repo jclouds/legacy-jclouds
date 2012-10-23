@@ -28,21 +28,19 @@ import com.abiquo.model.enumerator.RemoteServiceType;
 import com.google.common.base.Function;
 
 /**
- * Parses a {@link ParseRemoteServiceType} object to extract its type in the format that the API
- * expects it.
+ * Parses a {@link ParseRemoteServiceType} object to extract its type in the
+ * format that the API expects it.
  * 
  * @author Francesc Montserrat
  */
 @Singleton
-public class ParseRemoteServiceType implements Function<Object, String>
-{
-    @Override
-    public String apply(final Object input)
-    {
-        checkArgument(checkNotNull(input, "input") instanceof RemoteServiceType,
+public class ParseRemoteServiceType implements Function<Object, String> {
+   @Override
+   public String apply(final Object input) {
+      checkArgument(checkNotNull(input, "input") instanceof RemoteServiceType,
             "This parser is only valid for RemoteServiceType objects");
 
-        return ((RemoteServiceType) input).name().replaceAll("_", "").toLowerCase();
-    }
+      return ((RemoteServiceType) input).name().replaceAll("_", "").toLowerCase();
+   }
 
 }

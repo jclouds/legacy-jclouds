@@ -34,19 +34,15 @@ import com.google.common.base.Predicate;
  * @author Ignasi Barrera
  * @author Francesc Montserrat
  */
-public class RemoteServicePredicates
-{
-    public static Predicate<RemoteService> type(final RemoteServiceType... types)
-    {
-        checkNotNull(types, "types must be defined");
+public class RemoteServicePredicates {
+   public static Predicate<RemoteService> type(final RemoteServiceType... types) {
+      checkNotNull(types, "types must be defined");
 
-        return new Predicate<RemoteService>()
-        {
-            @Override
-            public boolean apply(final RemoteService remoteService)
-            {
-                return Arrays.asList(types).contains(remoteService.getType());
-            }
-        };
-    }
+      return new Predicate<RemoteService>() {
+         @Override
+         public boolean apply(final RemoteService remoteService) {
+            return Arrays.asList(types).contains(remoteService.getType());
+         }
+      };
+   }
 }

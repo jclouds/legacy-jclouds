@@ -35,21 +35,16 @@ import org.testng.annotations.Test;
  * @author Francesc Montserrat
  */
 @Test(groups = "api", testName = "LicenseLiveApiTest")
-public class LicenseLiveApiTest extends BaseAbiquoApiLiveApiTest
-{
+public class LicenseLiveApiTest extends BaseAbiquoApiLiveApiTest {
 
-    public void testCreateRepeated()
-    {
-        License repeated = License.Builder.fromLicense(env.license).build();
+   public void testCreateRepeated() {
+      License repeated = License.Builder.fromLicense(env.license).build();
 
-        try
-        {
-            repeated.add();
-            fail("Should not be able to create licenses with the same code");
-        }
-        catch (AbiquoException ex)
-        {
-            assertHasError(ex, Status.CONFLICT, "LICENSE-5");
-        }
-    }
+      try {
+         repeated.add();
+         fail("Should not be able to create licenses with the same code");
+      } catch (AbiquoException ex) {
+         assertHasError(ex, Status.CONFLICT, "LICENSE-5");
+      }
+   }
 }

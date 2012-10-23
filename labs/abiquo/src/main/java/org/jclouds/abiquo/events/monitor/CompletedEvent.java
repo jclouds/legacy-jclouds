@@ -24,11 +24,9 @@ package org.jclouds.abiquo.events.monitor;
  * 
  * @author Ignasi Barrera
  */
-public class CompletedEvent<T> extends MonitorEvent<T>
-{
-    public CompletedEvent(final T target)
-    {
-        super(MonitorEvent.Type.COMPLETED, target);
-    }
+public class CompletedEvent<T> extends MonitorEvent<T> {
+   public CompletedEvent(final T target) {
+      super(MonitorEvent.Type.COMPLETED, target);
+   }
 
 }

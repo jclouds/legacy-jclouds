@@ -42,46 +42,38 @@ import com.google.inject.TypeLiteral;
  * @author Ignasi Barrera
  * @author Francesc Montserrat
  */
-public class PublicIp extends AbstractPublicIp<PublicIpDto, PublicNetwork>
-{
-    /**
-     * Constructor to be used only by the builder.
-     */
-    protected PublicIp(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-        final PublicIpDto target)
-    {
-        super(context, target);
-    }
+public class PublicIp extends AbstractPublicIp<PublicIpDto, PublicNetwork> {
+   /**
+    * Constructor to be used only by the builder.
+    */
+   protected PublicIp(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final PublicIpDto target) {
+      super(context, target);
+   }
 
-    @Override
-    public PublicNetwork getNetwork()
-    {
-        RESTLink link =
-            checkNotNull(target.searchLink(ParentLinkName.PUBLIC_NETWORK),
-                ValidationErrors.MISSING_REQUIRED_LINK + ParentLinkName.PUBLIC_NETWORK);
+   @Override
+   public PublicNetwork getNetwork() {
+      RESTLink link = checkNotNull(target.searchLink(ParentLinkName.PUBLIC_NETWORK),
+            ValidationErrors.MISSING_REQUIRED_LINK + ParentLinkName.PUBLIC_NETWORK);
 
-        ExtendedUtils utils = (ExtendedUtils) context.getUtils();
-        HttpResponse response = utils.getAbiquoHttpClient().get(link);
+      ExtendedUtils utils = (ExtendedUtils) context.getUtils();
+      HttpResponse response = utils.getAbiquoHttpClient().get(link);
 
-        ParseXMLWithJAXB<VLANNetworkDto> parser =
-            new ParseXMLWithJAXB<VLANNetworkDto>(utils.getXml(),
-                TypeLiteral.get(VLANNetworkDto.class));
+      ParseXMLWithJAXB<VLANNetworkDto> parser = new ParseXMLWithJAXB<VLANNetworkDto>(utils.getXml(),
+            TypeLiteral.get(VLANNetworkDto.class));
 
-        return wrap(context, PublicNetwork.class, parser.apply(response));
-    }
+      return wrap(context, PublicNetwork.class, parser.apply(response));
+   }
 
-    @Override
-    public NetworkType getNetworkType()
-    {
-        return NetworkType.PUBLIC;
-    }
+   @Override
+   public NetworkType getNetworkType() {
+      return NetworkType.PUBLIC;
+   }
 
-    @Override
-    public String toString()
-    {
-        return "PublicIp [networkType=" + getNetworkType() + ", available=" + isAvailable()
-            + ", quarantine=" + isQuarantine() + ", id=" + getId() + ", ip=" + getIp() + ", mac="
-            + getMac() + ", name=" + getName() + ", networkName=" + getNetworkName() + "]";
-    }
+   @Override
+   public String toString() {
+      return "PublicIp [networkType=" + getNetworkType() + ", available=" + isAvailable() + ", quarantine="
+            + isQuarantine() + ", id=" + getId() + ", ip=" + getIp() + ", mac=" + getMac() + ", name=" + getName()
+            + ", networkName=" + getNetworkName() + "]";
+   }
 
 }

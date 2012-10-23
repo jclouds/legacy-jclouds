@@ -19,7 +19,6 @@
 
 package org.jclouds.abiquo.domain.infrastructure;
 
-
 import org.jclouds.abiquo.AbiquoAsyncApi;
 import org.jclouds.abiquo.AbiquoApi;
 import org.jclouds.abiquo.domain.DomainWrapper;
@@ -37,72 +36,59 @@ import com.abiquo.server.core.infrastructure.OrganizationDto;
  *      http://community.abiquo.com/display/ABI20/RackResource</a>
  */
 @EnterpriseEdition
-public class Organization extends DomainWrapper<OrganizationDto>
-{
-    /**
-     * Constructor to be used only by the builder.
-     */
-    protected Organization(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final OrganizationDto target)
-    {
-        super(context, target);
-    }
+public class Organization extends DomainWrapper<OrganizationDto> {
+   /**
+    * Constructor to be used only by the builder.
+    */
+   protected Organization(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final OrganizationDto target) {
+      super(context, target);
+   }
 
-    // Delegate Methods
+   // Delegate Methods
 
-    public String getDescription()
-    {
-        return target.getDescription();
-    }
+   public String getDescription() {
+      return target.getDescription();
+   }
 
-    public String getDn()
-    {
-        return target.getDn();
-    }
+   public String getDn() {
+      return target.getDn();
+   }
 
-    public String getLevel()
-    {
-        return target.getLevel();
-    }
+   public String getLevel() {
+      return target.getLevel();
+   }
 
-    public String getName()
-    {
-        return target.getName();
-    }
+   public String getName() {
+      return target.getName();
+   }
 
-    public String getStatus()
-    {
-        return target.getStatus();
-    }
+   public String getStatus() {
+      return target.getStatus();
+   }
 
-    public void setDescription(final String value)
-    {
-        target.setDescription(value);
-    }
+   public void setDescription(final String value) {
+      target.setDescription(value);
+   }
 
-    public void setDn(final String dn)
-    {
-        target.setDn(dn);
-    }
+   public void setDn(final String dn) {
+      target.setDn(dn);
+   }
 
-    public void setLevel(final String value)
-    {
-        target.setLevel(value);
-    }
+   public void setLevel(final String value) {
+      target.setLevel(value);
+   }
 
-    public void setName(final String value)
-    {
-        target.setName(value);
-    }
+   public void setName(final String value) {
+      target.setName(value);
+   }
 
-    public void setStatus(final String value)
-    {
-        target.setStatus(value);
-    }
+   public void setStatus(final String value) {
+      target.setStatus(value);
+   }
 
-    @Override
-    public String toString()
-    {
-        return "Organization [name=" + getName() + ", description=" + getDescription() + ", dn="
-            + getDn() + ", level=" + getLevel() + ", status=" + getStatus() + "]";
-    }
+   @Override
+   public String toString() {
+      return "Organization [name=" + getName() + ", description=" + getDescription() + ", dn=" + getDn() + ", level="
+            + getLevel() + ", status=" + getStatus() + "]";
+   }
 }

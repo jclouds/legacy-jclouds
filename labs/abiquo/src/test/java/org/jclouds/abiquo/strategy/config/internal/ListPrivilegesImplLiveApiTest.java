@@ -38,49 +38,40 @@ import com.google.common.base.Predicates;
  * @author Ignasi Barrera
  */
 @Test(groups = "api", testName = "ListPrivilegesImplLiveApiTest")
-public class ListPrivilegesImplLiveApiTest extends BaseAbiquoStrategyLiveApiTest
-{
-    private ListPrivilegesImpl strategy;
+public class ListPrivilegesImplLiveApiTest extends BaseAbiquoStrategyLiveApiTest {
+   private ListPrivilegesImpl strategy;
 
-    @Override
-    @BeforeClass(groups = "api")
-    protected void setupStrategy()
-    {
-        this.strategy = env.context.getUtils().getInjector().getInstance(ListPrivilegesImpl.class);
-    }
+   @Override
+   @BeforeClass(groups = "api")
+   protected void setupStrategy() {
+      this.strategy = env.context.getUtils().getInjector().getInstance(ListPrivilegesImpl.class);
+   }
 
-    public void testExecute()
-    {
-        Iterable<Privilege> privileges = strategy.execute();
-        assertNotNull(privileges);
-        assertTrue(size(privileges) > 0);
-    }
+   public void testExecute() {
+      Iterable<Privilege> privileges = strategy.execute();
+      assertNotNull(privileges);
+      assertTrue(size(privileges) > 0);
+   }
 
-    public void testExecutePredicateWithoutResults()
-    {
-        Iterable<Privilege> privileges =
-            strategy.execute(PrivilegePredicates.name("Destroy the universe"));
-        assertNotNull(privileges);
-        assertEquals(size(privileges), 0);
-    }
+   public void testExecutePredicateWithoutResults() {
+      Iterable<Privilege> privileges = strategy.execute(PrivilegePredicates.name("Destroy the universe"));
+      assertNotNull(privileges);
+      assertEquals(size(privileges), 0);
+   }
 
-    public void testExecutePredicateWithResults()
-    {
-        Iterable<Privilege> privileges =
-            strategy.execute(PrivilegePredicates.name("USERS_MANAGE_USERS"));
-        assertNotNull(privileges);
-        assertEquals(size(privileges), 1);
-    }
+   public void testExecutePredicateWithResults() {
+      Iterable<Privilege> privileges = strategy.execute(PrivilegePredicates.name("USERS_MANAGE_USERS"));
+      assertNotNull(privileges);
+      assertEquals(size(privileges), 1);
+   }
 
-    public void testExecuteNotPredicateWithResults()
-    {
-        Iterable<Privilege> privileges =
-            strategy.execute(Predicates.not(PrivilegePredicates.name("USERS_MANAGE_USERS")));
+   public void testExecuteNotPredicateWithResults() {
+      Iterable<Privilege> privileges = strategy.execute(Predicates.not(PrivilegePredicates.name("USERS_MANAGE_USERS")));
 
-        Iterable<Privilege> allPrivileges = strategy.execute();
+      Iterable<Privilege> allPrivileges = strategy.execute();
 
-        assertNotNull(privileges);
-        assertNotNull(allPrivileges);
-        assertEquals(size(privileges), size(allPrivileges) - 1);
-    }
+      assertNotNull(privileges);
+      assertNotNull(allPrivileges);
+      assertEquals(size(privileges), size(allPrivileges) - 1);
+   }
 }

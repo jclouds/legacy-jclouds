@@ -32,20 +32,16 @@ import com.google.common.base.Predicate;
  * 
  * @author Ignasi Barrera
  */
-public class StorageDeviceMetadataPredicates
-{
+public class StorageDeviceMetadataPredicates {
 
-    public static Predicate<StorageDeviceMetadata> type(final String... types)
-    {
-        checkNotNull(types, "types must be defined");
+   public static Predicate<StorageDeviceMetadata> type(final String... types) {
+      checkNotNull(types, "types must be defined");
 
-        return new Predicate<StorageDeviceMetadata>()
-        {
-            @Override
-            public boolean apply(final StorageDeviceMetadata metadata)
-            {
-                return Arrays.asList(types).contains(metadata.getType());
-            }
-        };
-    }
+      return new Predicate<StorageDeviceMetadata>() {
+         @Override
+         public boolean apply(final StorageDeviceMetadata metadata) {
+            return Arrays.asList(types).contains(metadata.getType());
+         }
+      };
+   }
 }

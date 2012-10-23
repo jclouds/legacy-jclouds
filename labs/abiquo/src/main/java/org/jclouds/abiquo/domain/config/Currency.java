@@ -32,138 +32,117 @@ import com.abiquo.server.core.pricing.CurrencyDto;
  * @author Ignasi Barrera
  * @author Susana Acedo
  */
-public class Currency extends DomainWrapper<CurrencyDto>
-{
+public class Currency extends DomainWrapper<CurrencyDto> {
 
-    /**
-     * Constructor to be used only by the builder. This resource cannot be created.
-     */
-    private Currency(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final CurrencyDto target)
-    {
-        super(context, target);
-    }
+   /**
+    * Constructor to be used only by the builder. This resource cannot be
+    * created.
+    */
+   private Currency(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final CurrencyDto target) {
+      super(context, target);
+   }
 
-    // Domain operations
+   // Domain operations
 
-    public void delete()
-    {
-        context.getApi().getPricingApi().deleteCurrency(target);
-        target = null;
-    }
+   public void delete() {
+      context.getApi().getPricingApi().deleteCurrency(target);
+      target = null;
+   }
 
-    public void save()
-    {
-        target = context.getApi().getPricingApi().createCurrency(target);
-    }
+   public void save() {
+      target = context.getApi().getPricingApi().createCurrency(target);
+   }
 
-    public void update()
-    {
-        target = context.getApi().getPricingApi().updateCurrency(target);
-    }
+   public void update() {
+      target = context.getApi().getPricingApi().updateCurrency(target);
+   }
 
-    // Builder
+   // Builder
 
-    public static Builder builder(final RestContext<AbiquoApi, AbiquoAsyncApi> context)
-    {
-        return new Builder(context);
-    }
+   public static Builder builder(final RestContext<AbiquoApi, AbiquoAsyncApi> context) {
+      return new Builder(context);
+   }
 
-    public static class Builder
-    {
-        private RestContext<AbiquoApi, AbiquoAsyncApi> context;
+   public static class Builder {
+      private RestContext<AbiquoApi, AbiquoAsyncApi> context;
 
-        private String name;
+      private String name;
 
-        private String symbol;
+      private String symbol;
 
-        private int digits;
+      private int digits;
 
-        public Builder(final RestContext<AbiquoApi, AbiquoAsyncApi> context)
-        {
-            super();
-            this.context = context;
-        }
+      public Builder(final RestContext<AbiquoApi, AbiquoAsyncApi> context) {
+         super();
+         this.context = context;
+      }
 
-        public Builder name(final String name)
-        {
-            this.name = name;
-            return this;
-        }
+      public Builder name(final String name) {
+         this.name = name;
+         return this;
+      }
 
-        public Builder symbol(final String symbol)
-        {
-            this.symbol = symbol;
-            return this;
-        }
+      public Builder symbol(final String symbol) {
+         this.symbol = symbol;
+         return this;
+      }
 
-        public Builder digits(final int digits)
-        {
-            this.digits = digits;
-            return this;
-        }
+      public Builder digits(final int digits) {
+         this.digits = digits;
+         return this;
+      }
 
-        public Currency build()
-        {
-            CurrencyDto dto = new CurrencyDto();
-            dto.setName(name);
-            dto.setSymbol(symbol);
-            dto.setDigits(digits);
-            Currency currency = new Currency(context, dto);
+      public Currency build() {
+         CurrencyDto dto = new CurrencyDto();
+         dto.setName(name);
+         dto.setSymbol(symbol);
+         dto.setDigits(digits);
+         Currency currency = new Currency(context, dto);
 
-            return currency;
-        }
+         return currency;
+      }
 
-        public static Builder fromCurrency(final Currency in)
-        {
-            Builder builder =
-                Currency.builder(in.context).name(in.getName()).symbol(in.getSymbol())
-                    .digits(in.getDigits());
+      public static Builder fromCurrency(final Currency in) {
+         Builder builder = Currency.builder(in.context).name(in.getName()).symbol(in.getSymbol())
+               .digits(in.getDigits());
 
-            return builder;
-        }
-    }
+         return builder;
+      }
+   }
 
-    // Delegate methods
+   // Delegate methods
 
-    public Integer getId()
-    {
-        return target.getId();
-    }
+   public Integer getId() {
+      return target.getId();
+   }
 
-    public String getName()
-    {
-        return target.getName();
-    }
+   public String getName() {
+      return target.getName();
+   }
 
-    public void setName(final String name)
-    {
-        target.setName(name);
-    }
+   public void setName(final String name) {
+      target.setName(name);
+   }
 
-    public String getSymbol()
-    {
-        return target.getSymbol();
-    }
+   public String getSymbol() {
+      return target.getSymbol();
+   }
 
-    public void setSymbol(final String symbol)
-    {
-        target.setSymbol(symbol);
-    }
+   public void setSymbol(final String symbol) {
+      target.setSymbol(symbol);
+   }
 
-    public int getDigits()
-    {
-        return target.getDigits();
-    }
+   public int getDigits() {
+      return target.getDigits();
+   }
 
-    public void setDigits(final int digits)
-    {
-        target.setDigits(digits);
-    }
+   public void setDigits(final int digits) {
+      target.setDigits(digits);
+   }
 
-    @Override
-    public String toString()
-    {
-        return "Currency [id=" + getId() + ", name=" + getName() + ", symbol=" + getSymbol()
-            + ", digits=" + getDigits() + "]";
-    }
+   @Override
+   public String toString() {
+      return "Currency [id=" + getId() + ", name=" + getName() + ", symbol=" + getSymbol() + ", digits=" + getDigits()
+            + "]";
+   }
 }

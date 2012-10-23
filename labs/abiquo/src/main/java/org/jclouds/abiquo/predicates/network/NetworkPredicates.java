@@ -33,19 +33,15 @@ import com.google.common.base.Predicate;
  * 
  * @author Francesc Montserrat
  */
-public class NetworkPredicates
-{
-    public static <T extends Ip< ? , ? >> Predicate<Network<T>> name(final String... names)
-    {
-        checkNotNull(names, "names must be defined");
+public class NetworkPredicates {
+   public static <T extends Ip<?, ?>> Predicate<Network<T>> name(final String... names) {
+      checkNotNull(names, "names must be defined");
 
-        return new Predicate<Network<T>>()
-        {
-            @Override
-            public boolean apply(final Network<T> network)
-            {
-                return Arrays.asList(names).contains(network.getName());
-            }
-        };
-    }
+      return new Predicate<Network<T>>() {
+         @Override
+         public boolean apply(final Network<T> network) {
+            return Arrays.asList(names).contains(network.getName());
+         }
+      };
+   }
 }

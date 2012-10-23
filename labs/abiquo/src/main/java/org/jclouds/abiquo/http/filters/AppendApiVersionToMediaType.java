@@ -34,52 +34,45 @@ import com.google.common.collect.Iterables;
 import com.google.common.net.HttpHeaders;
 
 /**
- * Appends the api version to the Abiquo mime types to ensure the input and output of api calls will
- * be in the desired format.
+ * Appends the api version to the Abiquo mime types to ensure the input and
+ * output of api calls will be in the desired format.
  * 
  * @author Ignasi Barrera
  */
 @Singleton
-public class AppendApiVersionToMediaType implements HttpRequestFilter
-{
-    /** The function used to append the version to media types. */
-    private AppendApiVersionToAbiquoMimeType versionAppender;
+public class AppendApiVersionToMediaType implements HttpRequestFilter {
+   /** The function used to append the version to media types. */
+   private AppendApiVersionToAbiquoMimeType versionAppender;
 
-    @Inject
-    public AppendApiVersionToMediaType(final AppendApiVersionToAbiquoMimeType versionAppender)
-    {
-        super();
-        this.versionAppender = versionAppender;
-    }
+   @Inject
+   public AppendApiVersionToMediaType(final AppendApiVersionToAbiquoMimeType versionAppender) {
+      super();
+      this.versionAppender = versionAppender;
+   }
 
-    @Override
-    public HttpRequest filter(final HttpRequest request) throws HttpException
-    {
-        HttpRequest requestWithVersionInMediaTypes = appendVersionToNonPayloadHeaders(request);
-        return appendVersionToPayloadHeaders(requestWithVersionInMediaTypes);
-    }
+   @Override
+   public HttpRequest filter(final HttpRequest request) throws HttpException {
+      HttpRequest requestWithVersionInMediaTypes = appendVersionToNonPayloadHeaders(request);
+      return appendVersionToPayloadHeaders(requestWithVersionInMediaTypes);
+   }
 
-    @VisibleForTesting
-    HttpRequest appendVersionToNonPayloadHeaders(final HttpRequest request)
-    {
-        Collection<String> accept = request.getHeaders().get(HttpHeaders.ACCEPT);
-        return accept.isEmpty() ? request : request
+   @VisibleForTesting
+   HttpRequest appendVersionToNonPayloadHeaders(final HttpRequest request) {
+      Collection<String> accept = request.getHeaders().get(HttpHeaders.ACCEPT);
+      return accept.isEmpty() ? request : request
             .toBuilder()
             .replaceHeader(HttpHeaders.ACCEPT,
-                Iterables.toArray(Iterables.transform(accept, versionAppender), String.class))
-            .build();
-    }
+                  Iterables.toArray(Iterables.transform(accept, versionAppender), String.class)).build();
+   }
 
-    @VisibleForTesting
-    HttpRequest appendVersionToPayloadHeaders(final HttpRequest request)
-    {
-        if (request.getPayload() != null)
-        {
-            String contentTypeWithVersion =
-                versionAppender.apply(request.getPayload().getContentMetadata().getContentType());
-            request.getPayload().getContentMetadata().setContentType(contentTypeWithVersion);
-        }
+   @VisibleForTesting
+   HttpRequest appendVersionToPayloadHeaders(final HttpRequest request) {
+      if (request.getPayload() != null) {
+         String contentTypeWithVersion = versionAppender.apply(request.getPayload().getContentMetadata()
+               .getContentType());
+         request.getPayload().getContentMetadata().setContentType(contentTypeWithVersion);
+      }
 
-        return request;
-    }
+      return request;
+   }
 }

@@ -55,144 +55,122 @@ import com.google.inject.Module;
  * @author Ignasi Barrera
  */
 @Test(groups = "api", testName = "AbiquoAuthenticationLiveApiTest")
-public class AbiquoAuthenticationLiveApiTest
-{
-    private String identity;
+public class AbiquoAuthenticationLiveApiTest {
+   private String identity;
 
-    private String credential;
+   private String credential;
 
-    private String endpoint;
+   private String endpoint;
 
-    @BeforeMethod
-    public void setupToken()
-    {
-        identity = checkNotNull(System.getProperty("test.abiquo.identity"), "test.abiquo.identity");
-        credential =
-            checkNotNull(System.getProperty("test.abiquo.credential"), "test.abiquo.credential");
-        endpoint = checkNotNull(System.getProperty("test.abiquo.endpoint"), "test.abiquo.endpoint");
-    }
+   @BeforeMethod
+   public void setupToken() {
+      identity = checkNotNull(System.getProperty("test.abiquo.identity"), "test.abiquo.identity");
+      credential = checkNotNull(System.getProperty("test.abiquo.credential"), "test.abiquo.credential");
+      endpoint = checkNotNull(System.getProperty("test.abiquo.endpoint"), "test.abiquo.endpoint");
+   }
 
-    @Test
-    public void testAuthenticateWithToken() throws IOException
-    {
-        String token = getAuthtenticationToken();
+   @Test
+   public void testAuthenticateWithToken() throws IOException {
+      String token = getAuthtenticationToken();
 
-        Properties props = new Properties();
-        props.setProperty(AbiquoProperties.CREDENTIAL_IS_TOKEN, "true");
+      Properties props = new Properties();
+      props.setProperty(AbiquoProperties.CREDENTIAL_IS_TOKEN, "true");
 
-        // Create a new context that uses the generated token to perform the API calls
-        AbiquoContext tokenContext = ContextBuilder.newBuilder(new AbiquoApiMetadata()) //
+      // Create a new context that uses the generated token to perform the API
+      // calls
+      AbiquoContext tokenContext = ContextBuilder.newBuilder(new AbiquoApiMetadata()) //
             .endpoint(endpoint) //
             .credentials("token", token) //
             .modules(ImmutableSet.<Module> of(new SLF4JLoggingModule())) //
             .overrides(props) //
             .build(AbiquoContext.class);
 
-        try
-        {
-            // Perform a call to get the logged user and verify the identity
-            UserDto user = tokenContext.getApiContext().getApi().getAdminApi().getCurrentUser();
-            assertNotNull(user);
-            assertEquals(user.getNick(), identity);
-        }
-        finally
-        {
-            if (tokenContext != null)
-            {
-                tokenContext.close();
-            }
-        }
-    }
+      try {
+         // Perform a call to get the logged user and verify the identity
+         UserDto user = tokenContext.getApiContext().getApi().getAdminApi().getCurrentUser();
+         assertNotNull(user);
+         assertEquals(user.getNick(), identity);
+      } finally {
+         if (tokenContext != null) {
+            tokenContext.close();
+         }
+      }
+   }
 
-    @Test
-    public void testAuthenticateWithInvalidToken() throws IOException
-    {
-        String token = getAuthtenticationToken() + "INVALID";
+   @Test
+   public void testAuthenticateWithInvalidToken() throws IOException {
+      String token = getAuthtenticationToken() + "INVALID";
 
-        Properties props = new Properties();
-        props.setProperty(AbiquoProperties.CREDENTIAL_IS_TOKEN, "true");
+      Properties props = new Properties();
+      props.setProperty(AbiquoProperties.CREDENTIAL_IS_TOKEN, "true");
 
-        // Create a new context that uses the generated token to perform the API calls
-        AbiquoContext tokenContext = ContextBuilder.newBuilder(new AbiquoApiMetadata()) //
+      // Create a new context that uses the generated token to perform the API
+      // calls
+      AbiquoContext tokenContext = ContextBuilder.newBuilder(new AbiquoApiMetadata()) //
             .endpoint(endpoint) //
             .credentials("token", token) //
             .modules(ImmutableSet.<Module> of(new SLF4JLoggingModule())) //
             .overrides(props) //
             .build(AbiquoContext.class);
 
-        // Perform a call to get the logged user. It should fail
-        try
-        {
-            tokenContext.getApiContext().getApi().getAdminApi().getCurrentUser();
-        }
-        catch (AuthorizationException ex)
-        {
-            // Test succeeded
-            return;
-        }
-        finally
-        {
-            if (tokenContext != null)
-            {
-                tokenContext.close();
-            }
-        }
+      // Perform a call to get the logged user. It should fail
+      try {
+         tokenContext.getApiContext().getApi().getAdminApi().getCurrentUser();
+      } catch (AuthorizationException ex) {
+         // Test succeeded
+         return;
+      } finally {
+         if (tokenContext != null) {
+            tokenContext.close();
+         }
+      }
 
-        fail("Token authentication should have failed");
-    }
+      fail("Token authentication should have failed");
+   }
 
-    private String getAuthtenticationToken()
-    {
-        String token = null;
+   private String getAuthtenticationToken() {
+      String token = null;
 
-        AbiquoContext context = ContextBuilder.newBuilder(new AbiquoApiMetadata()) //
+      AbiquoContext context = ContextBuilder.newBuilder(new AbiquoApiMetadata()) //
             .endpoint(endpoint) //
             .credentials(identity, credential) //
             .modules(ImmutableSet.<Module> of(new SLF4JLoggingModule())) //
             .build(AbiquoContext.class);
 
-        try
-        {
-            // Create a request to authenticate to the API and generate the token
-            HttpRequest request =
-                HttpRequest.builder().method("GET").endpoint(URI.create(endpoint)).build();
-            String auth = AbiquoAuthentication.basicAuth(identity, credential);
-            request = request.toBuilder().replaceHeader(HttpHeaders.AUTHORIZATION, auth).build();
+      try {
+         // Create a request to authenticate to the API and generate the token
+         HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create(endpoint)).build();
+         String auth = AbiquoAuthentication.basicAuth(identity, credential);
+         request = request.toBuilder().replaceHeader(HttpHeaders.AUTHORIZATION, auth).build();
 
-            // Execute the request and read the generated token
-            HttpResponse response = context.utils().http().invoke(request);
-            assertEquals(response.getStatusCode(), 200);
+         // Execute the request and read the generated token
+         HttpResponse response = context.utils().http().invoke(request);
+         assertEquals(response.getStatusCode(), 200);
 
-            token = readAuthenticationToken(response);
-            assertNotNull(token);
+         token = readAuthenticationToken(response);
+         assertNotNull(token);
 
-            releasePayload(response);
-        }
-        finally
-        {
-            if (context != null)
-            {
-                context.close();
-            }
-        }
+         releasePayload(response);
+      } finally {
+         if (context != null) {
+            context.close();
+         }
+      }
 
-        return token;
-    }
+      return token;
+   }
 
-    private String readAuthenticationToken(final HttpResponse response)
-    {
-        Collection<String> cookies = response.getHeaders().get(HttpHeaders.SET_COOKIE);
-        assertFalse(cookies.isEmpty());
+   private String readAuthenticationToken(final HttpResponse response) {
+      Collection<String> cookies = response.getHeaders().get(HttpHeaders.SET_COOKIE);
+      assertFalse(cookies.isEmpty());
 
-        for (String cookie : cookies)
-        {
-            Cookie c = Cookie.valueOf(cookie);
-            if (c.getName().equals(AbiquoAuthentication.AUTH_TOKEN_NAME))
-            {
-                return c.getValue();
-            }
-        }
+      for (String cookie : cookies) {
+         Cookie c = Cookie.valueOf(cookie);
+         if (c.getName().equals(AbiquoAuthentication.AUTH_TOKEN_NAME)) {
+            return c.getValue();
+         }
+      }
 
-        return null;
-    }
+      return null;
+   }
 }

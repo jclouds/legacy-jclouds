@@ -35,29 +35,21 @@ import com.google.common.collect.Iterables;
  * @author Ignasi Barrera
  */
 @Singleton
-public class ReturnAbiquoExceptionOnNotFoundOr4xx implements Function<Exception, Object>
-{
-    @Override
-    public Object apply(final Exception from)
-    {
-        Throwable exception =
-            Iterables.find(Throwables.getCausalChain(from), isNotFoundAndHasAbiquoException(from),
-                null);
+public class ReturnAbiquoExceptionOnNotFoundOr4xx implements Function<Exception, Object> {
+   @Override
+   public Object apply(final Exception from) {
+      Throwable exception = Iterables
+            .find(Throwables.getCausalChain(from), isNotFoundAndHasAbiquoException(from), null);
 
-        throw Throwables.propagate(exception == null ? from : (AbiquoException) exception
-            .getCause());
-    }
+      throw Throwables.propagate(exception == null ? from : (AbiquoException) exception.getCause());
+   }
 
-    private static Predicate<Throwable> isNotFoundAndHasAbiquoException(final Throwable exception)
-    {
-        return new Predicate<Throwable>()
-        {
-            @Override
-            public boolean apply(final Throwable input)
-            {
-                return input instanceof ResourceNotFoundException
-                    && input.getCause() instanceof AbiquoException;
-            }
-        };
-    }
+   private static Predicate<Throwable> isNotFoundAndHasAbiquoException(final Throwable exception) {
+      return new Predicate<Throwable>() {
+         @Override
+         public boolean apply(final Throwable input) {
+            return input instanceof ResourceNotFoundException && input.getCause() instanceof AbiquoException;
+         }
+      };
+   }
 }

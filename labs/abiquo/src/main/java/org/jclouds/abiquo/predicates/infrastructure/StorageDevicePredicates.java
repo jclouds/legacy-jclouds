@@ -33,47 +33,37 @@ import com.google.common.base.Predicate;
  * @author Ignasi Barrera
  * @author Francesc Montserrat
  */
-public class StorageDevicePredicates
-{
-    public static Predicate<StorageDevice> name(final String... names)
-    {
-        checkNotNull(names, "names must be defined");
+public class StorageDevicePredicates {
+   public static Predicate<StorageDevice> name(final String... names) {
+      checkNotNull(names, "names must be defined");
 
-        return new Predicate<StorageDevice>()
-        {
-            @Override
-            public boolean apply(final StorageDevice storageDevice)
-            {
-                return Arrays.asList(names).contains(storageDevice.getName());
-            }
-        };
-    }
+      return new Predicate<StorageDevice>() {
+         @Override
+         public boolean apply(final StorageDevice storageDevice) {
+            return Arrays.asList(names).contains(storageDevice.getName());
+         }
+      };
+   }
 
-    public static Predicate<StorageDevice> managementIp(final String... ips)
-    {
-        checkNotNull(ips, "managementIps must be defined");
+   public static Predicate<StorageDevice> managementIp(final String... ips) {
+      checkNotNull(ips, "managementIps must be defined");
 
-        return new Predicate<StorageDevice>()
-        {
-            @Override
-            public boolean apply(final StorageDevice storageDevice)
-            {
-                return Arrays.asList(ips).contains(storageDevice.getManagementIp());
-            }
-        };
-    }
+      return new Predicate<StorageDevice>() {
+         @Override
+         public boolean apply(final StorageDevice storageDevice) {
+            return Arrays.asList(ips).contains(storageDevice.getManagementIp());
+         }
+      };
+   }
 
-    public static Predicate<StorageDevice> type(final String... types)
-    {
-        checkNotNull(types, "types must be defined");
+   public static Predicate<StorageDevice> type(final String... types) {
+      checkNotNull(types, "types must be defined");
 
-        return new Predicate<StorageDevice>()
-        {
-            @Override
-            public boolean apply(final StorageDevice storageDevice)
-            {
-                return Arrays.asList(types).contains(storageDevice.getType());
-            }
-        };
-    }
+      return new Predicate<StorageDevice>() {
+         @Override
+         public boolean apply(final StorageDevice storageDevice) {
+            return Arrays.asList(types).contains(storageDevice.getType());
+         }
+      };
+   }
 }

@@ -47,46 +47,38 @@ import com.google.common.eventbus.EventBus;
  * @author Sergi Castro
  */
 @Singleton
-public class BaseConversionMonitor extends BaseMonitoringService implements ConversionMonitor
-{
+public class BaseConversionMonitor extends BaseMonitoringService implements ConversionMonitor {
 
-    @VisibleForTesting
-    protected ConversionStatusMonitor conversionMonitor;
+   @VisibleForTesting
+   protected ConversionStatusMonitor conversionMonitor;
 
-    @Inject
-    public BaseConversionMonitor(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-        @Named(PROPERTY_SCHEDULER_THREADS) final ScheduledExecutorService scheduler,
-        @Named(ASYNC_TASK_MONITOR_DELAY) final Long pollingDelay, final EventBus eventBus,
-        final ConversionStatusMonitor monitor)
-    {
-        super(context, scheduler, pollingDelay, eventBus);
-        this.conversionMonitor = checkNotNull(monitor, "monitor");
-    }
+   @Inject
+   public BaseConversionMonitor(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
+         @Named(PROPERTY_SCHEDULER_THREADS) final ScheduledExecutorService scheduler,
+         @Named(ASYNC_TASK_MONITOR_DELAY) final Long pollingDelay, final EventBus eventBus,
+         final ConversionStatusMonitor monitor) {
+      super(context, scheduler, pollingDelay, eventBus);
+      this.conversionMonitor = checkNotNull(monitor, "monitor");
+   }
 
-    @Override
-    public void awaitCompletion(final Conversion... conversions)
-    {
-        awaitCompletion(conversionMonitor, conversions);
-    }
+   @Override
+   public void awaitCompletion(final Conversion... conversions) {
+      awaitCompletion(conversionMonitor, conversions);
+   }
 
-    @Override
-    public void monitor(final Conversion... conversions)
-    {
-        monitor(conversionMonitor, conversions);
-    }
+   @Override
+   public void monitor(final Conversion... conversions) {
+      monitor(conversionMonitor, conversions);
+   }
 
-    @Override
-    public void awaitCompletion(final Long maxWait, final TimeUnit timeUnit,
-        final Conversion... conversions)
-    {
-        awaitCompletion(maxWait, timeUnit, conversionMonitor, conversions);
-    }
+   @Override
+   public void awaitCompletion(final Long maxWait, final TimeUnit timeUnit, final Conversion... conversions) {
+      awaitCompletion(maxWait, timeUnit, conversionMonitor, conversions);
+   }
 
-    @Override
-    public void monitor(final Long maxWait, final TimeUnit timeUnit,
-        final Conversion... conversions)
-    {
-        monitor(maxWait, timeUnit, conversionMonitor, conversions);
-    }
+   @Override
+   public void monitor(final Long maxWait, final TimeUnit timeUnit, final Conversion... conversions) {
+      monitor(maxWait, timeUnit, conversionMonitor, conversions);
+   }
 
 }

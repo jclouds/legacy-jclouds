@@ -37,84 +37,68 @@ import com.google.common.base.Function;
  * @author Ignasi Barrera
  */
 @Test(groups = "unit", testName = "VirtualMachineStateMonitorTest")
-public class VirtualMachineStateMonitorTest
-{
-    @Test(expectedExceptions = NullPointerException.class)
-    public void testInvalidNullState()
-    {
-        new VirtualMachineStateMonitor(null);
-    }
+public class VirtualMachineStateMonitorTest {
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testInvalidNullState() {
+      new VirtualMachineStateMonitor(null);
+   }
 
-    @Test(expectedExceptions = NullPointerException.class)
-    public void testInvalidNullArgument()
-    {
-        Function<VirtualMachine, MonitorStatus> function =
-            new VirtualMachineStateMonitor(VirtualMachineState.ON);
-        function.apply(null);
-    }
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testInvalidNullArgument() {
+      Function<VirtualMachine, MonitorStatus> function = new VirtualMachineStateMonitor(VirtualMachineState.ON);
+      function.apply(null);
+   }
 
-    public void testReturnDone()
-    {
-        VirtualMachineState[] states = {VirtualMachineState.ON};
+   public void testReturnDone() {
+      VirtualMachineState[] states = { VirtualMachineState.ON };
 
-        checkStatesReturn(new MockVirtualMachine(),
-            new VirtualMachineStateMonitor(VirtualMachineState.ON), states, MonitorStatus.DONE);
-    }
+      checkStatesReturn(new MockVirtualMachine(), new VirtualMachineStateMonitor(VirtualMachineState.ON), states,
+            MonitorStatus.DONE);
+   }
 
-    public void testReturnContinue()
-    {
-        VirtualMachineState[] states =
-            {VirtualMachineState.ALLOCATED, VirtualMachineState.CONFIGURED,
+   public void testReturnContinue() {
+      VirtualMachineState[] states = { VirtualMachineState.ALLOCATED, VirtualMachineState.CONFIGURED,
             VirtualMachineState.LOCKED, VirtualMachineState.OFF, VirtualMachineState.PAUSED,
-            VirtualMachineState.NOT_ALLOCATED, VirtualMachineState.UNKNOWN};
+            VirtualMachineState.NOT_ALLOCATED, VirtualMachineState.UNKNOWN };
 
-        checkStatesReturn(new MockVirtualMachine(),
-            new VirtualMachineStateMonitor(VirtualMachineState.ON), states, MonitorStatus.CONTINUE);
+      checkStatesReturn(new MockVirtualMachine(), new VirtualMachineStateMonitor(VirtualMachineState.ON), states,
+            MonitorStatus.CONTINUE);
 
-        checkStatesReturn(new MockVirtualMachineFailing(),
-            new VirtualMachineStateMonitor(VirtualMachineState.ON), states, MonitorStatus.CONTINUE);
-    }
+      checkStatesReturn(new MockVirtualMachineFailing(), new VirtualMachineStateMonitor(VirtualMachineState.ON),
+            states, MonitorStatus.CONTINUE);
+   }
 
-    private void checkStatesReturn(final MockVirtualMachine vm,
-        final Function<VirtualMachine, MonitorStatus> function, final VirtualMachineState[] states,
-        final MonitorStatus expectedStatus)
-    {
-        for (VirtualMachineState state : states)
-        {
-            vm.setState(state);
-            assertEquals(function.apply(vm), expectedStatus);
-        }
-    }
+   private void checkStatesReturn(final MockVirtualMachine vm, final Function<VirtualMachine, MonitorStatus> function,
+         final VirtualMachineState[] states, final MonitorStatus expectedStatus) {
+      for (VirtualMachineState state : states) {
+         vm.setState(state);
+         assertEquals(function.apply(vm), expectedStatus);
+      }
+   }
 
-    private static class MockVirtualMachine extends VirtualMachine
-    {
-        private VirtualMachineState state;
+   private static class MockVirtualMachine extends VirtualMachine {
+      private VirtualMachineState state;
 
-        @SuppressWarnings("unchecked")
-        public MockVirtualMachine()
-        {
-            super(EasyMock.createMock(RestContext.class), new VirtualMachineWithNodeExtendedDto());
-        }
+      @SuppressWarnings("unchecked")
+      public MockVirtualMachine() {
+         super(EasyMock.createMock(RestContext.class), new VirtualMachineWithNodeExtendedDto());
+      }
 
-        @Override
-        public VirtualMachineState getState()
-        {
-            return state;
-        }
+      @Override
+      public VirtualMachineState getState() {
+         return state;
+      }
 
-        public void setState(final VirtualMachineState state)
-        {
-            this.state = state;
-        }
-    }
+      public void setState(final VirtualMachineState state) {
+         this.state = state;
+      }
+   }
 
-    private static class MockVirtualMachineFailing extends MockVirtualMachine
-    {
-        @Override
-        public VirtualMachineState getState()
-        {
-            throw new RuntimeException("This mock class always fails to get the state");
-        }
+   private static class MockVirtualMachineFailing extends MockVirtualMachine {
+      @Override
+      public VirtualMachineState getState() {
+         throw new RuntimeException("This mock class always fails to get the state");
+      }
 
-    }
+   }
 }

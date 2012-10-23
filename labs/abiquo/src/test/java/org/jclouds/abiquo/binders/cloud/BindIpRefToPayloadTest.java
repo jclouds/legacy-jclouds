@@ -40,39 +40,30 @@ import com.abiquo.server.core.infrastructure.network.PrivateIpDto;
  * @author Ignasi Barrera
  */
 @Test(groups = "unit", testName = "BindIpRefToPayloadTest")
-public class BindIpRefToPayloadTest
-{
+public class BindIpRefToPayloadTest {
 
-    @Test(expectedExceptions = NullPointerException.class)
-    public void testInvalidNullInput()
-    {
-        BindIpRefToPayload binder = new BindIpRefToPayload(new JAXBParser("false"));
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
-        binder.bindToRequest(request, null);
-    }
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testInvalidNullInput() {
+      BindIpRefToPayload binder = new BindIpRefToPayload(new JAXBParser("false"));
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
+      binder.bindToRequest(request, null);
+   }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
-    public void testInvalidTypeInput()
-    {
-        BindIpRefToPayload binder = new BindIpRefToPayload(new JAXBParser("false"));
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
-        binder.bindToRequest(request, new Object());
-    }
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testInvalidTypeInput() {
+      BindIpRefToPayload binder = new BindIpRefToPayload(new JAXBParser("false"));
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
+      binder.bindToRequest(request, new Object());
+   }
 
-    public void testBindIpRef() throws IOException
-    {
-        PrivateIpDto ip = NetworkResources.privateIpPut();
-        RESTLink selfLink = ip.searchLink("self");
-        BindIpRefToPayload binder = new BindIpRefToPayload(new JAXBParser("false"));
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
-        request = binder.bindToRequest(request, ip);
-        assertPayloadEquals(
-            request.getPayload(),
-            withHeader("<links><link href=\"" + selfLink.getHref() + "\" rel=\""
-                + selfLink.getTitle() + "\"/></links>"), LinksDto.class);
+   public void testBindIpRef() throws IOException {
+      PrivateIpDto ip = NetworkResources.privateIpPut();
+      RESTLink selfLink = ip.searchLink("self");
+      BindIpRefToPayload binder = new BindIpRefToPayload(new JAXBParser("false"));
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
+      request = binder.bindToRequest(request, ip);
+      assertPayloadEquals(request.getPayload(), withHeader("<links><link href=\"" + selfLink.getHref() + "\" rel=\""
+            + selfLink.getTitle() + "\"/></links>"), LinksDto.class);
 
-    }
+   }
 }

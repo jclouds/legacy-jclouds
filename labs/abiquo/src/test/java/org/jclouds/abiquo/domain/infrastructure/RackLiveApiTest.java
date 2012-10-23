@@ -36,39 +36,35 @@ import com.google.common.collect.Iterables;
  * @author Ignasi Barrera
  */
 @Test(groups = "api", testName = "RackLiveApiTest")
-public class RackLiveApiTest extends BaseAbiquoApiLiveApiTest
-{
+public class RackLiveApiTest extends BaseAbiquoApiLiveApiTest {
 
-    public void testUpdate()
-    {
-        env.rack.setName("Updated rack");
-        env.rack.update();
+   public void testUpdate() {
+      env.rack.setName("Updated rack");
+      env.rack.update();
 
-        // Recover the updated rack
-        RackDto updated = env.infrastructureApi.getRack(env.datacenter.unwrap(), env.rack.getId());
+      // Recover the updated rack
+      RackDto updated = env.infrastructureApi.getRack(env.datacenter.unwrap(), env.rack.getId());
 
-        assertEquals(updated.getName(), "Updated rack");
-    }
+      assertEquals(updated.getName(), "Updated rack");
+   }
 
-    public void testListRacks()
-    {
-        Iterable<Rack> racks = env.datacenter.listRacks();
-        assertEquals(Iterables.size(racks), 1);
+   public void testListRacks() {
+      Iterable<Rack> racks = env.datacenter.listRacks();
+      assertEquals(Iterables.size(racks), 1);
 
-        racks = env.datacenter.listRacks(name(env.rack.getName()));
-        assertEquals(Iterables.size(racks), 1);
+      racks = env.datacenter.listRacks(name(env.rack.getName()));
+      assertEquals(Iterables.size(racks), 1);
 
-        racks = env.datacenter.listRacks(name(env.rack.getName() + "FAIL"));
-        assertEquals(Iterables.size(racks), 0);
-    }
+      racks = env.datacenter.listRacks(name(env.rack.getName() + "FAIL"));
+      assertEquals(Iterables.size(racks), 0);
+   }
 
-    public void testFindRack()
-    {
-        Rack rack = env.datacenter.findRack(name(env.rack.getName()));
-        assertNotNull(rack);
+   public void testFindRack() {
+      Rack rack = env.datacenter.findRack(name(env.rack.getName()));
+      assertNotNull(rack);
 
-        rack = env.datacenter.findRack(name(env.rack.getName() + "FAIL"));
-        assertNull(rack);
-    }
+      rack = env.datacenter.findRack(name(env.rack.getName() + "FAIL"));
+      assertNull(rack);
+   }
 
 }

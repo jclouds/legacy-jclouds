@@ -36,36 +36,30 @@ import org.testng.annotations.Test;
  * @author Ignasi Barrera
  */
 @Test(groups = "api", testName = "ListMachinesImplLiveApiTest")
-public class ListMachinesImplLiveApiTest extends BaseAbiquoStrategyLiveApiTest
-{
-    private ListMachinesImpl strategy;
+public class ListMachinesImplLiveApiTest extends BaseAbiquoStrategyLiveApiTest {
+   private ListMachinesImpl strategy;
 
-    @Override
-    @BeforeClass(groups = "api")
-    protected void setupStrategy()
-    {
-        this.strategy = env.context.getUtils().getInjector().getInstance(ListMachinesImpl.class);
-    }
+   @Override
+   @BeforeClass(groups = "api")
+   protected void setupStrategy() {
+      this.strategy = env.context.getUtils().getInjector().getInstance(ListMachinesImpl.class);
+   }
 
-    public void testExecute()
-    {
-        Iterable<Machine> machines = strategy.execute();
-        assertNotNull(machines);
-        assertTrue(size(machines) > 0);
-    }
+   public void testExecute() {
+      Iterable<Machine> machines = strategy.execute();
+      assertNotNull(machines);
+      assertTrue(size(machines) > 0);
+   }
 
-    public void testExecutePredicateWithoutResults()
-    {
-        Iterable<Machine> machines = strategy.execute(MachinePredicates.name("UNEXISTING"));
-        assertNotNull(machines);
-        assertEquals(size(machines), 0);
-    }
+   public void testExecutePredicateWithoutResults() {
+      Iterable<Machine> machines = strategy.execute(MachinePredicates.name("UNEXISTING"));
+      assertNotNull(machines);
+      assertEquals(size(machines), 0);
+   }
 
-    public void testExecutePredicateWithResults()
-    {
-        Iterable<Machine> machines =
-            strategy.execute(MachinePredicates.name(env.machine.getName()));
-        assertNotNull(machines);
-        assertEquals(size(machines), 1);
-    }
+   public void testExecutePredicateWithResults() {
+      Iterable<Machine> machines = strategy.execute(MachinePredicates.name(env.machine.getName()));
+      assertNotNull(machines);
+      assertEquals(size(machines), 1);
+   }
 }

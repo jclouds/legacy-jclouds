@@ -28,9 +28,8 @@ import com.google.common.base.Predicate;
  * 
  * @author Ignasi Barrera
  */
-public interface ListEntities<T extends DomainWrapper< ? >, P extends DomainWrapper< ? >>
-{
-    Iterable<T> execute(P parent);
+public interface ListEntities<T extends DomainWrapper<?>, P extends DomainWrapper<?>> {
+   Iterable<T> execute(P parent);
 
-    Iterable<T> execute(P parent, Predicate<T> selector);
+   Iterable<T> execute(P parent, Predicate<T> selector);
 }

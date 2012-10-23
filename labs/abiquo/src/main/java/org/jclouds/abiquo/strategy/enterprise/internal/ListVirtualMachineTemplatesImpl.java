@@ -54,61 +54,53 @@ import com.google.inject.Inject;
  * @author Ignasi Barrera
  */
 @Singleton
-public class ListVirtualMachineTemplatesImpl implements ListVirtualMachineTemplates
-{
-    protected final RestContext<AbiquoApi, AbiquoAsyncApi> context;
+public class ListVirtualMachineTemplatesImpl implements ListVirtualMachineTemplates {
+   protected final RestContext<AbiquoApi, AbiquoAsyncApi> context;
 
-    protected final ExecutorService userExecutor;
+   protected final ExecutorService userExecutor;
 
-    @Resource
-    protected Logger logger = Logger.NULL;
+   @Resource
+   protected Logger logger = Logger.NULL;
 
-    @Inject(optional = true)
-    @Named(Constants.PROPERTY_REQUEST_TIMEOUT)
-    protected Long maxTime;
+   @Inject(optional = true)
+   @Named(Constants.PROPERTY_REQUEST_TIMEOUT)
+   protected Long maxTime;
 
-    @Inject
-    ListVirtualMachineTemplatesImpl(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-        @Named(Constants.PROPERTY_USER_THREADS) final ExecutorService userExecutor)
-    {
-        super();
-        this.context = checkNotNull(context, "context");
-        this.userExecutor = checkNotNull(userExecutor, "userExecutor");
-    }
+   @Inject
+   ListVirtualMachineTemplatesImpl(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
+         @Named(Constants.PROPERTY_USER_THREADS) final ExecutorService userExecutor) {
+      super();
+      this.context = checkNotNull(context, "context");
+      this.userExecutor = checkNotNull(userExecutor, "userExecutor");
+   }
 
-    @Override
-    public Iterable<VirtualMachineTemplate> execute(final Enterprise parent)
-    {
-        // Find virtual machine templates in concurrent requests
-        Iterable<Datacenter> dcs = parent.listAllowedDatacenters();
-        Iterable<VirtualMachineTemplateDto> templates = listConcurrentTemplates(parent, dcs);
+   @Override
+   public Iterable<VirtualMachineTemplate> execute(final Enterprise parent) {
+      // Find virtual machine templates in concurrent requests
+      Iterable<Datacenter> dcs = parent.listAllowedDatacenters();
+      Iterable<VirtualMachineTemplateDto> templates = listConcurrentTemplates(parent, dcs);
 
-        return wrap(context, VirtualMachineTemplate.class, templates);
-    }
+      return wrap(context, VirtualMachineTemplate.class, templates);
+   }
 
-    @Override
-    public Iterable<VirtualMachineTemplate> execute(final Enterprise parent,
-        final Predicate<VirtualMachineTemplate> selector)
-    {
-        return filter(execute(parent), selector);
-    }
+   @Override
+   public Iterable<VirtualMachineTemplate> execute(final Enterprise parent,
+         final Predicate<VirtualMachineTemplate> selector) {
+      return filter(execute(parent), selector);
+   }
 
-    private Iterable<VirtualMachineTemplateDto> listConcurrentTemplates(final Enterprise parent,
-        final Iterable<Datacenter> dcs)
-    {
-        Iterable<VirtualMachineTemplatesDto> templates =
-            transformParallel(dcs,
-                new Function<Datacenter, Future< ? extends VirtualMachineTemplatesDto>>()
-                {
-                    @Override
-                    public Future<VirtualMachineTemplatesDto> apply(final Datacenter input)
-                    {
-                        return context.getAsyncApi().getVirtualMachineTemplateApi()
-                            .listVirtualMachineTemplates(parent.getId(), input.getId());
-                    }
-                }, userExecutor, maxTime, logger, "getting virtual machine templates");
+   private Iterable<VirtualMachineTemplateDto> listConcurrentTemplates(final Enterprise parent,
+         final Iterable<Datacenter> dcs) {
+      Iterable<VirtualMachineTemplatesDto> templates = transformParallel(dcs,
+            new Function<Datacenter, Future<? extends VirtualMachineTemplatesDto>>() {
+               @Override
+               public Future<VirtualMachineTemplatesDto> apply(final Datacenter input) {
+                  return context.getAsyncApi().getVirtualMachineTemplateApi()
+                        .listVirtualMachineTemplates(parent.getId(), input.getId());
+               }
+            }, userExecutor, maxTime, logger, "getting virtual machine templates");
 
-        return DomainWrapper.join(templates);
-    }
+      return DomainWrapper.join(templates);
+   }
 
 }

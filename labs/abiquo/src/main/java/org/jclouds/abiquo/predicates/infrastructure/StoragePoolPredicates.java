@@ -33,19 +33,15 @@ import com.google.common.base.Predicate;
  * @author Ignasi Barrera
  * @author Francesc Montserrat
  */
-public class StoragePoolPredicates
-{
-    public static Predicate<StoragePool> name(final String... names)
-    {
-        checkNotNull(names, "names must be defined");
+public class StoragePoolPredicates {
+   public static Predicate<StoragePool> name(final String... names) {
+      checkNotNull(names, "names must be defined");
 
-        return new Predicate<StoragePool>()
-        {
-            @Override
-            public boolean apply(final StoragePool storagePool)
-            {
-                return Arrays.asList(names).contains(storagePool.getName());
-            }
-        };
-    }
+      return new Predicate<StoragePool>() {
+         @Override
+         public boolean apply(final StoragePool storagePool) {
+            return Arrays.asList(names).contains(storagePool.getName());
+         }
+      };
+   }
 }

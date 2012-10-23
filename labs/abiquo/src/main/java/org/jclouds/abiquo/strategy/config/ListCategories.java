@@ -31,6 +31,5 @@ import com.google.inject.ImplementedBy;
  * @author Ignasi Barrera
  */
 @ImplementedBy(ListCategoriesImpl.class)
-public interface ListCategories extends ListRootEntities<Category>
-{
+public interface ListCategories extends ListRootEntities<Category> {
 }

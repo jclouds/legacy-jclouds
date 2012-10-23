@@ -34,44 +34,35 @@ import com.google.common.collect.Iterables;
  * 
  * @author Ignasi Barrera
  */
-public abstract class ReturnMovedResource<T> implements Function<Exception, T>
-{
+public abstract class ReturnMovedResource<T> implements Function<Exception, T> {
 
-    @Override
-    public T apply(final Exception from)
-    {
-        Throwable exception =
-            Iterables.find(Throwables.getCausalChain(from), isMovedException(from), null);
+   @Override
+   public T apply(final Exception from) {
+      Throwable exception = Iterables.find(Throwables.getCausalChain(from), isMovedException(from), null);
 
-        if (exception != null)
-        {
-            HttpResponseException responseException = (HttpResponseException) exception;
-            HttpResponse response = responseException.getResponse();
+      if (exception != null) {
+         HttpResponseException responseException = (HttpResponseException) exception;
+         HttpResponse response = responseException.getResponse();
 
-            return getMovedEntity(response);
-        }
+         return getMovedEntity(response);
+      }
 
-        throw Throwables.propagate(from);
-    }
+      throw Throwables.propagate(from);
+   }
 
-    protected abstract T getMovedEntity(HttpResponse response);
+   protected abstract T getMovedEntity(HttpResponse response);
 
-    private static Predicate<Throwable> isMovedException(final Throwable exception)
-    {
-        return new Predicate<Throwable>()
-        {
-            @Override
-            public boolean apply(final Throwable input)
-            {
-                if (input instanceof HttpResponseException)
-                {
-                    HttpResponse response = ((HttpResponseException) input).getResponse();
-                    return response != null
-                        && response.getStatusCode() == Status.MOVED_PERMANENTLY.getStatusCode();
-                }
-
-                return false;
+   private static Predicate<Throwable> isMovedException(final Throwable exception) {
+      return new Predicate<Throwable>() {
+         @Override
+         public boolean apply(final Throwable input) {
+            if (input instanceof HttpResponseException) {
+               HttpResponse response = ((HttpResponseException) input).getResponse();
+               return response != null && response.getStatusCode() == Status.MOVED_PERMANENTLY.getStatusCode();
             }
-        };
-    }
+
+            return false;
+         }
+      };
+   }
 }

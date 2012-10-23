@@ -31,7 +31,6 @@ import com.google.inject.ImplementedBy;
  * @author Ignasi Barrera
  */
 @ImplementedBy(ListEnterprisesImpl.class)
-public interface ListEnterprises extends ListRootEntities<Enterprise>
-{
+public interface ListEnterprises extends ListRootEntities<Enterprise> {
 
 }

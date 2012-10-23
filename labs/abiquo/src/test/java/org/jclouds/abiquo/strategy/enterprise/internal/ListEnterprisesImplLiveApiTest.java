@@ -36,37 +36,30 @@ import org.testng.annotations.Test;
  * @author Ignasi Barrera
  */
 @Test(groups = "api", testName = "ListEnterprisesImplLiveApiTest")
-public class ListEnterprisesImplLiveApiTest extends BaseAbiquoStrategyLiveApiTest
-{
-    private ListEnterprisesImpl strategy;
+public class ListEnterprisesImplLiveApiTest extends BaseAbiquoStrategyLiveApiTest {
+   private ListEnterprisesImpl strategy;
 
-    @Override
-    @BeforeClass(groups = "api")
-    protected void setupStrategy()
-    {
-        this.strategy = env.context.getUtils().getInjector().getInstance(ListEnterprisesImpl.class);
-    }
+   @Override
+   @BeforeClass(groups = "api")
+   protected void setupStrategy() {
+      this.strategy = env.context.getUtils().getInjector().getInstance(ListEnterprisesImpl.class);
+   }
 
-    public void testExecute()
-    {
-        Iterable<Enterprise> enterprises = strategy.execute();
-        assertNotNull(enterprises);
-        assertTrue(size(enterprises) > 0);
-    }
+   public void testExecute() {
+      Iterable<Enterprise> enterprises = strategy.execute();
+      assertNotNull(enterprises);
+      assertTrue(size(enterprises) > 0);
+   }
 
-    public void testExecutePredicateWithoutResults()
-    {
-        Iterable<Enterprise> enterprises =
-            strategy.execute(EnterprisePredicates.name("UNEXISTING"));
-        assertNotNull(enterprises);
-        assertEquals(size(enterprises), 0);
-    }
+   public void testExecutePredicateWithoutResults() {
+      Iterable<Enterprise> enterprises = strategy.execute(EnterprisePredicates.name("UNEXISTING"));
+      assertNotNull(enterprises);
+      assertEquals(size(enterprises), 0);
+   }
 
-    public void testExecutePredicateWithResults()
-    {
-        Iterable<Enterprise> enterprises =
-            strategy.execute(EnterprisePredicates.name(env.enterprise.getName()));
-        assertNotNull(enterprises);
-        assertEquals(size(enterprises), 1);
-    }
+   public void testExecutePredicateWithResults() {
+      Iterable<Enterprise> enterprises = strategy.execute(EnterprisePredicates.name(env.enterprise.getName()));
+      assertNotNull(enterprises);
+      assertEquals(size(enterprises), 1);
+   }
 }

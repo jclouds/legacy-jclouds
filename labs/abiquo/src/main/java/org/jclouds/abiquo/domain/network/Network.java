@@ -44,336 +44,286 @@ import com.google.common.collect.Lists;
  * @author Ignasi Barrera
  * @author Francesc Montserrat
  */
-public abstract class Network<T extends Ip< ? , ? >> extends DomainWrapper<VLANNetworkDto>
-{
-    /**
-     * Constructor to be used only by the builder.
-     */
-    protected Network(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-        final VLANNetworkDto target)
-    {
-        super(context, target);
-    }
+public abstract class Network<T extends Ip<?, ?>> extends DomainWrapper<VLANNetworkDto> {
+   /**
+    * Constructor to be used only by the builder.
+    */
+   protected Network(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final VLANNetworkDto target) {
+      super(context, target);
+   }
 
-    // Domain operations
+   // Domain operations
 
-    public abstract void save();
+   public abstract void save();
 
-    public abstract void update();
+   public abstract void update();
 
-    public abstract void delete();
+   public abstract void delete();
 
-    public abstract List<T> listIps(IpOptions options);
+   public abstract List<T> listIps(IpOptions options);
 
-    public abstract T getIp(Integer id);
+   public abstract T getIp(Integer id);
 
-    public List<T> listIps()
-    {
-        // Disable pagination by default
-        return listIps(IpOptions.builder().disablePagination().build());
-    }
+   public List<T> listIps() {
+      // Disable pagination by default
+      return listIps(IpOptions.builder().disablePagination().build());
+   }
 
-    public List<T> listIps(final Predicate<T> filter)
-    {
-        return Lists.newLinkedList(filter(listIps(), filter));
-    }
+   public List<T> listIps(final Predicate<T> filter) {
+      return Lists.newLinkedList(filter(listIps(), filter));
+   }
 
-    public T findIp(final Predicate<T> filter)
-    {
-        return Iterables.getFirst(filter(listIps(), filter), null);
-    }
+   public T findIp(final Predicate<T> filter) {
+      return Iterables.getFirst(filter(listIps(), filter), null);
+   }
 
-    public List<T> listUnusedIps()
-    {
-        return listIps(IpPredicates.<T> notUsed());
-    }
+   public List<T> listUnusedIps() {
+      return listIps(IpPredicates.<T> notUsed());
+   }
 
-    public T findUnusedIp(final Predicate<T> filter)
-    {
-        return Iterables.getFirst(filter(listUnusedIps(), filter), null);
-    }
+   public T findUnusedIp(final Predicate<T> filter) {
+      return Iterables.getFirst(filter(listUnusedIps(), filter), null);
+   }
 
-    // Builder
+   // Builder
 
-    public static class NetworkBuilder<T extends NetworkBuilder<T>>
-    {
-        protected RestContext<AbiquoApi, AbiquoAsyncApi> context;
+   public static class NetworkBuilder<T extends NetworkBuilder<T>> {
+      protected RestContext<AbiquoApi, AbiquoAsyncApi> context;
 
-        protected String name;
+      protected String name;
 
-        protected Integer tag;
+      protected Integer tag;
 
-        protected String gateway;
+      protected String gateway;
 
-        protected String address;
+      protected String address;
 
-        protected Integer mask;
+      protected Integer mask;
 
-        protected String primaryDNS;
+      protected String primaryDNS;
 
-        protected String secondaryDNS;
+      protected String secondaryDNS;
 
-        protected String sufixDNS;
+      protected String sufixDNS;
 
-        protected Boolean defaultNetwork;
+      protected Boolean defaultNetwork;
 
-        public NetworkBuilder(final RestContext<AbiquoApi, AbiquoAsyncApi> context)
-        {
-            super();
-            this.context = context;
-        }
+      public NetworkBuilder(final RestContext<AbiquoApi, AbiquoAsyncApi> context) {
+         super();
+         this.context = context;
+      }
 
-        @SuppressWarnings("unchecked")
-        public T name(final String name)
-        {
-            this.name = name;
-            return (T) this;
-        }
+      @SuppressWarnings("unchecked")
+      public T name(final String name) {
+         this.name = name;
+         return (T) this;
+      }
 
-        @SuppressWarnings("unchecked")
-        public T tag(final Integer tag)
-        {
-            this.tag = tag;
-            return (T) this;
-        }
+      @SuppressWarnings("unchecked")
+      public T tag(final Integer tag) {
+         this.tag = tag;
+         return (T) this;
+      }
 
-        @SuppressWarnings("unchecked")
-        public T gateway(final String gateway)
-        {
-            this.gateway = gateway;
-            return (T) this;
-        }
+      @SuppressWarnings("unchecked")
+      public T gateway(final String gateway) {
+         this.gateway = gateway;
+         return (T) this;
+      }
 
-        @SuppressWarnings("unchecked")
-        public T address(final String address)
-        {
-            this.address = address;
-            return (T) this;
-        }
+      @SuppressWarnings("unchecked")
+      public T address(final String address) {
+         this.address = address;
+         return (T) this;
+      }
 
-        @SuppressWarnings("unchecked")
-        public T mask(final int mask)
-        {
-            this.mask = mask;
-            return (T) this;
-        }
+      @SuppressWarnings("unchecked")
+      public T mask(final int mask) {
+         this.mask = mask;
+         return (T) this;
+      }
 
-        @SuppressWarnings("unchecked")
-        public T primaryDNS(final String primaryDNS)
-        {
-            this.primaryDNS = primaryDNS;
-            return (T) this;
-        }
+      @SuppressWarnings("unchecked")
+      public T primaryDNS(final String primaryDNS) {
+         this.primaryDNS = primaryDNS;
+         return (T) this;
+      }
 
-        @SuppressWarnings("unchecked")
-        public T secondaryDNS(final String secondaryDNS)
-        {
-            this.secondaryDNS = secondaryDNS;
-            return (T) this;
-        }
+      @SuppressWarnings("unchecked")
+      public T secondaryDNS(final String secondaryDNS) {
+         this.secondaryDNS = secondaryDNS;
+         return (T) this;
+      }
 
-        @SuppressWarnings("unchecked")
-        public T sufixDNS(final String sufixDNS)
-        {
-            this.sufixDNS = sufixDNS;
-            return (T) this;
-        }
+      @SuppressWarnings("unchecked")
+      public T sufixDNS(final String sufixDNS) {
+         this.sufixDNS = sufixDNS;
+         return (T) this;
+      }
 
-        @SuppressWarnings("unchecked")
-        public T defaultNetwork(final Boolean defaultNetwork)
-        {
-            this.defaultNetwork = defaultNetwork;
-            return (T) this;
-        }
-    }
+      @SuppressWarnings("unchecked")
+      public T defaultNetwork(final Boolean defaultNetwork) {
+         this.defaultNetwork = defaultNetwork;
+         return (T) this;
+      }
+   }
 
-    public PrivateNetwork toPrivateNetwork()
-    {
-        checkArgument(target.getType().equals(NetworkType.INTERNAL),
+   public PrivateNetwork toPrivateNetwork() {
+      checkArgument(target.getType().equals(NetworkType.INTERNAL),
             ValidationErrors.INVALID_NETWORK_TYPE + target.getType());
 
-        return wrap(context, PrivateNetwork.class, target);
+      return wrap(context, PrivateNetwork.class, target);
 
-    }
+   }
 
-    public ExternalNetwork toExternalNetwork()
-    {
-        checkArgument(target.getType().equals(NetworkType.EXTERNAL),
+   public ExternalNetwork toExternalNetwork() {
+      checkArgument(target.getType().equals(NetworkType.EXTERNAL),
             ValidationErrors.INVALID_NETWORK_TYPE + target.getType());
 
-        return wrap(context, ExternalNetwork.class, target);
+      return wrap(context, ExternalNetwork.class, target);
 
-    }
+   }
 
-    public PublicNetwork toPublicNetwork()
-    {
-        checkArgument(target.getType().equals(NetworkType.PUBLIC),
+   public PublicNetwork toPublicNetwork() {
+      checkArgument(target.getType().equals(NetworkType.PUBLIC),
             ValidationErrors.INVALID_NETWORK_TYPE + target.getType());
 
-        return wrap(context, PublicNetwork.class, target);
+      return wrap(context, PublicNetwork.class, target);
 
-    }
+   }
 
-    public UnmanagedNetwork toUnmanagedNetwork()
-    {
-        checkArgument(target.getType().equals(NetworkType.UNMANAGED),
+   public UnmanagedNetwork toUnmanagedNetwork() {
+      checkArgument(target.getType().equals(NetworkType.UNMANAGED),
             ValidationErrors.INVALID_NETWORK_TYPE + target.getType());
 
-        return wrap(context, UnmanagedNetwork.class, target);
+      return wrap(context, UnmanagedNetwork.class, target);
 
-    }
+   }
 
-    // Delegate methods
+   // Delegate methods
 
-    public String getAddress()
-    {
-        return target.getAddress();
-    }
+   public String getAddress() {
+      return target.getAddress();
+   }
 
-    public Boolean getDefaultNetwork()
-    {
-        return target.getDefaultNetwork();
-    }
+   public Boolean getDefaultNetwork() {
+      return target.getDefaultNetwork();
+   }
 
-    public String getGateway()
-    {
-        return target.getGateway();
-    }
+   public String getGateway() {
+      return target.getGateway();
+   }
 
-    public Integer getId()
-    {
-        return target.getId();
-    }
+   public Integer getId() {
+      return target.getId();
+   }
 
-    public Integer getMask()
-    {
-        return target.getMask();
-    }
+   public Integer getMask() {
+      return target.getMask();
+   }
 
-    public String getName()
-    {
-        return target.getName();
-    }
+   public String getName() {
+      return target.getName();
+   }
 
-    public String getPrimaryDNS()
-    {
-        return target.getPrimaryDNS();
-    }
+   public String getPrimaryDNS() {
+      return target.getPrimaryDNS();
+   }
 
-    public String getSecondaryDNS()
-    {
-        return target.getSecondaryDNS();
-    }
+   public String getSecondaryDNS() {
+      return target.getSecondaryDNS();
+   }
 
-    public String getSufixDNS()
-    {
-        return target.getSufixDNS();
-    }
+   public String getSufixDNS() {
+      return target.getSufixDNS();
+   }
 
-    public Integer getTag()
-    {
-        return target.getTag();
-    }
+   public Integer getTag() {
+      return target.getTag();
+   }
 
-    public NetworkType getType()
-    {
-        return target.getType();
-    }
+   public NetworkType getType() {
+      return target.getType();
+   }
 
-    public void setAddress(final String address)
-    {
-        target.setAddress(address);
-    }
+   public void setAddress(final String address) {
+      target.setAddress(address);
+   }
 
-    public void setDefaultNetwork(final Boolean defaultNetwork)
-    {
-        target.setDefaultNetwork(defaultNetwork);
-    }
+   public void setDefaultNetwork(final Boolean defaultNetwork) {
+      target.setDefaultNetwork(defaultNetwork);
+   }
 
-    public void setGateway(final String gateway)
-    {
-        target.setGateway(gateway);
-    }
+   public void setGateway(final String gateway) {
+      target.setGateway(gateway);
+   }
 
-    public void setMask(final Integer mask)
-    {
-        target.setMask(mask);
-    }
+   public void setMask(final Integer mask) {
+      target.setMask(mask);
+   }
 
-    public void setName(final String name)
-    {
-        target.setName(name);
-    }
+   public void setName(final String name) {
+      target.setName(name);
+   }
 
-    public void setPrimaryDNS(final String primaryDNS)
-    {
-        target.setPrimaryDNS(primaryDNS);
-    }
+   public void setPrimaryDNS(final String primaryDNS) {
+      target.setPrimaryDNS(primaryDNS);
+   }
 
-    public void setSecondaryDNS(final String secondaryDNS)
-    {
-        target.setSecondaryDNS(secondaryDNS);
-    }
+   public void setSecondaryDNS(final String secondaryDNS) {
+      target.setSecondaryDNS(secondaryDNS);
+   }
 
-    public void setSufixDNS(final String sufixDNS)
-    {
-        target.setSufixDNS(sufixDNS);
-    }
+   public void setSufixDNS(final String sufixDNS) {
+      target.setSufixDNS(sufixDNS);
+   }
 
-    public void setTag(final Integer tag)
-    {
-        target.setTag(tag);
-    }
+   public void setTag(final Integer tag) {
+      target.setTag(tag);
+   }
 
-    @Override
-    public String toString()
-    {
-        return "Network [id=" + getId() + ", address=" + getAddress() + ", defaultNetwork="
-            + getDefaultNetwork() + ", gateway=" + getGateway() + ", mask=" + getMask() + ", name="
-            + getName() + ", primaryDNS=" + getPrimaryDNS() + ", secondaryDNS=" + getSecondaryDNS()
-            + ", suffixDNS=" + getSufixDNS() + ", tag=" + getTag() + ", type=" + getType() + "]";
-    }
+   @Override
+   public String toString() {
+      return "Network [id=" + getId() + ", address=" + getAddress() + ", defaultNetwork=" + getDefaultNetwork()
+            + ", gateway=" + getGateway() + ", mask=" + getMask() + ", name=" + getName() + ", primaryDNS="
+            + getPrimaryDNS() + ", secondaryDNS=" + getSecondaryDNS() + ", suffixDNS=" + getSufixDNS() + ", tag="
+            + getTag() + ", type=" + getType() + "]";
+   }
 
-    public static Network< ? > wrapNetwork(
-        final RestContext<AbiquoApi, AbiquoAsyncApi> context, final VLANNetworkDto dto)
-    {
-        if (dto == null)
-        {
-            return null;
-        }
+   public static Network<?> wrapNetwork(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final VLANNetworkDto dto) {
+      if (dto == null) {
+         return null;
+      }
 
-        Network< ? > network = null;
+      Network<?> network = null;
 
-        switch (dto.getType())
-        {
-            case EXTERNAL:
-                network = wrap(context, ExternalNetwork.class, dto);
-                break;
-            case EXTERNAL_UNMANAGED:
-                // TODO: How do we manage External && unmanaged networks ?
-                throw new UnsupportedOperationException("EXTERNAL_UNMANAGED networks not supported yet");
-            case INTERNAL:
-                network = wrap(context, PrivateNetwork.class, dto);
-                break;
-            case PUBLIC:
-                network = wrap(context, PublicNetwork.class, dto);
-                break;
-            case UNMANAGED:
-                network = wrap(context, UnmanagedNetwork.class, dto);
-                break;
-        }
+      switch (dto.getType()) {
+         case EXTERNAL:
+            network = wrap(context, ExternalNetwork.class, dto);
+            break;
+         case EXTERNAL_UNMANAGED:
+            // TODO: How do we manage External && unmanaged networks ?
+            throw new UnsupportedOperationException("EXTERNAL_UNMANAGED networks not supported yet");
+         case INTERNAL:
+            network = wrap(context, PrivateNetwork.class, dto);
+            break;
+         case PUBLIC:
+            network = wrap(context, PublicNetwork.class, dto);
+            break;
+         case UNMANAGED:
+            network = wrap(context, UnmanagedNetwork.class, dto);
+            break;
+      }
 
-        return network;
-    }
+      return network;
+   }
 
-    public static List<Network< ? >> wrapNetworks(
-        final RestContext<AbiquoApi, AbiquoAsyncApi> context, final List<VLANNetworkDto> dtos)
-    {
-        List<Network< ? >> networks = Lists.newLinkedList();
-        for (VLANNetworkDto dto : dtos)
-        {
-            networks.add(wrapNetwork(context, dto));
-        }
-        return networks;
-    }
+   public static List<Network<?>> wrapNetworks(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
+         final List<VLANNetworkDto> dtos) {
+      List<Network<?>> networks = Lists.newLinkedList();
+      for (VLANNetworkDto dto : dtos) {
+         networks.add(wrapNetwork(context, dto));
+      }
+      return networks;
+   }
 }

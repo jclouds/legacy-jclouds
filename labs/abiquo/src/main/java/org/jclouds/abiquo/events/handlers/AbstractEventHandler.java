@@ -29,29 +29,29 @@ import org.jclouds.logging.Logger;
  * 
  * @author Ignasi Barrera
  */
-public abstract class AbstractEventHandler<T>
-{
-    @Resource
-    protected Logger logger = Logger.NULL;
+public abstract class AbstractEventHandler<T> {
+   @Resource
+   protected Logger logger = Logger.NULL;
 
-    /**
-     * Checks if the current handler must handle the dispatched event.
-     * 
-     * @param event The event being dispatched.
-     * @return Boolean indicating if the event must be handled by the current handler.
-     */
-    protected abstract boolean handles(MonitorEvent<T> event);
+   /**
+    * Checks if the current handler must handle the dispatched event.
+    * 
+    * @param event
+    *           The event being dispatched.
+    * @return Boolean indicating if the event must be handled by the current
+    *         handler.
+    */
+   protected abstract boolean handles(MonitorEvent<T> event);
 
-    // Public getters and setters to allow non-guice code to set the appropriate logger
+   // Public getters and setters to allow non-guice code to set the appropriate
+   // logger
 
-    public Logger getLogger()
-    {
-        return logger;
-    }
+   public Logger getLogger() {
+      return logger;
+   }
 
-    public void setLogger(final Logger logger)
-    {
-        this.logger = logger;
-    }
+   public void setLogger(final Logger logger) {
+      this.logger = logger;
+   }
 
 }

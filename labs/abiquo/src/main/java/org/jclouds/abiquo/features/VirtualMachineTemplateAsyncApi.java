@@ -56,129 +56,130 @@ import com.abiquo.server.core.appslibrary.VirtualMachineTemplatesDto;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * Provides asynchronous access to Abiquo Abiquo Apps library API. * @see API: <a
- * href="http://community.abiquo.com/display/ABI20/API+Reference">
+ * Provides asynchronous access to Abiquo Abiquo Apps library API. * @see API:
+ * <a href="http://community.abiquo.com/display/ABI20/API+Reference">
  * http://community.abiquo.com/display/ABI20/API+Reference</a>
  * 
  * @see VirtualMachineTemplateApi
  * @author Ignasi Barrera
  * @author Francesc Montserrat
  */
-@RequestFilters({AbiquoAuthentication.class, AppendApiVersionToMediaType.class})
+@RequestFilters({ AbiquoAuthentication.class, AppendApiVersionToMediaType.class })
 @Path("/admin/enterprises")
-public interface VirtualMachineTemplateAsyncApi
-{
-    /*********************** Virtual Machine Template ***********************/
+public interface VirtualMachineTemplateAsyncApi {
+   /*********************** Virtual Machine Template ***********************/
 
-    /**
-     * @see VirtualMachineTemplateApi#listVirtualMachineTemplates(Integer, Integer)
-     */
-    @GET
-    @Path("/{enterprise}/datacenterrepositories/{datacenterrepository}/virtualmachinetemplates")
-    @Consumes(VirtualMachineTemplatesDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<VirtualMachineTemplatesDto> listVirtualMachineTemplates(
-        @PathParam("enterprise") Integer enterpriseId,
-        @PathParam("datacenterrepository") Integer datacenterRepositoryId);
+   /**
+    * @see VirtualMachineTemplateApi#listVirtualMachineTemplates(Integer,
+    *      Integer)
+    */
+   @GET
+   @Path("/{enterprise}/datacenterrepositories/{datacenterrepository}/virtualmachinetemplates")
+   @Consumes(VirtualMachineTemplatesDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<VirtualMachineTemplatesDto> listVirtualMachineTemplates(
+         @PathParam("enterprise") Integer enterpriseId,
+         @PathParam("datacenterrepository") Integer datacenterRepositoryId);
 
-    /**
-     * @see VirtualMachineTemplateApi#listVirtualMachineTemplates(Integer, Integer,
-     *      VirtualMachineTemplateOptions)
-     */
-    @GET
-    @Path("/{enterprise}/datacenterrepositories/{datacenterrepository}/virtualmachinetemplates")
-    @Consumes(VirtualMachineTemplatesDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<VirtualMachineTemplatesDto> listVirtualMachineTemplates(
-        @PathParam("enterprise") Integer enterpriseId,
-        @PathParam("datacenterrepository") Integer datacenterRepositoryId,
-        VirtualMachineTemplateOptions options);
+   /**
+    * @see VirtualMachineTemplateApi#listVirtualMachineTemplates(Integer,
+    *      Integer, VirtualMachineTemplateOptions)
+    */
+   @GET
+   @Path("/{enterprise}/datacenterrepositories/{datacenterrepository}/virtualmachinetemplates")
+   @Consumes(VirtualMachineTemplatesDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<VirtualMachineTemplatesDto> listVirtualMachineTemplates(
+         @PathParam("enterprise") Integer enterpriseId,
+         @PathParam("datacenterrepository") Integer datacenterRepositoryId, VirtualMachineTemplateOptions options);
 
-    /**
-     * @see VirtualMachineTemplateApi#getVirtualMachineTemplate(Integer, Integer, Integer)
-     */
-    @GET
-    @Path("/{enterprise}/datacenterrepositories/{datacenterrepository}/virtualmachinetemplates/{virtualmachinetemplate}")
-    @Consumes(VirtualMachineTemplateDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-    ListenableFuture<VirtualMachineTemplateDto> getVirtualMachineTemplate(
-        @PathParam("enterprise") Integer enterpriseId,
-        @PathParam("datacenterrepository") Integer datacenterRepositoryId,
-        @PathParam("virtualmachinetemplate") Integer virtualMachineTemplateId);
+   /**
+    * @see VirtualMachineTemplateApi#getVirtualMachineTemplate(Integer, Integer,
+    *      Integer)
+    */
+   @GET
+   @Path("/{enterprise}/datacenterrepositories/{datacenterrepository}/virtualmachinetemplates/{virtualmachinetemplate}")
+   @Consumes(VirtualMachineTemplateDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<VirtualMachineTemplateDto> getVirtualMachineTemplate(@PathParam("enterprise") Integer enterpriseId,
+         @PathParam("datacenterrepository") Integer datacenterRepositoryId,
+         @PathParam("virtualmachinetemplate") Integer virtualMachineTemplateId);
 
-    /**
-     * @see VirtualMachineTemplateApi#updateVirtualMachineTemplate(VirtualMachineTemplateDto)
-     */
-    @PUT
-    @Produces(VirtualMachineTemplateDto.BASE_MEDIA_TYPE)
-    @Consumes(VirtualMachineTemplateDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<VirtualMachineTemplateDto> updateVirtualMachineTemplate(
-        @EndpointLink("edit") @BinderParam(BindToXMLPayloadAndPath.class) VirtualMachineTemplateDto template);
+   /**
+    * @see VirtualMachineTemplateApi#updateVirtualMachineTemplate(VirtualMachineTemplateDto)
+    */
+   @PUT
+   @Produces(VirtualMachineTemplateDto.BASE_MEDIA_TYPE)
+   @Consumes(VirtualMachineTemplateDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<VirtualMachineTemplateDto> updateVirtualMachineTemplate(
+         @EndpointLink("edit") @BinderParam(BindToXMLPayloadAndPath.class) VirtualMachineTemplateDto template);
 
-    /**
-     * @see VirtualMachineTemplateApi#deleteVirtualMachineTemplate(VirtualMachineTemplateDto)
-     */
-    @DELETE
-    ListenableFuture<Void> deleteVirtualMachineTemplate(
-        @EndpointLink("edit") @BinderParam(BindToPath.class) VirtualMachineTemplateDto template);
+   /**
+    * @see VirtualMachineTemplateApi#deleteVirtualMachineTemplate(VirtualMachineTemplateDto)
+    */
+   @DELETE
+   ListenableFuture<Void> deleteVirtualMachineTemplate(
+         @EndpointLink("edit") @BinderParam(BindToPath.class) VirtualMachineTemplateDto template);
 
-    /**
-     * @see VirtualMachineTemplateApi#createPersistentVirtualMachineTemplate(DatacenterRepositoryDto,
-     *      VirtualMachineTemplatePersistentDto)
-     */
-    @POST
-    @Consumes(AcceptedRequestDto.BASE_MEDIA_TYPE)
-    @Produces(VirtualMachineTemplatePersistentDto.BASE_MEDIA_TYPE)
-    @Path("/{enterprise}/datacenterrepositories/{datacenterrepository}/virtualmachinetemplates")
-    @JAXBResponseParser
-    ListenableFuture<AcceptedRequestDto<String>> createPersistentVirtualMachineTemplate(
-        @PathParam("enterprise") Integer enterpriseId,
-        @PathParam("datacenterrepository") Integer datacenterRepositoryId,
-        @BinderParam(BindToXMLPayload.class) VirtualMachineTemplatePersistentDto persistentOptions);
+   /**
+    * @see VirtualMachineTemplateApi#createPersistentVirtualMachineTemplate(DatacenterRepositoryDto,
+    *      VirtualMachineTemplatePersistentDto)
+    */
+   @POST
+   @Consumes(AcceptedRequestDto.BASE_MEDIA_TYPE)
+   @Produces(VirtualMachineTemplatePersistentDto.BASE_MEDIA_TYPE)
+   @Path("/{enterprise}/datacenterrepositories/{datacenterrepository}/virtualmachinetemplates")
+   @JAXBResponseParser
+   ListenableFuture<AcceptedRequestDto<String>> createPersistentVirtualMachineTemplate(
+         @PathParam("enterprise") Integer enterpriseId,
+         @PathParam("datacenterrepository") Integer datacenterRepositoryId,
+         @BinderParam(BindToXMLPayload.class) VirtualMachineTemplatePersistentDto persistentOptions);
 
-    /*********************** Conversions ***********************/
+   /*********************** Conversions ***********************/
 
-    /**
-     * @see VirtualMachineTemplateApi#listConversions(VirtualMachineTemplateDto)
-     */
-    @GET
-    @Consumes(ConversionsDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<ConversionsDto> listConversions(
-        @EndpointLink("conversions") @BinderParam(BindToPath.class) VirtualMachineTemplateDto template);
+   /**
+    * @see VirtualMachineTemplateApi#listConversions(VirtualMachineTemplateDto)
+    */
+   @GET
+   @Consumes(ConversionsDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<ConversionsDto> listConversions(
+         @EndpointLink("conversions") @BinderParam(BindToPath.class) VirtualMachineTemplateDto template);
 
-    /**
-     * @see VirtualMachineTemplateApi#listConversions(VirtualMachineTemplateDto, ConversionOptions)
-     */
-    @GET
-    @Consumes(ConversionsDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<ConversionsDto> listConversions(
-        @EndpointLink("conversions") @BinderParam(BindToPath.class) final VirtualMachineTemplateDto template,
-        ConversionOptions options);
+   /**
+    * @see VirtualMachineTemplateApi#listConversions(VirtualMachineTemplateDto,
+    *      ConversionOptions)
+    */
+   @GET
+   @Consumes(ConversionsDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<ConversionsDto> listConversions(
+         @EndpointLink("conversions") @BinderParam(BindToPath.class) final VirtualMachineTemplateDto template,
+         ConversionOptions options);
 
-    /**
-     * @see VirtualMachineTemplateApi#getConversion(VirtualMachineTemplateDto, DiskFormatType)
-     */
-    @GET
-    @Consumes(ConversionDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-    ListenableFuture<ConversionDto> getConversion(
-        @EndpointLink("conversions") @BinderParam(BindToPath.class) final VirtualMachineTemplateDto template,
-        @BinderParam(AppendToPath.class) DiskFormatType targetFormat);
+   /**
+    * @see VirtualMachineTemplateApi#getConversion(VirtualMachineTemplateDto,
+    *      DiskFormatType)
+    */
+   @GET
+   @Consumes(ConversionDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<ConversionDto> getConversion(
+         @EndpointLink("conversions") @BinderParam(BindToPath.class) final VirtualMachineTemplateDto template,
+         @BinderParam(AppendToPath.class) DiskFormatType targetFormat);
 
-    /**
-     * @see VirtualMachineTemplateApi#updateConversion(ConversinoDto)
-     */
-    @PUT
-    @ResponseParser(ReturnTaskReferenceOrNull.class)
-    @Consumes(AcceptedRequestDto.BASE_MEDIA_TYPE)
-    @Produces(ConversionDto.BASE_MEDIA_TYPE)
-    ListenableFuture<AcceptedRequestDto<String>> requestConversion(
-        @EndpointLink("conversions") @BinderParam(BindToPath.class) final VirtualMachineTemplateDto template,
-        @BinderParam(AppendToPath.class) DiskFormatType targetFormat,
-        @BinderParam(BindToXMLPayload.class) ConversionDto conversion);
+   /**
+    * @see VirtualMachineTemplateApi#updateConversion(ConversinoDto)
+    */
+   @PUT
+   @ResponseParser(ReturnTaskReferenceOrNull.class)
+   @Consumes(AcceptedRequestDto.BASE_MEDIA_TYPE)
+   @Produces(ConversionDto.BASE_MEDIA_TYPE)
+   ListenableFuture<AcceptedRequestDto<String>> requestConversion(
+         @EndpointLink("conversions") @BinderParam(BindToPath.class) final VirtualMachineTemplateDto template,
+         @BinderParam(AppendToPath.class) DiskFormatType targetFormat,
+         @BinderParam(BindToXMLPayload.class) ConversionDto conversion);
 }

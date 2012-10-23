@@ -25,20 +25,17 @@ package org.jclouds.abiquo.domain.options.search.reference;
  * @author Francesc Montserrat
  * @author Ignasi Barrera
  */
-public enum OrderBy
-{
-    NAME("name"), ID("id"), VIRTUALDATACENTER("virtualdatacenter"), VIRTUALMACHINE("virtualmachine"), VIRTUALAPPLIANCE(
-        "virtualappliance"), TIER("tier"), TOTALSIZE("totalsize"), STATE("state");
+public enum OrderBy {
+   NAME("name"), ID("id"), VIRTUALDATACENTER("virtualdatacenter"), VIRTUALMACHINE("virtualmachine"), VIRTUALAPPLIANCE(
+         "virtualappliance"), TIER("tier"), TOTALSIZE("totalsize"), STATE("state");
 
-    public String value;
+   public String value;
 
-    public String getValue()
-    {
-        return value;
-    }
+   public String getValue() {
+      return value;
+   }
 
-    private OrderBy(final String value)
-    {
-        this.value = value;
-    }
+   private OrderBy(final String value) {
+      this.value = value;
+   }
 }

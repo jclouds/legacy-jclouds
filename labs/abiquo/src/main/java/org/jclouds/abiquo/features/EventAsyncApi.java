@@ -41,24 +41,23 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Ignasi Barrera
  * @author Vivien Mahé
  */
-@RequestFilters({AbiquoAuthentication.class, AppendApiVersionToMediaType.class})
-public interface EventAsyncApi
-{
-    /**
-     * @see EventApi#listEvents()
-     */
-    @GET
-    @Path("/events")
-    @Consumes(EventsDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<EventsDto> listEvents();
+@RequestFilters({ AbiquoAuthentication.class, AppendApiVersionToMediaType.class })
+public interface EventAsyncApi {
+   /**
+    * @see EventApi#listEvents()
+    */
+   @GET
+   @Path("/events")
+   @Consumes(EventsDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<EventsDto> listEvents();
 
-    /**
-     * @see EventApi#listEvents()
-     */
-    @GET
-    @Path("/events")
-    @Consumes(EventsDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<EventsDto> listEvents(EventOptions options);
+   /**
+    * @see EventApi#listEvents()
+    */
+   @GET
+   @Path("/events")
+   @Consumes(EventsDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<EventsDto> listEvents(EventOptions options);
 }

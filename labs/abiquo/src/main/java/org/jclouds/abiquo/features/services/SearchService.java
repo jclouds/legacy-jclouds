@@ -46,98 +46,108 @@ import com.google.inject.ImplementedBy;
  * @author Francesc Montserrat
  */
 @ImplementedBy(BaseSearchService.class)
-public interface SearchService
-{
-    /*********************** Enterprise ***********************/
+public interface SearchService {
+   /*********************** Enterprise ***********************/
 
-    /**
-     * Get the list of filtered enterprises.
-     * 
-     * @param options The set of filtering and pagination options of the search.
-     */
-    Iterable<Enterprise> searchEnterprises(final EnterpriseOptions options);
+   /**
+    * Get the list of filtered enterprises.
+    * 
+    * @param options
+    *           The set of filtering and pagination options of the search.
+    */
+   Iterable<Enterprise> searchEnterprises(final EnterpriseOptions options);
 
-    /**
-     * Get the list of filtered enterprises for a datacenter.
-     * 
-     * @param datacenter The given datacenter.
-     * @param options The set of filtering and pagination options of the search.
-     * @see API: <a href=
-     *      "http://community.abiquo.com/display/ABI20/Datacenter+Resource#DatacenterResource-Retrievealistofenterprisesusingdatacenter"
-     *      > http://community.abiquo.com/display/ABI20/Datacenter+Resource#DatacenterResource-
-     *      Retrievealistofenterprisesusingdatacenter</a>
-     */
-    Iterable<Enterprise> searchEnterprisesUsingDatacenter(final Datacenter datacenter,
-        final EnterpriseOptions options);
+   /**
+    * Get the list of filtered enterprises for a datacenter.
+    * 
+    * @param datacenter
+    *           The given datacenter.
+    * @param options
+    *           The set of filtering and pagination options of the search.
+    * @see API: <a href=
+    *      "http://community.abiquo.com/display/ABI20/Datacenter+Resource#DatacenterResource-Retrievealistofenterprisesusingdatacenter"
+    *      > http://community.abiquo.com/display/ABI20/Datacenter+Resource#
+    *      DatacenterResource- Retrievealistofenterprisesusingdatacenter</a>
+    */
+   Iterable<Enterprise> searchEnterprisesUsingDatacenter(final Datacenter datacenter, final EnterpriseOptions options);
 
-    /*********************** Volume ***********************/
+   /*********************** Volume ***********************/
 
-    /**
-     * Get the list of filtered volumes for a virtual datacenter.
-     * 
-     * @param virtualDatacenter The given virtual datacenter.
-     * @param options The set of filtering and pagination options of the search.
-     */
-    Iterable<Volume> searchVolumes(final VirtualDatacenter virtualDatacenter,
-        final VolumeOptions options);
+   /**
+    * Get the list of filtered volumes for a virtual datacenter.
+    * 
+    * @param virtualDatacenter
+    *           The given virtual datacenter.
+    * @param options
+    *           The set of filtering and pagination options of the search.
+    */
+   Iterable<Volume> searchVolumes(final VirtualDatacenter virtualDatacenter, final VolumeOptions options);
 
-    /*********************** Storage Pool ***********************/
+   /*********************** Storage Pool ***********************/
 
-    /**
-     * Get the list of filtered storage pools for a storage device.
-     * 
-     * @param device The given storage device.
-     * @param options The set of filtering and pagination options of the search.
-     */
-    Iterable<StoragePool> searchStoragePools(final StorageDevice device,
-        final StoragePoolOptions options);
+   /**
+    * Get the list of filtered storage pools for a storage device.
+    * 
+    * @param device
+    *           The given storage device.
+    * @param options
+    *           The set of filtering and pagination options of the search.
+    */
+   Iterable<StoragePool> searchStoragePools(final StorageDevice device, final StoragePoolOptions options);
 
-    /*********************** Private IPs ***********************/
+   /*********************** Private IPs ***********************/
 
-    /**
-     * Get the list of filtered ips for a private network.
-     * 
-     * @param network The given private network.
-     * @param options The set of filtering and pagination options of the search.
-     */
-    Iterable<PrivateIp> searchPrivateIps(final PrivateNetwork network, final IpOptions options);
+   /**
+    * Get the list of filtered ips for a private network.
+    * 
+    * @param network
+    *           The given private network.
+    * @param options
+    *           The set of filtering and pagination options of the search.
+    */
+   Iterable<PrivateIp> searchPrivateIps(final PrivateNetwork network, final IpOptions options);
 
-    /*********************** Public IPs ***********************/
+   /*********************** Public IPs ***********************/
 
-    /**
-     * Get the list of filtered public ips to purchase by a virtual datacenter.
-     * 
-     * @param virtualDatacenter The given virtual datacenter.
-     * @param options The set of filtering and pagination options of the search.
-     */
-    Iterable<PublicIp> searchPublicIpsToPurchase(final VirtualDatacenter virtualDatacenter,
-        final IpOptions options);
+   /**
+    * Get the list of filtered public ips to purchase by a virtual datacenter.
+    * 
+    * @param virtualDatacenter
+    *           The given virtual datacenter.
+    * @param options
+    *           The set of filtering and pagination options of the search.
+    */
+   Iterable<PublicIp> searchPublicIpsToPurchase(final VirtualDatacenter virtualDatacenter, final IpOptions options);
 
-    /**
-     * Get the list of filtered purchased public ips by a virtual datacenter.
-     * 
-     * @param virtualDatacenter The given virtual datacenter.
-     * @param options The set of filtering and pagination options of the search.
-     */
-    Iterable<PublicIp> searchPurchasedPublicIps(final VirtualDatacenter virtualDatacenter,
-        final IpOptions options);
+   /**
+    * Get the list of filtered purchased public ips by a virtual datacenter.
+    * 
+    * @param virtualDatacenter
+    *           The given virtual datacenter.
+    * @param options
+    *           The set of filtering and pagination options of the search.
+    */
+   Iterable<PublicIp> searchPurchasedPublicIps(final VirtualDatacenter virtualDatacenter, final IpOptions options);
 
-    /*********************** Logic Server ***********************/
+   /*********************** Logic Server ***********************/
 
-    /**
-     * Get the list of service profiles for managed rack.
-     * 
-     * @param managedRack The given rack.
-     * @param options The set of filtering and pagination options of the search.
-     */
-    Iterable<LogicServer> searchServiceProfiles(final ManagedRack rack, final FilterOptions options);
+   /**
+    * Get the list of service profiles for managed rack.
+    * 
+    * @param managedRack
+    *           The given rack.
+    * @param options
+    *           The set of filtering and pagination options of the search.
+    */
+   Iterable<LogicServer> searchServiceProfiles(final ManagedRack rack, final FilterOptions options);
 
-    /**
-     * Get the list of service profile templates for managed rack.
-     * 
-     * @param managedRack The given rack.
-     * @param options The set of filtering and pagination options of the search.
-     */
-    Iterable<LogicServer> searchServiceProfileTemplates(final ManagedRack rack,
-        final FilterOptions options);
+   /**
+    * Get the list of service profile templates for managed rack.
+    * 
+    * @param managedRack
+    *           The given rack.
+    * @param options
+    *           The set of filtering and pagination options of the search.
+    */
+   Iterable<LogicServer> searchServiceProfileTemplates(final ManagedRack rack, final FilterOptions options);
 }

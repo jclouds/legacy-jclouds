@@ -32,15 +32,14 @@ import com.google.inject.ImplementedBy;
  * @author Vivien Mahé
  */
 @ImplementedBy(BaseEventService.class)
-public interface EventService
-{
-    /**
-     * Get the list of all events.
-     */
-    Iterable<Event> listEvents();
+public interface EventService {
+   /**
+    * Get the list of all events.
+    */
+   Iterable<Event> listEvents();
 
-    /**
-     * Get the list of all events using filters as query params.
-     */
-    Iterable<Event> listEvents(EventOptions options);
+   /**
+    * Get the list of all events using filters as query params.
+    */
+   Iterable<Event> listEvents(EventOptions options);
 }

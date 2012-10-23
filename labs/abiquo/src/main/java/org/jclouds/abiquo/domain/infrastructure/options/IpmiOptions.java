@@ -26,43 +26,36 @@ import org.jclouds.http.options.BaseHttpRequestOptions;
  * 
  * @author scastro
  */
-public class IpmiOptions extends BaseHttpRequestOptions
-{
-    public static Builder builder()
-    {
-        return new Builder();
-    }
+public class IpmiOptions extends BaseHttpRequestOptions {
+   public static Builder builder() {
+      return new Builder();
+   }
 
-    @Override
-    protected Object clone() throws CloneNotSupportedException
-    {
-        IpmiOptions options = new IpmiOptions();
-        options.queryParameters.putAll(queryParameters);
-        return options;
-    }
+   @Override
+   protected Object clone() throws CloneNotSupportedException {
+      IpmiOptions options = new IpmiOptions();
+      options.queryParameters.putAll(queryParameters);
+      return options;
+   }
 
-    public static class Builder
-    {
-        private Integer port;
+   public static class Builder {
+      private Integer port;
 
-        /**
-         * Set the optional hypervisor port.
-         */
-        public Builder port(final int port)
-        {
-            this.port = port;
-            return this;
-        }
+      /**
+       * Set the optional hypervisor port.
+       */
+      public Builder port(final int port) {
+         this.port = port;
+         return this;
+      }
 
-        public IpmiOptions build()
-        {
-            IpmiOptions options = new IpmiOptions();
-            if (port != null)
-            {
-                options.queryParameters.put("port", port.toString());
-            }
+      public IpmiOptions build() {
+         IpmiOptions options = new IpmiOptions();
+         if (port != null) {
+            options.queryParameters.put("port", port.toString());
+         }
 
-            return options;
-        }
-    }
+         return options;
+      }
+   }
 }

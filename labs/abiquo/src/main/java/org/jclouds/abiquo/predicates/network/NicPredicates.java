@@ -32,33 +32,26 @@ import com.google.common.base.Predicate;
  * 
  * @author Francesc Montserrat
  */
-public class NicPredicates
-{
-    public static Predicate<Nic> ip(final String... ips)
-    {
-        checkNotNull(ips, "ips must be defined");
+public class NicPredicates {
+   public static Predicate<Nic> ip(final String... ips) {
+      checkNotNull(ips, "ips must be defined");
 
-        return new Predicate<Nic>()
-        {
-            @Override
-            public boolean apply(final Nic nic)
-            {
-                return Arrays.asList(ips).contains(nic.getIp());
-            }
-        };
-    }
+      return new Predicate<Nic>() {
+         @Override
+         public boolean apply(final Nic nic) {
+            return Arrays.asList(ips).contains(nic.getIp());
+         }
+      };
+   }
 
-    public static Predicate<Nic> mac(final String... macs)
-    {
-        checkNotNull(macs, "macs must be defined");
+   public static Predicate<Nic> mac(final String... macs) {
+      checkNotNull(macs, "macs must be defined");
 
-        return new Predicate<Nic>()
-        {
-            @Override
-            public boolean apply(final Nic nic)
-            {
-                return Arrays.asList(macs).contains(nic.getMac());
-            }
-        };
-    }
+      return new Predicate<Nic>() {
+         @Override
+         public boolean apply(final Nic nic) {
+            return Arrays.asList(macs).contains(nic.getMac());
+         }
+      };
+   }
 }

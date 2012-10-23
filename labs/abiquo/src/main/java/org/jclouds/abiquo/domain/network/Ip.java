@@ -33,53 +33,45 @@ import com.abiquo.server.core.infrastructure.network.AbstractIpDto;
  * @author Ignasi Barrera
  * @author Francesc Montserrat
  */
-public abstract class Ip<T extends AbstractIpDto, N extends Network< ? >> extends DomainWrapper<T>
-{
-    /**
-     * Constructor to be used only by the builder.
-     */
-    protected Ip(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final T target)
-    {
-        super(context, target);
-    }
+public abstract class Ip<T extends AbstractIpDto, N extends Network<?>> extends DomainWrapper<T> {
+   /**
+    * Constructor to be used only by the builder.
+    */
+   protected Ip(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final T target) {
+      super(context, target);
+   }
 
-    // Domain operations
+   // Domain operations
 
-    public abstract N getNetwork();
+   public abstract N getNetwork();
 
-    public abstract NetworkType getNetworkType();
+   public abstract NetworkType getNetworkType();
 
-    // Delegate methods
+   // Delegate methods
 
-    public Integer getId()
-    {
-        return target.getId();
-    }
+   public Integer getId() {
+      return target.getId();
+   }
 
-    public String getIp()
-    {
-        return target.getIp();
-    }
+   public String getIp() {
+      return target.getIp();
+   }
 
-    public String getMac()
-    {
-        return target.getMac();
-    }
+   public String getMac() {
+      return target.getMac();
+   }
 
-    public String getName()
-    {
-        return target.getName();
-    }
+   public String getName() {
+      return target.getName();
+   }
 
-    public String getNetworkName()
-    {
-        return target.getNetworkName();
-    }
+   public String getNetworkName() {
+      return target.getNetworkName();
+   }
 
-    @Override
-    public String toString()
-    {
-        return "Ip [id=" + getId() + ", ip=" + getIp() + ", mac=" + getMac() + ", name="
-            + getName() + ", networkName=" + getNetworkName() + "]";
-    }
+   @Override
+   public String toString() {
+      return "Ip [id=" + getId() + ", ip=" + getIp() + ", mac=" + getMac() + ", name=" + getName() + ", networkName="
+            + getNetworkName() + "]";
+   }
 }

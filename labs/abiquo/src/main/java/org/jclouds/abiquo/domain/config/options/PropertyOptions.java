@@ -26,52 +26,43 @@ import org.jclouds.http.options.BaseHttpRequestOptions;
  * 
  * @author Francesc Montserrat
  */
-public class PropertyOptions extends BaseHttpRequestOptions
-{
-    public static Builder builder()
-    {
-        return new Builder();
-    }
+public class PropertyOptions extends BaseHttpRequestOptions {
+   public static Builder builder() {
+      return new Builder();
+   }
 
-    @Override
-    protected Object clone() throws CloneNotSupportedException
-    {
-        PropertyOptions options = new PropertyOptions();
-        options.queryParameters.putAll(queryParameters);
-        return options;
-    }
+   @Override
+   protected Object clone() throws CloneNotSupportedException {
+      PropertyOptions options = new PropertyOptions();
+      options.queryParameters.putAll(queryParameters);
+      return options;
+   }
 
-    public static class Builder
-    {
-        private String component;
+   public static class Builder {
+      private String component;
 
-        private String name;
+      private String name;
 
-        public Builder component(final String component)
-        {
-            this.component = component;
-            return this;
-        }
+      public Builder component(final String component) {
+         this.component = component;
+         return this;
+      }
 
-        public Builder name(final String name)
-        {
-            this.name = name;
-            return this;
-        }
+      public Builder name(final String name) {
+         this.name = name;
+         return this;
+      }
 
-        public PropertyOptions build()
-        {
-            PropertyOptions options = new PropertyOptions();
-            if (component != null)
-            {
-                options.queryParameters.put("component", component.toString());
-            }
+      public PropertyOptions build() {
+         PropertyOptions options = new PropertyOptions();
+         if (component != null) {
+            options.queryParameters.put("component", component.toString());
+         }
 
-            if (name != null)
-            {
-                options.queryParameters.put("name", name.toString());
-            }
-            return options;
-        }
-    }
+         if (name != null) {
+            options.queryParameters.put("name", name.toString());
+         }
+         return options;
+      }
+   }
 }

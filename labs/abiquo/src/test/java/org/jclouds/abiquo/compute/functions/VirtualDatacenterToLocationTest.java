@@ -49,57 +49,51 @@ import com.google.common.base.Supplier;
  * @author Ignasi Barrera
  */
 @Test(groups = "unit", testName = "VirtualDatacenterToLocationTest")
-public class VirtualDatacenterToLocationTest
-{
-    public void testVirtualDatacenterToLocation()
-    {
-        Function<Datacenter, Location> dcToLocation = mockDatacenterToLocation();
-        Supplier<Map<Integer, Datacenter>> regionMap = mockRegionMap();
-        VirtualDatacenterToLocation function =
-            new VirtualDatacenterToLocation(dcToLocation, regionMap);
+public class VirtualDatacenterToLocationTest {
+   public void testVirtualDatacenterToLocation() {
+      Function<Datacenter, Location> dcToLocation = mockDatacenterToLocation();
+      Supplier<Map<Integer, Datacenter>> regionMap = mockRegionMap();
+      VirtualDatacenterToLocation function = new VirtualDatacenterToLocation(dcToLocation, regionMap);
 
-        VirtualDatacenter vdc = mockVirtualDatacenter();
+      VirtualDatacenter vdc = mockVirtualDatacenter();
 
-        Location location = function.apply(vdc);
+      Location location = function.apply(vdc);
 
-        verify(regionMap);
-        verify(dcToLocation);
+      verify(regionMap);
+      verify(dcToLocation);
 
-        assertEquals(location.getId(), "5");
-        assertEquals(location.getScope(), LocationScope.ZONE);
-    }
+      assertEquals(location.getId(), "5");
+      assertEquals(location.getScope(), LocationScope.ZONE);
+   }
 
-    @SuppressWarnings("unchecked")
-    private static VirtualDatacenter mockVirtualDatacenter()
-    {
-        RestContext<AbiquoApi, AbiquoAsyncApi> context = EasyMock.createMock(RestContext.class);
-        Datacenter datacenter = EasyMock.createMock(Datacenter.class);
-        Enterprise enterprise = EasyMock.createMock(Enterprise.class);
-        PrivateNetwork network = EasyMock.createMock(PrivateNetwork.class);
+   @SuppressWarnings("unchecked")
+   private static VirtualDatacenter mockVirtualDatacenter() {
+      RestContext<AbiquoApi, AbiquoAsyncApi> context = EasyMock.createMock(RestContext.class);
+      Datacenter datacenter = EasyMock.createMock(Datacenter.class);
+      Enterprise enterprise = EasyMock.createMock(Enterprise.class);
+      PrivateNetwork network = EasyMock.createMock(PrivateNetwork.class);
 
-        VirtualDatacenter vdc = VirtualDatacenter.builder(context, datacenter, enterprise) //
+      VirtualDatacenter vdc = VirtualDatacenter.builder(context, datacenter, enterprise) //
             .network(network) //
             .name("mock").build();
-        vdc.unwrap().setId(5);
+      vdc.unwrap().setId(5);
 
-        return vdc;
-    }
+      return vdc;
+   }
 
-    @SuppressWarnings("unchecked")
-    private static Function<Datacenter, Location> mockDatacenterToLocation()
-    {
-        Function<Datacenter, Location> mock = EasyMock.createMock(Function.class);
-        expect(mock.apply(anyObject(Datacenter.class))).andReturn(null);
-        replay(mock);
-        return mock;
-    }
+   @SuppressWarnings("unchecked")
+   private static Function<Datacenter, Location> mockDatacenterToLocation() {
+      Function<Datacenter, Location> mock = EasyMock.createMock(Function.class);
+      expect(mock.apply(anyObject(Datacenter.class))).andReturn(null);
+      replay(mock);
+      return mock;
+   }
 
-    @SuppressWarnings("unchecked")
-    private static Supplier<Map<Integer, Datacenter>> mockRegionMap()
-    {
-        Supplier<Map<Integer, Datacenter>> mock = EasyMock.createMock(Supplier.class);
-        expect(mock.get()).andReturn(Collections.EMPTY_MAP);
-        replay(mock);
-        return mock;
-    }
+   @SuppressWarnings("unchecked")
+   private static Supplier<Map<Integer, Datacenter>> mockRegionMap() {
+      Supplier<Map<Integer, Datacenter>> mock = EasyMock.createMock(Supplier.class);
+      expect(mock.get()).andReturn(Collections.EMPTY_MAP);
+      replay(mock);
+      return mock;
+   }
 }

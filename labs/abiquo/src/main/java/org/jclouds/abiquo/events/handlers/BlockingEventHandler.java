@@ -34,136 +34,116 @@ import com.google.common.collect.Lists;
 import com.google.common.eventbus.Subscribe;
 
 /**
- * An event handler that blocks the thread until all monitored objects have been finished being
- * watched.
+ * An event handler that blocks the thread until all monitored objects have been
+ * finished being watched.
  * <p>
- * Due to <a href="http://code.google.com/p/guava-libraries/issues/detail?id=783">Guava Issue
- * 786</a> {@link #handle(MonitorEvent)} is marked <code>final</code>to avoid having duplicate
- * events.
+ * Due to <a
+ * href="http://code.google.com/p/guava-libraries/issues/detail?id=783">Guava
+ * Issue 786</a> {@link #handle(MonitorEvent)} is marked <code>final</code>to
+ * avoid having duplicate events.
  * 
  * @author Ignasi Barrera
- * @param <T> The monitored object.
+ * @param <T>
+ *           The monitored object.
  */
-public class BlockingEventHandler<T> extends AbstractEventHandler<T>
-{
-    /** The signal used to lock the thread. */
-    @VisibleForTesting
-    CountDownLatch completeSignal;
+public class BlockingEventHandler<T> extends AbstractEventHandler<T> {
+   /** The signal used to lock the thread. */
+   @VisibleForTesting
+   CountDownLatch completeSignal;
 
-    /**
-     * The objects being locked.
-     * <p>
-     * This class handles events in a thread safe way. Otherwise this collections should be
-     * synchronised.
-     */
-    protected List<T> lockedObjects;
+   /**
+    * The objects being locked.
+    * <p>
+    * This class handles events in a thread safe way. Otherwise this collections
+    * should be synchronised.
+    */
+   protected List<T> lockedObjects;
 
-    public BlockingEventHandler(final T... lockedObjects)
-    {
-        this(Logger.NULL, lockedObjects);
-    }
+   public BlockingEventHandler(final T... lockedObjects) {
+      this(Logger.NULL, lockedObjects);
+   }
 
-    public BlockingEventHandler(final Logger logger, final T... lockedObjects)
-    {
-        super();
-        checkArgument(checkNotNull(lockedObjects, "lockedObjects").length > 0,
-            "must provide at least one object");
-        this.logger = checkNotNull(logger, "logger");
-        this.lockedObjects = Lists.newArrayList(lockedObjects);
-        this.logger.debug("created BlockingEventHandler locking %s objects", lockedObjects.length);
-    }
+   public BlockingEventHandler(final Logger logger, final T... lockedObjects) {
+      super();
+      checkArgument(checkNotNull(lockedObjects, "lockedObjects").length > 0, "must provide at least one object");
+      this.logger = checkNotNull(logger, "logger");
+      this.lockedObjects = Lists.newArrayList(lockedObjects);
+      this.logger.debug("created BlockingEventHandler locking %s objects", lockedObjects.length);
+   }
 
-    @Override
-    protected boolean handles(final MonitorEvent<T> event)
-    {
-        logger.debug("checking if %s event on %s must be handled by %s", event.getType(),
-            event.getTarget(), this);
-        boolean handles = lockedObjects.contains(event.getTarget());
-        logger.debug("%s event on %s must %sbe handled", event.getType(), event.getTarget(),
-            handles ? "" : "not ");
-        return handles;
-    }
+   @Override
+   protected boolean handles(final MonitorEvent<T> event) {
+      logger.debug("checking if %s event on %s must be handled by %s", event.getType(), event.getTarget(), this);
+      boolean handles = lockedObjects.contains(event.getTarget());
+      logger.debug("%s event on %s must %sbe handled", event.getType(), event.getTarget(), handles ? "" : "not ");
+      return handles;
+   }
 
-    /**
-     * Handles the dispatched event in a thread safe way.
-     * <p>
-     * Due to <a href="http://code.google.com/p/guava-libraries/issues/detail?id=783">Guava Issue
-     * 786</a> {@link #handle(MonitorEvent)} is marked <code>final</code>to avoid having duplicate
-     * events.
-     * 
-     * @see {@link #doBeforeRelease(MonitorEvent)}
-     */
-    @Subscribe
-    public final void handle(final MonitorEvent<T> event)
-    {
-        if (handles(event))
-        {
-            logger.debug("handling %s", event);
+   /**
+    * Handles the dispatched event in a thread safe way.
+    * <p>
+    * Due to <a
+    * href="http://code.google.com/p/guava-libraries/issues/detail?id=783">Guava
+    * Issue 786</a> {@link #handle(MonitorEvent)} is marked <code>final</code>to
+    * avoid having duplicate events.
+    * 
+    * @see {@link #doBeforeRelease(MonitorEvent)}
+    */
+   @Subscribe
+   public final void handle(final MonitorEvent<T> event) {
+      if (handles(event)) {
+         logger.debug("handling %s", event);
 
-            try
-            {
-                doBeforeRelease(event);
-            }
-            finally
-            {
-                // Always release the lock, even if the handler code fails
-                release(event.getTarget());
-            }
-        }
-    }
+         try {
+            doBeforeRelease(event);
+         } finally {
+            // Always release the lock, even if the handler code fails
+            release(event.getTarget());
+         }
+      }
+   }
 
-    /**
-     * Blocks the thread until all locked objects have been released.
-     */
-    public void lock()
-    {
-        // When invoking the lock, it is possible that all events have
-        // already been consumed. If there are no objects to monitor,
-        // just ignore the lock.
-        if (!lockedObjects.isEmpty())
-        {
-            try
-            {
-                completeSignal = new CountDownLatch(lockedObjects.size());
-                logger.debug("creating lock for %s object(s)", lockedObjects.size());
-                completeSignal.await();
-            }
-            catch (InterruptedException ex)
-            {
-                Throwables.propagate(ex);
-            }
-        }
-        else
-        {
-            logger.debug("there is nothing to watch. Ignoring lock.");
-        }
-    }
+   /**
+    * Blocks the thread until all locked objects have been released.
+    */
+   public void lock() {
+      // When invoking the lock, it is possible that all events have
+      // already been consumed. If there are no objects to monitor,
+      // just ignore the lock.
+      if (!lockedObjects.isEmpty()) {
+         try {
+            completeSignal = new CountDownLatch(lockedObjects.size());
+            logger.debug("creating lock for %s object(s)", lockedObjects.size());
+            completeSignal.await();
+         } catch (InterruptedException ex) {
+            Throwables.propagate(ex);
+         }
+      } else {
+         logger.debug("there is nothing to watch. Ignoring lock.");
+      }
+   }
 
-    /**
-     * Releases the lock on the given object.
-     */
-    protected void release(final T target)
-    {
-        logger.debug("releasing %s", target);
-        lockedObjects.remove(target);
+   /**
+    * Releases the lock on the given object.
+    */
+   protected void release(final T target) {
+      logger.debug("releasing %s", target);
+      lockedObjects.remove(target);
 
-        // The completeSignal might be null if the events have been consumed
-        // before acquiring the lock
-        if (completeSignal != null)
-        {
-            completeSignal.countDown();
-            logger.debug("releasing lock for %s. %s remaining objects", target,
-                completeSignal.getCount());
-        }
-    }
+      // The completeSignal might be null if the events have been consumed
+      // before acquiring the lock
+      if (completeSignal != null) {
+         completeSignal.countDown();
+         logger.debug("releasing lock for %s. %s remaining objects", target, completeSignal.getCount());
+      }
+   }
 
-    /**
-     * Convenience method to bypass the <a
-     * href="http://code.google.com/p/guava-libraries/issues/detail?id=783">Guava Issue 786</a> that
-     * forces the subscriber method to be <code>final</code>.
-     */
-    protected void doBeforeRelease(final MonitorEvent<T> event)
-    {
-        // Let subclasses may override it to customize behavior
-    }
+   /**
+    * Convenience method to bypass the <a
+    * href="http://code.google.com/p/guava-libraries/issues/detail?id=783">Guava
+    * Issue 786</a> that forces the subscriber method to be <code>final</code>.
+    */
+   protected void doBeforeRelease(final MonitorEvent<T> event) {
+      // Let subclasses may override it to customize behavior
+   }
 }

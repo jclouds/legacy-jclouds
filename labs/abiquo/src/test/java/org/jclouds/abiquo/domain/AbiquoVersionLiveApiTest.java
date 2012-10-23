@@ -36,26 +36,20 @@ import org.testng.annotations.Test;
  * @author Francesc Montserrat
  */
 @Test(groups = "api", testName = "AbiquoVersionLiveApiTest")
-public class AbiquoVersionLiveApiTest extends BaseAbiquoLiveApiTest
-{
-    @Override
-    protected Properties setupProperties()
-    {
-        Properties overrides = super.setupProperties();
-        overrides.setProperty("abiquo.api-version", "0.0");
-        return overrides;
-    }
+public class AbiquoVersionLiveApiTest extends BaseAbiquoLiveApiTest {
+   @Override
+   protected Properties setupProperties() {
+      Properties overrides = super.setupProperties();
+      overrides.setProperty("abiquo.api-version", "0.0");
+      return overrides;
+   }
 
-    public void testUnsupportedVersion()
-    {
-        try
-        {
-            view.getAdministrationService().getCurrentUser();
-            fail("Unsupported versions in mime types should not be allowed");
-        }
-        catch (AbiquoException ex)
-        {
-            assertHasError(ex, Status.NOT_ACCEPTABLE, "406-NOT-ACCEPTABLE");
-        }
-    }
+   public void testUnsupportedVersion() {
+      try {
+         view.getAdministrationService().getCurrentUser();
+         fail("Unsupported versions in mime types should not be allowed");
+      } catch (AbiquoException ex) {
+         assertHasError(ex, Status.NOT_ACCEPTABLE, "406-NOT-ACCEPTABLE");
+      }
+   }
 }

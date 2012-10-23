@@ -33,38 +33,30 @@ import com.google.common.base.Predicate;
  * @author Ignasi Barrera
  * @author Francesc Montserrat
  */
-public class BladePredicates
-{
-    public static Predicate<Blade> name(final String... names)
-    {
-        checkNotNull(names, "name must be defined");
+public class BladePredicates {
+   public static Predicate<Blade> name(final String... names) {
+      checkNotNull(names, "name must be defined");
 
-        return new Predicate<Blade>()
-        {
-            @Override
-            public boolean apply(final Blade machine)
-            {
-                return Arrays.asList(names).contains(machine.getName());
-            }
-        };
-    }
+      return new Predicate<Blade>() {
+         @Override
+         public boolean apply(final Blade machine) {
+            return Arrays.asList(names).contains(machine.getName());
+         }
+      };
+   }
 
-    public static Predicate<Blade> ip(final String ip)
-    {
-        return ips(checkNotNull(ip, "ip must be defined"));
-    }
+   public static Predicate<Blade> ip(final String ip) {
+      return ips(checkNotNull(ip, "ip must be defined"));
+   }
 
-    public static Predicate<Blade> ips(final String... ips)
-    {
-        checkNotNull(ips, "ips must be defined");
+   public static Predicate<Blade> ips(final String... ips) {
+      checkNotNull(ips, "ips must be defined");
 
-        return new Predicate<Blade>()
-        {
-            @Override
-            public boolean apply(final Blade machine)
-            {
-                return Arrays.asList(ips).contains(machine.getIp());
-            }
-        };
-    }
+      return new Predicate<Blade>() {
+         @Override
+         public boolean apply(final Blade machine) {
+            return Arrays.asList(ips).contains(machine.getIp());
+         }
+      };
+   }
 }

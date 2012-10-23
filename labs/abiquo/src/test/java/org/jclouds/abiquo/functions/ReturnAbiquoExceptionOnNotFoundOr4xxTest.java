@@ -36,51 +36,38 @@ import com.google.common.base.Function;
  * @author Ignasi Barrera
  */
 @Test(groups = "unit", testName = "ReturnAbiquoExceptionOnNotFoundOr4xxTest")
-public class ReturnAbiquoExceptionOnNotFoundOr4xxTest
-{
-    public void testReturnOriginalExceptionIfNotResourceNotFound()
-    {
-        Function<Exception, Object> function = new ReturnAbiquoExceptionOnNotFoundOr4xx();
-        RuntimeException exception = new RuntimeException();
+public class ReturnAbiquoExceptionOnNotFoundOr4xxTest {
+   public void testReturnOriginalExceptionIfNotResourceNotFound() {
+      Function<Exception, Object> function = new ReturnAbiquoExceptionOnNotFoundOr4xx();
+      RuntimeException exception = new RuntimeException();
 
-        try
-        {
-            function.apply(exception);
-        }
-        catch (Exception ex)
-        {
-            assertEquals(ex, exception);
-        }
-    }
+      try {
+         function.apply(exception);
+      } catch (Exception ex) {
+         assertEquals(ex, exception);
+      }
+   }
 
-    public void testReturnOriginalExceptionIfNotAbiquoException()
-    {
-        Function<Exception, Object> function = new ReturnAbiquoExceptionOnNotFoundOr4xx();
-        ResourceNotFoundException exception = new ResourceNotFoundException();
+   public void testReturnOriginalExceptionIfNotAbiquoException() {
+      Function<Exception, Object> function = new ReturnAbiquoExceptionOnNotFoundOr4xx();
+      ResourceNotFoundException exception = new ResourceNotFoundException();
 
-        try
-        {
-            function.apply(exception);
-        }
-        catch (Exception ex)
-        {
-            assertEquals(ex, exception);
-        }
-    }
+      try {
+         function.apply(exception);
+      } catch (Exception ex) {
+         assertEquals(ex, exception);
+      }
+   }
 
-    public void testReturnAbiquoException()
-    {
-        Function<Exception, Object> function = new ReturnAbiquoExceptionOnNotFoundOr4xx();
-        AbiquoException abiquoException = new AbiquoException(Status.NOT_FOUND, new ErrorsDto());
-        ResourceNotFoundException exception = new ResourceNotFoundException(abiquoException);
+   public void testReturnAbiquoException() {
+      Function<Exception, Object> function = new ReturnAbiquoExceptionOnNotFoundOr4xx();
+      AbiquoException abiquoException = new AbiquoException(Status.NOT_FOUND, new ErrorsDto());
+      ResourceNotFoundException exception = new ResourceNotFoundException(abiquoException);
 
-        try
-        {
-            function.apply(exception);
-        }
-        catch (Exception ex)
-        {
-            assertEquals(ex, abiquoException);
-        }
-    }
+      try {
+         function.apply(exception);
+      } catch (Exception ex) {
+         assertEquals(ex, abiquoException);
+      }
+   }
 }

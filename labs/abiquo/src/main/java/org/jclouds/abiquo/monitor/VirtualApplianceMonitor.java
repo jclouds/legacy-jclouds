@@ -33,75 +33,94 @@ import com.google.inject.ImplementedBy;
  * @author Ignasi Barrera
  */
 @ImplementedBy(BaseVirtualApplianceMonitor.class)
-public interface VirtualApplianceMonitor extends MonitoringService
-{
-    /**
-     * Monitor the given {@link VirtualAppliance}s and block until the deploy finishes.
-     * 
-     * @param vapp The {@link VirtualAppliance}s to monitor.
-     */
-    void awaitCompletionDeploy(final VirtualAppliance... vapp);
+public interface VirtualApplianceMonitor extends MonitoringService {
+   /**
+    * Monitor the given {@link VirtualAppliance}s and block until the deploy
+    * finishes.
+    * 
+    * @param vapp
+    *           The {@link VirtualAppliance}s to monitor.
+    */
+   void awaitCompletionDeploy(final VirtualAppliance... vapp);
 
-    /**
-     * Monitor the given {@link VirtualAppliance}s and populate an event when the deploy finishes.
-     * 
-     * @param VirtualAppliance The {@link VirtualAppliance}s to monitor.
-     */
-    public void monitorDeploy(final VirtualAppliance... vapps);
+   /**
+    * Monitor the given {@link VirtualAppliance}s and populate an event when the
+    * deploy finishes.
+    * 
+    * @param VirtualAppliance
+    *           The {@link VirtualAppliance}s to monitor.
+    */
+   public void monitorDeploy(final VirtualAppliance... vapps);
 
-    /**
-     * Monitor the given {@link VirtualAppliance}s and block until the deploy finishes.
-     * 
-     * @param maxWait The maximum time to wait.
-     * @param timeUnit The time unit for the maxWait parameter.
-     * @param vapp The {@link VirtualAppliance}s to monitor.
-     */
-    void awaitCompletionDeploy(final Long maxWait, final TimeUnit timeUnit,
-        final VirtualAppliance... vapp);
+   /**
+    * Monitor the given {@link VirtualAppliance}s and block until the deploy
+    * finishes.
+    * 
+    * @param maxWait
+    *           The maximum time to wait.
+    * @param timeUnit
+    *           The time unit for the maxWait parameter.
+    * @param vapp
+    *           The {@link VirtualAppliance}s to monitor.
+    */
+   void awaitCompletionDeploy(final Long maxWait, final TimeUnit timeUnit, final VirtualAppliance... vapp);
 
-    /**
-     * Monitor the given {@link VirtualAppliance}s and populate an event when deploy finishes.
-     * 
-     * @param maxWait The maximum time to wait.
-     * @param timeUnit The time unit for the maxWait parameter.
-     * @param vapps The {@link VirtualAppliance}s to monitor.
-     */
-    public void monitorDeploy(final Long maxWait, final TimeUnit timeUnit,
-        final VirtualAppliance... vapps);
+   /**
+    * Monitor the given {@link VirtualAppliance}s and populate an event when
+    * deploy finishes.
+    * 
+    * @param maxWait
+    *           The maximum time to wait.
+    * @param timeUnit
+    *           The time unit for the maxWait parameter.
+    * @param vapps
+    *           The {@link VirtualAppliance}s to monitor.
+    */
+   public void monitorDeploy(final Long maxWait, final TimeUnit timeUnit, final VirtualAppliance... vapps);
 
-    /**
-     * Monitor the given {@link VirtualAppliance}s and block until the undeploy finishes.
-     * 
-     * @param vapp The {@link VirtualAppliance}s to monitor.
-     */
-    void awaitCompletionUndeploy(final VirtualAppliance... vapp);
+   /**
+    * Monitor the given {@link VirtualAppliance}s and block until the undeploy
+    * finishes.
+    * 
+    * @param vapp
+    *           The {@link VirtualAppliance}s to monitor.
+    */
+   void awaitCompletionUndeploy(final VirtualAppliance... vapp);
 
-    /**
-     * Monitor the given {@link VirtualAppliance}s and call populate an event when undeploy
-     * finishes.
-     * 
-     * @param vapps The {@link VirtualAppliance}s to monitor.
-     */
-    public void monitorUndeploy(final VirtualAppliance... vapps);
+   /**
+    * Monitor the given {@link VirtualAppliance}s and call populate an event
+    * when undeploy finishes.
+    * 
+    * @param vapps
+    *           The {@link VirtualAppliance}s to monitor.
+    */
+   public void monitorUndeploy(final VirtualAppliance... vapps);
 
-    /**
-     * Monitor the given {@link VirtualAppliance}s and blocks until the undeploy finishes.
-     * 
-     * @param maxWait The maximum time to wait.
-     * @param timeUnit The time unit for the maxWait parameter.
-     * @param vapp The {@link VirtualAppliance}s to monitor.
-     */
-    void awaitCompletionUndeploy(final Long maxWait, final TimeUnit timeUnit,
-        final VirtualAppliance... vapp);
+   /**
+    * Monitor the given {@link VirtualAppliance}s and blocks until the undeploy
+    * finishes.
+    * 
+    * @param maxWait
+    *           The maximum time to wait.
+    * @param timeUnit
+    *           The time unit for the maxWait parameter.
+    * @param vapp
+    *           The {@link VirtualAppliance}s to monitor.
+    */
+   void awaitCompletionUndeploy(final Long maxWait, final TimeUnit timeUnit, final VirtualAppliance... vapp);
 
-    /**
-     * Monitor the given {@link VirtualAppliance}s and populate an event when undeploy finishes.
-     * 
-     * @param maxWait The maximum time to wait.
-     * @param timeUnit The time unit for the maxWait parameter.
-     * @param callback The callback.
-     * @param vapps The {@link VirtualAppliance}s to monitor.
-     */
-    public void monitorUndeploy(final Long maxWait, final TimeUnit timeUnit,
-        final VirtualAppliance... vapps);
+   /**
+    * Monitor the given {@link VirtualAppliance}s and populate an event when
+    * undeploy finishes.
+    * 
+    * @param maxWait
+    *           The maximum time to wait.
+    * @param timeUnit
+    *           The time unit for the maxWait parameter.
+    * @param callback
+    *           The callback.
+    * @param vapps
+    *           The {@link VirtualAppliance}s to monitor.
+    */
+   public void monitorUndeploy(final Long maxWait, final TimeUnit timeUnit, final VirtualAppliance... vapps);
 }

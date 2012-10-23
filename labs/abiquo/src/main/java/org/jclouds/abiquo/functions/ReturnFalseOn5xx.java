@@ -35,39 +35,29 @@ import com.google.common.collect.Iterables;
  * @author Ignasi Barrera
  */
 @Singleton
-public class ReturnFalseOn5xx implements Function<Exception, Object>
-{
-    @Override
-    public Object apply(final Exception from)
-    {
-        Throwable exception =
-            Iterables.find(Throwables.getCausalChain(from), hasResponse(from), null);
+public class ReturnFalseOn5xx implements Function<Exception, Object> {
+   @Override
+   public Object apply(final Exception from) {
+      Throwable exception = Iterables.find(Throwables.getCausalChain(from), hasResponse(from), null);
 
-        if (exception != null)
-        {
-            HttpResponseException responseException = (HttpResponseException) exception;
-            HttpResponse response = responseException.getResponse();
+      if (exception != null) {
+         HttpResponseException responseException = (HttpResponseException) exception;
+         HttpResponse response = responseException.getResponse();
 
-            if (response != null && response.getStatusCode() >= 500
-                && response.getStatusCode() < 600)
-            {
-                return false;
-            }
-        }
+         if (response != null && response.getStatusCode() >= 500 && response.getStatusCode() < 600) {
+            return false;
+         }
+      }
 
-        throw Throwables.propagate(from);
-    }
+      throw Throwables.propagate(from);
+   }
 
-    private static Predicate<Throwable> hasResponse(final Throwable exception)
-    {
-        return new Predicate<Throwable>()
-        {
-            @Override
-            public boolean apply(final Throwable input)
-            {
-                return input instanceof HttpResponseException
-                    && ((HttpResponseException) input).getResponse() != null;
-            }
-        };
-    }
+   private static Predicate<Throwable> hasResponse(final Throwable exception) {
+      return new Predicate<Throwable>() {
+         @Override
+         public boolean apply(final Throwable input) {
+            return input instanceof HttpResponseException && ((HttpResponseException) input).getResponse() != null;
+         }
+      };
+   }
 }

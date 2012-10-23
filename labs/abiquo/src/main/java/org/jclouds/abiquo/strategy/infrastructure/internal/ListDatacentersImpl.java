@@ -55,61 +55,52 @@ import com.google.inject.Inject;
  * @author Francesc Montserrat
  */
 @Singleton
-public class ListDatacentersImpl implements ListDatacenters
-{
+public class ListDatacentersImpl implements ListDatacenters {
 
-    protected final RestContext<AbiquoApi, AbiquoAsyncApi> context;
+   protected final RestContext<AbiquoApi, AbiquoAsyncApi> context;
 
-    protected final ExecutorService userExecutor;
+   protected final ExecutorService userExecutor;
 
-    @Resource
-    protected Logger logger = Logger.NULL;
+   @Resource
+   protected Logger logger = Logger.NULL;
 
-    @Inject(optional = true)
-    @Named(Constants.PROPERTY_REQUEST_TIMEOUT)
-    protected Long maxTime;
+   @Inject(optional = true)
+   @Named(Constants.PROPERTY_REQUEST_TIMEOUT)
+   protected Long maxTime;
 
-    @Inject
-    ListDatacentersImpl(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-        @Named(Constants.PROPERTY_USER_THREADS) final ExecutorService userExecutor)
-    {
-        this.context = context;
-        this.userExecutor = checkNotNull(userExecutor, "userExecutor");
-    }
+   @Inject
+   ListDatacentersImpl(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
+         @Named(Constants.PROPERTY_USER_THREADS) final ExecutorService userExecutor) {
+      this.context = context;
+      this.userExecutor = checkNotNull(userExecutor, "userExecutor");
+   }
 
-    @Override
-    public Iterable<Datacenter> execute()
-    {
-        DatacentersDto result = context.getApi().getInfrastructureApi().listDatacenters();
-        return wrap(context, Datacenter.class, result.getCollection());
-    }
+   @Override
+   public Iterable<Datacenter> execute() {
+      DatacentersDto result = context.getApi().getInfrastructureApi().listDatacenters();
+      return wrap(context, Datacenter.class, result.getCollection());
+   }
 
-    @Override
-    public Iterable<Datacenter> execute(final Predicate<Datacenter> selector)
-    {
-        return filter(execute(), selector);
-    }
+   @Override
+   public Iterable<Datacenter> execute(final Predicate<Datacenter> selector) {
+      return filter(execute(), selector);
+   }
 
-    @Override
-    public Iterable<Datacenter> execute(final List<Integer> datacenterIds)
-    {
-        // Find virtual datacenters in concurrent requests
-        return listConcurrentDatacenters(datacenterIds);
-    }
+   @Override
+   public Iterable<Datacenter> execute(final List<Integer> datacenterIds) {
+      // Find virtual datacenters in concurrent requests
+      return listConcurrentDatacenters(datacenterIds);
+   }
 
-    private Iterable<Datacenter> listConcurrentDatacenters(final List<Integer> ids)
-    {
-        Iterable<DatacenterDto> dcs =
-            transformParallel(ids, new Function<Integer, Future< ? extends DatacenterDto>>()
-            {
-                @Override
-                public Future<DatacenterDto> apply(final Integer input)
-                {
-                    return context.getAsyncApi().getInfrastructureApi().getDatacenter(input);
-                }
-            }, userExecutor, maxTime, logger, "getting datacenters");
+   private Iterable<Datacenter> listConcurrentDatacenters(final List<Integer> ids) {
+      Iterable<DatacenterDto> dcs = transformParallel(ids, new Function<Integer, Future<? extends DatacenterDto>>() {
+         @Override
+         public Future<DatacenterDto> apply(final Integer input) {
+            return context.getAsyncApi().getInfrastructureApi().getDatacenter(input);
+         }
+      }, userExecutor, maxTime, logger, "getting datacenters");
 
-        return DomainWrapper.wrap(context, Datacenter.class, Lists.newArrayList(dcs));
-    }
+      return DomainWrapper.wrap(context, Datacenter.class, Lists.newArrayList(dcs));
+   }
 
 }

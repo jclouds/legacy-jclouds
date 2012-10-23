@@ -39,64 +39,52 @@ import com.abiquo.server.core.infrastructure.LogicServerPolicyDto;
  *      http://community.abiquo.com/display/ABI20/Rack+Resource</a>
  */
 @EnterpriseEdition
-public class LogicServer extends DomainWrapper<LogicServerDto>
-{
-    /**
-     * Constructor to be used only by the builder.
-     */
-    protected LogicServer(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final LogicServerDto target)
-    {
-        super(context, target);
-    }
+public class LogicServer extends DomainWrapper<LogicServerDto> {
+   /**
+    * Constructor to be used only by the builder.
+    */
+   protected LogicServer(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final LogicServerDto target) {
+      super(context, target);
+   }
 
-    // Delegate Methods
+   // Delegate Methods
 
-    public String getName()
-    {
-        return target.getName();
-    }
+   public String getName() {
+      return target.getName();
+   }
 
-    public void setType(final String value)
-    {
-        target.setType(value);
-    }
+   public void setType(final String value) {
+      target.setType(value);
+   }
 
-    public String getAssociated()
-    {
-        return target.getAssociated();
-    }
+   public String getAssociated() {
+      return target.getAssociated();
+   }
 
-    public String getType()
-    {
-        return target.getType();
-    }
+   public String getType() {
+      return target.getType();
+   }
 
-    public String getAssociatedTo()
-    {
-        return target.getAssociatedTo();
-    }
+   public String getAssociatedTo() {
+      return target.getAssociatedTo();
+   }
 
-    public String getDescription()
-    {
-        return target.getDescription();
-    }
+   public String getDescription() {
+      return target.getDescription();
+   }
 
-    public void setDescription(final String value)
-    {
-        target.setDescription(value);
-    }
+   public void setDescription(final String value) {
+      target.setDescription(value);
+   }
 
-    public List<LogicServerPolicyDto> getCollection()
-    {
-        return target.getCollection();
-    }
+   public List<LogicServerPolicyDto> getCollection() {
+      return target.getCollection();
+   }
 
-    @Override
-    public String toString()
-    {
-        return "LogicServer [name=" + getName() + ", associated=" + getAssociated() + ", type="
-            + getType() + ", associatedTo=" + getAssociatedTo() + ", description="
-            + getDescription() + "]";
-    }
+   @Override
+   public String toString() {
+      return "LogicServer [name=" + getName() + ", associated=" + getAssociated() + ", type=" + getType()
+            + ", associatedTo=" + getAssociatedTo() + ", description=" + getDescription() + "]";
+   }
 
 }

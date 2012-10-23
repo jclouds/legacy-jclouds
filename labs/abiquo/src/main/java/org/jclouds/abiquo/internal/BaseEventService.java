@@ -41,31 +41,26 @@ import com.google.common.annotations.VisibleForTesting;
  * @author Vivien Mahé
  */
 @Singleton
-public class BaseEventService implements EventService
-{
-    @VisibleForTesting
-    protected RestContext<AbiquoApi, AbiquoAsyncApi> context;
+public class BaseEventService implements EventService {
+   @VisibleForTesting
+   protected RestContext<AbiquoApi, AbiquoAsyncApi> context;
 
-    @VisibleForTesting
-    protected final ListEvents listEvents;
+   @VisibleForTesting
+   protected final ListEvents listEvents;
 
-    @Inject
-    protected BaseEventService(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-        final ListEvents listEvents)
-    {
-        this.context = checkNotNull(context, "context");
-        this.listEvents = checkNotNull(listEvents, "listEvents");
-    }
+   @Inject
+   protected BaseEventService(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final ListEvents listEvents) {
+      this.context = checkNotNull(context, "context");
+      this.listEvents = checkNotNull(listEvents, "listEvents");
+   }
 
-    @Override
-    public Iterable<Event> listEvents()
-    {
-        return listEvents.execute();
-    }
+   @Override
+   public Iterable<Event> listEvents() {
+      return listEvents.execute();
+   }
 
-    @Override
-    public Iterable<Event> listEvents(final EventOptions options)
-    {
-        return listEvents.execute(options);
-    }
+   @Override
+   public Iterable<Event> listEvents(final EventOptions options) {
+      return listEvents.execute(options);
+   }
 }

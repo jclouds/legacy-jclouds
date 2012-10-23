@@ -37,85 +37,68 @@ import com.google.common.base.Function;
  * @author Serafin Sedano
  */
 @Test(groups = "unit", testName = "VirtualApplianceDeployMonitorTest")
-public class VirtualApplianceDeployMonitorTest
-{
+public class VirtualApplianceDeployMonitorTest {
 
-    @Test(expectedExceptions = NullPointerException.class)
-    public void testInvalidNullArgument()
-    {
-        Function<VirtualAppliance, MonitorStatus> function = new VirtualApplianceDeployMonitor();
-        function.apply(null);
-    }
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testInvalidNullArgument() {
+      Function<VirtualAppliance, MonitorStatus> function = new VirtualApplianceDeployMonitor();
+      function.apply(null);
+   }
 
-    public void testReturnDone()
-    {
-        VirtualApplianceState[] states = {VirtualApplianceState.DEPLOYED};
+   public void testReturnDone() {
+      VirtualApplianceState[] states = { VirtualApplianceState.DEPLOYED };
 
-        checkStatesReturn(new MockVirtualAppliance(), new VirtualApplianceDeployMonitor(), states,
-            MonitorStatus.DONE);
-    }
+      checkStatesReturn(new MockVirtualAppliance(), new VirtualApplianceDeployMonitor(), states, MonitorStatus.DONE);
+   }
 
-    public void testReturnFail()
-    {
-        VirtualApplianceState[] states =
-            {VirtualApplianceState.NEEDS_SYNC, VirtualApplianceState.UNKNOWN,
-            VirtualApplianceState.NOT_DEPLOYED};
+   public void testReturnFail() {
+      VirtualApplianceState[] states = { VirtualApplianceState.NEEDS_SYNC, VirtualApplianceState.UNKNOWN,
+            VirtualApplianceState.NOT_DEPLOYED };
 
-        checkStatesReturn(new MockVirtualAppliance(), new VirtualApplianceDeployMonitor(), states,
-            MonitorStatus.FAILED);
-    }
+      checkStatesReturn(new MockVirtualAppliance(), new VirtualApplianceDeployMonitor(), states, MonitorStatus.FAILED);
+   }
 
-    public void testReturnContinue()
-    {
-        VirtualApplianceState[] states = {VirtualApplianceState.LOCKED};
+   public void testReturnContinue() {
+      VirtualApplianceState[] states = { VirtualApplianceState.LOCKED };
 
-        checkStatesReturn(new MockVirtualAppliance(), new VirtualApplianceDeployMonitor(), states,
+      checkStatesReturn(new MockVirtualAppliance(), new VirtualApplianceDeployMonitor(), states, MonitorStatus.CONTINUE);
+
+      checkStatesReturn(new MockVirtualApplianceFailing(), new VirtualApplianceDeployMonitor(), states,
             MonitorStatus.CONTINUE);
+   }
 
-        checkStatesReturn(new MockVirtualApplianceFailing(), new VirtualApplianceDeployMonitor(),
-            states, MonitorStatus.CONTINUE);
-    }
+   private void checkStatesReturn(final MockVirtualAppliance vapp,
+         final Function<VirtualAppliance, MonitorStatus> function, final VirtualApplianceState[] states,
+         final MonitorStatus expectedStatus) {
+      for (VirtualApplianceState state : states) {
+         vapp.setState(state);
+         assertEquals(function.apply(vapp), expectedStatus);
+      }
+   }
 
-    private void checkStatesReturn(final MockVirtualAppliance vapp,
-        final Function<VirtualAppliance, MonitorStatus> function,
-        final VirtualApplianceState[] states, final MonitorStatus expectedStatus)
-    {
-        for (VirtualApplianceState state : states)
-        {
-            vapp.setState(state);
-            assertEquals(function.apply(vapp), expectedStatus);
-        }
-    }
+   private static class MockVirtualAppliance extends VirtualAppliance {
+      private VirtualApplianceState state;
 
-    private static class MockVirtualAppliance extends VirtualAppliance
-    {
-        private VirtualApplianceState state;
+      @SuppressWarnings("unchecked")
+      public MockVirtualAppliance() {
+         super(EasyMock.createMock(RestContext.class), new VirtualApplianceDto());
+      }
 
-        @SuppressWarnings("unchecked")
-        public MockVirtualAppliance()
-        {
-            super(EasyMock.createMock(RestContext.class), new VirtualApplianceDto());
-        }
+      @Override
+      public VirtualApplianceState getState() {
+         return state;
+      }
 
-        @Override
-        public VirtualApplianceState getState()
-        {
-            return state;
-        }
+      public void setState(final VirtualApplianceState state) {
+         this.state = state;
+      }
+   }
 
-        public void setState(final VirtualApplianceState state)
-        {
-            this.state = state;
-        }
-    }
+   private static class MockVirtualApplianceFailing extends MockVirtualAppliance {
+      @Override
+      public VirtualApplianceState getState() {
+         throw new RuntimeException("This mock class always fails to get the state");
+      }
 
-    private static class MockVirtualApplianceFailing extends MockVirtualAppliance
-    {
-        @Override
-        public VirtualApplianceState getState()
-        {
-            throw new RuntimeException("This mock class always fails to get the state");
-        }
-
-    }
+   }
 }

@@ -40,43 +40,40 @@ import org.jclouds.rest.RestContext;
 import com.abiquo.server.core.infrastructure.DatacenterDto;
 
 /**
- * Default implementation for the {@link FindCompatibleVirtualDatacenters} strategy.
+ * Default implementation for the {@link FindCompatibleVirtualDatacenters}
+ * strategy.
  * <p>
- * This strategy assumes that the datacenter will have different hypervisor technologies, and images
- * will have conversions to each of them.
+ * This strategy assumes that the datacenter will have different hypervisor
+ * technologies, and images will have conversions to each of them.
  * 
  * @author Ignasi Barrera
  */
 @Singleton
-public class FindCompatibleVirtualDatacentersForImageAndConversions implements
-    FindCompatibleVirtualDatacenters
-{
-    private final RestContext<AbiquoApi, AbiquoAsyncApi> context;
+public class FindCompatibleVirtualDatacentersForImageAndConversions implements FindCompatibleVirtualDatacenters {
+   private final RestContext<AbiquoApi, AbiquoAsyncApi> context;
 
-    private final CloudService cloudService;
+   private final CloudService cloudService;
 
-    @Inject
-    public FindCompatibleVirtualDatacentersForImageAndConversions(
-        final RestContext<AbiquoApi, AbiquoAsyncApi> context, final CloudService cloudService)
-    {
-        this.context = checkNotNull(context, "context");
-        this.cloudService = checkNotNull(cloudService, "cloudService");
-    }
+   @Inject
+   public FindCompatibleVirtualDatacentersForImageAndConversions(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
+         final CloudService cloudService) {
+      this.context = checkNotNull(context, "context");
+      this.cloudService = checkNotNull(cloudService, "cloudService");
+   }
 
-    @Override
-    public Iterable<VirtualDatacenter> execute(final VirtualMachineTemplate template)
-    {
-        // Build the transport object with the available information to avoid making an unnecessary
-        // call to the target API (we only need the id of the datacenter, and it is present in the
-        // link).
-        DatacenterDto datacenterDto = new DatacenterDto();
-        datacenterDto.setId(template.unwrap().getIdFromLink(ParentLinkName.DATACENTER_REPOSITORY));
-        Datacenter datacenter = wrap(context, Datacenter.class, datacenterDto);
+   @Override
+   public Iterable<VirtualDatacenter> execute(final VirtualMachineTemplate template) {
+      // Build the transport object with the available information to avoid
+      // making an unnecessary call to the target API (we only need the id of
+      // the datacenter, and it is present in the link).
+      DatacenterDto datacenterDto = new DatacenterDto();
+      datacenterDto.setId(template.unwrap().getIdFromLink(ParentLinkName.DATACENTER_REPOSITORY));
+      Datacenter datacenter = wrap(context, Datacenter.class, datacenterDto);
 
-        Iterable<VirtualDatacenter> vdcs =
-            cloudService.listVirtualDatacenters(VirtualDatacenterPredicates.datacenter(datacenter));
+      Iterable<VirtualDatacenter> vdcs = cloudService.listVirtualDatacenters(VirtualDatacenterPredicates
+            .datacenter(datacenter));
 
-        return filter(vdcs, compatibleWithTemplateOrConversions(template));
-    }
+      return filter(vdcs, compatibleWithTemplateOrConversions(template));
+   }
 
 }

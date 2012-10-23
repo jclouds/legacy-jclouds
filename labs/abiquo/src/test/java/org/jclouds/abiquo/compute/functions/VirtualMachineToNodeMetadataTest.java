@@ -64,182 +64,160 @@ import com.google.common.collect.Iterables;
  * @author Ignasi Barrera
  */
 @Test(groups = "unit", testName = "VirtualMachineToNodeMetadataTest")
-public class VirtualMachineToNodeMetadataTest
-{
-    private VirtualMachineToNodeMetadata function;
+public class VirtualMachineToNodeMetadataTest {
+   private VirtualMachineToNodeMetadata function;
 
-    private VirtualMachineWithNodeExtendedDto vm;
+   private VirtualMachineWithNodeExtendedDto vm;
 
-    private PrivateIpDto privNic;
+   private PrivateIpDto privNic;
 
-    private PublicIpDto pubNic;
+   private PublicIpDto pubNic;
 
-    private ExternalIpDto extNic;
+   private ExternalIpDto extNic;
 
-    private Hardware hardware;
+   private Hardware hardware;
 
-    @BeforeMethod
-    public void setup()
-    {
-        vm = new VirtualMachineWithNodeExtendedDto();
-        vm.setNodeName("VM");
-        vm.setName("Internal name");
-        vm.setId(5);
-        vm.setVdrpPort(22);
-        vm.setRam(2048);
-        vm.setCpu(2);
-        vm.setState(VirtualMachineState.ON);
-        vm.addLink(new RESTLink("edit", "http://foo/bar"));
+   @BeforeMethod
+   public void setup() {
+      vm = new VirtualMachineWithNodeExtendedDto();
+      vm.setNodeName("VM");
+      vm.setName("Internal name");
+      vm.setId(5);
+      vm.setVdrpPort(22);
+      vm.setRam(2048);
+      vm.setCpu(2);
+      vm.setState(VirtualMachineState.ON);
+      vm.addLink(new RESTLink("edit", "http://foo/bar"));
 
-        privNic = new PrivateIpDto();
-        privNic.setIp("192.168.1.2");
-        privNic.setMac("2a:6e:40:69:84:e0");
+      privNic = new PrivateIpDto();
+      privNic.setIp("192.168.1.2");
+      privNic.setMac("2a:6e:40:69:84:e0");
 
-        pubNic = new PublicIpDto();
-        pubNic.setIp("80.80.80.80");
-        pubNic.setMac("2a:6e:40:69:84:e1");
+      pubNic = new PublicIpDto();
+      pubNic.setIp("80.80.80.80");
+      pubNic.setMac("2a:6e:40:69:84:e1");
 
-        extNic = new ExternalIpDto();
-        extNic.setIp("10.10.10.10");
-        extNic.setMac("2a:6e:40:69:84:e2");
+      extNic = new ExternalIpDto();
+      extNic.setIp("10.10.10.10");
+      extNic.setMac("2a:6e:40:69:84:e2");
 
-        hardware = new HardwareBuilder() //
+      hardware = new HardwareBuilder() //
             .ids("1") //
             .build();
 
-        function =
-            new VirtualMachineToNodeMetadata(templateToImage(),
-                templateToHardware(),
-                stateToNodeState(),
-                virtualDatacenterToLocation());
-    }
+      function = new VirtualMachineToNodeMetadata(templateToImage(), templateToHardware(), stateToNodeState(),
+            virtualDatacenterToLocation());
+   }
 
-    public void testVirtualMachineToNodeMetadata()
-    {
-        VirtualAppliance vapp = EasyMock.createMock(VirtualAppliance.class);
-        VirtualMachine mockVm = mockVirtualMachine(vapp);
+   public void testVirtualMachineToNodeMetadata() {
+      VirtualAppliance vapp = EasyMock.createMock(VirtualAppliance.class);
+      VirtualMachine mockVm = mockVirtualMachine(vapp);
 
-        NodeMetadata node = function.apply(mockVm);
+      NodeMetadata node = function.apply(mockVm);
 
-        verify(mockVm);
+      verify(mockVm);
 
-        assertEquals(node.getId(), vm.getId().toString());
-        assertEquals(node.getUri(), URI.create("http://foo/bar"));
-        assertEquals(node.getName(), vm.getNodeName());
-        assertEquals(node.getGroup(), "VAPP");
-        assertEquals(node.getLocation().getId(), "1");
-        assertEquals(node.getLocation().getDescription(), "Mock Location");
-        assertEquals(node.getImageId(), "1");
-        assertEquals(node.getHardware().getId(), "1");
-        assertEquals(node.getHardware().getRam(), vm.getRam());
-        assertEquals(node.getHardware().getProcessors().get(0).getCores(), (double) vm.getCpu());
-        assertEquals(node.getLoginPort(), vm.getVdrpPort());
-        assertEquals(node.getPrivateAddresses().size(), 1);
-        assertEquals(node.getPublicAddresses().size(), 2);
-        assertEquals(Iterables.get(node.getPrivateAddresses(), 0), privNic.getIp());
-        assertEquals(Iterables.get(node.getPublicAddresses(), 0), pubNic.getIp());
-        assertEquals(Iterables.get(node.getPublicAddresses(), 1), extNic.getIp());
-    }
+      assertEquals(node.getId(), vm.getId().toString());
+      assertEquals(node.getUri(), URI.create("http://foo/bar"));
+      assertEquals(node.getName(), vm.getNodeName());
+      assertEquals(node.getGroup(), "VAPP");
+      assertEquals(node.getLocation().getId(), "1");
+      assertEquals(node.getLocation().getDescription(), "Mock Location");
+      assertEquals(node.getImageId(), "1");
+      assertEquals(node.getHardware().getId(), "1");
+      assertEquals(node.getHardware().getRam(), vm.getRam());
+      assertEquals(node.getHardware().getProcessors().get(0).getCores(), (double) vm.getCpu());
+      assertEquals(node.getLoginPort(), vm.getVdrpPort());
+      assertEquals(node.getPrivateAddresses().size(), 1);
+      assertEquals(node.getPublicAddresses().size(), 2);
+      assertEquals(Iterables.get(node.getPrivateAddresses(), 0), privNic.getIp());
+      assertEquals(Iterables.get(node.getPublicAddresses(), 0), pubNic.getIp());
+      assertEquals(Iterables.get(node.getPublicAddresses(), 1), extNic.getIp());
+   }
 
-    private VirtualMachineTemplateToImage templateToImage()
-    {
-        VirtualMachineTemplateToImage templateToImage =
-            EasyMock.createMock(VirtualMachineTemplateToImage.class);
-        Image image = EasyMock.createMock(Image.class);
+   private VirtualMachineTemplateToImage templateToImage() {
+      VirtualMachineTemplateToImage templateToImage = EasyMock.createMock(VirtualMachineTemplateToImage.class);
+      Image image = EasyMock.createMock(Image.class);
 
-        expect(image.getId()).andReturn("1");
-        expect(image.getOperatingSystem()).andReturn(null);
-        expect(templateToImage.apply(anyObject(VirtualMachineTemplate.class))).andReturn(image);
+      expect(image.getId()).andReturn("1");
+      expect(image.getOperatingSystem()).andReturn(null);
+      expect(templateToImage.apply(anyObject(VirtualMachineTemplate.class))).andReturn(image);
 
-        replay(image);
-        replay(templateToImage);
+      replay(image);
+      replay(templateToImage);
 
-        return templateToImage;
-    }
+      return templateToImage;
+   }
 
-    private VirtualMachineTemplateInVirtualDatacenterToHardware templateToHardware()
-    {
-        VirtualMachineTemplateInVirtualDatacenterToHardware virtualMachineTemplateToHardware =
-            EasyMock.createMock(VirtualMachineTemplateInVirtualDatacenterToHardware.class);
+   private VirtualMachineTemplateInVirtualDatacenterToHardware templateToHardware() {
+      VirtualMachineTemplateInVirtualDatacenterToHardware virtualMachineTemplateToHardware = EasyMock
+            .createMock(VirtualMachineTemplateInVirtualDatacenterToHardware.class);
 
-        expect(
-            virtualMachineTemplateToHardware.apply(anyObject(VirtualMachineTemplateInVirtualDatacenter.class)))
+      expect(virtualMachineTemplateToHardware.apply(anyObject(VirtualMachineTemplateInVirtualDatacenter.class)))
             .andReturn(hardware);
 
-        replay(virtualMachineTemplateToHardware);
+      replay(virtualMachineTemplateToHardware);
 
-        return virtualMachineTemplateToHardware;
-    }
+      return virtualMachineTemplateToHardware;
+   }
 
-    private VirtualDatacenterToLocation virtualDatacenterToLocation()
-    {
-        VirtualDatacenterToLocation datacenterToLocation =
-            EasyMock.createMock(VirtualDatacenterToLocation.class);
-        Location location = EasyMock.createMock(Location.class);
+   private VirtualDatacenterToLocation virtualDatacenterToLocation() {
+      VirtualDatacenterToLocation datacenterToLocation = EasyMock.createMock(VirtualDatacenterToLocation.class);
+      Location location = EasyMock.createMock(Location.class);
 
-        expect(location.getId()).andReturn("1");
-        expect(location.getDescription()).andReturn("Mock Location");
+      expect(location.getId()).andReturn("1");
+      expect(location.getDescription()).andReturn("Mock Location");
 
-        expect(datacenterToLocation.apply(anyObject(VirtualDatacenter.class))).andReturn(location);
+      expect(datacenterToLocation.apply(anyObject(VirtualDatacenter.class))).andReturn(location);
 
-        replay(location);
-        replay(datacenterToLocation);
+      replay(location);
+      replay(datacenterToLocation);
 
-        return datacenterToLocation;
-    }
+      return datacenterToLocation;
+   }
 
-    private VirtualMachineStateToNodeState stateToNodeState()
-    {
-        VirtualMachineStateToNodeState stateToNodeState =
-            EasyMock.createMock(VirtualMachineStateToNodeState.class);
-        expect(stateToNodeState.apply(anyObject(VirtualMachineState.class))).andReturn(
-            Status.RUNNING);
-        replay(stateToNodeState);
-        return stateToNodeState;
-    }
+   private VirtualMachineStateToNodeState stateToNodeState() {
+      VirtualMachineStateToNodeState stateToNodeState = EasyMock.createMock(VirtualMachineStateToNodeState.class);
+      expect(stateToNodeState.apply(anyObject(VirtualMachineState.class))).andReturn(Status.RUNNING);
+      replay(stateToNodeState);
+      return stateToNodeState;
+   }
 
-    private VirtualDatacenter mockVirtualDatacenter()
-    {
-        VirtualDatacenter vdc = EasyMock.createMock(VirtualDatacenter.class);
-        expect(vdc.getHypervisorType()).andReturn(HypervisorType.VMX_04);
-        expect(vdc.getDatacenter()).andReturn(null);
-        replay(vdc);
-        return vdc;
-    }
+   private VirtualDatacenter mockVirtualDatacenter() {
+      VirtualDatacenter vdc = EasyMock.createMock(VirtualDatacenter.class);
+      expect(vdc.getHypervisorType()).andReturn(HypervisorType.VMX_04);
+      expect(vdc.getDatacenter()).andReturn(null);
+      replay(vdc);
+      return vdc;
+   }
 
-    private VirtualMachineTemplate mockTemplate()
-    {
-        return EasyMock.createMock(VirtualMachineTemplate.class);
-    }
+   private VirtualMachineTemplate mockTemplate() {
+      return EasyMock.createMock(VirtualMachineTemplate.class);
+   }
 
-    @SuppressWarnings("unchecked")
-    private VirtualMachine mockVirtualMachine(final VirtualAppliance vapp)
-    {
-        VirtualMachine mockVm = EasyMock.createMock(VirtualMachine.class);
+   @SuppressWarnings("unchecked")
+   private VirtualMachine mockVirtualMachine(final VirtualAppliance vapp) {
+      VirtualMachine mockVm = EasyMock.createMock(VirtualMachine.class);
 
-        Ip< ? , ? > mockPrivNic =
-            wrap(EasyMock.createMock(RestContext.class), PrivateIp.class, privNic);
-        Ip< ? , ? > mockPubNic =
-            wrap(EasyMock.createMock(RestContext.class), PublicIp.class, pubNic);
-        Ip< ? , ? > mockExtNic =
-            wrap(EasyMock.createMock(RestContext.class), ExternalIp.class, extNic);
+      Ip<?, ?> mockPrivNic = wrap(EasyMock.createMock(RestContext.class), PrivateIp.class, privNic);
+      Ip<?, ?> mockPubNic = wrap(EasyMock.createMock(RestContext.class), PublicIp.class, pubNic);
+      Ip<?, ?> mockExtNic = wrap(EasyMock.createMock(RestContext.class), ExternalIp.class, extNic);
 
-        expect(mockVm.getId()).andReturn(vm.getId());
-        expect(mockVm.getURI()).andReturn(URI.create(vm.getEditLink().getHref()));
-        expect(mockVm.getNameLabel()).andReturn(vm.getNodeName());
-        expect(mockVm.getTemplate()).andReturn(mockTemplate());
-        expect(mockVm.getState()).andReturn(vm.getState());
-        expect(mockVm.listAttachedNics()).andReturn(
-            ImmutableList.<Ip< ? , ? >> of(mockPubNic, mockPrivNic, mockExtNic));
-        expect(mockVm.getVirtualAppliance()).andReturn(vapp);
-        expect(vapp.getName()).andReturn("VAPP");
-        expect(mockVm.getVirtualDatacenter()).andReturn(mockVirtualDatacenter());
-        expect(mockVm.getRam()).andReturn(vm.getRam());
-        expect(mockVm.getCpu()).andReturn(vm.getCpu());
+      expect(mockVm.getId()).andReturn(vm.getId());
+      expect(mockVm.getURI()).andReturn(URI.create(vm.getEditLink().getHref()));
+      expect(mockVm.getNameLabel()).andReturn(vm.getNodeName());
+      expect(mockVm.getTemplate()).andReturn(mockTemplate());
+      expect(mockVm.getState()).andReturn(vm.getState());
+      expect(mockVm.listAttachedNics()).andReturn(ImmutableList.<Ip<?, ?>> of(mockPubNic, mockPrivNic, mockExtNic));
+      expect(mockVm.getVirtualAppliance()).andReturn(vapp);
+      expect(vapp.getName()).andReturn("VAPP");
+      expect(mockVm.getVirtualDatacenter()).andReturn(mockVirtualDatacenter());
+      expect(mockVm.getRam()).andReturn(vm.getRam());
+      expect(mockVm.getCpu()).andReturn(vm.getCpu());
 
-        replay(mockVm);
-        replay(vapp);
+      replay(mockVm);
+      replay(vapp);
 
-        return mockVm;
-    }
+      return mockVm;
+   }
 }

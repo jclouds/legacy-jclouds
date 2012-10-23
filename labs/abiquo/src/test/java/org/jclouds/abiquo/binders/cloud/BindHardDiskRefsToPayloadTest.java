@@ -39,57 +39,44 @@ import com.abiquo.server.core.infrastructure.storage.DiskManagementDto;
  * @author Ignasi Barrera
  */
 @Test(groups = "unit", testName = "BindHardDiskRefsToPayloadTest")
-public class BindHardDiskRefsToPayloadTest
-{
+public class BindHardDiskRefsToPayloadTest {
 
-    @Test(expectedExceptions = NullPointerException.class)
-    public void testInvalidNullInput()
-    {
-        BindHardDiskRefsToPayload binder = new BindHardDiskRefsToPayload(new JAXBParser("false"));
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
-        binder.bindToRequest(request, null);
-    }
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testInvalidNullInput() {
+      BindHardDiskRefsToPayload binder = new BindHardDiskRefsToPayload(new JAXBParser("false"));
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
+      binder.bindToRequest(request, null);
+   }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
-    public void testInvalidTypeInput()
-    {
-        BindHardDiskRefsToPayload binder = new BindHardDiskRefsToPayload(new JAXBParser("false"));
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
-        binder.bindToRequest(request, new Object());
-    }
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testInvalidTypeInput() {
+      BindHardDiskRefsToPayload binder = new BindHardDiskRefsToPayload(new JAXBParser("false"));
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
+      binder.bindToRequest(request, new Object());
+   }
 
-    public void testBindEmptyArray() throws IOException
-    {
-        BindHardDiskRefsToPayload binder = new BindHardDiskRefsToPayload(new JAXBParser("false"));
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
-        request = binder.bindToRequest(request, new DiskManagementDto[] {});
-        assertPayloadEquals(request.getPayload(), withHeader("<links/>"), LinksDto.class);
-    }
+   public void testBindEmptyArray() throws IOException {
+      BindHardDiskRefsToPayload binder = new BindHardDiskRefsToPayload(new JAXBParser("false"));
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
+      request = binder.bindToRequest(request, new DiskManagementDto[] {});
+      assertPayloadEquals(request.getPayload(), withHeader("<links/>"), LinksDto.class);
+   }
 
-    public void testBindSingleHardDisk() throws IOException
-    {
-        DiskManagementDto hardDisk = CloudResources.hardDiskPut();
-        BindHardDiskRefsToPayload binder = new BindHardDiskRefsToPayload(new JAXBParser("false"));
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
-        request = binder.bindToRequest(request, new DiskManagementDto[] {hardDisk});
-        assertPayloadEquals(request.getPayload(), withHeader("<links><link href=\""
-            + hardDisk.getEditLink().getHref() + "\" rel=\"" + binder.getRelToUse(hardDisk)
-            + "\"/></links>"), LinksDto.class);
-    }
+   public void testBindSingleHardDisk() throws IOException {
+      DiskManagementDto hardDisk = CloudResources.hardDiskPut();
+      BindHardDiskRefsToPayload binder = new BindHardDiskRefsToPayload(new JAXBParser("false"));
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
+      request = binder.bindToRequest(request, new DiskManagementDto[] { hardDisk });
+      assertPayloadEquals(request.getPayload(), withHeader("<links><link href=\"" + hardDisk.getEditLink().getHref()
+            + "\" rel=\"" + binder.getRelToUse(hardDisk) + "\"/></links>"), LinksDto.class);
+   }
 
-    public void testBindMultipleHardDisks() throws IOException
-    {
-        DiskManagementDto hardDisk = CloudResources.hardDiskPut();
-        BindHardDiskRefsToPayload binder = new BindHardDiskRefsToPayload(new JAXBParser("false"));
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
-        request = binder.bindToRequest(request, new DiskManagementDto[] {hardDisk, hardDisk});
-        assertPayloadEquals(request.getPayload(), withHeader("<links><link href=\""
-            + hardDisk.getEditLink().getHref() + "\" rel=\"" + binder.getRelToUse(hardDisk)
-            + "\"/></links>"), LinksDto.class);
-    }
+   public void testBindMultipleHardDisks() throws IOException {
+      DiskManagementDto hardDisk = CloudResources.hardDiskPut();
+      BindHardDiskRefsToPayload binder = new BindHardDiskRefsToPayload(new JAXBParser("false"));
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
+      request = binder.bindToRequest(request, new DiskManagementDto[] { hardDisk, hardDisk });
+      assertPayloadEquals(request.getPayload(), withHeader("<links><link href=\"" + hardDisk.getEditLink().getHref()
+            + "\" rel=\"" + binder.getRelToUse(hardDisk) + "\"/></links>"), LinksDto.class);
+   }
 }

@@ -44,36 +44,30 @@ import com.google.common.collect.Iterables;
  * @author Ignasi Barrera
  */
 @Singleton
-public class BindNetworkConfigurationRefToPayload extends BindToXMLPayload
-{
-    @Inject
-    public BindNetworkConfigurationRefToPayload(final XMLParser xmlParser)
-    {
-        super(xmlParser);
-    }
+public class BindNetworkConfigurationRefToPayload extends BindToXMLPayload {
+   @Inject
+   public BindNetworkConfigurationRefToPayload(final XMLParser xmlParser) {
+      super(xmlParser);
+   }
 
-    @Override
-    public <R extends HttpRequest> R bindToRequest(final R request, final Object input)
-    {
-        checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest,
+   @Override
+   public <R extends HttpRequest> R bindToRequest(final R request, final Object input) {
+      checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest,
             "this binder is only valid for GeneratedHttpRequests");
-        checkArgument(checkNotNull(input, "input") instanceof VLANNetworkDto,
+      checkArgument(checkNotNull(input, "input") instanceof VLANNetworkDto,
             "this binder is only valid for VLANNetworkDto");
-        GeneratedHttpRequest gRequest = (GeneratedHttpRequest) request;
-        checkState(gRequest.getArgs() != null, "args should be initialized at this point");
+      GeneratedHttpRequest gRequest = (GeneratedHttpRequest) request;
+      checkState(gRequest.getArgs() != null, "args should be initialized at this point");
 
-        VLANNetworkDto network = (VLANNetworkDto) input;
-        VirtualMachineDto vm =
-            (VirtualMachineDto) Iterables.find(gRequest.getArgs(),
-                Predicates.instanceOf(VirtualMachineDto.class));
+      VLANNetworkDto network = (VLANNetworkDto) input;
+      VirtualMachineDto vm = (VirtualMachineDto) Iterables.find(gRequest.getArgs(),
+            Predicates.instanceOf(VirtualMachineDto.class));
 
-        RESTLink configLink =
-            checkNotNull(vm.searchLink("configurations"), "missing required link");
+      RESTLink configLink = checkNotNull(vm.searchLink("configurations"), "missing required link");
 
-        LinksDto dto = new LinksDto();
-        dto.addLink(new RESTLink("network_configuration", configLink.getHref() + "/"
-            + network.getId()));
+      LinksDto dto = new LinksDto();
+      dto.addLink(new RESTLink("network_configuration", configLink.getHref() + "/" + network.getId()));
 
-        return super.bindToRequest(request, dto);
-    }
+      return super.bindToRequest(request, dto);
+   }
 }

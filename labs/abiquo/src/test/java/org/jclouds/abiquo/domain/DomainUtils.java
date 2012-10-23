@@ -28,39 +28,33 @@ import com.abiquo.model.rest.RESTLink;
  * 
  * @author Ignasi Barrera
  */
-public class DomainUtils
-{
-    /**
-     * Adds the XML header to the given XML.
-     */
-    public static String withHeader(final String xml)
-    {
-        return XMLParser.DEFAULT_XML_HEADER + xml;
-    }
+public class DomainUtils {
+   /**
+    * Adds the XML header to the given XML.
+    */
+   public static String withHeader(final String xml) {
+      return XMLParser.DEFAULT_XML_HEADER + xml;
+   }
 
-    /**
-     * Builds a link in xml format
-     */
-    public static String link(final String href, final String rel)
-    {
-        return "<link href=\"http://localhost/api" + href + "\" rel=\"" + rel + "\"/>";
-    }
+   /**
+    * Builds a link in xml format
+    */
+   public static String link(final String href, final String rel) {
+      return "<link href=\"http://localhost/api" + href + "\" rel=\"" + rel + "\"/>";
+   }
 
-    /**
-     * Builds a link in xml format
-     */
-    public static String link(final String href, final String rel, final String title)
-    {
-        return "<link href=\"http://localhost/api" + href + "\" rel=\"" + rel + "\" title=\""
-            + title + "\"/>";
-    }
+   /**
+    * Builds a link in xml format
+    */
+   public static String link(final String href, final String rel, final String title) {
+      return "<link href=\"http://localhost/api" + href + "\" rel=\"" + rel + "\" title=\"" + title + "\"/>";
+   }
 
-    /**
-     * Builds a link in xml format
-     */
-    public static String link(final RESTLink link)
-    {
-        return "<link href=\"" + link.getHref() + "\" rel=\"" + link.getRel() + "\""
+   /**
+    * Builds a link in xml format
+    */
+   public static String link(final RESTLink link) {
+      return "<link href=\"" + link.getHref() + "\" rel=\"" + link.getRel() + "\""
             + (link.getTitle() == null ? "" : " title=\"" + link.getTitle() + "\"") + "/>";
-    }
+   }
 }

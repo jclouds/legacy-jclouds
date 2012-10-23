@@ -33,50 +33,43 @@ import com.abiquo.server.core.cloud.VirtualApplianceState;
 import com.google.common.base.Function;
 
 /**
- * This class takes care of monitoring the a undeploy of a {@link VirtualAppliance}.
+ * This class takes care of monitoring the a undeploy of a
+ * {@link VirtualAppliance}.
  * 
  * @author Serafin Sedano
  */
 @Singleton
-public class VirtualApplianceUndeployMonitor implements Function<VirtualAppliance, MonitorStatus>
-{
-    @Resource
-    protected Logger logger = Logger.NULL;
+public class VirtualApplianceUndeployMonitor implements Function<VirtualAppliance, MonitorStatus> {
+   @Resource
+   protected Logger logger = Logger.NULL;
 
-    @Override
-    public MonitorStatus apply(final VirtualAppliance virtualAppliance)
-    {
-        checkNotNull(virtualAppliance, "virtualAppliance");
+   @Override
+   public MonitorStatus apply(final VirtualAppliance virtualAppliance) {
+      checkNotNull(virtualAppliance, "virtualAppliance");
 
-        try
-        {
-            VirtualApplianceState state = virtualAppliance.getState();
+      try {
+         VirtualApplianceState state = virtualAppliance.getState();
 
-            switch (state)
-            {
-                case DEPLOYED:
-                case UNKNOWN:
-                case NEEDS_SYNC:
-                    return MonitorStatus.FAILED;
-                case NOT_DEPLOYED:
-                    return MonitorStatus.DONE;
-                case LOCKED:
-                default:
-                    return MonitorStatus.CONTINUE;
-            }
-        }
-        catch (ResourceNotFoundException nfe)
-        {
-            logger.warn("virtual appliance %s not found, assuming it was undeployed successfully, "
-                + "stop monitor with DONE", virtualAppliance);
-            return MonitorStatus.DONE;
-        }
-        catch (Exception ex)
-        {
-            logger.warn(ex, "exception thrown while monitoring %s on %s, returning CONTINUE",
-                virtualAppliance, getClass().getName());
+         switch (state) {
+            case DEPLOYED:
+            case UNKNOWN:
+            case NEEDS_SYNC:
+               return MonitorStatus.FAILED;
+            case NOT_DEPLOYED:
+               return MonitorStatus.DONE;
+            case LOCKED:
+            default:
+               return MonitorStatus.CONTINUE;
+         }
+      } catch (ResourceNotFoundException nfe) {
+         logger.warn("virtual appliance %s not found, assuming it was undeployed successfully, "
+               + "stop monitor with DONE", virtualAppliance);
+         return MonitorStatus.DONE;
+      } catch (Exception ex) {
+         logger.warn(ex, "exception thrown while monitoring %s on %s, returning CONTINUE", virtualAppliance, getClass()
+               .getName());
 
-            return MonitorStatus.CONTINUE;
-        }
-    }
+         return MonitorStatus.CONTINUE;
+      }
+   }
 }

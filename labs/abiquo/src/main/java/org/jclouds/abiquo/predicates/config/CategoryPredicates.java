@@ -33,20 +33,16 @@ import com.google.common.base.Predicate;
  * @author Ignasi Barrera
  * @author Francesc Montserrat
  */
-public class CategoryPredicates
-{
-    public static Predicate<Category> name(final String... names)
-    {
-        checkNotNull(names, "names must be defined");
+public class CategoryPredicates {
+   public static Predicate<Category> name(final String... names) {
+      checkNotNull(names, "names must be defined");
 
-        return new Predicate<Category>()
-        {
-            @Override
-            public boolean apply(final Category category)
-            {
-                return Arrays.asList(names).contains(category.getName());
-            }
-        };
-    }
+      return new Predicate<Category>() {
+         @Override
+         public boolean apply(final Category category) {
+            return Arrays.asList(names).contains(category.getName());
+         }
+      };
+   }
 
 }

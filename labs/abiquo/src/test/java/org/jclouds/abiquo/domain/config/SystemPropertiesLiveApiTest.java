@@ -31,24 +31,20 @@ import org.testng.annotations.Test;
  * @author Francesc Montserrat
  */
 @Test(groups = "api", testName = "SystemPropertiesLiveApiTest")
-public class SystemPropertiesLiveApiTest extends BaseAbiquoApiLiveApiTest
-{
-    public void testUpdate()
-    {
-        SystemProperty prop =
-            env.administrationService.getSystemProperty("client.dashboard.showStartUpAlert");
+public class SystemPropertiesLiveApiTest extends BaseAbiquoApiLiveApiTest {
+   public void testUpdate() {
+      SystemProperty prop = env.administrationService.getSystemProperty("client.dashboard.showStartUpAlert");
 
-        String value = prop.getValue();
-        prop.setValue("0");
-        prop.update();
+      String value = prop.getValue();
+      prop.setValue("0");
+      prop.update();
 
-        // Recover the updated datacenter
-        SystemProperty updated =
-            env.administrationService.getSystemProperty("client.dashboard.showStartUpAlert");
+      // Recover the updated datacenter
+      SystemProperty updated = env.administrationService.getSystemProperty("client.dashboard.showStartUpAlert");
 
-        assertEquals(updated.getValue(), "0");
+      assertEquals(updated.getValue(), "0");
 
-        prop.setValue(value);
-        prop.update();
-    }
+      prop.setValue(value);
+      prop.update();
+   }
 }

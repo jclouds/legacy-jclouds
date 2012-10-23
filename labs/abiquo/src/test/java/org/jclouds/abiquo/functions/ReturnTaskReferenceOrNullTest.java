@@ -46,53 +46,49 @@ import com.google.inject.TypeLiteral;
  * @author Ignasi Barrera
  */
 @Test(groups = "unit", testName = "ReturnTaskReferenceOrNullTest")
-public class ReturnTaskReferenceOrNullTest
-{
-    public void testReturnNullIfNoContent()
-    {
-        Function<HttpResponse, AcceptedRequestDto<String>> function =
-            new ReturnTaskReferenceOrNull(new JAXBParser("false"), createTypeLiteral());
+public class ReturnTaskReferenceOrNullTest {
+   public void testReturnNullIfNoContent() {
+      Function<HttpResponse, AcceptedRequestDto<String>> function = new ReturnTaskReferenceOrNull(new JAXBParser(
+            "false"), createTypeLiteral());
 
-        HttpResponse response = EasyMock.createMock(HttpResponse.class);
+      HttpResponse response = EasyMock.createMock(HttpResponse.class);
 
-        expect(response.getStatusCode()).andReturn(Status.NO_CONTENT.getStatusCode());
-        expect(response.getPayload()).andReturn(null);
+      expect(response.getStatusCode()).andReturn(Status.NO_CONTENT.getStatusCode());
+      expect(response.getPayload()).andReturn(null);
 
-        replay(response);
+      replay(response);
 
-        assertNull(function.apply(response));
+      assertNull(function.apply(response));
 
-        verify(response);
-    }
+      verify(response);
+   }
 
-    public void testReturnTaskIfAccepted() throws IOException
-    {
-        JAXBParser parser = new JAXBParser("false");
-        AcceptedRequestDto< ? > task = new AcceptedRequestDto<String>();
-        Payload payload = Payloads.newPayload(parser.toXML(task));
+   public void testReturnTaskIfAccepted() throws IOException {
+      JAXBParser parser = new JAXBParser("false");
+      AcceptedRequestDto<?> task = new AcceptedRequestDto<String>();
+      Payload payload = Payloads.newPayload(parser.toXML(task));
 
-        Function<HttpResponse, AcceptedRequestDto<String>> function =
-            new ReturnTaskReferenceOrNull(parser, createTypeLiteral());
+      Function<HttpResponse, AcceptedRequestDto<String>> function = new ReturnTaskReferenceOrNull(parser,
+            createTypeLiteral());
 
-        HttpResponse response = EasyMock.createMock(HttpResponse.class);
+      HttpResponse response = EasyMock.createMock(HttpResponse.class);
 
-        expect(response.getStatusCode()).andReturn(Status.ACCEPTED.getStatusCode());
-        // Get payload is called three times: one to deserialize it, and twice to release it
-        expect(response.getPayload()).andReturn(payload);
-        expect(response.getPayload()).andReturn(payload);
-        expect(response.getPayload()).andReturn(payload);
+      expect(response.getStatusCode()).andReturn(Status.ACCEPTED.getStatusCode());
+      // Get payload is called three times: one to deserialize it, and twice to
+      // release it
+      expect(response.getPayload()).andReturn(payload);
+      expect(response.getPayload()).andReturn(payload);
+      expect(response.getPayload()).andReturn(payload);
 
-        replay(response);
+      replay(response);
 
-        assertTrue(function.apply(response) instanceof AcceptedRequestDto);
+      assertTrue(function.apply(response) instanceof AcceptedRequestDto);
 
-        verify(response);
-    }
+      verify(response);
+   }
 
-    private static TypeLiteral<AcceptedRequestDto<String>> createTypeLiteral()
-    {
-        return new TypeLiteral<AcceptedRequestDto<String>>()
-        {
-        };
-    }
+   private static TypeLiteral<AcceptedRequestDto<String>> createTypeLiteral() {
+      return new TypeLiteral<AcceptedRequestDto<String>>() {
+      };
+   }
 }

@@ -33,39 +33,46 @@ import com.google.inject.ImplementedBy;
  * @author Sergi Castro
  */
 @ImplementedBy(BaseConversionMonitor.class)
-public interface ConversionMonitor extends MonitoringService
-{
-    /**
-     * Monitor the given {@link Conversion}s and block until they finishes.
-     * 
-     * @param conversions The {@link Conversion}s to monitor.
-     */
-    void awaitCompletion(final Conversion... conversions);
+public interface ConversionMonitor extends MonitoringService {
+   /**
+    * Monitor the given {@link Conversion}s and block until they finishes.
+    * 
+    * @param conversions
+    *           The {@link Conversion}s to monitor.
+    */
+   void awaitCompletion(final Conversion... conversions);
 
-    /**
-     * Monitor the given {@link Conversion}s and populate an event when they finish.
-     * 
-     * @param conversions The {@link Conversion}s to monitor.
-     */
-    public void monitor(final Conversion... conversions);
+   /**
+    * Monitor the given {@link Conversion}s and populate an event when they
+    * finish.
+    * 
+    * @param conversions
+    *           The {@link Conversion}s to monitor.
+    */
+   public void monitor(final Conversion... conversions);
 
-    /**
-     * Monitor the given {@link Conversion}s and block until they finish.
-     * 
-     * @param maxWait The maximum time to wait.
-     * @param timeUnit The time unit for the maxWait parameter.
-     * @param conversions The {@link Conversion}s to monitor.
-     */
-    void awaitCompletion(final Long maxWait, final TimeUnit timeUnit,
-        final Conversion... conversions);
+   /**
+    * Monitor the given {@link Conversion}s and block until they finish.
+    * 
+    * @param maxWait
+    *           The maximum time to wait.
+    * @param timeUnit
+    *           The time unit for the maxWait parameter.
+    * @param conversions
+    *           The {@link Conversion}s to monitor.
+    */
+   void awaitCompletion(final Long maxWait, final TimeUnit timeUnit, final Conversion... conversions);
 
-    /**
-     * Monitor the given {@link Conversion}s and populate an event when they finish.
-     * 
-     * @param maxWait The maximum time to wait.
-     * @param timeUnit The time unit for the maxWait parameter.
-     * @param conversions The {@link Conversion}s to monitor.
-     */
-    public void monitor(final Long maxWait, final TimeUnit timeUnit,
-        final Conversion... conversions);
+   /**
+    * Monitor the given {@link Conversion}s and populate an event when they
+    * finish.
+    * 
+    * @param maxWait
+    *           The maximum time to wait.
+    * @param timeUnit
+    *           The time unit for the maxWait parameter.
+    * @param conversions
+    *           The {@link Conversion}s to monitor.
+    */
+   public void monitor(final Long maxWait, final TimeUnit timeUnit, final Conversion... conversions);
 }

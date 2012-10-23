@@ -44,57 +44,49 @@ import com.google.inject.Module;
  * 
  * @author Ignasi Barrera
  */
-public abstract class BaseAbiquoAsyncApiTest<T> extends BaseAsyncClientTest<T>
-{
-    private XMLParser xml;
+public abstract class BaseAbiquoAsyncApiTest<T> extends BaseAsyncClientTest<T> {
+   private XMLParser xml;
 
-    @BeforeClass
-    @Override
-    protected void setupFactory() throws IOException
-    {
-        super.setupFactory();
-        xml = injector.getInstance(XMLParser.class);
-    }
+   @BeforeClass
+   @Override
+   protected void setupFactory() throws IOException {
+      super.setupFactory();
+      xml = injector.getInstance(XMLParser.class);
+   }
 
-    @Override
-    protected void checkFilters(final HttpRequest request)
-    {
-        assertEquals(request.getFilters().size(), 2);
-        assertEquals(request.getFilters().get(0).getClass(), AbiquoAuthentication.class);
-        assertEquals(request.getFilters().get(1).getClass(), AppendApiVersionToMediaType.class);
-    }
+   @Override
+   protected void checkFilters(final HttpRequest request) {
+      assertEquals(request.getFilters().size(), 2);
+      assertEquals(request.getFilters().get(0).getClass(), AbiquoAuthentication.class);
+      assertEquals(request.getFilters().get(1).getClass(), AppendApiVersionToMediaType.class);
+   }
 
-    @Override
-    protected Module createModule()
-    {
-        return new AbiquoRestClientModule();
-    }
+   @Override
+   protected Module createModule() {
+      return new AbiquoRestClientModule();
+   }
 
-    @Override
-    protected ProviderMetadata createProviderMetadata()
-    {
-        return AnonymousProviderMetadata.forApiWithEndpoint(new AbiquoApiMetadata(),
-            "http://localhost/api");
-    }
+   @Override
+   protected ProviderMetadata createProviderMetadata() {
+      return AnonymousProviderMetadata.forApiWithEndpoint(new AbiquoApiMetadata(), "http://localhost/api");
+   }
 
-    @Override
-    protected Properties setupProperties()
-    {
-        Properties props = super.setupProperties();
-        // Do not pretty print payloads in tests
-        props.setProperty(PROPERTY_PRETTY_PRINT_PAYLOADS, "false");
-        return props;
-    }
+   @Override
+   protected Properties setupProperties() {
+      Properties props = super.setupProperties();
+      // Do not pretty print payloads in tests
+      props.setProperty(PROPERTY_PRETTY_PRINT_PAYLOADS, "false");
+      return props;
+   }
 
-    protected void assertPayloadEquals(final HttpRequest request, final String toMatch,
-        final Class< ? extends SingleResourceTransportDto> entityClass, final String contentType,
-        final boolean contentMD5) throws IOException
-    {
-        // Make sure we don't have formatting issues
-        SingleResourceTransportDto entity = xml.fromXML(toMatch, entityClass);
-        String stringToMatch = xml.toXML(entity, entityClass);
+   protected void assertPayloadEquals(final HttpRequest request, final String toMatch,
+         final Class<? extends SingleResourceTransportDto> entityClass, final String contentType,
+         final boolean contentMD5) throws IOException {
+      // Make sure we don't have formatting issues
+      SingleResourceTransportDto entity = xml.fromXML(toMatch, entityClass);
+      String stringToMatch = xml.toXML(entity, entityClass);
 
-        super.assertPayloadEquals(request, stringToMatch, contentType, contentMD5);
-    }
+      super.assertPayloadEquals(request, stringToMatch, contentType, contentMD5);
+   }
 
 }

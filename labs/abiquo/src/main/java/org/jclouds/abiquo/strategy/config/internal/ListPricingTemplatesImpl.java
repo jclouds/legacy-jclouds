@@ -41,30 +41,27 @@ import com.google.inject.Inject;
  * @author Susana Acedo
  */
 @Singleton
-public class ListPricingTemplatesImpl implements ListPricingTemplates
-{
-    // This strategy does not have still an Executor instance because the current methods call
-    // single api methods
+public class ListPricingTemplatesImpl implements ListPricingTemplates {
+   // This strategy does not have still an Executor instance because the current
+   // methods call
+   // single api methods
 
-    protected final RestContext<AbiquoApi, AbiquoAsyncApi> context;
+   protected final RestContext<AbiquoApi, AbiquoAsyncApi> context;
 
-    @Inject
-    ListPricingTemplatesImpl(final RestContext<AbiquoApi, AbiquoAsyncApi> context)
-    {
-        this.context = context;
-    }
+   @Inject
+   ListPricingTemplatesImpl(final RestContext<AbiquoApi, AbiquoAsyncApi> context) {
+      this.context = context;
+   }
 
-    @Override
-    public Iterable<PricingTemplate> execute()
-    {
-        PricingTemplatesDto result = context.getApi().getPricingApi().listPricingTemplates();
-        return wrap(context, PricingTemplate.class, result.getCollection());
-    }
+   @Override
+   public Iterable<PricingTemplate> execute() {
+      PricingTemplatesDto result = context.getApi().getPricingApi().listPricingTemplates();
+      return wrap(context, PricingTemplate.class, result.getCollection());
+   }
 
-    @Override
-    public Iterable<PricingTemplate> execute(final Predicate<PricingTemplate> selector)
-    {
-        return filter(execute(), selector);
-    }
+   @Override
+   public Iterable<PricingTemplate> execute(final Predicate<PricingTemplate> selector) {
+      return filter(execute(), selector);
+   }
 
 }

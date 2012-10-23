@@ -37,54 +37,46 @@ import org.testng.annotations.Test;
  * @author Ignasi Barrera
  */
 @Test(groups = "api", testName = "ListLicensesImplLiveApiTest")
-public class ListLicensesImplLiveApiTest extends BaseAbiquoStrategyLiveApiTest
-{
-    private ListLicensesImpl strategy;
+public class ListLicensesImplLiveApiTest extends BaseAbiquoStrategyLiveApiTest {
+   private ListLicensesImpl strategy;
 
-    @Override
-    @BeforeClass(groups = "api")
-    protected void setupStrategy()
-    {
-        this.strategy = env.context.getUtils().getInjector().getInstance(ListLicensesImpl.class);
-    }
+   @Override
+   @BeforeClass(groups = "api")
+   protected void setupStrategy() {
+      this.strategy = env.context.getUtils().getInjector().getInstance(ListLicensesImpl.class);
+   }
 
-    public void testExecute()
-    {
-        Iterable<License> licenses = strategy.execute();
-        assertNotNull(licenses);
-        assertTrue(size(licenses) > 0);
-    }
+   public void testExecute() {
+      Iterable<License> licenses = strategy.execute();
+      assertNotNull(licenses);
+      assertTrue(size(licenses) > 0);
+   }
 
-    public void testExecuteInactive()
-    {
-        LicenseOptions options = LicenseOptions.builder().inactive(true).build();
+   public void testExecuteInactive() {
+      LicenseOptions options = LicenseOptions.builder().inactive(true).build();
 
-        Iterable<License> licenses = strategy.execute(options);
-        assertNotNull(licenses);
-        assertTrue(size(licenses) == 1);
-    }
+      Iterable<License> licenses = strategy.execute(options);
+      assertNotNull(licenses);
+      assertTrue(size(licenses) == 1);
+   }
 
-    public void testExecuteActive()
-    {
-        LicenseOptions options = LicenseOptions.builder().active(true).build();
+   public void testExecuteActive() {
+      LicenseOptions options = LicenseOptions.builder().active(true).build();
 
-        Iterable<License> licenses = strategy.execute(options);
-        assertNotNull(licenses);
-        assertTrue(size(licenses) >= 1);
-    }
+      Iterable<License> licenses = strategy.execute(options);
+      assertNotNull(licenses);
+      assertTrue(size(licenses) >= 1);
+   }
 
-    public void testExecutePredicateWithoutResults()
-    {
-        Iterable<License> licenses = strategy.execute(LicensePredicates.customer("FAIL"));
-        assertNotNull(licenses);
-        assertEquals(size(licenses), 0);
-    }
+   public void testExecutePredicateWithoutResults() {
+      Iterable<License> licenses = strategy.execute(LicensePredicates.customer("FAIL"));
+      assertNotNull(licenses);
+      assertEquals(size(licenses), 0);
+   }
 
-    public void testExecutePredicateWithResults()
-    {
-        Iterable<License> licenses =
-            strategy.execute(LicensePredicates.code(env.license.getCode()));
-        assertNotNull(licenses);
-        assertEquals(size(licenses), 1);
-    }
+   public void testExecutePredicateWithResults() {
+      Iterable<License> licenses = strategy.execute(LicensePredicates.code(env.license.getCode()));
+      assertNotNull(licenses);
+      assertEquals(size(licenses), 1);
+   }
 }

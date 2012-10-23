@@ -29,51 +29,42 @@ import java.util.Properties;
  * 
  * @author Ignasi Barrera
  */
-public class Config
-{
-    /** The main configuration file. */
-    private static final String CONFIG_FILE = "api-live.properties";
+public class Config {
+   /** The main configuration file. */
+   private static final String CONFIG_FILE = "api-live.properties";
 
-    /** The configuration properties */
-    private Properties config;
+   /** The configuration properties */
+   private Properties config;
 
-    /** The singleton configuration instance. */
-    private static Config instance;
+   /** The singleton configuration instance. */
+   private static Config instance;
 
-    public Config(final String config)
-    {
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        this.config = new Properties();
+   public Config(final String config) {
+      ClassLoader cl = Thread.currentThread().getContextClassLoader();
+      this.config = new Properties();
 
-        try
-        {
-            this.config.load(cl.getResourceAsStream(config));
-        }
-        catch (IOException ex)
-        {
-            throw new RuntimeException("Could not load test configuration file", ex);
-        }
-    }
+      try {
+         this.config.load(cl.getResourceAsStream(config));
+      } catch (IOException ex) {
+         throw new RuntimeException("Could not load test configuration file", ex);
+      }
+   }
 
-    public Config(final Properties config)
-    {
-        this.config = config;
-    }
+   public Config(final Properties config) {
+      this.config = config;
+   }
 
-    public static String get(final String property)
-    {
-        return get(property, null);
-    }
+   public static String get(final String property) {
+      return get(property, null);
+   }
 
-    public static String get(final String property, final String defaultValue)
-    {
-        if (instance == null)
-        {
-            String configFile = System.getProperty("abiquo.live.config", CONFIG_FILE);
-            instance = new Config(configFile);
-        }
+   public static String get(final String property, final String defaultValue) {
+      if (instance == null) {
+         String configFile = System.getProperty("abiquo.live.config", CONFIG_FILE);
+         instance = new Config(configFile);
+      }
 
-        return checkNotNull(instance.config.getProperty(property, defaultValue));
-    }
+      return checkNotNull(instance.config.getProperty(property, defaultValue));
+   }
 
 }

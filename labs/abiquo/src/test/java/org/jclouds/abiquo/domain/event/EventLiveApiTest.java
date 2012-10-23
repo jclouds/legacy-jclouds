@@ -46,238 +46,199 @@ import com.google.common.collect.Iterables;
  * @author Vivien Mahé
  */
 @Test(groups = "api", testName = "EventLiveApiTest")
-public class EventLiveApiTest extends BaseAbiquoApiLiveApiTest
-{
-    public void testListEventsFilteredByDatacenter()
-    {
-        String name = randomName();
-        env.datacenter.setName(name);
-        env.datacenter.update();
+public class EventLiveApiTest extends BaseAbiquoApiLiveApiTest {
+   public void testListEventsFilteredByDatacenter() {
+      String name = randomName();
+      env.datacenter.setName(name);
+      env.datacenter.update();
 
-        EventOptions options =
-            EventOptions.builder().dateFrom(new Date()).datacenterName(name).build();
-        assertEvents(options);
-    }
+      EventOptions options = EventOptions.builder().dateFrom(new Date()).datacenterName(name).build();
+      assertEvents(options);
+   }
 
-    public void testListEventsFilteredByRack()
-    {
-        String name = randomName();
-        env.rack.setName(name);
-        env.rack.update();
+   public void testListEventsFilteredByRack() {
+      String name = randomName();
+      env.rack.setName(name);
+      env.rack.update();
 
-        EventOptions options = EventOptions.builder().dateFrom(new Date()).rackName(name).build();
-        assertEvents(options);
-    }
+      EventOptions options = EventOptions.builder().dateFrom(new Date()).rackName(name).build();
+      assertEvents(options);
+   }
 
-    public void testListEventsFilteredByPM()
-    {
-        String name = randomName();
-        env.machine.setName(name);
-        env.machine.update();
+   public void testListEventsFilteredByPM() {
+      String name = randomName();
+      env.machine.setName(name);
+      env.machine.update();
 
-        EventOptions options =
-            EventOptions.builder().dateFrom(new Date()).physicalMachineName(name).build();
-        assertEvents(options);
-    }
+      EventOptions options = EventOptions.builder().dateFrom(new Date()).physicalMachineName(name).build();
+      assertEvents(options);
+   }
 
-    public void testListEventsFilteredByStorageDevice()
-    {
-        String name = randomName();
-        env.storageDevice.setName(name);
-        env.storageDevice.update();
+   public void testListEventsFilteredByStorageDevice() {
+      String name = randomName();
+      env.storageDevice.setName(name);
+      env.storageDevice.update();
 
-        EventOptions options =
-            EventOptions.builder().dateFrom(new Date()).storageSystemName(name).build();
-        assertEvents(options);
-    }
+      EventOptions options = EventOptions.builder().dateFrom(new Date()).storageSystemName(name).build();
+      assertEvents(options);
+   }
 
-    public void testListEventsFilteredByStoragePool()
-    {
-        Tier tier = env.datacenter.findTier(TierPredicates.name("Default Tier 2"));
-        assertNotNull(tier);
+   public void testListEventsFilteredByStoragePool() {
+      Tier tier = env.datacenter.findTier(TierPredicates.name("Default Tier 2"));
+      assertNotNull(tier);
 
-        try
-        {
-            env.storagePool.setTier(tier);
-            env.storagePool.update();
+      try {
+         env.storagePool.setTier(tier);
+         env.storagePool.update();
 
-            EventOptions options =
-                EventOptions.builder().dateFrom(new Date())
-                    .storagePoolName(env.storagePool.getName()).build();
-            assertEvents(options);
-        }
-        finally
-        {
-            // Restore the original tier
-            env.storagePool.setTier(env.tier);
-            env.storagePool.update();
-        }
-    }
+         EventOptions options = EventOptions.builder().dateFrom(new Date()).storagePoolName(env.storagePool.getName())
+               .build();
+         assertEvents(options);
+      } finally {
+         // Restore the original tier
+         env.storagePool.setTier(env.tier);
+         env.storagePool.update();
+      }
+   }
 
-    public void testListEventsFilteredByEnterprise()
-    {
-        String entName = env.enterprise.getName();
-        String name = randomName();
-        env.enterprise.setName(name);
-        env.enterprise.update();
+   public void testListEventsFilteredByEnterprise() {
+      String entName = env.enterprise.getName();
+      String name = randomName();
+      env.enterprise.setName(name);
+      env.enterprise.update();
 
-        // Enterprise current =
-        // env.enterpriseAdminContext.getAdministrationService().getCurrentEnterprise();
-        // current.setName("Enterprise updated");
-        // current.update();
+      // Enterprise current =
+      // env.enterpriseAdminContext.getAdministrationService().getCurrentEnterprise();
+      // current.setName("Enterprise updated");
+      // current.update();
 
-        EventOptions options =
-            EventOptions.builder().dateFrom(new Date()).enterpriseName(name).build();
-        assertEvents(options);
+      EventOptions options = EventOptions.builder().dateFrom(new Date()).enterpriseName(name).build();
+      assertEvents(options);
 
-        env.enterprise.setName(entName);
-        env.enterprise.update();
-    }
+      env.enterprise.setName(entName);
+      env.enterprise.update();
+   }
 
-    /**
-     * TODO: Using the painUserContext, modifying the user returns this error: HTTP/1.1 401
-     * Unauthorized
-     **/
-    @Test(enabled = false)
-    public void testListEventsFilteredByUser()
-    {
-        User current = env.plainUserContext.getAdministrationService().getCurrentUser();
-        current.setEmail("test@test.com");
-        current.update();
+   /**
+    * TODO: Using the painUserContext, modifying the user returns this error:
+    * HTTP/1.1 401 Unauthorized
+    **/
+   @Test(enabled = false)
+   public void testListEventsFilteredByUser() {
+      User current = env.plainUserContext.getAdministrationService().getCurrentUser();
+      current.setEmail("test@test.com");
+      current.update();
 
-        EventOptions options =
-            EventOptions.builder().dateFrom(new Date()).userName(current.getName()).build();
-        assertEvents(options);
-    }
+      EventOptions options = EventOptions.builder().dateFrom(new Date()).userName(current.getName()).build();
+      assertEvents(options);
+   }
 
-    public void testListEventsFilteredByVDC()
-    {
-        String name = randomName();
-        env.virtualDatacenter.setName(name);
-        env.virtualDatacenter.update();
+   public void testListEventsFilteredByVDC() {
+      String name = randomName();
+      env.virtualDatacenter.setName(name);
+      env.virtualDatacenter.update();
 
-        EventOptions options =
-            EventOptions.builder().dateFrom(new Date()).virtualDatacenterName(name).build();
-        assertEvents(options);
-    }
+      EventOptions options = EventOptions.builder().dateFrom(new Date()).virtualDatacenterName(name).build();
+      assertEvents(options);
+   }
 
-    public void testListEventsFilteredByVapp()
-    {
-        String name = randomName();
-        env.virtualAppliance.setName(name);
-        env.virtualAppliance.update();
+   public void testListEventsFilteredByVapp() {
+      String name = randomName();
+      env.virtualAppliance.setName(name);
+      env.virtualAppliance.update();
 
-        EventOptions options =
-            EventOptions.builder().dateFrom(new Date()).virtualAppName(name).build();
-        assertEvents(options);
-    }
+      EventOptions options = EventOptions.builder().dateFrom(new Date()).virtualAppName(name).build();
+      assertEvents(options);
+   }
 
-    public void testListEventsFilteredByVM()
-    {
-        VirtualMachine vm = createVirtualMachine();
-        vm.delete();
+   public void testListEventsFilteredByVM() {
+      VirtualMachine vm = createVirtualMachine();
+      vm.delete();
 
-        EventOptions options =
-            EventOptions.builder().dateFrom(new Date()).actionPerformed(EventType.VM_DELETE)
-                .build();
-        assertEvents(options);
-    }
+      EventOptions options = EventOptions.builder().dateFrom(new Date()).actionPerformed(EventType.VM_DELETE).build();
+      assertEvents(options);
+   }
 
-    public void testListEventsFilteredByVolume()
-    {
-        String name = randomName();
-        Volume volume = createVolume();
-        volume.setName(name);
-        volume.update();
-        volume.delete(); // We don't need it any more. events already exist
+   public void testListEventsFilteredByVolume() {
+      String name = randomName();
+      Volume volume = createVolume();
+      volume.setName(name);
+      volume.update();
+      volume.delete(); // We don't need it any more. events already exist
 
-        EventOptions options = EventOptions.builder().dateFrom(new Date()).volumeName(name).build();
-        assertEvents(options);
-    }
+      EventOptions options = EventOptions.builder().dateFrom(new Date()).volumeName(name).build();
+      assertEvents(options);
+   }
 
-    public void testListEventsFilteredBySeverity()
-    {
-        String name = randomName();
-        env.virtualAppliance.setName(name);
-        env.virtualAppliance.update();
+   public void testListEventsFilteredBySeverity() {
+      String name = randomName();
+      env.virtualAppliance.setName(name);
+      env.virtualAppliance.update();
 
-        EventOptions options =
-            EventOptions.builder().dateFrom(new Date()).virtualAppName(name)
-                .severity(SeverityType.INFO).build();
-        assertEvents(options);
-    }
+      EventOptions options = EventOptions.builder().dateFrom(new Date()).virtualAppName(name)
+            .severity(SeverityType.INFO).build();
+      assertEvents(options);
+   }
 
-    public void testListEventsFilteredByActionPerformed()
-    {
-        String name = randomName();
-        env.virtualAppliance.setName(name);
-        env.virtualAppliance.update();
+   public void testListEventsFilteredByActionPerformed() {
+      String name = randomName();
+      env.virtualAppliance.setName(name);
+      env.virtualAppliance.update();
 
-        EventOptions options =
-            EventOptions.builder().dateFrom(new Date()).virtualAppName(name)
-                .actionPerformed(EventType.VAPP_MODIFY).build();
-        assertEvents(options);
-    }
+      EventOptions options = EventOptions.builder().dateFrom(new Date()).virtualAppName(name)
+            .actionPerformed(EventType.VAPP_MODIFY).build();
+      assertEvents(options);
+   }
 
-    public void testListEventsFilteredByComponent()
-    {
-        String name = randomName();
-        env.virtualAppliance.setName(name);
-        env.virtualAppliance.update();
+   public void testListEventsFilteredByComponent() {
+      String name = randomName();
+      env.virtualAppliance.setName(name);
+      env.virtualAppliance.update();
 
-        EventOptions options =
-            EventOptions.builder().dateFrom(new Date()).virtualAppName(name)
-                .component(ComponentType.VIRTUAL_APPLIANCE).build();
-        assertEvents(options);
-    }
+      EventOptions options = EventOptions.builder().dateFrom(new Date()).virtualAppName(name)
+            .component(ComponentType.VIRTUAL_APPLIANCE).build();
+      assertEvents(options);
+   }
 
-    public void testListEventsFilteredByDescription()
-    {
-        String name = randomName();
-        env.virtualAppliance.setName(name);
-        env.virtualAppliance.update();
+   public void testListEventsFilteredByDescription() {
+      String name = randomName();
+      env.virtualAppliance.setName(name);
+      env.virtualAppliance.update();
 
-        EventOptions options =
-            EventOptions.builder().dateFrom(new Date()).virtualAppName(name)
-                .description("Virtual appliance '" + name + "' has been modified.").build();
-        assertEvents(options);
-    }
+      EventOptions options = EventOptions.builder().dateFrom(new Date()).virtualAppName(name)
+            .description("Virtual appliance '" + name + "' has been modified.").build();
+      assertEvents(options);
+   }
 
-    // Helpers
+   // Helpers
 
-    private void assertEvents(final EventOptions options)
-    {
-        Iterable<Event> events = env.eventService.listEvents(options);
-        assertTrue(Iterables.size(events) >= 1);
-    }
+   private void assertEvents(final EventOptions options) {
+      Iterable<Event> events = env.eventService.listEvents(options);
+      assertTrue(Iterables.size(events) >= 1);
+   }
 
-    private Volume createVolume()
-    {
-        Tier tier = env.virtualDatacenter.findStorageTier(TierPredicates.name(env.tier.getName()));
-        Volume volume =
-            Volume.builder(env.context.getApiContext(), env.virtualDatacenter, tier)
-                .name(PREFIX + "Event vol").sizeInMb(32).build();
+   private Volume createVolume() {
+      Tier tier = env.virtualDatacenter.findStorageTier(TierPredicates.name(env.tier.getName()));
+      Volume volume = Volume.builder(env.context.getApiContext(), env.virtualDatacenter, tier)
+            .name(PREFIX + "Event vol").sizeInMb(32).build();
 
-        volume.save();
-        assertNotNull(volume.getId());
+      volume.save();
+      assertNotNull(volume.getId());
 
-        return volume;
-    }
+      return volume;
+   }
 
-    private VirtualMachine createVirtualMachine()
-    {
-        VirtualMachine virtualMachine =
-            VirtualMachine.builder(env.context.getApiContext(), env.virtualAppliance, env.template)
-                .cpu(2).ram(128).build();
+   private VirtualMachine createVirtualMachine() {
+      VirtualMachine virtualMachine = VirtualMachine
+            .builder(env.context.getApiContext(), env.virtualAppliance, env.template).cpu(2).ram(128).build();
 
-        virtualMachine.save();
-        assertNotNull(virtualMachine.getId());
+      virtualMachine.save();
+      assertNotNull(virtualMachine.getId());
 
-        return virtualMachine;
-    }
+      return virtualMachine;
+   }
 
-    private static String randomName()
-    {
-        return PREFIX + UUID.randomUUID().toString().substring(0, 12);
-    }
+   private static String randomName() {
+      return PREFIX + UUID.randomUUID().toString().substring(0, 12);
+   }
 }

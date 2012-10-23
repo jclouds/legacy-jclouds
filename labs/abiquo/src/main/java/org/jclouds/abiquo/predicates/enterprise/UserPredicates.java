@@ -32,19 +32,15 @@ import com.google.common.base.Predicate;
  * 
  * @author Ignasi Barrera
  */
-public class UserPredicates
-{
-    public static Predicate<User> nick(final String... nicks)
-    {
-        checkNotNull(nicks, "nicks must be defined");
+public class UserPredicates {
+   public static Predicate<User> nick(final String... nicks) {
+      checkNotNull(nicks, "nicks must be defined");
 
-        return new Predicate<User>()
-        {
-            @Override
-            public boolean apply(final User user)
-            {
-                return Arrays.asList(nicks).contains(user.getNick());
-            }
-        };
-    }
+      return new Predicate<User>() {
+         @Override
+         public boolean apply(final User user) {
+            return Arrays.asList(nicks).contains(user.getNick());
+         }
+      };
+   }
 }
