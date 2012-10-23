@@ -32,35 +32,30 @@ import com.google.common.base.Function;
  * @author Ignasi Barrera
  */
 @Test(groups = "unit", testName = "ParseMachineIdTest")
-public class ParseMachineIdTest
-{
-    @Test(expectedExceptions = NullPointerException.class)
-    public void testInvalidNullInput()
-    {
-        Function<Object, String> parser = new ParseMachineId();
-        parser.apply(null);
-    }
+public class ParseMachineIdTest {
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testInvalidNullInput() {
+      Function<Object, String> parser = new ParseMachineId();
+      parser.apply(null);
+   }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
-    public void testInvalidInputType()
-    {
-        Function<Object, String> parser = new ParseMachineId();
-        parser.apply(new Object());
-    }
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testInvalidInputType() {
+      Function<Object, String> parser = new ParseMachineId();
+      parser.apply(new Object());
+   }
 
-    @Test(expectedExceptions = NullPointerException.class)
-    public void testInvalidId()
-    {
-        Function<Object, String> parser = new ParseMachineId();
-        parser.apply(new MachineDto());
-    }
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testInvalidId() {
+      Function<Object, String> parser = new ParseMachineId();
+      parser.apply(new MachineDto());
+   }
 
-    public void testValidId()
-    {
-        Function<Object, String> parser = new ParseMachineId();
+   public void testValidId() {
+      Function<Object, String> parser = new ParseMachineId();
 
-        MachineDto machine = new MachineDto();
-        machine.setId(5);
-        assertEquals(parser.apply(machine), "5");
-    }
+      MachineDto machine = new MachineDto();
+      machine.setId(5);
+      assertEquals(parser.apply(machine), "5");
+   }
 }

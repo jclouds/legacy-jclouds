@@ -30,24 +30,22 @@ import org.jclouds.rest.Binder;
 import com.abiquo.server.core.infrastructure.LogicServerDto;
 
 /**
- * Binds logic server query parameters to request. This method assumes that the input object is a
- * {@link LogicServerDto}.
+ * Binds logic server query parameters to request. This method assumes that the
+ * input object is a {@link LogicServerDto}.
  * 
  * @author Francesc Montserrat
  * @author Ignasi Barrera
  */
 @Singleton
-public class BindLogicServerParameters implements Binder
-{
-    @SuppressWarnings("unchecked")
-    @Override
-    public <R extends HttpRequest> R bindToRequest(final R request, final Object input)
-    {
-        checkArgument(checkNotNull(input, "input") instanceof LogicServerDto,
+public class BindLogicServerParameters implements Binder {
+   @SuppressWarnings("unchecked")
+   @Override
+   public <R extends HttpRequest> R bindToRequest(final R request, final Object input) {
+      checkArgument(checkNotNull(input, "input") instanceof LogicServerDto,
             "this binder is only valid for LogicServerDto objects");
 
-        LogicServerDto server = (LogicServerDto) input;
+      LogicServerDto server = (LogicServerDto) input;
 
-        return (R) request.toBuilder().addQueryParam("lsName", server.getName()).build();
-    }
+      return (R) request.toBuilder().addQueryParam("lsName", server.getName()).build();
+   }
 }

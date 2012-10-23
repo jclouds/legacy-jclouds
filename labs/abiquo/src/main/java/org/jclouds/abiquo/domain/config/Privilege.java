@@ -19,7 +19,6 @@
 
 package org.jclouds.abiquo.domain.config;
 
-
 import org.jclouds.abiquo.AbiquoAsyncApi;
 import org.jclouds.abiquo.AbiquoApi;
 import org.jclouds.abiquo.domain.DomainWrapper;
@@ -35,32 +34,28 @@ import com.abiquo.server.core.enterprise.PrivilegeDto;
  * @author Francesc Montserrat
  */
 @EnterpriseEdition
-public class Privilege extends DomainWrapper<PrivilegeDto>
-{
-    /**
-     * Constructor to be used only by the builder. This resource cannot be created.
-     */
-    private Privilege(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final PrivilegeDto target)
-    {
-        super(context, target);
-    }
+public class Privilege extends DomainWrapper<PrivilegeDto> {
+   /**
+    * Constructor to be used only by the builder. This resource cannot be
+    * created.
+    */
+   private Privilege(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final PrivilegeDto target) {
+      super(context, target);
+   }
 
-    // Delegate methods
+   // Delegate methods
 
-    public Integer getId()
-    {
-        return target.getId();
-    }
+   public Integer getId() {
+      return target.getId();
+   }
 
-    public String getName()
-    {
-        return target.getName();
-    }
+   public String getName() {
+      return target.getName();
+   }
 
-    @Override
-    public String toString()
-    {
-        return "Privilege [id=" + getId() + ", name=" + getName() + "]";
-    }
+   @Override
+   public String toString() {
+      return "Privilege [id=" + getId() + ", name=" + getName() + "]";
+   }
 
 }

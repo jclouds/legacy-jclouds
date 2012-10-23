@@ -32,33 +32,26 @@ import com.google.common.base.Predicate;
  * 
  * @author Ignasi Barrera
  */
-public class LicensePredicates
-{
-    public static Predicate<License> customer(final String... customerIds)
-    {
-        checkNotNull(customerIds, "customers must be defined");
+public class LicensePredicates {
+   public static Predicate<License> customer(final String... customerIds) {
+      checkNotNull(customerIds, "customers must be defined");
 
-        return new Predicate<License>()
-        {
-            @Override
-            public boolean apply(final License license)
-            {
-                return Arrays.asList(customerIds).contains(license.getCustomerId());
-            }
-        };
-    }
+      return new Predicate<License>() {
+         @Override
+         public boolean apply(final License license) {
+            return Arrays.asList(customerIds).contains(license.getCustomerId());
+         }
+      };
+   }
 
-    public static Predicate<License> code(final String... codes)
-    {
-        checkNotNull(codes, "customers must be defined");
+   public static Predicate<License> code(final String... codes) {
+      checkNotNull(codes, "customers must be defined");
 
-        return new Predicate<License>()
-        {
-            @Override
-            public boolean apply(final License license)
-            {
-                return Arrays.asList(codes).contains(license.getCode());
-            }
-        };
-    }
+      return new Predicate<License>() {
+         @Override
+         public boolean apply(final License license) {
+            return Arrays.asList(codes).contains(license.getCode());
+         }
+      };
+   }
 }

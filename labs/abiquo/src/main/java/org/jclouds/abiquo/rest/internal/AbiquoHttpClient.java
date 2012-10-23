@@ -32,13 +32,13 @@ import com.abiquo.model.rest.RESTLink;
  * @author Ignasi Barrera
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
-public interface AbiquoHttpClient
-{
-    /**
-     * Perform a GET request to the given link.
-     * 
-     * @param link The link to get.
-     * @return The response.
-     */
-    public HttpResponse get(final RESTLink link);
+public interface AbiquoHttpClient {
+   /**
+    * Perform a GET request to the given link.
+    * 
+    * @param link
+    *           The link to get.
+    * @return The response.
+    */
+   public HttpResponse get(final RESTLink link);
 }

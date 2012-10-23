@@ -32,25 +32,21 @@ import com.google.common.base.Function;
  * @author Francesc Montserrat
  */
 @Test(groups = "unit", testName = "ParseRemoteServiceTypeTest")
-public class ParseRemoteServiceTypeTest
-{
-    @Test(expectedExceptions = NullPointerException.class)
-    public void testInvalidNullInput()
-    {
-        Function<Object, String> parser = new ParseRemoteServiceType();
-        parser.apply(null);
-    }
+public class ParseRemoteServiceTypeTest {
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testInvalidNullInput() {
+      Function<Object, String> parser = new ParseRemoteServiceType();
+      parser.apply(null);
+   }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
-    public void testInvalidInputType()
-    {
-        Function<Object, String> parser = new ParseRemoteServiceType();
-        parser.apply(new Object());
-    }
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testInvalidInputType() {
+      Function<Object, String> parser = new ParseRemoteServiceType();
+      parser.apply(new Object());
+   }
 
-    public void testValidId()
-    {
-        Function<Object, String> parser = new ParseRemoteServiceType();
-        assertEquals(parser.apply(RemoteServiceType.BPM_SERVICE), "bpmservice");
-    }
+   public void testValidId() {
+      Function<Object, String> parser = new ParseRemoteServiceType();
+      assertEquals(parser.apply(RemoteServiceType.BPM_SERVICE), "bpmservice");
+   }
 }

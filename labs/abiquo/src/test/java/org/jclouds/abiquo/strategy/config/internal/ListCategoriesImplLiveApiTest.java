@@ -39,49 +39,40 @@ import com.google.common.base.Predicates;
  * @author Francesc Montserrat
  */
 @Test(groups = "api", testName = "ListCategoriesImplLiveApiTest")
-public class ListCategoriesImplLiveApiTest extends BaseAbiquoStrategyLiveApiTest
-{
-    private ListCategoriesImpl strategy;
+public class ListCategoriesImplLiveApiTest extends BaseAbiquoStrategyLiveApiTest {
+   private ListCategoriesImpl strategy;
 
-    @Override
-    @BeforeClass(groups = "api")
-    protected void setupStrategy()
-    {
-        this.strategy = env.context.getUtils().getInjector().getInstance(ListCategoriesImpl.class);
-    }
+   @Override
+   @BeforeClass(groups = "api")
+   protected void setupStrategy() {
+      this.strategy = env.context.getUtils().getInjector().getInstance(ListCategoriesImpl.class);
+   }
 
-    public void testExecute()
-    {
-        Iterable<Category> categories = strategy.execute();
-        assertNotNull(categories);
-        assertTrue(size(categories) > 0);
-    }
+   public void testExecute() {
+      Iterable<Category> categories = strategy.execute();
+      assertNotNull(categories);
+      assertTrue(size(categories) > 0);
+   }
 
-    public void testExecutePredicateWithoutResults()
-    {
-        Iterable<Category> categories =
-            strategy.execute(CategoryPredicates.name("Unexisting category"));
-        assertNotNull(categories);
-        assertEquals(size(categories), 0);
-    }
+   public void testExecutePredicateWithoutResults() {
+      Iterable<Category> categories = strategy.execute(CategoryPredicates.name("Unexisting category"));
+      assertNotNull(categories);
+      assertEquals(size(categories), 0);
+   }
 
-    public void testExecutePredicateWithResults()
-    {
-        Iterable<Category> categories =
-            strategy.execute(CategoryPredicates.name("Applications servers"));
-        assertNotNull(categories);
-        assertEquals(size(categories), 1);
-    }
+   public void testExecutePredicateWithResults() {
+      Iterable<Category> categories = strategy.execute(CategoryPredicates.name("Applications servers"));
+      assertNotNull(categories);
+      assertEquals(size(categories), 1);
+   }
 
-    public void testExecuteNotPredicateWithResults()
-    {
-        Iterable<Category> categories =
-            strategy.execute(Predicates.not(CategoryPredicates.name("Applications servers")));
+   public void testExecuteNotPredicateWithResults() {
+      Iterable<Category> categories = strategy.execute(Predicates.not(CategoryPredicates.name("Applications servers")));
 
-        Iterable<Category> allProperties = strategy.execute();
+      Iterable<Category> allProperties = strategy.execute();
 
-        assertNotNull(categories);
-        assertNotNull(allProperties);
-        assertEquals(size(categories), size(allProperties) - 1);
-    }
+      assertNotNull(categories);
+      assertNotNull(allProperties);
+      assertEquals(size(categories), size(allProperties) - 1);
+   }
 }

@@ -40,69 +40,68 @@ import com.abiquo.model.transport.SingleResourceTransportDto;
  * @see InfrastructureAsyncApi
  * @author Ignasi Barrera
  */
-public interface AbiquoAsyncApi
-{
-    /**
-     * The version of the supported Abiquo API.
-     */
-    public static final String API_VERSION = SingleResourceTransportDto.API_VERSION;
+public interface AbiquoAsyncApi {
+   /**
+    * The version of the supported Abiquo API.
+    */
+   public static final String API_VERSION = SingleResourceTransportDto.API_VERSION;
 
-    /**
-     * The supported build version of the Abiquo Api.
-     */
-    public static final String BUILD_VERSION = "7bbfe95-158721b";
+   /**
+    * The supported build version of the Abiquo Api.
+    */
+   public static final String BUILD_VERSION = "7bbfe95-158721b";
 
-    /**
-     * Provides asynchronous access to Admin features.
-     */
-    @Delegate
-    AdminAsyncApi getAdminApi();
+   /**
+    * Provides asynchronous access to Admin features.
+    */
+   @Delegate
+   AdminAsyncApi getAdminApi();
 
-    /**
-     * Provides asynchronous access to Infrastructure features.
-     */
-    @Delegate
-    InfrastructureAsyncApi getInfrastructureApi();
+   /**
+    * Provides asynchronous access to Infrastructure features.
+    */
+   @Delegate
+   InfrastructureAsyncApi getInfrastructureApi();
 
-    /**
-     * Provides asynchronous access to Cloud features.
-     */
-    @Delegate
-    CloudAsyncApi getCloudApi();
+   /**
+    * Provides asynchronous access to Cloud features.
+    */
+   @Delegate
+   CloudAsyncApi getCloudApi();
 
-    /**
-     * Provides asynchronous access to Apps library features.
-     */
-    @Delegate
-    VirtualMachineTemplateAsyncApi getVirtualMachineTemplateApi();
+   /**
+    * Provides asynchronous access to Apps library features.
+    */
+   @Delegate
+   VirtualMachineTemplateAsyncApi getVirtualMachineTemplateApi();
 
-    /**
-     * Provides asynchronous access to Enterprise features.
-     */
-    @Delegate
-    EnterpriseAsyncApi getEnterpriseApi();
+   /**
+    * Provides asynchronous access to Enterprise features.
+    */
+   @Delegate
+   EnterpriseAsyncApi getEnterpriseApi();
 
-    /**
-     * Provides asynchronous access to configuration features.
-     */
-    @Delegate
-    ConfigAsyncApi getConfigApi();
+   /**
+    * Provides asynchronous access to configuration features.
+    */
+   @Delegate
+   ConfigAsyncApi getConfigApi();
 
-    /**
-     * Provides asynchronous access to task asynchronous features.
-     */
-    @Delegate
-    TaskAsyncApi getTaskApi();
+   /**
+    * Provides asynchronous access to task asynchronous features.
+    */
+   @Delegate
+   TaskAsyncApi getTaskApi();
 
-    /**
-     * Provides asynchronous access to Event features.
-     */
-    @Delegate
-    EventAsyncApi getEventApi();
+   /**
+    * Provides asynchronous access to Event features.
+    */
+   @Delegate
+   EventAsyncApi getEventApi();
 
-    /**
-     * Provides asynchronous access to Pricing features.
-     */
-    @Delegate
-    PricingAsyncApi getPricingApi();
+   /**
+    * Provides asynchronous access to Pricing features.
+    */
+   @Delegate
+   PricingAsyncApi getPricingApi();
 }

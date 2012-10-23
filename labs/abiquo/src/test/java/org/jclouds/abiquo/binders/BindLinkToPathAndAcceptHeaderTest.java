@@ -35,27 +35,23 @@ import org.testng.annotations.Test;
  * @author Ignasi Barrera
  */
 @Test(groups = "unit", testName = "BindLinkToPathAndAcceptHeaderTest")
-public class BindLinkToPathAndAcceptHeaderTest
-{
-    @Test(expectedExceptions = NullPointerException.class)
-    public void testInvalidNullInput()
-    {
-        BindLinkToPathAndAcceptHeader binder = new BindLinkToPathAndAcceptHeader();
-        binder.addHeader(null, HttpHeaders.ACCEPT, null);
-    }
+public class BindLinkToPathAndAcceptHeaderTest {
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testInvalidNullInput() {
+      BindLinkToPathAndAcceptHeader binder = new BindLinkToPathAndAcceptHeader();
+      binder.addHeader(null, HttpHeaders.ACCEPT, null);
+   }
 
-    public void testAddHeader()
-    {
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
+   public void testAddHeader() {
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
 
-        BindLinkToPathAndAcceptHeader binder = new BindLinkToPathAndAcceptHeader();
-        HttpRequest updatedRequest =
-            binder.addHeader(request, HttpHeaders.ACCEPT, "application/vnd.abiquo.datacenters+xml");
+      BindLinkToPathAndAcceptHeader binder = new BindLinkToPathAndAcceptHeader();
+      HttpRequest updatedRequest = binder.addHeader(request, HttpHeaders.ACCEPT,
+            "application/vnd.abiquo.datacenters+xml");
 
-        String accept = updatedRequest.getFirstHeaderOrNull(HttpHeaders.ACCEPT);
+      String accept = updatedRequest.getFirstHeaderOrNull(HttpHeaders.ACCEPT);
 
-        assertNotNull(accept);
-        assertEquals(accept, "application/vnd.abiquo.datacenters+xml");
-    }
+      assertNotNull(accept);
+      assertEquals(accept, "application/vnd.abiquo.datacenters+xml");
+   }
 }

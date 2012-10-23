@@ -46,67 +46,57 @@ import com.abiquo.server.core.enterprise.RoleDto;
  * @author Francesc Montserrat
  */
 @Test(groups = "api", testName = "RoleLiveApiTest")
-public class RoleLiveApiTest extends BaseAbiquoApiLiveApiTest
-{
+public class RoleLiveApiTest extends BaseAbiquoApiLiveApiTest {
 
-    public void testUpdate()
-    {
-        Role role =
-            Role.builder(env.context.getApiContext()).name("dummyRoleUpdateRole").blocked(false)
-                .build();
-        role.save();
+   public void testUpdate() {
+      Role role = Role.builder(env.context.getApiContext()).name("dummyRoleUpdateRole").blocked(false).build();
+      role.save();
 
-        role.setName("UPDATED_ROLE");
-        role.update();
+      role.setName("UPDATED_ROLE");
+      role.update();
 
-        // Recover the updated role
-        RoleDto updated = env.adminApi.getRole(role.getId());
+      // Recover the updated role
+      RoleDto updated = env.adminApi.getRole(role.getId());
 
-        assertEquals(updated.getName(), "UPDATED_ROLE");
+      assertEquals(updated.getName(), "UPDATED_ROLE");
 
-        role.delete();
-    }
+      role.delete();
+   }
 
-    public void testCreateRepeated()
-    {
-        Role repeated = Role.Builder.fromRole(env.role).build();
+   public void testCreateRepeated() {
+      Role repeated = Role.Builder.fromRole(env.role).build();
 
-        try
-        {
-            repeated.save();
-            fail("Should not be able to create roles with the same name");
-        }
-        catch (AbiquoException ex)
-        {
-            assertHasError(ex, Status.CONFLICT, "ROLE-7");
-        }
-    }
+      try {
+         repeated.save();
+         fail("Should not be able to create roles with the same name");
+      } catch (AbiquoException ex) {
+         assertHasError(ex, Status.CONFLICT, "ROLE-7");
+      }
+   }
 
-    public void testCreateEnterpriseRole()
-    {
-        Role entRole = Role.Builder.fromRole(env.role).build();
-        entRole.setName(entRole.getName() + "enterprise");
-        entRole.setEnterprise(env.enterprise);
-        entRole.save();
+   public void testCreateEnterpriseRole() {
+      Role entRole = Role.Builder.fromRole(env.role).build();
+      entRole.setName(entRole.getName() + "enterprise");
+      entRole.setEnterprise(env.enterprise);
+      entRole.save();
 
-        entRole = env.enterprise.findRole(RolePredicates.name(entRole.getName()));
+      entRole = env.enterprise.findRole(RolePredicates.name(entRole.getName()));
 
-        assertNotNull(entRole);
-    }
+      assertNotNull(entRole);
+   }
 
-    public void testAddPrivilege()
-    {
-        PrivilegeDto dto = env.configApi.getPrivilege(8);
-        Privilege privilege = DomainWrapper.wrap(env.context.getApiContext(), Privilege.class, dto);
-        List<Privilege> privileges = env.role.listPrivileges();
-        privileges.add(privilege);
+   public void testAddPrivilege() {
+      PrivilegeDto dto = env.configApi.getPrivilege(8);
+      Privilege privilege = DomainWrapper.wrap(env.context.getApiContext(), Privilege.class, dto);
+      List<Privilege> privileges = env.role.listPrivileges();
+      privileges.add(privilege);
 
-        env.role.setPrivileges(privileges);
+      env.role.setPrivileges(privileges);
 
-        env.role.update();
+      env.role.update();
 
-        privilege = env.role.findPrivileges(PrivilegePredicates.name(dto.getName()));
+      privilege = env.role.findPrivileges(PrivilegePredicates.name(dto.getName()));
 
-        assertNotNull(privilege);
-    }
+      assertNotNull(privilege);
+   }
 }

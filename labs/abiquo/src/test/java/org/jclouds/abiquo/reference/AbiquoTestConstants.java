@@ -24,8 +24,7 @@ package org.jclouds.abiquo.reference;
  * 
  * @author Ignasi Barrera
  */
-public interface AbiquoTestConstants
-{
-    /** The prefix for test object names. */
-    public static final String PREFIX = "JC-";
+public interface AbiquoTestConstants {
+   /** The prefix for test object names. */
+   public static final String PREFIX = "JC-";
 }

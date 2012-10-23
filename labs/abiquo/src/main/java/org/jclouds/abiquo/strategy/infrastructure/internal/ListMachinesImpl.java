@@ -56,78 +56,65 @@ import com.google.inject.Inject;
  * @author Ignasi Barrera
  */
 @Singleton
-public class ListMachinesImpl implements ListMachines
-{
-    protected RestContext<AbiquoApi, AbiquoAsyncApi> context;
+public class ListMachinesImpl implements ListMachines {
+   protected RestContext<AbiquoApi, AbiquoAsyncApi> context;
 
-    protected ListDatacenters listDatacenters;
+   protected ListDatacenters listDatacenters;
 
-    protected final ExecutorService userExecutor;
+   protected final ExecutorService userExecutor;
 
-    @Resource
-    protected Logger logger = Logger.NULL;
+   @Resource
+   protected Logger logger = Logger.NULL;
 
-    @Inject(optional = true)
-    @Named(Constants.PROPERTY_REQUEST_TIMEOUT)
-    protected Long maxTime;
+   @Inject(optional = true)
+   @Named(Constants.PROPERTY_REQUEST_TIMEOUT)
+   protected Long maxTime;
 
-    @Inject
-    ListMachinesImpl(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-        @Named(Constants.PROPERTY_USER_THREADS) final ExecutorService userExecutor,
-        final ListDatacenters listDatacenters)
-    {
-        super();
-        this.context = checkNotNull(context, "context");
-        this.listDatacenters = checkNotNull(listDatacenters, "listDatacenters");
-        this.userExecutor = checkNotNull(userExecutor, "userExecutor");
-    }
+   @Inject
+   ListMachinesImpl(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
+         @Named(Constants.PROPERTY_USER_THREADS) final ExecutorService userExecutor,
+         final ListDatacenters listDatacenters) {
+      super();
+      this.context = checkNotNull(context, "context");
+      this.listDatacenters = checkNotNull(listDatacenters, "listDatacenters");
+      this.userExecutor = checkNotNull(userExecutor, "userExecutor");
+   }
 
-    @Override
-    public Iterable<Machine> execute()
-    {
-        // Find machines in concurrent requests
-        Iterable<Datacenter> datacenters = listDatacenters.execute();
-        Iterable<RackDto> racks = listConcurrentRacks(datacenters);
-        Iterable<MachineDto> machines = listConcurrentMachines(racks);
+   @Override
+   public Iterable<Machine> execute() {
+      // Find machines in concurrent requests
+      Iterable<Datacenter> datacenters = listDatacenters.execute();
+      Iterable<RackDto> racks = listConcurrentRacks(datacenters);
+      Iterable<MachineDto> machines = listConcurrentMachines(racks);
 
-        return wrap(context, Machine.class, machines);
-    }
+      return wrap(context, Machine.class, machines);
+   }
 
-    @Override
-    public Iterable<Machine> execute(final Predicate<Machine> selector)
-    {
-        return filter(execute(), selector);
-    }
+   @Override
+   public Iterable<Machine> execute(final Predicate<Machine> selector) {
+      return filter(execute(), selector);
+   }
 
-    private Iterable<RackDto> listConcurrentRacks(final Iterable<Datacenter> datacenters)
-    {
-        Iterable<RacksDto> racks =
-            transformParallel(datacenters, new Function<Datacenter, Future< ? extends RacksDto>>()
-            {
-                @Override
-                public Future<RacksDto> apply(final Datacenter input)
-                {
-                    return context.getAsyncApi().getInfrastructureApi()
-                        .listRacks(input.unwrap());
-                }
-            }, userExecutor, maxTime, logger, "getting racks");
+   private Iterable<RackDto> listConcurrentRacks(final Iterable<Datacenter> datacenters) {
+      Iterable<RacksDto> racks = transformParallel(datacenters, new Function<Datacenter, Future<? extends RacksDto>>() {
+         @Override
+         public Future<RacksDto> apply(final Datacenter input) {
+            return context.getAsyncApi().getInfrastructureApi().listRacks(input.unwrap());
+         }
+      }, userExecutor, maxTime, logger, "getting racks");
 
-        return DomainWrapper.join(racks);
-    }
+      return DomainWrapper.join(racks);
+   }
 
-    private Iterable<MachineDto> listConcurrentMachines(final Iterable<RackDto> racks)
-    {
-        Iterable<MachinesDto> machines =
-            transformParallel(racks, new Function<RackDto, Future< ? extends MachinesDto>>()
-            {
-                @Override
-                public Future<MachinesDto> apply(final RackDto input)
-                {
-                    return context.getAsyncApi().getInfrastructureApi().listMachines(input);
-                }
-            }, userExecutor, maxTime, logger, "getting machines");
+   private Iterable<MachineDto> listConcurrentMachines(final Iterable<RackDto> racks) {
+      Iterable<MachinesDto> machines = transformParallel(racks, new Function<RackDto, Future<? extends MachinesDto>>() {
+         @Override
+         public Future<MachinesDto> apply(final RackDto input) {
+            return context.getAsyncApi().getInfrastructureApi().listMachines(input);
+         }
+      }, userExecutor, maxTime, logger, "getting machines");
 
-        return DomainWrapper.join(machines);
-    }
+      return DomainWrapper.join(machines);
+   }
 
 }

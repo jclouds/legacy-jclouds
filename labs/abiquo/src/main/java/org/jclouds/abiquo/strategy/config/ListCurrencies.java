@@ -31,7 +31,6 @@ import com.google.inject.ImplementedBy;
  * @author Susana Acedo
  */
 @ImplementedBy(ListCurrenciesImpl.class)
-public interface ListCurrencies extends ListRootEntities<Currency>
-{
+public interface ListCurrencies extends ListRootEntities<Currency> {
 
 }

@@ -32,19 +32,15 @@ import com.google.common.base.Predicate;
  * 
  * @author Ignasi Barrera
  */
-public class DatastorePredicates
-{
-    public static Predicate<Datastore> name(final String... names)
-    {
-        checkNotNull(names, "names must be defined");
+public class DatastorePredicates {
+   public static Predicate<Datastore> name(final String... names) {
+      checkNotNull(names, "names must be defined");
 
-        return new Predicate<Datastore>()
-        {
-            @Override
-            public boolean apply(final Datastore datastore)
-            {
-                return Arrays.asList(names).contains(datastore.getName());
-            }
-        };
-    }
+      return new Predicate<Datastore>() {
+         @Override
+         public boolean apply(final Datastore datastore) {
+            return Arrays.asList(names).contains(datastore.getName());
+         }
+      };
+   }
 }

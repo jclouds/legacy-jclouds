@@ -41,44 +41,30 @@ import com.google.common.collect.ImmutableList;
  * @author Ignasi Barrera
  */
 @Test(groups = "unit", testName = "BindMoveVolumeToPathTest")
-public class BindMoveVolumeToPathTest
-{
-    @Test(expectedExceptions = NullPointerException.class)
-    public void testInvalidNullInput() throws SecurityException, NoSuchMethodException
-    {
-        BindMoveVolumeToPath binder = new BindMoveVolumeToPath();
-        binder.getNewEndpoint(generatedHttpRequest(), null);
-    }
+public class BindMoveVolumeToPathTest {
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testInvalidNullInput() throws SecurityException, NoSuchMethodException {
+      BindMoveVolumeToPath binder = new BindMoveVolumeToPath();
+      binder.getNewEndpoint(generatedHttpRequest(), null);
+   }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
-    public void testInvalidInputType() throws SecurityException, NoSuchMethodException
-    {
-        BindMoveVolumeToPath binder = new BindMoveVolumeToPath();
-        binder.getNewEndpoint(generatedHttpRequest(), new Object());
-    }
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testInvalidInputType() throws SecurityException, NoSuchMethodException {
+      BindMoveVolumeToPath binder = new BindMoveVolumeToPath();
+      binder.getNewEndpoint(generatedHttpRequest(), new Object());
+   }
 
-    public void testGetNewEndpoint() throws SecurityException, NoSuchMethodException
-    {
-        BindMoveVolumeToPath binder = new BindMoveVolumeToPath();
-        String newEndpoint =
-            binder.getNewEndpoint(generatedHttpRequest(), CloudResources.volumePut());
-        assertEquals(newEndpoint,
-            "http://localhost/api/cloud/virtualdatacenters/1/volumes/1/action/move");
-    }
+   public void testGetNewEndpoint() throws SecurityException, NoSuchMethodException {
+      BindMoveVolumeToPath binder = new BindMoveVolumeToPath();
+      String newEndpoint = binder.getNewEndpoint(generatedHttpRequest(), CloudResources.volumePut());
+      assertEquals(newEndpoint, "http://localhost/api/cloud/virtualdatacenters/1/volumes/1/action/move");
+   }
 
-    private static GeneratedHttpRequest generatedHttpRequest() throws SecurityException,
-        NoSuchMethodException
-    {
-        Method withEndpointLink =
-            CloudAsyncApi.class.getMethod("moveVolume", VolumeManagementDto.class,
-                VirtualDatacenterDto.class);
-        return GeneratedHttpRequest
-            .builder()
-            .declaring(CloudAsyncApi.class)
-            .javaMethod(withEndpointLink)
-            .args(
-                ImmutableList.<Object> of(CloudResources.volumePut(),
-                    CloudResources.virtualDatacenterPut())).method(HttpMethod.POST)
-            .endpoint(URI.create("http://localhost")).build();
-    }
+   private static GeneratedHttpRequest generatedHttpRequest() throws SecurityException, NoSuchMethodException {
+      Method withEndpointLink = CloudAsyncApi.class.getMethod("moveVolume", VolumeManagementDto.class,
+            VirtualDatacenterDto.class);
+      return GeneratedHttpRequest.builder().declaring(CloudAsyncApi.class).javaMethod(withEndpointLink)
+            .args(ImmutableList.<Object> of(CloudResources.volumePut(), CloudResources.virtualDatacenterPut()))
+            .method(HttpMethod.POST).endpoint(URI.create("http://localhost")).build();
+   }
 }

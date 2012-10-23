@@ -47,45 +47,38 @@ import com.google.common.eventbus.EventBus;
  * @author Ignasi Barrera
  */
 @Singleton
-public class BaseAsyncTaskMonitor extends BaseMonitoringService implements AsyncTaskMonitor
-{
+public class BaseAsyncTaskMonitor extends BaseMonitoringService implements AsyncTaskMonitor {
 
-    @VisibleForTesting
-    protected AsyncTaskStatusMonitor taskMonitor;
+   @VisibleForTesting
+   protected AsyncTaskStatusMonitor taskMonitor;
 
-    @Inject
-    public BaseAsyncTaskMonitor(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-        @Named(PROPERTY_SCHEDULER_THREADS) final ScheduledExecutorService scheduler,
-        @Named(ASYNC_TASK_MONITOR_DELAY) final Long pollingDelay, final EventBus eventBus,
-        final AsyncTaskStatusMonitor monitor)
-    {
-        super(context, scheduler, pollingDelay, eventBus);
-        this.taskMonitor = checkNotNull(monitor, "monitor");
-    }
+   @Inject
+   public BaseAsyncTaskMonitor(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
+         @Named(PROPERTY_SCHEDULER_THREADS) final ScheduledExecutorService scheduler,
+         @Named(ASYNC_TASK_MONITOR_DELAY) final Long pollingDelay, final EventBus eventBus,
+         final AsyncTaskStatusMonitor monitor) {
+      super(context, scheduler, pollingDelay, eventBus);
+      this.taskMonitor = checkNotNull(monitor, "monitor");
+   }
 
-    @Override
-    public void awaitCompletion(final AsyncTask... tasks)
-    {
-        awaitCompletion(taskMonitor, tasks);
-    }
+   @Override
+   public void awaitCompletion(final AsyncTask... tasks) {
+      awaitCompletion(taskMonitor, tasks);
+   }
 
-    @Override
-    public void monitor(final AsyncTask... tasks)
-    {
-        monitor(taskMonitor, tasks);
-    }
+   @Override
+   public void monitor(final AsyncTask... tasks) {
+      monitor(taskMonitor, tasks);
+   }
 
-    @Override
-    public void awaitCompletion(final Long maxWait, final TimeUnit timeUnit,
-        final AsyncTask... tasks)
-    {
-        awaitCompletion(maxWait, timeUnit, taskMonitor, tasks);
-    }
+   @Override
+   public void awaitCompletion(final Long maxWait, final TimeUnit timeUnit, final AsyncTask... tasks) {
+      awaitCompletion(maxWait, timeUnit, taskMonitor, tasks);
+   }
 
-    @Override
-    public void monitor(final Long maxWait, final TimeUnit timeUnit, final AsyncTask... tasks)
-    {
-        monitor(maxWait, timeUnit, taskMonitor, tasks);
-    }
+   @Override
+   public void monitor(final Long maxWait, final TimeUnit timeUnit, final AsyncTask... tasks) {
+      monitor(maxWait, timeUnit, taskMonitor, tasks);
+   }
 
 }

@@ -36,19 +36,18 @@ import com.abiquo.server.core.event.EventsDto;
  * @author Vivien Mahé
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
-public interface EventApi
-{
-    /**
-     * List events.
-     * 
-     * @return The list of events.
-     */
-    EventsDto listEvents();
+public interface EventApi {
+   /**
+    * List events.
+    * 
+    * @return The list of events.
+    */
+   EventsDto listEvents();
 
-    /**
-     * List events using filters.
-     * 
-     * @return The list of events using filters.
-     */
-    EventsDto listEvents(EventOptions options);
+   /**
+    * List events using filters.
+    * 
+    * @return The list of events using filters.
+    */
+   EventsDto listEvents(EventOptions options);
 }

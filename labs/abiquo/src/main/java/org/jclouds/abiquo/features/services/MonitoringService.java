@@ -39,99 +39,113 @@ import com.google.inject.ImplementedBy;
  * @author Francesc Montserrat
  */
 @ImplementedBy(BaseMonitoringService.class)
-public interface MonitoringService
-{
+public interface MonitoringService {
 
-    /*************** Generic monitoring methods ***************/
+   /*************** Generic monitoring methods ***************/
 
-    /**
-     * Monitor the given objects using the given complete condition.
-     * 
-     * @param completeCondition The function that will be used to decide if the asynchronous
-     *            operations have finished.
-     * @param objects The objects to monitor.
-     */
-    public <T> void awaitCompletion(final Function<T, MonitorStatus> completeCondition,
-        final T... objects);
+   /**
+    * Monitor the given objects using the given complete condition.
+    * 
+    * @param completeCondition
+    *           The function that will be used to decide if the asynchronous
+    *           operations have finished.
+    * @param objects
+    *           The objects to monitor.
+    */
+   public <T> void awaitCompletion(final Function<T, MonitorStatus> completeCondition, final T... objects);
 
-    /**
-     * Monitor the given objects using the given complete condition.
-     * 
-     * @param maxWait The maximum time to wait.
-     * @param timeUnit The time unit for the maxWait parameter.
-     * @param completeCondition The function that will be used to decide if the asynchronous
-     *            operations have finished.
-     * @param objects The objects to monitor.
-     */
-    public <T> void awaitCompletion(final Long maxWait, final TimeUnit timeUnit,
-        final Function<T, MonitorStatus> completeCondition, final T... objects);
+   /**
+    * Monitor the given objects using the given complete condition.
+    * 
+    * @param maxWait
+    *           The maximum time to wait.
+    * @param timeUnit
+    *           The time unit for the maxWait parameter.
+    * @param completeCondition
+    *           The function that will be used to decide if the asynchronous
+    *           operations have finished.
+    * @param objects
+    *           The objects to monitor.
+    */
+   public <T> void awaitCompletion(final Long maxWait, final TimeUnit timeUnit,
+         final Function<T, MonitorStatus> completeCondition, final T... objects);
 
-    /**
-     * Monitor the given objects using the given complete condition.
-     * 
-     * @param completeCondition The function that will be used to decide if the asynchronous
-     *            operations have finished.
-     * @param objects The objects to monitor.
-     */
-    public <T> void monitor(final Function<T, MonitorStatus> completeCondition, final T... objects);
+   /**
+    * Monitor the given objects using the given complete condition.
+    * 
+    * @param completeCondition
+    *           The function that will be used to decide if the asynchronous
+    *           operations have finished.
+    * @param objects
+    *           The objects to monitor.
+    */
+   public <T> void monitor(final Function<T, MonitorStatus> completeCondition, final T... objects);
 
-    /**
-     * Monitor the given objects using the given complete condition.
-     * 
-     * @param maxWait The maximum time to wait.
-     * @param timeUnit The time unit for the maxWait parameter.
-     * @param completeCondition The function that will be used to decide if the asynchronous
-     *            operations have finished.
-     * @param objects The objects to monitor.
-     */
-    public <T> void monitor(final Long maxWait, final TimeUnit timeUnit,
-        final Function<T, MonitorStatus> completeCondition, final T... objects);
+   /**
+    * Monitor the given objects using the given complete condition.
+    * 
+    * @param maxWait
+    *           The maximum time to wait.
+    * @param timeUnit
+    *           The time unit for the maxWait parameter.
+    * @param completeCondition
+    *           The function that will be used to decide if the asynchronous
+    *           operations have finished.
+    * @param objects
+    *           The objects to monitor.
+    */
+   public <T> void monitor(final Long maxWait, final TimeUnit timeUnit,
+         final Function<T, MonitorStatus> completeCondition, final T... objects);
 
-    /*************** Handler registration methods ***************/
+   /*************** Handler registration methods ***************/
 
-    /**
-     * Registers the given event handler.
-     * 
-     * @param <T> The type of event handler to register.
-     * @param handler The event handler to register.
-     */
-    public <T extends AbstractEventHandler< ? >> void register(T handler);
+   /**
+    * Registers the given event handler.
+    * 
+    * @param <T>
+    *           The type of event handler to register.
+    * @param handler
+    *           The event handler to register.
+    */
+   public <T extends AbstractEventHandler<?>> void register(T handler);
 
-    /**
-     * Unregisters the given event handler.
-     * 
-     * @param <T> The type of event handler to unregister.
-     * @param handler The event handler to unregister.
-     */
-    public <T extends AbstractEventHandler< ? >> void unregister(T handler);
+   /**
+    * Unregisters the given event handler.
+    * 
+    * @param <T>
+    *           The type of event handler to unregister.
+    * @param handler
+    *           The event handler to unregister.
+    */
+   public <T extends AbstractEventHandler<?>> void unregister(T handler);
 
-    /*************** Delegating monitors ***************/
+   /*************** Delegating monitors ***************/
 
-    /**
-     * Gets the virtual machine monitor service.
-     * 
-     * @return The virtual machine monitor service.
-     */
-    public VirtualMachineMonitor getVirtualMachineMonitor();
+   /**
+    * Gets the virtual machine monitor service.
+    * 
+    * @return The virtual machine monitor service.
+    */
+   public VirtualMachineMonitor getVirtualMachineMonitor();
 
-    /**
-     * Gets the virtual appliance monitor service.
-     * 
-     * @return The virtual appliance monitor service.
-     */
-    public VirtualApplianceMonitor getVirtualApplianceMonitor();
+   /**
+    * Gets the virtual appliance monitor service.
+    * 
+    * @return The virtual appliance monitor service.
+    */
+   public VirtualApplianceMonitor getVirtualApplianceMonitor();
 
-    /**
-     * Gets the asynchronous task monitor service.
-     * 
-     * @return The asynchronous task monitor service.
-     */
-    public AsyncTaskMonitor getAsyncTaskMonitor();
+   /**
+    * Gets the asynchronous task monitor service.
+    * 
+    * @return The asynchronous task monitor service.
+    */
+   public AsyncTaskMonitor getAsyncTaskMonitor();
 
-    /**
-     * Gets the conversion monitor service.
-     * 
-     * @return The conversion monitor service.
-     */
-    public ConversionMonitor getConversionMonitor();
+   /**
+    * Gets the conversion monitor service.
+    * 
+    * @return The conversion monitor service.
+    */
+   public ConversionMonitor getConversionMonitor();
 }

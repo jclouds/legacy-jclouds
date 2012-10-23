@@ -37,45 +37,38 @@ import org.testng.annotations.Test;
  * @author Francesc Montserrat
  */
 @Test(groups = "api", testName = "TemplateDefinitionListLiveApiTest")
-public class TemplateDefinitionListLiveApiTest extends BaseAbiquoApiLiveApiTest
-{
-    private TemplateDefinitionList list;
+public class TemplateDefinitionListLiveApiTest extends BaseAbiquoApiLiveApiTest {
+   private TemplateDefinitionList list;
 
-    public void testUpdate()
-    {
-        list.setName(list.getName() + "Updated");
-        list.update();
+   public void testUpdate() {
+      list.setName(list.getName() + "Updated");
+      list.update();
 
-        List<TemplateDefinitionList> lists =
-            env.enterprise.listTemplateDefinitionLists(TemplateDefinitionListPredicates
-                .name("myListUpdated"));
+      List<TemplateDefinitionList> lists = env.enterprise.listTemplateDefinitionLists(TemplateDefinitionListPredicates
+            .name("myListUpdated"));
 
-        assertEquals(lists.size(), 1);
-    }
+      assertEquals(lists.size(), 1);
+   }
 
-    public void testListStates()
-    {
-        List<TemplateState> states = list.listStatus(env.datacenter);
-        assertNotNull(states);
-    }
+   public void testListStates() {
+      List<TemplateState> states = list.listStatus(env.datacenter);
+      assertNotNull(states);
+   }
 
-    @BeforeClass
-    public void setup()
-    {
-        list =
-            TemplateDefinitionList.builder(env.context.getApiContext(), env.enterprise)
-                .name("myList").url("http://virtualapp-repository.com/vapp1.ovf").build();
+   @BeforeClass
+   public void setup() {
+      list = TemplateDefinitionList.builder(env.context.getApiContext(), env.enterprise).name("myList")
+            .url("http://virtualapp-repository.com/vapp1.ovf").build();
 
-        list.save();
+      list.save();
 
-        assertNotNull(list.getId());
-    }
+      assertNotNull(list.getId());
+   }
 
-    @AfterClass
-    public void tearDown()
-    {
-        Integer idTemplateList = list.getId();
-        list.delete();
-        assertNull(env.enterprise.getTemplateDefinitionList(idTemplateList));
-    }
+   @AfterClass
+   public void tearDown() {
+      Integer idTemplateList = list.getId();
+      list.delete();
+      assertNull(env.enterprise.getTemplateDefinitionList(idTemplateList));
+   }
 }

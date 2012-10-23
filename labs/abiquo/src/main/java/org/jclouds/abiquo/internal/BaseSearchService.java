@@ -63,120 +63,94 @@ import com.google.common.annotations.VisibleForTesting;
  * @author Francesc Montserrat
  */
 @Singleton
-public class BaseSearchService implements SearchService
-{
-    @VisibleForTesting
-    protected RestContext<AbiquoApi, AbiquoAsyncApi> context;
+public class BaseSearchService implements SearchService {
+   @VisibleForTesting
+   protected RestContext<AbiquoApi, AbiquoAsyncApi> context;
 
-    @Inject
-    protected BaseSearchService(final RestContext<AbiquoApi, AbiquoAsyncApi> context)
-    {
-        this.context = checkNotNull(context, "context");
-    }
+   @Inject
+   protected BaseSearchService(final RestContext<AbiquoApi, AbiquoAsyncApi> context) {
+      this.context = checkNotNull(context, "context");
+   }
 
-    /*********************** Enterprise ***********************/
+   /*********************** Enterprise ***********************/
 
-    @Override
-    public Iterable<Enterprise> searchEnterprises(final EnterpriseOptions options)
-    {
-        List<EnterpriseDto> enterprises =
-            context.getApi().getEnterpriseApi().listEnterprises(options).getCollection();
+   @Override
+   public Iterable<Enterprise> searchEnterprises(final EnterpriseOptions options) {
+      List<EnterpriseDto> enterprises = context.getApi().getEnterpriseApi().listEnterprises(options).getCollection();
 
-        return wrap(context, Enterprise.class, enterprises);
-    }
+      return wrap(context, Enterprise.class, enterprises);
+   }
 
-    @Override
-    public Iterable<Enterprise> searchEnterprisesUsingDatacenter(final Datacenter datacenter,
-        final EnterpriseOptions options)
-    {
-        List<EnterpriseDto> enterprises =
-            context.getApi().getEnterpriseApi().listEnterprises(datacenter.unwrap(), options)
-                .getCollection();
+   @Override
+   public Iterable<Enterprise> searchEnterprisesUsingDatacenter(final Datacenter datacenter,
+         final EnterpriseOptions options) {
+      List<EnterpriseDto> enterprises = context.getApi().getEnterpriseApi()
+            .listEnterprises(datacenter.unwrap(), options).getCollection();
 
-        return wrap(context, Enterprise.class, enterprises);
-    }
+      return wrap(context, Enterprise.class, enterprises);
+   }
 
-    /*********************** Volume ********************** */
+   /*********************** Volume ********************** */
 
-    @Override
-    public Iterable<Volume> searchVolumes(final VirtualDatacenter virtualDatacenter,
-        final VolumeOptions options)
-    {
-        List<VolumeManagementDto> volumes =
-            context.getApi().getCloudApi().listVolumes(virtualDatacenter.unwrap(), options)
-                .getCollection();
+   @Override
+   public Iterable<Volume> searchVolumes(final VirtualDatacenter virtualDatacenter, final VolumeOptions options) {
+      List<VolumeManagementDto> volumes = context.getApi().getCloudApi()
+            .listVolumes(virtualDatacenter.unwrap(), options).getCollection();
 
-        return wrap(context, Volume.class, volumes);
-    }
+      return wrap(context, Volume.class, volumes);
+   }
 
-    /*********************** Storage Pool ***********************/
+   /*********************** Storage Pool ***********************/
 
-    @Override
-    public List<StoragePool> searchStoragePools(final StorageDevice device,
-        final StoragePoolOptions options)
-    {
-        List<StoragePoolDto> pools =
-            context.getApi().getInfrastructureApi().listStoragePools(device.unwrap(), options)
-                .getCollection();
+   @Override
+   public List<StoragePool> searchStoragePools(final StorageDevice device, final StoragePoolOptions options) {
+      List<StoragePoolDto> pools = context.getApi().getInfrastructureApi().listStoragePools(device.unwrap(), options)
+            .getCollection();
 
-        return wrap(context, StoragePool.class, pools);
-    }
+      return wrap(context, StoragePool.class, pools);
+   }
 
-    /*********************** Private Network ***********************/
+   /*********************** Private Network ***********************/
 
-    @Override
-    public Iterable<PrivateIp> searchPrivateIps(final PrivateNetwork network,
-        final IpOptions options)
-    {
-        List<PrivateIpDto> ips =
-            context.getApi().getCloudApi().listPrivateNetworkIps(network.unwrap(), options)
-                .getCollection();
+   @Override
+   public Iterable<PrivateIp> searchPrivateIps(final PrivateNetwork network, final IpOptions options) {
+      List<PrivateIpDto> ips = context.getApi().getCloudApi().listPrivateNetworkIps(network.unwrap(), options)
+            .getCollection();
 
-        return wrap(context, PrivateIp.class, ips);
-    }
+      return wrap(context, PrivateIp.class, ips);
+   }
 
-    @Override
-    public Iterable<PublicIp> searchPublicIpsToPurchase(final VirtualDatacenter virtualDatacenter,
-        final IpOptions options)
-    {
-        List<PublicIpDto> ips =
-            context.getApi().getCloudApi()
-                .listAvailablePublicIps(virtualDatacenter.unwrap(), options).getCollection();
+   @Override
+   public Iterable<PublicIp> searchPublicIpsToPurchase(final VirtualDatacenter virtualDatacenter,
+         final IpOptions options) {
+      List<PublicIpDto> ips = context.getApi().getCloudApi()
+            .listAvailablePublicIps(virtualDatacenter.unwrap(), options).getCollection();
 
-        return wrap(context, PublicIp.class, ips);
-    }
+      return wrap(context, PublicIp.class, ips);
+   }
 
-    @Override
-    public Iterable<PublicIp> searchPurchasedPublicIps(final VirtualDatacenter virtualDatacenter,
-        final IpOptions options)
-    {
-        List<PublicIpDto> ips =
-            context.getApi().getCloudApi()
-                .listPurchasedPublicIps(virtualDatacenter.unwrap(), options).getCollection();
+   @Override
+   public Iterable<PublicIp> searchPurchasedPublicIps(final VirtualDatacenter virtualDatacenter, final IpOptions options) {
+      List<PublicIpDto> ips = context.getApi().getCloudApi()
+            .listPurchasedPublicIps(virtualDatacenter.unwrap(), options).getCollection();
 
-        return wrap(context, PublicIp.class, ips);
-    }
+      return wrap(context, PublicIp.class, ips);
+   }
 
-    @Override
-    public Iterable<LogicServer> searchServiceProfiles(final ManagedRack rack,
-        final FilterOptions options)
-    {
-        List<LogicServerDto> profiles =
-            context.getApi().getInfrastructureApi().listServiceProfiles(rack.unwrap(), options)
-                .getCollection();
+   @Override
+   public Iterable<LogicServer> searchServiceProfiles(final ManagedRack rack, final FilterOptions options) {
+      List<LogicServerDto> profiles = context.getApi().getInfrastructureApi()
+            .listServiceProfiles(rack.unwrap(), options).getCollection();
 
-        return wrap(context, LogicServer.class, profiles);
-    }
+      return wrap(context, LogicServer.class, profiles);
+   }
 
-    @Override
-    public Iterable<LogicServer> searchServiceProfileTemplates(final ManagedRack rack,
-        final FilterOptions options)
-    {
-        List<LogicServerDto> profiles =
-            context.getApi().getInfrastructureApi()
-                .listServiceProfileTemplates(rack.unwrap(), options).getCollection();
+   @Override
+   public Iterable<LogicServer> searchServiceProfileTemplates(final ManagedRack rack, final FilterOptions options) {
+      List<LogicServerDto> profiles = context.getApi().getInfrastructureApi()
+            .listServiceProfileTemplates(rack.unwrap(), options).getCollection();
 
-        return wrap(context, LogicServer.class, profiles);
-    }
+      return wrap(context, LogicServer.class, profiles);
+   }
 
 }

@@ -32,19 +32,17 @@ import com.abiquo.server.core.cloud.VirtualMachineState;
  * @author Ignasi Barrera
  */
 @Test(groups = "unit", testName = "VirtualMachineStateToNodeStateTest")
-public class VirtualMachineStateToNodeStateTest
-{
-    public void testVirtualMachineStateToNodeState()
-    {
-        VirtualMachineStateToNodeState function = new VirtualMachineStateToNodeState();
+public class VirtualMachineStateToNodeStateTest {
+   public void testVirtualMachineStateToNodeState() {
+      VirtualMachineStateToNodeState function = new VirtualMachineStateToNodeState();
 
-        assertEquals(function.apply(VirtualMachineState.ALLOCATED), Status.PENDING);
-        assertEquals(function.apply(VirtualMachineState.LOCKED), Status.PENDING);
-        assertEquals(function.apply(VirtualMachineState.CONFIGURED), Status.PENDING);
-        assertEquals(function.apply(VirtualMachineState.ON), Status.RUNNING);
-        assertEquals(function.apply(VirtualMachineState.OFF), Status.SUSPENDED);
-        assertEquals(function.apply(VirtualMachineState.PAUSED), Status.SUSPENDED);
-        assertEquals(function.apply(VirtualMachineState.NOT_ALLOCATED), Status.PENDING);
-        assertEquals(function.apply(VirtualMachineState.UNKNOWN), Status.UNRECOGNIZED);
-    }
+      assertEquals(function.apply(VirtualMachineState.ALLOCATED), Status.PENDING);
+      assertEquals(function.apply(VirtualMachineState.LOCKED), Status.PENDING);
+      assertEquals(function.apply(VirtualMachineState.CONFIGURED), Status.PENDING);
+      assertEquals(function.apply(VirtualMachineState.ON), Status.RUNNING);
+      assertEquals(function.apply(VirtualMachineState.OFF), Status.SUSPENDED);
+      assertEquals(function.apply(VirtualMachineState.PAUSED), Status.SUSPENDED);
+      assertEquals(function.apply(VirtualMachineState.NOT_ALLOCATED), Status.PENDING);
+      assertEquals(function.apply(VirtualMachineState.UNKNOWN), Status.UNRECOGNIZED);
+   }
 }

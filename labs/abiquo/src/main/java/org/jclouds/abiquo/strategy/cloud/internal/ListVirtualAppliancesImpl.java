@@ -54,64 +54,53 @@ import com.google.inject.Inject;
  * @author Ignasi Barrera
  */
 @Singleton
-public class ListVirtualAppliancesImpl implements ListVirtualAppliances
-{
-    protected final RestContext<AbiquoApi, AbiquoAsyncApi> context;
+public class ListVirtualAppliancesImpl implements ListVirtualAppliances {
+   protected final RestContext<AbiquoApi, AbiquoAsyncApi> context;
 
-    protected final ListVirtualDatacenters listVirtualDatacenters;
+   protected final ListVirtualDatacenters listVirtualDatacenters;
 
-    protected final ExecutorService userExecutor;
+   protected final ExecutorService userExecutor;
 
-    @Resource
-    protected Logger logger = Logger.NULL;
+   @Resource
+   protected Logger logger = Logger.NULL;
 
-    @Inject(optional = true)
-    @Named(Constants.PROPERTY_REQUEST_TIMEOUT)
-    protected Long maxTime;
+   @Inject(optional = true)
+   @Named(Constants.PROPERTY_REQUEST_TIMEOUT)
+   protected Long maxTime;
 
-    @Inject
-    ListVirtualAppliancesImpl(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-        @Named(Constants.PROPERTY_USER_THREADS) final ExecutorService userExecutor,
-        final ListVirtualDatacenters listVirtualDatacenters)
-    {
-        this.context = checkNotNull(context, "context");
-        this.listVirtualDatacenters =
-            checkNotNull(listVirtualDatacenters, "listVirtualDatacenters");
-        this.userExecutor = checkNotNull(userExecutor, "userExecutor");
-    }
+   @Inject
+   ListVirtualAppliancesImpl(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
+         @Named(Constants.PROPERTY_USER_THREADS) final ExecutorService userExecutor,
+         final ListVirtualDatacenters listVirtualDatacenters) {
+      this.context = checkNotNull(context, "context");
+      this.listVirtualDatacenters = checkNotNull(listVirtualDatacenters, "listVirtualDatacenters");
+      this.userExecutor = checkNotNull(userExecutor, "userExecutor");
+   }
 
-    @Override
-    public Iterable<VirtualAppliance> execute()
-    {
-        // Find virtual appliances in concurrent requests
-        Iterable<VirtualDatacenter> vdcs = listVirtualDatacenters.execute();
-        Iterable<VirtualApplianceDto> vapps = listConcurrentVirtualAppliances(vdcs);
+   @Override
+   public Iterable<VirtualAppliance> execute() {
+      // Find virtual appliances in concurrent requests
+      Iterable<VirtualDatacenter> vdcs = listVirtualDatacenters.execute();
+      Iterable<VirtualApplianceDto> vapps = listConcurrentVirtualAppliances(vdcs);
 
-        return wrap(context, VirtualAppliance.class, vapps);
-    }
+      return wrap(context, VirtualAppliance.class, vapps);
+   }
 
-    @Override
-    public Iterable<VirtualAppliance> execute(final Predicate<VirtualAppliance> selector)
-    {
-        return filter(execute(), selector);
-    }
+   @Override
+   public Iterable<VirtualAppliance> execute(final Predicate<VirtualAppliance> selector) {
+      return filter(execute(), selector);
+   }
 
-    private Iterable<VirtualApplianceDto> listConcurrentVirtualAppliances(
-        final Iterable<VirtualDatacenter> vdcs)
-    {
-        Iterable<VirtualAppliancesDto> vapps =
-            transformParallel(vdcs,
-                new Function<VirtualDatacenter, Future< ? extends VirtualAppliancesDto>>()
-                {
-                    @Override
-                    public Future<VirtualAppliancesDto> apply(final VirtualDatacenter input)
-                    {
-                        return context.getAsyncApi().getCloudApi()
-                            .listVirtualAppliances(input.unwrap());
-                    }
-                }, userExecutor, maxTime, logger, "getting virtual appliances");
+   private Iterable<VirtualApplianceDto> listConcurrentVirtualAppliances(final Iterable<VirtualDatacenter> vdcs) {
+      Iterable<VirtualAppliancesDto> vapps = transformParallel(vdcs,
+            new Function<VirtualDatacenter, Future<? extends VirtualAppliancesDto>>() {
+               @Override
+               public Future<VirtualAppliancesDto> apply(final VirtualDatacenter input) {
+                  return context.getAsyncApi().getCloudApi().listVirtualAppliances(input.unwrap());
+               }
+            }, userExecutor, maxTime, logger, "getting virtual appliances");
 
-        return DomainWrapper.join(vapps);
-    }
+      return DomainWrapper.join(vapps);
+   }
 
 }

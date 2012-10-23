@@ -47,204 +47,177 @@ import com.google.common.collect.Lists;
  * @see API: <a href="http://community.abiquo.com/display/ABI20/Roles+Resource">
  *      http://community.abiquo.com/display/ABI20/Roles+Resource</a>
  */
-public class Role extends DomainWrapper<RoleDto>
-{
-    /** Default active value of the user */
-    private static final boolean DEFAULT_BLOCKED = false;
+public class Role extends DomainWrapper<RoleDto> {
+   /** Default active value of the user */
+   private static final boolean DEFAULT_BLOCKED = false;
 
-    /**
-     * Constructor to be used only by the builder.
-     */
-    protected Role(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final RoleDto target)
-    {
-        super(context, target);
-    }
+   /**
+    * Constructor to be used only by the builder.
+    */
+   protected Role(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final RoleDto target) {
+      super(context, target);
+   }
 
-    // Domain operations
+   // Domain operations
 
-    /**
-     * @see API: <a href=
-     *      "http://community.abiquo.com/display/ABI20/Roles+Resource#RolesResource-DeleteanexistingRole"
-     *      >
-     *      http://community.abiquo.com/display/ABI20/Roles+Resource#RolesResource-DeleteanexistingRole
-     *      </a>
-     */
-    public void delete()
-    {
-        context.getApi().getAdminApi().deleteRole(target);
-        target = null;
-    }
+   /**
+    * @see API: <a href=
+    *      "http://community.abiquo.com/display/ABI20/Roles+Resource#RolesResource-DeleteanexistingRole"
+    *      >
+    *      http://community.abiquo.com/display/ABI20/Roles+Resource#RolesResource
+    *      -DeleteanexistingRole </a>
+    */
+   public void delete() {
+      context.getApi().getAdminApi().deleteRole(target);
+      target = null;
+   }
 
-    /**
-     * @see API: <a href=
-     *      "http://community.abiquo.com/display/ABI20/Roles+Resource#RolesResource-CreateanewRole">
-     *      http
-     *      ://community.abiquo.com/display/ABI20/Roles+Resource#RolesResource-CreateanewRole</a>
-     */
-    public void save()
-    {
-        target = context.getApi().getAdminApi().createRole(target);
-    }
+   /**
+    * @see API: <a href=
+    *      "http://community.abiquo.com/display/ABI20/Roles+Resource#RolesResource-CreateanewRole"
+    *      > http
+    *      ://community.abiquo.com/display/ABI20/Roles+Resource#RolesResource
+    *      -CreateanewRole</a>
+    */
+   public void save() {
+      target = context.getApi().getAdminApi().createRole(target);
+   }
 
-    /**
-     * @see API: <a href=
-     *      "http://community.abiquo.com/display/ABI20/Roles+Resource#RolesResource-UpdateanexistingRole"
-     *      >
-     *      http://community.abiquo.com/display/ABI20/Roles+Resource#RolesResource-UpdateanexistingRole
-     *      </a>
-     */
-    public void update()
-    {
-        target = context.getApi().getAdminApi().updateRole(target);
-    }
+   /**
+    * @see API: <a href=
+    *      "http://community.abiquo.com/display/ABI20/Roles+Resource#RolesResource-UpdateanexistingRole"
+    *      >
+    *      http://community.abiquo.com/display/ABI20/Roles+Resource#RolesResource
+    *      -UpdateanexistingRole </a>
+    */
+   public void update() {
+      target = context.getApi().getAdminApi().updateRole(target);
+   }
 
-    public void setEnterprise(final Enterprise enterprise)
-    {
-        checkNotNull(enterprise, ValidationErrors.NULL_RESOURCE + Enterprise.class);
-        checkNotNull(enterprise.getId(), ValidationErrors.MISSING_REQUIRED_FIELD + " id in "
-            + Enterprise.class);
+   public void setEnterprise(final Enterprise enterprise) {
+      checkNotNull(enterprise, ValidationErrors.NULL_RESOURCE + Enterprise.class);
+      checkNotNull(enterprise.getId(), ValidationErrors.MISSING_REQUIRED_FIELD + " id in " + Enterprise.class);
 
-        RESTLink link = enterprise.unwrap().searchLink("edit");
+      RESTLink link = enterprise.unwrap().searchLink("edit");
 
-        checkNotNull(link, ValidationErrors.MISSING_REQUIRED_LINK);
+      checkNotNull(link, ValidationErrors.MISSING_REQUIRED_LINK);
 
-        target.addLink(new RESTLink("enterprise", link.getHref()));
-    }
+      target.addLink(new RESTLink("enterprise", link.getHref()));
+   }
 
-    @EnterpriseEdition
-    public void setPrivileges(final List<Privilege> privileges)
-    {
-        for (Privilege privilege : privileges)
-        {
-            addPrivilege(privilege);
-        }
-    }
+   @EnterpriseEdition
+   public void setPrivileges(final List<Privilege> privileges) {
+      for (Privilege privilege : privileges) {
+         addPrivilege(privilege);
+      }
+   }
 
-    @EnterpriseEdition
-    private void addPrivilege(final Privilege privilege)
-    {
-        checkNotNull(privilege, ValidationErrors.NULL_RESOURCE + Privilege.class);
-        checkNotNull(privilege.getId(), ValidationErrors.MISSING_REQUIRED_FIELD + " id in "
-            + Privilege.class);
+   @EnterpriseEdition
+   private void addPrivilege(final Privilege privilege) {
+      checkNotNull(privilege, ValidationErrors.NULL_RESOURCE + Privilege.class);
+      checkNotNull(privilege.getId(), ValidationErrors.MISSING_REQUIRED_FIELD + " id in " + Privilege.class);
 
-        RESTLink link = privilege.unwrap().searchLink("self");
+      RESTLink link = privilege.unwrap().searchLink("self");
 
-        // rel would be "privilege" if the object is coming from a privilege list.
-        if (link == null)
-        {
-            link = privilege.unwrap().searchLink("privilege");
-        }
+      // rel would be "privilege" if the object is coming from a privilege list.
+      if (link == null) {
+         link = privilege.unwrap().searchLink("privilege");
+      }
 
-        checkNotNull(link, ValidationErrors.MISSING_REQUIRED_LINK);
+      checkNotNull(link, ValidationErrors.MISSING_REQUIRED_LINK);
 
-        target.addLink(new RESTLink("privilege" + privilege.getId(), link.getHref()));
-    }
+      target.addLink(new RESTLink("privilege" + privilege.getId(), link.getHref()));
+   }
 
-    // Children access
+   // Children access
 
-    /**
-     * @see API: <a href=
-     *      "http://community.abiquo.com/display/ABI20/Roles+Resource#RolesResource-RetrievealistofprivilegesfromaRole"
-     *      > http://community.abiquo.com/display/ABI20/Roles+Resource#RolesResource-
-     *      RetrievealistofprivilegesfromaRole</a>
-     */
-    public List<Privilege> listPrivileges()
-    {
-        PrivilegesDto dto = context.getApi().getAdminApi().listPrivileges(target);
+   /**
+    * @see API: <a href=
+    *      "http://community.abiquo.com/display/ABI20/Roles+Resource#RolesResource-RetrievealistofprivilegesfromaRole"
+    *      > http://community.abiquo.com/display/ABI20/Roles+Resource#
+    *      RolesResource- RetrievealistofprivilegesfromaRole</a>
+    */
+   public List<Privilege> listPrivileges() {
+      PrivilegesDto dto = context.getApi().getAdminApi().listPrivileges(target);
 
-        return wrap(context, Privilege.class, dto.getCollection());
-    }
+      return wrap(context, Privilege.class, dto.getCollection());
+   }
 
-    public List<Privilege> listPrivileges(final Predicate<Privilege> filter)
-    {
-        return Lists.newLinkedList(filter(listPrivileges(), filter));
-    }
+   public List<Privilege> listPrivileges(final Predicate<Privilege> filter) {
+      return Lists.newLinkedList(filter(listPrivileges(), filter));
+   }
 
-    public Privilege findPrivileges(final Predicate<Privilege> filter)
-    {
-        return Iterables.getFirst(filter(listPrivileges(), filter), null);
-    }
+   public Privilege findPrivileges(final Predicate<Privilege> filter) {
+      return Iterables.getFirst(filter(listPrivileges(), filter), null);
+   }
 
-    // Builder
+   // Builder
 
-    public static Builder builder(final RestContext<AbiquoApi, AbiquoAsyncApi> context)
-    {
-        return new Builder(context);
-    }
+   public static Builder builder(final RestContext<AbiquoApi, AbiquoAsyncApi> context) {
+      return new Builder(context);
+   }
 
-    public static class Builder
-    {
-        private RestContext<AbiquoApi, AbiquoAsyncApi> context;
+   public static class Builder {
+      private RestContext<AbiquoApi, AbiquoAsyncApi> context;
 
-        private String name;
+      private String name;
 
-        private boolean blocked = DEFAULT_BLOCKED;
+      private boolean blocked = DEFAULT_BLOCKED;
 
-        public Builder(final RestContext<AbiquoApi, AbiquoAsyncApi> context)
-        {
-            super();
-            this.context = context;
-        }
+      public Builder(final RestContext<AbiquoApi, AbiquoAsyncApi> context) {
+         super();
+         this.context = context;
+      }
 
-        public Builder name(final String name)
-        {
-            this.name = name;
-            return this;
-        }
+      public Builder name(final String name) {
+         this.name = name;
+         return this;
+      }
 
-        public Builder blocked(final boolean blocked)
-        {
-            this.blocked = blocked;
-            return this;
-        }
+      public Builder blocked(final boolean blocked) {
+         this.blocked = blocked;
+         return this;
+      }
 
-        public Role build()
-        {
-            RoleDto dto = new RoleDto();
-            dto.setName(name);
-            dto.setBlocked(blocked);
-            Role role = new Role(context, dto);
+      public Role build() {
+         RoleDto dto = new RoleDto();
+         dto.setName(name);
+         dto.setBlocked(blocked);
+         Role role = new Role(context, dto);
 
-            return role;
-        }
+         return role;
+      }
 
-        public static Builder fromRole(final Role in)
-        {
-            return Role.builder(in.context).blocked(in.isBlocked()).name(in.getName());
-        }
-    }
+      public static Builder fromRole(final Role in) {
+         return Role.builder(in.context).blocked(in.isBlocked()).name(in.getName());
+      }
+   }
 
-    // Delegate methods
+   // Delegate methods
 
-    public Integer getId()
-    {
-        return target.getId();
-    }
+   public Integer getId() {
+      return target.getId();
+   }
 
-    public String getName()
-    {
-        return target.getName();
-    }
+   public String getName() {
+      return target.getName();
+   }
 
-    public boolean isBlocked()
-    {
-        return target.isBlocked();
-    }
+   public boolean isBlocked() {
+      return target.isBlocked();
+   }
 
-    public void setBlocked(final boolean blocked)
-    {
-        target.setBlocked(blocked);
-    }
+   public void setBlocked(final boolean blocked) {
+      target.setBlocked(blocked);
+   }
 
-    public void setName(final String name)
-    {
-        target.setName(name);
-    }
+   public void setName(final String name) {
+      target.setName(name);
+   }
 
-    @Override
-    public String toString()
-    {
-        return "Role [id=" + getId() + ", name=" + getName() + ", blocked=" + isBlocked() + "]";
-    }
+   @Override
+   public String toString() {
+      return "Role [id=" + getId() + ", name=" + getName() + ", blocked=" + isBlocked() + "]";
+   }
 
 }

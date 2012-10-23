@@ -41,61 +41,56 @@ import com.google.common.base.Function;
 /**
  * Transforms a {@link VirtualMachineTemplate} into an {@link Hardware}.
  * <p>
- * Each {@link Image} ({@link VirtualMachineTemplate}) will have one {@link Hardware} entity for
- * each zone (scoped to a virtualization technology) supported by the image.
+ * Each {@link Image} ({@link VirtualMachineTemplate}) will have one
+ * {@link Hardware} entity for each zone (scoped to a virtualization technology)
+ * supported by the image.
  * 
  * @author Ignasi Barrera
  */
 @Singleton
 public class VirtualMachineTemplateInVirtualDatacenterToHardware implements
-    Function<VirtualMachineTemplateInVirtualDatacenter, Hardware>
-{
-    /** The default core speed, 2.0Ghz. */
-    public static final double DEFAULT_CORE_SPEED = 2.0;
+      Function<VirtualMachineTemplateInVirtualDatacenter, Hardware> {
+   /** The default core speed, 2.0Ghz. */
+   public static final double DEFAULT_CORE_SPEED = 2.0;
 
-    private final Function<VirtualDatacenter, Location> virtualDatacenterToLocation;
+   private final Function<VirtualDatacenter, Location> virtualDatacenterToLocation;
 
-    @Inject
-    public VirtualMachineTemplateInVirtualDatacenterToHardware(
-        final Function<VirtualDatacenter, Location> virtualDatacenterToLocation)
-    {
-        this.virtualDatacenterToLocation =
-            checkNotNull(virtualDatacenterToLocation, "virtualDatacenterToLocation");
-    }
+   @Inject
+   public VirtualMachineTemplateInVirtualDatacenterToHardware(
+         final Function<VirtualDatacenter, Location> virtualDatacenterToLocation) {
+      this.virtualDatacenterToLocation = checkNotNull(virtualDatacenterToLocation, "virtualDatacenterToLocation");
+   }
 
-    @Override
-    public Hardware apply(
-        final VirtualMachineTemplateInVirtualDatacenter templateInVirtualDatacenter)
-    {
-        VirtualMachineTemplate template = templateInVirtualDatacenter.getTemplate();
-        VirtualDatacenter virtualDatacenter = templateInVirtualDatacenter.getZone();
+   @Override
+   public Hardware apply(final VirtualMachineTemplateInVirtualDatacenter templateInVirtualDatacenter) {
+      VirtualMachineTemplate template = templateInVirtualDatacenter.getTemplate();
+      VirtualDatacenter virtualDatacenter = templateInVirtualDatacenter.getZone();
 
-        HardwareBuilder builder = new HardwareBuilder();
-        builder.providerId(template.getId().toString());
-        builder.id(template.getId().toString() + "/" + virtualDatacenter.getId());
-        builder.uri(template.getURI());
+      HardwareBuilder builder = new HardwareBuilder();
+      builder.providerId(template.getId().toString());
+      builder.id(template.getId().toString() + "/" + virtualDatacenter.getId());
+      builder.uri(template.getURI());
 
-        builder.name(template.getName());
-        builder.processor(new Processor(template.getCpuRequired(), DEFAULT_CORE_SPEED));
-        builder.ram(template.getRamRequired());
+      builder.name(template.getName());
+      builder.processor(new Processor(template.getCpuRequired(), DEFAULT_CORE_SPEED));
+      builder.ram(template.getRamRequired());
 
-        // Location information
-        builder.location(virtualDatacenterToLocation.apply(virtualDatacenter));
-        builder.hypervisor(virtualDatacenter.getHypervisorType().name());
-        builder.supportsImage(ImagePredicates.idEquals(template.getId().toString()));
+      // Location information
+      builder.location(virtualDatacenterToLocation.apply(virtualDatacenter));
+      builder.hypervisor(virtualDatacenter.getHypervisorType().name());
+      builder.supportsImage(ImagePredicates.idEquals(template.getId().toString()));
 
-        VolumeBuilder volumeBuilder = new VolumeBuilder();
-        volumeBuilder.bootDevice(true);
-        volumeBuilder.size(toGb(template.getHdRequired()));
-        volumeBuilder.type(Volume.Type.LOCAL);
-        volumeBuilder.durable(false);
-        builder.volume(volumeBuilder.build());
+      VolumeBuilder volumeBuilder = new VolumeBuilder();
+      volumeBuilder.bootDevice(true);
+      volumeBuilder.size(toGb(template.getHdRequired()));
+      volumeBuilder.type(Volume.Type.LOCAL);
+      volumeBuilder.durable(false);
+      builder.volume(volumeBuilder.build());
 
-        return builder.build();
-    }
+      return builder.build();
+   }
 
-    private static float toGb(final long bytes)
-    {
-        return bytes / 1024 / 1024 / (float) 1024;
-    }
+   private static float toGb(final long bytes) {
+      return bytes / 1024 / 1024 / (float) 1024;
+   }
 }

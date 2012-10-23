@@ -32,35 +32,30 @@ import com.google.common.base.Function;
  * @author Francesc Montserrat
  */
 @Test(groups = "unit", testName = "ParseEnterpriseIdTest")
-public class ParseEnterpriseIdTest
-{
-    @Test(expectedExceptions = NullPointerException.class)
-    public void testInvalidNullInput()
-    {
-        Function<Object, String> parser = new ParseEnterpriseId();
-        parser.apply(null);
-    }
+public class ParseEnterpriseIdTest {
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testInvalidNullInput() {
+      Function<Object, String> parser = new ParseEnterpriseId();
+      parser.apply(null);
+   }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
-    public void testInvalidInputType()
-    {
-        Function<Object, String> parser = new ParseEnterpriseId();
-        parser.apply(new Object());
-    }
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testInvalidInputType() {
+      Function<Object, String> parser = new ParseEnterpriseId();
+      parser.apply(new Object());
+   }
 
-    @Test(expectedExceptions = NullPointerException.class)
-    public void testInvalidId()
-    {
-        Function<Object, String> parser = new ParseEnterpriseId();
-        parser.apply(new EnterpriseDto());
-    }
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testInvalidId() {
+      Function<Object, String> parser = new ParseEnterpriseId();
+      parser.apply(new EnterpriseDto());
+   }
 
-    public void testValidId()
-    {
-        Function<Object, String> parser = new ParseEnterpriseId();
+   public void testValidId() {
+      Function<Object, String> parser = new ParseEnterpriseId();
 
-        EnterpriseDto enterprise = new EnterpriseDto();
-        enterprise.setId(5);
-        assertEquals(parser.apply(enterprise), "5");
-    }
+      EnterpriseDto enterprise = new EnterpriseDto();
+      enterprise.setId(5);
+      assertEquals(parser.apply(enterprise), "5");
+   }
 }

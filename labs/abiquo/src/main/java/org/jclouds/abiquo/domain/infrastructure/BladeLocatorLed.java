@@ -19,7 +19,6 @@
 
 package org.jclouds.abiquo.domain.infrastructure;
 
-
 import org.jclouds.abiquo.AbiquoAsyncApi;
 import org.jclouds.abiquo.AbiquoApi;
 import org.jclouds.abiquo.domain.DomainWrapper;
@@ -35,47 +34,40 @@ import com.abiquo.server.core.infrastructure.BladeLocatorLedDto;
  * @author Francesc Montserrat
  * @see API: <a href=
  *      "http://community.abiquo.com/display/ABI20/MachineResource#MachineResource-Retrievethelocatorledoftheblade"
- *      > http://community.abiquo.com/display/ABI20/MachineResource#MachineResource-
- *      Retrievethelocatorledoftheblade</a>
+ *      > http://community.abiquo.com/display/ABI20/MachineResource#
+ *      MachineResource- Retrievethelocatorledoftheblade</a>
  */
 @EnterpriseEdition
-public class BladeLocatorLed extends DomainWrapper<BladeLocatorLedDto>
-{
-    /**
-     * Constructor to be used only by the builder.
-     */
-    protected BladeLocatorLed(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final BladeLocatorLedDto target)
-    {
-        super(context, target);
-    }
+public class BladeLocatorLed extends DomainWrapper<BladeLocatorLedDto> {
+   /**
+    * Constructor to be used only by the builder.
+    */
+   protected BladeLocatorLed(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final BladeLocatorLedDto target) {
+      super(context, target);
+   }
 
-    // Delegate Methods
+   // Delegate Methods
 
-    public String getAdminStatus()
-    {
-        return target.getAdminStatus();
-    }
+   public String getAdminStatus() {
+      return target.getAdminStatus();
+   }
 
-    public String getBladeDn()
-    {
-        return target.getBladeDn();
-    }
+   public String getBladeDn() {
+      return target.getBladeDn();
+   }
 
-    public String getColor()
-    {
-        return target.getColor();
-    }
+   public String getColor() {
+      return target.getColor();
+   }
 
-    public String getDn()
-    {
-        return target.getDn();
-    }
+   public String getDn() {
+      return target.getDn();
+   }
 
-    @Override
-    public String toString()
-    {
-        return "BladeLocatorLed [Dn=" + getDn() + ", BladeDn=" + getBladeDn() + ", Color="
-            + getColor() + ", AdminStatus=" + getAdminStatus() + "]";
-    }
+   @Override
+   public String toString() {
+      return "BladeLocatorLed [Dn=" + getDn() + ", BladeDn=" + getBladeDn() + ", Color=" + getColor()
+            + ", AdminStatus=" + getAdminStatus() + "]";
+   }
 
 }

@@ -19,7 +19,6 @@
 
 package org.jclouds.abiquo.domain.infrastructure;
 
-
 import org.jclouds.abiquo.AbiquoAsyncApi;
 import org.jclouds.abiquo.AbiquoApi;
 import org.jclouds.abiquo.domain.DomainWrapper;
@@ -33,69 +32,58 @@ import com.abiquo.server.core.infrastructure.DatastoreDto;
  * @author Ignasi Barrera
  * @author Francesc Montserrat
  */
-public class Datastore extends DomainWrapper<DatastoreDto>
-{
-    /**
-     * Constructor to be used only by the builder. This resource cannot be created.
-     */
-    private Datastore(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final DatastoreDto target)
-    {
-        super(context, target);
-    }
+public class Datastore extends DomainWrapper<DatastoreDto> {
+   /**
+    * Constructor to be used only by the builder. This resource cannot be
+    * created.
+    */
+   private Datastore(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final DatastoreDto target) {
+      super(context, target);
+   }
 
-    // Delegate methods
+   // Delegate methods
 
-    public String getDatastoreUUID()
-    {
-        return target.getDatastoreUUID();
-    }
+   public String getDatastoreUUID() {
+      return target.getDatastoreUUID();
+   }
 
-    public String getDirectory()
-    {
-        return target.getDirectory();
-    }
+   public String getDirectory() {
+      return target.getDirectory();
+   }
 
-    public Integer getId()
-    {
-        return target.getId();
-    }
+   public Integer getId() {
+      return target.getId();
+   }
 
-    public String getName()
-    {
-        return target.getName();
-    }
+   public String getName() {
+      return target.getName();
+   }
 
-    public String getRootPath()
-    {
-        return target.getRootPath();
-    }
+   public String getRootPath() {
+      return target.getRootPath();
+   }
 
-    public long getSize()
-    {
-        return target.getSize();
-    }
+   public long getSize() {
+      return target.getSize();
+   }
 
-    public long getUsedSize()
-    {
-        return target.getUsedSize();
-    }
+   public long getUsedSize() {
+      return target.getUsedSize();
+   }
 
-    public boolean isEnabled()
-    {
-        return target.isEnabled();
-    }
+   public boolean isEnabled() {
+      return target.isEnabled();
+   }
 
-    public void setEnabled(final boolean enabled)
-    {
-        target.setEnabled(enabled);
-    }
+   public void setEnabled(final boolean enabled) {
+      target.setEnabled(enabled);
+   }
 
-    @Override
-    public String toString()
-    {
-        return "Datastore [id=" + getId() + ", uuid=" + getDatastoreUUID() + ", directory="
-            + getDirectory() + ", name=" + getName() + ", rootPath=" + getRootPath() + ", size="
-            + getSize() + ", usedSize=" + getUsedSize() + ", enabled=" + isEnabled() + "]";
-    }
+   @Override
+   public String toString() {
+      return "Datastore [id=" + getId() + ", uuid=" + getDatastoreUUID() + ", directory=" + getDirectory() + ", name="
+            + getName() + ", rootPath=" + getRootPath() + ", size=" + getSize() + ", usedSize=" + getUsedSize()
+            + ", enabled=" + isEnabled() + "]";
+   }
 
 }

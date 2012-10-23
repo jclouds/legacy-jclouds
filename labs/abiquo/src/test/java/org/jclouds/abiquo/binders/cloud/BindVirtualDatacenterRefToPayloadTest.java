@@ -39,39 +39,28 @@ import com.abiquo.server.core.cloud.VirtualDatacenterDto;
  * @author Ignasi Barrera
  */
 @Test(groups = "unit", testName = "BindVirtualDatacenterRefToPayloadTest")
-public class BindVirtualDatacenterRefToPayloadTest
-{
+public class BindVirtualDatacenterRefToPayloadTest {
 
-    @Test(expectedExceptions = NullPointerException.class)
-    public void testInvalidNullInput()
-    {
-        BindVirtualDatacenterRefToPayload binder =
-            new BindVirtualDatacenterRefToPayload(new JAXBParser("false"));
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
-        binder.bindToRequest(request, null);
-    }
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testInvalidNullInput() {
+      BindVirtualDatacenterRefToPayload binder = new BindVirtualDatacenterRefToPayload(new JAXBParser("false"));
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
+      binder.bindToRequest(request, null);
+   }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
-    public void testInvalidTypeInput()
-    {
-        BindVirtualDatacenterRefToPayload binder =
-            new BindVirtualDatacenterRefToPayload(new JAXBParser("false"));
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
-        binder.bindToRequest(request, new Object());
-    }
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testInvalidTypeInput() {
+      BindVirtualDatacenterRefToPayload binder = new BindVirtualDatacenterRefToPayload(new JAXBParser("false"));
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
+      binder.bindToRequest(request, new Object());
+   }
 
-    public void testBindSingleVolume() throws IOException
-    {
-        VirtualDatacenterDto vdc = CloudResources.virtualDatacenterPut();
-        BindVirtualDatacenterRefToPayload binder =
-            new BindVirtualDatacenterRefToPayload(new JAXBParser("false"));
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
-        request = binder.bindToRequest(request, vdc);
-        assertPayloadEquals(request.getPayload(), withHeader("<links><link href=\""
-            + vdc.getEditLink().getHref() + "\" rel=\"virtualdatacenter\"/></links>"),
-            LinksDto.class);
-    }
+   public void testBindSingleVolume() throws IOException {
+      VirtualDatacenterDto vdc = CloudResources.virtualDatacenterPut();
+      BindVirtualDatacenterRefToPayload binder = new BindVirtualDatacenterRefToPayload(new JAXBParser("false"));
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
+      request = binder.bindToRequest(request, vdc);
+      assertPayloadEquals(request.getPayload(), withHeader("<links><link href=\"" + vdc.getEditLink().getHref()
+            + "\" rel=\"virtualdatacenter\"/></links>"), LinksDto.class);
+   }
 }

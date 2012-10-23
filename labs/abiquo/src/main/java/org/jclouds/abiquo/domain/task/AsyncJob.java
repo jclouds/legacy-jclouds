@@ -19,7 +19,6 @@
 
 package org.jclouds.abiquo.domain.task;
 
-
 import org.jclouds.abiquo.AbiquoAsyncApi;
 import org.jclouds.abiquo.AbiquoApi;
 import org.jclouds.abiquo.domain.DomainWrapper;
@@ -34,54 +33,44 @@ import com.abiquo.server.core.task.JobDto;
  * 
  * @author Francesc Montserrat
  */
-public class AsyncJob extends DomainWrapper<JobDto>
-{
-    /**
-     * Constructor to be used only by the builder.
-     */
-    protected AsyncJob(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final JobDto target)
-    {
-        super(context, target);
-    }
+public class AsyncJob extends DomainWrapper<JobDto> {
+   /**
+    * Constructor to be used only by the builder.
+    */
+   protected AsyncJob(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final JobDto target) {
+      super(context, target);
+   }
 
-    // Delegate methods
+   // Delegate methods
 
-    public String getDescription()
-    {
-        return target.getDescription();
-    }
+   public String getDescription() {
+      return target.getDescription();
+   }
 
-    public String getId()
-    {
-        return target.getId();
-    }
+   public String getId() {
+      return target.getId();
+   }
 
-    public JobState getRollbackState()
-    {
-        return target.getRollbackState();
-    }
+   public JobState getRollbackState() {
+      return target.getRollbackState();
+   }
 
-    public JobState getState()
-    {
-        return target.getState();
-    }
+   public JobState getState() {
+      return target.getState();
+   }
 
-    public long getTimestamp()
-    {
-        return target.getTimestamp();
-    }
+   public long getTimestamp() {
+      return target.getTimestamp();
+   }
 
-    public JobType getType()
-    {
-        return target.getType();
-    }
+   public JobType getType() {
+      return target.getType();
+   }
 
-    @Override
-    public String toString()
-    {
-        return "AsyncJob [id=" + getId() + ", description=" + getDescription() + ", rollbackState="
-            + getRollbackState() + ", state=" + getState() + ", timestamp=" + getTimestamp()
-            + ", type=" + getType() + "]";
-    }
+   @Override
+   public String toString() {
+      return "AsyncJob [id=" + getId() + ", description=" + getDescription() + ", rollbackState=" + getRollbackState()
+            + ", state=" + getState() + ", timestamp=" + getTimestamp() + ", type=" + getType() + "]";
+   }
 
 }

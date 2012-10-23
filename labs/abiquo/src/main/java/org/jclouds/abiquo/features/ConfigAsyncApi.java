@@ -63,149 +63,145 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Ignasi Barrera
  * @author Francesc Montserrat
  */
-@RequestFilters({AbiquoAuthentication.class, AppendApiVersionToMediaType.class})
+@RequestFilters({ AbiquoAuthentication.class, AppendApiVersionToMediaType.class })
 @Path("/config")
-public interface ConfigAsyncApi
-{
-    /*********************** License ***********************/
+public interface ConfigAsyncApi {
+   /*********************** License ***********************/
 
-    /**
-     * @see ConfigApi#listLicenses()
-     */
+   /**
+    * @see ConfigApi#listLicenses()
+    */
 
-    @EnterpriseEdition
-    @GET
-    @Path("/licenses")
-    @Consumes(LicensesDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<LicensesDto> listLicenses();
+   @EnterpriseEdition
+   @GET
+   @Path("/licenses")
+   @Consumes(LicensesDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<LicensesDto> listLicenses();
 
-    /**
-     * @see ConfigApi#listLicenses(LicenseOptions)
-     */
-    @EnterpriseEdition
-    @GET
-    @Path("/licenses")
-    @Consumes(LicensesDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<LicensesDto> listLicenses(LicenseOptions options);
+   /**
+    * @see ConfigApi#listLicenses(LicenseOptions)
+    */
+   @EnterpriseEdition
+   @GET
+   @Path("/licenses")
+   @Consumes(LicensesDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<LicensesDto> listLicenses(LicenseOptions options);
 
-    /**
-     * @see ConfigApi#addLicense(LicenseDto)
-     */
-    @EnterpriseEdition
-    @POST
-    @Produces(LicenseDto.BASE_MEDIA_TYPE)
-    @Consumes(LicenseDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    @Path("/licenses")
-    ListenableFuture<LicenseDto> addLicense(@BinderParam(BindToXMLPayload.class) LicenseDto license);
+   /**
+    * @see ConfigApi#addLicense(LicenseDto)
+    */
+   @EnterpriseEdition
+   @POST
+   @Produces(LicenseDto.BASE_MEDIA_TYPE)
+   @Consumes(LicenseDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   @Path("/licenses")
+   ListenableFuture<LicenseDto> addLicense(@BinderParam(BindToXMLPayload.class) LicenseDto license);
 
-    /**
-     * @see ConfigApi#removeLicense(LicenseDto)
-     */
-    @DELETE
-    @EnterpriseEdition
-    ListenableFuture<Void> removeLicense(
-        @EndpointLink("edit") @BinderParam(BindToPath.class) LicenseDto license);
+   /**
+    * @see ConfigApi#removeLicense(LicenseDto)
+    */
+   @DELETE
+   @EnterpriseEdition
+   ListenableFuture<Void> removeLicense(@EndpointLink("edit") @BinderParam(BindToPath.class) LicenseDto license);
 
-    /*********************** Privilege ***********************/
+   /*********************** Privilege ***********************/
 
-    /**
-     * @see ConfigApi#listPrivileges()
-     */
-    @GET
-    @Path("/privileges")
-    @Consumes(PrivilegesDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<PrivilegesDto> listPrivileges();
+   /**
+    * @see ConfigApi#listPrivileges()
+    */
+   @GET
+   @Path("/privileges")
+   @Consumes(PrivilegesDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<PrivilegesDto> listPrivileges();
 
-    /**
-     * @see ConfigApi#getPrivilege(Integer)
-     */
-    @GET
-    @Path("/privileges/{privilege}")
-    @Consumes(PrivilegeDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-    ListenableFuture<PrivilegeDto> getPrivilege(@PathParam("privilege") Integer privilegeId);
+   /**
+    * @see ConfigApi#getPrivilege(Integer)
+    */
+   @GET
+   @Path("/privileges/{privilege}")
+   @Consumes(PrivilegeDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<PrivilegeDto> getPrivilege(@PathParam("privilege") Integer privilegeId);
 
-    /*********************** System Properties ***********************/
+   /*********************** System Properties ***********************/
 
-    /**
-     * @see ConfigApi#listSystemProperties()
-     */
-    @GET
-    @Path("/properties")
-    @Consumes(SystemPropertiesDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<SystemPropertiesDto> listSystemProperties();
+   /**
+    * @see ConfigApi#listSystemProperties()
+    */
+   @GET
+   @Path("/properties")
+   @Consumes(SystemPropertiesDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<SystemPropertiesDto> listSystemProperties();
 
-    /**
-     * @see ConfigApi#listSystemProperties(PropertyOptions)
-     */
-    @GET
-    @Path("/properties")
-    @Consumes(SystemPropertiesDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<SystemPropertiesDto> listSystemProperties(PropertyOptions options);
+   /**
+    * @see ConfigApi#listSystemProperties(PropertyOptions)
+    */
+   @GET
+   @Path("/properties")
+   @Consumes(SystemPropertiesDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<SystemPropertiesDto> listSystemProperties(PropertyOptions options);
 
-    /**
-     * @see ConfigApi#updateSystemProperty(VirtualDatacenterDto)
-     */
-    @PUT
-    @Produces(SystemPropertyDto.BASE_MEDIA_TYPE)
-    @Consumes(SystemPropertyDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<SystemPropertyDto> updateSystemProperty(
-        @EndpointLink("edit") @BinderParam(BindToXMLPayloadAndPath.class) SystemPropertyDto property);
+   /**
+    * @see ConfigApi#updateSystemProperty(VirtualDatacenterDto)
+    */
+   @PUT
+   @Produces(SystemPropertyDto.BASE_MEDIA_TYPE)
+   @Consumes(SystemPropertyDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<SystemPropertyDto> updateSystemProperty(
+         @EndpointLink("edit") @BinderParam(BindToXMLPayloadAndPath.class) SystemPropertyDto property);
 
-    /*********************** Category ***********************/
+   /*********************** Category ***********************/
 
-    /**
-     * @see ConfigApi#listCategories()
-     */
-    @GET
-    @Path("/categories")
-    @Consumes(CategoriesDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<CategoriesDto> listCategories();
+   /**
+    * @see ConfigApi#listCategories()
+    */
+   @GET
+   @Path("/categories")
+   @Consumes(CategoriesDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<CategoriesDto> listCategories();
 
-    /**
-     * @see ConfigApi#getCategory(Integer)
-     */
-    @GET
-    @Path("/categories/{category}")
-    @Consumes(CategoryDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-    ListenableFuture<CategoryDto> getCategory(@PathParam("category") Integer categoryId);
+   /**
+    * @see ConfigApi#getCategory(Integer)
+    */
+   @GET
+   @Path("/categories/{category}")
+   @Consumes(CategoryDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<CategoryDto> getCategory(@PathParam("category") Integer categoryId);
 
-    /**
-     * @see ConfigApi#createCategory(CategoryDto)
-     */
-    @POST
-    @Path("/categories")
-    @Produces(CategoryDto.BASE_MEDIA_TYPE)
-    @Consumes(CategoryDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<CategoryDto> createCategory(
-        @BinderParam(BindToXMLPayload.class) CategoryDto category);
+   /**
+    * @see ConfigApi#createCategory(CategoryDto)
+    */
+   @POST
+   @Path("/categories")
+   @Produces(CategoryDto.BASE_MEDIA_TYPE)
+   @Consumes(CategoryDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<CategoryDto> createCategory(@BinderParam(BindToXMLPayload.class) CategoryDto category);
 
-    /**
-     * @see ConfigApi#updateCategory(CategoryDto)
-     */
-    @PUT
-    @Produces(CategoryDto.BASE_MEDIA_TYPE)
-    @Consumes(CategoryDto.BASE_MEDIA_TYPE)
-    @JAXBResponseParser
-    ListenableFuture<CategoryDto> updateCategory(
-        @EndpointLink("edit") @BinderParam(BindToXMLPayloadAndPath.class) CategoryDto category);
+   /**
+    * @see ConfigApi#updateCategory(CategoryDto)
+    */
+   @PUT
+   @Produces(CategoryDto.BASE_MEDIA_TYPE)
+   @Consumes(CategoryDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<CategoryDto> updateCategory(
+         @EndpointLink("edit") @BinderParam(BindToXMLPayloadAndPath.class) CategoryDto category);
 
-    /**
-     * @see ConfigApi#deleteCategory(CategoryDto)
-     */
-    @DELETE
-    ListenableFuture<Void> deleteCategory(
-        @EndpointLink("edit") @BinderParam(BindToPath.class) CategoryDto category);
+   /**
+    * @see ConfigApi#deleteCategory(CategoryDto)
+    */
+   @DELETE
+   ListenableFuture<Void> deleteCategory(@EndpointLink("edit") @BinderParam(BindToPath.class) CategoryDto category);
 }

@@ -31,19 +31,15 @@ import com.google.common.base.Predicate;
  * 
  * @author Ignasi Barrera
  */
-public class ErrorPredicates
-{
-    public static Predicate<ErrorDto> code(final String... codes)
-    {
-        checkNotNull(codes, "codes must be defined");
+public class ErrorPredicates {
+   public static Predicate<ErrorDto> code(final String... codes) {
+      checkNotNull(codes, "codes must be defined");
 
-        return new Predicate<ErrorDto>()
-        {
-            @Override
-            public boolean apply(final ErrorDto error)
-            {
-                return Arrays.asList(codes).contains(error.getCode());
-            }
-        };
-    }
+      return new Predicate<ErrorDto>() {
+         @Override
+         public boolean apply(final ErrorDto error) {
+            return Arrays.asList(codes).contains(error.getCode());
+         }
+      };
+   }
 }

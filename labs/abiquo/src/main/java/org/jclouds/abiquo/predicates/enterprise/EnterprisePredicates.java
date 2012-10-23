@@ -32,19 +32,15 @@ import com.google.common.base.Predicate;
  * 
  * @author Ignasi Barrera
  */
-public class EnterprisePredicates
-{
-    public static Predicate<Enterprise> name(final String... names)
-    {
-        checkNotNull(names, "names must be defined");
+public class EnterprisePredicates {
+   public static Predicate<Enterprise> name(final String... names) {
+      checkNotNull(names, "names must be defined");
 
-        return new Predicate<Enterprise>()
-        {
-            @Override
-            public boolean apply(final Enterprise enterprise)
-            {
-                return Arrays.asList(names).contains(enterprise.getName());
-            }
-        };
-    }
+      return new Predicate<Enterprise>() {
+         @Override
+         public boolean apply(final Enterprise enterprise) {
+            return Arrays.asList(names).contains(enterprise.getName());
+         }
+      };
+   }
 }

@@ -24,14 +24,13 @@ package org.jclouds.abiquo.monitor;
  * 
  * @author Serafin Sedano
  */
-public enum MonitorStatus
-{
-    /** The monitoring job has finished. */
-    DONE,
+public enum MonitorStatus {
+   /** The monitoring job has finished. */
+   DONE,
 
-    /** The monitoring job has finished and the result is not the expected one. */
-    FAILED,
+   /** The monitoring job has finished and the result is not the expected one. */
+   FAILED,
 
-    /** The monitoring job must continue. */
-    CONTINUE
+   /** The monitoring job must continue. */
+   CONTINUE
 }

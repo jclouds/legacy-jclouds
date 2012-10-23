@@ -31,7 +31,6 @@ import com.google.inject.ImplementedBy;
  * @author Ignasi Barrera
  */
 @ImplementedBy(ListVirtualAppliancesImpl.class)
-public interface ListVirtualAppliances extends ListRootEntities<VirtualAppliance>
-{
+public interface ListVirtualAppliances extends ListRootEntities<VirtualAppliance> {
 
 }

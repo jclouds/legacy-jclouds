@@ -35,13 +35,12 @@ import com.google.inject.ImplementedBy;
  * @author Ignasi Barrera
  */
 @ImplementedBy(ListVirtualDatacentersImpl.class)
-public interface ListVirtualDatacenters extends ListRootEntities<VirtualDatacenter>
-{
-    Iterable<VirtualDatacenter> execute(VirtualDatacenterOptions virtualDatacenterOptions);
+public interface ListVirtualDatacenters extends ListRootEntities<VirtualDatacenter> {
+   Iterable<VirtualDatacenter> execute(VirtualDatacenterOptions virtualDatacenterOptions);
 
-    Iterable<VirtualDatacenter> execute(List<Integer> virtualDatacenterIds);
+   Iterable<VirtualDatacenter> execute(List<Integer> virtualDatacenterIds);
 
-    Iterable<VirtualDatacenter> execute(Predicate<VirtualDatacenter> selector,
-        VirtualDatacenterOptions virtualDatacenterOptions);
+   Iterable<VirtualDatacenter> execute(Predicate<VirtualDatacenter> selector,
+         VirtualDatacenterOptions virtualDatacenterOptions);
 
 }

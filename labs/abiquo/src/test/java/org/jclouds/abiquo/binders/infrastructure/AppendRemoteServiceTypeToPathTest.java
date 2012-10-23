@@ -35,36 +35,25 @@ import com.abiquo.model.enumerator.RemoteServiceType;
  * @author Ignasi Barrera
  */
 @Test(groups = "unit", testName = "AppendRemoteServiceTypeToPathTest")
-public class AppendRemoteServiceTypeToPathTest
-{
-    @Test(expectedExceptions = NullPointerException.class)
-    public void testGetValueWithNullInput()
-    {
-        AppendRemoteServiceTypeToPath binder =
-            new AppendRemoteServiceTypeToPath(new ParseRemoteServiceType());
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
-        binder.getValue(request, null);
-    }
+public class AppendRemoteServiceTypeToPathTest {
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testGetValueWithNullInput() {
+      AppendRemoteServiceTypeToPath binder = new AppendRemoteServiceTypeToPath(new ParseRemoteServiceType());
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
+      binder.getValue(request, null);
+   }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
-    public void testGetValueWithInvalidInput()
-    {
-        AppendRemoteServiceTypeToPath binder =
-            new AppendRemoteServiceTypeToPath(new ParseRemoteServiceType());
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
-        binder.getValue(request, new Object());
-    }
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testGetValueWithInvalidInput() {
+      AppendRemoteServiceTypeToPath binder = new AppendRemoteServiceTypeToPath(new ParseRemoteServiceType());
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
+      binder.getValue(request, new Object());
+   }
 
-    public void testGetValue()
-    {
-        AppendRemoteServiceTypeToPath binder =
-            new AppendRemoteServiceTypeToPath(new ParseRemoteServiceType());
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
+   public void testGetValue() {
+      AppendRemoteServiceTypeToPath binder = new AppendRemoteServiceTypeToPath(new ParseRemoteServiceType());
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
 
-        assertEquals(binder.getValue(request, RemoteServiceType.VIRTUAL_SYSTEM_MONITOR),
-            "virtualsystemmonitor");
-    }
+      assertEquals(binder.getValue(request, RemoteServiceType.VIRTUAL_SYSTEM_MONITOR), "virtualsystemmonitor");
+   }
 }

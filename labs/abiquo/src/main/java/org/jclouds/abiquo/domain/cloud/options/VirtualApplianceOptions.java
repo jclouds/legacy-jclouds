@@ -27,42 +27,35 @@ import org.jclouds.http.options.BaseHttpRequestOptions;
  * @author Francesc Montserrat
  * @author Ignasi Barrera
  */
-public class VirtualApplianceOptions extends BaseHttpRequestOptions
-{
-    public static Builder builder()
-    {
-        return new Builder();
-    }
+public class VirtualApplianceOptions extends BaseHttpRequestOptions {
+   public static Builder builder() {
+      return new Builder();
+   }
 
-    @Override
-    protected Object clone() throws CloneNotSupportedException
-    {
-        VirtualApplianceOptions options = new VirtualApplianceOptions();
-        options.queryParameters.putAll(queryParameters);
-        return options;
-    }
+   @Override
+   protected Object clone() throws CloneNotSupportedException {
+      VirtualApplianceOptions options = new VirtualApplianceOptions();
+      options.queryParameters.putAll(queryParameters);
+      return options;
+   }
 
-    public static class Builder
-    {
+   public static class Builder {
 
-        private Boolean available;
+      private Boolean available;
 
-        public Builder available(final boolean available)
-        {
-            this.available = available;
-            return this;
-        }
+      public Builder available(final boolean available) {
+         this.available = available;
+         return this;
+      }
 
-        public VirtualApplianceOptions build()
-        {
-            VirtualApplianceOptions options = new VirtualApplianceOptions();
+      public VirtualApplianceOptions build() {
+         VirtualApplianceOptions options = new VirtualApplianceOptions();
 
-            if (available != null)
-            {
-                options.queryParameters.put("available", String.valueOf(available));
-            }
+         if (available != null) {
+            options.queryParameters.put("available", String.valueOf(available));
+         }
 
-            return options;
-        }
-    }
+         return options;
+      }
+   }
 }

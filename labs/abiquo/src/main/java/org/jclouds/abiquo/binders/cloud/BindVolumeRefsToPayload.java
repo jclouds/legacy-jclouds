@@ -28,24 +28,21 @@ import org.jclouds.xml.XMLParser;
 import com.abiquo.server.core.infrastructure.storage.VolumeManagementDto;
 
 /**
- * Bind multiple {@link VolumeManagementDto} objects to the payload of the request as a list of
- * links.
+ * Bind multiple {@link VolumeManagementDto} objects to the payload of the
+ * request as a list of links.
  * 
  * @author Ignasi Barrera
  */
 @Singleton
-public class BindVolumeRefsToPayload extends BindRefsToPayload
-{
-    @Inject
-    public BindVolumeRefsToPayload(final XMLParser xmlParser)
-    {
-        super(xmlParser);
-    }
+public class BindVolumeRefsToPayload extends BindRefsToPayload {
+   @Inject
+   public BindVolumeRefsToPayload(final XMLParser xmlParser) {
+      super(xmlParser);
+   }
 
-    @Override
-    protected String getRelToUse(final Object input)
-    {
-        return "volume";
-    }
+   @Override
+   protected String getRelToUse(final Object input) {
+      return "volume";
+   }
 
 }

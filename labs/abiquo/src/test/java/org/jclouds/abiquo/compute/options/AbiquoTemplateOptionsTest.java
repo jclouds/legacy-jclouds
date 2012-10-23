@@ -30,31 +30,25 @@ import org.testng.annotations.Test;
  * @author Ignasi Barrera
  */
 @Test(groups = "unit", testName = "AbiquoTemplateOptionsTest")
-public class AbiquoTemplateOptionsTest
-{
-    public void testAs()
-    {
-        TemplateOptions options = new AbiquoTemplateOptions();
-        assertEquals(options.as(AbiquoTemplateOptions.class), options);
-    }
+public class AbiquoTemplateOptionsTest {
+   public void testAs() {
+      TemplateOptions options = new AbiquoTemplateOptions();
+      assertEquals(options.as(AbiquoTemplateOptions.class), options);
+   }
 
-    public void testOverrideCores()
-    {
-        TemplateOptions options = new AbiquoTemplateOptions().overrideCores(5);
-        assertEquals(options.as(AbiquoTemplateOptions.class).getOverrideCores(), Integer.valueOf(5));
-    }
+   public void testOverrideCores() {
+      TemplateOptions options = new AbiquoTemplateOptions().overrideCores(5);
+      assertEquals(options.as(AbiquoTemplateOptions.class).getOverrideCores(), Integer.valueOf(5));
+   }
 
-    public void testOverrideRam()
-    {
-        TemplateOptions options = new AbiquoTemplateOptions().overrideRam(2048);
-        assertEquals(options.as(AbiquoTemplateOptions.class).getOverrideRam(),
-            Integer.valueOf(2048));
-    }
+   public void testOverrideRam() {
+      TemplateOptions options = new AbiquoTemplateOptions().overrideRam(2048);
+      assertEquals(options.as(AbiquoTemplateOptions.class).getOverrideRam(), Integer.valueOf(2048));
+   }
 
-    public void testVncPassword()
-    {
-        TemplateOptions options = new AbiquoTemplateOptions().vncPassword("foo");
-        assertEquals(options.as(AbiquoTemplateOptions.class).getVncPassword(), "foo");
-    }
+   public void testVncPassword() {
+      TemplateOptions options = new AbiquoTemplateOptions().vncPassword("foo");
+      assertEquals(options.as(AbiquoTemplateOptions.class).getVncPassword(), "foo");
+   }
 
 }

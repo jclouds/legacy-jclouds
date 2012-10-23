@@ -46,86 +46,70 @@ import com.google.common.collect.Iterables;
  * @author Ignasi Barrera
  */
 @Test(groups = "api", testName = "RemoteServiceLiveApiTest")
-public class RemoteServiceLiveApiTest extends BaseAbiquoApiLiveApiTest
-{
-    public void testUpdate()
-    {
-        // Update the remote service
-        RemoteService rs =
-            env.datacenter.findRemoteService(type(RemoteServiceType.VIRTUAL_FACTORY));
-        rs.setUri(rs.getUri());
-        rs.update();
+public class RemoteServiceLiveApiTest extends BaseAbiquoApiLiveApiTest {
+   public void testUpdate() {
+      // Update the remote service
+      RemoteService rs = env.datacenter.findRemoteService(type(RemoteServiceType.VIRTUAL_FACTORY));
+      rs.setUri(rs.getUri());
+      rs.update();
 
-        // Recover the updated remote service
-        RemoteServiceDto updated =
-            env.infrastructureApi.getRemoteService(env.datacenter.unwrap(),
-                RemoteServiceType.VIRTUAL_FACTORY);
+      // Recover the updated remote service
+      RemoteServiceDto updated = env.infrastructureApi.getRemoteService(env.datacenter.unwrap(),
+            RemoteServiceType.VIRTUAL_FACTORY);
 
-        assertEquals(updated.getUri(), rs.getUri());
-    }
+      assertEquals(updated.getUri(), rs.getUri());
+   }
 
-    public void testDelete()
-    {
-        RemoteService rs = env.datacenter.findRemoteService(type(RemoteServiceType.BPM_SERVICE));
-        rs.delete();
+   public void testDelete() {
+      RemoteService rs = env.datacenter.findRemoteService(type(RemoteServiceType.BPM_SERVICE));
+      rs.delete();
 
-        // Recover the deleted remote service
-        RemoteServiceDto deleted =
-            env.infrastructureApi.getRemoteService(env.datacenter.unwrap(),
-                RemoteServiceType.BPM_SERVICE);
+      // Recover the deleted remote service
+      RemoteServiceDto deleted = env.infrastructureApi.getRemoteService(env.datacenter.unwrap(),
+            RemoteServiceType.BPM_SERVICE);
 
-        assertNull(deleted);
+      assertNull(deleted);
 
-        URI endpoint = URI.create(env.context.getApiContext().getProviderMetadata().getEndpoint());
+      URI endpoint = URI.create(env.context.getApiContext().getProviderMetadata().getEndpoint());
 
-        // Restore rs
-        RemoteService bpm =
-            RemoteService.builder(env.context.getApiContext(), env.datacenter)
-                .type(RemoteServiceType.BPM_SERVICE).ip(endpoint.getHost()).build();
-        bpm.save();
-    }
+      // Restore rs
+      RemoteService bpm = RemoteService.builder(env.context.getApiContext(), env.datacenter)
+            .type(RemoteServiceType.BPM_SERVICE).ip(endpoint.getHost()).build();
+      bpm.save();
+   }
 
-    public void testIsAvailableNonCheckeable()
-    {
-        RemoteService rs = env.datacenter.findRemoteService(type(RemoteServiceType.DHCP_SERVICE));
-        assertTrue(rs.isAvailable());
-    }
+   public void testIsAvailableNonCheckeable() {
+      RemoteService rs = env.datacenter.findRemoteService(type(RemoteServiceType.DHCP_SERVICE));
+      assertTrue(rs.isAvailable());
+   }
 
-    public void testIsAvailable()
-    {
-        RemoteService rs = env.datacenter.findRemoteService(type(RemoteServiceType.NODE_COLLECTOR));
-        assertTrue(rs.isAvailable());
-    }
+   public void testIsAvailable() {
+      RemoteService rs = env.datacenter.findRemoteService(type(RemoteServiceType.NODE_COLLECTOR));
+      assertTrue(rs.isAvailable());
+   }
 
-    public void testCreateRepeated()
-    {
-        RemoteService repeated = Builder.fromRemoteService(env.remoteServices.get(1)).build();
+   public void testCreateRepeated() {
+      RemoteService repeated = Builder.fromRemoteService(env.remoteServices.get(1)).build();
 
-        try
-        {
-            repeated.save();
-            fail("Should not be able to create duplicated remote services in the datacenter");
-        }
-        catch (AbiquoException ex)
-        {
-            assertHasError(ex, Status.CONFLICT, "RS-6");
-        }
-    }
+      try {
+         repeated.save();
+         fail("Should not be able to create duplicated remote services in the datacenter");
+      } catch (AbiquoException ex) {
+         assertHasError(ex, Status.CONFLICT, "RS-6");
+      }
+   }
 
-    public void testListRemoteServices()
-    {
-        Iterable<RemoteService> remoteServices = env.datacenter.listRemoteServices();
-        assertEquals(Iterables.size(remoteServices), env.remoteServices.size());
+   public void testListRemoteServices() {
+      Iterable<RemoteService> remoteServices = env.datacenter.listRemoteServices();
+      assertEquals(Iterables.size(remoteServices), env.remoteServices.size());
 
-        remoteServices = env.datacenter.listRemoteServices(type(RemoteServiceType.NODE_COLLECTOR));
-        assertEquals(Iterables.size(remoteServices), 1);
-    }
+      remoteServices = env.datacenter.listRemoteServices(type(RemoteServiceType.NODE_COLLECTOR));
+      assertEquals(Iterables.size(remoteServices), 1);
+   }
 
-    public void testFindRemoteService()
-    {
-        RemoteService remoteService =
-            env.datacenter.findRemoteService(type(RemoteServiceType.NODE_COLLECTOR));
-        assertNotNull(remoteService);
-    }
+   public void testFindRemoteService() {
+      RemoteService remoteService = env.datacenter.findRemoteService(type(RemoteServiceType.NODE_COLLECTOR));
+      assertNotNull(remoteService);
+   }
 
 }

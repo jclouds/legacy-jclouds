@@ -41,69 +41,60 @@ import com.google.common.collect.Iterables;
  * @author Francesc Montserrat
  */
 @Test(groups = "api", testName = "UserLiveApiTest")
-public class UserLiveApiTest extends BaseAbiquoApiLiveApiTest
-{
+public class UserLiveApiTest extends BaseAbiquoApiLiveApiTest {
 
-    public void testUpdate()
-    {
-        String username = env.user.getName();
-        env.user.setName("Manolo");
-        env.user.update();
+   public void testUpdate() {
+      String username = env.user.getName();
+      env.user.setName("Manolo");
+      env.user.update();
 
-        // Recover the updated user
-        UserDto updated = env.enterpriseApi.getUser(env.enterprise.unwrap(), env.user.getId());
+      // Recover the updated user
+      UserDto updated = env.enterpriseApi.getUser(env.enterprise.unwrap(), env.user.getId());
 
-        assertEquals(updated.getName(), "Manolo");
+      assertEquals(updated.getName(), "Manolo");
 
-        env.user.setName(username);
-        env.user.update();
-    }
+      env.user.setName(username);
+      env.user.update();
+   }
 
-    public void testCreateRepeated()
-    {
-        User repeated = User.Builder.fromUser(env.user).build();
+   public void testCreateRepeated() {
+      User repeated = User.Builder.fromUser(env.user).build();
 
-        try
-        {
-            repeated.save();
-            fail("Should not be able to create users with the same nick");
-        }
-        catch (AbiquoException ex)
-        {
-            assertHasError(ex, Status.CONFLICT, "USER-4");
-        }
-    }
+      try {
+         repeated.save();
+         fail("Should not be able to create users with the same nick");
+      } catch (AbiquoException ex) {
+         assertHasError(ex, Status.CONFLICT, "USER-4");
+      }
+   }
 
-    public void testChangeRoleAndUpdate()
-    {
-        env.user.setRole(env.anotherRole);
-        env.user.update();
+   public void testChangeRoleAndUpdate() {
+      env.user.setRole(env.anotherRole);
+      env.user.update();
 
-        Role role2 = env.enterprise.findUser(UserPredicates.nick(env.user.getNick())).getRole();
+      Role role2 = env.enterprise.findUser(UserPredicates.nick(env.user.getNick())).getRole();
 
-        assertEquals(env.anotherRole.getId(), role2.getId());
-        assertEquals(role2.getName(), "Another role");
+      assertEquals(env.anotherRole.getId(), role2.getId());
+      assertEquals(role2.getName(), "Another role");
 
-        env.user.setRole(env.role);
-        env.user.update();
-    }
+      env.user.setRole(env.role);
+      env.user.update();
+   }
 
-    public void testListUser()
-    {
-        Iterable<User> users = env.enterprise.listUsers();
-        assertEquals(Iterables.size(users), 2);
+   public void testListUser() {
+      Iterable<User> users = env.enterprise.listUsers();
+      assertEquals(Iterables.size(users), 2);
 
-        users = env.enterprise.listUsers(nick(env.user.getNick()));
-        assertEquals(Iterables.size(users), 1);
+      users = env.enterprise.listUsers(nick(env.user.getNick()));
+      assertEquals(Iterables.size(users), 1);
 
-        users = env.enterprise.listUsers(nick(env.user.getName() + "FAIL"));
-        assertEquals(Iterables.size(users), 0);
-    }
+      users = env.enterprise.listUsers(nick(env.user.getName() + "FAIL"));
+      assertEquals(Iterables.size(users), 0);
+   }
 
-    public void testGetCurrentUser()
-    {
-        User user = env.context.getAdministrationService().getCurrentUser();
-        assertNotNull(user);
-        assertEquals(user.getNick(), env.context.getApiContext().getIdentity());
-    }
+   public void testGetCurrentUser() {
+      User user = env.context.getAdministrationService().getCurrentUser();
+      assertNotNull(user);
+      assertEquals(user.getNick(), env.context.getApiContext().getIdentity());
+   }
 }

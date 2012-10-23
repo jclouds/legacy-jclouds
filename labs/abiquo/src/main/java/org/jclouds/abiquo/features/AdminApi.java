@@ -39,77 +39,82 @@ import com.abiquo.server.core.enterprise.UserDto;
  * @author Francesc Montserrat
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
-public interface AdminApi
-{
-    /* ********************** User ********************** */
+public interface AdminApi {
+   /* ********************** User ********************** */
 
-    /**
-     * Get the information of the current user.
-     * 
-     * @return The information of the current user.
-     */
-    UserDto getCurrentUser();
+   /**
+    * Get the information of the current user.
+    * 
+    * @return The information of the current user.
+    */
+   UserDto getCurrentUser();
 
-    /* ********************** Role ********************** */
+   /* ********************** Role ********************** */
 
-    /**
-     * List global roles.
-     * 
-     * @return The list of global Roles.
-     */
-    RolesDto listRoles();
+   /**
+    * List global roles.
+    * 
+    * @return The list of global Roles.
+    */
+   RolesDto listRoles();
 
-    /**
-     * List enterprise roles.
-     * 
-     * @return The list of Roles for the given enterprise.
-     */
-    RolesDto listRoles(EnterpriseDto enterprise);
+   /**
+    * List enterprise roles.
+    * 
+    * @return The list of Roles for the given enterprise.
+    */
+   RolesDto listRoles(EnterpriseDto enterprise);
 
-    /**
-     * Retrieves the role of the given user.
-     * 
-     * @param user The user.
-     * @return The role of the user.
-     */
-    RoleDto getRole(UserDto user);
+   /**
+    * Retrieves the role of the given user.
+    * 
+    * @param user
+    *           The user.
+    * @return The role of the user.
+    */
+   RoleDto getRole(UserDto user);
 
-    /**
-     * Get the given role.
-     * 
-     * @param roleId The id of the role.
-     * @return The role or <code>null</code> if it does not exist.
-     */
-    RoleDto getRole(Integer roleId);
+   /**
+    * Get the given role.
+    * 
+    * @param roleId
+    *           The id of the role.
+    * @return The role or <code>null</code> if it does not exist.
+    */
+   RoleDto getRole(Integer roleId);
 
-    /**
-     * Deletes an existing role.
-     * 
-     * @param role The role to delete.
-     */
-    void deleteRole(final RoleDto role);
+   /**
+    * Deletes an existing role.
+    * 
+    * @param role
+    *           The role to delete.
+    */
+   void deleteRole(final RoleDto role);
 
-    /**
-     * Updates an existing role.
-     * 
-     * @param role The new attributes for the role.
-     * @return The updated role.
-     */
-    RoleDto updateRole(RoleDto role);
+   /**
+    * Updates an existing role.
+    * 
+    * @param role
+    *           The new attributes for the role.
+    * @return The updated role.
+    */
+   RoleDto updateRole(RoleDto role);
 
-    /**
-     * Create a new role.
-     * 
-     * @param role The role to be created.
-     * @return The created role.
-     */
-    RoleDto createRole(RoleDto role);
+   /**
+    * Create a new role.
+    * 
+    * @param role
+    *           The role to be created.
+    * @return The created role.
+    */
+   RoleDto createRole(RoleDto role);
 
-    /**
-     * Get privileges of the given role.
-     * 
-     * @param role The role.
-     * @return The list of privileges.
-     */
-    PrivilegesDto listPrivileges(RoleDto role);
+   /**
+    * Get privileges of the given role.
+    * 
+    * @param role
+    *           The role.
+    * @return The list of privileges.
+    */
+   PrivilegesDto listPrivileges(RoleDto role);
 }

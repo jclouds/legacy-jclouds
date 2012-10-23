@@ -28,23 +28,21 @@ import org.jclouds.xml.XMLParser;
 import com.abiquo.server.core.infrastructure.storage.DiskManagementDto;
 
 /**
- * Bind multiple {@link DiskManagementDto} objects to the payload of the request as a list of links.
+ * Bind multiple {@link DiskManagementDto} objects to the payload of the request
+ * as a list of links.
  * 
  * @author Ignasi Barrera
  */
 @Singleton
-public class BindHardDiskRefsToPayload extends BindRefsToPayload
-{
-    @Inject
-    public BindHardDiskRefsToPayload(final XMLParser xmlParser)
-    {
-        super(xmlParser);
-    }
+public class BindHardDiskRefsToPayload extends BindRefsToPayload {
+   @Inject
+   public BindHardDiskRefsToPayload(final XMLParser xmlParser) {
+      super(xmlParser);
+   }
 
-    @Override
-    protected String getRelToUse(final Object input)
-    {
-        return "disk";
-    }
+   @Override
+   protected String getRelToUse(final Object input) {
+      return "disk";
+   }
 
 }

@@ -29,17 +29,16 @@ import com.abiquo.server.core.infrastructure.storage.MovedVolumeDto;
 import com.google.inject.TypeLiteral;
 
 /**
- * Return an {@link MovedVolumeDto} representing the reference to a moved resource.
+ * Return an {@link MovedVolumeDto} representing the reference to a moved
+ * resource.
  * 
  * @author Ignasi Barrera
  */
 @Singleton
-public class ReturnMoveVolumeReference extends ParseXMLWithJAXB<MovedVolumeDto>
-{
-    @Inject
-    public ReturnMoveVolumeReference(final XMLParser xml, final TypeLiteral<MovedVolumeDto> type)
-    {
-        super(xml, type);
-    }
+public class ReturnMoveVolumeReference extends ParseXMLWithJAXB<MovedVolumeDto> {
+   @Inject
+   public ReturnMoveVolumeReference(final XMLParser xml, final TypeLiteral<MovedVolumeDto> type) {
+      super(xml, type);
+   }
 
 }

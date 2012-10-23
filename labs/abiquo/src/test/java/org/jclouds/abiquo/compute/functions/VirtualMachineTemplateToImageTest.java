@@ -53,89 +53,79 @@ import com.google.common.base.Supplier;
  * @author Ignasi Barrera
  */
 @Test(groups = "unit", testName = "VirtualMachineTemplateToImageTest")
-public class VirtualMachineTemplateToImageTest
-{
-    @SuppressWarnings("unchecked")
-    public void testVirtualMachineTemplateToImage()
-    {
-        RestContext<AbiquoApi, AbiquoAsyncApi> context = EasyMock.createMock(RestContext.class);
-        Function<Datacenter, Location> dcToLocation = mockDatacenterToLocation();
-        Supplier<Map<Integer, Datacenter>> regionMap = mockRegionMap();
-        VirtualMachineTemplateToImage function =
-            new VirtualMachineTemplateToImage(dcToLocation, regionMap);
+public class VirtualMachineTemplateToImageTest {
+   @SuppressWarnings("unchecked")
+   public void testVirtualMachineTemplateToImage() {
+      RestContext<AbiquoApi, AbiquoAsyncApi> context = EasyMock.createMock(RestContext.class);
+      Function<Datacenter, Location> dcToLocation = mockDatacenterToLocation();
+      Supplier<Map<Integer, Datacenter>> regionMap = mockRegionMap();
+      VirtualMachineTemplateToImage function = new VirtualMachineTemplateToImage(dcToLocation, regionMap);
 
-        VirtualMachineTemplateDto dto = new VirtualMachineTemplateDto();
-        dto.setId(5);
-        dto.setName("Template");
-        dto.setDescription("Template description");
-        dto.addLink(new RESTLink("diskfile", "http://foo/bar"));
-        dto.addLink(new RESTLink("datacenter", "http://foo/bar/4"));
+      VirtualMachineTemplateDto dto = new VirtualMachineTemplateDto();
+      dto.setId(5);
+      dto.setName("Template");
+      dto.setDescription("Template description");
+      dto.addLink(new RESTLink("diskfile", "http://foo/bar"));
+      dto.addLink(new RESTLink("datacenter", "http://foo/bar/4"));
 
-        Image image = function.apply(wrap(context, VirtualMachineTemplate.class, dto));
+      Image image = function.apply(wrap(context, VirtualMachineTemplate.class, dto));
 
-        verify(regionMap);
-        verify(dcToLocation);
+      verify(regionMap);
+      verify(dcToLocation);
 
-        assertEquals(image.getId(), dto.getId().toString());
-        assertEquals(image.getName(), dto.getName());
-        assertEquals(image.getDescription(), dto.getDescription());
-        assertEquals(image.getUri(), URI.create("http://foo/bar"));
-        assertEquals(image.getOperatingSystem(),
-            OperatingSystem.builder().description(dto.getName()).build());
-    }
+      assertEquals(image.getId(), dto.getId().toString());
+      assertEquals(image.getName(), dto.getName());
+      assertEquals(image.getDescription(), dto.getDescription());
+      assertEquals(image.getUri(), URI.create("http://foo/bar"));
+      assertEquals(image.getOperatingSystem(), OperatingSystem.builder().description(dto.getName()).build());
+   }
 
-    @SuppressWarnings("unchecked")
-    public void testConvertWithoutDownloadLink()
-    {
-        RestContext<AbiquoApi, AbiquoAsyncApi> context = EasyMock.createMock(RestContext.class);
-        Function<Datacenter, Location> dcToLocation = mockDatacenterToLocation();
-        Supplier<Map<Integer, Datacenter>> regionMap = mockRegionMap();
-        VirtualMachineTemplateToImage function =
-            new VirtualMachineTemplateToImage(dcToLocation, regionMap);
+   @SuppressWarnings("unchecked")
+   public void testConvertWithoutDownloadLink() {
+      RestContext<AbiquoApi, AbiquoAsyncApi> context = EasyMock.createMock(RestContext.class);
+      Function<Datacenter, Location> dcToLocation = mockDatacenterToLocation();
+      Supplier<Map<Integer, Datacenter>> regionMap = mockRegionMap();
+      VirtualMachineTemplateToImage function = new VirtualMachineTemplateToImage(dcToLocation, regionMap);
 
-        VirtualMachineTemplateDto dto = new VirtualMachineTemplateDto();
-        dto.setId(5);
-        dto.setName("Template");
-        dto.setDescription("Template description");
-        dto.addLink(new RESTLink("datacenter", "http://foo/bar/4"));
+      VirtualMachineTemplateDto dto = new VirtualMachineTemplateDto();
+      dto.setId(5);
+      dto.setName("Template");
+      dto.setDescription("Template description");
+      dto.addLink(new RESTLink("datacenter", "http://foo/bar/4"));
 
-        Image image = function.apply(wrap(context, VirtualMachineTemplate.class, dto));
+      Image image = function.apply(wrap(context, VirtualMachineTemplate.class, dto));
 
-        verify(regionMap);
-        verify(dcToLocation);
+      verify(regionMap);
+      verify(dcToLocation);
 
-        assertNull(image.getUri());
-    }
+      assertNull(image.getUri());
+   }
 
-    @SuppressWarnings("unchecked")
-    @Test(expectedExceptions = NullPointerException.class)
-    public void testConvertWithoutId()
-    {
-        RestContext<AbiquoApi, AbiquoAsyncApi> context = EasyMock.createMock(RestContext.class);
-        Function<Datacenter, Location> dcToLocation = mockDatacenterToLocation();
-        Supplier<Map<Integer, Datacenter>> regionMap = mockRegionMap();
-        VirtualMachineTemplateToImage function =
-            new VirtualMachineTemplateToImage(dcToLocation, regionMap);
+   @SuppressWarnings("unchecked")
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testConvertWithoutId() {
+      RestContext<AbiquoApi, AbiquoAsyncApi> context = EasyMock.createMock(RestContext.class);
+      Function<Datacenter, Location> dcToLocation = mockDatacenterToLocation();
+      Supplier<Map<Integer, Datacenter>> regionMap = mockRegionMap();
+      VirtualMachineTemplateToImage function = new VirtualMachineTemplateToImage(dcToLocation, regionMap);
 
-        VirtualMachineTemplateDto dto = new VirtualMachineTemplateDto();
-        function.apply(wrap(context, VirtualMachineTemplate.class, dto));
-    }
+      VirtualMachineTemplateDto dto = new VirtualMachineTemplateDto();
+      function.apply(wrap(context, VirtualMachineTemplate.class, dto));
+   }
 
-    @SuppressWarnings("unchecked")
-    private static Function<Datacenter, Location> mockDatacenterToLocation()
-    {
-        Function<Datacenter, Location> mock = EasyMock.createMock(Function.class);
-        expect(mock.apply(anyObject(Datacenter.class))).andReturn(null);
-        replay(mock);
-        return mock;
-    }
+   @SuppressWarnings("unchecked")
+   private static Function<Datacenter, Location> mockDatacenterToLocation() {
+      Function<Datacenter, Location> mock = EasyMock.createMock(Function.class);
+      expect(mock.apply(anyObject(Datacenter.class))).andReturn(null);
+      replay(mock);
+      return mock;
+   }
 
-    @SuppressWarnings("unchecked")
-    private static Supplier<Map<Integer, Datacenter>> mockRegionMap()
-    {
-        Supplier<Map<Integer, Datacenter>> mock = EasyMock.createMock(Supplier.class);
-        expect(mock.get()).andReturn(Collections.EMPTY_MAP);
-        replay(mock);
-        return mock;
-    }
+   @SuppressWarnings("unchecked")
+   private static Supplier<Map<Integer, Datacenter>> mockRegionMap() {
+      Supplier<Map<Integer, Datacenter>> mock = EasyMock.createMock(Supplier.class);
+      expect(mock.get()).andReturn(Collections.EMPTY_MAP);
+      replay(mock);
+      return mock;
+   }
 }

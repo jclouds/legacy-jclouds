@@ -32,19 +32,15 @@ import com.google.common.base.Predicate;
  * @author Ignasi Barrera
  * @author Francesc Montserrat
  */
-public class HypervisorPredicates
-{
-    public static Predicate<HypervisorType> type(final HypervisorType... types)
-    {
-        checkNotNull(types, "types must be defined");
+public class HypervisorPredicates {
+   public static Predicate<HypervisorType> type(final HypervisorType... types) {
+      checkNotNull(types, "types must be defined");
 
-        return new Predicate<HypervisorType>()
-        {
-            @Override
-            public boolean apply(final HypervisorType type)
-            {
-                return Arrays.asList(types).contains(type);
-            }
-        };
-    }
+      return new Predicate<HypervisorType>() {
+         @Override
+         public boolean apply(final HypervisorType type) {
+            return Arrays.asList(types).contains(type);
+         }
+      };
+   }
 }

@@ -36,95 +36,80 @@ import com.abiquo.server.core.pricing.PricingCostCodeDto;
  * 
  * @author Susana Acedo
  */
-public class PricingCostCode extends DomainWrapper<PricingCostCodeDto>
-{
-    private CostCode costcode;
+public class PricingCostCode extends DomainWrapper<PricingCostCodeDto> {
+   private CostCode costcode;
 
-    private PricingTemplate pricingTemplate;
+   private PricingTemplate pricingTemplate;
 
-    protected PricingCostCode(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-        final PricingCostCodeDto target)
-    {
-        super(context, target);
-    }
+   protected PricingCostCode(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final PricingCostCodeDto target) {
+      super(context, target);
+   }
 
-    // Builder
+   // Builder
 
-    public static Builder builder(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-        final PricingTemplate pricingtemplate, final CostCode costcode)
-    {
-        return new Builder(context, pricingtemplate, costcode);
-    }
+   public static Builder builder(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
+         final PricingTemplate pricingtemplate, final CostCode costcode) {
+      return new Builder(context, pricingtemplate, costcode);
+   }
 
-    public static class Builder
-    {
-        private RestContext<AbiquoApi, AbiquoAsyncApi> context;
+   public static class Builder {
+      private RestContext<AbiquoApi, AbiquoAsyncApi> context;
 
-        private Integer id;
+      private Integer id;
 
-        private PricingTemplate pricingTemplate;
+      private PricingTemplate pricingTemplate;
 
-        private CostCode costcode;
+      private CostCode costcode;
 
-        private BigDecimal price;
+      private BigDecimal price;
 
-        public Builder(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-            final PricingTemplate pricingTemplate, final CostCode costcode)
-        {
-            super();
-            this.pricingTemplate =
-                checkNotNull(pricingTemplate, ValidationErrors.NULL_RESOURCE
-                    + PricingTemplate.class);
-            this.costcode = checkNotNull(costcode, ValidationErrors.NULL_RESOURCE + CostCode.class);
-            this.context = context;
-        }
+      public Builder(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final PricingTemplate pricingTemplate,
+            final CostCode costcode) {
+         super();
+         this.pricingTemplate = checkNotNull(pricingTemplate, ValidationErrors.NULL_RESOURCE + PricingTemplate.class);
+         this.costcode = checkNotNull(costcode, ValidationErrors.NULL_RESOURCE + CostCode.class);
+         this.context = context;
+      }
 
-        public Builder price(final BigDecimal price)
-        {
-            this.price = price;
-            return this;
-        }
+      public Builder price(final BigDecimal price) {
+         this.price = price;
+         return this;
+      }
 
-        public PricingCostCode build()
-        {
-            PricingCostCodeDto dto = new PricingCostCodeDto();
-            dto.setId(id);
-            dto.setPrice(price);
+      public PricingCostCode build() {
+         PricingCostCodeDto dto = new PricingCostCodeDto();
+         dto.setId(id);
+         dto.setPrice(price);
 
-            RESTLink link = costcode.unwrap().searchLink("edit");
-            checkNotNull(link, ValidationErrors.MISSING_REQUIRED_LINK);
-            dto.addLink(new RESTLink("costcode", link.getHref()));
+         RESTLink link = costcode.unwrap().searchLink("edit");
+         checkNotNull(link, ValidationErrors.MISSING_REQUIRED_LINK);
+         dto.addLink(new RESTLink("costcode", link.getHref()));
 
-            PricingCostCode pricingcostcode = new PricingCostCode(context, dto);
-            pricingcostcode.pricingTemplate = pricingTemplate;
-            pricingcostcode.costcode = costcode;
+         PricingCostCode pricingcostcode = new PricingCostCode(context, dto);
+         pricingcostcode.pricingTemplate = pricingTemplate;
+         pricingcostcode.costcode = costcode;
 
-            return pricingcostcode;
-        }
+         return pricingcostcode;
+      }
 
-        public static Builder fromPricingCostCode(final PricingCostCode in)
-        {
-            return PricingCostCode.builder(in.context, in.pricingTemplate, in.costcode).price(
-                in.getPrice());
-        }
-    }
+      public static Builder fromPricingCostCode(final PricingCostCode in) {
+         return PricingCostCode.builder(in.context, in.pricingTemplate, in.costcode).price(in.getPrice());
+      }
+   }
 
-    // Delegate methods
+   // Delegate methods
 
-    public Integer getId()
-    {
-        return target.getId();
-    }
+   public Integer getId() {
+      return target.getId();
+   }
 
-    public BigDecimal getPrice()
-    {
-        return target.getPrice();
-    }
+   public BigDecimal getPrice() {
+      return target.getPrice();
+   }
 
-    @Override
-    public String toString()
-    {
-        return "PricingCostCode [id=" + getId() + ", price=" + getPrice() + "]";
-    }
+   @Override
+   public String toString() {
+      return "PricingCostCode [id=" + getId() + ", price=" + getPrice() + "]";
+   }
 
 }

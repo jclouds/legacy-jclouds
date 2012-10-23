@@ -24,11 +24,9 @@ package org.jclouds.abiquo.events.monitor;
  * 
  * @author Ignasi Barrera
  */
-public class FailedEvent<T> extends MonitorEvent<T>
-{
-    public FailedEvent(final T target)
-    {
-        super(MonitorEvent.Type.FAILED, target);
-    }
+public class FailedEvent<T> extends MonitorEvent<T> {
+   public FailedEvent(final T target) {
+      super(MonitorEvent.Type.FAILED, target);
+   }
 
 }

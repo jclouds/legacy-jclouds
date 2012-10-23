@@ -31,14 +31,11 @@ import org.testng.annotations.Test;
  * @author Ignasi Barrera
  */
 @Test(groups = "unit", testName = "BaseAsyncTaskMonitorTest")
-public class BaseAsyncTaskMonitorTest extends BaseInjectionTest
-{
+public class BaseAsyncTaskMonitorTest extends BaseInjectionTest {
 
-    public void testAllPropertiesInjected()
-    {
-        BaseAsyncTaskMonitor monitor =
-            (BaseAsyncTaskMonitor) injector.getInstance(AsyncTaskMonitor.class);
+   public void testAllPropertiesInjected() {
+      BaseAsyncTaskMonitor monitor = (BaseAsyncTaskMonitor) injector.getInstance(AsyncTaskMonitor.class);
 
-        assertNotNull(monitor.taskMonitor);
-    }
+      assertNotNull(monitor.taskMonitor);
+   }
 }

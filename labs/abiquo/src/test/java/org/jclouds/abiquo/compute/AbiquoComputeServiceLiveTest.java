@@ -45,96 +45,82 @@ import com.google.inject.Module;
  * @author Ignasi Barrera
  */
 @Test(groups = "live", testName = "AbiquoComputeServiceLiveTest", singleThreaded = true)
-// Made abstract to avoid executing tests. Since the base class has test configuration, even if we
-// disable tests here, or comment them out, the ones in the base class will be executed
-public class AbiquoComputeServiceLiveTest extends BaseComputeServiceLiveTest
-{
-    public AbiquoComputeServiceLiveTest()
-    {
-        provider = "abiquo";
-    }
+// Made abstract to avoid executing tests. Since the base class has test
+// configuration, even if we
+// disable tests here, or comment them out, the ones in the base class will be
+// executed
+public class AbiquoComputeServiceLiveTest extends BaseComputeServiceLiveTest {
+   public AbiquoComputeServiceLiveTest() {
+      provider = "abiquo";
+   }
 
-    @Override
-    public void setServiceDefaults()
-    {
-        System
-            .setProperty("test.abiquo.template",
-                "imageNameMatches=ubuntu_server_ssh_iptables,loginUser=user:abiquo,authenticateSudo=true");
-    }
+   @Override
+   public void setServiceDefaults() {
+      System.setProperty("test.abiquo.template",
+            "imageNameMatches=ubuntu_server_ssh_iptables,loginUser=user:abiquo,authenticateSudo=true");
+   }
 
-    @Override
-    protected Properties setupProperties()
-    {
-        Properties overrides = super.setupProperties();
-        overrides.put(Constants.PROPERTY_MAX_RETRIES, "0");
-        overrides.put(Constants.PROPERTY_MAX_REDIRECTS, "0");
-        overrides.put("jclouds.timeouts.CloudApi.listVirtualMachines", "60000");
-        return overrides;
-    }
+   @Override
+   protected Properties setupProperties() {
+      Properties overrides = super.setupProperties();
+      overrides.put(Constants.PROPERTY_MAX_RETRIES, "0");
+      overrides.put(Constants.PROPERTY_MAX_REDIRECTS, "0");
+      overrides.put("jclouds.timeouts.CloudApi.listVirtualMachines", "60000");
+      return overrides;
+   }
 
-    @Override
-    protected void initializeContext()
-    {
-        super.initializeContext();
-        String templateId = buildTemplate(client.templateBuilder()).getImage().getId();
-        view.getUtils().getCredentialStore().put("image#" + templateId, loginCredentials);
-    }
+   @Override
+   protected void initializeContext() {
+      super.initializeContext();
+      String templateId = buildTemplate(client.templateBuilder()).getImage().getId();
+      view.getUtils().getCredentialStore().put("image#" + templateId, loginCredentials);
+   }
 
-    @Override
-    protected LoggingModule getLoggingModule()
-    {
-        return new SLF4JLoggingModule();
-    }
+   @Override
+   protected LoggingModule getLoggingModule() {
+      return new SLF4JLoggingModule();
+   }
 
-    @Override
-    protected Module getSshModule()
-    {
-        return new SshjSshClientModule();
-    }
+   @Override
+   protected Module getSshModule() {
+      return new SshjSshClientModule();
+   }
 
-    @Override
-    public void testListSizes() throws Exception
-    {
-        for (Hardware hardware : client.listHardwareProfiles())
-        {
-            assert hardware.getProviderId() != null : hardware;
-            assert getCores(hardware) > 0 : hardware;
-            assert hardware.getVolumes().size() >= 0 : hardware;
-            // There are some small images in Abiquo that have less than 1GB of RAM
-            // assert hardware.getRam() > 0 : hardware;
-            assertEquals(hardware.getType(), ComputeType.HARDWARE);
-        }
-    }
+   @Override
+   public void testListSizes() throws Exception {
+      for (Hardware hardware : client.listHardwareProfiles()) {
+         assert hardware.getProviderId() != null : hardware;
+         assert getCores(hardware) > 0 : hardware;
+         assert hardware.getVolumes().size() >= 0 : hardware;
+         // There are some small images in Abiquo that have less than 1GB of RAM
+         // assert hardware.getRam() > 0 : hardware;
+         assertEquals(hardware.getType(), ComputeType.HARDWARE);
+      }
+   }
 
-    @Override
-    public void testOptionToNotBlock() throws Exception
-    {
-        // By default the provider blocks until the node is running
-    }
+   @Override
+   public void testOptionToNotBlock() throws Exception {
+      // By default the provider blocks until the node is running
+   }
 
-    // Abiquo does not set the hostname
-    @Override
-    protected void checkResponseEqualsHostname(final ExecResponse execResponse,
-        final NodeMetadata node)
-    {
-        assert node.getHostname() == null : node + " with hostname: " + node.getHostname();
-    }
+   // Abiquo does not set the hostname
+   @Override
+   protected void checkResponseEqualsHostname(final ExecResponse execResponse, final NodeMetadata node) {
+      assert node.getHostname() == null : node + " with hostname: " + node.getHostname();
+   }
 
-    // Abiquo does not support metadata
-    @Override
-    protected void checkUserMetadataInNodeEquals(final NodeMetadata node,
-        final ImmutableMap<String, String> userMetadata)
-    {
-        assert node.getUserMetadata().equals(ImmutableMap.<String, String> of()) : String.format(
+   // Abiquo does not support metadata
+   @Override
+   protected void checkUserMetadataInNodeEquals(final NodeMetadata node, final ImmutableMap<String, String> userMetadata) {
+      assert node.getUserMetadata().equals(ImmutableMap.<String, String> of()) : String.format(
             "node userMetadata did not match %s %s", userMetadata, node);
-    }
+   }
 
-    // Abiquo does not support tags
-    @Override
-    protected void checkTagsInNodeEquals(final NodeMetadata node, final ImmutableSet<String> tags)
-    {
-        assert node.getTags().equals(ImmutableSet.<String> of()) : String.format(
-            "node tags did not match %s %s", tags, node);
-    }
+   // Abiquo does not support tags
+   @Override
+   protected void checkTagsInNodeEquals(final NodeMetadata node, final ImmutableSet<String> tags) {
+      assert node.getTags().equals(ImmutableSet.<String> of()) : String.format("node tags did not match %s %s", tags,
+            node);
+   }
 
 }

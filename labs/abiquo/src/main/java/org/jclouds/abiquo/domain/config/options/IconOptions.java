@@ -26,40 +26,33 @@ import org.jclouds.http.options.BaseHttpRequestOptions;
  * 
  * @author Francesc Montserrat
  */
-public class IconOptions extends BaseHttpRequestOptions
-{
-    public static Builder builder()
-    {
-        return new Builder();
-    }
+public class IconOptions extends BaseHttpRequestOptions {
+   public static Builder builder() {
+      return new Builder();
+   }
 
-    @Override
-    protected Object clone() throws CloneNotSupportedException
-    {
-        IconOptions options = new IconOptions();
-        options.queryParameters.putAll(queryParameters);
-        return options;
-    }
+   @Override
+   protected Object clone() throws CloneNotSupportedException {
+      IconOptions options = new IconOptions();
+      options.queryParameters.putAll(queryParameters);
+      return options;
+   }
 
-    public static class Builder
-    {
-        private String path;
+   public static class Builder {
+      private String path;
 
-        public Builder path(final String path)
-        {
-            this.path = path;
-            return this;
-        }
+      public Builder path(final String path) {
+         this.path = path;
+         return this;
+      }
 
-        public IconOptions build()
-        {
-            IconOptions options = new IconOptions();
-            if (path != null)
-            {
-                options.queryParameters.put("path", path);
-            }
+      public IconOptions build() {
+         IconOptions options = new IconOptions();
+         if (path != null) {
+            options.queryParameters.put("path", path);
+         }
 
-            return options;
-        }
-    }
+         return options;
+      }
+   }
 }

@@ -31,15 +31,13 @@ import org.testng.annotations.Test;
  * @author Ignasi Barrera
  */
 @Test(groups = "unit", testName = "BaseVirtualApplianceMonitorTest")
-public class BaseVirtualApplianceMonitorTest extends BaseInjectionTest
-{
+public class BaseVirtualApplianceMonitorTest extends BaseInjectionTest {
 
-    public void testAllPropertiesInjected()
-    {
-        BaseVirtualApplianceMonitor monitor =
-            (BaseVirtualApplianceMonitor) injector.getInstance(VirtualApplianceMonitor.class);
+   public void testAllPropertiesInjected() {
+      BaseVirtualApplianceMonitor monitor = (BaseVirtualApplianceMonitor) injector
+            .getInstance(VirtualApplianceMonitor.class);
 
-        assertNotNull(monitor.deployMonitor);
-        assertNotNull(monitor.undeployMonitor);
-    }
+      assertNotNull(monitor.deployMonitor);
+      assertNotNull(monitor.undeployMonitor);
+   }
 }

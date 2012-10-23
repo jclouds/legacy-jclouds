@@ -39,39 +39,43 @@ import com.abiquo.model.transport.error.ErrorDto;
  * 
  * @author Ignasi Barrera
  */
-public class Assert
-{
-    /**
-     * Assert that the exception contains the given error.
-     * 
-     * @param exception The exception.
-     * @param expectedHttpStatus The expected HTTP status code.
-     * @param expectedErrorCode The expected error code.
-     */
-    public static void assertHasError(final AbiquoException exception,
-        final Status expectedHttpStatus, final String expectedErrorCode)
-    {
-        assertEquals(exception.getHttpStatus(), expectedHttpStatus);
-        ErrorDto error = exception.findError(expectedErrorCode);
-        assertNotNull(error);
-    }
+public class Assert {
+   /**
+    * Assert that the exception contains the given error.
+    * 
+    * @param exception
+    *           The exception.
+    * @param expectedHttpStatus
+    *           The expected HTTP status code.
+    * @param expectedErrorCode
+    *           The expected error code.
+    */
+   public static void assertHasError(final AbiquoException exception, final Status expectedHttpStatus,
+         final String expectedErrorCode) {
+      assertEquals(exception.getHttpStatus(), expectedHttpStatus);
+      ErrorDto error = exception.findError(expectedErrorCode);
+      assertNotNull(error);
+   }
 
-    /**
-     * Assert that the given payload matches the given string.
-     * 
-     * @param payload The payload to check.
-     * @param expected The expected string.
-     * @param entityClass The entity class for the payload.
-     * @throws IOException If there is an error during serialization.
-     */
-    public static void assertPayloadEquals(final Payload payload, final String expected,
-        final Class< ? extends SingleResourceTransportDto> entityClass) throws IOException
-    {
-        // Serialize and deserialize to avoid formatting issues
-        XMLParser xml = new JAXBParser("false");
-        SingleResourceTransportDto entity = xml.fromXML(expected, entityClass);
-        String toMatch = xml.toXML(entity, entityClass);
+   /**
+    * Assert that the given payload matches the given string.
+    * 
+    * @param payload
+    *           The payload to check.
+    * @param expected
+    *           The expected string.
+    * @param entityClass
+    *           The entity class for the payload.
+    * @throws IOException
+    *            If there is an error during serialization.
+    */
+   public static void assertPayloadEquals(final Payload payload, final String expected,
+         final Class<? extends SingleResourceTransportDto> entityClass) throws IOException {
+      // Serialize and deserialize to avoid formatting issues
+      XMLParser xml = new JAXBParser("false");
+      SingleResourceTransportDto entity = xml.fromXML(expected, entityClass);
+      String toMatch = xml.toXML(entity, entityClass);
 
-        assertEquals(payload.getRawContent(), toMatch);
-    }
+      assertEquals(payload.getRawContent(), toMatch);
+   }
 }

@@ -44,71 +44,58 @@ import com.google.common.collect.Lists;
  * @author Ignasi Barrera
  */
 @Test(groups = "api", testName = "ListAttachedNicsImplLiveApiTest")
-public class ListAttachedNicsImplLiveApiTest extends BaseAbiquoStrategyLiveApiTest
-{
-    private ListAttachedNicsImpl strategy;
+public class ListAttachedNicsImplLiveApiTest extends BaseAbiquoStrategyLiveApiTest {
+   private ListAttachedNicsImpl strategy;
 
-    private PrivateIp privateIp;
+   private PrivateIp privateIp;
 
-    private ExternalIp externalIp;
+   private ExternalIp externalIp;
 
-    private PublicIp publicIp;
+   private PublicIp publicIp;
 
-    @Override
-    @BeforeClass(groups = "api")
-    protected void setupStrategy()
-    {
-        this.strategy =
-            env.context.getUtils().getInjector().getInstance(ListAttachedNicsImpl.class);
+   @Override
+   @BeforeClass(groups = "api")
+   protected void setupStrategy() {
+      this.strategy = env.context.getUtils().getInjector().getInstance(ListAttachedNicsImpl.class);
 
-        privateIp = env.privateNetwork.listUnusedIps().get(0);
-        assertNotNull(privateIp);
+      privateIp = env.privateNetwork.listUnusedIps().get(0);
+      assertNotNull(privateIp);
 
-        externalIp = env.externalNetwork.listUnusedIps().get(0);
-        assertNotNull(externalIp);
+      externalIp = env.externalNetwork.listUnusedIps().get(0);
+      assertNotNull(externalIp);
 
-        publicIp = env.virtualDatacenter.listAvailablePublicIps().get(0);
-        env.virtualDatacenter.purchasePublicIp(publicIp);
-        publicIp =
-            env.virtualDatacenter.findPurchasedPublicIp(IpPredicates.<PublicIp> address(publicIp
-                .getIp()));
-        assertNotNull(publicIp);
+      publicIp = env.virtualDatacenter.listAvailablePublicIps().get(0);
+      env.virtualDatacenter.purchasePublicIp(publicIp);
+      publicIp = env.virtualDatacenter.findPurchasedPublicIp(IpPredicates.<PublicIp> address(publicIp.getIp()));
+      assertNotNull(publicIp);
 
-        env.virtualMachine.setNics(
-            Lists.<Ip< ? , ? >> newArrayList(privateIp, externalIp, publicIp),
+      env.virtualMachine.setNics(Lists.<Ip<?, ?>> newArrayList(privateIp, externalIp, publicIp),
             Lists.<UnmanagedNetwork> newArrayList(env.unmanagedNetwork));
-    }
+   }
 
-    @AfterClass(groups = "api")
-    protected void tearDownStrategy()
-    {
-        env.virtualMachine.setNics(Lists.<Ip< ? , ? >> newArrayList(privateIp));
-        String address = publicIp.getIp();
-        env.virtualDatacenter.releaseePublicIp(publicIp);
-        assertNull(env.virtualDatacenter.findPurchasedPublicIp(IpPredicates
-            .<PublicIp> address(address)));
-    }
+   @AfterClass(groups = "api")
+   protected void tearDownStrategy() {
+      env.virtualMachine.setNics(Lists.<Ip<?, ?>> newArrayList(privateIp));
+      String address = publicIp.getIp();
+      env.virtualDatacenter.releaseePublicIp(publicIp);
+      assertNull(env.virtualDatacenter.findPurchasedPublicIp(IpPredicates.<PublicIp> address(address)));
+   }
 
-    public void testExecute()
-    {
-        Iterable<Ip< ? , ? >> vapps = strategy.execute(env.virtualMachine);
-        assertNotNull(vapps);
-        assertTrue(size(vapps) == 4);
-    }
+   public void testExecute() {
+      Iterable<Ip<?, ?>> vapps = strategy.execute(env.virtualMachine);
+      assertNotNull(vapps);
+      assertTrue(size(vapps) == 4);
+   }
 
-    public void testExecutePredicateWithoutResults()
-    {
-        Iterable<Ip< ? , ? >> vapps =
-            strategy.execute(env.virtualMachine, IpPredicates.address("UNEXISTING"));
-        assertNotNull(vapps);
-        assertEquals(size(vapps), 0);
-    }
+   public void testExecutePredicateWithoutResults() {
+      Iterable<Ip<?, ?>> vapps = strategy.execute(env.virtualMachine, IpPredicates.address("UNEXISTING"));
+      assertNotNull(vapps);
+      assertEquals(size(vapps), 0);
+   }
 
-    public void testExecutePredicateWithResults()
-    {
-        Iterable<Ip< ? , ? >> vapps =
-            strategy.execute(env.virtualMachine, IpPredicates.address(publicIp.getIp()));
-        assertNotNull(vapps);
-        assertEquals(size(vapps), 1);
-    }
+   public void testExecutePredicateWithResults() {
+      Iterable<Ip<?, ?>> vapps = strategy.execute(env.virtualMachine, IpPredicates.address(publicIp.getIp()));
+      assertNotNull(vapps);
+      assertEquals(size(vapps), 1);
+   }
 }

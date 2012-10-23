@@ -30,91 +30,76 @@ import com.abiquo.model.enumerator.StatefulInclusion;
  * 
  * @author Ignasi Barrera
  */
-public class VirtualMachineTemplateOptions extends BaseHttpRequestOptions
-{
-    public static Builder builder()
-    {
-        return new Builder();
-    }
+public class VirtualMachineTemplateOptions extends BaseHttpRequestOptions {
+   public static Builder builder() {
+      return new Builder();
+   }
 
-    @Override
-    protected Object clone() throws CloneNotSupportedException
-    {
-        VirtualMachineTemplateOptions options = new VirtualMachineTemplateOptions();
-        options.queryParameters.putAll(queryParameters);
-        return options;
-    }
+   @Override
+   protected Object clone() throws CloneNotSupportedException {
+      VirtualMachineTemplateOptions options = new VirtualMachineTemplateOptions();
+      options.queryParameters.putAll(queryParameters);
+      return options;
+   }
 
-    public static class Builder
-    {
-        private StatefulInclusion persistent;
+   public static class Builder {
+      private StatefulInclusion persistent;
 
-        private HypervisorType hypervisorType;
+      private HypervisorType hypervisorType;
 
-        private Category category;
+      private Category category;
 
-        private String categoryName;
+      private String categoryName;
 
-        private Integer idTemplate;
+      private Integer idTemplate;
 
-        public Builder persistent(final StatefulInclusion persistent)
-        {
-            this.persistent = persistent;
-            return this;
-        }
+      public Builder persistent(final StatefulInclusion persistent) {
+         this.persistent = persistent;
+         return this;
+      }
 
-        public Builder hypervisorType(final HypervisorType hypervisorType)
-        {
-            this.hypervisorType = hypervisorType;
-            return this;
-        }
+      public Builder hypervisorType(final HypervisorType hypervisorType) {
+         this.hypervisorType = hypervisorType;
+         return this;
+      }
 
-        public Builder category(final Category category)
-        {
-            this.category = category;
-            return this;
-        }
+      public Builder category(final Category category) {
+         this.category = category;
+         return this;
+      }
 
-        public Builder categoryName(final String categoryName)
-        {
-            this.categoryName = categoryName;
-            return this;
-        }
+      public Builder categoryName(final String categoryName) {
+         this.categoryName = categoryName;
+         return this;
+      }
 
-        public Builder idTemplate(final Integer idTemplate)
-        {
-            this.idTemplate = idTemplate;
-            return this;
-        }
+      public Builder idTemplate(final Integer idTemplate) {
+         this.idTemplate = idTemplate;
+         return this;
+      }
 
-        public VirtualMachineTemplateOptions build()
-        {
-            VirtualMachineTemplateOptions options = new VirtualMachineTemplateOptions();
+      public VirtualMachineTemplateOptions build() {
+         VirtualMachineTemplateOptions options = new VirtualMachineTemplateOptions();
 
-            if (persistent != null)
-            {
-                options.queryParameters.put("stateful", persistent.name());
-            }
-            if (hypervisorType != null)
-            {
-                options.queryParameters.put("hypervisorTypeName", hypervisorType.name());
-            }
-            if (category != null)
-            {
-                options.queryParameters.put("categoryName", category.getName());
-            }
+         if (persistent != null) {
+            options.queryParameters.put("stateful", persistent.name());
+         }
+         if (hypervisorType != null) {
+            options.queryParameters.put("hypervisorTypeName", hypervisorType.name());
+         }
+         if (category != null) {
+            options.queryParameters.put("categoryName", category.getName());
+         }
 
-            if (category == null && categoryName != null)
-            {
-                options.queryParameters.put("categoryName", categoryName);
-            }
+         if (category == null && categoryName != null) {
+            options.queryParameters.put("categoryName", categoryName);
+         }
 
-            if (idTemplate != null)
-            {
-                options.queryParameters.put("idTemplate", String.valueOf(idTemplate));
-            }
+         if (idTemplate != null) {
+            options.queryParameters.put("idTemplate", String.valueOf(idTemplate));
+         }
 
-            return options;
-        }
-    }
+         return options;
+      }
+   }
 }

@@ -38,58 +38,49 @@ import com.google.inject.TypeLiteral;
  * @author Ignasi Barrera
  */
 @Test(groups = "unit", testName = "AbiquoDelegateApiTest")
-public class AbiquoDelegateApiTest extends BaseAbiquoAsyncApiTest<AbiquoAsyncApi>
-{
-    private AbiquoAsyncApi asyncApi;
+public class AbiquoDelegateApiTest extends BaseAbiquoAsyncApiTest<AbiquoAsyncApi> {
+   private AbiquoAsyncApi asyncApi;
 
-    private AbiquoApi syncApi;
+   private AbiquoApi syncApi;
 
-    @BeforeClass
-    @Override
-    protected void setupFactory() throws IOException
-    {
-        super.setupFactory();
-        asyncApi = injector.getInstance(AbiquoAsyncApi.class);
-        syncApi = injector.getInstance(AbiquoApi.class);
-    }
+   @BeforeClass
+   @Override
+   protected void setupFactory() throws IOException {
+      super.setupFactory();
+      asyncApi = injector.getInstance(AbiquoAsyncApi.class);
+      syncApi = injector.getInstance(AbiquoApi.class);
+   }
 
-    public void testSync() throws SecurityException, NoSuchMethodException, InterruptedException,
-        ExecutionException
-    {
-        assertNotNull(syncApi.getAdminApi());
-        assertNotNull(syncApi.getConfigApi());
-        assertNotNull(syncApi.getInfrastructureApi());
-        assertNotNull(syncApi.getEnterpriseApi());
-        assertNotNull(syncApi.getCloudApi());
-        assertNotNull(syncApi.getVirtualMachineTemplateApi());
-        assertNotNull(syncApi.getTaskApi());
-        assertNotNull(syncApi.getPricingApi());
-    }
+   public void testSync() throws SecurityException, NoSuchMethodException, InterruptedException, ExecutionException {
+      assertNotNull(syncApi.getAdminApi());
+      assertNotNull(syncApi.getConfigApi());
+      assertNotNull(syncApi.getInfrastructureApi());
+      assertNotNull(syncApi.getEnterpriseApi());
+      assertNotNull(syncApi.getCloudApi());
+      assertNotNull(syncApi.getVirtualMachineTemplateApi());
+      assertNotNull(syncApi.getTaskApi());
+      assertNotNull(syncApi.getPricingApi());
+   }
 
-    public void testAsync() throws SecurityException, NoSuchMethodException, InterruptedException,
-        ExecutionException
-    {
-        assertNotNull(asyncApi.getAdminApi());
-        assertNotNull(asyncApi.getConfigApi());
-        assertNotNull(asyncApi.getInfrastructureApi());
-        assertNotNull(asyncApi.getEnterpriseApi());
-        assertNotNull(asyncApi.getCloudApi());
-        assertNotNull(asyncApi.getVirtualMachineTemplateApi());
-        assertNotNull(asyncApi.getTaskApi());
-        assertNotNull(asyncApi.getPricingApi());
-    }
+   public void testAsync() throws SecurityException, NoSuchMethodException, InterruptedException, ExecutionException {
+      assertNotNull(asyncApi.getAdminApi());
+      assertNotNull(asyncApi.getConfigApi());
+      assertNotNull(asyncApi.getInfrastructureApi());
+      assertNotNull(asyncApi.getEnterpriseApi());
+      assertNotNull(asyncApi.getCloudApi());
+      assertNotNull(asyncApi.getVirtualMachineTemplateApi());
+      assertNotNull(asyncApi.getTaskApi());
+      assertNotNull(asyncApi.getPricingApi());
+   }
 
-    @Override
-    protected TypeLiteral<RestAnnotationProcessor<AbiquoAsyncApi>> createTypeLiteral()
-    {
-        return new TypeLiteral<RestAnnotationProcessor<AbiquoAsyncApi>>()
-        {
-        };
-    }
+   @Override
+   protected TypeLiteral<RestAnnotationProcessor<AbiquoAsyncApi>> createTypeLiteral() {
+      return new TypeLiteral<RestAnnotationProcessor<AbiquoAsyncApi>>() {
+      };
+   }
 
-    @Override
-    protected void checkFilters(final HttpRequest request)
-    {
+   @Override
+   protected void checkFilters(final HttpRequest request) {
 
-    }
+   }
 }

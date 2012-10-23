@@ -47,141 +47,115 @@ import com.abiquo.server.core.infrastructure.network.UnmanagedIpsDto;
  * @author Ignasi Barrera
  */
 @Test(groups = "api", testName = "UnmanagedNetworkLiveApiTest")
-public class UnmanagedNetworkLiveApiTest extends BaseAbiquoApiLiveApiTest
-{
-    private UnmanagedNetwork unmanagedNetwork;
+public class UnmanagedNetworkLiveApiTest extends BaseAbiquoApiLiveApiTest {
+   private UnmanagedNetwork unmanagedNetwork;
 
-    @BeforeClass
-    public void setupNetwork()
-    {
-        unmanagedNetwork = createNetwork(env.unmanagedNetwork, PREFIX + "-unmanagednetwork-test");
-    }
+   @BeforeClass
+   public void setupNetwork() {
+      unmanagedNetwork = createNetwork(env.unmanagedNetwork, PREFIX + "-unmanagednetwork-test");
+   }
 
-    @AfterClass
-    public void tearDownNetwork()
-    {
-        unmanagedNetwork.delete();
-    }
+   @AfterClass
+   public void tearDownNetwork() {
+      unmanagedNetwork.delete();
+   }
 
-    public void testListIps()
-    {
-        UnmanagedIpsDto ipsDto =
-            env.context.getApiContext().getApi().getInfrastructureApi()
-                .listUnmanagedIps(unmanagedNetwork.unwrap(), IpOptions.builder().limit(1).build());
-        int totalIps = ipsDto.getTotalSize();
+   public void testListIps() {
+      UnmanagedIpsDto ipsDto = env.context.getApiContext().getApi().getInfrastructureApi()
+            .listUnmanagedIps(unmanagedNetwork.unwrap(), IpOptions.builder().limit(1).build());
+      int totalIps = ipsDto.getTotalSize();
 
-        List<UnmanagedIp> ips = unmanagedNetwork.listIps();
+      List<UnmanagedIp> ips = unmanagedNetwork.listIps();
 
-        assertEquals(ips.size(), totalIps);
-    }
+      assertEquals(ips.size(), totalIps);
+   }
 
-    public void testListIpsWithOptions()
-    {
-        List<UnmanagedIp> ips = unmanagedNetwork.listIps(IpOptions.builder().limit(5).build());
-        // Unmanaged networks do not have IPs until attached to VMs
-        assertEquals(ips.size(), 0);
-    }
+   public void testListIpsWithOptions() {
+      List<UnmanagedIp> ips = unmanagedNetwork.listIps(IpOptions.builder().limit(5).build());
+      // Unmanaged networks do not have IPs until attached to VMs
+      assertEquals(ips.size(), 0);
+   }
 
-    public void testListUnusedIps()
-    {
-        UnmanagedIpsDto ipsDto =
-            env.context.getApiContext().getApi().getInfrastructureApi()
-                .listUnmanagedIps(unmanagedNetwork.unwrap(), IpOptions.builder().limit(1).build());
-        int totalIps = ipsDto.getTotalSize();
+   public void testListUnusedIps() {
+      UnmanagedIpsDto ipsDto = env.context.getApiContext().getApi().getInfrastructureApi()
+            .listUnmanagedIps(unmanagedNetwork.unwrap(), IpOptions.builder().limit(1).build());
+      int totalIps = ipsDto.getTotalSize();
 
-        List<UnmanagedIp> ips = unmanagedNetwork.listUnusedIps();
-        assertEquals(ips.size(), totalIps);
-    }
+      List<UnmanagedIp> ips = unmanagedNetwork.listUnusedIps();
+      assertEquals(ips.size(), totalIps);
+   }
 
-    public void testUpdateBasicInfo()
-    {
-        unmanagedNetwork.setName("Unmanaged network Updated");
-        unmanagedNetwork.setPrimaryDNS("8.8.8.8");
-        unmanagedNetwork.setSecondaryDNS("8.8.8.8");
-        unmanagedNetwork.update();
+   public void testUpdateBasicInfo() {
+      unmanagedNetwork.setName("Unmanaged network Updated");
+      unmanagedNetwork.setPrimaryDNS("8.8.8.8");
+      unmanagedNetwork.setSecondaryDNS("8.8.8.8");
+      unmanagedNetwork.update();
 
-        assertEquals(unmanagedNetwork.getName(), "Unmanaged network Updated");
-        assertEquals(unmanagedNetwork.getPrimaryDNS(), "8.8.8.8");
-        assertEquals(unmanagedNetwork.getSecondaryDNS(), "8.8.8.8");
+      assertEquals(unmanagedNetwork.getName(), "Unmanaged network Updated");
+      assertEquals(unmanagedNetwork.getPrimaryDNS(), "8.8.8.8");
+      assertEquals(unmanagedNetwork.getSecondaryDNS(), "8.8.8.8");
 
-        // Refresh the unmanaged network
-        UnmanagedNetwork en =
-            env.enterprise.findUnmanagedNetwork(env.datacenter,
-                NetworkPredicates.<UnmanagedIp> name(unmanagedNetwork.getName()));
+      // Refresh the unmanaged network
+      UnmanagedNetwork en = env.enterprise.findUnmanagedNetwork(env.datacenter,
+            NetworkPredicates.<UnmanagedIp> name(unmanagedNetwork.getName()));
 
-        assertEquals(en.getId(), unmanagedNetwork.getId());
-        assertEquals(en.getName(), "Unmanaged network Updated");
-        assertEquals(en.getPrimaryDNS(), "8.8.8.8");
-        assertEquals(en.getSecondaryDNS(), "8.8.8.8");
-    }
+      assertEquals(en.getId(), unmanagedNetwork.getId());
+      assertEquals(en.getName(), "Unmanaged network Updated");
+      assertEquals(en.getPrimaryDNS(), "8.8.8.8");
+      assertEquals(en.getSecondaryDNS(), "8.8.8.8");
+   }
 
-    public void testUpdateReadOnlyFields()
-    {
-        UnmanagedNetwork toUpdate = createNetwork(unmanagedNetwork, PREFIX + "-umtoupdate-test");
+   public void testUpdateReadOnlyFields() {
+      UnmanagedNetwork toUpdate = createNetwork(unmanagedNetwork, PREFIX + "-umtoupdate-test");
 
-        try
-        {
-            toUpdate.setTag(20);
-            toUpdate.setAddress("10.2.0.0");
-            toUpdate.setMask(16);
-            toUpdate.update();
+      try {
+         toUpdate.setTag(20);
+         toUpdate.setAddress("10.2.0.0");
+         toUpdate.setMask(16);
+         toUpdate.update();
 
-            fail("Tag field should not be editable");
-        }
-        catch (AbiquoException ex)
-        {
-            assertHasError(ex, Status.CONFLICT, "VLAN-19");
-        }
-        finally
-        {
-            toUpdate.delete();
-        }
-    }
+         fail("Tag field should not be editable");
+      } catch (AbiquoException ex) {
+         assertHasError(ex, Status.CONFLICT, "VLAN-19");
+      } finally {
+         toUpdate.delete();
+      }
+   }
 
-    public void testUpdateWithInvalidValues()
-    {
-        UnmanagedNetwork toUpdate = createNetwork(unmanagedNetwork, PREFIX + "-umtoupdate-test");
+   public void testUpdateWithInvalidValues() {
+      UnmanagedNetwork toUpdate = createNetwork(unmanagedNetwork, PREFIX + "-umtoupdate-test");
 
-        try
-        {
-            toUpdate.setMask(60);
-            toUpdate.update();
+      try {
+         toUpdate.setMask(60);
+         toUpdate.update();
 
-            fail("Invalid mask value");
-        }
-        catch (AbiquoException ex)
-        {
-            assertHasError(ex, Status.BAD_REQUEST, "CONSTR-MAX");
-        }
-        finally
-        {
-            toUpdate.delete();
-        }
-    }
+         fail("Invalid mask value");
+      } catch (AbiquoException ex) {
+         assertHasError(ex, Status.BAD_REQUEST, "CONSTR-MAX");
+      } finally {
+         toUpdate.delete();
+      }
+   }
 
-    public void testGetEnterprise()
-    {
-        assertEquals(unmanagedNetwork.getEnterprise().getId(), env.enterprise.getId());
-    }
+   public void testGetEnterprise() {
+      assertEquals(unmanagedNetwork.getEnterprise().getId(), env.enterprise.getId());
+   }
 
-    public void testGetDatacenter()
-    {
-        assertEquals(unmanagedNetwork.getDatacenter().getId(), env.datacenter.getId());
-    }
+   public void testGetDatacenter() {
+      assertEquals(unmanagedNetwork.getDatacenter().getId(), env.datacenter.getId());
+   }
 
-    public void testGetNetworkFromIp()
-    {
-        UnmanagedIp ip = unmanagedNetwork.findIp(IpPredicates.<UnmanagedIp> notUsed());
-        // Unmanaged networks do not have IPs until attached to VMs
-        assertNull(ip);
-    }
+   public void testGetNetworkFromIp() {
+      UnmanagedIp ip = unmanagedNetwork.findIp(IpPredicates.<UnmanagedIp> notUsed());
+      // Unmanaged networks do not have IPs until attached to VMs
+      assertNull(ip);
+   }
 
-    private UnmanagedNetwork createNetwork(final UnmanagedNetwork from, final String name)
-    {
-        UnmanagedNetwork network = UnmanagedNetwork.Builder.fromUnmanagedNetwork(from).build();
-        network.setName(name);
-        network.save();
-        assertNotNull(network.getId());
-        return network;
-    }
+   private UnmanagedNetwork createNetwork(final UnmanagedNetwork from, final String name) {
+      UnmanagedNetwork network = UnmanagedNetwork.Builder.fromUnmanagedNetwork(from).build();
+      network.setName(name);
+      network.save();
+      assertNotNull(network.getId());
+      return network;
+   }
 }

@@ -42,96 +42,81 @@ import com.google.common.io.Closeables;
  * @author Ignasi Barrera
  */
 @Singleton
-public class AbiquoErrorHandler implements HttpErrorHandler
-{
-    /** The error parser. */
-    private ParseErrors errorParser;
+public class AbiquoErrorHandler implements HttpErrorHandler {
+   /** The error parser. */
+   private ParseErrors errorParser;
 
-    @Inject
-    AbiquoErrorHandler(final ParseErrors errorParser)
-    {
-        super();
-        this.errorParser = errorParser;
-    }
+   @Inject
+   AbiquoErrorHandler(final ParseErrors errorParser) {
+      super();
+      this.errorParser = errorParser;
+   }
 
-    @Override
-    public void handleError(final HttpCommand command, final HttpResponse response)
-    {
-        Exception exception = null;
-        String defaultMessage =
-            String.format("%s -> %s", command.getCurrentRequest().getRequestLine(),
-                response.getStatusLine());
+   @Override
+   public void handleError(final HttpCommand command, final HttpResponse response) {
+      Exception exception = null;
+      String defaultMessage = String.format("%s -> %s", command.getCurrentRequest().getRequestLine(),
+            response.getStatusLine());
 
-        try
-        {
-            switch (response.getStatusCode())
-            {
-                case 401:
-                case 403:
-                    // Autorization exceptions do not return an errors DTO, so we encapsulate a
-                    // generic exception
-                    exception =
-                        new AuthorizationException(defaultMessage,
-                            new HttpResponseException(command, response, defaultMessage));
-                    break;
-                case 404:
-                    exception =
-                        new ResourceNotFoundException(defaultMessage, getExceptionToPropagate(
-                            command, response, defaultMessage));
-                    break;
-                case 301:
-                    // Moved resources in Abiquo should be handled with the ReturnMovedResource
-                    // exception parser to return the moved entity.
-                    exception = new HttpResponseException(command, response, defaultMessage);
-                    break;
-                default:
-                    exception = getExceptionToPropagate(command, response, defaultMessage);
-                    break;
-            }
-        }
-        finally
-        {
-            if (response.getPayload() != null)
-            {
-                Closeables.closeQuietly(response.getPayload().getInput());
-            }
-            command.setException(exception);
-        }
-    }
+      try {
+         switch (response.getStatusCode()) {
+            case 401:
+            case 403:
+               // Autorization exceptions do not return an errors DTO, so we
+               // encapsulate a
+               // generic exception
+               exception = new AuthorizationException(defaultMessage, new HttpResponseException(command, response,
+                     defaultMessage));
+               break;
+            case 404:
+               exception = new ResourceNotFoundException(defaultMessage, getExceptionToPropagate(command, response,
+                     defaultMessage));
+               break;
+            case 301:
+               // Moved resources in Abiquo should be handled with the
+               // ReturnMovedResource
+               // exception parser to return the moved entity.
+               exception = new HttpResponseException(command, response, defaultMessage);
+               break;
+            default:
+               exception = getExceptionToPropagate(command, response, defaultMessage);
+               break;
+         }
+      } finally {
+         if (response.getPayload() != null) {
+            Closeables.closeQuietly(response.getPayload().getInput());
+         }
+         command.setException(exception);
+      }
+   }
 
-    private Exception getExceptionToPropagate(final HttpCommand command,
-        final HttpResponse response, final String defaultMessage)
-    {
-        Exception exception = null;
+   private Exception getExceptionToPropagate(final HttpCommand command, final HttpResponse response,
+         final String defaultMessage) {
+      Exception exception = null;
 
-        if (hasPayload(response))
-        {
-            try
-            {
-                ErrorsDto errors = errorParser.apply(response);
-                exception = new AbiquoException(fromStatusCode(response.getStatusCode()), errors);
-            }
-            catch (Exception ex)
-            {
-                // If it is not an Abiquo Exception (can not be unmarshalled), propagate a standard
-                // HttpResponseException
-                exception = new HttpResponseException(command, response, defaultMessage);
-            }
-        }
-        else
-        {
-            // If it is not an Abiquo Exception (there is not an errors xml in the payload)
-            // propagate a standard HttpResponseException
+      if (hasPayload(response)) {
+         try {
+            ErrorsDto errors = errorParser.apply(response);
+            exception = new AbiquoException(fromStatusCode(response.getStatusCode()), errors);
+         } catch (Exception ex) {
+            // If it is not an Abiquo Exception (can not be unmarshalled),
+            // propagate a standard
+            // HttpResponseException
             exception = new HttpResponseException(command, response, defaultMessage);
-        }
+         }
+      } else {
+         // If it is not an Abiquo Exception (there is not an errors xml in the
+         // payload)
+         // propagate a standard HttpResponseException
+         exception = new HttpResponseException(command, response, defaultMessage);
+      }
 
-        return exception;
-    }
+      return exception;
+   }
 
-    private static boolean hasPayload(final HttpResponse response)
-    {
-        return response.getPayload() != null && response.getPayload().getContentMetadata() != null
+   private static boolean hasPayload(final HttpResponse response) {
+      return response.getPayload() != null && response.getPayload().getContentMetadata() != null
             && response.getPayload().getContentMetadata().getContentLength() != null
             && response.getPayload().getContentMetadata().getContentLength() > 0L;
-    }
+   }
 }

@@ -47,60 +47,53 @@ import com.google.inject.TypeLiteral;
  * @author Ignasi Barrera
  */
 @Test(groups = "unit", testName = "ReturnMovedVolumeTest")
-public class ReturnMovedVolumeTest
-{
-    public void testReturnOriginalExceptionIfNotHttpResponseException()
-    {
-        Function<Exception, VolumeManagementDto> function =
-            new ReturnMovedVolume(new ReturnMoveVolumeReference(new JAXBParser("false"),
-                TypeLiteral.get(MovedVolumeDto.class)));
+public class ReturnMovedVolumeTest {
+   public void testReturnOriginalExceptionIfNotHttpResponseException() {
+      Function<Exception, VolumeManagementDto> function = new ReturnMovedVolume(new ReturnMoveVolumeReference(
+            new JAXBParser("false"), TypeLiteral.get(MovedVolumeDto.class)));
 
-        RuntimeException exception = new RuntimeException();
+      RuntimeException exception = new RuntimeException();
 
-        try
-        {
-            function.apply(exception);
-        }
-        catch (Exception ex)
-        {
-            assertEquals(ex, exception);
-        }
-    }
+      try {
+         function.apply(exception);
+      } catch (Exception ex) {
+         assertEquals(ex, exception);
+      }
+   }
 
-    public void testReturnVolume() throws IOException
-    {
-        JAXBParser xmlParser = new JAXBParser("false");
-        Function<Exception, VolumeManagementDto> function =
-            new ReturnMovedVolume(new ReturnMoveVolumeReference(new JAXBParser("false"),
-                TypeLiteral.get(MovedVolumeDto.class)));
+   public void testReturnVolume() throws IOException {
+      JAXBParser xmlParser = new JAXBParser("false");
+      Function<Exception, VolumeManagementDto> function = new ReturnMovedVolume(new ReturnMoveVolumeReference(
+            new JAXBParser("false"), TypeLiteral.get(MovedVolumeDto.class)));
 
-        VolumeManagementDto volume = new VolumeManagementDto();
-        volume.setName("Test volume");
-        MovedVolumeDto movedRef = new MovedVolumeDto();
-        movedRef.setVolume(volume);
+      VolumeManagementDto volume = new VolumeManagementDto();
+      volume.setName("Test volume");
+      MovedVolumeDto movedRef = new MovedVolumeDto();
+      movedRef.setVolume(volume);
 
-        HttpResponse response = EasyMock.createMock(HttpResponse.class);
-        HttpResponseException exception = EasyMock.createMock(HttpResponseException.class);
-        Payload payload = Payloads.newPayload(xmlParser.toXML(movedRef));
+      HttpResponse response = EasyMock.createMock(HttpResponse.class);
+      HttpResponseException exception = EasyMock.createMock(HttpResponseException.class);
+      Payload payload = Payloads.newPayload(xmlParser.toXML(movedRef));
 
-        // Status code is called once
-        expect(response.getStatusCode()).andReturn(Status.MOVED_PERMANENTLY.getStatusCode());
-        // Get response gets called twice
-        expect(exception.getResponse()).andReturn(response);
-        expect(exception.getResponse()).andReturn(response);
-        // Get payload is called three times: one to deserialize it, and twice to release it
-        expect(response.getPayload()).andReturn(payload);
-        expect(response.getPayload()).andReturn(payload);
-        expect(response.getPayload()).andReturn(payload);
-        // Get cause is called to determine the root cause
-        expect(exception.getCause()).andReturn(null);
+      // Status code is called once
+      expect(response.getStatusCode()).andReturn(Status.MOVED_PERMANENTLY.getStatusCode());
+      // Get response gets called twice
+      expect(exception.getResponse()).andReturn(response);
+      expect(exception.getResponse()).andReturn(response);
+      // Get payload is called three times: one to deserialize it, and twice to
+      // release it
+      expect(response.getPayload()).andReturn(payload);
+      expect(response.getPayload()).andReturn(payload);
+      expect(response.getPayload()).andReturn(payload);
+      // Get cause is called to determine the root cause
+      expect(exception.getCause()).andReturn(null);
 
-        replay(response);
-        replay(exception);
+      replay(response);
+      replay(exception);
 
-        function.apply(exception);
+      function.apply(exception);
 
-        verify(response);
-        verify(exception);
-    }
+      verify(response);
+      verify(exception);
+   }
 }

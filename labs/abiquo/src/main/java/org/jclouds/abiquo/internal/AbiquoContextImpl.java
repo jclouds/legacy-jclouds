@@ -44,82 +44,73 @@ import org.jclouds.rest.internal.RestContextImpl;
 import com.google.common.reflect.TypeToken;
 
 /**
- * Abiquo {@link RestContextImpl} implementation to expose high level Abiquo functionalities.
+ * Abiquo {@link RestContextImpl} implementation to expose high level Abiquo
+ * functionalities.
  * 
  * @author Ignasi Barrera
  */
 @Singleton
-public class AbiquoContextImpl extends ComputeServiceContextImpl implements AbiquoContext
-{
-    private final AdministrationService administrationService;
+public class AbiquoContextImpl extends ComputeServiceContextImpl implements AbiquoContext {
+   private final AdministrationService administrationService;
 
-    private final CloudService cloudService;
+   private final CloudService cloudService;
 
-    private final SearchService searchService;
+   private final SearchService searchService;
 
-    private final MonitoringService monitoringService;
+   private final MonitoringService monitoringService;
 
-    private final EventService eventService;
+   private final EventService eventService;
 
-    private final PricingService pricingService;
+   private final PricingService pricingService;
 
-    @Inject
-    public AbiquoContextImpl(@Provider final Context wrapped,
-        @Provider final TypeToken< ? extends Context> wrappedType,
-        final ComputeService computeService, final Utils utils,
-        final RestContext<AbiquoApi, AbiquoAsyncApi> providerSpecificContext,
-        final AdministrationService administrationService, final CloudService cloudService,
-        final SearchService searchService, final MonitoringService monitoringService,
-        final EventService eventService, final PricingService pricingService)
-    {
-        super(wrapped, wrappedType, computeService, utils);
-        this.administrationService = checkNotNull(administrationService, "administrationService");
-        this.cloudService = checkNotNull(cloudService, "cloudService");
-        this.searchService = checkNotNull(searchService, "searchService");
-        this.monitoringService = checkNotNull(monitoringService, "monitoringService");
-        this.eventService = checkNotNull(eventService, "eventService");
-        this.pricingService = checkNotNull(pricingService, "pricingService");
-    }
+   @Inject
+   public AbiquoContextImpl(@Provider final Context wrapped, @Provider final TypeToken<? extends Context> wrappedType,
+         final ComputeService computeService, final Utils utils,
+         final RestContext<AbiquoApi, AbiquoAsyncApi> providerSpecificContext,
+         final AdministrationService administrationService, final CloudService cloudService,
+         final SearchService searchService, final MonitoringService monitoringService, final EventService eventService,
+         final PricingService pricingService) {
+      super(wrapped, wrappedType, computeService, utils);
+      this.administrationService = checkNotNull(administrationService, "administrationService");
+      this.cloudService = checkNotNull(cloudService, "cloudService");
+      this.searchService = checkNotNull(searchService, "searchService");
+      this.monitoringService = checkNotNull(monitoringService, "monitoringService");
+      this.eventService = checkNotNull(eventService, "eventService");
+      this.pricingService = checkNotNull(pricingService, "pricingService");
+   }
 
-    @Override
-    public RestContext<AbiquoApi, AbiquoAsyncApi> getApiContext()
-    {
-        return unwrap();
-    }
+   @Override
+   public RestContext<AbiquoApi, AbiquoAsyncApi> getApiContext() {
+      return unwrap();
+   }
 
-    @Override
-    public AdministrationService getAdministrationService()
-    {
-        return administrationService;
-    }
+   @Override
+   public AdministrationService getAdministrationService() {
+      return administrationService;
+   }
 
-    @Override
-    public CloudService getCloudService()
-    {
-        return cloudService;
-    }
+   @Override
+   public CloudService getCloudService() {
+      return cloudService;
+   }
 
-    @Override
-    public SearchService getSearchService()
-    {
-        return searchService;
-    }
+   @Override
+   public SearchService getSearchService() {
+      return searchService;
+   }
 
-    @Override
-    public MonitoringService getMonitoringService()
-    {
-        return monitoringService;
-    }
+   @Override
+   public MonitoringService getMonitoringService() {
+      return monitoringService;
+   }
 
-    @Override
-    public EventService getEventService()
-    {
-        return eventService;
-    }
+   @Override
+   public EventService getEventService() {
+      return eventService;
+   }
 
-    @Override
-    public PricingService getPricingService()
-    {
-        return pricingService;
-    }
+   @Override
+   public PricingService getPricingService() {
+      return pricingService;
+   }
 }

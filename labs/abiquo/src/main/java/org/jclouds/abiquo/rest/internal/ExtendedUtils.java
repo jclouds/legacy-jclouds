@@ -49,36 +49,30 @@ import com.google.inject.Singleton;
  * @author Ignasi Barrera
  */
 @Singleton
-public class ExtendedUtils extends UtilsImpl implements Utils
-{
-    private AbiquoHttpClient abiquoHttpClient;
+public class ExtendedUtils extends UtilsImpl implements Utils {
+   private AbiquoHttpClient abiquoHttpClient;
 
-    private AbiquoHttpAsyncClient abiquoHttpAsyncApi;
+   private AbiquoHttpAsyncClient abiquoHttpAsyncApi;
 
-    @Inject
-    public ExtendedUtils(final Injector injector, final Json json, final XMLParser xml,
-        final HttpClient simpleApi, final HttpAsyncClient simpleAsyncApi, final Crypto encryption,
-        final DateService date,
-        @Named(Constants.PROPERTY_USER_THREADS) final ExecutorService userThreads,
-        @Named(Constants.PROPERTY_IO_WORKER_THREADS) final ExecutorService ioThreads,
-        final EventBus eventBus, final Map<String, Credentials> credentialStore,
-        final LoggerFactory loggerFactory, final AbiquoHttpClient abiquoHttpClient,
-        final AbiquoHttpAsyncClient abiquoHttpAsyncApi)
-    {
-        super(injector, json, xml, simpleApi, simpleAsyncApi, encryption, date, userThreads,
-            ioThreads, eventBus, credentialStore, loggerFactory);
-        this.abiquoHttpClient = checkNotNull(abiquoHttpClient, "abiquoHttpClient");
-        this.abiquoHttpAsyncApi = checkNotNull(abiquoHttpAsyncApi, "abiquoHttpAsyncApi");
-    }
+   @Inject
+   public ExtendedUtils(final Injector injector, final Json json, final XMLParser xml, final HttpClient simpleApi,
+         final HttpAsyncClient simpleAsyncApi, final Crypto encryption, final DateService date,
+         @Named(Constants.PROPERTY_USER_THREADS) final ExecutorService userThreads,
+         @Named(Constants.PROPERTY_IO_WORKER_THREADS) final ExecutorService ioThreads, final EventBus eventBus,
+         final Map<String, Credentials> credentialStore, final LoggerFactory loggerFactory,
+         final AbiquoHttpClient abiquoHttpClient, final AbiquoHttpAsyncClient abiquoHttpAsyncApi) {
+      super(injector, json, xml, simpleApi, simpleAsyncApi, encryption, date, userThreads, ioThreads, eventBus,
+            credentialStore, loggerFactory);
+      this.abiquoHttpClient = checkNotNull(abiquoHttpClient, "abiquoHttpClient");
+      this.abiquoHttpAsyncApi = checkNotNull(abiquoHttpAsyncApi, "abiquoHttpAsyncApi");
+   }
 
-    public AbiquoHttpClient getAbiquoHttpClient()
-    {
-        return abiquoHttpClient;
-    }
+   public AbiquoHttpClient getAbiquoHttpClient() {
+      return abiquoHttpClient;
+   }
 
-    public AbiquoHttpAsyncClient getAbiquoHttpAsyncClient()
-    {
-        return abiquoHttpAsyncApi;
-    }
+   public AbiquoHttpAsyncClient getAbiquoHttpAsyncClient() {
+      return abiquoHttpAsyncApi;
+   }
 
 }

@@ -32,44 +32,33 @@ import com.google.common.base.Function;
  * @author Ignasi Barrera
  */
 @Test(groups = "unit", testName = "AppendApiVersionToAbiquoMimeTypeTest")
-public class AppendApiVersionToAbiquoMimeTypeTest
-{
-    @Test(expectedExceptions = NullPointerException.class)
-    public void testApplyWithNullInput()
-    {
-        Function<String, String> function =
-            new AppendApiVersionToAbiquoMimeType(AbiquoAsyncApi.API_VERSION);
-        function.apply(null);
-    }
+public class AppendApiVersionToAbiquoMimeTypeTest {
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testApplyWithNullInput() {
+      Function<String, String> function = new AppendApiVersionToAbiquoMimeType(AbiquoAsyncApi.API_VERSION);
+      function.apply(null);
+   }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
-    public void testApplyWithInvalidMediaType()
-    {
-        Function<String, String> function =
-            new AppendApiVersionToAbiquoMimeType(AbiquoAsyncApi.API_VERSION);
-        function.apply("foo");
-    }
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testApplyWithInvalidMediaType() {
+      Function<String, String> function = new AppendApiVersionToAbiquoMimeType(AbiquoAsyncApi.API_VERSION);
+      function.apply("foo");
+   }
 
-    public void testApplyToStandardMediaType()
-    {
-        Function<String, String> function =
-            new AppendApiVersionToAbiquoMimeType(AbiquoAsyncApi.API_VERSION);
-        assertEquals(function.apply("application/xml"), "application/xml");
-    }
+   public void testApplyToStandardMediaType() {
+      Function<String, String> function = new AppendApiVersionToAbiquoMimeType(AbiquoAsyncApi.API_VERSION);
+      assertEquals(function.apply("application/xml"), "application/xml");
+   }
 
-    public void testApplyToAbiquoMediaTypeWithVersion()
-    {
-        Function<String, String> function =
-            new AppendApiVersionToAbiquoMimeType(AbiquoAsyncApi.API_VERSION);
-        assertEquals(function.apply("application/vnd.abiquo.datacenters+xml;version=1.8.5"),
+   public void testApplyToAbiquoMediaTypeWithVersion() {
+      Function<String, String> function = new AppendApiVersionToAbiquoMimeType(AbiquoAsyncApi.API_VERSION);
+      assertEquals(function.apply("application/vnd.abiquo.datacenters+xml;version=1.8.5"),
             "application/vnd.abiquo.datacenters+xml;version=1.8.5");
-    }
+   }
 
-    public void testApplyToAbiquoMediaTypeWithoutVersion()
-    {
-        Function<String, String> function =
-            new AppendApiVersionToAbiquoMimeType(AbiquoAsyncApi.API_VERSION);
-        assertEquals(function.apply("application/vnd.abiquo.datacenters+xml"),
+   public void testApplyToAbiquoMediaTypeWithoutVersion() {
+      Function<String, String> function = new AppendApiVersionToAbiquoMimeType(AbiquoAsyncApi.API_VERSION);
+      assertEquals(function.apply("application/vnd.abiquo.datacenters+xml"),
             "application/vnd.abiquo.datacenters+xml;version=" + AbiquoAsyncApi.API_VERSION);
-    }
+   }
 }

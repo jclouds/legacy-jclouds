@@ -30,13 +30,11 @@ import org.testng.annotations.Test;
  * @author Ignasi Barrera
  */
 @Test(groups = "unit", testName = "BaseSearchServiceTest")
-public class BaseSearchServiceTest extends BaseInjectionTest
-{
+public class BaseSearchServiceTest extends BaseInjectionTest {
 
-    public void testAllPropertiesInjected()
-    {
-        BaseSearchService service = (BaseSearchService) injector.getInstance(SearchService.class);
+   public void testAllPropertiesInjected() {
+      BaseSearchService service = (BaseSearchService) injector.getInstance(SearchService.class);
 
-        assertNotNull(service.context);
-    }
+      assertNotNull(service.context);
+   }
 }

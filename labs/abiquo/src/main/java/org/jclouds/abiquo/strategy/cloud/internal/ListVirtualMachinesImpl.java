@@ -55,73 +55,60 @@ import com.google.inject.Inject;
  * @author Ignasi Barrera
  */
 @Singleton
-public class ListVirtualMachinesImpl implements ListVirtualMachines
-{
-    protected final RestContext<AbiquoApi, AbiquoAsyncApi> context;
+public class ListVirtualMachinesImpl implements ListVirtualMachines {
+   protected final RestContext<AbiquoApi, AbiquoAsyncApi> context;
 
-    protected final ExecutorService userExecutor;
+   protected final ExecutorService userExecutor;
 
-    protected final ListVirtualAppliances listVirtualAppliances;
+   protected final ListVirtualAppliances listVirtualAppliances;
 
-    @Resource
-    protected Logger logger = Logger.NULL;
+   @Resource
+   protected Logger logger = Logger.NULL;
 
-    @Inject(optional = true)
-    @Named(Constants.PROPERTY_REQUEST_TIMEOUT)
-    protected Long maxTime;
+   @Inject(optional = true)
+   @Named(Constants.PROPERTY_REQUEST_TIMEOUT)
+   protected Long maxTime;
 
-    @Inject
-    ListVirtualMachinesImpl(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-        @Named(Constants.PROPERTY_USER_THREADS) final ExecutorService userExecutor,
-        final ListVirtualAppliances listVirtualAppliances)
-    {
-        super();
-        this.context = checkNotNull(context, "context");
-        this.listVirtualAppliances = checkNotNull(listVirtualAppliances, "listVirtualAppliances");
-        this.userExecutor = checkNotNull(userExecutor, "userExecutor");
-    }
+   @Inject
+   ListVirtualMachinesImpl(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
+         @Named(Constants.PROPERTY_USER_THREADS) final ExecutorService userExecutor,
+         final ListVirtualAppliances listVirtualAppliances) {
+      super();
+      this.context = checkNotNull(context, "context");
+      this.listVirtualAppliances = checkNotNull(listVirtualAppliances, "listVirtualAppliances");
+      this.userExecutor = checkNotNull(userExecutor, "userExecutor");
+   }
 
-    @Override
-    public Iterable<VirtualMachine> execute()
-    {
-        return execute(VirtualMachineOptions.builder().disablePagination().build());
-    }
+   @Override
+   public Iterable<VirtualMachine> execute() {
+      return execute(VirtualMachineOptions.builder().disablePagination().build());
+   }
 
-    @Override
-    public Iterable<VirtualMachine> execute(final VirtualMachineOptions options)
-    {
-        // Find virtual machines in concurrent requests
-        Iterable<VirtualAppliance> vapps = listVirtualAppliances.execute();
-        Iterable<VirtualMachineWithNodeExtendedDto> vms =
-            listConcurrentVirtualMachines(vapps, options);
+   @Override
+   public Iterable<VirtualMachine> execute(final VirtualMachineOptions options) {
+      // Find virtual machines in concurrent requests
+      Iterable<VirtualAppliance> vapps = listVirtualAppliances.execute();
+      Iterable<VirtualMachineWithNodeExtendedDto> vms = listConcurrentVirtualMachines(vapps, options);
 
-        return wrap(context, VirtualMachine.class, vms);
-    }
+      return wrap(context, VirtualMachine.class, vms);
+   }
 
-    @Override
-    public Iterable<VirtualMachine> execute(final Predicate<VirtualMachine> selector)
-    {
-        return filter(execute(), selector);
-    }
+   @Override
+   public Iterable<VirtualMachine> execute(final Predicate<VirtualMachine> selector) {
+      return filter(execute(), selector);
+   }
 
-    private Iterable<VirtualMachineWithNodeExtendedDto> listConcurrentVirtualMachines(
-        final Iterable<VirtualAppliance> vapps, final VirtualMachineOptions options)
-    {
-        Iterable<VirtualMachinesWithNodeExtendedDto> vms =
-            transformParallel(
-                vapps,
-                new Function<VirtualAppliance, Future< ? extends VirtualMachinesWithNodeExtendedDto>>()
-                {
-                    @Override
-                    public Future<VirtualMachinesWithNodeExtendedDto> apply(
-                        final VirtualAppliance input)
-                    {
-                        return context.getAsyncApi().getCloudApi()
-                            .listVirtualMachines(input.unwrap(), options);
-                    }
-                }, userExecutor, maxTime, logger, "getting virtual machines");
+   private Iterable<VirtualMachineWithNodeExtendedDto> listConcurrentVirtualMachines(
+         final Iterable<VirtualAppliance> vapps, final VirtualMachineOptions options) {
+      Iterable<VirtualMachinesWithNodeExtendedDto> vms = transformParallel(vapps,
+            new Function<VirtualAppliance, Future<? extends VirtualMachinesWithNodeExtendedDto>>() {
+               @Override
+               public Future<VirtualMachinesWithNodeExtendedDto> apply(final VirtualAppliance input) {
+                  return context.getAsyncApi().getCloudApi().listVirtualMachines(input.unwrap(), options);
+               }
+            }, userExecutor, maxTime, logger, "getting virtual machines");
 
-        return DomainWrapper.join(vms);
-    }
+      return DomainWrapper.join(vms);
+   }
 
 }

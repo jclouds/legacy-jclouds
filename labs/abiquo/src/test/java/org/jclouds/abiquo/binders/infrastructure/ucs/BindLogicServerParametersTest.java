@@ -34,44 +34,35 @@ import com.abiquo.server.core.infrastructure.LogicServerDto;
  * @author Francesc Montserrat
  */
 @Test(groups = "unit", testName = "BindLogicServerParametersTest")
-public class BindLogicServerParametersTest
-{
-    @Test(expectedExceptions = NullPointerException.class)
-    public void testInvalidNullInput()
-    {
-        BindLogicServerParameters binder = new BindLogicServerParameters();
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
-        binder.bindToRequest(request, null);
-    }
+public class BindLogicServerParametersTest {
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testInvalidNullInput() {
+      BindLogicServerParameters binder = new BindLogicServerParameters();
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
+      binder.bindToRequest(request, null);
+   }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
-    public void testInvalidTypeInput()
-    {
-        BindLogicServerParameters binder = new BindLogicServerParameters();
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
-        binder.bindToRequest(request, new Object());
-    }
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testInvalidTypeInput() {
+      BindLogicServerParameters binder = new BindLogicServerParameters();
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
+      binder.bindToRequest(request, new Object());
+   }
 
-    @Test(expectedExceptions = NullPointerException.class)
-    public void testBindLogicServerWithEmptyName()
-    {
-        BindLogicServerParameters binder = new BindLogicServerParameters();
-        LogicServerDto dto = new LogicServerDto();
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
-        binder.bindToRequest(request, dto);
-    }
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testBindLogicServerWithEmptyName() {
+      BindLogicServerParameters binder = new BindLogicServerParameters();
+      LogicServerDto dto = new LogicServerDto();
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
+      binder.bindToRequest(request, dto);
+   }
 
-    public void testBindLogicServer()
-    {
-        BindLogicServerParameters binder = new BindLogicServerParameters();
-        LogicServerDto dto = new LogicServerDto();
-        dto.setName("name");
-        HttpRequest request =
-            HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
-        HttpRequest newRequest = binder.bindToRequest(request, dto);
-        assertEquals(newRequest.getRequestLine(), "GET http://localhost?lsName=name HTTP/1.1");
-    }
+   public void testBindLogicServer() {
+      BindLogicServerParameters binder = new BindLogicServerParameters();
+      LogicServerDto dto = new LogicServerDto();
+      dto.setName("name");
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build();
+      HttpRequest newRequest = binder.bindToRequest(request, dto);
+      assertEquals(newRequest.getRequestLine(), "GET http://localhost?lsName=name HTTP/1.1");
+   }
 }

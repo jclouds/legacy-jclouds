@@ -34,28 +34,27 @@ import com.google.common.collect.Lists;
  * 
  * @author Ignasi Barrera
  */
-public class LinkUtils
-{
-    /**
-     * Get the link that points to the current resource.
-     * 
-     * @param dto The target dto.
-     * @return The link to the current resource.
-     */
-    public static RESTLink getSelfLink(final SingleResourceTransportDto dto)
-    {
-        RESTLink link = dto.searchLink("edit");
-        return link == null ? dto.searchLink("self") : link;
-    }
+public class LinkUtils {
+   /**
+    * Get the link that points to the current resource.
+    * 
+    * @param dto
+    *           The target dto.
+    * @return The link to the current resource.
+    */
+   public static RESTLink getSelfLink(final SingleResourceTransportDto dto) {
+      RESTLink link = dto.searchLink("edit");
+      return link == null ? dto.searchLink("self") : link;
+   }
 
-    /**
-     * Filter the given link list and return only the links that point to a NIC.
-     * 
-     * @param links The list with the links to filter.
-     * @return A lsit with all links taht point to a NIC.
-     */
-    public static List<RESTLink> filterNicLinks(final List<RESTLink> links)
-    {
-        return Lists.newLinkedList(filter(links, LinkPredicates.isNic()));
-    }
+   /**
+    * Filter the given link list and return only the links that point to a NIC.
+    * 
+    * @param links
+    *           The list with the links to filter.
+    * @return A lsit with all links taht point to a NIC.
+    */
+   public static List<RESTLink> filterNicLinks(final List<RESTLink> links) {
+      return Lists.newLinkedList(filter(links, LinkPredicates.isNic()));
+   }
 }

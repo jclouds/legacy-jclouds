@@ -57,137 +57,114 @@ import com.google.common.collect.Iterables;
  * @author Susana Acedo
  */
 @Singleton
-public class BasePricingService implements PricingService
-{
-    @VisibleForTesting
-    protected RestContext<AbiquoApi, AbiquoAsyncApi> context;
+public class BasePricingService implements PricingService {
+   @VisibleForTesting
+   protected RestContext<AbiquoApi, AbiquoAsyncApi> context;
 
-    @VisibleForTesting
-    protected final ListCurrencies listCurrencies;
+   @VisibleForTesting
+   protected final ListCurrencies listCurrencies;
 
-    @VisibleForTesting
-    protected final ListCostCodes listCostCodes;
+   @VisibleForTesting
+   protected final ListCostCodes listCostCodes;
 
-    @VisibleForTesting
-    protected final ListPricingTemplates listPricingTemplates;
+   @VisibleForTesting
+   protected final ListPricingTemplates listPricingTemplates;
 
-    @Inject
-    protected BasePricingService(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-        final ListCurrencies listCurrencies, final ListCostCodes listCostCodes,
-        final ListPricingTemplates listPricingTemplates)
-    {
-        this.context = checkNotNull(context, "context");
-        this.listCurrencies = checkNotNull(listCurrencies, "listCurrencies");
-        this.listCostCodes = checkNotNull(listCostCodes, "listCostCodes");
-        this.listPricingTemplates = checkNotNull(listPricingTemplates, "listPricingTemplates");
-    }
+   @Inject
+   protected BasePricingService(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
+         final ListCurrencies listCurrencies, final ListCostCodes listCostCodes,
+         final ListPricingTemplates listPricingTemplates) {
+      this.context = checkNotNull(context, "context");
+      this.listCurrencies = checkNotNull(listCurrencies, "listCurrencies");
+      this.listCostCodes = checkNotNull(listCostCodes, "listCostCodes");
+      this.listPricingTemplates = checkNotNull(listPricingTemplates, "listPricingTemplates");
+   }
 
-    /*********************** Currency ********************** */
+   /*********************** Currency ********************** */
 
-    @Override
-    public Iterable<Currency> listCurrencies()
-    {
-        return listCurrencies.execute();
-    }
+   @Override
+   public Iterable<Currency> listCurrencies() {
+      return listCurrencies.execute();
+   }
 
-    @Override
-    public Iterable<Currency> listCurrencies(final Predicate<Currency> filter)
-    {
-        return listCurrencies.execute(filter);
-    }
+   @Override
+   public Iterable<Currency> listCurrencies(final Predicate<Currency> filter) {
+      return listCurrencies.execute(filter);
+   }
 
-    @Override
-    public Currency findCurrency(final Predicate<Currency> filter)
-    {
-        return Iterables.getFirst(listCurrencies(filter), null);
-    }
+   @Override
+   public Currency findCurrency(final Predicate<Currency> filter) {
+      return Iterables.getFirst(listCurrencies(filter), null);
+   }
 
-    /*********************** CostCode ********************** */
+   /*********************** CostCode ********************** */
 
-    @Override
-    public Iterable<CostCode> listCostCodes()
-    {
-        return listCostCodes.execute();
-    }
+   @Override
+   public Iterable<CostCode> listCostCodes() {
+      return listCostCodes.execute();
+   }
 
-    @Override
-    public Iterable<CostCode> listCostCodes(final Predicate<CostCode> filter)
-    {
-        return listCostCodes.execute(filter);
-    }
+   @Override
+   public Iterable<CostCode> listCostCodes(final Predicate<CostCode> filter) {
+      return listCostCodes.execute(filter);
+   }
 
-    @Override
-    public CostCode findCostCode(final Predicate<CostCode> filter)
-    {
-        return Iterables.getFirst(listCostCodes(filter), null);
-    }
+   @Override
+   public CostCode findCostCode(final Predicate<CostCode> filter) {
+      return Iterables.getFirst(listCostCodes(filter), null);
+   }
 
-    /*********************** PricingTemplate ********************** */
+   /*********************** PricingTemplate ********************** */
 
-    @Override
-    public Iterable<PricingTemplate> listPricingTemplates()
-    {
-        return listPricingTemplates.execute();
-    }
+   @Override
+   public Iterable<PricingTemplate> listPricingTemplates() {
+      return listPricingTemplates.execute();
+   }
 
-    @Override
-    public Iterable<PricingTemplate> listPricingTemplates(final Predicate<PricingTemplate> filter)
-    {
-        return listPricingTemplates.execute(filter);
-    }
+   @Override
+   public Iterable<PricingTemplate> listPricingTemplates(final Predicate<PricingTemplate> filter) {
+      return listPricingTemplates.execute(filter);
+   }
 
-    @Override
-    public PricingTemplate findPricingTemplate(final Predicate<PricingTemplate> filter)
-    {
-        return Iterables.getFirst(listPricingTemplates(filter), null);
-    }
+   @Override
+   public PricingTemplate findPricingTemplate(final Predicate<PricingTemplate> filter) {
+      return Iterables.getFirst(listPricingTemplates(filter), null);
+   }
 
-    /*********************** CostCodeCurrency ********************** */
+   /*********************** CostCodeCurrency ********************** */
 
-    @Override
-    public Iterable<CostCodeCurrency> getCostCodeCurrencies(final Integer costcodeId,
-        final Integer currencyId)
-    {
-        CostCodeCurrenciesDto result =
-            context.getApi().getPricingApi().getCostCodeCurrencies(costcodeId, currencyId);
-        return wrap(context, CostCodeCurrency.class, result.getCollection());
-    }
+   @Override
+   public Iterable<CostCodeCurrency> getCostCodeCurrencies(final Integer costcodeId, final Integer currencyId) {
+      CostCodeCurrenciesDto result = context.getApi().getPricingApi().getCostCodeCurrencies(costcodeId, currencyId);
+      return wrap(context, CostCodeCurrency.class, result.getCollection());
+   }
 
-    /*********************** Pricing Cost Code ********************** */
+   /*********************** Pricing Cost Code ********************** */
 
-    @Override
-    public Collection<PricingCostCode> getPricingCostCodes(final Integer pricingTemplateId)
-    {
-        PricingCostCodesDto result =
-            context.getApi().getPricingApi().getPricingCostCodes(pricingTemplateId);
-        return wrap(context, PricingCostCode.class, result.getCollection());
-    }
+   @Override
+   public Collection<PricingCostCode> getPricingCostCodes(final Integer pricingTemplateId) {
+      PricingCostCodesDto result = context.getApi().getPricingApi().getPricingCostCodes(pricingTemplateId);
+      return wrap(context, PricingCostCode.class, result.getCollection());
+   }
 
-    @Override
-    public PricingCostCode getPricingCostCode(final Integer pricingTemplateId,
-        final Integer pricingCostCodeId)
-    {
-        PricingCostCodeDto pricingcostcode =
-            context.getApi().getPricingApi()
-                .getPricingCostCode(pricingTemplateId, pricingCostCodeId);
-        return wrap(context, PricingCostCode.class, pricingcostcode);
-    }
+   @Override
+   public PricingCostCode getPricingCostCode(final Integer pricingTemplateId, final Integer pricingCostCodeId) {
+      PricingCostCodeDto pricingcostcode = context.getApi().getPricingApi()
+            .getPricingCostCode(pricingTemplateId, pricingCostCodeId);
+      return wrap(context, PricingCostCode.class, pricingcostcode);
+   }
 
-    /*********************** Pricing Tier********************** */
+   /*********************** Pricing Tier********************** */
 
-    @Override
-    public Collection<PricingTier> getPricingTiers(final Integer pricingTemplateId)
-    {
-        PricingTiersDto result =
-            context.getApi().getPricingApi().getPricingTiers(pricingTemplateId);
-        return wrap(context, PricingTier.class, result.getCollection());
-    }
+   @Override
+   public Collection<PricingTier> getPricingTiers(final Integer pricingTemplateId) {
+      PricingTiersDto result = context.getApi().getPricingApi().getPricingTiers(pricingTemplateId);
+      return wrap(context, PricingTier.class, result.getCollection());
+   }
 
-    @Override
-    public PricingTier getPricingTier(final Integer pricingTemplateId, final Integer pricingTierId)
-    {
-        PricingTierDto pricingtier =
-            context.getApi().getPricingApi().getPricingTier(pricingTemplateId, pricingTierId);
-        return wrap(context, PricingTier.class, pricingtier);
-    }
+   @Override
+   public PricingTier getPricingTier(final Integer pricingTemplateId, final Integer pricingTierId) {
+      PricingTierDto pricingtier = context.getApi().getPricingApi().getPricingTier(pricingTemplateId, pricingTierId);
+      return wrap(context, PricingTier.class, pricingtier);
+   }
 }

@@ -44,47 +44,39 @@ import com.abiquo.server.core.infrastructure.DatacenterDto;
  * @author Ignasi Barrera
  */
 @Test(groups = "api", testName = "DatacenterLiveApiTest")
-public class DatacenterLiveApiTest extends BaseAbiquoApiLiveApiTest
-{
+public class DatacenterLiveApiTest extends BaseAbiquoApiLiveApiTest {
 
-    public void testUpdate()
-    {
-        env.datacenter.setLocation("New York");
-        env.datacenter.update();
+   public void testUpdate() {
+      env.datacenter.setLocation("New York");
+      env.datacenter.update();
 
-        // Recover the updated datacenter
-        DatacenterDto updated = env.infrastructureApi.getDatacenter(env.datacenter.getId());
+      // Recover the updated datacenter
+      DatacenterDto updated = env.infrastructureApi.getDatacenter(env.datacenter.getId());
 
-        assertEquals(updated.getLocation(), "New York");
-    }
+      assertEquals(updated.getLocation(), "New York");
+   }
 
-    public void testCheckHypervisorType()
-    {
-        HypervisorType type = env.datacenter.getHypervisorType(env.machine.getIp());
+   public void testCheckHypervisorType() {
+      HypervisorType type = env.datacenter.getHypervisorType(env.machine.getIp());
 
-        assertEquals(env.machine.getType(), type);
-    }
+      assertEquals(env.machine.getType(), type);
+   }
 
-    public void testCreateRepeated()
-    {
-        Datacenter repeated = Builder.fromDatacenter(env.datacenter).build();
+   public void testCreateRepeated() {
+      Datacenter repeated = Builder.fromDatacenter(env.datacenter).build();
 
-        try
-        {
-            repeated.save();
-            fail("Should not be able to create datacenters with the same name");
-        }
-        catch (AbiquoException ex)
-        {
-            assertHasError(ex, Status.CONFLICT, "DC-3");
-        }
-    }
+      try {
+         repeated.save();
+         fail("Should not be able to create datacenters with the same name");
+      } catch (AbiquoException ex) {
+         assertHasError(ex, Status.CONFLICT, "DC-3");
+      }
+   }
 
-    public void testListLimits()
-    {
-        List<Limits> limits = env.datacenter.listLimits();
-        assertNotNull(limits);
-        assertTrue(limits.size() > 0);
-    }
+   public void testListLimits() {
+      List<Limits> limits = env.datacenter.listLimits();
+      assertNotNull(limits);
+      assertTrue(limits.size() > 0);
+   }
 
 }

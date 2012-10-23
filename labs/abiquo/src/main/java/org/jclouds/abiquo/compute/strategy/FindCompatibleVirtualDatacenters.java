@@ -26,12 +26,12 @@ import org.jclouds.abiquo.domain.cloud.VirtualMachineTemplate;
 import com.google.inject.ImplementedBy;
 
 /**
- * Finds all virtual datacenters where the given {@link VirtualMachineTemplate} can be deployed.
+ * Finds all virtual datacenters where the given {@link VirtualMachineTemplate}
+ * can be deployed.
  * 
  * @author Ignasi Barrera
  */
 @ImplementedBy(FindCompatibleVirtualDatacentersForImageAndConversions.class)
-public interface FindCompatibleVirtualDatacenters
-{
-    Iterable<VirtualDatacenter> execute(VirtualMachineTemplate template);
+public interface FindCompatibleVirtualDatacenters {
+   Iterable<VirtualDatacenter> execute(VirtualMachineTemplate template);
 }

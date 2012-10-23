@@ -35,33 +35,29 @@ import com.abiquo.server.core.cloud.VirtualDatacenterDto;
 import com.abiquo.server.core.infrastructure.storage.VolumeManagementDto;
 
 /**
- * Bind multiple {@link VolumeManagementDto} objects to the payload of the request as a list of
- * links.
+ * Bind multiple {@link VolumeManagementDto} objects to the payload of the
+ * request as a list of links.
  * 
  * @author Ignasi Barrera
  */
 @Singleton
-public class BindVirtualDatacenterRefToPayload extends BindToXMLPayload
-{
-    @Inject
-    public BindVirtualDatacenterRefToPayload(final XMLParser xmlParser)
-    {
-        super(xmlParser);
-    }
+public class BindVirtualDatacenterRefToPayload extends BindToXMLPayload {
+   @Inject
+   public BindVirtualDatacenterRefToPayload(final XMLParser xmlParser) {
+      super(xmlParser);
+   }
 
-    @Override
-    public <R extends HttpRequest> R bindToRequest(final R request, final Object input)
-    {
-        checkArgument(checkNotNull(input, "input") instanceof VirtualDatacenterDto,
+   @Override
+   public <R extends HttpRequest> R bindToRequest(final R request, final Object input) {
+      checkArgument(checkNotNull(input, "input") instanceof VirtualDatacenterDto,
             "this binder is only valid for VirtualDatacenterDto objects");
 
-        VirtualDatacenterDto vdc = (VirtualDatacenterDto) input;
-        RESTLink editLink =
-            checkNotNull(vdc.getEditLink(), "VirtualDatacenterDto must have an edit link");
-        LinksDto refs = new LinksDto();
-        refs.addLink(new RESTLink("virtualdatacenter", editLink.getHref()));
+      VirtualDatacenterDto vdc = (VirtualDatacenterDto) input;
+      RESTLink editLink = checkNotNull(vdc.getEditLink(), "VirtualDatacenterDto must have an edit link");
+      LinksDto refs = new LinksDto();
+      refs.addLink(new RESTLink("virtualdatacenter", editLink.getHref()));
 
-        return super.bindToRequest(request, refs);
-    }
+      return super.bindToRequest(request, refs);
+   }
 
 }

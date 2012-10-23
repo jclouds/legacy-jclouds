@@ -37,94 +37,79 @@ import com.abiquo.server.core.pricing.PricingTierDto;
  * 
  * @author Susana Acedo
  */
-public class PricingTier extends DomainWrapper<PricingTierDto>
-{
-    private Tier tier;
+public class PricingTier extends DomainWrapper<PricingTierDto> {
+   private Tier tier;
 
-    private PricingTemplate pricingTemplate;
+   private PricingTemplate pricingTemplate;
 
-    protected PricingTier(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-        final PricingTierDto target)
-    {
-        super(context, target);
-    }
+   protected PricingTier(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final PricingTierDto target) {
+      super(context, target);
+   }
 
-    // Builder
+   // Builder
 
-    public static Builder builder(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-        final PricingTemplate pricingtemplate, final Tier tier)
-    {
-        return new Builder(context, pricingtemplate, tier);
-    }
+   public static Builder builder(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
+         final PricingTemplate pricingtemplate, final Tier tier) {
+      return new Builder(context, pricingtemplate, tier);
+   }
 
-    public static class Builder
-    {
-        private RestContext<AbiquoApi, AbiquoAsyncApi> context;
+   public static class Builder {
+      private RestContext<AbiquoApi, AbiquoAsyncApi> context;
 
-        private Integer id;
+      private Integer id;
 
-        private PricingTemplate pricingTemplate;
+      private PricingTemplate pricingTemplate;
 
-        private Tier tier;
+      private Tier tier;
 
-        private BigDecimal price;
+      private BigDecimal price;
 
-        public Builder(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-            final PricingTemplate pricingTemplate, final Tier tier)
-        {
-            super();
-            this.pricingTemplate =
-                checkNotNull(pricingTemplate, ValidationErrors.NULL_RESOURCE
-                    + PricingTemplate.class);
-            this.tier = checkNotNull(tier, ValidationErrors.NULL_RESOURCE + Tier.class);
-            this.context = context;
-        }
+      public Builder(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final PricingTemplate pricingTemplate,
+            final Tier tier) {
+         super();
+         this.pricingTemplate = checkNotNull(pricingTemplate, ValidationErrors.NULL_RESOURCE + PricingTemplate.class);
+         this.tier = checkNotNull(tier, ValidationErrors.NULL_RESOURCE + Tier.class);
+         this.context = context;
+      }
 
-        public Builder price(final BigDecimal price)
-        {
-            this.price = price;
-            return this;
-        }
+      public Builder price(final BigDecimal price) {
+         this.price = price;
+         return this;
+      }
 
-        public PricingTier build()
-        {
-            PricingTierDto dto = new PricingTierDto();
-            dto.setId(id);
-            dto.setPrice(price);
+      public PricingTier build() {
+         PricingTierDto dto = new PricingTierDto();
+         dto.setId(id);
+         dto.setPrice(price);
 
-            RESTLink link = tier.unwrap().searchLink("edit");
-            checkNotNull(link, ValidationErrors.MISSING_REQUIRED_LINK);
-            dto.addLink(new RESTLink("tier", link.getHref()));
+         RESTLink link = tier.unwrap().searchLink("edit");
+         checkNotNull(link, ValidationErrors.MISSING_REQUIRED_LINK);
+         dto.addLink(new RESTLink("tier", link.getHref()));
 
-            PricingTier pricingTier = new PricingTier(context, dto);
-            pricingTier.pricingTemplate = pricingTemplate;
-            pricingTier.tier = tier;
+         PricingTier pricingTier = new PricingTier(context, dto);
+         pricingTier.pricingTemplate = pricingTemplate;
+         pricingTier.tier = tier;
 
-            return pricingTier;
-        }
+         return pricingTier;
+      }
 
-        public static Builder fromPricingTier(final PricingTier in)
-        {
-            return PricingTier.builder(in.context, in.pricingTemplate, in.tier)
-                .price(in.getPrice());
-        }
-    }
+      public static Builder fromPricingTier(final PricingTier in) {
+         return PricingTier.builder(in.context, in.pricingTemplate, in.tier).price(in.getPrice());
+      }
+   }
 
-    // Delegate methods
+   // Delegate methods
 
-    public Integer getId()
-    {
-        return target.getId();
-    }
+   public Integer getId() {
+      return target.getId();
+   }
 
-    public BigDecimal getPrice()
-    {
-        return target.getPrice();
-    }
+   public BigDecimal getPrice() {
+      return target.getPrice();
+   }
 
-    @Override
-    public String toString()
-    {
-        return "PricingTier [id=" + getId() + ", price=" + getPrice() + "]";
-    }
+   @Override
+   public String toString() {
+      return "PricingTier [id=" + getId() + ", price=" + getPrice() + "]";
+   }
 }

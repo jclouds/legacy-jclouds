@@ -52,190 +52,168 @@ import com.google.common.collect.Lists;
  * @author Ignasi Barrera
  */
 @Test(groups = "api", testName = "VirtualMachineNetworkingLiveApiTest")
-public class VirtualMachineNetworkingLiveApiTest extends BaseAbiquoApiLiveApiTest
-{
-    private PrivateIp privateIp;
+public class VirtualMachineNetworkingLiveApiTest extends BaseAbiquoApiLiveApiTest {
+   private PrivateIp privateIp;
 
-    private ExternalIp externalIp;
+   private ExternalIp externalIp;
 
-    private PublicIp publicIpInfrastructure;
+   private PublicIp publicIpInfrastructure;
 
-    private PublicIp publicIpCloud;
+   private PublicIp publicIpCloud;
 
-    private UnmanagedIp unmanagedIp1;
+   private UnmanagedIp unmanagedIp1;
 
-    private UnmanagedIp unmanagedIp2;
+   private UnmanagedIp unmanagedIp2;
 
-    @BeforeClass
-    public void setupIps()
-    {
-        privateIp = env.privateNetwork.listUnusedIps().get(0);
-        assertNotNull(privateIp);
+   @BeforeClass
+   public void setupIps() {
+      privateIp = env.privateNetwork.listUnusedIps().get(0);
+      assertNotNull(privateIp);
 
-        externalIp = env.externalNetwork.listUnusedIps().get(0);
-        assertNotNull(externalIp);
+      externalIp = env.externalNetwork.listUnusedIps().get(0);
+      assertNotNull(externalIp);
 
-        publicIpInfrastructure = env.virtualDatacenter.listAvailablePublicIps().get(0);
-        env.virtualDatacenter.purchasePublicIp(publicIpInfrastructure);
+      publicIpInfrastructure = env.virtualDatacenter.listAvailablePublicIps().get(0);
+      env.virtualDatacenter.purchasePublicIp(publicIpInfrastructure);
 
-        publicIpCloud =
-            env.virtualDatacenter.findPurchasedPublicIp(IpPredicates
-                .<PublicIp> address(publicIpInfrastructure.getIp()));
-        assertNotNull(publicIpCloud);
-    }
+      publicIpCloud = env.virtualDatacenter.findPurchasedPublicIp(IpPredicates
+            .<PublicIp> address(publicIpInfrastructure.getIp()));
+      assertNotNull(publicIpCloud);
+   }
 
-    @AfterClass
-    public void restorePrivateIp()
-    {
-        AsyncTask task = env.virtualMachine.setNics(Lists.<Ip< ? , ? >> newArrayList(privateIp));
-        assertNull(task);
+   @AfterClass
+   public void restorePrivateIp() {
+      AsyncTask task = env.virtualMachine.setNics(Lists.<Ip<?, ?>> newArrayList(privateIp));
+      assertNull(task);
 
-        List<Ip< ? , ? >> nics = env.virtualMachine.listAttachedNics();
-        assertEquals(nics.size(), 1);
-        assertEquals(nics.get(0).getId(), privateIp.getId());
+      List<Ip<?, ?>> nics = env.virtualMachine.listAttachedNics();
+      assertEquals(nics.size(), 1);
+      assertEquals(nics.get(0).getId(), privateIp.getId());
 
-        String address = publicIpCloud.getIp();
-        env.virtualDatacenter.releaseePublicIp(publicIpCloud);
-        assertNull(env.virtualDatacenter.findPurchasedPublicIp(IpPredicates
-            .<PublicIp> address(address)));
-    }
+      String address = publicIpCloud.getIp();
+      env.virtualDatacenter.releaseePublicIp(publicIpCloud);
+      assertNull(env.virtualDatacenter.findPurchasedPublicIp(IpPredicates.<PublicIp> address(address)));
+   }
 
-    // TODO: Infrastructure edit link for public ips can not be used to attach
-    @Test(enabled = false)
-    public void testAttachInfrastructurePublicIp()
-    {
-        AsyncTask task =
-            env.virtualMachine.setNics(Lists.<Ip< ? , ? >> newArrayList(publicIpInfrastructure));
-        assertNull(task);
+   // TODO: Infrastructure edit link for public ips can not be used to attach
+   @Test(enabled = false)
+   public void testAttachInfrastructurePublicIp() {
+      AsyncTask task = env.virtualMachine.setNics(Lists.<Ip<?, ?>> newArrayList(publicIpInfrastructure));
+      assertNull(task);
 
-        List<Ip< ? , ? >> nics = env.virtualMachine.listAttachedNics();
-        assertEquals(nics.size(), 1);
-        assertEquals(nics.get(0).getId(), publicIpInfrastructure.getId());
-    }
+      List<Ip<?, ?>> nics = env.virtualMachine.listAttachedNics();
+      assertEquals(nics.size(), 1);
+      assertEquals(nics.get(0).getId(), publicIpInfrastructure.getId());
+   }
 
-    public void testAttachPublicIp()
-    {
-        AsyncTask task =
-            env.virtualMachine.setNics(Lists.<Ip< ? , ? >> newArrayList(publicIpCloud));
-        assertNull(task);
+   public void testAttachPublicIp() {
+      AsyncTask task = env.virtualMachine.setNics(Lists.<Ip<?, ?>> newArrayList(publicIpCloud));
+      assertNull(task);
 
-        List<Ip< ? , ? >> nics = env.virtualMachine.listAttachedNics();
-        assertEquals(nics.size(), 1);
-        assertEquals(nics.get(0).getId(), publicIpCloud.getId());
-    }
+      List<Ip<?, ?>> nics = env.virtualMachine.listAttachedNics();
+      assertEquals(nics.size(), 1);
+      assertEquals(nics.get(0).getId(), publicIpCloud.getId());
+   }
 
-    @Test(dependsOnMethods = "testAttachPublicIp")
-    public void testAttachPrivateIp()
-    {
-        List<Ip< ? , ? >> nics = env.virtualMachine.listAttachedNics();
-        nics.add(privateIp);
+   @Test(dependsOnMethods = "testAttachPublicIp")
+   public void testAttachPrivateIp() {
+      List<Ip<?, ?>> nics = env.virtualMachine.listAttachedNics();
+      nics.add(privateIp);
 
-        AsyncTask task = env.virtualMachine.setNics(nics);
-        assertNull(task);
+      AsyncTask task = env.virtualMachine.setNics(nics);
+      assertNull(task);
 
-        nics = env.virtualMachine.listAttachedNics();
-        assertEquals(nics.size(), 2);
-        assertEquals(nics.get(0).getId(), publicIpCloud.getId());
-        assertEquals(nics.get(1).getId(), privateIp.getId());
-    }
+      nics = env.virtualMachine.listAttachedNics();
+      assertEquals(nics.size(), 2);
+      assertEquals(nics.get(0).getId(), publicIpCloud.getId());
+      assertEquals(nics.get(1).getId(), privateIp.getId());
+   }
 
-    @Test(dependsOnMethods = "testAttachPrivateIp")
-    public void testAttachExternalIp()
-    {
-        List<Ip< ? , ? >> nics = env.virtualMachine.listAttachedNics();
-        nics.add(externalIp);
+   @Test(dependsOnMethods = "testAttachPrivateIp")
+   public void testAttachExternalIp() {
+      List<Ip<?, ?>> nics = env.virtualMachine.listAttachedNics();
+      nics.add(externalIp);
 
-        AsyncTask task = env.virtualMachine.setNics(nics);
-        assertNull(task);
+      AsyncTask task = env.virtualMachine.setNics(nics);
+      assertNull(task);
 
-        nics = env.virtualMachine.listAttachedNics();
-        assertEquals(nics.size(), 3);
-        assertEquals(nics.get(0).getId(), publicIpCloud.getId());
-        assertEquals(nics.get(1).getId(), privateIp.getId());
-        assertEquals(nics.get(2).getId(), externalIp.getId());
-    }
+      nics = env.virtualMachine.listAttachedNics();
+      assertEquals(nics.size(), 3);
+      assertEquals(nics.get(0).getId(), publicIpCloud.getId());
+      assertEquals(nics.get(1).getId(), privateIp.getId());
+      assertEquals(nics.get(2).getId(), externalIp.getId());
+   }
 
-    @Test(dependsOnMethods = "testAttachExternalIp")
-    public void testAddUnmanagedNics()
-    {
-        List<Ip< ? , ? >> nics = env.virtualMachine.listAttachedNics();
+   @Test(dependsOnMethods = "testAttachExternalIp")
+   public void testAddUnmanagedNics() {
+      List<Ip<?, ?>> nics = env.virtualMachine.listAttachedNics();
 
-        AsyncTask task =
-            env.virtualMachine.setNics(nics,
-                Lists.<UnmanagedNetwork> newArrayList(env.unmanagedNetwork, env.unmanagedNetwork));
-        assertNull(task);
+      AsyncTask task = env.virtualMachine.setNics(nics,
+            Lists.<UnmanagedNetwork> newArrayList(env.unmanagedNetwork, env.unmanagedNetwork));
+      assertNull(task);
 
-        nics = env.virtualMachine.listAttachedNics();
-        assertEquals(nics.size(), 5);
-        assertEquals(nics.get(0).getId(), publicIpCloud.getId());
-        assertEquals(nics.get(1).getId(), privateIp.getId());
-        assertEquals(nics.get(2).getId(), externalIp.getId());
-        // Unmanaged ips are created during the attach.
-        assertEquals(nics.get(3).getNetworkName(), env.unmanagedNetwork.getName());
-        assertEquals(nics.get(4).getNetworkName(), env.unmanagedNetwork.getName());
+      nics = env.virtualMachine.listAttachedNics();
+      assertEquals(nics.size(), 5);
+      assertEquals(nics.get(0).getId(), publicIpCloud.getId());
+      assertEquals(nics.get(1).getId(), privateIp.getId());
+      assertEquals(nics.get(2).getId(), externalIp.getId());
+      // Unmanaged ips are created during the attach.
+      assertEquals(nics.get(3).getNetworkName(), env.unmanagedNetwork.getName());
+      assertEquals(nics.get(4).getNetworkName(), env.unmanagedNetwork.getName());
 
-        unmanagedIp1 = (UnmanagedIp) nics.get(3);
-        unmanagedIp2 = (UnmanagedIp) nics.get(4);
-    }
+      unmanagedIp1 = (UnmanagedIp) nics.get(3);
+      unmanagedIp2 = (UnmanagedIp) nics.get(4);
+   }
 
-    @Test(dependsOnMethods = "testAddUnmanagedNics")
-    public void testReorderNics()
-    {
-        List<Ip< ? , ? >> nics = env.virtualMachine.listAttachedNics();
+   @Test(dependsOnMethods = "testAddUnmanagedNics")
+   public void testReorderNics() {
+      List<Ip<?, ?>> nics = env.virtualMachine.listAttachedNics();
 
-        AsyncTask task =
-            env.virtualMachine.setNics(Lists.<Ip< ? , ? >> newArrayList(nics.get(2), nics.get(1),
-                nics.get(0), nics.get(4), nics.get(3)));
-        assertNull(task);
+      AsyncTask task = env.virtualMachine.setNics(Lists.<Ip<?, ?>> newArrayList(nics.get(2), nics.get(1), nics.get(0),
+            nics.get(4), nics.get(3)));
+      assertNull(task);
 
-        nics = env.virtualMachine.listAttachedNics();
-        assertEquals(nics.size(), 5);
-        assertEquals(nics.get(0).getId(), externalIp.getId());
-        assertEquals(nics.get(1).getId(), privateIp.getId());
-        assertEquals(nics.get(2).getId(), publicIpCloud.getId());
-        assertEquals(nics.get(3).getId(), unmanagedIp2.getId());
-        assertEquals(nics.get(4).getId(), unmanagedIp1.getId());
-    }
+      nics = env.virtualMachine.listAttachedNics();
+      assertEquals(nics.size(), 5);
+      assertEquals(nics.get(0).getId(), externalIp.getId());
+      assertEquals(nics.get(1).getId(), privateIp.getId());
+      assertEquals(nics.get(2).getId(), publicIpCloud.getId());
+      assertEquals(nics.get(3).getId(), unmanagedIp2.getId());
+      assertEquals(nics.get(4).getId(), unmanagedIp1.getId());
+   }
 
-    @Test(dependsOnMethods = "testReorderNics")
-    public void testDetachNics()
-    {
-        List<Ip< ? , ? >> nics = env.virtualMachine.listAttachedNics();
+   @Test(dependsOnMethods = "testReorderNics")
+   public void testDetachNics() {
+      List<Ip<?, ?>> nics = env.virtualMachine.listAttachedNics();
 
-        AsyncTask task =
-            env.virtualMachine.setNics(Lists.<Ip< ? , ? >> newArrayList(nics.get(1), nics.get(2)));
-        assertNull(task);
+      AsyncTask task = env.virtualMachine.setNics(Lists.<Ip<?, ?>> newArrayList(nics.get(1), nics.get(2)));
+      assertNull(task);
 
-        nics = env.virtualMachine.listAttachedNics();
-        assertEquals(nics.size(), 2);
-        assertEquals(nics.get(0).getId(), privateIp.getId());
-        assertEquals(nics.get(1).getId(), publicIpCloud.getId());
-    }
+      nics = env.virtualMachine.listAttachedNics();
+      assertEquals(nics.size(), 2);
+      assertEquals(nics.get(0).getId(), privateIp.getId());
+      assertEquals(nics.get(1).getId(), publicIpCloud.getId());
+   }
 
-    @Test(dependsOnMethods = "testDetachNics")
-    public void testSetDefaultGateway()
-    {
-        PublicNetwork network = publicIpCloud.getNetwork();
-        env.virtualMachine.setGatewayNetwork(network);
+   @Test(dependsOnMethods = "testDetachNics")
+   public void testSetDefaultGateway() {
+      PublicNetwork network = publicIpCloud.getNetwork();
+      env.virtualMachine.setGatewayNetwork(network);
 
-        Integer configId = env.virtualMachine.unwrap().getIdFromLink("network_configuration");
-        assertEquals(configId, network.getId());
-    }
+      Integer configId = env.virtualMachine.unwrap().getIdFromLink("network_configuration");
+      assertEquals(configId, network.getId());
+   }
 
-    // TODO: Review this functionality
-    @Test(dependsOnMethods = "testSetDefaultGateway", enabled = false)
-    public void testDetachAllNics()
-    {
-        try
-        {
-            env.virtualMachine.setNics(null);
+   // TODO: Review this functionality
+   @Test(dependsOnMethods = "testSetDefaultGateway", enabled = false)
+   public void testDetachAllNics() {
+      try {
+         env.virtualMachine.setNics(null);
 
-            fail("It should not be allowed to remove all nics from a vm");
-        }
-        catch (AbiquoException ex)
-        {
-            // At least one nic must be configured
-            assertHasError(ex, Status.BAD_REQUEST, "VM-46");
-        }
-    }
+         fail("It should not be allowed to remove all nics from a vm");
+      } catch (AbiquoException ex) {
+         // At least one nic must be configured
+         assertHasError(ex, Status.BAD_REQUEST, "VM-46");
+      }
+   }
 }

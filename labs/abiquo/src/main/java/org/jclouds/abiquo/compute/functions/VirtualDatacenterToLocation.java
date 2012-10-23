@@ -42,40 +42,37 @@ import com.google.common.collect.ImmutableSet;
 /**
  * Converts a {@link VirtualDatacenter} to a {@link Location} one.
  * <p>
- * Virtual datacenters will be considered zones, since images will be deployed in a virtual
- * datacenter. Each zone will be scoped into a physical datacenter (region).
+ * Virtual datacenters will be considered zones, since images will be deployed
+ * in a virtual datacenter. Each zone will be scoped into a physical datacenter
+ * (region).
  * 
  * @author Ignasi Barrera
  */
 @Singleton
-public class VirtualDatacenterToLocation implements Function<VirtualDatacenter, Location>
-{
-    private final Function<Datacenter, Location> datacenterToLocation;
+public class VirtualDatacenterToLocation implements Function<VirtualDatacenter, Location> {
+   private final Function<Datacenter, Location> datacenterToLocation;
 
-    private final Supplier<Map<Integer, Datacenter>> regionMap;
+   private final Supplier<Map<Integer, Datacenter>> regionMap;
 
-    @Inject
-    public VirtualDatacenterToLocation(final Function<Datacenter, Location> datacenterToLocation,
-        @Memoized final Supplier<Map<Integer, Datacenter>> regionMap)
-    {
-        this.datacenterToLocation = checkNotNull(datacenterToLocation, "datacenterToLocation");
-        this.regionMap = checkNotNull(regionMap, "regionMap");
-    }
+   @Inject
+   public VirtualDatacenterToLocation(final Function<Datacenter, Location> datacenterToLocation,
+         @Memoized final Supplier<Map<Integer, Datacenter>> regionMap) {
+      this.datacenterToLocation = checkNotNull(datacenterToLocation, "datacenterToLocation");
+      this.regionMap = checkNotNull(regionMap, "regionMap");
+   }
 
-    @Override
-    public Location apply(final VirtualDatacenter vdc)
-    {
-        LocationBuilder builder = new LocationBuilder();
-        builder.id(vdc.getId().toString());
-        builder.description(vdc.getName());
-        builder.metadata(ImmutableMap.<String, Object> of());
-        builder.scope(LocationScope.ZONE);
-        builder.iso3166Codes(ImmutableSet.<String> of());
+   @Override
+   public Location apply(final VirtualDatacenter vdc) {
+      LocationBuilder builder = new LocationBuilder();
+      builder.id(vdc.getId().toString());
+      builder.description(vdc.getName());
+      builder.metadata(ImmutableMap.<String, Object> of());
+      builder.scope(LocationScope.ZONE);
+      builder.iso3166Codes(ImmutableSet.<String> of());
 
-        Datacenter parent =
-            regionMap.get().get(vdc.unwrap().getIdFromLink(ParentLinkName.DATACENTER));
-        builder.parent(datacenterToLocation.apply(parent));
+      Datacenter parent = regionMap.get().get(vdc.unwrap().getIdFromLink(ParentLinkName.DATACENTER));
+      builder.parent(datacenterToLocation.apply(parent));
 
-        return builder.build();
-    }
+      return builder.build();
+   }
 }
