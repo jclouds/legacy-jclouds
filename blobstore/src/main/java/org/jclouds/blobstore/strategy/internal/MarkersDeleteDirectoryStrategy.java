@@ -18,12 +18,14 @@
  */
 package org.jclouds.blobstore.strategy.internal;
 
+import static com.google.common.base.Throwables.propagate;
 import static org.jclouds.concurrent.FutureIterables.awaitCompletion;
 
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeoutException;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
@@ -98,8 +100,12 @@ public class MarkersDeleteDirectoryStrategy implements DeleteDirectoryStrategy {
       }
       String message = String.format("deleting directory %s in containerName: %s", directory,
                containerName);
-      Map<String, Exception> exceptions = awaitCompletion(responses, userExecutor, maxTime, logger,
-               message);
+      Map<String, Exception> exceptions;
+      try {
+         exceptions = awaitCompletion(responses, userExecutor, maxTime, logger, message);
+      } catch (TimeoutException te) {
+         throw propagate(te);
+      }
       if (exceptions.size() > 0)
          throw new BlobRuntimeException(String.format("error %s: %s", message, exceptions));
       assert !blobstore.directoryExists(containerName, directory) : String.format(
