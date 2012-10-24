@@ -63,7 +63,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Implementation of {@link SwiftAsyncClient} which keeps all data in a local Map object.
- * 
+ *
  * @author Adrian Cole
  */
 @Singleton
@@ -201,7 +201,7 @@ public class StubSwiftAsyncClient implements CommonSwiftAsyncClient {
         return null;
     }
 
-    public ListenableFuture<Boolean> setObjectInfo(String container, String key, Map<String, String> userMetadata) {
+   public ListenableFuture<Boolean> setObjectInfo(String container, String key, Map<String, String> userMetadata) {
       throw new UnsupportedOperationException();
    }
 

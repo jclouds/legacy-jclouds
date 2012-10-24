@@ -50,7 +50,7 @@ import com.google.common.net.HttpHeaders;
  * 
  * @author grkvlt@apache.org, Adrian Cole
  */
-@Test(groups = { "unit", "admin" }, singleThreaded = true, testName = "CatalogApiExpectTest")
+@Test(groups = { "unit", "admin" }, singleThreaded = true, testName = "AdminCatalogApiExpectTest")
 public class AdminCatalogApiExpectTest extends VCloudDirectorAdminApiExpectTest {
    
    static String catalog = "7212e451-76e1-4631-b2de-ba1dfd8080e4";

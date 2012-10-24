@@ -42,7 +42,7 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit")
+@Test(groups = "unit", testName = "BrowsingAsyncApiTest")
 public class BrowsingAsyncApiTest extends BaseVPDCAsyncApiTest<BrowsingAsyncApi> {
 
    public void testOrg() throws SecurityException, NoSuchMethodException, IOException {

@@ -23,18 +23,22 @@ import java.util.Date;
 import java.util.Set;
 import java.util.TimeZone;
 
+import org.jclouds.cloudstack.config.CloudStackParserModule;
 import org.jclouds.cloudstack.domain.StoragePool;
 import org.jclouds.json.BaseItemParserTest;
+import org.jclouds.json.config.GsonModule;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 /**
  * 
  * @author Richard Downer
  */
-@Test(groups = "unit")
+@Test(groups = "unit", testName = "ListStoragePoolsResponseTest")
 public class ListStoragePoolsResponseTest extends BaseItemParserTest<Set<StoragePool>> {
 
    @Override
@@ -54,7 +58,16 @@ public class ListStoragePoolsResponseTest extends BaseItemParserTest<Set<Storage
       c.set(Calendar.SECOND, 6);
       Date created = c.getTime();
 
-      StoragePool storagePool = StoragePool.builder().id("201").zoneId("1").zoneName("Dev Zone 1").podId("1").podName("Dev Pod 1").name("NFS Pri 1").ipAddress("10.26.26.165").path("/mnt/nfs/cs_pri").created(created).type(StoragePool.Type.NETWORK_FILESYSTEM).clusterId("1").clusterName("Xen Clust 1").diskSizeTotal(898356445184L).diskSizeAllocated(18276679680L).tags("").state(StoragePool.State.UP).build();
+      StoragePool storagePool = StoragePool.builder().id("201").zoneId("1").zoneName("Dev Zone 1").podId("1")
+               .podName("Dev Pod 1").name("NFS Pri 1").ipAddress("10.26.26.165").path("/mnt/nfs/cs_pri")
+               .created(created).type(StoragePool.Type.NETWORK_FILESYSTEM).clusterId("1").clusterName("Xen Clust 1")
+               .diskSizeTotal(898356445184L).diskSizeAllocated(18276679680L).tag("tag1").state(StoragePool.State.UP)
+               .build();
       return ImmutableSet.of(storagePool);
+   }
+   
+   @Override
+   protected Injector injector() {
+      return Guice.createInjector(new GsonModule(), new CloudStackParserModule());
    }
 }

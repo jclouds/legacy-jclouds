@@ -33,36 +33,36 @@ import com.google.common.base.CaseFormat;
  * @author Dies Koper
  */
 public enum BuiltinServerConfiguration {
-    FW_NAT_RULE,
-    FW_DNS,
-    FW_POLICY,
-    FW_LOG,
-    FW_LIMIT_POLICY,
-    SLB_RULE,
-    SLB_LOAD_STATISTICS,
-    SLB_ERROR_STATISTICS,
-    SLB_CERTIFICATE_LIST,
-    EFM_UPDATE,
-    SLB_CONNECTION,
-    UNRECOGNIZED;
+   FW_NAT_RULE,
+   FW_DNS,
+   FW_POLICY,
+   FW_LOG,
+   FW_LIMIT_POLICY,
+   SLB_RULE,
+   SLB_LOAD_STATISTICS,
+   SLB_ERROR_STATISTICS,
+   SLB_CERTIFICATE_LIST,
+   EFM_UPDATE,
+   SLB_CONNECTION,
+   UNRECOGNIZED;
 
-    public String value() {
-        return (CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name()));
-    }
+   public String value() {
+      return (CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name()));
+   }
 
-    @Override
-    public String toString() {
-        return value();
-    }
+   @Override
+   public String toString() {
+      return value();
+   }
 
-    public static BuiltinServerConfiguration fromValue(String configuration) {
-        try {
-            return valueOf(CaseFormat.UPPER_CAMEL
-                    .to(CaseFormat.UPPER_UNDERSCORE,
-                            checkNotNull(configuration, "configuration")));
-        } catch (IllegalArgumentException e) {
-            return UNRECOGNIZED;
-        }
-    }
+   public static BuiltinServerConfiguration fromValue(String configuration) {
+      try {
+         return valueOf(CaseFormat.UPPER_CAMEL
+               .to(CaseFormat.UPPER_UNDERSCORE,
+                     checkNotNull(configuration, "configuration")));
+      } catch (IllegalArgumentException e) {
+         return UNRECOGNIZED;
+      }
+   }
 
 }

@@ -25,57 +25,57 @@ package org.jclouds.fujitsu.fgcp.reference;
  */
 public interface RequestParameters {
 
-    /**
-     * Indicates the action to perform. Example: ListVSYS
-     */
-    public static final String ACTION = "Action";
+   /**
+    * Indicates the action to perform. Example: ListVSYS
+    */
+   public static final String ACTION = "Action";
 
-    /**
-     * The API version to use. Example: 2011-01-31
-     */
-    public static final String VERSION = "Version";
+   /**
+    * The API version to use. Example: 2011-01-31
+    */
+   public static final String VERSION = "Version";
 
-    /**
-     * The locale to use. Example: en
-     */
-    public static final String LOCALE = "Locale";
+   /**
+    * The locale to use. Example: en
+    */
+   public static final String LOCALE = "Locale";
 
-    /**
-     * The Access Key ID for the request sender. This identifies the account
-     * which will be charged for usage of the service. The account with which
-     * the Access Key ID is associated must be signed up for FGCP, or requests
-     * will not be accepted. AKIADQKE4SARGYLE
-     */
-    public static final String ACCESS_KEY_ID = "AccessKeyId";
+   /**
+    * The Access Key ID for the request sender. This identifies the account
+    * which will be charged for usage of the service. The account with which
+    * the Access Key ID is associated must be signed up for FGCP, or requests
+    * will not be accepted. AKIADQKE4SARGYLE
+    */
+   public static final String ACCESS_KEY_ID = "AccessKeyId";
 
-    /**
-     * The date and time at which the request is signed, in the format
-     * YYYY-MM-DDThh:mm:ssZ. For more information, go to ISO 8601. Example:
-     * 2006-07-07T15:04:56Z
-     */
-    public static final String TIMESTAMP = "Timestamp";
+   /**
+    * The date and time at which the request is signed, in the format
+    * YYYY-MM-DDThh:mm:ssZ. For more information, go to ISO 8601. Example:
+    * 2006-07-07T15:04:56Z
+    */
+   public static final String TIMESTAMP = "Timestamp";
 
-    /**
-     * The date and time at which the signer included in the request expires, in
-     * the format YYYY-MM-DDThh:mm:ssZ. Example: 2006-07-07T15:04:56Z
-     */
-    public static final String EXPIRES = "Expires";
+   /**
+    * The date and time at which the signer included in the request expires, in
+    * the format YYYY-MM-DDThh:mm:ssZ. Example: 2006-07-07T15:04:56Z
+    */
+   public static final String EXPIRES = "Expires";
 
-    /**
-     * The request signer. For more information, go to the Amazon Elastic
-     * Compute Cloud Developer Guide. Example: Qnpl4Qk/7tINHzfXCiT7VbBatDA=
-     */
-    public static final String SIGNATURE = "Signature";
+   /**
+    * The request signer. For more information, go to the Amazon Elastic
+    * Compute Cloud Developer Guide. Example: Qnpl4Qk/7tINHzfXCiT7VbBatDA=
+    */
+   public static final String SIGNATURE = "Signature";
 
-    /**
-     * The hash algorithm you use to create the request signer. Valid value:
-     * SHA1withRSA.
-     */
-    public static final String SIGNATURE_METHOD = "SignatureMethod";
+   /**
+    * The hash algorithm you use to create the request signer. Valid value:
+    * SHA1withRSA.
+    */
+   public static final String SIGNATURE_METHOD = "SignatureMethod";
 
-    /**
-     * The signer version you use to sign the request. Set this value to 1.0.
-     * 
-     */
-    public static final String SIGNATURE_VERSION = "SignatureVersion";
+   /**
+    * The signer version you use to sign the request. Set this value to 1.0.
+    * 
+    */
+   public static final String SIGNATURE_VERSION = "SignatureVersion";
 }

@@ -20,7 +20,6 @@ package org.jclouds.http.filters;
 
 import static org.testng.Assert.assertEquals;
 
-import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 
@@ -40,7 +39,7 @@ public class BasicAuthenticationTest {
    private static final String USER = "Aladdin";
    private static final String PASSWORD = "open sesame";
 
-   public void testAuth() throws UnsupportedEncodingException, NoSuchAlgorithmException, CertificateException {
+   public void testAuth() throws NoSuchAlgorithmException, CertificateException {
       BasicAuthentication filter = new BasicAuthentication(USER, PASSWORD, new JCECrypto(null));
       HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://localhost").build();
       request = filter.filter(request);

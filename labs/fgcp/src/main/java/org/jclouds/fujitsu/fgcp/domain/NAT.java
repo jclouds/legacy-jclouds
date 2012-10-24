@@ -30,36 +30,36 @@ import com.google.common.collect.ImmutableSet;
  * @author Dies Koper
  */
 public class NAT {
-    private Set<Rule> rules = new LinkedHashSet<Rule>();
+   private Set<Rule> rules = new LinkedHashSet<Rule>();
 
-    /**
-     * @return the rules
-     */
-    public Set<Rule> getRules() {
-        return rules == null ? ImmutableSet.<Rule> of() : ImmutableSet
-                .copyOf(rules);
-    }
+   /**
+    * @return the rules
+    */
+   public Set<Rule> getRules() {
+      return rules == null ? ImmutableSet.<Rule> of() : ImmutableSet
+            .copyOf(rules);
+   }
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(rules);
-    }
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(rules);
+   }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        NAT that = NAT.class.cast(obj);
-        return Objects.equal(this.rules, that.rules);
-    }
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      NAT that = NAT.class.cast(obj);
+      return Objects.equal(this.rules, that.rules);
+   }
 
-    @Override
-    public String toString() {
-        return Objects.toStringHelper(this).omitNullValues()
-                .add("rules", rules).toString();
-    }
+   @Override
+   public String toString() {
+      return Objects.toStringHelper(this).omitNullValues()
+            .add("rules", rules).toString();
+   }
 }

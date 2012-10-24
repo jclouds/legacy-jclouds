@@ -51,7 +51,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", singleThreaded = true, testName = "VirtualBoxExperimentLiveTest")
+@Test(groups = "live", testName = "VirtualBoxExperimentLiveTest")
 public class VirtualBoxExperimentLiveTest extends BaseVirtualBoxClientLiveTest {
 
    @Resource
@@ -69,10 +69,10 @@ public class VirtualBoxExperimentLiveTest extends BaseVirtualBoxClientLiveTest {
 
    @Test
    public void testLaunchCluster() throws RunNodesException {
-      int numNodes = 2;
+      int numNodes = 3;
       final String clusterName = "test-launch-cluster";
       Set<? extends NodeMetadata> nodes = context.getComputeService().createNodesInGroup(clusterName, numNodes,
-               TemplateOptions.Builder.runScript(AdminAccess.standard()));
+               TemplateOptions.Builder.overrideLoginUser("toor").runScript(AdminAccess.standard()));
       assertEquals(numNodes, nodes.size(), "wrong number of nodes");
       for (NodeMetadata node : nodes) {
          assertTrue(node.getGroup().equals("test-launch-cluster"));

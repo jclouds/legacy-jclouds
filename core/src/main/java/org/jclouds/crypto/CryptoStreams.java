@@ -24,7 +24,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -342,16 +341,12 @@ public class CryptoStreams {
          int currentPos = 0;
 
          public boolean processBytes(byte[] buf, int off, int len) {
-            try {
-               if (currentPos == 0 && new String(Arrays.copyOfRange(buf, off, 2), "ASCII").equals("0x")) {
-                  off += 2;
-               }
-               byte[] decoded = hex(new String(Arrays.copyOfRange(buf, off, len), "ASCII"));
-               out.write(decoded, 0, decoded.length);
-               currentPos += len;
-            } catch (UnsupportedEncodingException e) {
-               throw new IllegalStateException("ASCII must be supported");
+            if (currentPos == 0 && new String(Arrays.copyOfRange(buf, off, 2), Charsets.US_ASCII).equals("0x")) {
+               off += 2;
             }
+            byte[] decoded = hex(new String(Arrays.copyOfRange(buf, off, len), Charsets.US_ASCII));
+            out.write(decoded, 0, decoded.length);
+            currentPos += len;
             return true;
          }
 

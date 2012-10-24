@@ -32,6 +32,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.functions.PollNodeRunning;
 import org.jclouds.compute.predicates.AtomicImageAvailable;
 import org.jclouds.compute.predicates.AtomicImageDeleted;
 import org.jclouds.compute.predicates.AtomicNodeRunning;
@@ -39,12 +40,16 @@ import org.jclouds.compute.predicates.AtomicNodeSuspended;
 import org.jclouds.compute.predicates.AtomicNodeTerminated;
 import org.jclouds.compute.predicates.ScriptStatusReturnsZero;
 import org.jclouds.compute.predicates.ScriptStatusReturnsZero.CommandUsingClient;
+import org.jclouds.compute.reference.ComputeServiceConstants.PollPeriod;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.predicates.RetryablePredicate;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
+import com.google.inject.name.Names;
 
 /**
  * 
@@ -56,26 +61,35 @@ public class ComputeServiceTimeoutsModule extends AbstractModule {
    @Provides
    @Singleton
    @Named(TIMEOUT_NODE_RUNNING)
-   protected Predicate<AtomicReference<NodeMetadata>> nodeRunning(AtomicNodeRunning statusRunning, Timeouts timeouts) {
-      return timeouts.nodeRunning == 0 ? statusRunning : new RetryablePredicateGuardingNull<NodeMetadata>(statusRunning,
-            timeouts.nodeRunning);
+   protected Predicate<AtomicReference<NodeMetadata>> nodeRunning(
+         AtomicNodeRunning statusRunning, Timeouts timeouts, PollPeriod period) {
+      return timeouts.nodeRunning == 0 ? 
+             statusRunning : 
+             new RetryablePredicateGuardingNull<NodeMetadata>(
+                   statusRunning, timeouts.nodeRunning, period.pollInitialPeriod, period.pollMaxPeriod);
    }
 
    @Provides
    @Singleton
    @Named(TIMEOUT_NODE_TERMINATED)
-   protected Predicate<AtomicReference<NodeMetadata>> serverTerminated(AtomicNodeTerminated statusTerminated, Timeouts timeouts) {
-      return timeouts.nodeTerminated == 0 ? statusTerminated : new RetryablePredicate<AtomicReference<NodeMetadata>>(statusTerminated,
-            timeouts.nodeTerminated);
+   protected Predicate<AtomicReference<NodeMetadata>> serverTerminated(
+         AtomicNodeTerminated statusTerminated, Timeouts timeouts, PollPeriod period) {
+      return timeouts.nodeTerminated == 0 ? 
+             statusTerminated : 
+             new RetryablePredicate<AtomicReference<NodeMetadata>>(
+                   statusTerminated, timeouts.nodeTerminated, period.pollInitialPeriod, period.pollMaxPeriod);
    }
    
 
    @Provides
    @Singleton
    @Named(TIMEOUT_NODE_SUSPENDED)
-   protected Predicate<AtomicReference<NodeMetadata>> serverSuspended(AtomicNodeSuspended statusSuspended, Timeouts timeouts) {
-      return timeouts.nodeSuspended == 0 ? statusSuspended : new RetryablePredicateGuardingNull<NodeMetadata>(statusSuspended,
-            timeouts.nodeSuspended);
+   protected Predicate<AtomicReference<NodeMetadata>> serverSuspended(
+         AtomicNodeSuspended statusSuspended, Timeouts timeouts, PollPeriod period) {
+      return timeouts.nodeSuspended == 0 ? 
+             statusSuspended : 
+             new RetryablePredicateGuardingNull<NodeMetadata>(
+                   statusSuspended, timeouts.nodeSuspended, period.pollInitialPeriod, period.pollMaxPeriod);
    }
    
    @Provides
@@ -89,22 +103,29 @@ public class ComputeServiceTimeoutsModule extends AbstractModule {
    @Provides
    @Singleton
    @Named(TIMEOUT_IMAGE_AVAILABLE)
-   protected Predicate<AtomicReference<Image>> imageAvailable(AtomicImageAvailable statusAvailable, Timeouts timeouts) {
-      return timeouts.imageAvailable == 0 ? statusAvailable : new RetryablePredicateGuardingNull<Image>(statusAvailable,
-            timeouts.imageAvailable);
+   protected Predicate<AtomicReference<Image>> imageAvailable(
+         AtomicImageAvailable statusAvailable, Timeouts timeouts, PollPeriod period) {
+      return timeouts.imageAvailable == 0 ? 
+             statusAvailable : 
+             new RetryablePredicateGuardingNull<Image>(
+                   statusAvailable, timeouts.imageAvailable, period.pollInitialPeriod, period.pollMaxPeriod);
    }
 
    @Provides
    @Singleton
    @Named(TIMEOUT_IMAGE_DELETED)
-   protected Predicate<AtomicReference<Image>> serverDeleted(AtomicImageDeleted statusDeleted, Timeouts timeouts) {
-      return timeouts.imageDeleted == 0 ? statusDeleted : new RetryablePredicate<AtomicReference<Image>>(statusDeleted,
-            timeouts.imageDeleted);
+   protected Predicate<AtomicReference<Image>> serverDeleted(
+         AtomicImageDeleted statusDeleted, Timeouts timeouts, PollPeriod period) {
+      return timeouts.imageDeleted == 0 ? 
+             statusDeleted : 
+             new RetryablePredicate<AtomicReference<Image>>(
+                   statusDeleted, timeouts.imageDeleted, period.pollInitialPeriod, period.pollMaxPeriod);
    }
    
    @Override
    protected void configure() {
-
+      bind(new TypeLiteral<Function<AtomicReference<NodeMetadata>, AtomicReference<NodeMetadata>>>() {
+      }).annotatedWith(Names.named(TIMEOUT_NODE_RUNNING)).to(PollNodeRunning.class);
    }
 
    /**
@@ -127,7 +148,7 @@ public class ComputeServiceTimeoutsModule extends AbstractModule {
       
       private final RetryablePredicate<AtomicRefAndOrig> retryablePredicate;
       
-      public RetryablePredicateGuardingNull(final Predicate<AtomicReference<T>> predicate, long maxWait) {
+      public RetryablePredicateGuardingNull(final Predicate<AtomicReference<T>> predicate, long maxWait, long period, long maxPeriod) {
          Predicate<AtomicRefAndOrig> nonNullThingPredicate = new Predicate<AtomicRefAndOrig>() {
             @Override
             public boolean apply(AtomicRefAndOrig input) {
@@ -139,7 +160,7 @@ public class ComputeServiceTimeoutsModule extends AbstractModule {
                }
             }
          };
-         retryablePredicate = new RetryablePredicate<AtomicRefAndOrig>(nonNullThingPredicate, maxWait);
+         retryablePredicate = new RetryablePredicate<AtomicRefAndOrig>(nonNullThingPredicate, maxWait, period, maxPeriod);
       }
 
       @Override

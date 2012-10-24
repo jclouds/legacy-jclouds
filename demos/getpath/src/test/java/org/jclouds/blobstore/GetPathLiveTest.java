@@ -22,7 +22,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
@@ -33,17 +32,18 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.util.Strings2;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.google.common.io.Files;
 
 /**
  * 
@@ -153,8 +153,8 @@ public class GetPathLiveTest {
          new File(tmpDirectory).mkdirs();
          GetPath.main(uriKey, tmpDirectory);
          for (Entry<String, String> entry : fiveStrings.entrySet()) {
-            assertEquals(Strings2.toStringAndClose(new FileInputStream(new File(tmpDirectory, entry
-                     .getKey()))), entry.getValue());
+            assertEquals(Files.toString(new File(tmpDirectory, entry.getKey()),
+                  Charsets.UTF_8), entry.getValue());
          }
       }
 

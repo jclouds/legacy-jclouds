@@ -34,7 +34,6 @@ import org.testng.annotations.Test;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.io.CharStreams;
 import com.google.common.io.Resources;
 
 /**
@@ -59,8 +58,7 @@ public class InitBuilderTest {
    public void testBuildSimpleUNIX() throws MalformedURLException, IOException {
       assertEquals(
             testInitBuilder.render(OsFamily.UNIX),
-            CharStreams.toString(Resources.newReaderSupplier(
-                  Resources.getResource("test_init." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
+            Resources.toString(Resources.getResource("test_init." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8));
    }
 
    @Test
@@ -93,7 +91,6 @@ public class InitBuilderTest {
                               "du -sk {varl}EBS_MOUNT_POINT{varr}", "echo size of source",
                               "du -sk {varl}IMAGE_DIR{varr}", "rm -rf {varl}IMAGE_DIR{varr}/*",
                               "umount {varl}EBS_MOUNT_POINT{varr}", "echo ----COMPLETE----"))).render(OsFamily.UNIX),
-            CharStreams.toString(Resources.newReaderSupplier(
-                  Resources.getResource("test_ebs." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
+            Resources.toString(Resources.getResource("test_ebs." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8));
    }
 }

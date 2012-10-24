@@ -18,8 +18,6 @@
  */
 package org.jclouds.openstack.glance.v1_0.options;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.openstack.glance.v1_0.options.ImageField.CONTAINER_FORMAT;
 import static org.jclouds.openstack.glance.v1_0.options.ImageField.DISK_FORMAT;
 import static org.jclouds.openstack.glance.v1_0.options.ImageField.IS_PUBLIC;
@@ -31,10 +29,12 @@ import static org.jclouds.openstack.glance.v1_0.options.ImageField.SIZE_MAX;
 import static org.jclouds.openstack.glance.v1_0.options.ImageField.SIZE_MIN;
 import static org.jclouds.openstack.glance.v1_0.options.ImageField.STATUS;
 
-import org.jclouds.http.options.BaseHttpRequestOptions;
+import java.util.Date;
+
 import org.jclouds.openstack.glance.v1_0.domain.ContainerFormat;
 import org.jclouds.openstack.glance.v1_0.domain.DiskFormat;
 import org.jclouds.openstack.glance.v1_0.domain.Image.Status;
+import org.jclouds.openstack.v2_0.options.PaginationOptions;
 
 /**
  * <h2></h2>Usage</h2> The recommended way to instantiate a ListImageOptions object is to statically import
@@ -51,26 +51,8 @@ import org.jclouds.openstack.glance.v1_0.domain.Image.Status;
  * @author Adam Lowe
  * @see <a href="http://glance.openstack.org/glanceapi.html"/>
  */
-public class ListImageOptions extends BaseHttpRequestOptions {
+public class ListImageOptions extends PaginationOptions {
    public static final ListImageOptions NONE = new ListImageOptions();
-
-   /**
-    * Given a string value x, return object names greater in value than the specified marker.
-    */
-   public ListImageOptions marker(String marker) {
-      queryParameters.put("marker", checkNotNull(marker, "marker"));
-      return this;
-   }
-
-   /**
-    * For an integer value n, limits the number of results to n values.
-    */
-   public ListImageOptions limit(int limit) {
-      checkState(limit >= 0, "limit must be >= 0");
-      checkState(limit <= 10000, "limit must be <= 10000");
-      queryParameters.put("limit", Integer.toString(limit));
-      return this;
-   }
 
    /**
     * Return only those images having a matching name attribute
@@ -267,8 +249,22 @@ public class ListImageOptions extends BaseHttpRequestOptions {
        * @see ListImageOptions#marker
        */
       public static ListImageOptions marker(String marker) {
-         ListImageOptions options = new ListImageOptions();
-         return options.marker(marker);
+         return new ListImageOptions().marker(marker);
       }
+   }
+
+   @Override
+   public ListImageOptions changesSince(Date ifModifiedSince) {
+      return ListImageOptions.class.cast(super.changesSince(ifModifiedSince));
+   }
+
+   @Override
+   public ListImageOptions marker(String marker) {
+      return ListImageOptions.class.cast(super.marker(marker));
+   }
+
+   @Override
+   public ListImageOptions limit(int limit) {
+      return ListImageOptions.class.cast(super.limit(limit));
    }
 }

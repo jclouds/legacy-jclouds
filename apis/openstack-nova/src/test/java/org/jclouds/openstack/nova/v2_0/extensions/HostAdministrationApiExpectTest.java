@@ -59,7 +59,7 @@ public class HostAdministrationApiExpectTest extends BaseNovaApiExpectTest {
       
       Host expected = Host.builder().name("ubuntu").service("compute").build();
 
-      Set<? extends Host> result = api.listHosts();
+      Set<? extends Host> result = api.list().toImmutableSet();
       Host host = Iterables.getOnlyElement(result);
       assertEquals(host.getName(), "ubuntu");
       assertEquals(host.getService(), "compute");
@@ -84,7 +84,7 @@ public class HostAdministrationApiExpectTest extends BaseNovaApiExpectTest {
             HostResourceUsage.builder().memoryMb(6144).project("f8535069c3fb404cb61c873b1a0b4921").cpu(3).diskGb(80).host("ubuntu").build()
       );
 
-      assertEquals(api.getHostResourceUsage("xyz"), expected);
+      assertEquals(api.listResourceUsage("xyz").toImmutableSet(), expected);
    }
    
    public void testEnableHost() {
@@ -99,7 +99,7 @@ public class HostAdministrationApiExpectTest extends BaseNovaApiExpectTest {
             HttpResponse.builder().statusCode(200)
                   .payload(payloadFromStringWithContentType("{\"host\":\"ubuntu\",\"status\":\"enabled\"}", MediaType.APPLICATION_JSON))
                   .build()).getHostAdministrationExtensionForZone("az-1.region-a.geo-1").get();
-      assertTrue(api.enableHost("ubuntu"));
+      assertTrue(api.enable("ubuntu"));
    }
 
    @Test(expectedExceptions = ResourceNotFoundException.class)
@@ -114,7 +114,7 @@ public class HostAdministrationApiExpectTest extends BaseNovaApiExpectTest {
                   .endpoint(endpoint).build(),
             HttpResponse.builder().statusCode(404)
                   .build()).getHostAdministrationExtensionForZone("az-1.region-a.geo-1").get();
-      api.enableHost("ubuntu");
+      api.enable("ubuntu");
    }
 
    public void testEnableHostFailNotEnabled() {
@@ -129,7 +129,7 @@ public class HostAdministrationApiExpectTest extends BaseNovaApiExpectTest {
             HttpResponse.builder().statusCode(200)
                   .payload(payloadFromStringWithContentType("{\"host\":\"ubuntu\",\"status\":\"disabled\"}", MediaType.APPLICATION_JSON))
                   .build()).getHostAdministrationExtensionForZone("az-1.region-a.geo-1").get();
-      assertFalse(api.enableHost("ubuntu"));
+      assertFalse(api.enable("ubuntu"));
    }
 
    public void testDisableHost() {
@@ -144,7 +144,7 @@ public class HostAdministrationApiExpectTest extends BaseNovaApiExpectTest {
             HttpResponse.builder().statusCode(200)
                   .payload(payloadFromStringWithContentType("{\"host\":\"ubuntu\",\"status\":\"disabled\"}", MediaType.APPLICATION_JSON))
                   .build()).getHostAdministrationExtensionForZone("az-1.region-a.geo-1").get();
-      assertTrue(api.disableHost("ubuntu"));
+      assertTrue(api.disable("ubuntu"));
    }
 
    public void testStartMaintenance() {
@@ -159,7 +159,7 @@ public class HostAdministrationApiExpectTest extends BaseNovaApiExpectTest {
             HttpResponse.builder().statusCode(200)
                   .payload(payloadFromStringWithContentType("{\"host\":\"ubuntu\",\"maintenance_mode\":\"on_maintenance\"}", MediaType.APPLICATION_JSON))
                   .build()).getHostAdministrationExtensionForZone("az-1.region-a.geo-1").get();
-      assertTrue(api.startHostMaintenance("ubuntu"));
+      assertTrue(api.startMaintenance("ubuntu"));
    }
 
    public void testStopMaintenance() {
@@ -174,7 +174,7 @@ public class HostAdministrationApiExpectTest extends BaseNovaApiExpectTest {
             HttpResponse.builder().statusCode(200)
                   .payload(payloadFromStringWithContentType("{\"host\":\"ubuntu\",\"maintenance_mode\":\"off_maintenance\"}", MediaType.APPLICATION_JSON))
                   .build()).getHostAdministrationExtensionForZone("az-1.region-a.geo-1").get();
-      assertTrue(api.stopHostMaintenance("ubuntu"));
+      assertTrue(api.stopMaintenance("ubuntu"));
    }
    
    public void testStartupHost() {
@@ -187,7 +187,7 @@ public class HostAdministrationApiExpectTest extends BaseNovaApiExpectTest {
             HttpResponse.builder().statusCode(200)
                   .payload(payloadFromStringWithContentType("{\"host\":\"ubuntu\",\"power_action\":\"startup\"}", MediaType.APPLICATION_JSON))
                   .build()).getHostAdministrationExtensionForZone("az-1.region-a.geo-1").get();
-      assertTrue(api.startupHost("ubuntu"));
+      assertTrue(api.startup("ubuntu"));
    }
 
    @Test(expectedExceptions = ResourceNotFoundException.class)
@@ -199,7 +199,7 @@ public class HostAdministrationApiExpectTest extends BaseNovaApiExpectTest {
                        .addHeader("Accept", "application/json")
                        .addHeader("X-Auth-Token", authToken).build(),
             HttpResponse.builder().statusCode(404).build()).getHostAdministrationExtensionForZone("az-1.region-a.geo-1").get();
-      assertTrue(api.startupHost("ubuntu"));
+      assertTrue(api.startup("ubuntu"));
    }
 
    public void testStartupHostFailWrongActionInProgress() {
@@ -212,7 +212,7 @@ public class HostAdministrationApiExpectTest extends BaseNovaApiExpectTest {
             HttpResponse.builder().statusCode(200)
                   .payload(payloadFromStringWithContentType("{\"host\":\"ubuntu\",\"power_action\":\"shutdown\"}", MediaType.APPLICATION_JSON))
                   .build()).getHostAdministrationExtensionForZone("az-1.region-a.geo-1").get();
-      assertFalse(api.startupHost("ubuntu"));
+      assertFalse(api.startup("ubuntu"));
    }
    
    public void testShutdownHost() {
@@ -225,7 +225,7 @@ public class HostAdministrationApiExpectTest extends BaseNovaApiExpectTest {
             HttpResponse.builder().statusCode(200)
                   .payload(payloadFromStringWithContentType("{\"host\":\"ubuntu\",\"power_action\":\"shutdown\"}", MediaType.APPLICATION_JSON))
                   .build()).getHostAdministrationExtensionForZone("az-1.region-a.geo-1").get();
-      assertTrue(api.shutdownHost("ubuntu"));
+      assertTrue(api.shutdown("ubuntu"));
    }
    
    public void testRebootHost() {
@@ -238,6 +238,6 @@ public class HostAdministrationApiExpectTest extends BaseNovaApiExpectTest {
             HttpResponse.builder().statusCode(200)
                   .payload(payloadFromStringWithContentType("{\"host\":\"ubuntu\",\"power_action\":\"reboot\"}", MediaType.APPLICATION_JSON))
                   .build()).getHostAdministrationExtensionForZone("az-1.region-a.geo-1").get();
-      assertTrue(api.rebootHost("ubuntu"));
+      assertTrue(api.reboot("ubuntu"));
    }
 }

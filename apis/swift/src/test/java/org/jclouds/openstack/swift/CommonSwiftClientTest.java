@@ -28,17 +28,21 @@ import java.util.Properties;
 import javax.inject.Singleton;
 
 import org.jclouds.apis.ApiMetadata;
+import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.openstack.functions.URIFromAuthenticationResponseForService;
 import org.jclouds.openstack.internal.TestOpenStackAuthenticationModule;
 import org.jclouds.openstack.reference.AuthHeaders;
+import org.jclouds.openstack.swift.blobstore.SwiftBlobSigner;
 import org.jclouds.openstack.swift.blobstore.config.SwiftBlobStoreContextModule;
+import org.jclouds.openstack.swift.blobstore.config.TemporaryUrlExtensionModule;
 import org.jclouds.openstack.swift.config.SwiftRestClientModule;
 import org.jclouds.rest.internal.BaseAsyncClientTest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
 import com.google.inject.Provides;
@@ -46,12 +50,16 @@ import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code BindSwiftObjectMetadataToRequest}
- * 
+ *
  * @author Adrian Cole
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
-@Test(groups = "unit", testName = "SwiftClientTest")
+@Test(groups = "unit", testName = "CommonSwiftClientTest")
 public abstract class CommonSwiftClientTest extends BaseAsyncClientTest<SwiftAsyncClient> {
+
+   public static final long UNIX_EPOCH_TIMESTAMP = 123456789L;
+
+   public static final String TEMPORARY_URL_KEY = "get-or-set-X-Account-Meta-Temp-Url-Key";
 
    @Override
    protected TypeLiteral<RestAnnotationProcessor<SwiftAsyncClient>> createTypeLiteral() {
@@ -74,11 +82,34 @@ public abstract class CommonSwiftClientTest extends BaseAsyncClientTest<SwiftAsy
       }
    }
 
+   public static class StaticTimeAndTemporaryUrlKeyModule extends TemporaryUrlExtensionModule<SwiftAsyncClient> {
+      @Override
+      protected Long unixEpochTimestampProvider() {
+         return UNIX_EPOCH_TIMESTAMP;
+      }
+
+      @Override
+      protected void configure() {
+         bindTemporaryUrlKeyApi();
+         bind(new TypeLiteral<Supplier<String>>() {
+         }).annotatedWith(TemporaryUrlKey.class).toInstance(Suppliers.ofInstance(TEMPORARY_URL_KEY));
+      }
+
+      @Override
+      protected void bindRequestSigner() {
+         bind(BlobRequestSigner.class).to(new TypeLiteral<SwiftBlobSigner<SwiftAsyncClient>>() {
+         });
+      }
+   }
+
    @Override
    protected ApiMetadata createApiMetadata() {
-      return new SwiftApiMetadata().toBuilder().defaultModules(
-               ImmutableSet.<Class<? extends Module>> of(StorageEndpointModule.class, SwiftRestClientModule.class,
-                        SwiftBlobStoreContextModule.class)).build();
+      return new SwiftApiMetadata().toBuilder()
+                                   .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
+                                         .add(StorageEndpointModule.class)
+                                         .add(SwiftRestClientModule.class)
+                                         .add(SwiftBlobStoreContextModule.class)
+                                         .add(StaticTimeAndTemporaryUrlKeyModule.class).build()).build();
    }
 
    @Override

@@ -89,9 +89,11 @@
 
     <!--
         NOTE!! enabling this logger will cause the following test to
-        fail BaseBlobIntegrationTest.testPutObjectStream <category
-        name="jclouds.wire"> <priority value="DEBUG" /> <appender-ref
-        ref="ASYNCWIRE" /> </category>
+        fail: BaseBlobIntegrationTest.testPutObjectStream
+    <category name="jclouds.wire">
+        <priority value="DEBUG" />
+        <appender-ref ref="ASYNCWIRE" />
+    </category>
     -->
 
     <category name="jclouds.blobstore">

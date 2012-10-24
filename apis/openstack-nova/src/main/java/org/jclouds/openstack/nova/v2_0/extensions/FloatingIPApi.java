@@ -18,13 +18,15 @@
  */
 package org.jclouds.openstack.nova.v2_0.extensions;
 
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.nova.v2_0.domain.FloatingIP;
 import org.jclouds.openstack.v2_0.ServiceType;
 import org.jclouds.openstack.v2_0.services.Extension;
+
+import com.google.common.annotations.Beta;
+import com.google.common.collect.FluentIterable;
 
 /**
  * Provides synchronous access to Floating IPs.
@@ -33,6 +35,7 @@ import org.jclouds.openstack.v2_0.services.Extension;
  * @see FloatingIPAsyncApi
  * @author Jeremy Daggett
  */
+@Beta
 @Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.FLOATING_IPS)
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface FloatingIPApi {
@@ -42,29 +45,29 @@ public interface FloatingIPApi {
     * 
     * @return all Floating IPs
     */
-   Set<? extends FloatingIP> listFloatingIPs();
+   FluentIterable<? extends FloatingIP> list();
 
    /**
     * Get a specific Floating IP address
     * 
     * @return all Floating IPs
     */
-   FloatingIP getFloatingIP(String id);
+   FloatingIP get(String id);
 
    /**
     * Allocate a Floating IP address
     * 
-    * @return a newly allocated FloatingIP
+    * @return a newly created FloatingIP
     */
-   FloatingIP allocate();
+   FloatingIP create();
 
    /**
-    * Deallocate a Floating IP address
+    * Decreate a Floating IP address
     * 
     * @param id
     *           the Floating IP id
     */
-   void deallocate(String id);
+   void delete(String id);
 
    /**
     * Add a Floating IP address to a Server
@@ -76,7 +79,7 @@ public interface FloatingIPApi {
     * 
     *           NOTE: Possibly move this to ServerApi?
     */
-   void addFloatingIPToServer(String address, String serverId);
+   void addToServer(String address, String serverId);
 
    /**
     * Remove a Floating IP address from a Server
@@ -88,5 +91,5 @@ public interface FloatingIPApi {
     * 
     *           NOTE: Possibly move this to ServerApi?
     */
-   void removeFloatingIPFromServer(String address, String serverId);
+   void removeFromServer(String address, String serverId);
 }

@@ -38,6 +38,10 @@ import com.google.common.collect.ImmutableSet;
  */
 public class Volume implements Comparable<Volume> {
 
+   public Builder toBuilder() {
+      return builder().fromVolume(this);
+   }
+   
    /**
     * Specifies whether the instance's Amazon EBS volumes are stopped or terminated when the
     * instance is shut down.
@@ -146,7 +150,13 @@ public class Volume implements Comparable<Volume> {
       
       public Volume build() {
          return new Volume(region, id, size, snapshotId, availabilityZone, status, createTime, attachments);
-      }      
+      }
+
+      public Builder fromVolume(Volume in) {
+         return region(in.region).id(in.id).size(in.size).snapshotId(in.snapshotId)
+                  .availabilityZone(in.availabilityZone).status(in.status).createTime(in.createTime)
+                  .attachments(in.attachments);
+      }
    }
 
    private final String region;
@@ -172,9 +182,12 @@ public class Volume implements Comparable<Volume> {
    }
 
    /**
-    * An Amazon EBS volume must be located within the same Availability Zone as the instance to
-    * which it attaches.
+    * To be removed in jclouds 1.6 <h4>Warning</h4>
+    * 
+    * Especially on EC2 clones that may not support regions, this value is fragile. Consider
+    * alternate means to determine context.
     */
+   @Deprecated
    public String getRegion() {
       return region;
    }

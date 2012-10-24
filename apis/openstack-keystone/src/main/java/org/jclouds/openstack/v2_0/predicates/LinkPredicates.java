@@ -91,7 +91,7 @@ public class LinkPredicates {
       return new Predicate<Link>() {
          @Override
          public boolean apply(Link link) {
-            return type.equals(link.getType());
+            return type.equals(link.getType().orNull());
          }
 
          @Override

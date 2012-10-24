@@ -33,6 +33,8 @@ import org.jclouds.io.Payloads;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableSet;
+
 /**
  * Tests behavior of {@code AWSClientErrorRetryHandler}
  * 
@@ -49,7 +51,8 @@ public class AWSClientErrorRetryHandlerTest {
 
       replay(utils, backoffLimitedRetryHandler, command);
 
-      AWSClientErrorRetryHandler retry = new AWSClientErrorRetryHandler(utils, backoffLimitedRetryHandler);
+      AWSClientErrorRetryHandler retry = new AWSClientErrorRetryHandler(utils, backoffLimitedRetryHandler,
+            ImmutableSet.<String> of());
 
       assert !retry.shouldRetryRequest(command, HttpResponse.builder().statusCode(401).build());
 
@@ -70,10 +73,10 @@ public class AWSClientErrorRetryHandlerTest {
       HttpCommand command = createMock(HttpCommand.class);
 
       HttpRequest putBucket = HttpRequest.builder().method("PUT")
-               .endpoint("https://adriancole-blobstore113.s3.amazonaws.com/").build();
+            .endpoint("https://adriancole-blobstore113.s3.amazonaws.com/").build();
 
       HttpResponse operationAborted = HttpResponse.builder().statusCode(409)
-               .payload(Payloads.newStringPayload(String.format("<Error><Code>%s</Code></Error>", code))).build();
+            .payload(Payloads.newStringPayload(String.format("<Error><Code>%s</Code></Error>", code))).build();
 
       expect(command.getCurrentRequest()).andReturn(putBucket);
 
@@ -86,7 +89,8 @@ public class AWSClientErrorRetryHandlerTest {
 
       replay(utils, backoffLimitedRetryHandler, command);
 
-      AWSClientErrorRetryHandler retry = new AWSClientErrorRetryHandler(utils, backoffLimitedRetryHandler);
+      AWSClientErrorRetryHandler retry = new AWSClientErrorRetryHandler(utils, backoffLimitedRetryHandler,
+            ImmutableSet.<String> of("RequestTimeout", "OperationAborted", "SignatureDoesNotMatch"));
 
       assert retry.shouldRetryRequest(command, operationAborted);
 

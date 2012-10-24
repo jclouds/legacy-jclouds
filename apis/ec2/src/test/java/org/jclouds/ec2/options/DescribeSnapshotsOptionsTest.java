@@ -23,7 +23,7 @@ import static org.jclouds.ec2.options.DescribeSnapshotsOptions.Builder.restorabl
 import static org.jclouds.ec2.options.DescribeSnapshotsOptions.Builder.snapshotIds;
 import static org.testng.Assert.assertEquals;
 
-import java.util.Collections;
+import com.google.common.collect.ImmutableList;
 
 import org.jclouds.http.options.HttpRequestOptions;
 import org.testng.annotations.Test;
@@ -45,49 +45,49 @@ public class DescribeSnapshotsOptionsTest {
    public void testRestorableBy() {
       DescribeSnapshotsOptions options = new DescribeSnapshotsOptions();
       options.restorableBy("test");
-      assertEquals(options.buildFormParameters().get("RestorableBy.1"), Collections
-               .singletonList("test"));
+      assertEquals(options.buildFormParameters().get("RestorableBy.1"),
+               ImmutableList.of("test"));
    }
 
    @Test
    public void testNullRestorableBy() {
       DescribeSnapshotsOptions options = new DescribeSnapshotsOptions();
-      assertEquals(options.buildFormParameters().get("RestorableBy.1"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("RestorableBy.1"), ImmutableList.of());
    }
 
    @Test
    public void testRestorableByStatic() {
       DescribeSnapshotsOptions options = restorableBy("test");
-      assertEquals(options.buildFormParameters().get("RestorableBy.1"), Collections
-               .singletonList("test"));
+      assertEquals(options.buildFormParameters().get("RestorableBy.1"),
+               ImmutableList.of("test"));
    }
 
    @Test
    public void testOwners() {
       DescribeSnapshotsOptions options = new DescribeSnapshotsOptions();
       options.ownedBy("test");
-      assertEquals(options.buildFormParameters().get("Owner.1"), Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("Owner.1"), ImmutableList.of("test"));
    }
 
    @Test
    public void testMultipleOwners() {
       DescribeSnapshotsOptions options = new DescribeSnapshotsOptions();
       options.ownedBy("test", "trouble");
-      assertEquals(options.buildFormParameters().get("Owner.1"), Collections.singletonList("test"));
-      assertEquals(options.buildFormParameters().get("Owner.2"), Collections
-               .singletonList("trouble"));
+      assertEquals(options.buildFormParameters().get("Owner.1"), ImmutableList.of("test"));
+      assertEquals(options.buildFormParameters().get("Owner.2"),
+               ImmutableList.of("trouble"));
    }
 
    @Test
    public void testNullOwners() {
       DescribeSnapshotsOptions options = new DescribeSnapshotsOptions();
-      assertEquals(options.buildFormParameters().get("Owner.1"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("Owner.1"), ImmutableList.of());
    }
 
    @Test
    public void testOwnersStatic() {
       DescribeSnapshotsOptions options = ownedBy("test");
-      assertEquals(options.buildFormParameters().get("Owner.1"), Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("Owner.1"), ImmutableList.of("test"));
    }
 
    public void testNoOwners() {
@@ -98,31 +98,31 @@ public class DescribeSnapshotsOptionsTest {
    public void testSnapshotIds() {
       DescribeSnapshotsOptions options = new DescribeSnapshotsOptions();
       options.snapshotIds("test");
-      assertEquals(options.buildFormParameters().get("SnapshotId.1"), Collections
-               .singletonList("test"));
+      assertEquals(options.buildFormParameters().get("SnapshotId.1"),
+               ImmutableList.of("test"));
    }
 
    @Test
    public void testMultipleSnapshotIds() {
       DescribeSnapshotsOptions options = new DescribeSnapshotsOptions();
       options.snapshotIds("test", "trouble");
-      assertEquals(options.buildFormParameters().get("SnapshotId.1"), Collections
-               .singletonList("test"));
-      assertEquals(options.buildFormParameters().get("SnapshotId.2"), Collections
-               .singletonList("trouble"));
+      assertEquals(options.buildFormParameters().get("SnapshotId.1"),
+               ImmutableList.of("test"));
+      assertEquals(options.buildFormParameters().get("SnapshotId.2"),
+               ImmutableList.of("trouble"));
    }
 
    @Test
    public void testNullSnapshotIds() {
       DescribeSnapshotsOptions options = new DescribeSnapshotsOptions();
-      assertEquals(options.buildFormParameters().get("SnapshotId.1"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("SnapshotId.1"), ImmutableList.of());
    }
 
    @Test
    public void testSnapshotIdsStatic() {
       DescribeSnapshotsOptions options = snapshotIds("test");
-      assertEquals(options.buildFormParameters().get("SnapshotId.1"), Collections
-               .singletonList("test"));
+      assertEquals(options.buildFormParameters().get("SnapshotId.1"),
+               ImmutableList.of("test"));
    }
 
    public void testNoSnapshotIds() {

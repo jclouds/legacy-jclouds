@@ -45,13 +45,7 @@ public class InstallGuestAdditionsLiveTest extends BaseVirtualBoxClientLiveTest 
       InstallGuestAdditions installer = new InstallGuestAdditions(vmSpecification, "4.1.8");
       String scripts = installer.render(OsFamily.UNIX);
       assertEquals("installModuleAssistantIfNeeded || return 1\n" + "mount -t iso9660 /dev/sr1 /mnt\n"
-               + "/mnt/VBoxLinuxAdditions.run\n" 
-               + "service vboxadd setup\n"
-               + "VBoxService\n"
-               + "echo VBoxService > /etc/rc.local\n"
-               + "echo exit 0 >> /etc/rc.local\n"
-               + "umount /mnt\n"
-               , scripts);
+            + "/mnt/VBoxLinuxAdditions.run --nox11\n", scripts);
    }
    
    public void testIsoNotPresent() {
@@ -67,12 +61,7 @@ public class InstallGuestAdditionsLiveTest extends BaseVirtualBoxClientLiveTest 
                         + "setupPublicCurl || return 1\n"
                         + "(mkdir -p /tmp/ && cd /tmp/ && [ ! -f VBoxGuestAdditions_4.1.8.iso ] && curl -q -s -S -L --connect-timeout 10 --max-time 600 --retry 20 -C - -X GET  http://download.virtualbox.org/virtualbox/4.1.8/VBoxGuestAdditions_4.1.8.iso >VBoxGuestAdditions_4.1.8.iso)\n"
                         + "mount -o loop /tmp/VBoxGuestAdditions_4.1.8.iso /mnt\n"
-                        + "/mnt/VBoxLinuxAdditions.run\n"                
-                        + "service vboxadd setup\n"
-                        + "VBoxService\n"
-                        + "echo VBoxService > /etc/rc.local\n"
-                        + "echo exit 0 >> /etc/rc.local\n"
-                        + "umount /mnt\n", scripts);
+                        + "/mnt/VBoxLinuxAdditions.run --nox11\n", scripts);
    }
 
 }

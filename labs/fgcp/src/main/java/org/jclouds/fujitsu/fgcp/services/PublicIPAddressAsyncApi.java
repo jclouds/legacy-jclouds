@@ -18,7 +18,6 @@
  */
 package org.jclouds.fujitsu.fgcp.services;
 
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.Consumes;
@@ -53,35 +52,35 @@ import com.google.common.util.concurrent.ListenableFuture;
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface PublicIPAddressAsyncApi {
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "AttachPublicIP")
-    ListenableFuture<Void> attach(@QueryParam("vsysId") String systemId,
-            @QueryParam("publicIp") String ip);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "AttachPublicIP")
+   ListenableFuture<Void> attach(@QueryParam("vsysId") String systemId,
+         @QueryParam("publicIp") String ip);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "DetachPublicIP")
-    ListenableFuture<Void> detach(@QueryParam("vsysId") String systemId,
-            @QueryParam("publicIp") String ip);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "DetachPublicIP")
+   ListenableFuture<Void> detach(@QueryParam("vsysId") String systemId,
+         @QueryParam("publicIp") String ip);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "GetPublicIPStatus")
-    @Transform(SingleElementResponseToElement.class)
-    ListenableFuture<PublicIPStatus> getStatus(
-            @QueryParam("publicIp") String ip);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "GetPublicIPStatus")
+   @Transform(SingleElementResponseToElement.class)
+   ListenableFuture<PublicIPStatus> getStatus(
+         @QueryParam("publicIp") String ip);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "GetPublicIPAttributes")
-    @Transform(SingleElementResponseToElement.class)
-    ListenableFuture<PublicIP> get(@QueryParam("publicIp") String ip);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "GetPublicIPAttributes")
+   @Transform(SingleElementResponseToElement.class)
+   ListenableFuture<PublicIP> get(@QueryParam("publicIp") String ip);
 
-    @GET
-    @JAXBResponseParser
-    @QueryParams(keys = "Action", values = "FreePublicIP")
-    ListenableFuture<Void> free(@QueryParam("vsysId") String systemId,
-            @QueryParam("publicIp") String ip);
+   @GET
+   @JAXBResponseParser
+   @QueryParams(keys = "Action", values = "FreePublicIP")
+   ListenableFuture<Void> free(@QueryParam("vsysId") String systemId,
+         @QueryParam("publicIp") String ip);
 
 }

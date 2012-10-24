@@ -43,7 +43,6 @@ import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
 import java.net.URI;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -140,11 +139,13 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.base.Objects;
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
+import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -167,7 +168,7 @@ import com.google.inject.util.Types;
 
 /**
  * Creates http methods based on annotations on a class or interface.
- * 
+ *
  * @author Adrian Cole
  */
 public class RestAnnotationProcessor<T> {
@@ -190,18 +191,8 @@ public class RestAnnotationProcessor<T> {
    static final LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> methodToIndexOfParamToPostParamAnnotations = createMethodToIndexOfParamToAnnotation(PayloadParam.class);
    static final LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> methodToIndexOfParamToPartParamAnnotations = createMethodToIndexOfParamToAnnotation(PartParam.class);
    static final LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> methodToIndexOfParamToParamParserAnnotations = createMethodToIndexOfParamToAnnotation(ParamParser.class);
-   
-   /**
-    * Shared for all types of rest clients. this is read-only in this class, and
-    * currently populated only by {@link SeedAnnotationCache}
-    * 
-    * @see SeedAnnotationCache
-    */
-   // TODO: change this to a private final LoadingCache<MethodKey, Method>
-   // supplied by guice. The CacheLoader<MethodKey, Method> can be refactored
-   // out from SeedAnnotationCache. Potentially, preseed the cache, but only if
-   // this is uncomplicated.
-   static final Map<MethodKey, Method> delegationMap = newHashMap();
+
+   final Cache<MethodKey, Method> delegationMap;
 
    static LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> createMethodToIndexOfParamToAnnotation(
             final Class<? extends Annotation> annotation) {
@@ -330,7 +321,7 @@ public class RestAnnotationProcessor<T> {
 
    @SuppressWarnings("unchecked")
    @Inject
-   public RestAnnotationProcessor(Injector injector, LoadingCache<Class<?>, Boolean> seedAnnotationCache,
+   public RestAnnotationProcessor(Injector injector, LoadingCache<Class<?>, Boolean> seedAnnotationCache, Cache<MethodKey, Method> delegationMap,
             @ApiVersion String apiVersion, @BuildVersion String buildVersion, ParseSax.Factory parserFactory,
             HttpUtils utils, ContentMetadataCodec contentMetadataCodec, TypeLiteral<T> typeLiteral) throws ExecutionException {
       this.declaring = (Class<T>) typeLiteral.getRawType();
@@ -341,6 +332,7 @@ public class RestAnnotationProcessor<T> {
       this.uriBuilderProvider = injector.getProvider(UriBuilder.class);
       this.seedAnnotationCache = seedAnnotationCache;
       seedAnnotationCache.get(declaring);
+      this.delegationMap = delegationMap;
       if (declaring.isAnnotationPresent(SkipEncoding.class)) {
          skips = declaring.getAnnotation(SkipEncoding.class).value();
       } else {
@@ -350,8 +342,9 @@ public class RestAnnotationProcessor<T> {
       this.buildVersion = buildVersion;
    }
 
+
    public Method getDelegateOrNull(Method in) {
-      return delegationMap.get(new MethodKey(in));
+      return delegationMap.getIfPresent(new MethodKey(in));
    }
 
    public static class MethodKey {
@@ -370,7 +363,7 @@ public class RestAnnotationProcessor<T> {
                && Objects.equal(this.name, that.name)
                && Objects.equal(this.parametersTypeHashCode, that.parametersTypeHashCode);
       }
-      
+
       private final String name;
       private final int parametersTypeHashCode;
       private final Class<?> declaringClass;
@@ -844,7 +837,7 @@ public class RestAnnotationProcessor<T> {
       Type returnVal = getReturnTypeForMethod(method);
       return getJsonParserKeyForMethodAnType(method, returnVal);
    }
-   
+
    @SuppressWarnings("unchecked")
    public static Key<? extends Function<HttpResponse, ?>> getJAXBParserKeyForMethod(Method method) {
        Type returnVal = getReturnTypeForMethod(method);
@@ -1014,7 +1007,7 @@ public class RestAnnotationProcessor<T> {
 
             Annotation[] annotations = request.getJavaMethod().getParameterAnnotations()[entry.getKey()];
             for (Annotation a : annotations) {
-               if (Nullable.class.isAssignableFrom(a.annotationType()))
+               if (NULLABLE.apply(a))
                   continue OUTER;
             }
             Preconditions.checkNotNull(null, request.getJavaMethod().getName() + " parameter " + (entry.getKey() + 1));
@@ -1093,7 +1086,7 @@ public class RestAnnotationProcessor<T> {
    }
 
    private static List<String> getAcceptHeadersOrNull(Method method) {
-      List<String> accept = Collections.emptyList();
+      List<String> accept = ImmutableList.of();
       if (method.getDeclaringClass().isAnnotationPresent(Consumes.class)) {
          Consumes header = method.getDeclaringClass().getAnnotation(Consumes.class);
          accept = asList(header.value());
@@ -1188,17 +1181,11 @@ public class RestAnnotationProcessor<T> {
          for (Annotation key : entry.getValue()) {
             Set<Annotation> extractors = indexToParamExtractor.get(entry.getKey());
             String paramKey = ((PathParam) key).value();
-            String paramValue;
-            if (extractors != null && extractors.size() > 0) {
-               ParamParser extractor = (ParamParser) extractors.iterator().next();
-               paramValue = injector.getInstance(extractor.value()).apply(args[entry.getKey()]);
-            } else {
-               paramValue = args[entry.getKey()].toString();
-            }
-            pathParamValues.put(paramKey, paramValue);
+            Optional<?> paramValue = getParamValue(method, args, extractors, entry, paramKey);
+            if (paramValue.isPresent())
+               pathParamValues.put(paramKey, paramValue.get().toString());
          }
       }
-
       if (method.isAnnotationPresent(PathParam.class) && method.isAnnotationPresent(ParamParser.class)) {
          String paramKey = method.getAnnotation(PathParam.class).value();
          String paramValue = injector.getInstance(method.getAnnotation(ParamParser.class).value()).apply(args);
@@ -1206,6 +1193,42 @@ public class RestAnnotationProcessor<T> {
 
       }
       return pathParamValues;
+   }
+
+   protected Optional<?> getParamValue(Method method, Object[] args, Set<Annotation> extractors,
+            Entry<Integer, Set<Annotation>> entry, String paramKey) {
+      Integer argIndex = entry.getKey();
+      Object arg = args[argIndex];
+      if (extractors != null && extractors.size() > 0 && checkPresentOrNullable(method, paramKey, argIndex, arg)) {
+         ParamParser extractor = (ParamParser) extractors.iterator().next();
+         // ParamParsers can deal with nullable parameters
+         arg = injector.getInstance(extractor.value()).apply(arg);
+      }
+      checkPresentOrNullable(method, paramKey, argIndex, arg);
+      return Optional.fromNullable(arg);
+   }
+
+   private static boolean checkPresentOrNullable(Method method, String paramKey, Integer argIndex, Object arg) {
+      if (arg == null && !argNullable(method, argIndex))
+         throw new NullPointerException(String.format("param{%s} for method %s.%s", paramKey, method
+                  .getDeclaringClass().getSimpleName(), method.getName()));
+      return true;
+   }
+
+   private static boolean argNullable(Method method, Integer argIndex) {
+      return containsNullable(method.getParameterAnnotations()[argIndex]);
+   }
+
+   private static final Predicate<Annotation> NULLABLE = new Predicate<Annotation>() {
+
+      @Override
+      public boolean apply(Annotation in) {
+         return Nullable.class.isAssignableFrom(in.annotationType());
+      }
+   };
+
+   private static boolean containsNullable(Annotation[] annotations) {
+      return Iterables.any(ImmutableSet.copyOf(annotations), NULLABLE);
    }
 
    private Multimap<String, String> encodeValues(Multimap<String, String> unencoded, char... skips) {
@@ -1226,14 +1249,9 @@ public class RestAnnotationProcessor<T> {
          for (Annotation key : entry.getValue()) {
             Set<Annotation> extractors = indexToParamExtractor.get(entry.getKey());
             String paramKey = ((MatrixParam) key).value();
-            String paramValue;
-            if (extractors != null && extractors.size() > 0) {
-               ParamParser extractor = (ParamParser) extractors.iterator().next();
-               paramValue = injector.getInstance(extractor.value()).apply(args[entry.getKey()]);
-            } else {
-               paramValue = args[entry.getKey()].toString();
-            }
-            matrixParamValues.put(paramKey, paramValue);
+            Optional<?> paramValue = getParamValue(method, args, extractors, entry, paramKey);
+            if (paramValue.isPresent())
+               matrixParamValues.put(paramKey, paramValue.get().toString());
          }
       }
 
@@ -1257,16 +1275,9 @@ public class RestAnnotationProcessor<T> {
          for (Annotation key : entry.getValue()) {
             Set<Annotation> extractors = indexToParamExtractor.get(entry.getKey());
             String paramKey = ((FormParam) key).value();
-            String paramValue;
-            if (extractors != null && extractors.size() > 0) {
-               ParamParser extractor = (ParamParser) extractors.iterator().next();
-               paramValue = injector.getInstance(extractor.value()).apply(args[entry.getKey()]);
-            } else {
-               Object pvo = args[entry.getKey()];
-               Preconditions.checkNotNull(pvo, paramKey);
-               paramValue = pvo.toString();
-            }
-            formParamValues.put(paramKey, paramValue);
+            Optional<?> paramValue = getParamValue(method, args, extractors, entry, paramKey);
+            if (paramValue.isPresent())
+               formParamValues.put(paramKey, paramValue.get().toString());
          }
       }
 
@@ -1289,16 +1300,9 @@ public class RestAnnotationProcessor<T> {
          for (Annotation key : entry.getValue()) {
             Set<Annotation> extractors = indexToParamExtractor.get(entry.getKey());
             String paramKey = ((QueryParam) key).value();
-            Object paramValue;
-            if (extractors != null && extractors.size() > 0) {
-               ParamParser extractor = (ParamParser) extractors.iterator().next();
-               paramValue = injector.getInstance(extractor.value()).apply(args[entry.getKey()]);
-            } else {
-               paramValue = args[entry.getKey()];
-            }
-            if (paramValue != null) {
-                queryParamValues.put(paramKey, paramValue.toString());
-            }
+            Optional<?> paramValue = getParamValue(method, args, extractors, entry, paramKey);
+            if (paramValue.isPresent())
+               queryParamValues.put(paramKey, paramValue.get().toString());
          }
       }
 
@@ -1321,18 +1325,18 @@ public class RestAnnotationProcessor<T> {
          for (Annotation key : entry.getValue()) {
             Set<Annotation> extractors = indexToParamExtractor.get(entry.getKey());
             String paramKey = ((PayloadParam) key).value();
-            Object paramValue;
-            if (extractors != null && extractors.size() > 0) {
-               ParamParser extractor = (ParamParser) extractors.iterator().next();
-               paramValue = injector.getInstance(extractor.value()).apply(args[entry.getKey()]);
-            } else {
-               paramValue = args[entry.getKey()] != null ? args[entry.getKey()] : null;
-            }
-            postParams.put(paramKey, paramValue);
-
+            Optional<?> paramValue = getParamValue(method, args, extractors, entry, paramKey);
+            if (paramValue.isPresent())
+               postParams.put(paramKey, paramValue.get());
          }
       }
       return postParams;
    }
 
+   /**
+    * the class that is being processed
+    */
+   public Class<T> getDeclaring(){
+      return declaring;
+   }
 }

@@ -39,6 +39,8 @@ import org.jclouds.json.Json;
 import org.jclouds.json.internal.DeserializationConstructorAndReflectiveTypeAdapterFactory;
 import org.jclouds.json.internal.EnumTypeAdapterThatReturnsFromValue;
 import org.jclouds.json.internal.GsonWrapper;
+import org.jclouds.json.internal.IgnoreNullFluentIterableTypeAdapterFactory;
+import org.jclouds.json.internal.IgnoreNullIterableTypeAdapterFactory;
 import org.jclouds.json.internal.IgnoreNullMapTypeAdapterFactory;
 import org.jclouds.json.internal.IgnoreNullMultimapTypeAdapterFactory;
 import org.jclouds.json.internal.IgnoreNullSetTypeAdapterFactory;
@@ -81,7 +83,10 @@ public class GsonModule extends AbstractModule {
    @Provides
    @Singleton
    Gson provideGson(TypeAdapter<JsonBall> jsonAdapter, DateAdapter adapter, ByteListAdapter byteListAdapter,
-            ByteArrayAdapter byteArrayAdapter, PropertiesAdapter propertiesAdapter, JsonAdapterBindings bindings)
+            ByteArrayAdapter byteArrayAdapter, PropertiesAdapter propertiesAdapter, JsonAdapterBindings bindings,
+            OptionalTypeAdapterFactory optional, IgnoreNullSetTypeAdapterFactory set,
+            IgnoreNullMapTypeAdapterFactory map, IgnoreNullMultimapTypeAdapterFactory multimap,
+            IgnoreNullIterableTypeAdapterFactory iterable, IgnoreNullFluentIterableTypeAdapterFactory fluentIterable)
             throws Exception {
 
       FieldNamingStrategy serializationPolicy = new AnnotationOrNameFieldNamingStrategy(new ExtractSerializedName(),
@@ -96,10 +101,12 @@ public class GsonModule extends AbstractModule {
       }.getType(), byteListAdapter.nullSafe());
       builder.registerTypeAdapter(byte[].class, byteArrayAdapter.nullSafe());
       builder.registerTypeAdapter(JsonBall.class, jsonAdapter.nullSafe());
-      builder.registerTypeAdapterFactory(new OptionalTypeAdapterFactory());
-      builder.registerTypeAdapterFactory(new IgnoreNullSetTypeAdapterFactory());
-      builder.registerTypeAdapterFactory(new IgnoreNullMapTypeAdapterFactory());
-      builder.registerTypeAdapterFactory(new IgnoreNullMultimapTypeAdapterFactory());
+      builder.registerTypeAdapterFactory(optional);
+      builder.registerTypeAdapterFactory(iterable);
+      builder.registerTypeAdapterFactory(set);
+      builder.registerTypeAdapterFactory(map);
+      builder.registerTypeAdapterFactory(multimap);
+      builder.registerTypeAdapterFactory(fluentIterable);
 
       AnnotationConstructorNamingStrategy deserializationPolicy =
             new AnnotationConstructorNamingStrategy(

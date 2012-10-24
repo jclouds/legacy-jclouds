@@ -21,11 +21,8 @@ package org.jclouds.filesystem.strategy.internal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.File;
-import java.io.FileFilter;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -34,11 +31,11 @@ import javax.inject.Named;
 import javax.inject.Provider;
 
 import com.google.common.base.Throwables;
-import com.google.common.io.Closeables;
+import com.google.common.collect.ImmutableList;
+import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.jclouds.blobstore.LocalStorageStrategy;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobBuilder;
@@ -93,14 +90,17 @@ public class FilesystemStorageStrategyImpl implements LocalStorageStrategy {
 
    @Override
    public Iterable<String> getAllContainerNames() {
-      Iterable<String> containers = new Iterable<String>() {
-         @Override
-         public Iterator<String> iterator() {
-            return new FileIterator(buildPathStartingFromBaseDir(), DirectoryFileFilter.INSTANCE);
+      File[] files = new File(buildPathStartingFromBaseDir()).listFiles();
+      if (files == null) {
+         return ImmutableList.of();
+      }
+      ImmutableList.Builder<String> containers = ImmutableList.builder();
+      for (File file : files) {
+         if (file.isDirectory()) {
+            containers.add(file.getName());
          }
-      };
-
-      return containers;
+      }
+      return containers.build();
    }
 
    @Override
@@ -201,14 +201,13 @@ public class FilesystemStorageStrategyImpl implements LocalStorageStrategy {
       filesystemContainerNameValidator.validate(containerName);
       filesystemBlobKeyValidator.validate(blobKey);
       File outputFile = getFileForBlobKey(containerName, blobKey);
-      FileOutputStream output = null;
       try {
          Files.createParentDirs(outputFile);
          if (payload.getRawContent() instanceof File)
             Files.copy((File) payload.getRawContent(), outputFile);
          else {
-            output = new FileOutputStream(outputFile);
-            payload.writeTo(output);
+            payload = Payloads.newPayload(ByteStreams.toByteArray(payload));
+            Files.copy(payload, outputFile);
          }
          Payloads.calculateMD5(payload, crypto.md5());
          String eTag = CryptoStreams.hex(payload.getContentMetadata().getContentMD5());
@@ -219,7 +218,6 @@ public class FilesystemStorageStrategyImpl implements LocalStorageStrategy {
          }
          throw ex;
       } finally {
-         Closeables.closeQuietly(output);
          payload.release();
       }
    }
@@ -433,39 +431,6 @@ public class FilesystemStorageStrategyImpl implements LocalStorageStrategy {
          }
       }
       return folder;
-   }
-
-   private class FileIterator implements Iterator<String> {
-      int currentFileIndex = 0;
-      File[] children = new File[0];
-      File currentFile = null;
-
-      public FileIterator(String fileName, FileFilter filter) {
-         File file = new File(fileName);
-         if (file.exists() && file.isDirectory()) {
-            children = file.listFiles(filter);
-         }
-      }
-
-      @Override
-      public boolean hasNext() {
-         return currentFileIndex < children.length;
-      }
-
-      @Override
-      public String next() {
-         currentFile = children[currentFileIndex++];
-         return currentFile.getName();
-      }
-
-      @Override
-      public void remove() {
-         if (currentFile != null && currentFile.exists()) {
-            if (!currentFile.delete()) {
-               throw new RuntimeException("An error occurred deleting " + currentFile.getName());
-            }
-         }
-      }
    }
 
    private void populateBlobKeysInContainer(File directory, Set<String> blobNames) {

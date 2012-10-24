@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>        
-        <version>1.5.0-SNAPSHOT</version>
+        <version>1.6.0-SNAPSHOT</version>
         <relativePath>project/pom.xml</relativePath>
     </parent>
     <artifactId>jclouds-multi</artifactId>
@@ -45,7 +45,6 @@
         <module>blobstore</module>
         <module>skeletons</module>
         <module>drivers</module>
-        <module>antcontrib</module>
         <module>scriptbuilder</module>
         <module>allcompute</module>
         <module>allblobstore</module>

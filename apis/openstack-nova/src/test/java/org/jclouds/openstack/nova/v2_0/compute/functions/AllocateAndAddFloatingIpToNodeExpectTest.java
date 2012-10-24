@@ -57,7 +57,7 @@ public class AllocateAndAddFloatingIpToNodeExpectTest extends BaseNovaComputeSer
             host).name("Server 71592").status(Status.RUNNING).privateAddresses(ImmutableSet.of("10.4.27.237"))
             .credentials(LoginCredentials.builder().password("foo").build()).build();
 
-   HttpRequest allocateFloatingIP = HttpRequest.builder().method("POST").endpoint(
+   HttpRequest createFloatingIP = HttpRequest.builder().method("POST").endpoint(
             URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-floating-ips")).headers(
             ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
                      authToken).build()).payload(payloadFromStringWithContentType("{}", "application/json")).build();
@@ -65,7 +65,7 @@ public class AllocateAndAddFloatingIpToNodeExpectTest extends BaseNovaComputeSer
    HttpResponse addFloatingIPResponse = HttpResponse.builder().statusCode(200).build();
 
    public void testAllocateWhenAllocationReturnsIpIsAddedToServerAndUpdatesNodeMetadataButSavesCredentials() throws Exception {
-      HttpResponse allocateFloatingIPResponse = HttpResponse.builder().statusCode(200).payload(
+      HttpResponse createFloatingIPResponse = HttpResponse.builder().statusCode(200).payload(
                payloadFromResource("/floatingip_details.json")).build();
 
       HttpRequest addFloatingIPRequest = addFloatingIPForAddress("10.0.0.3");
@@ -73,7 +73,7 @@ public class AllocateAndAddFloatingIpToNodeExpectTest extends BaseNovaComputeSer
       AllocateAndAddFloatingIpToNode fn = requestsSendResponses(
                ImmutableMap.<HttpRequest, HttpResponse> builder().put(keystoneAuthWithUsernameAndPasswordAndTenantName,
                         responseWithKeystoneAccess).put(extensionsOfNovaRequest, extensionsOfNovaResponse).put(
-                        allocateFloatingIP, allocateFloatingIPResponse)
+                        createFloatingIP, createFloatingIPResponse)
                         .put(addFloatingIPRequest, addFloatingIPResponse).build()).getContext().utils().injector()
                .getInstance(AllocateAndAddFloatingIpToNode.class);
 
@@ -98,20 +98,20 @@ public class AllocateAndAddFloatingIpToNodeExpectTest extends BaseNovaComputeSer
    }
 
    public void testAllocateWhenAllocationFailsLookupUnusedIpAddToServerAndUpdatesNodeMetadata() throws Exception {
-      HttpResponse allocateFloatingIPResponse = HttpResponse
+      HttpResponse createFloatingIPResponse = HttpResponse
                .builder()
                .statusCode(400)
                .payload(
                         payloadFromStringWithContentType(
-                                 "{\"badRequest\": {\"message\": \"AddressLimitExceeded: Address quota exceeded. You cannot allocate any more addresses\", \"code\": 400}}",
+                                 "{\"badRequest\": {\"message\": \"AddressLimitExceeded: Address quota exceeded. You cannot create any more addresses\", \"code\": 400}}",
                                  "application/json")).build();
 
-      HttpRequest listFloatingIPs = HttpRequest.builder().method("GET").endpoint(
+      HttpRequest list = HttpRequest.builder().method("GET").endpoint(
                URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-floating-ips")).headers(
                ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
                         authToken).build()).build();
 
-      HttpResponse listFloatingIPsResponseForUnassigned = HttpResponse.builder().statusCode(200).payload(
+      HttpResponse listResponseForUnassigned = HttpResponse.builder().statusCode(200).payload(
                payloadFromResource("/floatingip_list.json")).build();
 
       HttpRequest addFloatingIPRequest = addFloatingIPForAddress("10.0.0.5");
@@ -119,9 +119,9 @@ public class AllocateAndAddFloatingIpToNodeExpectTest extends BaseNovaComputeSer
       AllocateAndAddFloatingIpToNode fn = requestsSendResponses(
                ImmutableMap.<HttpRequest, HttpResponse> builder().put(keystoneAuthWithUsernameAndPasswordAndTenantName,
                         responseWithKeystoneAccess).put(extensionsOfNovaRequest, extensionsOfNovaResponse).put(
-                        allocateFloatingIP, allocateFloatingIPResponse)
-                        .put(addFloatingIPRequest, addFloatingIPResponse).put(listFloatingIPs,
-                                 listFloatingIPsResponseForUnassigned).build()).getContext().utils().injector()
+                        createFloatingIP, createFloatingIPResponse)
+                        .put(addFloatingIPRequest, addFloatingIPResponse).put(list,
+                                 listResponseForUnassigned).build()).getContext().utils().injector()
                .getInstance(AllocateAndAddFloatingIpToNode.class);
 
       AtomicReference<NodeMetadata> nodeRef = new AtomicReference<NodeMetadata>(node);

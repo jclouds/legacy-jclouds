@@ -47,7 +47,7 @@ public class FlavorApiLiveTest extends BaseNovaApiLiveTest {
    public void testListFlavors() throws Exception {
       for (String zoneId : zones) {
          FlavorApi api = novaContext.getApi().getFlavorApiForZone(zoneId);
-         Set<? extends Resource> response = api.listFlavors();
+         Set<? extends Resource> response = api.list().concat().toImmutableSet();
          assertNotNull(response);
          assertFalse(response.isEmpty());
          for (Resource flavor : response) {
@@ -67,7 +67,7 @@ public class FlavorApiLiveTest extends BaseNovaApiLiveTest {
    public void testListFlavorsInDetail() throws Exception {
       for (String zoneId : zones) {
          FlavorApi api = novaContext.getApi().getFlavorApiForZone(zoneId);
-         Set<? extends Flavor> response = api.listFlavorsInDetail();
+         Set<? extends Flavor> response = api.listInDetail().concat().toImmutableSet();
          assertNotNull(response);
          assertFalse(response.isEmpty());
          for (Flavor flavor : response) {
@@ -90,9 +90,9 @@ public class FlavorApiLiveTest extends BaseNovaApiLiveTest {
    public void testGetFlavorById() throws Exception {
       for (String zoneId : zones) {
          FlavorApi api = novaContext.getApi().getFlavorApiForZone(zoneId);
-         Set<? extends Flavor> response = api.listFlavorsInDetail();
+         Set<? extends Flavor> response = api.listInDetail().concat().toImmutableSet();
          for (Flavor flavor : response) {
-            Flavor details = api.getFlavor(flavor.getId());
+            Flavor details = api.get(flavor.getId());
             assertNotNull(details);
             assertEquals(details.getId(), flavor.getId());
             assertEquals(details.getName(), flavor.getName());

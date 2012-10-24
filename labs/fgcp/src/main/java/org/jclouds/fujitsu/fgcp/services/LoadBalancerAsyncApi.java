@@ -18,32 +18,18 @@
  */
 package org.jclouds.fujitsu.fgcp.services;
 
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.fujitsu.fgcp.FGCPAsyncApi;
-import org.jclouds.fujitsu.fgcp.binders.BindAlsoToSystemId;
-import org.jclouds.fujitsu.fgcp.compute.functions.SingleElementResponseToElement;
-import org.jclouds.fujitsu.fgcp.domain.BuiltinServer;
-import org.jclouds.fujitsu.fgcp.domain.BuiltinServerBackup;
-import org.jclouds.fujitsu.fgcp.domain.BuiltinServerConfiguration;
-import org.jclouds.fujitsu.fgcp.domain.BuiltinServerStatus;
 import org.jclouds.fujitsu.fgcp.filters.RequestAuthenticator;
 import org.jclouds.fujitsu.fgcp.reference.RequestParameters;
-import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.PayloadParams;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.annotations.Transform;
-
-import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Non-blocking API relating to a built-in server, also called extended function
@@ -58,12 +44,12 @@ import com.google.common.util.concurrent.ListenableFuture;
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface LoadBalancerAsyncApi extends BuiltinServerAsyncApi {
 
-    /*
-    SLB_RULE,           getLBConfiguration(String id)
-    SLB_LOAD_STATISTICS,    getLoadBalancerStats(String id)
-    SLB_ERROR_STATISTICS,   getLoadBalancerErrorStats(String id)
-    SLB_CERTIFICATE_LIST,   getLoadBalancerCerts(String id)
-    SLB_CONNECTION,     getLoadBalancerConnection(String id)
+   /*
+   SLB_RULE,         getLBConfiguration(String id)
+   SLB_LOAD_STATISTICS,   getLoadBalancerStats(String id)
+   SLB_ERROR_STATISTICS,   getLoadBalancerErrorStats(String id)
+   SLB_CERTIFICATE_LIST,   getLoadBalancerCerts(String id)
+   SLB_CONNECTION,    getLoadBalancerConnection(String id)
 
-     */
+    */
 }

@@ -29,45 +29,45 @@ import com.google.common.base.Objects;
  */
 @XmlRootElement(name = "vnic")
 public class VNIC {
-    private String networkId;
+   private String networkId;
 
-    private String privateIp;
+   private String privateIp;
 
-    private int nicNo;
+   private int nicNo;
 
-    public String getNetworkId() {
-        return networkId;
-    }
+   public String getNetworkId() {
+      return networkId;
+   }
 
-    public String getPrivateIp() {
-        return privateIp;
-    }
+   public String getPrivateIp() {
+      return privateIp;
+   }
 
-    public int getNicNo() {
-        return nicNo;
-    }
+   public int getNicNo() {
+      return nicNo;
+   }
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(networkId);
-    }
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(networkId);
+   }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        VNIC that = VNIC.class.cast(obj);
-        return Objects.equal(this.networkId, that.networkId);
-    }
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      VNIC that = VNIC.class.cast(obj);
+      return Objects.equal(this.networkId, that.networkId);
+   }
 
-    @Override
-    public String toString() {
-        return Objects.toStringHelper(this).omitNullValues()
-                .add("networkId", networkId).add("privateIp", privateIp)
-                .add("nicNo", nicNo).toString();
-    }
+   @Override
+   public String toString() {
+      return Objects.toStringHelper(this).omitNullValues()
+            .add("networkId", networkId).add("privateIp", privateIp)
+            .add("nicNo", nicNo).toString();
+   }
 }

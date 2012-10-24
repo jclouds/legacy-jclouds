@@ -36,13 +36,13 @@ import com.google.common.collect.ImmutableSet;
  */
 @XmlRootElement(name = "ListServerTypeResponse")
 public class ListServerTypeResponse extends SetWithStatusResponse<ServerType> {
-    @XmlElementWrapper(name = "servertypes")
-    @XmlElement(name = "servertype")
-    private Set<ServerType> serverTypes;
+   @XmlElementWrapper(name = "servertypes")
+   @XmlElement(name = "servertype")
+   private Set<ServerType> serverTypes;
 
-    @Override
-    protected Set<ServerType> delegate() {
-        return serverTypes == null ? ImmutableSet.<ServerType> of()
-                : Collections.unmodifiableSet(serverTypes);
-    }
+   @Override
+   protected Set<ServerType> delegate() {
+      return serverTypes == null ? ImmutableSet.<ServerType> of()
+            : Collections.unmodifiableSet(serverTypes);
+   }
 }

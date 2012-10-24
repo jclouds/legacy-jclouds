@@ -25,76 +25,76 @@ package org.jclouds.fujitsu.fgcp.domain;
  * @author Dies Koper
  */
 public class Cause {
-    private String cat;
+   private String cat;
 
-    private String status;
+   private String status;
 
-    private String filePath;
+   private String filePath;
 
-    private String current;
+   private String current;
 
-    private String before;
+   private String before;
 
-    private String today;
+   private String today;
 
-    private String yesterday;
+   private String yesterday;
 
-    private String total;
+   private String total;
 
-    /**
-     * @return category
-     */
-    public String getCat() {
-        return cat;
-    }
+   /**
+    * @return category
+    */
+   public String getCat() {
+      return cat;
+   }
 
-    /**
-     * @return the status
-     */
-    public String getStatus() {
-        return status;
-    }
+   /**
+    * @return the status
+    */
+   public String getStatus() {
+      return status;
+   }
 
-    /**
-     * @return the filePath
-     */
-    public String getFilePath() {
-        return filePath;
-    }
+   /**
+    * @return the filePath
+    */
+   public String getFilePath() {
+      return filePath;
+   }
 
-    /**
-     * @return the current
-     */
-    public String getCurrent() {
-        return current;
-    }
+   /**
+    * @return the current
+    */
+   public String getCurrent() {
+      return current;
+   }
 
-    /**
-     * @return the before
-     */
-    public String getBefore() {
-        return before;
-    }
+   /**
+    * @return the before
+    */
+   public String getBefore() {
+      return before;
+   }
 
-    /**
-     * @return the today
-     */
-    public String getToday() {
-        return today;
-    }
+   /**
+    * @return the today
+    */
+   public String getToday() {
+      return today;
+   }
 
-    /**
-     * @return the yesterday
-     */
-    public String getYesterday() {
-        return yesterday;
-    }
+   /**
+    * @return the yesterday
+    */
+   public String getYesterday() {
+      return yesterday;
+   }
 
-    /**
-     * @return the total
-     */
-    public String getTotal() {
-        return total;
-    }
+   /**
+    * @return the total
+    */
+   public String getTotal() {
+      return total;
+   }
 
 }

@@ -34,7 +34,7 @@ import org.jclouds.http.HttpRequestFilter;
  */
 @Singleton
 public class StripExtraAcceptHeader implements HttpRequestFilter {
- 
+
    @Override
    public HttpRequest filter(HttpRequest request) throws HttpException {
       return request.toBuilder().replaceHeader("Accept", request.getFirstHeaderOrNull("Accept")).build();

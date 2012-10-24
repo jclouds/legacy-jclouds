@@ -25,10 +25,10 @@ import java.util.Map;
 
 import javax.inject.Singleton;
 
-import org.jclouds.hpcloud.objectstorage.HPCloudObjectStorageAsyncClient;
-import org.jclouds.hpcloud.objectstorage.HPCloudObjectStorageClient;
-import org.jclouds.hpcloud.objectstorage.extensions.HPCloudCDNAsyncClient;
-import org.jclouds.hpcloud.objectstorage.extensions.HPCloudCDNClient;
+import org.jclouds.hpcloud.objectstorage.HPCloudObjectStorageApi;
+import org.jclouds.hpcloud.objectstorage.HPCloudObjectStorageAsyncApi;
+import org.jclouds.hpcloud.objectstorage.extensions.CDNContainerApi;
+import org.jclouds.hpcloud.objectstorage.extensions.CDNContainerAsyncApi;
 import org.jclouds.hpcloud.services.HPExtensionCDN;
 import org.jclouds.hpcloud.services.HPExtensionServiceType;
 import org.jclouds.location.suppliers.RegionIdToURISupplier;
@@ -45,25 +45,25 @@ import com.google.inject.Provides;
 import com.google.inject.Scopes;
 
 /**
- * 
+ *
  * @author Adrian Cole
  */
 @ConfiguresRestClient
 public class HPCloudObjectStorageRestClientModule extends
-         SwiftRestClientModule<HPCloudObjectStorageClient, HPCloudObjectStorageAsyncClient> {
+         SwiftRestClientModule<HPCloudObjectStorageApi, HPCloudObjectStorageAsyncApi> {
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder().put(
-            HPCloudCDNClient.class, HPCloudCDNAsyncClient.class).build();
+            CDNContainerApi.class, CDNContainerAsyncApi.class).build();
 
    public HPCloudObjectStorageRestClientModule() {
-      super(TypeToken.of(HPCloudObjectStorageClient.class), TypeToken.of(HPCloudObjectStorageAsyncClient.class),
+      super(TypeToken.of(HPCloudObjectStorageApi.class), TypeToken.of(HPCloudObjectStorageAsyncApi.class),
                DELEGATE_MAP);
    }
 
    protected void bindResolvedClientsToCommonSwift() {
-      bind(CommonSwiftClient.class).to(HPCloudObjectStorageClient.class).in(Scopes.SINGLETON);
-      bind(CommonSwiftAsyncClient.class).to(HPCloudObjectStorageAsyncClient.class).in(Scopes.SINGLETON);
+      bind(CommonSwiftClient.class).to(HPCloudObjectStorageApi.class).in(Scopes.SINGLETON);
+      bind(CommonSwiftAsyncClient.class).to(HPCloudObjectStorageAsyncApi.class).in(Scopes.SINGLETON);
    }
-   
+
    @Provides
    @Singleton
    @HPExtensionCDN

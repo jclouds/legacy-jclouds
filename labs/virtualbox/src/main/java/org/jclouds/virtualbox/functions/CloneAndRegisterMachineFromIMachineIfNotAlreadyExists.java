@@ -19,6 +19,9 @@
 
 package org.jclouds.virtualbox.functions;
 
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.GUEST_OS_PASSWORD;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.GUEST_OS_USER;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,7 +63,7 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
    private final Supplier<VirtualBoxManager> manager;
    private final String workingDir;
    private final MachineUtils machineUtils;
-
+   
    @Inject
    public CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(Supplier<VirtualBoxManager> manager,
             @Named(VirtualBoxConstants.VIRTUALBOX_WORKINGDIR) String workingDir, MachineUtils machineUtils) {
@@ -104,15 +107,13 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
       if (isLinkedClone)
          options.add(CloneOptions.Link);
 
-      // TODO snapshot name
-      ISnapshot currentSnapshot = new TakeSnapshotIfNotAlreadyAttached(manager, "snapshotName", "snapshotDesc", logger)
-               .apply(master);
-
-      // clone
-      IProgress progress = currentSnapshot.getMachine().cloneTo(clonedMachine, CloneMode.MachineState, options);
-
+      ISnapshot currentSnapshot = new TakeSnapshotIfNotAlreadyAttached(manager,
+            "snapshotName", "snapshotDesc", logger).apply(master);
+      IProgress progress = currentSnapshot.getMachine().cloneTo(clonedMachine,
+            CloneMode.MachineState, options);
       progress.waitForCompletion(-1);
-      logger.debug(String.format("Machine %s is cloned correctly", clonedMachine.getName()));
+      logger.debug(String.format("Machine %s is cloned correctly",
+            clonedMachine.getName()));
 
       // memory may not be the same as the master vm
       clonedMachine.setMemorySize(cloneSpec.getVmSpec().getMemory());
@@ -124,6 +125,13 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
       for (NetworkInterfaceCard networkInterfaceCard : networkSpec.getNetworkInterfaceCards()) {
          new AttachNicToMachine(vmSpec.getVmName(), machineUtils).apply(networkInterfaceCard);
       }
+      
+      // set only once the creds for this machine, same coming from its master
+      logger.debug(">> storing guest credentials on vm %s as extra data", clonedMachine.getName());
+      String masterUsername = master.getExtraData(GUEST_OS_USER);
+      String masterPassword = master.getExtraData(GUEST_OS_PASSWORD);
+      clonedMachine.setExtraData(GUEST_OS_USER, masterUsername);
+      clonedMachine.setExtraData(GUEST_OS_PASSWORD, masterPassword);
 
       return clonedMachine;
    }

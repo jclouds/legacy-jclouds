@@ -18,8 +18,6 @@
  */
 package org.jclouds.openstack.quantum.v1_0.features;
 
-import java.util.Set;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -40,9 +38,10 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.WrapWith;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnEmptyFluentIterableOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
+import com.google.common.collect.FluentIterable;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -63,8 +62,8 @@ public interface PortAsyncApi {
     */
    @GET
    @SelectJson("ports")
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<? extends Set<? extends Reference>> listReferences();
+   @ExceptionParser(ReturnEmptyFluentIterableOnNotFoundOr404.class)
+   ListenableFuture<? extends FluentIterable<? extends Reference>> listReferences();
 
    /**
     * @see PortApi#list
@@ -72,8 +71,8 @@ public interface PortAsyncApi {
    @GET
    @SelectJson("ports")
    @Path("/detail")
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<? extends Set<? extends Port>> list();
+   @ExceptionParser(ReturnEmptyFluentIterableOnNotFoundOr404.class)
+   ListenableFuture<? extends FluentIterable<? extends Port>> list();
 
    /**
     * @see PortApi#get

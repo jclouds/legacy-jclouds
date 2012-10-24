@@ -30,50 +30,50 @@ import org.jclouds.providers.internal.BaseProviderMetadata;
  */
 public class FGCPDEProviderMetadata extends FGCPProviderMetadata {
 
-    private static final long serialVersionUID = -8498457904032259345L;
+   private static final long serialVersionUID = -8498457904032259345L;
 
-    public static Builder builder() {
-        return new Builder();
-    }
+   public static Builder builder() {
+      return new Builder();
+   }
 
-    public FGCPDEProviderMetadata() {
-        super(builder());
-    }
+   public FGCPDEProviderMetadata() {
+      super(builder());
+   }
 
-    public FGCPDEProviderMetadata(Builder builder) {
-        super(builder);
-    }
+   public FGCPDEProviderMetadata(Builder builder) {
+      super(builder);
+   }
 
-    @Override
-    public Builder toBuilder() {
-        return builder().fromProviderMetadata(this);
-    }
+   @Override
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
 
-    public static class Builder extends BaseProviderMetadata.Builder {
+   public static class Builder extends BaseProviderMetadata.Builder {
 
-        protected Builder() {
-            id("fgcp-de")
-                    .name("Fujitsu Global Cloud Platform (FGCP) - DE")
-                    .apiMetadata(new FGCPApiMetadata())
-                    .homepage(
-                            URI.create("http://www.fujitsu.com/global/solutions/cloud/solutions/global-cloud-platform/index.html"))
-                    .console(URI.create("http://globalcloud.de.fujitsu.com"))
-                    .defaultProperties(FGCPApiMetadata.defaultProperties())
-                    .iso3166Codes("DE-BY")
-                    .endpoint(
-                            "https://api.globalcloud.de.fujitsu.com/ovissapi/endpoint")
-                    .defaultProperties(FGCPProviderMetadata.defaultProperties());
-        }
+      protected Builder() {
+         id("fgcp-de")
+               .name("Fujitsu Global Cloud Platform (FGCP) - DE")
+               .apiMetadata(new FGCPApiMetadata())
+               .homepage(
+                     URI.create("http://www.fujitsu.com/global/solutions/cloud/solutions/global-cloud-platform/index.html"))
+               .console(URI.create("http://globalcloud.de.fujitsu.com"))
+               .defaultProperties(FGCPApiMetadata.defaultProperties())
+               .iso3166Codes("DE-BY")
+               .endpoint(
+                     "https://api.globalcloud.de.fujitsu.com/ovissapi/endpoint")
+               .defaultProperties(FGCPProviderMetadata.defaultProperties());
+      }
 
-        @Override
-        public FGCPDEProviderMetadata build() {
-            return new FGCPDEProviderMetadata(this);
-        }
+      @Override
+      public FGCPDEProviderMetadata build() {
+         return new FGCPDEProviderMetadata(this);
+      }
 
-        @Override
-        public Builder fromProviderMetadata(ProviderMetadata in) {
-            super.fromProviderMetadata(in);
-            return this;
-        }
-    }
+      @Override
+      public Builder fromProviderMetadata(ProviderMetadata in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
+   }
 }

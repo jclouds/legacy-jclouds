@@ -24,6 +24,7 @@ import java.util.Properties;
 
 import org.jclouds.ContextBuilder;
 import org.jclouds.compute.reference.ComputeServiceConstants.InitStatusProperties;
+import org.jclouds.compute.reference.ComputeServiceConstants.PollPeriod;
 import org.testng.annotations.Test;
 
 /**
@@ -51,4 +52,22 @@ public class ComputeServicePropertiesTest {
       assertEquals(props.initStatusMaxPeriod, 5001);
    }
 
+   public void testDefaultPollPeriod() {
+	   PollPeriod props = ContextBuilder.newBuilder("stub").buildInjector()
+            .getInstance(PollPeriod.class);
+      assertEquals(props.pollInitialPeriod, 50);
+      assertEquals(props.pollMaxPeriod, 1000);
+   }
+
+   public void testOverridePollPeriod() {
+      Properties overrides = new Properties();
+      overrides.setProperty(ComputeServiceProperties.POLL_INITIAL_PERIOD, "501");
+      overrides.setProperty(ComputeServiceProperties.POLL_MAX_PERIOD, "5001");
+      
+      PollPeriod props = ContextBuilder.newBuilder("stub").overrides(overrides).buildInjector()
+            .getInstance(PollPeriod.class);
+      
+      assertEquals(props.pollInitialPeriod, 501);
+      assertEquals(props.pollMaxPeriod, 5001);
+   }
 }

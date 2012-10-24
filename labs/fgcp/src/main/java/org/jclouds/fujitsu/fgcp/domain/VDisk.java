@@ -30,57 +30,57 @@ import com.google.common.base.Objects;
  */
 @XmlRootElement(name = "vdisk")
 public class VDisk {
-    @XmlElement(name = "diskId")
-    private String id;
-    @XmlElement(name = "diskName")
-    private String name;
-    @XmlElement(name = "attachedTo")
-    private String attachedServer;
-    private String creator;
-    private double size;
+   @XmlElement(name = "diskId")
+   private String id;
+   @XmlElement(name = "diskName")
+   private String name;
+   @XmlElement(name = "attachedTo")
+   private String attachedServer;
+   private String creator;
+   private double size;
 
-    public String getId() {
-        return id;
-    }
+   public String getId() {
+      return id;
+   }
 
-    public String getName() {
-        return name;
-    }
+   public String getName() {
+      return name;
+   }
 
-    public String getAttachedServer() {
-        return attachedServer;
-    }
+   public String getAttachedServer() {
+      return attachedServer;
+   }
 
-    public String getCreator() {
-        return creator;
-    }
+   public String getCreator() {
+      return creator;
+   }
 
-    public double getSize() {
-        return size;
-    }
+   public double getSize() {
+      return size;
+   }
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(id);
-    }
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(id);
+   }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        VDisk that = VDisk.class.cast(obj);
-        return Objects.equal(this.id, that.id);
-    }
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      VDisk that = VDisk.class.cast(obj);
+      return Objects.equal(this.id, that.id);
+   }
 
-    @Override
-    public String toString() {
-        return Objects.toStringHelper(this).omitNullValues().add("id", id)
-                .add("name", name).add("attachedServer", attachedServer)
-                .add("creator", creator).add("size", size).toString();
-    }
+   @Override
+   public String toString() {
+      return Objects.toStringHelper(this).omitNullValues().add("id", id)
+            .add("name", name).add("attachedServer", attachedServer)
+            .add("creator", creator).add("size", size).toString();
+   }
 
 }

@@ -31,54 +31,54 @@ import com.google.common.base.Objects;
  * @author Dies Koper
  */
 public class Rule {
-    private String publicIp;
-    private String privateIp;
-    private boolean snapt;
+   private String publicIp;
+   private String privateIp;
+   private boolean snapt;
 
-    /**
-     * @return the publicIp
-     */
-    public String getPublicIp() {
-        return publicIp;
-    }
+   /**
+    * @return the publicIp
+    */
+   public String getPublicIp() {
+      return publicIp;
+   }
 
-    /**
-     * @return the privateIp
-     */
-    public String getPrivateIp() {
-        return privateIp;
-    }
+   /**
+    * @return the privateIp
+    */
+   public String getPrivateIp() {
+      return privateIp;
+   }
 
-    /**
-     * @return the snapt
-     */
-    public boolean isSnapt() {
-        return snapt;
-    }
+   /**
+    * @return the snapt
+    */
+   public boolean isSnapt() {
+      return snapt;
+   }
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(privateIp, publicIp, snapt);
-    }
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(privateIp, publicIp, snapt);
+   }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Rule that = Rule.class.cast(obj);
-        return Objects.equal(this.privateIp, that.privateIp)
-                && Objects.equal(this.publicIp, that.publicIp)
-                && Objects.equal(this.snapt, that.snapt);
-    }
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      Rule that = Rule.class.cast(obj);
+      return Objects.equal(this.privateIp, that.privateIp)
+            && Objects.equal(this.publicIp, that.publicIp)
+            && Objects.equal(this.snapt, that.snapt);
+   }
 
-    @Override
-    public String toString() {
-        return Objects.toStringHelper(this).omitNullValues()
-                .add("privateIp", privateIp).add("publicIp", publicIp)
-                .add("snapt", snapt).toString();
-    }
+   @Override
+   public String toString() {
+      return Objects.toStringHelper(this).omitNullValues()
+            .add("privateIp", privateIp).add("publicIp", publicIp)
+            .add("snapt", snapt).toString();
+   }
 }

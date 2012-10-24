@@ -73,6 +73,7 @@ public class BindRestContextWithWildcardExtendsExplicitAndRawTypeTest {
 
    private Injector injectorFor(ProviderMetadata md) {
       return Guice.createInjector(
+               new BindNameToContext("test"),
                new BindProviderMetadataContextAndCredentials(md, new Credentials("user", "pass")),
                new BindRestContextWithWildcardExtendsExplicitAndRawType(RestApiMetadata.class.cast(md
                                  .getApiMetadata())),

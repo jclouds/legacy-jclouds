@@ -38,37 +38,37 @@ import org.jclouds.fujitsu.fgcp.domain.VSystemWithDetails;
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface VirtualSystemApi {
 
-    void destroy(String id);
+   void destroy(String id);
 
-    VSystemStatus getStatus(String id);
+   VSystemStatus getStatus(String id);
 
-    VSystem get(String id);
+   VSystem get(String id);
 
-    VSystemWithDetails getDetails(String id);
+   VSystemWithDetails getDetails(String id);
 
-    void update(String id, String name, String value);
+   void update(String id, String name, String value);
 
-    void updateConfiguration(String id, String name, String value);
+   void updateConfiguration(String id, String name, String value);
 
-    String createServer(String name, String type, String diskImageId,
-            String networkId);
+   String createServer(String name, String type, String diskImageId,
+         String networkId);
 
-    Set<VServer> listServers(String id);
+   Set<VServer> listServers(String id);
 
-    String createBuiltinServer(String name, String networkId);
+   String createBuiltinServer(String name, String networkId);
 
-    Set<BuiltinServer> listBuiltinServers(String id, String type);
+   Set<BuiltinServer> listBuiltinServers(String id, String type);
 
-    String createDisk(String id, String name, int size);
+   String createDisk(String id, String name, int size);
 
-    Set<VDisk> listDisks(String id);
+   Set<VDisk> listDisks(String id);
 
-    void allocatePublicIP(String id);
+   void allocatePublicIP(String id);
 
-    Set<PublicIP> listPublicIPs(String id);
+   Set<PublicIP> listPublicIPs(String id);
 
-    String standByConsole(String id, String networkId);
+   String standByConsole(String id, String networkId);
 
-    void registerAsPrivateVSYSDescriptor(String id,
-            String vsysDescriptorXMLFilePath);
+   void registerAsPrivateVSYSDescriptor(String id,
+         String vsysDescriptorXMLFilePath);
 }

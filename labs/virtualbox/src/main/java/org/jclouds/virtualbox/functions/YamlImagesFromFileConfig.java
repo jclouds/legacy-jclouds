@@ -22,7 +22,6 @@ package org.jclouds.virtualbox.functions;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
@@ -32,7 +31,9 @@ import javax.inject.Named;
 import org.apache.commons.io.IOUtils;
 import org.jclouds.virtualbox.config.VirtualBoxConstants;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Supplier;
+import com.google.common.io.Files;
 
 /**
  * A supplier for vbox yaml config that reads a yaml whose path is stored under
@@ -59,7 +60,7 @@ public class YamlImagesFromFileConfig implements Supplier<String> {
          if (!yamlFile.exists()) {
             yamlDesc = IOUtils.toString(new InputStreamReader(getClass().getResourceAsStream("/default-images.yaml")));
          } else {
-            yamlDesc = IOUtils.toString(new FileInputStream(yamlFile));
+            yamlDesc = Files.toString(yamlFile, Charsets.UTF_8);
          }
          checkNotNull(yamlDesc, "yaml descriptor");
          return yamlDesc;

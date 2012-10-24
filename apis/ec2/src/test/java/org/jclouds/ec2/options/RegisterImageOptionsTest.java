@@ -24,7 +24,7 @@ import static org.jclouds.ec2.options.RegisterImageOptions.Builder.withKernelId;
 import static org.jclouds.ec2.options.RegisterImageOptions.Builder.withRamdisk;
 import static org.testng.Assert.assertEquals;
 
-import java.util.Collections;
+import com.google.common.collect.ImmutableList;
 
 import org.jclouds.ec2.domain.Image.Architecture;
 import org.jclouds.http.options.HttpRequestOptions;
@@ -47,21 +47,21 @@ public class RegisterImageOptionsTest {
    public void testWithDescription() {
       RegisterImageOptions options = new RegisterImageOptions();
       options.withDescription("test");
-      assertEquals(options.buildFormParameters().get("Description"), Collections
-               .singletonList("test"));
+      assertEquals(options.buildFormParameters().get("Description"),
+               ImmutableList.of("test"));
    }
 
    @Test
    public void testNullWithDescription() {
       RegisterImageOptions options = new RegisterImageOptions();
-      assertEquals(options.buildFormParameters().get("Description"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("Description"), ImmutableList.of());
    }
 
    @Test
    public void testWithDescriptionStatic() {
       RegisterImageOptions options = withDescription("test");
-      assertEquals(options.buildFormParameters().get("Description"), Collections
-               .singletonList("test"));
+      assertEquals(options.buildFormParameters().get("Description"),
+               ImmutableList.of("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
@@ -73,21 +73,21 @@ public class RegisterImageOptionsTest {
    public void testWithArchitecture() {
       RegisterImageOptions options = new RegisterImageOptions();
       options.asArchitecture(Architecture.I386);
-      assertEquals(options.buildFormParameters().get("Architecture"), Collections
-               .singletonList("i386"));
+      assertEquals(options.buildFormParameters().get("Architecture"),
+               ImmutableList.of("i386"));
    }
 
    @Test
    public void testNullWithArchitecture() {
       RegisterImageOptions options = new RegisterImageOptions();
-      assertEquals(options.buildFormParameters().get("Architecture"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("Architecture"), ImmutableList.of());
    }
 
    @Test
    public void testWithArchitectureStatic() {
       RegisterImageOptions options = asArchitecture(Architecture.I386);
-      assertEquals(options.buildFormParameters().get("Architecture"), Collections
-               .singletonList("i386"));
+      assertEquals(options.buildFormParameters().get("Architecture"),
+               ImmutableList.of("i386"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
@@ -99,19 +99,19 @@ public class RegisterImageOptionsTest {
    public void testWithKernelId() {
       RegisterImageOptions options = new RegisterImageOptions();
       options.withKernelId("test");
-      assertEquals(options.buildFormParameters().get("KernelId"), Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("KernelId"), ImmutableList.of("test"));
    }
 
    @Test
    public void testNullWithKernelId() {
       RegisterImageOptions options = new RegisterImageOptions();
-      assertEquals(options.buildFormParameters().get("KernelId"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("KernelId"), ImmutableList.of());
    }
 
    @Test
    public void testWithKernelIdStatic() {
       RegisterImageOptions options = withKernelId("test");
-      assertEquals(options.buildFormParameters().get("KernelId"), Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("KernelId"), ImmutableList.of("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
@@ -123,21 +123,21 @@ public class RegisterImageOptionsTest {
    public void testWithRamdisk() {
       RegisterImageOptions options = new RegisterImageOptions();
       options.withRamdisk("test");
-      assertEquals(options.buildFormParameters().get("RamdiskId"), Collections
-               .singletonList("test"));
+      assertEquals(options.buildFormParameters().get("RamdiskId"),
+               ImmutableList.of("test"));
    }
 
    @Test
    public void testNullWithRamdisk() {
       RegisterImageOptions options = new RegisterImageOptions();
-      assertEquals(options.buildFormParameters().get("RamdiskId"), Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("RamdiskId"), ImmutableList.of());
    }
 
    @Test
    public void testWithRamdiskStatic() {
       RegisterImageOptions options = withRamdisk("test");
-      assertEquals(options.buildFormParameters().get("RamdiskId"), Collections
-               .singletonList("test"));
+      assertEquals(options.buildFormParameters().get("RamdiskId"),
+               ImmutableList.of("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)

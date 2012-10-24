@@ -28,17 +28,17 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "CreateVDiskResponse")
 public class CreateVDiskResponse extends StatusResponse implements
-        SingleElementResponse {
-    @XmlElement(required = true)
-    private String vdiskId;
+      SingleElementResponse {
+   @XmlElement(required = true)
+   private String vdiskId;
 
-    @Override
-    public String toString() {
-        return getElement();
-    }
+   @Override
+   public String toString() {
+      return getElement();
+   }
 
-    @Override
-    public String getElement() {
-        return vdiskId;
-    }
+   @Override
+   public String getElement() {
+      return vdiskId;
+   }
 }

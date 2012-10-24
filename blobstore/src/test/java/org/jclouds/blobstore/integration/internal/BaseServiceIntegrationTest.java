@@ -19,6 +19,7 @@
 package org.jclouds.blobstore.integration.internal;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.util.Set;
 
@@ -34,7 +35,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 /**
- * 
+ *
  * @author Adrian Cole
  */
 public class BaseServiceIntegrationTest extends BaseBlobStoreIntegrationTest {
@@ -64,6 +65,7 @@ public class BaseServiceIntegrationTest extends BaseBlobStoreIntegrationTest {
                         return containerName.equals(md.getName()) && location.equals(md.getLocation());
                      }
                   }) : String.format("container %s/%s not found in list %s", location, containerName, list);
+                  assertTrue(view.getBlobStore().containerExists(containerName), containerName);
                }
 
             });

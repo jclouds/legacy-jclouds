@@ -23,8 +23,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeoutException;
 
 import org.jclouds.cache.ForwardingCacheLoader;
+import org.jclouds.util.Throwables2;
 
 import com.google.common.annotations.Beta;
 import com.google.common.cache.CacheLoader;
@@ -93,7 +95,16 @@ public class BackoffExponentiallyAndRetryOnThrowableCacheLoader<K, V> extends Fo
 
          @Override
          public V call() throws Exception {
-            return BackoffExponentiallyAndRetryOnThrowableCacheLoader.super.load(key);
+            try {
+               return BackoffExponentiallyAndRetryOnThrowableCacheLoader.super.load(key);
+            } catch (Exception e) {
+               TimeoutException te = Throwables2.getFirstThrowableOfType(e,
+                  TimeoutException.class);
+               if (te != null) {
+                  throw te;
+               }
+               throw e;
+            }
          }
       });
    }

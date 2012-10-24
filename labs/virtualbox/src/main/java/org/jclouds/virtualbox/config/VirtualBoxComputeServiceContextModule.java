@@ -150,7 +150,10 @@ public class VirtualBoxComputeServiceContextModule extends
 
          @Override
          public VirtualBoxManager apply(Supplier<NodeMetadata> nodeSupplier) {
-            return VirtualBoxManager.createInstance(nodeSupplier.get().getId());
+            if(nodeSupplier.get().getId() != null)
+            	return VirtualBoxManager.createInstance(nodeSupplier.get().getId());
+
+           	return VirtualBoxManager.createInstance("");
          }
 
          @Override
@@ -233,4 +236,5 @@ public class VirtualBoxComputeServiceContextModule extends
    protected Map<MachineState, Image.Status> toPortableImageStatus() {
       return toPortableImageStatus;
    }
+
 }

@@ -34,7 +34,6 @@
 
 package org.jclouds.concurrent;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.AbstractExecutorService;
 import java.util.concurrent.ExecutorService;
@@ -46,6 +45,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.ImmutableList;
 
 /**
  * functions related to or replacing those in
@@ -146,7 +146,7 @@ public class MoreExecutors {
       @Override
       public List<Runnable> shutdownNow() {
          shutdown();
-         return Collections.emptyList();
+         return ImmutableList.of();
       }
 
       @Override

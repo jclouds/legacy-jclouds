@@ -18,9 +18,6 @@
  */
 package org.jclouds.openstack.nova.v2_0.extensions;
 
-import java.util.Map;
-import java.util.Set;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -32,6 +29,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.openstack.nova.v2_0.domain.KeyPair;
+import org.jclouds.openstack.nova.v2_0.functions.internal.ParseKeyPairs;
 import org.jclouds.openstack.v2_0.ServiceType;
 import org.jclouds.openstack.v2_0.features.ExtensionAsyncApi;
 import org.jclouds.openstack.v2_0.services.Extension;
@@ -39,11 +37,14 @@ import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.Payload;
 import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.SkipEncoding;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnEmptyFluentIterableOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
 
+import com.google.common.annotations.Beta;
+import com.google.common.collect.FluentIterable;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -59,6 +60,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see <a href="http://nova.openstack.org/api_ext" />
  * @see <a href="http://nova.openstack.org/api_ext/ext_keypairs.html" />
  */
+@Beta
 @Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.KEYPAIRS)
 @SkipEncoding({ '/', '=' })
 @RequestFilters(AuthenticateRequest.class)
@@ -66,10 +68,10 @@ public interface KeyPairAsyncApi {
 
    @GET
    @Path("/os-keypairs")
-   @SelectJson("keypairs")
+   @ResponseParser(ParseKeyPairs.class)
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<? extends Set<? extends Map<String, ? extends KeyPair>>> listKeyPairs();
+   @ExceptionParser(ReturnEmptyFluentIterableOnNotFoundOr404.class)
+   ListenableFuture<? extends FluentIterable<? extends KeyPair>> list();
 
    @POST
    @Path("/os-keypairs")
@@ -77,7 +79,7 @@ public interface KeyPairAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("%7B\"keypair\":%7B\"name\":\"{name}\"%7D%7D")
-   ListenableFuture<? extends KeyPair> createKeyPair(@PayloadParam("name") String name);
+   ListenableFuture<? extends KeyPair> create(@PayloadParam("name") String name);
 
    @POST
    @Path("/os-keypairs")
@@ -85,13 +87,13 @@ public interface KeyPairAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("%7B\"keypair\":%7B\"name\":\"{name}\",\"public_key\":\"{publicKey}\"%7D%7D")
-   ListenableFuture<? extends KeyPair> createKeyPairWithPublicKey(@PayloadParam("name") String name,
+   ListenableFuture<? extends KeyPair> createWithPublicKey(@PayloadParam("name") String name,
          @PayloadParam("publicKey") String publicKey);
 
    @DELETE
    @Path("/os-keypairs/{name}")
    @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
    @Consumes
-   ListenableFuture<Boolean> deleteKeyPair(@PathParam("name") String name);
+   ListenableFuture<Boolean> delete(@PathParam("name") String name);
 
 }

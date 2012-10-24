@@ -24,6 +24,8 @@ import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_PRECONFIGURATION_URL;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_WORKINGDIR;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_GUEST_MEMORY;
+
 
 import java.io.File;
 import java.net.URI;
@@ -72,16 +74,17 @@ public class VirtualBoxApiMetadata extends BaseApiMetadata {
                + "initrd=/install/initrd.gz -- <Enter>");
 
       String workingDir = System.getProperty("test.virtualbox.workingDir", VIRTUALBOX_DEFAULT_DIR);
-
       properties.put(VIRTUALBOX_WORKINGDIR, workingDir);
 
+      String ram = System.getProperty(VIRTUALBOX_GUEST_MEMORY, "1024");
+      properties.put(VIRTUALBOX_GUEST_MEMORY, ram);
+      
       String yamlDescriptor = System.getProperty("test.virtualbox.image.descriptor.yaml", VIRTUALBOX_WORKINGDIR
                + File.separator + "images.yaml");
 
       properties.put(VIRTUALBOX_IMAGES_DESCRIPTOR, yamlDescriptor);
-
       properties.put(VIRTUALBOX_PRECONFIGURATION_URL, "http://10.0.2.2:23232/preseed.cfg");
-      properties.setProperty(TEMPLATE, "osFamily=UBUNTU,osVersionMatches=11.10,os64Bit=true,osArchMatches=x86,loginUser=toor:password,authenticateSudo=true");
+      properties.setProperty(TEMPLATE, "osFamily=UBUNTU,osVersionMatches=12.04.1,os64Bit=true,osArchMatches=amd64"); 
       return properties;
    }
 
@@ -93,8 +96,8 @@ public class VirtualBoxApiMetadata extends BaseApiMetadata {
          .identityName("User")
          .credentialName("Password")
          .documentation(URI.create("https://www.virtualbox.org/sdkref/index.html"))
-         .defaultIdentity("administrator")
-         .defaultCredential("12345")
+         .defaultIdentity(System.getProperty("user.name"))
+         .defaultCredential("CHANGE_ME")
          .defaultEndpoint("http://localhost:18083/")
          .documentation(URI.create("https://github.com/jclouds/jclouds/tree/master/apis/byon"))
           // later version not in maven, yet

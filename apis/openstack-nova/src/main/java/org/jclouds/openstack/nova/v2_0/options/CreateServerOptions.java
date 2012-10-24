@@ -152,7 +152,7 @@ public class CreateServerOptions implements MapBinder {
       return string().toString();
    }
 
-   private class ServerRequest {
+   static class ServerRequest {
       final String name;
       final String imageRef;
       final String flavorRef;

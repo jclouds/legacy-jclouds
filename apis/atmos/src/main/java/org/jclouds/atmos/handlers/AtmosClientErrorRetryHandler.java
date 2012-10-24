@@ -37,6 +37,7 @@ import com.google.inject.Inject;
 /**
  * Handles Retryable responses with error codes in the 4xx range
  * 
+ * @see Error codes section at <a href="https://www.synaptic.att.com/assets/us/en/home/Atmos_Programmers_Guide_1.3.4A.pdf" />
  * @author Adrian Cole
  */
 public class AtmosClientErrorRetryHandler implements HttpRetryHandler {
@@ -62,14 +63,14 @@ public class AtmosClientErrorRetryHandler implements HttpRetryHandler {
       if (response.getStatusCode() == 404 && command.getCurrentRequest().getMethod().equals("DELETE")) {
          command.incrementFailureCount();
          return true;
-      } else if (response.getStatusCode() == 409 || response.getStatusCode() == 400) {
+      } else if (response.getStatusCode() == 409) {
          byte[] content = HttpUtils.closeClientButKeepContentStream(response);
          // Content can be null in the case of HEAD requests
          if (content != null) {
             try {
                AtmosError error = utils.parseAtmosErrorFromContent(command, response,
                         new String(content));
-               if (error.getCode() == 1016) {
+               if (error.getCode() == 1006) {
                   return backoffHandler.shouldRetryRequest(command, response);
                }
                // don't increment count before here, since backoff handler does already

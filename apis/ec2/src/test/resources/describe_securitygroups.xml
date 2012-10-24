@@ -1,36 +1,37 @@
-<DescribeSecurityGroupsResponse xmlns="http://ec2.amazonaws.com/doc/2009-11-30/">
-  <securityGroupInfo>
-    <item>
-      <ownerId>UYY3TLBUXIEON5NQVUUX6OMPWBZIQNFM</ownerId>
-      <groupName>WebServers</groupName>
-      <groupDescription>Web Servers</groupDescription>
-      <ipPermissions>
-        <item>
-      <ipProtocol>tcp</ipProtocol>
-      <fromPort>80</fromPort>
-      <toPort>80</toPort>
-      <groups/>
-      <ipRanges>
-        <item>
-          <cidrIp>0.0.0.0/0</cidrIp>
-        </item>
-      </ipRanges>
-         </item>
-      </ipPermissions>
-    </item>
-    <item>
-      <ownerId>UYY3TLBUXIEON5NQVUUX6OMPWBZIQNFM</ownerId>
-      <groupName>RangedPortsBySource</groupName>
-      <groupDescription>Group A</groupDescription>
-      <ipPermissions>
-    <item>
-      <ipProtocol>tcp</ipProtocol>
-      <fromPort>6000</fromPort>
-      <toPort>7000</toPort>
-      <groups/>
-      <ipRanges/>
-    </item>
-      </ipPermissions>
-    </item>
-  </securityGroupInfo>
+<DescribeSecurityGroupsResponse
+	xmlns="http://ec2.amazonaws.com/doc/2009-11-30/">
+	<securityGroupInfo>
+		<item>
+			<ownerId>UYY3TLBUXIEON5NQVUUX6OMPWBZIQNFM</ownerId>
+			<groupName>WebServers</groupName>
+			<groupDescription>Web Servers</groupDescription>
+			<ipPermissions>
+				<item>
+					<ipProtocol>tcp</ipProtocol>
+					<fromPort>80</fromPort>
+					<toPort>80</toPort>
+					<groups />
+					<ipRanges>
+						<item>
+							<cidrIp>0.0.0.0/0</cidrIp>
+						</item>
+					</ipRanges>
+				</item>
+			</ipPermissions>
+		</item>
+		<item>
+			<ownerId>UYY3TLBUXIEON5NQVUUX6OMPWBZIQNFM</ownerId>
+			<groupName>RangedPortsBySource</groupName>
+			<groupDescription>Group A</groupDescription>
+			<ipPermissions>
+				<item>
+					<ipProtocol>tcp</ipProtocol>
+					<fromPort>6000</fromPort>
+					<toPort>7000</toPort>
+					<groups />
+					<ipRanges />
+				</item>
+			</ipPermissions>
+		</item>
+	</securityGroupInfo>
 </DescribeSecurityGroupsResponse>

@@ -23,9 +23,13 @@ import static org.testng.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterators;
 
 import org.apache.commons.io.FileUtils;
 
@@ -37,19 +41,16 @@ import org.apache.commons.io.FileUtils;
 public class TestUtils {
 
     private static final String TARGET_RESOURCE_DIR = "." + File.separator + "src" + File.separator + "test" + File.separator + "resources" + File.separator;
+
     /** All the files available for the tests */
-    private static String[] imageResource = new String[]{
-        TARGET_RESOURCE_DIR + "image1.jpg",
-        TARGET_RESOURCE_DIR + "image2.jpg",
-        TARGET_RESOURCE_DIR + "image3.jpg",
-        TARGET_RESOURCE_DIR + "image4.jpg"
-    };
-    private static int imageResourceIndex = 0;
+    private static final Iterator<File> IMAGE_RESOURCES =
+            Iterators.cycle(ImmutableList.of(
+                    new File(TARGET_RESOURCE_DIR + "image1.jpg"),
+                    new File(TARGET_RESOURCE_DIR + "image2.jpg"),
+                    new File(TARGET_RESOURCE_DIR + "image3.jpg"),
+                    new File(TARGET_RESOURCE_DIR + "image4.jpg")));
 
     public static final String TARGET_BASE_DIR = "." + File.separator + "target" + File.separator + "basedir" + File.separator;
-
-    public static final Object[][] NO_INVOCATIONS = new Object[0][0];
-    public static final Object[][] SINGLE_NO_ARG_INVOCATION = new Object[][] { new Object[0] };
 
     public static boolean isWindowsOs() {
         return System.getProperty("os.name", "").toLowerCase().contains("windows");
@@ -194,8 +195,6 @@ public class TestUtils {
      * @return
      */
     public static File getImageForBlobPayload() {
-        String fileName = imageResource[imageResourceIndex++];
-        if (imageResourceIndex >= imageResource.length) imageResourceIndex = 0;
-        return new File(fileName);
+        return IMAGE_RESOURCES.next();
     }
 }

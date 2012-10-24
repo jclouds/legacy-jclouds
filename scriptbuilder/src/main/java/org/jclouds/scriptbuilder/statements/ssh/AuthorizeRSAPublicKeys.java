@@ -22,7 +22,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.scriptbuilder.domain.Statements.appendFile;
 import static org.jclouds.scriptbuilder.domain.Statements.exec;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.jclouds.scriptbuilder.domain.OsFamily;
@@ -53,7 +52,7 @@ public class AuthorizeRSAPublicKeys implements Statement {
 
    @Override
    public Iterable<String> functionDependencies(OsFamily family) {
-      return Collections.emptyList();
+      return ImmutableList.of();
    }
 
    @Override

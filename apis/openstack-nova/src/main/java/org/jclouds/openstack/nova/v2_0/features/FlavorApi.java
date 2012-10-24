@@ -18,20 +18,22 @@
  */
 package org.jclouds.openstack.nova.v2_0.features;
 
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.collect.PagedIterable;
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.openstack.keystone.v2_0.domain.PaginatedCollection;
 import org.jclouds.openstack.nova.v2_0.domain.Flavor;
 import org.jclouds.openstack.v2_0.domain.Resource;
+import org.jclouds.openstack.v2_0.options.PaginationOptions;
 
 /**
  * Provides asynchronous access to Flavors via their REST API.
  * <p/>
  * 
- * @see FlavorApi
+ * @see FlavorAsyncApi
  * @see <a href=
- *      "http://docs.openstack.org/api/openstack-compute/1.1/content/Flavors-d1e4180.html"
+ *      "http://docs.openstack.org/api/openstack-compute/2/content/List_Flavors-d1e4188.html"
  *      />
  * @author Jeremy Daggett
  */
@@ -43,14 +45,18 @@ public interface FlavorApi {
     * 
     * @return all flavors (IDs, names, links)
     */
-   Set<? extends Resource> listFlavors();
+   PagedIterable<? extends Resource> list();
+
+   PaginatedCollection<? extends Resource> list(PaginationOptions options);
 
    /**
     * List all flavors (all details)
     * 
     * @return all flavors (all details)
     */
-   Set<? extends Flavor> listFlavorsInDetail();
+   PagedIterable<? extends Flavor> listInDetail();
+
+   PaginatedCollection<? extends Flavor> listInDetail(PaginationOptions options);
 
    /**
     * List details of the specified flavor
@@ -59,6 +65,6 @@ public interface FlavorApi {
     *           id of the flavor
     * @return flavor or null if not found
     */
-   Flavor getFlavor(String id);
+   Flavor get(String id);
 
 }

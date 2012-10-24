@@ -1,0 +1,16 @@
+{"response":{"status":{"code":200,"timestamp":"2012-06-21T14:10:57+02:00","text":"OK"},
+    "server":{
+        "serverid":"vz1840356",
+        "hostname":"glesys-s",
+        "description":"glesys-s-6dd",
+        "cpucores":1,
+        "memorysize":512,
+        "disksize":5,
+        "transfer":50,
+        "templatename":"Ubuntu 10.04 LTS 32-bit",
+        "datacenter":"Falkenberg",
+        "managedhosting":"no",
+        "platform":"OpenVZ",
+        "cost":{"amount":10.22,"currency":"EUR","timeperiod":"month"},
+        "iplist":[{"ipaddress":"31.192.231.254","version":4,"cost":2,"currency":"EUR"}],"state":"running"},
+        "debug":{"input":{"includestate":"1","serverid":"vz1840356"}}}}

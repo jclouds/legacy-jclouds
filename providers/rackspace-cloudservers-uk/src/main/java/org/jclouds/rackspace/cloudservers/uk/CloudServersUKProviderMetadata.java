@@ -28,6 +28,7 @@ import java.util.Properties;
 
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule.ZoneModule;
 import org.jclouds.openstack.nova.v2_0.NovaApiMetadata;
+import org.jclouds.openstack.nova.v2_0.config.NovaParserModule;
 import org.jclouds.openstack.nova.v2_0.config.NovaRestClientModule;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
@@ -88,6 +89,7 @@ public class CloudServersUKProviderMetadata extends BaseProviderMetadata {
                   .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
                                               .add(CloudIdentityAuthenticationModule.class)
                                               .add(ZoneModule.class)
+                                              .add(NovaParserModule.class)
                                               .add(NovaRestClientModule.class)
                                               .add(CloudServersUKComputeServiceContextModule.class).build())
                   .build())

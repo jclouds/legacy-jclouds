@@ -44,6 +44,9 @@ import com.google.common.base.Predicate;
  * @author Adrian Cole
  */
 public class RetryablePredicate<T> implements Predicate<T> {
+   public static final long DEFAULT_PERIOD = 50l;
+   public static final long DEFAULT_MAX_PERIOD = 1000l;
+
    private final long maxWait;
    private final long period;
    private final long maxPeriod;
@@ -63,8 +66,12 @@ public class RetryablePredicate<T> implements Predicate<T> {
       this(predicate, maxWait, period, period * 10l, unit);
    }
 
+   public RetryablePredicate(Predicate<T> predicate, long maxWait, long period, long maxPeriod) {
+      this(predicate, maxWait, period, maxPeriod, TimeUnit.MILLISECONDS);
+   }
+
    public RetryablePredicate(Predicate<T> predicate, long maxWait) {
-      this(predicate, maxWait, 50l, 1000l, TimeUnit.MILLISECONDS);
+      this(predicate, maxWait, DEFAULT_PERIOD, DEFAULT_MAX_PERIOD, TimeUnit.MILLISECONDS);
    }
 
    @Override

@@ -25,6 +25,7 @@ import static org.jclouds.scriptbuilder.domain.Statements.exec;
 import static org.jclouds.scriptbuilder.domain.Statements.saveHttpResponseTo;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -38,7 +39,6 @@ import org.jclouds.scriptbuilder.domain.StatementList;
 import org.jclouds.virtualbox.domain.IsoImage;
 import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
-import org.testng.collections.Lists;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -62,7 +62,7 @@ public class InstallGuestAdditions implements Statement {
    }
 
    private List<Statement> getStatements(VmSpec vmSpecification, String vboxVersion) {
-      List<Statement> statements = Lists.newArrayList();
+      List<Statement> statements = new ArrayList<Statement>();
       statements.add(call("installModuleAssistantIfNeeded"));
       String mountPoint = "/mnt";
       if (Iterables.tryFind(vmSpecification.getControllers(), new Predicate<StorageController>() {
@@ -87,12 +87,7 @@ public class InstallGuestAdditions implements Statement {
          statements.add(saveHttpResponseTo(download, "{tmp}{fs}", vboxGuestAdditionsIso));//
          statements.add(exec(String.format("mount -o loop {tmp}{fs}%s %s", vboxGuestAdditionsIso, mountPoint)));
       }
-      statements.add(exec(String.format("%s%s", mountPoint, "/VBoxLinuxAdditions.run"))); //
-      statements.add(exec("service vboxadd setup")); //
-      statements.add(exec("VBoxService")); //
-      statements.add(exec(String.format("echo VBoxService > /etc/rc.local"))); //
-      statements.add(exec(String.format("echo exit 0 >> /etc/rc.local"))); //
-      statements.add(exec(String.format("umount %s", mountPoint)));
+      statements.add(exec(String.format("%s%s", mountPoint, "/VBoxLinuxAdditions.run --nox11"))); //
       return statements;
    }
 

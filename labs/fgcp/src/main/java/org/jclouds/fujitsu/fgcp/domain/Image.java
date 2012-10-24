@@ -34,81 +34,81 @@ import com.google.common.collect.ImmutableSet;
  * @author Dies Koper
  */
 public class Image {
-    private String id;
+   private String id;
 
-    private String serverCategory;
+   private String serverCategory;
 
-    private String serverApplication;
+   private String serverApplication;
 
-    private String cpuBit;
+   private String cpuBit;
 
-    private float sysvolSize;
+   private float sysvolSize;
 
-    private int numOfMaxDisk;
+   private int numOfMaxDisk;
 
-    private int numOfMaxNic;
+   private int numOfMaxNic;
 
-    @XmlElementWrapper(name = "softwares")
-    @XmlElement(name = "software")
-    private Set<Software> software = new LinkedHashSet<Software>();
+   @XmlElementWrapper(name = "softwares")
+   @XmlElement(name = "software")
+   private Set<Software> software = new LinkedHashSet<Software>();
 
-    public String getId() {
-        return id;
-    }
+   public String getId() {
+      return id;
+   }
 
-    public String getServerCategory() {
-        return serverCategory;
-    }
+   public String getServerCategory() {
+      return serverCategory;
+   }
 
-    public String getServerApplication() {
-        return serverApplication;
-    }
+   public String getServerApplication() {
+      return serverApplication;
+   }
 
-    public String getCpuBit() {
-        return cpuBit;
-    }
+   public String getCpuBit() {
+      return cpuBit;
+   }
 
-    public float getSysvolSize() {
-        return sysvolSize;
-    }
+   public float getSysvolSize() {
+      return sysvolSize;
+   }
 
-    public int getNumOfMaxDisk() {
-        return numOfMaxDisk;
-    }
+   public int getNumOfMaxDisk() {
+      return numOfMaxDisk;
+   }
 
-    public int getNumOfMaxNic() {
-        return numOfMaxNic;
-    }
+   public int getNumOfMaxNic() {
+      return numOfMaxNic;
+   }
 
-    public Set<Software> getSoftware() {
-        return software == null ? ImmutableSet.<Software> of() : ImmutableSet
-                .copyOf(software);
-    }
+   public Set<Software> getSoftware() {
+      return software == null ? ImmutableSet.<Software> of() : ImmutableSet
+            .copyOf(software);
+   }
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(id);
-    }
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(id);
+   }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Image that = Image.class.cast(obj);
-        return Objects.equal(this.id, that.id);
-    }
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      Image that = Image.class.cast(obj);
+      return Objects.equal(this.id, that.id);
+   }
 
-    @Override
-    public String toString() {
-        return Objects.toStringHelper(this).omitNullValues().add("id", id)
-                .add("serverCategory", serverCategory)
-                .add("serverApplication", serverApplication)
-                .add("cpuBit", cpuBit).add("sysvolSize", sysvolSize)
-                .add("numOfMaxDisk", numOfMaxDisk)
-                .add("numOfMaxNic", numOfMaxNic).toString();
-    }
+   @Override
+   public String toString() {
+      return Objects.toStringHelper(this).omitNullValues().add("id", id)
+            .add("serverCategory", serverCategory)
+            .add("serverApplication", serverApplication)
+            .add("cpuBit", cpuBit).add("sysvolSize", sysvolSize)
+            .add("numOfMaxDisk", numOfMaxDisk)
+            .add("numOfMaxNic", numOfMaxNic).toString();
+   }
 }

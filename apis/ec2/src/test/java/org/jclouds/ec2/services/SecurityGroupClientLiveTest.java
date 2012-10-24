@@ -23,7 +23,6 @@ import static org.testng.Assert.assertNotNull;
 
 import java.util.Iterator;
 import java.util.Set;
-import java.util.SortedSet;
 
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.ec2.EC2ApiMetadata;
@@ -32,14 +31,12 @@ import org.jclouds.ec2.domain.IpPermission;
 import org.jclouds.ec2.domain.IpProtocol;
 import org.jclouds.ec2.domain.SecurityGroup;
 import org.jclouds.ec2.domain.UserIdGroupPair;
-import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Iterables;
 
 /**
@@ -67,15 +64,13 @@ public class SecurityGroupClientLiveTest extends BaseComputeServiceContextLiveTe
    @Test
    void testDescribe() {
       for (String region : ec2Client.getConfiguredRegions()) {
-         SortedSet<SecurityGroup> allResults = ImmutableSortedSet.<SecurityGroup> copyOf(client
-               .describeSecurityGroupsInRegion(region));
+         Set<SecurityGroup> allResults = client.describeSecurityGroupsInRegion(region);
          assertNotNull(allResults);
          if (allResults.size() >= 1) {
-            SecurityGroup group = allResults.last();
-            SortedSet<SecurityGroup> result = ImmutableSortedSet.<SecurityGroup> copyOf(client
-                  .describeSecurityGroupsInRegion(region, group.getName()));
+            SecurityGroup group = Iterables.getLast(allResults);
+            Set<SecurityGroup> result = client.describeSecurityGroupsInRegion(region, group.getName());
             assertNotNull(result);
-            SecurityGroup compare = result.last();
+            SecurityGroup compare = Iterables.getLast(result);
             assertEquals(compare, group);
          }
       }
@@ -233,8 +228,7 @@ public class SecurityGroupClientLiveTest extends BaseComputeServiceContextLiveTe
    }
 
    protected void ensureGroupsExist(String group1Name, String group2Name) {
-      SortedSet<SecurityGroup> twoResults = ImmutableSortedSet.copyOf(client.describeSecurityGroupsInRegion(null,
-            group1Name, group2Name));
+      Set<SecurityGroup> twoResults = client.describeSecurityGroupsInRegion(null, group1Name, group2Name);
       assertNotNull(twoResults);
       assertEquals(twoResults.size(), 2);
       Iterator<SecurityGroup> iterator = twoResults.iterator();
@@ -279,8 +273,4 @@ public class SecurityGroupClientLiveTest extends BaseComputeServiceContextLiveTe
 
    public static final String PREFIX = System.getProperty("user.name") + "-ec2";
 
-   @AfterTest
-   public void shutdown() {
-      view.close();
-   }
 }

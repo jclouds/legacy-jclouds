@@ -20,9 +20,9 @@ package org.jclouds.snia.cdmi.v1.internal;
 
 import org.jclouds.apis.BaseContextLiveTest;
 import org.jclouds.rest.RestContext;
+import org.jclouds.snia.cdmi.v1.CDMIApi;
 import org.jclouds.snia.cdmi.v1.CDMIApiMetadata;
 import org.jclouds.snia.cdmi.v1.CDMIAsyncApi;
-import org.jclouds.snia.cdmi.v1.CDMIApi;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;

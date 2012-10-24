@@ -19,8 +19,6 @@
 package org.jclouds.openstack.nova.v2_0.extensions;
 
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -31,7 +29,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.openstack.nova.v2_0.domain.HostAggregate;
 import org.jclouds.openstack.v2_0.ServiceType;
@@ -41,10 +38,12 @@ import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.WrapWith;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnEmptyFluentIterableOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
+import com.google.common.annotations.Beta;
+import com.google.common.collect.FluentIterable;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -53,40 +52,40 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adam Lowe
  * @see HostAggregateApi
  */
+@Beta
 @Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.AGGREGATES)
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 @RequestFilters(AuthenticateRequest.class)
 @Path("/os-aggregates")
 public interface HostAggregateAsyncApi {
 
    /**
-    * @see HostAggregateApi#listAggregates()
+    * @see HostAggregateApi#list()
     */
    @GET
    @SelectJson("aggregates")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<? extends Set<? extends HostAggregate>> listAggregates();
+   @ExceptionParser(ReturnEmptyFluentIterableOnNotFoundOr404.class)
+   ListenableFuture<? extends FluentIterable<? extends HostAggregate>> list();
 
    /**
-    * @see HostAggregateApi#getAggregate(String)
+    * @see HostAggregateApi#get(String)
     */
    @GET
    @Path("/{id}")
    @SelectJson("aggregate")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<? extends HostAggregate> getAggregate(@PathParam("id") String id);
+   ListenableFuture<? extends HostAggregate> get(@PathParam("id") String id);
 
    /**
-    * @see HostAggregateApi#createAggregate(String, String)
+    * @see HostAggregateApi#createInAvailabilityZone(String, String)
     */
    @POST
    @SelectJson("aggregate")
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
    @WrapWith("aggregate")
-   ListenableFuture<? extends HostAggregate> createAggregate(@PayloadParam("name") String name,
+   ListenableFuture<? extends HostAggregate> createInAvailabilityZone(@PayloadParam("name") String name,
                                                    @PayloadParam("availability_zone") String availabilityZone);
 
    /**
@@ -110,13 +109,13 @@ public interface HostAggregateAsyncApi {
    ListenableFuture<? extends HostAggregate> updateAvailabilityZone(@PathParam("id") String id, @PayloadParam("availability_zone") String availabilityZone);
    
    /**
-    * @see HostAggregateApi#deleteAggregate(String)
+    * @see HostAggregateApi#delete(String)
     */
    @DELETE
    @Path("/{id}")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
-   ListenableFuture<Boolean> deleteAggregate(@PathParam("id") String id);
+   ListenableFuture<Boolean> delete(@PathParam("id") String id);
 
    /**
     * @see HostAggregateApi#addHost(String,String)

@@ -24,7 +24,10 @@ import static org.jclouds.openstack.nova.v2_0.config.NovaProperties.AUTO_GENERAT
 import java.net.URI;
 import java.util.Properties;
 
+import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule;
+import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule.ZoneModule;
 import org.jclouds.openstack.nova.v2_0.NovaApiMetadata;
+import org.jclouds.openstack.nova.v2_0.config.NovaParserModule;
 import org.jclouds.openstack.nova.v2_0.config.NovaRestClientModule;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
@@ -74,7 +77,12 @@ public class TryStackNovaProviderMetadata extends BaseProviderMetadata {
          .name("TryStack.org (Nova)")
                .apiMetadata(
                      new NovaApiMetadata().toBuilder()
-                     .defaultModules(ImmutableSet.<Class<? extends Module>>of(NovaRestClientModule.class, TryStackNovaServiceContextModule.class))
+                                          .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
+                                                 .add(KeystoneAuthenticationModule.class)
+                                                 .add(ZoneModule.class)
+                                                 .add(NovaParserModule.class)
+                                                 .add(NovaRestClientModule.class)
+                                                 .add(TryStackNovaServiceContextModule.class).build())
                      .build())         
          .homepage(URI.create("https://trystack.org"))
          .console(URI.create("https://trystack.org/dash"))

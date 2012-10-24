@@ -37,27 +37,27 @@ import com.google.common.base.Predicate;
 @Singleton
 public class ServerStopped implements Predicate<String> {
 
-    private final FGCPApi api;
+   private final FGCPApi api;
 
-    @Resource
-    protected Logger logger = Logger.NULL;
+   @Resource
+   protected Logger logger = Logger.NULL;
 
-    @Inject
-    public ServerStopped(FGCPApi api) {
-        this.api = api;
-    }
+   @Inject
+   public ServerStopped(FGCPApi api) {
+      this.api = api;
+   }
 
-    public boolean apply(String serverId) {
-        logger.trace("looking for status on server %s", serverId);
+   public boolean apply(String serverId) {
+      logger.trace("looking for status on server %s", serverId);
 
-        VServerStatus status = api.getVirtualServerApi().getStatus(serverId);
-        logger.trace("looking for status on server %s: currently: %s",
-                serverId, status);
+      VServerStatus status = api.getVirtualServerApi().getStatus(serverId);
+      logger.trace("looking for status on server %s: currently: %s",
+            serverId, status);
 
-        if (status == VServerStatus.ERROR || status == VServerStatus.STOP_ERROR)
-            throw new IllegalStateException("server not around or in error: "
-                    + status);
-        return status == VServerStatus.STOPPED;
-    }
+      if (status == VServerStatus.ERROR || status == VServerStatus.STOP_ERROR)
+         throw new IllegalStateException("server not around or in error: "
+               + status);
+      return status == VServerStatus.STOPPED;
+   }
 
 }

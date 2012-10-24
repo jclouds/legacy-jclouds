@@ -2,7 +2,7 @@ jclouds
 ======
 jclouds allows provisioning and control of cloud resources, including blobstore
 and compute, from Java and Clojure.  Our API gives allows developers to use
-both portable abstractions and cloud-specific features.  We test support of 30
+both portable abstractions and cloud-specific features.  We test support of dozens of
 cloud providers and cloud software stacks, including Amazon, Azure, GoGrid,
 Ninefold, OpenStack, and vCloud.  jclouds is licensed under the Apache License,
 Version 2.0
@@ -107,7 +107,7 @@ Check out https://github.com/jclouds/jclouds-examples for more examples!
 
 Downloads
 ------------------------
-* release notes: http://www.jclouds.org/documentation/releasenotes/1.3
+* release notes: http://www.jclouds.org/documentation/releasenotes/1.5
 * installation guide: http://www.jclouds.org/documentation/userguide/installation-guide
 * maven repo: http://repo2.maven.org/maven2 (maven central - the default repository)
 * snapshot repo: https://oss.sonatype.org/content/repositories/snapshots
@@ -116,8 +116,6 @@ Resources
 ----------------------------
 * Project page: http://jclouds.org/
 * Documentation: http://www.jclouds.org/documentation/index
-* Javadocs (1.1.0): http://jclouds.rimuhosting.com/apidocs/
-* Javadocs (1.0-SNAPSHOT): http://jclouds.rimuhosting.com/apidocs-SNAPSHOT/
 * Community: http://www.jclouds.org/documentation/reference/apps-that-use-jclouds 
 * User group: http://groups.google.com/group/jclouds
 * Dev group: http://groups.google.com/group/jclouds-dev

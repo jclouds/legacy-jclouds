@@ -27,9 +27,11 @@ import javax.inject.Provider;
 import org.jclouds.atmos.AtmosClient;
 import org.jclouds.atmos.blobstore.functions.BlobToObject;
 import org.jclouds.atmos.domain.AtmosError;
+import org.jclouds.atmos.domain.AtmosObject;
 import org.jclouds.atmos.filters.SignRequest;
 import org.jclouds.atmos.options.PutOptions;
 import org.jclouds.atmos.xml.ErrorHandler;
+import org.jclouds.blobstore.KeyAlreadyExistsException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.http.HttpCommand;
@@ -70,8 +72,15 @@ public class AtmosUtils {
    public static String putBlob(final AtmosClient sync, Crypto crypto, BlobToObject blob2Object, String container,
             Blob blob, PutOptions options) {
       final String path = container + "/" + blob.getMetadata().getName();
-      deleteAndEnsureGone(sync, path);
-      sync.createFile(container, blob2Object.apply(blob), options);
+      final AtmosObject object = blob2Object.apply(blob);
+      
+      try {
+         sync.createFile(container, object, options);
+         
+      } catch(KeyAlreadyExistsException e) {
+         deleteAndEnsureGone(sync, path);
+         sync.createFile(container, object, options);
+      }
       return path;
    }
 

@@ -24,7 +24,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -42,9 +41,11 @@ import org.jclouds.util.Strings2;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 import com.google.common.base.Suppliers;
 import com.google.common.io.Closeables;
+import com.google.common.io.Files;
 import com.google.common.net.HostAndPort;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -136,7 +137,7 @@ public class SshjSshClientLiveTest {
          SshClient connection;
          if (Strings.emptyToNull(sshKeyFile) != null) {
             connection = factory.create(HostAndPort.fromParts(sshHost, port), LoginCredentials.builder().user(sshUser)
-                  .privateKey(Strings2.toStringAndClose(new FileInputStream(sshKeyFile))).build());
+                  .privateKey(Files.toString(new File(sshKeyFile), Charsets.UTF_8)).build());
          } else {
             connection = factory.create(HostAndPort.fromParts(sshHost, port),
                   LoginCredentials.builder().user(sshUser).password(sshPass).build());

@@ -148,7 +148,7 @@ public class Tenant {
    }
 
    protected ToStringHelper string() {
-      return Objects.toStringHelper(this)
+      return Objects.toStringHelper(this).omitNullValues()
             .add("id", id).add("name", name).add("description", description);
    }
 

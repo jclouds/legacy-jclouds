@@ -28,17 +28,17 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "CreateEFMResponse")
 public class CreateEFMResponse extends StatusResponse implements
-        SingleElementResponse {
-    @XmlElement(required = true)
-    private String efmId;
+      SingleElementResponse {
+   @XmlElement(required = true)
+   private String efmId;
 
-    @Override
-    public String toString() {
-        return getElement();
-    }
+   @Override
+   public String toString() {
+      return getElement();
+   }
 
-    @Override
-    public String getElement() {
-        return efmId;
-    }
+   @Override
+   public String getElement() {
+      return efmId;
+   }
 }

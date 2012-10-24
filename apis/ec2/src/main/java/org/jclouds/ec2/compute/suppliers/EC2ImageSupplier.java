@@ -23,7 +23,6 @@ import static com.google.common.collect.Iterables.transform;
 import static org.jclouds.ec2.options.DescribeImagesOptions.Builder.ownedBy;
 import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -83,7 +82,7 @@ public class EC2ImageSupplier implements Supplier<Set<? extends Image>> {
    public Set<? extends Image> get() {
       if (amiOwners.length == 0) {
          logger.debug(">> no owners specified, skipping image parsing");
-         return Collections.emptySet();
+         return ImmutableSet.of();
       
       } else {
          logger.debug(">> providing images");

@@ -35,7 +35,16 @@ import com.google.common.collect.ImmutableMap.Builder;
  */
 @Test(groups = "unit", testName = "EC2ElasticBlockStoreClientExpectTest")
 public class EC2ElasticBlockStoreClientExpectTest extends BaseEC2ExpectTest<EC2Client> {
-
+   Volume creating = Volume.builder()
+                           .id("vol-2a21e543")
+                           .status(Volume.Status.CREATING)
+                           .availabilityZone("us-east-1a")
+                           .region("us-east-1")
+                           .id("vol-2a21e543")
+                           .size(1)
+                           .createTime(dateService.iso8601DateParse("2009-12-28T05:42:53.000Z"))
+                           .build();
+   
    public void testCreateVolumeInAvailabilityZone() {
       Builder<HttpRequest, HttpResponse> builder = ImmutableMap.<HttpRequest, HttpResponse>builder();
       builder.put(describeRegionsRequest, describeRegionsResponse);
@@ -51,18 +60,31 @@ public class EC2ElasticBlockStoreClientExpectTest extends BaseEC2ExpectTest<EC2C
                         .payload(payloadFromResource("/created_volume.xml")).build());
       
       ElasticBlockStoreClient client = requestsSendResponses(builder.build()).getElasticBlockStoreServices();
-      Volume expected =  Volume
-            .builder()
-            .id("vol-2a21e543")
-            .status(Volume.Status.CREATING)
-            .availabilityZone("us-east-1a")
-            .region("us-east-1")
-            .id("vol-2a21e543")
-            .size(1)
-            .createTime(dateService.iso8601DateParse("2009-12-28T05:42:53.000Z"))
-            .build();
 
-      assertEquals(client.createVolumeInAvailabilityZone("us-east-1a", 4), expected);
+      assertEquals(client.createVolumeInAvailabilityZone("us-east-1a", 4), creating);
    }
+   
+   public void testCreateVolumeFromSnapshotInAvailabilityZoneEuSetsCorrectEndpoint() {
+      String region = "eu-west-1";
+      
+      Builder<HttpRequest, HttpResponse> builder = ImmutableMap.<HttpRequest, HttpResponse>builder();
+      builder.put(describeRegionsRequest, describeRegionsResponse);
+      builder.putAll(describeAvailabilityZonesRequestResponse);
+      builder.put(
+            formSigner.filter(HttpRequest.builder()
+                                         .method("POST")
+                                         .endpoint("https://ec2." + region + ".amazonaws.com/")
+                                         .addHeader("Host", "ec2." + region + ".amazonaws.com")
+                                         .addFormParam("Action", "CreateVolume")
+                                         .addFormParam("AvailabilityZone", "eu-west-1a")
+                                         .addFormParam("Size", "1")
+                                         .addFormParam("SnapshotId", "snap-8b7ffbdd").build()),
+            HttpResponse.builder()
+                        .statusCode(200)
+                        .payload(payloadFromResource("/created_volume.xml")).build());
+      
+      ElasticBlockStoreClient client = requestsSendResponses(builder.build()).getElasticBlockStoreServices();
 
+      assertEquals(client.createVolumeFromSnapshotInAvailabilityZone(region + "a", 1, "snap-8b7ffbdd"), creating.toBuilder().region(region).build());
+   }
 }

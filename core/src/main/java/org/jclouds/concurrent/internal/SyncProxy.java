@@ -21,6 +21,7 @@ package org.jclouds.concurrent.internal;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
@@ -41,6 +42,7 @@ import org.jclouds.util.Throwables2;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
+import com.google.common.base.Throwables;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -158,7 +160,11 @@ public class SyncProxy implements InvocationHandler {
          }
          return returnVal;
       } else if (syncMethodMap.containsKey(method)) {
-         return syncMethodMap.get(method).invoke(delegate, args);
+         try {
+            return syncMethodMap.get(method).invoke(delegate, args);
+         } catch (InvocationTargetException e) {
+            throw Throwables.propagate(e.getCause());
+         }
       } else {
          try {
             return ((ListenableFuture<?>) methodMap.get(method).invoke(delegate, args)).get(timeoutMap.get(method),

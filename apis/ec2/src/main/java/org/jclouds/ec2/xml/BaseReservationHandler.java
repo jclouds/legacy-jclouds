@@ -80,7 +80,7 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
    private String deviceName;
 
    // reservation stuff
-   private Set<String> groupIds = Sets.newLinkedHashSet();
+   private Set<String> groupNames = Sets.newLinkedHashSet();
    private String ownerId;
    private String requesterId;
    private String reservationId;
@@ -111,7 +111,7 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
       } else if (equalsOrSuffix(qName, "groupSet")) {
          inGroupSet = false;
       } else if (equalsOrSuffix(qName, "groupId")) {
-         groupIds.add(currentOrNull(currentText));
+         groupNames.add(currentOrNull(currentText));
       } else if (equalsOrSuffix(qName, "ownerId")) {
          ownerId = currentOrNull(currentText);
       } else if (equalsOrSuffix(qName, "requesterId")) {
@@ -210,7 +210,7 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
       }
 
       builder.region((region == null) ? defaultRegion.get() : region);
-      builder.groupIds(groupIds);
+      builder.groupNames(groupNames);
    }
 
    protected Builder builder() {
@@ -229,9 +229,9 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
       String region = getRequest() != null ? AWSUtils.findRegionInArgsOrNull(getRequest()) : null;
       if (region == null)
          region = defaultRegion.get();
-      Reservation<? extends RunningInstance> info = new Reservation<RunningInstance>(region, groupIds, instances,
+      Reservation<? extends RunningInstance> info = new Reservation<RunningInstance>(region, groupNames, instances,
             ownerId, requesterId, reservationId);
-      this.groupIds = Sets.newLinkedHashSet();
+      this.groupNames = Sets.newLinkedHashSet();
       this.instances = Sets.newLinkedHashSet();
       this.ownerId = null;
       this.requesterId = null;

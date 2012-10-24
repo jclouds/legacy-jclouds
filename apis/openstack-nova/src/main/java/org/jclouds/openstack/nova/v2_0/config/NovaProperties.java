@@ -31,10 +31,10 @@ public class NovaProperties {
    public static final String TIMEOUT_SECURITYGROUP_PRESENT = "jclouds.openstack-nova.timeout.securitygroup-present";
 
    /**
-    * Whenever a node is created, automatically allocate and assign a floating ip address, also
-    * deallocate when the node is destroyed.
+    * Whenever a node is created, automatically create and assign a floating ip address, also
+    * delete when the node is destroyed.
     */
-   public static final String AUTO_ALLOCATE_FLOATING_IPS = "jclouds.openstack-nova.auto-allocate-floating-ips";
+   public static final String AUTO_ALLOCATE_FLOATING_IPS = "jclouds.openstack-nova.auto-create-floating-ips";
 
    /**
     * Whenever a node is created, automatically generate keypairs for groups, as needed, also

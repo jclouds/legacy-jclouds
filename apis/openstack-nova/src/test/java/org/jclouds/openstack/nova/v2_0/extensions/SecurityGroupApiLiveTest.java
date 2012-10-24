@@ -41,10 +41,10 @@ public class SecurityGroupApiLiveTest extends BaseNovaApiLiveTest {
 
    public static final String SECURITY_GROUP_NAME = "testsg";
 
-   public void listSecurityGroups() throws Exception {
+   public void list() throws Exception {
       for (String zoneId : novaContext.getApi().getConfiguredZones()) {
          SecurityGroupApi api = novaContext.getApi().getSecurityGroupExtensionForZone(zoneId).get();
-         Set<? extends SecurityGroup> securityGroupsList = api.listSecurityGroups();
+         Set<? extends SecurityGroup> securityGroupsList = api.list().toImmutableSet();
          assertNotNull(securityGroupsList);
       }
    }
@@ -56,14 +56,14 @@ public class SecurityGroupApiLiveTest extends BaseNovaApiLiveTest {
          String id;
          try {
             securityGroup = api
-                     .createSecurityGroupWithNameAndDescription(SECURITY_GROUP_NAME, "test security group");
+                     .createWithDescription(SECURITY_GROUP_NAME, "test security group");
             assertNotNull(securityGroup);
             id = securityGroup.getId();
-            SecurityGroup theGroup = api.getSecurityGroup(id);
+            SecurityGroup theGroup = api.get(id);
             assertNotNull(theGroup);
          } finally {
             if (securityGroup != null) {
-               api.deleteSecurityGroup(securityGroup.getId());
+               api.delete(securityGroup.getId());
             }
          }
       }
@@ -75,25 +75,25 @@ public class SecurityGroupApiLiveTest extends BaseNovaApiLiveTest {
          SecurityGroup securityGroup = null;
 
          try {
-            securityGroup = api.createSecurityGroupWithNameAndDescription(SECURITY_GROUP_NAME, "test security group");
+            securityGroup = api.createWithDescription(SECURITY_GROUP_NAME, "test security group");
             assertNotNull(securityGroup);
 
             for (int port : ImmutableSet.of(22, 8080)) {
-               SecurityGroupRule rule = api.createSecurityGroupRuleAllowingCidrBlock(securityGroup.getId(), Ingress
+               SecurityGroupRule rule = api.createRuleAllowingCidrBlock(securityGroup.getId(), Ingress
                         .builder().ipProtocol(IpProtocol.TCP).fromPort(port).toPort(port).build(), "0.0.0.0/0");
                assertNotNull(rule);
 
-               SecurityGroupRule rule2 = api.createSecurityGroupRuleAllowingSecurityGroupId(securityGroup.getId(),
+               SecurityGroupRule rule2 = api.createRuleAllowingSecurityGroupId(securityGroup.getId(),
                         Ingress.builder().ipProtocol(IpProtocol.TCP).fromPort(port).toPort(port).build(), securityGroup
                                  .getId());
 
                assertNotNull(rule2);
             }
-            securityGroup = api.getSecurityGroup(securityGroup.getId());
+            securityGroup = api.get(securityGroup.getId());
 
          } finally {
             if (securityGroup != null) {
-               api.deleteSecurityGroup(securityGroup.getId());
+               api.delete(securityGroup.getId());
             }
          }
       }

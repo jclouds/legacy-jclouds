@@ -40,9 +40,9 @@ import java.net.URI;
 import java.net.URLEncoder;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -146,6 +146,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
@@ -499,6 +500,12 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       @QueryParams(keys = { "foo", "fooble" }, values = { "bar", "baz" })
       public void foo3(@QueryParam("robbie") String robbie) {
       }
+      
+      @FOO
+      @Path("/")
+      @QueryParams(keys = { "foo", "fooble" }, values = { "bar", "baz" })
+      public void foo3Nullable(@Nullable @QueryParam("robbie") String robbie) {
+      }
    }
 
    public void testUnEncodeQuery() {
@@ -535,6 +542,25 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       assertEquals(request.getEndpoint().getHost(), "localhost");
       assertEquals(request.getEndpoint().getPath(), "/");
       assertEquals(request.getEndpoint().getQuery(), "x-ms-version=2009-07-17&foo=bar&fooble=baz&robbie=wonder");
+      assertEquals(request.getMethod(), "FOO");
+   }
+   
+   @Test
+   public void testNiceNPEQueryParam() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = TestQuery.class.getMethod("foo3", String.class);
+      try {
+         factory(TestPath.class).createRequest(method, (String) null);
+      } catch (NullPointerException e) {
+         assertEquals(e.getMessage(), "param{robbie} for method TestQuery.foo3");
+      }
+   }
+
+   public void testNoNPEOnQueryParamWithNullable() throws SecurityException, NoSuchMethodException {
+      Method method = TestQuery.class.getMethod("foo3Nullable", String.class);
+      HttpRequest request = factory(TestPath.class).createRequest(method, (String) null);
+      assertEquals(request.getEndpoint().getHost(), "localhost");
+      assertEquals(request.getEndpoint().getPath(), "/");
+      assertEquals(request.getEndpoint().getQuery(), "foo=bar&fooble=baz");
       assertEquals(request.getMethod(), "FOO");
    }
 
@@ -578,7 +604,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, "foo", "application/octet-stream", false);
    }
-
+   
    public void testHttpRequestWithOnlyContentType() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TestPayloadParamVarargs.class.getMethod("post", HttpRequestOptions.class);
       HttpRequest request = factory(TestPayloadParamVarargs.class).createRequest(method, new TestHttpRequestOptions().payload("fooya"));
@@ -1397,6 +1423,11 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       @Path("/{path}")
       public void onePath(@PathParam("path") String path) {
       }
+      
+      @GET
+      @Path("/{path}")
+      public void onePathNullable(@Nullable @PathParam("path") String path) {
+      }
 
       @GET
       @Path("/{path1}/{path2}")
@@ -1435,7 +1466,17 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       public void onePathParamExtractorMethod(String path) {
       }
    }
-
+   
+   @Test
+   public void testNiceNPEPathParam() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = TestPath.class.getMethod("onePath", String.class);
+      try {
+         factory(TestPath.class).createRequest(method, (String) null);
+      } catch (NullPointerException e) {
+         assertEquals(e.getMessage(), "param{path} for method TestPath.onePath");
+      }
+   }
+   
    @Test
    public void testPathParamExtractor() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TestPath.class.getMethod("onePathParamExtractor", String.class);
@@ -1462,7 +1503,17 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
    }
-
+   
+   @Test
+   public void testNiceNPEMatrixParam() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = TestPath.class.getMethod("oneMatrixParamExtractor", String.class);
+      try {
+         factory(TestPath.class).createRequest(method, (String) null);
+      } catch (NullPointerException e) {
+         assertEquals(e.getMessage(), "param{one} for method TestPath.oneMatrixParamExtractor");
+      }
+   }
+   
    @Test
    public void testFormParamExtractor() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TestPath.class.getMethod("oneFormParamExtractor", String.class);
@@ -1471,7 +1522,17 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, "one=l", "application/x-www-form-urlencoded", false);
    }
-
+   
+   @Test
+   public void testNiceNPEFormParam() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = TestPath.class.getMethod("oneFormParamExtractor", String.class);
+      try {
+         factory(TestPath.class).createRequest(method, (String) null);
+      } catch (NullPointerException e) {
+         assertEquals(e.getMessage(), "param{one} for method TestPath.oneFormParamExtractor");
+      }
+   }
+   
    @Test
    public void testParamExtractorMethod() throws SecurityException, NoSuchMethodException {
       Method method = TestPath.class.getMethod("onePathParamExtractorMethod", String.class);
@@ -1525,8 +1586,8 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       Multimap<String, String> headers = factory(TestHeader.class).createRequest(oneHeader, new Object[] { "robot" })
             .getHeaders();
       assertEquals(headers.size(), 2);
-      assertEquals(headers.get("slash"), Collections.singletonList("/robot"));
-      assertEquals(headers.get("hyphen"), Collections.singletonList("-robot"));
+      assertEquals(headers.get("slash"), ImmutableList.of("/robot"));
+      assertEquals(headers.get("hyphen"), ImmutableList.of("-robot"));
    }
 
    @Headers(keys = "x-amz-copy-source", values = "/{bucket}")
@@ -1543,7 +1604,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       Multimap<String, String> headers = factory(TestClassHeader.class).createRequest(oneHeader,
             new Object[] { "robot" }).getHeaders();
       assertEquals(headers.size(), 1);
-      assertEquals(headers.get("x-amz-copy-source"), Collections.singletonList("/robot"));
+      assertEquals(headers.get("x-amz-copy-source"), ImmutableList.of("/robot"));
    }
 
    @Test
@@ -1552,7 +1613,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       Multimap<String, String> headers = factory(TestHeader.class).createRequest(oneHeader, new Object[] { "robot" })
             .getHeaders();
       assertEquals(headers.size(), 1);
-      assertEquals(headers.get("x-amz-copy-source"), Collections.singletonList("/robot"));
+      assertEquals(headers.get("x-amz-copy-source"), ImmutableList.of("/robot"));
    }
 
    @Test
@@ -1561,7 +1622,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       Multimap<String, String> headers = factory(TestHeader.class).createRequest(twoHeaders,
             new Object[] { "robot", "eggs" }).getHeaders();
       assertEquals(headers.size(), 1);
-      assertEquals(headers.get("x-amz-copy-source"), Collections.singletonList("/robot/eggs"));
+      assertEquals(headers.get("x-amz-copy-source"), ImmutableList.of("/robot/eggs"));
    }
 
    @Test
@@ -1570,7 +1631,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       Multimap<String, String> headers = factory(TestHeader.class).createRequest(twoHeadersOutOfOrder,
             new Object[] { "robot", "eggs" }).getHeaders();
       assertEquals(headers.size(), 1);
-      assertEquals(headers.get("x-amz-copy-source"), Collections.singletonList("/eggs/robot"));
+      assertEquals(headers.get("x-amz-copy-source"), ImmutableList.of("/eggs/robot"));
    }
 
    public class TestReplaceQueryOptions extends BaseHttpRequestOptions {
@@ -2038,9 +2099,9 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       assertEquals(request.getEndpoint().getPath(), "/1");
       assertEquals(request.getMethod(), HttpMethod.GET);
       assertEquals(request.getHeaders().size(), 2);
-      assertEquals(request.getHeaders().get(HttpHeaders.HOST), Collections.singletonList("localhost:9999"));
+      assertEquals(request.getHeaders().get(HttpHeaders.HOST), ImmutableList.of("localhost:9999"));
       assertEquals(request.getHeaders().get(HttpHeaders.IF_MODIFIED_SINCE),
-            Collections.singletonList(dateService.rfc822DateFormat(date)));
+            ImmutableList.of(dateService.rfc822DateFormat(date)));
    }
 
    public void testCreateGetOptionsThatProducesHeaders() throws SecurityException, NoSuchMethodException {
@@ -2052,9 +2113,9 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       assertEquals(request.getEndpoint().getPath(), "/1");
       assertEquals(request.getMethod(), HttpMethod.GET);
       assertEquals(request.getHeaders().size(), 2);
-      assertEquals(request.getHeaders().get(HttpHeaders.HOST), Collections.singletonList("localhost:9999"));
+      assertEquals(request.getHeaders().get(HttpHeaders.HOST), ImmutableList.of("localhost:9999"));
       assertEquals(request.getHeaders().get(HttpHeaders.IF_MODIFIED_SINCE),
-            Collections.singletonList(dateService.rfc822DateFormat(date)));
+            ImmutableList.of(dateService.rfc822DateFormat(date)));
    }
 
    public class PrefixOptions extends BaseHttpRequestOptions {
@@ -2136,7 +2197,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       assertEquals(request.getEndpoint().getPath(), "/" + key);
       assertEquals(request.getMethod(), HttpMethod.GET);
       assertEquals(request.getHeaders().size(), 1);
-      assertEquals(request.getHeaders().get(HttpHeaders.HOST), Collections.singletonList("localhost"));
+      assertEquals(request.getHeaders().get(HttpHeaders.HOST), ImmutableList.of("localhost"));
    }
 
    public void testCreatePutRequest() throws SecurityException, NoSuchMethodException, IOException {
@@ -2175,7 +2236,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       assertEquals(request.getEndpoint().getPath(), "/1");
       assertEquals(request.getMethod(), HttpMethod.GET);
       assertEquals(request.getHeaders().size(), 1);
-      assertEquals(request.getHeaders().get(HttpHeaders.HOST), Collections.singletonList("localhost:9999"));
+      assertEquals(request.getHeaders().get(HttpHeaders.HOST), ImmutableList.of("localhost:9999"));
    }
 
    public interface TestVirtualHost {
@@ -2198,7 +2259,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       assertEquals(request.getEndpoint().getPath(), "/1");
       assertEquals(request.getMethod(), HttpMethod.GET);
       assertEquals(request.getHeaders().size(), 1);
-      assertEquals(request.getHeaders().get(HttpHeaders.HOST), Collections.singletonList("localhost:9999"));
+      assertEquals(request.getHeaders().get(HttpHeaders.HOST), ImmutableList.of("localhost:9999"));
    }
 
    @Test
@@ -2237,7 +2298,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       Multimap<String, String> headers = factory(TestHeaders.class).buildHeaders(
             ImmutableMultimap.<String, String> of().entries(), method, "robot");
       assertEquals(headers.size(), 1);
-      assertEquals(headers.get("header"), Collections.singletonList("robot"));
+      assertEquals(headers.get("header"), ImmutableList.of("robot"));
    }
 
    @Test
@@ -2246,7 +2307,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       Multimap<String, String> headers = factory(TestHeaders.class).buildHeaders(
             ImmutableMultimap.<String, String> of().entries(), method, 1);
       assertEquals(headers.size(), 1);
-      assertEquals(headers.get("header"), Collections.singletonList("1"));
+      assertEquals(headers.get("header"), ImmutableList.of("1"));
    }
 
    @Test
@@ -2255,8 +2316,8 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       Multimap<String, String> headers = factory(TestHeaders.class).buildHeaders(
             ImmutableMultimap.<String, String> of().entries(), method, "robot", "egg");
       assertEquals(headers.size(), 2);
-      assertEquals(headers.get("header1"), Collections.singletonList("robot"));
-      assertEquals(headers.get("header2"), Collections.singletonList("egg"));
+      assertEquals(headers.get("header1"), ImmutableList.of("robot"));
+      assertEquals(headers.get("header2"), ImmutableList.of("egg"));
    }
 
    @Test
@@ -2416,6 +2477,10 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       @Provides
       Set<String> exception();
 
+      @Named("NoSuchElementException")
+      @Provides
+      Set<String> noSuchElementException();
+      
       @POST
       @Path("/")
       void oneForm(@PathParam("bucket") String path);
@@ -2437,7 +2502,12 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
    public void testProvidesWithGenericQualifiedAuthorizationException() throws SecurityException, NoSuchMethodException {
       injector.getInstance(AsyncClientFactory.class).create(TestClassForm.class).exception();
    }
-
+   
+   @Test(expectedExceptions = NoSuchElementException.class)
+   public void testProvidesWithGenericQualifiedNoSuchElementException() throws SecurityException, NoSuchMethodException {
+      injector.getInstance(AsyncClientFactory.class).create(TestClassForm.class).noSuchElementException();
+   }
+   
    @Test
    public void testBuildOneClassForm() throws SecurityException, NoSuchMethodException {
       Method oneForm = TestClassForm.class.getMethod("oneForm", String.class);
@@ -2604,7 +2674,13 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
                Set<String> exception() {
                   throw new AuthorizationException();
                }
-
+               
+               @Provides
+               @Named("NoSuchElementException")
+               Set<String> noSuchElementException() {
+                  throw new NoSuchElementException();
+               }
+               
             })).buildInjector();
       parserFactory = injector.getInstance(ParseSax.Factory.class);
       crypto = injector.getInstance(Crypto.class);

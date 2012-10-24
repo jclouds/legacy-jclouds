@@ -124,8 +124,8 @@ public class NovaComputeServiceAdapter implements
       String flavorId = template.getHardware().getProviderId();
 
       logger.debug(">> creating new server zone(%s) name(%s) image(%s) flavor(%s) options(%s)", zoneId, name, imageId, flavorId, options);
-      ServerCreated lightweightServer = novaApi.getServerApiForZone(zoneId).createServer(name, imageId, flavorId, options);
-      Server server = novaApi.getServerApiForZone(zoneId).getServer(lightweightServer.getId());
+      ServerCreated lightweightServer = novaApi.getServerApiForZone(zoneId).create(name, imageId, flavorId, options);
+      Server server = novaApi.getServerApiForZone(zoneId).get(lightweightServer.getId());
 
       logger.trace("<< server(%s)", server.getId());
 
@@ -140,7 +140,7 @@ public class NovaComputeServiceAdapter implements
    public Iterable<FlavorInZone> listHardwareProfiles() {
       Builder<FlavorInZone> builder = ImmutableSet.builder();
       for (final String zoneId : zoneIds.get()) {
-         builder.addAll(transform(novaApi.getFlavorApiForZone(zoneId).listFlavorsInDetail(),
+         builder.addAll(transform(novaApi.getFlavorApiForZone(zoneId).listInDetail().concat(),
                   new Function<Flavor, FlavorInZone>() {
 
                      @Override
@@ -159,7 +159,7 @@ public class NovaComputeServiceAdapter implements
       Set<String> zones = zoneIds.get();
       checkState(zones.size() > 0, "no zones found in supplier %s", zoneIds);
       for (final String zoneId : zones) {
-         Set<? extends Image> images = novaApi.getImageApiForZone(zoneId).listImagesInDetail();
+         Set<? extends Image> images = novaApi.getImageApiForZone(zoneId).listInDetail().concat().toImmutableSet();
          if (images.size() == 0) {
             logger.debug("no images found in zone %s", zoneId);
             continue;
@@ -194,8 +194,8 @@ public class NovaComputeServiceAdapter implements
    public Iterable<ServerInZone> listNodes() {
       Builder<ServerInZone> builder = ImmutableSet.builder();
       for (final String zoneId : zoneIds.get()) {
-         builder.addAll(transform(novaApi.getServerApiForZone(zoneId).listServersInDetail(),
-                  new Function<Server, ServerInZone>() {
+         builder.addAll(novaApi.getServerApiForZone(zoneId).listInDetail().concat()
+                  .transform(new Function<Server, ServerInZone>() {
 
                      @Override
                      public ServerInZone apply(Server arg0) {
@@ -216,14 +216,14 @@ public class NovaComputeServiceAdapter implements
    @Override
    public ServerInZone getNode(String id) {
       ZoneAndId zoneAndId = ZoneAndId.fromSlashEncoded(id);
-      Server server = novaApi.getServerApiForZone(zoneAndId.getZone()).getServer(zoneAndId.getId());
+      Server server = novaApi.getServerApiForZone(zoneAndId.getZone()).get(zoneAndId.getId());
       return server == null ? null : new ServerInZone(server, zoneAndId.getZone());
    }
 
    @Override
    public ImageInZone getImage(String id) {
       ZoneAndId zoneAndId = ZoneAndId.fromSlashEncoded(id);
-      Image image = novaApi.getImageApiForZone(zoneAndId.getZone()).getImage(zoneAndId.getId());
+      Image image = novaApi.getImageApiForZone(zoneAndId.getZone()).get(zoneAndId.getId());
       return image == null ? null : new ImageInZone(image, zoneAndId.getZone());
    }
 
@@ -237,20 +237,20 @@ public class NovaComputeServiceAdapter implements
             logger.warn(e, "<< error removing and deallocating ip from node(%s): %s", id, e.getMessage());
          }
       }
-      novaApi.getServerApiForZone(zoneAndId.getZone()).deleteServer(zoneAndId.getId());
+      novaApi.getServerApiForZone(zoneAndId.getZone()).delete(zoneAndId.getId());
    }
 
    @Override
    public void rebootNode(String id) {
       ZoneAndId zoneAndId = ZoneAndId.fromSlashEncoded(id);
-      novaApi.getServerApiForZone(zoneAndId.getZone()).rebootServer(zoneAndId.getId(), RebootType.HARD);
+      novaApi.getServerApiForZone(zoneAndId.getZone()).reboot(zoneAndId.getId(), RebootType.HARD);
    }
 
    @Override
    public void resumeNode(String id) {
       ZoneAndId zoneAndId = ZoneAndId.fromSlashEncoded(id);
-      if (novaApi.getAdminActionsExtensionForZone(zoneAndId.getZone()).isPresent()) {
-         novaApi.getAdminActionsExtensionForZone(zoneAndId.getZone()).get().resumeServer(zoneAndId.getId());
+      if (novaApi.getServerAdminExtensionForZone(zoneAndId.getZone()).isPresent()) {
+         novaApi.getServerAdminExtensionForZone(zoneAndId.getZone()).get().resume(zoneAndId.getId());
       }
       throw new UnsupportedOperationException("resume requires installation of the Admin Actions extension");
    }
@@ -258,8 +258,8 @@ public class NovaComputeServiceAdapter implements
    @Override
    public void suspendNode(String id) {
       ZoneAndId zoneAndId = ZoneAndId.fromSlashEncoded(id);
-      if (novaApi.getAdminActionsExtensionForZone(zoneAndId.getZone()).isPresent()) {
-         novaApi.getAdminActionsExtensionForZone(zoneAndId.getZone()).get().suspendServer(zoneAndId.getId());
+      if (novaApi.getServerAdminExtensionForZone(zoneAndId.getZone()).isPresent()) {
+         novaApi.getServerAdminExtensionForZone(zoneAndId.getZone()).get().suspend(zoneAndId.getId());
       }
       throw new UnsupportedOperationException("suspend requires installation of the Admin Actions extension");
    }

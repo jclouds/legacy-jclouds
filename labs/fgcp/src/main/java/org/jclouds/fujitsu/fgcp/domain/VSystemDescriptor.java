@@ -34,71 +34,71 @@ import com.google.common.collect.ImmutableSet;
  */
 @XmlRootElement(name = "vsysdescriptor")
 public class VSystemDescriptor {
-    @XmlElement(name = "vsysdescriptorId")
-    private String id;
+   @XmlElement(name = "vsysdescriptorId")
+   private String id;
 
-    @XmlElement(name = "vsysdescriptorName")
-    private String name;
+   @XmlElement(name = "vsysdescriptorName")
+   private String name;
 
-    private String creatorName;
+   private String creatorName;
 
-    private String registrant;
+   private String registrant;
 
-    private String description;
+   private String description;
 
-    private String keyword;
+   private String keyword;
 
-    @XmlElementWrapper(name = "vservers")
-    @XmlElement(name = "vserver")
-    private Set<VServerWithDetails> servers = new LinkedHashSet<VServerWithDetails>();
+   @XmlElementWrapper(name = "vservers")
+   @XmlElement(name = "vserver")
+   private Set<VServerWithDetails> servers = new LinkedHashSet<VServerWithDetails>();
 
-    /**
-     * @return the id
-     */
-    public String getId() {
-        return id;
-    }
+   /**
+    * @return the id
+    */
+   public String getId() {
+      return id;
+   }
 
-    /**
-     * @return the name
-     */
-    public String getName() {
-        return name;
-    }
+   /**
+    * @return the name
+    */
+   public String getName() {
+      return name;
+   }
 
-    /**
-     * @return the creatorName
-     */
-    public String getCreatorName() {
-        return creatorName;
-    }
+   /**
+    * @return the creatorName
+    */
+   public String getCreatorName() {
+      return creatorName;
+   }
 
-    /**
-     * @return the registrant
-     */
-    public String getRegistrant() {
-        return registrant;
-    }
+   /**
+    * @return the registrant
+    */
+   public String getRegistrant() {
+      return registrant;
+   }
 
-    /**
-     * @return the description
-     */
-    public String getDescription() {
-        return description;
-    }
+   /**
+    * @return the description
+    */
+   public String getDescription() {
+      return description;
+   }
 
-    /**
-     * @return the keyword
-     */
-    public String getKeyword() {
-        return keyword;
-    }
+   /**
+    * @return the keyword
+    */
+   public String getKeyword() {
+      return keyword;
+   }
 
-    /**
-     * @return the servers
-     */
-    public Set<VServerWithDetails> getServers() {
-        return servers == null ? ImmutableSet.<VServerWithDetails> of()
-                : ImmutableSet.copyOf(servers);
-    }
+   /**
+    * @return the servers
+    */
+   public Set<VServerWithDetails> getServers() {
+      return servers == null ? ImmutableSet.<VServerWithDetails> of()
+            : ImmutableSet.copyOf(servers);
+   }
 }

@@ -48,10 +48,10 @@ public class OptionalTypeAdapterFactory implements TypeAdapterFactory {
 
       Type elementType = ((ParameterizedType) type).getActualTypeArguments()[0];
       TypeAdapter<?> elementAdapter = gson.getAdapter(TypeToken.get(elementType));
-      return (TypeAdapter<T>) newMultisetAdapter(elementAdapter);
+      return (TypeAdapter<T>) newOptionalAdapter(elementAdapter);
    }
 
-   private <E> TypeAdapter<Optional<E>> newMultisetAdapter(
+   protected <E> TypeAdapter<Optional<E>> newOptionalAdapter(
          final TypeAdapter<E> elementAdapter) {
       return new TypeAdapter<Optional<E>>() {
          public void write(JsonWriter out, Optional<E> value) throws IOException {

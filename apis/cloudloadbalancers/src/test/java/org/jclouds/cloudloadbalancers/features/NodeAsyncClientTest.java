@@ -20,7 +20,6 @@ package org.jclouds.cloudloadbalancers.features;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.Collections;
 import java.util.Set;
 
 import org.jclouds.cloudloadbalancers.domain.NodeAttributes;
@@ -38,6 +37,7 @@ import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -85,7 +85,7 @@ public class NodeAsyncClientTest extends BaseCloudLoadBalancersAsyncClientTest<N
 
    public void createNodesInLoadBalancerWithType() throws SecurityException, NoSuchMethodException, IOException {
       Method method = NodeAsyncClient.class.getMethod("createNodesInLoadBalancer", Set.class, int.class);
-      HttpRequest httpRequest = processor.createRequest(method, Collections.<NodeRequest>singleton(NodeRequest.builder().
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<NodeRequest>of(NodeRequest.builder().
     		  address("192.168.1.1").port(8080).build()), 3);
 
       assertRequestLineEquals(httpRequest,

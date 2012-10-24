@@ -21,6 +21,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_RUNNING;
 import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_SUSPENDED;
 import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_TERMINATED;
+import static org.jclouds.openstack.nova.v2_0.predicates.KeyPairPredicates.nameMatches;
 
 import java.util.Map;
 import java.util.Set;
@@ -65,7 +66,6 @@ import org.jclouds.openstack.nova.v2_0.domain.zonescoped.SecurityGroupInZone;
 import org.jclouds.openstack.nova.v2_0.domain.zonescoped.ZoneAndName;
 import org.jclouds.openstack.nova.v2_0.extensions.KeyPairApi;
 import org.jclouds.openstack.nova.v2_0.extensions.SecurityGroupApi;
-import org.jclouds.openstack.nova.v2_0.predicates.KeyPairPredicates;
 import org.jclouds.openstack.nova.v2_0.predicates.SecurityGroupPredicates;
 import org.jclouds.scriptbuilder.functions.InitAdminAccess;
 
@@ -138,11 +138,11 @@ public class NovaComputeService extends BaseComputeService {
       Optional<? extends SecurityGroupApi> securityGroupApi = novaApi.getSecurityGroupExtensionForZone(zoneId);
       if (securityGroupApi.isPresent()) {
          for (String group : groups) {
-            for (SecurityGroup securityGroup : Iterables.filter(securityGroupApi.get().listSecurityGroups(),
+            for (SecurityGroup securityGroup : Iterables.filter(securityGroupApi.get().list(),
                      SecurityGroupPredicates.nameMatches(namingConvention.create().containsGroup(group)))) {
                ZoneAndName zoneAndName = ZoneAndName.fromZoneAndName(zoneId, securityGroup.getName());
                logger.debug(">> deleting securityGroup(%s)", zoneAndName);
-               securityGroupApi.get().deleteSecurityGroup(securityGroup.getId());
+               securityGroupApi.get().delete(securityGroup.getId());
                // TODO: test this clear happens
                securityGroupMap.invalidate(zoneAndName);
                logger.debug("<< deleted securityGroup(%s)", zoneAndName);
@@ -155,16 +155,13 @@ public class NovaComputeService extends BaseComputeService {
       Optional<? extends KeyPairApi> keyPairApi = novaApi.getKeyPairExtensionForZone(zoneId);
       if (keyPairApi.isPresent()) {
          for (String group : groups) {
-            for (Map<String, ? extends KeyPair> view : keyPairApi.get().listKeyPairs()) {
-               for (KeyPair pair : Iterables.filter(view.values(),
-                        KeyPairPredicates.nameMatches(namingConvention.create().containsGroup(group)))) {
-                  ZoneAndName zoneAndName = ZoneAndName.fromZoneAndName(zoneId, pair.getName());
-                  logger.debug(">> deleting keypair(%s)", zoneAndName);
-                  keyPairApi.get().deleteKeyPair(pair.getName());
-                  // TODO: test this clear happens
-                  keyPairCache.invalidate(zoneAndName);
-                  logger.debug("<< deleted keypair(%s)", zoneAndName);
-               }
+            for (KeyPair pair : keyPairApi.get().list().filter(nameMatches(namingConvention.create().containsGroup(group)))) {
+               ZoneAndName zoneAndName = ZoneAndName.fromZoneAndName(zoneId, pair.getName());
+               logger.debug(">> deleting keypair(%s)", zoneAndName);
+               keyPairApi.get().delete(pair.getName());
+               // TODO: test this clear happens
+               keyPairCache.invalidate(zoneAndName);
+               logger.debug("<< deleted keypair(%s)", zoneAndName);
             }
             keyPairCache.invalidate(ZoneAndName.fromZoneAndName(zoneId,
                      namingConvention.create().sharedNameForGroup(group)));

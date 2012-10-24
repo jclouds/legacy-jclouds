@@ -25,7 +25,7 @@ import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.Zone;
 import org.jclouds.location.functions.ZoneToEndpoint;
-import org.jclouds.openstack.nova.v2_0.extensions.AdminActionsApi;
+import org.jclouds.openstack.nova.v2_0.extensions.ServerAdminApi;
 import org.jclouds.openstack.nova.v2_0.extensions.FlavorExtraSpecsApi;
 import org.jclouds.openstack.nova.v2_0.extensions.FloatingIPApi;
 import org.jclouds.openstack.nova.v2_0.extensions.HostAdministrationApi;
@@ -156,7 +156,7 @@ public interface NovaApi {
     * Provides synchronous access to Server Admin Actions features.
     */
    @Delegate
-   Optional<? extends AdminActionsApi> getAdminActionsExtensionForZone(
+   Optional<? extends ServerAdminApi> getServerAdminExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
  
    /**

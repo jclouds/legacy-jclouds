@@ -20,7 +20,7 @@ package org.jclouds.rimuhosting.miro;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import java.util.Set;
 
@@ -66,11 +66,10 @@ public class RimuHostingClientLiveTest
       Set<? extends PricingPlan> plans = connection.getPricingPlanList();
       for (PricingPlan plan : plans) {
          if (plan.getId().equalsIgnoreCase("MIRO4B")) {
-            assertTrue(true);
             return;
          }
       }
-      assertTrue(false);
+      fail("MIRO4B not found");
    }
 
    @Test
@@ -78,11 +77,10 @@ public class RimuHostingClientLiveTest
       Set<? extends Image> images = connection.getImageList();
       for (Image image : images) {
          if (image.getId().equalsIgnoreCase("lenny")) {
-            assertTrue(true);
             return;
          }
       }
-      assertTrue(false, "lenny not found");
+      fail("lenny not found");
    }
 
    @Test

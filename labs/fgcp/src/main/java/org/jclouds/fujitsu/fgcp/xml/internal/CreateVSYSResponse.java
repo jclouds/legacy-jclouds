@@ -28,17 +28,17 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "CreateVSYSResponse")
 public class CreateVSYSResponse extends StatusResponse implements
-        SingleElementResponse {
-    @XmlElement(required = true)
-    private String vsysId;
+      SingleElementResponse {
+   @XmlElement(required = true)
+   private String vsysId;
 
-    @Override
-    public String toString() {
-        return getElement();
-    }
+   @Override
+   public String toString() {
+      return getElement();
+   }
 
-    @Override
-    public String getElement() {
-        return vsysId;
-    }
+   @Override
+   public String getElement() {
+      return vsysId;
+   }
 }

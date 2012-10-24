@@ -20,27 +20,119 @@ package org.jclouds.ec2.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.jclouds.javax.annotation.Nullable;
 
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
+import com.google.common.base.Objects;
+import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.ForwardingSet;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Ordering;
 
 /**
  * 
- * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-ReservationInfoType.html"
+ * @see <a href=
+ *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-ReservationInfoType.html"
  *      />
  * @author Adrian Cole
  */
-public class Reservation<T extends RunningInstance> extends LinkedHashSet<T> implements Comparable<Reservation<T>>,
-         Set<T> {
+public class Reservation<T extends RunningInstance> extends ForwardingSet<T> implements Comparable<Reservation<T>>{
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -9051777593518861395L;
+   public static <T extends RunningInstance> Builder<T> builder() {
+      return new Builder<T>();
+   }
+
+   public Builder<T> toBuilder() {
+      return Reservation.<T> builder().fromReservation(this);
+   }
+
+   public static class Builder<T extends RunningInstance> {
+      private String region;
+      private String ownerId;
+      private String requesterId;
+      private String reservationId;
+
+      private ImmutableSet.Builder<T> instances = ImmutableSet.<T> builder();
+      private ImmutableSet.Builder<String> groupNames = ImmutableSet.<String> builder();
+
+      /**
+       * @see Reservation#getRegion()
+       */
+      public Builder<T> region(String region) {
+         this.region = region;
+         return this;
+      }
+
+      /**
+       * @see Reservation#getOwnerId()
+       */
+      public Builder<T> ownerId(String ownerId) {
+         this.ownerId = ownerId;
+         return this;
+      }
+
+      /**
+       * @see Reservation#getRequesterId()
+       */
+      public Builder<T> requesterId(String requesterId) {
+         this.requesterId = requesterId;
+         return this;
+      }
+
+      /**
+       * @see Reservation#getReservationId()
+       */
+      public Builder<T> reservationId(String reservationId) {
+         this.reservationId = reservationId;
+         return this;
+      }
+
+      /**
+       * @see Reservation#iterator
+       */
+      public Builder<T> instance(T instance) {
+         this.instances.add(checkNotNull(instance, "instance"));
+         return this;
+      }
+
+      /**
+       * @see Reservation#iterator
+       */
+      public Builder<T> instances(Set<T> instances) {
+         this.instances.addAll(checkNotNull(instances, "instances"));
+         return this;
+      }
+
+      /**
+       * @see Reservation#getGroupNames()
+       */
+      public Builder<T> groupName(String groupName) {
+         this.groupNames.add(checkNotNull(groupName, "groupName"));
+         return this;
+      }
+
+      /**
+       * @see Reservation#getGroupNames()
+       */
+      public Builder<T> groupNames(Iterable<String> groupNames) {
+         this.groupNames = ImmutableSet.<String> builder().addAll(checkNotNull(groupNames, "groupNames"));
+         return this;
+      }
+
+      public Reservation<T> build() {
+         return new Reservation<T>(region, groupNames.build(), instances.build(), ownerId, requesterId, reservationId);
+      }
+
+      public Builder<T> fromReservation(Reservation<T> in) {
+         return region(in.region).ownerId(in.ownerId).requesterId(in.requesterId).reservationId(in.reservationId)
+                  .instances(in).groupNames(in.groupNames);
+      }
+   }
+
    private final String region;
-   private final Set<String> groupIds = Sets.newLinkedHashSet();
+   private final ImmutableSet<String> groupNames;
+   private final ImmutableSet<T> instances;
    @Nullable
    private final String ownerId;
    @Nullable
@@ -48,32 +140,45 @@ public class Reservation<T extends RunningInstance> extends LinkedHashSet<T> imp
    @Nullable
    private final String reservationId;
 
-   public Reservation(String region, Iterable<String> groupIds, Iterable<T> instances, @Nullable String ownerId,
+   public Reservation(String region, Iterable<String> groupNames, Iterable<T> instances, @Nullable String ownerId,
             @Nullable String requesterId, @Nullable String reservationId) {
       this.region = checkNotNull(region, "region");
-      Iterables.addAll(this.groupIds, checkNotNull(groupIds, "groupIds"));
-      Iterables.addAll(this, checkNotNull(instances, "instances"));
+      this.groupNames = ImmutableSet.copyOf(checkNotNull(groupNames, "groupNames"));
+      this.instances = ImmutableSet.copyOf(checkNotNull(instances, "instances"));
       this.ownerId = ownerId;
       this.requesterId = requesterId;
       this.reservationId = reservationId;
    }
 
+   @Override
+   protected Set<T> delegate() {
+      return instances;
+   }
+
    /**
-    * Instances are tied to Availability Zones. However, the instance ID is tied to the Region.
+    * To be removed in jclouds 1.6 <h4>Warning</h4>
+    * 
+    * Especially on EC2 clones that may not support regions, this value is fragile. Consider
+    * alternate means to determine context.
     */
+   @Deprecated
    public String getRegion() {
       return region;
    }
 
-   public int compareTo(Reservation<T> o) {
-      return (this == o) ? 0 : getReservationId().compareTo(o.getReservationId());
+   /**
+    * @see #getGroupNames()
+    */
+   @Deprecated
+   public Set<String> getGroupIds() {
+      return groupNames;
    }
-
+   
    /**
     * Names of the security groups.
     */
-   public Set<String> getGroupIds() {
-      return groupIds;
+   public Set<String> getGroupNames() {
+      return groupNames;
    }
 
    /**
@@ -84,7 +189,8 @@ public class Reservation<T extends RunningInstance> extends LinkedHashSet<T> imp
    }
 
    /**
-    * ID of the requester.
+    * The ID of the requester that launched the instances on your behalf (for example, AWS
+    * Management Console or Auto Scaling).
     */
    public String getRequesterId() {
       return requesterId;
@@ -99,51 +205,34 @@ public class Reservation<T extends RunningInstance> extends LinkedHashSet<T> imp
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = super.hashCode();
-      result = prime * result + ((groupIds == null) ? 0 : groupIds.hashCode());
-      result = prime * result + ((ownerId == null) ? 0 : ownerId.hashCode());
-      result = prime * result + ((region == null) ? 0 : region.hashCode());
-      result = prime * result + ((requesterId == null) ? 0 : requesterId.hashCode());
-      result = prime * result + ((reservationId == null) ? 0 : reservationId.hashCode());
-      return result;
+      return Objects.hashCode(region, reservationId, super.hashCode());
    }
 
    @Override
    public boolean equals(Object obj) {
       if (this == obj)
          return true;
-      if (!super.equals(obj))
+      if (obj == null || getClass() != obj.getClass())
          return false;
-      if (getClass() != obj.getClass())
-         return false;
-      Reservation<?> other = (Reservation<?>) obj;
-      if (groupIds == null) {
-         if (other.groupIds != null)
-            return false;
-      } else if (!groupIds.equals(other.groupIds))
-         return false;
-      if (ownerId == null) {
-         if (other.ownerId != null)
-            return false;
-      } else if (!ownerId.equals(other.ownerId))
-         return false;
-      if (region == null) {
-         if (other.region != null)
-            return false;
-      } else if (!region.equals(other.region))
-         return false;
-      if (requesterId == null) {
-         if (other.requesterId != null)
-            return false;
-      } else if (!requesterId.equals(other.requesterId))
-         return false;
-      if (reservationId == null) {
-         if (other.reservationId != null)
-            return false;
-      } else if (!reservationId.equals(other.reservationId))
-         return false;
-      return true;
+      @SuppressWarnings("unchecked")
+      Reservation<T> that = Reservation.class.cast(obj);
+      return super.equals(that) && Objects.equal(this.region, that.region)
+               && Objects.equal(this.reservationId, that.reservationId);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String toString() {
+      return Objects.toStringHelper(this).omitNullValues().add("region", region).add("reservationId", reservationId)
+               .add("requesterId", requesterId).add("instances", instances).add("groupNames", groupNames).toString();
+   }
+
+   @Override
+   public int compareTo(Reservation<T> other) {
+      return ComparisonChain.start().compare(region, other.region)
+               .compare(reservationId, other.reservationId, Ordering.natural().nullsLast()).result();
    }
 
 }

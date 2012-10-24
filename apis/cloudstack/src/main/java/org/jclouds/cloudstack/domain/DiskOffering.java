@@ -22,11 +22,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.beans.ConstructorProperties;
 import java.util.Date;
+import java.util.Set;
 
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Class DiskOffering
@@ -54,7 +56,7 @@ public class DiskOffering implements Comparable<DiskOffering> {
       protected String domainId;
       protected int diskSize;
       protected boolean customized;
-      protected String tags;
+      protected ImmutableSet.Builder<String> tags = ImmutableSet.<String>builder();
 
       /**
        * @see DiskOffering#getId()
@@ -123,13 +125,21 @@ public class DiskOffering implements Comparable<DiskOffering> {
       /**
        * @see DiskOffering#getTags()
        */
-      public T tags(String tags) {
-         this.tags = tags;
+      public T tags(Iterable<String> tags) {
+         this.tags = ImmutableSet.<String>builder().addAll(tags);
          return self();
       }
-
+      
+      /**
+       * @see DiskOffering#getTags()
+       */
+      public T tag(String tag) {
+         this.tags.add(tag);
+         return self();
+      }
+      
       public DiskOffering build() {
-         return new DiskOffering(id, name, displayText, created, domain, domainId, diskSize, customized, tags);
+         return new DiskOffering(id, name, displayText, created, domain, domainId, diskSize, customized, tags.build());
       }
 
       public T fromDiskOffering(DiskOffering in) {
@@ -161,14 +171,14 @@ public class DiskOffering implements Comparable<DiskOffering> {
    private final String domainId;
    private final int diskSize;
    private final boolean customized;
-   private final String tags;
+   private final Set<String> tags;
 
    @ConstructorProperties({
          "id", "name", "displaytext", "created", "domain", "domainid", "disksize", "iscustomized", "tags"
    })
    protected DiskOffering(String id, @Nullable String name, @Nullable String displayText, @Nullable Date created,
                           @Nullable String domain, @Nullable String domainId, int diskSize, boolean customized,
-                          @Nullable String tags) {
+                          @Nullable Iterable<String> tags) {
       this.id = checkNotNull(id, "id");
       this.name = name;
       this.displayText = displayText;
@@ -177,7 +187,7 @@ public class DiskOffering implements Comparable<DiskOffering> {
       this.domainId = domainId;
       this.diskSize = diskSize;
       this.customized = customized;
-      this.tags = tags;
+      this.tags = tags != null ? ImmutableSet.copyOf(tags) : ImmutableSet.<String> of();
    }
 
    /**
@@ -244,8 +254,7 @@ public class DiskOffering implements Comparable<DiskOffering> {
    /**
     * @return the tags for the disk offering
     */
-   @Nullable
-   public String getTags() {
+   public Set<String> getTags() {
       return this.tags;
    }
 

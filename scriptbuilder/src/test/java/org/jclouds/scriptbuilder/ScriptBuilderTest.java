@@ -43,7 +43,6 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.io.CharStreams;
 import com.google.common.io.Resources;
 
 /**
@@ -72,16 +71,14 @@ public class ScriptBuilderTest {
    public void testBuildSimpleWindows() throws MalformedURLException, IOException {
       assertEquals(
             testScriptBuilder.render(OsFamily.WINDOWS),
-            CharStreams.toString(Resources.newReaderSupplier(
-                  Resources.getResource("test_script." + ShellToken.SH.to(OsFamily.WINDOWS)), Charsets.UTF_8)));
+            Resources.toString(Resources.getResource("test_script." + ShellToken.SH.to(OsFamily.WINDOWS)), Charsets.UTF_8));
    }
 
    @Test
    public void testBuildSimpleUNIX() throws MalformedURLException, IOException {
       assertEquals(
             testScriptBuilder.render(OsFamily.UNIX),
-            CharStreams.toString(Resources.newReaderSupplier(
-                  Resources.getResource("test_script." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
+            Resources.toString(Resources.getResource("test_script." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8));
    }
 
    ScriptBuilder findPidBuilder = new ScriptBuilder().addStatement(findPid("{args}")).addStatement(
@@ -91,32 +88,29 @@ public class ScriptBuilderTest {
    public void testFindPidWindows() throws MalformedURLException, IOException {
       assertEquals(
             findPidBuilder.render(OsFamily.WINDOWS),
-            CharStreams.toString(Resources.newReaderSupplier(
-                  Resources.getResource("test_find_pid." + ShellToken.SH.to(OsFamily.WINDOWS)), Charsets.UTF_8)));
+            Resources.toString(Resources.getResource("test_find_pid." + ShellToken.SH.to(OsFamily.WINDOWS)), Charsets.UTF_8));
    }
 
    @Test
    public void testFindPidUNIX() throws MalformedURLException, IOException {
       assertEquals(
             findPidBuilder.render(OsFamily.UNIX),
-            CharStreams.toString(Resources.newReaderSupplier(
-                  Resources.getResource("test_find_pid." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
+            Resources.toString(Resources.getResource("test_find_pid." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8));
    }
 
    ScriptBuilder seekAndDestroyBuilder = new ScriptBuilder().addStatement(findPid("{args}")).addStatement(kill());
 
    @Test
    public void testSeekAndDestroyWindows() throws MalformedURLException, IOException {
-      assertEquals(seekAndDestroyBuilder.render(OsFamily.WINDOWS), CharStreams.toString(Resources.newReaderSupplier(
-            Resources.getResource("test_seek_and_destroy." + ShellToken.SH.to(OsFamily.WINDOWS)), Charsets.UTF_8)));
+      assertEquals(seekAndDestroyBuilder.render(OsFamily.WINDOWS), Resources.toString(
+            Resources.getResource("test_seek_and_destroy." + ShellToken.SH.to(OsFamily.WINDOWS)), Charsets.UTF_8));
    }
 
    @Test
    public void testSeekAndDestroyUNIX() throws MalformedURLException, IOException {
       assertEquals(
             seekAndDestroyBuilder.render(OsFamily.UNIX),
-            CharStreams.toString(Resources.newReaderSupplier(
-                  Resources.getResource("test_seek_and_destroy." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
+            Resources.toString(Resources.getResource("test_seek_and_destroy." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8));
    }
 
    @Test

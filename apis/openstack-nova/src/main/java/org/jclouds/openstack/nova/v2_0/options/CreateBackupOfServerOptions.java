@@ -55,7 +55,7 @@ public class CreateBackupOfServerOptions implements MapBinder {
 
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object toBind) {
-      throw new IllegalStateException("createBackupOfServer is a POST operation");
+      throw new IllegalStateException("createBackup is a POST operation");
    }
 
    @Override

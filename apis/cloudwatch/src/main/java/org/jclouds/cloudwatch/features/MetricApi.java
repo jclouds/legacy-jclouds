@@ -34,6 +34,7 @@ import org.jclouds.concurrent.Timeout;
  * Provides access to Amazon CloudWatch via the Query API
  * <p/>
  * 
+ * @see MetricAsyncApi
  * @see <a href="http://docs.amazonwebservices.com/AmazonCloudWatch/latest/APIReference" />
  * @author Jeremy Whitlock
  */

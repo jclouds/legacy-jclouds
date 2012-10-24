@@ -29,7 +29,6 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
-import com.google.common.io.CharStreams;
 import com.google.common.io.Resources;
 
 /**
@@ -49,8 +48,8 @@ public class CreateRunScriptTest {
                               exec("echo {varl}JAVA_HOME{varr}{fs}bin{fs}java -DinstanceName={varl}INSTANCE_NAME{varr} myServer.Main")));
 
    public void testUNIX() throws IOException {
-      assertEquals(statement.render(OsFamily.UNIX), CharStreams.toString(Resources.newReaderSupplier(Resources
-               .getResource("test_runrun." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
+      assertEquals(statement.render(OsFamily.UNIX), Resources.toString(Resources
+               .getResource("test_runrun." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8));
    }
 
    @Test(expectedExceptions = UnsupportedOperationException.class)

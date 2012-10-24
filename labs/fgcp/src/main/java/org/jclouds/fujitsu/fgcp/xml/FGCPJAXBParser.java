@@ -40,49 +40,49 @@ import org.jclouds.xml.XMLParser;
  */
 @Singleton
 public class FGCPJAXBParser implements XMLParser {
-    JAXBContext context;
+   JAXBContext context;
 
-    public FGCPJAXBParser() throws JAXBException {
-        context = JAXBContext.newInstance(VServerWithDetails.class.getPackage()
-                .getName()
-                + ":"
-                + ListServerTypeResponse.class.getPackage().getName(),
-                VServerWithDetails.class.getClassLoader());
-    }
+   public FGCPJAXBParser() throws JAXBException {
+      context = JAXBContext.newInstance(VServerWithDetails.class.getPackage()
+            .getName()
+            + ":"
+            + ListServerTypeResponse.class.getPackage().getName(),
+            VServerWithDetails.class.getClassLoader());
+   }
 
-    @Override
-    public String toXML(final Object src) throws IOException {
-        return toXML(src, src.getClass());
-    }
+   @Override
+   public String toXML(final Object src) throws IOException {
+      return toXML(src, src.getClass());
+   }
 
-    @Override
-    public <T> String toXML(final Object src, final Class<T> type)
-            throws IOException {
-        throw new UnsupportedOperationException(
-                "only marshaling from XML is implemented");
-    }
+   @Override
+   public <T> String toXML(final Object src, final Class<T> type)
+         throws IOException {
+      throw new UnsupportedOperationException(
+            "only marshaling from XML is implemented");
+   }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T> T fromXML(final String xml, final Class<T> type)
-            throws IOException {
-        T response = null;
-        try {
-            StringReader reader = new StringReader(xml);
+   @SuppressWarnings("unchecked")
+   @Override
+   public <T> T fromXML(final String xml, final Class<T> type)
+         throws IOException {
+      T response = null;
+      try {
+         StringReader reader = new StringReader(xml);
 
-            Unmarshaller unmarshaller = context.createUnmarshaller();
+         Unmarshaller unmarshaller = context.createUnmarshaller();
 
-            response = (T) unmarshaller.unmarshal(reader);
-        } catch (Exception ex) {
-            throw new IOException("Could not unmarshal document", ex);
-        }
+         response = (T) unmarshaller.unmarshal(reader);
+      } catch (Exception ex) {
+         throw new IOException("Could not unmarshal document", ex);
+      }
 
-        if (((StatusQuerable) response).isError()) {
-            throw new HttpException(
-                    ((StatusQuerable) response).getResponseMessage());
-        }
+      if (((StatusQuerable) response).isError()) {
+         throw new HttpException(
+               ((StatusQuerable) response).getResponseMessage());
+      }
 
-        return response;
-    }
+      return response;
+   }
 
 }

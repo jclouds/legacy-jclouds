@@ -24,7 +24,7 @@
     <parent>
         <artifactId>jclouds-project</artifactId>
         <groupId>org.jclouds</groupId>
-        <version>1.5.0-SNAPSHOT</version>
+        <version>1.6.0-SNAPSHOT</version>
         <relativePath>../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.labs</groupId>
@@ -34,7 +34,6 @@
     <modules>
        <module>virtualbox</module>
        <module>vcloud-director</module>
-       <module>glesys</module>
        <module>opsource-servers</module>
        <module>elb</module>
        <module>aws-elb</module>
@@ -61,6 +60,6 @@
        <module>fgcp</module>
        <module>fgcp-au</module>
        <module>fgcp-de</module>
-       <module>sqs</module>
+       <module>abiquo</module>
     </modules>
 </project>

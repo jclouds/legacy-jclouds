@@ -28,57 +28,57 @@ import com.google.common.base.Objects;
  * @author Dies Koper
  */
 public class VSystem {
-    @XmlElement(name = "vsysId")
-    protected String id;
-    @XmlElement(name = "vsysName")
-    protected String name;
-    protected String creator;
-    @XmlElement(name = "baseDescriptor")
-    protected String template;
-    protected String description;
+   @XmlElement(name = "vsysId")
+   protected String id;
+   @XmlElement(name = "vsysName")
+   protected String name;
+   protected String creator;
+   @XmlElement(name = "baseDescriptor")
+   protected String template;
+   protected String description;
 
-    public String getId() {
-        return id;
-    }
+   public String getId() {
+      return id;
+   }
 
-    public String getName() {
-        return name;
-    }
+   public String getName() {
+      return name;
+   }
 
-    public String getCreator() {
-        return creator;
-    }
+   public String getCreator() {
+      return creator;
+   }
 
-    public String getTemplate() {
-        return template;
-    }
+   public String getTemplate() {
+      return template;
+   }
 
-    public String getDescription() {
-        return description;
-    }
+   public String getDescription() {
+      return description;
+   }
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(id);
-    }
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(id);
+   }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        VSystem that = VSystem.class.cast(obj);
-        return Objects.equal(this.id, that.id);
-    }
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      VSystem that = VSystem.class.cast(obj);
+      return Objects.equal(this.id, that.id);
+   }
 
-    @Override
-    public String toString() {
-        return Objects.toStringHelper(this).omitNullValues().add("id", id)
-                .add("name", name).add("creator", creator)
-                .add("template", template).add("description", description)
-                .toString();
-    }
+   @Override
+   public String toString() {
+      return Objects.toStringHelper(this).omitNullValues().add("id", id)
+            .add("name", name).add("creator", creator)
+            .add("template", template).add("description", description)
+            .toString();
+   }
 }

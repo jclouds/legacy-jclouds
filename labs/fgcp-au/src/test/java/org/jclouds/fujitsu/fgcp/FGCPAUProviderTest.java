@@ -28,7 +28,7 @@ import org.testng.annotations.Test;
 public class FGCPAUProviderTest extends BaseProviderMetadataTest {
 
    public FGCPAUProviderTest() {
-      super(new FGCPAUProviderMetadata(), new FGCPApiMetadata());
+     super(new FGCPAUProviderMetadata(), new FGCPApiMetadata());
    }
 
 }

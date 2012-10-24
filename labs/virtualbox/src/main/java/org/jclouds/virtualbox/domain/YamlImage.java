@@ -27,6 +27,7 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.domain.LoginCredentials;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
@@ -118,6 +119,7 @@ public class YamlImage {
    public String os_family;
    public String os_description;
    public String os_version;
+   public String iso_md5;
    public String iso;
    public String keystroke_sequence;
    public String preseed_cfg;
@@ -136,13 +138,16 @@ public class YamlImage {
       public Image apply(YamlImage arg0) {
          if (arg0 == null)
             return null;
+         
          OsFamily family = parseOsFamilyOrUnrecognized(arg0.os_family);
 
          OperatingSystem operatingSystem = OperatingSystem.builder().description(arg0.os_description).family(family)
                   .version(arg0.os_version).is64Bit(arg0.os_64bit).arch(arg0.os_arch).build();
 
          return new ImageBuilder().id(arg0.id).name(arg0.name).description(arg0.description)
-                  .operatingSystem(operatingSystem).status(Image.Status.AVAILABLE).build();
+                  .operatingSystem(operatingSystem).status(Image.Status.AVAILABLE)
+                  .defaultCredentials(new LoginCredentials(arg0.username, arg0.credential, null, true))
+                  .build();
       }
    };
 
@@ -154,7 +159,7 @@ public class YamlImage {
    public String toString() {
       return "YamlImage [id=" + id + ", name=" + name + ", description=" + description + ", hostname=" + hostname
                + ", location_id=" + location_id + ", os_arch=" + os_arch + ", os_family=" + os_family
-               + ", os_description=" + os_description + ", os_version=" + os_version + ", iso=" + iso
+               + ", os_description=" + os_description + ", os_version=" + os_version + ", iso=" + iso 
                + ", keystroke_sequence=" + keystroke_sequence + ", preseed_cfg=" + preseed_cfg + ", login_port="
                + login_port + ", os_64bit=" + os_64bit + ", group=" + group + ", tags=" + tags + ", metadata="
                + metadata + ", username=" + username + ", credential=" + credential + ", credential_url="

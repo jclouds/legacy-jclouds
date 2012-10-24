@@ -35,111 +35,111 @@ import com.google.common.collect.Sets;
  */
 @XmlRootElement(name = "servertype")
 public class ServerType implements Comparable<ServerType> {
-    private String id;
+   private String id;
 
-    private String name;
+   private String name;
 
-    private String label;
+   private String label;
 
-    private String comment;
+   private String comment;
 
-    private String productId;
+   private String productId;
 
-    private String productName;
+   private String productName;
 
-    private String price;
+   private String price;
 
-    private String chargeType;
+   private String chargeType;
 
-    private String expectedUsage;
+   private String expectedUsage;
 
-    private CPU cpu;
+   private CPU cpu;
 
-    private Memory memory;
+   private Memory memory;
 
-    @XmlElementWrapper(name = "disks")
-    @XmlElement(name = "disk")
-    private Set<Disk> disks = Sets.newLinkedHashSet();
+   @XmlElementWrapper(name = "disks")
+   @XmlElement(name = "disk")
+   private Set<Disk> disks = Sets.newLinkedHashSet();
 
-    public String getId() {
-        return id;
-    }
+   public String getId() {
+      return id;
+   }
 
-    public String getName() {
-        return name;
-    }
+   public String getName() {
+      return name;
+   }
 
-    public String getLabel() {
-        return label;
-    }
+   public String getLabel() {
+      return label;
+   }
 
-    public String getComment() {
-        return comment;
-    }
+   public String getComment() {
+      return comment;
+   }
 
-    public String getProductId() {
-        return productId;
-    }
+   public String getProductId() {
+      return productId;
+   }
 
-    public String getProductName() {
-        return productName;
-    }
+   public String getProductName() {
+      return productName;
+   }
 
-    public String getPrice() {
-        return price;
-    }
+   public String getPrice() {
+      return price;
+   }
 
-    public String getChargeType() {
-        return chargeType;
-    }
+   public String getChargeType() {
+      return chargeType;
+   }
 
-    public String getExpectedUsage() {
-        return expectedUsage;
-    }
+   public String getExpectedUsage() {
+      return expectedUsage;
+   }
 
-    public CPU getCpu() {
-        return cpu;
-    }
+   public CPU getCpu() {
+      return cpu;
+   }
 
-    public Memory getMemory() {
-        return memory;
-    }
+   public Memory getMemory() {
+      return memory;
+   }
 
-    public Set<Disk> getDisks() {
-        return disks == null ? ImmutableSet.<Disk> of() : ImmutableSet
-                .copyOf(disks);
-    }
+   public Set<Disk> getDisks() {
+      return disks == null ? ImmutableSet.<Disk> of() : ImmutableSet
+            .copyOf(disks);
+   }
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(id);
-    }
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(id);
+   }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        ServerType that = ServerType.class.cast(obj);
-        return Objects.equal(this.id, that.id);
-    }
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      ServerType that = ServerType.class.cast(obj);
+      return Objects.equal(this.id, that.id);
+   }
 
-    @Override
-    public String toString() {
-        return Objects.toStringHelper(this).omitNullValues().add("id", id)
-                .add("name", name).add("label", label).add("comment", comment)
-                .add("productId", productId).add("productName", productName)
-                .add("price", price).add("chargeType", chargeType)
-                .add("expectedUsage", expectedUsage).add("cpu", cpu)
-                .add("memory", memory).add("disks", disks).toString();
-    }
+   @Override
+   public String toString() {
+      return Objects.toStringHelper(this).omitNullValues().add("id", id)
+            .add("name", name).add("label", label).add("comment", comment)
+            .add("productId", productId).add("productName", productName)
+            .add("price", price).add("chargeType", chargeType)
+            .add("expectedUsage", expectedUsage).add("cpu", cpu)
+            .add("memory", memory).add("disks", disks).toString();
+   }
 
-    @Override
-    public int compareTo(ServerType o) {
-        return memory == null ? -1 : memory.compareTo(o.memory);
-    }
+   @Override
+   public int compareTo(ServerType o) {
+      return memory == null ? -1 : memory.compareTo(o.memory);
+   }
 
 }

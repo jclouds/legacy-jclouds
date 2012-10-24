@@ -65,7 +65,7 @@ import com.google.common.primitives.Ints;
 public class ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddToSet extends
          CreateNodesWithGroupEncodedIntoNameThenAddToSet {
 
-   private final AllocateAndAddFloatingIpToNode allocateAndAddFloatingIpToNode;
+   private final AllocateAndAddFloatingIpToNode createAndAddFloatingIpToNode;
    private final LoadingCache<ZoneAndName, SecurityGroupInZone> securityGroupCache;
    private final LoadingCache<ZoneAndName, KeyPair> keyPairCache;
    private final NovaApi novaApi;
@@ -77,15 +77,15 @@ public class ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddT
             GroupNamingConvention.Factory namingConvention,
             CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.Factory customizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapFactory,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
-            AllocateAndAddFloatingIpToNode allocateAndAddFloatingIpToNode,
+            AllocateAndAddFloatingIpToNode createAndAddFloatingIpToNode,
             LoadingCache<ZoneAndName, SecurityGroupInZone> securityGroupCache,
             LoadingCache<ZoneAndName, KeyPair> keyPairCache, NovaApi novaApi) {
       super(addNodeWithTagStrategy, listNodesStrategy, namingConvention, executor,
                customizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapFactory);
       this.securityGroupCache = checkNotNull(securityGroupCache, "securityGroupCache");
       this.keyPairCache = checkNotNull(keyPairCache, "keyPairCache");
-      this.allocateAndAddFloatingIpToNode = checkNotNull(allocateAndAddFloatingIpToNode,
-               "allocateAndAddFloatingIpToNode");
+      this.createAndAddFloatingIpToNode = checkNotNull(createAndAddFloatingIpToNode,
+               "createAndAddFloatingIpToNode");
       this.novaApi = checkNotNull(novaApi, "novaApi");
    }
 
@@ -153,7 +153,7 @@ public class ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddT
       NovaTemplateOptions templateOptions = NovaTemplateOptions.class.cast(template.getOptions());
 
       if (templateOptions.shouldAutoAssignFloatingIp()) {
-         return Futures.compose(future, allocateAndAddFloatingIpToNode, executor);
+         return Futures.compose(future, createAndAddFloatingIpToNode, executor);
       } else {
          return future;
       }

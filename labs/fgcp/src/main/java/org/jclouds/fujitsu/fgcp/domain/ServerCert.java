@@ -29,93 +29,93 @@ import com.google.common.base.Objects;
  */
 @XmlRootElement(name = "servercert")
 public class ServerCert implements Comparable<ServerCert> {
-    private int certNum;
+   private int certNum;
 
-    private String subject;
+   private String subject;
 
-    private String issuer;
+   private String issuer;
 
-    private String validity;
+   private String validity;
 
-    private int groupId;
+   private int groupId;
 
-    private String detail;
+   private String detail;
 
-    /**
-     * @return the certNum
-     */
-    public int getCertNum() {
-        return certNum;
-    }
+   /**
+    * @return the certNum
+    */
+   public int getCertNum() {
+      return certNum;
+   }
 
-    /**
-     * @return the subject
-     */
-    public String getSubject() {
-        return subject;
-    }
+   /**
+    * @return the subject
+    */
+   public String getSubject() {
+      return subject;
+   }
 
-    /**
-     * @return the issuer
-     */
-    public String getIssuer() {
-        return issuer;
-    }
+   /**
+    * @return the issuer
+    */
+   public String getIssuer() {
+      return issuer;
+   }
 
-    /**
-     * @return the validity
-     */
-    public String getValidity() {
-        return validity;
-    }
+   /**
+    * @return the validity
+    */
+   public String getValidity() {
+      return validity;
+   }
 
-    /**
-     * @return the groupId
-     */
-    public int getGroupId() {
-        return groupId;
-    }
+   /**
+    * @return the groupId
+    */
+   public int getGroupId() {
+      return groupId;
+   }
 
-    /**
-     * @return the detail
-     */
-    public String getDetail() {
-        return detail;
-    }
+   /**
+    * @return the detail
+    */
+   public String getDetail() {
+      return detail;
+   }
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(certNum, groupId, issuer, subject, validity);
-    }
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(certNum, groupId, issuer, subject, validity);
+   }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        ServerCert that = ServerCert.class.cast(obj);
-        return Objects.equal(this.certNum, that.certNum)
-                && Objects.equal(this.groupId, that.groupId)
-                && Objects.equal(this.issuer, that.issuer)
-                && Objects.equal(this.subject, that.subject)
-                && Objects.equal(this.validity, that.validity);
-    }
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      ServerCert that = ServerCert.class.cast(obj);
+      return Objects.equal(this.certNum, that.certNum)
+            && Objects.equal(this.groupId, that.groupId)
+            && Objects.equal(this.issuer, that.issuer)
+            && Objects.equal(this.subject, that.subject)
+            && Objects.equal(this.validity, that.validity);
+   }
 
-    @Override
-    public String toString() {
-        return Objects.toStringHelper(this).omitNullValues()
-                .add("certNum", certNum).add("issuer", issuer)
-                .add("subject", subject).add("validity", validity)
-                .add("groupId", groupId).add("detail", detail).toString();
-    }
+   @Override
+   public String toString() {
+      return Objects.toStringHelper(this).omitNullValues()
+            .add("certNum", certNum).add("issuer", issuer)
+            .add("subject", subject).add("validity", validity)
+            .add("groupId", groupId).add("detail", detail).toString();
+   }
 
-    @Override
-    public int compareTo(ServerCert o) {
-        return (certNum - o.certNum) == 0 ? (groupId - o.groupId)
-                : (certNum - o.certNum);
-    }
+   @Override
+   public int compareTo(ServerCert o) {
+      return (certNum - o.certNum) == 0 ? (groupId - o.groupId)
+            : (certNum - o.certNum);
+   }
 
 }

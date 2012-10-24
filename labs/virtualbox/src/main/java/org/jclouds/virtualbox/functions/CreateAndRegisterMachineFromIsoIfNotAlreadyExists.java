@@ -77,30 +77,31 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Functi
    }
 
    @Override
-   public IMachine apply(MasterSpec launchSpecification) {
+   public IMachine apply(MasterSpec masterSpec) {
       final IVirtualBox vBox = manager.get().getVBox();
-      String vmName = launchSpecification.getVmSpec().getVmName();
-      String vmId = launchSpecification.getVmSpec().getVmId();
+      String vmName = masterSpec.getVmSpec().getVmName();
+      String vmId = masterSpec.getVmSpec().getVmId();
 
       try {
          vBox.findMachine(vmId);
          throw new IllegalStateException("Machine " + vmName + " is already registered.");
       } catch (VBoxException e) {
          if (machineNotFoundException(e))
-            return createMachine(vBox, launchSpecification);
+            return createMachine(vBox, masterSpec);
          else
             throw e;
       }
    }
 
-   private IMachine createMachine(IVirtualBox vBox, MasterSpec machineSpec) {
-      VmSpec vmSpec = machineSpec.getVmSpec();
+   private IMachine createMachine(IVirtualBox vBox, MasterSpec masterSpec) {
+      VmSpec vmSpec = masterSpec.getVmSpec();
       String settingsFile = vBox.composeMachineFilename(vmSpec.getVmName(), workingDir);
 
       IMachine newMachine = vBox.createMachine(settingsFile, vmSpec.getVmName(), vmSpec.getOsTypeId(),
                vmSpec.getVmId(), vmSpec.isForceOverwrite());
+      
       manager.get().getVBox().registerMachine(newMachine);
-      ensureConfiguration(machineSpec);
+      ensureConfiguration(masterSpec);
       return newMachine;
    }
 

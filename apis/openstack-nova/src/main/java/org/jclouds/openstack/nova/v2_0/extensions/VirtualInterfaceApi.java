@@ -18,7 +18,6 @@
  */
 package org.jclouds.openstack.nova.v2_0.extensions;
 
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
@@ -26,12 +25,16 @@ import org.jclouds.openstack.nova.v2_0.domain.VirtualInterface;
 import org.jclouds.openstack.v2_0.ServiceType;
 import org.jclouds.openstack.v2_0.services.Extension;
 
+import com.google.common.annotations.Beta;
+import com.google.common.collect.FluentIterable;
+
 /**
  * Provides synchronous access to Virtual Interface features (VIFs).
  * 
  * @see VirtualInterfaceAsyncApi
  * @author Adam Lowe
  */
+@Beta
 @Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.VIRTUAL_INTERFACES)
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface VirtualInterfaceApi {
@@ -41,6 +44,6 @@ public interface VirtualInterfaceApi {
     *
     * @return the list of snapshots
     */
-   Set<? extends VirtualInterface> listVirtualInterfacesForServer(String serverId);   
+   FluentIterable<? extends VirtualInterface> listOnServer(String serverId);   
 
 }

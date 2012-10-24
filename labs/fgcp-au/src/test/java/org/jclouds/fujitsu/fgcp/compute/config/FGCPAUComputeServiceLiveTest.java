@@ -29,9 +29,9 @@ import org.testng.annotations.Test;
 @Test(groups = "live", enabled = true, singleThreaded = true, testName = "FGCPAUComputeServiceLiveTest")
 public class FGCPAUComputeServiceLiveTest extends FGCPBaseComputeServiceLiveTest {
 
-    @Override
-    public void setServiceDefaults() {
-        provider = "fgcp-au";
-    }
+   @Override
+   public void setServiceDefaults() {
+      provider = "fgcp-au";
+   }
 
 }

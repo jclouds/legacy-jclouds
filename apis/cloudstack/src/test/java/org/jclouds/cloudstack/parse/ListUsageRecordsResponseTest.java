@@ -23,7 +23,7 @@ import java.util.Date;
 import java.util.Set;
 import java.util.TimeZone;
 
-import org.jclouds.cloudstack.config.CloudStackDateAdapter;
+import org.jclouds.cloudstack.config.CloudStackParserModule;
 import org.jclouds.cloudstack.domain.UsageRecord;
 import org.jclouds.json.BaseSetParserTest;
 import org.jclouds.json.config.GsonModule;
@@ -69,17 +69,10 @@ public class ListUsageRecordsResponseTest extends BaseSetParserTest<UsageRecord>
             .templateId("0").id("203").startDate(start).endDate(end).build());
 
    }
-
+   
    @Override
    protected Injector injector() {
-      return Guice.createInjector(new GsonModule() {
-
-               @Override
-               protected void configure() {
-                  bind(DateAdapter.class).to(CloudStackDateAdapter.class);
-                  super.configure();
-               }
-
-            });
+      return Guice.createInjector(new GsonModule(), new CloudStackParserModule());
    }
+
 }

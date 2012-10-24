@@ -32,26 +32,26 @@ import org.jclouds.providers.internal.BaseProviderMetadata;
  */
 public class FGCPProviderMetadata extends BaseProviderMetadata {
 
-    private static final long serialVersionUID = 7527265705102650456L;
+   private static final long serialVersionUID = 7527265705102650456L;
 
-    public static Builder builder() {
-        return new Builder();
-    }
+   public static Builder builder() {
+      return new Builder();
+   }
 
-    public FGCPProviderMetadata() {
-        super(builder());
-    }
+   public FGCPProviderMetadata() {
+      super(builder());
+   }
 
-    public FGCPProviderMetadata(Builder builder) {
-        super(builder);
-    }
+   public FGCPProviderMetadata(Builder builder) {
+      super(builder);
+   }
 
-    public static Properties defaultProperties() {
-        Properties properties = new Properties();
+   public static Properties defaultProperties() {
+      Properties properties = new Properties();
 
-        properties.setProperty(TEMPLATE,
-                "osFamily=CENTOS,osVersionMatches=6.2,os64Bit=true");
+      properties.setProperty(TEMPLATE,
+            "osFamily=CENTOS,osVersionMatches=6.2,os64Bit=true");
 
-        return properties;
-    }
+      return properties;
+   }
 }

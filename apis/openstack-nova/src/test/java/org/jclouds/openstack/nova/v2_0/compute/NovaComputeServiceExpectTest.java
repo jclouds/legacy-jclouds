@@ -26,6 +26,7 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -52,12 +53,22 @@ import com.google.inject.TypeLiteral;
  */
 @Test(groups = "unit", testName = "NovaComputeServiceExpectTest")
 public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTest {
-
+   
+   @Override
+   protected Properties setupProperties() {
+      Properties overrides = super.setupProperties();
+      // only specify limited zones so that we don't have to configure requests for multiple zones.
+      // since we are doing tests with keystone responses from hpcloud and also trystack, we have
+      // to whitelist one zone from each
+      overrides.setProperty("jclouds.zones", "az-1.region-a.geo-1,RegionOne");
+      return overrides;
+   }
+   
    public void testListLocationsWhenResponseIs2xx() throws Exception {
 
       Map<HttpRequest, HttpResponse> requestResponseMap = ImmutableMap.<HttpRequest, HttpResponse> builder()
             .put(keystoneAuthWithUsernameAndPasswordAndTenantName, responseWithKeystoneAccess)
-            .put(extensionsOfNovaRequest, extensionsOfNovaResponse).put(listImagesDetail, listImagesDetailResponse)
+            .put(extensionsOfNovaRequest, extensionsOfNovaResponse).put(listDetail, listDetailResponse)
             .put(listServers, listServersResponse).put(listFlavorsDetail, listFlavorsDetailResponse).build();
 
       ComputeService apiWhenServersExist = requestsSendResponses(requestResponseMap);
@@ -88,7 +99,7 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
                .endpoint("https://nova-api.trystack.org:9774/v1.1/3456/extensions").build(),
                HttpResponse.builder().statusCode(200).payload(payloadFromResource("/extension_list_trystack.json"))
                      .build())
-         .put(listImagesDetail.toBuilder()
+         .put(listDetail.toBuilder()
                .endpoint("https://nova-api.trystack.org:9774/v1.1/3456/images/detail").build(),
                HttpResponse.builder().statusCode(200).payload(payloadFromResource("/image_list_detail_trystack.json"))
                      .build())
@@ -135,7 +146,7 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
       assertTrue(apiWhenNoServersExist.listNodes().isEmpty());
    }
 
-   HttpRequest listSecurityGroups = HttpRequest
+   HttpRequest list = HttpRequest
          .builder()
          .method("GET")
          .endpoint("https://nova-api.trystack.org:9774/v1.1/3456/os-security-groups")
@@ -144,7 +155,7 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
 
    HttpResponse notFound = HttpResponse.builder().statusCode(404).build();
 
-   HttpRequest createSecurityGroupWithPrefixOnGroup = HttpRequest
+   HttpRequest createWithPrefixOnGroup = HttpRequest
          .builder()
          .method("POST")
          .endpoint("https://nova-api.trystack.org:9774/v1.1/3456/os-security-groups")
@@ -158,7 +169,7 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
    HttpResponse securityGroupCreated = HttpResponse.builder().statusCode(200)
          .payload(payloadFromResource("/securitygroup_created.json")).build();
 
-   HttpRequest createSecurityGroupRuleForDefaultPort22 = HttpRequest
+   HttpRequest createRuleForDefaultPort22 = HttpRequest
          .builder()
          .method("POST")
          .endpoint("https://nova-api.trystack.org:9774/v1.1/3456/os-security-group-rules")
@@ -182,7 +193,7 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
    HttpResponse securityGroupWithPort22 = HttpResponse.builder().statusCode(200)
          .payload(payloadFromResource("/securitygroup_details_port22.json")).build();
    
-   HttpRequest createKeyPair = HttpRequest
+   HttpRequest create = HttpRequest
          .builder()
          .method("POST")
          .endpoint("https://nova-api.trystack.org:9774/v1.1/3456/os-keypairs")
@@ -210,15 +221,15 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
    public void testCreateNodeWithGeneratedKeyPair() throws Exception {
       Builder<HttpRequest, HttpResponse> requestResponseMap = ImmutableMap.<HttpRequest, HttpResponse> builder()
             .putAll(defaultTemplateTryStack);
-      requestResponseMap.put(listSecurityGroups, notFound);
+      requestResponseMap.put(list, notFound);
 
-      requestResponseMap.put(createSecurityGroupWithPrefixOnGroup, securityGroupCreated);
+      requestResponseMap.put(createWithPrefixOnGroup, securityGroupCreated);
 
-      requestResponseMap.put(createSecurityGroupRuleForDefaultPort22, securityGroupRuleCreated);
+      requestResponseMap.put(createRuleForDefaultPort22, securityGroupRuleCreated);
 
       requestResponseMap.put(getSecurityGroup, securityGroupWithPort22);
 
-      requestResponseMap.put(createKeyPair, keyPairWithPrivateKey);
+      requestResponseMap.put(create, keyPairWithPrivateKey);
 
       requestResponseMap.put(serverDetail, serverDetailResponse);
 
@@ -266,11 +277,11 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
    public void testCreateNodeWhileUserSpecifiesKeyPair() throws Exception {
       Builder<HttpRequest, HttpResponse> requestResponseMap = ImmutableMap.<HttpRequest, HttpResponse> builder()
             .putAll(defaultTemplateTryStack);
-      requestResponseMap.put(listSecurityGroups, notFound);
+      requestResponseMap.put(list, notFound);
 
-      requestResponseMap.put(createSecurityGroupWithPrefixOnGroup, securityGroupCreated);
+      requestResponseMap.put(createWithPrefixOnGroup, securityGroupCreated);
 
-      requestResponseMap.put(createSecurityGroupRuleForDefaultPort22, securityGroupRuleCreated);
+      requestResponseMap.put(createRuleForDefaultPort22, securityGroupRuleCreated);
 
       requestResponseMap.put(getSecurityGroup, securityGroupWithPort22);
 
@@ -316,4 +327,5 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
       // we don't have access to this private key
       assertEquals(node.getCredentials().getPrivateKey(), null);
    }
+
 }

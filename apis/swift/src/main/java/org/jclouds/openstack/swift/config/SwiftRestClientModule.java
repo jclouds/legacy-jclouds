@@ -54,23 +54,24 @@ import com.google.inject.Provides;
 import com.google.inject.Scopes;
 
 /**
- * 
+ *
  * @author Adrian Cole
  */
 @ConfiguresRestClient
-public class SwiftRestClientModule<S extends CommonSwiftClient, A extends CommonSwiftAsyncClient> extends RestClientModule<S, A> {
+public class SwiftRestClientModule<S extends CommonSwiftClient, A extends CommonSwiftAsyncClient> extends
+      RestClientModule<S, A> {
 
    @SuppressWarnings("unchecked")
    public SwiftRestClientModule() {
       this(TypeToken.class.cast(TypeToken.of(SwiftClient.class)), TypeToken.class.cast(TypeToken
-               .of(SwiftAsyncClient.class)), ImmutableMap.<Class<?>, Class<?>> of());
+            .of(SwiftAsyncClient.class)), ImmutableMap.<Class<?>, Class<?>> of());
    }
 
    protected SwiftRestClientModule(TypeToken<S> syncClientType, TypeToken<A> asyncClientType,
-            Map<Class<?>, Class<?>> sync2Async) {
+         Map<Class<?>, Class<?>> sync2Async) {
       super(syncClientType, asyncClientType, sync2Async);
    }
-   
+
    public static class StorageEndpointModule extends OpenStackAuthenticationModule {
       @Provides
       @Singleton

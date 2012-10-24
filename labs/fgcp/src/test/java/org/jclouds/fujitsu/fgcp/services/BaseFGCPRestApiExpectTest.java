@@ -46,11 +46,11 @@ import com.google.inject.Module;
 public class BaseFGCPRestApiExpectTest extends
 		BaseRestClientExpectTest<FGCPApi> {
 
-    public BaseFGCPRestApiExpectTest() {
+   public BaseFGCPRestApiExpectTest() {
 		provider = "fgcp";
 
-        // self-signed dummy cert:
-        // keytool -genkey -alias test-fgcp -keyalg RSA -keysize 1024 -validity 5475 -dname "CN=localhost" -keystore jclouds-test-fgcp.p12 -storepass jcloudsjclouds -storetype pkcs12
+      // self-signed dummy cert:
+      // keytool -genkey -alias test-fgcp -keyalg RSA -keysize 1024 -validity 5475 -dname "CN=localhost" -keystore jclouds-test-fgcp.p12 -storepass jcloudsjclouds -storetype pkcs12
 		String cert = "/certs/jclouds-test-fgcp.p12";
 		URL url = this.getClass().getResource(cert);
 		assertNotNull(url, cert + " not found");
@@ -79,47 +79,47 @@ public class BaseFGCPRestApiExpectTest extends
 		return new TestFGCPRestClientModule();
 	}
 
-    @Override
-    protected ProviderMetadata createProviderMetadata() {
-        return new FGCPProviderMetadata();
-    }
+   @Override
+   protected ProviderMetadata createProviderMetadata() {
+      return new FGCPProviderMetadata();
+   }
 
-    @Override
-    public Payload payloadFromResource(String resource) {
-        return super.payloadFromResource("/responses" + resource);
-    }
+   @Override
+   public Payload payloadFromResource(String resource) {
+      return super.payloadFromResource("/responses" + resource);
+   }
 
-    protected static HttpRequest buildGETWithQuery(String query) {
-        URI uri = URI.create("https://api.globalcloud.fujitsu.com.au/ovissapi/endpoint"
-                + "?Version=2012-02-18"
-                + "&" + query
-                + "&Locale=en"
-                + "&AccessKeyId=R01ULTA5OjAwJjEyMzQ1Njc4OTAmMS4wJlNIQTF3aXRoUlNB"
-//                + "&Signature=G2rGfLAkbq0IURQfXIWYxj3BnMGbjRk4KPnZLAze3Lt4SMMRt8lkjqKvR5Cm%2BnFpDN7J6IprVCCsIrRq5BqPeXT6xtWyb6qMNds2BAr1h%2FJePGs0UosOh2tgPUMSFlZwLVjgNyrSa2zeHA3AEHjF6H1jqcWXXqfCAD4SOHaNavk%3D");
-        + "&Signature=G2rGfLAkbq0IURQfXIWYxj3BnMGbjRk4KPnZLAze3Lt4SMMRt8lkjqKvR5Cm%2BnFpDN7J6IprVCCs%0D%0AIrRq5BqPeXT6xtWyb6qMNds2BAr1h%2FJePGs0UosOh2tgPUMSFlZwLVjgNyrSa2zeHA3AEHjF6H1j%0D%0AqcWXXqfCAD4SOHaNavk%3D");
-        return HttpRequest
-                .builder()
-                .method("GET")
-                .endpoint(uri)
-                .addHeader("Accept", "text/xml")
-                .addHeader("User-Agent", "OViSS-API-CLIENT")
-                .build();
-    }
+   protected static HttpRequest buildGETWithQuery(String query) {
+      URI uri = URI.create("https://api.globalcloud.fujitsu.com.au/ovissapi/endpoint"
+            + "?Version=2012-02-18"
+            + "&" + query
+            + "&Locale=en"
+            + "&AccessKeyId=R01ULTA5OjAwJjEyMzQ1Njc4OTAmMS4wJlNIQTF3aXRoUlNB"
+//            + "&Signature=G2rGfLAkbq0IURQfXIWYxj3BnMGbjRk4KPnZLAze3Lt4SMMRt8lkjqKvR5Cm%2BnFpDN7J6IprVCCsIrRq5BqPeXT6xtWyb6qMNds2BAr1h%2FJePGs0UosOh2tgPUMSFlZwLVjgNyrSa2zeHA3AEHjF6H1jqcWXXqfCAD4SOHaNavk%3D");
+      + "&Signature=G2rGfLAkbq0IURQfXIWYxj3BnMGbjRk4KPnZLAze3Lt4SMMRt8lkjqKvR5Cm%2BnFpDN7J6IprVCCs%0D%0AIrRq5BqPeXT6xtWyb6qMNds2BAr1h%2FJePGs0UosOh2tgPUMSFlZwLVjgNyrSa2zeHA3AEHjF6H1j%0D%0AqcWXXqfCAD4SOHaNavk%3D");
+      return HttpRequest
+            .builder()
+            .method("GET")
+            .endpoint(uri)
+            .addHeader("Accept", "text/xml")
+            .addHeader("User-Agent", "OViSS-API-CLIENT")
+            .build();
+   }
 
-    protected HttpRequest preparePOSTForAction(String action) {
-        return HttpRequest
-                .builder()
-                .method("POST")
-                .endpoint(
-                        URI.create("https://api.globalcloud.fujitsu.com.au/ovissapi/endpoint"))
-                .payload(
-                        payloadFromResourceWithContentType(
-                                "/" + action.toLowerCase() + "-request.xml",
-                                MediaType.TEXT_XML))
-                .headers(
-                        ImmutableMultimap.<String, String> builder()
-                                .put("Accept", "text/xml")
-                                .put("User-Agent", "OViSS-API-CLIENT").build())
-                .build();
-    }
+   protected HttpRequest preparePOSTForAction(String action) {
+      return HttpRequest
+            .builder()
+            .method("POST")
+            .endpoint(
+                  URI.create("https://api.globalcloud.fujitsu.com.au/ovissapi/endpoint"))
+            .payload(
+                  payloadFromResourceWithContentType(
+                        "/" + action.toLowerCase() + "-request.xml",
+                        MediaType.TEXT_XML))
+            .headers(
+                  ImmutableMultimap.<String, String> builder()
+                        .put("Accept", "text/xml")
+                        .put("User-Agent", "OViSS-API-CLIENT").build())
+            .build();
+   }
 }

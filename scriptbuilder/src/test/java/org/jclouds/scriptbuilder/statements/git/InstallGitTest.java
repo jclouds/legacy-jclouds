@@ -29,7 +29,6 @@ import org.jclouds.scriptbuilder.statements.git.InstallGit;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Charsets;
-import com.google.common.io.CharStreams;
 import com.google.common.io.Resources;
 
 /**
@@ -44,9 +43,7 @@ public class InstallGitTest {
 
    public void testInstallGitUNIXInScriptBuilderSourcesSetupPublicCurl() throws IOException {
       assertEquals(InitScript.builder().name("install_git").run(new InstallGit()).build().render(OsFamily.UNIX),
-               CharStreams.toString(Resources.newReaderSupplier(
-                        Resources.getResource("test_install_git_scriptbuilder." + ShellToken.SH.to(OsFamily.UNIX)),
-                        Charsets.UTF_8)));
+               Resources.toString(Resources.getResource("test_install_git_scriptbuilder." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8));
    }
 
 }

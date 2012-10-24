@@ -30,17 +30,17 @@ import org.jclouds.fujitsu.fgcp.domain.VServerStatus;
  */
 @XmlRootElement(name = "GetVServerStatusResponse")
 public class GetVServerStatusResponse extends StatusResponse implements
-        SingleElementResponse {
-    @XmlElement(required = true)
-    private VServerStatus vserverStatus;
+      SingleElementResponse {
+   @XmlElement(required = true)
+   private VServerStatus vserverStatus;
 
-    @Override
-    public String toString() {
-        return getElement().toString();
-    }
+   @Override
+   public String toString() {
+      return getElement().toString();
+   }
 
-    @Override
-    public Object getElement() {
-        return vserverStatus;
-    }
+   @Override
+   public Object getElement() {
+      return vserverStatus;
+   }
 }

@@ -22,17 +22,16 @@ import static org.testng.Assert.assertEquals;
 
 import java.util.Set;
 
+import org.jclouds.cloudstack.config.CloudStackParserModule;
 import org.jclouds.cloudstack.domain.AllocationState;
 import org.jclouds.cloudstack.domain.Host;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.json.BaseParserTest;
-import org.jclouds.json.BaseSetParserTest;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSortedSet;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -48,16 +47,7 @@ public class ListHostsResponseTest extends BaseParserTest<Set<Host>, Set<Host>> 
 
    @Override
    protected Injector injector() {
-      return Guice.createInjector(new GsonModule() {
-
-         @Override
-         protected void configure() {
-            bind(DateAdapter.class).to(Iso8601DateAdapter.class);
-            super.configure();
-         }
-
-      });
-
+      return Guice.createInjector(new GsonModule(), new CloudStackParserModule());
    }
 
    @Override
@@ -102,7 +92,6 @@ public class ListHostsResponseTest extends BaseParserTest<Set<Host>, Set<Host>> 
             .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-11-26T23:28:36+0200"))
             .events("PrepareUnmanaged; HypervisorVersionChanged; ManagementServerDown; PingTimeout; " +
                "AgentDisconnected; MaintenanceRequested; HostDown; AgentConnected; StartAgentRebalance; ShutdownRequested; Ping")
-            .hostTags("")
             .hasEnoughCapacity(false)
             .allocationState(AllocationState.ENABLED).build(),
 

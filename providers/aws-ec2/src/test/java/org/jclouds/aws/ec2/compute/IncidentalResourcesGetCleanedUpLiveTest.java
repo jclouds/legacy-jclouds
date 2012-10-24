@@ -21,7 +21,6 @@ package org.jclouds.aws.ec2.compute;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
-import java.util.Collections;
 import java.util.Set;
 
 import org.jclouds.aws.ec2.AWSEC2ApiMetadata;
@@ -117,8 +116,8 @@ public class IncidentalResourcesGetCleanedUpLiveTest extends BaseComputeServiceC
          assertNotNull(instance1.getKeyName());
          assertEquals(instance1.getRegion(), instance2.getRegion(), "Nodes are not in the same region");
          assertEquals(instance1.getKeyName(), instance2.getKeyName(), "Nodes do not have same key-pair name");
-         assertEquals(instance1.getGroupIds(), instance2.getGroupIds(), "Nodes are not in the same group");
-         assertEquals(instance1.getGroupIds(), ImmutableSet.of(expectedSecurityGroupName), "Nodes are not in the expected security group");
+         assertEquals(instance1.getGroupNames(), instance2.getGroupNames(), "Nodes are not in the same group");
+         assertEquals(instance1.getGroupNames(), ImmutableSet.of(expectedSecurityGroupName), "Nodes are not in the expected security group");
 
          // Assert a single key-pair and security group has been created
          String expectedKeyPairName = instance1.getKeyName();
@@ -157,8 +156,8 @@ public class IncidentalResourcesGetCleanedUpLiveTest extends BaseComputeServiceC
             done = securityGroupsAfterDestroyAll.isEmpty() && keyPairsAfterDestroyAll.isEmpty();
          } while (!done && stopwatch.elapsedMillis() < TIMEOUT_MS);
 
-         assertEquals(securityGroupsAfterDestroyAll, Collections.emptySet());
-         assertEquals(keyPairsAfterDestroyAll, Collections.emptySet());
+         assertEquals(securityGroupsAfterDestroyAll, ImmutableSet.of());
+         assertEquals(keyPairsAfterDestroyAll, ImmutableSet.of());
          
       } finally {
          view.getComputeService().destroyNodesMatching(NodePredicates.inGroup(group));

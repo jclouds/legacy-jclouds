@@ -24,11 +24,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.beans.ConstructorProperties;
 import java.util.Date;
+import java.util.Set;
 
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Represents a host issued by Cloudstack
@@ -149,7 +151,7 @@ public class Host implements Comparable<Host> {
       protected long diskSizeTotal;
       protected String events;
       protected boolean hasEnoughCapacity;
-      protected String hostTags;
+      protected ImmutableSet.Builder<String> tags = ImmutableSet.<String>builder();
       protected String hypervisor;
       protected String ipAddress;
       protected boolean localStorageActive;
@@ -319,13 +321,21 @@ public class Host implements Comparable<Host> {
       }
 
       /**
-       * @see Host#getHostTags()
+       * @see Host#getTags()
        */
-      public T hostTags(String hostTags) {
-         this.hostTags = hostTags;
+      public T tags(Iterable<String> tags) {
+         this.tags = ImmutableSet.<String>builder().addAll(tags);
          return self();
       }
-
+      
+      /**
+       * @see Host#getTags()
+       */
+      public T tag(String tag) {
+         this.tags.add(tag);
+         return self();
+      }
+      
       /**
        * @see Host#getHypervisor()
        */
@@ -512,7 +522,7 @@ public class Host implements Comparable<Host> {
 
 
       public Host build() {
-         return new Host(id, allocationState, averageLoad, capabilities, clusterId, clusterName, clusterType, cpuAllocated, cpuNumber, cpuSpeed, cpuUsed, cpuWithOverProvisioning, created, disconnected, diskSizeAllocated, diskSizeTotal, events, hasEnoughCapacity, hostTags, hypervisor, ipAddress, localStorageActive, jobId, jobStatus, lastPinged, managementServerId, memoryAllocated, memoryTotal, memoryUsed, name, networkKbsRead, networkKbsWrite, osCategoryId, osCategoryName, podId, podName, removed, state, type, version, zoneId, zoneName);
+         return new Host(id, allocationState, averageLoad, capabilities, clusterId, clusterName, clusterType, cpuAllocated, cpuNumber, cpuSpeed, cpuUsed, cpuWithOverProvisioning, created, disconnected, diskSizeAllocated, diskSizeTotal, events, hasEnoughCapacity, tags.build(), hypervisor, ipAddress, localStorageActive, jobId, jobStatus, lastPinged, managementServerId, memoryAllocated, memoryTotal, memoryUsed, name, networkKbsRead, networkKbsWrite, osCategoryId, osCategoryName, podId, podName, removed, state, type, version, zoneId, zoneName);
       }
 
       public T fromHost(Host in) {
@@ -535,7 +545,7 @@ public class Host implements Comparable<Host> {
                .diskSizeTotal(in.getDiskSizeTotal())
                .events(in.getEvents())
                .hasEnoughCapacity(in.isHasEnoughCapacity())
-               .hostTags(in.getHostTags())
+               .tags(in.getTags())
                .hypervisor(in.getHypervisor())
                .ipAddress(in.getIpAddress())
                .localStorageActive(in.isLocalStorageActive())
@@ -587,7 +597,7 @@ public class Host implements Comparable<Host> {
    private final long diskSizeTotal;
    private final String events;
    private final boolean hasEnoughCapacity;
-   private final String hostTags;
+   private final Set<String> tags;
    private final String hypervisor;
    private final String ipAddress;
    private final boolean localStorageActive;
@@ -619,7 +629,7 @@ public class Host implements Comparable<Host> {
                   @Nullable String clusterId, @Nullable String clusterName, @Nullable Host.ClusterType clusterType,
                   @Nullable String cpuAllocated, int cpuNumber, int cpuSpeed, @Nullable String cpuUsed,
                   float cpuWithOverProvisioning, @Nullable Date created, @Nullable Date disconnected, long diskSizeAllocated,
-                  long diskSizeTotal, @Nullable String events, boolean hasEnoughCapacity, @Nullable String hostTags,
+                  long diskSizeTotal, @Nullable String events, boolean hasEnoughCapacity, @Nullable Iterable<String> tags,
                   @Nullable String hypervisor, @Nullable String ipAddress, boolean localStorageActive, @Nullable String jobId,
                   @Nullable AsyncJob.Status jobStatus, @Nullable Date lastPinged, @Nullable String managementServerId,
                   long memoryAllocated, long memoryTotal, long memoryUsed, @Nullable String name, long networkKbsRead, long networkKbsWrite,
@@ -644,7 +654,7 @@ public class Host implements Comparable<Host> {
       this.diskSizeTotal = diskSizeTotal;
       this.events = events;
       this.hasEnoughCapacity = hasEnoughCapacity;
-      this.hostTags = hostTags;
+      this.tags = tags != null ? ImmutableSet.copyOf(tags) : ImmutableSet.<String> of();
       this.hypervisor = hypervisor;
       this.ipAddress = ipAddress;
       this.localStorageActive = localStorageActive;
@@ -752,10 +762,13 @@ public class Host implements Comparable<Host> {
       return this.hasEnoughCapacity;
    }
 
-   @Nullable
-   public String getHostTags() {
-      return this.hostTags;
+   /**
+    * @return the tags for the host
+    */
+   public Set<String> getTags() {
+      return this.tags;
    }
+
 
    @Nullable
    public String getHypervisor() {
@@ -868,7 +881,7 @@ public class Host implements Comparable<Host> {
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(id, allocationState, averageLoad, capabilities, clusterId, clusterName, clusterType, cpuAllocated, cpuNumber, cpuSpeed, cpuUsed, cpuWithOverProvisioning, created, disconnected, diskSizeAllocated, diskSizeTotal, events, hasEnoughCapacity, hostTags, hypervisor, ipAddress, localStorageActive, jobId, jobStatus, lastPinged, managementServerId, memoryAllocated, memoryTotal, memoryUsed, name, networkKbsRead, networkKbsWrite, osCategoryId, osCategoryName, podId, podName, removed, state, type, version, zoneId, zoneName);
+      return Objects.hashCode(id, allocationState, averageLoad, capabilities, clusterId, clusterName, clusterType, cpuAllocated, cpuNumber, cpuSpeed, cpuUsed, cpuWithOverProvisioning, created, disconnected, diskSizeAllocated, diskSizeTotal, events, hasEnoughCapacity, tags, hypervisor, ipAddress, localStorageActive, jobId, jobStatus, lastPinged, managementServerId, memoryAllocated, memoryTotal, memoryUsed, name, networkKbsRead, networkKbsWrite, osCategoryId, osCategoryName, podId, podName, removed, state, type, version, zoneId, zoneName);
    }
 
    @Override
@@ -894,7 +907,7 @@ public class Host implements Comparable<Host> {
             && Objects.equal(this.diskSizeTotal, that.diskSizeTotal)
             && Objects.equal(this.events, that.events)
             && Objects.equal(this.hasEnoughCapacity, that.hasEnoughCapacity)
-            && Objects.equal(this.hostTags, that.hostTags)
+            && Objects.equal(this.tags, that.tags)
             && Objects.equal(this.hypervisor, that.hypervisor)
             && Objects.equal(this.ipAddress, that.ipAddress)
             && Objects.equal(this.localStorageActive, that.localStorageActive)
@@ -928,7 +941,7 @@ public class Host implements Comparable<Host> {
             .add("cpuSpeed", cpuSpeed).add("cpuUsed", cpuUsed).add("cpuWithOverProvisioning", cpuWithOverProvisioning)
             .add("created", created).add("disconnected", disconnected).add("diskSizeAllocated", diskSizeAllocated)
             .add("diskSizeTotal", diskSizeTotal).add("events", events).add("hasEnoughCapacity", hasEnoughCapacity)
-            .add("hostTags", hostTags).add("hypervisor", hypervisor).add("ipAddress", ipAddress)
+            .add("tags", tags).add("hypervisor", hypervisor).add("ipAddress", ipAddress)
             .add("localStorageActive", localStorageActive).add("jobId", jobId).add("jobStatus", jobStatus)
             .add("lastPinged", lastPinged).add("managementServerId", managementServerId).add("memoryAllocated", memoryAllocated)
             .add("memoryTotal", memoryTotal).add("memoryUsed", memoryUsed).add("name", name).add("networkKbsRead", networkKbsRead)

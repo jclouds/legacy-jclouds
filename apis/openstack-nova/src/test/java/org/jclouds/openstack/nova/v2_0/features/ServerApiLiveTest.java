@@ -19,9 +19,9 @@
 package org.jclouds.openstack.nova.v2_0.features;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.*;
-
-import java.util.Set;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 import org.jclouds.openstack.nova.v2_0.domain.Server;
 import org.jclouds.openstack.nova.v2_0.internal.BaseNovaApiLiveTest;
@@ -44,12 +44,7 @@ public class ServerApiLiveTest extends BaseNovaApiLiveTest {
     public void testListServers() throws Exception {
        for (String zoneId : zones) {
           ServerApi api = novaContext.getApi().getServerApiForZone(zoneId);
-          Set<? extends Resource> response = api.listServers();
-          assertNotNull(response);
-          assertFalse(response.isEmpty());
-          assert null != response;
-          assertTrue(response.size() >= 0);
-          for (Resource server : response) {
+          for (Resource server : api.list().concat()) {
              checkResource(server);
           }
        }
@@ -59,10 +54,7 @@ public class ServerApiLiveTest extends BaseNovaApiLiveTest {
     public void testListServersInDetail() throws Exception {
        for (String zoneId : zones) {
           ServerApi api = novaContext.getApi().getServerApiForZone(zoneId);
-          Set<? extends Server> response = api.listServersInDetail();
-          assertNotNull(response);
-          assertFalse(response.isEmpty());
-          for (Server server : response) {
+          for (Server server : api.listInDetail().concat()) {
              checkServer(server);
           }
        }
@@ -72,9 +64,8 @@ public class ServerApiLiveTest extends BaseNovaApiLiveTest {
     public void testGetServerById() throws Exception {
        for (String zoneId : zones) {
           ServerApi api = novaContext.getApi().getServerApiForZone(zoneId);
-          Set<? extends Resource> response = api.listServers();
-          for (Resource server : response) {
-             Server details = api.getServer(server.getId());
+          for (Resource server : api.list().concat()) {
+             Server details = api.get(server.getId());
              assertEquals(details.getId(), server.getId());
              assertEquals(details.getName(), server.getName());
              assertEquals(details.getLinks(), server.getLinks());

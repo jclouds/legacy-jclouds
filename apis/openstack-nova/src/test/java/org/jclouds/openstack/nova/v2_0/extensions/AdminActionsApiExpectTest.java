@@ -47,298 +47,298 @@ public class AdminActionsApiExpectTest extends BaseNovaApiExpectTest {
 
    public void testSuspend() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/1/action");
-      AdminActionsApi api = requestsSendResponses(
+      ServerAdminApi api = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "suspend").build(),
             HttpResponse.builder().statusCode(202).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertTrue(api.suspendServer("1"));
+      assertTrue(api.suspend("1"));
    }
 
    public void testSuspendFailsNotFound() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/1/action");
-      AdminActionsApi api = requestsSendResponses(
+      ServerAdminApi api = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "suspend").build(),
             HttpResponse.builder().statusCode(404).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertFalse(api.suspendServer("1"));
+      assertFalse(api.suspend("1"));
    }
 
    @Test(expectedExceptions = AuthorizationException.class)
    public void testSuspendFailsNotAuthorized() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/1/action");
-      AdminActionsApi api = requestsSendResponses(
+      ServerAdminApi api = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "suspend").build(),
             HttpResponse.builder().statusCode(403).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
-      api.suspendServer("1");
+      api.suspend("1");
    }
    
    public void testResume() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/1/action");
-      AdminActionsApi api = requestsSendResponses(
+      ServerAdminApi api = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "resume").build(),
             HttpResponse.builder().statusCode(202).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertTrue(api.resumeServer("1"));
+      assertTrue(api.resume("1"));
    }
 
    public void testResumeFailsNotFound() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/1/action");
-      AdminActionsApi api = requestsSendResponses(
+      ServerAdminApi api = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "resume").build(),
             HttpResponse.builder().statusCode(404).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertFalse(api.resumeServer("1"));
+      assertFalse(api.resume("1"));
    }
 
    @Test(expectedExceptions = AuthorizationException.class)
    public void testResumeFailsNotAuthorized() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/1/action");
-      AdminActionsApi api = requestsSendResponses(
+      ServerAdminApi api = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "resume").build(),
             HttpResponse.builder().statusCode(403).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
-      api.resumeServer("1");
+      api.resume("1");
    }
 
    public void testLock() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/1/action");
-      AdminActionsApi api = requestsSendResponses(
+      ServerAdminApi api = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "lock").build(),
             HttpResponse.builder().statusCode(202).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertTrue(api.lockServer("1"));
+      assertTrue(api.lock("1"));
    }
 
    public void testLockFailsNotFound() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/1/action");
-      AdminActionsApi api = requestsSendResponses(
+      ServerAdminApi api = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "lock").build(),
             HttpResponse.builder().statusCode(404).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertFalse(api.lockServer("1"));
+      assertFalse(api.lock("1"));
    }
 
    public void testUnlock() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/1/action");
-      AdminActionsApi api = requestsSendResponses(
+      ServerAdminApi api = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "unlock").build(),
             HttpResponse.builder().statusCode(202).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertTrue(api.unlockServer("1"));
+      assertTrue(api.unlock("1"));
    }
 
    public void testUnlockFailsNotFound() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/1/action");
-      AdminActionsApi api = requestsSendResponses(
+      ServerAdminApi api = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "unlock").build(),
             HttpResponse.builder().statusCode(404).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertFalse(api.unlockServer("1"));
+      assertFalse(api.unlock("1"));
    }
 
    public void testPause() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/1/action");
-      AdminActionsApi api = requestsSendResponses(
+      ServerAdminApi api = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "pause").build(),
             HttpResponse.builder().statusCode(202).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertTrue(api.pauseServer("1"));
+      assertTrue(api.pause("1"));
    }
 
    public void testPauseFailsNotFound() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/1/action");
-      AdminActionsApi api = requestsSendResponses(
+      ServerAdminApi api = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "pause").build(),
             HttpResponse.builder().statusCode(404).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertFalse(api.pauseServer("1"));
+      assertFalse(api.pause("1"));
    }
    
    public void testUnpause() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/1/action");
-      AdminActionsApi api = requestsSendResponses(
+      ServerAdminApi api = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "unpause").build(),
             HttpResponse.builder().statusCode(202).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertTrue(api.unpauseServer("1"));
+      assertTrue(api.unpause("1"));
    }
 
    public void testUnpauseFailsNotFound() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/1/action");
-      AdminActionsApi api = requestsSendResponses(
+      ServerAdminApi api = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "unpause").build(),
             HttpResponse.builder().statusCode(404).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertFalse(api.unpauseServer("1"));
+      assertFalse(api.unpause("1"));
    }
    
    public void testMigrateServer() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/1/action");
-      AdminActionsApi api = requestsSendResponses(
+      ServerAdminApi api = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "migrate").build(),
             HttpResponse.builder().statusCode(202).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertTrue(api.migrateServer("1"));
+      assertTrue(api.migrate("1"));
    }
 
 
    public void testMigrateServerFailsNotFound() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/1/action");
-      AdminActionsApi api = requestsSendResponses(
+      ServerAdminApi api = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "migrate").build(),
             HttpResponse.builder().statusCode(404).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertFalse(api.migrateServer("1"));
+      assertFalse(api.migrate("1"));
    }
 
    public void testResetNetworkOfServer() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/1/action");
-      AdminActionsApi api = requestsSendResponses(
+      ServerAdminApi api = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "resetNetwork").build(),
             HttpResponse.builder().statusCode(202).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertTrue(api.resetNetworkOfServer("1"));
+      assertTrue(api.resetNetwork("1"));
    }
 
    public void testResetNetworkOfServerFailsNotFound() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/1/action");
-      AdminActionsApi api = requestsSendResponses(
+      ServerAdminApi api = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "resetNetwork").build(),
             HttpResponse.builder().statusCode(404).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertFalse(api.resetNetworkOfServer("1"));
+      assertFalse(api.resetNetwork("1"));
    }
    
    public void testInjectNetworkInfoIntoServer() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/1/action");
-      AdminActionsApi api = requestsSendResponses(
+      ServerAdminApi api = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "injectNetworkInfo").build(),
             HttpResponse.builder().statusCode(202).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertTrue(api.injectNetworkInfoIntoServer("1"));
+      assertTrue(api.injectNetworkInfo("1"));
    }
 
    public void testInjectNetworkInfoIntoServerFailsNotFound() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/1/action");
-      AdminActionsApi api = requestsSendResponses(
+      ServerAdminApi api = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "injectNetworkInfo").build(),
             HttpResponse.builder().statusCode(404).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertFalse(api.injectNetworkInfoIntoServer("1"));
+      assertFalse(api.injectNetworkInfo("1"));
    }
    
    public void testBackupServer() {
-      AdminActionsApi api = requestsSendResponses(
+      ServerAdminApi api = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             authenticatedGET().endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/1/action").method("POST")
                   .payload(payloadFromStringWithContentType("{\"createBackup\":{\"backup_type\":\"weekly\",\"rotation\":3,\"name\":\"mybackup\",\"metadata\":{\"some\":\"data or other\"}}}", MediaType.APPLICATION_JSON)).build(),
             HttpResponse.builder().statusCode(202).addHeader("Location", "http://172.16.89.149:8774/v2/images/1976b3b3-409a-468d-b16c-a9172c341b46").build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
-      String imageId = api.createBackupOfServer("1", "mybackup", BackupType.WEEKLY, 3, CreateBackupOfServerOptions.Builder.metadata(ImmutableMap.of("some", "data or other")));
+      String imageId = api.createBackup("1", "mybackup", BackupType.WEEKLY, 3, CreateBackupOfServerOptions.Builder.metadata(ImmutableMap.of("some", "data or other")));
       assertEquals(imageId, "1976b3b3-409a-468d-b16c-a9172c341b46");
    }
 
    @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testBackupServerFailNotFound() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/1/action");
-      AdminActionsApi api = requestsSendResponses(
+      ServerAdminApi api = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             authenticatedGET().endpoint(endpoint).method("POST")
                   .payload(payloadFromStringWithContentType("{\"createBackup\":{\"backup_type\":\"weekly\",\"rotation\":3,\"name\":\"mybackup\",\"metadata\":{\"some\":\"data or other\"}}}", MediaType.APPLICATION_JSON)).build(),
             HttpResponse.builder().statusCode(404).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
-      api.createBackupOfServer("1", "mybackup", BackupType.WEEKLY, 3, CreateBackupOfServerOptions.Builder.metadata(ImmutableMap.of("some", "data or other")));
+      api.createBackup("1", "mybackup", BackupType.WEEKLY, 3, CreateBackupOfServerOptions.Builder.metadata(ImmutableMap.of("some", "data or other")));
    }
 
    public void testLiveMigrateServer() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/1/action");
-      AdminActionsApi api = requestsSendResponses(
+      ServerAdminApi api = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "GONNAOVERWRITE")
                   .payload(payloadFromStringWithContentType("{\"os-migrateLive\":{\"host\":\"bighost\",\"block_migration\":true,\"disk_over_commit\":false}}", MediaType.APPLICATION_JSON)).build(),
             HttpResponse.builder().statusCode(202).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertTrue(api.liveMigrateServer("1", "bighost", true, false));
+      assertTrue(api.liveMigrate("1", "bighost", true, false));
    }
 
    public void testLiveMigrateServerFailsNotFound() {
       URI endpoint = URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/1/action");
-      AdminActionsApi api = requestsSendResponses(
+      ServerAdminApi api = requestsSendResponses(
             keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             standardActionRequestBuilderVoidResponse(endpoint, "GONNAOVERWRITE")
                   .payload(payloadFromStringWithContentType("{\"os-migrateLive\":{\"host\":\"bighost\",\"block_migration\":true,\"disk_over_commit\":false}}", MediaType.APPLICATION_JSON)).build(),
             HttpResponse.builder().statusCode(404).build()
-      ).getAdminActionsExtensionForZone("az-1.region-a.geo-1").get();
+      ).getServerAdminExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertFalse(api.liveMigrateServer("1", "bighost", true, false));
+      assertFalse(api.liveMigrate("1", "bighost", true, false));
    }
    
    protected HttpRequest.Builder<?> standardActionRequestBuilderVoidResponse(URI endpoint, String actionName) {

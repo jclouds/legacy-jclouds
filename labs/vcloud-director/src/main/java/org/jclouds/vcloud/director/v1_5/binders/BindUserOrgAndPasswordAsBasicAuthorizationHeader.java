@@ -20,7 +20,6 @@ package org.jclouds.vcloud.director.v1_5.binders;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 import javax.inject.Singleton;
@@ -30,6 +29,7 @@ import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.MapBinder;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Throwables;
 
 /**
@@ -45,15 +45,11 @@ public class BindUserOrgAndPasswordAsBasicAuthorizationHeader implements MapBind
    @SuppressWarnings("unchecked")
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
-      try {
-         String header = "Basic "
-                  + CryptoStreams.base64(String.format("%s@%s:%s", checkNotNull(postParams.get("user"), "user"),
-                           checkNotNull(postParams.get("org"), "org"),
-                           checkNotNull(postParams.get("password"), "password")).getBytes("UTF-8"));
-         return (R) request.toBuilder().replaceHeader(HttpHeaders.AUTHORIZATION, header).build();
-      } catch (UnsupportedEncodingException e) {
-         throw Throwables.propagate(e);
-      }
+      String header = "Basic "
+               + CryptoStreams.base64(String.format("%s@%s:%s", checkNotNull(postParams.get("user"), "user"),
+                        checkNotNull(postParams.get("org"), "org"),
+                        checkNotNull(postParams.get("password"), "password")).getBytes(Charsets.UTF_8));
+      return (R) request.toBuilder().replaceHeader(HttpHeaders.AUTHORIZATION, header).build();
    }
 
    @Override

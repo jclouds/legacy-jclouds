@@ -70,6 +70,7 @@ public class QuantumRestClientModule<S extends QuantumApi, A extends QuantumAsyn
          .put(PortApi.class, PortAsyncApi.class)
          .build();
 
+   @SuppressWarnings("unchecked")
    public QuantumRestClientModule() {
       super(TypeToken.class.cast(TypeToken.of(QuantumApi.class)), TypeToken.class.cast(TypeToken.of(QuantumAsyncApi.class)), DELEGATE_MAP);
    }
@@ -99,7 +100,7 @@ public class QuantumRestClientModule<S extends QuantumApi, A extends QuantumAsyn
             .build(new CacheLoader<String, Set<? extends Extension>>() {
                @Override
                public Set<? extends Extension> load(String key) throws Exception {
-                  return quantumApi.get().getExtensionApiForRegion(key).listExtensions();
+                  return quantumApi.get().getExtensionApiForZone(key).list();
                }
             });
    }

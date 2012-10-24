@@ -25,8 +25,8 @@ import java.net.URI;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.hpcloud.objectstorage.HPCloudObjectStorageClient;
-import org.jclouds.hpcloud.objectstorage.extensions.HPCloudCDNClient;
+import org.jclouds.hpcloud.objectstorage.HPCloudObjectStorageApi;
+import org.jclouds.hpcloud.objectstorage.extensions.CDNContainerApi;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
@@ -39,19 +39,19 @@ import com.google.common.cache.LoadingCache;
 @Singleton
 public class EnableCDNAndCache implements Function<String, URI> {
    private final LoadingCache<String, URI> cdnContainer;
-   private final HPCloudObjectStorageClient sync;
+   private final HPCloudObjectStorageApi sync;
 
    @Inject
-   public EnableCDNAndCache(HPCloudObjectStorageClient sync, LoadingCache<String, URI> cdnContainer) {
+   public EnableCDNAndCache(HPCloudObjectStorageApi sync, LoadingCache<String, URI> cdnContainer) {
       this.sync = sync;
       this.cdnContainer = cdnContainer;
    }
 
    @Override
    public URI apply(String input) {
-      Optional<HPCloudCDNClient> cdnExtension = sync.getCDNExtension();
+      Optional<CDNContainerApi> cdnExtension = sync.getCDNExtension();
       checkArgument(cdnExtension.isPresent(), "CDN is required, but the extension is not available!");
-      URI uri = cdnExtension.get().enableCDN(input);
+      URI uri = cdnExtension.get().enable(input);
       cdnContainer.put(input, uri);
       return uri;
    }

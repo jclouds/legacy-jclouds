@@ -28,12 +28,12 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "GetVServerInitialPasswordResponse")
 public class GetVServerInitialPasswordResponse extends StatusResponse implements
-        SingleElementResponse {
-    @XmlElement(required = true)
-    private String initialPassword;
+      SingleElementResponse {
+   @XmlElement(required = true)
+   private String initialPassword;
 
-    @Override
-    public Object getElement() {
-        return initialPassword;
-    }
+   @Override
+   public Object getElement() {
+      return initialPassword;
+   }
 }

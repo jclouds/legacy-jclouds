@@ -34,6 +34,7 @@ import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
+import com.google.common.annotations.Beta;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -44,19 +45,20 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see ServerWithSecurityGroupsApi
  * @see <a href="http://nova.openstack.org/api/nova.api.openstack.compute.contrib.createserverext.html"/>
  */
+@Beta
 @Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.CREATESERVEREXT)
 @SkipEncoding({'/', '='})
 @RequestFilters(AuthenticateRequest.class)
 public interface ServerWithSecurityGroupsAsyncApi {
 
    /**
-    * @see ServerWithSecurityGroupsApi#getServer(String)
+    * @see ServerWithSecurityGroupsApi#get(String)
     */
    @GET
    @SelectJson("server")
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/os-create-server-ext/{id}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<? extends ServerWithSecurityGroups> getServer(@PathParam("id") String id);
+   ListenableFuture<? extends ServerWithSecurityGroups> get(@PathParam("id") String id);
 
 }

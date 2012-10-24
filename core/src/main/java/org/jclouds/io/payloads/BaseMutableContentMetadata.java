@@ -26,8 +26,6 @@ import org.jclouds.io.ContentMetadataBuilder;
 import org.jclouds.io.MutableContentMetadata;
 import org.jclouds.javax.annotation.Nullable;
 
-import com.google.common.collect.Multimap;
-
 /**
  * @author Adrian Cole
  */

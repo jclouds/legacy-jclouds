@@ -24,7 +24,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.s3.Bucket;
 
 import com.google.common.base.Function;
@@ -32,17 +31,17 @@ import com.google.common.base.Optional;
 import com.google.common.cache.LoadingCache;
 
 /**
- * 
+ *
  * @author Adrian Cole
  */
 @Singleton
 public class DefaultEndpointThenInvalidateRegion implements Function<Object, URI> {
 
    private final LoadingCache<String, Optional<String>> bucketToRegionCache;
-   private final RegionToEndpointOrProviderIfNull r2;
+   private final AssignCorrectHostnameForBucket r2;
 
    @Inject
-   public DefaultEndpointThenInvalidateRegion(RegionToEndpointOrProviderIfNull r2,
+   public DefaultEndpointThenInvalidateRegion(AssignCorrectHostnameForBucket r2,
             @Bucket LoadingCache<String, Optional<String>> bucketToRegionCache) {
       this.r2 = r2;
       this.bucketToRegionCache = bucketToRegionCache;
@@ -51,7 +50,7 @@ public class DefaultEndpointThenInvalidateRegion implements Function<Object, URI
    @Override
    public URI apply(@Nullable Object from) {
       try {
-         return r2.apply(null);
+         return r2.apply(from);
       } finally {
          bucketToRegionCache.invalidate(from.toString());
       }

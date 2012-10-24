@@ -44,17 +44,9 @@ public class ParseContainerTest extends BaseItemParserTest<Container> {
    @Override
    @Consumes(MediaType.APPLICATION_JSON)
    public Container expected() {
-      return Container.builder()
-                      .objectType("application/cdmi-container")
-                      .objectID("00007E7F00102E230ED82694DAA975D2")
-                      .objectName("MyContainer/")
-                      .parentURI("/")
-                      .metadata(ImmutableMap.<String, JsonBall>builder()
-                          .put("cdmi_size", new JsonBall("\"83\""))
-                          .build())
-                      .children(ImmutableSet.<String>builder()
-                          .add("MyDataObject.txt")
-                          .build())
-                      .build();
+      return Container.builder().objectType("application/cdmi-container").objectID("00007E7F00102E230ED82694DAA975D2")
+               .objectName("MyContainer/").parentURI("/")
+               .metadata(ImmutableMap.<String, JsonBall> builder().put("cdmi_size", new JsonBall("\"83\"")).build())
+               .children(ImmutableSet.<String> builder().add("MyDataObject.txt").build()).build();
    }
 }

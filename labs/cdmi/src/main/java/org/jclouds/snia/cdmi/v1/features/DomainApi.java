@@ -32,5 +32,4 @@ import org.jclouds.concurrent.Timeout;
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface DomainApi {
 
-
 }

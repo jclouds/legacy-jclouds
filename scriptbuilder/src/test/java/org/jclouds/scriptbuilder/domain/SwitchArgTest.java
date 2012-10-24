@@ -27,6 +27,7 @@ import java.util.Collections;
 
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -37,7 +38,7 @@ public class SwitchArgTest {
 
    public void testSwitchArgUNIX() {
       assertEquals(new SwitchArg(1, ImmutableMap.of("0", newStatementList(appendFile(
-               "{tmp}{fs}{uid}{fs}scripttest{fs}temp.txt", Collections.singleton("hello world")),
+               "{tmp}{fs}{uid}{fs}scripttest{fs}temp.txt", ImmutableList.of("hello world")),
                interpret("echo hello zero{lf}")), "1", interpret("echo hello one{lf}"))).render(OsFamily.UNIX),
       "case $1 in\n"+
       "0)\n"+

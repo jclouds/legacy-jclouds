@@ -29,4 +29,7 @@ import org.testng.annotations.Test;
 @Test(groups = "live", sequential = true, testName = "SynapticStorageClientLiveTest")
 public class SynapticStorageClientLiveTest extends AtmosClientLiveTest {
 
+   public SynapticStorageClientLiveTest() {
+      provider = "synaptic-storage";
+   }
 }

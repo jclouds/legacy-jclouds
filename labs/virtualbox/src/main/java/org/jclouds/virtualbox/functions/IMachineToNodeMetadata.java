@@ -19,9 +19,12 @@
 
 package org.jclouds.virtualbox.functions;
 
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.GUEST_OS_PASSWORD;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.GUEST_OS_USER;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_NODE_NAME_SEPARATOR;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_NODE_PREFIX;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -37,8 +40,7 @@ import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.logging.Logger;
-import org.jclouds.virtualbox.util.MachineUtils;
-import org.testng.collections.Lists;
+import org.jclouds.virtualbox.util.NetworkUtils;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.INetworkAdapter;
 import org.virtualbox_4_1.MachineState;
@@ -46,7 +48,6 @@ import org.virtualbox_4_1.NetworkAttachmentType;
 
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -59,12 +60,13 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
    protected Logger logger = Logger.NULL;
    
    private final Map<MachineState, Status> toPortableNodeStatus;
-   private final MachineUtils machineUtils;
+   private final NetworkUtils networkUtils;
 
    @Inject
-   public IMachineToNodeMetadata(Map<MachineState, NodeMetadata.Status> toPortableNodeStatus, MachineUtils machineUtils) {
+   public IMachineToNodeMetadata(Map<MachineState, NodeMetadata.Status> toPortableNodeStatus, 
+         NetworkUtils networkUtils) {
       this.toPortableNodeStatus = toPortableNodeStatus;
-      this.machineUtils = machineUtils;
+      this.networkUtils = networkUtils;
    }
    
    @Override
@@ -82,7 +84,6 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
       
       NodeMetadataBuilder nodeMetadataBuilder = new NodeMetadataBuilder();
       nodeMetadataBuilder.name(name).ids(vm.getName()).group(group);
-
       // TODO Set up location properly
       LocationBuilder locationBuilder = new LocationBuilder();
       locationBuilder.description("");
@@ -96,55 +97,26 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
       if (nodeState == null)
          nodeState = Status.UNRECOGNIZED;
       nodeMetadataBuilder.status(nodeState);
-
-      /*
-      // nat adapter
-      INetworkAdapter natAdapter = vm.getNetworkAdapter(0l);
-      checkNotNull(natAdapter, "slot 0 networkadapter");
-      checkState(natAdapter.getAttachmentType() == NetworkAttachmentType.NAT,
-               "expecting slot 0 to be a NAT attachment type (was: " + natAdapter.getAttachmentType() + ")");
-
-      int ipTermination = 0;
-      int inPort = 0;
-      String hostAddress = "";
-
-      nodeMetadataBuilder.publicAddresses(ImmutableSet.of(natAdapter.getNatDriver().getHostIP()));
-      for (String nameProtocolnumberAddressInboudportGuestTargetport : natAdapter.getNatDriver().getRedirects()) {
-         Iterable<String> stuff = Splitter.on(',').split(nameProtocolnumberAddressInboudportGuestTargetport);
-         String protocolNumber = Iterables.get(stuff, 1);
-         hostAddress = Iterables.get(stuff, 2);
-         String inboundPort = Iterables.get(stuff, 3);
-         String targetPort = Iterables.get(stuff, 5);
-         if ("1".equals(protocolNumber) && "22".equals(targetPort)) {
-            inPort = Integer.parseInt(inboundPort);
-            ipTermination = inPort % NodeCreator.NODE_PORT_INIT + 2;
-         }
-      }
-      
-      // only masters use 2222 port
-      if (inPort == MastersLoadingCache.MASTER_PORT) {
-         nodeMetadataBuilder.publicAddresses(ImmutableSet.of(hostAddress)).loginPort(inPort);
-      } else {
-         nodeMetadataBuilder.privateAddresses(ImmutableSet.of((NodeCreator.VMS_NETWORK + ipTermination) + ""));
-         nodeMetadataBuilder.publicAddresses(ImmutableSet.of((NodeCreator.VMS_NETWORK + ipTermination) + ""));
-      } 
-      */
-      
       nodeMetadataBuilder = getIpAddresses(vm, nodeMetadataBuilder);
-      LoginCredentials loginCredentials = new LoginCredentials("toor", "password", null, true);
+
+      String guestOsUser = vm.getExtraData(GUEST_OS_USER);
+      String guestOsPassword = vm.getExtraData(GUEST_OS_PASSWORD);
+      LoginCredentials loginCredentials = new LoginCredentials(guestOsUser, guestOsPassword, null, true);
       nodeMetadataBuilder.credentials(loginCredentials);
 
       return nodeMetadataBuilder.build();
    }
    
    private NodeMetadataBuilder getIpAddresses(IMachine vm, NodeMetadataBuilder nodeMetadataBuilder) {
-      List<String> publicIpAddresses = Lists.newArrayList();
-
+      List<String> publicIpAddresses = new ArrayList<String>();
+      List<String> privateIpAddresses = new ArrayList<String>();
       for(long slot = 0; slot < 4; slot ++) {
          INetworkAdapter adapter = vm.getNetworkAdapter(slot);
          if(adapter != null) {
             if (adapter.getAttachmentType() == NetworkAttachmentType.NAT) {
-               publicIpAddresses.add(adapter.getNatDriver().getHostIP());
+               String hostIP = adapter.getNatDriver().getHostIP();
+               if(!hostIP.isEmpty())
+                  publicIpAddresses.add(hostIP);
                for (String nameProtocolnumberAddressInboudportGuestTargetport : adapter.getNatDriver().getRedirects()) {
                   Iterable<String> stuff = Splitter.on(',').split(nameProtocolnumberAddressInboudportGuestTargetport);
                   String protocolNumber = Iterables.get(stuff, 1);
@@ -153,26 +125,24 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
                   String targetPort = Iterables.get(stuff, 5);
                   if ("1".equals(protocolNumber) && "22".equals(targetPort)) {
                      int inPort = Integer.parseInt(inboundPort);
-                     nodeMetadataBuilder.publicAddresses(ImmutableSet.of(hostAddress)).loginPort(inPort);
+                     publicIpAddresses.add(hostAddress);
+                     nodeMetadataBuilder.loginPort(inPort);
                   }
-                  //privateIpAddresses.add((NodeCreator.VMS_NETWORK + ipTermination) + "");
                }
-               // TODO this could be a public and private address
             } else if (adapter.getAttachmentType() == NetworkAttachmentType.Bridged) {
-               String clientIpAddress = machineUtils.getIpAddressFromBridgedNIC(vm.getName());
-               //privateIpAddresses.add(clientIpAddress);
-               publicIpAddresses.add(clientIpAddress);
+               // TODO quick test first
+               String clientIpAddress = networkUtils.getIpAddressFromNicSlot(vm.getName(), adapter.getSlot());
+               privateIpAddresses.add(clientIpAddress);
 
             } else if (adapter.getAttachmentType() == NetworkAttachmentType.HostOnly) {
-               String clientIpAddress = machineUtils.getIpAddressFromHostOnlyNIC(vm.getName());
+               // TODO quick test first
+               String clientIpAddress = networkUtils.getIpAddressFromNicSlot(vm.getName(), adapter.getSlot());
                publicIpAddresses.add(clientIpAddress);
-
             }
          }
       }
       nodeMetadataBuilder.publicAddresses(publicIpAddresses);
       nodeMetadataBuilder.privateAddresses(publicIpAddresses);
-
       return nodeMetadataBuilder;
    }   
 

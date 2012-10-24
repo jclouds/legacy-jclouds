@@ -25,7 +25,6 @@ import static org.easymock.EasyMock.verify;
 
 import java.net.URI;
 
-import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Optional;
@@ -40,10 +39,10 @@ public class DefaultEndpointThenInvalidateRegionTest {
    @SuppressWarnings("unchecked")
    @Test
    void testInvalidate() throws Exception {
-      RegionToEndpointOrProviderIfNull r2 = createMock(RegionToEndpointOrProviderIfNull.class);
+      AssignCorrectHostnameForBucket r2 = createMock(AssignCorrectHostnameForBucket.class);
       LoadingCache<String, Optional<String>> bucketToRegionCache = createMock(LoadingCache.class);
 
-      expect(r2.apply(null)).andReturn(URI.create("http://east-url"));
+      expect(r2.apply("mybucket")).andReturn(URI.create("http://east-url"));
       bucketToRegionCache.invalidate("mybucket");
 
       replay(r2, bucketToRegionCache);

@@ -93,7 +93,8 @@ public class ServerInfoToNodeMetadata implements Function<ServerInfo, NodeMetada
       builder.name(from.getName());
       builder.location(locationSupplier.get());
       builder.group(nodeNamingConvention.groupInUniqueNameOrNull(from.getName()));
-
+      builder.tags(from.getTags());
+      builder.userMetadata(from.getUserMetadata());
       String imageId = getImageIdFromServer.apply(from);
       if (imageId != null) {
          Image image = findImageForId.apply(imageId);

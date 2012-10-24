@@ -25,7 +25,7 @@ import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
 import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author James Murty
  * @author Adrian Cole
  */
@@ -37,7 +37,7 @@ public class SwiftBlobLiveTest extends BaseBlobLiveTest {
       setIfTestSystemPropertyPresent(props, KeystoneProperties.CREDENTIAL_TYPE);
       return props;
    }
-   
+
    public SwiftBlobLiveTest() {
       provider = System.getProperty("test.swift.provider", "swift");
    }

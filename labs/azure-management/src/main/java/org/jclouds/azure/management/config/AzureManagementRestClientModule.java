@@ -62,6 +62,7 @@ import org.jclouds.rest.annotations.Credential;
 import org.jclouds.rest.annotations.Identity;
 import org.jclouds.rest.config.RestClientModule;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Provides;
@@ -139,7 +140,7 @@ public class AzureManagementRestClientModule extends RestClientModule<AzureManag
          CertificateFactory cf = CertificateFactory.getInstance("X.509");
          @SuppressWarnings("unchecked")
          Collection<Certificate> certs = (Collection<Certificate>) cf.generateCertificates(new ByteArrayInputStream(
-                  pemCerts.getBytes("UTF-8")));
+                  pemCerts.getBytes(Charsets.UTF_8)));
          keyStore.load(null);
          keyStore.setKeyEntry("dummy", privateKey, keyStorePassword.toCharArray(),
                   certs.toArray(new java.security.cert.Certificate[0]));

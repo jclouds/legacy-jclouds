@@ -8,19 +8,19 @@ import java.util.Map;
  * @author Kenneth Nagin
  */
 public class CreateContainerOptions extends CreateCDMIObjectOptions {
-	/**
-	 * A name-value pair to associate with the container as metadata.
-	 */
-	public CreateContainerOptions metadata(Map<String, String> metadata) {
-		super.metadata(metadata);
-		return this;
-		
-	}
-	public static class Builder {
-		public static CreateContainerOptions metadata(
-				Map<String, String> metadata) {
-			CreateContainerOptions options = new CreateContainerOptions();
-			return (CreateContainerOptions) options.metadata(metadata);
-		}
-	}
+   /**
+    * A name-value pair to associate with the container as metadata.
+    */
+   public CreateContainerOptions metadata(Map<String, String> metadata) {
+      super.metadata(metadata);
+      return this;
+
+   }
+
+   public static class Builder {
+      public static CreateContainerOptions metadata(Map<String, String> metadata) {
+         CreateContainerOptions options = new CreateContainerOptions();
+         return (CreateContainerOptions) options.metadata(metadata);
+      }
+   }
 }

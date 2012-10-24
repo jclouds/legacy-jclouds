@@ -25,6 +25,7 @@ import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTA
 
 import java.io.File;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -53,6 +54,7 @@ import org.jclouds.virtualbox.functions.IMachineToVmSpec;
 import org.jclouds.virtualbox.functions.admin.UnregisterMachineIfExistsAndDeleteItsMedia;
 import org.jclouds.virtualbox.util.MachineController;
 import org.jclouds.virtualbox.util.MachineUtils;
+import org.jclouds.virtualbox.util.NetworkUtils;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeClass;
@@ -71,6 +73,7 @@ import com.google.common.base.Supplier;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.util.concurrent.Uninterruptibles;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
@@ -103,6 +106,9 @@ public class BaseVirtualBoxClientLiveTest extends BaseComputeServiceContextLiveT
 
    @Inject
    protected MachineUtils machineUtils;
+   
+   @Inject
+   protected NetworkUtils networkUtils;
 
    protected String hostVersion;
    protected String operatingSystemIso;
@@ -119,7 +125,7 @@ public class BaseVirtualBoxClientLiveTest extends BaseComputeServiceContextLiveT
    protected LoadingCache<Image, Master> mastersCache;
 
    private final ExecutorService singleThreadExec = MoreExecutors.sameThreadExecutor();
-   private String masterVmName;
+   private String masterName;
    
 
    @Override
@@ -133,13 +139,13 @@ public class BaseVirtualBoxClientLiveTest extends BaseComputeServiceContextLiveT
    public void setupContext() {
       super.setupContext();
       view.utils().injector().injectMembers(this);
-
+      
       // try and get a master from the cache, this will initialize the config/download isos and
       // prepare everything IF a master is not available, subsequent calls should be pretty fast
       Template template = view.getComputeService().templateBuilder().build();
       checkNotNull(mastersCache.apply(template.getImage()));
 
-      masterVmName = VIRTUALBOX_IMAGE_PREFIX + template.getImage().getId();
+      masterName = VIRTUALBOX_IMAGE_PREFIX + template.getImage().getId();
       isosDir = workingDir + File.separator + "isos";
 
       hostVersion = Iterables.get(Splitter.on('r').split(view.utils().injector().getInstance(Key.get(String.class, BuildVersion.class))), 0);
@@ -155,10 +161,7 @@ public class BaseVirtualBoxClientLiveTest extends BaseComputeServiceContextLiveT
          int attempts = 0;
          while (attempts < 10 && !vm.getSessionState().equals(SessionState.Unlocked)) {
             attempts++;
-            try {
-               Thread.sleep(200l);
-            } catch (InterruptedException e) {
-            }
+            Uninterruptibles.sleepUninterruptibly(200, TimeUnit.MILLISECONDS);
          }
          machineUtils.applyForMachine(vmNameOrId, new UnregisterMachineIfExistsAndDeleteItsMedia(vmSpec));
 
@@ -173,8 +176,6 @@ public class BaseVirtualBoxClientLiveTest extends BaseComputeServiceContextLiveT
    }
 
    public MasterSpec getMasterSpecForTest() {
-      String masterName = "jclouds-image-0x0-" + template.getImageId();
-
       StorageController ideController = StorageController
                .builder()
                .name("IDE Controller")
@@ -220,7 +221,7 @@ public class BaseVirtualBoxClientLiveTest extends BaseComputeServiceContextLiveT
    protected void destroyMaster() {
       if (System.getProperty(DONT_DESTROY_MASTER) == null
                || !Boolean.parseBoolean(System.getProperty(DONT_DESTROY_MASTER))) {
-         undoVm(masterVmName);
+         undoVm(masterName);
       }
    }
 

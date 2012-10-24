@@ -93,8 +93,10 @@ public class MetricDataBinder implements org.jclouds.rest.Binder {
          formParameters.put("MetricData.member." + metricDatumIndex + ".Unit",
                             String.valueOf(metricDatum.getUnit()));
 
-         formParameters.put("MetricData.member." + metricDatumIndex + ".Value",
-                            String.valueOf(metricDatum.getValue()));
+         if (metricDatum.getValue().isPresent()) {
+            formParameters.put("MetricData.member." + metricDatumIndex + ".Value",
+                     String.valueOf(metricDatum.getValue().get()));
+         }
 
          metricDatumIndex++;
       }

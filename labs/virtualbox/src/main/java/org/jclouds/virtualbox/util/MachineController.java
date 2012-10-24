@@ -20,6 +20,9 @@ package org.jclouds.virtualbox.util;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -28,15 +31,25 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.virtualbox.domain.ExecutionType;
 import org.jclouds.virtualbox.functions.LaunchMachineIfNotAlreadyRunning;
+import org.virtualbox_4_1.AdditionsFacilityStatus;
+import org.virtualbox_4_1.AdditionsFacilityType;
+import org.virtualbox_4_1.AdditionsRunLevelType;
+import org.virtualbox_4_1.IAdditionsFacility;
+import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IProgress;
 import org.virtualbox_4_1.ISession;
 import org.virtualbox_4_1.LockType;
 import org.virtualbox_4_1.MachineState;
+import org.virtualbox_4_1.SessionState;
 import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
 import com.google.common.base.Supplier;
-import com.google.common.base.Throwables;
+import com.google.common.collect.Iterables;
+import com.google.common.util.concurrent.Uninterruptibles;
 import com.google.inject.Inject;
 
 /**
@@ -65,27 +78,57 @@ public class MachineController {
 
    public ISession ensureMachineIsLaunched(String vmName) {
       ISession session = null;
-      while (!manager.get().getVBox().findMachine(vmName).getState().equals(MachineState.Running)) {
+      IMachine machine = manager.get().getVBox().findMachine(vmName);
+      while (!machine.getState().equals(MachineState.Running)) {
          try {
-            session = machineUtils.applyForMachine(vmName, new LaunchMachineIfNotAlreadyRunning(manager.get(),
-                     executionType, ""));
+            session = machineUtils.applyForMachine(vmName,
+                  new LaunchMachineIfNotAlreadyRunning(manager.get(),
+                        executionType, ""));
          } catch (RuntimeException e) {
-            if (e.getMessage().contains(
-                     "org.virtualbox_4_1.VBoxException: VirtualBox error: The given session is busy (0x80BB0007)")) {
+            if (e.getMessage()
+                  .contains(
+                        "org.virtualbox_4_1.VBoxException: VirtualBox error: The given session is busy (0x80BB0007)")) {
                throw e;
-            } else if (e.getMessage().contains("VirtualBox error: The object is not ready")) {
+            } else if (e.getMessage().contains(
+                  "VirtualBox error: The object is not ready")) {
                continue;
             } else {
                throw e;
             }
          }
       }
+      // for scancode
+      Uninterruptibles.sleepUninterruptibly(5, TimeUnit.SECONDS);
+      
+      String guestAdditionsInstalled = machineUtils.sharedLockMachineAndApplyToSession(vmName,
+            new Function<ISession, String>() {
+
+               @Override
+               public String apply(ISession session) {
+                  int attempts = 0;
+                  String guestAdditionsInstalled = null;
+                  while (!!session.getConsole().getGuest()
+                        .getAdditionsVersion().isEmpty() && attempts  < 3) {
+                     Uninterruptibles.sleepUninterruptibly(2, TimeUnit.SECONDS);
+                     guestAdditionsInstalled = session.getConsole().getGuest()
+                           .getAdditionsVersion();
+                     attempts++;
+                  }
+                  return guestAdditionsInstalled;
+               }
+               
+      });
+      if(!Strings.nullToEmpty(guestAdditionsInstalled).isEmpty()) {
+         waitVBoxServiceIsActive(vmName);
+      }
+
       return checkNotNull(session, "session");
    }
 
    public ISession ensureMachineHasPowerDown(String vmName) {
       ISession session = manager.get().getSessionObject();
-      while (!manager.get().getVBox().findMachine(vmName).getState().equals(MachineState.PoweredOff)) {
+      IMachine machine = manager.get().getVBox().findMachine(vmName);
+      while (!machine.getState().equals(MachineState.PoweredOff)) {
          try {
             session = machineUtils.lockSessionOnMachineAndApply(vmName, LockType.Shared,
                      new Function<ISession, ISession>() {
@@ -97,9 +140,6 @@ public class MachineController {
                         }
                      });
          } catch (RuntimeException e) {
-            // sometimes the machine might be powered of between the while
-            // test and the call to
-            // lockSessionOnMachineAndApply
             if (e.getMessage().contains("Invalid machine state: PoweredOff")) {
                throw e;
             } else if (e.getMessage().contains("VirtualBox error: The object is not ready")) {
@@ -109,6 +149,7 @@ public class MachineController {
             }
          }
       }
+      safeCheckMachineIsUnlocked(machine);
       return checkNotNull(session, "session");
    }
    
@@ -117,6 +158,7 @@ public class MachineController {
     * http://askubuntu.com/questions/82015/shutting-down-ubuntu-server-running-in-headless-virtualbox
     */
    public ISession ensureMachineIsShutdown(String vmName) {
+      IMachine machine = manager.get().getVBox().findMachine(vmName);
       ISession session = machineUtils.lockSessionOnMachineAndApply(vmName, LockType.Shared,
                      new Function<ISession, ISession>() {
                         @Override
@@ -125,19 +167,12 @@ public class MachineController {
                            return session;
                         }
                      });
-      int count = 0;
-      while (!manager.get().getVBox().findMachine(vmName).getState().equals(MachineState.PoweredOff) && count < 10) {
-         try {
-            Thread.sleep(500l * count);
-         } catch (InterruptedException e) {
-            Throwables.propagate(e);
-         }
-         count++;
-      }
+      safeCheckMachineIsUnlocked(machine);
       return checkNotNull(session, "session");
    }
 
    public void ensureMachineIsPaused(String vmName) {
+      IMachine machine = manager.get().getVBox().findMachine(vmName);
       while (!manager.get().getVBox().findMachine(vmName).getState().equals(MachineState.Paused)) {
          try {
             machineUtils.lockSessionOnMachineAndApply(vmName, LockType.Shared, new Function<ISession, Void>() {
@@ -160,9 +195,11 @@ public class MachineController {
             }
          }
       }
+      safeCheckMachineIsUnlocked(machine);
    }
    
    public void ensureMachineIsResumed(String vmName) {
+      IMachine machine = manager.get().getVBox().findMachine(vmName);
       while (!manager.get().getVBox().findMachine(vmName).getState().equals(MachineState.Running)) {
          try {
             machineUtils.lockSessionOnMachineAndApply(vmName, LockType.Shared, new Function<ISession, Void>() {
@@ -185,6 +222,58 @@ public class MachineController {
             }
          }
       }
+      safeCheckMachineIsUnlocked(machine);
+   }
+   
+   private void safeCheckMachineIsUnlocked(IMachine machine) {
+      int guard = 0;
+       while (!machine.getSessionState().equals(SessionState.Unlocked)) {
+          if(guard >= 5) {
+             logger.warn("Machine session (%s) possibly still unlocked!!!", machine.getName());
+             break;
+          }
+          logger.debug("Machine session (%s) not unlocked - wait ...", machine.getName());
+          Uninterruptibles.sleepUninterruptibly(3, TimeUnit.SECONDS);
+          guard++;
+       }
+       logger.debug("Machine session (%s) is %s", machine.getName(), machine.getSessionState());
+   }
+   
+   private void waitVBoxServiceIsActive(String vmName) {
+      machineUtils.sharedLockMachineAndApplyToSession(vmName, new Function<ISession, Void>() {
+
+         @Override
+         public Void apply(ISession session) {
+            session.getConsole().getGuest().setStatisticsUpdateInterval(1l);
+            while (!session.getConsole().getGuest().getAdditionsStatus(AdditionsRunLevelType.Userland)) {
+               Uninterruptibles.sleepUninterruptibly(200, TimeUnit.MILLISECONDS);
+            }
+            
+            List<IAdditionsFacility> facilities = session.getConsole().getGuest().getFacilities();
+            while (facilities.size() != 4) {
+               Uninterruptibles.sleepUninterruptibly(200, TimeUnit.MILLISECONDS);
+               facilities = session.getConsole().getGuest().getFacilities();
+            }
+            facilities = session.getConsole().getGuest().getFacilities();
+
+            Optional<IAdditionsFacility> vboxServiceFacility = Optional.absent();
+            while (!vboxServiceFacility.isPresent()) {
+               vboxServiceFacility = Iterables.tryFind(session.getConsole().getGuest().getFacilities(),
+                     new Predicate<IAdditionsFacility>() {
+                        @Override
+                        public boolean apply(IAdditionsFacility additionsFacility) {
+                           return additionsFacility.getType().equals(AdditionsFacilityType.VBoxService);
+                        };
+                     });
+            }
+
+            while(!vboxServiceFacility.get().getStatus().equals(AdditionsFacilityStatus.Active)) {
+               Uninterruptibles.sleepUninterruptibly(1, TimeUnit.SECONDS);
+            }
+            Uninterruptibles.sleepUninterruptibly(3, TimeUnit.SECONDS);
+            return null;
+         }
+      });
    }
 
 }

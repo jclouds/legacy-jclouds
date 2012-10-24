@@ -41,11 +41,11 @@ import com.google.common.collect.Iterables;
 public class ImageFromYamlStringTest {
 
    public static final Image TEST1 = new ImageBuilder()
-            .id("ubuntu-11.04-i386")
-            .name("ubuntu-11.04-server-i386")
-            .description("ubuntu 11.04 server (i386)")
+            .id("ubuntu-10.04.4-server-i386")
+            .name("ubuntu-10.04-server-i386")
+            .description("ubuntu")
             .operatingSystem(
-                     OperatingSystem.builder().description("ubuntu").family(OsFamily.UBUNTU).version("11.04")
+                     OperatingSystem.builder().description("ubuntu").family(OsFamily.UBUNTU).version("10.04.4")
                               .arch("x86").build())
             .status(Image.Status.AVAILABLE).build();
 

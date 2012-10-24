@@ -25,7 +25,7 @@ import java.beans.ConstructorProperties;
  * 
  * @see org.jclouds.openstack.nova.v2_0.extensions.QuotaClassApi
 */
-public class QuotaClass extends Quotas {
+public class QuotaClass extends Quota {
 
    public static Builder<?> builder() { 
       return new ConcreteBuilder();
@@ -35,7 +35,7 @@ public class QuotaClass extends Quotas {
       return new ConcreteBuilder().fromQuotaClass(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> extends Quotas.Builder<T>  {
+   public static abstract class Builder<T extends Builder<T>> extends Quota.Builder<T>  {
    
       public QuotaClass build() {
          return new QuotaClass(id, metadataItems, injectedFileContentBytes, volumes, gigabytes, ram, floatingIps, instances, injectedFiles, cores, securityGroups, securityGroupRules, keyPairs);

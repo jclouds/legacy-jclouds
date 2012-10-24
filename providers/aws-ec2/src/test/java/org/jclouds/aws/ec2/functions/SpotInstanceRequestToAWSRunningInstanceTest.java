@@ -66,7 +66,7 @@ public class SpotInstanceRequestToAWSRunningInstanceTest {
             AWSRunningInstance.builder().region("us-east-1").instanceId("sir-228e6406")
                   .spotInstanceRequestId("sir-228e6406").instanceState(InstanceState.PENDING)
                   .rawState("open").imageId("ami-595a0a1c")
-                  .groupId("default").instanceType("m1.large")
+                  .groupName("default").instanceType("m1.large")
                   .tag("foo", "bar")
                   .tag("empty", "")
                   .hypervisor(Hypervisor.XEN)
