@@ -78,6 +78,42 @@ public class AsyncMonitorTest {
       verify(schedulerMock);
    }
 
+   @Test(expectedExceptions = NullPointerException.class, expectedExceptionsMessageRegExp = "timeUnit must not be null when using timeouts")
+   public void testStartMonitoringWithNullTimeout() {
+      ScheduledExecutorService schedulerMock = EasyMock.createMock(ScheduledExecutorService.class);
+      AsyncMonitor<Object> monitor = mockMonitor(schedulerMock, new Object(), mockFunction(MonitorStatus.DONE),
+            new EventBus());
+
+      monitor.startMonitoring(100L, null);
+   }
+
+   @SuppressWarnings({ "rawtypes", "unchecked" })
+   public void testStartMonitoringWithoutTimeoutAndNullTimeUnit() {
+      ScheduledFuture mockFuture = EasyMock.createMock(ScheduledFuture.class);
+      ScheduledExecutorService schedulerMock = EasyMock.createMock(ScheduledExecutorService.class);
+      expect(
+            schedulerMock.scheduleWithFixedDelay(anyObject(Runnable.class), anyLong(), anyLong(),
+                  anyObject(TimeUnit.class))).andReturn(mockFuture);
+
+      replay(mockFuture);
+      replay(schedulerMock);
+
+      AsyncMonitor<Object> monitor = mockMonitor(schedulerMock, new Object(), mockFunction(MonitorStatus.DONE),
+            new EventBus());
+
+      assertNull(monitor.getFuture());
+      assertNull(monitor.getTimeout());
+
+      // If the maxWait parameter is null, timeUnit is not required
+      monitor.startMonitoring(null, null);
+
+      assertNotNull(monitor.getFuture());
+      assertNull(monitor.getTimeout());
+
+      verify(mockFuture);
+      verify(schedulerMock);
+   }
+
    @SuppressWarnings({ "rawtypes", "unchecked" })
    public void testStartMonitoringWithTimeout() {
       ScheduledFuture mockFuture = EasyMock.createMock(ScheduledFuture.class);
@@ -100,6 +136,33 @@ public class AsyncMonitorTest {
       assertNotNull(monitor.getFuture());
       assertNotNull(monitor.getTimeout());
       assertTrue(monitor.getTimeout() > 100L);
+
+      verify(mockFuture);
+      verify(schedulerMock);
+   }
+
+   @SuppressWarnings({ "rawtypes", "unchecked" })
+   public void testStartMonitoringWithTimeoutInMinutes() {
+      ScheduledFuture mockFuture = EasyMock.createMock(ScheduledFuture.class);
+      ScheduledExecutorService schedulerMock = EasyMock.createMock(ScheduledExecutorService.class);
+      expect(
+            schedulerMock.scheduleWithFixedDelay(anyObject(Runnable.class), anyLong(), anyLong(),
+                  anyObject(TimeUnit.class))).andReturn(mockFuture);
+
+      replay(mockFuture);
+      replay(schedulerMock);
+
+      AsyncMonitor<Object> monitor = mockMonitor(schedulerMock, new Object(), mockFunction(MonitorStatus.DONE),
+            new EventBus());
+
+      assertNull(monitor.getFuture());
+      assertNull(monitor.getTimeout());
+
+      monitor.startMonitoring(1L, TimeUnit.MINUTES);
+
+      assertNotNull(monitor.getFuture());
+      assertNotNull(monitor.getTimeout());
+      assertTrue(monitor.getTimeout() > TimeUnit.MINUTES.toMillis(1));
 
       verify(mockFuture);
       verify(schedulerMock);
