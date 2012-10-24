@@ -69,7 +69,7 @@ public class AsyncMonitorTest {
       assertNull(monitor.getFuture());
       assertNull(monitor.getTimeout());
 
-      monitor.startMonitoring(null);
+      monitor.startMonitoring(null, TimeUnit.MILLISECONDS);
 
       assertNotNull(monitor.getFuture());
       assertNull(monitor.getTimeout());
@@ -95,7 +95,7 @@ public class AsyncMonitorTest {
       assertNull(monitor.getFuture());
       assertNull(monitor.getTimeout());
 
-      monitor.startMonitoring(100L);
+      monitor.startMonitoring(100L, TimeUnit.MILLISECONDS);
 
       assertNotNull(monitor.getFuture());
       assertNotNull(monitor.getTimeout());
@@ -122,7 +122,7 @@ public class AsyncMonitorTest {
       assertNull(monitor.getFuture());
       assertNull(monitor.getTimeout());
 
-      monitor.startMonitoring(null);
+      monitor.startMonitoring(null, TimeUnit.MILLISECONDS);
       assertNotNull(monitor.getFuture());
       assertNull(monitor.getTimeout());
       assertFalse(monitor.isTimeout());
@@ -148,7 +148,7 @@ public class AsyncMonitorTest {
       assertNull(monitor.getFuture());
       assertNull(monitor.getTimeout());
 
-      monitor.startMonitoring(60000L);
+      monitor.startMonitoring(60000L, TimeUnit.MILLISECONDS);
       assertNotNull(monitor.getFuture());
       assertNotNull(monitor.getTimeout());
       assertFalse(monitor.isTimeout());
@@ -174,7 +174,7 @@ public class AsyncMonitorTest {
       assertNull(monitor.getFuture());
       assertNull(monitor.getTimeout());
 
-      monitor.startMonitoring(1L);
+      monitor.startMonitoring(1L, TimeUnit.MILLISECONDS);
       Thread.sleep(2L);
       assertNotNull(monitor.getFuture());
       assertNotNull(monitor.getTimeout());
@@ -203,7 +203,7 @@ public class AsyncMonitorTest {
       assertNull(monitor.getFuture());
       assertNull(monitor.getTimeout());
 
-      monitor.startMonitoring(null);
+      monitor.startMonitoring(null, TimeUnit.MILLISECONDS);
       assertNotNull(monitor.getFuture());
       assertNull(monitor.getTimeout());
 
@@ -233,7 +233,7 @@ public class AsyncMonitorTest {
       assertNull(monitor.getFuture());
       assertNull(monitor.getTimeout());
 
-      monitor.startMonitoring(null);
+      monitor.startMonitoring(null, TimeUnit.MILLISECONDS);
       assertNotNull(monitor.getFuture());
       assertNull(monitor.getTimeout());
 
@@ -264,7 +264,7 @@ public class AsyncMonitorTest {
       assertNull(monitor.getFuture());
       assertNull(monitor.getTimeout());
 
-      monitor.startMonitoring(null);
+      monitor.startMonitoring(null, TimeUnit.MILLISECONDS);
       assertNotNull(monitor.getFuture());
       assertNull(monitor.getTimeout());
 
@@ -297,7 +297,7 @@ public class AsyncMonitorTest {
       assertNull(monitor.getFuture());
       assertNull(monitor.getTimeout());
 
-      monitor.startMonitoring(null);
+      monitor.startMonitoring(null, TimeUnit.MILLISECONDS);
       assertNotNull(monitor.getFuture());
       assertNull(monitor.getTimeout());
 
@@ -333,7 +333,7 @@ public class AsyncMonitorTest {
       assertNull(monitor.getFuture());
       assertNull(monitor.getTimeout());
 
-      monitor.startMonitoring(null);
+      monitor.startMonitoring(null, TimeUnit.MILLISECONDS);
       assertNotNull(monitor.getFuture());
       assertNull(monitor.getTimeout());
 
@@ -367,7 +367,7 @@ public class AsyncMonitorTest {
       assertNull(monitor.getFuture());
       assertNull(monitor.getTimeout());
 
-      monitor.startMonitoring(null);
+      monitor.startMonitoring(null, TimeUnit.MILLISECONDS);
       assertNotNull(monitor.getFuture());
       assertNull(monitor.getTimeout());
 
@@ -403,7 +403,7 @@ public class AsyncMonitorTest {
       assertNull(monitor.getFuture());
       assertNull(monitor.getTimeout());
 
-      monitor.startMonitoring(1L);
+      monitor.startMonitoring(1L, TimeUnit.MILLISECONDS);
       assertNotNull(monitor.getFuture());
       assertNotNull(monitor.getTimeout());
 

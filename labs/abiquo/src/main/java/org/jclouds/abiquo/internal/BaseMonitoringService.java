@@ -131,7 +131,7 @@ public class BaseMonitoringService implements MonitoringService {
       if (objects != null && objects.length > 0) {
          for (T object : objects) {
             AsyncMonitor<T> monitor = new AsyncMonitor<T>(object, completeCondition);
-            monitor.startMonitoring(maxWait);
+            monitor.startMonitoring(maxWait, timeUnit);
          }
       }
    }
@@ -208,9 +208,9 @@ public class BaseMonitoringService implements MonitoringService {
        * @param maxWait
        *           The timeout.
        */
-      public void startMonitoring(final Long maxWait) {
+      public void startMonitoring(final Long maxWait, TimeUnit timeUnit) {
          future = scheduler.scheduleWithFixedDelay(this, 0L, pollingDelay, TimeUnit.MILLISECONDS);
-         timeout = maxWait == null ? null : System.currentTimeMillis() + maxWait;
+         timeout = maxWait == null ? null : System.currentTimeMillis() + timeUnit.toMillis(maxWait);
          logger.debug("started monitor job for %s with %s timeout", monitoredObject,
                timeout == null ? "no" : String.valueOf(timeout));
       }
