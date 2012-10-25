@@ -47,6 +47,10 @@ public class VirtualMachineTest {
       // Retrieving CpuUsed should just give us a straightforward float
       vm = VirtualMachine.builder().id("3").cpuUsed("23.4%").build();
       assertEquals(vm.getCpuUsed(), 23.4, 0.01);
+      
+      //Allow ',' as decimal separator
+      vm = VirtualMachine.builder().id("4").cpuUsed("23,4%").build();
+      assertEquals(vm.getCpuUsed(), 23.4, 0.01);
    }
 
 }
