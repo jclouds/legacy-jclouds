@@ -24,7 +24,6 @@ import static org.testng.Assert.assertNotNull;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
@@ -47,7 +46,6 @@ import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Charsets;
-import com.google.common.io.ByteStreams;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Files;
 import com.google.common.net.MediaType;
@@ -78,7 +76,6 @@ public class DataNonCDMIContentTypeApiLiveTest extends BaseCDMIApiLiveTest {
 
       Payload payloadIn;
       Payload payloadOut;
-      FileOutputStream fos;
 
       CreateContainerOptions pCreateContainerOptions = CreateContainerOptions.Builder.metadata(pContainerMetaDataIn);
       ContainerApi containerApi = cdmiContext.getApi().getApi();
@@ -185,10 +182,7 @@ public class DataNonCDMIContentTypeApiLiveTest extends BaseCDMIApiLiveTest {
          // assertEquals(Strings2.toString(payloadOut), value);
          // byte[] _bytes = ByteStreams.toByteArray(payloadOut);
          tmpFileOut = new File(Files.createTempDir(), "temp.txt");
-         fos = new FileOutputStream(tmpFileOut);
-         ByteStreams.copy(payloadOut, fos);
-         fos.flush();
-         fos.close();
+         Files.copy(payloadOut, tmpFileOut);
          assertEquals(Files.equal(tmpFileOut, tmpFileIn), true);
          tmpFileOut.delete();
 
@@ -236,10 +230,7 @@ public class DataNonCDMIContentTypeApiLiveTest extends BaseCDMIApiLiveTest {
          payloadOut = dataNonCDMIContentTypeApi.getValue(inFile.getName());
          assertNotNull(payloadOut);
          tmpFileOut = new File(Files.createTempDir(), "temp.jpg");
-         fos = new FileOutputStream(tmpFileOut);
-         ByteStreams.copy(payloadOut, fos);
-         fos.flush();
-         fos.close();
+         Files.copy(payloadOut, tmpFileOut);
          assertEquals(Files.equal(tmpFileOut, inFile), true);
          tmpFileOut.delete();
 
@@ -288,10 +279,7 @@ public class DataNonCDMIContentTypeApiLiveTest extends BaseCDMIApiLiveTest {
          payloadOut = dataNonCDMIContentTypeApi.getValue(inFile.getName());
          assertNotNull(payloadOut);
          tmpFileOut = new File(Files.createTempDir(), "temp.jpg");
-         fos = new FileOutputStream(tmpFileOut);
-         ByteStreams.copy(payloadOut, fos);
-         fos.flush();
-         fos.close();
+         Files.copy(payloadOut, tmpFileOut);
          assertEquals(Files.equal(tmpFileOut, inFile), true);
          tmpFileOut.delete();
 
