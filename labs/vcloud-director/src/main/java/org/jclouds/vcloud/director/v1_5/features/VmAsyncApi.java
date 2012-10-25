@@ -203,7 +203,7 @@ public interface VmAsyncApi {
     * @see VmApi#reboot(String)
     */
    @POST
-   @Path("/power/action/powerOff")
+   @Path("/power/action/reboot")
    @Consumes(TASK)
    @JAXBResponseParser
    ListenableFuture<Task> reboot(@EndpointParam(parser = VmURNToHref.class) String vmUrn);
