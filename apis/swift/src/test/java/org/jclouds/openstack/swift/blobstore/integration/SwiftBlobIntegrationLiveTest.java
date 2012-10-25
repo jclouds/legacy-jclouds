@@ -18,7 +18,7 @@
  */
 package org.jclouds.openstack.swift.blobstore.integration;
 
-import com.google.common.io.ByteStreams;
+import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
@@ -31,7 +31,9 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import java.io.*;
+import java.io.File;
+import java.io.InputStream;
+import java.io.IOException;
 import java.util.Properties;
 
 /**
@@ -92,10 +94,7 @@ public class SwiftBlobIntegrationLiveTest extends BaseBlobIntegrationTest {
    }
     
    public void testMultipartChunkedFileStream() throws IOException, InterruptedException {
-       FileOutputStream fous = new FileOutputStream(new File("target/const.txt"));
-       ByteStreams.copy(oneHundredOneConstitutions, fous);
-       fous.flush();
-       fous.close();
+       Files.copy(oneHundredOneConstitutions, new File("target/const.txt"));
        String containerName = getContainerName();
 
        try {
