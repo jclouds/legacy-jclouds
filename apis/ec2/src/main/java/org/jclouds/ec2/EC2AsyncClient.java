@@ -83,4 +83,5 @@ public interface EC2AsyncClient extends EC2AsyncApi {
     */
    @Delegate
    ElasticBlockStoreAsyncClient getElasticBlockStoreServices();
+
 }

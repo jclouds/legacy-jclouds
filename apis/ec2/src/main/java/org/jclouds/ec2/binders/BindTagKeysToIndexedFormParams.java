@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.aws.ec2.binders;
+package org.jclouds.ec2.binders;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -27,16 +27,22 @@ import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
 
+import com.google.common.collect.Iterables;
+
 /**
- * Binds Ids to query parameters named with ResourceId.index
+ * Binds the Iterable<String> to form parameters named with Tag.index.Key
  * 
- * @author grkvlt@apache.org
+ * @author Adrian Cole
  */
 @Singleton
-public class BindResourceIdsToIndexedFormParams implements Binder {
-    @Override
-    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
-        checkArgument(checkNotNull(input, "input") instanceof Iterable, "this binder is only valid for Iterable<String>");
-        return AWSUtils.indexIterableToFormValuesWithPrefix(request, "ResourceId", input);
-    }
+public class BindTagKeysToIndexedFormParams implements Binder {
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
+      checkArgument(checkNotNull(input, "input") instanceof Iterable, "This binder is only valid for Iterable<String>");
+      @SuppressWarnings("unchecked")
+      Iterable<String> keys = (Iterable<String>) input;
+      return AWSUtils.indexStringArrayToFormValuesWithStringFormat(request, "Tag.%s.Key",
+            Iterables.toArray(keys, String.class));
+   }
+
 }

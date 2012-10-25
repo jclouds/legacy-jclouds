@@ -26,9 +26,14 @@ import com.google.common.base.Objects;
 import com.google.common.collect.ComparisonChain;
 
 /**
+ * <h3>Important</h3>
+ * This will be removed in jclouds version 1.6 
+ * 
  * @see <a href= "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-TagSetItemType.html" />
+ * @see org.jclouds.ec2.domain.Tag
  * @author grkvlt@apache.org
  */
+@Deprecated
 public class Tag implements Comparable<Tag> {
     public static Builder builder() {
         return new Builder();
