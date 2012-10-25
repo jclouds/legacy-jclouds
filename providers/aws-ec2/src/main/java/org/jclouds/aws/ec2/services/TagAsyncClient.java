@@ -26,13 +26,13 @@ import java.util.Set;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
-import org.jclouds.aws.ec2.binders.BindResourceIdsToIndexedFormParams;
 import org.jclouds.aws.ec2.binders.BindTagFiltersToIndexedFormParams;
 import org.jclouds.aws.ec2.binders.BindTagsToIndexedFormParams;
 import org.jclouds.aws.ec2.domain.Tag;
 import org.jclouds.aws.ec2.util.TagFilters.FilterName;
 import org.jclouds.aws.ec2.xml.DescribeTagsResponseHandler;
 import org.jclouds.aws.filters.FormSigner;
+import org.jclouds.ec2.binders.BindResourceIdsToIndexedFormParams;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.rest.annotations.BinderParam;
@@ -50,8 +50,12 @@ import com.google.common.util.concurrent.ListenableFuture;
 /**
  * Provides access to EC2 Tags via their REST API.
  * 
+ * <h3>Important</h3>
+ * This will be removed in jclouds version 1.6 
+ * 
  * @author grkvlt@apache.org
  */
+@Deprecated
 @RequestFilters(FormSigner.class)
 @VirtualHost
 public interface TagAsyncClient {

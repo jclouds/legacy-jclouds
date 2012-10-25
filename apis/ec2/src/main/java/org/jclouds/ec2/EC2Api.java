@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.ec2.features.TagApi;
 import org.jclouds.ec2.features.WindowsApi;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.Region;
@@ -29,7 +30,6 @@ import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
 import com.google.inject.Provides;
 
@@ -66,12 +66,19 @@ public interface EC2Api {
     * Provides synchronous access to Windows features.
     */
    @Delegate
-   @Beta
    Optional<? extends WindowsApi> getWindowsApi();
 
    @Delegate
-   @Beta
    Optional<? extends WindowsApi> getWindowsApiForRegion(
          @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+   
+   /**
+    * Provides synchronous access to Tag features.
+    */
+   @Delegate
+   Optional<? extends TagApi> getTagApi();
 
+   @Delegate
+   Optional<? extends TagApi> getTagApiForRegion(
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 }

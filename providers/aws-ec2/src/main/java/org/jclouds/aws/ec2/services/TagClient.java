@@ -28,11 +28,17 @@ import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
 
 /**
+ * 
  * Provides Tag services for EC2. For more information, refer to the Amazon EC2
  * Developer Guide.
  * 
+ * <h3>Important</h3>
+ * This will be removed in jclouds version 1.6 
+ * 
  * @author grkvlt@apache.org
+ * @see TagApi
  */
+@Deprecated
 @Timeout(duration = 45, timeUnit = TimeUnit.SECONDS)
 public interface TagClient {
    /**

@@ -27,6 +27,8 @@ import org.jclouds.ec2.EC2Api;
 import org.jclouds.ec2.EC2AsyncApi;
 import org.jclouds.ec2.EC2AsyncClient;
 import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.features.TagApi;
+import org.jclouds.ec2.features.TagAsyncApi;
 import org.jclouds.ec2.features.WindowsApi;
 import org.jclouds.ec2.features.WindowsAsyncApi;
 import org.jclouds.ec2.services.AMIAsyncClient;
@@ -82,6 +84,7 @@ public class EC2RestClientModule<S extends EC2Api, A extends EC2AsyncApi> extend
                         .put(AvailabilityZoneAndRegionClient.class, AvailabilityZoneAndRegionAsyncClient.class)//
                         .put(ElasticBlockStoreClient.class, ElasticBlockStoreAsyncClient.class)//
                         .put(WindowsApi.class, WindowsAsyncApi.class)//
+                        .put(TagApi.class, TagAsyncApi.class)//
                         .build();
    
    @SuppressWarnings("unchecked")
