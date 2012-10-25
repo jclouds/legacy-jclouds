@@ -215,5 +215,10 @@
             <artifactId>rackspace-cloudservers-us</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>rackspace-cloudservers-uk</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 </project>
