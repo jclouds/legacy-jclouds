@@ -31,7 +31,6 @@ import static org.testng.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.GZIPInputStream;
@@ -57,7 +56,7 @@ import org.jclouds.s3.domain.S3Object;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.io.ByteStreams;
+import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
 
 import org.testng.ITestContext;
@@ -152,17 +151,14 @@ public class AWSS3ClientLiveTest extends S3ClientLiveTest {
    
    public void testMultipartChunkedFileStream() throws IOException, InterruptedException {
       
-      FileOutputStream fous = new FileOutputStream(new File("target/const.txt"));
-      ByteStreams.copy(oneHundredOneConstitutions, fous);
-      fous.flush();
-      fous.close();
+      File file = new File("target/const.txt");
+      Files.copy(oneHundredOneConstitutions, file);
       String containerName = getContainerName();
       
       try {
          BlobStore blobStore = view.getBlobStore();
          blobStore.createContainerInLocation(null, containerName);
-         Blob blob = blobStore.blobBuilder("const.txt")
-            .payload(new File("target/const.txt")).build();
+         Blob blob = blobStore.blobBuilder("const.txt").payload(file).build();
          blobStore.putBlob(containerName, blob, PutOptions.Builder.multipart());
 
       } finally {
