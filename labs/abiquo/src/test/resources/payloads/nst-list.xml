@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<networkservicestypes>
+    <networkservicetype>
+        <link rel="edit" type="application/vnd.abiquo.networkservicetype+xml" href="http://localhost:80/api/admin/datacenters/1/networkservicetypes/3"/>
+        <defaultNST>true</defaultNST>
+        <id>1</id>
+        <name>Service Network</name>
+    </networkservicetype>
+    <networkservicetype>
+        <link rel="edit" type="application/vnd.abiquo.networkservicetype+xml" href="http://localhost:80/api/admin/datacenters/1/networkservicetypes/2"/>
+        <defaultNST>false</defaultNST>
+        <id>2</id>
+        <name>Storage Network</name>
+    </networkservicetype>
+</networkservicestypes>

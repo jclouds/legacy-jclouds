@@ -56,8 +56,8 @@ import com.abiquo.server.core.appslibrary.VirtualMachineTemplatePersistentDto;
 import com.abiquo.server.core.infrastructure.storage.VolumeManagementDto;
 import com.abiquo.server.core.pricing.CostCodeDto;
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -239,7 +239,7 @@ public class VirtualMachineTemplate extends DomainWrapper<VirtualMachineTemplate
     *         matching the given filter.
     */
    public List<Conversion> listConversions(final Predicate<Conversion> filter) {
-      return Lists.newLinkedList(filter(listConversions(), filter));
+      return ImmutableList.copyOf(filter(listConversions(), filter));
    }
 
    /**

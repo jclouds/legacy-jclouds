@@ -44,8 +44,8 @@ import com.abiquo.server.core.cloud.VirtualMachineWithNodeExtendedDto;
 import com.abiquo.server.core.cloud.VirtualMachinesWithNodeExtendedDto;
 import com.abiquo.server.core.enterprise.EnterpriseDto;
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 
 /**
  * Represents a virtual appliance.
@@ -178,7 +178,7 @@ public class VirtualAppliance extends DomainWrapper<VirtualApplianceDto> {
     *         given filter.
     */
    public List<VirtualMachine> listVirtualMachines(final Predicate<VirtualMachine> filter) {
-      return Lists.newLinkedList(filter(listVirtualMachines(), filter));
+      return ImmutableList.copyOf(filter(listVirtualMachines(), filter));
    }
 
    /**

@@ -25,8 +25,8 @@ import static com.google.common.collect.Iterables.filter;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import org.jclouds.abiquo.AbiquoAsyncApi;
 import org.jclouds.abiquo.AbiquoApi;
+import org.jclouds.abiquo.AbiquoAsyncApi;
 import org.jclouds.abiquo.domain.DomainWrapper;
 import org.jclouds.abiquo.domain.cloud.VirtualDatacenter;
 import org.jclouds.abiquo.domain.cloud.VirtualMachine;
@@ -41,6 +41,7 @@ import com.abiquo.server.core.enterprise.RoleDto;
 import com.abiquo.server.core.enterprise.UserDto;
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
@@ -128,11 +129,11 @@ public class User extends DomainWrapper<UserDto> {
 
       ListVirtualDatacenters listVirtualDatacenters = context.getUtils().getInjector()
             .getInstance(ListVirtualDatacenters.class);
-      return Lists.newArrayList(listVirtualDatacenters.execute(ids));
+      return ImmutableList.copyOf(listVirtualDatacenters.execute(ids));
    }
 
    public List<VirtualDatacenter> listPermittedVirtualDatacenters(final Predicate<VirtualDatacenter> filter) {
-      return Lists.newLinkedList(filter(listPermittedVirtualDatacenters(), filter));
+      return ImmutableList.copyOf(filter(listPermittedVirtualDatacenters(), filter));
    }
 
    public VirtualDatacenter findPermittedVirtualDatacenter(final Predicate<VirtualDatacenter> filter) {
@@ -195,7 +196,7 @@ public class User extends DomainWrapper<UserDto> {
    }
 
    public List<VirtualMachine> listMachines(final Predicate<VirtualMachine> filter) {
-      return Lists.newLinkedList(filter(listMachines(), filter));
+      return ImmutableList.copyOf(filter(listMachines(), filter));
    }
 
    public VirtualMachine findMachine(final Predicate<VirtualMachine> filter) {

@@ -24,8 +24,8 @@ import static com.google.common.collect.Iterables.filter;
 
 import java.util.List;
 
-import org.jclouds.abiquo.AbiquoAsyncApi;
 import org.jclouds.abiquo.AbiquoApi;
+import org.jclouds.abiquo.AbiquoAsyncApi;
 import org.jclouds.abiquo.domain.DomainWrapper;
 import org.jclouds.abiquo.domain.config.Privilege;
 import org.jclouds.abiquo.reference.ValidationErrors;
@@ -36,8 +36,8 @@ import com.abiquo.model.rest.RESTLink;
 import com.abiquo.server.core.enterprise.PrivilegesDto;
 import com.abiquo.server.core.enterprise.RoleDto;
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 
 /**
  * Adds high level functionality to {@link RoleDto}.
@@ -144,7 +144,7 @@ public class Role extends DomainWrapper<RoleDto> {
    }
 
    public List<Privilege> listPrivileges(final Predicate<Privilege> filter) {
-      return Lists.newLinkedList(filter(listPrivileges(), filter));
+      return ImmutableList.copyOf(filter(listPrivileges(), filter));
    }
 
    public Privilege findPrivileges(final Predicate<Privilege> filter) {

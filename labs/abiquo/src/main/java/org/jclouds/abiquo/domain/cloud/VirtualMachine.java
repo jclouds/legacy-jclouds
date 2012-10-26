@@ -67,6 +67,7 @@ import com.abiquo.server.core.infrastructure.storage.VolumesManagementDto;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.TypeLiteral;
@@ -304,7 +305,7 @@ public class VirtualMachine extends DomainWithTasksWrapper<VirtualMachineWithNod
    }
 
    public List<HardDisk> listAttachedHardDisks(final Predicate<HardDisk> filter) {
-      return Lists.newLinkedList(filter(listAttachedHardDisks(), filter));
+      return ImmutableList.copyOf(filter(listAttachedHardDisks(), filter));
    }
 
    public HardDisk findAttachedHardDisk(final Predicate<HardDisk> filter) {
@@ -318,7 +319,7 @@ public class VirtualMachine extends DomainWithTasksWrapper<VirtualMachineWithNod
    }
 
    public List<Volume> listAttachedVolumes(final Predicate<Volume> filter) {
-      return Lists.newLinkedList(filter(listAttachedVolumes(), filter));
+      return ImmutableList.copyOf(filter(listAttachedVolumes(), filter));
    }
 
    public Volume findAttachedVolume(final Predicate<Volume> filter) {
@@ -328,11 +329,11 @@ public class VirtualMachine extends DomainWithTasksWrapper<VirtualMachineWithNod
    public List<Ip<?, ?>> listAttachedNics() {
       // The strategy will refresh the vm. There is no need to do it here
       ListAttachedNics strategy = context.getUtils().getInjector().getInstance(ListAttachedNics.class);
-      return Lists.newLinkedList(strategy.execute(this));
+      return ImmutableList.copyOf(strategy.execute(this));
    }
 
    public List<Ip<?, ?>> listAttachedNics(final Predicate<Ip<?, ?>> filter) {
-      return Lists.newLinkedList(filter(listAttachedNics(), filter));
+      return ImmutableList.copyOf(filter(listAttachedNics(), filter));
    }
 
    public Ip<?, ?> findAttachedNic(final Predicate<Ip<?, ?>> filter) {
@@ -392,7 +393,7 @@ public class VirtualMachine extends DomainWithTasksWrapper<VirtualMachineWithNod
    }
 
    public AsyncTask attachHardDisks(final HardDisk... hardDisks) {
-      List<HardDisk> expected = listAttachedHardDisks();
+      List<HardDisk> expected = Lists.newArrayList(listAttachedHardDisks());
       expected.addAll(Arrays.asList(hardDisks));
 
       HardDisk[] disks = new HardDisk[expected.size()];
@@ -405,7 +406,7 @@ public class VirtualMachine extends DomainWithTasksWrapper<VirtualMachineWithNod
    }
 
    public AsyncTask detachHardDisks(final HardDisk... hardDisks) {
-      List<HardDisk> expected = listAttachedHardDisks();
+      List<HardDisk> expected = Lists.newArrayList(listAttachedHardDisks());
       Iterables.removeIf(expected, hardDiskIdIn(hardDisks));
 
       HardDisk[] disks = new HardDisk[expected.size()];
@@ -419,7 +420,7 @@ public class VirtualMachine extends DomainWithTasksWrapper<VirtualMachineWithNod
    }
 
    public AsyncTask attachVolumes(final Volume... volumes) {
-      List<Volume> expected = listAttachedVolumes();
+      List<Volume> expected = Lists.newArrayList(listAttachedVolumes());
       expected.addAll(Arrays.asList(volumes));
 
       Volume[] vols = new Volume[expected.size()];
@@ -432,7 +433,7 @@ public class VirtualMachine extends DomainWithTasksWrapper<VirtualMachineWithNod
    }
 
    public AsyncTask detachVolumes(final Volume... volumes) {
-      List<Volume> expected = listAttachedVolumes();
+      List<Volume> expected = Lists.newArrayList(listAttachedVolumes());
       Iterables.removeIf(expected, volumeIdIn(volumes));
 
       Volume[] vols = new Volume[expected.size()];

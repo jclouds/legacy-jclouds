@@ -26,6 +26,8 @@ package org.jclouds.abiquo.domain.exception;
  */
 public class BuilderException extends RuntimeException {
 
+   private static final long serialVersionUID = 540948631643049450L;
+
    /**
     * Creates a {@link BuilderException} with the given message.
     * 

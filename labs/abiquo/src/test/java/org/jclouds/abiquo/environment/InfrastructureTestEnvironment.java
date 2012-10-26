@@ -43,6 +43,7 @@ import org.jclouds.abiquo.domain.infrastructure.Datacenter;
 import org.jclouds.abiquo.domain.infrastructure.Datastore;
 import org.jclouds.abiquo.domain.infrastructure.Machine;
 import org.jclouds.abiquo.domain.infrastructure.ManagedRack;
+import org.jclouds.abiquo.domain.infrastructure.NetworkInterface;
 import org.jclouds.abiquo.domain.infrastructure.Rack;
 import org.jclouds.abiquo.domain.infrastructure.RemoteService;
 import org.jclouds.abiquo.domain.infrastructure.StorageDevice;
@@ -50,6 +51,7 @@ import org.jclouds.abiquo.domain.infrastructure.StorageDeviceMetadata;
 import org.jclouds.abiquo.domain.infrastructure.StoragePool;
 import org.jclouds.abiquo.domain.infrastructure.Tier;
 import org.jclouds.abiquo.domain.network.ExternalNetwork;
+import org.jclouds.abiquo.domain.network.NetworkServiceType;
 import org.jclouds.abiquo.domain.network.PublicNetwork;
 import org.jclouds.abiquo.domain.network.UnmanagedNetwork;
 import org.jclouds.abiquo.features.AdminApi;
@@ -213,8 +215,9 @@ public class InfrastructureTestEnvironment implements TestEnvironment {
 
       machine = datacenter.discoverSingleMachine(ip, type, user, pass);
 
-      String vswitch = machine.findAvailableVirtualSwitch(Config.get("abiquo.hypervisor.vswitch"));
-      machine.setVirtualSwitch(vswitch);
+      NetworkServiceType nst = datacenter.defaultNetworkServiceType();
+      NetworkInterface vswitch = machine.findAvailableVirtualSwitch(Config.get("abiquo.hypervisor.vswitch"));
+      vswitch.setNetworkServiceType(nst);
 
       Datastore datastore = machine.findDatastore(Config.get("abiquo.hypervisor.datastore"));
       datastore.setEnabled(true);

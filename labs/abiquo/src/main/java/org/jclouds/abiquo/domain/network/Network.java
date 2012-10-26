@@ -21,11 +21,12 @@ package org.jclouds.abiquo.domain.network;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.transform;
 
 import java.util.List;
 
-import org.jclouds.abiquo.AbiquoAsyncApi;
 import org.jclouds.abiquo.AbiquoApi;
+import org.jclouds.abiquo.AbiquoAsyncApi;
 import org.jclouds.abiquo.domain.DomainWrapper;
 import org.jclouds.abiquo.domain.network.options.IpOptions;
 import org.jclouds.abiquo.predicates.network.IpPredicates;
@@ -34,9 +35,10 @@ import org.jclouds.rest.RestContext;
 
 import com.abiquo.model.enumerator.NetworkType;
 import com.abiquo.server.core.infrastructure.network.VLANNetworkDto;
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 
 /**
  * Adds generic high level functionality to {@link VLANNetworkDto}.
@@ -70,7 +72,7 @@ public abstract class Network<T extends Ip<?, ?>> extends DomainWrapper<VLANNetw
    }
 
    public List<T> listIps(final Predicate<T> filter) {
-      return Lists.newLinkedList(filter(listIps(), filter));
+      return ImmutableList.copyOf(filter(listIps(), filter));
    }
 
    public T findIp(final Predicate<T> filter) {
@@ -320,10 +322,11 @@ public abstract class Network<T extends Ip<?, ?>> extends DomainWrapper<VLANNetw
 
    public static List<Network<?>> wrapNetworks(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
          final List<VLANNetworkDto> dtos) {
-      List<Network<?>> networks = Lists.newLinkedList();
-      for (VLANNetworkDto dto : dtos) {
-         networks.add(wrapNetwork(context, dto));
-      }
-      return networks;
+      return ImmutableList.copyOf(transform(dtos, new Function<VLANNetworkDto, Network<?>>() {
+         @Override
+         public Network<?> apply(VLANNetworkDto input) {
+            return wrapNetwork(context, input);
+         }
+      }));
    }
 }

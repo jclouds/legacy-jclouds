@@ -113,9 +113,9 @@ public class MachineLiveApiTest extends BaseAbiquoApiLiveApiTest {
    }
 
    public void testFindAvailableVirtualSwitch() {
-      String vswitch = env.machine.getAvailableVirtualSwitches().get(0);
-      String found = env.machine.findAvailableVirtualSwitch(vswitch);
-      assertEquals(found, vswitch);
+      String vswitch = Config.get("abiquo.hypervisor.vswitch");
+      NetworkInterface found = env.machine.findAvailableVirtualSwitch(vswitch);
+      assertEquals(found.getName(), vswitch);
    }
 
    public void testGetRack() {

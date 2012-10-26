@@ -60,8 +60,8 @@ import com.abiquo.server.core.infrastructure.storage.TiersDto;
 import com.abiquo.server.core.infrastructure.storage.VolumeManagementDto;
 import com.abiquo.server.core.infrastructure.storage.VolumesManagementDto;
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 
 /**
  * Represents a virtual datacenter.
@@ -194,7 +194,7 @@ public class VirtualDatacenter extends DomainWithLimitsWrapper<VirtualDatacenter
     *      # VirtualApplianceResource-RetrievethelistofVirtualAppliances</a>
     */
    public List<VirtualAppliance> listVirtualAppliances(final Predicate<VirtualAppliance> filter) {
-      return Lists.newLinkedList(filter(listVirtualAppliances(), filter));
+      return ImmutableList.copyOf(filter(listVirtualAppliances(), filter));
    }
 
    /**
@@ -256,7 +256,7 @@ public class VirtualDatacenter extends DomainWithLimitsWrapper<VirtualDatacenter
     *      Resource# VirtualDatacenterResource-Retrieveenabledtiers</a>
     */
    public List<Tier> listStorageTiers(final Predicate<Tier> filter) {
-      return Lists.newLinkedList(filter(listStorageTiers(), filter));
+      return ImmutableList.copyOf(filter(listStorageTiers(), filter));
    }
 
    /**
@@ -317,7 +317,7 @@ public class VirtualDatacenter extends DomainWithLimitsWrapper<VirtualDatacenter
     *      VolumeResource- Retrievethelistofvolumes</a>
     */
    public List<Volume> listVolumes(final Predicate<Volume> filter) {
-      return Lists.newLinkedList(filter(listVolumes(), filter));
+      return ImmutableList.copyOf(filter(listVolumes(), filter));
    }
 
    /**
@@ -354,7 +354,7 @@ public class VirtualDatacenter extends DomainWithLimitsWrapper<VirtualDatacenter
    }
 
    public List<HardDisk> listHardDisks(final Predicate<HardDisk> filter) {
-      return Lists.newLinkedList(filter(listHardDisks(), filter));
+      return ImmutableList.copyOf(filter(listHardDisks(), filter));
    }
 
    public HardDisk findHardDisk(final Predicate<HardDisk> filter) {
@@ -392,7 +392,7 @@ public class VirtualDatacenter extends DomainWithLimitsWrapper<VirtualDatacenter
    }
 
    public List<PrivateNetwork> listPrivateNetworks(final Predicate<Network<PrivateIp>> filter) {
-      return Lists.newLinkedList(filter(listPrivateNetworks(), filter));
+      return ImmutableList.copyOf(filter(listPrivateNetworks(), filter));
    }
 
    public PrivateNetwork findPrivateNetwork(final Predicate<Network<PrivateIp>> filter) {
@@ -420,7 +420,7 @@ public class VirtualDatacenter extends DomainWithLimitsWrapper<VirtualDatacenter
    }
 
    public List<VirtualMachineTemplate> listAvailableTemplates(final Predicate<VirtualMachineTemplate> filter) {
-      return Lists.newLinkedList(filter(listAvailableTemplates(), filter));
+      return ImmutableList.copyOf(filter(listAvailableTemplates(), filter));
    }
 
    public VirtualMachineTemplate findAvailableTemplate(final Predicate<VirtualMachineTemplate> filter) {
@@ -463,7 +463,7 @@ public class VirtualDatacenter extends DomainWithLimitsWrapper<VirtualDatacenter
    }
 
    public List<PublicIp> listAvailablePublicIps(final Predicate<PublicIp> filter) {
-      return Lists.newLinkedList(filter(listAvailablePublicIps(), filter));
+      return ImmutableList.copyOf(filter(listAvailablePublicIps(), filter));
    }
 
    public PublicIp findAvailablePublicIp(final Predicate<PublicIp> filter) {
@@ -487,7 +487,7 @@ public class VirtualDatacenter extends DomainWithLimitsWrapper<VirtualDatacenter
    }
 
    public List<PublicIp> listPurchasedPublicIps(final Predicate<PublicIp> filter) {
-      return Lists.newLinkedList(filter(listPurchasedPublicIps(), filter));
+      return ImmutableList.copyOf(filter(listPurchasedPublicIps(), filter));
    }
 
    public PublicIp findPurchasedPublicIp(final Predicate<PublicIp> filter) {
