@@ -18,12 +18,7 @@
  */
 package org.jclouds.encryption.internal;
 
-import java.security.InvalidKeyException;
-import java.security.KeyFactory;
-import java.security.KeyPairGenerator;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.Provider;
+import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 
@@ -92,6 +87,12 @@ public class JCECrypto implements Crypto {
    public Cipher cipher(String algorithm) throws NoSuchAlgorithmException, NoSuchPaddingException {
       return provider == null ? Cipher.getInstance(algorithm) : Cipher.getInstance(algorithm, provider);
    }
+
+   @Override
+   public Signature signature(String algorithm) throws NoSuchAlgorithmException {
+       return Signature.getInstance("SHA256withRSA");
+   }
+
 
    public final static String MD5 = "MD5";
    public final static String SHA1 = "SHA1";
