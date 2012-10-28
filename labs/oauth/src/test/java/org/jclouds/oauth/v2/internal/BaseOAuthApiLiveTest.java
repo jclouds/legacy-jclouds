@@ -32,7 +32,7 @@ import org.jclouds.rest.RestContext;
 public class BaseOAuthApiLiveTest extends BaseContextLiveTest<RestContext<OAuthClient, OAuthAsyncClient>> {
 
    public BaseOAuthApiLiveTest() {
-      provider = "bla";
+      provider = "oauth";
    }
    
    @Override

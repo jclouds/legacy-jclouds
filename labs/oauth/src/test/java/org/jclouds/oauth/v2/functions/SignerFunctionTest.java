@@ -40,7 +40,7 @@ public class SignerFunctionTest {
 
 
    public void testLoadRS256Signature() throws NoSuchAlgorithmException {
-      Crypto crypto = ContextBuilder.newBuilder("bla").overrides(OAuthTestUtils.defaultProperties(null)).
+      Crypto crypto = ContextBuilder.newBuilder("oauth").overrides(OAuthTestUtils.defaultProperties(null)).
               buildInjector().getInstance(Crypto.class);
       signature = new OAuthBaseModule().provideSignature("RS256", crypto).get();
       assertNotNull(signature);

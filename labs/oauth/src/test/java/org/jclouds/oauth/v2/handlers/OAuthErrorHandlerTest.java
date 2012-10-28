@@ -43,7 +43,7 @@ public class OAuthErrorHandlerTest {
    public void test409MakesIllegalStateException() {
       assertCodeMakes(
                "POST",
-               URI.create("http://bla.org"),
+               URI.create("http://oauth.org"),
                409,
                "HTTP/1.1 409 Conflict",
                "\"{\"code\":\"InvalidState\",\"message\":\"An incompatible transition has already been queued for this resource\"}\"",

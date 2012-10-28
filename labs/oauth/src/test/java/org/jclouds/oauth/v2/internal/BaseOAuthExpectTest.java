@@ -26,6 +26,6 @@ import org.jclouds.rest.internal.BaseRestApiExpectTest;
 public class BaseOAuthExpectTest<T> extends BaseRestApiExpectTest<T> {
 
    public BaseOAuthExpectTest() {
-      provider = "bla";
+      provider = "oauth";
    }
 }
