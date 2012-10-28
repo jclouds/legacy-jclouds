@@ -19,11 +19,14 @@
 package org.jclouds.oauth;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import org.jclouds.oauth.config.Authentication;
 import org.jclouds.oauth.domain.Token;
 import org.jclouds.oauth.domain.TokenRequest;
 import org.jclouds.oauth.handlers.OAuthTokenBinder;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.annotations.BinderParam;
+import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.SkipEncoding;
 
 import javax.ws.rs.Consumes;
@@ -41,6 +44,7 @@ import javax.ws.rs.core.MediaType;
  * @see OAuthAsyncClient
  */
 @SkipEncoding({'/', '='})
+@Endpoint(Authentication.class)
 public interface OAuthAsyncClient {
 
    @POST

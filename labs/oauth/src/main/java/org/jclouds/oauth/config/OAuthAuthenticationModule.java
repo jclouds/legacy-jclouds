@@ -25,7 +25,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.reflect.TypeToken;
+import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 import org.jclouds.crypto.Crypto;
@@ -42,11 +42,11 @@ import org.jclouds.oauth.functions.SignerFunction;
 import org.jclouds.oauth.json.ClaimSetTypeAdapter;
 import org.jclouds.oauth.json.HeaderTypeAdapter;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.config.RestClientModule;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.lang.reflect.Type;
+import java.net.URI;
 import java.security.NoSuchAlgorithmException;
 import java.security.Signature;
 import java.util.Map;
@@ -55,6 +55,7 @@ import java.util.concurrent.TimeUnit;
 
 import static com.google.common.base.Throwables.propagate;
 import static org.jclouds.oauth.OAuthConstants.SIGNATURE_ALGORITHM;
+import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
 
 /**
  * Configures the OAuth connection.
@@ -62,14 +63,9 @@ import static org.jclouds.oauth.OAuthConstants.SIGNATURE_ALGORITHM;
  * @author David Alves
  */
 @ConfiguresRestClient
-public class OAuthAuthenticationModule extends RestClientModule<OAuthClient, OAuthAsyncClient> {
+public class OAuthAuthenticationModule extends AbstractModule {
 
    private Map<String, String> OAUTH_ALGO_NAMES_TO_JCE_ALGO_NAMES = ImmutableMap.of("RS256", "SHA256withRSA");
-
-   public OAuthAuthenticationModule() {
-      super(TypeToken.class.cast(TypeToken.of(OAuthClient.class)), TypeToken.class.cast(TypeToken.of(OAuthAsyncClient
-              .class)));
-   }
 
    @Override
    protected void configure() {
@@ -82,7 +78,9 @@ public class OAuthAuthenticationModule extends RestClientModule<OAuthClient, OAu
       }).to(OAuthCredentialsFromPKCS12File.class);
       bind(new TypeLiteral<Function<Credentials, Token>>() {
       }).to(DefaultAuthenticator.class);
-      super.configure();
+      // AuthenticationApi is used directly for filters and retry handlers, so let's bind it
+      // explicitly
+      bindClientAndAsyncClient(binder(), OAuthClient.class, OAuthAsyncClient.class);
    }
 
    @Provides
@@ -119,6 +117,13 @@ public class OAuthAuthenticationModule extends RestClientModule<OAuthClient, OAu
             }
          }
       };
+   }
+
+   @Provides
+   @Singleton
+   @Authentication
+   protected Supplier<URI> provideAuthenticationEndpoint(@Named("oauth.endpoint") String endpoint) {
+      return Suppliers.ofInstance(URI.create(endpoint));
    }
 
 

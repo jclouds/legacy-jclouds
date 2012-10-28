@@ -22,6 +22,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import java.util.Map;
 import java.util.Set;
@@ -93,12 +94,13 @@ public class ClaimSet {
       }
 
       public Builder addAllClaims(Map<String, String> claims) {
-         claims.putAll(claims);
+         this.claims.putAll(claims);
          return this;
       }
 
       public ClaimSet build() {
-         checkState(claims.keySet().containsAll(requiredClaims), "not all required claims were present");
+         checkState(Sets.intersection(claims.keySet(),requiredClaims).size() == requiredClaims.size() - 2,
+                 "not all required claims were present");
          if (emissionTime == 0) {
             emissionTime = System.currentTimeMillis() / 1000;
          }
