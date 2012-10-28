@@ -18,15 +18,6 @@
  */
 package org.jclouds.encryption.internal;
 
-import org.jclouds.crypto.Crypto;
-import org.jclouds.javax.annotation.Nullable;
-
-import javax.crypto.Cipher;
-import javax.crypto.Mac;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.spec.SecretKeySpec;
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
 import java.security.KeyPairGenerator;
@@ -36,6 +27,16 @@ import java.security.Provider;
 import java.security.Signature;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
+
+import javax.crypto.Cipher;
+import javax.crypto.Mac;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.SecretKeySpec;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import org.jclouds.crypto.Crypto;
+import org.jclouds.javax.annotation.Nullable;
 
 /**
  * 
@@ -95,9 +96,8 @@ public class JCECrypto implements Crypto {
 
    @Override
    public Signature signature(String algorithm) throws NoSuchAlgorithmException {
-       return Signature.getInstance(algorithm);
+      return Signature.getInstance(algorithm);
    }
-
 
    public final static String MD5 = "MD5";
    public final static String SHA1 = "SHA1";
