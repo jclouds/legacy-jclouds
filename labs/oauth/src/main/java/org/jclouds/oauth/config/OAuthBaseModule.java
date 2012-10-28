@@ -36,28 +36,25 @@ import static org.jclouds.oauth.OAuthConstants.SIGNATURE_ALGORITHM;
 
 public class OAuthBaseModule extends AbstractModule {
 
-   private Map<String, String> OAUTH_ALGO_NAMES_TO_JCE_ALGO_NAMES = ImmutableMap.of("RS256", "SHA256withRSA");
+   private Map<String, String> OAUTH_ALGORITHM_NAMES_TO_CRYPTO_ALGORITHM_NAMES = ImmutableMap.of("RS256", "SHA256withRSA");
 
    @Override
    protected void configure() {
-      bind(new TypeLiteral<Function<byte[], byte[]>>() {
-      }).to(SignerFunction.class);
+      bind(new TypeLiteral<Function<byte[], byte[]>>() {}).to(SignerFunction.class);
       bind(new TypeLiteral<Map<Type, Object>>() {
       }).toInstance(ImmutableMap.<Type, Object>of(Header.class, new HeaderTypeAdapter(), ClaimSet.class,
               new ClaimSetTypeAdapter()));
-      bind(new TypeLiteral<Supplier<OAuthCredentials>>() {
-      }).to(OAuthCredentialsFromPKCS12File.class);
-      bind(new TypeLiteral<Function<Credentials, Token>>() {
-      }).to(DefaultAuthenticator.class);
+      bind(new TypeLiteral<Supplier<OAuthCredentials>>() {}).to(OAuthCredentialsFromPKCS12File.class);
+      bind(new TypeLiteral<Function<Credentials, Token>>() {}).to(DefaultAuthenticator.class);
    }
 
    @Provides
    public Supplier<Signature> provideSignature(@Named(SIGNATURE_ALGORITHM) String algoName, Crypto crypto)
            throws NoSuchAlgorithmException {
-      if (!OAUTH_ALGO_NAMES_TO_JCE_ALGO_NAMES.containsKey(algoName)) {
+      if (!OAUTH_ALGORITHM_NAMES_TO_CRYPTO_ALGORITHM_NAMES.containsKey(algoName)) {
          throw new NoSuchAlgorithmException("Unsupported signature algorithm: " + algoName);
       }
-      return Suppliers.ofInstance(crypto.signature(OAUTH_ALGO_NAMES_TO_JCE_ALGO_NAMES.get(algoName)));
+      return Suppliers.ofInstance(crypto.signature(OAUTH_ALGORITHM_NAMES_TO_CRYPTO_ALGORITHM_NAMES.get(algoName)));
    }
 
    // TODO: the token actually includes the expiration time (<= 1 hr) cache should be changed accordingly
@@ -85,6 +82,4 @@ public class OAuthBaseModule extends AbstractModule {
          }
       };
    }
-
-
 }

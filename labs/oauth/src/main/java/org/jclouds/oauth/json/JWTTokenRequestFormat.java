@@ -53,15 +53,15 @@ import static org.apache.commons.codec.binary.Base64.encodeBase64URLSafeString;
 public class JWTTokenRequestFormat implements TokenRequestFormat {
 
    @Resource
-   protected Logger logger = Logger.NULL;
+   private Logger logger = Logger.NULL;
 
    private static final String UTF_8 = "UTF-8";
    private static final String ASSERTION_FORM_PARAM = "assertion";
    private static final String GRANT_TYPE_FORM_PARAM = "grant_type";
    private static final String GRANT_TYPE_JWT_BEARER = "urn:ietf:params:oauth:grant-type:jwt-bearer";
 
-   private Function<byte[], byte[]> signer;
-   private Json json;
+   private final Function<byte[], byte[]> signer;
+   private final Json json;
 
    @Inject
    public JWTTokenRequestFormat(Function<byte[], byte[]> signer, Json json) {

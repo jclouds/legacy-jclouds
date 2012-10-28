@@ -27,6 +27,7 @@ import org.jclouds.rest.ResourceNotFoundException;
 
 import javax.inject.Singleton;
 
+import static javax.ws.rs.core.Response.Status;
 import static org.jclouds.http.HttpUtils.closeClientButKeepContentStream;
 
 /**
@@ -45,19 +46,20 @@ public class OAuthErrorHandler implements HttpErrorHandler {
               : new HttpResponseException(command, response);
       message = message != null ? message : String.format("%s -> %s", command.getCurrentRequest().getRequestLine(),
               response.getStatusLine());
-      switch (response.getStatusCode()) {
-         case 400:
+      Status status = Status.fromStatusCode(response.getStatusCode());
+      switch (status) {
+         case BAD_REQUEST:
             break;
-         case 401:
-         case 403:
+         case UNAUTHORIZED:
+         case FORBIDDEN:
             exception = new AuthorizationException(message, exception);
             break;
-         case 404:
+         case NOT_FOUND:
             if (!command.getCurrentRequest().getMethod().equals("DELETE")) {
                exception = new ResourceNotFoundException(message, exception);
             }
             break;
-         case 409:
+         case CONFLICT:
             exception = new IllegalStateException(message, exception);
             break;
       }

@@ -35,7 +35,7 @@ import javax.inject.Singleton;
 @Singleton
 public class OAuthTokenBinder implements Binder {
 
-   private TokenRequestFormat tokenRequestFormat;
+   private final TokenRequestFormat tokenRequestFormat;
 
    @Inject
    OAuthTokenBinder(TokenRequestFormat tokenRequestFormat) {

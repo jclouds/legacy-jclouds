@@ -18,6 +18,8 @@
  */
 package org.jclouds.oauth.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * The complete token request.
  *
@@ -25,8 +27,8 @@ package org.jclouds.oauth.domain;
  */
 public class TokenRequest {
 
-   private Header header;
-   private ClaimSet claimSet;
+   private final Header header;
+   private final ClaimSet claimSet;
 
    public TokenRequest(Header header, ClaimSet claimSet) {
       this.header = header;
@@ -64,9 +66,27 @@ public class TokenRequest {
       }
 
       public TokenRequest build() {
-         return new TokenRequest(header, claimSet);
+         return new TokenRequest(checkNotNull(header), checkNotNull(claimSet));
       }
+   }
 
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
 
+      TokenRequest that = (TokenRequest) o;
+
+      if (!claimSet.equals(that.claimSet)) return false;
+      if (!header.equals(that.header)) return false;
+
+      return true;
+   }
+
+   @Override
+   public int hashCode() {
+      int result = header.hashCode();
+      result = 31 * result + claimSet.hashCode();
+      return result;
    }
 }

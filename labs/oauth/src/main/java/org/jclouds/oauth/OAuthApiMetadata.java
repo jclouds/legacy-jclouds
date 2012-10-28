@@ -41,15 +41,8 @@ import static org.jclouds.oauth.OAuthConstants.SIGNATURE_KEY_FORMAT;
  */
 public class OAuthApiMetadata extends BaseRestApiMetadata {
 
-   /**
-    * The serialVersionUID
-    */
-   private static final long serialVersionUID = 6725672099385580694L;
-
    public static final TypeToken<RestContext<OAuthClient, OAuthAsyncClient>> CONTEXT_TOKEN = new
-           TypeToken<RestContext<OAuthClient, OAuthAsyncClient>>() {
-              private static final long serialVersionUID = -5070937833892503232L;
-           };
+           TypeToken<RestContext<OAuthClient, OAuthAsyncClient>>() {};
 
    @Override
    public Builder toBuilder() {

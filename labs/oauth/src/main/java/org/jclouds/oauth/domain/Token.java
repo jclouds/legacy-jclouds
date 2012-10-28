@@ -27,9 +27,9 @@ import java.beans.ConstructorProperties;
  */
 public class Token {
 
-   private String accessToken;
-   private String tokenType;
-   private long expiresIn;
+   private final String accessToken;
+   private final String tokenType;
+   private final long expiresIn;
 
    @ConstructorProperties({"access_token", "token_type", "expires_in"})
    public Token(String accessToken, String tokenType, long expiresIn) {

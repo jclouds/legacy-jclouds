@@ -59,8 +59,27 @@ public class Header {
       }
 
       public Header build() {
-         return new Header(signerAlgorithm, type);
+         return new Header(checkNotNull(signerAlgorithm), checkNotNull(type));
       }
+   }
 
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      Header header = (Header) o;
+
+      if (!signerAlgorithm.equals(header.signerAlgorithm)) return false;
+      if (!type.equals(header.type)) return false;
+
+      return true;
+   }
+
+   @Override
+   public int hashCode() {
+      int result = signerAlgorithm.hashCode();
+      result = 31 * result + type.hashCode();
+      return result;
    }
 }

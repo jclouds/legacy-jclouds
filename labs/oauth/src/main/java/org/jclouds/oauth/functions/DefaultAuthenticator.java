@@ -28,10 +28,10 @@ import static org.jclouds.oauth.OAuthConstants.TOKEN_SCOPE;
 @Singleton
 public class DefaultAuthenticator extends BaseAuthenticator {
 
-   protected String scope;
-   protected String assertionTargetDescription;
-   protected String signatureAlgorithm;
-   protected TokenRequestFormat tokenRequestFormat;
+   private final String scope;
+   private final String assertionTargetDescription;
+   private final String signatureAlgorithm;
+   private final TokenRequestFormat tokenRequestFormat;
    @Inject(optional = true)
    @Named(ADDITIONAL_CLAIMS)
    protected Map<String, String> additionalClaims;

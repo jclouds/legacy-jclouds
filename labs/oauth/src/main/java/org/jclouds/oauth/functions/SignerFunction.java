@@ -38,7 +38,7 @@ import java.security.SignatureException;
 @Singleton
 public class SignerFunction implements Function<byte[], byte[]> {
 
-   private Signature signature;
+   private final Signature signature;
 
    @Inject
    public SignerFunction(Supplier<Signature> signature, Supplier<OAuthCredentials> credentials) throws

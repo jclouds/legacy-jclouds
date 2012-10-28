@@ -37,9 +37,9 @@ import static com.google.common.base.Preconditions.checkState;
  */
 public class ClaimSet {
 
-   private Map<String, String> claims;
-   private long emissionTime;
-   private long expirationTime;
+   private final Map<String, String> claims;
+   private final long emissionTime;
+   private final long expirationTime;
 
    private ClaimSet(Map<String, String> claims, long emissionTime, long expirationTime) {
       this.claims = claims;
@@ -99,7 +99,7 @@ public class ClaimSet {
       }
 
       public ClaimSet build() {
-         checkState(Sets.intersection(claims.keySet(),requiredClaims).size() == requiredClaims.size(),
+         checkState(Sets.intersection(claims.keySet(), requiredClaims).size() == requiredClaims.size(),
                  "not all required claims were present");
          if (emissionTime == 0) {
             emissionTime = System.currentTimeMillis() / 1000;
@@ -109,5 +109,27 @@ public class ClaimSet {
          }
          return new ClaimSet(ImmutableMap.copyOf(claims), emissionTime, expirationTime);
       }
+   }
+
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      ClaimSet claimSet = (ClaimSet) o;
+
+      if (emissionTime != claimSet.emissionTime) return false;
+      if (expirationTime != claimSet.expirationTime) return false;
+      if (!claims.equals(claimSet.claims)) return false;
+
+      return true;
+   }
+
+   @Override
+   public int hashCode() {
+      int result = claims.hashCode();
+      result = 31 * result + (int) (emissionTime ^ (emissionTime >>> 32));
+      result = 31 * result + (int) (expirationTime ^ (expirationTime >>> 32));
+      return result;
    }
 }

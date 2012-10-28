@@ -22,10 +22,10 @@ import static org.jclouds.oauth.OAuthConstants.PKCS_CERTIFICATE_KEY_NAME;
 @Singleton
 public class OAuthCredentialsFromPKCS12File implements Supplier<OAuthCredentials> {
 
-   private String keystorePath;
-   private String keyName;
-   private String keyPassword;
-   private String identity;
+   private final String keystorePath;
+   private final String keyName;
+   private final String keyPassword;
+   private final String identity;
 
    @Inject
    public OAuthCredentialsFromPKCS12File(@Identity String identity, @Credential String keystorePath,
@@ -59,5 +59,29 @@ public class OAuthCredentialsFromPKCS12File implements Supplier<OAuthCredentials
       } catch (Exception e) {
          throw new AuthorizationException("Cannot access private key.", e);
       }
+   }
+
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      OAuthCredentialsFromPKCS12File that = (OAuthCredentialsFromPKCS12File) o;
+
+      if (identity != null ? !identity.equals(that.identity) : that.identity != null) return false;
+      if (keyName != null ? !keyName.equals(that.keyName) : that.keyName != null) return false;
+      if (keyPassword != null ? !keyPassword.equals(that.keyPassword) : that.keyPassword != null) return false;
+      if (keystorePath != null ? !keystorePath.equals(that.keystorePath) : that.keystorePath != null) return false;
+
+      return true;
+   }
+
+   @Override
+   public int hashCode() {
+      int result = keystorePath != null ? keystorePath.hashCode() : 0;
+      result = 31 * result + (keyName != null ? keyName.hashCode() : 0);
+      result = 31 * result + (keyPassword != null ? keyPassword.hashCode() : 0);
+      result = 31 * result + (identity != null ? identity.hashCode() : 0);
+      return result;
    }
 }

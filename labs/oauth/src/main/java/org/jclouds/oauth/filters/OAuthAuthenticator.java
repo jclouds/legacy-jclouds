@@ -30,7 +30,7 @@ import javax.inject.Singleton;
 
 /**
  * To be used by client applications to embed an OAuth authentication in their REST requests.
- *
+ * <p/>
  * TODO when we're able to use the OAuthAuthentication an this should be used automatically
  *
  * @author David Alves
@@ -47,6 +47,7 @@ public class OAuthAuthenticator implements HttpRequestFilter {
 
    @Override
    public HttpRequest filter(HttpRequest request) throws HttpException {
-      return request.toBuilder().addHeader("Authorization", "Bearer " + tokeSupplier.get().getAccessToken()).build();
+      return request.toBuilder().addHeader("Authorization", String.format("Bearer %s",
+              tokeSupplier.get().getAccessToken())).build();
    }
 }
