@@ -22,14 +22,17 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Module;
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.oauth.config.OAuthAuthenticationModule;
+import org.jclouds.oauth.config.OAuthRestClientModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
 
 import java.net.URI;
 import java.util.Properties;
 
-import static org.jclouds.oauth.OAuthConstants.*;
+import static org.jclouds.oauth.OAuthConstants.PKCS_CERITIFICATE_KEY_PASSWORD;
+import static org.jclouds.oauth.OAuthConstants.PKCS_CERTIFICATE_KEY_NAME;
+import static org.jclouds.oauth.OAuthConstants.SIGNATURE_ALGORITHM;
+import static org.jclouds.oauth.OAuthConstants.SIGNATURE_KEY_FORMAT;
 
 /**
  * Implementation of {@link ApiMetadata} for OAuth 2 API
@@ -80,7 +83,7 @@ public class OAuthApiMetadata extends BaseRestApiMetadata {
                  .documentation(URI.create("TODO"))
                  .version("2")
                  .defaultProperties(OAuthApiMetadata.defaultProperties())
-                 .defaultModules(ImmutableSet.<Class<? extends Module>>of(OAuthAuthenticationModule.class));
+                 .defaultModules(ImmutableSet.<Class<? extends Module>>of(OAuthRestClientModule.class));
       }
 
       @Override

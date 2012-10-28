@@ -26,7 +26,6 @@ import org.jclouds.oauth.handlers.OAuthTokenBinder;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
-import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.SkipEncoding;
 
 import javax.ws.rs.Consumes;
@@ -38,7 +37,6 @@ import javax.ws.rs.core.MediaType;
  * <p/>
  * Usually this is not directly used by a client, which instead specifies OAuthAuthenticator as a request filter,
  * which in turn uses this class to perform token requests.
- *
  *
  * @author David Alves
  * @see OAuthAsyncClient

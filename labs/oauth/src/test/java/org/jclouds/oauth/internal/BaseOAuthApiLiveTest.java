@@ -18,13 +18,12 @@
  */
 package org.jclouds.oauth.internal;
 
+import com.google.common.reflect.TypeToken;
 import org.jclouds.apis.BaseContextLiveTest;
 import org.jclouds.oauth.OAuthApiMetadata;
 import org.jclouds.oauth.OAuthAsyncClient;
 import org.jclouds.oauth.OAuthClient;
 import org.jclouds.rest.RestContext;
-
-import com.google.common.reflect.TypeToken;
 
 
 /**

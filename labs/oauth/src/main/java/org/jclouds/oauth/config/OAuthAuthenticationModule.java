@@ -18,43 +18,17 @@
  */
 package org.jclouds.oauth.config;
 
-import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.common.collect.ImmutableMap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import com.google.inject.TypeLiteral;
-import org.jclouds.crypto.Crypto;
-import org.jclouds.domain.Credentials;
 import org.jclouds.oauth.OAuthAsyncClient;
 import org.jclouds.oauth.OAuthClient;
-import org.jclouds.oauth.domain.ClaimSet;
-import org.jclouds.oauth.domain.Header;
-import org.jclouds.oauth.domain.OAuthCredentials;
-import org.jclouds.oauth.domain.Token;
-import org.jclouds.oauth.functions.DefaultAuthenticator;
-import org.jclouds.oauth.functions.OAuthCredentialsFromPKCS12File;
-import org.jclouds.oauth.functions.SignerFunction;
-import org.jclouds.oauth.json.ClaimSetTypeAdapter;
-import org.jclouds.oauth.json.HeaderTypeAdapter;
-import org.jclouds.rest.ConfiguresRestClient;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
-import java.lang.reflect.Type;
 import java.net.URI;
-import java.security.NoSuchAlgorithmException;
-import java.security.Signature;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 
-import static com.google.common.base.Throwables.propagate;
-import static org.jclouds.oauth.OAuthConstants.SIGNATURE_ALGORITHM;
 import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
 
 /**
@@ -62,63 +36,19 @@ import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
  *
  * @author David Alves
  */
-@ConfiguresRestClient
 public class OAuthAuthenticationModule extends AbstractModule {
-
-   private Map<String, String> OAUTH_ALGO_NAMES_TO_JCE_ALGO_NAMES = ImmutableMap.of("RS256", "SHA256withRSA");
 
    @Override
    protected void configure() {
-      bind(new TypeLiteral<Function<byte[], byte[]>>() {
-      }).to(SignerFunction.class);
-      bind(new TypeLiteral<Map<Type, Object>>() {
-      }).toInstance(ImmutableMap.<Type, Object>of(Header.class, new HeaderTypeAdapter(), ClaimSet.class,
-              new ClaimSetTypeAdapter()));
-      bind(new TypeLiteral<Supplier<OAuthCredentials>>() {
-      }).to(OAuthCredentialsFromPKCS12File.class);
-      bind(new TypeLiteral<Function<Credentials, Token>>() {
-      }).to(DefaultAuthenticator.class);
+      install(new OAuthBaseModule());
       // AuthenticationApi is used directly for filters and retry handlers, so let's bind it
       // explicitly
       bindClientAndAsyncClient(binder(), OAuthClient.class, OAuthAsyncClient.class);
    }
 
-   @Provides
-   public Supplier<Signature> provideSignature(@Named(SIGNATURE_ALGORITHM) String algoName, Crypto crypto)
-           throws NoSuchAlgorithmException {
-      if (!OAUTH_ALGO_NAMES_TO_JCE_ALGO_NAMES.containsKey(algoName)) {
-         throw new NoSuchAlgorithmException("Unsupported signature algorithm: " + algoName);
-      }
-      return Suppliers.ofInstance(crypto.signature(OAUTH_ALGO_NAMES_TO_JCE_ALGO_NAMES.get(algoName)));
-   }
-
-   // TODO: the token actually includes the expiration time (<= 1 hr) cache should be changed accordingly
-   @Provides
-   @Singleton
-   public LoadingCache<Credentials, Token> provideAccessCache(Function<Credentials, Token> getAccess) {
-
-      return CacheBuilder.newBuilder().expireAfterWrite(59, TimeUnit.MINUTES).build(CacheLoader.from(getAccess));
-   }
-
-   // Temporary conversion of a cache to a supplier until there is a single-element cache
-   // http://code.google.com/p/guava-libraries/issues/detail?id=872
-   @Provides
-   @Singleton
-   @Authentication
-   protected Supplier<Token> provideAccessSupplier(final LoadingCache<Credentials, Token> cache,
-                                                   @org.jclouds.location.Provider final Credentials creds) {
-      return new Supplier<Token>() {
-         @Override
-         public Token get() {
-            try {
-               return cache.get(creds);
-            } catch (ExecutionException e) {
-               throw propagate(e.getCause());
-            }
-         }
-      };
-   }
-
+   /**
+    * When oauth is used as a module the oauth endpoint is a normal property
+    */
    @Provides
    @Singleton
    @Authentication

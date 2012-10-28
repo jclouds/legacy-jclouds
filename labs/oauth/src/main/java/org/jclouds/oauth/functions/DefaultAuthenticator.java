@@ -13,7 +13,10 @@ import org.jclouds.oauth.domain.TokenRequestFormat;
 import javax.inject.Singleton;
 import java.util.Map;
 
-import static org.jclouds.oauth.OAuthConstants.*;
+import static org.jclouds.oauth.OAuthConstants.ADDITIONAL_CLAIMS;
+import static org.jclouds.oauth.OAuthConstants.SIGNATURE_ALGORITHM;
+import static org.jclouds.oauth.OAuthConstants.TOKEN_ASSERTION_DESCRIPTION;
+import static org.jclouds.oauth.OAuthConstants.TOKEN_SCOPE;
 
 /**
  * The default authenticator.

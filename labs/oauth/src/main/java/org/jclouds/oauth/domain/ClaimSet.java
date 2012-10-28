@@ -99,7 +99,7 @@ public class ClaimSet {
       }
 
       public ClaimSet build() {
-         checkState(Sets.intersection(claims.keySet(),requiredClaims).size() == requiredClaims.size() - 2,
+         checkState(Sets.intersection(claims.keySet(),requiredClaims).size() == requiredClaims.size(),
                  "not all required claims were present");
          if (emissionTime == 0) {
             emissionTime = System.currentTimeMillis() / 1000;

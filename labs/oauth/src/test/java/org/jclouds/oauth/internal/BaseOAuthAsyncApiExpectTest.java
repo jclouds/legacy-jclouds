@@ -18,14 +18,13 @@
  */
 package org.jclouds.oauth.internal;
 
-import java.util.Properties;
-
+import com.google.common.base.Function;
+import com.google.inject.Module;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.oauth.OAuthAsyncClient;
 
-import com.google.common.base.Function;
-import com.google.inject.Module;
+import java.util.Properties;
 
 /**
  * @author Adrian Cole
