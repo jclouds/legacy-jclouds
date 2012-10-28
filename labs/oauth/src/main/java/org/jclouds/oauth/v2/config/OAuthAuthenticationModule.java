@@ -32,7 +32,7 @@ import java.net.URI;
 import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
 
 /**
- * Configures the OAuth connection.
+ * An OAuth module to be used form other providers.
  *
  * @author David Alves
  */

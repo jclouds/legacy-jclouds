@@ -28,6 +28,8 @@ import org.jclouds.oauth.v2.domain.TokenRequest;
 /**
  * A base for authenticators. Actually makes the request, subclasses should be responsible for composing the token
  * request.
+ *
+ * @author David Alves´
  */
 public abstract class BaseAuthenticator implements Function<Credentials, Token> {
 

@@ -28,7 +28,7 @@ public class OAuthConstants {
    /**
     * The selected signature algorithm to use to sign the requests.
     */
-   public static final String SIGNATURE_ALGORITHM = "jclouds.oauth.signature-algo";
+   public static final String SIGNATURE_ALGORITHM = "jclouds.oauth.signature-algorithm";
 
    /**
     * The format of the certificate key file that will be used to sign the token request.

@@ -13,6 +13,11 @@ import org.jclouds.rest.config.RestClientModule;
 import javax.inject.Singleton;
 import java.net.URI;
 
+/**
+ * OAuth module to when accessing OAuth stand-alone.
+ *
+ * @author David Alves
+ */
 @ConfiguresRestClient
 public class OAuthRestClientModule extends RestClientModule<OAuthAsyncClient, OAuthClient> {
 
@@ -24,7 +29,6 @@ public class OAuthRestClientModule extends RestClientModule<OAuthAsyncClient, OA
    @Override
    protected void configure() {
       install(new OAuthBaseModule());
-
       super.configure();
    }
 
