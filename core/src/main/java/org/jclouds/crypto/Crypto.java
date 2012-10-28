@@ -18,11 +18,7 @@
  */
 package org.jclouds.crypto;
 
-import java.security.InvalidKeyException;
-import java.security.KeyFactory;
-import java.security.KeyPairGenerator;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.security.*;
 import java.security.cert.CertificateFactory;
 
 import javax.crypto.Cipher;
@@ -64,5 +60,7 @@ public interface Crypto {
    MessageDigest sha512();
 
    Cipher cipher(String algorithm) throws NoSuchAlgorithmException, NoSuchPaddingException;
+
+   Signature signature(String algorithm) throws NoSuchAlgorithmException;
 
 }
