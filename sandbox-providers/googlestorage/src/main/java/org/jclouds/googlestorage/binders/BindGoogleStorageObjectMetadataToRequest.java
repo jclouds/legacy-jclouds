@@ -27,7 +27,6 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.blobstore.binders.BindMapToHeadersWithPrefix;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.s3.binders.BindS3ObjectMetadataToRequest;
 import org.jclouds.s3.domain.S3Object;
 
@@ -56,14 +55,14 @@ public class BindGoogleStorageObjectMetadataToRequest extends BindS3ObjectMetada
                   "maximum size for put object is 5GB");
       } else {
          // Enable "chunked"/"streamed" data, where the size needn't be known in advance.
-         request = ModifyRequest.replaceHeader(request, "Transfer-Encoding", "chunked");
+         request =  (R)request.toBuilder().replaceHeader("Transfer-Encoding", "chunked").build();
       }
 
       request = metadataPrefixer.bindToRequest(request, s3Object.getMetadata().getUserMetadata());
 
       if (s3Object.getMetadata().getCacheControl() != null) {
-         request = ModifyRequest.replaceHeader(request, HttpHeaders.CACHE_CONTROL, s3Object.getMetadata()
-                  .getCacheControl());
+         request = (R)request.toBuilder().replaceHeader(HttpHeaders.CACHE_CONTROL, s3Object.getMetadata()
+                  .getCacheControl()).build();
       }
       return request;
    }

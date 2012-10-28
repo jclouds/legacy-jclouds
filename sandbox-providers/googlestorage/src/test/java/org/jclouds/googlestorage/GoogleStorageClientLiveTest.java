@@ -18,15 +18,23 @@
  */
 package org.jclouds.googlestorage;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+import com.google.inject.Module;
 import org.jclouds.s3.S3ClientLiveTest;
+import org.testng.annotations.AfterTest;
 import org.testng.annotations.Test;
 
 /**
  * Tests behavior of {@code S3Client}
- * 
+ *
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "GoogleStorageClientLiveTest")
+@Test(groups = "live", singleThreaded = true, testName = "GoogleStorageClientLiveTest")
 public class GoogleStorageClientLiveTest extends S3ClientLiveTest {
+
+    GoogleStorageClientLiveTest() {
+        provider = "googlestorage";
+    }
 
 }

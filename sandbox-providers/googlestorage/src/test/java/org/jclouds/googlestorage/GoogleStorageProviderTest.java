@@ -16,22 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.googlestorage;
+//package org.jclouds.googlestorage;
 
-import org.jclouds.providers.BaseProviderMetadataTest;
-import org.jclouds.providers.ProviderMetadata;
-import org.testng.annotations.Test;
+//import org.jclouds.providers.BaseProviderMetadataTest;
+//import org.jclouds.apis.ApiMetadata;
+//import org.jclouds.providers.internal.BaseProviderMetadataTest;
+//import org.testng.annotations.Test;
 
 /**
  * The GoogleStorageProviderTest tests the {@link GoogleStorageProviderMetadata} class.
- * 
+ *
  * @author Jeremy Whitlock <jwhitlock@apache.org>
  */
-@Test(groups = "unit", testName = "GoogleStorageProviderTest")
-public class GoogleStorageProviderTest extends BaseProviderMetadataTest {
-
-   public GoogleStorageProviderTest() {
-      super(new GoogleStorageProviderMetadata(), ProviderMetadata.BLOBSTORE_TYPE);
-   }
-
-}
+//@Test(groups = "unit", testName = "GoogleStorageProviderTest")
+//public class GoogleStorageProviderTest extends BaseProviderMetadataTest {
+//
+//    public GoogleStorageProviderTest() {
+//        super(new GoogleStorageProviderMetadata(), new GoogleStorageApiMetadata());
+//    }
+//
+//}
