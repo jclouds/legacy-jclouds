@@ -16,23 +16,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-//package org.jclouds.googlestorage;
+package org.jclouds.oauth.v2.domain;
 
-//import org.jclouds.providers.BaseProviderMetadataTest;
-//import org.jclouds.apis.ApiMetadata;
-//import org.jclouds.providers.internal.BaseProviderMetadataTest;
-//import org.testng.annotations.Test;
+import com.google.inject.ImplementedBy;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.oauth.v2.json.JWTTokenRequestFormat;
+
+import java.util.Set;
 
 /**
- * The GoogleStorageProviderTest tests the {@link GoogleStorageProviderMetadata} class.
+ * Formats a TokenRequest for a specific format (e.g. JWT token)
  *
- * @author Jeremy Whitlock <jwhitlock@apache.org>
+ * @author David Alves
  */
-//@Test(groups = "unit", testName = "GoogleStorageProviderTest")
-//public class GoogleStorageProviderTest extends BaseProviderMetadataTest {
-//
-//    public GoogleStorageProviderTest() {
-//        super(new GoogleStorageProviderMetadata(), new GoogleStorageApiMetadata());
-//    }
-//
-//}
+@ImplementedBy(JWTTokenRequestFormat.class)
+public interface TokenRequestFormat {
+
+   public <R extends HttpRequest> R formatRequest(R httpRequest, TokenRequest tokenRequest);
+
+   public String getTypeName();
+
+   public Set<String> requiredClaimSet();
+}

@@ -16,18 +16,18 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.googlestorage.blobstore;
+//package org.jclouds.googlestorage.blobstore;
 
-import org.jclouds.s3.blobstore.integration.S3TestInitializer;
+//import org.jclouds.s3.blobstore.integration.S3TestInitializer;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class GoogleStorageTestInitializer extends S3TestInitializer {
-
-   public GoogleStorageTestInitializer() {
-      provider = "googlestorage";
-   }
-
-}
+//public class GoogleStorageTestInitializer extends S3TestInitializer {
+//
+//   public GoogleStorageTestInitializer() {
+//      provider = "googlestorage";
+//   }
+//
+//}

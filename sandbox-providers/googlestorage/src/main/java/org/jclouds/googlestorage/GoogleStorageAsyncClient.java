@@ -18,37 +18,31 @@
  */
 package org.jclouds.googlestorage;
 
-import static org.jclouds.blobstore.attr.BlobScopes.CONTAINER;
-
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-
+import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.blobstore.attr.BlobScope;
-import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.Headers;
-import org.jclouds.rest.annotations.ParamValidators;
-import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.annotations.SkipEncoding;
-import org.jclouds.rest.annotations.XMLResponseParser;
+import org.jclouds.googlestorage.filters.AddGoogleProjectId;
+import org.jclouds.oauth.v2.filters.OAuthAuthenticator;
+import org.jclouds.rest.annotations.*;
 import org.jclouds.s3.Bucket;
 import org.jclouds.s3.S3AsyncClient;
 import org.jclouds.s3.S3Client;
 import org.jclouds.s3.binders.BindAsHostPrefixIfConfigured;
 import org.jclouds.s3.domain.ObjectMetadata;
-import org.jclouds.s3.filters.RequestAuthorizeSignature;
 import org.jclouds.s3.options.CopyObjectOptions;
 import org.jclouds.s3.predicates.validators.BucketNameValidator;
 import org.jclouds.s3.xml.CopyObjectHandler;
 
-import com.google.common.util.concurrent.ListenableFuture;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+
+import static org.jclouds.blobstore.attr.BlobScopes.CONTAINER;
 
 /**
- * 
  * @author Adrian Cole
  */
 @SkipEncoding('/')
-@RequestFilters(RequestAuthorizeSignature.class)
+@RequestFilters({OAuthAuthenticator.class, AddGoogleProjectId.class})
 @BlobScope(CONTAINER)
 public interface GoogleStorageAsyncClient extends S3AsyncClient {
    /**
@@ -60,9 +54,10 @@ public interface GoogleStorageAsyncClient extends S3AsyncClient {
    @Headers(keys = "x-goog-copy-source", values = "/{sourceBucket}/{sourceObject}")
    @XMLResponseParser(CopyObjectHandler.class)
    ListenableFuture<ObjectMetadata> copyObject(
-            @PathParam("sourceBucket") String sourceBucket,
-            @PathParam("sourceObject") String sourceObject,
-            @Bucket @BinderParam(BindAsHostPrefixIfConfigured.class) @ParamValidators( { BucketNameValidator.class }) String destinationBucket,
-            @PathParam("destinationObject") String destinationObject, CopyObjectOptions... options);
+           @PathParam("sourceBucket") String sourceBucket,
+           @PathParam("sourceObject") String sourceObject,
+           @Bucket @BinderParam(BindAsHostPrefixIfConfigured.class) @ParamValidators({BucketNameValidator.class})
+           String destinationBucket,
+           @PathParam("destinationObject") String destinationObject, CopyObjectOptions... options);
 
 }

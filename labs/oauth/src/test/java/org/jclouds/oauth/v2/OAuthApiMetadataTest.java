@@ -16,23 +16,27 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-//package org.jclouds.googlestorage;
+package org.jclouds.oauth.v2;
 
-//import org.jclouds.providers.BaseProviderMetadataTest;
-//import org.jclouds.apis.ApiMetadata;
-//import org.jclouds.providers.internal.BaseProviderMetadataTest;
-//import org.testng.annotations.Test;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.reflect.TypeToken;
+import org.jclouds.View;
+import org.jclouds.apis.internal.BaseApiMetadataTest;
+import org.testng.annotations.Test;
 
 /**
- * The GoogleStorageProviderTest tests the {@link GoogleStorageProviderMetadata} class.
+ * Tests that OAuthApiMetadata is properly registered in ServiceLoader
+ * <p/>
+ * <pre>
+ * META-INF/services/org.jclouds.apis.ApiMetadata
+ * </pre>
  *
- * @author Jeremy Whitlock <jwhitlock@apache.org>
+ * @author Adrian Cole
  */
-//@Test(groups = "unit", testName = "GoogleStorageProviderTest")
-//public class GoogleStorageProviderTest extends BaseProviderMetadataTest {
-//
-//    public GoogleStorageProviderTest() {
-//        super(new GoogleStorageProviderMetadata(), new GoogleStorageApiMetadata());
-//    }
-//
-//}
+@Test(groups = "unit", testName = "OAuthApiMetadataTest")
+public class OAuthApiMetadataTest extends BaseApiMetadataTest {
+
+   public OAuthApiMetadataTest() {
+      super(new OAuthApiMetadata(), ImmutableSet.<TypeToken<? extends View>>of());
+   }
+}

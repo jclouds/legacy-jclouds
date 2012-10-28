@@ -24,6 +24,7 @@ import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.Provider;
+import java.security.Signature;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 
@@ -91,6 +92,11 @@ public class JCECrypto implements Crypto {
    @Override
    public Cipher cipher(String algorithm) throws NoSuchAlgorithmException, NoSuchPaddingException {
       return provider == null ? Cipher.getInstance(algorithm) : Cipher.getInstance(algorithm, provider);
+   }
+
+   @Override
+   public Signature signature(String algorithm) throws NoSuchAlgorithmException {
+      return Signature.getInstance(algorithm);
    }
 
    public final static String MD5 = "MD5";

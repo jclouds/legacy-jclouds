@@ -16,23 +16,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-//package org.jclouds.googlestorage;
+package org.jclouds.oauth.v2;
 
-//import org.jclouds.providers.BaseProviderMetadataTest;
-//import org.jclouds.apis.ApiMetadata;
-//import org.jclouds.providers.internal.BaseProviderMetadataTest;
-//import org.testng.annotations.Test;
+import org.jclouds.concurrent.Timeout;
+import org.jclouds.oauth.v2.domain.Token;
+import org.jclouds.oauth.v2.domain.TokenRequest;
+import org.jclouds.rest.AuthorizationException;
+
+import java.util.concurrent.TimeUnit;
 
 /**
- * The GoogleStorageProviderTest tests the {@link GoogleStorageProviderMetadata} class.
+ * Provides synchronous access to OAuth.
+ * <p/>
  *
- * @author Jeremy Whitlock <jwhitlock@apache.org>
+ * @author David Alves
+ * @see OAuthAsyncClient
  */
-//@Test(groups = "unit", testName = "GoogleStorageProviderTest")
-//public class GoogleStorageProviderTest extends BaseProviderMetadataTest {
-//
-//    public GoogleStorageProviderTest() {
-//        super(new GoogleStorageProviderMetadata(), new GoogleStorageApiMetadata());
-//    }
-//
-//}
+@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
+public interface OAuthClient {
+
+   public Token authenticate(TokenRequest tokenRequest) throws AuthorizationException;
+
+}

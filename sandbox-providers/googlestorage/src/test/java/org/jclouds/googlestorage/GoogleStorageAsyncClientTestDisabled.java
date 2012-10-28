@@ -32,7 +32,7 @@ import com.google.inject.TypeLiteral;
 public class GoogleStorageAsyncClientTestDisabled extends org.jclouds.s3.S3AsyncClientTest<S3AsyncClient> {
 
    public GoogleStorageAsyncClientTestDisabled() {
-      this.provider = "googlestorage";
+//      this.provider = "googlestorage";
       this.url = "commondatastorage.googleapis.com";
    }
 

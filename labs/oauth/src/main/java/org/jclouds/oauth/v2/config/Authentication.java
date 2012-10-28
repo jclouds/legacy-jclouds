@@ -16,29 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.googlestorage;
+package org.jclouds.oauth.v2.config;
 
-import java.util.List;
-import java.util.Properties;
 
-import org.jclouds.googlestorage.config.GoogleStorageRestClientModule;
-import org.jclouds.s3.S3ContextBuilder;
-
-import com.google.inject.Module;
+import javax.inject.Qualifier;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * 
- * 
- * @author Adrian Cole
+ * @author David Alves
  */
-public class GoogleStorageContextBuilder extends S3ContextBuilder {
-
-   public GoogleStorageContextBuilder(Properties props) {
-      super(props);
-   }
-
-   @Override
-   protected void addClientModule(List<Module> modules) {
-      modules.add(new GoogleStorageRestClientModule());
-   }
+@Retention(value = RetentionPolicy.RUNTIME)
+@Target(value = {ElementType.TYPE, ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD})
+@Qualifier
+public @interface Authentication {
 }

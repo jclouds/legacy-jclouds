@@ -37,7 +37,7 @@
         <test.initializer>org.jclouds.googlestorage.blobstore.GoogleStorageTestInitializer</test.initializer>
         <test.googlestorage.endpoint>https://commondatastorage.googleapis.com</test.googlestorage.endpoint>
         <test.googlestorage.api-version>2006-03-01</test.googlestorage.api-version>
-        <test.googlestorage.build-version></test.googlestorage.build-version>
+        <test.googlestorage.build-version>1.6.0-SNAPSHOT</test.googlestorage.build-version>
         <test.googlestorage.identity>FIX_ME</test.googlestorage.identity>
         <test.googlestorage.credential>FIX_ME</test.googlestorage.credential>
 
@@ -49,6 +49,12 @@
         <dependency>
             <groupId>org.jclouds.api</groupId>
             <artifactId>s3</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.labs</groupId>
+            <artifactId>oauth</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
         </dependency>
@@ -75,8 +81,26 @@
         </dependency>
         <dependency>
             <groupId>org.jclouds.driver</groupId>
-            <artifactId>jclouds-log4j</artifactId>
+            <artifactId>jclouds-slf4j</artifactId>
             <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.driver</groupId>
+            <artifactId>jclouds-sshj</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.driver</groupId>
+            <artifactId>jclouds-sshj</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.0.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>

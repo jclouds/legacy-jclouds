@@ -16,23 +16,32 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-//package org.jclouds.googlestorage;
+package org.jclouds.oauth.v2.config;
 
-//import org.jclouds.providers.BaseProviderMetadataTest;
-//import org.jclouds.apis.ApiMetadata;
-//import org.jclouds.providers.internal.BaseProviderMetadataTest;
-//import org.testng.annotations.Test;
+
+import javax.inject.Qualifier;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * The GoogleStorageProviderTest tests the {@link GoogleStorageProviderMetadata} class.
+ * Used to annotate REST methods that use OAuthAuthentication.
+ * <p/>
+ * TODO: use this to have fine-grained specification of scopes, etc.
  *
- * @author Jeremy Whitlock <jwhitlock@apache.org>
+ * @author David Alves
  */
-//@Test(groups = "unit", testName = "GoogleStorageProviderTest")
-//public class GoogleStorageProviderTest extends BaseProviderMetadataTest {
-//
-//    public GoogleStorageProviderTest() {
-//        super(new GoogleStorageProviderMetadata(), new GoogleStorageApiMetadata());
-//    }
-//
-//}
+@Retention(value = RetentionPolicy.RUNTIME)
+@Target(value = {ElementType.TYPE, ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD})
+@Qualifier
+public @interface OAuthAuthentication {
+
+   String[] scopes();
+
+   String signatureAlgorithm() default "RS256";
+
+   String assertionDescription();
+
+   String[] additionalClaims();
+}

@@ -16,23 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-//package org.jclouds.googlestorage;
+package org.jclouds.oauth.v2.internal;
 
-//import org.jclouds.providers.BaseProviderMetadataTest;
-//import org.jclouds.apis.ApiMetadata;
-//import org.jclouds.providers.internal.BaseProviderMetadataTest;
-//import org.testng.annotations.Test;
+import com.google.common.base.Function;
+import com.google.inject.Module;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpResponse;
+import org.jclouds.oauth.v2.OAuthAsyncClient;
+
+import java.util.Properties;
 
 /**
- * The GoogleStorageProviderTest tests the {@link GoogleStorageProviderMetadata} class.
- *
- * @author Jeremy Whitlock <jwhitlock@apache.org>
+ * @author Adrian Cole
  */
-//@Test(groups = "unit", testName = "GoogleStorageProviderTest")
-//public class GoogleStorageProviderTest extends BaseProviderMetadataTest {
-//
-//    public GoogleStorageProviderTest() {
-//        super(new GoogleStorageProviderMetadata(), new GoogleStorageApiMetadata());
-//    }
-//
-//}
+public class BaseOAuthAsyncApiExpectTest extends BaseOAuthExpectTest<OAuthAsyncClient> {
+   public OAuthAsyncClient createClient(Function<HttpRequest, HttpResponse> fn, Module module, Properties props) {
+      return createInjector(fn, module, props).getInstance(OAuthAsyncClient.class);
+   }
+}

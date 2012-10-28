@@ -23,6 +23,7 @@ import java.security.KeyFactory;
 import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.Signature;
 import java.security.cert.CertificateFactory;
 
 import javax.crypto.Cipher;
@@ -64,5 +65,7 @@ public interface Crypto {
    MessageDigest sha512();
 
    Cipher cipher(String algorithm) throws NoSuchAlgorithmException, NoSuchPaddingException;
+
+   Signature signature(String algorithm) throws NoSuchAlgorithmException;
 
 }

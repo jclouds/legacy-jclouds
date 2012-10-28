@@ -29,9 +29,9 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.s3.BaseS3AsyncClientTest;
 import org.jclouds.s3.S3AsyncClient;
 import org.jclouds.s3.domain.S3Object;
+import org.jclouds.s3.internal.BaseS3AsyncClientTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
@@ -130,7 +130,7 @@ public class BindGoogleStorageObjectMetadataToRequestTest extends BaseS3AsyncCli
 
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testMustBeS3Object() {
-      HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("http://localhost"));
+      HttpRequest request = HttpRequest.builder().method(HttpMethod.POST).endpoint(URI.create("http://localhost")).build();
       injector.getInstance(BindGoogleStorageObjectMetadataToRequest.class).bindToRequest(request, new File("foo"));
    }
 
