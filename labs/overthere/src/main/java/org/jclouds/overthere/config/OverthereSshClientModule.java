@@ -15,6 +15,8 @@ import com.xebialabs.overthere.ConnectionOptions;
 import com.xebialabs.overthere.OperatingSystemFamily;
 import com.xebialabs.overthere.cifs.CifsConnectionBuilder;
 import com.xebialabs.overthere.cifs.CifsConnectionType;
+import com.xebialabs.overthere.cifs.WinrmHttpsCertificateTrustStrategy;
+import com.xebialabs.overthere.cifs.WinrmHttpsHostnameVerificationStrategy;
 
 /**
  * Module for the Overthere library for remote access to hosts.
@@ -47,7 +49,10 @@ public class OverthereSshClientModule extends AbstractModule {
          options.set(ConnectionOptions.USERNAME, credentials.getUser());
          options.set(ConnectionOptions.PASSWORD, credentials.getPassword());
          options.set(ConnectionOptions.OPERATING_SYSTEM, OperatingSystemFamily.WINDOWS);
-         options.set(CifsConnectionBuilder.CONNECTION_TYPE, CifsConnectionType.WINRM_HTTPS);
+         options.set(CifsConnectionBuilder.CONNECTION_TYPE, CifsConnectionType.WINRM);
+         options.set(CifsConnectionBuilder.WINRM_ENABLE_HTTPS, true);
+         options.set(CifsConnectionBuilder.WINRM_HTTPS_HOSTNAME_VERIFICATION_STRATEGY, WinrmHttpsHostnameVerificationStrategy.ALLOW_ALL);
+         options.set(CifsConnectionBuilder.WINRM_HTTPS_CERTIFICATE_TRUST_STRATEGY, WinrmHttpsCertificateTrustStrategy.ALLOW_ALL);
          return new OverthereSshClient(options);
       }
    }

@@ -30,6 +30,9 @@ import com.xebialabs.overthere.OperatingSystemFamily;
 import com.xebialabs.overthere.OverthereConnection;
 import com.xebialabs.overthere.cifs.CifsConnectionBuilder;
 import com.xebialabs.overthere.cifs.CifsConnectionType;
+import com.xebialabs.overthere.cifs.WinrmHttpsCertificateTrustStrategy;
+import com.xebialabs.overthere.cifs.WinrmHttpsHostnameVerificationStrategy;
+import com.xebialabs.overthere.cifs.winrm.CifsWinRmConnection;
 import com.xebialabs.overthere.util.CapturingOverthereProcessOutputHandler;
 
 /**
@@ -96,7 +99,10 @@ public class OverthereRunner implements RunScriptOnNode {
       switch (node.getOperatingSystem().getFamily()) {
       case WINDOWS :
          overthereOptions.set(ConnectionOptions.OPERATING_SYSTEM, OperatingSystemFamily.WINDOWS);
-         overthereOptions.set(CifsConnectionBuilder.CONNECTION_TYPE, CifsConnectionType.WINRM_HTTPS);
+         overthereOptions.set(CifsConnectionBuilder.CONNECTION_TYPE, CifsConnectionType.WINRM);
+         overthereOptions.set(CifsConnectionBuilder.WINRM_ENABLE_HTTPS, true);
+         overthereOptions.set(CifsConnectionBuilder.WINRM_HTTPS_HOSTNAME_VERIFICATION_STRATEGY, WinrmHttpsHostnameVerificationStrategy.ALLOW_ALL);
+         overthereOptions.set(CifsConnectionBuilder.WINRM_HTTPS_CERTIFICATE_TRUST_STRATEGY, WinrmHttpsCertificateTrustStrategy.ALLOW_ALL);
          break;
       case UNRECOGNIZED:
       case LINUX:
