@@ -28,38 +28,38 @@ public class OAuthConstants {
    /**
     * The selected signature algorithm to use to sign the requests.
     */
-   public static final String SIGNATURE_ALGORITHM = "jclouds.bla.signature-algo";
+   public static final String SIGNATURE_ALGORITHM = "jclouds.oauth.signature-algo";
 
    /**
     * The format of the certificate key file that will be used to sign the token request.
     * Supported formats are PKCS12 and PKCS8, default is PKCS12
     */
-   public static final String SIGNATURE_KEY_FORMAT = "jclouds.bla.signature-key-format";
+   public static final String SIGNATURE_KEY_FORMAT = "jclouds.oauth.signature-key-format";
 
    /**
     * The name of the key (if the ceritificate is in a PKCS12 Keystore)
     */
-   public static final String PKCS_CERTIFICATE_KEY_NAME = "jclouds.bla.pkcs12.key-name";
+   public static final String PKCS_CERTIFICATE_KEY_NAME = "jclouds.oauth.pkcs12.key-name";
 
    /**
     * The the password for the key (if the ceritificate is in a PKCS12 Keystore)
     */
-   public static final String PKCS_CERITIFICATE_KEY_PASSWORD = "jclouds.bla.pkcs12.key-password";
+   public static final String PKCS_CERITIFICATE_KEY_PASSWORD = "jclouds.oauth.pkcs12.key-password";
 
    /**
     * The permissions being requested.
     */
-   public static final String TOKEN_SCOPE = "jclouds.bla.scope";
+   public static final String TOKEN_SCOPE = "jclouds.oauth.scope";
 
    /**
     * The assertion target
     */
-   public static final String TOKEN_ASSERTION_DESCRIPTION = "jclouds.bla.assertion-description";
+   public static final String TOKEN_ASSERTION_DESCRIPTION = "jclouds.oauth.assertion-description";
 
    /**
     * The (optional) set of additional claims to use, provided in Map<String,String> form
     */
-   public static final String ADDITIONAL_CLAIMS = "jclouds.bla.additional-claims";
+   public static final String ADDITIONAL_CLAIMS = "jclouds.oauth.additional-claims";
 
 
 }

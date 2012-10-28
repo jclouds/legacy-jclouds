@@ -47,12 +47,12 @@ public class OAuthAuthenticationModule extends AbstractModule {
    }
 
    /**
-    * When bla is used as a module the bla endpoint is a normal property
+    * When oauth is used as a module the oauth endpoint is a normal property
     */
    @Provides
    @Singleton
    @Authentication
-   protected Supplier<URI> provideAuthenticationEndpoint(@Named("bla.endpoint") String endpoint) {
+   protected Supplier<URI> provideAuthenticationEndpoint(@Named("oauth.endpoint") String endpoint) {
       return Suppliers.ofInstance(URI.create(endpoint));
    }
 

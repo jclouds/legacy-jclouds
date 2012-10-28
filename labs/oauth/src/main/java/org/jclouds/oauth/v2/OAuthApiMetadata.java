@@ -70,7 +70,7 @@ public class OAuthApiMetadata extends BaseRestApiMetadata {
 
       protected Builder() {
          super(OAuthClient.class, OAuthAsyncClient.class);
-         id("bla").name("OAuth API")
+         id("oauth").name("OAuth API")
                  .identityName("service_account")
                  .credentialName("service_key")
                  .documentation(URI.create("TODO"))

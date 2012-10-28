@@ -23,7 +23,7 @@ import org.jclouds.domain.Credentials;
 import java.security.PrivateKey;
 
 /**
- * Special kind credentials for bla authentication.
+ * Special kind credentials for oauth authentication.
  * <p/>
  * OAuth authentication requires a {@link java.security.PrivateKey} to sign requests.
  */

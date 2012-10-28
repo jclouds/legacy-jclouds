@@ -21,7 +21,7 @@ package org.jclouds.oauth.v2.domain;
 import java.beans.ConstructorProperties;
 
 /**
- * The bla token, obtained upon a sucessful token request and ready to embed in requests.
+ * The oauth token, obtained upon a sucessful token request and ready to embed in requests.
  *
  * @author David Alves
  */
