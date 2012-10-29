@@ -22,7 +22,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.openstack.keystone.v2_0.AuthenticationAsyncApi;
 import org.jclouds.openstack.keystone.v2_0.AuthenticationApi;
 import org.jclouds.openstack.keystone.v2_0.domain.Access;
 import org.jclouds.rackspace.cloudidentity.v2_0.domain.ApiKeyCredentials;

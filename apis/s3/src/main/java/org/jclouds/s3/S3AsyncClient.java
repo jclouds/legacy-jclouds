@@ -21,7 +21,6 @@ package org.jclouds.s3;
 import static org.jclouds.blobstore.attr.BlobScopes.CONTAINER;
 
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;

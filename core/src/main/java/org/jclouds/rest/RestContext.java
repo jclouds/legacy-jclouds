@@ -18,8 +18,6 @@
  */
 package org.jclouds.rest;
 
-import java.util.concurrent.Future;
-
 import org.jclouds.Context;
 import org.jclouds.rest.internal.RestContextImpl;
 

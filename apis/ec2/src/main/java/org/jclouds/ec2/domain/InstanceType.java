@@ -18,8 +18,6 @@
  */
 package org.jclouds.ec2.domain;
 
-import org.jclouds.ec2.EC2AsyncClient;
-
 /**
  * 
  * The type of the instance. Description accurate as of 8-15-2009 release.

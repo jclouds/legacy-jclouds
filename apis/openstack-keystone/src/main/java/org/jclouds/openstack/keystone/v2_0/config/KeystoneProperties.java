@@ -18,8 +18,6 @@
  */
 package org.jclouds.openstack.keystone.v2_0.config;
 
-import org.jclouds.openstack.v2_0.ServiceType;
-
 /**
  * Configuration properties and constants used in Keystone connections.
  *

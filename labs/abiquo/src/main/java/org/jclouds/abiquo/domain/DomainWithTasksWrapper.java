@@ -30,7 +30,6 @@ import org.jclouds.abiquo.domain.task.AsyncTask;
 import org.jclouds.rest.RestContext;
 
 import com.abiquo.model.transport.SingleResourceTransportDto;
-import com.abiquo.server.core.task.TaskDto;
 import com.abiquo.server.core.task.TasksDto;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;

@@ -20,7 +20,6 @@ package org.jclouds.trmk.vcloud_0_8;
 
 import java.net.URI;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 

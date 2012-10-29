@@ -24,8 +24,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import javax.ws.rs.Path;
-
 /**
  * Designates that this parameter will hold the payload for a PUT or POST command.
  * 

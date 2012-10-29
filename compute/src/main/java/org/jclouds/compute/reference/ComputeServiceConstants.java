@@ -41,7 +41,6 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.compute.config.ComputeServiceProperties;
 import org.jclouds.predicates.RetryablePredicate;
 
 import com.google.common.base.Supplier;

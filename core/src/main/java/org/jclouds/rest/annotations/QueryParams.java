@@ -25,8 +25,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import javax.ws.rs.QueryParam;
-
 /**
  * Designates that a query will be added to the request.
  * 

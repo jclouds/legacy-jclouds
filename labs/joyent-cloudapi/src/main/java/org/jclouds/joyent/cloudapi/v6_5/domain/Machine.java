@@ -28,8 +28,6 @@ import java.util.Set;
 import javax.inject.Named;
 
 import org.jclouds.domain.JsonBall;
-import org.jclouds.joyent.cloudapi.v6_5.reference.Metadata;
-import org.jclouds.json.Json;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.CaseFormat;

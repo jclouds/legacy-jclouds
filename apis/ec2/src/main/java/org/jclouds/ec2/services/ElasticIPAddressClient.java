@@ -21,7 +21,6 @@ package org.jclouds.ec2.services;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.aws.AWSResponseException;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.ec2.domain.PublicIpInstanceIdPair;
 import org.jclouds.javax.annotation.Nullable;

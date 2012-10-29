@@ -20,7 +20,6 @@ package org.jclouds.gogrid.compute.options;
 
 import java.util.Map;
 
-import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.options.TemplateOptions;
 
 /**

@@ -24,7 +24,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Map;
 
 import org.jclouds.http.options.BaseHttpRequestOptions;
-import org.jclouds.joyent.cloudapi.v6_5.features.PackageApi;
 import org.jclouds.util.Maps2;
 
 import com.google.common.base.Function;

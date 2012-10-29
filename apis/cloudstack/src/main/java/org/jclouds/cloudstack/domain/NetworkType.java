@@ -20,8 +20,6 @@ package org.jclouds.cloudstack.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.cloudstack.features.TemplateClient;
-
 import com.google.common.base.CaseFormat;
 
 /**

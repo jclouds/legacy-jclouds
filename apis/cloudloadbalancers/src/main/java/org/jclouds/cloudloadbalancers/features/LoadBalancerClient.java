@@ -25,7 +25,6 @@ import org.jclouds.cloudloadbalancers.domain.LoadBalancer;
 import org.jclouds.cloudloadbalancers.domain.LoadBalancerAttributes;
 import org.jclouds.cloudloadbalancers.domain.LoadBalancerRequest;
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.http.HttpResponseException;
 
 /**
  * Provides synchronous access to CloudLoadBalancers LoadBalancer features.

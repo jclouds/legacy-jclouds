@@ -20,7 +20,6 @@ package org.jclouds.compute;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.javax.annotation.Nullable;

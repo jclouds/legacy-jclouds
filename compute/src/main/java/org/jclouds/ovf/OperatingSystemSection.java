@@ -18,7 +18,6 @@
  */
 package org.jclouds.ovf;
 
-import org.jclouds.cim.OSType;
 import org.jclouds.javax.annotation.Nullable;
 
 /**

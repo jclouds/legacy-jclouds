@@ -45,7 +45,6 @@ import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import com.abiquo.server.core.appslibrary.CategoriesDto;
 import com.abiquo.server.core.appslibrary.CategoryDto;
-import com.abiquo.server.core.cloud.VirtualDatacenterDto;
 import com.abiquo.server.core.config.LicenseDto;
 import com.abiquo.server.core.config.LicensesDto;
 import com.abiquo.server.core.config.SystemPropertiesDto;

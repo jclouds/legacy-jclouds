@@ -24,8 +24,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import org.jclouds.http.HttpCommandExecutorService;
-
 /**
  * designates the the module configures a {@link HttpCommandExecutorService}
  * 

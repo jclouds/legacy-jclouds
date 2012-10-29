@@ -19,7 +19,6 @@
 package org.jclouds.openstack.nova;
 
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;

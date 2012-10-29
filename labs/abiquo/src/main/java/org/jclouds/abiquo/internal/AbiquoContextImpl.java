@@ -39,7 +39,6 @@ import org.jclouds.compute.Utils;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.location.Provider;
 import org.jclouds.rest.RestContext;
-import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.common.reflect.TypeToken;
 

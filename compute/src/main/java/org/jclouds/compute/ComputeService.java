@@ -19,10 +19,8 @@
 package org.jclouds.compute;
 
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Set;
 
-import org.jclouds.compute.callables.ScriptStillRunningException;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.Hardware;
@@ -34,7 +32,6 @@ import org.jclouds.compute.extensions.ImageExtension;
 import org.jclouds.compute.internal.BaseComputeService;
 import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.domain.Location;
 import org.jclouds.scriptbuilder.domain.Statement;
 

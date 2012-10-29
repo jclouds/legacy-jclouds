@@ -23,8 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Map;
 import java.util.Set;
 
-import org.jclouds.cloudstack.options.DeployVirtualMachineOptions;
-import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.options.TemplateOptions;
 
 import com.google.common.collect.Iterables;

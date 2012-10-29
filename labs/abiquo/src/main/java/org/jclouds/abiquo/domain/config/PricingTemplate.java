@@ -27,7 +27,6 @@ import java.util.Date;
 import org.jclouds.abiquo.AbiquoApi;
 import org.jclouds.abiquo.AbiquoAsyncApi;
 import org.jclouds.abiquo.domain.DomainWrapper;
-import org.jclouds.abiquo.domain.enterprise.Enterprise;
 import org.jclouds.abiquo.reference.ValidationErrors;
 import org.jclouds.rest.RestContext;
 

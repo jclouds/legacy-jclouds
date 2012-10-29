@@ -19,8 +19,6 @@
 package org.jclouds.cloudservers;
 
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.PathParam;
@@ -38,7 +36,6 @@ import org.jclouds.cloudservers.options.CreateSharedIpGroupOptions;
 import org.jclouds.cloudservers.options.ListOptions;
 import org.jclouds.cloudservers.options.RebuildServerOptions;
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.rest.ResourceNotFoundException;
 
 /**
  * Provides access to Cloud Servers via their REST API.

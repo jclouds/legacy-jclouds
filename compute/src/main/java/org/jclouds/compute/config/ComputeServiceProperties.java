@@ -18,10 +18,6 @@
  */
 package org.jclouds.compute.config;
 
-import org.jclouds.ContextBuilder;
-import org.jclouds.compute.domain.TemplateBuilderSpec;
-import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
-
 /**
  * 
  * @author Adrian Cole

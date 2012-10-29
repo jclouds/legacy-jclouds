@@ -38,7 +38,6 @@ import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.AdminVdc;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.features.MetadataAsyncApi;
-import org.jclouds.vcloud.director.v1_5.features.MetadataAsyncApi.Writeable;
 import org.jclouds.vcloud.director.v1_5.features.VdcAsyncApi;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationAndCookieToRequest;
 import org.jclouds.vcloud.director.v1_5.functions.href.VdcURNToAdminHref;

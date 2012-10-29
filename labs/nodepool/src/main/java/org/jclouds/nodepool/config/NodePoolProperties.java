@@ -18,9 +18,6 @@
  */
 package org.jclouds.nodepool.config;
 
-import org.jclouds.scriptbuilder.statements.login.AdminAccess;
-import org.jclouds.scriptbuilder.statements.login.AdminAccessBuilderSpec;
-
 /**
  * Constants for the {@link org.jclouds.nodepool.NodePoolComputeService}.
  */

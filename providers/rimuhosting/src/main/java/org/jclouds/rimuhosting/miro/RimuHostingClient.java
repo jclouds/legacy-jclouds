@@ -25,7 +25,6 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rimuhosting.miro.binder.CreateServerOptions;
 import org.jclouds.rimuhosting.miro.domain.Image;
-import org.jclouds.rimuhosting.miro.domain.MetaData;
 import org.jclouds.rimuhosting.miro.domain.NewServerResponse;
 import org.jclouds.rimuhosting.miro.domain.PricingPlan;
 import org.jclouds.rimuhosting.miro.domain.Server;
