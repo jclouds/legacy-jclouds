@@ -18,7 +18,10 @@
  */
 package org.jclouds.hpcloud.objectstorage.blobstore.functions;
 
+import static com.google.common.base.Throwables.propagate;
+
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -45,14 +48,24 @@ public class PublicUriForObjectInfo implements Function<ObjectInfo, URI> {
       this.uriBuilders = uriBuilders;
    }
 
+   private static final URI NEGATIVE_ENTRY = URI.create("http://127.0.0.1");
+
    public URI apply(ObjectInfo from) {
       if (from == null)
          return null;
       try {
-         return uriBuilders.get().uri(cdnContainer.getUnchecked(from.getContainer())).path(from.getName()).replaceQuery("")
+         URI uri = cdnContainer.getUnchecked(from.getContainer());
+         if (uri == NEGATIVE_ENTRY) {  // intentionally use reference equality
+            // TODO: GetCDNMetadata.load returns null on failure cases.  We use
+            // a negative entry to avoid repeatedly issuing failed CDN queries.
+            // The LoadingCache removes this value after its normal expiry.
+            return null;
+         }
+         return uriBuilders.get().uri(uri).path(from.getName()).replaceQuery("")
                   .build();
       } catch (CacheLoader.InvalidCacheLoadException e) {
          // nulls not permitted from cache loader
+         cdnContainer.put(from.getContainer(), NEGATIVE_ENTRY);
          return null;
       } catch (NullPointerException e) {
          // nulls not permitted from cache loader
