@@ -1,5 +1,5 @@
 /**
-f * Licensed to jclouds, Inc. (jclouds) under one or more
+ * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
  * regarding copyright ownership.  jclouds licenses this file
