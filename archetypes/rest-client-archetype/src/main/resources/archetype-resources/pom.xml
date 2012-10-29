@@ -85,7 +85,6 @@ $symbol_dollar = '$' )
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>1.0.0</version>
       <scope>test</scope>
     </dependency>    
   </dependencies>
