@@ -41,10 +41,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.annotation.Resource;
-
-import org.jclouds.logging.Logger;
-
 import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
 import com.google.common.io.InputSupplier;
@@ -135,11 +131,6 @@ public class Strings2 {
       checkNotNull(input, "input");
       try {
          return new String(toByteArray(input), Charsets.UTF_8);
-      } catch (IOException e) {
-         logger.warn(e, "Failed to read from stream");
-         return null;
-      } catch (NullPointerException e) {
-         return null;
       } finally {
          closeQuietly(input);
       }
@@ -148,9 +139,6 @@ public class Strings2 {
    public static InputStream toInputStream(String in) {
       return new ByteArrayInputStream(in.getBytes(Charsets.UTF_8));
    }
-
-   @Resource
-   private static Logger logger = Logger.NULL;
 
    /**
     * replaces tokens that are expressed as <code>{token}</code>
