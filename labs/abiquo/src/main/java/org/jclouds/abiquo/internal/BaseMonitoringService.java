@@ -131,7 +131,7 @@ public class BaseMonitoringService implements MonitoringService {
       if (objects != null && objects.length > 0) {
          for (T object : objects) {
             AsyncMonitor<T> monitor = new AsyncMonitor<T>(object, completeCondition);
-            monitor.startMonitoring(maxWait);
+            monitor.startMonitoring(maxWait, timeUnit);
          }
       }
    }
@@ -176,8 +176,7 @@ public class BaseMonitoringService implements MonitoringService {
     * Performs the periodical monitoring tasks.
     * 
     * @author Ignasi Barrera
-    * @param <T>
-    *           The type of the object being monitored.
+    * @param <T> The type of the object being monitored.
     */
    @VisibleForTesting
    class AsyncMonitor<T> implements Runnable {
@@ -205,12 +204,15 @@ public class BaseMonitoringService implements MonitoringService {
       /**
        * Starts the monitoring job with the given timeout.
        * 
-       * @param maxWait
-       *           The timeout.
+       * @param maxWait The timeout.
+       * @param timeUnit The timeunit used in the maxWait parameter.
        */
-      public void startMonitoring(final Long maxWait) {
+      public void startMonitoring(final Long maxWait, TimeUnit timeUnit) {
+         if (maxWait != null) {
+            checkNotNull(timeUnit, "timeUnit must not be null when using timeouts");
+         }
          future = scheduler.scheduleWithFixedDelay(this, 0L, pollingDelay, TimeUnit.MILLISECONDS);
-         timeout = maxWait == null ? null : System.currentTimeMillis() + maxWait;
+         timeout = maxWait == null ? null : System.currentTimeMillis() + timeUnit.toMillis(maxWait);
          logger.debug("started monitor job for %s with %s timeout", monitoredObject,
                timeout == null ? "no" : String.valueOf(timeout));
       }
