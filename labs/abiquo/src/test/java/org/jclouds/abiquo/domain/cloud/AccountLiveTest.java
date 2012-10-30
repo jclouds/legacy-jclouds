@@ -37,8 +37,10 @@ public class AccountLiveTest extends BaseAbiquoLiveApiTest {
 
    private Enterprise enterprise;
 
-   @BeforeClass(groups = "live")
-   public void setup() {
+   @BeforeClass(groups = { "integration", "live" })
+   @Override
+   public void setupContext() {
+      super.setupContext();
       enterprise = view.getAdministrationService().getCurrentEnterprise();
    }
 

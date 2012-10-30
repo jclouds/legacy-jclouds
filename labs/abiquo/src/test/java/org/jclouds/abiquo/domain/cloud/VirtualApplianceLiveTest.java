@@ -58,8 +58,10 @@ public class VirtualApplianceLiveTest extends BaseAbiquoLiveApiTest {
 
    private MonitoringService monitoringService;
 
-   @BeforeClass(groups = "live")
-   public void setup() {
+   @BeforeClass(groups = { "integration", "live" })
+   @Override
+   public void setupContext() {
+      super.setupContext();
       monitoringService = view.getMonitoringService();
       vdc = getLast(view.getCloudService().listVirtualDatacenters());
       vmt = templateBySize().min(vdc.listAvailableTemplates());
