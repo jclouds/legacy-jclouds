@@ -91,7 +91,6 @@ public class FilesystemAsyncBlobStoreTest {
 
     private BlobStoreContext context = null;
     private BlobStore blobStore = null;
-    private Set<File> resourcesToBeDeleted = new HashSet<File>();
 
     @BeforeMethod
     protected void setUp() throws Exception {
@@ -101,25 +100,13 @@ public class FilesystemAsyncBlobStoreTest {
         context = ContextBuilder.newBuilder(PROVIDER).overrides(prop).build(BlobStoreContext.class);
         // create a container in the default location
         blobStore = context.getBlobStore();
-
-        resourcesToBeDeleted.add(new File(TestUtils.TARGET_BASE_DIR));
+        new File(TestUtils.TARGET_BASE_DIR).mkdir();
     }
 
     @AfterMethod
-    protected void tearDown() {
+    protected void tearDown() throws IOException {
         context.close();
-        context = null;
-        // freeing filesystem resources used for tests
-        Iterator<File> resourceToDelete = resourcesToBeDeleted.iterator();
-        while (resourceToDelete.hasNext()) {
-            File fileToDelete = resourceToDelete.next();
-            try {
-                FileUtils.forceDelete(fileToDelete);
-            } catch (IOException ex) {
-                System.err.println("Error deleting folder [" + fileToDelete.getName() + "].");
-            }
-            resourceToDelete.remove();
-        }
+        FileUtils.forceDelete(new File(TestUtils.TARGET_BASE_DIR));
     }
 
     /**
@@ -515,9 +502,6 @@ public class FilesystemAsyncBlobStoreTest {
         result = blobStore.containerExists(CONTAINER_NAME2);
         assertTrue(result, "Container doesn't exist");
         TestUtils.directoryExists(TestUtils.TARGET_BASE_DIR + CONTAINER_NAME2, true);
-
-        // clean the environment
-        FileUtils.forceDelete(new File(TARGET_CONTAINER_NAME2));
     }
 
     /**
