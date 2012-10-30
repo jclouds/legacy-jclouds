@@ -26,7 +26,6 @@ import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.vcloud.director.v1_5.domain.Catalog;
 import org.jclouds.vcloud.director.v1_5.domain.CatalogItem;
-import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.functions.href.CatalogItemURNToHref;
 import org.jclouds.vcloud.director.v1_5.functions.href.CatalogURNToHref;
 

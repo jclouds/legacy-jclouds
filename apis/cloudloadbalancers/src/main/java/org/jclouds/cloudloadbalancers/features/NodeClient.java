@@ -21,12 +21,10 @@ package org.jclouds.cloudloadbalancers.features;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.cloudloadbalancers.domain.LoadBalancerAttributes;
 import org.jclouds.cloudloadbalancers.domain.Node;
 import org.jclouds.cloudloadbalancers.domain.NodeAttributes;
 import org.jclouds.cloudloadbalancers.domain.NodeRequest;
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.http.HttpResponseException;
 
 /**
  * Provides synchronous access to CloudLoadBalancers Node features.

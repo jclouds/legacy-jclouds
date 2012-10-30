@@ -24,7 +24,6 @@ import java.util.List;
 import org.jclouds.abiquo.AbiquoApi;
 import org.jclouds.abiquo.AbiquoAsyncApi;
 import org.jclouds.abiquo.domain.DomainWrapper;
-import org.jclouds.abiquo.domain.cloud.VirtualMachineTemplate;
 import org.jclouds.rest.RestContext;
 
 import com.abiquo.model.rest.RESTLink;

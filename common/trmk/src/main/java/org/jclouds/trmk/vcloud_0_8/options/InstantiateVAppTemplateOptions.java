@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.ovf.NetworkSection;
 import org.jclouds.trmk.vcloud_0_8.domain.FenceMode;
 
 import com.google.common.collect.Maps;

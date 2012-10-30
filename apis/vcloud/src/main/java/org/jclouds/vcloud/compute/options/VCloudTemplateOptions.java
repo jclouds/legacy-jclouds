@@ -27,7 +27,6 @@ import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.util.Preconditions2;
 import org.jclouds.vcloud.domain.network.FenceMode;
 import org.jclouds.vcloud.domain.network.IpAddressAllocationMode;
-import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;

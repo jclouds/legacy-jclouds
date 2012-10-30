@@ -25,9 +25,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.HttpHeaders;
-
 /**
  * Designates that a header will be added to the request. This header will contain the specified
  * {@code value}, expanding any variables annotated with {@code PathParam}.

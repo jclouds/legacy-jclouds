@@ -30,7 +30,6 @@ import org.jclouds.aws.ec2.xml.ProductCodesHandler;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.ec2.binders.BindProductCodesToIndexedFormParams;
 import org.jclouds.ec2.services.AMIAsyncClient;
-import org.jclouds.ec2.services.AMIClient;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.rest.annotations.BinderParam;

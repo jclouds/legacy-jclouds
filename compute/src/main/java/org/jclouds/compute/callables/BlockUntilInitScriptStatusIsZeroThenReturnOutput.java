@@ -36,7 +36,6 @@ import org.jclouds.compute.events.StatementOnNodeFailure;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.scriptbuilder.InitScript;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Objects;

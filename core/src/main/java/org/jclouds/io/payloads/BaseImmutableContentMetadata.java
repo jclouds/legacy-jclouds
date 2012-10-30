@@ -19,8 +19,6 @@
 package org.jclouds.io.payloads;
 
 import java.io.Serializable;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 

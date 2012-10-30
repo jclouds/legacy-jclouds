@@ -24,7 +24,6 @@ import java.util.Set;
 
 import javax.inject.Singleton;
 
-import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;

@@ -24,8 +24,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.google.common.eventbus.EventBus;
-
 /**
  * Designates the module configures an {@link EventBus}.
  * 

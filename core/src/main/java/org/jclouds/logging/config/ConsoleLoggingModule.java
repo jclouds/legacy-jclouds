@@ -18,7 +18,6 @@
  */
 package org.jclouds.logging.config;
 
-import org.jclouds.logging.ConsoleLogger;
 import org.jclouds.logging.Logger;
 
 /**

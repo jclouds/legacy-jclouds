@@ -25,8 +25,6 @@ import java.lang.annotation.Target;
 
 import javax.inject.Qualifier;
 
-import org.jclouds.openstack.v2_0.ServiceType;
-
 /**
  * Identity Service (Keystone)
  * 

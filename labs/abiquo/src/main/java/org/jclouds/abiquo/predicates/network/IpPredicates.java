@@ -25,7 +25,6 @@ import java.util.Arrays;
 
 import org.jclouds.abiquo.domain.network.AbstractPublicIp;
 import org.jclouds.abiquo.domain.network.Ip;
-import org.jclouds.abiquo.domain.network.Network;
 
 import com.google.common.base.Predicate;
 

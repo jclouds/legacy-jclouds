@@ -22,12 +22,10 @@ import static org.jclouds.http.HttpUtils.releasePayload;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Type;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.xml.bind.JAXBContext;
 
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;

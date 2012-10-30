@@ -26,8 +26,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.scriptbuilder.InitScript;
-
 import com.google.common.base.Supplier;
 import com.google.inject.Inject;
 

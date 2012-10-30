@@ -25,8 +25,6 @@ import java.lang.annotation.Target;
 
 import javax.inject.Qualifier;
 
-import org.jclouds.openstack.v2_0.ServiceType;
-
 /**
  * An extension of a {@link ServiceType service}. In order for us to understand
  * the context of the extension, we must consider the <a href=

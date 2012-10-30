@@ -26,7 +26,6 @@ import java.net.URI;
 import javax.inject.Inject;
 
 import org.jclouds.atmos.domain.AtmosObject;
-import org.jclouds.blobstore.functions.ParseSystemAndUserMetadataFromHeaders;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.InvocationContext;

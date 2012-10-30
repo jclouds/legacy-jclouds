@@ -22,9 +22,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.Map;
 
-import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.glesys.features.ServerApi;
 
 import com.google.common.net.InetAddresses;
 

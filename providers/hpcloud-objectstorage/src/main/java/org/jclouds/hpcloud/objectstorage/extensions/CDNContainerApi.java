@@ -27,7 +27,6 @@ import org.jclouds.hpcloud.objectstorage.options.ListCDNContainerOptions;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.FluentIterable;
-import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Provides synchronous access to HP Cloud Object Storage via the REST API.

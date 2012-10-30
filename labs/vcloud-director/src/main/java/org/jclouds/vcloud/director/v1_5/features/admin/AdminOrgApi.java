@@ -25,7 +25,6 @@ import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.vcloud.director.v1_5.domain.org.AdminOrg;
-import org.jclouds.vcloud.director.v1_5.domain.org.Org;
 import org.jclouds.vcloud.director.v1_5.domain.org.OrgEmailSettings;
 import org.jclouds.vcloud.director.v1_5.domain.org.OrgGeneralSettings;
 import org.jclouds.vcloud.director.v1_5.domain.org.OrgLdapSettings;

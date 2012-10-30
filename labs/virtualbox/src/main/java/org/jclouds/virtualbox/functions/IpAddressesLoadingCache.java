@@ -39,7 +39,6 @@ import org.virtualbox_4_1.VirtualBoxManager;
 import com.google.common.base.Strings;
 import com.google.common.base.Supplier;
 import com.google.common.cache.AbstractLoadingCache;
-import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.Uninterruptibles;
 

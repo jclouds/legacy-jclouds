@@ -24,7 +24,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Arrays;
 
 import org.jclouds.abiquo.domain.cloud.Conversion;
-import org.jclouds.abiquo.domain.cloud.VirtualMachineTemplate;
 
 import com.abiquo.model.enumerator.ConversionState;
 import com.abiquo.model.enumerator.DiskFormatType;

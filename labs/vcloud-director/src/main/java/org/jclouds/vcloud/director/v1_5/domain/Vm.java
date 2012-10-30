@@ -26,7 +26,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.jclouds.dmtf.ovf.environment.EnvironmentType;
-import org.omg.CORBA.Environment;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;

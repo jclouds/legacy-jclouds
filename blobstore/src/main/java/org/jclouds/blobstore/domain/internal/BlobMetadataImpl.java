@@ -25,7 +25,6 @@ import java.net.URI;
 import java.util.Date;
 import java.util.Map;
 
-import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.domain.Location;

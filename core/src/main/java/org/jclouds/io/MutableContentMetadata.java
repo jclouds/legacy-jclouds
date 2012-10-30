@@ -22,8 +22,6 @@ import java.util.Date;
 
 import org.jclouds.javax.annotation.Nullable;
 
-import com.google.common.collect.Multimap;
-
 /**
  * @author Adrian Cole
  */

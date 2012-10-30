@@ -19,8 +19,6 @@
 package org.jclouds.openstack.nova;
 
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
@@ -34,7 +32,6 @@ import org.jclouds.openstack.nova.domain.Server;
 import org.jclouds.openstack.nova.options.CreateServerOptions;
 import org.jclouds.openstack.nova.options.ListOptions;
 import org.jclouds.openstack.nova.options.RebuildServerOptions;
-import org.jclouds.rest.ResourceNotFoundException;
 
 /**
  * Provides access to OpenStack Nova via their REST API.

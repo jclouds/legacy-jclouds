@@ -19,7 +19,6 @@
 package org.jclouds.slicehost;
 
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
@@ -27,8 +26,6 @@ import org.jclouds.slicehost.domain.Backup;
 import org.jclouds.slicehost.domain.Flavor;
 import org.jclouds.slicehost.domain.Image;
 import org.jclouds.slicehost.domain.Slice;
-
-import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Provides access to Slicehost via their REST API.

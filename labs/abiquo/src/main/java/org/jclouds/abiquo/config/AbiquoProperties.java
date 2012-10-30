@@ -19,8 +19,6 @@
 
 package org.jclouds.abiquo.config;
 
-import org.jclouds.abiquo.features.services.MonitoringService;
-
 /**
  * Configuration properties and constants used in Abiquo connections.
  * 

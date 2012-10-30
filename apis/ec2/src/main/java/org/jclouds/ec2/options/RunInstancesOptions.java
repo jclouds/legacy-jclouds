@@ -24,7 +24,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Set;
 
 import org.jclouds.ec2.domain.BlockDeviceMapping;
-import org.jclouds.ec2.domain.InstanceType;
 import org.jclouds.ec2.options.internal.BaseEC2RequestOptions;
 import org.jclouds.encryption.internal.Base64;
 

@@ -23,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.aws.ec2.domain.MonitoringState;
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.ec2.services.InstanceClient;
 import org.jclouds.javax.annotation.Nullable;
 
 /**

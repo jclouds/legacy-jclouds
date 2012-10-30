@@ -25,8 +25,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import javax.ws.rs.QueryParam;
-
 /**
  * Designates that default parameters will be added a map that builds the request entity.
  * 

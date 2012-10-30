@@ -20,8 +20,6 @@ package org.jclouds.ec2.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.ec2.EC2AsyncClient;
-
 import com.google.common.base.CaseFormat;
 
 /**

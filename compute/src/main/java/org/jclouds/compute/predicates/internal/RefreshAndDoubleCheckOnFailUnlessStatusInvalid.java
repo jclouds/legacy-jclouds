@@ -27,7 +27,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Resource;
 import javax.inject.Singleton;
 
-import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.domain.ComputeMetadataIncludingStatus;
 import org.jclouds.logging.Logger;
 

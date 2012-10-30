@@ -32,7 +32,6 @@ import org.jclouds.cloudservers.domain.Image;
 import org.jclouds.cloudservers.domain.RebootType;
 import org.jclouds.cloudservers.domain.Server;
 import org.jclouds.cloudservers.options.ListOptions;
-import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.domain.Location;

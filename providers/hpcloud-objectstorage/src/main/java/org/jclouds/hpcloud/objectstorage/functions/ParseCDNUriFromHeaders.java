@@ -24,7 +24,6 @@ import java.net.URI;
 
 import org.jclouds.hpcloud.objectstorage.reference.HPCloudObjectStorageHeaders;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.openstack.swift.domain.AccountMetadata;
 
 import com.google.common.base.Function;
 

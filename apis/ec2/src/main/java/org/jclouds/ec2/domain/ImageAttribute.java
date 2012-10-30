@@ -18,8 +18,6 @@
  */
 package org.jclouds.ec2.domain;
 
-import org.jclouds.ec2.EC2AsyncClient;
-
 /**
  * 
  * An attribute of an AMI.

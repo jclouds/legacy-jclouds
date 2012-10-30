@@ -22,7 +22,6 @@ import java.io.Closeable;
 import java.net.URI;
 import java.util.Map;
 
-import org.jclouds.apis.ApiMetadata;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.internal.ContextImpl;

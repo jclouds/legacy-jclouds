@@ -20,9 +20,6 @@ package org.jclouds.aws.ec2.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.aws.ec2.services.MonitoringClient;
-import org.jclouds.ec2.services.InstanceClient;
-
 /**
  * 
  * State of monitoring for the instance.

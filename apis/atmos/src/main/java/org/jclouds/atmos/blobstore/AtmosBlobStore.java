@@ -27,7 +27,6 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
-import org.jclouds.atmos.AtmosAsyncClient;
 import org.jclouds.atmos.AtmosClient;
 import org.jclouds.atmos.blobstore.functions.BlobStoreListOptionsToListOptions;
 import org.jclouds.atmos.blobstore.functions.BlobToObject;

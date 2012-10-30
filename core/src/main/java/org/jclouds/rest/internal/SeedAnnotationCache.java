@@ -43,7 +43,6 @@ import javax.ws.rs.Path;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.logging.Logger;
-import org.jclouds.rest.RestContext;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.internal.RestAnnotationProcessor.MethodKey;
 

@@ -21,8 +21,6 @@ package org.jclouds.opsource.servers;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.opsource.servers.domain.Account;
-import org.jclouds.opsource.servers.domain.ServerImage;
 import org.jclouds.opsource.servers.features.AccountApi;
 import org.jclouds.opsource.servers.features.ServerApi;
 import org.jclouds.opsource.servers.features.ServerImageApi;

@@ -18,7 +18,6 @@
  */
 package org.jclouds;
 
-import org.jclouds.domain.Location;
 import org.jclouds.location.reference.LocationConstants;
 
 /**
