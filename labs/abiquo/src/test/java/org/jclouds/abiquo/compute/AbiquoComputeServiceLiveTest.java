@@ -45,11 +45,12 @@ import com.google.inject.Module;
  * @author Ignasi Barrera
  */
 @Test(groups = "live", testName = "AbiquoComputeServiceLiveTest", singleThreaded = true)
-// Made abstract to avoid executing tests. Since the base class has test
-// configuration, even if we
-// disable tests here, or comment them out, the ones in the base class will be
-// executed
-public class AbiquoComputeServiceLiveTest extends BaseComputeServiceLiveTest {
+// Since the base class has test configuration, even if we disable tests here,
+// or comment them out, the ones in the base class will be executed.
+// This class is still a work in progress and will fail until the race condition
+// (when creating the virtual appliance) in the AbiquoComputeServiceAdapter is
+// fixed and a proper test environment is configured.
+public abstract class AbiquoComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    public AbiquoComputeServiceLiveTest() {
       provider = "abiquo";
    }

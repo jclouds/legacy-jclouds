@@ -21,7 +21,6 @@ package org.jclouds.abiquo.internal;
 
 import java.util.Properties;
 
-import org.jclouds.Constants;
 import org.jclouds.abiquo.AbiquoContext;
 import org.jclouds.apis.BaseViewLiveTest;
 import org.jclouds.logging.config.LoggingModule;
@@ -42,8 +41,6 @@ public abstract class BaseAbiquoLiveApiTest extends BaseViewLiveTest<AbiquoConte
    @Override
    protected Properties setupProperties() {
       Properties overrides = super.setupProperties();
-      overrides.put(Constants.PROPERTY_MAX_RETRIES, "0");
-      overrides.put(Constants.PROPERTY_MAX_REDIRECTS, "0");
       // Wait at most one minute in Machine discovery
       overrides.put("jclouds.timeouts.InfrastructureApi.discoverSingleMachine", "60000");
       overrides.put("jclouds.timeouts.InfrastructureApi.discoverMultipleMachines", "60000");
