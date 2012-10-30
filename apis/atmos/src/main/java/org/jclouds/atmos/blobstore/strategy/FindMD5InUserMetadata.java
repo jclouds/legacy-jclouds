@@ -19,6 +19,7 @@
 package org.jclouds.atmos.blobstore.strategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Throwables.propagate;
 import static org.jclouds.concurrent.FutureIterables.awaitCompletion;
 
 import java.util.Arrays;
@@ -28,6 +29,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
@@ -109,8 +111,13 @@ public class FindMD5InUserMetadata implements ContainsValueInListStrategy {
          }, userExecutor);
          responses.put(md.getName(), future);
       }
-      Map<String, Exception> exceptions = awaitCompletion(responses, userExecutor, maxTime, logger,
-            String.format("searching for md5 in container %s", containerName));
+      Map<String, Exception> exceptions;
+      try {
+         exceptions = awaitCompletion(responses, userExecutor, maxTime, logger,
+               String.format("searching for md5 in container %s", containerName));
+      } catch (TimeoutException te) {
+         throw propagate(te);
+      }
       if (exceptions.size() > 0)
          throw new BlobRuntimeException(String.format("searching for md5 in container %s: %s", containerName,
                exceptions));
