@@ -76,7 +76,7 @@ public class AsyncGaeHttpCommandExecutorServiceIntegrationTest extends BaseHttpC
    }
 
    @Test(enabled = false)
-   public void testPerformanceVsNothing() {
+   public void testPerformanceVsNothing() throws TimeoutException {
       setupApiProxy();
       int count = 5;
       final URI fetch = URI.create("http://www.google.com");
@@ -159,7 +159,8 @@ public class AsyncGaeHttpCommandExecutorServiceIntegrationTest extends BaseHttpC
 
    }
 
-   private Results getTest(int count, String who, Supplier<ListenableFuture<?>> getSupplier, Consumer consumer) {
+   private Results getTest(int count, String who, Supplier<ListenableFuture<?>> getSupplier, Consumer consumer)
+         throws TimeoutException {
       Results results = new Results();
       results.count = count;
       results.who = who;

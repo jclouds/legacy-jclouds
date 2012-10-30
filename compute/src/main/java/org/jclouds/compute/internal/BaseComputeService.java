@@ -21,6 +21,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.and;
 import static com.google.common.base.Predicates.not;
 import static com.google.common.base.Predicates.notNull;
+import static com.google.common.base.Throwables.propagate;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Maps.newLinkedHashMap;
 import static com.google.common.collect.Sets.filter;
@@ -41,6 +42,7 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -212,8 +214,12 @@ public class BaseComputeService implements ComputeService {
 
       Map<?, Future<Void>> responses = runNodesAndAddToSetStrategy.execute(group, count, template, goodNodes, badNodes,
             customizationResponses);
-      Map<?, Exception> executionExceptions = awaitCompletion(responses, executor, null, logger, "createNodesInGroup("
-            + group + ")");
+      Map<?, Exception> executionExceptions;
+      try {
+         executionExceptions = awaitCompletion(responses, executor, null, logger, "createNodesInGroup(" + group + ")");
+      } catch (TimeoutException te) {
+         throw propagate(te);
+      }
       Function<NodeMetadata, NodeMetadata> fn = persistNodeCredentials.always(template.getOptions().getRunScript());
       badNodes = Maps2.transformKeys(badNodes, fn);
       goodNodes = ImmutableSet.copyOf(Iterables.transform(goodNodes, fn));
@@ -548,7 +554,11 @@ public class BaseComputeService implements ComputeService {
             responses.put(runner.getNode(), executor.submit(new RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap(
                   runner, goodNodes, badNodes)));
          }
-         exceptions = awaitCompletion(responses, executor, null, logger, "runScriptOnNodesMatching(" + filter + ")");
+         try {
+            exceptions = awaitCompletion(responses, executor, null, logger, "runScriptOnNodesMatching(" + filter + ")");
+         } catch (TimeoutException te) {
+            throw propagate(te);
+         }
       }
 
       Function<NodeMetadata, NodeMetadata> fn = persistNodeCredentials.ifAdminAccess(runScript);

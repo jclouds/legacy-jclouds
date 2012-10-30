@@ -20,8 +20,13 @@ package org.jclouds.concurrent;
 
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
+import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jclouds.logging.Logger;
@@ -30,6 +35,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 
 /**
  * Tests behavior of FutureIterables
@@ -80,4 +86,32 @@ public class FutureIterablesTest {
 
    }
 
+   public void testAwaitCompletionTimeout() throws Exception {
+      final long timeoutMs = 1000;
+      ExecutorService executorService = Executors.newSingleThreadExecutor();
+      Map<Void, Future<?>> responses = Maps.newHashMap();
+      try {
+         responses.put(null, executorService.submit(new Runnable() {
+               @Override
+               public void run() {
+                  try {
+                     Thread.sleep(2 * timeoutMs);
+                  } catch (InterruptedException ie) {
+                     // triggered during shutdown
+                  }
+               }
+         }));
+         Map<Void, Exception> errors = FutureIterables.awaitCompletion(
+               responses, executorService, timeoutMs, Logger.CONSOLE,
+               /*prefix=*/ "");
+         if (!errors.isEmpty()) {
+            throw errors.values().iterator().next();
+         }
+         fail("Did not throw TimeoutException");
+      } catch (TimeoutException te) {
+         // expected
+      } finally {
+         executorService.shutdownNow();
+      }
+   }
 }
