@@ -18,8 +18,6 @@
  */
 package org.jclouds.opsource.servers;
 
-import org.jclouds.opsource.servers.domain.Account;
-import org.jclouds.opsource.servers.domain.ServerImage;
 import org.jclouds.opsource.servers.features.AccountAsyncApi;
 import org.jclouds.opsource.servers.features.ServerAsyncApi;
 import org.jclouds.opsource.servers.features.ServerImageAsyncApi;

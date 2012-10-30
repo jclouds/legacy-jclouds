@@ -19,7 +19,6 @@
 package org.jclouds.vcloud.features;
 
 import java.net.URI;
-import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;

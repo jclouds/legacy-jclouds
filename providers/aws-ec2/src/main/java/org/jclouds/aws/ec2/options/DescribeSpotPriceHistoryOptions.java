@@ -24,7 +24,6 @@ import java.util.Date;
 
 import org.jclouds.date.DateService;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
-import org.jclouds.ec2.domain.InstanceType;
 import org.jclouds.ec2.options.internal.BaseEC2RequestOptions;
 
 /**

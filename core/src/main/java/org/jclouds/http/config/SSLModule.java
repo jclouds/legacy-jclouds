@@ -36,7 +36,6 @@ import org.jclouds.logging.Logger;
 import com.google.common.collect.MapMaker;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
-import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;
 import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;

@@ -24,7 +24,6 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.ExtractMode;
 import org.jclouds.cloudstack.domain.Template;
-import org.jclouds.cloudstack.domain.TemplateFilter;
 import org.jclouds.cloudstack.domain.TemplateMetadata;
 import org.jclouds.cloudstack.domain.TemplatePermission;
 import org.jclouds.cloudstack.options.AccountInDomainOptions;

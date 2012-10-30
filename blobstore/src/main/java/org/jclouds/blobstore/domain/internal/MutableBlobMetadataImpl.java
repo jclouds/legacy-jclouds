@@ -20,7 +20,6 @@ package org.jclouds.blobstore.domain.internal;
 
 import java.net.URI;
 
-import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.domain.StorageType;

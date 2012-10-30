@@ -20,7 +20,6 @@ package org.jclouds.compute.stub;
 
 import java.net.URI;
 
-import org.jclouds.apis.ApiMetadata;
 import org.jclouds.apis.internal.BaseApiMetadata;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.stub.config.StubComputeServiceContextModule;

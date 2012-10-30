@@ -32,7 +32,6 @@ import org.jclouds.xml.XMLParser;
 import com.abiquo.model.enumerator.NetworkType;
 import com.abiquo.model.rest.RESTLink;
 import com.abiquo.model.transport.LinksDto;
-import com.abiquo.server.core.infrastructure.network.AbstractIpDto;
 import com.abiquo.server.core.infrastructure.network.VLANNetworkDto;
 
 /**

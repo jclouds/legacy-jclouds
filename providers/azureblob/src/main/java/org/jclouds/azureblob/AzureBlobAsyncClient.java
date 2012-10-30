@@ -19,7 +19,6 @@
 package org.jclouds.azureblob;
 
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;

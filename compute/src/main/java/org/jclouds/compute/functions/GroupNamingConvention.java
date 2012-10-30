@@ -18,7 +18,6 @@
  */
 package org.jclouds.compute.functions;
 
-import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.internal.FormatSharedNamesAndAppendUniqueStringToThoseWhichRepeat;
 import org.jclouds.javax.annotation.Nullable;
 

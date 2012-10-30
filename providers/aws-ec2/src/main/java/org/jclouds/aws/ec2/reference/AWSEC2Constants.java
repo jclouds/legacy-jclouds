@@ -18,7 +18,6 @@
  */
 package org.jclouds.aws.ec2.reference;
 
-import org.jclouds.ec2.domain.InstanceType;
 import org.jclouds.ec2.reference.EC2Constants;
 
 /**

@@ -26,7 +26,6 @@ import java.util.Map;
 
 import org.jclouds.blobstore.domain.internal.BlobBuilderImpl;
 import org.jclouds.io.Payload;
-import org.jclouds.io.Payloads;
 
 import com.google.inject.ImplementedBy;
 

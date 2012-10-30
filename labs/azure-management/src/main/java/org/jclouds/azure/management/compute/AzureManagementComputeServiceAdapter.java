@@ -30,7 +30,6 @@ import org.jclouds.azure.management.AzureManagementAsyncApi;
 import org.jclouds.azure.management.domain.Deployment;
 import org.jclouds.azure.management.domain.OSImage;
 import org.jclouds.azure.management.domain.RoleSize;
-import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.reference.ComputeServiceConstants;

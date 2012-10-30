@@ -44,7 +44,6 @@ import org.jclouds.logging.Logger;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
-import com.google.common.util.concurrent.Futures;
 import com.google.inject.Inject;
 
 /**

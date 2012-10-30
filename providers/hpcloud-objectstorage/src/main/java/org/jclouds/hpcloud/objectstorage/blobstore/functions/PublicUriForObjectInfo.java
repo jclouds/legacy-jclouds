@@ -18,10 +18,7 @@
  */
 package org.jclouds.hpcloud.objectstorage.blobstore.functions;
 
-import static com.google.common.base.Throwables.propagate;
-
 import java.net.URI;
-import java.net.URISyntaxException;
 
 import javax.inject.Inject;
 import javax.inject.Provider;

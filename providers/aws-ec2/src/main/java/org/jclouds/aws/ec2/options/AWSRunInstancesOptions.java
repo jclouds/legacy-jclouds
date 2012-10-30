@@ -24,7 +24,6 @@ import java.util.Set;
 
 import org.jclouds.aws.ec2.domain.LaunchSpecification;
 import org.jclouds.ec2.domain.BlockDeviceMapping;
-import org.jclouds.ec2.domain.InstanceType;
 import org.jclouds.ec2.options.RunInstancesOptions;
 
 import com.google.common.collect.ImmutableSet;

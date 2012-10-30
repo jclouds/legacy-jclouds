@@ -22,8 +22,6 @@ import static com.google.common.base.Objects.equal;
 
 import java.util.Set;
 
-import javax.lang.model.type.ReferenceType;
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;

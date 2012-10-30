@@ -19,8 +19,6 @@
 package org.jclouds.azureblob;
 
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.azure.storage.domain.BoundedSet;
@@ -31,7 +29,6 @@ import org.jclouds.azureblob.domain.ListBlobsResponse;
 import org.jclouds.azureblob.domain.PublicAccess;
 import org.jclouds.azureblob.options.CreateContainerOptions;
 import org.jclouds.azureblob.options.ListBlobsOptions;
-import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.options.GetOptions;
 

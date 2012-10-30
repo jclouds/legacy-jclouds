@@ -31,7 +31,6 @@ import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.IOExceptionRetryHandler;
-import org.jclouds.http.TransformingHttpCommand;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Throwables;

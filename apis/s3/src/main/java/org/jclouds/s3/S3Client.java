@@ -19,8 +19,6 @@
 package org.jclouds.s3;
 
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;

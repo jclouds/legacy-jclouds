@@ -21,7 +21,6 @@ package org.jclouds.vcloud.director.v1_5.predicates;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Set;
 
 import javax.annotation.Resource;

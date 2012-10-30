@@ -25,7 +25,6 @@ import java.util.Set;
 import org.jclouds.http.options.BaseHttpRequestOptions;
 import org.jclouds.util.Predicates2;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Iterables;

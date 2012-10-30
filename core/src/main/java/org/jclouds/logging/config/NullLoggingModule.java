@@ -19,7 +19,6 @@
 package org.jclouds.logging.config;
 
 import org.jclouds.logging.Logger;
-import org.jclouds.logging.NullLogger;
 
 /**
  * Configures logging of type {@link NullLogger}

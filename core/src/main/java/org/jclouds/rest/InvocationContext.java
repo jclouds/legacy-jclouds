@@ -18,8 +18,6 @@
  */
 package org.jclouds.rest;
 
-import javax.ws.rs.PathParam;
-
 import org.jclouds.http.HttpRequest;
 
 /**

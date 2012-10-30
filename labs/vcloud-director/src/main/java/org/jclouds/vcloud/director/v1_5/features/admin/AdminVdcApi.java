@@ -27,7 +27,6 @@ import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.vcloud.director.v1_5.domain.AdminVdc;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.features.MetadataApi;
-import org.jclouds.vcloud.director.v1_5.features.MetadataApi.Writeable;
 import org.jclouds.vcloud.director.v1_5.features.VdcApi;
 import org.jclouds.vcloud.director.v1_5.functions.href.VdcURNToAdminHref;
 

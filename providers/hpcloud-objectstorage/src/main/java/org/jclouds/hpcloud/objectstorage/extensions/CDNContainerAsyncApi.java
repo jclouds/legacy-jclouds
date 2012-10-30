@@ -31,7 +31,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.blobstore.functions.ReturnNullOnContainerNotFound;
-import org.jclouds.hpcloud.objectstorage.HPCloudObjectStorageApi;
 import org.jclouds.hpcloud.objectstorage.domain.CDNContainer;
 import org.jclouds.hpcloud.objectstorage.functions.ParseCDNContainerFromHeaders;
 import org.jclouds.hpcloud.objectstorage.functions.ParseCDNUriFromHeaders;

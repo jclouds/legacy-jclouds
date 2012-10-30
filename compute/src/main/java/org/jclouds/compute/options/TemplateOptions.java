@@ -26,9 +26,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 
-import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.io.Payload;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.Statements;
 

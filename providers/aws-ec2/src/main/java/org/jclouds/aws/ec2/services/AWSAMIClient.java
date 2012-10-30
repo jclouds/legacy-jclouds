@@ -22,7 +22,6 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.ec2.options.DescribeImagesOptions;
 import org.jclouds.ec2.services.AMIClient;
 import org.jclouds.javax.annotation.Nullable;
 

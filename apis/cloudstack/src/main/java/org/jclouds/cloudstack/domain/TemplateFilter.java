@@ -18,8 +18,6 @@
  */
 package org.jclouds.cloudstack.domain;
 
-import org.jclouds.cloudstack.features.TemplateClient;
-
 import com.google.common.base.CaseFormat;
 
 /**

@@ -20,11 +20,9 @@ package org.jclouds.virtualbox.config;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.Future;
 
 import javax.inject.Singleton;
 
-import org.jclouds.compute.callables.RunScriptOnNode;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.domain.NodeMetadataBuilder;

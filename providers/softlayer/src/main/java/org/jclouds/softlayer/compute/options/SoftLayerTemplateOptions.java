@@ -23,9 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Map;
 
-import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.softlayer.features.VirtualGuestClient;
 
 import com.google.common.net.InternetDomainName;
 

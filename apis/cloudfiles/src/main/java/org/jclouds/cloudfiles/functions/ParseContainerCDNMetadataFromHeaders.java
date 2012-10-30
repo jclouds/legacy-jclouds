@@ -26,7 +26,6 @@ import org.jclouds.cloudfiles.domain.ContainerCDNMetadata;
 import org.jclouds.cloudfiles.reference.CloudFilesHeaders;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.openstack.swift.domain.AccountMetadata;
 import org.jclouds.rest.InvocationContext;
 
 import com.google.common.base.Function;

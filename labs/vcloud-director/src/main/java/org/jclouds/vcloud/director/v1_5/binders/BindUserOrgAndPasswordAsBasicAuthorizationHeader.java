@@ -30,7 +30,6 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.MapBinder;
 
 import com.google.common.base.Charsets;
-import com.google.common.base.Throwables;
 
 /**
  * Uses Basic Authentication to sign the request.

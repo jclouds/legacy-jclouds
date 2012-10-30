@@ -26,7 +26,6 @@ import java.lang.annotation.Target;
 import java.net.URI;
 
 import javax.inject.Singleton;
-import javax.ws.rs.PathParam;
 
 import com.google.common.base.Function;
 

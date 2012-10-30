@@ -28,7 +28,6 @@ import org.jclouds.openstack.swift.CommonSwiftClient;
 import org.jclouds.rest.annotations.Delegate;
 
 import com.google.common.base.Optional;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Provides;
 
 /**

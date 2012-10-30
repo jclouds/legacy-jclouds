@@ -28,7 +28,6 @@ import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Qualifier;
 import javax.inject.Singleton;
-import javax.ws.rs.Path;
 
 import org.jclouds.Constants;
 import org.jclouds.concurrent.ExceptionParsingListenableFuture;

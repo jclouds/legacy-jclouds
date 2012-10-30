@@ -32,7 +32,6 @@ import org.jclouds.xml.XMLParser;
 import com.abiquo.model.rest.RESTLink;
 import com.abiquo.model.transport.LinksDto;
 import com.abiquo.server.core.cloud.VirtualDatacenterDto;
-import com.abiquo.server.core.infrastructure.storage.VolumeManagementDto;
 
 /**
  * Bind multiple {@link VolumeManagementDto} objects to the payload of the

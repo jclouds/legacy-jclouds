@@ -2,7 +2,6 @@ package org.jclouds.smartos;
 
 import java.net.URI;
 
-import org.jclouds.apis.ApiMetadata;
 import org.jclouds.apis.internal.BaseApiMetadata;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.smartos.compute.config.SmartOSComputeServiceContextModule;

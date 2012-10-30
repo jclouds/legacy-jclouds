@@ -20,7 +20,6 @@ package org.jclouds.filesystem;
 
 import java.net.URI;
 
-import org.jclouds.apis.ApiMetadata;
 import org.jclouds.apis.internal.BaseApiMetadata;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.filesystem.config.FilesystemBlobStoreContextModule;

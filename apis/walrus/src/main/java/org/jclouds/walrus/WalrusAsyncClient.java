@@ -34,7 +34,6 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.s3.Bucket;
 import org.jclouds.s3.S3AsyncClient;
-import org.jclouds.s3.S3Client;
 import org.jclouds.s3.binders.BindAsHostPrefixIfConfigured;
 import org.jclouds.s3.filters.RequestAuthorizeSignature;
 import org.jclouds.s3.predicates.validators.BucketNameValidator;

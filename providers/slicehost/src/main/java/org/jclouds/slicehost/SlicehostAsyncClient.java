@@ -19,7 +19,6 @@
 package org.jclouds.slicehost;
 
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;

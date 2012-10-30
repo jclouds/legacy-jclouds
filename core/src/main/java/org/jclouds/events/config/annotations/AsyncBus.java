@@ -29,11 +29,6 @@ import java.lang.annotation.Target;
 
 import javax.inject.Qualifier;
 
-import org.jclouds.events.config.EventBusModule;
-
-import com.google.common.eventbus.AsyncEventBus;
-import com.google.common.eventbus.EventBus;
-
 /**
  * Used to configure {@link EventBus} injection, providing a flexible way to inject the
  * {@link AsyncEventBus}.

@@ -18,7 +18,6 @@
  */
 package org.jclouds.sqs.features;
 
-import java.net.URI;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 

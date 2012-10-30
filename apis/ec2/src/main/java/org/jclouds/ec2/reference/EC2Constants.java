@@ -18,8 +18,6 @@
  */
 package org.jclouds.ec2.reference;
 
-import org.jclouds.compute.ComputeService;
-
 /**
  * Configuration properties and constants used in EC2 connections.
  * 
