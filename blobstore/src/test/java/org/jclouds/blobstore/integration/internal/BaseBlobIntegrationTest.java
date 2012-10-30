@@ -42,6 +42,7 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.GZIPInputStream;
 
@@ -119,7 +120,7 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
     * http://groups.google.com/group/jclouds/browse_thread/thread/4a7c8d58530b287f
     */
    @Test(groups = { "integration", "live" })
-   public void testPutFileParallel() throws InterruptedException, IOException {
+   public void testPutFileParallel() throws InterruptedException, IOException, TimeoutException {
 
       File payloadFile = File.createTempFile("testPutFileParallel", "png");
       Files.copy(InputSuppliers.of(getClass().getResource("/testimg.png").openStream()), payloadFile);
@@ -166,7 +167,7 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
    }
 
    @Test(groups = { "integration", "live" })
-   public void testBigFileGets() throws InterruptedException, IOException {
+   public void testBigFileGets() throws InterruptedException, IOException, TimeoutException {
       final String expectedContentDisposition = "attachment; filename=constit.txt";
       final String container = getContainerName();
       try {

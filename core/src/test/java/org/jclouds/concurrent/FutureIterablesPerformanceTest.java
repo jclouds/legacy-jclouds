@@ -30,6 +30,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeoutException;
 
 import org.jclouds.logging.Logger;
 import org.testng.annotations.Test;
@@ -61,8 +62,8 @@ public class FutureIterablesPerformanceTest {
    }
 
    @Test(enabled = false)
-   public void testAwaitCompletionUsingSameThreadExecutorDoesntSerializeFutures() throws InterruptedException,
-            ExecutionException {
+   public void testAwaitCompletionUsingSameThreadExecutorDoesntSerializeFutures()
+            throws InterruptedException, ExecutionException, TimeoutException {
       long expectedMax = IO_DURATION;
       long expectedMin = IO_DURATION;
       long expectedOverhead = COUNT + FUDGE;
