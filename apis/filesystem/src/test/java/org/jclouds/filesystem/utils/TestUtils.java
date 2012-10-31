@@ -28,10 +28,11 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import org.jclouds.filesystem.util.Utils;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
-
-import org.apache.commons.io.FileUtils;
+import com.google.common.io.Files;
 
 /**
  * Utility class for test
@@ -98,7 +99,10 @@ public class TestUtils {
      * @throws IOException
      */
     public static void createContainerAsDirectory(String containerName) throws IOException {
-        FileUtils.forceMkdir(new File(TARGET_BASE_DIR + containerName));
+        File file = new File(TARGET_BASE_DIR, containerName);
+        if (!file.mkdirs()) {
+            throw new IOException("Could not mkdir: " + file);
+        };
     }
 
     /**
@@ -167,8 +171,8 @@ public class TestUtils {
         File parentDirectory = new File(directoryName);
         File[] children = parentDirectory.listFiles();
         if (null != children) {
-            for(File child:children) {
-                FileUtils.forceDelete(child);
+            for (File child : children) {
+                Utils.deleteRecursively(child);
             }
         }
     }
@@ -186,7 +190,9 @@ public class TestUtils {
             filePath = containerName  + blobKey;
         else
             filePath = containerName + File.separator + blobKey;
-        FileUtils.copyFile(source, new File(TARGET_BASE_DIR + filePath));
+        File file = new File(TARGET_BASE_DIR + filePath);
+        Files.createParentDirs(file);
+        Files.copy(source, file);
     }
 
 

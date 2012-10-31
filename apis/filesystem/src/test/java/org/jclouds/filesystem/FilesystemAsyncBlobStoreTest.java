@@ -36,7 +36,6 @@ import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.commons.io.FileUtils;
 import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.blobstore.BlobStore;
@@ -52,6 +51,7 @@ import org.jclouds.blobstore.options.GetOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.filesystem.reference.FilesystemConstants;
+import org.jclouds.filesystem.util.Utils;
 import org.jclouds.filesystem.utils.TestUtils;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.io.InputSuppliers;
@@ -106,7 +106,7 @@ public class FilesystemAsyncBlobStoreTest {
     @AfterMethod
     protected void tearDown() throws IOException {
         context.close();
-        FileUtils.forceDelete(new File(TestUtils.TARGET_BASE_DIR));
+        Utils.deleteRecursively(new File(TestUtils.TARGET_BASE_DIR));
     }
 
     /**
