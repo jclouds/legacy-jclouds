@@ -59,6 +59,15 @@ public interface PricingService {
     */
    Currency findCurrency(final Predicate<Currency> filter);
 
+   /**
+    * Get the currency with the given id.
+    * 
+    * @param currencyId
+    *           The id of the currency to get.
+    * @return The currency with the gicen id.
+    */
+   Currency getCurrency(final Integer currencyId);
+
    /*********************** CostCode ***********************/
 
    /**
@@ -77,37 +86,55 @@ public interface PricingService {
     */
    CostCode findCostCode(final Predicate<CostCode> filter);
 
+   /**
+    * Get a cost code given its id.
+    * 
+    * @param costCodeId
+    *           The id of the cost code.
+    * @return The cost code.
+    */
+   CostCode getCostCode(Integer costCodeId);
+
    /*********************** PricingTemplate ***********************/
 
    /**
     * Get the list of pricingtemplates.
     */
-   public Iterable<PricingTemplate> listPricingTemplates();
+   Iterable<PricingTemplate> listPricingTemplates();
 
    /**
     * Get the list of pricingtemplates matching the given filter.
     */
-   public Iterable<PricingTemplate> listPricingTemplates(final Predicate<PricingTemplate> filter);
+   Iterable<PricingTemplate> listPricingTemplates(final Predicate<PricingTemplate> filter);
 
    /**
     * Get the first pricingtemplates that matches the given filter or
     * <code>null</code> if none is found.
     */
-   public PricingTemplate findPricingTemplate(final Predicate<PricingTemplate> filter);
+   PricingTemplate findPricingTemplate(final Predicate<PricingTemplate> filter);
+
+   /**
+    * Get a pricing template given its id.
+    * 
+    * @param pricingTemplateId
+    *           The id of the pricing template.
+    * @return The pricing template.
+    */
+   PricingTemplate getPricingTemplate(Integer pricingTemplateId);
 
    /*********************** CostCodeCurrency ***********************/
 
    /**
     * Get a cost code currency
     */
-   public Iterable<CostCodeCurrency> getCostCodeCurrencies(Integer costcodeid, Integer currencyid);
+   Iterable<CostCodeCurrency> getCostCodeCurrencies(Integer costcodeid, Integer currencyid);
 
    /*********************** PricingCostCode ***********************/
 
    /**
     * Get pricing cost codes
     */
-   public Collection<PricingCostCode> getPricingCostCodes(Integer pricingTemplateId);
+   Collection<PricingCostCode> getPricingCostCodes(Integer pricingTemplateId);
 
    /**
     * Get a pricing cost code

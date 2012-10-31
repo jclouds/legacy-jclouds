@@ -19,8 +19,6 @@
 
 package org.jclouds.abiquo.features.services;
 
-import java.util.List;
-
 import org.jclouds.abiquo.domain.config.Category;
 import org.jclouds.abiquo.domain.config.License;
 import org.jclouds.abiquo.domain.config.Privilege;
@@ -66,11 +64,6 @@ public interface AdministrationService {
     * Get the datacenter with the given id.
     */
    Datacenter getDatacenter(final Integer datacenterId);
-
-   /**
-    * Get the list of datacenters with the given ids.
-    */
-   Iterable<Datacenter> getDatacenters(final List<Integer> datacenterIds);
 
    /*********************** Machine ***********************/
 
@@ -160,6 +153,15 @@ public interface AdministrationService {
     */
    Privilege findPrivilege(final Predicate<Privilege> filter);
 
+   /**
+    * Get a privilege given its id.
+    * 
+    * @param privilegeId
+    *           The id of the privilege.
+    * @return The privilege.
+    */
+   Privilege getPrivilege(Integer privilegeId);
+
    /*********************** User ***********************/
 
    /**
@@ -245,4 +247,13 @@ public interface AdministrationService {
     * <code>null</code> if none is found.
     */
    Category findCategory(final Predicate<Category> filter);
+
+   /**
+    * Get the category identified by the given id.
+    * 
+    * @param categoryId
+    *           The id of the category.
+    * @return The requested category.
+    */
+   Category getCategory(Integer categoryId);
 }

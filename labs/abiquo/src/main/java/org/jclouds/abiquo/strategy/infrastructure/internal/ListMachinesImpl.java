@@ -32,16 +32,16 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
-import org.jclouds.abiquo.AbiquoAsyncApi;
 import org.jclouds.abiquo.AbiquoApi;
+import org.jclouds.abiquo.AbiquoAsyncApi;
 import org.jclouds.abiquo.domain.DomainWrapper;
 import org.jclouds.abiquo.domain.infrastructure.Datacenter;
 import org.jclouds.abiquo.domain.infrastructure.Machine;
-import org.jclouds.abiquo.strategy.infrastructure.ListDatacenters;
 import org.jclouds.abiquo.strategy.infrastructure.ListMachines;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.RestContext;
 
+import com.abiquo.server.core.infrastructure.DatacentersDto;
 import com.abiquo.server.core.infrastructure.MachineDto;
 import com.abiquo.server.core.infrastructure.MachinesDto;
 import com.abiquo.server.core.infrastructure.RackDto;
@@ -59,8 +59,6 @@ import com.google.inject.Inject;
 public class ListMachinesImpl implements ListMachines {
    protected RestContext<AbiquoApi, AbiquoAsyncApi> context;
 
-   protected ListDatacenters listDatacenters;
-
    protected final ExecutorService userExecutor;
 
    @Resource
@@ -72,18 +70,17 @@ public class ListMachinesImpl implements ListMachines {
 
    @Inject
    ListMachinesImpl(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-         @Named(Constants.PROPERTY_USER_THREADS) final ExecutorService userExecutor,
-         final ListDatacenters listDatacenters) {
+         @Named(Constants.PROPERTY_USER_THREADS) final ExecutorService userExecutor) {
       super();
       this.context = checkNotNull(context, "context");
-      this.listDatacenters = checkNotNull(listDatacenters, "listDatacenters");
       this.userExecutor = checkNotNull(userExecutor, "userExecutor");
    }
 
    @Override
    public Iterable<Machine> execute() {
       // Find machines in concurrent requests
-      Iterable<Datacenter> datacenters = listDatacenters.execute();
+      DatacentersDto result = context.getApi().getInfrastructureApi().listDatacenters();
+      Iterable<Datacenter> datacenters = wrap(context, Datacenter.class, result.getCollection());
       Iterable<RackDto> racks = listConcurrentRacks(datacenters);
       Iterable<MachineDto> machines = listConcurrentMachines(racks);
 

@@ -35,6 +35,5 @@ public class BaseEventServiceTest extends BaseInjectionTest {
       BaseEventService service = (BaseEventService) injector.getInstance(EventService.class);
 
       assertNotNull(service.context);
-      assertNotNull(service.listEvents);
    }
 }

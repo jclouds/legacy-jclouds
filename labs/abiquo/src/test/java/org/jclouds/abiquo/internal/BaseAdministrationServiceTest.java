@@ -36,12 +36,7 @@ public class BaseAdministrationServiceTest extends BaseInjectionTest {
       BaseAdministrationService service = (BaseAdministrationService) injector.getInstance(AdministrationService.class);
 
       assertNotNull(service.context);
-      assertNotNull(service.listDatacenters);
       assertNotNull(service.listMachines);
-      assertNotNull(service.listEnterprises);
-      assertNotNull(service.listLicenses);
-      assertNotNull(service.listPrivileges);
-      assertNotNull(service.listRoles);
       assertNotNull(service.currentUser);
       assertNotNull(service.currentEnterprise);
    }
