@@ -19,19 +19,87 @@
 
 package org.jclouds.abiquo.strategy.enterprise;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.filter;
+import static org.jclouds.abiquo.domain.DomainWrapper.wrap;
+import static org.jclouds.concurrent.FutureIterables.transformParallel;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+
+import javax.annotation.Resource;
+import javax.inject.Named;
+
+import org.jclouds.Constants;
+import org.jclouds.abiquo.AbiquoApi;
+import org.jclouds.abiquo.AbiquoAsyncApi;
+import org.jclouds.abiquo.domain.DomainWrapper;
 import org.jclouds.abiquo.domain.cloud.VirtualMachineTemplate;
 import org.jclouds.abiquo.domain.enterprise.Enterprise;
+import org.jclouds.abiquo.domain.infrastructure.Datacenter;
 import org.jclouds.abiquo.strategy.ListEntities;
-import org.jclouds.abiquo.strategy.enterprise.internal.ListVirtualMachineTemplatesImpl;
+import org.jclouds.logging.Logger;
+import org.jclouds.rest.RestContext;
 
-import com.google.inject.ImplementedBy;
+import com.abiquo.server.core.appslibrary.VirtualMachineTemplateDto;
+import com.abiquo.server.core.appslibrary.VirtualMachineTemplatesDto;
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 /**
  * List all virtual machine templates available to an enterprise.
  * 
  * @author Ignasi Barrera
  */
-@ImplementedBy(ListVirtualMachineTemplatesImpl.class)
-public interface ListVirtualMachineTemplates extends ListEntities<VirtualMachineTemplate, Enterprise> {
+@Singleton
+public class ListVirtualMachineTemplates implements ListEntities<VirtualMachineTemplate, Enterprise> {
+   protected final RestContext<AbiquoApi, AbiquoAsyncApi> context;
 
+   protected final ExecutorService userExecutor;
+
+   @Resource
+   protected Logger logger = Logger.NULL;
+
+   @Inject(optional = true)
+   @Named(Constants.PROPERTY_REQUEST_TIMEOUT)
+   protected Long maxTime;
+
+   @Inject
+   ListVirtualMachineTemplates(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
+         @Named(Constants.PROPERTY_USER_THREADS) final ExecutorService userExecutor) {
+      super();
+      this.context = checkNotNull(context, "context");
+      this.userExecutor = checkNotNull(userExecutor, "userExecutor");
+   }
+
+   @Override
+   public Iterable<VirtualMachineTemplate> execute(final Enterprise parent) {
+      // Find virtual machine templates in concurrent requests
+      Iterable<Datacenter> dcs = parent.listAllowedDatacenters();
+      Iterable<VirtualMachineTemplateDto> templates = listConcurrentTemplates(parent, dcs);
+
+      return wrap(context, VirtualMachineTemplate.class, templates);
+   }
+
+   @Override
+   public Iterable<VirtualMachineTemplate> execute(final Enterprise parent,
+         final Predicate<VirtualMachineTemplate> selector) {
+      return filter(execute(parent), selector);
+   }
+
+   private Iterable<VirtualMachineTemplateDto> listConcurrentTemplates(final Enterprise parent,
+         final Iterable<Datacenter> dcs) {
+      Iterable<VirtualMachineTemplatesDto> templates = transformParallel(dcs,
+            new Function<Datacenter, Future<? extends VirtualMachineTemplatesDto>>() {
+               @Override
+               public Future<VirtualMachineTemplatesDto> apply(final Datacenter input) {
+                  return context.getAsyncApi().getVirtualMachineTemplateApi()
+                        .listVirtualMachineTemplates(parent.getId(), input.getId());
+               }
+            }, userExecutor, maxTime, logger, "getting virtual machine templates");
+
+      return DomainWrapper.join(templates);
+   }
 }

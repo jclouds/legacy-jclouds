@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jclouds.abiquo.strategy.cloud.internal;
+package org.jclouds.abiquo.strategy.cloud;
 
 import static com.google.common.collect.Iterables.size;
 import static org.testng.Assert.assertEquals;
@@ -28,22 +28,23 @@ import org.jclouds.abiquo.domain.cloud.VirtualDatacenter;
 import org.jclouds.abiquo.domain.cloud.options.VirtualDatacenterOptions;
 import org.jclouds.abiquo.predicates.cloud.VirtualDatacenterPredicates;
 import org.jclouds.abiquo.strategy.BaseAbiquoStrategyLiveApiTest;
+import org.jclouds.abiquo.strategy.cloud.ListVirtualDatacenters;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
- * Live tests for the {@link ListVirtualDatacentersImpl} strategy.
+ * Live tests for the {@link ListVirtualDatacenters} strategy.
  * 
  * @author Ignasi Barrera
  */
-@Test(groups = "api", testName = "ListVirtualDatacentersImplLiveApiTest")
-public class ListVirtualDatacentersImplLiveApiTest extends BaseAbiquoStrategyLiveApiTest {
-   private ListVirtualDatacentersImpl strategy;
+@Test(groups = "api", testName = "ListVirtualDatacentersLiveApiTest")
+public class ListVirtualDatacentersLiveApiTest extends BaseAbiquoStrategyLiveApiTest {
+   private ListVirtualDatacenters strategy;
 
    @Override
    @BeforeClass(groups = "api")
    protected void setupStrategy() {
-      this.strategy = env.context.getUtils().getInjector().getInstance(ListVirtualDatacentersImpl.class);
+      this.strategy = env.context.getUtils().getInjector().getInstance(ListVirtualDatacenters.class);
    }
 
    public void testExecute() {

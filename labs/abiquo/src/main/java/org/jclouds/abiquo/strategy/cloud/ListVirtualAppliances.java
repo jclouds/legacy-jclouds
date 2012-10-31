@@ -19,18 +19,86 @@
 
 package org.jclouds.abiquo.strategy.cloud;
 
-import org.jclouds.abiquo.domain.cloud.VirtualAppliance;
-import org.jclouds.abiquo.strategy.ListRootEntities;
-import org.jclouds.abiquo.strategy.cloud.internal.ListVirtualAppliancesImpl;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.filter;
+import static org.jclouds.abiquo.domain.DomainWrapper.wrap;
+import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
-import com.google.inject.ImplementedBy;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+
+import javax.annotation.Resource;
+import javax.inject.Named;
+
+import org.jclouds.Constants;
+import org.jclouds.abiquo.AbiquoApi;
+import org.jclouds.abiquo.AbiquoAsyncApi;
+import org.jclouds.abiquo.domain.DomainWrapper;
+import org.jclouds.abiquo.domain.cloud.VirtualAppliance;
+import org.jclouds.abiquo.domain.cloud.VirtualDatacenter;
+import org.jclouds.abiquo.strategy.ListRootEntities;
+import org.jclouds.logging.Logger;
+import org.jclouds.rest.RestContext;
+
+import com.abiquo.server.core.cloud.VirtualApplianceDto;
+import com.abiquo.server.core.cloud.VirtualAppliancesDto;
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 /**
  * List virtual appliances in each virtual datacenter.
  * 
  * @author Ignasi Barrera
  */
-@ImplementedBy(ListVirtualAppliancesImpl.class)
-public interface ListVirtualAppliances extends ListRootEntities<VirtualAppliance> {
+@Singleton
+public class ListVirtualAppliances implements ListRootEntities<VirtualAppliance> {
+   protected final RestContext<AbiquoApi, AbiquoAsyncApi> context;
 
+   protected final ListVirtualDatacenters listVirtualDatacenters;
+
+   protected final ExecutorService userExecutor;
+
+   @Resource
+   protected Logger logger = Logger.NULL;
+
+   @Inject(optional = true)
+   @Named(Constants.PROPERTY_REQUEST_TIMEOUT)
+   protected Long maxTime;
+
+   @Inject
+   ListVirtualAppliances(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
+         @Named(Constants.PROPERTY_USER_THREADS) final ExecutorService userExecutor,
+         final ListVirtualDatacenters listVirtualDatacenters) {
+      this.context = checkNotNull(context, "context");
+      this.listVirtualDatacenters = checkNotNull(listVirtualDatacenters, "listVirtualDatacenters");
+      this.userExecutor = checkNotNull(userExecutor, "userExecutor");
+   }
+
+   @Override
+   public Iterable<VirtualAppliance> execute() {
+      // Find virtual appliances in concurrent requests
+      Iterable<VirtualDatacenter> vdcs = listVirtualDatacenters.execute();
+      Iterable<VirtualApplianceDto> vapps = listConcurrentVirtualAppliances(vdcs);
+
+      return wrap(context, VirtualAppliance.class, vapps);
+   }
+
+   @Override
+   public Iterable<VirtualAppliance> execute(final Predicate<VirtualAppliance> selector) {
+      return filter(execute(), selector);
+   }
+
+   private Iterable<VirtualApplianceDto> listConcurrentVirtualAppliances(final Iterable<VirtualDatacenter> vdcs) {
+      Iterable<VirtualAppliancesDto> vapps = transformParallel(vdcs,
+            new Function<VirtualDatacenter, Future<? extends VirtualAppliancesDto>>() {
+               @Override
+               public Future<VirtualAppliancesDto> apply(final VirtualDatacenter input) {
+                  return context.getAsyncApi().getCloudApi().listVirtualAppliances(input.unwrap());
+               }
+            }, userExecutor, maxTime, logger, "getting virtual appliances");
+
+      return DomainWrapper.join(vapps);
+   }
 }

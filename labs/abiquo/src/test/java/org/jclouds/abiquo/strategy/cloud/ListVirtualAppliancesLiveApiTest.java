@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jclouds.abiquo.strategy.cloud.internal;
+package org.jclouds.abiquo.strategy.cloud;
 
 import static com.google.common.collect.Iterables.size;
 import static org.testng.Assert.assertEquals;
@@ -27,22 +27,23 @@ import static org.testng.Assert.assertTrue;
 import org.jclouds.abiquo.domain.cloud.VirtualAppliance;
 import org.jclouds.abiquo.predicates.cloud.VirtualAppliancePredicates;
 import org.jclouds.abiquo.strategy.BaseAbiquoStrategyLiveApiTest;
+import org.jclouds.abiquo.strategy.cloud.ListVirtualAppliances;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
- * Live tests for the {@link ListVirtualAppliancesImpl} strategy.
+ * Live tests for the {@link ListVirtualAppliances} strategy.
  * 
  * @author Ignasi Barrera
  */
-@Test(groups = "api", testName = "ListVirtualAppliancesImplLiveApiTest")
-public class ListVirtualAppliancesImplLiveApiTest extends BaseAbiquoStrategyLiveApiTest {
-   private ListVirtualAppliancesImpl strategy;
+@Test(groups = "api", testName = "ListVirtualAppliancesLiveApiTest")
+public class ListVirtualAppliancesLiveApiTest extends BaseAbiquoStrategyLiveApiTest {
+   private ListVirtualAppliances strategy;
 
    @Override
    @BeforeClass(groups = "api")
    protected void setupStrategy() {
-      this.strategy = env.context.getUtils().getInjector().getInstance(ListVirtualAppliancesImpl.class);
+      this.strategy = env.context.getUtils().getInjector().getInstance(ListVirtualAppliances.class);
    }
 
    public void testExecute() {
