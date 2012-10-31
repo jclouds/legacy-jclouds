@@ -18,6 +18,11 @@
  */
 package org.jclouds.osgi;
 
+import com.google.common.base.Charsets;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
+import com.google.common.io.Closeables;
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.apis.ApiRegistry;
 import org.jclouds.providers.ProviderMetadata;
@@ -31,8 +36,8 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * A {@link BundleListener} that listens for {@link BundleEvent} and searches for {@link org.jclouds.providers.ProviderMetadata} and {@link org.jclouds.apis.ApiMetadata} in newly
@@ -41,168 +46,183 @@ import java.util.Map;
  */
 public class MetadataBundleListener implements BundleListener {
 
-  private Map<Long, ProviderMetadata> providerMetadataMap = new HashMap<Long, ProviderMetadata>();
-  private Map<Long, ApiMetadata> apiMetadataMap = new HashMap<Long, ApiMetadata>();
+   private Multimap<Long, ProviderMetadata> providerMetadataMap = ArrayListMultimap.create();
+   private Multimap<Long, ApiMetadata> apiMetadataMap = ArrayListMultimap.create();
 
 
-  public void start(BundleContext bundleContext) {
-    bundleContext.addBundleListener(this);
-    for (Bundle bundle : bundleContext.getBundles()) {
-      if (bundle.getState() == Bundle.ACTIVE) {
-        ProviderMetadata providerMetadata = getProviderMetadata(bundle);
-        ApiMetadata apiMetadata = getApiMetadata(bundle);
+   public void start(BundleContext bundleContext) {
+      bundleContext.addBundleListener(this);
+      for (Bundle bundle : bundleContext.getBundles()) {
+         if (bundle.getState() == Bundle.ACTIVE) {
+            List<ProviderMetadata> providerMetadataList = getProviderMetadata(bundle);
+            List<ApiMetadata> apiMetadataList = getApiMetadata(bundle);
 
-        if (providerMetadata != null) {
-          ProviderRegistry.registerProvider(providerMetadata);
-          providerMetadataMap.put(bundle.getBundleId(), providerMetadata);
-        }
-        if (apiMetadata != null) {
-          ApiRegistry.registerApi(apiMetadata);
-          apiMetadataMap.put(bundle.getBundleId(), apiMetadata);
-        }
+            for (ProviderMetadata providerMetadata : providerMetadataList) {
+               if (providerMetadata != null) {
+                  ProviderRegistry.registerProvider(providerMetadata);
+                  providerMetadataMap.put(bundle.getBundleId(), providerMetadata);
+               }
+            }
+
+            for (ApiMetadata apiMetadata : apiMetadataList) {
+               if (apiMetadata != null) {
+                  ApiRegistry.registerApi(apiMetadata);
+                  apiMetadataMap.put(bundle.getBundleId(), apiMetadata);
+               }
+            }
+         }
       }
-    }
-  }
+   }
 
-  public void stop(BundleContext bundleContext) {
-    providerMetadataMap.clear();
-    apiMetadataMap.clear();
-  }
+   public void stop(BundleContext bundleContext) {
+      providerMetadataMap.clear();
+      apiMetadataMap.clear();
+   }
 
-  @Override
-  public void bundleChanged(BundleEvent event) {
-    ProviderMetadata providerMetadata;
-    ApiMetadata apiMetadata;
-    switch (event.getType()) {
-      case BundleEvent.STARTED:
-        providerMetadata = getProviderMetadata(event.getBundle());
-        apiMetadata = getApiMetadata(event.getBundle());
-        if (providerMetadata != null) {
-          ProviderRegistry.registerProvider(providerMetadata);
-          providerMetadataMap.put(event.getBundle().getBundleId(), providerMetadata);
-        }
-        if (apiMetadata != null) {
-          ApiRegistry.registerApi(apiMetadata);
-          apiMetadataMap.put(event.getBundle().getBundleId(), apiMetadata);
-        }
-        break;
-      case BundleEvent.STOPPING:
-      case BundleEvent.STOPPED:
-        providerMetadata = providerMetadataMap.get(event.getBundle().getBundleId());
-        apiMetadata = apiMetadataMap.get(event.getBundle().getBundleId());
-        if (providerMetadata != null) {
-          ProviderRegistry.unregisterProvider(providerMetadata);
-        }
-        if (apiMetadata != null) {
-          ApiRegistry.unRegisterApi(apiMetadata);
-        }
-        break;
-    }
-  }
+   @Override
+   public void bundleChanged(BundleEvent event) {
+      Collection<ProviderMetadata> providerMetadataList = null;
+      Collection<ApiMetadata> apiMetadataList = null;
+      switch (event.getType()) {
+         case BundleEvent.STARTED:
+            providerMetadataList = getProviderMetadata(event.getBundle());
+            apiMetadataList = getApiMetadata(event.getBundle());
+            for (ProviderMetadata providerMetadata : providerMetadataList) {
+               if (providerMetadata != null) {
+                  ProviderRegistry.registerProvider(providerMetadata);
+                  providerMetadataMap.put(event.getBundle().getBundleId(), providerMetadata);
+               }
+            }
 
-  /**
-   * Creates an instance of {@link ProviderMetadata} from the {@link Bundle}.
-   *
-   * @param bundle
-   * @return
-   */
-  public ProviderMetadata getProviderMetadata(Bundle bundle) {
-    ProviderMetadata metadata = null;
-    String className = getProviderMetadataClassName(bundle);
-    if (className != null && !className.isEmpty()) {
+            for (ApiMetadata apiMetadata : apiMetadataList) {
+               if (apiMetadata != null) {
+                  ApiRegistry.registerApi(apiMetadata);
+                  apiMetadataMap.put(event.getBundle().getBundleId(), apiMetadata);
+               }
+            }
+            break;
+         case BundleEvent.STOPPING:
+         case BundleEvent.STOPPED:
+            providerMetadataList = providerMetadataMap.get(event.getBundle().getBundleId());
+            apiMetadataList = apiMetadataMap.get(event.getBundle().getBundleId());
+
+            if (providerMetadataList != null) {
+               for (ProviderMetadata providerMetadata : providerMetadataList) {
+                  ProviderRegistry.unregisterProvider(providerMetadata);
+               }
+            }
+            if (apiMetadataList != null) {
+               for (ApiMetadata apiMetadata : apiMetadataList) {
+                  ApiRegistry.unRegisterApi(apiMetadata);
+               }
+            }
+            break;
+      }
+   }
+
+   /**
+    * Creates an instance of {@link ProviderMetadata} from the {@link Bundle}.
+    *
+    * @param bundle
+    * @return
+    */
+   public List<ProviderMetadata> getProviderMetadata(Bundle bundle) {
+      List<ProviderMetadata> metadataList = Lists.newArrayList();
+      String classNames = getProviderMetadataClassNames(bundle);
+      if (classNames != null && !classNames.isEmpty()) {
+         for (String className : classNames.split("\n")) {
+            try {
+               Class<? extends ProviderMetadata> providerMetadataClass = bundle.loadClass(className);
+               //Classes loaded by other class loaders are not assignable.
+               if (ProviderMetadata.class.isAssignableFrom(providerMetadataClass)) {
+                  ProviderMetadata metadata = providerMetadataClass.newInstance();
+                  metadataList.add(metadata);
+               }
+            } catch (ClassNotFoundException e) {
+               // ignore
+            } catch (InstantiationException e) {
+               // ignore
+            } catch (IllegalAccessException e) {
+               // ignore
+            }
+         }
+      }
+      return metadataList;
+   }
+
+   /**
+    * Creates an instance of {@link ApiMetadata} from the {@link Bundle}.
+    *
+    * @param bundle
+    * @return
+    */
+   public List<ApiMetadata> getApiMetadata(Bundle bundle) {
+      List<ApiMetadata> metadataList = Lists.newArrayList();
+      String classNames = getApiMetadataClassNames(bundle);
+      if (classNames != null && !classNames.isEmpty()) {
+         for (String className : classNames.split("\n")) {
+            try {
+               Class<? extends ApiMetadata> apiMetadataClass = bundle.loadClass(className);
+               //Classes loaded by other class loaders are not assignable.
+               if (ApiMetadata.class.isAssignableFrom(apiMetadataClass)) {
+                  ApiMetadata metadata = apiMetadataClass.newInstance();
+                  metadataList.add(metadata);
+               }
+            } catch (ClassNotFoundException e) {
+               // ignore
+            } catch (InstantiationException e) {
+               // ignore
+            } catch (IllegalAccessException e) {
+               // ignore
+            }
+         }
+      }
+      return metadataList;
+   }
+
+
+   public String getMetadataClassNames(Bundle bundle, String pathToMetadata) {
+      URL resource = bundle.getEntry(pathToMetadata);
+      InputStream is = null;
+      InputStreamReader reader = null;
+      BufferedReader bufferedReader = null;
+      StringBuilder sb = new StringBuilder();
+
       try {
-        Class<? extends ProviderMetadata> providerMetadataClass = bundle.loadClass(className);
-        metadata = providerMetadataClass.newInstance();
-      } catch (ClassNotFoundException e) {
-        // ignore
-      } catch (InstantiationException e) {
-        // ignore
-      } catch (IllegalAccessException e) {
-        // ignore
-      }
-    }
-    return metadata;
-  }
-
-  /**
-   * Creates an instance of {@link ApiMetadata} from the {@link Bundle}.
-   *
-   * @param bundle
-   * @return
-   */
-  public ApiMetadata getApiMetadata(Bundle bundle) {
-    ApiMetadata metadata = null;
-    String className = getApiMetadataClassName(bundle);
-    if (className != null && !className.isEmpty()) {
-      try {
-        Class<? extends ApiMetadata> apiMetadataClass = bundle.loadClass(className);
-        metadata = apiMetadataClass.newInstance();
-      } catch (ClassNotFoundException e) {
-        // ignore
-      } catch (InstantiationException e) {
-        // ignore
-      } catch (IllegalAccessException e) {
-        // ignore
-      }
-    }
-    return metadata;
-  }
-
-
-  public String getMetadataClassName(Bundle bundle, String pathToMetadata) {
-    URL resource = bundle.getEntry(pathToMetadata);
-    InputStream is = null;
-    InputStreamReader reader = null;
-    BufferedReader bufferedReader = null;
-    StringBuilder sb = new StringBuilder();
-
-    try {
-      is = resource.openStream();
-      reader = new InputStreamReader(is, "UTF-8");
-      bufferedReader = new BufferedReader(reader);
-      String line;
-      while ((line = bufferedReader.readLine()) != null) {
-        sb.append(line).append("\n");
-      }
-    } catch (Throwable e) {
-    } finally {
-      try {
-        if (reader != null)
-          reader.close();
+         is = resource.openStream();
+         reader = new InputStreamReader(is, Charsets.UTF_8);
+         bufferedReader = new BufferedReader(reader);
+         String line;
+         while ((line = bufferedReader.readLine()) != null) {
+            sb.append(line).append("\n");
+         }
       } catch (Throwable e) {
+      } finally {
+         Closeables.closeQuietly(reader);
+         Closeables.closeQuietly(bufferedReader);
+         Closeables.closeQuietly(is);
       }
-      try {
-        if (bufferedReader != null)
-          bufferedReader.close();
-      } catch (Throwable e) {
-      }
-      try {
-        is.close();
-      } catch (Throwable e) {
-      }
+      return sb.toString().trim();
+   }
 
-    }
-    return sb.toString().trim();
-  }
+   /**
+    * Retrieves the {@link ProviderMetadata} class name for the bundle if it exists.
+    *
+    * @param bundle
+    * @return
+    */
+   public String getProviderMetadataClassNames(Bundle bundle) {
+      return getMetadataClassNames(bundle, "/META-INF/services/org.jclouds.providers.ProviderMetadata");
+   }
 
-  /**
-   * Retrieves the {@link ProviderMetadata} class name for the bundle if it exists.
-   *
-   * @param bundle
-   * @return
-   */
-  public String getProviderMetadataClassName(Bundle bundle) {
-    return getMetadataClassName(bundle, "/META-INF/services/org.jclouds.providers.ProviderMetadata");
-  }
-
-  /**
-   * Retrieves the {@link ProviderMetadata} class name for the bundle if it exists.
-   *
-   * @param bundle
-   * @return
-   */
-  public String getApiMetadataClassName(Bundle bundle) {
-    return getMetadataClassName(bundle, "/META-INF/services/org.jclouds.apis.ApiMetadata");
-  }
+   /**
+    * Retrieves the {@link ProviderMetadata} class name for the bundle if it exists.
+    *
+    * @param bundle
+    * @return
+    */
+   public String getApiMetadataClassNames(Bundle bundle) {
+      return getMetadataClassNames(bundle, "/META-INF/services/org.jclouds.apis.ApiMetadata");
+   }
 
 }
