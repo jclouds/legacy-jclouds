@@ -35,7 +35,11 @@
 
     <properties>
         <jclouds.osgi.export>org.jclouds.logging.slf4j*;version="${project.version}"</jclouds.osgi.export>
-        <jclouds.osgi.import>org.jclouds*;version="${project.version}",*</jclouds.osgi.import>
+        <jclouds.osgi.import>
+          org.jclouds*;version="${project.version}",
+          org.slf4j*;version="[1.5,2)",
+          *
+        </jclouds.osgi.import>
     </properties>
 
     <!-- bootstrapping: need to fetch the project POM -->
