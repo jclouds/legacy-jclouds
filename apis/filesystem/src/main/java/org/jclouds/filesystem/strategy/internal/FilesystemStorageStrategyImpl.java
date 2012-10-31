@@ -35,7 +35,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 
-import org.apache.commons.io.FileUtils;
 import org.jclouds.blobstore.LocalStorageStrategy;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobBuilder;
@@ -46,6 +45,7 @@ import org.jclouds.domain.Location;
 import org.jclouds.filesystem.predicates.validators.FilesystemBlobKeyValidator;
 import org.jclouds.filesystem.predicates.validators.FilesystemContainerNameValidator;
 import org.jclouds.filesystem.reference.FilesystemConstants;
+import org.jclouds.filesystem.util.Utils;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.logging.Logger;
@@ -131,7 +131,7 @@ public class FilesystemStorageStrategyImpl implements LocalStorageStrategy {
          File[] children = containerFile.listFiles();
          if (null != children) {
             for (File child : children)
-               FileUtils.forceDelete(child);
+               Utils.deleteRecursively(child);
          }
       } catch (IOException e) {
          logger.error(e, "An error occurred while clearing container %s", container);
@@ -283,7 +283,7 @@ public class FilesystemStorageStrategyImpl implements LocalStorageStrategy {
       // create complete dir path
       String fullDirPath = buildPathStartingFromBaseDir(container, directory);
       try {
-         FileUtils.forceDelete(new File(fullDirPath));
+         Utils.deleteRecursively(new File(fullDirPath));
       } catch (IOException ex) {
          logger.error("An error occurred removing directory %s.", fullDirPath);
          Throwables.propagate(ex);
