@@ -20,18 +20,19 @@
 package org.jclouds.abiquo.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.abiquo.domain.DomainWrapper.wrap;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.abiquo.AbiquoAsyncApi;
 import org.jclouds.abiquo.AbiquoApi;
+import org.jclouds.abiquo.AbiquoAsyncApi;
 import org.jclouds.abiquo.domain.event.Event;
 import org.jclouds.abiquo.domain.event.options.EventOptions;
 import org.jclouds.abiquo.features.services.EventService;
-import org.jclouds.abiquo.strategy.event.ListEvents;
 import org.jclouds.rest.RestContext;
 
+import com.abiquo.server.core.event.EventsDto;
 import com.google.common.annotations.VisibleForTesting;
 
 /**
@@ -45,22 +46,20 @@ public class BaseEventService implements EventService {
    @VisibleForTesting
    protected RestContext<AbiquoApi, AbiquoAsyncApi> context;
 
-   @VisibleForTesting
-   protected final ListEvents listEvents;
-
    @Inject
-   protected BaseEventService(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final ListEvents listEvents) {
+   protected BaseEventService(final RestContext<AbiquoApi, AbiquoAsyncApi> context) {
       this.context = checkNotNull(context, "context");
-      this.listEvents = checkNotNull(listEvents, "listEvents");
    }
 
    @Override
    public Iterable<Event> listEvents() {
-      return listEvents.execute();
+      EventsDto result = context.getApi().getEventApi().listEvents();
+      return wrap(context, Event.class, result.getCollection());
    }
 
    @Override
    public Iterable<Event> listEvents(final EventOptions options) {
-      return listEvents.execute(options);
+      EventsDto result = context.getApi().getEventApi().listEvents(options);
+      return wrap(context, Event.class, result.getCollection());
    }
 }

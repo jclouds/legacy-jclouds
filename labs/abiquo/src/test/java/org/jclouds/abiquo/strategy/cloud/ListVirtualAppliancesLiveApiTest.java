@@ -17,49 +17,51 @@
  * under the License.
  */
 
-package org.jclouds.abiquo.strategy.infrastructure.internal;
+package org.jclouds.abiquo.strategy.cloud;
 
 import static com.google.common.collect.Iterables.size;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
-import org.jclouds.abiquo.domain.infrastructure.Datacenter;
-import org.jclouds.abiquo.predicates.infrastructure.DatacenterPredicates;
+import org.jclouds.abiquo.domain.cloud.VirtualAppliance;
+import org.jclouds.abiquo.predicates.cloud.VirtualAppliancePredicates;
 import org.jclouds.abiquo.strategy.BaseAbiquoStrategyLiveApiTest;
+import org.jclouds.abiquo.strategy.cloud.ListVirtualAppliances;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
- * Live tests for the {@link ListDatacentersImpl} strategy.
+ * Live tests for the {@link ListVirtualAppliances} strategy.
  * 
  * @author Ignasi Barrera
  */
-@Test(groups = "api", testName = "ListDatacentersImplLiveApiTest")
-public class ListDatacentersImplLiveApiTest extends BaseAbiquoStrategyLiveApiTest {
-   private ListDatacentersImpl strategy;
+@Test(groups = "api", testName = "ListVirtualAppliancesLiveApiTest")
+public class ListVirtualAppliancesLiveApiTest extends BaseAbiquoStrategyLiveApiTest {
+   private ListVirtualAppliances strategy;
 
    @Override
    @BeforeClass(groups = "api")
    protected void setupStrategy() {
-      this.strategy = env.context.getUtils().getInjector().getInstance(ListDatacentersImpl.class);
+      this.strategy = env.context.getUtils().getInjector().getInstance(ListVirtualAppliances.class);
    }
 
    public void testExecute() {
-      Iterable<Datacenter> datacenters = strategy.execute();
-      assertNotNull(datacenters);
-      assertTrue(size(datacenters) > 0);
+      Iterable<VirtualAppliance> vapps = strategy.execute();
+      assertNotNull(vapps);
+      assertTrue(size(vapps) > 0);
    }
 
    public void testExecutePredicateWithoutResults() {
-      Iterable<Datacenter> datacenters = strategy.execute(DatacenterPredicates.name("UNEXISTING"));
-      assertNotNull(datacenters);
-      assertEquals(size(datacenters), 0);
+      Iterable<VirtualAppliance> vapps = strategy.execute(VirtualAppliancePredicates.name("UNEXISTING"));
+      assertNotNull(vapps);
+      assertEquals(size(vapps), 0);
    }
 
    public void testExecutePredicateWithResults() {
-      Iterable<Datacenter> datacenters = strategy.execute(DatacenterPredicates.name(env.datacenter.getName()));
-      assertNotNull(datacenters);
-      assertEquals(size(datacenters), 1);
+      Iterable<VirtualAppliance> vapps = strategy.execute(VirtualAppliancePredicates.name(env.virtualAppliance
+            .getName()));
+      assertNotNull(vapps);
+      assertEquals(size(vapps), 1);
    }
 }

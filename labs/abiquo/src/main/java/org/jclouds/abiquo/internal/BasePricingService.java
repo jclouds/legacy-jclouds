@@ -20,6 +20,8 @@
 package org.jclouds.abiquo.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.getFirst;
 import static org.jclouds.abiquo.domain.DomainWrapper.wrap;
 
 import java.util.Collection;
@@ -36,14 +38,17 @@ import org.jclouds.abiquo.domain.config.PricingCostCode;
 import org.jclouds.abiquo.domain.config.PricingTemplate;
 import org.jclouds.abiquo.domain.config.PricingTier;
 import org.jclouds.abiquo.features.services.PricingService;
-import org.jclouds.abiquo.strategy.config.ListCostCodes;
-import org.jclouds.abiquo.strategy.config.ListCurrencies;
-import org.jclouds.abiquo.strategy.config.ListPricingTemplates;
 import org.jclouds.rest.RestContext;
 
 import com.abiquo.server.core.pricing.CostCodeCurrenciesDto;
+import com.abiquo.server.core.pricing.CostCodeDto;
+import com.abiquo.server.core.pricing.CostCodesDto;
+import com.abiquo.server.core.pricing.CurrenciesDto;
+import com.abiquo.server.core.pricing.CurrencyDto;
 import com.abiquo.server.core.pricing.PricingCostCodeDto;
 import com.abiquo.server.core.pricing.PricingCostCodesDto;
+import com.abiquo.server.core.pricing.PricingTemplateDto;
+import com.abiquo.server.core.pricing.PricingTemplatesDto;
 import com.abiquo.server.core.pricing.PricingTierDto;
 import com.abiquo.server.core.pricing.PricingTiersDto;
 import com.google.common.annotations.VisibleForTesting;
@@ -51,7 +56,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
 /**
- * Provides high level Abiquo administration operations.
+ * Provides access to Abiquo pricing features.
  * 
  * @author Ignasi Barrera
  * @author Susana Acedo
@@ -61,52 +66,46 @@ public class BasePricingService implements PricingService {
    @VisibleForTesting
    protected RestContext<AbiquoApi, AbiquoAsyncApi> context;
 
-   @VisibleForTesting
-   protected final ListCurrencies listCurrencies;
-
-   @VisibleForTesting
-   protected final ListCostCodes listCostCodes;
-
-   @VisibleForTesting
-   protected final ListPricingTemplates listPricingTemplates;
-
    @Inject
-   protected BasePricingService(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-         final ListCurrencies listCurrencies, final ListCostCodes listCostCodes,
-         final ListPricingTemplates listPricingTemplates) {
+   protected BasePricingService(final RestContext<AbiquoApi, AbiquoAsyncApi> context) {
       this.context = checkNotNull(context, "context");
-      this.listCurrencies = checkNotNull(listCurrencies, "listCurrencies");
-      this.listCostCodes = checkNotNull(listCostCodes, "listCostCodes");
-      this.listPricingTemplates = checkNotNull(listPricingTemplates, "listPricingTemplates");
    }
 
    /*********************** Currency ********************** */
 
    @Override
    public Iterable<Currency> listCurrencies() {
-      return listCurrencies.execute();
+      CurrenciesDto result = context.getApi().getPricingApi().listCurrencies();
+      return wrap(context, Currency.class, result.getCollection());
    }
 
    @Override
    public Iterable<Currency> listCurrencies(final Predicate<Currency> filter) {
-      return listCurrencies.execute(filter);
+      return filter(listCurrencies(), filter);
    }
 
    @Override
    public Currency findCurrency(final Predicate<Currency> filter) {
-      return Iterables.getFirst(listCurrencies(filter), null);
+      return getFirst(listCurrencies(filter), null);
+   }
+
+   @Override
+   public Currency getCurrency(final Integer currencyId) {
+      CurrencyDto result = context.getApi().getPricingApi().getCurrency(currencyId);
+      return wrap(context, Currency.class, result);
    }
 
    /*********************** CostCode ********************** */
 
    @Override
    public Iterable<CostCode> listCostCodes() {
-      return listCostCodes.execute();
+      CostCodesDto result = context.getApi().getPricingApi().listCostCodes();
+      return wrap(context, CostCode.class, result.getCollection());
    }
 
    @Override
    public Iterable<CostCode> listCostCodes(final Predicate<CostCode> filter) {
-      return listCostCodes.execute(filter);
+      return filter(listCostCodes(), filter);
    }
 
    @Override
@@ -114,21 +113,34 @@ public class BasePricingService implements PricingService {
       return Iterables.getFirst(listCostCodes(filter), null);
    }
 
+   @Override
+   public CostCode getCostCode(Integer costCodeId) {
+      CostCodeDto result = context.getApi().getPricingApi().getCostCode(costCodeId);
+      return wrap(context, CostCode.class, result);
+   }
+
    /*********************** PricingTemplate ********************** */
 
    @Override
    public Iterable<PricingTemplate> listPricingTemplates() {
-      return listPricingTemplates.execute();
+      PricingTemplatesDto result = context.getApi().getPricingApi().listPricingTemplates();
+      return wrap(context, PricingTemplate.class, result.getCollection());
    }
 
    @Override
    public Iterable<PricingTemplate> listPricingTemplates(final Predicate<PricingTemplate> filter) {
-      return listPricingTemplates.execute(filter);
+      return filter(listPricingTemplates(), filter);
    }
 
    @Override
    public PricingTemplate findPricingTemplate(final Predicate<PricingTemplate> filter) {
-      return Iterables.getFirst(listPricingTemplates(filter), null);
+      return getFirst(listPricingTemplates(filter), null);
+   }
+
+   @Override
+   public PricingTemplate getPricingTemplate(Integer pricingTemplateId) {
+      PricingTemplateDto result = context.getApi().getPricingApi().getPricingTemplate(pricingTemplateId);
+      return wrap(context, PricingTemplate.class, result);
    }
 
    /*********************** CostCodeCurrency ********************** */

@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jclouds.abiquo.strategy.cloud.internal;
+package org.jclouds.abiquo.strategy.cloud;
 
 import static com.google.common.collect.Iterables.size;
 import static org.testng.Assert.assertEquals;
@@ -32,6 +32,7 @@ import org.jclouds.abiquo.domain.network.PublicIp;
 import org.jclouds.abiquo.domain.network.UnmanagedNetwork;
 import org.jclouds.abiquo.predicates.network.IpPredicates;
 import org.jclouds.abiquo.strategy.BaseAbiquoStrategyLiveApiTest;
+import org.jclouds.abiquo.strategy.cloud.ListAttachedNics;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -39,13 +40,13 @@ import org.testng.annotations.Test;
 import com.google.common.collect.Lists;
 
 /**
- * Live tests for the {@link ListAttachedNicsImpl} strategy.
+ * Live tests for the {@link ListAttachedNics} strategy.
  * 
  * @author Ignasi Barrera
  */
-@Test(groups = "api", testName = "ListAttachedNicsImplLiveApiTest")
-public class ListAttachedNicsImplLiveApiTest extends BaseAbiquoStrategyLiveApiTest {
-   private ListAttachedNicsImpl strategy;
+@Test(groups = "api", testName = "ListAttachedNicsLiveApiTest")
+public class ListAttachedNicsLiveApiTest extends BaseAbiquoStrategyLiveApiTest {
+   private ListAttachedNics strategy;
 
    private PrivateIp privateIp;
 
@@ -56,7 +57,7 @@ public class ListAttachedNicsImplLiveApiTest extends BaseAbiquoStrategyLiveApiTe
    @Override
    @BeforeClass(groups = "api")
    protected void setupStrategy() {
-      this.strategy = env.context.getUtils().getInjector().getInstance(ListAttachedNicsImpl.class);
+      this.strategy = env.context.getUtils().getInjector().getInstance(ListAttachedNics.class);
 
       privateIp = env.privateNetwork.listUnusedIps().get(0);
       assertNotNull(privateIp);
