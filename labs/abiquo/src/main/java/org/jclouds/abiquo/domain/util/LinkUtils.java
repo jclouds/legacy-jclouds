@@ -52,7 +52,7 @@ public class LinkUtils {
     * 
     * @param links
     *           The list with the links to filter.
-    * @return A lsit with all links taht point to a NIC.
+    * @return A list with all links that point to a NIC.
     */
    public static List<RESTLink> filterNicLinks(final List<RESTLink> links) {
       return Lists.newLinkedList(filter(links, LinkPredicates.isNic()));

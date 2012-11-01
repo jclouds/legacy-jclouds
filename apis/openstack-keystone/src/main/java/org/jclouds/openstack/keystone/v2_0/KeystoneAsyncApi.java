@@ -37,7 +37,7 @@ import com.google.common.base.Optional;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * Provides access to Openstack keystone resources via their REST API.
+ * Provides access to OpenStack keystone resources via their REST API.
  * <p/>
  *
  * @author Adam Lowe

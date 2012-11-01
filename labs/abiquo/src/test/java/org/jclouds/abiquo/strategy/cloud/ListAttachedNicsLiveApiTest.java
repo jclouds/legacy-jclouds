@@ -78,7 +78,7 @@ public class ListAttachedNicsLiveApiTest extends BaseAbiquoStrategyLiveApiTest {
    protected void tearDownStrategy() {
       env.virtualMachine.setNics(Lists.<Ip<?, ?>> newArrayList(privateIp));
       String address = publicIp.getIp();
-      env.virtualDatacenter.releaseePublicIp(publicIp);
+      env.virtualDatacenter.releasePublicIp(publicIp);
       assertNull(env.virtualDatacenter.findPurchasedPublicIp(IpPredicates.<PublicIp> address(address)));
    }
 

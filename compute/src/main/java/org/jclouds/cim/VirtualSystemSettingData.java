@@ -239,7 +239,7 @@ public class VirtualSystemSettingData extends ManagedElement {
    /**
     * Action to take for the virtual system when the software executed by the virtual system fails.
     * Failures in this case means a failure that is detectable by the host platform, such as a
-    * non-interuptable wait state condition.
+    * non-interruptible wait state condition.
     */
    public static enum AutomaticRecoveryAction {
 
@@ -397,7 +397,7 @@ public class VirtualSystemSettingData extends ManagedElement {
    /**
     * Action to take for the virtual system when the software executed by the virtual system fails.
     * Failures in this case means a failure that is detectable by the host platform, such as a
-    * non-interuptable wait state condition.
+    * non-interruptible wait state condition.
     */
    public AutomaticRecoveryAction getAutomaticRecoveryAction() {
       return automaticRecoveryAction;

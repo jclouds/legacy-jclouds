@@ -73,7 +73,7 @@ public class SystemProperty extends DomainWrapper<SystemPropertyDto> {
 
    @Override
    public String toString() {
-      return "SystemPorperty [getName()=" + getName() + ", getValue()=" + getValue() + "]";
+      return "SystemProperty [getName()=" + getName() + ", getValue()=" + getValue() + "]";
    }
 
 }

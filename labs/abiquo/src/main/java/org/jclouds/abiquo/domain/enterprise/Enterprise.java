@@ -117,7 +117,7 @@ public class Enterprise extends DomainWithLimitsWrapper<EnterpriseDto> {
    }
 
    /**
-    * Update emterprise information in the server with the data from this
+    * Update enterprise information in the server with the data from this
     * enterprise.
     * 
     * @see API: <a href=
@@ -498,7 +498,7 @@ public class Enterprise extends DomainWithLimitsWrapper<EnterpriseDto> {
       DatacenterLimitsDto limitForDatacenter = getLimits(datacenter);
 
       ExtendedUtils utils = (ExtendedUtils) context.getUtils();
-      // The "rel" for the unmanaged networks is the same than teh one used for
+      // The "rel" for the unmanaged networks is the same than the one used for
       // external networks
       HttpResponse response = utils.getAbiquoHttpClient().get(limitForDatacenter.searchLink("externalnetworks"));
 
@@ -680,7 +680,7 @@ public class Enterprise extends DomainWithLimitsWrapper<EnterpriseDto> {
    }
 
    /**
-    * Prohibe the given datacenter to be used by this enterprise. Deletes a
+    * Prohibit the given datacenter to be used by this enterprise. Deletes a
     * {@link Limits} object.
     * 
     * @param datacenter

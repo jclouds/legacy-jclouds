@@ -36,7 +36,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * An Openstack Nova Volume
+ * An OpenStack Nova Volume
 */
 public class Volume {
 

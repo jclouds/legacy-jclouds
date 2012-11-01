@@ -364,7 +364,7 @@ public interface IBMSmartCloudClient {
     *            code 402 if payment is required before more storage volumes may
     *            be created
     * @throws IllegalStateException
-    *            code 409 ifhere are not enough resources in the cloud to
+    *            code 409 if there are not enough resources in the cloud to
     *            fulfill this request
     *            <p/>
     *            code 412 One or more of the supplied parameters are invalid for
@@ -437,7 +437,7 @@ public interface IBMSmartCloudClient {
     *            allocated
     * 
     * @throws IllegalStateException
-    *            code 409 ifhere are not enough resources in the cloud to
+    *            code 409 if there are not enough resources in the cloud to
     *            fulfill this request
     */
    Address allocateAddressInLocation(String locationId, String offeringID);

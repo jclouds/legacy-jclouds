@@ -142,7 +142,7 @@ public class PrivateNetwork extends Network<PrivateIp> {
          dto.setMask(mask);
          dto.setPrimaryDNS(primaryDNS);
          dto.setSecondaryDNS(secondaryDNS);
-         dto.setSufixDNS(sufixDNS);
+         dto.setSufixDNS(suffixDNS);
          dto.setDefaultNetwork(defaultNetwork);
          dto.setUnmanaged(false);
          dto.setType(NetworkType.INTERNAL);
@@ -156,7 +156,7 @@ public class PrivateNetwork extends Network<PrivateIp> {
       public static Builder fromPrivateNetwork(final PrivateNetwork in) {
          return PrivateNetwork.builder(in.context).name(in.getName()).tag(in.getTag()).gateway(in.getGateway())
                .address(in.getAddress()).mask(in.getMask()).primaryDNS(in.getPrimaryDNS())
-               .secondaryDNS(in.getSecondaryDNS()).sufixDNS(in.getSufixDNS()).defaultNetwork(in.getDefaultNetwork())
+               .secondaryDNS(in.getSecondaryDNS()).suffixDNS(in.getSuffixDNS()).defaultNetwork(in.getDefaultNetwork())
                .virtualDatacenter(in.virtualDatacenter);
       }
    }

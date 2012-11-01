@@ -48,7 +48,7 @@ import com.abiquo.server.core.infrastructure.storage.VolumeManagementDto;
  */
 @EnterpriseEdition
 public class Volume extends DomainWrapper<VolumeManagementDto> {
-   /** The default state for folumes. */
+   /** The default state for volumes. */
    public static final VolumeState DEFAULT_STATE = VolumeState.DETACHED;
 
    /** The virtual datacenter where the volume belongs. */

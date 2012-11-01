@@ -140,7 +140,7 @@ public class Limits extends DomainWithLimitsWrapper<DatacenterLimitsDto> {
    @Override
    public String toString() {
       return "Limits [id=" + getId() + ", repositoryHard=" + getRepositoryHard() + ", repositorySoft="
-            + getRepositorySoft() + ", cpuCounthard=" + getCpuCountHardLimit() + ", cpuCountSoft="
+            + getRepositorySoft() + ", cpuCountHard=" + getCpuCountHardLimit() + ", cpuCountSoft="
             + getCpuCountSoftLimit() + ", hdHardInMB=" + getHdHardLimitInMb() + ", hdSoftInMB=" + getHdSoftLimitInMb()
             + ", publicIPsHard=" + getPublicIpsHard() + ", publicIpsSoft=" + getPublicIpsSoft() + ", ramHardInMB="
             + getRamHardLimitInMb() + ", ramSoftInMB=" + getRamSoftLimitInMb() + ", storageHard=" + getStorageHard()

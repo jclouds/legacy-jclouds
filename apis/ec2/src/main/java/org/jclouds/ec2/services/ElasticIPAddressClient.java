@@ -81,7 +81,7 @@ public interface ElasticIPAddressClient {
     * @see #describeAddresses
     * @see #releaseAddress
     * @see #associateAddress
-    * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/index.html?ApiReference-query-DisdisassociateAddress.html"
+    * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/index.html?ApiReference-query-DisassociateAddress.html"
     */
    void disassociateAddressInRegion(@Nullable String region, String publicIp);
 

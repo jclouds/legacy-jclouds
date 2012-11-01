@@ -51,15 +51,15 @@ public class VAppTemplatesInOrgs implements Supplier<Set<? extends Image>> {
    public Logger logger = Logger.NULL;
 
    private final Supplier<Set<? extends Location>> locations;
-   private final Function<Iterable<? extends Location>, Iterable<? extends Org>> organizatonsForLocations;
+   private final Function<Iterable<? extends Location>, Iterable<? extends Org>> organizationsForLocations;
    private final ImagesInVCloudExpressOrg imagesInOrg;
 
    @Inject
    VAppTemplatesInOrgs(@Memoized Supplier<Set<? extends Location>> locations,
-            Function<Iterable<? extends Location>, Iterable<? extends Org>> organizatonsForLocations,
+            Function<Iterable<? extends Location>, Iterable<? extends Org>> organizationsForLocations,
             ImagesInVCloudExpressOrg imagesInOrg) {
       this.locations = locations;
-      this.organizatonsForLocations = organizatonsForLocations;
+      this.organizationsForLocations = organizationsForLocations;
       this.imagesInOrg = imagesInOrg;
    }
 
@@ -70,6 +70,6 @@ public class VAppTemplatesInOrgs implements Supplier<Set<? extends Image>> {
    @Override
    public Set<? extends Image> get() {
       logger.debug(">> providing vAppTemplates");
-      return newLinkedHashSet(concat(transform(organizatonsForLocations.apply(locations.get()), imagesInOrg)));
+      return newLinkedHashSet(concat(transform(organizationsForLocations.apply(locations.get()), imagesInOrg)));
    }
 }

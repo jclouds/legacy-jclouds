@@ -24,7 +24,7 @@ import java.lang.annotation.RetentionPolicy;
 
 /**
  * Indicates that the annotated element will access Abiquo Enterprise Edition
- * functionallity. If the target Abiquo Cloud platform is a Community Edition
+ * functionality. If the target Abiquo Cloud platform is a Community Edition
  * version, the invocation of the method may have unexpected results.
  * 
  * @author Ignasi Barrera

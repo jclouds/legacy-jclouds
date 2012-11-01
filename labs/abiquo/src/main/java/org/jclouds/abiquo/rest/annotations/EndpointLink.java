@@ -25,7 +25,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Indicates the link to be used to generate the enpoind for the request.
+ * Indicates the link to be used to generate the endpoint for the request.
  * 
  * @author Ignasi Barrera
  */

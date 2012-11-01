@@ -458,16 +458,16 @@ public class VirtualMachine extends DomainWithTasksWrapper<VirtualMachineWithNod
       return setNics(ips != null && !ips.isEmpty() ? ips.get(0).getNetwork() : null, ips, null);
    }
 
-   public AsyncTask setNics(final List<? extends Ip<?, ?>> ips, final List<UnmanagedNetwork> unmanagetNetworks) {
+   public AsyncTask setNics(final List<? extends Ip<?, ?>> ips, final List<UnmanagedNetwork> unmanagedNetworks) {
       // By default the network of the first ip will be used as a gateway
       Network<?> gateway = null;
       if (ips != null && !ips.isEmpty()) {
          gateway = ips.get(0).getNetwork();
-      } else if (unmanagetNetworks != null && !unmanagetNetworks.isEmpty()) {
-         gateway = unmanagetNetworks.get(0);
+      } else if (unmanagedNetworks != null && !unmanagedNetworks.isEmpty()) {
+         gateway = unmanagedNetworks.get(0);
       }
 
-      return setNics(gateway, ips, unmanagetNetworks);
+      return setNics(gateway, ips, unmanagedNetworks);
    }
 
    public AsyncTask setNics(final Network<?> gatewayNetwork, final List<? extends Ip<?, ?>> ips) {
@@ -475,7 +475,7 @@ public class VirtualMachine extends DomainWithTasksWrapper<VirtualMachineWithNod
    }
 
    public AsyncTask setNics(final Network<?> gatewayNetwork, final List<? extends Ip<?, ?>> ips,
-         final List<UnmanagedNetwork> unmanagetNetworks) {
+         final List<UnmanagedNetwork> unmanagedNetworks) {
       // Remove the gateway configuration and the current nics
       Iterables.removeIf(target.getLinks(),
             Predicates.or(LinkPredicates.isNic(), LinkPredicates.rel(ParentLinkName.NETWORK_GATEWAY)));
@@ -492,8 +492,8 @@ public class VirtualMachine extends DomainWithTasksWrapper<VirtualMachineWithNod
       }
 
       // Add unmanaged network references, if given
-      if (unmanagetNetworks != null) {
-         for (UnmanagedNetwork unmanaged : unmanagetNetworks) {
+      if (unmanagedNetworks != null) {
+         for (UnmanagedNetwork unmanaged : unmanagedNetworks) {
             RESTLink source = checkNotNull(unmanaged.unwrap().searchLink("ips"), ValidationErrors.MISSING_REQUIRED_LINK
                   + "ips");
 

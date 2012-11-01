@@ -30,7 +30,7 @@
   <groupId>org.jclouds.api</groupId>
   <artifactId>openstack-nova-ec2</artifactId>
   <name>jclouds openstack-nova-ec2 api</name>
-  <description>EC2 interface to Openstack Nova</description>
+  <description>EC2 interface to OpenStack Nova</description>
   <packaging>bundle</packaging>
 
   <properties>
