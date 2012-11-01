@@ -39,7 +39,10 @@
     </scm>
 
     <properties>
-        <jclouds.osgi.import>*</jclouds.osgi.import>
+        <jclouds.osgi.import>
+          org.nnsoft.guice.rocoto*;version="[6.1,7)",
+          *
+        </jclouds.osgi.import>
         <jclouds.osgi.export>org.jclouds*;version=${project.version};-noimport:=true</jclouds.osgi.export>
         <jclouds.osgi.activator>org.jclouds.osgi.Activator</jclouds.osgi.activator>
     </properties>
