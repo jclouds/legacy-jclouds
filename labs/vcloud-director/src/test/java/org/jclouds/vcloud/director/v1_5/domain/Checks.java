@@ -1370,7 +1370,7 @@ public class Checks {
 
    private static void checkCimResourceAllocationSettingData(RasdItem val) {
       // TODO Could do more assertions...
-      assertNotNull(val, String.format(NOT_NULL_OBJ_FMT, "ResouorceAllocatoinSettingData"));
+      assertNotNull(val, String.format(NOT_NULL_OBJ_FMT, "ResouorceAllocationSettingData"));
    }
 
    public static void checkOrgNetwork(OrgNetwork network) {

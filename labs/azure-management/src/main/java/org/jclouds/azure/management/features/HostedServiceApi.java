@@ -124,7 +124,7 @@ public interface HostedServiceApi {
     * 
     * @param serviceName
     *           the unique DNS Prefix value in the Windows Azure Management Portal
-    * @param deploylentName
+    * @param deploymentName
     *           the unique DNS Prefix value in the Windows Azure Management Portal
     */
    String deleteDeployment(String serviceName, String deploymentName);
@@ -135,7 +135,7 @@ public interface HostedServiceApi {
     * 
     * @param serviceName
     *           the unique DNS Prefix value in the Windows Azure Management Portal
-    * @param deploylentName
+    * @param deploymentName
     *           the unique DNS Prefix value in the Windows Azure Management Portal
     */
    Deployment getDeployment(String serviceName, String deploymentName);

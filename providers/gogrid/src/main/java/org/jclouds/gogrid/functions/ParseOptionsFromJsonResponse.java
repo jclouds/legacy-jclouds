@@ -32,7 +32,7 @@ import com.google.inject.Singleton;
 /**
  * Parses the list of generic options.
  * 
- * GoGrid uses options as containers for id/name/descrOptiontion objects.
+ * GoGrid uses options as containers for id/name/description objects.
  * 
  * @author Oleksiy Yarmula
  */

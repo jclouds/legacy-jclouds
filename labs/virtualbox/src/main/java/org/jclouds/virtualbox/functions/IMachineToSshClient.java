@@ -76,10 +76,10 @@ public class IMachineToSshClient implements Function<IMachine, SshClient> {
 
 		if (networkAdapter.getAttachmentType()
 				.equals(NetworkAttachmentType.NAT)) {
-			for (String nameProtocolnumberAddressInboudportGuestTargetport : networkAdapter
+			for (String nameProtocolnumberAddressInboundPortGuestTargetport : networkAdapter
 					.getNatDriver().getRedirects()) {
 				Iterable<String> stuff = Splitter.on(',').split(
-						nameProtocolnumberAddressInboudportGuestTargetport);
+						nameProtocolnumberAddressInboundPortGuestTargetport);
 				String protocolNumber = Iterables.get(stuff, 1);
 				String hostAddress = Iterables.get(stuff, 2);
 				String inboundPort = Iterables.get(stuff, 3);

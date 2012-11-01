@@ -34,7 +34,7 @@ import org.jclouds.concurrent.Timeout;
 public interface BoxDotNetClient {
    /*
     * Note all these delegate to methods in BoxDotNetAsyncClient with a specified or inherited timeout.
-    *   The singatures should match those of BoxDotNetAsyncClient, except the returnvals should not be 
+    *   The signatures should match those of BoxDotNetAsyncClient, except the returnvals should not be
     *   wrapped in a Future 
     */
    

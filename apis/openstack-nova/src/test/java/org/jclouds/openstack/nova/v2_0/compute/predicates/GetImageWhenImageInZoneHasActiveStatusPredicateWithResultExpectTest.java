@@ -41,7 +41,7 @@ import com.google.inject.Injector;
  * @author David Alves
  * 
  */
-@Test(groups = "unit", testName = "GetImageWhenImageInZoneHasActiveStatucPredicateWithResultExpectTest")
+@Test(groups = "unit", testName = "GetImageWhenImageInZoneHasActiveStatusPredicateWithResultExpectTest")
 public class GetImageWhenImageInZoneHasActiveStatusPredicateWithResultExpectTest extends
          BaseNovaComputeServiceContextExpectTest<Injector> {
 

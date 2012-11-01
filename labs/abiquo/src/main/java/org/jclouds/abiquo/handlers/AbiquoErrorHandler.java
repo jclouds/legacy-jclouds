@@ -62,7 +62,7 @@ public class AbiquoErrorHandler implements HttpErrorHandler {
          switch (response.getStatusCode()) {
             case 401:
             case 403:
-               // Autorization exceptions do not return an errors DTO, so we
+               // Authorization exceptions do not return an errors DTO, so we
                // encapsulate a
                // generic exception
                exception = new AuthorizationException(defaultMessage, new HttpResponseException(command, response,

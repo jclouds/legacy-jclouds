@@ -104,7 +104,7 @@ public abstract class Network<T extends Ip<?, ?>> extends DomainWrapper<VLANNetw
 
       protected String secondaryDNS;
 
-      protected String sufixDNS;
+      protected String suffixDNS;
 
       protected Boolean defaultNetwork;
 
@@ -156,8 +156,8 @@ public abstract class Network<T extends Ip<?, ?>> extends DomainWrapper<VLANNetw
       }
 
       @SuppressWarnings("unchecked")
-      public T sufixDNS(final String sufixDNS) {
-         this.sufixDNS = sufixDNS;
+      public T suffixDNS(final String suffixDNS) {
+         this.suffixDNS = suffixDNS;
          return (T) this;
       }
 
@@ -234,7 +234,7 @@ public abstract class Network<T extends Ip<?, ?>> extends DomainWrapper<VLANNetw
       return target.getSecondaryDNS();
    }
 
-   public String getSufixDNS() {
+   public String getSuffixDNS() {
       return target.getSufixDNS();
    }
 
@@ -274,8 +274,8 @@ public abstract class Network<T extends Ip<?, ?>> extends DomainWrapper<VLANNetw
       target.setSecondaryDNS(secondaryDNS);
    }
 
-   public void setSufixDNS(final String sufixDNS) {
-      target.setSufixDNS(sufixDNS);
+   public void setSuffixDNS(final String suffixDNS) {
+      target.setSufixDNS(suffixDNS);
    }
 
    public void setTag(final Integer tag) {
@@ -286,7 +286,7 @@ public abstract class Network<T extends Ip<?, ?>> extends DomainWrapper<VLANNetw
    public String toString() {
       return "Network [id=" + getId() + ", address=" + getAddress() + ", defaultNetwork=" + getDefaultNetwork()
             + ", gateway=" + getGateway() + ", mask=" + getMask() + ", name=" + getName() + ", primaryDNS="
-            + getPrimaryDNS() + ", secondaryDNS=" + getSecondaryDNS() + ", suffixDNS=" + getSufixDNS() + ", tag="
+            + getPrimaryDNS() + ", secondaryDNS=" + getSecondaryDNS() + ", suffixDNS=" + getSuffixDNS() + ", tag="
             + getTag() + ", type=" + getType() + "]";
    }
 

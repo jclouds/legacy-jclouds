@@ -82,10 +82,7 @@ public interface ComputeServiceAdapter<N, H, I, L> {
          return node;
       }
 
-      /**
-       * 
-       * @return Stringifed version of the new node's id.
-       */
+      /** @return Stringified version of the new node's id. */
       public String getNodeId() {
          return nodeId;
       }

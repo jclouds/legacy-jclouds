@@ -138,7 +138,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
         IVirtualBox vBox = createNiceMock(IVirtualBox.class);
         String vmName = "jclouds-image-my-ubuntu-image";
 
-        String errorMessage = "VirtualBox error: Soem other VBox error";
+        String errorMessage = "VirtualBox error: Some other VBox error";
         VBoxException vBoxException = new VBoxException(createNiceMock(Throwable.class), errorMessage);
 
         expect(manager.getVBox()).andReturn(vBox).anyTimes();

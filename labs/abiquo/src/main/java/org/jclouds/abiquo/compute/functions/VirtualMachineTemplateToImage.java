@@ -56,9 +56,9 @@ public class VirtualMachineTemplateToImage implements Function<VirtualMachineTem
 
    @Inject
    public VirtualMachineTemplateToImage(final Function<Datacenter, Location> datacenterToLocation,
-         @Memoized final Supplier<Map<Integer, Datacenter>> reginoMap) {
+         @Memoized final Supplier<Map<Integer, Datacenter>> regionMap) {
       this.datacenterToLocation = checkNotNull(datacenterToLocation, "datacenterToLocation");
-      this.regionMap = checkNotNull(reginoMap, "reginoMap");
+      this.regionMap = checkNotNull(regionMap, "regionMap");
    }
 
    @Override

@@ -315,7 +315,7 @@ public class Event extends DomainWrapper<EventDto> {
             + ", subnet=" + getSubnet() + ", idVirtualApp=" + getIdVirtualApp() + ", virtualApp=" + getVirtualApp()
             + ", idVirtualDatacenter=" + getIdVirtualDatacenter() + ", virtualDatacenter=" + getVirtualDatacenter()
             + ", idVirtualMachine=" + getIdVirtualMachine() + ", virtualMachine=" + getVirtualMachine()
-            + ", stackstrace=" + getStacktrace() + ", performedBy=" + getPerformedBy() + ", severity=" + getSeverity()
+            + ", stacktrace=" + getStacktrace() + ", performedBy=" + getPerformedBy() + ", severity=" + getSeverity()
             + "]";
    }
 }

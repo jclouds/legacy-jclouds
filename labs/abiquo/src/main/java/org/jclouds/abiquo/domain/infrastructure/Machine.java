@@ -180,7 +180,7 @@ public class Machine extends AbstractPhysicalMachine {
    }
 
    /**
-    * Gets the list of virtual machines in the physical machine sinchronizing
+    * Gets the list of virtual machines in the physical machine synchronizing
     * virtual machines from remote hypervisor with abiquo's database.
     * 
     * @return The list of virtual machines in the physical machine.
@@ -199,7 +199,7 @@ public class Machine extends AbstractPhysicalMachine {
 
    /**
     * Gets the list of virtual machines in the physical machine matching the
-    * given filter sinchronizing virtual machines from remote hypervisor with
+    * given filter synchronizing virtual machines from remote hypervisor with
     * abiquo's database.
     * 
     * @param filter
@@ -213,7 +213,7 @@ public class Machine extends AbstractPhysicalMachine {
 
    /**
     * Gets a single virtual machine in the physical machine matching the given
-    * filter sinchronizing virtual machines from remote hypervisor with abiquo's
+    * filter synchronizing virtual machines from remote hypervisor with abiquo's
     * database.
     * 
     * @param filter

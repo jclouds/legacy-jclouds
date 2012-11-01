@@ -227,7 +227,7 @@ public class AdminAccessBuilderSpec {
       }
    }
 
-   /** Parse authorizeAdminPublickKey */
+   /** Parse authorizeAdminPublicKey */
    static class AuthorizeAdminPublicKeyParser extends BooleanParser {
       @Override
       protected void parseBoolean(AdminAccessBuilderSpec spec, boolean value) {

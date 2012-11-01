@@ -31,7 +31,7 @@ import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 
 /**
- * An Openstack Nova Volume Snapshot
+ * An OpenStack Nova Volume Snapshot
 */
 public class VolumeSnapshot {
 

@@ -146,8 +146,7 @@ public class HttpMessage extends PayloadEnclosingImpl {
       }
 
       /**
-       * 
-       * Repla
+       * Replace header.
        * 
        * @see HttpMessage#getHeaders()
        */

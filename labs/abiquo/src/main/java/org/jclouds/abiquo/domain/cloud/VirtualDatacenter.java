@@ -80,7 +80,7 @@ public class VirtualDatacenter extends DomainWithLimitsWrapper<VirtualDatacenter
    /** The enterprise where the rack belongs. */
    private Enterprise enterprise;
 
-   /** The dataceter where the virtual datacenter will be deployed. */
+   /** The datacenter where the virtual datacenter will be deployed. */
    private Datacenter datacenter;
 
    /**
@@ -282,7 +282,7 @@ public class VirtualDatacenter extends DomainWithLimitsWrapper<VirtualDatacenter
     * 
     * @param id
     *           The id of the storage tier.
-    * @return The sotrage tier.
+    * @return The storage tier.
     */
    public Tier getStorageTier(final Integer id) {
       TierDto tier = context.getApi().getCloudApi().getStorageTier(target, id);
@@ -499,7 +499,7 @@ public class VirtualDatacenter extends DomainWithLimitsWrapper<VirtualDatacenter
       context.getApi().getCloudApi().purchasePublicIp(ip.unwrap());
    }
 
-   public void releaseePublicIp(final PublicIp ip) {
+   public void releasePublicIp(final PublicIp ip) {
       checkNotNull(ip.unwrap().searchLink("release"), ValidationErrors.MISSING_REQUIRED_LINK);
       context.getApi().getCloudApi().releasePublicIp(ip.unwrap());
    }

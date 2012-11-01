@@ -90,7 +90,7 @@ public class CloudStackErrorHandlerTest {
 
    @Test
    public void test531MakesAuthorizationException() {
-      assertCodeMakes("GET", URI.create("https://cloudstack.com/foo"), 531, "", "Unauthoized",
+      assertCodeMakes("GET", URI.create("https://cloudstack.com/foo"), 531, "", "Unauthorized",
          AuthorizationException.class);
    }
 

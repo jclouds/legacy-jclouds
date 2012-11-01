@@ -163,7 +163,7 @@ public class StoragePool extends DomainWrapper<StoragePoolDto> {
     * Get the tier assigned to the pool. The storage pool needs to be persisted
     * in Abiquo first.
     * 
-    * @return The tier assinged to this storage pool.
+    * @return The tier assigned to this storage pool.
     */
    public Tier getTier() {
       RESTLink link = checkNotNull(target.searchLink(ParentLinkName.TIER), ValidationErrors.MISSING_REQUIRED_LINK + " "

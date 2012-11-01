@@ -204,7 +204,7 @@ public class UnmanagedNetwork extends Network<UnmanagedIp> {
          dto.setMask(mask);
          dto.setPrimaryDNS(primaryDNS);
          dto.setSecondaryDNS(secondaryDNS);
-         dto.setSufixDNS(sufixDNS);
+         dto.setSufixDNS(suffixDNS);
          dto.setDefaultNetwork(defaultNetwork);
          dto.setUnmanaged(true);
          dto.setType(NetworkType.UNMANAGED);
@@ -219,7 +219,7 @@ public class UnmanagedNetwork extends Network<UnmanagedIp> {
       public static Builder fromUnmanagedNetwork(final UnmanagedNetwork in) {
          return UnmanagedNetwork.builder(in.context, in.datacenter, in.enterprise).name(in.getName()).tag(in.getTag())
                .gateway(in.getGateway()).address(in.getAddress()).mask(in.getMask()).primaryDNS(in.getPrimaryDNS())
-               .secondaryDNS(in.getSecondaryDNS()).sufixDNS(in.getSufixDNS()).defaultNetwork(in.getDefaultNetwork());
+               .secondaryDNS(in.getSecondaryDNS()).suffixDNS(in.getSuffixDNS()).defaultNetwork(in.getDefaultNetwork());
       }
    }
 

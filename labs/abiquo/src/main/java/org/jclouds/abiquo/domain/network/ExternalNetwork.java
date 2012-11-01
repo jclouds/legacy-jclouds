@@ -203,7 +203,7 @@ public class ExternalNetwork extends Network<ExternalIp> {
          dto.setMask(mask);
          dto.setPrimaryDNS(primaryDNS);
          dto.setSecondaryDNS(secondaryDNS);
-         dto.setSufixDNS(sufixDNS);
+         dto.setSufixDNS(suffixDNS);
          dto.setDefaultNetwork(defaultNetwork == null ? Boolean.FALSE : defaultNetwork);
          dto.setUnmanaged(Boolean.FALSE);
          dto.setType(NetworkType.EXTERNAL);
@@ -218,7 +218,7 @@ public class ExternalNetwork extends Network<ExternalIp> {
       public static Builder fromExternalNetwork(final ExternalNetwork in) {
          return ExternalNetwork.builder(in.context, in.datacenter, in.enterprise).name(in.getName()).tag(in.getTag())
                .gateway(in.getGateway()).address(in.getAddress()).mask(in.getMask()).primaryDNS(in.getPrimaryDNS())
-               .secondaryDNS(in.getSecondaryDNS()).sufixDNS(in.getSufixDNS()).defaultNetwork(in.getDefaultNetwork());
+               .secondaryDNS(in.getSecondaryDNS()).suffixDNS(in.getSuffixDNS()).defaultNetwork(in.getDefaultNetwork());
       }
    }
 

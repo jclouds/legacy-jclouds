@@ -53,7 +53,7 @@ public interface VirtualMachineTemplateApi {
     * @param enterpriseId
     *           Id of the enterprise.
     * @param datacenterRepositoryId
-    *           Id of the datacenter repository contaning the templates.
+    *           Id of the datacenter repository containing the templates.
     * @return The list of virtual machine templates for the enterprise in the
     *         datacenter repository.
     */
@@ -66,7 +66,7 @@ public interface VirtualMachineTemplateApi {
     * @param enterpriseId
     *           Id of the enterprise.
     * @param datacenterRepositoryId
-    *           Id of the datacenter repository contaning the templates.
+    *           Id of the datacenter repository containing the templates.
     * @param options
     *           The options to query the virtual machine templates.
     * @return The filtered list of virtual machine templates for the enterprise
@@ -81,13 +81,13 @@ public interface VirtualMachineTemplateApi {
     * @param enterpriseId
     *           Id of the enterprise.
     * @param datacenterRepositoryId
-    *           Id of the datacenter repository contaning the templates.
+    *           Id of the datacenter repository containing the templates.
     * @param enterpriseId
     *           The id of the virtual machine template.
     * @return The virtual machine template or <code>null</code> if it does not
     *         exist.
     */
-   VirtualMachineTemplateDto getVirtualMachineTemplate(Integer entepriseId, Integer datacenterRepositoryId,
+   VirtualMachineTemplateDto getVirtualMachineTemplate(Integer enterpriseId, Integer datacenterRepositoryId,
          Integer virtualMachineTemplateId);
 
    /**

@@ -34,7 +34,7 @@ public enum StoreType {
     */
    S3,
    /**
-    * Openstack swift store
+    * OpenStack swift store
     */
    SWIFT,
    /**

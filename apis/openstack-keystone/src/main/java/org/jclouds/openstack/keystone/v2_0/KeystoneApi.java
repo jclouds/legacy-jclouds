@@ -32,7 +32,7 @@ import org.jclouds.rest.annotations.Delegate;
 import com.google.common.base.Optional;
 
 /**
- * Provides access to Openstack keystone resources via their REST API.
+ * Provides access to OpenStack keystone resources via their REST API.
  * <p/>
  *
  * @author Adam Lowe
