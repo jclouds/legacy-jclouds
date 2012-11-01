@@ -19,18 +19,98 @@
 
 package org.jclouds.abiquo.strategy.infrastructure;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.filter;
+import static org.jclouds.abiquo.domain.DomainWrapper.wrap;
+import static org.jclouds.concurrent.FutureIterables.transformParallel;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+
+import javax.annotation.Resource;
+import javax.inject.Named;
+
+import org.jclouds.Constants;
+import org.jclouds.abiquo.AbiquoApi;
+import org.jclouds.abiquo.AbiquoAsyncApi;
+import org.jclouds.abiquo.domain.DomainWrapper;
+import org.jclouds.abiquo.domain.infrastructure.Datacenter;
 import org.jclouds.abiquo.domain.infrastructure.Machine;
 import org.jclouds.abiquo.strategy.ListRootEntities;
-import org.jclouds.abiquo.strategy.infrastructure.internal.ListMachinesImpl;
+import org.jclouds.logging.Logger;
+import org.jclouds.rest.RestContext;
 
-import com.google.inject.ImplementedBy;
+import com.abiquo.server.core.infrastructure.DatacentersDto;
+import com.abiquo.server.core.infrastructure.MachineDto;
+import com.abiquo.server.core.infrastructure.MachinesDto;
+import com.abiquo.server.core.infrastructure.RackDto;
+import com.abiquo.server.core.infrastructure.RacksDto;
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 /**
  * List machines in each datacenter and rack.
  * 
  * @author Ignasi Barrera
  */
-@ImplementedBy(ListMachinesImpl.class)
-public interface ListMachines extends ListRootEntities<Machine> {
+@Singleton
+public class ListMachines implements ListRootEntities<Machine> {
+   protected RestContext<AbiquoApi, AbiquoAsyncApi> context;
 
+   protected final ExecutorService userExecutor;
+
+   @Resource
+   protected Logger logger = Logger.NULL;
+
+   @Inject(optional = true)
+   @Named(Constants.PROPERTY_REQUEST_TIMEOUT)
+   protected Long maxTime;
+
+   @Inject
+   ListMachines(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
+         @Named(Constants.PROPERTY_USER_THREADS) final ExecutorService userExecutor) {
+      super();
+      this.context = checkNotNull(context, "context");
+      this.userExecutor = checkNotNull(userExecutor, "userExecutor");
+   }
+
+   @Override
+   public Iterable<Machine> execute() {
+      // Find machines in concurrent requests
+      DatacentersDto result = context.getApi().getInfrastructureApi().listDatacenters();
+      Iterable<Datacenter> datacenters = wrap(context, Datacenter.class, result.getCollection());
+      Iterable<RackDto> racks = listConcurrentRacks(datacenters);
+      Iterable<MachineDto> machines = listConcurrentMachines(racks);
+
+      return wrap(context, Machine.class, machines);
+   }
+
+   @Override
+   public Iterable<Machine> execute(final Predicate<Machine> selector) {
+      return filter(execute(), selector);
+   }
+
+   private Iterable<RackDto> listConcurrentRacks(final Iterable<Datacenter> datacenters) {
+      Iterable<RacksDto> racks = transformParallel(datacenters, new Function<Datacenter, Future<? extends RacksDto>>() {
+         @Override
+         public Future<RacksDto> apply(final Datacenter input) {
+            return context.getAsyncApi().getInfrastructureApi().listRacks(input.unwrap());
+         }
+      }, userExecutor, maxTime, logger, "getting racks");
+
+      return DomainWrapper.join(racks);
+   }
+
+   private Iterable<MachineDto> listConcurrentMachines(final Iterable<RackDto> racks) {
+      Iterable<MachinesDto> machines = transformParallel(racks, new Function<RackDto, Future<? extends MachinesDto>>() {
+         @Override
+         public Future<MachinesDto> apply(final RackDto input) {
+            return context.getAsyncApi().getInfrastructureApi().listMachines(input);
+         }
+      }, userExecutor, maxTime, logger, "getting machines");
+
+      return DomainWrapper.join(machines);
+   }
 }

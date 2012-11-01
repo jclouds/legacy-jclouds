@@ -17,49 +17,50 @@
  * under the License.
  */
 
-package org.jclouds.abiquo.strategy.enterprise.internal;
+package org.jclouds.abiquo.strategy.infrastructure;
 
 import static com.google.common.collect.Iterables.size;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
-import org.jclouds.abiquo.domain.enterprise.Enterprise;
-import org.jclouds.abiquo.predicates.enterprise.EnterprisePredicates;
+import org.jclouds.abiquo.domain.infrastructure.Machine;
+import org.jclouds.abiquo.predicates.infrastructure.MachinePredicates;
 import org.jclouds.abiquo.strategy.BaseAbiquoStrategyLiveApiTest;
+import org.jclouds.abiquo.strategy.infrastructure.ListMachines;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
- * Live tests for the {@link ListEnterprisesImpl} strategy.
+ * Live tests for the {@link ListMachines} strategy.
  * 
  * @author Ignasi Barrera
  */
-@Test(groups = "api", testName = "ListEnterprisesImplLiveApiTest")
-public class ListEnterprisesImplLiveApiTest extends BaseAbiquoStrategyLiveApiTest {
-   private ListEnterprisesImpl strategy;
+@Test(groups = "api", testName = "ListMachinesLiveApiTest")
+public class ListMachinesLiveApiTest extends BaseAbiquoStrategyLiveApiTest {
+   private ListMachines strategy;
 
    @Override
    @BeforeClass(groups = "api")
    protected void setupStrategy() {
-      this.strategy = env.context.getUtils().getInjector().getInstance(ListEnterprisesImpl.class);
+      this.strategy = env.context.getUtils().getInjector().getInstance(ListMachines.class);
    }
 
    public void testExecute() {
-      Iterable<Enterprise> enterprises = strategy.execute();
-      assertNotNull(enterprises);
-      assertTrue(size(enterprises) > 0);
+      Iterable<Machine> machines = strategy.execute();
+      assertNotNull(machines);
+      assertTrue(size(machines) > 0);
    }
 
    public void testExecutePredicateWithoutResults() {
-      Iterable<Enterprise> enterprises = strategy.execute(EnterprisePredicates.name("UNEXISTING"));
-      assertNotNull(enterprises);
-      assertEquals(size(enterprises), 0);
+      Iterable<Machine> machines = strategy.execute(MachinePredicates.name("UNEXISTING"));
+      assertNotNull(machines);
+      assertEquals(size(machines), 0);
    }
 
    public void testExecutePredicateWithResults() {
-      Iterable<Enterprise> enterprises = strategy.execute(EnterprisePredicates.name(env.enterprise.getName()));
-      assertNotNull(enterprises);
-      assertEquals(size(enterprises), 1);
+      Iterable<Machine> machines = strategy.execute(MachinePredicates.name(env.machine.getName()));
+      assertNotNull(machines);
+      assertEquals(size(machines), 1);
    }
 }
