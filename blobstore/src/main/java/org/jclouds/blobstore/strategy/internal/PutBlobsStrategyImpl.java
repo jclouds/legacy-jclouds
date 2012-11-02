@@ -18,11 +18,13 @@
  */
 package org.jclouds.blobstore.strategy.internal;
 
+import static com.google.common.base.Throwables.propagate;
 import static org.jclouds.concurrent.FutureIterables.awaitCompletion;
 
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeoutException;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
@@ -71,8 +73,13 @@ public class PutBlobsStrategyImpl implements PutBlobsStrategy {
       for (Blob blob : blobs) {
          responses.put(blob, ablobstore.putBlob(containerName, blob));
       }
-      Map<Blob, Exception> exceptions = awaitCompletion(responses, userExecutor, maxTime, logger,
-               String.format("putting into containerName: %s", containerName));
+      Map<Blob, Exception> exceptions;
+      try {
+         exceptions = awaitCompletion(responses, userExecutor, maxTime, logger,
+                  String.format("putting into containerName: %s", containerName));
+      } catch (TimeoutException te) {
+         throw propagate(te);
+      }
       if (exceptions.size() > 0)
          throw new BlobRuntimeException(String.format("error putting into container %s: %s",
                   containerName, exceptions));
