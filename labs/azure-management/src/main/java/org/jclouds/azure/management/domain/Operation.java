@@ -107,7 +107,7 @@ public class Operation {
        * @see Operation#getHttpStatusCode()
        */
       public Builder httpStatusCode(Integer httpStatusCode) {
-         this.httpStatusCode = Optional.fromNullable(httpStatusCode);;
+         this.httpStatusCode = Optional.fromNullable(httpStatusCode);
          return this;
       }
 
@@ -139,7 +139,7 @@ public class Operation {
       this.id = checkNotNull(id, "id");
       this.rawStatus = checkNotNull(rawStatus, "rawStatus for %s", id);
       this.status = checkNotNull(status, "status for %s", id);
-      this.httpStatusCode = checkNotNull(httpStatusCode, "httpStatusCode for %s", id);;
+      this.httpStatusCode = checkNotNull(httpStatusCode, "httpStatusCode for %s", id);
       this.error = checkNotNull(error, "error for %s", id);
    }
 

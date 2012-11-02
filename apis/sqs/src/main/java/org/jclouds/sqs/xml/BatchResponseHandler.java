@@ -54,9 +54,9 @@ public class BatchResponseHandler<V> extends ParseSax.HandlerForGeneratedRequest
 
    protected BatchResponseHandler(String resultElement, HandlerForGeneratedRequestWithResult<Map.Entry<String, V>> resultHandler,
          BatchErrorHandler errorHandler) {
-      this.resultElement = checkNotNull(resultElement, "resultElement");;
-      this.resultHandler = checkNotNull(resultHandler, "resultHandler");;
-      this.errorHandler = checkNotNull(errorHandler, "errorHandler");;
+      this.resultElement = checkNotNull(resultElement, "resultElement");
+      this.resultHandler = checkNotNull(resultHandler, "resultHandler");
+      this.errorHandler = checkNotNull(errorHandler, "errorHandler");
    }
 
    @Override

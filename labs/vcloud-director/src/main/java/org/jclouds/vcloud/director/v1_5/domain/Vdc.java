@@ -124,7 +124,7 @@ public class Vdc extends Entity {
        * @see Vdc#getAvailableNetworks()
        */
       public B network(Reference availableNetwork) {
-         this.availableNetworks.add(checkNotNull(availableNetwork, "availableNetwork"));;
+         this.availableNetworks.add(checkNotNull(availableNetwork, "availableNetwork"));
          return self();
       }
 

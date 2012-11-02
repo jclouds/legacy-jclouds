@@ -142,7 +142,7 @@ public class OperatingSystemSection extends org.jclouds.dmtf.ovf.OperatingSystem
       this.osType = builder.osType;
       this.href = builder.href;
       this.type = builder.type;
-      this.links = builder.links != null && builder.links.isEmpty() ? null : builder.links;;
+      this.links = builder.links != null && builder.links.isEmpty() ? null : builder.links;
    }
 
    protected OperatingSystemSection() {

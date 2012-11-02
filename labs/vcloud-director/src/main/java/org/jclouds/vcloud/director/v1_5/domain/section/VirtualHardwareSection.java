@@ -132,7 +132,7 @@ public class VirtualHardwareSection extends org.jclouds.dmtf.ovf.VirtualHardware
       super(builder);
       this.type = builder.type;
       this.href = builder.href;
-      this.links = builder.links != null && builder.links.isEmpty() ? null : builder.links;;
+      this.links = builder.links != null && builder.links.isEmpty() ? null : builder.links;
    }
 
    protected VirtualHardwareSection() {
