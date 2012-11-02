@@ -91,12 +91,14 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
       if (options.isRecursive())
          message = message + " recursively";
       Map<StorageMetadata, Exception> exceptions = Maps.newHashMap();
-      PageSet<? extends StorageMetadata> listing;
       int maxErrors = 3; // TODO parameterize
       for (int numErrors = 0; numErrors < maxErrors; ) {
          // fetch partial directory listing
+         PageSet<? extends StorageMetadata> listing;
+         Future<PageSet<? extends StorageMetadata>> listFuture =
+               connection.list(containerName, options);
          try {
-            listing = connection.list(containerName, options).get();
+            listing = listFuture.get();
          } catch (InterruptedException ie) {
             Thread.currentThread().interrupt();
             break;
@@ -107,6 +109,8 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
             }
             retryHandler.imposeBackoffExponentialDelay(numErrors, message);
             continue;
+         } finally {
+            listFuture.cancel(true);
          }
 
          // recurse on subdirectories
@@ -162,7 +166,12 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
             }
             retryHandler.imposeBackoffExponentialDelay(numErrors, message);
             continue;
+         } finally {
+            for (Future<?> future : responses.values()) {
+               future.cancel(true);
+            }
          }
+
          if (!exceptions.isEmpty()) {
             ++numErrors;
             retryHandler.imposeBackoffExponentialDelay(numErrors, message);
