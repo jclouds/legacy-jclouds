@@ -72,8 +72,8 @@ public class ParseFirstJsonValueNamed<T> implements Function<HttpResponse, T> {
          AtomicReference<String> name = new AtomicReference<String>();
          JsonToken token = reader.peek();
          for (; token != JsonToken.END_DOCUMENT && nnn(this.name, reader, token, name); token = skipAndPeek(token,
-               reader))
-            ;
+               reader)) {
+         }
          if (name.get() == null) {
             logger.trace("did not object named %s in json from response %s", this.name, arg0);
             return nothing();
