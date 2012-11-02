@@ -39,7 +39,7 @@ import com.google.common.base.Objects;
 @XmlType(name = "Section_Type")
 public abstract class SectionType {
 
-   public static abstract class Builder<B extends Builder<B>> {
+   public abstract static class Builder<B extends Builder<B>> {
       private String info;
       private Boolean required;
 

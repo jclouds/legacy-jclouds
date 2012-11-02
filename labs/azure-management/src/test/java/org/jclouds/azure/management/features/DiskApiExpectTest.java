@@ -35,7 +35,7 @@ import com.google.common.collect.ImmutableSet;
 @Test(groups = "unit", testName = "DiskApiExpectTest")
 public class DiskApiExpectTest extends BaseAzureManagementApiExpectTest {
 
-	private final static String DISK_NAME = "mydisk";
+	private static final String DISK_NAME = "mydisk";
 	
    HttpRequest list = HttpRequest.builder().method("GET")
                                  .endpoint("https://management.core.windows.net/" + subscriptionId + "/services/disks")

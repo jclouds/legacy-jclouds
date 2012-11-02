@@ -10,6 +10,7 @@
             <property name="ignorePattern" value="^import\s.*;$"/>
             <property name="max" value="120"/>
         </module>
+        <module name="ModifierOrder"/>
         <module name="UnusedImports"/>
     </module>
 </module>

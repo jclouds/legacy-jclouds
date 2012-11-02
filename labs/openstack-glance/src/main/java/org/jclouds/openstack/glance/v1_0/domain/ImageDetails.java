@@ -53,7 +53,7 @@ public class ImageDetails extends Image {
       return new ConcreteBuilder().fromImageDetails(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> extends Image.Builder<T>  {
+   public abstract static class Builder<T extends Builder<T>> extends Image.Builder<T>  {
       protected long minDisk;
       protected long minRam;
       protected String location;

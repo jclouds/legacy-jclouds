@@ -57,19 +57,19 @@ public class JcloudsVersion {
     /**
      * Non-null iff {@link #alpha} is {@code true}
      */
-    public final @Nullable Integer alphaVersion;
+    @Nullable public final Integer alphaVersion;
 
     /**
      * Non-null iff {@link #beta} is {@code true}
      */
-    public final @Nullable Integer betaVersion;
+    @Nullable public final Integer betaVersion;
 
     public final boolean releaseCandidate;
 
     /**
      * Non-null iff {@link #releaseCandidate} is {@code true}
      */
-    public final @Nullable Integer releaseCandidateVersion;
+    @Nullable public final Integer releaseCandidateVersion;
     public final boolean snapshot;
     private final String version;
 

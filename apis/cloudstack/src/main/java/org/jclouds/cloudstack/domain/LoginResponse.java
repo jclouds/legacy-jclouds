@@ -40,7 +40,7 @@ public class LoginResponse {
       return new ConcreteBuilder().fromLoginResponse(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> {
+   public abstract static class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected String username;

@@ -71,7 +71,7 @@ public class VAppTemplate extends ResourceEntity {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static abstract class Builder<B extends Builder<B>> extends ResourceEntity.Builder<B> {
+   public abstract static class Builder<B extends Builder<B>> extends ResourceEntity.Builder<B> {
       private Owner owner;
       private Set<Vm> children = Sets.newLinkedHashSet();
       private Set<SectionType> sections = Sets.newLinkedHashSet();

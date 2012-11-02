@@ -75,7 +75,7 @@ import com.google.common.net.HostSpecifier;
  */
 @Test(groups = "live", singleThreaded = true, testName = "VirtualMachineClientLiveTest")
 public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
-   private final static Logger logger = Logger.getAnonymousLogger();
+   private static final Logger logger = Logger.getAnonymousLogger();
 
    private VirtualMachine vm = null;
 

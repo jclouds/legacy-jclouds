@@ -35,7 +35,7 @@ public class QuotaClass extends Quota {
       return new ConcreteBuilder().fromQuotaClass(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> extends Quota.Builder<T>  {
+   public abstract static class Builder<T extends Builder<T>> extends Quota.Builder<T>  {
    
       public QuotaClass build() {
          return new QuotaClass(id, metadataItems, injectedFileContentBytes, volumes, gigabytes, ram, floatingIps, instances, injectedFiles, cores, securityGroups, securityGroupRules, keyPairs);

@@ -40,7 +40,7 @@ import com.google.common.collect.Sets;
  */
 public abstract class BaseVirtualSystem extends SectionType {
 
-   public static abstract class Builder<B extends Builder<B>> extends SectionType.Builder<B> {
+   public abstract static class Builder<B extends Builder<B>> extends SectionType.Builder<B> {
 
       private String id;
       private String name;

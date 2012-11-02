@@ -25,7 +25,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Adrian Cole
  */
 public abstract class Device {
-   public static abstract class Builder {
+   public abstract static class Builder {
       protected String uuid;
       protected MediaType mediaType = MediaType.DISK;
 

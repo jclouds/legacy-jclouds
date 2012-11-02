@@ -62,7 +62,7 @@ public class Entity extends Resource {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static abstract class Builder<B extends Builder<B>> extends Resource.Builder<B> {
+   public abstract static class Builder<B extends Builder<B>> extends Resource.Builder<B> {
       
       private String description;
       private List<Task> tasks = Lists.newArrayList();

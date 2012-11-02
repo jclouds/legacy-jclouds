@@ -57,7 +57,7 @@ public class SecurityGroupRule extends Ingress {
       return new ConcreteBuilder().fromSecurityGroupRule(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> extends Ingress.Builder<T> {
+   public abstract static class Builder<T extends Builder<T>> extends Ingress.Builder<T> {
       protected String id;
       protected TenantIdAndName group;
       protected String parentGroupId;

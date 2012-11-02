@@ -47,7 +47,7 @@ public class Port extends Reference {
       return new ConcreteBuilder().fromPort(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> extends Reference.Builder<T>  {
+   public abstract static class Builder<T extends Builder<T>> extends Reference.Builder<T>  {
       protected Port.State state;
    
       /** 

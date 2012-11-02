@@ -61,7 +61,7 @@ public class Authorization {
       return new ConcreteBuilder().fromAuthorization(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> {
+   public abstract static class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected String rawStatus;

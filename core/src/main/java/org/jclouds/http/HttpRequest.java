@@ -56,7 +56,7 @@ public class HttpRequest extends HttpMessage {
       return new ConcreteBuilder().fromHttpRequest(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> extends HttpMessage.Builder<T>  {
+   public abstract static class Builder<T extends Builder<T>> extends HttpMessage.Builder<T>  {
       protected String method;
       protected URI endpoint;
       protected ImmutableList.Builder<Character> skips = ImmutableList.<Character>builder();

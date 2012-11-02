@@ -29,7 +29,7 @@ import org.testng.annotations.Test;
 @Test(groups = "live", singleThreaded = true)
 public class VCloudSessionRefreshLiveTest extends BaseVCloudClientLiveTest {
 
-   private final static int timeOut = 40;
+   private static final int timeOut = 40;
 
    @Test
    public void testSessionRefresh() throws Exception {

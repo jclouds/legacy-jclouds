@@ -49,7 +49,7 @@ public class Role {
       return new ConcreteBuilder().fromRole(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public abstract static class Builder<T extends Builder<T>>  {
       protected abstract T self();
       protected String id;
       protected String name;

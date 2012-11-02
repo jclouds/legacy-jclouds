@@ -116,7 +116,7 @@ public class AsyncJob<S> {
       return new ConcreteBuilder<S>().fromAsyncJob(this);
    }
 
-   public static abstract class Builder<T extends Builder<T, S>, S> {
+   public abstract static class Builder<T extends Builder<T, S>, S> {
       protected abstract T self();
 
       protected String accountId;

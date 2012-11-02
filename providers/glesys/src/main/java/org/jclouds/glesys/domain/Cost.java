@@ -41,7 +41,7 @@ public class Cost {
       return new ConcreteBuilder().fromCost(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> {
+   public abstract static class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected double amount;

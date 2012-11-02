@@ -81,7 +81,7 @@ public class AdminOrg extends Org {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static abstract class Builder<B extends Builder<B>> extends Org.Builder<B> {
+   public abstract static class Builder<B extends Builder<B>> extends Org.Builder<B> {
       
       private OrgSettings settings;
       private Set<Reference> users = Sets.newLinkedHashSet();

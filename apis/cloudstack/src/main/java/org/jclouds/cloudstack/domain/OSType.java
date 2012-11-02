@@ -42,7 +42,7 @@ public class OSType implements Comparable<OSType> {
       return new ConcreteBuilder().fromOSType(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> {
+   public abstract static class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected String id;

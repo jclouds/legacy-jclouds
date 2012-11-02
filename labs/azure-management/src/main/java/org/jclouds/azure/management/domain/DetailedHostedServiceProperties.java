@@ -42,7 +42,7 @@ public class DetailedHostedServiceProperties extends HostedServiceProperties {
       return new ConcreteBuilder().fromDetailedHostedServiceProperties(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> extends HostedServiceProperties.Builder<T> {
+   public abstract static class Builder<T extends Builder<T>> extends HostedServiceProperties.Builder<T> {
 
       protected String rawStatus;
       protected Status status;

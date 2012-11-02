@@ -36,7 +36,7 @@ public class Attachment extends Reference {
       return new ConcreteBuilder().fromAttachment(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> extends Reference.Builder<T>  {
+   public abstract static class Builder<T extends Builder<T>> extends Reference.Builder<T>  {
    
       public Attachment build() {
          return new Attachment(id);

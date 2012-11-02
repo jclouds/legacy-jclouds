@@ -41,7 +41,7 @@ public class PortDetails extends Port {
       return new ConcreteBuilder().fromPortDetails(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> extends Port.Builder<T>  {
+   public abstract static class Builder<T extends Builder<T>> extends Port.Builder<T>  {
       protected Attachment attachment;
    
       /** 

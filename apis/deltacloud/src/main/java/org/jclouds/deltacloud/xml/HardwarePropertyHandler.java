@@ -82,7 +82,7 @@ public class HardwarePropertyHandler extends ParseSax.HandlerWithResult<Hardware
    private static final Pattern LONG = Pattern.compile("^[0-9]+$");
    private static final Pattern DOUBLE = Pattern.compile("^[0-9]+\\.[0-9]+$");
 
-   public static @Nullable
+   @Nullable public static
    Number parseNumberOrNull(String in) {
       if (DOUBLE.matcher(in).matches())
          return new Double(in);

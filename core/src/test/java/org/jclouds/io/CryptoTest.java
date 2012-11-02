@@ -57,7 +57,7 @@ public class CryptoTest extends PerformanceTest {
       crypto = i.getInstance(Crypto.class);
    }
 
-   public final static Object[][] base64KeyMessageDigest = {
+   public static final Object[][] base64KeyMessageDigest = {
             { Base64.decode("CwsLCwsLCwsLCwsLCwsLCwsLCws="), "Hi There", "thcxhlUFcmTii8C2+zeMjvFGvgA=" },
             { Base64.decode("SmVmZQ=="), "what do ya want for nothing?", "7/zfauXrL6LSdBbV8YTfnCWafHk=" },
             { Base64.decode("DAwMDAwMDAwMDAwMDAwMDAwMDAw="), "Test With Truncation", "TBoDQktV4H/n8nvh1Yu5MkqaWgQ=" },
@@ -111,7 +111,7 @@ public class CryptoTest extends PerformanceTest {
       return hexMD5MessageDigest;
    }
 
-   public final static Object[][] hexMD5MessageDigest = { { "apple", "1f3870be274f6c49b3e31a0c6728957f" },
+   public static final Object[][] hexMD5MessageDigest = { { "apple", "1f3870be274f6c49b3e31a0c6728957f" },
             { "bear", "893b56e3cfe153fb770a120b83bac20c" }, { "candy", "c48ba993d35c3abe0380f91738fe2a34" },
             { "dogma", "95eb470e4faee302e9cd3063b1923dab" }, { "emma", "00a809937eddc44521da9521269e75c6" } };
 

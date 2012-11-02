@@ -29,186 +29,186 @@ public interface VCloudMediaType {
    /**
     * "application/vnd.vmware.vcloud.error+xml"
     */
-   public final static String ERROR_XML = "application/vnd.vmware.vcloud.error+xml";
+   public static final String ERROR_XML = "application/vnd.vmware.vcloud.error+xml";
 
    /**
     * "application/vnd.vmware.vcloud.error+xml"
     */
-   public final static MediaType ERROR_XML_TYPE = new MediaType("application", "vnd.vmware.vcloud.error+xml");
+   public static final MediaType ERROR_XML_TYPE = new MediaType("application", "vnd.vmware.vcloud.error+xml");
 
    /**
     * "application/vnd.vmware.vcloud.vcloud+xml"
     */
-   public final static String VCLOUD_XML = "application/vnd.vmware.vcloud.vcloud+xml";
+   public static final String VCLOUD_XML = "application/vnd.vmware.vcloud.vcloud+xml";
 
    /**
     * "application/vnd.vmware.vcloud.vcloud+xml"
     */
-   public final static MediaType VCLOUD_XML_TYPE = new MediaType("application", "vnd.vmware.vcloud.vcloud+xml");
+   public static final MediaType VCLOUD_XML_TYPE = new MediaType("application", "vnd.vmware.vcloud.vcloud+xml");
    /**
     * "application/vnd.vmware.vcloud.orgList+xml"
     */
-   public final static String ORGLIST_XML = "application/vnd.vmware.vcloud.orgList+xml";
+   public static final String ORGLIST_XML = "application/vnd.vmware.vcloud.orgList+xml";
 
    /**
     * "application/vnd.vmware.vcloud.orgList+xml"
     */
-   public final static MediaType ORGLIST_XML_TYPE = new MediaType("application", "vnd.vmware.vcloud.orgList+xml");
+   public static final MediaType ORGLIST_XML_TYPE = new MediaType("application", "vnd.vmware.vcloud.orgList+xml");
    /**
     * "application/vnd.vmware.vcloud.org+xml"
     */
-   public final static String ORG_XML = "application/vnd.vmware.vcloud.org+xml";
+   public static final String ORG_XML = "application/vnd.vmware.vcloud.org+xml";
    /**
     * "application/vnd.vmware.vcloud.org+xml"
     */
-   public final static MediaType ORG_XML_TYPE = new MediaType("application", "vnd.vmware.vcloud.org+xml");
+   public static final MediaType ORG_XML_TYPE = new MediaType("application", "vnd.vmware.vcloud.org+xml");
 
    /**
     * "application/vnd.vmware.vcloud.vdc+xml"
     */
-   public final static String VDC_XML = "application/vnd.vmware.vcloud.vdc+xml";
+   public static final String VDC_XML = "application/vnd.vmware.vcloud.vdc+xml";
    /**
     * "application/vnd.vmware.vcloud.vdc+xml"
     */
-   public final static MediaType VDC_XML_TYPE = new MediaType("application", "vnd.vmware.vcloud.vdc+xml");
+   public static final MediaType VDC_XML_TYPE = new MediaType("application", "vnd.vmware.vcloud.vdc+xml");
 
    /**
     * "application/vnd.vmware.vcloud.catalog+xml"
     */
-   public final static String CATALOG_XML = "application/vnd.vmware.vcloud.catalog+xml";
+   public static final String CATALOG_XML = "application/vnd.vmware.vcloud.catalog+xml";
    /**
     * "application/vnd.vmware.vcloud.catalog+xml"
     */
-   public final static MediaType CATALOG_XML_TYPE = new MediaType("application", "vnd.vmware.vcloud.catalog+xml");
+   public static final MediaType CATALOG_XML_TYPE = new MediaType("application", "vnd.vmware.vcloud.catalog+xml");
 
    /**
     * "application/vnd.vmware.vcloud.tasksList+xml"
     */
-   public final static String TASKSLIST_XML = "application/vnd.vmware.vcloud.tasksList+xml";
+   public static final String TASKSLIST_XML = "application/vnd.vmware.vcloud.tasksList+xml";
    /**
     * "application/vnd.vmware.vcloud.tasksList+xml"
     */
-   public final static MediaType TASKSLIST_XML_TYPE = new MediaType("application", "vnd.vmware.vcloud.tasksList+xml");
+   public static final MediaType TASKSLIST_XML_TYPE = new MediaType("application", "vnd.vmware.vcloud.tasksList+xml");
 
    /**
     * "application/vnd.vmware.vcloud.catalogItem+xml"
     */
-   public final static String CATALOGITEM_XML = "application/vnd.vmware.vcloud.catalogItem+xml";
+   public static final String CATALOGITEM_XML = "application/vnd.vmware.vcloud.catalogItem+xml";
    /**
     * "application/vnd.vmware.vcloud.catalogItem+xml"
     */
-   public final static MediaType CATALOGITEM_XML_TYPE = new MediaType("application",
+   public static final MediaType CATALOGITEM_XML_TYPE = new MediaType("application",
          "vnd.vmware.vcloud.catalogItem+xml");
    /**
     * "application/vnd.vmware.vcloud.networkConnectionSection+xml"
     */
-   public final static String NETWORKCONNECTIONSECTION_XML = "application/vnd.vmware.vcloud.networkConnectionSection+xml";
+   public static final String NETWORKCONNECTIONSECTION_XML = "application/vnd.vmware.vcloud.networkConnectionSection+xml";
    /**
     * "application/vnd.vmware.vcloud.networkConnectionSection+xml"
     */
-   public final static MediaType NETWORKCONNECTIONSECTION_XML_TYPE = new MediaType("application",
+   public static final MediaType NETWORKCONNECTIONSECTION_XML_TYPE = new MediaType("application",
          "vnd.vmware.vcloud.networkConnectionSection+xml");
    /**
     * "application/vnd.vmware.vcloud.virtualHardwareSection+xml"
     */
-   public final static String VIRTUALHARDWARESECTION_XML = "application/vnd.vmware.vcloud.virtualHardwareSection+xml";
+   public static final String VIRTUALHARDWARESECTION_XML = "application/vnd.vmware.vcloud.virtualHardwareSection+xml";
    /**
     * "application/vnd.vmware.vcloud.virtualHardwareSection+xml"
     */
-   public final static MediaType VIRTUALHARDWARESECTION_XML_TYPE = new MediaType("application",
+   public static final MediaType VIRTUALHARDWARESECTION_XML_TYPE = new MediaType("application",
          "vnd.vmware.vcloud.virtualHardwareSection+xml");
    /**
     * "application/vnd.vmware.vcloud.guestCustomizationSection+xml"
     */
-   public final static String GUESTCUSTOMIZATIONSECTION_XML = "application/vnd.vmware.vcloud.guestCustomizationSection+xml";
+   public static final String GUESTCUSTOMIZATIONSECTION_XML = "application/vnd.vmware.vcloud.guestCustomizationSection+xml";
    /**
     * "application/vnd.vmware.vcloud.guestCustomizationSection+xml"
     */
-   public final static MediaType GUESTCUSTOMIZATIONSECTION_XML_TYPE = new MediaType("application",
+   public static final MediaType GUESTCUSTOMIZATIONSECTION_XML_TYPE = new MediaType("application",
          "vnd.vmware.vcloud.guestCustomizationSection+xml");
 
    /**
     * "application/vnd.vmware.vcloud.networkSection+xml"
     */
-   public final static String NETWORKSECTION_XML = "application/vnd.vmware.vcloud.networkSection+xml";
+   public static final String NETWORKSECTION_XML = "application/vnd.vmware.vcloud.networkSection+xml";
    /**
     * "application/vnd.vmware.vcloud.networkSection+xml"
     */
-   public final static MediaType NETWORKSECTION_XML_TYPE = new MediaType("application",
+   public static final MediaType NETWORKSECTION_XML_TYPE = new MediaType("application",
          "vnd.vmware.vcloud.networkSection+xml");
 
    /**
     * "application/vnd.vmware.vcloud.task+xml"
     */
-   public final static String TASK_XML = "application/vnd.vmware.vcloud.task+xml";
+   public static final String TASK_XML = "application/vnd.vmware.vcloud.task+xml";
    /**
     * "application/vnd.vmware.vcloud.task+xml"
     */
-   public final static MediaType TASK_XML_TYPE = new MediaType("application", "vnd.vmware.vcloud.task+xml");
+   public static final MediaType TASK_XML_TYPE = new MediaType("application", "vnd.vmware.vcloud.task+xml");
 
    /**
     * "application/vnd.vmware.vcloud.undeployVAppParams+xml"
     */
-   public final static String UNDEPLOYVAPPPARAMS_XML = "application/vnd.vmware.vcloud.undeployVAppParams+xml";
+   public static final String UNDEPLOYVAPPPARAMS_XML = "application/vnd.vmware.vcloud.undeployVAppParams+xml";
    /**
     * "application/vnd.vmware.vcloud.undeployVAppParams+xml"
     */
-   public final static MediaType UNDEPLOYVAPPPARAMS_XML_TYPE = new MediaType("application",
+   public static final MediaType UNDEPLOYVAPPPARAMS_XML_TYPE = new MediaType("application",
          "vnd.vmware.vcloud.undeployVAppParams+xml");
 
    /**
     * "application/vnd.vmware.vcloud.deployVAppParams+xml"
     */
-   public final static String DEPLOYVAPPPARAMS_XML = "application/vnd.vmware.vcloud.deployVAppParams+xml";
+   public static final String DEPLOYVAPPPARAMS_XML = "application/vnd.vmware.vcloud.deployVAppParams+xml";
    /**
     * "application/vnd.vmware.vcloud.deployVAppParams+xml"
     */
-   public final static MediaType DEPLOYVAPPPARAMS_XML_TYPE = new MediaType("application",
+   public static final MediaType DEPLOYVAPPPARAMS_XML_TYPE = new MediaType("application",
          "vnd.vmware.vcloud.deployVAppParams+xml");
 
    /**
     * "application/vnd.vmware.vcloud.vApp+xml"
     */
-   public final static String VAPP_XML = "application/vnd.vmware.vcloud.vApp+xml";
+   public static final String VAPP_XML = "application/vnd.vmware.vcloud.vApp+xml";
    /**
     * "application/vnd.vmware.vcloud.vApp+xml"
     */
-   public final static MediaType VAPP_XML_TYPE = new MediaType("application", "vnd.vmware.vcloud.vApp+xml");
+   public static final MediaType VAPP_XML_TYPE = new MediaType("application", "vnd.vmware.vcloud.vApp+xml");
 
    /**
     * "application/vnd.vmware.vcloud.vm+xml"
     */
-   public final static String VM_XML = "application/vnd.vmware.vcloud.vm+xml";
+   public static final String VM_XML = "application/vnd.vmware.vcloud.vm+xml";
    /**
     * "application/vnd.vmware.vcloud.vm+xml"
     */
-   public final static MediaType VM_XML_TYPE = new MediaType("application", "vnd.vmware.vcloud.vm+xml");
+   public static final MediaType VM_XML_TYPE = new MediaType("application", "vnd.vmware.vcloud.vm+xml");
 
    /**
     * "application/vnd.vmware.vcloud.vAppTemplate+xml"
     */
-   public final static String VAPPTEMPLATE_XML = "application/vnd.vmware.vcloud.vAppTemplate+xml";
+   public static final String VAPPTEMPLATE_XML = "application/vnd.vmware.vcloud.vAppTemplate+xml";
    /**
     * "application/vnd.vmware.vcloud.vAppTemplate+xml"
     */
-   public final static MediaType VAPPTEMPLATE_XML_TYPE = new MediaType("application",
+   public static final MediaType VAPPTEMPLATE_XML_TYPE = new MediaType("application",
          "vnd.vmware.vcloud.vAppTemplate+xml");
    /**
     * "application/vnd.vmware.vcloud.network+xml"
     */
-   public final static String NETWORK_XML = "application/vnd.vmware.vcloud.network+xml";
+   public static final String NETWORK_XML = "application/vnd.vmware.vcloud.network+xml";
    /**
     * "application/vnd.vmware.vcloud.network+xml"
     */
-   public final static MediaType NETWORK_XML_TYPE = new MediaType("application", "vnd.vmware.vcloud.network+xml");
+   public static final MediaType NETWORK_XML_TYPE = new MediaType("application", "vnd.vmware.vcloud.network+xml");
 
    /**
     * "application/vnd.vmware.vcloud.rasdItem+xml"
     */
-   public final static String RASDITEM_XML = "application/vnd.vmware.vcloud.rasdItem+xml";
+   public static final String RASDITEM_XML = "application/vnd.vmware.vcloud.rasdItem+xml";
    /**
     * "application/vnd.vmware.vcloud.rasdItem+xml"
     */
-   public final static MediaType RASDITEM_XML_TYPE = new MediaType("application", "vnd.vmware.vcloud.rasdItem+xml");
+   public static final MediaType RASDITEM_XML_TYPE = new MediaType("application", "vnd.vmware.vcloud.rasdItem+xml");
 
 }

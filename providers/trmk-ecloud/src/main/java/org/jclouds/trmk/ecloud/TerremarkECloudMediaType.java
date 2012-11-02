@@ -31,92 +31,92 @@ public interface TerremarkECloudMediaType extends TerremarkVCloudMediaType {
    /**
     * "application/vnd.tmrk.ecloud.publicIp+xml"
     */
-   public final static String PUBLICIP_XML = "application/vnd.tmrk.ecloud.publicIp+xml";
+   public static final String PUBLICIP_XML = "application/vnd.tmrk.ecloud.publicIp+xml";
 
    /**
     * "application/vnd.tmrk.ecloud.publicIp+xml"
     */
-   public final static MediaType PUBLICIP_XML_TYPE = new MediaType("application", "vnd.tmrk.ecloud.publicIp+xml");
+   public static final MediaType PUBLICIP_XML_TYPE = new MediaType("application", "vnd.tmrk.ecloud.publicIp+xml");
 
    /**
     * "application/vnd.tmrk.ecloud.internetService+xml"
     */
-   public final static String INTERNETSERVICE_XML = "application/vnd.tmrk.ecloud.internetService+xml";
+   public static final String INTERNETSERVICE_XML = "application/vnd.tmrk.ecloud.internetService+xml";
 
    /**
     * "application/vnd.tmrk.ecloud.internetService+xml"
     */
-   public final static MediaType INTERNETSERVICE_XML_TYPE = new MediaType("application",
+   public static final MediaType INTERNETSERVICE_XML_TYPE = new MediaType("application",
          "vnd.tmrk.ecloud.internetService+xml");
    /**
     * "application/vnd.tmrk.ecloud.internetServicesList+xml"
     */
-   public final static String INTERNETSERVICESLIST_XML = "application/vnd.tmrk.ecloud.internetServicesList+xml";
+   public static final String INTERNETSERVICESLIST_XML = "application/vnd.tmrk.ecloud.internetServicesList+xml";
 
    /**
     * "application/vnd.tmrk.ecloud.internetServicesList+xml"
     */
-   public final static MediaType INTERNETSERVICESLIST_XML_TYPE = new MediaType("application",
+   public static final MediaType INTERNETSERVICESLIST_XML_TYPE = new MediaType("application",
          "vnd.tmrk.ecloud.internetServicesList+xml");
 
    /**
     * "application/vnd.tmrk.ecloud.keysList+xml"
     */
-   public final static String KEYSLIST_XML = "application/vnd.tmrk.ecloud.keysList+xml";
+   public static final String KEYSLIST_XML = "application/vnd.tmrk.ecloud.keysList+xml";
 
    /**
     * "application/vnd.tmrk.ecloud.keysList+xml"
     */
-   public final static MediaType KEYSLIST_XML_TYPE = new MediaType("application", "vnd.tmrk.ecloud.keysList+xml");
+   public static final MediaType KEYSLIST_XML_TYPE = new MediaType("application", "vnd.tmrk.ecloud.keysList+xml");
    /**
     * "application/vnd.tmrk.ecloud.tagsList+xml"
     */
-   public final static String TAGSLISTLIST_XML = "application/vnd.tmrk.ecloud.tagsList+xml";
+   public static final String TAGSLISTLIST_XML = "application/vnd.tmrk.ecloud.tagsList+xml";
 
    /**
     * "application/vnd.tmrk.ecloud.tagsList+xml"
     */
-   public final static MediaType TAGSLISTLIST_XML_TYPE = new MediaType("application", "vnd.tmrk.ecloud.tagsList+xml");
+   public static final MediaType TAGSLISTLIST_XML_TYPE = new MediaType("application", "vnd.tmrk.ecloud.tagsList+xml");
    /**
     * "application/vnd.tmrk.ecloud.VAppCatalogList+xml"
     */
-   public final static String VAPPCATALOGLIST_XML = "application/vnd.tmrk.ecloud.VAppCatalogList+xml";
+   public static final String VAPPCATALOGLIST_XML = "application/vnd.tmrk.ecloud.VAppCatalogList+xml";
 
    /**
     * "application/vnd.tmrk.ecloud.VAppCatalogList+xml"
     */
-   public final static MediaType VAPPCATALOGLIST_XML_TYPE = new MediaType("application",
+   public static final MediaType VAPPCATALOGLIST_XML_TYPE = new MediaType("application",
          "vnd.tmrk.ecloud.VAppCatalogList+xml");
 
    /**
     * "application/vnd.tmrk.ecloud.dataCentersList+xml"
     */
-   public final static String DATACENTERSLIST_XML = "application/vnd.tmrk.ecloud.dataCentersList+xml";
+   public static final String DATACENTERSLIST_XML = "application/vnd.tmrk.ecloud.dataCentersList+xml";
 
    /**
     * "application/vnd.tmrk.ecloud.dataCentersList+xml"
     */
-   public final static MediaType DATACENTERSLIST_XML_TYPE = new MediaType("application",
+   public static final MediaType DATACENTERSLIST_XML_TYPE = new MediaType("application",
          "vnd.tmrk.ecloud.dataCentersList+xml");
 
    /**
     * "application/vnd.tmrk.ecloud.ipAddressList+xml"
     */
-   public final static String IPADDRESS_LIST_XML = "application/vnd.tmrk.ecloud.ipAddressList+xml";
+   public static final String IPADDRESS_LIST_XML = "application/vnd.tmrk.ecloud.ipAddressList+xml";
 
    /**
     * "application/vnd.tmrk.ecloud.ipAddressList+xml"
     */
-   public final static MediaType IPADDRESSES_LIST_XML_TYPE = new MediaType("application",
+   public static final MediaType IPADDRESSES_LIST_XML_TYPE = new MediaType("application",
          "vnd.tmrk.ecloud.ipAddressList+xml");
 
    /**
     * "application/vnd.tmrk.ecloud.vApp+xml"
     */
-   public final static String VAPPEXTINFO_XML = "application/vnd.tmrk.ecloud.vApp+xml";
+   public static final String VAPPEXTINFO_XML = "application/vnd.tmrk.ecloud.vApp+xml";
 
    /**
     * "application/vnd.tmrk.ecloud.vApp+xml"
     */
-   public final static MediaType VAPPEXTINFO_XML_TYPE = new MediaType("application", "vnd.tmrk.ecloud.vApp+xml");
+   public static final MediaType VAPPEXTINFO_XML_TYPE = new MediaType("application", "vnd.tmrk.ecloud.vApp+xml");
 }

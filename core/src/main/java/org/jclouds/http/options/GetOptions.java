@@ -51,7 +51,7 @@ import com.google.common.collect.Multimap;
  * 
  */
 public class GetOptions extends BaseHttpRequestOptions {
-   private final static DateService dateService = new SimpleDateFormatDateService();
+   private static final DateService dateService = new SimpleDateFormatDateService();
    public static final GetOptions NONE = new GetOptions();
    private final List<String> ranges = new ArrayList<String>();
 

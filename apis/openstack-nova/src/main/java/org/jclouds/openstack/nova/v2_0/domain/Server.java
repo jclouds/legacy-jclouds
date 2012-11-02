@@ -82,7 +82,7 @@ public class Server extends Resource {
       return new ConcreteBuilder().fromServer(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> extends Resource.Builder<T> {
+   public abstract static class Builder<T extends Builder<T>> extends Resource.Builder<T> {
       protected String uuid;
       protected String tenantId;
       protected String userId;

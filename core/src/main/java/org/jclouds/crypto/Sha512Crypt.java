@@ -123,14 +123,14 @@ public class Sha512Crypt {
 
    }
 
-   static private final String sha512_salt_prefix = "$6$";
-   static private final String sha512_rounds_prefix = "rounds=";
-   static private final int SALT_LEN_MAX = 16;
-   static private final int ROUNDS_DEFAULT = 5000;
-   static private final int ROUNDS_MIN = 1000;
-   static private final int ROUNDS_MAX = 999999999;
-   static private final String SALTCHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
-   static private final String itoa64 = "./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+   private static final String sha512_salt_prefix = "$6$";
+   private static final String sha512_rounds_prefix = "rounds=";
+   private static final int SALT_LEN_MAX = 16;
+   private static final int ROUNDS_DEFAULT = 5000;
+   private static final int ROUNDS_MIN = 1000;
+   private static final int ROUNDS_MAX = 999999999;
+   private static final String SALTCHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+   private static final String itoa64 = "./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
    /**
     * This method actually generates an Sha512 crypted password hash from a

@@ -42,7 +42,7 @@ import com.google.common.base.Objects;
 public abstract class NetworkServiceType<T extends NetworkServiceType<T>> {
    public abstract Builder<T> toBuilder();
 
-   public static abstract class Builder<T extends NetworkServiceType<T>> {
+   public abstract static class Builder<T extends NetworkServiceType<T>> {
       protected boolean isEnabled;
 
       /**

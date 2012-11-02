@@ -46,7 +46,7 @@ public class CloneVAppParams extends InstantiateVAppParams {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static abstract class Builder<B extends Builder<B>> extends InstantiateVAppParams.Builder<B> {
+   public abstract static class Builder<B extends Builder<B>> extends InstantiateVAppParams.Builder<B> {
 
       @SuppressWarnings("unchecked")
       @Override

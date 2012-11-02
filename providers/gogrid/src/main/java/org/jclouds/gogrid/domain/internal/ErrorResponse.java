@@ -40,7 +40,7 @@ public class ErrorResponse {
       return new ConcreteBuilder().fromErrorResponse(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public abstract static class Builder<T extends Builder<T>>  {
       protected abstract T self();
 
       protected String message;

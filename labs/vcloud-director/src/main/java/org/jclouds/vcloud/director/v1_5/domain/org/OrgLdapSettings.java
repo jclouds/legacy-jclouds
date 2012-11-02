@@ -84,7 +84,7 @@ public class OrgLdapSettings extends Resource {
          return stringValue;
       }
 
-      protected final static Map<String, LdapMode> LDAP_MODE_BY_ID = Maps.uniqueIndex(
+      protected static final Map<String, LdapMode> LDAP_MODE_BY_ID = Maps.uniqueIndex(
             ImmutableSet.copyOf(LdapMode.values()), new Function<LdapMode, String>() {
                @Override
                public String apply(LdapMode input) {
@@ -110,7 +110,7 @@ public class OrgLdapSettings extends Resource {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static abstract class Builder<B extends Builder<B>> extends Resource.Builder<B> {
+   public abstract static class Builder<B extends Builder<B>> extends Resource.Builder<B> {
       
       private LdapMode ldapMode;
       private String customUsersOu;

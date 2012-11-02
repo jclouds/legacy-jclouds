@@ -34,7 +34,7 @@ public class HostedServiceWithDetailedProperties extends HostedService {
       return new ConcreteBuilder().fromHostedServiceWithDetailedProperties(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> extends HostedService.Builder<T> {
+   public abstract static class Builder<T extends Builder<T>> extends HostedService.Builder<T> {
 
       @Override
       public T properties(HostedServiceProperties properties) {
