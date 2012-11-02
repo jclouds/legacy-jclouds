@@ -127,7 +127,7 @@ public class RasdItem extends ResourceAllocationSettingData {
       super(builder);
       this.type = builder.type;
       this.href = builder.href;
-      this.links = builder.links != null && builder.links.isEmpty() ? null : builder.links;;
+      this.links = builder.links != null && builder.links.isEmpty() ? null : builder.links;
    }
 
    protected RasdItem() {

@@ -58,7 +58,6 @@ public class UnwrapLoadBalancers implements Function<HttpResponse, Set<LoadBalan
       Map<String, Set<LB>> map = json.apply(arg0);
       if (map.size() == 0)
          return ImmutableSet.<LoadBalancer> of();
-      ;
       return ImmutableSet.copyOf(Iterables.transform(Iterables.get(map.values(), 0), convertLB));
    }
 
