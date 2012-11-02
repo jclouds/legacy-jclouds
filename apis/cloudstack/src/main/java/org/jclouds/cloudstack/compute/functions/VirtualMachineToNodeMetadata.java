@@ -124,7 +124,8 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
 
       builder.status(vmStateToNodeStatus.get(from.getState()));
 
-      Set<String> publicAddresses = newHashSet(), privateAddresses = newHashSet();
+      Set<String> publicAddresses = newHashSet();
+      Set<String> privateAddresses = newHashSet();
       if (from.getIPAddress() != null) {
          boolean isPrivate = isPrivateIPAddress(from.getIPAddress());
          if (isPrivate) {
