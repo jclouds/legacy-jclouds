@@ -31,7 +31,6 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.jclouds.blobstore.BlobMap;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.InputStreamMap;
 import org.jclouds.blobstore.domain.Blob;
@@ -109,7 +108,7 @@ public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements Inpu
    }
 
    @Override
-   public void putAllBytes(Map<? extends String, ? extends byte[]> map) {
+   public void putAllBytes(Map<? extends String, byte[]> map) {
       putAllInternal(map);
    }
 
