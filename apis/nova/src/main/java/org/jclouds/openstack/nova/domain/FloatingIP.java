@@ -44,7 +44,7 @@ public class FloatingIP extends Resource {
       return new ConcreteBuilder().fromFloatingIP(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> extends Resource.Builder<T>  {
+   public abstract static class Builder<T extends Builder<T>> extends Resource.Builder<T>  {
       protected String ip;
       protected String fixedIP;
       protected int instanceID;

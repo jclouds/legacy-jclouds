@@ -45,7 +45,7 @@ public class JobProperties implements Comparable<JobProperties> {
       return new ConcreteBuilder().fromJobProperties(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public abstract static class Builder<T extends Builder<T>>  {
       protected abstract T self();
 
       protected long id;

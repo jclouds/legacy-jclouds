@@ -7,7 +7,7 @@ import java.util.TimeZone;
 //@XmlRootElement(name = "ConfigurationSet")
 public class WindowsProvisioningConfiguration extends ConfigurationSet {
 
-   public final static String ID = "WindowsProvisioningConfiguration";
+   public static final String ID = "WindowsProvisioningConfiguration";
 
    /**
     * Specifies the computer name for the virtual machine

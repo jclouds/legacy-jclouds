@@ -6,7 +6,7 @@ import java.util.List;
 //@XmlRootElement(name = "ConfigurationSet")
 public class NetworkConfiguration extends ConfigurationSet {
 
-   public final static String ID = "NetworkConfiguration";
+   public static final String ID = "NetworkConfiguration";
 
    /**
     * Contains a collection of external endpoints for the virtual machine.

@@ -52,7 +52,7 @@ public class Property {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
 
-   public static abstract class Builder<B extends Builder<B>> {
+   public abstract static class Builder<B extends Builder<B>> {
 
       protected String key;
       protected Set<PropertyConfigurationValueType> values = Sets.newLinkedHashSet();

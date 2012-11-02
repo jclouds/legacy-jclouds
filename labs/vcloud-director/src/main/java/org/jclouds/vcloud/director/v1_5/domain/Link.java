@@ -137,7 +137,7 @@ public class Link extends Reference {
          return stringValue;
       }
 
-      protected final static Map<String, Rel> REL_BY_ID = Maps.uniqueIndex(
+      protected static final Map<String, Rel> REL_BY_ID = Maps.uniqueIndex(
             ImmutableSet.copyOf(Rel.values()), new Function<Rel, String>() {
                @Override
                public String apply(Rel input) {

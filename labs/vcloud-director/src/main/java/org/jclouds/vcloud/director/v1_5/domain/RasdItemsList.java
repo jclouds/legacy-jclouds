@@ -60,7 +60,7 @@ public class RasdItemsList extends Resource implements Set<RasdItem> {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static abstract class Builder<B extends Builder<B>> extends Resource.Builder<B> {
+   public abstract static class Builder<B extends Builder<B>> extends Resource.Builder<B> {
 
       private Set<RasdItem> items = Sets.newLinkedHashSet();
 

@@ -42,7 +42,7 @@ public class ResourceUsageValue {
       return new ConcreteBuilder().fromResourceUsage(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> {
+   public abstract static class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected double value;

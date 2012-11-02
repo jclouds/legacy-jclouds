@@ -33,7 +33,7 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "unit", testName = "OperationApiExpectTest")
 public class OperationApiExpectTest extends BaseAzureManagementApiExpectTest {
-   private final static String REQUEST_ID ="request-id";
+   private static final String REQUEST_ID ="request-id";
 
    HttpRequest get = HttpRequest.builder().method("GET")
             .endpoint("https://management.core.windows.net/" + subscriptionId + "/operations/" + REQUEST_ID)

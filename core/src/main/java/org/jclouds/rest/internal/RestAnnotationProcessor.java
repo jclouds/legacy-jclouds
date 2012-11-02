@@ -752,7 +752,7 @@ public class RestAnnotationProcessor<T> {
       return null;
    }
 
-   private final static TypeLiteral<Supplier<URI>> uriSupplierLiteral = new TypeLiteral<Supplier<URI>>() {
+   private static final TypeLiteral<Supplier<URI>> uriSupplierLiteral = new TypeLiteral<Supplier<URI>>() {
    };
 
    // TODO: change to LoadingCache<ClassMethodArgs, URI> and move this logic to the CacheLoader.

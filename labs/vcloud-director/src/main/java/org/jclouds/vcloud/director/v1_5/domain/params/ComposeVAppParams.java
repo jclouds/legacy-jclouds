@@ -58,7 +58,7 @@ public class ComposeVAppParams extends VAppCreationParams {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static abstract class Builder<B extends Builder<B>> extends VAppCreationParams.Builder<B> {
+   public abstract static class Builder<B extends Builder<B>> extends VAppCreationParams.Builder<B> {
 
       private List<SourcedCompositionItemParam> sourcedItems = Lists.newArrayList();
       private Boolean allEULAsAccepted;

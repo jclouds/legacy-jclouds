@@ -131,7 +131,7 @@ public class GsonModule extends AbstractModule {
    }
 
    @ImplementedBy(CDateAdapter.class)
-   public static abstract class DateAdapter extends TypeAdapter<Date> {
+   public abstract static class DateAdapter extends TypeAdapter<Date> {
 
    }
 
@@ -151,12 +151,12 @@ public class GsonModule extends AbstractModule {
    }
 
    @ImplementedBy(HexByteListAdapter.class)
-   public static abstract class ByteListAdapter extends TypeAdapter<List<Byte>> {
+   public abstract static class ByteListAdapter extends TypeAdapter<List<Byte>> {
 
    }
 
    @ImplementedBy(HexByteArrayAdapter.class)
-   public static abstract class ByteArrayAdapter extends TypeAdapter<byte[]> {
+   public abstract static class ByteArrayAdapter extends TypeAdapter<byte[]> {
 
    }
 

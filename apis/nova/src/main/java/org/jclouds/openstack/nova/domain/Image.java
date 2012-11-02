@@ -50,7 +50,7 @@ public class Image extends Resource {
       return new ConcreteBuilder().fromImage(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> extends Resource.Builder<T> {
+   public abstract static class Builder<T extends Builder<T>> extends Resource.Builder<T> {
       protected String name;
       protected Integer progress;
       protected String serverRef;

@@ -69,7 +69,7 @@ public class CloneVAppTemplateParams extends ParamsType {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static abstract class Builder<B extends Builder<B>> extends ParamsType.Builder<B> {
+   public abstract static class Builder<B extends Builder<B>> extends ParamsType.Builder<B> {
 
       private Reference source;
       private Boolean isSourceDelete;

@@ -54,7 +54,7 @@ public class ServerWithSecurityGroups extends Server {
       return new ConcreteBuilder().fromServerWithSecurityGroups(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> extends Server.Builder<T>  {
+   public abstract static class Builder<T extends Builder<T>> extends Server.Builder<T>  {
       protected Set<String> securityGroupNames = ImmutableSet.of();
    
       /** 

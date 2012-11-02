@@ -46,7 +46,7 @@ public class LastBuild {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
 
-   public static abstract class Builder<B extends Builder<B>> {
+   public abstract static class Builder<B extends Builder<B>> {
       private String id;
       private URI url;
       private String description;

@@ -42,7 +42,7 @@ public class ConfigurationEntry implements Comparable<ConfigurationEntry> {
       return new ConcreteBuilder().fromConfigurationEntry(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> {
+   public abstract static class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected String category;

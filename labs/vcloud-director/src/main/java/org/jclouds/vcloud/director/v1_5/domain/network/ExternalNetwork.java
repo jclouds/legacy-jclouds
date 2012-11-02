@@ -56,7 +56,7 @@ public class ExternalNetwork extends Network {
       return new ConcreteBuilder().fromExternalNetwork(this);
    }
    
-   public static abstract class Builder<T extends Builder<T>> extends Network.Builder<T> {
+   public abstract static class Builder<T extends Builder<T>> extends Network.Builder<T> {
       private String providerInfo;
 
       /**

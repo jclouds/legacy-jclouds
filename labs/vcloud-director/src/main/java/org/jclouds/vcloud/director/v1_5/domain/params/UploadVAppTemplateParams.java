@@ -51,7 +51,7 @@ public class UploadVAppTemplateParams extends ParamsType {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static abstract class Builder<B extends Builder<B>> extends ParamsType.Builder<B> {
+   public abstract static class Builder<B extends Builder<B>> extends ParamsType.Builder<B> {
 
       private String transferFormat;
       private Boolean manifestRequired;

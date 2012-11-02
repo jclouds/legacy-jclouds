@@ -105,7 +105,7 @@ public class CustomOrgLdapSettings {
          return stringValue;
       }
 
-      protected final static Map<String, AuthenticationMechanism> AUTHENTICATION_MECHANISM_BY_ID = Maps.uniqueIndex(
+      protected static final Map<String, AuthenticationMechanism> AUTHENTICATION_MECHANISM_BY_ID = Maps.uniqueIndex(
             ImmutableSet.copyOf(AuthenticationMechanism.values()), new Function<AuthenticationMechanism, String>() {
                @Override
                public String apply(AuthenticationMechanism input) {
@@ -139,7 +139,7 @@ public class CustomOrgLdapSettings {
          return stringValue;
       }
 
-      protected final static Map<String, ConnectorType> CONNECTOR_TYPE_BY_ID = Maps.uniqueIndex(
+      protected static final Map<String, ConnectorType> CONNECTOR_TYPE_BY_ID = Maps.uniqueIndex(
             ImmutableSet.copyOf(ConnectorType.values()), new Function<ConnectorType, String>() {
                @Override
                public String apply(ConnectorType input) {
@@ -161,7 +161,7 @@ public class CustomOrgLdapSettings {
       return new ConcreteBuilder().fromCustomOrgLdapSettings(this);
    }
    
-   public static abstract class Builder<T extends Builder<T>> {
+   public abstract static class Builder<T extends Builder<T>> {
       protected abstract T self();
       
       private String hostName;

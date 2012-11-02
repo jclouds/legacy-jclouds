@@ -52,7 +52,7 @@ public class MsgType {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
 
-   public static abstract class Builder<B extends Builder<B>> {
+   public abstract static class Builder<B extends Builder<B>> {
 
       protected String value;
       protected String msgid;

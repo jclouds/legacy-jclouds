@@ -43,16 +43,16 @@ public interface Region {
    /**
     * Chicago (ORD) https://ord.loadbalancers.api.rackspacecloud.com/v1.0/1234/
     */
-   public final static String ORD = "ORD";
+   public static final String ORD = "ORD";
 
    /**
     * Dallas/Ft. Worth (DFW) https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/1234/
     */
-   public final static String DFW = "DFW";
+   public static final String DFW = "DFW";
    
    /**
     * London/Slough (LON) https://lon.loadbalancers.api.rackspacecloud.com/v1.0/1234/
     */
-   public final static String LON = "LON";
+   public static final String LON = "LON";
    
 }

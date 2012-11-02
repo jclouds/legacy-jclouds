@@ -55,7 +55,7 @@ public class TasksList extends Resource implements Set<Task> {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static abstract class Builder<B extends Builder<B>> extends Resource.Builder<B> {
+   public abstract static class Builder<B extends Builder<B>> extends Resource.Builder<B> {
       private String name;
       private Set<Task> tasks;
 

@@ -59,7 +59,7 @@ public class InstantiateVAppParams extends VAppCreationParams {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static abstract class Builder<B extends Builder<B>> extends VAppCreationParams.Builder<B> {
+   public abstract static class Builder<B extends Builder<B>> extends VAppCreationParams.Builder<B> {
 
       private Reference source;
       private Boolean sourceDelete;

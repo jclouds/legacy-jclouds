@@ -73,7 +73,7 @@ public class UndeployVAppParams {
          return stringValue;
       }
 
-      protected final static Map<String, PowerAction> POWER_ACTION_BY_ID = Maps.uniqueIndex(
+      protected static final Map<String, PowerAction> POWER_ACTION_BY_ID = Maps.uniqueIndex(
             ImmutableSet.copyOf(PowerAction.values()), new Function<PowerAction, String>() {
                @Override
                public String apply(PowerAction input) {

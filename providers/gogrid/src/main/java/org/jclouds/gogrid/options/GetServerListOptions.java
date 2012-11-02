@@ -31,7 +31,7 @@ import org.jclouds.http.options.BaseHttpRequestOptions;
  */
 public class GetServerListOptions extends BaseHttpRequestOptions {
 
-   public final static GetServerListOptions NONE = new GetServerListOptions();
+   public static final GetServerListOptions NONE = new GetServerListOptions();
 
    public GetServerListOptions limitServerTypeTo(String serverType) {
       checkState(!queryParameters.containsKey(SERVER_TYPE_KEY),

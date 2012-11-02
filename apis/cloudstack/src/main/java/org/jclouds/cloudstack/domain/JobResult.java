@@ -43,7 +43,7 @@ public class JobResult {
       return new ConcreteBuilder().fromJobResult(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> {
+   public abstract static class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected boolean success;

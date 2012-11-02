@@ -88,7 +88,7 @@ public class Capacity implements Comparable<Capacity> {
       return new ConcreteBuilder().fromCapacity(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> {
+   public abstract static class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected long capacityTotal;

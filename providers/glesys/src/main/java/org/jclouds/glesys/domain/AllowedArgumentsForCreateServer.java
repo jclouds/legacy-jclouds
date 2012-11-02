@@ -43,7 +43,7 @@ public class AllowedArgumentsForCreateServer {
       return new ConcreteBuilder().fromAllowedArgumentsForCreateServer(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> {
+   public abstract static class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected Set<Integer> diskSizes = ImmutableSet.of();

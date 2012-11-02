@@ -42,7 +42,7 @@ public class VlanIPRange implements Comparable<VlanIPRange> {
       return new ConcreteBuilder().fromVlanIPRange(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> {
+   public abstract static class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected String id;

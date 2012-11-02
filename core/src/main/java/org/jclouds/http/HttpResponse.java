@@ -40,7 +40,7 @@ public class HttpResponse extends HttpMessage {
       return new ConcreteBuilder().fromHttpResponse(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> extends HttpMessage.Builder<T>  {
+   public abstract static class Builder<T extends Builder<T>> extends HttpMessage.Builder<T>  {
       protected int statusCode;
       protected String message;
 

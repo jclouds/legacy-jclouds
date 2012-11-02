@@ -49,7 +49,7 @@ public class VAppNetwork extends Network {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static abstract class Builder<B extends Builder<B>> extends Network.Builder<B> {
+   public abstract static class Builder<B extends Builder<B>> extends Network.Builder<B> {
 
       private Boolean deployed;
 

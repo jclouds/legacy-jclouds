@@ -44,7 +44,7 @@ public class Flavor extends Resource {
       return new ConcreteBuilder().fromFlavor(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> extends Resource.Builder<T> {
+   public abstract static class Builder<T extends Builder<T>> extends Resource.Builder<T> {
       protected String name;
       protected Integer disk;
       protected Integer ram;

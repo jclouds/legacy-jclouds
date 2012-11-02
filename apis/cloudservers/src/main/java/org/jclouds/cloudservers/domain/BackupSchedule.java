@@ -41,7 +41,7 @@ public class BackupSchedule {
       return new ConcreteBuilder().fromBackupSchedule(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public abstract static class Builder<T extends Builder<T>>  {
       protected abstract T self();
 
       protected DailyBackup daily;

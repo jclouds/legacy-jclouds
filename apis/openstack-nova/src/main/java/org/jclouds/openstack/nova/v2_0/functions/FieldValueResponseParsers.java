@@ -70,7 +70,7 @@ public class FieldValueResponseParsers {
       }
    }
 
-   public static abstract class FieldValueResponseParser<T> implements Function<HttpResponse, Boolean> {
+   public abstract static class FieldValueResponseParser<T> implements Function<HttpResponse, Boolean> {
       private final T expectedValue;
       private final ParseFirstJsonValueNamed<T> valueParser;
 

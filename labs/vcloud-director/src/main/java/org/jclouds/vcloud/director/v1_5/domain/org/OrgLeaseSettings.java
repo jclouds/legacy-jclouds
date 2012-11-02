@@ -66,7 +66,7 @@ public class OrgLeaseSettings extends Resource {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static abstract class Builder<B extends Builder<B>> extends Resource.Builder<B> {
+   public abstract static class Builder<B extends Builder<B>> extends Resource.Builder<B> {
       
       private Boolean deleteOnStorageLeaseExpiration;
       private Integer deploymentLeaseSeconds;

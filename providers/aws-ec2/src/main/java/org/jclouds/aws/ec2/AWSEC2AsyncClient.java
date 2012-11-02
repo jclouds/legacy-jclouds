@@ -35,7 +35,7 @@ import org.jclouds.rest.annotations.Delegate;
  * @author Adrian Cole
  */
 public interface AWSEC2AsyncClient extends EC2AsyncClient {
-   public final static String VERSION = "2011-05-15";
+   public static final String VERSION = "2011-05-15";
 
    /**
     * {@inheritDoc}

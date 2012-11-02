@@ -40,7 +40,7 @@ public class TemplatePermission {
       return new ConcreteBuilder().fromTemplatePermission(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> {
+   public abstract static class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected String id;

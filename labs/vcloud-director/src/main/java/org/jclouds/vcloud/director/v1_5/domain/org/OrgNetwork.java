@@ -41,7 +41,7 @@ public class OrgNetwork extends Network {
       return new ConcreteBuilder().fromOrgNetwork(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> extends Network.Builder<T> {
+   public abstract static class Builder<T extends Builder<T>> extends Network.Builder<T> {
       private Reference networkPool;
       private IpAddresses allowedExternalIpAddresses;
 

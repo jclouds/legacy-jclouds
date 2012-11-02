@@ -45,7 +45,7 @@ public class LoadBalancer implements Comparable<LoadBalancer> {
       return new ConcreteBuilder().fromLoadBalancer(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public abstract static class Builder<T extends Builder<T>>  {
       protected abstract T self();
 
       protected long id;

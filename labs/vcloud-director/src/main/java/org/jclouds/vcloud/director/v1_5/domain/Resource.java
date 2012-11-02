@@ -68,7 +68,7 @@ public class Resource {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static abstract class Builder<B extends Builder<B>> {
+   public abstract static class Builder<B extends Builder<B>> {
       private URI href;
       private String type;
       private Set<Link> links;

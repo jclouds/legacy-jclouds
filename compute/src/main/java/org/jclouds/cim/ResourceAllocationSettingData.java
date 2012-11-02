@@ -334,7 +334,7 @@ public class ResourceAllocationSettingData extends ManagedElement {
          return code + "";
       }
 
-      protected final static Map<Integer, ResourceType> RESOURCE_TYPE_BY_ID = Maps.uniqueIndex(
+      protected static final Map<Integer, ResourceType> RESOURCE_TYPE_BY_ID = Maps.uniqueIndex(
             ImmutableSet.copyOf(ResourceType.values()), new Function<ResourceType, Integer>() {
 
                @Override
@@ -383,7 +383,7 @@ public class ResourceAllocationSettingData extends ManagedElement {
          return code + "";
       }
 
-      protected final static Map<Integer, ConsumerVisibility> MAPPING_BEHAVIOR_BY_ID = Maps.uniqueIndex(
+      protected static final Map<Integer, ConsumerVisibility> MAPPING_BEHAVIOR_BY_ID = Maps.uniqueIndex(
             ImmutableSet.copyOf(ConsumerVisibility.values()), new Function<ConsumerVisibility, Integer>() {
 
                @Override
@@ -417,7 +417,7 @@ public class ResourceAllocationSettingData extends ManagedElement {
          return code + "";
       }
 
-      protected final static Map<Integer, MappingBehavior> MAPPING_BEHAVIOR_BY_ID = Maps.uniqueIndex(
+      protected static final Map<Integer, MappingBehavior> MAPPING_BEHAVIOR_BY_ID = Maps.uniqueIndex(
             ImmutableSet.copyOf(MappingBehavior.values()), new Function<MappingBehavior, Integer>() {
 
                @Override

@@ -43,7 +43,7 @@ public class NetworkDetails extends Network {
       return new ConcreteBuilder().fromNetworkDetails(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> extends Network.Builder<T>  {
+   public abstract static class Builder<T extends Builder<T>> extends Network.Builder<T>  {
       protected Set<Port> ports = ImmutableSet.of();
    
       /** 

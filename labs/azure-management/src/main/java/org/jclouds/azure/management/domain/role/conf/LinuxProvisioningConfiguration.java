@@ -3,7 +3,7 @@ package org.jclouds.azure.management.domain.role.conf;
 
 public class LinuxProvisioningConfiguration extends ConfigurationSet {
 
-   public final static String ID = "LinuxProvisioningConfiguration";
+   public static final String ID = "LinuxProvisioningConfiguration";
 
    /**
     * Specifies the host name for the VM. Host names are ASCII character strings 1 to 64 characters

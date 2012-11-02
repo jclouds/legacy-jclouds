@@ -37,7 +37,7 @@ public class Limits {
       return new ConcreteBuilder().fromLimits(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public abstract static class Builder<T extends Builder<T>>  {
       protected abstract T self();
 
       protected List<RateLimit> rate = ImmutableList.of();

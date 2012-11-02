@@ -143,7 +143,7 @@ public class AbiquoRestClientModule extends RestClientModule<AbiquoApi, AbiquoAs
    @Singleton
    @Memoized
    public Supplier<Enterprise> getCurrentEnterprise(final AtomicReference<AuthorizationException> authException,
-         @Named(PROPERTY_SESSION_INTERVAL) final long seconds, final @Memoized Supplier<User> currentUser) {
+         @Named(PROPERTY_SESSION_INTERVAL) final long seconds, @Memoized final Supplier<User> currentUser) {
       return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException,
             new Supplier<Enterprise>() {
                @Override

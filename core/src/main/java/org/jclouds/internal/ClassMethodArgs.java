@@ -45,7 +45,7 @@ public class ClassMethodArgs {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
 
-   public static abstract class Builder<B extends Builder<B>> {
+   public abstract static class Builder<B extends Builder<B>> {
       private Class<?> clazz;
       private Method method;
       private Object[] args;
@@ -110,7 +110,7 @@ public class ClassMethodArgs {
       return method;
    }
 
-   public @Nullable Object[] getArgs() {
+   @Nullable public Object[] getArgs() {
       return args;
    }
 
