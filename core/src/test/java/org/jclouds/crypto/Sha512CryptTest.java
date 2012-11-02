@@ -41,7 +41,7 @@ public class Sha512CryptTest {
       crypto = i.getInstance(Crypto.class);
    }
 
-   public final static Object[][] TEST_DATA = {
+   public static final Object[][] TEST_DATA = {
             { "Hello world!", "$6$saltstring",
                      "$6$saltstring$svn8UoSVapNtMuq1ukKS4tPQd8iKwSMHWjl/O817G3uBnIFNjnQJuesI68u4OTLiBFdcbYEdFCoEOfaS35inz1" },
             {

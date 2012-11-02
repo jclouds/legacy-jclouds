@@ -37,7 +37,7 @@ public class BaseInstance {
       return new ConcreteBuilder().fromBaseInstance(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> {
+   public abstract static class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected Optional<String> name = Optional.absent();

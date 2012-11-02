@@ -35,11 +35,11 @@ import com.google.common.collect.Maps;
 @Singleton
 public class ServerManager {
 
-   private final static Map<Integer, Server> servers = Maps.newHashMap();
-   private final static Map<Integer, Image> images = ImmutableMap.of(1, new Image(1, "ubuntu"));
-   private final static Map<Integer, Hardware> hardware = ImmutableMap.of(1, new Hardware(1, "small", 1, 512, 10));
+   private static final Map<Integer, Server> servers = Maps.newHashMap();
+   private static final Map<Integer, Image> images = ImmutableMap.of(1, new Image(1, "ubuntu"));
+   private static final Map<Integer, Hardware> hardware = ImmutableMap.of(1, new Hardware(1, "small", 1, 512, 10));
 
-   private final static AtomicInteger nodeIds = new AtomicInteger(0);
+   private static final AtomicInteger nodeIds = new AtomicInteger(0);
 
    /**
     * simulate creating a server, as this is really going to happen with the api underneath

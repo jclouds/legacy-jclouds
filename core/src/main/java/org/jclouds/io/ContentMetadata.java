@@ -38,7 +38,7 @@ public interface ContentMetadata {
 
    // See http://stackoverflow.com/questions/10584647/simpledateformat-parse-is-one-hour-out-using-rfc-1123-gmt-in-summer
    // for why not using "zzz"
-   public final static String RFC1123_DATE_PATTERN = "EEE, dd MMM yyyyy HH:mm:ss Z";
+   public static final String RFC1123_DATE_PATTERN = "EEE, dd MMM yyyyy HH:mm:ss Z";
    
    /**
     * Returns the total size of the payload, or the chunk that's available.

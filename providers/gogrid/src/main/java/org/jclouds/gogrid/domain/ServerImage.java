@@ -47,7 +47,7 @@ public class ServerImage implements Comparable<ServerImage> {
       return new ConcreteBuilder().fromServerImage(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public abstract static class Builder<T extends Builder<T>>  {
       protected abstract T self();
 
       protected long id;

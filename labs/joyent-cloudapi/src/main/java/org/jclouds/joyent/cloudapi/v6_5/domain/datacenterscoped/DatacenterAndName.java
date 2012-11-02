@@ -35,7 +35,7 @@ import com.google.common.collect.Iterables;
  */
 public class DatacenterAndName {
    
-   public final static Function<DatacenterAndName, String> NAME_FUNCTION = new Function<DatacenterAndName, String>(){
+   public static final Function<DatacenterAndName, String> NAME_FUNCTION = new Function<DatacenterAndName, String>(){
 
       @Override
       public String apply(DatacenterAndName input) {
@@ -44,7 +44,7 @@ public class DatacenterAndName {
       
    };
    
-   public final static Function<DatacenterAndName, String> DATACENTER_FUNCTION = new Function<DatacenterAndName, String>(){
+   public static final Function<DatacenterAndName, String> DATACENTER_FUNCTION = new Function<DatacenterAndName, String>(){
 
       @Override
       public String apply(DatacenterAndName input) {

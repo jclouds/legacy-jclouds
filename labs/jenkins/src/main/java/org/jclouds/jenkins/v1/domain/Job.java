@@ -44,7 +44,7 @@ public class Job {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
 
-   public static abstract class Builder<B extends Builder<B>> {
+   public abstract static class Builder<B extends Builder<B>> {
       private String name;
       private URI url;
       private String color;

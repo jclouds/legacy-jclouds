@@ -36,5 +36,5 @@ public class AzureManagementProperties {
 	 * 
 	 * @see <a href="http://msdn.microsoft.com/en-us/library/ee460786">docs</a>
 	 */
-	public final static String SUBSCRIPTION_ID = "jclouds.azure.management.subscription-id";
+	public static final String SUBSCRIPTION_ID = "jclouds.azure.management.subscription-id";
 }

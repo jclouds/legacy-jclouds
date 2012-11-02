@@ -56,7 +56,7 @@ public class EnumTypeAdapterThatReturnsFromValue<T extends Enum<T>> implements J
       }
    }
 
-   private final static LoadingCache<Class<?>, Method> classToConvert = CacheBuilder.newBuilder()
+   private static final LoadingCache<Class<?>, Method> classToConvert = CacheBuilder.newBuilder()
          .build(new CacheLoader<Class<?>, Method>() {
 
             @Override

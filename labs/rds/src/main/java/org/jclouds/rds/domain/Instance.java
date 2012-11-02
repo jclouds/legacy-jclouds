@@ -103,7 +103,7 @@ public class Instance extends BaseInstance {
       return new ConcreteBuilder().fromInstance(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> extends BaseInstance.Builder<T> {
+   public abstract static class Builder<T extends Builder<T>> extends BaseInstance.Builder<T> {
 
       protected String id;
       protected Optional<HostAndPort> endpoint = Optional.absent();

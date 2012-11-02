@@ -59,7 +59,7 @@ public class Org extends Entity {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static abstract class Builder<B extends Builder<B>> extends Entity.Builder<B> {
+   public abstract static class Builder<B extends Builder<B>> extends Entity.Builder<B> {
       
       private String fullName;
       private Boolean isEnabled;

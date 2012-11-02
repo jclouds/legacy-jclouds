@@ -93,10 +93,10 @@ public class JCECrypto implements Crypto {
       return provider == null ? Cipher.getInstance(algorithm) : Cipher.getInstance(algorithm, provider);
    }
 
-   public final static String MD5 = "MD5";
-   public final static String SHA1 = "SHA1";
-   public final static String SHA256 = "SHA-256";
-   public final static String SHA512 = "SHA-512";
+   public static final String MD5 = "MD5";
+   public static final String SHA1 = "SHA1";
+   public static final String SHA256 = "SHA-256";
+   public static final String SHA512 = "SHA-512";
 
    @Override
    public MessageDigest md5() {
@@ -134,8 +134,8 @@ public class JCECrypto implements Crypto {
       }
    }
 
-   public final static String HmacSHA256 = "HmacSHA256";
-   public final static String HmacSHA1 = "HmacSHA1";
+   public static final String HmacSHA256 = "HmacSHA256";
+   public static final String HmacSHA1 = "HmacSHA1";
 
    @Override
    public Mac hmacSHA1(byte[] key) throws InvalidKeyException {

@@ -51,7 +51,7 @@ public class HttpMessage extends PayloadEnclosingImpl {
       return new ConcreteBuilder().fromHttpMessage(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public abstract static class Builder<T extends Builder<T>>  {
       protected abstract T self();
 
       protected ImmutableMultimap.Builder<String, String> headers = ImmutableMultimap.<String, String>builder();

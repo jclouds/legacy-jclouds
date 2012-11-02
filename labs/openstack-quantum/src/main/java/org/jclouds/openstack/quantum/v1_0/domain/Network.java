@@ -41,7 +41,7 @@ public class Network extends Reference {
       return new ConcreteBuilder().fromNetwork(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> extends Reference.Builder<T>  {
+   public abstract static class Builder<T extends Builder<T>> extends Reference.Builder<T>  {
       protected String name;
    
       /** 

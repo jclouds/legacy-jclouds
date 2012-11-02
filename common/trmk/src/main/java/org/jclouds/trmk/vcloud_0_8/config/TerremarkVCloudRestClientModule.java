@@ -299,7 +299,7 @@ public class TerremarkVCloudRestClientModule<S, A> extends RestClientModule<S, A
 
    }
 
-   final static Function<ReferenceType, String> name = new Function<ReferenceType, String>() {
+   static final Function<ReferenceType, String> name = new Function<ReferenceType, String>() {
 
       @Override
       public String apply(ReferenceType from) {

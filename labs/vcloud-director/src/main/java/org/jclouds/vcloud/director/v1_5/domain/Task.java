@@ -88,7 +88,7 @@ public class Task extends Entity {
          return stringValue;
       }
 
-      protected final static Map<String, Status> STATUS_BY_ID = Maps.uniqueIndex(
+      protected static final Map<String, Status> STATUS_BY_ID = Maps.uniqueIndex(
             ImmutableSet.copyOf(Status.values()), new Function<Status, String>() {
                @Override
                public String apply(Status input) {
@@ -114,7 +114,7 @@ public class Task extends Entity {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static abstract class Builder<B extends Builder<B>> extends Entity.Builder<B> {
+   public abstract static class Builder<B extends Builder<B>> extends Entity.Builder<B> {
 
       private Error error;
       private Reference org;

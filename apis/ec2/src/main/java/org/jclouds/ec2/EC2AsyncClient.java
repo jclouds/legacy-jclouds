@@ -44,7 +44,7 @@ import com.google.inject.Provides;
  * @author Adrian Cole
  */
 public interface EC2AsyncClient {
-   public final static String VERSION = "2010-06-15";
+   public static final String VERSION = "2010-06-15";
    /**
     * 
     * @return the Region codes configured

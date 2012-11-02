@@ -38,7 +38,7 @@ public abstract class BaseEnvelope<V extends BaseVirtualSystem, E extends BaseEn
    
    public abstract Builder<?, V, E> toBuilder();
 
-   public static abstract class Builder<B extends Builder<B, V, E>, V extends BaseVirtualSystem, E extends BaseEnvelope<V, E>> {
+   public abstract static class Builder<B extends Builder<B, V, E>, V extends BaseVirtualSystem, E extends BaseEnvelope<V, E>> {
 
       protected Set<DiskSection> diskSections = Sets.newLinkedHashSet();
       protected Set<NetworkSection> networkSections = Sets.newLinkedHashSet();

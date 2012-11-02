@@ -68,7 +68,7 @@ public class Image extends Resource {
       return new ConcreteBuilder().fromImage(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> extends Resource.Builder<T>  {
+   public abstract static class Builder<T extends Builder<T>> extends Resource.Builder<T>  {
       protected ContainerFormat containerFormat;
       protected DiskFormat diskFormat;
       protected Long size;

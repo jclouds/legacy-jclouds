@@ -74,7 +74,7 @@ public class OrgSettings extends Resource {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static abstract class Builder<B extends Builder<B>> extends Resource.Builder<B> {
+   public abstract static class Builder<B extends Builder<B>> extends Resource.Builder<B> {
       
       private OrgGeneralSettings generalSettings;
       private OrgLeaseSettings vAppLeaseSettings;

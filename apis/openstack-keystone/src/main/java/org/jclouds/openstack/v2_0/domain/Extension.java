@@ -51,7 +51,7 @@ public class Extension extends Resource {
       return new ConcreteBuilder().fromExtension(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> extends Resource.Builder<T>  {
+   public abstract static class Builder<T extends Builder<T>> extends Resource.Builder<T>  {
       protected URI namespace;
       protected String alias;
       protected Date updated;

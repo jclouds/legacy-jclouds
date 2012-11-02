@@ -49,7 +49,7 @@ public class ApiMetadata extends Resource {
       return new ConcreteBuilder().fromApiMetadata(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> extends Resource.Builder<T>  {
+   public abstract static class Builder<T extends Builder<T>> extends Resource.Builder<T>  {
       protected String status;
       protected Date updated;
       protected Set<MediaType> mediaTypes = ImmutableSet.of();

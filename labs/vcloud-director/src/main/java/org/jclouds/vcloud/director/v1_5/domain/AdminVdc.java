@@ -66,7 +66,7 @@ public class AdminVdc extends Vdc {
       return new ConcreteBuilder();
    }
 
-   public static abstract class Builder<T extends Builder<T>> extends Vdc.Builder<T> {
+   public abstract static class Builder<T extends Builder<T>> extends Vdc.Builder<T> {
       private Double resourceGuaranteedMemory;
       private Double resourceGuaranteedCpu;
       private Long vCpuInMhz;

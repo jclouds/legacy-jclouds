@@ -64,7 +64,7 @@ public abstract class Network extends Entity {
          return stringValue;
       }
 
-      protected final static Map<String, FenceMode> FENCE_MODE_BY_ID = Maps.uniqueIndex(
+      protected static final Map<String, FenceMode> FENCE_MODE_BY_ID = Maps.uniqueIndex(
             ImmutableSet.copyOf(FenceMode.values()), new Function<FenceMode, String>() {
                @Override
                public String apply(FenceMode input) {

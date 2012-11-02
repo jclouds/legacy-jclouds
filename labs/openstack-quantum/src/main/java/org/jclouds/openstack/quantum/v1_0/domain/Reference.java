@@ -41,7 +41,7 @@ public class Reference {
       return new ConcreteBuilder().fromReference(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public abstract static class Builder<T extends Builder<T>>  {
       protected abstract T self();
 
       protected String id;

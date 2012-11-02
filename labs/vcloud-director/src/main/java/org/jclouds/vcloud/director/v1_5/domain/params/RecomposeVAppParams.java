@@ -66,7 +66,7 @@ public class RecomposeVAppParams extends ComposeVAppParams {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static abstract class Builder<B extends Builder<B>> extends ComposeVAppParams.Builder<B> {
+   public abstract static class Builder<B extends Builder<B>> extends ComposeVAppParams.Builder<B> {
 
       private List<Vm> createItem;
       private List<Reference> removeItem;

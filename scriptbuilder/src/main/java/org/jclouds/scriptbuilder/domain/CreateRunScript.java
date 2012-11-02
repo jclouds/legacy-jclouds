@@ -48,7 +48,7 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 public class CreateRunScript extends StatementList {
-   public final static String DELIMITER = "END_OF_JCLOUDS_SCRIPT";
+   public static final String DELIMITER = "END_OF_JCLOUDS_SCRIPT";
    final String instanceName;
    final Iterable<String> exports;
    final String pwd;

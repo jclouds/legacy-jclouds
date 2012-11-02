@@ -41,7 +41,7 @@ public class SnapshotPolicySchedule {
       return new ConcreteBuilder().fromSnapshotPolicySchedule(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> {
+   public abstract static class Builder<T extends Builder<T>> {
       protected abstract T self();
 
       protected Snapshot.Interval interval;

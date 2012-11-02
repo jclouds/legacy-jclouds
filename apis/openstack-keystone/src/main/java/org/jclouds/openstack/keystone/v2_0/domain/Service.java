@@ -47,7 +47,7 @@ public class Service extends ForwardingSet<Endpoint> {
       return new ConcreteBuilder().fromService(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public abstract static class Builder<T extends Builder<T>>  {
       protected abstract T self();
 
       protected String type;

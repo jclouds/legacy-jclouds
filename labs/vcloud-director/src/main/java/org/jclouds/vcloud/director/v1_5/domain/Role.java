@@ -38,7 +38,7 @@ public class Role { //TODO: placeholder for implementation
          return stringValue;
       }
 
-      protected final static Map<String, DefaultRoles> DEFAULT_ROLES_BY_ID = Maps.uniqueIndex(
+      protected static final Map<String, DefaultRoles> DEFAULT_ROLES_BY_ID = Maps.uniqueIndex(
             ImmutableSet.copyOf(DefaultRoles.values()), new Function<DefaultRoles, String>() {
                @Override
                public String apply(DefaultRoles input) {

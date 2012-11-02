@@ -32,7 +32,7 @@ import com.google.common.base.Objects;
 )
 public abstract class IpsecVpnManagedPeerType<T extends IpsecVpnManagedPeerType<T>> extends IpsecVpnPeerType<T> {
 
-   public static abstract class Builder<T extends IpsecVpnManagedPeerType<T>> {
+   public abstract static class Builder<T extends IpsecVpnManagedPeerType<T>> {
       protected String id;
       protected String name;
 

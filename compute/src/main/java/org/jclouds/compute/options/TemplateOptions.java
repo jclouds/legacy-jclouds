@@ -315,7 +315,7 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
 
    }
 
-   private final static Set<Integer> DEFAULT_INBOUND_PORTS = ImmutableSet.of(22);
+   private static final Set<Integer> DEFAULT_INBOUND_PORTS = ImmutableSet.of(22);
    
    protected Set<Integer> inboundPorts = DEFAULT_INBOUND_PORTS;
 

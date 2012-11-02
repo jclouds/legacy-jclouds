@@ -91,7 +91,7 @@ public class NetworkConnection {
          return label;
       }
 
-      protected final static Map<String, IpAddressAllocationMode> IP_ADDRESS_ALLOCATION_MODE_BY_ID = Maps.uniqueIndex(
+      protected static final Map<String, IpAddressAllocationMode> IP_ADDRESS_ALLOCATION_MODE_BY_ID = Maps.uniqueIndex(
             ImmutableSet.copyOf(IpAddressAllocationMode.values()), new Function<IpAddressAllocationMode, String>() {
                @Override
                public String apply(IpAddressAllocationMode input) {

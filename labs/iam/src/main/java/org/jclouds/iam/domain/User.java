@@ -37,7 +37,7 @@ public class User {
       return new ConcreteBuilder().fromUser(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>>  {
+   public abstract static class Builder<T extends Builder<T>>  {
       protected abstract T self();
 
       private Optional<String> path = Optional.absent();

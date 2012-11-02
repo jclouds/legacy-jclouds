@@ -84,7 +84,7 @@ public class Key implements Comparable<Key> {
    protected final String name;
    protected final String key;
    // don't include created in the http request
-   transient protected final Date created;
+   protected final transient Date created;
    
    @ConstructorProperties({ "name", "key", "created" })
    public Key(String name, String key, Date created) {

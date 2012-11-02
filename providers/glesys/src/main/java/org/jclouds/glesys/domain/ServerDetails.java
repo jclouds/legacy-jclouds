@@ -45,7 +45,7 @@ public class ServerDetails extends Server {
       return new ConcreteBuilder().fromServerDetails(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> extends Server.Builder<T> {
+   public abstract static class Builder<T extends Builder<T>> extends Server.Builder<T> {
       protected Server.State state;
       protected String description;
       protected String templateName;

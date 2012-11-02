@@ -50,7 +50,7 @@ public class GeneratedHttpRequest extends HttpRequest {
       return new ConcreteBuilder().fromGeneratedHttpRequest(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> extends HttpRequest.Builder<T>  {
+   public abstract static class Builder<T extends Builder<T>> extends HttpRequest.Builder<T>  {
       protected Class<?> declaring;
       protected Method javaMethod;
       // args can be null, so cannot use immutable list

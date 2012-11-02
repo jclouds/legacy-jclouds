@@ -36,7 +36,7 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  */
 public class ListAsyncJobsOptions extends AccountInDomainOptions {
-   private final static DateService dateService = new SimpleDateFormatDateService();
+   private static final DateService dateService = new SimpleDateFormatDateService();
 
    public static final ListAsyncJobsOptions NONE = new ListAsyncJobsOptions();
 

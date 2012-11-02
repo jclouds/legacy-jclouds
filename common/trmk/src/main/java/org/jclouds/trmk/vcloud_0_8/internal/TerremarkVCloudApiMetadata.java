@@ -48,7 +48,7 @@ public abstract class TerremarkVCloudApiMetadata extends BaseRestApiMetadata {
       return properties;
    }
 
-   public static abstract class Builder extends BaseRestApiMetadata.Builder {
+   public abstract static class Builder extends BaseRestApiMetadata.Builder {
 
       protected Builder(Class<?> syncClient, Class<?> asyncClient) {
          super(syncClient, asyncClient);

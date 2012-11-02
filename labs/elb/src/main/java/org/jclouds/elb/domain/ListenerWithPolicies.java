@@ -43,7 +43,7 @@ public class ListenerWithPolicies extends Listener {
       return builder().fromListenerWithPolicies(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> extends Listener.Builder<T> {
+   public abstract static class Builder<T extends Builder<T>> extends Listener.Builder<T> {
 
       private ImmutableSet.Builder<String> policyNames = ImmutableSet.<String> builder();
 

@@ -107,7 +107,7 @@ public class NamingStrategies {
       }
    }
 
-   public static abstract class AnnotationBasedNamingStrategy {
+   public abstract static class AnnotationBasedNamingStrategy {
       protected final Map<Class<? extends Annotation>, ? extends NameExtractor> annotationToNameExtractor;
       private String forToString;
 

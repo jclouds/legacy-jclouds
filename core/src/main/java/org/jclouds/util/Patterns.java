@@ -51,7 +51,7 @@ public class Patterns {
    public static final Pattern TRAILING_SLASHES = Pattern.compile("[/]*$");
    public static final Pattern REST_CONTEXT_BUILDER = Pattern.compile("(.*ContextBuilder)<([^,]+), ?([^>]+)>");
 
-   public final static LoadingCache<Character, Pattern> CHAR_TO_ENCODED_PATTERN = CacheBuilder.newBuilder()
+   public static final LoadingCache<Character, Pattern> CHAR_TO_ENCODED_PATTERN = CacheBuilder.newBuilder()
          .<Character, Pattern> build(new CacheLoader<Character, Pattern>() {
             @Override
             public Pattern load(Character plain) throws ExecutionException {
@@ -64,7 +64,7 @@ public class Patterns {
             }
          });
 
-   public final static LoadingCache<Character, Pattern> CHAR_TO_PATTERN = CacheBuilder.newBuilder()
+   public static final LoadingCache<Character, Pattern> CHAR_TO_PATTERN = CacheBuilder.newBuilder()
          .<Character, Pattern> build(new CacheLoader<Character, Pattern>() {
             @Override
             public Pattern load(Character plain) {
@@ -72,7 +72,7 @@ public class Patterns {
             }
          });
 
-   public final static LoadingCache<String, Pattern> TOKEN_TO_PATTERN = CacheBuilder.newBuilder()
+   public static final LoadingCache<String, Pattern> TOKEN_TO_PATTERN = CacheBuilder.newBuilder()
          .<String, Pattern> build(new CacheLoader<String, Pattern>() {
             @Override
             public Pattern load(String tokenValue) {

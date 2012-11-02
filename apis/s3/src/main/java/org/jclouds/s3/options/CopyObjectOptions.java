@@ -76,7 +76,7 @@ import com.google.common.collect.Multimap;
  *      />
  */
 public class CopyObjectOptions extends BaseHttpRequestOptions {
-   private final static DateService dateService = new SimpleDateFormatDateService();
+   private static final DateService dateService = new SimpleDateFormatDateService();
    public static final CopyObjectOptions NONE = new CopyObjectOptions();
    private Map<String, String> metadata;
    private CannedAccessPolicy acl = CannedAccessPolicy.PRIVATE;

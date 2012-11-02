@@ -73,7 +73,7 @@ public class Metadata extends Resource implements Map<String, String> {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
 
-   public static abstract class Builder<B extends Builder<B>> extends Resource.Builder<B> {
+   public abstract static class Builder<B extends Builder<B>> extends Resource.Builder<B> {
 
       private Set<MetadataEntry> metadataEntries = Sets.newLinkedHashSet();
       

@@ -286,7 +286,7 @@ public class VirtualSystemSettingData {
          return Integer.toString(code);
       }
 
-      protected final static Map<Integer, AutomaticRecoveryAction> AUTOMATIC_RECOVERY_ACTION_BY_ID = Maps.uniqueIndex(
+      protected static final Map<Integer, AutomaticRecoveryAction> AUTOMATIC_RECOVERY_ACTION_BY_ID = Maps.uniqueIndex(
                ImmutableSet.copyOf(AutomaticRecoveryAction.values()), new Function<AutomaticRecoveryAction, Integer>() {
                   @Override
                   public Integer apply(AutomaticRecoveryAction input) {
@@ -320,7 +320,7 @@ public class VirtualSystemSettingData {
          return Integer.toString(code);
       }
 
-      protected final static Map<Integer, AutomaticShutdownAction> AUTOMATIC_SHUTDOWN_ACTION_BY_ID = Maps.uniqueIndex(
+      protected static final Map<Integer, AutomaticShutdownAction> AUTOMATIC_SHUTDOWN_ACTION_BY_ID = Maps.uniqueIndex(
                ImmutableSet.copyOf(AutomaticShutdownAction.values()), new Function<AutomaticShutdownAction, Integer>() {
                   @Override
                   public Integer apply(AutomaticShutdownAction input) {
@@ -354,7 +354,7 @@ public class VirtualSystemSettingData {
          return Integer.toString(code);
       }
 
-      protected final static Map<Integer, AutomaticStartupAction> AUTOMATIC_STARTUP_ACTION_BY_ID = Maps.uniqueIndex(
+      protected static final Map<Integer, AutomaticStartupAction> AUTOMATIC_STARTUP_ACTION_BY_ID = Maps.uniqueIndex(
                ImmutableSet.copyOf(AutomaticStartupAction.values()), new Function<AutomaticStartupAction, Integer>() {
                   @Override
                   public Integer apply(AutomaticStartupAction input) {
