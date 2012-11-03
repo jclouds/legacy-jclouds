@@ -58,7 +58,7 @@ public class FutureIterablesTest {
             }
 
          }, MoreExecutors.sameThreadExecutor(), null, Logger.CONSOLE, "");
-         assert false;
+         fail("Expected AuthorizationException");
       } catch (AuthorizationException e) {
          assertEquals(counter.get(), 2);
       }
@@ -78,7 +78,7 @@ public class FutureIterablesTest {
             }
 
          }, MoreExecutors.sameThreadExecutor(), null, Logger.CONSOLE, "");
-         assert false;
+         fail("Expected TransformParallelException");
       } catch (TransformParallelException e) {
          assertEquals(e.getFromToException().size(), 2);
          assertEquals(counter.get(), 10);

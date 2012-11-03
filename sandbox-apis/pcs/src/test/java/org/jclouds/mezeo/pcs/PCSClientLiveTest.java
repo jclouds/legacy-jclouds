@@ -24,6 +24,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import java.io.InputStream;
 import java.net.URI;
@@ -209,7 +210,7 @@ public class PCSClientLiveTest {
 
       try {
          connection.downloadFile(uriBuilderProvider.get().uri(objectURI).path("sad").build());
-         assert false;
+         fail("Expected KeyNotFoundException");
       } catch (KeyNotFoundException e) {
       }
       // Test GET of object (including updated metadata)

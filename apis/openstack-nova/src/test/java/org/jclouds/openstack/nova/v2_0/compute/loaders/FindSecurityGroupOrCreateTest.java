@@ -20,6 +20,7 @@ package org.jclouds.openstack.nova.v2_0.compute.loaders;
 
 import static org.easymock.EasyMock.createMock;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -80,7 +81,7 @@ public class FindSecurityGroupOrCreateTest {
 
          @Override
          public SecurityGroupInZone apply(ZoneSecurityGroupNameAndPorts input) {
-            assert false;
+            fail();
             return null;
          }
 
@@ -105,7 +106,7 @@ public class FindSecurityGroupOrCreateTest {
 
          @Override
          public SecurityGroupInZone apply(ZoneSecurityGroupNameAndPorts input) {
-            assert false;
+            fail();
             return null;
          }
 
@@ -130,7 +131,7 @@ public class FindSecurityGroupOrCreateTest {
 
          @Override
          public SecurityGroupInZone apply(ZoneSecurityGroupNameAndPorts input) {
-            assert false;
+            fail();
             return null;
          }
 

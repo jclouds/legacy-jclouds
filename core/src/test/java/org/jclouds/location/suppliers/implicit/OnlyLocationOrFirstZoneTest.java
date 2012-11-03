@@ -19,6 +19,7 @@
 package org.jclouds.location.suppliers.implicit;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -54,7 +55,7 @@ public class OnlyLocationOrFirstZoneTest {
 
       try {
          fn.get();
-         assert false;
+         fail("Expected NoSuchElementException");
       } catch (NoSuchElementException e) {
          assertEquals(e.getMessage(), "none to of the locations are scope ZONE: [servo:PROVIDER, servo-r:REGION]");
       }

@@ -27,6 +27,7 @@ import static org.jclouds.compute.predicates.NodePredicates.runningInGroup;
 import static org.jclouds.scriptbuilder.domain.Statements.exec;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.fail;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -177,7 +178,7 @@ public class AWSKeyPairClientLiveTest extends BaseComputeServiceContextLiveTest 
          // try again to see if there's an error
          try {
             client.importKeyPairInRegion(null, keyName, myKey.get("public"));
-            assert false;
+            fail("Expected IllegalStateException");
          } catch (IllegalStateException e) {
 
          }

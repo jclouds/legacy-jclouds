@@ -23,6 +23,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
 import java.io.IOException;
 import java.util.concurrent.Callable;
@@ -233,7 +234,7 @@ Caused by: java.lang.IllegalStateException: foo
    static void checkFutureGetFailsWith(Future<?> task, String ...requiredPhrases) throws Exception {
       try {
          task.get();
-         assert false : "task should have failed";
+         fail("task should have failed");
       } catch (ExecutionException e) {
          String trace = Throwables.getStackTraceAsString(e);
          for (String requiredPhrase : requiredPhrases) {

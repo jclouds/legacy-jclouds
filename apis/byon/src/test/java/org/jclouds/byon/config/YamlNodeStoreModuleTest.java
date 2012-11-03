@@ -19,6 +19,7 @@
 package org.jclouds.byon.config;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -162,7 +163,7 @@ public class YamlNodeStoreModuleTest {
       assertEquals(map.size(), 0);
       try {
          assertEquals(store.getUnchecked(key), null);
-         assert false : "should not work as null is invalid";
+         fail("should not work as null is invalid");
       } catch (UncheckedExecutionException e) {
 
       }
