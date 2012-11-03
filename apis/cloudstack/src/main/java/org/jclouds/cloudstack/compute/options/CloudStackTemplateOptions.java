@@ -58,7 +58,9 @@ public class CloudStackTemplateOptions extends TemplateOptions implements Clonea
    protected String ipOnDefaultNetwork;
    protected String keyPair;
    protected boolean setupStaticNat = true;
-
+   protected String account;
+   protected String domainId;
+    
    @Override
    public CloudStackTemplateOptions clone() {
       CloudStackTemplateOptions options = new CloudStackTemplateOptions();
@@ -76,6 +78,8 @@ public class CloudStackTemplateOptions extends TemplateOptions implements Clonea
          eTo.ipsToNetworks(this.ipsToNetworks);
          eTo.ipOnDefaultNetwork(this.ipOnDefaultNetwork);
          eTo.keyPair(this.keyPair);
+         eTo.account(this.account);
+         eTo.domainId(this.domainId);
          eTo.setupStaticNat(setupStaticNat);
       }
    }
@@ -165,6 +169,31 @@ public class CloudStackTemplateOptions extends TemplateOptions implements Clonea
       return keyPair;
    }
 
+   /**
+    * @see DeployVirtualMachineOptions#accountInDomain(String,String)
+    */
+   public CloudStackTemplateOptions account(String account) {
+      this.account = account;
+      return this;
+   }
+
+   public String getAccount() {
+      return account;
+   }
+
+   /**
+    * @see DeployVirtualMachineOptions#accountInDomain(String,String)
+    * @see DeployVirtualMachineOptions#domainId(String)
+    */
+   public CloudStackTemplateOptions domainId(String domainId) {
+      this.domainId = domainId;
+      return this;
+   }
+
+   public String getDomainId() {
+      return domainId;
+   }
+
    public static final CloudStackTemplateOptions NONE = new CloudStackTemplateOptions();
 
    public static class Builder {
@@ -231,6 +260,22 @@ public class CloudStackTemplateOptions extends TemplateOptions implements Clonea
       public static CloudStackTemplateOptions keyPair(String keyPair) {
          CloudStackTemplateOptions options = new CloudStackTemplateOptions();
          return options.keyPair(keyPair);
+      }
+
+      /**
+       * @see CloudStackTemplateOptions#account
+       */
+      public static CloudStackTemplateOptions account(String account) {
+         CloudStackTemplateOptions options = new CloudStackTemplateOptions();
+         return options.account(account);
+      }
+
+      /**
+       * @see CloudStackTemplateOptions#domainId
+       */
+      public static CloudStackTemplateOptions domainId(String domainId) {
+         CloudStackTemplateOptions options = new CloudStackTemplateOptions();
+         return options.domainId(domainId);
       }
 
       // methods that only facilitate returning the correct object type
