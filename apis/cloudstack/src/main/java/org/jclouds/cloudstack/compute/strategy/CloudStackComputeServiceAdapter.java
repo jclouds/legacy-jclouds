@@ -125,6 +125,7 @@ public class CloudStackComputeServiceAdapter implements
    @Override
    public NodeAndInitialCredentials<VirtualMachine> createNodeWithGroupEncodedIntoName(String group, String name,
                                                                                        org.jclouds.compute.domain.Template template) {
+
       checkNotNull(template, "template was null");
       checkNotNull(template.getOptions(), "template options was null");
       checkArgument(template.getOptions().getClass().isAssignableFrom(CloudStackTemplateOptions.class),
@@ -144,6 +145,12 @@ public class CloudStackComputeServiceAdapter implements
 
       checkState(optionsConverters.containsKey(zone.getNetworkType()), "no options converter configured for network type %s", zone.getNetworkType());
       DeployVirtualMachineOptions options = displayName(name).name(name);
+      if (templateOptions.getAccount() != null) {
+          options.accountInDomain(templateOptions.getAccount(), templateOptions.getDomainId());
+      } else if (templateOptions.getDomainId() != null) {
+          options.domainId(templateOptions.getDomainId());
+      }
+      
       OptionsConverter optionsConverter = optionsConverters.get(zone.getNetworkType());
       options = optionsConverter.apply(templateOptions, networks, zoneId, options);
 

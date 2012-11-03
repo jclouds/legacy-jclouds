@@ -18,6 +18,8 @@
  */
 package org.jclouds.cloudstack.compute.options;
 
+import static org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions.Builder.account;
+import static org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions.Builder.domainId;
 import static org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions.Builder.ipOnDefaultNetwork;
 import static org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions.Builder.ipsToNetworks;
 import static org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions.Builder.keyPair;
@@ -174,6 +176,18 @@ public class CloudStackTemplateOptionsTest {
    public void testKeyPair() {
       TemplateOptions options = keyPair("test");
       assertEquals(options.as(CloudStackTemplateOptions.class).getKeyPair(), "test");
+   }
+
+   @Test
+   public void testAccount() {
+      TemplateOptions options = account("test");
+      assertEquals(options.as(CloudStackTemplateOptions.class).getAccount(), "test");
+   }
+
+   @Test
+   public void testDomainId() {
+      TemplateOptions options = domainId("test");
+      assertEquals(options.as(CloudStackTemplateOptions.class).getDomainId(), "test");
    }
 
    @Test
