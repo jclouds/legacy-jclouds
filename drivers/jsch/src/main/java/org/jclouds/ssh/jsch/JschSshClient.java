@@ -30,7 +30,9 @@ import static org.jclouds.crypto.CryptoStreams.md5;
 import static org.jclouds.crypto.SshKeys.fingerprintPrivateKey;
 import static org.jclouds.crypto.SshKeys.sha1PrivateKey;
 
+import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -40,8 +42,6 @@ import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.inject.Named;
 
-import org.apache.commons.io.input.ProxyInputStream;
-import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.jclouds.compute.domain.ExecChannel;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.domain.LoginCredentials;
@@ -74,7 +74,7 @@ import com.jcraft.jsch.Session;
  */
 public class JschSshClient implements SshClient {
 
-   private final class CloseFtpChannelOnCloseInputStream extends ProxyInputStream {
+   private final class CloseFtpChannelOnCloseInputStream extends FilterInputStream {
 
       private final ChannelSftp sftp;
 
