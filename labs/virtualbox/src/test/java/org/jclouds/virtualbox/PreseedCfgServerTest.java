@@ -25,8 +25,8 @@ import java.net.URL;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.util.Strings2;
 import org.jclouds.virtualbox.config.VirtualBoxConstants;
 import org.jclouds.virtualbox.domain.YamlImage;
 import org.jclouds.virtualbox.functions.YamlImagesFromFileConfig;
@@ -59,7 +59,7 @@ public class PreseedCfgServerTest {
 
       starter.start(preconfigurationUrl, getDefaultImage().preseed_cfg);
 
-      String preseedFileFromJetty = IOUtils.toString(new URL("http://127.0.0.1:" + port + "/preseed.cfg").openStream());
+      String preseedFileFromJetty = Strings2.toStringAndClose(new URL("http://127.0.0.1:" + port + "/preseed.cfg").openStream());
       String preseedFileFromFile = getDefaultImage().preseed_cfg + lineSeparator;
       assertEquals(preseedFileFromFile, preseedFileFromJetty);
 
