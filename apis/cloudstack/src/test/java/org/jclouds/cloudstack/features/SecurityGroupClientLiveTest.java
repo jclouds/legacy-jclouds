@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.features;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -82,7 +83,7 @@ public class SecurityGroupClientLiveTest extends BaseCloudStackClientLiveTest {
          checkGroup(group);
          try {
             client.getSecurityGroupClient().createSecurityGroup(prefix);
-            assert false;
+            fail("Expected IllegalStateException");
          } catch (IllegalStateException e) {
 
          }

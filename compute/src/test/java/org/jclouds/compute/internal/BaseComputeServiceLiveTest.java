@@ -43,6 +43,7 @@ import static org.jclouds.compute.predicates.NodePredicates.runningInGroup;
 import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.fail;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -293,7 +294,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
       ExecResponse response = null;
       try {
          response = future.get(1, TimeUnit.MILLISECONDS);
-         assert false : node.getId() + ": " + response;
+         fail(node.getId() + ": " + response);
       } catch (TimeoutException e) {
          assert !future.isDone();
          response = client.runScriptOnNode(node.getId(), Statements.exec("/tmp/init-sleeper status"),
@@ -305,7 +306,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
          assert response.getOutput().trim().equals("") : node.getId() + ": " + response;
          try {
             future.get();
-            assert false : future;
+            fail(future.toString());
          } catch (CancellationException e1) {
 
          }

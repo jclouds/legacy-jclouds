@@ -23,6 +23,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newTreeSet;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -106,7 +107,7 @@ public class PlacementGroupClientLiveTest extends BaseComputeServiceContextLiveT
          if (!supportedRegions.contains(region))
             try {
                client.getPlacementGroupServices().describePlacementGroupsInRegion(region);
-               assert false : "should be unsupported for region: " + region;
+               fail("should be unsupported for region: " + region);
             } catch (UnsupportedOperationException e) {
             }
       }

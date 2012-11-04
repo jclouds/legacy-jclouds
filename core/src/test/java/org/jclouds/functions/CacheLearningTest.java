@@ -19,6 +19,7 @@
 package org.jclouds.functions;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
 import java.util.concurrent.ExecutionException;
 
@@ -56,14 +57,14 @@ public class CacheLearningTest {
       });
       try {
          cache.get("foo");
-         assert false : "expected exception on miss";
+         fail("expected exception on miss");
       } catch (CacheLoader.InvalidCacheLoadException e) {
          assertEquals(e.getMessage(), "CacheLoader returned null for key foo.");
       }
       
       try {
          cache.getUnchecked("foo");
-         assert false : "expected exception on miss";
+         fail("expected exception on miss");
       } catch (CacheLoader.InvalidCacheLoadException e) {
          assertEquals(e.getMessage(), "CacheLoader returned null for key foo.");
       }
@@ -85,21 +86,21 @@ public class CacheLearningTest {
       
       try {
          cache.get("exception");
-         assert false : "expected checked exception in loader to rethrow as ExecutionException";
+         fail("expected checked exception in loader to rethrow as ExecutionException");
       } catch (ExecutionException e) {
          assertEquals(e.getMessage(), "java.lang.Exception: exception");
       }
 
       try {
          cache.get("runtimeexception");
-         assert false : "expected unchecked exception in loader to rethrow as UncheckedExecutionException";
+         fail("expected unchecked exception in loader to rethrow as UncheckedExecutionException");
       } catch (UncheckedExecutionException e) {
          assertEquals(e.getMessage(), "java.lang.RuntimeException: runtimeexception");
       }
 
       try {
          cache.getUnchecked("exception");
-         assert false : "expected checked exception in loader to rethrow as UncheckedExecutionException, when getUnchecked called";
+         fail("expected checked exception in loader to rethrow as UncheckedExecutionException, when getUnchecked called");
       } catch (UncheckedExecutionException e) {
          assertEquals(e.getMessage(), "java.lang.Exception: exception");
       }

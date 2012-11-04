@@ -20,6 +20,7 @@ package org.jclouds.softlayer.compute.options;
 
 import static org.jclouds.softlayer.compute.options.SoftLayerTemplateOptions.Builder.domainName;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
 import org.jclouds.compute.options.TemplateOptions;
 import org.testng.annotations.Test;
@@ -61,7 +62,7 @@ public class SoftLayerTemplateOptionsTest {
    public void testDomainNameNullHasDecentMessage() {
       try {
          new SoftLayerTemplateOptions().domainName(null);
-         assert false : "should NPE";
+         fail("should NPE");
       } catch (NullPointerException e) {
          assertEquals(e.getMessage(), "domainName was null");
       }

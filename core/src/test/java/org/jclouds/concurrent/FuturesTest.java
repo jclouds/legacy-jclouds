@@ -23,6 +23,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -80,7 +81,7 @@ public class FuturesTest {
       CallGetAndRunExecutionList<String> caller = new CallGetAndRunExecutionList<String>(future, executionList);
       try {
          caller.run();
-         assert false;
+         fail("Expected IllegalStateException");
       } catch (IllegalStateException e) {
          assertEquals(e.getMessage(), "interrupted calling get() on [EasyMock for interface java.util.concurrent.Future], so could not run listeners");
       }

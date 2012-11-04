@@ -19,6 +19,7 @@
 package org.jclouds.atmos;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
 import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;
@@ -272,7 +273,7 @@ public class AtmosClientLiveTest extends BaseBlobStoreIntegrationTest {
          Strings2.toStringAndClose(URI.create(
                   "http://accesspoint.emccis.com/rest/objects/" + getBlob.getSystemMetadata().getObjectID()).toURL()
                   .openStream());
-         assert false : "shouldn't have worked, since it is private";
+         fail("shouldn't have worked, since it is private");
       } catch (IOException e) {
 
       }

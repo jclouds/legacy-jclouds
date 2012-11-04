@@ -23,6 +23,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -61,7 +62,7 @@ public class RetryOnTimeOutExceptionFunctionTest {
                delegate);
       try {
          supplier.apply("baz");
-         assert false;
+         fail();
       } catch (RuntimeException e) {
          assertEquals(e.getCause(), timeout);
       }
@@ -113,7 +114,7 @@ public class RetryOnTimeOutExceptionFunctionTest {
 
       try {
          supplier.apply("baz");
-         assert false;
+         fail();
       } catch (RuntimeException e) {
          assertEquals(e.getCause(), auth);
       }
