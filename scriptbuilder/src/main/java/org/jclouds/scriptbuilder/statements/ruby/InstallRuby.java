@@ -16,23 +16,39 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.scriptbuilder.statements.chef;
+package org.jclouds.scriptbuilder.statements.ruby;
 
 import static org.jclouds.scriptbuilder.domain.Statements.call;
+import static org.jclouds.scriptbuilder.domain.Statements.exec;
+import static org.jclouds.scriptbuilder.domain.Statements.extractTargzAndFlattenIntoDirectory;
+
+import java.net.URI;
 
 import org.jclouds.scriptbuilder.domain.OsFamily;
+import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.StatementList;
-import org.jclouds.scriptbuilder.statements.ruby.InstallRuby;
 
 /**
- * Installs Chef gems onto a host.
+ * Installs Ruby and Rubygems gems onto a host.
  * 
  * @author Ignasi Barrera
  */
-public class InstallChefGems extends StatementList {
+public class InstallRuby extends StatementList {
 
-   public InstallChefGems() {
-      super(new InstallRuby(), call("installChefGems"));
+   private static final URI RUBYGEMS_URI = URI.create("http://production.cf.rubygems.org/rubygems/rubygems-1.3.7.tgz");
+
+   public static Statement installRubyGems() {
+      return new StatementList(//
+            exec("("), //
+            extractTargzAndFlattenIntoDirectory(RUBYGEMS_URI, "/tmp/rubygems"), //
+            exec("{cd} /tmp/rubygems"), //
+            exec("ruby setup.rb --no-format-executable"), //
+            exec("{rm} -fr /tmp/rubygems"), //
+            exec(")"));
+   }
+
+   public InstallRuby() {
+      super(call("setupPublicCurl"), call("installRuby"), installRubyGems());
    }
 
    @Override

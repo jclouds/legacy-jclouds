@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.scriptbuilder.statements.chef;
+package org.jclouds.scriptbuilder.statements.ruby;
 
 import static org.testng.Assert.assertEquals;
 
@@ -30,27 +30,24 @@ import org.testng.annotations.Test;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
-@Test(groups = "unit", testName = "InstallChefGemsTest")
-public class InstallChefGemsTest {
+@Test(groups = "unit", testName = "InstallRubyTest")
+public class InstallRubyTest {
 
    @Test(expectedExceptions = UnsupportedOperationException.class,
          expectedExceptionsMessageRegExp = "windows not yet implemented")
-   public void installChefGemsInWindows() {
-      new InstallChefGems().render(OsFamily.WINDOWS);
+   public void installRubyInWindows() {
+      new InstallRuby().render(OsFamily.WINDOWS);
    }
 
-   public void installChefGemsUnix() throws IOException {
-      assertEquals(
-            new InstallChefGems().render(OsFamily.UNIX),
-            Resources.toString(Resources.getResource("test_install_ruby." + ShellToken.SH.to(OsFamily.UNIX)),
-                  Charsets.UTF_8) + "installChefGems || return 1\n");
+   public void installRubyUnix() throws IOException {
+      assertEquals(new InstallRuby().render(OsFamily.UNIX), Resources.toString(
+            Resources.getResource("test_install_ruby." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8));
    }
 
-   public void installChefGemsUnixInScriptBuilderSourcesSetupPublicCurl() throws IOException {
-      assertEquals(
-            InitScript.builder().name("install_chef_gems").run(new InstallChefGems()).build().render(OsFamily.UNIX),
+   public void installRubyUnixInScriptBuilderSourcesSetupPublicCurl() throws IOException {
+      assertEquals(InitScript.builder().name("install_ruby").run(new InstallRuby()).build().render(OsFamily.UNIX),
             Resources.toString(
-                  Resources.getResource("test_install_chef_gems_scriptbuilder." + ShellToken.SH.to(OsFamily.UNIX)),
+                  Resources.getResource("test_install_ruby_scriptbuilder." + ShellToken.SH.to(OsFamily.UNIX)),
                   Charsets.UTF_8));
    }
 }

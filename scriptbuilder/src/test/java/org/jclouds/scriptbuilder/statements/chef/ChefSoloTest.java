@@ -20,10 +20,15 @@ package org.jclouds.scriptbuilder.statements.chef;
 
 import static org.testng.Assert.assertEquals;
 
+import java.io.IOException;
+
 import org.jclouds.scriptbuilder.domain.OsFamily;
+import org.jclouds.scriptbuilder.domain.ShellToken;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
+import com.google.common.io.Resources;
 
 @Test(groups = "unit", testName = "ChefSoloTest")
 public class ChefSoloTest {
@@ -43,34 +48,42 @@ public class ChefSoloTest {
       ChefSolo.builder().cookbooksArchiveLocation("/tmp/cookbooks").build().render(OsFamily.WINDOWS);
    }
 
-   public void testChefSoloWithCookbooksLocation() {
+   public void testChefSoloWithCookbooksLocation() throws IOException {
       String script = ChefSolo.builder().cookbooksArchiveLocation("/tmp/cookbooks").build().render(OsFamily.UNIX);
-      assertEquals(script,
-            "setupPublicCurl || return 1\ninstallChefGems || return 1\nchef-solo -N `hostname` -r /tmp/cookbooks\n");
+      assertEquals(
+            script,
+            Resources.toString(Resources.getResource("test_install_ruby." + ShellToken.SH.to(OsFamily.UNIX)),
+                  Charsets.UTF_8) + "installChefGems || return 1\nchef-solo -N `hostname` -r /tmp/cookbooks\n");
    }
 
-   public void testChefSoloWithCookbooksLocationAndSingleRecipe() {
+   public void testChefSoloWithCookbooksLocationAndSingleRecipe() throws IOException {
       String script = ChefSolo.builder().cookbooksArchiveLocation("/tmp/cookbooks").installRecipe("apache2").build()
             .render(OsFamily.UNIX);
       assertEquals(
             script,
-            "setupPublicCurl || return 1\ninstallChefGems || return 1\nchef-solo -N `hostname` -r /tmp/cookbooks -o recipe[apache2]\n");
+            Resources.toString(Resources.getResource("test_install_ruby." + ShellToken.SH.to(OsFamily.UNIX)),
+                  Charsets.UTF_8)
+                  + "installChefGems || return 1\nchef-solo -N `hostname` -r /tmp/cookbooks -o recipe[apache2]\n");
    }
 
-   public void testChefSoloWithCookbooksLocationAndMultipleRecipes() {
+   public void testChefSoloWithCookbooksLocationAndMultipleRecipes() throws IOException {
       String script = ChefSolo.builder().cookbooksArchiveLocation("/tmp/cookbooks").installRecipe("apache2")
             .installRecipe("mysql").build().render(OsFamily.UNIX);
       assertEquals(
             script,
-            "setupPublicCurl || return 1\ninstallChefGems || return 1\nchef-solo -N `hostname` -r /tmp/cookbooks -o recipe[apache2],recipe[mysql]\n");
+            Resources.toString(Resources.getResource("test_install_ruby." + ShellToken.SH.to(OsFamily.UNIX)),
+                  Charsets.UTF_8)
+                  + "installChefGems || return 1\nchef-solo -N `hostname` -r /tmp/cookbooks -o recipe[apache2],recipe[mysql]\n");
    }
 
-   public void testChefSoloWithCookbooksLocationAndMultipleRecipesInList() {
+   public void testChefSoloWithCookbooksLocationAndMultipleRecipesInList() throws IOException {
       String script = ChefSolo.builder().cookbooksArchiveLocation("/tmp/cookbooks")
             .installRecipes(ImmutableList.<String> of("apache2", "mysql")).build().render(OsFamily.UNIX);
       assertEquals(
             script,
-            "setupPublicCurl || return 1\ninstallChefGems || return 1\nchef-solo -N `hostname` -r /tmp/cookbooks -o recipe[apache2],recipe[mysql]\n");
+            Resources.toString(Resources.getResource("test_install_ruby." + ShellToken.SH.to(OsFamily.UNIX)),
+                  Charsets.UTF_8)
+                  + "installChefGems || return 1\nchef-solo -N `hostname` -r /tmp/cookbooks -o recipe[apache2],recipe[mysql]\n");
    }
 
 }

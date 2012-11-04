@@ -8,12 +8,12 @@ function abort {
    exit 1
 }
 function default {
-   export INSTANCE_NAME="install_chef_gems"
+   export INSTANCE_NAME="install_ruby"
 export INSTANCE_HOME="/tmp/$INSTANCE_NAME"
 export LOG_DIR="$INSTANCE_HOME"
    return $?
 }
-function install_chef_gems {
+function install_ruby {
       return $?
 }
 function findPid {
@@ -58,27 +58,27 @@ export PATH=/usr/ucb/bin:/bin:/sbin:/usr/bin:/usr/sbin
 case $1 in
 init)
    default || exit 1
-   install_chef_gems || exit 1
+   install_ruby || exit 1
    mkdir -p $INSTANCE_HOME
    
    # create runscript header
-   cat > $INSTANCE_HOME/install_chef_gems.sh <<-'END_OF_JCLOUDS_SCRIPT'
+   cat > $INSTANCE_HOME/install_ruby.sh <<-'END_OF_JCLOUDS_SCRIPT'
 	#!/bin/bash
 	set +u
 	shopt -s xpg_echo
 	shopt -s expand_aliases
 	
-	PROMPT_COMMAND='echo -ne \"\033]0;install_chef_gems\007\"'
+	PROMPT_COMMAND='echo -ne \"\033]0;install_ruby\007\"'
 	export PATH=/usr/ucb/bin:/bin:/sbin:/usr/bin:/usr/sbin
 
-	export INSTANCE_NAME='install_chef_gems'
+	export INSTANCE_NAME='install_ruby'
 END_OF_JCLOUDS_SCRIPT
-   cat >> $INSTANCE_HOME/install_chef_gems.sh <<-END_OF_JCLOUDS_SCRIPT
+   cat >> $INSTANCE_HOME/install_ruby.sh <<-END_OF_JCLOUDS_SCRIPT
 	export INSTANCE_NAME='$INSTANCE_NAME'
 	export INSTANCE_HOME='$INSTANCE_HOME'
 	export LOG_DIR='$LOG_DIR'
 END_OF_JCLOUDS_SCRIPT
-   cat >> $INSTANCE_HOME/install_chef_gems.sh <<-'END_OF_JCLOUDS_SCRIPT'
+   cat >> $INSTANCE_HOME/install_ruby.sh <<-'END_OF_JCLOUDS_SCRIPT'
 	function abort {
    echo "aborting: $@" 1>&2
    exit 1
@@ -151,25 +151,18 @@ function installRuby() {
     fi
   fi
 }
-function installChefGems() {
-  if ! hash chef-client 2>/dev/null; then
-    if which rpm &> /dev/null; then
-      #Install gems provided by libruby-extras deb package (based on https://launchpad.net/ubuntu/precise/+package/libruby-extras)
-      /usr/bin/gem install cmdparse daemons log4r mmap ncurses --no-rdoc --no-ri --verbose
-    fi
-    /usr/bin/gem install ohai chef --no-rdoc --no-ri --verbose
-  fi
-}
 
 END_OF_JCLOUDS_SCRIPT
    
    # add desired commands from the user
-   cat >> $INSTANCE_HOME/install_chef_gems.sh <<-'END_OF_JCLOUDS_SCRIPT'
+   cat >> $INSTANCE_HOME/install_ruby.sh <<-'END_OF_JCLOUDS_SCRIPT'
 	cd $INSTANCE_HOME
 	rm -f $INSTANCE_HOME/rc
 	trap 'echo $?>$INSTANCE_HOME/rc' 0 1 2 3 15
 	setupPublicCurl || exit 1
+	
 	installRuby || exit 1
+	
 	(
 	mkdir /tmp/$$
 	curl -q -s -S -L --connect-timeout 10 --max-time 600 --retry 20 -X GET  http://production.cf.rubygems.org/rubygems/rubygems-1.3.7.tgz |(mkdir -p /tmp/$$ &&cd /tmp/$$ &&tar -xpzf -)
@@ -181,17 +174,15 @@ END_OF_JCLOUDS_SCRIPT
 	rm -fr /tmp/rubygems
 	)
 	
-	installChefGems || exit 1
-	
 END_OF_JCLOUDS_SCRIPT
    
    # add runscript footer
-   cat >> $INSTANCE_HOME/install_chef_gems.sh <<-'END_OF_JCLOUDS_SCRIPT'
+   cat >> $INSTANCE_HOME/install_ruby.sh <<-'END_OF_JCLOUDS_SCRIPT'
 	exit $?
 	
 END_OF_JCLOUDS_SCRIPT
    
-   chmod u+x $INSTANCE_HOME/install_chef_gems.sh
+   chmod u+x $INSTANCE_HOME/install_ruby.sh
    ;;
 status)
    default || exit 1
