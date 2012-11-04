@@ -52,6 +52,11 @@ import com.google.inject.TypeLiteral;
 @Test(groups = "unit", testName = "AtmosBlobRequestSignerTest")
 public class AtmosBlobRequestSignerTest extends BaseAsyncClientTest<AtmosAsyncClient> {
 
+   public AtmosBlobRequestSignerTest(){
+      // this is base64 decoded in the signer;
+      credential = "aaaabbbb"; 
+   }
+   
    private BlobRequestSigner signer;
    private Factory blobFactory;
 
@@ -62,7 +67,7 @@ public class AtmosBlobRequestSignerTest extends BaseAsyncClientTest<AtmosAsyncCl
       assertRequestLineEquals(request, "GET https://accesspoint.atmosonline.com/rest/namespace/container/name HTTP/1.1");
       assertNonPayloadHeadersEqual(
                request,
-               "Accept: */*\nDate: Thu, 05 Jun 2008 16:38:19 GMT\nx-emc-signature: Mhe5tqaKv04BlMvEjreNKkHHxzk=\nx-emc-uid: identity\n");
+               "Accept: */*\nDate: Thu, 05 Jun 2008 16:38:19 GMT\nx-emc-signature: DHDKwV6IPsJJvtrI9ktTiKq9us4=\nx-emc-uid: identity\n");
       assertPayloadEquals(request, null, null, false);
 
       assertEquals(request.getFilters().size(), 0);
@@ -76,7 +81,7 @@ public class AtmosBlobRequestSignerTest extends BaseAsyncClientTest<AtmosAsyncCl
                "DELETE https://accesspoint.atmosonline.com/rest/namespace/container/name HTTP/1.1");
       assertNonPayloadHeadersEqual(
                request,
-               "Accept: */*\nDate: Thu, 05 Jun 2008 16:38:19 GMT\nx-emc-signature: Q3zmO6KNAViNXquiCZSMx/0nuuc=\nx-emc-uid: identity\n");
+               "Accept: */*\nDate: Thu, 05 Jun 2008 16:38:19 GMT\nx-emc-signature: cPnxwSdWfIjChx8sox+43U9oo20=\nx-emc-uid: identity\n");
       assertPayloadEquals(request, null, null, false);
 
       assertEquals(request.getFilters().size(), 0);
@@ -98,7 +103,7 @@ public class AtmosBlobRequestSignerTest extends BaseAsyncClientTest<AtmosAsyncCl
                "POST https://accesspoint.atmosonline.com/rest/namespace/container/name HTTP/1.1");
       assertNonPayloadHeadersEqual(
                request,
-               "Accept: */*\nDate: Thu, 05 Jun 2008 16:38:19 GMT\nx-emc-signature: aLpB1oQaCA27AXT6Nzam7s0f0pI=\nx-emc-uid: identity\n");
+               "Accept: */*\nDate: Thu, 05 Jun 2008 16:38:19 GMT\nx-emc-signature: 7Cbdnu+YA5rG9J/C9RlHk07mU7w=\nx-emc-uid: identity\n");
 
       assertContentHeadersEqual(request, "text/plain", null, null, null, (long) 2l, new byte[] { 0, 2, 4, 8 }, new Date(1000));
 

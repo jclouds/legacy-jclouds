@@ -50,6 +50,11 @@ import com.google.inject.TypeLiteral;
 @Test(groups = "unit", testName = "AzureBlobRequestSignerTest")
 public class AzureBlobRequestSignerTest extends BaseAsyncClientTest<AzureBlobAsyncClient> {
 
+   public AzureBlobRequestSignerTest(){
+      // this is base64 decoded in the signer;
+      credential = "aaaabbbb"; 
+   }
+   
    private BlobRequestSigner signer;
    private Factory blobFactory;
 
@@ -60,7 +65,7 @@ public class AzureBlobRequestSignerTest extends BaseAsyncClientTest<AzureBlobAsy
       assertRequestLineEquals(request, "GET https://identity.blob.core.windows.net/container/name HTTP/1.1");
       assertNonPayloadHeadersEqual(
                request,
-               "Authorization: SharedKeyLite identity:nI6ca9CdLWhPoMuSzk4perqx5pzi2hx7YBJ92FCqeXM=\nDate: Thu, 05 Jun 2008 16:38:19 GMT\nx-ms-version: 2009-09-19\n");
+               "Authorization: SharedKeyLite identity:nutCr98JWBu7wbe1p9rDiyOXg3o6UqI4tEZ29bctKEU=\nDate: Thu, 05 Jun 2008 16:38:19 GMT\nx-ms-version: 2009-09-19\n");
       assertPayloadEquals(request, null, null, false);
 
       assertEquals(request.getFilters().size(), 0);
@@ -73,7 +78,7 @@ public class AzureBlobRequestSignerTest extends BaseAsyncClientTest<AzureBlobAsy
       assertRequestLineEquals(request, "DELETE https://identity.blob.core.windows.net/container/name HTTP/1.1");
       assertNonPayloadHeadersEqual(
                request,
-               "Authorization: SharedKeyLite identity:+BDU2AGqS9LwevaKH+jaRKNrxTZ3LsFDpnnWFKpN0jc=\nDate: Thu, 05 Jun 2008 16:38:19 GMT\nx-ms-version: 2009-09-19\n");
+               "Authorization: SharedKeyLite identity:GRixvGXJ05tuWANrM5xeWOAAVqfztvmPLpwCRcWPZEk=\nDate: Thu, 05 Jun 2008 16:38:19 GMT\nx-ms-version: 2009-09-19\n");
       assertPayloadEquals(request, null, null, false);
 
       assertEquals(request.getFilters().size(), 0);
@@ -94,7 +99,7 @@ public class AzureBlobRequestSignerTest extends BaseAsyncClientTest<AzureBlobAsy
       assertRequestLineEquals(request, "PUT https://identity.blob.core.windows.net/container/name HTTP/1.1");
       assertNonPayloadHeadersEqual(
                request,
-               "Authorization: SharedKeyLite identity:LT+HBNzhbRsZY07kC+/JxeuAURbxTmwJaIe464LO36c=\nDate: Thu, 05 Jun 2008 16:38:19 GMT\nx-ms-blob-type: BlockBlob\nx-ms-version: 2009-09-19\n");
+               "Authorization: SharedKeyLite identity:ssvK6ZB8GMqRcp1lBpY9vIzbLKL9Goxh7wZ2YhfHNzQ=\nDate: Thu, 05 Jun 2008 16:38:19 GMT\nx-ms-blob-type: BlockBlob\nx-ms-version: 2009-09-19\n");
       assertContentHeadersEqual(request, "text/plain", null, null, null, (long) 2l, new byte[] { 0, 2, 4, 8 }, new Date(1000));
 
       assertEquals(request.getFilters().size(), 0);
