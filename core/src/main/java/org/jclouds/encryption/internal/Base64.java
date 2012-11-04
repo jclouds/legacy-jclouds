@@ -152,6 +152,12 @@ public class Base64
     /** 
      * Translates a Base64 value to either its 6-bit reconstruction value
      * or a negative number indicating some other meaning.
+     * 
+     * <h4>Note</h4>
+     * {@code +} and {@code -} both decode to 62. {@code /} and {@code _} both decode to 63
+     * 
+     * This accomodates URL-safe encoding
+     * @see <a href="http://en.wikipedia.org/wiki/Base64#URL_applications">url-safe base64</a>
      **/
     private static final byte[] DECODABET =
     {   
@@ -164,7 +170,9 @@ public class Base64
         -5,                                         // Whitespace: Space
         -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,              // Decimal 33 - 42
         62,                                         // Plus sign at decimal 43
-        -9,-9,-9,                                   // Decimal 44 - 46
+        -9,                                         // Decimal 44
+        62,                                         // Hyphen at decimal 45
+        -9,                                         // Decimal 45
         63,                                         // Slash at decimal 47
         52,53,54,55,56,57,58,59,60,61,              // Numbers zero through nine
         -9,-9,-9,                                   // Decimal 58 - 60
@@ -172,7 +180,9 @@ public class Base64
         -9,-9,-9,                                      // Decimal 62 - 64
         0,1,2,3,4,5,6,7,8,9,10,11,12,13,            // Letters 'A' through 'N'
         14,15,16,17,18,19,20,21,22,23,24,25,        // Letters 'O' through 'Z'
-        -9,-9,-9,-9,-9,-9,                          // Decimal 91 - 96
+        -9,-9,-9,-9,                                // Decimal 91 - 94
+        63,                                         // Underscore at decimal 95
+        -9,                                         // Decimal 96
         26,27,28,29,30,31,32,33,34,35,36,37,38,     // Letters 'a' through 'm'
         39,40,41,42,43,44,45,46,47,48,49,50,51,     // Letters 'n' through 'z'
         -9,-9,-9,-9                                 // Decimal 123 - 126
@@ -199,7 +209,7 @@ public class Base64
     
     
     
-/* ********  E N C O D I N G   ApiMetadata E T H O D S  ******** */    
+/* ********  E N C O D I N G   M E T H O D S  ******** */    
     
     
     /**
@@ -727,6 +737,16 @@ public class Base64
      */
     public static byte[] decode( String s )
     {   
+        int modulo = s.length() % 4;
+        switch (modulo) {
+        case 2:
+            s += "==";
+            break;
+        case 3:
+            s += "=";
+            break;
+        }
+        
         byte[] bytes;
         try
         {
@@ -737,7 +757,7 @@ public class Base64
             bytes = s.getBytes();
         }   // end catch
 		//</change>
-        
+           
         // Decode
         bytes = decode( bytes, 0, bytes.length );
         
