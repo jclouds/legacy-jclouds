@@ -105,6 +105,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
+import com.google.common.util.concurrent.Atomics;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -294,7 +295,7 @@ public class BaseComputeService implements ComputeService {
    protected NodeMetadata doDestroyNode(final String id) {
       checkNotNull(id, "id");
       logger.debug(">> destroying node(%s)", id);
-      final AtomicReference<NodeMetadata> node = new AtomicReference<NodeMetadata>();
+      final AtomicReference<NodeMetadata> node = Atomics.newReference();
       RetryablePredicate<String> tester = new RetryablePredicate<String>(new Predicate<String>() {
 
          @Override
@@ -419,7 +420,7 @@ public class BaseComputeService implements ComputeService {
    public void rebootNode(String id) {
       checkNotNull(id, "id");
       logger.debug(">> rebooting node(%s)", id);
-      AtomicReference<NodeMetadata> node = new AtomicReference<NodeMetadata>(rebootNodeStrategy.rebootNode(id));
+      AtomicReference<NodeMetadata> node = Atomics.newReference(rebootNodeStrategy.rebootNode(id));
       boolean successful = nodeRunning.apply(node);
       logger.debug("<< rebooted node(%s) success(%s)", id, successful);
    }
@@ -450,7 +451,7 @@ public class BaseComputeService implements ComputeService {
    public void resumeNode(String id) {
       checkNotNull(id, "id");
       logger.debug(">> resuming node(%s)", id);
-      AtomicReference<NodeMetadata> node = new AtomicReference<NodeMetadata>(resumeNodeStrategy.resumeNode(id));
+      AtomicReference<NodeMetadata> node = Atomics.newReference(resumeNodeStrategy.resumeNode(id));
       boolean successful = nodeRunning.apply(node);
       logger.debug("<< resumed node(%s) success(%s)", id, successful);
    }
@@ -481,7 +482,7 @@ public class BaseComputeService implements ComputeService {
    public void suspendNode(String id) {
       checkNotNull(id, "id");
       logger.debug(">> suspending node(%s)", id);
-      AtomicReference<NodeMetadata> node = new AtomicReference<NodeMetadata>(suspendNodeStrategy.suspendNode(id));
+      AtomicReference<NodeMetadata> node = Atomics.newReference(suspendNodeStrategy.suspendNode(id));
       boolean successful = nodeSuspended.apply(node);
       logger.debug("<< suspended node(%s) success(%s)", id, successful);
    }

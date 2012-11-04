@@ -28,6 +28,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
+import com.google.common.util.concurrent.Atomics;
 
 /**
  * 
@@ -37,7 +38,7 @@ import com.google.common.base.Suppliers;
 public class SetAndThrowAuthorizationExceptionSupplierTest {
    @Test
    public void testNormal() {
-      AtomicReference<AuthorizationException> authException = new AtomicReference<AuthorizationException>();
+      AtomicReference<AuthorizationException> authException = Atomics.newReference();
       assertEquals(
             new SetAndThrowAuthorizationExceptionSupplier<String>(Suppliers.ofInstance("foo"), authException).get(),
             "foo");
@@ -46,7 +47,7 @@ public class SetAndThrowAuthorizationExceptionSupplierTest {
 
    @Test(expectedExceptions = AuthorizationException.class)
    public void testThrowsAuthorizationExceptionAndAlsoSetsExceptionType() {
-      AtomicReference<AuthorizationException> authException = new AtomicReference<AuthorizationException>();
+      AtomicReference<AuthorizationException> authException = Atomics.newReference();
       try {
          new SetAndThrowAuthorizationExceptionSupplier<String>(new Supplier<String>() {
 
@@ -62,7 +63,7 @@ public class SetAndThrowAuthorizationExceptionSupplierTest {
 
    @Test(expectedExceptions = AuthorizationException.class)
    public void testThrowsAuthorizationExceptionAndAlsoSetsExceptionTypeWhenNested() {
-      AtomicReference<AuthorizationException> authException = new AtomicReference<AuthorizationException>();
+      AtomicReference<AuthorizationException> authException = Atomics.newReference();
       try {
          new SetAndThrowAuthorizationExceptionSupplier<String>(new Supplier<String>() {
 
@@ -78,7 +79,7 @@ public class SetAndThrowAuthorizationExceptionSupplierTest {
 
    @Test(expectedExceptions = RuntimeException.class)
    public void testThrowsOriginalExceptionAndAlsoSetsExceptionTypeWhenNestedAndNotAuthorizationException() {
-      AtomicReference<AuthorizationException> authException = new AtomicReference<AuthorizationException>();
+      AtomicReference<AuthorizationException> authException = Atomics.newReference();
       try {
          new SetAndThrowAuthorizationExceptionSupplier<String>(new Supplier<String>() {
 

@@ -63,6 +63,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
+import com.google.common.util.concurrent.Atomics;
 
 /**
  * creates futures that correlate to
@@ -200,7 +201,7 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
 
          // block until instance is running
          logger.debug(">> awaiting status running instance(%s)", coordinates);
-         AtomicReference<NodeMetadata> node = new AtomicReference<NodeMetadata>(runningInstanceToNodeMetadata.apply(startedInstance));
+         AtomicReference<NodeMetadata> node = Atomics.newReference(runningInstanceToNodeMetadata.apply(startedInstance));
          nodeRunning.apply(node);
          logger.trace("<< running instance(%s)", coordinates);
          logger.debug(">> associating elastic IP %s to instance %s", ip, coordinates);

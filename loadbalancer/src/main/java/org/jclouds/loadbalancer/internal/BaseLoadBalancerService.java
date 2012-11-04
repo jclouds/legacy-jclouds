@@ -48,6 +48,7 @@ import org.jclouds.predicates.RetryablePredicate;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.util.concurrent.Atomics;
 import com.google.inject.Inject;
 
 /**
@@ -136,7 +137,7 @@ public class BaseLoadBalancerService implements LoadBalancerService {
    public void destroyLoadBalancer(final String id) {
       checkNotNull(id, "id");
       logger.debug(">> destroying load balancer(%s)", id);
-      final AtomicReference<LoadBalancerMetadata> loadBalancer = new AtomicReference<LoadBalancerMetadata>();
+      final AtomicReference<LoadBalancerMetadata> loadBalancer = Atomics.newReference();
       RetryablePredicate<String> tester = new RetryablePredicate<String>(new Predicate<String>() {
 
          @Override

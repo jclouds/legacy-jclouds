@@ -30,10 +30,12 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.net.HostAndPort;
+import com.google.common.util.concurrent.Atomics;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.inject.Inject;
+
 public class ConcurrentOpenSocketFinder implements OpenSocketFinder {
 
    @Resource
@@ -62,7 +64,7 @@ public class ConcurrentOpenSocketFinder implements OpenSocketFinder {
       long period = timeUnits.convert(1, TimeUnit.SECONDS);
 
       // For storing the result; needed because predicate will just tell us true/false
-      final AtomicReference<HostAndPort> result = new AtomicReference<HostAndPort>();
+      final AtomicReference<HostAndPort> result = Atomics.newReference();
 
       Predicate<Collection<HostAndPort>> concurrentOpenSocketFinder = new Predicate<Collection<HostAndPort>>() {
 
@@ -109,7 +111,7 @@ public class ConcurrentOpenSocketFinder implements OpenSocketFinder {
     * @throws InterruptedException 
     */
    private HostAndPort findOpenSocket(final Collection<HostAndPort> sockets) {
-      final AtomicReference<HostAndPort> result = new AtomicReference<HostAndPort>();
+      final AtomicReference<HostAndPort> result = Atomics.newReference();
       final CountDownLatch latch = new CountDownLatch(1);
       final AtomicInteger completeCount = new AtomicInteger();
       

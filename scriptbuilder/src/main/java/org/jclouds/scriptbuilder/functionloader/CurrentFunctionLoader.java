@@ -20,12 +20,14 @@ package org.jclouds.scriptbuilder.functionloader;
 
 import java.util.concurrent.atomic.AtomicReference;
 
+import com.google.common.util.concurrent.Atomics;
+
 /**
  * Means to access the current {@link FunctionLoader} instance;
  */
 public class CurrentFunctionLoader {
 
-   private static final AtomicReference<FunctionLoader> ref = new AtomicReference<FunctionLoader>(
+   private static final AtomicReference<FunctionLoader> ref = Atomics.<FunctionLoader>newReference(
             BasicFunctionLoader.INSTANCE);
 
    public static FunctionLoader get() {

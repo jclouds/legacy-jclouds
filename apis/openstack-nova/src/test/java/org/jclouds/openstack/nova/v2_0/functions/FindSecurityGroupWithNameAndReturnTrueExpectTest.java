@@ -37,6 +37,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Iterables;
+import com.google.common.util.concurrent.Atomics;
 
 /**
  * 
@@ -61,7 +62,7 @@ public class FindSecurityGroupWithNameAndReturnTrueExpectTest extends BaseNovaAp
       FindSecurityGroupWithNameAndReturnTrue predicate = new FindSecurityGroupWithNameAndReturnTrue(
                apiWhenSecurityGroupsExist);
 
-      AtomicReference<ZoneAndName> securityGroupInZoneRef = new AtomicReference<ZoneAndName>(ZoneAndName
+      AtomicReference<ZoneAndName> securityGroupInZoneRef = Atomics.newReference(ZoneAndName
                .fromZoneAndName("az-1.region-a.geo-1", "name1"));
 
       // we can find it
@@ -91,7 +92,7 @@ public class FindSecurityGroupWithNameAndReturnTrueExpectTest extends BaseNovaAp
 
       ZoneAndName zoneAndGroup = ZoneAndName.fromZoneAndName("az-1.region-a.geo-1", "name2");
 
-      AtomicReference<ZoneAndName> securityGroupInZoneRef = new AtomicReference<ZoneAndName>(zoneAndGroup);
+      AtomicReference<ZoneAndName> securityGroupInZoneRef = Atomics.newReference(zoneAndGroup);
 
       // we cannot find it
       assertFalse(predicate.apply(securityGroupInZoneRef));

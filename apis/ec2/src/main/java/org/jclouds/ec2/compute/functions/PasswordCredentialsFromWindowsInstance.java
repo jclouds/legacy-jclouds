@@ -46,6 +46,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
+import com.google.common.util.concurrent.Atomics;
 
 /**
  * @author Adrian Cole
@@ -82,7 +83,7 @@ public class PasswordCredentialsFromWindowsInstance implements Function<RunningI
       // 15 minutes.
       // So we create a predicate that tests if the password is ready, and wrap it in a retryable
       // predicate.
-      final AtomicReference<PasswordData> data = new AtomicReference<PasswordData>();
+      final AtomicReference<PasswordData> data = Atomics.newReference();
       Predicate<String> passwordReady = new Predicate<String>() {
          @Override
          public boolean apply(@Nullable String s) {

@@ -28,6 +28,7 @@ import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 
 import com.google.common.collect.Lists;
+import com.google.common.util.concurrent.Atomics;
 
 import org.jclouds.logging.Logger;
 
@@ -44,7 +45,7 @@ public abstract class BaseLifeCycle implements Runnable, LifeCycle {
    protected final List<LifeCycle> dependencies;
    protected final Object statusLock;
    protected volatile Status status;
-   protected AtomicReference<Exception> exception = new AtomicReference<Exception>();
+   protected AtomicReference<Exception> exception = Atomics.newReference();
 
    public BaseLifeCycle(ExecutorService executor, LifeCycle... dependencies) {
       this.executorService = executor;
