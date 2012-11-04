@@ -31,7 +31,7 @@ import com.google.common.base.Charsets;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", sequential = true)
+@Test(groups = "unit", singleThreaded = true)
 public class CryptoStreamsTest {
 
    @Test
@@ -43,9 +43,63 @@ public class CryptoStreamsTest {
 
    @Test
    public void testBase64Decode() throws IOException {
-
       byte[] decoded = CryptoStreams.base64Decode(Payloads.newStringPayload("aGVsbG8gd29ybGQ="));
       assertEquals(new String(decoded, Charsets.UTF_8), "hello world");
+   }
+
+   @Test
+   public void testBase64DecodeURLSafeJson() throws IOException {
+      byte[] decoded = CryptoStreams.base64("eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9");
+      assertEquals(new String(decoded, Charsets.UTF_8), "{\"alg\":\"RS256\",\"typ\":\"JWT\"}");
+   }
+
+   @Test
+   public void testBase64DecodeURLSafeNoPadding() throws IOException {
+
+      byte[] decoded = CryptoStreams
+            .base64("eyJpc3MiOiI3NjEzMjY3OTgwNjktcjVtbGpsbG4xcmQ0bHJiaGc3NWVmZ2lncDM2bTc4ajVAZGV2ZWxvcGVyLmdzZXJ2aWNlYWNjb3VudC5jb20iLCJzY29wZSI6Imh0dHBzOi8vd3d3Lmdvb2dsZWFwaXMuY29tL2F1dGgvcHJlZGljdGlvbiIsImF1ZCI6Imh0dHBzOi8vYWNjb3VudHMuZ29vZ2xlLmNvbS9vL29hdXRoMi90b2tlbiIsImV4cCI6MTMyODU1NDM4NSwiaWF0IjoxMzI4NTUwNzg1fQ");
+
+      assertEquals(new String(decoded, Charsets.UTF_8), "{"
+            + "\"iss\":\"761326798069-r5mljlln1rd4lrbhg75efgigp36m78j5@developer.gserviceaccount.com\","
+            + "\"scope\":\"https://www.googleapis.com/auth/prediction\","
+            + "\"aud\":\"https://accounts.google.com/o/oauth2/token\"," + "\"exp\":1328554385," + "\"iat\":1328550785"
+            + "}");
+   }
+   
+   @Test
+   public void testBase64EncodeURLSafeNoSinglePad() {
+      assertEquals(CryptoStreams.base64("any carnal pleasu".getBytes(Charsets.UTF_8)), "YW55IGNhcm5hbCBwbGVhc3U=");
+      assertEquals(CryptoStreams.base64URLSafe("any carnal pleasu".getBytes(Charsets.UTF_8)), "YW55IGNhcm5hbCBwbGVhc3U");
+   }
+
+   @Test
+   public void testBase64EncodeURLSafeNoDoublePad() {
+      assertEquals(CryptoStreams.base64("any carnal pleas".getBytes(Charsets.UTF_8)), "YW55IGNhcm5hbCBwbGVhcw==");
+      assertEquals(CryptoStreams.base64URLSafe("any carnal pleas".getBytes(Charsets.UTF_8)), "YW55IGNhcm5hbCBwbGVhcw");
+   }
+
+   @Test
+   public void testBase64EncodeURLSafeHyphenNotPlus() {
+      assertEquals(CryptoStreams.base64("i?>".getBytes(Charsets.UTF_8)), "aT8+");
+      assertEquals(CryptoStreams.base64URLSafe("i?>".getBytes(Charsets.UTF_8)), "aT8-");
+   }
+   
+   @Test
+   public void testBase64EncodeURLSafeUnderscoreNotSlash() {
+      assertEquals(CryptoStreams.base64("i??".getBytes(Charsets.UTF_8)), "aT8/");
+      assertEquals(CryptoStreams.base64URLSafe("i??".getBytes(Charsets.UTF_8)), "aT8_");
+   }
+   
+   @Test
+   public void testBase64DecodeWithoutSinglePad() {
+      assertEquals(new String(CryptoStreams.base64("YW55IGNhcm5hbCBwbGVhc3U="), Charsets.UTF_8), "any carnal pleasu");
+      assertEquals(new String(CryptoStreams.base64("YW55IGNhcm5hbCBwbGVhc3U"), Charsets.UTF_8), "any carnal pleasu");
+   }
+   
+   @Test
+   public void testBase64DecodeWithoutDoublePad() {
+      assertEquals(new String(CryptoStreams.base64("YW55IGNhcm5hbCBwbGVhcw=="), Charsets.UTF_8), "any carnal pleas");
+      assertEquals(new String(CryptoStreams.base64("YW55IGNhcm5hbCBwbGVhcw"), Charsets.UTF_8), "any carnal pleas");
    }
 
    @Test

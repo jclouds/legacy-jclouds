@@ -45,7 +45,6 @@ import java.security.spec.RSAPublicKeySpec;
 import java.util.Map;
 
 import org.bouncycastle.openssl.PEMWriter;
-import org.jclouds.encryption.internal.Base64;
 import org.jclouds.io.InputSuppliers;
 import org.jclouds.util.Strings2;
 
@@ -102,7 +101,7 @@ public class SshKeys {
       Iterable<String> parts = Splitter.on(' ').split(Strings2.toStringAndClose(stream));
       checkArgument(Iterables.size(parts) >= 2 && "ssh-rsa".equals(Iterables.get(parts, 0)),
                "bad format, should be: ssh-rsa AAAAB3...");
-      stream = new ByteArrayInputStream(Base64.decode(Iterables.get(parts, 1)));
+      stream = new ByteArrayInputStream(CryptoStreams.base64(Iterables.get(parts, 1)));
       String marker = new String(readLengthFirst(stream));
       checkArgument("ssh-rsa".equals(marker), "looking for marker ssh-rsa but got %s", marker);
       BigInteger publicExponent = new BigInteger(readLengthFirst(stream));

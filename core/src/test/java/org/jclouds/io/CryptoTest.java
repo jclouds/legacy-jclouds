@@ -29,10 +29,11 @@ import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 
+import static javax.xml.bind.DatatypeConverter.*;
+
 import org.jclouds.PerformanceTest;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.crypto.CryptoStreams;
-import org.jclouds.encryption.internal.Base64;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -46,7 +47,7 @@ import com.google.inject.Injector;
  * @author Adrian Cole
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
-@Test(groups = "performance", sequential = true, timeOut = 2 * 60 * 1000, testName = "CryptoTest")
+@Test(groups = "performance", singleThreaded = true, timeOut = 2 * 60 * 1000, testName = "CryptoTest")
 public class CryptoTest extends PerformanceTest {
 
    protected Crypto crypto;
@@ -58,16 +59,12 @@ public class CryptoTest extends PerformanceTest {
    }
 
    public static final Object[][] base64KeyMessageDigest = {
-            { Base64.decode("CwsLCwsLCwsLCwsLCwsLCwsLCws="), "Hi There", "thcxhlUFcmTii8C2+zeMjvFGvgA=" },
-            { Base64.decode("SmVmZQ=="), "what do ya want for nothing?", "7/zfauXrL6LSdBbV8YTfnCWafHk=" },
-            { Base64.decode("DAwMDAwMDAwMDAwMDAwMDAwMDAw="), "Test With Truncation", "TBoDQktV4H/n8nvh1Yu5MkqaWgQ=" },
-            {
-                     Base64
-                              .decode("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqo="),
+            { parseBase64Binary("CwsLCwsLCwsLCwsLCwsLCwsLCws="), "Hi There", "thcxhlUFcmTii8C2+zeMjvFGvgA=" },
+            { parseBase64Binary("SmVmZQ=="), "what do ya want for nothing?", "7/zfauXrL6LSdBbV8YTfnCWafHk=" },
+            { parseBase64Binary("DAwMDAwMDAwMDAwMDAwMDAwMDAw="), "Test With Truncation", "TBoDQktV4H/n8nvh1Yu5MkqaWgQ=" },
+            { parseBase64Binary("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqo="),
                      "Test Using Larger Than Block-Size Key - Hash Key First", "qkrl4VJy0A6VcFY3zoo7Ve1AIRI=" },
-            {
-                     Base64
-                              .decode("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqo="),
+            { parseBase64Binary("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqo="),
                      "Test Using Larger Than Block-Size Key and Larger Than One Block-Size Data",
                      "6OmdD0UjfXhta7qnllx4CLv/GpE=" } };
 
