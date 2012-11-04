@@ -46,7 +46,6 @@
         <plugins>
            <plugin>      
                 <artifactId>maven-remote-resources-plugin</artifactId>
-                <version>1.3</version>
                 <executions>              
                     <execution>
                         <id>bundle-remote-resources</id>

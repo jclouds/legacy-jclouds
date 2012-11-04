@@ -126,7 +126,6 @@
         <plugins>
             <plugin>      
                 <artifactId>maven-remote-resources-plugin</artifactId>
-                <version>1.2</version>
                 <configuration>
                     <!-- prevents the maven-war-plugin from including the resources in WEB-INF/classes -->
                     <attached>false</attached>
