@@ -25,6 +25,7 @@ import static org.jclouds.io.Payloads.newInputStreamPayload;
 import static org.jclouds.io.Payloads.newStringPayload;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
+import static org.testng.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -278,7 +279,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
 
       try {
          child.getInstance(AsyncCallee.class);
-         assert false : "Callee shouldn't be bound yet";
+         fail("Callee shouldn't be bound yet");
       } catch (ConfigurationException e) {
 
       }
@@ -302,7 +303,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
 
       try {
          child.getInstance(Callee.class);
-         assert false : "Callee shouldn't be bound yet";
+         fail("Callee shouldn't be bound yet");
       } catch (ConfigurationException e) {
 
       }
@@ -327,7 +328,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
 
       try {
          child.getInstance(AsyncCallee.class);
-         assert false : "Callee shouldn't be bound yet";
+         fail("Callee shouldn't be bound yet");
       } catch (ConfigurationException e) {
 
       }
@@ -352,7 +353,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
 
       try {
          child.getInstance(AsyncCallee.class);
-         assert false : "Callee shouldn't be bound yet";
+         fail("Callee shouldn't be bound yet");
       } catch (ConfigurationException e) {
 
       }
@@ -376,7 +377,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
 
       try {
          child.getInstance(AsyncCallee.class);
-         assert false : "Callee shouldn't be bound yet";
+         fail("Callee shouldn't be bound yet");
       } catch (ConfigurationException e) {
 
       }
@@ -415,7 +416,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
 
       try {
          child.getInstance(AsyncCallee.class);
-         assert false : "Callee shouldn't be bound yet";
+         fail("Callee shouldn't be bound yet");
       } catch (ConfigurationException e) {
 
       }
@@ -440,7 +441,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
 
       try {
          child.getInstance(Callee.class);
-         assert false : "Callee shouldn't be bound yet";
+         fail("Callee shouldn't be bound yet");
       } catch (ConfigurationException e) {
 
       }

@@ -18,6 +18,8 @@
  */
 package org.jclouds.eucalyptus.compute;
 
+import static org.testng.Assert.fail;
+
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.ec2.compute.EC2ComputeServiceLiveTest;
@@ -42,7 +44,7 @@ public class EucalyptusComputeServiceLiveTest extends EC2ComputeServiceLiveTest 
    public void testSuspendResume() throws Exception {
       try {
          super.testSuspendResume();
-         assert false;
+         fail("Expected HttpResponseException");
       } catch (HttpResponseException e) {
          // ebs backed not yet available
       }

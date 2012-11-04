@@ -19,6 +19,7 @@
 package org.jclouds.location.suppliers.implicit;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -55,7 +56,7 @@ public class FirstNetworkTest {
 
       try {
          fn.get();
-         assert false;
+         fail("Expected NoSuchElementException");
       } catch (NoSuchElementException e) {
          assertEquals(e.getMessage(), "none of the locations are scope NETWORK: [servo:PROVIDER, servo-r:REGION]");
       }

@@ -23,6 +23,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
@@ -68,7 +69,7 @@ public class MapHttp4xxCodesToExceptionsTest {
 
       try {
          function.apply(responseException);
-         assert false;
+         fail();
       } catch (Exception e) {
          assertEquals(e.getClass(), expected);
       }

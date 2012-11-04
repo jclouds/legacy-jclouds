@@ -2,6 +2,7 @@ package org.jclouds.gogrid.services;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import java.net.URI;
 
@@ -110,7 +111,7 @@ public class GridServerClientExpectTest extends BaseGoGridRestClientExpectTest {
       GoGridClient clientWhenGridServersNotFound = requestSendsResponse(listGridServers, listGridServersResponse);
       try {
          clientWhenGridServersNotFound.getServerServices().getServerCredentials(11);
-         assert false : "should have failed";
+         fail("should have failed");
       } catch (ResourceNotFoundException e) {
          assertEquals(e.getMessage(), "No object found that matches your input criteria.");
       }

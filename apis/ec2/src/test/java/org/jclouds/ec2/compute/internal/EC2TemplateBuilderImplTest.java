@@ -24,6 +24,7 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.jclouds.ec2.compute.domain.EC2HardwareBuilder.c1_medium;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -181,7 +182,7 @@ public class EC2TemplateBuilderImplTest extends TemplateBuilderImplTest {
             optionsProvider, templateBuilderProvider);
       try {
          template.imageId("ami").build();
-         assert false;
+         fail("Expected IllegalArgumentException");
       } catch (IllegalArgumentException e) {
 
       }

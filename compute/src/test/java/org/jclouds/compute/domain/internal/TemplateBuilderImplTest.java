@@ -23,6 +23,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -242,7 +243,7 @@ public class TemplateBuilderImplTest {
                optionsProvider, templateBuilderProvider);
       try {
          template.imageId("us-east-1/imageId").build();
-         assert false;
+         fail("Expected NoSuchElementException");
       } catch (NoSuchElementException e) {
          // make sure message is succinct
          assertEquals(e.getMessage(), "no hardware profiles support images matching params: idEquals(differentImageId)");
@@ -380,7 +381,7 @@ public class TemplateBuilderImplTest {
 
       try {
          template.imageId("foo").locationId("location").build();
-         assert false;
+         fail("Expected NoSuchElementException");
       } catch (NoSuchElementException e) {
 
       }
@@ -413,7 +414,7 @@ public class TemplateBuilderImplTest {
 
       try {
          template.imageId("foo").options(provideTemplateOptions()).locationId("location").build();
-         assert false;
+         fail("Expected NoSuchElementException");
       } catch (NoSuchElementException e) {
 
       }
@@ -442,7 +443,7 @@ public class TemplateBuilderImplTest {
 
       try {
          template.os64Bit(true).build();
-         assert false;
+         fail("Expected IllegalStateException");
       } catch (IllegalStateException e) {
          assertEquals(e.getMessage(), "no images present!");
       }
@@ -470,7 +471,7 @@ public class TemplateBuilderImplTest {
 
       try {
          template.os64Bit(true).build();
-         assert false;
+         fail("Expected IllegalStateException");
       } catch (IllegalStateException e) {
          assertEquals(e.getMessage(), "no hardware profiles present!");
       }
@@ -499,7 +500,7 @@ public class TemplateBuilderImplTest {
 
       try {
          template.imageId("region/imageId2").build();
-         assert false;
+         fail("Expected NoSuchElementException");
       } catch (NoSuchElementException e) {
          // make sure big data is not in the exception message
          assertEquals(e.getMessage(), "imageId(region/imageId2) not found");
@@ -529,7 +530,7 @@ public class TemplateBuilderImplTest {
 
       try {
          template.imageDescriptionMatches("notDescription").build();
-         assert false;
+         fail("Expected NoSuchElementException");
       } catch (NoSuchElementException e) {
          // make sure big data is not in the exception message
          assertEquals(e.getMessage(), "no image matched predicate: And(nullEqualToIsParentOrIsGrandparentOfCurrentLocation(),imageDescription(notDescription))");
@@ -564,7 +565,7 @@ public class TemplateBuilderImplTest {
 
       try {
          template.imageId("region/ami").options(provideTemplateOptions()).build();
-         assert false;
+         fail("Expected NoSuchElementException");
       } catch (NoSuchElementException e) {
 
       }

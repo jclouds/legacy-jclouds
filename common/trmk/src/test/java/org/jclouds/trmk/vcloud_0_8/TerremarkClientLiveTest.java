@@ -27,6 +27,7 @@ import static org.jclouds.trmk.vcloud_0_8.options.CloneVAppOptions.Builder.deplo
 import static org.jclouds.trmk.vcloud_0_8.options.InstantiateVAppTemplateOptions.Builder.processorCount;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.fail;
 
 import java.io.IOException;
 import java.net.URI;
@@ -348,13 +349,13 @@ public abstract class TerremarkClientLiveTest<S extends TerremarkVCloudClient, A
 
       try {// per docs, this is not supported
          connection.undeployVApp(vApp.getHref());
-         assert false;
+         fail("Expected UnsupportedOperationException");
       } catch (UnsupportedOperationException e) {
       }
 
       try {// per docs, this is not supported
          connection.suspendVApp(vApp.getHref());
-         assert false;
+         fail("Expected UnsupportedOperationException");
       } catch (UnsupportedOperationException e) {
       }
 

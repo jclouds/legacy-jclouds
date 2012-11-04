@@ -23,6 +23,7 @@ import static org.jclouds.scriptbuilder.domain.Statements.exec;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.fail;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -233,7 +234,7 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest extends BaseComputeS
    private void setUserDataForInstanceInRegion() {
       try {
          client.getInstanceServices().setUserDataForInstanceInRegion(null, instanceId, "test".getBytes());
-         assert false : "shouldn't be allowed, as instance needs to be stopped";
+         fail("shouldn't be allowed, as instance needs to be stopped");
       } catch (AWSResponseException e) {
          assertEquals("IncorrectInstanceState", e.getError().getCode());
       }
@@ -243,7 +244,7 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest extends BaseComputeS
       try {
          String ramdisk = client.getInstanceServices().getRamdiskForInstanceInRegion(null, instanceId);
          client.getInstanceServices().setRamdiskForInstanceInRegion(null, instanceId, ramdisk);
-         assert false : "shouldn't be allowed, as instance needs to be stopped";
+         fail("shouldn't be allowed, as instance needs to be stopped");
       } catch (AWSResponseException e) {
          assertEquals("IncorrectInstanceState", e.getError().getCode());
       }
@@ -253,7 +254,7 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest extends BaseComputeS
       try {
          String oldKernel = client.getInstanceServices().getKernelForInstanceInRegion(null, instanceId);
          client.getInstanceServices().setKernelForInstanceInRegion(null, instanceId, oldKernel);
-         assert false : "shouldn't be allowed, as instance needs to be stopped";
+         fail("shouldn't be allowed, as instance needs to be stopped");
       } catch (AWSResponseException e) {
          assertEquals("IncorrectInstanceState", e.getError().getCode());
       }
@@ -262,7 +263,7 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest extends BaseComputeS
    private void setInstanceTypeForInstanceInRegion() {
       try {
          client.getInstanceServices().setInstanceTypeForInstanceInRegion(null, instanceId, InstanceType.C1_MEDIUM);
-         assert false : "shouldn't be allowed, as instance needs to be stopped";
+         fail("shouldn't be allowed, as instance needs to be stopped");
       } catch (AWSResponseException e) {
          assertEquals("IncorrectInstanceState", e.getError().getCode());
       }
@@ -272,7 +273,7 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest extends BaseComputeS
       Map<String, BlockDevice> mapping = Maps.newLinkedHashMap();
       try {
          client.getInstanceServices().setBlockDeviceMappingForInstanceInRegion(null, instanceId, mapping);
-         assert false : "shouldn't be allowed, as instance needs to be ebs based-ami";
+         fail("shouldn't be allowed, as instance needs to be ebs based-ami");
       } catch (AWSResponseException e) {
          assertEquals("InvalidParameterCombination", e.getError().getCode());
       }
@@ -282,7 +283,7 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest extends BaseComputeS
       try {
          client.getInstanceServices().setInstanceInitiatedShutdownBehaviorForInstanceInRegion(null, instanceId,
                InstanceInitiatedShutdownBehavior.STOP);
-         assert false : "shouldn't be allowed, as instance needs to be ebs based-ami";
+         fail("shouldn't be allowed, as instance needs to be ebs based-ami");
       } catch (AWSResponseException e) {
          assertEquals("UnsupportedInstanceAttribute", e.getError().getCode());
       }
