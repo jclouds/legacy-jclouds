@@ -53,7 +53,7 @@ public interface InputStreamMap extends ListableMap<String, InputStream> {
 
    void putAllStrings(Map<? extends String, ? extends String> map);
 
-   void putAllBytes(Map<? extends String, ? extends byte[]> map);
+   void putAllBytes(Map<? extends String, byte[]> map);
 
    void putAllFiles(Map<? extends String, ? extends File> map);
 
