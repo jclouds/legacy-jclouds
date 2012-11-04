@@ -295,7 +295,7 @@ public abstract class CommonSwiftClientLiveTest<C extends CommonSwiftClient> ext
       // test that not giving a destination name *doesn't* copy source name to the destination container with
       // the source name but copy still returns success :(
       assertTrue(getApi().copyObject(sourceContainer, sourceObject, destinationContainer, ""));
-      assertTrue(!getApi().objectExists(destinationContainer, sourceObject));
+      assertFalse(getApi().objectExists(destinationContainer, sourceObject));
       
       // test copy works
       assertTrue(getApi().copyObject(sourceContainer, sourceObject, destinationContainer, destinationObject));      

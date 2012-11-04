@@ -22,7 +22,8 @@ package org.jclouds.virtualbox.functions;
 import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertFalse;
 
 import java.net.URI;
 import java.util.Map;
@@ -136,7 +137,8 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
 
          String version = machine.getGuestPropertyValue("/VirtualBox/GuestAdd/Version");
          
-         assertTrue(version != null && !version.isEmpty());
+         assertNotNull(version);
+         assertFalse(version.isEmpty());
       } finally {
          for (VmSpec spec : ImmutableSet.of(machineSpec.getVmSpec())) {
             machineController.ensureMachineIsShutdown(spec.getVmName());

@@ -18,6 +18,7 @@
  */
 package org.jclouds.fujitsu.fgcp.services;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
@@ -59,7 +60,7 @@ public class VirtualDCApiLiveTest extends BaseFGCPApiLiveTest {
       String vsysId = api.createVirtualSystem("abc", "def");
 
       assertNotNull(vsysId, "vsysId");
-      assertFalse(vsysId.equals(""), "vsysId is empty (\"\")");
+      assertNotEquals("", vsysId, "vsysId is empty (\"\")");
       System.out.println("vsysId: " + vsysId);
    }*/
 
@@ -67,7 +68,7 @@ public class VirtualDCApiLiveTest extends BaseFGCPApiLiveTest {
       Set<ServerType> serverTypes = api.listServerTypes();
 
       assertNotNull(serverTypes, "serverTypes");
-      assertTrue(serverTypes.size() == 4, "serverTypes.size should return 4, not " + serverTypes.size());
+      assertEquals(4, serverTypes.size(), "serverTypes.size should return 4, not " + serverTypes.size());
 
 //      System.out.println("listServerTypes: " + serverTypes);
    }

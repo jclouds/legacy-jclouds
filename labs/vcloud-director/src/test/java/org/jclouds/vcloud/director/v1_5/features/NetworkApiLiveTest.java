@@ -27,6 +27,7 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.U
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkResource;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
@@ -88,7 +89,7 @@ public class NetworkApiLiveTest extends BaseVCloudDirectorApiLiveTest {
                String.format(REQUIRED_VALUE_OBJECT_FMT, ".class", NETWORK, abstractNetwork.getClass(), "OrgNetwork"));
       OrgNetwork network = Network.toSubType(abstractNetwork);
       assertNotNull(network, String.format(OBJ_REQ_LIVE, NETWORK));
-      assertTrue(!network.getDescription().equals("DO NOT USE"), "Network isn't to be used for testing");
+      assertNotEquals("DO NOT USE", network.getDescription(), "Network isn't to be used for testing");
 
       Checks.checkOrgNetwork(network);
    }

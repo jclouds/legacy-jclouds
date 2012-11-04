@@ -138,7 +138,7 @@ public class MediaApiLiveTest extends BaseVCloudDirectorApiLiveTest {
       Checks.checkMediaFor(MEDIA, media);
 
       assertNotNull(media.getFiles(), String.format(OBJ_FIELD_REQ, MEDIA, "files"));
-      assertTrue(media.getFiles().size() == 1,
+      assertEquals(1, media.getFiles().size(),
                String.format(OBJ_FIELD_LIST_SIZE_EQ, MEDIA, "files", 1, media.getFiles().size()));
       File uploadFile = getFirst(media.getFiles(), null);
       assertNotNull(uploadFile, String.format(OBJ_FIELD_REQ, MEDIA, "files.first"));

@@ -75,7 +75,7 @@ public class OSImageApiLiveTest extends BaseAzureManagementApiLiveTest {
       checkNotNull(image.getCategory(), "While Category can be null for OSImage, its Optional wrapper cannot: %s",
                image);
       if (image.getCategory().isPresent())
-         assertFalse(image.getCategory().get().trim().equals(""), "Invalid Category: " + image.toString());
+         assertNotEquals("", image.getCategory().get().trim(), "Invalid Category: " + image.toString());
 
       checkNotNull(image.getLogicalSizeInGB(),
                "While LogicalSizeInGB can be null for OSImage, its Optional wrapper cannot: %s", image);

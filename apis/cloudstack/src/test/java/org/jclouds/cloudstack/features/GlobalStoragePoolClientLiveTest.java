@@ -19,6 +19,7 @@
 package org.jclouds.cloudstack.features;
 
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
@@ -46,17 +47,17 @@ public class GlobalStoragePoolClientLiveTest extends BaseCloudStackClientLiveTes
       assertNotNull(result);
       assertTrue(result.size() > 0);
       for(StoragePool pool : result) {
-         assertTrue(pool.getId() != null);
+         assertNotNull(pool.getId());
          assertFalse(Strings.isNullOrEmpty(pool.getName()));
          assertFalse(Strings.isNullOrEmpty(pool.getPath()));
          assertNotNull(pool.getTags());
-         assertTrue(pool.getState() != StoragePool.State.UNRECOGNIZED);
-         assertTrue(pool.getType() != StoragePool.Type.UNRECOGNIZED);
-         assertTrue(pool.getZoneId() != null);
+         assertNotEquals(StoragePool.State.UNRECOGNIZED, pool.getState());
+         assertNotEquals(StoragePool.Type.UNRECOGNIZED, pool.getType());
+         assertNotNull(pool.getZoneId());
          assertFalse(Strings.isNullOrEmpty(pool.getZoneName()));
-         assertTrue(pool.getPodId() != null);
+         assertNotNull(pool.getPodId());
          assertFalse(Strings.isNullOrEmpty(pool.getPodName()));
-         assertTrue(pool.getClusterId() != null);
+         assertNotNull(pool.getClusterId());
          assertFalse(Strings.isNullOrEmpty(pool.getClusterName()));
          assertNotNull(pool.getCreated());
          assertTrue(pool.getDiskSizeTotal() > 0);

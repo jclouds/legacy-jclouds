@@ -29,6 +29,7 @@ import static org.jclouds.s3.options.CopyObjectOptions.Builder.overrideMetadataW
 import static org.jclouds.s3.options.PutObjectOptions.Builder.withAcl;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
@@ -156,7 +157,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest {
                   AccessControlList acl = getApi().getObjectACL(containerName, publicReadWriteObjectKey);
                   assertEquals(acl.getGrants().size(), 3);
                   assertEquals(acl.getPermissions(GroupGranteeURI.ALL_USERS).size(), 2);
-                  assertTrue(acl.getOwner() != null);
+                  assertNotNull(acl.getOwner());
                   String ownerId = acl.getOwner().getId();
                   assertTrue(acl.hasPermission(ownerId, Permission.FULL_CONTROL));
                   assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ));
@@ -230,7 +231,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest {
          AccessControlList acl = getApi().getObjectACL(containerName, privateObjectKey);
 
          assertEquals(acl.getGrants().size(), 1);
-         assertTrue(acl.getOwner() != null);
+         assertNotNull(acl.getOwner());
          String ownerId = acl.getOwner().getId();
          assertTrue(acl.hasPermission(ownerId, Permission.FULL_CONTROL));
       } finally {
@@ -255,7 +256,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest {
 
                   assertEquals(acl.getGrants().size(), 2);
                   assertEquals(acl.getPermissions(GroupGranteeURI.ALL_USERS).size(), 1);
-                  assertTrue(acl.getOwner() != null);
+                  assertNotNull(acl.getOwner());
                   String ownerId = acl.getOwner().getId();
                   assertTrue(acl.hasPermission(ownerId, Permission.FULL_CONTROL));
                   assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ));

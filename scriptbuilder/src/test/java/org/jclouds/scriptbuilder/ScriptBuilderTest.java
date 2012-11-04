@@ -152,7 +152,7 @@ public class ScriptBuilderTest {
                Utils.writeFunctionFromResource("abort", OsFamily.UNIX));
 
       for (String fn : defaultFunctions.values()) {
-         assertTrue(fn.indexOf("\r\n") == -1, "windows linefeeds!");
+         assertEquals(-1, fn.indexOf("\r\n"), "windows linefeeds!");
       }
 
       Map<String, String> resolvedFunctions = ScriptBuilder.resolveFunctionDependenciesForStatements(defaultFunctions,

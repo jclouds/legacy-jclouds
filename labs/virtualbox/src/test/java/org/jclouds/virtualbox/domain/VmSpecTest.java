@@ -21,6 +21,7 @@ package org.jclouds.virtualbox.domain;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotEquals;
 
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.CleanupMode;
@@ -39,28 +40,28 @@ public class VmSpecTest {
    public void testEqualsWrongId() throws Exception {
       VmSpec vmSpec = defaultVm().build();
       VmSpec other = defaultVm().id("OtherVMId").build();
-      assertFalse(vmSpec.equals(other));
+      assertNotEquals(vmSpec, other);
    }
 
    @Test
    public void testEqualsWrongName() throws Exception {
       VmSpec vmSpec = defaultVm().build();
       VmSpec other = defaultVm().name("OtherName").build();
-      assertFalse(vmSpec.equals(other));
+      assertNotEquals(vmSpec, other);
    }
 
    @Test
    public void testEqualsWrongOsType() throws Exception {
       VmSpec vmSpec = defaultVm().build();
       VmSpec other = defaultVm().osTypeId("OtherOS").build();
-      assertFalse(vmSpec.equals(other));
+      assertNotEquals(vmSpec, other);
    }
 
    @Test
    public void testEqualsWrongForceOverwriteRule() throws Exception {
       VmSpec vmSpec = defaultVm().build();
       VmSpec other = defaultVm().forceOverwrite(false).build();
-      assertFalse(vmSpec.equals(other));
+      assertNotEquals(vmSpec, other);
    }
 
    private VmSpec.Builder defaultVm() {

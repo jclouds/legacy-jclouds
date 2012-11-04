@@ -18,7 +18,7 @@
  */
 package org.jclouds.openstack.nova.functions;
 
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 import java.net.UnknownHostException;
@@ -63,7 +63,7 @@ public class ParseAddressesFromJsonResponseTest {
       List<Address> privateAddresses = ImmutableList.copyOf(Iterables.transform(
                ImmutableList.of("10.176.42.16", "::babe:10.176.42.16"), Address.newString2AddressFunction()));
 
-      assertTrue(response.getPublicAddresses().equals(Sets.newHashSet(publicAddresses)));
-      assertTrue(response.getPrivateAddresses().equals(Sets.newHashSet(privateAddresses)));
+      assertEquals(Sets.newHashSet(publicAddresses), response.getPublicAddresses());
+      assertEquals(Sets.newHashSet(privateAddresses), response.getPrivateAddresses());
    }
 }

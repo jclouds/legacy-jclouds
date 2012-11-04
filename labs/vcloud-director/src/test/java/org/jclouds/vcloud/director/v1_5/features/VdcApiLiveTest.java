@@ -24,6 +24,7 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.O
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.URN_REQ_LIVE;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
@@ -134,7 +135,7 @@ public class VdcApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    public void testGetVdc() {
       Vdc vdc = lazyGetVdc();
       assertNotNull(vdc, String.format(OBJ_REQ_LIVE, VDC));
-      assertFalse("DO NOT USE".equals(vdc.getDescription()), "vDC isn't to be used for testing");
+      assertNotEquals("DO NOT USE", vdc.getDescription(), "vDC isn't to be used for testing");
       Checks.checkVdc(vdc);
    }
 

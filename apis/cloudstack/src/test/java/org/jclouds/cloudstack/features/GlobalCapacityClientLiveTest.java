@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudstack.features;
 
+import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
@@ -40,14 +41,14 @@ public class GlobalCapacityClientLiveTest extends BaseCloudStackClientLiveTest {
       skipIfNotGlobalAdmin();
 
       final Set<Capacity> response = globalAdminClient.getCapacityClient().listCapacity();
-      assert null != response;
-      assertTrue(response.size() >= 0);
+      assertNotNull(response);
+      assertNotEquals(0, response.size());
       int count = 0;
       for (Capacity capacity : response) {
          assertTrue(capacity.getCapacityTotal() > 0);
          assertTrue(capacity.getCapacityUsed() > 0);
          assertTrue(capacity.getPercentUsed() >= 0);
-         assertTrue(capacity.getType() != Capacity.Type.UNRECOGNIZED);
+         assertNotEquals(Capacity.Type.UNRECOGNIZED, capacity.getType());
          assertNotNull(capacity.getZoneName());
          count++;
       }
