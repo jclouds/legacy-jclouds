@@ -24,13 +24,14 @@ import java.beans.ConstructorProperties;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.ComparisonChain;
 
 /**
  * Class ErrorResponse
  *
  * @author Oleksiy Yarmula
  */
-public class ErrorResponse {
+public class ErrorResponse implements Comparable<ErrorResponse> {
 
    public static Builder<?> builder() {
       return new ConcreteBuilder();
@@ -111,6 +112,14 @@ public class ErrorResponse {
       ErrorResponse that = ErrorResponse.class.cast(obj);
       return Objects.equal(this.message, that.message)
             && Objects.equal(this.errorCode, that.errorCode);
+   }
+
+   @Override
+   public int compareTo(ErrorResponse that) {
+      return ComparisonChain.start()
+            .compare(errorCode, that.errorCode)
+            .compare(message, that.message)
+            .result();
    }
 
    protected ToStringHelper string() {
