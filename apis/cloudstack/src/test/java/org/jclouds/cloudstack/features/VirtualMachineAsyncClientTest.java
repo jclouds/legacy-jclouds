@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 
 import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
+import org.jclouds.cloudstack.options.AssignVirtualMachineOptions;
 import org.jclouds.cloudstack.options.DeployVirtualMachineOptions;
 import org.jclouds.cloudstack.options.ListVirtualMachinesOptions;
 import org.jclouds.functions.IdentityFunction;
@@ -235,6 +236,26 @@ public class VirtualMachineAsyncClientTest extends BaseCloudStackAsyncClientTest
       assertResponseParserClassEquals(method, httpRequest, ParseFirstJsonValueNamed.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+
+   }
+   
+   public void testAssignVirtualMachine() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VirtualMachineAsyncClient.class.getMethod("assignVirtualMachine", String.class,
+            AssignVirtualMachineOptions[].class);
+      HttpRequest httpRequest = processor.createRequest(method, "abcd",
+            AssignVirtualMachineOptions.Builder.accountInDomain("adrian", "6"));
+
+      assertRequestLineEquals(
+            httpRequest,
+            "GET http://localhost:8080/client/api?response=json&command=assignVirtualMachine&virtualmachineid=abcd&account=adrian&domainid=6 HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseFirstJsonValueNamed.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
 
       checkFilters(httpRequest);
 

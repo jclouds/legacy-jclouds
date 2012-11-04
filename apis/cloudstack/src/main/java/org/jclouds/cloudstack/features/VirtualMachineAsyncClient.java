@@ -28,6 +28,7 @@ import javax.ws.rs.core.MediaType;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.filters.AuthenticationFilter;
+import org.jclouds.cloudstack.options.AssignVirtualMachineOptions;
 import org.jclouds.cloudstack.options.DeployVirtualMachineOptions;
 import org.jclouds.cloudstack.options.ListVirtualMachinesOptions;
 import org.jclouds.rest.annotations.ExceptionParser;
@@ -157,5 +158,15 @@ public interface VirtualMachineAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<String> destroyVirtualMachine(@QueryParam("id") String id);
+
+   /**
+    * @see VirtualMachineClient#assinVirtualMachine
+    */
+   @GET
+   @QueryParams(keys = "command", values = "assignVirtualMachine")
+   @SelectJson("jobid")
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<VirtualMachine> assignVirtualMachine(@QueryParam("virtualmachineid") String virtualMachineId,
+                                                         AssignVirtualMachineOptions... options);
 
 }
