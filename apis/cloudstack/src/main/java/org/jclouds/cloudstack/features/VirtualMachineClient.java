@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.VirtualMachine;
+import org.jclouds.cloudstack.options.AssignVirtualMachineOptions;
 import org.jclouds.cloudstack.options.DeployVirtualMachineOptions;
 import org.jclouds.cloudstack.options.ListVirtualMachinesOptions;
 import org.jclouds.concurrent.Timeout;
@@ -150,4 +151,17 @@ public interface VirtualMachineClient {
     *         found
     */
    String destroyVirtualMachine(String id);
+
+    
+   /**
+    * Re-assign a virtual machine to a different account/domain.
+    * 
+    * @param virtualMachineId
+    *           VirtualMachine to re-assign
+    * @param options
+    *           AssignVirtualMachineOptions specifying account and domain to transfer to, and optional network and security group IDs.
+    * @return VirtualMachine or null if not found
+    */
+    VirtualMachine assignVirtualMachine(String virtualMachineId, AssignVirtualMachineOptions... options);
+
 }
