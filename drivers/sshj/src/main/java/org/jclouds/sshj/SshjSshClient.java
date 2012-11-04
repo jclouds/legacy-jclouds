@@ -31,6 +31,7 @@ import static org.jclouds.crypto.SshKeys.fingerprintPrivateKey;
 import static org.jclouds.crypto.SshKeys.sha1PrivateKey;
 
 import java.io.Closeable;
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ConnectException;
@@ -54,7 +55,6 @@ import net.schmizz.sshj.transport.TransportException;
 import net.schmizz.sshj.userauth.UserAuthException;
 import net.schmizz.sshj.xfer.InMemorySourceFile;
 
-import org.apache.commons.io.input.ProxyInputStream;
 import org.jclouds.compute.domain.ExecChannel;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.domain.LoginCredentials;
@@ -86,7 +86,7 @@ import com.google.inject.Inject;
 @SuppressWarnings("unchecked")
 public class SshjSshClient implements SshClient {
 
-   private final class CloseFtpChannelOnCloseInputStream extends ProxyInputStream {
+   private final class CloseFtpChannelOnCloseInputStream extends FilterInputStream {
 
       private final SFTPClient sftp;
 
