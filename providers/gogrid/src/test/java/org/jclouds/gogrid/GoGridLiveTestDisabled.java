@@ -25,7 +25,6 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
@@ -56,6 +55,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.net.HostAndPort;
 
 /**
@@ -79,8 +79,8 @@ public class GoGridLiveTestDisabled extends BaseComputeServiceContextLiveTest {
    /**
     * Keeps track of the servers, created during the tests, to remove them after all tests complete
     */
-   private List<String> serversToDeleteAfterTheTests = new ArrayList<String>();
-   private List<String> loadBalancersToDeleteAfterTest = new ArrayList<String>();
+   private List<String> serversToDeleteAfterTheTests = Lists.newArrayList();
+   private List<String> loadBalancersToDeleteAfterTest = Lists.newArrayList();
 
    private RestContext<GoGridClient, GoGridAsyncClient> gocontext;
 

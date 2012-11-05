@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.core.HttpHeaders;
@@ -47,6 +46,7 @@ import org.testng.annotations.Test;
 import com.google.appengine.api.urlfetch.HTTPHeader;
 import com.google.appengine.api.urlfetch.HTTPResponse;
 import com.google.common.base.Throwables;
+import com.google.common.collect.Lists;
 
 /**
  * 
@@ -85,7 +85,7 @@ public class ConvertToJcloudsResponseTest {
    void testConvertWithHeaders() throws IOException {
       HTTPResponse gaeResponse = createMock(HTTPResponse.class);
       expect(gaeResponse.getResponseCode()).andReturn(200);
-      List<HTTPHeader> headers = new ArrayList<HTTPHeader>();
+      List<HTTPHeader> headers = Lists.newArrayList();
       headers.add(new HTTPHeader(HttpHeaders.CONTENT_TYPE, "text/xml"));
       expect(gaeResponse.getHeaders()).andReturn(headers);
       expect(gaeResponse.getContent()).andReturn(null).atLeastOnce();
@@ -100,7 +100,7 @@ public class ConvertToJcloudsResponseTest {
    void testConvertWithContent() throws IOException {
       HTTPResponse gaeResponse = createMock(HTTPResponse.class);
       expect(gaeResponse.getResponseCode()).andReturn(200);
-      List<HTTPHeader> headers = new ArrayList<HTTPHeader>();
+      List<HTTPHeader> headers = Lists.newArrayList();
       headers.add(new HTTPHeader(HttpHeaders.CONTENT_TYPE, "text/xml"));
       expect(gaeResponse.getHeaders()).andReturn(headers);
       expect(gaeResponse.getContent()).andReturn("hello".getBytes()).atLeastOnce();

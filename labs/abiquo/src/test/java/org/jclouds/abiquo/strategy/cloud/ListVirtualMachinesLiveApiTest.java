@@ -24,8 +24,9 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import org.jclouds.abiquo.domain.cloud.VirtualMachine;
 import org.jclouds.abiquo.predicates.cloud.VirtualMachinePredicates;
@@ -69,7 +70,7 @@ public class ListVirtualMachinesLiveApiTest extends BaseAbiquoStrategyLiveApiTes
    }
 
    public void testExecuteWhenExceedsPagination() {
-      List<VirtualMachine> vms = new ArrayList<VirtualMachine>();
+      List<VirtualMachine> vms = Lists.newArrayList();
 
       // Pagination by default is set to 25 items per page, so create a few more
       // to verify that

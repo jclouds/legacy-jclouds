@@ -26,10 +26,11 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.fail;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.core.Response.Status;
+
+import com.google.common.collect.Lists;
 
 import org.jclouds.abiquo.domain.exception.AbiquoException;
 import org.jclouds.abiquo.internal.BaseAbiquoApiLiveApiTest;
@@ -99,7 +100,7 @@ public class CostCodeLiveApiTest extends BaseAbiquoApiLiveApiTest {
             .description("description").build();
 
       costcodeprice = new CostCodePrice(currency, new BigDecimal(100));
-      this.defaultPrices = new ArrayList<CostCodePrice>();
+      this.defaultPrices = Lists.newArrayList();
       defaultPrices.add(costcodeprice);
       costcode2.setDefaultPrices(defaultPrices);
       // When a cost code is created it is also created a costcodecurrency with

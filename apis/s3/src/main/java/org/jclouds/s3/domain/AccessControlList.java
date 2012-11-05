@@ -19,17 +19,17 @@
 package org.jclouds.s3.domain;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * An Access Control List (ACL) describes the access control settings for a bucket or object in S3.
@@ -46,7 +46,7 @@ import com.google.common.collect.Collections2;
 public class AccessControlList {
 
    private CanonicalUser owner;
-   private final List<Grant> grants = new ArrayList<Grant>();
+   private final List<Grant> grants = Lists.newArrayList();
 
    public void setOwner(CanonicalUser owner) {
       this.owner = owner;
@@ -67,7 +67,7 @@ public class AccessControlList {
     * @return an unmodifiable set of grantees who have been assigned permissions in this ACL.
     */
    public Set<Grantee> getGrantees() {
-      Set<Grantee> grantees = new TreeSet<Grantee>();
+      Set<Grantee> grantees = Sets.newTreeSet();
       for (Grant grant : getGrants()) {
          grantees.add(grant.getGrantee());
       }

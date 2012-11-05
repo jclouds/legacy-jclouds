@@ -21,7 +21,6 @@ package org.jclouds.openstack.swift.functions;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +32,7 @@ import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Maps;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -51,7 +51,7 @@ public class ParseContainerListFromJsonResponseTest {
    public void testApplyInputStream() {
       InputStream is = Strings2
                .toInputStream("[ {\"name\":\"test_container_1\",\"count\":2,\"bytes\":78}, {\"name\":\"test_container_2\",\"count\":1,\"bytes\":17} ]   ");
-      Map<String, String> meta = new HashMap<String, String>();
+      Map<String, String> meta = Maps.newHashMap();
 
       List<ContainerMetadata> expects = ImmutableList.of(ContainerMetadata.builder().name("test_container_1").count( 2).bytes(78).metadata(meta).build(),
                ContainerMetadata.builder().name("test_container_2").count(1).bytes(17).metadata(meta).build());

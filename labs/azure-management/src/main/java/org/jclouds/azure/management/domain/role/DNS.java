@@ -1,11 +1,12 @@
 package org.jclouds.azure.management.domain.role;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import com.google.common.collect.Lists;
 
 @XmlRootElement(name = "Dns")
 public class DNS {
@@ -14,7 +15,7 @@ public class DNS {
     */
    @XmlElementWrapper(required = true, name = "DnsServers")
    @XmlElement(name = "DnsServer")
-   private List<DNSServer> dnsServers = new ArrayList<DNSServer>();
+   private List<DNSServer> dnsServers = Lists.newArrayList();
 
    public DNS() {
       super();

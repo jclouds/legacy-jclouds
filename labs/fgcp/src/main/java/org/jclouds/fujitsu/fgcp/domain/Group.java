@@ -18,13 +18,13 @@
  */
 package org.jclouds.fujitsu.fgcp.domain;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlEnumValue;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 /**
  * Describes attributes of a software load balancer's (SLB) configuration.
@@ -62,7 +62,7 @@ public class Group {
 
    private RecoveryAction recoveryAction;
 
-   private Set<Target> targets = new LinkedHashSet<Target>();
+   private Set<Target> targets = Sets.newLinkedHashSet();
 
    private String validity;
 

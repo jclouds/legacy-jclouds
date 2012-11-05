@@ -30,7 +30,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.InetAddress;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
@@ -51,6 +50,7 @@ import org.testng.annotations.Test;
 import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 import com.google.common.base.Suppliers;
+import com.google.common.collect.Lists;
 import com.google.common.io.Closeables;
 import com.google.common.io.Files;
 import com.google.common.net.HostAndPort;
@@ -236,7 +236,7 @@ public class JschSshClientLiveTest {
    public void testExecHostnameConcurrentlyWithSameSessions() throws Exception {
       final SshClient client = setupClient();
       ListeningExecutorService executor = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(10));
-      List<ListenableFuture<ExecResponse>> futures = new ArrayList<ListenableFuture<ExecResponse>>();
+      List<ListenableFuture<ExecResponse>> futures = Lists.newArrayList();
       try {
          for (int i = 0; i < 100; i++) {
             futures.add(executor.submit(new Callable<ExecResponse>() {

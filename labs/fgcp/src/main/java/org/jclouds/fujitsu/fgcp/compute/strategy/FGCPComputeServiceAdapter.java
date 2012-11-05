@@ -20,7 +20,6 @@ package org.jclouds.fujitsu.fgcp.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -57,6 +56,7 @@ import org.jclouds.predicates.RetryablePredicate;
 import com.google.common.base.Predicate;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -172,7 +172,7 @@ public class FGCPComputeServiceAdapter implements
       Builder builder = VServerMetadata.builder();
       builder.id(id);
 
-      List<ListenableFuture<?>> futures = new ArrayList<ListenableFuture<?>>();
+      List<ListenableFuture<?>> futures = Lists.newArrayList();
 
       futures.add(asyncApi.getVirtualServerApi().getDetails(id));
       futures.add(asyncApi.getVirtualServerApi().getStatus(id));
@@ -216,7 +216,7 @@ public class FGCPComputeServiceAdapter implements
             .<VServerMetadata> builder();
 
       Set<VSystem> systems = api.getVirtualDCApi().listVirtualSystems();
-      List<ListenableFuture<VSystemWithDetails>> futures = new ArrayList<ListenableFuture<VSystemWithDetails>>();
+      List<ListenableFuture<VSystemWithDetails>> futures = Lists.newArrayList();
       for (VSystem system : systems) {
 
          futures.add(asyncApi.getVirtualSystemApi().getDetails(

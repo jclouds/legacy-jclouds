@@ -20,7 +20,6 @@ package org.jclouds.vcloud.director.v1_5.domain.params;
 
 import static com.google.common.base.Objects.equal;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -32,6 +31,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Vm;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.Lists;
 
 /**
  * Represents vApp re-composition parameters.
@@ -117,7 +117,7 @@ public class RecomposeVAppParams extends ComposeVAppParams {
     */
    public List<Vm> getCreateItem() {
       if (createItem == null) {
-         createItem = new ArrayList<Vm>();
+         createItem = Lists.newArrayList();
       }
       return this.createItem;
    }
@@ -127,7 +127,7 @@ public class RecomposeVAppParams extends ComposeVAppParams {
     */
    public List<Reference> getDeleteItem() {
       if (removeItem == null) {
-         removeItem = new ArrayList<Reference>();
+         removeItem = Lists.newArrayList();
       }
       return this.removeItem;
    }

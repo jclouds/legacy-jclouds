@@ -20,12 +20,11 @@ package org.jclouds.virtualbox.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
-
+import com.google.common.collect.Lists;
 
 /**
  * Describes the network configuration for a VirtualBox machine.
@@ -44,7 +43,7 @@ public class NetworkSpec {
 
    public static class Builder {
 
-      private List<NetworkInterfaceCard> networkInterfaceCards = new ArrayList<NetworkInterfaceCard>();
+      private List<NetworkInterfaceCard> networkInterfaceCards = Lists.newArrayList();
 
       public Builder addNIC(NetworkInterfaceCard networkInterfaceCard) {
          this.networkInterfaceCards.add(networkInterfaceCard);

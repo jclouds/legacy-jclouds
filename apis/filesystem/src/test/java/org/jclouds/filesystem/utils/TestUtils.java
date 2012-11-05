@@ -24,7 +24,6 @@ import static org.testng.Assert.assertTrue;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -32,6 +31,7 @@ import org.jclouds.filesystem.util.Utils;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
+import com.google.common.collect.Sets;
 import com.google.common.io.Files;
 
 /**
@@ -85,7 +85,7 @@ public class TestUtils {
      * @throws IOException
      */
    public static Set<String> createBlobsInContainer(String containerName, String... blobNames) throws IOException {
-        Set<String> blobNamesCreatedInContainer = new HashSet<String>();
+        Set<String> blobNamesCreatedInContainer = Sets.newHashSet();
         for (String blobName : blobNames) {
             createBlobAsFile(containerName, blobName, getImageForBlobPayload());
             blobNamesCreatedInContainer.add(blobName);

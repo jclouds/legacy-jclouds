@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -34,6 +33,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -75,7 +75,7 @@ public class GsonExperimentsTest {
    @BeforeTest
    void setupSource() {
       gson = new Gson();
-      Collection<Object> collection = new ArrayList<Object>();
+      Collection<Object> collection = Lists.newArrayList();
       collection.add("hello");
       collection.add(5);
       collection.add(new Event("GREETINGS", "guest"));

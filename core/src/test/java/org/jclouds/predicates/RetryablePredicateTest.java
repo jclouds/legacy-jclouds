@@ -20,7 +20,6 @@ package org.jclouds.predicates;
 
 import static org.testng.Assert.fail;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -35,6 +34,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Supplier;
+import com.google.common.collect.Lists;
 
 /**
  * 
@@ -160,7 +160,7 @@ public class RetryablePredicateTest {
    }
    
    public static class RepeatedAttemptsPredicate implements Predicate<String> {
-      final List<Long> callTimes = new ArrayList<Long>();
+      final List<Long> callTimes = Lists.newArrayList();
       private final int succeedOnAttempt;
       private final Stopwatch stopwatch;
       private int count = 0;

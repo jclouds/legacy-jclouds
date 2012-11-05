@@ -18,7 +18,6 @@
  */
 package org.jclouds.lifecycle;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -27,6 +26,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
+
+import com.google.common.collect.Lists;
 
 import org.jclouds.logging.Logger;
 
@@ -47,7 +48,7 @@ public abstract class BaseLifeCycle implements Runnable, LifeCycle {
 
    public BaseLifeCycle(ExecutorService executor, LifeCycle... dependencies) {
       this.executorService = executor;
-      this.dependencies = new ArrayList<LifeCycle>();
+      this.dependencies = Lists.newArrayList();
       this.dependencies.addAll(Arrays.asList(dependencies));
       this.statusLock = new Object();
       this.status = Status.INACTIVE;

@@ -18,7 +18,6 @@
  */
 package org.jclouds.fujitsu.fgcp.domain;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -27,6 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 /**
  * Represents a virtual system with servers, additional storage, public IP
@@ -38,16 +38,16 @@ import com.google.common.collect.ImmutableSet;
 public class VSystemWithDetails extends VSystem {
    @XmlElementWrapper(name = "vservers")
    @XmlElement(name = "vserver")
-   private Set<VServerWithVNICs> servers = new LinkedHashSet<VServerWithVNICs>();
+   private Set<VServerWithVNICs> servers = Sets.newLinkedHashSet();
    @XmlElementWrapper(name = "vdisks")
    @XmlElement(name = "vdisk")
-   private Set<VDisk> disks = new LinkedHashSet<VDisk>();
+   private Set<VDisk> disks = Sets.newLinkedHashSet();
    @XmlElementWrapper(name = "publicips")
    @XmlElement(name = "publicip")
-   private Set<PublicIP> publicips = new LinkedHashSet<PublicIP>();
+   private Set<PublicIP> publicips = Sets.newLinkedHashSet();
    @XmlElementWrapper(name = "vnets")
    @XmlElement(name = "vnet")
-   private Set<VNet> networks = new LinkedHashSet<VNet>();
+   private Set<VNet> networks = Sets.newLinkedHashSet();
 
    public Set<VServerWithVNICs> getServers() {
       return servers == null ? ImmutableSet.<VServerWithVNICs> of() : ImmutableSet

@@ -18,7 +18,6 @@
  */
 package org.jclouds.fujitsu.fgcp.domain;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -26,6 +25,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 /**
  * Holds information on the system disk image of a virtual server, including the
@@ -50,7 +50,7 @@ public class Image {
 
    @XmlElementWrapper(name = "softwares")
    @XmlElement(name = "software")
-   private Set<Software> software = new LinkedHashSet<Software>();
+   private Set<Software> software = Sets.newLinkedHashSet();
 
    public String getId() {
       return id;

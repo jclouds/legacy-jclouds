@@ -19,7 +19,6 @@
 package org.jclouds.fujitsu.fgcp.xml.internal;
 
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -29,6 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.jclouds.fujitsu.fgcp.domain.VServer;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 /**
  * Wrapper for ListVServerResponse.
@@ -39,7 +39,7 @@ import com.google.common.collect.ImmutableSet;
 public class ListVServerResponse extends SetWithStatusResponse<VServer> {
    @XmlElementWrapper(name = "vservers")
    @XmlElement(name = "vserver")
-   private Set<VServer> servers = new LinkedHashSet<VServer>();
+   private Set<VServer> servers = Sets.newLinkedHashSet();
 
    @Override
    protected Set<VServer> delegate() {

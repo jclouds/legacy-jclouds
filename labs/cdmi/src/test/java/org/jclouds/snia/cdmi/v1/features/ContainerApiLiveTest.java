@@ -21,11 +21,12 @@ package org.jclouds.snia.cdmi.v1.features;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+
+import com.google.common.collect.Maps;
 
 import org.jclouds.domain.JsonBall;
 import org.jclouds.snia.cdmi.v1.ObjectTypes;
@@ -46,7 +47,7 @@ public class ContainerApiLiveTest extends BaseCDMIApiLiveTest {
    @Test
    public void testCreateContainer() throws Exception {
       String pContainerName = "MyContainer" + System.currentTimeMillis() + "/";
-      Map<String, String> pContainerMetaDataIn = new HashMap<String, String>();
+      Map<String, String> pContainerMetaDataIn = Maps.newHashMap();
       Iterator<String> keys;
       pContainerMetaDataIn.put("containerkey1", "value1");
       pContainerMetaDataIn.put("containerkey2", "value2");
@@ -134,7 +135,7 @@ public class ContainerApiLiveTest extends BaseCDMIApiLiveTest {
    @Test
    public void testGetContainer() throws Exception {
       String pContainerName = "MyContainer" + System.currentTimeMillis() + "/";
-      Map<String, String> pContainerMetaDataIn = new HashMap<String, String>();
+      Map<String, String> pContainerMetaDataIn = Maps.newHashMap();
       Iterator<String> keys;
       pContainerMetaDataIn.put("containerkey1", "value1");
       pContainerMetaDataIn.put("containerkey2", "value2");

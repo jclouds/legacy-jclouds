@@ -20,7 +20,6 @@ package org.jclouds.date;
 
 import static org.testng.Assert.assertEquals;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -28,6 +27,7 @@ import org.jclouds.PerformanceTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.Lists;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -205,7 +205,7 @@ public class DateServiceTest extends PerformanceTest {
 
    @Test
    void testFormatIso8601DateCorrectnessInParallel() throws Throwable {
-      List<Runnable> tasks = new ArrayList<Runnable>(testData.length);
+      List<Runnable> tasks = Lists.newArrayListWithCapacity(testData.length);
       for (final TestData myData : testData) {
          tasks.add(new Runnable() {
             public void run() {
@@ -219,7 +219,7 @@ public class DateServiceTest extends PerformanceTest {
 
    @Test
    void testFormatIso8601DatePerformanceInParallel() throws Throwable {
-      List<Runnable> tasks = new ArrayList<Runnable>(testData.length);
+      List<Runnable> tasks = Lists.newArrayListWithCapacity(testData.length);
       for (final TestData myData : testData) {
          tasks.add(new Runnable() {
             public void run() {
@@ -238,7 +238,7 @@ public class DateServiceTest extends PerformanceTest {
 
    @Test
    void testParseIso8601DateCorrectnessInParallel() throws Throwable {
-      List<Runnable> tasks = new ArrayList<Runnable>(testData.length);
+      List<Runnable> tasks = Lists.newArrayListWithCapacity(testData.length);
       for (final TestData myData : testData) {
          tasks.add(new Runnable() {
             public void run() {
@@ -252,7 +252,7 @@ public class DateServiceTest extends PerformanceTest {
 
    @Test
    void testParseIso8601DatePerformanceInParallel() throws Throwable {
-      List<Runnable> tasks = new ArrayList<Runnable>(testData.length);
+      List<Runnable> tasks = Lists.newArrayListWithCapacity(testData.length);
       for (final TestData myData : testData) {
          tasks.add(new Runnable() {
             public void run() {

@@ -19,7 +19,6 @@
 package org.jclouds.fujitsu.fgcp.xml.internal;
 
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -29,6 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.jclouds.fujitsu.fgcp.domain.AddressRange;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 /**
  * Wrapper for GetAddressRangeResponse.
@@ -40,7 +40,7 @@ public class GetAddressRangeResponse extends
       SetWithStatusResponse<AddressRange> {
    @XmlElementWrapper(name = "addressranges")
    @XmlElement(name = "addressrange")
-   private Set<AddressRange> ranges = new LinkedHashSet<AddressRange>();
+   private Set<AddressRange> ranges = Sets.newLinkedHashSet();
 
    @Override
    protected Set<AddressRange> delegate() {

@@ -18,8 +18,9 @@
  */
 package org.jclouds.aws.domain;
 
-import java.util.HashMap;
 import java.util.Map;
+
+import com.google.common.collect.Maps;
 
 /**
  * When an Amazon S3 request is in error, the client receives an error response.
@@ -35,7 +36,7 @@ public class AWSError {
    private String message;
    private String requestId;
    private String requestToken;
-   private Map<String, String> details = new HashMap<String, String>();
+   private Map<String, String> details = Maps.newHashMap();
    private String stringSigned;
    private String signature;
 

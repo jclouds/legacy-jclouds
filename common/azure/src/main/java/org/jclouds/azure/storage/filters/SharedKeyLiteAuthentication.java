@@ -22,7 +22,6 @@ import static org.jclouds.util.Patterns.NEWLINE_PATTERN;
 
 import java.util.Collection;
 import java.util.Set;
-import java.util.TreeSet;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -52,6 +51,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Multimaps;
+import com.google.common.collect.Sets;
 
 /**
  * Signs the Azure Storage request.
@@ -153,7 +153,8 @@ public class SharedKeyLiteAuthentication implements HttpRequestFilter {
    }
 
    private void appendCanonicalizedHeaders(HttpRequest request, StringBuilder toSign) {
-      Set<String> headers = new TreeSet<String>(request.getHeaders().keySet());
+      // TreeSet == Sort the headers alphabetically.
+      Set<String> headers = Sets.newTreeSet(request.getHeaders().keySet());
       for (String header : headers) {
          if (header.startsWith("x-ms-")) {
             toSign.append(header.toLowerCase()).append(":");

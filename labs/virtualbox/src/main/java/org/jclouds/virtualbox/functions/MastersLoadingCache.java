@@ -34,7 +34,6 @@ import static org.jclouds.virtualbox.util.MachineUtils.machineNotFoundException;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -84,6 +83,7 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.cache.AbstractLoadingCache;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.net.HostAndPort;
 
@@ -292,7 +292,7 @@ public class MastersLoadingCache extends AbstractLoadingCache<Image, Master> {
          throw new RuntimeException("could not connect to virtualbox");
       }
       File file = new File(isosDir, fileName);
-      List<Statement> statements = new ArrayList<Statement>();
+      List<Statement> statements = Lists.newArrayList();
       statements.add(Statements.saveHttpResponseTo(URI.create(httpUrl),
             isosDir, fileName));
       StatementList statementList = new StatementList(statements);

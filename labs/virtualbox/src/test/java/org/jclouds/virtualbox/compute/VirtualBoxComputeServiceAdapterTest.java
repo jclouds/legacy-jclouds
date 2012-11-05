@@ -24,7 +24,6 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -45,6 +44,7 @@ import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Function;
 import com.google.common.base.Suppliers;
+import com.google.common.collect.Lists;
 import com.google.inject.Guice;
 
 @Test(groups = "unit")
@@ -61,7 +61,7 @@ public class VirtualBoxComputeServiceAdapterTest {
       IVirtualBox vBox = createNiceMock(IVirtualBox.class);
       IGuestOSType osType = createNiceMock(IGuestOSType.class);
 
-      List<IMachine> machines = new ArrayList<IMachine>();
+      List<IMachine> machines = Lists.newArrayList();
       IMachine imageMachine = createNiceMock(IMachine.class);
       IMachine clonedMachine = createNiceMock(IMachine.class);
       machines.add(imageMachine);

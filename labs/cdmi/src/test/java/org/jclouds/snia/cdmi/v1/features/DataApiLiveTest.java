@@ -27,9 +27,7 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -42,6 +40,7 @@ import org.jclouds.snia.cdmi.v1.queryparams.DataObjectQueryParams;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Charsets;
+import com.google.common.collect.Maps;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Files;
 
@@ -69,8 +68,8 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
       DataObject dataObject;
       Iterator<String> keys;
       Map<String, String> dataObjectMetaDataOut;
-      Map<String, String> pContainerMetaDataIn = new HashMap<String, String>();
-      Map<String, String> pDataObjectMetaDataIn = new LinkedHashMap<String, String>();
+      Map<String, String> pContainerMetaDataIn = Maps.newHashMap();
+      Map<String, String> pDataObjectMetaDataIn = Maps.newLinkedHashMap();
       pDataObjectMetaDataIn.put("dataObjectkey1", "value1");
       pDataObjectMetaDataIn.put("dataObjectkey2", "value2");
       pDataObjectMetaDataIn.put("dataObjectkey3", "value3");
@@ -487,8 +486,8 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
       DataObject dataObject;
       Iterator<String> keys;
       Map<String, String> dataObjectMetaDataOut;
-      Map<String, String> pContainerMetaDataIn = new HashMap<String, String>();
-      Map<String, String> pDataObjectMetaDataIn = new LinkedHashMap<String, String>();
+      Map<String, String> pContainerMetaDataIn = Maps.newHashMap();
+      Map<String, String> pDataObjectMetaDataIn = Maps.newLinkedHashMap();
       pDataObjectMetaDataIn.put("dataObjectkey1", "value1");
       pDataObjectMetaDataIn.put("dataObjectkey2", "value2");
       pDataObjectMetaDataIn.put("dataObjectkey3", "value3");

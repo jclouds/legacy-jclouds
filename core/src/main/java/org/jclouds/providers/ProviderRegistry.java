@@ -18,15 +18,16 @@
  */
 package org.jclouds.providers;
 
-import java.util.HashSet;
 import java.util.Set;
+
+import com.google.common.collect.Sets;
 
 /**
  * A registry for holding {@link org.jclouds.providers.ProviderMetadata}.
  */
 public class ProviderRegistry {
 
-  private static final Set<ProviderMetadata> providers = new HashSet<ProviderMetadata>();
+  private static final Set<ProviderMetadata> providers = Sets.newHashSet();
 
   public static void registerProvider(ProviderMetadata provider) {
     providers.add(provider);
