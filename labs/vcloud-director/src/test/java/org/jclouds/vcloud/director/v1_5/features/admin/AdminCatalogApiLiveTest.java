@@ -24,6 +24,7 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.O
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_EQ;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_UPDATABLE;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkControlAccessParams;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
@@ -176,7 +177,7 @@ public class AdminCatalogApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    @Test(description = "POST /admin/catalog/{id}/action/publish", dependsOnMethods = { "testEditCatalog" })
    public void testPublishCatalog() {
       assertNotNull(catalog, String.format(NOT_NULL_OBJ_FMT, "Catalog"));
-      assertTrue(!catalog.isPublished(),
+      assertFalse(catalog.isPublished(),
                String.format(OBJ_FIELD_EQ, CATALOG, "isPublished", false, catalog.isPublished()));
 
       PublishCatalogParams params = PublishCatalogParams.builder().isPublished(true).build();

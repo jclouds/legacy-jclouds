@@ -48,7 +48,7 @@ public class OptionsConverterTest {
       DeployVirtualMachineOptions optionsOut = new DeployVirtualMachineOptions();
 
       DeployVirtualMachineOptions optionsOut2 = converter.apply(optionsIn, EMPTY_NETWORKS_MAP, ZONE_ID, optionsOut);
-      assertTrue(optionsOut == optionsOut2);
+      assertEquals(optionsOut, optionsOut2);
 
       DeployVirtualMachineOptions optionsExpected = DeployVirtualMachineOptions.Builder.securityGroupId("42").networkId("46");
       assertEquals(optionsOut, optionsExpected);

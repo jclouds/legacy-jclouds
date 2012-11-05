@@ -21,6 +21,7 @@ package org.jclouds.virtualbox.compute;
 
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_NODE_PREFIX;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 import javax.inject.Inject;
@@ -78,13 +79,13 @@ public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClien
    @Test
    public void testListHardwareProfiles() {
       Iterable<Hardware> profiles = adapter.listHardwareProfiles();
-      assertTrue(!Iterables.isEmpty(profiles));
+      assertFalse(Iterables.isEmpty(profiles));
    }
 
    @Test
    public void testListImages() {
       Iterable<Image> iMageIterable = adapter.listImages();
-      assertTrue(!Iterables.isEmpty(iMageIterable));
+      assertFalse(Iterables.isEmpty(iMageIterable));
    }
 
    @AfterClass

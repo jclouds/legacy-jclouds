@@ -143,7 +143,7 @@ public class KeyPairsApiLiveTest extends BaseVCloudDirectorApiLiveTest {
 				keyPairsContainerName);
 		assertNotNull(keyPairsContainer.getFiles(),
 				String.format(OBJ_FIELD_REQ, MEDIA, "files"));
-		assertTrue(keyPairsContainer.getFiles().size() == 1, String.format(
+		assertEquals(1, keyPairsContainer.getFiles().size(), String.format(
 				OBJ_FIELD_LIST_SIZE_EQ, MEDIA, "files", 1, keyPairsContainer
 						.getFiles().size()));
 

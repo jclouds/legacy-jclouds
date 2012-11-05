@@ -22,6 +22,7 @@ import static org.jclouds.ec2.options.RunInstancesOptions.Builder.asType;
 import static org.jclouds.scriptbuilder.domain.Statements.exec;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.fail;
 
@@ -331,7 +332,7 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest extends BaseComputeS
             .describeInstancesInRegion(null, instanceId));
 
       assertNotNull(Iterables.getOnlyElement(reservation).getIpAddress());
-      assertFalse(Iterables.getOnlyElement(reservation).getIpAddress().equals(address));
+      assertNotEquals(address, Iterables.getOnlyElement(reservation).getIpAddress());
 
       doCheckKey(address);
 

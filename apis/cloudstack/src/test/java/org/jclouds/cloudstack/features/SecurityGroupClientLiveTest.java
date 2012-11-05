@@ -208,7 +208,7 @@ public class SecurityGroupClientLiveTest extends BaseCloudStackClientLiveTest {
             jobComplete, virtualMachineRunning);
       try {
          VirtualMachine runningVm = client.getVirtualMachineClient().getVirtualMachine(newVm.getId());
-         assertTrue(runningVm.getSecurityGroups().size() == 1);
+         assertEquals(1, runningVm.getSecurityGroups().size());
          assertEquals(Iterables.getOnlyElement(runningVm.getSecurityGroups()).getName(), "default");
       } finally {
          assertTrue(jobComplete.apply(client.getVirtualMachineClient().destroyVirtualMachine(newVm.getId())));

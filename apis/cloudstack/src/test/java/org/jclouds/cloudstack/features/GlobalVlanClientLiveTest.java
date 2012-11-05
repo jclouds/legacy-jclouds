@@ -22,6 +22,7 @@ import static com.google.common.collect.Iterables.find;
 import static org.jclouds.cloudstack.options.ListNetworksOptions.Builder.zoneId;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Set;
@@ -71,17 +72,17 @@ public class GlobalVlanClientLiveTest extends BaseCloudStackClientLiveTest {
             ListVlanIPRangesOptions.Builder.id(range.getId())));
          assertEquals(range, newDetails);
          assertEquals(range, globalAdminClient.getVlanClient().getVlanIPRange(range.getId()));
-         assertFalse(range.getId() != null);
-         assertFalse(range.getZoneId() != null);
+         assertNull(range.getId());
+         assertNull(range.getZoneId());
          assertFalse(Strings.isNullOrEmpty(range.getVlan()));
          assertFalse(Strings.isNullOrEmpty(range.getAccount()));
-         assertFalse(range.getDomainId() != null);
+         assertNull(range.getDomainId());
          assertFalse(Strings.isNullOrEmpty(range.getDomain()));
          assertFalse(Strings.isNullOrEmpty(range.getGateway()));
          assertFalse(Strings.isNullOrEmpty(range.getNetmask()));
          assertFalse(Strings.isNullOrEmpty(range.getStartIP()));
          assertFalse(Strings.isNullOrEmpty(range.getEndIP()));
-         assertFalse(range.getNetworkId() != null);
+         assertNull(range.getNetworkId());
       }
    }
 

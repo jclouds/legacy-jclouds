@@ -22,6 +22,7 @@ package org.jclouds.virtualbox.util;
 import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
+import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertTrue;
 
 import org.jclouds.config.ValueOfConfigurationKeyOrNull;
@@ -100,7 +101,7 @@ public class MachineUtilsLiveTest extends BaseVirtualBoxClientLiveTest {
             new Function<ISession, ISession>() {
                @Override
                public ISession apply(ISession session) {
-                  assertTrue(session.getMachine().getName().equals(clone.getName()));
+                  assertEquals(session.getMachine().getName(), clone.getName());
                   return session;
                }
             });
@@ -115,7 +116,7 @@ public class MachineUtilsLiveTest extends BaseVirtualBoxClientLiveTest {
             new Function<ISession, ISession>() {
                @Override
                public ISession apply(ISession session) {
-                  assertTrue(session.getMachine().getName().equals(clone.getName()));
+                  assertEquals(session.getMachine().getName(), clone.getName());
                   return session;
                }
             });
@@ -148,7 +149,7 @@ public class MachineUtilsLiveTest extends BaseVirtualBoxClientLiveTest {
                @Override
                public ISession apply(ISession sharedSession) {
                   checkState(sharedSession.getState().equals(SessionState.Locked));
-                  assertTrue(sharedSession.getMachine().getName().equals(clone.getName()));
+                  assertEquals(sharedSession.getMachine().getName(), clone.getName());
                   return sharedSession;
                }
             });
@@ -173,7 +174,7 @@ public class MachineUtilsLiveTest extends BaseVirtualBoxClientLiveTest {
                   @Override
                   public ISession apply(ISession writeSession) {
                      checkState(writeSession.getState().equals(SessionState.Locked));
-                     assertTrue(writeSession.getMachine().getName().equals(clone.getName()));
+                     assertEquals(writeSession.getMachine().getName(), clone.getName());
                      return writeSession;
                   }
                });

@@ -85,7 +85,7 @@ public class ListAttachedNicsLiveApiTest extends BaseAbiquoStrategyLiveApiTest {
    public void testExecute() {
       Iterable<Ip<?, ?>> vapps = strategy.execute(env.virtualMachine);
       assertNotNull(vapps);
-      assertTrue(size(vapps) == 4);
+      assertEquals(4, size(vapps));
    }
 
    public void testExecutePredicateWithoutResults() {

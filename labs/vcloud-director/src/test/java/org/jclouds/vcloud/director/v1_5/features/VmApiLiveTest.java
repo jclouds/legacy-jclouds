@@ -41,6 +41,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
 
 import java.math.BigInteger;
@@ -451,9 +452,9 @@ public class VmApiLiveTest extends AbstractVAppApiLiveTest {
 		for (NetworkConnection connection : modified.getNetworkConnections()) {
 			if (connection.getNetwork().equals(
 					newNetworkConnection.getNetwork())) {
-				assertTrue(connection.getIpAddressAllocationMode().equals(
-						newNetworkConnection.getIpAddressAllocationMode()));
-				assertTrue(connection.getNetworkConnectionIndex() == newNetworkConnection
+				assertEquals(connection.getIpAddressAllocationMode(),
+						newNetworkConnection.getIpAddressAllocationMode());
+				assertSame(connection.getNetworkConnectionIndex(), newNetworkConnection
 						.getNetworkConnectionIndex());
 			}
 		}

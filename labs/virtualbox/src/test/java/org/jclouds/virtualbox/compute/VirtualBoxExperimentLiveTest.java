@@ -75,7 +75,7 @@ public class VirtualBoxExperimentLiveTest extends BaseVirtualBoxClientLiveTest {
                TemplateOptions.Builder.overrideLoginUser("toor").runScript(AdminAccess.standard()));
       assertEquals(numNodes, nodes.size(), "wrong number of nodes");
       for (NodeMetadata node : nodes) {
-         assertTrue(node.getGroup().equals("test-launch-cluster"));
+         assertEquals("test-launch-cluster", node.getGroup());
          logger.debug("Created Node: %s", node);
          SshClient client = context.utils().sshForNode().apply(node);
          client.connect();
