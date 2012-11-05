@@ -23,7 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 
 import javax.inject.Inject;
 import javax.inject.Named;

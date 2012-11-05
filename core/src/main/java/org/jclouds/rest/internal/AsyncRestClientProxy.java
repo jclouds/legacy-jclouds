@@ -133,7 +133,7 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
 
    };
 
-   public Object invoke(Object o, Method method, Object[] args) throws Throwable {
+   public Object invoke(Object o, Method method, Object[] args) throws ExecutionException {
       if (method.getName().equals("equals")) {
          return this.equals(o);
       } else if (method.getName().equals("toString")) {

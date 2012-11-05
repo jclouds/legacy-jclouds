@@ -6,6 +6,7 @@
     <module name="NewlineAtEndOfFile"/>
     <module name="TreeWalker">
         <module name="EmptyStatement"/>
+        <module name="IllegalThrows"/>
         <module name="LineLength">
             <property name="ignorePattern" value="^import\s.*;$"/>
             <property name="max" value="120"/>
