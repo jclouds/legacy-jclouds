@@ -158,7 +158,8 @@ public class Sha512Crypt {
       byte[] temp_result;
       byte[] p_bytes = null;
       byte[] s_bytes = null;
-      int cnt, cnt2;
+      int cnt;
+      int cnt2;
       int rounds = ROUNDS_DEFAULT; // Default number of rounds.
       StringBuilder buffer;
 

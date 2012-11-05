@@ -12,6 +12,7 @@
             <property name="max" value="120"/>
         </module>
         <module name="ModifierOrder"/>
+        <module name="MultipleVariableDeclarations"/>
         <module name="UnusedImports"/>
     </module>
 </module>
