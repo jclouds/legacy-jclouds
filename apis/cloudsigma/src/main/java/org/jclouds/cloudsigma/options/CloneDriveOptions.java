@@ -68,7 +68,7 @@ public class CloneDriveOptions {
       Set<String> currentTags = (currentTagsString == null) ? new HashSet<String>() :
          Sets.newLinkedHashSet(Splitter.on(' ').split(currentTagsString));
 
-      Set<String> newTags = new LinkedHashSet<String>();
+      Set<String> newTags = Sets.newLinkedHashSet();
       for (String tag : tags)
           newTags.add(tag);
       

@@ -33,7 +33,6 @@ import static com.google.common.collect.Lists.newArrayList;
 import static org.jclouds.Constants.*;
 import static org.jclouds.util.Throwables2.propagateAuthorizationOrOriginalException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -79,6 +78,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.ImmutableMultimap.Builder;
 import com.google.common.reflect.TypeToken;
@@ -157,7 +157,7 @@ public class ContextBuilder {
    protected String apiVersion;
    protected String buildVersion;
    protected Optional<Properties> overrides = Optional.absent();
-   protected List<Module> modules = new ArrayList<Module>(3);
+   protected List<Module> modules = Lists.newArrayListWithCapacity(3);
 
    @Override
    public String toString() {

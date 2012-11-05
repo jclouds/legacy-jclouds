@@ -18,15 +18,16 @@
  */
 package org.jclouds.apis;
 
-import java.util.HashSet;
 import java.util.Set;
+
+import com.google.common.collect.Sets;
 
 /**
  * A registry for holding {@link org.jclouds.apis.ApiMetadata}.
  */
 public class ApiRegistry {
 
-  private static final Set<ApiMetadata> apis = new HashSet<ApiMetadata>();
+  private static final Set<ApiMetadata> apis = Sets.newHashSet();
 
   public static void registerApi(ApiMetadata api) {
     apis.add(api);

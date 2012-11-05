@@ -19,7 +19,6 @@
 package org.jclouds.fujitsu.fgcp.xml.internal;
 
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -29,6 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.jclouds.fujitsu.fgcp.domain.DiskImage;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 /**
  * Wrapper for ListDiskImageResponse.
@@ -39,7 +39,7 @@ import com.google.common.collect.ImmutableSet;
 public class ListDiskImageResponse extends SetWithStatusResponse<DiskImage> {
    @XmlElementWrapper(name = "diskimages")
    @XmlElement(name = "diskimage")
-   private Set<DiskImage> diskImages = new LinkedHashSet<DiskImage>();
+   private Set<DiskImage> diskImages = Sets.newLinkedHashSet();
 
    @Override
    protected Set<DiskImage> delegate() {

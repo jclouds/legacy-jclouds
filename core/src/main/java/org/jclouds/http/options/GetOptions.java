@@ -21,7 +21,6 @@ package org.jclouds.http.options;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -31,6 +30,7 @@ import org.jclouds.date.DateService;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 
 /**
@@ -53,7 +53,7 @@ import com.google.common.collect.Multimap;
 public class GetOptions extends BaseHttpRequestOptions {
    private static final DateService dateService = new SimpleDateFormatDateService();
    public static final GetOptions NONE = new GetOptions();
-   private final List<String> ranges = new ArrayList<String>();
+   private final List<String> ranges = Lists.newArrayList();
 
    @Override
    public Multimap<String, String> buildRequestHeaders() {

@@ -1,11 +1,12 @@
 package org.jclouds.azure.management.domain.role;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import com.google.common.collect.Lists;
 
 @XmlRootElement(name = "Deployment")
 public class Deployment {
@@ -37,7 +38,7 @@ public class Deployment {
 
    @XmlElementWrapper(required = true, name = "RoleList")
    @XmlElement(required = true, name = "Role")
-   private List<Role> roleList = new ArrayList<Role>();
+   private List<Role> roleList = Lists.newArrayList();
 
    /**
     * Specifies the name of an existing virtual network to which the deployment will belong.

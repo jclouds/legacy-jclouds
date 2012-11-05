@@ -24,9 +24,10 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import org.jclouds.virtualbox.domain.HardDisk;
 import org.jclouds.virtualbox.domain.StorageController;
@@ -55,7 +56,7 @@ public class UnregisterMachineIfExistsAndDeleteItsMediaTest {
       IVirtualBox vBox = createMock(IVirtualBox.class);
       IMachine registeredMachine = createMock(IMachine.class);
       IProgress progress = createNiceMock(IProgress.class);
-      List<IMedium> media = new ArrayList<IMedium>();
+      List<IMedium> media = Lists.newArrayList();
       List<IMedium> mediums = Collections.unmodifiableList(media);
       
       StorageController ideController = StorageController.builder().name(ideControllerName).bus(StorageBus.IDE)

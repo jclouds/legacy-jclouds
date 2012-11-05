@@ -19,7 +19,6 @@
 package org.jclouds.fujitsu.fgcp.xml.internal;
 
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -29,6 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.jclouds.fujitsu.fgcp.domain.PerformanceInfo;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 /**
  * Wrapper for GetPerformanceInformationResponse.
@@ -40,7 +40,7 @@ public class GetPerformanceInformationResponse extends
       SetWithStatusResponse<PerformanceInfo> {
    @XmlElementWrapper(name = "performanceinfos")
    @XmlElement(name = "performanceinfo")
-   private Set<PerformanceInfo> stats = new LinkedHashSet<PerformanceInfo>();
+   private Set<PerformanceInfo> stats = Sets.newLinkedHashSet();
 
    @Override
    protected Set<PerformanceInfo> delegate() {

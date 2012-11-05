@@ -1,8 +1,9 @@
 package org.jclouds.azure.management.domain.role.conf;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.TimeZone;
+
+import com.google.common.collect.Lists;
 
 //@XmlRootElement(name = "ConfigurationSet")
 public class WindowsProvisioningConfiguration extends ConfigurationSet {
@@ -50,7 +51,7 @@ public class WindowsProvisioningConfiguration extends ConfigurationSet {
     */
    // @XmlElementWrapper(required = true, name = "StoredCertificateSettings")
    // @XmlElement(name = "CertificateSetting")
-   private List<CertificateSetting> storedCertificateSettings = new ArrayList<CertificateSetting>();
+   private List<CertificateSetting> storedCertificateSettings = Lists.newArrayList();
 
    public WindowsProvisioningConfiguration() {
 

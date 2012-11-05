@@ -1,10 +1,10 @@
 package org.jclouds.azure.management.domain;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.Lists;
 
 /**
  * 
@@ -34,7 +34,7 @@ public class DeploymentParams {
 		protected String storageAccount;
 		protected OSType osType;
 		protected RoleSize size = RoleSize.SMALL;
-		protected List<InputEndpoint> endpoints = new ArrayList<InputEndpoint>();
+		protected List<InputEndpoint> endpoints = Lists.newArrayList();
 
 		public Builder name(String name) {
 			this.name = name;

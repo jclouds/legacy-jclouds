@@ -25,7 +25,6 @@ import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_DEFAU
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_WORKINGDIR;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -60,6 +59,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -122,7 +122,7 @@ public class VirtualBoxImageExtension implements ImageExtension {
       IMachine clonedMachine = manager.get().getVBox()
                .createMachine(settingsFile, template.getName(), source.getOSTypeId(), template.getName(), true);
 
-      List<CloneOptions> options = new ArrayList<CloneOptions>();
+      List<CloneOptions> options = Lists.newArrayList();
       if (isLinkedClone)
          options.add(CloneOptions.Link);
 

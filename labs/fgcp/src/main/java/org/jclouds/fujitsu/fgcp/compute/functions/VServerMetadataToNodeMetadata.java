@@ -20,7 +20,6 @@ package org.jclouds.fujitsu.fgcp.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -53,6 +52,7 @@ import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 /**
  * @author Dies Koper
@@ -228,7 +228,7 @@ public class VServerMetadataToNodeMetadata implements
 
             VServerWithVNICs server = (VServerWithVNICs) from.getServer();
             builder.location(parseLocation(server));
-            List<String> ips = new ArrayList<String>();
+            List<String> ips = Lists.newArrayList();
             if (server.getVnics() != null && server.getVnics().iterator().next().getPrivateIp() != null) {
                ips.add(server.getVnics().iterator().next().getPrivateIp());
             }

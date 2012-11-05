@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedList;
 
+import com.google.common.collect.Lists;
+
 /**
  * {@link InputStream} implementation that allows chaining of various streams for seamless
  * sequential reading
@@ -34,7 +36,7 @@ public class InputStreamChain extends InputStream {
    /**
     * Input stream chain
     */
-   private final LinkedList<InputStream> streams = new LinkedList<InputStream>();
+   private final LinkedList<InputStream> streams = Lists.newLinkedList();
 
    /**
     * Currently active stream

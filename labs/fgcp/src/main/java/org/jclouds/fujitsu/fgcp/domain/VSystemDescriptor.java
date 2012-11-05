@@ -18,7 +18,6 @@
  */
 package org.jclouds.fujitsu.fgcp.domain;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -26,6 +25,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 /**
  * Describes a virtual system template.
@@ -50,7 +50,7 @@ public class VSystemDescriptor {
 
    @XmlElementWrapper(name = "vservers")
    @XmlElement(name = "vserver")
-   private Set<VServerWithDetails> servers = new LinkedHashSet<VServerWithDetails>();
+   private Set<VServerWithDetails> servers = Sets.newLinkedHashSet();
 
    /**
     * @return the id

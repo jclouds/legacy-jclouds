@@ -24,7 +24,6 @@ import static com.google.common.collect.Iterables.transform;
 
 import java.lang.reflect.Constructor;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.jclouds.abiquo.AbiquoApi;
@@ -199,7 +198,7 @@ public abstract class DomainWrapper<T extends SingleResourceTransportDto> {
     * @return The async task array.
     */
    protected AsyncTask[] getTasks(final AcceptedRequestDto<String> acceptedRequest) {
-      List<AsyncTask> tasks = new ArrayList<AsyncTask>();
+      List<AsyncTask> tasks = Lists.newArrayList();
 
       for (RESTLink link : acceptedRequest.getLinks()) {
          // This will return null on untrackable tasks

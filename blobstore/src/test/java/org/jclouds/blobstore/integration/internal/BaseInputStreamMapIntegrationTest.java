@@ -25,7 +25,6 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -39,6 +38,7 @@ import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
@@ -80,7 +80,7 @@ public abstract class BaseInputStreamMapIntegrationTest extends BaseMapIntegrati
             keySet.add(i + "");
          }
 
-         Map<String, String> newMap = new HashMap<String, String>();
+         Map<String, String> newMap = Maps.newHashMap();
          for (String key : keySet) {
             newMap.put(key, key);
          }

@@ -22,7 +22,6 @@ package org.jclouds.virtualbox.functions;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.GUEST_OS_PASSWORD;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.GUEST_OS_USER;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -46,6 +45,7 @@ import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
 /**
@@ -103,7 +103,7 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
                .createMachine(settingsFile, vmSpec.getVmName(), vmSpec.getOsTypeId(), vmSpec.getVmId(),
                         vmSpec.isForceOverwrite());
 
-      List<CloneOptions> options = new ArrayList<CloneOptions>();
+      List<CloneOptions> options = Lists.newArrayList();
       if (isLinkedClone)
          options.add(CloneOptions.Link);
 

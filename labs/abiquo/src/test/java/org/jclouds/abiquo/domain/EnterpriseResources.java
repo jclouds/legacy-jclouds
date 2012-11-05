@@ -21,7 +21,6 @@ package org.jclouds.abiquo.domain;
 
 import static org.jclouds.abiquo.domain.DomainUtils.link;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import com.abiquo.model.rest.RESTLink;
@@ -30,6 +29,7 @@ import com.abiquo.server.core.enterprise.DatacenterLimitsDto;
 import com.abiquo.server.core.enterprise.EnterpriseDto;
 import com.abiquo.server.core.enterprise.EnterprisePropertiesDto;
 import com.abiquo.server.core.enterprise.UserDto;
+import com.google.common.collect.Maps;
 
 /**
  * Enterprise domain utilities.
@@ -71,7 +71,7 @@ public class EnterpriseResources {
    public static EnterprisePropertiesDto enterprisePropertiesPut() {
       EnterprisePropertiesDto enterpriseProp = new EnterprisePropertiesDto();
       enterpriseProp.setId(1);
-      Map<String, String> props = new HashMap<String, String>();
+      Map<String, String> props = Maps.newHashMap();
       props.put("key", "value");
       enterpriseProp.setProperties(props);
       enterpriseProp.addLink(new RESTLink("edit", "http://localhost/api/admin/enterprises/1/properties"));

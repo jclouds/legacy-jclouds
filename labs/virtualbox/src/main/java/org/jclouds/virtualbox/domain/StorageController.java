@@ -21,7 +21,6 @@ package org.jclouds.virtualbox.domain;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.filter;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import org.jclouds.javax.annotation.Nullable;
@@ -31,6 +30,7 @@ import org.virtualbox_4_1.StorageBus;
 import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 
 /**
  * Represents a storage controller in a VirtualBox VM.
@@ -117,8 +117,8 @@ public class StorageController {
 
       private String name;
       private StorageBus bus;
-      private Set<HardDisk> hardDisks = new HashSet<HardDisk>();
-      private Set<IsoImage> dvds = new HashSet<IsoImage>();
+      private Set<HardDisk> hardDisks = Sets.newHashSet();
+      private Set<IsoImage> dvds = Sets.newHashSet();
 
       public Builder name(String name) {
          this.name = name;

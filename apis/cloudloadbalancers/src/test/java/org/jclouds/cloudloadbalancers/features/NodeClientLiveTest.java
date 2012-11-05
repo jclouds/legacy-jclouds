@@ -22,7 +22,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -30,6 +29,7 @@ import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 
 import org.jclouds.cloudloadbalancers.domain.LoadBalancer;
 import org.jclouds.cloudloadbalancers.domain.LoadBalancerRequest;
@@ -49,7 +49,7 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live", singleThreaded = true, testName = "NodeClientLiveTest")
 public class NodeClientLiveTest extends BaseCloudLoadBalancersClientLiveTest {
-   private Map<LoadBalancer, Set<Node>> nodes = new HashMap<LoadBalancer, Set<Node>>();
+   private Map<LoadBalancer, Set<Node>> nodes = Maps.newHashMap();
 
    @Test(groups = "live")
    public void testCreateLoadBalancers() {

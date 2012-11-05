@@ -26,8 +26,6 @@ import static org.testng.Assert.fail;
 
 import java.beans.ConstructorProperties;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -41,6 +39,8 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.gson.FieldNamingStrategy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -188,8 +188,8 @@ public final class DeserializationConstructorAndReflectiveTypeAdapterFactoryTest
 
       @Inject
       GenericParamsCopiedIn(@Named("foo") List<String> foo, @Named("bar") Map<String, String> bar) {
-         this.foo = new ArrayList<String>(foo);
-         this.bar = new HashMap<String, String>(bar);
+         this.foo = Lists.newArrayList(foo);
+         this.bar = Maps.newHashMap(bar);
       }
 
    }
@@ -197,9 +197,9 @@ public final class DeserializationConstructorAndReflectiveTypeAdapterFactoryTest
    public void testGenericParamsCopiedIn() throws IOException {
       TypeAdapter<GenericParamsCopiedIn> adapter = parameterizedCtorFactory.create(gson, TypeToken
             .get(GenericParamsCopiedIn.class));
-      List<String> inputFoo = new ArrayList<String>();
+      List<String> inputFoo = Lists.newArrayList();
       inputFoo.add("one");
-      HashMap<String, String> inputBar = new HashMap<String, String>();
+      Map<String, String> inputBar = Maps.newHashMap();
       inputBar.put("2", "two");
 
       GenericParamsCopiedIn toTest = adapter.fromJson("{ \"foo\":[\"one\"], \"bar\":{ \"2\":\"two\"}}");

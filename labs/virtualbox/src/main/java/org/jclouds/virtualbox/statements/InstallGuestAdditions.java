@@ -25,7 +25,6 @@ import static org.jclouds.scriptbuilder.domain.Statements.exec;
 import static org.jclouds.scriptbuilder.domain.Statements.saveHttpResponseTo;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -42,6 +41,7 @@ import org.jclouds.virtualbox.domain.VmSpec;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 /**
  * Mounts the DVD with guest additions that was downloaded and attached as removable storage. If no
@@ -62,7 +62,7 @@ public class InstallGuestAdditions implements Statement {
    }
 
    private List<Statement> getStatements(VmSpec vmSpecification, String vboxVersion) {
-      List<Statement> statements = new ArrayList<Statement>();
+      List<Statement> statements = Lists.newArrayList();
       statements.add(call("installModuleAssistantIfNeeded"));
       String mountPoint = "/mnt";
       if (Iterables.tryFind(vmSpecification.getControllers(), new Predicate<StorageController>() {

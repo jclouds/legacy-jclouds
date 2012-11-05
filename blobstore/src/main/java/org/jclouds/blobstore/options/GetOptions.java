@@ -21,9 +21,10 @@ package org.jclouds.blobstore.options;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 /**
  * Contains options supported for HTTP GET operations. <h2>
@@ -46,7 +47,7 @@ public class GetOptions {
 
    public static final GetOptions NONE = new GetOptions();
 
-   private final List<String> ranges = new ArrayList<String>();
+   private final List<String> ranges = Lists.newArrayList();
    private Date ifModifiedSince;
    private Date ifUnmodifiedSince;
    private String ifMatch;

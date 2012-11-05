@@ -1,11 +1,12 @@
 package org.jclouds.azure.management.domain.role.conf;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import com.google.common.collect.Lists;
 
 @XmlRootElement(name = "SSH")
 public class SSH {
@@ -15,14 +16,14 @@ public class SSH {
     */
    @XmlElementWrapper(name = "PublicKeys")
    @XmlElement(name = "PublicKey")
-   private List<PublicKey> publicKeys = new ArrayList<PublicKey>(0);
+   private List<PublicKey> publicKeys = Lists.newArrayListWithCapacity(0);
 
    /**
     * Specifies the public key.
     */
    @XmlElementWrapper(name = "KeyPairs")
    @XmlElement(name = "KeyPair")
-   private List<KeyPair> keyPairs = new ArrayList<KeyPair>(0);
+   private List<KeyPair> keyPairs = Lists.newArrayListWithCapacity(0);
 
    public SSH() {
    }

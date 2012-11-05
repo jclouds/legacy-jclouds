@@ -1,6 +1,5 @@
 package org.jclouds.fujitsu.fgcp.domain;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -8,12 +7,13 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 public class VServerWithVNICs extends VServer {
 
    @XmlElementWrapper(name = "vnics")
    @XmlElement(name = "vnic")
-   protected Set<VNIC> vnics = new LinkedHashSet<VNIC>();
+   protected Set<VNIC> vnics = Sets.newLinkedHashSet();
 
    public Set<VNIC> getVnics() {
       return vnics == null ? ImmutableSet.<VNIC> of() : ImmutableSet

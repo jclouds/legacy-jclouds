@@ -19,7 +19,6 @@
 package org.jclouds.fujitsu.fgcp.xml.internal;
 
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -29,6 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.jclouds.fujitsu.fgcp.domain.BuiltinServer;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 /**
  * Wrapper for ListEFMResponse.
@@ -39,7 +39,7 @@ import com.google.common.collect.ImmutableSet;
 public class ListEFMResponse extends SetWithStatusResponse<BuiltinServer> {
    @XmlElementWrapper(name = "efms")
    @XmlElement(name = "efm")
-   private Set<BuiltinServer> efm = new LinkedHashSet<BuiltinServer>();
+   private Set<BuiltinServer> efm = Sets.newLinkedHashSet();
 
    @Override
    protected Set<BuiltinServer> delegate() {

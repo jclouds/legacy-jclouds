@@ -20,7 +20,6 @@ package org.jclouds.dmtf.ovf;
 
 import static com.google.common.base.Objects.equal;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAnyAttribute;
@@ -31,6 +30,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Maps;
 
 /**
  * Java class for anonymous complex type.
@@ -78,7 +78,7 @@ public class Item {
     @XmlAttribute
     protected String stopAction;
     @XmlAnyAttribute
-    private Map<QName, String> otherAttributes = new HashMap<QName, String>();
+    private Map<QName, String> otherAttributes = Maps.newHashMap();
 
     /**
      * Gets the value of the id property.

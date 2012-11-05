@@ -1,7 +1,8 @@
 package org.jclouds.azure.management.domain.role.conf;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 //@XmlRootElement(name = "ConfigurationSet")
 public class NetworkConfiguration extends ConfigurationSet {
@@ -13,14 +14,14 @@ public class NetworkConfiguration extends ConfigurationSet {
     */
    // @XmlElementWrapper(name = "InputEndpoints")
    // @XmlElement(name = "InputEndpoint")
-   private List<InputEndpoint> inputEndpoints = new ArrayList<InputEndpoint>(0);
+   private List<InputEndpoint> inputEndpoints = Lists.newArrayListWithCapacity(0);
 
    /**
     * Specifies the name of a subnet to which the virtual machine belongs.
     */
    // @XmlElementWrapper(name = "SubnetNames")
    // @XmlElement(name = "SubnetName")
-   private List<String> subnetNames = new ArrayList<String>(0);
+   private List<String> subnetNames = Lists.newArrayListWithCapacity(0);
 
    public NetworkConfiguration() {
       setConfigurationSetType(ID);

@@ -15,4 +15,36 @@
         <module name="MultipleVariableDeclarations"/>
         <module name="UnusedImports"/>
     </module>
+    <module name="RegexpMultiline">
+        <property name="format" value="=\s*new ArrayList&lt;[^&gt;]"/>
+        <property name="message" value="Prefer com.google.common.collect.Lists"/>
+    </module>
+    <module name="RegexpMultiline">
+        <property name="format" value="=\s*new HashMap&lt;[^&gt;]"/>
+        <property name="message" value="Prefer com.google.common.collect.Maps"/>
+    </module>
+    <module name="RegexpMultiline">
+        <property name="format" value="=\s*new HashSet&lt;[^&gt;]"/>
+        <property name="message" value="Prefer com.google.common.collect.Sets"/>
+    </module>
+    <module name="RegexpMultiline">
+        <property name="format" value="=\s*new LinkedHashMap&lt;[^&gt;]"/>
+        <property name="message" value="Prefer com.google.common.collect.Maps"/>
+    </module>
+    <module name="RegexpMultiline">
+        <property name="format" value="=\s*new LinkedHashSet&lt;[^&gt;]"/>
+        <property name="message" value="Prefer com.google.common.collect.Sets"/>
+    </module>
+    <module name="RegexpMultiline">
+        <property name="format" value="=\s*new LinkedList&lt;[^&gt;]"/>
+        <property name="message" value="Prefer com.google.common.collect.Lists"/>
+    </module>
+    <module name="RegexpMultiline">
+        <property name="format" value="=\s*new TreeMap&lt;[^&gt;]"/>
+        <property name="message" value="Prefer com.google.common.collect.Maps"/>
+    </module>
+    <module name="RegexpMultiline">
+        <property name="format" value="=\s*new TreeSet&lt;[^&gt;]"/>
+        <property name="message" value="Prefer com.google.common.collect.Sets"/>
+    </module>
 </module>

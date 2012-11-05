@@ -18,12 +18,12 @@
  */
 package org.jclouds.fujitsu.fgcp.domain;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 /**
  * Represents a firewall (FW).
@@ -33,7 +33,7 @@ import com.google.common.collect.ImmutableSet;
 @XmlRootElement(name = "fw")
 public class Firewall {
    private NAT nat;
-   private Set<Direction> directions = new LinkedHashSet<Direction>();
+   private Set<Direction> directions = Sets.newLinkedHashSet();
    private String log;
    private String status;
    private String category;

@@ -1,12 +1,13 @@
 package org.jclouds.azure.management.domain.role.conf;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.TimeZone;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
+
+import com.google.common.collect.Lists;
 
 public class ConfigurationSetAdapter extends
          XmlAdapter<ConfigurationSetAdapter.AdaptedConfigurationSet, ConfigurationSet> {
@@ -119,15 +120,15 @@ public class ConfigurationSetAdapter extends
 
       @XmlElementWrapper(required = true, name = "StoredCertificateSettings")
       @XmlElement(name = "CertificateSetting")
-      public List<CertificateSetting> storedCertificateSettings = new ArrayList<CertificateSetting>();
+      public List<CertificateSetting> storedCertificateSettings = Lists.newArrayList();
 
       @XmlElementWrapper(name = "InputEndpoints")
       @XmlElement(name = "InputEndpoint")
-      public List<InputEndpoint> inputEndpoints = new ArrayList<InputEndpoint>(0);
+      public List<InputEndpoint> inputEndpoints = Lists.newArrayListWithCapacity(0);
 
       @XmlElementWrapper(name = "SubnetNames")
       @XmlElement(name = "SubnetName")
-      public List<String> subnetNames = new ArrayList<String>(0);
+      public List<String> subnetNames = Lists.newArrayListWithCapacity(0);
    }
 
 }

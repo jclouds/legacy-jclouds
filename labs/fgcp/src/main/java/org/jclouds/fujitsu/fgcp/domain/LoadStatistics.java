@@ -18,13 +18,13 @@
  */
 package org.jclouds.fujitsu.fgcp.domain;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 /**
  * Holds statistics of the load on a load balancer (SLB).
@@ -33,7 +33,7 @@ import com.google.common.collect.ImmutableSet;
  */
 @XmlRootElement(name = "loadstatistics")
 public class LoadStatistics {
-   private Set<Group> groups = new LinkedHashSet<Group>();
+   private Set<Group> groups = Sets.newLinkedHashSet();
 
    /**
     * @return the groups

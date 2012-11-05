@@ -22,7 +22,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.ws.rs.core.MediaType;
@@ -54,6 +53,7 @@ import org.jclouds.rest.ResourceNotFoundException;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 
 /**
  * Tests annotation parsing of {@code ServerAsyncApi}
@@ -92,7 +92,7 @@ public class ServerApiExpectTest extends BaseGleSYSApiExpectTest {
                        .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build(),
             HttpResponse.builder().statusCode(204).payload(payloadFromResource("/server_allowed_arguments.json")).build()).getServerApi();
 
-      Map<String, AllowedArgumentsForCreateServer> expected = new LinkedHashMap<String, AllowedArgumentsForCreateServer>();
+      Map<String, AllowedArgumentsForCreateServer> expected = Maps.newLinkedHashMap();
       AllowedArgumentsForCreateServer openvz = AllowedArgumentsForCreateServer.builder()
             .dataCenters("Amsterdam", "Falkenberg", "New York City", "Stockholm")
             .memorySizes(128, 256, 512, 768, 1024, 1536, 2048, 2560, 3072, 3584, 4096, 5120, 6144, 7168, 8192, 9216, 10240, 11264, 12288)

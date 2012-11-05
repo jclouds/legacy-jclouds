@@ -18,11 +18,11 @@
  */
 package org.jclouds.fujitsu.fgcp.domain;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 /**
  * Grouping of firewall rules pertaining to a particular direction in network
@@ -34,7 +34,7 @@ import com.google.common.collect.ImmutableSet;
 public class Direction {
    private String from;
    private String to;
-   private Set<Policy> policies = new LinkedHashSet<Policy>();
+   private Set<Policy> policies = Sets.newLinkedHashSet();
    private Acceptable acceptable;
    private Prefix prefix;
    private int maxPolicyNum;

@@ -19,7 +19,6 @@
 package org.jclouds.fujitsu.fgcp.xml.internal;
 
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -29,6 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.jclouds.fujitsu.fgcp.domain.VDisk;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 /**
  * Wrapper for ListVDiskResponse.
@@ -39,7 +39,7 @@ import com.google.common.collect.ImmutableSet;
 public class ListVDiskResponse extends SetWithStatusResponse<VDisk> {
    @XmlElementWrapper(name = "vdisks")
    @XmlElement(name = "vdisk")
-   private Set<VDisk> disks = new LinkedHashSet<VDisk>();
+   private Set<VDisk> disks = Sets.newLinkedHashSet();
 
    @Override
    protected Set<VDisk> delegate() {

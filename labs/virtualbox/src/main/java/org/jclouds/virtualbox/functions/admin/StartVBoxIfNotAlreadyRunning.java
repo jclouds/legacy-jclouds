@@ -24,7 +24,6 @@ import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -49,6 +48,7 @@ import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.common.collect.Lists;
 import com.google.common.net.HostAndPort;
 
 @Singleton
@@ -120,7 +120,7 @@ public class StartVBoxIfNotAlreadyRunning implements Supplier<VirtualBoxManager>
 
    private void cleanUpHost(URI provider, NodeMetadata hostNodeMetadata) {
       // kill previously started vboxwebsrv (possibly dirty session)
-      List<Statement> statements = new ArrayList<Statement>();
+      List<Statement> statements = Lists.newArrayList();
       statements.add(Statements.findPid("vboxwebsrv"));
       statements.add(Statements.kill());
       StatementList statementList = new StatementList(statements);
