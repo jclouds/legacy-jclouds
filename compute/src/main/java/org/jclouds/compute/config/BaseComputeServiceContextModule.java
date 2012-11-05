@@ -104,8 +104,6 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
 
       install(new PersistNodeCredentialsModule());
 
-      bind(RunScriptOnNode.Factory.class).to(RunScriptOnNodeFactoryImpl.class);
-
       install(new FactoryModuleBuilder().implement(new TypeLiteral<Callable<Void>>() {
       }, CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.class)
             .implement(new TypeLiteral<Function<AtomicReference<NodeMetadata>, Void>>() {
@@ -124,7 +122,7 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
    }
 
    @Singleton
-   static class RunScriptOnNodeFactoryImpl implements RunScriptOnNode.Factory {
+   public static class RunScriptOnNodeFactoryImpl implements RunScriptOnNode.Factory {
 
       static interface Factory {
 

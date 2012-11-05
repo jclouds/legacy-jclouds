@@ -41,8 +41,8 @@
     <test.aws-ec2.credential>${test.aws.credential}</test.aws-ec2.credential>
     <test.aws-ec2.template></test.aws-ec2.template>
     <test.aws-ec2.ebs-template>hardwareId=m1.small,imageId=us-west-2/ami-38c64a08</test.aws-ec2.ebs-template>
-    <test.aws-ec2.windows-template>hardwareId=m1.small,imageNameMatches=Windows_Server-2008-R2_SP1-English-64Bit-Base-WinRM-</test.aws-ec2.windows-template>
-    <test.aws-ec2.windows-owner>449550055360</test.aws-ec2.windows-owner>
+    <!-- Windows_Server-2008-R2 with WinRM enabled (setup instructions at http://www.frontiertown.co.uk/2011/12/overthere-control-windows-from-java/) -->
+    <test.aws-ec2.windows-template>hardwareId=m1.small,imageId=us-east-1/ami-0cb76d65</test.aws-ec2.windows-template>
     <jclouds.osgi.export>org.jclouds.aws.ec2*;version="${project.version}"</jclouds.osgi.export>
     <jclouds.osgi.import>
       org.jclouds.compute.internal;version="${project.version}",
