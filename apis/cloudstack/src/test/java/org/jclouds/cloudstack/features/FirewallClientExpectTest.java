@@ -28,7 +28,7 @@ import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.FirewallRule;
 import org.jclouds.cloudstack.domain.PortForwardingRule;
-import org.jclouds.cloudstack.internal.BaseCloudStackRestClientExpectTest;
+import org.jclouds.cloudstack.internal.BaseCloudStackExpectTest;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Test;
@@ -41,7 +41,7 @@ import com.google.common.collect.ImmutableSet;
  * @author Andrei Savu
  */
 @Test(groups = "unit", testName = "FirewallClientExpectTest")
-public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest<FirewallClient> {
+public class FirewallClientExpectTest extends BaseCloudStackExpectTest<FirewallClient> {
 
    public void testListFirewallRulesWhenResponseIs2xx() {
       FirewallClient client = requestSendsResponse(

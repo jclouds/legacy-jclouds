@@ -25,7 +25,7 @@ import java.util.Set;
 import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.domain.User;
-import org.jclouds.cloudstack.internal.BaseCloudStackRestClientExpectTest;
+import org.jclouds.cloudstack.internal.BaseCloudStackExpectTest;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
@@ -39,7 +39,7 @@ import com.google.common.collect.ImmutableSet;
  * @author Andrei Savu
  */
 @Test(groups = "unit", testName = "AccountClientExpectTest")
-public class AccountClientExpectTest extends BaseCloudStackRestClientExpectTest<AccountClient> {
+public class AccountClientExpectTest extends BaseCloudStackExpectTest<AccountClient> {
 
 
    public void testListAccountsWhenResponseIs2xx() {

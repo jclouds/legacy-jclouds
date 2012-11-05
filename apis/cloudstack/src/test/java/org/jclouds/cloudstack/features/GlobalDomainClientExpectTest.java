@@ -26,7 +26,7 @@ import java.net.URI;
 
 import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.domain.Domain;
-import org.jclouds.cloudstack.internal.BaseCloudStackRestClientExpectTest;
+import org.jclouds.cloudstack.internal.BaseCloudStackExpectTest;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Test;
@@ -37,7 +37,7 @@ import org.testng.annotations.Test;
  * @author Andrei Savu
  */
 @Test(groups = "unit", testName = "GlobalDomainClientExpectTest")
-public class GlobalDomainClientExpectTest extends BaseCloudStackRestClientExpectTest<GlobalDomainClient> {
+public class GlobalDomainClientExpectTest extends BaseCloudStackExpectTest<GlobalDomainClient> {
 
    public void testCreateDomainWhenResponseIs2xx() {
       GlobalDomainClient client = requestSendsResponse(
