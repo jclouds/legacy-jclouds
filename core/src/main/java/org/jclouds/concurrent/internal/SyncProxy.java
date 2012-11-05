@@ -134,7 +134,7 @@ public class SyncProxy implements InvocationHandler {
       return methodNanos;
    }
 
-   public Object invoke(Object o, Method method, Object[] args) throws Throwable {
+   public Object invoke(Object o, Method method, Object[] args) throws Exception {
       if (method.getName().equals("equals")) {
          return this.equals(o);
       } else if (method.getName().equals("hashCode")) {
