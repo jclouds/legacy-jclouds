@@ -21,8 +21,6 @@ package org.jclouds.snia.cdmi.v1.domain;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +31,7 @@ import org.jclouds.javax.annotation.Nullable;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
@@ -190,9 +189,9 @@ public class CDMIObject {
     * 
     */
    private void parseMetadata() {
-      userMetaDataIn = new HashMap<String, String>();
-      systemMetaDataIn = new HashMap<String, String>();
-      aclMetaDataIn = new ArrayList<Map<String, String>>();
+      userMetaDataIn = Maps.newHashMap();
+      systemMetaDataIn = Maps.newHashMap();
+      aclMetaDataIn = Lists.newArrayList();
       Iterator<String> keys = metadata.keySet().iterator();
       while (keys.hasNext()) {
          String key = keys.next();
@@ -203,7 +202,7 @@ public class CDMIObject {
                for (int i = 0; i < cdmi_acl_array.length; i++) {
                   if (!(cdmi_acl_array[i].startsWith("[") || cdmi_acl_array[i].startsWith("]") || cdmi_acl_array[i]
                            .startsWith(","))) {
-                     HashMap<String, String> aclMap = new HashMap<String, String>();
+                     Map<String, String> aclMap = Maps.newHashMap();
                      String[] cdmi_acl_member = cdmi_acl_array[i].split(",");
                      for (String s : cdmi_acl_member) {
                         String cdmi_acl_key = s.substring(0, s.indexOf(":"));

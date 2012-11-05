@@ -18,7 +18,6 @@
  */
 package org.jclouds.fujitsu.fgcp.domain;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -27,6 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 /**
  * Represents a virtual server with virtual storage and NICs.
@@ -37,7 +37,7 @@ import com.google.common.collect.ImmutableSet;
 public class VServerWithDetails extends VServerWithVNICs {
    @XmlElementWrapper(name = "vdisks")
    @XmlElement(name = "vdisk")
-   protected Set<VDisk> vdisks = new LinkedHashSet<VDisk>();
+   protected Set<VDisk> vdisks = Sets.newLinkedHashSet();
    protected Image image;
 
    public Set<VDisk> getVdisks() {

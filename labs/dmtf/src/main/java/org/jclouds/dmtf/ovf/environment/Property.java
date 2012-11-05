@@ -20,8 +20,9 @@ package org.jclouds.dmtf.ovf.environment;
 
 import static org.jclouds.dmtf.DMTFConstants.OVF_ENV_NS;
 
-import java.util.HashMap;
 import java.util.Map;
+
+import com.google.common.collect.Maps;
 
 import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -39,7 +40,7 @@ public class Property {
     @XmlAttribute(namespace = OVF_ENV_NS, required = true)
     protected String value;
     @XmlAnyAttribute
-    private Map<QName, String> otherAttributes = new HashMap<QName, String>();
+    private Map<QName, String> otherAttributes = Maps.newHashMap();
 
     /**
      * Gets the value of the key property.

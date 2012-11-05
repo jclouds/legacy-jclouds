@@ -20,8 +20,6 @@ package org.jclouds.dmtf.cim;
 
 import static org.jclouds.dmtf.DMTFConstants.CIM_NS;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +27,9 @@ import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * Java class for cimReference complex type.
@@ -43,7 +44,7 @@ public class CimReference {
     @XmlAnyElement(lax = true)
     protected List<Object> any;
     @XmlAnyAttribute
-    private Map<QName, String> otherAttributes = new HashMap<QName, String>();
+    private Map<QName, String> otherAttributes = Maps.newHashMap();
 
     /**
      * Gets the value of the any property.
@@ -70,7 +71,7 @@ public class CimReference {
      */
     public List<Object> getAny() {
         if (any == null) {
-            any = new ArrayList<Object>();
+            any = Lists.newArrayList();
         }
         return this.any;
     }

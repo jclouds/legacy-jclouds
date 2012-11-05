@@ -31,7 +31,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
@@ -64,6 +63,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Charsets;
+import com.google.common.collect.Sets;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
 import com.google.common.io.Files;
@@ -136,7 +136,7 @@ public class FilesystemAsyncBlobStoreTest {
      */
     public void testList_Root() throws IOException {
         PageSet<? extends StorageMetadata> containersRetrieved;
-        Set<String> containersCreated = new HashSet<String>();
+        Set<String> containersCreated = Sets.newHashSet();
 
         // Testing list with no containers
         containersRetrieved = blobStore.list();
@@ -144,7 +144,7 @@ public class FilesystemAsyncBlobStoreTest {
 
         // Testing list with some containers
         String[] containerNames = new String[]{"34343", "aaaa", "bbbbb"};
-        containersCreated = new HashSet<String>();
+        containersCreated = Sets.newHashSet();
         for (String containerName : containerNames) {
             blobStore.createContainerInLocation(null, containerName);
             containersCreated.add(containerName);
@@ -839,7 +839,7 @@ public class FilesystemAsyncBlobStoreTest {
         }
 
         // copies values
-        Set<String> expectedBlobKeysCopy = new HashSet<String>();
+        Set<String> expectedBlobKeysCopy = Sets.newHashSet();
         for (String value : expectedBlobKeys) {
             expectedBlobKeysCopy.add(value);
         }

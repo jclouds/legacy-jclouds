@@ -18,11 +18,11 @@
  */
 package org.jclouds.fujitsu.fgcp.domain;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 /**
  * Holds the network address translation rules of a firewall.
@@ -30,7 +30,7 @@ import com.google.common.collect.ImmutableSet;
  * @author Dies Koper
  */
 public class NAT {
-   private Set<Rule> rules = new LinkedHashSet<Rule>();
+   private Set<Rule> rules = Sets.newLinkedHashSet();
 
    /**
     * @return the rules

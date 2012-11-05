@@ -20,11 +20,12 @@ package org.jclouds.rimuhosting.miro.binder;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
+
+import com.google.common.collect.Lists;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.json.Json;
@@ -42,7 +43,7 @@ public class CreateServerOptions extends RimuHostingJsonBinder {
    }
    
    private String password;
-   private List<MetaData> metaData = new ArrayList<MetaData>();
+   private List<MetaData> metaData = Lists.newArrayList();
 
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {

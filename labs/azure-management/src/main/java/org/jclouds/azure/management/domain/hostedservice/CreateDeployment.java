@@ -1,11 +1,12 @@
 package org.jclouds.azure.management.domain.hostedservice;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import com.google.common.collect.Lists;
 
 @XmlRootElement(name = "CreateDeployment")
 public class CreateDeployment {
@@ -65,7 +66,7 @@ public class CreateDeployment {
 
    @XmlElementWrapper(name = "ExtendedProperties")
    @XmlElement(required = true, name = "ExtendedProperty")
-   private List<ExtendedProperty> extendedProperties = new ArrayList<ExtendedProperty>();
+   private List<ExtendedProperty> extendedProperties = Lists.newArrayList();
 
    public CreateDeployment() {
    }

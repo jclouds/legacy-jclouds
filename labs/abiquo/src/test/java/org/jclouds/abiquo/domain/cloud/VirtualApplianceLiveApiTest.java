@@ -24,7 +24,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.jclouds.abiquo.internal.BaseAbiquoApiLiveApiTest;
@@ -32,6 +31,7 @@ import org.testng.annotations.Test;
 
 import com.abiquo.server.core.cloud.VirtualApplianceDto;
 import com.abiquo.server.core.cloud.VirtualApplianceState;
+import com.google.common.collect.Lists;
 
 /**
  * Live integration tests for the {@link VirtualAppliance} domain class.
@@ -69,7 +69,7 @@ public class VirtualApplianceLiveApiTest extends BaseAbiquoApiLiveApiTest {
    }
 
    public void testListVirtualMachinesReturnsAll() {
-      List<VirtualMachine> vms = new ArrayList<VirtualMachine>();
+      List<VirtualMachine> vms = Lists.newArrayList();
 
       // Pagination by default is set to 25 items per page, so create a few more
       // to verify that

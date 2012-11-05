@@ -22,8 +22,9 @@ import static org.jclouds.util.SaxUtils.currentOrNull;
 import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import org.jclouds.azure.management.domain.Deployment;
 import org.jclouds.azure.management.domain.DeploymentSlot;
@@ -42,7 +43,7 @@ import org.xml.sax.SAXException;
 public class DeploymentHandler extends
 		ParseSax.HandlerForGeneratedRequestWithResult<Deployment> {
 
-	private List<String> elements = new ArrayList<String>();
+	private List<String> elements = Lists.newArrayList();
 	protected StringBuilder currentText = new StringBuilder();
 	private Deployment.Builder builder = Deployment.builder();
 

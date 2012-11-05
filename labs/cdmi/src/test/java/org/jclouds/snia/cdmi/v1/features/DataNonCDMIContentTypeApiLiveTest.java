@@ -26,8 +26,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -46,6 +44,7 @@ import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Charsets;
+import com.google.common.collect.Maps;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Files;
 import com.google.common.net.MediaType;
@@ -68,8 +67,8 @@ public class DataNonCDMIContentTypeApiLiveTest extends BaseCDMIApiLiveTest {
       Files.touch(tmpFileIn);
       byte[] bytes;
       DataObject dataObject;
-      Map<String, String> pContainerMetaDataIn = new HashMap<String, String>();
-      Map<String, String> pDataObjectMetaDataIn = new LinkedHashMap<String, String>();
+      Map<String, String> pContainerMetaDataIn = Maps.newHashMap();
+      Map<String, String> pDataObjectMetaDataIn = Maps.newLinkedHashMap();
       pDataObjectMetaDataIn.put("dataObjectkey1", "value1");
       pDataObjectMetaDataIn.put("dataObjectkey2", "value2");
       pDataObjectMetaDataIn.put("dataObjectkey3", "value3");

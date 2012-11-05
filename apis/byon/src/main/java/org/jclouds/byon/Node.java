@@ -19,7 +19,6 @@
 package org.jclouds.byon;
 
 import java.net.URI;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,6 +26,7 @@ import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 /**
  * 
@@ -245,7 +245,7 @@ public class Node {
    }
    
    public Set<String> getTags() {
-      Set<String> tagSet = new HashSet<String>();
+      Set<String> tagSet = Sets.newHashSet();
       for (String tag : tags)
          tagSet.add(tag);
       return tagSet;

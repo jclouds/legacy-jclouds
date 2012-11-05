@@ -23,7 +23,6 @@ import static org.jclouds.util.Patterns.NEWLINE_PATTERN;
 import static org.jclouds.util.Patterns.TWO_SPACE_PATTERN;
 
 import java.util.Set;
-import java.util.TreeSet;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -52,6 +51,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Multimaps;
+import com.google.common.collect.Sets;
 
 /**
  * Signs the EMC Atmos Online Storage request.
@@ -141,7 +141,7 @@ public class SignRequest implements HttpRequestFilter {
 
    private void appendCanonicalizedHeaders(HttpRequest request, StringBuilder toSign) {
       // TreeSet == Sort the headers alphabetically.
-      Set<String> headers = new TreeSet<String>(request.getHeaders().keySet());
+      Set<String> headers = Sets.newTreeSet(request.getHeaders().keySet());
       for (String header : headers) {
          if (header.startsWith("x-emc-") && !header.equals(AtmosHeaders.SIGNATURE)) {
             // Convert all header names to lowercase.

@@ -18,7 +18,6 @@
  */
 package org.jclouds.nodepool.internal;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -31,11 +30,12 @@ import org.jclouds.compute.options.TemplateOptions;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 
 @Singleton
 public class NodeMetadataStoreCache implements NodeMetadataStore {
 
-   private Map<String, NodeMetadata> frontendMetadataCache = new HashMap<String, NodeMetadata>();
+   private Map<String, NodeMetadata> frontendMetadataCache = Maps.newHashMap();
    private NodeMetadataStore backend;
 
    @Inject

@@ -26,7 +26,6 @@ import static org.testng.Assert.assertTrue;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -50,6 +49,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 
 /**
  * Tests live behavior of {@link QueryApi}.
@@ -230,7 +230,7 @@ public class QueryApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    }
 
    private Set<URI> toHrefs(QueryResultRecords queryResult) {
-      Set<URI> hrefs = new LinkedHashSet<URI>();
+      Set<URI> hrefs = Sets.newLinkedHashSet();
       for (QueryResultRecordType record : queryResult.getRecords()) {
          hrefs.add(record.getHref());
       }
@@ -238,7 +238,7 @@ public class QueryApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    }
 
    private Set<URI> toHrefs(Iterable<? extends Resource> resources) {
-      Set<URI> hrefs = new LinkedHashSet<URI>();
+      Set<URI> hrefs = Sets.newLinkedHashSet();
       for (Resource resource : resources) {
          hrefs.add(resource.getHref());
       }

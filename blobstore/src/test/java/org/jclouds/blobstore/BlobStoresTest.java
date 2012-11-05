@@ -21,7 +21,6 @@ package org.jclouds.blobstore;
 import static org.easymock.EasyMock.createMock;
 import static org.testng.Assert.assertEquals;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import org.easymock.EasyMock;
@@ -37,6 +36,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 
 @Test(singleThreaded = true, testName = "BlobStoresTest")
 public class BlobStoresTest {
@@ -95,7 +95,7 @@ public class BlobStoresTest {
       try {
          blobStore = context.getBlobStore();
          blobStore.createContainerInLocation(null, containerName);
-         Set<String> expectedNames = new HashSet<String>();
+         Set<String> expectedNames = Sets.newHashSet();
          for (int i = 0; i < NUM_BLOBS; i++) {
             String blobName = "myname" + i;
             blobStore.putBlob(containerName, blobStore.blobBuilder(blobName).payload("payload" + i).build());

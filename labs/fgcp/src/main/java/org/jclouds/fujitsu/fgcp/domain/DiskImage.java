@@ -18,7 +18,6 @@
  */
 package org.jclouds.fujitsu.fgcp.domain;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -27,6 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 /**
  * Represents a disk image with pre-installed OS and/or software.
@@ -59,7 +59,7 @@ public class DiskImage {
 
    @XmlElementWrapper(name = "softwares")
    @XmlElement(name = "software")
-   private Set<Software> software = new LinkedHashSet<Software>();
+   private Set<Software> software = Sets.newLinkedHashSet();
 
    public String getId() {
       return id;

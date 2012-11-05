@@ -27,8 +27,6 @@ import static org.testng.Assert.fail;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -49,6 +47,8 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
@@ -305,7 +305,7 @@ public class FilesystemStorageStrategyImplTest {
       storageStrategy.createContainer(CONTAINER_NAME + "2");
       storageStrategy.createContainer(CONTAINER_NAME + "3");
 
-      List<String> containers = new ArrayList<String>();
+      List<String> containers = Lists.newArrayList();
       resultList = storageStrategy.getAllContainerNames();
       Iterator<String> containersIterator = resultList.iterator();
       while (containersIterator.hasNext()) {
@@ -465,7 +465,7 @@ public class FilesystemStorageStrategyImplTest {
                TestUtils.createRandomBlobKey("346" + FS + "g3sx2" + FS + "removeBlob-", ".jpg"),
                TestUtils.createRandomBlobKey("346" + FS + "g3sx2" + FS + "removeBlob-", ".jpg") });
 
-      Set<String> remainingBlobKeys = new HashSet<String>();
+      Set<String> remainingBlobKeys = Sets.newHashSet();
       for (String key : blobKeys) {
          remainingBlobKeys.add(key);
       }
@@ -507,7 +507,7 @@ public class FilesystemStorageStrategyImplTest {
                TestUtils.createRandomBlobKey("563" + FS + "g3sx2" + FS + "removeBlob-", ".jpg") });
       storageStrategy.getBlobKeysInsideContainer(CONTAINER_NAME);
 
-      List<String> retrievedBlobKeys = new ArrayList<String>();
+      List<String> retrievedBlobKeys = Lists.newArrayList();
       resultList = storageStrategy.getBlobKeysInsideContainer(CONTAINER_NAME);
       Iterator<String> containersIterator = resultList.iterator();
       while (containersIterator.hasNext()) {

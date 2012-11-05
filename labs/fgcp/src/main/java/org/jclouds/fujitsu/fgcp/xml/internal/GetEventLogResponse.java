@@ -19,7 +19,6 @@
 package org.jclouds.fujitsu.fgcp.xml.internal;
 
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -29,6 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.jclouds.fujitsu.fgcp.domain.EventLog;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 /**
  * Wrapper for GetEventLogResponse.
@@ -39,7 +39,7 @@ import com.google.common.collect.ImmutableSet;
 public class GetEventLogResponse extends SetWithStatusResponse<EventLog> {
    @XmlElementWrapper(name = "eventlogs")
    @XmlElement(name = "eventlog")
-   private Set<EventLog> logs = new LinkedHashSet<EventLog>();
+   private Set<EventLog> logs = Sets.newLinkedHashSet();
 
    @Override
    protected Set<EventLog> delegate() {

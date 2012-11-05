@@ -18,7 +18,6 @@
  */
 package org.jclouds.fujitsu.fgcp.domain;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -27,6 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 /**
  * Describes the usage by a virtual system.
@@ -42,7 +42,7 @@ public class UsageInfo {
 
    @XmlElementWrapper(name = "products")
    @XmlElement(name = "product")
-   private Set<Product> products = new LinkedHashSet<Product>();
+   private Set<Product> products = Sets.newLinkedHashSet();
 
    /**
     * @return the systemId

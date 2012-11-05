@@ -18,12 +18,12 @@
  */
 package org.jclouds.fujitsu.fgcp.domain;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 /**
  * Represents a software load balancer.
@@ -34,9 +34,9 @@ import com.google.common.collect.ImmutableSet;
 public class SLB extends BuiltinServer {
    private String ipAddress;
 
-   private Set<IntermediateCACert> ccacerts = new LinkedHashSet<IntermediateCACert>();
+   private Set<IntermediateCACert> ccacerts = Sets.newLinkedHashSet();
 
-   private Set<ServerCert> servercerts = new LinkedHashSet<ServerCert>();
+   private Set<ServerCert> servercerts = Sets.newLinkedHashSet();
 
    private Set<Group> groups;
 

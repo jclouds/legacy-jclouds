@@ -20,7 +20,6 @@ package org.jclouds.fujitsu.fgcp.location;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -42,6 +41,7 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -83,7 +83,7 @@ public class SystemAndNetworkSegmentToLocationSupplier implements
    public Set<Location> get() {
       Builder<Location> locations = ImmutableSet.builder();
       try {
-         List<ListenableFuture<VSystemWithDetails>> futures = new ArrayList<ListenableFuture<VSystemWithDetails>>();
+         List<ListenableFuture<VSystemWithDetails>> futures = Lists.newArrayList();
          for (VSystem system : api.getVirtualDCApi().listVirtualSystems()
                .get()) {
 

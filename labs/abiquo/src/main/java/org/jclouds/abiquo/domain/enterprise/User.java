@@ -22,7 +22,6 @@ package org.jclouds.abiquo.domain.enterprise;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.filter;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -155,7 +154,7 @@ public class User extends DomainWrapper<UserDto> {
     *           List of virtual datacenters from the user's enterprise.
     */
    public void setPermittedVirtualDatacenters(final List<VirtualDatacenter> vdcs) {
-      List<Integer> ids = new ArrayList<Integer>();
+      List<Integer> ids = Lists.newArrayList();
 
       for (VirtualDatacenter vdc : vdcs) {
          checkNotNull(vdc.getId(), ValidationErrors.MISSING_REQUIRED_FIELD + " id in " + VirtualDatacenter.class);

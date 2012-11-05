@@ -22,12 +22,12 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.virtualbox_4_1.CleanupMode;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Sets;
 
 /**
  * A description of a Virtual Machine in VirtualBox.
@@ -60,7 +60,7 @@ public class VmSpec {
 
    public static class Builder {
 
-      private Set<StorageController> controllers = new HashSet<StorageController>();
+      private Set<StorageController> controllers = Sets.newHashSet();
 
       private String name;
       private String id;

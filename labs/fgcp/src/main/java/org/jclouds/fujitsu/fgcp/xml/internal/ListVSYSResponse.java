@@ -19,7 +19,6 @@
 package org.jclouds.fujitsu.fgcp.xml.internal;
 
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -29,6 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.jclouds.fujitsu.fgcp.domain.VSystem;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 /**
  * Wrapper for ListVSYSResponse.
@@ -39,7 +39,7 @@ import com.google.common.collect.ImmutableSet;
 public class ListVSYSResponse extends SetWithStatusResponse<VSystem> {
    @XmlElementWrapper(name = "vsyss")
    @XmlElement(name = "vsys")
-   private Set<VSystem> systems = new LinkedHashSet<VSystem>();
+   private Set<VSystem> systems = Sets.newLinkedHashSet();
 
    @Override
    protected Set<VSystem> delegate() {
