@@ -113,7 +113,7 @@ public class VirtualSystemApiExpectTest extends BaseFGCPRestApiExpectTest {
 
       Set<PublicIP> ips = api.listPublicIPs("ABCDEFGH-A123B456CE");
       assertNotNull(ips, "ips");
-      assertTrue(ips.size() == 2, "Unexpected number of ips: " + ips.size());
+      assertEquals(2, ips.size(), "Unexpected number of ips: " + ips.size());
       assertEquals(ips.iterator().next().getVersion(), PublicIP.Version.IPv4);
    }
 

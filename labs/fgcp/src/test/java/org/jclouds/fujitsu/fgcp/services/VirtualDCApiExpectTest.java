@@ -128,7 +128,7 @@ public class VirtualDCApiExpectTest extends BaseFGCPRestApiExpectTest {
       Set<DiskImage> images = api.listDiskImages(null, "IMG_A1B2C3_1234567890ABCD");
 
       assertNotNull(images, "images");
-      assertTrue(images.size() == 1, "Unexpected number of images: " + images.size());
+      assertEquals(1, images.size(), "Unexpected number of images: " + images.size());
    }
 
    public void testGetAddressRange() {

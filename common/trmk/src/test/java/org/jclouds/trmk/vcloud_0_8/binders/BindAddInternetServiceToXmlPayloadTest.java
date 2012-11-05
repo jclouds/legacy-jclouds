@@ -20,6 +20,7 @@ package org.jclouds.trmk.vcloud_0_8.binders;
 
 import static org.jclouds.trmk.vcloud_0_8.reference.TerremarkConstants.PROPERTY_TERREMARK_EXTENSION_NS;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
@@ -96,7 +97,7 @@ public class BindAddInternetServiceToXmlPayloadTest {
        
        binder.bindToRequest(request, map);
        String rawContent = (String) request.getPayload().getRawContent();
-       assertTrue(rawContent.indexOf("<MonitorType>Disabled</MonitorType>") == -1); 
+       assertEquals(-1, rawContent.indexOf("<MonitorType>Disabled</MonitorType>")); 
     }
 
    public void testDisableMonitoringDisabled() throws IOException {
@@ -114,6 +115,6 @@ public class BindAddInternetServiceToXmlPayloadTest {
        
        binder.bindToRequest(request, map);
        String rawContent = (String) request.getPayload().getRawContent();
-       assertTrue(rawContent.indexOf("<MonitorType>Disabled</MonitorType>") != -1);
+       assertNotEquals(-1, rawContent.indexOf("<MonitorType>Disabled</MonitorType>"));
     }
 }

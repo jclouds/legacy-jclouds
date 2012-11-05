@@ -21,6 +21,8 @@ package org.jclouds.virtualbox.util;
 
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertSame;
 import static org.testng.AssertJUnit.assertTrue;
 
 import org.jclouds.config.ValueOfConfigurationKeyOrNull;
@@ -102,16 +104,16 @@ public class MachineControllerLiveTest extends BaseVirtualBoxClientLiveTest {
    public void testEnsureMachineisLaunchedAndSessionIsUnlocked() {
       cloneFromMaster();
       ISession cloneMachineSession = machineController.ensureMachineIsLaunched(instanceName);
-      assertTrue(cloneMachineSession.getState() == SessionState.Unlocked);
+      assertSame(cloneMachineSession.getState(), SessionState.Unlocked);
       cloneMachineSession = machineController.ensureMachineHasPowerDown(instanceName);
-      assertTrue(cloneMachineSession.getState() == SessionState.Unlocked);
+      assertSame(cloneMachineSession.getState(), SessionState.Unlocked);
    }
 
    @Test(dependsOnMethods="testEnsureMachineisLaunchedAndSessionIsUnlocked")
    public void testEnsureMachineCanBePoweredOffMoreThanOneTimeAndSessionIsUnlocked() {
       ISession cloneMachineSession = machineController.ensureMachineHasPowerDown(instanceName);
       SessionState state = cloneMachineSession.getState();
-      assertTrue(state.equals(SessionState.Unlocked));
+      assertEquals(SessionState.Unlocked, state);
    }
 
    private IMachine cloneFromMaster() {

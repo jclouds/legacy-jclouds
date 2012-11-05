@@ -19,6 +19,8 @@
 package org.jclouds.cloudstack.features;
 
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Set;
@@ -80,15 +82,15 @@ public class GlobalHostClientLiveTest extends BaseCloudStackClientLiveTest {
    }
 
    private void checkCluster(Cluster cluster) {
-      assertTrue(cluster.getId() != null);
+      assertNotNull(cluster.getId());
       assertFalse(Strings.isNullOrEmpty(cluster.getName()));
-      assertTrue(cluster.getAllocationState() != AllocationState.UNKNOWN);
-      assertTrue(cluster.getClusterType() != Host.ClusterType.UNKNOWN);
+      assertNotEquals(AllocationState.UNKNOWN, cluster.getAllocationState());
+      assertNotEquals(Host.ClusterType.UNKNOWN, cluster.getClusterType());
       assertFalse(Strings.isNullOrEmpty(cluster.getHypervisor()));
-      assertTrue(cluster.getManagedState() != Cluster.ManagedState.UNRECOGNIZED);
-      assertTrue(cluster.getPodId() != null);
+      assertNotEquals(Cluster.ManagedState.UNRECOGNIZED, cluster.getManagedState());
+      assertNotNull(cluster.getPodId());
       assertFalse(Strings.isNullOrEmpty(cluster.getPodName()));
-      assertTrue(cluster.getZoneId() != null);
+      assertNotNull(cluster.getZoneId());
       assertFalse(Strings.isNullOrEmpty(cluster.getZoneName()));
    }
 

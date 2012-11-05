@@ -2,6 +2,7 @@ package org.jclouds.fujitsu.fgcp.compute.functions;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
@@ -56,7 +57,7 @@ public class DiskImageToOperatingSystemTest {
 
          assertNotNull(os, description);
          assertNotNull(os.getFamily(), description);
-         assertFalse(os.getFamily().equals(OsFamily.UNRECOGNIZED),
+         assertNotEquals(OsFamily.UNRECOGNIZED, os.getFamily(),
                "OsFamily not recognised: " + description);
          assertNotNull(os.getVersion(), "Version not recognised: "
                + description);

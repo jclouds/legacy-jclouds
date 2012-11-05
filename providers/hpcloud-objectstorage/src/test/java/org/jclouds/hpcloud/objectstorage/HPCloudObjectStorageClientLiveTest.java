@@ -19,6 +19,7 @@
 package org.jclouds.hpcloud.objectstorage;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.net.URI;
@@ -71,7 +72,7 @@ public class HPCloudObjectStorageClientLiveTest extends CommonSwiftClientLiveTes
 
          // Enable CDN with PUT for one container
          final URI cdnUri = getApi().getCDNExtension().get().enable(containerNameWithCDN);
-         assertTrue(cdnUri != null);
+         assertNotNull(cdnUri);
 
          // Confirm CDN is enabled via HEAD request and has default TTL
          cdnMetadata = getApi().getCDNExtension().get().get(containerNameWithCDN);

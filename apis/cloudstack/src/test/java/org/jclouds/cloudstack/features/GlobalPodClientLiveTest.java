@@ -64,9 +64,9 @@ public class GlobalPodClientLiveTest extends BaseCloudStackClientLiveTest {
             ListPodsOptions.Builder.id(pod.getId())));
          assertEquals(pod, newDetails);
          assertEquals(pod, globalAdminClient.getPodClient().getPod(pod.getId()));
-         assertFalse(pod.getId() == null);
+         assertNotNull(pod.getId());
          assertFalse(Strings.isNullOrEmpty(pod.getName()));
-         assertFalse(pod.getZoneId() == null);
+         assertNotNull(pod.getZoneId());
          assertFalse(Strings.isNullOrEmpty(pod.getZoneName()));
          assertFalse(Strings.isNullOrEmpty(pod.getGateway()));
          assertFalse(Strings.isNullOrEmpty(pod.getNetmask()));

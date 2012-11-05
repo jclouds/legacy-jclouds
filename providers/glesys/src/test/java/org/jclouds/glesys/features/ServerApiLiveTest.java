@@ -201,7 +201,7 @@ public class ServerApiLiveTest extends BaseGleSYSApiWithAServerLiveTest {
          assertNotNull(entry.getValue());
          ServerLimit limit = entry.getValue();
          assertTrue(limit.getBarrier() >= 0);
-         assertTrue(limit.getFailCount() == 0);
+         assertEquals(0, limit.getFailCount());
          assertTrue(limit.getHeld() >= 0);
          assertTrue(limit.getLimit() > 0);
          assertTrue(limit.getMaxHeld() >= 0);

@@ -24,6 +24,7 @@ import static org.jclouds.s3.options.ListBucketOptions.Builder.maxResults;
 import static org.jclouds.s3.options.ListBucketOptions.Builder.withPrefix;
 import static org.jclouds.s3.options.PutBucketOptions.Builder.withBucketAcl;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
@@ -98,7 +99,7 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest {
       try {
          AccessControlList acl = getApi().getBucketACL(bucketName);
          assertEquals(acl.getGrants().size(), 1);
-         assertTrue(acl.getOwner() != null);
+         assertNotNull(acl.getOwner());
          String ownerId = acl.getOwner().getId();
          assertTrue(acl.hasPermission(ownerId, Permission.FULL_CONTROL));
       } finally {

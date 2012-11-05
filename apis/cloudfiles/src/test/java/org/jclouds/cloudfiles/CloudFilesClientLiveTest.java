@@ -19,6 +19,7 @@
 package org.jclouds.cloudfiles;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.net.URI;
@@ -75,7 +76,7 @@ public class CloudFilesClientLiveTest extends CommonSwiftClientLiveTest<CloudFil
 
          // Enable CDN with PUT for one container
          final URI cdnUri = getApi().enableCDN(containerNameWithCDN);
-         assertTrue(cdnUri != null);
+         assertNotNull(cdnUri);
 
          // Confirm CDN is enabled via HEAD request and has default TTL
          cdnMetadata = getApi().getCDNMetadata(containerNameWithCDN);

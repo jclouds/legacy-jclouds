@@ -112,18 +112,18 @@ public class EmailAccountApiLiveTest extends BaseGleSYSApiLiveTest {
       assertEquals(aliasFromList, alias);
 
       EmailOverview overview = api.getOverview();
-      assertTrue(overview.getSummary().getAliases() == 1);
+      assertEquals(1, overview.getSummary().getAliases());
 
       alias = api.updateAlias("test2@" + testDomain, "test1@" + testDomain);
       overview = api.getOverview();
-      assertTrue(overview.getSummary().getAliases() == 1);
+      assertEquals(1, overview.getSummary().getAliases());
 
       aliasFromList = Iterables.getOnlyElement(api.listAliasesInDomain(testDomain));
       assertEquals(aliasFromList, alias);
 
       api.delete("test2@" + testDomain);
       overview = api.getOverview();
-      assertTrue(overview.getSummary().getAliases() == 0);
+      assertEquals(0, overview.getSummary().getAliases());
    }
 
    @Test(dependsOnMethods = "testCreateEmail")

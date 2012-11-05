@@ -20,6 +20,7 @@ package org.jclouds.openstack.nova.domain;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -47,7 +48,7 @@ public class ServerStatusTest {
             "PASSWORD", "RESCUE", "REBOOT",
             "HARD_REBOOT", "DELETE_IP", "UNKNOWN", "DELETED");
       for (String status : knownStatuses) {
-         assertFalse(ServerStatus.fromValue(status).equals(ServerStatus.UNRECOGNIZED));
+         assertNotEquals(ServerStatus.UNRECOGNIZED, ServerStatus.fromValue(status));
       }
 
       List<String> allStatuses = Lists.newArrayList(knownStatuses);
