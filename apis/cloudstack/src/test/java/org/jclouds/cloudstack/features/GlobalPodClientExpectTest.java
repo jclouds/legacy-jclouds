@@ -25,7 +25,7 @@ import java.net.URI;
 import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.domain.AllocationState;
 import org.jclouds.cloudstack.domain.Pod;
-import org.jclouds.cloudstack.internal.BaseCloudStackRestClientExpectTest;
+import org.jclouds.cloudstack.internal.BaseCloudStackExpectTest;
 import org.jclouds.cloudstack.options.CreatePodOptions;
 import org.jclouds.cloudstack.options.UpdatePodOptions;
 import org.jclouds.http.HttpRequest;
@@ -41,7 +41,7 @@ import com.google.common.collect.ImmutableSet;
  * @author Richard Downer
  */
 @Test(groups = "unit", testName = "GlobalPodClientExpectTest")
-public class GlobalPodClientExpectTest extends BaseCloudStackRestClientExpectTest<GlobalPodClient> {
+public class GlobalPodClientExpectTest extends BaseCloudStackExpectTest<GlobalPodClient> {
 
    public void testListPodsWhenResponseIs2xx() {
       GlobalPodClient client = requestSendsResponse(

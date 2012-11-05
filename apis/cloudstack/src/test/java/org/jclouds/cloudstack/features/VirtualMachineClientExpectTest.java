@@ -27,7 +27,7 @@ import java.security.cert.CertificateException;
 import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.domain.EncryptedPasswordAndPrivateKey;
 import org.jclouds.cloudstack.functions.WindowsLoginCredentialsFromEncryptedData;
-import org.jclouds.cloudstack.internal.BaseCloudStackRestClientExpectTest;
+import org.jclouds.cloudstack.internal.BaseCloudStackExpectTest;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.encryption.bouncycastle.BouncyCastleCrypto;
 import org.jclouds.http.HttpRequest;
@@ -40,7 +40,7 @@ import org.testng.annotations.Test;
  * @author Andrei Savu
  */
 @Test(groups = "unit", testName = "VirtualMachineClientExpectTest")
-public class VirtualMachineClientExpectTest extends BaseCloudStackRestClientExpectTest<VirtualMachineClient> {
+public class VirtualMachineClientExpectTest extends BaseCloudStackExpectTest<VirtualMachineClient> {
 
    public void testGetPasswordForVirtualMachineWhenResponseIs2xx() throws NoSuchAlgorithmException, CertificateException {
       String privateKey = "-----BEGIN RSA PRIVATE KEY-----\n" +

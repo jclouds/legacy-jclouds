@@ -29,7 +29,7 @@ import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.domain.AllocationState;
 import org.jclouds.cloudstack.domain.Cluster;
 import org.jclouds.cloudstack.domain.Host;
-import org.jclouds.cloudstack.internal.BaseCloudStackRestClientExpectTest;
+import org.jclouds.cloudstack.internal.BaseCloudStackExpectTest;
 import org.jclouds.cloudstack.options.AddClusterOptions;
 import org.jclouds.cloudstack.options.AddHostOptions;
 import org.jclouds.cloudstack.options.AddSecondaryStorageOptions;
@@ -48,7 +48,7 @@ import com.google.common.collect.ImmutableSet;
  * @author Richard Downer
  */
 @Test(groups = "unit", testName = "GlobalConfigurationClientExpectTest")
-public class GlobalHostClientExpectTest extends BaseCloudStackRestClientExpectTest<GlobalHostClient> {
+public class GlobalHostClientExpectTest extends BaseCloudStackExpectTest<GlobalHostClient> {
 
    @Test
    public void testListHostsWhenResponseIs2xx() {

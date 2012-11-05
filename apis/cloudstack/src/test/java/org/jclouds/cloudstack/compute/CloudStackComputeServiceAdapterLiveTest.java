@@ -166,7 +166,7 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
          new DefaultCredentialsFromImageOrOverridingCredentials());
 
    @Test
-   public void testCreateNodeWithGroupEncodedIntoName() throws InterruptedException {
+   public void testCreateNodeWithGroupEncodedIntoName() {
       String group = prefix + "-foo";
       String name = group + "-node-" + new Random().nextInt();
       Template template = view.getComputeService().templateBuilder().build();

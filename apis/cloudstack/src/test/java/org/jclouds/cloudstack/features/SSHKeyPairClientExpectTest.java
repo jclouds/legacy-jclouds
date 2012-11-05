@@ -25,7 +25,7 @@ import java.net.URI;
 
 import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.domain.SshKeyPair;
-import org.jclouds.cloudstack.internal.BaseCloudStackRestClientExpectTest;
+import org.jclouds.cloudstack.internal.BaseCloudStackExpectTest;
 import org.jclouds.crypto.SshKeys;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
@@ -41,7 +41,7 @@ import com.sun.jersey.api.uri.UriComponent;
  * @author Andrei Savu
  */
 @Test(groups = "unit", testName = "SSHKeyPairClientExpectTest")
-public class SSHKeyPairClientExpectTest extends BaseCloudStackRestClientExpectTest<SSHKeyPairClient> {
+public class SSHKeyPairClientExpectTest extends BaseCloudStackExpectTest<SSHKeyPairClient> {
 
    @Test
    public void testListAndGetSSHKeyPairsWhenResponseIs2xx() {

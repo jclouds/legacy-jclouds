@@ -28,7 +28,7 @@ import java.net.URLEncoder;
 import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.domain.LoginResponse;
-import org.jclouds.cloudstack.internal.BaseCloudStackRestClientExpectTest;
+import org.jclouds.cloudstack.internal.BaseCloudStackExpectTest;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Test;
@@ -41,7 +41,7 @@ import com.google.common.collect.ImmutableMultimap;
  * @author Andrei Savu
  */
 @Test(groups = "live", singleThreaded = true, testName = "SessionClientExpectTest")
-public class SessionClientExpectTest extends BaseCloudStackRestClientExpectTest<SessionClient> {
+public class SessionClientExpectTest extends BaseCloudStackExpectTest<SessionClient> {
 
    @SuppressWarnings("deprecation")
    public void testLoginWhenResponseIs2xxIncludesJSessionId() throws IOException {

@@ -25,7 +25,7 @@ import java.net.URI;
 
 import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.domain.ConfigurationEntry;
-import org.jclouds.cloudstack.internal.BaseCloudStackRestClientExpectTest;
+import org.jclouds.cloudstack.internal.BaseCloudStackExpectTest;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Test;
@@ -38,7 +38,7 @@ import com.google.common.collect.ImmutableSet;
  * @author Andrei Savu
  */
 @Test(groups = "unit", testName = "GlobalConfigurationClientExpectTest")
-public class GlobalConfigurationClientExpectTest extends BaseCloudStackRestClientExpectTest<GlobalConfigurationClient> {
+public class GlobalConfigurationClientExpectTest extends BaseCloudStackExpectTest<GlobalConfigurationClient> {
 
    @Test
    public void testListConfigurationEntriesWhenResponseIs2xx() {

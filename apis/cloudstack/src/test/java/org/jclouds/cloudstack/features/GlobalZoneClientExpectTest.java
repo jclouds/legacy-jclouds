@@ -28,7 +28,7 @@ import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.domain.AllocationState;
 import org.jclouds.cloudstack.domain.NetworkType;
 import org.jclouds.cloudstack.domain.Zone;
-import org.jclouds.cloudstack.internal.BaseCloudStackRestClientExpectTest;
+import org.jclouds.cloudstack.internal.BaseCloudStackExpectTest;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Test;
@@ -42,7 +42,7 @@ import com.google.common.collect.ImmutableMultimap;
  * @author Andrei Savu
  */
 @Test(groups = "unit", testName = "GlobalZoneClientExpectTest")
-public class GlobalZoneClientExpectTest extends BaseCloudStackRestClientExpectTest<GlobalZoneClient> {
+public class GlobalZoneClientExpectTest extends BaseCloudStackExpectTest<GlobalZoneClient> {
 
    public void testCreateZoneWhenResponseIs2xxAnd404() {
       HttpRequest request = HttpRequest.builder()

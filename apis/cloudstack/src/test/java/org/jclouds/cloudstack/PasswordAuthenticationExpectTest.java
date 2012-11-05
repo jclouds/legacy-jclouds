@@ -20,18 +20,16 @@ package org.jclouds.cloudstack;
 
 import static org.testng.Assert.assertNotNull;
 
-import java.net.URI;
-import java.net.URLEncoder;
 import java.util.Properties;
 
 import org.jclouds.cloudstack.config.CloudStackProperties;
 import org.jclouds.cloudstack.features.AccountClient;
-import org.jclouds.cloudstack.internal.BaseCloudStackRestClientExpectTest;
+import org.jclouds.cloudstack.internal.BaseCloudStackExpectTest;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.net.HttpHeaders;
 
 /**
@@ -40,7 +38,7 @@ import com.google.common.net.HttpHeaders;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "PasswordAuthenticationExpectTest")
-public class PasswordAuthenticationExpectTest extends BaseCloudStackRestClientExpectTest<CloudStackContext> {
+public class PasswordAuthenticationExpectTest extends BaseCloudStackExpectTest<CloudStackContext> {
 
    /**
     * this reflects the properties that a user would pass to createContext
@@ -52,27 +50,21 @@ public class PasswordAuthenticationExpectTest extends BaseCloudStackRestClientEx
       return contextProperties;
    }
 
-
-   @SuppressWarnings("deprecation")
    public void testLoginWithPasswordSetsSessionKeyAndCookie() {
       
       CloudStackContext context = requestsSendResponses(
-               loginRequest, loginResponse, 
+               login, loginResponse, 
          HttpRequest.builder()
             .method("GET")
-            .endpoint(
-               URI.create("http://localhost:8080/client/api?response=json&command=listAccounts&listAll=true&sessionkey=" + URLEncoder.encode(sessionKey)))
-            .headers(
-               ImmutableMultimap.<String, String>builder()
-                  .put("Accept", "application/json")
-                  .put(HttpHeaders.COOKIE, "JSESSIONID=" + jSessionId)
-                  .build())
+            .endpoint("http://localhost:8080/client/api?response=json&command=listAccounts&listAll=true&sessionkey=" + Strings2.urlEncode(sessionKey))
+            .addHeader("Accept", "application/json")
+            .addHeader(HttpHeaders.COOKIE, "JSESSIONID=" + jSessionId)
             .build(),
          HttpResponse.builder()
             .statusCode(200)
             .payload(payloadFromResource("/listaccountsresponse.json"))
             .build()
-            , logoutRequest, logoutResponse);
+            ,logout, logoutResponse);
 
       AccountClient client = context.getProviderSpecificContext().getApi().getAccountClient();
       
