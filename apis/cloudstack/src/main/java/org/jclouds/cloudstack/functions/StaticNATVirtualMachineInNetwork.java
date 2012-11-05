@@ -63,7 +63,7 @@ public class StaticNATVirtualMachineInNetwork implements Function<VirtualMachine
 
    public PublicIPAddress apply(VirtualMachine vm) {
       PublicIPAddress ip;
-      for (ip = reuseOrAssociate.apply(network); (!ip.isStaticNAT() || ip.getVirtualMachineId() != vm.getId()); ip = reuseOrAssociate
+      for (ip = reuseOrAssociate.apply(network); !ip.isStaticNAT() || ip.getVirtualMachineId() != vm.getId(); ip = reuseOrAssociate
             .apply(network)) {
          // check to see if someone already grabbed this ip
          if (ip.getVirtualMachineId() != null && ip.getVirtualMachineId() != vm.getId())

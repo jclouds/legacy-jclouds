@@ -121,7 +121,7 @@ public class ComputeServiceUtils {
    public static double getCoresAndSpeed(Hardware input) {
       double total = 0;
       for (Processor processor : input.getProcessors())
-         total += (processor.getCores() * processor.getSpeed());
+         total += processor.getCores() * processor.getSpeed();
       return total;
    }
 

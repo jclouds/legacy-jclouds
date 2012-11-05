@@ -83,7 +83,7 @@ public class NetworkHandler extends ParseSax.HandlerWithResult<Network> {
       } else if (qName.equals("Netmask")) {
          netmask = currentOrNull(currentText);
       } else if (qName.equals("FenceMode")) {
-         fenceMode = (FenceMode.fromValue(currentOrNull(currentText)));
+         fenceMode = FenceMode.fromValue(currentOrNull(currentText));
       }
       currentText = new StringBuilder();
    }

@@ -77,13 +77,13 @@ public class OrgAndVDCToLocationSupplier extends JustProvider implements Locatio
       Map<String, Supplier<Set<String>>> isoCodesById = isoCodesByIdSupplier.get();
       for (ReferenceType org : orgNameToResource.get().values()) {
          LocationBuilder builder = new LocationBuilder().scope(LocationScope.REGION).id(org.getHref().toASCIIString())
-                  .description((org.getName())).parent(provider);
+                  .description(org.getName()).parent(provider);
          if (isoCodesById.containsKey(org.getHref().toASCIIString()))
             builder.iso3166Codes(isoCodesById.get(org.getHref().toASCIIString()).get());
          Location orgL = builder.build();
          for (ReferenceType vdc : orgNameToVDCResource.get().get(org.getName()).getVDCs().values()) {
             builder = new LocationBuilder().scope(LocationScope.ZONE).id(vdc.getHref().toASCIIString()).description(
-                     (vdc.getName())).parent(orgL);
+                     vdc.getName()).parent(orgL);
             if (isoCodesById.containsKey(vdc.getHref().toASCIIString()))
                builder.iso3166Codes(isoCodesById.get(vdc.getHref().toASCIIString()).get());
             locations.add(builder.build());

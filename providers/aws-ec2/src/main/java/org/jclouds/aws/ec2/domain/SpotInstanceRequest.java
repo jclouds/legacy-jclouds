@@ -187,7 +187,7 @@ public class SpotInstanceRequest implements Comparable<SpotInstanceRequest> {
       ONE_TIME, PERSISTENT, UNRECOGNIZED;
 
       public String value() {
-         return (CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, name()));
+         return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, name());
       }
 
       @Override
@@ -208,7 +208,7 @@ public class SpotInstanceRequest implements Comparable<SpotInstanceRequest> {
       OPEN, ACTIVE, CANCELLED, CLOSED, UNRECOGNIZED;
 
       public String value() {
-         return (CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, name()));
+         return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, name());
       }
 
       @Override

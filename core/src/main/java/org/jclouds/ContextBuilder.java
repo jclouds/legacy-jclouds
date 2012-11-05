@@ -419,12 +419,12 @@ public class ContextBuilder {
    }
 
    static boolean nothingConfiguresAnHttpService(List<Module> modules) {
-      return (!any(modules, new Predicate<Module>() {
+      return !any(modules, new Predicate<Module>() {
          public boolean apply(Module input) {
             return input.getClass().isAnnotationPresent(ConfiguresHttpCommandExecutorService.class);
          }
 
-      }));
+      });
    }
 
    @VisibleForTesting

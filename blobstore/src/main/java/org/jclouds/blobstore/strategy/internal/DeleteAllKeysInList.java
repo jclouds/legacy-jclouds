@@ -195,6 +195,6 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
    }
 
    private boolean parentIsFolder(final ListContainerOptions options, final StorageMetadata md) {
-      return (options.getDir() != null && md.getName().indexOf('/') == -1);
+      return options.getDir() != null && md.getName().indexOf('/') == -1;
    }
 }

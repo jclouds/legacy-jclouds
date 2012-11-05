@@ -115,7 +115,7 @@ public class SshKeys {
       int byte2 = in.read();
       int byte3 = in.read();
       int byte4 = in.read();
-      int length = ((byte1 << 24) + (byte2 << 16) + (byte3 << 8) + (byte4 << 0));
+      int length = (byte1 << 24) + (byte2 << 16) + (byte3 << 8) + (byte4 << 0);
       byte[] val = new byte[length];
       in.read(val, 0, length);
       return val;

@@ -30,7 +30,7 @@ public enum ServerState {
    ON, STARTING, OFF, STOPPING, RESTARTING, SAVING, RESTORING, UPDATING, UNRECOGNIZED;
 
    public String value() {
-      return (CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name()));
+      return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name());
    }
 
    @Override

@@ -51,7 +51,7 @@ public class ImagePredicates {
 
       @Override
       public boolean equals(@Nullable Object obj) {
-         return (obj instanceof Is64BitPredicate);
+         return obj instanceof Is64BitPredicate;
       }
 
    }

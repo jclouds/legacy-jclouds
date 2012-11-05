@@ -115,7 +115,7 @@ public class AWSUtils {
       String[] values = (String[]) input;
       Builder<String, String> builder = ImmutableMultimap.builder();
       for (int i = 0; i < values.length; i++) {
-         builder.put(String.format(format, (i + 1)), checkNotNull(values[i], format.toLowerCase() + "s[" + i + "]"));
+         builder.put(String.format(format, i + 1), checkNotNull(values[i], format.toLowerCase() + "s[" + i + "]"));
       }
       ImmutableMultimap<String, String> forms = builder.build();
       return forms.size() == 0 ? request : (R) request.toBuilder().replaceFormParams(forms).build();

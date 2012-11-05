@@ -109,7 +109,7 @@ public class MultipartUploadSlicingAlgorithm {
       this.parts = parts;
       this.remaining = length - partSize * parts;
       logger.debug(" %d bytes partitioned in %d parts of part size: %d, remaining: %d%s", length, parts, chunkSize,
-            remaining, (remaining > MultipartUpload.MAX_PART_SIZE ? " overflow!" : ""));
+            remaining, remaining > MultipartUpload.MAX_PART_SIZE ? " overflow!" : "");
       return this.chunkSize;
    }
 

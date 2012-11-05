@@ -96,7 +96,7 @@ public class BindLoggersAnnotatedWithResource implements TypeListener {
             Predicate<Field> {
         public boolean apply(Field from) {
             Annotation inject = from.getAnnotation(Resource.class);
-            return (inject != null && from.getType().isAssignableFrom(Logger.class));
+            return inject != null && from.getType().isAssignableFrom(Logger.class);
         }
     }
 

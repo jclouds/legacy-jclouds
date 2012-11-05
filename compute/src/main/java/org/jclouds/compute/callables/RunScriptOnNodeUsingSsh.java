@@ -80,7 +80,7 @@ public class RunScriptOnNodeUsingSsh implements RunScriptOnNode {
          ssh.connect();
          ExecResponse returnVal;
          eventBus.post(new StatementOnNodeSubmission(statement, node));
-         String command = (runAsRoot) ? execAsRoot(statement.render(OsFamily.UNIX)) : execScriptAsDefaultUser(statement
+         String command = runAsRoot ? execAsRoot(statement.render(OsFamily.UNIX)) : execScriptAsDefaultUser(statement
                .render(OsFamily.UNIX));
          try {
             returnVal = runCommand(command);

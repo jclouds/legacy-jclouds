@@ -4,6 +4,9 @@
 <module name="Checker">
     <property name="severity" value="warning"/>
     <module name="NewlineAtEndOfFile"/>
+    <module name="SuppressionFilter">
+        <property name="file" value="resources/checkstyle_suppressions.xml"/>
+    </module>
     <module name="TreeWalker">
         <module name="EmptyStatement"/>
         <module name="IllegalThrows"/>
@@ -18,6 +21,7 @@
         <module name="ModifierOrder"/>
         <module name="MultipleVariableDeclarations"/>
         <module name="SimplifyBooleanExpression"/>
+        <module name="UnnecessaryParentheses"/>
         <module name="UnusedImports"/>
     </module>
     <module name="RegexpMultiline">

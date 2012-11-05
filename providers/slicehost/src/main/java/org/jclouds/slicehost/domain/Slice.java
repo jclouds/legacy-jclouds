@@ -42,7 +42,7 @@ public class Slice {
       ACTIVE, BUILD, REBOOT, HARD_REBOOT, TERMINATED, UNRECOGNIZED;
 
       public String value() {
-         return (CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_UNDERSCORE, name()));
+         return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_UNDERSCORE, name());
       }
 
       @Override

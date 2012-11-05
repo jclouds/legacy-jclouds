@@ -71,10 +71,10 @@ public class MapToNICs implements Function<Map<String, String>, List<NIC>> {
    private String getDhcpIp(Map<String, String> from, String key) {
       if (apiVersion.equals("2.0")) {
          final String ip = from.get(key + ":dhcp:ip");
-         return (ip == null ? "auto" : ip);
+         return ip == null ? "auto" : ip;
       } else {
          final String ip = from.get(key + ":dhcp");
-         return (ip == null ? "auto" : ip);
+         return ip == null ? "auto" : ip;
       }
    }
 }
