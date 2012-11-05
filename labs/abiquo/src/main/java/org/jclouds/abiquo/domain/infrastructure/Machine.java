@@ -286,7 +286,9 @@ public class Machine extends AbstractPhysicalMachine {
    public static class Builder {
       private RestContext<AbiquoApi, AbiquoAsyncApi> context;
 
-      private String name, description;
+      private String name;
+
+      private String description;
 
       private Integer virtualRamInMb;
 
