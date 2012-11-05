@@ -27,6 +27,7 @@ import org.jclouds.scriptbuilder.domain.Statement;
 
 import com.google.common.annotations.Beta;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.inject.ImplementedBy;
 
 /**
  * Separates out how one implements the ability to run a script on a node.
@@ -36,6 +37,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 @Beta
 public interface RunScriptOnNode extends Callable<ExecResponse> {
 
+   @ImplementedBy(org.jclouds.compute.config.BaseComputeServiceContextModule.RunScriptOnNodeFactoryImpl.class)
    public interface Factory {
 
       RunScriptOnNode create(NodeMetadata node, Statement script, RunScriptOptions options);
