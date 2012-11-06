@@ -13,6 +13,7 @@
         </module>
         <module name="ModifierOrder"/>
         <module name="MultipleVariableDeclarations"/>
+        <module name="SimplifyBooleanExpression"/>
         <module name="UnusedImports"/>
     </module>
     <module name="RegexpMultiline">

@@ -160,7 +160,7 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
        machineUtils.runScriptOnNode(partialNodeMetadata, new DeleteGShadowLock(), RunScriptOptions.NONE);
 
       if(optionalNatIfaceCard.isPresent())
-         checkState(networkUtils.enableNetworkInterface(partialNodeMetadata, optionalNatIfaceCard.get()) == true, 
+         checkState(networkUtils.enableNetworkInterface(partialNodeMetadata, optionalNatIfaceCard.get()),
          "cannot enable Nat Interface");
       
       LoginCredentials credentials = partialNodeMetadata.getCredentials();

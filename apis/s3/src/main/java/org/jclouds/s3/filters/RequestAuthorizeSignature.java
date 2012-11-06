@@ -242,7 +242,7 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
          char separator = '?';
          for (String paramName : Ordering.natural().sortedCopy(params.keySet())) {
             // Skip any parameters that aren't part of the canonical signed string
-            if (SIGNED_PARAMETERS.contains(paramName) == false)
+            if (!SIGNED_PARAMETERS.contains(paramName))
                continue;
             toSign.append(separator).append(paramName);
             String paramValue = get(params.get(paramName), 0);
