@@ -20,6 +20,8 @@ package org.jclouds.scriptbuilder.statements.chef;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.transform;
+import static org.jclouds.scriptbuilder.domain.Statements.createOrOverwriteFile;
+import static org.jclouds.scriptbuilder.domain.Statements.exec;
 
 import java.util.List;
 
@@ -30,6 +32,7 @@ import org.jclouds.scriptbuilder.domain.Statements;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -46,10 +49,16 @@ public class ChefSolo implements Statement {
 
    public static class Builder {
       private String cookbooksArchiveLocation;
+      private String jsonAttributes;
       private List<String> recipes = Lists.newArrayList();
 
       public Builder cookbooksArchiveLocation(String cookbooksArchiveLocation) {
          this.cookbooksArchiveLocation = checkNotNull(cookbooksArchiveLocation, "cookbooksArchiveLocation");
+         return this;
+      }
+
+      public Builder jsonAttributes(String jsonAttributes) {
+         this.jsonAttributes = checkNotNull(jsonAttributes, "jsonAttributes");
          return this;
       }
 
@@ -64,18 +73,20 @@ public class ChefSolo implements Statement {
       }
 
       public ChefSolo build() {
-         return new ChefSolo(cookbooksArchiveLocation, recipes);
+         return new ChefSolo(cookbooksArchiveLocation, recipes, Optional.fromNullable(jsonAttributes));
       }
 
    }
 
    private String cookbooksArchiveLocation;
+   private Optional<String> jsonAttributes;
    private List<String> recipes;
    private final InstallChefGems installChefGems = new InstallChefGems();
 
-   public ChefSolo(String cookbooksArchiveLocation, List<String> recipes) {
+   public ChefSolo(String cookbooksArchiveLocation, List<String> recipes, Optional<String> jsonAttributes) {
       this.cookbooksArchiveLocation = checkNotNull(cookbooksArchiveLocation, "cookbooksArchiveLocation must be set");
-      this.recipes = checkNotNull(recipes, "recipes must be set");
+      this.recipes = ImmutableList.copyOf(checkNotNull(recipes, "recipes must be set"));
+      this.jsonAttributes = checkNotNull(jsonAttributes, "jsonAttributes must be set");
    }
 
    @Override
@@ -84,17 +95,25 @@ public class ChefSolo implements Statement {
          throw new UnsupportedOperationException("windows not yet implemented");
       }
 
+      ImmutableList.Builder<Statement> statements = ImmutableList.builder();
+      statements.add(installChefGems);
+
       ImmutableMap.Builder<String, String> chefSoloOptions = ImmutableMap.builder();
       chefSoloOptions.put("-N", "`hostname`");
       chefSoloOptions.put("-r", cookbooksArchiveLocation);
+
+      if (jsonAttributes.isPresent()) {
+         statements.add(exec("{md} /var/chef"));
+         statements.add(createOrOverwriteFile("/var/chef/node.json", jsonAttributes.asSet()));
+         chefSoloOptions.put("-j", "/var/chef/node.json");
+      }
+
       if (!recipes.isEmpty()) {
          chefSoloOptions.put("-o", recipesToRunlistString(recipes));
       }
 
       String options = Joiner.on(' ').withKeyValueSeparator(" ").join(chefSoloOptions.build());
 
-      ImmutableList.Builder<Statement> statements = ImmutableList.builder();
-      statements.add(installChefGems);
       statements.add(Statements.exec(String.format("chef-solo %s", options)));
 
       return new StatementList(statements.build()).render(family);

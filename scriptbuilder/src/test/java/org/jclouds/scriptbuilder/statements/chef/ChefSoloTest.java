@@ -27,7 +27,9 @@ import org.jclouds.scriptbuilder.domain.ShellToken;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 
 @Test(groups = "unit", testName = "ChefSoloTest")
@@ -40,7 +42,12 @@ public class ChefSoloTest {
 
    @Test(expectedExceptions = NullPointerException.class, expectedExceptionsMessageRegExp = "recipes must be set")
    public void testChefSoloWithoutRecipes() {
-      new ChefSolo("/tmp/foo", null);
+      new ChefSolo("/tmp/foo", null, Optional.<String> absent());
+   }
+
+   @Test(expectedExceptions = NullPointerException.class, expectedExceptionsMessageRegExp = "jsonAttributes must be set")
+   public void testChefSoloWithoutAttributes() {
+      new ChefSolo("/tmp/foo", Lists.<String> newArrayList(), null);
    }
 
    @Test(expectedExceptions = UnsupportedOperationException.class, expectedExceptionsMessageRegExp = "windows not yet implemented")
@@ -84,6 +91,19 @@ public class ChefSoloTest {
             Resources.toString(Resources.getResource("test_install_ruby." + ShellToken.SH.to(OsFamily.UNIX)),
                   Charsets.UTF_8)
                   + "installChefGems || return 1\nchef-solo -N `hostname` -r /tmp/cookbooks -o recipe[apache2],recipe[mysql]\n");
+   }
+
+   public void testChefSoloWithCookbooksLocationAndAttributes() throws IOException {
+      String script = ChefSolo.builder().cookbooksArchiveLocation("/tmp/cookbooks").jsonAttributes("{\"foo\":\"bar\"}")
+            .installRecipe("apache2").build().render(OsFamily.UNIX);
+      assertEquals(
+            script,
+            Resources.toString(Resources.getResource("test_install_ruby." + ShellToken.SH.to(OsFamily.UNIX)),
+                  Charsets.UTF_8)
+                  + "installChefGems || return 1\n"
+                  + "mkdir -p /var/chef\n"
+                  + "cat > /var/chef/node.json <<-'END_OF_JCLOUDS_FILE'\n\t{\"foo\":\"bar\"}\nEND_OF_JCLOUDS_FILE\n"
+                  + "chef-solo -N `hostname` -r /tmp/cookbooks -j /var/chef/node.json -o recipe[apache2]\n");
    }
 
 }
