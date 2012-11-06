@@ -108,7 +108,14 @@ public class ParseAccessTest extends BaseItemParserTest<Access> {
                                                      .internalURL("https://csnode.jclouds.org:9696/v1.0/tenants/3456")
                                                      .adminURL("https://csnode.jclouds.org:9696/v1.0")
                                                      .region("region-a.geo-1")
-                                                     .versionId("1.0").build()).build()).build();
+                                                     .versionId("1.0").build()).build())
+                  .service(Service.builder().name("cinder").type("volume")
+                        .endpoint(Endpoint.builder()
+                                          .id("08330c2dcbfc4c6c8dc7a0949fbf5da7")
+                                          .publicURL("http://172.16.0.1:8776/v1/50cdb4c60374463198695d9f798fa34d")
+                                          .internalURL("http://10.0.2.15:8776/v1/50cdb4c60374463198695d9f798fa34d")
+                                          .adminURL("http://10.0.2.15:8776/v1/50cdb4c60374463198695d9f798fa34d")
+                                          .region("RegionOne").build()).build()).build();
    }
 
 }
