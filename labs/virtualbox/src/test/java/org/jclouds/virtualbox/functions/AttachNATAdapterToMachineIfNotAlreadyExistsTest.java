@@ -55,7 +55,7 @@ public class AttachNATAdapterToMachineIfNotAlreadyExistsTest {
 
 		expect(machine.getNetworkAdapter(slotId)).andReturn(iNetworkAdapter);
 		iNetworkAdapter.setAttachmentType(NAT);
-		expect(iNetworkAdapter.getNATEngine()).andReturn(natEngine);
+		expect(iNetworkAdapter.getNATEngine()).andReturn(natEngine).anyTimes();
 
 		List<String> redirects = new ArrayList<String>();
 		expect(natEngine.getRedirects()).andReturn(redirects);

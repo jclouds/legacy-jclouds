@@ -55,8 +55,6 @@ import org.virtualbox_4_2.IDHCPServer;
 import org.virtualbox_4_2.IHostNetworkInterface;
 import org.virtualbox_4_2.IMachine;
 import org.virtualbox_4_2.INetworkAdapter;
-import org.virtualbox_4_2.ISession;
-import org.virtualbox_4_2.LockType;
 import org.virtualbox_4_2.NetworkAttachmentType;
 import org.virtualbox_4_2.VirtualBoxManager;
 

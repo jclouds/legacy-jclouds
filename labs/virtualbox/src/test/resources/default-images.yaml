@@ -405,4 +405,8 @@ images:
                       echo "veewee"|passwd --stdin veewee
                       echo "veewee        ALL=(ALL)       NOPASSWD: ALL" >> /etc/sudoers.d/veewee
                       chmod 0440 /etc/sudoers.d/veewee
+<<<<<<< HEAD
                       %end
+=======
+                      %end
+>>>>>>> c931f1c... initial work for centos; networking strategy refactoring; hostname support added

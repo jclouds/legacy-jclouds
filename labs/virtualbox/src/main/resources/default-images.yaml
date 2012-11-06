@@ -351,4 +351,8 @@ images:
                       #choose-mirror-bin mirror/http/directory string /ubuntu
                       #choose-mirror-bin mirror/suite select maverick
                       #d-i debian-installer/allow_unauthenticated string true
+<<<<<<< HEAD
                       choose-mirror-bin mirror/http/proxy string                    
+=======
+                      choose-mirror-bin mirror/http/proxy string                    
+>>>>>>> c931f1c... initial work for centos; networking strategy refactoring; hostname support added

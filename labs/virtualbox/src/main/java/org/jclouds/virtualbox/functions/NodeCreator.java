@@ -165,7 +165,6 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
 		// scripts
 		NodeMetadata partialNodeMetadata = buildPartialNodeMetadata(cloned);
 
-		logger.debug("DeleteGShadowLock for a detailed explanation");
 		machineUtils.runScriptOnNode(partialNodeMetadata,
 				new DeleteGShadowLock(), RunScriptOptions.NONE);
 		
