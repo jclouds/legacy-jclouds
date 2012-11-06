@@ -28,6 +28,8 @@ import org.virtualbox_4_2.INetworkAdapter;
 import org.virtualbox_4_2.VBoxException;
 
 import com.google.common.base.Function;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
 
 /**
  * @author Mattias Holmqvist, Andrea Turli
@@ -43,6 +45,11 @@ public class AttachNATAdapterToMachineIfNotAlreadyExists implements Function<IMa
    @Override
    public Void apply(IMachine machine) {
       INetworkAdapter iNetworkAdapter = machine.getNetworkAdapter(networkInterfaceCard.getSlot());
+      // clean up previously set rules
+      for (String redirectRule : iNetworkAdapter.getNATEngine().getRedirects()) {
+    	  String redirectRuleName = Iterables.getFirst(Splitter.on(",").split(redirectRule), null);
+    	  iNetworkAdapter.getNATEngine().removeRedirect(redirectRuleName);
+      }
       iNetworkAdapter.setAttachmentType(NAT);
       for (RedirectRule rule : networkInterfaceCard.getNetworkAdapter().getRedirectRules()) {
          try {

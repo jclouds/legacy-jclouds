@@ -44,9 +44,9 @@ import org.virtualbox_4_2.ISnapshot;
 import org.virtualbox_4_2.VBoxException;
 import org.virtualbox_4_2.VirtualBoxManager;
 
-import com.beust.jcommander.internal.Lists;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
 /**

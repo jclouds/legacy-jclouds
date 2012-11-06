@@ -25,7 +25,6 @@ import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
 import java.net.URI;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -56,18 +55,14 @@ import org.virtualbox_4_2.IDHCPServer;
 import org.virtualbox_4_2.IHostNetworkInterface;
 import org.virtualbox_4_2.IMachine;
 import org.virtualbox_4_2.INetworkAdapter;
-import org.virtualbox_4_2.ISession;
-import org.virtualbox_4_2.LockType;
 import org.virtualbox_4_2.NetworkAttachmentType;
 import org.virtualbox_4_2.VirtualBoxManager;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import com.google.common.util.concurrent.Uninterruptibles;
 import com.google.inject.Inject;
 
 /**
@@ -134,19 +129,16 @@ public class NetworkUtils {
       return createNetworkSpecForHostOnlyNATNICs(natIfaceCard, hostOnlyIfaceCard);
    }
    
-   public NetworkSpec createHostOnlyNIC(long port) {
+   public NetworkInterfaceCard createHostOnlyNIC(long port) {
        NetworkAdapter hostOnlyAdapter = NetworkAdapter.builder()
             .networkAttachmentType(NetworkAttachmentType.HostOnly)
                .build();
       // create new hostOnly interface if needed, otherwise use the one already there with dhcp enabled ...
       String hostOnlyIfName = getHostOnlyIfOrCreate();
-      NetworkInterfaceCard hostOnlyIfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(hostOnlyAdapter)
+      return  NetworkInterfaceCard.builder().addNetworkAdapter(hostOnlyAdapter)
                .addHostInterfaceName(hostOnlyIfName)
                .slot(port)
                .build();
-      return NetworkSpec.builder()
-            .addNIC(hostOnlyIfaceCard)
-            .build();
    }   
    
    public boolean enableNetworkInterface(NodeMetadata nodeMetadata, NetworkInterfaceCard networkInterfaceCard) {

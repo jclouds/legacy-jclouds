@@ -27,6 +27,7 @@ import java.net.URI;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -85,7 +86,7 @@ public class StartVBoxIfNotAlreadyRunning implements Supplier<VirtualBoxManager>
    public synchronized void start() {
       URI provider = providerSupplier.get();
       NodeMetadata hostNodeMetadata = hardcodedHostToHostNodeMetadata.apply(host.get());
-      cleanUpHost(provider, hostNodeMetadata);
+      //cleanUpHost(provider, hostNodeMetadata);
      
       logger.debug("disabling password access");
       runScriptOnNodeFactory
@@ -94,20 +95,23 @@ public class StartVBoxIfNotAlreadyRunning implements Supplier<VirtualBoxManager>
                   Statements
                         .exec("VBoxManage setproperty websrvauthlibrary null"),
                   runAsRoot(false).wrapInInitScript(false)).init().call();
-      logger.debug(">> starting vboxwebsrv");
-      String vboxwebsrv = "vboxwebsrv -t0 -v -b -H "
-            + providerSupplier.get().getHost();
-      runScriptOnNodeFactory
-            .create(
-                  hostNodeMetadata,
-                  Statements.exec(vboxwebsrv),
-                  runAsRoot(false).wrapInInitScript(false)
-                        .blockOnComplete(false).nameTask("vboxwebsrv")).init()
-            .call();
-
       if (!socketTester.apply(HostAndPort.fromParts(provider.getHost(),
-            provider.getPort()))) {
-         throw new RuntimeException("could not connect to virtualbox");
+              provider.getPort()))) {
+	      logger.debug(">> starting vboxwebsrv");
+	      String vboxwebsrv = "vboxwebsrv -t0 -v -b -H "
+	            + providerSupplier.get().getHost();
+	      runScriptOnNodeFactory
+	            .create(
+	                  hostNodeMetadata,
+	                  Statements.exec(vboxwebsrv),
+	                  runAsRoot(false).wrapInInitScript(false)
+	                        .blockOnComplete(false).nameTask("vboxwebsrv")).init()
+	            .call();
+	
+	      if (!socketTester.apply(HostAndPort.fromParts(provider.getHost(),
+	            provider.getPort()))) {
+	         throw new RuntimeException(String.format("could not connect to virtualbox at %s", provider));
+	      }
       }
 
       manager = managerForNode.apply(host);
@@ -116,6 +120,7 @@ public class StartVBoxIfNotAlreadyRunning implements Supplier<VirtualBoxManager>
          if (manager.getSessionObject().getState() != SessionState.Unlocked)
             logger.warn("manager is not in unlocked state "
                   + manager.getSessionObject().getState());
+      
    }
 
    private void cleanUpHost(URI provider, NodeMetadata hostNodeMetadata) {

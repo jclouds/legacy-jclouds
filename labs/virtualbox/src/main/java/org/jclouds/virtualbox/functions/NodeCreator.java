@@ -50,6 +50,7 @@ import org.jclouds.virtualbox.domain.NetworkSpec;
 import org.jclouds.virtualbox.domain.NodeSpec;
 import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.statements.DeleteGShadowLock;
+import org.jclouds.virtualbox.statements.SetHostname;
 import org.jclouds.virtualbox.util.MachineController;
 import org.jclouds.virtualbox.util.MachineUtils;
 import org.jclouds.virtualbox.util.NetworkUtils;
@@ -62,11 +63,8 @@ import org.virtualbox_4_2.NetworkAttachmentType;
 import org.virtualbox_4_2.VirtualBoxManager;
 
 import com.google.common.base.Function;
-import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 
 /**
  * Creates nodes, by cloning a master vm and based on the provided {@link NodeSpec}. Must be
@@ -104,86 +102,103 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
    }
 
    @Override
-   public synchronized NodeAndInitialCredentials<IMachine> apply(NodeSpec nodeSpec) {
-      checkNotNull(nodeSpec, "NodeSpec");
-      Master master = checkNotNull(nodeSpec.getMaster(), "Master");
-      
-      if (master.getMachine().getCurrentSnapshot() != null) {
-         ISession session;
-         try {
-            session = manager.get().getSessionObject();
-            master.getMachine().lockMachine(session, LockType.Write);
-            IProgress progress = session.getConsole().deleteSnapshot(master.getMachine().getCurrentSnapshot().getId());
-            progress.waitForCompletion(-1);
-            session.unlockMachine();
-         } catch (Exception e) {
-            throw new RuntimeException("error opening vbox machine session: " + e.getMessage(), e);
-         }
-         logger.debug("Deleted an existing snapshot from %s", master.getMachine().getName());
-      }
-      String masterNameWithoutPrefix = master.getMachine().getName().replace(VIRTUALBOX_IMAGE_PREFIX, "");
-      String cloneName = VIRTUALBOX_NODE_PREFIX + masterNameWithoutPrefix + VIRTUALBOX_NODE_NAME_SEPARATOR
-               + nodeSpec.getTag() + VIRTUALBOX_NODE_NAME_SEPARATOR + nodeSpec.getName();
-      
-      IMachine masterMachine = master.getMachine();
-      String username = masterMachine.getExtraData(GUEST_OS_USER);
-      String password = masterMachine.getExtraData(GUEST_OS_PASSWORD);
-      
-      VmSpec cloneVmSpec = VmSpec.builder().id(cloneName).name(cloneName).memoryMB(ram)
-            .guestUser(username).guestPassword(password)
-            .cleanUpMode(CleanupMode.Full)
-            .forceOverwrite(true).build();
-      
-      // case 'vbox host is localhost': NAT + HOST-ONLY
-//      NetworkSpec networkSpec = networkUtils.createNetworkSpecWhenVboxIsLocalhost();
-//      Optional<NetworkInterfaceCard> optionalNatIfaceCard = Iterables.tryFind(
-//            networkSpec.getNetworkInterfaceCards(),
-//            new Predicate<NetworkInterfaceCard>() {
-//
-//               @Override
-//               public boolean apply(NetworkInterfaceCard nic) {
-//                  return nic.getNetworkAdapter().getNetworkAttachmentType()
-//                        .equals(NetworkAttachmentType.NAT);
-//               }
-//            });
-      
-      NetworkSpec networkSpec = networkUtils.createHostOnlyNIC(0l); 
-      CloneSpec cloneSpec = CloneSpec.builder().linked(true).master(master.getMachine()).network(networkSpec)
-               .vm(cloneVmSpec).build();
+	public synchronized NodeAndInitialCredentials<IMachine> apply(
+			NodeSpec nodeSpec) {
+		checkNotNull(nodeSpec, "NodeSpec");
+		Master master = checkNotNull(nodeSpec.getMaster(), "Master");
 
-      logger.debug("Cloning a new guest an existing snapshot from %s ...", master.getMachine().getName());
-      IMachine cloned = cloner.apply(cloneSpec);
-      machineController.ensureMachineIsLaunched(cloneVmSpec.getVmName());
-      
-      // IMachineToNodeMetadata produces the final ip's but these need to be set before so we build a
-      // NodeMetadata just for the sake of running the gshadow and setip scripts 
-      NodeMetadata partialNodeMetadata = buildPartialNodeMetadata(cloned);
+		if (master.getMachine().getCurrentSnapshot() != null) {
+			ISession session;
+			try {
+				session = manager.get().getSessionObject();
+				master.getMachine().lockMachine(session, LockType.Write);
+				IProgress progress = session.getConsole().deleteSnapshot(
+						master.getMachine().getCurrentSnapshot().getId());
+				progress.waitForCompletion(-1);
+				session.unlockMachine();
+			} catch (Exception e) {
+				throw new RuntimeException(
+						"error opening vbox machine session: " + e.getMessage(),
+						e);
+			}
+			logger.debug("Deleted an existing snapshot from %s", master
+					.getMachine().getName());
+		}
+		String masterNameWithoutPrefix = master.getMachine().getName()
+				.replace(VIRTUALBOX_IMAGE_PREFIX, "");
+		String cloneName = VIRTUALBOX_NODE_PREFIX + masterNameWithoutPrefix
+				+ VIRTUALBOX_NODE_NAME_SEPARATOR + nodeSpec.getTag()
+				+ VIRTUALBOX_NODE_NAME_SEPARATOR + nodeSpec.getName();
 
-      // see DeleteGShadowLock for a detailed explanation
-       machineUtils.runScriptOnNode(partialNodeMetadata, new DeleteGShadowLock(), RunScriptOptions.NONE);
-       
+		IMachine masterMachine = master.getMachine();
+		String username = masterMachine.getExtraData(GUEST_OS_USER);
+		String password = masterMachine.getExtraData(GUEST_OS_PASSWORD);
 
-//      if(optionalNatIfaceCard.isPresent())
-//         checkState(networkUtils.enableNetworkInterface(partialNodeMetadata, optionalNatIfaceCard.get()) == true, 
-//         "cannot enable Nat Interface");
-       
-       NetworkAdapter natAdapter = NetworkAdapter.builder()
-             .networkAttachmentType(NetworkAttachmentType.NAT)
-             .build();
-       
-       NetworkInterfaceCard natIfaceCard = NetworkInterfaceCard.builder()
-             .addNetworkAdapter(natAdapter)
-             .slot(1L)
-             .build();
-       checkState(networkUtils.enableNetworkInterface(partialNodeMetadata, natIfaceCard) == true, "cannot enable Nat Interface");
-       machineController.ensureMachineIsShutdown(cloneVmSpec.getVmName());
-       
-       new AttachNicToMachine(cloneVmSpec.getVmName(), machineUtils).apply(natIfaceCard);
-       machineController.ensureMachineIsLaunched(cloneVmSpec.getVmName());
-      LoginCredentials credentials = partialNodeMetadata.getCredentials();
-      return new NodeAndInitialCredentials<IMachine>(cloned,
-               cloneName, credentials);
-   }
+		VmSpec cloneVmSpec = VmSpec.builder().id(cloneName).name(cloneName)
+				.memoryMB(ram).guestUser(username).guestPassword(password)
+				.cleanUpMode(CleanupMode.Full).forceOverwrite(true).build();
+
+		NetworkAdapter natAdapter = NetworkAdapter.builder()
+				.networkAttachmentType(NetworkAttachmentType.NAT)
+				.build();
+		NetworkInterfaceCard natIfaceCard = NetworkInterfaceCard.builder()
+		.addNetworkAdapter(natAdapter).slot(0L).build();
+		
+		NetworkInterfaceCard hostOnlyIfaceCard = networkUtils.createHostOnlyNIC(1l);
+	    NetworkSpec networkSpec = NetworkSpec.builder()
+	              .addNIC(hostOnlyIfaceCard)
+	              .addNIC(natIfaceCard)
+	              .build();
+		CloneSpec cloneSpec = CloneSpec.builder().linked(true)
+				.master(master.getMachine()).network(networkSpec)
+				.vm(cloneVmSpec).build();
+
+		logger.debug("Cloning a new guest an existing snapshot from %s ...",
+				master.getMachine().getName());
+		IMachine cloned = cloner.apply(cloneSpec);
+				
+		machineController.ensureMachineIsLaunched(cloneName);
+
+		// IMachineToNodeMetadata produces the final ip's but these need to be
+		// set before so we build a
+		// NodeMetadata just for the sake of running the gshadow and setip
+		// scripts
+		NodeMetadata partialNodeMetadata = buildPartialNodeMetadata(cloned);
+
+		// see DeleteGShadowLock for a detailed explanation
+		machineUtils.runScriptOnNode(partialNodeMetadata,
+				new DeleteGShadowLock(), RunScriptOptions.NONE);
+		
+	
+//		String mac_eth0 = natIfaceCard.getNetworkAdapter().getMacAddress();
+//		String mac_eth1  = hostOnlyIfaceCard.getNetworkAdapter().getMacAddress();
+//		ListenableFuture<ExecResponse> execCleanup = machineUtils
+//				.runScriptOnNode(partialNodeMetadata, new ReconfigureUdevNetRules(mac_eth0, mac_eth1),
+//						RunScriptOptions.NONE);
+//		ExecResponse cleanupResponse = Futures.getUnchecked(execCleanup);
+//		checkState(cleanupResponse.getExitStatus() == 0);
+		
+		/*
+		NetworkAdapter natAdapter = NetworkAdapter.builder()
+				.networkAttachmentType(NetworkAttachmentType.NAT).build();
+
+		NetworkInterfaceCard natIfaceCard = NetworkInterfaceCard.builder()
+				.addNetworkAdapter(natAdapter).slot(1L).build();
+		checkState(networkUtils.enableNetworkInterface(partialNodeMetadata,
+				natIfaceCard) == true, "cannot enable Nat Interface");
+		machineController.ensureMachineIsShutdown(cloneVmSpec.getVmName());
+
+		new AttachNicToMachine(cloneVmSpec.getVmName(), machineUtils)
+				.apply(natIfaceCard);
+		machineController.ensureMachineIsLaunched(cloneVmSpec.getVmName());
+		*/
+		long slot = findSlotForNetworkAttachment(cloned, NetworkAttachmentType.HostOnly);
+		machineUtils.runScriptOnNode(partialNodeMetadata,
+				new SetHostname(slot), RunScriptOptions.NONE);
+		LoginCredentials credentials = partialNodeMetadata.getCredentials();
+		return new NodeAndInitialCredentials<IMachine>(cloned, cloneName,
+				credentials);
+	}
 
    private NodeMetadata buildPartialNodeMetadata(IMachine clone) {
       NodeMetadataBuilder nodeMetadataBuilder = new NodeMetadataBuilder();
@@ -194,8 +209,8 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
       String guestOsUser = clone.getExtraData(GUEST_OS_USER);
       String guestOsPassword = clone.getExtraData(GUEST_OS_PASSWORD);
       LoginCredentials loginCredentials = new LoginCredentials(guestOsUser, guestOsPassword, null, true);
-      nodeMetadataBuilder.credentials(loginCredentials);    
-      return  nodeMetadataBuilder.build();
+      nodeMetadataBuilder.credentials(loginCredentials);
+      return nodeMetadataBuilder.build();
    }
 
    private long findSlotForNetworkAttachment(IMachine clone, NetworkAttachmentType networkAttachmentType) {

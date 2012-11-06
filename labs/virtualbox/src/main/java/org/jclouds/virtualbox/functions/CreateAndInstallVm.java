@@ -26,6 +26,7 @@ import static org.jclouds.virtualbox.config.VirtualBoxConstants.GUEST_OS_USER;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_PRECONFIGURATION_URL;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
@@ -41,10 +42,14 @@ import org.jclouds.rest.annotations.BuildVersion;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.virtualbox.domain.IsoSpec;
 import org.jclouds.virtualbox.domain.MasterSpec;
+import org.jclouds.virtualbox.domain.NetworkInterfaceCard;
+import org.jclouds.virtualbox.domain.NetworkSpec;
 import org.jclouds.virtualbox.domain.VmSpec;
+import org.jclouds.virtualbox.statements.EnableNetworkInterface;
 import org.jclouds.virtualbox.statements.InstallGuestAdditions;
 import org.jclouds.virtualbox.util.MachineController;
 import org.jclouds.virtualbox.util.MachineUtils;
+import org.jclouds.virtualbox.util.NetworkUtils;
 import org.virtualbox_4_2.DeviceType;
 import org.virtualbox_4_2.IMachine;
 import org.virtualbox_4_2.IMediumAttachment;
@@ -69,6 +74,7 @@ public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
    private final Predicate<SshClient> sshResponds;
    private final Function<IMachine, SshClient> sshClientForIMachine;
    private final MachineUtils machineUtils;
+   private final NetworkUtils networkUtils;
    private final IMachineToNodeMetadata imachineToNodeMetadata;
    private final MachineController machineController;
    private final String version;
@@ -78,13 +84,14 @@ public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
    public CreateAndInstallVm(
             CreateAndRegisterMachineFromIsoIfNotAlreadyExists CreateAndRegisterMachineFromIsoIfNotAlreadyExists,
             IMachineToNodeMetadata imachineToNodeMetadata, Predicate<SshClient> sshResponds,
-            Function<IMachine, SshClient> sshClientForIMachine, MachineUtils machineUtils,
+            Function<IMachine, SshClient> sshClientForIMachine, MachineUtils machineUtils, NetworkUtils networkUtils,
             MachineController machineController, @BuildVersion String version,
             @Named(VIRTUALBOX_PRECONFIGURATION_URL) String preconfigurationUrl) {
       this.createAndRegisterMachineFromIsoIfNotAlreadyExists = CreateAndRegisterMachineFromIsoIfNotAlreadyExists;
       this.sshResponds = sshResponds;
       this.sshClientForIMachine = sshClientForIMachine;
       this.machineUtils = machineUtils;
+      this.networkUtils = networkUtils;
       this.imachineToNodeMetadata = imachineToNodeMetadata;
       this.machineController = machineController;
       this.version = Iterables.get(Splitter.on('r').split(version), 0);
@@ -127,8 +134,23 @@ public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
       ExecResponse gaInstallationResponse = Futures.getUnchecked(execInstallGA);
       checkState(gaInstallationResponse.getExitStatus() == 0);
       
-      machineController.ensureMachineIsShutdown(masterName);      
 
+      NetworkInterfaceCard hostOnlyInterfaceCard = networkUtils.createHostOnlyNIC(1l);
+      machineUtils.sharedLockMachineAndApply(masterName, new AttachHostOnlyAdapter(hostOnlyInterfaceCard));
+
+      try {
+		ExecResponse execResponse = machineUtils.runScriptOnNode(nodeMetadata, 
+		          new EnableNetworkInterface(hostOnlyInterfaceCard), RunScriptOptions.NONE).get();
+	} catch (InterruptedException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (ExecutionException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+      machineController.ensureMachineIsShutdown(masterName);
+
+      
       // detach DVD and ISOs, if needed
       Iterable<IMediumAttachment> mediumAttachments = Iterables.filter(
             masterMachine.getMediumAttachmentsOfController("IDE Controller"),

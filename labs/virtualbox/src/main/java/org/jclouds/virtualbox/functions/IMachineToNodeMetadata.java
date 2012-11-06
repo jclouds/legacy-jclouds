@@ -19,6 +19,9 @@
 
 package org.jclouds.virtualbox.functions;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.compute.util.ComputeServiceUtils.parseOsFamilyOrUnrecognized;
+import static org.jclouds.compute.util.ComputeServiceUtils.parseVersionOrReturnEmptyString;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.GUEST_OS_PASSWORD;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.GUEST_OS_USER;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_NODE_NAME_SEPARATOR;
@@ -31,6 +34,8 @@ import javax.annotation.Resource;
 import javax.inject.Named;
 
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.reference.ComputeServiceConstants;
@@ -40,14 +45,16 @@ import org.jclouds.domain.LoginCredentials;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.logging.Logger;
 import org.jclouds.virtualbox.util.NetworkUtils;
-import org.testng.collections.Lists;
+import org.virtualbox_4_2.IGuestOSType;
 import org.virtualbox_4_2.IMachine;
 import org.virtualbox_4_2.INetworkAdapter;
 import org.virtualbox_4_2.MachineState;
 import org.virtualbox_4_2.NetworkAttachmentType;
+import org.virtualbox_4_2.VirtualBoxManager;
 
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
+import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -59,14 +66,18 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
    
+   private final Supplier<VirtualBoxManager> virtualboxManager;
    private final Map<MachineState, Status> toPortableNodeStatus;
    private final NetworkUtils networkUtils;
+   private final Map<OsFamily, Map<String, String>> osVersionMap;
 
    @Inject
-   public IMachineToNodeMetadata(Map<MachineState, NodeMetadata.Status> toPortableNodeStatus, 
-         NetworkUtils networkUtils) {
+   public IMachineToNodeMetadata(Supplier<VirtualBoxManager> virtualboxManager, Map<MachineState, NodeMetadata.Status> toPortableNodeStatus, 
+         NetworkUtils networkUtils, Map<OsFamily, Map<String, String>> osVersionMap) {
+      this.virtualboxManager = checkNotNull(virtualboxManager, "virtualboxManager");
       this.toPortableNodeStatus = toPortableNodeStatus;
       this.networkUtils = networkUtils;
+      this.osVersionMap = checkNotNull(osVersionMap, "osVersionMap");
    }
    
    @Override
@@ -98,6 +109,13 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
          nodeState = Status.UNRECOGNIZED;
       nodeMetadataBuilder.status(nodeState);
       nodeMetadataBuilder = getIpAddresses(vm, nodeMetadataBuilder);
+      
+      IGuestOSType guestOSType = virtualboxManager.get().getVBox().getGuestOSType(vm.getOSTypeId());
+      OsFamily family = parseOsFamilyOrUnrecognized(guestOSType.getDescription());
+      String version = parseVersionOrReturnEmptyString(family, guestOSType.getDescription(), osVersionMap);
+      OperatingSystem os = OperatingSystem.builder().description(guestOSType.getDescription()).family(family)
+               .version(version).is64Bit(guestOSType.getIs64Bit()).build();
+      nodeMetadataBuilder.operatingSystem(os);
 
       String guestOsUser = vm.getExtraData(GUEST_OS_USER);
       String guestOsPassword = vm.getExtraData(GUEST_OS_PASSWORD);

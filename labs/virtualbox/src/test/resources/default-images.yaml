@@ -352,3 +352,57 @@ images:
                       #choose-mirror-bin mirror/suite select maverick
                       #d-i debian-installer/allow_unauthenticated string true
                       choose-mirror-bin mirror/http/proxy string
+    - id: centos-6.3-amd64
+      name: centos-6.3-amd64
+      description: centos-6.3 (amd64)
+      os_arch: amd64
+      os_family: centos
+      os_description: centos
+      os_version: 6.3
+      os_64bit: true
+      iso: http://www.mirrorservice.org/sites/mirror.centos.org/6.3/isos/i386/CentOS-6.3-x86_64-LiveCD.iso
+      iso_md5: 9953ff1cc2ef31da89a0e1f993ee6335
+      username: root
+      credential: password
+      keystroke_sequence: |
+                <Esc><Esc><Enter> 
+                /install/vmlinuz noapic preseed/url=http://10.0.2.2:8080/src/test/resources/preseed.cfg 
+                console-setup/ask_detect=false keyboard-configuration/layoutcode=us 
+                initrd=/install/initrd.gz -- <Enter>
+      preseed_cfg: |
+                      ## Options to set on the command line
+                      install
+                      cdrom
+                      lang en_US.UTF-8
+                      keyboard us
+                      network --bootproto=dhcp
+                      rootpw --iscrypted $1$damlkd,f$UC/u5pUts5QiU3ow.CSso/
+                      firewall --enabled --service=ssh
+                      authconfig --enableshadow --passalgo=sha512
+                      selinux --disabled
+                      timezone UTC
+                      bootloader --location=mbr
+                      text
+                      skipx
+                      zerombr
+                      clearpart --all --initlabel
+                      autopart
+                      auth  --useshadow  --enablemd5
+                      firstboot --disabled
+                      reboot%packages --ignoremissing
+                      @core
+                      bzip2
+                      kernel-devel
+                      kernel-headers
+                      -ipw2100-firmware
+                      -ipw2200-firmware
+                      -ivtv-firmware
+                      %end
+                      %post
+                      /usr/bin/yum -y install sudo
+                      /usr/sbin/groupadd veewee
+                      /usr/sbin/useradd veewee -g veewee -G wheel
+                      echo "veewee"|passwd --stdin veewee
+                      echo "veewee        ALL=(ALL)       NOPASSWD: ALL" >> /etc/sudoers.d/veewee
+                      chmod 0440 /etc/sudoers.d/veewee
+                      %end

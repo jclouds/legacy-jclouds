@@ -51,9 +51,9 @@ import org.virtualbox_4_2.IVirtualBox;
 import org.virtualbox_4_2.VBoxException;
 import org.virtualbox_4_2.VirtualBoxManager;
 
-import com.beust.jcommander.internal.Lists;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.common.collect.Lists;
 
 /**
  * @author Mattias Holmqvist
@@ -102,7 +102,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Functi
       String group = "";
       String settingsFile = manager.get().getVBox().composeMachineFilename(vmSpec.getVmName(), group , flags , workingDir);
 
-      IMachine newMachine = vBox.createMachine(settingsFile, vmSpec.getVmName(), groups, vmSpec.getOsTypeId(), flags);
+      IMachine newMachine = vBox.createMachine(settingsFile, vmSpec.getVmName(), groups, "RedHat_64" /*vmSpec.getOsTypeId()*/, flags);
       
       manager.get().getVBox().registerMachine(newMachine);
       ensureConfiguration(masterSpec);

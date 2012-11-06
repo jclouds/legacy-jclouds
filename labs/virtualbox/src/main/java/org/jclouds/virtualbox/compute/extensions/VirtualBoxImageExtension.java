@@ -54,7 +54,6 @@ import org.virtualbox_4_2.IProgress;
 import org.virtualbox_4_2.ISnapshot;
 import org.virtualbox_4_2.VirtualBoxManager;
 
-import com.beust.jcommander.internal.Lists;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
