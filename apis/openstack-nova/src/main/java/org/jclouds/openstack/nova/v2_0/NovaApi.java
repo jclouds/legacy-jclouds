@@ -25,19 +25,20 @@ import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.Zone;
 import org.jclouds.location.functions.ZoneToEndpoint;
-import org.jclouds.openstack.nova.v2_0.extensions.ServerAdminApi;
 import org.jclouds.openstack.nova.v2_0.extensions.FlavorExtraSpecsApi;
 import org.jclouds.openstack.nova.v2_0.extensions.FloatingIPApi;
 import org.jclouds.openstack.nova.v2_0.extensions.HostAdministrationApi;
 import org.jclouds.openstack.nova.v2_0.extensions.HostAggregateApi;
 import org.jclouds.openstack.nova.v2_0.extensions.KeyPairApi;
-import org.jclouds.openstack.nova.v2_0.extensions.QuotaClassApi;
 import org.jclouds.openstack.nova.v2_0.extensions.QuotaApi;
+import org.jclouds.openstack.nova.v2_0.extensions.QuotaClassApi;
 import org.jclouds.openstack.nova.v2_0.extensions.SecurityGroupApi;
+import org.jclouds.openstack.nova.v2_0.extensions.ServerAdminApi;
 import org.jclouds.openstack.nova.v2_0.extensions.ServerWithSecurityGroupsApi;
 import org.jclouds.openstack.nova.v2_0.extensions.SimpleTenantUsageApi;
 import org.jclouds.openstack.nova.v2_0.extensions.VirtualInterfaceApi;
 import org.jclouds.openstack.nova.v2_0.extensions.VolumeApi;
+import org.jclouds.openstack.nova.v2_0.extensions.VolumeAttachmentApi;
 import org.jclouds.openstack.nova.v2_0.extensions.VolumeTypeApi;
 import org.jclouds.openstack.nova.v2_0.features.FlavorApi;
 import org.jclouds.openstack.nova.v2_0.features.ImageApi;
@@ -132,13 +133,6 @@ public interface NovaApi {
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
    /**
-    * Provides synchronous access to Volume features.
-    */
-   @Delegate
-   Optional<? extends VolumeApi> getVolumeExtensionForZone(
-         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
-
-   /**
     * Provides synchronous access to Virtual Interface features.
     */
    @Delegate
@@ -185,6 +179,20 @@ public interface NovaApi {
     */
    @Delegate
    Optional<? extends QuotaClassApi> getQuotaClassExtensionForZone(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
+
+   /**
+    * Provides synchronous access to Volume features.
+    */
+   @Delegate
+   Optional<? extends VolumeApi> getVolumeExtensionForZone(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
+
+   /**
+    * Provides synchronous access to Volume Attachment features.
+    */
+   @Delegate
+   Optional<? extends VolumeAttachmentApi> getVolumeAttachmentExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
    /**

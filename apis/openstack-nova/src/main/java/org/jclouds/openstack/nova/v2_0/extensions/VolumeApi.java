@@ -83,29 +83,37 @@ public interface VolumeApi {
     * List volume attachments for a given instance.
     * 
     * @return all Floating IPs
+    * @deprecated To be removed in jclouds 1.7
+    * @see VolumeAttachmentApi#listAttachmentsOnServer(String)
     */
-   FluentIterable<? extends VolumeAttachment> listAttachmentsOnServer(String serverId);
+   @Deprecated FluentIterable<? extends VolumeAttachment> listAttachmentsOnServer(String serverId);
 
    /**
     * Get a specific attached volume.
     * 
     * @return data about the given volume attachment.
+    * @deprecated To be removed in jclouds 1.7
+    * @see VolumeAttachmentApi#getAttachmentForVolumeOnServer(String, String)
     */
-   VolumeAttachment getAttachmentForVolumeOnServer(String volumeId, String serverId);
+   @Deprecated VolumeAttachment getAttachmentForVolumeOnServer(String volumeId, String serverId);
 
    /**
     * Attach a volume to an instance
     * 
     * @return data about the new volume attachment
+    * @deprecated To be removed in jclouds 1.7
+    * @see VolumeAttachmentApi#attachVolumeToServerAsDevice(String, String, String)
     */
-   VolumeAttachment attachVolumeToServerAsDevice(String volumeId, String serverId, String device);
+   @Deprecated VolumeAttachment attachVolumeToServerAsDevice(String volumeId, String serverId, String device);
 
    /**
     * Detach a Volume from an instance.
     * 
     * @return true if successful
+    * @deprecated To be removed in jclouds 1.7
+    * @see VolumeAttachmentApi#detachVolumeFromServer(String, String)
     */
-   Boolean detachVolumeFromServer(String server_id, String volumeId);
+   @Deprecated Boolean detachVolumeFromServer(String server_id, String volumeId);
 
    /**
     * Returns a summary list of snapshots.
