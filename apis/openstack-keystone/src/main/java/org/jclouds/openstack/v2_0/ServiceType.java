@@ -49,4 +49,8 @@ public interface ServiceType {
     * Network Service (Quantum)
     */
    public static final String NETWORK = "network";
+   /**
+    * Block Storage (Cinder)
+    */
+   public static final String BLOCK_STORAGE = "volume";
 }

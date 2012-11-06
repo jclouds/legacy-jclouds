@@ -64,6 +64,18 @@
             "type": "rax:load-balancer"
         }, {
             "endpoints": [{
+                "publicURL": "https:\/\/dfw.blockstorage.api.rackspacecloud.com\/v1\/40806637803162",
+                "tenantId": "40806637803162",
+                "region": "DFW"
+            }, {
+                "publicURL": "https:\/\/ord.blockstorage.api.rackspacecloud.com\/v1\/40806637803162",
+                "tenantId": "40806637803162",
+                "region": "ORD"
+            }],
+            "type": "volume",
+            "name": "cloudBlockStorage"
+        }, {
+            "endpoints": [{
                 "tenantId": "40806637803162",
                 "publicURL": "https:\/\/monitoring.api.rackspacecloud.com\/v1.0\/40806637803162"
             }],
