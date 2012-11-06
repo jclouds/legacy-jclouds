@@ -29,12 +29,14 @@ import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.StatementList;
 import org.jclouds.scriptbuilder.domain.Statements;
+import org.jclouds.scriptbuilder.domain.chef.Role;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
 /**
@@ -43,6 +45,7 @@ import com.google.common.collect.Lists;
  * @author Ignasi Barrera
  */
 public class ChefSolo implements Statement {
+
    public static Builder builder() {
       return new Builder();
    }
@@ -50,7 +53,8 @@ public class ChefSolo implements Statement {
    public static class Builder {
       private String cookbooksArchiveLocation;
       private String jsonAttributes;
-      private List<String> recipes = Lists.newArrayList();
+      private List<Role> roles = Lists.newArrayList();
+      private List<String> runlist = Lists.newArrayList();
 
       public Builder cookbooksArchiveLocation(String cookbooksArchiveLocation) {
          this.cookbooksArchiveLocation = checkNotNull(cookbooksArchiveLocation, "cookbooksArchiveLocation");
@@ -62,30 +66,64 @@ public class ChefSolo implements Statement {
          return this;
       }
 
+      public Builder defineRole(Role role) {
+         this.roles.add(checkNotNull(role, "role"));
+         return this;
+      }
+
+      public Builder defineRoles(Iterable<Role> roles) {
+         this.roles = ImmutableList.<Role> copyOf(checkNotNull(roles, "roles"));
+         return this;
+      }
+
       public Builder installRecipe(String recipe) {
-         this.recipes.add(checkNotNull(recipe, "recipe"));
+         this.runlist.add("recipe[" + checkNotNull(recipe, "recipe") + "]");
          return this;
       }
 
       public Builder installRecipes(Iterable<String> recipes) {
-         this.recipes = ImmutableList.<String> copyOf(checkNotNull(recipes, "recipes"));
+         this.runlist.addAll(Lists.newArrayList(transform(checkNotNull(recipes, "recipes"),
+               new Function<String, String>() {
+                  @Override
+                  public String apply(String input) {
+                     return "recipe[" + input + "]";
+                  }
+               })));
+         return this;
+      }
+
+      public Builder installRole(String role) {
+         this.runlist.add("role[" + checkNotNull(role, "role") + "]");
+         return this;
+      }
+
+      public Builder installRoles(Iterable<String> roles) {
+         this.runlist.addAll(Lists.newArrayList(transform(checkNotNull(roles, "roles"), new Function<String, String>() {
+            @Override
+            public String apply(String input) {
+               return "role[" + input + "]";
+            }
+         })));
          return this;
       }
 
       public ChefSolo build() {
-         return new ChefSolo(cookbooksArchiveLocation, recipes, Optional.fromNullable(jsonAttributes));
+         return new ChefSolo(cookbooksArchiveLocation, Optional.fromNullable(jsonAttributes), roles, runlist);
       }
 
    }
 
    private String cookbooksArchiveLocation;
    private Optional<String> jsonAttributes;
-   private List<String> recipes;
+   private List<Role> roles;
+   private List<String> runlist;
    private final InstallChefGems installChefGems = new InstallChefGems();
 
-   public ChefSolo(String cookbooksArchiveLocation, List<String> recipes, Optional<String> jsonAttributes) {
+   public ChefSolo(String cookbooksArchiveLocation, Optional<String> jsonAttributes, List<Role> roles,
+         List<String> runlist) {
       this.cookbooksArchiveLocation = checkNotNull(cookbooksArchiveLocation, "cookbooksArchiveLocation must be set");
-      this.recipes = ImmutableList.copyOf(checkNotNull(recipes, "recipes must be set"));
+      this.roles = ImmutableList.copyOf(checkNotNull(roles, "roles must be set"));
+      this.runlist = ImmutableList.copyOf(checkNotNull(runlist, "runlist must be set"));
       this.jsonAttributes = checkNotNull(jsonAttributes, "jsonAttributes must be set");
    }
 
@@ -97,23 +135,31 @@ public class ChefSolo implements Statement {
 
       ImmutableList.Builder<Statement> statements = ImmutableList.builder();
       statements.add(installChefGems);
+      statements.add(exec("{md} /var/chef"));
+
+      // The roles directory must contain one file for each role definition
+      if (!roles.isEmpty()) {
+         statements.add(exec("{md} /var/chef/roles"));
+         for (Role role : roles) {
+            statements.add(createOrOverwriteFile("/var/chef/roles/" + role.getName() + ".json",
+                  ImmutableSet.of(role.toJsonString())));
+         }
+      }
 
       ImmutableMap.Builder<String, String> chefSoloOptions = ImmutableMap.builder();
       chefSoloOptions.put("-N", "`hostname`");
       chefSoloOptions.put("-r", cookbooksArchiveLocation);
 
       if (jsonAttributes.isPresent()) {
-         statements.add(exec("{md} /var/chef"));
          statements.add(createOrOverwriteFile("/var/chef/node.json", jsonAttributes.asSet()));
          chefSoloOptions.put("-j", "/var/chef/node.json");
       }
 
-      if (!recipes.isEmpty()) {
-         chefSoloOptions.put("-o", recipesToRunlistString(recipes));
+      if (!runlist.isEmpty()) {
+         chefSoloOptions.put("-o", Joiner.on(',').join(runlist));
       }
 
       String options = Joiner.on(' ').withKeyValueSeparator(" ").join(chefSoloOptions.build());
-
       statements.add(Statements.exec(String.format("chef-solo %s", options)));
 
       return new StatementList(statements.build()).render(family);
@@ -122,15 +168,6 @@ public class ChefSolo implements Statement {
    @Override
    public Iterable<String> functionDependencies(OsFamily family) {
       return installChefGems.functionDependencies(family);
-   }
-
-   private static String recipesToRunlistString(List<String> recipes) {
-      return Joiner.on(',').join(transform(recipes, new Function<String, String>() {
-         @Override
-         public String apply(String input) {
-            return "recipe[" + input + "]";
-         }
-      }));
    }
 
 }
