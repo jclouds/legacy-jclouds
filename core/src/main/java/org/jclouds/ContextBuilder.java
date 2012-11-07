@@ -91,17 +91,46 @@ import com.google.inject.Stage;
 import com.google.inject.TypeLiteral;
 
 /**
- * Creates {@link RestContext} or {@link Injector} instances based on the most commonly requested
- * arguments.
+ * Creates {@link Context} or {@link Injector} configured to an api and
+ * endpoint. Alternatively, this can be used to make a portable {@link View} of
+ * that api.
+ * 
+ * <br/>
+ * ex. to build a {@link RestContext} on a particular endpoint using the typed
+ * interface
+ * 
+ * <pre>
+ * context = ContextBuilder.newBuilder(new NovaApiMetadata())
+ *                         .endpoint("http://10.10.10.10:5000/v2.0")
+ *                         .credentials(user, pass)
+ *                         .build(NovaApiMetadata.CONTEXT_TOKEN)
+ * </pre>
+ * 
+ * <br/>
+ * ex. to build a {@link View} of a particular backend context, looked up by
+ * key.
+ * 
+ * <pre>
+ * context = ContextBuilder.newBuilder("aws-s3")
+ *                         .credentials(apikey, secret)
+ *                         .buildView(BlobStoreContext.class);
+ * </pre>
+ * 
+ * <h4>Assumptions</h4>
+ * 
+ * Threadsafe objects will be bound as singletons to the Injector or Context
+ * provided.
  * <p/>
- * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
- * <p/>
- * <p/>
- * If no <code>Module</code>s are specified, the default {@link JDKLoggingModule logging} and
- * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
+ * If no <code>Module</code>s are specified, the default
+ * {@link JDKLoggingModule logging} and
+ * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be
+ * installed.
  * 
  * @author Adrian Cole, Andrew Newdigate
- * @see RestContext
+ * @see Context
+ * @see View
+ * @see ApiMetadata
+ * @see ProviderMetadata
  */
 public class ContextBuilder {
 
