@@ -31,9 +31,17 @@ import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
 
 /**
+ * This class is deprecated in favor of {@link ContextBuilder}. Please view
+ * sample usage below:
+ * 
+ * <pre>
+ * context = ContextBuilder.newBuilder("aws-elb")
+ *                         .credentials(apikey, secret)
+ *                         .buildView(LoadBalancerServiceContext.class);
+ * </pre>
  * 
  * @see ContextBuilder
- * @see LoadBalancerServiceContextBuilder
+ * @deprecated  As of version 1.5, replaced by {@link ContextBuilder}
  * @author Adrian Cole
  */
 @Deprecated
