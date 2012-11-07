@@ -32,8 +32,6 @@ import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.openstack.nova.v2_0.NovaApi;
 import org.jclouds.openstack.nova.v2_0.NovaAsyncApi;
-import org.jclouds.openstack.nova.v2_0.extensions.ServerAdminApi;
-import org.jclouds.openstack.nova.v2_0.extensions.ServerAdminAsyncApi;
 import org.jclouds.openstack.nova.v2_0.extensions.ExtensionNamespaces;
 import org.jclouds.openstack.nova.v2_0.extensions.FlavorExtraSpecsApi;
 import org.jclouds.openstack.nova.v2_0.extensions.FlavorExtraSpecsAsyncApi;
@@ -51,6 +49,8 @@ import org.jclouds.openstack.nova.v2_0.extensions.QuotaClassApi;
 import org.jclouds.openstack.nova.v2_0.extensions.QuotaClassAsyncApi;
 import org.jclouds.openstack.nova.v2_0.extensions.SecurityGroupApi;
 import org.jclouds.openstack.nova.v2_0.extensions.SecurityGroupAsyncApi;
+import org.jclouds.openstack.nova.v2_0.extensions.ServerAdminApi;
+import org.jclouds.openstack.nova.v2_0.extensions.ServerAdminAsyncApi;
 import org.jclouds.openstack.nova.v2_0.extensions.ServerWithSecurityGroupsApi;
 import org.jclouds.openstack.nova.v2_0.extensions.ServerWithSecurityGroupsAsyncApi;
 import org.jclouds.openstack.nova.v2_0.extensions.SimpleTenantUsageApi;
@@ -59,6 +59,8 @@ import org.jclouds.openstack.nova.v2_0.extensions.VirtualInterfaceApi;
 import org.jclouds.openstack.nova.v2_0.extensions.VirtualInterfaceAsyncApi;
 import org.jclouds.openstack.nova.v2_0.extensions.VolumeApi;
 import org.jclouds.openstack.nova.v2_0.extensions.VolumeAsyncApi;
+import org.jclouds.openstack.nova.v2_0.extensions.VolumeAttachmentApi;
+import org.jclouds.openstack.nova.v2_0.extensions.VolumeAttachmentAsyncApi;
 import org.jclouds.openstack.nova.v2_0.extensions.VolumeTypeApi;
 import org.jclouds.openstack.nova.v2_0.extensions.VolumeTypeAsyncApi;
 import org.jclouds.openstack.nova.v2_0.features.FlavorApi;
@@ -103,7 +105,6 @@ public class NovaRestClientModule<S extends NovaApi, A extends NovaAsyncApi> ext
          .put(KeyPairApi.class, KeyPairAsyncApi.class)
          .put(HostAdministrationApi.class, HostAdministrationAsyncApi.class)
          .put(SimpleTenantUsageApi.class, SimpleTenantUsageAsyncApi.class)
-         .put(VolumeApi.class, VolumeAsyncApi.class)
          .put(VirtualInterfaceApi.class, VirtualInterfaceAsyncApi.class)
          .put(ServerWithSecurityGroupsApi.class, ServerWithSecurityGroupsAsyncApi.class)
          .put(ServerAdminApi.class, ServerAdminAsyncApi.class)
@@ -111,6 +112,8 @@ public class NovaRestClientModule<S extends NovaApi, A extends NovaAsyncApi> ext
          .put(FlavorExtraSpecsApi.class, FlavorExtraSpecsAsyncApi.class)
          .put(QuotaApi.class, QuotaAsyncApi.class)
          .put(QuotaClassApi.class, QuotaClassAsyncApi.class)
+         .put(VolumeApi.class, VolumeAsyncApi.class)
+         .put(VolumeAttachmentApi.class, VolumeAttachmentAsyncApi.class)
          .put(VolumeTypeApi.class, VolumeTypeAsyncApi.class)
          .build();
    
