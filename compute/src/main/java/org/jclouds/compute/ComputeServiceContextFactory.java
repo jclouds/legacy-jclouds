@@ -31,9 +31,19 @@ import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
 
 /**
+ * This class is deprecated in favor of {@link ContextBuilder}. Please view
+ * sample usage below:
+ * 
+ * <pre>
+ * context = ContextBuilder.newBuilder("openstack-nova")
+ *                         .endpoint("http://10.10.10.10:5000/v2.0")
+ *                         .credentials(user, pass)
+ *                         .modules(singleton(new SshjSshClientModule()))
+ *                         .buildView(ComputeServiceContext.class);
+ * </pre>
  * 
  * @see ContextBuilder
- * @see ComputeServiceContextBuilder
+ * @deprecated  As of version 1.5, replaced by {@link ContextBuilder}
  * @author Adrian Cole
  */
 @Deprecated
