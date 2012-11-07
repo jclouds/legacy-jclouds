@@ -1,9 +1,9 @@
 package org.jclouds.snia.cdmi.v1.queryparams;
 
 /**
- * Generate CDMI data object query parameters Example: dataObject =
- * dataApi.get(containerName,dataObjectNameIn,DataObjectQueryParams.Builder.field("parentURI"));
- * dataObject = dataApi.get(containerName,dataObjectNameIn,DataObjectQueryParams.Builder.value());
+ * Generate CDMI data object query parameters Example: dataObject = dataApi.get(containerName
+ * ,dataObjectNameIn,DataObjectQueryParams.Builder.field("parentURI")); dataObject =
+ * dataApi.get(containerName,dataObjectNameIn,DataObjectQueryParams. Builder.value());
  * 
  * @author Kenneth Nagin
  */
@@ -46,6 +46,17 @@ public class DataObjectQueryParams extends CDMIObjectQueryParams {
    }
 
    /**
+    * Get CDMI data object's with any query parameter string
+    * 
+    * @param anyQueryParam
+    * @return this
+    */
+   public DataObjectQueryParams any(String anyQueryParam) {
+      super.any(anyQueryParam);
+      return this;
+   }
+
+   /**
     * Get CDMI data object's value with range
     * 
     * @return this
@@ -81,6 +92,11 @@ public class DataObjectQueryParams extends CDMIObjectQueryParams {
       public static DataObjectQueryParams metadata(String prefix) {
          DataObjectQueryParams options = new DataObjectQueryParams();
          return (DataObjectQueryParams) options.metadata(prefix);
+      }
+
+      public static DataObjectQueryParams any(String anyQueryParam) {
+         DataObjectQueryParams options = new DataObjectQueryParams();
+         return (DataObjectQueryParams) options.any(anyQueryParam);
       }
 
       public static DataObjectQueryParams value() {

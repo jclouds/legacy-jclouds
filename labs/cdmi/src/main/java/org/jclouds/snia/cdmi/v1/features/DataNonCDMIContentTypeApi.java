@@ -35,28 +35,28 @@ import org.jclouds.snia.cdmi.v1.queryparams.DataObjectQueryParams;
 @Timeout(duration = 600, timeUnit = TimeUnit.SECONDS)
 public interface DataNonCDMIContentTypeApi {
    /**
-    * get CDMI Data object
+    * get CDMI Data object's payload
     * 
     * @param containerName
     *           containerName must end with a forward slash, /.
     * @param dataObjectName
     *           dataObjectName must not end with a forward slash, /.
-    * @return DataObjectNonCDMIContentType
+    * @return payload
     * 
     *         <pre>
     *  Examples: 
     *  {@code
-    *  dataObject = get("myDataObject");
-    *  dataObject = get("parentContainer/childContainer/","myDataObject");
+    *  payload = getPayload("mycontainer/myDataObject");
+    *  payload = getPayload("parentContainer/childContainer/myDataObject");
     * }
     * 
     * <pre>
-    * @see DataNonCDMIContentTypeAsyncApi#getValue(String dataObjectName)
+    * @see DataNonCDMIContentTypeAsyncApi#getPayload(String dataObjectName)
     */
-   Payload getValue(String dataObjectName);
+   Payload getPayload(String dataObjectName);
 
    /**
-    * get CDMI Data object
+    * get CDMI Data object's payload
     * 
     * @param containerName
     *           containerName must end with a forward slash, /.
@@ -64,17 +64,17 @@ public interface DataNonCDMIContentTypeApi {
     *           dataObjectName must not end with a forward slash, /.
     * @param range
     *           a valid ranges-specifier (see RFC2616 Section 14.35.1)
-    * @return DataObjectNonCDMIContentType
+    * @return payload
     * 
     *         <pre>
     *  Examples: 
     *  {@code
-    *  dataObject = get("myDataObject","bytes=0-10");
+    *  payload = get("mycontainer/myDataObject","bytes=0-10");
     * }
     * 
     *         <pre>
     */
-   Payload getValue(String dataObjectName, String range);
+   Payload getPayload(String dataObjectName, String range);
 
    /**
     * get CDMI Data object
@@ -84,14 +84,58 @@ public interface DataNonCDMIContentTypeApi {
     * @param dataObjectName
     *           dataObjectName must not end with a forward slash, /.
     * @param queryParams
-    *           enables getting only certain fields, metadata, value range
+    *           enables specifying additional information when retrieving payload
+    * @return payload
+    * 
+    *         <pre>
+    *  Examples: 
+    *  {@code
+    *  dataObject = get("mycontainer/myDataObject","bytes=0-10");
+    * }
+    * 
+    *         <pre>
+    */
+   Payload getPayload(String dataObjectName, DataObjectQueryParams queryParams);
+
+   /**
+    * get CDMI Data object's payload constrained by byte range
+    * 
+    * @param containerName
+    *           containerName must end with a forward slash, /.
+    * @param dataObjectName
+    *           dataObjectName must not end with a forward slash, /.
+    * @param range
+    *           a valid ranges-specifier (see RFC2616 Section 14.35.1)
+    * @param queryParams
+    *           enables getting only certain fields, metadata, value range, any
+    * @return Payload
+    * 
+    *         <pre>
+    *  Examples: 
+    *  {@code
+    *  dataObject = get("mycontainer/myDataObject","bytes=0-10");
+    * }
+    * 
+    *         <pre>
+    */
+   Payload getPayload(String dataObjectName, String range, DataObjectQueryParams queryParams);
+
+   /**
+    * get CDMI Data object
+    * 
+    * @param containerName
+    *           containerName must end with a forward slash, /.
+    * @param dataObjectName
+    *           dataObjectName must not end with a forward slash, /.
+    * @param queryParams
+    *           enables getting only certain fields, metadata, value range, any
     * @return DataObject
     * 
     *         <pre>
     *  Examples: 
     *  {@code
-    *  dataObject = get("myDataObject",ContainerQueryParams.Builder.field("parentURI").field("objectName"));
-    *  dataObject = get("myDataObject",ContainerQueryParams.Builder.value(0,10));
+    *  dataObject = get("mycontainer/myDataObject",ContainerQueryParams.Builder.field("parentURI").field("objectName"));
+    *  dataObject = get("mycontainer/myDataObject",ContainerQueryParams.Builder.any("myquery=anyQueryParam"));
     * }
     * 
     *         <pre>
@@ -111,10 +155,10 @@ public interface DataNonCDMIContentTypeApi {
     *           <pre>
     *  Examples: 
     *  {@code
-    *  create("myDataObject",new StringPayload("value");
-    *  create("myDataObject",new ByteArrayPayload(bytes);
-    *  create("myDataObject",new FilePayload(myFileIn);
-    *  create("myDataObject",new InputStreamPayload(is);
+    *  create("mycontainer/myDataObject",new StringPayload("value");
+    *  create("mycontainer/myDataObject",new ByteArrayPayload(bytes);
+    *  create("mycontainer/myDataObject",new FilePayload(myFileIn);
+    *  create("mycontainer/myDataObject",new InputStreamPayload(is);
     *  
     *  File f = new File("yellow-flowers.jpg");
     *  payloadIn = new InputStreamPayload(new FileInputStream(f));
@@ -123,7 +167,7 @@ public interface DataNonCDMIContentTypeApi {
     *            .contentType(MediaType.JPEG.toString())
     *            .contentLength(new Long(inFile.length()))
     *            .build()));
-    *  dataNonCDMIContentTypeApi.create(containerName, f.getName(),
+    *  dataNonCDMIContentTypeApi.create(containerName+ f.getName(),
     * 					payloadIn);
     * }
     * 
@@ -132,8 +176,8 @@ public interface DataNonCDMIContentTypeApi {
    void create(String dataObjectName, Payload payload);
 
    /**
-    * create CDMI Data object partial Non CDMI Content Type Only part of the object is contained in
-    * the payload and the X-CDMI-Partial header flag is set to true
+    * create CDMI Data object partial Non CDMI Content Type Only part of the object is contained in the payload and the
+    * X-CDMI-Partial header flag is set to true
     * 
     * 
     * 
@@ -145,10 +189,10 @@ public interface DataNonCDMIContentTypeApi {
     *           <pre>
     *  Examples: 
     *  {@code
-    *  createPartial("myDataObject",new StringPayload("value");
-    *  createPartial("myDataObject",new ByteArrayPayload(bytes);
-    *  createPartial("myDataObject",new FilePayload(myFileIn);
-    *  createPartial("myDataObject",new InputStreamPayload(is);
+    *  createPartial("mycontainer/myDataObject",new StringPayload("value");
+    *  createPartial("mycontainer/myDataObject",new ByteArrayPayload(bytes);
+    *  createPartial("mycontainer/myDataObject",new FilePayload(myFileIn);
+    *  createPartial("mycontainer/myDataObject",new InputStreamPayload(is);
     * }
     * 
     *           <pre>
@@ -168,7 +212,7 @@ public interface DataNonCDMIContentTypeApi {
     *           <pre>
     *  Examples: 
     *  {@code
-    *  create("myDataObject",new String("value");
+    *  create("mycontainer/myDataObject",new String("value");
     * }
     * 
     *           <pre>
@@ -186,7 +230,7 @@ public interface DataNonCDMIContentTypeApi {
     *           <pre>
     *  Examples: 
     *  {@code
-    *  delete("myDataObject");
+    *  delete("mycontainer/myDataObject");
     * }
     * 
     *           <pre>

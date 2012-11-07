@@ -37,7 +37,6 @@ import org.jclouds.snia.cdmi.v1.features.DataNonCDMIContentTypeAsyncApi;
 import org.jclouds.snia.cdmi.v1.features.DomainApi;
 import org.jclouds.snia.cdmi.v1.features.DomainAsyncApi;
 import org.jclouds.snia.cdmi.v1.handlers.CDMIErrorHandler;
-
 import com.google.common.collect.ImmutableMap;
 
 /**
