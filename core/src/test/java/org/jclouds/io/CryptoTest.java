@@ -18,6 +18,7 @@
  */
 package org.jclouds.io;
 
+import static javax.xml.bind.DatatypeConverter.parseBase64Binary;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -28,8 +29,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
-
-import static javax.xml.bind.DatatypeConverter.*;
 
 import org.jclouds.PerformanceTest;
 import org.jclouds.crypto.Crypto;
