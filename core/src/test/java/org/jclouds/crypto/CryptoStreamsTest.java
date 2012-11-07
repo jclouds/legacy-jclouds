@@ -48,13 +48,13 @@ public class CryptoStreamsTest {
    }
 
    @Test
-   public void testBase64DecodeURLSafeJson() throws IOException {
+   public void testBase64DecodeUrlJson() throws IOException {
       byte[] decoded = CryptoStreams.base64("eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9");
       assertEquals(new String(decoded, Charsets.UTF_8), "{\"alg\":\"RS256\",\"typ\":\"JWT\"}");
    }
 
    @Test
-   public void testBase64DecodeURLSafeNoPadding() throws IOException {
+   public void testBase64DecodeUrlNoPadding() throws IOException {
 
       byte[] decoded = CryptoStreams
             .base64("eyJpc3MiOiI3NjEzMjY3OTgwNjktcjVtbGpsbG4xcmQ0bHJiaGc3NWVmZ2lncDM2bTc4ajVAZGV2ZWxvcGVyLmdzZXJ2aWNlYWNjb3VudC5jb20iLCJzY29wZSI6Imh0dHBzOi8vd3d3Lmdvb2dsZWFwaXMuY29tL2F1dGgvcHJlZGljdGlvbiIsImF1ZCI6Imh0dHBzOi8vYWNjb3VudHMuZ29vZ2xlLmNvbS9vL29hdXRoMi90b2tlbiIsImV4cCI6MTMyODU1NDM4NSwiaWF0IjoxMzI4NTUwNzg1fQ");
@@ -67,27 +67,27 @@ public class CryptoStreamsTest {
    }
    
    @Test
-   public void testBase64EncodeURLSafeNoSinglePad() {
+   public void testBase64EncodeUrlNoSinglePad() {
       assertEquals(CryptoStreams.base64("any carnal pleasu".getBytes(Charsets.UTF_8)), "YW55IGNhcm5hbCBwbGVhc3U=");
-      assertEquals(CryptoStreams.base64URLSafe("any carnal pleasu".getBytes(Charsets.UTF_8)), "YW55IGNhcm5hbCBwbGVhc3U");
+      assertEquals(CryptoStreams.base64Url("any carnal pleasu".getBytes(Charsets.UTF_8)), "YW55IGNhcm5hbCBwbGVhc3U");
    }
 
    @Test
-   public void testBase64EncodeURLSafeNoDoublePad() {
+   public void testBase64EncodeUrlNoDoublePad() {
       assertEquals(CryptoStreams.base64("any carnal pleas".getBytes(Charsets.UTF_8)), "YW55IGNhcm5hbCBwbGVhcw==");
-      assertEquals(CryptoStreams.base64URLSafe("any carnal pleas".getBytes(Charsets.UTF_8)), "YW55IGNhcm5hbCBwbGVhcw");
+      assertEquals(CryptoStreams.base64Url("any carnal pleas".getBytes(Charsets.UTF_8)), "YW55IGNhcm5hbCBwbGVhcw");
    }
 
    @Test
-   public void testBase64EncodeURLSafeHyphenNotPlus() {
+   public void testBase64EncodeUrlHyphenNotPlus() {
       assertEquals(CryptoStreams.base64("i?>".getBytes(Charsets.UTF_8)), "aT8+");
-      assertEquals(CryptoStreams.base64URLSafe("i?>".getBytes(Charsets.UTF_8)), "aT8-");
+      assertEquals(CryptoStreams.base64Url("i?>".getBytes(Charsets.UTF_8)), "aT8-");
    }
    
    @Test
-   public void testBase64EncodeURLSafeUnderscoreNotSlash() {
+   public void testBase64EncodeUrlUnderscoreNotSlash() {
       assertEquals(CryptoStreams.base64("i??".getBytes(Charsets.UTF_8)), "aT8/");
-      assertEquals(CryptoStreams.base64URLSafe("i??".getBytes(Charsets.UTF_8)), "aT8_");
+      assertEquals(CryptoStreams.base64Url("i??".getBytes(Charsets.UTF_8)), "aT8_");
    }
    
    @Test

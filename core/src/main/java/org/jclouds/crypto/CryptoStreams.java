@@ -82,11 +82,15 @@ public class CryptoStreams {
     * encodes value substituting {@code '-' and '_'} for {@code '+' and '/'},
     * and without adding trailing {@code '='} padding.
     * 
+    * <h3>Note</h3>
+    * This utility will be replaced with Guava 14+ BaseEncoding.base64Url()
+    * 
     * @see <a
     *      href="http://en.wikipedia.org/wiki/Base64#URL_applications">url-safe
     *      encoding</a>
     */
-   public static String base64URLSafe(byte[] in) {
+   @Beta
+   public static String base64Url(byte[] in) {
       String provisional = base64(in);
       int length = provisional.length();
       if (length == 0)
