@@ -29,6 +29,8 @@ import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.StatementList;
 import org.jclouds.scriptbuilder.domain.Statements;
+import org.jclouds.scriptbuilder.domain.chef.DataBag;
+import org.jclouds.scriptbuilder.domain.chef.DataBag.Item;
 import org.jclouds.scriptbuilder.domain.chef.Role;
 
 import com.google.common.base.Function;
@@ -54,6 +56,7 @@ public class ChefSolo implements Statement {
       private String cookbooksArchiveLocation;
       private String jsonAttributes;
       private List<Role> roles = Lists.newArrayList();
+      private List<DataBag> databags = Lists.newArrayList();
       private List<String> runlist = Lists.newArrayList();
 
       public Builder cookbooksArchiveLocation(String cookbooksArchiveLocation) {
@@ -73,6 +76,22 @@ public class ChefSolo implements Statement {
 
       public Builder defineRoles(Iterable<Role> roles) {
          this.roles = ImmutableList.<Role> copyOf(checkNotNull(roles, "roles"));
+         return this;
+      }
+
+      /**
+       * @since Chef 0.10.4
+       */
+      public Builder defineDataBag(DataBag dataBag) {
+         this.databags.add(checkNotNull(dataBag, "dataBag"));
+         return this;
+      }
+
+      /**
+       * @since Chef 0.10.4
+       */
+      public Builder defineDataBags(Iterable<DataBag> databags) {
+         this.databags = ImmutableList.<DataBag> copyOf(checkNotNull(databags, "databags"));
          return this;
       }
 
@@ -108,21 +127,24 @@ public class ChefSolo implements Statement {
       }
 
       public ChefSolo build() {
-         return new ChefSolo(cookbooksArchiveLocation, Optional.fromNullable(jsonAttributes), roles, runlist);
+         return new ChefSolo(cookbooksArchiveLocation, Optional.fromNullable(jsonAttributes), Optional.of(roles),
+               Optional.of(databags), runlist);
       }
 
    }
 
    private String cookbooksArchiveLocation;
    private Optional<String> jsonAttributes;
-   private List<Role> roles;
+   private Optional<List<Role>> roles;
+   private Optional<List<DataBag>> databags;
    private List<String> runlist;
    private final InstallChefGems installChefGems = new InstallChefGems();
 
-   public ChefSolo(String cookbooksArchiveLocation, Optional<String> jsonAttributes, List<Role> roles,
-         List<String> runlist) {
+   public ChefSolo(String cookbooksArchiveLocation, Optional<String> jsonAttributes, Optional<List<Role>> roles,
+         Optional<List<DataBag>> databags, List<String> runlist) {
       this.cookbooksArchiveLocation = checkNotNull(cookbooksArchiveLocation, "cookbooksArchiveLocation must be set");
-      this.roles = ImmutableList.copyOf(checkNotNull(roles, "roles must be set"));
+      this.roles = checkNotNull(roles, "roles must be set");
+      this.databags = checkNotNull(databags, "databags must be set");
       this.runlist = ImmutableList.copyOf(checkNotNull(runlist, "runlist must be set"));
       this.jsonAttributes = checkNotNull(jsonAttributes, "jsonAttributes must be set");
    }
@@ -138,11 +160,25 @@ public class ChefSolo implements Statement {
       statements.add(exec("{md} /var/chef"));
 
       // The roles directory must contain one file for each role definition
-      if (!roles.isEmpty()) {
+      if (roles.isPresent() && !roles.get().isEmpty()) {
          statements.add(exec("{md} /var/chef/roles"));
-         for (Role role : roles) {
+         for (Role role : roles.get()) {
             statements.add(createOrOverwriteFile("/var/chef/roles/" + role.getName() + ".json",
                   ImmutableSet.of(role.toJsonString())));
+         }
+      }
+
+      // Each data bag item must be defined in a file inside the data bag
+      // directory
+      if (databags.isPresent() && !databags.get().isEmpty()) {
+         statements.add(exec("{md} /var/chef/data_bags"));
+         for (DataBag databag : databags.get()) {
+            String databagFolder = "/var/chef/data_bags/" + databag.getName();
+            statements.add(exec("{md} " + databagFolder));
+            for (Item item : databag.getItems()) {
+               statements.add(createOrOverwriteFile(databagFolder + "/" + item.getName() + ".json",
+                     ImmutableSet.of(item.getJsonData())));
+            }
          }
       }
 

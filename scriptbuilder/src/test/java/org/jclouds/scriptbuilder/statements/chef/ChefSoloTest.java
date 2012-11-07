@@ -24,6 +24,7 @@ import java.io.IOException;
 
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.ShellToken;
+import org.jclouds.scriptbuilder.domain.chef.DataBag;
 import org.jclouds.scriptbuilder.domain.chef.Role;
 import org.testng.annotations.Test;
 
@@ -142,5 +143,38 @@ public class ChefSoloTest {
                   + "\t{\"name\": \"foo\",\"description\":\"\",\"default_attributes\":{},\"override_attributes\":{},"
                   + "\"json_class\":\"Chef::Role\",\"chef_type\":\"role\",\"run_list\":[\"recipe[apache2]\"]}"
                   + "\nEND_OF_JCLOUDS_FILE\nchef-solo -N `hostname` -r /tmp/cookbooks -o role[foo],recipe[git]\n");
+   }
+
+   public void testChefSoloWithDataBag() throws IOException {
+      DataBag databag = DataBag.builder().name("foo").item("item", "{\"foo\":\"bar\"}").build();
+      String script = ChefSolo.builder().cookbooksArchiveLocation("/tmp/cookbooks").defineDataBag(databag)
+            .installRecipe("apache2").build().render(OsFamily.UNIX);
+      assertEquals(
+            script,
+            Resources.toString(Resources.getResource("test_install_ruby." + ShellToken.SH.to(OsFamily.UNIX)),
+                  Charsets.UTF_8)
+                  + "installChefGems || return 1\nmkdir -p /var/chef\n"
+                  + "mkdir -p /var/chef/data_bags\nmkdir -p /var/chef/data_bags/foo\n"
+                  + "cat > /var/chef/data_bags/foo/item.json <<-'END_OF_JCLOUDS_FILE'\n"
+                  + "\t{\"foo\":\"bar\"}\nEND_OF_JCLOUDS_FILE\n"
+                  + "chef-solo -N `hostname` -r /tmp/cookbooks -o recipe[apache2]\n");
+   }
+
+   public void testChefSoloWithDataBagAndMultipleItems() throws IOException {
+      DataBag databag = DataBag.builder().name("foo").item("item", "{\"foo\":\"bar\"}")
+            .item("item2", "{\"foo2\":\"bar2\"}").build();
+      String script = ChefSolo.builder().cookbooksArchiveLocation("/tmp/cookbooks").defineDataBag(databag)
+            .installRecipe("apache2").build().render(OsFamily.UNIX);
+      assertEquals(
+            script,
+            Resources.toString(Resources.getResource("test_install_ruby." + ShellToken.SH.to(OsFamily.UNIX)),
+                  Charsets.UTF_8)
+                  + "installChefGems || return 1\nmkdir -p /var/chef\n"
+                  + "mkdir -p /var/chef/data_bags\nmkdir -p /var/chef/data_bags/foo\n"
+                  + "cat > /var/chef/data_bags/foo/item.json <<-'END_OF_JCLOUDS_FILE'\n"
+                  + "\t{\"foo\":\"bar\"}\nEND_OF_JCLOUDS_FILE\n"
+                  + "cat > /var/chef/data_bags/foo/item2.json <<-'END_OF_JCLOUDS_FILE'\n"
+                  + "\t{\"foo2\":\"bar2\"}\nEND_OF_JCLOUDS_FILE\n"
+                  + "chef-solo -N `hostname` -r /tmp/cookbooks -o recipe[apache2]\n");
    }
 }
