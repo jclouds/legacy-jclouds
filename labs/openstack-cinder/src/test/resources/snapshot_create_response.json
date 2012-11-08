@@ -1,0 +1,11 @@
+{
+    "snapshot": {
+        "status": "creating",
+        "display_name": "jclouds-test-snapshot",
+        "created_at": "2012-11-02T16:23:27.000000",
+        "display_description": "jclouds test snapshot",
+        "volume_id": "ea6f70ef-2784-40b9-9d14-d7f33c507c3f",
+        "id": "67d03df1-ce5d-4ba7-adbe-492ceb80170b",
+        "size": 1
+    }
+}
