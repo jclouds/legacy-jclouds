@@ -1,10 +1,10 @@
 package org.jclouds.snia.cdmi.v1.queryparams;
 
 /**
- * Generate CDMI object query parameters Note: The preferred implementation would use jax-rs
- * queryParam. However, the CDMI query parameters specification does not conform to jax-rs
- * queryParam of key=value separated by &. Rather it follows the form: ?<fieldname>;<fieldname>;....
- * ?metadata:<prefix>;... ?children:<from>-<to>;... ?value:<from>-<to>;...
+ * Generate CDMI object query parameters Note: The preferred implementation would use jax-rs queryParam. However, the
+ * CDMI query parameters specification does not conform to jax-rs queryParam of key=value separated by &. Rather it
+ * follows the form: ?<fieldname>;<fieldname>;.... ?metadata:<prefix>;... ?children:<from>-<to>;...
+ * ?value:<from>-<to>;...
  * 
  * @author Kenneth Nagin
  */
@@ -48,15 +48,36 @@ public class CDMIObjectQueryParams {
       return this;
    }
 
+   /**
+    * Get CDMI data object's with any query parameter string
+    * 
+    * @param anyQueryParam
+    * @return this
+    */
+   public CDMIObjectQueryParams any(String anyQueryParam) {
+      queryParams = queryParams + anyQueryParam + ";";
+      return this;
+   }
+
    public static class Builder {
       public static CDMIObjectQueryParams field(String fieldname) {
          CDMIObjectQueryParams options = new CDMIObjectQueryParams();
          return (CDMIObjectQueryParams) options.field(fieldname);
       }
 
+      public static CDMIObjectQueryParams metadata() {
+         CDMIObjectQueryParams options = new CDMIObjectQueryParams();
+         return (CDMIObjectQueryParams) options.metadata();
+      }
+
       public static CDMIObjectQueryParams metadata(String prefix) {
          CDMIObjectQueryParams options = new CDMIObjectQueryParams();
          return (CDMIObjectQueryParams) options.metadata(prefix);
+      }
+
+      public static CDMIObjectQueryParams any(String anyQueryParam) {
+         CDMIObjectQueryParams options = new CDMIObjectQueryParams();
+         return (CDMIObjectQueryParams) options.any(anyQueryParam);
       }
 
    }

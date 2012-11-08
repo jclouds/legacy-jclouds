@@ -1,8 +1,8 @@
 package org.jclouds.snia.cdmi.v1.queryparams;
 
 /**
- * Generate CDMI container query parameters Example: container =
- * containerApi.get(containerName,ContainerQueryParams.Builder.field("parentURI")); container =
+ * Generate CDMI container query parameters Example: container = containerApi.get
+ * (containerName,ContainerQueryParams.Builder.field("parentURI")); container =
  * containerApi.get(containerName,ContainerQueryParams.Builder.children(0,3));
  * 
  * @author Kenneth Nagin
@@ -46,6 +46,17 @@ public class ContainerQueryParams extends CDMIObjectQueryParams {
    }
 
    /**
+    * Get CDMI data object's with any query parameter string
+    * 
+    * @param anyQueryParam
+    * @return this
+    */
+   public ContainerQueryParams any(String anyQueryParam) {
+      super.any(anyQueryParam);
+      return this;
+   }
+
+   /**
     * Get CDMI container's children
     * 
     * @return this
@@ -81,6 +92,11 @@ public class ContainerQueryParams extends CDMIObjectQueryParams {
       public static ContainerQueryParams metadata(String prefix) {
          ContainerQueryParams options = new ContainerQueryParams();
          return (ContainerQueryParams) options.metadata(prefix);
+      }
+
+      public static ContainerQueryParams any(String anyQueryParam) {
+         ContainerQueryParams options = new ContainerQueryParams();
+         return (ContainerQueryParams) options.any(anyQueryParam);
       }
 
       public static ContainerQueryParams children() {
