@@ -22,19 +22,29 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
+import org.jclouds.cloudstack.ec2.config.CloudStackEC2RestClientModule;
 import org.jclouds.ec2.EC2ApiMetadata;
-import org.jclouds.ec2.EC2AsyncClient;
-import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.compute.config.EC2ComputeServiceContextModule;
+import org.jclouds.ec2.compute.config.EC2ResolveImagesModule;
+import org.jclouds.rest.RestContext;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.common.reflect.TypeToken;
+import com.google.inject.Module;
 
 /**
- * Implementation of {@link ApiMetadata} for the CloudStackEC2 (EC2 clone) api.
+ * Implementation of {@link ApiMetadata} for the CloudStack's EC2-clone API
  * 
  * @author Adrian Cole
  */
 public class CloudStackEC2ApiMetadata extends EC2ApiMetadata {
+
    /** The serialVersionUID */
-   private static final long serialVersionUID = 3060225665040763827L;
+   private static final long serialVersionUID = -8539835226183747429L;
+
+   public static final TypeToken<RestContext<CloudStackEC2Client, CloudStackEC2AsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<CloudStackEC2Client, CloudStackEC2AsyncClient>>() {
+      private static final long serialVersionUID = -6449920293625658712L;
+   };
 
    private static Builder builder() {
       return new Builder();
@@ -52,23 +62,29 @@ public class CloudStackEC2ApiMetadata extends EC2ApiMetadata {
    protected CloudStackEC2ApiMetadata(Builder builder) {
       super(builder);
    }
-
+   
    public static Properties defaultProperties() {
       Properties properties = EC2ApiMetadata.defaultProperties();
+      // any property overrides here
       return properties;
    }
 
    public static class Builder extends EC2ApiMetadata.Builder {
-      protected Builder() {
-         super(EC2Client.class, EC2AsyncClient.class);
+      protected Builder(){
+         super(CloudStackEC2Client.class, CloudStackEC2AsyncClient.class);
          id("cloudstack-ec2")
-         .name("CloudStackEC2 (EC2 clone) API")
+         .name("CloudBridge (EC2 clone) API")
          .version("2010-11-15")
          .defaultEndpoint("http://localhost:8090/bridge/rest/AmazonEC2")
          .documentation(URI.create("http://docs.cloudstack.org/CloudBridge_Documentation"))
-         .defaultProperties(CloudStackEC2ApiMetadata.defaultProperties());
+         .defaultProperties(CloudStackEC2ApiMetadata.defaultProperties())
+         .context(CONTEXT_TOKEN)
+         .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
+                                     .add(CloudStackEC2RestClientModule.class)
+                                     .add(EC2ResolveImagesModule.class)
+                                     .add(EC2ComputeServiceContextModule.class).build());
       }
-
+      
       @Override
       public CloudStackEC2ApiMetadata build() {
          return new CloudStackEC2ApiMetadata(this);

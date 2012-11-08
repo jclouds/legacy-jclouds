@@ -16,19 +16,27 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.cloudstack.ec2.services;
+package org.jclouds.cloudstack.ec2;
 
-import org.jclouds.ec2.services.InstanceClientLiveTest;
-import org.testng.annotations.Test;
+import java.util.concurrent.TimeUnit;
+
+import org.jclouds.cloudstack.ec2.services.CloudStackAMIClient;
+import org.jclouds.concurrent.Timeout;
+import org.jclouds.ec2.EC2Client;
+import org.jclouds.rest.annotations.Delegate;
 
 /**
+ * Provides synchronous access to EC2 services.
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", singleThreaded = true, testName = "CloudStackInstanceClientLiveTest")
-public class CloudStackEC2InstanceClientLiveTest extends InstanceClientLiveTest {
-   public CloudStackEC2InstanceClientLiveTest() {
-      provider = "cloudstack-ec2";
-   }
+@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
+public interface CloudStackEC2Client extends EC2Client {
 
+   /**
+    * {@inheritDoc}
+    */
+   @Delegate
+   @Override
+   CloudStackAMIClient getAMIServices();   
 }
