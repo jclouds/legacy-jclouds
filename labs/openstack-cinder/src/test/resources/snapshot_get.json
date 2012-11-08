@@ -1,0 +1,13 @@
+{
+    "snapshot": {
+        "status": "available",
+        "display_name": "jclouds-test-snapshot",
+        "created_at": "2012-11-02T16:23:27.000000",
+        "display_description": "jclouds test snapshot",
+        "os-extended-snapshot-attributes:progress": "100%",
+        "volume_id": "ea6f70ef-2784-40b9-9d14-d7f33c507c3f",
+        "os-extended-snapshot-attributes:project_id": "cc03fd4f503f4d9c986b381b8abe6af5",
+        "id": "67d03df1-ce5d-4ba7-adbe-492ceb80170b",
+        "size": 1
+    }
+}
