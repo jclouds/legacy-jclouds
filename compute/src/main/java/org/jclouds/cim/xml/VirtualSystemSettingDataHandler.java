@@ -18,10 +18,6 @@
  */
 package org.jclouds.cim.xml;
 
-import static com.google.common.base.Predicates.equalTo;
-import static com.google.common.base.Predicates.not;
-import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Iterables.transform;
 import static org.jclouds.util.SaxUtils.currentOrNull;
 import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
@@ -34,7 +30,6 @@ import org.jclouds.cim.VirtualSystemSettingData.AutomaticStartupAction;
 import org.jclouds.http.functions.ParseSax;
 import org.xml.sax.Attributes;
 
-import com.google.common.base.Function;
 import com.google.common.base.Splitter;
 
 /**
@@ -102,15 +97,7 @@ public class VirtualSystemSettingDataHandler extends ParseSax.HandlerWithResult<
          } else if (equalsOrSuffix(qName, "VirtualSystemIdentifier")) {
             builder.virtualSystemIdentifier(current);
          } else if (equalsOrSuffix(qName, "VirtualSystemType")) {
-            builder.virtualSystemTypes(filter(transform(Splitter.on(',').split(current),
-                     new Function<String, String>() {
-
-                        @Override
-                        public String apply(String input) {
-                           return input.trim();
-                        }
-
-                     }), not(equalTo(""))));
+            builder.virtualSystemTypes(Splitter.on(',').trimResults().omitEmptyStrings().split(current));
          } else if (equalsOrSuffix(qName, "Notes")) {
             builder.notes(current);
          }

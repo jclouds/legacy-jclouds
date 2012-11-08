@@ -19,9 +19,6 @@
 package org.jclouds.providers.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Predicates.equalTo;
-import static com.google.common.base.Predicates.not;
-import static com.google.common.collect.Iterables.filter;
 import static org.jclouds.Constants.PROPERTY_API;
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_BUILD_VERSION;
@@ -85,7 +82,7 @@ public class UpdateProviderMetadataFromProperties implements Function<Properties
                .toBuilder()
                .apiMetadata(apiMetadata)
                .id(providerId)
-               .iso3166Codes(filter(Splitter.on(',').split(isoCodes), not(equalTo(""))))
+               .iso3166Codes(Splitter.on(',').omitEmptyStrings().split(isoCodes))
                .endpoint(endpoint).defaultProperties(mutable).build();
 
       return providerMetadata;
