@@ -18,9 +18,6 @@
  */
 package org.jclouds.cloudsigma.functions;
 
-import static com.google.common.base.Predicates.equalTo;
-import static com.google.common.base.Predicates.not;
-import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Sets.newTreeSet;
 
 import java.util.Set;
@@ -49,6 +46,6 @@ public class SplitNewlines implements Function<HttpResponse, Set<String>> {
 
    @Override
    public Set<String> apply(HttpResponse response) {
-      return newTreeSet(filter(Splitter.on('\n').split(returnStringIf200.apply(response)), not(equalTo(""))));
+      return newTreeSet(Splitter.on('\n').omitEmptyStrings().split(returnStringIf200.apply(response)));
    }
 }

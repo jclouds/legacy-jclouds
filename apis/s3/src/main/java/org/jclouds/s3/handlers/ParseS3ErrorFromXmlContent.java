@@ -18,9 +18,6 @@
  */
 package org.jclouds.s3.handlers;
 
-import static com.google.common.base.Predicates.equalTo;
-import static com.google.common.base.Predicates.not;
-import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.jclouds.s3.reference.S3Constants.PROPERTY_S3_SERVICE_PATH;
 import static org.jclouds.s3.reference.S3Constants.PROPERTY_S3_VIRTUAL_HOST_BUCKETS;
@@ -88,7 +85,7 @@ public class ParseS3ErrorFromXmlContent extends ParseAWSErrorFromXmlContent {
                } else if (command.getCurrentRequest().getEndpoint().getPath()
                         .indexOf(servicePath.equals("/") ? "/" : servicePath + "/") == 0) {
                   String path = command.getCurrentRequest().getEndpoint().getPath().substring(servicePath.length());
-                  List<String> parts = newArrayList(filter(Splitter.on('/').split(path), not(equalTo(""))));
+                  List<String> parts = newArrayList(Splitter.on('/').omitEmptyStrings().split(path));
                   if (parts.size() == 1) {
                      exception = new ContainerNotFoundException(parts.get(0), message);
                   } else if (parts.size() > 1) {
