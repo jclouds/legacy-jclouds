@@ -39,7 +39,7 @@ import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.snia.cdmi.v1.binders.BindQueryParmsToSuffix;
 import org.jclouds.snia.cdmi.v1.domain.DataObject;
-import org.jclouds.snia.cdmi.v1.filters.BasicAuthenticationAndTenantId;
+import org.jclouds.snia.cdmi.v1.filters.AuthenticationFilterSwitch;
 import org.jclouds.snia.cdmi.v1.filters.StripExtraAcceptHeader;
 import org.jclouds.snia.cdmi.v1.functions.ParseObjectFromHeadersAndHttpContent;
 import org.jclouds.snia.cdmi.v1.queryparams.DataObjectQueryParams;
@@ -55,20 +55,20 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see <a href="http://www.snia.org/cdmi">api doc</a>
  */
 @SkipEncoding({ '/', '=' })
-@RequestFilters({ BasicAuthenticationAndTenantId.class, StripExtraAcceptHeader.class })
+@RequestFilters({ AuthenticationFilterSwitch.class, StripExtraAcceptHeader.class })
 public interface DataNonCDMIContentTypeAsyncApi {
    /**
-    * @see DataNonCDMIContentTypeApi#getValue(String dataObjectName)
+    * @see DataNonCDMIContentTypeApi#getPayload(String dataObjectName)
     */
    @GET
    @Consumes(MediaType.MEDIA_TYPE_WILDCARD)
    @ResponseParser(ParseObjectFromHeadersAndHttpContent.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Path("/{dataObjectName}")
-   ListenableFuture<org.jclouds.io.Payload> getValue(@PathParam("dataObjectName") String dataObjectName);
+   ListenableFuture<org.jclouds.io.Payload> getPayload(@PathParam("dataObjectName") String dataObjectName);
 
    /**
-    * @see DataNonCDMIContentTypeApi#getValue(String dataObjectName, String range )
+    * @see DataNonCDMIContentTypeApi#getPayload(String dataObjectName, String range )
     */
 
    @GET
@@ -76,8 +76,20 @@ public interface DataNonCDMIContentTypeAsyncApi {
    @ResponseParser(ParseObjectFromHeadersAndHttpContent.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Path("/{dataObjectName}")
-   ListenableFuture<org.jclouds.io.Payload> getValue(@PathParam("dataObjectName") String dataObjectName,
+   ListenableFuture<org.jclouds.io.Payload> getPayload(@PathParam("dataObjectName") String dataObjectName,
             @HeaderParam("Range") String range);
+
+   /**
+    * @see DataNonCDMIContentTypeApi#getPayload(String dataObjectName, DataObjectQueryParams queryParams )
+    */
+
+   @GET
+   @Consumes(MediaType.MEDIA_TYPE_WILDCARD)
+   @ResponseParser(ParseObjectFromHeadersAndHttpContent.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Path("/{dataObjectName}")
+   ListenableFuture<org.jclouds.io.Payload> getPayload(@PathParam("dataObjectName") String dataObjectName,
+            @BinderParam(BindQueryParmsToSuffix.class) DataObjectQueryParams queryParams);
 
    /**
     * @see DataNonCDMIContentTypeApi#get(String dataObjectName, DataObjectQueryParams queryParams )
@@ -90,6 +102,19 @@ public interface DataNonCDMIContentTypeAsyncApi {
             @BinderParam(BindQueryParmsToSuffix.class) DataObjectQueryParams queryParams);
 
    /**
+    * @see DataNonCDMIContentTypeApi#getPayload(String dataObjectName, String range, DataObjectQueryParams queryParams)
+    */
+
+   @GET
+   @Consumes(MediaType.MEDIA_TYPE_WILDCARD)
+   @ResponseParser(ParseObjectFromHeadersAndHttpContent.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Path("/{dataObjectName}")
+   ListenableFuture<org.jclouds.io.Payload> getPayload(@PathParam("dataObjectName") String dataObjectName,
+            @HeaderParam("Range") String range,
+            @BinderParam(BindQueryParmsToSuffix.class) DataObjectQueryParams queryParams);
+
+   /**
     * @see DataNonCDMIContentTypeApi#create(String dataObjectName, org.jclouds.io.Payload payload )
     */
    @PUT
@@ -99,8 +124,7 @@ public interface DataNonCDMIContentTypeAsyncApi {
    ListenableFuture<Void> create(@PathParam("dataObjectName") String dataObjectName, org.jclouds.io.Payload payload);
 
    /**
-    * @see DataNonCDMIContentTypeApi#createPartial(String dataObjectName, org.jclouds.io.Payload
-    *      payload )
+    * @see DataNonCDMIContentTypeApi#createPartial(String dataObjectName, org.jclouds.io.Payload payload )
     */
    @PUT
    @Consumes(MediaType.MEDIA_TYPE_WILDCARD)

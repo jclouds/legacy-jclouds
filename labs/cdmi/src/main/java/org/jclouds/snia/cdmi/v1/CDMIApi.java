@@ -61,10 +61,9 @@ public interface CDMIApi {
    DataApi getDataApiForContainer(@PathParam("containerName") String containerName);
 
    /**
-    * Provides synchronous access to Data Object Resource Operations.
+    * Provides synchronous access to Data Object Resource Operations using Non CDMI Content type.
     */
    @Delegate
    @Path("/{containerName}")
    DataNonCDMIContentTypeApi getDataNonCDMIContentTypeApiForContainer(@PathParam("containerName") String containerName);
-
 }

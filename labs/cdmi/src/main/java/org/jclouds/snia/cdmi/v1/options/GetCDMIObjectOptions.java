@@ -3,20 +3,19 @@ package org.jclouds.snia.cdmi.v1.options;
 import org.jclouds.http.options.BaseHttpRequestOptions;
 
 /**
- * Optional get CDMI object options Note: We use BaseHttpRequestOptions.pathSuffix to include the
- * CDMI query parameters rather than queryParam or MatrixParam because the CDMI specification is not
- * following the standard usage. This is the summary of the CDMI specification: To read one or more
- * requested fields from an existing CDMI container object, one of the following requests shall be
- * performed: GET <root URI>/<ContainerName>/<TheContainerName>/?<fieldname>;<fieldname>;... GET
- * <root URI>/<ContainerName>/<TheContainerName>/?children:<range>;... GET <root
+ * Optional get CDMI object options Note: We use BaseHttpRequestOptions.pathSuffix to include the CDMI query parameters
+ * rather than queryParam or MatrixParam because the CDMI specification is not following the standard usage. This is the
+ * summary of the CDMI specification: To read one or more requested fields from an existing CDMI container object, one
+ * of the following requests shall be performed: GET <root
+ * URI>/<ContainerName>/<TheContainerName>/?<fieldname>;<fieldname>;... GET <root
+ * URI>/<ContainerName>/<TheContainerName>/?children:<range>;... GET <root
  * URI>/<ContainerName>/<TheContainerName>/?metadata:<prefix>;...
  * 
- * For example: GET /MyContainer/?parentURI;children HTTP/1.1 GET
- * /MyContainer/?childrenrange;children:0-2 HTTP/1.1
+ * For example: GET /MyContainer/?parentURI;children HTTP/1.1 GET /MyContainer/?childrenrange;children:0-2 HTTP/1.1
  * 
- * To read one or more requested fields from an existing data object, one of the following requests
- * shall be performed: GET <root URI>/<ContainerName>/<DataObjectName>?<fieldname>;<fieldname>;...
- * GET <root URI>/<ContainerName>/<DataObjectName>?value:<range>;... GET <root
+ * To read one or more requested fields from an existing data object, one of the following requests shall be performed:
+ * GET <root URI>/<ContainerName>/<DataObjectName>?<fieldname>;<fieldname>;... GET <root
+ * URI>/<ContainerName>/<DataObjectName>?value:<range>;... GET <root
  * URI>/<ContainerName>/<DataObjectName>?metadata:<prefix>;...
  * 
  * @author Kenneth Nagin
