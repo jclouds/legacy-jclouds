@@ -18,17 +18,16 @@
  */
 package org.jclouds.cloudstack.ec2.services;
 
-import org.jclouds.ec2.services.InstanceClientLiveTest;
-import org.testng.annotations.Test;
+import org.jclouds.aws.filters.FormSigner;
+import org.jclouds.ec2.services.AMIAsyncClient;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.VirtualHost;
 
 /**
- * 
  * @author Adrian Cole
  */
-@Test(groups = "live", singleThreaded = true, testName = "CloudStackInstanceClientLiveTest")
-public class CloudStackEC2InstanceClientLiveTest extends InstanceClientLiveTest {
-   public CloudStackEC2InstanceClientLiveTest() {
-      provider = "cloudstack-ec2";
-   }
+@RequestFilters(FormSigner.class)
+@VirtualHost
+public interface CloudStackAMIAsyncClient extends AMIAsyncClient {
 
 }

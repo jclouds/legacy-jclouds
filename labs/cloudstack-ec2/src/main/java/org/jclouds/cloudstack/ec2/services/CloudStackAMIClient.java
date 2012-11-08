@@ -18,17 +18,26 @@
  */
 package org.jclouds.cloudstack.ec2.services;
 
-import org.jclouds.ec2.services.InstanceClientLiveTest;
-import org.testng.annotations.Test;
+import java.util.concurrent.TimeUnit;
+
+import org.jclouds.concurrent.Timeout;
+import org.jclouds.ec2.options.CreateImageOptions;
+import org.jclouds.ec2.services.AMIClient;
+import org.jclouds.javax.annotation.Nullable;
 
 /**
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", singleThreaded = true, testName = "CloudStackInstanceClientLiveTest")
-public class CloudStackEC2InstanceClientLiveTest extends InstanceClientLiveTest {
-   public CloudStackEC2InstanceClientLiveTest() {
-      provider = "cloudstack-ec2";
-   }
+@Timeout(duration = 90, timeUnit = TimeUnit.SECONDS)
+public interface CloudStackAMIClient extends AMIClient {
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   //overriding to set a new default timeout as this is a blocking call
+   @Timeout(duration = 15, timeUnit = TimeUnit.MINUTES)
+   String createImageInRegion(@Nullable String region, String name, String instanceId, CreateImageOptions... options);
 
 }
