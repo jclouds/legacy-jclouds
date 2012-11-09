@@ -84,7 +84,8 @@ public class VirtualBoxApiMetadata extends BaseApiMetadata {
 
       properties.put(VIRTUALBOX_IMAGES_DESCRIPTOR, yamlDescriptor);
       properties.put(VIRTUALBOX_PRECONFIGURATION_URL, "http://10.0.2.2:23232/preseed.cfg");
-      properties.setProperty(TEMPLATE, "osFamily=UBUNTU,osVersionMatches=12.04.1,os64Bit=true,osArchMatches=amd64"); 
+      properties.setProperty(TEMPLATE, "osFamily=UBUNTU,osVersionMatches=12.04.1,os64Bit=true,osArchMatches=amd64");
+      //properties.setProperty(TEMPLATE, "osFamily=CENTOS,osVersionMatches=6.3,os64Bit=true,osArchMatches=amd64");
       return properties;
    }
 

@@ -42,12 +42,12 @@
         <level value="ERROR" />
         <appender-ref ref="CONSOLE" />
     </root>
-    
+<!--    
    <logger name="net.schmizz.sshj">
         <level value="ERROR" />
         <appender-ref ref="CONSOLE" />
     </logger>
-
+-->
     <logger name="org.jclouds">
         <level value="DEBUG" />
         <appender-ref ref="FILE" />

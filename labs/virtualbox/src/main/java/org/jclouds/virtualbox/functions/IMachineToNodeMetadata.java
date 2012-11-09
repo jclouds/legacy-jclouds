@@ -154,7 +154,8 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
 
             } else if (adapter.getAttachmentType() == NetworkAttachmentType.HostOnly) {
                // TODO quick test first
-               String clientIpAddress = networkUtils.getIpAddressFromNicSlot(vm.getName(), adapter.getSlot());
+//               String clientIpAddress = networkUtils.getIpAddressFromNicSlot(vm.getName(), adapter.getSlot());
+               String clientIpAddress = networkUtils.getValidHostOnlyIpFromVm(vm.getName());             
                publicIpAddresses.add(clientIpAddress);
             }
          }

@@ -20,7 +20,6 @@
 package org.jclouds.virtualbox.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.GUEST_OS_PASSWORD;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.GUEST_OS_USER;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_GUEST_MEMORY;
@@ -65,6 +64,7 @@ import org.virtualbox_4_2.VirtualBoxManager;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 
 /**
  * Creates nodes, by cloning a master vm and based on the provided {@link NodeSpec}. Must be
@@ -165,36 +165,15 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
 		// scripts
 		NodeMetadata partialNodeMetadata = buildPartialNodeMetadata(cloned);
 
-		// see DeleteGShadowLock for a detailed explanation
+		logger.debug("DeleteGShadowLock for a detailed explanation");
 		machineUtils.runScriptOnNode(partialNodeMetadata,
 				new DeleteGShadowLock(), RunScriptOptions.NONE);
 		
-	
-//		String mac_eth0 = natIfaceCard.getNetworkAdapter().getMacAddress();
-//		String mac_eth1  = hostOnlyIfaceCard.getNetworkAdapter().getMacAddress();
-//		ListenableFuture<ExecResponse> execCleanup = machineUtils
-//				.runScriptOnNode(partialNodeMetadata, new ReconfigureUdevNetRules(mac_eth0, mac_eth1),
-//						RunScriptOptions.NONE);
-//		ExecResponse cleanupResponse = Futures.getUnchecked(execCleanup);
-//		checkState(cleanupResponse.getExitStatus() == 0);
-		
-		/*
-		NetworkAdapter natAdapter = NetworkAdapter.builder()
-				.networkAttachmentType(NetworkAttachmentType.NAT).build();
-
-		NetworkInterfaceCard natIfaceCard = NetworkInterfaceCard.builder()
-				.addNetworkAdapter(natAdapter).slot(1L).build();
-		checkState(networkUtils.enableNetworkInterface(partialNodeMetadata,
-				natIfaceCard) == true, "cannot enable Nat Interface");
-		machineController.ensureMachineIsShutdown(cloneVmSpec.getVmName());
-
-		new AttachNicToMachine(cloneVmSpec.getVmName(), machineUtils)
-				.apply(natIfaceCard);
-		machineController.ensureMachineIsLaunched(cloneVmSpec.getVmName());
-		*/
-		long slot = findSlotForNetworkAttachment(cloned, NetworkAttachmentType.HostOnly);
+		String publicIpAddress = Iterables.get(partialNodeMetadata.getPublicAddresses(), 0);
+		logger.debug(String.format("Assigning (transient) hostname '%s' to the vm %s", publicIpAddress, cloneName));
 		machineUtils.runScriptOnNode(partialNodeMetadata,
-				new SetHostname(slot), RunScriptOptions.NONE);
+				new SetHostname(publicIpAddress), RunScriptOptions.NONE);
+		
 		LoginCredentials credentials = partialNodeMetadata.getCredentials();
 		return new NodeAndInitialCredentials<IMachine>(cloned, cloneName,
 				credentials);
@@ -204,26 +183,12 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
       NodeMetadataBuilder nodeMetadataBuilder = new NodeMetadataBuilder();
       nodeMetadataBuilder.id(clone.getName());
       nodeMetadataBuilder.status(VirtualBoxComputeServiceContextModule.toPortableNodeStatus.get(clone.getState()));
-      long slot = findSlotForNetworkAttachment(clone, NetworkAttachmentType.HostOnly);
-      nodeMetadataBuilder.publicAddresses(ImmutableSet.of(networkUtils.getIpAddressFromNicSlot(clone.getName(), slot)));
+      nodeMetadataBuilder.publicAddresses(ImmutableSet.of(networkUtils.getValidHostOnlyIpFromVm(clone.getName())));
       String guestOsUser = clone.getExtraData(GUEST_OS_USER);
       String guestOsPassword = clone.getExtraData(GUEST_OS_PASSWORD);
       LoginCredentials loginCredentials = new LoginCredentials(guestOsUser, guestOsPassword, null, true);
       nodeMetadataBuilder.credentials(loginCredentials);
       return nodeMetadataBuilder.build();
    }
-
-   private long findSlotForNetworkAttachment(IMachine clone, NetworkAttachmentType networkAttachmentType) {
-      long slot = -1;
-      long i = 0;
-      while (slot == -1 && i < 4) {
-         if(clone.getNetworkAdapter(i).getAttachmentType().equals(networkAttachmentType))
-            slot = i;
-         i++;
-      }
-      checkState(slot!=-1);
-      return slot;
-   }
-
 
 }

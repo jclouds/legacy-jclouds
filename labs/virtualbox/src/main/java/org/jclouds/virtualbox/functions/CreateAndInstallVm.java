@@ -26,7 +26,6 @@ import static org.jclouds.virtualbox.config.VirtualBoxConstants.GUEST_OS_USER;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_PRECONFIGURATION_URL;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
@@ -43,7 +42,6 @@ import org.jclouds.ssh.SshClient;
 import org.jclouds.virtualbox.domain.IsoSpec;
 import org.jclouds.virtualbox.domain.MasterSpec;
 import org.jclouds.virtualbox.domain.NetworkInterfaceCard;
-import org.jclouds.virtualbox.domain.NetworkSpec;
 import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.statements.EnableNetworkInterface;
 import org.jclouds.virtualbox.statements.InstallGuestAdditions;
@@ -98,80 +96,92 @@ public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
       this.preconfigurationUrl = preconfigurationUrl;
    }
 
-   @Override
-   public IMachine apply(MasterSpec masterSpec) {
-      VmSpec vmSpec = masterSpec.getVmSpec();
-      IsoSpec isoSpec = masterSpec.getIsoSpec();
-      String masterName = vmSpec.getVmName();
-      IMachine masterMachine = createAndRegisterMachineFromIsoIfNotAlreadyExists.apply(masterSpec);
-      // Launch machine and wait for it to come online
-      machineController.ensureMachineIsLaunchedWithoutGA(masterName);
-      String installationKeySequence = isoSpec.getInstallationKeySequence().replace("PRECONFIGURATION_URL",
-               preconfigurationUrl);
-      
-      configureOsInstallationWithKeyboardSequence(masterName, installationKeySequence);
+	@Override
+	public IMachine apply(MasterSpec masterSpec) {
+		VmSpec vmSpec = masterSpec.getVmSpec();
+		IsoSpec isoSpec = masterSpec.getIsoSpec();
+		String masterName = vmSpec.getVmName();
+		IMachine masterMachine = createAndRegisterMachineFromIsoIfNotAlreadyExists
+				.apply(masterSpec);
+		// Launch machine and wait for it to come online
+		machineController.ensureMachineIsLaunchedWithoutGA(masterName);
+		String installationKeySequence = isoSpec.getInstallationKeySequence()
+				.replace("PRECONFIGURATION_URL", preconfigurationUrl);
 
-      // the OS installation is a long process: let's delay the check for ssh of 40 sec
-      Uninterruptibles.sleepUninterruptibly(40, TimeUnit.SECONDS);
-      
-      masterMachine.setExtraData(GUEST_OS_USER, masterSpec.getLoginCredentials().getUser());
-      masterMachine.setExtraData(GUEST_OS_PASSWORD, masterSpec.getLoginCredentials().getPassword());
+		configureOsInstallationWithKeyboardSequence(masterName,
+				installationKeySequence);
 
-      SshClient client = sshClientForIMachine.apply(masterMachine);
-      logger.debug(">> awaiting installation to finish node(%s)", masterName);
-      checkState(sshResponds.apply(client), "timed out waiting for guest %s to be accessible via ssh", masterName);
-      NodeMetadata nodeMetadata = imachineToNodeMetadata.apply(masterMachine);
+		// the OS installation is a long process: let's delay the check for ssh
+		// of 40 sec
+		Uninterruptibles.sleepUninterruptibly(40, TimeUnit.SECONDS);
 
-      logger.debug(">> awaiting post-installation actions on vm: %s", masterName);
-      ListenableFuture<ExecResponse> execCleanup = machineUtils.runScriptOnNode(nodeMetadata,
-               call("cleanupUdevIfNeeded"), RunScriptOptions.NONE);
-      ExecResponse cleanupResponse = Futures.getUnchecked(execCleanup);
-      checkState(cleanupResponse.getExitStatus() == 0);
+		masterMachine.setExtraData(GUEST_OS_USER, masterSpec
+				.getLoginCredentials().getUser());
+		masterMachine.setExtraData(GUEST_OS_PASSWORD, masterSpec
+				.getLoginCredentials().getPassword());
 
-      logger.debug(">> awaiting installation of guest additions on vm: %s", masterName);
-      ListenableFuture<ExecResponse> execInstallGA = machineUtils.runScriptOnNode(nodeMetadata,
-               new InstallGuestAdditions(vmSpec, version), RunScriptOptions.NONE);
-      ExecResponse gaInstallationResponse = Futures.getUnchecked(execInstallGA);
-      checkState(gaInstallationResponse.getExitStatus() == 0);
-      
+		SshClient client = sshClientForIMachine.apply(masterMachine);
+		logger.debug(">> awaiting installation to finish node(%s)", masterName);
+		checkState(sshResponds.apply(client),
+				"timed out waiting for guest %s to be accessible via ssh",
+				masterName);
+		NodeMetadata nodeMetadata = imachineToNodeMetadata.apply(masterMachine);
 
-      NetworkInterfaceCard hostOnlyInterfaceCard = networkUtils.createHostOnlyNIC(1l);
-      machineUtils.sharedLockMachineAndApply(masterName, new AttachHostOnlyAdapter(hostOnlyInterfaceCard));
+		logger.debug(">> awaiting post-installation actions on vm: %s",
+				masterName);
+		ListenableFuture<ExecResponse> execCleanup = machineUtils
+				.runScriptOnNode(nodeMetadata, call("cleanupUdevIfNeeded"),
+						RunScriptOptions.NONE);
+		ExecResponse cleanupResponse = Futures.getUnchecked(execCleanup);
+		checkState(cleanupResponse.getExitStatus() == 0);
 
-      try {
-		ExecResponse execResponse = machineUtils.runScriptOnNode(nodeMetadata, 
-		          new EnableNetworkInterface(hostOnlyInterfaceCard), RunScriptOptions.NONE).get();
-	} catch (InterruptedException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} catch (ExecutionException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
+		logger.debug(">> awaiting installation of guest additions on vm: %s",
+				masterName);
+		ListenableFuture<ExecResponse> execInstallGA = machineUtils
+				.runScriptOnNode(nodeMetadata, new InstallGuestAdditions(
+						vmSpec, version), RunScriptOptions.NONE);
+		ExecResponse gaInstallationResponse = Futures
+				.getUnchecked(execInstallGA);
+		checkState(gaInstallationResponse.getExitStatus() == 0);
+
+		logger.debug(
+				">> awaiting post-installation: attach HostOnly NIC to vm: %s",
+				masterName);
+		NetworkInterfaceCard hostOnlyInterfaceCard = networkUtils
+				.createHostOnlyNIC(1l);
+		machineUtils.sharedLockMachineAndApply(masterName,
+				new AttachHostOnlyAdapter(hostOnlyInterfaceCard));
+
+		ListenableFuture<ExecResponse> enableNetworkInterface = machineUtils
+				.runScriptOnNode(nodeMetadata, new EnableNetworkInterface(
+						hostOnlyInterfaceCard), RunScriptOptions.NONE);
+		ExecResponse enableNetworkInterfaceResponse = Futures
+				.getUnchecked(enableNetworkInterface);
+		checkState(enableNetworkInterfaceResponse.getExitStatus() == 0);
+		machineController.ensureMachineIsShutdown(masterName);
+
+		// detach DVD and ISOs, if needed
+		Iterable<IMediumAttachment> mediumAttachments = Iterables.filter(
+				masterMachine
+						.getMediumAttachmentsOfController("IDE Controller"),
+				new Predicate<IMediumAttachment>() {
+					public boolean apply(IMediumAttachment in) {
+						return in.getMedium() != null
+								&& in.getMedium().getDeviceType()
+										.equals(DeviceType.DVD);
+					}
+				});
+		for (IMediumAttachment iMediumAttachment : mediumAttachments) {
+			logger.debug("Detach %s from (%s)", iMediumAttachment.getMedium()
+					.getName(), masterMachine.getName());
+			machineUtils.writeLockMachineAndApply(
+					masterMachine.getName(),
+					new DetachDistroMediumFromMachine(iMediumAttachment
+							.getController(), iMediumAttachment.getPort(),
+							iMediumAttachment.getDevice()));
+		}
+		return masterMachine;
 	}
-      machineController.ensureMachineIsShutdown(masterName);
-
-      
-      // detach DVD and ISOs, if needed
-      Iterable<IMediumAttachment> mediumAttachments = Iterables.filter(
-            masterMachine.getMediumAttachmentsOfController("IDE Controller"),
-            new Predicate<IMediumAttachment>() {
-               public boolean apply(IMediumAttachment in) {
-                  return in.getMedium() != null
-                        && in.getMedium().getDeviceType()
-                              .equals(DeviceType.DVD);
-               }
-            });
-      for (IMediumAttachment iMediumAttachment : mediumAttachments) {
-         logger.debug("Detach %s from (%s)", iMediumAttachment.getMedium()
-               .getName(), masterMachine.getName());
-         machineUtils.writeLockMachineAndApply(
-               masterMachine.getName(),
-               new DetachDistroMediumFromMachine(iMediumAttachment
-                     .getController(), iMediumAttachment.getPort(),
-                     iMediumAttachment.getDevice()));
-      }
-      return masterMachine;
-   }
 
    private void configureOsInstallationWithKeyboardSequence(String vmName, String installationKeySequence) {
       Iterable<List<Integer>> scancodelist = transform(Splitter.on(" ").split(installationKeySequence),

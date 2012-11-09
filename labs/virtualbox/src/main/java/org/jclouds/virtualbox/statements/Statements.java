@@ -37,4 +37,5 @@ public class Statements {
    public static Statement exportIpAddressFromVmNamed(String vmName) {
       return ScriptBuilder.call("exportIpAddressFromVmNamed", vmName);
    }
+
  }

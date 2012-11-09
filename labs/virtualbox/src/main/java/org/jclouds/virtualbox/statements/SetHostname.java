@@ -33,10 +33,10 @@ import com.google.common.collect.ImmutableList;
  */
 public class SetHostname implements Statement {
 
-	private long slot;
+	private String publicIpAddress;
 	
-	public SetHostname(long slot) {
-		this.slot = slot;
+	public SetHostname(String publicIpAddress) {
+		this.publicIpAddress = publicIpAddress;
 	}
 
 @Override
@@ -48,7 +48,7 @@ public class SetHostname implements Statement {
    public String render(OsFamily family) {
       if (checkNotNull(family, "family") == OsFamily.WINDOWS)
          throw new UnsupportedOperationException("windows not yet implemented");
-      return String.format("ifconfig eth%s | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}' | xargs sudo hostname", slot);
+      return String.format("sudo hostname ", publicIpAddress);
    }
 
 }

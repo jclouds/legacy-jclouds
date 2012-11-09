@@ -59,6 +59,7 @@ import org.virtualbox_4_2.NetworkAttachmentType;
 import org.virtualbox_4_2.VirtualBoxManager;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
@@ -255,24 +256,35 @@ public class NetworkUtils {
       return filteredNetworkInterfaces;
    }
 
-   
-   public String getIpAddressFromNicSlot(String machineNameOrId, long nicSlot) {
-      MachineNameOrIdAndNicSlot machineNameOrIdAndNicSlot = 
-            MachineNameOrIdAndNicSlot.fromParts(machineNameOrId, nicSlot);
+	public String getValidHostOnlyIpFromVm(String machineNameOrId) {
+		long nicSlot = 0;
+		String ipAddress = "";
+		while (nicSlot < 4 && ipAddress.isEmpty()) {
+		      MachineNameOrIdAndNicSlot machineNameOrIdAndNicSlot = 
+		              MachineNameOrIdAndNicSlot.fromParts(machineNameOrId, nicSlot);
+			ipAddress = getIpAddressFromNicSlot(machineNameOrIdAndNicSlot);
+			if (!isValidIpForHostOnly(machineNameOrIdAndNicSlot, ipAddress)) {
+				ipAddressesLoadingCache.invalidate(machineNameOrIdAndNicSlot);
+				ipAddress = "";
+			}
+			nicSlot++;
+		}
+		return checkNotNull(Strings.emptyToNull(ipAddress), String.format("Cannot find a valid IP address for the %s's HostOnly NIC", machineNameOrId));
+	}
+	
+	public String getIpAddressFromNicSlot(String machineNameOrId, long nicSlot) {
+	      MachineNameOrIdAndNicSlot machineNameOrIdAndNicSlot = 
+	              MachineNameOrIdAndNicSlot.fromParts(machineNameOrId, nicSlot);
+		return getIpAddressFromNicSlot(machineNameOrIdAndNicSlot);
+	}
+	
+		
+   public String getIpAddressFromNicSlot(MachineNameOrIdAndNicSlot machineNameOrIdAndNicSlot) {
       logger.debug("Looking for an available IP address for %s at slot %s ...", 
             machineNameOrIdAndNicSlot.getMachineNameOrId(),
             machineNameOrIdAndNicSlot.getSlotText());
       try {
-         String ipAddress = ipAddressesLoadingCache.get(machineNameOrIdAndNicSlot);
-         while(!isValidIpForHostOnly(machineNameOrIdAndNicSlot, ipAddress)) {
-            ipAddressesLoadingCache.invalidate(machineNameOrIdAndNicSlot);
-            ipAddress = ipAddressesLoadingCache.get(machineNameOrIdAndNicSlot);
-         }
-         logger.debug("Found an available IP address %s for guest: %s at slot: %s",
-               ipAddress,
-               machineNameOrIdAndNicSlot.getMachineNameOrId(),
-               machineNameOrIdAndNicSlot.getSlotText());
-         return ipAddress;
+         return ipAddressesLoadingCache.get(machineNameOrIdAndNicSlot);
       } catch (ExecutionException e) {
          logger.error("Problem in using the ipAddressCache", e.getCause());
          throw Throwables.propagate(e);
@@ -292,38 +304,18 @@ public class NetworkUtils {
       final String vmNameOrId = machineNameOrIdAndNicSlot.getMachineNameOrId();
       IMachine machine = manager.get().getVBox().findMachine(vmNameOrId);
       long slot = machineNameOrIdAndNicSlot.getSlot();
-      
-      if(ip.equals(VIRTUALBOX_HOST_GATEWAY) || !isValidHostOnlyIpAddress(ip, slot, machine)) {
-         // restart vm
-         logger.debug("reset node (%s) to refresh guest properties.", vmNameOrId);
-         
-//         machineUtils.lockSessionOnMachineAndApply(vmNameOrId, LockType.Shared,
-//               new Function<ISession, Void>() {
-//                  @Override
-//                  public Void apply(ISession session) {
-//                     try {
-//                        session.getConsole().powerDown().wait(-1);
-//                        session.getConsole().powerUp().wait(-1);
-//                     } catch (InterruptedException e) {
-//                        // TODO Auto-generated catch block
-//                        e.printStackTrace();
-//                     }
-//                     return null;
-//                  }
-//               });
-         return false;
-      }
-      return true;
+      return isValidHostOnlyIpAddress(ip, slot, machine);
    }
 
-   public static  boolean isValidHostOnlyIpAddress(String ip, long slot,
-         IMachine machine) {
-      boolean result = isIpv4(ip) && machine.getNetworkAdapter(slot).getAttachmentType().equals(NetworkAttachmentType.HostOnly)
-            && !ipBelongsToNatRange(ip);
-      return result;
+   public static boolean isValidHostOnlyIpAddress(String ip, long slot, IMachine machine) {
+      return isIpv4(ip) && !ipBelongsToNatRange(ip) && !ipEqualsToNatGateway(ip);
    }
 
-   private static boolean ipBelongsToNatRange(String ip) {
+   private static boolean ipEqualsToNatGateway(String ip) {
+	return ip.equals(VIRTUALBOX_HOST_GATEWAY);
+}
+
+private static boolean ipBelongsToNatRange(String ip) {
       return ip.startsWith("10.0.3");
    }
    

@@ -28,6 +28,9 @@ import static org.easymock.EasyMock.verify;
 import static org.virtualbox_4_2.NATProtocol.TCP;
 import static org.virtualbox_4_2.NetworkAttachmentType.NAT;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jclouds.virtualbox.domain.NetworkAdapter;
 import org.jclouds.virtualbox.domain.NetworkInterfaceCard;
 import org.testng.annotations.Test;
@@ -52,8 +55,10 @@ public class AttachNATAdapterToMachineIfNotAlreadyExistsTest {
 
 		expect(machine.getNetworkAdapter(slotId)).andReturn(iNetworkAdapter);
 		iNetworkAdapter.setAttachmentType(NAT);
-		expect(iNetworkAdapter.getNATEngine()).andReturn(natEngine);
+		expect(iNetworkAdapter.getNATEngine()).andReturn(natEngine).anyTimes();
 
+		List<String> redirects = new ArrayList<String>();
+		expect(natEngine.getRedirects()).andReturn(redirects);
 		natEngine.addRedirect("TCP@127.0.0.1:2222->:22", TCP, "127.0.0.1",
 				2222, "", 22);
 		iNetworkAdapter.setEnabled(true);
@@ -81,7 +86,10 @@ public class AttachNATAdapterToMachineIfNotAlreadyExistsTest {
 
 		expect(machine.getNetworkAdapter(slotId)).andReturn(iNetworkAdapter);
 		iNetworkAdapter.setAttachmentType(NAT);
-		expect(iNetworkAdapter.getNATEngine()).andReturn(natEngine);
+		expect(iNetworkAdapter.getNATEngine()).andReturn(natEngine).anyTimes();
+
+		List<String> redirects = new ArrayList<String>();
+		expect(natEngine.getRedirects()).andReturn(redirects);
 
 		natEngine.addRedirect("TCP@127.0.0.1:2222->:22", TCP, "127.0.0.1",
 				2222, "", 22);

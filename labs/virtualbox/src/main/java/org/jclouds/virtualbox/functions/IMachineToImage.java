@@ -61,7 +61,7 @@ public class IMachineToImage implements Function<IMachine, Image> {
    public Image apply(@Nullable IMachine from) {
       if (from == null)
          return null;
-
+// "RedHat_64" /
       IGuestOSType guestOSType = virtualboxManager.get().getVBox().getGuestOSType(from.getOSTypeId());
       OsFamily family = parseOsFamilyOrUnrecognized(guestOSType.getDescription());
       String version = parseVersionOrReturnEmptyString(family, guestOSType.getDescription(), osVersionMap);

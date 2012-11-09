@@ -85,9 +85,7 @@ public class StartVBoxIfNotAlreadyRunning implements Supplier<VirtualBoxManager>
    @PostConstruct
    public synchronized void start() {
       URI provider = providerSupplier.get();
-      NodeMetadata hostNodeMetadata = hardcodedHostToHostNodeMetadata.apply(host.get());
-      //cleanUpHost(provider, hostNodeMetadata);
-     
+      NodeMetadata hostNodeMetadata = hardcodedHostToHostNodeMetadata.apply(host.get());     
       logger.debug("disabling password access");
       runScriptOnNodeFactory
             .create(
@@ -95,6 +93,7 @@ public class StartVBoxIfNotAlreadyRunning implements Supplier<VirtualBoxManager>
                   Statements
                         .exec("VBoxManage setproperty websrvauthlibrary null"),
                   runAsRoot(false).wrapInInitScript(false)).init().call();
+      
       if (!socketTester.apply(HostAndPort.fromParts(provider.getHost(),
               provider.getPort()))) {
 	      logger.debug(">> starting vboxwebsrv");

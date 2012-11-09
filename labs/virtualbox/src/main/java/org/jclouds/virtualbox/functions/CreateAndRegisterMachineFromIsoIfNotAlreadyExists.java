@@ -102,7 +102,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Functi
       String group = "";
       String settingsFile = manager.get().getVBox().composeMachineFilename(vmSpec.getVmName(), group , flags , workingDir);
 
-      IMachine newMachine = vBox.createMachine(settingsFile, vmSpec.getVmName(), groups, "RedHat_64" /*vmSpec.getOsTypeId()*/, flags);
+      IMachine newMachine = vBox.createMachine(settingsFile, vmSpec.getVmName(), groups, vmSpec.getOsTypeId(), flags);
       
       manager.get().getVBox().registerMachine(newMachine);
       ensureConfiguration(masterSpec);
