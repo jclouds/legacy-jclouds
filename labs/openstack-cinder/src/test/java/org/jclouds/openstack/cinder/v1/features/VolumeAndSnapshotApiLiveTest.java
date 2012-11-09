@@ -40,7 +40,7 @@ import com.google.common.collect.Iterables;
 
 /**
  * Tests behavior of VolumeApi
- * 
+ *  
  * @author Everett Toews
  */
 @Test(groups = "live", testName = "VolumeApiLiveTest", singleThreaded = true)
@@ -74,7 +74,7 @@ public class VolumeAndSnapshotApiLiveTest extends BaseCinderApiLiveTest {
             public boolean apply(SnapshotApi snapshotApi) {
                return snapshotApi.get(testSnapshot.getId()) == null;
             }
-         }, 30 * 1000L).apply(snapshotApi));
+         }, 300 * 1000L).apply(snapshotApi));
       }
 
       if (testVolume != null) {
@@ -84,7 +84,7 @@ public class VolumeAndSnapshotApiLiveTest extends BaseCinderApiLiveTest {
             public boolean apply(VolumeApi volumeApi) {
                return volumeApi.get(testVolume.getId()) == null;
             }
-         }, 30 * 1000L).apply(volumeApi));
+         }, 300 * 1000L).apply(volumeApi));
       }
 
       super.tearDownContext();
