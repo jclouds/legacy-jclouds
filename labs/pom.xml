@@ -43,10 +43,8 @@
        <module>openstack-swift</module>
        <module>jenkins</module>
        <module>cdmi</module>
-       <module>openstack-glance</module>
        <module>joyent-cloudapi</module>
        <module>joyentcloud</module>
-       <module>openstack-quantum</module>
        <module>greenqloud-compute</module>
        <module>greenqloud-storage</module>
        <module>iam</module>
@@ -62,6 +60,10 @@
        <module>fgcp-de</module>
        <module>abiquo</module>
        <module>oauth</module>
+       <module>openstack-quantum</module>
+       <module>openstack-glance</module>
        <module>openstack-cinder</module>
+       <module>rackspace-cloudblockstorage-us</module>
+       <module>rackspace-cloudblockstorage-uk</module>
   </modules>
 </project>
