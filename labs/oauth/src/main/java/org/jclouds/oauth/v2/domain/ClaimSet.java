@@ -161,7 +161,7 @@ public class ClaimSet extends ForwardingMap<String, String> {
     */
    @Override
    public int hashCode() {
-      return Objects.hashCode(claims, emissionTime, expirationTime);
+      return Objects.hashCode(claims);
    }
 
    /**
@@ -176,8 +176,7 @@ public class ClaimSet extends ForwardingMap<String, String> {
       if (getClass() != obj.getClass())
          return false;
       ClaimSet other = (ClaimSet) obj;
-      return equal(claims, other.claims) && equal(this.emissionTime,
-              other.emissionTime) && equal(this.expirationTime, other.expirationTime);
+      return equal(claims, other.claims);
    }
 
    /**
