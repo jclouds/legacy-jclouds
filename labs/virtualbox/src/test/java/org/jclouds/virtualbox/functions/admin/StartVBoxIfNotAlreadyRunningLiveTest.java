@@ -77,9 +77,5 @@ public class StartVBoxIfNotAlreadyRunningLiveTest {
       verify(manager, runScriptOnNodeFactory, client);
 
    }
-<<<<<<< HEAD
-}
-=======
 
 }
->>>>>>> issue 384: added support for virtualbox 4.2.0

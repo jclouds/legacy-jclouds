@@ -104,22 +104,9 @@ public class MachineControllerLiveTest extends BaseVirtualBoxClientLiveTest {
 
    @Test
    public void testEnsureMachineisLaunchedAndSessionIsUnlocked() {
-<<<<<<< HEAD
-      cloneFromMaster();
-      ISession cloneMachineSession = machineController.ensureMachineIsLaunched(instanceName);
-      assertSame(cloneMachineSession.getState(), SessionState.Unlocked);
-      cloneMachineSession = machineController.ensureMachineHasPowerDown(instanceName);
-      assertSame(cloneMachineSession.getState(), SessionState.Unlocked);
-   }
-
-   @Test(dependsOnMethods="testEnsureMachineisLaunchedAndSessionIsUnlocked")
-   public void testEnsureMachineCanBePoweredOffMoreThanOneTimeAndSessionIsUnlocked() {
-      ISession cloneMachineSession = machineController.ensureMachineHasPowerDown(instanceName);
-=======
       ISession cloneMachineSession = machineController.ensureMachineIsLaunched(clonedMachine.getName());
       assertTrue(cloneMachineSession.getState() == SessionState.Unlocked);
       cloneMachineSession = machineController.ensureMachineHasPowerDown(clonedMachine.getName());
->>>>>>> issue 384: added support for virtualbox 4.2.0
       SessionState state = cloneMachineSession.getState();
       assertEquals(SessionState.Unlocked, state);
    }
