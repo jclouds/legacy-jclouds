@@ -22,8 +22,6 @@ import static org.testng.Assert.assertEquals;
 
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableList;
-
 /**
  * Unit tests for the {@link Role} class.
  * 
@@ -60,22 +58,16 @@ public class RoleTest {
    }
 
    public void testToJsonStringWithSingleRecipe() {
-      Role role = Role.builder().name("foo").installRecipe("apache2").build();
+      RunList runlist = RunList.builder().recipe("apache2").build();
+      Role role = Role.builder().name("foo").runlist(runlist).build();
       assertEquals(role.toJsonString(),
             "{\"name\": \"foo\",\"description\":\"\",\"default_attributes\":{},\"override_attributes\":{},"
                   + "\"json_class\":\"Chef::Role\",\"chef_type\":\"role\",\"run_list\":[\"recipe[apache2]\"]}");
    }
 
    public void testToJsonStringWithMultipleRecipes() {
-      Role role = Role.builder().name("foo").installRecipe("apache2").installRecipe("git").build();
-      assertEquals(role.toJsonString(),
-            "{\"name\": \"foo\",\"description\":\"\",\"default_attributes\":{},\"override_attributes\":{},"
-                  + "\"json_class\":\"Chef::Role\",\"chef_type\":\"role\","
-                  + "\"run_list\":[\"recipe[apache2]\",\"recipe[git]\"]}");
-   }
-
-   public void testToJsonStringWithMultipleRecipesInList() {
-      Role role = Role.builder().name("foo").installRecipes(ImmutableList.of("apache2", "git")).build();
+      RunList runlist = RunList.builder().recipe("apache2").recipe("git").build();
+      Role role = Role.builder().name("foo").runlist(runlist).build();
       assertEquals(role.toJsonString(),
             "{\"name\": \"foo\",\"description\":\"\",\"default_attributes\":{},\"override_attributes\":{},"
                   + "\"json_class\":\"Chef::Role\",\"chef_type\":\"role\","
@@ -83,22 +75,16 @@ public class RoleTest {
    }
 
    public void testToJsonStringWithSingleRole() {
-      Role role = Role.builder().name("foo").installRole("webserver").build();
+      RunList runlist = RunList.builder().role("webserver").build();
+      Role role = Role.builder().name("foo").runlist(runlist).build();
       assertEquals(role.toJsonString(),
             "{\"name\": \"foo\",\"description\":\"\",\"default_attributes\":{},\"override_attributes\":{},"
                   + "\"json_class\":\"Chef::Role\",\"chef_type\":\"role\",\"run_list\":[\"role[webserver]\"]}");
    }
 
    public void testToJsonStringWithMultipleRoles() {
-      Role role = Role.builder().name("foo").installRole("webserver").installRole("firewall").build();
-      assertEquals(role.toJsonString(),
-            "{\"name\": \"foo\",\"description\":\"\",\"default_attributes\":{},\"override_attributes\":{},"
-                  + "\"json_class\":\"Chef::Role\",\"chef_type\":\"role\","
-                  + "\"run_list\":[\"role[webserver]\",\"role[firewall]\"]}");
-   }
-
-   public void testToJsonStringWithMultipleRolesInList() {
-      Role role = Role.builder().name("foo").installRoles(ImmutableList.of("webserver", "firewall")).build();
+      RunList runlist = RunList.builder().role("webserver").role("firewall").build();
+      Role role = Role.builder().name("foo").runlist(runlist).build();
       assertEquals(role.toJsonString(),
             "{\"name\": \"foo\",\"description\":\"\",\"default_attributes\":{},\"override_attributes\":{},"
                   + "\"json_class\":\"Chef::Role\",\"chef_type\":\"role\","
@@ -106,7 +92,8 @@ public class RoleTest {
    }
 
    public void testToJsonStringWithRolesAndRecipes() {
-      Role role = Role.builder().name("foo").installRole("webserver").installRecipe("git").build();
+      RunList runlist = RunList.builder().role("webserver").recipe("git").build();
+      Role role = Role.builder().name("foo").runlist(runlist).build();
       assertEquals(role.toJsonString(),
             "{\"name\": \"foo\",\"description\":\"\",\"default_attributes\":{},\"override_attributes\":{},"
                   + "\"json_class\":\"Chef::Role\",\"chef_type\":\"role\","

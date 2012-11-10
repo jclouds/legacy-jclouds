@@ -20,11 +20,11 @@ package org.jclouds.scriptbuilder.domain.chef;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.List;
+import java.util.Map;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
+import com.google.common.collect.ForwardingMap;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * A Data bag to be configured for a Chef Solo run.
@@ -32,73 +32,7 @@ import com.google.common.collect.Lists;
  * @author Ignasi Barrera
  * @since Chef 0.10.4
  */
-public class DataBag {
-
-   public static class Item {
-      public static Builder builder() {
-         return new Builder();
-      }
-
-      public static class Builder {
-         private String name;
-         private String jsonData;
-
-         public Builder name(String name) {
-            this.name = checkNotNull(name, "name must be set");
-            return this;
-         }
-
-         public Builder jsonData(String jsonData) {
-            this.jsonData = checkNotNull(jsonData, "jsonData must be set");
-            return this;
-         }
-
-         public Item build() {
-            return new Item(name, jsonData);
-         }
-      }
-
-      private String name;
-      private String jsonData;
-
-      public Item(String name, String jsonData) {
-         this.name = checkNotNull(name, "name must be set");
-         this.jsonData = checkNotNull(jsonData, "jsonData must be set");
-      }
-
-      public String getName() {
-         return name;
-      }
-
-      public String getJsonData() {
-         return jsonData;
-      }
-
-      @Override
-      public int hashCode() {
-         return Objects.hashCode(name);
-      }
-
-      @Override
-      public boolean equals(Object obj) {
-         if (this == obj) {
-            return true;
-         }
-         if (obj == null) {
-            return false;
-         }
-         if (getClass() != obj.getClass()) {
-            return false;
-         }
-         Item other = (Item) obj;
-         return Objects.equal(name, other.name);
-      }
-
-      @Override
-      public String toString() {
-         return Objects.toStringHelper(this).add("name", name).toString();
-      }
-   }
+public class DataBag extends ForwardingMap<String, String> {
 
    public static Builder builder() {
       return new Builder();
@@ -106,7 +40,7 @@ public class DataBag {
 
    public static class Builder {
       private String name;
-      private List<Item> items = Lists.newArrayList();
+      private ImmutableMap.Builder<String, String> items = ImmutableMap.builder();
 
       public Builder name(String name) {
          this.name = checkNotNull(name, "name must be set");
@@ -114,36 +48,40 @@ public class DataBag {
       }
 
       public Builder item(String name, String jsonData) {
-         Item item = Item.builder().name(checkNotNull(name, "name must be set"))
-               .jsonData(checkNotNull(jsonData, "jsonData must be set")).build();
-         this.items.add(item);
+         this.items.put(checkNotNull(name, "name must be set"), checkNotNull(jsonData, "jsonData must be set"));
          return this;
       }
 
-      public Builder items(Iterable<Item> items) {
-         this.items = ImmutableList.copyOf(checkNotNull(items, "items must be set"));
+      public Builder items(Map<String, String> items) {
+         this.items.putAll(checkNotNull(items, "items must be set"));
          return this;
       }
 
       public DataBag build() {
-         return new DataBag(name, items);
+         return new DataBag(name, items.build());
       }
 
    }
 
    private String name;
-   private List<Item> items;
 
-   public DataBag(String name, List<Item> items) {
+   private Map<String, String> items;
+
+   public DataBag(String name, Map<String, String> items) {
       this.name = checkNotNull(name, "name must be set");
-      this.items = ImmutableList.copyOf(checkNotNull(items, "items must be set"));
+      this.items = ImmutableMap.copyOf(checkNotNull(items, "items must be set"));
+   }
+
+   @Override
+   protected Map<String, String> delegate() {
+      return items;
    }
 
    public String getName() {
       return name;
    }
 
-   public List<Item> getItems() {
+   public Map<String, String> getItems() {
       return items;
    }
 
@@ -163,7 +101,7 @@ public class DataBag {
       if (getClass() != obj.getClass()) {
          return false;
       }
-      Item other = (Item) obj;
+      DataBag other = (DataBag) obj;
       return Objects.equal(name, other.name);
    }
 
@@ -171,4 +109,5 @@ public class DataBag {
    public String toString() {
       return Objects.toStringHelper(this).add("name", name).toString();
    }
+
 }

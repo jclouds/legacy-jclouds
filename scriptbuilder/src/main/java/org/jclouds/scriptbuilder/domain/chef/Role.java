@@ -19,16 +19,9 @@
 package org.jclouds.scriptbuilder.domain.chef;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Iterables.transform;
 
-import java.util.List;
-
-import com.google.common.base.Function;
-import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 /**
  * A Role to be configured for a Chef Solo run.
@@ -46,7 +39,7 @@ public class Role {
       private String description;
       private String jsonDefaultAttributes;
       private String jsonOverrideAttributes;
-      private List<String> runlist = Lists.newArrayList();
+      private RunList runlist;
 
       public Builder name(String name) {
          this.name = checkNotNull(name, "name must be set");
@@ -68,41 +61,14 @@ public class Role {
          return this;
       }
 
-      public Builder installRecipe(String recipe) {
-         this.runlist.add("recipe[" + checkNotNull(recipe, "recipe must be set") + "]");
-         return this;
-      }
-
-      public Builder installRecipes(Iterable<String> recipes) {
-         this.runlist.addAll(Lists.newArrayList(transform(checkNotNull(recipes, "recipes must be set"),
-               new Function<String, String>() {
-                  @Override
-                  public String apply(String input) {
-                     return "recipe[" + input + "]";
-                  }
-               })));
-         return this;
-      }
-
-      public Builder installRole(String role) {
-         this.runlist.add("role[" + checkNotNull(role, "role must be set") + "]");
-         return this;
-      }
-
-      public Builder installRoles(Iterable<String> roles) {
-         this.runlist.addAll(Lists.newArrayList(transform(checkNotNull(roles, "roles must be set"),
-               new Function<String, String>() {
-                  @Override
-                  public String apply(String input) {
-                     return "role[" + input + "]";
-                  }
-               })));
+      public Builder runlist(RunList runlist) {
+         this.runlist = checkNotNull(runlist, "runlist must be set");
          return this;
       }
 
       public Role build() {
          return new Role(name, Optional.fromNullable(description), Optional.fromNullable(jsonDefaultAttributes),
-               Optional.fromNullable(jsonOverrideAttributes), runlist);
+               Optional.fromNullable(jsonOverrideAttributes), Optional.fromNullable(runlist));
       }
    }
 
@@ -110,15 +76,15 @@ public class Role {
    private Optional<String> description;
    private Optional<String> jsonDefaultAttributes;
    private Optional<String> jsonOverrideAttributes;
-   private List<String> runlist;
+   private RunList runlist;
 
    protected Role(String name, Optional<String> description, Optional<String> jsonDefaultAttributes,
-         Optional<String> jsonOverrideAttributes, List<String> runlist) {
+         Optional<String> jsonOverrideAttributes, Optional<RunList> runlist) {
       this.name = checkNotNull(name, "name must be set");
       this.description = checkNotNull(description, "description must be set");
       this.jsonDefaultAttributes = checkNotNull(jsonDefaultAttributes, "jsonDefaultAttributes must be set");
       this.jsonOverrideAttributes = checkNotNull(jsonOverrideAttributes, "jsonOverrideAttributes must be set");
-      this.runlist = ImmutableList.<String> copyOf(checkNotNull(runlist, "runlist must be set"));
+      this.runlist = checkNotNull(runlist, "runlist must be set").or(RunList.builder().build());
    }
 
    public String toJsonString() {
@@ -130,7 +96,7 @@ public class Role {
       json.append("\"override_attributes\":").append(jsonOverrideAttributes.or("{}")).append(",");
       json.append("\"json_class\":\"Chef::Role\",");
       json.append("\"chef_type\":\"role\",");
-      json.append("\"run_list\":[").append(runlistToJsonString(runlist)).append("]");
+      json.append("\"run_list\":" + runlist.toString());
       json.append("}");
       return json.toString();
    }
@@ -151,7 +117,7 @@ public class Role {
       return jsonOverrideAttributes;
    }
 
-   public List<String> getRunlist() {
+   public RunList getRunlist() {
       return runlist;
    }
 
@@ -179,15 +145,6 @@ public class Role {
    public String toString() {
       return Objects.toStringHelper(this).omitNullValues().add("name", name).add("description", description.orNull())
             .toString();
-   }
-
-   private static String runlistToJsonString(List<String> runlist) {
-      return Joiner.on(',').join(transform(runlist, new Function<String, String>() {
-         @Override
-         public String apply(String input) {
-            return "\"" + input + "\"";
-         }
-      }));
    }
 
 }

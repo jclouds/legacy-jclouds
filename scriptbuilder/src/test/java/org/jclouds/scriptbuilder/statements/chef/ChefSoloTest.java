@@ -30,6 +30,7 @@ import org.jclouds.scriptbuilder.domain.ShellToken;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.chef.DataBag;
 import org.jclouds.scriptbuilder.domain.chef.Role;
+import org.jclouds.scriptbuilder.domain.chef.RunList;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Charsets;
@@ -115,7 +116,8 @@ public class ChefSoloTest {
 
    public void testCreateNodeConfigurationWithRunList() {
       ImmutableList.Builder<Statement> statements = ImmutableList.builder();
-      ChefSolo solo = ChefSolo.builder().installRecipe("foo").installRole("bar").build();
+      RunList runlist = RunList.builder().recipe("foo").role("bar").build();
+      ChefSolo solo = ChefSolo.builder().runlist(runlist).build();
 
       solo.createNodeConfiguration(statements);
       ImmutableList<Statement> statementList = statements.build();
@@ -129,8 +131,8 @@ public class ChefSoloTest {
 
    public void testCreateNodeConfigurationWithJsonAttributesAndRunList() {
       ImmutableList.Builder<Statement> statements = ImmutableList.builder();
-      ChefSolo solo = ChefSolo.builder().jsonAttributes("{\"foo\":\"bar\"}").installRecipe("foo").installRole("bar")
-            .build();
+      RunList runlist = RunList.builder().recipe("foo").role("bar").build();
+      ChefSolo solo = ChefSolo.builder().jsonAttributes("{\"foo\":\"bar\"}").runlist(runlist).build();
 
       solo.createNodeConfiguration(statements);
       ImmutableList<Statement> statementList = statements.build();
@@ -154,7 +156,8 @@ public class ChefSoloTest {
 
    public void testCreateRolesIfNecessaryWithOneRole() {
       ImmutableList.Builder<Statement> statements = ImmutableList.builder();
-      Role role = Role.builder().name("foo").installRecipe("bar").build();
+      RunList runlist = RunList.builder().recipe("bar").build();
+      Role role = Role.builder().name("foo").runlist(runlist).build();
       ChefSolo solo = ChefSolo.builder().defineRole(role).build();
 
       solo.createRolesIfNecessary(statements);
@@ -170,7 +173,8 @@ public class ChefSoloTest {
 
    public void testCreateRolesIfNecessaryWithOneRoleAndCustomPath() {
       ImmutableList.Builder<Statement> statements = ImmutableList.builder();
-      Role role = Role.builder().name("foo").installRecipe("bar").build();
+      RunList runlist = RunList.builder().recipe("bar").build();
+      Role role = Role.builder().name("foo").runlist(runlist).build();
       ChefSolo solo = ChefSolo.builder().rolePath("/tmp/roles").defineRole(role).build();
 
       solo.createRolesIfNecessary(statements);
@@ -186,8 +190,8 @@ public class ChefSoloTest {
 
    public void testCreateRolesIfNecessaryWithMultipleRoleAndCustomPath() {
       ImmutableList.Builder<Statement> statements = ImmutableList.builder();
-      Role roleFoo = Role.builder().name("foo").installRecipe("bar").build();
-      Role roleBar = Role.builder().name("bar").installRecipe("foo").build();
+      Role roleFoo = Role.builder().name("foo").runlist(RunList.builder().recipe("foo").build()).build();
+      Role roleBar = Role.builder().name("bar").runlist(RunList.builder().recipe("bar").build()).build();
       ChefSolo solo = ChefSolo.builder().rolePath("/tmp/roles").defineRole(roleFoo).defineRole(roleBar).build();
 
       solo.createRolesIfNecessary(statements);

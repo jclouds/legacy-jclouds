@@ -24,14 +24,15 @@ import static org.jclouds.scriptbuilder.domain.Statements.createOrOverwriteFile;
 import static org.jclouds.scriptbuilder.domain.Statements.exec;
 
 import java.util.List;
+import java.util.Map;
 
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.StatementList;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.scriptbuilder.domain.chef.DataBag;
-import org.jclouds.scriptbuilder.domain.chef.DataBag.Item;
 import org.jclouds.scriptbuilder.domain.chef.Role;
+import org.jclouds.scriptbuilder.domain.chef.RunList;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
@@ -59,7 +60,7 @@ public class ChefSolo implements Statement {
       private String fileCachePath = DEFAULT_SOLO_PATH;
       private String rolePath;
       private String databagPath;
-      private List<String> cookbookPath = Lists.newArrayList();
+      private ImmutableList.Builder<String> cookbookPath = ImmutableList.builder();
       private String cookbooksArchiveLocation;
       private String jsonAttributes;
       private String group;
@@ -71,7 +72,7 @@ public class ChefSolo implements Statement {
       private String user;
       private List<Role> roles = Lists.newArrayList();
       private List<DataBag> databags = Lists.newArrayList();
-      private List<String> runlist = Lists.newArrayList();
+      private RunList runlist;
 
       /**
        * Directory where Chef Solo will store files.
@@ -109,7 +110,7 @@ public class ChefSolo implements Statement {
        * Directories where Chef Solo will look for cookbooks.
        */
       public Builder cookbookPaths(Iterable<String> cookbookPaths) {
-         this.cookbookPath = ImmutableList.<String> copyOf(checkNotNull(cookbookPaths, "cookbookPaths"));
+         this.cookbookPath.addAll(checkNotNull(cookbookPaths, "cookbookPath"));
          return this;
       }
 
@@ -224,58 +225,20 @@ public class ChefSolo implements Statement {
       }
 
       /**
-       * Adds the given recipe to the run list of the node.
+       * The run list to be executed in the Chef Solo run.
        */
-      public Builder installRecipe(String recipe) {
-         this.runlist.add("recipe[" + checkNotNull(recipe, "recipe") + "]");
-         return this;
-      }
-
-      /**
-       * Adds the given recipes to the run list of the node.
-       */
-      public Builder installRecipes(Iterable<String> recipes) {
-         this.runlist.addAll(Lists.newArrayList(transform(checkNotNull(recipes, "recipes"),
-               new Function<String, String>() {
-                  @Override
-                  public String apply(String input) {
-                     return "recipe[" + input + "]";
-                  }
-               })));
-         return this;
-      }
-
-      /**
-       * Adds the given role to the run list of the node.
-       */
-      public Builder installRole(String role) {
-         this.runlist.add("role[" + checkNotNull(role, "role") + "]");
-         return this;
-      }
-
-      /**
-       * Adds the given roles to the run list of the node.
-       */
-      public Builder installRoles(Iterable<String> roles) {
-         this.runlist.addAll(Lists.newArrayList(transform(checkNotNull(roles, "roles"), new Function<String, String>() {
-            @Override
-            public String apply(String input) {
-               return "role[" + input + "]";
-            }
-         })));
+      public Builder runlist(RunList runlist) {
+         this.runlist = checkNotNull(runlist, "runlist");
          return this;
       }
 
       public ChefSolo build() {
-         if (cookbookPath.isEmpty()) {
-            cookbookPath.add(fileCachePath + "/cookbooks");
-         }
          return new ChefSolo(Optional.of(fileCachePath), Optional.fromNullable(rolePath),
-               Optional.fromNullable(databagPath), Optional.of(cookbookPath),
+               Optional.fromNullable(databagPath), Optional.of(cookbookPath.build()),
                Optional.fromNullable(cookbooksArchiveLocation), Optional.fromNullable(jsonAttributes),
                Optional.fromNullable(group), Optional.fromNullable(interval), Optional.fromNullable(logLevel),
                Optional.fromNullable(logFile), Optional.fromNullable(nodeName), Optional.fromNullable(splay),
-               Optional.fromNullable(user), Optional.of(roles), Optional.of(databags), runlist);
+               Optional.fromNullable(user), Optional.of(roles), Optional.of(databags), Optional.fromNullable(runlist));
       }
 
    }
@@ -295,19 +258,17 @@ public class ChefSolo implements Statement {
    private Optional<String> user;
    private Optional<List<Role>> roles;
    private Optional<List<DataBag>> databags;
-   private List<String> runlist;
+   private RunList runlist;
    private final InstallChefGems installChefGems = new InstallChefGems();
 
    public ChefSolo(Optional<String> fileCachePath, Optional<String> rolePath, Optional<String> databagPath,
-         Optional<List<String>> cookbookPath, Optional<String> cookbooksArchiveLocation,
+         Optional<ImmutableList<String>> cookbookPath, Optional<String> cookbooksArchiveLocation,
          Optional<String> jsonAttributes, Optional<String> group, Optional<Integer> interval,
          Optional<String> logLevel, Optional<String> logFile, Optional<String> nodeName, Optional<Integer> splay,
-         Optional<String> user, Optional<List<Role>> roles, Optional<List<DataBag>> databags, List<String> runlist) {
+         Optional<String> user, Optional<List<Role>> roles, Optional<List<DataBag>> databags, Optional<RunList> runlist) {
       this.fileCachePath = checkNotNull(fileCachePath, "fileCachePath must be set").or(DEFAULT_SOLO_PATH);
       this.rolePath = checkNotNull(rolePath, "rolePath must be set").or(this.fileCachePath + "/roles");
       this.databagPath = checkNotNull(databagPath, "databagPath must be set").or(this.fileCachePath + "/data_bags");
-      this.cookbookPath = checkNotNull(cookbookPath, "cookbookPath must be set").or(
-            Lists.<String> newArrayList(this.fileCachePath + "/cookbooks"));
       this.cookbooksArchiveLocation = checkNotNull(cookbooksArchiveLocation, "cookbooksArchiveLocation must be set");
       this.jsonAttributes = checkNotNull(jsonAttributes, "jsonAttributes must be set");
       this.group = checkNotNull(group, "group must be set");
@@ -319,7 +280,12 @@ public class ChefSolo implements Statement {
       this.user = checkNotNull(user, "user must be set");
       this.roles = checkNotNull(roles, "roles must be set");
       this.databags = checkNotNull(databags, "databags must be set");
-      this.runlist = ImmutableList.copyOf(checkNotNull(runlist, "runlist must be set"));
+      this.runlist = checkNotNull(runlist, "runlist must be set").or(RunList.builder().build());
+      if (!checkNotNull(cookbookPath, "cookbookPath must be set").isPresent() || cookbookPath.get().isEmpty()) {
+         this.cookbookPath = ImmutableList.<String> of(this.fileCachePath + "/cookbooks");
+      } else {
+         this.cookbookPath = ImmutableList.<String> copyOf(cookbookPath.get());
+      }
    }
 
    @Override
@@ -399,9 +365,8 @@ public class ChefSolo implements Statement {
       } else {
          json.append("{");
       }
-      json.append("\"run_list\":[");
-      json.append(Joiner.on(',').join(transform(runlist, quote())));
-      json.append("]");
+      json.append("\"run_list\":");
+      json.append(runlist.toString());
       json.append("}");
 
       statements.add(createOrOverwriteFile(fileCachePath + "/node.json", ImmutableSet.of(json.toString())));
@@ -428,9 +393,9 @@ public class ChefSolo implements Statement {
          for (DataBag databag : databags.get()) {
             String databagFolder = databagPath + "/" + databag.getName();
             statements.add(exec("{md} " + databagFolder));
-            for (Item item : databag.getItems()) {
-               statements.add(createOrOverwriteFile(databagFolder + "/" + item.getName() + ".json",
-                     ImmutableSet.of(item.getJsonData())));
+            for (Map.Entry<String, String> item : databag.getItems().entrySet()) {
+               statements.add(createOrOverwriteFile(databagFolder + "/" + item.getKey() + ".json",
+                     ImmutableSet.of(item.getValue())));
             }
          }
       }
