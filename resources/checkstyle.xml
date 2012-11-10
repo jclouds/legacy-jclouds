@@ -7,10 +7,14 @@
     <module name="TreeWalker">
         <module name="EmptyStatement"/>
         <module name="IllegalThrows"/>
+<!--
+        jclouds prefers 120 character line lengths but has many files with
+        longer lines
         <module name="LineLength">
             <property name="ignorePattern" value="^import\s.*;$"/>
             <property name="max" value="120"/>
         </module>
+-->
         <module name="ModifierOrder"/>
         <module name="MultipleVariableDeclarations"/>
         <module name="SimplifyBooleanExpression"/>
