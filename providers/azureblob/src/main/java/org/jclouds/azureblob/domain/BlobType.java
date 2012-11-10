@@ -29,7 +29,7 @@ public enum BlobType {
    BLOCK_BLOB, PAGE_BLOB, UNRECOGNIZED;
 
    public String value() {
-      return (CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name()));
+      return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name());
    }
 
    @Override

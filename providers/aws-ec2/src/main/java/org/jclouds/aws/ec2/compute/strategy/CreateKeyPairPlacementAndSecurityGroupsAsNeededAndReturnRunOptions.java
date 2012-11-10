@@ -150,7 +150,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions 
 
       @Override
       public boolean apply(TemplateOptions options) {
-         return (options.getRunScript() == null && options.getPrivateKey() == null);
+         return options.getRunScript() == null && options.getPrivateKey() == null;
       }
 
    };

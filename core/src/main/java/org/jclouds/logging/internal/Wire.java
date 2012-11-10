@@ -153,7 +153,7 @@ public abstract class Wire {
          output((String) data);
          return data;
       } else if (data instanceof File) {
-         output(((File) data));
+         output((File) data);
          return data;
       }
       throw new UnsupportedOperationException("Content not supported " + data.getClass());

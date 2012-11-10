@@ -98,7 +98,7 @@ public class CreateOptions implements PostData{
 
 	@Override
 	public void validate() {
-		assert(imageId != null && imageId.length() != 0);
+		assert imageId != null && imageId.length() != 0;
 		//TODO validation of FQDN
 	}
 }

@@ -61,7 +61,7 @@ public class IpRequestData implements PostData {
 	
 	@Override
 	public void validate() {
-		assert(numberOfIps < 1 && numberOfIps > 5);
-		assert(numberOfIps > 1 && extraIpReason == null || extraIpReason.length() == 0);
+		assert numberOfIps < 1 && numberOfIps > 5;
+		assert numberOfIps > 1 && extraIpReason == null || extraIpReason.length() == 0;
 	}
 }

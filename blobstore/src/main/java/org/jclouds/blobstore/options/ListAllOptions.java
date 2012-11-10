@@ -90,6 +90,6 @@ public class ListAllOptions implements Cloneable {
       if (getClass() != obj.getClass())
          return false;
       ListAllOptions other = (ListAllOptions) obj;
-      return (eager == other.eager);
+      return eager == other.eager;
    }
 }

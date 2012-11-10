@@ -173,7 +173,7 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
          Proxy proxy = new Proxy(Proxy.Type.HTTP, addr);
          Authenticator authenticator = new Authenticator() {
             public PasswordAuthentication getPasswordAuthentication() {
-               return (new PasswordAuthentication(utils.getProxyUser(), utils.getProxyPassword().toCharArray()));
+               return new PasswordAuthentication(utils.getProxyUser(), utils.getProxyPassword().toCharArray());
             }
          };
          Authenticator.setDefault(authenticator);

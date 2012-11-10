@@ -127,7 +127,7 @@ public class ServerInZoneToNodeMetadata implements Function<ServerInZone, NodeMe
       public boolean apply(String input) {
          try {
             // Note we can do this, as InetAddress is now on the white list
-            return (InetAddresses.forString(input) instanceof Inet4Address);
+            return InetAddresses.forString(input) instanceof Inet4Address;
          } catch (IllegalArgumentException e) {
             // could be a hostname
             return true;

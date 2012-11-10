@@ -55,7 +55,7 @@ class SendScancodes implements Function<ISession, Void> {
       for (List<Integer> maxOrLess : partition(scancodes, MAX_SIZE)) {
          long codesSent = iSession.getConsole().getKeyboard().putScancodes(maxOrLess);
          logger.debug("List of scancodes sent: ", maxOrLess);
-         assert (codesSent == maxOrLess.size());
+         assert codesSent == maxOrLess.size();
          if (any(maxOrLess, in(SPECIAL_KEYBOARD_BUTTON_MAP_LIST.values()))) {
             Uninterruptibles.sleepUninterruptibly(300, TimeUnit.MILLISECONDS);
          } else {

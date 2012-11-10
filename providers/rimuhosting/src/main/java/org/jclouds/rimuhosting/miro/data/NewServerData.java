@@ -179,13 +179,13 @@ public class NewServerData implements PostData {
 
    public void validate() {
       // bitwise XOR, works with boolean :)
-      assert (this.cloneOptions == null ^ this.createOptions == null);
+      assert this.cloneOptions == null ^ this.createOptions == null;
       if (this.cloneOptions != null) {
          this.cloneOptions.validate();
       }
       if (this.createOptions != null) {
          this.createOptions.validate();
-         assert (this.planId != null && this.planId.length() == 0);
+         assert this.planId != null && this.planId.length() == 0;
       }
 
       if (this.ipRequest != null) {

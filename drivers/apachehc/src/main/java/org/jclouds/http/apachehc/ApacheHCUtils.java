@@ -168,7 +168,7 @@ public class ApacheHCUtils {
          }
       }
       
-      assert (apacheRequest.getEntity() != null);
+      assert apacheRequest.getEntity() != null;
    }
 
    public static class HttpEntityPayload extends BasePayload<HttpEntity> {

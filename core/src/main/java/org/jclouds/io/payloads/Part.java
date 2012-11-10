@@ -81,7 +81,7 @@ public class Part extends DelegatingPayload {
    private Part(String name, Part.PartMap map, Payload delegate) {
       super(delegate);
       this.name = name;
-      this.headers = ImmutableMultimap.copyOf(forMap((checkNotNull(map, "headers"))));
+      this.headers = ImmutableMultimap.copyOf(forMap(checkNotNull(map, "headers")));
    }
 
    public static class PartOptions {

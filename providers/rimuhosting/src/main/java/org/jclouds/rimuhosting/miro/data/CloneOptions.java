@@ -59,6 +59,6 @@ public class CloneOptions implements PostData {
    }
    
    public void validate(){
-	   assert(instanceId == null || instanceId < 0);
+	   assert instanceId == null || instanceId < 0;
    }
 }

@@ -34,7 +34,7 @@ public enum VServerStatus {
    DEPLOYING, RUNNING, STOPPING, STOPPED, STARTING, FAILOVER, UNEXPECTED_STOP, RESTORING, BACKUP_ING, ERROR, START_ERROR, STOP_ERROR, CHANGE_TYPE, REGISTERING, UNRECOGNIZED;
 
    public String value() {
-      return (CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name()));
+      return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name());
    }
 
    @Override

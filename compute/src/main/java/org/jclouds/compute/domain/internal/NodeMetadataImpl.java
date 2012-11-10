@@ -199,7 +199,7 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
          helper.add("privateAddresses", getPrivateAddresses());
       if (getPublicAddresses().size() > 0)
          helper.add("publicAddresses", getPublicAddresses());
-      helper.add("hardware", getHardware()).add("loginUser", ((credentials != null) ? credentials.identity : null));
+      helper.add("hardware", getHardware()).add("loginUser", credentials != null ? credentials.identity : null);
       return addComputeToStringSuffix(helper);
    }
 }

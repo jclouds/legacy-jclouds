@@ -130,16 +130,16 @@ public class ParallelMultipartUploadStrategy implements AsyncMultipartUploadStra
             try {
                etags.put(part, futureETag.get());
                logger.debug(String.format("async uploaded part %s of %s to container %s in %sms with uploadId %s", 
-                     part, key, container, (System.currentTimeMillis()-start), uploadId));
+                     part, key, container, System.currentTimeMillis() - start, uploadId));
             } catch (CancellationException e) {
                errorMap.put(part, e);
                String message = String.format("%s while uploading part %s - [%s,%s] to container %s with uploadId: %s running since %dms", 
-                     e.getMessage(), part, offset, size, container, uploadId, (System.currentTimeMillis()-start));
+                     e.getMessage(), part, offset, size, container, uploadId, System.currentTimeMillis() - start);
                logger.debug(message);
             } catch (Exception e) {
                errorMap.put(part, e);
                String message = String.format("%s while uploading part %s - [%s,%s] to container %s with uploadId: %s running since %dms", 
-                     e.getMessage(), part, offset, size, container, uploadId, (System.currentTimeMillis()-start));
+                     e.getMessage(), part, offset, size, container, uploadId, System.currentTimeMillis() - start);
                logger.error(message, e);
                if (errors.incrementAndGet() <= maxRetries)
                   toRetry.add(new Part(part, offset, size));

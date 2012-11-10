@@ -110,10 +110,10 @@ public class RetrieveActiveBridgedInterfaces implements Function<NodeMetadata, L
       @Override
       public boolean apply(BridgedIf bridgedInterface) {
          try {
-            return (bridgedInterface.getName().startsWith(networkInterface.getDisplayName()) &&
+            return bridgedInterface.getName().startsWith(networkInterface.getDisplayName()) &&
             		bridgedInterface.getStatus().equals("Up") &&
             		networkInterface.isUp() && 
-            		!networkInterface.isLoopback());
+            		!networkInterface.isLoopback();
          } catch (SocketException e) {
             logger.error(e, "Problem in listing network interfaces.");
             throw Throwables.propagate(e);
