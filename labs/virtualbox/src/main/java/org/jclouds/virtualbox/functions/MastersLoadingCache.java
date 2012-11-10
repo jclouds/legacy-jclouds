@@ -309,12 +309,8 @@ public class MastersLoadingCache extends AbstractLoadingCache<Image, Master> {
                   hostNodeMetadata,
                   new Md5(filePath),
                   runAsRoot(false)).init().call();
-      if (md5 != null) {
-         if (!Iterables.get(
-               Splitter.on("=").trimResults().split(response.getOutput()), 1)
-               .equals(md5))
-            return null;
-      }
+      checkNotNull(response.getOutput(),"iso_md5 missing");
+      checkState(response.getOutput().trim().equals(md5));
       return file.getAbsolutePath();
    }
 
