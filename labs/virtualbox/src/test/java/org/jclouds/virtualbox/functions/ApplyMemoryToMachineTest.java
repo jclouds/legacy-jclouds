@@ -26,8 +26,8 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 
 import org.testng.annotations.Test;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.VBoxException;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.VBoxException;
 
 /**
  * @author Mattias Holmqvist

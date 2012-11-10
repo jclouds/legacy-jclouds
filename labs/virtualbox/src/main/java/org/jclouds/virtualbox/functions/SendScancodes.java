@@ -31,7 +31,7 @@ import javax.annotation.Resource;
 import javax.inject.Named;
 
 import org.jclouds.logging.Logger;
-import org.virtualbox_4_1.ISession;
+import org.virtualbox_4_2.ISession;
 
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.Uninterruptibles;
@@ -57,9 +57,10 @@ class SendScancodes implements Function<ISession, Void> {
          logger.debug("List of scancodes sent: ", maxOrLess);
          assert codesSent == maxOrLess.size();
          if (any(maxOrLess, in(SPECIAL_KEYBOARD_BUTTON_MAP_LIST.values()))) {
-            Uninterruptibles.sleepUninterruptibly(300, TimeUnit.MILLISECONDS);
+            // in case of special keystroke we assume more time needed than normal (page refresh)
+            Uninterruptibles.sleepUninterruptibly(500, TimeUnit.MILLISECONDS);
          } else {
-            Uninterruptibles.sleepUninterruptibly(50, TimeUnit.MILLISECONDS);
+            Uninterruptibles.sleepUninterruptibly(250, TimeUnit.MILLISECONDS);
          }
       }
       return null;

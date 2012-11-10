@@ -34,7 +34,7 @@ public class NetworkSpec {
    private final List<NetworkInterfaceCard> networkInterfaceCards;
 
    public NetworkSpec(final List<NetworkInterfaceCard> networkInterfaceCards) {
-      this.networkInterfaceCards = ImmutableList.copyOf(checkNotNull(networkInterfaceCards, "networkInterfaceCards"));
+      this.networkInterfaceCards = ImmutableList.copyOf(checkNotNull(networkInterfaceCards, "networkInterfaceCards can't be null"));
    }
 
    public static Builder builder() {

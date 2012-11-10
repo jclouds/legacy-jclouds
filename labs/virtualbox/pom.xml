@@ -35,9 +35,10 @@
   <packaging>bundle</packaging>
 
   <properties>
+    <virtualbox.version>4.2.6</virtualbox.version>
     <test.virtualbox.endpoint>http://localhost:18083/</test.virtualbox.endpoint>
-    <test.virtualbox.api-version>4.1.4</test.virtualbox.api-version>
-    <test.virtualbox.build-version>4.1.20r80170</test.virtualbox.build-version>
+    <test.virtualbox.api-version>4.2.6</test.virtualbox.api-version>
+    <test.virtualbox.build-version>${virtualbox.version}</test.virtualbox.build-version>
     <test.virtualbox.identity>${user.name}</test.virtualbox.identity>
     <test.virtualbox.credential>CHANGE_ME</test.virtualbox.credential>
     <test.virtualbox.template>osFamily=UBUNTU,osVersionMatches=12.04.1,os64Bit=true,osArchMatches=amd64,loginUser=toor:password,authenticateSudo=true</test.virtualbox.template>
@@ -49,7 +50,7 @@
       *
     </jclouds.osgi.import>
   </properties>
-
+  
   <dependencies>
     <dependency>
       <groupId>org.jclouds</groupId>
@@ -59,7 +60,7 @@
     <dependency>
       <groupId>org.virtualbox</groupId>
       <artifactId>vboxjws</artifactId>
-      <version>${test.virtualbox.api-version}</version>
+      <version>${virtualbox.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jclouds.api</groupId>
@@ -87,6 +88,11 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <scope>test</scope>
+    </dependency>    
+    <dependency>
       <groupId>org.jclouds</groupId>
       <artifactId>jclouds-core</artifactId>
       <version>${project.version}</version>
@@ -98,11 +104,6 @@
       <artifactId>jclouds-compute</artifactId>
       <version>${project.version}</version>
       <type>test-jar</type>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>

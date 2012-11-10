@@ -24,6 +24,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -37,14 +38,14 @@ import org.jclouds.json.config.GsonModule;
 import org.jclouds.virtualbox.config.VirtualBoxComputeServiceContextModule;
 import org.jclouds.virtualbox.functions.IMachineToImage;
 import org.testng.annotations.Test;
-import org.virtualbox_4_1.IGuestOSType;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.IVirtualBox;
-import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_2.IGuestOSType;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.IVirtualBox;
+import org.virtualbox_4_2.VirtualBoxManager;
 
+import com.beust.jcommander.internal.Lists;
 import com.google.common.base.Function;
 import com.google.common.base.Suppliers;
-import com.google.common.collect.Lists;
 import com.google.inject.Guice;
 
 @Test(groups = "unit")
@@ -82,25 +83,6 @@ public class VirtualBoxComputeServiceAdapterTest {
 
       Function<IMachine, Image> iMachineToImage = new IMachineToImage(
                VirtualBoxComputeServiceContextModule.toPortableImageStatus, Suppliers.ofInstance(manager), osMap);
-//      VirtualBoxComputeServiceAdapter adapter = new VirtualBoxComputeServiceAdapter(Suppliers.ofInstance(manager), iMachineToImage, new ImageFromYamlString(), new Supplier<String>() {
-//
-//			@Override
-//         public String get() {
-//	         return "images:\n" + 
-//	         		"    - id: myTestId\n" + 
-//	         		"      name: ubuntu-11.04-server-i386\n" + 
-//	         		"      description: ubuntu 11.04 server (i386)\n" + 
-//	         		"      os_arch: x86\n" + 
-//	         		"      os_family: ubuntu\n" + 
-//	         		"      os_description: ubuntu\n" + 
-//	         		"      os_version: 11.04\n" + 
-//	         		"      iso: http://releases.ubuntu.com/11.04/ubuntu-11.04-server-i386.iso";
-//         }
-//		});
-//
-//      Iterator<Image> iterator = adapter.listImages().iterator();
-//      Image image = Iterators.getOnlyElement(iterator);
-//      assertEquals(image.getDescription(), "ubuntu 11.04 server (i386)");
 
    }
 }

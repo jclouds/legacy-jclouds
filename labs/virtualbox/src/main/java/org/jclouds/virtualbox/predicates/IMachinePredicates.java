@@ -25,10 +25,10 @@ import static org.jclouds.virtualbox.predicates.IMediumPredicates.deviceTypeEqua
 import static org.jclouds.virtualbox.predicates.IMediumPredicates.hasParent;
 import static org.jclouds.virtualbox.predicates.IMediumPredicates.machineIdsContain;
 import static org.jclouds.virtualbox.util.IMediumAttachments.toMedium;
-import static org.virtualbox_4_1.DeviceType.HardDisk;
+import static org.virtualbox_4_2.DeviceType.HardDisk;
 
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.IMedium;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.IMedium;
 
 import com.google.common.base.Predicate;
 
@@ -58,11 +58,9 @@ public class IMachinePredicates {
       public String toString() {
          return "isLinkedClone()";
       }
-
    }
 
    public static Predicate<IMachine> isLinkedClone() {
       return IsLinkedClone.INSTANCE;
    }
-
 }

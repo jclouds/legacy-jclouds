@@ -115,15 +115,15 @@ public class BridgedIf {
 	public BridgedIf(String name, String guid, String dhcp, String ipAddress,
 			String networkMask, String ipv6Address, String iv6NetworkMask,
 			String mediumType, String status) {
-		this.name = checkNotNull(name, "bridgedIf name");
+		this.name = checkNotNull(name, "bridgedIf name can't be null");
 		this.guid = guid;
 		this.dhcp = dhcp;
-		this.ipAddress = checkNotNull(ipAddress, "bridgedIf ipAddress");
+		this.ipAddress = checkNotNull(ipAddress, "bridgedIf ipAddress can't be null");
 		this.networkMask = networkMask;
 		this.ipv6Address = ipv6Address;
 		this.ipv6NetworkMask = iv6NetworkMask;
 		this.mediumType = mediumType;
-		this.status = checkNotNull(status, "bridgedIf status");
+		this.status = checkNotNull(status, "bridgedIf status can't be null");
 	}
 
 	public String getName() {

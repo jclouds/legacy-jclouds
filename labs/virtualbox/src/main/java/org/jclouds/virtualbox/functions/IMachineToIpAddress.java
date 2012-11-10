@@ -25,9 +25,9 @@ import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.virtualbox.config.VirtualBoxConstants;
-import org.virtualbox_4_1.IGuestOSType;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_2.IGuestOSType;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.VirtualBoxManager;
 
 import com.google.common.base.Function;
 
@@ -50,8 +50,7 @@ public class IMachineToIpAddress implements Function<IMachine, String> {
    public String apply(IMachine machine) {
 
       String macAddress = machine.getNetworkAdapter(0l).getMACAddress();
-      int offset = 0;
-      int step = 2;
+      int offset = 0, step = 2;
       for (int j = 1; j <= 5; j++) {
          macAddress = new StringBuilder(macAddress).insert(j * step + offset, ":").toString().toLowerCase();
          offset++;

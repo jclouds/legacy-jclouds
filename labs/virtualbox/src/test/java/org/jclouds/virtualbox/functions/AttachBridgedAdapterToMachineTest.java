@@ -22,15 +22,14 @@ import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.virtualbox_4_1.NetworkAdapterType.Am79C973;
-import static org.virtualbox_4_1.NetworkAttachmentType.Bridged;
+import static org.virtualbox_4_2.NetworkAttachmentType.Bridged;
 
 import org.jclouds.virtualbox.domain.NetworkAdapter;
 import org.jclouds.virtualbox.domain.NetworkInterfaceCard;
 import org.testng.annotations.Test;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.INetworkAdapter;
-import org.virtualbox_4_1.NetworkAttachmentType;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.INetworkAdapter;
+import org.virtualbox_4_2.NetworkAttachmentType;
 
 /**
  * @author Andrea Turli
@@ -49,7 +48,6 @@ public class AttachBridgedAdapterToMachineTest {
 
 		expect(machine.getNetworkAdapter(adapterId)).andReturn(iNetworkAdapter);
 		iNetworkAdapter.setAttachmentType(Bridged);
-		iNetworkAdapter.setAdapterType(Am79C973);
 		iNetworkAdapter.setMACAddress(macAddress);
 		iNetworkAdapter.setBridgedInterface(hostInterface);
 		iNetworkAdapter.setEnabled(true);

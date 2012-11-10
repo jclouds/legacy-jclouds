@@ -21,7 +21,7 @@ package org.jclouds.virtualbox.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_2.IMachine;
 
 import com.google.common.base.Objects;
 
@@ -74,12 +74,9 @@ public class CloneSpec {
    }
 
    public CloneSpec(VmSpec vmSpec, NetworkSpec networkSpec, IMachine master, boolean isLinked) {
-      checkNotNull(vmSpec, "vmSpec");
-      checkNotNull(networkSpec, "networkSpec");
-      checkNotNull(master, "master");
-      this.vmSpec = vmSpec;
-      this.networkSpec = networkSpec;
-      this.master = master;
+      this.vmSpec = checkNotNull(vmSpec, "vmSpec can't be null");
+      this.networkSpec =  checkNotNull(networkSpec, "networkSpec can't be null");
+      this.master =  checkNotNull(master, "master can't be null");
       this.isLinked = isLinked;
    }
 

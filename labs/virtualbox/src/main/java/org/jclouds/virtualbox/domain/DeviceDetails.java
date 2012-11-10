@@ -21,7 +21,7 @@ package org.jclouds.virtualbox.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.virtualbox_4_1.DeviceType;
+import org.virtualbox_4_2.DeviceType;
 
 import com.google.common.base.Objects;
 
@@ -43,10 +43,9 @@ public class DeviceDetails {
    private final DeviceType deviceType;
 
    public DeviceDetails(int port, int deviceSlot, DeviceType deviceType) {
-      checkNotNull(deviceType, "deviceType");
       this.port = port;
       this.deviceSlot = deviceSlot;
-      this.deviceType = deviceType;
+      this.deviceType = checkNotNull(deviceType, "deviceType can't be null");
    }
 
    public int getPort() {
@@ -87,7 +86,7 @@ public class DeviceDetails {
       }
 
       public DeviceDetails build() {
-         checkNotNull(deviceType, "deviceType");
+         checkNotNull(deviceType, "deviceType can't be null");
          return new DeviceDetails(port, deviceSlot, deviceType);
       }
    }

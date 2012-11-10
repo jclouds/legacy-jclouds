@@ -39,12 +39,12 @@
     </appender>
 
     <root>
-        <level value="DEBUG" />
+        <level value="INFO" />
         <appender-ref ref="CONSOLE" />
     </root>
     
    <logger name="net.schmizz.sshj">
-        <level value="ERROR" />
+        <level value="INFO" />
         <appender-ref ref="CONSOLE" />
     </logger>
 

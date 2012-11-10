@@ -37,7 +37,7 @@ import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
 import org.jclouds.virtualbox.functions.IMachineToSshClient;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.Test;
-import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_2.IMachine;
 
 import com.google.common.collect.Iterables;
 
@@ -61,7 +61,7 @@ public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClien
       doConnectViaSsh(machine.getNode(), prioritizeCredentialsFromTemplate.apply(template, machine.getCredentials()));
    }
 
-   protected void doConnectViaSsh(IMachine machine, LoginCredentials creds) {      
+   protected void doConnectViaSsh(IMachine machine, LoginCredentials creds) {
       SshClient ssh = view.utils().injector().getInstance(IMachineToSshClient.class).apply(machine);
       try {
          ssh.connect();

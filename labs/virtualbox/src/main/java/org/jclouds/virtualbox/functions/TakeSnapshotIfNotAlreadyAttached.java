@@ -22,12 +22,12 @@ package org.jclouds.virtualbox.functions;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.logging.Logger;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.IProgress;
-import org.virtualbox_4_1.ISession;
-import org.virtualbox_4_1.ISnapshot;
-import org.virtualbox_4_1.MachineState;
-import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.IProgress;
+import org.virtualbox_4_2.ISession;
+import org.virtualbox_4_2.ISnapshot;
+import org.virtualbox_4_2.MachineState;
+import org.virtualbox_4_2.VirtualBoxManager;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -61,8 +61,6 @@ public class TakeSnapshotIfNotAlreadyAttached implements Function<IMachine, ISna
       if (snap == null) {
          try {
             session = manager.get().openMachineSession(machine);
-            logger.debug("No snapshot available taking new one: %s (description: %s) taken from %s", snapshotName,
-                     snapshotDesc, machine.getName());
             int retries = 10;
             while (true) {
                try {
@@ -83,7 +81,7 @@ public class TakeSnapshotIfNotAlreadyAttached implements Function<IMachine, ISna
                   }
 
                   snap = machine.getCurrentSnapshot();
-                  logger.debug("Snapshot %s (description: %s) taken from %s", snapshotName, snapshotDesc,
+                  logger.debug("<< snapshot(%s) with description(%s) taken from master(%s)", snapshotName, snapshotDesc,
                            machine.getName());
                   break;
                } catch (Exception e) {

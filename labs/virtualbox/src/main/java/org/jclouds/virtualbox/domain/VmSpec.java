@@ -24,7 +24,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Collections;
 import java.util.Set;
 
-import org.virtualbox_4_1.CleanupMode;
+import org.virtualbox_4_2.CleanupMode;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
@@ -44,13 +44,13 @@ public class VmSpec {
 
    public VmSpec(String vmId, String vmName, String osTypeId, long memory, String guestUser, String guestPassword, boolean forceOverwrite,
             Set<StorageController> controllers, CleanupMode cleanupMode) {
-      this.vmId = checkNotNull(vmId, "vmId");
-      this.vmName = checkNotNull(vmName, "vmName");
-      this.osTypeId = checkNotNull(osTypeId, "osTypeId");
+      this.vmId = checkNotNull(vmId, "vmId can't be null");
+      this.vmName = checkNotNull(vmName, "vmName can't be null");
+      this.osTypeId = checkNotNull(osTypeId, "osTypeId can't be null");
       checkArgument(memory > 0, "memory must be > 0");
       this.memory = memory;
-      this.controllers = checkNotNull(controllers, "controllers");
-      this.cleanupMode = checkNotNull(cleanupMode, "cleanupMode");
+      this.controllers = checkNotNull(controllers, "controllers can't be null");
+      this.cleanupMode = checkNotNull(cleanupMode, "cleanupMode can't be null");
       this.forceOverwrite = forceOverwrite;
    }
 

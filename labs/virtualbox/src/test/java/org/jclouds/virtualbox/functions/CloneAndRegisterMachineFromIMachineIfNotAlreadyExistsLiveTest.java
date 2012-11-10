@@ -37,10 +37,10 @@ import org.jclouds.virtualbox.domain.VmSpec;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import org.virtualbox_4_1.CleanupMode;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.NetworkAttachmentType;
-import org.virtualbox_4_1.StorageBus;
+import org.virtualbox_4_2.CleanupMode;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.NetworkAttachmentType;
+import org.virtualbox_4_2.StorageBus;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Function;
