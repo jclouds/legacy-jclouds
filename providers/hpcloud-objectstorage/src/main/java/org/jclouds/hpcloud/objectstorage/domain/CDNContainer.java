@@ -40,13 +40,13 @@ public class CDNContainer implements Comparable<CDNContainer> {
    public static class Builder {
 
       protected String name;
-      protected boolean cdn_enabled;
-      protected boolean log_retention;
+      protected boolean cdnEnabled;
+      protected boolean logRetention;
       protected long ttl;
-      protected URI cdn_uri;
-      protected URI cdn_ssl_uri;
-      protected String referrer_acl;
-      protected String useragent_acl;
+      protected URI cdnUri;
+      protected URI cdnSslUri;
+      protected String referrerAcl;
+      protected String useragentAcl;
 
       /**
        * @see CDNContainer#getName()
@@ -59,8 +59,8 @@ public class CDNContainer implements Comparable<CDNContainer> {
       /**
        * @see CDNContainer#isCDNEnabled()
        */
-      public Builder CDNEnabled(boolean cdn_enabled) {
-         this.cdn_enabled = cdn_enabled;
+      public Builder CDNEnabled(boolean cdnEnabled) {
+         this.cdnEnabled = cdnEnabled;
          return this;
       }
 
@@ -75,45 +75,45 @@ public class CDNContainer implements Comparable<CDNContainer> {
       /**
        * @see CDNContainer#getCDNUri()
        */
-      public Builder CDNUri(URI cdn_uri) {
-         this.cdn_uri = cdn_uri;
+      public Builder CDNUri(URI cdnUri) {
+         this.cdnUri = cdnUri;
          return this;
       }
 
       /**
        * @see CDNContainer#getCDNSslUri()
        */
-      public Builder CDNSslUri(URI cdn_ssl_uri) {
-         this.cdn_ssl_uri = cdn_ssl_uri;
+      public Builder CDNSslUri(URI cdnSslUri) {
+         this.cdnSslUri = cdnSslUri;
          return this;
       }
       
       /**
        * @see CDNContainer#getReferrerAcl()
        */
-      public Builder referrerAcl(String referrer_acl) {
-         this.referrer_acl = referrer_acl;
+      public Builder referrerAcl(String referrerAcl) {
+         this.referrerAcl = referrerAcl;
          return this;
       }
 
       /**
        * @see CDNContainer#getUseragentAcl()
        */
-      public Builder useragentAcl(String useragent_acl) {
-         this.useragent_acl = useragent_acl;
+      public Builder useragentAcl(String useragentAcl) {
+         this.useragentAcl = useragentAcl;
          return this;
       }
 
       /**
        * @see CDNContainer#isLogRetention()
        */
-      public Builder logRetention(boolean log_retention) {
-         this.log_retention = log_retention;
+      public Builder logRetention(boolean logRetention) {
+         this.logRetention = logRetention;
          return this;
       }
 
       public CDNContainer build() {
-         return new CDNContainer(name, cdn_enabled, ttl, cdn_uri, cdn_ssl_uri, referrer_acl, useragent_acl, log_retention);
+         return new CDNContainer(name, cdnEnabled, ttl, cdnUri, cdnSslUri, referrerAcl, useragentAcl, logRetention);
       }
 
       public Builder fromCDNContainer(CDNContainer in) {
@@ -132,9 +132,11 @@ public class CDNContainer implements Comparable<CDNContainer> {
    private final String referrerAcl;
    private final String useragentAcl;
 
-   @ConstructorProperties({ "name", "cdn_enabled", "ttl", "cdn_uri", "cdn_ssl_uri", "referrer_acl", "useragent_acl", "log_retention" })
+   @ConstructorProperties({ "name", "cdnEnabled", "ttl", "cdnUri", "cdnSslUri", "referrerAcl", "useragentAcl", 
+                            "logRetention" })
    protected CDNContainer(@Nullable String name, boolean cdnEnabled, long ttl, @Nullable URI CDNUri,
-           @Nullable URI CDNSslUri, @Nullable String referrerAcl, @Nullable String useragentAcl, boolean logRetention) {
+           @Nullable URI CDNSslUri, @Nullable String referrerAcl, @Nullable String useragentAcl, 
+           boolean logRetention) {
       this.name = Strings.emptyToNull(name);
       this.cdnEnabled = cdnEnabled;
       this.ttl = ttl;
