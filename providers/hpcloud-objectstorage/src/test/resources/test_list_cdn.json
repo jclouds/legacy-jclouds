@@ -1,5 +1,5 @@
 [
-{"name":"hpcloud-blobstore.testCDNOperationsContainerWithCDN","cdn_enabled":"false","ttl":3600,"cdn_uri":"https://cdnmgmt.hpcloud.net:8080/v1/AUTH_test/","referrer_acl":"","useragent_acl":"", "log_retention":"false"},
-{"name":"hpcloud-blobstore5","cdn_enabled":"true","ttl":28800,"cdn_uri":"https://cdnmgmt.hpcloud.net:8080/v1/AUTH_test/","referrer_acl":"","useragent_acl":"", "log_retention":"false"},
-{"name":"hpcloud-cfcdnint.testCDNOperationsContainerWithCDN","cdn_enabled":"false","ttl":3600,"cdn_uri":"https://cdnmgmt.hpcloud.net:8080/v1/AUTH_test/","referrer_acl":"","useragent_acl":"", "log_retention":"false"}
+{"name":"hpcloud-blobstore.testCDNOperationsContainerWithCDN","cdnEnabled":"false","ttl":3600,"cdnUri":"http://h10cdf69e2913a87afe9ce721ceb35ca5.cdn.hpcloudsvc.com","cdnSslUri":"https://a248.e.akamai.net/cdn.hpcloudsvc.com/h10cdf69e2913a87afe9ce721ceb35ca5/aw2","referrerAcl":"","useragentAcl":"", "logRetention":"false"},
+{"name":"hpcloud-blobstore5","cdnEnabled":"true","ttl":28800,"cdnUri":"http://h0bc2984e4ad8f8bec0ebf5b147c9fe55.cdn.hpcloudsvc.com","cdnSslUri":"https://a248.e.akamai.net/cdn.hpcloudsvc.com/h0bc2984e4ad8f8bec0ebf5b147c9fe55/aw2","referrerAcl":"","useragentAcl":"", "logRetention":"false"},
+{"name":"hpcloud-cfcdnint.testCDNOperationsContainerWithCDN","cdnEnabled":"false","ttl":3600,"cdnUri":"http://h82d1ae1ee2ada5151c60e33f097294c2.cdn.hpcloudsvc.com","cdnSslUri":"https://a248.e.akamai.net/cdn.hpcloudsvc.com/h82d1ae1ee2ada5151c60e33f097294c2/aw2","referrerAcl":"","useragentAcl":"", "logRetention":"false"}
 ]

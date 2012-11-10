@@ -45,11 +45,17 @@ public class CDNContainersTest extends BaseItemParserTest<FluentIterable<CDNCont
    @Consumes(MediaType.APPLICATION_JSON)
    public FluentIterable<CDNContainer> expected() {
       return FluentIterable.from(ImmutableSet.of(
-               CDNContainer.builder().name("hpcloud-blobstore.testCDNOperationsContainerWithCDN").CDNEnabled(false)
-                        .ttl(3600).CDNUri(URI.create("https://cdnmgmt.hpcloud.net:8080/v1/AUTH_test/")).build(),
-               CDNContainer.builder().name("hpcloud-blobstore5").CDNEnabled(true).ttl(28800)
-                        .CDNUri(URI.create("https://cdnmgmt.hpcloud.net:8080/v1/AUTH_test/")).build(),
-               CDNContainer.builder().name("hpcloud-cfcdnint.testCDNOperationsContainerWithCDN").CDNEnabled(false)
-                        .ttl(3600).CDNUri(URI.create("https://cdnmgmt.hpcloud.net:8080/v1/AUTH_test/")).build()));
+         CDNContainer.builder().name("hpcloud-blobstore.testCDNOperationsContainerWithCDN").CDNEnabled(false).ttl(3600)
+            .CDNUri(URI.create("http://h10cdf69e2913a87afe9ce721ceb35ca5.cdn.hpcloudsvc.com"))
+            .CDNSslUri(URI.create("https://a248.e.akamai.net/cdn.hpcloudsvc.com/h10cdf69e2913a87afe9ce721ceb35ca5/aw2"))
+            .build(),
+         CDNContainer.builder().name("hpcloud-blobstore5").CDNEnabled(true).ttl(28800)
+            .CDNUri(URI.create("http://h0bc2984e4ad8f8bec0ebf5b147c9fe55.cdn.hpcloudsvc.com"))
+            .CDNSslUri(URI.create("https://a248.e.akamai.net/cdn.hpcloudsvc.com/h0bc2984e4ad8f8bec0ebf5b147c9fe55/aw2"))
+            .build(),
+         CDNContainer.builder().name("hpcloud-cfcdnint.testCDNOperationsContainerWithCDN").CDNEnabled(false).ttl(3600)
+            .CDNUri(URI.create("http://h82d1ae1ee2ada5151c60e33f097294c2.cdn.hpcloudsvc.com"))
+            .CDNSslUri(URI.create("https://a248.e.akamai.net/cdn.hpcloudsvc.com/h82d1ae1ee2ada5151c60e33f097294c2/aw2"))
+            .build()));
    }
 }
