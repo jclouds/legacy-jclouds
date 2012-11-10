@@ -20,7 +20,6 @@ package org.jclouds.dmtf.cim;
 
 import static com.google.common.base.Objects.equal;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAnyAttribute;
@@ -29,6 +28,7 @@ import javax.xml.bind.annotation.XmlValue;
 import javax.xml.namespace.QName;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Maps;
 
 /**
  * Java class for cimString complex type.
@@ -51,7 +51,7 @@ public class CimString {
    @XmlValue
    protected String value;
    @XmlAnyAttribute
-   private Map<QName, String> otherAttributes = new HashMap<QName, String>();
+   private Map<QName, String> otherAttributes = Maps.newHashMap();
 
    /**
     * Gets the value of the value property.
