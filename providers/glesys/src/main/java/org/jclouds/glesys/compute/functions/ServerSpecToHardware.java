@@ -52,7 +52,7 @@ public class ServerSpecToHardware implements Function<ServerSpec, Hardware> {
    @Override
    public Hardware apply(ServerSpec spec) {
       Location location = findLocationForServerSpec.apply(spec);
-      assert (location != null) : String.format("no location matched ServerSpec %s", spec);
+      assert location != null : String.format("no location matched ServerSpec %s", spec);
       return new HardwareBuilder().ids(spec.toString()).ram(spec.getMemorySizeMB()).processors(
                ImmutableList.of(new Processor(spec.getCpuCores(), 1.0))).volumes(
                ImmutableList.<Volume> of(new VolumeImpl((float) spec.getDiskSizeGB(), true, true))).hypervisor(

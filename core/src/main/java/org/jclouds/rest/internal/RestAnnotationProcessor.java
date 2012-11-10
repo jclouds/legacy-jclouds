@@ -850,7 +850,7 @@ public class RestAnnotationProcessor<T> {
       if (method.getReturnType().getTypeParameters().length == 0) {
          returnVal = method.getReturnType();
       } else if (method.getReturnType().equals(ListenableFuture.class)) {
-         ParameterizedType futureType = ((ParameterizedType) method.getGenericReturnType());
+         ParameterizedType futureType = (ParameterizedType) method.getGenericReturnType();
          returnVal = futureType.getActualTypeArguments()[0];
          if (returnVal instanceof WildcardType)
             returnVal = WildcardType.class.cast(returnVal).getUpperBounds()[0];

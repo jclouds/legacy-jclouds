@@ -168,7 +168,7 @@ public class LocalAsyncBlobStore extends BaseAsyncBlobStore {
          if (prefix != null) {
             contents = newTreeSet(filter(contents, new Predicate<StorageMetadata>() {
                public boolean apply(StorageMetadata o) {
-                  return (o != null && o.getName().startsWith(prefix) && !o.getName().equals(prefix));
+                  return o != null && o.getName().startsWith(prefix) && !o.getName().equals(prefix);
                }
             }));
          }

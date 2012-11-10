@@ -29,7 +29,7 @@ public enum IpState {
    UNASSIGNED, ASSIGNED, UNRECOGNIZED;
 
    public String toString() {
-      return (CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name()));
+      return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name());
    }
 
    public static IpState fromValue(String state) {

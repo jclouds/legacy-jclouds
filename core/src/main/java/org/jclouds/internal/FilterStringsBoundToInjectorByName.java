@@ -73,8 +73,8 @@ public class FilterStringsBoundToInjectorByName implements Function<Predicate<St
                @Override
                public String apply(Binding<String> input) {
                   Annotation annotation = input.getKey().getAnnotation();
-                  return ((annotation instanceof javax.inject.Named) ? javax.inject.Named.class.cast(annotation)
-                        .value() : com.google.inject.name.Named.class.cast(annotation).value());
+                  return (annotation instanceof javax.inject.Named) ? javax.inject.Named.class.cast(annotation)
+                        .value() : com.google.inject.name.Named.class.cast(annotation).value();
                }
 
             });

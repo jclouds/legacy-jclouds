@@ -55,17 +55,17 @@ public class CatalogItemHandler extends ParseSax.HandlerWithResult<CatalogItem> 
       Map<String, String> attributes = SaxUtils.cleanseAttributes(attrs);
       if (SaxUtils.equalsOrSuffix(qName, "CatalogItem")) {
          catalogItem = newReferenceType(attributes);
-      } else if (SaxUtils.equalsOrSuffix(qName, ("Entity"))) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "Entity")) {
          entity = newReferenceType(attributes);
-      } else if (SaxUtils.equalsOrSuffix(qName, ("Property"))) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "Property")) {
          key = attributes.get("key");
       }
    }
 
    public void endElement(String uri, String name, String qName) {
-      if (SaxUtils.equalsOrSuffix(qName, ("Description"))) {
+      if (SaxUtils.equalsOrSuffix(qName, "Description")) {
          description = currentOrNull();
-      } else if (SaxUtils.equalsOrSuffix(qName, ("Property"))) {
+      } else if (SaxUtils.equalsOrSuffix(qName, "Property")) {
          properties.put(key, currentOrNull());
          key = null;
       }

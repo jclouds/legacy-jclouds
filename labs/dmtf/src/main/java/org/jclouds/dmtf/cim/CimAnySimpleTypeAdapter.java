@@ -24,7 +24,7 @@ public class CimAnySimpleTypeAdapter extends XmlAdapter<String, String> {
 
    @Override
    public String unmarshal(String value) {
-      return (javax.xml.bind.DatatypeConverter.parseAnySimpleType(value));
+      return javax.xml.bind.DatatypeConverter.parseAnySimpleType(value);
    }
 
    @Override
@@ -32,7 +32,7 @@ public class CimAnySimpleTypeAdapter extends XmlAdapter<String, String> {
       if (value == null) {
          return null;
       }
-      return (javax.xml.bind.DatatypeConverter.printAnySimpleType(value));
+      return javax.xml.bind.DatatypeConverter.printAnySimpleType(value);
    }
 
 }

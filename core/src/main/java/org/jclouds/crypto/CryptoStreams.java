@@ -96,9 +96,9 @@ public class CryptoStreams {
       if (length == 0)
          return provisional;
       // we know base64 is in 4 character chunks, so out of bounds risk here
-      else if (provisional.charAt((length - 2)) == '=')
+      else if (provisional.charAt(length - 2) == '=')
          length-=2;
-      else if (provisional.charAt((length - 1)) == '=')
+      else if (provisional.charAt(length - 1) == '=')
          length-=1;
       
       char[] tmp = new char[length];

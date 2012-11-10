@@ -111,7 +111,7 @@ public class RetryablePredicate<T> implements Predicate<T> {
    protected long nextMaxInterval(long attempt, Date end) {
       // Interval increases exponentially, at a rate of nextInterval *= 1.5
       // Note that attempt starts counting at 1
-      long interval = (long) (period * Math.pow(1.5, (attempt-1)));
+      long interval = (long) (period * Math.pow(1.5, attempt - 1));
       interval = interval > maxPeriod ? maxPeriod : interval;
       long max = end.getTime() - System.currentTimeMillis();
       return (interval > max) ? max : interval;

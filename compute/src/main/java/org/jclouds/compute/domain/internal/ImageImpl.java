@@ -126,7 +126,7 @@ public class ImageImpl extends ComputeMetadataImpl implements Image {
       ToStringHelper helper = computeToStringPrefix();
       helper.add("os", getOperatingSystem()).add("description", getDescription()).add("version", getVersion())
                .add("status", formatStatus(this))
-               .add("loginUser", ((defaultCredentials != null) ? defaultCredentials.identity : null));
+               .add("loginUser", defaultCredentials != null ? defaultCredentials.identity : null);
       return addComputeToStringSuffix(helper);
    }
 

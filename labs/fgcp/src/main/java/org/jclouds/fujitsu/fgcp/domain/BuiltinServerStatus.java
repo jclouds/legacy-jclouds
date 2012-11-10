@@ -39,7 +39,7 @@ public enum BuiltinServerStatus {
    DEPLOYING, RUNNING, STOPPING, STOPPED, STARTING, FAILOVER, UNEXPECTED_STOP, RESTORING, BACKUP_ING, ERROR, EXECUTE_NETWORK_SERVER, START_ERROR, STOP_ERROR, UPDATE, BACKOUT, UNRECOGNIZED;
 
    public String value() {
-      return (CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name()));
+      return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name());
    }
 
    @Override

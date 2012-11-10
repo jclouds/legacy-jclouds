@@ -104,7 +104,7 @@ public class BlockDeviceMapping implements Comparable<BlockDeviceMapping>{
       Preconditions2.checkNotEmpty(deviceName, "the deviceName must be non-empty");
 
       if (sizeInGib != null) {
-         checkArgument((sizeInGib >= VOLUME_SIZE_MIN_VALUE && sizeInGib <= VOLUME_SIZE_MAX_VALUE),
+         checkArgument(sizeInGib >= VOLUME_SIZE_MIN_VALUE && sizeInGib <= VOLUME_SIZE_MAX_VALUE,
                String.format("Size in Gib must be between %s and %s GB", VOLUME_SIZE_MIN_VALUE, VOLUME_SIZE_MAX_VALUE));
       }
       this.deviceName = deviceName;

@@ -420,8 +420,8 @@ public class InstantiateVAppTemplateOptions {
    @Override
    public String toString() {
       return "[cpuCount=" + cpuCount + ", memorySizeMegabytes=" + memorySizeMegabytes + ", networkConfig="
-            + networkConfig + ", customizeOnInstantiate=" + customizeOnInstantiate + ", deploy=" + (deploy)
-            + ", powerOn=" + (powerOn) + "]";
+            + networkConfig + ", customizeOnInstantiate=" + customizeOnInstantiate + ", deploy=" + deploy
+            + ", powerOn=" + powerOn + "]";
    }
 
    @Override

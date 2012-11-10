@@ -35,7 +35,7 @@ public enum VDiskStatus {
    NORMAL, BACKUP_ING, DEPLOYING, DETACHING, ATTACHING, RESTORING, ERROR, UNRECOGNIZED;
 
    public String value() {
-      return (CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name()));
+      return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name());
    }
 
    @Override
