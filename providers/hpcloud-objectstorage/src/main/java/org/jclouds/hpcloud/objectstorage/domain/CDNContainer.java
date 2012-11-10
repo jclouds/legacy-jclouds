@@ -41,11 +41,12 @@ public class CDNContainer implements Comparable<CDNContainer> {
 
       protected String name;
       protected boolean cdnEnabled;
+      protected boolean logRetention;
       protected long ttl;
-      protected URI CDNUri;
+      protected URI cdnUri;
+      protected URI cdnSslUri;
       protected String referrerAcl;
       protected String useragentAcl;
-      protected boolean logRetention;
 
       /**
        * @see CDNContainer#getName()
@@ -74,11 +75,19 @@ public class CDNContainer implements Comparable<CDNContainer> {
       /**
        * @see CDNContainer#getCDNUri()
        */
-      public Builder CDNUri(URI CDNUri) {
-         this.CDNUri = CDNUri;
+      public Builder CDNUri(URI cdnUri) {
+         this.cdnUri = cdnUri;
          return this;
       }
 
+      /**
+       * @see CDNContainer#getCDNSslUri()
+       */
+      public Builder CDNSslUri(URI cdnSslUri) {
+         this.cdnSslUri = cdnSslUri;
+         return this;
+      }
+      
       /**
        * @see CDNContainer#getReferrerAcl()
        */
@@ -90,7 +99,7 @@ public class CDNContainer implements Comparable<CDNContainer> {
       /**
        * @see CDNContainer#getUseragentAcl()
        */
-      public Builder useragent_acl(String useragentAcl) {
+      public Builder useragentAcl(String useragentAcl) {
          this.useragentAcl = useragentAcl;
          return this;
       }
@@ -104,31 +113,35 @@ public class CDNContainer implements Comparable<CDNContainer> {
       }
 
       public CDNContainer build() {
-         return new CDNContainer(name, cdnEnabled, ttl, CDNUri, referrerAcl, useragentAcl, logRetention);
+         return new CDNContainer(name, cdnEnabled, ttl, cdnUri, cdnSslUri, referrerAcl, useragentAcl, logRetention);
       }
 
       public Builder fromCDNContainer(CDNContainer in) {
-         return this.name(in.getName()).CDNEnabled(in.isCDNEnabled()).ttl(in.getTTL()).CDNUri(in.getCDNUri())
-                  .referrerAcl(in.getReferrerAcl()).useragent_acl(in.getUseragentAcl())
-                  .logRetention(in.isLogRetention());
+         return this.name(in.getName()).CDNEnabled(in.isCDNEnabled()).ttl(in.getTTL())
+                  .CDNUri(in.getCDNUri()).CDNSslUri(in.getCDNSslUri()).referrerAcl(in.getReferrerAcl())
+                  .useragentAcl(in.getUseragentAcl()).logRetention(in.isLogRetention());
       }
    }
 
    private final String name;
    private final boolean cdnEnabled;
+   private final boolean logRetention;
    private final long ttl;
    private final URI CDNUri;
+   private final URI CDNSslUri;
    private final String referrerAcl;
    private final String useragentAcl;
-   private final boolean logRetention;
 
-   @ConstructorProperties({ "name", "cdn_enabled", "ttl", "cdn_uri", "referrer_acl", "useragent_acl", "log_retention" })
+   @ConstructorProperties({ "name", "cdnEnabled", "ttl", "cdnUri", "cdnSslUri", "referrerAcl", "useragentAcl", 
+                            "logRetention" })
    protected CDNContainer(@Nullable String name, boolean cdnEnabled, long ttl, @Nullable URI CDNUri,
-            @Nullable String referrerAcl, @Nullable String useragentAcl, boolean logRetention) {
+           @Nullable URI CDNSslUri, @Nullable String referrerAcl, @Nullable String useragentAcl, 
+           boolean logRetention) {
       this.name = Strings.emptyToNull(name);
       this.cdnEnabled = cdnEnabled;
       this.ttl = ttl;
       this.CDNUri = CDNUri;
+      this.CDNSslUri = CDNSslUri;
       this.referrerAcl = Strings.emptyToNull(referrerAcl);
       this.useragentAcl = Strings.emptyToNull(useragentAcl);
       this.logRetention = logRetention;
@@ -155,6 +168,11 @@ public class CDNContainer implements Comparable<CDNContainer> {
    @Nullable
    public URI getCDNUri() {
       return this.CDNUri;
+   }
+
+   @Nullable
+   public URI getCDNSslUri() {
+      return this.CDNSslUri;
    }
 
    @Nullable
@@ -188,8 +206,8 @@ public class CDNContainer implements Comparable<CDNContainer> {
 
    protected ToStringHelper string() {
       return Objects.toStringHelper(this).omitNullValues().add("name", name).add("cdnEnabled", cdnEnabled)
-               .add("ttl", ttl).add("CDNUri", CDNUri).add("referrerAcl", referrerAcl).add("useragentAcl", useragentAcl)
-               .add("logRetention", logRetention);
+               .add("ttl", ttl).add("CDNUri", CDNUri).add("CDNSslUri", CDNSslUri).add("referrerAcl", referrerAcl)
+               .add("useragentAcl", useragentAcl).add("logRetention", logRetention);
    }
 
    @Override
