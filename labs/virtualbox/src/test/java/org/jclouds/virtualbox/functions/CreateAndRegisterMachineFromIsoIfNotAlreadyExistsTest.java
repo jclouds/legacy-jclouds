@@ -18,7 +18,6 @@
  */
 package org.jclouds.virtualbox.functions;
 
-import static org.easymock.EasyMock.anyBoolean;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.eq;
@@ -26,6 +25,8 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+
+import java.util.List;
 
 import org.easymock.EasyMock;
 import org.jclouds.virtualbox.domain.IsoSpec;
@@ -35,15 +36,16 @@ import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.util.MachineUtils;
 import org.testng.annotations.Test;
-import org.virtualbox_4_1.CleanupMode;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.ISession;
-import org.virtualbox_4_1.IVirtualBox;
-import org.virtualbox_4_1.LockType;
-import org.virtualbox_4_1.StorageBus;
-import org.virtualbox_4_1.VBoxException;
-import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_2.CleanupMode;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.ISession;
+import org.virtualbox_4_2.IVirtualBox;
+import org.virtualbox_4_2.LockType;
+import org.virtualbox_4_2.StorageBus;
+import org.virtualbox_4_2.VBoxException;
+import org.virtualbox_4_2.VirtualBoxManager;
 
+import com.beust.jcommander.internal.Lists;
 import com.google.common.base.Suppliers;
 
 /**
@@ -70,7 +72,10 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
         ISession session = createMock(ISession.class);
 
         expect(manager.getVBox()).andReturn(vBox).anyTimes();
-        expect(vBox.composeMachineFilename(vmName, "/tmp/workingDir")).andReturn("settingsFile");
+        String flags = "";
+        List<String> groups = Lists.newArrayList();
+        String group = "";
+        expect(vBox.composeMachineFilename(vmName, group, flags, "/tmp/workingDir")).andReturn("settingsFile");
 
         StringBuilder errorMessageBuilder = new StringBuilder();
         errorMessageBuilder.append("VirtualBox error: Could not find a registered machine with UUID {");
@@ -80,7 +85,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
 
         expect(vBox.findMachine(vmName)).andThrow(vBoxException);
 
-        expect(vBox.createMachine(anyString(), eq(vmName), anyString(), anyString(), anyBoolean())).andReturn(
+        expect(vBox.createMachine(anyString(), eq(vmName), groups, anyString(), anyString())).andReturn(
                 createdMachine).anyTimes();
         vBox.registerMachine(createdMachine);
 

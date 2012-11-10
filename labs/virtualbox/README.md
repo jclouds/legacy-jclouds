@@ -1,7 +1,7 @@
 
 #Setup
 
-Have virtualbox 4.1.20r80170 installed. 
+Have virtualbox 4.2.0r80737 installed. 
 
 Have an ssh daemon with passwordless login to localhost (i.e. "ssh [me]@localhost" must work without password).
 To achieve that, be sure you have your ssh public key (at System.getProperty("user.home") + "/.ssh/id_rsa") in your '.ssh/authorized_keys'.

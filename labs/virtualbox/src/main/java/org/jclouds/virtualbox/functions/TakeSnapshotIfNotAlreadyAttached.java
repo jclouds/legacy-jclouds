@@ -22,12 +22,12 @@ package org.jclouds.virtualbox.functions;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.logging.Logger;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.IProgress;
-import org.virtualbox_4_1.ISession;
-import org.virtualbox_4_1.ISnapshot;
-import org.virtualbox_4_1.MachineState;
-import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.IProgress;
+import org.virtualbox_4_2.ISession;
+import org.virtualbox_4_2.ISnapshot;
+import org.virtualbox_4_2.MachineState;
+import org.virtualbox_4_2.VirtualBoxManager;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;

@@ -25,7 +25,6 @@ import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
 import java.net.URI;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,23 +50,20 @@ import org.jclouds.virtualbox.functions.RetrieveActiveBridgedInterfaces;
 import org.jclouds.virtualbox.statements.EnableNetworkInterface;
 import org.jclouds.virtualbox.statements.GetIPAddressFromMAC;
 import org.jclouds.virtualbox.statements.ScanNetworkWithPing;
-import org.virtualbox_4_1.HostNetworkInterfaceType;
-import org.virtualbox_4_1.IDHCPServer;
-import org.virtualbox_4_1.IHostNetworkInterface;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.INetworkAdapter;
-import org.virtualbox_4_1.ISession;
-import org.virtualbox_4_1.LockType;
-import org.virtualbox_4_1.NetworkAttachmentType;
-import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_2.HostNetworkInterfaceType;
+import org.virtualbox_4_2.IDHCPServer;
+import org.virtualbox_4_2.IHostNetworkInterface;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.INetworkAdapter;
+import org.virtualbox_4_2.NetworkAttachmentType;
+import org.virtualbox_4_2.VirtualBoxManager;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import com.google.common.util.concurrent.Uninterruptibles;
 import com.google.inject.Inject;
 
 /**
@@ -128,9 +124,23 @@ public class NetworkUtils {
       // create new hostOnly interface if needed, otherwise use the one already there with dhcp enabled ...
       String hostOnlyIfName = getHostOnlyIfOrCreate();
       NetworkInterfaceCard hostOnlyIfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(hostOnlyAdapter)
-               .addHostInterfaceName(hostOnlyIfName).slot(0L).build();      
+               .addHostInterfaceName(hostOnlyIfName)
+               .slot(0L)
+               .build();      
       return createNetworkSpecForHostOnlyNATNICs(natIfaceCard, hostOnlyIfaceCard);
    }
+   
+   public NetworkInterfaceCard createHostOnlyNIC(long port) {
+       NetworkAdapter hostOnlyAdapter = NetworkAdapter.builder()
+            .networkAttachmentType(NetworkAttachmentType.HostOnly)
+               .build();
+      // create new hostOnly interface if needed, otherwise use the one already there with dhcp enabled ...
+      String hostOnlyIfName = getHostOnlyIfOrCreate();
+      return  NetworkInterfaceCard.builder().addNetworkAdapter(hostOnlyAdapter)
+               .addHostInterfaceName(hostOnlyIfName)
+               .slot(port)
+               .build();
+   }   
    
    public boolean enableNetworkInterface(NodeMetadata nodeMetadata, NetworkInterfaceCard networkInterfaceCard) {
       ExecResponse execResponse = null;
@@ -171,7 +181,8 @@ public class NetworkUtils {
       List<IHostNetworkInterface> availableNetworkInterfaces = manager.get().getVBox().getHost()
                .getNetworkInterfaces();
       
-      IHostNetworkInterface iHostNetworkInterfaceWithHostOnlyIfName = Iterables.getOnlyElement(Iterables.filter(availableNetworkInterfaces, new Predicate<IHostNetworkInterface>() {
+      IHostNetworkInterface iHostNetworkInterfaceWithHostOnlyIfName = 
+            Iterables.getOnlyElement(Iterables.filter(availableNetworkInterfaces, new Predicate<IHostNetworkInterface>() {
 
          @Override
          public boolean apply(IHostNetworkInterface iHostNetworkInterface) {
@@ -227,7 +238,8 @@ public class NetworkUtils {
     * @return
     */
    private Iterable<IHostNetworkInterface> filterAvailableNetworkInterfaceByHostOnlyAndDHCPenabled(Iterable<IHostNetworkInterface> availableNetworkInterfaces) {
-      Iterable<IHostNetworkInterface> filteredNetworkInterfaces = Iterables.filter(availableNetworkInterfaces, new Predicate<IHostNetworkInterface>() {
+      Iterable<IHostNetworkInterface> filteredNetworkInterfaces = 
+            Iterables.filter(availableNetworkInterfaces, new Predicate<IHostNetworkInterface>() {
          @Override
          public boolean apply(IHostNetworkInterface iHostNetworkInterface) {
             // this is an horrible workaround cause iHostNetworkInterface.getDhcpEnabled is working only for windows host
@@ -244,24 +256,35 @@ public class NetworkUtils {
       return filteredNetworkInterfaces;
    }
 
-   
-   public String getIpAddressFromNicSlot(String machineNameOrId, long nicSlot) {
-      MachineNameOrIdAndNicSlot machineNameOrIdAndNicSlot = 
-            MachineNameOrIdAndNicSlot.fromParts(machineNameOrId, nicSlot);
+	public String getValidHostOnlyIpFromVm(String machineNameOrId) {
+		long nicSlot = 0;
+		String ipAddress = "";
+		while (nicSlot < 4 && ipAddress.isEmpty()) {
+		      MachineNameOrIdAndNicSlot machineNameOrIdAndNicSlot = 
+		              MachineNameOrIdAndNicSlot.fromParts(machineNameOrId, nicSlot);
+			ipAddress = getIpAddressFromNicSlot(machineNameOrIdAndNicSlot);
+			if (!isValidIpForHostOnly(machineNameOrIdAndNicSlot, ipAddress)) {
+				ipAddressesLoadingCache.invalidate(machineNameOrIdAndNicSlot);
+				ipAddress = "";
+			}
+			nicSlot++;
+		}
+		return checkNotNull(Strings.emptyToNull(ipAddress), String.format("Cannot find a valid IP address for the %s's HostOnly NIC", machineNameOrId));
+	}
+	
+	public String getIpAddressFromNicSlot(String machineNameOrId, long nicSlot) {
+	      MachineNameOrIdAndNicSlot machineNameOrIdAndNicSlot = 
+	              MachineNameOrIdAndNicSlot.fromParts(machineNameOrId, nicSlot);
+		return getIpAddressFromNicSlot(machineNameOrIdAndNicSlot);
+	}
+	
+		
+   public String getIpAddressFromNicSlot(MachineNameOrIdAndNicSlot machineNameOrIdAndNicSlot) {
       logger.debug("Looking for an available IP address for %s at slot %s ...", 
             machineNameOrIdAndNicSlot.getMachineNameOrId(),
             machineNameOrIdAndNicSlot.getSlotText());
       try {
-         String ipAddress = ipAddressesLoadingCache.get(machineNameOrIdAndNicSlot);
-         while(!isValidIpForHostOnly(machineNameOrIdAndNicSlot, ipAddress)) {
-            ipAddressesLoadingCache.invalidate(machineNameOrIdAndNicSlot);
-            ipAddress = ipAddressesLoadingCache.get(machineNameOrIdAndNicSlot);
-         }
-         logger.debug("Found an available IP address %s for guest: %s at slot: %s",
-               ipAddress,
-               machineNameOrIdAndNicSlot.getMachineNameOrId(),
-               machineNameOrIdAndNicSlot.getSlotText());
-         return ipAddress;
+         return ipAddressesLoadingCache.get(machineNameOrIdAndNicSlot);
       } catch (ExecutionException e) {
          logger.error("Problem in using the ipAddressCache", e.getCause());
          throw Throwables.propagate(e);
@@ -281,34 +304,18 @@ public class NetworkUtils {
       final String vmNameOrId = machineNameOrIdAndNicSlot.getMachineNameOrId();
       IMachine machine = manager.get().getVBox().findMachine(vmNameOrId);
       long slot = machineNameOrIdAndNicSlot.getSlot();
-      
-      if(ip.equals(VIRTUALBOX_HOST_GATEWAY) || !isValidHostOnlyIpAddress(ip, slot, machine)) {
-         // restart vm
-         logger.debug("reset node (%s) to refresh guest properties.", vmNameOrId);
-         machineUtils.lockSessionOnMachineAndApply(vmNameOrId, LockType.Shared,
-               new Function<ISession, Void>() {
-                  @Override
-                  public Void apply(ISession session) {
-                     session.getConsole().reset();
-                     long time = 15;
-                     logger.debug("Waiting %s secs for the reset of (%s) ...", time, vmNameOrId);
-                     Uninterruptibles.sleepUninterruptibly(time, TimeUnit.SECONDS);
-                     return null;
-                  }
-               });
-         return false;
-      }
-      return true;
+      return isValidHostOnlyIpAddress(ip, slot, machine);
    }
 
-   public static  boolean isValidHostOnlyIpAddress(String ip, long slot,
-         IMachine machine) {
-      boolean result = isIpv4(ip) && machine.getNetworkAdapter(slot).getAttachmentType().equals(NetworkAttachmentType.HostOnly)
-            && !ipBelongsToNatRange(ip);
-      return result;
+   public static boolean isValidHostOnlyIpAddress(String ip, long slot, IMachine machine) {
+      return isIpv4(ip) && !ipBelongsToNatRange(ip) && !ipEqualsToNatGateway(ip);
    }
 
-   private static boolean ipBelongsToNatRange(String ip) {
+   private static boolean ipEqualsToNatGateway(String ip) {
+	return ip.equals(VIRTUALBOX_HOST_GATEWAY);
+}
+
+private static boolean ipBelongsToNatRange(String ip) {
       return ip.startsWith("10.0.3");
    }
    

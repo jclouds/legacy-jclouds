@@ -62,10 +62,10 @@ import org.jclouds.virtualbox.functions.admin.ImagesToYamlImagesFromYamlDescript
 import org.jclouds.virtualbox.functions.admin.PreseedCfgServer;
 import org.jclouds.virtualbox.functions.admin.StartVBoxIfNotAlreadyRunning;
 import org.jclouds.virtualbox.predicates.SshResponds;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.LockType;
-import org.virtualbox_4_1.MachineState;
-import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.LockType;
+import org.virtualbox_4_2.MachineState;
+import org.virtualbox_4_2.VirtualBoxManager;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;

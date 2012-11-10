@@ -26,9 +26,9 @@ import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.predicates.ImagePredicates;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.virtualbox.config.VirtualBoxConstants;
-import org.virtualbox_4_1.IGuestOSType;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_2.IGuestOSType;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.VirtualBoxManager;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;

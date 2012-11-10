@@ -22,9 +22,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.jclouds.virtualbox.domain.NetworkInterfaceCard;
 import org.jclouds.virtualbox.util.MachineUtils;
-import org.virtualbox_4_1.NetworkAttachmentType;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.INetworkAdapter;
+import org.virtualbox_4_2.NetworkAttachmentType;
 
 import com.google.common.base.Function;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
 
 /**
  * @author Andrea Turli
@@ -40,8 +44,8 @@ public class AttachNicToMachine implements Function<NetworkInterfaceCard, Void> 
    }
 
    @Override
-   public Void apply(NetworkInterfaceCard nic) {
-      if (hasNatAdapter(nic)) {
+   public Void apply(final NetworkInterfaceCard nic) {
+      if (hasNatAdapter(nic)) {			
          return machineUtils.writeLockMachineAndApply(vmName, new AttachNATAdapterToMachineIfNotAlreadyExists(nic));
       } else if (hasBridgedAdapter(nic)) {
          return machineUtils.writeLockMachineAndApply(vmName, new AttachBridgedAdapterToMachine(nic));

@@ -72,7 +72,15 @@ public class VirtualBoxExperimentLiveTest extends BaseVirtualBoxClientLiveTest {
       int numNodes = 3;
       final String clusterName = "test-launch-cluster";
       Set<? extends NodeMetadata> nodes = context.getComputeService().createNodesInGroup(clusterName, numNodes,
-               TemplateOptions.Builder.overrideLoginUser("toor").runScript(AdminAccess.standard()));
+<<<<<<< HEAD
+<<<<<<< HEAD
+               TemplateOptions.Builder.overrideLoginUser("toor"));
+=======
+               TemplateOptions.Builder.overrideLoginUser("root").runScript(AdminAccess.standard()));
+>>>>>>> c931f1c... initial work for centos; networking strategy refactoring; hostname support added
+=======
+               TemplateOptions.Builder.overrideLoginUser("toor"));
+>>>>>>> 39c7509... tidy-up implementation; issue 1117 addressed
       assertEquals(numNodes, nodes.size(), "wrong number of nodes");
       for (NodeMetadata node : nodes) {
          assertEquals("test-launch-cluster", node.getGroup());

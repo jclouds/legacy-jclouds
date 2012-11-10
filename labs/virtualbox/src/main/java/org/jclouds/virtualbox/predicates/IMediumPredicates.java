@@ -22,8 +22,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.equalTo;
 import static com.google.common.collect.Iterables.any;
 
-import org.virtualbox_4_1.DeviceType;
-import org.virtualbox_4_1.IMedium;
+import org.virtualbox_4_2.DeviceType;
+import org.virtualbox_4_2.IMedium;
 
 import com.google.common.base.Predicate;
 

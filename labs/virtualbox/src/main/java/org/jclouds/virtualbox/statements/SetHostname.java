@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,24 +18,38 @@
  */
 package org.jclouds.virtualbox.statements;
 
-import org.jclouds.scriptbuilder.ScriptBuilder;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.Statement;
 
-/**
- * VboxManage statements used in shell scripts .
- * 
- * @author Andrea Turli
- */
-public class Statements {
+import com.google.common.collect.ImmutableList;
 
-   /**
-    * Extract the IP address from the specified vm and stores the IP address into the variable {@code FOUND_IP_ADDRESS} if successful.
-    * 
-    * @param vmname
-    *           - the vm name
-    */
-   public static Statement exportIpAddressFromVmNamed(String vmName) {
-      return ScriptBuilder.call("exportIpAddressFromVmNamed", vmName);
+/**
+ * Set hostname
+ * 
+ * @author andrea turli
+ * 
+ */
+public class SetHostname implements Statement {
+
+	private String publicIpAddress;
+	
+	public SetHostname(String publicIpAddress) {
+		this.publicIpAddress = publicIpAddress;
+	}
+
+@Override
+   public Iterable<String> functionDependencies(OsFamily family) {
+      return ImmutableList.of();
    }
 
- }
+   @Override
+   public String render(OsFamily family) {
+      if (checkNotNull(family, "family") == OsFamily.WINDOWS)
+         throw new UnsupportedOperationException("windows not yet implemented");
+      return String.format("sudo hostname ", publicIpAddress);
+   }
+
+}
+

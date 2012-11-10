@@ -24,8 +24,8 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
 
 import org.testng.annotations.Test;
-import org.virtualbox_4_1.CleanupMode;
-import org.virtualbox_4_1.StorageBus;
+import org.virtualbox_4_2.CleanupMode;
+import org.virtualbox_4_2.StorageBus;
 
 public class VmSpecTest {
 

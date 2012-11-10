@@ -18,8 +18,8 @@
  */
 package org.jclouds.virtualbox.functions;
 
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.VBoxException;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.VBoxException;
 
 import com.google.common.base.Function;
 

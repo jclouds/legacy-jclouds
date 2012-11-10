@@ -69,13 +69,14 @@ import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.domain.YamlImage;
 import org.jclouds.virtualbox.functions.admin.PreseedCfgServer;
 import org.jclouds.virtualbox.predicates.RetryIfSocketNotYetOpen;
+import org.jclouds.virtualbox.statements.Md5;
 import org.jclouds.virtualbox.util.NetworkUtils;
-import org.virtualbox_4_1.CleanupMode;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.NetworkAttachmentType;
-import org.virtualbox_4_1.StorageBus;
-import org.virtualbox_4_1.VBoxException;
-import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_2.CleanupMode;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.NetworkAttachmentType;
+import org.virtualbox_4_2.StorageBus;
+import org.virtualbox_4_2.VBoxException;
+import org.virtualbox_4_2.VirtualBoxManager;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Function;
@@ -239,7 +240,7 @@ public class MastersLoadingCache extends AbstractLoadingCache<Image, Master> {
 				.attachISO(0, 0, localIsoUrl).attachHardDisk(hardDisk)
 				.attachISO(1, 0, guestAdditionsIso).build();
 
-      VmSpec vmSpecification = VmSpec.builder().id(currentImage.id)
+        VmSpec vmSpecification = VmSpec.builder().id(currentImage.id)
 				.name(vmName).memoryMB(512).osTypeId(getOsTypeId(currentImage.os_family, currentImage.os_64bit))
 				.controller(ideController).forceOverwrite(true)
 				.guestUser(currentImage.username).guestPassword(currentImage.credential)
@@ -302,17 +303,14 @@ public class MastersLoadingCache extends AbstractLoadingCache<Image, Master> {
             .create(hostNodeMetadata, statementList, runAsRoot(false)).init()
             .call();
 
+      String filePath = isosDir + File.separator + fileName;
       ExecResponse response = runScriptOnNodeFactory
             .create(
                   hostNodeMetadata,
-                  Statements.exec("md5 " + isosDir + File.separator + fileName),
+                  new Md5(filePath),
                   runAsRoot(false)).init().call();
-      if (md5 != null) {
-         if (!Iterables.get(
-               Splitter.on("=").trimResults().split(response.getOutput()), 1)
-               .equals(md5))
-            return null;
-      }
+      checkNotNull(response.getOutput(),"iso_md5 missing");
+      checkState(response.getOutput().trim().equals(md5));
       return file.getAbsolutePath();
    }
 

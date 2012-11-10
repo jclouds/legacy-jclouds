@@ -34,7 +34,7 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.virtualbox.util.MachineNameOrIdAndNicSlot;
 import org.jclouds.virtualbox.util.NetworkUtils;
-import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_2.VirtualBoxManager;
 
 import com.google.common.base.Strings;
 import com.google.common.base.Supplier;
@@ -71,19 +71,14 @@ public class IpAddressesLoadingCache extends
          return masters.get(machineNameOrIdAndNicPort);
       }
       String query = String.format("/VirtualBox/GuestInfo/Net/%s/V4/IP", machineNameOrIdAndNicPort.getSlotText());
-      String currentIp = "";
-         while (!NetworkUtils.isIpv4(currentIp)) {
-            currentIp = manager.get().getVBox().findMachine(machineNameOrIdAndNicPort.getMachineNameOrId())
+      String ipAddress = manager.get().getVBox().findMachine(machineNameOrIdAndNicPort.getMachineNameOrId())
                   .getGuestPropertyValue(query);
-            if(!Strings.nullToEmpty(currentIp).isEmpty())
-               logger.debug("Found IP address %s for '%s' at slot %s", currentIp, 
+            if(!Strings.nullToEmpty(ipAddress).isEmpty())
+               logger.debug("Found IP address %s for '%s' at slot %s", ipAddress, 
                      machineNameOrIdAndNicPort.getMachineNameOrId(),
                      machineNameOrIdAndNicPort.getSlotText());
-            Uninterruptibles.sleepUninterruptibly(1, TimeUnit.SECONDS);
-         }
-
-      masters.put(machineNameOrIdAndNicPort, currentIp);
-      return currentIp;
+      masters.put(machineNameOrIdAndNicPort, ipAddress);
+      return ipAddress;
    }
 
    @Override
