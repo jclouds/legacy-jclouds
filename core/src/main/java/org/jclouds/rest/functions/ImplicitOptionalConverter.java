@@ -66,8 +66,10 @@ import com.google.inject.ImplementedBy;
  * <li>call another api which can validate the feature can be presented</li>
  * </ul>
  * 
- * The {@link AlwaysPresentImplicitOptionalConverter default implementation}
- * always returns present. To override this, add the following in your subclass
+ * The {@link PresentWhenApiVersionLexicographicallyAtOrAfterSinceApiVersion
+ * default implementation} returns present if no {@link SinceApiVersion}
+ * annotation is assigned, or the value is less than or equal to the current
+ * {@link ApiVersion}. To override this, add the following in your subclass
  * override of {@link RestClientModule#configure} method:
  * 
  * <pre>
@@ -77,7 +79,7 @@ import com.google.inject.ImplementedBy;
  * @author Adrian Cole
  */
 @Beta
-@ImplementedBy(AlwaysPresentImplicitOptionalConverter.class)
+@ImplementedBy(PresentWhenApiVersionLexicographicallyAtOrAfterSinceApiVersion.class)
 public interface ImplicitOptionalConverter extends Function<ClassMethodArgsAndReturnVal, Optional<Object>> {
 
 }
