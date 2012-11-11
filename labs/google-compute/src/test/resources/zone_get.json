@@ -1,0 +1,17 @@
+{
+ "kind": "compute#zone",
+ "id": "13020128040171887099",
+ "creationTimestamp": "2012-10-19T16:42:54.131",
+ "selfLink": "https://www.googleapis.com/compute/v1beta13/projects/google/zones/us-central2-a",
+ "name": "us-central2-a",
+ "description": "us-central2-a",
+ "status": "DOWN",
+ "maintenanceWindows": [
+  {
+   "name": "2012-11-10-planned-outage",
+   "description": "maintenance zone",
+   "beginTime": "2012-11-10T20:00:00.000",
+   "endTime": "2012-12-02T20:00:00.000"
+  }
+ ]
+}

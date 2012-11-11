@@ -1,0 +1,24 @@
+{
+   "kind": "compute#operation",
+   "id": "13053095055850848306",
+   "selfLink": "https://www.googleapis.com/compute/v1beta13/projects/myproject/operations/operation-1354084865060-4cf88735faeb8-bbbb12cb",
+   "name": "operation-1354084865060-4cf88735faeb8-bbbb12cb",
+   "targetLink": "https://www.googleapis.com/compute/v1beta13/projects/myproject/instances/instance-api-live-test-instance",
+   "targetId": "13053094017547040099",
+   "status": "DONE",
+   "user": "user@developer.gserviceaccount.com",
+   "progress": 100,
+   "insertTime": "2012-11-28T06:41:05.060",
+   "startTime": "2012-11-28T06:41:05.142",
+   "httpErrorStatusCode": 400,
+   "httpErrorMessage": "BAD REQUEST",
+   "error": {
+    "errors": [
+     {
+      "code": "RESOURCE_ALREADY_EXISTS",
+      "message": "The resource 'projects/myproject/instances/instance-api-live-test-instance' already exists"
+     }
+    ]
+   },
+   "operationType": "insert"
+  }
