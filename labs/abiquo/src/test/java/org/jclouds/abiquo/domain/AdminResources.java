@@ -50,7 +50,7 @@ public class AdminResources {
    }
 
    public static String rolePostPayload() {
-      StringBuffer buffer = new StringBuffer();
+      StringBuilder buffer = new StringBuilder();
       buffer.append("<role>");
       buffer.append(link("/admin/roles/1/action/privileges", "privileges"));
       buffer.append("<blocked>false</blocked>");
@@ -60,7 +60,7 @@ public class AdminResources {
    }
 
    public static String rolePutPayload() {
-      StringBuffer buffer = new StringBuffer();
+      StringBuilder buffer = new StringBuilder();
       buffer.append("<role>");
       buffer.append(link("/admin/roles/1/action/privileges", "privileges"));
       buffer.append(link("/admin/roles/1", "edit"));
@@ -92,7 +92,7 @@ public class AdminResources {
    }
 
    public static String datacenterLimitsPostPayload() {
-      StringBuffer buffer = new StringBuffer();
+      StringBuilder buffer = new StringBuilder();
       buffer.append("<limit>");
       buffer.append("<cpuHard>0</cpuHard>");
       buffer.append("<cpuSoft>0</cpuSoft>");
@@ -113,7 +113,7 @@ public class AdminResources {
    }
 
    public static String datacenterLimitsPutPayload(final EnterpriseDto enterprise) {
-      StringBuffer buffer = new StringBuffer();
+      StringBuilder buffer = new StringBuilder();
       buffer.append("<limit>");
       buffer.append(link("/admin/enterprises/" + enterprise.getId() + "/limits/1", "edit"));
       buffer.append("<cpuHard>0</cpuHard>");
@@ -136,7 +136,7 @@ public class AdminResources {
    }
 
    public static String userPostPayload() {
-      StringBuffer buffer = new StringBuffer();
+      StringBuilder buffer = new StringBuilder();
       buffer.append("<user>");
       buffer.append(link("/admin/roles/1", "role"));
       buffer.append("<active>true</active>");
@@ -168,7 +168,7 @@ public class AdminResources {
    }
 
    public static String userPutPayload() {
-      StringBuffer buffer = new StringBuffer();
+      StringBuilder buffer = new StringBuilder();
       buffer.append("<user>");
       buffer.append(link("/admin/roles/1", "role"));
       buffer.append(link("/admin/enterprises/1/users/1", "edit"));

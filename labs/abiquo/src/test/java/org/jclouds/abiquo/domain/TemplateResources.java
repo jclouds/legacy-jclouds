@@ -71,7 +71,7 @@ public class TemplateResources {
    }
 
    public static String virtualMachineTemplatePutPayload() {
-      StringBuffer buffer = new StringBuffer();
+      StringBuilder buffer = new StringBuilder();
       buffer.append("<virtualMachineTemplate>");
       buffer.append(link("/admin/enterprises/1/datacenterrepositories/1/virtualmachinetemplates/1", "edit"));
       buffer.append(link("/admin/enterprises/1", "enterprise"));
@@ -105,7 +105,7 @@ public class TemplateResources {
    }
 
    public static String persistentPayload() {
-      StringBuffer buffer = new StringBuffer();
+      StringBuilder buffer = new StringBuilder();
       buffer.append("<virtualmachinetemplatepersistent>");
       buffer.append(link("/cloud/virtualdatacenters/1/tiers/1", "tier"));
       buffer.append(link("/cloud/virtualdatacenters/1", "virtualdatacenter"));
@@ -136,7 +136,7 @@ public class TemplateResources {
    }
 
    public static String conversionPutPlayload() {
-      StringBuffer buffer = new StringBuffer();
+      StringBuilder buffer = new StringBuilder();
       buffer.append("<conversion>");
       buffer.append(link("/admin/enterprises/1/datacenterrepositories/1/virtualmachinetemplates/1/conversions/RAW",
             "edit"));
