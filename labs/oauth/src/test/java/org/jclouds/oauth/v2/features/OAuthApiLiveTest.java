@@ -86,6 +86,7 @@ public class OAuthApiLiveTest extends BaseOAuthApiLiveTest {
       Token token = context.getApi().authenticate(tokenRequest);
 
       assertNotNull(token);
+      System.out.println("passed");
    }
 
    @Override

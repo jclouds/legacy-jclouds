@@ -1,0 +1,8 @@
+{
+ "kind": "compute#kernel",
+ "id": "12941177846308850718",
+ "creationTimestamp": "2012-07-16T21:42:16.950",
+ "selfLink": "https://www.googleapis.com/compute/v1beta13/projects/google/kernels/gce-20110524",
+ "name": "gce-20110524",
+ "description": "DEPRECATED. Created Tue, 24 May 2011 00:48:22 +0000"
+}

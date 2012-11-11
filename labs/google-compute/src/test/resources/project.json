@@ -1,0 +1,68 @@
+{
+ "kind": "compute#project",
+ "id": "13024414184846275913",
+ "creationTimestamp": "2012-10-24T20:13:16.252",
+ "selfLink": "https://www.googleapis.com/compute/v1beta13/projects/myproject",
+ "name": "myproject",
+ "description": "",
+ "commonInstanceMetadata": {
+  "kind": "compute#metadata",
+  "items": [
+   {
+    "key": "propA",
+    "value": "valueA"
+   },
+   {
+    "key": "propB",
+    "value": "valueB"
+   }
+  ]
+ },
+ "quotas": [
+  {
+   "metric": "INSTANCES",
+   "usage": 0,
+   "limit": 8
+  },
+  {
+   "metric": "CPUS",
+   "usage": 0,
+   "limit": 8
+  },
+  {
+   "metric": "EPHEMERAL_ADDRESSES",
+   "usage": 0,
+   "limit": 8
+  },
+  {
+   "metric": "DISKS",
+   "usage": 0,
+   "limit": 8
+  },
+  {
+   "metric": "DISKS_TOTAL_GB",
+   "usage": 0,
+   "limit": 100
+  },
+  {
+   "metric": "SNAPSHOTS",
+   "usage": 0,
+   "limit": 1000
+  },
+  {
+   "metric": "NETWORKS",
+   "usage": 1,
+   "limit": 5
+  },
+  {
+   "metric": "FIREWALLS",
+   "usage": 2,
+   "limit": 100
+  },
+  {
+   "metric": "IMAGES",
+   "usage": 0,
+   "limit": 100
+  }
+ ]
+}
