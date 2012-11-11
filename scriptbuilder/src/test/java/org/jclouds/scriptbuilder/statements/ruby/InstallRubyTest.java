@@ -30,6 +30,11 @@ import org.testng.annotations.Test;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
+/**
+ * Unit tests for the {@link InstallRuby} statement.
+ * 
+ * @author Ignasi Barrera
+ */
 @Test(groups = "unit", testName = "InstallRubyTest")
 public class InstallRubyTest {
 

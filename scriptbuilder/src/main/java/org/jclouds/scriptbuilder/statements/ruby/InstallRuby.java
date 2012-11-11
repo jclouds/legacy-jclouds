@@ -35,7 +35,7 @@ import org.jclouds.scriptbuilder.domain.StatementList;
  */
 public class InstallRuby extends StatementList {
 
-   private static final URI RUBYGEMS_URI = URI.create("http://production.cf.rubygems.org/rubygems/rubygems-1.3.7.tgz");
+   private static final URI RUBYGEMS_URI = URI.create("http://production.cf.rubygems.org/rubygems/rubygems-1.8.10.tgz");
 
    public static Statement installRubyGems() {
       return new StatementList(//
@@ -44,7 +44,10 @@ public class InstallRuby extends StatementList {
             exec("{cd} /tmp/rubygems"), //
             exec("ruby setup.rb --no-format-executable"), //
             exec("{rm} -fr /tmp/rubygems"), //
-            exec(")"));
+            exec(")"), //
+            // Make sure RubyGems is up to date
+            exec("gem update --system"), //
+            exec("gem update --no-rdoc --no-ri"));
    }
 
    public InstallRuby() {
