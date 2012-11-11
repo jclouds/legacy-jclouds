@@ -30,6 +30,11 @@ import org.testng.annotations.Test;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
+/**
+ * Unit tests for the {@link InstallChefGems} statement.
+ * 
+ * @author Ignasi Barrera
+ */
 @Test(groups = "unit", testName = "InstallChefGemsTest")
 public class InstallChefGemsTest {
 
@@ -43,7 +48,7 @@ public class InstallChefGemsTest {
       assertEquals(
             new InstallChefGems().render(OsFamily.UNIX),
             Resources.toString(Resources.getResource("test_install_ruby." + ShellToken.SH.to(OsFamily.UNIX)),
-                  Charsets.UTF_8) + "installChefGems || return 1\n");
+                  Charsets.UTF_8) + "gem install ohai chef --no-rdoc --no-ri\n");
    }
 
    public void installChefGemsUnixInScriptBuilderSourcesSetupPublicCurl() throws IOException {

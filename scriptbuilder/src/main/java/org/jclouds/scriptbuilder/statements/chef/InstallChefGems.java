@@ -18,7 +18,7 @@
  */
 package org.jclouds.scriptbuilder.statements.chef;
 
-import static org.jclouds.scriptbuilder.domain.Statements.call;
+import static org.jclouds.scriptbuilder.domain.Statements.exec;
 
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.StatementList;
@@ -32,7 +32,7 @@ import org.jclouds.scriptbuilder.statements.ruby.InstallRuby;
 public class InstallChefGems extends StatementList {
 
    public InstallChefGems() {
-      super(new InstallRuby(), call("installChefGems"));
+      super(new InstallRuby(), exec("gem install ohai chef --no-rdoc --no-ri"));
    }
 
    @Override

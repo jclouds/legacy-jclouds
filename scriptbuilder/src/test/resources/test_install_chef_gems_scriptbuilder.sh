@@ -140,26 +140,17 @@ function installRuby() {
   if ! hash ruby 2>/dev/null; then
     if which dpkg &> /dev/null; then
       apt-get-update
-      apt-get install -y ruby ruby1.8-dev build-essential wget libruby-extras libruby1.8-extras
+      apt-get install -y ruby ruby1.8-dev build-essential
     elif which rpm &> /dev/null; then
       # Disable chef from the base repo (http://tickets.opscode.com/browse/CHEF-2906)
       sed -i "s/\[base\]/\0\n\exclude=ruby*/g" /etc/yum.repos.d/CentOS-Base.repo
       # Make sure to install an appropriate ruby version
       yum erase -y ruby ruby-libs
       rpm -Uvh http://rbel.co/rbel5
-      yum install -y ruby ruby-devel make gcc gcc-c++ kernel-devel automake autoconf wget
+      yum install -y ruby ruby-devel make gcc gcc-c++ automake autoconf
     else
       abort "we only support apt-get and yum right now... please contribute"
     fi
-  fi
-}
-function installChefGems() {
-  if ! hash chef-client 2>/dev/null; then
-    if which rpm &> /dev/null; then
-      #Install gems provided by libruby-extras deb package (based on https://launchpad.net/ubuntu/precise/+package/libruby-extras)
-      /usr/bin/gem install cmdparse daemons log4r mmap ncurses --no-rdoc --no-ri --verbose
-    fi
-    /usr/bin/gem install ohai chef --no-rdoc --no-ri --verbose
   fi
 }
 
@@ -174,7 +165,7 @@ END_OF_JCLOUDS_SCRIPT
 	installRuby || exit 1
 	(
 	mkdir /tmp/$$
-	curl -q -s -S -L --connect-timeout 10 --max-time 600 --retry 20 -X GET  http://production.cf.rubygems.org/rubygems/rubygems-1.3.7.tgz |(mkdir -p /tmp/$$ &&cd /tmp/$$ &&tar -xpzf -)
+	curl -q -s -S -L --connect-timeout 10 --max-time 600 --retry 20 -X GET  http://production.cf.rubygems.org/rubygems/rubygems-1.8.10.tgz |(mkdir -p /tmp/$$ &&cd /tmp/$$ &&tar -xpzf -)
 	mkdir -p /tmp/rubygems
 	mv /tmp/$$/*/* /tmp/rubygems
 	rm -rf /tmp/$$
@@ -182,8 +173,10 @@ END_OF_JCLOUDS_SCRIPT
 	ruby setup.rb --no-format-executable
 	rm -fr /tmp/rubygems
 	)
+	gem update --system
+	gem update --no-rdoc --no-ri
 	
-	installChefGems || exit 1
+	gem install ohai chef --no-rdoc --no-ri
 	
 END_OF_JCLOUDS_SCRIPT
    
