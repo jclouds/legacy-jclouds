@@ -28,6 +28,7 @@ import org.jclouds.scriptbuilder.domain.StatementVisitor;
 import org.jclouds.scriptbuilder.statements.login.AdminAccess;
 
 import com.google.common.base.Function;
+import com.google.common.util.concurrent.Atomics;
 
 /**
  * 
@@ -40,7 +41,7 @@ public enum CredentialsFromAdminAccess implements Function<Statement, Credential
       if (input == null)
          return null;
       if (input instanceof AcceptsStatementVisitor) {
-         final AtomicReference<Credentials> credsHolder = new AtomicReference<Credentials>();
+         final AtomicReference<Credentials> credsHolder = Atomics.newReference();
          AcceptsStatementVisitor.class.cast(input).accept(new StatementVisitor() {
 
             @Override

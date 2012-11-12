@@ -42,6 +42,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Sets;
 import com.google.common.reflect.TypeToken;
+import com.google.common.util.concurrent.Atomics;
 import com.google.common.util.concurrent.Uninterruptibles;
 
 /**
@@ -81,7 +82,7 @@ public class BaseSQSApiLiveTest extends BaseContextLiveTest<RestContext<SQSApi, 
    }
 
    protected String assertPolicyPresent(final URI queue) {
-      final AtomicReference<String> policy = new AtomicReference<String>();
+      final AtomicReference<String> policy = Atomics.newReference();
       assertEventually(new Runnable() {
          public void run() {
             String policyForAuthorizationByAccount = api().getQueueApi().getAttribute(queue, "Policy");

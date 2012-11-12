@@ -41,6 +41,7 @@ import org.testng.annotations.Test;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
+import com.google.common.util.concurrent.Atomics;
 
 /**
  * 
@@ -51,7 +52,7 @@ import com.google.common.base.Suppliers;
 public class MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplierTest {
    @Test
    public void testLoaderNormal() {
-      AtomicReference<AuthorizationException> authException = new AtomicReference<AuthorizationException>();
+      AtomicReference<AuthorizationException> authException = Atomics.newReference();
       assertEquals(new SetAndThrowAuthorizationExceptionSupplierBackedLoader<String>(Suppliers.ofInstance("foo"),
                authException).load("KEY"), "foo");
       assertEquals(authException.get(), null);
@@ -59,7 +60,7 @@ public class MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplierTest {
 
    @Test(expectedExceptions = AuthorizationException.class)
    public void testLoaderThrowsAuthorizationExceptionAndAlsoSetsExceptionType() {
-      AtomicReference<AuthorizationException> authException = new AtomicReference<AuthorizationException>();
+      AtomicReference<AuthorizationException> authException = Atomics.newReference();
       try {
          new SetAndThrowAuthorizationExceptionSupplierBackedLoader<String>(new Supplier<String>() {
 
@@ -75,7 +76,7 @@ public class MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplierTest {
 
    @Test(expectedExceptions = AuthorizationException.class)
    public void testLoaderThrowsAuthorizationExceptionAndAlsoSetsExceptionTypeWhenNested() {
-      AtomicReference<AuthorizationException> authException = new AtomicReference<AuthorizationException>();
+      AtomicReference<AuthorizationException> authException = Atomics.newReference();
       try {
          new SetAndThrowAuthorizationExceptionSupplierBackedLoader<String>(new Supplier<String>() {
 
@@ -91,7 +92,7 @@ public class MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplierTest {
 
    @Test(expectedExceptions = RuntimeException.class)
    public void testLoaderThrowsOriginalExceptionAndAlsoSetsExceptionTypeWhenNestedAndNotAuthorizationException() {
-      AtomicReference<AuthorizationException> authException = new AtomicReference<AuthorizationException>();
+      AtomicReference<AuthorizationException> authException = Atomics.newReference();
       try {
          new SetAndThrowAuthorizationExceptionSupplierBackedLoader<String>(new Supplier<String>() {
 
@@ -214,7 +215,7 @@ public class MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplierTest {
 
    private void supplierThreadSafe(Function<Supplier<Boolean>, Supplier<Boolean>> memoizer) throws Throwable {
       final AtomicInteger count = new AtomicInteger(0);
-      final AtomicReference<Throwable> thrown = new AtomicReference<Throwable>(null);
+      final AtomicReference<Throwable> thrown = Atomics.newReference(null);
       final int numThreads = 3;
       final Thread[] threads = new Thread[numThreads];
       final long timeout = TimeUnit.SECONDS.toNanos(60);

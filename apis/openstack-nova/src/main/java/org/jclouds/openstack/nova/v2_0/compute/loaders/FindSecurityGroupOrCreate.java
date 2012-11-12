@@ -33,6 +33,7 @@ import org.jclouds.openstack.nova.v2_0.domain.zonescoped.ZoneSecurityGroupNameAn
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.cache.CacheLoader;
+import com.google.common.util.concurrent.Atomics;
 
 /**
  * 
@@ -54,7 +55,7 @@ public class FindSecurityGroupOrCreate extends CacheLoader<ZoneAndName, Security
 
    @Override
    public SecurityGroupInZone load(ZoneAndName in) {
-      AtomicReference<ZoneAndName> securityGroupInZoneRef = new AtomicReference<ZoneAndName>(checkNotNull(in,
+      AtomicReference<ZoneAndName> securityGroupInZoneRef = Atomics.newReference(checkNotNull(in,
                "zoneSecurityGroupNameAndPorts"));
       if (returnSecurityGroupExistsInZone.apply(securityGroupInZoneRef)) {
          return returnExistingSecurityGroup(securityGroupInZoneRef);

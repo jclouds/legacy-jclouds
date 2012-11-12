@@ -26,6 +26,8 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.ws.rs.core.UriBuilder;
 
+import com.google.commons.util.concurrent.Atomitcs;
+
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
@@ -82,7 +84,7 @@ public class AddSessionTokenToRequest implements HttpRequestFilter {
    public AddSessionTokenToRequest(@SessionToken Provider<String> authTokenProvider, Provider<UriBuilder> builder) {
       this.builder = builder;
       this.authTokenProvider = authTokenProvider;
-      authToken = new AtomicReference<String>();
+      authToken = Atomics.newReference();
    }
 
    @Override

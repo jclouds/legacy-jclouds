@@ -38,6 +38,7 @@ import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
+import com.google.common.util.concurrent.Atomics;
 
 /**
  * @author Adrian Cole
@@ -60,7 +61,7 @@ public class PollNodeRunningTest {
 
       };
 
-      AtomicReference<NodeMetadata> atomicNode = new AtomicReference<NodeMetadata>(pendingNode);
+      AtomicReference<NodeMetadata> atomicNode = Atomics.newReference(pendingNode);
       try {
          new PollNodeRunning(nodeRunning).apply(atomicNode);
       } finally {
@@ -84,7 +85,7 @@ public class PollNodeRunningTest {
 
       };
 
-      AtomicReference<NodeMetadata> atomicNode = new AtomicReference<NodeMetadata>(pendingNode);
+      AtomicReference<NodeMetadata> atomicNode = Atomics.newReference(pendingNode);
       try {
          new PollNodeRunning(nodeRunning).apply(atomicNode);
       } finally {
@@ -107,7 +108,7 @@ public class PollNodeRunningTest {
 
       };
 
-      AtomicReference<NodeMetadata> atomicNode = new AtomicReference<NodeMetadata>(pendingNode);
+      AtomicReference<NodeMetadata> atomicNode = Atomics.newReference(pendingNode);
       try {
          new PollNodeRunning(nodeRunning).apply(atomicNode);
       } finally {
@@ -131,7 +132,7 @@ public class PollNodeRunningTest {
             return super.nodeRunning(statusRunning, timeouts, period);
          }
       }.nodeRunning(nodeRunning, timeouts, period);
-      AtomicReference<NodeMetadata> atomicNode = new AtomicReference<NodeMetadata>(pendingNode);
+      AtomicReference<NodeMetadata> atomicNode = Atomics.newReference(pendingNode);
 
       // Simulate transient error: first call returns null; subsequent calls
       // return the running node

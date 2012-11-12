@@ -25,6 +25,8 @@ import static org.easymock.EasyMock.verify;
 
 import java.util.concurrent.atomic.AtomicReference;
 
+import com.google.common.util.concurrent.Atomics;
+
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeMetadata.Status;
@@ -53,7 +55,7 @@ public class AtomicNodePredicatesTest {
       replay(computeService);
 
       AtomicNodeRunning nodeRunning = new AtomicNodeRunning(computeService);
-      AtomicReference<NodeMetadata> reference = new AtomicReference<NodeMetadata>(running);
+      AtomicReference<NodeMetadata> reference = Atomics.newReference(running);
       Assert.assertTrue(nodeRunning.apply(reference));
       Assert.assertEquals(reference.get(), running);
 
@@ -71,7 +73,7 @@ public class AtomicNodePredicatesTest {
       replay(computeService);
 
       AtomicNodeRunning nodeRunning = new AtomicNodeRunning(computeService);
-      AtomicReference<NodeMetadata> reference = new AtomicReference<NodeMetadata>(pending);
+      AtomicReference<NodeMetadata> reference = Atomics.newReference(pending);
       Assert.assertFalse(nodeRunning.apply(reference));
       Assert.assertEquals(reference.get(), pending);
 
@@ -95,7 +97,7 @@ public class AtomicNodePredicatesTest {
       replay(computeService);
 
       AtomicNodeRunning nodeRunning = new AtomicNodeRunning(computeService);
-      AtomicReference<NodeMetadata> reference = new AtomicReference<NodeMetadata>(newNode);
+      AtomicReference<NodeMetadata> reference = Atomics.newReference(newNode);
       Assert.assertFalse(nodeRunning.apply(reference));
       Assert.assertEquals(reference.get(), pending);
 
@@ -113,7 +115,7 @@ public class AtomicNodePredicatesTest {
       replay(computeService);
 
       AtomicNodeRunning nodeRunning = new AtomicNodeRunning(computeService);
-      AtomicReference<NodeMetadata> reference = new AtomicReference<NodeMetadata>(pending);
+      AtomicReference<NodeMetadata> reference = Atomics.newReference(pending);
       Assert.assertTrue(nodeRunning.apply(reference));
       Assert.assertEquals(reference.get(), running);
 
@@ -139,7 +141,7 @@ public class AtomicNodePredicatesTest {
       replay(computeService);
 
       AtomicNodeRunning nodeRunning = new AtomicNodeRunning(computeService);
-      AtomicReference<NodeMetadata> reference = new AtomicReference<NodeMetadata>(node);
+      AtomicReference<NodeMetadata> reference = Atomics.newReference(node);
       Assert.assertTrue(nodeRunning.apply(reference));
       Assert.assertEquals(reference.get(), node);
    }
@@ -152,7 +154,7 @@ public class AtomicNodePredicatesTest {
       replay(computeService);
 
       AtomicNodeRunning nodeRunning = new AtomicNodeRunning(computeService);
-      AtomicReference<NodeMetadata> reference = new AtomicReference<NodeMetadata>(node);
+      AtomicReference<NodeMetadata> reference = Atomics.newReference(node);
       nodeRunning.apply(reference);
       Assert.assertEquals(reference.get(), node);
    }
@@ -165,7 +167,7 @@ public class AtomicNodePredicatesTest {
       replay(computeService);
 
       AtomicNodeRunning nodeRunning = new AtomicNodeRunning(computeService);
-      AtomicReference<NodeMetadata> reference = new AtomicReference<NodeMetadata>(node);
+      AtomicReference<NodeMetadata> reference = Atomics.newReference(node);
       nodeRunning.apply(reference);
       Assert.assertEquals(reference.get(), node);
    }
