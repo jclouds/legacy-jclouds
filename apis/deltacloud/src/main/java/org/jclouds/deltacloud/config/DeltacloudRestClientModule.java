@@ -55,6 +55,7 @@ import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
+import com.google.common.util.concurrent.Atomics;
 import com.google.inject.Provides;
 
 /**
@@ -77,7 +78,7 @@ public class DeltacloudRestClientModule extends RestClientModule<DeltacloudClien
       bind(HttpRetryHandler.class).annotatedWith(Redirection.class).to(DeltacloudRedirectionRetryHandler.class);
    }
 
-   protected AtomicReference<AuthorizationException> authException = new AtomicReference<AuthorizationException>();
+   protected AtomicReference<AuthorizationException> authException = Atomics.newReference();
 
    @Provides
    @Singleton

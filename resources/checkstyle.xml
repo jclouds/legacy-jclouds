@@ -57,6 +57,10 @@
         <property name="message" value="Prefer com.google.common.collect.Sets"/>
     </module>
     <module name="RegexpMultiline">
+        <property name="format" value="=\s*new AtomicReference&lt;[^&gt;]"/>
+        <property name="message" value="Prefer com.google.common.util.concurrent.Atomics"/>
+    </module>
+    <module name="RegexpMultiline">
         <property name="format" value="new StringBuffer"/>
         <property name="message" value="Prefer java.lang.StringBuilder"/>
     </module>

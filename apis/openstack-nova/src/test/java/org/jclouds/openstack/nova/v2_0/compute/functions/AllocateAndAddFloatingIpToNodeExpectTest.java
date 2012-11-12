@@ -39,6 +39,7 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.util.concurrent.Atomics;
 
 /**
  * Tests the compute service abstraction of the nova api.
@@ -77,7 +78,7 @@ public class AllocateAndAddFloatingIpToNodeExpectTest extends BaseNovaComputeSer
                         .put(addFloatingIPRequest, addFloatingIPResponse).build()).getContext().utils().injector()
                .getInstance(AllocateAndAddFloatingIpToNode.class);
 
-      AtomicReference<NodeMetadata> nodeRef = new AtomicReference<NodeMetadata>(node);
+      AtomicReference<NodeMetadata> nodeRef = Atomics.newReference(node);
       fn.apply(nodeRef);
       NodeMetadata node1 = nodeRef.get();
       assertNotNull(node1);
@@ -124,7 +125,7 @@ public class AllocateAndAddFloatingIpToNodeExpectTest extends BaseNovaComputeSer
                                  listResponseForUnassigned).build()).getContext().utils().injector()
                .getInstance(AllocateAndAddFloatingIpToNode.class);
 
-      AtomicReference<NodeMetadata> nodeRef = new AtomicReference<NodeMetadata>(node);
+      AtomicReference<NodeMetadata> nodeRef = Atomics.newReference(node);
       fn.apply(nodeRef);
       NodeMetadata node1 = nodeRef.get();
       assertNotNull(node1);

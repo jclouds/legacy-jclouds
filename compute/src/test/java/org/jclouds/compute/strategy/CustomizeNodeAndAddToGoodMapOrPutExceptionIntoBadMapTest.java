@@ -47,6 +47,7 @@ import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
+import com.google.common.util.concurrent.Atomics;
 
 /**
  * @author Adrian Cole
@@ -81,7 +82,7 @@ public class CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapTest {
       // replay mocks
       replay(initScriptRunnerFactory, openSocketFinder);
       // run
-      AtomicReference<NodeMetadata> atomicNode = new AtomicReference<NodeMetadata>(pendingNode);
+      AtomicReference<NodeMetadata> atomicNode = Atomics.newReference(pendingNode);
       new CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap(pollNodeRunning, openSocketFinder,
             templateOptionsToStatement, initScriptRunnerFactory, options, atomicNode, goodNodes, badNodes,
             customizationResponses).apply(atomicNode);
@@ -126,7 +127,7 @@ public class CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapTest {
       replay(initScriptRunnerFactory, openSocketFinder);
 
       // run
-      AtomicReference<NodeMetadata> atomicNode = new AtomicReference<NodeMetadata>(pendingNode);
+      AtomicReference<NodeMetadata> atomicNode = Atomics.newReference(pendingNode);
       new CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap(pollNodeRunning, openSocketFinder,
             templateOptionsToStatement, initScriptRunnerFactory, options, atomicNode, goodNodes, badNodes,
             customizationResponses).apply(atomicNode);

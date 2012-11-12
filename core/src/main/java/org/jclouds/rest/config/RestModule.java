@@ -61,6 +61,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import com.google.common.util.concurrent.Atomics;
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -78,7 +79,7 @@ public class RestModule extends AbstractModule {
    public static final TypeLiteral<Supplier<URI>> URI_SUPPLIER_TYPE = new TypeLiteral<Supplier<URI>>() {
    };
    protected final Map<Class<?>, Class<?>> sync2Async;
-   protected final AtomicReference<AuthorizationException> authException = new AtomicReference<AuthorizationException>();
+   protected final AtomicReference<AuthorizationException> authException = Atomics.newReference();
    
    public RestModule() {
       this(ImmutableMap.<Class<?>, Class<?>> of());

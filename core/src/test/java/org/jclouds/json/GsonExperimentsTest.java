@@ -34,6 +34,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
+import com.google.common.util.concurrent.Atomics;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -173,7 +174,7 @@ public class GsonExperimentsTest {
    }
 
    protected <T> T parseThingFromReaderOrNull(String toFind, JsonReader reader, Type type) throws IOException {
-      AtomicReference<String> name = new AtomicReference<String>();
+      AtomicReference<String> name = Atomics.newReference();
       JsonToken token = reader.peek();
       for (; token != JsonToken.END_DOCUMENT && nnn(toFind, reader, token, name); token = skipAndPeek(token, reader))
          ;

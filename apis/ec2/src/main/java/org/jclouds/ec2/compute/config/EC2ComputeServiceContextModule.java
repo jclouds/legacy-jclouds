@@ -47,6 +47,7 @@ import com.google.common.base.Throwables;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.util.concurrent.Atomics;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Provides;
@@ -103,7 +104,7 @@ public class EC2ComputeServiceContextModule extends BaseComputeServiceContextMod
    protected Supplier<CacheLoader<RegionAndName, Image>> provideRegionAndNameToImageSupplierCacheLoader(
             final RegionAndIdToImage delegate) {
       return Suppliers.<CacheLoader<RegionAndName, Image>>ofInstance(new CacheLoader<RegionAndName, Image>() {
-         private final AtomicReference<AuthorizationException> authException = new AtomicReference<AuthorizationException>();
+         private final AtomicReference<AuthorizationException> authException = Atomics.newReference();
 
          @Override
          public Image load(final RegionAndName key) throws Exception {
