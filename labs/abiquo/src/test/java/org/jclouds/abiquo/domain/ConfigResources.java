@@ -80,7 +80,7 @@ public class ConfigResources {
    }
 
    public static String licensePutPayload() {
-      StringBuffer buffer = new StringBuffer();
+      StringBuilder buffer = new StringBuilder();
       buffer.append("<license>");
       buffer.append(link("/admin/enterprises/config/licenses/1", "edit"));
       buffer.append("<customerid>3bca6d1d-5fe2-42c5-82ea-a5276ea8c71c</customerid>");
@@ -91,7 +91,7 @@ public class ConfigResources {
    }
 
    public static String licensePostPayload() {
-      StringBuffer buffer = new StringBuffer();
+      StringBuilder buffer = new StringBuilder();
       buffer.append("<license>");
       buffer.append("<customerid>3bca6d1d-5fe2-42c5-82ea-a5276ea8c71c</customerid>");
       buffer.append("<code>" + readLicense("license/expired") + "</code>");
@@ -100,7 +100,7 @@ public class ConfigResources {
    }
 
    public static String categoryPostPayload() {
-      StringBuffer buffer = new StringBuffer();
+      StringBuilder buffer = new StringBuilder();
       buffer.append("<category>");
       buffer.append("<defaultCategory>false</defaultCategory>");
       buffer.append("<erasable>false</erasable>");
@@ -110,7 +110,7 @@ public class ConfigResources {
    }
 
    public static String categoryPutPayload() {
-      StringBuffer buffer = new StringBuffer();
+      StringBuilder buffer = new StringBuilder();
       buffer.append("<category>");
       buffer.append(link("/config/categories/1", "edit"));
       buffer.append("<defaultCategory>false</defaultCategory>");
@@ -122,7 +122,7 @@ public class ConfigResources {
    }
 
    public static String iconPutPayload() {
-      StringBuffer buffer = new StringBuffer();
+      StringBuilder buffer = new StringBuilder();
       buffer.append("<icon>");
       buffer.append(link("/config/icons/1", "edit"));
       buffer.append("<id>1</id>");
@@ -133,7 +133,7 @@ public class ConfigResources {
    }
 
    public static String iconPostPayload() {
-      StringBuffer buffer = new StringBuffer();
+      StringBuilder buffer = new StringBuilder();
       buffer.append("<icon>");
       buffer.append("<name>icon</name>");
       buffer.append("<path>http://www.pixeljoint.com/files/icons/mipreview1.gif</path>");
@@ -142,7 +142,7 @@ public class ConfigResources {
    }
 
    public static String propertyPutPayload() {
-      StringBuffer buffer = new StringBuffer();
+      StringBuilder buffer = new StringBuilder();
       buffer.append("<property>");
       buffer.append(link("/config/properties/1", "edit"));
       buffer.append("<description>Time interval in seconds</description>");
