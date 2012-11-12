@@ -35,6 +35,7 @@ import org.testng.annotations.Test;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 
 /**
  * Tests for the function for transforming a nova specific Image into a generic
@@ -79,7 +80,7 @@ public class ImageToOperatingSystemTest {
 
       Image imageToConvert = Image.builder().id("id-" + name).name(name).build();
 
-      Map<OsFamily, Map<String, String>> osFamilyMap = new HashMap<OsFamily, Map<String, String>>();
+      Map<OsFamily, Map<String, String>> osFamilyMap = Maps.newHashMap();
       osFamilyMap.put(OsFamily.WINDOWS, ImmutableMap.of("Server 2008 R2", "Server-2008-R2"));
 
       ImageToOperatingSystem converter = new ImageToOperatingSystem(osFamilyMap);
@@ -100,7 +101,7 @@ public class ImageToOperatingSystemTest {
 
       Image imageToConvert = Image.builder().id("id-" + name).name(name).build();
 
-      Map<OsFamily, Map<String, String>> osFamilyMap = new HashMap<OsFamily, Map<String, String>>();
+      Map<OsFamily, Map<String, String>> osFamilyMap = Maps.newHashMap();
       osFamilyMap.put(OsFamily.WINDOWS, ImmutableMap.of("98", "98"));
 
       ImageToOperatingSystem converter = new ImageToOperatingSystem(osFamilyMap);

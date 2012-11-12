@@ -20,7 +20,6 @@ package org.jclouds.dmtf.cim;
 
 import static org.jclouds.dmtf.DMTFConstants.CIM_NS;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAnyAttribute;
@@ -29,6 +28,8 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.namespace.QName;
+
+import com.google.common.collect.Maps;
 
 /**
  * <p>Java class for cimAnySimpleType complex type.
@@ -45,7 +46,7 @@ public class CimAnySimpleType {
     @XmlSchemaType(name = "anySimpleType")
     protected String value;
     @XmlAnyAttribute
-    private Map<QName, String> otherAttributes = new HashMap<QName, String>();
+    private Map<QName, String> otherAttributes = Maps.newHashMap();
 
     /**
      * Gets the value of the value property.
