@@ -22,7 +22,7 @@ import static org.testng.Assert.assertEquals;
 
 import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.domain.Volume;
-import org.jclouds.ec2.internal.BaseEC2ExpectTest;
+import org.jclouds.ec2.internal.BaseEC2ClientExpectTest;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Test;
@@ -34,7 +34,7 @@ import com.google.common.collect.ImmutableMap.Builder;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "EC2ElasticBlockStoreClientExpectTest")
-public class EC2ElasticBlockStoreClientExpectTest extends BaseEC2ExpectTest<EC2Client> {
+public class EC2ElasticBlockStoreClientExpectTest extends BaseEC2ClientExpectTest<EC2Client> {
    Volume creating = Volume.builder()
                            .id("vol-2a21e543")
                            .status(Volume.Status.CREATING)

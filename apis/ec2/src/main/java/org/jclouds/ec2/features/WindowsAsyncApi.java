@@ -30,6 +30,7 @@ import org.jclouds.ec2.xml.GetPasswordDataResponseHandler;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.SinceApiVersion;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
@@ -48,6 +49,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 @RequestFilters(FormSigner.class)
 @VirtualHost
 @Beta
+@SinceApiVersion("2008-08-08")
 public interface WindowsAsyncApi {
 
    /**
