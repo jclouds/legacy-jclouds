@@ -356,7 +356,7 @@ public class ChefSolo implements Statement {
 
    @VisibleForTesting
    void createNodeConfiguration(ImmutableList.Builder<Statement> statements) {
-      StringBuffer json = new StringBuffer();
+      StringBuilder json = new StringBuilder();
       if (jsonAttributes.isPresent()) {
          // Start the node configuration with the attributes, but remove the
          // last bracket to append the run list to the json configuration

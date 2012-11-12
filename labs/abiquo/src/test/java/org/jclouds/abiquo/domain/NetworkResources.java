@@ -146,7 +146,7 @@ public class NetworkResources {
    }
 
    public static String vlanNetworkPostPayload() {
-      StringBuffer buffer = new StringBuffer();
+      StringBuilder buffer = new StringBuilder();
       buffer.append("<network>");
       buffer.append("<address>192.168.1.0</address>");
       buffer.append("<defaultNetwork>true</defaultNetwork>");
@@ -158,7 +158,7 @@ public class NetworkResources {
    }
 
    public static String privateNetworkPutPayload() {
-      StringBuffer buffer = new StringBuffer();
+      StringBuilder buffer = new StringBuilder();
       buffer.append("<network>");
       buffer.append(link("/cloud/virtualdatacenters/1/privatenetworks/1", "edit"));
       buffer.append(link("/cloud/virtualdatacenters/1/privatenetworks/1/ips", "ips"));
@@ -174,7 +174,7 @@ public class NetworkResources {
    }
 
    public static String publicNetworkPutPayload() {
-      StringBuffer buffer = new StringBuffer();
+      StringBuilder buffer = new StringBuilder();
       buffer.append("<network>");
       buffer.append(link("/admin/datacenters/1/network/1", "edit"));
       buffer.append(link("/admin/datacenters/1/network/1/ips", "ips"));
@@ -190,7 +190,7 @@ public class NetworkResources {
    }
 
    public static String externalNetworkPutPayload() {
-      StringBuffer buffer = new StringBuffer();
+      StringBuilder buffer = new StringBuilder();
       buffer.append("<network>");
       buffer.append(link("/admin/datacenters/1/network/1", "edit"));
       buffer.append(link("/admin/enterprises/1", "enterprise"));
@@ -207,7 +207,7 @@ public class NetworkResources {
    }
 
    public static String unmanagedNetworkPutPayload() {
-      StringBuffer buffer = new StringBuffer();
+      StringBuilder buffer = new StringBuilder();
       buffer.append("<network>");
       buffer.append(link("/admin/datacenters/1/network/1", "edit"));
       buffer.append(link("/admin/enterprises/1", "enterprise"));
@@ -224,7 +224,7 @@ public class NetworkResources {
    }
 
    public static String privateIpPutPayload() {
-      StringBuffer buffer = new StringBuffer();
+      StringBuilder buffer = new StringBuilder();
       buffer.append("<ipPoolManagement>");
       buffer.append(link("/cloud/virtualdatacenters/1/privatenetworks/1/ips/1", "self", "privateip"));
       buffer.append("<available>false</available>");
@@ -237,7 +237,7 @@ public class NetworkResources {
    }
 
    public static String linksDtoPayload(final LinksDto dto) {
-      StringBuffer buffer = new StringBuffer();
+      StringBuilder buffer = new StringBuilder();
       buffer.append("<links>");
       for (RESTLink link : dto.getLinks()) {
          buffer.append(link(link));
