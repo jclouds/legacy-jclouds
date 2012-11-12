@@ -18,7 +18,6 @@
  */
 package org.jclouds.dmtf.cim;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAnyAttribute;
@@ -26,6 +25,8 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.namespace.QName;
+
+import com.google.common.collect.Maps;
 
 /**
  * Java class for cimUnsignedInt complex type.
@@ -41,7 +42,7 @@ public class CimUnsignedInt {
     @XmlSchemaType(name = "unsignedInt")
     protected long value;
     @XmlAnyAttribute
-    private Map<QName, String> otherAttributes = new HashMap<QName, String>();
+    private Map<QName, String> otherAttributes = Maps.newHashMap();
 
     /**
      * Gets the value of the value property.

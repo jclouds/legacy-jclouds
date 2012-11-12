@@ -29,7 +29,6 @@ import java.util.Map.Entry;
 import javax.inject.Inject;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.openstack.cinder.v1.features.VolumeTypeApi;
 import org.jclouds.rest.MapBinder;
 import org.jclouds.rest.binders.BindToJsonPayload;
 
