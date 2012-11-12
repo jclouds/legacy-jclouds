@@ -205,6 +205,10 @@ public class Volume {
          return this;
       }
    }
+   
+   public static Volume forId(String volumeId) {
+      return builder().id(volumeId).build();
+   }
 
    private final String id;
    private final Volume.Status status;
@@ -315,7 +319,7 @@ public class Volume {
    public Map<String, String> getMetadata() {
       return this.metadata;
    }
-
+   
    @Override
    public int hashCode() {
       return Objects.hashCode(id, status, size, zone, created, attachments, volumeType, snapshotId, name, description, metadata);

@@ -52,7 +52,7 @@ public interface VolumeApi {
    Volume create(int sizeGB, CreateVolumeOptions... options);
 
    /**
-    * Delete a Volume.
+    * Delete a Volume. The Volume status must be Available or Error.
     *
     * @param volumeId Id of the Volume
     * @return true if successful, false otherwise
