@@ -19,29 +19,20 @@
 package org.jclouds.ec2.internal;
 
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.date.DateService;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
-import org.jclouds.ec2.EC2AsyncClient;
-import org.jclouds.ec2.EC2Client;
-import org.jclouds.ec2.config.EC2RestClientModule;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.internal.BaseRestClientExpectTest;
 
 import com.google.common.base.Functions;
-import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
-import com.google.inject.Provides;
-import com.google.inject.TypeLiteral;
 
 public abstract class BaseEC2ExpectTest<T> extends BaseRestClientExpectTest<T> {
    protected static final String CONSTANT_DATE = "2012-04-16T15:54:08.897Z";
@@ -87,34 +78,4 @@ public abstract class BaseEC2ExpectTest<T> extends BaseRestClientExpectTest<T> {
       describeAvailabilityZonesRequestResponse = builder.build();
    }
 
-   @ConfiguresRestClient
-   protected static class TestEC2RestClientModule extends EC2RestClientModule<EC2Client, EC2AsyncClient> {
-
-      @Override
-      protected void configure() {
-         super.configure();
-         // predicatable node names
-         final AtomicInteger suffix = new AtomicInteger();
-         bind(new TypeLiteral<Supplier<String>>() {
-         }).toInstance(new Supplier<String>() {
-
-            @Override
-            public String get() {
-               return suffix.getAndIncrement() + "";
-            }
-
-         });
-      }
-
-      @Override
-      @Provides
-      protected String provideTimeStamp(DateService dateService) {
-         return CONSTANT_DATE;
-      }
-   }
-
-   @Override
-   protected Module createModule() {
-      return new TestEC2RestClientModule();
-   }
 }

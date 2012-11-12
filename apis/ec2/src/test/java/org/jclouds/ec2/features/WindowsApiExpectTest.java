@@ -23,8 +23,8 @@ import static org.testng.Assert.assertNull;
 
 import java.util.TimeZone;
 
-import org.jclouds.ec2.EC2Client;
-import org.jclouds.ec2.internal.BaseEC2ExpectTest;
+import org.jclouds.ec2.EC2Api;
+import org.jclouds.ec2.internal.BaseEC2ApiExpectTest;
 import org.jclouds.ec2.parse.GetPasswordDataResponseTest;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
@@ -34,7 +34,7 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "WindowsApiExpectTest")
-public class WindowsApiExpectTest extends BaseEC2ExpectTest<EC2Client> {
+public class WindowsApiExpectTest extends BaseEC2ApiExpectTest<EC2Api> {
 
    public WindowsApiExpectTest() {
       TimeZone.setDefault(TimeZone.getTimeZone("America/Los_Angeles"));
@@ -63,19 +63,17 @@ public class WindowsApiExpectTest extends BaseEC2ExpectTest<EC2Client> {
       HttpResponse getResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResourceWithContentType("/get_passworddata.xml", "text/xml")).build();
 
-      EC2Client apiWhenExist = requestSendsResponse(
-            get, getResponse);
+      EC2Api apiWhenExist = requestSendsResponse(get, getResponse);
 
-      assertEquals(apiWhenExist.getWindowsApi().getPasswordDataForInstance("i-2574e22a").toString(), new GetPasswordDataResponseTest().expected().toString());
+      assertEquals(apiWhenExist.getWindowsApi().get().getPasswordDataForInstance("i-2574e22a").toString(), new GetPasswordDataResponseTest().expected().toString());
    }
 
    public void testGetPasswordDataWhenResponseIs404() throws Exception {
 
       HttpResponse getResponse = HttpResponse.builder().statusCode(404).build();
 
-      EC2Client apiWhenDontExist = requestSendsResponse(
-            get, getResponse);
+      EC2Api apiWhenDontExist = requestSendsResponse(get, getResponse);
 
-      assertNull(apiWhenDontExist.getWindowsApi().getPasswordDataForInstance("i-2574e22a"));
+      assertNull(apiWhenDontExist.getWindowsApi().get().getPasswordDataForInstance("i-2574e22a"));
    }
 }

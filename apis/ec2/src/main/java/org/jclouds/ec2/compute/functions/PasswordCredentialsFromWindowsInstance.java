@@ -19,6 +19,7 @@
 package org.jclouds.ec2.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
@@ -44,6 +45,7 @@ import org.jclouds.predicates.RetryablePredicate;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 
@@ -71,12 +73,16 @@ public class PasswordCredentialsFromWindowsInstance implements Function<RunningI
 
    @Override
    public LoginCredentials apply(final RunningInstance instance) {
+      Optional<? extends WindowsApi> windowsOption = ec2Client.getWindowsApiForRegion(instance.getRegion());
+      checkState(windowsOption.isPresent(), "windows feature not present in region %s", instance.getRegion());
+      
+      final WindowsApi windowsApi = windowsOption.get();
+      
       LoginCredentials credentials = LoginCredentials.builder().user("Administrator").noPrivateKey().build();
       String privateKey = getPrivateKeyOrNull(instance);
       if (privateKey == null) {
          return credentials;
       }
-      final WindowsApi windowsApi = ec2Client.getWindowsApiForRegion(instance.getRegion());
       // The Administrator password will take some time before it is ready - Amazon says
       // sometimes
       // 15 minutes.

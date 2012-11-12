@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.ec2.domain.PasswordData;
+import org.jclouds.rest.annotations.SinceApiVersion;
 
 import com.google.common.annotations.Beta;
 
@@ -35,6 +36,7 @@ import com.google.common.annotations.Beta;
  */
 @Timeout(duration = 45, timeUnit = TimeUnit.SECONDS)
 @Beta
+@SinceApiVersion("2008-08-08")
 public interface WindowsApi {
 
    /**
