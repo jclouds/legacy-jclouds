@@ -40,7 +40,7 @@ public interface SnapshotApi {
    Snapshot get(String snapshotId);
 
    /**
-    * Creates a new Snapshot
+    * Creates a new Snapshot. The Volume status must be Available.
     * 
     * @param volumeId The Volume Id from which to create the Snapshot
     * @param options See CreateSnapshotOptions
