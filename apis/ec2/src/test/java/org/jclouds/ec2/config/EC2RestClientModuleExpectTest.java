@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.jclouds.ec2.internal.BaseEC2ExpectTest;
+import org.jclouds.ec2.internal.BaseEC2ClientExpectTest;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.location.Region;
@@ -48,7 +48,7 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "EC2RestClientModuleExpectTest")
-public class EC2RestClientModuleExpectTest extends BaseEC2ExpectTest<Injector> {
+public class EC2RestClientModuleExpectTest extends BaseEC2ClientExpectTest<Injector> {
    private Injector injector;
 
    public EC2RestClientModuleExpectTest() {

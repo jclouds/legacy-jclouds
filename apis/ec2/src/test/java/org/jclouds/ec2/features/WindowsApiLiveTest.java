@@ -18,18 +18,22 @@
  */
 package org.jclouds.ec2.features;
 
-import org.jclouds.ec2.internal.BaseEC2ClientLiveTest;
+import org.jclouds.ec2.internal.BaseEC2ApiLiveTest;
+import org.testng.SkipException;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Optional;
 
 /**
  * @author Adrian Cole
  */
-@Test(groups = "live", testName = "WindowsApiLiveTest")
-public class WindowsApiLiveTest extends BaseEC2ClientLiveTest {
-
-
+@Test(groups = "live")
+public class WindowsApiLiveTest extends BaseEC2ApiLiveTest {
 
    protected WindowsApi api() {
-      return context.getApi().getWindowsApi();
+      Optional<? extends WindowsApi> windowsOption = context.getApi().getWindowsApi();
+      if (!windowsOption.isPresent())
+         throw new SkipException("windows api not present");
+      return windowsOption.get();
    }
 }
