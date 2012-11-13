@@ -32,6 +32,7 @@ import java.io.IOException;
 import org.jclouds.compute.options.TemplateOptions;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -57,14 +58,14 @@ public class NovaTemplateOptionsTest {
    public void testsecurityGroupNamesIterable() {
       NovaTemplateOptions options = new NovaTemplateOptions();
       options.securityGroupNames(ImmutableSet.of("group1", "group2"));
-      assertEquals(options.getSecurityGroupNames(), ImmutableSet.of("group1", "group2"));
+      assertEquals(options.getSecurityGroupNames(), Optional.of(ImmutableSet.of("group1", "group2")));
 
    }
 
    @Test
    public void testsecurityGroupNamesIterableStatic() {
       NovaTemplateOptions options = securityGroupNames(ImmutableSet.of("group1", "group2"));
-      assertEquals(options.getSecurityGroupNames(), ImmutableSet.of("group1", "group2"));
+      assertEquals(options.getSecurityGroupNames(), Optional.of(ImmutableSet.of("group1", "group2")));
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
@@ -77,20 +78,20 @@ public class NovaTemplateOptionsTest {
    public void testsecurityGroupNamesVarArgs() {
       NovaTemplateOptions options = new NovaTemplateOptions();
       options.securityGroupNames("group1", "group2");
-      assertEquals(options.getSecurityGroupNames(), ImmutableSet.of("group1", "group2"));
+      assertEquals(options.getSecurityGroupNames(), Optional.of(ImmutableSet.of("group1", "group2")));
 
    }
 
    @Test
    public void testDefaultGroupsVarArgsEmpty() {
       NovaTemplateOptions options = new NovaTemplateOptions();
-      assertEquals(options.getSecurityGroupNames(), ImmutableSet.of());
+      assertEquals(options.getSecurityGroupNames(), Optional.absent());
    }
 
    @Test
    public void testsecurityGroupNamesVarArgsStatic() {
       NovaTemplateOptions options = securityGroupNames("group1", "group2");
-      assertEquals(options.getSecurityGroupNames(), ImmutableSet.of("group1", "group2"));
+      assertEquals(options.getSecurityGroupNames(), Optional.of(ImmutableSet.of("group1", "group2")));
    }
 
    @Test
