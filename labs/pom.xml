@@ -61,8 +61,5 @@
        <module>abiquo</module>
        <module>openstack-quantum</module>
        <module>openstack-glance</module>
-       <module>openstack-cinder</module>
-       <module>rackspace-cloudblockstorage-us</module>
-       <module>rackspace-cloudblockstorage-uk</module>
   </modules>
 </project>
