@@ -28,8 +28,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import org.jclouds.io.Payload;
@@ -41,11 +39,11 @@ import org.jclouds.io.payloads.StringPayload;
 import org.jclouds.snia.cdmi.v1.domain.Container;
 import org.jclouds.snia.cdmi.v1.domain.DataObject;
 import org.jclouds.snia.cdmi.v1.internal.BaseCDMIApiLiveTest;
-import org.jclouds.snia.cdmi.v1.options.CreateContainerOptions;
 import org.jclouds.snia.cdmi.v1.queryparams.DataObjectQueryParams;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Charsets;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Files;
@@ -64,6 +62,12 @@ public class DataNonCDMIContentTypeApiLiveTest extends BaseCDMIApiLiveTest {
    ContainerApi containerApi;
    String serverType;
    String containerName;
+   static final ImmutableMap<String, String> pDataObjectMetaDataIn =
+      new ImmutableMap.Builder<String, String>()
+          .put("one", "1")
+          .put("two", "2")
+          .put("three", "3")
+          .build(); 
 
    @Test
    public void testCreateDataObjectsNonCDMI() throws Exception {
@@ -78,21 +82,13 @@ public class DataNonCDMIContentTypeApiLiveTest extends BaseCDMIApiLiveTest {
       Files.touch(tmpFileIn);
       byte[] bytes;
       DataObject dataObject;
-      Map<String, String> pContainerMetaDataIn = new HashMap<String, String>();
-      Map<String, String> pDataObjectMetaDataIn = new HashMap<String, String>();
-      pDataObjectMetaDataIn.put("dataObjectkey1", "value1");
-      pDataObjectMetaDataIn.put("dataObjectkey2", "value2");
-      pDataObjectMetaDataIn.put("dataObjectkey3", "value3");
-
       Payload payloadIn;
       Payload payloadOut;
-
-      CreateContainerOptions pCreateContainerOptions = CreateContainerOptions.Builder.metadata(pContainerMetaDataIn);
       containerApi = cdmiContext.getApi().getApi();
       dataApi = cdmiContext.getApi().getDataApiForContainer(containerName);
       dataNonCDMIContentTypeApi = cdmiContext.getApi().getDataNonCDMIContentTypeApiForContainer(containerName);
       Logger.getAnonymousLogger().info("createContainer: " + containerName);
-      Container container = containerApi.create(containerName, pCreateContainerOptions);
+      Container container = containerApi.create(containerName);
       try {
 
          assertNotNull(container);

@@ -20,10 +20,14 @@ package org.jclouds.snia.cdmi.v1.features;
 
 import static org.testng.Assert.assertEquals;
 
+import java.util.Properties;
+
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.snia.cdmi.v1.CDMIApi;
+import org.jclouds.snia.cdmi.v1.config.CDMIProperties;
+import org.jclouds.snia.cdmi.v1.filters.AuthTypes;
 import org.jclouds.snia.cdmi.v1.internal.BaseCDMIApiExpectTest;
 import org.jclouds.snia.cdmi.v1.parse.ParseContainerTest;
 import org.testng.annotations.Test;
@@ -55,5 +59,15 @@ public class ContainerApiExpectTest extends BaseCDMIApiExpectTest {
 
         assertEquals(apiWhenContainersExist.getApi().get("MyContainer/"), new ParseContainerTest().expected());
     }
+
+	/**
+	 * this reflects the properties that a user would pass to createContext
+	 */
+	@Override
+	protected Properties setupProperties() {
+		Properties contextProperties = super.setupProperties();
+		contextProperties.setProperty(CDMIProperties.AUTHTYPE, AuthTypes.BASICAUTHTID_AUTHTYPE);
+		return contextProperties;
+	}    
 
 }

@@ -21,7 +21,6 @@ package org.jclouds.snia.cdmi.v1.features;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +34,8 @@ import org.jclouds.snia.cdmi.v1.options.CreateContainerOptions;
 import org.jclouds.snia.cdmi.v1.queryparams.ContainerQueryParams;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableMap;
+
 /**
  * Example Setup: -Dtest.cdmi.identity=admin:Admin?authType=openstackKeystone -Dtest.cdmi.credential=passw0rd
  * -Dtest.cdmi.endpoint=http://pds-stack2:5000/v2.0/
@@ -44,15 +45,17 @@ import org.testng.annotations.Test;
 
 @Test(groups = "live", testName = "ContainerApiLiveTest")
 public class ContainerApiLiveTest extends BaseCDMIApiLiveTest {
+   static final ImmutableMap<String, String> pContainerMetaDataIn =
+      new ImmutableMap.Builder<String, String>()
+          .put("one", "1")
+          .put("two", "2")
+          .put("three", "3")
+          .build();
 
    @Test
    public void testCreateContainer() throws Exception {
       String pContainerName = "MyContainer" + System.currentTimeMillis() + "/";
-      Map<String, String> pContainerMetaDataIn = new HashMap<String, String>();
       Iterator<String> keys;
-      pContainerMetaDataIn.put("containerkey1", "value1");
-      pContainerMetaDataIn.put("containerkey2", "value2");
-      pContainerMetaDataIn.put("containerkey3", "value3");
       CreateContainerOptions pCreateContainerOptions = CreateContainerOptions.Builder.metadata(pContainerMetaDataIn);
       ContainerApi api = cdmiContext.getApi().getApi();
 
@@ -108,11 +111,7 @@ public class ContainerApiLiveTest extends BaseCDMIApiLiveTest {
       // for container nesting. containerNesting allows for distinguishing.
       boolean containerNesting = Boolean.valueOf(System.getProperty("test.cdmi.containerNesting", "false"));
       String pContainerName = "MyContainer" + System.currentTimeMillis() + "/";
-      Map<String, String> pContainerMetaDataIn = new HashMap<String, String>();
       Iterator<String> keys;
-      pContainerMetaDataIn.put("containerkey1", "value1");
-      pContainerMetaDataIn.put("containerkey2", "value2");
-      pContainerMetaDataIn.put("containerkey3", "value3");
       CreateContainerOptions pCreateContainerOptions = CreateContainerOptions.Builder.metadata(pContainerMetaDataIn);
       ContainerApi api = cdmiContext.getApi().getApi();
 

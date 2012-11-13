@@ -27,7 +27,6 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -35,12 +34,12 @@ import java.util.logging.Logger;
 import org.jclouds.snia.cdmi.v1.domain.Container;
 import org.jclouds.snia.cdmi.v1.domain.DataObject;
 import org.jclouds.snia.cdmi.v1.internal.BaseCDMIApiLiveTest;
-import org.jclouds.snia.cdmi.v1.options.CreateContainerOptions;
 import org.jclouds.snia.cdmi.v1.options.CreateDataObjectOptions;
 import org.jclouds.snia.cdmi.v1.queryparams.DataObjectQueryParams;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Charsets;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Files;
 
@@ -51,19 +50,20 @@ import com.google.common.io.Files;
  * @author Kenneth Nagin
  */
 @Test(groups = "live", testName = "DataApiLiveTest")
-public class DataApiLiveTest extends BaseCDMIApiLiveTest {
-  
+public class DataApiLiveTest extends BaseCDMIApiLiveTest {  
    ContainerApi containerApi;
    DataApi dataApi;
    String containerName;
    String dataObjectNameIn;
-   Map<String, String> dataObjectMetaDataIn;
    String serverType;
-
-
+   static final ImmutableMap<String, String> dataObjectMetaDataIn =
+      new ImmutableMap.Builder<String, String>()
+          .put("one", "1")
+          .put("two", "2")
+          .put("three", "3")
+          .build();
    @Test
    public void testCreateDataObjects() throws Exception {
-
       containerName = "MyContainer" + System.currentTimeMillis() + "/";
       dataObjectNameIn = "dataobject08121.txt";
       File tmpFileIn = new File("temp.txt");
@@ -77,19 +77,11 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
       byte[] bytes;
 
       CreateDataObjectOptions pCreateDataObjectOptions;
-      DataObject dataObject;
-      Map<String, String> pContainerMetaDataIn = new HashMap<String, String>();
-      dataObjectMetaDataIn = new HashMap<String, String>();
-      dataObjectMetaDataIn.put("dataObjectkey1", "value1");
-      dataObjectMetaDataIn.put("dataObjectkey2", "value2");
-      dataObjectMetaDataIn.put("dataObjectkey3", "value3");
-
-      CreateContainerOptions pCreateContainerOptions = CreateContainerOptions.Builder.metadata(pContainerMetaDataIn);
-
+      DataObject dataObject;      
       containerApi = cdmiContext.getApi().getApi();
       dataApi = cdmiContext.getApi().getDataApiForContainer(containerName);
       Logger.getAnonymousLogger().info("createContainer: " + containerName);
-      Container container = containerApi.create(containerName, pCreateContainerOptions);
+      Container container = containerApi.create(containerName);
 
       try {
 
@@ -122,31 +114,9 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
          dataApi.delete(containerName + dataObjectNameIn);
          assertEquals(containerApi.get(containerName).getChildren().contains(dataObjectNameIn), false);
 
-         // exercise create data object with empty metadata
-         value = "Hello CDMI World4";
-         dataObjectMetaDataIn.clear();
-         pCreateDataObjectOptions = CreateDataObjectOptions.Builder.value(value).mimetype("text/plain")
-                  .metadata(dataObjectMetaDataIn);
-         dataObject = dataApi.create(containerName + dataObjectNameIn, pCreateDataObjectOptions);
-         validateDataObject(dataObject, value.length(), null);
-         dataObject = dataApi.get(containerName + dataObjectNameIn);
-         validateDataObject(dataObject, value, "text/plain");
-         dataApi.delete(containerName + dataObjectNameIn);
-         assertEquals(containerApi.get(containerName).getChildren().contains(dataObjectNameIn), false);
-
-         // exercise create data object with null metadata
-         value = "Hello CDMI World5";
-         pCreateDataObjectOptions = CreateDataObjectOptions.Builder.value(value).mimetype("text/plain");
-         dataObject = dataApi.create(containerName + dataObjectNameIn, pCreateDataObjectOptions);
-         validateDataObject(dataObject, value.length(), null);
-         dataObject = dataApi.get(containerName + dataObjectNameIn);
-         validateDataObject(dataObject, value, "text/plain");
-         dataApi.delete(containerName + dataObjectNameIn);
-         assertEquals(containerApi.get(containerName).getChildren().contains(dataObjectNameIn), false);
-
          // exercise create data object with empty mimetype only
          value = "";
-         pCreateDataObjectOptions = CreateDataObjectOptions.Builder.mimetype(new String());
+         pCreateDataObjectOptions = CreateDataObjectOptions.Builder.mimetype(new String()).metadata(dataObjectMetaDataIn);
          dataObject = dataApi.create(containerName + dataObjectNameIn, pCreateDataObjectOptions);
          validateDataObject(dataObject, value.length(), null);
          dataObject = dataApi.get(containerName + dataObjectNameIn);
@@ -156,7 +126,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 
          // exercise create data object with no value
          value = "";
-         pCreateDataObjectOptions = CreateDataObjectOptions.Builder.value();
+         pCreateDataObjectOptions = CreateDataObjectOptions.Builder.value().metadata(dataObjectMetaDataIn);
          dataObject = dataApi.create(containerName + dataObjectNameIn, pCreateDataObjectOptions);
          validateDataObject(dataObject, value.length(), null);
          dataObject = dataApi.get(containerName + dataObjectNameIn);
@@ -289,8 +259,6 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
          is = new ByteArrayInputStream(value.getBytes());
          pCreateDataObjectOptions = CreateDataObjectOptions.Builder.value(is).mimetype("text/plain");
          dataObject = dataApi.create(containerName + dataObjectNameIn, pCreateDataObjectOptions);
-         //validateDataObject(dataObject, dataObjectNameIn, value.length(), pDataObjectMetaDataIn, containerName,
-         //         containerApi);
          validateDataObject(dataObject, value.length(), null);
          dataObject = dataApi.get(containerName + dataObjectNameIn);
          validateDataObject(dataObject, value.length(), "text/plain");
@@ -327,20 +295,11 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
       DataObject dataObject;
       Iterator<String> keys;
       Map<String, String> dataObjectMetaDataOut;
-      Map<String, String> pContainerMetaDataIn = new HashMap<String, String>();
-      dataObjectMetaDataIn = new HashMap<String, String>();
-      dataObjectMetaDataIn.put("dataObjectkey1", "value1");
-      dataObjectMetaDataIn.put("dataObjectkey2", "value2");
-      dataObjectMetaDataIn.put("dataObjectkey3", "value3");
-
-      CreateContainerOptions pCreateContainerOptions = CreateContainerOptions.Builder.metadata(pContainerMetaDataIn);
-      // ContainerApi containerApi = cdmiContext.getApi().getContainerApi();
       containerApi = cdmiContext.getApi().getApi();
-      // DataApi dataApi = cdmiContext.getApi().getDataApi();
       dataApi = cdmiContext.getApi().getDataApiForContainer(containerName);
       Logger.getAnonymousLogger().info("running tests on serverType: " + serverType);
       Logger.getAnonymousLogger().info("createContainer: " + containerName);
-      Container container = containerApi.create(containerName, pCreateContainerOptions);
+      Container container = containerApi.create(containerName);
       try {
          assertNotNull(container);
          Logger.getAnonymousLogger().info(container.toString());
@@ -356,6 +315,14 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
          dataObject = dataApi.create(containerName + dataObjectNameIn, pCreateDataObjectOptions);
          validateDataObject(dataObject,value.length(),null);
          dataObject = dataApi.get(containerName + dataObjectNameIn);
+         dataObjectMetaDataOut = dataObject.getUserMetadata();
+         assertNotNull(dataObjectMetaDataOut);
+         keys = dataObjectMetaDataIn.keySet().iterator();
+         while (keys.hasNext()) {
+            String key = keys.next();
+            assertEquals(dataObjectMetaDataOut.containsKey(key), true);
+            assertEquals(dataObjectMetaDataOut.get(key), dataObjectMetaDataIn.get(key));
+         }         
          validateDataObject(dataObject, value, "text/plain");
 
          dataObject = dataApi.get(containerName + dataObjectNameIn, DataObjectQueryParams.Builder.field("objectName")
@@ -377,8 +344,8 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
          assertEquals(dataObject.getMimetype(), "text/plain");
          dataObjectMetaDataOut = dataObject.getUserMetadata();
          assertNotNull(dataObjectMetaDataOut);
-         assertEquals(dataObjectMetaDataOut.containsKey("dataObjectkey2"), true);
-         assertEquals(dataObjectMetaDataOut.get("dataObjectkey2"), "value2");
+         assertEquals(dataObjectMetaDataOut.containsKey("two"), true);
+         assertEquals(dataObjectMetaDataOut.get("two"), "2");
 
          if (!serverType.matches("openstack")) {
             // openstack is returning parentURI == to authorization string!
@@ -485,14 +452,6 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
       }
       if(value!=null) {
          assertEquals(dataObject.getValueAsString(), value);
-      }
-      Map<String, String> dataObjectMetaDataOut = dataObject.getUserMetadata();
-      assertNotNull(dataObjectMetaDataOut);
-      Iterator<String> keys = dataObjectMetaDataIn.keySet().iterator();
-      while (keys.hasNext()) {
-         String key = keys.next();
-         assertEquals(dataObjectMetaDataOut.containsKey(key), true);
-         assertEquals(dataObjectMetaDataOut.get(key), dataObjectMetaDataIn.get(key));
       }
       // openstack does not return cdmi-size
       if (dataObject.getSystemMetadata().get("cdmi_size") != null) {

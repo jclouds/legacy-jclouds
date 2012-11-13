@@ -23,15 +23,13 @@ import org.jclouds.rest.internal.BaseRestApiExpectTest;
 /**
  * Base class for writing CDMI Expect tests
  * 
- * @author Kenneth Nagin
+ * @author Adrian Cole
  */
 public class BaseCDMIExpectTest<T> extends BaseRestApiExpectTest<T> {
-
    public BaseCDMIExpectTest() {
       provider = "cdmi";
       // now, createContext arg will need tenant prefix
-      // and use basic authentication with TID
-      identity = "tenantId:username?authType=basicAuthTid";
+      identity = "tenantId:username";
       credential = "password";
    }
 }
