@@ -328,4 +328,54 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
       assertEquals(node.getCredentials().getPrivateKey(), null);
    }
 
+
+   @Test
+   public void testCreateNodeWhileUserSpecifiesKeyPairAndUserSpecifiedGroups() throws Exception {
+      Builder<HttpRequest, HttpResponse> requestResponseMap = ImmutableMap.<HttpRequest, HttpResponse> builder()
+            .putAll(defaultTemplateTryStack);
+      requestResponseMap.put(list, notFound);
+
+      requestResponseMap.put(serverDetail, serverDetailResponse);
+
+      HttpRequest createServerWithSuppliedKeyPairAndGroup = HttpRequest
+            .builder()
+            .method("POST")
+            .endpoint("https://nova-api.trystack.org:9774/v1.1/3456/servers")
+            .addHeader("Accept", "application/json")
+            .addHeader("X-Auth-Token", authToken)
+            .payload(
+                  payloadFromStringWithContentType(
+                        "{\"server\":{\"name\":\"test-0\",\"imageRef\":\"14\",\"flavorRef\":\"1\",\"key_name\":\"fooPair\",\"security_groups\":[{\"name\":\"mygroup\"}]}}",
+                        "application/json")).build();
+
+      HttpResponse createdServer = HttpResponse.builder().statusCode(202).message("HTTP/1.1 202 Accepted")
+            .payload(payloadFromResourceWithContentType("/new_server.json", "application/json; charset=UTF-8")).build();
+
+      requestResponseMap.put(createServerWithSuppliedKeyPairAndGroup, createdServer);
+
+      ComputeService apiThatCreatesNode = requestsSendResponses(requestResponseMap.build(), new AbstractModule() {
+
+         @Override
+         protected void configure() {
+            // predicatable node names
+            final AtomicInteger suffix = new AtomicInteger();
+            bind(new TypeLiteral<Supplier<String>>() {
+            }).toInstance(new Supplier<String>() {
+
+               @Override
+               public String get() {
+                  return suffix.getAndIncrement() + "";
+               }
+
+            });
+         }
+
+      });
+
+      NodeMetadata node = Iterables.getOnlyElement(apiThatCreatesNode.createNodesInGroup("test", 1,
+            keyPairName("fooPair").securityGroupNames("mygroup").blockUntilRunning(false)));
+      // we don't have access to this private key
+      assertEquals(node.getCredentials().getPrivateKey(), null);
+   }
+
 }

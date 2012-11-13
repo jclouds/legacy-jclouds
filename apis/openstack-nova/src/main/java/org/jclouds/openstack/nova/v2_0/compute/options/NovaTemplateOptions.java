@@ -32,6 +32,7 @@ import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.util.Preconditions2;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Optional;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
 
@@ -65,7 +66,8 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
       if (to instanceof NovaTemplateOptions) {
          NovaTemplateOptions eTo = NovaTemplateOptions.class.cast(to);
          eTo.autoAssignFloatingIp(shouldAutoAssignFloatingIp());
-         eTo.securityGroupNames(getSecurityGroupNames());
+         if (getSecurityGroupNames().isPresent())
+            eTo.securityGroupNames(getSecurityGroupNames().get());
          eTo.generateKeyPair(shouldGenerateKeyPair());
          eTo.keyPairName(getKeyPairName());
          if (getUserData() != null) {
@@ -75,7 +77,7 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
    }
 
    protected boolean autoAssignFloatingIp = false;
-   protected Set<String> securityGroupNames = ImmutableSet.of();
+   protected Optional<Set<String>> securityGroupNames = Optional.absent();
    protected boolean generateKeyPair = false;
    protected String keyPairName;
    protected byte[] userData;
@@ -104,8 +106,8 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
       ToStringHelper toString = super.string();
       if (!autoAssignFloatingIp)
          toString.add("autoAssignFloatingIp", autoAssignFloatingIp);
-      if (securityGroupNames.size() != 0)
-         toString.add("securityGroupNames", securityGroupNames);
+      if (securityGroupNames.isPresent())
+         toString.add("securityGroupNames", securityGroupNames.get());
       if (generateKeyPair)
          toString.add("generateKeyPair", generateKeyPair);
       toString.add("keyPairName", keyPairName);
@@ -153,7 +155,7 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
    public NovaTemplateOptions securityGroupNames(Iterable<String> securityGroupNames) {
       for (String groupName : checkNotNull(securityGroupNames, "securityGroupNames"))
          Preconditions2.checkNotEmpty(groupName, "all security groups must be non-empty");
-      this.securityGroupNames = ImmutableSet.copyOf(securityGroupNames);
+      this.securityGroupNames = Optional.<Set<String>> of(ImmutableSet.copyOf(securityGroupNames));
       return this;
    }
 
@@ -190,9 +192,12 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
    }
    
    /**
+    * if unset, generate a default group prefixed with {@link jclouds#} according
+    * to {@link #getInboundPorts()}
+    * 
     * @see org.jclouds.openstack.nova.v2_0.options.CreateServerOptions#getSecurityGroupNames
     */
-   public Set<String> getSecurityGroupNames() {
+   public Optional<Set<String>> getSecurityGroupNames() {
       return securityGroupNames;
    }
 
