@@ -83,9 +83,11 @@ public interface VolumeAttachmentApi {
    /**
     * Detach a Volume from a server.
     * 
-    * @param serverId The ID of the Server
+    * Note: Make sure you've unmounted the volume first. Failure to do so could result in failure or data loss.
+    * 
     * @param volumeId The ID of the Volume
+    * @param serverId The ID of the Server
     * @return true if successful
     */
-   boolean detachVolumeFromServer(String serverId, String volumeId);
+   boolean detachVolumeFromServer(String volumeId, String serverId);
 }
