@@ -29,6 +29,8 @@ import org.jclouds.openstack.cinder.v1.domain.Volume;
 import org.jclouds.openstack.cinder.v1.internal.BaseCinderApiLiveTest;
 import org.jclouds.openstack.cinder.v1.options.CreateSnapshotOptions;
 import org.jclouds.openstack.cinder.v1.options.CreateVolumeOptions;
+import org.jclouds.openstack.cinder.v1.predicates.SnapshotPredicates;
+import org.jclouds.openstack.cinder.v1.predicates.VolumePredicates;
 import org.jclouds.predicates.RetryablePredicate;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -97,12 +99,7 @@ public class VolumeAndSnapshotApiLiveTest extends BaseCinderApiLiveTest {
             .availabilityZone(zone);
       testVolume = volumeApi.create(100, options);
       
-      assertTrue(new RetryablePredicate<VolumeApi>(new Predicate<VolumeApi>() {
-         @Override
-         public boolean apply(VolumeApi volumeApi) {
-            return volumeApi.get(testVolume.getId()).getStatus() == Volume.Status.AVAILABLE;
-         }
-      }, 600 * 1000L).apply(volumeApi));
+      assertTrue(VolumePredicates.awaitAvailable(volumeApi).apply(testVolume));
    }
 
    @Test(dependsOnMethods = "testCreateVolume")
@@ -152,17 +149,11 @@ public class VolumeAndSnapshotApiLiveTest extends BaseCinderApiLiveTest {
                         "jclouds live test snapshot").force());
       assertNotNull(testSnapshot);
       assertNotNull(testSnapshot.getId());
-      final String snapshotId = testSnapshot.getId();
       assertNotNull(testSnapshot.getStatus());
       assertTrue(testSnapshot.getSize() > -1);
       assertNotNull(testSnapshot.getCreated());
 
-      assertTrue(new RetryablePredicate<VolumeApi>(new Predicate<VolumeApi>() {
-         @Override
-         public boolean apply(VolumeApi volumeApi) {
-            return snapshotApi.get(snapshotId).getStatus() == Volume.Status.AVAILABLE;
-         }
-      }, 1200 * 1000L).apply(volumeApi));
+      assertTrue(SnapshotPredicates.awaitAvailable(snapshotApi).apply(testSnapshot));
    }
 
    @Test(dependsOnMethods = "testCreateSnapshot")
