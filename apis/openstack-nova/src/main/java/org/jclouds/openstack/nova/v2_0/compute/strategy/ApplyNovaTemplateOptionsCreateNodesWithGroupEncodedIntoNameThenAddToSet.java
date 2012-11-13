@@ -128,18 +128,21 @@ public class ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddT
 
       boolean securityGroupExtensionPresent = novaApi.getSecurityGroupExtensionForZone(zone).isPresent();
       List<Integer> inboundPorts = Ints.asList(templateOptions.getInboundPorts());
-      if (templateOptions.getSecurityGroupNames().size() > 0) {
-         checkArgument(novaApi.getSecurityGroupExtensionForZone(zone).isPresent(),
+      if (templateOptions.getSecurityGroupNames().isPresent()
+            && templateOptions.getSecurityGroupNames().get().size() > 0) {
+         checkArgument(securityGroupExtensionPresent,
                   "Security groups are required by options, but the extension is not available! options: %s",
                   templateOptions);
-      } else if (securityGroupExtensionPresent && inboundPorts.size() > 0) {
-         String securityGroupName = namingConvention.create().sharedNameForGroup(group);
-         try {
-            securityGroupCache.get(new ZoneSecurityGroupNameAndPorts(zone, securityGroupName, inboundPorts));
-         } catch (ExecutionException e) {
-            throw Throwables.propagate(e.getCause());
+      } else if (securityGroupExtensionPresent) {
+         if (!templateOptions.getSecurityGroupNames().isPresent() && inboundPorts.size() > 0) {
+            String securityGroupName = namingConvention.create().sharedNameForGroup(group);
+            try {
+               securityGroupCache.get(new ZoneSecurityGroupNameAndPorts(zone, securityGroupName, inboundPorts));
+            } catch (ExecutionException e) {
+               throw Throwables.propagate(e.getCause());
+            }
+            templateOptions.securityGroupNames(securityGroupName);
          }
-         templateOptions.securityGroupNames(securityGroupName);
       }
 
       return super.execute(group, count, mutableTemplate, goodNodes, badNodes, customizationResponses);

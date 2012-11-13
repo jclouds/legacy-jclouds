@@ -292,13 +292,12 @@ public class CreateServerOptions implements MapBinder {
    
    /**
     * 
+    * Security groups the user specified to run servers with.
+    * 
     * <h3>Note</h3>
     * 
     * This requires that {@link NovaApi#getSecurityGroupExtensionForZone(String)} to return
     * {@link Optional#isPresent present}
-    * 
-    * @return security groups the user specified to run servers with; zero length will create an
-    *         implicit group starting with {@code jclouds#}
     */
    public Set<String> getSecurityGroupNames() {
       return securityGroupNames;
