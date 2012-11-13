@@ -85,6 +85,19 @@ public class VolumePredicates {
 
       return new RetryablePredicate<Volume>(statusPredicate, 600, 5, 5, TimeUnit.SECONDS);
    }
+
+   /**
+    * Wait until a Volume no longer exists.
+    * 
+    * @param volumeApi The VolumeApi in the zone where your Volume resides.
+    * @return RetryablePredicate That will check the whether the Volume exists 
+    * every 5 seconds for a maxiumum of 10 minutes.
+    */
+   public static RetryablePredicate<Volume> awaitDeleted(VolumeApi volumeApi) {
+      DeletedPredicate deletedPredicate = new DeletedPredicate(volumeApi);
+      
+      return new RetryablePredicate<Volume>(deletedPredicate, 600, 5, 5, TimeUnit.SECONDS);
+   }
    
    public static RetryablePredicate<Volume> awaitStatus(
          VolumeApi volumeApi, Volume.Status status, long maxWaitInSec, long periodInSec) {
@@ -118,6 +131,24 @@ public class VolumePredicates {
             
             return status.equals(volumeUpdated.getStatus());
          }
+      }
+   }
+
+   private static class DeletedPredicate implements Predicate<Volume> {
+      private VolumeApi volumeApi;
+
+      public DeletedPredicate(VolumeApi volumeApi) {
+         this.volumeApi = checkNotNull(volumeApi, "volumeApi must be defined");
+      }
+
+      /**
+       * @return boolean Return true when the snapshot is deleted, false otherwise
+       */
+      @Override
+      public boolean apply(Volume volume) {
+         checkNotNull(volume, "volume must be defined");
+
+         return volumeApi.get(volume.getId()) == null;
       }
    }
 }

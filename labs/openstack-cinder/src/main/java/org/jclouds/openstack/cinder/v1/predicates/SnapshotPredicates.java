@@ -74,6 +74,19 @@ public class SnapshotPredicates {
       return new RetryablePredicate<Snapshot>(statusPredicate, 1200, 5, 5, TimeUnit.SECONDS);
    }
    
+   /**
+    * Wait until a Snapshot no longer exists.
+    * 
+    * @param snapshotApi The SnapshotApi in the zone where your Snapshot resides.
+    * @return RetryablePredicate That will check the whether the Snapshot exists 
+    * every 5 seconds for a maxiumum of 20 minutes.
+    */
+   public static RetryablePredicate<Snapshot> awaitDeleted(SnapshotApi snapshotApi) {
+      DeletedPredicate deletedPredicate = new DeletedPredicate(snapshotApi);
+      
+      return new RetryablePredicate<Snapshot>(deletedPredicate, 1200, 5, 5, TimeUnit.SECONDS);
+   }
+
    public static RetryablePredicate<Snapshot> awaitStatus(
          SnapshotApi snapshotApi, Volume.Status status, long maxWaitInSec, long periodInSec) {
       StatusUpdatedPredicate statusPredicate = new StatusUpdatedPredicate(snapshotApi, status);
@@ -95,7 +108,7 @@ public class SnapshotPredicates {
        */
       @Override
       public boolean apply(Snapshot snapshot) {
-         checkNotNull(snapshot, "snapshotId must be defined");
+         checkNotNull(snapshot, "snapshot must be defined");
 
          if (status.equals(snapshot.getStatus())) {
             return true;
@@ -106,6 +119,24 @@ public class SnapshotPredicates {
             
             return status.equals(snapshotUpdated.getStatus());
          }
+      }
+   }
+
+   private static class DeletedPredicate implements Predicate<Snapshot> {
+      private SnapshotApi snapshotApi;
+
+      public DeletedPredicate(SnapshotApi snapshotApi) {
+         this.snapshotApi = checkNotNull(snapshotApi, "snapshotApi must be defined");
+      }
+
+      /**
+       * @return boolean Return true when the snapshot is deleted, false otherwise
+       */
+      @Override
+      public boolean apply(Snapshot snapshot) {
+         checkNotNull(snapshot, "snapshot must be defined");
+
+         return snapshotApi.get(snapshot.getId()) == null;
       }
    }
 }
