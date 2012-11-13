@@ -20,6 +20,7 @@ package org.jclouds.aws.sqs;
 
 import static org.jclouds.aws.domain.Region.AP_NORTHEAST_1;
 import static org.jclouds.aws.domain.Region.AP_SOUTHEAST_1;
+import static org.jclouds.aws.domain.Region.AP_SOUTHEAST_2;
 import static org.jclouds.aws.domain.Region.EU_WEST_1;
 import static org.jclouds.aws.domain.Region.SA_EAST_1;
 import static org.jclouds.aws.domain.Region.US_EAST_1;
@@ -31,9 +32,9 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.aws.domain.Region;
-import org.jclouds.sqs.SQSApiMetadata;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
+import org.jclouds.sqs.SQSApiMetadata;
 
 /**
  * Implementation of @ link org.jclouds.types.ProviderMetadata} for Amazon's Simple Queue Service
@@ -78,6 +79,8 @@ public class AWSSQSProviderMetadata extends BaseProviderMetadata {
             "https://sqs.eu-west-1.amazonaws.com");
       properties.setProperty(PROPERTY_REGION + "." + AP_SOUTHEAST_1 + ".endpoint",
             "https://sqs.ap-southeast-1.amazonaws.com");
+      properties.setProperty(PROPERTY_REGION + "." + AP_SOUTHEAST_2 + ".endpoint",
+            "https://sqs.ap-southeast-2.amazonaws.com");
       properties.setProperty(PROPERTY_REGION + "." + AP_NORTHEAST_1 + ".endpoint",
             "https://sqs.ap-northeast-1.amazonaws.com");
       return properties;
@@ -92,7 +95,7 @@ public class AWSSQSProviderMetadata extends BaseProviderMetadata {
          .homepage(URI.create("http://aws.amazon.com/sqs"))
          .console(URI.create("https://console.aws.amazon.com/ec2/home"))
          .linkedServices("aws-ec2", "aws-rds", "aws-sqs", "aws-elb", "aws-iam","aws-cloudwatch", "aws-s3", "aws-simpledb")
-         .iso3166Codes("US-VA", "US-CA", "BR-SP", "US-OR", "IE", "SG", "JP-13")
+         .iso3166Codes("US-VA", "US-CA", "BR-SP", "US-OR", "IE", "SG", "AU-NSW", "JP-13")
          .apiMetadata(new SQSApiMetadata())
          .defaultProperties(AWSSQSProviderMetadata.defaultProperties());
       }
