@@ -195,7 +195,7 @@ public class VolumeApiExpectTest extends BaseCinderApiExpectTest {
 
       assertFalse(api.delete("60761c60-0f56-4499-b522-ff13e120af10"));
    }
-
+   
    protected Volume testVolumeCreate() {
       return Volume.builder()
             .id("60761c60-0f56-4499-b522-ff13e120af10")
