@@ -30,13 +30,12 @@ import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Multimap;
 
 /**
- * Provides access to Amazon EC2 via the Query API
- * <p/>
- * 
- * This api is not available in EC2 versions below {@link #MIN_API_VERSION}
+ * To help you manage your Amazon EC2 instances, images, and other Amazon EC2
+ * resources, you can assign your own metadata to each resource in the form of
+ * tags.
  * 
  * @see <a
- *      href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeTags.html"
+ *      href="http://docs.amazonwebservices.com/AWSEC2/latest/UserGuide/Using_Tags.html"
  *      >doc</a>
  * @see TagAsyncApi
  * @author Adrian Cole
@@ -140,7 +139,7 @@ public interface TagApi {
     * <h4>example</h4>
     * 
     * <pre>
-    * tagApi.deleteFromResources(ImmutableMap.of(&quot;Purpose&quot;, &quot;production&quot;), ImmutableSet.of(&quot;ami-1a2b3c4d&quot;));
+    * tagApi.conditionallyDeleteFromResources(ImmutableMap.of(&quot;Purpose&quot;, &quot;production&quot;), ImmutableSet.of(&quot;ami-1a2b3c4d&quot;));
     * </pre>
     * 
     * @param conditionalTagValues
