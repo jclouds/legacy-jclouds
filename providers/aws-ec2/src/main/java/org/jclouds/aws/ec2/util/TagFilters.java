@@ -22,6 +22,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Map;
 
+import org.jclouds.ec2.features.TagApi;
+
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -30,8 +32,14 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
+ * <h3>Important</h3>
+ * This will be removed in jclouds version 1.6 
+ * 
  * @author grkvlt@apache.org
+ * 
+ * @see TagApi
  */
+@Deprecated
 public class TagFilters {
    public static enum FilterName {
       KEY, RESOURCE_ID, RESOURCE_TYPE, VALUE;
@@ -54,6 +62,12 @@ public class TagFilters {
       }
    }
 
+   /**
+    * <h3>Important</h3> This will be removed in jclouds version 1.6
+    * 
+    * @see TagApi
+    */
+   @Deprecated
    public static enum ResourceType {
       CUSTOMER_GATEWAY, DHCP_OPTIONS, IMAGE, INSTANCE, INTERNET_GATEWAY, NETWORK_ACL, RESERVED_INSTANCES, ROUTE_TABLE, SECURITY_GROUP, SNAPSHOT, SPOT_INSTANCES_REQUEST, SUBNET, VOLUME, VPC, VPN_CONNECTION, VPN_GATEWAY;
 
