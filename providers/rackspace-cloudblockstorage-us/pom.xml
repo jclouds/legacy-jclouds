@@ -27,7 +27,7 @@
     <version>1.6.0-SNAPSHOT</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
-  <groupId>org.jclouds.labs</groupId>
+  <groupId>org.jclouds.provider</groupId>
   <artifactId>rackspace-cloudblockstorage-us</artifactId>
   <name>jclouds Rackspace Next Generation Cloud Block Storage US provider</name>
   <description>OpenStack Cinder implementation targeted to Rackspace Next Generation Cloud Block Storage US</description>
@@ -56,7 +56,7 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.jclouds.labs</groupId>
+      <groupId>org.jclouds.api</groupId>
       <artifactId>openstack-cinder</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -78,7 +78,7 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.jclouds.labs</groupId>
+      <groupId>org.jclouds.api</groupId>
       <artifactId>openstack-cinder</artifactId>
       <version>${project.version}</version>
       <type>test-jar</type>
@@ -96,6 +96,12 @@
       <artifactId>rackspace-cloudidentity</artifactId>
       <version>${project.version}</version>
       <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jclouds.driver</groupId>
+      <artifactId>jclouds-slf4j</artifactId>
+      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
