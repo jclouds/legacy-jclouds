@@ -47,7 +47,24 @@ import com.google.inject.Injector;
  */
 @Test(groups = "unit")
 public class CloudStackComputeServiceAdapterExpectTest extends BaseCloudStackComputeServiceContextExpectTest<Injector> {
+   HttpResponse deployVMResponse = HttpResponse.builder().statusCode(200)
+         .payload(payloadFromResource("/deployvirtualmachineresponse.json"))
+         .build();
+  
+   HttpRequest queryAsyncJobResult = HttpRequest.builder().method("GET")
+        .endpoint("http://localhost:8080/client/api")
+        .addQueryParam("response", "json")
+        .addQueryParam("command", "queryAsyncJobResult")
+        .addQueryParam("jobid", "50006")
+        .addQueryParam("apiKey", "APIKEY")
+        .addQueryParam("signature", "v8BWKMxd%2BIzHIuTaZ9sNSzCWqFI%3D")
+        .addHeader("Accept", "application/json")
+        .build();
 
+   HttpResponse queryAsyncJobResultResponse = HttpResponse.builder().statusCode(200)
+        .payload(payloadFromResource("/queryasyncjobresultresponse-virtualmachine.json"))
+        .build();
+   
    public void testCreateNodeWithGroupEncodedIntoNameWithKeyPair() {
       HttpRequest deployVM = HttpRequest.builder().method("GET")
             .endpoint("http://localhost:8080/client/api")
@@ -63,25 +80,7 @@ public class CloudStackComputeServiceAdapterExpectTest extends BaseCloudStackCom
             .addQueryParam("apiKey", "APIKEY")
             .addQueryParam("signature", "hI%2FU4cWXdU6KTZKbJvzPCmOpGmU%3D")
             .addHeader("Accept", "application/json")
-            .build();
-
-     HttpResponse deployVMResponse = HttpResponse.builder().statusCode(200)
-            .payload(payloadFromResource("/deployvirtualmachineresponse.json"))
-            .build();
-     
-     HttpRequest queryAsyncJobResult = HttpRequest.builder().method("GET")
-           .endpoint("http://localhost:8080/client/api")
-           .addQueryParam("response", "json")
-           .addQueryParam("command", "queryAsyncJobResult")
-           .addQueryParam("jobid", "50006")
-           .addQueryParam("apiKey", "APIKEY")
-           .addQueryParam("signature", "v8BWKMxd%2BIzHIuTaZ9sNSzCWqFI%3D")
-           .addHeader("Accept", "application/json")
-           .build();
-
-      HttpResponse queryAsyncJobResultResponse = HttpResponse.builder().statusCode(200)
-           .payload(payloadFromResource("/queryasyncjobresultresponse-virtualmachine.json"))
-           .build();     
+            .build(); 
   
       Map<HttpRequest, HttpResponse> requestResponseMap = ImmutableMap.<HttpRequest, HttpResponse> builder()
             .put(listTemplates, listTemplatesResponse)
@@ -109,6 +108,51 @@ public class CloudStackComputeServiceAdapterExpectTest extends BaseCloudStackCom
       assertEquals(server.getCredentials(), LoginCredentials.builder().password("dD7jwajkh").build());
    }
 
+   public void testCreateNodeWithGroupEncodedIntoNameWithKeyPairAssignedToAccountAndDomain() {
+      HttpRequest deployVM = HttpRequest.builder().method("GET")
+            .endpoint("http://localhost:8080/client/api")
+            .addQueryParam("response", "json")
+            .addQueryParam("command", "deployVirtualMachine")
+            .addQueryParam("zoneid", "1")
+            .addQueryParam("templateid", "4")
+            .addQueryParam("serviceofferingid", "1")
+            .addQueryParam("displayname", "test-e92")
+            .addQueryParam("name", "test-e92")
+            .addQueryParam("account", "account") //
+            .addQueryParam("domainid", "domainId") //
+            .addQueryParam("networkids", "204")
+            .addQueryParam("keypair", "mykeypair")
+            .addQueryParam("apiKey", "APIKEY")
+            .addQueryParam("signature", "ly5Pip8ICOoVTmNLdDBTc3gbKlA%3D")
+            .addHeader("Accept", "application/json")
+            .build();
+  
+      Map<HttpRequest, HttpResponse> requestResponseMap = ImmutableMap.<HttpRequest, HttpResponse> builder()
+            .put(listTemplates, listTemplatesResponse)
+            .put(listOsTypes, listOsTypesResponse)
+            .put(listOsCategories, listOsCategoriesResponse)
+            .put(listZones, listZonesResponse)
+            .put(listServiceOfferings, listServiceOfferingsResponse)
+            .put(listAccounts, listAccountsResponse)
+            .put(listNetworks, listNetworksResponse)
+            .put(getZone, getZoneResponse)
+            .put(deployVM, deployVMResponse)
+            .put(queryAsyncJobResult, queryAsyncJobResultResponse)
+            .build();
+
+      Injector forKeyPair = requestsSendResponses(requestResponseMap);
+
+      Template template = forKeyPair.getInstance(TemplateBuilder.class).osFamily(OsFamily.CENTOS).build();
+      template.getOptions().as(CloudStackTemplateOptions.class).keyPair("mykeypair").account("account").domainId("domainId").setupStaticNat(false);
+
+      CloudStackComputeServiceAdapter adapter = forKeyPair.getInstance(CloudStackComputeServiceAdapter.class);
+
+      NodeAndInitialCredentials<VirtualMachine> server = adapter.createNodeWithGroupEncodedIntoName("test", "test-e92",
+            template);
+      assertNotNull(server);
+      assertEquals(server.getCredentials(), LoginCredentials.builder().password("dD7jwajkh").build());
+   }   
+   
    @Override
    protected Injector clientFrom(CloudStackContext context) {
       return context.utils().injector();
