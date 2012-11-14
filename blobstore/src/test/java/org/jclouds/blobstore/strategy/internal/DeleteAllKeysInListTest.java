@@ -18,16 +18,30 @@
  */
 package org.jclouds.blobstore.strategy.internal;
 
+import static org.easymock.EasyMock.anyLong;
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
+
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.TimeUnit;
 
 import org.jclouds.ContextBuilder;
+import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.options.ListContainerOptions;
+import org.jclouds.blobstore.domain.PageSet;
+import org.jclouds.blobstore.domain.StorageMetadata;
+import org.jclouds.util.Throwables2;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.google.common.io.Closeables;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Injector;
 
 /**
@@ -72,6 +86,27 @@ public class DeleteAllKeysInListTest {
    public void testExecuteInDirectory() {
       deleter.execute(containerName, ListContainerOptions.Builder.inDirectory(directoryName));
       assertEquals(blobstore.countBlobs(containerName), 1111);
+   }
+
+   public void testListTimeoutException() throws Exception {
+      ListenableFuture<PageSet<? extends StorageMetadata>> future = createMock(ListenableFuture.class);
+      expect(future.get(anyLong(), anyObject(TimeUnit.class))).andThrow(new RuntimeException(new TimeoutException()));
+      expect(future.cancel(true)).andReturn(true);
+      replay(future);
+
+      AsyncBlobStore asyncBlobStore = createMock(AsyncBlobStore.class);
+      expect(asyncBlobStore.list(anyObject(String.class), anyObject(ListContainerOptions.class))).andReturn(future);
+      replay(asyncBlobStore);
+
+      deleter = new DeleteAllKeysInList(null, asyncBlobStore, null);
+      try {
+         deleter.execute(containerName, ListContainerOptions.NONE);
+         fail();
+      } catch (Exception e) {
+         if (Throwables2.getFirstThrowableOfType(e, TimeoutException.class) == null) {
+            throw e;
+         }
+      }
    }
 
    /**
