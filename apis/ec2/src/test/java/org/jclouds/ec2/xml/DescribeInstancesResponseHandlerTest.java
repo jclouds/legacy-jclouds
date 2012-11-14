@@ -18,6 +18,7 @@
  */
 package org.jclouds.ec2.xml;
 
+import static com.google.common.collect.Iterables.get;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
@@ -41,7 +42,6 @@ import org.testng.annotations.Test;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableSet;
-import static com.google.common.collect.Iterables.*;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
