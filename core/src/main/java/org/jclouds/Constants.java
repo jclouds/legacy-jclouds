@@ -154,7 +154,7 @@ public interface Constants {
    /**
     * Long property.
     * <p/>
-    * longest time a single request can take before throwing an exception.
+    * Maximum duration in milliseconds a single request can take before throwing an exception.
     */
    public static final String PROPERTY_REQUEST_TIMEOUT = "jclouds.request-timeout";
    /**
