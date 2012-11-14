@@ -8,6 +8,7 @@
         <property name="file" value="resources/checkstyle_suppressions.xml"/>
     </module>
     <module name="TreeWalker">
+        <module name="AvoidStarImport"/>
         <module name="EmptyStatement"/>
         <module name="IllegalThrows"/>
 <!--

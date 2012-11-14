@@ -18,6 +18,8 @@
  */
 package org.jclouds.vcloud.director.v1_5.functions;
 
+import static com.google.common.collect.FluentIterable.from;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -27,7 +29,6 @@ import org.jclouds.vcloud.director.v1_5.domain.org.Org;
 import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorApi;
 
 import com.google.common.base.Function;
-import static com.google.common.collect.FluentIterable.*;
 
 /**
  * @author danikov, Adrian Cole

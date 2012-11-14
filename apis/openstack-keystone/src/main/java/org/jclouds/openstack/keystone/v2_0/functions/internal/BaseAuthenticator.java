@@ -19,13 +19,15 @@
 package org.jclouds.openstack.keystone.v2_0.functions.internal;
 
 import static com.google.common.base.Preconditions.checkState;
+import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.REQUIRES_TENANT;
+import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.TENANT_ID;
+import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.TENANT_NAME;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import org.jclouds.domain.Credentials;
 import org.jclouds.logging.Logger;
-import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.*;
 import org.jclouds.openstack.keystone.v2_0.domain.Access;
 
 import com.google.common.base.Function;

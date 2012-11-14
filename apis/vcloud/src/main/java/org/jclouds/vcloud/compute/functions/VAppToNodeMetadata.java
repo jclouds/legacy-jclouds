@@ -20,6 +20,7 @@ package org.jclouds.vcloud.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.not;
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.collect.Iterables.filter;
 import static org.jclouds.compute.util.ComputeServiceUtils.addMetadataAndParseTagsFromCommaDelimitedValue;
 import static org.jclouds.vcloud.compute.util.VCloudComputeUtils.getCredentialsFrom;
@@ -45,7 +46,6 @@ import org.jclouds.vcloud.domain.VApp;
 
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
-import static com.google.common.base.Strings.*;
 
 /**
  * @author Adrian Cole
