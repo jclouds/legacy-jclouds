@@ -36,8 +36,23 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.jclouds.api</groupId>
+            <artifactId>openstack-cinder</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.jclouds.provider</groupId>
             <artifactId>aws-cloudwatch</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>rackspace-cloudblockstorage-us</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>rackspace-cloudblockstorage-uk</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

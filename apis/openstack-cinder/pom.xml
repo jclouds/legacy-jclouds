@@ -27,7 +27,7 @@
     <version>1.6.0-SNAPSHOT</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
-  <groupId>org.jclouds.labs</groupId>
+  <groupId>org.jclouds.api</groupId>
   <artifactId>openstack-cinder</artifactId>
   <name>jclouds openstack-cinder api</name>
   <description>jclouds components to access an implementation of OpenStack Cinder</description>
@@ -77,9 +77,14 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.jclouds.driver</groupId>
+      <artifactId>jclouds-slf4j</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>1.0.0</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
