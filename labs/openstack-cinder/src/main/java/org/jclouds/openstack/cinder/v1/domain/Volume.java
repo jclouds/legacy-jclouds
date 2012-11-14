@@ -206,8 +206,16 @@ public class Volume {
       }
    }
    
+   /**
+    * Creates a dummy Volume when you need a Volume with just the volumeId. 
+    * Several fields must be set in the returned Volume:
+    * 
+    * 1. status=Status.UNRECOGNIZED
+    * 2. zone="nova"
+    * 3. created=[The Date the method was called]
+    */
    public static Volume forId(String volumeId) {
-      return builder().id(volumeId).build();
+      return builder().id(volumeId).status(Status.UNRECOGNIZED).zone("nova").created(new Date()).build();
    }
 
    private final String id;

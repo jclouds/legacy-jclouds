@@ -31,13 +31,11 @@ import org.jclouds.openstack.cinder.v1.options.CreateSnapshotOptions;
 import org.jclouds.openstack.cinder.v1.options.CreateVolumeOptions;
 import org.jclouds.openstack.cinder.v1.predicates.SnapshotPredicates;
 import org.jclouds.openstack.cinder.v1.predicates.VolumePredicates;
-import org.jclouds.predicates.RetryablePredicate;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
 /**
@@ -71,22 +69,12 @@ public class VolumeAndSnapshotApiLiveTest extends BaseCinderApiLiveTest {
    protected void tearDownContext() {
       if (testSnapshot != null) {
          assertTrue(snapshotApi.delete(testSnapshot.getId()));
-         assertTrue(new RetryablePredicate<SnapshotApi>(new Predicate<SnapshotApi>() {
-            @Override
-            public boolean apply(SnapshotApi snapshotApi) {
-               return snapshotApi.get(testSnapshot.getId()) == null;
-            }
-         }, 300 * 1000L).apply(snapshotApi));
+         assertTrue(SnapshotPredicates.awaitDeleted(snapshotApi).apply(testSnapshot));
       }
 
       if (testVolume != null) {
          assertTrue(volumeApi.delete(testVolume.getId()));
-         assertTrue(new RetryablePredicate<VolumeApi>(new Predicate<VolumeApi>() {
-            @Override
-            public boolean apply(VolumeApi volumeApi) {
-               return volumeApi.get(testVolume.getId()) == null;
-            }
-         }, 300 * 1000L).apply(volumeApi));
+         assertTrue(VolumePredicates.awaitDeleted(volumeApi).apply(testVolume));
       }
 
       super.tearDownContext();
