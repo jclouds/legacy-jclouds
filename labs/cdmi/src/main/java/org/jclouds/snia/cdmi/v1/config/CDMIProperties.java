@@ -23,7 +23,7 @@ package org.jclouds.snia.cdmi.v1.config;
  * 
  * @author Kenneth Nagin
  */
-public @interface CDMIProperties {
+public interface CDMIProperties {
 	/**
 	 * Property type for choosing which authorization type is used when accessing provider.
 	 * For valid values:

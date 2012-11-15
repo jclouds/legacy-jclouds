@@ -64,13 +64,14 @@ public class OpenstackKeystoneAuthReqFilter implements HttpRequestFilter {
 
    @Inject
    public OpenstackKeystoneAuthReqFilter(@Identity String tenantNameAndUsername, @Credential String credential) {
-      if (tenantNameAndUsername.indexOf(':') == -1) {
+      int colonIndex = tenantNameAndUsername.indexOf(':');
+      if (colonIndex == -1) {
          throw new AuthorizationException(String.format("Identity %s does not match format tenantName:username",
                   tenantNameAndUsername), null);
       }
       this.credential = credential;
-      this.tenant = tenantNameAndUsername.substring(0, tenantNameAndUsername.indexOf(':'));
-      this.identity = tenantNameAndUsername.substring(tenantNameAndUsername.indexOf(':') + 1);
+      this.tenant = tenantNameAndUsername.substring(0, colonIndex);
+      this.identity = tenantNameAndUsername.substring(colonIndex + 1);
 
    }
 

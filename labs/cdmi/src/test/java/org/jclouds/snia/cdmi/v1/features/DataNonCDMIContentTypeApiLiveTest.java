@@ -67,7 +67,8 @@ public class DataNonCDMIContentTypeApiLiveTest extends BaseCDMIApiLiveTest {
           .put("one", "1")
           .put("two", "2")
           .put("three", "3")
-          .build(); 
+          .build();
+   static final Logger logger = Logger.getAnonymousLogger();
 
    @Test
    public void testCreateDataObjectsNonCDMI() throws Exception {
@@ -87,12 +88,12 @@ public class DataNonCDMIContentTypeApiLiveTest extends BaseCDMIApiLiveTest {
       containerApi = cdmiContext.getApi().getApi();
       dataApi = cdmiContext.getApi().getDataApiForContainer(containerName);
       dataNonCDMIContentTypeApi = cdmiContext.getApi().getDataNonCDMIContentTypeApiForContainer(containerName);
-      Logger.getAnonymousLogger().info("createContainer: " + containerName);
+      logger.info("createContainer: " + containerName);
       Container container = containerApi.create(containerName);
       try {
 
          assertNotNull(container);
-         Logger.getAnonymousLogger().info("container: " + container);
+         logger.info("container: " + container);
          container = containerApi.get(containerName);
          assertNotNull(container);
          assertNotNull(container.getChildren());
@@ -248,30 +249,34 @@ public class DataNonCDMIContentTypeApiLiveTest extends BaseCDMIApiLiveTest {
          // exercise create data object with none cdmi partial.
          // server does not actually support cdmi partial but
          // trace allows me to see that request was constructed properly
-         value = "Hello CDMI World non-cdmi String";
-         payloadIn = new StringPayload(value);
+         String part1 = "abcde";
+         String part2 = "fghijklmnop";
+         String part3 = "qrstwxyz";
+         String allparts = part1+part2+part3;
+         payloadIn = new StringPayload(part1);
          payloadIn.setContentMetadata(BaseMutableContentMetadata.fromContentMetadata(payloadIn.getContentMetadata()
                   .toBuilder().contentType(MediaType.PLAIN_TEXT_UTF_8.toString()).build()));
-         dataNonCDMIContentTypeApi.createPartial(containerName + dataObjectNameIn, payloadIn);
+         int index = 0;
+         dataNonCDMIContentTypeApi.createPartial(containerName + dataObjectNameIn, payloadIn, true, "bytes "+index+"-"+String.valueOf(index+part1.length()-1)+"/"+allparts.length());
+         index = index + part1.length();
+         payloadIn = new StringPayload(part2);
+         payloadIn.setContentMetadata(BaseMutableContentMetadata.fromContentMetadata(payloadIn.getContentMetadata()
+                  .toBuilder().contentType(MediaType.PLAIN_TEXT_UTF_8.toString()).build()));         
+         dataNonCDMIContentTypeApi.createPartial(containerName + dataObjectNameIn, payloadIn, true, "bytes "+index+"-"+String.valueOf(index+part2.length()-1)+"/"+allparts.length());
+         index = index + part2.length();
+         payloadIn = new StringPayload(part3);
+         payloadIn.setContentMetadata(BaseMutableContentMetadata.fromContentMetadata(payloadIn.getContentMetadata()
+                  .toBuilder().contentType(MediaType.PLAIN_TEXT_UTF_8.toString()).build()));        
+         dataNonCDMIContentTypeApi.createPartial(containerName + dataObjectNameIn, payloadIn, false, "bytes "+index+"-"+String.valueOf(index+part3.length()-1)+"/"+allparts.length());
          payloadOut = dataNonCDMIContentTypeApi.getPayload(containerName + dataObjectNameIn);
          assertNotNull(payloadOut);
-         Logger.getAnonymousLogger().info("payload " + payloadOut);
-
-         dataNonCDMIContentTypeApi.createPartial(containerName + dataObjectNameIn, payloadIn);
-         payloadOut = dataNonCDMIContentTypeApi.getPayload(containerName + dataObjectNameIn);
-         assertNotNull(payloadOut);
-         Logger.getAnonymousLogger().info("payload " + payloadOut);
-
-         dataNonCDMIContentTypeApi.create(containerName + dataObjectNameIn, payloadIn);
-
-         payloadOut = dataNonCDMIContentTypeApi.getPayload(containerName + dataObjectNameIn);
-         assertNotNull(payloadOut);
-         Logger.getAnonymousLogger().info("payload " + payloadOut);
+         logger.info("payload " + payloadOut);
+         logger.info("payload " +CharStreams.toString(new InputStreamReader(payloadOut.getInput(), "UTF-8")));
 
       } finally {
          tmpFileIn.delete();
          for (String containerChild : containerApi.get(containerName).getChildren()) {
-            Logger.getAnonymousLogger().info("deleting: " + containerChild);
+            logger.info("deleting: " + containerChild);
             dataNonCDMIContentTypeApi.delete(containerName + containerChild);
          }
          containerApi.delete(containerName);
@@ -284,18 +289,18 @@ public class DataNonCDMIContentTypeApiLiveTest extends BaseCDMIApiLiveTest {
       DataObject dataObject;
       // openstack's NonCDMIContentType only returning payload for filtered queries
       if (!serverType.matches("openstack")) {
-         Logger.getAnonymousLogger().info("retrieving objectName with dataNonCDMIContentTypeApi");
+         logger.info("retrieving objectName with dataNonCDMIContentTypeApi");
          dataObject = dataNonCDMIContentTypeApi.get(containerName + dataObjectNameIn, DataObjectQueryParams.Builder
                   .field("objectName").field("objectType").field("mimetype").field("parentURI").metadata());
       } else {
-         Logger.getAnonymousLogger().info("retrieving objectName with dataApi");
+         logger.info("retrieving objectName with dataApi");
          dataObject = dataApi.get(containerName + dataObjectNameIn, DataObjectQueryParams.Builder.field("objectName")
                   .field("objectType").field("mimetype"));
 
       }
 
       assertNotNull(dataObject);
-      Logger.getAnonymousLogger().info(dataObject.toString());
+      logger.info(dataObject.toString());
       assertEquals(dataObject.getObjectName(), dataObjectNameIn);
       assertEquals(dataObject.getObjectType(), "application/cdmi-object");
       assertEquals(dataObject.getMimetype(), mimetype);

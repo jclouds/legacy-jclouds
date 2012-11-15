@@ -51,6 +51,7 @@ public class ContainerApiLiveTest extends BaseCDMIApiLiveTest {
           .put("two", "2")
           .put("three", "3")
           .build();
+   static final Logger logger = Logger.getAnonymousLogger();
 
    @Test
    public void testCreateContainer() throws Exception {
@@ -59,11 +60,11 @@ public class ContainerApiLiveTest extends BaseCDMIApiLiveTest {
       CreateContainerOptions pCreateContainerOptions = CreateContainerOptions.Builder.metadata(pContainerMetaDataIn);
       ContainerApi api = cdmiContext.getApi().getApi();
 
-      Logger.getAnonymousLogger().info("create: " + pContainerName);
+      logger.info("create: " + pContainerName);
       Container container = api.create(pContainerName, pCreateContainerOptions);
       assertNotNull(container);
       try {
-         Logger.getAnonymousLogger().info(container.toString());
+         logger.info(container.toString());
          assertEquals(container.getObjectType(), ObjectTypes.CONTAINER);
          assertNotNull(container.getObjectID());
          assertNotNull(container.getObjectName());
@@ -75,29 +76,29 @@ public class ContainerApiLiveTest extends BaseCDMIApiLiveTest {
             assertEquals(pContainerMetaDataOut.containsKey(key), true);
             assertEquals(pContainerMetaDataOut.get(key), pContainerMetaDataIn.get(key));
          }
-         Logger.getAnonymousLogger().info("UserMetaData: " + container.getUserMetadata());
+         logger.info("UserMetaData: " + container.getUserMetadata());
          assertNotNull(container.getSystemMetadata());
-         Logger.getAnonymousLogger().info("SystemMetaData: " + container.getSystemMetadata());
+         logger.info("SystemMetaData: " + container.getSystemMetadata());
          assertNotNull(container.getACLMetadata());
          List<Map<String, String>> aclMetadataOut = container.getACLMetadata();
-         Logger.getAnonymousLogger().info("ACLMetaData: ");
+         logger.info("ACLMetaData: ");
          for (Map<String, String> aclMap : aclMetadataOut) {
-            Logger.getAnonymousLogger().info(aclMap.toString());
+            logger.info(aclMap.toString());
          }
          container = api.get("/");
          assertNotNull(container);
-         Logger.getAnonymousLogger().info("root container: " + container);
+         logger.info("root container: " + container);
          assertEquals(container.getChildren().contains(pContainerName), true);
 
       } finally {
-         Logger.getAnonymousLogger().info("deleteContainer: " + pContainerName);
+         logger.info("deleteContainer: " + pContainerName);
          for (String containerChild : api.get(pContainerName).getChildren()) {
-            Logger.getAnonymousLogger().info("Deleting " + containerChild);
+            logger.info("Deleting " + containerChild);
             api.delete(containerChild);
          }
          api.delete(pContainerName);
          container = api.get("/");
-         Logger.getAnonymousLogger().info("root container: " + container.toString());
+         logger.info("root container: " + container.toString());
          assertEquals(container.getChildren().contains(pContainerName), false);
       }
 
@@ -118,25 +119,25 @@ public class ContainerApiLiveTest extends BaseCDMIApiLiveTest {
       Container container = api.create(pContainerName, pCreateContainerOptions);
       assertNotNull(container);
       try {
-         Logger.getAnonymousLogger().info(container.toString());
-         Logger.getAnonymousLogger().info("getContainer: " + pContainerName);
+         logger.info(container.toString());
+         logger.info("getContainer: " + pContainerName);
          container = api.get(pContainerName);
          assertNotNull(container);
-         Logger.getAnonymousLogger().info(container.toString());
+         logger.info(container.toString());
          assertEquals(container.getObjectType(), ObjectTypes.CONTAINER);
          assertNotNull(container.getObjectID());
          assertNotNull(container.getObjectName());
          assertEquals(container.getObjectName(), pContainerName);
          assertNotNull(container.getChildren());
          assertEquals(container.getChildren().isEmpty(), true);
-         Logger.getAnonymousLogger().info("Children: " + container.getChildren());
+         logger.info("Children: " + container.getChildren());
          assertNotNull(container.getMetadata());
-         Logger.getAnonymousLogger().info("Raw metadata: " + container.getMetadata());
+         logger.info("Raw metadata: " + container.getMetadata());
          keys = container.getMetadata().keySet().iterator();
          while (keys.hasNext()) {
             String key = keys.next();
             JsonBall value = container.getMetadata().get(key);
-            Logger.getAnonymousLogger().info(key + ":" + value);
+            logger.info(key + ":" + value);
          }
          assertNotNull(container.getUserMetadata());
          Map<String, String> pContainerMetaDataOut = container.getUserMetadata();
@@ -146,21 +147,21 @@ public class ContainerApiLiveTest extends BaseCDMIApiLiveTest {
             assertEquals(pContainerMetaDataOut.containsKey(key), true);
             assertEquals(pContainerMetaDataOut.get(key), pContainerMetaDataIn.get(key));
          }
-         Logger.getAnonymousLogger().info("UserMetaData: " + container.getUserMetadata());
+         logger.info("UserMetaData: " + container.getUserMetadata());
          assertNotNull(container.getSystemMetadata());
-         Logger.getAnonymousLogger().info("SystemMetaData: " + container.getSystemMetadata());
+         logger.info("SystemMetaData: " + container.getSystemMetadata());
          assertNotNull(container.getACLMetadata());
          List<Map<String, String>> aclMetadataOut = container.getACLMetadata();
-         Logger.getAnonymousLogger().info("ACLMetaData: ");
+         logger.info("ACLMetaData: ");
          for (Map<String, String> aclMap : aclMetadataOut) {
-            Logger.getAnonymousLogger().info(aclMap.toString());
+            logger.info(aclMap.toString());
          }
          container = api.get("/");
-         Logger.getAnonymousLogger().info("root container: " + container.toString());
+         logger.info("root container: " + container.toString());
          assertEquals(container.getChildren().contains(pContainerName), true);
          container = api.get(pContainerName, ContainerQueryParams.Builder.field("parentURI"));
          assertNotNull(container);
-         Logger.getAnonymousLogger().info(container.toString());
+         logger.info(container.toString());
 
          container = api.get(pContainerName, ContainerQueryParams.Builder.field("parentURI").field("objectName"));
          assertNotNull(container);
@@ -175,11 +176,11 @@ public class ContainerApiLiveTest extends BaseCDMIApiLiveTest {
             assertEquals(pContainerMetaDataOut.containsKey(key), true);
             assertEquals(pContainerMetaDataOut.get(key), pContainerMetaDataIn.get(key));
          }
-         Logger.getAnonymousLogger().info(container.toString());
+         logger.info(container.toString());
 
          container = api.get(pContainerName, ContainerQueryParams.Builder.metadata("cdmi_acl"));
          assertNotNull(container);
-         Logger.getAnonymousLogger().info(container.toString());
+         logger.info(container.toString());
          assertNotNull(container.getACLMetadata());
          container = api.get(pContainerName,
                   ContainerQueryParams.Builder.any("query1=abc").field("objectName").any("query2=anyQueryParam")
@@ -188,7 +189,7 @@ public class ContainerApiLiveTest extends BaseCDMIApiLiveTest {
 
          // openstack does not support containers within containers
          if (containerNesting) {
-            Logger.getAnonymousLogger().info("adding containers to container");
+            logger.info("adding containers to container");
             String firstParentURI = api.get(pContainerName).getObjectName();
             for (int i = 0; i < 10; i++) {
                container = api.create(firstParentURI + "childcontainer" + i + "/");
@@ -227,14 +228,14 @@ public class ContainerApiLiveTest extends BaseCDMIApiLiveTest {
          }
 
       } finally {
-         Logger.getAnonymousLogger().info("deleteContainer: " + pContainerName);
+         logger.info("deleteContainer: " + pContainerName);
          for (String containerChild : api.get(pContainerName).getChildren()) {
-            Logger.getAnonymousLogger().info("deleting: " + containerChild);
+            logger.info("deleting: " + containerChild);
             api.delete(containerChild);
          }
          api.delete(pContainerName);
          container = api.get("/");
-         Logger.getAnonymousLogger().info("root container: " + container);
+         logger.info("root container: " + container);
          assertEquals(container.getChildren().contains(pContainerName), false);
       }
    }

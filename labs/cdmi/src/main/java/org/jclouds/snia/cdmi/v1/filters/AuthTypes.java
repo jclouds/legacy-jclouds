@@ -22,7 +22,7 @@ package org.jclouds.snia.cdmi.v1.filters;
  * @author Kenneth Nagin
  * 
  */
-public @interface AuthTypes {
+public interface AuthTypes {
 	/**
 	 * Valid values for AUTHTYPE
 	 * 

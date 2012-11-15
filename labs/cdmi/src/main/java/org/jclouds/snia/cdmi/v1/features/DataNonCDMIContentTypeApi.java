@@ -37,7 +37,7 @@ public interface DataNonCDMIContentTypeApi {
    /**
     * get CDMI Data object's payload
     * 
-    * @param dataObject
+    * @param dataObject data object path in the form <containerName>/<dataObjectName>
     * @return payload
     * 
     *         <pre>
@@ -55,7 +55,7 @@ public interface DataNonCDMIContentTypeApi {
    /**
     * get CDMI Data object's payload
     * 
-    * @param dataObject
+    * @param dataObject data object path in the form <containerName>/<dataObjectName>
     * @param range
     *           a valid ranges-specifier (see RFC2616 Section 14.35.1)
     * @return payload
@@ -73,7 +73,7 @@ public interface DataNonCDMIContentTypeApi {
    /**
     * get CDMI Data object
     * 
-    * @param dataObject
+    * @param dataObject data object path in the form <containerName>/<dataObjectName>
     * @param queryParams
     *           enables specifying additional information when retrieving payload
     * @return payload
@@ -91,7 +91,7 @@ public interface DataNonCDMIContentTypeApi {
    /**
     * get CDMI Data object's payload constrained by byte range
     * 
-    * @param dataObject
+    * @param dataObject data object path in the form <containerName>/<dataObjectName>
     * @param range
     *           a valid ranges-specifier (see RFC2616 Section 14.35.1)
     * @param queryParams
@@ -111,7 +111,7 @@ public interface DataNonCDMIContentTypeApi {
    /**
     * get CDMI Data object
     * 
-    * @param dataObject
+    * @param dataObject data object path in the form <containerName>/<dataObjectName>
     * @param queryParams
     *           enables getting only certain fields, metadata, value range, any
     * @return DataObject
@@ -130,7 +130,7 @@ public interface DataNonCDMIContentTypeApi {
    /**
     * create CDMI Data object Non CDMI Content Type
     * 
-    * @param dataObject
+    * @param dataObject data object path in the form <containerName>/<dataObjectName>
     * @param payload
     *           enables defining the body's payload i.e. file, inputStream, String, ByteArray
     * 
@@ -158,27 +158,29 @@ public interface DataNonCDMIContentTypeApi {
     * create CDMI Data object partial Non CDMI Content Type Only part of the object is contained in the payload and the
     * X-CDMI-Partial header flag is set to true
     * 
-    * 
-    * 
-    * @param dataObject
-    *           dataObject must not end with a forward slash, /.
+    * @param dataObject data object path in the form <containerName>/<dataObjectName>
     * @param payload
     *           enables defining the body's payload i.e. file, inputStream, String, ByteArray
+    * @param partial true|false 
+    *           true Indicates that the object is in the process of being updated 
+    *           and has not yet been fully updated. When set, the completionStatus 
+    *           field shall be set to "Processing".
+    * @param contentrange Content Range as described in RFC 2616, e.g. bytes 21010-47021/47022                           
     * 
     *           <pre>
     *  Examples: 
     *  {@code
-    *  createPartial("mycontainer/myDataObject",Payloads.newPayload(X);
+    *  createPartial("mycontainer/myDataObject",Payloads.newPayload(X),true,bytes 21010-47021/47022);
     * }
     * 
     *           <pre>
     */
-   void createPartial(String dataObject, Payload payload);
+   void createPartial(String dataObject, Payload payload, boolean partial, String contentrange);
 
    /**
     * create CDMI Data object Non CDMI Content Type
     * 
-    * @param dataObject
+    * @param dataObject data object path in the form <containerName>/<dataObjectName>
     * @param inputString
     *           simple string input
     * 
@@ -195,7 +197,7 @@ public interface DataNonCDMIContentTypeApi {
    /**
     * delete CDMI Data object
     * 
-    * @param dataObject
+    * @param dataObject data object path in the form <containerName>/<dataObjectName>
     *           <pre>
     *  Examples: 
     *  {@code

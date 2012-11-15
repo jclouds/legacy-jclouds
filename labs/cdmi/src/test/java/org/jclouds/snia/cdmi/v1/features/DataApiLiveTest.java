@@ -62,6 +62,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
           .put("two", "2")
           .put("three", "3")
           .build();
+   static final Logger logger = Logger.getAnonymousLogger();
    @Test
    public void testCreateDataObjects() throws Exception {
       containerName = "MyContainer" + System.currentTimeMillis() + "/";
@@ -80,13 +81,13 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
       DataObject dataObject;      
       containerApi = cdmiContext.getApi().getApi();
       dataApi = cdmiContext.getApi().getDataApiForContainer(containerName);
-      Logger.getAnonymousLogger().info("createContainer: " + containerName);
+      logger.info("createContainer: " + containerName);
       Container container = containerApi.create(containerName);
 
       try {
 
          assertNotNull(container);
-         Logger.getAnonymousLogger().info(container.toString());
+         logger.info(container.toString());
          container = containerApi.get(containerName);
          assertNotNull(container);
          assertNotNull(container.getChildren());
@@ -271,7 +272,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
       } finally {
          tmpFileIn.delete();
          for (String containerChild : containerApi.get(containerName).getChildren()) {
-            Logger.getAnonymousLogger().info("deleting: " + containerChild);
+            logger.info("deleting: " + containerChild);
             dataApi.delete(containerName + containerChild);
          }
 
@@ -297,12 +298,12 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
       Map<String, String> dataObjectMetaDataOut;
       containerApi = cdmiContext.getApi().getApi();
       dataApi = cdmiContext.getApi().getDataApiForContainer(containerName);
-      Logger.getAnonymousLogger().info("running tests on serverType: " + serverType);
-      Logger.getAnonymousLogger().info("createContainer: " + containerName);
+      logger.info("running tests on serverType: " + serverType);
+      logger.info("createContainer: " + containerName);
       Container container = containerApi.create(containerName);
       try {
          assertNotNull(container);
-         Logger.getAnonymousLogger().info(container.toString());
+         logger.info(container.toString());
          container = containerApi.get(containerName);
          assertNotNull(container);
          assertNotNull(container.getChildren());
@@ -350,22 +351,22 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
          if (!serverType.matches("openstack")) {
             // openstack is returning parentURI == to authorization string!
             // so all this fails
-            Logger.getAnonymousLogger().info("running parentURI tests.");
+            logger.info("running parentURI tests.");
             dataObject = dataApi
                      .get(containerName + dataObjectNameIn, DataObjectQueryParams.Builder.field("parentURI"));
             assertNotNull(dataObject);
-            Logger.getAnonymousLogger().info(dataObject.toString());
+            logger.info(dataObject.toString());
             assertEquals(dataObject.getParentURI(), container.getParentURI() + container.getObjectName());
             dataObject = dataApi.get(containerName + dataObjectNameIn, DataObjectQueryParams.Builder.field("parentURI")
                      .field("objectName"));
             assertNotNull(dataObject);
-            Logger.getAnonymousLogger().info(dataObject.toString());
+            logger.info(dataObject.toString());
             assertEquals(dataObject.getParentURI(), container.getParentURI() + container.getObjectName());
             assertEquals(dataObject.getObjectName(), dataObjectNameIn);
             dataObject = dataApi.get(containerName + dataObjectNameIn, DataObjectQueryParams.Builder.field("parentURI")
                      .field("objectName").field("mimetype"));
             assertNotNull(dataObject);
-            Logger.getAnonymousLogger().info(dataObject.toString());
+            logger.info(dataObject.toString());
             assertEquals(dataObject.getParentURI(), container.getParentURI() + container.getObjectName());
             assertEquals(dataObject.getObjectName(), dataObjectNameIn);
             assertEquals(dataObject.getMimetype(), "text/plain");
@@ -373,7 +374,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
             dataObject = dataApi.get(containerName + dataObjectNameIn, DataObjectQueryParams.Builder.field("parentURI")
                      .field("objectName").field("mimetype").metadata());
             assertNotNull(dataObject);
-            Logger.getAnonymousLogger().info(dataObject.toString());
+            logger.info(dataObject.toString());
             assertEquals(dataObject.getParentURI(), container.getParentURI() + container.getObjectName());
             assertEquals(dataObject.getObjectName(), dataObjectNameIn);
             assertEquals(dataObject.getMimetype(), "text/plain");
@@ -390,41 +391,41 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
             dataObject = dataApi.get(containerName + dataObjectNameIn,
                      DataObjectQueryParams.Builder.metadata("cdmi_size"));
             assertNotNull(dataObject);
-            Logger.getAnonymousLogger().info(dataObject.toString());
+            logger.info(dataObject.toString());
             assertEquals(Integer.parseInt(dataObject.getSystemMetadata().get("cdmi_size")), value.length());
 
             dataObject = dataApi.get(containerName + dataObjectNameIn, DataObjectQueryParams.Builder.field("mimetype")
                      .value());
             assertNotNull(dataObject);
-            Logger.getAnonymousLogger().info(dataObject.toString());
-            Logger.getAnonymousLogger().info(dataObject.getValueAsString());
+            logger.info(dataObject.toString());
+            logger.info(dataObject.getValueAsString());
             assertEquals(dataObject.getMimetype(), "text/plain");
             assertEquals(dataObject.getValueAsString(), value);
 
             dataObject = dataApi.get(containerName + dataObjectNameIn, DataObjectQueryParams.Builder.field("mimetype")
                      .value(0, 3));
             assertNotNull(dataObject);
-            Logger.getAnonymousLogger().info(dataObject.toString());
-            Logger.getAnonymousLogger().info(dataObject.getValueAsString());
+            logger.info(dataObject.toString());
+            logger.info(dataObject.getValueAsString());
             assertEquals(dataObject.getMimetype(), "text/plain");
             // value is SGVsbA==. This needs investigating to determine if this is problem with wss-sonas CDMI
             // server or
             // the jcloud client or
             // must understanding of spec
-            Logger.getAnonymousLogger().info(dataObject.toString());
+            logger.info(dataObject.toString());
          }
          // validate any query: allows user to indicate special handling with any query.
          dataObject = dataApi.get(containerName + dataObjectNameIn, DataObjectQueryParams.Builder
                   .any("query1=anything").field("objectName").any("anyQueryParam").field("mimetype").metadata());
          assertNotNull(dataObject);
-         Logger.getAnonymousLogger().info(dataObject.toString());
+         logger.info(dataObject.toString());
          dataApi.delete(containerName + dataObjectNameIn);
          assertEquals(containerApi.get(containerName).getChildren().contains(dataObjectNameIn), false);
 
       } finally {
          tmpFileIn.delete();
          for (String containerChild : containerApi.get(containerName).getChildren()) {
-            Logger.getAnonymousLogger().info("deleting: " + containerChild);
+            logger.info("deleting: " + containerChild);
             dataApi.delete(containerName + containerChild);
          }
          containerApi.delete(containerName);
@@ -443,10 +444,10 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
    
    private void validateDataObject(DataObject dataObject, String value, long valueLength, String mimetype) {
       assertNotNull(dataObject);
-      Logger.getAnonymousLogger().info("validateDataObject("+dataObject.getObjectName()+","+value+","+valueLength+","+mimetype+")");
+      logger.info("validateDataObject("+dataObject.getObjectName()+","+value+","+valueLength+","+mimetype+")");
 
-      Logger.getAnonymousLogger().info(dataObject.toString());
-      Logger.getAnonymousLogger().info("value: " + dataObject.getValueAsString());
+      logger.info(dataObject.toString());
+      logger.info("value: " + dataObject.getValueAsString());
       if(mimetype!=null) {
          assertEquals(dataObject.getMimetype(), mimetype);
       }
@@ -459,7 +460,7 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
       }
       assertEquals(dataObject.getObjectName(), dataObjectNameIn);
       assertEquals(dataObject.getObjectType(), "application/cdmi-object");
-      Logger.getAnonymousLogger().info("parentURI: " + dataObject.getParentURI());
+      logger.info("parentURI: " + dataObject.getParentURI());
       assertEquals(containerApi.get(containerName).getChildren().contains(dataObjectNameIn), true);
    }
 

@@ -133,6 +133,13 @@ public interface DataNonCDMIContentTypeAsyncApi {
    @Headers(keys = "X-CDMI-Partial", values = "true")
    ListenableFuture<Void> createPartial(@PathParam("dataObjectName") String dataObjectName,
             org.jclouds.io.Payload payload);
+   @PUT
+   @Consumes(MediaType.MEDIA_TYPE_WILDCARD)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Path("/{dataObjectName}")
+   ListenableFuture<Void> createPartial(@PathParam("dataObjectName") String dataObjectName,
+            org.jclouds.io.Payload payload,@HeaderParam("X-CDMI-Partial") boolean partial, @HeaderParam("Content-Range") String contentrange);
+   
 
    /**
     * @see DataNonCDMIContentTypeApi#create(String dataObjectName, String input )
