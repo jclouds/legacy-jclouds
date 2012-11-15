@@ -18,6 +18,7 @@
  */
 package org.jclouds.openstack.nova.v2_0.features;
 
+import com.google.common.base.Optional;
 import java.util.Map;
 
 import javax.ws.rs.Consumes;
@@ -63,8 +64,10 @@ import org.jclouds.rest.functions.ReturnEmptyPagedIterableOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnAbsentOn403Or404Or500;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import org.jclouds.openstack.nova.v2_0.functions.internal.*;
 
 /**
  * Provides asynchronous access to Server via their REST API.
@@ -319,4 +322,14 @@ public interface ServerAsyncApi {
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    ListenableFuture<Void> deleteMetadata(@PathParam("id") String id, @PathParam("key") String key);
 
+   
+   /**
+    * @see ServerApi#getDiagnostics
+    */
+   @GET
+   @Path("/servers/{id}/diagnostics")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnAbsentOn403Or404Or500.class)
+   @ResponseParser(ParseDiagnostics.class)
+   ListenableFuture<Optional<Map<String, String>>> getDiagnostics(@PathParam("id") String id);
 }
