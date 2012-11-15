@@ -36,6 +36,7 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
+import org.jclouds.openstack.nova.v2_0.parse.*;
 
 /**
  * Tests annotation parsing of {@code ServerAsyncApi}
@@ -577,4 +578,46 @@ public class ServerApiExpectTest extends BaseNovaApiExpectTest {
       apiWhenServerExists.getServerApiForZone("az-1.region-a.geo-1").deleteMetadata(serverId, key);
 
    }
+   
+   public void testGetDiagnosticsWhenResponseIs200() throws Exception {
+       
+       String serverId = "123";
+       HttpRequest getDiagnostics = HttpRequest
+            .builder()
+            .method("GET")
+            .addHeader("Accept", "application/json")
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/"+ serverId + "/diagnostics")
+            .addHeader("X-Auth-Token", authToken)
+            .build();
+
+
+      HttpResponse serverDiagnosticsResponse = HttpResponse.builder().statusCode(202).message("HTTP/1.1 202 Accepted")
+            .payload(payloadFromResourceWithContentType("/server_diagnostics.json","application/json; charset=UTF-8")).build();
+
+      NovaApi apiWithNewServer = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
+            responseWithKeystoneAccess, getDiagnostics, serverDiagnosticsResponse);
+      assertEquals(apiWithNewServer.getServerApiForZone("az-1.region-a.geo-1").getDiagnostics(serverId),
+             new ParseServerDiagnostics().expected());
+   }
+   
+   
+   public void testGetDiagnosticsWhenResponseIs403Or404Or500() throws Exception {
+       
+       String serverId = "123";
+       HttpRequest getDiagnostics = HttpRequest
+            .builder()
+            .method("GET")
+            .addHeader("Accept", "application/json")
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers/"+ serverId + "/diagnostics")
+            .addHeader("X-Auth-Token", authToken)
+            .build();
+
+      for (int statusCode : ImmutableSet.of(403, 404, 500)) {
+        assertTrue(!requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName, responseWithKeystoneAccess, getDiagnostics,
+            HttpResponse.builder().statusCode(statusCode).build()).getServerApiForZone("az-1.region-a.geo-1").getDiagnostics(serverId).isPresent());
+      }
+   }
+   
+   
+   
 }
