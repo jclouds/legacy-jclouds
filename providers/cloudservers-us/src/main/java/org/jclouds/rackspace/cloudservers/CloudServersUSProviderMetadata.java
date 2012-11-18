@@ -33,9 +33,6 @@ import org.jclouds.providers.internal.BaseProviderMetadata;
  * @author Adrian Cole
  */
 public class CloudServersUSProviderMetadata extends BaseProviderMetadata {
-   
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 8728307961498165226L;
 
    public static Builder builder() {
       return new Builder();

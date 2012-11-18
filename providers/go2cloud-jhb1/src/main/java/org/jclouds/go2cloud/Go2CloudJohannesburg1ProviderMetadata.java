@@ -33,9 +33,6 @@ import org.jclouds.providers.internal.BaseProviderMetadata;
  */
 public class Go2CloudJohannesburg1ProviderMetadata extends BaseProviderMetadata {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 5737728330686182812L;
-
    public static Builder builder() {
       return new Builder();
    }

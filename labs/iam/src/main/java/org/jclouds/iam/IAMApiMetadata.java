@@ -38,11 +38,7 @@ import com.google.common.reflect.TypeToken;
  */
 public class IAMApiMetadata extends BaseRestApiMetadata {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 3450830053589179249L;
-
    public static final TypeToken<RestContext<? extends IAMApi, ? extends IAMAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<? extends IAMApi, ? extends IAMAsyncApi>>() {
-      private static final long serialVersionUID = -5070937833892503232L;
    };
 
    @Override

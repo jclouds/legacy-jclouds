@@ -32,9 +32,6 @@ import org.jclouds.providers.internal.BaseProviderMetadata;
  */
 public class SkaliCloudMalaysiaProviderMetadata extends BaseProviderMetadata {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 102653451946303901L;
-
    public static Builder builder() {
       return new Builder();
    }

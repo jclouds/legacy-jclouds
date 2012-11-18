@@ -32,8 +32,6 @@ import org.jclouds.http.HttpResponseException;
  */
 public class GoGridResponseException extends HttpResponseException {
 
-    private static final long serialVersionUID = 1924589L;
-
     private Set<ErrorResponse> errors;
 
     public GoGridResponseException(HttpCommand command, HttpResponse response, Set<ErrorResponse> errors) {

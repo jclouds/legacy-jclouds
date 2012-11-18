@@ -33,8 +33,7 @@ import org.jclouds.io.payloads.BaseMutableContentMetadata;
  * @author Adrian Cole
  */
 public class MutableBlobMetadataImpl extends MutableStorageMetadataImpl implements MutableBlobMetadata {
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -5932618957134612231L;
+
    private MutableContentMetadata contentMetadata;
    private URI publicUri;
    private String container;

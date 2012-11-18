@@ -44,7 +44,6 @@ import com.google.inject.Module;
  * @author Everett Toews
  */
 public class CloudBlockStorageUSProviderMetadata extends BaseProviderMetadata {
-   private static final long serialVersionUID = -290987074134012652L;
 
    public static Builder builder() {
       return new Builder();

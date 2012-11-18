@@ -18,7 +18,6 @@
  */
 package org.jclouds.blobstore.domain.internal;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import org.jclouds.blobstore.domain.MutableStorageMetadata;
@@ -32,10 +31,7 @@ import org.jclouds.domain.internal.MutableResourceMetadataImpl;
  * @author Adrian Cole
  */
 public class MutableStorageMetadataImpl extends MutableResourceMetadataImpl<StorageType> implements
-         MutableStorageMetadata, Serializable {
-
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -280558162576368264L;
+         MutableStorageMetadata {
 
    private String eTag;
    private Date lastModified;

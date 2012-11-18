@@ -31,9 +31,6 @@ import org.jclouds.rest.internal.BaseRestApiMetadata;
  */
 public class JcloudsTestYetAnotherComputeApiMetadata extends BaseRestApiMetadata {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 3142126601795295510L;
-
    public static Builder builder() {
       return new Builder();
    }

@@ -34,9 +34,6 @@ import org.jclouds.providers.internal.BaseProviderMetadata;
  */
 public class CloudServersUKProviderMetadata extends BaseProviderMetadata {
    
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 4295911433196692746L;
-   
    public static Builder builder() {
       return new Builder();
    }

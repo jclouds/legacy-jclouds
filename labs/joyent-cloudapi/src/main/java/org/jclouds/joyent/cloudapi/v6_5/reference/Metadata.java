@@ -44,7 +44,6 @@ public enum Metadata {
     * </pre>
     */
    CREDENTIALS(new TypeToken<Map<String, String>>() {
-      private static final long serialVersionUID = -433136967305618708L;
    }.getType());
 
    private final Type valueType;

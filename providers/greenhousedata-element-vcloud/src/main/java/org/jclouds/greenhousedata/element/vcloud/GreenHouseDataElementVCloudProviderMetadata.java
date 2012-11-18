@@ -39,9 +39,6 @@ import com.google.inject.Module;
  */
 public class GreenHouseDataElementVCloudProviderMetadata extends BaseProviderMetadata {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 8503534430849704022L;
-
    public static Builder builder() {
       return new Builder();
    }

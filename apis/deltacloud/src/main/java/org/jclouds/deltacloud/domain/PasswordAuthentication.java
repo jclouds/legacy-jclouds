@@ -20,7 +20,6 @@ package org.jclouds.deltacloud.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.Serializable;
 
 import org.jclouds.domain.LoginCredentials;
 
@@ -28,10 +27,8 @@ import org.jclouds.domain.LoginCredentials;
  * 
  * @author Adrian Cole
  */
-public class PasswordAuthentication implements Instance.Authentication, Serializable {
+public class PasswordAuthentication implements Instance.Authentication {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 7669076186483470376L;
    private final LoginCredentials login;
 
    public PasswordAuthentication(LoginCredentials login) {

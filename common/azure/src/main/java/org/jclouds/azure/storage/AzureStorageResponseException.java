@@ -34,8 +34,6 @@ import org.jclouds.http.HttpResponseException;
  */
 public class AzureStorageResponseException extends HttpResponseException {
 
-   private static final long serialVersionUID = 1L;
-
    private AzureStorageError error = new AzureStorageError();
 
    public AzureStorageResponseException(HttpCommand command, HttpResponse response, AzureStorageError error) {

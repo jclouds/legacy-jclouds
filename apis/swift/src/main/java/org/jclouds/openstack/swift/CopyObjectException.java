@@ -53,7 +53,4 @@ public class CopyObjectException extends ResourceNotFoundException {
       return destinationPath;
    }
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -2272965726680721281L;
-
 }

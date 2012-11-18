@@ -18,7 +18,6 @@
  */
 package org.jclouds.azureblob.domain.internal;
 
-import java.io.Serializable;
 import java.net.URI;
 import java.util.Date;
 import java.util.Map;
@@ -33,11 +32,8 @@ import com.google.common.collect.Maps;
  * 
  * @author Adrian Cole
  */
-public class MutableContainerPropertiesWithMetadataImpl implements Serializable,
+public class MutableContainerPropertiesWithMetadataImpl implements
          MutableContainerPropertiesWithMetadata {
-
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -4648755473986695062L;
 
    private String name;
    private URI url;

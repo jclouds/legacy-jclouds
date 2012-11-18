@@ -68,7 +68,6 @@ public class BlockUntilJobCompletesAndReturnResult {
       if (jobWithResult.getError() != null)
          throw new UncheckedExecutionException(String.format("job %s failed with exception %s", job.getJobId(),
                jobWithResult.getError().toString())) {
-            private static final long serialVersionUID = 4371112085613620239L;
          };
       return jobWithResult.getResult();
    }

@@ -37,11 +37,7 @@ import com.google.inject.Module;
  */
 public class CDMIApiMetadata extends BaseRestApiMetadata {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 6725672099385580694L;
-
    public static final TypeToken<RestContext<CDMIApi, CDMIAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<CDMIApi, CDMIAsyncApi>>() {
-      private static final long serialVersionUID = -5070937833892503232L;
    };
 
    @Override

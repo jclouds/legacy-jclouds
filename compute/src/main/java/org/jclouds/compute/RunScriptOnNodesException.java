@@ -35,8 +35,6 @@ import org.jclouds.scriptbuilder.domain.Statement;
  */
 public class RunScriptOnNodesException extends Exception {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -2272965726680821281L;
    private final Statement runScript;
    private final RunScriptOptions options;
    private final Map<NodeMetadata, ExecResponse> successfulNodes;

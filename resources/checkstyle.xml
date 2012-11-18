@@ -24,6 +24,9 @@
         <module name="SimplifyBooleanExpression"/>
         <module name="UnnecessaryParentheses"/>
         <module name="UnusedImports"/>
+        <module name="InterfaceIsType">
+            <property name="allowMarkerInterfaces" value="false"/>
+        </module>
     </module>
     <module name="RegexpMultiline">
         <property name="format" value="=\s*new ArrayList&lt;[^&gt;]"/>

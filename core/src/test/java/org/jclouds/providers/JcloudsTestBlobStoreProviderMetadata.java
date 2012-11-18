@@ -32,9 +32,6 @@ import com.google.common.collect.ImmutableSet;
  */
 public class JcloudsTestBlobStoreProviderMetadata extends BaseProviderMetadata {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -3444555273226423853L;
-
    public static Builder builder() {
       return new Builder();
    }

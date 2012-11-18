@@ -34,8 +34,6 @@ import com.google.common.collect.Iterables;
  */
 public class BoundedLinkedHashSet<T> extends LinkedHashSet<T> implements BoundedSet<T> {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -7133632087734650835L;
    protected final String token;
 
    public BoundedLinkedHashSet(Iterable<T> contents, @Nullable String token) {

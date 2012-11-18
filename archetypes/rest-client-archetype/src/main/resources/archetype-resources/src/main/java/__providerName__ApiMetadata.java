@@ -41,11 +41,7 @@ import com.google.inject.Module;
  */
 public class ${providerName}ApiMetadata extends BaseRestApiMetadata {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 6725672099385580694L;
-
    public static final TypeToken<RestContext<${providerName}Api, ${providerName}AsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<${providerName}Api, ${providerName}AsyncApi>>() {
-      private static final long serialVersionUID = -5070937833892503232L;
    };
 
    @Override

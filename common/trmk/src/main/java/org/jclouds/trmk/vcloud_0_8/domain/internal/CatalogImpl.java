@@ -36,8 +36,6 @@ import org.jclouds.trmk.vcloud_0_8.domain.ReferenceType;
  */
 public class CatalogImpl extends LinkedHashMap<String, ReferenceType> implements Catalog {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 8464716396538298809L;
    private final String name;
    private final String type;
    private final URI href;

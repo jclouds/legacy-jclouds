@@ -22,7 +22,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.Serializable;
 import java.util.Map;
 
 import com.google.common.annotations.Beta;
@@ -162,9 +161,7 @@ public class Suppliers2 {
       return new SupplierComposition<F, T>(function, supplier);
    }
 
-   private static class SupplierComposition<F, T> implements Supplier<T>, Serializable {
-      /** The serialVersionUID */
-      private static final long serialVersionUID = 1023509665531743802L;
+   private static class SupplierComposition<F, T> implements Supplier<T> {
 
       final Function<? super F, T> function;
       final Supplier<F> supplier;

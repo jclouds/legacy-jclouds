@@ -39,8 +39,7 @@ import com.google.common.collect.ImmutableSet;
  * @author Ivan Meredith
  */
 public class ComputeMetadataImpl extends ResourceMetadataImpl<ComputeType> implements ComputeMetadata {
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 7374704415964898694L;
+
    private final String id;
    private final ComputeType type;
    protected final Set<String> tags;

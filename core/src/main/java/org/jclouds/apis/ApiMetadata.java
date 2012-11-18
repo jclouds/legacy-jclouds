@@ -18,7 +18,6 @@
  */
 package org.jclouds.apis;
 
-import java.io.Serializable;
 import java.net.URI;
 import java.util.Properties;
 import java.util.Set;
@@ -40,7 +39,7 @@ import com.google.inject.Module;
  * @since 1.5
  */
 @Beta
-public interface ApiMetadata extends Serializable {
+public interface ApiMetadata {
 
    public static interface Builder {
       /**

@@ -51,7 +51,6 @@ public class ListDomainsResponseHandler extends ParseSax.HandlerWithResult<ListD
 
    public static class ListDomainsResponseImpl extends LinkedHashSet<String> implements ListDomainsResponse {
 
-      private static final long serialVersionUID = 1L;
       private final String nextToken;
 
       public ListDomainsResponseImpl(Iterable<String> domains, String nextToken) {

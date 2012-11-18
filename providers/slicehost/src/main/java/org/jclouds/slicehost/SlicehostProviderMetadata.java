@@ -14,9 +14,6 @@ import org.jclouds.providers.internal.BaseProviderMetadata;
  * @author Adrian Cole
  */
 public class SlicehostProviderMetadata extends BaseProviderMetadata {
-   
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -5260230633956988685L;
 
    public static Builder builder() {
       return new Builder();

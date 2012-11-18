@@ -165,7 +165,6 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
       if (jobWithResult.getError() != null)
          Throwables.propagate(new ExecutionException(String.format("job %s failed with exception %s", job.getId(),
                jobWithResult.getError().toString())) {
-            private static final long serialVersionUID = 4371112085613620239L;
          });
       VirtualMachine vm = jobWithResult.getResult();
       if (vm.isPasswordEnabled()) {

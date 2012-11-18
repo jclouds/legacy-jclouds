@@ -19,7 +19,6 @@
 package org.jclouds.blobstore.internal;
 
 public class BlobRuntimeException extends RuntimeException {
-   private static final long serialVersionUID = 1L;
 
    public BlobRuntimeException(String s) {
       super(s);

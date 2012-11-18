@@ -46,11 +46,7 @@ import com.google.inject.Module;
  */
 public class NovaEC2ApiMetadata extends EC2ApiMetadata {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -8539835226183747429L;
-
    public static final TypeToken<RestContext<NovaEC2Client, NovaEC2AsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<NovaEC2Client, NovaEC2AsyncClient>>() {
-      private static final long serialVersionUID = -6449920293625658712L;
    };
 
    private static Builder builder() {

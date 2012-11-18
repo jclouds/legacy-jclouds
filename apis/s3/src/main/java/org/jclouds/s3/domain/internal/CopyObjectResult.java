@@ -18,7 +18,6 @@
  */
 package org.jclouds.s3.domain.internal;
 
-import java.io.Serializable;
 import java.net.URI;
 import java.util.Date;
 import java.util.Map;
@@ -35,10 +34,7 @@ import com.google.common.collect.ImmutableMap;
  * 
  * @author Adrian Cole
  */
-public class CopyObjectResult implements Serializable, ObjectMetadata {
-
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -4415449798024051115L;
+public class CopyObjectResult implements ObjectMetadata {
 
    private final Date lastModified;
    private final String eTag;

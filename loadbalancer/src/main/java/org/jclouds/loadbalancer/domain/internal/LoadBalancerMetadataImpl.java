@@ -35,8 +35,7 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  */
 public class LoadBalancerMetadataImpl extends ResourceMetadataImpl<LoadBalancerType> implements LoadBalancerMetadata {
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 7374704415964898694L;
+
    private final String id;
    private final LoadBalancerType type;
    private final Set<String> addresses;

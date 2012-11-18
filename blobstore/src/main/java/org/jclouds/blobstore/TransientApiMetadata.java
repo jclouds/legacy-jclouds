@@ -30,9 +30,6 @@ import org.jclouds.blobstore.config.TransientBlobStoreContextModule;
  */
 public class TransientApiMetadata extends BaseApiMetadata {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -6541485071006878726L;
-
    public static Builder builder() {
       return new Builder();
    }

@@ -12,9 +12,6 @@ import org.jclouds.servermanager.compute.config.ServerManagerComputeServiceConte
  * @author Adrian Cole
  */
 public class ServerManagerApiMetadata extends BaseApiMetadata {
-   
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 3606170564482119304L;
 
    public static Builder builder() {
       return new Builder();

@@ -46,9 +46,6 @@ import com.google.common.collect.ImmutableSet;
  */
 public abstract class BaseProviderMetadata implements ProviderMetadata {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -6647397371073751922L;
-
    @Override
    public ProviderMetadata.Builder toBuilder() {
       return new BaseProviderMetadata.Builder().fromProviderMetadata(this);
@@ -196,8 +193,6 @@ public abstract class BaseProviderMetadata implements ProviderMetadata {
       @Override
       public ProviderMetadata build() {
          return new BaseProviderMetadata(this) {
-            /** The serialVersionUID */
-            private static final long serialVersionUID = 562451792167711326L;
          };
       }
    }

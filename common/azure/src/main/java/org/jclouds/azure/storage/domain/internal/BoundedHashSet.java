@@ -32,8 +32,6 @@ import com.google.common.collect.Iterables;
  */
 public class BoundedHashSet<T> extends HashSet<T> implements BoundedSet<T> {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -7133632087734650835L;
    protected final URI url;
    protected final String prefix;
    protected final String marker;

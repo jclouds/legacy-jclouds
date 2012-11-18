@@ -32,8 +32,7 @@ import com.google.common.collect.Iterables;
  * 
  */
 public class ListBucketResponseImpl extends LinkedHashSet<ObjectMetadata> implements ListBucketResponse {
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -4475709781001190244L;
+
    protected final String name;
    protected final String prefix;
    protected final int maxKeys;

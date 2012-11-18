@@ -34,8 +34,6 @@ import org.jclouds.http.HttpResponseException;
  */
 public class AWSResponseException extends HttpResponseException {
 
-   private static final long serialVersionUID = 1L;
-
    private AWSError error = new AWSError();
 
    public AWSResponseException(HttpCommand command, HttpResponse response, AWSError error) {

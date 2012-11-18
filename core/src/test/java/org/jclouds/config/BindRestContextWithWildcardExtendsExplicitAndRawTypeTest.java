@@ -116,7 +116,6 @@ public class BindRestContextWithWildcardExtendsExplicitAndRawTypeTest {
                IntegrationTestClient.class, IntegrationTestAsyncClient.class, "http://localhost");
 
       TypeToken wildCardExtendsType = new TypeToken<RestContext<? extends IntegrationTestClient, ? extends IntegrationTestAsyncClient>>() {
-         private static final long serialVersionUID = -8170268554700397860L;
       };
       
       md = md.toBuilder().apiMetadata(md.getApiMetadata().toBuilder().context(wildCardExtendsType).build()).build();

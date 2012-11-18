@@ -38,11 +38,7 @@ import com.google.inject.Module;
  */
 public class AWSS3ApiMetadata extends S3ApiMetadata {
    
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -1572520638079261710L;
-   
    public static final TypeToken<RestContext<AWSS3Client, AWSS3AsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<AWSS3Client, AWSS3AsyncClient>>() {
-      private static final long serialVersionUID = -5070937833892503232L;
    };
    
    private static Builder builder() {

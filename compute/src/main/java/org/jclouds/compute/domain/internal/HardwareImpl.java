@@ -46,8 +46,6 @@ import com.google.common.collect.ImmutableList;
  */
 public class HardwareImpl extends ComputeMetadataImpl implements Hardware {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 8994255275911717567L;
    private final List<Processor> processors;
    private final int ram;
    private final List<Volume> volumes;

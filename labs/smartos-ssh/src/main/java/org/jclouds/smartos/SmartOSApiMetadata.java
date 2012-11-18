@@ -17,9 +17,6 @@ import com.google.inject.Module;
  */
 public class SmartOSApiMetadata extends BaseApiMetadata {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 3606170564482119304L;
-
    public static Builder builder() {
       return new Builder();
    }

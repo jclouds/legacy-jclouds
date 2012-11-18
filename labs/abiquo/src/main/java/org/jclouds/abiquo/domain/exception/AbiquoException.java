@@ -39,8 +39,6 @@ import com.google.common.collect.Lists;
  * @author Ignasi Barrera
  */
 public class AbiquoException extends RuntimeException {
-   /** Serial UID. */
-   private static final long serialVersionUID = 1L;
 
    /** The HTTP status. */
    private Status httpStatus;

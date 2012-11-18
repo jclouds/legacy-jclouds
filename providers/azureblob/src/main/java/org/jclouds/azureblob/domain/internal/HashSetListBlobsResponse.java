@@ -35,8 +35,6 @@ import com.google.common.collect.Sets;
  */
 public class HashSetListBlobsResponse extends BoundedHashSet<BlobProperties> implements
          ListBlobsResponse {
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -4475709781001190244L;
 
    protected final String delimiter;
    protected final Set<String> blobPrefixes = Sets.newHashSet();

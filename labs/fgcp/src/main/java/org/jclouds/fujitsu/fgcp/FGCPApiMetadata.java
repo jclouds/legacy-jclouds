@@ -40,9 +40,6 @@ import com.google.inject.Module;
  */
 public class FGCPApiMetadata extends BaseRestApiMetadata {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -8430912756058292588L;
-
    @Override
    public Builder toBuilder() {
       return new Builder().fromApiMetadata(this);

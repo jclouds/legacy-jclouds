@@ -42,9 +42,6 @@ import com.google.common.collect.ImmutableSet;
  */
 public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadata {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 7924307572338157887L;
-
    private final Status status;
    private final String backendStatus;
    private final int loginPort;

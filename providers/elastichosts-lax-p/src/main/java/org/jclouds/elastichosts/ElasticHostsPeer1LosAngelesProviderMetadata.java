@@ -33,9 +33,6 @@ import org.jclouds.providers.internal.BaseProviderMetadata;
  */
 public class ElasticHostsPeer1LosAngelesProviderMetadata extends BaseProviderMetadata {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -4027094214969340248L;
-
    public static Builder builder() {
       return new Builder();
    }

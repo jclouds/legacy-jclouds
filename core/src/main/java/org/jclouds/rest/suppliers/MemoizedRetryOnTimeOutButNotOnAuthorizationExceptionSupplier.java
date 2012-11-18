@@ -22,7 +22,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Throwables.propagate;
 import static org.jclouds.util.Throwables2.getFirstThrowableOfType;
 
-import java.io.Serializable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -57,22 +56,13 @@ import com.google.common.util.concurrent.UncheckedExecutionException;
  * @author Adrian Cole
  */
 public class MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<T> extends ForwardingObject implements
-         Supplier<T>, Serializable {
-
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 7626769175726919353L;
+         Supplier<T> {
 
    static class NullValueException extends RuntimeException {
 
-      /** The serialVersionUID */
-      private static final long serialVersionUID = 5064521423206078374L;
-
    }
 
-   static class SetAndThrowAuthorizationExceptionSupplierBackedLoader<V> extends CacheLoader<String, V> implements
-            Serializable {
-      /** The serialVersionUID */
-      private static final long serialVersionUID = -6129510622181946809L;
+   static class SetAndThrowAuthorizationExceptionSupplierBackedLoader<V> extends CacheLoader<String, V> {
 
       private final Supplier<V> delegate;
       private final AtomicReference<AuthorizationException> authException;
