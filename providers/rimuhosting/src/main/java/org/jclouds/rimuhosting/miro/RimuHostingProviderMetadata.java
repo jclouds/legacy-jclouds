@@ -35,9 +35,6 @@ import org.jclouds.providers.internal.BaseProviderMetadata;
  */
 public class RimuHostingProviderMetadata extends BaseProviderMetadata {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 8802226645589501365L;
-
    public static Builder builder() {
       return new Builder();
    }

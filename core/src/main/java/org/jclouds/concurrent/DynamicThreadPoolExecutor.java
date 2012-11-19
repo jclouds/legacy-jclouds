@@ -95,7 +95,6 @@ public class DynamicThreadPoolExecutor extends ThreadPoolExecutor {
 * @author kimchy (Shay Banon)
 */
     public static class DynamicQueue<E> extends LinkedBlockingQueue<E> {
-        private static final long serialVersionUID = 1L;
 
         /**
 * The executor this Queue belongs to

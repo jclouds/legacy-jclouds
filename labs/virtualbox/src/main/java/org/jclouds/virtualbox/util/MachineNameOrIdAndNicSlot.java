@@ -4,7 +4,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-import java.io.Serializable;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Splitter;
@@ -24,7 +23,7 @@ import com.google.common.collect.Iterables;
  *
  * @author Andrea Turli
  */
-public final class MachineNameOrIdAndNicSlot implements Serializable {
+public final class MachineNameOrIdAndNicSlot {
 
   private static final String SEPARATOR = ":";
 
@@ -127,6 +126,4 @@ public final class MachineNameOrIdAndNicSlot implements Serializable {
   private static boolean isValidSlot(long slot) {
     return slot >= 0l && slot <= 3l;
   }
-
-  private static final long serialVersionUID = 0;
 }

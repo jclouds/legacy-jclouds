@@ -27,8 +27,6 @@ import org.jclouds.vcloud.domain.Task;
  */
 public class TaskInErrorStateException extends RuntimeException {
 
-   private static final long serialVersionUID = 1L;
-
    private final Task task;
 
    public TaskInErrorStateException(Task task) {

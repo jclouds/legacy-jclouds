@@ -31,9 +31,6 @@ import com.google.common.collect.Iterables;
  */
 public final class TransformParallelException extends RuntimeException {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 1L;
-
    private final Map<?, Future<?>> success;
    private final Map<?, Exception> exceptions;
 

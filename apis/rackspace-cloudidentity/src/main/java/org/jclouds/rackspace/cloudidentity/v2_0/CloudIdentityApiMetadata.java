@@ -46,11 +46,7 @@ import com.google.inject.Module;
  */
 public class CloudIdentityApiMetadata extends KeystoneApiMetadata {
    
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -1572520638079261710L;
-   
    public static final TypeToken<RestContext<KeystoneApi, KeystoneAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<KeystoneApi, KeystoneAsyncApi>>() {
-      private static final long serialVersionUID = -5070937833892503232L;
    };
    
    private static Builder builder() {

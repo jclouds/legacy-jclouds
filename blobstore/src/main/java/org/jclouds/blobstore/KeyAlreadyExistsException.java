@@ -50,7 +50,4 @@ public class KeyAlreadyExistsException extends RuntimeException {
       return key;
    }
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -2272965726680821281L;
-
 }

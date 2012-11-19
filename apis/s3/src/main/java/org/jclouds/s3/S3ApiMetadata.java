@@ -61,12 +61,8 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 public class S3ApiMetadata extends BaseRestApiMetadata {
-
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 820062881469203616L;
    
    public static final TypeToken<RestContext<? extends S3Client,? extends  S3AsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<? extends S3Client,? extends  S3AsyncClient>>() {
-      private static final long serialVersionUID = -5070937833892503232L;
    };
 
    @Override

@@ -20,16 +20,13 @@ package org.jclouds.deltacloud.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.Serializable;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class KeyAuthentication implements Instance.Authentication, Serializable {
+public class KeyAuthentication implements Instance.Authentication {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 7669076186483470376L;
    private final String keyName;
 
    public KeyAuthentication(String keyName) {

@@ -73,7 +73,5 @@ public class VCloudDirectorConstants {
    /** TODO javadoc */
    public static final TypeToken<RestContext<SessionApi, SessionAsyncApi>> SESSION_CONTEXT_TYPE =
          new TypeToken<RestContext<SessionApi, SessionAsyncApi>>() {
-				/** The serialVersionUID */
-				private static final long serialVersionUID = -3625362618882122604L;
 		   };
 }

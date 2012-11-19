@@ -39,8 +39,6 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 public class EucalyptusApiMetadata extends EC2ApiMetadata {
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 3060225665040763827L;
 
    private static Builder builder() {
       return new Builder();

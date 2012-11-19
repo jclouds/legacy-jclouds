@@ -41,9 +41,6 @@ import com.google.inject.Module;
 
 public class NodePoolApiMetadata extends BaseApiMetadata {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -2778027403592717115L;
-
    public static Builder builder() {
       return new Builder();
    }

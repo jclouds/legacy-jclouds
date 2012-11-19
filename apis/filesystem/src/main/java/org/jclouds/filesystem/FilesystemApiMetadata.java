@@ -31,9 +31,6 @@ import org.jclouds.filesystem.config.FilesystemBlobStoreContextModule;
  */
 public class FilesystemApiMetadata extends BaseApiMetadata {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -2625620001657309404L;
-
    public static Builder builder() {
       return new Builder();
    }

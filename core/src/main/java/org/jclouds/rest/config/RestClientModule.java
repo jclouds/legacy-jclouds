@@ -42,10 +42,8 @@ public class RestClientModule<S, A> extends RestModule {
    protected RestClientModule(Map<Class<?>, Class<?>> sync2Async) {
       super(sync2Async);
       this.syncClientType = TypeTokens2.checkBound(new TypeToken<S>(getClass()) {
-         private static final long serialVersionUID = 7519656925453755752L;
       });
       this.asyncClientType = TypeTokens2.checkBound(new TypeToken<A>(getClass()) {
-         private static final long serialVersionUID = -4420015967358511548L;
       });
    }
 

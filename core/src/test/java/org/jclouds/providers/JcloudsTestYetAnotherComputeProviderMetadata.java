@@ -32,9 +32,6 @@ import com.google.common.collect.ImmutableSet;
  */
 public class JcloudsTestYetAnotherComputeProviderMetadata extends BaseProviderMetadata {
    
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 1L;
-
    public static Builder builder() {
       return new Builder();
    }

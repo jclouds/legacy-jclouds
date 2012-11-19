@@ -21,7 +21,6 @@ package org.jclouds.domain.internal;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.Serializable;
 import java.net.URI;
 import java.util.Map;
 
@@ -38,10 +37,7 @@ import com.google.common.collect.Maps;
  * 
  * @author Adrian Cole
  */
-public abstract class ResourceMetadataImpl<T extends Enum<T>> implements ResourceMetadata<T>, Serializable {
-
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -280558162576368264L;
+public abstract class ResourceMetadataImpl<T extends Enum<T>> implements ResourceMetadata<T> {
 
    @Nullable
    private final String providerId;

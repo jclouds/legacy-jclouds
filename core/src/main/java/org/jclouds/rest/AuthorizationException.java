@@ -26,9 +26,6 @@ package org.jclouds.rest;
  */
 public class AuthorizationException extends RuntimeException {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -2272965726680821281L;
-
    public AuthorizationException() {
       super();
    }

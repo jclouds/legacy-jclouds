@@ -42,9 +42,6 @@ import com.google.inject.Module;
  */
 public class BYONApiMetadata extends BaseApiMetadata {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -4059125995177393819L;
-
    @Override
    public Builder toBuilder() {
       return new Builder().fromApiMetadata(this);

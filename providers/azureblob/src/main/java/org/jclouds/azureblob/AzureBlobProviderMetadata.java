@@ -31,9 +31,6 @@ import org.jclouds.providers.internal.BaseProviderMetadata;
  */
 public class AzureBlobProviderMetadata extends BaseProviderMetadata {
    
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 8271570736207734777L;
-   
    public static Builder builder() {
       return new Builder();
    }

@@ -35,9 +35,6 @@ import org.jclouds.providers.internal.BaseProviderMetadata;
  */
 public class GleSYSProviderMetadata extends BaseProviderMetadata {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 539076518401969165L;
-
    public static Builder builder() {
       return new Builder();
    }

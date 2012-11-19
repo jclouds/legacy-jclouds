@@ -46,9 +46,6 @@ import com.google.inject.Module;
  */
 public class CloudServersUSProviderMetadata extends BaseProviderMetadata {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -300987074165012648L;
-
    public static Builder builder() {
       return new Builder();
    }

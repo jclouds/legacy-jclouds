@@ -23,9 +23,6 @@ package org.jclouds.ssh;
  */
 public class SshException extends RuntimeException {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 7271048517353750433L;
-
    public SshException() {
       super();
    }

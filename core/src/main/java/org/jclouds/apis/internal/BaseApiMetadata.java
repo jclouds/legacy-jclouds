@@ -58,9 +58,6 @@ import com.google.inject.Module;
  */
 public abstract class BaseApiMetadata implements ApiMetadata {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -8080028444066498110L;
-
    public static Properties defaultProperties() {
       Properties props = new Properties();
       // TODO: move this to ApiMetadata
@@ -268,8 +265,6 @@ public abstract class BaseApiMetadata implements ApiMetadata {
       @Override
       public ApiMetadata build() {
          return new BaseApiMetadata(this) {
-            /** The serialVersionUID */
-            private static final long serialVersionUID = 3599854558038790678L;
          };
       }
 

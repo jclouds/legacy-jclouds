@@ -47,9 +47,6 @@ import com.google.inject.Module;
  */
 public class VirtualBoxApiMetadata extends BaseApiMetadata {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -7039233043408808289L;
-
    @Override
    public Builder toBuilder() {
       return new Builder().fromApiMetadata(this);

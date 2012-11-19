@@ -18,7 +18,6 @@
  */
 package org.jclouds.s3.domain.internal;
 
-import java.io.Serializable;
 import java.net.URI;
 import java.util.Date;
 import java.util.Map;
@@ -37,10 +36,7 @@ import com.google.common.collect.Maps;
  * 
  * @author Adrian Cole
  */
-public class MutableObjectMetadataImpl implements Serializable, MutableObjectMetadata {
-
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -4648755473986695062L;
+public class MutableObjectMetadataImpl implements MutableObjectMetadata {
 
    private String key;
    private String bucket;

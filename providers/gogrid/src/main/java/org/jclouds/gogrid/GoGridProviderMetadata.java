@@ -36,9 +36,6 @@ import org.jclouds.providers.internal.BaseProviderMetadata;
  */
 public class GoGridProviderMetadata extends BaseProviderMetadata {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 503149209800711396L;
-
    public static Builder builder() {
       return new Builder();
    }

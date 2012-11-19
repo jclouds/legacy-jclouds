@@ -20,7 +20,6 @@ package org.jclouds.azureblob.domain.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.Serializable;
 import java.net.URI;
 import java.util.Date;
 import java.util.Map;
@@ -39,10 +38,8 @@ import com.google.common.collect.Maps;
  * 
  * @author Adrian Cole
  */
-public class BlobPropertiesImpl implements Serializable, BlobProperties {
+public class BlobPropertiesImpl implements BlobProperties {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -4648755473986695062L;
    private final BlobType type;
    private final String name;
    private final String container;

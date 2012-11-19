@@ -32,9 +32,6 @@ import org.jclouds.providers.internal.BaseProviderMetadata;
  * @author Jeremy Whitlock <jwhitlock@apache.org>
  */
 public class NinefoldStorageProviderMetadata extends BaseProviderMetadata {
-   
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 1L;
 
    public static Builder builder() {
       return new Builder();

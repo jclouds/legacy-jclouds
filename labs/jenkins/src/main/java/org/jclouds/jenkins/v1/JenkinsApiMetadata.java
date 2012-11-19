@@ -38,12 +38,8 @@ import com.google.inject.Module;
 public class JenkinsApiMetadata extends BaseRestApiMetadata {
    
    public static final String ANONYMOUS_IDENTITY = "ANONYMOUS";
-   
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 6725672099385580694L;
 
    public static final TypeToken<RestContext<JenkinsApi, JenkinsAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<JenkinsApi, JenkinsAsyncApi>>() {
-      private static final long serialVersionUID = -5070937833892503232L;
    };
 
    @Override

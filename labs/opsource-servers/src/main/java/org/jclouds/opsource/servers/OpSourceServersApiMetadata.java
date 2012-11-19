@@ -34,12 +34,10 @@ import com.google.common.reflect.TypeToken;
  * @author Adrian Cole
  */
 public class OpSourceServersApiMetadata extends BaseRestApiMetadata {
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 6725672099385580694L;
-
+   
    public static final TypeToken<RestContext<OpSourceServersApi, OpSourceServersAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<OpSourceServersApi, OpSourceServersAsyncApi>>() {
-      private static final long serialVersionUID = -5070937833892503232L;
    };
+
    @Override
    public Builder toBuilder() {
       return new Builder().fromApiMetadata(this);

@@ -23,8 +23,6 @@ package org.jclouds.cloudstack;
  */
 public class AsyncJobException extends RuntimeException {
 
-   private static final long serialVersionUID = -9174243454135616477L;
-
    public AsyncJobException() {
    }
 

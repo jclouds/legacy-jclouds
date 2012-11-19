@@ -41,9 +41,6 @@ import com.google.common.collect.ImmutableSet;
  */
 public class SoftLayerProviderMetadata extends BaseProviderMetadata {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 2196535609684739834L;
-
    public static Builder builder() {
       return new Builder();
    }

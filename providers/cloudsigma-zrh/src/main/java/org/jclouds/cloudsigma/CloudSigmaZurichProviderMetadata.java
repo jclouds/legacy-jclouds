@@ -32,9 +32,6 @@ import org.jclouds.providers.internal.BaseProviderMetadata;
  */
 public class CloudSigmaZurichProviderMetadata extends BaseProviderMetadata {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -7104853865766042528L;
-
    public static Builder builder() {
       return new Builder();
    }

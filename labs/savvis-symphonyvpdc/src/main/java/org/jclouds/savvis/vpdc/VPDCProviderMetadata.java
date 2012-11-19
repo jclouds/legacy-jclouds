@@ -33,9 +33,6 @@ import org.jclouds.providers.internal.BaseProviderMetadata;
  */
 public class VPDCProviderMetadata extends BaseProviderMetadata {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -3438042651384066520L;
-
    public static Builder builder() {
       return new Builder();
    }

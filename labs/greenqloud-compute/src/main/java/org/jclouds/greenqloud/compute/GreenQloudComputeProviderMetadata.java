@@ -41,9 +41,6 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 public class GreenQloudComputeProviderMetadata extends BaseProviderMetadata {
-   
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 7625722444851538962L;
 
    public static Builder builder() {
       return new Builder();

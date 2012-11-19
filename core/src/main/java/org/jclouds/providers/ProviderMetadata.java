@@ -18,7 +18,6 @@
  */
 package org.jclouds.providers;
 
-import java.io.Serializable;
 import java.net.URI;
 import java.util.Properties;
 import java.util.Set;
@@ -34,7 +33,7 @@ import com.google.common.base.Optional;
  * 
  * @author Jeremy Whitlock <jwhitlock@apache.org>, Adrian Cole
  */
-public interface ProviderMetadata extends Serializable {
+public interface ProviderMetadata {
   
    /**
     * 

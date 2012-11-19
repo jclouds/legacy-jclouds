@@ -18,7 +18,6 @@
  */
 package org.jclouds.domain.internal;
 
-import java.io.Serializable;
 import java.net.URI;
 import java.util.Map;
 
@@ -33,11 +32,7 @@ import com.google.common.collect.Maps;
  * 
  * @author Adrian Cole
  */
-public class MutableResourceMetadataImpl<T extends Enum<T>> implements MutableResourceMetadata<T>,
-         Serializable {
-
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -280558162576368264L;
+public class MutableResourceMetadataImpl<T extends Enum<T>> implements MutableResourceMetadata<T> {
 
    private T type;
    private String id;

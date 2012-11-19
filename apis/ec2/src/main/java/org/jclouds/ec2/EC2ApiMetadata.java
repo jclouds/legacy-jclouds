@@ -58,12 +58,8 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 public class EC2ApiMetadata extends BaseRestApiMetadata {
-
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 4424763314988423886L;
    
    public static final TypeToken<RestContext<? extends EC2Client, ? extends EC2AsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<? extends EC2Client, ? extends EC2AsyncClient>>() {
-      private static final long serialVersionUID = -5070937833892503232L;
    };
 
    @Override

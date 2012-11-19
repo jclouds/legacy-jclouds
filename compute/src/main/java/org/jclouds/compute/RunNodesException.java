@@ -33,8 +33,6 @@ import org.jclouds.compute.domain.Template;
  */
 public class RunNodesException extends Exception {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -2272965726680821281L;
    private final String group;
    private final int count;
    private final Template template;

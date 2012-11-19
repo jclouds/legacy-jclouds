@@ -40,11 +40,8 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 public class AzureBlobApiMetadata extends BaseRestApiMetadata {
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 8067252472547486854L;
 
    public static final TypeToken<RestContext<AzureBlobClient, AzureBlobAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<AzureBlobClient, AzureBlobAsyncClient>>() {
-      private static final long serialVersionUID = -5070937833892503232L;
    };
    
    private static Builder builder() {

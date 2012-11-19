@@ -26,7 +26,6 @@ import static org.easymock.EasyMock.reportMatcher;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -390,9 +389,7 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
       return null;
    }
 
-   private static class PayloadEquals implements IArgumentMatcher, Serializable {
-
-      private static final long serialVersionUID = 583055160049982067L;
+   private static class PayloadEquals implements IArgumentMatcher {
 
       private final Object expected;
 

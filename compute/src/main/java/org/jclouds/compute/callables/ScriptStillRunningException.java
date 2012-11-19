@@ -35,9 +35,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 public class ScriptStillRunningException extends TimeoutException implements Supplier<ListenableFuture<ExecResponse>> {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -7265376839848564663L;
-
    private final ListenableFuture<ExecResponse> delegate;
 
    public ScriptStillRunningException(long timeout, TimeUnit unit, ListenableFuture<ExecResponse> delegate) {

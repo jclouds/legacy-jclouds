@@ -21,7 +21,6 @@ package org.jclouds.collect;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.notNull;
 
-import java.io.Serializable;
 import java.util.Set;
 
 import com.google.common.base.Function;
@@ -33,9 +32,7 @@ import com.google.common.collect.FluentIterable;
  * 
  * @author Adrian Cole
  */
-public class TransformingSetSupplier<F, T> implements Supplier<Set<? extends T>>, Serializable {
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -8747953419394840218L;
+public class TransformingSetSupplier<F, T> implements Supplier<Set<? extends T>> {
    
    private final Supplier<Iterable<F>> backingSupplier;
    private final Function<F, T> converter;

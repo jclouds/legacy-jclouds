@@ -37,9 +37,6 @@ import org.jclouds.walrus.WalrusApiMetadata;
  * @author Adrian Cole
  */
 public class EucalyptusPartnerCloudS3ProviderMetadata extends BaseProviderMetadata {
-   
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 1L;
 
    public static Builder builder() {
       return new Builder();

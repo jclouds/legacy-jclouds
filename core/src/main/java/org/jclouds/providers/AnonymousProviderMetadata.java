@@ -31,9 +31,6 @@ import org.jclouds.rest.AnonymousRestApiMetadata;
  */
 public class AnonymousProviderMetadata extends BaseProviderMetadata {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 3038298137724260273L;
-
    public static ProviderMetadata forClientMappedToAsyncClientOnEndpoint(Class<?> client, Class<?> asyncClient,
             String endpoint) {
       return forApiWithEndpoint(AnonymousRestApiMetadata.forClientMappedToAsyncClient(client, asyncClient), endpoint);

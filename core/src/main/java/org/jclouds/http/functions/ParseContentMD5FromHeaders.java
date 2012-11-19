@@ -37,7 +37,6 @@ public class ParseContentMD5FromHeaders implements Function<HttpResponse, byte[]
 
    public static class NoContentMD5Exception extends RuntimeException {
 
-      private static final long serialVersionUID = 1L;
       private final HttpRequest request;
       private final HttpResponse response;
 

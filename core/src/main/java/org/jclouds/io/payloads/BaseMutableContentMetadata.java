@@ -18,7 +18,6 @@
  */
 package org.jclouds.io.payloads;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import org.jclouds.io.ContentMetadata;
@@ -29,9 +28,7 @@ import org.jclouds.javax.annotation.Nullable;
 /**
  * @author Adrian Cole
  */
-public class BaseMutableContentMetadata extends ContentMetadataBuilder implements MutableContentMetadata, Serializable {
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 8364286391963469370L;
+public class BaseMutableContentMetadata extends ContentMetadataBuilder implements MutableContentMetadata {
 
    /**
     * {@inheritDoc}

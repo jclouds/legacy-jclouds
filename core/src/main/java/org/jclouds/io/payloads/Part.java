@@ -42,9 +42,6 @@ public class Part extends DelegatingPayload {
 
    private static class PartMap extends LinkedHashMap<String, String> {
 
-      /** The serialVersionUID */
-      private static final long serialVersionUID = -287387556008320212L;
-
       static Part.PartMap create(String name) {
          Part.PartMap map = new PartMap();
          map.put("Content-Disposition", String.format("form-data; name=\"%s\"", checkNotNull(name,

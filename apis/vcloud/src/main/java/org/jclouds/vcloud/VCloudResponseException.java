@@ -31,8 +31,6 @@ import org.jclouds.vcloud.domain.VCloudError;
  */
 public class VCloudResponseException extends HttpResponseException {
 
-   private static final long serialVersionUID = 1L;
-
    private org.jclouds.vcloud.domain.VCloudError error;
 
    public VCloudResponseException(HttpCommand command, HttpResponse response, VCloudError error) {

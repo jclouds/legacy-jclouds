@@ -42,7 +42,6 @@ public class SmartOSHostController {
    protected transient SshClient _connection;
 
    public static class HostException extends RuntimeException {
-      private static final long serialVersionUID = -2247796213703641847L;
 
       public HostException(String s, Throwable throwable) {
          super(s, throwable);
@@ -54,7 +53,6 @@ public class SmartOSHostController {
    }
 
    public static class NoResponseException extends Exception {
-      private static final long serialVersionUID = -2247796213703641847L;
 
       public NoResponseException() {
       }

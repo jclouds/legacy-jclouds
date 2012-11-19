@@ -40,11 +40,8 @@ import com.google.inject.Module;
  * @author Gerald Pereira
  */
 public class AzureManagementApiMetadata extends BaseRestApiMetadata {
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 8067252472547486854L;
 
    public static final TypeToken<RestContext<AzureManagementApi, AzureManagementAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<AzureManagementApi, AzureManagementAsyncApi>>() {
-      private static final long serialVersionUID = -5070937833892503232L;
    };
 
    private static Builder builder() {

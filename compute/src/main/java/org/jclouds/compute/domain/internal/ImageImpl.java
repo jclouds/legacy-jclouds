@@ -39,9 +39,6 @@ import com.google.common.base.Objects.ToStringHelper;
  */
 public class ImageImpl extends ComputeMetadataImpl implements Image {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 7856744554191025307L;
-
    private final OperatingSystem operatingSystem;
    private final Status status;
    private final String backendStatus;

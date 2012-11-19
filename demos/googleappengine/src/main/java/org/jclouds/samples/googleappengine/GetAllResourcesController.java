@@ -61,7 +61,6 @@ import com.google.common.util.concurrent.ListeningExecutorService;
  */
 @Singleton
 public class GetAllResourcesController extends HttpServlet {
-   private static final long serialVersionUID = 1L;
 
    private final ListeningExecutorService currentRequestExecutorService;
    private final Iterable<View> views;
