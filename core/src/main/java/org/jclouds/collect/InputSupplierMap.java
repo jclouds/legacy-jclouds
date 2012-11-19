@@ -68,7 +68,7 @@ public class InputSupplierMap<K, V> extends AbstractMap<K, V> {
    public V get(Object key) {
       InputSupplier<V> value = toMap.get(key);
       try {
-         return (value != null || toMap.containsKey(key)) ? value.getInput() : null;
+         return value != null ? value.getInput() : null;
       } catch (IOException e) {
          throw Throwables.propagate(e);
       }
