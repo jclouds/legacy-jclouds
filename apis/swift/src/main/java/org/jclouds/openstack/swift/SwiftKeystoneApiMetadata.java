@@ -45,11 +45,7 @@ import com.google.inject.Module;
  */
 public class SwiftKeystoneApiMetadata extends SwiftApiMetadata {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 820062881469203616L;
-
    public static final TypeToken<RestContext<SwiftKeystoneClient, SwiftKeystoneAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<SwiftKeystoneClient, SwiftKeystoneAsyncClient>>() {
-      private static final long serialVersionUID = -5070937833892503232L;
    };
 
    private static Builder builder() {

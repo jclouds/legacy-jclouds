@@ -32,9 +32,6 @@ import org.jclouds.providers.internal.BaseProviderMetadata;
 * @author Adrian Cole
 */
 public class AWSIAMProviderMetadata extends BaseProviderMetadata {
-   
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 2394954723306943404L;
 
    public static Builder builder() {
       return new Builder();

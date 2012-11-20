@@ -33,8 +33,7 @@ import org.jclouds.openstack.swift.domain.ObjectInfo;
  */
 public class DelegatingMutableObjectInfoWithMetadata extends BaseMutableContentMetadata implements
          MutableObjectInfoWithMetadata {
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 5280642704532078500L;
+
    private final MutableObjectInfoWithMetadata delegate;
 
    public DelegatingMutableObjectInfoWithMetadata(MutableObjectInfoWithMetadata delegate) {

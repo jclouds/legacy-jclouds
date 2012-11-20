@@ -39,9 +39,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 public class WalrusApiMetadata extends S3ApiMetadata {
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 820062881469203616L;
-   
+
    private static Builder builder() {
       return new Builder();
    }

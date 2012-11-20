@@ -41,12 +41,8 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 public class SQSApiMetadata extends BaseRestApiMetadata {
-
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -7077953935392202824L;
    
    public static final TypeToken<RestContext<SQSApi, SQSAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<SQSApi, SQSAsyncApi>>() {
-      private static final long serialVersionUID = -5070937833892503232L;
    };
 
    @Override

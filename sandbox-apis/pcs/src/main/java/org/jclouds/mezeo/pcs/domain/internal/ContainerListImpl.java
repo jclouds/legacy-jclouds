@@ -35,8 +35,6 @@ import org.jclouds.mezeo.pcs.domain.ResourceInfo;
  */
 public class ContainerListImpl extends TreeSet<ResourceInfo> implements ContainerList {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 8147941177495755603L;
    private final ResourceInfo info;
    private final Map<String, URI> metadataItems;
 

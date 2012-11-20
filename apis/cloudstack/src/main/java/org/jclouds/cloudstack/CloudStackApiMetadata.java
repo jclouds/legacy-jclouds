@@ -51,11 +51,7 @@ import com.google.inject.Module;
  */
 public class CloudStackApiMetadata extends BaseRestApiMetadata {
    
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -3936131452958663245L;
-   
    public static final TypeToken<RestContext<CloudStackClient, CloudStackAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<CloudStackClient, CloudStackAsyncClient>>() {
-      private static final long serialVersionUID = -5070937833892503232L;
    };
    
    @Override

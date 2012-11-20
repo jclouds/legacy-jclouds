@@ -39,9 +39,7 @@ import com.google.common.reflect.TypeToken;
  */
 @Beta
 public class BaseRestApiMetadata extends BaseApiMetadata implements RestApiMetadata {
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 564135477427872712L;
-   
+
    protected final Class<?> api;
    protected final Class<?> asyncApi;
 
@@ -69,7 +67,6 @@ public class BaseRestApiMetadata extends BaseApiMetadata implements RestApiMetad
    
    public static <S, A> TypeToken<RestContext<S, A>> contextToken(TypeToken<S> apiToken, TypeToken<A> asyncApiToken) {
       return new TypeToken<RestContext<S, A>>() {
-         private static final long serialVersionUID = 1L;
       }.where(new TypeParameter<S>() {
       }, apiToken).where(new TypeParameter<A>() {
       }, asyncApiToken);

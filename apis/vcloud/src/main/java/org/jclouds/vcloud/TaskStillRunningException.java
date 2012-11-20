@@ -27,8 +27,6 @@ import org.jclouds.vcloud.domain.Task;
  */
 public class TaskStillRunningException extends RuntimeException {
 
-   private static final long serialVersionUID = 1L;
-
    private final Task task;
 
    public TaskStillRunningException(Task task) {

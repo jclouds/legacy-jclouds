@@ -40,9 +40,6 @@ import com.google.inject.Module;
  */
 public class StratoGenVCloudMyCloudProviderMetadata extends BaseProviderMetadata {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -113107768473491412L;
-
    public static Builder builder() {
       return new Builder();
    }

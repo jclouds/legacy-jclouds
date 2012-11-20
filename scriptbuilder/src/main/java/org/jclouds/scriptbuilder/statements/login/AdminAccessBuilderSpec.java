@@ -63,8 +63,6 @@ import com.google.common.collect.ImmutableMap;
 
 public class AdminAccessBuilderSpec {
 
-   private static final long serialVersionUID = -379469670373111569L;
-
    /** Parses a single value. */
    protected static interface ValueParser {
       void parse(AdminAccessBuilderSpec spec, String key, @Nullable String value);

@@ -32,9 +32,6 @@ import com.google.common.collect.Iterables;
  */
 public class VCloudDirectorException extends RuntimeException {
 
-   /** The serialVersionUID. */
-   private static final long serialVersionUID = -5292516858598372960L;
-
    private static final String MSG_FMT = "%s (%d) %s: %s";   
 
    private final Error error;

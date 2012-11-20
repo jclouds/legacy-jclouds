@@ -44,12 +44,9 @@ import com.google.inject.Module;
  * @author Ignasi Barrera
  */
 public class AbiquoApiMetadata extends BaseRestApiMetadata {
-   /** Serial UID. */
-   private static final long serialVersionUID = -8355533493674898171L;
 
    /** The token describing the rest api context. */
    public static final TypeToken<RestContext<AbiquoApi, AbiquoAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<AbiquoApi, AbiquoAsyncApi>>() {
-      private static final long serialVersionUID = -5070937833892503232L;
    };
 
    public AbiquoApiMetadata() {

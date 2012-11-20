@@ -30,9 +30,6 @@ import org.jclouds.providers.internal.BaseProviderMetadata;
  * @author Adrian Cole
  */
 public class TerremarkVCloudExpressProviderMetadata extends BaseProviderMetadata {
-   
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -7993337019540975194L;
 
    public static Builder builder() {
       return new Builder();

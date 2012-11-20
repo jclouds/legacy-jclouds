@@ -31,9 +31,6 @@ import com.google.common.collect.ImmutableSet;
  * @author Jeremy Whitlock <jwhitlock@apache.org>
  */
 public class JcloudsTestComputeProviderMetadata extends BaseProviderMetadata {
-   
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 424799830416415960L;
 
    public static Builder builder() {
       return new Builder();

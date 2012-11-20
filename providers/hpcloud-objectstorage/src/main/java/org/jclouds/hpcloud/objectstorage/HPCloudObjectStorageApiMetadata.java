@@ -46,11 +46,7 @@ import com.google.inject.Module;
  */
 public class HPCloudObjectStorageApiMetadata extends SwiftKeystoneApiMetadata {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 820062881469203616L;
-
    public static final TypeToken<RestContext<HPCloudObjectStorageApi, HPCloudObjectStorageAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<HPCloudObjectStorageApi, HPCloudObjectStorageAsyncApi>>() {
-      private static final long serialVersionUID = -5070937833892503232L;
    };
 
    private static Builder builder() {

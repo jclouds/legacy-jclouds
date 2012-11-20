@@ -20,7 +20,6 @@ public class BaseEC2ApiLiveTest extends BaseContextLiveTest<RestContext<? extend
    @Override
    protected TypeToken<RestContext<? extends EC2Api, ? extends EC2AsyncApi>> contextType() {
       return new TypeToken<RestContext<? extends EC2Api, ? extends EC2AsyncApi>>() {
-         private static final long serialVersionUID = -5070937833892503232L;
       };
    }
 

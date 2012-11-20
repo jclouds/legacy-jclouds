@@ -23,11 +23,7 @@ import com.google.inject.Module;
  */
 public class TerremarkECloudApiMetadata extends TerremarkVCloudApiMetadata {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -6212626084139698761L;
-
    public static final TypeToken<RestContext<TerremarkECloudClient, TerremarkECloudAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<TerremarkECloudClient, TerremarkECloudAsyncClient>>() {
-      private static final long serialVersionUID = -5070937833892503232L;
    };
    
    @Override

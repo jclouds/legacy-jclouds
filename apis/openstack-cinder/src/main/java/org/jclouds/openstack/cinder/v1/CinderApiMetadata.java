@@ -45,10 +45,7 @@ import com.google.inject.Module;
  */
 public class CinderApiMetadata extends BaseRestApiMetadata {
    
-   private static final long serialVersionUID = 4525672099385581765L;
-
    public static final TypeToken<RestContext<CinderApi, CinderAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<CinderApi, CinderAsyncApi>>() {
-      private static final long serialVersionUID = -2850937833892503251L;
    };
 
    @Override

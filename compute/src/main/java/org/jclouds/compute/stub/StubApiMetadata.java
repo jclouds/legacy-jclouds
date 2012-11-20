@@ -31,9 +31,6 @@ import org.jclouds.compute.stub.config.StubComputeServiceContextModule;
  */
 public class StubApiMetadata extends BaseApiMetadata {
    
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -4880642520937391337L;
-
    public static Builder builder() {
       return new Builder();
    }

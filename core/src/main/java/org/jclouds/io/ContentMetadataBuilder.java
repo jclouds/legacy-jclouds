@@ -18,7 +18,6 @@
  */
 package org.jclouds.io;
 
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -30,9 +29,7 @@ import com.google.common.base.Objects;
 /**
  * @author Adrian Cole
  */
-public class ContentMetadataBuilder implements Serializable {
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -5279643002875371558L;
+public class ContentMetadataBuilder {
 
    public static ContentMetadataBuilder create() {
       return new ContentMetadataBuilder();

@@ -36,9 +36,6 @@ import org.jclouds.s3.S3ApiMetadata;
  * @author Adrian Cole
  */
 public class GreenQloudStorageProviderMetadata extends BaseProviderMetadata {
-   
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 1L;
 
    public static Builder builder() {
       return new Builder();

@@ -32,9 +32,6 @@ import org.jclouds.providers.internal.BaseProviderMetadata;
  */
 public class ServerloveManchesterProviderMetadata extends BaseProviderMetadata {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -8799752320729476294L;
-
    public static Builder builder() {
       return new Builder();
    }

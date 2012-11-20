@@ -33,9 +33,6 @@ import com.google.common.annotations.Beta;
 @Beta
 public class AnonymousRestApiMetadata extends BaseRestApiMetadata {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 5297549599879474202L;
-
    public static AnonymousRestApiMetadata forClientMappedToAsyncClient(Class<?> client, Class<?> asyncClient) {
       return new AnonymousRestApiMetadata(client, asyncClient);
    }

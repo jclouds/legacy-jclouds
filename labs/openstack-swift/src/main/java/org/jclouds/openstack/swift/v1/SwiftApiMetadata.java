@@ -43,12 +43,8 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 public class SwiftApiMetadata extends BaseRestApiMetadata {
-   
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 6725672099385580694L;
 
    public static final TypeToken<RestContext<SwiftApi, SwiftAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<SwiftApi, SwiftAsyncApi>>() {
-      private static final long serialVersionUID = -5070937833892503232L;
    };
 
    @Override

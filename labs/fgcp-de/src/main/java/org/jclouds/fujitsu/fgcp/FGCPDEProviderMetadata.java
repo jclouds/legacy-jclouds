@@ -30,8 +30,6 @@ import org.jclouds.providers.internal.BaseProviderMetadata;
  */
 public class FGCPDEProviderMetadata extends FGCPProviderMetadata {
 
-   private static final long serialVersionUID = -8498457904032259345L;
-
    public static Builder builder() {
       return new Builder();
    }

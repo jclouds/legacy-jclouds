@@ -42,9 +42,6 @@ import com.google.common.reflect.TypeToken;
  */
 public class VCloudDirectorApiMetadata extends BaseRestApiMetadata {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 6725672099385580694L;
-
    public static final TypeToken<VCloudDirectorContext> CONTEXT_TOKEN = TypeToken.of(VCloudDirectorContext.class);
    
    @Override

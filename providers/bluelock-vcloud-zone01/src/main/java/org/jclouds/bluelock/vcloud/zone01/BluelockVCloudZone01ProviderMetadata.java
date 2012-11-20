@@ -34,9 +34,6 @@ import org.jclouds.vcloud.VCloudApiMetadata;
  */
 public class BluelockVCloudZone01ProviderMetadata extends BaseProviderMetadata {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -2931858111365760610L;
-
    public static Builder builder() {
       return new Builder();
    }

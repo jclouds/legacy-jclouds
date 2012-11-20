@@ -43,9 +43,6 @@ import com.google.inject.Module;
  */
 public class TryStackNovaProviderMetadata extends BaseProviderMetadata {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -8567407993297259224L;
-
    public static Builder builder() {
       return new Builder();
    }

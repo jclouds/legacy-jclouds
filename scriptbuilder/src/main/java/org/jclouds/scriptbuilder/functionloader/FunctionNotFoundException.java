@@ -21,10 +21,6 @@ package org.jclouds.scriptbuilder.functionloader;
 import org.jclouds.scriptbuilder.domain.OsFamily;
 
 public class FunctionNotFoundException extends RuntimeException {
-  /**
-   * The serialVersionUID
-   */
-  private static final long serialVersionUID = 1L;
 
   public FunctionNotFoundException(String functionName, OsFamily family) {
     super("function: " + functionName + " not found for family: " + family);

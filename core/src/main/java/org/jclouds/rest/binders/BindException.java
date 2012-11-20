@@ -26,7 +26,6 @@ import org.jclouds.http.HttpRequest;
  * @author Ignasi Barrera
  */
 public class BindException extends RuntimeException {
-   private static final long serialVersionUID = 1L;
 
    private HttpRequest request;
 

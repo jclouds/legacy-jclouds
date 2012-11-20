@@ -43,11 +43,8 @@ import com.google.inject.Module;
  * @author Adam Lowe
  */
 public class QuantumApiMetadata extends BaseRestApiMetadata {
-      /** The serialVersionUID */
-   private static final long serialVersionUID = -7273686435105663195L;
 
    public static final TypeToken<RestContext<QuantumApi, QuantumAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<QuantumApi, QuantumAsyncApi>>() {
-      private static final long serialVersionUID = -3493117927790861884L;
    };
 
    @Override

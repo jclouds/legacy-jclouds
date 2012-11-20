@@ -20,7 +20,6 @@ package org.jclouds.s3.domain.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.Serializable;
 import java.net.URI;
 import java.util.Date;
 import java.util.Map;
@@ -37,10 +36,7 @@ import com.google.common.collect.ImmutableMap;
  * 
  * @author Adrian Cole
  */
-public class BucketListObjectMetadata implements Serializable, ObjectMetadata {
-
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -4415449798024051115L;
+public class BucketListObjectMetadata implements ObjectMetadata {
 
    private final String key;
    private final String bucket;

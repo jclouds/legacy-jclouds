@@ -40,12 +40,8 @@ import com.google.inject.Module;
  * @author Kedar Dave
  */
 public class VPDCApiMetadata extends BaseRestApiMetadata {
-   
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 6725672099385580694L;
 
    public static final TypeToken<RestContext<VPDCApi, VPDCAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<VPDCApi, VPDCAsyncApi>>() {
-      private static final long serialVersionUID = -5070937833892503232L;
    };
    
    @Override

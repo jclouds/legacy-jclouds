@@ -21,7 +21,6 @@ package org.jclouds.domain.internal;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 
@@ -38,9 +37,7 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author Adrian Cole
  */
-public class LocationImpl implements Location, Serializable {
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -280558162576368264L;
+public class LocationImpl implements Location {
 
    private final LocationScope scope;
    private final String id;

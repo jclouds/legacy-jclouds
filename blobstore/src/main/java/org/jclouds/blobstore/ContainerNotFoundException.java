@@ -46,7 +46,4 @@ public class ContainerNotFoundException extends ResourceNotFoundException {
       return container;
    }
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -2272965726680821281L;
-
 }

@@ -33,8 +33,6 @@ import org.jclouds.http.HttpResponseException;
  */
 public class AtmosResponseException extends HttpResponseException {
 
-   private static final long serialVersionUID = 1L;
-
    private AtmosError error;
 
    public AtmosResponseException(HttpCommand command, HttpResponse response,

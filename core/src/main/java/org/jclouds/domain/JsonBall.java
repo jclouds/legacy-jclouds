@@ -29,9 +29,8 @@ import org.jclouds.util.Patterns;
  * @author Adrian Cole
  * @see <a href="http://code.google.com/p/google-gson/issues/detail?id=326"/>
  */
-public class JsonBall implements java.io.Serializable, Comparable<String>, CharSequence {
+public class JsonBall implements Comparable<String>, CharSequence {
 
-   private static final long serialVersionUID = -8168997021767065199L;
    private final String value;
 
    @Override
