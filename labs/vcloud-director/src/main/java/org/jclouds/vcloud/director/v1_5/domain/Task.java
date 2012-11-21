@@ -18,12 +18,13 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import com.google.common.base.Function;
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
@@ -31,15 +32,13 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
-
-import com.google.common.base.Function;
-import com.google.common.base.Objects;
-import com.google.common.base.Objects.ToStringHelper;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
+import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Represents an asynchronous or long-running task in the vCloud environment.
@@ -48,376 +47,397 @@ import com.google.common.collect.Maps;
  * &lt;xs:complexType name="TaskType"&gt;
  * </pre>
  *
- *  TODO: this object and the hierarchy is wrong.  it is literally a Task with a Task container.  please review class diagram
- * 
+ * TODO: this object and the hierarchy is wrong.  it is literally a Task with a Task container.  please review class diagram
+ *
  * @author grkvlt@apache.org
  */
 @XmlRootElement(name = "Task")
 public class Task extends Entity {
 
-   public static final String MEDIA_TYPE = VCloudDirectorMediaType.TASK;
-   
-   @XmlType(name = "TaskStatus")
-   @XmlEnum(String.class)
-   public static enum Status {
+    public static final String MEDIA_TYPE = VCloudDirectorMediaType.TASK;
+
+    @XmlType(name = "TaskStatus")
+    @XmlEnum(String.class)
+    public static enum Status {
       /** The task has been queued for execution. */
-      @XmlEnumValue("queued") QUEUED("queued"),
+        @XmlEnumValue("queued")QUEUED("queued"),
       /** The task is awaiting preprocessing or, if it is a blocking task, administrative action. */
-      @XmlEnumValue("preRunning") PRE_RUNNING("preRunning"),
+        @XmlEnumValue("preRunning")PRE_RUNNING("preRunning"),
       /** The task is running. */
-      @XmlEnumValue("running") RUNNING("running"),
+        @XmlEnumValue("running")RUNNING("running"),
       /** The task completed with a status of success. */
-      @XmlEnumValue("success") SUCCESS("success"),
+        @XmlEnumValue("success")SUCCESS("success"),
       /** The task encountered an error while running. */
-      @XmlEnumValue("error") ERROR("error"),
+        @XmlEnumValue("error")ERROR("error"),
       /** The task was canceled by the owner or an administrator. */
-      @XmlEnumValue("canceled") CANCELED("canceled"),
+        @XmlEnumValue("canceled")CANCELED("canceled"),
       /** The task was aborted by an administrative action. */
-      @XmlEnumValue("aborted") ABORTED("aborted"),
-      @XmlEnumValue("") UNRECOGNIZED("unrecognized");
-      
-      public static final List<Status> ALL = ImmutableList.of(QUEUED, PRE_RUNNING, RUNNING, SUCCESS, ERROR, CANCELED, ABORTED);
+        @XmlEnumValue("aborted")ABORTED("aborted"),
+        @XmlEnumValue("")UNRECOGNIZED("unrecognized");
 
-      protected final String stringValue;
+        public static final List<Status> ALL = ImmutableList.of(QUEUED, PRE_RUNNING, RUNNING, SUCCESS, ERROR, CANCELED, ABORTED);
 
-      Status(String stringValue) {
-         this.stringValue = stringValue;
-      }
+        protected final String stringValue;
 
-      public String value() {
-         return stringValue;
-      }
+        Status(String stringValue) {
+            this.stringValue = stringValue;
+        }
 
-      protected final static Map<String, Status> STATUS_BY_ID = Maps.uniqueIndex(
-            ImmutableSet.copyOf(Status.values()), new Function<Status, String>() {
-               @Override
-               public String apply(Status input) {
-                  return input.stringValue;
-               }
-            });
+        public String value() {
+            return stringValue;
+        }
 
-      public static Status fromValue(String value) {
-         Status status = STATUS_BY_ID.get(checkNotNull(value, "stringValue"));
-         return status == null ? UNRECOGNIZED : status;
-      }
-   }
+        protected final static Map<String, Status> STATUS_BY_ID = Maps.uniqueIndex(
+                ImmutableSet.copyOf(Status.values()), new Function<Status, String>() {
+            @Override
+            public String apply(Status input) {
+                return input.stringValue;
+            }
+        });
 
-   public static Builder<?> builder() {
-      return new ConcreteBuilder();
-   }
+        public static Status fromValue(String value) {
+            Status status = STATUS_BY_ID.get(checkNotNull(value, "stringValue"));
+            return status == null ? UNRECOGNIZED : status;
+        }
+    }
 
-   @Override
-   public Builder<?> toBuilder() {
-      return builder().fromTask(this);
-   }
+    public static Builder<?> builder() {
+        return new ConcreteBuilder();
+    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
-   }
-   
-   public static abstract class Builder<B extends Builder<B>> extends Entity.Builder<B> {
+    @Override
+    public Builder<?> toBuilder() {
+        return builder().fromTask(this);
+    }
 
-      private Error error;
-      private Reference org;
-      private Reference owner;
-      private Reference user;
-      private Object params;
-      private Integer progress;
-      private Status status;
-      private String operation;
-      private String operationName;
-      private Date startTime;
-      private Date endTime;
-      private Date expiryTime;
+    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+    }
 
-      /**
-       * @see Task#getError()
-       */
-      public B error(Error error) {
-         this.error = error;
-         return self();
-      }
+    public static abstract class Builder<B extends Builder<B>> extends Entity.Builder<B> {
 
-      /**
-       * @see Task#get()
-       */
-      public B org(Reference org) {
-         this.org = org;
-         return self();
-      }
+        private Error error;
+        private Reference org;
+        private Reference owner;
+        private Reference user;
+        private Object params;
+        private Integer progress;
+        private Status status;
+        private String operation;
+        private String operationName;
+        private Date startTime;
+        private Date endTime;
+        private Date expiryTime;
 
-      /**
-       * @see Task#getOwner()
-       */
-      public B owner(Reference owner) {
-         this.owner = owner;
-         return self();
-      }
+        /**
+         * @see Task#getError()
+         */
+        public B error(Error error) {
+            this.error = error;
+            return self();
+        }
 
-      /**
-       * @see Task#getUser()
-       */
-      public B user(Reference user) {
-         this.user = user;
-         return self();
-      }
+        /**
+         * @see Task#get()
+         */
+        public B org(Reference org) {
+            this.org = org;
+            return self();
+        }
 
-      /**
-       * @see Task#getParams()
-       */
-      public B params(Object params) {
-         this.params = params;
-         return self();
-      }
+        /**
+         * @see Task#getOwner()
+         */
+        public B owner(Reference owner) {
+            this.owner = owner;
+            return self();
+        }
 
-      /**
-       * @see Task#getProgress()
-       */
-      public B progress(Integer progress) {
-         this.progress = progress;
-         return self();
-      }
+        /**
+         * @see Task#getUser()
+         */
+        public B user(Reference user) {
+            this.user = user;
+            return self();
+        }
 
-      /**
-       * @see Task#getStatus()
-       */
-      public B status(String status) {
-         this.status = Status.fromValue(status);
-         return self();
-      }
+        /**
+         * @see Task#getParams()
+         */
+        public B params(Object params) {
+            this.params = params;
+            return self();
+        }
 
-      /**
-       * @see Task#getStatus()
-       */
-      public B status(Status status) {
-         this.status = status;
-         return self();
-      }
+        /**
+         * @see Task#getProgress()
+         */
+        public B progress(Integer progress) {
+            this.progress = progress;
+            return self();
+        }
 
-      /**
-       * @see Task#getOperation()
-       */
-      public B operation(String operation) {
-         this.operation = operation;
-         return self();
-      }
+        /**
+         * @see Task#getStatus()
+         */
+        public B status(String status) {
+            this.status = Status.fromValue(status);
+            return self();
+        }
 
-      /**
-       * @see Task#getOperationName()
-       */
-      public B operationName(String operationName) {
-         this.operationName = operationName;
-         return self();
-      }
+        /**
+         * @see Task#getStatus()
+         */
+        public B status(Status status) {
+            this.status = status;
+            return self();
+        }
 
-      /**
-       * @see Task#getStartTime()
-       */
-      public B startTime(Date startTime) {
-         this.startTime = startTime;
-         return self();
-      }
+        /**
+         * @see Task#getOperation()
+         */
+        public B operation(String operation) {
+            this.operation = operation;
+            return self();
+        }
 
-      /**
-       * @see Task#getEndTime()
-       */
-      public B endTime(Date endTime) {
-         this.endTime = endTime;
-         return self();
-      }
+        /**
+         * @see Task#getOperationName()
+         */
+        public B operationName(String operationName) {
+            this.operationName = operationName;
+            return self();
+        }
 
-      /**
-       * @see Task#getExpiryTime()
-       */
-      public B expiryTime(Date expiryTime) {
-         this.expiryTime = expiryTime;
-         return self();
-      }
+        /**
+         * @see Task#getStartTime()
+         */
+        public B startTime(Date startTime) {
+            this.startTime = startTime;
+            return self();
+        }
 
-      @Override
-      public Task build() {
-         return new Task(this);
-      }
+        /**
+         * @see Task#getEndTime()
+         */
+        public B endTime(Date endTime) {
+            this.endTime = endTime;
+            return self();
+        }
 
-      public B fromTask(Task in) {
-         return fromEntityType(in)
-               .error(in.getError())
-               .org(in.get())
-               .progress(in.getProgress())
-               .owner(in.getOwner())
-               .user(in.getUser())
-               .params(in.getParams())
-               .status(in.getStatus())
-               .operation(in.getOperation())
-               .operationName(in.getOperationName())
-               .startTime(in.getStartTime())
-               .endTime(in.getEndTime())
-               .expiryTime(in.getExpiryTime());
-      }
-   }
+        /**
+         * @see Task#getExpiryTime()
+         */
+        public B expiryTime(Date expiryTime) {
+            this.expiryTime = expiryTime;
+            return self();
+        }
 
-   protected Task(Builder<?> builder) {
-      super(builder);
-      this.error = builder.error;
-      this.org = builder.org;
-      this.progress = builder.progress;
-      this.owner = builder.owner;
-      this.user = builder.user;
-      this.params = builder.params;
-      this.status = builder.status;
-      this.operation = builder.operation;
-      this.operationName = builder.operationName;
-      this.startTime = builder.startTime;
-      this.endTime = builder.endTime;
-      this.expiryTime = builder.expiryTime;
-   }
+        @Override
+        public Task build() {
+            return new Task(this);
+        }
 
-   protected Task() {
-      // for JAXB
-   }
+        public B fromTask(Task in) {
+            return fromEntityType(in)
+                    .error(in.getError())
+                    .org(in.get())
+                    .progress(in.getProgress())
+                    .owner(in.getOwner())
+                    .user(in.getUser())
+                    .params(in.getParams())
+                    .status(in.getStatus())
+                    .operation(in.getOperation())
+                    .operationName(in.getOperationName())
+                    .startTime(in.getStartTime())
+                    .endTime(in.getEndTime())
+                    .expiryTime(in.getExpiryTime());
+        }
+    }
 
-   @XmlElement(name = "Error")
-   private Error error;
-   @XmlElement(name = "Organization")
-   private Reference org;
-   @XmlElement(name = "Progress")
-   private Integer progress;
-   @XmlElement(name = "Owner")
-   private Reference owner;
-   @XmlElement(name = "User")
-   private Reference user;
-   @XmlElement(name = "Params")
-   private Object params;
-   @XmlAttribute
-   private Status status;
-   @XmlAttribute
-   private String operation;
-   @XmlAttribute
-   private String operationName;
-   @XmlAttribute
-   private Date startTime;
-   @XmlAttribute
-   private Date endTime;
-   @XmlAttribute
-   private Date expiryTime;
+    protected Task(Builder<?> builder) {
+        super(builder);
+        this.error = builder.error;
+        this.org = builder.org;
+        this.progress = builder.progress;
+        this.owner = builder.owner;
+        this.user = builder.user;
+        this.params = builder.params;
+        this.status = builder.status;
+        this.operation = builder.operation;
+        this.operationName = builder.operationName;
+        this.startTime = builder.startTime;
+        this.endTime = builder.endTime;
+        this.expiryTime = builder.expiryTime;
+    }
 
-   /**
-    * Represents an error information if the task failed.
-    */
-   public Error getError() {
-      return error;
-   }
+    protected Task() {
+        // for JAXB
+    }
 
-   /**
-    * The organization that started the task.
-    */
-   public Reference get() {
-      return org;
-   }
+    @XmlElement(name = "Error")
+    private Error error;
+    @XmlElement(name = "Organization")
+    private Reference org;
+    @XmlElement(name = "Progress")
+    private Integer progress;
+    @XmlElement(name = "Owner")
+    private Reference owner;
+    @XmlElement(name = "User")
+    private Reference user;
+    @XmlElement(name = "Params")
+    private Object params;
+    @XmlAttribute
+    private Status status;
+    @XmlAttribute
+    private String operation;
+    @XmlAttribute
+    private String operationName;
+    @XmlAttribute
+    private Date startTime;
+    @XmlAttribute
+    private Date endTime;
+    @XmlAttribute
+    private Date expiryTime;
 
-   /**
-    * Reference to the owner of the task.
-    */
-   public Reference getOwner() {
-      return owner;
-   }
+    /**
+     * Represents an error information if the task failed.
+     */
+    public Error getError() {
+        return error;
+    }
 
-   /**
-    * The user who started the task.
-    */
-   public Reference getUser() {
-      return user;
-   }
+    /**
+     * The organization that started the task.
+     */
+    public Reference get() {
+        return org;
+    }
 
-   /**
-    * The parameters with which this task has been run.
-    */
-   public Object getParams() {
-      return params;
-   }
+    /**
+     * Reference to the owner of the task.
+     */
+    public Reference getOwner() {
+        return owner;
+    }
 
-   /**
-    * The progress of a long running asynchronous task.
-    * <p/>
-    * The value is between 0 - 100. Not all tasks have progress, the value is not
-    * present for task which progress is not available.
-    */
-   public Integer getProgress() {
-      return progress;
-   }
+    /**
+     * The user who started the task.
+     */
+    public Reference getUser() {
+        return user;
+    }
 
-   /**
-    * The execution status of the task.
-    */
-   public Status getStatus() {
-      return status;
-   }
+    /**
+     * The parameters with which this task has been run.
+     */
+    public Object getParams() {
+        return params;
+    }
 
-   /**
-    * The display name of the operation that is tracked by this task.
-    */
-   public String getOperation() {
-      return operation;
-   }
+    /**
+     * The progress of a long running asynchronous task.
+     * <p/>
+     * The value is between 0 - 100. Not all tasks have progress, the value is not
+     * present for task which progress is not available.
+     */
+    public Integer getProgress() {
+        return progress;
+    }
 
-   /**
-    * The name of the operation that is tracked by this task.
-    */
-   public String getOperationName() {
-      return operationName;
-   }
+    /**
+     * The execution status of the task.
+     */
+    public Status getStatus() {
+        return status;
+    }
 
-   /**
-    * The date and time the system started executing the task.
-    * <p/>
-    * May not be present if the task hasn't been executed yet.
-    */
-   public Date getStartTime() {
-      return startTime;
-   }
+    /**
+     * The display name of the operation that is tracked by this task.
+     */
+    public String getOperation() {
+        return operation;
+    }
 
-   /**
-    * The date and time that processing of the task was completed.
-    * <p/>
-    * May not be present if the task is still being executed.
-    */
-   public Date getEndTime() {
-      return endTime;
-   }
+    /**
+     * The name of the operation that is tracked by this task.
+     */
+    public String getOperationName() {
+        return operationName;
+    }
 
-   /**
-    * The date and time at which the task resource will be destroyed and no longer available for retrieval.
-    * <p/>
-    * May not be present if the task has not been executed or is still being executed.
-    */
-   public Date getExpiryTime() {
-      return expiryTime;
-   }
+    /**
+     * The date and time the system started executing the task.
+     * <p/>
+     * May not be present if the task hasn't been executed yet.
+     */
+    public Date getStartTime() {
+        return startTime;
+    }
 
-   @Override
-   public boolean equals(Object o) {
-      if (this == o)
-         return true;
-      if (o == null || getClass() != o.getClass())
-         return false;
-      Task that = Task.class.cast(o);
-      return super.equals(that) &&
-            equal(this.error, that.error) && equal(this.org, that.org) &&
-            equal(this.progress, that.progress) && equal(this.status, that.status) &&
-            equal(this.operation, that.operation) && equal(this.operationName, that.operationName) &&
-            equal(this.startTime, that.startTime) && equal(this.endTime, that.endTime) &&
-            equal(this.expiryTime, that.expiryTime);
-   }
+    /**
+     * The date and time that processing of the task was completed.
+     * <p/>
+     * May not be present if the task is still being executed.
+     */
+    public Date getEndTime() {
+        return endTime;
+    }
 
-   @Override
-   public int hashCode() {
-      return Objects.hashCode(super.hashCode(), error, org, progress, status, operation, operationName,
-            startTime, endTime, expiryTime);
-   }
+    /**
+     * The date and time at which the task resource will be destroyed and no longer available for retrieval.
+     * <p/>
+     * May not be present if the task has not been executed or is still being executed.
+     */
+    public Date getExpiryTime() {
+        return expiryTime;
+    }
 
-   @Override
-   public ToStringHelper string() {
-      return super.string().add("error", error).add("org", org).add("progress", progress).add("status", status)
-            .add("operation", operation).add("operationName", operationName).add("startTime", startTime)
-            .add("endTime", endTime).add("expiryTime", expiryTime);
-   }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        Task that = Task.class.cast(o);
+        return super.equals(that) &&
+                equal(this.error, that.error) && equal(this.org, that.org) &&
+                equal(this.progress, that.progress) && equal(this.status, that.status) &&
+                equal(this.operation, that.operation) && equal(this.operationName, that.operationName) &&
+                datesEqual(this.startTime, that.startTime) &&
+                datesEqual(this.endTime, that.endTime) &&
+                datesEqual(this.expiryTime, that.expiryTime);
+    }
+
+    private boolean datesEqual(Date date1, Date date2) {
+        Date cDate1 = null;
+        if (date1 != null) {
+            Calendar c1 = Calendar.getInstance();
+            c1.setTime(date1);
+            c1.clear(Calendar.MILLISECOND);
+            cDate1 = c1.getTime();
+        }
+
+        Date cDate2 = null;
+        if (date2 != null) {
+            Calendar c2 = Calendar.getInstance();
+            c2.setTime(date2);
+            c2.clear(Calendar.MILLISECOND);
+            cDate2 = c2.getTime();
+        }
+
+        return equal(cDate1, cDate2);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(super.hashCode(), error, org, progress, status, operation, operationName,
+                startTime, endTime, expiryTime);
+    }
+
+    @Override
+    public ToStringHelper string() {
+        return super.string().add("error", error).add("org", org).add("progress", progress).add("status", status)
+                .add("operation", operation).add("operationName", operationName).add("startTime", startTime)
+                .add("endTime", endTime).add("expiryTime", expiryTime);
+    }
 }
