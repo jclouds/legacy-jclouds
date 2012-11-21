@@ -651,7 +651,7 @@ public interface VmAsyncApi {
     * @see VmApi#reboot(URI)
     */
    @POST
-   @Path("/power/action/powerOff")
+   @Path("/power/action/reboot")
    @Consumes(TASK)
    @JAXBResponseParser
    ListenableFuture<Task> reboot(@EndpointParam URI vmHref);
