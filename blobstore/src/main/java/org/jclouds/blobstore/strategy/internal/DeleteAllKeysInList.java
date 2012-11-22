@@ -60,7 +60,7 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
    protected Logger logger = Logger.NULL;
 
    protected final BackoffLimitedRetryHandler retryHandler;
-   private final ExecutorService userExecutor;
+   protected final ExecutorService userExecutor;
 
    protected final AsyncBlobStore connection;
    /** Maximum duration in milliseconds of a request. */
@@ -69,9 +69,9 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
    protected Long maxTime = Long.MAX_VALUE;
 
    @Inject
-   DeleteAllKeysInList(@Named(Constants.PROPERTY_USER_THREADS) ExecutorService userExecutor,
-            AsyncBlobStore connection,
-            BackoffLimitedRetryHandler retryHandler) {
+   public DeleteAllKeysInList(@Named(Constants.PROPERTY_USER_THREADS) ExecutorService userExecutor,
+                              AsyncBlobStore connection,
+                              BackoffLimitedRetryHandler retryHandler) {
 
       this.userExecutor = userExecutor;
       this.connection = connection;

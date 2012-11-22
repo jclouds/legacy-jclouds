@@ -33,10 +33,13 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Set;
+import java.util.UUID;
 import java.util.zip.GZIPInputStream;
 
 import org.jclouds.aws.AWSResponseException;
 import org.jclouds.aws.domain.Region;
+import org.jclouds.aws.s3.domain.DeleteResult;
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.KeyNotFoundException;
@@ -253,6 +256,34 @@ public class AWSS3ClientLiveTest extends S3ClientLiveTest {
          fail("Should had failed because in non-US regions, mixed-case bucket names are invalid.");
       } catch (AWSResponseException e) {
          assertEquals("InvalidBucketName", e.getError().getCode());
+      }
+   }
+   
+   public void testDeleteMultipleObjects() throws InterruptedException {
+      String container = getContainerName();
+      try {
+         ImmutableSet.Builder<String> builder = ImmutableSet.builder();
+         for (int i = 0; i < 5; i++) {
+            String key = UUID.randomUUID().toString();
+            
+            Blob blob = view.getBlobStore().blobBuilder(key).payload("").build();
+            view.getBlobStore().putBlob(container, blob);
+            
+            builder.add(key);
+         }
+
+         Set<String> keys = builder.build();
+         DeleteResult result = getApi().deleteObjects(container, keys);
+
+         assertEquals(result.getDeleted().size(), 0); /* quite = true */
+         assertEquals(result.getErrors().size(), 0);
+
+         for (String key : keys) {
+            assertConsistencyAwareBlobDoesntExist(container, key);
+         }
+         
+      }  finally {
+         returnContainer(container);
       }
    }
 
