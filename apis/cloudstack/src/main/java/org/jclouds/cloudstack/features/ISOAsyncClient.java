@@ -127,7 +127,8 @@ public interface ISOAsyncClient {
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "command", values = "registerIso")
-   @Unwrap
+   @SelectJson("iso")
+   @OnlyElement
    ListenableFuture<ISO> registerISO(@QueryParam("name") String name, @QueryParam("displaytext") String displayText, @QueryParam("url") String url, @QueryParam("zoneid") String zoneId, RegisterISOOptions... options);
 
    /**

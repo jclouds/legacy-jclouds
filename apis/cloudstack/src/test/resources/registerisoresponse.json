@@ -1,0 +1,3 @@
+{ "registerisoresponse" : { "count":1 ,"iso" : [  
+{"id":"b52c509d-c6e2-452c-b6ec-aa00720ed6cd","name":"ubuntu10.10","displaytext":"ubuntu 10.10 (32 bit)","ispublic":true,"created":"2012-08-21T15:45:01+0530","isready":false,"bootable":true,"isfeatured":false,"crossZones":false,"ostypeid":"0e0335d9-b6cc-4808-bddf-0828e66a0d03","ostypename":"Ubuntu 10.10 (32-bit)","account":"admin","zoneid":"6f9a2921-b22a-4149-8b71-6ffc275a2177","zonename":"Basic1","status":"","domain":"ROOT","domainid":"99f4159b-c698-4bd9-b8c5-5ac462f101eb","isextractable":false} ] 
+}}
