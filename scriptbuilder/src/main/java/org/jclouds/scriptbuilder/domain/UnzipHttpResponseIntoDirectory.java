@@ -47,7 +47,7 @@ public class UnzipHttpResponseIntoDirectory extends InterpretableStatement {
    public UnzipHttpResponseIntoDirectory(String method, URI endpoint, Multimap<String, String> headers, String dir) {
       super(
                format(
-                        "({md} %s &&{cd} %s &&curl -X %s -s --retry 20 %s %s >extract.zip && unzip -o -qq extract.zip&& rm extract.zip)\n",
+                        "({md} %s &&{cd} %s &&curl -X -L %s -s --retry 20 %s %s >extract.zip && unzip -o -qq extract.zip&& rm extract.zip)\n",
                         dir, dir, method, Joiner.on(' ').join(
                                  transform(headers.entries(), new Function<Entry<String, String>, String>() {
 
