@@ -37,8 +37,9 @@
 
     <licenses>
         <license>
-            <name>Apache License</name>
-            <url>../resources/LICENSE.txt</url>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
         </license>
     </licenses>
 
