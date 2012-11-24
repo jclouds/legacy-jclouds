@@ -41,7 +41,7 @@ public class UnzipHttpResponseIntoDirectoryToTest {
    public void testUnzipHttpResponseIntoDirectoryUNIX() {
       assertEquals(
                jboss.render(OsFamily.UNIX),
-               "(mkdir -p /tmp &&cd /tmp &&curl -X GET -s --retry 20  http://superb-sea2.dl.sourceforge.net/project/jboss/JBoss/JBoss-5.0.0.CR2/jboss-5.0.0.CR2-jdk6.zip >extract.zip && unzip -o -qq extract.zip&& rm extract.zip)\n");
+               "(mkdir -p /tmp &&cd /tmp &&curl -X -L GET -s --retry 20  http://superb-sea2.dl.sourceforge.net/project/jboss/JBoss/JBoss-5.0.0.CR2/jboss-5.0.0.CR2-jdk6.zip >extract.zip && unzip -o -qq extract.zip&& rm extract.zip)\n");
    }
    public void testUnzipHttpResponseIntoDirectoryWINDOWS() {
      
