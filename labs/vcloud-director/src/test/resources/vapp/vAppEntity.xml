@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Entity xmlns="http://www.vmware.com/vcloud/v1.5" name="urn:vcloud:vapp:6ef7767a-9522-4f8a-aa61-772ea1dc3145" id="urn:vcloud:vapp:6ef7767a-9522-4f8a-aa61-772ea1dc3145" type="application/vnd.vmware.vcloud.entity+xml" href="https://vcloudbeta.bluelock.com/api/entity/urn:vcloud:vapp:6ef7767a-9522-4f8a-aa61-772ea1dc3145" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vmware.com/vcloud/v1.5 http://vcloudbeta.bluelock.com/api/v1.5/schema/master.xsd">
+   <Link rel="alternate" type="application/vnd.vmware.vcloud.vApp+xml" href="https://vcloudbeta.bluelock.com/api/vApp/vapp-6ef7767a-9522-4f8a-aa61-772ea1dc3145"/>
+</Entity>

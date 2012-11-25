@@ -21,6 +21,7 @@ package org.jclouds.vcloud.director.v1_5.domain;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -49,14 +50,14 @@ import com.google.common.collect.Maps;
  * </pre>
  *
  *  TODO: this object and the hierarchy is wrong.  it is literally a Task with a Task container.  please review class diagram
- * 
+ *
  * @author grkvlt@apache.org
  */
 @XmlRootElement(name = "Task")
 public class Task extends Entity {
 
    public static final String MEDIA_TYPE = VCloudDirectorMediaType.TASK;
-   
+
    @XmlType(name = "TaskStatus")
    @XmlEnum(String.class)
    public static enum Status {
@@ -75,7 +76,7 @@ public class Task extends Entity {
       /** The task was aborted by an administrative action. */
       @XmlEnumValue("aborted") ABORTED("aborted"),
       @XmlEnumValue("") UNRECOGNIZED("unrecognized");
-      
+
       public static final List<Status> ALL = ImmutableList.of(QUEUED, PRE_RUNNING, RUNNING, SUCCESS, ERROR, CANCELED, ABORTED);
 
       protected final String stringValue;
@@ -113,7 +114,7 @@ public class Task extends Entity {
 
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
-   
+
    public abstract static class Builder<B extends Builder<B>> extends Entity.Builder<B> {
 
       private Error error;
@@ -404,8 +405,29 @@ public class Task extends Entity {
             equal(this.error, that.error) && equal(this.org, that.org) &&
             equal(this.progress, that.progress) && equal(this.status, that.status) &&
             equal(this.operation, that.operation) && equal(this.operationName, that.operationName) &&
-            equal(this.startTime, that.startTime) && equal(this.endTime, that.endTime) &&
-            equal(this.expiryTime, that.expiryTime);
+            datesEqual(this.startTime, that.startTime) &&
+            datesEqual(this.endTime, that.endTime) &&
+            datesEqual(this.expiryTime, that.expiryTime);
+   }
+
+   private boolean datesEqual(Date date1, Date date2) {
+      Date cDate1 = null;
+      if (date1 != null) {
+         Calendar c1 = Calendar.getInstance();
+         c1.setTime(date1);
+         c1.clear(Calendar.MILLISECOND);
+         cDate1 = c1.getTime();
+      }
+
+      Date cDate2 = null;
+      if (date2 != null) {
+         Calendar c2 = Calendar.getInstance();
+         c2.setTime(date2);
+         c2.clear(Calendar.MILLISECOND);
+         cDate2 = c2.getTime();
+      }
+
+      return equal(cDate1, cDate2);
    }
 
    @Override
