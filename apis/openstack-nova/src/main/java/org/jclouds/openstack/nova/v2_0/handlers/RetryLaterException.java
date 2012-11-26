@@ -23,16 +23,12 @@ import java.util.Date;
 
 /**
  * This exception is raised when the Nova endpoint returns with a response telling the caller to make
- * the same request later. 
- * The "later" can be specified as an absolute time, or as a delta from the current time.
- * In either constructor, a reference time must be supplied to calculate the other value.
- * 
- * Callers 
+ * the same request later.
+ * The "later" can be specified as a delta from the current time or as an absolute time.
+ * In either constructor, a reference time must be supplied to calculate the offset in milliseconds.
+ *
  */
 public class RetryLaterException extends RuntimeException {
-
-   /** System time when a request can be retried */
-   private final Date retryDate;
 
    /**
     * Time in seconds after which a request can be remade.
@@ -42,35 +38,36 @@ public class RetryLaterException extends RuntimeException {
    /**
     * Construct an exception
     * @param message message
-    * @param retryAfter
-    * @param now
+    * @param retryAfter retry after time. Negative values are converted to zero
     */
-   public RetryLaterException(String message, long retryAfter, long now) {
+   public RetryLaterException(String message, long retryAfter) {
       super(message);
-      this.retryAfter = retryAfter;
-      retryDate = new Date(now + (retryAfter * 1000));
+      this.retryAfter = Math.max(retryAfter, 0);
    }
 
-   public RetryLaterException(String message, Date retryDate, long now) {
+/**
+    * Construct an exception using the specified retry date, and the reference date used to
+    * calculate the difference.
+    * If the difference is negative, the retryAfter field is set to 0.
+    * @param message exception text
+    * @param retryDate date when a retry is permitted.
+    * @param now current time to use when calculating the offset.
+    */
+   public RetryLaterException(String message, Date retryDate, Date now) {
       super(message);
-      this.retryDate = retryDate;
-      long after = (retryDate.getTime() - now) / 1000;
-      if (after < 0) {
-         after = 0;
-      }
-      retryAfter = after;
+      retryAfter = Math.max((retryDate.getTime()/1000 - now.getTime()/1000), 0);
    }
 
-   public Date getRetryDate() {
-      return retryDate;
-   }
-
+   /**
+    * Get the value of the retry time
+    * @return the retry time, in seconds. This is always zero or positive.
+    */
    public long getRetryAfter() {
       return retryAfter;
    }
 
-   @Override
+@Override
    public String toString() {
-      return super.toString() + " retry after " + retryAfter + "s  - at " + retryDate;
+      return super.toString() + " retry after " + retryAfter + "s";
    }
 }
