@@ -29,6 +29,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.jclouds.date.DateService;
+import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpResponse;
@@ -53,11 +54,12 @@ public class NovaErrorHandler implements HttpErrorHandler {
 
    @Resource
    protected Logger logger = Logger.NULL;
-   protected final DateService dateService;
+   protected final DateService dateService = new SimpleDateFormatDateService();
 
    @Inject
    public NovaErrorHandler(DateService dateService) {
-      this.dateService = dateService;
+      //ignored while Joda doesn't parse properly
+      //this.dateService = dateService;
    }
 
    public void handleError(HttpCommand command, HttpResponse response) {
@@ -153,7 +155,7 @@ public class NovaErrorHandler implements HttpErrorHandler {
         logger.error("Failed to parse " + jsonBody + "", e);
         return new InsufficientResourcesException(message
                                                   + "\n" + " parse failure " + e,
-                                                  exception);
+                                                  e);
      }
   }
 

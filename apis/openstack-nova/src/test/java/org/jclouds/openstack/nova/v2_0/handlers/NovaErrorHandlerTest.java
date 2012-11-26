@@ -19,6 +19,7 @@
 
 package org.jclouds.openstack.nova.v2_0.handlers;
 
+import org.jclouds.date.DateService;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.rest.InsufficientResourcesException;
 import org.testng.annotations.Test;
@@ -88,10 +89,8 @@ public class NovaErrorHandlerTest {
    public void testParseRackspaceUKResponse() throws Exception {
       NovaErrorHandler novaErrorHandler = createErrorHandler();
       Date date = novaErrorHandler.parseRetryAtField(RACKSPACE_UK_JSON);
-      assertNotNull(date);
-      verifyDateIsAsExpected(date);
+      assertNotNull(date);verifyDateIsAsExpected(date);
    }
-
 
    public void testBuildExceptionFromRackspaceUK() throws Exception {
       //build the exception with a current time matching the response time
@@ -139,7 +138,6 @@ public class NovaErrorHandlerTest {
       assertAfterTime(retryEx, 0);
    }
 
-
    public void testEmptyPayload() {
       assertBadJsonHandledAsInsufficientResources("");
    }
@@ -183,6 +181,7 @@ public class NovaErrorHandlerTest {
     * @param date date to validate
     */
    private void verifyDateIsAsExpected(Date date) {
+      assertNotNull(date,"Null date");
       Calendar calendar = new GregorianCalendar();
       calendar.setTime(date);
       assertEquals(calendar.get(Calendar.MONTH), Calendar.NOVEMBER);
