@@ -25,8 +25,6 @@ import java.util.Date;
  * This exception is raised when the Nova endpoint returns with a response telling the caller to make
  * the same request later.
  * The "later" can be specified as a delta from the current time or as an absolute time.
- * In either constructor, a reference time must be supplied to calculate the offset in milliseconds.
- *
  */
 public class RetryLaterException extends RuntimeException {
 
@@ -35,27 +33,36 @@ public class RetryLaterException extends RuntimeException {
     */
    private final long retryAfter;
 
+   /***
+    * Raw JSON
+    */
+   private final String json;
+
    /**
-    * Construct an exception
+    * Construct an exception instance to happen at a time in the future
     * @param message message
     * @param retryAfter retry after time. Negative values are converted to zero
+    * @param json the original JSON
     */
-   public RetryLaterException(String message, long retryAfter) {
+   public RetryLaterException(String message, long retryAfter, String json) {
       super(message);
       this.retryAfter = Math.max(retryAfter, 0);
+      this.json = json;
    }
 
-/**
+   /**
     * Construct an exception using the specified retry date, and the reference date used to
     * calculate the difference.
     * If the difference is negative, the retryAfter field is set to 0.
     * @param message exception text
     * @param retryDate date when a retry is permitted.
     * @param now current time to use when calculating the offset.
+    * @param json the original JSON
     */
-   public RetryLaterException(String message, Date retryDate, Date now) {
+   public RetryLaterException(String message, Date retryDate, Date now, String json) {
       super(message);
-      retryAfter = Math.max((retryDate.getTime()/1000 - now.getTime()/1000), 0);
+      retryAfter = Math.max((retryDate.getTime() / 1000 - now.getTime() / 1000), 0);
+      this.json = json;
    }
 
    /**
@@ -66,8 +73,17 @@ public class RetryLaterException extends RuntimeException {
       return retryAfter;
    }
 
-@Override
+   /**
+    * Get the JSON message that generated this exception
+    * @return the original JSON
+    */
+   public String getJson() {
+      return json;
+   }
+
+   @Override
    public String toString() {
-      return super.toString() + " retry after " + retryAfter + "s";
+      return super.toString() + "  --retry after " + retryAfter + "s"
+             + "\n" + json;
    }
 }

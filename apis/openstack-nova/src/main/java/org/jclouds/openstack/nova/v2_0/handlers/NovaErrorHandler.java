@@ -139,13 +139,13 @@ public class NovaErrorHandler implements HttpErrorHandler {
         Integer retryAfter = parseRetryAfterField(jsonBody);
         if (retryAfter != null) {
            return new RetryLaterException(requestLine + " failed - retry after " + retryAfter,
-                                          retryAfter);
+                                          retryAfter, "");
         }
         //next look for the retryAt field.
         Date date = parseRetryAtField(jsonBody);
         if (date != null) {
            return new RetryLaterException(requestLine + " failed - retry at " + date,
-                                          date, now);
+                                          date, now, jsonBody);
         } else {
            //parsing failed.
            return new InsufficientResourcesException(message, exception);
@@ -184,12 +184,14 @@ public class NovaErrorHandler implements HttpErrorHandler {
    }
 
    /**
-    * Take the JSON response and parse it to the "overLimit" element
+    * Take the JSON response and parse it to the "overLimit" element then get the field under it
+    * field under it.
     * @param jsonText the text to parse
+    * @param field field to resolve
     * @return null if there is no overlimit element found.
     * @throws RuntimeException on JSON parse problems.
     */
-   private String parseToOverLimitSubElement(String jsonText, String subElement) {
+   private String parseToOverLimitSubElement(String jsonText, String field) {
       JsonParser parse = new JsonParser();
       JsonElement rootElt = parse.parse(jsonText);
       if (!(rootElt instanceof JsonObject)) {
@@ -200,7 +202,7 @@ public class NovaErrorHandler implements HttpErrorHandler {
       if (overLimit == null) {
          return null;
       }
-      JsonElement jsonElement = overLimit.get(subElement);
+      JsonElement jsonElement = overLimit.get(field);
       if (jsonElement == null) {
          return null;
       }

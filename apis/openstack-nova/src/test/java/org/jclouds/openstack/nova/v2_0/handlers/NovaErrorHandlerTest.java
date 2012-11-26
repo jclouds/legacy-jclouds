@@ -19,7 +19,6 @@
 
 package org.jclouds.openstack.nova.v2_0.handlers;
 
-import org.jclouds.date.DateService;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.rest.InsufficientResourcesException;
 import org.testng.annotations.Test;
@@ -77,19 +76,20 @@ public class NovaErrorHandlerTest {
     * that the retryAfter field is picked up first
     */
    public static final String FOLSOM_JSON_WITH_RETRY_AT = "{ 'overLimit': " +
-                                            "{" +
-                                            " 'message': 'This request was rate-limited.', " +
-                                            " 'retryAfter': '54', " +
-                                            " 'retryAt' : '2012-11-14T21:51:28UTC'," +
-                                            " 'details': 'Only 1 POST request(s) can be made to \\'*\\' every minute.'" +
-                                            " }" +
-                                            "}";
+                                                          "{" +
+                                                          " 'message': 'This request was rate-limited.', " +
+                                                          " 'retryAfter': '54', " +
+                                                          " 'retryAt' : '2012-11-14T21:51:28UTC'," +
+                                                          " 'details': 'Only 1 POST request(s) can be made to \\'*\\' every minute.'" +
+                                                          " }" +
+                                                          "}";
 
 
    public void testParseRackspaceUKResponse() throws Exception {
       NovaErrorHandler novaErrorHandler = createErrorHandler();
       Date date = novaErrorHandler.parseRetryAtField(RACKSPACE_UK_JSON);
-      assertNotNull(date);verifyDateIsAsExpected(date);
+      assertNotNull(date);
+      verifyDateIsAsExpected(date);
    }
 
    public void testBuildExceptionFromRackspaceUK() throws Exception {
@@ -105,7 +105,7 @@ public class NovaErrorHandlerTest {
 
    public void testBuildExceptionFromRackspaceUKNegativeTime() throws Exception {
       //build the exception with a current time  the response time
-      validateRetryAtExceptionGeneration(new Date(RACKSPACE_UK_DATE.getTime()+20000), 0);
+      validateRetryAtExceptionGeneration(new Date(RACKSPACE_UK_DATE.getTime() + 20000), 0);
    }
 
    /**
@@ -181,7 +181,7 @@ public class NovaErrorHandlerTest {
     * @param date date to validate
     */
    private void verifyDateIsAsExpected(Date date) {
-      assertNotNull(date,"Null date");
+      assertNotNull(date, "Null date");
       Calendar calendar = new GregorianCalendar();
       calendar.setTime(date);
       assertEquals(calendar.get(Calendar.MONTH), Calendar.NOVEMBER);
@@ -211,7 +211,6 @@ public class NovaErrorHandlerTest {
       if (ex.getClass() != RetryLaterException.class) {
          throw ex;
       }
-      RetryLaterException retryEx = (RetryLaterException) ex;
       return (RetryLaterException) ex;
    }
 
@@ -250,8 +249,8 @@ public class NovaErrorHandlerTest {
     * @param val the value to insert. This is not quoted for JSON; use quotes if a string type is desired.
     * @return the created JSON (which may not parse, depending on the arguments)
     */
-   private String retryAtJSON(String s) {
-      return "{ 'overLimit' : { 'retryAt' : " + s + " }}";
+   private String retryAtJSON(String val) {
+      return "{ 'overLimit' : { 'retryAt' : " + val + " }}";
    }
 
    /**
