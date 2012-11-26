@@ -19,8 +19,10 @@
 package org.jclouds.aws.s3;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.aws.s3.domain.DeleteResult;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.io.Payload;
 import org.jclouds.s3.S3Client;
@@ -143,4 +145,26 @@ public interface AWSS3Client extends S3Client {
     * @return ETag of the content uploaded
     */
    String completeMultipartUpload(String bucketName, String key, String uploadId, Map<Integer, String> parts);
+
+   /**
+    * The Multi-Object Delete operation enables you to delete multiple objects from a bucket using a 
+    * single HTTP request. If you know the object keys that you want to delete, then this operation 
+    * provides a suitable alternative to sending individual delete requests (see DELETE Object), 
+    * reducing per-request overhead.
+    * 
+    * The Multi-Object Delete request contains a set of up to 1000 keys that you want to delete.
+    * 
+    * If a key does not exist is considered to be deleted. 
+    * 
+    * The Multi-Object Delete operation supports two modes for the response; verbose and quiet.
+    * By default, the operation uses verbose mode in which the response includes the result of
+    * deletion of each key in your request.
+    * 
+    * @see <a href="http://docs.amazonwebservices.com/AmazonS3/latest/API/multiobjectdeleteapi.html" />
+    * @param bucketName
+    *           namespace of the objects you are deleting
+    * @param keys
+    *           set of unique keys identifying objects
+    */
+   DeleteResult deleteObjects(String bucketName, Iterable<String> keys);
 }

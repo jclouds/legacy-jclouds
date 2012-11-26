@@ -29,8 +29,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
+import org.jclouds.aws.s3.binders.BindIterableAsPayloadToDeleteRequest;
 import org.jclouds.aws.s3.binders.BindObjectMetadataToRequest;
 import org.jclouds.aws.s3.binders.BindPartIdsAndETagsToRequest;
+import org.jclouds.aws.s3.domain.DeleteResult;
+import org.jclouds.aws.s3.xml.DeleteResultHandler;
 import org.jclouds.aws.s3.functions.ETagFromHttpResponseViaRegex;
 import org.jclouds.aws.s3.functions.ObjectMetadataKey;
 import org.jclouds.aws.s3.functions.UploadIdFromHttpResponseViaRegex;
@@ -46,6 +49,7 @@ import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SkipEncoding;
+import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.s3.Bucket;
 import org.jclouds.s3.S3AsyncClient;
@@ -111,5 +115,16 @@ public interface AWSS3AsyncClient extends S3AsyncClient {
             @Bucket @EndpointParam(parser = AssignCorrectHostnameForBucket.class) @BinderParam(BindAsHostPrefixIfConfigured.class) @ParamValidators(BucketNameValidator.class) String bucketName,
             @PathParam("key") String key, @QueryParam("uploadId") String uploadId,
             @BinderParam(BindPartIdsAndETagsToRequest.class) Map<Integer, String> parts);
+
+   /**
+    * @see AWSS3Client#deleteObjects
+    */
+   @POST                              
+   @Path("/")
+   @QueryParams(keys = "delete")
+   @XMLResponseParser(DeleteResultHandler.class)
+   ListenableFuture<DeleteResult> deleteObjects(
+      @Bucket @EndpointParam(parser = AssignCorrectHostnameForBucket.class) @BinderParam(BindAsHostPrefixIfConfigured.class) @ParamValidators(BucketNameValidator.class) String bucketName,
+      @BinderParam(BindIterableAsPayloadToDeleteRequest.class) Iterable<String> keys);
 
 }
