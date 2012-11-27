@@ -113,22 +113,24 @@ public class JodaDateService implements DateService {
    public final Date iso8601DateParse(String toParse) {
       if (toParse.length() < 10)
          throw new IllegalArgumentException("incorrect date format " + toParse);
-      String tz = findTZ(toParse);
-      toParse = trimToMillis(toParse);
-      toParse = trimTZ(toParse);
-      toParse += tz;
+      toParse = adjustTz(toParse);
       if (toParse.charAt(10) == ' ')
          toParse = new StringBuilder(toParse).replace(10, 11, "T").toString();
       return iso8601DateFormatter.parseDateTime(toParse).toDate();
    }
 
-   public final Date iso8601SecondsDateParse(String toParse) {
-      if (toParse.length() < 10)
-         throw new IllegalArgumentException("incorrect date format " + toParse);
+   private String adjustTz(String toParse) {
       String tz = findTZ(toParse);
       toParse = trimToMillis(toParse);
       toParse = trimTZ(toParse);
       toParse += tz;
+      return toParse.replace("UTC", "");
+   }
+
+   public final Date iso8601SecondsDateParse(String toParse) {
+      if (toParse.length() < 10)
+         throw new IllegalArgumentException("incorrect date format " + toParse);
+      toParse = adjustTz(toParse);
       return iso8601SecondsDateFormatter.parseDateTime(toParse).toDate();
    }
    
