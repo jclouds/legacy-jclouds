@@ -180,7 +180,12 @@ public class DateServiceTest extends PerformanceTest {
       Date date = dateService.fromSeconds(seconds);
       assertEquals(dateService.iso8601SecondsDateFormat(date), "2009-09-26T23:37:05Z");
    }
-
+   
+   @Test
+   void testUTCIsGMT() {
+      assertEquals(dateService.iso8601SecondsDateParse("2012-11-26T17:32:31UTC+0000").getTime(), dateService.iso8601SecondsDateParse("2012-11-26T17:32:31UTC+0000").getTime());
+   }
+   
    @Test
    void testTz() {
       assertEquals(dateService.iso8601SecondsDateParse("2011-05-26T02:14:13-04:00").getTime(), 1306390453000l);
