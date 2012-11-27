@@ -21,13 +21,11 @@ package org.jclouds.cloudstack.features;
 import java.lang.reflect.Method;
 
 import org.jclouds.cloudstack.domain.ExtractMode;
-import org.jclouds.cloudstack.domain.ISO;
 import org.jclouds.cloudstack.domain.PermissionOperation;
 import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.AccountInDomainOptions;
 import org.jclouds.cloudstack.options.DeleteISOOptions;
 import org.jclouds.cloudstack.options.ExtractISOOptions;
-import org.jclouds.cloudstack.options.ListISOsOptions;
 import org.jclouds.cloudstack.options.RegisterISOOptions;
 import org.jclouds.cloudstack.options.UpdateISOOptions;
 import org.jclouds.cloudstack.options.UpdateISOPermissionsOptions;
@@ -78,53 +76,6 @@ public class ISOAsyncClientTest extends BaseCloudStackAsyncClientTest<ISOAsyncCl
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, UnwrapOnlyJsonValue.class);
-      assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
-
-      checkFilters(httpRequest);
-   }
-
-   public void testGetISO() throws NoSuchMethodException {
-      Method method = ISOAsyncClient.class.getMethod("getISO", String.class);
-      HttpRequest httpRequest = processor.createRequest(method, 3);
-
-      assertRequestLineEquals(httpRequest,
-         "GET http://localhost:8080/client/api?response=json&command=listIsos&listAll=true&id=3 HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
-      assertPayloadEquals(httpRequest, null, null, false);
-
-      assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
-
-      checkFilters(httpRequest);
-   }
-
-   public void testListISOs() throws NoSuchMethodException {
-      Method method = ISOAsyncClient.class.getMethod("listISOs", ListISOsOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method);
-
-      assertRequestLineEquals(httpRequest,
-         "GET http://localhost:8080/client/api?response=json&command=listIsos&listAll=true HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
-      assertPayloadEquals(httpRequest, null, null, false);
-
-      assertResponseParserClassEquals(method, httpRequest, ParseFirstJsonValueNamed.class);
-      assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
-
-      checkFilters(httpRequest);
-   }
-
-   public void testListISOsOptions() throws NoSuchMethodException {
-      Method method = ISOAsyncClient.class.getMethod("listISOs", ListISOsOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, ListISOsOptions.Builder.accountInDomain("fred", "5").bootable().hypervisor("xen").id("3").isoFilter(ISO.ISOFilter.featured).isPublic().isReady().keyword("bob").name("bob's iso").zoneId("7"));
-
-      assertRequestLineEquals(httpRequest,
-         "GET http://localhost:8080/client/api?response=json&command=listIsos&listAll=true&account=fred&domainid=5&bootable=true&hypervisor=xen&id=3&isofilter=featured&ispublic=true&isready=true&keyword=bob&name=bob%27s%20iso&zoneid=7 HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
-      assertPayloadEquals(httpRequest, null, null, false);
-
-      assertResponseParserClassEquals(method, httpRequest, ParseFirstJsonValueNamed.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
 

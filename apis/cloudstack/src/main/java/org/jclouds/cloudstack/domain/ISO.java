@@ -435,7 +435,7 @@ public class ISO {
    private final String zoneName;
 
    @ConstructorProperties({
-         "id", "account", "accountid", "bootable", "checksum", "created", "crossZones", "displaytext", "domain", "domainId", "format", "hostid", "hostname", "hypervisor", "isextractable", "isfeatured", "ispublic", "isready", "jobid", "jobstatus", "name", "ostypeid", "ostypename", "passwordenabled", "removed", "size", "sourcetemplateid", "status", "templatetag", "templatetype", "zoneid", "zonename"
+         "id", "account", "accountid", "bootable", "checksum", "created", "crossZones", "displaytext", "domain", "domainid", "format", "hostid", "hostname", "hypervisor", "isextractable", "isfeatured", "ispublic", "isready", "jobid", "jobstatus", "name", "ostypeid", "ostypename", "passwordenabled", "removed", "size", "sourcetemplateid", "status", "templatetag", "templatetype", "zoneid", "zonename"
    })
    protected ISO(String id, @Nullable String account, @Nullable String accountId, boolean bootable, @Nullable String checksum,
                  @Nullable Date created, boolean crossZones, @Nullable String displayText, @Nullable String domain,
