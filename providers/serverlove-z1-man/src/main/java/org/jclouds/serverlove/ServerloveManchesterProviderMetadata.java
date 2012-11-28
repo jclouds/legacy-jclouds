@@ -61,7 +61,7 @@ public class ServerloveManchesterProviderMetadata extends BaseProviderMetadata {
       protected Builder() {
          id("serverlove-z1-man")
          .name("Serverlove Manchester")
-         .apiMetadata(new ElasticStackApiMetadata())
+         .apiMetadata(new ElasticStackApiMetadata().toBuilder().version("2.0").build())
          .homepage(URI.create("http://www.serverlove.com"))
          .console(URI.create("http://www.serverlove.com/accounts"))
          .iso3166Codes("GB-MAN")
