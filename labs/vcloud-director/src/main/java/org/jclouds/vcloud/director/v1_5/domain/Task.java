@@ -401,39 +401,12 @@ public class Task extends Entity {
       if (o == null || getClass() != o.getClass())
          return false;
       Task that = Task.class.cast(o);
-      return super.equals(that) &&
-            equal(this.error, that.error) && equal(this.org, that.org) &&
-            equal(this.progress, that.progress) && equal(this.status, that.status) &&
-            equal(this.operation, that.operation) && equal(this.operationName, that.operationName) &&
-            datesEqual(this.startTime, that.startTime) &&
-            datesEqual(this.endTime, that.endTime) &&
-            datesEqual(this.expiryTime, that.expiryTime);
-   }
-
-   private boolean datesEqual(Date date1, Date date2) {
-      Date cDate1 = null;
-      if (date1 != null) {
-         Calendar c1 = Calendar.getInstance();
-         c1.setTime(date1);
-         c1.clear(Calendar.MILLISECOND);
-         cDate1 = c1.getTime();
-      }
-
-      Date cDate2 = null;
-      if (date2 != null) {
-         Calendar c2 = Calendar.getInstance();
-         c2.setTime(date2);
-         c2.clear(Calendar.MILLISECOND);
-         cDate2 = c2.getTime();
-      }
-
-      return equal(cDate1, cDate2);
+      return super.equals(that) && equal(this.getHref(), that.getHref());
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(super.hashCode(), error, org, progress, status, operation, operationName,
-            startTime, endTime, expiryTime);
+      return Objects.hashCode(super.hashCode(), getHref());
    }
 
    @Override
