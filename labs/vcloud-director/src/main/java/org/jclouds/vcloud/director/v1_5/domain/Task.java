@@ -21,6 +21,7 @@ package org.jclouds.vcloud.director.v1_5.domain;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -49,14 +50,14 @@ import com.google.common.collect.Maps;
  * </pre>
  *
  *  TODO: this object and the hierarchy is wrong.  it is literally a Task with a Task container.  please review class diagram
- * 
+ *
  * @author grkvlt@apache.org
  */
 @XmlRootElement(name = "Task")
 public class Task extends Entity {
 
    public static final String MEDIA_TYPE = VCloudDirectorMediaType.TASK;
-   
+
    @XmlType(name = "TaskStatus")
    @XmlEnum(String.class)
    public static enum Status {
@@ -75,7 +76,7 @@ public class Task extends Entity {
       /** The task was aborted by an administrative action. */
       @XmlEnumValue("aborted") ABORTED("aborted"),
       @XmlEnumValue("") UNRECOGNIZED("unrecognized");
-      
+
       public static final List<Status> ALL = ImmutableList.of(QUEUED, PRE_RUNNING, RUNNING, SUCCESS, ERROR, CANCELED, ABORTED);
 
       protected final String stringValue;
@@ -113,7 +114,7 @@ public class Task extends Entity {
 
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
-   
+
    public abstract static class Builder<B extends Builder<B>> extends Entity.Builder<B> {
 
       private Error error;
@@ -400,18 +401,12 @@ public class Task extends Entity {
       if (o == null || getClass() != o.getClass())
          return false;
       Task that = Task.class.cast(o);
-      return super.equals(that) &&
-            equal(this.error, that.error) && equal(this.org, that.org) &&
-            equal(this.progress, that.progress) && equal(this.status, that.status) &&
-            equal(this.operation, that.operation) && equal(this.operationName, that.operationName) &&
-            equal(this.startTime, that.startTime) && equal(this.endTime, that.endTime) &&
-            equal(this.expiryTime, that.expiryTime);
+      return super.equals(that) && equal(this.getHref(), that.getHref());
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(super.hashCode(), error, org, progress, status, operation, operationName,
-            startTime, endTime, expiryTime);
+      return Objects.hashCode(super.hashCode(), getHref());
    }
 
    @Override

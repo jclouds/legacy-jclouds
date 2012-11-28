@@ -22,8 +22,11 @@ import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 
+import com.google.common.net.HttpHeaders;
 import org.jclouds.dmtf.ovf.NetworkSection;
 import org.jclouds.dmtf.ovf.StartupSection;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpResponse;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Error;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
@@ -56,30 +59,34 @@ import org.testng.internal.annotations.Sets;
 
 /**
  * Allows us to test the {@link VAppApi} via its side effects.
- * 
+ *
  * @author grkvlt@apache.org
  */
 @Test(groups = { "unit", "user" }, singleThreaded = true, testName = "VAppApiExpectTest")
 public class VAppApiExpectTest extends VCloudDirectorAdminApiExpectTest {
-   
-   private String vAppId = "vapp-d0e2b6b9-4381-4ddc-9572-cdfae54059be";
-   private URI vAppURI = URI.create(endpoint + vAppId);
-   
+
+   private static final String id = "6ef7767a-9522-4f8a-aa61-772ea1dc3145";
+   private static final String vAppId = "vapp-" + id;
+   private static final String vAppUrn = "urn:vcloud:vapp:" + id;
+
+   private static final URI vAppURI = URI.create(endpoint + "/vApp/" + vAppId);
+
+
    @BeforeClass
    public void before() {
    }
-   
+
    @Test(enabled = false)//TODO
    public void testGetVapp() {
-      VCloudDirectorApi api = orderedRequestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorApi api = orderedRequestsSendResponses(loginRequest, sessionResponse,
             new VcloudHttpRequestPrimer()
                .apiCommand("GET", vAppId)
                .acceptMedia(VCloudDirectorMediaType.VAPP)
-               .httpRequestBuilder().build(), 
+               .httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer()
                .xmlFilePayload("/vApp/vApp.xml", VCloudDirectorMediaType.VAPP)
                .httpResponseBuilder().build());
-      
+
       VApp expected = getVApp();
 
       assertEquals(api.getVAppApi().get(vAppURI), expected);
@@ -87,171 +94,171 @@ public class VAppApiExpectTest extends VCloudDirectorAdminApiExpectTest {
 
    @Test(enabled = false)
    public void testEditVApp() {
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse,
          new VcloudHttpRequestPrimer()
             .apiCommand("PUT", vAppId)
             .xmlFilePayload("/vApp/editVApp.xml", VCloudDirectorMediaType.VAPP)
             .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
+            .httpRequestBuilder().build(),
          new VcloudHttpResponsePrimer()
             .xmlFilePayload("/vApp/modifiedVapp.xml", VCloudDirectorMediaType.VAPP)
             .httpResponseBuilder().build());
-		         
+
 		VApp modified = getVApp();
 		modified.setName("new-name");
 		modified.setDescription("New Description");
-		
+
 		Task expected = editVAppTask();
-		
+
 		assertEquals(api.getVAppApi().edit(vAppURI, modified), expected);
    }
 
    @Test(enabled = false)
    public void testRemoveVApp() {
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse,
          new VcloudHttpRequestPrimer()
             .apiCommand("DELETE", vAppId)
             .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
+            .httpRequestBuilder().build(),
          new VcloudHttpResponsePrimer()
             .xmlFilePayload("/vApp/removeVAppTask.xml", VCloudDirectorMediaType.TASK)
             .httpResponseBuilder().build());
-		
+
 		Task expected = removeVAppTask();
-		
+
 		assertEquals(api.getVAppApi().remove(vAppURI), expected);
    }
 
    @Test(enabled = false)
    public void testControlAccess() {
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse,
          new VcloudHttpRequestPrimer()
             .apiCommand("POST", vAppId + "/action/controlAccess")
             .xmlFilePayload("/vApp/controlAccessParams.xml", VCloudDirectorMediaType.CONTROL_ACCESS)
             .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
+            .httpRequestBuilder().build(),
          new VcloudHttpResponsePrimer()
             .xmlFilePayload("/vApp/controlAccessParams.xml", VCloudDirectorMediaType.CONTROL_ACCESS)
             .httpResponseBuilder().build());
-		
+
 		ControlAccessParams params = controlAccessParams();
-		
+
 		ControlAccessParams expected = controlAccessParams();
-		         
+
 		assertEquals(api.getVAppApi().editControlAccess(vAppURI, params), expected);
    }
 
    @Test(enabled = false)
    public void testDeploy() {
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse,
          new VcloudHttpRequestPrimer()
             .apiCommand("POST", vAppId + "/action/deploy")
             .xmlFilePayload("/vApp/deployParams.xml", VCloudDirectorMediaType.DEPLOY_VAPP_PARAMS)
             .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
+            .httpRequestBuilder().build(),
          new VcloudHttpResponsePrimer()
             .xmlFilePayload("/vApp/deployTask.xml", VCloudDirectorMediaType.TASK)
             .httpResponseBuilder().build());
-      
+
       DeployVAppParams params = DeployVAppParams.builder()
             .build();
-		
+
 		Task expected = deployTask();
-		
+
 		assertEquals(api.getVAppApi().deploy(vAppURI, params), expected);
    }
 
    @Test(enabled = false)
    public void testDiscardSuspendedState() {
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse,
          new VcloudHttpRequestPrimer()
             .apiCommand("POST", vAppId + "/action/discardSuspendedState")
             .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
+            .httpRequestBuilder().build(),
          new VcloudHttpResponsePrimer()
             .xmlFilePayload("/vApp/discardSuspendedStateTask.xml", VCloudDirectorMediaType.TASK)
             .httpResponseBuilder().build());
-		
+
 		Task expected = discardSuspendedStateTask();
-		
+
 		assertEquals(api.getVAppApi().discardSuspendedState(vAppURI), expected);
    }
 
    @Test(enabled = false)
    public void testEnterMaintenanceMode() {
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse,
          new VcloudHttpRequestPrimer()
             .apiCommand("POST", vAppId + "/action/enterMaintenanceMode")
             .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
+            .httpRequestBuilder().build(),
          new VcloudHttpResponsePrimer()
             .httpResponseBuilder().statusCode(204).build());
-		
+
 		// TODO how to test?
 		api.getVAppApi().enterMaintenanceMode(vAppURI);
    }
 
    @Test(enabled = false)
    public void testExitMaintenanceMode() {
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse,
          new VcloudHttpRequestPrimer()
             .apiCommand("POST", vAppId + "/action/exitMaintenanceMode")
             .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
+            .httpRequestBuilder().build(),
          new VcloudHttpResponsePrimer()
             .httpResponseBuilder().statusCode(204).build());
-		
+
 		// TODO how to test?
 		api.getVAppApi().exitMaintenanceMode(vAppURI);
    }
 
    @Test(enabled = false)
    public void testRecomposeVApp() {
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse,
          new VcloudHttpRequestPrimer()
             .apiCommand("POST", vAppId + "/action/recomposeVApp")
             .xmlFilePayload("/vApp/recomposeVAppParams.xml", VCloudDirectorMediaType.RECOMPOSE_VAPP_PARAMS)
             .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
+            .httpRequestBuilder().build(),
          new VcloudHttpResponsePrimer()
             .xmlFilePayload("/vApp/recomposeVAppTask.xml", VCloudDirectorMediaType.TASK)
             .httpResponseBuilder().build());
-     
+
       RecomposeVAppParams params = RecomposeVAppParams.builder()
             .build();
-		
+
 		Task expected = recomposeVAppTask();
-		
+
 		assertEquals(api.getVAppApi().recompose(vAppURI, params), expected);
    }
 
    @Test(enabled = false)
    public void testUndeploy() {
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse,
          new VcloudHttpRequestPrimer()
             .apiCommand("POST", vAppId + "/action/undeploy")
             .xmlFilePayload("/vApp/undeployParams.xml", VCloudDirectorMediaType.UNDEPLOY_VAPP_PARAMS)
             .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
+            .httpRequestBuilder().build(),
          new VcloudHttpResponsePrimer()
             .xmlFilePayload("/vApp/undeployTask.xml", VCloudDirectorMediaType.TASK)
             .httpResponseBuilder().build());
-      
+
       UndeployVAppParams params = UndeployVAppParams.builder()
             .build();
-		
+
 		Task expected = undeployTask();
-		
+
 		assertEquals(api.getVAppApi().undeploy(vAppURI, params), expected);
    }
 
    @Test(enabled = false)
    public void testPowerOff() {
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse,
          new VcloudHttpRequestPrimer()
             .apiCommand("POST", vAppId + "/power/action/powerOff")
             .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
+            .httpRequestBuilder().build(),
          new VcloudHttpResponsePrimer()
             .xmlFilePayload("/vApp/powerOffTask.xml", VCloudDirectorMediaType.TASK)
             .httpResponseBuilder().build());
@@ -263,11 +270,11 @@ public class VAppApiExpectTest extends VCloudDirectorAdminApiExpectTest {
 
    @Test(enabled = false)
    public void testPowerOn() {
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse,
          new VcloudHttpRequestPrimer()
             .apiCommand("POST", vAppId + "/power/action/powerOn")
             .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
+            .httpRequestBuilder().build(),
          new VcloudHttpResponsePrimer()
             .xmlFilePayload("/vApp/powerOnTask.xml", VCloudDirectorMediaType.TASK)
             .httpResponseBuilder().build());
@@ -277,29 +284,57 @@ public class VAppApiExpectTest extends VCloudDirectorAdminApiExpectTest {
       assertEquals(api.getVAppApi().powerOn(vAppURI), expected);
    }
 
-   @Test(enabled = false)
-   public void testReboot() {
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("POST", vAppId + "/power/action/reboot")
-            .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/vApp/rebootTask.xml", VCloudDirectorMediaType.TASK)
-            .httpResponseBuilder().build());
 
+   @Test(enabled = true)
+   public void testReboot() {
+
+      URI vAppRebootUri = URI.create(endpoint + "/vApp/" + vAppId + "/power/action/reboot");
+
+      HttpRequest vAppEntityRequest = HttpRequest.builder()
+            .method("GET")
+            .endpoint(URI.create(endpoint + "/entity/" + vAppUrn))
+            .addHeader("Accept", "*/*")
+            .addHeader("x-vcloud-authorization", token)
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
+            .build();
+
+      HttpResponse vAppEntityResponse = HttpResponse.builder()
+            .payload(payloadFromResourceWithContentType("/vapp/vAppEntity.xml", VCloudDirectorMediaType.ENTITY))
+            .statusCode(200)
+            .build();
+
+      HttpRequest vAppRebootRequest = HttpRequest.builder()
+            .method("POST")
+            .endpoint(vAppRebootUri)
+            .addHeader("Accept", "application/vnd.vmware.vcloud.task+xml")
+            .addHeader("x-vcloud-authorization", token)
+            .addHeader(HttpHeaders.COOKIE, "vcloud-token=" + token)
+            .build();
+
+      HttpResponse vAppRebootResponse = HttpResponse.builder()
+            .payload(payloadFromResourceWithContentType("/vapp/vAppRebootTask.xml", VCloudDirectorMediaType.TASK))
+            .statusCode(200)
+            .build();
+
+      VCloudDirectorApi vCloudDirectorApi = requestsSendResponses(
+            loginRequest, sessionResponse,
+            vAppEntityRequest, vAppEntityResponse,
+            vAppRebootRequest, vAppRebootResponse
+      );
+
+      Task actual = vCloudDirectorApi.getVAppApi().reboot(vAppUrn);
       Task expected = rebootTask();
 
-      assertEquals(api.getVAppApi().reboot(vAppURI), expected);
+      assertEquals(actual, expected);
    }
 
    @Test(enabled = false)
    public void testReset() {
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse,
          new VcloudHttpRequestPrimer()
             .apiCommand("POST", vAppId + "/power/action/reset")
             .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
+            .httpRequestBuilder().build(),
          new VcloudHttpResponsePrimer()
             .xmlFilePayload("/vApp/resetTask.xml", VCloudDirectorMediaType.TASK)
             .httpResponseBuilder().build());
@@ -311,11 +346,11 @@ public class VAppApiExpectTest extends VCloudDirectorAdminApiExpectTest {
 
    @Test(enabled = false)
    public void testShutdown() {
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse,
          new VcloudHttpRequestPrimer()
             .apiCommand("POST", vAppId + "/power/action/shutdown")
             .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
+            .httpRequestBuilder().build(),
          new VcloudHttpResponsePrimer()
             .xmlFilePayload("/vApp/shutdownTask.xml", VCloudDirectorMediaType.TASK)
             .httpResponseBuilder().build());
@@ -327,27 +362,27 @@ public class VAppApiExpectTest extends VCloudDirectorAdminApiExpectTest {
 
    @Test(enabled = false)
    public void testSuspend() {
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse,
          new VcloudHttpRequestPrimer()
             .apiCommand("POST", vAppId + "/power/action/suspend")
             .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
+            .httpRequestBuilder().build(),
          new VcloudHttpResponsePrimer()
             .xmlFilePayload("/vApp/suspend.xml", VCloudDirectorMediaType.TASK)
             .httpResponseBuilder().build());
-		
+
 		Task expected = suspendTask();
-		
+
 		assertEquals(api.getVAppApi().suspend(vAppURI), expected);
    }
 
    @Test(enabled = false)
    public void testGetControlAccesss() {
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse,
          new VcloudHttpRequestPrimer()
             .apiCommand("GET", vAppId + "/controlAccess")
             .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
+            .httpRequestBuilder().build(),
          new VcloudHttpResponsePrimer()
             .xmlFilePayload("/vApp/getAccessControl.xml", VCloudDirectorMediaType.VAPP)
             .httpResponseBuilder().build());
@@ -359,11 +394,11 @@ public class VAppApiExpectTest extends VCloudDirectorAdminApiExpectTest {
 
    @Test(enabled = false)
    public void testGetLeaseSettingsSection() {
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse,
          new VcloudHttpRequestPrimer()
             .apiCommand("GET", vAppId + "/leaseSettingsSection")
             .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
+            .httpRequestBuilder().build(),
          new VcloudHttpResponsePrimer()
             .xmlFilePayload("/vApp/getLeaseSettingsSection.xml", VCloudDirectorMediaType.LEASE_SETTINGS_SECTION)
             .httpResponseBuilder().build());
@@ -375,83 +410,83 @@ public class VAppApiExpectTest extends VCloudDirectorAdminApiExpectTest {
 
    @Test(enabled = false)
    public void testEditLeaseSettingsSection() {
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse,
          new VcloudHttpRequestPrimer()
             .apiCommand("PUT", vAppId + "/leaseSettingsSection")
             .xmlFilePayload("/vApp/editLeaseSettingsSection.xml", VCloudDirectorMediaType.LEASE_SETTINGS_SECTION)
             .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
+            .httpRequestBuilder().build(),
          new VcloudHttpResponsePrimer()
             .xmlFilePayload("/vApp/editLeaseSettingsSectionTask.xml", VCloudDirectorMediaType.TASK)
             .httpResponseBuilder().build());
-      
+
       LeaseSettingsSection section = getLeaseSettingsSection().toBuilder()
             .build();
-		
+
 		Task expected = editLeaseSettingsSectionTask();
-		
+
 		assertEquals(api.getVAppApi().editLeaseSettingsSection(vAppURI, section), expected);
    }
 
    @Test(enabled = false)
    public void testGetNetworkConfigSection() {
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse,
          new VcloudHttpRequestPrimer()
             .apiCommand("GET", vAppId + "/networkConfigSection")
             .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
+            .httpRequestBuilder().build(),
          new VcloudHttpResponsePrimer()
             .xmlFilePayload("/vApp/getNetworkConfigSection.xml", VCloudDirectorMediaType.NETWORK_CONFIG_SECTION)
             .httpResponseBuilder().build());
-			
+
 		NetworkConfigSection expected = getNetworkConfigSection();
-		
+
 		assertEquals(api.getVAppApi().getNetworkConfigSection(vAppURI), expected);
    }
 
    @Test(enabled = false)
    public void testEditNetworkConfigSection() {
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse,
          new VcloudHttpRequestPrimer()
             .apiCommand("PUT", vAppId + "/networkConfigSection")
             .xmlFilePayload("/vApp/editNetworkConfigSection.xml", VCloudDirectorMediaType.NETWORK_CONFIG_SECTION)
             .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
+            .httpRequestBuilder().build(),
          new VcloudHttpResponsePrimer()
             .xmlFilePayload("/vApp/editNetworkConfigSectionTask.xml", VCloudDirectorMediaType.TASK)
             .httpResponseBuilder().build());
-		      
+
 		NetworkConfigSection section = getNetworkConfigSection().toBuilder()
 		      .build();
-		
+
 		Task expected = editNetworkConfigSectionTask();
-		
+
 		assertEquals(api.getVAppApi().editNetworkConfigSection(vAppURI, section), expected);
    }
 
    @Test(enabled = false)
    public void testGetNetworkSection() {
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse,
          new VcloudHttpRequestPrimer()
             .apiCommand("GET", vAppId + "/networkSection")
             .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
+            .httpRequestBuilder().build(),
          new VcloudHttpResponsePrimer()
             .xmlFilePayload("/vApp/getNetworkSection.xml", VCloudDirectorMediaType.TASK)
             .httpResponseBuilder().build());
-		
+
 		NetworkSection expected = getNetworkSection();
-		
+
 		assertEquals(api.getVAppApi().getNetworkSection(vAppURI), expected);
    }
 
    @Test(enabled = false)
    public void testGetOwner() {
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse,
          new VcloudHttpRequestPrimer()
             .apiCommand("GET", vAppId + "/owner")
             .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
+            .httpRequestBuilder().build(),
          new VcloudHttpResponsePrimer()
             .xmlFilePayload("/vApp/getOwner.xml", VCloudDirectorMediaType.OWNER)
             .httpResponseBuilder().build());
@@ -463,28 +498,28 @@ public class VAppApiExpectTest extends VCloudDirectorAdminApiExpectTest {
 
    @Test(enabled = false)
    public void testEditOwner() {
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse,
          new VcloudHttpRequestPrimer()
             .apiCommand("PUT", vAppId + "/owner")
             .xmlFilePayload("/vApp/editOwner.xml", VCloudDirectorMediaType.OWNER)
             .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
+            .httpRequestBuilder().build(),
          new VcloudHttpResponsePrimer()
             .httpResponseBuilder().statusCode(204).build());
-      
+
       Owner owner = Owner.builder()
             .build();
-		
+
 		api.getVAppApi().editOwner(vAppURI, owner);
    }
 
    @Test(enabled = false)
    public void testGetProductSections() {
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse,
          new VcloudHttpRequestPrimer()
             .apiCommand("GET", vAppId + "/productSections")
             .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
+            .httpRequestBuilder().build(),
          new VcloudHttpResponsePrimer()
             .xmlFilePayload("/vApp/getProductSections.xml", VCloudDirectorMediaType.PRODUCT_SECTION_LIST)
             .httpResponseBuilder().build());
@@ -496,12 +531,12 @@ public class VAppApiExpectTest extends VCloudDirectorAdminApiExpectTest {
 
    @Test(enabled = false)
    public void testEditProductSections() {
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse,
          new VcloudHttpRequestPrimer()
             .apiCommand("PUT", vAppId + "/productSections")
             .xmlFilePayload("/vApp/editProductSections.xml", VCloudDirectorMediaType.PRODUCT_SECTION_LIST)
             .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
+            .httpRequestBuilder().build(),
          new VcloudHttpResponsePrimer()
             .xmlFilePayload("/vApp/editProductSections.xml", VCloudDirectorMediaType.VAPP)
             .httpResponseBuilder().build());
@@ -513,37 +548,37 @@ public class VAppApiExpectTest extends VCloudDirectorAdminApiExpectTest {
 
    @Test(enabled = false)
    public void testGetStartupSection() {
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse,
          new VcloudHttpRequestPrimer()
             .apiCommand("GET", vAppId + "/startupSection")
             .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
+            .httpRequestBuilder().build(),
          new VcloudHttpResponsePrimer()
             .xmlFilePayload("/vApp/getStartupSection.xml", VCloudDirectorMediaType.STARTUP_SECTION)
             .httpResponseBuilder().build());
-		
+
 		StartupSection expected = getStartupSection();
-		
+
 		assertEquals(api.getVAppApi().getStartupSection(vAppURI), expected);
    }
 
    @Test(enabled = false)
    public void testEditStartupSection() {
-      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse,
          new VcloudHttpRequestPrimer()
             .apiCommand("PUT", vAppId + "/startupSection")
             .xmlFilePayload("/vApp/editStartupSection.xml", VCloudDirectorMediaType.STARTUP_SECTION)
             .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
+            .httpRequestBuilder().build(),
          new VcloudHttpResponsePrimer()
             .xmlFilePayload("/vApp/editStartupSectionTask.xml", VCloudDirectorMediaType.TASK)
             .httpResponseBuilder().build());
-      
+
       StartupSection section = null; // getStartupSection().toBuilder()
 //            .build();
-		
+
 		Task expected = editStartupSectionTask();
-		
+
 		assertEquals(api.getVAppApi().editStartupSection(vAppURI, section), expected);
    }
 
@@ -567,7 +602,7 @@ public class VAppApiExpectTest extends VCloudDirectorAdminApiExpectTest {
 //      <Link rel="remove" href="https://mycloud.greenhousedata.com/api/vApp/vapp-d0e2b6b9-4381-4ddc-9572-cdfae54059be"/>
 //      <Link rel="down" type="application/vnd.vmware.vcloud.owner+xml" href="https://mycloud.greenhousedata.com/api/vApp/vapp-d0e2b6b9-4381-4ddc-9572-cdfae54059be/owner"/>
 //      <Link rel="down" type="application/vnd.vmware.vcloud.metadata+xml" href="https://mycloud.greenhousedata.com/api/vApp/vapp-d0e2b6b9-4381-4ddc-9572-cdfae54059be/metadata"/>
-      
+
       return vApp;
    }
 
@@ -663,10 +698,27 @@ public class VAppApiExpectTest extends VCloudDirectorAdminApiExpectTest {
    }
 
    public static Task rebootTask() {
-      Task task = Task.builder()
+      return Task.builder()
+            .id("urn:vcloud:task:5bc25a1b-79cb-4904-b53f-4ca09088e434")
+            .name("task")
+            .href(URI.create("https://vcloudbeta.bluelock.com/api/task/5bc25a1b-79cb-4904-b53f-4ca09088e434"))
+            .link(Link.builder()
+                  .rel(Link.Rel.TASK_CANCEL)
+                  .href(URI.create("https://vcloudbeta.bluelock.com/api/task/5bc25a1b-79cb-4904-b53f-4ca09088e434/action/cancel"))
+                  .build())
+            .org(Reference.builder()
+                  .href(URI.create("https://vcloudbeta.bluelock.com/api/org/4559b367-8af2-4ee1-8429-a0d39e7df3de"))
+                  .name("jclouds")
+                  .type(VCloudDirectorMediaType.ORG)
+                  .build())
+            .operation("Rebooting Virtual Machine damn small(b7e995a7-1468-4873-af39-bc703feefd63)")
+            .operationName("vappReboot")
+            .progress(0)
+            .startTime(dateService.cDateParse("Thu Oct 25 13:39:25 EDT 2012"))
+            .expiryTime(dateService.cDateParse("Wed Jan 23 13:39:25 EST 2013"))
+            .status(Task.Status.RUNNING)
+            .type(VCloudDirectorMediaType.TASK)
             .build();
-
-      return task;
    }
 
    public static Task resetTask() {
@@ -824,7 +876,7 @@ public class VAppApiExpectTest extends VCloudDirectorAdminApiExpectTest {
    }
 
    public static VmQuestionAnswer answerQuestion() {
-      VmQuestionAnswer answer = null; // = VmQuestionAnswer.builder() 
+      VmQuestionAnswer answer = null; // = VmQuestionAnswer.builder()
 //            .build();
 
       return answer;
