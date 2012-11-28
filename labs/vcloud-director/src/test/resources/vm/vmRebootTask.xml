@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Task xmlns="http://www.vmware.com/vcloud/v1.5" status="running" startTime="2012-11-21T08:51:42.300-05:00" serviceNamespace="com.vmware.vcloud" operationName="vappRebootGuest" operation="Rebooting Virtual Machine ubuntu(dea05479-d7c1-4710-ba1a-a1a18cd0d455)" expiryTime="2013-02-19T08:51:42.300-05:00" cancelRequested="false" name="task" id="urn:vcloud:task:8d188b18-c2dd-4e29-a1b2-118e5f6a8276" type="application/vnd.vmware.vcloud.task+xml" href="https://vcloudbeta.bluelock.com/api/task/8d188b18-c2dd-4e29-a1b2-118e5f6a8276" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vmware.com/vcloud/v1.5 http://vcloudbeta.bluelock.com/api/v1.5/schema/master.xsd">
+   <Link rel="task:cancel" href="https://vcloudbeta.bluelock.com/api/task/8d188b18-c2dd-4e29-a1b2-118e5f6a8276/action/cancel"/>
+   <Owner type="application/vnd.vmware.vcloud.vm+xml" name="ubuntu" href="https://vcloudbeta.bluelock.com/api/vApp/vm-dea05479-d7c1-4710-ba1a-a1a18cd0d455"/>
+   <User type="application/vnd.vmware.admin.user+xml" name="switbeck" href="https://vcloudbeta.bluelock.com/api/admin/user/9d9a4da6-4b54-4797-98d8-068819001c0f"/>
+   <Organization type="application/vnd.vmware.vcloud.org+xml" name="jclouds" href="https://vcloudbeta.bluelock.com/api/org/4559b367-8af2-4ee1-8429-a0d39e7df3de"/>
+   <Progress>0</Progress>
+   <Details/>
+</Task>

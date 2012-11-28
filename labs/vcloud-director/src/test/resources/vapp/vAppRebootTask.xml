@@ -1,0 +1,15 @@
+<Task xmlns="http://www.vmware.com/vcloud/v1.5" status="running" startTime="2012-10-25T13:39:25.380-04:00"
+      serviceNamespace="com.vmware.vcloud" operationName="vappReboot"
+      operation="Rebooting Virtual Machine damn small(b7e995a7-1468-4873-af39-bc703feefd63)"
+      expiryTime="2013-01-23T13:39:25.380-05:00" cancelRequested="false" name="task"
+      id="urn:vcloud:task:5bc25a1b-79cb-4904-b53f-4ca09088e434" type="application/vnd.vmware.vcloud.task+xml"
+      href="https://vcloudbeta.bluelock.com/api/task/5bc25a1b-79cb-4904-b53f-4ca09088e434"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.vmware.com/vcloud/v1.5 http://vcloudbeta.bluelock.com/api/v1.5/schema/master.xsd">
+   <Link rel="task:cancel" href="https://vcloudbeta.bluelock.com/api/task/5bc25a1b-79cb-4904-b53f-4ca09088e434/action/cancel"/>
+   <Owner type="application/vnd.vmware.vcloud.vm+xml" name="foo" href="https://vcloudbeta.bluelock.com/api/vApp/vm-b7e995a7-1468-4873-af39-bc703feefd63"/>
+   <User type="application/vnd.vmware.admin.user+xml" name="switbeck" href="https://vcloudbeta.bluelock.com/api/admin/user/9d9a4da6-4b54-4797-98d8-068819001c0f"/>
+   <Organization type="application/vnd.vmware.vcloud.org+xml" name="jclouds" href="https://vcloudbeta.bluelock.com/api/org/4559b367-8af2-4ee1-8429-a0d39e7df3de"/>
+   <Progress>0</Progress>
+   <Details/>
+</Task>
