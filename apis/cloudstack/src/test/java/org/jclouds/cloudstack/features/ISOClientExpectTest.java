@@ -19,15 +19,18 @@
 package org.jclouds.cloudstack.features;
 
 import static org.jclouds.cloudstack.options.ListISOsOptions.Builder.accountInDomain;
+
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
 import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.domain.ISO;
 import org.jclouds.cloudstack.internal.BaseCloudStackExpectTest;
+import org.jclouds.cloudstack.options.RegisterISOOptions;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.rest.ResourceNotFoundException;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -162,6 +165,59 @@ public class ISOClientExpectTest extends BaseCloudStackExpectTest<ISOClient> {
       assertNull(client.getISO("018e0928-8205-4d8e-9329-f731a9ccd488"));
    }
 
+   HttpRequest registerIso = HttpRequest.builder().method("GET")
+           .endpoint("http://localhost:8080/client/api")
+           .addQueryParam("response", "json")
+           .addQueryParam("command", "registerIso")
+           .addQueryParam("name", "ubuntu10.10")
+           .addQueryParam("url", "http://ubuntu/ubuntu-10.10.iso")
+           .addQueryParam("displaytext", "ubuntu 10.10 (32 bit)")
+           .addQueryParam("zoneid", "1e0335d9-b6cc-4805-bddf-0828e66a0d01")
+           .addQueryParam("account", "root")
+           .addQueryParam("domainid", "99f4159b-c698-4bd9-b8c5-5ac462f101eb")
+           .addQueryParam("bootable", "true")
+           .addQueryParam("isextractable", "true")
+           .addQueryParam("isfeatured", "true")
+           .addQueryParam("ispublic", "true")
+           .addQueryParam("ostypeid", "1234-abcd")
+           .addQueryParam("apiKey", "identity")
+           .addQueryParam("signature", "YpFMYUUu0daLgwxNFubVfkV0Nw8%3D")
+           .addHeader("Accept", "application/json") 
+           .build();
+   
+   RegisterISOOptions registerISOOptions = RegisterISOOptions.Builder
+           .accountInDomain("root", "99f4159b-c698-4bd9-b8c5-5ac462f101eb")
+           .bootable(true).isExtractable(true).isFeatured(true).isPublic(true).osTypeId("1234-abcd");
+   
+   @Test
+   public void testRegisterISOsWhenResponseIs2xx() {
+      ISOClient client = requestSendsResponse(
+         registerIso,
+         HttpResponse.builder()
+            .statusCode(200)
+            .payload(payloadFromResource("/registerisoresponse.json"))
+            .build());
+      
+      assertEquals(client.registerISO("ubuntu10.10", "ubuntu 10.10 (32 bit)", "http://ubuntu/ubuntu-10.10.iso", "1e0335d9-b6cc-4805-bddf-0828e66a0d01", 
+              registerISOOptions),
+            ISO.builder().id("b52c509d-c6e2-452c-b6ec-aa00720ed6cd").name("ubuntu10.10").displayText("ubuntu 10.10 (32 bit)").isPublic(true)
+                .isReady(false).bootable(true).isFeatured(false).crossZones(false).osTypeId("0e0335d9-b6cc-4808-bddf-0828e66a0d03")
+                .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2012-08-21T15:45:01+0530"))
+                .osTypeName("Ubuntu 10.10 (32-bit)").account("root").domain("ROOT").domainid("99f4159b-c698-4bd9-b8c5-5ac462f101eb").status("")
+                .account("admin").zoneId("6f9a2921-b22a-4149-8b71-6ffc275a2177").zoneName("Basic1")
+                .isExtractable(false).build());
+   }
+   
+   @Test(expectedExceptions=ResourceNotFoundException.class)
+   public void testRegisterISOWhenResponseIs404() {
+       ISOClient client = requestSendsResponse(registerIso,
+          HttpResponse.builder()
+             .statusCode(404)
+             .build());
+
+       assertNull(client.registerISO("ubuntu10.10", "ubuntu 10.10 (32 bit)", "http://ubuntu/ubuntu-10.10.iso", "1e0335d9-b6cc-4805-bddf-0828e66a0d01", 
+               registerISOOptions));
+    }
    
    @Override
    protected ISOClient clientFrom(CloudStackContext context) {
