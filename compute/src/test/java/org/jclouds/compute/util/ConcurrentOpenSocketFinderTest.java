@@ -111,25 +111,18 @@ public class ConcurrentOpenSocketFinderTest {
    
    @Test
    public void testChecksSocketsConcurrently() throws Exception {
-      long delayForReachableMs = 25;
-      
       expect(nodeRunning.apply(EasyMock.<AtomicReference<NodeMetadata>>anyObject())).andReturn(true);
       replay(nodeRunning);
 
       // Can't use mock+answer for concurrency tests; EasyMock uses lock in ReplayState
       ControllableSocketOpen socketTester = new ControllableSocketOpen(ImmutableMap.of(
-                              HostAndPort.fromParts("1.2.3.4", 22), new SlowCallable<Boolean>(false, 1000),
-                              HostAndPort.fromParts("1.2.3.5", 22), new SlowCallable<Boolean>(true, delayForReachableMs)));
+                              HostAndPort.fromParts("1.2.3.4", 22), new SlowCallable<Boolean>(true, 1500),
+                              HostAndPort.fromParts("1.2.3.5", 22), new SlowCallable<Boolean>(true, 1000)));
       
       OpenSocketFinder finder = new ConcurrentOpenSocketFinder(socketTester, null, threadPool);
 
-      Stopwatch stopwatch = new Stopwatch();
-      stopwatch.start();
       HostAndPort result = finder.findOpenSocketOnNode(node, 22, 2000, TimeUnit.MILLISECONDS);
-      long timetaken = stopwatch.elapsedMillis();
-      
       assertEquals(result, HostAndPort.fromParts("1.2.3.5", 22));
-      assertTrue(timetaken >= delayForReachableMs-EARLY_GRACE && timetaken <= delayForReachableMs+SLOW_GRACE, "timetaken="+timetaken);
       verify(node);
    }
    
