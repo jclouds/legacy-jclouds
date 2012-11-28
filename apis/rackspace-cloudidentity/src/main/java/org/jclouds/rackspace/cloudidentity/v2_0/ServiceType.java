@@ -16,18 +16,18 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.rackspace.cloudloadbalancers;
 
-import org.jclouds.cloudloadbalancers.features.NodeClientLiveTest;
-import org.testng.annotations.Test;
+package org.jclouds.rackspace.cloudidentity.v2_0;
 
 /**
+ * An Rackspace service, such as Cloud Load Balancers, DNS, etc.
+ * A service provides one or more endpoints through which users can access resources and perform operations.
  * 
- * @author Dan Lo Bianco
+ * @author Everett Toews
  */
-@Test(groups = "live", singleThreaded = true, testName = "CloudLoadBalancersUKNodeClientLiveTest")
-public class CloudLoadBalancersUKNodeClientLiveTest extends NodeClientLiveTest {
-   public CloudLoadBalancersUKNodeClientLiveTest() {
-      provider = "cloudloadbalancers-uk";
-   }
+public interface ServiceType {
+   /**
+    * Cloud Load Balancers
+    */
+   public static final String LOAD_BALANCERS = "rax:load-balancer";
 }

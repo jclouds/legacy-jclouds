@@ -18,16 +18,19 @@
  */
 package org.jclouds.cloudloadbalancers.internal;
 
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
-import org.jclouds.apis.BaseViewLiveTest;
+import org.jclouds.apis.BaseContextLiveTest;
+import org.jclouds.cloudloadbalancers.CloudLoadBalancersApiMetadata;
 import org.jclouds.cloudloadbalancers.CloudLoadBalancersAsyncClient;
 import org.jclouds.cloudloadbalancers.CloudLoadBalancersClient;
 import org.jclouds.cloudloadbalancers.domain.LoadBalancer;
 import org.jclouds.cloudloadbalancers.predicates.LoadBalancerActive;
 import org.jclouds.cloudloadbalancers.predicates.LoadBalancerDeleted;
-import org.jclouds.loadbalancer.LoadBalancerServiceContext;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
+import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
 import org.testng.annotations.BeforeGroups;
@@ -42,15 +45,13 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-public class BaseCloudLoadBalancersClientLiveTest extends BaseViewLiveTest<LoadBalancerServiceContext> {
+public class BaseCloudLoadBalancersClientLiveTest extends BaseContextLiveTest<RestContext<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient>> {
 
    public BaseCloudLoadBalancersClientLiveTest() {
       provider = "cloudloadbalancers";
    }
 
    protected CloudLoadBalancersClient client;
-   protected RestContext<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient> lbContext;
-   protected String[] regions = {};
    protected Predicate<HostAndPort> socketTester;
    protected RetryablePredicate<LoadBalancer> loadBalancerActive;
    protected RetryablePredicate<LoadBalancer> loadBalancerDeleted;
@@ -61,22 +62,30 @@ public class BaseCloudLoadBalancersClientLiveTest extends BaseViewLiveTest<LoadB
    @Override
    public void setupContext() {
       super.setupContext();
-      lbContext = view.unwrap();
 
-      client = lbContext.getApi();
-
-      injector = Guice.createInjector(new Log4JLoggingModule());
-      loadBalancerActive = new RetryablePredicate<LoadBalancer>(new LoadBalancerActive(client), 300, 1, 1,
-               TimeUnit.SECONDS);
+      client = context.getApi();
+      injector = Guice.createInjector(new SLF4JLoggingModule());
+      
+      loadBalancerActive = new RetryablePredicate<LoadBalancer>(
+            new LoadBalancerActive(client), 300, 1, 1, TimeUnit.SECONDS);
       injector.injectMembers(loadBalancerActive);
-      loadBalancerDeleted = new RetryablePredicate<LoadBalancer>(new LoadBalancerDeleted(client), 300, 1, 1,
-               TimeUnit.SECONDS);
+      
+      loadBalancerDeleted = new RetryablePredicate<LoadBalancer>(
+            new LoadBalancerDeleted(client), 300, 1, 1, TimeUnit.SECONDS);
       injector.injectMembers(loadBalancerDeleted);
+      
+      Logger.getAnonymousLogger().info("running against zones " + client.getConfiguredZones());
    }
 
    @Override
-   protected TypeToken<LoadBalancerServiceContext> viewType() {
-      return TypeToken.of(LoadBalancerServiceContext.class);
+   protected Properties setupProperties() {
+      Properties props = super.setupProperties();
+      setIfTestSystemPropertyPresent(props, KeystoneProperties.CREDENTIAL_TYPE);
+      return props;
    }
-
+   
+   @Override
+   protected TypeToken<RestContext<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient>> contextType() {
+      return CloudLoadBalancersApiMetadata.CONTEXT_TOKEN;
+   }
 }

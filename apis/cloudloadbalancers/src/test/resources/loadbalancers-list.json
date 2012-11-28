@@ -20,7 +20,8 @@
             },
             "updated":{
                 "time":"2010-11-30T03:23:44Z"
-            }
+            },
+            "nodeCount":1
         },
         {
             "name":"lb-site2",
@@ -42,7 +43,8 @@
             },
             "updated":{
                 "time":"2010-11-30T03:23:44Z"
-            }
+            },
+            "nodeCount":1
         }
     ]
 }

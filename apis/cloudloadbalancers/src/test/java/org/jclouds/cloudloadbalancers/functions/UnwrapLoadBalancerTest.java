@@ -43,30 +43,31 @@ public class UnwrapLoadBalancerTest extends BaseItemParserTest<LoadBalancer> {
 
    @Override
    public String resource() {
-      return "/getloadbalancer.json";
+      return "/loadbalancer-get.json";
    }
 
    @Override
    public LoadBalancer expected() {
-      return LoadBalancer.builder().region("DFW").id(2000).name("sample-loadbalancer").protocol("HTTP").port(80)
-               .algorithm("RANDOM").status(Status.ACTIVE).connectionLoggingEnabled(true).virtualIPs(
-                        ImmutableSet.of(VirtualIP.builder().id(1000).address("206.10.10.210").type(
-                                 VirtualIP.Type.PUBLIC).ipVersion(IPVersion.IPV4).build()))
-
-               .nodes(
-                        ImmutableSet.of(Node.builder().id(1041).address("10.1.1.1").port(80).condition(
-                                 Node.Condition.ENABLED).status(Node.Status.ONLINE).build(), Node.builder().id(1411)
-                                 .address("10.1.1.2").port(80).condition(Node.Condition.ENABLED).status(
-                                          Node.Status.ONLINE).build())).sessionPersistenceType("HTTP_COOKIE")
-               // connectionThrottle({
-               // minConnections(10)
-               // maxConnections(100)
-               // maxConnectionRate(50)
-               // rateInterval(60
-               // })
-               .clusterName("c1.dfw1").created(
-                        new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-11-30T03:23:42Z")).updated(
-                        new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-11-30T03:23:44Z")).build();
+      return LoadBalancer
+            .builder()
+            .region("DFW")
+            .id(2000)
+            .name("sample-loadbalancer")
+            .protocol("HTTP")
+            .port(80)
+            .algorithm("RANDOM")
+            .status(Status.ACTIVE)
+            .connectionLoggingEnabled(true)
+            .nodeCount(2)
+            .virtualIPs(ImmutableSet.of(
+                  VirtualIP.builder().id(1000).address("206.10.10.210").type(VirtualIP.Type.PUBLIC).ipVersion(IPVersion.IPV4).build()))
+            .nodes(ImmutableSet.of(
+                  Node.builder().id(1041).address("10.1.1.1").port(80).condition(Node.Condition.ENABLED).status(Node.Status.ONLINE).build(), 
+                  Node.builder().id(1411).address("10.1.1.2").port(80).condition(Node.Condition.ENABLED).status(Node.Status.ONLINE).build()))
+            .sessionPersistenceType("HTTP_COOKIE")
+            .clusterName("c1.dfw1")
+            .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-11-30T03:23:42Z"))
+            .updated(new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-11-30T03:23:44Z")).build();
    }
 
    // add factory binding as this is not default

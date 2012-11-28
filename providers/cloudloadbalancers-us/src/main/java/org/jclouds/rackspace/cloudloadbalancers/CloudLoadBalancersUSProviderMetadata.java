@@ -18,24 +18,23 @@
  */
 package org.jclouds.rackspace.cloudloadbalancers;
 
-import static org.jclouds.Constants.PROPERTY_API_VERSION;
-import static org.jclouds.Constants.PROPERTY_ENDPOINT;
-import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
-import static org.jclouds.cloudloadbalancers.reference.Region.DFW;
-import static org.jclouds.cloudloadbalancers.reference.Region.ORD;
-import static org.jclouds.location.reference.LocationConstants.ENDPOINT;
 import static org.jclouds.location.reference.LocationConstants.ISO3166_CODES;
-import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGION;
-import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_ZONE;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_ZONES;
 
 import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.cloudloadbalancers.CloudLoadBalancersApiMetadata;
+import org.jclouds.cloudloadbalancers.config.CloudLoadBalancersRestClientModule;
+import org.jclouds.cloudloadbalancers.loadbalancer.config.CloudLoadBalancersLoadBalancerContextModule;
+import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule.ZoneModule;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
+import org.jclouds.rackspace.cloudidentity.v2_0.config.CloudIdentityAuthenticationModule;
 
-import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for Rackspace Cloud LoadBalancers US.
@@ -63,21 +62,12 @@ public class CloudLoadBalancersUSProviderMetadata extends BaseProviderMetadata {
    public CloudLoadBalancersUSProviderMetadata(Builder builder) {
       super(builder);
    }
-   public static final String[] REGIONS = {ORD, DFW};
 
    public static Properties defaultProperties() {
       Properties properties = new Properties();
-      properties.setProperty(PROPERTY_ENDPOINT, "https://auth.api.rackspacecloud.com");
-      properties.setProperty(PROPERTY_REGIONS, Joiner.on(',').join(REGIONS));
-      properties.setProperty(PROPERTY_ISO3166_CODES, "US-IL,US-TX");
-      
-      properties.setProperty(PROPERTY_REGION + "." + ORD + "." + ISO3166_CODES, "US-IL");
-      properties.setProperty(PROPERTY_REGION + "." + ORD + "." + ENDPOINT, String
-               .format("https://ord.loadbalancers.api.rackspacecloud.com/v${%s}", PROPERTY_API_VERSION));
-      
-      properties.setProperty(PROPERTY_REGION + "." + DFW + "." + ISO3166_CODES, "US-TX");
-      properties.setProperty(PROPERTY_REGION + "." + DFW + "." + ENDPOINT, String
-               .format("https://dfw.loadbalancers.api.rackspacecloud.com/v${%s}", PROPERTY_API_VERSION));
+      properties.setProperty(PROPERTY_ZONES, "ORD,DFW");
+      properties.setProperty(PROPERTY_ZONE + ".ORD." + ISO3166_CODES, "US-IL");
+      properties.setProperty(PROPERTY_ZONE + ".DFW." + ISO3166_CODES, "US-TX");
       return properties;
    }
    
@@ -86,12 +76,26 @@ public class CloudLoadBalancersUSProviderMetadata extends BaseProviderMetadata {
       protected Builder(){
          id("cloudloadbalancers-us")
          .name("Rackspace Cloud Load Balancers US")
-         .apiMetadata(new CloudLoadBalancersApiMetadata())
-         .homepage(URI.create("http://www.rackspace.com/cloud/cloud_hosting_products/loadbalancers"))
-         .console(URI.create("https://manage.rackspacecloud.com"))
-         .linkedServices("cloudloadbalancers-us", "cloudservers-us", "cloudfiles-us")
-         .iso3166Codes("US-IL","US-TX")
-         .endpoint("https://auth.api.rackspacecloud.com");
+         .apiMetadata(new CloudLoadBalancersApiMetadata().toBuilder()
+                  .identityName("${userName}")
+                  .credentialName("${apiKey}")
+                  .version("1.0")
+                  .defaultEndpoint("https://identity.api.rackspacecloud.com/v2.0/")
+                  .endpointName("Identity service URL ending in /v2.0/")
+                  .documentation(URI.create("http://docs.rackspace.com/loadbalancers/api/clb-devguide-latest/index.html"))
+                  .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
+                                              .add(CloudIdentityAuthenticationModule.class)
+                                              .add(ZoneModule.class)
+                                              .add(CloudLoadBalancersRestClientModule.class)
+                                              .add(CloudLoadBalancersLoadBalancerContextModule.class)
+                                              .build())
+                  .build())
+         .homepage(URI.create("http://www.rackspace.com/cloud/public/loadbalancers/"))
+         .console(URI.create("https://mycloud.rackspace.com"))
+         .linkedServices("rackspace-cloudservers-us", "cloudfiles-us", "rackspace-cloudblockstorage-us")
+         .iso3166Codes("US-IL", "US-TX")
+         .endpoint("https://identity.api.rackspacecloud.com/v2.0/")
+         .defaultProperties(CloudLoadBalancersApiMetadata.defaultProperties());
       }
 
       @Override

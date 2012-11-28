@@ -18,13 +18,7 @@
  */
 package org.jclouds.cloudloadbalancers.config;
 
-import static org.jclouds.util.Suppliers2.getLastValueInMap;
-
-import java.net.URI;
 import java.util.Map;
-
-import javax.inject.Named;
-import javax.inject.Singleton;
 
 import org.jclouds.cloudloadbalancers.CloudLoadBalancersAsyncClient;
 import org.jclouds.cloudloadbalancers.CloudLoadBalancersClient;
@@ -34,28 +28,16 @@ import org.jclouds.cloudloadbalancers.features.NodeAsyncClient;
 import org.jclouds.cloudloadbalancers.features.NodeClient;
 import org.jclouds.cloudloadbalancers.functions.ConvertLB;
 import org.jclouds.cloudloadbalancers.handlers.ParseCloudLoadBalancersErrorFromHttpResponse;
-import org.jclouds.cloudloadbalancers.location.RegionUrisFromPropertiesAndAccountIDPathSuffix;
-import org.jclouds.cloudloadbalancers.reference.RackspaceConstants;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
-import org.jclouds.location.config.LocationModule;
-import org.jclouds.location.suppliers.RegionIdToURISupplier;
-import org.jclouds.openstack.keystone.v1_1.config.AuthenticationServiceModule;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.annotations.ApiVersion;
 import org.jclouds.rest.config.RestClientModule;
-import org.jclouds.util.Suppliers2;
 
-import com.google.common.base.Function;
-import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
-import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
-import com.google.inject.Scopes;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 /**
@@ -67,47 +49,13 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
 public class CloudLoadBalancersRestClientModule extends
          RestClientModule<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient> {
 
-   public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
-            .put(LoadBalancerClient.class, LoadBalancerAsyncClient.class)//
-            .put(NodeClient.class, NodeAsyncClient.class)//
+   public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()
+            .put(LoadBalancerClient.class, LoadBalancerAsyncClient.class)
+            .put(NodeClient.class, NodeAsyncClient.class)
             .build();
 
    public CloudLoadBalancersRestClientModule() {
       super(DELEGATE_MAP);
-   }
-
-   protected void installLocations() {
-      install(new LocationModule());
-      install(new URIWithAccountIDPathSuffixAuthenticationServiceModule());
-   }
-
-   public static class URIWithAccountIDPathSuffixAuthenticationServiceModule extends AbstractModule {
-
-      @Override
-      protected void configure() {
-         install(new AuthenticationServiceModule());
-         bind(RegionIdToURISupplier.class).to(RegionUrisFromPropertiesAndAccountIDPathSuffix.class)
-                  .in(Scopes.SINGLETON);
-      }
-
-      @Provides
-      @Singleton
-      @Named(RackspaceConstants.PROPERTY_ACCOUNT_ID)
-      protected Supplier<String> accountID(RegionIdToURISupplier.Factory factory, @ApiVersion String apiVersion) {
-         return Suppliers2.compose(new Function<URI, String>() {
-
-            @Override
-            public String apply(URI arg0) {
-               return arg0.getPath().substring(arg0.getPath().lastIndexOf('/') + 1);
-            }
-
-            @Override
-            public String toString() {
-               return "getAccountIdFromCloudServers()";
-            }
-         }, getLastValueInMap(factory.createForApiTypeAndVersion("cloudServers", apiVersion)));
-
-      }
    }
 
    @Override

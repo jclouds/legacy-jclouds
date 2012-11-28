@@ -50,14 +50,13 @@ import org.testng.annotations.Test;
 public class NodeClientLiveTest extends BaseCloudLoadBalancersClientLiveTest {
    private Map<LoadBalancer, Set<Node>> nodes = new HashMap<LoadBalancer, Set<Node>>();
 
-   @Test(groups = "live")
    public void testCreateLoadBalancers() {
-      assertTrue(client.getConfiguredRegions().size() > 0, "Need to have some regions!");
-      Logger.getAnonymousLogger().info("running against regions " + client.getConfiguredRegions());
-      for (String region : client.getConfiguredRegions()) {
-         Logger.getAnonymousLogger().info("starting lb in region " + region);
-         LoadBalancer lb = client.getLoadBalancerClient(region).createLoadBalancer(
-                  LoadBalancerRequest.builder().name(prefix + "-" + region).protocol("HTTP").port(80).virtualIPType(
+      assertTrue(client.getConfiguredZones().size() > 0, "Need to have some zones!");
+      Logger.getAnonymousLogger().info("running against zones " + client.getConfiguredZones());
+      for (String zone : client.getConfiguredZones()) {
+         Logger.getAnonymousLogger().info("starting lb in zone " + zone);
+         LoadBalancer lb = client.getLoadBalancerClient(zone).createLoadBalancer(
+                  LoadBalancerRequest.builder().name(prefix + "-" + zone).protocol("HTTP").port(80).virtualIPType(
                            Type.PUBLIC).node(NodeRequest.builder().address("192.168.1.1").port(8080).build()).build());
          nodes.put(lb, new HashSet<Node>());
 
@@ -65,7 +64,7 @@ public class NodeClientLiveTest extends BaseCloudLoadBalancersClientLiveTest {
       }
    }
 
-   @Test(groups = "live", dependsOnMethods = "testCreateLoadBalancers")
+   @Test(dependsOnMethods = "testCreateLoadBalancers")
    public void testAddNodes() throws Exception {
       for (LoadBalancer lb : nodes.keySet()) {
          String region = lb.getRegion();
@@ -85,7 +84,7 @@ public class NodeClientLiveTest extends BaseCloudLoadBalancersClientLiveTest {
       }
    }
 
-   @Test(groups = "live", dependsOnMethods = "testAddNodes")
+   @Test(dependsOnMethods = "testAddNodes")
    public void testModifyNode() throws Exception {
       for (Entry<LoadBalancer, Set<Node>> entry : nodes.entrySet()) {
          for (Node n : entry.getValue()) {
@@ -102,7 +101,7 @@ public class NodeClientLiveTest extends BaseCloudLoadBalancersClientLiveTest {
       }
    }
 
-   @Test(groups = "live", dependsOnMethods = "testModifyNode")
+   @Test(dependsOnMethods = "testModifyNode")
    public void testListNodes() throws Exception {
       for (LoadBalancer lb : nodes.keySet()) {
          Set<Node> response = client.getNodeClient(lb.getRegion()).listNodes(lb.getId());
@@ -143,6 +142,7 @@ public class NodeClientLiveTest extends BaseCloudLoadBalancersClientLiveTest {
          LoadBalancerClient lbClient = client.getLoadBalancerClient(lb.getRegion());
 
          if (lbClient.getLoadBalancer(lb.getId()).getStatus() != Status.DELETED) {
+            assert loadBalancerActive.apply(lb) : lb;
             lbClient.removeLoadBalancer(lb.getId());
          }
          assert loadBalancerDeleted.apply(lb) : lb;

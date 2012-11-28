@@ -60,7 +60,7 @@ public class LoadBalancerToLoadBalancerMetadata implements Function<LoadBalancer
 
       String id = input.getRegion() + "/" + input.getId();
       // TODO Builder
-      return new LoadBalancerMetadataImpl(LoadBalancerType.LB, input.getName(), input.getName(), id, location, null,
+      return new LoadBalancerMetadataImpl(LoadBalancerType.LB, String.valueOf(input.getId()), input.getName(), id, location, null,
                ImmutableMap.<String, String> of(), Iterables.transform(input.getVirtualIPs(),
                         new Function<VirtualIP, String>() {
 

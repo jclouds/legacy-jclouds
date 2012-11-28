@@ -38,7 +38,7 @@ import org.jclouds.cloudloadbalancers.domain.LoadBalancer;
 import org.jclouds.loadbalancer.domain.LoadBalancerMetadata;
 import org.jclouds.loadbalancer.reference.LoadBalancerConstants;
 import org.jclouds.loadbalancer.strategy.ListLoadBalancersStrategy;
-import org.jclouds.location.Region;
+import org.jclouds.location.Zone;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
@@ -58,21 +58,21 @@ public class CloudLoadBalancersListLoadBalancersStrategy implements ListLoadBala
    private final CloudLoadBalancersAsyncClient aclient;
    private final Function<LoadBalancer, LoadBalancerMetadata> converter;
    private final ExecutorService executor;
-   private final Supplier<Set<String>> regions;
+   private final Supplier<Set<String>> zones;
 
    @Inject
    protected CloudLoadBalancersListLoadBalancersStrategy(CloudLoadBalancersAsyncClient aclient,
             Function<LoadBalancer, LoadBalancerMetadata> converter,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, @Region Supplier<Set<String>> regions) {
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, @Zone Supplier<Set<String>> zones) {
       this.aclient = checkNotNull(aclient, "aclient");
-      this.regions = checkNotNull(regions, "regions");
+      this.zones = checkNotNull(zones, "zones");
       this.converter = checkNotNull(converter, "converter");
       this.executor = checkNotNull(executor, "executor");
    }
 
    @Override
    public Iterable<? extends LoadBalancerMetadata> listLoadBalancers() {
-      return transform(concat(transformParallel(regions.get(), new Function<String, Future<? extends Set<LoadBalancer>>>() {
+      return transform(concat(transformParallel(zones.get(), new Function<String, Future<? extends Set<LoadBalancer>>>() {
 
          @Override
          public ListenableFuture<Set<LoadBalancer>> apply(String from) {
