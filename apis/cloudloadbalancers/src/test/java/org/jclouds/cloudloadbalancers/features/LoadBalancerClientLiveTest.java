@@ -19,9 +19,9 @@
 package org.jclouds.cloudloadbalancers.features;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
-import java.util.Arrays;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -31,6 +31,7 @@ import org.jclouds.cloudloadbalancers.domain.LoadBalancerRequest;
 import org.jclouds.cloudloadbalancers.domain.NodeRequest;
 import org.jclouds.cloudloadbalancers.domain.VirtualIP.Type;
 import org.jclouds.cloudloadbalancers.internal.BaseCloudLoadBalancersClientLiveTest;
+import org.testng.annotations.AfterGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Iterables;
@@ -46,15 +47,10 @@ public class LoadBalancerClientLiveTest extends BaseCloudLoadBalancersClientLive
    private Set<LoadBalancer> lbs = Sets.newLinkedHashSet();
 
    @Override
-   public void setupContext() {
-      super.setupContext();
-      assertEquals(client.getConfiguredRegions(), Arrays.asList(regions));
-      Logger.getAnonymousLogger().info("running against regions " + client.getConfiguredRegions());
-   }
-
-   @Override
+   @AfterGroups(groups = "live")
    protected void tearDownContext() {
-      for (LoadBalancer lb : lbs) {
+      for (LoadBalancer lb: lbs) {
+         assert loadBalancerActive.apply(lb) : lb;
          client.getLoadBalancerClient(lb.getRegion()).removeLoadBalancer(lb.getId());
          assert loadBalancerDeleted.apply(lb) : lb;
       }
@@ -62,43 +58,60 @@ public class LoadBalancerClientLiveTest extends BaseCloudLoadBalancersClientLive
    }
 
    public void testCreateLoadBalancer() throws Exception {
-      for (String region : client.getConfiguredRegions()) {
-         Logger.getAnonymousLogger().info("starting lb in region " + region);
-         LoadBalancer lb = client.getLoadBalancerClient(region).createLoadBalancer(
-                  LoadBalancerRequest.builder().name(prefix + "-" + region).protocol("HTTP").port(80).virtualIPType(
-                           Type.PUBLIC).node(NodeRequest.builder().address("192.168.1.1").port(8080).build()).build());
-         checkLBInRegion(region, lb, prefix + "-" + region);
+      for (String zone: client.getConfiguredZones()) {
+         Logger.getAnonymousLogger().info("starting lb in region " + zone);
+         
+         LoadBalancer lb = client.getLoadBalancerClient(zone).createLoadBalancer(
+               LoadBalancerRequest.builder()
+                     .name(prefix + "-" + zone)
+                     .protocol("HTTP")
+                     .port(80)
+                     .virtualIPType(Type.PUBLIC)
+                     .node(NodeRequest.builder()
+                           .address("192.168.1.1")
+                           .port(8080)
+                           .build())
+                     .build());
+         checkLBInRegion(zone, lb, prefix + "-" + zone);
+         
          assertEquals(lb.getStatus(), LoadBalancer.Status.BUILD);
+         
          lbs.add(lb);
-         assert loadBalancerActive.apply(lb) : lb;
+         
+         assertTrue(loadBalancerActive.apply(lb));
 
-         LoadBalancer newLb = client.getLoadBalancerClient(region).getLoadBalancer(lb.getId());
-         checkLBInRegion(region, newLb, prefix + "-" + region);
+         LoadBalancer newLb = client.getLoadBalancerClient(zone).getLoadBalancer(lb.getId());
+         checkLBInRegion(zone, newLb, prefix + "-" + zone);
+         
          assertEquals(newLb.getStatus(), LoadBalancer.Status.ACTIVE);
       }
    }
 
    @Test(dependsOnMethods = "testCreateLoadBalancer")
    public void testUpdateLoadBalancer() throws Exception {
-      for (LoadBalancer lb : lbs) {
+      for (LoadBalancer lb: lbs) {
          client.getLoadBalancerClient(lb.getRegion()).updateLoadBalancerAttributes(lb.getId(),
-                  LoadBalancerAttributes.Builder.name("foo" + "-" + lb.getRegion()));
-         assert loadBalancerActive.apply(lb) : lb;
+               LoadBalancerAttributes.Builder.name("foo" + "-" + lb.getRegion()));
+         
+         assertTrue(loadBalancerActive.apply(lb));
 
          LoadBalancer newLb = client.getLoadBalancerClient(lb.getRegion()).getLoadBalancer(lb.getId());
          checkLBInRegion(newLb.getRegion(), newLb, "foo" + "-" + lb.getRegion());
+         
          assertEquals(newLb.getStatus(), LoadBalancer.Status.ACTIVE);
       }
    }
 
    @Test(dependsOnMethods = "testUpdateLoadBalancer")
    public void testListLoadBalancers() throws Exception {
-      for (String region : client.getConfiguredRegions()) {
-         Set<LoadBalancer> response = client.getLoadBalancerClient(region).listLoadBalancers();
-         assert null != response;
+      for (String zone: client.getConfiguredZones()) {
+         Set<LoadBalancer> response = client.getLoadBalancerClient(zone).listLoadBalancers();
+         
+         assertNotNull(response);
          assertTrue(response.size() >= 0);
-         for (LoadBalancer lb : response) {
-            if (lb.getStatus() == LoadBalancer.Status.DELETED)
+         
+         for (LoadBalancer lb: response) {
+            if (!lbs.contains(lb))
                continue;
             assert lb.getRegion() != null : lb;
             assert lb.getName() != null : lb;
@@ -112,7 +125,8 @@ public class LoadBalancerClientLiveTest extends BaseCloudLoadBalancersClientLive
             // node info not available during list;
             assert lb.getNodes().size() == 0 : lb;
 
-            LoadBalancer getDetails = client.getLoadBalancerClient(region).getLoadBalancer(lb.getId());
+            LoadBalancer getDetails = client.getLoadBalancerClient(zone).getLoadBalancer(lb.getId());
+            
             try {
                assertEquals(getDetails.getRegion(), lb.getRegion());
                assertEquals(getDetails.getName(), lb.getName());

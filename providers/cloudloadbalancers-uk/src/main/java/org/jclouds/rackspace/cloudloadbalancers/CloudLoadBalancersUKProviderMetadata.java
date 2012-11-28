@@ -18,21 +18,24 @@
  */
 package org.jclouds.rackspace.cloudloadbalancers;
 
-import static org.jclouds.Constants.PROPERTY_API_VERSION;
-import static org.jclouds.Constants.PROPERTY_ENDPOINT;
-import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
 import static org.jclouds.cloudloadbalancers.reference.Region.LON;
-import static org.jclouds.location.reference.LocationConstants.ENDPOINT;
 import static org.jclouds.location.reference.LocationConstants.ISO3166_CODES;
-import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGION;
-import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_ZONE;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_ZONES;
 
 import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.cloudloadbalancers.CloudLoadBalancersApiMetadata;
+import org.jclouds.cloudloadbalancers.config.CloudLoadBalancersRestClientModule;
+import org.jclouds.cloudloadbalancers.loadbalancer.config.CloudLoadBalancersLoadBalancerContextModule;
+import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule.ZoneModule;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
+import org.jclouds.rackspace.cloudidentity.v2_0.config.CloudIdentityAuthenticationModule;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for Rackspace Cloud LoadBalancers UK.
@@ -60,12 +63,8 @@ public class CloudLoadBalancersUKProviderMetadata extends BaseProviderMetadata {
 
    public static Properties defaultProperties() {
       Properties properties = new Properties();
-      properties.setProperty(PROPERTY_REGIONS, LON);
-      properties.setProperty(PROPERTY_ENDPOINT, "https://lon.auth.api.rackspacecloud.com");
-      properties.setProperty(PROPERTY_ISO3166_CODES, "GB-SLG");
-      properties.setProperty(PROPERTY_REGION + "." + LON + "." + ISO3166_CODES, "GB-SLG");
-      properties.setProperty(PROPERTY_REGION + "." + LON + "." + ENDPOINT,
-            String.format("https://lon.loadbalancers.api.rackspacecloud.com/v${%s}", PROPERTY_API_VERSION));
+      properties.setProperty(PROPERTY_ZONES, LON);
+      properties.setProperty(PROPERTY_ZONE + ".LON." + ISO3166_CODES, "GB-SLG");
       return properties;
    }
    public static class Builder extends BaseProviderMetadata.Builder {
@@ -73,12 +72,26 @@ public class CloudLoadBalancersUKProviderMetadata extends BaseProviderMetadata {
       protected Builder(){
          id("cloudloadbalancers-uk")
          .name("Rackspace Cloud Load Balancers UK")
-         .apiMetadata(new CloudLoadBalancersApiMetadata())
-         .homepage(URI.create("http://www.rackspace.co.uk/cloud-hosting/cloud-products/cloud-load-balancers"))
-         .console(URI.create("https://lon.manage.rackspacecloud.com"))
-         .linkedServices("cloudloadbalancers-uk", "cloudservers-uk", "cloudfiles-uk")
+         .apiMetadata(new CloudLoadBalancersApiMetadata().toBuilder()
+                  .identityName("${userName}")
+                  .credentialName("${apiKey}")
+                  .version("1.0")
+                  .defaultEndpoint("https://lon.identity.api.rackspacecloud.com/v2.0/")
+                  .endpointName("Identity service URL ending in /v2.0/")
+                  .documentation(URI.create("http://docs.rackspace.com/loadbalancers/api/clb-devguide-latest/index.html"))
+                  .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
+                                              .add(CloudIdentityAuthenticationModule.class)
+                                              .add(ZoneModule.class)
+                                              .add(CloudLoadBalancersRestClientModule.class)
+                                              .add(CloudLoadBalancersLoadBalancerContextModule.class)
+                                              .build())
+                  .build())
+         .homepage(URI.create("http://www.rackspace.co.uk/cloud-load-balancers/"))
+         .console(URI.create("https://mycloud.rackspace.co.uk"))
+         .linkedServices("rackspace-cloudservers-uk", "cloudfiles-uk", "rackspace-cloudblockstorage-uk")
          .iso3166Codes("GB-SLG")
-         .endpoint("https://lon.auth.api.rackspacecloud.com");
+         .endpoint("https://lon.identity.api.rackspacecloud.com/v2.0/")
+         .defaultProperties(CloudLoadBalancersApiMetadata.defaultProperties());
       }
 
       @Override

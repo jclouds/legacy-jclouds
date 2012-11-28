@@ -43,7 +43,7 @@ public class UnwrapLoadBalancersTest extends BaseSetParserTest<LoadBalancer> {
 
    @Override
    public String resource() {
-      return "/listloadbalancers.json";
+      return "/loadbalancers-list.json";
    }
 
    @Override
@@ -51,18 +51,36 @@ public class UnwrapLoadBalancersTest extends BaseSetParserTest<LoadBalancer> {
 
       return ImmutableSet.of(
 
-      LoadBalancer.builder().region("DFW").name("lb-site1").id(71).protocol("HTTP").port(80).algorithm("RANDOM")
-               .status(Status.ACTIVE).virtualIPs(
-                        ImmutableSet.of(VirtualIP.builder().id(403).address("206.55.130.1").type(VirtualIP.Type.PUBLIC)
-                                 .ipVersion(VirtualIP.IPVersion.IPV4).build())).created(
-                        new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-11-30T03:23:42Z")).updated(
-                        new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-11-30T03:23:44Z")).build(),
-               LoadBalancer.builder().region("DFW").name("lb-site2").id(166).protocol("HTTP").port(80).algorithm(
-                        "RANDOM").status(Status.ACTIVE).virtualIPs(
-                        ImmutableSet.of(VirtualIP.builder().id(401).address("206.55.130.2").type(VirtualIP.Type.PUBLIC)
-                                 .ipVersion(VirtualIP.IPVersion.IPV4).build())).created(
-                        new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-11-30T03:23:42Z")).updated(
-                        new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-11-30T03:23:44Z")).build());
+            LoadBalancer
+                  .builder()
+                  .region("DFW")
+                  .name("lb-site1")
+                  .id(71)
+                  .protocol("HTTP")
+                  .port(80)
+                  .algorithm("RANDOM")
+                  .status(Status.ACTIVE)
+                  .nodeCount(1)
+                  .virtualIPs(ImmutableSet.of(
+                        VirtualIP.builder().id(403).address("206.55.130.1")
+                              .type(VirtualIP.Type.PUBLIC).ipVersion(VirtualIP.IPVersion.IPV4).build()))
+                  .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-11-30T03:23:42Z"))
+                  .updated(new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-11-30T03:23:44Z")).build(),
+            LoadBalancer
+                  .builder()
+                  .region("DFW")
+                  .name("lb-site2")
+                  .id(166)
+                  .protocol("HTTP")
+                  .port(80)
+                  .algorithm("RANDOM")
+                  .status(Status.ACTIVE)
+                  .nodeCount(1)
+                  .virtualIPs(ImmutableSet.of(
+                        VirtualIP.builder().id(401).address("206.55.130.2")
+                              .type(VirtualIP.Type.PUBLIC).ipVersion(VirtualIP.IPVersion.IPV4).build()))
+                  .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-11-30T03:23:42Z"))
+                  .updated(new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-11-30T03:23:44Z")).build());
 
    }
 

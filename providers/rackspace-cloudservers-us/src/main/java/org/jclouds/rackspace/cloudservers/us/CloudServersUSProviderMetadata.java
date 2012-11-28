@@ -83,7 +83,7 @@ public class CloudServersUSProviderMetadata extends BaseProviderMetadata {
                   .version("2")
                   .defaultEndpoint("https://identity.api.rackspacecloud.com/v2.0/")
                   .endpointName("identity service url ending in /v2.0/")
-                  .documentation(URI.create("http://docs.rackspace.com/servers/api/v2/cs-devguide/content/ch_preface.html#webhelp-currentid"))
+                  .documentation(URI.create("http://docs.rackspace.com/loadbalancers/api/v1.0/clb-devguide/content/index.html"))
                   .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
                                               .add(CloudIdentityAuthenticationModule.class)
                                               .add(ZoneModule.class)
