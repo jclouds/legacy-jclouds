@@ -44,7 +44,7 @@ public class DescribeInstancesResponseHandler extends
    private Set<Reservation<? extends RunningInstance>> reservations = Sets.newLinkedHashSet();
 
    @Inject
-   DescribeInstancesResponseHandler(DateCodecFactory dateCodecFactory,
+   public DescribeInstancesResponseHandler(DateCodecFactory dateCodecFactory,
             @Region Supplier<String> defaultRegion, Provider<RunningInstance.Builder> builderProvider) {
       super(dateCodecFactory, defaultRegion, builderProvider);
    }
