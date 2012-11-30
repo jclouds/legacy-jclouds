@@ -40,7 +40,8 @@ public class PublicIPAddressPredicates {
 
       @Override
       public boolean apply(PublicIPAddress input) {
-         return checkNotNull(input, "ipaddress").getAssociatedNetworkId().equals(networkId);
+         String inputAssociatedNetwork = checkNotNull(input, "ipaddress").getAssociatedNetworkId();
+         return inputAssociatedNetwork != null && inputAssociatedNetwork.equals(networkId);
       }
 
       @Override
