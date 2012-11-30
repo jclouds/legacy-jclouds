@@ -22,7 +22,7 @@
      :doc "A clojure binding for the jclouds AWS elastic IP address interface."}
   org.jclouds.ec2.elastic-ip2
   (:require (org.jclouds [compute2 :as compute])
-    [org.jclouds.ec2.ebs :as ebs])
+    [org.jclouds.ec2.ebs2 :as ebs])
   (:import org.jclouds.compute.domain.NodeMetadata
     (org.jclouds.ec2.domain PublicIpInstanceIdPair)))
 
