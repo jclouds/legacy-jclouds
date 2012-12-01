@@ -25,14 +25,11 @@ import static org.jclouds.Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST;
 import static org.jclouds.Constants.PROPERTY_SO_TIMEOUT;
 import static org.jclouds.Constants.PROPERTY_USER_THREADS;
 
-import java.io.IOException;
 import java.util.Properties;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
 
 import org.jclouds.http.BaseHttpCommandExecutorServiceIntegrationTest;
 import org.jclouds.http.apachehc.config.ApacheHCHttpCommandExecutorServiceModule;
-import org.testng.annotations.Test;
+import org.testng.SkipException;
 
 import com.google.inject.Module;
 
@@ -61,25 +58,18 @@ public class ApacheHCHttpCommandExecutorServiceTestDisabled extends BaseHttpComm
    }
 
    @Override
-   @Test(enabled = false)
-   public void testPostContentDisposition() throws ExecutionException, InterruptedException, TimeoutException,
-         IOException {
-      // TODO: currently times out, see issue
-      // http://code.google.com/p/jclouds/issues/detail?id=353
+   public void testPostContentDisposition() {
+      throw new SkipException("http://code.google.com/p/jclouds/issues/detail?id=353");
    }
 
    @Override
-   @Test(enabled = false)
-   public void testPostContentEncoding() throws ExecutionException, InterruptedException, TimeoutException, IOException {
-      // TODO: currently times out, see issue
-      // http://code.google.com/p/jclouds/issues/detail?id=353
+   public void testPostContentEncoding() {
+      throw new SkipException("http://code.google.com/p/jclouds/issues/detail?id=353");
    }
 
    @Override
-   @Test(enabled = false)
-   public void testPostContentLanguage() throws ExecutionException, InterruptedException, TimeoutException, IOException {
-      // TODO: currently times out, see issue
-      // http://code.google.com/p/jclouds/issues/detail?id=353
+   public void testPostContentLanguage() {
+      throw new SkipException("http://code.google.com/p/jclouds/issues/detail?id=353");
    }
 
 }

@@ -18,7 +18,16 @@
  */
 package org.jclouds.http;
 
+import static com.google.common.io.Closeables.closeQuietly;
+import static java.lang.String.format;
+import static org.jclouds.crypto.CryptoStreams.base64;
+import static org.jclouds.crypto.CryptoStreams.md5Base64;
+import static org.jclouds.http.options.GetOptions.Builder.tail;
+import static org.jclouds.io.Payloads.newFilePayload;
+import static org.jclouds.io.Payloads.newStringPayload;
+import static org.jclouds.util.Throwables2.getFirstThrowableOfType;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -27,31 +36,23 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.security.MessageDigest;
-import java.util.Collections;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.jclouds.crypto.CryptoStreams;
-import org.jclouds.http.options.GetOptions;
 import org.jclouds.io.InputSuppliers;
 import org.jclouds.io.Payload;
-import org.jclouds.io.Payloads;
 import org.jclouds.util.Strings2;
-import org.jclouds.util.Throwables2;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
-import com.google.common.io.Closeables;
 
 /**
- * Tests for functionality all HttpCommandExecutorServices must express. These tests will operate
- * against an in-memory http engine, so as to ensure end-to-end functionality works.
+ * Tests for functionality all {@link HttpCommandExecutorService http executor
+ * services} must express. These tests will operate against an in-memory http
+ * engine, so as to ensure end-to-end functionality works.
  * 
  * @author Adrian Cole
  */
@@ -59,38 +60,30 @@ import com.google.common.io.Closeables;
 public abstract class BaseHttpCommandExecutorServiceIntegrationTest extends BaseJettyTest {
 
    @Test(invocationCount = 25, timeOut = 5000)
-   public void testRequestFilter() throws MalformedURLException, ExecutionException, InterruptedException,
-         TimeoutException {
+   public void testRequestFilter() {
       assertEquals(client.downloadFilter("", "filterme").trim(), "test");
    }
 
-   // TODO: filtering redirect test
-
    @Test(invocationCount = 5, timeOut = 5000)
-   public void testGetStringWithHeader() throws MalformedURLException, ExecutionException, InterruptedException,
-         TimeoutException {
+   public void testGetStringWithHeader() {
       assertEquals(client.download("", "test").trim(), "test");
    }
 
    @Test(invocationCount = 1, timeOut = 5000)
-   public void testAlternateMethod() throws MalformedURLException, ExecutionException, InterruptedException,
-         TimeoutException {
+   public void testAlternateMethod() {
       assertEquals(client.rowdy("").trim(), XML);
    }
 
    @Test(invocationCount = 5, timeOut = 5000)
-   public void testGetString() throws MalformedURLException, ExecutionException, InterruptedException, TimeoutException {
+   public void testGetString() {
       assertEquals(client.download("").trim(), XML);
    }
 
    @Test(invocationCount = 5, timeOut = 5000)
-   public void testGetStringViaRequest() throws ExecutionException, InterruptedException, TimeoutException, IOException {
-      assertEquals(
-            Strings2.toStringAndClose(
-                  client.invoke(
-                        HttpRequest.builder().method("GET")
-                              .endpoint("http://localhost:" + testPort + "/objects/").build()).getPayload()
-                        .getInput()).trim(), XML);
+   public void testGetStringViaRequest() throws IOException {
+      HttpResponse getStringResponse = client.invoke(HttpRequest.builder().method("GET")
+            .endpoint(format("http://localhost:%d/objects/", testPort)).build());
+      assertEquals(Strings2.toString(getStringResponse.getPayload()).trim(), XML);
    }
 
    @DataProvider(name = "gets")
@@ -99,71 +92,52 @@ public abstract class BaseHttpCommandExecutorServiceIntegrationTest extends Base
    }
 
    @Test(invocationCount = 5, timeOut = 5000, dataProvider = "gets")
-   public void testGetStringSynch(String uri) throws MalformedURLException, ExecutionException, InterruptedException,
-         TimeoutException {
-      // TODO why need trim?
+   public void testGetStringSynch(String uri) {
       assertEquals(client.synch(uri).trim(), XML);
    }
 
    @Test(invocationCount = 5, timeOut = 5000)
-   public void testGetException() throws MalformedURLException, ExecutionException, InterruptedException,
-         TimeoutException {
-      assertEquals(client.downloadException("", GetOptions.Builder.tail(1)).trim(), "foo");
+   public void testGetException() {
+      assertEquals(client.downloadException("", tail(1)).trim(), "foo");
    }
 
    @Test(invocationCount = 5, timeOut = 5000)
-   public void testGetSynchException() throws MalformedURLException, ExecutionException, InterruptedException,
-         TimeoutException {
+   public void testGetSynchException() {
       assertEquals(client.synchException("", "").trim(), "foo");
    }
 
    @Test(invocationCount = 5, timeOut = 5000)
-   public void testGetStringRedirect() throws MalformedURLException, ExecutionException, InterruptedException,
-         TimeoutException {
+   public void testGetStringRedirect() {
       assertEquals(client.download("redirect").trim(), XML2);
    }
 
    @Test(invocationCount = 100, timeOut = 5000)
-   public void testGetBigFile() throws ExecutionException, InterruptedException, TimeoutException, IOException {
+   public void testGetBigFile() throws IOException {
       InputStream input = getConsitution();
       try {
-         assertEquals(CryptoStreams.md5Base64(InputSuppliers.of(input)), md5);
+         assertEquals(md5Base64(InputSuppliers.of(input)), md5);
       } catch (RuntimeException e) {
-         Closeables.closeQuietly(input);
+         closeQuietly(input);
          // since we are parsing client side, and not through a response
-         // handler, the user
-         // must retry directly. In this case, we are assuming lightning doesn't
-         // strike
-         // twice in the same spot.
-         if (Throwables2.getFirstThrowableOfType(e, IOException.class) != null) {
+         // handler, the user must retry directly. In this case, we are assuming
+         // lightning doesn't strike twice in the same spot.
+         if (getFirstThrowableOfType(e, IOException.class) != null) {
             input = getConsitution();
-            assertEquals(CryptoStreams.md5Base64(InputSuppliers.of(input)), md5);
+            assertEquals(md5Base64(InputSuppliers.of(input)), md5);
          }
+      } finally {
+         closeQuietly(input);
       }
    }
 
    private InputStream getConsitution() {
-      InputStream input = context.utils().http()
-            .get(URI.create(String.format("http://localhost:%d/%s", testPort, "101constitutions")));
-      return input;
-   }
-
-   @Test(enabled = false, invocationCount = 5, timeOut = 5000)
-   public void testGetStringPermanentRedirect() throws MalformedURLException, ExecutionException, InterruptedException,
-         TimeoutException {
-      // GetString get = factory.createGetString("permanentredirect");
-      // assert get != null;
-      // client.submit(get);
-      // assertEquals(get.get(10, TimeUnit.SECONDS).trim(), XML2);
-      // TODO assert misses are only one, as permanent redirects paths should be
-      // remembered.
+      URI constitutionUri = URI.create(format("http://localhost:%d/101constitutions", testPort));
+      return context.utils().http().get(constitutionUri);
    }
 
    /**
-    * Tests sending a big file to the server. Note: this is a heavy test, takes several minutes to
-    * finish.
-    * 
-    * @throws java.io.IOException
+    * Tests sending a big file to the server. Note: this is a heavy test, takes
+    * several minutes to finish.
     */
    @Test(invocationCount = 1)
    public void testUploadBigFile() throws IOException {
@@ -185,35 +159,30 @@ public abstract class BaseHttpCommandExecutorServiceIntegrationTest extends Base
                os.write((byte) 'a');
             }
             os.flush();
-         } catch (IOException e) {
-            throw new RuntimeException(e);
          } finally {
-            Closeables.closeQuietly(out);
+            closeQuietly(out);
          }
 
-         Payload payload = Payloads.newFilePayload(f);
+         Payload payload = newFilePayload(f);
          byte[] digest = digester.digest();
          payload.getContentMetadata().setContentMD5(digest);
          Multimap<String, String> headers = client.postPayloadAndReturnHeaders("", payload);
-         assertEquals(headers.get("x-Content-MD5"),
-               ImmutableList.of(CryptoStreams.base64(digest)));
+         assertEquals(headers.get("x-Content-MD5"), ImmutableList.of(base64(digest)));
          payload.release();
       } finally {
-         if (os != null)
-            os.close();
+         closeQuietly(os);
          if (f != null && f.exists())
             f.delete();
       }
    }
 
    @Test(invocationCount = 5, timeOut = 5000)
-   public void testPost() throws MalformedURLException, ExecutionException, InterruptedException, TimeoutException {
+   public void testPost() {
       assertEquals(client.post("", "foo").trim(), "fooPOST");
    }
 
    @Test(invocationCount = 1, timeOut = 5000)
-   public void testPostAsInputStream() throws MalformedURLException, ExecutionException, InterruptedException,
-         TimeoutException {
+   public void testPostAsInputStream() {
       AtomicInteger postFailures = new AtomicInteger();
       for (int i = 0; i < 5; i++)
          try {
@@ -221,19 +190,17 @@ public abstract class BaseHttpCommandExecutorServiceIntegrationTest extends Base
          } catch (Exception e) {
             postFailures.incrementAndGet();
          }
-      assert postFailures.get() > 0;
+      assertTrue(postFailures.get() > 0, "expected failures");
    }
 
    @Test(invocationCount = 5, timeOut = 5000)
-   public void testPostBinder() throws MalformedURLException, ExecutionException, InterruptedException,
-         TimeoutException {
+   public void testPostBinder() {
       assertEquals(client.postJson("", "foo").trim(), "{\"key\":\"foo\"}POST");
    }
 
    @Test(invocationCount = 5, timeOut = 5000)
-   public void testPostContentDisposition() throws ExecutionException, InterruptedException, TimeoutException,
-         IOException {
-      Payload payload = Payloads.newStringPayload("foo");
+   public void testPostContentDisposition() {
+      Payload payload = newStringPayload("foo");
       payload.getContentMetadata().setContentDisposition("attachment; filename=photo.jpg");
       Multimap<String, String> headers = client.postPayloadAndReturnHeaders("", payload);
       assertEquals(headers.get("x-Content-Disposition"), ImmutableList.of("attachment; filename=photo.jpg"));
@@ -241,8 +208,8 @@ public abstract class BaseHttpCommandExecutorServiceIntegrationTest extends Base
    }
 
    @Test(invocationCount = 5, timeOut = 5000)
-   public void testPostContentEncoding() throws ExecutionException, InterruptedException, TimeoutException, IOException {
-      Payload payload = Payloads.newStringPayload("foo");
+   public void testPostContentEncoding() {
+      Payload payload = newStringPayload("foo");
       payload.getContentMetadata().setContentEncoding("gzip");
       Multimap<String, String> headers = client.postPayloadAndReturnHeaders("", payload);
       assertEquals(headers.get("x-Content-Encoding"), ImmutableList.of("gzip"));
@@ -250,8 +217,8 @@ public abstract class BaseHttpCommandExecutorServiceIntegrationTest extends Base
    }
 
    @Test(invocationCount = 5, timeOut = 5000)
-   public void testPostContentLanguage() throws ExecutionException, InterruptedException, TimeoutException, IOException {
-      Payload payload = Payloads.newStringPayload("foo");
+   public void testPostContentLanguage() {
+      Payload payload = newStringPayload("foo");
       payload.getContentMetadata().setContentLanguage("mi, en");
       Multimap<String, String> headers = client.postPayloadAndReturnHeaders("", payload);
       assertEquals(headers.get("x-Content-Language"), ImmutableList.of("mi, en"));
@@ -259,24 +226,22 @@ public abstract class BaseHttpCommandExecutorServiceIntegrationTest extends Base
    }
 
    @Test(invocationCount = 5, timeOut = 5000)
-   public void testPut() throws MalformedURLException, ExecutionException, InterruptedException, TimeoutException {
+   public void testPut() {
       assertEquals(client.upload("", "foo").trim(), "fooPUT");
    }
 
    @Test(invocationCount = 5, timeOut = 5000)
-   public void testPutRedirect() throws MalformedURLException, ExecutionException, InterruptedException,
-         TimeoutException {
+   public void testPutRedirect() {
       assertEquals(client.upload("redirect", "foo").trim(), "fooPUTREDIRECT");
    }
 
    @Test(invocationCount = 5, timeOut = 5000)
-   public void testHead() throws MalformedURLException, ExecutionException, InterruptedException, TimeoutException {
-      assert client.exists("");
+   public void testHead() {
+      assertTrue(client.exists(""), "head returned false");
    }
 
    @Test(invocationCount = 5, timeOut = 5000)
-   public void testGetAndParseSax() throws MalformedURLException, ExecutionException, InterruptedException,
-         TimeoutException {
+   public void testGetAndParseSax() {
       assertEquals(client.downloadAndParse(""), "whoppers");
    }
 }
