@@ -35,12 +35,12 @@ public class PublicIPAddressPredicates {
       private final String networkId;
 
       public AssociatedWithNetwork(String networkId) {
-         this.networkId = networkId;
+         this.networkId = checkNotNull(networkId, "networkId");
       }
 
       @Override
       public boolean apply(PublicIPAddress input) {
-         return checkNotNull(input, "ipaddress").getAssociatedNetworkId().equals(networkId);
+         return networkId.equals(checkNotNull(input, "ipaddress").getAssociatedNetworkId());
       }
 
       @Override
