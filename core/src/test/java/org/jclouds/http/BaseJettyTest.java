@@ -18,21 +18,28 @@
  */
 package org.jclouds.http;
 
-import static com.google.common.base.Throwables.propagate;
-import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.base.Throwables.getStackTraceAsString;
 import static com.google.common.io.ByteStreams.copy;
 import static com.google.common.io.ByteStreams.join;
 import static com.google.common.io.ByteStreams.newInputStreamSupplier;
 import static com.google.common.io.ByteStreams.toByteArray;
 import static com.google.common.io.Closeables.closeQuietly;
+import static com.google.common.util.concurrent.Uninterruptibles.sleepUninterruptibly;
+import static javax.servlet.http.HttpServletResponse.SC_OK;
+import static javax.ws.rs.core.HttpHeaders.CONTENT_ENCODING;
+import static javax.ws.rs.core.HttpHeaders.CONTENT_LANGUAGE;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_LENGTH;
+import static org.jclouds.Constants.PROPERTY_RELAX_HOSTNAME;
+import static org.jclouds.Constants.PROPERTY_TRUST_ALL_CERTS;
+import static org.jclouds.crypto.CryptoStreams.md5Base64;
+import static org.jclouds.util.Strings2.toStringAndClose;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
-import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -41,7 +48,6 @@ import java.util.zip.GZIPInputStream;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.HttpHeaders;
 
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
@@ -50,19 +56,18 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.server.ssl.SslSelectChannelConnector;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
-import org.jclouds.Constants;
 import org.jclouds.ContextBuilder;
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.io.InputSuppliers;
 import org.jclouds.providers.AnonymousProviderMetadata;
 import org.jclouds.rest.RestContext;
-import org.jclouds.util.Strings2;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 
-import com.google.common.base.Throwables;
+import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
@@ -86,40 +91,36 @@ public abstract class BaseJettyTest {
    static final Pattern actionPattern = Pattern.compile("/objects/(.*)/action/([a-z]*);?(.*)");
 
    @BeforeTest
-   @Parameters( { "test-jetty-port" })
+   @Parameters({ "test-jetty-port" })
    public void setUpJetty(@Optional("8123") final int testPort) throws Exception {
       this.testPort = testPort;
 
       final InputSupplier<InputStream> oneHundredOneConstitutions = getTestDataSupplier();
 
-      md5 = CryptoStreams.md5Base64(oneHundredOneConstitutions);
+      md5 = md5Base64(oneHundredOneConstitutions);
 
       Handler server1Handler = new AbstractHandler() {
          public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
-                  throws IOException, ServletException {
+               throws IOException, ServletException {
             InputStream body = request.getInputStream();
             try {
                if (failIfNoContentLength(request, response)) {
                   return;
                } else if (target.indexOf("sleep") > 0) {
-                  try {
-                     Thread.sleep(100);
-                  } catch (InterruptedException e) {
-                     propagate(e);
-                  }
+                  sleepUninterruptibly(100, TimeUnit.MILLISECONDS);
                   response.setContentType("text/xml");
-                  response.setStatus(HttpServletResponse.SC_OK);
+                  response.setStatus(SC_OK);
                } else if (target.indexOf("redirect") > 0) {
                   response.sendRedirect("https://localhost:" + (testPort + 1) + "/");
                } else if (target.indexOf("101constitutions") > 0) {
                   response.setContentType("text/plain");
                   response.setHeader("Content-MD5", md5);
-                  response.setStatus(HttpServletResponse.SC_OK);
+                  response.setStatus(SC_OK);
                   copy(oneHundredOneConstitutions, response.getOutputStream());
                } else if (request.getMethod().equals("PUT")) {
                   if (request.getContentLength() > 0) {
-                     response.setStatus(HttpServletResponse.SC_OK);
-                     response.getWriter().println(Strings2.toStringAndClose(body) + "PUT");
+                     response.setStatus(SC_OK);
+                     response.getWriter().println(toStringAndClose(body) + "PUT");
                   } else {
                      response.sendError(500, "no content");
                   }
@@ -138,26 +139,24 @@ public abstract class BaseJettyTest {
                   response.sendError(404, "no content");
                } else if (request.getHeader("test") != null) {
                   response.setContentType("text/plain");
-                  response.setStatus(HttpServletResponse.SC_OK);
+                  response.setStatus(SC_OK);
                   response.getWriter().println("test");
                } else if (request.getMethod().equals("HEAD")) {
-                  /*
-                   * NOTE: by HTML specification, HEAD response MUST NOT include a body
-                   */
+                  // by HTML specification, HEAD response MUST NOT include a
+                  // body
                   response.setContentType("text/xml");
-                  response.setStatus(HttpServletResponse.SC_OK);
+                  response.setStatus(SC_OK);
                } else {
                   if (failEveryTenRequests(request, response))
                      return;
                   response.setContentType("text/xml");
-                  response.setStatus(HttpServletResponse.SC_OK);
+                  response.setStatus(SC_OK);
                   response.getWriter().println(XML);
                }
                ((Request) request).setHandled(true);
             } catch (IOException e) {
-               if (body != null)
-                  closeQuietly(body);
-               response.sendError(500, Throwables.getStackTraceAsString(e));
+               closeQuietly(body);
+               response.sendError(500, getStackTraceAsString(e));
             }
          }
 
@@ -184,44 +183,41 @@ public abstract class BaseJettyTest {
          if (request.getHeader("Content-MD5") != null) {
             String expectedMd5 = request.getHeader("Content-MD5");
             String realMd5FromRequest;
-            realMd5FromRequest = CryptoStreams.md5Base64(InputSuppliers.of(body));
+            realMd5FromRequest = md5Base64(InputSuppliers.of(body));
             boolean matched = expectedMd5.equals(realMd5FromRequest);
             if (matched) {
-               response.setStatus(HttpServletResponse.SC_OK);
+               response.setStatus(SC_OK);
                response.addHeader("x-Content-MD5", realMd5FromRequest);
             } else {
                response.sendError(500, "didn't match");
             }
          } else {
-            String responseString = (request.getContentLength() < 10240) ? Strings2.toStringAndClose(body) + "POST"
-                     : "POST";
+            String responseString = (request.getContentLength() < 10240) ? toStringAndClose(body) + "POST" : "POST";
             body = null;
-            for (String header : new String[] { "Content-Disposition", HttpHeaders.CONTENT_LANGUAGE,
-                     HttpHeaders.CONTENT_ENCODING })
+            for (String header : new String[] { "Content-Disposition", CONTENT_LANGUAGE, CONTENT_ENCODING })
                if (request.getHeader(header) != null) {
                   response.addHeader("x-" + header, request.getHeader(header));
                }
-            response.setStatus(HttpServletResponse.SC_OK);
+            response.setStatus(SC_OK);
             response.getWriter().println(responseString);
          }
       } catch (IOException e) {
-         if (body != null)
-            closeQuietly(body);
-         response.sendError(500, Throwables.getStackTraceAsString(e));
+         closeQuietly(body);
+         response.sendError(500, getStackTraceAsString(e));
       }
    }
 
    protected void setupAndStartSSLServer(final int testPort) throws Exception {
       Handler server2Handler = new AbstractHandler() {
          public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
-                  throws IOException, ServletException {
+               throws IOException, ServletException {
             InputStream body = request.getInputStream();
             try {
                if (request.getMethod().equals("PUT")) {
-                  String text = Strings2.toStringAndClose(body);
+                  String text = toStringAndClose(body);
                   body = null;
                   if (request.getContentLength() > 0) {
-                     response.setStatus(HttpServletResponse.SC_OK);
+                     response.setStatus(SC_OK);
                      response.getWriter().println(text + "PUTREDIRECT");
                   }
                } else if (request.getMethod().equals("POST")) {
@@ -231,21 +227,19 @@ public abstract class BaseJettyTest {
                      handleAction(request, response);
                   }
                } else if (request.getMethod().equals("HEAD")) {
-                  /*
-                   * NOTE: by HTML specification, HEAD response MUST NOT include a body
-                   */
+                  // by HTML specification, HEAD response MUST NOT include a
+                  // body
                   response.setContentType("text/xml");
-                  response.setStatus(HttpServletResponse.SC_OK);
+                  response.setStatus(SC_OK);
                } else {
                   response.setContentType("text/xml");
-                  response.setStatus(HttpServletResponse.SC_OK);
+                  response.setStatus(SC_OK);
                   response.getWriter().println(XML2);
                }
                ((Request) request).setHandled(true);
             } catch (IOException e) {
-               if (body != null)
-                  closeQuietly(body);
-               response.sendError(500, Throwables.getStackTraceAsString(e));
+               closeQuietly(body);
+               response.sendError(500, getStackTraceAsString(e));
             }
          }
       };
@@ -262,8 +256,8 @@ public abstract class BaseJettyTest {
       ssl.setTrustStore("src/test/resources/test.jks");
       ssl.setTrustStorePassword("jclouds");
 
-      server2.setConnectors(new Connector[]{  ssl_connector });
-     
+      server2.setConnectors(new Connector[] { ssl_connector });
+
       server2.start();
    }
 
@@ -281,18 +275,18 @@ public abstract class BaseJettyTest {
    }
 
    public static ContextBuilder newBuilder(int testPort, Properties properties, Module... connectionModules) {
-      properties.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
-      properties.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-      return ContextBuilder.newBuilder(
-                  AnonymousProviderMetadata.forClientMappedToAsyncClientOnEndpoint(IntegrationTestClient.class, IntegrationTestAsyncClient.class,
-                        "http://localhost:" + testPort))
-            .modules(ImmutableSet.<Module> copyOf(connectionModules))
-            .overrides(properties);
+      properties.setProperty(PROPERTY_TRUST_ALL_CERTS, "true");
+      properties.setProperty(PROPERTY_RELAX_HOSTNAME, "true");
+      return ContextBuilder
+            .newBuilder(
+                  AnonymousProviderMetadata.forClientMappedToAsyncClientOnEndpoint(IntegrationTestClient.class,
+                        IntegrationTestAsyncClient.class, "http://localhost:" + testPort))
+            .modules(ImmutableSet.<Module> copyOf(connectionModules)).overrides(properties);
    }
 
    @AfterTest
    public void tearDownJetty() throws Exception {
-      context.close();
+      closeQuietly(context);
       if (server2 != null)
          server2.stop();
       server.stop();
@@ -320,7 +314,7 @@ public abstract class BaseJettyTest {
    }
 
    protected boolean redirectEveryTwentyRequests(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
+         throws IOException {
       if (cycle.incrementAndGet() % 20 == 0) {
          response.sendRedirect("http://localhost:" + (testPort + 1) + "/");
          ((Request) request).setHandled(true);
@@ -355,18 +349,12 @@ public abstract class BaseJettyTest {
       if (matchFound) {
          String objectId = matcher.group(1);
          String action = matcher.group(2);
-         Map<String, String> options = newHashMap();
+         Builder<String, String> options = ImmutableMap.<String, String> builder();
          if (matcher.groupCount() == 3) {
-            String optionsGroup = matcher.group(3);
-            for (String entry : optionsGroup.split(";")) {
-               if (entry.indexOf('=') >= 0) {
-                  String[] keyValue = entry.split("=");
-                  options.put(keyValue[0], keyValue[1]);
-               }
-            }
+            options.putAll(Splitter.on(';').withKeyValueSeparator("=").split(matcher.group(3)));
          }
-         response.setStatus(HttpServletResponse.SC_OK);
-         response.getWriter().println(objectId + "->" + action + ":" + options);
+         response.setStatus(SC_OK);
+         response.getWriter().println(objectId + "->" + action + ":" + options.build());
       } else {
          response.sendError(500, "no content");
       }
