@@ -175,7 +175,7 @@ public class CloudStackComputeServiceAdapter implements
       String templateId = template.getImage().getId();
       String serviceOfferingId = template.getHardware().getId();
 
-      logger.info("serviceOfferingId %s, templateId %s, zoneId %s, options %s%n", serviceOfferingId, templateId,
+      logger.debug("serviceOfferingId %s, templateId %s, zoneId %s, options %s%n", serviceOfferingId, templateId,
          zoneId, options);
       AsyncCreateResponse job = client.getVirtualMachineClient().deployVirtualMachineInZone(zoneId, serviceOfferingId,
          templateId, options);
