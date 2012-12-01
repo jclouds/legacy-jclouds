@@ -26,7 +26,6 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 
 import org.jclouds.cloudstack.CloudStackClient;
-import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.domain.User;
 import org.jclouds.cloudstack.predicates.UserPredicates;
 import org.jclouds.logging.Logger;
@@ -66,9 +65,6 @@ public class GetCurrentUser implements Supplier<User> {
                users));
       }
 
-      if (currentUser.getAccountType() != Account.Type.USER) {
-         logger.warn("Expecting an user account: %s", currentUser);
-      }
       return currentUser;
    }
 }
