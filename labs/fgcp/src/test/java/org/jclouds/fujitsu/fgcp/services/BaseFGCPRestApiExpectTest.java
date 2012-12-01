@@ -95,8 +95,7 @@ public class BaseFGCPRestApiExpectTest extends
             + "&" + query
             + "&Locale=en"
             + "&AccessKeyId=R01ULTA5OjAwJjEyMzQ1Njc4OTAmMS4wJlNIQTF3aXRoUlNB"
-//            + "&Signature=G2rGfLAkbq0IURQfXIWYxj3BnMGbjRk4KPnZLAze3Lt4SMMRt8lkjqKvR5Cm%2BnFpDN7J6IprVCCsIrRq5BqPeXT6xtWyb6qMNds2BAr1h%2FJePGs0UosOh2tgPUMSFlZwLVjgNyrSa2zeHA3AEHjF6H1jqcWXXqfCAD4SOHaNavk%3D");
-      + "&Signature=G2rGfLAkbq0IURQfXIWYxj3BnMGbjRk4KPnZLAze3Lt4SMMRt8lkjqKvR5Cm%2BnFpDN7J6IprVCCs%0D%0AIrRq5BqPeXT6xtWyb6qMNds2BAr1h%2FJePGs0UosOh2tgPUMSFlZwLVjgNyrSa2zeHA3AEHjF6H1j%0D%0AqcWXXqfCAD4SOHaNavk%3D");
+      + "&Signature=G2rGfLAkbq0IURQfXIWYxj3BnMGbjRk4KPnZLAze3Lt4SMMRt8lkjqKvR5Cm%2BnFpDN7J6IprVCCsIrRq5BqPeXT6xtWyb6qMNds2BAr1h%2FJePGs0UosOh2tgPUMSFlZwLVjgNyrSa2zeHA3AEHjF6H1jqcWXXqfCAD4SOHaNavk%3D");
       return HttpRequest
             .builder()
             .method("GET")

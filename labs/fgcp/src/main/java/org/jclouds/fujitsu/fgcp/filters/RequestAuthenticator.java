@@ -205,8 +205,7 @@ public class RequestAuthenticator implements HttpRequestFilter, RequestSigner {
 
       try {
          signer.update(stringToSign.getBytes(Charsets.UTF_8));
-         signed = CryptoStreams.base64(signer.sign()).replace("\n", "\r\n");
-//         signed = CryptoStreams.base64(signer.sign());
+         signed = CryptoStreams.base64(signer.sign());
       } catch (SignatureException e) {
          throw new HttpException("error signing request", e);
       }
