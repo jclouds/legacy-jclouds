@@ -29,7 +29,7 @@ import java.util.Map.Entry;
 import javax.inject.Inject;
 
 import org.jclouds.cloudservers.domain.Addresses;
-import org.jclouds.encryption.internal.Base64;
+import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.MapBinder;
 import org.jclouds.rest.binders.BindToJsonPayload;
@@ -54,7 +54,7 @@ public class CreateServerOptions implements MapBinder {
 
       public File(String path, byte[] contents) {
          this.path = checkNotNull(path, "path");
-         this.contents = Base64.encodeBytes(checkNotNull(contents, "contents"));
+         this.contents = CryptoStreams.base64(checkNotNull(contents, "contents"));
          checkArgument(path.getBytes().length < 255, String.format(
                   "maximum length of path is 255 bytes.  Path specified %s is %d bytes", path, path.getBytes().length));
          checkArgument(contents.length < 10 * 1024, String.format(

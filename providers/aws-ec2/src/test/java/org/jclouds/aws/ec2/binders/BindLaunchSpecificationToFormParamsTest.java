@@ -23,8 +23,8 @@ import static org.testng.Assert.assertEquals;
 import java.net.UnknownHostException;
 
 import org.jclouds.aws.ec2.domain.LaunchSpecification;
+import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.ec2.domain.InstanceType;
-import org.jclouds.encryption.internal.Base64;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
@@ -54,7 +54,7 @@ public class BindLaunchSpecificationToFormParamsTest {
 
       assertEquals(binder.apply(spec), ImmutableMap.of("LaunchSpecification.InstanceType", "t1.micro",
             "LaunchSpecification.ImageId", "ami-123", "LaunchSpecification.UserData",
-            Base64.encodeBytes("hello".getBytes())));
+            CryptoStreams.base64("hello".getBytes())));
    }
 
    @Test

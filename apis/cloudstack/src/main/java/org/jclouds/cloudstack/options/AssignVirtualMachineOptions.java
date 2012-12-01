@@ -18,13 +18,6 @@
  */
 package org.jclouds.cloudstack.options;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.util.Map;
-
-import org.jclouds.encryption.internal.Base64;
-
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;

@@ -18,7 +18,7 @@
  */
 package org.jclouds.ec2.xml;
 
-import org.jclouds.encryption.internal.Base64;
+import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.functions.ParseSax;
 
 import com.google.common.base.Charsets;
@@ -41,7 +41,7 @@ public class GetConsoleOutputResponseHandler extends ParseSax.HandlerWithResult<
     @Override
     public void endElement(String uri, String name, String qName) {
        if (qName.equalsIgnoreCase("output")) {
-          this.output = new String(Base64.decode(currentText.toString().trim()), Charsets.UTF_8);
+          this.output = new String(CryptoStreams.base64(currentText.toString().trim()), Charsets.UTF_8);
        }
        currentText = new StringBuilder();
     }

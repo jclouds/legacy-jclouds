@@ -92,7 +92,9 @@ public class CryptoStreamsTest {
    
    @Test
    public void testBase64DecodeWithoutSinglePad() {
-      assertEquals(new String(CryptoStreams.base64("YW55IGNhcm5hbCBwbGVhc3U="), Charsets.UTF_8), "any carnal pleasu");
+      String expect =  "any carnal pleasu";
+      String compare = new String(CryptoStreams.base64("YW55IGNhcm5hbCBwbGVhc3U="), Charsets.UTF_8);
+      assertEquals(compare,expect);
       assertEquals(new String(CryptoStreams.base64("YW55IGNhcm5hbCBwbGVhc3U"), Charsets.UTF_8), "any carnal pleasu");
    }
    

@@ -23,7 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Map;
 
-import org.jclouds.encryption.internal.Base64;
+import org.jclouds.crypto.CryptoStreams;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
@@ -215,7 +215,7 @@ public class DeployVirtualMachineOptions extends AccountInDomainOptions {
       int length = checkNotNull(unencodedData, "unencodedData").length;
       checkArgument(length > 0, "userData cannot be empty");
       checkArgument(length <= 2 * 1024, "userData cannot be larger than 2kb");
-      this.queryParameters.replaceValues("userdata", ImmutableSet.of(Base64.encodeBytes(unencodedData)));
+      this.queryParameters.replaceValues("userdata", ImmutableSet.of(CryptoStreams.base64(unencodedData)));
       return this;
    }
 
