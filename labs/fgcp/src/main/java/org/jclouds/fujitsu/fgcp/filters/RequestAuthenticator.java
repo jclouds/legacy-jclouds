@@ -42,8 +42,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.Constants;
+import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.TimeStamp;
-import org.jclouds.encryption.internal.Base64;
 import org.jclouds.fujitsu.fgcp.reference.RequestParameters;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
@@ -205,8 +205,7 @@ public class RequestAuthenticator implements HttpRequestFilter, RequestSigner {
 
       try {
          signer.update(stringToSign.getBytes(Charsets.UTF_8));
-         signed = Base64.encodeBytes(signer.sign()).replace("\n", "\r\n");
-//         signed = CryptoStreams.base64(signer.sign());
+         signed = CryptoStreams.base64(signer.sign());
       } catch (SignatureException e) {
          throw new HttpException("error signing request", e);
       }
@@ -224,7 +223,7 @@ public class RequestAuthenticator implements HttpRequestFilter, RequestSigner {
 
       String signatureData = String.format("%s&%s&%s&%s", timezone, expires,
             signatureVersion, signatureMethod);
-      String accessKeyId = Base64.encodeBytes(signatureData.getBytes(Charsets.UTF_8));
+      String accessKeyId = CryptoStreams.base64(signatureData.getBytes(Charsets.UTF_8));
       return accessKeyId.replace("\n", "\r\n");
    }
 
