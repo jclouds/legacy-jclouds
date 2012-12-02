@@ -63,7 +63,7 @@ public abstract class CallerArg0ToPagedIterable<T, I extends CallerArg0ToPagedIt
          return PagedIterables.of(input);
 
       Optional<String> arg0Option = Optional.absent();
-      if (request.getCaller().get().getArgs() != null && request.getCaller().get().getArgs().length > 0) {
+      if (request.getCaller().get().getArgs().length > 0) {
          Object arg0 = request.getCaller().get().getArgs()[0];
          if (arg0 != null)
             arg0Option = Optional.of(arg0.toString());

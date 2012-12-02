@@ -19,11 +19,10 @@
 package org.jclouds.concurrent.internal;
 
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.reflect.Reflection.newProxy;
 
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
@@ -46,6 +45,7 @@ import com.google.common.base.Throwables;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.reflect.AbstractInvocationHandler;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.ProvisionException;
 
@@ -54,15 +54,13 @@ import com.google.inject.ProvisionException;
  * 
  * @author Adrian Cole
  */
-public class SyncProxy implements InvocationHandler {
+public class SyncProxy extends AbstractInvocationHandler {
 
-   @SuppressWarnings("unchecked")
    public static <T> T proxy(Function<ClassMethodArgsAndReturnVal, Optional<Object>> optionalConverter, Class<T> clazz, Object async,
          @Named("sync") LoadingCache<ClassMethodArgs, Object> delegateMap,
          Map<Class<?>, Class<?>> sync2Async, Map<String, Long> timeouts) throws IllegalArgumentException, SecurityException,
          NoSuchMethodException {
-      return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[] { clazz },
-              new SyncProxy(optionalConverter, clazz, async, delegateMap, sync2Async, timeouts));
+      return newProxy(clazz, new SyncProxy(optionalConverter, clazz, async, delegateMap, sync2Async, timeouts));
    }
 
    private final Function<ClassMethodArgsAndReturnVal, Optional<Object>> optionalConverter;
@@ -134,14 +132,9 @@ public class SyncProxy implements InvocationHandler {
       return methodNanos;
    }
 
-   public Object invoke(Object o, Method method, Object[] args) throws Exception {
-      if (method.getName().equals("equals")) {
-         return this.equals(o);
-      } else if (method.getName().equals("hashCode")) {
-         return this.hashCode();
-      } else if (method.getName().equals("toString")) {
-         return this.toString();
-      } else if (method.isAnnotationPresent(Delegate.class)) {
+   @Override
+   protected Object handleInvocation(Object o, Method method, Object[] args) throws Exception {
+      if (method.isAnnotationPresent(Delegate.class)) {
          Class<?> syncClass = Optionals2.returnTypeOrTypeOfOptional(method);
          // get the return type of the asynchronous class associated with this client
          // ex. FloatingIPClient is associated with FloatingIPAsyncClient
@@ -191,24 +184,8 @@ public class SyncProxy implements InvocationHandler {
       }
       return timeout != null ? TimeUnit.MILLISECONDS.toNanos(timeout) : null;
    }
-
+   
    @Override
-   public boolean equals(Object obj) {
-      if (obj == null || !(obj instanceof SyncProxy))
-         return false;
-      SyncProxy other = (SyncProxy) obj;
-      if (other == this)
-         return true;
-      if (other.declaring != this.declaring)
-         return false;
-      return super.equals(obj);
-   }
-
-   @Override
-   public int hashCode() {
-      return declaring.hashCode();
-   }
-
    public String toString() {
       return "Sync Proxy for: " + delegate.getClass().getSimpleName();
    }
