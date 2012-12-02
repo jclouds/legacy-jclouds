@@ -39,12 +39,14 @@ public class InstallRuby extends StatementList {
 
    public static Statement installRubyGems() {
       return new StatementList(//
+            exec("if ! hash gem 2>/dev/null; then"), //
             exec("("), //
             extractTargzAndFlattenIntoDirectory(RUBYGEMS_URI, "/tmp/rubygems"), //
             exec("{cd} /tmp/rubygems"), //
             exec("ruby setup.rb --no-format-executable"), //
             exec("{rm} -fr /tmp/rubygems"), //
             exec(")"), //
+            exec("fi"), //
             // Make sure RubyGems is up to date
             exec("gem update --system"), //
             exec("gem update --no-rdoc --no-ri"));
