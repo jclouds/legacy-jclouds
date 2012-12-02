@@ -19,7 +19,6 @@
 package org.jclouds.rest.internal;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.concurrent.ExecutionException;
@@ -28,6 +27,7 @@ import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Qualifier;
 import javax.inject.Singleton;
+import javax.ws.rs.Path;
 
 import org.jclouds.Constants;
 import org.jclouds.concurrent.ExceptionParsingListenableFuture;
@@ -51,6 +51,7 @@ import com.google.common.base.Throwables;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import com.google.common.reflect.AbstractInvocationHandler;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Binding;
@@ -88,7 +89,7 @@ import com.google.inject.util.Types;
  * @author Adrian Cole
  */
 @Singleton
-public class AsyncRestClientProxy<T> implements InvocationHandler {
+public class AsyncRestClientProxy<T> extends AbstractInvocationHandler {
    public Class<T> getDeclaring() {
       return declaring;
    }
@@ -133,14 +134,9 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
 
    };
 
-   public Object invoke(Object o, Method method, Object[] args) throws ExecutionException {
-      if (method.getName().equals("equals")) {
-         return this.equals(o);
-      } else if (method.getName().equals("toString")) {
-         return this.toString();
-      } else if (method.getName().equals("hashCode")) {
-         return this.hashCode();
-      } else if (method.isAnnotationPresent(Provides.class)) {
+   @Override
+   protected Object handleInvocation(Object proxy, Method method, Object[] args) throws ExecutionException {
+      if (method.isAnnotationPresent(Provides.class)) {
          return lookupValueFromGuice(method);
       } else if (method.isAnnotationPresent(Delegate.class)) {
          return propagateContextToDelegate(method, args);
@@ -277,23 +273,6 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
 
    public static interface Factory {
       public TransformingHttpCommand<?> create(HttpRequest request, Function<HttpResponse, ?> transformer);
-   }
-
-   @Override
-   public boolean equals(Object obj) {
-      if (obj == null || !(obj instanceof AsyncRestClientProxy<?>))
-         return false;
-      AsyncRestClientProxy<?> other = (AsyncRestClientProxy<?>) obj;
-      if (other == this)
-         return true;
-      if (other.declaring != this.declaring)
-         return false;
-      return super.equals(obj);
-   }
-
-   @Override
-   public int hashCode() {
-      return declaring.hashCode();
    }
 
    public String toString() {

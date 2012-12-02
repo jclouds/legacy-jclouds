@@ -18,6 +18,7 @@
  */
 package org.jclouds.rest.config;
 
+import static com.google.common.reflect.Reflection.newProxy;
 import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
 
 import java.lang.reflect.Method;
@@ -40,7 +41,6 @@ import org.jclouds.internal.ClassMethodArgs;
 import org.jclouds.internal.FilterStringsBoundToInjectorByName;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.location.config.LocationModule;
-import org.jclouds.rest.AsyncClientFactory;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.HttpAsyncClient;
 import org.jclouds.rest.HttpClient;
@@ -178,15 +178,14 @@ public class RestModule extends AbstractModule {
          TypeLiteral typeLiteral = TypeLiteral.get(clazz);
          RestAnnotationProcessor util = (RestAnnotationProcessor) injector.getInstance(Key.get(TypeLiteral.get(Types
                   .newParameterizedType(RestAnnotationProcessor.class, clazz))));
-         // cannot use child injectors due to the super coarse guice lock on
-         // Singleton
+         // cannot use child injectors due to the super coarse guice lock on Singleton
          util.setCaller(from);
          LoadingCache<ClassMethodArgs, Object> delegateMap = injector.getInstance(Key.get(
                   new TypeLiteral<LoadingCache<ClassMethodArgs, Object>>() {
                   }, Names.named("async")));
          AsyncRestClientProxy proxy = new AsyncRestClientProxy(injector, factory, util, typeLiteral, delegateMap);
          injector.injectMembers(proxy);
-         return AsyncClientFactory.create(clazz, proxy);
+         return newProxy(clazz, proxy);
       }
    }
 

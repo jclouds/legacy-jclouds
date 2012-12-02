@@ -94,15 +94,4 @@ public class BinderUtils {
       binder.bind(asyncClientType).toProvider(asyncProvider);
    }
 
-   @SuppressWarnings("unchecked")
-   public static <T> T newNullProxy(Class<T> clazz) {
-      return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[] { clazz }, new InvocationHandler() {
-
-         @Override
-         public Object invoke(Object proxy, Method method, Object[] args) {
-            return null;
-         }
-
-      });
-   }
 }
