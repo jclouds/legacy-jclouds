@@ -163,6 +163,7 @@ END_OF_JCLOUDS_SCRIPT
 	trap 'echo $?>$INSTANCE_HOME/rc' 0 1 2 3 15
 	setupPublicCurl || exit 1
 	installRuby || exit 1
+	if ! hash gem 2>/dev/null; then
 	(
 	mkdir /tmp/$$
 	curl -q -s -S -L --connect-timeout 10 --max-time 600 --retry 20 -X GET  http://production.cf.rubygems.org/rubygems/rubygems-1.8.10.tgz |(mkdir -p /tmp/$$ &&cd /tmp/$$ &&tar -xpzf -)
@@ -173,6 +174,7 @@ END_OF_JCLOUDS_SCRIPT
 	ruby setup.rb --no-format-executable
 	rm -fr /tmp/rubygems
 	)
+	fi
 	gem update --system
 	gem update --no-rdoc --no-ri
 	
