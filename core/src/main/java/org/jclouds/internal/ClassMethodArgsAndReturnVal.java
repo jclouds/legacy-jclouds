@@ -22,8 +22,6 @@ import static com.google.common.base.Objects.equal;
 
 import java.lang.reflect.Method;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 
@@ -68,7 +66,7 @@ public class ClassMethodArgsAndReturnVal extends ClassMethodArgs {
 
    private final Object returnVal;
 
-   public ClassMethodArgsAndReturnVal(Class<?> clazz, Method method, @Nullable Object[] args, Object returnVal) {
+   public ClassMethodArgsAndReturnVal(Class<?> clazz, Method method, Object[] args, Object returnVal) {
       super(clazz, method, args);
       this.returnVal = returnVal;
    }

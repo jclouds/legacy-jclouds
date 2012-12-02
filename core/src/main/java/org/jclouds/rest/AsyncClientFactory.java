@@ -18,7 +18,8 @@
  */
 package org.jclouds.rest;
 
-import java.lang.reflect.Proxy;
+import static com.google.common.reflect.Reflection.newProxy;
+import static com.google.inject.util.Types.newParameterizedType;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -28,7 +29,6 @@ import org.jclouds.rest.internal.AsyncRestClientProxy;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
-import com.google.inject.util.Types;
 
 /**
  * 
@@ -45,12 +45,9 @@ public class AsyncClientFactory {
 
    @SuppressWarnings("unchecked")
    public <T> T create(Class<T> clazz) {
-      return (T) create(clazz, (AsyncRestClientProxy<T>) injector.getInstance(Key.get(TypeLiteral
-               .get(Types.newParameterizedType(AsyncRestClientProxy.class, clazz)))));
+      Key<AsyncRestClientProxy<T>> key = (Key<AsyncRestClientProxy<T>>) Key.get(TypeLiteral.get(newParameterizedType(
+            AsyncRestClientProxy.class, clazz)));
+      return newProxy(clazz, injector.getInstance(key));
    }
 
-   @SuppressWarnings("unchecked")
-   public static <T> T create(Class<T> clazz, AsyncRestClientProxy<T> proxy) {
-      return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[] { clazz }, proxy);
-   }
 }

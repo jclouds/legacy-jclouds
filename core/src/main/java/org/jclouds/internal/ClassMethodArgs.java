@@ -24,8 +24,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 
@@ -48,7 +46,7 @@ public class ClassMethodArgs {
    public abstract static class Builder<B extends Builder<B>> {
       private Class<?> clazz;
       private Method method;
-      private Object[] args;
+      private Object[] args = {};
 
       @SuppressWarnings("unchecked")
       protected B self() {
@@ -96,10 +94,10 @@ public class ClassMethodArgs {
       this(builder.clazz, builder.method, builder.args);
    }
 
-   public ClassMethodArgs(Class<?> clazz, Method method, @Nullable Object[] args) {
+   public ClassMethodArgs(Class<?> clazz, Method method, Object[] args) {
       this.clazz = checkNotNull(clazz, "clazz");
       this.method = checkNotNull(method, "method");
-      this.args = args;
+      this.args = checkNotNull(args, "args");
    }
 
    public Class<?> getClazz() {
@@ -110,7 +108,7 @@ public class ClassMethodArgs {
       return method;
    }
 
-   @Nullable public Object[] getArgs() {
+   public Object[] getArgs() {
       return args;
    }
 
@@ -136,6 +134,6 @@ public class ClassMethodArgs {
 
    protected ToStringHelper string() {
       return Objects.toStringHelper("").omitNullValues().add("clazz", clazz).add("method", method)
-               .add("args", args != null ? Arrays.asList(args) : null);
+               .add("args", args.length != 0 ? Arrays.asList(args) : null);
    }
 }
