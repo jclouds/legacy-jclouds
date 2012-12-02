@@ -60,8 +60,8 @@ import org.jclouds.ContextBuilder;
 import org.jclouds.io.InputSuppliers;
 import org.jclouds.providers.AnonymousProviderMetadata;
 import org.jclouds.rest.RestContext;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 
@@ -90,7 +90,7 @@ public abstract class BaseJettyTest {
    protected String md5;
    static final Pattern actionPattern = Pattern.compile("/objects/(.*)/action/([a-z]*);?(.*)");
 
-   @BeforeTest
+   @BeforeClass
    @Parameters({ "test-jetty-port" })
    public void setUpJetty(@Optional("8123") final int testPort) throws Exception {
       this.testPort = testPort;
@@ -102,62 +102,61 @@ public abstract class BaseJettyTest {
       Handler server1Handler = new AbstractHandler() {
          public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
                throws IOException, ServletException {
-            InputStream body = request.getInputStream();
-            try {
-               if (failIfNoContentLength(request, response)) {
-                  return;
-               } else if (target.indexOf("sleep") > 0) {
-                  sleepUninterruptibly(100, TimeUnit.MILLISECONDS);
-                  response.setContentType("text/xml");
+            if (failIfNoContentLength(request, response)) {
+               return;
+            } else if (target.indexOf("sleep") > 0) {
+               sleepUninterruptibly(100, TimeUnit.MILLISECONDS);
+               response.setContentType("text/xml");
+               response.setStatus(SC_OK);
+            } else if (target.indexOf("redirect") > 0) {
+               // in OpenJDK 7.0, expect continue handling is enforced, so we
+               // have to consume the stream.
+               // http://hg.openjdk.java.net/jdk7/tl/jdk/rev/045aeb76b0ff
+               // getInputStream address the expect-continue, per jetty docs
+               // http://wiki.eclipse.org/Jetty/Feature/1xx_Responses#100_Continue
+               toStringAndClose(request.getInputStream());
+               response.sendRedirect("https://localhost:" + (testPort + 1) + "/");
+            } else if (target.indexOf("101constitutions") > 0) {
+               response.setContentType("text/plain");
+               response.setHeader("Content-MD5", md5);
+               response.setStatus(SC_OK);
+               copy(oneHundredOneConstitutions, response.getOutputStream());
+            } else if (request.getMethod().equals("PUT")) {
+               if (request.getContentLength() > 0) {
                   response.setStatus(SC_OK);
-               } else if (target.indexOf("redirect") > 0) {
-                  response.sendRedirect("https://localhost:" + (testPort + 1) + "/");
-               } else if (target.indexOf("101constitutions") > 0) {
-                  response.setContentType("text/plain");
-                  response.setHeader("Content-MD5", md5);
-                  response.setStatus(SC_OK);
-                  copy(oneHundredOneConstitutions, response.getOutputStream());
-               } else if (request.getMethod().equals("PUT")) {
-                  if (request.getContentLength() > 0) {
-                     response.setStatus(SC_OK);
-                     response.getWriter().println(toStringAndClose(body) + "PUT");
-                  } else {
-                     response.sendError(500, "no content");
-                  }
-               } else if (request.getMethod().equals("POST")) {
-                  // don't redirect large objects
-                  if (request.getContentLength() < 10240 && redirectEveryTwentyRequests(request, response))
-                     return;
-                  if (failEveryTenRequests(request, response))
-                     return;
-                  if (request.getContentLength() > 0) {
-                     handlePost(request, response);
-                  } else {
-                     handleAction(request, response);
-                  }
-               } else if (request.getHeader("range") != null) {
-                  response.sendError(404, "no content");
-               } else if (request.getHeader("test") != null) {
-                  response.setContentType("text/plain");
-                  response.setStatus(SC_OK);
-                  response.getWriter().println("test");
-               } else if (request.getMethod().equals("HEAD")) {
-                  // by HTML specification, HEAD response MUST NOT include a
-                  // body
-                  response.setContentType("text/xml");
-                  response.setStatus(SC_OK);
+                  response.getWriter().println(toStringAndClose(request.getInputStream()) + "PUT");
                } else {
-                  if (failEveryTenRequests(request, response))
-                     return;
-                  response.setContentType("text/xml");
-                  response.setStatus(SC_OK);
-                  response.getWriter().println(XML);
+                  response.sendError(500, "no content");
                }
-               ((Request) request).setHandled(true);
-            } catch (IOException e) {
-               closeQuietly(body);
-               response.sendError(500, getStackTraceAsString(e));
+            } else if (request.getMethod().equals("POST")) {
+               // don't redirect large objects
+               if (request.getContentLength() < 10240 && redirectEveryTwentyRequests(request, response))
+                  return;
+               if (failEveryTenRequests(request, response))
+                  return;
+               if (request.getContentLength() > 0) {
+                  handlePost(request, response);
+               } else {
+                  handleAction(request, response);
+               }
+            } else if (request.getHeader("range") != null) {
+               response.sendError(404, "no content");
+            } else if (request.getHeader("test") != null) {
+               response.setContentType("text/plain");
+               response.setStatus(SC_OK);
+               response.getWriter().println("test");
+            } else if (request.getMethod().equals("HEAD")) {
+               // by HTML specification, HEAD response MUST NOT include a body
+               response.setContentType("text/xml");
+               response.setStatus(SC_OK);
+            } else {
+               if (failEveryTenRequests(request, response))
+                  return;
+               response.setContentType("text/xml");
+               response.setStatus(SC_OK);
+               response.getWriter().println(XML);
             }
+            Request.class.cast(request).setHandled(true);
          }
 
       };
@@ -201,6 +200,7 @@ public abstract class BaseJettyTest {
             response.setStatus(SC_OK);
             response.getWriter().println(responseString);
          }
+         Request.class.cast(request).setHandled(true);
       } catch (IOException e) {
          closeQuietly(body);
          response.sendError(500, getStackTraceAsString(e));
@@ -211,36 +211,28 @@ public abstract class BaseJettyTest {
       Handler server2Handler = new AbstractHandler() {
          public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
                throws IOException, ServletException {
-            InputStream body = request.getInputStream();
-            try {
-               if (request.getMethod().equals("PUT")) {
-                  String text = toStringAndClose(body);
-                  body = null;
-                  if (request.getContentLength() > 0) {
-                     response.setStatus(SC_OK);
-                     response.getWriter().println(text + "PUTREDIRECT");
-                  }
-               } else if (request.getMethod().equals("POST")) {
-                  if (request.getContentLength() > 0) {
-                     handlePost(request, response);
-                  } else {
-                     handleAction(request, response);
-                  }
-               } else if (request.getMethod().equals("HEAD")) {
-                  // by HTML specification, HEAD response MUST NOT include a
-                  // body
-                  response.setContentType("text/xml");
+            if (request.getMethod().equals("PUT")) {
+               if (request.getContentLength() > 0) {
                   response.setStatus(SC_OK);
-               } else {
-                  response.setContentType("text/xml");
-                  response.setStatus(SC_OK);
-                  response.getWriter().println(XML2);
+                  String text = toStringAndClose(request.getInputStream());
+                  response.getWriter().println(text + "PUTREDIRECT");
                }
-               ((Request) request).setHandled(true);
-            } catch (IOException e) {
-               closeQuietly(body);
-               response.sendError(500, getStackTraceAsString(e));
+            } else if (request.getMethod().equals("POST")) {
+               if (request.getContentLength() > 0) {
+                  handlePost(request, response);
+               } else {
+                  handleAction(request, response);
+               }
+            } else if (request.getMethod().equals("HEAD")) {
+               // by HTML specification, HEAD response MUST NOT include a body
+               response.setContentType("text/xml");
+               response.setStatus(SC_OK);
+            } else {
+               response.setContentType("text/xml");
+               response.setStatus(SC_OK);
+               response.getWriter().println(XML2);
             }
+            Request.class.cast(request).setHandled(true);
          }
       };
 
@@ -284,7 +276,7 @@ public abstract class BaseJettyTest {
             .modules(ImmutableSet.<Module> copyOf(connectionModules)).overrides(properties);
    }
 
-   @AfterTest
+   @AfterClass
    public void tearDownJetty() throws Exception {
       closeQuietly(context);
       if (server2 != null)
@@ -307,7 +299,7 @@ public abstract class BaseJettyTest {
    protected boolean failEveryTenRequests(HttpServletRequest request, HttpServletResponse response) throws IOException {
       if (cycle.incrementAndGet() % 10 == 0) {
          response.sendError(500, "unlucky 10");
-         ((Request) request).setHandled(true);
+         Request.class.cast(request).setHandled(true);
          return true;
       }
       return false;
@@ -317,7 +309,7 @@ public abstract class BaseJettyTest {
          throws IOException {
       if (cycle.incrementAndGet() % 20 == 0) {
          response.sendRedirect("http://localhost:" + (testPort + 1) + "/");
-         ((Request) request).setHandled(true);
+         Request.class.cast(request).setHandled(true);
          return true;
       }
       return false;
@@ -337,7 +329,7 @@ public abstract class BaseJettyTest {
          response.getWriter().println("no content length!");
          response.getWriter().println(realHeaders.toString());
          response.sendError(500, "no content length!");
-         ((Request) request).setHandled(true);
+         Request.class.cast(request).setHandled(true);
          return true;
       }
       return false;
@@ -359,4 +351,5 @@ public abstract class BaseJettyTest {
          response.sendError(500, "no content");
       }
    }
+
 }
