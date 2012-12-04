@@ -18,6 +18,7 @@
  */
 package org.jclouds.openstack.nova.v2_0.features;
 
+import com.google.common.base.Optional;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -260,5 +261,24 @@ public interface ServerApi {
     *           the name of the metadata item
     */
    void deleteMetadata(String id, String key);
+   
+   
+   /**
+    * Get usage information about the server such as CPU usage, Memory and IO.
+    * The information returned by this method is dependent on the hypervisor
+    * in use by the OpenStack installation and whether that hypervisor supports
+    * this method. More information can be found in the 
+    * <a href="http://api.openstack.org/api-ref.html"> OpenStack API 
+    * reference</a>. <br/>
+    * At the moment the returned response is a generic map. In future versions 
+    * of OpenStack this might be subject to change.
+    * 
+    * @param id
+    *           id of the server
+    * @return A Map containing the collected values organized by key - value.
+    * @Beta
+    */
+    Optional<Map<String, String>> getDiagnostics(String id);
+
 
 }
