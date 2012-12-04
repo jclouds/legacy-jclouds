@@ -35,6 +35,8 @@ import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.domain.Org;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
 
 /**
  * @author Adrian Cole
@@ -54,14 +56,14 @@ public class OrgsForNames implements Function<Iterable<String>, Iterable<Org>> {
 
    @Override
    public Iterable<Org> apply(Iterable<String> from) {
-      return Iterables2.concreteCopy(transformParallel(from, new Function<String, Future<? extends Org>>() {
+      return Iterables.filter(transformParallel(from, new Function<String, Future<? extends Org>>() {
 
          @Override
          public Future<Org> apply(String from) {
             return aclient.getOrgClient().findOrgNamed(from);
          }
 
-      }, executor, null, logger, "organizations for names"));
+      }, executor, null, logger, "organizations for names"), Predicates.notNull());
    }
 
 }
