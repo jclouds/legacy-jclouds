@@ -18,6 +18,9 @@
  */
 package org.jclouds.cloudstack.ec2;
 
+import static java.util.concurrent.TimeUnit.MINUTES;
+import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
+
 import java.net.URI;
 import java.util.Properties;
 
@@ -39,6 +42,7 @@ import com.google.inject.Module;
  */
 public class CloudStackEC2ApiMetadata extends EC2ApiMetadata {
 
+   @SuppressWarnings("serial")
    public static final TypeToken<RestContext<CloudStackEC2Client, CloudStackEC2AsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<CloudStackEC2Client, CloudStackEC2AsyncClient>>() {
    };
 
@@ -61,7 +65,8 @@ public class CloudStackEC2ApiMetadata extends EC2ApiMetadata {
    
    public static Properties defaultProperties() {
       Properties properties = EC2ApiMetadata.defaultProperties();
-      // any property overrides here
+      // raise timeout on all ami operations to 15 minutes
+      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "AmiClient", MINUTES.toMillis(15) + "");
       return properties;
    }
 

@@ -20,10 +20,8 @@ package org.jclouds.cloudstack.ec2;
 
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.cloudstack.ec2.services.CloudStackAMIClient;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.ec2.EC2Client;
-import org.jclouds.rest.annotations.Delegate;
 
 /**
  * Provides synchronous access to EC2 services.
@@ -33,10 +31,4 @@ import org.jclouds.rest.annotations.Delegate;
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface CloudStackEC2Client extends EC2Client {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Delegate
-   @Override
-   CloudStackAMIClient getAMIServices();   
 }

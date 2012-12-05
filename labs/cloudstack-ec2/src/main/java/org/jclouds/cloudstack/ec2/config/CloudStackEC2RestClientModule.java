@@ -24,13 +24,13 @@ import javax.inject.Singleton;
 
 import org.jclouds.cloudstack.ec2.CloudStackEC2AsyncClient;
 import org.jclouds.cloudstack.ec2.CloudStackEC2Client;
-import org.jclouds.cloudstack.ec2.services.CloudStackAMIAsyncClient;
-import org.jclouds.cloudstack.ec2.services.CloudStackAMIClient;
 import org.jclouds.ec2.EC2AsyncClient;
 import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.config.EC2RestClientModule;
 import org.jclouds.ec2.features.WindowsApi;
 import org.jclouds.ec2.features.WindowsAsyncApi;
+import org.jclouds.ec2.services.AMIAsyncClient;
+import org.jclouds.ec2.services.AMIClient;
 import org.jclouds.ec2.services.AvailabilityZoneAndRegionAsyncClient;
 import org.jclouds.ec2.services.AvailabilityZoneAndRegionClient;
 import org.jclouds.ec2.services.ElasticBlockStoreAsyncClient;
@@ -58,7 +58,7 @@ import com.google.inject.Provides;
 @ConfiguresRestClient
 public class CloudStackEC2RestClientModule extends EC2RestClientModule<CloudStackEC2Client, CloudStackEC2AsyncClient> {
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
-         .put(CloudStackAMIClient.class, CloudStackAMIAsyncClient.class)//
+         .put(AMIClient.class, AMIAsyncClient.class)//
          .put(ElasticIPAddressClient.class, ElasticIPAddressAsyncClient.class)//
          .put(InstanceClient.class, InstanceAsyncClient.class)//
          .put(KeyPairClient.class, KeyPairAsyncClient.class)//
