@@ -31,4 +31,9 @@ public class CloudStackEC2AvailabilityZoneAndRegionClientLiveTest extends Availa
       provider = "cloudstack-ec2";
    }
 
+    @Override
+    public void testDescribeRegions() {
+        //just a place holder
+   }
+
 }
