@@ -20,6 +20,8 @@ package org.jclouds.domain.internal;
 
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.ComparisonChain.start;
+import static com.google.common.collect.Ordering.natural;
 
 import java.net.URI;
 import java.util.Map;
@@ -62,10 +64,10 @@ public abstract class ResourceMetadataImpl<T extends Enum<T>> implements Resourc
     * {@inheritDoc}
     */
    @Override
-   public int compareTo(ResourceMetadata<T> o) {
-      if (getName() == null)
-         return -1;
-      return (this == o) ? 0 : getName().compareTo(o.getName());
+   public int compareTo(ResourceMetadata<T> that) {
+      return start()
+            .compare(this.getName(), that.getName(), natural().nullsLast())
+            .result();
    }
 
    /**
