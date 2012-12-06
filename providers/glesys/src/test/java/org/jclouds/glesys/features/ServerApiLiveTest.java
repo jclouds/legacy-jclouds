@@ -98,12 +98,12 @@ public class ServerApiLiveTest extends BaseGleSYSApiWithAServerLiveTest {
       assertNotNull(t);
 
       assert t.getDataCenters().size() > 0 : t;
-      assert t.getCpuCoreOptions().size() > 0 : t;
-      assert t.getDiskSizesInGB().size() > 0 : t;
-      assert t.getMemorySizesInMB().size() > 0 : t;
+      assert t.getCpuCoreOptions().getAllowedUnits().size() > 0 : t;
+      assert t.getDiskSizesInGB().getAllowedUnits().size() > 0 : t;
+      assert t.getMemorySizesInMB().getAllowedUnits().size() > 0 : t;
       assert t.getTemplateNames().size() > 0 : t;
-      assert t.getTransfersInGB().size() > 0 : t;
-      assert t.getTransfersInGB().size() > 0 : t;
+      assert t.getTransfersInGB().getAllowedUnits().size() > 0 : t;
+      assert t.getTransfersInGB().getAllowedUnits().size() > 0 : t;
    }
    
    public void testListTemplates() throws Exception {

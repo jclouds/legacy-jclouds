@@ -173,9 +173,9 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
       for (Entry<String, AllowedArgumentsForCreateServer> platformToArgs : api.getServerApi()
             .getAllowedArgumentsForCreateByPlatform().entrySet())
          for (String datacenter : platformToArgs.getValue().getDataCenters())
-            for (int diskSizeGB : platformToArgs.getValue().getDiskSizesInGB())
-               for (int cpuCores : platformToArgs.getValue().getCpuCoreOptions())
-                  for (int memorySizeMB : platformToArgs.getValue().getMemorySizesInMB()) {
+            for (int diskSizeGB : platformToArgs.getValue().getDiskSizesInGB().getAllowedUnits())
+               for (int cpuCores : platformToArgs.getValue().getCpuCoreOptions().getAllowedUnits())
+                  for (int memorySizeMB : platformToArgs.getValue().getMemorySizesInMB().getAllowedUnits()) {
                      ImmutableSet.Builder<String> templatesSupportedBuilder = ImmutableSet.builder();
                      for (OSTemplate template : images) {
                         if (template.getPlatform().equals(platformToArgs.getKey())
