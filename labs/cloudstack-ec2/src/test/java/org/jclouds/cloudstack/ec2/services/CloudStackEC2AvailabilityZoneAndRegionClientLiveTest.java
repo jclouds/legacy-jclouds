@@ -22,7 +22,6 @@ import org.jclouds.ec2.services.AvailabilityZoneAndRegionClientLiveTest;
 import org.testng.annotations.Test;
 
 /**
- * 
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "CloudStackEC2AvailabilityZoneAndRegionClientLiveTest")
@@ -31,9 +30,8 @@ public class CloudStackEC2AvailabilityZoneAndRegionClientLiveTest extends Availa
       provider = "cloudstack-ec2";
    }
 
-    @Override
-    public void testDescribeRegions() {
-        //just a place holder
+   @Override
+   public void testDescribeRegions() {
+      throw new org.testng.SkipException("Regions are not supported in CloudStack");
    }
-
 }

@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Provides synchronous access to EC2 services.
- * 
+ *
  * @author Adrian Cole
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)

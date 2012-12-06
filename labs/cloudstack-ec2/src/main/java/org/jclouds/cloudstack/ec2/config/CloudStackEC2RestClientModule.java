@@ -29,20 +29,43 @@ import org.jclouds.cloudstack.ec2.services.CloudStackAMIClient;
 import org.jclouds.cloudstack.ec2.services.CloudStackEC2InstanceAsyncClient;
 import org.jclouds.cloudstack.ec2.services.CloudStackEC2InstanceClient;
 import org.jclouds.cloudstack.ec2.suppliers.CloudStackEC2DescribeRegionsForRegionURIs;
-import org.jclouds.cloudstack.ec2.xml.*;
+import org.jclouds.cloudstack.ec2.xml.CloudStackEC2CreateVolumeResponseHandler;
+import org.jclouds.cloudstack.ec2.xml.CloudStackEC2DescribeImagesResponseHandler;
+import org.jclouds.cloudstack.ec2.xml.CloudStackEC2DescribeInstancesResponseHandler;
+import org.jclouds.cloudstack.ec2.xml.CloudStackEC2DescribeVolumesResponseHandler;
+import org.jclouds.cloudstack.ec2.xml.CloudStackEC2RunInstancesResponseHandler;
 import org.jclouds.ec2.EC2AsyncClient;
 import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.config.EC2RestClientModule;
 import org.jclouds.ec2.features.WindowsApi;
 import org.jclouds.ec2.features.WindowsAsyncApi;
-import org.jclouds.ec2.services.*;
+import org.jclouds.ec2.services.AvailabilityZoneAndRegionAsyncClient;
+import org.jclouds.ec2.services.AvailabilityZoneAndRegionClient;
+import org.jclouds.ec2.services.ElasticBlockStoreAsyncClient;
+import org.jclouds.ec2.services.ElasticBlockStoreClient;
+import org.jclouds.ec2.services.ElasticIPAddressAsyncClient;
+import org.jclouds.ec2.services.ElasticIPAddressClient;
+import org.jclouds.ec2.services.KeyPairAsyncClient;
+import org.jclouds.ec2.services.KeyPairClient;
+import org.jclouds.ec2.services.SecurityGroupAsyncClient;
+import org.jclouds.ec2.services.SecurityGroupClient;
+import org.jclouds.ec2.services.WindowsAsyncClient;
+import org.jclouds.ec2.services.WindowsClient;
 import org.jclouds.ec2.suppliers.DescribeAvailabilityZonesInRegion;
-import org.jclouds.ec2.xml.*;
+import org.jclouds.ec2.xml.CreateVolumeResponseHandler;
+import org.jclouds.ec2.xml.DescribeImagesResponseHandler;
+import org.jclouds.ec2.xml.DescribeInstancesResponseHandler;
+import org.jclouds.ec2.xml.DescribeVolumesResponseHandler;
+import org.jclouds.ec2.xml.RunInstancesResponseHandler;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.IOExceptionRetryHandler;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.location.config.LocationModule;
-import org.jclouds.location.suppliers.*;
+import org.jclouds.location.suppliers.RegionIdToURISupplier;
+import org.jclouds.location.suppliers.RegionIdToZoneIdsSupplier;
+import org.jclouds.location.suppliers.RegionIdsSupplier;
+import org.jclouds.location.suppliers.ZoneIdToURISupplier;
+import org.jclouds.location.suppliers.ZoneIdsSupplier;
 import org.jclouds.location.suppliers.derived.RegionIdsFromRegionIdToURIKeySet;
 import org.jclouds.location.suppliers.derived.ZoneIdToURIFromJoinOnRegionIdToURI;
 import org.jclouds.location.suppliers.derived.ZoneIdsFromRegionIdToZoneIdsValues;
@@ -52,24 +75,21 @@ import javax.inject.Singleton;
 import java.util.Map;
 
 /**
- * 
  * @author Adrian Cole
  */
 @ConfiguresRestClient
 public class CloudStackEC2RestClientModule extends EC2RestClientModule<CloudStackEC2Client, CloudStackEC2AsyncClient> {
-
-
-   public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
-         .put(CloudStackAMIClient.class, CloudStackAMIAsyncClient.class)//
-         .put(ElasticIPAddressClient.class, ElasticIPAddressAsyncClient.class)//
-         .put(CloudStackEC2InstanceClient.class, CloudStackEC2InstanceAsyncClient.class)//
-         .put(KeyPairClient.class, KeyPairAsyncClient.class)//
-         .put(SecurityGroupClient.class, SecurityGroupAsyncClient.class)//
-         .put(WindowsClient.class, WindowsAsyncClient.class)//
-         .put(AvailabilityZoneAndRegionClient.class, AvailabilityZoneAndRegionAsyncClient.class)//
-         .put(ElasticBlockStoreClient.class, ElasticBlockStoreAsyncClient.class)//
-         .put(WindowsApi.class, WindowsAsyncApi.class)//
-         .build();
+   public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>>builder()//
+           .put(CloudStackAMIClient.class, CloudStackAMIAsyncClient.class)//
+           .put(ElasticIPAddressClient.class, ElasticIPAddressAsyncClient.class)//
+           .put(CloudStackEC2InstanceClient.class, CloudStackEC2InstanceAsyncClient.class)//
+           .put(KeyPairClient.class, KeyPairAsyncClient.class)//
+           .put(SecurityGroupClient.class, SecurityGroupAsyncClient.class)//
+           .put(WindowsClient.class, WindowsAsyncClient.class)//
+           .put(AvailabilityZoneAndRegionClient.class, AvailabilityZoneAndRegionAsyncClient.class)//
+           .put(ElasticBlockStoreClient.class, ElasticBlockStoreAsyncClient.class)//
+           .put(WindowsApi.class, WindowsAsyncApi.class)//
+           .build();
 
    public CloudStackEC2RestClientModule() {
       super(TypeToken.of(CloudStackEC2Client.class), TypeToken.of(CloudStackEC2AsyncClient.class), DELEGATE_MAP);
@@ -85,21 +105,24 @@ public class CloudStackEC2RestClientModule extends EC2RestClientModule<CloudStac
       bind(CreateVolumeResponseHandler.class).to(CloudStackEC2CreateVolumeResponseHandler.class);
    }
 
-    @Override
-    protected void installLocations() {
-        install(new LocationModule());
-        bind(RegionIdToZoneIdsSupplier.class).to(DescribeAvailabilityZonesInRegion.class).in(Scopes.SINGLETON);
-        bind(RegionIdToURISupplier.class).to(CloudStackEC2DescribeRegionsForRegionURIs.class).in(Scopes.SINGLETON);
-        bind(ZoneIdsSupplier.class).to(ZoneIdsFromRegionIdToZoneIdsValues.class).in(Scopes.SINGLETON);
-        bind(RegionIdsSupplier.class).to(RegionIdsFromRegionIdToURIKeySet.class).in(Scopes.SINGLETON);
-        bind(ZoneIdToURISupplier.class).to(ZoneIdToURIFromJoinOnRegionIdToURI.class).in(Scopes.SINGLETON);
-    }
+   @Override
+   protected void installLocations() {
+      install(new LocationModule());
+      bind(RegionIdToZoneIdsSupplier.class).to(DescribeAvailabilityZonesInRegion.class).in(Scopes.SINGLETON);
+      bind(RegionIdToURISupplier.class).to(CloudStackEC2DescribeRegionsForRegionURIs.class).in(Scopes.SINGLETON);
+      bind(ZoneIdsSupplier.class).to(ZoneIdsFromRegionIdToZoneIdsValues.class).in(Scopes.SINGLETON);
+      bind(RegionIdsSupplier.class).to(RegionIdsFromRegionIdToURIKeySet.class).in(Scopes.SINGLETON);
+      bind(ZoneIdToURISupplier.class).to(ZoneIdToURIFromJoinOnRegionIdToURI.class).in(Scopes.SINGLETON);
+   }
 
-    @Override
-    protected void bindRetryHandlers() {
-        bind(HttpRetryHandler.class).annotatedWith(ClientError.class).toInstance(HttpRetryHandler.NEVER_RETRY);
-        bind(IOExceptionRetryHandler.class).toInstance(IOExceptionRetryHandler.NEVER_RETRY);
-    }
+   @Override
+   protected void bindRetryHandlers() {
+      //Changing these to NEVER_RETRY as retrying may leads to unknown state
+      bind(HttpRetryHandler.class).annotatedWith(ClientError.class).toInstance(HttpRetryHandler.NEVER_RETRY);
+      //first instance creation takes lot of time in CloudStack
+      //It is misinterpreting this as failure so changing it to NEVER_RETRY
+      bind(IOExceptionRetryHandler.class).toInstance(IOExceptionRetryHandler.NEVER_RETRY);
+   }
 
    @Singleton
    @Provides
@@ -112,5 +135,4 @@ public class CloudStackEC2RestClientModule extends EC2RestClientModule<CloudStac
    EC2AsyncClient provide(CloudStackEC2AsyncClient in) {
       return in;
    }
-
 }

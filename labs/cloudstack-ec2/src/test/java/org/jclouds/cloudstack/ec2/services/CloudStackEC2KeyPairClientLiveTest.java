@@ -34,68 +34,66 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 /**
- * 
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "CloudStackEC2KeyPairClientLiveTest")
 public class CloudStackEC2KeyPairClientLiveTest extends KeyPairClientLiveTest {
+   private CloudStackEC2Client cloudstackEc2Client;
+   private KeyPairClient cloudstackClient;
+   private String regionId = "AmazonEC2";
 
-    private CloudStackEC2Client cloudstackEc2Client;
-    private KeyPairClient cloudstackClient;
-    private String regionId = "AmazonEC2";
-
-
-    public CloudStackEC2KeyPairClientLiveTest() {
+   public CloudStackEC2KeyPairClientLiveTest() {
       provider = "cloudstack-ec2";
    }
 
-    @Override
-    @BeforeClass(groups = {"integration", "live"})
-    public void setupContext() {
-        initializeContext();
-        cloudstackEc2Client = view.unwrap(CloudStackEC2ApiMetadata.CONTEXT_TOKEN).getApi();
-        cloudstackClient = cloudstackEc2Client.getKeyPairServices();
-    }
+   @Override
+   @BeforeClass(groups = {"integration", "live"})
+   public void setupContext() {
+      initializeContext();
+      cloudstackEc2Client = view.unwrap(CloudStackEC2ApiMetadata.CONTEXT_TOKEN).getApi();
+      cloudstackClient = cloudstackEc2Client.getKeyPairServices();
+   }
 
-    @Test
-    void testDescribeKeyPairs() {
-        SortedSet<KeyPair> allResults = Sets.newTreeSet(cloudstackClient.describeKeyPairsInRegion(regionId));
-        assertNotNull(allResults);
-        if (allResults.size() >= 1) {
-            KeyPair pair = allResults.last();
-            SortedSet<KeyPair> result = Sets.newTreeSet(cloudstackClient.describeKeyPairsInRegion(regionId, pair.getKeyName()));
-            assertNotNull(result);
-            KeyPair compare = result.last();
-            assertEquals(compare, pair);
-        }
-    }
+   @Test
+   void testDescribeKeyPairs() {
+      SortedSet<KeyPair> allResults = Sets.newTreeSet(cloudstackClient.describeKeyPairsInRegion(regionId));
+      assertNotNull(allResults);
+      if (allResults.size() >= 1) {
+         KeyPair pair = allResults.last();
+         SortedSet<KeyPair> result = Sets.newTreeSet(cloudstackClient.describeKeyPairsInRegion(regionId,
+                 pair.getKeyName()));
+         assertNotNull(result);
+         KeyPair compare = result.last();
+         assertEquals(compare, pair);
+      }
+   }
 
-    public static final String PREFIX = System.getProperty("user.name") + "-cloudstack-ec2";
+   public static final String PREFIX = System.getProperty("user.name") + "-cloudstack-ec2";
 
-    @Test
-    void testCreateKeyPair() {
-        String keyName = PREFIX + "1";
-        cleanUpKeyPair(keyName);
+   @Test
+   void testCreateKeyPair() {
+      String keyName = PREFIX + "1";
+      cleanUpKeyPair(keyName);
 
-        KeyPair result = cloudstackClient.createKeyPairInRegion(null, keyName);
-        assertNotNull(result);
-        assertNotNull(result.getKeyMaterial());
-        assertNotNull(result.getSha1OfPrivateKey());
-        assertEquals(result.getKeyName(), keyName);
+      KeyPair result = cloudstackClient.createKeyPairInRegion(null, keyName);
+      assertNotNull(result);
+      assertNotNull(result.getKeyMaterial());
+      assertNotNull(result.getSha1OfPrivateKey());
+      assertEquals(result.getKeyName(), keyName);
 
-        Set<KeyPair> twoResults = Sets.newLinkedHashSet(cloudstackClient.describeKeyPairsInRegion(null, keyName));
-        assertNotNull(twoResults);
-        assertEquals(twoResults.size(), 1);
-        KeyPair listPair = twoResults.iterator().next();
-        assertEquals(listPair.getKeyName(), result.getKeyName());
-        assertEquals(listPair.getSha1OfPrivateKey(), result.getSha1OfPrivateKey());
-        cleanUpKeyPair(keyName);
-    }
+      Set<KeyPair> twoResults = Sets.newLinkedHashSet(cloudstackClient.describeKeyPairsInRegion(null, keyName));
+      assertNotNull(twoResults);
+      assertEquals(twoResults.size(), 1);
+      KeyPair listPair = twoResults.iterator().next();
+      assertEquals(listPair.getKeyName(), result.getKeyName());
+      assertEquals(listPair.getSha1OfPrivateKey(), result.getSha1OfPrivateKey());
+      cleanUpKeyPair(keyName);
+   }
 
-    private void cleanUpKeyPair(String keyName) {
-        try {
-            cloudstackClient.deleteKeyPairInRegion(null, keyName);
-        } catch (Exception e) {
-        }
-    }
+   private void cleanUpKeyPair(String keyName) {
+      try {
+         cloudstackClient.deleteKeyPairInRegion(null, keyName);
+      } catch (Exception e) {
+      }
+   }
 }

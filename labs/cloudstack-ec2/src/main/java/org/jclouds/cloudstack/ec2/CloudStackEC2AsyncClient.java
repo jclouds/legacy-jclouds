@@ -29,18 +29,18 @@ import org.jclouds.rest.annotations.Delegate;
  * @author Adrian Cole
  */
 public interface CloudStackEC2AsyncClient extends EC2AsyncClient {
-    /**
-     * {@inheritDoc}
-     */
-    @Delegate
-    @Override
-    CloudStackAMIAsyncClient getAMIServices();
 
-    /**
-     * {@inheritDoc}
-     */
-    @Delegate
-    @Override
-    CloudStackEC2InstanceAsyncClient getInstanceServices();
+   /**
+    * {@inheritDoc}
+    */
+   @Delegate
+   @Override
+   CloudStackAMIAsyncClient getAMIServices();
 
+   /**
+    * {@inheritDoc}
+    */
+   @Delegate
+   @Override
+   CloudStackEC2InstanceAsyncClient getInstanceServices();
 }
