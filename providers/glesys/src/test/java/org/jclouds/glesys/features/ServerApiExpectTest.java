@@ -26,6 +26,7 @@ import java.util.Map;
 
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.glesys.domain.AllowedArguments;
 import org.jclouds.glesys.domain.AllowedArgumentsForCreateServer;
 import org.jclouds.glesys.domain.Console;
 import org.jclouds.glesys.domain.Cost;
@@ -93,26 +94,40 @@ public class ServerApiExpectTest extends BaseGleSYSApiExpectTest {
             HttpResponse.builder().statusCode(204).payload(payloadFromResource("/server_allowed_arguments.json")).build()).getServerApi();
 
       Map<String, AllowedArgumentsForCreateServer> expected = Maps.newLinkedHashMap();
+      AllowedArguments openvzAllowedMemorySizes = AllowedArguments.builder().allowedUnits(128, 256, 512, 768, 1024, 1536, 2048, 2560, 3072, 3584, 4096, 5120, 6144, 7168, 8192, 9216, 10240, 11264, 12288, 14336, 16384).costPerUnit(Cost.builder().amount(0.09).currency("SEK").timePeriod("month").build()).build();
+      AllowedArguments openvzAllowedDiskSizes = AllowedArguments.builder().allowedUnits(5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 120, 140, 150).costPerUnit(Cost.builder().amount(2.2).currency("SEK").timePeriod("month").build()).build();
+      AllowedArguments openvzAllowedCpuCores = AllowedArguments.builder().allowedUnits(1, 2, 3, 4, 5, 6, 7, 8).costPerUnit(Cost.builder().amount(30).currency("SEK").timePeriod("month").build()).build();
+      AllowedArguments openvzAllowedTransfers = AllowedArguments.builder().allowedUnits(50, 100, 250, 500, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000).costPerUnit(Cost.builder().amount(0.2).currency("SEK").timePeriod("month").build()).build();
       AllowedArgumentsForCreateServer openvz = AllowedArgumentsForCreateServer.builder()
             .dataCenters("Amsterdam", "Falkenberg", "New York City", "Stockholm")
-            .memorySizes(128, 256, 512, 768, 1024, 1536, 2048, 2560, 3072, 3584, 4096, 5120, 6144, 7168, 8192, 9216, 10240, 11264, 12288)
-            .diskSizes(5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 120, 140, 150)
-            .cpuCores(1, 2, 3, 4, 5, 6, 7, 8)
+            .memorySizes(openvzAllowedMemorySizes)
+            .diskSizes(openvzAllowedDiskSizes)
+            .cpuCores(openvzAllowedCpuCores)
             .templates("Centos 5", "Centos 5 64-bit", "Centos 6 32-bit", "Centos 6 64-bit", "Debian 5.0 32-bit",
-                  "Debian 5.0 64-bit", "Debian 6.0 32-bit", "Debian 6.0 64-bit", "Fedora Core 11", "Fedora Core 11 64-bit",
-                  "Gentoo", "Gentoo 64-bit", "Scientific Linux 6", "Scientific Linux 6 64-bit", "Slackware 12",
-                  "Ubuntu 10.04 LTS 32-bit", "Ubuntu 10.04 LTS 64-bit", "Ubuntu 11.04 64-bit")
-            .transfers(50, 100, 250, 500, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000)
+                    "Debian 5.0 64-bit", "Debian 6.0 32-bit", "Debian 6.0 64-bit", "Fedora Core 11", "Fedora Core 11 64-bit",
+                    "Gentoo", "Gentoo 64-bit", "Scientific Linux 6", "Scientific Linux 6 64-bit", "Slackware 12",
+                    "Ubuntu 10.04 LTS 32-bit", "Ubuntu 10.04 LTS 64-bit", "Ubuntu 11.04 64-bit", "Ubuntu 12.04 LTS 32-bit",
+                    "Ubuntu 12.04 LTS 64-bit")
+            .transfers(openvzAllowedTransfers)
             .build();
+      
+      AllowedArguments xenAllowedMemorySizes = AllowedArguments.builder().allowedUnits(512, 768, 1024, 1536, 2048, 2560, 3072, 3584, 4096, 5120, 6144, 7168, 8192, 9216, 10240, 11264, 12288, 14336, 16384).costPerUnit(Cost.builder().amount(0.09).currency("SEK").timePeriod("month").build()).build();
+      AllowedArguments xenAllowedDiskSizes = AllowedArguments.builder().allowedUnits(5, 10, 20, 30, 40, 50, 80, 100, 120, 140, 150, 160, 160, 200, 250, 300).costPerUnit(Cost.builder().amount(2.2).currency("SEK").timePeriod("month").build()).build();
+      AllowedArguments xenAllowedCpuCores = AllowedArguments.builder().allowedUnits(1, 2, 3, 4, 5, 6, 7, 8).costPerUnit(Cost.builder().amount(30).currency("SEK").timePeriod("month").build()).build();
+      AllowedArguments xenAllowedTransfers = AllowedArguments.builder().allowedUnits(50, 100, 250, 500, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000).costPerUnit(Cost.builder().amount(0.2).currency("SEK").timePeriod("month").build()).build();      
       AllowedArgumentsForCreateServer xen = AllowedArgumentsForCreateServer.builder()
-            .memorySizes(512, 768, 1024, 1536, 2048, 2560, 3072, 3584, 4096, 5120, 6144, 7168, 8192, 9216, 10240, 11264, 12288, 14336, 16384)
-            .diskSizes(5, 10, 20, 30, 40, 50, 80, 100, 120, 140, 150, 160, 160, 200, 250, 300)
-            .cpuCores(1, 2, 3, 4, 5, 6, 7, 8)
-            .templates("CentOS 5.5 x64", "CentOS 5.5 x86", "Centos 6 x64", "Centos 6 x86", "Debian-6 x64",
-                  "Debian 5.0.1 x64", "FreeBSD 8.2", "Gentoo 10.1 x64", "Ubuntu 8.04 x64", "Ubuntu 10.04 LTS 64-bit",
-                  "Ubuntu 10.10 x64", "Ubuntu 11.04 x64", "Windows Server 2008 R2 x64 std",
-                  "Windows Server 2008 R2 x64 web", "Windows Server 2008 x64 web", "Windows Server 2008 x86 web")
-            .transfers(50, 100, 250, 500, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000)
+            .memorySizes(xenAllowedMemorySizes)
+            .diskSizes(xenAllowedDiskSizes)
+            .cpuCores(xenAllowedCpuCores)
+            
+            
+            .templates("CentOS 5.5 x64", "CentOS 5.5 x86", "Centos 6 x64", "Centos 6 x86", 
+            		"Debian-6 x64", "Debian 5.0.1 x64", "FreeBSD 8.2", "FreeBSD 9.0", 
+            		"Gentoo 10.1 x64", "OpenSUSE 11.4 64-bit", "Ubuntu 8.04 x64", 
+            		"Ubuntu 10.04 LTS 64-bit", "Ubuntu 10.10 x64", "Ubuntu 11.04 x64", 
+            		"Ubuntu 12.04 x64", "Ubuntu 12.04 x86", "Windows Server 2008 R2 x64 std", 
+            		"Windows Server 2008 R2 x64 web", "Windows Server 2008 x64 web")
+            .transfers(xenAllowedTransfers)
             .dataCenters("Falkenberg")
             .build();
       expected.put("Xen", xen);
