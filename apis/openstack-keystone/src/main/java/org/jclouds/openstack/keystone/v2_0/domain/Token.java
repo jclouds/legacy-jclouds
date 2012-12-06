@@ -23,8 +23,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.beans.ConstructorProperties;
 import java.util.Date;
 
+import org.jclouds.javax.annotation.Nullable;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.base.Optional;
 
 /**
  * A token is an arbitrary bit of text that is used to access resources. Each token has a scope
@@ -54,7 +57,7 @@ public class Token implements Comparable<Token> {
 
       protected String id;
       protected Date expires;
-      protected Tenant tenant;
+      protected Optional<Tenant> tenant = Optional.absent();
 
       /**
        * @see Token#getId()
@@ -76,7 +79,7 @@ public class Token implements Comparable<Token> {
        * @see Token#getTenant()
        */
       public T tenant(Tenant tenant) {
-         this.tenant = tenant;
+         this.tenant = Optional.fromNullable(tenant);
          return self();
       }
 
@@ -88,7 +91,7 @@ public class Token implements Comparable<Token> {
          return this
                .id(in.getId())
                .expires(in.getExpires())
-               .tenant(in.getTenant());
+               .tenant(in.getTenant().orNull());
       }
    }
 
@@ -101,15 +104,15 @@ public class Token implements Comparable<Token> {
 
    private final String id;
    private final Date expires;
-   private final Tenant tenant;
+   private final Optional<Tenant> tenant;
 
    @ConstructorProperties({
          "id", "expires", "tenant"
    })
-   protected Token(String id, Date expires, Tenant tenant) {
+   protected Token(String id, Date expires, @Nullable Optional<Tenant> tenant) {
       this.id = checkNotNull(id, "id");
       this.expires = checkNotNull(expires, "expires");
-      this.tenant = checkNotNull(tenant, "tenant");
+      this.tenant = tenant == null ? Optional.<Tenant> absent() : tenant;
    }
 
    /**
@@ -131,7 +134,7 @@ public class Token implements Comparable<Token> {
    /**
     * @return the tenant assigned to the token
     */
-   public Tenant getTenant() {
+   public Optional<Tenant> getTenant() {
       return this.tenant;
    }
 
@@ -151,8 +154,8 @@ public class Token implements Comparable<Token> {
    }
 
    protected ToStringHelper string() {
-      return Objects.toStringHelper(this)
-            .add("id", id).add("expires", expires).add("tenant", tenant);
+      return Objects.toStringHelper(this).omitNullValues()
+            .add("id", id).add("expires", expires).add("tenant", tenant.orNull());
    }
 
    @Override
