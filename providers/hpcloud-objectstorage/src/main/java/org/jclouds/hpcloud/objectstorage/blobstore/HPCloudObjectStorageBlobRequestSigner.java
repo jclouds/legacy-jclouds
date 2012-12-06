@@ -105,7 +105,7 @@ public class HPCloudObjectStorageBlobRequestSigner implements BlobRequestSigner 
    @PostConstruct
    public void populateTenantId() {
       // Defer call from constructor since access.get issues an RPC.
-      this.tenantId = access.get().getToken().getTenant().getId();
+      this.tenantId = access.get().getToken().getTenant().get().getId();
    }
 
    @Override
