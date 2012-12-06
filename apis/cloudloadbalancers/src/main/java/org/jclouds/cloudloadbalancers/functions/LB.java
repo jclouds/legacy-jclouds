@@ -22,20 +22,21 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
+import org.jclouds.cloudloadbalancers.domain.LoadBalancer.Status;
 import org.jclouds.cloudloadbalancers.domain.Node;
 import org.jclouds.cloudloadbalancers.domain.VirtualIP;
-import org.jclouds.cloudloadbalancers.domain.LoadBalancer.Status;
 import org.jclouds.cloudloadbalancers.domain.internal.BaseLoadBalancer;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
- * only here as the datatype for cloudloadbalancers is awkward.
- * 
+ * Only here as the datatype for cloudloadbalancers is awkward.
  **/
 class LB extends BaseLoadBalancer<Node, LB> {
    int id;
+   int nodeCount;
    Status status;
    Set<VirtualIP> virtualIps = Sets.newLinkedHashSet();
    Map<String, String> sessionPersistence = Maps.newLinkedHashMap();
@@ -43,4 +44,18 @@ class LB extends BaseLoadBalancer<Node, LB> {
    Map<String, Date> created = Maps.newLinkedHashMap();
    Map<String, Date> updated = Maps.newLinkedHashMap();
    Map<String, Boolean> connectionLogging = Maps.newLinkedHashMap();
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(id);
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      
+      LB that = LB.class.cast(obj);      
+      return Objects.equal(this.id, that.id);
+   }
 }

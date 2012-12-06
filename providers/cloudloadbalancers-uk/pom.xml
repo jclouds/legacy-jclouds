@@ -34,8 +34,8 @@
     <packaging>bundle</packaging>
     
     <properties>
-        <test.cloudloadbalancers-uk.endpoint>https://lon.auth.api.rackspacecloud.com</test.cloudloadbalancers-uk.endpoint>
-        <test.cloudloadbalancers-uk.api-version>1.0</test.cloudloadbalancers-uk.api-version>
+        <test.cloudloadbalancers-uk.endpoint>https://lon.identity.api.rackspacecloud.com/v2.0/</test.cloudloadbalancers-uk.endpoint>
+        <test.cloudloadbalancers-uk.api-version>1</test.cloudloadbalancers-uk.api-version>
         <test.cloudloadbalancers-uk.build-version></test.cloudloadbalancers-uk.build-version>
         <test.cloudloadbalancers-uk.identity>${test.rackspace-uk.identity}</test.cloudloadbalancers-uk.identity>
         <test.cloudloadbalancers-uk.credential>${test.rackspace-uk.credential}</test.cloudloadbalancers-uk.credential>
@@ -45,6 +45,11 @@
     </properties>
     
     <dependencies>
+        <dependency>
+            <groupId>org.jclouds</groupId>
+            <artifactId>jclouds-loadbalancer</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     	<dependency>
             <groupId>org.jclouds.api</groupId>
             <artifactId>cloudloadbalancers</artifactId>
@@ -52,20 +57,20 @@
         </dependency>
         <dependency>
             <groupId>org.jclouds.api</groupId>
-            <artifactId>cloudloadbalancers</artifactId>
+            <artifactId>openstack-keystone</artifactId>
             <version>${project.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.api</groupId>
+            <artifactId>rackspace-cloudidentity</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jclouds</groupId>
             <artifactId>jclouds-loadbalancer</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jclouds.common</groupId>
-            <artifactId>openstack-common</artifactId>
-            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jclouds</groupId>
@@ -75,23 +80,28 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.jclouds</groupId>
-            <artifactId>jclouds-loadbalancer</artifactId>
+            <groupId>org.jclouds.api</groupId>
+            <artifactId>cloudloadbalancers</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.jclouds.common</groupId>
-            <artifactId>openstack-common</artifactId>
+            <groupId>org.jclouds.api</groupId>
+            <artifactId>openstack-keystone</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jclouds.driver</groupId>
-            <artifactId>jclouds-log4j</artifactId>
+            <artifactId>jclouds-slf4j</artifactId>
             <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -117,6 +127,7 @@
                                         <test.cloudloadbalancers-uk.build-version>${test.cloudloadbalancers-uk.build-version}</test.cloudloadbalancers-uk.build-version>
                                         <test.cloudloadbalancers-uk.identity>${test.cloudloadbalancers-uk.identity}</test.cloudloadbalancers-uk.identity>
                                         <test.cloudloadbalancers-uk.credential>${test.cloudloadbalancers-uk.credential}</test.cloudloadbalancers-uk.credential>
+                                        <test.jclouds.keystone.credential-type>${test.jclouds.keystone.credential-type}</test.jclouds.keystone.credential-type>
                                     </systemPropertyVariables>
                                 </configuration>
                             </execution>

@@ -18,6 +18,9 @@
  */
 package org.jclouds.cloudloadbalancers;
 
+import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.CREDENTIAL_TYPE;
+import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.SERVICE_TYPE;
+
 import java.net.URI;
 import java.util.Properties;
 
@@ -25,6 +28,10 @@ import org.jclouds.apis.ApiMetadata;
 import org.jclouds.cloudloadbalancers.config.CloudLoadBalancersRestClientModule;
 import org.jclouds.cloudloadbalancers.loadbalancer.config.CloudLoadBalancersLoadBalancerContextModule;
 import org.jclouds.loadbalancer.LoadBalancerServiceContext;
+import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule.ZoneModule;
+import org.jclouds.rackspace.cloudidentity.v2_0.ServiceType;
+import org.jclouds.rackspace.cloudidentity.v2_0.config.CloudIdentityAuthenticationModule;
+import org.jclouds.rackspace.cloudidentity.v2_0.config.CloudIdentityCredentialTypes;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
 
@@ -37,10 +44,10 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class CloudLoadBalancersApiMetadata  extends BaseRestApiMetadata {
+public class CloudLoadBalancersApiMetadata extends BaseRestApiMetadata {
 
-   public static final TypeToken<RestContext<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient>>() {
-   };
+   public static final TypeToken<RestContext<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient>> CONTEXT_TOKEN = 
+         new TypeToken<RestContext<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient>>() {};
 
    @Override
    public Builder toBuilder() {
@@ -57,6 +64,10 @@ public class CloudLoadBalancersApiMetadata  extends BaseRestApiMetadata {
 
    public static Properties defaultProperties() {
       Properties properties = BaseRestApiMetadata.defaultProperties();
+
+      properties.setProperty(SERVICE_TYPE, ServiceType.LOAD_BALANCERS);
+      properties.setProperty(CREDENTIAL_TYPE, CloudIdentityCredentialTypes.API_KEY_CREDENTIALS);
+
       return properties;
    }
 
@@ -65,15 +76,21 @@ public class CloudLoadBalancersApiMetadata  extends BaseRestApiMetadata {
       protected Builder() {
          super(CloudLoadBalancersClient.class, CloudLoadBalancersAsyncClient.class);
          id("cloudloadbalancers")
-         .name("Rackspace Cloud Load Balancers API")
-         .identityName("Username")
-         .credentialName("API Key")
-         .documentation(URI.create("http://docs.rackspacecloud.com/loadbalancers/api/v1.0/clb-devguide/content/ch01.html"))
-         .version("1.0")
-         .defaultEndpoint("https://auth.api.rackspacecloud.com")
-         .defaultProperties(CloudLoadBalancersApiMetadata.defaultProperties())
-         .view(TypeToken.of(LoadBalancerServiceContext.class))
-         .defaultModules(ImmutableSet.<Class<? extends Module>>of(CloudLoadBalancersRestClientModule.class, CloudLoadBalancersLoadBalancerContextModule.class));
+               .name("Rackspace Cloud Load Balancers API")
+               .identityName("Username")
+               .credentialName("API Key")
+               .documentation(
+                     URI.create("http://docs.rackspace.com/loadbalancers/api/clb-devguide-latest/index.html"))
+               .version("1.0")
+               .defaultEndpoint("https://identity.api.rackspacecloud.com/v2.0/")
+               .defaultProperties(CloudLoadBalancersApiMetadata.defaultProperties())
+               .view(TypeToken.of(LoadBalancerServiceContext.class))
+               .defaultModules(
+                     ImmutableSet.<Class<? extends Module>> of(
+                           CloudIdentityAuthenticationModule.class,
+                           ZoneModule.class,
+                           CloudLoadBalancersRestClientModule.class,
+                           CloudLoadBalancersLoadBalancerContextModule.class));
       }
 
       @Override

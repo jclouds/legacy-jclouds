@@ -34,7 +34,7 @@ import org.jclouds.cloudloadbalancers.domain.LoadBalancerAttributes;
 import org.jclouds.cloudloadbalancers.domain.LoadBalancerRequest;
 import org.jclouds.cloudloadbalancers.functions.UnwrapLoadBalancer;
 import org.jclouds.cloudloadbalancers.functions.UnwrapLoadBalancers;
-import org.jclouds.openstack.filters.AuthenticateRequest;
+import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;

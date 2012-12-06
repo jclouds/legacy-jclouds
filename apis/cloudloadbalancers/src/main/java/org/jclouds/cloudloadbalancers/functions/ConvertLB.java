@@ -51,9 +51,9 @@ public class ConvertLB implements Function<LB, LoadBalancer> {
    @Override
    public LoadBalancer apply(LB lb) {
       try {
-         Builder builder = LoadBalancer.builder().region(region).name(lb.getName()).port(lb.getPort()).protocol(
-                  lb.getProtocol()).algorithm(lb.getAlgorithm()).nodes(lb.getNodes()).id(lb.id).status(lb.status)
-                  .virtualIPs(lb.virtualIps);
+         Builder builder = LoadBalancer.builder().region(region).name(lb.getName()).port(lb.getPort())
+               .protocol(lb.getProtocol()).algorithm(lb.getAlgorithm()).nodes(lb.getNodes()).id(lb.id)
+               .status(lb.status).virtualIPs(lb.virtualIps).nodeCount(lb.nodeCount);
          if (lb.cluster.size() == 1)
             builder.clusterName(Iterables.get(lb.cluster.values(), 0));
          if (lb.sessionPersistence.size() == 1)

@@ -25,7 +25,7 @@ import org.testng.annotations.Test;
  * 
  * @author Dan Lo Bianco
  */
-@Test(groups = "live", singleThreaded = true)
+@Test(groups = "live", singleThreaded = true, testName = "CloudLoadBalancersUSNodeClientLiveTest")
 public class CloudLoadBalancersUSNodeClientLiveTest extends NodeClientLiveTest {
    public CloudLoadBalancersUSNodeClientLiveTest() {
       provider = "cloudloadbalancers-us";

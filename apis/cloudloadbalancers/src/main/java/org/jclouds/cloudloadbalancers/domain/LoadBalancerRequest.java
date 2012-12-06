@@ -68,8 +68,9 @@ public class LoadBalancerRequest extends BaseLoadBalancer<NodeRequest, LoadBalan
       }
 
       public LoadBalancerRequest build() {
-         return virtualIps == null ? new LoadBalancerRequest(name, protocol, port, algorithm, nodes, virtualIPType,
-                  virtualIPId) : new LoadBalancerRequest(name, protocol, port, algorithm, nodes, virtualIps);
+         return virtualIps == null
+               ? new LoadBalancerRequest(name, protocol, port, algorithm, nodes, virtualIPType, virtualIPId) 
+               : new LoadBalancerRequest(name, protocol, port, algorithm, nodes, virtualIps);
       }
 
       @Override
