@@ -39,17 +39,13 @@
         <module>azureblob</module>
         <module>aws-s3</module>
         <module>aws-ec2</module>
+        <module>aws-sqs</module>
+        <module>aws-cloudwatch</module>
         <module>synaptic-storage</module>
         <module>ninefold-storage</module>
         <module>cloudonestorage</module>
         <module>eucalyptus-partnercloud-s3</module>
         <module>eucalyptus-partnercloud-ec2</module>
-        <module>cloudservers-us</module>
-        <module>cloudservers-uk</module>
-        <module>cloudfiles-us</module>
-        <module>cloudfiles-uk</module>
-        <module>cloudloadbalancers-us</module>
-        <module>cloudloadbalancers-uk</module>
         <module>bluelock-vcloud-zone01</module>
         <module>stratogen-vcloud-mycloud</module>
         <module>trmk-ecloud</module>
@@ -64,18 +60,22 @@
         <module>serverlove-z1-man</module>
         <module>skalicloud-sdg-my</module>
         <module>greenhousedata-element-vcloud</module>
-        <module>aws-cloudwatch</module>
         <module>go2cloud-jhb1</module>
         <module>softlayer</module>
         <module>ninefold-compute</module>
         <module>hpcloud-compute</module>
         <module>hpcloud-objectstorage</module>
         <module>trystack-nova</module>
+        <module>cloudservers-us</module>
+        <module>cloudservers-uk</module>
+        <module>cloudfiles-us</module>
+        <module>cloudfiles-uk</module>
+        <module>rackspace-cloudloadbalancers-us</module>
+        <module>rackspace-cloudloadbalancers-uk</module>
         <module>rackspace-cloudservers-us</module>
         <module>rackspace-cloudservers-uk</module>
         <module>rackspace-cloudblockstorage-us</module>
         <module>rackspace-cloudblockstorage-uk</module>
-        <module>aws-sqs</module>
         <module>glesys</module>
     </modules>
 </project>

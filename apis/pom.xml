@@ -32,29 +32,29 @@
     <packaging>pom</packaging>
     <name>jclouds apis project</name>
     <modules>
+       <module>cloudwatch</module>
+       <module>cloudsigma</module>
+       <module>cloudstack</module>
        <module>filesystem</module>
        <module>byon</module>
        <module>s3</module>
        <module>ec2</module>
+       <module>sqs</module>
        <module>deltacloud</module>
        <module>walrus</module>
        <module>eucalyptus</module>
-       <module>swift</module>
-       <module>cloudfiles</module>
-       <module>cloudservers</module>
-       <module>cloudloadbalancers</module>
        <module>vcloud</module>
        <module>elasticstack</module>
        <module>atmos</module>
        <module>nova</module>
+       <module>swift</module>
        <module>openstack-keystone</module>
        <module>openstack-cinder</module>
        <module>openstack-nova</module>
        <module>openstack-nova-ec2</module>
-       <module>cloudwatch</module>
-       <module>cloudsigma</module>
-       <module>cloudstack</module>
+       <module>cloudfiles</module>
+       <module>cloudservers</module>
        <module>rackspace-cloudidentity</module>
-       <module>sqs</module>
+       <module>rackspace-cloudloadbalancers</module>
     </modules>
 </project>
