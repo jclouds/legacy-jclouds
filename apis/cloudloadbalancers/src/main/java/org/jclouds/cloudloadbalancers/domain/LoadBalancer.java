@@ -25,16 +25,16 @@ import java.util.Date;
 import java.util.Set;
 
 import org.jclouds.cloudloadbalancers.domain.internal.BaseLoadBalancer;
+import org.jclouds.cloudloadbalancers.features.LoadBalancerClient;
 import org.jclouds.javax.annotation.Nullable;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
 
 /**
  * 
  * @author Adrian Cole
- * @see <a href=
- *      "http://docs.rackspacecloud.com/loadbalancers/api/v1.0/clb-devguide/content/ch04s01s02.html"
- *      />
  */
 public class LoadBalancer extends BaseLoadBalancer<Node, LoadBalancer> {
 
@@ -61,6 +61,7 @@ public class LoadBalancer extends BaseLoadBalancer<Node, LoadBalancer> {
       private Date created;
       private Date updated;
       private boolean connectionLoggingEnabled;
+      private int nodeCount = 0;
 
       public Builder region(String region) {
          this.region = region;
@@ -112,9 +113,17 @@ public class LoadBalancer extends BaseLoadBalancer<Node, LoadBalancer> {
          return this;
       }
 
+      /**
+       * @see LoadBalancer#getNodeCount()
+       */
+      public Builder nodeCount(int nodeCount) {
+         this.nodeCount = nodeCount;
+         return this;
+      }
+
       public LoadBalancer build() {
          return new LoadBalancer(region, id, name, protocol, port, algorithm, status, virtualIPs, nodes,
-                  sessionPersistenceType, clusterName, created, updated, connectionLoggingEnabled);
+                  sessionPersistenceType, clusterName, created, updated, connectionLoggingEnabled, nodeCount);
       }
 
       @Override
@@ -138,7 +147,7 @@ public class LoadBalancer extends BaseLoadBalancer<Node, LoadBalancer> {
       public Builder from(LoadBalancer in) {
          return Builder.class.cast(super.from(in)).id(in.getId()).status(in.getStatus()).virtualIPs(in.getVirtualIPs())
                   .clusterName(in.getClusterName()).created(in.getCreated()).updated(in.getUpdated())
-                  .connectionLoggingEnabled(in.isConnectionLoggingEnabled());
+                  .connectionLoggingEnabled(in.isConnectionLoggingEnabled()).nodeCount(in.getNodeCount());
       }
 
       @Override
@@ -268,10 +277,11 @@ public class LoadBalancer extends BaseLoadBalancer<Node, LoadBalancer> {
    private final Date created;
    private final Date updated;
    private final boolean connectionLoggingEnabled;
+   private int nodeCount = 0;
 
    public LoadBalancer(String region, int id, String name, String protocol, Integer port, @Nullable String algorithm,
             Status status, Iterable<VirtualIP> virtualIPs, Iterable<Node> nodes, String sessionPersistenceType,
-            String clusterName, Date created, Date updated, boolean connectionLoggingEnabled) {
+            String clusterName, Date created, Date updated, boolean connectionLoggingEnabled, Integer nodeCount) {
       super(name, protocol, port, algorithm, nodes);
       this.region = checkNotNull(region, "region");
       checkArgument(id != -1, "id must be specified");
@@ -284,6 +294,7 @@ public class LoadBalancer extends BaseLoadBalancer<Node, LoadBalancer> {
       this.created = checkNotNull(created, "created");
       this.updated = checkNotNull(updated, "updated");
       this.connectionLoggingEnabled = connectionLoggingEnabled;
+      this.nodeCount = nodeCount;
    }
 
    public String getRegion() {
@@ -331,41 +342,42 @@ public class LoadBalancer extends BaseLoadBalancer<Node, LoadBalancer> {
       return connectionLoggingEnabled;
    }
 
+   /**
+    * Broken out as a separate field because when LoadBalancers are returned from 
+    * {@link LoadBalancerClient#listLoadBalancers()}, no Nodes are returned (so you can't rely on getNodes().size())
+    * but a nodeCount is returned. When {@link LoadBalancerClient#getLoadBalancer(int)} is called, nodes are
+    * returned by no nodeCount is returned.
+    *  
+    * @return The number of Nodes in this LoadBalancer 
+    */
+   public int getNodeCount() {
+      return nodes.size() > 0 ? nodes.size() : nodeCount;
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("id", id).add("region", region).add("name", name).add("protocol", protocol).add("port", port)
+            .add("algorithm", algorithm).add("status", status).add("virtualIPs", virtualIPs).add("nodeCount", getNodeCount())
+            .add("nodes", nodes).add("sessionPersistenceType", sessionPersistenceType).add("created", created)
+            .add("updated", updated).add("clusterName", clusterName).add("connectionLoggingEnabled", connectionLoggingEnabled);
+   }
+   
    @Override
    public String toString() {
-      return String
-               .format(
-                        "[region=%s, id=%s, name=%s, protocol=%s, port=%s, algorithm=%s, status=%s, virtualIPs=%s, nodes=%s, sessionPersistenceType=%s, created=%s, updated=%s, clusterName=%s, connectionLoggingEnabled=%s]",
-                        region, id, name, protocol, port, algorithm, status, virtualIPs, nodes, sessionPersistenceType,
-                        created, updated, clusterName, connectionLoggingEnabled);
+      return string().toString();
    }
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = super.hashCode();
-      result = prime * result + id;
-      result = prime * result + ((region == null) ? 0 : region.hashCode());
-      return result;
+      return Objects.hashCode(id, region);
    }
 
    @Override
    public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (!super.equals(obj))
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      LoadBalancer other = (LoadBalancer) obj;
-      if (id != other.id)
-         return false;
-      if (region == null) {
-         if (other.region != null)
-            return false;
-      } else if (!region.equals(other.region))
-         return false;
-      return true;
-   }
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
 
+      LoadBalancer that = LoadBalancer.class.cast(obj);
+      return Objects.equal(this.id, that.id) && Objects.equal(this.region, that.region);
+   }
 }

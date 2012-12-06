@@ -22,8 +22,9 @@ import java.util.Set;
 
 import org.jclouds.cloudloadbalancers.features.LoadBalancerAsyncClient;
 import org.jclouds.cloudloadbalancers.features.NodeAsyncClient;
-import org.jclouds.location.Region;
-import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
+import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.location.Zone;
+import org.jclouds.location.functions.ZoneToEndpoint;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
 
@@ -34,33 +35,28 @@ import com.google.inject.Provides;
  * <p/>
  * 
  * @see CloudLoadBalancersClient
- * @see <a
- *      href="http://docs.rackspacecloud.com/loadbalancers/api/v1.0/clb-devguide/content/ch04s01.html"
- *      />
  * @author Adrian Cole
  */
 public interface CloudLoadBalancersAsyncClient {
-
    /**
-    * 
-    * @return the region codes configured
+    * @return the Zone codes configured
     */
    @Provides
-   @Region
-   Set<String> getConfiguredRegions();
+   @Zone
+   Set<String> getConfiguredZones();
 
    /**
     * Provides asynchronous access to LoadBalancer features.
     */
    @Delegate
    LoadBalancerAsyncClient getLoadBalancerClient(
-            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) String region);
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
    
    /**
     * Provides asynchronous access to Node features.
     */
    @Delegate
    NodeAsyncClient getNodeClient(
-		   @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) String region);
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
 }

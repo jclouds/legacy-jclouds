@@ -33,7 +33,7 @@ import javax.ws.rs.core.MediaType;
 import org.jclouds.cloudloadbalancers.domain.Node;
 import org.jclouds.cloudloadbalancers.domain.NodeAttributes;
 import org.jclouds.cloudloadbalancers.domain.NodeRequest;
-import org.jclouds.openstack.filters.AuthenticateRequest;
+import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;

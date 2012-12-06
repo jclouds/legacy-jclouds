@@ -34,8 +34,8 @@
   <packaging>bundle</packaging>
   
    <properties>
-    <test.cloudloadbalancers.endpoint>https://auth.api.rackspacecloud.com</test.cloudloadbalancers.endpoint>
-    <test.cloudloadbalancers.api-version>1.0</test.cloudloadbalancers.api-version>
+    <test.cloudloadbalancers.endpoint>https://identity.api.rackspacecloud.com/v2.0/</test.cloudloadbalancers.endpoint>
+    <test.cloudloadbalancers.api-version>1</test.cloudloadbalancers.api-version>
     <test.cloudloadbalancers.build-version></test.cloudloadbalancers.build-version>
     <test.cloudloadbalancers.identity>${test.rackspace.identity}</test.cloudloadbalancers.identity>
     <test.cloudloadbalancers.credential>${test.rackspace.credential}</test.cloudloadbalancers.credential>
@@ -50,8 +50,13 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.jclouds.common</groupId>
-      <artifactId>openstack-common</artifactId>
+      <groupId>org.jclouds.api</groupId>
+      <artifactId>openstack-keystone</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jclouds.api</groupId>
+      <artifactId>rackspace-cloudidentity</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -69,16 +74,28 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.jclouds.common</groupId>
-      <artifactId>openstack-common</artifactId>
+      <groupId>org.jclouds.api</groupId>
+      <artifactId>openstack-keystone</artifactId>
+      <version>${project.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jclouds.api</groupId>
+      <artifactId>rackspace-cloudidentity</artifactId>
       <version>${project.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jclouds.driver</groupId>
-      <artifactId>jclouds-log4j</artifactId>
+      <artifactId>jclouds-slf4j</artifactId>
       <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -104,6 +121,7 @@
                     <test.cloudloadbalancers.build-version>${test.cloudloadbalancers.build-version}</test.cloudloadbalancers.build-version>
                     <test.cloudloadbalancers.identity>${test.cloudloadbalancers.identity}</test.cloudloadbalancers.identity>
                     <test.cloudloadbalancers.credential>${test.cloudloadbalancers.credential}</test.cloudloadbalancers.credential>
+                    <test.jclouds.keystone.credential-type>${test.jclouds.keystone.credential-type}</test.jclouds.keystone.credential-type>
                   </systemPropertyVariables>
                 </configuration>
               </execution>

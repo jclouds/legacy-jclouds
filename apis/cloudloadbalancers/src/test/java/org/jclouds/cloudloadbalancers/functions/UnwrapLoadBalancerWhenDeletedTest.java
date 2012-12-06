@@ -39,14 +39,14 @@ public class UnwrapLoadBalancerWhenDeletedTest extends BaseItemParserTest<LoadBa
 
    @Override
    public String resource() {
-      return "/getloadbalancer-deleted.json";
+      return "/loadbalancer-get-deleted.json";
    }
 
    @Override
    public LoadBalancer expected() {
-      return LoadBalancer.builder().region("LON").id(4865).name("adriancole-LON").status(Status.DELETED).created(
-               new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-12-05T18:03:23Z")).updated(
-               new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-12-05T18:04:04Z")).build();
+      return LoadBalancer.builder().region("LON").id(4865).name("adriancole-LON").status(Status.DELETED).nodeCount(0)
+            .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-12-05T18:03:23Z"))
+            .updated(new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-12-05T18:04:04Z")).build();
    }
 
    // add factory binding as this is not default
