@@ -384,6 +384,7 @@
                         <ignoredResource>test.jks</ignoredResource>
                         <ignoredResource>CreateInternetService-options-test.xml</ignoredResource>
                         <ignoredResource>.gitattributes</ignoredResource>
+                        <ignoredResource>OSGI-OPT/bnd.bnd</ignoredResource>
                     </ignoredResources>
                     <failBuildInCaseOfConflict>true</failBuildInCaseOfConflict>
                 </configuration>
