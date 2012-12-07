@@ -32,12 +32,12 @@
     <dependencies>
         <dependency>
             <groupId>org.jclouds.provider</groupId>
-            <artifactId>cloudloadbalancers-uk</artifactId>
+            <artifactId>rackspace-cloudloadbalancers-uk</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jclouds.provider</groupId>
-            <artifactId>cloudloadbalancers-us</artifactId>
+            <artifactId>rackspace-cloudloadbalancers-us</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
