@@ -29,6 +29,7 @@ import org.jclouds.View;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.reflect.TypeToken;
 
@@ -69,7 +70,9 @@ public class Apis {
     * @return all available apis
     */
    public static Iterable<ApiMetadata> all() {
-      return Iterables.concat(fromServiceLoader(), ApiRegistry.fromRegistry());
+      return ImmutableSet.<ApiMetadata>builder()
+                         .addAll(fromServiceLoader())
+                         .addAll(ApiRegistry.fromRegistry()).build();
    }
 
    /**
