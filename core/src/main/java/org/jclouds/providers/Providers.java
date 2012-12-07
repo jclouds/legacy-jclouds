@@ -24,7 +24,7 @@ import static com.google.common.collect.Iterables.find;
 import java.util.NoSuchElementException;
 import java.util.ServiceLoader;
 
-import com.google.common.collect.Iterables;
+import com.google.common.collect.ImmutableSet;
 import org.jclouds.Context;
 import org.jclouds.View;
 import org.jclouds.apis.ApiMetadata;
@@ -83,7 +83,9 @@ public class Providers {
     * @return all available providers
     */
    public static Iterable<ProviderMetadata> all() {
-     return Iterables.concat(fromServiceLoader(), ProviderRegistry.fromRegistry());
+     return ImmutableSet.<ProviderMetadata>builder()
+                        .addAll(fromServiceLoader())
+                        .addAll(ProviderRegistry.fromRegistry()).build();
    }
 
    /**
