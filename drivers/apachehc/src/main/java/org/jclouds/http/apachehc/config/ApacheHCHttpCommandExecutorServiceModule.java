@@ -53,6 +53,7 @@ import org.jclouds.http.apachehc.ApacheHCHttpCommandExecutorService;
 import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
 import org.jclouds.http.config.SSLModule;
 import org.jclouds.lifecycle.Closer;
+import org.jclouds.proxy.ProxyConfig;
 
 import com.google.common.base.Supplier;
 import com.google.inject.AbstractModule;
@@ -155,9 +156,9 @@ public class ApacheHCHttpCommandExecutorServiceModule extends AbstractModule {
 
    @Provides
    @Singleton
-   HttpClient newDefaultHttpClient(HttpUtils utils, BasicHttpParams params, ClientConnectionManager cm) {
+   HttpClient newDefaultHttpClient(ProxyConfig config, BasicHttpParams params, ClientConnectionManager cm) {
       DefaultHttpClient client = new DefaultHttpClient(cm, params);
-      if (utils.useSystemProxies()) {
+      if (config.useSystem()) {
          ProxySelectorRoutePlanner routePlanner = new ProxySelectorRoutePlanner(client.getConnectionManager()
                   .getSchemeRegistry(), ProxySelector.getDefault());
          client.setRoutePlanner(routePlanner);

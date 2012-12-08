@@ -33,6 +33,7 @@ import static org.jclouds.util.Maps2.transformKeys;
 import static org.jclouds.util.Predicates2.startsWith;
 
 import java.lang.reflect.Method;
+import java.net.Proxy;
 import java.net.URI;
 import java.util.Map;
 import java.util.Set;
@@ -46,6 +47,8 @@ import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.internal.FilterStringsBoundToInjectorByName;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.location.config.LocationModule;
+import com.google.common.reflect.Invokable;
+import org.jclouds.proxy.ProxyForURI;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.HttpAsyncClient;
 import org.jclouds.rest.HttpClient;
@@ -59,7 +62,6 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.reflect.Invokable;
 import com.google.common.reflect.Parameter;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -147,8 +149,8 @@ public class RestModule extends AbstractModule {
       }).toInstance(authException);
       bind(new TypeLiteral<Function<Predicate<String>, Map<String, String>>>() {
       }).to(FilterStringsBoundToInjectorByName.class);
-      bind(new TypeLiteral<Function<Predicate<String>, Map<String, String>>>() {
-      }).to(FilterStringsBoundToInjectorByName.class);
+      bind(new TypeLiteral<Function<URI, Proxy>>() {
+      }).to(ProxyForURI.class);
       installLocations();
    }
 
