@@ -46,11 +46,13 @@ package org.jclouds.crypto.pem;
 import java.io.IOException;
 import java.security.spec.RSAPublicKeySpec;
 
-import net.oauth.signature.pem.PKCS1EncodedKeySpec;
+import org.bouncycastle.asn1.ASN1Object;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.x509.RSAPublicKeyStructure;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 
 /**
  * PKCS#1 encoded public key spec.
- * 
  * 
  * @author Adrian Cole
  */
@@ -65,7 +67,7 @@ public class PKCS1EncodedPublicKeySpec {
     *           DER encoded octet stream
     * @throws IOException
     */
-   public PKCS1EncodedPublicKeySpec(byte[] keyBytes) throws IOException {
+   public PKCS1EncodedPublicKeySpec(final byte[] keyBytes) throws IOException {
       decode(keyBytes);
    }
 
@@ -79,12 +81,31 @@ public class PKCS1EncodedPublicKeySpec {
    }
 
    /**
-    * get the modulus and public exponent by reusing {@link PKCS1EncodedKeySpec}
+    * Decode PKCS#1 encoded private key into RSAPrivateCrtKeySpec.
+    * <p>
+    * Keys here can be in two different formats. They can have the algorithm
+    * encoded, or they can have only the modulus and the public exponent.
+    * <p>
+    * The latter is not a valid PEM encoded file, but it is a valid DER encoded
+    * RSA key, so this method should also support it.
+    * 
+    * @param keyBytes
+    *           Encoded PKCS#1 rsa key.
     */
-   private void decode(byte[] keyBytes) throws IOException {
-      PKCS1EncodedKeySpec privateSpec = new PKCS1EncodedKeySpec(keyBytes);
-
-      keySpec = new RSAPublicKeySpec(privateSpec.getKeySpec().getModulus(), privateSpec.getKeySpec()
-               .getPublicExponent());
+   private void decode(final byte[] keyBytes) throws IOException {
+      RSAPublicKeyStructure pks = null;
+      ASN1Sequence seq = (ASN1Sequence) ASN1Object.fromByteArray(keyBytes);
+      try {
+         // Try to parse the public key normally. If the algorithm is not
+         // present in the encoded key, an IllegalArgumentException will be
+         // raised.
+         SubjectPublicKeyInfo info = new SubjectPublicKeyInfo(seq);
+         pks = new RSAPublicKeyStructure((ASN1Sequence) info.getPublicKey());
+      } catch (IllegalArgumentException ex) {
+         // If the algorithm is not found in the encoded key, try to extract
+         // just the modulus and the public exponent to build the public key.
+         pks = new RSAPublicKeyStructure(seq);
+      }
+      keySpec = new RSAPublicKeySpec(pks.getModulus(), pks.getPublicExponent());
    }
 }
