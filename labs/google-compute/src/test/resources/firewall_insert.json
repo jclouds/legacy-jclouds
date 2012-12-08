@@ -1,0 +1,1 @@
+{"network":"https://www.googleapis.com/compute/v1beta13/projects/myproject/networks/default","sourceRanges":["10.0.1.0/32"],"sourceTags":["tag1"],"targetTags":["tag2"],"allowed":[{"IPProtocol":"tcp","ports":["22","23-24"]}],"kind":"compute#firewall","name":"myfw"}

@@ -1,0 +1,21 @@
+{
+ "kind": "compute#machineType",
+ "id": "12907738072351752276",
+ "creationTimestamp": "2012-06-07T20:48:14.670",
+ "selfLink": "https://www.googleapis.com/compute/v1beta13/projects/myproject/machineTypes/n1-standard-1",
+ "name": "n1-standard-1",
+ "description": "1 vCPU, 3.75 GB RAM, and a 10 GB ephemeral root disk",
+ "guestCpus": 1,
+ "memoryMb": 3840,
+ "imageSpaceGb": 10,
+ "ephemeralDisks": [
+     {
+      "diskGb": 1770
+     },
+     {
+      "diskGb": 1770
+     }
+    ],
+ "maximumPersistentDisks": 16,
+ "maximumPersistentDisksSizeGb": "128"
+}

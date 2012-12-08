@@ -1,0 +1,19 @@
+{
+ "kind": "compute#imageList",
+ "id": "projects/google/images",
+ "selfLink": "https://www.googleapis.com/compute/v1beta13/projects/google/images",
+ "items": [
+  {
+   "kind": "compute#image",
+   "name": "gcel-10-04-v20121106"
+  },
+  {
+   "kind": "compute#image",
+   "name": "gcel-12-04-v20121106"
+  },
+  {
+   "kind": "compute#image",
+   "name": "ubuntu-10-04-v20110728"
+  },
+ ]
+}

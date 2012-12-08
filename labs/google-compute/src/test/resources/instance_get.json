@@ -1,0 +1,27 @@
+{
+ "kind": "compute#instance",
+ "id": "13051190678907570425",
+ "creationTimestamp": "2012-11-25T23:48:20.758",
+ "selfLink": "https://www.googleapis.com/compute/v1beta13/projects/myproject/instances/test-instance",
+ "name": "test-instance",
+ "image": "https://www.googleapis.com/compute/v1beta13/projects/google/images/ubuntu-12-04-v20120912",
+ "machineType": "https://www.googleapis.com/compute/v1beta13/projects/myproject/machineTypes/n1-standard-1",
+ "status": "RUNNING",
+ "zone": "https://www.googleapis.com/compute/v1beta13/projects/myproject/zones/us-central1-a",
+ "networkInterfaces": [
+  {
+   "kind": "compute#networkInterface",
+   "name": "nic0",
+   "network": "https://www.googleapis.com/compute/v1beta13/projects/myproject/networks/default",
+   "networkIP": "10.240.95.85"
+  }
+ ],
+ "disks": [
+  {
+   "kind": "compute#attachedDisk",
+   "type": "EPHEMERAL",
+   "mode": "READ_WRITE",
+   "index": 0
+  }
+ ]
+}

@@ -1,0 +1,30 @@
+{
+
+ "kind": "compute#firewall",
+ "id": "12862241031274216284",
+ "creationTimestamp": "2012-04-13T03:05:02.855",
+ "selfLink": "https://www.googleapis.com/compute/v1beta13/projects/google/firewalls/default-allow-internal",
+ "name": "default-allow-internal",
+ "description": "Internal traffic from default allowed",
+ "network": "https://www.googleapis.com/compute/v1beta13/projects/google/networks/default",
+ "sourceRanges": [
+  "10.0.0.0/8"
+ ],
+ "allowed": [
+  {
+   "IPProtocol": "tcp",
+   "ports": [
+    "1-65535"
+   ]
+  },
+  {
+   "IPProtocol": "udp",
+   "ports": [
+    "1-65535"
+   ]
+  },
+  {
+   "IPProtocol": "icmp"
+  }
+ ]
+}
