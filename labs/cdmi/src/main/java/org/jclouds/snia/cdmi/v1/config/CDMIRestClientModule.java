@@ -20,11 +20,18 @@ package org.jclouds.snia.cdmi.v1.config;
 
 import java.util.Map;
 
+import javax.inject.Singleton;
+import javax.inject.Named;
+
+import org.jclouds.crypto.Crypto;
 import org.jclouds.http.HttpErrorHandler;
+import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.rest.annotations.Credential;
+import org.jclouds.rest.annotations.Identity;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.snia.cdmi.v1.CDMIApi;
 import org.jclouds.snia.cdmi.v1.CDMIAsyncApi;
@@ -36,15 +43,24 @@ import org.jclouds.snia.cdmi.v1.features.DataNonCDMIContentTypeApi;
 import org.jclouds.snia.cdmi.v1.features.DataNonCDMIContentTypeAsyncApi;
 import org.jclouds.snia.cdmi.v1.features.DomainApi;
 import org.jclouds.snia.cdmi.v1.features.DomainAsyncApi;
+import org.jclouds.snia.cdmi.v1.filters.AuthTypes;
+import org.jclouds.snia.cdmi.v1.filters.AuthenticationFilterSwitch;
+import org.jclouds.snia.cdmi.v1.filters.BasicAuthenticationAndTenantId;
+import org.jclouds.snia.cdmi.v1.filters.OpenstackKeystoneAuthReqFilter;
 import org.jclouds.snia.cdmi.v1.handlers.CDMIErrorHandler;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.Provides;
+import com.google.inject.name.Names;
 
 /**
  * Configures the CDMI connection.
  * 
- * @author Adrian Cole
+ * @author Kenneth Nagin
  */
+
 @ConfiguresRestClient
 public class CDMIRestClientModule extends RestClientModule<CDMIApi, CDMIAsyncApi> {
 
@@ -55,6 +71,18 @@ public class CDMIRestClientModule extends RestClientModule<CDMIApi, CDMIAsyncApi
 
    public CDMIRestClientModule() {
       super(DELEGATE_MAP);
+   }
+   
+   public void configure() {
+	   super.configure();
+	   bind(HttpRequestFilter.class).annotatedWith(Names.named(AuthTypes.BASICAUTHTID_AUTHTYPE)).to(BasicAuthenticationAndTenantId.class);
+	   bind(HttpRequestFilter.class).annotatedWith(Names.named(AuthTypes.OPENSTACKKEYSTONE_AUTHTYPE)).to(OpenstackKeystoneAuthReqFilter.class);
+   }
+   
+   @Provides
+   @Singleton
+   public AuthenticationFilterSwitch provideAuthenticationFilterSwitch(Injector i, @Named(CDMIProperties.AUTHTYPE) String authType) {
+	   return  new AuthenticationFilterSwitch(i.getInstance(Key.get(HttpRequestFilter.class,Names.named(authType))));
    }
 
    @Override

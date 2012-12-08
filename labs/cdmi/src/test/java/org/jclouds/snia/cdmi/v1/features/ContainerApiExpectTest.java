@@ -20,10 +20,14 @@ package org.jclouds.snia.cdmi.v1.features;
 
 import static org.testng.Assert.assertEquals;
 
+import java.util.Properties;
+
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.snia.cdmi.v1.CDMIApi;
+import org.jclouds.snia.cdmi.v1.config.CDMIProperties;
+import org.jclouds.snia.cdmi.v1.filters.AuthTypes;
 import org.jclouds.snia.cdmi.v1.internal.BaseCDMIApiExpectTest;
 import org.jclouds.snia.cdmi.v1.parse.ParseContainerTest;
 import org.testng.annotations.Test;
@@ -37,23 +41,33 @@ import com.google.common.collect.ImmutableMultimap;
 @Test(groups = "unit", testName = "ContainerAsyncApiTest")
 public class ContainerApiExpectTest extends BaseCDMIApiExpectTest {
 
-   public void testGetContainerWhenResponseIs2xx() throws Exception {
+    public void testGetContainerWhenResponseIs2xx() throws Exception {
 
-      HttpRequest get = HttpRequest
-               .builder()
-               .method("GET")
-               .endpoint("http://localhost:8080/MyContainer/")
-               .headers(ImmutableMultimap.<String, String> builder().put("X-CDMI-Specification-Version", "1.0.1")
-                        .put("TID", "tenantId")
-                        .put("Authorization", "Basic " + CryptoStreams.base64("username:password".getBytes()))
-                        .put("Accept", "application/cdmi-container").build()).build();
+        HttpRequest get = HttpRequest
+                    .builder()
+                    .method("GET")
+                    .endpoint("http://localhost:8080/MyContainer/")
+                    .headers(ImmutableMultimap.<String, String> builder().put("X-CDMI-Specification-Version", "1.0.1")
+                                .put("TID", "tenantId")
+                                .put("Authorization", "Basic " + CryptoStreams.base64("username:password".getBytes()))
+                                .put("Accept", "application/cdmi-container").build()).build();
 
-      HttpResponse getResponse = HttpResponse.builder().statusCode(200).payload(payloadFromResource("/container.json"))
-               .build();
+        HttpResponse getResponse = HttpResponse.builder().statusCode(200)
+                    .payload(payloadFromResource("/container.json")).build();
 
-      CDMIApi apiWhenContainersExist = requestSendsResponse(get, getResponse);
+        CDMIApi apiWhenContainersExist = requestSendsResponse(get, getResponse);
 
-      assertEquals(apiWhenContainersExist.getApi().get("MyContainer/"), new ParseContainerTest().expected());
-   }
+        assertEquals(apiWhenContainersExist.getApi().get("MyContainer/"), new ParseContainerTest().expected());
+    }
+
+	/**
+	 * this reflects the properties that a user would pass to createContext
+	 */
+	@Override
+	protected Properties setupProperties() {
+		Properties contextProperties = super.setupProperties();
+		contextProperties.setProperty(CDMIProperties.AUTHTYPE, AuthTypes.BASICAUTHTID_AUTHTYPE);
+		return contextProperties;
+	}    
 
 }

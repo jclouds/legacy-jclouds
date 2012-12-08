@@ -14,8 +14,7 @@ import com.google.common.io.CharStreams;
 import com.google.common.io.Files;
 
 /**
- * CreateDataObjectOptions options supported in the REST API for the CREATE CDMI Data Object
- * operation. <h2>
+ * CreateDataObjectOptions options supported in the REST API for the CREATE CDMI Data Object operation.
  * 
  * @author Kenneth Nagin
  */
@@ -133,8 +132,7 @@ public class CreateDataObjectOptions extends CreateCDMIObjectOptions {
     * @param value
     *           InputSteam
     * @param charset
-    *           character set of input stream InputSteam is converted to a String value with charset
-    *           UTF_8
+    *           character set of input stream InputSteam is converted to a String value with charset UTF_8
     * @return CreateDataObjectOptions
     */
    public CreateDataObjectOptions value(InputStream value, Charset charset) throws IOException {

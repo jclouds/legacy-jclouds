@@ -21,8 +21,14 @@ package org.jclouds.snia.cdmi.v1.config;
 /**
  * Configuration properties and constants used in SNIA CDMI connections.
  * 
- * @author Adrian Cole
+ * @author Kenneth Nagin
  */
-public class CDMIProperties {
+public interface CDMIProperties {
+	/**
+	 * Property type for choosing which authorization type is used when accessing provider.
+	 * For valid values:
+	 * @see org.jclouds.snia.cdmi.v1.filters.AuthTypes
+	 */
+	public static final String AUTHTYPE = "jclouds.cdmi.authType";
 
 }

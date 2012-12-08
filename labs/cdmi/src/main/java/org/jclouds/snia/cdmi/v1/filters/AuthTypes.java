@@ -16,24 +16,18 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.snia.cdmi.v1.internal;
-
-import java.util.Properties;
-
-import org.jclouds.http.HttpRequest;
-import org.jclouds.http.HttpResponse;
-import org.jclouds.snia.cdmi.v1.CDMIAsyncApi;
-
-import com.google.common.base.Function;
-import com.google.inject.Module;
+package org.jclouds.snia.cdmi.v1.filters;
 
 /**
- * Base class for writing KeyStone Rest Api Expect tests
+ * @author Kenneth Nagin
  * 
- * @author Adrian Cole
  */
-public class BaseCDMIAsyncApiExpectTest extends BaseCDMIExpectTest<CDMIAsyncApi> {
-	public CDMIAsyncApi createClient(Function<HttpRequest, HttpResponse> fn, Module module, Properties props) {
-		return createInjector(fn, module, props).getInstance(CDMIAsyncApi.class);
-	}
+public interface AuthTypes {
+	/**
+	 * Valid values for AUTHTYPE
+	 * 
+	 * @see org.jclouds.snia.cdmi.v1.config.CDMIProperties#AUTHTYPE
+	 */
+	public static final String OPENSTACKKEYSTONE_AUTHTYPE = "openstackKeystone";
+	public static final String BASICAUTHTID_AUTHTYPE = "basicAuthTid";
 }

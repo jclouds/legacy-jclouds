@@ -45,12 +45,13 @@ public class BasicAuthenticationAndTenantId implements HttpRequestFilter {
    @Inject
    public BasicAuthenticationAndTenantId(@Identity String tenantIdAndUsername, @Credential String password,
             Crypto crypto) {
-      if (tenantIdAndUsername.indexOf(':') == -1) {
+      int colonIndex = tenantIdAndUsername.indexOf(':');
+      if (colonIndex == -1) {
          throw new AuthorizationException(String.format("Identity %s does not match format tenantId:username",
                   tenantIdAndUsername), null);
       }
-      this.tenantId = tenantIdAndUsername.substring(0, tenantIdAndUsername.indexOf(':'));
-      String username = tenantIdAndUsername.substring(tenantIdAndUsername.indexOf(':') + 1);
+      this.tenantId = tenantIdAndUsername.substring(0, colonIndex);
+      String username = tenantIdAndUsername.substring(colonIndex + 1);
       this.basicAuthentication = new BasicAuthentication(username, password, crypto);
    }
 

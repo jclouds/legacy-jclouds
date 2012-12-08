@@ -26,7 +26,6 @@ import org.jclouds.rest.internal.BaseRestApiExpectTest;
  * @author Adrian Cole
  */
 public class BaseCDMIExpectTest<T> extends BaseRestApiExpectTest<T> {
-
    public BaseCDMIExpectTest() {
       provider = "cdmi";
       // now, createContext arg will need tenant prefix
