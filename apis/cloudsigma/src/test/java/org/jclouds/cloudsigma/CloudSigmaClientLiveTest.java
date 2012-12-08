@@ -46,7 +46,7 @@ import org.jclouds.cloudsigma.util.Servers;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.predicates.InetSocketAddressConnect;
+import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.sshj.config.SshjSshClientModule;
@@ -92,7 +92,8 @@ public class CloudSigmaClientLiveTest extends BaseComputeServiceContextLiveTest 
 
       client = cloudSigmaContext.getApi();
       driveNotClaimed = retry(Predicates.not(new DriveClaimed(client)), maxDriveImageTime, 1, SECONDS);
-      socketTester = retry(new InetSocketAddressConnect(), maxDriveImageTime, 1, SECONDS);
+      SocketOpen socketOpten = context.utils().injector().getInstance(SocketOpen.class);
+      socketTester = retry(socketOpten, maxDriveImageTime, 1, SECONDS);
 
       if (template == null || template.getImageId() == null) {
          imageId = view.getComputeService().templateBuilder().build().getImage().getId();
