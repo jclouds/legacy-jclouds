@@ -18,6 +18,9 @@
  */
 package org.jclouds;
 
+import java.net.Proxy;
+
+import org.jclouds.domain.Location;
 import org.jclouds.location.reference.LocationConstants;
 
 /**
@@ -103,24 +106,38 @@ public interface Constants {
     * Whether or not to use the proxy setup from the underlying operating system.
     */
    public static final String PROPERTY_PROXY_SYSTEM = "jclouds.use-system-proxy";
+   
    /**
     * String property.
     * <p/>
-    *Explicitly sets the host name of a HTTP proxy server.
+    *Explicitly sets the host name of a proxy server.
     */
    public static final String PROPERTY_PROXY_HOST = "jclouds.proxy-host";
+
    /**
-    * Integer property.
+    * Integer property. default is 80 when {@link #PROPERTY_PROXY_TYPE} is
+    * {@code HTTP}, and 1080 when {@link #PROPERTY_PROXY_TYPE} is {@code SOCKS}.
     * <p/>
-    * Explicitly sets the port number of a HTTP proxy server.
+    * Explicitly sets the port number of a proxy server.
     */
    public static final String PROPERTY_PROXY_PORT = "jclouds.proxy-port";
+
+   /**
+    * String property. default {@code HTTP}, valid options: {@code HTTP}, {@code SOCKS}.
+    * <p/>
+    * Explicitly sets the type of a proxy server.
+    * 
+    * @see Proxy.Type
+    */
+   public static final String PROPERTY_PROXY_TYPE = "jclouds.proxy-type";
+   
    /**
     * String property.
     * <p/>
     * Explicitly sets the user name credential for proxy authentication.
     */
    public static final String PROPERTY_PROXY_USER = "jclouds.proxy-user";
+   
    /**
     * String property.
     * <p/>

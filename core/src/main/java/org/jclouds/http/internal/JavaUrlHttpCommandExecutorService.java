@@ -20,7 +20,6 @@ package org.jclouds.http.internal;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Throwables.propagate;
-import static com.google.common.collect.Iterables.getLast;
 import static com.google.common.io.ByteStreams.toByteArray;
 import static com.google.common.io.Closeables.closeQuietly;
 import static com.google.common.net.HttpHeaders.CONTENT_LENGTH;
@@ -33,14 +32,10 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
-import java.net.Authenticator;
 import java.net.HttpURLConnection;
-import java.net.InetSocketAddress;
-import java.net.PasswordAuthentication;
 import java.net.ProtocolException;
 import java.net.Proxy;
-import java.net.ProxySelector;
-import java.net.SocketAddress;
+import java.net.URI;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
@@ -64,6 +59,7 @@ import org.jclouds.io.ContentMetadataCodec;
 import org.jclouds.io.MutableContentMetadata;
 import org.jclouds.io.Payload;
 
+import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableMultimap.Builder;
@@ -83,23 +79,26 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
             .getProperty("java.version"));
 
    private final Supplier<SSLContext> untrustedSSLContextProvider;
+   private final Function<URI, Proxy> proxyForURI;
    private final HostnameVerifier verifier;
    private final Field methodField;
    @Inject(optional = true)
    Supplier<SSLContext> sslContextSupplier;
+
 
    @Inject
    public JavaUrlHttpCommandExecutorService(HttpUtils utils, ContentMetadataCodec contentMetadataCodec,
             @Named(Constants.PROPERTY_IO_WORKER_THREADS) ListeningExecutorService ioExecutor,
             DelegatingRetryHandler retryHandler, IOExceptionRetryHandler ioRetryHandler,
             DelegatingErrorHandler errorHandler, HttpWire wire, @Named("untrusted") HostnameVerifier verifier,
-            @Named("untrusted") Supplier<SSLContext> untrustedSSLContextProvider) throws SecurityException,
-            NoSuchFieldException {
+            @Named("untrusted") Supplier<SSLContext> untrustedSSLContextProvider, Function<URI, Proxy> proxyForURI) 
+                  throws SecurityException, NoSuchFieldException {
       super(utils, contentMetadataCodec, ioExecutor, retryHandler, ioRetryHandler, errorHandler, wire);
       if (utils.getMaxConnections() > 0)
          System.setProperty("http.maxConnections", String.valueOf(checkNotNull(utils, "utils").getMaxConnections()));
       this.untrustedSSLContextProvider = checkNotNull(untrustedSSLContextProvider, "untrustedSSLContextProvider");
       this.verifier = checkNotNull(verifier, "verifier");
+      this.proxyForURI = checkNotNull(proxyForURI, "proxyForURI");
       this.methodField = HttpURLConnection.class.getDeclaredField("method");
       methodField.setAccessible(true);
    }
@@ -159,26 +158,7 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
       boolean chunked = "chunked".equals(request.getFirstHeaderOrNull("Transfer-Encoding"));
       URL url = request.getEndpoint().toURL();
 
-      HttpURLConnection connection;
-
-      if (utils.useSystemProxies()) {
-         System.setProperty("java.net.useSystemProxies", "true");
-         Iterable<Proxy> proxies = ProxySelector.getDefault().select(request.getEndpoint());
-         Proxy proxy = getLast(proxies);
-         connection = (HttpURLConnection) url.openConnection(proxy);
-      } else if (utils.getProxyHost() != null) {
-         SocketAddress addr = new InetSocketAddress(utils.getProxyHost(), utils.getProxyPort());
-         Proxy proxy = new Proxy(Proxy.Type.HTTP, addr);
-         Authenticator authenticator = new Authenticator() {
-            public PasswordAuthentication getPasswordAuthentication() {
-               return new PasswordAuthentication(utils.getProxyUser(), utils.getProxyPassword().toCharArray());
-            }
-         };
-         Authenticator.setDefault(authenticator);
-         connection = (HttpURLConnection) url.openConnection(proxy);
-      } else {
-         connection = (HttpURLConnection) url.openConnection();
-      }
+      HttpURLConnection connection = (HttpURLConnection) url.openConnection(proxyForURI.apply(request.getEndpoint()));
       if (connection instanceof HttpsURLConnection) {
          HttpsURLConnection sslCon = (HttpsURLConnection) connection;
          if (utils.relaxHostname())
