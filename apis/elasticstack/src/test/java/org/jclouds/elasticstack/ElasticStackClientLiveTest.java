@@ -43,7 +43,7 @@ import org.jclouds.elasticstack.domain.ServerStatus;
 import org.jclouds.elasticstack.predicates.DriveClaimed;
 import org.jclouds.elasticstack.util.Servers;
 import org.jclouds.io.Payloads;
-import org.jclouds.predicates.InetSocketAddressConnect;
+import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.sshj.config.SshjSshClientModule;
@@ -89,7 +89,8 @@ public class ElasticStackClientLiveTest extends BaseComputeServiceContextLiveTes
          
       client = view.unwrap(ElasticStackApiMetadata.CONTEXT_TOKEN).getApi();
       driveNotClaimed = retry(Predicates.not(new DriveClaimed(client)), maxDriveImageTime, 1, SECONDS);
-      socketTester = retry(new InetSocketAddressConnect(), maxDriveImageTime, 1, SECONDS);
+      SocketOpen socketOpen = context.utils().injector().getInstance(SocketOpen.class);
+      socketTester = retry(socketOpen, maxDriveImageTime, 1, SECONDS);
    }
    
    @Test
