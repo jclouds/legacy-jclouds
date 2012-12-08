@@ -50,6 +50,7 @@ import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.logging.Logger;
+import org.jclouds.proxy.ProxyConfig;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
@@ -123,7 +124,8 @@ public class JschSshClient implements SshClient {
    final String user;
    final String host;
 
-   public JschSshClient(BackoffLimitedRetryHandler backoffLimitedRetryHandler, HostAndPort socket,
+
+   public JschSshClient(ProxyConfig proxyConfig, BackoffLimitedRetryHandler backoffLimitedRetryHandler, HostAndPort socket,
             LoginCredentials loginCredentials, int timeout) {
       this.user = checkNotNull(loginCredentials, "loginCredentials").getUser();
       this.host = checkNotNull(socket, "socket").getHostText();
@@ -142,7 +144,7 @@ public class JschSshClient implements SshClient {
                   fingerPrint, sha1, host, socket.getPort());
       }
       sessionConnection = SessionConnection.builder().hostAndPort(HostAndPort.fromParts(host, socket.getPort())).loginCredentials(
-               loginCredentials).connectTimeout(timeout).sessionTimeout(timeout).build();
+               loginCredentials).proxy(checkNotNull(proxyConfig, "proxyConfig")).connectTimeout(timeout).sessionTimeout(timeout).build();
    }
 
    @Override
@@ -467,8 +469,8 @@ public class JschSshClient implements SshClient {
 
       @Override
       public ExecChannel create() throws Exception {
-         this.sessionConnection = acquire(SessionConnection.builder().fromSessionConnection(
-                  JschSshClient.this.sessionConnection).sessionTimeout(0).build());
+         this.sessionConnection = acquire(SessionConnection.builder().from(JschSshClient.this.sessionConnection)
+               .sessionTimeout(0).build());
          String channel = "exec";
          executor = (ChannelExec) sessionConnection.openChannel(channel);
          executor.setCommand(command);

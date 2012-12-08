@@ -18,12 +18,15 @@
  */
 package org.jclouds.ssh.jsch.config;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import javax.inject.Named;
 
 import org.jclouds.Constants;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
+import org.jclouds.proxy.ProxyConfig;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.config.ConfiguresSshClient;
 import org.jclouds.ssh.jsch.JschSshClient;
@@ -50,18 +53,20 @@ public class JschSshClientModule extends AbstractModule {
       @Inject(optional = true)
       int timeout = 60000;
 
+      private final ProxyConfig proxyConfig;
       private final BackoffLimitedRetryHandler backoffLimitedRetryHandler;
       private final Injector injector;
 
       @Inject
-      public Factory(BackoffLimitedRetryHandler backoffLimitedRetryHandler, Injector injector) {
-         this.backoffLimitedRetryHandler = backoffLimitedRetryHandler;
-         this.injector = injector;
+      public Factory(ProxyConfig proxyConfig, BackoffLimitedRetryHandler backoffLimitedRetryHandler, Injector injector) {
+         this.proxyConfig = checkNotNull(proxyConfig, "proxyConfig");
+         this.backoffLimitedRetryHandler = checkNotNull(backoffLimitedRetryHandler, "backoffLimitedRetryHandler");
+         this.injector = checkNotNull(injector, "injector");
       }
 
       @Override
       public SshClient create(HostAndPort socket, LoginCredentials credentials) {
-         SshClient client = new JschSshClient(backoffLimitedRetryHandler, socket, credentials, timeout);
+         SshClient client = new JschSshClient(proxyConfig, backoffLimitedRetryHandler, socket, credentials, timeout);
          injector.injectMembers(client);// add logger
          return client;
       }
