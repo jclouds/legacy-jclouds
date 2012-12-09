@@ -24,6 +24,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.CertificateEncodingException;
@@ -34,15 +35,16 @@ import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.KeySpec;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Map;
 
-import net.oauth.signature.pem.PEMReader;
-import net.oauth.signature.pem.PKCS1EncodedKeySpec;
-
 import org.bouncycastle.asn1.ASN1OutputStream;
 import org.bouncycastle.asn1.pkcs.RSAPrivateKeyStructure;
+import org.bouncycastle.util.io.pem.PemObject;
+import org.bouncycastle.util.io.pem.PemReader;
 import org.jclouds.crypto.Pems.PemProcessor.ResultParser;
+import org.jclouds.crypto.pem.PKCS1EncodedPrivateKeySpec;
 import org.jclouds.crypto.pem.PKCS1EncodedPublicKeySpec;
 import org.jclouds.io.InputSuppliers;
 import org.jclouds.javax.annotation.Nullable;
@@ -79,20 +81,28 @@ public class Pems {
          this.parsers = checkNotNull(parsers, "parsers");
       }
 
+      @Override
       public boolean processBytes(byte[] buf, int off, int len) {
          out.write(buf, off, len);
          return true;
       }
 
+      @Override
       public T getResult() {
          try {
-            PEMReader reader = new PEMReader(out.toByteArray());
-            byte[] bytes = reader.getDerBytes();
-            if (parsers.containsKey(reader.getBeginMarker())) {
-               return parsers.get(reader.getBeginMarker()).parseResult(bytes);
+            PemReader reader = new PemReader(new InputStreamReader(new ByteArrayInputStream(out.toByteArray())));
+            PemObject pem = reader.readPemObject();
+            byte[] bytes = pem.getContent();
+
+            // Bouncycastle removes the BEGIN and the markers when reading the
+            // PEM object
+            String beginMarker = "-----BEGIN " + pem.getType() + "-----";
+
+            if (parsers.containsKey(beginMarker)) {
+               return parsers.get(beginMarker).parseResult(bytes);
             } else {
-               throw new IOException(String.format("Invalid PEM file: no parsers for marker %s in %s",
-                     reader.getBeginMarker(), parsers.keySet()));
+               throw new IOException(String.format("Invalid PEM file: no parsers for marker %s in %s", beginMarker,
+                     parsers.keySet()));
             }
          } catch (IOException e) {
             throw new RuntimeException(e);
@@ -142,13 +152,13 @@ public class Pems {
             supplier,
             new PemProcessor<KeySpec>(ImmutableMap.<String, ResultParser<KeySpec>> of(PRIVATE_PKCS1_MARKER,
                   new ResultParser<KeySpec>() {
-
+                     @Override
                      public KeySpec parseResult(byte[] bytes) throws IOException {
-                        return (new PKCS1EncodedKeySpec(bytes)).getKeySpec();
+                        return new PKCS1EncodedPrivateKeySpec(bytes).getKeySpec();
                      }
 
                   }, PRIVATE_PKCS8_MARKER, new ResultParser<KeySpec>() {
-
+                     @Override
                      public KeySpec parseResult(byte[] bytes) throws IOException {
                         return new PKCS8EncodedKeySpec(bytes);
                      }
@@ -188,12 +198,14 @@ public class Pems {
             new PemProcessor<KeySpec>(ImmutableMap.<String, ResultParser<KeySpec>> of(PUBLIC_PKCS1_MARKER,
                   new ResultParser<KeySpec>() {
 
+                     @Override
                      public KeySpec parseResult(byte[] bytes) throws IOException {
-                        return (new PKCS1EncodedPublicKeySpec(bytes)).getKeySpec();
+                        return new PKCS1EncodedPublicKeySpec(bytes).getKeySpec();
                      }
 
                   }, PUBLIC_X509_MARKER, new ResultParser<KeySpec>() {
 
+                     @Override
                      public X509EncodedKeySpec parseResult(byte[] bytes) throws IOException {
                         return new X509EncodedKeySpec(bytes);
                      }
@@ -237,6 +249,7 @@ public class Pems {
                new PemProcessor<X509Certificate>(ImmutableMap.<String, ResultParser<X509Certificate>> of(
                      CERTIFICATE_X509_MARKER, new ResultParser<X509Certificate>() {
 
+                        @Override
                         public X509Certificate parseResult(byte[] bytes) throws IOException {
                            try {
                               return (X509Certificate) finalCertFactory.generateCertificate(new ByteArrayInputStream(
