@@ -20,21 +20,22 @@
 package org.jclouds.crypto.pem;
 
 import java.io.IOException;
-import java.security.spec.RSAPublicKeySpec;
+import java.math.BigInteger;
+import java.security.spec.RSAPrivateCrtKeySpec;
+import java.security.spec.RSAPrivateKeySpec;
 
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.x509.RSAPublicKeyStructure;
-import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.asn1.pkcs.RSAPrivateKeyStructure;
 
 /**
- * PKCS#1 encoded public key spec.
+ * PKCS#1 encoded private key spec.
  * 
- * @author Adrian Cole
+ * @author Ignasi Barrera
  */
-public class PKCS1EncodedPublicKeySpec {
+public class PKCS1EncodedPrivateKeySpec {
 
-   private RSAPublicKeySpec keySpec;
+   private RSAPrivateCrtKeySpec keySpec;
 
    /**
     * Create a PKCS#1 keyspec from DER encoded buffer
@@ -43,7 +44,7 @@ public class PKCS1EncodedPublicKeySpec {
     *           DER encoded octet stream
     * @throws IOException
     */
-   public PKCS1EncodedPublicKeySpec(final byte[] keyBytes) throws IOException {
+   public PKCS1EncodedPrivateKeySpec(final byte[] keyBytes) throws IOException {
       decode(keyBytes);
    }
 
@@ -52,36 +53,29 @@ public class PKCS1EncodedPublicKeySpec {
     * 
     * @return CRT keyspec defined by JCE
     */
-   public RSAPublicKeySpec getKeySpec() {
+   public RSAPrivateKeySpec getKeySpec() {
       return keySpec;
    }
 
    /**
-    * Decode PKCS#1 encoded public key into RSAPublicKeySpec.
-    * <p>
-    * Keys here can be in two different formats. They can have the algorithm
-    * encoded, or they can have only the modulus and the public exponent.
-    * <p>
-    * The latter is not a valid PEM encoded file, but it is a valid DER encoded
-    * RSA key, so this method should also support it.
+    * Decode PKCS#1 encoded private key into RSAPrivateCrtKeySpec.
     * 
     * @param keyBytes
     *           Encoded PKCS#1 rsa key.
     */
    private void decode(final byte[] keyBytes) throws IOException {
-      RSAPublicKeyStructure pks = null;
       ASN1Sequence seq = (ASN1Sequence) ASN1Object.fromByteArray(keyBytes);
-      try {
-         // Try to parse the public key normally. If the algorithm is not
-         // present in the encoded key, an IllegalArgumentException will be
-         // raised.
-         SubjectPublicKeyInfo info = new SubjectPublicKeyInfo(seq);
-         pks = new RSAPublicKeyStructure((ASN1Sequence) info.getPublicKey());
-      } catch (IllegalArgumentException ex) {
-         // If the algorithm is not found in the encoded key, try to extract
-         // just the modulus and the public exponent to build the public key.
-         pks = new RSAPublicKeyStructure(seq);
-      }
-      keySpec = new RSAPublicKeySpec(pks.getModulus(), pks.getPublicExponent());
+      RSAPrivateKeyStructure rsa = new RSAPrivateKeyStructure(seq);
+
+      BigInteger mod = rsa.getModulus();
+      BigInteger pubExp = rsa.getPublicExponent();
+      BigInteger privExp = rsa.getPrivateExponent();
+      BigInteger p1 = rsa.getPrime1();
+      BigInteger p2 = rsa.getPrime2();
+      BigInteger exp1 = rsa.getExponent1();
+      BigInteger exp2 = rsa.getExponent2();
+      BigInteger crtCoef = rsa.getCoefficient();
+
+      keySpec = new RSAPrivateCrtKeySpec(mod, pubExp, privExp, p1, p2, exp1, exp2, crtCoef);
    }
 }
