@@ -18,6 +18,9 @@
  */
 package org.jclouds.rest.functions;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.http.HttpResponseException;
@@ -34,7 +37,16 @@ import com.google.common.base.Throwables;
 @Singleton
 public class MapHttp4xxCodesToExceptions implements Function<Exception, Object> {
 
+   private final PropagateIfRetryAfter propagateIfRetryAfter;
+
+   @Inject
+   protected MapHttp4xxCodesToExceptions(PropagateIfRetryAfter propagateIfRetryAfter) {
+      this.propagateIfRetryAfter = checkNotNull(propagateIfRetryAfter, "propagateIfRetryAfter");
+   }
+
+   @Override
    public Object apply(Exception from) {
+      propagateIfRetryAfter.apply(from);
       if (from instanceof HttpResponseException) {
          HttpResponseException responseException = (HttpResponseException) from;
          if (responseException.getResponse() != null)

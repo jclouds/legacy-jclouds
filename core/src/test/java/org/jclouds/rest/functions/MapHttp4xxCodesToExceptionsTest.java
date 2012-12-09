@@ -18,19 +18,16 @@
  */
 package org.jclouds.rest.functions;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
-import static org.testng.Assert.assertEquals;
-
+import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
+import org.jclouds.http.functions.HeaderToRetryAfterExceptionTest;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ResourceNotFoundException;
+import org.jclouds.rest.RetryAfterException;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Function;
+import com.google.common.net.HttpHeaders;
 
 /**
  * 
@@ -39,42 +36,52 @@ import com.google.common.base.Function;
 @Test(groups = { "unit" })
 public class MapHttp4xxCodesToExceptionsTest {
 
-   @Test
-   public void test401And403ToAuthorizationException() {
-      assertCodeMakes(401, AuthorizationException.class);
-      assertCodeMakes(403, AuthorizationException.class);
+   @Test(expectedExceptions = AuthorizationException.class)
+   public void test401ToAuthorizationException() {
+      fn.apply(new HttpResponseException(command, HttpResponse.builder().statusCode(401).build()));
    }
 
-   @Test
+   @Test(expectedExceptions = AuthorizationException.class)
+   public void test403ToAuthorizationException() {
+      fn.apply(new HttpResponseException(command, HttpResponse.builder().statusCode(403).build()));
+   }
+   
+   @Test(expectedExceptions = ResourceNotFoundException.class)
    public void test404ToResourceNotFoundException() {
-      assertCodeMakes(404, ResourceNotFoundException.class);
+      fn.apply(new HttpResponseException(command, HttpResponse.builder().statusCode(404).build()));
    }
 
-   @Test
+   @Test(expectedExceptions = IllegalStateException.class)
    public void test409ToIllegalStateException() {
-      assertCodeMakes(409, IllegalStateException.class);
+      fn.apply(new HttpResponseException(command, HttpResponse.builder().statusCode(409).build()));
    }
-
-   private void assertCodeMakes(int statuscode, Class<?> expected) {
-      Function<Exception, Object> function = new MapHttp4xxCodesToExceptions();
-      HttpResponseException responseException = createMock(HttpResponseException.class);
-
-      HttpResponse response = createMock(HttpResponse.class);
-      expect(response.getStatusCode()).andReturn(statuscode).atLeastOnce();
-      expect(responseException.getResponse()).andReturn(response).atLeastOnce();
-
-      replay(responseException);
-      replay(response);
-
-      try {
-         function.apply(responseException);
-         assert false;
-      } catch (Exception e) {
-         assertEquals(e.getClass(), expected);
-      }
-
-      verify(responseException);
-      verify(response);
+   
+   @Test(expectedExceptions = RetryAfterException.class, expectedExceptionsMessageRegExp = "retry now")
+   public void testHttpResponseExceptionWithRetryAfterDate() {
+      fn.apply(new HttpResponseException(command, 
+            HttpResponse.builder()
+                        .statusCode(503)
+                        .addHeader(HttpHeaders.RETRY_AFTER, "Fri, 31 Dec 1999 23:59:59 GMT").build()));
    }
-
+   
+   @Test(expectedExceptions = RetryAfterException.class, expectedExceptionsMessageRegExp = "retry in 700 seconds")
+   public void testHttpResponseExceptionWithRetryAfterOffset(){
+      fn.apply(new HttpResponseException(command, 
+            HttpResponse.builder()
+                        .statusCode(503)
+                        .addHeader(HttpHeaders.RETRY_AFTER, "700").build()));
+   }
+   
+   @Test(expectedExceptions = RetryAfterException.class, expectedExceptionsMessageRegExp = "retry in 86400 seconds")
+   public void testHttpResponseExceptionWithRetryAfterPastIsZero(){
+      fn.apply(new HttpResponseException(command, 
+            HttpResponse.builder()
+                        .statusCode(503)
+                        .addHeader(HttpHeaders.RETRY_AFTER, "Sun, 2 Jan 2000 00:00:00 GMT").build()));
+   }
+   
+   MapHttp4xxCodesToExceptions fn = new MapHttp4xxCodesToExceptions(HeaderToRetryAfterExceptionTest.fn);
+   
+   HttpCommand command = HeaderToRetryAfterExceptionTest.command;
+   
 }
