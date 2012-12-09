@@ -64,11 +64,11 @@ public class CreateClientForCaller extends CacheLoader<ClassMethodArgs, Object> 
    }
 
    @Override
-   public Object load(ClassMethodArgs from) throws ExecutionException {
+   public Object load(ClassMethodArgs from) {
       Class<?> syncClass = Optionals2.returnTypeOrTypeOfOptional(from.getMethod());
       Class<?> asyncClass = sync2Async.get(syncClass);
       checkState(asyncClass != null, "configuration error, sync class " + syncClass + " not mapped to an async class");
-      Object asyncClient = asyncMap.get(from);
+      Object asyncClient = asyncMap.getUnchecked(from);
       checkState(asyncClient != null, "configuration error, sync client for " + from + " not found");
       Function<ClassMethodArgsAndReturnVal, Optional<Object>> optionalConverter = injector.getInstance(Key.get(new TypeLiteral<Function<ClassMethodArgsAndReturnVal, Optional<Object>>>() {
       }));
