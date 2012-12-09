@@ -30,15 +30,25 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.collect.IterableWithMarker;
+import org.jclouds.collect.PagedIterable;
 import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
+import org.jclouds.openstack.keystone.v2_0.functions.ReturnEmptyPaginatedCollectionOnNotFoundOr404;
+import org.jclouds.openstack.v2_0.options.PaginationOptions;
+import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancer;
 import org.jclouds.rackspace.cloudloadbalancers.domain.Node;
 import org.jclouds.rackspace.cloudloadbalancers.domain.NodeAttributes;
 import org.jclouds.rackspace.cloudloadbalancers.domain.NodeRequest;
+import org.jclouds.rackspace.cloudloadbalancers.functions.ParseLoadBalancers;
+import org.jclouds.rackspace.cloudloadbalancers.functions.ParseNodes;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.SkipEncoding;
+import org.jclouds.rest.annotations.Transform;
 import org.jclouds.rest.annotations.WrapWith;
+import org.jclouds.rest.functions.ReturnEmptyPagedIterableOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
@@ -46,80 +56,82 @@ import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * Provides asynchronous access to CloudLoadBalancers Node features.
+ * Provides asynchronous access to Cloud Load Balancers Node features.
  * <p/>
  * 
- * @see NodeAsyncClient
- * @see <a
- *      href="http://docs.rackspace.com/loadbalancers/api/v1.0/clb-devguide/content/Nodes-d1e2173.html"
- *      />
- * @author Dan Lo Bianco
+ * @see NodeAsyncApi
+ * @author Everett Toews
  */
 @SkipEncoding('/')
 @RequestFilters(AuthenticateRequest.class)
-public interface NodeAsyncClient {
+public interface NodeAsyncApi {
 
    /**
-    * @see NodeClient#createNodesInLoadBalancer
+    * @see NodeApi#add(Set)
     */
    @POST
    @SelectJson("nodes")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   @Path("/loadbalancers/{lbid}/nodes")
-   ListenableFuture<Set<Node>> createNodesInLoadBalancer(@WrapWith("nodes") Set<NodeRequest> nodes,
-		   @PathParam("lbid") int lbid);
+   @Path("/nodes")
+   ListenableFuture<Set<Node>> add(@WrapWith("nodes") Iterable<NodeRequest> nodes);
 
    /**
-    * @see NodeClient#updateAttributesForNodeInLoadBalancer
+    * @see NodeApi#update(int, NodeAttributes)
     */
    @PUT
    @Consumes(MediaType.APPLICATION_JSON)
-   @Path("/loadbalancers/{lbid}/nodes/{nid}")
-   ListenableFuture<Void> updateAttributesForNodeInLoadBalancer(@WrapWith("node") NodeAttributes attrs,
-		   @PathParam("nid") int nid,
-		   @PathParam("lbid") int lbid);
-
-   /**
-    * @see NodeClient#listNodes
-    */
-   @GET
-   @SelectJson("nodes")
-   @Consumes(MediaType.APPLICATION_JSON)
-   @Path("/loadbalancers/{lbid}/nodes")
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<Node>> listNodes(@PathParam("lbid") int lbid);
+   @Path("/nodes/{id}")
+   ListenableFuture<Void> update(@PathParam("id") int id, @WrapWith("node") NodeAttributes attrs);
    
    /**
-    * @see NodeClient#getNodeInLoadBalancer
+    * @see NodeApi#list()
+    */
+   @GET
+   @ResponseParser(ParseNodes.class)
+   @Transform(ParseNodes.ToPagedIterable.class)
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Path("/nodes")
+   @ExceptionParser(ReturnEmptyPagedIterableOnNotFoundOr404.class)
+   ListenableFuture<PagedIterable<Node>> list();
+
+   /** 
+    * @see NodeApi#list(PaginationOptions) 
+    */
+   @GET
+   @ResponseParser(ParseNodes.class)
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnEmptyPaginatedCollectionOnNotFoundOr404.class)
+   @Path("/loadbalancers")
+   ListenableFuture<IterableWithMarker<LoadBalancer>> list(PaginationOptions options);
+   
+   /**
+    * @see NodeApi#get(int)
     */
    @GET
    @SelectJson("node")
    @Consumes(MediaType.APPLICATION_JSON)
-   @Path("/loadbalancers/{lbid}/nodes/{nid}")
+   @Path("/nodes/{id}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Node> getNodeInLoadBalancer(@PathParam("nid") int nid,
-		   @PathParam("lbid") int lbid);
+   ListenableFuture<Node> get(@PathParam("id") int id);
    
    /**
-    * @see NodeClient#removeNodeFromLoadBalancer
+    * @see NodeApi#remove(int)
     */
    @DELETE
-   @Path("/loadbalancers/{lbid}/nodes/{nid}")
+   @Path("/nodes/{id}")
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    @Consumes("*/*")
-   ListenableFuture<Void> removeNodeFromLoadBalancer(@PathParam("nid") int nid,
-		   @PathParam("lbid") int lbid);
+   ListenableFuture<Void> remove(@PathParam("id") int id);
    
    /**
-    * @see NodeClient#removeNodesFromLoadBalancer
+    * @see NodeApi#remove(Set)
     */
    @DELETE
-   @Path("/loadbalancers/{lbid}/nodes")
+   @Path("/nodes")
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    @Consumes("*/*")
-   ListenableFuture<Void> removeNodesFromLoadBalancer(@QueryParam("id") Set<Integer> nids, 
-		   @PathParam("lbid") int lbid);
+   ListenableFuture<Void> remove(@QueryParam("id") Iterable<Integer> ids);
 
 
 }

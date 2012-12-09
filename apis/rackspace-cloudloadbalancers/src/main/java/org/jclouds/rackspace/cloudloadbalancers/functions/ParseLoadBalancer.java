@@ -19,9 +19,9 @@
 package org.jclouds.rackspace.cloudloadbalancers.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 import java.util.Map;
-import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -33,41 +33,40 @@ import org.jclouds.rackspace.cloudloadbalancers.functions.ConvertLB.Factory;
 import org.jclouds.rest.InvocationContext;
 
 import com.google.common.base.Function;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 /**
  * @author Adrian Cole
  */
-public class UnwrapLoadBalancers implements Function<HttpResponse, Set<LoadBalancer>>,
-         InvocationContext<UnwrapLoadBalancers> {
+public class ParseLoadBalancer implements Function<HttpResponse, LoadBalancer>, InvocationContext<ParseLoadBalancer> {
 
-   private final ParseJson<Map<String, Set<LB>>> json;
+   private final ParseJson<Map<String, LB>> json;
    private final Factory factory;
 
    private ConvertLB convertLB;
 
    @Inject
-   UnwrapLoadBalancers(ParseJson<Map<String, Set<LB>>> json, ConvertLB.Factory factory) {
+   ParseLoadBalancer(ParseJson<Map<String, LB>> json, ConvertLB.Factory factory) {
       this.json = checkNotNull(json, "json");
       this.factory = checkNotNull(factory, "factory");
    }
 
    @Override
-   public Set<LoadBalancer> apply(HttpResponse arg0) {
-      Map<String, Set<LB>> map = json.apply(arg0);
-      if (map.size() == 0)
-         return ImmutableSet.<LoadBalancer> of();
-      ;
-      return ImmutableSet.copyOf(Iterables.transform(Iterables.get(map.values(), 0), convertLB));
+   public LoadBalancer apply(HttpResponse arg0) {
+      checkState(convertLB != null, "convertLB should be set by InvocationContext");
+      Map<String, LB> map = json.apply(arg0);
+      if (map == null || map.size() == 0)
+         return null;
+      LB lb = Iterables.get(map.values(), 0);
+      return convertLB.apply(lb);
    }
 
    @Override
-   public UnwrapLoadBalancers setContext(HttpRequest request) {
+   public ParseLoadBalancer setContext(HttpRequest request) {
       return setRegion(request.getEndpoint().getHost().substring(0, request.getEndpoint().getHost().indexOf('.')));
    }
 
-   UnwrapLoadBalancers setRegion(String region) {
+   ParseLoadBalancer setRegion(String region) {
       this.convertLB = factory.createForRegion(region);
       return this;
    }

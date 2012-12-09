@@ -24,7 +24,7 @@ import org.jclouds.json.BaseItemParserTest;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancer;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancer.Status;
 import org.jclouds.rackspace.cloudloadbalancers.functions.ConvertLB;
-import org.jclouds.rackspace.cloudloadbalancers.functions.UnwrapLoadBalancer;
+import org.jclouds.rackspace.cloudloadbalancers.functions.ParseLoadBalancer;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
@@ -37,7 +37,7 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "UnwrapLoadBalancerWhenDeletedTest")
-public class UnwrapLoadBalancerWhenDeletedTest extends BaseItemParserTest<LoadBalancer> {
+public class ParseLoadBalancerWhenDeletedTest extends BaseItemParserTest<LoadBalancer> {
 
    @Override
    public String resource() {
@@ -67,6 +67,6 @@ public class UnwrapLoadBalancerWhenDeletedTest extends BaseItemParserTest<LoadBa
 
    @Override
    protected Function<HttpResponse, LoadBalancer> parser(Injector i) {
-      return i.getInstance(UnwrapLoadBalancer.class).setRegion("LON");
+      return i.getInstance(ParseLoadBalancer.class).setRegion("LON");
    }
 }

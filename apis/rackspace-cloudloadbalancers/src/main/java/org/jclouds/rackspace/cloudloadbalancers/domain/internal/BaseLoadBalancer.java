@@ -24,7 +24,10 @@ import java.util.Set;
 import java.util.SortedSet;
 
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancer;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Sets;
@@ -147,34 +150,28 @@ public class BaseLoadBalancer<N extends BaseNode<N>, T extends BaseLoadBalancer<
       return nodes;
    }
 
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this)
+            .add("name", name).add("protocol", protocol).add("port", port)
+            .add("algorithm", algorithm).add("nodes", nodes);
+   }
+   
+   @Override
+   public String toString() {
+      return string().toString();
+   }
+
    @Override
    public int hashCode() {
-      final Integer prime = 31;
-      Integer result = 1;
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
-      return result;
+      return Objects.hashCode(name);
    }
 
    @Override
    public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      BaseLoadBalancer<?, ?> other = (BaseLoadBalancer<?, ?>) obj;
-      if (name == null) {
-         if (other.name != null)
-            return false;
-      } else if (!name.equals(other.name))
-         return false;
-      return true;
-   }
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
 
-   @Override
-   public String toString() {
-      return String.format("[name=%s, port=%s, protocol=%s, algorithm=%s, nodes=%s]", name, port, protocol, algorithm,
-               nodes);
+      LoadBalancer that = LoadBalancer.class.cast(obj);
+      return Objects.equal(this.name, that.name);
    }
 }
