@@ -40,26 +40,30 @@ Simplifies dealing with key-value providers such as Amazon S3. For example, Blob
 
 BlobStore Example (Java):
 
-	// init
-	context = new BlobStoreContextFactory().createContext(
-	"aws-s3",
-	accesskeyid,
-	secretaccesskey);
-	blobStore = context.getBlobStore();
+```java
+// init
+context = new BlobStoreContextFactory().createContext(
+"aws-s3",
+accesskeyid,
+secretaccesskey);
+blobStore = context.getBlobStore();
 
-	// create container
-	blobStore.createContainerInLocation(null, "mycontainer");
+// create container
+blobStore.createContainerInLocation(null, "mycontainer");
 
-	// add blob
-	blob = blobStore.blobBuilder("test").payload("testdata").build();
-	blobStore.putBlob("mycontainer", blob);
+// add blob
+blob = blobStore.blobBuilder("test").payload("testdata").build();
+blobStore.putBlob("mycontainer", blob);
+```
 
 BlobStore Example (Clojure):
 
-	(use 'org.jclouds.blobstore2)
-	(def *blobstore* (blobstore "azureblob" account encodedkey))
-	(create-container *blobstore* "mycontainer")
-	(put-blob *blobstore* "mycontainer" (blob "test" :payload "testdata"))
+```clojure
+(use 'org.jclouds.blobstore2)
+(def *blobstore* (blobstore "azureblob" account encodedkey))
+(create-container *blobstore* "mycontainer")
+(put-blob *blobstore* "mycontainer" (blob "test" :payload "testdata"))
+```
 
 ComputeService
 ---------------
@@ -67,41 +71,45 @@ Simplifies the task of managing machines in the cloud. For example, you can use 
 
 Compute Example (Java):
 
-	// init
-	context = new ComputeServiceContextFactory().createContext(
-	"aws-ec2",
-	accesskeyid,
-	secretaccesskey,
-	ImmutableSet.of(new Log4JLoggingModule(), new SshjSshClientModule()));
+```java
+// init
+context = new ComputeServiceContextFactory().createContext(
+"aws-ec2",
+accesskeyid,
+secretaccesskey,
+ImmutableSet.of(new Log4JLoggingModule(), new SshjSshClientModule()));
 
-	client = context.getComputeService();
- 
-	// define the requirements of your node
-	template = client.templateBuilder().osFamily(UBUNTU).smallest().build();
+client = context.getComputeService();
 
-	// setup a boot user which is the same as your login
-	template.getOptions().runScript(AdminAccess.standard());
+// define the requirements of your node
+template = client.templateBuilder().osFamily(UBUNTU).smallest().build();
 
-	// these nodes will be accessible via ssh when the call returns
-	nodes = client.createNodesInGroup("mycluster", 2, template);
+// setup a boot user which is the same as your login
+template.getOptions().runScript(AdminAccess.standard());
 
-	// you can now run ad-hoc commands on the nodes based on predicates
-	responses = client.runScriptOnNodesMatching(inGroup("mycluster"), "uptime", wrapInInitScript(false));
+// these nodes will be accessible via ssh when the call returns
+nodes = client.createNodesInGroup("mycluster", 2, template);
+
+// you can now run ad-hoc commands on the nodes based on predicates
+responses = client.runScriptOnNodesMatching(inGroup("mycluster"), "uptime", wrapInInitScript(false));
+```
 
 Compute Example (Clojure):
 
-	(use 'org.jclouds.compute2)
+```clojure
+(use 'org.jclouds.compute2)
 
-	; create a compute service using sshj and log4j extensions
-	(def compute (*compute* "trmk`-ecloud" "user" "password" :sshj :log4j))
+; create a compute service using sshj and log4j extensions
+(def compute (*compute* "trmk`-ecloud" "user" "password" :sshj :log4j))
 
-	; launch a couple nodes with the default operating system, installing your user.
-	(create-nodes *compute* "mycluster" 2
-	(TemplateOptions$Builder/runScript (AdminAccess/standard)))
+; launch a couple nodes with the default operating system, installing your user.
+(create-nodes *compute* "mycluster" 2
+(TemplateOptions$Builder/runScript (AdminAccess/standard)))
 
-	; run a command on that group 
-	(run-script-on-nodes-matching *compute* (in-group? "mycluster") "uptime" 
-	(RunScriptOptions$Builder/wrapInInitScript false))
+; run a command on that group 
+(run-script-on-nodes-matching *compute* (in-group? "mycluster") "uptime" 
+(RunScriptOptions$Builder/wrapInInitScript false))
+```
 
 Check out https://github.com/jclouds/jclouds-examples for more examples!
 
