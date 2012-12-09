@@ -26,11 +26,17 @@ import com.google.inject.ImplementedBy;
  * Codecs for converting from Date->String and vice versa.
  * 
  * @author aled
+ * @see DateCodec
  */
 @ImplementedBy(DateServiceDateCodecFactory.class)
 public interface DateCodecFactory {
 
+   DateCodec rfc822();
+
    DateCodec rfc1123();
 
    DateCodec iso8601();
+
+   DateCodec iso8601Seconds();
+
 }
