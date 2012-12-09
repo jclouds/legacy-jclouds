@@ -380,51 +380,29 @@ public class RestAnnotationProcessor<T> {
    final Injector injector;
 
    private ClassMethodArgs caller;
-   private URI callerEndpoint;
 
    public void setCaller(ClassMethodArgs caller) {
       seedAnnotationCache.getUnchecked(caller.getMethod().getDeclaringClass());
       this.caller = caller;
-      try {
-         UriBuilder builder = uriBuilderProvider.get().uri(getEndpointFor(caller.getMethod(), caller.getArgs(), injector));
-         Multimap<String, String> tokenValues = addPathAndGetTokens(caller.getMethod().getDeclaringClass(), caller.getMethod(), caller.getArgs(), builder);
-         callerEndpoint = builder.buildFromEncodedMap(Maps2.convertUnsafe(tokenValues));
-      } catch (IllegalStateException e) {
-         // no endpoint annotation
-      }
    }
 
    public GeneratedHttpRequest createRequest(Method method, Object... args) {
       inputParamValidator.validateMethodParametersOrThrow(method, args);
-      ClassMethodArgs cma = logger.isTraceEnabled() ? new ClassMethodArgs(method.getDeclaringClass(), method, args)
-            : null;
 
-      URI endpoint = callerEndpoint;
-      try {
-         if (endpoint == null) {
-            endpoint = getEndpointFor(method, args, injector);
-            logger.trace("using endpoint %s for %s", endpoint, cma);
-         } else {
-            logger.trace("using endpoint %s from caller %s for %s", caller, endpoint, cma);
-         }
-      } catch (IllegalStateException e) {
-         logger.trace("looking up default endpoint for %s", cma);
-         endpoint = injector.getInstance(Key.get(uriSupplierLiteral, org.jclouds.location.Provider.class)).get();
-         logger.trace("using default endpoint %s for %s", endpoint, cma);
+
+      Optional<URI> endpoint = findEndpoint(method, args);
+
+      if (!endpoint.isPresent()) {
+         throw new NoSuchElementException(String.format("no endpoint found for %s",
+               new ClassMethodArgs(method.getDeclaringClass(), method, args)));
       }
-      GeneratedHttpRequest.Builder<?> requestBuilder;
+
+      GeneratedHttpRequest.Builder<?> requestBuilder = GeneratedHttpRequest.builder();
       HttpRequest r = RestAnnotationProcessor.findHttpRequestInArgs(args);
       if (r != null) {
-         requestBuilder = GeneratedHttpRequest.builder().fromHttpRequest(r);
-         endpoint = r.getEndpoint();
+         requestBuilder.fromHttpRequest(r);
       } else {
-         requestBuilder = GeneratedHttpRequest.builder();
          requestBuilder.method(getHttpMethodOrConstantOrThrowException(method));
-      }
-
-      if (endpoint == null) {
-         throw new NoSuchElementException(String.format("no endpoint found for %s",
-                  new ClassMethodArgs(method.getDeclaringClass(), method, args)));
       }
 
       requestBuilder.declaring(declaring)
@@ -434,15 +412,21 @@ public class RestAnnotationProcessor<T> {
                     .skips(skips)
                     .filters(getFiltersIfAnnotated(method));
 
-      UriBuilder builder = uriBuilderProvider.get().uri(endpoint);
-
+      UriBuilder builder = uriBuilderProvider.get().uri(endpoint.get());
+      
       Multimap<String, String> tokenValues = LinkedHashMultimap.create();
 
       tokenValues.put(Constants.PROPERTY_API_VERSION, apiVersion);
       tokenValues.put(Constants.PROPERTY_BUILD_VERSION, buildVersion);
 
+      // make sure any path from the caller is a prefix
+      if (caller != null) {
+         tokenValues.putAll(addPathAndGetTokens(caller.getMethod().getDeclaringClass(), caller.getMethod(),
+               caller.getArgs(), builder));
+      }
+      
       tokenValues.putAll(addPathAndGetTokens(declaring, method, args, builder));
-
+      
       Multimap<String, String> formParams = addFormParams(tokenValues.entries(), method, args);
       Multimap<String, String> queryParams = addQueryParams(tokenValues.entries(), method, args);
       Multimap<String, String> matrixParams = addMatrixParams(tokenValues.entries(), method, args);
@@ -451,9 +435,9 @@ public class RestAnnotationProcessor<T> {
          headers.putAll(r.getHeaders());
 
       if (shouldAddHostHeader(method)) {
-         StringBuilder hostHeader = new StringBuilder(endpoint.getHost());
-         if (endpoint.getPort() != -1)
-            hostHeader.append(":").append(endpoint.getPort());
+         StringBuilder hostHeader = new StringBuilder(endpoint.get().getHost());
+         if (endpoint.get().getPort() != -1)
+            hostHeader.append(":").append(endpoint.get().getPort());
          headers.put(HOST, hostHeader.toString());
       }
 
@@ -538,6 +522,39 @@ public class RestAnnotationProcessor<T> {
       }
       utils.checkRequestHasRequiredProperties(request);
       return request;
+   }
+
+   private Optional<URI> findEndpoint(Method method, Object... args) {
+      ClassMethodArgs cma = logger.isTraceEnabled() ? new ClassMethodArgs(method.getDeclaringClass(), method, args)
+            : null;
+      Optional<URI> endpoint = Optional.absent();
+
+      HttpRequest r = RestAnnotationProcessor.findHttpRequestInArgs(args);
+
+      if (r != null) {
+         endpoint = Optional.fromNullable(r.getEndpoint());
+         if (endpoint.isPresent())
+            logger.trace("using endpoint %s from args for %s", endpoint, cma);
+      }
+
+      if (!endpoint.isPresent() && caller != null) {
+         endpoint = getEndpointFor(caller.getMethod(), caller.getArgs());
+         if (endpoint.isPresent())
+            logger.trace("using endpoint %s from caller %s for %s", endpoint, caller, cma);
+      }
+      if (!endpoint.isPresent()) {
+         endpoint = getEndpointFor(method, args);
+         if (endpoint.isPresent())
+            logger.trace("using endpoint %s for %s", endpoint, cma);
+      }
+      if (!endpoint.isPresent()) {
+         logger.trace("looking up default endpoint for %s", cma);
+         endpoint = Optional.fromNullable(injector.getInstance(
+               Key.get(uriSupplierLiteral, org.jclouds.location.Provider.class)).get());
+         if (endpoint.isPresent())
+            logger.trace("using default endpoint %s for %s", endpoint, cma);
+      }
+      return endpoint;
    }
 
    public static Multimap<String, String> filterOutContentHeaders(Multimap<String, String> headers) {
@@ -745,7 +762,7 @@ public class RestAnnotationProcessor<T> {
    };
 
    // TODO: change to LoadingCache<ClassMethodArgs, URI> and move this logic to the CacheLoader.
-   public static URI getEndpointFor(Method method, Object[] args, Injector injector) {
+   private Optional<URI> getEndpointFor(Method method, Object[] args) {
       URI endpoint = getEndpointInParametersOrNull(method, args, injector);
       if (endpoint == null) {
          Endpoint annotation;
@@ -754,16 +771,18 @@ public class RestAnnotationProcessor<T> {
          } else if (method.getDeclaringClass().isAnnotationPresent(Endpoint.class)) {
             annotation = method.getDeclaringClass().getAnnotation(Endpoint.class);
          } else {
-            throw new IllegalStateException("no annotations on class or method: " + method);
+            logger.trace("no annotations on class or method: %s", method);
+            return Optional.absent();
          }
          endpoint = injector.getInstance(Key.get(uriSupplierLiteral, annotation.value())).get();
       }
       URI providerEndpoint = injector.getInstance(Key.get(uriSupplierLiteral, org.jclouds.location.Provider.class))
                .get();
-      return addHostIfMissing(endpoint, providerEndpoint);
+      return Optional.fromNullable(addHostIfMissing(endpoint, providerEndpoint));
    }
 
-   public static URI addHostIfMissing(URI original, URI withHost) {
+   @VisibleForTesting
+   static URI addHostIfMissing(URI original, URI withHost) {
       checkNotNull(withHost, "URI withHost cannot be null");
       checkArgument(withHost.getHost() != null, "URI withHost must have host:" + withHost);
 
