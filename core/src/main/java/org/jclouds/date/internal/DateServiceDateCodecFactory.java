@@ -33,13 +33,45 @@ import com.google.inject.Inject;
 @Singleton
 public class DateServiceDateCodecFactory implements DateCodecFactory {
 
+   private final DateCodec rfc822Codec;
    private final DateCodec rfc1123Codec;
-   private final DateServiceIso8601Codec iso8601Codec;
+   private final DateCodec iso8601Codec;
+   private final DateCodec iso8601SecondsCodec;
 
    @Inject
-   public DateServiceDateCodecFactory(DateServiceRfc1123Codec rfc1123Codec, DateServiceIso8601Codec iso8601Codec) {
-      this.rfc1123Codec = checkNotNull(rfc1123Codec, "rfc1123Codec");
-      this.iso8601Codec = checkNotNull(iso8601Codec, "iso8601Codec");
+   public DateServiceDateCodecFactory(DateService dateService) {
+      checkNotNull(dateService, "dateService");
+      this.rfc822Codec = new DateServiceRfc822Codec(dateService);
+      this.rfc1123Codec = new DateServiceRfc1123Codec(dateService);
+      this.iso8601Codec = new DateServiceIso8601Codec(dateService);
+      this.iso8601SecondsCodec = new DateServiceIso8601SecondsCodec(dateService);
+   }
+
+   @Singleton
+   public static class DateServiceRfc822Codec implements DateCodec {
+
+      protected final DateService dateService;
+
+      @Inject
+      public DateServiceRfc822Codec(final DateService dateService) {
+         this.dateService = checkNotNull(dateService, "dateService");
+      }
+
+      @Override
+      public Date toDate(String date) throws IllegalArgumentException {
+         return dateService.rfc822DateParse(date);
+      }
+
+      @Override
+      public String toString(Date date) {
+         return dateService.rfc822DateFormat(date);
+      }
+
+      @Override
+      public String toString() {
+         return "rfc822()";
+      }
+
    }
 
    @Singleton
@@ -68,7 +100,7 @@ public class DateServiceDateCodecFactory implements DateCodecFactory {
       }
 
    }
-
+   
    @Singleton
    public static class DateServiceIso8601Codec implements DateCodec {
 
@@ -95,15 +127,52 @@ public class DateServiceDateCodecFactory implements DateCodecFactory {
       }
 
    }
+   
+   @Singleton
+   public static class DateServiceIso8601SecondsCodec implements DateCodec {
+
+      protected final DateService dateService;
+
+      @Inject
+      public DateServiceIso8601SecondsCodec(DateService dateService) {
+         this.dateService = checkNotNull(dateService, "dateService");
+      }
+
+      @Override
+      public Date toDate(String date) throws IllegalArgumentException {
+         return dateService.iso8601SecondsDateParse(date);
+      }
+
+      @Override
+      public String toString(Date date) {
+         return dateService.iso8601SecondsDateFormat(date);
+      }
+
+      @Override
+      public String toString() {
+         return "iso8601Seconds()";
+      }
+
+   }
+
+   @Override
+   public DateCodec rfc822() {
+      return rfc822Codec;
+   }
 
    @Override
    public DateCodec rfc1123() {
       return rfc1123Codec;
    }
-   
+
    @Override
    public DateCodec iso8601() {
       return iso8601Codec;
+   }
+
+   @Override
+   public DateCodec iso8601Seconds() {
+      return iso8601SecondsCodec;
    }
 
 }
