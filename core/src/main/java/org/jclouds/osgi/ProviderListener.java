@@ -16,32 +16,32 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.providers;
 
-import java.util.Set;
+package org.jclouds.osgi;
 
-import com.google.common.collect.Sets;
+import org.jclouds.providers.ProviderMetadata;
 
 /**
- * A registry for holding {@link org.jclouds.providers.ProviderMetadata}.
+ * A listener interface for {@link ProviderMetadata}.
+ * In OSGi a provider can be added or removed dynamically.
+ * OSGi services using this interface will receive a notification whenever this happens.
  */
-public class ProviderRegistry {
+public interface ProviderListener {
 
-   private static final Set<ProviderMetadata> providers = Sets.newHashSet();
+   /**
+    * Method to be called when a Provider gets added.
+    *
+    * @param provider The provider that was added.
+    * @param <P>      The {@link ProviderMetadata}.
+    */
+   <P extends ProviderMetadata> void added(P provider);
 
-   public static void registerProvider(ProviderMetadata provider) {
-      providers.add(provider);
-   }
+   /**
+    * Method to be called when a Provider gets removed.
+    *
+    * @param provider The provider that was added.
+    * @param <P>      The {@link ProviderMetadata}.
+    */
+   <P extends ProviderMetadata> void removed(P provider);
 
-   public static void unregisterProvider(ProviderMetadata provider) {
-      providers.remove(provider);
-   }
-
-   public static Iterable<ProviderMetadata> fromRegistry() {
-      return Iterable.class.cast(providers);
-   }
-
-   public static void clear() {
-      providers.clear();
-   }
 }
