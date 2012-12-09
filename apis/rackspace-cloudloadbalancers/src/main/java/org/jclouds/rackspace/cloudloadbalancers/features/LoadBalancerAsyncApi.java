@@ -18,8 +18,6 @@
  */
 package org.jclouds.rackspace.cloudloadbalancers.features;
 
-import java.util.Set;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -29,84 +27,96 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.collect.IterableWithMarker;
+import org.jclouds.collect.PagedIterable;
 import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
+import org.jclouds.openstack.keystone.v2_0.functions.ReturnEmptyPaginatedCollectionOnNotFoundOr404;
+import org.jclouds.openstack.v2_0.options.PaginationOptions;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancer;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancerAttributes;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancerRequest;
-import org.jclouds.rackspace.cloudloadbalancers.functions.UnwrapLoadBalancer;
-import org.jclouds.rackspace.cloudloadbalancers.functions.UnwrapLoadBalancers;
+import org.jclouds.rackspace.cloudloadbalancers.functions.ParseLoadBalancer;
+import org.jclouds.rackspace.cloudloadbalancers.functions.ParseLoadBalancers;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SkipEncoding;
+import org.jclouds.rest.annotations.Transform;
 import org.jclouds.rest.annotations.WrapWith;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnEmptyPagedIterableOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * Provides asynchronous access toRackspace Cloud Load Balancers via their REST API.
+ * Provides asynchronous access to Rackspace Cloud Load Balancers via their REST API.
  * <p/>
  * 
- * @see LoadBalancerClient
- * @see <a
- *      href="http://docs.rackspacecloud.com/loadbalancers/api/v1.0/clb-devguide/content/ch04s01.html"
- *      />
- * @author Adrian Cole
+ * @see LoadBalancerApi
+ * @author Everett Toews
  */
 @SkipEncoding('/')
 @RequestFilters(AuthenticateRequest.class)
-public interface LoadBalancerAsyncClient {
+public interface LoadBalancerAsyncApi {
 
    /**
-    * @see LoadBalancerClient#createLoadBalancer
+    * @see LoadBalancerApi#create(LoadBalancerRequest)
     */
    @POST
-   @ResponseParser(UnwrapLoadBalancer.class)
+   @ResponseParser(ParseLoadBalancer.class)
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Path("/loadbalancers")
-   ListenableFuture<LoadBalancer> createLoadBalancer(@WrapWith("loadBalancer") LoadBalancerRequest lb);
+   ListenableFuture<LoadBalancer> create(@WrapWith("loadBalancer") LoadBalancerRequest lb);
 
    /**
-    * @see LoadBalancerClient#updateLoadBalancerAttributes
+    * @see LoadBalancerApi#update(int, LoadBalancerAttributes)
     */
    @PUT
-   @ResponseParser(UnwrapLoadBalancer.class)
+   @ResponseParser(ParseLoadBalancer.class)
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/loadbalancers/{id}")
-   ListenableFuture<Void> updateLoadBalancerAttributes(@PathParam("id") int id,
-            @WrapWith("loadBalancer") LoadBalancerAttributes attrs);
+   ListenableFuture<Void> update(@PathParam("id") int id, @WrapWith("loadBalancer") LoadBalancerAttributes attrs);
 
    /**
-    * @see CloudServersClient#listLoadBalancers
+    * @see LoadBalancerApi#list()
     */
    @GET
-   @ResponseParser(UnwrapLoadBalancers.class)
+   @ResponseParser(ParseLoadBalancers.class)
+   @Transform(ParseLoadBalancers.ToPagedIterable.class)
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/loadbalancers")
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<LoadBalancer>> listLoadBalancers();
+   @ExceptionParser(ReturnEmptyPagedIterableOnNotFoundOr404.class)
+   ListenableFuture<PagedIterable<LoadBalancer>> list();
 
-   /**
-    * @see LoadBalancerClient#getLoadBalancer
+   /** 
+    * @see LoadBalancerApi#list(PaginationOptions) 
     */
    @GET
-   @ResponseParser(UnwrapLoadBalancer.class)
+   @ResponseParser(ParseLoadBalancers.class)
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnEmptyPaginatedCollectionOnNotFoundOr404.class)
+   @Path("/loadbalancers")
+   ListenableFuture<IterableWithMarker<LoadBalancer>> list(PaginationOptions options);
+
+   /**
+    * @see LoadBalancerApi#get(int)
+    */
+   @GET
+   @ResponseParser(ParseLoadBalancer.class)
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Path("/loadbalancers/{id}")
-   ListenableFuture<LoadBalancer> getLoadBalancer(@PathParam("id") int id);
+   ListenableFuture<LoadBalancer> get(@PathParam("id") int id);
 
    /**
-    * @see LoadBalancerClient#removeLoadBalancer
+    * @see LoadBalancerApi#remove(int)
     */
    @DELETE
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    @Path("/loadbalancers/{id}")
    @Consumes("*/*")
-   ListenableFuture<Void> removeLoadBalancer(@PathParam("id") int id);
+   ListenableFuture<Void> remove(@PathParam("id") int id);
 
 }

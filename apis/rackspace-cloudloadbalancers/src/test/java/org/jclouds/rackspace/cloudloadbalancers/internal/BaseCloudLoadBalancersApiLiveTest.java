@@ -45,9 +45,9 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-public class BaseCloudLoadBalancersClientLiveTest extends BaseContextLiveTest<RestContext<CloudLoadBalancersApi, CloudLoadBalancersAsyncApi>> {
+public class BaseCloudLoadBalancersApiLiveTest extends BaseContextLiveTest<RestContext<CloudLoadBalancersApi, CloudLoadBalancersAsyncApi>> {
 
-   public BaseCloudLoadBalancersClientLiveTest() {
+   public BaseCloudLoadBalancersApiLiveTest() {
       provider = "cloudloadbalancers";
    }
 

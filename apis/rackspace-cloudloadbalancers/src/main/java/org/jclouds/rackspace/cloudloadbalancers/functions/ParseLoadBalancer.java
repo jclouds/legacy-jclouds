@@ -38,7 +38,7 @@ import com.google.common.collect.Iterables;
 /**
  * @author Adrian Cole
  */
-public class UnwrapLoadBalancer implements Function<HttpResponse, LoadBalancer>, InvocationContext<UnwrapLoadBalancer> {
+public class ParseLoadBalancer implements Function<HttpResponse, LoadBalancer>, InvocationContext<ParseLoadBalancer> {
 
    private final ParseJson<Map<String, LB>> json;
    private final Factory factory;
@@ -46,7 +46,7 @@ public class UnwrapLoadBalancer implements Function<HttpResponse, LoadBalancer>,
    private ConvertLB convertLB;
 
    @Inject
-   UnwrapLoadBalancer(ParseJson<Map<String, LB>> json, ConvertLB.Factory factory) {
+   ParseLoadBalancer(ParseJson<Map<String, LB>> json, ConvertLB.Factory factory) {
       this.json = checkNotNull(json, "json");
       this.factory = checkNotNull(factory, "factory");
    }
@@ -62,11 +62,11 @@ public class UnwrapLoadBalancer implements Function<HttpResponse, LoadBalancer>,
    }
 
    @Override
-   public UnwrapLoadBalancer setContext(HttpRequest request) {
+   public ParseLoadBalancer setContext(HttpRequest request) {
       return setRegion(request.getEndpoint().getHost().substring(0, request.getEndpoint().getHost().indexOf('.')));
    }
 
-   UnwrapLoadBalancer setRegion(String region) {
+   ParseLoadBalancer setRegion(String region) {
       this.convertLB = factory.createForRegion(region);
       return this;
    }

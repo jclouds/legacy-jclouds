@@ -30,13 +30,13 @@ import org.jclouds.rest.internal.BaseRestApiExpectTest;
  * 
  * @author Everett Toews
  */
-public class BaseCloudLoadBalancerExpectTest<T> extends BaseRestApiExpectTest<T> {
+public class BaseCloudLoadBalancerApiExpectTest<T> extends BaseRestApiExpectTest<T> {
    protected HttpRequest rackspaceAuthWithUsernameAndApiKey;
 
    protected String authToken;
    protected HttpResponse responseWithAccess;
 
-   public BaseCloudLoadBalancerExpectTest() {
+   public BaseCloudLoadBalancerApiExpectTest() {
       provider = "cloudloadbalancers";
 
       rackspaceAuthWithUsernameAndApiKey = RackspaceFixture.INSTANCE

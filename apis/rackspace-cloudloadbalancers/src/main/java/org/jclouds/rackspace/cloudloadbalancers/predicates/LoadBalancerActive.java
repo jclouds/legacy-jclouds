@@ -63,6 +63,6 @@ public class LoadBalancerActive implements Predicate<LoadBalancer> {
    }
 
    private LoadBalancer refresh(LoadBalancer loadBalancer) {
-      return client.getLoadBalancerClient(loadBalancer.getRegion()).getLoadBalancer(loadBalancer.getId());
+      return client.getLoadBalancerApiForZone(loadBalancer.getRegion()).get(loadBalancer.getId());
    }
 }

@@ -18,10 +18,13 @@
  */
 package org.jclouds.rackspace.cloudloadbalancers.features;
 
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.collect.IterableWithMarker;
+import org.jclouds.collect.PagedIterable;
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.http.HttpResponseException;
+import org.jclouds.openstack.v2_0.options.PaginationOptions;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancer;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancerAttributes;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancerRequest;
@@ -30,14 +33,11 @@ import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancerRequest;
  * Provides synchronous access to CloudLoadBalancers LoadBalancer features.
  * <p/>
  * 
- * @see LoadBalancerAsyncClient
- * @see <a
- *      href="http://docs.rackspacecloud.com/loadbalancers/api/v1.0/clb-devguide/content/ch04s01.html"
- *      />
- * @author Adrian Cole
+ * @see LoadBalancerAsyncApi
+ * @author Everett Toews
  */
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
-public interface LoadBalancerClient {
+public interface LoadBalancerApi {
    /**
     * Create a new load balancer with the configuration defined by the request.
     * 
@@ -51,13 +51,13 @@ public interface LoadBalancerClient {
     *           configuration to create
     * @return The object will contain a unique identifier and status of the request. Using the
     *         identifier, the caller can check on the progress of the operation by performing a
-    *         {@link LoadBalancerClient#getLoadBalancer}.
+    *         {@link LoadBalancerApi#getLoadBalancer}.
     * @throws HttpResponseException
     *            If the corresponding request cannot be fulfilled due to insufficient or invalid
     *            data
     * 
     */
-   LoadBalancer createLoadBalancer(LoadBalancerRequest lb);
+   LoadBalancer create(LoadBalancerRequest lb);
 
    /**
     * 
@@ -75,16 +75,18 @@ public interface LoadBalancerClient {
     *           what to change
     * @return The object will contain a unique identifier and status of the request. Using the
     *         identifier, the caller can check on the progress of the operation by performing a
-    *         {@link LoadBalancerClient#getLoadBalancer}.
+    *         {@link LoadBalancerApi#getLoadBalancer}.
     * @see LoadBalancerAttributes#fromLoadBalancer
     */
-   void updateLoadBalancerAttributes(int id, LoadBalancerAttributes attrs);
+   void update(int id, LoadBalancerAttributes attrs);
 
    /**
     * 
     * @return all load balancers configured for the account, or empty set if none available
     */
-   Set<LoadBalancer> listLoadBalancers();
+   PagedIterable<LoadBalancer> list();
+   
+   IterableWithMarker<LoadBalancer> list(PaginationOptions options);
 
    /**
     * 
@@ -93,7 +95,7 @@ public interface LoadBalancerClient {
     *           id of the loadbalancer to retrieve
     * @return details of the specified load balancer, or null if not found
     */
-   LoadBalancer getLoadBalancer(int id);
+   LoadBalancer get(int id);
 
    /**
     * Remove a load balancer from the account.
@@ -105,5 +107,5 @@ public interface LoadBalancerClient {
     * @param id
     *           to remove
     */
-   void removeLoadBalancer(int id);
+   void remove(int id);
 }

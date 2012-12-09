@@ -30,8 +30,8 @@ import org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersApi;
 import org.jclouds.rackspace.cloudloadbalancers.domain.Node;
 import org.jclouds.rackspace.cloudloadbalancers.domain.NodeAttributes;
 import org.jclouds.rackspace.cloudloadbalancers.domain.NodeRequest;
-import org.jclouds.rackspace.cloudloadbalancers.features.NodeClient;
-import org.jclouds.rackspace.cloudloadbalancers.internal.BaseCloudLoadBalancerExpectTest;
+import org.jclouds.rackspace.cloudloadbalancers.features.NodeApi;
+import org.jclouds.rackspace.cloudloadbalancers.internal.BaseCloudLoadBalancerApiExpectTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -41,37 +41,36 @@ import com.google.common.collect.ImmutableSortedSet;
  * @author Everett Toews
  */
 @Test(groups = "unit")
-public class NodeExpectTest extends BaseCloudLoadBalancerExpectTest<CloudLoadBalancersApi> {
-
+public class NodeApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<CloudLoadBalancersApi> {
    public void testListNodes() {
       URI endpoint = URI.create("https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/123123/loadbalancers/2000/nodes");
-      NodeClient api = requestsSendResponses(
+      NodeApi api = requestsSendResponses(
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
             authenticatedGET().endpoint(endpoint).build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/nodes-list.json")).build()
-      ).getNodeClient("DFW");
+      ).getNodeApiForZoneAndLoadBalancer("DFW", 2000);
 
-      Set<Node> nodes = api.listNodes(2000);
+      Set<Node> nodes = api.list().concat().toImmutableSet();
       assertEquals(nodes, testNodes());
    }
 
    public void testGetNodeInLoadBalancer() {
       URI endpoint = URI.create("https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/123123/loadbalancers/2000/nodes/410");
-      NodeClient api = requestsSendResponses(
+      NodeApi api = requestsSendResponses(
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
             authenticatedGET().endpoint(endpoint).build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/node-get.json")).build()
-      ).getNodeClient("DFW");
+      ).getNodeApiForZoneAndLoadBalancer("DFW", 2000);
 
-      Node node = api.getNodeInLoadBalancer(410, 2000);
+      Node node = api.get(410);
       assertEquals(node, testNode());
    }
 
    public void testAddNodesInLoadBalancer() {
       URI endpoint = URI.create("https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/123123/loadbalancers/2000/nodes");
-      NodeClient api = requestsSendResponses(
+      NodeApi api = requestsSendResponses(
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
             authenticatedGET()
@@ -80,7 +79,7 @@ public class NodeExpectTest extends BaseCloudLoadBalancerExpectTest<CloudLoadBal
                   .endpoint(endpoint)
                   .build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/nodes-list.json")).build()
-      ).getNodeClient("DFW");
+      ).getNodeApiForZoneAndLoadBalancer("DFW", 2000);
 
       NodeRequest nodeRequest1 = NodeRequest.builder()
             .address("10.1.1.1")
@@ -105,50 +104,50 @@ public class NodeExpectTest extends BaseCloudLoadBalancerExpectTest<CloudLoadBal
 
       Set<NodeRequest> nodeRequests = ImmutableSortedSet.<NodeRequest> of(nodeRequest1, nodeRequest2, nodeRequest3);
       
-      Set<Node> nodes = api.createNodesInLoadBalancer(nodeRequests, 2000);
+      Set<Node> nodes = api.add(nodeRequests);
       assertEquals(nodes, testNodes());
    }
 
    public void testUpdateAttributesForNodeInLoadBalancer() {
       URI endpoint = URI.create("https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/123123/loadbalancers/2000/nodes/410");
-      NodeClient api = requestsSendResponses(
+      NodeApi api = requestsSendResponses(
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
             authenticatedGET().method("PUT").payload(payloadFromResource("/node-update.json")).endpoint(endpoint).build(),
             HttpResponse.builder().statusCode(200).build()
-      ).getNodeClient("DFW");
+      ).getNodeApiForZoneAndLoadBalancer("DFW", 2000);
 
       NodeAttributes nodeAttributes = NodeAttributes.Builder
             .condition(NodeRequest.Condition.DISABLED)
             .weight(20);
 
-      api.updateAttributesForNodeInLoadBalancer(nodeAttributes, 410, 2000);
+      api.update(410, nodeAttributes);
    }
 
    public void testRemoveNodeFromLoadBalancer() {
       URI endpoint = URI.create("https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/123123/loadbalancers/2000/nodes/410");
-      NodeClient api = requestsSendResponses(
+      NodeApi api = requestsSendResponses(
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
             authenticatedGET().method("DELETE").replaceHeader("Accept", MediaType.WILDCARD).endpoint(endpoint).build(),
             HttpResponse.builder().statusCode(200).build()
-      ).getNodeClient("DFW");
+      ).getNodeApiForZoneAndLoadBalancer("DFW", 2000);
 
-      api.removeNodeFromLoadBalancer(410, 2000);
+      api.remove(410);
    }
 
    public void testRemoveNodesFromLoadBalancer() {
       URI endpoint = URI.create("https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/123123/loadbalancers/2000/nodes?id=%5B410%2C%20411%5D");
-      NodeClient api = requestsSendResponses(
+      NodeApi api = requestsSendResponses(
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
             authenticatedGET().method("DELETE").replaceHeader("Accept", MediaType.WILDCARD).endpoint(endpoint).build(),
             HttpResponse.builder().statusCode(200).build()
-      ).getNodeClient("DFW");
+      ).getNodeApiForZoneAndLoadBalancer("DFW", 2000);
       
       Set<Integer> nodeIds = ImmutableSortedSet.<Integer> of(410, 411);
 
-      api.removeNodesFromLoadBalancer(nodeIds, 2000);
+      api.remove(nodeIds);
    }
 
    private Set<Node> testNodes() {

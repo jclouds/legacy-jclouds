@@ -30,7 +30,7 @@ import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancerAttributes;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancerRequest;
 import org.jclouds.rackspace.cloudloadbalancers.domain.NodeRequest;
 import org.jclouds.rackspace.cloudloadbalancers.domain.VirtualIP.Type;
-import org.jclouds.rackspace.cloudloadbalancers.internal.BaseCloudLoadBalancersClientLiveTest;
+import org.jclouds.rackspace.cloudloadbalancers.internal.BaseCloudLoadBalancersApiLiveTest;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.Test;
 
@@ -38,12 +38,10 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
 /**
- * Tests behavior of {@code LoadBalancerClientLiveTest}
- * 
  * @author Adrian Cole
  */
-@Test(groups = "live", singleThreaded = true, testName = "LoadBalancerClientLiveTest")
-public class LoadBalancerClientLiveTest extends BaseCloudLoadBalancersClientLiveTest {
+@Test(groups = "live", singleThreaded = true, testName = "LoadBalancerApiLiveTest")
+public class LoadBalancerApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
    private Set<LoadBalancer> lbs = Sets.newLinkedHashSet();
 
    @Override
@@ -51,7 +49,7 @@ public class LoadBalancerClientLiveTest extends BaseCloudLoadBalancersClientLive
    protected void tearDownContext() {
       for (LoadBalancer lb: lbs) {
          assert loadBalancerActive.apply(lb) : lb;
-         client.getLoadBalancerClient(lb.getRegion()).removeLoadBalancer(lb.getId());
+         client.getLoadBalancerApiForZone(lb.getRegion()).remove(lb.getId());
          assert loadBalancerDeleted.apply(lb) : lb;
       }
       super.tearDownContext();
@@ -61,7 +59,7 @@ public class LoadBalancerClientLiveTest extends BaseCloudLoadBalancersClientLive
       for (String zone: client.getConfiguredZones()) {
          Logger.getAnonymousLogger().info("starting lb in region " + zone);
          
-         LoadBalancer lb = client.getLoadBalancerClient(zone).createLoadBalancer(
+         LoadBalancer lb = client.getLoadBalancerApiForZone(zone).create(
                LoadBalancerRequest.builder()
                      .name(prefix + "-" + zone)
                      .protocol("HTTP")
@@ -80,7 +78,7 @@ public class LoadBalancerClientLiveTest extends BaseCloudLoadBalancersClientLive
          
          assertTrue(loadBalancerActive.apply(lb));
 
-         LoadBalancer newLb = client.getLoadBalancerClient(zone).getLoadBalancer(lb.getId());
+         LoadBalancer newLb = client.getLoadBalancerApiForZone(zone).get(lb.getId());
          checkLBInRegion(zone, newLb, prefix + "-" + zone);
          
          assertEquals(newLb.getStatus(), LoadBalancer.Status.ACTIVE);
@@ -90,12 +88,12 @@ public class LoadBalancerClientLiveTest extends BaseCloudLoadBalancersClientLive
    @Test(dependsOnMethods = "testCreateLoadBalancer")
    public void testUpdateLoadBalancer() throws Exception {
       for (LoadBalancer lb: lbs) {
-         client.getLoadBalancerClient(lb.getRegion()).updateLoadBalancerAttributes(lb.getId(),
+         client.getLoadBalancerApiForZone(lb.getRegion()).update(lb.getId(),
                LoadBalancerAttributes.Builder.name("foo" + "-" + lb.getRegion()));
          
          assertTrue(loadBalancerActive.apply(lb));
 
-         LoadBalancer newLb = client.getLoadBalancerClient(lb.getRegion()).getLoadBalancer(lb.getId());
+         LoadBalancer newLb = client.getLoadBalancerApiForZone(lb.getRegion()).get(lb.getId());
          checkLBInRegion(newLb.getRegion(), newLb, "foo" + "-" + lb.getRegion());
          
          assertEquals(newLb.getStatus(), LoadBalancer.Status.ACTIVE);
@@ -105,7 +103,8 @@ public class LoadBalancerClientLiveTest extends BaseCloudLoadBalancersClientLive
    @Test(dependsOnMethods = "testUpdateLoadBalancer")
    public void testListLoadBalancers() throws Exception {
       for (String zone: client.getConfiguredZones()) {
-         Set<LoadBalancer> response = client.getLoadBalancerClient(zone).listLoadBalancers();
+         //TODO: FIXME
+         Set<LoadBalancer> response = client.getLoadBalancerApiForZone(zone).list().concat().toImmutableSet();
          
          assertNotNull(response);
          assertTrue(response.size() >= 0);
@@ -125,7 +124,7 @@ public class LoadBalancerClientLiveTest extends BaseCloudLoadBalancersClientLive
             // node info not available during list;
             assert lb.getNodes().size() == 0 : lb;
 
-            LoadBalancer getDetails = client.getLoadBalancerClient(zone).getLoadBalancer(lb.getId());
+            LoadBalancer getDetails = client.getLoadBalancerApiForZone(zone).get(lb.getId());
             
             try {
                assertEquals(getDetails.getRegion(), lb.getRegion());

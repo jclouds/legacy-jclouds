@@ -27,7 +27,7 @@ import org.jclouds.rackspace.cloudloadbalancers.domain.VirtualIP;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancer.Status;
 import org.jclouds.rackspace.cloudloadbalancers.domain.VirtualIP.IPVersion;
 import org.jclouds.rackspace.cloudloadbalancers.functions.ConvertLB;
-import org.jclouds.rackspace.cloudloadbalancers.functions.UnwrapLoadBalancer;
+import org.jclouds.rackspace.cloudloadbalancers.functions.ParseLoadBalancer;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
@@ -41,7 +41,7 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "UnwrapLoadBalancerTest")
-public class UnwrapLoadBalancerTest extends BaseItemParserTest<LoadBalancer> {
+public class ParseLoadBalancerTest extends BaseItemParserTest<LoadBalancer> {
 
    @Override
    public String resource() {
@@ -88,6 +88,6 @@ public class UnwrapLoadBalancerTest extends BaseItemParserTest<LoadBalancer> {
 
    @Override
    protected Function<HttpResponse, LoadBalancer> parser(Injector i) {
-      return i.getInstance(UnwrapLoadBalancer.class).setRegion("DFW");
+      return i.getInstance(ParseLoadBalancer.class).setRegion("DFW");
    }
 }

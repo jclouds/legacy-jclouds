@@ -21,12 +21,15 @@ package org.jclouds.rackspace.cloudloadbalancers;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.Zone;
 import org.jclouds.location.functions.ZoneToEndpoint;
-import org.jclouds.rackspace.cloudloadbalancers.features.LoadBalancerClient;
-import org.jclouds.rackspace.cloudloadbalancers.features.NodeClient;
+import org.jclouds.rackspace.cloudloadbalancers.features.LoadBalancerApi;
+import org.jclouds.rackspace.cloudloadbalancers.features.NodeApi;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
 
@@ -52,14 +55,15 @@ public interface CloudLoadBalancersApi {
     * Provides synchronous access to LoadBalancer features.
     */
    @Delegate
-   LoadBalancerClient getLoadBalancerClient(
+   LoadBalancerApi getLoadBalancerApiForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
    
    /**
     * Provides synchronous access to Node features.
     */
    @Delegate
-   NodeClient getNodeClient(
-         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
+   @Path("/loadbalancers/{lbId}")
+   NodeApi getNodeApiForZoneAndLoadBalancer(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone, @PathParam("lbId") int lbId);
 
 }

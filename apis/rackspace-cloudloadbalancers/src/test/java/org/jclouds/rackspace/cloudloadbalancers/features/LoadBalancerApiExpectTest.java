@@ -32,10 +32,9 @@ import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancerAttributes;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancerRequest;
 import org.jclouds.rackspace.cloudloadbalancers.domain.NodeRequest;
 import org.jclouds.rackspace.cloudloadbalancers.domain.VirtualIP;
-import org.jclouds.rackspace.cloudloadbalancers.features.LoadBalancerClient;
-import org.jclouds.rackspace.cloudloadbalancers.functions.UnwrapLoadBalancerTest;
-import org.jclouds.rackspace.cloudloadbalancers.functions.UnwrapLoadBalancersTest;
-import org.jclouds.rackspace.cloudloadbalancers.internal.BaseCloudLoadBalancerExpectTest;
+import org.jclouds.rackspace.cloudloadbalancers.functions.ParseLoadBalancerTest;
+import org.jclouds.rackspace.cloudloadbalancers.functions.ParseLoadBalancersTest;
+import org.jclouds.rackspace.cloudloadbalancers.internal.BaseCloudLoadBalancerApiExpectTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Sets;
@@ -44,37 +43,37 @@ import com.google.common.collect.Sets;
  * @author Everett Toews
  */
 @Test(groups = "unit")
-public class LoadBalancerExpectTest extends BaseCloudLoadBalancerExpectTest<CloudLoadBalancersApi> {
+public class LoadBalancerApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<CloudLoadBalancersApi> {
 
    public void testListLoadBalancers() {
       URI endpoint = URI.create("https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/123123/loadbalancers");
-      LoadBalancerClient api = requestsSendResponses(
+      LoadBalancerApi api = requestsSendResponses(
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
             authenticatedGET().endpoint(endpoint).build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/loadbalancers-list.json")).build()
-      ).getLoadBalancerClient("DFW");
+      ).getLoadBalancerApiForZone("DFW");
 
-      Set<LoadBalancer> loadBalancers = api.listLoadBalancers();
+      Set<LoadBalancer> loadBalancers = api.list().concat().toImmutableSet();
       assertEquals(loadBalancers, testLoadBalancers());
    }
 
    public void testGetLoadBalancer() {
       URI endpoint = URI.create("https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/123123/loadbalancers/2000");
-      LoadBalancerClient api = requestsSendResponses(
+      LoadBalancerApi api = requestsSendResponses(
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
             authenticatedGET().endpoint(endpoint).build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/loadbalancer-get.json")).build()
-      ).getLoadBalancerClient("DFW");
+      ).getLoadBalancerApiForZone("DFW");
 
-      LoadBalancer loadBalancer = api.getLoadBalancer(2000);
+      LoadBalancer loadBalancer = api.get(2000);
       assertEquals(loadBalancer, testLoadBalancer());
    }
 
    public void testCreateLoadBalancer() {
       URI endpoint = URI.create("https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/123123/loadbalancers");
-      LoadBalancerClient api = requestsSendResponses(
+      LoadBalancerApi api = requestsSendResponses(
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
             authenticatedGET()
@@ -83,7 +82,7 @@ public class LoadBalancerExpectTest extends BaseCloudLoadBalancerExpectTest<Clou
                   .endpoint(endpoint)
                   .build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/loadbalancer-get.json")).build()
-      ).getLoadBalancerClient("DFW");
+      ).getLoadBalancerApiForZone("DFW");
 
       NodeRequest nodeRequest1 = NodeRequest.builder()
             .address("10.1.1.1")
@@ -108,19 +107,19 @@ public class LoadBalancerExpectTest extends BaseCloudLoadBalancerExpectTest<Clou
             .nodes(nodeRequests)
             .build();
       
-      LoadBalancer loadBalancer = api.createLoadBalancer(lbRequest);
+      LoadBalancer loadBalancer = api.create(lbRequest);
       
       assertEquals(loadBalancer, testLoadBalancer());
    }
 
    public void testUpdateLoadBalancerAttributes() {
       URI endpoint = URI.create("https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/123123/loadbalancers/2000");
-      LoadBalancerClient api = requestsSendResponses(
+      LoadBalancerApi api = requestsSendResponses(
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
             authenticatedGET().method("PUT").payload(payloadFromResource("/loadbalancer-update.json")).endpoint(endpoint).build(),
             HttpResponse.builder().statusCode(202).payload("").build()
-      ).getLoadBalancerClient("DFW");
+      ).getLoadBalancerApiForZone("DFW");
 
       LoadBalancerAttributes lbAttrs = LoadBalancerAttributes.Builder
             .name("foo")
@@ -128,12 +127,12 @@ public class LoadBalancerExpectTest extends BaseCloudLoadBalancerExpectTest<Clou
             .port(443)
             .algorithm(LoadBalancer.Algorithm.RANDOM.name());
 
-      api.updateLoadBalancerAttributes(2000, lbAttrs);
+      api.update(2000, lbAttrs);
    }
 
    public void testRemoveLoadBalancer() {
       URI endpoint = URI.create("https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/123123/loadbalancers/2000");
-      LoadBalancerClient api = requestsSendResponses(
+      LoadBalancerApi api = requestsSendResponses(
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
             authenticatedGET()
@@ -142,16 +141,16 @@ public class LoadBalancerExpectTest extends BaseCloudLoadBalancerExpectTest<Clou
                   .endpoint(endpoint)
                   .build(),
             HttpResponse.builder().statusCode(202).payload("").build()
-      ).getLoadBalancerClient("DFW");
+      ).getLoadBalancerApiForZone("DFW");
       
-      api.removeLoadBalancer(2000);
+      api.remove(2000);
    }
 
    private Object testLoadBalancer() {
-      return new UnwrapLoadBalancerTest().expected();
+      return new ParseLoadBalancerTest().expected();
    }
 
    private Set<LoadBalancer> testLoadBalancers() {      
-      return new UnwrapLoadBalancersTest().expected();
+      return new ParseLoadBalancersTest().data();
    }   
 }
