@@ -24,6 +24,7 @@ import static org.jclouds.compute.util.ComputeServiceUtils.metadataAndTagsAsComm
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
 import java.util.Map;
+import java.util.UUID;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -32,7 +33,6 @@ import java.util.concurrent.Future;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
@@ -93,18 +93,16 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
    private final ExecutorService userThreads;
    private final Timeouts timeouts;
    private final Supplier<Set<? extends Location>> locations;
-   private final Provider<String> passwordProvider;
 
    @Inject
    public GleSYSComputeServiceAdapter(GleSYSApi api, GleSYSAsyncApi aapi,
          @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads, Timeouts timeouts,
-         @Memoized Supplier<Set<? extends Location>> locations, @Named("PASSWORD") Provider<String> passwordProvider) {
+         @Memoized Supplier<Set<? extends Location>> locations) {
       this.api = checkNotNull(api, "api");
       this.aapi = checkNotNull(aapi, "aapi");
       this.userThreads = checkNotNull(userThreads, "userThreads");
       this.timeouts = checkNotNull(timeouts, "timeouts");
       this.locations = checkNotNull(locations, "locations");
-      this.passwordProvider = checkNotNull(passwordProvider, "passwordProvider");
    }
 
    @Override
@@ -134,11 +132,12 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
       builder.memorySizeMB(template.getHardware().getRam());
       builder.diskSizeGB(Math.round(template.getHardware().getVolumes().get(0).getSize()));
       builder.cpuCores((int) template.getHardware().getProcessors().get(0).getCores());
-      builder.transferGB(50);// TODO: add to template options with default value
+      builder.transferGB(templateOptions.getTransferGB());
       ServerSpec spec = builder.build();
 
-      String password = passwordProvider.get(); // TODO: add to templateOptions
-                                                // and set if present
+      
+      // use random root password unless one was provided via template options
+      String password = templateOptions.hasRootPassword() ? templateOptions.getRootPassword() : getRandomPassword();
 
       logger.debug(">> creating new Server spec(%s) name(%s) options(%s)", spec, name, createServerOptions);
       ServerDetails result = api.getServerApi().createWithHostnameAndRootPassword(spec, name, password,
@@ -147,6 +146,13 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
 
       return new NodeAndInitialCredentials<ServerDetails>(result, result.getId() + "", LoginCredentials.builder()
             .password(password).build());
+   }
+
+   /**
+    * @return a generated random password string
+    */
+   private String getRandomPassword() {
+      return UUID.randomUUID().toString().replace("-","");
    }
 
    @Singleton

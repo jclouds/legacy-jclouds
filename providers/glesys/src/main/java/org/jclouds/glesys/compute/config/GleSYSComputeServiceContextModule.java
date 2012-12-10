@@ -18,12 +18,6 @@
  */
 package org.jclouds.glesys.compute.config;
 
-import java.util.UUID;
-
-import javax.inject.Named;
-import javax.inject.Provider;
-import javax.inject.Singleton;
-
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
 import org.jclouds.compute.domain.Hardware;
@@ -42,9 +36,7 @@ import org.jclouds.glesys.domain.OSTemplate;
 import org.jclouds.glesys.domain.ServerDetails;
 
 import com.google.common.base.Function;
-import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
-import com.google.inject.name.Names;
 
 /**
  * 
@@ -70,19 +62,7 @@ public class GleSYSComputeServiceContextModule extends
       bind(new TypeLiteral<Function<String, OsFamilyVersion64Bit>>() {
       }).to(ParseOsFamilyVersion64BitFromImageName.class);
       bind(TemplateOptions.class).to(GleSYSTemplateOptions.class);
-      bind(String.class).annotatedWith(Names.named("PASSWORD")).toProvider(PasswordProvider.class).in(Scopes.SINGLETON);
-      // to have the compute service adapter override default locations
       install(new LocationsFromComputeServiceAdapterModule<ServerDetails, Hardware, OSTemplate, String>(){});
    }
 
-   @Named("PASSWORD")
-   @Singleton
-   public static class PasswordProvider implements Provider<String> {
-
-      @Override
-      public String get() {
-         return UUID.randomUUID().toString().replace("-","");
-      }
-      
-   }
 }
