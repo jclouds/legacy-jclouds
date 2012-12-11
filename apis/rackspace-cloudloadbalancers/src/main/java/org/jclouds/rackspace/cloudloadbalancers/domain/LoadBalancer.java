@@ -26,7 +26,7 @@ import java.util.Set;
 
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.rackspace.cloudloadbalancers.domain.internal.BaseLoadBalancer;
-import org.jclouds.rackspace.cloudloadbalancers.features.LoadBalancerClient;
+import org.jclouds.rackspace.cloudloadbalancers.features.LoadBalancerApi;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -344,8 +344,8 @@ public class LoadBalancer extends BaseLoadBalancer<Node, LoadBalancer> {
 
    /**
     * Broken out as a separate field because when LoadBalancers are returned from 
-    * {@link LoadBalancerClient#listLoadBalancers()}, no Nodes are returned (so you can't rely on getNodes().size())
-    * but a nodeCount is returned. When {@link LoadBalancerClient#getLoadBalancer(int)} is called, nodes are
+    * {@link LoadBalancerApi#list()}, no Nodes are returned (so you can't rely on getNodes().size())
+    * but a nodeCount is returned. When {@link LoadBalancerApi#get(int)} is called, nodes are
     * returned by no nodeCount is returned.
     *  
     * @return The number of Nodes in this LoadBalancer 

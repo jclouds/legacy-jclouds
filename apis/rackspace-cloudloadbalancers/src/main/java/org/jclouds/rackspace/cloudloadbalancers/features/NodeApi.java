@@ -21,7 +21,12 @@ package org.jclouds.rackspace.cloudloadbalancers.features;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.collect.IterableWithMarker;
+import org.jclouds.collect.PagedIterable;
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.http.HttpResponseException;
+import org.jclouds.openstack.v2_0.options.PaginationOptions;
+import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancerAttributes;
 import org.jclouds.rackspace.cloudloadbalancers.domain.Node;
 import org.jclouds.rackspace.cloudloadbalancers.domain.NodeAttributes;
 import org.jclouds.rackspace.cloudloadbalancers.domain.NodeRequest;
@@ -30,14 +35,11 @@ import org.jclouds.rackspace.cloudloadbalancers.domain.NodeRequest;
  * Provides synchronous access to CloudLoadBalancers Node features.
  * <p/>
  * 
- * @see NodeAsyncClient
- * @see <a
- *      href="http://docs.rackspace.com/loadbalancers/api/v1.0/clb-devguide/content/Nodes-d1e2173.html"
- *      />
- * @author Dan Lo Bianco
+ * @see NodeAsyncApi
+ * @author Everett Toews
  */
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
-public interface NodeClient {
+public interface NodeApi {
    /**
     * Create a new node with the configuration defined by the request.
     * 
@@ -49,15 +51,13 @@ public interface NodeClient {
     * 
     * @param nodes
     *           configurations to create
-    * @param lbid
-    *           loadbalancer on which to create the nodes
     * @return created nodes
     * @throws HttpResponseException
     *            If the corresponding request cannot be fulfilled due to insufficient or invalid
     *            data
     * 
     */
-	Set<Node> createNodesInLoadBalancer(Set<NodeRequest> nodes, int lbid);
+	Set<Node> add(Iterable<NodeRequest> nodes);
 
    /**
     * 
@@ -68,37 +68,28 @@ public interface NodeClient {
     * successful validation of the request, the service will return a 202 (Accepted) response code.
     * A caller can poll the load balancer with its ID to wait for the changes to be applied and the
     * load balancer to return to an ACTIVE status.
-    * 
+    * @param id
+    *           node to get
     * @param attrs
     *           what to change
-    * @param nid
-    *           node to get
-    * @param lbid
-    *           loadbalancer from which to get the node
-    *           
+    * 
     * @see LoadBalancerAttributes#fromLoadBalancer
     */
-   void updateAttributesForNodeInLoadBalancer(NodeAttributes attrs, int nid, int lbid);
+   void update(int id, NodeAttributes attrs);
 
    /**
-    * 
     * @return all nodes for a given loadbalancer, or empty set if none available
-    * 
-    * @param lbid
-    *           id of the loadbalancer to get the nodes for
     */
-   Set<Node> listNodes(int lbid);
+   PagedIterable<Node> list();
+
+   IterableWithMarker<Node> list(PaginationOptions options);
 
    /**
-    * 
-    * 
-    * @param nid
+    * @param id
     *           node to get
-    * @param lbid
-    *           loadbalancer from which to get the node
     * @return details of the specified node, or null if not found
     */
-   Node getNodeInLoadBalancer(int nid, int lbid);
+   Node get(int id);
 
    /**
     * Remove a node from the account.
@@ -107,12 +98,10 @@ public interface NodeClient {
     * configuration from the account. Any and all configuration data is immediately purged and is
     * not recoverable.
     * 
-    * @param nid
+    * @param id
     *           node to remove
-    * @param lbid
-    *           loadbalancer from which to remove the node
     */
-   void removeNodeFromLoadBalancer(int nid, int lbid);
+   void remove(int id);
    
    /**
     * Batch-remove nodes from the account.
@@ -122,10 +111,8 @@ public interface NodeClient {
     * cannot be removed due to its current status a 400:BadRequest is returned along with the ids 
     * of the ones the system identified as potential failures for this request
     * 
-    * @param nids
+    * @param ids
     *           nodes to remove
-    * @param lbid
-    *           loadbalancer from which to remove the node
     */
-   void removeNodesFromLoadBalancer(Set<Integer> nids, int lbid);
+   void remove(Iterable<Integer> ids);
 }

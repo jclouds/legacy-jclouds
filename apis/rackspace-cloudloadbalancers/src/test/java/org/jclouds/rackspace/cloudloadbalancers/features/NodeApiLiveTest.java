@@ -38,18 +38,16 @@ import org.jclouds.rackspace.cloudloadbalancers.domain.NodeAttributes;
 import org.jclouds.rackspace.cloudloadbalancers.domain.NodeRequest;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancer.Status;
 import org.jclouds.rackspace.cloudloadbalancers.domain.VirtualIP.Type;
-import org.jclouds.rackspace.cloudloadbalancers.features.LoadBalancerClient;
-import org.jclouds.rackspace.cloudloadbalancers.internal.BaseCloudLoadBalancersClientLiveTest;
+import org.jclouds.rackspace.cloudloadbalancers.features.LoadBalancerApi;
+import org.jclouds.rackspace.cloudloadbalancers.internal.BaseCloudLoadBalancersApiLiveTest;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.Test;
 
 /**
- * Tests behavior of {@code NodeClient}
- * 
  * @author Dan Lo Bianco
  */
 @Test(groups = "live", singleThreaded = true, testName = "NodeClientLiveTest")
-public class NodeClientLiveTest extends BaseCloudLoadBalancersClientLiveTest {
+public class NodeApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
    private Map<LoadBalancer, Set<Node>> nodes = Maps.newHashMap();
 
    public void testCreateLoadBalancers() {
@@ -57,7 +55,7 @@ public class NodeClientLiveTest extends BaseCloudLoadBalancersClientLiveTest {
       Logger.getAnonymousLogger().info("running against zones " + client.getConfiguredZones());
       for (String zone : client.getConfiguredZones()) {
          Logger.getAnonymousLogger().info("starting lb in zone " + zone);
-         LoadBalancer lb = client.getLoadBalancerClient(zone).createLoadBalancer(
+         LoadBalancer lb = client.getLoadBalancerApiForZone(zone).create(
                   LoadBalancerRequest.builder().name(prefix + "-" + zone).protocol("HTTP").port(80).virtualIPType(
                            Type.PUBLIC).node(NodeRequest.builder().address("192.168.1.1").port(8080).build()).build());
          nodes.put(lb, new HashSet<Node>());
@@ -71,14 +69,13 @@ public class NodeClientLiveTest extends BaseCloudLoadBalancersClientLiveTest {
       for (LoadBalancer lb : nodes.keySet()) {
          String region = lb.getRegion();
          Logger.getAnonymousLogger().info("starting node on loadbalancer " + lb.getId() + " in region " + region);
-         Set<Node> newNodes = client.getNodeClient(region).createNodesInLoadBalancer(
-                  ImmutableSet.<NodeRequest> of(NodeRequest.builder().address("192.168.1.2").port(8080).build()),
-                  lb.getId());
+         Set<Node> newNodes = client.getNodeApiForZoneAndLoadBalancer(region, lb.getId()).add(
+                  ImmutableSet.<NodeRequest> of(NodeRequest.builder().address("192.168.1.2").port(8080).build()));
 
          for (Node n : newNodes) {
             assertEquals(n.getStatus(), Node.Status.ONLINE);
             nodes.get(lb).add(n);
-            assertEquals(client.getNodeClient(region).getNodeInLoadBalancer(n.getId(), lb.getId()).getStatus(),
+            assertEquals(client.getNodeApiForZoneAndLoadBalancer(region, lb.getId()).get(n.getId()).getStatus(),
                      Node.Status.ONLINE);
          }
 
@@ -91,12 +88,12 @@ public class NodeClientLiveTest extends BaseCloudLoadBalancersClientLiveTest {
       for (Entry<LoadBalancer, Set<Node>> entry : nodes.entrySet()) {
          for (Node n : entry.getValue()) {
             String region = entry.getKey().getRegion();
-            client.getNodeClient(region).updateAttributesForNodeInLoadBalancer(NodeAttributes.Builder.weight(23),
-                     n.getId(), entry.getKey().getId());
-            assertEquals(client.getNodeClient(region).getNodeInLoadBalancer(n.getId(), entry.getKey().getId())
+            client.getNodeApiForZoneAndLoadBalancer(region, entry.getKey().getId()).update(n.getId(),
+                     NodeAttributes.Builder.weight(23));
+            assertEquals(client.getNodeApiForZoneAndLoadBalancer(region, entry.getKey().getId()).get(n.getId())
                      .getStatus(), Node.Status.ONLINE);
 
-            Node newNode = client.getNodeClient(region).getNodeInLoadBalancer(n.getId(), entry.getKey().getId());
+            Node newNode = client.getNodeApiForZoneAndLoadBalancer(region, entry.getKey().getId()).get(n.getId());
             assertEquals(newNode.getStatus(), Node.Status.ONLINE);
             assertEquals(newNode.getWeight(), (Integer) 23);
          }
@@ -106,7 +103,7 @@ public class NodeClientLiveTest extends BaseCloudLoadBalancersClientLiveTest {
    @Test(dependsOnMethods = "testModifyNode")
    public void testListNodes() throws Exception {
       for (LoadBalancer lb : nodes.keySet()) {
-         Set<Node> response = client.getNodeClient(lb.getRegion()).listNodes(lb.getId());
+         Set<Node> response = client.getNodeApiForZoneAndLoadBalancer(lb.getRegion(), lb.getId()).list().concat().toImmutableSet();
          assert null != response;
          assertTrue(response.size() >= 0);
          for (Node n : response) {
@@ -118,8 +115,8 @@ public class NodeClientLiveTest extends BaseCloudLoadBalancersClientLiveTest {
             assert !Arrays.asList(LoadBalancer.WEIGHTED_ALGORITHMS).contains(lb.getTypedAlgorithm())
                      || n.getWeight() != null : n;
 
-            Node getDetails = client.getNodeClient(lb.getRegion()).getNodeInLoadBalancer(n.getId(), lb.getId());
-            System.out.println(n.toString());
+            Node getDetails = client.getNodeApiForZoneAndLoadBalancer(lb.getRegion(), lb.getId()).get(n.getId());
+
             try {
                assertEquals(getDetails.getId(), n.getId());
                assertEquals(getDetails.getCondition(), n.getCondition());
@@ -141,11 +138,11 @@ public class NodeClientLiveTest extends BaseCloudLoadBalancersClientLiveTest {
    protected void tearDownContext() {
       for (Entry<LoadBalancer, Set<Node>> entry : nodes.entrySet()) {
          LoadBalancer lb = entry.getKey();
-         LoadBalancerClient lbClient = client.getLoadBalancerClient(lb.getRegion());
+         LoadBalancerApi lbClient = client.getLoadBalancerApiForZone(lb.getRegion());
 
-         if (lbClient.getLoadBalancer(lb.getId()).getStatus() != Status.DELETED) {
+         if (lbClient.get(lb.getId()).getStatus() != Status.DELETED) {
             assert loadBalancerActive.apply(lb) : lb;
-            lbClient.removeLoadBalancer(lb.getId());
+            lbClient.remove(lb.getId());
          }
          assert loadBalancerDeleted.apply(lb) : lb;
       }

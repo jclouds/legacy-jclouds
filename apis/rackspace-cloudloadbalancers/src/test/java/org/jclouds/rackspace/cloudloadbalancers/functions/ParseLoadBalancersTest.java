@@ -20,14 +20,14 @@ package org.jclouds.rackspace.cloudloadbalancers.functions;
 
 import java.util.Set;
 
+import org.jclouds.collect.IterableWithMarker;
+import org.jclouds.collect.IterableWithMarkers;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.json.BaseSetParserTest;
+import org.jclouds.json.BaseIterableWithMarkerParserTest;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancer;
-import org.jclouds.rackspace.cloudloadbalancers.domain.VirtualIP;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancer.Status;
-import org.jclouds.rackspace.cloudloadbalancers.functions.ConvertLB;
-import org.jclouds.rackspace.cloudloadbalancers.functions.UnwrapLoadBalancers;
+import org.jclouds.rackspace.cloudloadbalancers.domain.VirtualIP;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
@@ -41,18 +41,10 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
  * @author Adrian Cole
  */
 @Test(groups = "unit")
-public class UnwrapLoadBalancersTest extends BaseSetParserTest<LoadBalancer> {
+public class ParseLoadBalancersTest extends BaseIterableWithMarkerParserTest<LoadBalancer> {
 
-   @Override
-   public String resource() {
-      return "/loadbalancers-list.json";
-   }
-
-   @Override
-   public Set<LoadBalancer> expected() {
-
+   public Set<LoadBalancer> data() {
       return ImmutableSet.of(
-
             LoadBalancer
                   .builder()
                   .region("DFW")
@@ -83,7 +75,16 @@ public class UnwrapLoadBalancersTest extends BaseSetParserTest<LoadBalancer> {
                               .type(VirtualIP.Type.PUBLIC).ipVersion(VirtualIP.IPVersion.IPV4).build()))
                   .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-11-30T03:23:42Z"))
                   .updated(new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-11-30T03:23:44Z")).build());
+   }
+   
+   @Override
+   public String resource() {
+      return "/loadbalancers-list.json";
+   }
 
+   @Override
+   public IterableWithMarker<LoadBalancer> expected() {
+      return IterableWithMarkers.from(data());
    }
 
    // add factory binding as this is not default
@@ -101,7 +102,7 @@ public class UnwrapLoadBalancersTest extends BaseSetParserTest<LoadBalancer> {
    }
 
    @Override
-   protected Function<HttpResponse, Set<LoadBalancer>> parser(Injector i) {
-      return i.getInstance(UnwrapLoadBalancers.class).setRegion("DFW");
+   protected Function<HttpResponse, IterableWithMarker<LoadBalancer>> parser(Injector i) {
+      return i.getInstance(ParseLoadBalancers.class).setRegion("DFW");
    }
 }

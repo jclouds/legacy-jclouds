@@ -16,18 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.rackspace.cloudloadbalancers.us;
+package org.jclouds.json;
 
-import org.jclouds.rackspace.cloudloadbalancers.features.LoadBalancerApiLiveTest;
-import org.testng.annotations.Test;
+import static org.testng.Assert.assertEquals;
+
+import org.jclouds.collect.IterableWithMarker;
+
+import com.google.common.collect.ImmutableSortedSet;
 
 /**
  * 
- * @author Dan Lo Bianco
+ * @author Adrian Cole
  */
-@Test(groups = "live", singleThreaded = true, testName = "CloudLoadBalancersUSLoadBalancerClientLiveTest")
-public class CloudLoadBalancersUSLoadBalancerClientLiveTest extends LoadBalancerApiLiveTest {
-   public CloudLoadBalancersUSLoadBalancerClientLiveTest() {
-      provider = "cloudloadbalancers-us";
+public abstract class BaseIterableWithMarkerParserTest<T> extends BaseParserTest<IterableWithMarker<T>, T> {
+
+   public void compare(IterableWithMarker<T> expects, IterableWithMarker<T> response) {
+      assertEquals(ImmutableSortedSet.copyOf(response).toString(), ImmutableSortedSet.copyOf(expects).toString());
    }
+
 }
