@@ -28,10 +28,10 @@ import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
 import org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersAsyncApi;
 import org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersApi;
-import org.jclouds.rackspace.cloudloadbalancers.features.LoadBalancerAsyncClient;
-import org.jclouds.rackspace.cloudloadbalancers.features.LoadBalancerClient;
-import org.jclouds.rackspace.cloudloadbalancers.features.NodeAsyncClient;
-import org.jclouds.rackspace.cloudloadbalancers.features.NodeClient;
+import org.jclouds.rackspace.cloudloadbalancers.features.LoadBalancerAsyncApi;
+import org.jclouds.rackspace.cloudloadbalancers.features.LoadBalancerApi;
+import org.jclouds.rackspace.cloudloadbalancers.features.NodeAsyncApi;
+import org.jclouds.rackspace.cloudloadbalancers.features.NodeApi;
 import org.jclouds.rackspace.cloudloadbalancers.functions.ConvertLB;
 import org.jclouds.rackspace.cloudloadbalancers.handlers.ParseCloudLoadBalancersErrorFromHttpResponse;
 import org.jclouds.rest.ConfiguresRestClient;
@@ -50,8 +50,8 @@ public class CloudLoadBalancersRestClientModule extends
          RestClientModule<CloudLoadBalancersApi, CloudLoadBalancersAsyncApi> {
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()
-            .put(LoadBalancerClient.class, LoadBalancerAsyncClient.class)
-            .put(NodeClient.class, NodeAsyncClient.class)
+            .put(LoadBalancerApi.class, LoadBalancerAsyncApi.class)
+            .put(NodeApi.class, NodeAsyncApi.class)
             .build();
 
    public CloudLoadBalancersRestClientModule() {

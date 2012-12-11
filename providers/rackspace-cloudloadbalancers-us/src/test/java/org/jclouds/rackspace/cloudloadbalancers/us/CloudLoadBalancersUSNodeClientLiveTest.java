@@ -18,7 +18,7 @@
  */
 package org.jclouds.rackspace.cloudloadbalancers.us;
 
-import org.jclouds.rackspace.cloudloadbalancers.features.NodeClientLiveTest;
+import org.jclouds.rackspace.cloudloadbalancers.features.NodeApiLiveTest;
 import org.testng.annotations.Test;
 
 /**
@@ -26,7 +26,7 @@ import org.testng.annotations.Test;
  * @author Dan Lo Bianco
  */
 @Test(groups = "live", singleThreaded = true, testName = "CloudLoadBalancersUSNodeClientLiveTest")
-public class CloudLoadBalancersUSNodeClientLiveTest extends NodeClientLiveTest {
+public class CloudLoadBalancersUSNodeClientLiveTest extends NodeApiLiveTest {
    public CloudLoadBalancersUSNodeClientLiveTest() {
       provider = "cloudloadbalancers-us";
    }
