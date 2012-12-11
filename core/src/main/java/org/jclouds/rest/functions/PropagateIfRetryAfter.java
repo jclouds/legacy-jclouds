@@ -16,27 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.date;
+package org.jclouds.rest.functions;
 
-import org.jclouds.date.internal.DateServiceDateCodecFactory;
+import org.jclouds.http.functions.HeaderToRetryAfterException;
+import org.jclouds.rest.RetryAfterException;
 
+import com.google.common.base.Function;
 import com.google.inject.ImplementedBy;
 
 /**
- * Codecs for converting from Date->String and vice versa.
+ * propagates as {@link RetryAfterException} if a Throwable contains information
+ * such as a retry offset.
  * 
- * @author aled
- * @see DateCodec
+ * @author Adrian Cole
  */
-@ImplementedBy(DateServiceDateCodecFactory.class)
-public interface DateCodecFactory {
-
-   DateCodec rfc822();
-
-   DateCodec rfc1123();
-
-   DateCodec iso8601();
-
-   DateCodec iso8601Seconds();
+@ImplementedBy(HeaderToRetryAfterException.class)
+public interface PropagateIfRetryAfter extends Function<Throwable, Void> {
 
 }

@@ -24,8 +24,6 @@ import static org.testng.Assert.fail;
 import java.util.Date;
 
 import org.jclouds.date.DateCodec;
-import org.jclouds.date.internal.DateServiceDateCodecFactory.DateServiceIso8601Codec;
-import org.jclouds.date.internal.DateServiceDateCodecFactory.DateServiceRfc1123Codec;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -38,15 +36,35 @@ import org.testng.annotations.Test;
 public class DateServiceDateCodecFactoryTest {
 
    private DateServiceDateCodecFactory simpleDateCodecFactory;
+   private DateCodec rfc822Codec;
    private DateCodec rfc1123Codec;
    private DateCodec iso8601Codec;
+   private DateCodec iso8601SecondsCodec;
 
    @BeforeTest
    public void setUp() {
-      simpleDateCodecFactory = new DateServiceDateCodecFactory(new DateServiceRfc1123Codec(
-               new SimpleDateFormatDateService()), new DateServiceIso8601Codec(new SimpleDateFormatDateService()));
+      simpleDateCodecFactory = new DateServiceDateCodecFactory(new SimpleDateFormatDateService());
+      rfc822Codec = simpleDateCodecFactory.rfc822();
       rfc1123Codec = simpleDateCodecFactory.rfc1123();
       iso8601Codec = simpleDateCodecFactory.iso8601();
+      iso8601SecondsCodec = simpleDateCodecFactory.iso8601Seconds();
+   }
+   
+   @Test
+   public void testCodecForRfc822() {
+      Date date = new Date(1000);
+      assertEquals(rfc822Codec.toDate(rfc822Codec.toString(date)), date);
+
+      assertEquals(rfc822Codec.toDate("Thu, 01 Dec 1994 16:00:00 GMT"), new Date(786297600000L));
+   }
+
+   @Test
+   public void testCodecForRfc822ThrowsParseExceptionWhenMalformed() {
+      try {
+         rfc822Codec.toDate("wrong");
+         fail();
+      } catch (IllegalArgumentException e) {
+      }
    }
 
    @Test
@@ -78,6 +96,23 @@ public class DateServiceDateCodecFactoryTest {
    public void testCodecForIso8601ThrowsParseExceptionWhenMalformed() {
       try {
          iso8601Codec.toDate("-");
+         fail();
+      } catch (IllegalArgumentException e) {
+      }
+   }
+   
+   @Test
+   public void testCodecForIso8601Seconds() {
+      Date date = new Date(1000);
+      assertEquals(iso8601SecondsCodec.toDate(iso8601SecondsCodec.toString(date)), date);
+
+      assertEquals(iso8601SecondsCodec.toDate("2012-11-14T21:51:28UTC").getTime(), 1352929888000l);
+   }
+
+   @Test
+   public void testCodecForIso8601SecondsThrowsParseExceptionWhenMalformed() {
+      try {
+         iso8601SecondsCodec.toDate("-");
          fail();
       } catch (IllegalArgumentException e) {
       }
