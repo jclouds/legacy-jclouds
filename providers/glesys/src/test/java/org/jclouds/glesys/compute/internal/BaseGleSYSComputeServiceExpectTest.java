@@ -25,14 +25,12 @@ import org.jclouds.apis.ApiMetadata;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.glesys.GleSYSApiMetadata;
-import org.jclouds.glesys.compute.config.GleSYSComputeServiceContextModule.PasswordProvider;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.internal.BaseRestApiExpectTest;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
-import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
@@ -55,15 +53,6 @@ public abstract class BaseGleSYSComputeServiceExpectTest extends BaseRestApiExpe
    @Override
    public ComputeService createClient(Function<HttpRequest, HttpResponse> fn, Module module, Properties props) {
       return createInjector(fn, module, props).getInstance(ComputeService.class);
-   }
-
-   protected PasswordProvider passwordGenerator() {
-      // make sure we can predict passwords generated for createServer requests
-      return new PasswordProvider() {
-         public String get() {
-            return "foo";
-         }
-      };
    }
 
    protected Injector injectorForKnownArgumentsAndConstantPassword() {
@@ -95,14 +84,7 @@ public abstract class BaseGleSYSComputeServiceExpectTest extends BaseRestApiExpe
                         .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build(),
                         HttpResponse.builder().statusCode(204)
                               .payload(payloadFromResource("/server_allowed_arguments.json")).build())
-                  .putAll(requestsResponses).build(), new AbstractModule() {
-
-               @Override
-               protected void configure() {
-                  bind(PasswordProvider.class).toInstance(passwordGenerator());
-               }
-
-            }).getContext();
+                  .putAll(requestsResponses).build()).getContext();
    }
 
    protected ComputeServiceContext computeContextForKnownArgumentsAndConstantPassword() {

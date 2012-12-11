@@ -19,6 +19,8 @@
 package org.jclouds.glesys.compute.options;
 
 import static org.jclouds.glesys.compute.options.GleSYSTemplateOptions.Builder.ip;
+import static org.jclouds.glesys.compute.options.GleSYSTemplateOptions.Builder.rootPassword;
+import static org.jclouds.glesys.compute.options.GleSYSTemplateOptions.Builder.transferGB;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.compute.options.TemplateOptions;
@@ -57,8 +59,72 @@ public class GleSYSTemplateOptionsTest {
       assertEquals(options.as(GleSYSTemplateOptions.class).getIp(), "1.1.1.1");
    }
 
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testNullIpThrowsNPE() {
+      new GleSYSTemplateOptions().ip(null);
+   }
+
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testInvalidIpThrowsIllegalArgument() {
+      new GleSYSTemplateOptions().ip("1.1.1");
+   }
+
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testipIsInvalidThrowsIllegalArgument() {
       new GleSYSTemplateOptions().ip("foo");
+   }
+
+   @Test
+   public void testDefaultRootPassword() {
+      TemplateOptions options = new GleSYSTemplateOptions();
+      assertEquals(options.as(GleSYSTemplateOptions.class).getRootPassword(), null);
+   }
+
+   @Test
+   public void testRootPassword() {
+      TemplateOptions options = new GleSYSTemplateOptions().rootPassword("secret");
+      assertEquals(options.as(GleSYSTemplateOptions.class).getRootPassword(), "secret");
+   }   
+
+   @Test
+   public void testRootPasswordStatic() {
+      TemplateOptions options = rootPassword("secret");
+      assertEquals(options.as(GleSYSTemplateOptions.class).getRootPassword(), "secret");
+   }   
+
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testNullRootPasswordThrowsNPE() {
+      new GleSYSTemplateOptions().rootPassword(null);
+   }   
+
+   @Test
+   public void testDefaultTranferGB() {
+      TemplateOptions options = new GleSYSTemplateOptions();
+      assertEquals(options.as(GleSYSTemplateOptions.class).getTransferGB(), 50);
+   }
+
+   @Test
+   public void testTransferGB() {
+      TemplateOptions options = new GleSYSTemplateOptions().transferGB(75);
+      assertEquals(options.as(GleSYSTemplateOptions.class).getTransferGB(), 75);
+   }   
+
+   @Test
+   public void testTransferGBStatic() {
+      TemplateOptions options = transferGB(75);
+      assertEquals(options.as(GleSYSTemplateOptions.class).getTransferGB(), 75);
+   }
+
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testNegativeTransferGBThrowsException() {
+      new GleSYSTemplateOptions().transferGB(-1);
+   }
+   
+   @Test
+   public void testClone() {
+      GleSYSTemplateOptions clone = transferGB(75).rootPassword("root").ip("1.1.1.1").clone();
+      assertEquals(clone.getTransferGB(), 75);
+      assertEquals(clone.getRootPassword(), "root");
+      assertEquals(clone.getIp(), "1.1.1.1");
    }
 }
