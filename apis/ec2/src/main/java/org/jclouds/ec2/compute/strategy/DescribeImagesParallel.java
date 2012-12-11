@@ -40,7 +40,6 @@ import org.jclouds.logging.Logger;
 import com.google.common.base.Function;
 
 /**
- * 
  * @author Adrian Cole
  */
 @Singleton
@@ -68,7 +67,7 @@ public class DescribeImagesParallel implements
                new Function<Entry<String, DescribeImagesOptions>, Future<? extends Set<? extends org.jclouds.ec2.domain.Image>>>() {
 
                   @Override
-                  public Future<Set<? extends org.jclouds.ec2.domain.Image>> apply(
+                  public Future<? extends Set<? extends org.jclouds.ec2.domain.Image>> apply(
                            Entry<String, DescribeImagesOptions> from) {
                      return async.getAMIServices().describeImagesInRegion(from.getKey(), from.getValue());
                   }

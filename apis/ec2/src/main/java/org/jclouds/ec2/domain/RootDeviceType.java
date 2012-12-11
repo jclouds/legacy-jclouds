@@ -18,31 +18,39 @@
  */
 package org.jclouds.ec2.domain;
 
+import org.jclouds.javax.annotation.Nullable;
+
 import com.google.common.base.CaseFormat;
 
 /**
- * The root device type used by the AMI. The AMI can use an Amazon EBS or instance store root
- * device.
+ * The root device type used by an AMI.
  * 
  * @author Adrian Cole
  */
 public enum RootDeviceType {
 
+   /** EC2 Instance Storage. */
    INSTANCE_STORE,
 
-   EBS, UNRECOGNIZED;
+   /** Amazon Elastic Block Storage. */
+   EBS,
+   
+   UNRECOGNIZED;
 
    public String value() {
       return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, name());
    }
 
+   @Override
    public String toString() {
       return value();
    }
 
-   public static RootDeviceType fromValue(String v) {
+   public static RootDeviceType fromValue(@Nullable String v) {
       try {
          return valueOf(CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_UNDERSCORE, v));
+      } catch (NullPointerException e) {
+         return null;
       } catch (IllegalArgumentException e) {
          return UNRECOGNIZED;
       }

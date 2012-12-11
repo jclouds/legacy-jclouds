@@ -72,7 +72,7 @@ public interface AMIAsyncClient {
    @FormParams(keys = ACTION, values = "DescribeImages")
    @XMLResponseParser(DescribeImagesResponseHandler.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<? extends Image>> describeImagesInRegion(
+   ListenableFuture<? extends Set<? extends Image>> describeImagesInRegion(
             @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             DescribeImagesOptions... options);
 
