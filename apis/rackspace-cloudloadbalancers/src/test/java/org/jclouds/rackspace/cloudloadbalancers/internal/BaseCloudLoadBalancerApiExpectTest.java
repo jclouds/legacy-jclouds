@@ -37,7 +37,7 @@ public class BaseCloudLoadBalancerApiExpectTest<T> extends BaseRestApiExpectTest
    protected HttpResponse responseWithAccess;
 
    public BaseCloudLoadBalancerApiExpectTest() {
-      provider = "cloudloadbalancers";
+      provider = "rackspace-cloudloadbalancers";
 
       rackspaceAuthWithUsernameAndApiKey = RackspaceFixture.INSTANCE
             .initialAuthWithUsernameAndApiKey(identity, credential);

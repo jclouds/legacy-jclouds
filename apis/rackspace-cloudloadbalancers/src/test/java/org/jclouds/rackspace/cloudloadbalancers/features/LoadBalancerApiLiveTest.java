@@ -103,7 +103,7 @@ public class LoadBalancerApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
    @Test(dependsOnMethods = "testUpdateLoadBalancer")
    public void testListLoadBalancers() throws Exception {
       for (String zone: client.getConfiguredZones()) {
-         //TODO: FIXME
+
          Set<LoadBalancer> response = client.getLoadBalancerApiForZone(zone).list().concat().toImmutableSet();
          
          assertNotNull(response);
