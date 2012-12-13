@@ -75,7 +75,7 @@ public class CloudLoadBalancersApiMetadata extends BaseRestApiMetadata {
 
       protected Builder() {
          super(CloudLoadBalancersApi.class, CloudLoadBalancersAsyncApi.class);
-         id("cloudloadbalancers")
+         id("rackspace-cloudloadbalancers")
                .name("Rackspace Cloud Load Balancers API")
                .identityName("Username")
                .credentialName("API Key")
