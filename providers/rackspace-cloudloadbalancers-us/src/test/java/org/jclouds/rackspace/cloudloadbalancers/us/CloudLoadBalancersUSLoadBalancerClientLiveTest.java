@@ -28,6 +28,6 @@ import org.testng.annotations.Test;
 @Test(groups = "live", singleThreaded = true, testName = "CloudLoadBalancersUSLoadBalancerClientLiveTest")
 public class CloudLoadBalancersUSLoadBalancerClientLiveTest extends LoadBalancerApiLiveTest {
    public CloudLoadBalancersUSLoadBalancerClientLiveTest() {
-      provider = "cloudloadbalancers-us";
+      provider = "rackspace-cloudloadbalancers-us";
    }
 }

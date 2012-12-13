@@ -70,7 +70,7 @@ public class CloudLoadBalancersUKProviderMetadata extends BaseProviderMetadata {
    public static class Builder extends BaseProviderMetadata.Builder {
 
       protected Builder(){
-         id("cloudloadbalancers-uk")
+         id("rackspace-cloudloadbalancers-uk")
          .name("Rackspace Cloud Load Balancers UK")
          .apiMetadata(new CloudLoadBalancersApiMetadata().toBuilder()
                   .identityName("${userName}")
