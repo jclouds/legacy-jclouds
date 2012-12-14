@@ -22,6 +22,8 @@ import static org.testng.Assert.assertEquals;
 
 import java.util.Properties;
 
+import javax.ws.rs.core.MediaType;
+
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
@@ -54,6 +56,7 @@ public class PasswordAuthenticationExpectTest extends BaseSwiftKeystoneExpectTes
       HttpRequest containerExists = HttpRequest.builder()
                                                .method("HEAD")
                                                .endpoint("https://objects.jclouds.org/v1.0/40806637803162/container")
+                                               .addHeader("Accept", MediaType.WILDCARD)
                                                .addHeader("X-Auth-Token", authToken).build();
 
       HttpResponse containerExistsResponse = HttpResponse.builder().statusCode(200).build();

@@ -28,10 +28,12 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SkipEncoding;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.HEAD;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.core.MediaType;
 
 /**
  * @author Andrei Savu
@@ -47,6 +49,7 @@ public interface TemporaryUrlKeyAsyncApi {
     */
    @HEAD
    @Path("/")
+   @Consumes(MediaType.WILDCARD)
    @ResponseParser(ParseTemporaryUrlKeyFromHeaders.class)
    ListenableFuture<String> getTemporaryUrlKey();
 
