@@ -22,6 +22,8 @@ import static org.jclouds.openstack.swift.reference.SwiftHeaders.ACCOUNT_TEMPORA
 
 import java.util.Map;
 
+import javax.ws.rs.core.MediaType;
+
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.blobstore.internal.BaseBlobSignerExpectTest;
 import org.jclouds.http.HttpRequest;
@@ -60,7 +62,8 @@ public class SwiftBlobSignerExpectTest extends BaseBlobSignerExpectTest {
    @Override
    protected HttpRequest getBlobWithTime() {
       return HttpRequest.builder().method("GET")
-            .endpoint("http://storage/container/name?temp_url_sig=2abd47f6b1c159fe9a45c873aaade8eeeb36a2e1&temp_url_expires=123456792").build();
+            .endpoint("http://storage/container/name?temp_url_sig=2abd47f6b1c159fe9a45c873aaade8eeeb36a2e1&temp_url_expires=123456792")
+            .build();
    }
 
    @Override
@@ -81,7 +84,8 @@ public class SwiftBlobSignerExpectTest extends BaseBlobSignerExpectTest {
    @Override
    protected HttpRequest putBlobWithTime() {
       return HttpRequest.builder().method("PUT")
-            .endpoint("http://storage/container/name?temp_url_sig=e894c60fa1284cc575cf22d7786bab07b8c33610&temp_url_expires=123456792").build();
+            .endpoint("http://storage/container/name?temp_url_sig=e894c60fa1284cc575cf22d7786bab07b8c33610&temp_url_expires=123456792")
+            .build();
    }
 
    @Override
@@ -107,6 +111,7 @@ public class SwiftBlobSignerExpectTest extends BaseBlobSignerExpectTest {
 
       HttpRequest temporaryKeyRequest = HttpRequest.builder().method("HEAD")
             .endpoint("http://storage/")
+            .addHeader("Accept", MediaType.WILDCARD)
             .addHeader("X-Auth-Token", "testtoken").build();
 
       HttpResponse temporaryKeyResponse = HttpResponse.builder().statusCode(200)
