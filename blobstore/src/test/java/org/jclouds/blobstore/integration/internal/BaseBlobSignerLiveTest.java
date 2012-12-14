@@ -22,15 +22,15 @@ import static org.jclouds.blobstore.options.GetOptions.Builder.range;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
 
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.util.Strings2;
 import org.testng.SkipException;
 import org.testng.annotations.Test;
-
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Tests integrated functionality of all signature commands.
@@ -89,7 +89,7 @@ public class BaseBlobSignerLiveTest extends BaseBlobStoreIntegrationTest {
          view.getBlobStore().putBlob(container, blob);
          assertConsistencyAwareContainerSize(container, 1);
          HttpRequest request = view.getSigner().signGetBlob(container, name, 3 /* seconds */);
-
+         
          assertEquals(request.getFilters().size(), 0);
          assertEquals(Strings2.toString(view.utils().http().invoke(request).getPayload()), text);
 

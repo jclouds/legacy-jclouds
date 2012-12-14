@@ -22,6 +22,8 @@ import static org.jclouds.openstack.swift.reference.SwiftHeaders.ACCOUNT_TEMPORA
 
 import java.util.Map;
 
+import javax.ws.rs.core.MediaType;
+
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.blobstore.internal.BaseBlobSignerExpectTest;
 import org.jclouds.http.HttpRequest;
@@ -110,6 +112,7 @@ public class SwiftKeystoneBlobSignerExpectTest extends BaseBlobSignerExpectTest 
             .builder()
             .method("HEAD")
             .endpoint("https://objects.jclouds.org/v1.0/40806637803162/")
+            .addHeader("Accept", MediaType.WILDCARD)
             .addHeader("X-Auth-Token", "Auth_4f173437e4b013bee56d1007").build();
 
       HttpResponse temporaryKeyResponse = HttpResponse.builder().statusCode(200)
