@@ -91,8 +91,9 @@ public interface CommonSwiftAsyncClient {
     * @see CommonSwiftClient#getAccountStatistics
     */
    @HEAD
-   @ResponseParser(ParseAccountMetadataResponseFromHeaders.class)
    @Path("/")
+   @Consumes(MediaType.WILDCARD)
+   @ResponseParser(ParseAccountMetadataResponseFromHeaders.class)
    ListenableFuture<AccountMetadata> getAccountStatistics();
 
    /**
@@ -109,9 +110,10 @@ public interface CommonSwiftAsyncClient {
     */
    @Beta
    @HEAD
+   @Path("/{container}")
+   @Consumes(MediaType.WILDCARD)
    @ResponseParser(ParseContainerMetadataFromHeaders.class)
    @ExceptionParser(ReturnNullOnContainerNotFound.class)
-   @Path("/{container}")
    ListenableFuture<ContainerMetadata> getContainerMetadata(@PathParam("container") String container);
 
    /**
@@ -179,6 +181,7 @@ public interface CommonSwiftAsyncClient {
     */
    @HEAD
    @Path("/{container}")
+   @Consumes(MediaType.WILDCARD)
    @ExceptionParser(ReturnFalseOnContainerNotFound.class)
    ListenableFuture<Boolean> containerExists(@PathParam("container") String container);
 
@@ -221,6 +224,7 @@ public interface CommonSwiftAsyncClient {
    @ResponseParser(ParseObjectInfoFromHeaders.class)
    @ExceptionParser(ReturnNullOnKeyNotFound.class)
    @Path("/{container}/{name}")
+   @Consumes(MediaType.WILDCARD)
    ListenableFuture<MutableObjectInfoWithMetadata> getObjectInfo(@PathParam("container") String container,
                                                                  @PathParam("name") String name);
 
@@ -230,6 +234,7 @@ public interface CommonSwiftAsyncClient {
    @HEAD
    @ExceptionParser(ReturnFalseOnKeyNotFound.class)
    @Path("/{container}/{name}")
+   @Consumes(MediaType.WILDCARD)
    ListenableFuture<Boolean> objectExists(@PathParam("container") String container, 
                                           @PathParam("name") String name);
 
