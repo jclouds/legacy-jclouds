@@ -19,7 +19,6 @@
 package org.jclouds.rest.functions;
 
 import org.jclouds.internal.ClassMethodArgsAndReturnVal;
-import org.jclouds.rest.config.RestClientModule;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;

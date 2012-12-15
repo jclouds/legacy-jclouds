@@ -25,7 +25,6 @@ import java.util.Set;
 
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.ec2.domain.BlockDeviceMapping;
-import org.jclouds.ec2.domain.InstanceType;
 import org.jclouds.ec2.options.internal.BaseEC2RequestOptions;
 
 /**

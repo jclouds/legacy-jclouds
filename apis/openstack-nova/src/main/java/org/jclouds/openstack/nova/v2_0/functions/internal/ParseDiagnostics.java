@@ -18,14 +18,10 @@ package org.jclouds.openstack.nova.v2_0.functions.internal;
 import static com.google.common.base.Preconditions.checkNotNull;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseJson;
-import org.jclouds.json.internal.GsonWrapper;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
-import com.google.common.base.Supplier;
-import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
-import com.google.inject.TypeLiteral;
 import java.util.Map;
 
 /**

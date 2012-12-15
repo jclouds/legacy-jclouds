@@ -29,9 +29,6 @@ import java.lang.annotation.Target;
 
 import javax.inject.Qualifier;
 
-import org.jclouds.Constants;
-import org.jclouds.ContextBuilder;
-
 /**
  * Designates that this resource only exists since a particular
  * {@link ApiVersion}.
