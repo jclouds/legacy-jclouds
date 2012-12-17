@@ -77,7 +77,7 @@ public class HttpResponseException extends RuntimeException {
 
    public HttpResponseException(HttpCommand command, HttpResponse response) {
       this(String.format("request: %s %sfailed with response: %s", command.getCurrentRequest().getRequestLine(),
-            requestPayloadIfStringOrFormIfNotReturnEmptyString((HttpRequest) command.getCurrentRequest()),
+            requestPayloadIfStringOrFormIfNotReturnEmptyString(command.getCurrentRequest()),
             response.getStatusLine()), command, response);
    }
 

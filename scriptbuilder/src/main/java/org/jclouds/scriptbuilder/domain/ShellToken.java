@@ -74,6 +74,7 @@ public enum ShellToken {
       return familyToTokenValueMap.getUnchecked(family);
    }
 
+   @SuppressWarnings("fallthrough")
    public String to(OsFamily family) {
       checkNotNull(family, "family");
       switch (this) {

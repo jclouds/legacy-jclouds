@@ -38,7 +38,7 @@ public class ErrorHandlerTest extends BaseHandlerTest {
    public static final String errorFromAmazonIfYouDontRemoveTransferEncodingHeader = "<Error><Code>NotImplemented</Code><Message>A header you provided implies functionality that is not implemented</Message><Header>Transfer-Encoding</Header><RequestId>7C59925D75D15561</RequestId><HostId>fbskVU51OZJg2yZS/wNIxoE2PmCf0ZqFd0iH6Vrzw0uKG3KmokswBytL/Bfp/GWb</HostId></Error>";
 
    ParseSax<AWSError> createParser() {
-      ParseSax<AWSError> parser = (ParseSax<AWSError>) factory.create(injector.getInstance(ErrorHandler.class));
+      ParseSax<AWSError> parser = factory.create(injector.getInstance(ErrorHandler.class));
       return parser;
    }
 

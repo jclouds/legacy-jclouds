@@ -53,7 +53,7 @@ public abstract class BaseCloudStackExpectTest<S> extends BaseRestClientExpectTe
 
    @Override
    public S createClient(Function<HttpRequest, HttpResponse> fn, Module module, Properties props) {
-      return (S) clientFrom(createInjector(fn, module, props).getInstance(CloudStackContext.class));
+      return clientFrom(createInjector(fn, module, props).getInstance(CloudStackContext.class));
    }
 
    protected abstract S clientFrom(CloudStackContext context);

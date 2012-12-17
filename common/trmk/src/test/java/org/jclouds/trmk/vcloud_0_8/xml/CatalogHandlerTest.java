@@ -50,7 +50,7 @@ public class CatalogHandlerTest {
       InputStream is = getClass().getResourceAsStream("/catalog.xml");
       injector = Guice.createInjector(new SaxParserModule());
       factory = injector.getInstance(ParseSax.Factory.class);
-      Catalog result = (Catalog) factory.create(injector.getInstance(CatalogHandler.class)).parse(is);
+      Catalog result = factory.create(injector.getInstance(CatalogHandler.class)).parse(is);
       assertEquals(result.getName(), "Miami Environment 1");
       assert result.getDescription() == null;
 

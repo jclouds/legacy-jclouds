@@ -37,7 +37,7 @@ import org.testng.annotations.Test;
 public class ErrorHandlerTest extends BaseHandlerTest {
 
    ParseSax<AtmosError> createParser() {
-      ParseSax<AtmosError> parser = (ParseSax<AtmosError>) factory.create(injector
+      ParseSax<AtmosError> parser = factory.create(injector
                .getInstance(ErrorHandler.class));
       return parser;
    }
