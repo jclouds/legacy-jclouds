@@ -22,6 +22,8 @@ import static org.jclouds.openstack.swift.reference.SwiftHeaders.ACCOUNT_TEMPORA
 
 import java.util.Map;
 
+import javax.ws.rs.core.MediaType;
+
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.blobstore.internal.BaseBlobSignerExpectTest;
 import org.jclouds.cloudfiles.CloudFilesApiMetadata;
@@ -112,6 +114,7 @@ public class CloudFilesBlobSignerExpectTest extends BaseBlobSignerExpectTest {
 
       HttpRequest temporaryKeyRequest = HttpRequest.builder().method("HEAD")
             .endpoint("https://storage101.lon3.clouddrive.com/v1/MossoCloudFS_83a9d536-2e25-4166-bd3b-a503a934f953/")
+            .addHeader("Accept", MediaType.WILDCARD)
             .addHeader("X-Auth-Token", authToken).build();
 
       HttpResponse temporaryKeyResponse = HttpResponse.builder().statusCode(200)
