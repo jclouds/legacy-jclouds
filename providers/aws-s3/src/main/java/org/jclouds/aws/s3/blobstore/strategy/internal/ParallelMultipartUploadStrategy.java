@@ -166,7 +166,7 @@ public class ParallelMultipartUploadStrategy implements AsyncMultipartUploadStra
                   long chunkSize = algorithm.getChunkSize();
                   long remaining = algorithm.getRemaining();
                   if (parts > 0) {
-                     AWSS3Client client = (AWSS3Client) ablobstore
+                     AWSS3Client client = ablobstore
                            .getContext().unwrap(AWSS3ApiMetadata.CONTEXT_TOKEN).getApi();
                      String uploadId = null;
                      final Map<Integer, ListenableFuture<String>> futureParts = 

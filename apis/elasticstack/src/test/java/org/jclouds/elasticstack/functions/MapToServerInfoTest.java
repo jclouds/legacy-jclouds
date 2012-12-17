@@ -67,7 +67,7 @@ public class MapToServerInfoTest {
                            "tcp/23", "tcp/25", "tcp/110", "tcp/143", "tcp/43595")).build()))
          .devices(
                ImmutableMap.of("ide:0:0",
-                     new IDEDevice.Builder((int) 0, (int) 0).uuid("4af85ed3-0caa-4736-8a26-a33d7de0a122").build()
+                     new IDEDevice.Builder(0, 0).uuid("4af85ed3-0caa-4736-8a26-a33d7de0a122").build()
 
                ))
          .metrics(
@@ -95,7 +95,7 @@ public class MapToServerInfoTest {
          .devices(
                ImmutableMap.of(
                      "ide:0:0",
-                     new IDEDevice.Builder((int) 0, (int) 0).uuid("853bb98a-4fff-4c2f-a265-97c363f19ea5")
+                     new IDEDevice.Builder(0, 0).uuid("853bb98a-4fff-4c2f-a265-97c363f19ea5")
                            .mediaType(MediaType.CDROM).build()))
          .metrics(
                new ServerMetrics.Builder().driveMetrics(ImmutableMap.of("ide:0:0", new DriveMetrics.Builder().build()))
@@ -149,7 +149,7 @@ public class MapToServerInfoTest {
                            "tcp/23", "tcp/25", "tcp/110", "tcp/143", "tcp/43595")).build()))
          .devices(
                ImmutableMap.of("ide:0:0",
-                     new IDEDevice.Builder((int) 0, (int) 0).uuid("403c9a86-0aab-4e47-aa95-e9768021c4c1").build()
+                     new IDEDevice.Builder(0, 0).uuid("403c9a86-0aab-4e47-aa95-e9768021c4c1").build()
 
                ))
          .metrics(

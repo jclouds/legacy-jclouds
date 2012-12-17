@@ -40,7 +40,7 @@ public class CustomizationParametersHandlerTest extends BaseHandlerTest {
       InputStream is = getClass().getResourceAsStream(
             "/CustomizationParameters.xml");
 
-      CustomizationParameters result = (CustomizationParameters) factory
+      CustomizationParameters result = factory
             .create(injector.getInstance(CustomizationParametersHandler.class))
             .parse(is);
       assertEquals(result, new CustomizationParameters(true, false, false));

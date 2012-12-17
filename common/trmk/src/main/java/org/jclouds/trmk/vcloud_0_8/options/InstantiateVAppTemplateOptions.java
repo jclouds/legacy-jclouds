@@ -403,7 +403,7 @@ public class InstantiateVAppTemplateOptions {
        */
       public static InstantiateVAppTemplateOptions productProperty(String key, String value) {
          InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
-         return (InstantiateVAppTemplateOptions) options.productProperty(key, value);
+         return options.productProperty(key, value);
       }
 
       /**
@@ -412,7 +412,7 @@ public class InstantiateVAppTemplateOptions {
        */
       public static InstantiateVAppTemplateOptions productProperties(Map<String, String> properties) {
          InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
-         return (InstantiateVAppTemplateOptions) options.productProperties(properties);
+         return options.productProperties(properties);
       }
 
    }

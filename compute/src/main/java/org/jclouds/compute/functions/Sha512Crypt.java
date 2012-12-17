@@ -335,7 +335,7 @@ public class Sha512Crypt {
       StringBuilder result = new StringBuilder();
 
       while (--size >= 0) {
-         result.append(itoa64.charAt((int) (v & 0x3f)));
+         result.append(itoa64.charAt(v & 0x3f));
          v >>>= 6;
       }
 

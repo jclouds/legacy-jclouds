@@ -74,7 +74,7 @@ public class MultipartUploadSlicingAlgorithm {
       long unitPartSize = defaultPartSize; // first try with default part size
       int parts = (int)(length / unitPartSize);
       long partSize = unitPartSize;
-      int magnitude = (int) (parts / magnitudeBase);
+      int magnitude = parts / magnitudeBase;
       if (magnitude > 0) {
          partSize = magnitude * unitPartSize;
          if (partSize > MultipartUpload.MAX_PART_SIZE) {
