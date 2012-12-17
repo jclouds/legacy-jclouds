@@ -21,6 +21,8 @@ package org.jclouds.openstack.swift;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
+import javax.ws.rs.core.MediaType;
+
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
@@ -43,6 +45,7 @@ public class SwiftClientExpectTest extends BaseSwiftExpectTest<SwiftClient> {
       HttpRequest headContainer = HttpRequest.builder()
             .method("HEAD")
             .endpoint(swiftEndpointWithHostReplaced + "/foo")
+            .addHeader("Accept", MediaType.WILDCARD)
             .addHeader("X-Auth-Token", authToken).build();
 
       HttpResponse headContainerResponse = HttpResponse.builder().statusCode(200).build();
@@ -58,6 +61,7 @@ public class SwiftClientExpectTest extends BaseSwiftExpectTest<SwiftClient> {
       HttpRequest headContainer = HttpRequest.builder()
             .method("HEAD")
             .endpoint(swiftEndpointWithHostReplaced + "/foo")
+            .addHeader("Accept", MediaType.WILDCARD)
             .addHeader("X-Auth-Token", authToken).build();
 
       HttpResponse headContainerResponse = HttpResponse.builder().statusCode(404).build();
