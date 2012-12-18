@@ -16,35 +16,35 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.cloudstack.ec2;
+package org.jclouds.cloudstack.ec2.suppliers;
 
-import org.jclouds.cloudstack.ec2.services.CloudStackAMIClient;
-import org.jclouds.cloudstack.ec2.services.CloudStackEC2InstanceClient;
-import org.jclouds.concurrent.Timeout;
+import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableMap;
 import org.jclouds.ec2.EC2Client;
-import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.ec2.suppliers.DescribeRegionsForRegionURIs;
+import org.jclouds.location.Provider;
 
-import java.util.concurrent.TimeUnit;
+import javax.inject.Inject;
+import java.net.URI;
+import java.util.Map;
+
 
 /**
- * Provides synchronous access to EC2 services.
+ * CloudStack Doesn't support regions
  *
- * @author Adrian Cole
+ * @author Anshul Gangwar
  */
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
-public interface CloudStackEC2Client extends EC2Client {
+public class CloudStackEC2DescribeRegionsForRegionURIs extends DescribeRegionsForRegionURIs {
+   private Supplier<URI> defaultURISupplier;
 
-   /**
-    * {@inheritDoc}
-    */
-   @Delegate
-   @Override
-   CloudStackAMIClient getAMIServices();
+   @Inject
+   public CloudStackEC2DescribeRegionsForRegionURIs(@Provider Supplier<URI> defaultURISupplier, EC2Client client) {
+      super(client);
+      this.defaultURISupplier = defaultURISupplier;
+   }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Delegate
    @Override
-   CloudStackEC2InstanceClient getInstanceServices();
+   public Map<String, Supplier<URI>> get() {
+      return ImmutableMap.of("AmazonEC2", defaultURISupplier);
+   }
 }

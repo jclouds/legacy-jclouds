@@ -19,19 +19,28 @@
 package org.jclouds.cloudstack.ec2;
 
 import org.jclouds.cloudstack.ec2.services.CloudStackAMIAsyncClient;
+import org.jclouds.cloudstack.ec2.services.CloudStackEC2InstanceAsyncClient;
 import org.jclouds.ec2.EC2AsyncClient;
 import org.jclouds.rest.annotations.Delegate;
 
 /**
  * Provides asynchronous access to EC2 services.
- * 
+ *
  * @author Adrian Cole
  */
 public interface CloudStackEC2AsyncClient extends EC2AsyncClient {
+
    /**
     * {@inheritDoc}
     */
    @Delegate
    @Override
    CloudStackAMIAsyncClient getAMIServices();
+
+   /**
+    * {@inheritDoc}
+    */
+   @Delegate
+   @Override
+   CloudStackEC2InstanceAsyncClient getInstanceServices();
 }

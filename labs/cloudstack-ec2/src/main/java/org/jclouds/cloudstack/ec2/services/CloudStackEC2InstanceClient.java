@@ -18,34 +18,31 @@
  */
 package org.jclouds.cloudstack.ec2.services;
 
-import org.jclouds.cloudstack.ec2.options.CloudStackEC2RegisterImageOptions;
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.ec2.options.CreateImageOptions;
-import org.jclouds.ec2.services.AMIClient;
+import org.jclouds.ec2.domain.Reservation;
+import org.jclouds.ec2.domain.RunningInstance;
+import org.jclouds.ec2.options.RunInstancesOptions;
+import org.jclouds.ec2.services.InstanceClient;
 import org.jclouds.javax.annotation.Nullable;
 
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author Adrian Cole
+ * changed timeout of runInstance API call
+ *
+ * @author Anshul Gangwar
  */
 @Timeout(duration = 90, timeUnit = TimeUnit.SECONDS)
-public interface CloudStackAMIClient extends AMIClient {
+public interface CloudStackEC2InstanceClient extends InstanceClient {
 
    /**
     * {@inheritDoc}
     */
    @Override
    @Timeout(duration = 10, timeUnit = TimeUnit.MINUTES)
-   String createImageInRegion(@Nullable String region, String name, String instanceId, CreateImageOptions... options);
-
-   /**
-    * This method is overloaded<br/>
-    * Here CloudStackEC2RegisterImageOptions parameter is changed as architecture has different meaning in CloudStack
-    *
-    * @see CloudStackEC2RegisterImageOptions
-    * @see AMIClient#registerImageFromManifestInRegion
-    */
-   String registerImageFromManifestInRegion(@Nullable String region, String name, String pathToManifest,
-                                            CloudStackEC2RegisterImageOptions... options);
+   Reservation<? extends RunningInstance> runInstancesInRegion(@Nullable String region,
+                                                               @Nullable String nullableAvailabilityZone,
+                                                               String imageId,
+                                                               int minCount, int maxCount,
+                                                               RunInstancesOptions... options);
 }

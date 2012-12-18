@@ -18,10 +18,24 @@
  */
 package org.jclouds.cloudstack.ec2.services;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.aws.filters.FormSigner;
+import org.jclouds.cloudstack.ec2.options.CloudStackEC2RegisterImageOptions;
 import org.jclouds.ec2.services.AMIAsyncClient;
+import org.jclouds.ec2.xml.ImageIdHandler;
+import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
+import org.jclouds.rest.annotations.EndpointParam;
+import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
+import org.jclouds.rest.annotations.XMLResponseParser;
+
+import javax.ws.rs.FormParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+
+import static org.jclouds.aws.reference.FormParameters.ACTION;
 
 /**
  * @author Adrian Cole
@@ -30,4 +44,15 @@ import org.jclouds.rest.annotations.VirtualHost;
 @VirtualHost
 public interface CloudStackAMIAsyncClient extends AMIAsyncClient {
 
+   /**
+    * @see CloudStackAMIClient#registerImageFromManifestInRegion
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "RegisterImage")
+   @XMLResponseParser(ImageIdHandler.class)
+   ListenableFuture<String> registerImageFromManifestInRegion(
+           @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
+           @FormParam("Name") String imageName, @FormParam("ImageLocation") String pathToManifest,
+           CloudStackEC2RegisterImageOptions... options);
 }

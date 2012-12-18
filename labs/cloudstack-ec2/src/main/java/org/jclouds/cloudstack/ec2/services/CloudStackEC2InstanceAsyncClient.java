@@ -18,20 +18,15 @@
  */
 package org.jclouds.cloudstack.ec2.services;
 
-import org.jclouds.ec2.services.AvailabilityZoneAndRegionClientLiveTest;
-import org.testng.annotations.Test;
+import org.jclouds.aws.filters.FormSigner;
+import org.jclouds.ec2.services.InstanceAsyncClient;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.VirtualHost;
 
 /**
- * @author Adrian Cole
+ * @author Anshul Gangwar
  */
-@Test(groups = "live", singleThreaded = true, testName = "CloudStackEC2AvailabilityZoneAndRegionClientLiveTest")
-public class CloudStackEC2AvailabilityZoneAndRegionClientLiveTest extends AvailabilityZoneAndRegionClientLiveTest {
-   public CloudStackEC2AvailabilityZoneAndRegionClientLiveTest() {
-      provider = "cloudstack-ec2";
-   }
-
-   @Override
-   public void testDescribeRegions() {
-      throw new org.testng.SkipException("Regions are not supported in CloudStack");
-   }
+@RequestFilters(FormSigner.class)
+@VirtualHost
+public interface CloudStackEC2InstanceAsyncClient extends InstanceAsyncClient {
 }
