@@ -23,7 +23,6 @@ import static com.google.common.collect.Iterables.size;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
 
 import org.jclouds.abiquo.domain.network.ExternalIp;
 import org.jclouds.abiquo.domain.network.Ip;
@@ -32,7 +31,6 @@ import org.jclouds.abiquo.domain.network.PublicIp;
 import org.jclouds.abiquo.domain.network.UnmanagedNetwork;
 import org.jclouds.abiquo.predicates.network.IpPredicates;
 import org.jclouds.abiquo.strategy.BaseAbiquoStrategyLiveApiTest;
-import org.jclouds.abiquo.strategy.cloud.ListAttachedNics;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;

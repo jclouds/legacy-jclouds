@@ -20,6 +20,9 @@
 package org.jclouds.abiquo.domain.infrastructure;
 
 import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.find;
+import static com.google.common.collect.Iterables.getFirst;
+import static com.google.common.collect.Iterables.transform;
 
 import java.util.List;
 
@@ -34,7 +37,10 @@ import org.jclouds.abiquo.domain.infrastructure.options.DatacenterOptions;
 import org.jclouds.abiquo.domain.infrastructure.options.IpmiOptions;
 import org.jclouds.abiquo.domain.infrastructure.options.MachineOptions;
 import org.jclouds.abiquo.domain.network.Network;
+import org.jclouds.abiquo.domain.network.NetworkServiceType;
+import org.jclouds.abiquo.domain.network.PrivateNetwork;
 import org.jclouds.abiquo.domain.network.options.NetworkOptions;
+import org.jclouds.abiquo.predicates.network.NetworkServiceTypePredicates;
 import org.jclouds.abiquo.reference.annotations.EnterpriseEdition;
 import org.jclouds.rest.RestContext;
 
@@ -59,6 +65,8 @@ import com.abiquo.server.core.infrastructure.RacksDto;
 import com.abiquo.server.core.infrastructure.RemoteServicesDto;
 import com.abiquo.server.core.infrastructure.UcsRackDto;
 import com.abiquo.server.core.infrastructure.UcsRacksDto;
+import com.abiquo.server.core.infrastructure.network.NetworkServiceTypeDto;
+import com.abiquo.server.core.infrastructure.network.NetworkServiceTypesDto;
 import com.abiquo.server.core.infrastructure.network.VLANNetworkDto;
 import com.abiquo.server.core.infrastructure.network.VLANNetworksDto;
 import com.abiquo.server.core.infrastructure.network.VlanTagAvailabilityDto;
@@ -66,9 +74,9 @@ import com.abiquo.server.core.infrastructure.storage.StorageDeviceDto;
 import com.abiquo.server.core.infrastructure.storage.StorageDevicesDto;
 import com.abiquo.server.core.infrastructure.storage.StorageDevicesMetadataDto;
 import com.abiquo.server.core.infrastructure.storage.TiersDto;
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableList;
 
 /**
  * Adds high level functionality to {@link DatacenterDto}.
@@ -203,7 +211,7 @@ public class Datacenter extends DomainWrapper<DatacenterDto> {
     * @return Filtered list of unmanaged racks in this datacenter.
     */
    public List<Rack> listRacks(final Predicate<Rack> filter) {
-      return Lists.newLinkedList(filter(listRacks(), filter));
+      return ImmutableList.copyOf(filter(listRacks(), filter));
    }
 
    /**
@@ -220,7 +228,7 @@ public class Datacenter extends DomainWrapper<DatacenterDto> {
     *         the is none.
     */
    public Rack findRack(final Predicate<Rack> filter) {
-      return Iterables.getFirst(filter(listRacks(), filter), null);
+      return getFirst(filter(listRacks(), filter), null);
    }
 
    /**
@@ -269,7 +277,7 @@ public class Datacenter extends DomainWrapper<DatacenterDto> {
     */
    @EnterpriseEdition
    public List<ManagedRack> listManagedRacks(final Predicate<ManagedRack> filter) {
-      return Lists.newLinkedList(filter(listManagedRacks(), filter));
+      return ImmutableList.copyOf(filter(listManagedRacks(), filter));
    }
 
    /**
@@ -287,7 +295,7 @@ public class Datacenter extends DomainWrapper<DatacenterDto> {
     */
    @EnterpriseEdition
    public ManagedRack findManagedRack(final Predicate<ManagedRack> filter) {
-      return Iterables.getFirst(filter(listManagedRacks(), filter), null);
+      return getFirst(filter(listManagedRacks(), filter), null);
    }
 
    /**
@@ -339,7 +347,7 @@ public class Datacenter extends DomainWrapper<DatacenterDto> {
     */
    @EnterpriseEdition
    public List<StorageDeviceMetadata> listSupportedStorageDevices(final Predicate<StorageDeviceMetadata> filter) {
-      return Lists.newLinkedList(filter(listSupportedStorageDevices(), filter));
+      return ImmutableList.copyOf(filter(listSupportedStorageDevices(), filter));
    }
 
    /**
@@ -352,7 +360,7 @@ public class Datacenter extends DomainWrapper<DatacenterDto> {
     */
    @EnterpriseEdition
    public StorageDeviceMetadata findSupportedStorageDevice(final Predicate<StorageDeviceMetadata> filter) {
-      return Iterables.getFirst(filter(listSupportedStorageDevices(), filter), null);
+      return getFirst(filter(listSupportedStorageDevices(), filter), null);
    }
 
    /**
@@ -383,7 +391,7 @@ public class Datacenter extends DomainWrapper<DatacenterDto> {
     */
    @EnterpriseEdition
    public List<StorageDevice> listStorageDevices(final Predicate<StorageDevice> filter) {
-      return Lists.newLinkedList(filter(listStorageDevices(), filter));
+      return ImmutableList.copyOf(filter(listStorageDevices(), filter));
    }
 
    /**
@@ -401,7 +409,7 @@ public class Datacenter extends DomainWrapper<DatacenterDto> {
     */
    @EnterpriseEdition
    public StorageDevice findStorageDevice(final Predicate<StorageDevice> filter) {
-      return Iterables.getFirst(filter(listStorageDevices(), filter), null);
+      return getFirst(filter(listStorageDevices(), filter), null);
    }
 
    /**
@@ -420,6 +428,66 @@ public class Datacenter extends DomainWrapper<DatacenterDto> {
    public StorageDevice getStorageDevice(final Integer id) {
       StorageDeviceDto device = context.getApi().getInfrastructureApi().getStorageDevice(target, id);
       return wrap(context, StorageDevice.class, device);
+   }
+
+   /**
+    * Return the list of Network Service Types defined in a datacenter. By
+    * default, a Network Service Type called 'Service Network' will be created
+    * with the datacenter.
+    * 
+    * @return List of network services in this datacenter.
+    */
+   public List<NetworkServiceType> listNetworkServiceTypes() {
+      NetworkServiceTypesDto dtos = context.getApi().getInfrastructureApi().listNetworkServiceTypes(target);
+      return wrap(context, NetworkServiceType.class, dtos.getCollection());
+   }
+
+   /**
+    * Retrieve a filtered list of network service types in this datacenter.
+    * 
+    * @param filter
+    *           Filter to be applied to the list.
+    * @return Filtered list of storage devices in this datacenter.
+    */
+   public List<NetworkServiceType> listNetworkServiceTypes(final Predicate<NetworkServiceType> filter) {
+      return ImmutableList.copyOf(filter(listNetworkServiceTypes(), filter));
+   }
+
+   /**
+    * Retrieve the first network service type matching the filter within the
+    * list of nsts in this datacenter.
+    * 
+    * @param filter
+    *           Filter to be applied to the list.
+    * @return First network service type matching the filter or
+    *         <code>null</code> if there is none.
+    */
+   public NetworkServiceType findNetworkServiceType(final Predicate<NetworkServiceType> filter) {
+      return getFirst(filter(listNetworkServiceTypes(), filter), null);
+   }
+
+   /**
+    * Retrieve a single network service type.
+    * 
+    * @param id
+    *           Unique ID of the network service type in this datacenter.
+    * @return Network Service Type with the given id or <code>null</code> if it
+    *         does not exist.
+    */
+   public NetworkServiceType getNetworkServiceType(final Integer id) {
+      NetworkServiceTypeDto nst = context.getApi().getInfrastructureApi().getNetworkServiceType(target, id);
+      return wrap(context, NetworkServiceType.class, nst);
+   }
+
+   /**
+    * Return the default network service type used by the datacenter. This
+    * datacenter will be the one used by {@link PrivateNetwork}. Even it can not
+    * be deleted, it can be modified.
+    * 
+    * @return the defult {@link NetworkServiceType}
+    */
+   public NetworkServiceType defaultNetworkServiceType() {
+      return find(listNetworkServiceTypes(), NetworkServiceTypePredicates.isDefault());
    }
 
    /**
@@ -448,7 +516,7 @@ public class Datacenter extends DomainWrapper<DatacenterDto> {
     * @return Filtered list of remote services in this datacenter.
     */
    public List<RemoteService> listRemoteServices(final Predicate<RemoteService> filter) {
-      return Lists.newLinkedList(filter(listRemoteServices(), filter));
+      return ImmutableList.copyOf(filter(listRemoteServices(), filter));
    }
 
    /**
@@ -465,7 +533,7 @@ public class Datacenter extends DomainWrapper<DatacenterDto> {
     *         there is none.
     */
    public RemoteService findRemoteService(final Predicate<RemoteService> filter) {
-      return Iterables.getFirst(filter(listRemoteServices(), filter), null);
+      return getFirst(filter(listRemoteServices(), filter), null);
    }
 
    private void createRemoteServices() {
@@ -515,7 +583,7 @@ public class Datacenter extends DomainWrapper<DatacenterDto> {
     * @return Filtered list of datacenter limits by all enterprises.
     */
    public List<Limits> listLimits(final Predicate<Limits> filter) {
-      return Lists.newLinkedList(filter(listLimits(), filter));
+      return ImmutableList.copyOf(filter(listLimits(), filter));
    }
 
    /**
@@ -534,7 +602,7 @@ public class Datacenter extends DomainWrapper<DatacenterDto> {
     *         if there is none.
     */
    public Limits findLimits(final Predicate<Limits> filter) {
-      return Iterables.getFirst(filter(listLimits(), filter), null);
+      return getFirst(filter(listLimits(), filter), null);
    }
 
    /**
@@ -567,7 +635,7 @@ public class Datacenter extends DomainWrapper<DatacenterDto> {
     */
    @EnterpriseEdition
    public List<Tier> listTiers(final Predicate<Tier> filter) {
-      return Lists.newLinkedList(filter(listTiers(), filter));
+      return ImmutableList.copyOf(filter(listTiers(), filter));
    }
 
    /**
@@ -585,7 +653,7 @@ public class Datacenter extends DomainWrapper<DatacenterDto> {
     */
    @EnterpriseEdition
    public Tier findTier(final Predicate<Tier> filter) {
-      return Iterables.getFirst(filter(listTiers(), filter), null);
+      return getFirst(filter(listTiers(), filter), null);
    }
 
    /**
@@ -616,7 +684,7 @@ public class Datacenter extends DomainWrapper<DatacenterDto> {
     *      PublicNetworkResource- Getthelistofpublicnetworks</a>
     */
    public List<Network<?>> listNetworks(final Predicate<Network<?>> filter) {
-      return Lists.newLinkedList(filter(listNetworks(), filter));
+      return ImmutableList.copyOf(filter(listNetworks(), filter));
    }
 
    /**
@@ -633,7 +701,7 @@ public class Datacenter extends DomainWrapper<DatacenterDto> {
     *         datacenter.
     */
    public Network<?> findNetwork(final Predicate<Network<?>> filter) {
-      return Iterables.getFirst(filter(listNetworks(), filter), null);
+      return getFirst(filter(listNetworks(), filter), null);
    }
 
    /**
@@ -669,7 +737,7 @@ public class Datacenter extends DomainWrapper<DatacenterDto> {
     *         type.
     */
    public List<Network<?>> listNetworks(final NetworkType type, final Predicate<Network<?>> filter) {
-      return Lists.newLinkedList(filter(listNetworks(type), filter));
+      return ImmutableList.copyOf(filter(listNetworks(type), filter));
    }
 
    /**
@@ -687,7 +755,7 @@ public class Datacenter extends DomainWrapper<DatacenterDto> {
     *         <code>null</code> if there is none.
     */
    public Network<?> findNetwork(final NetworkType type, final Predicate<Network<?>> filter) {
-      return Iterables.getFirst(filter(listNetworks(type), filter), null);
+      return getFirst(filter(listNetworks(type), filter), null);
    }
 
    /**
@@ -765,7 +833,7 @@ public class Datacenter extends DomainWrapper<DatacenterDto> {
     */
    @EnterpriseEdition
    public List<HypervisorType> listAvailableHypervisors(final Predicate<HypervisorType> filter) {
-      return Lists.newLinkedList(filter(listAvailableHypervisors(), filter));
+      return ImmutableList.copyOf(filter(listAvailableHypervisors(), filter));
    }
 
    /**
@@ -783,17 +851,16 @@ public class Datacenter extends DomainWrapper<DatacenterDto> {
     */
    @EnterpriseEdition
    public HypervisorType findHypervisor(final Predicate<HypervisorType> filter) {
-      return Iterables.getFirst(filter(listAvailableHypervisors(), filter), null);
+      return getFirst(filter(listAvailableHypervisors(), filter), null);
    }
 
    private List<HypervisorType> getHypervisorTypes(final HypervisorTypesDto dtos) {
-      List<HypervisorType> types = Lists.newArrayList();
-
-      for (HypervisorTypeDto dto : dtos.getCollection()) {
-         types.add(HypervisorType.fromId(dto.getId()));
-      }
-
-      return types;
+      return ImmutableList.copyOf(transform(dtos.getCollection(), new Function<HypervisorTypeDto, HypervisorType>() {
+         @Override
+         public HypervisorType apply(HypervisorTypeDto input) {
+            return HypervisorType.fromId(input.getId());
+         }
+      }));
    }
 
    /**
@@ -1069,7 +1136,7 @@ public class Datacenter extends DomainWrapper<DatacenterDto> {
     */
    public List<VirtualMachineTemplate> listTemplatesInRepository(final Enterprise enterprise,
          final Predicate<VirtualMachineTemplate> filter) {
-      return Lists.newLinkedList(filter(listTemplatesInRepository(enterprise), filter));
+      return ImmutableList.copyOf(filter(listTemplatesInRepository(enterprise), filter));
    }
 
    /**
@@ -1090,7 +1157,7 @@ public class Datacenter extends DomainWrapper<DatacenterDto> {
     */
    public VirtualMachineTemplate findTemplateInRepository(final Enterprise enterprise,
          final Predicate<VirtualMachineTemplate> filter) {
-      return Iterables.getFirst(filter(listTemplatesInRepository(enterprise), filter), null);
+      return getFirst(filter(listTemplatesInRepository(enterprise), filter), null);
    }
 
    /**
@@ -1107,8 +1174,8 @@ public class Datacenter extends DomainWrapper<DatacenterDto> {
     *      > http://community.abiquo.com/display/ABI20/
     *      VirtualMachineTemplateResource#
     *      VirtualMachineTemplateResource-Retrieveallvirtualmachinetemplates</a>
-    * @return Virtual machine template with the given id in the given
-    *         enterprise or <code>null</code> if it does not exist.
+    * @return Virtual machine template with the given id in the given enterprise
+    *         or <code>null</code> if it does not exist.
     */
    public VirtualMachineTemplate getTemplateInRepository(final Enterprise enterprise, final Integer id) {
       VirtualMachineTemplateDto template = context.getApi().getVirtualMachineTemplateApi()

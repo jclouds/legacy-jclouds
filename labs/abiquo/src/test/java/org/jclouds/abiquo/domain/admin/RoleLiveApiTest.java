@@ -39,6 +39,7 @@ import org.testng.annotations.Test;
 
 import com.abiquo.server.core.enterprise.PrivilegeDto;
 import com.abiquo.server.core.enterprise.RoleDto;
+import com.google.common.collect.Lists;
 
 /**
  * Live integration tests for the {@link Role} domain class.
@@ -88,7 +89,7 @@ public class RoleLiveApiTest extends BaseAbiquoApiLiveApiTest {
    public void testAddPrivilege() {
       PrivilegeDto dto = env.configApi.getPrivilege(8);
       Privilege privilege = DomainWrapper.wrap(env.context.getApiContext(), Privilege.class, dto);
-      List<Privilege> privileges = env.role.listPrivileges();
+      List<Privilege> privileges = Lists.newArrayList(env.role.listPrivileges());
       privileges.add(privilege);
 
       env.role.setPrivileges(privileges);
