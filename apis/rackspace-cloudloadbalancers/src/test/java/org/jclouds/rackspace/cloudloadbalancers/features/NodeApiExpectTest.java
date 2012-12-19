@@ -137,7 +137,7 @@ public class NodeApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<CloudL
    }
 
    public void testRemoveNodesFromLoadBalancer() {
-      URI endpoint = URI.create("https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/123123/loadbalancers/2000/nodes?id=%5B410%2C%20411%5D");
+      URI endpoint = URI.create("https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/123123/loadbalancers/2000/nodes?id=410&id=411");
       NodeApi api = requestsSendResponses(
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 

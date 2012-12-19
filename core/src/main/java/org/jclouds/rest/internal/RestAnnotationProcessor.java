@@ -18,6 +18,7 @@
  */
 package org.jclouds.rest.internal;
 
+import static com.google.common.base.Functions.toStringFunction;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Collections2.filter;
@@ -1318,8 +1319,15 @@ public class RestAnnotationProcessor<T> {
             Set<Annotation> extractors = indexToParamExtractor.getUnchecked(entry.getKey());
             String paramKey = ((QueryParam) key).value();
             Optional<?> paramValue = getParamValue(method, args, extractors, entry, paramKey);
-            if (paramValue.isPresent())
-               queryParamValues.put(paramKey, paramValue.get().toString());
+            if (paramValue.isPresent()) {
+               if (paramValue.get() instanceof Iterable) {                  
+                  Iterable<String> iterableStrings = transform(Iterable.class.cast(paramValue.get()), toStringFunction());
+                  queryParamValues.putAll(paramKey, iterableStrings);
+               }
+               else {
+                  queryParamValues.put(paramKey, paramValue.get().toString());
+               }
+            }
          }
       }
 

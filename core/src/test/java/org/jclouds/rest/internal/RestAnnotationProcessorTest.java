@@ -150,6 +150,7 @@ import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Multimap;
 import com.google.common.io.Files;
 import com.google.common.util.concurrent.Futures;
@@ -506,6 +507,11 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       @QueryParams(keys = { "foo", "fooble" }, values = { "bar", "baz" })
       public void foo3Nullable(@Nullable @QueryParam("robbie") String robbie) {
       }
+
+      @FOO
+      @Path("/")
+      public void queryParamIterable(@Nullable @QueryParam("foo") Iterable<String> bars) {
+      }
    }
 
    public void testUnEncodeQuery() {
@@ -561,6 +567,55 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       assertEquals(request.getEndpoint().getHost(), "localhost");
       assertEquals(request.getEndpoint().getPath(), "/");
       assertEquals(request.getEndpoint().getQuery(), "foo=bar&fooble=baz");
+      assertEquals(request.getMethod(), "FOO");
+   }
+   
+   public void testQueryParamIterableOneString() throws SecurityException, NoSuchMethodException {
+      Method method = TestQuery.class.getMethod("queryParamIterable", Iterable.class);
+      Set<String> bars = ImmutableSortedSet.<String> of("1"); 
+      HttpRequest request = factory(TestPath.class).createRequest(method, new Object[] { bars });
+      assertEquals(request.getEndpoint().getHost(), "localhost");
+      assertEquals(request.getEndpoint().getPath(), "/");
+      assertEquals(request.getEndpoint().getQuery(), "foo=1");
+      assertEquals(request.getMethod(), "FOO");
+   }
+
+   public void testQueryParamIterableString() throws SecurityException, NoSuchMethodException {
+      Method method = TestQuery.class.getMethod("queryParamIterable", Iterable.class);
+      Set<String> bars = ImmutableSortedSet.<String> of("1", "2", "3"); 
+      HttpRequest request = factory(TestPath.class).createRequest(method, new Object[] { bars });
+      assertEquals(request.getEndpoint().getHost(), "localhost");
+      assertEquals(request.getEndpoint().getPath(), "/");
+      assertEquals(request.getEndpoint().getQuery(), "foo=1&foo=2&foo=3");
+      assertEquals(request.getMethod(), "FOO");
+   }
+
+   public void testQueryParamIterableInteger() throws SecurityException, NoSuchMethodException {
+      Method method = TestQuery.class.getMethod("queryParamIterable", Iterable.class);
+      Set<Integer> bars = ImmutableSortedSet.<Integer> of(1, 2, 3); 
+      HttpRequest request = factory(TestPath.class).createRequest(method, new Object[] { bars });
+      assertEquals(request.getEndpoint().getHost(), "localhost");
+      assertEquals(request.getEndpoint().getPath(), "/");
+      assertEquals(request.getEndpoint().getQuery(), "foo=1&foo=2&foo=3");
+      assertEquals(request.getMethod(), "FOO");
+   }
+
+   public void testQueryParamIterableEmpty() throws SecurityException, NoSuchMethodException {
+      Method method = TestQuery.class.getMethod("queryParamIterable", Iterable.class);
+      Set<String> bars = Collections.emptySet(); 
+      HttpRequest request = factory(TestPath.class).createRequest(method, new Object[] { bars });
+      assertEquals(request.getEndpoint().getHost(), "localhost");
+      assertEquals(request.getEndpoint().getPath(), "/");
+      assertEquals(request.getEndpoint().getQuery(), null);
+      assertEquals(request.getMethod(), "FOO");
+   }
+
+   public void testQueryParamIterableNull() throws SecurityException, NoSuchMethodException {
+      Method method = TestQuery.class.getMethod("queryParamIterable", Iterable.class);
+      HttpRequest request = factory(TestPath.class).createRequest(method, (Iterable<String>) null);
+      assertEquals(request.getEndpoint().getHost(), "localhost");
+      assertEquals(request.getEndpoint().getPath(), "/");
+      assertEquals(request.getEndpoint().getQuery(), null);
       assertEquals(request.getMethod(), "FOO");
    }
 
