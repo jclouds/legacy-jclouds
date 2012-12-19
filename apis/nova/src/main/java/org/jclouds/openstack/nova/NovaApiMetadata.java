@@ -36,30 +36,39 @@ import com.google.inject.Module;
  * Implementation of {@link ApiMetadata} for Nova 1.0 API
  * 
  * @author Adrian Cole
+ * 
+ * @deprecated Deprecated in jclouds 1.6, to be removed in jclouds 1.7. See {@link org.jclouds.openstack.nova.v2_0.NovaApiMetadata} in openstack-nova.
  */
+@Deprecated
 public class NovaApiMetadata extends BaseRestApiMetadata {
 
+   @Deprecated
    public static final TypeToken<RestContext<NovaClient, NovaAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<NovaClient, NovaAsyncClient>>() {
    };
 
    @Override
+   @Deprecated
    public Builder toBuilder() {
       return new Builder().fromApiMetadata(this);
    }
 
+   @Deprecated
    public NovaApiMetadata() {
       this(new Builder());
    }
 
+   @Deprecated
    protected NovaApiMetadata(Builder builder) {
       super(builder);
    }
 
+   @Deprecated
    public static Properties defaultProperties() {
       Properties properties = BaseRestApiMetadata.defaultProperties();
       return properties;
    }
 
+   @Deprecated
    public static class Builder extends BaseRestApiMetadata.Builder {
 
       protected Builder() {
