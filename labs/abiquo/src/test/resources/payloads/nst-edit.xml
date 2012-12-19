@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<networkservicetype>
+    <link href="http://localhost/api/admin/datacenters/1/networkservicetypes/1" type="application/vnd.abiquo.networkservicetype+xml" rel="edit"/>
+    <defaultNST>true</defaultNST>
+    <id>1</id>
+    <name>Service Network</name>
+</networkservicetype>

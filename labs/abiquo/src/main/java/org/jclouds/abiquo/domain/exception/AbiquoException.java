@@ -30,7 +30,7 @@ import javax.ws.rs.core.Response.Status;
 
 import com.abiquo.model.transport.error.ErrorDto;
 import com.abiquo.model.transport.error.ErrorsDto;
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableList;
 
 /**
  * Abiquo API exception.
@@ -39,6 +39,8 @@ import com.google.common.collect.Lists;
  * @author Ignasi Barrera
  */
 public class AbiquoException extends RuntimeException {
+
+   private static final long serialVersionUID = 3627304442037389536L;
 
    /** The HTTP status. */
    private Status httpStatus;
@@ -70,7 +72,7 @@ public class AbiquoException extends RuntimeException {
     * Find all errors with the given code.
     */
    public List<ErrorDto> findErrors(final String code) {
-      return Lists.newLinkedList(filter(errors.getCollection(), code(code)));
+      return ImmutableList.copyOf(filter(errors.getCollection(), code(code)));
    }
 
    /**

@@ -58,6 +58,8 @@ import com.abiquo.server.core.infrastructure.UcsRackDto;
 import com.abiquo.server.core.infrastructure.UcsRacksDto;
 import com.abiquo.server.core.infrastructure.network.ExternalIpDto;
 import com.abiquo.server.core.infrastructure.network.ExternalIpsDto;
+import com.abiquo.server.core.infrastructure.network.NetworkServiceTypeDto;
+import com.abiquo.server.core.infrastructure.network.NetworkServiceTypesDto;
 import com.abiquo.server.core.infrastructure.network.PublicIpDto;
 import com.abiquo.server.core.infrastructure.network.PublicIpsDto;
 import com.abiquo.server.core.infrastructure.network.UnmanagedIpDto;
@@ -1205,4 +1207,53 @@ public interface InfrastructureApi {
     * @since 2.3
     */
    UnmanagedIpDto getUnmanagedIp(VLANNetworkDto network, Integer ipId);
+
+   /**
+    * List all the Network Service types definied into a datacenter.
+    * 
+    * @param datacenter
+    *           The datacenter
+    * @return The list of Network Service Types in the datacenter.
+    */
+   NetworkServiceTypesDto listNetworkServiceTypes(DatacenterDto datacenter);
+
+   /**
+    * Create a new Network Service Type Dto.
+    * 
+    * @param datacenter
+    *           the datacenter where the network service type will belong to
+    * @param nst
+    *           {@link NetworkServiceTypeDto} instance to create
+    * @return the created {@link NetworkServiceTypeDto}
+    */
+   NetworkServiceTypeDto createNetworkServiceType(DatacenterDto datacenter, NetworkServiceTypeDto nst);
+
+   /**
+    * Get a single instance of a {@link NetworkServiceTypeDto}
+    * 
+    * @param datacenter
+    *           datacenter where search into
+    * @param nstId
+    *           identifier of the {@link NetworkServiceTypeDto}
+    * @return the found entity
+    */
+   NetworkServiceTypeDto getNetworkServiceType(DatacenterDto datacenter, Integer nstId);
+
+   /**
+    * Update the value of a {@link NetworkServiceTypeDto}
+    * 
+    * @param nstDto
+    *           the instance to update with the new values.
+    * @return the updated entity.
+    */
+   NetworkServiceTypeDto updateNetworkServiceType(NetworkServiceTypeDto nstDto);
+
+   /**
+    * Remove a {@link NetworkServiceTypeDto} entity.
+    * 
+    * @param nstDto
+    *           the entity to delete
+    */
+   void deleteNetworkServiceType(NetworkServiceTypeDto nstDto);
+
 }

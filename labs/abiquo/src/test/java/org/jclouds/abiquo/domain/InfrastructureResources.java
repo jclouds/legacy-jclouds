@@ -77,7 +77,6 @@ public class InfrastructureResources {
       machine.setVirtualCpuCores(3);
       machine.setDescription("A hawaian machine");
       machine.setVirtualRamInMb(512);
-      machine.setVirtualSwitch("192.168.1.10");
       return machine;
    }
 

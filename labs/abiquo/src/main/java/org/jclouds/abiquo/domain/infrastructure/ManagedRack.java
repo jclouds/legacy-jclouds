@@ -24,8 +24,8 @@ import static com.google.common.collect.Iterables.filter;
 
 import java.util.List;
 
-import org.jclouds.abiquo.AbiquoAsyncApi;
 import org.jclouds.abiquo.AbiquoApi;
+import org.jclouds.abiquo.AbiquoAsyncApi;
 import org.jclouds.abiquo.domain.DomainWrapper;
 import org.jclouds.abiquo.reference.ValidationErrors;
 import org.jclouds.abiquo.reference.annotations.EnterpriseEdition;
@@ -36,10 +36,11 @@ import com.abiquo.server.core.infrastructure.FsmsDto;
 import com.abiquo.server.core.infrastructure.LogicServersDto;
 import com.abiquo.server.core.infrastructure.MachinesDto;
 import com.abiquo.server.core.infrastructure.OrganizationsDto;
+import com.abiquo.server.core.infrastructure.RackDto;
 import com.abiquo.server.core.infrastructure.UcsRackDto;
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 
 /**
  * Adds high level functionality to {@link RackDto}.
@@ -158,7 +159,7 @@ public class ManagedRack extends DomainWrapper<UcsRackDto> {
     *      MachineResource- RetrievealistofMachines</a>
     */
    public List<Blade> listMachines(final Predicate<Blade> filter) {
-      return Lists.newLinkedList(filter(listMachines(), filter));
+      return ImmutableList.copyOf(filter(listMachines(), filter));
    }
 
    /**
@@ -200,7 +201,7 @@ public class ManagedRack extends DomainWrapper<UcsRackDto> {
     *      - RetrievealistofallservicesprofilesinaUCSrack</a>
     */
    public List<LogicServer> listServiceProfiles(final Predicate<LogicServer> filter) {
-      return Lists.newLinkedList(filter(listServiceProfiles(), filter));
+      return ImmutableList.copyOf(filter(listServiceProfiles(), filter));
    }
 
    /**
@@ -242,7 +243,7 @@ public class ManagedRack extends DomainWrapper<UcsRackDto> {
     *      RetrievealistofallServicesProfilesTemplatesinaUCSRack</a>
     */
    public List<LogicServer> listServiceProfileTemplates(final Predicate<LogicServer> filter) {
-      return Lists.newLinkedList(filter(listServiceProfileTemplates(), filter));
+      return ImmutableList.copyOf(filter(listServiceProfileTemplates(), filter));
    }
 
    /**
@@ -291,7 +292,7 @@ public class ManagedRack extends DomainWrapper<UcsRackDto> {
     *      RetrieveallorganizationsfromaUCS</a>
     */
    public List<Organization> listOrganizations(final Predicate<Organization> filter) {
-      return Lists.newLinkedList(filter(listOrganizations(), filter));
+      return ImmutableList.copyOf(filter(listOrganizations(), filter));
    }
 
    /**

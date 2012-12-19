@@ -15,7 +15,8 @@
     <packaging>bundle</packaging>
     
     <properties>
-        <abiquo.version>2.1.1</abiquo.version>
+        <abiquomodel.version>2.2.0</abiquomodel.version>
+        <abiquoam.version>2.1.2</abiquoam.version>
         <test.abiquo.endpoint>http://localhost/api</test.abiquo.endpoint>
         <test.abiquo.identity>FIXME</test.abiquo.identity>
         <test.abiquo.credential>FIXME</test.abiquo.credential>
@@ -49,7 +50,7 @@
         <dependency>
             <groupId>com.abiquo</groupId>
             <artifactId>api-model-transport</artifactId>
-            <version>${abiquo.version}</version>
+            <version>${abiquomodel.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>javax.ws.rs</groupId>
@@ -64,7 +65,7 @@
         <dependency>
             <groupId>com.abiquo</groupId>
             <artifactId>am-model</artifactId>
-            <version>${abiquo.version}</version>
+            <version>${abiquoam.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>javax.ws.rs</groupId>

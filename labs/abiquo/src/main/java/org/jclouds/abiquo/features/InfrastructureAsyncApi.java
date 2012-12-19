@@ -89,6 +89,8 @@ import com.abiquo.server.core.infrastructure.UcsRackDto;
 import com.abiquo.server.core.infrastructure.UcsRacksDto;
 import com.abiquo.server.core.infrastructure.network.ExternalIpDto;
 import com.abiquo.server.core.infrastructure.network.ExternalIpsDto;
+import com.abiquo.server.core.infrastructure.network.NetworkServiceTypeDto;
+import com.abiquo.server.core.infrastructure.network.NetworkServiceTypesDto;
 import com.abiquo.server.core.infrastructure.network.PublicIpDto;
 import com.abiquo.server.core.infrastructure.network.PublicIpsDto;
 import com.abiquo.server.core.infrastructure.network.UnmanagedIpDto;
@@ -1078,4 +1080,62 @@ public interface InfrastructureAsyncApi {
    ListenableFuture<UnmanagedIpDto> getUnmanagedIp(
          @EndpointLink("ips") @BinderParam(BindToPath.class) VLANNetworkDto network,
          @BinderParam(AppendToPath.class) Integer ipId);
+
+   /***************************** NETWORK SERVICE TYPES *******************************************/
+
+   /**
+    * @see InfrastructureApi#listNetworkServiceTypes(DatacenterDto)
+    */
+   @GET
+   @Consumes(NetworkServiceTypesDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<NetworkServiceTypesDto> listNetworkServiceTypes(
+         @EndpointLink("networkservicetypes") @BinderParam(BindToPath.class) DatacenterDto datacenter);
+
+   /**
+    * @see InfrastructureApi#createNetworkServiceType(DatacenterDto,
+    *      NetworkServiceTypeDto)
+    */
+   @POST
+   @Produces(NetworkServiceTypeDto.BASE_MEDIA_TYPE)
+   @Consumes(NetworkServiceTypeDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<NetworkServiceTypeDto> createNetworkServiceType(
+         @EndpointLink("networkservicetypes") @BinderParam(BindToPath.class) DatacenterDto datacenter,
+         @BinderParam(BindToXMLPayload.class) NetworkServiceTypeDto nst);
+
+   /**
+    * @see InfrastructureApi#getNetworkServiceType(DatacenterDto, Integer)
+    */
+   @GET
+   @Consumes(NetworkServiceTypeDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<NetworkServiceTypeDto> getNetworkServiceType(
+         @EndpointLink("networkservicetypes") @BinderParam(BindToPath.class) DatacenterDto datacenter,
+         @BinderParam(AppendToPath.class) Integer nstId);
+
+   /**
+    * Update the value of a {@link NetworkServiceTypeDto}
+    * 
+    * @param nstDto
+    *           the instance to update with the new values.
+    * @return the updated entity.
+    */
+   @PUT
+   @Produces(NetworkServiceTypeDto.BASE_MEDIA_TYPE)
+   @Consumes(NetworkServiceTypeDto.BASE_MEDIA_TYPE)
+   @JAXBResponseParser
+   ListenableFuture<NetworkServiceTypeDto> updateNetworkServiceType(
+         @EndpointLink("edit") @BinderParam(BindToXMLPayloadAndPath.class) NetworkServiceTypeDto nstDto);
+
+   /**
+    * Remove a {@link NetworkServiceTypeDto} entity.
+    * 
+    * @param nstDto
+    *           the entity to delete
+    */
+   @DELETE
+   ListenableFuture<Void> deleteNetworkServiceType(
+         @EndpointLink("edit") @BinderParam(BindToPath.class) NetworkServiceTypeDto nstDto);
 }

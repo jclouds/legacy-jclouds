@@ -24,8 +24,8 @@ import static com.google.common.collect.Iterables.filter;
 
 import java.util.List;
 
-import org.jclouds.abiquo.AbiquoAsyncApi;
 import org.jclouds.abiquo.AbiquoApi;
+import org.jclouds.abiquo.AbiquoAsyncApi;
 import org.jclouds.abiquo.domain.DomainWrapper;
 import org.jclouds.abiquo.reference.ValidationErrors;
 import org.jclouds.abiquo.reference.rest.ParentLinkName;
@@ -35,8 +35,8 @@ import com.abiquo.server.core.infrastructure.MachineDto;
 import com.abiquo.server.core.infrastructure.MachinesDto;
 import com.abiquo.server.core.infrastructure.RackDto;
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 
 /**
  * Adds high level functionality to {@link RackDto}. Represents unmanaged racks
@@ -151,7 +151,7 @@ public class Rack extends DomainWrapper<RackDto> {
     *      MachineResource- RetrievealistofMachines</a>
     */
    public List<Machine> listMachines(final Predicate<Machine> filter) {
-      return Lists.newLinkedList(filter(listMachines(), filter));
+      return ImmutableList.copyOf(filter(listMachines(), filter));
    }
 
    /**

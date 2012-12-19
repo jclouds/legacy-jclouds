@@ -117,7 +117,7 @@ public class VirtualMachineNetworkingLiveApiTest extends BaseAbiquoApiLiveApiTes
 
    @Test(dependsOnMethods = "testAttachPublicIp")
    public void testAttachPrivateIp() {
-      List<Ip<?, ?>> nics = env.virtualMachine.listAttachedNics();
+      List<Ip<?, ?>> nics = Lists.newArrayList(env.virtualMachine.listAttachedNics());
       nics.add(privateIp);
 
       AsyncTask task = env.virtualMachine.setNics(nics);
@@ -131,7 +131,7 @@ public class VirtualMachineNetworkingLiveApiTest extends BaseAbiquoApiLiveApiTes
 
    @Test(dependsOnMethods = "testAttachPrivateIp")
    public void testAttachExternalIp() {
-      List<Ip<?, ?>> nics = env.virtualMachine.listAttachedNics();
+      List<Ip<?, ?>> nics = Lists.newArrayList(env.virtualMachine.listAttachedNics());
       nics.add(externalIp);
 
       AsyncTask task = env.virtualMachine.setNics(nics);

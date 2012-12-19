@@ -30,10 +30,11 @@ import org.jclouds.abiquo.domain.task.AsyncTask;
 import org.jclouds.rest.RestContext;
 
 import com.abiquo.model.transport.SingleResourceTransportDto;
+import com.abiquo.server.core.task.TaskDto;
 import com.abiquo.server.core.task.TasksDto;
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import com.google.common.primitives.Longs;
 
@@ -65,7 +66,7 @@ public abstract class DomainWithTasksWrapper<T extends SingleResourceTransportDt
    }
 
    public List<AsyncTask> listTasks(final Predicate<AsyncTask> filter) {
-      return Lists.newLinkedList(filter(listTasks(), filter));
+      return ImmutableList.copyOf(filter(listTasks(), filter));
    }
 
    public AsyncTask findTask(final Predicate<AsyncTask> filter) {

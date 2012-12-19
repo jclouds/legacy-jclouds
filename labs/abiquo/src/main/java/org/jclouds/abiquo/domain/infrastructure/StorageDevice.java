@@ -24,8 +24,8 @@ import static com.google.common.collect.Iterables.filter;
 
 import java.util.List;
 
-import org.jclouds.abiquo.AbiquoAsyncApi;
 import org.jclouds.abiquo.AbiquoApi;
+import org.jclouds.abiquo.AbiquoAsyncApi;
 import org.jclouds.abiquo.domain.DomainWrapper;
 import org.jclouds.abiquo.domain.infrastructure.options.StoragePoolOptions;
 import org.jclouds.abiquo.reference.ValidationErrors;
@@ -39,8 +39,8 @@ import com.abiquo.server.core.infrastructure.storage.StoragePoolDto;
 import com.abiquo.server.core.infrastructure.storage.StoragePoolsDto;
 import com.abiquo.server.core.infrastructure.storage.TiersDto;
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 
 /**
  * Adds high level functionality to {@link StorageDeviceDto}. The Storage Device
@@ -157,7 +157,7 @@ public class StorageDevice extends DomainWrapper<StorageDeviceDto> {
     * @return Filtered synchronized list of storage pools in this device.
     */
    public List<StoragePool> listRemoteStoragePools(final Predicate<StoragePool> filter) {
-      return Lists.newLinkedList(filter(listRemoteStoragePools(), filter));
+      return ImmutableList.copyOf(filter(listRemoteStoragePools(), filter));
    }
 
    /**
@@ -206,7 +206,7 @@ public class StorageDevice extends DomainWrapper<StorageDeviceDto> {
     * @return Filtered unsynchronized list of storage pools in this device.
     */
    public List<StoragePool> listStoragePools(final Predicate<StoragePool> filter) {
-      return Lists.newLinkedList(filter(listStoragePools(), filter));
+      return ImmutableList.copyOf(filter(listStoragePools(), filter));
    }
 
    /**
@@ -280,7 +280,7 @@ public class StorageDevice extends DomainWrapper<StorageDeviceDto> {
     * @return Filtered list of tiers in the datacenter using this device.
     */
    public List<Tier> listTiersFromDatacenter(final Predicate<Tier> filter) {
-      return Lists.newLinkedList(filter(listTiersFromDatacenter(), filter));
+      return ImmutableList.copyOf(filter(listTiersFromDatacenter(), filter));
    }
 
    /**

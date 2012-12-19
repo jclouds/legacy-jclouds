@@ -27,7 +27,7 @@ import org.jclouds.abiquo.predicates.LinkPredicates;
 
 import com.abiquo.model.rest.RESTLink;
 import com.abiquo.model.transport.SingleResourceTransportDto;
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableList;
 
 /**
  * Utility method to work with {@link RESTLink} objects.
@@ -55,6 +55,6 @@ public class LinkUtils {
     * @return A list with all links that point to a NIC.
     */
    public static List<RESTLink> filterNicLinks(final List<RESTLink> links) {
-      return Lists.newLinkedList(filter(links, LinkPredicates.isNic()));
+      return ImmutableList.copyOf(filter(links, LinkPredicates.isNic()));
    }
 }

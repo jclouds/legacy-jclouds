@@ -47,6 +47,8 @@ public class AbiquoApiMetadata extends BaseRestApiMetadata {
 
    /** The token describing the rest api context. */
    public static final TypeToken<RestContext<AbiquoApi, AbiquoAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<AbiquoApi, AbiquoAsyncApi>>() {
+
+      private static final long serialVersionUID = -2098594161943130770L;
    };
 
    public AbiquoApiMetadata() {

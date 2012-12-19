@@ -42,6 +42,7 @@ import org.jclouds.abiquo.features.CloudApi;
 import org.jclouds.abiquo.features.services.EventService;
 import org.jclouds.abiquo.predicates.enterprise.EnterprisePredicates;
 import org.jclouds.abiquo.predicates.network.NetworkPredicates;
+import org.testng.collections.Lists;
 
 import com.google.common.collect.Ordering;
 import com.google.common.primitives.Longs;
@@ -160,15 +161,17 @@ public class CloudTestEnvironment extends InfrastructureTestEnvironment {
       List<VirtualMachineTemplate> templates = virtualDatacenter.listAvailableTemplates();
       assertFalse(templates.isEmpty());
 
+      List<VirtualMachineTemplate> sorted = Lists.newArrayList(templates);
+
       // Sort by size to use the smallest one
-      Collections.sort(templates, new Ordering<VirtualMachineTemplate>() {
+      Collections.sort(sorted, new Ordering<VirtualMachineTemplate>() {
          @Override
          public int compare(final VirtualMachineTemplate left, final VirtualMachineTemplate right) {
             return Longs.compare(left.getDiskFileSize(), right.getDiskFileSize());
          }
       });
 
-      template = templates.get(0);
+      template = sorted.get(0);
 
       virtualMachine = VirtualMachine.builder(context.getApiContext(), virtualAppliance, template).cpu(2)
             .nameLabel(PREFIX + "VM Aloha").ram(128).build();

@@ -21,8 +21,8 @@ package org.jclouds.abiquo.domain.network;
 
 import java.util.List;
 
-import org.jclouds.abiquo.AbiquoAsyncApi;
 import org.jclouds.abiquo.AbiquoApi;
+import org.jclouds.abiquo.AbiquoAsyncApi;
 import org.jclouds.abiquo.domain.cloud.VirtualDatacenter;
 import org.jclouds.abiquo.domain.network.options.IpOptions;
 import org.jclouds.rest.RestContext;
