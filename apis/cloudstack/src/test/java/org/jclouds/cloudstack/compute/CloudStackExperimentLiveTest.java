@@ -20,33 +20,24 @@ package org.jclouds.cloudstack.compute;
 
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.get;
-import static com.google.common.collect.Iterables.getOnlyElement;
 import static com.google.common.collect.Sets.newTreeSet;
 import static org.jclouds.cloudstack.options.CreateNetworkOptions.Builder.vlan;
 import static org.jclouds.cloudstack.options.ListNetworkOfferingsOptions.Builder.specifyVLAN;
-import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions;
-import org.jclouds.cloudstack.domain.EncryptedPasswordAndPrivateKey;
 import org.jclouds.cloudstack.domain.Network;
-import org.jclouds.cloudstack.domain.SshKeyPair;
 import org.jclouds.cloudstack.domain.TrafficType;
 import org.jclouds.cloudstack.internal.BaseCloudStackClientLiveTest;
-import org.jclouds.cloudstack.functions.WindowsLoginCredentialsFromEncryptedData;
 import org.jclouds.cloudstack.options.ListNetworksOptions;
 import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.predicates.NodePredicates;
-import org.jclouds.crypto.Crypto;
-import org.jclouds.encryption.bouncycastle.BouncyCastleCrypto;
 import org.testng.annotations.Test;
 
 /**
@@ -128,48 +119,6 @@ public class CloudStackExperimentLiveTest extends BaseCloudStackClientLiveTest {
          if (network != null)
             domainAdminContext.getApi().getNetworkClient().deleteNetwork(network.getId());
       }
-   }
-
-   @Test(enabled = false)
-   public void testCreateWindowsMachineWithKeyPairAndCheckIfTheGeneratedPasswordIsEncrypted()
-      throws RunNodesException, NoSuchAlgorithmException, CertificateException {
-      // final Map<String, String> sshKey = SshKeys.generate();
-      // final String publicKey = sshKey.get("public");
-
-      String keyPairName = prefix + "-windows-keypair";
-      client.getSSHKeyPairClient().deleteSSHKeyPair(keyPairName);
-      // client.getSSHKeyPairClient().registerSSHKeyPair(keyPairName, publicKey);
-
-      SshKeyPair keyPair = client.getSSHKeyPairClient().createSSHKeyPair(keyPairName);
-
-      String group = prefix + "-windows-test";
-      Template template = view.getComputeService().templateBuilder()
-         .imageId("290").locationId("1")
-         .options(new CloudStackTemplateOptions().setupStaticNat(false).keyPair(keyPairName))
-         .build();
-
-      NodeMetadata node = null;
-      try {
-         node = getOnlyElement(view.getComputeService()
-            .createNodesInGroup(group, 1, template));
-
-         String encryptedPassword = client.getVirtualMachineClient()
-            .getEncryptedPasswordForVirtualMachine(node.getId());
-
-         Crypto crypto = new BouncyCastleCrypto();
-         WindowsLoginCredentialsFromEncryptedData passwordDecrypt = new WindowsLoginCredentialsFromEncryptedData(crypto);
-
-         assertEquals(passwordDecrypt.apply(
-            EncryptedPasswordAndPrivateKey.builder().encryptedPassword(encryptedPassword).privateKey(keyPair.getPrivateKey()).build())
-               .getPassword(), "bX7vvptvw");
-
-      } finally {
-         if (node != null) {
-            view.getComputeService().destroyNode(node.getId());
-         }
-
-      }
-
    }
 
 }
