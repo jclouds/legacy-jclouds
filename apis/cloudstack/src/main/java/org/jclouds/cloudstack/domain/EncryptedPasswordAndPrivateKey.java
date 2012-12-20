@@ -23,25 +23,22 @@ import java.beans.ConstructorProperties;
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Objects.ToStringHelper;
 
 /**
- * Class EncryptedPasswordAndPrivateKey
  *
  * @author Andrei Savu
  */
-public class EncryptedPasswordAndPrivateKey {
+public final class EncryptedPasswordAndPrivateKey {
 
-   public static Builder<?> builder() {
-      return new ConcreteBuilder();
+   public static Builder builder() {
+      return new Builder();
    }
 
-   public Builder<?> toBuilder() {
-      return new ConcreteBuilder().fromEncryptedPasswordAndPrivateKey(this);
+   public Builder toBuilder() {
+      return builder().fromEncryptedPasswordAndPrivateKey(this);
    }
 
-   public abstract static class Builder<T extends Builder<T>> {
-      protected abstract T self();
+   public final static class Builder {
 
       protected String encryptedPassword;
       protected String privateKey;
@@ -49,34 +46,26 @@ public class EncryptedPasswordAndPrivateKey {
       /**
        * @see EncryptedPasswordAndPrivateKey#getEncryptedPassword()
        */
-      public T encryptedPassword(String encryptedPassword) {
+      public Builder encryptedPassword(String encryptedPassword) {
          this.encryptedPassword = encryptedPassword;
-         return self();
+         return this;
       }
 
       /**
        * @see EncryptedPasswordAndPrivateKey#getPrivateKey()
        */
-      public T privateKey(String privateKey) {
+      public Builder privateKey(String privateKey) {
          this.privateKey = privateKey;
-         return self();
+         return this;
       }
 
       public EncryptedPasswordAndPrivateKey build() {
          return new EncryptedPasswordAndPrivateKey(encryptedPassword, privateKey);
       }
 
-      public T fromEncryptedPasswordAndPrivateKey(EncryptedPasswordAndPrivateKey in) {
-         return this
-               .encryptedPassword(in.getEncryptedPassword())
+      public Builder fromEncryptedPasswordAndPrivateKey(EncryptedPasswordAndPrivateKey in) {
+         return encryptedPassword(in.getEncryptedPassword())
                .privateKey(in.getPrivateKey());
-      }
-   }
-
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
-      @Override
-      protected ConcreteBuilder self() {
-         return this;
       }
    }
 
@@ -86,7 +75,7 @@ public class EncryptedPasswordAndPrivateKey {
    @ConstructorProperties({
          "encryptedPassword", "privateKey"
    })
-   protected EncryptedPasswordAndPrivateKey(@Nullable String encryptedPassword, @Nullable String privateKey) {
+   public EncryptedPasswordAndPrivateKey(@Nullable String encryptedPassword, @Nullable String privateKey) {
       this.encryptedPassword = encryptedPassword;
       this.privateKey = privateKey;
    }
@@ -121,14 +110,10 @@ public class EncryptedPasswordAndPrivateKey {
             && Objects.equal(this.privateKey, that.privateKey);
    }
 
-   protected ToStringHelper string() {
-      return Objects.toStringHelper(this)
-            .add("encryptedPassword", encryptedPassword).add("privateKey", privateKey);
-   }
-
    @Override
    public String toString() {
-      return string().toString();
+      return Objects.toStringHelper(this).omitNullValues()
+            .add("encryptedPassword", encryptedPassword).add("privateKey", privateKey).toString();
    }
 
 }

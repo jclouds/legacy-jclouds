@@ -28,8 +28,7 @@ import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.domain.EncryptedPasswordAndPrivateKey;
 import org.jclouds.cloudstack.functions.WindowsLoginCredentialsFromEncryptedData;
 import org.jclouds.cloudstack.internal.BaseCloudStackExpectTest;
-import org.jclouds.crypto.Crypto;
-import org.jclouds.encryption.bouncycastle.BouncyCastleCrypto;
+import org.jclouds.encryption.internal.JCECrypto;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Test;
@@ -79,8 +78,7 @@ public class VirtualMachineClientExpectTest extends BaseCloudStackExpectTest<Vir
 
       assertEquals(actual, expected);
 
-      Crypto crypto = new BouncyCastleCrypto();
-      WindowsLoginCredentialsFromEncryptedData passwordDecrypt = new WindowsLoginCredentialsFromEncryptedData(crypto);
+      WindowsLoginCredentialsFromEncryptedData passwordDecrypt = new WindowsLoginCredentialsFromEncryptedData(new JCECrypto());
 
       assertEquals(passwordDecrypt.apply(
          EncryptedPasswordAndPrivateKey.builder().encryptedPassword(actual).privateKey(privateKey).build()).getPassword(), "bX7vvptvw");
