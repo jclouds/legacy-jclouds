@@ -19,62 +19,37 @@
 package org.jclouds.rackspace.cloudloadbalancers.internal;
 
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import org.jclouds.apis.BaseContextLiveTest;
-import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
-import org.jclouds.predicates.RetryablePredicate;
+import org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersApi;
 import org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersApiMetadata;
 import org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersAsyncApi;
-import org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersApi;
-import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancer;
-import org.jclouds.rackspace.cloudloadbalancers.predicates.LoadBalancerActive;
-import org.jclouds.rackspace.cloudloadbalancers.predicates.LoadBalancerDeleted;
 import org.jclouds.rest.RestContext;
 import org.testng.annotations.BeforeGroups;
 
-import com.google.common.base.Predicate;
-import com.google.common.net.HostAndPort;
 import com.google.common.reflect.TypeToken;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 
 /**
  * 
  * @author Adrian Cole
  */
 public class BaseCloudLoadBalancersApiLiveTest extends BaseContextLiveTest<RestContext<CloudLoadBalancersApi, CloudLoadBalancersAsyncApi>> {
+   protected CloudLoadBalancersApi clbApi;
 
    public BaseCloudLoadBalancersApiLiveTest() {
       provider = "cloudloadbalancers";
    }
-
-   protected CloudLoadBalancersApi client;
-   protected Predicate<HostAndPort> socketTester;
-   protected RetryablePredicate<LoadBalancer> loadBalancerActive;
-   protected RetryablePredicate<LoadBalancer> loadBalancerDeleted;
-
-   protected Injector injector;
 
    @BeforeGroups(groups = { "integration", "live" })
    @Override
    public void setupContext() {
       super.setupContext();
 
-      client = context.getApi();
-      injector = Guice.createInjector(new SLF4JLoggingModule());
+      clbApi = context.getApi();
       
-      loadBalancerActive = new RetryablePredicate<LoadBalancer>(
-            new LoadBalancerActive(client), 300, 1, 1, TimeUnit.SECONDS);
-      injector.injectMembers(loadBalancerActive);
-      
-      loadBalancerDeleted = new RetryablePredicate<LoadBalancer>(
-            new LoadBalancerDeleted(client), 300, 1, 1, TimeUnit.SECONDS);
-      injector.injectMembers(loadBalancerDeleted);
-      
-      Logger.getAnonymousLogger().info("running against zones " + client.getConfiguredZones());
+      Logger.getAnonymousLogger().info("running against zones " + clbApi.getConfiguredZones());
    }
 
    @Override
