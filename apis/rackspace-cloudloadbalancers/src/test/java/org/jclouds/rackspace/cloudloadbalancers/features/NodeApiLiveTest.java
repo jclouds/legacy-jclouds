@@ -18,6 +18,8 @@
  */
 package org.jclouds.rackspace.cloudloadbalancers.features;
 
+import static org.jclouds.rackspace.cloudloadbalancers.predicates.LoadBalancerPredicates.awaitAvailable;
+import static org.jclouds.rackspace.cloudloadbalancers.predicates.LoadBalancerPredicates.awaitDeleted;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
@@ -51,16 +53,16 @@ public class NodeApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
    private Map<LoadBalancer, Set<Node>> nodes = Maps.newHashMap();
 
    public void testCreateLoadBalancers() {
-      assertTrue(client.getConfiguredZones().size() > 0, "Need to have some zones!");
-      Logger.getAnonymousLogger().info("running against zones " + client.getConfiguredZones());
-      for (String zone : client.getConfiguredZones()) {
+      assertTrue(clbApi.getConfiguredZones().size() > 0, "Need to have some zones!");
+      Logger.getAnonymousLogger().info("running against zones " + clbApi.getConfiguredZones());
+      for (String zone : clbApi.getConfiguredZones()) {
          Logger.getAnonymousLogger().info("starting lb in zone " + zone);
-         LoadBalancer lb = client.getLoadBalancerApiForZone(zone).create(
+         LoadBalancer lb = clbApi.getLoadBalancerApiForZone(zone).create(
                   LoadBalancerRequest.builder().name(prefix + "-" + zone).protocol("HTTP").port(80).virtualIPType(
                            Type.PUBLIC).node(NodeRequest.builder().address("192.168.1.1").port(8080).build()).build());
          nodes.put(lb, new HashSet<Node>());
 
-         assert loadBalancerActive.apply(lb) : lb;
+         assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(lb.getRegion())).apply(lb));
       }
    }
 
@@ -69,17 +71,17 @@ public class NodeApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
       for (LoadBalancer lb : nodes.keySet()) {
          String region = lb.getRegion();
          Logger.getAnonymousLogger().info("starting node on loadbalancer " + lb.getId() + " in region " + region);
-         Set<Node> newNodes = client.getNodeApiForZoneAndLoadBalancer(region, lb.getId()).add(
+         Set<Node> newNodes = clbApi.getNodeApiForZoneAndLoadBalancer(region, lb.getId()).add(
                   ImmutableSet.<NodeRequest> of(NodeRequest.builder().address("192.168.1.2").port(8080).build()));
 
          for (Node n : newNodes) {
             assertEquals(n.getStatus(), Node.Status.ONLINE);
             nodes.get(lb).add(n);
-            assertEquals(client.getNodeApiForZoneAndLoadBalancer(region, lb.getId()).get(n.getId()).getStatus(),
+            assertEquals(clbApi.getNodeApiForZoneAndLoadBalancer(region, lb.getId()).get(n.getId()).getStatus(),
                      Node.Status.ONLINE);
          }
 
-         assert loadBalancerActive.apply(lb) : lb;
+         assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(lb.getRegion())).apply(lb));
       }
    }
 
@@ -88,12 +90,12 @@ public class NodeApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
       for (Entry<LoadBalancer, Set<Node>> entry : nodes.entrySet()) {
          for (Node n : entry.getValue()) {
             String region = entry.getKey().getRegion();
-            client.getNodeApiForZoneAndLoadBalancer(region, entry.getKey().getId()).update(n.getId(),
+            clbApi.getNodeApiForZoneAndLoadBalancer(region, entry.getKey().getId()).update(n.getId(),
                      NodeAttributes.Builder.weight(23));
-            assertEquals(client.getNodeApiForZoneAndLoadBalancer(region, entry.getKey().getId()).get(n.getId())
+            assertEquals(clbApi.getNodeApiForZoneAndLoadBalancer(region, entry.getKey().getId()).get(n.getId())
                      .getStatus(), Node.Status.ONLINE);
 
-            Node newNode = client.getNodeApiForZoneAndLoadBalancer(region, entry.getKey().getId()).get(n.getId());
+            Node newNode = clbApi.getNodeApiForZoneAndLoadBalancer(region, entry.getKey().getId()).get(n.getId());
             assertEquals(newNode.getStatus(), Node.Status.ONLINE);
             assertEquals(newNode.getWeight(), (Integer) 23);
          }
@@ -103,7 +105,7 @@ public class NodeApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
    @Test(dependsOnMethods = "testModifyNode")
    public void testListNodes() throws Exception {
       for (LoadBalancer lb : nodes.keySet()) {
-         Set<Node> response = client.getNodeApiForZoneAndLoadBalancer(lb.getRegion(), lb.getId()).list().concat().toImmutableSet();
+         Set<Node> response = clbApi.getNodeApiForZoneAndLoadBalancer(lb.getRegion(), lb.getId()).list().concat().toImmutableSet();
          assert null != response;
          assertTrue(response.size() >= 0);
          for (Node n : response) {
@@ -115,7 +117,7 @@ public class NodeApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
             assert !Arrays.asList(LoadBalancer.WEIGHTED_ALGORITHMS).contains(lb.getTypedAlgorithm())
                      || n.getWeight() != null : n;
 
-            Node getDetails = client.getNodeApiForZoneAndLoadBalancer(lb.getRegion(), lb.getId()).get(n.getId());
+            Node getDetails = clbApi.getNodeApiForZoneAndLoadBalancer(lb.getRegion(), lb.getId()).get(n.getId());
 
             try {
                assertEquals(getDetails.getId(), n.getId());
@@ -138,13 +140,13 @@ public class NodeApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
    protected void tearDownContext() {
       for (Entry<LoadBalancer, Set<Node>> entry : nodes.entrySet()) {
          LoadBalancer lb = entry.getKey();
-         LoadBalancerApi lbClient = client.getLoadBalancerApiForZone(lb.getRegion());
+         LoadBalancerApi lbClient = clbApi.getLoadBalancerApiForZone(lb.getRegion());
 
          if (lbClient.get(lb.getId()).getStatus() != Status.DELETED) {
-            assert loadBalancerActive.apply(lb) : lb;
+            assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(lb.getRegion())).apply(lb));
             lbClient.remove(lb.getId());
          }
-         assert loadBalancerDeleted.apply(lb) : lb;
+         assertTrue(awaitDeleted(clbApi.getLoadBalancerApiForZone(lb.getRegion())).apply(lb));
       }
       super.tearDownContext();
    }
