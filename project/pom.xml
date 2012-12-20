@@ -205,6 +205,11 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcpkix-jdk15on</artifactId>
+                <version>1.47</version>
+            </dependency>
+            <dependency>
                 <groupId>com.jcraft</groupId>
                 <artifactId>jsch</artifactId>
                 <version>0.1.49</version>
@@ -385,6 +390,9 @@
                         <ignoredResource>CreateInternetService-options-test.xml</ignoredResource>
                         <ignoredResource>.gitattributes</ignoredResource>
                         <ignoredResource>OSGI-OPT/bnd.bnd</ignoredResource>
+                        <!-- For bouncycastle -->
+                        <ignoredResource>META-INF/BCKEY.DSA</ignoredResource>
+                        <ignoredResource>META-INF/BCKEY.SF</ignoredResource>
                     </ignoredResources>
                     <failBuildInCaseOfConflict>true</failBuildInCaseOfConflict>
                 </configuration>

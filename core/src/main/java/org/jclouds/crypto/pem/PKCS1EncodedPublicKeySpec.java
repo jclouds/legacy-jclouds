@@ -22,9 +22,8 @@ package org.jclouds.crypto.pem;
 import java.io.IOException;
 import java.security.spec.RSAPublicKeySpec;
 
-import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.x509.RSAPublicKeyStructure;
+import org.bouncycastle.asn1.pkcs.RSAPublicKey;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 
 /**
@@ -69,18 +68,18 @@ public class PKCS1EncodedPublicKeySpec {
     *           Encoded PKCS#1 rsa key.
     */
    private void decode(final byte[] keyBytes) throws IOException {
-      RSAPublicKeyStructure pks = null;
-      ASN1Sequence seq = (ASN1Sequence) ASN1Object.fromByteArray(keyBytes);
+      RSAPublicKey pks = null;
+      ASN1Sequence seq = ASN1Sequence.getInstance(keyBytes);
       try {
          // Try to parse the public key normally. If the algorithm is not
          // present in the encoded key, an IllegalArgumentException will be
          // raised.
          SubjectPublicKeyInfo info = new SubjectPublicKeyInfo(seq);
-         pks = new RSAPublicKeyStructure((ASN1Sequence) info.getPublicKey());
+         pks = RSAPublicKey.getInstance(info.parsePublicKey());
       } catch (IllegalArgumentException ex) {
          // If the algorithm is not found in the encoded key, try to extract
          // just the modulus and the public exponent to build the public key.
-         pks = new RSAPublicKeyStructure(seq);
+         pks = RSAPublicKey.getInstance(seq);
       }
       keySpec = new RSAPublicKeySpec(pks.getModulus(), pks.getPublicExponent());
    }

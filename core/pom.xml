@@ -51,8 +51,7 @@
         <!-- Required for Pems.java to read and write public and private keys -->
         <dependency>
             <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk16</artifactId>
-            <version>1.46</version>
+            <artifactId>bcpkix-jdk15on</artifactId>
         </dependency>
         <dependency>
             <groupId>aopalliance</groupId>

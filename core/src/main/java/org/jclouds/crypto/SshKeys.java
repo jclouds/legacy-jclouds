@@ -51,7 +51,6 @@ import org.jclouds.util.Strings2;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Iterables;
@@ -80,8 +79,7 @@ public class SshKeys {
       try {
          return publicKeySpecFromOpenSSH(InputSuppliers.of(idRsaPub));
       } catch (IOException e) {
-         propagate(e);
-         return null;
+         throw propagate(e);
       }
    }
 
@@ -142,8 +140,7 @@ public class SshKeys {
       try {
          return generate(KeyPairGenerator.getInstance("RSA"), new SecureRandom());
       } catch (NoSuchAlgorithmException e) {
-         propagate(e);
-         return null;
+         throw propagate(e);
       }
    }
 
@@ -167,7 +164,7 @@ public class SshKeys {
          pemFormatWriter.writeObject(key);
          pemFormatWriter.close();
       } catch (IOException e) {
-         Throwables.propagate(e);
+         throw propagate(e);
       }
       return stringWriter.toString();
       // TODO: understand why pem isn't passing testCanGenerate where keys are
@@ -292,11 +289,9 @@ public class SshKeys {
                                     .getEncoded()))));
          return sha1;
       } catch (InvalidKeySpecException e) {
-         propagate(e);
-         return null;
+         throw propagate(e);
       } catch (NoSuchAlgorithmException e) {
-         propagate(e);
-         return null;
+         throw propagate(e);
       }
    }
 
@@ -340,8 +335,7 @@ public class SshKeys {
          writeLengthFirst(modulus.toByteArray(), out);
          return out.toByteArray();
       } catch (IOException e) {
-         propagate(e);
-         return null;
+         throw propagate(e);
       }
    }
 
