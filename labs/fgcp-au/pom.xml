@@ -72,17 +72,6 @@
             <artifactId>jclouds-compute</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>org.jclouds.provider</groupId>-->
-            <!--<artifactId>fgcp</artifactId>-->
-            <!--<version>${project.version}</version>-->
-        <!--</dependency>-->
-        <dependency>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk16</artifactId>
-            <version>1.46</version>
-            <optional>true</optional>
-        </dependency>
         <dependency>
             <groupId>org.jclouds.driver</groupId>
             <artifactId>jclouds-sshj</artifactId>
