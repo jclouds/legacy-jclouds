@@ -62,7 +62,7 @@ public class WindowsLoginCredentialsFromEncryptedData implements Function<Passwo
          KeyFactory kf = crypto.rsaKeyFactory();
          PrivateKey privKey = kf.generatePrivate(keySpec);
 
-         Cipher cipher = crypto.cipher("RSA/NONE/PKCS1Padding");
+         Cipher cipher = crypto.cipher("RSA");
          cipher.init(Cipher.DECRYPT_MODE, privKey);
          byte[] cipherText = Base64.decode(dataAndKey.getPasswordData().getPasswordData());
          byte[] plainText = cipher.doFinal(cipherText);

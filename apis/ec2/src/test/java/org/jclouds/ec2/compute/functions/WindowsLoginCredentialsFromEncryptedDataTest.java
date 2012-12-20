@@ -21,13 +21,12 @@ package org.jclouds.ec2.compute.functions;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 
-import org.jclouds.crypto.Crypto;
 import org.jclouds.date.DateService;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ec2.compute.domain.PasswordDataAndPrivateKey;
 import org.jclouds.ec2.domain.PasswordData;
-import org.jclouds.encryption.bouncycastle.BouncyCastleCrypto;
+import org.jclouds.encryption.internal.JCECrypto;
 import org.testng.annotations.Test;
 
 /**
@@ -64,8 +63,7 @@ public class WindowsLoginCredentialsFromEncryptedDataTest {
 
    @Test
    public void testApply() throws Exception {
-      Crypto crypto = new BouncyCastleCrypto();
-      WindowsLoginCredentialsFromEncryptedData f = new WindowsLoginCredentialsFromEncryptedData(crypto);
+      WindowsLoginCredentialsFromEncryptedData f = new WindowsLoginCredentialsFromEncryptedData(new JCECrypto());
 
       PasswordData passwordData = PasswordData.builder()
                                               .instanceId("i-2574e22a")
