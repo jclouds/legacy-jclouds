@@ -8,6 +8,14 @@
       "loginUser": "root"
   },
   {
+      "uuid": "bcd758d4-cfc8-4d42-a707-c4bebe47900b",
+      "description": "CentOS Linux 6.2",
+      "osFamily": "CENTOS",
+      "osVersion": "6.2",
+      "size": "3",
+      "loginUser": "root"
+  },
+  {
       "uuid": "aca2fa0b-40bc-4e06-ad99-f1467690d5de",
       "description": "Debian Linux 6.0",
       "osFamily": "DEBIAN",
@@ -24,18 +32,50 @@
       "loginUser": "root"
   },
   {
-      "uuid": "85623ca1-9c2a-4398-a771-9a43c347e86b",
-      "description": "Windows Web Server 2008 R2",
+      "uuid": "80f7b359-b25f-48ea-b208-cc1f39d8bf07",
+      "description": "Ubuntu 12.04 LTS",
+      "osFamily": "UBUNTU",
+      "osVersion": "12.04",
+      "size": "1",
+      "loginUser": "root"
+  },
+  {
+      "uuid": "41993a02-0b22-4e49-bb47-0aa8975217e4",
+      "description": "Windows Server 2008 R2 Standard",
       "osFamily": "WINDOWS",
       "osVersion": "2008 R2",
       "size": "13",
       "loginUser": "Administrator"
   },
   {
-      "uuid": "41993a02-0b22-4e49-bb47-0aa8975217e4",
-      "description": "Windows Server 2008 Standard R2",
+      "uuid": "7a488d27-7b79-472c-8fbc-84dca822027e",
+      "description": "Windows Server 2008 R2 Standard SP1 with SQL Server 2008 R2 Web Edition",
       "osFamily": "WINDOWS",
-      "osVersion": "2008 R2",
+      "osVersion": "2008 R2 SP1 SQL",
+      "size": "13",
+      "loginUser": "Administrator"
+  },
+  {
+      "uuid": "a90a65b0-9452-4ac8-acfa-3e607c77cc9c",
+      "description": "Windows Server 2012 Standard",
+      "osFamily": "WINDOWS",
+      "osVersion": "2012",
+      "size": "13",
+      "loginUser": "Administrator"
+  },
+  {
+      "uuid": "85623ca1-9c2a-4398-a771-9a43c347e86b",
+      "description": "Windows Web Server 2008 R2",
+      "osFamily": "WINDOWS",
+      "osVersion": "2008 R2 Web",
+      "size": "13",
+      "loginUser": "Administrator"
+  },
+  {
+      "uuid": "9183de46-ca66-43aa-aa8a-8d172acca51d",
+      "description": "Windows Web Server 2008 R2 SP1 with SQL Server 2008 R2 Web Edition",
+      "osFamily": "WINDOWS",
+      "osVersion": "2008 R2 SP1 Web SQL",
       "size": "13",
       "loginUser": "Administrator"
   }
