@@ -46,13 +46,6 @@
             <artifactId>jclouds-core</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- only required for Pems.java and only writing a private key file -->
-        <dependency>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk16</artifactId>
-            <version>1.46</version>
-            <optional>true</optional>
-        </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
