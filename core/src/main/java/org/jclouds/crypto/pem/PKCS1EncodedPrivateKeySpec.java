@@ -24,9 +24,7 @@ import java.math.BigInteger;
 import java.security.spec.RSAPrivateCrtKeySpec;
 import java.security.spec.RSAPrivateKeySpec;
 
-import org.bouncycastle.asn1.ASN1Object;
-import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.pkcs.RSAPrivateKeyStructure;
+import org.bouncycastle.asn1.pkcs.RSAPrivateKey;
 
 /**
  * PKCS#1 encoded private key spec.
@@ -44,7 +42,7 @@ public class PKCS1EncodedPrivateKeySpec {
     *           DER encoded octet stream
     * @throws IOException
     */
-   public PKCS1EncodedPrivateKeySpec(final byte[] keyBytes) throws IOException {
+   public PKCS1EncodedPrivateKeySpec(final byte[] keyBytes) {
       decode(keyBytes);
    }
 
@@ -63,9 +61,8 @@ public class PKCS1EncodedPrivateKeySpec {
     * @param keyBytes
     *           Encoded PKCS#1 rsa key.
     */
-   private void decode(final byte[] keyBytes) throws IOException {
-      ASN1Sequence seq = (ASN1Sequence) ASN1Object.fromByteArray(keyBytes);
-      RSAPrivateKeyStructure rsa = new RSAPrivateKeyStructure(seq);
+   private void decode(final byte[] keyBytes) {
+      RSAPrivateKey rsa = RSAPrivateKey.getInstance(keyBytes);
 
       BigInteger mod = rsa.getModulus();
       BigInteger pubExp = rsa.getPublicExponent();

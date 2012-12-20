@@ -18,13 +18,17 @@
  */
 package org.jclouds.crypto;
 
+import static com.google.common.base.Charsets.US_ASCII;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Throwables.propagate;
+import static com.google.common.io.Closeables.closeQuietly;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.CertificateEncodingException;
@@ -40,7 +44,7 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.Map;
 
 import org.bouncycastle.asn1.ASN1OutputStream;
-import org.bouncycastle.asn1.pkcs.RSAPrivateKeyStructure;
+import org.bouncycastle.asn1.pkcs.RSAPrivateKey;
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemReader;
 import org.jclouds.crypto.Pems.PemProcessor.ResultParser;
@@ -52,7 +56,6 @@ import org.jclouds.javax.annotation.Nullable;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.InputSupplier;
 
@@ -89,23 +92,21 @@ public class Pems {
 
       @Override
       public T getResult() {
+         PemReader reader = new PemReader(new StringReader(new String(out.toByteArray(), US_ASCII)));
          try {
-            PemReader reader = new PemReader(new InputStreamReader(new ByteArrayInputStream(out.toByteArray())));
             PemObject pem = reader.readPemObject();
             byte[] bytes = pem.getContent();
 
-            // Bouncycastle removes the BEGIN and the markers when reading the
-            // PEM object
+            // Bouncycastle removes the BEGIN and the markers when reading the PEM object
             String beginMarker = "-----BEGIN " + pem.getType() + "-----";
 
-            if (parsers.containsKey(beginMarker)) {
-               return parsers.get(beginMarker).parseResult(bytes);
-            } else {
-               throw new IOException(String.format("Invalid PEM file: no parsers for marker %s in %s", beginMarker,
-                     parsers.keySet()));
-            }
+            checkState(parsers.containsKey(beginMarker), "Invalid PEM file: no parsers for marker %s in %s",
+                  beginMarker, parsers.keySet());
+            return parsers.get(beginMarker).parseResult(bytes);
          } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw propagate(e);
+         } finally {
+            closeQuietly(reader);
          }
       }
    }
@@ -178,7 +179,7 @@ public class Pems {
       try {
          return privateKeySpec(InputSuppliers.of(pem));
       } catch (IOException e) {
-         throw Throwables.propagate(e);
+         throw propagate(e);
       }
    }
 
@@ -327,7 +328,7 @@ public class Pems {
 
    // TODO find a way to do this without using bouncycastle
    public static byte[] getEncoded(RSAPrivateCrtKey key) {
-      RSAPrivateKeyStructure keyStruct = new RSAPrivateKeyStructure(key.getModulus(), key.getPublicExponent(),
+      RSAPrivateKey keyStruct = new RSAPrivateKey(key.getModulus(), key.getPublicExponent(),
             key.getPrivateExponent(), key.getPrimeP(), key.getPrimeQ(), key.getPrimeExponentP(),
             key.getPrimeExponentQ(), key.getCrtCoefficient());
 
@@ -338,7 +339,7 @@ public class Pems {
          aOut.writeObject(keyStruct);
          aOut.close();
       } catch (IOException e) {
-         Throwables.propagate(e);
+         throw propagate(e);
       }
 
       return bOut.toByteArray();
