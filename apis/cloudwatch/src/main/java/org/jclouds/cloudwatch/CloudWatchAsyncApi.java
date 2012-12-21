@@ -21,6 +21,7 @@ package org.jclouds.cloudwatch;
 import java.util.Date;
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -69,6 +70,7 @@ public interface CloudWatchAsyncApi {
    /**
     * @see MetricAsyncApi#getMetricStatistics
     */
+   @Named("cloudwatch:GetMetricStatistics")
    @Deprecated
    @POST
    @Path("/")

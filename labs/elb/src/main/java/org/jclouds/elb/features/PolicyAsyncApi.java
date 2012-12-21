@@ -20,6 +20,7 @@ package org.jclouds.elb.features;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -59,6 +60,7 @@ public interface PolicyAsyncApi {
    /**
     * @see PolicyApi#get()
     */
+   @Named("elasticloadbalancing:DescribeLoadBalancerPolicies")
    @POST
    @Path("/")
    @XMLResponseParser(PolicyHandler.class)
@@ -69,6 +71,7 @@ public interface PolicyAsyncApi {
    /**
     * @see PolicyApi#list()
     */
+   @Named("elasticloadbalancing:DescribeLoadBalancerPolicies")
    @POST
    @Path("/")
    @XMLResponseParser(DescribeLoadBalancerPoliciesResultHandler.class)
@@ -79,6 +82,7 @@ public interface PolicyAsyncApi {
    /**
     * @see PolicyApi#list(ListPoliciesOptions)
     */
+   @Named("elasticloadbalancing:DescribeLoadBalancerPolicies")
    @POST
    @Path("/")
    @XMLResponseParser(DescribeLoadBalancerPoliciesResultHandler.class)
@@ -90,6 +94,7 @@ public interface PolicyAsyncApi {
    /**
     * @see PolicyApi#getType()
     */
+   @Named("elasticloadbalancing:DescribeLoadBalancerPolicyTypes")
    @POST
    @Path("/")
    @XMLResponseParser(PolicyTypeHandler.class)
@@ -100,6 +105,7 @@ public interface PolicyAsyncApi {
    /**
     * @see PolicyApi#listTypes()
     */
+   @Named("elasticloadbalancing:DescribeLoadBalancerPolicyTypes")
    @POST
    @Path("/")
    @XMLResponseParser(DescribeLoadBalancerPolicyTypesResultHandler.class)
@@ -110,6 +116,7 @@ public interface PolicyAsyncApi {
    /**
     * @see PolicyApi#listTypes(Iterable<String>)
     */
+   @Named("elasticloadbalancing:DescribeLoadBalancerPolicyTypes")
    @POST
    @Path("/")
    @XMLResponseParser(DescribeLoadBalancerPolicyTypesResultHandler.class)

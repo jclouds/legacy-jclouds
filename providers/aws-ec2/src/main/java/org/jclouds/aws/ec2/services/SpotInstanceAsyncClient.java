@@ -22,6 +22,7 @@ import static org.jclouds.aws.reference.FormParameters.ACTION;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -64,6 +65,7 @@ public interface SpotInstanceAsyncClient {
    /**
     * @see SpotInstanceClient#describeSpotInstanceRequestsInRegion
     */
+   @Named("ec2:DescribeSpotInstanceRequests")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribeSpotInstanceRequests")
@@ -76,6 +78,7 @@ public interface SpotInstanceAsyncClient {
    /**
     * @see SpotInstanceClient#requestSpotInstanceInRegion
     */
+   @Named("ec2:RequestSpotInstances")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "RequestSpotInstances")
@@ -88,6 +91,7 @@ public interface SpotInstanceAsyncClient {
    /**
     * @see SpotInstanceClient#requestSpotInstancesInRegion
     */
+   @Named("ec2:RequestSpotInstances")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "RequestSpotInstances")
@@ -101,6 +105,7 @@ public interface SpotInstanceAsyncClient {
    /**
     * @see SpotInstanceClient#describeSpotPriceHistoryInRegion
     */
+   @Named("ec2:DescribeSpotPriceHistory")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribeSpotPriceHistory")
@@ -113,6 +118,7 @@ public interface SpotInstanceAsyncClient {
    /**
     * @see SpotInstanceClient#cancelSpotInstanceRequestsInRegion
     */
+   @Named("ec2:CancelSpotInstanceRequests")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "CancelSpotInstanceRequests")

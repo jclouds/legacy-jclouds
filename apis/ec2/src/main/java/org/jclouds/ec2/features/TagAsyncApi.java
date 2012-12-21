@@ -22,6 +22,7 @@ import static org.jclouds.aws.reference.FormParameters.ACTION;
 
 import java.util.Map;
 
+import javax.inject.Named;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
@@ -64,6 +65,7 @@ public interface TagAsyncApi {
     * @see <a
     *      href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-CreateTags.html">docs</a>
     */
+   @Named("ec2:CreateTags")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "CreateTags")
@@ -75,6 +77,7 @@ public interface TagAsyncApi {
     * @see <a
     *      href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-CreateTags.html">docs</a>
     */
+   @Named("ec2:CreateTags")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "CreateTags")
@@ -86,6 +89,7 @@ public interface TagAsyncApi {
     * @see <a
     *      href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeTags.html">docs</a>
     */
+   @Named("ec2:DescribeTags")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribeTags")
@@ -98,6 +102,7 @@ public interface TagAsyncApi {
     * @see <a
     *      href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeTags.html">docs</a>
     */
+   @Named("ec2:DescribeTags")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribeTags")
@@ -111,6 +116,7 @@ public interface TagAsyncApi {
     * @see <a
     *      href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DeleteTags.html">docs</a>
     */
+   @Named("ec2:DeleteTags")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DeleteTags")
@@ -123,6 +129,7 @@ public interface TagAsyncApi {
     * @see <a
     *      href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DeleteTags.html">docs</a>
     */
+   @Named("ec2:DeleteTags")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DeleteTags")

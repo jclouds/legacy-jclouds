@@ -22,6 +22,7 @@ import static org.jclouds.aws.reference.FormParameters.ACTION;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -61,6 +62,7 @@ public interface AWSInstanceAsyncClient extends InstanceAsyncClient {
    /**
     * @see AWSInstanceClient#describeInstancesInRegion
     */
+   @Named("ec2:DescribeInstances")
    @Override
    @POST
    @Path("/")
@@ -74,6 +76,7 @@ public interface AWSInstanceAsyncClient extends InstanceAsyncClient {
    /**
     * @see AWSInstanceClient#runInstancesInRegion
     */
+   @Named("ec2:RunInstances")
    @Override
    @POST
    @Path("/")
