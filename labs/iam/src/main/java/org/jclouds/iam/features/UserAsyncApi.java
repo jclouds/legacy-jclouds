@@ -18,6 +18,7 @@
  */
 package org.jclouds.iam.features;
 
+import javax.inject.Named;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -54,6 +55,7 @@ public interface UserAsyncApi {
    /**
     * @see UserApi#getCurrent()
     */
+   @Named("iam:GetUser")
    @POST
    @Path("/")
    @XMLResponseParser(UserHandler.class)
@@ -63,6 +65,7 @@ public interface UserAsyncApi {
    /**
     * @see UserApi#get()
     */
+   @Named("iam:GetUser")
    @POST
    @Path("/")
    @XMLResponseParser(UserHandler.class)
@@ -73,6 +76,7 @@ public interface UserAsyncApi {
    /**
     * @see UserApi#list()
     */
+   @Named("iam:ListUsers")
    @POST
    @Path("/")
    @XMLResponseParser(ListUsersResultHandler.class)
@@ -83,6 +87,7 @@ public interface UserAsyncApi {
    /**
     * @see UserApi#list(ListUsersOptions)
     */
+   @Named("iam:ListUsers")
    @POST
    @Path("/")
    @XMLResponseParser(ListUsersResultHandler.class)

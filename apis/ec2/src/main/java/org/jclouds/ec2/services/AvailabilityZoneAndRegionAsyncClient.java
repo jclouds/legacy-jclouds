@@ -24,6 +24,7 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
@@ -58,6 +59,7 @@ public interface AvailabilityZoneAndRegionAsyncClient {
    /**
     * @see AvailabilityZoneAndRegionClient#describeAvailabilityZonesInRegion
     */
+   @Named("ec2:DescribeAvailabilityZones")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribeAvailabilityZones")
@@ -70,6 +72,7 @@ public interface AvailabilityZoneAndRegionAsyncClient {
    /**
     * @see AvailabilityZoneAndRegionClient#describeRegions
     */
+   @Named("ec2:DescribeRegions")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribeRegions")

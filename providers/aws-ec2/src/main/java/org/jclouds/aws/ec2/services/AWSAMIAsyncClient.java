@@ -22,6 +22,7 @@ import static org.jclouds.aws.reference.FormParameters.ACTION;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -56,6 +57,7 @@ public interface AWSAMIAsyncClient extends AMIAsyncClient {
    /**
     * @see AMIClient#getProductCodesForImageInRegion
     */
+   @Named("ec2:DescribeImageAttribute")
    @POST
    @Path("/")
    @FormParams(keys = { ACTION, "Attribute" }, values = { "DescribeImageAttribute", "productCodes" })
@@ -67,6 +69,7 @@ public interface AWSAMIAsyncClient extends AMIAsyncClient {
    /**
     * @see AMIClient#addProductCodesToImageInRegion
     */
+   @Named("ec2:ModifyImageAttribute")
    @POST
    @Path("/")
    @FormParams(keys = { ACTION, "OperationType", "Attribute" }, values = { "ModifyImageAttribute", "add",
@@ -79,6 +82,7 @@ public interface AWSAMIAsyncClient extends AMIAsyncClient {
    /**
     * @see AMIClient#removeProductCodesToImageInRegion
     */
+   @Named("ec2:ModifyImageAttribute")
    @POST
    @Path("/")
    @FormParams(keys = { ACTION, "OperationType", "Attribute" }, values = { "ModifyImageAttribute", "remove",

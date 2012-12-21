@@ -21,6 +21,7 @@ package org.jclouds.sqs.features;
 import static org.jclouds.sqs.reference.SQSParameters.ACTION;
 import static org.jclouds.sqs.reference.SQSParameters.VERSION;
 
+import javax.inject.Named;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -48,6 +49,7 @@ public interface PermissionAsyncApi {
    /**
     * @see PermissionApi#addPermissionToAccount
     */
+   @Named("sqs:AddPermission")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "AddPermission")
@@ -57,6 +59,7 @@ public interface PermissionAsyncApi {
    /**
     * @see PermissionApi#remove
     */
+   @Named("sqs:RemovePermission")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "RemovePermission")

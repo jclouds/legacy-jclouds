@@ -20,6 +20,7 @@ package org.jclouds.aws.ec2.services;
 
 import static org.jclouds.aws.reference.FormParameters.ACTION;
 
+import javax.inject.Named;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -50,6 +51,7 @@ public interface AWSKeyPairAsyncClient extends KeyPairAsyncClient {
    /**
     * @see AWSKeyPairClient#importKeyPairInRegion
     */
+   @Named("ec2:ImportKeyPair")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "ImportKeyPair")

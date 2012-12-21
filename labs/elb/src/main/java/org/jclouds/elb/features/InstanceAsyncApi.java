@@ -22,6 +22,7 @@ import static org.jclouds.aws.reference.FormParameters.ACTION;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -57,6 +58,7 @@ public interface InstanceAsyncApi {
    /**
     * @see InstanceApi#getHealthOfInstancesOfLoadBalancer(String)
     */
+   @Named("elasticloadbalancing:DescribeInstanceHealth")
    @POST
    @Path("/")
    @XMLResponseParser(DescribeInstanceHealthResultHandler.class)
@@ -68,6 +70,7 @@ public interface InstanceAsyncApi {
    /**
     * @see InstanceApi#getHealthOfInstancesOfLoadBalancer(Iterable, String)
     */
+   @Named("elasticloadbalancing:DescribeInstanceHealth")
    @POST
    @Path("/")
    @XMLResponseParser(DescribeInstanceHealthResultHandler.class)
@@ -81,6 +84,7 @@ public interface InstanceAsyncApi {
    /**
     * @see InstanceApi#registerInstancesWithLoadBalancer
     */
+   @Named("elasticloadbalancing:RegisterInstancesWithLoadBalancer")
    @POST
    @Path("/")
    @XMLResponseParser(InstancesResultHandler.class)
@@ -93,6 +97,7 @@ public interface InstanceAsyncApi {
    /**
     * @see InstanceApi#registerInstanceWithLoadBalancer
     */
+   @Named("elasticloadbalancing:RegisterInstancesWithLoadBalancer")
    @POST
    @Path("/")
    @XMLResponseParser(InstancesResultHandler.class)
@@ -104,6 +109,7 @@ public interface InstanceAsyncApi {
    /**
     * @see InstanceApi#deregisterInstancesFromLoadBalancer
     */
+   @Named("elasticloadbalancing:DeregisterInstancesFromLoadBalancer")
    @POST
    @Path("/")
    @XMLResponseParser(InstancesResultHandler.class)
@@ -115,6 +121,7 @@ public interface InstanceAsyncApi {
    /**
     * @see InstanceApi#deregisterInstanceFromLoadBalancer
     */
+   @Named("elasticloadbalancing:DeregisterInstancesFromLoadBalancer")
    @POST
    @Path("/")
    @XMLResponseParser(InstancesResultHandler.class)

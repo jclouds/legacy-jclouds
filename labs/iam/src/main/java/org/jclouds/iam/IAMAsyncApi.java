@@ -18,6 +18,7 @@
  */
 package org.jclouds.iam;
 
+import javax.inject.Named;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
@@ -49,6 +50,7 @@ public interface IAMAsyncApi {
    /**
     * @see IAMApi#getCurrentUser()
     */
+   @Named("iam:GetUser")
    @POST
    @Path("/")
    @XMLResponseParser(UserHandler.class)

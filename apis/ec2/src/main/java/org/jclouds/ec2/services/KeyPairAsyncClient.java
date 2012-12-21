@@ -22,6 +22,7 @@ import static org.jclouds.aws.reference.FormParameters.ACTION;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -57,6 +58,7 @@ public interface KeyPairAsyncClient {
    /**
     * @see KeyPairClient#createKeyPairInRegion
     */
+   @Named("ec2:CreateKeyPair")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "CreateKeyPair")
@@ -68,6 +70,7 @@ public interface KeyPairAsyncClient {
    /**
     * @see KeyPairClient#describeKeyPairsInRegion
     */
+   @Named("ec2:DescribeKeyPairs")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribeKeyPairs")
@@ -80,6 +83,7 @@ public interface KeyPairAsyncClient {
    /**
     * @see KeyPairClient#deleteKeyPairInRegion
     */
+   @Named("ec2:DeleteKeyPair")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DeleteKeyPair")
