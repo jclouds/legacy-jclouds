@@ -20,6 +20,7 @@ package org.jclouds.rds.features;
 
 import static org.jclouds.aws.reference.FormParameters.ACTION;
 
+import javax.inject.Named;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -59,6 +60,7 @@ public interface SubnetGroupAsyncApi {
    /**
     * @see SubnetGroupApi#get()
     */
+   @Named("rds:DescribeDBSubnetGroups")
    @POST
    @Path("/")
    @XMLResponseParser(SubnetGroupHandler.class)
@@ -69,6 +71,7 @@ public interface SubnetGroupAsyncApi {
    /**
     * @see SubnetGroupApi#list()
     */
+   @Named("rds:DescribeDBSubnetGroups")
    @POST
    @Path("/")
    @XMLResponseParser(DescribeDBSubnetGroupsResultHandler.class)
@@ -79,6 +82,7 @@ public interface SubnetGroupAsyncApi {
    /**
     * @see SubnetGroupApi#list(ListSubnetGroupsOptions)
     */
+   @Named("rds:DescribeDBSubnetGroups")
    @POST
    @Path("/")
    @XMLResponseParser(DescribeDBSubnetGroupsResultHandler.class)
@@ -88,6 +92,7 @@ public interface SubnetGroupAsyncApi {
    /**
     * @see SubnetGroupApi#delete()
     */
+   @Named("rds:DeleteDBSubnetGroup")
    @POST
    @Path("/")
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)

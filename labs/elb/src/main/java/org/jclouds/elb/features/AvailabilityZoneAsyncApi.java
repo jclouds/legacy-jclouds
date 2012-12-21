@@ -22,6 +22,7 @@ import static org.jclouds.aws.reference.FormParameters.ACTION;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -53,6 +54,7 @@ public interface AvailabilityZoneAsyncApi {
    /**
     * @see AvailabilityZoneApi#addAvailabilityZonesToLoadBalancer
     */
+   @Named("elasticloadbalancing:EnableAvailabilityZonesForLoadBalancer")
    @POST
    @Path("/")
    @XMLResponseParser(AvailabilityZonesResultHandler.class)
@@ -65,6 +67,7 @@ public interface AvailabilityZoneAsyncApi {
    /**
     * @see AvailabilityZoneApi#addAvailabilityZoneToLoadBalancer
     */
+   @Named("elasticloadbalancing:EnableAvailabilityZonesForLoadBalancer")
    @POST
    @Path("/")
    @XMLResponseParser(AvailabilityZonesResultHandler.class)
@@ -76,6 +79,7 @@ public interface AvailabilityZoneAsyncApi {
    /**
     * @see AvailabilityZoneApi#removeAvailabilityZonesFromLoadBalancer
     */
+   @Named("elasticloadbalancing:DisableAvailabilityZonesForLoadBalancer")
    @POST
    @Path("/")
    @XMLResponseParser(AvailabilityZonesResultHandler.class)
@@ -87,6 +91,7 @@ public interface AvailabilityZoneAsyncApi {
    /**
     * @see AvailabilityZoneApi#removeAvailabilityZoneFromLoadBalancer
     */
+   @Named("elasticloadbalancing:DisableAvailabilityZonesForLoadBalancer")
    @POST
    @Path("/")
    @XMLResponseParser(AvailabilityZonesResultHandler.class)

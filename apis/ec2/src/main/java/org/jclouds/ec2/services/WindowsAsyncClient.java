@@ -22,6 +22,7 @@ import static org.jclouds.aws.reference.FormParameters.ACTION;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -61,6 +62,7 @@ public interface WindowsAsyncClient {
    /**
     * @see WindowsClient#bundleInstanceInRegion
     */
+   @Named("ec2:BundleInstance")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "BundleInstance")
@@ -75,6 +77,7 @@ public interface WindowsAsyncClient {
    /**
     * @see WindowsClient#cancelBundleTaskInRegion
     */
+   @Named("ec2:CancelBundleTask")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "CancelBundleTask")
@@ -86,6 +89,7 @@ public interface WindowsAsyncClient {
    /**
     * @see BundleTaskClient#describeBundleTasksInRegion
     */
+   @Named("ec2:DescribeBundleTasks")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribeBundleTasks")
@@ -98,6 +102,7 @@ public interface WindowsAsyncClient {
    /**
     * @see WindowsClient#getPasswordDataInRegion
     */
+   @Named("ec2:GetPasswordData")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "GetPasswordData")

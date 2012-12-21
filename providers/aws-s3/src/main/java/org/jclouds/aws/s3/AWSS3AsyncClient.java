@@ -22,6 +22,7 @@ import static org.jclouds.blobstore.attr.BlobScopes.CONTAINER;
 
 import java.util.Map;
 
+import javax.inject.Named;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -75,6 +76,7 @@ public interface AWSS3AsyncClient extends S3AsyncClient {
    /**
     * @see AWSS3Client#initiateMultipartUpload
     */
+   @Named("s3:PutObject")
    @POST
    @QueryParams(keys = "uploads")
    @Path("/{key}")
@@ -87,6 +89,7 @@ public interface AWSS3AsyncClient extends S3AsyncClient {
    /**
     * @see AWSS3Client#abortMultipartUpload
     */
+   @Named("s3:AbortMultipartUpload")
    @DELETE
    @Path("/{key}")
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
@@ -97,6 +100,7 @@ public interface AWSS3AsyncClient extends S3AsyncClient {
    /**
     * @see AWSS3Client#uploadPart
     */
+   @Named("s3:PutObject")
    @PUT
    @Path("/{key}")
    @ResponseParser(ParseETagHeader.class)
@@ -108,6 +112,7 @@ public interface AWSS3AsyncClient extends S3AsyncClient {
    /**
     * @see AWSS3Client#completeMultipartUpload
     */
+   @Named("s3:PutObject")
    @POST
    @Path("/{key}")
    @ResponseParser(ETagFromHttpResponseViaRegex.class)
@@ -119,6 +124,7 @@ public interface AWSS3AsyncClient extends S3AsyncClient {
    /**
     * @see AWSS3Client#deleteObjects
     */
+   @Named("s3:DeleteObject")
    @POST                              
    @Path("/")
    @QueryParams(keys = "delete")

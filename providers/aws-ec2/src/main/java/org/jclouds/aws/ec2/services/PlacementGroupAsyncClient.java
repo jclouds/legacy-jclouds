@@ -22,6 +22,7 @@ import static org.jclouds.aws.reference.FormParameters.ACTION;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -57,6 +58,7 @@ public interface PlacementGroupAsyncClient {
    /**
     * @see PlacementGroupClient#createPlacementGroupInRegion(String,String,String)
     */
+   @Named("ec2:CreatePlacementGroup")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "CreatePlacementGroup")
@@ -67,6 +69,7 @@ public interface PlacementGroupAsyncClient {
    /**
     * @see PlacementGroupClient#createPlacementGroupInRegion(String,String)
     */
+   @Named("ec2:CreatePlacementGroup")
    @POST
    @Path("/")
    @FormParams(keys = { ACTION, "Strategy" }, values = { "CreatePlacementGroup", "cluster" })
@@ -76,6 +79,7 @@ public interface PlacementGroupAsyncClient {
    /**
     * @see PlacementGroupClient#deletePlacementGroupInRegion
     */
+   @Named("ec2:DeletePlacementGroup")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DeletePlacementGroup")
@@ -86,6 +90,7 @@ public interface PlacementGroupAsyncClient {
    /**
     * @see PlacementGroupClient#describePlacementGroupsInRegion
     */
+   @Named("ec2:DescribePlacementGroups")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribePlacementGroups")

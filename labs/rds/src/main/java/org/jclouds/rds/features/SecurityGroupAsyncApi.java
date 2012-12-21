@@ -20,6 +20,7 @@ package org.jclouds.rds.features;
 
 import static org.jclouds.aws.reference.FormParameters.ACTION;
 
+import javax.inject.Named;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -57,6 +58,7 @@ public interface SecurityGroupAsyncApi {
    /**
     * @see SecurityGroupApi#createWithNameAndDescription
     */
+   @Named("rds:CreateDBSecurityGroup")
    @POST
    @Path("/")
    @XMLResponseParser(SecurityGroupHandler.class)
@@ -67,6 +69,7 @@ public interface SecurityGroupAsyncApi {
    /**
     * @see SecurityGroupApi#createInVPCWithNameAndDescription
     */
+   @Named("rds:CreateDBSecurityGroup")
    @POST
    @Path("/")
    @XMLResponseParser(SecurityGroupHandler.class)
@@ -77,6 +80,7 @@ public interface SecurityGroupAsyncApi {
    /**
     * @see SecurityGroupApi#get()
     */
+   @Named("rds:DescribeDBSecurityGroups")
    @POST
    @Path("/")
    @XMLResponseParser(SecurityGroupHandler.class)
@@ -87,6 +91,7 @@ public interface SecurityGroupAsyncApi {
    /**
     * @see SecurityGroupApi#list()
     */
+   @Named("rds:DescribeDBSecurityGroups")
    @POST
    @Path("/")
    @XMLResponseParser(DescribeDBSecurityGroupsResultHandler.class)
@@ -97,6 +102,7 @@ public interface SecurityGroupAsyncApi {
    /**
     * @see SecurityGroupApi#list(ListSecurityGroupsOptions)
     */
+   @Named("rds:DescribeDBSecurityGroups")
    @POST
    @Path("/")
    @XMLResponseParser(DescribeDBSecurityGroupsResultHandler.class)
@@ -106,6 +112,7 @@ public interface SecurityGroupAsyncApi {
    /**
     * @see SecurityGroupApi#authorizeIngressToIPRange
     */
+   @Named("rds:AuthorizeDBSecurityGroupIngress")
    @POST
    @Path("/")
    @XMLResponseParser(SecurityGroupHandler.class)
@@ -116,6 +123,7 @@ public interface SecurityGroupAsyncApi {
    /**
     * @see SecurityGroupApi#authorizeIngressToEC2SecurityGroupOfOwner
     */
+   @Named("rds:AuthorizeDBSecurityGroupIngress")
    @POST
    @Path("/")
    @XMLResponseParser(SecurityGroupHandler.class)
@@ -128,6 +136,7 @@ public interface SecurityGroupAsyncApi {
    /**
     * @see SecurityGroupApi#authorizeIngressToVPCSecurityGroup
     */
+   @Named("rds:AuthorizeDBSecurityGroupIngress")
    @POST
    @Path("/")
    @XMLResponseParser(SecurityGroupHandler.class)
@@ -139,6 +148,7 @@ public interface SecurityGroupAsyncApi {
    /**
     * @see SecurityGroupApi#revokeIngressFromIPRange
     */
+   @Named("rds:RevokeDBSecurityGroupIngress")
    @POST
    @Path("/")
    @XMLResponseParser(SecurityGroupHandler.class)
@@ -149,6 +159,7 @@ public interface SecurityGroupAsyncApi {
    /**
     * @see SecurityGroupApi#revokeIngressFromEC2SecurityGroupOfOwner
     */
+   @Named("rds:RevokeDBSecurityGroupIngress")
    @POST
    @Path("/")
    @XMLResponseParser(SecurityGroupHandler.class)
@@ -161,6 +172,7 @@ public interface SecurityGroupAsyncApi {
    /**
     * @see SecurityGroupApi#revokeIngressFromVPCSecurityGroup
     */
+   @Named("rds:RevokeDBSecurityGroupIngress")
    @POST
    @Path("/")
    @XMLResponseParser(SecurityGroupHandler.class)
@@ -171,6 +183,7 @@ public interface SecurityGroupAsyncApi {
    /**
     * @see SecurityGroupApi#delete()
     */
+   @Named("rds:DeleteDBSecurityGroup")
    @POST
    @Path("/")
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)

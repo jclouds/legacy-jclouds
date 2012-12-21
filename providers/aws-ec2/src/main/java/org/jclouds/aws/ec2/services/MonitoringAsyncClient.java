@@ -22,6 +22,7 @@ import static org.jclouds.aws.reference.FormParameters.ACTION;
 
 import java.util.Map;
 
+import javax.inject.Named;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -54,6 +55,7 @@ public interface MonitoringAsyncClient {
    /**
     * @see Monitoring#monitorInstancesInRegion
     */
+   @Named("ec2:MonitorInstances")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "MonitorInstances")
@@ -66,6 +68,7 @@ public interface MonitoringAsyncClient {
    /**
     * @see Monitoring#monitorInstancesInRegion
     */
+   @Named("ec2:UnmonitorInstances")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "UnmonitorInstances")

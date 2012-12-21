@@ -22,6 +22,7 @@ import static org.jclouds.aws.reference.FormParameters.ACTION;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -57,6 +58,7 @@ public interface ElasticIPAddressAsyncClient {
    /**
     * @see BaseEC2Client#allocateAddressInRegion
     */
+   @Named("ec2:AllocateAddress")
    @POST
    @Path("/")
    @XMLResponseParser(AllocateAddressResponseHandler.class)
@@ -67,6 +69,7 @@ public interface ElasticIPAddressAsyncClient {
    /**
     * @see BaseEC2Client#associateAddressInRegion
     */
+   @Named("ec2:AssociateAddress")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "AssociateAddress")
@@ -77,6 +80,7 @@ public interface ElasticIPAddressAsyncClient {
    /**
     * @see BaseEC2Client#disassociateAddressInRegion
     */
+   @Named("ec2:DisassociateAddress")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DisassociateAddress")
@@ -87,6 +91,7 @@ public interface ElasticIPAddressAsyncClient {
    /**
     * @see BaseEC2Client#releaseAddressInRegion
     */
+   @Named("ec2:ReleaseAddress")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "ReleaseAddress")
@@ -97,6 +102,7 @@ public interface ElasticIPAddressAsyncClient {
    /**
     * @see BaseEC2Client#describeAddressesInRegion
     */
+   @Named("ec2:DescribeAddresses")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribeAddresses")

@@ -22,6 +22,7 @@ import static org.jclouds.aws.reference.FormParameters.ACTION;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -71,6 +72,7 @@ public interface ElasticBlockStoreAsyncClient {
    /**
     * @see ElasticBlockStoreClient#createVolumeFromSnapshotInAvailabilityZone
     */
+   @Named("ec2:CreateVolume")   
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "CreateVolume")
@@ -82,6 +84,7 @@ public interface ElasticBlockStoreAsyncClient {
    /**
     * @see ElasticBlockStoreClient#createVolumeFromSnapshotInAvailabilityZone
     */
+   @Named("ec2:CreateVolume")   
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "CreateVolume")
@@ -93,6 +96,7 @@ public interface ElasticBlockStoreAsyncClient {
    /**
     * @see ElasticBlockStoreClient#createVolumeInAvailabilityZone
     */
+   @Named("ec2:CreateVolume")   
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "CreateVolume")
@@ -105,6 +109,7 @@ public interface ElasticBlockStoreAsyncClient {
     * @see ElasticBlockStoreClient#describeVolumesInRegion
     */
    @POST
+   @Named("ec2:DescribeVolumes")   
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribeVolumes")
    @XMLResponseParser(DescribeVolumesResponseHandler.class)
@@ -115,6 +120,7 @@ public interface ElasticBlockStoreAsyncClient {
    /**
     * @see ElasticBlockStoreClient#deleteVolumeInRegion
     */
+   @Named("ec2:DeleteVolume")   
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DeleteVolume")
@@ -124,6 +130,7 @@ public interface ElasticBlockStoreAsyncClient {
    /**
     * @see ElasticBlockStoreClient#detachVolumeInRegion
     */
+   @Named("ec2:DetachVolume")   
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DetachVolume")
@@ -134,6 +141,7 @@ public interface ElasticBlockStoreAsyncClient {
    /**
     * @see ElasticBlockStoreClient#attachVolumeInRegion
     */
+   @Named("ec2:AttachVolume")   
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "AttachVolume")
@@ -146,6 +154,7 @@ public interface ElasticBlockStoreAsyncClient {
    /**
     * @see ElasticBlockStoreClient#createSnapshotInRegion
     */
+   @Named("ec2:CreateSnapshot")   
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "CreateSnapshot")
@@ -157,6 +166,7 @@ public interface ElasticBlockStoreAsyncClient {
    /**
     * @see ElasticBlockStoreClient#describeSnapshotsInRegion
     */
+   @Named("ec2:DescribeSnapshots")   
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribeSnapshots")
@@ -169,6 +179,7 @@ public interface ElasticBlockStoreAsyncClient {
    /**
     * @see ElasticBlockStoreClient#deleteSnapshotInRegion
     */
+   @Named("ec2:DeleteSnapshot")   
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DeleteSnapshot")
@@ -179,6 +190,7 @@ public interface ElasticBlockStoreAsyncClient {
    /**
     * @see ElasticBlockStoreClient#addCreateVolumePermissionsToSnapshotInRegion
     */
+   @Named("ec2:ModifySnapshotAttribute")   
    @POST
    @Path("/")
    @FormParams(keys = { ACTION, "OperationType", "Attribute" }, values = { "ModifySnapshotAttribute", "add",
@@ -192,6 +204,7 @@ public interface ElasticBlockStoreAsyncClient {
    /**
     * @see ElasticBlockStoreClient#removeCreateVolumePermissionsFromSnapshotInRegion
     */
+   @Named("ec2:ModifySnapshotAttribute")   
    @POST
    @Path("/")
    @FormParams(keys = { ACTION, "OperationType", "Attribute" }, values = { "ModifySnapshotAttribute", "remove",
@@ -205,6 +218,7 @@ public interface ElasticBlockStoreAsyncClient {
    /**
     * @see ElasticBlockStoreClient#getCreateVolumePermissionForSnapshotInRegion
     */
+   @Named("ec2:DescribeSnapshotAttribute")   
    @POST
    @Path("/")
    @FormParams(keys = { ACTION, "Attribute" }, values = { "DescribeSnapshotAttribute", "createVolumePermission" })
@@ -216,6 +230,7 @@ public interface ElasticBlockStoreAsyncClient {
    /**
     * @see ElasticBlockStoreClient#resetCreateVolumePermissionsOnSnapshotInRegion
     */
+   @Named("ec2:ResetSnapshotAttribute")   
    @POST
    @Path("/")
    @FormParams(keys = { ACTION, "Attribute" }, values = { "ResetSnapshotAttribute", "createVolumePermission" })
