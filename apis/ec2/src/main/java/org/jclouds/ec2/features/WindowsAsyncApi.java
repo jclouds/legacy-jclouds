@@ -20,6 +20,7 @@ package org.jclouds.ec2.features;
 
 import static org.jclouds.aws.reference.FormParameters.ACTION;
 
+import javax.inject.Named;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -55,6 +56,7 @@ public interface WindowsAsyncApi {
    /**
     * @see WindowsApi#getPasswordDataForInstance
     */
+   @Named("ec2:GetPasswordData")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "GetPasswordData")

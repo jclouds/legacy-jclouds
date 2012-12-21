@@ -20,6 +20,7 @@ package org.jclouds.rds.features;
 
 import static org.jclouds.aws.reference.FormParameters.ACTION;
 
+import javax.inject.Named;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -60,6 +61,7 @@ public interface InstanceAsyncApi {
    /**
     * @see InstanceApi#create
     */
+   @Named("rds:CreateDBInstance")
    @POST
    @Path("/")
    @XMLResponseParser(InstanceHandler.class)
@@ -70,6 +72,7 @@ public interface InstanceAsyncApi {
    /**
     * @see InstanceApi#createInAvailabilityZone
     */
+   @Named("rds:CreateDBInstance")
    @POST
    @Path("/")
    @XMLResponseParser(InstanceHandler.class)
@@ -81,6 +84,7 @@ public interface InstanceAsyncApi {
    /**
     * @see InstanceApi#createMultiAZ
     */
+   @Named("rds:CreateDBInstance")
    @POST
    @Path("/")
    @XMLResponseParser(InstanceHandler.class)
@@ -91,6 +95,7 @@ public interface InstanceAsyncApi {
    /**
     * @see InstanceApi#get()
     */
+   @Named("rds:DescribeDBInstances")
    @POST
    @Path("/")
    @XMLResponseParser(InstanceHandler.class)
@@ -101,6 +106,7 @@ public interface InstanceAsyncApi {
    /**
     * @see InstanceApi#list()
     */
+   @Named("rds:DescribeDBInstances")
    @POST
    @Path("/")
    @XMLResponseParser(DescribeDBInstancesResultHandler.class)
@@ -111,6 +117,7 @@ public interface InstanceAsyncApi {
    /**
     * @see InstanceApi#list(ListInstancesOptions)
     */
+   @Named("rds:DescribeDBInstances")
    @POST
    @Path("/")
    @XMLResponseParser(DescribeDBInstancesResultHandler.class)
@@ -120,6 +127,7 @@ public interface InstanceAsyncApi {
    /**
     * @see InstanceApi#delete()
     */
+   @Named("rds:DeleteDBInstance")
    @POST
    @Path("/")
    @XMLResponseParser(InstanceHandler.class)
@@ -130,6 +138,7 @@ public interface InstanceAsyncApi {
    /**
     * @see InstanceApi#deleteAndSaveSnapshot
     */
+   @Named("rds:DeleteDBInstance")
    @POST
    @Path("/")
    @XMLResponseParser(InstanceHandler.class)

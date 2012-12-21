@@ -22,6 +22,7 @@ import static org.jclouds.aws.reference.FormParameters.ACTION;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -64,6 +65,7 @@ public interface AWSSecurityGroupAsyncClient extends SecurityGroupAsyncClient {
    /**
     * @see AWSSecurityGroupClient#createSecurityGroupInRegion
     */
+   @Named("ec2:CreateSecurityGroup")
    @POST
    @Path("/")
    @XMLResponseParser(CreateSecurityGroupResponseHandler.class)
@@ -77,6 +79,7 @@ public interface AWSSecurityGroupAsyncClient extends SecurityGroupAsyncClient {
     * @see AWSSecurityGroupClient#authorizeSecurityGroupIngressInRegion(String,
     *      String,IpPermission)
     */
+   @Named("ec2:AuthorizeSecurityGroupIngress")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "AuthorizeSecurityGroupIngress")
@@ -88,6 +91,7 @@ public interface AWSSecurityGroupAsyncClient extends SecurityGroupAsyncClient {
     * @see AWSSecurityGroupClient#authorizeSecurityGroupIngressInRegion(String,
     *      String,Iterable)
     */
+   @Named("ec2:AuthorizeSecurityGroupIngress")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "AuthorizeSecurityGroupIngress")
@@ -100,6 +104,7 @@ public interface AWSSecurityGroupAsyncClient extends SecurityGroupAsyncClient {
     * @see AWSSecurityGroupClient#revokeSecurityGroupIngressInRegion(@Nullable
     *      Region, String,IpPermission)
     */
+   @Named("ec2:RevokeSecurityGroupIngress")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "RevokeSecurityGroupIngress")
@@ -111,6 +116,7 @@ public interface AWSSecurityGroupAsyncClient extends SecurityGroupAsyncClient {
     * @see AWSSecurityGroupClient#revokeSecurityGroupIngressInRegion(@Nullable
     *      Region, String,Iterable)
     */
+   @Named("ec2:RevokeSecurityGroupIngress")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "RevokeSecurityGroupIngress")
@@ -122,6 +128,7 @@ public interface AWSSecurityGroupAsyncClient extends SecurityGroupAsyncClient {
    /**
     * @see AWSSecurityGroupClient#deleteSecurityGroupInRegionById
     */
+   @Named("ec2:DeleteSecurityGroup")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DeleteSecurityGroup")
@@ -132,6 +139,7 @@ public interface AWSSecurityGroupAsyncClient extends SecurityGroupAsyncClient {
    /**
     * @see AWSSecurityGroupClient#describeSecurityGroupsInRegionById
     */
+   @Named("ec2:DescribeSecurityGroups")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribeSecurityGroups")

@@ -20,6 +20,7 @@ package org.jclouds.elb.features;
 
 import static org.jclouds.aws.reference.FormParameters.ACTION;
 
+import javax.inject.Named;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -67,6 +68,7 @@ public interface LoadBalancerAsyncApi {
    /**
     * @see LoadBalancerApi#createListeningInAvailabilityZones()
     */
+   @Named("elasticloadbalancing:CreateLoadBalancer")
    @POST
    @Path("/")
    @XMLResponseParser(CreateLoadBalancerResponseHandler.class)
@@ -78,6 +80,7 @@ public interface LoadBalancerAsyncApi {
    /**
     * @see LoadBalancerApi#createListeningInAvailabilityZones()
     */
+   @Named("elasticloadbalancing:CreateLoadBalancer")
    @POST
    @Path("/")
    @XMLResponseParser(CreateLoadBalancerResponseHandler.class)
@@ -89,6 +92,7 @@ public interface LoadBalancerAsyncApi {
    /**
     * @see LoadBalancerApi#createListeningInSubnetAssignedToSecurityGroups()
     */
+   @Named("elasticloadbalancing:CreateLoadBalancer")
    @POST
    @Path("/")
    @XMLResponseParser(CreateLoadBalancerResponseHandler.class)
@@ -101,6 +105,7 @@ public interface LoadBalancerAsyncApi {
    /**
     * @see LoadBalancerApi#createListeningInSubnetsAssignedToSecurityGroups()
     */
+   @Named("elasticloadbalancing:CreateLoadBalancer")
    @POST
    @Path("/")
    @XMLResponseParser(CreateLoadBalancerResponseHandler.class)
@@ -113,6 +118,7 @@ public interface LoadBalancerAsyncApi {
    /**
     * @see LoadBalancerApi#get()
     */
+   @Named("elasticloadbalancing:DescribeLoadBalancers")
    @POST
    @Path("/")
    @XMLResponseParser(LoadBalancerHandler.class)
@@ -123,6 +129,7 @@ public interface LoadBalancerAsyncApi {
    /**
     * @see LoadBalancerApi#list()
     */
+   @Named("elasticloadbalancing:DescribeLoadBalancers")
    @POST
    @Path("/")
    @XMLResponseParser(DescribeLoadBalancersResultHandler.class)
@@ -134,6 +141,7 @@ public interface LoadBalancerAsyncApi {
    /**
     * @see LoadBalancerApi#list(ListLoadBalancersOptions)
     */
+   @Named("elasticloadbalancing:DescribeLoadBalancers")
    @POST
    @Path("/")
    @XMLResponseParser(DescribeLoadBalancersResultHandler.class)
@@ -144,6 +152,7 @@ public interface LoadBalancerAsyncApi {
    /**
     * @see LoadBalancerApi#delete()
     */
+   @Named("elasticloadbalancing:DeleteLoadBalancer")
    @POST
    @Path("/")
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)

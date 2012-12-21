@@ -23,6 +23,7 @@ import static org.jclouds.aws.reference.FormParameters.ACTION;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
@@ -62,6 +63,7 @@ public interface TagAsyncClient {
     /**
      * @see TagClient#createTagsInRegion(String, Iterable, Map)
      */
+    @Named("ec2:CreateTags")
     @POST
     @Path("/")
     @FormParams(keys = ACTION, values = "CreateTags")
@@ -72,6 +74,7 @@ public interface TagAsyncClient {
     /**
      * @see TagClient#deleteTagsInRegion(String, Iterable, Map)
      */
+    @Named("ec2:DeleteTags")
     @POST
     @Path("/")
     @FormParams(keys = ACTION, values = "DeleteTags")
@@ -83,6 +86,7 @@ public interface TagAsyncClient {
     /**
      * @see TagClient#describeTagsInRegion(String, Map)
      */
+    @Named("ec2:DescribeTags")
     @POST
     @Path("/")
     @FormParams(keys = ACTION, values = "DescribeTags")

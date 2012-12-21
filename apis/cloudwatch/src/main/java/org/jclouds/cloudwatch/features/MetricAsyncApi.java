@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudwatch.features;
 
+import javax.inject.Named;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -62,6 +63,7 @@ public interface MetricAsyncApi {
    /**
     * @see MetricApi#list()
     */
+   @Named("cloudwatch:ListMetrics")
    @POST
    @Path("/")
    @XMLResponseParser(ListMetricsResponseHandler.class)
@@ -73,6 +75,7 @@ public interface MetricAsyncApi {
    /**
     * @see MetricApi#list(ListMetricsOptions)
     */
+   @Named("cloudwatch:ListMetrics")
    @POST
    @Path("/")
    @XMLResponseParser(ListMetricsResponseHandler.class)
@@ -83,6 +86,7 @@ public interface MetricAsyncApi {
    /**
     * @see MetricApi#getMetricStatistics(GetMetricStatistics)
     */
+   @Named("cloudwatch:GetMetricStatistics")
    @POST
    @Path("/")
    @XMLResponseParser(GetMetricStatisticsResponseHandlerV2.class)
@@ -93,6 +97,7 @@ public interface MetricAsyncApi {
    /**
     * @see MetricApi#getMetricStatistics(GetMetricStatistics, GetMetricStatisticsOptions)
     */
+   @Named("cloudwatch:GetMetricStatistics")
    @POST
    @Path("/")
    @XMLResponseParser(GetMetricStatisticsResponseHandlerV2.class)
@@ -104,6 +109,7 @@ public interface MetricAsyncApi {
    /**
     * @see MetricApi#putMetricsInNamespace(Iterable, String)
     */
+   @Named("cloudwatch:PutMetricData")
    @POST
    @Path("/")
    @FormParams(keys = "Action", values = "PutMetricData")
