@@ -4,7 +4,7 @@ import org.jclouds.http.options.BaseHttpRequestOptions;
 
 /**
  * Optional get CDMI object options Note: We use BaseHttpRequestOptions.pathSuffix to include the
- * CDMI query parameters rather than queryParam or MatrixParam because the CDMI specification is not
+ * CDMI query parameters rather than queryParam because the CDMI specification is not
  * following the standard usage. This is the summary of the CDMI specification: To read one or more
  * requested fields from an existing CDMI container object, one of the following requests shall be
  * performed: GET <root URI>/<ContainerName>/<TheContainerName>/?<fieldname>;<fieldname>;... GET

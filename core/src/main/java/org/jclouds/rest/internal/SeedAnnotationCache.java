@@ -25,7 +25,6 @@ import static org.jclouds.rest.internal.RestAnnotationProcessor.methodToIndexOfP
 import static org.jclouds.rest.internal.RestAnnotationProcessor.methodToIndexOfParamToEndpointParamAnnotations;
 import static org.jclouds.rest.internal.RestAnnotationProcessor.methodToIndexOfParamToFormParamAnnotations;
 import static org.jclouds.rest.internal.RestAnnotationProcessor.methodToIndexOfParamToHeaderParamAnnotations;
-import static org.jclouds.rest.internal.RestAnnotationProcessor.methodToIndexOfParamToMatrixParamAnnotations;
 import static org.jclouds.rest.internal.RestAnnotationProcessor.methodToIndexOfParamToParamParserAnnotations;
 import static org.jclouds.rest.internal.RestAnnotationProcessor.methodToIndexOfParamToPartParamAnnotations;
 import static org.jclouds.rest.internal.RestAnnotationProcessor.methodToIndexOfParamToPathParamAnnotations;
@@ -84,7 +83,6 @@ public class SeedAnnotationCache extends CacheLoader<Class<?>, Boolean> {
                methodToIndexOfParamToBinderParamAnnotation.get(method).get(index);
                methodToIndexOfParamToWrapWithAnnotation.get(method).get(index);
                methodToIndexOfParamToHeaderParamAnnotations.get(method).get(index);
-               methodToIndexOfParamToMatrixParamAnnotations.get(method).get(index);
                methodToIndexOfParamToFormParamAnnotations.get(method).get(index);
                methodToIndexOfParamToQueryParamAnnotations.get(method).get(index);
                methodToIndexOfParamToEndpointAnnotations.get(method).get(index);
