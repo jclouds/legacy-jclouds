@@ -49,13 +49,6 @@ public interface HttpRequestOptions {
     */
    Multimap<String, String> buildFormParameters();
 
-   /**
-    * Builds matrix parameters representing options.
-    * 
-    * @return multimap that may contain matrix parameters.
-    */
-   Multimap<String, String> buildMatrixParameters();
-
    String buildStringPayload();
 
    String buildPathSuffix();

@@ -127,18 +127,6 @@ public class BindToPathTest {
       assertEquals(newRequest.getRequestLine(), "GET http://linkuri?param=value HTTP/1.1");
    }
 
-   public void testBindWithQueryAndMatrixParameters() throws SecurityException, NoSuchMethodException {
-      TestDto dto = new TestDto();
-      Method withEndpointLink = TestEndpointLink.class.getMethod("withEndpointLink", TestDto.class);
-      GeneratedHttpRequest request = GeneratedHttpRequest.builder().declaring(TestEndpointLink.class)
-            .javaMethod(withEndpointLink).args(ImmutableList.<Object> of(dto)).method(HttpMethod.GET)
-            .endpoint(URI.create("http://localhost?param=value;matrix=value2")).build();
-
-      BindToPath binder = new BindToPath();
-      GeneratedHttpRequest newRequest = binder.bindToRequest(request, dto);
-      assertEquals(newRequest.getRequestLine(), "GET http://linkuri?param=value;matrix=value2 HTTP/1.1");
-   }
-
    static interface TestEndpointLink {
       @GET
       void withEndpointLink(@EndpointLink("edit") TestDto dto);
