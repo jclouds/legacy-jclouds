@@ -57,7 +57,6 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.HttpMethod;
-import javax.ws.rs.MatrixParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -111,7 +110,6 @@ import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.MapBinder;
-import org.jclouds.rest.annotations.MatrixParams;
 import org.jclouds.rest.annotations.OnlyElement;
 import org.jclouds.rest.annotations.OverrideRequestFilters;
 import org.jclouds.rest.annotations.ParamParser;
@@ -182,7 +180,6 @@ public class RestAnnotationProcessor<T> {
    static final LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> methodToIndexOfParamToHeaderParamAnnotations = createMethodToIndexOfParamToAnnotation(HeaderParam.class);
    static final LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> methodToIndexOfParamToEndpointAnnotations = createMethodToIndexOfParamToAnnotation(Endpoint.class);
    static final LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> methodToIndexOfParamToEndpointParamAnnotations = createMethodToIndexOfParamToAnnotation(EndpointParam.class);
-   static final LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> methodToIndexOfParamToMatrixParamAnnotations = createMethodToIndexOfParamToAnnotation(MatrixParam.class);
    static final LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> methodToIndexOfParamToFormParamAnnotations = createMethodToIndexOfParamToAnnotation(FormParam.class);
    static final LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> methodToIndexOfParamToQueryParamAnnotations = createMethodToIndexOfParamToAnnotation(QueryParam.class);
    static final LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> methodToIndexOfParamToPathParamAnnotations = createMethodToIndexOfParamToAnnotation(PathParam.class);
@@ -429,7 +426,6 @@ public class RestAnnotationProcessor<T> {
       
       Multimap<String, String> formParams = addFormParams(tokenValues.entries(), method, args);
       Multimap<String, String> queryParams = addQueryParams(tokenValues.entries(), method, args);
-      Multimap<String, String> matrixParams = addMatrixParams(tokenValues.entries(), method, args);
       Multimap<String, String> headers = buildHeaders(tokenValues.entries(), method, args);
       if (r != null)
          headers.putAll(r.getHeaders());
@@ -447,9 +443,6 @@ public class RestAnnotationProcessor<T> {
          for (Entry<String, String> header : options.buildRequestHeaders().entries()) {
             headers.put(header.getKey(), Strings2.replaceTokens(header.getValue(), tokenValues.entries()));
          }
-         for (Entry<String, String> matrix : options.buildMatrixParameters().entries()) {
-            matrixParams.put(matrix.getKey(), Strings2.replaceTokens(matrix.getValue(), tokenValues.entries()));
-         }
          for (Entry<String, String> query : options.buildQueryParameters().entries()) {
             queryParams.put(query.getKey(), Strings2.replaceTokens(query.getValue(), tokenValues.entries()));
          }
@@ -464,11 +457,6 @@ public class RestAnnotationProcessor<T> {
          String stringPayload = options.buildStringPayload();
          if (stringPayload != null)
             payload = Payloads.newStringPayload(stringPayload);
-      }
-
-      if (matrixParams.size() > 0) {
-         for (String key : matrixParams.keySet())
-            builder.matrixParam(key, Lists.newArrayList(matrixParams.get(key)).toArray());
       }
 
       if (queryParams.size() > 0) {
@@ -587,25 +575,6 @@ public class RestAnnotationProcessor<T> {
       return builder.build();
    }
 
-   private Multimap<String, String> addMatrixParams(Collection<Entry<String, String>> tokenValues, Method method,
-         Object... args) {
-      Multimap<String, String> matrixMap = LinkedListMultimap.create();
-      if (declaring.isAnnotationPresent(MatrixParams.class)) {
-         MatrixParams matrix = declaring.getAnnotation(MatrixParams.class);
-         addMatrix(matrixMap, matrix, tokenValues);
-      }
-
-      if (method.isAnnotationPresent(MatrixParams.class)) {
-         MatrixParams matrix = method.getAnnotation(MatrixParams.class);
-         addMatrix(matrixMap, matrix, tokenValues);
-      }
-
-      for (Entry<String, String> matrix : getMatrixParamKeyValues(method, args).entries()) {
-         matrixMap.put(matrix.getKey(), Strings2.replaceTokens(matrix.getValue(), tokenValues));
-      }
-      return matrixMap;
-   }
-
    private Multimap<String, String> addFormParams(Collection<Entry<String, String>> tokenValues, Method method,
          Object... args) {
       Multimap<String, String> formMap = LinkedListMultimap.create();
@@ -664,18 +633,6 @@ public class RestAnnotationProcessor<T> {
             queryParams.put(query.keys()[i], null);
          } else {
             queryParams.put(query.keys()[i], Strings2.replaceTokens(query.values()[i], tokenValues));
-         }
-      }
-   }
-
-   private void addMatrix(Multimap<String, String> matrixParams, MatrixParams matrix,
-         Collection<Entry<String, String>> tokenValues) {
-      for (int i = 0; i < matrix.keys().length; i++) {
-         if (matrix.values()[i].equals(MatrixParams.NULL)) {
-            matrixParams.removeAll(matrix.keys()[i]);
-            matrixParams.put(matrix.keys()[i], null);
-         } else {
-            matrixParams.put(matrix.keys()[i], Strings2.replaceTokens(matrix.values()[i], tokenValues));
          }
       }
    }
@@ -1247,33 +1204,6 @@ public class RestAnnotationProcessor<T> {
          encoded.put(entry.getKey(), Strings2.urlEncode(entry.getValue(), skips));
       }
       return encoded;
-   }
-
-   //TODO: change to LoadingCache<ClassMethodArgs, Multimap<String,String> and move this logic to the CacheLoader.
-   private Multimap<String, String> getMatrixParamKeyValues(Method method, Object... args) {
-      Multimap<String, String> matrixParamValues = LinkedHashMultimap.create();
-      LoadingCache<Integer, Set<Annotation>> indexToMatrixParam = methodToIndexOfParamToMatrixParamAnnotations
-            .getUnchecked(method);
-
-      LoadingCache<Integer, Set<Annotation>> indexToParamExtractor = methodToIndexOfParamToParamParserAnnotations
-            .getUnchecked(method);
-      for (Entry<Integer, Set<Annotation>> entry : indexToMatrixParam.asMap().entrySet()) {
-         for (Annotation key : entry.getValue()) {
-            Set<Annotation> extractors = indexToParamExtractor.getUnchecked(entry.getKey());
-            String paramKey = ((MatrixParam) key).value();
-            Optional<?> paramValue = getParamValue(method, args, extractors, entry, paramKey);
-            if (paramValue.isPresent())
-               matrixParamValues.put(paramKey, paramValue.get().toString());
-         }
-      }
-
-      if (method.isAnnotationPresent(MatrixParam.class) && method.isAnnotationPresent(ParamParser.class)) {
-         String paramKey = method.getAnnotation(MatrixParam.class).value();
-         String paramValue = injector.getInstance(method.getAnnotation(ParamParser.class).value()).apply(args);
-         matrixParamValues.put(paramKey, paramValue);
-
-      }
-      return matrixParamValues;
    }
 
    //TODO: change to LoadingCache<ClassMethodArgs, Multimap<String,String> and move this logic to the CacheLoader.

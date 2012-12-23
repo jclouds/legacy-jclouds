@@ -298,9 +298,8 @@ public class GetOptions extends BaseHttpRequestOptions {
 
    @Override
    public String toString() {
-      return "[matrixParameters=" + matrixParameters + ", formParameters=" + formParameters + ", queryParameters="
-            + queryParameters + ", headers=" + headers + ", payload=" + payload + ", pathSuffix=" + pathSuffix
-            + ", ranges=" + ranges + "]";
+      return "[formParameters=" + formParameters + ", queryParameters=" + queryParameters + ", headers=" + headers
+            + ", payload=" + payload + ", pathSuffix=" + pathSuffix + ", ranges=" + ranges + "]";
    }
 
 }

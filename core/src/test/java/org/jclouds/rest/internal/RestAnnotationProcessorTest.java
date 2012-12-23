@@ -58,7 +58,6 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.HttpMethod;
-import javax.ws.rs.MatrixParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -114,7 +113,6 @@ import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.MapBinder;
-import org.jclouds.rest.annotations.MatrixParams;
 import org.jclouds.rest.annotations.OnlyElement;
 import org.jclouds.rest.annotations.OverrideRequestFilters;
 import org.jclouds.rest.annotations.ParamParser;
@@ -1456,11 +1454,6 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       }
 
       @GET
-      @Path("/")
-      public void oneMatrixParamExtractor(@MatrixParam("one") @ParamParser(FirstCharacter.class) String one) {
-      }
-
-      @GET
       @Path("/{path}")
       @PathParam("path")
       @ParamParser(FirstCharacterFirstElement.class)
@@ -1494,25 +1487,6 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       assertRequestLineEquals(request, "GET http://localhost:9999/?one=l HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
-   }
-
-   @Test
-   public void testMatrixParamExtractor() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = TestPath.class.getMethod("oneMatrixParamExtractor", String.class);
-      HttpRequest request = factory(TestPath.class).createRequest(method, new Object[] { "localhost" });
-      assertRequestLineEquals(request, "GET http://localhost:9999/;one=l HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "");
-      assertPayloadEquals(request, null, null, false);
-   }
-   
-   @Test
-   public void testNiceNPEMatrixParam() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = TestPath.class.getMethod("oneMatrixParamExtractor", String.class);
-      try {
-         factory(TestPath.class).createRequest(method, (String) null);
-      } catch (NullPointerException e) {
-         assertEquals(e.getMessage(), "param{one} for method TestPath.oneMatrixParamExtractor");
-      }
    }
    
    @Test
@@ -1728,104 +1702,6 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       String query = factory(TestQueryReplace.class)
             .createRequest(twoQuerysOutOfOrder, new Object[] { "robot", "eggs" }).getEndpoint().getQuery();
       assertEquals(query, "x-amz-copy-source=/eggs/robot");
-   }
-
-   public class TestReplaceMatrixOptions extends BaseHttpRequestOptions {
-      public TestReplaceMatrixOptions() {
-         this.matrixParameters.put("x-amz-copy-source", "/{bucket}");
-      }
-   }
-
-   @Test
-   public void testMatrixInOptions() throws SecurityException, NoSuchMethodException {
-      Method oneMatrix = TestMatrixReplace.class.getMethod("matrixInOptions", String.class,
-            TestReplaceMatrixOptions.class);
-      String path = factory(TestMatrixReplace.class)
-            .createRequest(oneMatrix, new Object[] { "robot", new TestReplaceMatrixOptions() }).getEndpoint().getPath();
-      assertEquals(path, "/;x-amz-copy-source=/robot");
-   }
-
-   @Path("/")
-   public class TestMatrixReplace {
-
-      @GET
-      @Path("/")
-      public void matrixInOptions(@PathParam("bucket") String path, TestReplaceMatrixOptions options) {
-      }
-
-      @GET
-      @Path("/")
-      @MatrixParams(keys = "x-amz-copy-source", values = "/{bucket}")
-      public void oneMatrix(@PathParam("bucket") String path) {
-      }
-
-      @GET
-      @Path("/")
-      @MatrixParams(keys = { "slash", "hyphen" }, values = { "/{bucket}", "-{bucket}" })
-      public void twoMatrix(@PathParam("bucket") String path) {
-      }
-
-      @GET
-      @Path("/")
-      @MatrixParams(keys = "x-amz-copy-source", values = "/{bucket}/{key}")
-      public void twoMatrixs(@PathParam("bucket") String path, @PathParam("key") String path2) {
-      }
-
-      @GET
-      @Path("/")
-      @MatrixParams(keys = "x-amz-copy-source", values = "/{bucket}/{key}")
-      public void twoMatrixsOutOfOrder(@PathParam("key") String path, @PathParam("bucket") String path2) {
-      }
-   }
-
-   @Test
-   public void testBuildTwoMatrix() throws SecurityException, NoSuchMethodException {
-      Method oneMatrix = TestMatrixReplace.class.getMethod("twoMatrix", String.class);
-      String path = factory(TestMatrixReplace.class).createRequest(oneMatrix, new Object[] { "robot" }).getEndpoint()
-            .getPath();
-      assertEquals(path, "/;slash=/robot;hyphen=-robot");
-   }
-
-   @MatrixParams(keys = "x-amz-copy-source", values = "/{bucket}")
-   @Path("/")
-   public class TestClassMatrix {
-      @GET
-      @Path("/")
-      public void oneMatrix(@PathParam("bucket") String path) {
-      }
-   }
-
-   @Test
-   public void testBuildOneClassMatrix() throws SecurityException, NoSuchMethodException {
-      Method oneMatrix = TestClassMatrix.class.getMethod("oneMatrix", String.class);
-      String path = factory(TestClassMatrix.class).createRequest(oneMatrix, new Object[] { "robot" }).getEndpoint()
-            .getPath();
-      assertEquals(path, "/;x-amz-copy-source=/robot");
-   }
-
-   @Test
-   public void testBuildOneMatrix() throws SecurityException, NoSuchMethodException {
-      Method oneMatrix = TestMatrixReplace.class.getMethod("oneMatrix", String.class);
-      String path = factory(TestMatrixReplace.class).createRequest(oneMatrix, new Object[] { "robot" }).getEndpoint()
-            .getPath();
-      assertEquals(path, "/;x-amz-copy-source=/robot");
-   }
-
-   @Test
-   public void testBuildTwoMatrixs() throws SecurityException, NoSuchMethodException {
-      Method twoMatrixs = TestMatrixReplace.class.getMethod("twoMatrixs", String.class, String.class);
-      String path = factory(TestMatrixReplace.class).createRequest(twoMatrixs, new Object[] { "robot", "eggs" })
-            .getEndpoint().getPath();
-      assertEquals(path, "/;x-amz-copy-source=/robot/eggs");
-   }
-
-   @Test
-   public void testBuildTwoMatrixsOutOfOrder() throws SecurityException, NoSuchMethodException {
-      Method twoMatrixsOutOfOrder = TestMatrixReplace.class.getMethod("twoMatrixsOutOfOrder", String.class,
-            String.class);
-      String path = factory(TestMatrixReplace.class)
-            .createRequest(twoMatrixsOutOfOrder, new Object[] { "robot", "eggs" }).getEndpoint().getPath();
-      assertEquals(path, "/;x-amz-copy-source=/eggs/robot");
    }
 
    public interface TestTransformers {

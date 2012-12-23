@@ -31,7 +31,6 @@ import com.google.common.collect.Multimap;
  */
 public class BaseHttpRequestOptions implements HttpRequestOptions {
 
-   protected final Multimap<String, String> matrixParameters = LinkedHashMultimap.create();
    protected final Multimap<String, String> formParameters = LinkedHashMultimap.create();
    protected final Multimap<String, String> queryParameters = LinkedHashMultimap.create();
    protected final Multimap<String, String> headers = LinkedHashMultimap.create();
@@ -40,11 +39,6 @@ public class BaseHttpRequestOptions implements HttpRequestOptions {
 
    public String buildStringPayload() {
       return payload;
-   }
-
-   protected String getFirstMatrixOrNull(String string) {
-      Collection<String> values = matrixParameters.get(string);
-      return (values != null && values.size() >= 1) ? values.iterator().next() : null;
    }
 
    protected String getFirstQueryOrNull(String string) {
@@ -81,13 +75,6 @@ public class BaseHttpRequestOptions implements HttpRequestOptions {
       return queryParameters;
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   public Multimap<String, String> buildMatrixParameters() {
-      return matrixParameters;
-   }
-
    public String buildPathSuffix() {
       return pathSuffix;
    }
@@ -102,7 +89,6 @@ public class BaseHttpRequestOptions implements HttpRequestOptions {
       int result = 1;
       result = prime * result + ((formParameters == null) ? 0 : formParameters.hashCode());
       result = prime * result + ((headers == null) ? 0 : headers.hashCode());
-      result = prime * result + ((matrixParameters == null) ? 0 : matrixParameters.hashCode());
       result = prime * result + ((pathSuffix == null) ? 0 : pathSuffix.hashCode());
       result = prime * result + ((payload == null) ? 0 : payload.hashCode());
       result = prime * result + ((queryParameters == null) ? 0 : queryParameters.hashCode());
@@ -128,11 +114,6 @@ public class BaseHttpRequestOptions implements HttpRequestOptions {
             return false;
       } else if (!headers.equals(other.headers))
          return false;
-      if (matrixParameters == null) {
-         if (other.matrixParameters != null)
-            return false;
-      } else if (!matrixParameters.equals(other.matrixParameters))
-         return false;
       if (pathSuffix == null) {
          if (other.pathSuffix != null)
             return false;
@@ -153,9 +134,8 @@ public class BaseHttpRequestOptions implements HttpRequestOptions {
 
    @Override
    public String toString() {
-      return "[formParameters=" + formParameters + ", headers=" + headers + ", matrixParameters="
-               + matrixParameters + ", pathSuffix=" + pathSuffix + ", payload=" + payload
-               + ", queryParameters=" + queryParameters + "]";
+      return "[formParameters=" + formParameters + ", headers=" + headers + ", pathSuffix=" + pathSuffix + ", payload="
+            + payload + ", queryParameters=" + queryParameters + "]";
    }
 
 }
