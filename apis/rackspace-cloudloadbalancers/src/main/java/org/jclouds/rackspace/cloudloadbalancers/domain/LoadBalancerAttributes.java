@@ -20,6 +20,9 @@ package org.jclouds.rackspace.cloudloadbalancers.domain;
 
 import org.jclouds.rackspace.cloudloadbalancers.domain.internal.BaseLoadBalancer;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
+
 /**
  * 
  * @author Adrian Cole
@@ -75,51 +78,30 @@ public class LoadBalancerAttributes {
       }
    }
 
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this).omitNullValues()
+            .add("name", name).add("algorithm", algorithm).add("port", port).add("protocol", protocol);
+   }
+   
    @Override
    public String toString() {
-      return String.format("[algorithm=%s, name=%s, port=%s, protocol=%s]", algorithm, name, port, protocol);
+      return string().toString();
    }
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((algorithm == null) ? 0 : algorithm.hashCode());
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result + ((port == null) ? 0 : port.hashCode());
-      result = prime * result + ((protocol == null) ? 0 : protocol.hashCode());
-      return result;
+      return Objects.hashCode(name, algorithm, port, protocol);
    }
 
    @Override
    public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      LoadBalancerAttributes other = (LoadBalancerAttributes) obj;
-      if (algorithm == null) {
-         if (other.algorithm != null)
-            return false;
-      } else if (!algorithm.equals(other.algorithm))
-         return false;
-      if (name == null) {
-         if (other.name != null)
-            return false;
-      } else if (!name.equals(other.name))
-         return false;
-      if (port == null) {
-         if (other.port != null)
-            return false;
-      } else if (!port.equals(other.port))
-         return false;
-      if (protocol == null) {
-         if (other.protocol != null)
-            return false;
-      } else if (!protocol.equals(other.protocol))
-         return false;
-      return true;
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+
+      LoadBalancerAttributes that = LoadBalancerAttributes.class.cast(obj);
+      return Objects.equal(this.name, that.name)
+            && Objects.equal(this.algorithm, that.algorithm)
+            && Objects.equal(this.port, that.port)
+            && Objects.equal(this.protocol, that.protocol);
    }
 }

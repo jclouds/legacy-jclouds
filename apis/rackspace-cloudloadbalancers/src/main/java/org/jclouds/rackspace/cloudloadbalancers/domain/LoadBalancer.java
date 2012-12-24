@@ -355,7 +355,7 @@ public class LoadBalancer extends BaseLoadBalancer<Node, LoadBalancer> {
    }
 
    protected ToStringHelper string() {
-      return Objects.toStringHelper(this)
+      return Objects.toStringHelper(this).omitNullValues()
             .add("id", id).add("region", region).add("name", name).add("protocol", protocol).add("port", port)
             .add("algorithm", algorithm).add("status", status).add("virtualIPs", virtualIPs).add("nodeCount", getNodeCount())
             .add("nodes", nodes).add("sessionPersistenceType", sessionPersistenceType).add("created", created)
