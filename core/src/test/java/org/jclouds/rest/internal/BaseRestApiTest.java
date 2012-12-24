@@ -22,13 +22,13 @@ import static com.google.common.base.Throwables.propagate;
 import static com.google.inject.util.Types.newParameterizedType;
 import static org.easymock.EasyMock.createMock;
 import static org.eclipse.jetty.http.HttpHeaders.TRANSFER_ENCODING;
-import static org.jclouds.http.HttpUtils.sortAndConcatHeadersIntoString;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Date;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 
 import org.jclouds.Constants;
@@ -46,6 +46,9 @@ import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.Multimap;
+import com.google.common.collect.SortedSetMultimap;
+import com.google.common.collect.TreeMultimap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -144,6 +147,17 @@ public abstract class BaseRestApiTest {
       assertEquals(sortAndConcatHeadersIntoString(request.getHeaders()), toMatch);
    }
 
+   public static String sortAndConcatHeadersIntoString(Multimap<String, String> headers) {
+      StringBuilder buffer = new StringBuilder();
+      SortedSetMultimap<String, String> sortedMap = TreeMultimap.create();
+      sortedMap.putAll(headers);
+      for (Entry<String, String> header : sortedMap.entries()) {
+         if (header.getKey() != null)
+            buffer.append(String.format("%s: %s\n", header.getKey(), header.getValue()));
+      }
+      return buffer.toString();
+   }
+   
    protected void assertRequestLineEquals(HttpRequest request, String toMatch) {
       assertEquals(request.getRequestLine(), toMatch);
    }

@@ -228,7 +228,6 @@ public class FirewallRule implements Comparable<FirewallRule> {
    @ConstructorProperties({
          "id", "cidrlist", "startport", "endport", "icmpcode", "icmptype", "ipaddress", "ipaddressid", "protocol", "state"
    })
-   @SuppressWarnings("unused")
    private FirewallRule(String id, @Nullable String CIDRs, int startPort, int endPort, @Nullable String icmpCode,
                         @Nullable String icmpType, @Nullable String ipAddress, @Nullable String ipAddressId,
                         @Nullable Protocol protocol, @Nullable State state) {

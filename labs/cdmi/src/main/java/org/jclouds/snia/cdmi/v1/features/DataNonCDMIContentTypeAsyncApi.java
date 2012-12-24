@@ -35,7 +35,6 @@ import org.jclouds.rest.annotations.Payload;
 import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
-import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.snia.cdmi.v1.binders.BindQueryParmsToSuffix;
 import org.jclouds.snia.cdmi.v1.domain.DataObject;
@@ -54,7 +53,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Kenneth Nagin
  * @see <a href="http://www.snia.org/cdmi">api doc</a>
  */
-@SkipEncoding({ '/', '=' })
 @RequestFilters({ BasicAuthenticationAndTenantId.class, StripExtraAcceptHeader.class })
 public interface DataNonCDMIContentTypeAsyncApi {
    /**

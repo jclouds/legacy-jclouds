@@ -30,7 +30,6 @@ import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.functions.ReturnEmptyMapOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
@@ -42,7 +41,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adrian Cole
  * @see <a href="http://apidocs.joyent.com/sdcapidoc/cloudapi/index.html#datacenters">api doc</a>
  */
-@SkipEncoding({ '/', '=' })
 @Headers(keys = "X-Api-Version", values = "{jclouds.api-version}")
 @RequestFilters(BasicAuthentication.class)
 public interface DatacenterAsyncApi {

@@ -19,6 +19,7 @@
 package org.jclouds.fujitsu.fgcp.filters;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.http.utils.Queries.queryParser;
 
 import java.security.InvalidKeyException;
 import java.security.KeyStore;
@@ -39,7 +40,6 @@ import javax.inject.Singleton;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.Constants;
 import org.jclouds.crypto.CryptoStreams;
@@ -50,7 +50,6 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.internal.SignatureWire;
-import org.jclouds.http.utils.Queries;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.RequestSigner;
 import org.jclouds.rest.annotations.ApiVersion;
@@ -75,7 +74,6 @@ public class RequestAuthenticator implements HttpRequestFilter, RequestSigner {
 
    final Provider<Calendar> calendarProvider;
    final Signature signer;
-   final Provider<UriBuilder> builder;
    final String apiVersion;
 
    public String signatureVersion = "1.0";
@@ -84,22 +82,17 @@ public class RequestAuthenticator implements HttpRequestFilter, RequestSigner {
    private HttpUtils utils;
 
    @Inject
-   public RequestAuthenticator(@TimeStamp Provider<Calendar> calendarProvider,
-         Provider<KeyStore> keyStoreProvider,
-         @Credential String keyPassword, Provider<UriBuilder> builder,
-         HttpUtils utils, SignatureWire signatureWire,
-         @ApiVersion String apiVersion) throws NoSuchAlgorithmException,
-         InvalidKeyException, KeyStoreException, UnrecoverableKeyException {
+   public RequestAuthenticator(@TimeStamp Provider<Calendar> calendarProvider, Provider<KeyStore> keyStoreProvider,
+         @Credential String keyPassword, HttpUtils utils, SignatureWire signatureWire, @ApiVersion String apiVersion)
+         throws NoSuchAlgorithmException, InvalidKeyException, KeyStoreException, UnrecoverableKeyException {
       this.calendarProvider = checkNotNull(calendarProvider);
-      this.builder = checkNotNull(builder);
       this.utils = checkNotNull(utils, "utils");
       this.apiVersion = checkNotNull(apiVersion, "apiVersion");
 
       signer = Signature.getInstance(signatureMethod);
 
       KeyStore keyStore = checkNotNull(keyStoreProvider).get();
-      String alias = keyStore.aliases().nextElement(); // there should be only
-                                           // one private key
+      String alias = keyStore.aliases().nextElement(); // there should be only one private key
       PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias,
             keyPassword.toCharArray());
 
@@ -115,38 +108,13 @@ public class RequestAuthenticator implements HttpRequestFilter, RequestSigner {
       String accessKeyId = createStringToSign(request);
       String signature = sign(accessKeyId);
 
-      // leaving this in for now for reference in case I need it for multipart
-      // POSTs
-      // add parameters. Note that in case of a GET, url escaping is required
-      /*
-       * Multimap<String, String> decodedParams = null; if
-       * (HttpMethod.GET.equals(request.getMethod())) { decodedParams =
-       * ModifyRequest.parseQueryToMap(request.getEndpoint().getRawQuery());
-       * 
-       * } else if (HttpMethod.POST.equals(request.getMethod())) {
-       * decodedParams =
-       * ModifyRequest.parseQueryToMap(request.getPayload().getRawContent()
-       * .toString()); }
-       * 
-       * checkNotNull(decodedParams, "no query params found");
-       * System.out.println("filter: request params before: " +
-       * decodedParams.toString()); addAuthenticationParams(decodedParams,
-       * accessKeyId, signature); addLocaleParam(decodedParams);
-       * System.out.println("filter: request params after : " +
-       * decodedParams.toString()); if (signatureWire.enabled())
-       * signatureWire.output(decodedParams);
-       * 
-       * 
-       * request = setPayload(request, decodedParams);
-       */
       // only "en" and "ja" are allowed
       String lang = Locale.JAPANESE.getLanguage().equals(
             Locale.getDefault().getLanguage()) ? Locale.JAPANESE
             .getLanguage() : Locale.ENGLISH.getLanguage();
 
       if (HttpMethod.GET.equals(request.getMethod())) {
-         Multimap<String, String> decodedParams = Queries
-               .parseQueryToMap(request.getEndpoint().getRawQuery());
+         Multimap<String, String> decodedParams = queryParser().apply(request.getEndpoint().getRawQuery());
 
          if (!decodedParams.containsKey(RequestParameters.VERSION)) {
             decodedParams.put(RequestParameters.VERSION, apiVersion);
@@ -154,8 +122,7 @@ public class RequestAuthenticator implements HttpRequestFilter, RequestSigner {
          decodedParams.put(RequestParameters.LOCALE, lang);
          decodedParams.put(RequestParameters.ACCESS_KEY_ID, accessKeyId);
          decodedParams.put(RequestParameters.SIGNATURE, signature);
-         request = request.toBuilder().replaceQueryParams(decodedParams)
-               .build();
+         request = request.toBuilder().replaceQueryParams(decodedParams).build();
       } else {
 
          String payload = request.getPayload().getRawContent().toString();

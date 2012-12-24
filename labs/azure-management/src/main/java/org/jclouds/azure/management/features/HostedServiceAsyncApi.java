@@ -45,7 +45,6 @@ import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.ResponseParser;
-import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
@@ -61,7 +60,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see HostedServiceApi
  * @author Gerald Pereira, Adrian Cole
  */
-@SkipEncoding('/')
 @Headers(keys = "x-ms-version", values = "2012-03-01")
 public interface HostedServiceAsyncApi {
 

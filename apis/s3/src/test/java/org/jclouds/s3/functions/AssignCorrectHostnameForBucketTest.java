@@ -23,9 +23,6 @@ import static org.testng.Assert.assertEquals;
 import java.net.URI;
 import java.util.Map;
 
-import javax.inject.Provider;
-import javax.ws.rs.core.UriBuilder;
-
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.testng.annotations.Test;
 
@@ -34,7 +31,6 @@ import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
-import com.sun.jersey.api.uri.UriBuilderImpl;
 
 /**
  * Tests behavior of {@code AssignCorrectHostnameForBucket}
@@ -45,14 +41,6 @@ import com.sun.jersey.api.uri.UriBuilderImpl;
 // surefire
 @Test(groups = "unit", testName = "AssignCorrectHostnameForBucketTest")
 public class AssignCorrectHostnameForBucketTest {
-   Provider<UriBuilder> uriBuilderProvider = new Provider<UriBuilder>() {
-
-      @Override
-      public UriBuilder get() {
-         return new UriBuilderImpl();
-      }
-
-   };
 
    public void testWhenNoBucketRegionMappingInCache() {
 

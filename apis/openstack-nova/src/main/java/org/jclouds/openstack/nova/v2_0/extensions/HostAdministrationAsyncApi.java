@@ -43,7 +43,6 @@ import org.jclouds.rest.annotations.Payload;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SelectJson;
-import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.functions.ReturnEmptyFluentIterableOnNotFoundOr404;
 
 import com.google.common.annotations.Beta;
@@ -62,7 +61,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 @Beta
 @Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.HOSTS)
-@SkipEncoding({'/', '='})
 @RequestFilters(AuthenticateRequest.class)
 @Path("/os-hosts")
 @Consumes(MediaType.APPLICATION_JSON)

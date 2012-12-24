@@ -39,7 +39,6 @@ import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.ParamParser;
-import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
@@ -53,7 +52,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see OSImageApi
  * @author Gerald Pereira, Adrian Cole
  */
-@SkipEncoding('/')
 @Headers(keys = "x-ms-version", values = "2012-03-01")
 public interface OSImageAsyncApi {
 

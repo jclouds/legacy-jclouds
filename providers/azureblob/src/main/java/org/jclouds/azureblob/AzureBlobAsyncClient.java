@@ -19,6 +19,7 @@
 package org.jclouds.azureblob;
 
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -81,9 +82,9 @@ import com.google.inject.Provides;
  * @see AzureBlobClient
  * @author Adrian Cole
  */
-@SkipEncoding('/')
 @RequestFilters(SharedKeyLiteAuthentication.class)
 @Headers(keys = AzureStorageHeaders.VERSION, values = "2009-09-19")
+@SkipEncoding({ '/', '$' })
 @Path("/")
 public interface AzureBlobAsyncClient {
    @Provides

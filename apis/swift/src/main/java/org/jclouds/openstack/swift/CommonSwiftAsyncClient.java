@@ -66,7 +66,6 @@ import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
-import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.annotations.Beta;
@@ -80,7 +79,6 @@ import com.google.inject.Provides;
  * @see <a href="http://www.rackspacecloud.com/cf-devguide-20090812.pdf" />
  * @author Adrian Cole
  */
-@SkipEncoding('/')
 @RequestFilters(AuthenticateRequest.class)
 @Endpoint(Storage.class)
 public interface CommonSwiftAsyncClient {

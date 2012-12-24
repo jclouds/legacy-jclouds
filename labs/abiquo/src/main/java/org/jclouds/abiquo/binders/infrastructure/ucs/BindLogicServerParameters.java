@@ -46,6 +46,6 @@ public class BindLogicServerParameters implements Binder {
 
       LogicServerDto server = (LogicServerDto) input;
 
-      return (R) request.toBuilder().addQueryParam("lsName", server.getName()).build();
+      return (R) request.toBuilder().addQueryParam("lsName", checkNotNull(server.getName(), "server.name")).build();
    }
 }

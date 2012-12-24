@@ -40,7 +40,6 @@ import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.annotations.SkipEncoding;
 
 import com.google.common.base.Optional;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -59,7 +58,6 @@ import com.google.inject.Provides;
  *      Storage API</a>
  * @author Jeremy Daggett
  */
-@SkipEncoding('/')
 @RequestFilters(AuthenticateRequest.class)
 @Endpoint(Storage.class)
 public interface HPCloudObjectStorageAsyncApi extends CommonSwiftAsyncClient {

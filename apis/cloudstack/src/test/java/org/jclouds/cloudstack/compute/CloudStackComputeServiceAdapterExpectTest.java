@@ -78,7 +78,7 @@ public class CloudStackComputeServiceAdapterExpectTest extends BaseCloudStackCom
             .addQueryParam("networkids", "204")
             .addQueryParam("keypair", "mykeypair")
             .addQueryParam("apiKey", "APIKEY")
-            .addQueryParam("signature", "hI%2FU4cWXdU6KTZKbJvzPCmOpGmU%3D")
+            .addQueryParam("signature", "hI/U4cWXdU6KTZKbJvzPCmOpGmU%3D")
             .addHeader("Accept", "application/json")
             .build(); 
   

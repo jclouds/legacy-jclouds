@@ -19,12 +19,12 @@
 
 package org.jclouds.oauth.v2.internal;
 
-import com.google.common.base.Charsets;
-import com.sun.jersey.core.util.Base64;
+import static org.testng.Assert.assertTrue;
+
 import org.jclouds.crypto.CryptoStreams;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.assertTrue;
+import com.google.common.base.Charsets;
 
 /**
  * Tests that the Base64 implementations used to Base64 encode the tokens are Url safe.
@@ -40,8 +40,8 @@ public class Base64UrlSafeTest {
 
 
    public void testJcloudsCoreBase64IsNotUrlSafe() {
-      String encoded = new String(Base64.encode(STRING_THAT_GENERATES_URL_UNSAFE_BASE64_ENCODING.getBytes(Charsets
-              .UTF_8)), Charsets.UTF_8);
+      String encoded = new String(CryptoStreams.base64(STRING_THAT_GENERATES_URL_UNSAFE_BASE64_ENCODING
+            .getBytes(Charsets.UTF_8)));
       assertTrue(encoded.contains("+"), encoded);
       assertTrue(encoded.contains("/"), encoded);
    }

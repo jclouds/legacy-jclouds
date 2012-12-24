@@ -26,7 +26,6 @@ import org.jclouds.openstack.swift.reference.SwiftHeaders;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
-import org.jclouds.rest.annotations.SkipEncoding;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.HEAD;
@@ -39,7 +38,6 @@ import javax.ws.rs.core.MediaType;
  * @author Andrei Savu
  * @see TemporaryUrlKeyApi
  */
-@SkipEncoding('/')
 @RequestFilters(AuthenticateRequest.class)
 @Endpoint(Storage.class)
 public interface TemporaryUrlKeyAsyncApi {

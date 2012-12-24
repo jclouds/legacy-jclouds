@@ -17,16 +17,11 @@
  * under the License.
  */
 package org.jclouds.io.payloads;
+import static com.google.common.net.MediaType.FORM_DATA;
+import static org.jclouds.http.utils.Queries.encodeQueryLine;
+import static org.jclouds.util.Strings2.toInputStream;
 
 import java.io.InputStream;
-import java.util.Comparator;
-import java.util.Map;
-
-import javax.ws.rs.core.MediaType;
-
-import org.jclouds.http.utils.Queries;
-import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.util.Strings2;
 
 import com.google.common.collect.Multimap;
 
@@ -34,15 +29,10 @@ import com.google.common.collect.Multimap;
  * @author Adrian Cole
  */
 public class UrlEncodedFormPayload extends BasePayload<String> {
-   public UrlEncodedFormPayload(Multimap<String, String> formParams, char... skips) {
-      this(formParams, null, skips);
-   }
-
-   public UrlEncodedFormPayload(Multimap<String, String> formParams,
-            @Nullable Comparator<Map.Entry<String, String>> sorter, char... skips) {
-      super(Queries.makeQueryLine(formParams, sorter, skips));
+   public UrlEncodedFormPayload(Multimap<String, String> formParams) {
+      super(encodeQueryLine(formParams));
       getContentMetadata().setContentLength((long) content.length());
-      getContentMetadata().setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+      getContentMetadata().setContentType(FORM_DATA.toString());
    }
 
    /**
@@ -50,7 +40,7 @@ public class UrlEncodedFormPayload extends BasePayload<String> {
     */
    @Override
    public InputStream getInput() {
-      return Strings2.toInputStream(content);
+      return toInputStream(content);
    }
 
 }

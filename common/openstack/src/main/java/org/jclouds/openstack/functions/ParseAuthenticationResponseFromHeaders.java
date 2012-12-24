@@ -20,6 +20,7 @@ package org.jclouds.openstack.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.http.HttpUtils.releasePayload;
+import static org.jclouds.http.Uris.uriBuilder;
 import static org.jclouds.openstack.reference.AuthHeaders.AUTH_TOKEN;
 import static org.jclouds.openstack.reference.AuthHeaders.URL_SUFFIX;
 
@@ -27,9 +28,6 @@ import java.net.URI;
 import java.util.Map.Entry;
 
 import javax.annotation.Resource;
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
@@ -53,13 +51,7 @@ public class ParseAuthenticationResponseFromHeaders implements Function<HttpResp
    @Resource
    protected Logger logger = Logger.NULL;
 
-   private final Provider<UriBuilder> uriBuilderProvider;
    private String hostToReplace;
-
-   @Inject
-   public ParseAuthenticationResponseFromHeaders(Provider<UriBuilder> uriBuilderProvider) {
-      this.uriBuilderProvider = uriBuilderProvider;
-   }
 
    /**
     * parses the http response headers to create a new {@link AuthenticationResponse} object.
@@ -84,7 +76,7 @@ public class ParseAuthenticationResponseFromHeaders implements Function<HttpResp
       URI toReturn = URI.create(headerValue);
       if (!"127.0.0.1".equals(toReturn.getHost()))
          return toReturn;
-      return uriBuilderProvider.get().uri(toReturn).host(hostToReplace).build();
+      return uriBuilder(toReturn).host(hostToReplace).build();
    }
 
    @Override

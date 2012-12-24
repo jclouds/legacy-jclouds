@@ -18,51 +18,35 @@
  */
 package org.jclouds.http.functions;
 
+import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
+import static com.google.common.net.HttpHeaders.LOCATION;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+import static org.jclouds.util.Strings2.toInputStream;
 import static org.testng.Assert.assertEquals;
 
-import java.io.IOException;
 import java.net.URI;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
 
-import javax.inject.Provider;
-import javax.ws.rs.core.UriBuilder;
-
-import org.eclipse.jetty.http.HttpHeaders;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.io.Payload;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
-import com.sun.jersey.api.uri.UriBuilderImpl;
 
 @Test(groups = { "unit" })
 public class ParseURIFromListOrLocationHeaderIf20xTest {
-   Provider<UriBuilder> uriBuilderProvider = new Provider<UriBuilder>() {
-
-      @Override
-      public UriBuilder get() {
-         return new UriBuilderImpl();
-      }
-
-   };
 
    @Test
-   public void testExceptionWhenNoContentOn200() throws ExecutionException, InterruptedException,
-            TimeoutException, IOException {
-      Function<HttpResponse, URI> function = new ParseURIFromListOrLocationHeaderIf20x(
-               uriBuilderProvider);
+   public void testExceptionWhenNoContentOn200() {
+      Function<HttpResponse, URI> function = new ParseURIFromListOrLocationHeaderIf20x();
       HttpResponse response = createMock(HttpResponse.class);
       Payload payload = createMock(Payload.class);
 
       expect(response.getStatusCode()).andReturn(200).atLeastOnce();
-      expect(response.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE)).andReturn("text/uri-list");
+      expect(response.getFirstHeaderOrNull(CONTENT_TYPE)).andReturn("text/uri-list");
       expect(response.getPayload()).andReturn(payload).atLeastOnce();
       expect(payload.getInput()).andReturn(null);
       payload.release();
@@ -79,15 +63,13 @@ public class ParseURIFromListOrLocationHeaderIf20xTest {
    }
 
    @Test
-   public void testExceptionWhenIOExceptionOn200() throws ExecutionException, InterruptedException,
-            TimeoutException, IOException {
-      Function<HttpResponse, URI> function = new ParseURIFromListOrLocationHeaderIf20x(
-               uriBuilderProvider);
+   public void testExceptionWhenIOExceptionOn200() {
+      Function<HttpResponse, URI> function = new ParseURIFromListOrLocationHeaderIf20x();
       HttpResponse response = createMock(HttpResponse.class);
       Payload payload = createMock(Payload.class);
 
       expect(response.getStatusCode()).andReturn(200).atLeastOnce();
-      expect(response.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE)).andReturn("text/uri-list");
+      expect(response.getFirstHeaderOrNull(CONTENT_TYPE)).andReturn("text/uri-list");
       RuntimeException exception = new RuntimeException("bad");
       expect(response.getPayload()).andReturn(payload).atLeastOnce();
       expect(payload.getInput()).andThrow(exception);
@@ -105,16 +87,15 @@ public class ParseURIFromListOrLocationHeaderIf20xTest {
    }
 
    @Test
-   public void testResponseOk() throws Exception {
-      Function<HttpResponse, URI> function = new ParseURIFromListOrLocationHeaderIf20x(
-               uriBuilderProvider);
+   public void testResponseOk() {
+      Function<HttpResponse, URI> function = new ParseURIFromListOrLocationHeaderIf20x();
       HttpResponse response = createMock(HttpResponse.class);
       Payload payload = createMock(Payload.class);
 
       expect(response.getStatusCode()).andReturn(200).atLeastOnce();
-      expect(response.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE)).andReturn("text/uri-list");
+      expect(response.getFirstHeaderOrNull(CONTENT_TYPE)).andReturn("text/uri-list");
       expect(response.getPayload()).andReturn(payload).atLeastOnce();
-      expect(payload.getInput()).andReturn(Strings2.toInputStream("http://locahost")).atLeastOnce();
+      expect(payload.getInput()).andReturn(toInputStream("http://locahost")).atLeastOnce();
       payload.release();
 
       replay(payload);
@@ -126,15 +107,14 @@ public class ParseURIFromListOrLocationHeaderIf20xTest {
    }
 
    @Test
-   public void testResponseLocationOk() throws Exception {
-      Function<HttpResponse, URI> function = new ParseURIFromListOrLocationHeaderIf20x(
-               uriBuilderProvider);
+   public void testResponseLocationOk() {
+      Function<HttpResponse, URI> function = new ParseURIFromListOrLocationHeaderIf20x();
       HttpResponse response = createMock(HttpResponse.class);
       Payload payload = createMock(Payload.class);
 
       expect(response.getStatusCode()).andReturn(200).atLeastOnce();
-      expect(response.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE)).andReturn("text/plain");
-      expect(response.getFirstHeaderOrNull(HttpHeaders.LOCATION)).andReturn("http://locahost");
+      expect(response.getFirstHeaderOrNull(CONTENT_TYPE)).andReturn("text/plain");
+      expect(response.getFirstHeaderOrNull(LOCATION)).andReturn("http://locahost");
       expect(response.getPayload()).andReturn(payload).atLeastOnce();
       payload.release();
 
@@ -147,15 +127,14 @@ public class ParseURIFromListOrLocationHeaderIf20xTest {
    }
 
    @Test
-   public void testResponseLowercaseLocationOk() throws Exception {
-      Function<HttpResponse, URI> function = new ParseURIFromListOrLocationHeaderIf20x(
-               uriBuilderProvider);
+   public void testResponseLowercaseLocationOk() {
+      Function<HttpResponse, URI> function = new ParseURIFromListOrLocationHeaderIf20x();
       HttpResponse response = createMock(HttpResponse.class);
       Payload payload = createMock(Payload.class);
 
       expect(response.getStatusCode()).andReturn(200).atLeastOnce();
-      expect(response.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE)).andReturn("text/plain");
-      expect(response.getFirstHeaderOrNull(HttpHeaders.LOCATION)).andReturn(null);
+      expect(response.getFirstHeaderOrNull(CONTENT_TYPE)).andReturn("text/plain");
+      expect(response.getFirstHeaderOrNull(LOCATION)).andReturn(null);
       expect(response.getFirstHeaderOrNull("location")).andReturn("http://locahost");
       expect(response.getPayload()).andReturn(payload).atLeastOnce();
       payload.release();
@@ -169,78 +148,66 @@ public class ParseURIFromListOrLocationHeaderIf20xTest {
    }
 
    @Test
-   public void testResponsePathLocationOk() throws Exception {
-      ParseURIFromListOrLocationHeaderIf20x function = new ParseURIFromListOrLocationHeaderIf20x(
-               uriBuilderProvider);
+   public void testResponsePathLocationOk() {
+      ParseURIFromListOrLocationHeaderIf20x function = new ParseURIFromListOrLocationHeaderIf20x();
       HttpResponse response = createMock(HttpResponse.class);
-      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
       Payload payload = createMock(Payload.class);
-
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://new/fd").build();
+      
       function.setContext(request);
-      expect(request.getEndpoint()).andReturn(URI.create("http://new/fd")).atLeastOnce();
       expect(response.getStatusCode()).andReturn(200).atLeastOnce();
-      expect(response.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE)).andReturn("text/plain");
-      expect(response.getFirstHeaderOrNull(HttpHeaders.LOCATION)).andReturn("path");
+      expect(response.getFirstHeaderOrNull(CONTENT_TYPE)).andReturn("text/plain");
+      expect(response.getFirstHeaderOrNull(LOCATION)).andReturn("path");
       expect(response.getPayload()).andReturn(payload).atLeastOnce();
       payload.release();
 
-      replay(request);
       replay(payload);
       replay(response);
       assertEquals(function.apply(response), URI.create("http://new/path"));
-      verify(request);
       verify(response);
       verify(payload);
 
    }
 
    @Test
-   public void testResponsePathPortLocationOk() throws Exception {
-      ParseURIFromListOrLocationHeaderIf20x function = new ParseURIFromListOrLocationHeaderIf20x(
-               uriBuilderProvider);
+   public void testResponsePathPortLocationOk() {
+      ParseURIFromListOrLocationHeaderIf20x function = new ParseURIFromListOrLocationHeaderIf20x();
       HttpResponse response = createMock(HttpResponse.class);
-      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
       Payload payload = createMock(Payload.class);
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://new:8080/fd").build();
 
       function.setContext(request);
-      expect(request.getEndpoint()).andReturn(URI.create("http://new:8080/fd")).atLeastOnce();
       expect(response.getStatusCode()).andReturn(200).atLeastOnce();
-      expect(response.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE)).andReturn("text/plain");
-      expect(response.getFirstHeaderOrNull(HttpHeaders.LOCATION)).andReturn("path");
+      expect(response.getFirstHeaderOrNull(CONTENT_TYPE)).andReturn("text/plain");
+      expect(response.getFirstHeaderOrNull(LOCATION)).andReturn("path");
       expect(response.getPayload()).andReturn(payload).atLeastOnce();
       payload.release();
 
-      replay(request);
       replay(payload);
       replay(response);
       assertEquals(function.apply(response), URI.create("http://new:8080/path"));
-      verify(request);
       verify(response);
       verify(payload);
 
    }
 
    @Test
-   public void testResponsePathSchemeLocationOk() throws Exception {
-      ParseURIFromListOrLocationHeaderIf20x function = new ParseURIFromListOrLocationHeaderIf20x(
-               uriBuilderProvider);
+   public void testResponsePathSchemeLocationOk() {
+      ParseURIFromListOrLocationHeaderIf20x function = new ParseURIFromListOrLocationHeaderIf20x();
       HttpResponse response = createMock(HttpResponse.class);
-      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
       Payload payload = createMock(Payload.class);
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("https://new/fd").build();
 
       function.setContext(request);
-      expect(request.getEndpoint()).andReturn(URI.create("https://new/fd")).atLeastOnce();
       expect(response.getStatusCode()).andReturn(200).atLeastOnce();
-      expect(response.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE)).andReturn("text/plain");
-      expect(response.getFirstHeaderOrNull(HttpHeaders.LOCATION)).andReturn("path");
+      expect(response.getFirstHeaderOrNull(CONTENT_TYPE)).andReturn("text/plain");
+      expect(response.getFirstHeaderOrNull(LOCATION)).andReturn("path");
       expect(response.getPayload()).andReturn(payload).atLeastOnce();
       payload.release();
 
-      replay(request);
       replay(payload);
       replay(response);
       assertEquals(function.apply(response), URI.create("https://new/path"));
-      verify(request);
       verify(response);
       verify(payload);
 

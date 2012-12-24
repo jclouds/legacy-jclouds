@@ -26,7 +26,6 @@ import org.jclouds.oauth.v2.handlers.OAuthTokenBinder;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
-import org.jclouds.rest.annotations.SkipEncoding;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -41,7 +40,6 @@ import javax.ws.rs.core.MediaType;
  * @author David Alves
  * @see OAuthAsyncApi
  */
-@SkipEncoding({'/', '='})
 @Endpoint(Authentication.class)
 public interface OAuthAsyncApi {
 

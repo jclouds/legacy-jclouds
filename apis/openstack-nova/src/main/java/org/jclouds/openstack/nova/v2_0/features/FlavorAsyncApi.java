@@ -37,7 +37,6 @@ import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SelectJson;
-import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.Transform;
 import org.jclouds.rest.functions.ReturnEmptyPagedIterableOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
@@ -55,7 +54,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Jeremy Daggett TODO: Need a ListFlavorOptions class minDisk=minDiskInGB&
  *         minRam=minRamInMB& marker=markerID&limit=int
  */
-@SkipEncoding({ '/', '=' })
 @RequestFilters(AuthenticateRequest.class)
 public interface FlavorAsyncApi {
 

@@ -47,6 +47,6 @@ public class BindOrganizationParameters implements Binder {
 
       OrganizationDto org = (OrganizationDto) input;
 
-      return (R) request.toBuilder().addQueryParam("org", org.getDn()).build();
+      return (R) request.toBuilder().addQueryParam("org", checkNotNull(org.getDn(), "org.dn")).build();
    }
 }

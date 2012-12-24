@@ -95,7 +95,7 @@ public class DelegateAnnotationExpectTest extends BaseRestClientExpectTest<Deleg
 
    @Override
    public ProviderMetadata createProviderMetadata() {
-      return forClientMappedToAsyncClientOnEndpoint(DelegatingApi.class, DelegatingAsyncApi.class, "http://mock/");
+      return forClientMappedToAsyncClientOnEndpoint(DelegatingApi.class, DelegatingAsyncApi.class, "http://mock");
    }
 
    @Override

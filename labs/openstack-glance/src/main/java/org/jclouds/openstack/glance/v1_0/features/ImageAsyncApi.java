@@ -49,7 +49,6 @@ import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SelectJson;
-import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.Transform;
 import org.jclouds.rest.functions.ReturnEmptyPagedIterableOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
@@ -66,7 +65,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see <a href="http://glance.openstack.org/glanceapi.html">api doc</a>
  * @see <a href="https://github.com/openstack/glance/blob/master/glance/api/v1/images.py">api src</a>
  */
-@SkipEncoding( { '/', '=' })
 @RequestFilters(AuthenticateRequest.class)
 public interface ImageAsyncApi {
 

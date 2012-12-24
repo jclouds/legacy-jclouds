@@ -50,7 +50,7 @@ public class GlobalZoneClientExpectTest extends BaseCloudStackExpectTest<GlobalZ
          .endpoint(
             URI.create("http://localhost:8080/client/api?response=json&command=createZone&" +
                "name=test-zone&dns1=8.8.8.8&networktype=Basic&internaldns1=10.10.10.10&" +
-               "apiKey=identity&signature=hWNmM2%2BTsfb5DelQa%2FGJLN5DVWE%3D"))
+               "apiKey=identity&signature=hWNmM2%2BTsfb5DelQa/GJLN5DVWE%3D"))
          .headers(
             ImmutableMultimap.<String, String>builder()
                .put("Accept", "application/json")

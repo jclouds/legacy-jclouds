@@ -28,11 +28,9 @@ import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import javax.inject.Provider;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
-import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.date.internal.DateServiceDateCodecFactory;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
@@ -56,7 +54,6 @@ import org.testng.annotations.Test;
 import com.google.common.base.Supplier;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
-import com.sun.jersey.api.uri.UriBuilderImpl;
 
 @Test(groups = "unit", testName = "BackoffLimitedRetryHandlerTest")
 public class BackoffLimitedRetryHandlerTest {
@@ -101,14 +98,6 @@ public class BackoffLimitedRetryHandlerTest {
    }
 
    TransformingHttpCommandExecutorServiceImpl executorService;
-   Provider<UriBuilder> uriBuilderProvider = new Provider<UriBuilder>() {
-
-      @Override
-      public UriBuilder get() {
-         return new UriBuilderImpl();
-      }
-
-   };
 
    @BeforeTest
    void setupExecutorService() throws Exception {
@@ -117,7 +106,7 @@ public class BackoffLimitedRetryHandlerTest {
       HttpUtils utils = new HttpUtils(0, 500, 1, 1);
       ContentMetadataCodec contentMetadataCodec = new DefaultContentMetadataCodec(new DateServiceDateCodecFactory(
             new SimpleDateFormatDateService()));
-      RedirectionRetryHandler retry = new RedirectionRetryHandler(uriBuilderProvider, backoff);
+      RedirectionRetryHandler retry = new RedirectionRetryHandler(backoff);
       JavaUrlHttpCommandExecutorService httpService = new JavaUrlHttpCommandExecutorService(utils, 
                contentMetadataCodec, execService,
                new DelegatingRetryHandler(backoff, retry), new BackoffLimitedRetryHandler(),

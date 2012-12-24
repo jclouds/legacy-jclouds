@@ -19,13 +19,14 @@
 package org.jclouds.s3.handlers;
 
 import static org.jclouds.http.HttpUtils.closeClientButKeepContentStream;
+import static org.jclouds.http.Uris.uriBuilder;
+
+import java.net.URI;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.aws.domain.AWSError;
 import org.jclouds.aws.util.AWSUtils;
@@ -44,9 +45,8 @@ public class S3RedirectionRetryHandler extends RedirectionRetryHandler {
    private final AWSUtils utils;
 
    @Inject
-   public S3RedirectionRetryHandler(Provider<UriBuilder> uriBuilderProvider,
-         BackoffLimitedRetryHandler backoffHandler, AWSUtils utils) {
-      super(uriBuilderProvider, backoffHandler);
+   public S3RedirectionRetryHandler(BackoffLimitedRetryHandler backoffHandler, AWSUtils utils) {
+      super(backoffHandler);
       this.utils = utils;
    }
 
@@ -69,9 +69,8 @@ public class S3RedirectionRetryHandler extends RedirectionRetryHandler {
                   // http://developer.amazonwebservices.com/connect/thread.jspa?messageID=72287&#72287
                   return backoffHandler.shouldRetryRequest(command, response);
                } else {
-                  UriBuilder builder = uriBuilderProvider.get().uri(command.getCurrentRequest().getEndpoint());
-                  builder.host(host);
-                  command.setCurrentRequest(command.getCurrentRequest().toBuilder().endpoint(builder.build()).build());
+                  URI newHost = uriBuilder(command.getCurrentRequest().getEndpoint()).host(host).build();
+                  command.setCurrentRequest(command.getCurrentRequest().toBuilder().endpoint(newHost).build());
                }
                return true;
             } else {

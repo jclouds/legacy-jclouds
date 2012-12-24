@@ -19,20 +19,18 @@
 package org.jclouds.http.functions;
 
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
+import static com.google.common.net.HttpHeaders.LOCATION;
 import static org.jclouds.http.HttpUtils.releasePayload;
 
 import java.io.IOException;
 import java.net.URI;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.UriBuilder;
-
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
+import org.jclouds.http.Uris;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.util.Strings2;
 
@@ -45,19 +43,13 @@ import com.google.common.base.Function;
  */
 public class ParseURIFromListOrLocationHeaderIf20x implements Function<HttpResponse, URI>,
       InvocationContext<ParseURIFromListOrLocationHeaderIf20x> {
-   private final Provider<UriBuilder> uriBuilderProvider;
-
-   @Inject
-   ParseURIFromListOrLocationHeaderIf20x(Provider<UriBuilder> uriBuilderProvider) {
-      this.uriBuilderProvider = uriBuilderProvider;
-   }
 
    private HttpRequest request;
 
    public URI apply(HttpResponse from) {
       if (from.getStatusCode() > 206)
          throw new HttpException(String.format("Unhandled status code  - %1$s", from));
-      if ("text/uri-list".equals(from.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE))) {
+      if ("text/uri-list".equals(from.getFirstHeaderOrNull(CONTENT_TYPE))) {
          try {
             if (from.getPayload().getInput() == null)
                throw new HttpResponseException("no content", null, from);
@@ -70,7 +62,7 @@ public class ParseURIFromListOrLocationHeaderIf20x implements Function<HttpRespo
          }
       } else {
          releasePayload(from);
-         String location = from.getFirstHeaderOrNull(HttpHeaders.LOCATION);
+         String location = from.getFirstHeaderOrNull(LOCATION);
          if (location == null)
             location = from.getFirstHeaderOrNull("location");
          if (location != null) {
@@ -80,11 +72,8 @@ public class ParseURIFromListOrLocationHeaderIf20x implements Function<HttpRespo
             checkState(request != null, "request should have been initialized");
             if (!location.startsWith("/"))
                location = "/" + location;
-            UriBuilder builder = uriBuilderProvider.get().uri(URI.create("http://localhost" + location));
-            builder.host(request.getEndpoint().getHost());
-            builder.port(request.getEndpoint().getPort());
-            builder.scheme(request.getEndpoint().getScheme());
-            return builder.build();
+            locationUri = URI.create(location);
+            return Uris.uriBuilder(request.getEndpoint()).path(locationUri.getPath()).query(locationUri.getQuery()).build();
          } else {
             throw new HttpResponseException("no uri in headers or content", null, from);
          }

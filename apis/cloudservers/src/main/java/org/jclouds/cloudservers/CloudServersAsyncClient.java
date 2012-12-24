@@ -55,7 +55,6 @@ import org.jclouds.rest.annotations.Payload;
 import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.Unwrap;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
@@ -75,7 +74,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see <a href="http://docs.rackspacecloud.com/servers/api/cs-devguide-latest.pdf" />
  * @author Adrian Cole
  */
-@SkipEncoding({ '/', '=' })
 @RequestFilters({ AuthenticateRequest.class, AddTimestampQuery.class })
 @Endpoint(Compute.class)
 public interface CloudServersAsyncClient {

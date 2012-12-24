@@ -56,7 +56,7 @@ public class PasswordAuthenticationExpectTest extends BaseCloudStackExpectTest<C
                login, loginResponse, 
          HttpRequest.builder()
             .method("GET")
-            .endpoint("http://localhost:8080/client/api?response=json&command=listAccounts&listAll=true&sessionkey=" + Strings2.urlEncode(sessionKey))
+            .endpoint("http://localhost:8080/client/api?response=json&command=listAccounts&listAll=true&sessionkey=" + Strings2.urlEncode(sessionKey, '/'))
             .addHeader("Accept", "application/json")
             .addHeader(HttpHeaders.COOKIE, "JSESSIONID=" + jSessionId)
             .build(),

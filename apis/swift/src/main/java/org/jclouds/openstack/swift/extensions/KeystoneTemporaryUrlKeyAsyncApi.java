@@ -22,7 +22,6 @@ import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.openstack.swift.Storage;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.annotations.SkipEncoding;
 
 /**
  * Only purpose is to override the auth filter with one that works in keystone
@@ -30,7 +29,6 @@ import org.jclouds.rest.annotations.SkipEncoding;
  * @author Adrian Cole
  * @see TemporaryUrlKeyApi
  */
-@SkipEncoding('/')
 @RequestFilters(AuthenticateRequest.class)
 @Endpoint(Storage.class)
 public interface KeystoneTemporaryUrlKeyAsyncApi extends TemporaryUrlKeyAsyncApi {

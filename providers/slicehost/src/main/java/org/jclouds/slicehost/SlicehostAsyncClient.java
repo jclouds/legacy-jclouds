@@ -32,7 +32,6 @@ import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
@@ -65,7 +64,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see <a href="http://www.slicehost.com/docs/Slicehost_API.pdf" />
  * @author Adrian Cole
  */
-@SkipEncoding( { '/', '=' })
 @RequestFilters(SlicehostBasic.class)
 public interface SlicehostAsyncClient {
 

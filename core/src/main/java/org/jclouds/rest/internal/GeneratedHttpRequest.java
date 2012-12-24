@@ -41,16 +41,17 @@ import com.google.common.collect.Multimap;
  * 
  * @author Adrian Cole
  */
+// TODO: get rid of all the mock tests so that this can be made final
 public class GeneratedHttpRequest extends HttpRequest {
-   public static Builder<?> builder() { 
-      return new ConcreteBuilder();
+   public static Builder builder() { 
+      return new Builder();
    }
    
-   public Builder<?> toBuilder() { 
-      return new ConcreteBuilder().fromGeneratedHttpRequest(this);
+   public Builder toBuilder() { 
+      return new Builder().fromGeneratedHttpRequest(this);
    }
 
-   public abstract static class Builder<T extends Builder<T>> extends HttpRequest.Builder<T>  {
+   public static class Builder extends HttpRequest.Builder<Builder>  {
       protected Class<?> declaring;
       protected Method javaMethod;
       // args can be null, so cannot use immutable list
@@ -60,67 +61,65 @@ public class GeneratedHttpRequest extends HttpRequest {
       /** 
        * @see GeneratedHttpRequest#getDeclaring()
        */
-      public T declaring(Class<?> declaring) {
+      public Builder declaring(Class<?> declaring) {
          this.declaring = checkNotNull(declaring, "declaring");
-         return self();
+         return this;
       }
 
       /** 
        * @see GeneratedHttpRequest#getJavaMethod()
        */
-      public T javaMethod(Method javaMethod) {
+      public Builder javaMethod(Method javaMethod) {
          this.javaMethod = checkNotNull(javaMethod, "javaMethod");
-         return self();
+         return this;
       }
       
       /** 
        * @see GeneratedHttpRequest#getArgs()
        */
-      public T args(Iterable<Object> args) {
+      public Builder args(Iterable<Object> args) {
          this.args = Lists.newArrayList(checkNotNull(args, "args"));
-         return self();
+         return this;
       }
       
       /** 
        * @see GeneratedHttpRequest#getArgs()
        */
-      public T args(@Nullable Object[] args) {
+      public Builder args(@Nullable Object[] args) {
          return args(Arrays.asList(args != null ? args : new Object[] {}));
       }
 
       /** 
        * @see GeneratedHttpRequest#getArgs()
        */
-      public T arg(@Nullable Object arg) {
+      public Builder arg(@Nullable Object arg) {
          this.args.add(arg);
-         return self();
+         return this;
       }
       
       /** 
        * @see GeneratedHttpRequest#getCaller()
        */
-      public T caller(@Nullable ClassMethodArgs caller) {
+      public Builder caller(@Nullable ClassMethodArgs caller) {
          this.caller = Optional.fromNullable(caller);
-         return self();
+         return this;
       }
       
       public GeneratedHttpRequest build() {
          return new GeneratedHttpRequest(method, endpoint, headers.build(), payload, declaring, javaMethod,
-                  args, skips.build(), filters.build(), caller);
+                  args, filters.build(), caller);
       }
 
-      public T fromGeneratedHttpRequest(GeneratedHttpRequest in) {
+      public Builder fromGeneratedHttpRequest(GeneratedHttpRequest in) {
          return super.fromHttpRequest(in)
                      .declaring(in.getDeclaring())
                      .javaMethod(in.getJavaMethod())
                      .args(in.getArgs())
                      .caller(in.getCaller().orNull());
       }
-   }
-   
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+
       @Override
-      protected ConcreteBuilder self() {
+      protected Builder self() {
          return this;
       }
    }
@@ -130,10 +129,10 @@ public class GeneratedHttpRequest extends HttpRequest {
    private final List<Object> args;
    private final Optional<ClassMethodArgs> caller;
 
-   protected GeneratedHttpRequest(String method, URI endpoint, Multimap<String, String> headers, @Nullable Payload payload,
-            Class<?> declaring, Method javaMethod, Iterable<Object> args, Iterable<Character> skips,
-            Iterable<HttpRequestFilter> filters, Optional<ClassMethodArgs> caller) {
-      super(method, endpoint, headers, payload, skips, filters);
+   protected GeneratedHttpRequest(String method, URI endpoint, Multimap<String, String> headers,
+         @Nullable Payload payload, Class<?> declaring, Method javaMethod, Iterable<Object> args,
+         Iterable<HttpRequestFilter> filters, Optional<ClassMethodArgs> caller) {
+      super(method, endpoint, headers, payload, filters);
       this.declaring = checkNotNull(declaring, "declaring");
       this.javaMethod = checkNotNull(javaMethod, "javaMethod");
       // TODO make immutable. ImmutableList.of() doesn't accept nulls
