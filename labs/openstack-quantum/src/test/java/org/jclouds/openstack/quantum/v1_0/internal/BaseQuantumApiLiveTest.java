@@ -22,11 +22,10 @@ import java.util.Properties;
 
 import org.jclouds.apis.BaseContextLiveTest;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
+import org.jclouds.openstack.quantum.v1_0.QuantumApi;
 import org.jclouds.openstack.quantum.v1_0.QuantumApiMetadata;
 import org.jclouds.openstack.quantum.v1_0.QuantumAsyncApi;
-import org.jclouds.openstack.quantum.v1_0.QuantumApi;
 import org.jclouds.rest.RestContext;
-import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
@@ -58,12 +57,6 @@ public class BaseQuantumApiLiveTest extends BaseContextLiveTest<RestContext<Quan
       Properties props = super.setupProperties();
       setIfTestSystemPropertyPresent(props, KeystoneProperties.CREDENTIAL_TYPE);
       return props;
-   }
-   
-   @AfterGroups(groups = "live")
-   protected void tearDown() {
-      if (quantumContext != null)
-         quantumContext.close();
    }
 
    @Override

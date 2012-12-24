@@ -37,7 +37,7 @@ import org.jclouds.cloudstack.options.CreateVlanIPRangeOptions;
 import org.jclouds.cloudstack.options.ListVlanIPRangesOptions;
 import org.jclouds.cloudstack.predicates.NetworkOfferingPredicates;
 import org.jclouds.cloudstack.predicates.ZonePredicates;
-import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
@@ -121,8 +121,9 @@ public class GlobalVlanClientLiveTest extends BaseCloudStackClientLiveTest {
       );
    }
 
-   @AfterClass
-   public void testFixtureTearDown() {
+   @AfterGroups(groups = "live")
+   @Override
+   protected void tearDownContext() {
       if (range != null) {
          globalAdminClient.getVlanClient().deleteVlanIPRange(range.getId());
          range = null;
@@ -131,6 +132,7 @@ public class GlobalVlanClientLiveTest extends BaseCloudStackClientLiveTest {
          client.getNetworkClient().deleteNetwork(network.getId());
          network = null;
       }
+      super.tearDownContext();
    }
 
 }

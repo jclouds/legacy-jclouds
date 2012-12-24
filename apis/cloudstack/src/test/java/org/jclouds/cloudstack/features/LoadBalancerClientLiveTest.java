@@ -179,7 +179,8 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
    }
 
    @AfterGroups(groups = "live")
-   protected void tearDown() {
+   @Override
+   protected void tearDownContext() {
       if (rule != null) {
          assertTrue(jobComplete.apply(client.getLoadBalancerClient().deleteLoadBalancerRule(rule.getId())));
       }
@@ -189,7 +190,7 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
       if (ip != null) {
          client.getAddressClient().disassociateIPAddress(ip.getId());
       }
-      super.tearDown();
+      super.tearDownContext();
    }
 
    public void testListLoadBalancerRules() throws Exception {

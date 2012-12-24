@@ -91,7 +91,8 @@ public class CatalogApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    }
 
    @AfterClass(alwaysRun = true)
-   public void tearDown() {
+   @Override
+   protected void tearDownContext() {
       if (media != null) {
          try {
             Task remove = context.getApi().getMediaApi().remove(media.getId());
@@ -116,6 +117,7 @@ public class CatalogApiLiveTest extends BaseVCloudDirectorApiLiveTest {
             }
          }
       }
+      super.tearDownContext();
    }
 
    @Test(description = "GET /catalog/{id}")
