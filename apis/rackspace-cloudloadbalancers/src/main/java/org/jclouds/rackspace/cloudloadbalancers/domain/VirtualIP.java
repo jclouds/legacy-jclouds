@@ -21,6 +21,9 @@ package org.jclouds.rackspace.cloudloadbalancers.domain;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
+
 /**
  * A virtual IP (VIP) makes a load balancer accessible by clients. The load balancing service
  * supports either a public VIP, routable on the public Internet, or a ServiceNet address, routable
@@ -146,31 +149,27 @@ public class VirtualIP implements Comparable<VirtualIP> {
       return address.compareTo(arg0.address);
    }
 
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this).omitNullValues()
+            .add("id", id).add("address", address).add("ipVersion", ipVersion).add("type", type);
+   }
+   
+   @Override
+   public String toString() {
+      return string().toString();
+   }
+
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + id;
-      return result;
+      return Objects.hashCode(id);
    }
 
    @Override
    public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      VirtualIP other = (VirtualIP) obj;
-      if (id != other.id)
-         return false;
-      return true;
-   }
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
 
-   @Override
-   public String toString() {
-      return String.format("[address=%s, id=%s, ipVersion=%s, type=%s]", address, id, ipVersion, type);
+      VirtualIP that = VirtualIP.class.cast(obj);
+      return Objects.equal(this.id, that.id);
    }
-
 }
