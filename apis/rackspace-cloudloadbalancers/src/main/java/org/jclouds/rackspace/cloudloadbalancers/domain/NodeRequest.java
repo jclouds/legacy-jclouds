@@ -20,6 +20,9 @@ package org.jclouds.rackspace.cloudloadbalancers.domain;
 
 import org.jclouds.rackspace.cloudloadbalancers.domain.internal.BaseNode;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
+
 /**
  * The nodes defined by the load balancer are responsible for servicing the requests received
  * through the load balancer's virtual IP. By default, the load balancer employs a basic health
@@ -106,4 +109,28 @@ public class NodeRequest extends BaseNode<NodeRequest> {
       super(address, port, condition, weight);
    }
 
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this).omitNullValues()
+            .add("address", address).add("port", port).add("condition", condition).add("weight", weight);
+   }
+   
+   @Override
+   public String toString() {
+      return string().toString();
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(address, port);
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+
+      NodeRequest that = NodeRequest.class.cast(obj);
+      return Objects.equal(this.address, that.address)
+            && Objects.equal(this.port, that.port);
+   }
 }

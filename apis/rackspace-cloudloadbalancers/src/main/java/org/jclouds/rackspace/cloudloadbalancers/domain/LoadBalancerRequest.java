@@ -26,6 +26,8 @@ import java.util.Map;
 
 import org.jclouds.rackspace.cloudloadbalancers.domain.internal.BaseLoadBalancer;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -141,10 +143,14 @@ public class LoadBalancerRequest extends BaseLoadBalancer<NodeRequest, LoadBalan
          throw new IllegalArgumentException("virtualIPType or virtualIPId must be specified");
    }
 
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this).omitNullValues()
+            .add("name", name).add("algorithm", algorithm).add("nodes", nodes).add("port", port)
+            .add("protocol", protocol).add("virtualIps", virtualIps);
+   }
+   
    @Override
    public String toString() {
-      return String.format("[algorithm=%s, name=%s, nodes=%s, port=%s, protocol=%s, virtualIps=%s]", algorithm, name,
-               nodes, port, protocol, virtualIps);
+      return string().toString();
    }
-
 }

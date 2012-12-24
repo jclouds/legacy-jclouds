@@ -21,6 +21,9 @@ package org.jclouds.rackspace.cloudloadbalancers.domain;
 import org.jclouds.rackspace.cloudloadbalancers.domain.internal.BaseNode;
 import org.jclouds.rackspace.cloudloadbalancers.domain.internal.BaseNode.Condition;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
+
 /**
  * 
  * @author Dan Lo Bianco
@@ -56,39 +59,28 @@ public class NodeAttributes {
       }
    }
 
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this).omitNullValues()
+            .add("condition", condition).add("weight", weight);
+   }
+   
    @Override
    public String toString() {
-      return String.format("[condition=%s, weight=%s]", condition, weight);
+      return string().toString();
    }
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((condition == null) ? 0 : condition.hashCode());
-      result = prime * result + ((weight == null) ? 0 : weight.hashCode());
-      return result;
+      return Objects.hashCode(condition, weight);
    }
 
    @Override
    public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      NodeAttributes other = (NodeAttributes) obj;
-      if (condition == null) {
-         if (other.condition != null)
-            return false;
-      } else if (!condition.equals(other.condition))
-         return false;
-      if (weight == null) {
-         if (other.weight != null)
-            return false;
-      } else if (!weight.equals(other.weight))
-         return false;
-      return true;
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+
+      NodeAttributes that = NodeAttributes.class.cast(obj);
+      return Objects.equal(this.condition, that.condition)
+            && Objects.equal(this.weight, that.weight);
    }
 }

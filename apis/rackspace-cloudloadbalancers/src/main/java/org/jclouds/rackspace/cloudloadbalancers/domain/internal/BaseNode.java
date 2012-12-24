@@ -21,6 +21,9 @@ package org.jclouds.rackspace.cloudloadbalancers.domain.internal;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
+
 /**
  * The nodes defined by the load balancer are responsible for servicing the requests received
  * through the load balancer's virtual IP. By default, the load balancer employs a basic health
@@ -168,43 +171,29 @@ public class BaseNode<T extends BaseNode<T>> implements Comparable<BaseNode<T>> 
       return address.compareTo(arg0.address);
    }
 
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this).omitNullValues()
+            .add("address", address).add("port", port).add("condition", condition).add("weight", weight);
+   }
+   
+   @Override
+   public String toString() {
+      return string().toString();
+   }
+
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((address == null) ? 0 : address.hashCode());
-      result = prime * result + ((condition == null) ? 0 : condition.hashCode());
-      result = prime * result + port;
-      return result;
+      return Objects.hashCode(address, port, condition);
    }
 
    @Override
    public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      BaseNode<?> other = (BaseNode<?>) obj;
-      if (address == null) {
-         if (other.address != null)
-            return false;
-      } else if (!address.equals(other.address))
-         return false;
-      if (condition == null) {
-         if (other.condition != null)
-            return false;
-      } else if (!condition.equals(other.condition))
-         return false;
-      if (port != other.port)
-         return false;
-      return true;
-   }
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
 
-   @Override
-   public String toString() {
-      return String.format("[address=%s, condition=%s, port=%s, weight=%s]", address, condition, port, weight);
+      BaseNode<?> that = BaseNode.class.cast(obj);
+      return Objects.equal(this.address, that.address)
+            && Objects.equal(this.port, that.port)
+            && Objects.equal(this.condition, that.condition);
    }
-
 }
