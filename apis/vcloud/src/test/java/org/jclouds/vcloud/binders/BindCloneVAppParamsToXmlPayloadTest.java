@@ -18,13 +18,8 @@
  */
 package org.jclouds.vcloud.binders;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
+import static org.testng.Assert.assertEquals;
 
-import java.io.IOException;
-import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.rest.internal.GeneratedHttpRequest;
@@ -33,7 +28,6 @@ import org.jclouds.vcloud.VCloudApiMetadata;
 import org.jclouds.vcloud.options.CloneVAppOptions;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.inject.AbstractModule;
@@ -59,36 +53,30 @@ public class BindCloneVAppParamsToXmlPayloadTest {
       }
    });
 
-   public void testWithDescriptionDeployOn() throws IOException {
+   public void testWithDescriptionDeployOn() throws Exception {
       String expected = Strings2.toStringAndClose(getClass().getResourceAsStream("/copyVApp.xml"));
 
       CloneVAppOptions options = new CloneVAppOptions().deploy().powerOn().description(
                "The description of the new vApp");
-      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
-      expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
-      expect(request.getArgs()).andReturn(ImmutableList.<Object> of(options)).atLeastOnce();
-      request.setPayload(expected);
-      replay(request);
+      GeneratedHttpRequest request = GeneratedHttpRequest.builder().method("POST").endpoint("http://localhost/key")
+            .declaring(String.class).javaMethod(String.class.getDeclaredMethod("toString")).arg(options).build();
 
       BindCloneVAppParamsToXmlPayload binder = injector.getInstance(BindCloneVAppParamsToXmlPayload.class);
 
       Builder<String, Object> map = ImmutableMap.builder();
       map.put("name", "new-linux-server");
       map.put("Source", "https://vcenterprise.bluelock.com/api/v1.0/vapp/201");
-      binder.bindToRequest(request, map.build());
-      verify(request);
+      assertEquals(binder.bindToRequest(request, map.build()).getPayload().getRawContent(), expected);
    }
 
-   public void testWithDescriptionDeployOnSourceDelete() throws IOException {
+   public void testWithDescriptionDeployOnSourceDelete() throws Exception {
       String expected = Strings2.toStringAndClose(getClass().getResourceAsStream("/moveVApp.xml"));
 
       CloneVAppOptions options = new CloneVAppOptions().deploy().powerOn().description(
                "The description of the new vApp");
-      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
-      expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
-      expect(request.getArgs()).andReturn(ImmutableList.<Object> of(options)).atLeastOnce();
-      request.setPayload(expected);
-      replay(request);
+      GeneratedHttpRequest request = GeneratedHttpRequest.builder().method("POST").endpoint("http://localhost/key")
+            .declaring(String.class).javaMethod(String.class.getDeclaredMethod("toString")).arg(options).build();
+
 
       BindCloneVAppParamsToXmlPayload binder = injector.getInstance(BindCloneVAppParamsToXmlPayload.class);
 
@@ -96,25 +84,21 @@ public class BindCloneVAppParamsToXmlPayloadTest {
       map.put("name", "new-linux-server");
       map.put("Source", "https://vcenterprise.bluelock.com/api/v1.0/vapp/201");
       map.put("IsSourceDelete", "true");
-      binder.bindToRequest(request, map.build());
-      verify(request);
+      assertEquals(binder.bindToRequest(request, map.build()).getPayload().getRawContent(), expected);
    }
 
-   public void testDefault() throws IOException {
+   public void testDefault() throws Exception {
       String expected = Strings2.toStringAndClose(getClass().getResourceAsStream("/copyVApp-default.xml"));
 
-      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
-      expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
-      expect(request.getArgs()).andReturn(ImmutableList.<Object> of()).atLeastOnce();
-      request.setPayload(expected);
-      replay(request);
+      GeneratedHttpRequest request = GeneratedHttpRequest.builder().method("POST").endpoint("http://localhost/key")
+            .declaring(String.class).javaMethod(String.class.getDeclaredMethod("toString")).build();
+
 
       BindCloneVAppParamsToXmlPayload binder = injector.getInstance(BindCloneVAppParamsToXmlPayload.class);
 
       Builder<String, Object> map = ImmutableMap.builder();
       map.put("name", "my-vapp");
       map.put("Source", "https://vcenterprise.bluelock.com/api/v1.0/vapp/4181");
-      binder.bindToRequest(request, map.build());
-      verify(request);
+      assertEquals(binder.bindToRequest(request, map.build()).getPayload().getRawContent(), expected);
    }
 }

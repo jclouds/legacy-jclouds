@@ -22,11 +22,9 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.net.InternetDomainName.from;
 import static com.google.common.net.InternetDomainName.isValid;
+import static org.jclouds.http.Uris.uriBuilder;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
 import javax.inject.Singleton;
-import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
@@ -40,21 +38,12 @@ import com.google.common.net.InternetDomainName;
 @Singleton
 public class BindAsHostPrefix implements Binder {
 
-   private final Provider<UriBuilder> uriBuilderProvider;
-
-   @Inject
-   public BindAsHostPrefix(Provider<UriBuilder> uriBuilderProvider) {
-      this.uriBuilderProvider = checkNotNull(uriBuilderProvider, "uriBuilderProvider");
-   }
-
    @Override
    @SuppressWarnings("unchecked")
    public <R extends HttpRequest> R bindToRequest(R request, Object payload) {
       checkNotNull(payload, "hostprefix");
       checkArgument(isValid(request.getEndpoint().getHost()), "this is only valid for hostnames: " + request);
-      UriBuilder builder = uriBuilderProvider.get().uri(request.getEndpoint());
       InternetDomainName name = from(request.getEndpoint().getHost()).child(payload.toString());
-      builder.host(name.name());
-      return (R) request.toBuilder().endpoint(builder.build()).build();
+      return (R) request.toBuilder().endpoint(uriBuilder(request.getEndpoint()).host(name.name()).build()).build();
    }
 }

@@ -1,15 +1,18 @@
 package org.jclouds.io;
 
 import static com.google.common.collect.Iterables.any;
-import static javax.ws.rs.core.HttpHeaders.CONTENT_LENGTH;
-import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
-import static javax.ws.rs.core.HttpHeaders.EXPIRES;
+import static com.google.common.net.HttpHeaders.CONTENT_DISPOSITION;
+import static com.google.common.net.HttpHeaders.CONTENT_ENCODING;
+import static com.google.common.net.HttpHeaders.CONTENT_LANGUAGE;
+import static com.google.common.net.HttpHeaders.CONTENT_LENGTH;
+import static com.google.common.net.HttpHeaders.CONTENT_MD5;
+import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
+import static com.google.common.net.HttpHeaders.EXPIRES;
 
 import java.util.Date;
 import java.util.Map.Entry;
 
 import javax.annotation.Resource;
-import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.DateCodec;
@@ -68,19 +71,19 @@ public interface ContentMetadataCodec {
       public Multimap<String, String> toHeaders(ContentMetadata md) {
          Builder<String, String> builder = ImmutableMultimap.builder();
          if (md.getContentType() != null)
-            builder.put(HttpHeaders.CONTENT_TYPE, md.getContentType());
+            builder.put(CONTENT_TYPE, md.getContentType());
          if (md.getContentDisposition() != null)
-            builder.put("Content-Disposition", md.getContentDisposition());
+            builder.put(CONTENT_DISPOSITION, md.getContentDisposition());
          if (md.getContentEncoding() != null)
-            builder.put(HttpHeaders.CONTENT_ENCODING, md.getContentEncoding());
+            builder.put(CONTENT_ENCODING, md.getContentEncoding());
          if (md.getContentLanguage() != null)
-            builder.put(HttpHeaders.CONTENT_LANGUAGE, md.getContentLanguage());
+            builder.put(CONTENT_LANGUAGE, md.getContentLanguage());
          if (md.getContentLength() != null)
-            builder.put(HttpHeaders.CONTENT_LENGTH, md.getContentLength() + "");
+            builder.put(CONTENT_LENGTH, md.getContentLength() + "");
          if (md.getContentMD5() != null)
-            builder.put("Content-MD5", CryptoStreams.base64(md.getContentMD5()));
+            builder.put(CONTENT_MD5, CryptoStreams.base64(md.getContentMD5()));
          if (md.getExpires() != null)
-            builder.put(HttpHeaders.EXPIRES, getExpiresDateCodec().toString(md.getExpires()));
+            builder.put(EXPIRES, getExpiresDateCodec().toString(md.getExpires()));
          return builder.build();
       }
       
@@ -95,15 +98,15 @@ public interface ContentMetadataCodec {
          for (Entry<String, String> header : headers.entries()) {
             if (!chunked && CONTENT_LENGTH.equalsIgnoreCase(header.getKey())) {
                contentMetadata.setContentLength(Long.valueOf(header.getValue()));
-            } else if ("Content-MD5".equalsIgnoreCase(header.getKey())) {
+            } else if (CONTENT_MD5.equalsIgnoreCase(header.getKey())) {
                contentMetadata.setContentMD5(CryptoStreams.base64(header.getValue()));
             } else if (CONTENT_TYPE.equalsIgnoreCase(header.getKey())) {
                contentMetadata.setContentType(header.getValue());
-            } else if ("Content-Disposition".equalsIgnoreCase(header.getKey())) {
+            } else if (CONTENT_DISPOSITION.equalsIgnoreCase(header.getKey())) {
                contentMetadata.setContentDisposition(header.getValue());
-            } else if ("Content-Encoding".equalsIgnoreCase(header.getKey())) {
+            } else if (CONTENT_ENCODING.equalsIgnoreCase(header.getKey())) {
                contentMetadata.setContentEncoding(header.getValue());
-            } else if ("Content-Language".equalsIgnoreCase(header.getKey())) {
+            } else if (CONTENT_LANGUAGE.equalsIgnoreCase(header.getKey())) {
                contentMetadata.setContentLanguage(header.getValue());
             } else if (EXPIRES.equalsIgnoreCase(header.getKey())) {
                contentMetadata.setExpires(parseExpires(header.getValue()));

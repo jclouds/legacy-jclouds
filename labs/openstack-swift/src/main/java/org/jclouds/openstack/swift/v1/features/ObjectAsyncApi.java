@@ -20,7 +20,6 @@ package org.jclouds.openstack.swift.v1.features;
 
 import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.annotations.SkipEncoding;
 
 /**
  * Storage Object Services
@@ -31,7 +30,6 @@ import org.jclouds.rest.annotations.SkipEncoding;
  *      "http://docs.openstack.org/api/openstack-object-storage/1.0/content/storage-container-services.html"
  *      >api doc</a>
  */
-@SkipEncoding( { '/', '=' })
 @RequestFilters(AuthenticateRequest.class)
 public interface ObjectAsyncApi {
 

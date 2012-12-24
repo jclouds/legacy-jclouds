@@ -39,15 +39,15 @@ public class GroupApiExpectTest extends VCloudDirectorAdminApiExpectTest {
    
    private Reference groupRef = Reference.builder()
          .type("application/vnd.vmware.admin.group+xml")
-         .name("???")
-         .href(URI.create(endpoint + "/admin/group/???"))
+         .name("fff")
+         .href(URI.create(endpoint + "/admin/group/fff"))
          .build();
    
    @Test(enabled = false)
    public void testGetGroup() {
       VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
-            .apiCommand("GET", "/admin/group/???")
+            .apiCommand("GET", "/admin/group/fff")
             .acceptAnyMedia()
             .httpRequestBuilder().build(), 
          new VcloudHttpResponsePrimer()
@@ -69,7 +69,7 @@ public class GroupApiExpectTest extends VCloudDirectorAdminApiExpectTest {
    public void testEditGroup() {
       VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
-            .apiCommand("PUT", "/admin/group/???")
+            .apiCommand("PUT", "/admin/group/fff")
             .xmlFilePayload("/group/editGroupSource.xml", VCloudDirectorMediaType.GROUP)
             .acceptMedia(VCloudDirectorMediaType.GROUP)
             .httpRequestBuilder().build(), 
@@ -90,7 +90,7 @@ public class GroupApiExpectTest extends VCloudDirectorAdminApiExpectTest {
    public void testRemoveGroup() {
       VCloudDirectorAdminApi api = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
-               .apiCommand("DELETE", "/admin/group/???")
+               .apiCommand("DELETE", "/admin/group/fff")
                .acceptAnyMedia()
                .httpRequestBuilder().build(), 
             new VcloudHttpResponsePrimer()

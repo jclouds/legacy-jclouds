@@ -23,7 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.ws.rs.core.MediaType;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.json.Json;
@@ -52,7 +51,7 @@ public class BindToJsonPayload implements MapBinder {
    public <R extends HttpRequest> R bindToRequest(R request, Object payload) {
       String json = jsonBinder.toJson(checkNotNull(payload, "payload"));
       request.setPayload(json);
-      request.getPayload().getContentMetadata().setContentType(MediaType.APPLICATION_JSON);
+      request.getPayload().getContentMetadata().setContentType("application/json");
       return request;
    }
 

@@ -27,7 +27,6 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
-import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.functions.IdentityFunction;
 import org.jclouds.http.HttpRequest;
@@ -71,7 +70,6 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.name.Names;
 import com.google.inject.util.Types;
-import com.sun.jersey.api.uri.UriBuilderImpl;
 
 public class RestModule extends AbstractModule {
 
@@ -98,7 +96,6 @@ public class RestModule extends AbstractModule {
       install(new GsonModule());
       install(new FactoryModuleBuilder().build(BindToJsonPayloadWrappedWith.Factory.class));
       bind(IdentityFunction.class).toInstance(IdentityFunction.INSTANCE);
-      bind(UriBuilder.class).to(UriBuilderImpl.class);
       bind(AsyncRestClientProxy.Factory.class).to(Factory.class).in(Scopes.SINGLETON);
       BinderUtils.bindAsyncClient(binder(), HttpAsyncClient.class);
       BinderUtils.bindClient(binder(), HttpClient.class, HttpAsyncClient.class, ImmutableMap.<Class<?>, Class<?>> of(

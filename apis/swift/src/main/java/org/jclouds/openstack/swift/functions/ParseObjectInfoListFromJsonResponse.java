@@ -20,6 +20,7 @@ package org.jclouds.openstack.swift.functions;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
+import static org.jclouds.http.Uris.uriBuilder;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,8 +28,6 @@ import java.lang.reflect.Type;
 import java.util.SortedSet;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.internal.PageSetImpl;
@@ -54,16 +53,14 @@ import com.google.inject.TypeLiteral;
  */
 public class ParseObjectInfoListFromJsonResponse extends ParseJson<PageSet<ObjectInfo>> implements
          InvocationContext<ParseObjectInfoListFromJsonResponse> {
-   private final Provider<UriBuilder> uriBuilders;
 
    private GeneratedHttpRequest request;
    private String container;
 
    @Inject
-   public ParseObjectInfoListFromJsonResponse(Json json, Provider<UriBuilder> uriBuilders) {
+   public ParseObjectInfoListFromJsonResponse(Json json) {
       super(json, new TypeLiteral<PageSet<ObjectInfo>>() {
       });
-      this.uriBuilders = uriBuilders;
    }
 
    public PageSet<ObjectInfo> apply(InputStream stream) {
@@ -82,9 +79,9 @@ public class ParseObjectInfoListFromJsonResponse extends ParseJson<PageSet<Objec
          SortedSet<ObjectInfo> returnVal = Sets.newTreeSet(Iterables.transform(list,
                   new Function<ObjectInfoImpl, ObjectInfo>() {
                      public ObjectInfo apply(ObjectInfoImpl from) {
-                        return from.toBuilder().container(container).uri(
-                                 uriBuilders.get().uri(request.getEndpoint()).path(from.getName()).replaceQuery("")
-                                          .build()).build();
+                     return from.toBuilder().container(container)
+                           .uri(uriBuilder(request.getEndpoint()).clearQuery().appendPath(from.getName()).build())
+                           .build();
                      }
                   }));
          boolean truncated = options.getMaxResults() == returnVal.size();

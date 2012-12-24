@@ -17,10 +17,13 @@
  * under the License.
  */
 package org.jclouds.io;
-
-import static javax.ws.rs.core.HttpHeaders.CONTENT_LENGTH;
-import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
-import static javax.ws.rs.core.HttpHeaders.EXPIRES;
+import static com.google.common.net.HttpHeaders.CONTENT_DISPOSITION;
+import static com.google.common.net.HttpHeaders.CONTENT_ENCODING;
+import static com.google.common.net.HttpHeaders.CONTENT_LANGUAGE;
+import static com.google.common.net.HttpHeaders.CONTENT_LENGTH;
+import static com.google.common.net.HttpHeaders.CONTENT_MD5;
+import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
+import static com.google.common.net.HttpHeaders.EXPIRES;
 
 import java.util.Date;
 import java.util.Set;
@@ -33,8 +36,8 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  */
 public interface ContentMetadata {
-   public static final Set<String> HTTP_HEADERS = ImmutableSet.of(CONTENT_LENGTH, "Content-MD5", CONTENT_TYPE,
-            "Content-Disposition", "Content-Encoding", "Content-Language", EXPIRES);
+   public static final Set<String> HTTP_HEADERS = ImmutableSet.of(CONTENT_LENGTH, CONTENT_MD5, CONTENT_TYPE,
+            CONTENT_DISPOSITION, CONTENT_ENCODING, CONTENT_LANGUAGE, EXPIRES);
 
    // See http://stackoverflow.com/questions/10584647/simpledateformat-parse-is-one-hour-out-using-rfc-1123-gmt-in-summer
    // for why not using "zzz"

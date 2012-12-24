@@ -18,22 +18,37 @@
  */
 package org.jclouds.rest.internal;
 
+import static com.google.common.base.Functions.compose;
 import static com.google.common.base.Functions.toStringFunction;
+import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Predicates.and;
+import static com.google.common.base.Predicates.in;
+import static com.google.common.base.Predicates.not;
+import static com.google.common.base.Predicates.notNull;
 import static com.google.common.collect.Collections2.filter;
+import static com.google.common.collect.Iterables.any;
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.transform;
+import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.filterValues;
 import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Multimaps.filterKeys;
+import static com.google.common.collect.Multimaps.transformValues;
 import static com.google.common.collect.Sets.newTreeSet;
+import static com.google.common.net.HttpHeaders.ACCEPT;
+import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
+import static com.google.common.net.HttpHeaders.HOST;
 import static java.util.Arrays.asList;
-import static javax.ws.rs.core.HttpHeaders.ACCEPT;
-import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
-import static javax.ws.rs.core.HttpHeaders.HOST;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static javax.ws.rs.core.MediaType.APPLICATION_XML;
+import static org.jclouds.http.Uris.uriBuilder;
 import static org.jclouds.io.Payloads.newPayload;
+import static org.jclouds.util.Maps2.convertUnsafe;
+import static org.jclouds.util.Strings2.replaceTokens;
 
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
@@ -43,9 +58,6 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
 import java.net.URI;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -54,19 +66,14 @@ import java.util.Set;
 import java.util.SortedSet;
 
 import javax.annotation.Resource;
-import javax.inject.Provider;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.HttpMethod;
-import javax.ws.rs.MatrixParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriBuilderException;
 
 import org.jclouds.Constants;
 import org.jclouds.functions.IdentityFunction;
@@ -75,6 +82,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpUtils;
+import org.jclouds.http.Uris.UriBuilder;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.http.functions.ParseSax;
@@ -87,7 +95,6 @@ import org.jclouds.http.functions.ReturnStringIf2xx;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
 import org.jclouds.http.options.HttpRequestOptions;
-import org.jclouds.http.utils.Queries;
 import org.jclouds.internal.ClassMethodArgs;
 import org.jclouds.io.ContentMetadata;
 import org.jclouds.io.ContentMetadataCodec;
@@ -113,7 +120,6 @@ import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.MapBinder;
-import org.jclouds.rest.annotations.MatrixParams;
 import org.jclouds.rest.annotations.OnlyElement;
 import org.jclouds.rest.annotations.OverrideRequestFilters;
 import org.jclouds.rest.annotations.ParamParser;
@@ -133,17 +139,12 @@ import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.binders.BindMapToStringPayload;
 import org.jclouds.rest.binders.BindToJsonPayloadWrappedWith;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
-import org.jclouds.util.Maps2;
-import org.jclouds.util.Strings2;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
-import com.google.common.base.Functions;
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -153,12 +154,10 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
+import com.google.common.primitives.Chars;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -184,7 +183,6 @@ public class RestAnnotationProcessor<T> {
    static final LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> methodToIndexOfParamToHeaderParamAnnotations = createMethodToIndexOfParamToAnnotation(HeaderParam.class);
    static final LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> methodToIndexOfParamToEndpointAnnotations = createMethodToIndexOfParamToAnnotation(Endpoint.class);
    static final LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> methodToIndexOfParamToEndpointParamAnnotations = createMethodToIndexOfParamToAnnotation(EndpointParam.class);
-   static final LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> methodToIndexOfParamToMatrixParamAnnotations = createMethodToIndexOfParamToAnnotation(MatrixParam.class);
    static final LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> methodToIndexOfParamToFormParamAnnotations = createMethodToIndexOfParamToAnnotation(FormParam.class);
    static final LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> methodToIndexOfParamToQueryParamAnnotations = createMethodToIndexOfParamToAnnotation(QueryParam.class);
    static final LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> methodToIndexOfParamToPathParamAnnotations = createMethodToIndexOfParamToAnnotation(PathParam.class);
@@ -223,11 +221,11 @@ public class RestAnnotationProcessor<T> {
 
    }
 
-   private static final Function<? super Entry<String, String>, ? extends Part> ENTRY_TO_PART = new Function<Entry<String, String>, Part>() {
+   private static final Function<? super Entry<String, Object>, ? extends Part> ENTRY_TO_PART = new Function<Entry<String, Object>, Part>() {
 
       @Override
-      public Part apply(Entry<String, String> from) {
-         return Part.create(from.getKey(), from.getValue());
+      public Part apply(Entry<String, Object> from) {
+         return Part.create(from.getKey(), from.getValue().toString());
       }
 
    };
@@ -249,11 +247,9 @@ public class RestAnnotationProcessor<T> {
    private final ParseSax.Factory parserFactory;
    private final HttpUtils utils;
    private final ContentMetadataCodec contentMetadataCodec;
-   private final Provider<UriBuilder> uriBuilderProvider;
    private final LoadingCache<Class<?>, Boolean> seedAnnotationCache;
    private final String apiVersion;
    private final String buildVersion;
-   private char[] skips;
 
    @Inject
    private InputParamValidator inputParamValidator;
@@ -282,7 +278,7 @@ public class RestAnnotationProcessor<T> {
          if (wrappingTransformer instanceof InvocationContext<?>) {
             ((InvocationContext<?>) wrappingTransformer).setContext(request);
          }
-         transformer = Functions.compose(Function.class.cast(wrappingTransformer), transformer);
+         transformer = compose(Function.class.cast(wrappingTransformer), transformer);
       }
       return transformer;
    }
@@ -297,7 +293,7 @@ public class RestAnnotationProcessor<T> {
          transformer = new ParseFirstJsonValueNamed(injector.getInstance(GsonWrapper.class),
                TypeLiteral.get(returnVal), method.getAnnotation(SelectJson.class).value());
          if (method.isAnnotationPresent(OnlyElement.class))
-            transformer = Functions.compose(new OnlyElementOrNull(), transformer);
+            transformer = compose(new OnlyElementOrNull(), transformer);
       } else {
          transformer = injector.getInstance(getParserOrThrowException(method));
       }
@@ -329,15 +325,9 @@ public class RestAnnotationProcessor<T> {
       this.parserFactory = parserFactory;
       this.utils = utils;
       this.contentMetadataCodec = contentMetadataCodec;
-      this.uriBuilderProvider = injector.getProvider(UriBuilder.class);
       this.seedAnnotationCache = seedAnnotationCache;
       seedAnnotationCache.getUnchecked(declaring);
       this.delegationMap = delegationMap;
-      if (declaring.isAnnotationPresent(SkipEncoding.class)) {
-         skips = declaring.getAnnotation(SkipEncoding.class).value();
-      } else {
-         skips = new char[] {};
-      }
       this.apiVersion = apiVersion;
       this.buildVersion = buildVersion;
    }
@@ -359,9 +349,9 @@ public class RestAnnotationProcessor<T> {
          if (this == obj) return true;
          if (obj == null || getClass() != obj.getClass()) return false;
          MethodKey that = MethodKey.class.cast(obj);
-         return Objects.equal(this.declaringClass, that.declaringClass)
-               && Objects.equal(this.name, that.name)
-               && Objects.equal(this.parametersTypeHashCode, that.parametersTypeHashCode);
+         return equal(this.declaringClass, that.declaringClass)
+               && equal(this.name, that.name)
+               && equal(this.parametersTypeHashCode, that.parametersTypeHashCode);
       }
 
       private final String name;
@@ -399,7 +389,7 @@ public class RestAnnotationProcessor<T> {
                new ClassMethodArgs(method.getDeclaringClass(), method, args)));
       }
 
-      GeneratedHttpRequest.Builder<?> requestBuilder = GeneratedHttpRequest.builder();
+      GeneratedHttpRequest.Builder requestBuilder = GeneratedHttpRequest.builder();
       HttpRequest r = RestAnnotationProcessor.findHttpRequestInArgs(args);
       if (r != null) {
          requestBuilder.fromHttpRequest(r);
@@ -407,16 +397,18 @@ public class RestAnnotationProcessor<T> {
          requestBuilder.method(getHttpMethodOrConstantOrThrowException(method));
       }
 
+      // URI template in rfc6570 form
+      UriBuilder uriBuilder = uriBuilder(endpoint.get().toString());
+      
+      overridePathEncoding(uriBuilder, method);
+      
       requestBuilder.declaring(declaring)
                     .javaMethod(method)
                     .args(args)
                     .caller(caller)
-                    .skips(skips)
                     .filters(getFiltersIfAnnotated(method));
-
-      UriBuilder builder = uriBuilderProvider.get().uri(endpoint.get());
       
-      Multimap<String, String> tokenValues = LinkedHashMultimap.create();
+      Multimap<String, Object> tokenValues = LinkedHashMultimap.create();
 
       tokenValues.put(Constants.PROPERTY_API_VERSION, apiVersion);
       tokenValues.put(Constants.PROPERTY_BUILD_VERSION, buildVersion);
@@ -424,15 +416,15 @@ public class RestAnnotationProcessor<T> {
       // make sure any path from the caller is a prefix
       if (caller != null) {
          tokenValues.putAll(addPathAndGetTokens(caller.getMethod().getDeclaringClass(), caller.getMethod(),
-               caller.getArgs(), builder));
+               caller.getArgs(), uriBuilder));
       }
       
-      tokenValues.putAll(addPathAndGetTokens(declaring, method, args, builder));
+      tokenValues.putAll(addPathAndGetTokens(declaring, method, args, uriBuilder));
       
-      Multimap<String, String> formParams = addFormParams(tokenValues.entries(), method, args);
-      Multimap<String, String> queryParams = addQueryParams(tokenValues.entries(), method, args);
-      Multimap<String, String> matrixParams = addMatrixParams(tokenValues.entries(), method, args);
-      Multimap<String, String> headers = buildHeaders(tokenValues.entries(), method, args);
+      Multimap<String, Object> formParams = addFormParams(tokenValues, method, args);
+      Multimap<String, Object> queryParams = addQueryParams(tokenValues, method, args);
+      Multimap<String, String> headers = buildHeaders(tokenValues, method, args);
+
       if (r != null)
          headers.putAll(r.getHeaders());
 
@@ -447,60 +439,50 @@ public class RestAnnotationProcessor<T> {
       for(HttpRequestOptions options : findOptionsIn(method, args)) {
          injector.injectMembers(options);// TODO test case
          for (Entry<String, String> header : options.buildRequestHeaders().entries()) {
-            headers.put(header.getKey(), Strings2.replaceTokens(header.getValue(), tokenValues.entries()));
-         }
-         for (Entry<String, String> matrix : options.buildMatrixParameters().entries()) {
-            matrixParams.put(matrix.getKey(), Strings2.replaceTokens(matrix.getValue(), tokenValues.entries()));
+            headers.put(header.getKey(), replaceTokens(header.getValue(), tokenValues));
          }
          for (Entry<String, String> query : options.buildQueryParameters().entries()) {
-            queryParams.put(query.getKey(), Strings2.replaceTokens(query.getValue(), tokenValues.entries()));
+            queryParams.put(query.getKey(), replaceTokens(query.getValue(), tokenValues));
          }
          for (Entry<String, String> form : options.buildFormParameters().entries()) {
-            formParams.put(form.getKey(), Strings2.replaceTokens(form.getValue(), tokenValues.entries()));
+            formParams.put(form.getKey(), replaceTokens(form.getValue(), tokenValues));
          }
 
          String pathSuffix = options.buildPathSuffix();
          if (pathSuffix != null) {
-            builder.path(pathSuffix);
+            uriBuilder.appendPath(pathSuffix);
          }
          String stringPayload = options.buildStringPayload();
          if (stringPayload != null)
             payload = Payloads.newStringPayload(stringPayload);
       }
-
-      if (matrixParams.size() > 0) {
-         for (String key : matrixParams.keySet())
-            builder.matrixParam(key, Lists.newArrayList(matrixParams.get(key)).toArray());
-      }
-
+      
       if (queryParams.size() > 0) {
-         builder.replaceQuery(Queries.makeQueryLine(queryParams, null, skips));
+         uriBuilder.query(queryParams);
       }
 
       requestBuilder.headers(filterOutContentHeaders(headers));
 
-      try {
-         requestBuilder.endpoint(builder.buildFromEncodedMap(Maps2.convertUnsafe(tokenValues)));
-      } catch (IllegalArgumentException e) {
-         throw new IllegalStateException(e);
-      } catch (UriBuilderException e) {
-         throw new IllegalStateException(e);
-      }
-
+      requestBuilder.endpoint(uriBuilder.build(convertUnsafe(tokenValues)));
+      
       if (payload == null)
          payload = findPayloadInArgs(args);
-      List<? extends Part> parts = getParts(method, args, concat(tokenValues.entries(), formParams.entries()));
+      
+      List<? extends Part> parts = getParts(method, args, ImmutableMultimap.<String, Object> builder()
+                                                                           .putAll(tokenValues)
+                                                                           .putAll(formParams).build());
+      
       if (parts.size() > 0) {
          if (formParams.size() > 0) {
             parts = newLinkedList(concat(transform(formParams.entries(), ENTRY_TO_PART), parts));
          }
          payload = new MultipartForm(BOUNDARY, parts);
       } else if (formParams.size() > 0) {
-         payload = Payloads.newUrlEncodedFormPayload(formParams, skips);
+         payload = Payloads.newUrlEncodedFormPayload(transformValues(formParams, NullableToStringFunction.INSTANCE));
       } else if (headers.containsKey(CONTENT_TYPE)) {
          if (payload == null)
             payload = Payloads.newByteArrayPayload(new byte[] {});
-         payload.getContentMetadata().setContentType(Iterables.get(headers.get(CONTENT_TYPE), 0));
+         payload.getContentMetadata().setContentType(get(headers.get(CONTENT_TYPE), 0));
       }
       if (payload != null) {
          requestBuilder.payload(payload);
@@ -512,7 +494,7 @@ public class RestAnnotationProcessor<T> {
          Map<String, Object> mapParams = buildPostParams(method, args);
          if (method.isAnnotationPresent(PayloadParams.class)) {
             PayloadParams params = method.getAnnotation(PayloadParams.class);
-            addMapPayload(mapParams, params, headers.entries());
+            addMapPayload(mapParams, params, headers);
          }
          request = mapBinder.bindToRequest(request, mapParams);
       } else {
@@ -526,6 +508,33 @@ public class RestAnnotationProcessor<T> {
       return request;
    }
 
+   // TODO cache
+   private void overridePathEncoding(UriBuilder uriBuilder, Method method) {
+      if (declaring.isAnnotationPresent(SkipEncoding.class)) {
+         uriBuilder.skipPathEncoding(Chars.asList(declaring.getAnnotation(SkipEncoding.class).value()));
+      }
+      if (method.isAnnotationPresent(SkipEncoding.class)) {
+         uriBuilder.skipPathEncoding(Chars.asList(method.getAnnotation(SkipEncoding.class).value()));
+      }
+   }
+
+   // different than guava as accepts null
+   private static enum NullableToStringFunction implements Function<Object, String> {
+      INSTANCE;
+
+      @Override
+      public String apply(Object o) {
+         if (o == null)
+            return null;
+         return o.toString();
+      }
+
+      @Override
+      public String toString() {
+         return "toString";
+      }
+   }
+   
    private Optional<URI> findEndpoint(Method method, Object... args) {
       ClassMethodArgs cma = logger.isTraceEnabled() ? new ClassMethodArgs(method.getDeclaringClass(), method, args)
             : null;
@@ -560,57 +569,22 @@ public class RestAnnotationProcessor<T> {
    }
 
    public static Multimap<String, String> filterOutContentHeaders(Multimap<String, String> headers) {
-      // http message usually comes in as a null key header, let's filter it
-      // out.
-      return ImmutableMultimap.copyOf(Multimaps.filterKeys(headers,
-         Predicates.and(
-            Predicates.notNull(),
-            Predicates.not(Predicates.in(ContentMetadata.HTTP_HEADERS)))));
+      // http message usually comes in as a null key header, let's filter it out.
+      return ImmutableMultimap.copyOf(filterKeys(headers, and(notNull(), not(in(ContentMetadata.HTTP_HEADERS)))));
    }
 
    public static final String BOUNDARY = "--JCLOUDS--";
 
-   private Multimap<String, String> addPathAndGetTokens(Class<?> clazz, Method method, Object[] args, UriBuilder builder) {
+   private Multimap<String, Object> addPathAndGetTokens(Class<?> clazz, Method method, Object[] args, UriBuilder uriBuilder) {
       if (clazz.isAnnotationPresent(Path.class))
-         builder.path(clazz);
+         uriBuilder.appendPath(clazz.getAnnotation(Path.class).value());
       if (method.isAnnotationPresent(Path.class))
-         builder.path(method);
-      return encodeValues(getPathParamKeyValues(method, args), skips);
+         uriBuilder.appendPath(method.getAnnotation(Path.class).value());
+      return getPathParamKeyValues(method, args);
    }
 
-   public URI replaceQuery(URI in, String newQuery, @Nullable Comparator<Entry<String, String>> sorter) {
-      return replaceQuery(uriBuilderProvider, in, newQuery, sorter, skips);
-   }
-
-   public static URI replaceQuery(Provider<UriBuilder> uriBuilderProvider, URI in, String newQuery,
-         @Nullable Comparator<Entry<String, String>> sorter, char... skips) {
-      UriBuilder builder = uriBuilderProvider.get().uri(in);
-      builder.replaceQuery(Queries.makeQueryLine(Queries.parseQueryToMap(newQuery), sorter, skips));
-      return builder.build();
-   }
-
-   private Multimap<String, String> addMatrixParams(Collection<Entry<String, String>> tokenValues, Method method,
-         Object... args) {
-      Multimap<String, String> matrixMap = LinkedListMultimap.create();
-      if (declaring.isAnnotationPresent(MatrixParams.class)) {
-         MatrixParams matrix = declaring.getAnnotation(MatrixParams.class);
-         addMatrix(matrixMap, matrix, tokenValues);
-      }
-
-      if (method.isAnnotationPresent(MatrixParams.class)) {
-         MatrixParams matrix = method.getAnnotation(MatrixParams.class);
-         addMatrix(matrixMap, matrix, tokenValues);
-      }
-
-      for (Entry<String, String> matrix : getMatrixParamKeyValues(method, args).entries()) {
-         matrixMap.put(matrix.getKey(), Strings2.replaceTokens(matrix.getValue(), tokenValues));
-      }
-      return matrixMap;
-   }
-
-   private Multimap<String, String> addFormParams(Collection<Entry<String, String>> tokenValues, Method method,
-         Object... args) {
-      Multimap<String, String> formMap = LinkedListMultimap.create();
+   private Multimap<String, Object> addFormParams(Multimap<String, ?> tokenValues, Method method, Object... args) {
+      Multimap<String, Object> formMap = LinkedListMultimap.create();
       if (declaring.isAnnotationPresent(FormParams.class)) {
          FormParams form = declaring.getAnnotation(FormParams.class);
          addForm(formMap, form, tokenValues);
@@ -621,15 +595,15 @@ public class RestAnnotationProcessor<T> {
          addForm(formMap, form, tokenValues);
       }
 
-      for (Entry<String, String> form : getFormParamKeyValues(method, args).entries()) {
-         formMap.put(form.getKey(), Strings2.replaceTokens(form.getValue(), tokenValues));
+      for (Entry<String, Object> form : getFormParamKeyValues(method, args).entries()) {
+         formMap.put(form.getKey(), replaceTokens(form.getValue().toString(), tokenValues));
       }
       return formMap;
    }
 
-   private Multimap<String, String> addQueryParams(Collection<Entry<String, String>> tokenValues, Method method,
+   private Multimap<String, Object> addQueryParams(Multimap<String, ?> tokenValues, Method method,
          Object... args) {
-      Multimap<String, String> queryMap = LinkedListMultimap.create();
+      Multimap<String, Object> queryMap = LinkedListMultimap.create();
       if (declaring.isAnnotationPresent(QueryParams.class)) {
          QueryParams query = declaring.getAnnotation(QueryParams.class);
          addQuery(queryMap, query, tokenValues);
@@ -640,55 +614,41 @@ public class RestAnnotationProcessor<T> {
          addQuery(queryMap, query, tokenValues);
       }
 
-      for (Entry<String, String> query : getQueryParamKeyValues(method, args).entries()) {
-         queryMap.put(query.getKey(), Strings2.replaceTokens(query.getValue(), tokenValues));
+      for (Entry<String, Object> query : getQueryParamKeyValues(method, args).entries()) {
+         queryMap.put(query.getKey(), replaceTokens(query.getValue().toString(), tokenValues));
       }
       return queryMap;
    }
 
-   private void addForm(Multimap<String, String> formParams, FormParams form,
-         Collection<Entry<String, String>> tokenValues) {
+   private void addForm(Multimap<String, Object> formParams, FormParams form, Multimap<String, ?> tokenValues) {
       for (int i = 0; i < form.keys().length; i++) {
          if (form.values()[i].equals(FormParams.NULL)) {
             formParams.removeAll(form.keys()[i]);
             formParams.put(form.keys()[i], null);
          } else {
-            formParams.put(form.keys()[i], Strings2.replaceTokens(form.values()[i], tokenValues));
+            formParams.put(form.keys()[i], replaceTokens(form.values()[i], tokenValues));
          }
       }
    }
 
-   private void addQuery(Multimap<String, String> queryParams, QueryParams query,
-         Collection<Entry<String, String>> tokenValues) {
+   private void addQuery(Multimap<String, Object> queryParams, QueryParams query, Multimap<String, ?> tokenValues) {
       for (int i = 0; i < query.keys().length; i++) {
          if (query.values()[i].equals(QueryParams.NULL)) {
             queryParams.removeAll(query.keys()[i]);
             queryParams.put(query.keys()[i], null);
          } else {
-            queryParams.put(query.keys()[i], Strings2.replaceTokens(query.values()[i], tokenValues));
-         }
-      }
-   }
-
-   private void addMatrix(Multimap<String, String> matrixParams, MatrixParams matrix,
-         Collection<Entry<String, String>> tokenValues) {
-      for (int i = 0; i < matrix.keys().length; i++) {
-         if (matrix.values()[i].equals(MatrixParams.NULL)) {
-            matrixParams.removeAll(matrix.keys()[i]);
-            matrixParams.put(matrix.keys()[i], null);
-         } else {
-            matrixParams.put(matrix.keys()[i], Strings2.replaceTokens(matrix.values()[i], tokenValues));
+            queryParams.put(query.keys()[i], replaceTokens(query.values()[i], tokenValues));
          }
       }
    }
 
    private void addMapPayload(Map<String, Object> postParams, PayloadParams mapDefaults,
-         Collection<Entry<String, String>> tokenValues) {
+         Multimap<String, String> headers) {
       for (int i = 0; i < mapDefaults.keys().length; i++) {
          if (mapDefaults.values()[i].equals(PayloadParams.NULL)) {
             postParams.put(mapDefaults.keys()[i], null);
          } else {
-            postParams.put(mapDefaults.keys()[i], Strings2.replaceTokens(mapDefaults.values()[i], tokenValues));
+            postParams.put(mapDefaults.keys()[i], replaceTokens(mapDefaults.values()[i], headers));
          }
       }
    }
@@ -696,7 +656,7 @@ public class RestAnnotationProcessor<T> {
    //TODO: change to LoadingCache<Method, List<HttpRequestFilter>> and move this logic to the CacheLoader.
    @VisibleForTesting
    List<HttpRequestFilter> getFiltersIfAnnotated(Method method) {
-      List<HttpRequestFilter> filters = Lists.newArrayList();
+      List<HttpRequestFilter> filters = newArrayList();
       if (declaring.isAnnotationPresent(RequestFilters.class)) {
          for (Class<? extends HttpRequestFilter> clazz : declaring.getAnnotation(RequestFilters.class).value()) {
             HttpRequestFilter instance = injector.getInstance(clazz);
@@ -760,7 +720,7 @@ public class RestAnnotationProcessor<T> {
       return null;
    }
 
-   private final static TypeLiteral<Supplier<URI>> uriSupplierLiteral = new TypeLiteral<Supplier<URI>>() {
+   private static final TypeLiteral<Supplier<URI>> uriSupplierLiteral = new TypeLiteral<Supplier<URI>>() {
    };
 
    // TODO: change to LoadingCache<ClassMethodArgs, URI> and move this logic to the CacheLoader.
@@ -825,9 +785,9 @@ public class RestAnnotationProcessor<T> {
          } else if (method.getReturnType().equals(HttpResponse.class)
                || TypeLiteral.get(method.getGenericReturnType()).equals(futureHttpResponseLiteral)) {
             return Key.get(Class.class.cast(IdentityFunction.class));
-         } else if (getAcceptHeadersOrNull(method).contains(MediaType.APPLICATION_JSON)) {
+         } else if (getAcceptHeadersOrNull(method).contains(APPLICATION_JSON)) {
             return getJsonParserKeyForMethod(method);
-         } else if (getAcceptHeadersOrNull(method).contains(MediaType.APPLICATION_XML)
+         } else if (getAcceptHeadersOrNull(method).contains(APPLICATION_XML)
                 || method.isAnnotationPresent(JAXBResponseParser.class)) {
             return getJAXBParserKeyForMethod(method);
          } else if (method.getReturnType().equals(String.class)
@@ -860,7 +820,7 @@ public class RestAnnotationProcessor<T> {
       if (method.getReturnType().getTypeParameters().length == 0) {
          returnVal = method.getReturnType();
       } else if (method.getReturnType().equals(ListenableFuture.class)) {
-         ParameterizedType futureType = ((ParameterizedType) method.getGenericReturnType());
+         ParameterizedType futureType = (ParameterizedType) method.getGenericReturnType();
          returnVal = futureType.getActualTypeArguments()[0];
          if (returnVal instanceof WildcardType)
             returnVal = WildcardType.class.cast(returnVal).getUpperBounds()[0];
@@ -968,7 +928,7 @@ public class RestAnnotationProcessor<T> {
                   notEmpty).entrySet());
       OUTER: for (Entry<Integer, Set<Annotation>> entry : binderOrWrapWith) {
          boolean shouldBreak = false;
-         Annotation annotation = Iterables.get(entry.getValue(), 0);
+         Annotation annotation = get(entry.getValue(), 0);
          Binder binder;
          if (annotation instanceof BinderParam)
             binder = injector.getInstance(BinderParam.class.cast(annotation).value());
@@ -1020,7 +980,7 @@ public class RestAnnotationProcessor<T> {
                if (NULLABLE.apply(a))
                   continue OUTER;
             }
-            Preconditions.checkNotNull(null, request.getJavaMethod().getName() + " parameter " + (entry.getKey() + 1));
+            checkNotNull(null, request.getJavaMethod().getName() + " parameter " + (entry.getKey() + 1));
          }
       }
 
@@ -1072,8 +1032,7 @@ public class RestAnnotationProcessor<T> {
       return result.build();
    }
 
-   public Multimap<String, String> buildHeaders(Collection<Entry<String, String>> tokenValues, Method method,
-         final Object... args) {
+   public Multimap<String, String> buildHeaders(Multimap<String, ?> tokenValues, Method method, Object... args) {
       Multimap<String, String> headers = LinkedHashMultimap.create();
       addHeaderIfAnnotationPresentOnMethod(headers, method, tokenValues);
       LoadingCache<Integer, Set<Annotation>> indexToHeaderParam = methodToIndexOfParamToHeaderParamAnnotations
@@ -1081,7 +1040,7 @@ public class RestAnnotationProcessor<T> {
       for (Entry<Integer, Set<Annotation>> entry : indexToHeaderParam.asMap().entrySet()) {
          for (Annotation key : entry.getValue()) {
             String value = args[entry.getKey()].toString();
-            value = Strings2.replaceTokens(value, tokenValues);
+            value = replaceTokens(value, tokenValues);
             headers.put(((HeaderParam) key).value(), value);
          }
       }
@@ -1097,7 +1056,7 @@ public class RestAnnotationProcessor<T> {
    }
 
    private static List<String> getAcceptHeadersOrNull(Method method) {
-      List<String> accept = Collections.emptyList();
+      List<String> accept = ImmutableList.of();
       if (method.getDeclaringClass().isAnnotationPresent(Consumes.class)) {
          Consumes header = method.getDeclaringClass().getAnnotation(Consumes.class);
          accept = asList(header.value());
@@ -1121,7 +1080,7 @@ public class RestAnnotationProcessor<T> {
    }
 
    public void addHeaderIfAnnotationPresentOnMethod(Multimap<String, String> headers, Method method,
-         Collection<Entry<String, String>> tokenValues) {
+         Multimap<String, ?> tokenValues) {
       if (declaring.isAnnotationPresent(Headers.class)) {
          Headers header = declaring.getAnnotation(Headers.class);
          addHeader(headers, header, tokenValues);
@@ -1132,18 +1091,17 @@ public class RestAnnotationProcessor<T> {
       }
    }
 
-   private void addHeader(Multimap<String, String> headers, Headers header,
-         Collection<Entry<String, String>> tokenValues) {
+   private void addHeader(Multimap<String, String> headers, Headers header, Multimap<String, ?> tokenValues) {
       for (int i = 0; i < header.keys().length; i++) {
          String value = header.values()[i];
-         value = Strings2.replaceTokens(value, tokenValues);
+         value = replaceTokens(value, tokenValues);
          headers.put(header.keys()[i], value);
       }
 
    }
 
-   List<? extends Part> getParts(Method method, Object[] args, Iterable<Entry<String, String>> iterable) {
-      List<Part> parts = newLinkedList();
+   private List<Part> getParts(Method method, Object[] args, Multimap<String, ?> tokenValues) {
+      ImmutableList.Builder<Part> parts = ImmutableList.<Part> builder();
       LoadingCache<Integer, Set<Annotation>> indexToPartParam = methodToIndexOfParamToPartParamAnnotations
             .getUnchecked(method);
       for (Entry<Integer, Set<Annotation>> entry : indexToPartParam.asMap().entrySet()) {
@@ -1153,14 +1111,14 @@ public class RestAnnotationProcessor<T> {
             if (!PartParam.NO_CONTENT_TYPE.equals(param.contentType()))
                options.contentType(param.contentType());
             if (!PartParam.NO_FILENAME.equals(param.filename()))
-               options.filename(Strings2.replaceTokens(param.filename(), iterable));
+               options.filename(replaceTokens(param.filename(), tokenValues));
             Object arg = args[entry.getKey()];
-            Preconditions.checkNotNull(arg, param.name());
+            checkNotNull(arg, param.name());
             Part part = Part.create(param.name(), newPayload(arg), options);
             parts.add(part);
          }
       }
-      return parts;
+      return parts.build();
    }
 
    public static HttpRequest findHttpRequestInArgs(Object[] args) {
@@ -1184,8 +1142,8 @@ public class RestAnnotationProcessor<T> {
    }
 
    //TODO: change to LoadingCache<ClassMethodArgs, Multimap<String,String> and move this logic to the CacheLoader.
-   private Multimap<String, String> getPathParamKeyValues(Method method, Object... args) {
-      Multimap<String, String> pathParamValues = LinkedHashMultimap.create();
+   private Multimap<String, Object> getPathParamKeyValues(Method method, Object... args) {
+      Multimap<String, Object> pathParamValues = LinkedHashMultimap.create();
       LoadingCache<Integer, Set<Annotation>> indexToPathParam = methodToIndexOfParamToPathParamAnnotations.getUnchecked(method);
 
       LoadingCache<Integer, Set<Annotation>> indexToParamExtractor = methodToIndexOfParamToParamParserAnnotations.getUnchecked(method);
@@ -1240,48 +1198,14 @@ public class RestAnnotationProcessor<T> {
    };
 
    private static boolean containsNullable(Annotation[] annotations) {
-      return Iterables.any(ImmutableSet.copyOf(annotations), NULLABLE);
+      return any(ImmutableSet.copyOf(annotations), NULLABLE);
    }
 
-   private Multimap<String, String> encodeValues(Multimap<String, String> unencoded, char... skips) {
-      Multimap<String, String> encoded = LinkedHashMultimap.create();
-      for (Entry<String, String> entry : unencoded.entries()) {
-         encoded.put(entry.getKey(), Strings2.urlEncode(entry.getValue(), skips));
-      }
-      return encoded;
-   }
-
-   //TODO: change to LoadingCache<ClassMethodArgs, Multimap<String,String> and move this logic to the CacheLoader.
-   private Multimap<String, String> getMatrixParamKeyValues(Method method, Object... args) {
-      Multimap<String, String> matrixParamValues = LinkedHashMultimap.create();
-      LoadingCache<Integer, Set<Annotation>> indexToMatrixParam = methodToIndexOfParamToMatrixParamAnnotations
-            .getUnchecked(method);
-
-      LoadingCache<Integer, Set<Annotation>> indexToParamExtractor = methodToIndexOfParamToParamParserAnnotations
-            .getUnchecked(method);
-      for (Entry<Integer, Set<Annotation>> entry : indexToMatrixParam.asMap().entrySet()) {
-         for (Annotation key : entry.getValue()) {
-            Set<Annotation> extractors = indexToParamExtractor.getUnchecked(entry.getKey());
-            String paramKey = ((MatrixParam) key).value();
-            Optional<?> paramValue = getParamValue(method, args, extractors, entry, paramKey);
-            if (paramValue.isPresent())
-               matrixParamValues.put(paramKey, paramValue.get().toString());
-         }
-      }
-
-      if (method.isAnnotationPresent(MatrixParam.class) && method.isAnnotationPresent(ParamParser.class)) {
-         String paramKey = method.getAnnotation(MatrixParam.class).value();
-         String paramValue = injector.getInstance(method.getAnnotation(ParamParser.class).value()).apply(args);
-         matrixParamValues.put(paramKey, paramValue);
-
-      }
-      return matrixParamValues;
-   }
 
    //TODO: change to LoadingCache<ClassMethodArgs, Multimap<String,String> and move this logic to the CacheLoader.
    //take care to manage size of this cache
-   private Multimap<String, String> getFormParamKeyValues(Method method, Object... args) {
-      Multimap<String, String> formParamValues = LinkedHashMultimap.create();
+   private Multimap<String, Object> getFormParamKeyValues(Method method, Object... args) {
+      Multimap<String, Object> formParamValues = LinkedHashMultimap.create();
       LoadingCache<Integer, Set<Annotation>> indexToFormParam = methodToIndexOfParamToFormParamAnnotations
             .getUnchecked(method);
 
@@ -1307,8 +1231,8 @@ public class RestAnnotationProcessor<T> {
    }
 
    //TODO: change to LoadingCache<ClassMethodArgs, Multimap<String,String> and move this logic to the CacheLoader.
-   private Multimap<String, String> getQueryParamKeyValues(Method method, Object... args) {
-      Multimap<String, String> queryParamValues = LinkedHashMultimap.create();
+   private Multimap<String, Object> getQueryParamKeyValues(Method method, Object... args) {
+      Multimap<String, Object> queryParamValues = LinkedHashMultimap.create();
       LoadingCache<Integer, Set<Annotation>> indexToQueryParam = methodToIndexOfParamToQueryParamAnnotations
             .getUnchecked(method);
 

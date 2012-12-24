@@ -25,7 +25,16 @@ import static com.google.common.io.ByteStreams.join;
 import static com.google.common.io.ByteStreams.newInputStreamSupplier;
 import static com.google.common.io.ByteStreams.toByteArray;
 import static com.google.common.io.Closeables.closeQuietly;
-import static javax.ws.rs.core.HttpHeaders.CONTENT_LENGTH;
+import static com.google.common.net.HttpHeaders.CONTENT_DISPOSITION;
+import static com.google.common.net.HttpHeaders.CONTENT_ENCODING;
+import static com.google.common.net.HttpHeaders.CONTENT_LANGUAGE;
+import static com.google.common.net.HttpHeaders.CONTENT_LENGTH;
+import static com.google.common.util.concurrent.Uninterruptibles.sleepUninterruptibly;
+import static javax.servlet.http.HttpServletResponse.SC_OK;
+import static org.jclouds.Constants.PROPERTY_RELAX_HOSTNAME;
+import static org.jclouds.Constants.PROPERTY_TRUST_ALL_CERTS;
+import static org.jclouds.crypto.CryptoStreams.md5Base64;
+import static org.jclouds.util.Strings2.toStringAndClose;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -196,8 +205,7 @@ public abstract class BaseJettyTest {
             String responseString = (request.getContentLength() < 10240) ? Strings2.toStringAndClose(body) + "POST"
                      : "POST";
             body = null;
-            for (String header : new String[] { "Content-Disposition", HttpHeaders.CONTENT_LANGUAGE,
-                     HttpHeaders.CONTENT_ENCODING })
+            for (String header : new String[] { CONTENT_DISPOSITION, CONTENT_LANGUAGE, CONTENT_ENCODING })
                if (request.getHeader(header) != null) {
                   response.addHeader("x-" + header, request.getHeader(header));
                }

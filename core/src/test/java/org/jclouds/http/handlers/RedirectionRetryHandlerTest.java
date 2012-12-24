@@ -18,12 +18,12 @@
  */
 package org.jclouds.http.handlers;
 
+import static com.google.common.net.HttpHeaders.HOST;
+import static com.google.common.net.HttpHeaders.LOCATION;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-
-import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.ContextBuilder;
 import org.jclouds.http.HttpCommand;
@@ -78,7 +78,7 @@ public class RedirectionRetryHandlerTest {
       HttpResponse response = HttpResponse.builder()
                                           .statusCode(302)
                                           .message("HTTP/1.1 302 Found")
-                                          .addHeader(HttpHeaders.LOCATION, "/api/v0.8b-ext2.5/Error.aspx?aspxerrorpath=/api/v0.8b-ext2.5/org.svc/1906645").build(); 
+                                          .addHeader(LOCATION, "/api/v0.8b-ext2.5/Error.aspx?aspxerrorpath=/api/v0.8b-ext2.5/org.svc/1906645").build(); 
 
       expect(command.incrementRedirectCount()).andReturn(5);
 
@@ -102,7 +102,7 @@ public class RedirectionRetryHandlerTest {
                HttpResponse.builder()
                            .statusCode(302)
                            .message("HTTP/1.1 302 Found")
-                           .addHeader(HttpHeaders.LOCATION, "/api/v0.8b-ext2.5/Error.aspx?aspxerrorpath=/api/v0.8b-ext2.5/org.svc/1906645").build(),
+                           .addHeader(LOCATION, "/api/v0.8b-ext2.5/Error.aspx?aspxerrorpath=/api/v0.8b-ext2.5/org.svc/1906645").build(),
                HttpRequest.builder()
                           .method("GET")
                           .endpoint("https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.5/Error.aspx?aspxerrorpath=/api/v0.8b-ext2.5/org.svc/1906645").build());
@@ -118,7 +118,7 @@ public class RedirectionRetryHandlerTest {
                HttpResponse.builder()
                            .statusCode(302)
                            .message("HTTP/1.1 302 Found")
-                           .addHeader(HttpHeaders.LOCATION, "https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.5/org/1906645").build(),
+                           .addHeader(LOCATION, "https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.5/org/1906645").build(),
                HttpRequest.builder()
                           .method("GET")
                           .endpoint("https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.5/org/1906645").build());
@@ -133,7 +133,7 @@ public class RedirectionRetryHandlerTest {
                HttpResponse.builder()
                            .statusCode(302)
                            .message("HTTP/1.1 302 Found")
-                           .addHeader(HttpHeaders.LOCATION, "http://services.enterprisecloud.terremark.com:3030/api/v0.8b-ext2.5/org/1906645").build(),
+                           .addHeader(LOCATION, "http://services.enterprisecloud.terremark.com:3030/api/v0.8b-ext2.5/org/1906645").build(),
                HttpRequest.builder()
                           .method("GET")
                           .endpoint("http://services.enterprisecloud.terremark.com:3030/api/v0.8b-ext2.5/org/1906645").build());
@@ -148,7 +148,7 @@ public class RedirectionRetryHandlerTest {
                HttpResponse.builder()
                            .statusCode(302)
                            .message("HTTP/1.1 302 Found")
-                           .addHeader(HttpHeaders.LOCATION, "https://services1.enterprisecloud.terremark.com/api/v0.8b-ext2.5/org/1906645").build(),
+                           .addHeader(LOCATION, "https://services1.enterprisecloud.terremark.com/api/v0.8b-ext2.5/org/1906645").build(),
                HttpRequest.builder()
                           .method("GET")
                           .endpoint("https://services1.enterprisecloud.terremark.com/api/v0.8b-ext2.5/org/1906645").build());
@@ -160,15 +160,15 @@ public class RedirectionRetryHandlerTest {
                HttpRequest.builder()
                           .method("GET")
                           .endpoint("https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.5/org/1906645")
-                          .addHeader(HttpHeaders.HOST, "services.enterprisecloud.terremark.com").build(),
+                          .addHeader(HOST, "services.enterprisecloud.terremark.com").build(),
                HttpResponse.builder()
                            .statusCode(302)
                            .message("HTTP/1.1 302 Found")
-                           .addHeader(HttpHeaders.LOCATION, "https://services1.enterprisecloud.terremark.com/api/v0.8b-ext2.5/org/1906645").build(),
+                           .addHeader(LOCATION, "https://services1.enterprisecloud.terremark.com/api/v0.8b-ext2.5/org/1906645").build(),
                HttpRequest.builder()
                           .method("GET")
                           .endpoint("https://services1.enterprisecloud.terremark.com/api/v0.8b-ext2.5/org/1906645")
-                          .addHeader(HttpHeaders.HOST, "services1.enterprisecloud.terremark.com").build());
+                          .addHeader(HOST, "services1.enterprisecloud.terremark.com").build());
    }
 
    protected void verifyRedirectRoutes(HttpRequest request, HttpResponse response, HttpRequest expected) {

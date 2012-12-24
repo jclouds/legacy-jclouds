@@ -581,80 +581,62 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
 
         assertRequestLineEquals(
             request,
-            "POST http://localhost/api/admin/datacenters/1/racks/1/logicservers/associate?bladeDn=blade&org=org-root%2Forg-Finance&lsName=server HTTP/1.1");
-        assertNonPayloadHeadersEqual(request, "");
-        assertPayloadEquals(request, null, null, false);
+            "POST http://localhost/api/admin/datacenters/1/racks/1/logicservers/associate?bladeDn=blade&org=org-root/org-Finance&lsName=server HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "");
+      assertPayloadEquals(request, null, null, false);
 
-        assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
-        assertSaxResponseParserClassEquals(method, null);
-        assertExceptionParserClassEquals(method, null);
+      assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
 
-        checkFilters(request);
-    }
+      checkFilters(request);
+   }
 
-    public void testAssociateTemplate() throws SecurityException, NoSuchMethodException,
-        IOException
-    {
-        Method method =
-            InfrastructureAsyncApi.class.getMethod("associateTemplate", UcsRackDto.class,
-                LogicServerDto.class, OrganizationDto.class, String.class, String.class);
-        GeneratedHttpRequest request =
-            processor.createRequest(method, InfrastructureResources.managedRackPut(),
-                InfrastructureResources.logicServerPut(),
-                InfrastructureResources.organizationPut(), "newname", "blade");
+   public void testAssociateTemplate() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = InfrastructureAsyncApi.class.getMethod("associateTemplate", UcsRackDto.class,
+            LogicServerDto.class, OrganizationDto.class, String.class, String.class);
+      GeneratedHttpRequest request = processor.createRequest(method, InfrastructureResources.managedRackPut(),
+            InfrastructureResources.logicServerPut(), InfrastructureResources.organizationPut(), "newname", "blade");
 
-        assertRequestLineEquals(
+      assertRequestLineEquals(
             request,
-            "POST http://localhost/api/admin/datacenters/1/racks/1/logicservers/associatetemplate?newName=newname&bladeDn=blade&org=org-root%2Forg-Finance&lsName=server HTTP/1.1");
-        assertNonPayloadHeadersEqual(request, "");
-        assertPayloadEquals(request, null, null, false);
+            "POST http://localhost/api/admin/datacenters/1/racks/1/logicservers/associatetemplate?newName=newname&bladeDn=blade&org=org-root/org-Finance&lsName=server HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "");
+      assertPayloadEquals(request, null, null, false);
 
-        assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
-        assertSaxResponseParserClassEquals(method, null);
-        assertExceptionParserClassEquals(method, null);
+      assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
 
-        checkFilters(request);
-    }
+      checkFilters(request);
+   }
 
-    public void testCloneAndAssociateLogicServer() throws SecurityException, NoSuchMethodException,
-        IOException
-    {
-        Method method =
-            InfrastructureAsyncApi.class.getMethod("cloneAndAssociateLogicServer",
-                UcsRackDto.class, LogicServerDto.class, OrganizationDto.class, String.class,
-                String.class);
-        GeneratedHttpRequest request =
-            processor.createRequest(method, InfrastructureResources.managedRackPut(),
-                InfrastructureResources.logicServerPut(),
-                InfrastructureResources.organizationPut(), "newname", "blade");
+   public void testCloneAndAssociateLogicServer() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = InfrastructureAsyncApi.class.getMethod("cloneAndAssociateLogicServer", UcsRackDto.class,
+            LogicServerDto.class, OrganizationDto.class, String.class, String.class);
+      GeneratedHttpRequest request = processor.createRequest(method, InfrastructureResources.managedRackPut(),
+            InfrastructureResources.logicServerPut(), InfrastructureResources.organizationPut(), "newname", "blade");
 
-        assertRequestLineEquals(
+      assertRequestLineEquals(
             request,
-            "POST http://localhost/api/admin/datacenters/1/racks/1/logicservers/assocclone?newName=newname&bladeDn=blade&org=org-root%2Forg-Finance&lsName=server HTTP/1.1");
-        assertNonPayloadHeadersEqual(request, "");
-        assertPayloadEquals(request, null, null, false);
+            "POST http://localhost/api/admin/datacenters/1/racks/1/logicservers/assocclone?newName=newname&bladeDn=blade&org=org-root/org-Finance&lsName=server HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "");
+      assertPayloadEquals(request, null, null, false);
 
-        assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
-        assertSaxResponseParserClassEquals(method, null);
-        assertExceptionParserClassEquals(method, null);
+      assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
 
-        checkFilters(request);
-    }
+      checkFilters(request);
+   }
 
-    public void testDissociateLogicServer() throws SecurityException, NoSuchMethodException,
-        IOException
-    {
-        Method method =
-            InfrastructureAsyncApi.class.getMethod("dissociateLogicServer", UcsRackDto.class,
-                LogicServerDto.class);
-        GeneratedHttpRequest request =
-            processor
-                .createRequest(method, InfrastructureResources.managedRackPut(),
-                    InfrastructureResources.logicServerPut(),
-                    InfrastructureResources.organizationPut());
+   public void testDissociateLogicServer() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = InfrastructureAsyncApi.class.getMethod("dissociateLogicServer", UcsRackDto.class,
+            LogicServerDto.class);
+      GeneratedHttpRequest request = processor.createRequest(method, InfrastructureResources.managedRackPut(),
+            InfrastructureResources.logicServerPut(), InfrastructureResources.organizationPut());
 
-        assertRequestLineEquals(
-            request,
+      assertRequestLineEquals(request,
             "POST http://localhost/api/admin/datacenters/1/racks/1/logicservers/dissociate?lsName=server HTTP/1.1");
         assertNonPayloadHeadersEqual(request, "");
         assertPayloadEquals(request, null, null, false);
@@ -678,28 +660,24 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
 
         assertRequestLineEquals(
             request,
-            "POST http://localhost/api/admin/datacenters/1/racks/1/logicservers/clone?newName=name&org=org-root%2Forg-Finance&lsName=server HTTP/1.1");
-        assertNonPayloadHeadersEqual(request, "");
-        assertPayloadEquals(request, null, null, false);
+            "POST http://localhost/api/admin/datacenters/1/racks/1/logicservers/clone?newName=name&org=org-root/org-Finance&lsName=server HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "");
+      assertPayloadEquals(request, null, null, false);
 
-        assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
-        assertSaxResponseParserClassEquals(method, null);
-        assertExceptionParserClassEquals(method, null);
+      assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
 
-        checkFilters(request);
-    }
+      checkFilters(request);
+   }
 
-    public void testDeleteLogicServer() throws SecurityException, NoSuchMethodException,
-        IOException
-    {
-        Method method =
-            InfrastructureAsyncApi.class.getMethod("deleteLogicServer", UcsRackDto.class,
-                LogicServerDto.class);
-        GeneratedHttpRequest request =
-            processor.createRequest(method, InfrastructureResources.managedRackPut(),
-                InfrastructureResources.logicServerPut());
+   public void testDeleteLogicServer() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = InfrastructureAsyncApi.class.getMethod("deleteLogicServer", UcsRackDto.class,
+            LogicServerDto.class);
+      GeneratedHttpRequest request = processor.createRequest(method, InfrastructureResources.managedRackPut(),
+            InfrastructureResources.logicServerPut());
 
-        assertRequestLineEquals(request,
+      assertRequestLineEquals(request,
             "POST http://localhost/api/admin/datacenters/1/racks/1/logicservers/delete?lsName=server HTTP/1.1");
         assertNonPayloadHeadersEqual(request, "");
         assertPayloadEquals(request, null, null, false);

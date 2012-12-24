@@ -51,7 +51,6 @@ import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
-import org.jclouds.rest.annotations.SkipEncoding;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -66,7 +65,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see <a href="http://www.rackspacecloud.com/cf-devguide-20090812.pdf" />
  * @author Adrian Cole
  */
-@SkipEncoding('/')
 @RequestFilters(AuthenticateRequest.class)
 @Endpoint(Storage.class)
 public interface CloudFilesAsyncClient extends CommonSwiftAsyncClient {

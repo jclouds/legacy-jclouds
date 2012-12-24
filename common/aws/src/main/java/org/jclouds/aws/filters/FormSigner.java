@@ -20,6 +20,7 @@ package org.jclouds.aws.filters;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.collect.Ordering.natural;
 import static org.jclouds.aws.reference.FormParameters.ACTION;
 import static org.jclouds.aws.reference.FormParameters.AWS_ACCESS_KEY_ID;
 import static org.jclouds.aws.reference.FormParameters.SIGNATURE;
@@ -27,11 +28,14 @@ import static org.jclouds.aws.reference.FormParameters.SIGNATURE_METHOD;
 import static org.jclouds.aws.reference.FormParameters.SIGNATURE_VERSION;
 import static org.jclouds.aws.reference.FormParameters.TIMESTAMP;
 import static org.jclouds.aws.reference.FormParameters.VERSION;
+import static org.jclouds.crypto.CryptoStreams.base64;
+import static org.jclouds.crypto.CryptoStreams.mac;
+import static org.jclouds.http.utils.Queries.encodeQueryLine;
+import static org.jclouds.http.utils.Queries.queryParser;
+import static org.jclouds.util.Strings2.toInputStream;
 
-import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -42,31 +46,29 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.Constants;
 import org.jclouds.crypto.Crypto;
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.internal.SignatureWire;
-import org.jclouds.http.utils.Queries;
 import org.jclouds.io.InputSuppliers;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.RequestSigner;
 import org.jclouds.rest.annotations.ApiVersion;
 import org.jclouds.rest.annotations.Credential;
 import org.jclouds.rest.annotations.Identity;
-import org.jclouds.util.Strings2;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.TreeMultimap;
 
 /**
  * 
  * @see <a href=
- *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/Form-Common-Parameters.html"
+ *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/Query-Common-Parameters.html"
  *      />
  * @author Adrian Cole
  * 
@@ -74,8 +76,9 @@ import com.google.common.collect.Multimap;
 @Singleton
 public class FormSigner implements HttpRequestFilter, RequestSigner {
 
-   public static String[] mandatoryParametersForSignature = new String[] { ACTION, SIGNATURE_METHOD, SIGNATURE_VERSION,
-            VERSION };
+   public static final Set<String> mandatoryParametersForSignature = ImmutableSet.of(ACTION, SIGNATURE_METHOD,
+         SIGNATURE_VERSION, VERSION);
+
    private final SignatureWire signatureWire;
    private final String apiVersion;
    private final String accessKey;
@@ -103,8 +106,7 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
 
    public HttpRequest filter(HttpRequest request) throws HttpException {
       checkNotNull(request.getFirstHeaderOrNull(HttpHeaders.HOST), "request is not ready to sign; host not present");
-      Multimap<String, String> decodedParams = Queries.parseQueryToMap(request.getPayload().getRawContent()
-               .toString());
+      Multimap<String, String> decodedParams = queryParser().apply(request.getPayload().getRawContent().toString()); 
       decodedParams.replaceValues(VERSION, ImmutableSet.of(apiVersion));
       addSigningParams(decodedParams);
       validateParams(decodedParams);
@@ -115,34 +117,37 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
       utils.logRequest(signatureLog, request, "<<");
       return request;
    }
-
-   String[] sortForSigning(String queryLine) {
-      String[] parts = queryLine.split("&");
-      // 1. Sort the UTF-8 query string components by parameter name with natural byte ordering.
-      Arrays.sort(parts, new Comparator<String>() {
-
-         public int compare(String o1, String o2) {
-            if (o1.startsWith("AWSAccessKeyId"))
-               return -1;
-            return o1.compareTo(o2);
-         }
-
-      });
-      return parts;
-   }
-
+   
    HttpRequest setPayload(HttpRequest request, Multimap<String, String> decodedParams) {
-      request.setPayload(Queries.makeQueryLine(decodedParams, new Comparator<Map.Entry<String, String>>() {
-         public int compare(Entry<String, String> o1, Entry<String, String> o2) {
-            if (o1.getKey().startsWith("Action") || o2.getKey().startsWith("AWSAccessKeyId"))
-               return -1;
-            if (o1.getKey().startsWith("AWSAccessKeyId") || o2.getKey().startsWith("Action"))
-               return 1;
-            return o1.getKey().compareTo(o2.getKey());
-         }
-      }));
+      String queryLine = buildQueryLine(decodedParams);
+      request.setPayload(queryLine);
       request.getPayload().getContentMetadata().setContentType("application/x-www-form-urlencoded");
       return request;
+   }
+
+   private static final Comparator<String> actionFirstAccessKeyLast = new Comparator<String>() {
+      static final int LEFT_IS_GREATER = 1;
+      static final int RIGHT_IS_GREATER = -1;
+
+      @Override
+      public int compare(String left, String right) {
+         if (left == right) {
+            return 0;
+         }
+         if ("Action".equals(right) || "AWSAccessKeyId".equals(left)) {
+            return LEFT_IS_GREATER;
+         }
+         if ("Action".equals(left) || "AWSAccessKeyId".equals(right)) {
+            return RIGHT_IS_GREATER;
+         }
+         return natural().compare(left, right);
+      }
+   };
+
+   private static String buildQueryLine(Multimap<String, String> decodedParams) {
+      Multimap<String, String> sortedParams = TreeMultimap.create(actionFirstAccessKeyLast, natural());
+      sortedParams.putAll(decodedParams);
+      return encodeQueryLine(sortedParams);
    }
 
    @VisibleForTesting
@@ -161,10 +166,9 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
    public String sign(String stringToSign) {
       String signature;
       try {
-         signature = CryptoStreams.base64(CryptoStreams.mac(InputSuppliers.of(stringToSign), crypto
-                  .hmacSHA256(secretKey.getBytes())));
+         signature = base64(mac(InputSuppliers.of(stringToSign), crypto.hmacSHA256(secretKey.getBytes())));
          if (signatureWire.enabled())
-            signatureWire.input(Strings2.toInputStream(signature));
+            signatureWire.input(toInputStream(signature));
       } catch (Exception e) {
          throw new HttpException("error signing request", e);
       }
@@ -190,16 +194,10 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
 
    @VisibleForTesting
    String buildCanonicalizedString(Multimap<String, String> decodedParams) {
-      return Queries.makeQueryLine(decodedParams, sortAWSFirst);
+      // note that aws wants to percent encode the canonicalized string without skipping '/' and '?'
+      return encodeQueryLine(TreeMultimap.create(decodedParams), ImmutableList.<Character> of());
    }
 
-   public static final Comparator<Map.Entry<String, String>> sortAWSFirst = new Comparator<Map.Entry<String, String>>() {
-      public int compare(Map.Entry<String, String> o1, Map.Entry<String, String> o2) {
-         if (o1.getKey().startsWith("AWSAccessKeyId"))
-            return -1;
-         return o1.getKey().compareTo(o2.getKey());
-      }
-   };
 
    @VisibleForTesting
    void addSigningParams(Multimap<String, String> params) {
@@ -211,7 +209,7 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
    }
 
    public String createStringToSign(HttpRequest input) {
-      return createStringToSign(input, Queries.parseQueryToMap(input.getPayload().getRawContent().toString()));
+      return createStringToSign(input, queryParser().apply(input.getPayload().getRawContent().toString()));
    }
 
 }

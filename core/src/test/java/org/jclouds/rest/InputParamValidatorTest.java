@@ -31,7 +31,6 @@ import org.jclouds.http.IntegrationTestClient;
 import org.jclouds.predicates.validators.AllLowerCaseValidator;
 import org.jclouds.providers.AnonymousProviderMetadata;
 import org.jclouds.rest.annotations.ParamValidators;
-import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.TestException;
 import org.testng.annotations.BeforeClass;
@@ -46,8 +45,7 @@ import com.google.inject.util.Types;
 public class InputParamValidatorTest {
 
    @Timeout(duration = 1000, timeUnit = TimeUnit.SECONDS)
-   @SkipEncoding('/')
-   class InputParamValidatorForm {
+      class InputParamValidatorForm {
       @POST
       @ParamValidators( { AllLowerCaseValidator.class })
       public void allParamsValidated(@PathParam("param1") String param1, @PathParam("param2") String param2) {
@@ -109,8 +107,7 @@ public class InputParamValidatorTest {
    @Test
    public void testWrongPredicateTypeLiteral() throws Exception {
       @Timeout(duration = 1000, timeUnit = TimeUnit.SECONDS)
-      @SkipEncoding('/')
-      class WrongValidator {
+            class WrongValidator {
          @SuppressWarnings("unused")
          @POST
          @ParamValidators( { AllLowerCaseValidator.class })

@@ -19,30 +19,25 @@
 package org.jclouds.http;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Throwables.getCausalChain;
 import static com.google.common.base.Throwables.propagate;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.size;
-import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.io.ByteStreams.toByteArray;
 import static com.google.common.io.Closeables.closeQuietly;
-import static javax.ws.rs.core.HttpHeaders.CONTENT_ENCODING;
-import static javax.ws.rs.core.HttpHeaders.CONTENT_LANGUAGE;
-import static javax.ws.rs.core.HttpHeaders.CONTENT_LENGTH;
-import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
-import static javax.ws.rs.core.HttpHeaders.EXPIRES;
-import static org.jclouds.util.Patterns.PATTERN_THAT_BREAKS_URI;
-import static org.jclouds.util.Patterns.URI_PATTERN;
+import static com.google.common.net.HttpHeaders.CONTENT_DISPOSITION;
+import static com.google.common.net.HttpHeaders.CONTENT_ENCODING;
+import static com.google.common.net.HttpHeaders.CONTENT_LANGUAGE;
+import static com.google.common.net.HttpHeaders.CONTENT_LENGTH;
+import static com.google.common.net.HttpHeaders.CONTENT_MD5;
+import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
+import static com.google.common.net.HttpHeaders.EXPIRES;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map.Entry;
-import java.util.regex.Matcher;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -57,14 +52,8 @@ import org.jclouds.io.PayloadEnclosing;
 import org.jclouds.io.Payloads;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.internal.Wire;
-import org.jclouds.util.Strings2;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
-import com.google.common.base.Splitter;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.SortedSetMultimap;
-import com.google.common.collect.TreeMultimap;
 import com.google.inject.Inject;
 
 /**
@@ -169,18 +158,6 @@ public class HttpUtils {
       return globalMaxConnectionsPerHost;
    }
 
-   /**
-    * keys to the map are only used for socket information, not path. In this case, you should
-    * remove any path or query details from the URI.
-    */
-   public static URI createBaseEndpointFor(URI endpoint) {
-      if (endpoint.getPort() == -1) {
-         return URI.create(String.format("%s://%s", endpoint.getScheme(), endpoint.getHost()));
-      } else {
-         return URI.create(String.format("%s://%s:%d", endpoint.getScheme(), endpoint.getHost(), endpoint.getPort()));
-      }
-   }
-
    public static byte[] toByteArrayOrNull(PayloadEnclosing response) {
       if (response.getPayload() != null) {
          InputStream input = response.getPayload().getInput();
@@ -222,70 +199,6 @@ public class HttpUtils {
       toMd.setExpires(fromMd.getExpires());
    }
 
-   public static URI parseEndPoint(String hostHeader) {
-      URI redirectURI = URI.create(hostHeader);
-      String scheme = redirectURI.getScheme();
-
-      checkState(redirectURI.getScheme().startsWith("http"),
-            String.format("header %s didn't parse an http scheme: [%s]", hostHeader, scheme));
-      int port = redirectURI.getPort() > 0 ? redirectURI.getPort() : redirectURI.getScheme().equals("https") ? 443 : 80;
-      String host = redirectURI.getHost();
-      checkState(host.indexOf('/') == -1,
-            String.format("header %s didn't parse an http host correctly: [%s]", hostHeader, host));
-      URI endPoint = URI.create(String.format("%s://%s:%d", scheme, host, port));
-      return endPoint;
-   }
-
-   public static URI replaceHostInEndPoint(URI endPoint, String host) {
-      return URI.create(endPoint.toString().replace(endPoint.getHost(), host));
-   }
-
-   /**
-    * Used to extract the URI and authentication data from a String. Note that the java URI class
-    * breaks, if there are special characters like '/' present. Otherwise, we wouldn't need this
-    * class, and we could simply use URI.create("uri").getUserData(); Also, URI breaks if there are
-    * curly braces.
-    * 
-    */
-   public static URI createUri(String uriPath) {
-      List<String> onQuery = newArrayList(Splitter.on('?').split(uriPath));
-      if (onQuery.size() == 2) {
-         onQuery.add(Strings2.urlEncode(onQuery.remove(1), '=', '&'));
-         uriPath = Joiner.on('?').join(onQuery);
-      }
-      if (uriPath.indexOf('@') != 1) {
-         List<String> parts = newArrayList(Splitter.on('@').split(uriPath));
-         String path = parts.remove(parts.size() - 1);
-         if (parts.size() > 1) {
-            parts = newArrayList(Strings2.urlEncode(Joiner.on('@').join(parts), '/', ':'));
-         }
-         parts.add(Strings2.urlEncode(path, '/', ':'));
-         uriPath = Joiner.on('@').join(parts);
-      } else {
-         List<String> parts = newArrayList(Splitter.on('/').split(uriPath));
-         String path = parts.remove(parts.size() - 1);
-         parts.add(Strings2.urlEncode(path, ':'));
-         uriPath = Joiner.on('/').join(parts);
-      }
-
-      if (PATTERN_THAT_BREAKS_URI.matcher(uriPath).matches()) {
-         // Compile and use regular expression
-         Matcher matcher = URI_PATTERN.matcher(uriPath);
-         if (matcher.find()) {
-            String scheme = matcher.group(1);
-            String rest = matcher.group(4);
-            String identity = matcher.group(2);
-            String key = matcher.group(3);
-            return URI.create(String.format("%s://%s:%s@%s", scheme, Strings2.urlEncode(identity),
-                  Strings2.urlEncode(key), rest));
-         } else {
-            throw new IllegalArgumentException("bad syntax");
-         }
-      } else {
-         return URI.create(uriPath);
-      }
-   }
-
    public void logRequest(Logger logger, HttpRequest request, String prefix) {
       if (logger.isDebugEnabled()) {
          logger.debug("%s %s", prefix, request.getRequestLine().toString());
@@ -304,19 +217,11 @@ public class HttpUtils {
          if (message.getPayload().getContentMetadata().getContentLength() != null)
             logger.debug("%s %s: %s", prefix, CONTENT_LENGTH, message.getPayload().getContentMetadata()
                   .getContentLength());
-         if (message.getPayload().getContentMetadata().getContentMD5() != null)
-            try {
-               logger.debug(
-                     "%s %s: %s",
-                     prefix,
-                     "Content-MD5",
-                     CryptoStreams.base64Encode(InputSuppliers.of(message.getPayload().getContentMetadata()
-                           .getContentMD5())));
-            } catch (IOException e) {
-               logger.warn(e, " error getting md5 for %s", message);
-            }
+         byte[] md5 = message.getPayload().getContentMetadata().getContentMD5();
+         if (md5 != null)
+            logger.debug("%s %s: %s", prefix, CONTENT_MD5, CryptoStreams.base64(md5));
          if (message.getPayload().getContentMetadata().getContentDisposition() != null)
-            logger.debug("%s %s: %s", prefix, "Content-Disposition", message.getPayload().getContentMetadata()
+            logger.debug("%s %s: %s", prefix, CONTENT_DISPOSITION, message.getPayload().getContentMetadata()
                   .getContentDisposition());
          if (message.getPayload().getContentMetadata().getContentEncoding() != null)
             logger.debug("%s %s: %s", prefix, CONTENT_ENCODING, message.getPayload().getContentMetadata()
@@ -335,17 +240,6 @@ public class HttpUtils {
          logger.debug("%s %s", prefix, response.getStatusLine().toString());
          logMessage(logger, response, prefix);
       }
-   }
-
-   public static String sortAndConcatHeadersIntoString(Multimap<String, String> headers) {
-      StringBuilder buffer = new StringBuilder();
-      SortedSetMultimap<String, String> sortedMap = TreeMultimap.create();
-      sortedMap.putAll(headers);
-      for (Entry<String, String> header : sortedMap.entries()) {
-         if (header.getKey() != null)
-            buffer.append(String.format("%s: %s\n", header.getKey(), header.getValue()));
-      }
-      return buffer.toString();
    }
 
    public void checkRequestHasRequiredProperties(HttpRequest message) {

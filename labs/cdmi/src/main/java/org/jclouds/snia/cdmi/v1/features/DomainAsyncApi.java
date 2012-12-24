@@ -20,7 +20,6 @@ package org.jclouds.snia.cdmi.v1.features;
 
 import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.snia.cdmi.v1.filters.BasicAuthenticationAndTenantId;
 import org.jclouds.snia.cdmi.v1.filters.StripExtraAcceptHeader;
 
@@ -31,7 +30,6 @@ import org.jclouds.snia.cdmi.v1.filters.StripExtraAcceptHeader;
  * @author Adrian Cole
  * @see <a href="http://www.snia.org/cdmi">api doc</a>
  */
-@SkipEncoding({ '/', '=' })
 @RequestFilters({ BasicAuthenticationAndTenantId.class, StripExtraAcceptHeader.class })
 @Headers(keys = "X-CDMI-Specification-Version", values = "{jclouds.api-version}")
 public interface DomainAsyncApi {

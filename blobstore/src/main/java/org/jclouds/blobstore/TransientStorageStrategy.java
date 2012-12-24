@@ -27,15 +27,9 @@ import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import javax.inject.Provider;
+
 import javax.inject.Inject;
 import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.UriBuilder;
-
-import com.google.common.base.Preconditions;
-import com.google.common.base.Supplier;
-import com.google.common.base.Throwables;
-import com.google.common.collect.Multimaps;
 
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.Blob.Factory;
@@ -47,12 +41,18 @@ import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.DateService;
 import org.jclouds.domain.Location;
 import org.jclouds.http.HttpUtils;
+import static org.jclouds.http.Uris.*;
 import org.jclouds.io.ContentMetadataCodec;
 import org.jclouds.io.MutableContentMetadata;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.io.payloads.ByteArrayPayload;
 import org.jclouds.io.payloads.DelegatingPayload;
+
+import com.google.common.base.Supplier;
+import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Multimaps;
 
 public class TransientStorageStrategy implements LocalStorageStrategy {
    private final ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs = new ConcurrentHashMap<String, ConcurrentMap<String, Blob>>();
@@ -62,19 +62,15 @@ public class TransientStorageStrategy implements LocalStorageStrategy {
    private final Factory blobFactory;
    private final Crypto crypto;
    private final ContentMetadataCodec contentMetadataCodec;
-   private final Provider<UriBuilder> uriBuilders;
 
    @Inject
-   TransientStorageStrategy(final Supplier<Location> defaultLocation,
-         DateService dateService, Factory blobFactory, Crypto crypto,
-         ContentMetadataCodec contentMetadataCodec,
-         Provider<UriBuilder> uriBuilders) {
+   TransientStorageStrategy(Supplier<Location> defaultLocation, DateService dateService, Factory blobFactory,
+         Crypto crypto, ContentMetadataCodec contentMetadataCodec) {
       this.defaultLocation = defaultLocation;
       this.dateService = dateService;
       this.blobFactory = blobFactory;
       this.crypto = crypto;
       this.contentMetadataCodec = contentMetadataCodec;
-      this.uriBuilders = uriBuilders;
    }
 
    @Override
@@ -185,7 +181,7 @@ public class TransientStorageStrategy implements LocalStorageStrategy {
       blob.setPayload(payload);
       blob.getMetadata().setContainer(containerName);
       blob.getMetadata().setUri(
-               uriBuilders.get().scheme("mem").host(containerName).path(in.getMetadata().getName()).build());
+            uriBuilder(new StringBuilder("mem://").append(containerName)).path(in.getMetadata().getName()).build());
       blob.getMetadata().setLastModified(new Date());
       String eTag = CryptoStreams.hex(payload.getContentMetadata().getContentMD5());
       blob.getMetadata().setETag(eTag);

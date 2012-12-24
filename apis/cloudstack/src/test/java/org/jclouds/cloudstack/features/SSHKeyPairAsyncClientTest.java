@@ -117,7 +117,7 @@ public class SSHKeyPairAsyncClientTest extends BaseCloudStackAsyncClientTest<SSH
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
 
-      assertEquals(httpRequest.getFilters().size(), 2);
+      assertEquals(httpRequest.getFilters().size(), 1);
       assertEquals(httpRequest.getFilters().get(0).getClass(), QuerySigner.class);
    }
 

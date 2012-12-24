@@ -27,8 +27,6 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.Set;
 
-import javax.ws.rs.core.UriBuilder;
-
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.json.config.GsonModule;
@@ -45,7 +43,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.sun.jersey.api.uri.UriBuilderImpl;
 
 /**
  * Tests behavior of {@code ParseObjectInfoListFromJsonResponse}
@@ -60,7 +57,6 @@ public class ParseObjectInfoListFromJsonResponseTest {
       @Override
       protected void configure() {
          bind(DateAdapter.class).to(Iso8601DateAdapter.class);
-         bind(UriBuilder.class).to(UriBuilderImpl.class);
       }
 
    }, new GsonModule());

@@ -33,7 +33,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.MapBinder;
-import org.jclouds.rest.annotations.MatrixParams;
 import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
@@ -83,9 +82,8 @@ public interface RimuHostingAsyncClient {
     * @see RimuHostingClient#getServerList
     */
    @GET
-   @Path("/orders")
+   @Path("/orders;include_inactive=N")
    @ResponseParser(ParseServersFromJsonResponse.class)
-   @MatrixParams(keys = "include_inactive", values = "N")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ParseRimuHostingException.class)
    ListenableFuture<Set<Server>> getServerList();
@@ -94,8 +92,7 @@ public interface RimuHostingAsyncClient {
     * @see RimuHostingClient#getPricingPlanList
     */
    @GET
-   @Path("/pricing-plans")
-   @MatrixParams(keys = "server-type", values = "VPS")
+   @Path("/pricing-plans;server-type=VPS")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ParseRimuHostingException.class)
    @ResponseParser(ParsePricingPlansFromJsonResponse.class)

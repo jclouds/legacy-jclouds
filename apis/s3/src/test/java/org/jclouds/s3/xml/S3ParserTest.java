@@ -28,8 +28,6 @@ import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 
-import javax.ws.rs.core.UriBuilder;
-
 import org.jclouds.PerformanceTest;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.HttpException;
@@ -50,7 +48,6 @@ import org.xml.sax.SAXException;
 import com.google.common.collect.Iterables;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.sun.jersey.api.uri.UriBuilderImpl;
 
 /**
  * Tests parsing of S3 responses
@@ -65,12 +62,7 @@ public class S3ParserTest extends PerformanceTest {
 
    @BeforeTest
    protected void setUpInjector() {
-      injector = Guice.createInjector(new SaxParserModule() {
-         public void configure() {
-            super.configure();
-            bind(UriBuilder.class).to(UriBuilderImpl.class);
-         }
-      });
+      injector = Guice.createInjector(new SaxParserModule());
       factory = injector.getInstance(ParseSax.Factory.class);
       assert factory != null;
    }

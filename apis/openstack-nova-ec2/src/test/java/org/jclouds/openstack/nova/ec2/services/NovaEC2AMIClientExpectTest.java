@@ -42,7 +42,7 @@ public class NovaEC2AMIClientExpectTest extends BaseNovaEC2RestClientExpectTest 
             HttpRequest.builder().method("POST")
                   .endpoint("http://localhost:8773/services/Cloud/")
                   .addHeader("Host", "localhost:8773")
-                  .payload(payloadFromStringWithContentType("Action=DescribeImages&Signature=Z3q3jSutwlfgvbcINT0Ed3AjrjxM4WMvQloXu%2F1kd40%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2012-04-16T15%3A54%3A08.897Z&Version=2009-04-04&AWSAccessKeyId=identity", "application/x-www-form-urlencoded")).build(),
+                  .payload(payloadFromStringWithContentType("Action=DescribeImages&Signature=Z3q3jSutwlfgvbcINT0Ed3AjrjxM4WMvQloXu/1kd40%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2012-04-16T15%3A54%3A08.897Z&Version=2009-04-04&AWSAccessKeyId=identity", "application/x-www-form-urlencoded")).build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/nova_ec2_images_with_ramdisk.xml")).build()
       ).getAMIServices();
 

@@ -21,13 +21,10 @@ package org.jclouds.util;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.io.ByteStreams.toByteArray;
 import static com.google.common.io.Closeables.closeQuietly;
-import static org.jclouds.util.Patterns.CHAR_TO_ENCODED_PATTERN;
+import static org.jclouds.util.Patterns.CHAR_TO_ENCODED;
 import static org.jclouds.util.Patterns.CHAR_TO_PATTERN;
-import static org.jclouds.util.Patterns.PLUS_PATTERN;
-import static org.jclouds.util.Patterns.STAR_PATTERN;
 import static org.jclouds.util.Patterns.TOKEN_TO_PATTERN;
 import static org.jclouds.util.Patterns.URL_ENCODED_PATTERN;
-import static org.jclouds.util.Patterns._7E_PATTERN;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -41,13 +38,13 @@ import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.annotation.Resource;
-
-import org.jclouds.logging.Logger;
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Charsets;
+import com.google.common.collect.Multimap;
 import com.google.common.io.CharStreams;
 import com.google.common.io.InputSupplier;
+import com.google.common.primitives.Chars;
 
 /**
  * 
@@ -60,15 +57,18 @@ public class Strings2 {
     * Web browsers do not always handle '+' characters well, use the well-supported '%20' instead.
     */
    public static String urlEncode(String in, char... skipEncode) {
+      return urlEncode(in, Chars.asList(skipEncode));
+   }
+
+   public static String urlEncode(String in, Iterable<Character> skipEncode) {
       if (isUrlEncoded(in))
          return in;
       try {
          String returnVal = URLEncoder.encode(in, "UTF-8");
-         returnVal = Strings2.replaceAll(returnVal, '+', PLUS_PATTERN, "%20");
-         returnVal = Strings2.replaceAll(returnVal, '*', STAR_PATTERN, "%2A");
-         returnVal = Strings2.replaceAll(returnVal, _7E_PATTERN, "~");
+         returnVal = returnVal.replace("+", "%20");
+         returnVal = returnVal.replace("*", "%2A");
          for (char c : skipEncode) {
-            returnVal = Strings2.replaceAll(returnVal, CHAR_TO_ENCODED_PATTERN.get(c), c + "");
+            returnVal = returnVal.replace(CHAR_TO_ENCODED.get(c), c + "");
          }
          return returnVal;
       } catch (UnsupportedEncodingException e) {
@@ -77,28 +77,27 @@ public class Strings2 {
          throw new IllegalStateException("error creating pattern: " + in, e);
       }
    }
-
    public static boolean isUrlEncoded(String in) {
       return URL_ENCODED_PATTERN.matcher(in).matches();
    }
 
-   public static String urlDecode(String in) {
+   /**
+    * url decodes the input param, if set.
+    * 
+    * @param in
+    *           nullable
+    * @return null if input was null
+    * @throws IllegalStateException
+    *            if encoding isn't {@code UTF-8}
+    */
+   public static String urlDecode(@Nullable Object in) {
+      if (in == null)
+         return null;
       try {
-         return URLDecoder.decode(in, "UTF-8");
+         return URLDecoder.decode(in.toString(), "UTF-8");
       } catch (UnsupportedEncodingException e) {
          throw new IllegalStateException("Bad encoding on input: " + in, e);
       }
-   }
-
-   public static String replaceTokens(String value, Iterable<Entry<String, String>> tokenValues) {
-      for (Entry<String, String> tokenValue : tokenValues) {
-         try {
-            value = Strings2.replaceAll(value, TOKEN_TO_PATTERN.get(tokenValue.getKey()), tokenValue.getValue());
-         } catch (ExecutionException e) {
-            throw new IllegalStateException("error creating pattern: " + tokenValue.getKey(), e);
-         }
-      }
-      return value;
    }
 
    public static String replaceAll(String returnVal, Pattern pattern, String replace) {
@@ -135,11 +134,6 @@ public class Strings2 {
       checkNotNull(input, "input");
       try {
          return new String(toByteArray(input), Charsets.UTF_8);
-      } catch (IOException e) {
-         logger.warn(e, "Failed to read from stream");
-         return null;
-      } catch (NullPointerException e) {
-         return null;
       } finally {
          closeQuietly(input);
       }
@@ -148,9 +142,6 @@ public class Strings2 {
    public static InputStream toInputStream(String in) {
       return new ByteArrayInputStream(in.getBytes(Charsets.UTF_8));
    }
-
-   @Resource
-   private static Logger logger = Logger.NULL;
 
    /**
     * replaces tokens that are expressed as <code>{token}</code>
@@ -182,4 +173,11 @@ public class Strings2 {
       return builder.toString();
    }
 
+   public static String replaceTokens(String input, Multimap<String, ?> tokenValues) {
+      for (Entry<String, ?> tokenValue : tokenValues.entries()) {
+         Pattern pattern = TOKEN_TO_PATTERN.getUnchecked(tokenValue.getKey());
+         input = replaceAll(input, pattern, tokenValue.getValue().toString());
+      }
+      return input;
+   }
 }

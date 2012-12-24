@@ -47,7 +47,6 @@ import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SelectJson;
-import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.Transform;
 import org.jclouds.rest.binders.BindToJsonPayload;
 import org.jclouds.rest.functions.ReturnEmptyMapOnNotFoundOr404;
@@ -64,7 +63,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see ImageApi
  * @author Jeremy Daggett
  */
-@SkipEncoding({ '/', '=' })
 @RequestFilters(AuthenticateRequest.class)
 public interface ImageAsyncApi {
 

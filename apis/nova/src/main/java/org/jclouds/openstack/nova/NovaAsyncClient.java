@@ -50,7 +50,6 @@ import org.jclouds.rest.annotations.Payload;
 import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.Unwrap;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
@@ -69,7 +68,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see NovaClient
  * @see <a href="http://wiki.openstack.org/OpenStackAPI_1-1" />
  */
-@SkipEncoding({'/', '='})
 @RequestFilters({AuthenticateRequest.class, AddTimestampQuery.class})
 @Endpoint(ServerManagement.class)
 public interface NovaAsyncClient {

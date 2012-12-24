@@ -19,9 +19,7 @@
 package org.jclouds.deltacloud.handlers;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 import javax.inject.Singleton;
-import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponse;
@@ -37,9 +35,8 @@ import org.jclouds.http.handlers.RedirectionRetryHandler;
 public class DeltacloudRedirectionRetryHandler extends RedirectionRetryHandler {
 
    @Inject
-   public DeltacloudRedirectionRetryHandler(Provider<UriBuilder> uriBuilderProvider,
-         BackoffLimitedRetryHandler backoffHandler) {
-      super(uriBuilderProvider, backoffHandler);
+   public DeltacloudRedirectionRetryHandler(BackoffLimitedRetryHandler backoffHandler) {
+      super(backoffHandler);
    }
 
    @Override

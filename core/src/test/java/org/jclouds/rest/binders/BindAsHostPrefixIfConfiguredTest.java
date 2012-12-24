@@ -20,27 +20,21 @@ package org.jclouds.rest.binders;
 
 import static org.testng.Assert.assertEquals;
 
-import javax.ws.rs.core.UriBuilder;
-
 import org.jclouds.http.HttpRequest;
 import org.testng.annotations.Test;
-
-import com.google.inject.util.Providers;
-import com.sun.jersey.api.uri.UriBuilderImpl;
 
 /**
  * Tests behavior of {@code BindAsHostPrefix}
  * 
  * @author Adrian Cole
  */
-// NOTE:without testName, this will not call @Before* and fail w/NPE during
-// surefire
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "BindAsHostPrefixTest")
 public class BindAsHostPrefixIfConfiguredTest {
 
    public void testPrefixValid() {
 
-      BindAsHostPrefix binder = new BindAsHostPrefix(Providers.<UriBuilder> of(new UriBuilderImpl()));
+      BindAsHostPrefix binder = new BindAsHostPrefix();
 
       HttpRequest request = binder.bindToRequest(HttpRequest.builder().method("GET").endpoint("https://s3.amazonaws.com").build(),
             "bucket");
@@ -51,7 +45,7 @@ public class BindAsHostPrefixIfConfiguredTest {
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testPrefixInvalidHostname() {
 
-      BindAsHostPrefix binder = new BindAsHostPrefix(Providers.<UriBuilder> of(new UriBuilderImpl()));
+      BindAsHostPrefix binder = new BindAsHostPrefix();
 
       binder.bindToRequest(HttpRequest.builder().method("GET").endpoint("https://s3.amazonaws.com").build(), "b_ucket");
 

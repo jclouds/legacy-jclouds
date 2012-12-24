@@ -131,7 +131,7 @@ public class FirewallClientExpectTest extends BaseCloudStackExpectTest<FirewallC
             .method("GET")
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&command=createFirewallRule&" +
-                  "ipaddressid=2&protocol=TCP&apiKey=identity&signature=d0MZ%2FyhQPAaV%2BYQmfZsQtQL2C28%3D"))
+                  "ipaddressid=2&protocol=TCP&apiKey=identity&signature=d0MZ/yhQPAaV%2BYQmfZsQtQL2C28%3D"))
             .addHeader("Accept", "application/json")
             .build(),
          HttpResponse.builder()
@@ -150,7 +150,7 @@ public class FirewallClientExpectTest extends BaseCloudStackExpectTest<FirewallC
             .method("GET")
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&" +
-                  "command=deleteFirewallRule&id=2015&apiKey=identity&signature=%2FT5FAO2yGPctaPmg7TEtIEFW3EU%3D"))
+                  "command=deleteFirewallRule&id=2015&apiKey=identity&signature=/T5FAO2yGPctaPmg7TEtIEFW3EU%3D"))
             .build(),
          HttpResponse.builder()
             .statusCode(200)
@@ -248,7 +248,7 @@ public class FirewallClientExpectTest extends BaseCloudStackExpectTest<FirewallC
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&command=createPortForwardingRule&" +
                   "ipaddressid=2&publicport=22&protocol=tcp&virtualmachineid=1234&privateport=22&" +
-                  "apiKey=identity&signature=84dtGzQp0G6k3z3Gkc3F%2FHBNS2Y%3D"))
+                  "apiKey=identity&signature=84dtGzQp0G6k3z3Gkc3F/HBNS2Y%3D"))
             .addHeader("Accept", "application/json")
             .build(),
          HttpResponse.builder()
