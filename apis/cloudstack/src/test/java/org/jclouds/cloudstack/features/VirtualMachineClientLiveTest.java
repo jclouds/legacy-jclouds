@@ -327,12 +327,13 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
    }
 
    @AfterGroups(groups = "live")
-   protected void tearDown() {
+   @Override
+   protected void tearDownContext() {
       if (vm != null) {
          destroyMachine(vm);
          vm = null;
       }
-      super.tearDown();
+      super.tearDownContext();
    }
 
    @Test

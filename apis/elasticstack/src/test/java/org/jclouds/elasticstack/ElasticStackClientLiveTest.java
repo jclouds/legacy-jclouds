@@ -299,7 +299,8 @@ public class ElasticStackClientLiveTest extends BaseComputeServiceContextLiveTes
    }
 
    @AfterGroups(groups = "live")
-   protected void tearDown() {
+   @Override
+   protected void tearDownContext() {
       try {
          client.destroyServer(server.getUuid());
       } catch (Exception e) {
@@ -310,8 +311,7 @@ public class ElasticStackClientLiveTest extends BaseComputeServiceContextLiveTes
       } catch (Exception e) {
 
       }
-      if (cloudStackContext != null)
-         cloudStackContext.close();
+      super.tearDownContext();
    }
 
    private DriveInfo drive2;

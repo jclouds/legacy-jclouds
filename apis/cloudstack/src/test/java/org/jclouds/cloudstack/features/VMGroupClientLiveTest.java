@@ -62,11 +62,12 @@ public class VMGroupClientLiveTest extends BaseCloudStackClientLiveTest {
    }
 
    @AfterGroups(groups = "live")
-   protected void tearDown() {
+   @Override
+   protected void tearDownContext() {
       if (groupCreated != null) {
          client.getVMGroupClient().deleteInstanceGroup(groupCreated.getId());
       }
-      super.tearDown();
+      super.tearDownContext();
    }
 
 }

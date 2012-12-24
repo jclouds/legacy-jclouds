@@ -35,6 +35,7 @@ import org.jclouds.cloudstack.options.CreatePodOptions;
 import org.jclouds.cloudstack.options.ListPodsOptions;
 import org.jclouds.cloudstack.options.UpdatePodOptions;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Strings;
@@ -117,8 +118,9 @@ public class GlobalPodClientLiveTest extends BaseCloudStackClientLiveTest {
       assertEquals(updated.getAllocationState(), AllocationState.DISABLED);
    }
 
-   @AfterClass
-   public void testFixtureTearDown() {
+   @AfterGroups(groups = "live")
+   @Override
+   protected void tearDownContext() {
       if (pod != null) {
          globalAdminClient.getPodClient().deletePod(pod.getId());
          pod = null;
@@ -127,5 +129,6 @@ public class GlobalPodClientLiveTest extends BaseCloudStackClientLiveTest {
          globalAdminClient.getZoneClient().deleteZone(zone.getId());
          zone = null;
       }
+      super.tearDownContext();
    }
 }

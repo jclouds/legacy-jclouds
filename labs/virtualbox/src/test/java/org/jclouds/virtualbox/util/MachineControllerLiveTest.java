@@ -22,6 +22,8 @@ package org.jclouds.virtualbox.util;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
 import static org.testng.AssertJUnit.assertTrue;
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertSame;
 
 import org.jclouds.config.ValueOfConfigurationKeyOrNull;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
@@ -36,7 +38,7 @@ import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.functions.CloneAndRegisterMachineFromIMachineIfNotAlreadyExists;
 import org.jclouds.virtualbox.functions.CreateAndInstallVm;
-import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.CleanupMode;
@@ -133,12 +135,12 @@ public class MachineControllerLiveTest extends BaseVirtualBoxClientLiveTest {
       }
    }
 
+   @AfterGroups(groups = "live")
    @Override
-   @AfterClass(groups = "live")
-   protected void tearDown() throws Exception {
+   protected void tearDownContext() {
       for (String vmName : ImmutableSet.of(instanceName)) {
          undoVm(vmName);
       }
-      super.tearDown();
+      super.tearDownContext();
    }
 }

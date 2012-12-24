@@ -35,6 +35,7 @@ import org.jclouds.cloudstack.options.AccountInDomainOptions;
 import org.jclouds.cloudstack.options.DeployVirtualMachineOptions;
 import org.jclouds.cloudstack.options.ListSecurityGroupsOptions;
 import org.jclouds.util.Strings2;
+import org.testng.SkipException;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.Test;
 
@@ -97,11 +98,16 @@ public class SecurityGroupClientLiveTest extends BaseCloudStackClientLiveTest {
       connection.connect();
       return Strings2.toStringAndClose(connection.getInputStream()).trim() + "/32";
    }
-
+   
+   protected void skipIfSecurityGroupsNotSupported() {
+      if (!securityGroupsSupported) {
+         throw new SkipException("Test cannot run without security groups supported in a zone");
+      }
+   }
+   
    @Test(dependsOnMethods = "testCreateDestroySecurityGroup")
    public void testCreateIngress() throws Exception {
-      if (!securityGroupsSupported)
-         return;
+      skipIfSecurityGroupsNotSupported();
       String cidr = getCurrentCIDR();
       ImmutableSet<String> cidrs = ImmutableSet.of(cidr);
       assertTrue(jobComplete.apply(client.getSecurityGroupClient().authorizeIngressICMPToCIDRs(group.getId(), 0, 8, cidrs)), group.toString());
@@ -162,16 +168,14 @@ public class SecurityGroupClientLiveTest extends BaseCloudStackClientLiveTest {
    }
 
    public void testListSecurityGroup() throws Exception {
-      if (!securityGroupsSupported)
-         return;
+      skipIfSecurityGroupsNotSupported();
       for (SecurityGroup securityGroup : client.getSecurityGroupClient().listSecurityGroups())
          checkGroup(securityGroup);
    }
 
    @Test(dependsOnMethods = "testCreateIngress")
    public void testCreateVMInSecurityGroup() throws Exception {
-      if (!securityGroupsSupported)
-         return;
+      skipIfSecurityGroupsNotSupported();
       String defaultTemplate = template != null ? template.getImageId() : null;
       vm = VirtualMachineClientLiveTest.createVirtualMachineWithSecurityGroupInZone(zone.getId(),
             defaultTemplateOrPreferredInZone(defaultTemplate, client, zone.getId()), group.getId(), client,
@@ -199,8 +203,7 @@ public class SecurityGroupClientLiveTest extends BaseCloudStackClientLiveTest {
 
    @Test
    public void testCreateVMWithoutSecurityGroupAssignsDefault() throws Exception {
-      if (!securityGroupsSupported)
-         return;
+      skipIfSecurityGroupsNotSupported();
       String defaultTemplate = template != null ? template.getImageId() : null;
       VirtualMachine newVm = VirtualMachineClientLiveTest.createVirtualMachineWithOptionsInZone(DeployVirtualMachineOptions.NONE,
             zone.getId(), defaultTemplateOrPreferredInZone(defaultTemplate, client, zone.getId()), client,
@@ -215,7 +218,8 @@ public class SecurityGroupClientLiveTest extends BaseCloudStackClientLiveTest {
    }
 
    @AfterGroups(groups = "live")
-   protected void tearDown() {
+   @Override
+   protected void tearDownContext() {
       if (vm != null) {
          assertTrue(jobComplete.apply(client.getVirtualMachineClient().destroyVirtualMachine(vm.getId())));
       }
@@ -225,7 +229,7 @@ public class SecurityGroupClientLiveTest extends BaseCloudStackClientLiveTest {
          client.getSecurityGroupClient().deleteSecurityGroup(group.getId());
          assertEquals(client.getSecurityGroupClient().getSecurityGroup(group.getId()), null);
       }
-      super.tearDown();
+      super.tearDownContext();
    }
 
 }

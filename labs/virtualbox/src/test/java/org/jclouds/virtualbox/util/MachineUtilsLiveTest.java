@@ -35,7 +35,7 @@ import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.functions.CloneAndRegisterMachineFromIMachineIfNotAlreadyExists;
 import org.jclouds.virtualbox.functions.CreateAndInstallVm;
-import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.CleanupMode;
@@ -132,11 +132,11 @@ public class MachineUtilsLiveTest extends BaseVirtualBoxClientLiveTest {
    }
 
    @Override
-   @AfterClass(groups = "live")
-   protected void tearDown() throws Exception {
+   @AfterGroups(groups = "live")
+   protected void tearDownContext() {
       for (String vmName : ImmutableSet.of(instanceName)) {
          undoVm(vmName);
       }
-      super.tearDown();
+      super.tearDownContext();
    }
 }

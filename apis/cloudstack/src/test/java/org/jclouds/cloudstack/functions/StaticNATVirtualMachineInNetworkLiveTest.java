@@ -108,7 +108,8 @@ public class StaticNATVirtualMachineInNetworkLiveTest extends NATClientLiveTest 
    }
 
    @AfterGroups(groups = "live")
-   protected void tearDown() {
+   @Override
+   protected void tearDownContext() {
       if (rule != null) {
          client.getNATClient().deleteIPForwardingRule(rule.getId());
       }
@@ -118,7 +119,7 @@ public class StaticNATVirtualMachineInNetworkLiveTest extends NATClientLiveTest 
       if (ip != null) {
          client.getAddressClient().disassociateIPAddress(ip.getId());
       }
-      super.tearDown();
+      super.tearDownContext();
    }
 
 }

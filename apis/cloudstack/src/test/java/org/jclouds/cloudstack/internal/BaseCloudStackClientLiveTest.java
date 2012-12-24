@@ -58,7 +58,6 @@ import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.SkipException;
-import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 
 import com.google.common.base.Predicate;
@@ -283,10 +282,5 @@ public class BaseCloudStackClientLiveTest extends BaseGenericComputeServiceConte
       }
    }
 
-   @AfterGroups(groups = "live")
-   protected void tearDown() {
-      if (cloudStackContext != null)
-         cloudStackContext.close();
-   }
-
 }
+

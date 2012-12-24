@@ -151,13 +151,14 @@ public class MachineApiLiveTest extends BaseJoyentCloudApiLiveTest {
       api.delete(machine.getId());
    }
 
-   @Override
+
    @AfterGroups(groups = "live")
-   protected void tearDown() {
+   @Override
+   protected void tearDownContext() {
       if (machine != null)
          api.delete(machine.getId());
       cloudApiContext.getApi().getKeyApi().delete(fingerprint);
-      super.tearDown();
+      super.tearDownContext();
    }
 
    @Override

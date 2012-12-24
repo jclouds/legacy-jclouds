@@ -53,7 +53,6 @@ import org.jclouds.virtualbox.functions.IMachineToVmSpec;
 import org.jclouds.virtualbox.functions.admin.UnregisterMachineIfExistsAndDeleteItsMedia;
 import org.jclouds.virtualbox.util.MachineController;
 import org.jclouds.virtualbox.util.MachineUtils;
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -206,12 +205,6 @@ public class BaseVirtualBoxClientLiveTest extends BaseComputeServiceContextLiveT
    @Override
    protected Module getSshModule() {
       return new SshjSshClientModule();
-   }
-
-   @AfterClass(groups = "live")
-   protected void tearDown() throws Exception {
-      if (view != null)
-         view.close();
    }
 
    @AfterSuite

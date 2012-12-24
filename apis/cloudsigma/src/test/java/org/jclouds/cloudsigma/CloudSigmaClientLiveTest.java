@@ -404,13 +404,13 @@ public class CloudSigmaClientLiveTest extends BaseComputeServiceContextLiveTest 
    }
 
    @AfterGroups(groups = "live")
-   protected void tearDown() {
+   @Override
+   protected void tearDownContext() {
       if (server != null)
          client.destroyServer(server.getUuid());
       if (server != null)
          client.destroyDrive(drive.getUuid());
-      if (cloudSigmaContext != null)
-         cloudSigmaContext.close();
+      super.tearDownContext();
    }
 
    @Test
