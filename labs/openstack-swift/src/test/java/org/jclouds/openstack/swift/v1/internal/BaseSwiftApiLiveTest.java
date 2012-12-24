@@ -26,7 +26,6 @@ import org.jclouds.openstack.swift.v1.SwiftApi;
 import org.jclouds.openstack.swift.v1.SwiftApiMetadata;
 import org.jclouds.openstack.swift.v1.SwiftAsyncApi;
 import org.jclouds.rest.RestContext;
-import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 
 import com.google.common.reflect.TypeToken;
@@ -56,12 +55,6 @@ public class BaseSwiftApiLiveTest extends BaseContextLiveTest<RestContext<SwiftA
       Properties props = super.setupProperties();
       setIfTestSystemPropertyPresent(props, KeystoneProperties.CREDENTIAL_TYPE);
       return props;
-   }
-   
-   @AfterGroups(groups = "live")
-   protected void tearDown() {
-      if (swiftContext != null)
-         swiftContext.close();
    }
 
    @Override

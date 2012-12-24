@@ -23,7 +23,6 @@ import org.jclouds.rest.RestContext;
 import org.jclouds.snia.cdmi.v1.CDMIApi;
 import org.jclouds.snia.cdmi.v1.CDMIApiMetadata;
 import org.jclouds.snia.cdmi.v1.CDMIAsyncApi;
-import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
@@ -49,13 +48,7 @@ public class BaseCDMIApiLiveTest extends BaseContextLiveTest<RestContext<CDMIApi
       super.setupContext();
       cdmiContext = context;
    }
-
-   @AfterGroups(groups = "live")
-   protected void tearDown() {
-      if (cdmiContext != null)
-         cdmiContext.close();
-   }
-
+   
    @Override
    protected TypeToken<RestContext<CDMIApi, CDMIAsyncApi>> contextType() {
       return CDMIApiMetadata.CONTEXT_TOKEN;

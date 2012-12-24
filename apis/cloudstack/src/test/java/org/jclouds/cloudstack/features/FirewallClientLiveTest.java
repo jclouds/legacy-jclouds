@@ -154,7 +154,8 @@ public class FirewallClientLiveTest extends BaseCloudStackClientLiveTest {
    }
 
    @AfterGroups(groups = "live")
-   protected void tearDown() {
+   @Override
+   protected void tearDownContext() {
       if (firewallRule != null) {
          client.getFirewallClient().deleteFirewallRule(firewallRule.getId());
       }
@@ -167,7 +168,7 @@ public class FirewallClientLiveTest extends BaseCloudStackClientLiveTest {
       if (ip != null) {
          client.getAddressClient().disassociateIPAddress(ip.getId());
       }
-      super.tearDown();
+      super.tearDownContext();
    }
 
    protected void checkFirewallRule(FirewallRule rule) {
