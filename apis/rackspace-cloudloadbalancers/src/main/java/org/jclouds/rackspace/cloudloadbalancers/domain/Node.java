@@ -23,6 +23,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.jclouds.rackspace.cloudloadbalancers.domain.internal.BaseNode;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
+
 /**
  * The nodes defined by the load balancer are responsible for servicing the requests received
  * through the load balancer's virtual IP. By default, the load balancer employs a basic health
@@ -169,32 +172,28 @@ public class Node extends BaseNode<Node> {
       return status;
    }
 
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this).omitNullValues()
+            .add("address", address).add("port", port).add("condition", condition)
+            .add("weight", weight).add("status", status);
+   }
+   
    @Override
    public String toString() {
-      return String.format("[id=%s, address=%s, condition=%s,  port=%s,  weight=%s, status=%s]", id, address, condition,
-               port, weight, status);
+      return string().toString();
    }
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = super.hashCode();
-      result = prime * result + id;
-      return result;
+      return Objects.hashCode(id);
    }
 
    @Override
    public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (!super.equals(obj))
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      Node other = (Node) obj;
-      if (id != other.id)
-         return false;
-      return true;
-   }
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
 
+      Node that = Node.class.cast(obj);
+      return Objects.equal(this.id, that.id);
+   }
 }

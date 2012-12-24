@@ -21,7 +21,6 @@ package org.jclouds.rackspace.cloudloadbalancers.uk;
 import static org.jclouds.location.reference.LocationConstants.ISO3166_CODES;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_ZONE;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_ZONES;
-import static org.jclouds.rackspace.cloudloadbalancers.reference.Region.LON;
 
 import java.net.URI;
 import java.util.Properties;
@@ -63,7 +62,7 @@ public class CloudLoadBalancersUKProviderMetadata extends BaseProviderMetadata {
 
    public static Properties defaultProperties() {
       Properties properties = new Properties();
-      properties.setProperty(PROPERTY_ZONES, LON);
+      properties.setProperty(PROPERTY_ZONES, "LON");
       properties.setProperty(PROPERTY_ZONE + ".LON." + ISO3166_CODES, "GB-SLG");
       return properties;
    }

@@ -151,7 +151,7 @@ public class BaseLoadBalancer<N extends BaseNode<N>, T extends BaseLoadBalancer<
    }
 
    protected ToStringHelper string() {
-      return Objects.toStringHelper(this)
+      return Objects.toStringHelper(this).omitNullValues()
             .add("name", name).add("protocol", protocol).add("port", port)
             .add("algorithm", algorithm).add("nodes", nodes);
    }
