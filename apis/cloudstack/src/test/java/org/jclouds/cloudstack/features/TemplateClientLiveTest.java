@@ -195,7 +195,8 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
 
 
    @AfterGroups(groups = "live")
-   protected void tearDown() {
+   @Override
+   protected void tearDownContext() {
       if (vmForCreation != null) {
          assertTrue(jobComplete.apply(client.getVirtualMachineClient().stopVirtualMachine(vmForCreation.getId())), vmForCreation.toString());
          assertTrue(jobComplete.apply(client.getVirtualMachineClient().destroyVirtualMachine(vmForCreation.getId())), vmForCreation.toString());
@@ -214,7 +215,7 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
          AsyncCreateResponse deleteJob = client.getTemplateClient().deleteTemplate(registeredTemplate.getId());
          assertTrue(jobComplete.apply(deleteJob.getJobId()));
       }
-      super.tearDown();
+      super.tearDownContext();
    }
 
 }

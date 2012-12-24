@@ -62,11 +62,12 @@ public class AddressClientLiveTest extends BaseCloudStackClientLiveTest {
    }
 
    @AfterGroups(groups = "live")
-   protected void tearDown() {
+   @Override
+   protected void tearDownContext() {
       if (ip != null) {
          client.getAddressClient().disassociateIPAddress(ip.getId());
       }
-      super.tearDown();
+      super.tearDownContext();
    }
 
    public void testListPublicIPAddresss() throws Exception {

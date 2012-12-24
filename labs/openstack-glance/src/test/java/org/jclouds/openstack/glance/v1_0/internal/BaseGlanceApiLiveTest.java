@@ -59,12 +59,6 @@ public class BaseGlanceApiLiveTest extends BaseContextLiveTest<RestContext<Glanc
       setIfTestSystemPropertyPresent(props, KeystoneProperties.CREDENTIAL_TYPE);
       return props;
    }
-   
-   @AfterGroups(groups = "live")
-   protected void tearDown() {
-      if (glanceContext != null)
-         glanceContext.close();
-   }
 
    @Override
    protected TypeToken<RestContext<GlanceApi, GlanceAsyncApi>> contextType() {

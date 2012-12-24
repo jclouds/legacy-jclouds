@@ -35,7 +35,7 @@ import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
 import org.jclouds.virtualbox.functions.IMachineToSshClient;
-import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterGroups;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.IMachine;
 
@@ -88,11 +88,11 @@ public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClien
       assertFalse(Iterables.isEmpty(iMageIterable));
    }
 
-   @AfterClass
+   @AfterGroups(groups = "live")
    @Override
-   protected void tearDown() throws Exception {
+   protected void tearDownContext() {
       if (machine != null)
          adapter.destroyNode(machine.getNodeId() + "");
-      super.tearDown();
+      super.tearDownContext();
    }
 }

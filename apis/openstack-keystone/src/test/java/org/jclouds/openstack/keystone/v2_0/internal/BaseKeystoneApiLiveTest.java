@@ -21,12 +21,11 @@ package org.jclouds.openstack.keystone.v2_0.internal;
 import java.util.Properties;
 
 import org.jclouds.apis.BaseContextLiveTest;
+import org.jclouds.openstack.keystone.v2_0.KeystoneApi;
 import org.jclouds.openstack.keystone.v2_0.KeystoneApiMetadata;
 import org.jclouds.openstack.keystone.v2_0.KeystoneAsyncApi;
-import org.jclouds.openstack.keystone.v2_0.KeystoneApi;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
 import org.jclouds.rest.RestContext;
-import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
@@ -59,13 +58,7 @@ public class BaseKeystoneApiLiveTest extends BaseContextLiveTest<RestContext<? e
       setIfTestSystemPropertyPresent(props, KeystoneProperties.CREDENTIAL_TYPE);
       return props;
    }
-
-   @AfterGroups(groups = "live")
-   protected void tearDown() {
-      if (keystoneContext != null)
-         keystoneContext.close();
-   }
-
+   
    @Override
    protected TypeToken<RestContext<? extends KeystoneApi,? extends  KeystoneAsyncApi>> contextType() {
       return KeystoneApiMetadata.CONTEXT_TOKEN;

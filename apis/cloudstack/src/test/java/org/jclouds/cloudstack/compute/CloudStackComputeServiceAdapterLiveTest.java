@@ -217,9 +217,10 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
    }
 
    @AfterGroups(groups = "live")
-   protected void tearDown() {
+   @Override
+   protected void tearDownContext() {
       if (vm != null)
          adapter.destroyNode(vm.getNodeId());
-      super.tearDown();
+      super.tearDownContext();
    }
 }

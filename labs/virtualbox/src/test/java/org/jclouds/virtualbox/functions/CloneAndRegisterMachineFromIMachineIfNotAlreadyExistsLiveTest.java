@@ -34,7 +34,7 @@ import org.jclouds.virtualbox.domain.NetworkInterfaceCard;
 import org.jclouds.virtualbox.domain.NetworkSpec;
 import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
-import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.CleanupMode;
@@ -116,13 +116,13 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExistsLiveTest exten
       }
    }
    
+   @AfterGroups(groups = "live")
    @Override
-   @AfterClass(groups = "live")
-   protected void tearDown() throws Exception {
+   protected void tearDownContext() {
       for (String vmName : ImmutableSet.of(instanceName)) {
          undoVm(vmName);
       }
-      super.tearDown();
+      super.tearDownContext();
    }
 
 }

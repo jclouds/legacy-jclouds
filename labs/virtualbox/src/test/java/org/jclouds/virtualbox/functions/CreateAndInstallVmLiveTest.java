@@ -22,8 +22,8 @@ package org.jclouds.virtualbox.functions;
 import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
-import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
 
 import java.net.URI;
 import java.util.Map;
@@ -49,7 +49,7 @@ import org.jclouds.virtualbox.domain.NetworkSpec;
 import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.predicates.SshResponds;
-import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.CleanupMode;
@@ -164,12 +164,12 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
       }
    }
 
+   @AfterGroups(groups = "live")
    @Override
-   @AfterClass(groups = "live")
-   protected void tearDown() throws Exception {
+   protected void tearDownContext() {
       for (String vmName : ImmutableSet.of(instanceName)) {
          undoVm(vmName);
       }
-      super.tearDown();
+      super.tearDownContext();
    }
 }
