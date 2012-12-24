@@ -18,12 +18,11 @@
  */
 package org.jclouds.http.filters;
 
+import static com.google.common.net.HttpHeaders.AUTHORIZATION;
 import static org.testng.Assert.assertEquals;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
-
-import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.encryption.internal.JCECrypto;
 import org.jclouds.http.HttpRequest;
@@ -43,7 +42,7 @@ public class BasicAuthenticationTest {
       BasicAuthentication filter = new BasicAuthentication(USER, PASSWORD, new JCECrypto(null));
       HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://localhost").build();
       request = filter.filter(request);
-      assertEquals(request.getFirstHeaderOrNull(HttpHeaders.AUTHORIZATION), "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==");
+      assertEquals(request.getFirstHeaderOrNull(AUTHORIZATION), "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==");
    }
 
 }

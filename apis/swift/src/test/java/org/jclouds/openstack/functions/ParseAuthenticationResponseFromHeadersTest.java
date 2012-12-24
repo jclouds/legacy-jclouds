@@ -22,8 +22,6 @@ import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 
-import javax.ws.rs.core.UriBuilder;
-
 import org.jclouds.Constants;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.http.HttpResponse;
@@ -35,7 +33,6 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.name.Names;
-import com.sun.jersey.api.uri.UriBuilderImpl;
 
 /**
  * Tests behavior of {@code ParseContainerListFromJsonResponse}
@@ -51,7 +48,6 @@ public class ParseAuthenticationResponseFromHeadersTest {
       protected void configure() {
          bindConstant().annotatedWith(Names.named(BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX)).to("sdf");
          bindConstant().annotatedWith(Names.named(Constants.PROPERTY_API_VERSION)).to("1");
-         bind(UriBuilder.class).to(UriBuilderImpl.class);
       }
 
    });

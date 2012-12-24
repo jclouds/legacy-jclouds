@@ -19,9 +19,6 @@
 package org.jclouds.io.payloads;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Multimaps.forMap;
-
-import java.util.LinkedHashMap;
 
 import javax.ws.rs.core.HttpHeaders;
 
@@ -40,7 +37,7 @@ public class Part extends DelegatingPayload {
    final String name;
    final Multimap<String, String> headers;
 
-   private static class PartMap extends LinkedHashMap<String, String> {
+   private static class PartMap extends ImmutableMultimap.Builder<String, String> {
 
       static Part.PartMap create(String name) {
          Part.PartMap map = new PartMap();
@@ -78,7 +75,7 @@ public class Part extends DelegatingPayload {
    private Part(String name, Part.PartMap map, Payload delegate) {
       super(delegate);
       this.name = name;
-      this.headers = ImmutableMultimap.copyOf(forMap(checkNotNull(map, "headers")));
+      this.headers = checkNotNull(map, "headers").build();
    }
 
    public static class PartOptions {

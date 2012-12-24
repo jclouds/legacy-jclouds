@@ -49,7 +49,6 @@ import org.jclouds.rest.annotations.ParamValidators;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
-import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.s3.Bucket;
@@ -68,7 +67,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  * 
  * @author Adrian Cole, Jeremy Whitlock
  */
-@SkipEncoding('/')
 @RequestFilters(RequestAuthorizeSignature.class)
 @BlobScope(CONTAINER)
 public interface AWSS3AsyncClient extends S3AsyncClient {

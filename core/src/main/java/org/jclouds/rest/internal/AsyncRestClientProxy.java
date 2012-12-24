@@ -27,7 +27,6 @@ import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Qualifier;
 import javax.inject.Singleton;
-import javax.ws.rs.Path;
 
 import org.jclouds.Constants;
 import org.jclouds.concurrent.ExceptionParsingListenableFuture;
@@ -75,8 +74,8 @@ import com.google.inject.util.Types;
  * instance of interface set in returnVal, adding the current JAXrs annotations
  * to whatever are on that class.</li>
  * <ul>
- * <li>ex. if the method with {@link Delegate} has a {@link Path} annotation,
- * and the returnval interface also has {@link Path}, these values are combined.
+ * <li>ex. if the method with {@link Delegate} has a {@code Path} annotation,
+ * and the returnval interface also has {@code Path}, these values are combined.
  * </li>
  * </ul>
  * <li>if {@link RestAnnotationProcessor#delegationMap} contains a mapping for

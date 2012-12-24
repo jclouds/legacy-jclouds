@@ -17,12 +17,11 @@
  * under the License.
  */
 package org.jclouds.http.filters;
-
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.net.HttpHeaders.AUTHORIZATION;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.crypto.Crypto;
 import org.jclouds.crypto.CryptoStreams;
@@ -53,6 +52,6 @@ public class BasicAuthentication implements HttpRequestFilter {
 
    @Override
    public HttpRequest filter(HttpRequest request) throws HttpException {
-      return request.toBuilder().replaceHeader(HttpHeaders.AUTHORIZATION, header).build();
+      return request.toBuilder().replaceHeader(AUTHORIZATION, header).build();
    }
 }

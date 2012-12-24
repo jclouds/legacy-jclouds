@@ -53,7 +53,7 @@ public class WindowsAsyncClientTest extends BaseEC2AsyncClientTest<WindowsAsyncC
                         "my-bucket",
                         "{\"expiration\": \"2008-08-30T08:49:09Z\",\"conditions\": [{\"bucket\": \"my-bucket\"},[\"starts-with\", \"$key\", \"my-new-image\"]]}");
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
-      String payload = "Action=BundleInstance&Storage.S3.Prefix=winami&InstanceId=i-e468cd8d&Storage.S3.Bucket=my-bucket&Storage.S3.UploadPolicy=eyJleHBpcmF0aW9uIjogIjIwMDgtMDgtMzBUMDg6NDk6MDlaIiwiY29uZGl0aW9ucyI6IFt7ImJ1Y2tldCI6ICJteS1idWNrZXQifSxbInN0YXJ0cy13aXRoIiwgIiRrZXkiLCAibXktbmV3LWltYWdlIl1dfQ%3D%3D&Storage.S3.UploadPolicySignature=ih%2FiohGe0A7y4QVRbKaq6BZShzUsmBEJEa9AdFbxM6Y%3D";
+      String payload = "Action=BundleInstance&Storage.S3.Prefix=winami&InstanceId=i-e468cd8d&Storage.S3.Bucket=my-bucket&Storage.S3.UploadPolicy=eyJleHBpcmF0aW9uIjogIjIwMDgtMDgtMzBUMDg6NDk6MDlaIiwiY29uZGl0aW9ucyI6IFt7ImJ1Y2tldCI6ICJteS1idWNrZXQifSxbInN0YXJ0cy13aXRoIiwgIiRrZXkiLCAibXktbmV3LWltYWdlIl1dfQ%3D%3D&Storage.S3.UploadPolicySignature=ih/iohGe0A7y4QVRbKaq6BZShzUsmBEJEa9AdFbxM6Y%3D";
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request, payload, "application/x-www-form-urlencoded", false);
 
@@ -77,7 +77,7 @@ public class WindowsAsyncClientTest extends BaseEC2AsyncClientTest<WindowsAsyncC
                         "{\"expiration\": \"2008-08-30T08:49:09Z\",\"conditions\": [{\"bucket\": \"my-bucket\"},[\"starts-with\", \"$key\", \"my-new-image\"]]}",
                         BundleInstanceS3StorageOptions.Builder.bucketOwnedBy("10QMXFEV71ZS32XQFTR2"));
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
-      String payload = "Action=BundleInstance&Storage.S3.Prefix=winami&InstanceId=i-e468cd8d&Storage.S3.Bucket=my-bucket&Storage.S3.AWSAccessKeyId=10QMXFEV71ZS32XQFTR2&Storage.S3.UploadPolicy=eyJleHBpcmF0aW9uIjogIjIwMDgtMDgtMzBUMDg6NDk6MDlaIiwiY29uZGl0aW9ucyI6IFt7ImJ1Y2tldCI6ICJteS1idWNrZXQifSxbInN0YXJ0cy13aXRoIiwgIiRrZXkiLCAibXktbmV3LWltYWdlIl1dfQ%3D%3D&Storage.S3.UploadPolicySignature=ih%2FiohGe0A7y4QVRbKaq6BZShzUsmBEJEa9AdFbxM6Y%3D";
+      String payload = "Action=BundleInstance&Storage.S3.Prefix=winami&InstanceId=i-e468cd8d&Storage.S3.Bucket=my-bucket&Storage.S3.AWSAccessKeyId=10QMXFEV71ZS32XQFTR2&Storage.S3.UploadPolicy=eyJleHBpcmF0aW9uIjogIjIwMDgtMDgtMzBUMDg6NDk6MDlaIiwiY29uZGl0aW9ucyI6IFt7ImJ1Y2tldCI6ICJteS1idWNrZXQifSxbInN0YXJ0cy13aXRoIiwgIiRrZXkiLCAibXktbmV3LWltYWdlIl1dfQ%3D%3D&Storage.S3.UploadPolicySignature=ih/iohGe0A7y4QVRbKaq6BZShzUsmBEJEa9AdFbxM6Y%3D";
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request, payload, "application/x-www-form-urlencoded", false);
 

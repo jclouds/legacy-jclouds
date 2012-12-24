@@ -48,7 +48,7 @@ public class WindowsApiExpectTest extends BaseEC2ApiExpectTest<EC2Api> {
                                    payloadFromStringWithContentType(
                                          "Action=GetPasswordData" +
                                                "&InstanceId=i-2574e22a" +
-                                               "&Signature=vX1Tskc4VuBUWPqsJ%2BzcjEj6%2F2iMCKzqjWnKFXRkDdA%3D" +
+                                               "&Signature=vX1Tskc4VuBUWPqsJ%2BzcjEj6/2iMCKzqjWnKFXRkDdA%3D" +
                                                "&SignatureMethod=HmacSHA256" +
                                                "&SignatureVersion=2" +
                                                "&Timestamp=2012-04-16T15%3A54%3A08.897Z" +

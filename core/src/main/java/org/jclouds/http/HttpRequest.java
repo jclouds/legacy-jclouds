@@ -20,13 +20,13 @@ package org.jclouds.http;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.http.utils.Queries.makeQueryLine;
-import static org.jclouds.http.utils.Queries.parseQueryToMap;
+import static org.jclouds.http.Uris.uriBuilder;
+import static org.jclouds.http.utils.Queries.queryParser;
 import static org.jclouds.io.Payloads.newUrlEncodedFormPayload;
-import static org.jclouds.util.Multimaps2.replaceEntries;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 
 import org.jclouds.io.Payload;
 import org.jclouds.javax.annotation.Nullable;
@@ -34,12 +34,10 @@ import org.jclouds.javax.annotation.Nullable;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Iterables;
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
-import com.google.common.primitives.Chars;
-import com.sun.jersey.api.uri.UriBuilderImpl;
+import com.google.common.collect.Multimaps;
 
 /**
  * Represents a request that can be executed within {@link HttpCommandExecutorService}
@@ -59,7 +57,6 @@ public class HttpRequest extends HttpMessage {
    public abstract static class Builder<T extends Builder<T>> extends HttpMessage.Builder<T>  {
       protected String method;
       protected URI endpoint;
-      protected ImmutableList.Builder<Character> skips = ImmutableList.<Character>builder();
       protected ImmutableList.Builder<HttpRequestFilter> filters = ImmutableList.<HttpRequestFilter>builder();
    
       /** 
@@ -89,68 +86,64 @@ public class HttpRequest extends HttpMessage {
        * @see HttpRequest#getEndpoint()
        */
       public T addQueryParam(String name, Iterable<String> values) {
-         return addQueryParam(name, Iterables.toArray(checkNotNull(values, "values of %s", name), String.class));
+         endpoint = uriBuilder(endpoint).addQuery(name, values).build();
+         return self();
       }
       
       /**
        * @see HttpRequest#getEndpoint()
        */
       public T addQueryParam(String name, String... values) {
-         return addQueryParams(ImmutableMultimap.<String, String> builder()
-                  .putAll(checkNotNull(name, "name"), checkNotNull(values, "values of %s", name)).build());
-      }
-
-      /**
-       * @see HttpRequest#getEndpoint()
-       */
-      public T addQueryParams(Multimap<String, String> parameters) {
-         checkNotNull(endpoint, "endpoint");
-         Multimap<String, String> map = parseQueryToMap(endpoint.getQuery());
-         map = ImmutableMultimap.<String, String>builder().putAll(map).putAll(parameters).build();
-         return replaceQuery(map);
-      }
-      
-      /**
-       * @see HttpRequest#getEndpoint()
-       */
-      public T replaceQueryParam(String name, Iterable<String> values) {
-         return replaceQueryParam(name, Iterables.toArray(checkNotNull(values, "values of %s", name), String.class));
-      }
-      
-      /**
-       * @see HttpRequest#getEndpoint()
-       */
-      public T replaceQueryParam(String name, String... values) {
-         return replaceQueryParams(ImmutableMultimap.<String, String> builder()
-                  .putAll(checkNotNull(name, "name"), checkNotNull(values, "values of %s", name)).build());
-      }
-
-      /**
-       * @see HttpRequest#getEndpoint()
-       */
-      public T replaceQueryParams(Multimap<String, String> parameters) {
-         checkNotNull(endpoint, "endpoint");
-         Multimap<String, String> map = replaceEntries(parseQueryToMap(endpoint.getRawQuery()), parameters);
-         return replaceQuery(map);
-      }
-
-      @SuppressWarnings("unchecked")
-      private T replaceQuery(Multimap<String, String> map) {
-         URI oldURI = endpoint;
-         String query = makeQueryLine(map, null, Chars.toArray(skips.build()));
-         endpoint = new UriBuilderImpl().uri(oldURI).replaceQuery(query).buildFromEncodedMap(ImmutableMap.<String, Object>of());
+         endpoint = uriBuilder(endpoint).addQuery(name, values).build();
          return self();
       }
 
       /**
        * @see HttpRequest#getEndpoint()
        */
-      @SuppressWarnings("unchecked")
+      public T addQueryParams(Multimap<String, String> parameters) {
+         endpoint = uriBuilder(endpoint).addQuery(parameters).build();
+         return self();
+      }
+      
+      /**
+       * @see HttpRequest#getEndpoint()
+       */
+      public T replaceQueryParam(String name, Iterable<String> values) {
+         endpoint = uriBuilder(endpoint).replaceQuery(name, values).build();
+         return self();
+      }
+      
+      /**
+       * @see HttpRequest#getEndpoint()
+       */
+      public T replaceQueryParam(String name, String... values) {
+         endpoint = uriBuilder(endpoint).replaceQuery(name, values).build();
+         return self();
+      }
+      
+      /**
+       * @see HttpRequest#getEndpoint()
+       */
+      public T replaceQueryParams(Map<String, String> parameters) {
+         return replaceQueryParams(Multimaps.forMap(parameters));
+      }
+      
+      /**
+       * @see HttpRequest#getEndpoint()
+       */
+      public T replaceQueryParams(Multimap<String, String> parameters) {
+         endpoint = uriBuilder(endpoint).replaceQuery(parameters).build();
+         return self();
+      }
+
+      /**
+       * @see HttpRequest#getEndpoint()
+       */
       public T replacePath(String path) {
          checkNotNull(endpoint, "endpoint");
          checkNotNull(path, "path");
-         URI oldURI = endpoint;
-         endpoint = new UriBuilderImpl().uri(oldURI).replacePath(path).buildFromEncodedMap(ImmutableMap.<String, Object>of());
+         endpoint = uriBuilder(endpoint).path(path).build();
          return self();
       }
       
@@ -170,9 +163,9 @@ public class HttpRequest extends HttpMessage {
        */
       public T addFormParams(Multimap<String, String> parameters) {
          checkNotNull(endpoint, "endpoint");
-         Multimap<String, String> map = payload != null ? parseQueryToMap(payload.getRawContent()
-                  .toString()) : ImmutableMultimap.<String, String> of();
-         map = ImmutableMultimap.<String, String>builder().putAll(map).putAll(parameters).build();
+         Multimap<String, String> map = payload != null ? queryParser().apply(payload.getRawContent().toString())
+               : LinkedHashMultimap.<String, String> create();
+         map.putAll(parameters);
          payload = newUrlEncodedFormPayload(map);
          return self();
       }
@@ -193,18 +186,12 @@ public class HttpRequest extends HttpMessage {
        */
       public T replaceFormParams(Multimap<String, String> parameters) {
          checkNotNull(endpoint, "endpoint");
-         Multimap<String, String> map = replaceEntries(payload != null ? parseQueryToMap(payload.getRawContent()
-                  .toString()) : ImmutableMultimap.<String, String> of(), parameters);
+         Multimap<String, String> map = payload != null ? queryParser().apply(payload.getRawContent().toString())
+               : LinkedHashMultimap.<String, String> create();
+         for (String key : parameters.keySet()) {
+            map.replaceValues(key, parameters.get(key));
+         }
          payload = newUrlEncodedFormPayload(map);
-         return self();
-      }
-
-      /** 
-       * @see HttpRequest#getSkips()
-       */
-      public T skips(char[] skips) {
-         this.skips = ImmutableList.<Character>builder();
-         this.skips.addAll(Chars.asList(checkNotNull(skips, "skips")));
          return self();
       }
 
@@ -226,14 +213,13 @@ public class HttpRequest extends HttpMessage {
       }
 
       public HttpRequest build() {
-         return new HttpRequest(method, endpoint, headers.build(), payload, skips.build(), filters.build());
+         return new HttpRequest(method, endpoint, headers.build(), payload, filters.build());
       }
       
       public T fromHttpRequest(HttpRequest in) {
          return super.fromHttpMessage(in)
                      .method(in.getMethod())
                      .endpoint(in.getEndpoint())
-                     .skips(in.getSkips())
                      .filters(in.getFilters());
       }
    }
@@ -247,16 +233,14 @@ public class HttpRequest extends HttpMessage {
    
    private final String method;
    private final URI endpoint;
-   private final List<Character> skips;
    private final List<HttpRequestFilter> filters;
 
    protected HttpRequest(String method, URI endpoint, Multimap<String, String> headers, @Nullable Payload payload,
-            Iterable<Character> skips, Iterable<HttpRequestFilter> filters) {
+         Iterable<HttpRequestFilter> filters) {
       super(headers, payload);
       this.method = checkNotNull(method, "method");
       this.endpoint = checkNotNull(endpoint, "endpoint");
       checkArgument(endpoint.getHost() != null, String.format("endpoint.getHost() is null for %s", endpoint));
-      this.skips = ImmutableList.<Character> copyOf(checkNotNull(skips, "skips"));
       this.filters = ImmutableList.<HttpRequestFilter> copyOf(checkNotNull(filters, "filters"));
    }
 
@@ -278,13 +262,6 @@ public class HttpRequest extends HttpMessage {
       return endpoint;
    }
 
-   /**
-    * characters to skip encoding on.
-    */
-   public char[] getSkips() {
-      return Chars.toArray(skips);
-   }
-   
    public List<HttpRequestFilter> getFilters() {
       return filters;
    }

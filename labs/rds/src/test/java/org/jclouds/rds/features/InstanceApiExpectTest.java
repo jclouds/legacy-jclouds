@@ -93,7 +93,7 @@ public class InstanceApiExpectTest extends BaseRDSApiExpectTest {
                                  .payload(
                                     payloadFromStringWithContentType(
                                              "Action=DescribeDBInstances" +
-                                             "&Signature=SnClCujZG9Sq9sMdf59xZWsjQxIbMOp5YEF%2FFBsurf4%3D" +
+                                             "&Signature=SnClCujZG9Sq9sMdf59xZWsjQxIbMOp5YEF/FBsurf4%3D" +
                                              "&SignatureMethod=HmacSHA256" +
                                              "&SignatureVersion=2" +
                                              "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +
@@ -126,7 +126,7 @@ public class InstanceApiExpectTest extends BaseRDSApiExpectTest {
                                         payloadFromStringWithContentType(
                                                  "Action=DescribeDBInstances" +
                                                  "&Marker=MARKER" +
-                                                 "&Signature=TFW8vaU2IppmBey0ZHttbWz4rMFh%2F5ACWl6Xyt58sQU%3D" +
+                                                 "&Signature=TFW8vaU2IppmBey0ZHttbWz4rMFh/5ACWl6Xyt58sQU%3D" +
                                                  "&SignatureMethod=HmacSHA256" +
                                                  "&SignatureVersion=2" +
                                                  "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +
@@ -167,7 +167,7 @@ public class InstanceApiExpectTest extends BaseRDSApiExpectTest {
                        .payload(payloadFromStringWithContentType(
                                                   "Action=DescribeDBInstances" +
                                                   "&Marker=MARKER" +
-                                                  "&Signature=TFW8vaU2IppmBey0ZHttbWz4rMFh%2F5ACWl6Xyt58sQU%3D" +
+                                                  "&Signature=TFW8vaU2IppmBey0ZHttbWz4rMFh/5ACWl6Xyt58sQU%3D" +
                                                   "&SignatureMethod=HmacSHA256" +
                                                   "&SignatureVersion=2" +
                                                   "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +
@@ -241,7 +241,7 @@ public class InstanceApiExpectTest extends BaseRDSApiExpectTest {
                            "Action=DeleteDBInstance" +
                            "&DBInstanceIdentifier=id" +
                            "&FinalDBSnapshotIdentifier=snap" +
-                           "&Signature=aKuG1%2FYbZAzUFdAZTjke1LYRfR5JU86UxDt%2BtwdPJwE%3D" +
+                           "&Signature=aKuG1/YbZAzUFdAZTjke1LYRfR5JU86UxDt%2BtwdPJwE%3D" +
                            "&SignatureMethod=HmacSHA256" +
                            "&SignatureVersion=2" +
                            "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +
@@ -312,7 +312,7 @@ public class InstanceApiExpectTest extends BaseRDSApiExpectTest {
                            "&Engine=mysql" +
                            "&MasterUserPassword=Password01" +
                            "&MasterUsername=master" +
-                           "&Signature=kfDFp50sxBkSlZd%2Bv8G9u6%2BFdZ133BEVcIRGwwoa8%2Fs%3D" +
+                           "&Signature=kfDFp50sxBkSlZd%2Bv8G9u6%2BFdZ133BEVcIRGwwoa8/s%3D" +
                            "&SignatureMethod=HmacSHA256" +
                            "&SignatureVersion=2" +
                            "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +

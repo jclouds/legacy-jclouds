@@ -19,42 +19,42 @@
 package org.jclouds.cloudstack.filters;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Throwables.propagate;
+import static org.jclouds.Constants.LOGGER_SIGNATURE;
+import static org.jclouds.crypto.CryptoStreams.base64;
+import static org.jclouds.crypto.CryptoStreams.mac;
+import static org.jclouds.http.Uris.uriBuilder;
+import static org.jclouds.http.utils.Queries.encodeQueryLine;
+import static org.jclouds.http.utils.Queries.queryParser;
+import static org.jclouds.util.Strings2.toInputStream;
 
-import java.util.Map.Entry;
+import java.io.IOException;
+import java.security.InvalidKeyException;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.inject.Provider;
 import javax.inject.Singleton;
-import javax.ws.rs.core.UriBuilder;
 
-import org.jclouds.Constants;
 import org.jclouds.crypto.Crypto;
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.internal.SignatureWire;
-import org.jclouds.http.utils.Queries;
 import org.jclouds.io.InputSuppliers;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.RequestSigner;
 import org.jclouds.rest.annotations.Credential;
 import org.jclouds.rest.annotations.Identity;
-import org.jclouds.util.Strings2;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.TreeMultimap;
 
 /**
  * 
- * @see <a href=
- *      "http://download.cloud.com/releases/2.2.0/api/user/2.2api_security_details.html"
- *      />
+ * @see <a href= "http://download.cloud.com/releases/2.2.0/api/user/2.2api_security_details.html" />
  * @author Adrian Cole
  * 
  */
@@ -66,35 +66,29 @@ public class QuerySigner implements AuthenticationFilter, RequestSigner {
    private final String secretKey;
    private final Crypto crypto;
    private final HttpUtils utils;
-   private final Provider<UriBuilder> builder;
 
    @Resource
-   @Named(Constants.LOGGER_SIGNATURE)
+   @Named(LOGGER_SIGNATURE)
    private Logger signatureLog = Logger.NULL;
 
    @Inject
    public QuerySigner(SignatureWire signatureWire, @Identity String accessKey, @Credential String secretKey,
-            Crypto crypto, HttpUtils utils, Provider<UriBuilder> builder) {
+         Crypto crypto, HttpUtils utils) {
       this.signatureWire = signatureWire;
       this.accessKey = accessKey;
       this.secretKey = secretKey;
       this.crypto = crypto;
       this.utils = utils;
-      this.builder = builder;
    }
 
    public HttpRequest filter(HttpRequest request) throws HttpException {
       checkNotNull(request, "request must be present");
-      Multimap<String, String> decodedParams = Queries.parseQueryToMap(request.getEndpoint().getRawQuery());
+      Multimap<String, String> decodedParams = queryParser().apply(request.getEndpoint().getRawQuery());
       addSigningParams(decodedParams);
       String stringToSign = createStringToSign(request, decodedParams);
       String signature = sign(stringToSign);
       addSignature(decodedParams, signature);
-      request = request
-            .toBuilder()
-            .endpoint(
-                  builder.get().uri(request.getEndpoint())
-                        .replaceQuery(Queries.makeQueryLine(decodedParams, null)).build()).build();
+      request = request.toBuilder().endpoint(uriBuilder(request.getEndpoint()).query(decodedParams).build()).build();
       utils.logRequest(signatureLog, request, "<<");
       return request;
    }
@@ -108,27 +102,24 @@ public class QuerySigner implements AuthenticationFilter, RequestSigner {
    public String sign(String stringToSign) {
       String signature;
       try {
-         signature = CryptoStreams.base64(CryptoStreams.mac(InputSuppliers.of(stringToSign),
-               crypto.hmacSHA1(secretKey.getBytes())));
+         signature = base64(mac(InputSuppliers.of(stringToSign), crypto.hmacSHA1(secretKey.getBytes())));
          if (signatureWire.enabled())
-            signatureWire.input(Strings2.toInputStream(signature));
-      } catch (Exception e) {
-         throw new HttpException("error signing request", e);
+            signatureWire.input(toInputStream(signature));
+         return signature;
+      } catch (InvalidKeyException e) {
+         throw propagate(e);
+      } catch (IOException e) {
+         throw propagate(e);
       }
-      return signature;
    }
 
    @VisibleForTesting
    public String createStringToSign(HttpRequest request, Multimap<String, String> decodedParams) {
       utils.logRequest(signatureLog, request, ">>");
-
-      // encode each parameter value first,
-      ImmutableSortedSet.Builder<String> builder = ImmutableSortedSet.naturalOrder();
-      for (Entry<String, String> entry : decodedParams.entries())
-         builder.add(entry.getKey() + "=" + Strings2.urlEncode(entry.getValue()));
-
+      // like aws, percent encode the canonicalized string without skipping '/' and '?'
+      String queryLine = encodeQueryLine(TreeMultimap.create(decodedParams), ImmutableList.<Character> of());
       // then, lower case the entire query string
-      String stringToSign = Joiner.on('&').join(builder.build()).toLowerCase();
+      String stringToSign = queryLine.toLowerCase();
       if (signatureWire.enabled())
          signatureWire.output(stringToSign);
 
@@ -142,7 +133,7 @@ public class QuerySigner implements AuthenticationFilter, RequestSigner {
    }
 
    public String createStringToSign(HttpRequest input) {
-      Multimap<String, String> decodedParams = Queries.parseQueryToMap(input.getEndpoint().getQuery());
+      Multimap<String, String> decodedParams = queryParser().apply(input.getEndpoint().getQuery());
       addSigningParams(decodedParams);
       return createStringToSign(input, decodedParams);
    }

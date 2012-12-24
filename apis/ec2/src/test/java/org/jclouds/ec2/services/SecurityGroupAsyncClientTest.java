@@ -143,13 +143,13 @@ public class SecurityGroupAsyncClientTest extends BaseEC2AsyncClientTest<Securit
       try {
          assertPayloadEquals(
                request,
-               "Action=AuthorizeSecurityGroupIngress&CidrIp=0.0.0.0%2F0&IpProtocol=tcp&GroupName=group&FromPort=6000&ToPort=7000",
+               "Action=AuthorizeSecurityGroupIngress&CidrIp=0.0.0.0/0&IpProtocol=tcp&GroupName=group&FromPort=6000&ToPort=7000",
                "application/x-www-form-urlencoded", false);
       } catch (AssertionError e) {
          // mvn 3.0 osx 10.6.5 somehow sorts differently
          assertPayloadEquals(
                request,
-               "Action=AuthorizeSecurityGroupIngress&CidrIp=0.0.0.0%2F0&IpProtocol=tcp&GroupName=group&ToPort=7000&FromPort=6000",
+               "Action=AuthorizeSecurityGroupIngress&CidrIp=0.0.0.0/0&IpProtocol=tcp&GroupName=group&ToPort=7000&FromPort=6000",
                "application/x-www-form-urlencoded", false);
       }
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -189,13 +189,13 @@ public class SecurityGroupAsyncClientTest extends BaseEC2AsyncClientTest<Securit
       try {
          assertPayloadEquals(
                request,
-               "Action=RevokeSecurityGroupIngress&CidrIp=0.0.0.0%2F0&IpProtocol=tcp&GroupName=group&FromPort=6000&ToPort=7000",
+               "Action=RevokeSecurityGroupIngress&CidrIp=0.0.0.0/0&IpProtocol=tcp&GroupName=group&FromPort=6000&ToPort=7000",
                "application/x-www-form-urlencoded", false);
       } catch (AssertionError e) {
          // mvn 3.0 osx 10.6.5 somehow sorts differently
          assertPayloadEquals(
                request,
-               "Action=RevokeSecurityGroupIngress&CidrIp=0.0.0.0%2F0&IpProtocol=tcp&GroupName=group&ToPort=7000&FromPort=6000",
+               "Action=RevokeSecurityGroupIngress&CidrIp=0.0.0.0/0&IpProtocol=tcp&GroupName=group&ToPort=7000&FromPort=6000",
                "application/x-www-form-urlencoded", false);
       }
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);

@@ -13,7 +13,6 @@ import org.jclouds.joyent.cloudapi.v6_5.domain.Dataset;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
@@ -27,7 +26,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see DatasetApi
  * @see <a href="http://apidocs.joyent.com/sdcapidoc/cloudapi/index.html#datasets">api doc</a>
  */
-@SkipEncoding({ '/', '=' })
 @Headers(keys = "X-Api-Version", values = "{jclouds.api-version}")
 @RequestFilters(BasicAuthentication.class)
 public interface DatasetAsyncApi {

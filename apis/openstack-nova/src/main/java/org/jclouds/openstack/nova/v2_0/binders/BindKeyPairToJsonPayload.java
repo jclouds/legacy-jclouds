@@ -16,28 +16,34 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.v2_0.functions;
+package org.jclouds.openstack.nova.v2_0.binders;
 
-import static org.jclouds.http.Uris.uriBuilder;
+import java.util.Map;
 
-import java.net.URI;
-
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.openstack.v2_0.domain.Extension;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.json.Json;
+import org.jclouds.rest.binders.BindToJsonPayload;
 
-import com.google.common.base.Function;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSortedMap;
 
+/**
+ * 
+ * @author Adrian Cole
+ */
 @Singleton
-public class ExtensionToNameSpace implements Function<Extension, URI> {
+public class BindKeyPairToJsonPayload extends BindToJsonPayload {
+
+   @Inject
+   public BindKeyPairToJsonPayload(Json jsonBinder) {
+      super(jsonBinder);
+   }
 
    @Override
-   public URI apply(Extension input) {
-      return uriBuilder(input.getNamespace()).scheme("http").build();
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
+      return bindToRequest(request, (Object) ImmutableMap.of("keypair", ImmutableSortedMap.copyOf(postParams)));
    }
-
-   public String toString() {
-      return "changeSchemeToHttp()";
-   }
-
 }

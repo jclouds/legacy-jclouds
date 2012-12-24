@@ -18,17 +18,16 @@
  */
 package org.jclouds.http.handlers;
 
-import static javax.ws.rs.core.HttpHeaders.HOST;
+import static com.google.common.net.HttpHeaders.HOST;
+import static com.google.common.net.HttpHeaders.LOCATION;
 import static org.jclouds.http.HttpUtils.closeClientButKeepContentStream;
+import static org.jclouds.http.Uris.uriBuilder;
 
 import java.net.URI;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
-import javax.inject.Provider;
 import javax.inject.Singleton;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.Constants;
 import org.jclouds.http.HttpCommand;
@@ -56,17 +55,15 @@ public class RedirectionRetryHandler implements HttpRetryHandler {
    protected Logger logger = Logger.NULL;
 
    protected final BackoffLimitedRetryHandler backoffHandler;
-   protected final Provider<UriBuilder> uriBuilderProvider;
 
    @Inject
-   protected RedirectionRetryHandler(Provider<UriBuilder> uriBuilderProvider, BackoffLimitedRetryHandler backoffHandler) {
+   protected RedirectionRetryHandler(BackoffLimitedRetryHandler backoffHandler) {
       this.backoffHandler = backoffHandler;
-      this.uriBuilderProvider = uriBuilderProvider;
    }
 
    public boolean shouldRetryRequest(HttpCommand command, HttpResponse response) {
       closeClientButKeepContentStream(response);
-      String hostHeader = response.getFirstHeaderOrNull(HttpHeaders.LOCATION);
+      String hostHeader = response.getFirstHeaderOrNull(LOCATION);
       if (command.incrementRedirectCount() < retryCountLimit && hostHeader != null) {
          URI redirectionUrl = URI.create(hostHeader);
 
@@ -77,11 +74,8 @@ public class RedirectionRetryHandler implements HttpRetryHandler {
 
          assert redirectionUrl.getPath() != null : "no path in redirect header from: " + response;
          if (!redirectionUrl.isAbsolute()) {
-            UriBuilder builder = uriBuilderProvider.get().uri(currentRequest.getEndpoint());
-            builder.replacePath(redirectionUrl.getPath());
-            if (redirectionUrl.getQuery() != null)
-               builder.replaceQuery(redirectionUrl.getQuery());
-            redirectionUrl = builder.build();
+            redirectionUrl = uriBuilder(currentRequest.getEndpoint()).path(redirectionUrl.getPath())
+                  .query(redirectionUrl.getQuery()).build();
          }
 
          if (currentRequest.getFirstHeaderOrNull(HOST) != null && redirectionUrl.getHost() != null) {

@@ -24,7 +24,6 @@ import java.io.IOException;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.ws.rs.core.MediaType;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.io.MutableContentMetadata;
@@ -54,7 +53,7 @@ public class BindToXMLPayload implements Binder {
          request.setPayload(xml);
          MutableContentMetadata metadata = request.getPayload().getContentMetadata();
          if (contentTypeMustBeAdded(metadata)) {
-            metadata.setContentType(MediaType.APPLICATION_XML);
+            metadata.setContentType("application/xml");
          }
          return request;
       } catch (IOException ex) {

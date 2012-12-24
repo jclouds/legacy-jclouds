@@ -80,7 +80,7 @@ public class GlobalDomainClientExpectTest extends BaseCloudStackExpectTest<Globa
             .method("GET")
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&" +
-                  "command=updateDomain&id=10&name=test-2&apiKey=identity&signature=5t1eUf2Eyf%2FaB6qt%2BqIj%2BmcwFIo%3D"))
+                  "command=updateDomain&id=10&name=test-2&apiKey=identity&signature=5t1eUf2Eyf/aB6qt%2BqIj%2BmcwFIo%3D"))
             .addHeader("Accept", "application/json")
             .build(),
          HttpResponse.builder()
@@ -99,7 +99,7 @@ public class GlobalDomainClientExpectTest extends BaseCloudStackExpectTest<Globa
             .method("GET")
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&" +
-                  "command=updateDomain&id=10&name=test-2&apiKey=identity&signature=5t1eUf2Eyf%2FaB6qt%2BqIj%2BmcwFIo%3D"))
+                  "command=updateDomain&id=10&name=test-2&apiKey=identity&signature=5t1eUf2Eyf/aB6qt%2BqIj%2BmcwFIo%3D"))
             .addHeader("Accept", "application/json")
             .build(),
          HttpResponse.builder()
@@ -115,7 +115,7 @@ public class GlobalDomainClientExpectTest extends BaseCloudStackExpectTest<Globa
             .method("GET")
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&" +
-                  "command=deleteDomain&cleanup=false&id=1&apiKey=identity&signature=%2F5aLbigg612t9IrZi0JZO7CyiOU%3D"))
+                  "command=deleteDomain&cleanup=false&id=1&apiKey=identity&signature=/5aLbigg612t9IrZi0JZO7CyiOU%3D"))
             .build(),
          HttpResponse.builder()
             .statusCode(200)

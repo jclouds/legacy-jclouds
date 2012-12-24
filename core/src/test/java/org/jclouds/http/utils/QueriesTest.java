@@ -18,7 +18,7 @@
  */
 package org.jclouds.http.utils;
 
-import static org.jclouds.http.utils.Queries.parseQueryToMap;
+import static org.jclouds.http.utils.Queries.queryParser;
 import static org.testng.Assert.assertEquals;
 
 import java.util.Set;
@@ -45,13 +45,15 @@ public class QueriesTest {
       expects.put("Value", "dGVzdA==");
       expects.put("InstanceId", "1");
       assertEquals(
-         parseQueryToMap("Version=2010-06-15&Action=ModifyInstanceAttribute&Attribute=userData&Value=dGVzdA%3D%3D&InstanceId=1"),
-         expects);
+            queryParser()
+                  .apply(
+                        "Version=2010-06-15&Action=ModifyInstanceAttribute&Attribute=userData&Value=dGVzdA%3D%3D&InstanceId=1"),
+            expects);
    }
 
    @Test
    public void testParseQueryToMapSingleParam() {
-      Multimap<String, String> parsedMap = parseQueryToMap("v=1.3");
+      Multimap<String, String> parsedMap = queryParser().apply("v=1.3");
       assert parsedMap.keySet().size() == 1 : "Expected 1 key, found: " + parsedMap.keySet().size();
       assert parsedMap.keySet().contains("v") : "Expected v to be a part of the keys";
       String valueForV = Iterables.getOnlyElement(parsedMap.get("v"));
@@ -60,7 +62,7 @@ public class QueriesTest {
 
    @Test
    public void testParseQueryToMapMultiParam() {
-      Multimap<String, String> parsedMap = parseQueryToMap("v=1.3&sig=123");
+      Multimap<String, String> parsedMap = queryParser().apply("v=1.3&sig=123");
       assert parsedMap.keySet().size() == 2 : "Expected 2 keys, found: " + parsedMap.keySet().size();
       assert parsedMap.keySet().contains("v") : "Expected v to be a part of the keys";
       assert parsedMap.keySet().contains("sig") : "Expected sig to be a part of the keys";
@@ -79,16 +81,16 @@ public class QueriesTest {
 
       Set<String> expected = ImmutableSet.of(key);
 
-      Multimap<String, String> parsedMap = parseQueryToMap("a=1&b=1+2&publickey=" + Strings2.urlEncode(key));
+      Multimap<String, String> parsedMap = queryParser().apply("a=1&b=1+2&publickey=" + Strings2.urlEncode(key));
       assertEquals(parsedMap.get("publickey"), expected);
 
-      parsedMap = parseQueryToMap("publickey=" + Strings2.urlEncode(key));
+      parsedMap = queryParser().apply("publickey=" + Strings2.urlEncode(key));
       assertEquals(parsedMap.get("publickey"), expected);
    }
 
    @Test
    public void testParseQueryWithKeysThatRequireDecoding() {
-      Multimap<String, String> parsedMap = parseQueryToMap("network%5B0%5D.id=23&network%5B0%5D.address=192.168.0.1");
+      Multimap<String, String> parsedMap = queryParser().apply("network%5B0%5D.id=23&network%5B0%5D.address=192.168.0.1");
 
       assertEquals(parsedMap.get("network[0].id"), ImmutableSet.of("23"));
       assertEquals(parsedMap.get("network[0].address"), ImmutableSet.of("192.168.0.1"));

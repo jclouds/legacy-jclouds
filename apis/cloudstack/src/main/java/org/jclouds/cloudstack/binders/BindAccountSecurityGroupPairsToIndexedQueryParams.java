@@ -20,21 +20,20 @@ package org.jclouds.cloudstack.binders;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.http.Uris.uriBuilder;
+import static org.jclouds.http.utils.Queries.queryParser;
 
+import java.net.URI;
 import java.util.Map.Entry;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
 import javax.inject.Singleton;
-import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.utils.Queries;
 import org.jclouds.rest.Binder;
 
 import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
 import com.google.common.collect.ImmutableMultimap.Builder;
+import com.google.common.collect.Multimap;
 
 /**
  * 
@@ -42,12 +41,6 @@ import com.google.common.collect.ImmutableMultimap.Builder;
  */
 @Singleton
 public class BindAccountSecurityGroupPairsToIndexedQueryParams implements Binder {
-   private final Provider<UriBuilder> uriBuilderProvider;
-
-   @Inject
-   public BindAccountSecurityGroupPairsToIndexedQueryParams(Provider<UriBuilder> uriBuilderProvider) {
-      this.uriBuilderProvider = checkNotNull(uriBuilderProvider, "uriBuilderProvider");
-   }
 
    @SuppressWarnings("unchecked")
    @Override
@@ -55,15 +48,14 @@ public class BindAccountSecurityGroupPairsToIndexedQueryParams implements Binder
       checkArgument(input instanceof Multimap<?, ?>, "this binder is only valid for Multimaps!");
       Multimap<String, String> pairs = (Multimap<String, String>) checkNotNull(input, "account group pairs");
       checkArgument(pairs.size() > 0, "you must specify at least one account, group pair");
-      UriBuilder builder = uriBuilderProvider.get();
-      builder.uri(request.getEndpoint());
-      Builder<String, String> map = ImmutableMultimap.<String, String> builder().putAll(
-            Queries.parseQueryToMap(request.getEndpoint().getQuery()));
+
+      Multimap<String, String> existingParams = queryParser().apply(request.getEndpoint().getQuery());
+      Builder<String, String> map = ImmutableMultimap.<String, String> builder().putAll(existingParams);
       int i = 0;
       for (Entry<String, String> entry : pairs.entries())
          map.put(String.format("usersecuritygrouplist[%d].account", i), entry.getKey()).put(
                String.format("usersecuritygrouplist[%d].group", i++), entry.getValue());
-      builder.replaceQuery(Queries.makeQueryLine(map.build(), null));
-      return (R) request.toBuilder().endpoint(builder.build()).build();
+      URI endpoint = uriBuilder(request.getEndpoint()).query(map.build()).build();
+      return (R) request.toBuilder().endpoint(endpoint).build();
    }
 }

@@ -26,8 +26,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Comparator;
-import java.util.Map;
 
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.io.payloads.ByteArrayPayload;
@@ -35,7 +33,6 @@ import org.jclouds.io.payloads.FilePayload;
 import org.jclouds.io.payloads.InputStreamPayload;
 import org.jclouds.io.payloads.StringPayload;
 import org.jclouds.io.payloads.UrlEncodedFormPayload;
-import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.Multimap;
@@ -81,15 +78,10 @@ public class Payloads {
       return new FilePayload(checkNotNull(data, "data"));
    }
 
-   public static UrlEncodedFormPayload newUrlEncodedFormPayload(Multimap<String, String> formParams, char... skips) {
-      return new UrlEncodedFormPayload(formParams, skips);
+   public static UrlEncodedFormPayload newUrlEncodedFormPayload(Multimap<String, String> formParams) {
+      return new UrlEncodedFormPayload(formParams);
    }
-
-   public static UrlEncodedFormPayload newUrlEncodedFormPayload(Multimap<String, String> formParams,
-         @Nullable Comparator<Map.Entry<String, String>> sorter, char... skips) {
-      return new UrlEncodedFormPayload(formParams, sorter, skips);
-   }
-
+   
    /**
     * Calculates and sets {@link Payload#setContentMD5} on the payload.
     * 

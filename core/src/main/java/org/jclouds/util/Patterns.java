@@ -51,16 +51,23 @@ public class Patterns {
    public static final Pattern TRAILING_SLASHES = Pattern.compile("[/]*$");
    public static final Pattern REST_CONTEXT_BUILDER = Pattern.compile("(.*ContextBuilder)<([^,]+), ?([^>]+)>");
 
+   public static final LoadingCache<Character, String> CHAR_TO_ENCODED = CacheBuilder.newBuilder()
+         .<Character, String> build(new CacheLoader<Character, String>() {
+            @Override
+            public String load(Character plain) throws ExecutionException {
+               try {
+                  return URLEncoder.encode(plain + "", "UTF-8");
+               } catch (UnsupportedEncodingException e) {
+                  throw new ExecutionException("Bad encoding on input: " + plain, e);
+               }
+            }
+         });
+   
    public static final LoadingCache<Character, Pattern> CHAR_TO_ENCODED_PATTERN = CacheBuilder.newBuilder()
          .<Character, Pattern> build(new CacheLoader<Character, Pattern>() {
             @Override
             public Pattern load(Character plain) throws ExecutionException {
-               try {
-                  String encoded = URLEncoder.encode(plain + "", "UTF-8");
-                  return Pattern.compile(encoded);
-               } catch (UnsupportedEncodingException e) {
-                  throw new ExecutionException("Bad encoding on input: " + plain, e);
-               }
+               return Pattern.compile(CHAR_TO_ENCODED.get(plain));
             }
          });
 

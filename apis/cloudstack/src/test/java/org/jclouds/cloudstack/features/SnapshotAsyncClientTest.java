@@ -189,7 +189,7 @@ public class SnapshotAsyncClientTest extends BaseCloudStackAsyncClientTest<Snaps
       HttpRequest httpRequest = processor.createRequest(method, ids);
 
       assertRequestLineEquals(httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=deleteSnapshotPolicies&ids=3%2C5%2C7 HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=deleteSnapshotPolicies&ids=3,5,7 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
