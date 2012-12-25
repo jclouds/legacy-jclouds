@@ -51,7 +51,7 @@ public class AvailabilityZoneApiExpectTest extends BaseELBApiExpectTest {
                                              "Action=EnableAvailabilityZonesForLoadBalancer" +
                                                    "&AvailabilityZones.member.1=us-east-1a" +
                                                    "&LoadBalancerName=name" +
-                                                   "&Signature=lay8JNIpYsgWjiTbA4%2FrgKrQPWhFKToPxw%2FfCLld4SE%3D" +
+                                                   "&Signature=lay8JNIpYsgWjiTbA4/rgKrQPWhFKToPxw/fCLld4SE%3D" +
                                                    "&SignatureMethod=HmacSHA256" +
                                                    "&SignatureVersion=2" +
                                                    "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +
@@ -135,7 +135,7 @@ public class AvailabilityZoneApiExpectTest extends BaseELBApiExpectTest {
                                              "Action=DisableAvailabilityZonesForLoadBalancer" +
                                                    "&AvailabilityZones.member.1=us-east-1a" +
                                                    "&LoadBalancerName=name" +
-                                                   "&Signature=tjzaFDhUghKwTpe%2F9OC8JK%2BJsRMCkF3Kh5YkvPEDPbg%3D" +
+                                                   "&Signature=tjzaFDhUghKwTpe/9OC8JK%2BJsRMCkF3Kh5YkvPEDPbg%3D" +
                                                    "&SignatureMethod=HmacSHA256" +
                                                    "&SignatureVersion=2" +
                                                    "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +

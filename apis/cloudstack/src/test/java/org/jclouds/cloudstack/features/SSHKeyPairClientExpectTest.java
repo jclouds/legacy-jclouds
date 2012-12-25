@@ -21,6 +21,7 @@ package org.jclouds.cloudstack.features;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 
 import org.jclouds.cloudstack.CloudStackContext;
@@ -29,11 +30,11 @@ import org.jclouds.cloudstack.internal.BaseCloudStackExpectTest;
 import org.jclouds.crypto.SshKeys;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
-import com.sun.jersey.api.uri.UriComponent;
 
 /**
  * Test the CloudStack SSHKeyPairClient
@@ -115,7 +116,7 @@ public class SSHKeyPairClientExpectTest extends BaseCloudStackExpectTest<SSHKeyP
    }
 
    @Test
-   public void testRegisterSSHKeyPairWhenResponseIs2xx() {
+   public void testRegisterSSHKeyPairWhenResponseIs2xx() throws UnsupportedEncodingException {
       String publicKey = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCc903twxU2zcQnIJdXv61RwZNZW94uId9qz08fgsBJsCOnHNIC4+L9kDOA2IHV9cUfEDBm1Be5TbpadWwSbS/05E+FARH2/MCO932UgcKUq5PGymS0249fLCBPci5zoLiG5vIym+1ij1hL/nHvkK99NIwe7io+Lmp9OcF3PTsm3Rgh5T09cRHGX9horp0VoAVa9vKJx6C1/IEHVnG8p0YPPa1lmemvx5kNBEiyoNQNYa34EiFkcJfP6rqNgvY8h/j4nE9SXoUCC/g6frhMFMOL0tzYqvz0Lczqm1Oh4RnSn3O9X4R934p28qqAobe337hmlLUdb6H5zuf+NwCh0HdZ";
 
       String privateKey = "-----BEGIN RSA PRIVATE KEY-----\n" +
@@ -158,7 +159,7 @@ public class SSHKeyPairClientExpectTest extends BaseCloudStackExpectTest<SSHKeyP
             .method("GET")
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&command=registerSSHKeyPair&" +
-                  "name=jclouds-keypair&publickey=" + UriComponent.encode(publicKey, UriComponent.Type.QUERY_PARAM) +
+                  "name=jclouds-keypair&publickey=" + Strings2.urlEncode(publicKey, '/') +
                   "&apiKey=identity&signature=g/6BXLnnvOMlKQBp1yM7GKlvfus%3D"))
             .headers(
                ImmutableMultimap.<String, String>builder()

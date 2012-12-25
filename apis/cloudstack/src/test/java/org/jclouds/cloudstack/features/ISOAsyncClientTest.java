@@ -26,10 +26,8 @@ import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.AccountInDomainOptions;
 import org.jclouds.cloudstack.options.DeleteISOOptions;
 import org.jclouds.cloudstack.options.ExtractISOOptions;
-import org.jclouds.cloudstack.options.RegisterISOOptions;
 import org.jclouds.cloudstack.options.UpdateISOOptions;
 import org.jclouds.cloudstack.options.UpdateISOPermissionsOptions;
-import org.jclouds.functions.IdentityFunction;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
@@ -38,7 +36,6 @@ import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Functions;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.TypeLiteral;
 /**
@@ -47,8 +44,7 @@ import com.google.inject.TypeLiteral;
  * @see ISOAsyncClient
  * @author Richard Downer
  */
-// NOTE:without testName, this will not call @Before* and fail w/NPE during
-// surefire
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "ISOAsyncClientTest")
 public class ISOAsyncClientTest extends BaseCloudStackAsyncClientTest<ISOAsyncClient> {
 

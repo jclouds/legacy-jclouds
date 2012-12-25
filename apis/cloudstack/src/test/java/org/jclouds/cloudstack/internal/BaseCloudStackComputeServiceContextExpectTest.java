@@ -41,7 +41,7 @@ public abstract class BaseCloudStackComputeServiceContextExpectTest<T> extends B
       .addQueryParam("listAll", "true")
       .addQueryParam("templatefilter", "executable")
       .addQueryParam("apiKey", "APIKEY")
-      .addQueryParam("signature", "Xk6lF%2Fv3SbhrxTKqaC2IWoBPKHo%3D")
+      .addQueryParam("signature", "Xk6lF/v3SbhrxTKqaC2IWoBPKHo%3D")
       .addHeader("Accept", "application/json")
       .build();
 
@@ -56,7 +56,7 @@ public abstract class BaseCloudStackComputeServiceContextExpectTest<T> extends B
       .addQueryParam("command", "listOsTypes")
       .addQueryParam("listAll", "true")
       .addQueryParam("apiKey", "APIKEY")
-      .addQueryParam("signature", "8BsE8MsOAhUzo1Q4Y3UD%2Fe96u84%3D")
+      .addQueryParam("signature", "8BsE8MsOAhUzo1Q4Y3UD/e96u84%3D")
       .addHeader("Accept", "application/json")
       .build();
 
@@ -70,7 +70,7 @@ public abstract class BaseCloudStackComputeServiceContextExpectTest<T> extends B
       .addQueryParam("command", "listOsCategories")
       .addQueryParam("listAll", "true")
       .addQueryParam("apiKey", "APIKEY")
-      .addQueryParam("signature", "OojW4ssh%2FRQ3CubAzXue4svlofM%3D")
+      .addQueryParam("signature", "OojW4ssh/RQ3CubAzXue4svlofM%3D")
 //      .addHeader("Accept", "application/json") //TODO: why are we not passing this?
       .build();
 
@@ -84,7 +84,7 @@ public abstract class BaseCloudStackComputeServiceContextExpectTest<T> extends B
       .addQueryParam("command", "listZones")
       .addQueryParam("listAll", "true")
       .addQueryParam("apiKey", "APIKEY")
-      .addQueryParam("signature", "GTUgn%2FLHDioJRq48kurOdCAYueo%3D")
+      .addQueryParam("signature", "GTUgn/LHDioJRq48kurOdCAYueo%3D")
       .addHeader("Accept", "application/json")
       .build();
 
@@ -128,7 +128,7 @@ public abstract class BaseCloudStackComputeServiceContextExpectTest<T> extends B
       .addQueryParam("account", "jclouds") // account and domain came from above
       .addQueryParam("domainid", "457")
       .addQueryParam("apiKey", "APIKEY")
-      .addQueryParam("signature", "FDiGGBiG%2FsVj0k6DmZIgMNU8SqI%3D")
+      .addQueryParam("signature", "FDiGGBiG/sVj0k6DmZIgMNU8SqI%3D")
       .addHeader("Accept", "application/json")
       .build();
 
@@ -157,7 +157,7 @@ public abstract class BaseCloudStackComputeServiceContextExpectTest<T> extends B
       .addQueryParam("listAll", "true")      
       .addQueryParam("command", "listCapabilities")
       .addQueryParam("apiKey", "APIKEY")      
-      .addQueryParam("signature", "vVdhtet%2FzG59FXgkYkAzEQQ4q1o%3D")
+      .addQueryParam("signature", "vVdhtet/zG59FXgkYkAzEQQ4q1o%3D")
       .addHeader("Accept", "application/json")
       .build();
 

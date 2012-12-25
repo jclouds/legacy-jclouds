@@ -84,7 +84,7 @@ public class SecurityGroupApiExpectTest extends BaseRDSApiExpectTest {
                            "&DBSecurityGroupDescription=My%20new%20DBSecurityGroup" +
                            "&DBSecurityGroupName=mydbsecuritygroup" +
                            "&EC2VpcId=vpc-1a2b3c4d" +
-                           "&Signature=8MXHQRkGSKb0TzCKRIlDN9ymruqzY%2FQKgLMXoxYcqFI%3D" +
+                           "&Signature=8MXHQRkGSKb0TzCKRIlDN9ymruqzY/QKgLMXoxYcqFI%3D" +
                            "&SignatureMethod=HmacSHA256" +
                            "&SignatureVersion=2" +
                            "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +
@@ -109,7 +109,7 @@ public class SecurityGroupApiExpectTest extends BaseRDSApiExpectTest {
                                           payloadFromStringWithContentType(
                                                 "Action=DescribeDBSecurityGroups" +
                                                       "&DBSecurityGroupName=name" +
-                                                      "&Signature=F019%2B74qM%2FivsW6ngZWfILFBss4RqPGlppawtAjwUPg%3D" +
+                                                      "&Signature=F019%2B74qM/ivsW6ngZWfILFBss4RqPGlppawtAjwUPg%3D" +
                                                       "&SignatureMethod=HmacSHA256" +
                                                       "&SignatureVersion=2" +
                                                       "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +
@@ -147,7 +147,7 @@ public class SecurityGroupApiExpectTest extends BaseRDSApiExpectTest {
                                        .payload(
                                           payloadFromStringWithContentType(
                                                    "Action=DescribeDBSecurityGroups" +
-                                                   "&Signature=6PMtOHuBCxE%2FuujPnvn%2FnN8NIZrwcx9X0Jy6hz%2FRXtg%3D" +
+                                                   "&Signature=6PMtOHuBCxE/uujPnvn/nN8NIZrwcx9X0Jy6hz/RXtg%3D" +
                                                    "&SignatureMethod=HmacSHA256" +
                                                    "&SignatureVersion=2" +
                                                    "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +
@@ -180,7 +180,7 @@ public class SecurityGroupApiExpectTest extends BaseRDSApiExpectTest {
                                         payloadFromStringWithContentType(
                                                  "Action=DescribeDBSecurityGroups" +
                                                  "&Marker=MARKER" +
-                                                 "&Signature=DeZcA5ViQu%2FbB3PY9EmRZavRgYxLFMvdbq7topMKKhw%3D" +
+                                                 "&Signature=DeZcA5ViQu/bB3PY9EmRZavRgYxLFMvdbq7topMKKhw%3D" +
                                                  "&SignatureMethod=HmacSHA256" +
                                                  "&SignatureVersion=2" +
                                                  "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +
@@ -221,7 +221,7 @@ public class SecurityGroupApiExpectTest extends BaseRDSApiExpectTest {
                        .payload(payloadFromStringWithContentType(
                                                   "Action=DescribeDBSecurityGroups" +
                                                   "&Marker=MARKER" +
-                                                  "&Signature=DeZcA5ViQu%2FbB3PY9EmRZavRgYxLFMvdbq7topMKKhw%3D" +
+                                                  "&Signature=DeZcA5ViQu/bB3PY9EmRZavRgYxLFMvdbq7topMKKhw%3D" +
                                                   "&SignatureMethod=HmacSHA256" +
                                                   "&SignatureVersion=2" +
                                                   "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +
@@ -248,9 +248,9 @@ public class SecurityGroupApiExpectTest extends BaseRDSApiExpectTest {
                .payload(
                   payloadFromStringWithContentType(
                            "Action=AuthorizeDBSecurityGroupIngress" +
-                           "&CIDRIP=0.0.0.0%2F0" +
+                           "&CIDRIP=0.0.0.0/0" +
                            "&DBSecurityGroupName=mydbsecuritygroup" +
-                           "&Signature=Wk06HjnbFH5j%2FyfguUK6p3ZJU9kpYPgOlN9IGctLVSk%3D" +
+                           "&Signature=Wk06HjnbFH5j/yfguUK6p3ZJU9kpYPgOlN9IGctLVSk%3D" +
                            "&SignatureMethod=HmacSHA256" +
                            "&SignatureVersion=2" +
                            "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +
@@ -305,7 +305,7 @@ public class SecurityGroupApiExpectTest extends BaseRDSApiExpectTest {
                            "Action=AuthorizeDBSecurityGroupIngress" +
                            "&DBSecurityGroupName=mydbsecuritygroup" +
                            "&EC2SecurityGroupId=sg-1312321312" +
-                           "&Signature=o31Wey%2FwliTbHJoxdF7KGqIJwSM6pfqzkjIYio3XNGs%3D" +
+                           "&Signature=o31Wey/wliTbHJoxdF7KGqIJwSM6pfqzkjIYio3XNGs%3D" +
                            "&SignatureMethod=HmacSHA256" +
                            "&SignatureVersion=2" +
                            "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +
@@ -330,9 +330,9 @@ public class SecurityGroupApiExpectTest extends BaseRDSApiExpectTest {
                .payload(
                   payloadFromStringWithContentType(
                            "Action=RevokeDBSecurityGroupIngress" +
-                           "&CIDRIP=0.0.0.0%2F0" +
+                           "&CIDRIP=0.0.0.0/0" +
                            "&DBSecurityGroupName=mydbsecuritygroup" +
-                           "&Signature=YD1%2BzKmoWyYCmqWq1X9f%2FVj6UC7UnkwkPf%2BA5urnz%2BE%3D" +
+                           "&Signature=YD1%2BzKmoWyYCmqWq1X9f/Vj6UC7UnkwkPf%2BA5urnz%2BE%3D" +
                            "&SignatureMethod=HmacSHA256" +
                            "&SignatureVersion=2" +
                            "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +
@@ -387,7 +387,7 @@ public class SecurityGroupApiExpectTest extends BaseRDSApiExpectTest {
                            "Action=RevokeDBSecurityGroupIngress" +
                            "&DBSecurityGroupName=mydbsecuritygroup" +
                            "&EC2SecurityGroupId=sg-1312321312" +
-                           "&Signature=YI2oGYI%2BCx4DGYx43WH%2FehW6CWe6X6wEipsp5zPySzw%3D" +
+                           "&Signature=YI2oGYI%2BCx4DGYx43WH/ehW6CWe6X6wEipsp5zPySzw%3D" +
                            "&SignatureMethod=HmacSHA256" +
                            "&SignatureVersion=2" +
                            "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +

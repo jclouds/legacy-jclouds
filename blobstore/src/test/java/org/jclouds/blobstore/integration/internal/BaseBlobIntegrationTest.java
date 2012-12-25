@@ -363,51 +363,6 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
       }
    }
 
-   // @Test(groups = { "integration", "live" })
-   // public void testGetTail() throws InterruptedException, ExecutionException,
-   // TimeoutException,
-   // IOException {
-   // String container = getContainerName();
-   // try {
-   //
-   // String name = "apples";
-   //
-   // addObjectAndValidateContent(container, name);
-   // Blob blob = context.getBlobStore().getBlob(container, name,
-   // tail(5)).get(30,
-   // TimeUnit.SECONDS);
-   // assertEquals(BlobStoreUtils.getContentAsStringAndClose(blob), TEST_STRING
-   // .substring(TEST_STRING.length() - 5));
-   // assertEquals(blob.getContentLength(), 5);
-   // assertEquals(blob.getMetadata().getSize(), TEST_STRING.length());
-   // } finally {
-   // returnContainer(container);
-   // }
-   // }
-
-   // @Test(groups = { "integration", "live" })
-   // public void testGetStartAt() throws InterruptedException,
-   // ExecutionException,
-   // TimeoutException,
-   // IOException {
-   // String container = getContainerName();
-   // try {
-   // String name = "apples";
-   //
-   // addObjectAndValidateContent(container, name);
-   // Blob blob = context.getBlobStore().getBlob(container, name,
-   // startAt(5)).get(30,
-   // TimeUnit.SECONDS);
-   // assertEquals(BlobStoreUtils.getContentAsStringAndClose(blob),
-   // TEST_STRING.substring(5,
-   // TEST_STRING.length()));
-   // assertEquals(blob.getContentLength(), TEST_STRING.length() - 5);
-   // assertEquals(blob.getMetadata().getSize(), TEST_STRING.length());
-   // } finally {
-   // returnContainer(container);
-   // }
-   // }
-
    private String addObjectAndValidateContent(String sourcecontainer, String sourceKey) throws InterruptedException {
       String eTag = addBlobToContainer(sourcecontainer, sourceKey);
       validateContent(sourcecontainer, sourceKey);

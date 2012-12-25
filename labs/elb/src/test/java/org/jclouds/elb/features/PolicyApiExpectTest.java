@@ -92,7 +92,7 @@ public class PolicyApiExpectTest extends BaseELBApiExpectTest {
                                  .payload(
                                     payloadFromStringWithContentType(
                                              "Action=DescribeLoadBalancerPolicies" +
-                                             "&Signature=0LPrgeysYoQe6PyK2nh3mCgo0lxPNiERxm46W%2FN5GpU%3D" +
+                                             "&Signature=0LPrgeysYoQe6PyK2nh3mCgo0lxPNiERxm46W/N5GpU%3D" +
                                              "&SignatureMethod=HmacSHA256" +
                                              "&SignatureVersion=2" +
                                              "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +
@@ -197,7 +197,7 @@ public class PolicyApiExpectTest extends BaseELBApiExpectTest {
                                       .payload(
                                           payloadFromStringWithContentType(
                                                    "Action=DescribeLoadBalancerPolicyTypes" +
-                                                   "&Signature=%2F1mMjugJD8Zvb%2BK%2FQgOZMYVenlveCKtvGBiHaZVc%2B9w%3D" +
+                                                   "&Signature=/1mMjugJD8Zvb%2BK/QgOZMYVenlveCKtvGBiHaZVc%2B9w%3D" +
                                                    "&SignatureMethod=HmacSHA256" +
                                                    "&SignatureVersion=2" +
                                                    "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +

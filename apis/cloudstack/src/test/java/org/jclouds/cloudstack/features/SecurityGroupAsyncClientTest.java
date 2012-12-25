@@ -130,7 +130,7 @@ public class SecurityGroupAsyncClientTest extends BaseCloudStackAsyncClientTest<
 
       assertRequestLineEquals(
             httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=authorizeSecurityGroupIngress&securitygroupid=2&startport=22&protocol=tcp&endport=22&cidrlist=1.1.1.1%2F24%2C1.2.2.2%2F16 HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=authorizeSecurityGroupIngress&securitygroupid=2&startport=22&protocol=tcp&endport=22&cidrlist=1.1.1.1/24,1.2.2.2/16 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -169,7 +169,7 @@ public class SecurityGroupAsyncClientTest extends BaseCloudStackAsyncClientTest<
 
       assertRequestLineEquals(
             httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=authorizeSecurityGroupIngress&protocol=ICMP&securitygroupid=2&icmptype=22&icmpcode=22&cidrlist=1.1.1.1%2F24%2C1.2.2.2%2F16 HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=authorizeSecurityGroupIngress&protocol=ICMP&securitygroupid=2&icmptype=22&icmpcode=22&cidrlist=1.1.1.1/24,1.2.2.2/16 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

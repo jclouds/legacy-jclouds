@@ -11,7 +11,6 @@ import org.jclouds.http.HttpResponseException;
 import org.jclouds.rest.RetryAfterException;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Function;
 import com.google.common.base.Ticker;
 import com.google.common.net.HttpHeaders;
 

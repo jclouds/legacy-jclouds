@@ -20,8 +20,6 @@ package org.jclouds.rest.binders;
 
 import static org.testng.Assert.assertEquals;
 
-import javax.ws.rs.core.MediaType;
-
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessorTest.TestJAXBDomain;
 import org.jclouds.xml.XMLParser;
@@ -51,7 +49,7 @@ public class BindToXMLPayloadTest {
       HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://momma").build();
       request = binder.bindToRequest(request, obj);
       assertEquals(request.getPayload().getRawContent(), XMLParser.DEFAULT_XML_HEADER + "\n<test>\n    <elem>Hello World</elem>\n</test>\n");
-      assertEquals(request.getPayload().getContentMetadata().getContentType(), MediaType.APPLICATION_XML);
+      assertEquals(request.getPayload().getContentMetadata().getContentType(), "application/xml");
    }
 
    @Test
@@ -70,7 +68,7 @@ public class BindToXMLPayloadTest {
 
       request = binder.bindToRequest(request, obj);
       assertEquals(request.getPayload().getRawContent(), XMLParser.DEFAULT_XML_HEADER + "\n<test>\n    <elem>Hello World</elem>\n</test>\n");
-      assertEquals(request.getPayload().getContentMetadata().getContentType(), MediaType.APPLICATION_XML);
+      assertEquals(request.getPayload().getContentMetadata().getContentType(), "application/xml");
    }
 
    @Test(expectedExceptions = NullPointerException.class)

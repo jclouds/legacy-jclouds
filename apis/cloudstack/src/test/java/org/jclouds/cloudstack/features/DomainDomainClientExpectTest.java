@@ -85,7 +85,7 @@ public class DomainDomainClientExpectTest extends BaseCloudStackExpectTest<Domai
             .method("GET")
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&" +
-                          "command=listDomains&listAll=true&id=1&apiKey=identity&signature=M16YxHWKST%2FcIRUHvWhfWovJugU%3D"))
+                          "command=listDomains&listAll=true&id=1&apiKey=identity&signature=M16YxHWKST/cIRUHvWhfWovJugU%3D"))
             .addHeader("Accept", "application/json")
             .build(),
          HttpResponse.builder()
@@ -103,7 +103,7 @@ public class DomainDomainClientExpectTest extends BaseCloudStackExpectTest<Domai
             .method("GET")
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&" +
-                          "command=listDomains&listAll=true&id=1&apiKey=identity&signature=M16YxHWKST%2FcIRUHvWhfWovJugU%3D"))
+                          "command=listDomains&listAll=true&id=1&apiKey=identity&signature=M16YxHWKST/cIRUHvWhfWovJugU%3D"))
             .addHeader("Accept", "application/json")
             .build(),
          HttpResponse.builder()

@@ -18,6 +18,7 @@
  */
 package org.jclouds.io.payloads;
 
+import static com.google.common.net.MediaType.PLAIN_TEXT_UTF_8;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
@@ -27,8 +28,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import javax.ws.rs.core.MediaType;
 
 import org.jclouds.io.Payloads;
 import org.jclouds.io.payloads.Part.PartOptions;
@@ -94,7 +93,8 @@ public class MultipartFormTest {
    }
 
    private Part newPart(String data) {
-      return Part.create("file", new MockFilePayload(data), new PartOptions().contentType(MediaType.TEXT_PLAIN));
+      return Part.create("file", new MockFilePayload(data),
+            new PartOptions().contentType(PLAIN_TEXT_UTF_8.withoutParameters().toString()));
    }
 
    private void addData(String boundary, String data, StringBuilder builder) {

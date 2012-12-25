@@ -133,7 +133,7 @@ public class InstanceApiExpectTest extends BaseELBApiExpectTest {
                            "&Instances.member.1.InstanceId=i-6055fa09" +
                            "&Instances.member.2.InstanceId=i-9055fa55" +
                            "&LoadBalancerName=name" +
-                           "&Signature=Yfqg8TxL1J1Ug8SimY%2F30rnbt%2FUVygTEa0vhMT5Fz1Y%3D" +
+                           "&Signature=Yfqg8TxL1J1Ug8SimY/30rnbt/UVygTEa0vhMT5Fz1Y%3D" +
                            "&SignatureMethod=HmacSHA256" +
                            "&SignatureVersion=2" +
                            "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +
@@ -175,7 +175,7 @@ public class InstanceApiExpectTest extends BaseELBApiExpectTest {
                                              "Action=DeregisterInstancesFromLoadBalancer" +
                                                    "&Instances.member.1.InstanceId=i-6055fa09" +
                                                    "&LoadBalancerName=name" +
-                                                   "&Signature=d%2BK6b2ggJLEekW8wLyRnm%2FpcEpZvc8VNI%2FW0bpYBGUk%3D" +
+                                                   "&Signature=d%2BK6b2ggJLEekW8wLyRnm/pcEpZvc8VNI/W0bpYBGUk%3D" +
                                                    "&SignatureMethod=HmacSHA256" +
                                                    "&SignatureVersion=2" +
                                                    "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +
@@ -217,7 +217,7 @@ public class InstanceApiExpectTest extends BaseELBApiExpectTest {
                            "&Instances.member.1.InstanceId=i-6055fa09" +
                            "&Instances.member.2.InstanceId=i-9055fa55" +
                            "&LoadBalancerName=name" +
-                           "&Signature=nqn8iH70979k%2Fu%2FKXEcMlT1Zd%2FPaNK6ZBwFDjvbuMRo%3D" +
+                           "&Signature=nqn8iH70979k/u/KXEcMlT1Zd/PaNK6ZBwFDjvbuMRo%3D" +
                            "&SignatureMethod=HmacSHA256" +
                            "&SignatureVersion=2" +
                            "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +

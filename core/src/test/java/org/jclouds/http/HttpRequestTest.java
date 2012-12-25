@@ -18,11 +18,10 @@
  */
 package org.jclouds.http;
 
+import static com.google.common.net.MediaType.FORM_DATA;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
-
-import javax.ws.rs.core.MediaType;
 
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
@@ -51,21 +50,21 @@ public class HttpRequestTest {
       assertEquals(request.toBuilder().replaceQueryParam("header", "foo").build(), HttpRequest.builder().method("GET")
                .endpoint("http://goo.com:443?header=foo").build());
    }
-   
+
    // it is easy to accidentally encode twice. make sure this always works!
    public void testEncodesOnlyOnce() throws Exception {
       URI uri = URI.create("http://goo.com:443?header=value1");
       HttpRequest request = HttpRequest.builder().method("GET").endpoint(uri).build();
 
-      assertEquals(request.toBuilder().replaceQueryParam("header", "1.1.1.1/24,1.1.1.2/24").build(), HttpRequest.builder().method("GET")
-               .endpoint("http://goo.com:443?header=1.1.1.1%2F24%2C1.1.1.2%2F24").build());
+      assertEquals(request.toBuilder().replaceQueryParam("header", "hello?").build(),
+            HttpRequest.builder().method("GET").endpoint("http://goo.com:443?header=hello%3F").build());
    }
 
    public void testAddFormParamAddsAnotherValue() {
       HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://foo")
                .payload("foo=bar").build();
       Payload payload = Payloads.newStringPayload("foo=bar&foo=baz");
-      payload.getContentMetadata().setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+      payload.getContentMetadata().setContentType(FORM_DATA.toString());
       assertEquals(request.toBuilder().addFormParams(ImmutableMultimap.of("foo", "baz")).build(), HttpRequest
                .builder().method("GET").endpoint("http://foo").payload(payload).build());
    }

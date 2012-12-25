@@ -33,7 +33,6 @@ import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
-import org.jclouds.rest.annotations.SkipEncoding;
 
 /**
  * Helper functions needed to to derive BlobStore values
@@ -42,7 +41,6 @@ import org.jclouds.rest.annotations.SkipEncoding;
  * @see <a href="http://msdn.microsoft.com/en-us/library/dd135733.aspx" />
  * @author Adrian Cole
  */
-@SkipEncoding('/')
 @RequestFilters(SharedKeyLiteAuthentication.class)
 @Headers(keys = AzureStorageHeaders.VERSION, values = "2009-07-17")
 public interface AzureBlobUtil {

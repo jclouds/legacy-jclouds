@@ -17,13 +17,15 @@
  * under the License.
  */
 package org.jclouds.http.internal;
-
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Throwables.propagate;
 import static com.google.common.collect.Iterables.getLast;
 import static com.google.common.io.ByteStreams.toByteArray;
 import static com.google.common.io.Closeables.closeQuietly;
+import static com.google.common.net.HttpHeaders.CONTENT_LENGTH;
+import static com.google.common.net.HttpHeaders.HOST;
+import static com.google.common.net.HttpHeaders.USER_AGENT;
 import static org.jclouds.io.Payloads.newInputStreamPayload;
 
 import java.io.ByteArrayInputStream;
@@ -49,10 +51,10 @@ import javax.inject.Singleton;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
-import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.Constants;
 import org.jclouds.JcloudsVersion;
+import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpUtils;
@@ -79,7 +81,7 @@ import com.google.inject.Inject;
 @Singleton
 public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorService<HttpURLConnection> {
 
-   public static final String USER_AGENT = String.format("jclouds/%s java/%s", JcloudsVersion.get(), System
+   public static final String DEFAULT_USER_AGENT = String.format("jclouds/%s java/%s", JcloudsVersion.get(), System
             .getProperty("java.version"));
 
    @Resource
@@ -108,7 +110,7 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
 
    @Override
    protected HttpResponse invoke(HttpURLConnection connection) throws IOException, InterruptedException {
-      HttpResponse.Builder builder = HttpResponse.builder();
+      HttpResponse.Builder<?> builder = HttpResponse.builder();
       InputStream in = null;
       try {
          in = consumeOnClose(connection.getInputStream());
@@ -220,9 +222,9 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
       if(request.getEndpoint().getPort() != -1) {
          host += ":" + request.getEndpoint().getPort();
       }
-      connection.setRequestProperty(HttpHeaders.HOST, host);
-      if (connection.getRequestProperty(HttpHeaders.USER_AGENT) == null) {
-          connection.setRequestProperty(HttpHeaders.USER_AGENT, USER_AGENT);
+      connection.setRequestProperty(HOST, host);
+      if (connection.getRequestProperty(USER_AGENT) == null) {
+          connection.setRequestProperty(USER_AGENT, DEFAULT_USER_AGENT);
       }
 
       if (request.getPayload() != null) {
@@ -234,7 +236,7 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
             connection.setChunkedStreamingMode(8196);
          } else {
             Long length = checkNotNull(md.getContentLength(), "payload.getContentLength");
-            connection.setRequestProperty(HttpHeaders.CONTENT_LENGTH, length.toString());
+            connection.setRequestProperty(CONTENT_LENGTH, length.toString());
             // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6755625
             checkArgument(length < Integer.MAX_VALUE,
                      "JDK 1.6 does not support >2GB chunks. Use chunked encoding, if possible.");
@@ -251,7 +253,7 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
                      .getContentLength(), request.getRequestLine()), e);
          }
       } else {
-         connection.setRequestProperty(HttpHeaders.CONTENT_LENGTH, "0");
+         connection.setRequestProperty(CONTENT_LENGTH, "0");
          // for some reason POST/PUT undoes the content length header above.
          if (connection.getRequestMethod().equals("POST") || connection.getRequestMethod().equals("PUT"))
             connection.setFixedLengthStreamingMode(0);

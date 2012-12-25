@@ -35,7 +35,6 @@ import org.jclouds.openstack.v2_0.services.Identity;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
-import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
@@ -52,7 +51,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  *      />
  * @author Adam Lowe
  */
-@SkipEncoding({ '/', '=' })
 @org.jclouds.rest.annotations.Endpoint(Identity.class)
 public interface TokenAsyncApi {
 

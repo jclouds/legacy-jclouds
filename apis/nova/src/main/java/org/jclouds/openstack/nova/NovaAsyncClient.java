@@ -49,7 +49,6 @@ import org.jclouds.rest.annotations.Payload;
 import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.Unwrap;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
@@ -70,7 +69,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  * 
  * @deprecated Deprecated in jclouds 1.6, to be removed in jclouds 1.7. See NovaAsyncApi.
  */
-@SkipEncoding({'/', '='})
 @RequestFilters({AuthenticateRequest.class, AddTimestampQuery.class})
 @Endpoint(ServerManagement.class)
 @Deprecated

@@ -17,14 +17,16 @@
  * under the License.
  */
 package org.jclouds.http.options;
-
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.net.HttpHeaders.IF_MATCH;
+import static com.google.common.net.HttpHeaders.IF_MODIFIED_SINCE;
+import static com.google.common.net.HttpHeaders.IF_NONE_MATCH;
+import static com.google.common.net.HttpHeaders.IF_UNMODIFIED_SINCE;
+import static com.google.common.net.HttpHeaders.RANGE;
 
 import java.util.Date;
 import java.util.List;
-
-import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.date.DateService;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
@@ -60,7 +62,7 @@ public class GetOptions extends BaseHttpRequestOptions {
       Multimap<String, String> headers = super.buildRequestHeaders();
       String range = getRange();
       if (range != null)
-         headers.put("Range", this.getRange());
+         headers.put(RANGE, this.getRange());
       return headers;
    }
 
@@ -110,7 +112,7 @@ public class GetOptions extends BaseHttpRequestOptions {
    public GetOptions ifModifiedSince(Date ifModifiedSince) {
       checkArgument(getIfMatch() == null, "ifETagMatches() is not compatible with ifModifiedSince()");
       checkArgument(getIfUnmodifiedSince() == null, "ifUnmodifiedSince() is not compatible with ifModifiedSince()");
-      this.headers.put(HttpHeaders.IF_MODIFIED_SINCE,
+      this.headers.put(IF_MODIFIED_SINCE,
             dateService.rfc822DateFormat(checkNotNull(ifModifiedSince, "ifModifiedSince")));
       return this;
    }
@@ -124,7 +126,7 @@ public class GetOptions extends BaseHttpRequestOptions {
     * @see #ifModifiedSince(Date)
     */
    public String getIfModifiedSince() {
-      return this.getFirstHeaderOrNull(HttpHeaders.IF_MODIFIED_SINCE);
+      return this.getFirstHeaderOrNull(IF_MODIFIED_SINCE);
    }
 
    /**
@@ -135,7 +137,7 @@ public class GetOptions extends BaseHttpRequestOptions {
    public GetOptions ifUnmodifiedSince(Date ifUnmodifiedSince) {
       checkArgument(getIfNoneMatch() == null, "ifETagDoesntMatch() is not compatible with ifUnmodifiedSince()");
       checkArgument(getIfModifiedSince() == null, "ifModifiedSince() is not compatible with ifUnmodifiedSince()");
-      this.headers.put(HttpHeaders.IF_UNMODIFIED_SINCE,
+      this.headers.put(IF_UNMODIFIED_SINCE,
             dateService.rfc822DateFormat(checkNotNull(ifUnmodifiedSince, "ifUnmodifiedSince")));
       return this;
    }
@@ -149,7 +151,7 @@ public class GetOptions extends BaseHttpRequestOptions {
     * @see #ifUnmodifiedSince(Date)
     */
    public String getIfUnmodifiedSince() {
-      return this.getFirstHeaderOrNull(HttpHeaders.IF_UNMODIFIED_SINCE);
+      return this.getFirstHeaderOrNull(IF_UNMODIFIED_SINCE);
    }
 
    /**
@@ -164,7 +166,7 @@ public class GetOptions extends BaseHttpRequestOptions {
    public GetOptions ifETagMatches(String eTag) {
       checkArgument(getIfNoneMatch() == null, "ifETagDoesntMatch() is not compatible with ifETagMatches()");
       checkArgument(getIfModifiedSince() == null, "ifModifiedSince() is not compatible with ifETagMatches()");
-      this.headers.put(HttpHeaders.IF_MATCH, String.format("\"%1$s\"", checkNotNull(eTag, "eTag")));
+      this.headers.put(IF_MATCH, String.format("\"%1$s\"", checkNotNull(eTag, "eTag")));
       return this;
    }
 
@@ -177,7 +179,7 @@ public class GetOptions extends BaseHttpRequestOptions {
     * @see #ifETagMatches(String)
     */
    public String getIfMatch() {
-      return this.getFirstHeaderOrNull(HttpHeaders.IF_MATCH);
+      return this.getFirstHeaderOrNull(IF_MATCH);
    }
 
    /**
@@ -191,7 +193,7 @@ public class GetOptions extends BaseHttpRequestOptions {
    public GetOptions ifETagDoesntMatch(String eTag) {
       checkArgument(getIfMatch() == null, "ifETagMatches() is not compatible with ifETagDoesntMatch()");
       checkArgument(getIfUnmodifiedSince() == null, "ifUnmodifiedSince() is not compatible with ifETagDoesntMatch()");
-      this.headers.put(HttpHeaders.IF_NONE_MATCH, String.format("\"%1$s\"", checkNotNull(eTag, "ifETagDoesntMatch")));
+      this.headers.put(IF_NONE_MATCH, String.format("\"%1$s\"", checkNotNull(eTag, "ifETagDoesntMatch")));
       return this;
    }
 
@@ -204,7 +206,7 @@ public class GetOptions extends BaseHttpRequestOptions {
     * @see #ifETagDoesntMatch(String)
     */
    public String getIfNoneMatch() {
-      return this.getFirstHeaderOrNull(HttpHeaders.IF_NONE_MATCH);
+      return this.getFirstHeaderOrNull(IF_NONE_MATCH);
    }
 
    public List<String> getRanges() {

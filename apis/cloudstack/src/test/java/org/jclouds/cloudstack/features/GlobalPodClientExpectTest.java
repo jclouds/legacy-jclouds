@@ -144,7 +144,7 @@ public class GlobalPodClientExpectTest extends BaseCloudStackExpectTest<GlobalPo
          HttpRequest.builder()
             .method("GET")
             .endpoint(
-               URI.create("http://localhost:8080/client/api?response=json&command=updatePod&id=7&netmask=255.255.255.128&name=richard-updatepod&startip=172.21.0.129&endip=172.21.0.250&gateway=172.21.0.254&allocationstate=Disabled&apiKey=identity&signature=QpdbRyyF%2FxJ78ioJWhPKXEWhthY%3D"))
+               URI.create("http://localhost:8080/client/api?response=json&command=updatePod&id=7&netmask=255.255.255.128&name=richard-updatepod&startip=172.21.0.129&endip=172.21.0.250&gateway=172.21.0.254&allocationstate=Disabled&apiKey=identity&signature=QpdbRyyF/xJ78ioJWhPKXEWhthY%3D"))
             .headers(
                ImmutableMultimap.<String, String>builder()
                   .put("Accept", "application/json")

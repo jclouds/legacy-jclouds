@@ -21,7 +21,7 @@ package org.jclouds.s3.filters;
 import static com.google.common.collect.Iterables.get;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AUTH_TAG;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_HEADER_TAG;
-import static org.jclouds.http.utils.Queries.parseQueryToMap;
+import static org.jclouds.http.utils.Queries.queryParser;
 import static org.jclouds.s3.reference.S3Constants.PROPERTY_S3_SERVICE_PATH;
 import static org.jclouds.s3.reference.S3Constants.PROPERTY_S3_VIRTUAL_HOST_BUCKETS;
 import static org.jclouds.util.Strings2.toInputStream;
@@ -238,7 +238,7 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
       // ...however, there are a few exceptions that must be included in the
       // signed URI.
       if (request.getEndpoint().getQuery() != null) {
-         Multimap<String, String> params = parseQueryToMap(request.getEndpoint().getQuery());
+         Multimap<String, String> params = queryParser().apply(request.getEndpoint().getQuery());
          char separator = '?';
          for (String paramName : Ordering.natural().sortedCopy(params.keySet())) {
             // Skip any parameters that aren't part of the canonical signed string

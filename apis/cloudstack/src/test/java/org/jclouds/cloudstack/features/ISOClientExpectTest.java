@@ -81,7 +81,7 @@ public class ISOClientExpectTest extends BaseCloudStackExpectTest<ISOClient> {
                                      .addQueryParam("command", "listIsos")
                                      .addQueryParam("listAll", "true")
                                      .addQueryParam("apiKey", "identity")
-                                     .addQueryParam("signature", "qUUF6hCDc57Bc%2FnHriS9umbZBKA%3D")
+                                     .addQueryParam("signature", "qUUF6hCDc57Bc/nHriS9umbZBKA%3D")
                                      .addHeader("Accept", "application/json")
                                      .build();
    
@@ -121,7 +121,7 @@ public class ISOClientExpectTest extends BaseCloudStackExpectTest<ISOClient> {
                                             .addQueryParam("name", "bob%27s%20iso")
                                             .addQueryParam("zoneid", "7")
                                             .addQueryParam("apiKey", "identity")
-                                            .addQueryParam("signature", "4S5ustbaBErEnpymWLSj1rEJ%2Fnk%3D")
+                                            .addQueryParam("signature", "4S5ustbaBErEnpymWLSj1rEJ/nk%3D")
                                             .addHeader("Accept", "application/json")
                                             .build();
    

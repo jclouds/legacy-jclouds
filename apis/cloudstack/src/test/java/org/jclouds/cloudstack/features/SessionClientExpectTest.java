@@ -23,7 +23,6 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URLEncoder;
 
 import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.domain.Account;
@@ -43,7 +42,6 @@ import com.google.common.collect.ImmutableMultimap;
 @Test(groups = "live", singleThreaded = true, testName = "SessionClientExpectTest")
 public class SessionClientExpectTest extends BaseCloudStackExpectTest<SessionClient> {
 
-   @SuppressWarnings("deprecation")
    public void testLoginWhenResponseIs2xxIncludesJSessionId() throws IOException {
       String domain = "Partners/jCloud";
       String user = "jcloud";
@@ -54,7 +52,7 @@ public class SessionClientExpectTest extends BaseCloudStackExpectTest<SessionCli
          .method("GET")
          .endpoint(
             URI.create("http://localhost:8080/client/api?response=json&command=login&" +
-               "username=" + user + "&password=" + md5password + "&domain=" + URLEncoder.encode(domain)))
+               "username=" + user + "&password=" + md5password + "&domain=" + domain))
          .addHeader("Accept", "application/json")
          .build();
 

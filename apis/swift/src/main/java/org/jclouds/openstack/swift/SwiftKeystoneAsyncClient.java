@@ -21,14 +21,12 @@ package org.jclouds.openstack.swift;
 import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.annotations.SkipEncoding;
 
 /**
  * Functionality that's in Swift, and not in CloudFiles.
  * 
  * @author Adrian Cole
  */
-@SkipEncoding('/')
 @RequestFilters(AuthenticateRequest.class)
 @Endpoint(Storage.class)
 public interface SwiftKeystoneAsyncClient extends CommonSwiftAsyncClient {

@@ -267,7 +267,6 @@ public class LoadBalancerRule {
          "id", "account", "algorithm", "description", "domain", "domainid", "name", "privateport", "publicip",
          "publicipid", "publicport", "state", "cidrlist", "zoneId"
    })
-   @SuppressWarnings("unused")
    private LoadBalancerRule(String id, @Nullable String account, @Nullable Algorithm algorithm,
                             @Nullable String description, @Nullable String domain, @Nullable String domainId,
                             @Nullable String name, int privatePort, @Nullable String publicIP,

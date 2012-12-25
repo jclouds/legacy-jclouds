@@ -54,7 +54,7 @@ public class SubnetGroupApiExpectTest extends BaseRDSApiExpectTest {
                                           payloadFromStringWithContentType(
                                                 "Action=DescribeDBSubnetGroups" +
                                                       "&DBSubnetGroupName=name" +
-                                                      "&Signature=U7DwaG%2BDARTb1iQxztQN%2BBe042ywyD7wxEVUlm4%2FA20%3D" +
+                                                      "&Signature=U7DwaG%2BDARTb1iQxztQN%2BBe042ywyD7wxEVUlm4/A20%3D" +
                                                       "&SignatureMethod=HmacSHA256" +
                                                       "&SignatureVersion=2" +
                                                       "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +
@@ -194,7 +194,7 @@ public class SubnetGroupApiExpectTest extends BaseRDSApiExpectTest {
                payloadFromStringWithContentType(
                         "Action=DeleteDBSubnetGroup" +
                         "&DBSubnetGroupName=name" +
-                        "&Signature=BbT14zD9UyRQzelQYzg%2F0FVcX%2Fs46ZyRtyxsdylOw7o%3D" +
+                        "&Signature=BbT14zD9UyRQzelQYzg/0FVcX/s46ZyRtyxsdylOw7o%3D" +
                         "&SignatureMethod=HmacSHA256" +
                         "&SignatureVersion=2" +
                         "&Timestamp=2009-11-08T15%3A54%3A08.897Z" +

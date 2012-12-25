@@ -57,7 +57,7 @@ public class GetImageWhenStatusAvailablePredicateWithResultExpectTest extends Ba
             .endpoint("https://ec2.us-east-1.amazonaws.com/")
             .addHeader("Host", "ec2.us-east-1.amazonaws.com")
             .payload(payloadFromStringWithContentType(
-                     "Action=DescribeImages&ImageId.1=ami-0&Signature=k9douTXFWkAZecPiZfBLUm3LIS3bTLanMV%2F%2BWrB1jFA%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2012-04-16T15%3A54%3A08.897Z&Version=2010-06-15&AWSAccessKeyId=identity",
+                     "Action=DescribeImages&ImageId.1=ami-0&Signature=k9douTXFWkAZecPiZfBLUm3LIS3bTLanMV/%2BWrB1jFA%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2012-04-16T15%3A54%3A08.897Z&Version=2010-06-15&AWSAccessKeyId=identity",
                      "application/x-www-form-urlencoded")).build();
 
    protected HttpRequest describeImagesRequest1 = HttpRequest.builder()

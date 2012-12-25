@@ -48,7 +48,7 @@ public abstract class BaseEucalyptusExpectTest<T> extends BaseRestClientExpectTe
          .endpoint("http://partnercloud.eucalyptus.com:8773/services/Eucalyptus/")
          .addHeader("Host", "partnercloud.eucalyptus.com:8773")
          .payload(payloadFromStringWithContentType(
-                  "Action=DescribeRegions&Signature=tp9WpT8503JdxIXYu6Eu2Dmu%2Bd%2FpqviST7N7Fvr%2FyQo%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2012-04-16T15%3A54%3A08.897Z&Version=2010-06-15&AWSAccessKeyId=identity",
+                  "Action=DescribeRegions&Signature=tp9WpT8503JdxIXYu6Eu2Dmu%2Bd/pqviST7N7Fvr/yQo%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2012-04-16T15%3A54%3A08.897Z&Version=2010-06-15&AWSAccessKeyId=identity",
                   MediaType.APPLICATION_FORM_URLENCODED)).build();
    
    protected HttpResponse describeRegionsResponse = HttpResponse.builder().statusCode(200)
@@ -60,7 +60,7 @@ public abstract class BaseEucalyptusExpectTest<T> extends BaseRestClientExpectTe
          .endpoint("http://eucalyptus.partner.eucalyptus.com:8773/services/Eucalyptus/")
          .addHeader("Host", "eucalyptus.partner.eucalyptus.com:8773")
          .payload(payloadFromStringWithContentType(
-                "Action=DescribeAvailabilityZones&Signature=i4OkMed1sqQV7hlF%2Fl1KdbQwmwJ4Fh4o9W32eVGayPk%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2012-04-16T15%3A54%3A08.897Z&Version=2010-06-15&AWSAccessKeyId=identity",
+                "Action=DescribeAvailabilityZones&Signature=i4OkMed1sqQV7hlF/l1KdbQwmwJ4Fh4o9W32eVGayPk%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2012-04-16T15%3A54%3A08.897Z&Version=2010-06-15&AWSAccessKeyId=identity",
                 MediaType.APPLICATION_FORM_URLENCODED)).build();
    
    protected HttpResponse describeAZResponse = HttpResponse.builder().statusCode(200)

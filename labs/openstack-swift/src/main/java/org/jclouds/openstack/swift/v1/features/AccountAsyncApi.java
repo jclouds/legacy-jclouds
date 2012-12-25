@@ -26,7 +26,6 @@ import org.jclouds.openstack.swift.v1.domain.Account;
 import org.jclouds.openstack.swift.v1.functions.ParseAccountMetadataResponseFromHeaders;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
-import org.jclouds.rest.annotations.SkipEncoding;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -39,7 +38,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  *      href="http://docs.openstack.org/api/openstack-object-storage/1.0/content/storage-account-services.html"
  *      >api doc</a>
  */
-@SkipEncoding( { '/', '=' })
 @RequestFilters(AuthenticateRequest.class)
 public interface AccountAsyncApi {
 

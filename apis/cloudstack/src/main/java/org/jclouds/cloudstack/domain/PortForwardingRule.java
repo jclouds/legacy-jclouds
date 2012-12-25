@@ -261,7 +261,6 @@ public class PortForwardingRule implements Comparable<PortForwardingRule> {
          "id", "ipaddress", "ipaddressid", "privateport", "protocol", "publicport", "state", "virtualmachinedisplayname",
          "virtualmachineid", "virtualmachinename", "cidrlist", "privateendport", "publicendport"
    })
-   @SuppressWarnings("unused")
    private PortForwardingRule(String id, @Nullable String IPAddress, @Nullable String IPAddressId, int privatePort,
                               @Nullable Protocol protocol, int publicPort, @Nullable State state, @Nullable String virtualMachineDisplayName,
                               @Nullable String virtualMachineId, @Nullable String virtualMachineName, @Nullable String CIDRs,

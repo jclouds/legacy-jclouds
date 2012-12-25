@@ -33,7 +33,6 @@ import org.jclouds.azure.management.xml.ListDisksHandler;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.ResponseParser;
-import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
@@ -48,7 +47,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see DiskApi
  * @author Gerald Pereira
  */
-@SkipEncoding('/')
 @Headers(keys = "x-ms-version", values = "2012-03-01")
 public interface DiskAsyncApi {
 

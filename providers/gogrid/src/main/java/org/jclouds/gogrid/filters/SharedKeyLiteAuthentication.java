@@ -30,14 +30,12 @@ import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
-import org.jclouds.http.utils.Queries;
 import org.jclouds.io.InputSuppliers;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.annotations.Credential;
 import org.jclouds.rest.annotations.Identity;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Multimap;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * @author Oleksiy Yarmula
@@ -64,20 +62,9 @@ public class SharedKeyLiteAuthentication implements HttpRequestFilter {
 
    @Override
    public HttpRequest filter(HttpRequest request) {
-
       String toSign = createStringToSign();
       String signatureMd5 = getMd5For(toSign);
-
-      String query = request.getEndpoint().getQuery();
-      Multimap<String, String> decodedParams = Queries.parseQueryToMap(query);
-
-      decodedParams.replaceValues("sig", ImmutableSet.of(signatureMd5));
-      decodedParams.replaceValues("api_key", ImmutableSet.of(apiKey));
-
-      String updatedQuery = Queries.makeQueryLine(decodedParams, null);
-      String requestBasePart = request.getEndpoint().toASCIIString();
-      String updatedEndpoint = requestBasePart.substring(0, requestBasePart.indexOf("?") + 1) + updatedQuery;
-      request = request.toBuilder().endpoint(updatedEndpoint).build();
+      request = request.toBuilder().replaceQueryParams(ImmutableMap.of("sig", signatureMd5, "api_key" ,apiKey)).build();
       utils.logRequest(signatureLog, request, "<<");
       return request;
    }
