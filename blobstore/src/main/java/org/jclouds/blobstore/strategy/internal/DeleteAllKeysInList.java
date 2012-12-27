@@ -89,7 +89,8 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
                containerName);
       options = options.clone();
       if (options.isRecursive())
-         message = message + " recursively";
+         message += " recursively";
+      logger.debug(message);
       Map<StorageMetadata, Exception> exceptions = Maps.newHashMap();
       int maxErrors = 3; // TODO parameterize
       for (int numErrors = 0; numErrors < maxErrors; ) {
@@ -189,6 +190,7 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
          if (marker == null) {
             break;
          }
+         logger.debug("%s with marker %s", message, marker);
          options = options.afterMarker(marker);
 
          // Reset numErrors if we execute a successful iteration.  This ensures
