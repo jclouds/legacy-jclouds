@@ -19,7 +19,6 @@
 package org.jclouds.rest.functions;
 
 import org.jclouds.http.functions.HeaderToRetryAfterException;
-import org.jclouds.rest.RetryAfterException;
 
 import com.google.common.base.Function;
 import com.google.inject.ImplementedBy;

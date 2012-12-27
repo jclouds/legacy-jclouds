@@ -22,7 +22,6 @@ import java.util.Comparator;
 import java.util.Map.Entry;
 
 import org.jclouds.ec2.domain.Tag;
-import org.jclouds.ec2.features.TagApi;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMultimap;

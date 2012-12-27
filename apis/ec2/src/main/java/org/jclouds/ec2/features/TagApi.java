@@ -23,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.ec2.domain.Tag;
-import org.jclouds.ec2.util.TagFilterBuilder;
 import org.jclouds.rest.annotations.SinceApiVersion;
 
 import com.google.common.collect.FluentIterable;

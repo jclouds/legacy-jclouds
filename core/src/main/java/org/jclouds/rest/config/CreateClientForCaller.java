@@ -21,7 +21,6 @@ package org.jclouds.rest.config;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 import javax.inject.Named;
