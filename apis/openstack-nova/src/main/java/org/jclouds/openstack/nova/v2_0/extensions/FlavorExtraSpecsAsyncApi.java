@@ -30,10 +30,13 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.Fallbacks.EmptyMapOnNotFoundOr404;
+import org.jclouds.Fallbacks.FalseOnNotFoundOr404;
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.openstack.v2_0.ServiceType;
 import org.jclouds.openstack.v2_0.services.Extension;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.Payload;
 import org.jclouds.rest.annotations.PayloadParam;
@@ -41,9 +44,6 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.Unwrap;
 import org.jclouds.rest.binders.BindToJsonPayload;
-import org.jclouds.rest.functions.ReturnEmptyMapOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import com.google.common.annotations.Beta;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -68,7 +68,7 @@ public interface FlavorExtraSpecsAsyncApi {
    @GET
    @SelectJson("extra_specs")
    @Path("/flavors/{flavor_id}/os-extra_specs")
-   @ExceptionParser(ReturnEmptyMapOnNotFoundOr404.class)
+   @Fallback(EmptyMapOnNotFoundOr404.class)
    ListenableFuture<Map<String, String>> getMetadata(@PathParam("flavor_id") String flavorId);
 
    /**
@@ -77,7 +77,7 @@ public interface FlavorExtraSpecsAsyncApi {
    @POST
    @Path("/flavors/{flavor_id}/os-extra_specs")
    @Produces(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
+   @Fallback(FalseOnNotFoundOr404.class)
    @MapBinder(BindToJsonPayload.class)
    ListenableFuture<Boolean> updateMetadata(@PathParam("flavor_id") String flavorId, @PayloadParam("extra_specs") Map<String, String> specs);
 
@@ -87,7 +87,7 @@ public interface FlavorExtraSpecsAsyncApi {
    @GET
    @Path("/flavors/{flavor_id}/os-extra_specs/{key}")
    @Unwrap
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<String> getMetadataKey(@PathParam("flavor_id") String flavorId, @PathParam("key") String key);
 
    /**
@@ -96,7 +96,7 @@ public interface FlavorExtraSpecsAsyncApi {
    @PUT
    @Path("/flavors/{flavor_id}/os-extra_specs/{key}")
    @Produces(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
+   @Fallback(FalseOnNotFoundOr404.class)
    @Payload("%7B\"{key}\":\"{value}\"%7D")
    ListenableFuture<Boolean> updateMetadataEntry(@PathParam("flavor_id") String flavorId,
                                           @PathParam("key") @PayloadParam("key") String key,
@@ -107,7 +107,7 @@ public interface FlavorExtraSpecsAsyncApi {
     */
    @DELETE
    @Path("/flavors/{flavor_id}/os-extra_specs/{key}")
-   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
+   @Fallback(FalseOnNotFoundOr404.class)
    ListenableFuture<Boolean> deleteMetadataKey(@PathParam("flavor_id") String flavorId,
                                              @PathParam("key") String key);
 

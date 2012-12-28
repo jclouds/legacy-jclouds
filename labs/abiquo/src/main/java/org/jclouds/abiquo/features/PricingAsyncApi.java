@@ -28,17 +28,17 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.abiquo.binders.BindToPath;
 import org.jclouds.abiquo.binders.BindToXMLPayloadAndPath;
 import org.jclouds.abiquo.http.filters.AbiquoAuthentication;
 import org.jclouds.abiquo.http.filters.AppendApiVersionToMediaType;
 import org.jclouds.abiquo.rest.annotations.EndpointLink;
 import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.binders.BindToXMLPayload;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import com.abiquo.server.core.pricing.CostCodeCurrenciesDto;
 import com.abiquo.server.core.pricing.CostCodeDto;
@@ -83,7 +83,7 @@ public interface PricingAsyncApi {
    @Path("/currencies/{currency}")
    @Consumes(CurrencyDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<CurrencyDto> getCurrency(@PathParam("currency") Integer currencyId);
 
    /**
@@ -130,7 +130,7 @@ public interface PricingAsyncApi {
    @Path("/costcodes/{costcode}")
    @Consumes(CostCodeDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<CostCodeDto> getCostCode(@PathParam("costcode") Integer costcodeId);
 
    /**
@@ -177,7 +177,7 @@ public interface PricingAsyncApi {
    @Path("/pricingtemplates/{pricingtemplate}")
    @Consumes(PricingTemplateDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<PricingTemplateDto> getPricingTemplate(@PathParam("pricingtemplate") Integer pricingTemplateId);
 
    /**
@@ -217,7 +217,7 @@ public interface PricingAsyncApi {
    @Path("/costcodes/{costcode}/currencies")
    @Consumes(CostCodeCurrenciesDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<CostCodeCurrenciesDto> getCostCodeCurrencies(@PathParam("costcode") Integer costcodeId,
          @QueryParam("idCurrency") Integer currencyId);
 
@@ -241,7 +241,7 @@ public interface PricingAsyncApi {
    @Path("/pricingtemplates/{pricingtemplate}/costcodes")
    @Consumes(PricingCostCodesDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<PricingCostCodesDto> getPricingCostCodes(@PathParam("pricingtemplate") Integer pricingTemplateId);
 
    /**
@@ -251,7 +251,7 @@ public interface PricingAsyncApi {
    @Path("/pricingtemplates/{pricingtemplate}/costcodes/{costcode}")
    @Consumes(PricingCostCodeDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<PricingCostCodeDto> getPricingCostCode(@PathParam("pricingtemplate") Integer pricingTemplateId,
          @PathParam("costcode") Integer pricingCostcodeId);
 
@@ -276,7 +276,7 @@ public interface PricingAsyncApi {
    @Path("/pricingtemplates/{pricingtemplate}/tiers")
    @Consumes(PricingTiersDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<PricingTiersDto> getPricingTiers(@PathParam("pricingtemplate") Integer pricingTemplateId);
 
    /**
@@ -286,7 +286,7 @@ public interface PricingAsyncApi {
    @Path("/pricingtemplates/{pricingtemplate}/tiers/{tier}")
    @Consumes(PricingTierDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<PricingTierDto> getPricingTier(@PathParam("pricingtemplate") Integer pricingTemplateId,
          @PathParam("tier") Integer pricingTierId);
 

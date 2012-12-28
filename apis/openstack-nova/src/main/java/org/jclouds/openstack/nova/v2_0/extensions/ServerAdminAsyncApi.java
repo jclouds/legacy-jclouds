@@ -25,20 +25,20 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.Fallbacks.FalseOnNotFoundOr404;
+import org.jclouds.fallbacks.MapHttp4xxCodesToExceptions;
 import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.openstack.nova.v2_0.domain.BackupType;
 import org.jclouds.openstack.nova.v2_0.functions.ParseImageIdFromLocationHeader;
 import org.jclouds.openstack.nova.v2_0.options.CreateBackupOfServerOptions;
 import org.jclouds.openstack.v2_0.ServiceType;
 import org.jclouds.openstack.v2_0.services.Extension;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.Payload;
 import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.WrapWith;
-import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
-import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
 
 import com.google.common.annotations.Beta;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -61,7 +61,7 @@ public interface ServerAdminAsyncApi {
    @POST
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("{\"suspend\":null}")
-   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
+   @Fallback(FalseOnNotFoundOr404.class)
    ListenableFuture<Boolean> suspend(@PathParam("id") String id);
 
    /**
@@ -70,7 +70,7 @@ public interface ServerAdminAsyncApi {
    @POST
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("{\"resume\":null}")
-   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
+   @Fallback(FalseOnNotFoundOr404.class)
    ListenableFuture<Boolean> resume(@PathParam("id") String id);
 
    /**
@@ -79,7 +79,7 @@ public interface ServerAdminAsyncApi {
    @POST
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("{\"migrate\":null}")
-   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
+   @Fallback(FalseOnNotFoundOr404.class)
    ListenableFuture<Boolean> migrate(@PathParam("id") String id);
 
    /**
@@ -88,7 +88,7 @@ public interface ServerAdminAsyncApi {
    @POST
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("{\"lock\":null}")
-   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
+   @Fallback(FalseOnNotFoundOr404.class)
    ListenableFuture<Boolean> lock(@PathParam("id") String id);
 
    /**
@@ -97,7 +97,7 @@ public interface ServerAdminAsyncApi {
    @POST
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("{\"unlock\":null}")
-   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
+   @Fallback(FalseOnNotFoundOr404.class)
    ListenableFuture<Boolean> unlock(@PathParam("id") String id);
 
    /**
@@ -106,7 +106,7 @@ public interface ServerAdminAsyncApi {
    @POST
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("{\"resetNetwork\":null}")
-   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
+   @Fallback(FalseOnNotFoundOr404.class)
    ListenableFuture<Boolean> resetNetwork(@PathParam("id") String id);
 
    /**
@@ -116,7 +116,7 @@ public interface ServerAdminAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
    @WrapWith("createBackup")
-   @ExceptionParser(MapHttp4xxCodesToExceptions.class)
+   @Fallback(MapHttp4xxCodesToExceptions.class)
    @ResponseParser(ParseImageIdFromLocationHeader.class)
    ListenableFuture<String> createBackup(@PathParam("id") String id,
                                                   @PayloadParam("name") String imageName,
@@ -130,7 +130,7 @@ public interface ServerAdminAsyncApi {
    @POST
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("{\"pause\":null}")
-   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
+   @Fallback(FalseOnNotFoundOr404.class)
    ListenableFuture<Boolean> pause(@PathParam("id") String id);
 
    /**
@@ -139,7 +139,7 @@ public interface ServerAdminAsyncApi {
    @POST
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("{\"unpause\":null}")
-   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
+   @Fallback(FalseOnNotFoundOr404.class)
    ListenableFuture<Boolean> unpause(@PathParam("id") String id);
 
    /**
@@ -148,7 +148,7 @@ public interface ServerAdminAsyncApi {
    @POST
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("{\"injectNetworkInfo\":null}")
-   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
+   @Fallback(FalseOnNotFoundOr404.class)
    ListenableFuture<Boolean> injectNetworkInfo(@PathParam("id") String id);
 
    /**
@@ -156,7 +156,7 @@ public interface ServerAdminAsyncApi {
     */
    @POST
    @Produces(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
+   @Fallback(FalseOnNotFoundOr404.class)
    @WrapWith("os-migrateLive")
    ListenableFuture<Boolean> liveMigrate(@PathParam("id") String id,
                                                @PayloadParam("host") String host,

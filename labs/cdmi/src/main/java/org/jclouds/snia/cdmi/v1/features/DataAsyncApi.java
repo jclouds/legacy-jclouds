@@ -27,11 +27,11 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.snia.cdmi.v1.ObjectTypes;
 import org.jclouds.snia.cdmi.v1.binders.BindQueryParmsToSuffix;
 import org.jclouds.snia.cdmi.v1.domain.DataObject;
@@ -57,7 +57,7 @@ public interface DataAsyncApi {
     */
    @GET
    @Consumes({ ObjectTypes.DATAOBJECT, MediaType.APPLICATION_JSON })
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Path("/{dataObjectName}")
    ListenableFuture<DataObject> get(@PathParam("dataObjectName") String dataObjectName);
 
@@ -66,7 +66,7 @@ public interface DataAsyncApi {
     */
    @GET
    @Consumes({ ObjectTypes.DATAOBJECT, MediaType.APPLICATION_JSON })
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Path("/{dataObjectName}")
    ListenableFuture<DataObject> get(@PathParam("dataObjectName") String dataObjectName,
             @BinderParam(BindQueryParmsToSuffix.class) DataObjectQueryParams queryParams);
@@ -77,7 +77,7 @@ public interface DataAsyncApi {
    @PUT
    @Consumes({ ObjectTypes.DATAOBJECT, MediaType.APPLICATION_JSON })
    @Produces({ ObjectTypes.DATAOBJECT })
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Path("/{dataObjectName}")
    ListenableFuture<DataObject> create(@PathParam("dataObjectName") String dataObjectName,
             CreateDataObjectOptions... options);
@@ -89,7 +89,7 @@ public interface DataAsyncApi {
    @Consumes(MediaType.TEXT_PLAIN)
    // note: MediaType.APPLICATION_JSON work also, however without consumes
    // jclouds throws null exception
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Path("/{dataObjectName}")
    ListenableFuture<Void> delete(@PathParam("dataObjectName") String dataObjectName);
 

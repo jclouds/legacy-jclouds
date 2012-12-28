@@ -29,12 +29,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.binders.BindMapAsMetadata;
 import org.jclouds.vcloud.director.v1_5.binders.BindStringAsMetadataValue;
@@ -61,7 +61,7 @@ public interface MetadataAsyncApi {
       @Path("/metadata")
       @Consumes
       @JAXBResponseParser
-      @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+      @Fallback(NullOnNotFoundOr404.class)
       ListenableFuture<Metadata> get();
 
       /**
@@ -71,7 +71,7 @@ public interface MetadataAsyncApi {
       @Path("/metadata/{key}")
       @Consumes
       @ResponseParser(RegexValueParser.class)
-      @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+      @Fallback(NullOnNotFoundOr404.class)
       ListenableFuture<String> get(@PathParam("key") String key);
 
    }

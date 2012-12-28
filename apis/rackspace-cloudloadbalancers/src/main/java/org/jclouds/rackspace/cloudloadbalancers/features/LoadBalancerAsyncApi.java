@@ -27,24 +27,24 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.Fallbacks.EmptyPagedIterableOnNotFoundOr404;
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
+import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
 import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.collect.PagedIterable;
+import org.jclouds.openstack.keystone.v2_0.KeystoneFallbacks.EmptyPaginatedCollectionOnNotFoundOr404;
 import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
-import org.jclouds.openstack.keystone.v2_0.functions.ReturnEmptyPaginatedCollectionOnNotFoundOr404;
 import org.jclouds.openstack.v2_0.options.PaginationOptions;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancer;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancerAttributes;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancerRequest;
 import org.jclouds.rackspace.cloudloadbalancers.functions.ParseLoadBalancer;
 import org.jclouds.rackspace.cloudloadbalancers.functions.ParseLoadBalancers;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.Transform;
 import org.jclouds.rest.annotations.WrapWith;
-import org.jclouds.rest.functions.ReturnEmptyPagedIterableOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -64,7 +64,7 @@ public interface LoadBalancerAsyncApi {
    @POST
    @ResponseParser(ParseLoadBalancer.class)
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Path("/loadbalancers")
    ListenableFuture<LoadBalancer> create(@WrapWith("loadBalancer") LoadBalancerRequest lb);
 
@@ -85,7 +85,7 @@ public interface LoadBalancerAsyncApi {
    @Transform(ParseLoadBalancers.ToPagedIterable.class)
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/loadbalancers")
-   @ExceptionParser(ReturnEmptyPagedIterableOnNotFoundOr404.class)
+   @Fallback(EmptyPagedIterableOnNotFoundOr404.class)
    ListenableFuture<PagedIterable<LoadBalancer>> list();
 
    /** 
@@ -94,7 +94,7 @@ public interface LoadBalancerAsyncApi {
    @GET
    @ResponseParser(ParseLoadBalancers.class)
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnEmptyPaginatedCollectionOnNotFoundOr404.class)
+   @Fallback(EmptyPaginatedCollectionOnNotFoundOr404.class)
    @Path("/loadbalancers")
    ListenableFuture<IterableWithMarker<LoadBalancer>> list(PaginationOptions options);
 
@@ -104,7 +104,7 @@ public interface LoadBalancerAsyncApi {
    @GET
    @ResponseParser(ParseLoadBalancer.class)
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Path("/loadbalancers/{id}")
    ListenableFuture<LoadBalancer> get(@PathParam("id") int id);
 
@@ -112,7 +112,7 @@ public interface LoadBalancerAsyncApi {
     * @see LoadBalancerApi#remove(int)
     */
    @DELETE
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @Fallback(VoidOnNotFoundOr404.class)
    @Path("/loadbalancers/{id}")
    @Consumes("*/*")
    ListenableFuture<Void> remove(@PathParam("id") int id);

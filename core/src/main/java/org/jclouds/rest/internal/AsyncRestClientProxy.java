@@ -18,6 +18,9 @@
  */
 package org.jclouds.rest.internal;
 
+import static com.google.common.util.concurrent.Futures.immediateFailedFuture;
+import static com.google.common.util.concurrent.Futures.withFallback;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -29,7 +32,7 @@ import javax.inject.Qualifier;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
-import org.jclouds.concurrent.ExceptionParsingListenableFuture;
+import org.jclouds.fallbacks.MapHttp4xxCodesToExceptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.TransformingHttpCommand;
@@ -39,6 +42,7 @@ import org.jclouds.logging.Logger;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.util.Optionals2;
 import org.jclouds.util.Throwables2;
 
@@ -47,11 +51,13 @@ import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.reflect.AbstractInvocationHandler;
-import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.FutureFallback;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Binding;
 import com.google.inject.ConfigurationException;
@@ -221,23 +227,21 @@ public class AsyncRestClientProxy<T> extends AbstractInvocationHandler {
       return injector.getInstance(Key.get(genericReturnType, qualifier));
    }
 
-   @SuppressWarnings({ "unchecked", "rawtypes" })
    private ListenableFuture<?> createListenableFutureForHttpRequestMappedToMethodAndArgs(Method method, Object[] args)
          throws ExecutionException {
       method = annotationProcessor.getDelegateOrNull(method);
       logger.trace("Converting %s.%s", declaring.getSimpleName(), method.getName());
-      Function<Exception, ?> exceptionParser = annotationProcessor
-            .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method);
+      FutureFallback<?> fallback = fallbacks.getUnchecked(method);
       // in case there is an exception creating the request, we should at least
       // pass in args
-      if (exceptionParser instanceof InvocationContext) {
-         ((InvocationContext) exceptionParser).setContext((HttpRequest) null);
+      if (fallback instanceof InvocationContext) {
+         InvocationContext.class.cast(fallback).setContext((HttpRequest) null);
       }
       ListenableFuture<?> result;
       try {
          GeneratedHttpRequest request = annotationProcessor.createRequest(method, args);
-         if (exceptionParser instanceof InvocationContext) {
-            ((InvocationContext) exceptionParser).setContext(request);
+         if (fallback instanceof InvocationContext) {
+            InvocationContext.class.cast(fallback).setContext(request);
          }
          logger.trace("Converted %s.%s to %s", declaring.getSimpleName(), method.getName(), request.getRequestLine());
 
@@ -247,27 +251,19 @@ public class AsyncRestClientProxy<T> extends AbstractInvocationHandler {
 
          logger.debug("Invoking %s.%s", declaring.getSimpleName(), method.getName());
          result = commandFactory.create(request, transformer).execute();
-
       } catch (RuntimeException e) {
          AuthorizationException aex = Throwables2.getFirstThrowableOfType(e, AuthorizationException.class);
          if (aex != null)
             e = aex;
-         if (exceptionParser != null) {
-            try {
-               return Futures.immediateFuture(exceptionParser.apply(e));
-            } catch (Exception ex) {
-               return Futures.immediateFailedFuture(ex);
-            }
+         try {
+            return fallback.create(e);
+         } catch (Exception ex) {
+            return immediateFailedFuture(ex);
          }
-         return Futures.immediateFailedFuture(e);
       }
-
-      if (exceptionParser != null) {
-         logger.trace("Exceptions from %s.%s are parsed by %s", declaring.getSimpleName(), method.getName(),
-               exceptionParser.getClass().getSimpleName());
-         result = new ExceptionParsingListenableFuture(result, exceptionParser);
-      }
-      return result;
+      logger.trace("Exceptions from %s.%s are parsed by %s", declaring.getSimpleName(), method.getName(),
+            fallback.getClass().getSimpleName());
+      return withFallback(result, fallback);
    }
 
    public static interface Factory {
@@ -277,4 +273,19 @@ public class AsyncRestClientProxy<T> extends AbstractInvocationHandler {
    public String toString() {
       return "Client Proxy for :" + declaring.getName();
    }
+
+   private final LoadingCache<Method, FutureFallback<?>> fallbacks = CacheBuilder.newBuilder().build(
+         new CacheLoader<Method, FutureFallback<?>>() {
+
+            @Override
+            public FutureFallback<?> load(Method key) throws Exception {
+               Fallback annotation = key.getAnnotation(Fallback.class);
+               if (annotation != null) {
+                  return injector.getInstance(annotation.value());
+               }
+               return injector.getInstance(MapHttp4xxCodesToExceptions.class);
+            }
+
+         });
+
 }

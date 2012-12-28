@@ -25,6 +25,9 @@ import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
+import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
 import org.jclouds.cloudstack.binders.BindAccountSecurityGroupPairsToIndexedQueryParams;
 import org.jclouds.cloudstack.binders.BindCIDRsToCommaDelimitedQueryParam;
 import org.jclouds.cloudstack.domain.SecurityGroup;
@@ -32,14 +35,11 @@ import org.jclouds.cloudstack.filters.AuthenticationFilter;
 import org.jclouds.cloudstack.options.AccountInDomainOptions;
 import org.jclouds.cloudstack.options.ListSecurityGroupsOptions;
 import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.OnlyElement;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.collect.Multimap;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -63,7 +63,7 @@ public interface SecurityGroupAsyncClient {
    @QueryParams(keys = { "command", "listAll" }, values = { "listSecurityGroups", "true" })
    @SelectJson("securitygroup")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<SecurityGroup>> listSecurityGroups(ListSecurityGroupsOptions... options);
 
    /**
@@ -74,7 +74,7 @@ public interface SecurityGroupAsyncClient {
    @SelectJson("securitygroup")
    @OnlyElement
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<SecurityGroup> getSecurityGroup(@QueryParam("id") String id);
 
    /**
@@ -141,7 +141,7 @@ public interface SecurityGroupAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "revokeSecurityGroupIngress")
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @Fallback(VoidOnNotFoundOr404.class)
    @SelectJson("jobid")
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<String> revokeIngressRule(@QueryParam("id") String id, AccountInDomainOptions... options);
@@ -151,7 +151,7 @@ public interface SecurityGroupAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "deleteSecurityGroup")
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @Fallback(VoidOnNotFoundOr404.class)
    ListenableFuture<Void> deleteSecurityGroup(@QueryParam("id") String id);
 
 }

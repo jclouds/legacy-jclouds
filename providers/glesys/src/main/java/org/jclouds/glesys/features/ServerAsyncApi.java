@@ -28,6 +28,8 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.Fallbacks.EmptyFluentIterableOnNotFoundOr404;
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.glesys.domain.AllowedArgumentsForCreateServer;
 import org.jclouds.glesys.domain.Console;
 import org.jclouds.glesys.domain.OSTemplate;
@@ -41,18 +43,16 @@ import org.jclouds.glesys.functions.ParseTemplatesFromHttpResponse;
 import org.jclouds.glesys.options.CloneServerOptions;
 import org.jclouds.glesys.options.CreateServerOptions;
 import org.jclouds.glesys.options.DestroyServerOptions;
-import org.jclouds.glesys.options.UpdateServerOptions;
 import org.jclouds.glesys.options.ServerStatusOptions;
+import org.jclouds.glesys.options.UpdateServerOptions;
 import org.jclouds.http.filters.BasicAuthentication;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SelectJson;
-import org.jclouds.rest.functions.ReturnEmptyFluentIterableOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import com.google.common.collect.FluentIterable;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -76,7 +76,7 @@ public interface ServerAsyncApi {
    @Path("/server/list/format/json")
    @SelectJson("servers")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnEmptyFluentIterableOnNotFoundOr404.class)
+   @Fallback(EmptyFluentIterableOnNotFoundOr404.class)
    ListenableFuture<FluentIterable<Server>> list();
 
    /**
@@ -87,7 +87,7 @@ public interface ServerAsyncApi {
    @SelectJson("server")
    @Consumes(MediaType.APPLICATION_JSON)
    @FormParams(keys = "includestate", values = "true")
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<ServerDetails> get(@FormParam("serverid") String id);
 
    /**
@@ -97,7 +97,7 @@ public interface ServerAsyncApi {
    @Path("/server/status/format/json")
    @SelectJson("server")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<ServerStatus> getStatus(@FormParam("serverid") String id, ServerStatusOptions... options);
 
    /**
@@ -107,7 +107,7 @@ public interface ServerAsyncApi {
    @Path("/server/limits/format/json")
    @SelectJson("limits")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<SortedMap<String, ServerLimit>> getLimits(@FormParam("serverid") String id);
 
    /**
@@ -117,7 +117,7 @@ public interface ServerAsyncApi {
    @Path("/server/console/format/json")
    @SelectJson("console")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<Console> getConsole(@FormParam("serverid") String id);
 
    /**
@@ -135,7 +135,7 @@ public interface ServerAsyncApi {
    @GET
    @Path("/server/templates/format/json")
    @ResponseParser(ParseTemplatesFromHttpResponse.class)
-   @ExceptionParser(ReturnEmptyFluentIterableOnNotFoundOr404.class)
+   @Fallback(EmptyFluentIterableOnNotFoundOr404.class)
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<FluentIterable<OSTemplate>> listTemplates();
 

@@ -18,19 +18,19 @@
  */
 package org.jclouds.savvis.vpdc.features;
 
-import org.jclouds.javax.annotation.Nullable;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
+import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.savvis.vpdc.binders.BindFirewallRuleToXmlPayload;
 import org.jclouds.savvis.vpdc.domain.FirewallRule;
 import org.jclouds.savvis.vpdc.domain.Task;
@@ -68,7 +68,7 @@ public interface FirewallAsyncApi {
    @XMLResponseParser(TaskHandler.class)
    @Path("v{jclouds.api-version}/org/{billingSiteId}/vdc/{vpdcId}/FirewallService")
    @MapBinder(BindFirewallRuleToXmlPayload.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<Task> deleteFirewallRule(
             @PathParam("billingSiteId") @Nullable @ParamParser(DefaultOrgIfNull.class) String billingSiteId,
             @PathParam("vpdcId") String vpdcId, @PayloadParam("firewallRule") FirewallRule firewallRule);

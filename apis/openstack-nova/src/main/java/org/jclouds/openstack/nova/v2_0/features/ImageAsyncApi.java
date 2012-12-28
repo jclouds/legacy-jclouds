@@ -30,10 +30,14 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.Fallbacks.EmptyMapOnNotFoundOr404;
+import org.jclouds.Fallbacks.EmptyPagedIterableOnNotFoundOr404;
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
+import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
 import org.jclouds.collect.PagedIterable;
+import org.jclouds.openstack.keystone.v2_0.KeystoneFallbacks.EmptyPaginatedCollectionOnNotFoundOr404;
 import org.jclouds.openstack.keystone.v2_0.domain.PaginatedCollection;
 import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
-import org.jclouds.openstack.keystone.v2_0.functions.ReturnEmptyPaginatedCollectionOnNotFoundOr404;
 import org.jclouds.openstack.nova.v2_0.binders.BindMetadataToJsonPayload;
 import org.jclouds.openstack.nova.v2_0.domain.Image;
 import org.jclouds.openstack.nova.v2_0.functions.internal.OnlyMetadataValueOrNull;
@@ -41,7 +45,7 @@ import org.jclouds.openstack.nova.v2_0.functions.internal.ParseImageDetails;
 import org.jclouds.openstack.nova.v2_0.functions.internal.ParseImages;
 import org.jclouds.openstack.v2_0.domain.Resource;
 import org.jclouds.openstack.v2_0.options.PaginationOptions;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
@@ -49,10 +53,6 @@ import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.Transform;
 import org.jclouds.rest.binders.BindToJsonPayload;
-import org.jclouds.rest.functions.ReturnEmptyMapOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnEmptyPagedIterableOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -75,7 +75,7 @@ public interface ImageAsyncApi {
    @RequestFilters(AuthenticateRequest.class)
    @ResponseParser(ParseImages.class)
    @Transform(ParseImages.ToPagedIterable.class)
-   @ExceptionParser(ReturnEmptyPagedIterableOnNotFoundOr404.class)
+   @Fallback(EmptyPagedIterableOnNotFoundOr404.class)
    ListenableFuture<? extends PagedIterable<? extends Resource>> list();
 
    /** @see ImageApi#list(PaginationOptions) */
@@ -84,7 +84,7 @@ public interface ImageAsyncApi {
    @Path("/images")
    @RequestFilters(AuthenticateRequest.class)
    @ResponseParser(ParseImages.class)
-   @ExceptionParser(ReturnEmptyPaginatedCollectionOnNotFoundOr404.class)
+   @Fallback(EmptyPaginatedCollectionOnNotFoundOr404.class)
    ListenableFuture<? extends PaginatedCollection<? extends Resource>> list(PaginationOptions options);
 
    /**
@@ -96,7 +96,7 @@ public interface ImageAsyncApi {
    @RequestFilters(AuthenticateRequest.class)
    @ResponseParser(ParseImageDetails.class)
    @Transform(ParseImageDetails.ToPagedIterable.class)
-   @ExceptionParser(ReturnEmptyPagedIterableOnNotFoundOr404.class)
+   @Fallback(EmptyPagedIterableOnNotFoundOr404.class)
    ListenableFuture<? extends PagedIterable<? extends Image>> listInDetail();
 
    /** @see ImageApi#listInDetail(PaginationOptions) */
@@ -105,7 +105,7 @@ public interface ImageAsyncApi {
    @Path("/images/detail")
    @RequestFilters(AuthenticateRequest.class)
    @ResponseParser(ParseImageDetails.class)
-   @ExceptionParser(ReturnEmptyPaginatedCollectionOnNotFoundOr404.class)
+   @Fallback(EmptyPaginatedCollectionOnNotFoundOr404.class)
    ListenableFuture<? extends PaginatedCollection<? extends Image>> listInDetail(PaginationOptions options);
 
    /**
@@ -115,7 +115,7 @@ public interface ImageAsyncApi {
    @SelectJson("image")
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/images/{id}")
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<? extends Image> get(@PathParam("id") String id);
 
    /**
@@ -124,7 +124,7 @@ public interface ImageAsyncApi {
    @DELETE
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/images/{id}")
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @Fallback(VoidOnNotFoundOr404.class)
    ListenableFuture<Void> delete(@PathParam("id") String id);
    
    /**
@@ -134,7 +134,7 @@ public interface ImageAsyncApi {
    @SelectJson("metadata")
    @Path("/images/{id}/metadata")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnEmptyMapOnNotFoundOr404.class)
+   @Fallback(EmptyMapOnNotFoundOr404.class)
    ListenableFuture<Map<String, String>> getMetadata(@PathParam("id") String id);
 
    /**
@@ -145,7 +145,7 @@ public interface ImageAsyncApi {
    @Path("/images/{id}/metadata")
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnEmptyMapOnNotFoundOr404.class)
+   @Fallback(EmptyMapOnNotFoundOr404.class)
    @MapBinder(BindToJsonPayload.class)
    ListenableFuture<Map<String, String>> setMetadata(@PathParam("id") String id, @PayloadParam("metadata") Map<String, String> metadata);
 
@@ -157,7 +157,7 @@ public interface ImageAsyncApi {
    @Path("/images/{id}/metadata")
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnEmptyMapOnNotFoundOr404.class)
+   @Fallback(EmptyMapOnNotFoundOr404.class)
    @MapBinder(BindToJsonPayload.class)
    ListenableFuture<? extends Map<String, String>> updateMetadata(@PathParam("id") String id, @PayloadParam("metadata") Map<String, String> metadata);
 
@@ -168,7 +168,7 @@ public interface ImageAsyncApi {
    @Path("/images/{id}/metadata/{key}")
    @Consumes(MediaType.APPLICATION_JSON)
    @ResponseParser(OnlyMetadataValueOrNull.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<String> getMetadata(@PathParam("id") String id, @PathParam("key") String key);
    
    /**
@@ -190,6 +190,6 @@ public interface ImageAsyncApi {
    @DELETE
    @Consumes
    @Path("/images/{id}/metadata/{key}")
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @Fallback(VoidOnNotFoundOr404.class)
    ListenableFuture<Void> deleteMetadata(@PathParam("id") String id, @PathParam("key") String key);
 }

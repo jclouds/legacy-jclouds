@@ -77,7 +77,7 @@ public class CloudWatchAsyncApiTest extends BaseAsyncApiTest<CloudWatchAsyncApi>
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, GetMetricStatisticsResponseHandler.class);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }

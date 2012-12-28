@@ -30,6 +30,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.abiquo.binders.AppendToPath;
 import org.jclouds.abiquo.binders.BindToPath;
 import org.jclouds.abiquo.binders.BindToXMLPayloadAndPath;
@@ -39,14 +40,17 @@ import org.jclouds.abiquo.binders.cloud.BindNetworkConfigurationRefToPayload;
 import org.jclouds.abiquo.binders.cloud.BindNetworkRefToPayload;
 import org.jclouds.abiquo.binders.cloud.BindVirtualDatacenterRefToPayload;
 import org.jclouds.abiquo.binders.cloud.BindVolumeRefsToPayload;
+import org.jclouds.abiquo.domain.cloud.VirtualDatacenter;
 import org.jclouds.abiquo.domain.cloud.options.VirtualApplianceOptions;
 import org.jclouds.abiquo.domain.cloud.options.VirtualDatacenterOptions;
 import org.jclouds.abiquo.domain.cloud.options.VirtualMachineOptions;
 import org.jclouds.abiquo.domain.cloud.options.VirtualMachineTemplateOptions;
 import org.jclouds.abiquo.domain.cloud.options.VolumeOptions;
+import org.jclouds.abiquo.domain.enterprise.Enterprise;
+import org.jclouds.abiquo.domain.infrastructure.Datacenter;
 import org.jclouds.abiquo.domain.network.options.IpOptions;
+import org.jclouds.abiquo.fallbacks.MovedVolume;
 import org.jclouds.abiquo.functions.ReturnTaskReferenceOrNull;
-import org.jclouds.abiquo.functions.cloud.ReturnMovedVolume;
 import org.jclouds.abiquo.functions.enterprise.ParseEnterpriseId;
 import org.jclouds.abiquo.functions.infrastructure.ParseDatacenterId;
 import org.jclouds.abiquo.http.filters.AbiquoAuthentication;
@@ -55,13 +59,12 @@ import org.jclouds.abiquo.reference.annotations.EnterpriseEdition;
 import org.jclouds.abiquo.rest.annotations.EndpointLink;
 import org.jclouds.http.functions.ReturnStringIf2xx;
 import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.binders.BindToXMLPayload;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import com.abiquo.model.transport.AcceptedRequestDto;
 import com.abiquo.model.transport.LinksDto;
@@ -85,6 +88,7 @@ import com.abiquo.server.core.infrastructure.network.PublicIpDto;
 import com.abiquo.server.core.infrastructure.network.PublicIpsDto;
 import com.abiquo.server.core.infrastructure.network.VLANNetworkDto;
 import com.abiquo.server.core.infrastructure.network.VLANNetworksDto;
+import com.abiquo.server.core.infrastructure.network.VMNetworkConfigurationDto;
 import com.abiquo.server.core.infrastructure.network.VMNetworkConfigurationsDto;
 import com.abiquo.server.core.infrastructure.storage.DiskManagementDto;
 import com.abiquo.server.core.infrastructure.storage.DisksManagementDto;
@@ -123,7 +127,7 @@ public interface CloudAsyncApi {
     */
    @GET
    @Path("/virtualdatacenters/{virtualdatacenter}")
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Consumes(VirtualDatacenterDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
    ListenableFuture<VirtualDatacenterDto> getVirtualDatacenter(
@@ -195,7 +199,7 @@ public interface CloudAsyncApi {
     */
    @EnterpriseEdition
    @GET
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Consumes(TierDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
    ListenableFuture<TierDto> getStorageTier(
@@ -257,7 +261,7 @@ public interface CloudAsyncApi {
     * @see CloudApi#getPrivateNetwork(VirtualDatacenterDto, Integer)
     */
    @GET
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Consumes(VLANNetworkDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
    ListenableFuture<VLANNetworkDto> getPrivateNetwork(
@@ -355,7 +359,7 @@ public interface CloudAsyncApi {
     * @see CloudApi#getVirtualAppliance(VirtualDatacenterDto, Integer)
     */
    @GET
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Consumes(VirtualApplianceDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
    ListenableFuture<VirtualApplianceDto> getVirtualAppliance(
@@ -468,7 +472,7 @@ public interface CloudAsyncApi {
     * @see CloudApi#getVirtualMachine(VirtualApplianceDto, Integer)
     */
    @GET
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Consumes(VirtualMachineWithNodeExtendedDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
    ListenableFuture<VirtualMachineWithNodeExtendedDto> getVirtualMachine(
@@ -674,7 +678,7 @@ public interface CloudAsyncApi {
     * @see CloudApi#getHardDisk(VirtualDatacenterDto, Integer)
     */
    @GET
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Consumes(DiskManagementDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
    ListenableFuture<DiskManagementDto> getHardDisk(
@@ -726,7 +730,7 @@ public interface CloudAsyncApi {
     */
    @EnterpriseEdition
    @GET
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Consumes(VolumeManagementDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
    ListenableFuture<VolumeManagementDto> getVolume(
@@ -768,7 +772,7 @@ public interface CloudAsyncApi {
     */
    @EnterpriseEdition
    @POST
-   @ExceptionParser(ReturnMovedVolume.class)
+   @Fallback(MovedVolume.class)
    @Consumes(MovedVolumeDto.BASE_MEDIA_TYPE)
    @Produces(LinksDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser

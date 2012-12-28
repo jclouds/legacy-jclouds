@@ -27,7 +27,9 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
+import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
 import org.jclouds.aws.filters.FormSigner;
+import org.jclouds.ec2.EC2Fallbacks.VoidOnVolumeAvailable;
 import org.jclouds.ec2.binders.BindUserGroupsToIndexedFormParams;
 import org.jclouds.ec2.binders.BindUserIdsToIndexedFormParams;
 import org.jclouds.ec2.binders.BindVolumeIdsToIndexedFormParams;
@@ -35,7 +37,6 @@ import org.jclouds.ec2.domain.Attachment;
 import org.jclouds.ec2.domain.Permission;
 import org.jclouds.ec2.domain.Snapshot;
 import org.jclouds.ec2.domain.Volume;
-import org.jclouds.ec2.functions.ReturnVoidOnVolumeAvailable;
 import org.jclouds.ec2.options.CreateSnapshotOptions;
 import org.jclouds.ec2.options.DescribeSnapshotsOptions;
 import org.jclouds.ec2.options.DetachVolumeOptions;
@@ -50,12 +51,11 @@ import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.location.functions.ZoneToEndpoint;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.EndpointParam;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -134,7 +134,7 @@ public interface ElasticBlockStoreAsyncClient {
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DetachVolume")
-   @ExceptionParser(ReturnVoidOnVolumeAvailable.class)
+   @Fallback(VoidOnVolumeAvailable.class)
    ListenableFuture<Void> detachVolumeInRegion(@EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @FormParam("VolumeId") String volumeId, @FormParam("Force") boolean force, DetachVolumeOptions... options);
 
@@ -171,7 +171,7 @@ public interface ElasticBlockStoreAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribeSnapshots")
    @XMLResponseParser(DescribeSnapshotsResponseHandler.class)
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    ListenableFuture<? extends Set<Snapshot>> describeSnapshotsInRegion(
             @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             DescribeSnapshotsOptions... options);

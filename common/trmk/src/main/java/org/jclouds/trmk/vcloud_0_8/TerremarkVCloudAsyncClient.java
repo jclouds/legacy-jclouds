@@ -46,19 +46,20 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
+import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
+import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.predicates.validators.DnsNameValidator;
 import org.jclouds.rest.annotations.EndpointParam;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.ParamValidators;
 import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
+import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudFallbacks.VoidOnDeleteDefaultIp;
 import org.jclouds.trmk.vcloud_0_8.binders.BindCloneVAppParamsToXmlPayload;
 import org.jclouds.trmk.vcloud_0_8.binders.BindInstantiateVAppTemplateParamsToXmlPayload;
 import org.jclouds.trmk.vcloud_0_8.binders.BindNodeConfigurationToXmlPayload;
@@ -89,7 +90,6 @@ import org.jclouds.trmk.vcloud_0_8.functions.OrgNameToEndpoint;
 import org.jclouds.trmk.vcloud_0_8.functions.OrgNameVDCNameNetworkNameToEndpoint;
 import org.jclouds.trmk.vcloud_0_8.functions.OrgNameVDCNameResourceEntityNameToEndpoint;
 import org.jclouds.trmk.vcloud_0_8.functions.ParseTaskFromLocationHeader;
-import org.jclouds.trmk.vcloud_0_8.functions.ReturnVoidOnDeleteDefaultIp;
 import org.jclouds.trmk.vcloud_0_8.functions.VDCURIToInternetServicesEndpoint;
 import org.jclouds.trmk.vcloud_0_8.functions.VDCURIToPublicIPsEndpoint;
 import org.jclouds.trmk.vcloud_0_8.options.AddInternetServiceOptions;
@@ -133,7 +133,7 @@ public interface TerremarkVCloudAsyncClient {
    @GET
    @Consumes(CATALOGITEM_XML)
    @XMLResponseParser(CatalogItemHandler.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<? extends CatalogItem> findCatalogItemInOrgCatalogNamed(
          @Nullable @EndpointParam(parser = OrgNameCatalogNameItemNameToEndpoint.class) String orgName,
          @Nullable @EndpointParam(parser = OrgNameCatalogNameItemNameToEndpoint.class) String catalogName,
@@ -145,7 +145,7 @@ public interface TerremarkVCloudAsyncClient {
    @GET
    @Consumes(CATALOGITEM_XML)
    @XMLResponseParser(CatalogItemHandler.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<? extends CatalogItem> getCatalogItem(@EndpointParam URI catalogItem);
 
    /**
@@ -154,7 +154,7 @@ public interface TerremarkVCloudAsyncClient {
    @GET
    @Consumes(TASKSLIST_XML)
    @XMLResponseParser(TasksListHandler.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<? extends TasksList> getTasksList(@EndpointParam URI tasksListId);
 
    /**
@@ -162,7 +162,7 @@ public interface TerremarkVCloudAsyncClient {
     */
    @GET
    @XMLResponseParser(TasksListHandler.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Consumes(TASKSLIST_XML)
    ListenableFuture<? extends TasksList> findTasksListInOrgNamed(
          @Nullable @EndpointParam(parser = OrgNameAndTasksListNameToEndpoint.class) String orgName,
@@ -174,7 +174,7 @@ public interface TerremarkVCloudAsyncClient {
    @GET
    @Consumes(TASK_XML)
    @XMLResponseParser(TaskHandler.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<? extends Task> getTask(@EndpointParam URI taskId);
 
    /**
@@ -197,7 +197,7 @@ public interface TerremarkVCloudAsyncClient {
     */
    @GET
    @XMLResponseParser(CatalogHandler.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Consumes(CATALOG_XML)
    ListenableFuture<? extends Catalog> findCatalogInOrgNamed(
          @Nullable @EndpointParam(parser = OrgNameAndCatalogNameToEndpoint.class) String orgName,
@@ -209,7 +209,7 @@ public interface TerremarkVCloudAsyncClient {
    @GET
    @Consumes(VAPPTEMPLATE_XML)
    @XMLResponseParser(VAppTemplateHandler.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<? extends VAppTemplate> getVAppTemplate(@EndpointParam URI vAppTemplate);
 
    /**
@@ -218,7 +218,7 @@ public interface TerremarkVCloudAsyncClient {
    @GET
    @Consumes(VAPPTEMPLATE_XML)
    @XMLResponseParser(VAppTemplateHandler.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<? extends VAppTemplate> findVAppTemplateInOrgCatalogNamed(
          @Nullable @EndpointParam(parser = OrgNameCatalogNameVAppTemplateNameToEndpoint.class) String orgName,
          @Nullable @EndpointParam(parser = OrgNameCatalogNameVAppTemplateNameToEndpoint.class) String catalogName,
@@ -230,7 +230,7 @@ public interface TerremarkVCloudAsyncClient {
    @GET
    @Consumes(NETWORK_XML)
    @XMLResponseParser(NetworkHandler.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<? extends Network> findNetworkInOrgVDCNamed(
          @Nullable @EndpointParam(parser = OrgNameVDCNameNetworkNameToEndpoint.class) String orgName,
          @Nullable @EndpointParam(parser = OrgNameVDCNameNetworkNameToEndpoint.class) String catalogName,
@@ -242,7 +242,7 @@ public interface TerremarkVCloudAsyncClient {
    @GET
    @Consumes(NETWORK_XML)
    @XMLResponseParser(NetworkHandler.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<? extends Network> getNetwork(@EndpointParam URI network);
 
    /**
@@ -263,7 +263,7 @@ public interface TerremarkVCloudAsyncClient {
    @GET
    @Consumes(VAPP_XML)
    @XMLResponseParser(VAppHandler.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<? extends VApp> findVAppInOrgVDCNamed(
          @Nullable @EndpointParam(parser = OrgNameVDCNameResourceEntityNameToEndpoint.class) String orgName,
          @Nullable @EndpointParam(parser = OrgNameVDCNameResourceEntityNameToEndpoint.class) String catalogName,
@@ -275,7 +275,7 @@ public interface TerremarkVCloudAsyncClient {
    @GET
    @Consumes(VAPP_XML)
    @XMLResponseParser(VAppHandler.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<? extends VApp> getVApp(@EndpointParam URI vApp);
 
    /**
@@ -344,12 +344,12 @@ public interface TerremarkVCloudAsyncClient {
     */
    @DELETE
    @ResponseParser(ParseTaskFromLocationHeader.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<Task> deleteVApp(@EndpointParam URI vAppId);
 
    @GET
    @XMLResponseParser(OrgHandler.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Consumes(ORG_XML)
    ListenableFuture<? extends org.jclouds.trmk.vcloud_0_8.domain.Org> getOrg(@EndpointParam URI orgId);
 
@@ -358,7 +358,7 @@ public interface TerremarkVCloudAsyncClient {
     */
    @GET
    @XMLResponseParser(OrgHandler.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Consumes(ORG_XML)
    ListenableFuture<? extends org.jclouds.trmk.vcloud_0_8.domain.Org> findOrgNamed(
          @Nullable @EndpointParam(parser = OrgNameToEndpoint.class) String orgName);
@@ -369,7 +369,7 @@ public interface TerremarkVCloudAsyncClient {
    @GET
    @XMLResponseParser(CatalogHandler.class)
    @Consumes(CATALOG_XML)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<? extends Catalog> getCatalog(@EndpointParam URI catalogId);
 
    /**
@@ -378,7 +378,7 @@ public interface TerremarkVCloudAsyncClient {
    @GET
    @XMLResponseParser(VDCHandler.class)
    @Consumes(VDC_XML)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<? extends VDC> getVDC(@EndpointParam URI vdc);
 
    /**
@@ -387,7 +387,7 @@ public interface TerremarkVCloudAsyncClient {
    @GET
    @XMLResponseParser(VDCHandler.class)
    @Consumes(VDC_XML)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<? extends VDC> findVDCInOrgNamed(
          @Nullable @EndpointParam(parser = OrgNameAndVDCNameToEndpoint.class) String orgName,
          @Nullable @EndpointParam(parser = OrgNameAndVDCNameToEndpoint.class) String vdcName);
@@ -412,7 +412,7 @@ public interface TerremarkVCloudAsyncClient {
    @GET
    @Consumes(INTERNETSERVICESLIST_XML)
    @XMLResponseParser(InternetServicesHandler.class)
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    ListenableFuture<? extends Set<InternetService>> getAllInternetServicesInVDC(
          @EndpointParam(parser = VDCURIToInternetServicesEndpoint.class) URI vDCId);
 
@@ -433,7 +433,7 @@ public interface TerremarkVCloudAsyncClient {
     * @see TerremarkTerremarkVCloudClient#deletePublicIp
     */
    @DELETE
-   @ExceptionParser(ReturnVoidOnDeleteDefaultIp.class)
+   @Fallback(VoidOnDeleteDefaultIp.class)
    ListenableFuture<Void> deletePublicIp(@EndpointParam URI ipId);
 
    /**
@@ -443,7 +443,7 @@ public interface TerremarkVCloudAsyncClient {
    @Path("/internetServices")
    @Consumes(INTERNETSERVICESLIST_XML)
    @XMLResponseParser(InternetServicesHandler.class)
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    ListenableFuture<? extends Set<InternetService>> getInternetServicesOnPublicIp(@EndpointParam URI ipId);
 
    /**
@@ -452,7 +452,7 @@ public interface TerremarkVCloudAsyncClient {
    @GET
    @Consumes(PUBLICIP_XML)
    @XMLResponseParser(InternetServicesHandler.class)
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    ListenableFuture<? extends Set<InternetService>> getPublicIp(@EndpointParam URI ipId);
 
    /**
@@ -461,7 +461,7 @@ public interface TerremarkVCloudAsyncClient {
    @GET
    @Consumes(PUBLICIPSLIST_XML)
    @XMLResponseParser(PublicIpAddressesHandler.class)
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    ListenableFuture<? extends Set<PublicIpAddress>> getPublicIpsAssociatedWithVDC(
          @EndpointParam(parser = VDCURIToPublicIPsEndpoint.class) URI vDCId);
 
@@ -469,7 +469,7 @@ public interface TerremarkVCloudAsyncClient {
     * @see TerremarkTerremarkVCloudClient#deleteInternetService
     */
    @DELETE
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @Fallback(VoidOnNotFoundOr404.class)
    ListenableFuture<Void> deleteInternetService(@EndpointParam URI internetServiceId);
 
    /**
@@ -478,7 +478,7 @@ public interface TerremarkVCloudAsyncClient {
    @GET
    @Consumes(INTERNETSERVICESLIST_XML)
    @XMLResponseParser(InternetServiceHandler.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<? extends InternetService> getInternetService(@EndpointParam URI internetServiceId);
 
    /**
@@ -500,7 +500,7 @@ public interface TerremarkVCloudAsyncClient {
    @GET
    @Path("/nodeServices")
    @XMLResponseParser(NodesHandler.class)
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    @Consumes(NODESERVICE_XML)
    ListenableFuture<? extends Set<Node>> getNodes(@EndpointParam URI internetServiceId);
 
@@ -510,7 +510,7 @@ public interface TerremarkVCloudAsyncClient {
    @GET
    @XMLResponseParser(NodeHandler.class)
    @Consumes(NODESERVICE_XML)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<? extends Node> getNode(@EndpointParam URI nodeId);
 
    /**
@@ -528,7 +528,7 @@ public interface TerremarkVCloudAsyncClient {
     * @see TerremarkTerremarkVCloudClient#deleteNode
     */
    @DELETE
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @Fallback(VoidOnNotFoundOr404.class)
    ListenableFuture<Void> deleteNode(@EndpointParam URI nodeId);
 
    /**

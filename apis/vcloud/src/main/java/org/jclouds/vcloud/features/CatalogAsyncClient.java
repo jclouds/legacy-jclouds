@@ -30,15 +30,15 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
+import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.rest.annotations.EndpointParam;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.vcloud.binders.BindCatalogItemToXmlPayload;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.CatalogItem;
@@ -65,7 +65,7 @@ public interface CatalogAsyncClient {
     */
    @GET
    @XMLResponseParser(CatalogHandler.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Consumes(CATALOG_XML)
    ListenableFuture<Catalog> getCatalog(@EndpointParam URI catalogId);
 
@@ -74,7 +74,7 @@ public interface CatalogAsyncClient {
     */
    @GET
    @XMLResponseParser(CatalogHandler.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Consumes(CATALOG_XML)
    ListenableFuture<Catalog> findCatalogInOrgNamed(
             @Nullable @EndpointParam(parser = OrgNameAndCatalogNameToEndpoint.class) String orgName,
@@ -86,7 +86,7 @@ public interface CatalogAsyncClient {
    @GET
    @Consumes(CATALOGITEM_XML)
    @XMLResponseParser(CatalogItemHandler.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<CatalogItem> getCatalogItem(@EndpointParam URI catalogItem);
 
    /**
@@ -95,7 +95,7 @@ public interface CatalogAsyncClient {
    @GET
    @Consumes(CATALOGITEM_XML)
    @XMLResponseParser(CatalogItemHandler.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<CatalogItem> findCatalogItemInOrgCatalogNamed(
             @Nullable @EndpointParam(parser = OrgNameCatalogNameItemNameToEndpoint.class) String orgName,
             @Nullable @EndpointParam(parser = OrgNameCatalogNameItemNameToEndpoint.class) String catalogName,
@@ -118,7 +118,7 @@ public interface CatalogAsyncClient {
     * @see CatalogClient#deleteCatalogItem
     */
    @DELETE
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @Fallback(VoidOnNotFoundOr404.class)
    ListenableFuture<Void> deleteCatalogItem(@EndpointParam URI href);
 
 }

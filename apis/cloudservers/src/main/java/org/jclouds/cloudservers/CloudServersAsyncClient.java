@@ -19,6 +19,7 @@
 package org.jclouds.cloudservers;
 
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -30,6 +31,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
+import org.jclouds.Fallbacks.FalseOnNotFoundOr404;
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
+import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
 import org.jclouds.cloudservers.binders.BindBackupScheduleToJsonPayload;
 import org.jclouds.cloudservers.domain.Addresses;
 import org.jclouds.cloudservers.domain.BackupSchedule;
@@ -43,23 +48,18 @@ import org.jclouds.cloudservers.options.CreateServerOptions;
 import org.jclouds.cloudservers.options.CreateSharedIpGroupOptions;
 import org.jclouds.cloudservers.options.ListOptions;
 import org.jclouds.cloudservers.options.RebuildServerOptions;
-import org.jclouds.http.functions.ReturnFalseOn404;
 import org.jclouds.openstack.filters.AddTimestampQuery;
 import org.jclouds.openstack.filters.AuthenticateRequest;
 import org.jclouds.openstack.services.Compute;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.Payload;
 import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.Unwrap;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -86,7 +86,7 @@ public interface CloudServersAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "format", values = "json")
    @Path("/limits")
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    ListenableFuture<Limits> getLimits();
 
    /**
@@ -97,7 +97,7 @@ public interface CloudServersAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "format", values = "json")
    @Path("/servers")
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    ListenableFuture<? extends Set<Server>> listServers(ListOptions... options);
 
    /**
@@ -107,7 +107,7 @@ public interface CloudServersAsyncClient {
    @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "format", values = "json")
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Path("/servers/{id}")
    ListenableFuture<Server> getServer(@PathParam("id") int id);
 
@@ -115,7 +115,7 @@ public interface CloudServersAsyncClient {
     * @see CloudServersClient#deleteServer
     */
    @DELETE
-   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
+   @Fallback(FalseOnNotFoundOr404.class)
    @Path("/servers/{id}")
    ListenableFuture<Boolean> deleteServer(@PathParam("id") int id);
 
@@ -196,7 +196,7 @@ public interface CloudServersAsyncClient {
     */
    @DELETE
    @Path("/servers/{id}/ips/public/{address}")
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @Fallback(VoidOnNotFoundOr404.class)
    ListenableFuture<Void> unshareIp(@PathParam("address") String addressToShare,
          @PathParam("id") int serverToTosignBindressTo);
 
@@ -226,7 +226,7 @@ public interface CloudServersAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "format", values = "json")
    @Path("/flavors")
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    ListenableFuture<? extends Set<Flavor>> listFlavors(ListOptions... options);
 
    /**
@@ -237,7 +237,7 @@ public interface CloudServersAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "format", values = "json")
    @Path("/flavors/{id}")
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<Flavor> getFlavor(@PathParam("id") int id);
 
    /**
@@ -248,7 +248,7 @@ public interface CloudServersAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "format", values = "json")
    @Path("/images")
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    ListenableFuture<? extends Set<Image>> listImages(ListOptions... options);
 
    /**
@@ -257,7 +257,7 @@ public interface CloudServersAsyncClient {
    @GET
    @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @QueryParams(keys = "format", values = "json")
    @Path("/images/{id}")
    ListenableFuture<Image> getImage(@PathParam("id") int id);
@@ -266,7 +266,7 @@ public interface CloudServersAsyncClient {
     * @see CloudServersClient#deleteImage
     */
    @DELETE
-   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
+   @Fallback(FalseOnNotFoundOr404.class)
    @Path("/images/{id}")
    ListenableFuture<Boolean> deleteImage(@PathParam("id") int id);
 
@@ -291,7 +291,7 @@ public interface CloudServersAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "format", values = "json")
    @Path("/shared_ip_groups")
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    ListenableFuture<? extends Set<SharedIpGroup>> listSharedIpGroups(ListOptions... options);
 
    /**
@@ -302,7 +302,7 @@ public interface CloudServersAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "format", values = "json")
    @Path("/shared_ip_groups/{id}")
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<SharedIpGroup> getSharedIpGroup(@PathParam("id") int id);
 
    /**
@@ -321,7 +321,7 @@ public interface CloudServersAsyncClient {
     * @see CloudServersClient#deleteSharedIpGroup
     */
    @DELETE
-   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
+   @Fallback(FalseOnNotFoundOr404.class)
    @Path("/shared_ip_groups/{id}")
    ListenableFuture<Boolean> deleteSharedIpGroup(@PathParam("id") int id);
 
@@ -339,7 +339,7 @@ public interface CloudServersAsyncClient {
     * @see CloudServersClient#deleteBackupSchedule
     */
    @DELETE
-   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
+   @Fallback(FalseOnNotFoundOr404.class)
    @Path("/servers/{id}/backup_schedule")
    ListenableFuture<Boolean> deleteBackupSchedule(@PathParam("id") int serverId);
 
@@ -347,7 +347,6 @@ public interface CloudServersAsyncClient {
     * @see CloudServersClient#replaceBackupSchedule
     */
    @POST
-   @ExceptionParser(ReturnFalseOn404.class)
    @Path("/servers/{id}/backup_schedule")
    ListenableFuture<Void> replaceBackupSchedule(@PathParam("id") int id,
          @BinderParam(BindBackupScheduleToJsonPayload.class) BackupSchedule backupSchedule);
@@ -370,7 +369,7 @@ public interface CloudServersAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "format", values = "json")
    @Path("/servers/{id}/ips/public")
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    ListenableFuture<? extends Set<String>> listPublicAddresses(@PathParam("id") int serverId);
 
    /**
@@ -381,7 +380,7 @@ public interface CloudServersAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "format", values = "json")
    @Path("/servers/{id}/ips/private")
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    ListenableFuture<? extends Set<String>> listPrivateAddresses(@PathParam("id") int serverId);
 
 }

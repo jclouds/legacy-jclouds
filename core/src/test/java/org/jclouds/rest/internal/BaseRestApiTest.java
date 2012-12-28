@@ -17,11 +17,12 @@
  * under the License.
  */
 package org.jclouds.rest.internal;
-
 import static com.google.common.base.Throwables.propagate;
 import static com.google.inject.util.Types.newParameterizedType;
 import static org.easymock.EasyMock.createMock;
 import static org.eclipse.jetty.http.HttpHeaders.TRANSFER_ENCODING;
+import static org.jclouds.rest.internal.RestAnnotationProcessor.createResponseParser;
+import static org.jclouds.rest.internal.RestAnnotationProcessor.getSaxResponseParserClassOrNull;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
@@ -36,13 +37,14 @@ import org.jclouds.concurrent.MoreExecutors;
 import org.jclouds.concurrent.config.ConfiguresExecutorService;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.crypto.CryptoStreams;
+import org.jclouds.fallbacks.MapHttp4xxCodesToExceptions;
 import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.io.MutableContentMetadata;
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
@@ -162,26 +164,21 @@ public abstract class BaseRestApiTest {
       assertEquals(request.getRequestLine(), toMatch);
    }
 
-   protected void assertExceptionParserClassEquals(Method method, @Nullable Class<?> parserClass) {
-      if (parserClass == null)
-         assertEquals(
-               RestAnnotationProcessor
-                     .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(injector, method).getClass(),
-               MapHttp4xxCodesToExceptions.class);
+   protected void assertFallbackClassEquals(Method method, @Nullable Class<?> expected) {
+      Fallback fallbackAnnotation = method.getAnnotation(Fallback.class);
+      Class<?> assigned = fallbackAnnotation != null ? fallbackAnnotation.value() : MapHttp4xxCodesToExceptions.class;
+      if (expected == null)
+         assertEquals(assigned, MapHttp4xxCodesToExceptions.class);
       else
-         assertEquals(
-               RestAnnotationProcessor
-                     .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(injector, method).getClass(),
-               parserClass);
+         assertEquals(assigned, expected);
    }
 
    protected void assertSaxResponseParserClassEquals(Method method, @Nullable Class<?> parserClass) {
-      assertEquals(RestAnnotationProcessor.getSaxResponseParserClassOrNull(method), parserClass);
+      assertEquals(getSaxResponseParserClassOrNull(method), parserClass);
    }
 
    protected void assertResponseParserClassEquals(Method method, HttpRequest request, @Nullable Class<?> parserClass) {
-      assertEquals(RestAnnotationProcessor.createResponseParser(parserFactory, injector, method, request).getClass(),
-            parserClass);
+      assertEquals(createResponseParser(parserFactory, injector, method, request).getClass(), parserClass);
    }
 
    @SuppressWarnings("unchecked")

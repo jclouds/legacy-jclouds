@@ -27,15 +27,15 @@ import javax.ws.rs.HEAD;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
+import org.jclouds.Fallbacks.FalseOnNotFoundOr404;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.annotations.Delegate;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.config.RestClientModule;
-import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
 import org.jclouds.rest.internal.BaseRestClientExpectTest;
 import org.testng.annotations.Test;
 
@@ -76,7 +76,7 @@ public class DelegateAnnotationExpectTest extends BaseRestClientExpectTest<Deleg
 
       @HEAD
       @Path("/disks/{disk}")
-      @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
+      @Fallback(FalseOnNotFoundOr404.class)
       public ListenableFuture<Boolean> exists(@PathParam("disk") String diskName);
    }
 

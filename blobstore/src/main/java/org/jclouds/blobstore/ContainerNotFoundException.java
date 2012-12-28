@@ -38,7 +38,7 @@ public class ContainerNotFoundException extends ResourceNotFoundException {
       this.container = container;
    }
 
-   public ContainerNotFoundException(Exception from) {
+   public ContainerNotFoundException(Throwable from) {
       super(from);
    }
 

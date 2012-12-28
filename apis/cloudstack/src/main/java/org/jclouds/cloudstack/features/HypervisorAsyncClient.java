@@ -23,13 +23,13 @@ import java.util.Set;
 import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
 
+import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
 import org.jclouds.cloudstack.filters.AuthenticationFilter;
 import org.jclouds.cloudstack.functions.ParseNamesFromHttpResponse;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -51,7 +51,7 @@ public interface HypervisorAsyncClient {
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listHypervisors", "true" })
    @ResponseParser(ParseNamesFromHttpResponse.class)
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<String>> listHypervisors();
 
    /**
@@ -60,6 +60,6 @@ public interface HypervisorAsyncClient {
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listHypervisors", "true" })
    @ResponseParser(ParseNamesFromHttpResponse.class)
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<String>> listHypervisorsInZone(@QueryParam("zoneid") String zoneId);
 }

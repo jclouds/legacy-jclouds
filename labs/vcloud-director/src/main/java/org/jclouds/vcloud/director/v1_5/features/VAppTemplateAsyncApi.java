@@ -37,15 +37,16 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.dmtf.ovf.NetworkSection;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.binders.BindToXMLPayload;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.ProductSectionList;
 import org.jclouds.vcloud.director.v1_5.domain.References;
@@ -73,7 +74,7 @@ public interface VAppTemplateAsyncApi {
    @GET
    @Consumes(VAPP_TEMPLATE)
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<VAppTemplate> get(@EndpointParam(parser = VAppTemplateURNToHref.class) String reference);
 
    /**
@@ -118,7 +119,7 @@ public interface VAppTemplateAsyncApi {
    @Consumes(CUSTOMIZATION_SECTION)
    @Path("/customizationSection")
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<CustomizationSection> getCustomizationSection(
             @EndpointParam(parser = VAppTemplateURNToHref.class) String templateUrn);
 
@@ -129,7 +130,7 @@ public interface VAppTemplateAsyncApi {
    @Consumes(LEASE_SETTINGS_SECTION)
    @Path("/leaseSettingsSection")
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<LeaseSettingsSection> getLeaseSettingsSection(
             @EndpointParam(parser = VAppTemplateURNToHref.class) String templateUrn);
 
@@ -152,7 +153,7 @@ public interface VAppTemplateAsyncApi {
    @Consumes(NETWORK_CONFIG_SECTION)
    @Path("/networkConfigSection")
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<NetworkConfigSection> getNetworkConfigSection(
             @EndpointParam(parser = VAppTemplateURNToHref.class) String templateUrn);
 
@@ -163,7 +164,7 @@ public interface VAppTemplateAsyncApi {
    @Consumes(NETWORK_SECTION)
    @Path("/networkSection")
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<NetworkSection> getNetworkSection(
             @EndpointParam(parser = VAppTemplateURNToHref.class) String templateUrn);
 
@@ -174,7 +175,7 @@ public interface VAppTemplateAsyncApi {
    @Consumes
    @Path("/ovf")
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<Envelope> getOvf(@EndpointParam(parser = VAppTemplateURNToHref.class) String templateUrn);
 
    /**
@@ -184,7 +185,7 @@ public interface VAppTemplateAsyncApi {
    @Consumes(OWNER)
    @Path("/owner")
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<Owner> getOwner(@EndpointParam(parser = VAppTemplateURNToHref.class) String templateUrn);
 
    /**
@@ -194,7 +195,7 @@ public interface VAppTemplateAsyncApi {
    @Consumes(PRODUCT_SECTION_LIST)
    @Path("/productSections")
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<ProductSectionList> getProductSections(
             @EndpointParam(parser = VAppTemplateURNToHref.class) String templateUrn);
 
@@ -216,7 +217,7 @@ public interface VAppTemplateAsyncApi {
    @Consumes
    @Path("/shadowVms")
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<References> getShadowVms(@EndpointParam(parser = VAppTemplateURNToHref.class) String templateUrn);
 
    /**
@@ -225,7 +226,7 @@ public interface VAppTemplateAsyncApi {
    @GET
    @Consumes(VAPP_TEMPLATE)
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<VAppTemplate> get(@EndpointParam URI reference);
 
    /**
@@ -270,7 +271,7 @@ public interface VAppTemplateAsyncApi {
    @Consumes(CUSTOMIZATION_SECTION)
    @Path("/customizationSection")
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<CustomizationSection> getCustomizationSection(@EndpointParam URI templateHref);
 
    /**
@@ -280,7 +281,7 @@ public interface VAppTemplateAsyncApi {
    @Consumes(LEASE_SETTINGS_SECTION)
    @Path("/leaseSettingsSection")
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<LeaseSettingsSection> getLeaseSettingsSection(@EndpointParam URI templateHref);
 
    /**
@@ -301,7 +302,7 @@ public interface VAppTemplateAsyncApi {
    @Consumes(NETWORK_CONFIG_SECTION)
    @Path("/networkConfigSection")
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<NetworkConfigSection> getNetworkConfigSection(@EndpointParam URI templateHref);
 
    /**
@@ -311,7 +312,7 @@ public interface VAppTemplateAsyncApi {
    @Consumes(NETWORK_SECTION)
    @Path("/networkSection")
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<NetworkSection> getNetworkSection(@EndpointParam URI templateHref);
 
    /**
@@ -321,7 +322,7 @@ public interface VAppTemplateAsyncApi {
    @Consumes
    @Path("/ovf")
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<Envelope> getOvf(@EndpointParam URI templateHref);
 
    /**
@@ -331,7 +332,7 @@ public interface VAppTemplateAsyncApi {
    @Consumes(OWNER)
    @Path("/owner")
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<Owner> getOwner(@EndpointParam URI templateHref);
 
    /**
@@ -341,7 +342,7 @@ public interface VAppTemplateAsyncApi {
    @Consumes(PRODUCT_SECTION_LIST)
    @Path("/productSections")
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<ProductSectionList> getProductSections(@EndpointParam URI templateHref);
 
    /**
@@ -362,7 +363,7 @@ public interface VAppTemplateAsyncApi {
    @Consumes
    @Path("/shadowVms")
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<References> getShadowVms(@EndpointParam URI templateHref);
 
    /**

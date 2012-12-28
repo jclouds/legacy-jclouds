@@ -21,21 +21,21 @@ package org.jclouds.savvis.vpdc.features;
 import java.net.URI;
 import java.util.Set;
 
-import org.jclouds.javax.annotation.Nullable;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.rest.annotations.EndpointParam;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.savvis.vpdc.binders.BindCaptureVAppTemplateToXmlPayload;
 import org.jclouds.savvis.vpdc.binders.BindCloneVMToXmlPayload;
 import org.jclouds.savvis.vpdc.binders.BindVMSpecToXmlPayload;
@@ -126,7 +126,7 @@ public interface VMAsyncApi {
    @DELETE
    @XMLResponseParser(TaskHandler.class)
    @Path("v{jclouds.api-version}/org/{billingSiteId}/vdc/{vpdcId}/vApp/{vAppId}")
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<Task> removeVMFromVDC(
             @PathParam("billingSiteId") @Nullable @ParamParser(DefaultOrgIfNull.class) String billingSiteId,
             @PathParam("vpdcId") String vpdcId, @PathParam("vAppId") String vAppId);
@@ -136,7 +136,7 @@ public interface VMAsyncApi {
     */
    @DELETE
    @XMLResponseParser(TaskHandler.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<Task> removeVM(@EndpointParam URI vm);
 
    /**
@@ -145,7 +145,7 @@ public interface VMAsyncApi {
    @POST
    @XMLResponseParser(TaskHandler.class)
    @Path("action/powerOff")
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<Task> powerOffVM(@EndpointParam URI vm);
 
    /**
@@ -154,6 +154,6 @@ public interface VMAsyncApi {
    @POST
    @XMLResponseParser(TaskHandler.class)
    @Path("action/powerOn")
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<Task> powerOnVM(@EndpointParam URI vm);
 }

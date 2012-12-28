@@ -31,16 +31,16 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Produces;
 
+import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
+import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.rest.annotations.EndpointParam;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudAsyncClient;
 import org.jclouds.trmk.vcloud_0_8.binders.BindCreateKeyToXmlPayload;
 import org.jclouds.trmk.vcloud_0_8.domain.InternetService;
@@ -85,7 +85,7 @@ public interface TerremarkVCloudExpressAsyncClient extends TerremarkVCloudAsyncC
    @GET
    @XMLResponseParser(KeyPairByNameHandler.class)
    @Consumes(KEYSLIST_XML)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<? extends KeyPair> findKeyPairInOrg(
             @Nullable @EndpointParam(parser = OrgURIToKeysListEndpoint.class) URI org, String keyName);
 
@@ -95,7 +95,7 @@ public interface TerremarkVCloudExpressAsyncClient extends TerremarkVCloudAsyncC
    @GET
    @Consumes(KEYSLIST_XML)
    @XMLResponseParser(KeyPairsHandler.class)
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    ListenableFuture<? extends Set<KeyPair>> listKeyPairsInOrg(
             @Nullable @EndpointParam(parser = OrgURIToKeysListEndpoint.class) URI org);
 
@@ -105,7 +105,7 @@ public interface TerremarkVCloudExpressAsyncClient extends TerremarkVCloudAsyncC
    @GET
    @Consumes(KEYSLIST_XML)
    @XMLResponseParser(KeyPairsHandler.class)
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    ListenableFuture<? extends Set<KeyPair>> listKeyPairs(@EndpointParam URI keysList);
 
    /**
@@ -126,7 +126,7 @@ public interface TerremarkVCloudExpressAsyncClient extends TerremarkVCloudAsyncC
    @GET
    @XMLResponseParser(KeyPairHandler.class)
    @Consumes(APPLICATION_XML)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<? extends KeyPair> getKeyPair(@EndpointParam URI keyId);
 
    // TODO
@@ -148,7 +148,7 @@ public interface TerremarkVCloudExpressAsyncClient extends TerremarkVCloudAsyncC
     * @see TerremarkVCloudExpressClient#deleteKeyPair
     */
    @DELETE
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @Fallback(VoidOnNotFoundOr404.class)
    ListenableFuture<Void> deleteKeyPair(@EndpointParam URI keyId);
 
 }

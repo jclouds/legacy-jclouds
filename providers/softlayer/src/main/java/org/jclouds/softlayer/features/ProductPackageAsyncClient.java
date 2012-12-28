@@ -24,11 +24,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.http.filters.BasicAuthentication;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.softlayer.domain.ProductPackage;
 
 import com.google.common.util.concurrent.ListenableFuture;
@@ -53,7 +53,7 @@ public interface ProductPackageAsyncClient {
    @Path("/SoftLayer_Product_Package/{id}.json")
    @QueryParams(keys = "objectMask", values = PRODUCT_MASK)
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<ProductPackage> getProductPackage(@PathParam("id") long id);
 
 

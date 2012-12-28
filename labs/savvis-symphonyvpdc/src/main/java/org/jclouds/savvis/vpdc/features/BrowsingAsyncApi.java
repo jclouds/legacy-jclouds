@@ -20,18 +20,18 @@ package org.jclouds.savvis.vpdc.features;
 
 import java.net.URI;
 
-import org.jclouds.javax.annotation.Nullable;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.EndpointParam;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.savvis.vpdc.domain.FirewallService;
 import org.jclouds.savvis.vpdc.domain.Network;
 import org.jclouds.savvis.vpdc.domain.Org;
@@ -66,7 +66,7 @@ public interface BrowsingAsyncApi {
     */
    @GET
    @XMLResponseParser(OrgHandler.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Path("v{jclouds.api-version}/org/{billingSiteId}")
    ListenableFuture<Org> getOrg(
             @PathParam("billingSiteId") @Nullable @ParamParser(DefaultOrgIfNull.class) String billingSiteId);
@@ -76,7 +76,7 @@ public interface BrowsingAsyncApi {
     */
    @GET
    @XMLResponseParser(VDCHandler.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Path("v{jclouds.api-version}/org/{billingSiteId}/vdc/{vpdcId}")
    ListenableFuture<VDC> getVDCInOrg(
             @PathParam("billingSiteId") @Nullable @ParamParser(DefaultOrgIfNull.class) String billingSiteId,
@@ -87,7 +87,7 @@ public interface BrowsingAsyncApi {
     */
    @GET
    @XMLResponseParser(NetworkHandler.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Path("v{jclouds.api-version}/org/{billingSiteId}/vdc/{vpdcId}/network/{network-tier-name}")
    ListenableFuture<Network> getNetworkInVDC(
             @PathParam("billingSiteId") @Nullable @ParamParser(DefaultOrgIfNull.class) String billingSiteId,
@@ -98,7 +98,7 @@ public interface BrowsingAsyncApi {
     */
    @GET
    @XMLResponseParser(VMHandler.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Path("v{jclouds.api-version}/org/{billingSiteId}/vdc/{vpdcId}/vApp/{vAppId}")
    ListenableFuture<VM> getVMInVDC(
             @PathParam("billingSiteId") @Nullable @ParamParser(DefaultOrgIfNull.class) String billingSiteId,
@@ -110,7 +110,7 @@ public interface BrowsingAsyncApi {
     */
    @GET
    @XMLResponseParser(VMHandler.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<VM> getVM(@EndpointParam URI vm, @BinderParam(BindGetVMOptions.class) GetVMOptions... options);
 
    /**
@@ -118,7 +118,7 @@ public interface BrowsingAsyncApi {
     */
    @GET
    @XMLResponseParser(TaskHandler.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Path("v{jclouds.api-version}/task/{taskId}")
    ListenableFuture<Task> getTask(@PathParam("taskId") String taskId);
 
@@ -127,7 +127,7 @@ public interface BrowsingAsyncApi {
     */
    @GET
    @XMLResponseParser(FirewallServiceHandler.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Path("v{jclouds.api-version}/org/{billingSiteId}/vdc/{vpdcId}/FirewallService")
    ListenableFuture<FirewallService> listFirewallRules(
             @PathParam("billingSiteId") @Nullable @ParamParser(DefaultOrgIfNull.class) String billingSiteId,

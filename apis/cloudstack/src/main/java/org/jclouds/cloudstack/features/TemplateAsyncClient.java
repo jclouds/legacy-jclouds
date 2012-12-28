@@ -25,6 +25,8 @@ import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.cloudstack.binders.BindTemplateMetadataToQueryParams;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.ExtractMode;
@@ -41,14 +43,12 @@ import org.jclouds.cloudstack.options.RegisterTemplateOptions;
 import org.jclouds.cloudstack.options.UpdateTemplateOptions;
 import org.jclouds.cloudstack.options.UpdateTemplatePermissionsOptions;
 import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.OnlyElement;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.Unwrap;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -124,7 +124,7 @@ public interface TemplateAsyncClient {
    @QueryParams(keys = { "command", "listAll", "templatefilter" }, values = { "listTemplates", "true", "executable" })
    @SelectJson("template")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<Template>> listTemplates();
 
    /**
@@ -134,7 +134,7 @@ public interface TemplateAsyncClient {
    @QueryParams(keys = { "command", "listAll" }, values = { "listTemplates", "true" })
    @SelectJson("template")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<Template>> listTemplates(ListTemplatesOptions options);
 
    /**
@@ -146,7 +146,7 @@ public interface TemplateAsyncClient {
    @SelectJson("template")
    @OnlyElement
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<Template> getTemplateInZone(@QueryParam("id") String templateId, @QueryParam("zoneid") String zoneId);
 
    /**

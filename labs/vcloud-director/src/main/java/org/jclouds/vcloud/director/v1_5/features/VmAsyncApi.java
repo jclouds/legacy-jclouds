@@ -44,15 +44,15 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.binders.BindToXMLPayload;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.vcloud.director.v1_5.domain.ProductSectionList;
 import org.jclouds.vcloud.director.v1_5.domain.RasdItemsList;
 import org.jclouds.vcloud.director.v1_5.domain.ScreenTicket;
@@ -89,7 +89,7 @@ public interface VmAsyncApi {
    @GET
    @Consumes(VM)
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<Vm> get(@EndpointParam(parser = VmURNToHref.class) String vmUrn);
 
    /**
@@ -240,7 +240,7 @@ public interface VmAsyncApi {
    @Path("/guestCustomizationSection")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<GuestCustomizationSection> getGuestCustomizationSection(
             @EndpointParam(parser = VmURNToHref.class) String vmUrn);
 
@@ -284,7 +284,7 @@ public interface VmAsyncApi {
    @Path("/networkConnectionSection")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<NetworkConnectionSection> getNetworkConnectionSection(
             @EndpointParam(parser = VmURNToHref.class) String vmUrn);
 
@@ -306,7 +306,7 @@ public interface VmAsyncApi {
    @Path("/operatingSystemSection")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<OperatingSystemSection> getOperatingSystemSection(
             @EndpointParam(parser = VmURNToHref.class) String vmUrn);
 
@@ -328,7 +328,7 @@ public interface VmAsyncApi {
    @Path("/productSections")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<ProductSectionList> getProductSections(@EndpointParam(parser = VmURNToHref.class) String vmUrn);
 
    /**
@@ -349,7 +349,7 @@ public interface VmAsyncApi {
    @Path("/question")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<VmPendingQuestion> getPendingQuestion(@EndpointParam(parser = VmURNToHref.class) String vmUrn);
 
    /**
@@ -370,7 +370,7 @@ public interface VmAsyncApi {
    @Path("/runtimeInfoSection")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<RuntimeInfoSection> getRuntimeInfoSection(@EndpointParam(parser = VmURNToHref.class) String vmUrn);
 
    /**
@@ -379,7 +379,7 @@ public interface VmAsyncApi {
    @GET
    @Path("/screen")
    @Consumes(ANY_IMAGE)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @ResponseParser(ReturnPayloadBytes.class)
    ListenableFuture<byte[]> getScreenImage(@EndpointParam(parser = VmURNToHref.class) String vmUrn);
 
@@ -390,7 +390,7 @@ public interface VmAsyncApi {
    @Path("/screen/action/acquireTicket")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<ScreenTicket> getScreenTicket(@EndpointParam(parser = VmURNToHref.class) String vmUrn);
 
    /**
@@ -400,7 +400,7 @@ public interface VmAsyncApi {
    @Path("/virtualHardwareSection")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<VirtualHardwareSection> getVirtualHardwareSection(
             @EndpointParam(parser = VmURNToHref.class) String vmUrn);
 
@@ -422,7 +422,7 @@ public interface VmAsyncApi {
    @Path("/virtualHardwareSection/cpu")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<RasdItem> getVirtualHardwareSectionCpu(@EndpointParam(parser = VmURNToHref.class) String vmUrn);
 
    /**
@@ -443,7 +443,7 @@ public interface VmAsyncApi {
    @Path("/virtualHardwareSection/disks")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<RasdItemsList> getVirtualHardwareSectionDisks(
             @EndpointParam(parser = VmURNToHref.class) String vmUrn);
 
@@ -465,7 +465,7 @@ public interface VmAsyncApi {
    @Path("/virtualHardwareSection/media")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<RasdItemsList> getVirtualHardwareSectionMedia(
             @EndpointParam(parser = VmURNToHref.class) String vmUrn);
 
@@ -476,7 +476,7 @@ public interface VmAsyncApi {
    @Path("/virtualHardwareSection/memory")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<RasdItem> getVirtualHardwareSectionMemory(@EndpointParam(parser = VmURNToHref.class) String vmUrn);
 
    /**
@@ -497,7 +497,7 @@ public interface VmAsyncApi {
    @Path("/virtualHardwareSection/networkCards")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<RasdItemsList> getVirtualHardwareSectionNetworkCards(
             @EndpointParam(parser = VmURNToHref.class) String vmUrn);
 
@@ -520,7 +520,7 @@ public interface VmAsyncApi {
    @Path("/virtualHardwareSection/serialPorts")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<RasdItemsList> getVirtualHardwareSectionSerialPorts(
             @EndpointParam(parser = VmURNToHref.class) String vmUrn);
 
@@ -542,7 +542,7 @@ public interface VmAsyncApi {
    @GET
    @Consumes(VM)
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<Vm> get(@EndpointParam URI vmHref);
 
    /**
@@ -690,7 +690,7 @@ public interface VmAsyncApi {
    @Path("/guestCustomizationSection")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<GuestCustomizationSection> getGuestCustomizationSection(@EndpointParam URI vmHref);
 
    /**
@@ -733,7 +733,7 @@ public interface VmAsyncApi {
    @Path("/networkConnectionSection")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<NetworkConnectionSection> getNetworkConnectionSection(@EndpointParam URI vmHref);
 
    /**
@@ -754,7 +754,7 @@ public interface VmAsyncApi {
    @Path("/operatingSystemSection")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<OperatingSystemSection> getOperatingSystemSection(@EndpointParam URI vmHref);
 
    /**
@@ -775,7 +775,7 @@ public interface VmAsyncApi {
    @Path("/productSections")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<ProductSectionList> getProductSections(@EndpointParam URI vmHref);
 
    /**
@@ -796,7 +796,7 @@ public interface VmAsyncApi {
    @Path("/question")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<VmPendingQuestion> getPendingQuestion(@EndpointParam URI vmHref);
 
    /**
@@ -817,7 +817,7 @@ public interface VmAsyncApi {
    @Path("/runtimeInfoSection")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<RuntimeInfoSection> getRuntimeInfoSection(@EndpointParam URI vmHref);
 
    /**
@@ -826,7 +826,7 @@ public interface VmAsyncApi {
    @GET
    @Path("/screen")
    @Consumes(ANY_IMAGE)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @ResponseParser(ReturnPayloadBytes.class)
    ListenableFuture<byte[]> getScreenImage(@EndpointParam URI vmHref);
 
@@ -837,7 +837,7 @@ public interface VmAsyncApi {
    @Path("/screen/action/acquireTicket")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<ScreenTicket> getScreenTicket(@EndpointParam URI vmHref);
 
    /**
@@ -847,7 +847,7 @@ public interface VmAsyncApi {
    @Path("/virtualHardwareSection")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<VirtualHardwareSection> getVirtualHardwareSection(@EndpointParam URI vmHref);
 
    /**
@@ -868,7 +868,7 @@ public interface VmAsyncApi {
    @Path("/virtualHardwareSection/cpu")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<RasdItem> getVirtualHardwareSectionCpu(@EndpointParam URI vmHref);
 
    /**
@@ -889,7 +889,7 @@ public interface VmAsyncApi {
    @Path("/virtualHardwareSection/disks")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<RasdItemsList> getVirtualHardwareSectionDisks(@EndpointParam URI vmHref);
 
    /**
@@ -910,7 +910,7 @@ public interface VmAsyncApi {
    @Path("/virtualHardwareSection/media")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<RasdItemsList> getVirtualHardwareSectionMedia(@EndpointParam URI vmHref);
 
    /**
@@ -920,7 +920,7 @@ public interface VmAsyncApi {
    @Path("/virtualHardwareSection/memory")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<RasdItem> getVirtualHardwareSectionMemory(@EndpointParam URI vmHref);
 
    /**
@@ -941,7 +941,7 @@ public interface VmAsyncApi {
    @Path("/virtualHardwareSection/networkCards")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<RasdItemsList> getVirtualHardwareSectionNetworkCards(@EndpointParam URI vmHref);
 
    /**
@@ -962,7 +962,7 @@ public interface VmAsyncApi {
    @Path("/virtualHardwareSection/serialPorts")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<RasdItemsList> getVirtualHardwareSectionSerialPorts(@EndpointParam URI vmHref);
 
    /**

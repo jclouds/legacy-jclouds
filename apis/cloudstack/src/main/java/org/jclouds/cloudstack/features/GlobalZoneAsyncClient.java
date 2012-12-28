@@ -23,17 +23,17 @@ import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
+import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
 import org.jclouds.cloudstack.domain.NetworkType;
 import org.jclouds.cloudstack.domain.Zone;
 import org.jclouds.cloudstack.filters.AuthenticationFilter;
 import org.jclouds.cloudstack.options.CreateZoneOptions;
 import org.jclouds.cloudstack.options.UpdateZoneOptions;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -57,7 +57,7 @@ public interface GlobalZoneAsyncClient extends ZoneAsyncClient {
    @QueryParams(keys = "command", values = "createZone")
    @SelectJson("zone")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<Zone> createZone(@QueryParam("name") String name, @QueryParam("networktype") NetworkType networkType,
       @QueryParam("dns1") String externalDns1, @QueryParam("internaldns1") String internalDns1, CreateZoneOptions... options);
 
@@ -68,7 +68,7 @@ public interface GlobalZoneAsyncClient extends ZoneAsyncClient {
    @QueryParams(keys = "command", values = "updateZone")
    @SelectJson("zone")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<Zone> updateZone(@QueryParam("id") String id, UpdateZoneOptions... options);
 
    /**
@@ -77,6 +77,6 @@ public interface GlobalZoneAsyncClient extends ZoneAsyncClient {
    @GET
    @QueryParams(keys = "command", values = "deleteZone")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @Fallback(VoidOnNotFoundOr404.class)
    ListenableFuture<Void> deleteZone(@QueryParam("id") String id);
 }

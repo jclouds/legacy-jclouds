@@ -63,7 +63,7 @@ public class TerremarkVCloudLoginAsyncClientTest extends BaseAsyncClientTest<Ter
 
       assertResponseParserClassEquals(method, request, ParseLoginResponseFromHeaders.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }

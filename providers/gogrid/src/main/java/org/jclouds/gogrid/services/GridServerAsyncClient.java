@@ -35,6 +35,8 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 
+import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.domain.Credentials;
 import org.jclouds.gogrid.binders.BindIdsToQueryParams;
 import org.jclouds.gogrid.binders.BindNamesToQueryParams;
@@ -48,14 +50,12 @@ import org.jclouds.gogrid.functions.ParseServerNameToCredentialsMapFromJsonRespo
 import org.jclouds.gogrid.options.AddServerOptions;
 import org.jclouds.gogrid.options.GetServerListOptions;
 import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.OnlyElement;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SelectJson;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -77,7 +77,7 @@ public interface GridServerAsyncClient {
     */
    @GET
    @SelectJson("list")
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    @Path("/grid/server/list")
    ListenableFuture<Set<Server>> getServerList(GetServerListOptions... getServerListOptions);
 
@@ -86,7 +86,7 @@ public interface GridServerAsyncClient {
     */
    @GET
    @SelectJson("list")
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    @Path("/grid/server/get")
    ListenableFuture<Set<Server>> getServersByName(
             @BinderParam(BindNamesToQueryParams.class) String... names);
@@ -96,7 +96,7 @@ public interface GridServerAsyncClient {
     */
    @GET
    @SelectJson("list")
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    @Path("/grid/server/get")
    ListenableFuture<Set<Server>> getServersById(
             @BinderParam(BindIdsToQueryParams.class) long... ids);
@@ -147,7 +147,7 @@ public interface GridServerAsyncClient {
    @SelectJson("list")
    @OnlyElement
    @Path("/grid/server/delete")
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<Server> deleteById(@QueryParam(ID_KEY) long id);
 
    /**
@@ -157,7 +157,7 @@ public interface GridServerAsyncClient {
    @SelectJson("list")
    @OnlyElement
    @Path("/grid/server/delete")
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<Server> deleteByName(@QueryParam(NAME_KEY) String name);
 
    /**
