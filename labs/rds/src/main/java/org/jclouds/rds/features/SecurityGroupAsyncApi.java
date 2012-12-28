@@ -25,6 +25,8 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
+import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.collect.PagedIterable;
@@ -33,14 +35,12 @@ import org.jclouds.rds.functions.SecurityGroupsToPagedIterable;
 import org.jclouds.rds.options.ListSecurityGroupsOptions;
 import org.jclouds.rds.xml.DescribeDBSecurityGroupsResultHandler;
 import org.jclouds.rds.xml.SecurityGroupHandler;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.Transform;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -85,7 +85,7 @@ public interface SecurityGroupAsyncApi {
    @Path("/")
    @XMLResponseParser(SecurityGroupHandler.class)
    @FormParams(keys = "Action", values = "DescribeDBSecurityGroups")
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<SecurityGroup> get(@FormParam("DBSecurityGroupName") String name);
 
    /**
@@ -186,7 +186,7 @@ public interface SecurityGroupAsyncApi {
    @Named("rds:DeleteDBSecurityGroup")
    @POST
    @Path("/")
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @Fallback(VoidOnNotFoundOr404.class)
    @FormParams(keys = ACTION, values = "DeleteDBSecurityGroup")
    ListenableFuture<Void> delete(@FormParam("DBSecurityGroupName") String name);
 }

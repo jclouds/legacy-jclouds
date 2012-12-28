@@ -24,13 +24,14 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 
+import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
 import org.jclouds.aws.domain.Region;
+import org.jclouds.blobstore.BlobStoreFallbacks.FalseOnContainerNotFound;
+import org.jclouds.blobstore.BlobStoreFallbacks.FalseOnKeyNotFound;
+import org.jclouds.blobstore.BlobStoreFallbacks.NullOnKeyNotFound;
+import org.jclouds.blobstore.BlobStoreFallbacks.ThrowContainerNotFoundOn404;
+import org.jclouds.blobstore.BlobStoreFallbacks.ThrowKeyNotFoundOn404;
 import org.jclouds.blobstore.binders.BindBlobToMultipartFormTest;
-import org.jclouds.blobstore.functions.ReturnFalseOnContainerNotFound;
-import org.jclouds.blobstore.functions.ReturnFalseOnKeyNotFound;
-import org.jclouds.blobstore.functions.ReturnNullOnKeyNotFound;
-import org.jclouds.blobstore.functions.ThrowContainerNotFoundOn404;
-import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseETagHeader;
@@ -39,20 +40,19 @@ import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
+import org.jclouds.s3.S3Fallbacks.TrueOn404OrNotFoundFalseOnIllegalState;
 import org.jclouds.s3.config.S3RestClientModule;
 import org.jclouds.s3.domain.AccessControlList;
+import org.jclouds.s3.domain.AccessControlList.EmailAddressGrantee;
+import org.jclouds.s3.domain.AccessControlList.Grant;
+import org.jclouds.s3.domain.AccessControlList.Permission;
 import org.jclouds.s3.domain.BucketLogging;
 import org.jclouds.s3.domain.CannedAccessPolicy;
 import org.jclouds.s3.domain.Payer;
 import org.jclouds.s3.domain.S3Object;
-import org.jclouds.s3.domain.AccessControlList.EmailAddressGrantee;
-import org.jclouds.s3.domain.AccessControlList.Grant;
-import org.jclouds.s3.domain.AccessControlList.Permission;
+import org.jclouds.s3.fallbacks.FalseIfBucketAlreadyOwnedByYouOrOperationAbortedWhenBucketExists;
 import org.jclouds.s3.functions.ParseObjectFromHeadersAndHttpContent;
 import org.jclouds.s3.functions.ParseObjectMetadataFromHeaders;
-import org.jclouds.s3.functions.ReturnFalseIfBucketAlreadyOwnedByYouOrOperationAbortedWhenBucketExists;
-import org.jclouds.s3.functions.ReturnTrueOn404OrNotFoundFalseOnIllegalState;
 import org.jclouds.s3.internal.BaseS3AsyncClientTest;
 import org.jclouds.s3.options.CopyObjectOptions;
 import org.jclouds.s3.options.ListBucketOptions;
@@ -109,7 +109,7 @@ public abstract class S3AsyncClientTest<T extends S3AsyncClient> extends BaseS3A
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, LocationConstraintHandler.class);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -124,7 +124,7 @@ public abstract class S3AsyncClientTest<T extends S3AsyncClient> extends BaseS3A
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, PayerHandler.class);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -140,7 +140,7 @@ public abstract class S3AsyncClientTest<T extends S3AsyncClient> extends BaseS3A
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -156,7 +156,7 @@ public abstract class S3AsyncClientTest<T extends S3AsyncClient> extends BaseS3A
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -172,7 +172,7 @@ public abstract class S3AsyncClientTest<T extends S3AsyncClient> extends BaseS3A
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, ListBucketHandler.class);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -187,7 +187,7 @@ public abstract class S3AsyncClientTest<T extends S3AsyncClient> extends BaseS3A
 
       assertResponseParserClassEquals(method, request, ReturnTrueIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnFalseOnContainerNotFound.class);
+      assertFallbackClassEquals(method, FalseOnContainerNotFound.class);
 
       checkFilters(request);
    }
@@ -215,7 +215,7 @@ public abstract class S3AsyncClientTest<T extends S3AsyncClient> extends BaseS3A
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, CopyObjectHandler.class);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -230,7 +230,7 @@ public abstract class S3AsyncClientTest<T extends S3AsyncClient> extends BaseS3A
 
       assertResponseParserClassEquals(method, request, ReturnTrueIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnTrueOn404OrNotFoundFalseOnIllegalState.class);
+      assertFallbackClassEquals(method, TrueOn404OrNotFoundFalseOnIllegalState.class);
 
       checkFilters(request);
    }
@@ -245,7 +245,7 @@ public abstract class S3AsyncClientTest<T extends S3AsyncClient> extends BaseS3A
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
+      assertFallbackClassEquals(method, VoidOnNotFoundOr404.class);
 
       checkFilters(request);
    }
@@ -261,7 +261,7 @@ public abstract class S3AsyncClientTest<T extends S3AsyncClient> extends BaseS3A
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, AccessControlListHandler.class);
-      assertExceptionParserClassEquals(method, ThrowContainerNotFoundOn404.class);
+      assertFallbackClassEquals(method, ThrowContainerNotFoundOn404.class);
 
       checkFilters(request);
    }
@@ -277,7 +277,7 @@ public abstract class S3AsyncClientTest<T extends S3AsyncClient> extends BaseS3A
 
       assertResponseParserClassEquals(method, request, ParseObjectFromHeadersAndHttpContent.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnNullOnKeyNotFound.class);
+      assertFallbackClassEquals(method, NullOnKeyNotFound.class);
 
       checkFilters(request);
    }
@@ -293,7 +293,7 @@ public abstract class S3AsyncClientTest<T extends S3AsyncClient> extends BaseS3A
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, AccessControlListHandler.class);
-      assertExceptionParserClassEquals(method, ThrowKeyNotFoundOn404.class);
+      assertFallbackClassEquals(method, ThrowKeyNotFoundOn404.class);
 
       checkFilters(request);
    }
@@ -309,7 +309,7 @@ public abstract class S3AsyncClientTest<T extends S3AsyncClient> extends BaseS3A
 
       assertResponseParserClassEquals(method, request, ReturnTrueIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnFalseOnKeyNotFound.class);
+      assertFallbackClassEquals(method, FalseOnKeyNotFound.class);
 
       checkFilters(request);
    }
@@ -325,7 +325,7 @@ public abstract class S3AsyncClientTest<T extends S3AsyncClient> extends BaseS3A
 
       assertResponseParserClassEquals(method, request, ParseObjectMetadataFromHeaders.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnNullOnKeyNotFound.class);
+      assertFallbackClassEquals(method, NullOnKeyNotFound.class);
 
       checkFilters(request);
    }
@@ -340,7 +340,7 @@ public abstract class S3AsyncClientTest<T extends S3AsyncClient> extends BaseS3A
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, ListAllMyBucketsHandler.class);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -366,7 +366,7 @@ public abstract class S3AsyncClientTest<T extends S3AsyncClient> extends BaseS3A
 
       assertResponseParserClassEquals(method, request, ReturnTrueIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -383,7 +383,7 @@ public abstract class S3AsyncClientTest<T extends S3AsyncClient> extends BaseS3A
 
       assertResponseParserClassEquals(method, request, ReturnTrueIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnFalseIfBucketAlreadyOwnedByYouOrOperationAbortedWhenBucketExists.class);
+      assertFallbackClassEquals(method, FalseIfBucketAlreadyOwnedByYouOrOperationAbortedWhenBucketExists.class);
 
       checkFilters(request);
    }
@@ -402,7 +402,7 @@ public abstract class S3AsyncClientTest<T extends S3AsyncClient> extends BaseS3A
 
       assertResponseParserClassEquals(method, request, ParseETagHeader.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -424,7 +424,7 @@ public abstract class S3AsyncClientTest<T extends S3AsyncClient> extends BaseS3A
 
       assertResponseParserClassEquals(method, request, ReturnTrueIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -439,7 +439,7 @@ public abstract class S3AsyncClientTest<T extends S3AsyncClient> extends BaseS3A
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, BucketLoggingHandler.class);
-      assertExceptionParserClassEquals(method, ThrowContainerNotFoundOn404.class);
+      assertFallbackClassEquals(method, ThrowContainerNotFoundOn404.class);
 
       checkFilters(request);
    }
@@ -455,7 +455,7 @@ public abstract class S3AsyncClientTest<T extends S3AsyncClient> extends BaseS3A
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -473,7 +473,7 @@ public abstract class S3AsyncClientTest<T extends S3AsyncClient> extends BaseS3A
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }

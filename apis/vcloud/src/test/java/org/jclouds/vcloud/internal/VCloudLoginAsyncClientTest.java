@@ -62,7 +62,7 @@ public class VCloudLoginAsyncClientTest extends BaseAsyncClientTest<VCloudLoginA
 
       assertResponseParserClassEquals(method, request, ParseLoginResponseFromHeaders.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }

@@ -24,7 +24,6 @@ import static org.testng.Assert.assertNull;
 
 import java.util.TimeZone;
 
-import org.jclouds.collect.IterableWithMarkers;
 import org.jclouds.elb.ELBApi;
 import org.jclouds.elb.domain.LoadBalancer;
 import org.jclouds.elb.internal.BaseELBApiExpectTest;
@@ -204,7 +203,7 @@ public class LoadBalancerApiExpectTest extends BaseELBApiExpectTest {
       ELBApi apiWhenDontExist = requestSendsResponse(
             list, listResponse);
 
-      assertEquals(apiWhenDontExist.getLoadBalancerApi().list().get(0), IterableWithMarkers.EMPTY);
+      assertEquals(apiWhenDontExist.getLoadBalancerApi().list().get(0).toImmutableSet(), ImmutableSet.of());
 
    }
    

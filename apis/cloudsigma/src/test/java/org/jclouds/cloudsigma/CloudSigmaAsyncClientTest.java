@@ -23,6 +23,8 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
+import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.cloudsigma.binders.BindServerToPlainTextStringTest;
 import org.jclouds.cloudsigma.domain.CreateDriveRequest;
@@ -41,12 +43,10 @@ import org.jclouds.cloudsigma.functions.ListOfKeyValuesDelimitedByBlankLinesToVL
 import org.jclouds.cloudsigma.functions.SplitNewlines;
 import org.jclouds.cloudsigma.functions.SplitNewlinesAndReturnSecondField;
 import org.jclouds.cloudsigma.options.CloneDriveOptions;
+import org.jclouds.fallbacks.MapHttp4xxCodesToExceptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
-import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.BaseAsyncClientTest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
@@ -74,7 +74,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
       assertResponseParserClassEquals(method, httpRequest, KeyValuesDelimitedByBlankLinesToProfileInfo.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+      assertFallbackClassEquals(method, NullOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
 
@@ -90,7 +90,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
       assertResponseParserClassEquals(method, httpRequest, SplitNewlines.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(httpRequest);
    }
@@ -105,7 +105,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
       assertResponseParserClassEquals(method, httpRequest, SplitNewlines.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(httpRequest);
    }
@@ -120,7 +120,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
       assertResponseParserClassEquals(method, httpRequest, SplitNewlines.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(httpRequest);
    }
@@ -135,7 +135,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
       assertResponseParserClassEquals(method, httpRequest, ListOfKeyValuesDelimitedByBlankLinesToDriveInfoSet.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(httpRequest);
    }
@@ -150,7 +150,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
       assertResponseParserClassEquals(method, httpRequest, KeyValuesDelimitedByBlankLinesToDriveInfo.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+      assertFallbackClassEquals(method, NullOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
 
@@ -168,7 +168,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
       assertResponseParserClassEquals(method, httpRequest, KeyValuesDelimitedByBlankLinesToDriveInfo.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+      assertFallbackClassEquals(method, NullOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
 
@@ -185,7 +185,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
       assertResponseParserClassEquals(method, httpRequest, KeyValuesDelimitedByBlankLinesToDriveInfo.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
+      assertFallbackClassEquals(method, MapHttp4xxCodesToExceptions.class);
 
       checkFilters(httpRequest);
 
@@ -203,7 +203,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
       assertResponseParserClassEquals(method, httpRequest, KeyValuesDelimitedByBlankLinesToDriveInfo.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
+      assertFallbackClassEquals(method, MapHttp4xxCodesToExceptions.class);
 
       checkFilters(httpRequest);
 
@@ -220,7 +220,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
       assertResponseParserClassEquals(method, httpRequest, KeyValuesDelimitedByBlankLinesToDriveInfo.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
+      assertFallbackClassEquals(method, MapHttp4xxCodesToExceptions.class);
 
       checkFilters(httpRequest);
 
@@ -247,7 +247,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
       // TODO: insert expected response class, which probably extends ParseJson
       assertResponseParserClassEquals(method, httpRequest, SplitNewlines.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(httpRequest);
 
@@ -263,7 +263,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
       assertResponseParserClassEquals(method, httpRequest, ListOfKeyValuesDelimitedByBlankLinesToServerInfoSet.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(httpRequest);
    }
@@ -278,7 +278,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
       assertResponseParserClassEquals(method, httpRequest, KeyValuesDelimitedByBlankLinesToServerInfo.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+      assertFallbackClassEquals(method, NullOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
 
@@ -294,7 +294,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
       assertResponseParserClassEquals(method, httpRequest, KeyValuesDelimitedByBlankLinesToServerInfo.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+      assertFallbackClassEquals(method, NullOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
 
@@ -310,7 +310,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
       assertResponseParserClassEquals(method, httpRequest, KeyValuesDelimitedByBlankLinesToServerInfo.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+      assertFallbackClassEquals(method, NullOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
 
@@ -326,7 +326,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
       assertResponseParserClassEquals(method, httpRequest, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
+      assertFallbackClassEquals(method, VoidOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
 
@@ -342,7 +342,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
       assertResponseParserClassEquals(method, httpRequest, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
+      assertFallbackClassEquals(method, MapHttp4xxCodesToExceptions.class);
 
       checkFilters(httpRequest);
 
@@ -358,7 +358,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
       assertResponseParserClassEquals(method, httpRequest, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
+      assertFallbackClassEquals(method, MapHttp4xxCodesToExceptions.class);
 
       checkFilters(httpRequest);
 
@@ -374,7 +374,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
       assertResponseParserClassEquals(method, httpRequest, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
+      assertFallbackClassEquals(method, MapHttp4xxCodesToExceptions.class);
 
       checkFilters(httpRequest);
 
@@ -390,7 +390,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
       assertResponseParserClassEquals(method, httpRequest, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
+      assertFallbackClassEquals(method, MapHttp4xxCodesToExceptions.class);
 
       checkFilters(httpRequest);
 
@@ -417,7 +417,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
       // TODO: insert expected response class, which probably extends ParseJson
       assertResponseParserClassEquals(method, httpRequest, SplitNewlines.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(httpRequest);
 
@@ -433,7 +433,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
       assertResponseParserClassEquals(method, httpRequest, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
+      assertFallbackClassEquals(method, VoidOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
 
@@ -460,7 +460,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
       // TODO: insert expected response class, which probably extends ParseJson
       assertResponseParserClassEquals(method, httpRequest, SplitNewlinesAndReturnSecondField.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(httpRequest);
 
@@ -476,7 +476,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
       assertResponseParserClassEquals(method, httpRequest, ListOfKeyValuesDelimitedByBlankLinesToVLANInfoSet.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(httpRequest);
    }
@@ -491,7 +491,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
       assertResponseParserClassEquals(method, httpRequest, KeyValuesDelimitedByBlankLinesToVLANInfo.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+      assertFallbackClassEquals(method, NullOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
 
@@ -507,7 +507,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
       assertResponseParserClassEquals(method, httpRequest, KeyValuesDelimitedByBlankLinesToVLANInfo.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+      assertFallbackClassEquals(method, NullOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
 
@@ -523,7 +523,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
       assertResponseParserClassEquals(method, httpRequest, KeyValuesDelimitedByBlankLinesToVLANInfo.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
+      assertFallbackClassEquals(method, MapHttp4xxCodesToExceptions.class);
 
       checkFilters(httpRequest);
 
@@ -539,7 +539,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
       assertResponseParserClassEquals(method, httpRequest, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
+      assertFallbackClassEquals(method, VoidOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
 
@@ -566,7 +566,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
       // TODO: insert expected response class, which probably extends ParseJson
       assertResponseParserClassEquals(method, httpRequest, SplitNewlinesAndReturnSecondField.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(httpRequest);
 
@@ -582,7 +582,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
       assertResponseParserClassEquals(method, httpRequest, ListOfKeyValuesDelimitedByBlankLinesToStaticIPInfoSet.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(httpRequest);
    }
@@ -597,7 +597,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
       assertResponseParserClassEquals(method, httpRequest, KeyValuesDelimitedByBlankLinesToStaticIPInfo.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+      assertFallbackClassEquals(method, NullOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
 
@@ -613,7 +613,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
       assertResponseParserClassEquals(method, httpRequest, KeyValuesDelimitedByBlankLinesToStaticIPInfo.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+      assertFallbackClassEquals(method, NullOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
 
@@ -629,7 +629,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
       assertResponseParserClassEquals(method, httpRequest, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
+      assertFallbackClassEquals(method, VoidOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
 

@@ -25,6 +25,9 @@ import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
+import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
 import org.jclouds.cloudstack.binders.BindIdListToCommaDelimitedQueryParam;
 import org.jclouds.cloudstack.binders.BindSnapshotPolicyScheduleToQueryParam;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
@@ -36,15 +39,12 @@ import org.jclouds.cloudstack.options.CreateSnapshotOptions;
 import org.jclouds.cloudstack.options.ListSnapshotPoliciesOptions;
 import org.jclouds.cloudstack.options.ListSnapshotsOptions;
 import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.OnlyElement;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.Unwrap;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -84,7 +84,7 @@ public interface SnapshotAsyncClient {
    @QueryParams(keys = { "command", "listAll" }, values = { "listSnapshots", "true" })
    @SelectJson("snapshot")
    @Unwrap
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<Snapshot>> listSnapshots(ListSnapshotsOptions... options);
 
    /**
@@ -98,7 +98,7 @@ public interface SnapshotAsyncClient {
    @QueryParams(keys = { "command", "listAll" }, values = { "listSnapshots", "true" })
    @SelectJson("snapshot")
    @OnlyElement
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<Snapshot> getSnapshot(@QueryParam("id") String id);
 
    /**
@@ -110,7 +110,7 @@ public interface SnapshotAsyncClient {
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "command", values = "deleteSnapshot")
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @Fallback(VoidOnNotFoundOr404.class)
    ListenableFuture<Void> deleteSnapshot(@QueryParam("id") String id);
 
    /**
@@ -137,7 +137,7 @@ public interface SnapshotAsyncClient {
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "command", values = "deleteSnapshotPolicies")
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @Fallback(VoidOnNotFoundOr404.class)
    ListenableFuture<Void> deleteSnapshotPolicy(@QueryParam("id") String id);
 
    /**
@@ -149,7 +149,7 @@ public interface SnapshotAsyncClient {
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "command", values = "deleteSnapshotPolicies")
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @Fallback(VoidOnNotFoundOr404.class)
    ListenableFuture<Void> deleteSnapshotPolicies(@BinderParam(BindIdListToCommaDelimitedQueryParam.class) Iterable<String> id);
 
    /**
@@ -163,6 +163,6 @@ public interface SnapshotAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = { "command", "listAll" }, values = { "listSnapshotPolicies", "true" })
    @Unwrap
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<SnapshotPolicy>> listSnapshotPolicies(@QueryParam("volumeid") String volumeId, ListSnapshotPoliciesOptions... options);
 }

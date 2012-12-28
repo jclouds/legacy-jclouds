@@ -22,6 +22,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.openstack.keystone.v2_0.domain.ApiMetadata;
 import org.jclouds.openstack.keystone.v2_0.features.ServiceAsyncApi;
 import org.jclouds.openstack.keystone.v2_0.features.TenantAsyncApi;
@@ -29,9 +30,8 @@ import org.jclouds.openstack.keystone.v2_0.features.TokenAsyncApi;
 import org.jclouds.openstack.keystone.v2_0.features.UserAsyncApi;
 import org.jclouds.openstack.v2_0.features.ExtensionAsyncApi;
 import org.jclouds.rest.annotations.Delegate;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.SelectJson;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import com.google.common.base.Optional;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -52,7 +52,7 @@ public interface KeystoneAsyncApi {
    @GET
    @SelectJson("version")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<ApiMetadata> getApiMetadata();
    
    /**

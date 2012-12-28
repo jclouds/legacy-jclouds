@@ -25,10 +25,13 @@ import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.Set;
 
+import org.jclouds.Fallbacks.EmptyMultimapOnNotFoundOr404;
+import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.apis.ApiMetadata;
+import org.jclouds.deltacloud.DeltacloudFallbacks.VoidOnRedirectedDelete;
 import org.jclouds.deltacloud.config.DeltacloudRestClientModule;
 import org.jclouds.deltacloud.domain.DeltacloudCollection;
-import org.jclouds.deltacloud.functions.ReturnVoidOnRedirectedDelete;
 import org.jclouds.deltacloud.options.CreateInstanceOptions;
 import org.jclouds.deltacloud.xml.DeltacloudCollectionsHandler;
 import org.jclouds.deltacloud.xml.HardwareProfileHandler;
@@ -45,9 +48,6 @@ import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.functions.ReturnEmptyMultimapOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.internal.BaseAsyncClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
@@ -88,7 +88,7 @@ public class DeltacloudAsyncClientTest extends BaseAsyncClientTest<DeltacloudAsy
 
       assertResponseParserClassEquals(method, httpRequest, ParseSax.class);
       assertSaxResponseParserClassEquals(method, DeltacloudCollectionsHandler.class);
-      assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
+      assertFallbackClassEquals(method, EmptySetOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
 
@@ -104,7 +104,7 @@ public class DeltacloudAsyncClientTest extends BaseAsyncClientTest<DeltacloudAsy
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, InstanceStatesHandler.class);
-      assertExceptionParserClassEquals(method, ReturnEmptyMultimapOnNotFoundOr404.class);
+      assertFallbackClassEquals(method, EmptyMultimapOnNotFoundOr404.class);
 
       checkFilters(request);
    }
@@ -119,7 +119,7 @@ public class DeltacloudAsyncClientTest extends BaseAsyncClientTest<DeltacloudAsy
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, RealmsHandler.class);
-      assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
+      assertFallbackClassEquals(method, EmptySetOnNotFoundOr404.class);
 
       checkFilters(request);
    }
@@ -134,7 +134,7 @@ public class DeltacloudAsyncClientTest extends BaseAsyncClientTest<DeltacloudAsy
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, RealmHandler.class);
-      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+      assertFallbackClassEquals(method, NullOnNotFoundOr404.class);
 
       checkFilters(request);
    }
@@ -149,7 +149,7 @@ public class DeltacloudAsyncClientTest extends BaseAsyncClientTest<DeltacloudAsy
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, ImagesHandler.class);
-      assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
+      assertFallbackClassEquals(method, EmptySetOnNotFoundOr404.class);
 
       checkFilters(request);
    }
@@ -164,7 +164,7 @@ public class DeltacloudAsyncClientTest extends BaseAsyncClientTest<DeltacloudAsy
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, ImageHandler.class);
-      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+      assertFallbackClassEquals(method, NullOnNotFoundOr404.class);
 
       checkFilters(request);
    }
@@ -179,7 +179,7 @@ public class DeltacloudAsyncClientTest extends BaseAsyncClientTest<DeltacloudAsy
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, HardwareProfilesHandler.class);
-      assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
+      assertFallbackClassEquals(method, EmptySetOnNotFoundOr404.class);
 
       checkFilters(request);
    }
@@ -194,7 +194,7 @@ public class DeltacloudAsyncClientTest extends BaseAsyncClientTest<DeltacloudAsy
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, HardwareProfileHandler.class);
-      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+      assertFallbackClassEquals(method, NullOnNotFoundOr404.class);
 
       checkFilters(request);
    }
@@ -209,7 +209,7 @@ public class DeltacloudAsyncClientTest extends BaseAsyncClientTest<DeltacloudAsy
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, InstancesHandler.class);
-      assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
+      assertFallbackClassEquals(method, EmptySetOnNotFoundOr404.class);
 
       checkFilters(request);
    }
@@ -224,7 +224,7 @@ public class DeltacloudAsyncClientTest extends BaseAsyncClientTest<DeltacloudAsy
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, InstanceHandler.class);
-      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+      assertFallbackClassEquals(method, NullOnNotFoundOr404.class);
 
       checkFilters(request);
    }
@@ -240,7 +240,7 @@ public class DeltacloudAsyncClientTest extends BaseAsyncClientTest<DeltacloudAsy
 
       assertResponseParserClassEquals(method, httpRequest, ParseSax.class);
       assertSaxResponseParserClassEquals(method, InstanceHandler.class);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(httpRequest);
 
@@ -258,7 +258,7 @@ public class DeltacloudAsyncClientTest extends BaseAsyncClientTest<DeltacloudAsy
 
       assertResponseParserClassEquals(method, httpRequest, ParseSax.class);
       assertSaxResponseParserClassEquals(method, InstanceHandler.class);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(httpRequest);
 
@@ -275,7 +275,7 @@ public class DeltacloudAsyncClientTest extends BaseAsyncClientTest<DeltacloudAsy
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnVoidOnRedirectedDelete.class);
+      assertFallbackClassEquals(method, VoidOnRedirectedDelete.class);
 
       checkFilters(request);
    }

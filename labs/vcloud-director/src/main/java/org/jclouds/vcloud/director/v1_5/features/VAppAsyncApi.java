@@ -40,16 +40,16 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.dmtf.ovf.NetworkSection;
 import org.jclouds.dmtf.ovf.StartupSection;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.binders.BindToXMLPayload;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.ProductSectionList;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
@@ -78,7 +78,7 @@ public interface VAppAsyncApi {
    @GET
    @Consumes(VAPP)
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<VApp> get(@EndpointParam(parser = VAppURNToHref.class) String vAppUrn);
 
    /**
@@ -177,7 +177,7 @@ public interface VAppAsyncApi {
    @Path("/controlAccess")
    @Consumes(CONTROL_ACCESS)
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<ControlAccessParams> getAccessControl(@EndpointParam(parser = VAppURNToHref.class) String vAppUrn);
 
    /**
@@ -241,7 +241,7 @@ public interface VAppAsyncApi {
    @Path("/leaseSettingsSection")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<LeaseSettingsSection> getLeaseSettingsSection(
             @EndpointParam(parser = VAppURNToHref.class) String vAppUrn);
 
@@ -263,7 +263,7 @@ public interface VAppAsyncApi {
    @Path("/networkConfigSection")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<NetworkConfigSection> getNetworkConfigSection(
             @EndpointParam(parser = VAppURNToHref.class) String vAppUrn);
 
@@ -285,7 +285,7 @@ public interface VAppAsyncApi {
    @Path("/networkSection")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<NetworkSection> getNetworkSection(@EndpointParam(parser = VAppURNToHref.class) String vAppUrn);
 
    /**
@@ -295,7 +295,7 @@ public interface VAppAsyncApi {
    @Path("/owner")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<Owner> getOwner(@EndpointParam(parser = VAppURNToHref.class) String vAppUrn);
 
    /**
@@ -316,7 +316,7 @@ public interface VAppAsyncApi {
    @Path("/productSections")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<ProductSectionList> getProductSections(@EndpointParam(parser = VAppURNToHref.class) String vAppUrn);
 
    /**
@@ -337,7 +337,7 @@ public interface VAppAsyncApi {
    @Path("/startupSection")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<StartupSection> getStartupSection(@EndpointParam(parser = VAppURNToHref.class) String vAppUrn);
 
    /**
@@ -357,7 +357,7 @@ public interface VAppAsyncApi {
    @GET
    @Consumes(VAPP)
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<VApp> get(@EndpointParam URI vAppHref);
 
    /**
@@ -455,7 +455,7 @@ public interface VAppAsyncApi {
    @Path("/controlAccess")
    @Consumes(CONTROL_ACCESS)
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<ControlAccessParams> getAccessControl(@EndpointParam URI vAppHref);
 
    /**
@@ -519,7 +519,7 @@ public interface VAppAsyncApi {
    @Path("/leaseSettingsSection")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<LeaseSettingsSection> getLeaseSettingsSection(@EndpointParam URI vAppHref);
 
    /**
@@ -540,7 +540,7 @@ public interface VAppAsyncApi {
    @Path("/networkConfigSection")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<NetworkConfigSection> getNetworkConfigSection(@EndpointParam URI vAppHref);
 
    /**
@@ -561,7 +561,7 @@ public interface VAppAsyncApi {
    @Path("/networkSection")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<NetworkSection> getNetworkSection(@EndpointParam URI vAppHref);
 
    /**
@@ -571,7 +571,7 @@ public interface VAppAsyncApi {
    @Path("/owner")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<Owner> getOwner(@EndpointParam URI vAppHref);
 
    /**
@@ -591,7 +591,7 @@ public interface VAppAsyncApi {
    @Path("/productSections")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<ProductSectionList> getProductSections(@EndpointParam URI vAppHref);
 
    /**
@@ -612,7 +612,7 @@ public interface VAppAsyncApi {
    @Path("/startupSection")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<StartupSection> getStartupSection(@EndpointParam URI vAppHref);
 
    /**

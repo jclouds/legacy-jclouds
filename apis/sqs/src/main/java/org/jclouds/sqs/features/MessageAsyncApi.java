@@ -29,9 +29,10 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
 import org.jclouds.Constants;
+import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.PayloadParam;
@@ -39,7 +40,6 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.sqs.binders.BindChangeMessageVisibilityBatchRequestEntryToIndexedFormParams;
 import org.jclouds.sqs.binders.BindDeleteMessageBatchRequestEntryToIndexedFormParams;
 import org.jclouds.sqs.binders.BindSendMessageBatchRequestEntryToIndexedFormParams;
@@ -78,7 +78,7 @@ public interface MessageAsyncApi {
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DeleteMessage")
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @Fallback(VoidOnNotFoundOr404.class)
    ListenableFuture<Void> delete(@FormParam("ReceiptHandle") String receiptHandle);
 
    /**

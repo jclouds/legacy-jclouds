@@ -26,18 +26,18 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.azure.management.binders.BindDeploymentParamsToXmlPayload;
 import org.jclouds.azure.management.domain.DeploymentParams;
 import org.jclouds.azure.management.domain.role.PersistentVMRole;
 import org.jclouds.azure.management.functions.ParseRequestIdHeader;
 import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.Payload;
 import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.ResponseParser;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -56,7 +56,7 @@ public interface RoleAsyncApi {
 	 @Path("/services/hostedservices/{serviceName}/deployments/{deploymentName}/roles/{roleName}")
 	 @Consumes(MediaType.APPLICATION_ATOM_XML)
 	 @JAXBResponseParser
-	 @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+	 @Fallback(NullOnNotFoundOr404.class)
 	 ListenableFuture<PersistentVMRole> getRole(@PathParam("serviceName")
 	 String serviceName,
 	 @PathParam("deploymentName") String deploymentName,
@@ -67,7 +67,7 @@ public interface RoleAsyncApi {
 	// @Path("/services/hostedservices/{serviceName}/deployments/{deploymentName}/roles/{roleName}")
 	// @Consumes(MediaType.APPLICATION_ATOM_XML)
 	// @JAXBResponseParser
-	// @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+	// @Fallback(NullOnNotFoundOr404.class)
 	// ListenableFuture<Void> deleteRole(@PathParam("serviceName") String
 	// serviceName,
 	// @PathParam("deploymentName") String deploymentName,
@@ -79,7 +79,7 @@ public interface RoleAsyncApi {
 	@Path("/services/hostedservices/{serviceName}/deployments/{deploymentName}/roleInstances/{roleName}/Operations")
 	@Consumes(MediaType.APPLICATION_ATOM_XML)
 	@Produces(MediaType.APPLICATION_ATOM_XML)
-	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
+	@Fallback(NullOnNotFoundOr404.class)
 	@ResponseParser(ParseRequestIdHeader.class)
 	@Payload(value = "<RestartRoleOperation xmlns=\"http://schemas.microsoft.com/windowsazure\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"><OperationType>RestartRoleOperation</OperationType></RestartRoleOperation>")
 	ListenableFuture<String> restartRole(
@@ -92,7 +92,7 @@ public interface RoleAsyncApi {
 	// @Path("/services/hostedservices/{serviceName}/deployments/{deploymentName}/roles")
 	// @Produces(MediaType.APPLICATION_ATOM_XML)
 	// @Consumes(MediaType.TEXT_PLAIN)
-	// @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+	// @Fallback(NullOnNotFoundOr404.class)
 	// ListenableFuture<Void> addRole(@PathParam("serviceName") String
 	// serviceName,
 	// @PathParam("deploymentName") String deploymentName,
@@ -103,7 +103,7 @@ public interface RoleAsyncApi {
 //	@Path("/services/hostedservices/{serviceName}/deployments")
 //	@Produces(MediaType.APPLICATION_ATOM_XML)
 //	@Consumes(MediaType.TEXT_PLAIN)
-//	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
+//	@Fallback(NullOnNotFoundOr404.class)
 //	@ResponseParser(ParseRequestIdHeader.class)
 //	ListenableFuture<String> createVirtualMachineDeployment(
 //			@PathParam("serviceName") String serviceName,
@@ -113,7 +113,7 @@ public interface RoleAsyncApi {
 	@Path("/services/hostedservices/{serviceName}/deployments")
 	@Produces(MediaType.APPLICATION_ATOM_XML)
 	@Consumes(MediaType.APPLICATION_ATOM_XML)
-	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
+	@Fallback(NullOnNotFoundOr404.class)
 	@ResponseParser(ParseRequestIdHeader.class)
 	ListenableFuture<String> createDeployment(
 			@PathParam("serviceName") String serviceName,
@@ -123,7 +123,7 @@ public interface RoleAsyncApi {
 	@Path("/services/hostedservices/{serviceName}/deployments/{deploymentName}/roleInstances/{roleName}/Operations")
 	@Consumes(MediaType.APPLICATION_ATOM_XML)
 	@Produces(MediaType.APPLICATION_ATOM_XML)
-	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
+	@Fallback(NullOnNotFoundOr404.class)
 	@ResponseParser(ParseRequestIdHeader.class)
 	@Payload(value = "<CaptureRoleOperation xmlns=\"http://schemas.microsoft.com/windowsazure\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"><OperationType>CaptureRoleOperation</OperationType><PostCaptureAction>Delete</PostCaptureAction><TargetImageLabel>{imageLabel}</TargetImageLabel><TargetImageName>{imageName}</TargetImageName></CaptureRoleOperation>")
 	ListenableFuture<String> captureRole(
@@ -137,7 +137,7 @@ public interface RoleAsyncApi {
 	@Path("/services/hostedservices/{serviceName}/deployments/{deploymentName}/roleInstances/{roleName}/Operations")
 	@Consumes(MediaType.APPLICATION_ATOM_XML)
 	@Produces(MediaType.APPLICATION_ATOM_XML)
-	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
+	@Fallback(NullOnNotFoundOr404.class)
 	@ResponseParser(ParseRequestIdHeader.class)
 	@Payload(value = "<ShutdownRoleOperation xmlns=\"http://schemas.microsoft.com/windowsazure\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"><OperationType>ShutdownRoleOperation</OperationType></ShutdownRoleOperation>")
 	ListenableFuture<String> shutdownRole(
@@ -149,7 +149,7 @@ public interface RoleAsyncApi {
 	@Path("/services/hostedservices/{serviceName}/deployments/{deploymentName}/roleInstances/{roleName}/Operations")
 	@Consumes(MediaType.APPLICATION_ATOM_XML)
 	@Produces(MediaType.APPLICATION_ATOM_XML)
-	@ExceptionParser(ReturnNullOnNotFoundOr404.class)
+	@Fallback(NullOnNotFoundOr404.class)
 	@ResponseParser(ParseRequestIdHeader.class)
 	@Payload(value = "<StartRoleOperation xmlns=\"http://schemas.microsoft.com/windowsazure\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"><OperationType>StartRoleOperation</OperationType></StartRoleOperation>")
 	ListenableFuture<String> startRole(

@@ -30,7 +30,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.blobstore.functions.ReturnNullOnContainerNotFound;
+import org.jclouds.Fallbacks.EmptyFluentIterableOnNotFoundOr404;
+import org.jclouds.blobstore.BlobStoreFallbacks.NullOnContainerNotFound;
+import org.jclouds.hpcloud.objectstorage.HPCloudObjectStorageApi;
 import org.jclouds.hpcloud.objectstorage.domain.CDNContainer;
 import org.jclouds.hpcloud.objectstorage.functions.ParseCDNContainerFromHeaders;
 import org.jclouds.hpcloud.objectstorage.functions.ParseCDNUriFromHeaders;
@@ -39,12 +41,11 @@ import org.jclouds.hpcloud.objectstorage.reference.HPCloudObjectStorageHeaders;
 import org.jclouds.hpcloud.services.HPExtensionCDN;
 import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.rest.annotations.Endpoint;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
-import org.jclouds.rest.functions.ReturnEmptyFluentIterableOnNotFoundOr404;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.FluentIterable;
@@ -73,7 +74,7 @@ public interface CDNContainerAsyncApi {
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "format", values = "json")
-   @ExceptionParser(ReturnEmptyFluentIterableOnNotFoundOr404.class)
+   @Fallback(EmptyFluentIterableOnNotFoundOr404.class)
    @Path("/")
    ListenableFuture<FluentIterable<CDNContainer>> list();
 
@@ -84,7 +85,7 @@ public interface CDNContainerAsyncApi {
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "format", values = "json")
-   @ExceptionParser(ReturnEmptyFluentIterableOnNotFoundOr404.class)
+   @Fallback(EmptyFluentIterableOnNotFoundOr404.class)
    @Path("/")
    ListenableFuture<FluentIterable<CDNContainer>> list(ListCDNContainerOptions options);
 
@@ -94,7 +95,7 @@ public interface CDNContainerAsyncApi {
    @Beta
    @HEAD
    @ResponseParser(ParseCDNContainerFromHeaders.class)
-   @ExceptionParser(ReturnNullOnContainerNotFound.class)
+   @Fallback(NullOnContainerNotFound.class)
    @Path("/{container}")
    ListenableFuture<CDNContainer> get(@PathParam("container") String container);
 

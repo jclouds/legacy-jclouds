@@ -30,18 +30,18 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
 import org.jclouds.Constants;
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
+import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.EndpointParam;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.Transform;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.sqs.binders.BindAttributeNamesToIndexedFormParams;
 import org.jclouds.sqs.domain.QueueAttributes;
 import org.jclouds.sqs.functions.MapToQueueAttributes;
@@ -94,7 +94,7 @@ public interface QueueAsyncApi {
    @Path("/")
    @FormParams(keys = ACTION, values = "GetQueueUrl")
    @ResponseParser(RegexQueueHandler.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<URI> get(@FormParam("QueueName") String queueName);
 
    /**
@@ -105,7 +105,7 @@ public interface QueueAsyncApi {
    @Path("/")
    @FormParams(keys = ACTION, values = "GetQueueUrl")
    @ResponseParser(RegexQueueHandler.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<URI> getInAccount(@FormParam("QueueName") String queueName,
          @FormParam("QueueOwnerAWSAccountId") String accountId);
 
@@ -136,7 +136,7 @@ public interface QueueAsyncApi {
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DeleteQueue")
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @Fallback(VoidOnNotFoundOr404.class)
    ListenableFuture<Void> delete(@EndpointParam URI queue);
 
    /**
@@ -147,7 +147,7 @@ public interface QueueAsyncApi {
    @Path("/")
    @FormParams(keys = { ACTION, "AttributeName.1" }, values = { "GetQueueAttributes", "All" })
    @Transform(MapToQueueAttributes.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @XMLResponseParser(AttributesHandler.class)
    ListenableFuture<? extends QueueAttributes> getAttributes(@EndpointParam URI queue);
 

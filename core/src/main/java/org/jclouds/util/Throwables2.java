@@ -58,6 +58,10 @@ public class Throwables2 {
       };
    }
 
+   public static boolean containsResourceNotFoundException(Throwable from) {
+      return getFirstThrowableOfType(from, ResourceNotFoundException.class) != null;
+   }
+
    @SuppressWarnings("unchecked")
    public static <T extends Throwable> T getFirstThrowableOfType(Throwable from, Class<T> clazz) {
       if (from instanceof ProvisionException)

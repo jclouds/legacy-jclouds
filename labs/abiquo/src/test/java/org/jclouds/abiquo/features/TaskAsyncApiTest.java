@@ -22,9 +22,9 @@ package org.jclouds.abiquo.features;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
+import org.jclouds.abiquo.AbiquoFallbacks.NullOn303;
 import org.jclouds.abiquo.domain.CloudResources;
 import org.jclouds.abiquo.domain.TemplateResources;
-import org.jclouds.abiquo.functions.ReturnNullOn303;
 import org.jclouds.http.functions.ParseXMLWithJAXB;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
@@ -63,7 +63,7 @@ public class TaskAsyncApiTest extends BaseAbiquoAsyncApiTest<TaskAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnNullOn303.class);
+      assertFallbackClassEquals(method, NullOn303.class);
 
       checkFilters(request);
    }
@@ -79,7 +79,7 @@ public class TaskAsyncApiTest extends BaseAbiquoAsyncApiTest<TaskAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -101,7 +101,7 @@ public class TaskAsyncApiTest extends BaseAbiquoAsyncApiTest<TaskAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnNullOn303.class);
+      assertFallbackClassEquals(method, NullOn303.class);
 
       checkFilters(request);
    }
@@ -117,7 +117,7 @@ public class TaskAsyncApiTest extends BaseAbiquoAsyncApiTest<TaskAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }

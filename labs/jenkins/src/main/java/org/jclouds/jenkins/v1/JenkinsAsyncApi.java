@@ -23,14 +23,14 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.jenkins.v1.domain.Node;
 import org.jclouds.jenkins.v1.features.ComputerAsyncApi;
 import org.jclouds.jenkins.v1.features.JobAsyncApi;
 import org.jclouds.jenkins.v1.filters.BasicAuthenticationUnlessAnonymous;
 import org.jclouds.rest.annotations.Delegate;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -51,7 +51,7 @@ public interface JenkinsAsyncApi {
    @GET
    @Path("/api/json")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<Node> getMaster();
    
    /**

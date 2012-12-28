@@ -26,12 +26,12 @@ import java.util.Set;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 
+import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.rest.annotations.EndpointParam;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.trmk.ecloud.functions.OrgURIToDataCentersListEndpoint;
 import org.jclouds.trmk.vcloud_0_8.domain.DataCenter;
 import org.jclouds.trmk.vcloud_0_8.domain.KeyPair;
@@ -58,7 +58,7 @@ public interface DataCenterOperationsAsyncClient {
    @GET
    @Consumes(DATACENTERSLIST_XML)
    @XMLResponseParser(DataCentersHandler.class)
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    ListenableFuture<? extends Set<KeyPair>> listDataCentersInOrg(
          @Nullable @EndpointParam(parser = OrgURIToDataCentersListEndpoint.class) URI org);
 
@@ -68,6 +68,6 @@ public interface DataCenterOperationsAsyncClient {
    @GET
    @Consumes(DATACENTERSLIST_XML)
    @XMLResponseParser(DataCentersHandler.class)
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    ListenableFuture<? extends Set<DataCenter>> listDataCenters(@EndpointParam URI dataCenters);
 }

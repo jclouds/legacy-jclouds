@@ -33,7 +33,7 @@ import ${package}.${providerName}Client;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.rest.functions.NullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
@@ -60,14 +60,14 @@ public interface ${providerName}AsyncClient {
    @GET
    @Path("/items")
    @Consumes(MediaType.TEXT_PLAIN)
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    ListenableFuture<String> list();
    
    /**
     * @see ${providerName}Client#get(long)
     */
    @GET
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Consumes(MediaType.TEXT_PLAIN)
    @Path("/items/{itemId}")
    ListenableFuture<String> get(@PathParam("itemId") long id);
@@ -77,6 +77,6 @@ public interface ${providerName}AsyncClient {
     */
    @DELETE
    @Path("/items/{itemId}")
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @Fallback(VoidOnNotFoundOr404.class)
    ListenableFuture<Void> delete(@PathParam("itemId") long id);
 }

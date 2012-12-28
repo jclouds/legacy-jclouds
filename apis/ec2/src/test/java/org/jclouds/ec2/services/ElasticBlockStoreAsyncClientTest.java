@@ -25,7 +25,8 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 
-import org.jclouds.ec2.functions.ReturnVoidOnVolumeAvailable;
+import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
+import org.jclouds.ec2.EC2Fallbacks.VoidOnVolumeAvailable;
 import org.jclouds.ec2.options.CreateSnapshotOptions;
 import org.jclouds.ec2.options.DescribeSnapshotsOptions;
 import org.jclouds.ec2.options.DetachVolumeOptions;
@@ -37,7 +38,6 @@ import org.jclouds.ec2.xml.SnapshotHandler;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
@@ -64,7 +64,7 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -81,7 +81,7 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, DescribeVolumesResponseHandler.class);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -98,7 +98,7 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, DescribeVolumesResponseHandler.class);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -116,7 +116,7 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, AttachmentHandler.class);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -133,7 +133,7 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnVoidOnVolumeAvailable.class);
+      assertFallbackClassEquals(method, VoidOnVolumeAvailable.class);
 
       checkFilters(request);
    }
@@ -152,7 +152,7 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnVoidOnVolumeAvailable.class);
+      assertFallbackClassEquals(method, VoidOnVolumeAvailable.class);
 
       checkFilters(request);
    }
@@ -169,7 +169,7 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, SnapshotHandler.class);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -188,7 +188,7 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, SnapshotHandler.class);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -205,7 +205,7 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, DescribeSnapshotsResponseHandler.class);
-      assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
+      assertFallbackClassEquals(method, EmptySetOnNotFoundOr404.class);
 
       checkFilters(request);
    }
@@ -225,7 +225,7 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, DescribeSnapshotsResponseHandler.class);
-      assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
+      assertFallbackClassEquals(method, EmptySetOnNotFoundOr404.class);
 
       checkFilters(request);
    }
@@ -244,7 +244,7 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, PermissionHandler.class);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -264,7 +264,7 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -284,7 +284,7 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
                "application/x-www-form-urlencoded", false);
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -303,7 +303,7 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
                "application/x-www-form-urlencoded", false);
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }

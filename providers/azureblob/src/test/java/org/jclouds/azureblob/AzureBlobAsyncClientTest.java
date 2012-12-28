@@ -26,26 +26,26 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Map;
 
+import org.jclouds.Fallbacks.TrueOnNotFoundOr404;
+import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
 import org.jclouds.azure.storage.filters.SharedKeyLiteAuthentication;
 import org.jclouds.azure.storage.options.ListOptions;
+import org.jclouds.azureblob.AzureBlobFallbacks.FalseIfContainerAlreadyExists;
 import org.jclouds.azureblob.domain.PublicAccess;
 import org.jclouds.azureblob.functions.ParseBlobFromHeadersAndHttpContent;
 import org.jclouds.azureblob.functions.ParseContainerPropertiesFromHeaders;
 import org.jclouds.azureblob.functions.ParsePublicAccessHeader;
-import org.jclouds.azureblob.functions.ReturnFalseIfContainerAlreadyExists;
 import org.jclouds.azureblob.options.CreateContainerOptions;
 import org.jclouds.azureblob.options.ListBlobsOptions;
 import org.jclouds.azureblob.xml.AccountNameEnumerationResultsHandler;
 import org.jclouds.azureblob.xml.ContainerNameEnumerationResultsHandler;
-import org.jclouds.blobstore.functions.ReturnNullOnContainerNotFound;
-import org.jclouds.blobstore.functions.ReturnNullOnKeyNotFound;
+import org.jclouds.blobstore.BlobStoreFallbacks.NullOnContainerNotFound;
+import org.jclouds.blobstore.BlobStoreFallbacks.NullOnKeyNotFound;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
-import org.jclouds.http.functions.ReturnTrueOn404;
 import org.jclouds.http.options.GetOptions;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.BaseAsyncClientTest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
@@ -73,7 +73,7 @@ public class AzureBlobAsyncClientTest extends BaseAsyncClientTest<AzureBlobAsync
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, AccountNameEnumerationResultsHandler.class);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
    }
 
@@ -88,7 +88,7 @@ public class AzureBlobAsyncClientTest extends BaseAsyncClientTest<AzureBlobAsync
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, AccountNameEnumerationResultsHandler.class);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
    }
 
    public void testCreateContainer() throws SecurityException, NoSuchMethodException, IOException {
@@ -103,7 +103,7 @@ public class AzureBlobAsyncClientTest extends BaseAsyncClientTest<AzureBlobAsync
 
       assertResponseParserClassEquals(method, request, ReturnTrueIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnFalseIfContainerAlreadyExists.class);
+      assertFallbackClassEquals(method, FalseIfContainerAlreadyExists.class);
    }
 
    public void testDeleteContainer() throws SecurityException, NoSuchMethodException, IOException {
@@ -117,7 +117,7 @@ public class AzureBlobAsyncClientTest extends BaseAsyncClientTest<AzureBlobAsync
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
+      assertFallbackClassEquals(method, VoidOnNotFoundOr404.class);
    }
 
    public void testCreateContainerOptions() throws SecurityException, NoSuchMethodException, IOException {
@@ -134,7 +134,7 @@ public class AzureBlobAsyncClientTest extends BaseAsyncClientTest<AzureBlobAsync
 
       assertResponseParserClassEquals(method, request, ReturnTrueIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnFalseIfContainerAlreadyExists.class);
+      assertFallbackClassEquals(method, FalseIfContainerAlreadyExists.class);
    }
 
    public void testCreateRootContainer() throws SecurityException, NoSuchMethodException, IOException {
@@ -148,7 +148,7 @@ public class AzureBlobAsyncClientTest extends BaseAsyncClientTest<AzureBlobAsync
 
       assertResponseParserClassEquals(method, request, ReturnTrueIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnFalseIfContainerAlreadyExists.class);
+      assertFallbackClassEquals(method, FalseIfContainerAlreadyExists.class);
    }
 
    public void testDeleteRootContainer() throws SecurityException, NoSuchMethodException, IOException {
@@ -161,7 +161,7 @@ public class AzureBlobAsyncClientTest extends BaseAsyncClientTest<AzureBlobAsync
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnTrueOn404.class);
+      assertFallbackClassEquals(method, TrueOnNotFoundOr404.class);
    }
 
    public void testCreateRootContainerOptions() throws SecurityException, NoSuchMethodException, IOException {
@@ -176,7 +176,7 @@ public class AzureBlobAsyncClientTest extends BaseAsyncClientTest<AzureBlobAsync
 
       assertResponseParserClassEquals(method, request, ReturnTrueIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnFalseIfContainerAlreadyExists.class);
+      assertFallbackClassEquals(method, FalseIfContainerAlreadyExists.class);
    }
 
    public void testListBlobs() throws SecurityException, NoSuchMethodException, IOException {
@@ -190,7 +190,7 @@ public class AzureBlobAsyncClientTest extends BaseAsyncClientTest<AzureBlobAsync
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, ContainerNameEnumerationResultsHandler.class);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
    }
 
    public void testListRootBlobs() throws SecurityException, NoSuchMethodException, IOException {
@@ -204,7 +204,7 @@ public class AzureBlobAsyncClientTest extends BaseAsyncClientTest<AzureBlobAsync
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, ContainerNameEnumerationResultsHandler.class);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
    }
 
    public void testContainerProperties() throws SecurityException, NoSuchMethodException, IOException {
@@ -218,7 +218,7 @@ public class AzureBlobAsyncClientTest extends BaseAsyncClientTest<AzureBlobAsync
 
       assertResponseParserClassEquals(method, request, ParseContainerPropertiesFromHeaders.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnNullOnContainerNotFound.class);
+      assertFallbackClassEquals(method, NullOnContainerNotFound.class);
    }
 
    public void testGetPublicAccessForContainer() throws SecurityException, NoSuchMethodException, IOException {
@@ -232,7 +232,7 @@ public class AzureBlobAsyncClientTest extends BaseAsyncClientTest<AzureBlobAsync
 
       assertResponseParserClassEquals(method, request, ParsePublicAccessHeader.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnNullOnContainerNotFound.class);
+      assertFallbackClassEquals(method, NullOnContainerNotFound.class);
    }
 
    public void testSetResourceMetadata() throws SecurityException, NoSuchMethodException, IOException {
@@ -247,7 +247,7 @@ public class AzureBlobAsyncClientTest extends BaseAsyncClientTest<AzureBlobAsync
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
    }
 
    public void testGetBlob() throws SecurityException, NoSuchMethodException, IOException {
@@ -260,7 +260,7 @@ public class AzureBlobAsyncClientTest extends BaseAsyncClientTest<AzureBlobAsync
 
       assertResponseParserClassEquals(method, request, ParseBlobFromHeadersAndHttpContent.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnNullOnKeyNotFound.class);
+      assertFallbackClassEquals(method, NullOnKeyNotFound.class);
    }
 
    public void testSetBlobMetadata() throws SecurityException, NoSuchMethodException, IOException {
@@ -274,7 +274,7 @@ public class AzureBlobAsyncClientTest extends BaseAsyncClientTest<AzureBlobAsync
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
    }
 
    @Override

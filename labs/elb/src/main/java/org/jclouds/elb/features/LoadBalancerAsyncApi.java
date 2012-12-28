@@ -25,6 +25,10 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
+import org.jclouds.Fallbacks.EmptyIterableWithMarkerOnNotFoundOr404;
+import org.jclouds.Fallbacks.EmptyPagedIterableOnNotFoundOr404;
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
+import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.collect.PagedIterable;
@@ -40,16 +44,12 @@ import org.jclouds.elb.xml.CreateLoadBalancerResponseHandler;
 import org.jclouds.elb.xml.DescribeLoadBalancersResultHandler;
 import org.jclouds.elb.xml.LoadBalancerHandler;
 import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.Transform;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.rest.functions.ReturnEmptyIterableWithMarkerOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnEmptyPagedIterableOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -123,7 +123,7 @@ public interface LoadBalancerAsyncApi {
    @Path("/")
    @XMLResponseParser(LoadBalancerHandler.class)
    @FormParams(keys = "Action", values = "DescribeLoadBalancers")
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<LoadBalancer> get(@FormParam("LoadBalancerNames.member.1") String name);
 
    /**
@@ -134,7 +134,7 @@ public interface LoadBalancerAsyncApi {
    @Path("/")
    @XMLResponseParser(DescribeLoadBalancersResultHandler.class)
    @Transform(LoadBalancersToPagedIterable.class)
-   @ExceptionParser(ReturnEmptyPagedIterableOnNotFoundOr404.class)
+   @Fallback(EmptyPagedIterableOnNotFoundOr404.class)
    @FormParams(keys = "Action", values = "DescribeLoadBalancers")
    ListenableFuture<PagedIterable<LoadBalancer>> list();
 
@@ -145,7 +145,7 @@ public interface LoadBalancerAsyncApi {
    @POST
    @Path("/")
    @XMLResponseParser(DescribeLoadBalancersResultHandler.class)
-   @ExceptionParser(ReturnEmptyIterableWithMarkerOnNotFoundOr404.class)
+   @Fallback(EmptyIterableWithMarkerOnNotFoundOr404.class)
    @FormParams(keys = "Action", values = "DescribeLoadBalancers")
    ListenableFuture<IterableWithMarker<LoadBalancer>> list(ListLoadBalancersOptions options);
 
@@ -155,7 +155,7 @@ public interface LoadBalancerAsyncApi {
    @Named("elasticloadbalancing:DeleteLoadBalancer")
    @POST
    @Path("/")
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @Fallback(VoidOnNotFoundOr404.class)
    @FormParams(keys = ACTION, values = "DeleteLoadBalancer")
    ListenableFuture<Void> delete(@FormParam("LoadBalancerName") String name);
 }

@@ -32,6 +32,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.Fallbacks.EmptyPagedIterableOnNotFoundOr404;
+import org.jclouds.Fallbacks.FalseOnNotFoundOr404;
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.collect.PagedIterable;
 import org.jclouds.io.Payload;
 import org.jclouds.openstack.glance.v1_0.domain.Image;
@@ -42,17 +45,14 @@ import org.jclouds.openstack.glance.v1_0.functions.internal.ParseImages;
 import org.jclouds.openstack.glance.v1_0.options.CreateImageOptions;
 import org.jclouds.openstack.glance.v1_0.options.ListImageOptions;
 import org.jclouds.openstack.glance.v1_0.options.UpdateImageOptions;
+import org.jclouds.openstack.keystone.v2_0.KeystoneFallbacks.EmptyPaginatedCollectionOnNotFoundOr404;
 import org.jclouds.openstack.keystone.v2_0.domain.PaginatedCollection;
 import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
-import org.jclouds.openstack.keystone.v2_0.functions.ReturnEmptyPaginatedCollectionOnNotFoundOr404;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.Transform;
-import org.jclouds.rest.functions.ReturnEmptyPagedIterableOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -78,7 +78,7 @@ public interface ImageAsyncApi {
    @RequestFilters(AuthenticateRequest.class)
    @ResponseParser(ParseImages.class)
    @Transform(ParseImages.ToPagedIterable.class)
-   @ExceptionParser(ReturnEmptyPagedIterableOnNotFoundOr404.class)
+   @Fallback(EmptyPagedIterableOnNotFoundOr404.class)
    ListenableFuture<? extends PagedIterable<? extends Image>> list();
 
    /** @see ImageApi#list(ListImageOptions) */
@@ -87,7 +87,7 @@ public interface ImageAsyncApi {
    @Path("/images")
    @RequestFilters(AuthenticateRequest.class)
    @ResponseParser(ParseImages.class)
-   @ExceptionParser(ReturnEmptyPaginatedCollectionOnNotFoundOr404.class)
+   @Fallback(EmptyPaginatedCollectionOnNotFoundOr404.class)
    ListenableFuture<? extends PaginatedCollection<? extends Image>> list(ListImageOptions options);
 
    /**
@@ -99,7 +99,7 @@ public interface ImageAsyncApi {
    @RequestFilters(AuthenticateRequest.class)
    @ResponseParser(ParseImageDetails.class)
    @Transform(ParseImageDetails.ToPagedIterable.class)
-   @ExceptionParser(ReturnEmptyPagedIterableOnNotFoundOr404.class)
+   @Fallback(EmptyPagedIterableOnNotFoundOr404.class)
    ListenableFuture<? extends PagedIterable<? extends ImageDetails>> listInDetail();
 
    /** @see ImageApi#listInDetail(ListImageOptions) */
@@ -108,7 +108,7 @@ public interface ImageAsyncApi {
    @Path("/images/detail")
    @RequestFilters(AuthenticateRequest.class)
    @ResponseParser(ParseImageDetails.class)
-   @ExceptionParser(ReturnEmptyPaginatedCollectionOnNotFoundOr404.class)
+   @Fallback(EmptyPaginatedCollectionOnNotFoundOr404.class)
    ListenableFuture<? extends PaginatedCollection<? extends ImageDetails>> listInDetail(ListImageOptions options);
 
    
@@ -118,7 +118,7 @@ public interface ImageAsyncApi {
    @HEAD
    @Path("/images/{id}")
    @ResponseParser(ParseImageDetailsFromHeaders.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<ImageDetails> get(@PathParam("id") String id);
    
    /**
@@ -126,7 +126,7 @@ public interface ImageAsyncApi {
     */
    @GET
    @Path("/images/{id}")
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<InputStream> getAsStream(@PathParam("id") String id);
 
    /**
@@ -172,6 +172,6 @@ public interface ImageAsyncApi {
     */
    @DELETE
    @Path("/images/{id}")
-   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
+   @Fallback(FalseOnNotFoundOr404.class)
    ListenableFuture<Boolean> delete(@PathParam("id") String id);
 }

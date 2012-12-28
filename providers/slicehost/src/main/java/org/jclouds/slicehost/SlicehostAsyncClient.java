@@ -19,6 +19,7 @@
 package org.jclouds.slicehost;
 
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -28,14 +29,14 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
+import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.slicehost.binders.BindCreateSliceToXmlPayload;
 import org.jclouds.slicehost.domain.Backup;
 import org.jclouds.slicehost.domain.Flavor;
@@ -72,7 +73,7 @@ public interface SlicehostAsyncClient {
     */
    @GET
    @Path("/slices.xml")
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    @XMLResponseParser(SlicesHandler.class)
    ListenableFuture<? extends Set<Slice>> listSlices();
 
@@ -80,7 +81,7 @@ public interface SlicehostAsyncClient {
     * @see SlicehostClient#getSlice
     */
    @GET
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Path("/slices/{id}.xml")
    @XMLResponseParser(SliceHandler.class)
    ListenableFuture<Slice> getSlice(@PathParam("id") int id);
@@ -89,7 +90,7 @@ public interface SlicehostAsyncClient {
     * @see SlicehostClient#destroySlice
     */
    @DELETE
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @Fallback(VoidOnNotFoundOr404.class)
    @Path("/slices/{id}/destroy.xml")
    ListenableFuture<Void> destroySlice(@PathParam("id") int id);
 
@@ -136,7 +137,7 @@ public interface SlicehostAsyncClient {
     */
    @GET
    @Path("/flavors.xml")
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    @XMLResponseParser(FlavorsHandler.class)
    ListenableFuture<? extends Set<Flavor>> listFlavors();
 
@@ -145,7 +146,7 @@ public interface SlicehostAsyncClient {
     */
    @GET
    @Path("/flavors/{id}.xml")
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @XMLResponseParser(FlavorHandler.class)
    ListenableFuture<Flavor> getFlavor(@PathParam("id") int id);
 
@@ -154,7 +155,7 @@ public interface SlicehostAsyncClient {
     */
    @GET
    @Path("/images.xml")
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    @XMLResponseParser(ImagesHandler.class)
    ListenableFuture<? extends Set<Image>> listImages();
 
@@ -162,7 +163,7 @@ public interface SlicehostAsyncClient {
     * @see SlicehostClient#getImage
     */
    @GET
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Path("/images/{id}.xml")
    @XMLResponseParser(ImageHandler.class)
    ListenableFuture<Image> getImage(@PathParam("id") int id);
@@ -172,7 +173,7 @@ public interface SlicehostAsyncClient {
     */
    @GET
    @Path("/backups.xml")
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    @XMLResponseParser(BackupsHandler.class)
    ListenableFuture<? extends Set<Backup>> listBackups();
 
@@ -180,7 +181,7 @@ public interface SlicehostAsyncClient {
     * @see SlicehostClient#getBackup
     */
    @GET
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Path("/backups/{id}.xml")
    @XMLResponseParser(BackupHandler.class)
    ListenableFuture<Backup> getBackup(@PathParam("id") int id);

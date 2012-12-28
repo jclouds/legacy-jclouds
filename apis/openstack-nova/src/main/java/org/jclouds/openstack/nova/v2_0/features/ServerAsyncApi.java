@@ -18,7 +18,6 @@
  */
 package org.jclouds.openstack.nova.v2_0.features;
 
-import com.google.common.base.Optional;
 import java.util.Map;
 
 import javax.ws.rs.Consumes;
@@ -31,23 +30,31 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.Fallbacks.AbsentOn403Or404Or500;
+import org.jclouds.Fallbacks.EmptyMapOnNotFoundOr404;
+import org.jclouds.Fallbacks.EmptyPagedIterableOnNotFoundOr404;
+import org.jclouds.Fallbacks.FalseOnNotFoundOr404;
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
+import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
 import org.jclouds.collect.PagedIterable;
+import org.jclouds.fallbacks.MapHttp4xxCodesToExceptions;
+import org.jclouds.openstack.keystone.v2_0.KeystoneFallbacks.EmptyPaginatedCollectionOnNotFoundOr404;
 import org.jclouds.openstack.keystone.v2_0.domain.PaginatedCollection;
 import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
-import org.jclouds.openstack.keystone.v2_0.functions.ReturnEmptyPaginatedCollectionOnNotFoundOr404;
 import org.jclouds.openstack.nova.v2_0.binders.BindMetadataToJsonPayload;
 import org.jclouds.openstack.nova.v2_0.domain.RebootType;
 import org.jclouds.openstack.nova.v2_0.domain.Server;
 import org.jclouds.openstack.nova.v2_0.domain.ServerCreated;
 import org.jclouds.openstack.nova.v2_0.functions.ParseImageIdFromLocationHeader;
 import org.jclouds.openstack.nova.v2_0.functions.internal.OnlyMetadataValueOrNull;
+import org.jclouds.openstack.nova.v2_0.functions.internal.ParseDiagnostics;
 import org.jclouds.openstack.nova.v2_0.functions.internal.ParseServerDetails;
 import org.jclouds.openstack.nova.v2_0.functions.internal.ParseServers;
 import org.jclouds.openstack.nova.v2_0.options.CreateServerOptions;
 import org.jclouds.openstack.nova.v2_0.options.RebuildServerOptions;
 import org.jclouds.openstack.v2_0.domain.Resource;
 import org.jclouds.openstack.v2_0.options.PaginationOptions;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.Payload;
 import org.jclouds.rest.annotations.PayloadParam;
@@ -57,16 +64,9 @@ import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.Transform;
 import org.jclouds.rest.annotations.Unwrap;
 import org.jclouds.rest.binders.BindToJsonPayload;
-import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
-import org.jclouds.rest.functions.ReturnEmptyMapOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnEmptyPagedIterableOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnAbsentOn403Or404Or500;
 
+import com.google.common.base.Optional;
 import com.google.common.util.concurrent.ListenableFuture;
-import org.jclouds.openstack.nova.v2_0.functions.internal.*;
 
 /**
  * Provides asynchronous access to Server via their REST API.
@@ -89,7 +89,7 @@ public interface ServerAsyncApi {
    @RequestFilters(AuthenticateRequest.class)
    @ResponseParser(ParseServers.class)
    @Transform(ParseServers.ToPagedIterable.class)
-   @ExceptionParser(ReturnEmptyPagedIterableOnNotFoundOr404.class)
+   @Fallback(EmptyPagedIterableOnNotFoundOr404.class)
    ListenableFuture<? extends PagedIterable<? extends Resource>> list();
 
    /** @see ServerApi#list(PaginationOptions) */
@@ -98,7 +98,7 @@ public interface ServerAsyncApi {
    @Path("/servers")
    @RequestFilters(AuthenticateRequest.class)
    @ResponseParser(ParseServers.class)
-   @ExceptionParser(ReturnEmptyPaginatedCollectionOnNotFoundOr404.class)
+   @Fallback(EmptyPaginatedCollectionOnNotFoundOr404.class)
    ListenableFuture<? extends PaginatedCollection<? extends Resource>> list(PaginationOptions options);
 
    /**
@@ -110,7 +110,7 @@ public interface ServerAsyncApi {
    @RequestFilters(AuthenticateRequest.class)
    @ResponseParser(ParseServerDetails.class)
    @Transform(ParseServerDetails.ToPagedIterable.class)
-   @ExceptionParser(ReturnEmptyPagedIterableOnNotFoundOr404.class)
+   @Fallback(EmptyPagedIterableOnNotFoundOr404.class)
    ListenableFuture<? extends PagedIterable<? extends Server>> listInDetail();
 
    /** @see ServerApi#listInDetail(PaginationOptions) */
@@ -119,7 +119,7 @@ public interface ServerAsyncApi {
    @Path("/servers/detail")
    @RequestFilters(AuthenticateRequest.class)
    @ResponseParser(ParseServerDetails.class)
-   @ExceptionParser(ReturnEmptyPaginatedCollectionOnNotFoundOr404.class)
+   @Fallback(EmptyPaginatedCollectionOnNotFoundOr404.class)
    ListenableFuture<? extends PaginatedCollection<? extends Server>> listInDetail(PaginationOptions options);
 
    /**
@@ -129,7 +129,7 @@ public interface ServerAsyncApi {
    @SelectJson("server")
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/servers/{id}")
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<? extends Server> get(@PathParam("id") String id);
 
    /**
@@ -137,7 +137,7 @@ public interface ServerAsyncApi {
     */
    @DELETE
    @Consumes
-   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
+   @Fallback(FalseOnNotFoundOr404.class)
    @Path("/servers/{id}")
    ListenableFuture<Boolean> delete(@PathParam("id") String id);
 
@@ -249,7 +249,7 @@ public interface ServerAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("%7B\"createImage\":%7B\"name\":\"{name}\", \"metadata\": %7B%7D%7D%7D")
-   @ExceptionParser(MapHttp4xxCodesToExceptions.class)
+   @Fallback(MapHttp4xxCodesToExceptions.class)
    @ResponseParser(ParseImageIdFromLocationHeader.class)
    ListenableFuture<String> createImageFromServer(@PayloadParam("name") String name, @PathParam("id") String id);
 
@@ -260,7 +260,7 @@ public interface ServerAsyncApi {
    @SelectJson("metadata")
    @Path("/servers/{id}/metadata")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnEmptyMapOnNotFoundOr404.class)
+   @Fallback(EmptyMapOnNotFoundOr404.class)
    ListenableFuture<? extends Map<String, String>> getMetadata(@PathParam("id") String id);
 
    /**
@@ -271,7 +271,7 @@ public interface ServerAsyncApi {
    @Path("/servers/{id}/metadata")
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnEmptyMapOnNotFoundOr404.class)
+   @Fallback(EmptyMapOnNotFoundOr404.class)
    @MapBinder(BindToJsonPayload.class)
    ListenableFuture<? extends Map<String, String>> setMetadata(@PathParam("id") String id,
             @PayloadParam("metadata") Map<String, String> metadata);
@@ -284,7 +284,7 @@ public interface ServerAsyncApi {
    @Path("/servers/{id}/metadata")
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnEmptyMapOnNotFoundOr404.class)
+   @Fallback(EmptyMapOnNotFoundOr404.class)
    @MapBinder(BindToJsonPayload.class)
    ListenableFuture<? extends Map<String, String>> updateMetadata(@PathParam("id") String id,
             @PayloadParam("metadata") Map<String, String> metadata);
@@ -296,7 +296,7 @@ public interface ServerAsyncApi {
    @Path("/servers/{id}/metadata/{key}")
    @Consumes(MediaType.APPLICATION_JSON)
    @ResponseParser(OnlyMetadataValueOrNull.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<String> getMetadata(@PathParam("id") String id, @PathParam("key") String key);
 
    /**
@@ -317,7 +317,7 @@ public interface ServerAsyncApi {
    @DELETE
    @Consumes
    @Path("/servers/{id}/metadata/{key}")
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @Fallback(VoidOnNotFoundOr404.class)
    ListenableFuture<Void> deleteMetadata(@PathParam("id") String id, @PathParam("key") String key);
 
    
@@ -327,7 +327,7 @@ public interface ServerAsyncApi {
    @GET
    @Path("/servers/{id}/diagnostics")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnAbsentOn403Or404Or500.class)
+   @Fallback(AbsentOn403Or404Or500.class)
    @ResponseParser(ParseDiagnostics.class)
    ListenableFuture<Optional<Map<String, String>>> getDiagnostics(@PathParam("id") String id);
 }

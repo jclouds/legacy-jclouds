@@ -30,27 +30,27 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
+import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
 import org.jclouds.aws.s3.binders.BindIterableAsPayloadToDeleteRequest;
 import org.jclouds.aws.s3.binders.BindObjectMetadataToRequest;
 import org.jclouds.aws.s3.binders.BindPartIdsAndETagsToRequest;
 import org.jclouds.aws.s3.domain.DeleteResult;
-import org.jclouds.aws.s3.xml.DeleteResultHandler;
 import org.jclouds.aws.s3.functions.ETagFromHttpResponseViaRegex;
 import org.jclouds.aws.s3.functions.ObjectMetadataKey;
 import org.jclouds.aws.s3.functions.UploadIdFromHttpResponseViaRegex;
+import org.jclouds.aws.s3.xml.DeleteResultHandler;
 import org.jclouds.blobstore.attr.BlobScope;
 import org.jclouds.http.functions.ParseETagHeader;
 import org.jclouds.io.Payload;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.EndpointParam;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.ParamValidators;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.s3.Bucket;
 import org.jclouds.s3.S3AsyncClient;
 import org.jclouds.s3.binders.BindAsHostPrefixIfConfigured;
@@ -90,7 +90,7 @@ public interface AWSS3AsyncClient extends S3AsyncClient {
    @Named("s3:AbortMultipartUpload")
    @DELETE
    @Path("/{key}")
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @Fallback(VoidOnNotFoundOr404.class)
    ListenableFuture<Void> abortMultipartUpload(
             @Bucket @EndpointParam(parser = AssignCorrectHostnameForBucket.class) @BinderParam(BindAsHostPrefixIfConfigured.class) @ParamValidators(BucketNameValidator.class) String bucketName,
             @PathParam("key") String key, @QueryParam("uploadId") String uploadId);

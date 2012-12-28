@@ -26,14 +26,14 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.binders.BindToXMLPayload;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.org.AdminOrg;
 import org.jclouds.vcloud.director.v1_5.domain.org.OrgEmailSettings;
@@ -64,7 +64,7 @@ public interface AdminOrgAsyncApi extends OrgAsyncApi {
    @GET
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<AdminOrg> get(@EndpointParam(parser = OrgURNToAdminHref.class) String orgUrn);
 
    /**
@@ -74,7 +74,7 @@ public interface AdminOrgAsyncApi extends OrgAsyncApi {
    @GET
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<AdminOrg> get(@EndpointParam URI adminOrgHref);
 
    /**
@@ -84,7 +84,7 @@ public interface AdminOrgAsyncApi extends OrgAsyncApi {
    @Path("/settings")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<OrgSettings> getSettings(@EndpointParam(parser = OrgURNToAdminHref.class) String orgUrn);
 
    /**
@@ -94,7 +94,7 @@ public interface AdminOrgAsyncApi extends OrgAsyncApi {
    @Path("/settings")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<OrgSettings> getSettings(@EndpointParam URI adminOrgHref);
 
    /**
@@ -126,7 +126,7 @@ public interface AdminOrgAsyncApi extends OrgAsyncApi {
    @Path("/settings/email")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<OrgEmailSettings> getEmailSettings(@EndpointParam(parser = OrgURNToAdminHref.class) String orgUrn);
 
    /**
@@ -136,7 +136,7 @@ public interface AdminOrgAsyncApi extends OrgAsyncApi {
    @Path("/settings/email")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<OrgEmailSettings> getEmailSettings(@EndpointParam URI adminOrgHref);
 
    /**
@@ -169,7 +169,7 @@ public interface AdminOrgAsyncApi extends OrgAsyncApi {
    @Path("/settings/general")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<OrgGeneralSettings> getGeneralSettings(
             @EndpointParam(parser = OrgURNToAdminHref.class) String orgUrn);
 
@@ -180,7 +180,7 @@ public interface AdminOrgAsyncApi extends OrgAsyncApi {
    @Path("/settings/general")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<OrgGeneralSettings> getGeneralSettings(@EndpointParam URI adminOrgHref);
 
    /**
@@ -213,7 +213,7 @@ public interface AdminOrgAsyncApi extends OrgAsyncApi {
    @Path("/settings/ldap")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<OrgLdapSettings> getLdapSettings(@EndpointParam(parser = OrgURNToAdminHref.class) String orgUrn);
 
    /**
@@ -223,7 +223,7 @@ public interface AdminOrgAsyncApi extends OrgAsyncApi {
    @Path("/settings/ldap")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<OrgLdapSettings> getLdapSettings(@EndpointParam URI adminOrgHref);
 
    /**
@@ -233,7 +233,7 @@ public interface AdminOrgAsyncApi extends OrgAsyncApi {
    @Path("/settings/passwordPolicy")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<OrgPasswordPolicySettings> getPasswordPolicy(
             @EndpointParam(parser = OrgURNToAdminHref.class) String orgUrn);
 
@@ -244,7 +244,7 @@ public interface AdminOrgAsyncApi extends OrgAsyncApi {
    @Path("/settings/passwordPolicy")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<OrgPasswordPolicySettings> getPasswordPolicy(@EndpointParam URI adminOrgHref);
 
    /**
@@ -277,7 +277,7 @@ public interface AdminOrgAsyncApi extends OrgAsyncApi {
    @Path("/settings/vAppLeaseSettings")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<OrgLeaseSettings> getVAppLeaseSettings(
             @EndpointParam(parser = OrgURNToAdminHref.class) String orgUrn);
 
@@ -288,7 +288,7 @@ public interface AdminOrgAsyncApi extends OrgAsyncApi {
    @Path("/settings/vAppLeaseSettings")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<OrgLeaseSettings> getVAppLeaseSettings(@EndpointParam URI adminOrgHref);
 
    /**
@@ -321,7 +321,7 @@ public interface AdminOrgAsyncApi extends OrgAsyncApi {
    @Path("/settings/vAppTemplateLeaseSettings")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<OrgVAppTemplateLeaseSettings> getVAppTemplateLeaseSettings(
             @EndpointParam(parser = OrgURNToAdminHref.class) String orgUrn);
 
@@ -332,7 +332,7 @@ public interface AdminOrgAsyncApi extends OrgAsyncApi {
    @Path("/settings/vAppTemplateLeaseSettings")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<OrgVAppTemplateLeaseSettings> getVAppTemplateLeaseSettings(@EndpointParam URI adminOrgHref);
 
    /**

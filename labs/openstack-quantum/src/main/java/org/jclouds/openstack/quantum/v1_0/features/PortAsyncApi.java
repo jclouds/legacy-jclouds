@@ -27,18 +27,18 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.Fallbacks.EmptyFluentIterableOnNotFoundOr404;
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.openstack.quantum.v1_0.domain.Attachment;
 import org.jclouds.openstack.quantum.v1_0.domain.Port;
 import org.jclouds.openstack.quantum.v1_0.domain.PortDetails;
 import org.jclouds.openstack.quantum.v1_0.domain.Reference;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.WrapWith;
-import org.jclouds.rest.functions.ReturnEmptyFluentIterableOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import com.google.common.collect.FluentIterable;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -60,7 +60,7 @@ public interface PortAsyncApi {
     */
    @GET
    @SelectJson("ports")
-   @ExceptionParser(ReturnEmptyFluentIterableOnNotFoundOr404.class)
+   @Fallback(EmptyFluentIterableOnNotFoundOr404.class)
    ListenableFuture<? extends FluentIterable<? extends Reference>> listReferences();
 
    /**
@@ -69,7 +69,7 @@ public interface PortAsyncApi {
    @GET
    @SelectJson("ports")
    @Path("/detail")
-   @ExceptionParser(ReturnEmptyFluentIterableOnNotFoundOr404.class)
+   @Fallback(EmptyFluentIterableOnNotFoundOr404.class)
    ListenableFuture<? extends FluentIterable<? extends Port>> list();
 
    /**
@@ -78,7 +78,7 @@ public interface PortAsyncApi {
    @GET
    @SelectJson("port")
    @Path("/{id}")
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<? extends Port> get(@PathParam("id") String id);
 
    /**
@@ -88,7 +88,7 @@ public interface PortAsyncApi {
    @SelectJson("port")
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/{id}/detail")
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<? extends PortDetails> getDetails(@PathParam("id") String id);
 
    /**
@@ -127,7 +127,7 @@ public interface PortAsyncApi {
    @GET
    @SelectJson("attachment")
    @Path("/{id}/attachment")
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)   
+   @Fallback(NullOnNotFoundOr404.class)   
    ListenableFuture<? extends Attachment> showAttachment(@PathParam("id") String portId);
 
    /**

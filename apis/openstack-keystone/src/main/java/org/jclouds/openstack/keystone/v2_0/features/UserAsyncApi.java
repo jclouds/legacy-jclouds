@@ -27,24 +27,24 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.Fallbacks.EmptyPagedIterableOnNotFoundOr404;
+import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.collect.PagedIterable;
+import org.jclouds.openstack.keystone.v2_0.KeystoneFallbacks.EmptyPaginatedCollectionOnNotFoundOr404;
 import org.jclouds.openstack.keystone.v2_0.domain.PaginatedCollection;
 import org.jclouds.openstack.keystone.v2_0.domain.Role;
 import org.jclouds.openstack.keystone.v2_0.domain.User;
 import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
-import org.jclouds.openstack.keystone.v2_0.functions.ReturnEmptyPaginatedCollectionOnNotFoundOr404;
 import org.jclouds.openstack.keystone.v2_0.functions.internal.ParseUsers;
 import org.jclouds.openstack.keystone.v2_0.functions.internal.ParseUsers.ToPagedIterable;
 import org.jclouds.openstack.v2_0.options.PaginationOptions;
 import org.jclouds.openstack.v2_0.services.Identity;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.Transform;
-import org.jclouds.rest.functions.ReturnEmptyPagedIterableOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -70,7 +70,7 @@ public interface UserAsyncApi {
    @RequestFilters(AuthenticateRequest.class)
    @ResponseParser(ParseUsers.class)
    @Transform(ToPagedIterable.class)
-   @ExceptionParser(ReturnEmptyPagedIterableOnNotFoundOr404.class)
+   @Fallback(EmptyPagedIterableOnNotFoundOr404.class)
    ListenableFuture<? extends PagedIterable<? extends User>> list();
 
    /** @see UserApi#list(PaginationOptions) */
@@ -79,7 +79,7 @@ public interface UserAsyncApi {
    @Path("/users")
    @RequestFilters(AuthenticateRequest.class)
    @ResponseParser(ParseUsers.class)
-   @ExceptionParser(ReturnEmptyPaginatedCollectionOnNotFoundOr404.class)
+   @Fallback(EmptyPaginatedCollectionOnNotFoundOr404.class)
    ListenableFuture<? extends PaginatedCollection<? extends User>> list(PaginationOptions options);
 
    /** @see UserApi#get(String) */
@@ -88,7 +88,7 @@ public interface UserAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/users/{userId}")
    @RequestFilters(AuthenticateRequest.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<? extends User> get(@PathParam("userId") String userId);
 
    /** @see UserApi#getByName(String) */
@@ -97,7 +97,7 @@ public interface UserAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/users")
    @RequestFilters(AuthenticateRequest.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<? extends User> getByName(@QueryParam("name") String userName);
 
    /** @see UserApi#listRolesOfUser(String) */
@@ -106,7 +106,7 @@ public interface UserAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/users/{userId}/roles")
    @RequestFilters(AuthenticateRequest.class)
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    ListenableFuture<? extends Set<? extends Role>> listRolesOfUser(@PathParam("userId") String userId);
 
    /** @see UserApi#listRolesOfUserOnTenant(String, String) */
@@ -115,7 +115,7 @@ public interface UserAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/tenants/{tenantId}/users/{userId}/roles")
    @RequestFilters(AuthenticateRequest.class)
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    ListenableFuture<? extends Set<? extends Role>> listRolesOfUserOnTenant(@PathParam("userId") String userId,
             @PathParam("tenantId") String tenantId);
 }

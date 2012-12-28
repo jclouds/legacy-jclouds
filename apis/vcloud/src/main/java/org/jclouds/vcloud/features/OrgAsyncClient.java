@@ -26,13 +26,13 @@ import java.util.Map;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.EndpointParam;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.ReferenceType;
@@ -68,7 +68,7 @@ public interface OrgAsyncClient {
     */
    @GET
    @XMLResponseParser(OrgHandler.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Consumes(ORG_XML)
    ListenableFuture<Org> getOrg(@EndpointParam URI orgId);
 
@@ -77,7 +77,7 @@ public interface OrgAsyncClient {
     */
    @GET
    @XMLResponseParser(OrgHandler.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Consumes(ORG_XML)
    ListenableFuture<Org> findOrgNamed(
             @Nullable @EndpointParam(parser = OrgNameToEndpoint.class) String orgName);

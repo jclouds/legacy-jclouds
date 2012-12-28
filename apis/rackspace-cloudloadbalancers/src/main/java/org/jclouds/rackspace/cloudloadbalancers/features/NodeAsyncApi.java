@@ -30,25 +30,25 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.Fallbacks.EmptyPagedIterableOnNotFoundOr404;
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
+import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
 import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.collect.PagedIterable;
+import org.jclouds.openstack.keystone.v2_0.KeystoneFallbacks.EmptyPaginatedCollectionOnNotFoundOr404;
 import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
-import org.jclouds.openstack.keystone.v2_0.functions.ReturnEmptyPaginatedCollectionOnNotFoundOr404;
 import org.jclouds.openstack.v2_0.options.PaginationOptions;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancer;
 import org.jclouds.rackspace.cloudloadbalancers.domain.Node;
 import org.jclouds.rackspace.cloudloadbalancers.domain.NodeAttributes;
 import org.jclouds.rackspace.cloudloadbalancers.domain.NodeRequest;
 import org.jclouds.rackspace.cloudloadbalancers.functions.ParseNodes;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.Transform;
 import org.jclouds.rest.annotations.WrapWith;
-import org.jclouds.rest.functions.ReturnEmptyPagedIterableOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -68,7 +68,7 @@ public interface NodeAsyncApi {
    @POST
    @SelectJson("nodes")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Path("/nodes")
    ListenableFuture<Set<Node>> add(@WrapWith("nodes") Iterable<NodeRequest> nodes);
 
@@ -88,7 +88,7 @@ public interface NodeAsyncApi {
    @Transform(ParseNodes.ToPagedIterable.class)
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/nodes")
-   @ExceptionParser(ReturnEmptyPagedIterableOnNotFoundOr404.class)
+   @Fallback(EmptyPagedIterableOnNotFoundOr404.class)
    ListenableFuture<PagedIterable<Node>> list();
 
    /** 
@@ -97,7 +97,7 @@ public interface NodeAsyncApi {
    @GET
    @ResponseParser(ParseNodes.class)
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnEmptyPaginatedCollectionOnNotFoundOr404.class)
+   @Fallback(EmptyPaginatedCollectionOnNotFoundOr404.class)
    @Path("/loadbalancers")
    ListenableFuture<IterableWithMarker<LoadBalancer>> list(PaginationOptions options);
    
@@ -108,7 +108,7 @@ public interface NodeAsyncApi {
    @SelectJson("node")
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/nodes/{id}")
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<Node> get(@PathParam("id") int id);
    
    /**
@@ -116,7 +116,7 @@ public interface NodeAsyncApi {
     */
    @DELETE
    @Path("/nodes/{id}")
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @Fallback(VoidOnNotFoundOr404.class)
    @Consumes("*/*")
    ListenableFuture<Void> remove(@PathParam("id") int id);
    
@@ -125,7 +125,7 @@ public interface NodeAsyncApi {
     */
    @DELETE
    @Path("/nodes")
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @Fallback(VoidOnNotFoundOr404.class)
    @Consumes("*/*")
    ListenableFuture<Void> remove(@QueryParam("id") Iterable<Integer> ids);
 

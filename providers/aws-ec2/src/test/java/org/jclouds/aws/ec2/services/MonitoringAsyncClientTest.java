@@ -51,7 +51,7 @@ public class MonitoringAsyncClientTest extends BaseAWSEC2AsyncClientTest<Monitor
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, MonitoringStateHandler.class);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -69,7 +69,7 @@ public class MonitoringAsyncClientTest extends BaseAWSEC2AsyncClientTest<Monitor
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, MonitoringStateHandler.class);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }

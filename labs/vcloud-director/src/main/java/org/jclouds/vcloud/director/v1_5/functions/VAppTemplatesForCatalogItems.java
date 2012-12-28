@@ -54,10 +54,10 @@ public class VAppTemplatesForCatalogItems implements Function<Iterable<CatalogIt
    public Logger logger = Logger.NULL;
    private final VCloudDirectorAsyncApi aapi;
    private final ExecutorService executor;
-   private final ReturnNullOnAuthorizationException returnNullOnAuthorizationException;
+   private final NullOnAuthorizationException NullOnAuthorizationException;
 
    @Singleton
-   static class ReturnNullOnAuthorizationException implements Function<Exception, VAppTemplate> {
+   static class NullOnAuthorizationException implements Function<Exception, VAppTemplate> {
 
       public VAppTemplate apply(Exception from) {
          if (from instanceof AuthorizationException) {
@@ -70,10 +70,10 @@ public class VAppTemplatesForCatalogItems implements Function<Iterable<CatalogIt
    @Inject
    VAppTemplatesForCatalogItems(VCloudDirectorAsyncApi aapi,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
-            ReturnNullOnAuthorizationException returnNullOnAuthorizationException) {
+            NullOnAuthorizationException NullOnAuthorizationException) {
       this.aapi = aapi;
       this.executor = executor;
-      this.returnNullOnAuthorizationException = returnNullOnAuthorizationException;
+      this.NullOnAuthorizationException = NullOnAuthorizationException;
    }
 
    @Override
@@ -91,7 +91,7 @@ public class VAppTemplatesForCatalogItems implements Function<Iterable<CatalogIt
          public Future<? extends VAppTemplate> apply(CatalogItem from) {
             return new ExceptionParsingListenableFuture<VAppTemplate>(Futures.makeListenable(VCloudDirectorAsyncApi.class
                      .cast(aapi).getVAppTemplateApi().get(from.getEntity().getHref()), executor),
-                     returnNullOnAuthorizationException);
+                     NullOnAuthorizationException);
          }
 
       }, executor, null, logger, "vappTemplates in");
