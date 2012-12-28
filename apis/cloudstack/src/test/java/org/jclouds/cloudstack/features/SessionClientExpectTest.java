@@ -23,11 +23,14 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.domain.Account;
+import org.jclouds.cloudstack.domain.ApiKeyPair;
 import org.jclouds.cloudstack.domain.LoginResponse;
 import org.jclouds.cloudstack.internal.BaseCloudStackExpectTest;
+import org.jclouds.cloudstack.util.ApiKeyPairs;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Test;
@@ -41,17 +44,19 @@ import com.google.common.collect.ImmutableMultimap;
  */
 @Test(groups = "live", singleThreaded = true, testName = "SessionClientExpectTest")
 public class SessionClientExpectTest extends BaseCloudStackExpectTest<SessionClient> {
+	private String loginEndpoint = "http://localhost:8080/client";
+	private String restEndpoint = loginEndpoint + "/api";
+    private String domain = "Partners/jCloud";
+    private String user = "jcloud";
+    private String password = "jcl0ud";
 
    public void testLoginWhenResponseIs2xxIncludesJSessionId() throws IOException {
-      String domain = "Partners/jCloud";
-      String user = "jcloud";
-      String password = "jcl0ud";
       String md5password = md5Hex(password);
 
       HttpRequest request = HttpRequest.builder()
          .method("GET")
          .endpoint(
-            URI.create("http://localhost:8080/client/api?response=json&command=login&" +
+            URI.create(restEndpoint + "?response=json&command=login&" +
                "username=" + user + "&password=" + md5password + "&domain=" + domain))
          .addHeader("Accept", "application/json")
          .build();
@@ -72,6 +77,15 @@ public class SessionClientExpectTest extends BaseCloudStackExpectTest<SessionCli
             .domainId("11").accountType(Account.Type.DOMAIN_ADMIN).userId("19").sessionKey(
             "uYT4/MNiglgAKiZRQkvV8QP8gn0=").jSessionId(jSessionId).accountName("jcloud").build().toString());
    }
+
+	public void getKeyPair()
+	{
+		URI url = URI.create(restEndpoint);
+//		File f = new File(domain);
+		ApiKeyPair pair = ApiKeyPairs.loginToEndpointAsUsernameInDomainWithPasswordAndReturnApiKeyPair(url,user,password,domain);
+//		assertEquals("not the right key", pair.getApiKey(), key);
+//		assertEquals("not the right secret", pair.getSecretKey(),secret);
+	}
 
    public void testLogout() throws IOException {
       HttpRequest request = HttpRequest.builder()
