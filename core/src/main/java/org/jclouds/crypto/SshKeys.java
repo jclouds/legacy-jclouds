@@ -18,18 +18,24 @@
  */
 package org.jclouds.crypto;
 
+import static com.google.common.base.Joiner.on;
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Splitter.fixedLength;
 import static com.google.common.base.Throwables.propagate;
+import static com.google.common.collect.Iterables.get;
+import static com.google.common.collect.Iterables.size;
+import static com.google.common.io.BaseEncoding.base64;
 import static org.jclouds.crypto.CryptoStreams.base64;
 import static org.jclouds.crypto.CryptoStreams.hex;
 import static org.jclouds.crypto.CryptoStreams.md5;
 import static org.jclouds.crypto.Pems.privateKeySpec;
+import static org.jclouds.util.Strings2.toStringAndClose;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringWriter;
 import java.math.BigInteger;
 import java.security.KeyFactory;
 import java.security.KeyPair;
@@ -44,16 +50,15 @@ import java.security.spec.RSAPrivateCrtKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Map;
 
-import org.bouncycastle.openssl.PEMWriter;
+import org.bouncycastle.asn1.ASN1Primitive;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.jclouds.io.InputSuppliers;
-import org.jclouds.util.Strings2;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
-import com.google.common.collect.Iterables;
 import com.google.common.io.InputSupplier;
 
 /**
@@ -96,10 +101,10 @@ public class SshKeys {
    public static RSAPublicKeySpec publicKeySpecFromOpenSSH(InputSupplier<? extends InputStream> supplier)
             throws IOException {
       InputStream stream = supplier.getInput();
-      Iterable<String> parts = Splitter.on(' ').split(Strings2.toStringAndClose(stream));
-      checkArgument(Iterables.size(parts) >= 2 && "ssh-rsa".equals(Iterables.get(parts, 0)),
+      Iterable<String> parts = Splitter.on(' ').split(toStringAndClose(stream).trim());
+      checkArgument(size(parts) >= 2 && "ssh-rsa".equals(get(parts, 0)),
                "bad format, should be: ssh-rsa AAAAB3...");
-      stream = new ByteArrayInputStream(CryptoStreams.base64(Iterables.get(parts, 1)));
+      stream = new ByteArrayInputStream(base64().decode(get(parts, 1)));
       String marker = new String(readLengthFirst(stream));
       checkArgument("ssh-rsa".equals(marker), "looking for marker ssh-rsa but got %s", marker);
       BigInteger publicExponent = new BigInteger(readLengthFirst(stream));
@@ -158,18 +163,22 @@ public class SshKeys {
    }
 
    public static String encodeAsPem(RSAPrivateKey key) {
-      StringWriter stringWriter = new StringWriter();
-      PEMWriter pemFormatWriter = new PEMWriter(stringWriter);
+      String type = "RSA PRIVATE KEY";
+      byte[] encoded = asn1Encode(checkNotNull(key, type));
+      StringBuilder builder = new StringBuilder();
+      builder.append("-----BEGIN ").append(type).append("-----").append('\n');
+      builder.append(on('\n').join(fixedLength(64).split(base64().encode(encoded)))).append('\n');
+      builder.append("-----END ").append(type).append("-----").append('\n');
+      return builder.toString();
+   }
+
+   private static byte[] asn1Encode(RSAPrivateKey key) {
       try {
-         pemFormatWriter.writeObject(key);
-         pemFormatWriter.close();
+         PrivateKeyInfo info = new PrivateKeyInfo((ASN1Sequence) ASN1Primitive.fromByteArray(key.getEncoded()));
+         return info.parsePrivateKey().toASN1Primitive().getEncoded();
       } catch (IOException e) {
          throw propagate(e);
       }
-      return stringWriter.toString();
-      // TODO: understand why pem isn't passing testCanGenerate where keys are
-      // checked to match.
-      // return pem(key.getEncoded(), PRIVATE_PKCS1_MARKER, 64);
    }
 
    /**
@@ -283,8 +292,7 @@ public class SshKeys {
     */
    public static String sha1(RSAPrivateCrtKeySpec privateKey) {
       try {
-         String sha1 = Joiner.on(":").join(
-                  Splitter.fixedLength(2).split(
+         String sha1 = on(':').join(fixedLength(2).split(
                            hex(CryptoStreams.sha1(KeyFactory.getInstance("RSA").generatePrivate(privateKey)
                                     .getEncoded()))));
          return sha1;
@@ -324,7 +332,7 @@ public class SshKeys {
     */
    public static String fingerprint(BigInteger publicExponent, BigInteger modulus) {
       byte[] keyBlob = keyBlob(publicExponent, modulus);
-      return Joiner.on(":").join(Splitter.fixedLength(2).split(hex(md5(keyBlob))));
+      return on(':').join(fixedLength(2).split(hex(md5(keyBlob))));
    }
 
    public static byte[] keyBlob(BigInteger publicExponent, BigInteger modulus) {
