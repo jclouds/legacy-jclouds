@@ -2,7 +2,7 @@ function installRuby() {
   if ! hash ruby 2>/dev/null; then
     if which dpkg &> /dev/null; then
       apt-get-update
-      apt-get install -y ruby ruby1.8-dev build-essential
+      apt-get install -y ruby ruby-dev build-essential
     elif which rpm &> /dev/null; then
       # Disable chef from the base repo (http://tickets.opscode.com/browse/CHEF-2906)
       sed -i "s/\[base\]/\0\n\exclude=ruby*/g" /etc/yum.repos.d/CentOS-Base.repo

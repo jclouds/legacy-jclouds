@@ -382,7 +382,7 @@ public class ChefSoloTest {
 
    private static String installChefGems() throws IOException {
       return Resources.toString(Resources.getResource("test_install_ruby." + ShellToken.SH.to(OsFamily.UNIX)),
-            Charsets.UTF_8) + "gem install ohai chef --no-rdoc --no-ri\n";
+            Charsets.UTF_8) + "gem install chef -v '>= 10.16.4' --no-rdoc --no-ri\n";
    }
 
    private static String createConfigFile() {

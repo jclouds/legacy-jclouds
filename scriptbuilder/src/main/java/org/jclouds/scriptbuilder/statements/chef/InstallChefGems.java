@@ -32,7 +32,9 @@ import org.jclouds.scriptbuilder.statements.ruby.InstallRuby;
 public class InstallChefGems extends StatementList {
 
    public InstallChefGems() {
-      super(new InstallRuby(), exec("gem install ohai chef --no-rdoc --no-ri"));
+      // Chef versions prior to 10.16.4 install an incompatible moneta gem.
+      // See: http://tickets.opscode.com/browse/CHEF-3721
+      super(new InstallRuby(), exec("gem install chef -v '>= 10.16.4' --no-rdoc --no-ri"));
    }
 
    @Override
