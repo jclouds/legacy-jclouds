@@ -115,7 +115,6 @@ import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.BuildVersion;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.EndpointParam;
-import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.JAXBResponseParser;
@@ -138,7 +137,6 @@ import org.jclouds.rest.annotations.WrapWith;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.binders.BindMapToStringPayload;
 import org.jclouds.rest.binders.BindToJsonPayloadWrappedWith;
-import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
@@ -298,21 +296,6 @@ public class RestAnnotationProcessor<T> {
          transformer = injector.getInstance(getParserOrThrowException(method));
       }
       return transformer;
-   }
-
-   @VisibleForTesting
-   Function<Exception, ?> createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(Method method) {
-      return createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(injector, method);
-   }
-
-   @VisibleForTesting
-   public static Function<Exception, ?> createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(
-         Injector injector, Method method) {
-      ExceptionParser annotation = method.getAnnotation(ExceptionParser.class);
-      if (annotation != null) {
-         return injector.getInstance(annotation.value());
-      }
-      return injector.getInstance(MapHttp4xxCodesToExceptions.class);
    }
 
    @SuppressWarnings("unchecked")

@@ -53,7 +53,7 @@ public class VCloudVersionsAsyncClientTest extends BaseAsyncClientTest<VCloudVer
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, SupportedVersionsHandler.class);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }

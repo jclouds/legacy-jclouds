@@ -28,6 +28,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
+import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
 import org.jclouds.elasticstack.binders.BindDriveDataToPlainTextString;
 import org.jclouds.elasticstack.binders.BindDriveToPlainTextString;
 import org.jclouds.elasticstack.binders.BindServerToPlainTextString;
@@ -46,11 +48,9 @@ import org.jclouds.elasticstack.functions.SplitNewlines;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.io.Payload;
 import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -86,7 +86,7 @@ public interface ElasticStackAsyncClient {
     * @see ElasticStackClient#getServerInfo
     */
    @GET
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @ResponseParser(KeyValuesDelimitedByBlankLinesToServerInfo.class)
    @Path("/servers/{uuid}/info")
    ListenableFuture<ServerInfo> getServerInfo(@PathParam("uuid") String uuid);
@@ -95,7 +95,7 @@ public interface ElasticStackAsyncClient {
     * @see ElasticStackClient#createServer
     */
    @POST
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @ResponseParser(KeyValuesDelimitedByBlankLinesToServerInfo.class)
    @Path("/servers/create/stopped")
    ListenableFuture<ServerInfo> createServer(
@@ -105,7 +105,7 @@ public interface ElasticStackAsyncClient {
     * @see ElasticStackClient#setServerConfiguration
     */
    @POST
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @ResponseParser(KeyValuesDelimitedByBlankLinesToServerInfo.class)
    @Path("/servers/{uuid}/set")
    ListenableFuture<ServerInfo> setServerConfiguration(@PathParam("uuid") String uuid,
@@ -116,7 +116,7 @@ public interface ElasticStackAsyncClient {
     */
    @POST
    @Path("/servers/{uuid}/destroy")
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @Fallback(VoidOnNotFoundOr404.class)
    ListenableFuture<Void> destroyServer(@PathParam("uuid") String uuid);
 
    /**
@@ -167,7 +167,7 @@ public interface ElasticStackAsyncClient {
     * @see ElasticStackClient#getDriveInfo
     */
    @GET
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @ResponseParser(KeyValuesDelimitedByBlankLinesToDriveInfo.class)
    @Path("/drives/{uuid}/info")
    ListenableFuture<DriveInfo> getDriveInfo(@PathParam("uuid") String uuid);
@@ -176,7 +176,7 @@ public interface ElasticStackAsyncClient {
     * @see ElasticStackClient#createDrive
     */
    @POST
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @ResponseParser(KeyValuesDelimitedByBlankLinesToDriveInfo.class)
    @Path("/drives/create")
    ListenableFuture<DriveInfo> createDrive(@BinderParam(BindDriveToPlainTextString.class) Drive createDrive);
@@ -185,7 +185,7 @@ public interface ElasticStackAsyncClient {
     * @see ElasticStackClient#setDriveData
     */
    @POST
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @ResponseParser(KeyValuesDelimitedByBlankLinesToDriveInfo.class)
    @Path("/drives/{uuid}/set")
    ListenableFuture<DriveInfo> setDriveData(@PathParam("uuid") String uuid,
@@ -196,14 +196,14 @@ public interface ElasticStackAsyncClient {
     */
    @POST
    @Path("/drives/{uuid}/destroy")
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @Fallback(VoidOnNotFoundOr404.class)
    ListenableFuture<Void> destroyDrive(@PathParam("uuid") String uuid);
 
    /**
     * @see ElasticStackClient#createAndStartServer
     */
    @POST
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @ResponseParser(KeyValuesDelimitedByBlankLinesToServerInfo.class)
    @Path("/servers/create")
    ListenableFuture<ServerInfo> createAndStartServer(
@@ -214,7 +214,7 @@ public interface ElasticStackAsyncClient {
     */
    @POST
    @Path("/drives/{destination}/image/{source}")
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @Fallback(VoidOnNotFoundOr404.class)
    ListenableFuture<Void> imageDrive(@PathParam("source") String source, @PathParam("destination") String destination);
 
    /**
@@ -222,7 +222,7 @@ public interface ElasticStackAsyncClient {
     */
    @POST
    @Path("/drives/{destination}/image/{source}/{conversion}")
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @Fallback(VoidOnNotFoundOr404.class)
    ListenableFuture<Void> imageDrive(@PathParam("source") String source, @PathParam("destination") String destination,
          @PathParam("conversion") ImageConversionType conversionType);
 
@@ -233,7 +233,7 @@ public interface ElasticStackAsyncClient {
    @Consumes(MediaType.APPLICATION_OCTET_STREAM)
    @Path("/drives/{uuid}/read/{offset}/{size}")
    @ResponseParser(ReturnPayload.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<Payload> readDrive(@PathParam("uuid") String uuid, @PathParam("offset") long offset,
          @PathParam("size") long size);
 
@@ -243,7 +243,7 @@ public interface ElasticStackAsyncClient {
    @POST
    @Produces(MediaType.APPLICATION_OCTET_STREAM)
    @Path("/drives/{uuid}/write")
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @Fallback(VoidOnNotFoundOr404.class)
    ListenableFuture<Void> writeDrive(@PathParam("uuid") String uuid, Payload content);
 
    /**
@@ -252,6 +252,6 @@ public interface ElasticStackAsyncClient {
    @POST
    @Produces(MediaType.APPLICATION_OCTET_STREAM)
    @Path("/drives/{uuid}/write/{offset}")
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @Fallback(VoidOnNotFoundOr404.class)
    ListenableFuture<Void> writeDrive(@PathParam("uuid") String uuid, Payload content, @PathParam("offset") long offset);
 }

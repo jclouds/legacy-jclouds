@@ -33,11 +33,12 @@ import org.jclouds.cloudwatch.domain.Unit;
 import org.jclouds.cloudwatch.internal.BaseCloudWatchApiExpectTest;
 import org.jclouds.cloudwatch.options.GetMetricStatisticsOptions;
 import org.jclouds.cloudwatch.options.ListMetricsOptions;
-import org.jclouds.collect.IterableWithMarkers;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * @author Jeremy Whitlock, Adrian Cole
@@ -84,7 +85,7 @@ public class MetricApiExpectTest extends BaseCloudWatchApiExpectTest {
       CloudWatchApi apiWhenMetricsDontExist = requestSendsResponse(
             listMetrics, listMetricsResponse);
 
-      assertEquals(apiWhenMetricsDontExist.getMetricApiForRegion(null).list().get(0), IterableWithMarkers.EMPTY);
+      assertEquals(apiWhenMetricsDontExist.getMetricApiForRegion(null).list().get(0).toImmutableSet(), ImmutableSet.of());
    }
    
    public void testListMetrics2PagesWhenResponseIs2xx() throws Exception {

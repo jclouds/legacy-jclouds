@@ -26,10 +26,10 @@ import javax.ws.rs.PathParam;
 
 import org.jclouds.azure.storage.filters.SharedKeyLiteAuthentication;
 import org.jclouds.azure.storage.reference.AzureStorageHeaders;
-import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
+import org.jclouds.blobstore.BlobStoreFallbacks.ThrowKeyNotFoundOn404;
 import org.jclouds.http.functions.ParseContentMD5FromHeaders;
 import org.jclouds.rest.annotations.EndpointParam;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
@@ -49,7 +49,7 @@ public interface AzureBlobUtil {
    @Headers(keys = "Range", values = "bytes=0-0")
    // should use HEAD, this is a hack per http://code.google.com/p/jclouds/issues/detail?id=92
    @ResponseParser(ParseContentMD5FromHeaders.class)
-   @ExceptionParser(ThrowKeyNotFoundOn404.class)
+   @Fallback(ThrowKeyNotFoundOn404.class)
    @Path("{key}")
    byte[] getMD5(@EndpointParam URI container, @PathParam("key") String key);
 

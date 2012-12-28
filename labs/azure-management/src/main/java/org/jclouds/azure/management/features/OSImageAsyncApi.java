@@ -30,18 +30,18 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
+import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
 import org.jclouds.azure.management.binders.BindOSImageParamsToXmlPayload;
 import org.jclouds.azure.management.domain.OSImage;
 import org.jclouds.azure.management.domain.OSImageParams;
 import org.jclouds.azure.management.functions.OSImageParamsName;
 import org.jclouds.azure.management.xml.ListOSImagesHandler;
 import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -61,7 +61,7 @@ public interface OSImageAsyncApi {
    @GET
    @Path("/services/images")
    @XMLResponseParser(ListOSImagesHandler.class)
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    @Consumes(MediaType.APPLICATION_XML)
    ListenableFuture<Set<OSImage>> list();
 
@@ -87,7 +87,7 @@ public interface OSImageAsyncApi {
     */
    @DELETE
    @Path("/services/images/{imageName}")
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @Fallback(VoidOnNotFoundOr404.class)
    ListenableFuture<Void> delete(@PathParam("imageName") String imageName);
 
 }

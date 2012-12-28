@@ -28,12 +28,12 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.AdminVdc;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
@@ -57,7 +57,7 @@ public interface AdminVdcAsyncApi extends VdcAsyncApi {
    @GET
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<AdminVdc> get(@EndpointParam(parser = VdcURNToAdminHref.class) String vdcUrn);
 
    /**
@@ -102,7 +102,7 @@ public interface AdminVdcAsyncApi extends VdcAsyncApi {
    @GET
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<AdminVdc> get(@EndpointParam URI vdcAdminHref);
 
    /**

@@ -19,6 +19,7 @@
 package org.jclouds.http;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Predicates.equalTo;
 import static com.google.common.base.Throwables.getCausalChain;
 import static com.google.common.base.Throwables.propagate;
 import static com.google.common.collect.Iterables.filter;
@@ -229,8 +230,7 @@ public class HttpUtils {
             logger.debug("%s %s: %s", prefix, CONTENT_LANGUAGE, message.getPayload().getContentMetadata()
                   .getContentLanguage());
          if (message.getPayload().getContentMetadata().getExpires() != null)
-            logger.debug("%s %s: %s", prefix, EXPIRES, message.getPayload().getContentMetadata()
-                  .getExpires());
+            logger.debug("%s %s: %s", prefix, EXPIRES, message.getPayload().getContentMetadata().getExpires());
       }
    }
 
@@ -313,12 +313,16 @@ public class HttpUtils {
       }
    }
 
-   public static <T> T returnValueOnCodeOrNull(Exception from, T value, Predicate<Integer> codePredicate) {
+   public static <T> T returnValueOnCodeOrNull(Throwable from, T value, Predicate<Integer> codePredicate) {
       Iterable<HttpResponseException> throwables = filter(getCausalChain(from), HttpResponseException.class);
       if (size(throwables) >= 1 && get(throwables, 0).getResponse() != null
             && codePredicate.apply(get(throwables, 0).getResponse().getStatusCode())) {
          return value;
       }
       return null;
+   }
+
+   public static boolean contains404(Throwable t) {
+      return returnValueOnCodeOrNull(t, true, equalTo(404)) != null;
    }
 }

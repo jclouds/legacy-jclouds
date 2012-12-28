@@ -31,15 +31,17 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
+import org.jclouds.blobstore.BlobStoreFallbacks.FalseOnContainerNotFound;
+import org.jclouds.blobstore.BlobStoreFallbacks.FalseOnKeyNotFound;
+import org.jclouds.blobstore.BlobStoreFallbacks.NullOnContainerNotFound;
+import org.jclouds.blobstore.BlobStoreFallbacks.NullOnKeyNotFound;
 import org.jclouds.blobstore.binders.BindMapToHeadersWithPrefix;
 import org.jclouds.blobstore.domain.PageSet;
-import org.jclouds.blobstore.functions.ReturnFalseOnContainerNotFound;
-import org.jclouds.blobstore.functions.ReturnFalseOnKeyNotFound;
-import org.jclouds.blobstore.functions.ReturnNullOnContainerNotFound;
-import org.jclouds.blobstore.functions.ReturnNullOnKeyNotFound;
 import org.jclouds.http.functions.ParseETagHeader;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.openstack.filters.AuthenticateRequest;
+import org.jclouds.openstack.swift.SwiftFallbacks.TrueOn404FalseOn409;
 import org.jclouds.openstack.swift.binders.BindIterableToHeadersWithContainerDeleteMetadataPrefix;
 import org.jclouds.openstack.swift.binders.BindMapToHeadersWithContainerMetadataPrefix;
 import org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequest;
@@ -54,19 +56,17 @@ import org.jclouds.openstack.swift.functions.ParseContainerMetadataFromHeaders;
 import org.jclouds.openstack.swift.functions.ParseObjectFromHeadersAndHttpContent;
 import org.jclouds.openstack.swift.functions.ParseObjectInfoFromHeaders;
 import org.jclouds.openstack.swift.functions.ParseObjectInfoListFromJsonResponse;
-import org.jclouds.openstack.swift.functions.ReturnTrueOn404FalseOn409;
 import org.jclouds.openstack.swift.options.CreateContainerOptions;
 import org.jclouds.openstack.swift.options.ListContainerOptions;
 import org.jclouds.openstack.swift.reference.SwiftHeaders;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.annotations.Beta;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -111,7 +111,7 @@ public interface CommonSwiftAsyncClient {
    @Path("/{container}")
    @Consumes(MediaType.WILDCARD)
    @ResponseParser(ParseContainerMetadataFromHeaders.class)
-   @ExceptionParser(ReturnNullOnContainerNotFound.class)
+   @Fallback(NullOnContainerNotFound.class)
    ListenableFuture<ContainerMetadata> getContainerMetadata(@PathParam("container") String container);
 
    /**
@@ -119,7 +119,7 @@ public interface CommonSwiftAsyncClient {
     */
    @POST
    @Path("/{container}")
-   @ExceptionParser(ReturnFalseOnContainerNotFound.class)
+   @Fallback(FalseOnContainerNotFound.class)
    ListenableFuture<Boolean> setContainerMetadata(@PathParam("container") String container, 
                                                   @BinderParam(BindMapToHeadersWithContainerMetadataPrefix.class) Map<String, String> containerMetadata);
 
@@ -128,7 +128,7 @@ public interface CommonSwiftAsyncClient {
     */
    @POST
    @Path("/{container}")
-   @ExceptionParser(ReturnFalseOnContainerNotFound.class)
+   @Fallback(FalseOnContainerNotFound.class)
    ListenableFuture<Boolean> deleteContainerMetadata(@PathParam("container") String container, 
                                                      @BinderParam(BindIterableToHeadersWithContainerDeleteMetadataPrefix.class) Iterable<String> metadataKeys);
 
@@ -160,7 +160,7 @@ public interface CommonSwiftAsyncClient {
     * @see CommonSwiftClient#deleteContainerIfEmpty
     */
    @DELETE
-   @ExceptionParser(ReturnTrueOn404FalseOn409.class)
+   @Fallback(TrueOn404FalseOn409.class)
    @Path("/{container}")
    ListenableFuture<Boolean> deleteContainerIfEmpty(@PathParam("container") String container);
 
@@ -180,7 +180,7 @@ public interface CommonSwiftAsyncClient {
    @HEAD
    @Path("/{container}")
    @Consumes(MediaType.WILDCARD)
-   @ExceptionParser(ReturnFalseOnContainerNotFound.class)
+   @Fallback(FalseOnContainerNotFound.class)
    ListenableFuture<Boolean> containerExists(@PathParam("container") String container);
 
    /**
@@ -198,7 +198,7 @@ public interface CommonSwiftAsyncClient {
    @PUT
    @Path("/{destinationContainer}/{destinationObject}")
    @Headers(keys = SwiftHeaders.OBJECT_COPY_FROM, values = "/{sourceContainer}/{sourceObject}")
-   @ExceptionParser(ReturnFalseOnContainerNotFound.class)
+   @Fallback(FalseOnContainerNotFound.class)
    ListenableFuture<Boolean> copyObject(@PathParam("sourceContainer") String sourceContainer,
                                         @PathParam("sourceObject") String sourceObject,
                                         @PathParam("destinationContainer") String destinationContainer,
@@ -209,7 +209,7 @@ public interface CommonSwiftAsyncClient {
     */
    @GET
    @ResponseParser(ParseObjectFromHeadersAndHttpContent.class)
-   @ExceptionParser(ReturnNullOnKeyNotFound.class)
+   @Fallback(NullOnKeyNotFound.class)
    @Path("/{container}/{name}")
    ListenableFuture<SwiftObject> getObject(@PathParam("container") String container, 
                                            @PathParam("name") String name,
@@ -220,7 +220,7 @@ public interface CommonSwiftAsyncClient {
     */
    @HEAD
    @ResponseParser(ParseObjectInfoFromHeaders.class)
-   @ExceptionParser(ReturnNullOnKeyNotFound.class)
+   @Fallback(NullOnKeyNotFound.class)
    @Path("/{container}/{name}")
    @Consumes(MediaType.WILDCARD)
    ListenableFuture<MutableObjectInfoWithMetadata> getObjectInfo(@PathParam("container") String container,
@@ -230,7 +230,7 @@ public interface CommonSwiftAsyncClient {
     * @see CommonSwiftClient#objectExists
     */
    @HEAD
-   @ExceptionParser(ReturnFalseOnKeyNotFound.class)
+   @Fallback(FalseOnKeyNotFound.class)
    @Path("/{container}/{name}")
    @Consumes(MediaType.WILDCARD)
    ListenableFuture<Boolean> objectExists(@PathParam("container") String container, 
@@ -240,7 +240,7 @@ public interface CommonSwiftAsyncClient {
     * @see CommonSwiftClient#removeObject
     */
    @DELETE
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @Fallback(VoidOnNotFoundOr404.class)
    @Path("/{container}/{name}")
    ListenableFuture<Void> removeObject(@PathParam("container") String container, 
                                        @PathParam("name") String name);

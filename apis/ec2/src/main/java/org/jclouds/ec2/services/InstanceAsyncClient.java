@@ -28,6 +28,7 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
+import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.ec2.binders.BindBlockDeviceMappingToIndexedFormParams;
 import org.jclouds.ec2.binders.BindInstanceIdsToIndexedFormParams;
@@ -53,13 +54,12 @@ import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.EndpointParam;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -81,7 +81,7 @@ public interface InstanceAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribeInstances")
    @XMLResponseParser(DescribeInstancesResponseHandler.class)
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    ListenableFuture<? extends Set<? extends Reservation<? extends RunningInstance>>> describeInstancesInRegion(
          @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
          @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);
@@ -119,7 +119,7 @@ public interface InstanceAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "TerminateInstances")
    @XMLResponseParser(InstanceStateChangeHandler.class)
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<? extends InstanceStateChange>> terminateInstancesInRegion(
          @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
          @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);

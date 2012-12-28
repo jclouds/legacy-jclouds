@@ -28,16 +28,17 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.binders.BindToXMLPayload;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Media;
+import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.params.CloneMediaParams;
@@ -59,7 +60,7 @@ public interface MediaAsyncApi {
    @GET
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<Media> get(@EndpointParam(parser = MediaURNToHref.class) String mediaUrn);
 
    /**
@@ -107,7 +108,7 @@ public interface MediaAsyncApi {
    @Path("/owner")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<Owner> getOwner(@EndpointParam(parser = MediaURNToHref.class) String mediaUrn);
 
    /**
@@ -116,7 +117,7 @@ public interface MediaAsyncApi {
    @GET
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<Media> get(@EndpointParam URI mediaHref);
 
    /**
@@ -154,7 +155,7 @@ public interface MediaAsyncApi {
    @Path("/owner")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<Owner> getOwner(@EndpointParam URI mediaHref);
 
    /**

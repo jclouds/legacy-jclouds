@@ -57,7 +57,7 @@ public class GridLoadBalancerAsyncClientTest extends BaseGoGridAsyncClientTest<G
 
       assertResponseParserClassEquals(method, httpRequest, ParseLoadBalancerListFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(httpRequest);
       httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
@@ -89,7 +89,7 @@ public class GridLoadBalancerAsyncClientTest extends BaseGoGridAsyncClientTest<G
 
       assertResponseParserClassEquals(method, httpRequest, ParseLoadBalancerFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(httpRequest);
       httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
@@ -119,7 +119,7 @@ public class GridLoadBalancerAsyncClientTest extends BaseGoGridAsyncClientTest<G
 
       assertResponseParserClassEquals(method, httpRequest, ParseLoadBalancerFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(httpRequest);
       httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
@@ -146,7 +146,7 @@ public class GridLoadBalancerAsyncClientTest extends BaseGoGridAsyncClientTest<G
 
       assertResponseParserClassEquals(method, httpRequest, ParseLoadBalancerFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(httpRequest);
       httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
@@ -171,7 +171,7 @@ public class GridLoadBalancerAsyncClientTest extends BaseGoGridAsyncClientTest<G
 
       assertResponseParserClassEquals(method, httpRequest, ParseLoadBalancerListFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(httpRequest);
       httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
@@ -195,7 +195,7 @@ public class GridLoadBalancerAsyncClientTest extends BaseGoGridAsyncClientTest<G
 
       assertResponseParserClassEquals(method, httpRequest, ParseLoadBalancerFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(httpRequest);
       httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);

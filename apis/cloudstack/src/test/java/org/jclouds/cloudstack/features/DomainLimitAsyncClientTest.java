@@ -24,9 +24,9 @@ import java.lang.reflect.Method;
 import org.jclouds.cloudstack.domain.ResourceLimit;
 import org.jclouds.cloudstack.domain.ResourceLimit.ResourceType;
 import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
+import org.jclouds.fallbacks.MapHttp4xxCodesToExceptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
-import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
@@ -53,7 +53,7 @@ public class DomainLimitAsyncClientTest extends BaseCloudStackAsyncClientTest<Do
 
       assertResponseParserClassEquals(method, httpRequest, ParseFirstJsonValueNamed.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
+      assertFallbackClassEquals(method, MapHttp4xxCodesToExceptions.class);
 
       checkFilters(httpRequest);
 

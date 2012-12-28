@@ -25,12 +25,12 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
 import org.jclouds.azure.management.domain.Location;
 import org.jclouds.azure.management.xml.ListLocationsHandler;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -52,7 +52,7 @@ public interface LocationAsyncApi {
    @GET
    @Path("/locations")
    @XMLResponseParser(ListLocationsHandler.class)
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    @Consumes(MediaType.APPLICATION_XML)
    ListenableFuture<Set<Location>> list();
 

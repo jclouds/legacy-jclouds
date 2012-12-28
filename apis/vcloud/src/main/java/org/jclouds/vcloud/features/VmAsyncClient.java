@@ -36,14 +36,14 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.EndpointParam;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.PayloadParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.vcloud.binders.BindCPUCountToXmlPayload;
 import org.jclouds.vcloud.binders.BindDeployVAppParamsToXmlPayload;
 import org.jclouds.vcloud.binders.BindGuestCustomizationSectionToXmlPayload;
@@ -75,7 +75,7 @@ public interface VmAsyncClient {
    @GET
    @Consumes(VM_XML)
    @XMLResponseParser(VmHandler.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<Vm> getVm(@EndpointParam URI href);
 
    /**
@@ -227,6 +227,6 @@ public interface VmAsyncClient {
    @GET
    @Path("/screen")
    @Consumes("image/png")
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<InputStream> getScreenThumbnailForVm(@EndpointParam URI vm);
 }

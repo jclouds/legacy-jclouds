@@ -23,15 +23,15 @@ import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.filters.AuthenticationFilter;
 import org.jclouds.cloudstack.options.CreateAccountOptions;
 import org.jclouds.cloudstack.options.UpdateAccountOptions;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -55,7 +55,7 @@ public interface GlobalAccountAsyncClient extends DomainAccountAsyncClient {
    @QueryParams(keys = "command", values = "createAccount")
    @SelectJson("account")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<Account> createAccount(@QueryParam("username") String userName,
       @QueryParam("accounttype") Account.Type accountType, @QueryParam("email") String email,
       @QueryParam("firstname") String firstName, @QueryParam("lastname") String lastName,
@@ -68,7 +68,7 @@ public interface GlobalAccountAsyncClient extends DomainAccountAsyncClient {
    @QueryParams(keys = "command", values = "updateAccount")
    @SelectJson("account")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<Account> updateAccount(@QueryParam("account") String accountName,
       @QueryParam("domainid") String domainId, @QueryParam("newname") String newName, UpdateAccountOptions... options);
 
@@ -78,6 +78,6 @@ public interface GlobalAccountAsyncClient extends DomainAccountAsyncClient {
    @GET
    @QueryParams(keys = "command", values = "deleteAccount")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<Void> deleteAccount(@QueryParam("id") String id);
 }

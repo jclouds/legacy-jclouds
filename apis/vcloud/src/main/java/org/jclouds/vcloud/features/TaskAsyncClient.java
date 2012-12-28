@@ -28,12 +28,12 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.rest.annotations.EndpointParam;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TasksList;
 import org.jclouds.vcloud.filters.AddVCloudAuthorizationAndCookieToRequest;
@@ -58,7 +58,7 @@ public interface TaskAsyncClient {
    @GET
    @Consumes(TASKSLIST_XML)
    @XMLResponseParser(TasksListHandler.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<TasksList> getTasksList(@EndpointParam URI tasksListId);
 
    /**
@@ -67,7 +67,7 @@ public interface TaskAsyncClient {
    @GET
    @Consumes(TASKSLIST_XML)
    @XMLResponseParser(TasksListHandler.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<TasksList> findTasksListInOrgNamed(
             @Nullable @EndpointParam(parser = OrgNameToTasksListEndpoint.class) String orgName);
 
@@ -77,7 +77,7 @@ public interface TaskAsyncClient {
    @GET
    @Consumes(TASK_XML)
    @XMLResponseParser(TaskHandler.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<Task> getTask(@EndpointParam URI taskId);
 
    /**

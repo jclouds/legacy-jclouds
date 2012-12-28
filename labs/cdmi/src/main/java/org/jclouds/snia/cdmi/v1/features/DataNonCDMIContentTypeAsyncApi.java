@@ -28,14 +28,14 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.Payload;
 import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.snia.cdmi.v1.binders.BindQueryParmsToSuffix;
 import org.jclouds.snia.cdmi.v1.domain.DataObject;
 import org.jclouds.snia.cdmi.v1.filters.BasicAuthenticationAndTenantId;
@@ -61,7 +61,7 @@ public interface DataNonCDMIContentTypeAsyncApi {
    @GET
    @Consumes(MediaType.MEDIA_TYPE_WILDCARD)
    @ResponseParser(ParseObjectFromHeadersAndHttpContent.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Path("/{dataObjectName}")
    ListenableFuture<org.jclouds.io.Payload> getValue(@PathParam("dataObjectName") String dataObjectName);
 
@@ -72,7 +72,7 @@ public interface DataNonCDMIContentTypeAsyncApi {
    @GET
    @Consumes(MediaType.MEDIA_TYPE_WILDCARD)
    @ResponseParser(ParseObjectFromHeadersAndHttpContent.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Path("/{dataObjectName}")
    ListenableFuture<org.jclouds.io.Payload> getValue(@PathParam("dataObjectName") String dataObjectName,
             @HeaderParam("Range") String range);
@@ -82,7 +82,7 @@ public interface DataNonCDMIContentTypeAsyncApi {
     */
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Path("/{dataObjectName}")
    ListenableFuture<DataObject> get(@PathParam("dataObjectName") String dataObjectName,
             @BinderParam(BindQueryParmsToSuffix.class) DataObjectQueryParams queryParams);
@@ -92,7 +92,7 @@ public interface DataNonCDMIContentTypeAsyncApi {
     */
    @PUT
    @Consumes(MediaType.MEDIA_TYPE_WILDCARD)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Path("/{dataObjectName}")
    ListenableFuture<Void> create(@PathParam("dataObjectName") String dataObjectName, org.jclouds.io.Payload payload);
 
@@ -102,7 +102,7 @@ public interface DataNonCDMIContentTypeAsyncApi {
     */
    @PUT
    @Consumes(MediaType.MEDIA_TYPE_WILDCARD)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Path("/{dataObjectName}")
    @Headers(keys = "X-CDMI-Partial", values = "true")
    ListenableFuture<Void> createPartial(@PathParam("dataObjectName") String dataObjectName,
@@ -114,7 +114,7 @@ public interface DataNonCDMIContentTypeAsyncApi {
    @PUT
    @Consumes(MediaType.MEDIA_TYPE_WILDCARD)
    @Produces(MediaType.TEXT_PLAIN)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Path("/{dataObjectName}")
    @Payload("{input}")
    ListenableFuture<Void> create(@PathParam("dataObjectName") String dataObjectName, @PayloadParam("input") String input);
@@ -124,7 +124,7 @@ public interface DataNonCDMIContentTypeAsyncApi {
     */
    @DELETE
    @Consumes(MediaType.MEDIA_TYPE_WILDCARD)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Path("/{dataObjectName}")
    ListenableFuture<Void> delete(@PathParam("dataObjectName") String dataObjectName);
 

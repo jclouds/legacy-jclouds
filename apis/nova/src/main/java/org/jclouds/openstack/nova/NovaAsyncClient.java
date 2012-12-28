@@ -19,6 +19,7 @@
 package org.jclouds.openstack.nova;
 
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -30,6 +31,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
+import org.jclouds.Fallbacks.FalseOnNotFoundOr404;
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.openstack.filters.AddTimestampQuery;
 import org.jclouds.openstack.filters.AuthenticateRequest;
 import org.jclouds.openstack.nova.domain.Addresses;
@@ -43,16 +47,13 @@ import org.jclouds.openstack.nova.options.CreateServerOptions;
 import org.jclouds.openstack.nova.options.ListOptions;
 import org.jclouds.openstack.nova.options.RebuildServerOptions;
 import org.jclouds.rest.annotations.Endpoint;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.Payload;
 import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.Unwrap;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -84,7 +85,7 @@ public interface NovaAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "format", values = "json")
    @Path("/servers")
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    @Deprecated
    ListenableFuture<? extends Set<Server>> listServers(ListOptions... options);
 
@@ -97,7 +98,7 @@ public interface NovaAsyncClient {
    @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "format", values = "json")
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Path("/servers/{id}")
    @Deprecated
    ListenableFuture<Server> getServer(@PathParam("id") int id);
@@ -111,7 +112,7 @@ public interface NovaAsyncClient {
    @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "format", values = "json")
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Path("/servers/{uuid}")
    @Deprecated
    ListenableFuture<Server> getServer(@PathParam("uuid") String uuid);
@@ -123,7 +124,7 @@ public interface NovaAsyncClient {
     */
    @DELETE
    @Consumes
-   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
+   @Fallback(FalseOnNotFoundOr404.class)
    @Path("/servers/{id}")
    @Deprecated
    ListenableFuture<Boolean> deleteServer(@PathParam("id") int id);
@@ -135,7 +136,7 @@ public interface NovaAsyncClient {
      */
     @DELETE
     @Consumes
-    @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
+    @Fallback(FalseOnNotFoundOr404.class)
     @Path("/servers/{uuid}")
     @Deprecated
     ListenableFuture<Boolean> deleteServer(@PathParam("uuid") String uuid);
@@ -261,7 +262,7 @@ public interface NovaAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "format", values = "json")
    @Path("/flavors")
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    @Deprecated
    ListenableFuture<? extends Set<Flavor>> listFlavors(ListOptions... options);
 
@@ -275,7 +276,7 @@ public interface NovaAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "format", values = "json")
    @Path("/flavors/{id}")
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Deprecated
    ListenableFuture<Flavor> getFlavor(@PathParam("id") int id);
 
@@ -289,7 +290,7 @@ public interface NovaAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "format", values = "json")
    @Path("/flavors/{uuid}")
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Deprecated
    ListenableFuture<Flavor> getFlavor(@PathParam("uuid") String uuid);
 
@@ -303,7 +304,7 @@ public interface NovaAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "format", values = "json")
    @Path("/images")
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    @Deprecated
    ListenableFuture<? extends Set<Image>> listImages(ListOptions... options);
 
@@ -315,7 +316,7 @@ public interface NovaAsyncClient {
    @GET
    @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @QueryParams(keys = "format", values = "json")
    @Path("/images/{id}")
    @Deprecated
@@ -329,7 +330,7 @@ public interface NovaAsyncClient {
    @GET
    @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @QueryParams(keys = "format", values = "json")
    @Path("/images/{uuid}")
    @Deprecated
@@ -341,7 +342,7 @@ public interface NovaAsyncClient {
     * @deprecated Deprecated in jclouds 1.6, to be removed in jclouds 1.7. See {@link org.jclouds.openstack.nova.v2_0.features.ImageAsyncApi#delete(String)} in openstack-nova.
     */
    @DELETE
-   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
+   @Fallback(FalseOnNotFoundOr404.class)
    @Consumes
    @Path("/images/{id}")
    @Deprecated
@@ -353,7 +354,7 @@ public interface NovaAsyncClient {
     * @deprecated Deprecated in jclouds 1.6, to be removed in jclouds 1.7. See {@link org.jclouds.openstack.nova.v2_0.features.ImageAsyncApi#delete(String)} in openstack-nova.
     */
    @DELETE
-   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
+   @Fallback(FalseOnNotFoundOr404.class)
    @Consumes
    @Path("/images/{id}")
    @Deprecated
@@ -398,7 +399,7 @@ public interface NovaAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "format", values = "json")
    @Path("/servers/{id}/ips/public")
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    @Deprecated
    ListenableFuture<? extends Set<String>> listPublicAddresses(@PathParam("id") int serverId);
 
@@ -412,7 +413,7 @@ public interface NovaAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "format", values = "json")
    @Path("/servers/{id}/ips/private")
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    @Deprecated
    ListenableFuture<? extends Set<String>> listPrivateAddresses(@PathParam("id") int serverId);
    
@@ -435,7 +436,7 @@ public interface NovaAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "format", values = "json")
    @Path("/os-floating-ips")
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    @Deprecated
    ListenableFuture<? extends Set<FloatingIP>> listFloatingIPs();
    
@@ -447,7 +448,7 @@ public interface NovaAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "format", values = "json")
    @Path("/os-floating-ips/{id}")
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Deprecated
    ListenableFuture<FloatingIP> getFloatingIP(@PathParam("id") int id);
 
@@ -459,7 +460,7 @@ public interface NovaAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "format", values = "json")
    @Path("/os-security-groups")
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    @Deprecated
    ListenableFuture<? extends Set<SecurityGroup>> listSecurityGroups();
    
@@ -471,7 +472,7 @@ public interface NovaAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "format", values = "json")
    @Path("/os-security-groups/{id}")
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Deprecated
    ListenableFuture<SecurityGroup> getSecurityGroup(@PathParam("id") int id);
 

@@ -21,13 +21,13 @@ package org.jclouds.cloudstack.features;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
+import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.cloudstack.functions.ParseAsyncJobFromHttpResponse;
 import org.jclouds.cloudstack.functions.ParseAsyncJobsFromHttpResponse;
 import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.ListAsyncJobsOptions;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
@@ -54,7 +54,7 @@ public class AsyncJobAsyncClientTest extends BaseCloudStackAsyncClientTest<Async
 
       assertResponseParserClassEquals(method, httpRequest, ParseAsyncJobFromHttpResponse.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+      assertFallbackClassEquals(method, NullOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
 
@@ -71,7 +71,7 @@ public class AsyncJobAsyncClientTest extends BaseCloudStackAsyncClientTest<Async
 
       assertResponseParserClassEquals(method, httpRequest, ParseAsyncJobsFromHttpResponse.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
+      assertFallbackClassEquals(method, EmptySetOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
 
@@ -89,7 +89,7 @@ public class AsyncJobAsyncClientTest extends BaseCloudStackAsyncClientTest<Async
 
       assertResponseParserClassEquals(method, httpRequest, ParseAsyncJobsFromHttpResponse.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
+      assertFallbackClassEquals(method, EmptySetOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
 

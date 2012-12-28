@@ -26,12 +26,12 @@ import java.util.Map;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 
+import org.jclouds.Fallbacks.EmptyMapOnNotFoundOr404;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.rest.annotations.EndpointParam;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.rest.functions.ReturnEmptyMapOnNotFoundOr404;
 import org.jclouds.trmk.ecloud.functions.OrgURIToTagsListEndpoint;
 import org.jclouds.trmk.ecloud.xml.TagNameToUsageCountHandler;
 import org.jclouds.trmk.vcloud_0_8.filters.SetVCloudTokenCookie;
@@ -56,7 +56,7 @@ public interface TagOperationsAsyncClient {
    @GET
    @Consumes(TAGSLISTLIST_XML)
    @XMLResponseParser(TagNameToUsageCountHandler.class)
-   @ExceptionParser(ReturnEmptyMapOnNotFoundOr404.class)
+   @Fallback(EmptyMapOnNotFoundOr404.class)
    ListenableFuture<? extends Map<String, Integer>> getTagNameToUsageCountInOrg(
          @Nullable @EndpointParam(parser = OrgURIToTagsListEndpoint.class) URI org);
 
@@ -66,6 +66,6 @@ public interface TagOperationsAsyncClient {
    @GET
    @Consumes(TAGSLISTLIST_XML)
    @XMLResponseParser(TagNameToUsageCountHandler.class)
-   @ExceptionParser(ReturnEmptyMapOnNotFoundOr404.class)
+   @Fallback(EmptyMapOnNotFoundOr404.class)
    ListenableFuture<? extends Map<String, Integer>> getTagNameToUsageCount(@EndpointParam URI tagList);
 }

@@ -25,6 +25,8 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
+import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.collect.PagedIterable;
@@ -33,14 +35,12 @@ import org.jclouds.rds.functions.SubnetGroupsToPagedIterable;
 import org.jclouds.rds.options.ListSubnetGroupsOptions;
 import org.jclouds.rds.xml.DescribeDBSubnetGroupsResultHandler;
 import org.jclouds.rds.xml.SubnetGroupHandler;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.Transform;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -65,7 +65,7 @@ public interface SubnetGroupAsyncApi {
    @Path("/")
    @XMLResponseParser(SubnetGroupHandler.class)
    @FormParams(keys = "Action", values = "DescribeDBSubnetGroups")
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<SubnetGroup> get(@FormParam("DBSubnetGroupName") String name);
 
    /**
@@ -95,7 +95,7 @@ public interface SubnetGroupAsyncApi {
    @Named("rds:DeleteDBSubnetGroup")
    @POST
    @Path("/")
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @Fallback(VoidOnNotFoundOr404.class)
    @FormParams(keys = ACTION, values = "DeleteDBSubnetGroup")
    ListenableFuture<Void> delete(@FormParam("DBSubnetGroupName") String name);
 }

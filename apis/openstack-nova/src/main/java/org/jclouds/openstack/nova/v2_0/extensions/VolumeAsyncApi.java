@@ -27,6 +27,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.Fallbacks.EmptyFluentIterableOnNotFoundOr404;
+import org.jclouds.Fallbacks.FalseOnNotFoundOr404;
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.openstack.nova.v2_0.domain.Volume;
 import org.jclouds.openstack.nova.v2_0.domain.VolumeAttachment;
@@ -35,15 +38,12 @@ import org.jclouds.openstack.nova.v2_0.options.CreateVolumeOptions;
 import org.jclouds.openstack.nova.v2_0.options.CreateVolumeSnapshotOptions;
 import org.jclouds.openstack.v2_0.ServiceType;
 import org.jclouds.openstack.v2_0.services.Extension;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.WrapWith;
-import org.jclouds.rest.functions.ReturnEmptyFluentIterableOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.FluentIterable;
@@ -69,7 +69,7 @@ public interface VolumeAsyncApi {
    @Path("/os-volumes")
    @SelectJson("volumes")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnEmptyFluentIterableOnNotFoundOr404.class)
+   @Fallback(EmptyFluentIterableOnNotFoundOr404.class)
    ListenableFuture<? extends FluentIterable<? extends Volume>> list();
 
    /**
@@ -81,7 +81,7 @@ public interface VolumeAsyncApi {
    @Path("/os-volumes/detail")
    @SelectJson("volumes")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnEmptyFluentIterableOnNotFoundOr404.class)
+   @Fallback(EmptyFluentIterableOnNotFoundOr404.class)
    ListenableFuture<? extends FluentIterable<? extends Volume>> listInDetail();
 
    /**
@@ -93,7 +93,7 @@ public interface VolumeAsyncApi {
    @Path("/os-volumes/{id}")
    @SelectJson("volume")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<? extends Volume> get(@PathParam("id") String volumeId);
 
    /**
@@ -117,7 +117,7 @@ public interface VolumeAsyncApi {
    @DELETE
    @Path("/os-volumes/{id}")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
+   @Fallback(FalseOnNotFoundOr404.class)
    ListenableFuture<Boolean> delete(@PathParam("id") String volumeId);
    
    /**
@@ -131,7 +131,7 @@ public interface VolumeAsyncApi {
    @Path("/servers/{server_id}/os-volume_attachments")
    @SelectJson("volumeAttachments")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnEmptyFluentIterableOnNotFoundOr404.class)
+   @Fallback(EmptyFluentIterableOnNotFoundOr404.class)
    @Deprecated ListenableFuture<? extends FluentIterable<? extends VolumeAttachment>> listAttachmentsOnServer(@PathParam("server_id") String serverId);
 
    /**
@@ -145,7 +145,7 @@ public interface VolumeAsyncApi {
    @Path("/servers/{server_id}/os-volume_attachments/{id}")
    @SelectJson("volumeAttachment")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Deprecated ListenableFuture<? extends VolumeAttachment> getAttachmentForVolumeOnServer(@PathParam("id") String volumeId,
                                                                      @PathParam("server_id") String serverId);
 
@@ -175,7 +175,7 @@ public interface VolumeAsyncApi {
    @DELETE
    @Path("/servers/{server_id}/os-volume_attachments/{id}")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
+   @Fallback(FalseOnNotFoundOr404.class)
    @Deprecated ListenableFuture<Boolean> detachVolumeFromServer(@PathParam("id") String volumeId, @PathParam("server_id") String serverId);
 
    /**
@@ -187,7 +187,7 @@ public interface VolumeAsyncApi {
    @Path("/os-snapshots")
    @SelectJson("snapshots")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnEmptyFluentIterableOnNotFoundOr404.class)
+   @Fallback(EmptyFluentIterableOnNotFoundOr404.class)
    ListenableFuture<? extends FluentIterable<? extends VolumeSnapshot>> listSnapshots();
 
    /**
@@ -199,7 +199,7 @@ public interface VolumeAsyncApi {
    @Path("/os-snapshots/detail")
    @SelectJson("snapshots")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnEmptyFluentIterableOnNotFoundOr404.class)
+   @Fallback(EmptyFluentIterableOnNotFoundOr404.class)
    ListenableFuture<? extends FluentIterable<? extends VolumeSnapshot>> listSnapshotsInDetail();
 
    /**
@@ -211,7 +211,7 @@ public interface VolumeAsyncApi {
    @Path("/os-snapshots/{id}")
    @SelectJson("snapshot")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<? extends VolumeSnapshot> getSnapshot(@PathParam("id") String snapshotId);
 
    /**
@@ -235,7 +235,7 @@ public interface VolumeAsyncApi {
    @DELETE
    @Path("/os-snapshots/{id}")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
+   @Fallback(FalseOnNotFoundOr404.class)
    ListenableFuture<Boolean> deleteSnapshot(@PathParam("id") String snapshotId);
    
 }

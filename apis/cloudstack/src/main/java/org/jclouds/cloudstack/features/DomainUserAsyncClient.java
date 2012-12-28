@@ -25,17 +25,17 @@ import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.User;
 import org.jclouds.cloudstack.filters.AuthenticationFilter;
 import org.jclouds.cloudstack.options.ListUsersOptions;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.Unwrap;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -59,7 +59,7 @@ public interface DomainUserAsyncClient {
    @QueryParams(keys = "command", values = "listUsers")
    @SelectJson("user")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<User>> listUsers(ListUsersOptions... options);
 
    /**
@@ -69,7 +69,7 @@ public interface DomainUserAsyncClient {
    @QueryParams(keys = "command", values = "enableUser")
    @SelectJson("user")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<User> enableUser(@QueryParam("id") String userId);
 
    /**
@@ -79,7 +79,7 @@ public interface DomainUserAsyncClient {
    @QueryParams(keys = "command", values = "disableUser")
    @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<AsyncCreateResponse> disableUser(@QueryParam("id") String userId);
 
 }

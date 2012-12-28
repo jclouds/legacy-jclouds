@@ -27,6 +27,8 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
+import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
+import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
 import org.jclouds.aws.ec2.domain.PlacementGroup;
 import org.jclouds.aws.ec2.xml.DescribePlacementGroupsResponseHandler;
 import org.jclouds.aws.filters.FormSigner;
@@ -35,13 +37,11 @@ import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.EndpointParam;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -83,7 +83,7 @@ public interface PlacementGroupAsyncClient {
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DeletePlacementGroup")
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @Fallback(VoidOnNotFoundOr404.class)
    ListenableFuture<Void> deletePlacementGroupInRegion(
             @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region, @FormParam("GroupName") String name);
 
@@ -95,7 +95,7 @@ public interface PlacementGroupAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribePlacementGroups")
    @XMLResponseParser(DescribePlacementGroupsResponseHandler.class)
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    ListenableFuture<? extends Set<PlacementGroup>> describePlacementGroupsInRegion(
             @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @BinderParam(BindGroupNamesToIndexedFormParams.class) String... placementGroupIds);

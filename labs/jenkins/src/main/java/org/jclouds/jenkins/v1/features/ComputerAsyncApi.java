@@ -24,12 +24,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.jenkins.v1.domain.Computer;
 import org.jclouds.jenkins.v1.domain.ComputerView;
 import org.jclouds.jenkins.v1.filters.BasicAuthenticationUnlessAnonymous;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -59,7 +59,7 @@ public interface ComputerAsyncApi {
    @GET
    @Path("/computer/{displayName}/api/json")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<Computer> get(@PathParam("displayName") String displayName);
 
 }

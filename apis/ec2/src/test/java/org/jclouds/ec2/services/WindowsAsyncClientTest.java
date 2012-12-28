@@ -21,12 +21,12 @@ package org.jclouds.ec2.services;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
+import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
 import org.jclouds.ec2.options.BundleInstanceS3StorageOptions;
 import org.jclouds.ec2.xml.BundleTaskHandler;
 import org.jclouds.ec2.xml.DescribeBundleTasksResponseHandler;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
@@ -59,7 +59,7 @@ public class WindowsAsyncClientTest extends BaseEC2AsyncClientTest<WindowsAsyncC
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, BundleTaskHandler.class);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -83,7 +83,7 @@ public class WindowsAsyncClientTest extends BaseEC2AsyncClientTest<WindowsAsyncC
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, BundleTaskHandler.class);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -99,7 +99,7 @@ public class WindowsAsyncClientTest extends BaseEC2AsyncClientTest<WindowsAsyncC
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, DescribeBundleTasksResponseHandler.class);
-      assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
+      assertFallbackClassEquals(method, EmptySetOnNotFoundOr404.class);
 
       checkFilters(request);
    }
@@ -115,7 +115,7 @@ public class WindowsAsyncClientTest extends BaseEC2AsyncClientTest<WindowsAsyncC
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, DescribeBundleTasksResponseHandler.class);
-      assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
+      assertFallbackClassEquals(method, EmptySetOnNotFoundOr404.class);
 
       checkFilters(request);
    }

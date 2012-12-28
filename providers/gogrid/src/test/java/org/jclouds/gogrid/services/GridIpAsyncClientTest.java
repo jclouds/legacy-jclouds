@@ -53,7 +53,7 @@ public class GridIpAsyncClientTest extends BaseGoGridAsyncClientTest<GridIpAsync
 
       assertResponseParserClassEquals(method, httpRequest, ParseIpListFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(httpRequest);
       httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
@@ -76,7 +76,7 @@ public class GridIpAsyncClientTest extends BaseGoGridAsyncClientTest<GridIpAsync
 
       assertResponseParserClassEquals(method, httpRequest, ParseIpListFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(httpRequest);
       httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);

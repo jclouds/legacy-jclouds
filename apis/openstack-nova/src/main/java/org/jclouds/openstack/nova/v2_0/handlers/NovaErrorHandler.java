@@ -31,11 +31,11 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.date.DateCodecFactory;
+import org.jclouds.fallbacks.HeaderToRetryAfterException;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
-import org.jclouds.http.functions.HeaderToRetryAfterException;
 import org.jclouds.logging.Logger;
 import org.jclouds.openstack.nova.v2_0.functions.OverLimitParser;
 import org.jclouds.rest.AuthorizationException;

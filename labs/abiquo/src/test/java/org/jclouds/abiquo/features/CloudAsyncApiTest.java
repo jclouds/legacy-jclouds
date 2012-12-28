@@ -26,6 +26,7 @@ import java.lang.reflect.Method;
 
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.abiquo.domain.CloudResources;
 import org.jclouds.abiquo.domain.EnterpriseResources;
 import org.jclouds.abiquo.domain.InfrastructureResources;
@@ -36,12 +37,11 @@ import org.jclouds.abiquo.domain.cloud.options.VirtualMachineTemplateOptions;
 import org.jclouds.abiquo.domain.cloud.options.VolumeOptions;
 import org.jclouds.abiquo.domain.network.options.IpOptions;
 import org.jclouds.abiquo.domain.options.search.reference.OrderBy;
+import org.jclouds.abiquo.fallbacks.MovedVolume;
 import org.jclouds.abiquo.functions.ReturnTaskReferenceOrNull;
-import org.jclouds.abiquo.functions.cloud.ReturnMovedVolume;
 import org.jclouds.http.functions.ParseXMLWithJAXB;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.ReturnStringIf2xx;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
@@ -102,7 +102,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -117,7 +117,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -136,7 +136,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -151,7 +151,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+      assertFallbackClassEquals(method, NullOnNotFoundOr404.class);
 
       checkFilters(request);
    }
@@ -167,7 +167,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -182,7 +182,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -202,7 +202,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -220,7 +220,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -236,7 +236,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -252,7 +252,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -269,7 +269,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -288,7 +288,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -305,7 +305,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -320,7 +320,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+      assertFallbackClassEquals(method, NullOnNotFoundOr404.class);
 
       checkFilters(request);
    }
@@ -335,7 +335,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -356,7 +356,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -377,7 +377,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -394,7 +394,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -409,7 +409,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+      assertFallbackClassEquals(method, NullOnNotFoundOr404.class);
 
       checkFilters(request);
    }
@@ -427,7 +427,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -443,7 +443,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -459,7 +459,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -477,7 +477,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -494,7 +494,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -510,7 +510,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -527,7 +527,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -543,7 +543,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+      assertFallbackClassEquals(method, NullOnNotFoundOr404.class);
 
       checkFilters(request);
    }
@@ -559,7 +559,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -578,7 +578,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -595,7 +595,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -611,7 +611,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -630,7 +630,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -649,7 +649,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -665,7 +665,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ReturnStringIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -683,7 +683,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -701,7 +701,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -717,7 +717,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+      assertFallbackClassEquals(method, NullOnNotFoundOr404.class);
 
       checkFilters(request);
    }
@@ -736,7 +736,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -753,7 +753,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ReturnTaskReferenceOrNull.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -772,7 +772,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ReturnTaskReferenceOrNull.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -791,7 +791,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -807,7 +807,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -823,7 +823,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -842,7 +842,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -861,7 +861,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -877,7 +877,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -894,7 +894,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -918,7 +918,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -936,7 +936,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -952,7 +952,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -968,7 +968,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ReturnTaskReferenceOrNull.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -993,7 +993,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ReturnTaskReferenceOrNull.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -1009,7 +1009,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -1025,7 +1025,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ReturnTaskReferenceOrNull.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -1049,7 +1049,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ReturnTaskReferenceOrNull.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -1066,7 +1066,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -1081,7 +1081,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+      assertFallbackClassEquals(method, NullOnNotFoundOr404.class);
 
       checkFilters(request);
    }
@@ -1099,7 +1099,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -1114,7 +1114,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -1131,7 +1131,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -1148,7 +1148,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -1166,7 +1166,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -1181,7 +1181,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+      assertFallbackClassEquals(method, NullOnNotFoundOr404.class);
 
       checkFilters(request);
    }
@@ -1199,7 +1199,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -1215,7 +1215,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ReturnTaskReferenceOrNull.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -1230,7 +1230,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertFallbackClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -1249,7 +1249,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
 
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnMovedVolume.class);
+      assertFallbackClassEquals(method, MovedVolume.class);
 
       checkFilters(request);
    }

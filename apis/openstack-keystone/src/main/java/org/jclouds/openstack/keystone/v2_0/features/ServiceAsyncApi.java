@@ -25,12 +25,12 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
 import org.jclouds.openstack.keystone.v2_0.domain.Tenant;
 import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -54,6 +54,6 @@ public interface ServiceAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/tenants")
    @RequestFilters(AuthenticateRequest.class)
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    ListenableFuture<? extends Set<? extends Tenant>> listTenants();
 }

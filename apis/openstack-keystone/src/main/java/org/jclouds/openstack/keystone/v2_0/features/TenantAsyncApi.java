@@ -25,22 +25,22 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.Fallbacks.EmptyPagedIterableOnNotFoundOr404;
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.collect.PagedIterable;
+import org.jclouds.openstack.keystone.v2_0.KeystoneFallbacks.EmptyPaginatedCollectionOnNotFoundOr404;
 import org.jclouds.openstack.keystone.v2_0.domain.PaginatedCollection;
 import org.jclouds.openstack.keystone.v2_0.domain.Tenant;
 import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
-import org.jclouds.openstack.keystone.v2_0.functions.ReturnEmptyPaginatedCollectionOnNotFoundOr404;
 import org.jclouds.openstack.keystone.v2_0.functions.internal.ParseTenants;
 import org.jclouds.openstack.keystone.v2_0.functions.internal.ParseTenants.ToPagedIterable;
 import org.jclouds.openstack.v2_0.options.PaginationOptions;
 import org.jclouds.openstack.v2_0.services.Identity;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.Transform;
-import org.jclouds.rest.functions.ReturnEmptyPagedIterableOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -66,7 +66,7 @@ public interface TenantAsyncApi {
    @RequestFilters(AuthenticateRequest.class)
    @ResponseParser(ParseTenants.class)
    @Transform(ToPagedIterable.class)
-   @ExceptionParser(ReturnEmptyPagedIterableOnNotFoundOr404.class)
+   @Fallback(EmptyPagedIterableOnNotFoundOr404.class)
    ListenableFuture<? extends PagedIterable<? extends Tenant>> list();
 
    /** @see TenantApi#list(PaginationOptions) */
@@ -75,7 +75,7 @@ public interface TenantAsyncApi {
    @Path("/tenants")
    @RequestFilters(AuthenticateRequest.class)
    @ResponseParser(ParseTenants.class)
-   @ExceptionParser(ReturnEmptyPaginatedCollectionOnNotFoundOr404.class)
+   @Fallback(EmptyPaginatedCollectionOnNotFoundOr404.class)
    ListenableFuture<? extends PaginatedCollection<? extends Tenant>> list(PaginationOptions options);
 
    /** @see TenantApi#get(String) */
@@ -84,7 +84,7 @@ public interface TenantAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/tenants/{tenantId}")
    @RequestFilters(AuthenticateRequest.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<? extends Tenant> get(@PathParam("tenantId") String tenantId);
 
    /** @see TenantApi#getByName(String) */
@@ -93,7 +93,7 @@ public interface TenantAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/tenants")
    @RequestFilters(AuthenticateRequest.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<? extends Tenant> getByName(@QueryParam("name") String tenantName);
 
 }

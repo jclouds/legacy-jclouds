@@ -32,20 +32,20 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
+import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.ovf.Envelope;
 import org.jclouds.ovf.xml.EnvelopeHandler;
 import org.jclouds.predicates.validators.DnsNameValidator;
 import org.jclouds.rest.annotations.EndpointParam;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.ParamValidators;
 import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.PayloadParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.vcloud.binders.BindCaptureVAppParamsToXmlPayload;
 import org.jclouds.vcloud.binders.BindCloneVAppTemplateParamsToXmlPayload;
 import org.jclouds.vcloud.binders.BindInstantiateVAppTemplateParamsToXmlPayload;
@@ -92,7 +92,7 @@ public interface VAppTemplateAsyncClient {
    @Consumes(MediaType.TEXT_XML)
    @Path("/ovf")
    @XMLResponseParser(EnvelopeHandler.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<Envelope> getOvfEnvelopeForVAppTemplate(@EndpointParam URI href);
 
    /**
@@ -141,7 +141,7 @@ public interface VAppTemplateAsyncClient {
    @GET
    @Consumes(VAPPTEMPLATE_XML)
    @XMLResponseParser(VAppTemplateHandler.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<VAppTemplate> findVAppTemplateInOrgCatalogNamed(
             @Nullable @EndpointParam(parser = OrgNameCatalogNameVAppTemplateNameToEndpoint.class) String orgName,
             @Nullable @EndpointParam(parser = OrgNameCatalogNameVAppTemplateNameToEndpoint.class) String catalogName,
@@ -153,7 +153,7 @@ public interface VAppTemplateAsyncClient {
    @GET
    @Consumes(VAPPTEMPLATE_XML)
    @XMLResponseParser(VAppTemplateHandler.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<VAppTemplate> getVAppTemplate(@EndpointParam URI vAppTemplate);
 
    /**
@@ -161,7 +161,7 @@ public interface VAppTemplateAsyncClient {
     */
    @DELETE
    @Consumes(TASK_XML)
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @Fallback(VoidOnNotFoundOr404.class)
    @XMLResponseParser(TaskHandler.class)
    ListenableFuture<Task> deleteVAppTemplate(@EndpointParam URI href);
 

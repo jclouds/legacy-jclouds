@@ -24,18 +24,18 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.Fallbacks.EmptyFluentIterableOnNotFoundOr404;
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
+import org.jclouds.Fallbacks.TrueOnNotFoundOr404;
 import org.jclouds.glesys.domain.EmailAccount;
 import org.jclouds.glesys.domain.EmailAlias;
 import org.jclouds.glesys.domain.EmailOverview;
 import org.jclouds.glesys.options.CreateAccountOptions;
 import org.jclouds.glesys.options.UpdateAccountOptions;
 import org.jclouds.http.filters.BasicAuthentication;
-import org.jclouds.http.functions.ReturnTrueOn404;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
-import org.jclouds.rest.functions.ReturnEmptyFluentIterableOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import com.google.common.collect.FluentIterable;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -58,7 +58,7 @@ public interface EmailAccountAsyncApi {
    @Path("/email/overview/format/json")
    @SelectJson("overview")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<EmailOverview> getOverview();
 
    /**
@@ -68,7 +68,7 @@ public interface EmailAccountAsyncApi {
    @Path("/email/list/format/json")
    @SelectJson("emailaccounts")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnEmptyFluentIterableOnNotFoundOr404.class)
+   @Fallback(EmptyFluentIterableOnNotFoundOr404.class)
    ListenableFuture<FluentIterable<EmailAccount>> listDomain(@FormParam("domainname") String domain);
 
    /**
@@ -78,7 +78,7 @@ public interface EmailAccountAsyncApi {
    @Path("/email/list/format/json")
    @SelectJson("emailaliases")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnEmptyFluentIterableOnNotFoundOr404.class)
+   @Fallback(EmptyFluentIterableOnNotFoundOr404.class)
    ListenableFuture<FluentIterable<EmailAlias>> listAliasesInDomain(@FormParam("domainname") String domain);
 
    /**
@@ -122,7 +122,7 @@ public interface EmailAccountAsyncApi {
     */
    @POST
    @Path("/email/delete/format/json")
-   @ExceptionParser(ReturnTrueOn404.class)
+   @Fallback(TrueOnNotFoundOr404.class)
    ListenableFuture<Boolean> delete(@FormParam("email") String accountAddress);
 
 }

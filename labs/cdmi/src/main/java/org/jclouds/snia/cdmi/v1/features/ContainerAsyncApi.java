@@ -27,11 +27,11 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.snia.cdmi.v1.ObjectTypes;
 import org.jclouds.snia.cdmi.v1.binders.BindQueryParmsToSuffix;
 import org.jclouds.snia.cdmi.v1.domain.Container;
@@ -71,7 +71,7 @@ public interface ContainerAsyncApi {
     */
    @GET
    @Consumes({ ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Path("/{containerName}")
    ListenableFuture<Container> get(@PathParam("containerName") String containerName);
 
@@ -94,7 +94,7 @@ public interface ContainerAsyncApi {
     */
    @GET
    @Consumes({ ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Path("/{containerName}")
    ListenableFuture<Container> get(@PathParam("containerName") String containerName,
             @BinderParam(BindQueryParmsToSuffix.class) ContainerQueryParams queryParams);
@@ -117,7 +117,7 @@ public interface ContainerAsyncApi {
    @PUT
    @Consumes({ ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
    @Produces({ ObjectTypes.CONTAINER })
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Path("/{containerName}")
    ListenableFuture<Container> create(@PathParam("containerName") String containerName);
 
@@ -140,7 +140,7 @@ public interface ContainerAsyncApi {
    @PUT
    @Consumes({ ObjectTypes.CONTAINER, MediaType.APPLICATION_JSON })
    @Produces({ ObjectTypes.CONTAINER })
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Path("/{containerName}")
    ListenableFuture<Container> create(@PathParam("containerName") String containerName,
             CreateContainerOptions... options);
@@ -152,7 +152,7 @@ public interface ContainerAsyncApi {
     */
    @DELETE
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Path("/{containerName}")
    ListenableFuture<Void> delete(@PathParam("containerName") String containerName);
 

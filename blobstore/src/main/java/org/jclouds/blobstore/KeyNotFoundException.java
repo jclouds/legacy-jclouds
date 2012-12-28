@@ -40,7 +40,7 @@ public class KeyNotFoundException extends ResourceNotFoundException {
       this.key = key;
    }
 
-   public KeyNotFoundException(Exception from) {
+   public KeyNotFoundException(Throwable from) {
       super(from);
    }
 

@@ -27,15 +27,15 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
+import org.jclouds.Fallbacks.FalseOnNotFoundOr404;
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
+import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.softlayer.binders.ProductOrderToJson;
 import org.jclouds.softlayer.domain.ProductOrder;
 import org.jclouds.softlayer.domain.ProductOrderReceipt;
@@ -64,7 +64,7 @@ public interface VirtualGuestAsyncClient {
    @Path("/SoftLayer_Account/VirtualGuests.json")
    @QueryParams(keys = "objectMask", values = LIST_GUEST_MASK)
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<VirtualGuest>> listVirtualGuests();
 
    /**
@@ -74,7 +74,7 @@ public interface VirtualGuestAsyncClient {
    @Path("/SoftLayer_Virtual_Guest/{id}.json")
    @QueryParams(keys = "objectMask", values = GUEST_MASK)
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<VirtualGuest> getVirtualGuest(@PathParam("id") long id);
 
    /**
@@ -83,7 +83,7 @@ public interface VirtualGuestAsyncClient {
    @GET
    @Path("/SoftLayer_Virtual_Guest/{id}/rebootHard.json")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @Fallback(VoidOnNotFoundOr404.class)
    ListenableFuture<Void> rebootHardVirtualGuest(@PathParam("id") long id);
 
    /**
@@ -92,7 +92,7 @@ public interface VirtualGuestAsyncClient {
    @GET
    @Path("/SoftLayer_Virtual_Guest/{id}/powerOff.json")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @Fallback(VoidOnNotFoundOr404.class)
    ListenableFuture<Void> powerOffVirtualGuest(@PathParam("id") long id);
 
    /**
@@ -101,7 +101,7 @@ public interface VirtualGuestAsyncClient {
    @GET
    @Path("/SoftLayer_Virtual_Guest/{id}/powerOn.json")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @Fallback(VoidOnNotFoundOr404.class)
    ListenableFuture<Void> powerOnVirtualGuest(@PathParam("id") long id);
 
    /**
@@ -110,7 +110,7 @@ public interface VirtualGuestAsyncClient {
    @GET
    @Path("/SoftLayer_Virtual_Guest/{id}/pause.json")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @Fallback(VoidOnNotFoundOr404.class)
    ListenableFuture<Void> pauseVirtualGuest(@PathParam("id") long id);
 
    /**
@@ -119,7 +119,7 @@ public interface VirtualGuestAsyncClient {
    @GET
    @Path("/SoftLayer_Virtual_Guest/{id}/resume.json")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @Fallback(VoidOnNotFoundOr404.class)
    ListenableFuture<Void> resumeVirtualGuest(@PathParam("id") long id);
 
    /**
@@ -128,7 +128,7 @@ public interface VirtualGuestAsyncClient {
    @GET
    @Path("/SoftLayer_Billing_Item/{id}/cancelService.json")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
+   @Fallback(FalseOnNotFoundOr404.class)
    ListenableFuture<Boolean> cancelService(@PathParam("id") long id);
 
    /**
@@ -137,7 +137,7 @@ public interface VirtualGuestAsyncClient {
    @POST
    @Path("/SoftLayer_Product_Order/placeOrder.json")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<ProductOrderReceipt> orderVirtualGuest(@BinderParam(ProductOrderToJson.class)ProductOrder order);
 
    /**
@@ -148,7 +148,7 @@ public interface VirtualGuestAsyncClient {
    @GET
    @Path("SoftLayer_Virtual_Guest/{id}/getOrderTemplate/MONTHLY.json")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<ProductOrder> getOrderTemplate(@PathParam("id") long id);
 
 }

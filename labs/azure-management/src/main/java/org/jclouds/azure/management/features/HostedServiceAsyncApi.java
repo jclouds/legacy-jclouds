@@ -29,6 +29,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
+import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
 import org.jclouds.azure.management.binders.BindCreateHostedServiceToXmlPayload;
 import org.jclouds.azure.management.domain.Deployment;
 import org.jclouds.azure.management.domain.HostedService;
@@ -39,16 +42,13 @@ import org.jclouds.azure.management.xml.DeploymentHandler;
 import org.jclouds.azure.management.xml.HostedServiceHandler;
 import org.jclouds.azure.management.xml.HostedServiceWithDetailedPropertiesHandler;
 import org.jclouds.azure.management.xml.ListHostedServicesHandler;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -69,7 +69,7 @@ public interface HostedServiceAsyncApi {
    @GET
    @Path("/services/hostedservices")
    @XMLResponseParser(ListHostedServicesHandler.class)
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
    @Consumes(MediaType.APPLICATION_XML)
    ListenableFuture<Set<HostedServiceWithDetailedProperties>> list();
 
@@ -103,7 +103,7 @@ public interface HostedServiceAsyncApi {
    @GET
    @Path("/services/hostedservices/{serviceName}")
    @XMLResponseParser(HostedServiceHandler.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Consumes(MediaType.APPLICATION_XML)
    ListenableFuture<HostedService> get(@PathParam("serviceName") String serviceName);
 
@@ -114,7 +114,7 @@ public interface HostedServiceAsyncApi {
    @Path("/services/hostedservices/{serviceName}")
    @QueryParams(keys = "embed-detail", values = "true")
    @XMLResponseParser(HostedServiceWithDetailedPropertiesHandler.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Consumes(MediaType.APPLICATION_XML)
    ListenableFuture<HostedServiceWithDetailedProperties> getDetails(@PathParam("serviceName") String serviceName);
 
@@ -123,7 +123,7 @@ public interface HostedServiceAsyncApi {
     */
    @DELETE
    @Path("/services/hostedservices/{serviceName}")
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @ResponseParser(ParseRequestIdHeader.class)
    ListenableFuture<String> delete(@PathParam("serviceName") String serviceName);
 
@@ -132,14 +132,14 @@ public interface HostedServiceAsyncApi {
 //   @Path("/services/hostedservices/{serviceName}/deploymentslots/{deploymentSlotName}")
 //   @Produces(MediaType.APPLICATION_ATOM_XML)
 //   @Consumes(MediaType.TEXT_PLAIN)
-//   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+//   @Fallback(NullOnNotFoundOr404.class)
 //   ListenableFuture<Void> createDeployment(@PathParam("serviceName") String serviceName,
 //            @PathParam("deploymentSlotName") String deploymentSlotName,
 //            @BinderParam(BindToXMLPayload.class) CreateDeployment createDeployment);
 
    @DELETE
    @Path("/services/hostedservices/{serviceName}/deployments/{deploymentName}")
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @Fallback(VoidOnNotFoundOr404.class)
    @ResponseParser(ParseRequestIdHeader.class)
    ListenableFuture<String> deleteDeployment(@PathParam("serviceName") String serviceName,
             @PathParam("deploymentName") String deploymentName);
@@ -151,7 +151,7 @@ public interface HostedServiceAsyncApi {
    @GET
    @Path("/services/hostedservices/{serviceName}/deployments/{deploymentName}")
    @XMLResponseParser(DeploymentHandler.class)
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @Fallback(VoidOnNotFoundOr404.class)
    @Consumes(MediaType.APPLICATION_XML)
    ListenableFuture<Deployment> getDeployment(@PathParam("serviceName") String serviceName, @PathParam("deploymentName") String deploymentName);
 }

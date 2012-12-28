@@ -22,14 +22,14 @@ package org.jclouds.abiquo.features;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 
+import org.jclouds.abiquo.AbiquoFallbacks.NullOn303;
 import org.jclouds.abiquo.binders.BindLinkToPath;
 import org.jclouds.abiquo.binders.BindToPath;
-import org.jclouds.abiquo.functions.ReturnNullOn303;
 import org.jclouds.abiquo.http.filters.AbiquoAuthentication;
 import org.jclouds.abiquo.http.filters.AppendApiVersionToMediaType;
 import org.jclouds.abiquo.rest.annotations.EndpointLink;
 import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
 
@@ -58,7 +58,7 @@ public interface TaskAsyncApi {
    @GET
    @Consumes(TaskDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOn303.class)
+   @Fallback(NullOn303.class)
    ListenableFuture<TaskDto> getTask(@BinderParam(BindLinkToPath.class) RESTLink link);
 
    /**

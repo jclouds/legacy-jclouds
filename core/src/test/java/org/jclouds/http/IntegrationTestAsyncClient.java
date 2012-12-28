@@ -18,6 +18,8 @@
  */
 package org.jclouds.http;
 
+import static com.google.common.util.concurrent.Futures.immediateFuture;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -33,11 +35,12 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
+import org.jclouds.Fallbacks.FalseOnNotFoundOr404;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.io.Payload;
 import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
@@ -45,11 +48,11 @@ import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.binders.BindToJsonPayload;
 import org.jclouds.rest.binders.BindToStringPayload;
-import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
 import org.jclouds.util.Strings2;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Multimap;
+import com.google.common.util.concurrent.FutureFallback;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Provides;
 
@@ -71,7 +74,7 @@ public interface IntegrationTestAsyncClient {
 
    @HEAD
    @Path("/objects/{id}")
-   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
+   @Fallback(FalseOnNotFoundOr404.class)
    ListenableFuture<Boolean> exists(@PathParam("id") String path);
 
    @GET
@@ -86,20 +89,21 @@ public interface IntegrationTestAsyncClient {
 
    @GET
    @Path("/objects/{id}")
-   @ExceptionParser(FooOnException.class)
+   @Fallback(FooOnException.class)
    ListenableFuture<String> downloadException(@PathParam("id") String id, HttpRequestOptions options);
 
-   static class FooOnException implements Function<Exception, String> {
+   static class FooOnException implements FutureFallback<String> {
 
-      public String apply(Exception from) {
-         return "foo";
+      @Override
+      public ListenableFuture<String> create(Throwable t) throws Exception {
+         return immediateFuture("foo");
       }
 
    }
 
    @GET
    @Path("/objects/{id}")
-   @ExceptionParser(FooOnException.class)
+   @Fallback(FooOnException.class)
    ListenableFuture<String> synchException(@PathParam("id") String id, @HeaderParam("Range") String header);
 
    @PUT

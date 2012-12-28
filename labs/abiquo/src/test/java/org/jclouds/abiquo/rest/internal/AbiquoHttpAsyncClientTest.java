@@ -22,9 +22,9 @@ package org.jclouds.abiquo.rest.internal;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.abiquo.features.BaseAbiquoAsyncApiTest;
 import org.jclouds.functions.IdentityFunction;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
@@ -53,7 +53,7 @@ public class AbiquoHttpAsyncClientTest extends BaseAbiquoAsyncApiTest<AbiquoHttp
 
       assertResponseParserClassEquals(method, request, IdentityFunction.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+      assertFallbackClassEquals(method, NullOnNotFoundOr404.class);
 
       checkFilters(request);
    }

@@ -21,14 +21,14 @@ package org.jclouds.abiquo.rest.internal;
 
 import javax.ws.rs.GET;
 
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.abiquo.binders.BindLinkToPathAndAcceptHeader;
 import org.jclouds.abiquo.http.filters.AbiquoAuthentication;
 import org.jclouds.abiquo.http.filters.AppendApiVersionToMediaType;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import com.abiquo.model.rest.RESTLink;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -44,6 +44,6 @@ public interface AbiquoHttpAsyncClient {
     * @see AbiquoHttpClient#get(RESTLink)
     */
    @GET
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    public ListenableFuture<HttpResponse> get(@BinderParam(BindLinkToPathAndAcceptHeader.class) final RESTLink link);
 }

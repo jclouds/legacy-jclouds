@@ -29,19 +29,20 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.abiquo.binders.BindToPath;
 import org.jclouds.abiquo.binders.BindToXMLPayloadAndPath;
+import org.jclouds.abiquo.domain.enterprise.Enterprise;
 import org.jclouds.abiquo.functions.enterprise.ParseEnterpriseId;
 import org.jclouds.abiquo.http.filters.AbiquoAuthentication;
 import org.jclouds.abiquo.http.filters.AppendApiVersionToMediaType;
 import org.jclouds.abiquo.rest.annotations.EndpointLink;
 import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.binders.BindToXMLPayload;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import com.abiquo.server.core.enterprise.EnterpriseDto;
 import com.abiquo.server.core.enterprise.PrivilegesDto;
@@ -99,7 +100,7 @@ public interface AdminAsyncApi {
    @GET
    @Consumes(RoleDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<RoleDto> getRole(@EndpointLink("role") @BinderParam(BindToPath.class) UserDto user);
 
    /**
@@ -109,7 +110,7 @@ public interface AdminAsyncApi {
    @Path("/admin/roles/{role}")
    @Consumes(RoleDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<RoleDto> getRole(@PathParam("role") Integer roleId);
 
    /**

@@ -30,8 +30,8 @@ import org.jclouds.rest.internal.BaseAsyncClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.rimuhosting.miro.binder.CreateServerOptions;
+import org.jclouds.rimuhosting.miro.fallbacks.ParseRimuHostingException;
 import org.jclouds.rimuhosting.miro.filters.RimuHostingAuthentication;
-import org.jclouds.rimuhosting.miro.functions.ParseRimuHostingException;
 import org.jclouds.rimuhosting.miro.functions.ParseServersFromJsonResponse;
 import org.testng.annotations.Test;
 
@@ -60,7 +60,7 @@ public class RimuHostingAsyncClientTest extends BaseAsyncClientTest<RimuHostingA
                "application/json", false);
       assertResponseParserClassEquals(method, httpRequest, UnwrapOnlyJsonValue.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ParseRimuHostingException.class);
+      assertFallbackClassEquals(method, ParseRimuHostingException.class);
 
       checkFilters(httpRequest);
 
@@ -75,7 +75,7 @@ public class RimuHostingAsyncClientTest extends BaseAsyncClientTest<RimuHostingA
       assertPayloadEquals(httpRequest, null, null, false);
       assertResponseParserClassEquals(method, httpRequest, ParseServersFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ParseRimuHostingException.class);
+      assertFallbackClassEquals(method, ParseRimuHostingException.class);
 
       checkFilters(httpRequest);
 
