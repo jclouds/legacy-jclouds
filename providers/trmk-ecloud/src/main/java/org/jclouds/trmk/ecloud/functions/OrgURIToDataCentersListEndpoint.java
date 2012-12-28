@@ -37,7 +37,7 @@ import com.google.common.base.Supplier;
  * @author Adrian Cole
  */
 @Singleton
-public class OrgURIToDataCentersListEndpoint extends OrgURIToEndpoint implements Function<Object, URI> {
+public class OrgURIToDataCentersListEndpoint extends OrgURIToEndpoint {
    @Inject
    public OrgURIToDataCentersListEndpoint(Supplier<Map<String, ? extends Org>> orgMap,
          @org.jclouds.trmk.vcloud_0_8.endpoints.Org Supplier<ReferenceType> defaultUri) {
