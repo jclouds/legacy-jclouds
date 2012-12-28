@@ -51,7 +51,7 @@
         <!-- Required for Pems.java to read and write public and private keys -->
         <dependency>
             <groupId>org.bouncycastle</groupId>
-            <artifactId>bcpkix-jdk15on</artifactId>
+            <artifactId>bcprov-jdk15on</artifactId>
         </dependency>
         <dependency>
             <groupId>javax.ws.rs</groupId>
