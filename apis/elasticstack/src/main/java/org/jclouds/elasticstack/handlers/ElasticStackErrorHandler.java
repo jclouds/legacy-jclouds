@@ -82,8 +82,7 @@ public class ElasticStackErrorHandler implements HttpErrorHandler {
             break;
          }
       } finally {
-         if (response.getPayload() != null)
-            Closeables.closeQuietly(response.getPayload().getInput());
+         Closeables.closeQuietly(response.getPayload());
          command.setException(exception);
       }
    }
