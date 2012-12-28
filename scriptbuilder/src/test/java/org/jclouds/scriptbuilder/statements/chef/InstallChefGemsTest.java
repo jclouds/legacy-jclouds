@@ -38,8 +38,7 @@ import com.google.common.io.Resources;
 @Test(groups = "unit", testName = "InstallChefGemsTest")
 public class InstallChefGemsTest {
 
-   @Test(expectedExceptions = UnsupportedOperationException.class,
-         expectedExceptionsMessageRegExp = "windows not yet implemented")
+   @Test(expectedExceptions = UnsupportedOperationException.class, expectedExceptionsMessageRegExp = "windows not yet implemented")
    public void installChefGemsInWindows() {
       new InstallChefGems().render(OsFamily.WINDOWS);
    }
@@ -48,7 +47,7 @@ public class InstallChefGemsTest {
       assertEquals(
             new InstallChefGems().render(OsFamily.UNIX),
             Resources.toString(Resources.getResource("test_install_ruby." + ShellToken.SH.to(OsFamily.UNIX)),
-                  Charsets.UTF_8) + "gem install ohai chef --no-rdoc --no-ri\n");
+                  Charsets.UTF_8) + "gem install chef -v '>= 10.16.4' --no-rdoc --no-ri\n");
    }
 
    public void installChefGemsUnixInScriptBuilderSourcesSetupPublicCurl() throws IOException {

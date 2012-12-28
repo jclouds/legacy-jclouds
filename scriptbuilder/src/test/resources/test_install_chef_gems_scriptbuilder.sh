@@ -140,7 +140,7 @@ function installRuby() {
   if ! hash ruby 2>/dev/null; then
     if which dpkg &> /dev/null; then
       apt-get-update
-      apt-get install -y ruby ruby1.8-dev build-essential
+      apt-get install -y ruby ruby-dev build-essential
     elif which rpm &> /dev/null; then
       # Disable chef from the base repo (http://tickets.opscode.com/browse/CHEF-2906)
       sed -i "s/\[base\]/\0\n\exclude=ruby*/g" /etc/yum.repos.d/CentOS-Base.repo
@@ -178,7 +178,7 @@ END_OF_JCLOUDS_SCRIPT
 	gem update --system
 	gem update --no-rdoc --no-ri
 	
-	gem install ohai chef --no-rdoc --no-ri
+	gem install chef -v '>= 10.16.4' --no-rdoc --no-ri
 	
 END_OF_JCLOUDS_SCRIPT
    
