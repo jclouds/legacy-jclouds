@@ -51,11 +51,6 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.jclouds.provider</groupId>
-            <artifactId>rimuhosting</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.jclouds.api</groupId>
             <artifactId>openstack-nova</artifactId>
             <version>${project.version}</version>
