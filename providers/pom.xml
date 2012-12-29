@@ -43,7 +43,6 @@
         <module>synaptic-storage</module>
         <module>ninefold-storage</module>
         <module>cloudonestorage</module>
-        <module>eucalyptus-partnercloud-ec2</module>
         <module>bluelock-vcloud-zone01</module>
         <module>stratogen-vcloud-mycloud</module>
         <module>trmk-ecloud</module>

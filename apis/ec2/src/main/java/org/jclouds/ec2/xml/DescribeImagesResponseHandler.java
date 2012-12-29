@@ -83,9 +83,6 @@ public class DescribeImagesResponseHandler extends ParseSax.HandlerForGeneratedR
    private String ramdiskId;
    private boolean inProductCodes;
    private boolean inBlockDeviceMapping;
-   /**
-    * Eucalyptus 1.6 doesn't set rootDeviceType
-    */
    private RootDeviceType rootDeviceType = RootDeviceType.INSTANCE_STORE;
    private Map<String, EbsBlockDevice> ebsBlockDevices = Maps.newHashMap();
    private String deviceName;
@@ -129,8 +126,7 @@ public class DescribeImagesResponseHandler extends ParseSax.HandlerForGeneratedR
       } else if (qName.equals("imageState")) {
          rawState = currentOrNull(currentText);
          imageState = ImageState.fromValue(rawState);
-      // eucalyptus
-      } else if (qName.equals("imageType") || qName.equals("type")) {
+      } else if (qName.equals("imageType")) {
          imageType = ImageType.fromValue(currentText.toString().trim());
       } else if (qName.equals("isPublic")) {
          isPublic = Boolean.parseBoolean(currentText.toString().trim());

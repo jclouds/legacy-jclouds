@@ -22,6 +22,7 @@ import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -68,6 +69,25 @@ public class AWSUtilsTest {
                                           .addHeader("x-amz-id-2", "requesttoken").build();
       response.getPayload().getContentMetadata().setContentType("text/xml");
       return response;
+   }
+   
+   /**
+    * HEAD requests don't have a payload
+    */
+   @Test
+   public void testNoExceptionWhenNoPayload() {
+      HttpResponse response = HttpResponse.builder().statusCode(400).build();
+      assertNull(utils.parseAWSErrorFromContent(command.getCurrentRequest(), response));
+   }
+   
+   /**
+    * clones or proxies can mess up the error message.
+    */
+   @Test
+   public void testNoExceptionParsingTextPlain() {
+      HttpResponse response = HttpResponse.builder().statusCode(400).payload("foo bar").build();
+      response.getPayload().getContentMetadata().setContentType("text/plain");
+      assertNull(utils.parseAWSErrorFromContent(command.getCurrentRequest(), response));
    }
 
    @Test
