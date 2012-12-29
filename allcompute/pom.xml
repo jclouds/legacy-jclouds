@@ -67,11 +67,6 @@
         </dependency>
         <dependency>
             <groupId>org.jclouds.api</groupId>
-            <artifactId>nova</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jclouds.api</groupId>
             <artifactId>byon</artifactId>
             <version>${project.version}</version>
         </dependency>
