@@ -37,7 +37,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  * 
- * @deprecated Deprecated in jclouds 1.6, to be removed in jclouds 1.7. See {@link org.jclouds.openstack.nova.v2_0.NovaApiMetadata} in openstack-nova.
+ * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.NovaApiMetadata} in openstack-nova.
  */
 @Deprecated
 public class NovaApiMetadata extends BaseRestApiMetadata {
