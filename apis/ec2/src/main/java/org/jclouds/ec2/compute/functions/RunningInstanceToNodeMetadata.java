@@ -20,6 +20,7 @@ package org.jclouds.ec2.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.not;
+import static com.google.common.base.Strings.emptyToNull;
 import static com.google.common.collect.Iterables.filter;
 
 import java.util.List;
@@ -55,7 +56,6 @@ import org.jclouds.util.InetAddresses2.IsPrivateIPAddress;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.base.Strings;
 import com.google.common.base.Supplier;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -120,13 +120,9 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
       // collect all ip addresses into one bundle in case the api mistakenly put a private address
       // into the public address field
       Builder<String> addressesBuilder = ImmutableSet.builder();
-      if (Strings.emptyToNull(instance.getIpAddress()) != null)
+      if (emptyToNull(instance.getIpAddress()) != null)
          addressesBuilder.add(instance.getIpAddress());
-      //Add dnsName (if available) to addresses, when the IPAddress is null
-      // happens on Eucalyptus sometimes.
-      else if(Strings.emptyToNull(instance.getDnsName()) != null)
-         addressesBuilder.add(instance.getDnsName());
-      if (Strings.emptyToNull(instance.getPrivateIpAddress()) != null)
+      if (emptyToNull(instance.getPrivateIpAddress()) != null)
          addressesBuilder.add(instance.getPrivateIpAddress());
 
       Set<String> addresses = addressesBuilder.build();

@@ -121,10 +121,7 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
       } else if (equalsOrSuffix(qName, "amiLaunchIndex")) {
          builder.amiLaunchIndex(currentOrNull(currentText));
       } else if (equalsOrSuffix(qName, "dnsName")) {
-         String dnsName = currentOrNull(currentText);
-         // Eucalyptus
-         if (!"0.0.0.0".equals(dnsName))
-            builder.dnsName(dnsName);
+         builder.dnsName(currentOrNull(currentText));
       } else if (equalsOrSuffix(qName, "imageId")) {
          builder.imageId(currentOrNull(currentText));
       } else if (equalsOrSuffix(qName, "instanceId")) {
@@ -152,10 +149,7 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
       } else if (equalsOrSuffix(qName, "platform")) {
          builder.platform(currentOrNull(currentText));
       } else if (equalsOrSuffix(qName, "privateDnsName")) {
-         String privateDnsName = currentOrNull(currentText);
-         // Eucalyptus
-         if (!"0.0.0.0".equals(privateDnsName))
-            builder.privateDnsName(privateDnsName);
+         builder.privateDnsName(currentOrNull(currentText));
       } else if (equalsOrSuffix(qName, "privateIpAddress")) {
          builder.privateIpAddress(currentOrNull(currentText));
       } else if (equalsOrSuffix(qName, "ramdiskId")) {
@@ -197,18 +191,6 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
 
    protected void refineBuilderBeforeAddingInstance() {
       String region = getRequest() != null ? AWSUtils.findRegionInArgsOrNull(getRequest()) : null;
-
-      // Eucalyptus
-      if (builder.getIpAddress() == null && builder.getDnsName() != null && builder.getDnsName().matches(".*[0-9]$")) {
-         builder.ipAddress(builder.getDnsName());
-         builder.dnsName(null);
-      }
-      if (builder.getPrivateIpAddress() == null && builder.getPrivateDnsName() != null
-            && builder.getPrivateDnsName().matches(".*[0-9]$")) {
-         builder.privateIpAddress(builder.getPrivateDnsName());
-         builder.privateDnsName(null);
-      }
-
       builder.region((region == null) ? defaultRegion.get() : region);
       builder.groupNames(groupNames);
    }

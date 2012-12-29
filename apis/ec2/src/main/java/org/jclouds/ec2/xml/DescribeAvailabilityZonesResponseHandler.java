@@ -50,7 +50,8 @@ public class DescribeAvailabilityZonesResponseHandler extends ParseSax.HandlerWi
    private Set<String> messages = Sets.newHashSet();
 
    /**
-    * Eucalyptus 1.6 doesn't return region in the XML output
+    * clones like {@code openstack-nova-ec2}, which don't support multiple regions don't return region in the XML
+    * output.
     */
    @Inject
    DescribeAvailabilityZonesResponseHandler(@Region Supplier<String> defaultRegion) {
