@@ -181,7 +181,7 @@ public abstract class S3AsyncClientTest<T extends S3AsyncClient> extends BaseS3A
       Method method = S3AsyncClient.class.getMethod("bucketExists", String.class);
       HttpRequest request = processor.createRequest(method, "bucket");
 
-      assertRequestLineEquals(request, "HEAD https://bucket." + url + "/?max-keys=0 HTTP/1.1");
+      assertRequestLineEquals(request, "GET https://bucket." + url + "/?max-keys=0 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: bucket." + url + "\n");
       assertPayloadEquals(request, null, null, false);
 

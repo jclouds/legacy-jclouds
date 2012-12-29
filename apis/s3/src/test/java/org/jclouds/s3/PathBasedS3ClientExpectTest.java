@@ -48,10 +48,10 @@ public class PathBasedS3ClientExpectTest extends BaseS3ClientExpectTest {
    @Test
    public void testBucketExistsReturnsTrueOn200AndFalseOn404() {
       
-      HttpRequest bucketFooExists = HttpRequest.builder().method("HEAD")
+      HttpRequest bucketFooExists = HttpRequest.builder().method("GET")
                                                .endpoint("https://s3.amazonaws.com/foo?max-keys=0")
                                                .addHeader("Date", CONSTANT_DATE)
-                                               .addHeader("Authorization", "AWS identity:lLD0mzo2bZPIWhxlFDZoT09MKUQ=")
+                                               .addHeader("Authorization", "AWS identity:p32RsBr2inawMBeCkkiA228BT2w=")
                                                .build();
                                     
       S3Client clientWhenBucketExists = requestSendsResponse(bucketFooExists, HttpResponse.builder().statusCode(200).build());
