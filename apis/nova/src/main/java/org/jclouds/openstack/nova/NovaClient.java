@@ -46,6 +46,8 @@ import org.jclouds.rest.ResourceNotFoundException;
  * @see NovaAsyncClient
  * @see <a href="http://wiki.openstack.org/OpenStackAPI_1-1" />
  * @author Adrian Cole
+ * 
+ * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.ServerApi} in openstack-nova.
  */
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface NovaClient {
@@ -59,6 +61,8 @@ public interface NovaClient {
     * <p/>
     * in order to retrieve all details, pass the option {@link ListOptions#withDetails()
     * withDetails()}
+    * 
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.ServerApi#list()} in openstack-nova.
     */
    Set<Server> listServers(ListOptions... options);
 
@@ -68,6 +72,8 @@ public interface NovaClient {
     * 
     * @return null, if the server is not found
     * @see Server
+    * 
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.ServerApi#get(String)} in openstack-nova.
     */
    Server getServer(int id);
    Server getServer(String uuid);
@@ -80,6 +86,8 @@ public interface NovaClient {
     * 
     * @return false if the server is not found
     * @see Server
+    * 
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.ServerApi#delete(String)} in openstack-nova.
     */
    boolean deleteServer(int id);
    boolean deleteServer(String id);
@@ -97,6 +105,8 @@ public interface NovaClient {
     *           With a soft reboot, the operating system is signaled to restart, which allows for a
     *           graceful shutdown of all processes. A hard reboot is the equivalent of power cycling
     *           the server.
+    * 
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.ServerApi#reboot(String, RebootType)} in openstack-nova.
     */
    void rebootServer(int id, RebootType rebootType);
 
@@ -112,6 +122,8 @@ public interface NovaClient {
     * ACTIVE - QUEUE_RESIZE - PREP_RESIZE - VERIFY_RESIZE
     * <p/>
     * ACTIVE - QUEUE_RESIZE - ACTIVE (on error)
+    * 
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.ServerApi#resize(String, String)} in openstack-nova.
     */
    void resizeServer(int id, int flavorId);
 
@@ -125,6 +137,8 @@ public interface NovaClient {
     * Status Transition:
     * <p/>
     * VERIFY_RESIZE - ACTIVE
+    * 
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.ServerApi#confirmResize(String)} in openstack-nova.
     */
    void confirmResizeServer(int id);
 
@@ -138,6 +152,8 @@ public interface NovaClient {
     * Status Transition:
     * <p/>
     * VERIFY_RESIZE - ACTIVE
+    * 
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.ServerApi#revertResize(String)} in openstack-nova.
     */
    void revertResizeServer(int id);
 
@@ -151,6 +167,8 @@ public interface NovaClient {
     * 
     * @param options
     *           - used to specify extra files, metadata, or ip parameters during server creation.
+    * 
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.ServerApi#create(String, String, String, CreateServerOptions)} in openstack-nova.
     */
    Server createServer(String name, String imageRef, String flavorRef, CreateServerOptions... options);
 
@@ -168,6 +186,8 @@ public interface NovaClient {
     * @param options
     *           - imageId is an optional argument. If it is not specified, the server is rebuilt
     *           with the original imageId.
+    * 
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.ServerApi#rebuild(String, RebuildServerOptions)} in openstack-nova.
     */
    void rebuildServer(int id, RebuildServerOptions... options);
 
@@ -176,6 +196,7 @@ public interface NovaClient {
     * <p/>
     * Status Transition: ACTIVE - PASSWORD - ACTIVE
     * 
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.ServerApi#changeAdminPass(String, String)} in openstack-nova.
     */
    void changeAdminPass(int id, String adminPass);
 
@@ -185,6 +206,7 @@ public interface NovaClient {
     * <p/>
     * Status Transition: ACTIVE - PASSWORD - ACTIVE
     * 
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.ServerApi#rename(String, String)} in openstack-nova.
     */
    void renameServer(int id, String newName);
 
@@ -194,6 +216,8 @@ public interface NovaClient {
     * 
     * in order to retrieve all details, pass the option {@link ListOptions#withDetails()
     * withDetails()}
+    * 
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.FlavorApi#list()} in openstack-nova.
     */
    Set<Flavor> listFlavors(ListOptions... options);
 
@@ -203,6 +227,8 @@ public interface NovaClient {
     * 
     * @return null, if the flavor is not found
     * @see Flavor
+    * 
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.FlavorApi#get(String)} in openstack-nova.
     */
    Flavor getFlavor(int id);
    Flavor getFlavor(String uuid);
@@ -213,6 +239,8 @@ public interface NovaClient {
     * 
     * in order to retrieve all details, pass the option {@link ListOptions#withDetails()
     * withDetails()}
+    * 
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.ImageApi#list()} in openstack-nova.
     */
    Set<Image> listImages(ListOptions... options);
 
@@ -223,6 +251,8 @@ public interface NovaClient {
     * @return null, if the image is not found
     * 
     * @see Image
+    * 
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.ImageApi#get(String)} in openstack-nova.
     */
    Image getImage(int id);
    Image getImage(String id);
@@ -236,6 +266,8 @@ public interface NovaClient {
     * 
     * @return false if the image is not found
     * @see Image
+    * 
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.ImageApi#delete(String)} in openstack-nova.
     */
    boolean deleteImage(int id);
    boolean deleteImage(String id);
@@ -259,6 +291,8 @@ public interface NovaClient {
     * @throws ResourceNotFoundException
     *            if the server is not found
     * @see Image
+    * 
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.ServerApi#createImageFromServer(String, String)} in openstack-nova.
     */
    Image createImageFromServer(String imageName, int serverId);
 
@@ -266,6 +300,8 @@ public interface NovaClient {
     * List all server addresses
     * 
     * returns empty set if the server doesn't exist
+    * 
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.ServerApi#get(String)} in openstack-nova.
     */
    Addresses getAddresses(int serverId);
 
@@ -273,6 +309,8 @@ public interface NovaClient {
     * List all public server addresses
     * 
     * returns empty set if the server doesn't exist
+    * 
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.ServerApi#get(String)} in openstack-nova.
     */
    Set<String> listPublicAddresses(int serverId);
 
@@ -280,6 +318,8 @@ public interface NovaClient {
     * List all private server addresses
     * 
     * returns empty set if the server doesn't exist
+    * 
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.ServerApi#get(String)} in openstack-nova.
     */
    Set<String> listPrivateAddresses(int serverId);
 
@@ -293,6 +333,8 @@ public interface NovaClient {
 	 * @since 2011.3 "Diablo" release, OpenStack API 1.1
 	 * @param serverId
 	 * @param ip
+    * 
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.extensions.FloatingIPApi#addToServer(String, String)} in openstack-nova.
 	 */
    void addFloatingIP(int serverId, String ip);
    
@@ -302,6 +344,8 @@ public interface NovaClient {
     * @see <a href="http://wiki.openstack.org/os_api_floating_ip">http://wiki.openstack.org/os_api_floating_ip</a>
 	* @since 2011.3 "Diablo" release, OpenStack API 1.1
     * @return all the available floating IP for the current tenant
+    * 
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.extensions.FloatingIPApi#list()} in openstack-nova.
     */
    Set<FloatingIP> listFloatingIPs();
 
@@ -312,6 +356,8 @@ public interface NovaClient {
 	* @since 2011.3 "Diablo" release, OpenStack API 1.1
     * @param id the floating IP id
     * @return the floating IP or null if not found
+    * 
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.extensions.FloatingIPApi#get(String)} in openstack-nova.
     */
    FloatingIP getFloatingIP(int id);
    
@@ -321,6 +367,8 @@ public interface NovaClient {
     * @see <a href="http://wiki.openstack.org/os-security-groups">http://wiki.openstack.org/os-security-groups</a>
     * @since OpenStack API v1.1
     * @return all the security groups for the current tenant
+    * 
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.extensions.SecurityGroupApi#list()} in openstack-nova.
     */
    Set<SecurityGroup> listSecurityGroups();
    
@@ -331,6 +379,8 @@ public interface NovaClient {
     * @since OpenStack API v1.1
     * @param id the ID of the security group to get details from
     * @return the security group or null if not found
+    * 
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.extensions.SecurityGroupApi#get(String)} in openstack-nova.
     */
    SecurityGroup getSecurityGroup(int id);
    

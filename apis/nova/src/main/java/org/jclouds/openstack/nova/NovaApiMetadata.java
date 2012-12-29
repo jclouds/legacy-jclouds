@@ -36,6 +36,8 @@ import com.google.inject.Module;
  * Implementation of {@link ApiMetadata} for Nova 1.0 API
  * 
  * @author Adrian Cole
+ * 
+ * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.NovaApiMetadata} in openstack-nova.
  */
 public class NovaApiMetadata extends BaseRestApiMetadata {
    
