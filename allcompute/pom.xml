@@ -126,11 +126,6 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.jclouds.provider</groupId>
-            <artifactId>slicehost</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.jclouds.api</groupId>
             <artifactId>elasticstack</artifactId>
             <version>${project.version}</version>
