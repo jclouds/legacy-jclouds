@@ -46,7 +46,6 @@
        <module>vcloud</module>
        <module>elasticstack</module>
        <module>atmos</module>
-       <module>nova</module>
        <module>swift</module>
        <module>openstack-keystone</module>
        <module>openstack-cinder</module>
