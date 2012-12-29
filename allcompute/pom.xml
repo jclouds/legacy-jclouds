@@ -36,11 +36,6 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.jclouds.api</groupId>
-            <artifactId>deltacloud</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.jclouds.provider</groupId>
             <artifactId>aws-ec2</artifactId>
             <version>${project.version}</version>

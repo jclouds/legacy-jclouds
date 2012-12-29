@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-  <image href="http://fancycloudprovider.com/api/images/img1" id='img1'>
-    <owner_id>fedoraproject</owner_id>
-    <name>Fedora 10</name>
-    <description>Fedora 10</description>
-    <architecture>x86_64</architecture>
-  </image>
