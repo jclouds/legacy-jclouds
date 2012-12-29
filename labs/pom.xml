@@ -45,6 +45,7 @@
        <module>cdmi</module>
        <module>joyent-cloudapi</module>
        <module>joyentcloud</module>
+       <module>google-compute</module>
        <module>greenqloud-compute</module>
        <module>greenqloud-storage</module>
        <module>iam</module>
