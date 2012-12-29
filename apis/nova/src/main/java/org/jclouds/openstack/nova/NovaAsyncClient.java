@@ -68,7 +68,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see NovaClient
  * @see <a href="http://wiki.openstack.org/OpenStackAPI_1-1" />
  * 
- * @deprecated Deprecated in jclouds 1.6, to be removed in jclouds 1.7. See NovaAsyncApi.
+ * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See NovaAsyncApi.
  */
 @RequestFilters({AuthenticateRequest.class, AddTimestampQuery.class})
 @Endpoint(ServerManagement.class)
@@ -78,7 +78,7 @@ public interface NovaAsyncClient {
    /**
     * @see NovaClient#listServers
     * 
-    * @deprecated Deprecated in jclouds 1.6, to be removed in jclouds 1.7. See {@link org.jclouds.openstack.nova.v2_0.features.ServerAsyncApi#list()} in openstack-nova.
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.ServerAsyncApi#list()} in openstack-nova.
     */
    @GET
    @Unwrap
@@ -92,7 +92,7 @@ public interface NovaAsyncClient {
    /**
     * @see NovaClient#getServer
     * 
-    * @deprecated Deprecated in jclouds 1.6, to be removed in jclouds 1.7. See {@link org.jclouds.openstack.nova.v2_0.features.ServerAsyncApi#get(String)} in openstack-nova.
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.ServerAsyncApi#get(String)} in openstack-nova.
     */
    @GET
    @Unwrap
@@ -106,7 +106,7 @@ public interface NovaAsyncClient {
    /**
     * @see NovaClient#getServer
     * 
-    * @deprecated Deprecated in jclouds 1.6, to be removed in jclouds 1.7. See {@link org.jclouds.openstack.nova.v2_0.features.ServerAsyncApi#get(String)} in openstack-nova.
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.ServerAsyncApi#get(String)} in openstack-nova.
     */
    @GET
    @Unwrap
@@ -120,7 +120,7 @@ public interface NovaAsyncClient {
    /**
     * @see NovaClient#deleteServer
     * 
-    * @deprecated Deprecated in jclouds 1.6, to be removed in jclouds 1.7. See {@link org.jclouds.openstack.nova.v2_0.features.ServerAsyncApi#delete(String)} in openstack-nova.
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.ServerAsyncApi#delete(String)} in openstack-nova.
     */
    @DELETE
    @Consumes
@@ -132,7 +132,7 @@ public interface NovaAsyncClient {
     /**
      * @see NovaClient#deleteServer
      * 
-     * @deprecated Deprecated in jclouds 1.6, to be removed in jclouds 1.7. See {@link org.jclouds.openstack.nova.v2_0.features.ServerAsyncApi#delete(String)} in openstack-nova.
+     * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.ServerAsyncApi#delete(String)} in openstack-nova.
      */
     @DELETE
     @Consumes
@@ -144,7 +144,7 @@ public interface NovaAsyncClient {
    /**
     * @see NovaClient#rebootServer
     * 
-    * @deprecated Deprecated in jclouds 1.6, to be removed in jclouds 1.7. See {@link org.jclouds.openstack.nova.v2_0.features.ServerAsyncApi#reboot(String, RebootType)} in openstack-nova.
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.ServerAsyncApi#reboot(String, RebootType)} in openstack-nova.
     */
    @POST
    @QueryParams(keys = "format", values = "json")
@@ -158,7 +158,7 @@ public interface NovaAsyncClient {
    /**
     * @see NovaClient#resizeServer
     * 
-    * @deprecated Deprecated in jclouds 1.6, to be removed in jclouds 1.7. See {@link org.jclouds.openstack.nova.v2_0.features.ServerAsyncApi#resize(String, String)} in openstack-nova.
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.ServerAsyncApi#resize(String, String)} in openstack-nova.
     */
    @POST
    @QueryParams(keys = "format", values = "json")
@@ -172,7 +172,7 @@ public interface NovaAsyncClient {
    /**
     * @see NovaClient#confirmResizeServer
     * 
-    * @deprecated Deprecated in jclouds 1.6, to be removed in jclouds 1.7. See {@link org.jclouds.openstack.nova.v2_0.features.ServerAsyncApi#confirmResize(String)} in openstack-nova.
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.ServerAsyncApi#confirmResize(String)} in openstack-nova.
     */
    @POST
    @QueryParams(keys = "format", values = "json")
@@ -186,7 +186,7 @@ public interface NovaAsyncClient {
    /**
     * @see NovaClient#revertResizeServer
     * 
-    * @deprecated Deprecated in jclouds 1.6, to be removed in jclouds 1.7. See {@link org.jclouds.openstack.nova.v2_0.features.ServerAsyncApi#revertResize(String)} in openstack-nova.
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.ServerAsyncApi#revertResize(String)} in openstack-nova.
     */
    @POST
    @QueryParams(keys = "format", values = "json")
@@ -200,7 +200,7 @@ public interface NovaAsyncClient {
    /**
     * @see NovaClient#createServer
     * 
-    * @deprecated Deprecated in jclouds 1.6, to be removed in jclouds 1.7. See {@link org.jclouds.openstack.nova.v2_0.features.ServerAsyncApi#create(String, String, String, CreateServerOptions)} in openstack-nova.
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.ServerAsyncApi#create(String, String, String, CreateServerOptions)} in openstack-nova.
     */
    @POST
    @Unwrap
@@ -215,7 +215,7 @@ public interface NovaAsyncClient {
    /**
     * @see NovaClient#rebuildServer
     * 
-    * @deprecated Deprecated in jclouds 1.6, to be removed in jclouds 1.7. See {@link org.jclouds.openstack.nova.v2_0.features.ServerAsyncApi#rebuild(String, RebuildServerOptions)} in openstack-nova.
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.ServerAsyncApi#rebuild(String, RebuildServerOptions)} in openstack-nova.
     */
    @POST
    @QueryParams(keys = "format", values = "json")
@@ -229,7 +229,7 @@ public interface NovaAsyncClient {
    /**
     * @see NovaClient#changeAdminPass
     * 
-    * @deprecated Deprecated in jclouds 1.6, to be removed in jclouds 1.7. See {@link org.jclouds.openstack.nova.v2_0.features.ServerAsyncApi#changeAdminPass(String, String)} in openstack-nova.
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.ServerAsyncApi#changeAdminPass(String, String)} in openstack-nova.
     */
    @POST
    @Path("/servers/{id}/action")
@@ -242,7 +242,7 @@ public interface NovaAsyncClient {
    /**
     * @see NovaClient#renameServer
     * 
-    * @deprecated Deprecated in jclouds 1.6, to be removed in jclouds 1.7. See {@link org.jclouds.openstack.nova.v2_0.features.ServerAsyncApi#rename(String, String)} in openstack-nova.
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.ServerAsyncApi#rename(String, String)} in openstack-nova.
     */
    @PUT
    @Path("/servers/{id}")
@@ -255,7 +255,7 @@ public interface NovaAsyncClient {
    /**
     * @see NovaClient#listFlavors
     * 
-    * @deprecated Deprecated in jclouds 1.6, to be removed in jclouds 1.7. See {@link org.jclouds.openstack.nova.v2_0.features.FlavorAsyncApi#list()} in openstack-nova.
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.FlavorAsyncApi#list()} in openstack-nova.
     */
    @GET
    @Unwrap
@@ -269,7 +269,7 @@ public interface NovaAsyncClient {
    /**
     * @see NovaClient#getFlavor
     * 
-    * @deprecated Deprecated in jclouds 1.6, to be removed in jclouds 1.7. See {@link org.jclouds.openstack.nova.v2_0.features.FlavorAsyncApi#get(String)} in openstack-nova.
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.FlavorAsyncApi#get(String)} in openstack-nova.
     */
    @GET
    @Unwrap
@@ -283,7 +283,7 @@ public interface NovaAsyncClient {
    /**
     * @see NovaClient#getFlavor
     * 
-    * @deprecated Deprecated in jclouds 1.6, to be removed in jclouds 1.7. See {@link org.jclouds.openstack.nova.v2_0.features.FlavorAsyncApi#get(String)} in openstack-nova.
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.FlavorAsyncApi#get(String)} in openstack-nova.
     */
    @GET
    @Unwrap
@@ -297,7 +297,7 @@ public interface NovaAsyncClient {
    /**
     * @see NovaClient#listImages
     * 
-    * @deprecated Deprecated in jclouds 1.6, to be removed in jclouds 1.7. See {@link org.jclouds.openstack.nova.v2_0.features.ImageAsyncApi#list()} in openstack-nova.
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.ImageAsyncApi#list()} in openstack-nova.
     */
    @GET
    @Unwrap
@@ -311,7 +311,7 @@ public interface NovaAsyncClient {
    /**
     * @see NovaClient#getImage
     * 
-    * @deprecated Deprecated in jclouds 1.6, to be removed in jclouds 1.7. See {@link org.jclouds.openstack.nova.v2_0.features.ImageAsyncApi#get(String)} in openstack-nova.
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.ImageAsyncApi#get(String)} in openstack-nova.
     */
    @GET
    @Unwrap
@@ -325,7 +325,7 @@ public interface NovaAsyncClient {
    /**
     * @see NovaClient#getImage
     * 
-    * @deprecated Deprecated in jclouds 1.6, to be removed in jclouds 1.7. See {@link org.jclouds.openstack.nova.v2_0.features.ImageAsyncApi#get(String)} in openstack-nova.
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.ImageAsyncApi#get(String)} in openstack-nova.
     */
    @GET
    @Unwrap
@@ -339,7 +339,7 @@ public interface NovaAsyncClient {
    /**
     * @see NovaClient#deleteImage
     * 
-    * @deprecated Deprecated in jclouds 1.6, to be removed in jclouds 1.7. See {@link org.jclouds.openstack.nova.v2_0.features.ImageAsyncApi#delete(String)} in openstack-nova.
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.ImageAsyncApi#delete(String)} in openstack-nova.
     */
    @DELETE
    @Fallback(FalseOnNotFoundOr404.class)
@@ -351,7 +351,7 @@ public interface NovaAsyncClient {
    /**
     * @see NovaClient#deleteImage
     * 
-    * @deprecated Deprecated in jclouds 1.6, to be removed in jclouds 1.7. See {@link org.jclouds.openstack.nova.v2_0.features.ImageAsyncApi#delete(String)} in openstack-nova.
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.ImageAsyncApi#delete(String)} in openstack-nova.
     */
    @DELETE
    @Fallback(FalseOnNotFoundOr404.class)
@@ -363,7 +363,7 @@ public interface NovaAsyncClient {
    /**
     * @see NovaClient#createImageFromServer
     * 
-    * @deprecated Deprecated in jclouds 1.6, to be removed in jclouds 1.7. See {@link org.jclouds.openstack.nova.v2_0.features.ServerAsyncApi#createImageFromServer(String, String)} in openstack-nova.
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.ServerAsyncApi#createImageFromServer(String, String)} in openstack-nova.
     */
    @POST
    @Unwrap
@@ -379,7 +379,7 @@ public interface NovaAsyncClient {
    /**
     * @see NovaClient#getAddresses
     * 
-    * @deprecated Deprecated in jclouds 1.6, to be removed in jclouds 1.7. See {@link org.jclouds.openstack.nova.v2_0.features.ServerAsyncApi#get(String)} in openstack-nova.
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.ServerAsyncApi#get(String)} in openstack-nova.
     */
    @GET
    @Unwrap
@@ -392,7 +392,7 @@ public interface NovaAsyncClient {
    /**
     * @see NovaClient#listPublicAddresses
     * 
-    * @deprecated Deprecated in jclouds 1.6, to be removed in jclouds 1.7. See {@link org.jclouds.openstack.nova.v2_0.features.ServerAsyncApi#get(String)} in openstack-nova.
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.ServerAsyncApi#get(String)} in openstack-nova.
     */
    @GET
    @Unwrap
@@ -406,7 +406,7 @@ public interface NovaAsyncClient {
    /**
     * @see NovaClient#listPrivateAddresses
     * 
-    * @deprecated Deprecated in jclouds 1.6, to be removed in jclouds 1.7. See {@link org.jclouds.openstack.nova.v2_0.features.ServerAsyncApi#get(String)} in openstack-nova.
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.features.ServerAsyncApi#get(String)} in openstack-nova.
     */
    @GET
    @Unwrap
@@ -418,7 +418,7 @@ public interface NovaAsyncClient {
    ListenableFuture<? extends Set<String>> listPrivateAddresses(@PathParam("id") int serverId);
    
    /**
-    * @deprecated Deprecated in jclouds 1.6, to be removed in jclouds 1.7. See {@link org.jclouds.openstack.nova.v2_0.extensions.FloatingIPAsyncApi#addToServer(String, String)} in openstack-nova.
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.extensions.FloatingIPAsyncApi#addToServer(String, String)} in openstack-nova.
     */
    @POST
    @Path("/servers/{id}/action")
@@ -429,7 +429,7 @@ public interface NovaAsyncClient {
    ListenableFuture<Void> addFloatingIP(@PathParam("id") int serverId, @PayloadParam("address") String ip);
 
    /**
-    * @deprecated Deprecated in jclouds 1.6, to be removed in jclouds 1.7. See {@link org.jclouds.openstack.nova.v2_0.extensions.FloatingIPAsyncApi#list()} in openstack-nova.
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.extensions.FloatingIPAsyncApi#list()} in openstack-nova.
     */
    @GET
    @Unwrap
@@ -441,7 +441,7 @@ public interface NovaAsyncClient {
    ListenableFuture<? extends Set<FloatingIP>> listFloatingIPs();
    
    /**
-    * @deprecated Deprecated in jclouds 1.6, to be removed in jclouds 1.7. See {@link org.jclouds.openstack.nova.v2_0.extensions.FloatingIPAsyncApi#get(String)} in openstack-nova.
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.extensions.FloatingIPAsyncApi#get(String)} in openstack-nova.
     */
    @GET
    @Unwrap
@@ -453,7 +453,7 @@ public interface NovaAsyncClient {
    ListenableFuture<FloatingIP> getFloatingIP(@PathParam("id") int id);
 
    /**
-    * @deprecated Deprecated in jclouds 1.6, to be removed in jclouds 1.7. See {@link org.jclouds.openstack.nova.v2_0.extensions.SecurityGroupAsyncApi#list()} in openstack-nova.
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.extensions.SecurityGroupAsyncApi#list()} in openstack-nova.
     */
    @GET
    @Unwrap
@@ -465,7 +465,7 @@ public interface NovaAsyncClient {
    ListenableFuture<? extends Set<SecurityGroup>> listSecurityGroups();
    
    /**
-    * @deprecated Deprecated in jclouds 1.6, to be removed in jclouds 1.7. See {@link org.jclouds.openstack.nova.v2_0.extensions.SecurityGroupAsyncApi#get(String)} in openstack-nova.
+    * @deprecated Deprecated in jclouds 1.5.5, to be removed in jclouds 1.6. See {@link org.jclouds.openstack.nova.v2_0.extensions.SecurityGroupAsyncApi#get(String)} in openstack-nova.
     */
    @GET
    @Unwrap
