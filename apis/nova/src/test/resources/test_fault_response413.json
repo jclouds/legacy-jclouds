@@ -1,9 +1,0 @@
-{
-    "overLimit" : {
-        "code" : 413,
-        "message" : "OverLimit Retry...",
-        "details" : "Error Details...",
-	    "retryAt" : "2010-08-01T00:00:00Z"
-    }
-}
-
