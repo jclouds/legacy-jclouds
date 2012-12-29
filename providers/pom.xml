@@ -33,7 +33,6 @@
     <name>jclouds providers project</name>
     <modules>
         <module>gogrid</module>
-        <module>slicehost</module>
         <module>cloudsigma-zrh</module>
         <module>cloudsigma-lvs</module>
         <module>azureblob</module>

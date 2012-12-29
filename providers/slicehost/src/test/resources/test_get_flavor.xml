@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<flavor>
-	<id type="integer">1</id>
-	<name>256 slice</name>
-	<price type="integer">2000</price>
-	<ram type="integer">256</ram>
-</flavor>
