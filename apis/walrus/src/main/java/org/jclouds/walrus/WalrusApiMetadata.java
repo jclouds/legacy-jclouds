@@ -28,7 +28,7 @@ import org.jclouds.s3.S3ApiMetadata;
 import org.jclouds.s3.S3AsyncClient;
 import org.jclouds.s3.S3Client;
 import org.jclouds.s3.blobstore.config.S3BlobStoreContextModule;
-import org.jclouds.walrus.config.WalrusRestClientModule;
+import org.jclouds.s3.config.S3RestClientModule;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
@@ -71,7 +71,7 @@ public class WalrusApiMetadata extends S3ApiMetadata {
          .name("Walrus (S3 clone) API")
          .version("Walrus-1.6")
          .defaultProperties(WalrusApiMetadata.defaultProperties())
-         .defaultModules(ImmutableSet.<Class<? extends Module>>of(WalrusRestClientModule.class, S3BlobStoreContextModule.class));
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(S3RestClientModule.class, S3BlobStoreContextModule.class));
       }
       
       @Override
