@@ -85,15 +85,12 @@ public class AWSUtils {
    }
 
    public AWSError parseAWSErrorFromContent(HttpRequest request, HttpResponse response) {
-      // HEAD has no content
       if (response.getPayload() == null)
          return null;
-      // Eucalyptus and Walrus occasionally return text/plain
-      if (response.getPayload().getContentMetadata().getContentType() != null
-            && response.getPayload().getContentMetadata().getContentType().indexOf("text/plain") != -1)
+      if ("text/plain".equals(response.getPayload().getContentMetadata().getContentType()))
          return null;
       try {
-         AWSError error = (AWSError) factory.create(errorHandlerProvider.get()).setContext(request).apply(response);
+         AWSError error = factory.create(errorHandlerProvider.get()).setContext(request).apply(response);
          if (error.getRequestId() == null)
             error.setRequestId(response.getFirstHeaderOrNull(requestId));
          error.setRequestToken(response.getFirstHeaderOrNull(requestToken));

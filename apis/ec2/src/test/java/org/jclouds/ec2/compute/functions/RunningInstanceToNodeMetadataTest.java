@@ -99,21 +99,6 @@ public class RunningInstanceToNodeMetadataTest {
                "us-east-1/image").providerId("id").build().toString());
    }
 
-   @Test
-   public void testIPAddressIsSetToDnsNameWhenIPAddressIsNull() {
-      RunningInstance instance = RunningInstance.builder().instanceId("id").imageId("image").instanceType("m1.small")
-            .instanceState(InstanceState.RUNNING).rawState("running").region("us-east-1").dnsName("jclouds-1-1-1-1.jclouds.org").build();
-
-      RunningInstanceToNodeMetadata parser = createNodeParser(ImmutableSet.<Hardware> of(), ImmutableSet
-            .<Location> of(), ImmutableSet.<Image> of(), ImmutableMap.<String, Credentials> of());
-
-      assertEquals(parser.apply(instance).toString(), new NodeMetadataBuilder().status(Status.RUNNING).backendStatus("running").privateAddresses(
-            ImmutableSet.<String> of()).publicAddresses(ImmutableSet.of("jclouds-1-1-1-1.jclouds.org")).id("us-east-1/id").imageId(
-            "us-east-1/image").providerId("id").build().toString());
-
-   }
-
-
    static Location provider = new LocationBuilder().scope(LocationScope.REGION).id("us-east-1")
             .description("us-east-1").build();
 
