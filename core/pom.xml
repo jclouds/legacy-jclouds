@@ -48,11 +48,6 @@
     </properties>
 
     <dependencies>
-        <!-- Required for Pems.java to read and write public and private keys -->
-        <dependency>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk15on</artifactId>
-        </dependency>
         <dependency>
             <groupId>javax.ws.rs</groupId>
             <artifactId>jsr311-api</artifactId>
