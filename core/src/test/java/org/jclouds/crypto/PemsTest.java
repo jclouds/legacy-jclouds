@@ -56,12 +56,12 @@ public class PemsTest {
 
    private static final String CERTIFICATE = "-----BEGIN CERTIFICATE-----\nMIIClzCCAgCgAwIBAgIBATANBgkqhkiG9w0BAQUFADCBnjELMAkGA1UEBhMCVVMx\nEzARBgNVBAgMCldhc2hpbmd0b24xEDAOBgNVBAcMB1NlYXR0bGUxFjAUBgNVBAoM\nDU9wc2NvZGUsIEluYy4xHDAaBgNVBAsME0NlcnRpZmljYXRlIFNlcnZpY2UxMjAw\nBgNVBAMMKW9wc2NvZGUuY29tL2VtYWlsQWRkcmVzcz1hdXRoQG9wc2NvZGUuY29t\nMB4XDTEwMDczMDIwNDEzMFoXDTIwMDcyNzIwNDEzMFowADCCASIwDQYJKoZIhvcN\nAQEBBQADggEPADCCAQoCggEBAMm9mSSahptCikfvJ30CTbEnfhfbVzTFewnznFuo\n7KrPBGYIlUdPYQ9SGDo+GKjNKiTjZYMoOMUVnsHUhu0Ez49ZSaVQInWvbF8tvpM8\nmoGQNQJtDmXG6m+YaHiA4HF/ng2u/bNLtA6Jo3HzvRCobxywc/szPt0Kj0ZD1fJ2\nE237Ph41c8zlOg9QdF0d/iD2WZdgJ1rNndKoZ0rR3A1L50VUND+PNmMDfVYHHjmb\naT89AwihCeU8eUk7m/JNP87f1QDB0Gny0rkDC3drOGS7jmabTf/7gLE5sYq3qnd+\n8/vGU3QWyfCxKSfogl7kn5uWlIe4sOqMb06GNgC+d/oytlECAwEAATANBgkqhkiG\n9w0BAQUFAAOBgQBftzSZxstWw60GqRTDNN/F2GnrdtnKBoXzHww3r6jtGEylYq20\n5KfKpEx+sPX0gyZuYJiXC2CkEjImAluWKcdN9ZF6VD541sheAjbiaU7q7ZsztTxF\nWUH2tCvHeDXYKPKek3QzL7bYpUhLnCN/XxEv6ibeMDwtI7f5qpk2Aspzcw==\n-----END CERTIFICATE-----\n";
 
-   @Test(expectedExceptions = IllegalStateException.class, expectedExceptionsMessageRegExp = "^Invalid PEM file: no parsers for marker -----BEGIN FOO PRIVATE KEY----- .*")
+   @Test(expectedExceptions = IllegalStateException.class, expectedExceptionsMessageRegExp = "^Invalid PEM: no parsers for marker -----BEGIN FOO PRIVATE KEY----- .*")
    public void testPrivateKeySpecFromPemWithInvalidMarker() throws IOException {
       Pems.privateKeySpec(Payloads.newStringPayload(INVALID_PRIVATE_KEY));
    }
 
-   @Test(expectedExceptions = IllegalStateException.class, expectedExceptionsMessageRegExp = "^Invalid PEM file: no parsers for marker -----BEGIN FOO PUBLIC KEY----- .*")
+   @Test(expectedExceptions = IllegalStateException.class, expectedExceptionsMessageRegExp = "^Invalid PEM: no parsers for marker -----BEGIN FOO PUBLIC KEY----- .*")
    public void testPublicKeySpecFromPemWithInvalidMarker() throws IOException {
       Pems.publicKeySpec(Payloads.newStringPayload(INVALID_PUBLIC_KEY));
    }
@@ -91,21 +91,21 @@ public class PemsTest {
       RSAPrivateCrtKey key = (RSAPrivateCrtKey) KeyFactory.getInstance("RSA").generatePrivate(
             Pems.privateKeySpec(Payloads.newStringPayload(PRIVATE_KEY)));
       String encoded = Pems.pem(key);
-      assertEquals(encoded, PRIVATE_KEY.replaceAll("\n", "\n").trim());
+      assertEquals(encoded, PRIVATE_KEY.replaceAll("\n", "\n"));
    }
 
    @Test
    public void testRSAPublicKeySpecPem() throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
       String encoded = Pems.pem(KeyFactory.getInstance("RSA").generatePublic(
             Pems.publicKeySpec(Payloads.newStringPayload(PUBLIC_KEY))));
-      assertEquals(encoded, PUBLIC_KEY.replaceAll("PUBLIC", "RSA PUBLIC").replaceAll("\n", "\n").trim());
+      assertEquals(encoded, PUBLIC_KEY.replaceAll("PUBLIC", "RSA PUBLIC").replaceAll("\n", "\n"));
    }
 
    @Test
    public void testRSAPKCS1PublicKeySpecPem() throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
       String encoded = Pems.pem(KeyFactory.getInstance("RSA").generatePublic(
             Pems.publicKeySpec(Payloads.newStringPayload(PUBLIC_KEY_PKCS1))));
-      assertEquals(encoded, PUBLIC_KEY_PKCS1.replaceAll("\n", "\n").trim());
+      assertEquals(encoded, PUBLIC_KEY_PKCS1.replaceAll("\n", "\n"));
    }
 
    @Test
@@ -132,7 +132,7 @@ public class PemsTest {
    public void testX509CertificatePem() throws IOException, CertificateException {
       String encoded = Pems.pem(Pems.x509Certificate(Payloads.newStringPayload(CERTIFICATE),
             CertificateFactory.getInstance("X.509")));
-      assertEquals(encoded, CERTIFICATE.replaceAll("\n", "\n").trim());
+      assertEquals(encoded, CERTIFICATE.replaceAll("\n", "\n"));
    }
 
 }

@@ -20,7 +20,6 @@ package org.jclouds.crypto;
 
 import static com.google.common.base.Joiner.on;
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Splitter.fixedLength;
 import static com.google.common.base.Throwables.propagate;
 import static com.google.common.collect.Iterables.get;
@@ -29,6 +28,7 @@ import static com.google.common.io.BaseEncoding.base64;
 import static org.jclouds.crypto.CryptoStreams.base64;
 import static org.jclouds.crypto.CryptoStreams.hex;
 import static org.jclouds.crypto.CryptoStreams.md5;
+import static org.jclouds.crypto.Pems.pem;
 import static org.jclouds.crypto.Pems.privateKeySpec;
 import static org.jclouds.util.Strings2.toStringAndClose;
 
@@ -50,9 +50,6 @@ import java.security.spec.RSAPrivateCrtKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Map;
 
-import org.bouncycastle.asn1.ASN1Primitive;
-import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.jclouds.io.InputSuppliers;
 
 import com.google.common.annotations.Beta;
@@ -153,32 +150,13 @@ public class SshKeys {
       KeyPair pair = generateRsaKeyPair(generator, rand);
       Builder<String, String> builder = ImmutableMap.builder();
       builder.put("public", encodeAsOpenSSH(RSAPublicKey.class.cast(pair.getPublic())));
-      builder.put("private", encodeAsPem(RSAPrivateKey.class.cast(pair.getPrivate())));
+      builder.put("private", pem(RSAPrivateKey.class.cast(pair.getPrivate())));
       return builder.build();
    }
 
    public static String encodeAsOpenSSH(RSAPublicKey key) {
       byte[] keyBlob = keyBlob(key.getPublicExponent(), key.getModulus());
       return "ssh-rsa " + base64(keyBlob);
-   }
-
-   public static String encodeAsPem(RSAPrivateKey key) {
-      String type = "RSA PRIVATE KEY";
-      byte[] encoded = asn1Encode(checkNotNull(key, type));
-      StringBuilder builder = new StringBuilder();
-      builder.append("-----BEGIN ").append(type).append("-----").append('\n');
-      builder.append(on('\n').join(fixedLength(64).split(base64().encode(encoded)))).append('\n');
-      builder.append("-----END ").append(type).append("-----").append('\n');
-      return builder.toString();
-   }
-
-   private static byte[] asn1Encode(RSAPrivateKey key) {
-      try {
-         PrivateKeyInfo info = new PrivateKeyInfo((ASN1Sequence) ASN1Primitive.fromByteArray(key.getEncoded()));
-         return info.parsePrivateKey().toASN1Primitive().getEncoded();
-      } catch (IOException e) {
-         throw propagate(e);
-      }
    }
 
    /**
