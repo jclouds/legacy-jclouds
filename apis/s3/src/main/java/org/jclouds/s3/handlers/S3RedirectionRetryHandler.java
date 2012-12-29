@@ -25,7 +25,6 @@ import java.net.URI;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.aws.domain.AWSError;
@@ -54,28 +53,22 @@ public class S3RedirectionRetryHandler extends RedirectionRetryHandler {
    public boolean shouldRetryRequest(HttpCommand command, HttpResponse response) {
       if (response.getFirstHeaderOrNull(HttpHeaders.LOCATION) == null
             && (response.getStatusCode() == 301 || response.getStatusCode() == 307)) {
-         if (command.getCurrentRequest().getMethod().equals(HttpMethod.HEAD)) {
-            command.incrementRedirectCount();
-            command.setCurrentRequest(command.getCurrentRequest().toBuilder().method("GET").build());
+         command.incrementRedirectCount();
+         closeClientButKeepContentStream(response);
+         AWSError error = utils.parseAWSErrorFromContent(command.getCurrentRequest(), response);
+         String host = error.getDetails().get("Endpoint");
+         if (host != null) {
+            if (host.equals(command.getCurrentRequest().getEndpoint().getHost())) {
+               // must be an amazon error related to
+               // http://developer.amazonwebservices.com/connect/thread.jspa?messageID=72287&#72287
+               return backoffHandler.shouldRetryRequest(command, response);
+            } else {
+               URI newHost = uriBuilder(command.getCurrentRequest().getEndpoint()).host(host).build();
+               command.setCurrentRequest(command.getCurrentRequest().toBuilder().endpoint(newHost).build());
+            }
             return true;
          } else {
-            command.incrementRedirectCount();
-            closeClientButKeepContentStream(response);
-            AWSError error = utils.parseAWSErrorFromContent(command.getCurrentRequest(), response);
-            String host = error.getDetails().get("Endpoint");
-            if (host != null) {
-               if (host.equals(command.getCurrentRequest().getEndpoint().getHost())) {
-                  // must be an amazon error related to
-                  // http://developer.amazonwebservices.com/connect/thread.jspa?messageID=72287&#72287
-                  return backoffHandler.shouldRetryRequest(command, response);
-               } else {
-                  URI newHost = uriBuilder(command.getCurrentRequest().getEndpoint()).host(host).build();
-                  command.setCurrentRequest(command.getCurrentRequest().toBuilder().endpoint(newHost).build());
-               }
-               return true;
-            } else {
-               return false;
-            }
+            return false;
          }
       } else {
          return super.shouldRetryRequest(command, response);

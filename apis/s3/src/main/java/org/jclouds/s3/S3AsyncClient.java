@@ -201,7 +201,7 @@ public interface S3AsyncClient {
     * @see S3Client#bucketExists
     */
    @Named("s3:ListBucket")
-   @HEAD
+   @GET
    @Path("/")
    @QueryParams(keys = "max-keys", values = "0")
    @Fallback(FalseOnContainerNotFound.class)
