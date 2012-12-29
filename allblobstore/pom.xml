@@ -56,16 +56,6 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.jclouds.api</groupId>
-            <artifactId>walrus</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jclouds.provider</groupId>
-            <artifactId>eucalyptus-partnercloud-s3</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.jclouds.provider</groupId>
             <artifactId>azureblob</artifactId>
             <version>${project.version}</version>

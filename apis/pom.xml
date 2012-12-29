@@ -41,7 +41,6 @@
        <module>ec2</module>
        <module>sqs</module>
        <module>deltacloud</module>
-       <module>walrus</module>
        <module>eucalyptus</module>
        <module>vcloud</module>
        <module>elasticstack</module>
