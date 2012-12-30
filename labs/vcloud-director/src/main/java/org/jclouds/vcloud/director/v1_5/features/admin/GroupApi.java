@@ -19,9 +19,6 @@
 package org.jclouds.vcloud.director.v1_5.features.admin;
 
 import java.net.URI;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.director.v1_5.domain.Group;
 
 /**
@@ -30,7 +27,6 @@ import org.jclouds.vcloud.director.v1_5.domain.Group;
  * @see GroupAsyncApi
  * @author danikov, Adrian Cole
  */
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface GroupApi {
    
    /**

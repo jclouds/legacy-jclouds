@@ -19,14 +19,11 @@
 package org.jclouds.aws.ec2.services;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.aws.ec2.domain.LaunchSpecification;
 import org.jclouds.aws.ec2.domain.Spot;
 import org.jclouds.aws.ec2.domain.SpotInstanceRequest;
 import org.jclouds.aws.ec2.options.DescribeSpotPriceHistoryOptions;
 import org.jclouds.aws.ec2.options.RequestSpotInstancesOptions;
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
 
 /**
@@ -36,7 +33,6 @@ import org.jclouds.javax.annotation.Nullable;
  * 
  * @author Adrian Cole
  */
-@Timeout(duration = 45, timeUnit = TimeUnit.SECONDS)
 public interface SpotInstanceClient {
    /**
     * Describes Spot Instance requests. Spot Instances are instances that Amazon EC2 starts on your
@@ -129,7 +125,6 @@ public interface SpotInstanceClient {
     *      />
     * @return TODO
     */
-   @Timeout(duration = 2, timeUnit = TimeUnit.MINUTES)
    Set<Spot> describeSpotPriceHistoryInRegion(@Nullable String region, DescribeSpotPriceHistoryOptions... options);
 
    /**

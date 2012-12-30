@@ -19,9 +19,6 @@
 package org.jclouds.hpcloud.objectstorage.extensions;
 
 import java.net.URI;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.hpcloud.objectstorage.domain.CDNContainer;
 import org.jclouds.hpcloud.objectstorage.options.ListCDNContainerOptions;
 
@@ -42,7 +39,6 @@ import com.google.common.collect.FluentIterable;
  * @author Jeremy Daggett
  */
 @Beta
-@Timeout(duration = 120, timeUnit = TimeUnit.SECONDS)
 public interface CDNContainerApi  {
    
    FluentIterable<CDNContainer> list();

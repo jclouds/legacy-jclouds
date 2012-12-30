@@ -19,8 +19,6 @@
 import static org.jclouds.compute.domain.OsFamily.UBUNTU;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;

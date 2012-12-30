@@ -19,9 +19,6 @@
 package org.jclouds.ec2;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.ec2.features.TagApi;
 import org.jclouds.ec2.features.WindowsApi;
 import org.jclouds.javax.annotation.Nullable;
@@ -52,7 +49,6 @@ import com.google.inject.Provides;
  * @author Adrian Cole
  * @see EC2AsyncApi
  */
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface EC2Api {
    /**
     * 

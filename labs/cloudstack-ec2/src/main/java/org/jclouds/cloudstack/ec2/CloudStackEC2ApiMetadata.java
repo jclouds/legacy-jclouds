@@ -18,18 +18,21 @@
  */
 package org.jclouds.cloudstack.ec2;
 
+import static java.util.concurrent.TimeUnit.MINUTES;
+import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
+
 import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.cloudstack.ec2.config.CloudStackEC2RestClientModule;
 import org.jclouds.ec2.EC2ApiMetadata;
+import org.jclouds.ec2.EC2AsyncClient;
+import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.compute.config.EC2ComputeServiceContextModule;
 import org.jclouds.ec2.compute.config.EC2ResolveImagesModule;
-import org.jclouds.rest.RestContext;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.reflect.TypeToken;
 import com.google.inject.Module;
 
 /**
@@ -38,9 +41,6 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 public class CloudStackEC2ApiMetadata extends EC2ApiMetadata {
-
-   public static final TypeToken<RestContext<CloudStackEC2Client, CloudStackEC2AsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<CloudStackEC2Client, CloudStackEC2AsyncClient>>() {
-   };
 
    private static Builder builder() {
       return new Builder();
@@ -61,13 +61,13 @@ public class CloudStackEC2ApiMetadata extends EC2ApiMetadata {
    
    public static Properties defaultProperties() {
       Properties properties = EC2ApiMetadata.defaultProperties();
-      // any property overrides here
+      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "AMIClient.describeImagesInRegion", MINUTES.toMillis(15) + "");
       return properties;
    }
 
    public static class Builder extends EC2ApiMetadata.Builder {
       protected Builder(){
-         super(CloudStackEC2Client.class, CloudStackEC2AsyncClient.class);
+         super(EC2Client.class, EC2AsyncClient.class);
          id("cloudstack-ec2")
          .name("CloudBridge (EC2 clone) API")
          .version("2010-11-15")

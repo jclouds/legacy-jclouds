@@ -18,8 +18,6 @@
  */
 package org.jclouds.cloudwatch.features;
 
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.cloudwatch.domain.GetMetricStatistics;
 import org.jclouds.cloudwatch.domain.GetMetricStatisticsResponse;
 import org.jclouds.cloudwatch.domain.Metric;
@@ -28,7 +26,6 @@ import org.jclouds.cloudwatch.options.GetMetricStatisticsOptions;
 import org.jclouds.cloudwatch.options.ListMetricsOptions;
 import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.collect.PagedIterable;
-import org.jclouds.concurrent.Timeout;
 
 /**
  * Provides access to Amazon CloudWatch via the Query API
@@ -38,7 +35,6 @@ import org.jclouds.concurrent.Timeout;
  * @see <a href="http://docs.amazonwebservices.com/AmazonCloudWatch/latest/APIReference" />
  * @author Jeremy Whitlock
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface MetricApi {
 
    /**

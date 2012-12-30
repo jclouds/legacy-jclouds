@@ -18,12 +18,8 @@
  */
 package org.jclouds.trmk.vcloud_0_8.internal;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.trmk.vcloud_0_8.domain.VCloudSession;
 
-@Timeout(duration = 10, timeUnit = TimeUnit.SECONDS)
 public interface TerremarkVCloudLoginClient {
 
    VCloudSession login();

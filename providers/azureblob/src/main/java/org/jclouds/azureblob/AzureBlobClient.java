@@ -19,17 +19,15 @@
 package org.jclouds.azureblob;
 
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.azure.storage.domain.BoundedSet;
 import org.jclouds.azure.storage.options.ListOptions;
+import org.jclouds.azureblob.domain.AzureBlob;
 import org.jclouds.azureblob.domain.BlobProperties;
 import org.jclouds.azureblob.domain.ContainerProperties;
 import org.jclouds.azureblob.domain.ListBlobsResponse;
 import org.jclouds.azureblob.domain.PublicAccess;
 import org.jclouds.azureblob.options.CreateContainerOptions;
 import org.jclouds.azureblob.options.ListBlobsOptions;
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.options.GetOptions;
 
 import com.google.inject.Provides;
@@ -43,10 +41,9 @@ import com.google.inject.Provides;
  * @see <a href="http://msdn.microsoft.com/en-us/library/dd135733.aspx" />
  * @author Adrian Cole
  */
-@Timeout(duration = 90, timeUnit = TimeUnit.SECONDS)
 public interface AzureBlobClient {
    @Provides
-   public org.jclouds.azureblob.domain.AzureBlob newBlob();
+   public AzureBlob newBlob();
 
    /**
     * The List Containers operation returns a list of the containers under the specified identity.
@@ -185,10 +182,8 @@ public interface AzureBlobClient {
     * <p/>
     * Blobs are listed in alphabetical order in the response body.
     */
-   @Timeout(duration = 2, timeUnit = TimeUnit.MINUTES)
    ListBlobsResponse listBlobs(String container, ListBlobsOptions... options);
 
-   @Timeout(duration = 2, timeUnit = TimeUnit.MINUTES)
    ListBlobsResponse listBlobs(ListBlobsOptions... options);
 
    /**
@@ -205,19 +200,14 @@ public interface AzureBlobClient {
     * If you attempt to upload a blob that is larger than 64 MB, the service returns status code 413
     * (Request Payload Too Large). The Blob service also returns additional information about the
     * error in the response, including the maximum blob size permitted in bytes.
-    * <p/>
-    * A Put Blob operation is permitted 10 minutes per MB to complete. If the operation is taking
-    * longer than 10 minutes per MB on average, the operation will timeout.
     */
-   @Timeout(duration = 10 * 64, timeUnit = TimeUnit.MINUTES)
-   String putBlob(String container, org.jclouds.azureblob.domain.AzureBlob object);
+   String putBlob(String container, AzureBlob object);
 
    /**
     * The Get Blob operation reads or downloads a blob from the system, including its metadata and
     * properties.
     */
-   @Timeout(duration = 10 * 64, timeUnit = TimeUnit.MINUTES)
-   org.jclouds.azureblob.domain.AzureBlob getBlob(String container, String name, GetOptions... options);
+   AzureBlob getBlob(String container, String name, GetOptions... options);
 
    /**
     * The Get Blob Properties operation returns all user-defined metadata, standard HTTP properties,

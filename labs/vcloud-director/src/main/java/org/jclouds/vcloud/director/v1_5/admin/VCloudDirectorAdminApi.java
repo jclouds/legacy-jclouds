@@ -18,9 +18,6 @@
  */
 package org.jclouds.vcloud.director.v1_5.admin;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.vcloud.director.v1_5.features.admin.AdminCatalogApi;
 import org.jclouds.vcloud.director.v1_5.features.admin.AdminNetworkApi;
@@ -37,7 +34,6 @@ import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorApi;
  * @see VCloudDirectorAsyncApi
  * @author Adrian Cole
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface VCloudDirectorAdminApi extends VCloudDirectorApi {
    /**
     * @return asynchronous access to admin query features

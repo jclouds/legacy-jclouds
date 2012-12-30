@@ -18,10 +18,7 @@
  */
 package org.jclouds.cloudstack.features;
 
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.cloudstack.domain.LoginResponse;
-import org.jclouds.concurrent.Timeout;
 
 /**
  * Provides synchronous access to CloudStack Sessions
@@ -30,7 +27,6 @@ import org.jclouds.concurrent.Timeout;
  * @see <a href="http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_User.html" />
  * @author Andrei Savu
  */
-@Timeout(duration = 120, timeUnit = TimeUnit.SECONDS)
 public interface SessionClient {
 
    /**

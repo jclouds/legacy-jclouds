@@ -18,11 +18,8 @@
  */
 package org.jclouds.cloudstack.features;
 
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
-import org.jclouds.concurrent.Timeout;
 
 /**
  * Provides synchronous access to CloudStack Account features available to Domain
@@ -33,7 +30,6 @@ import org.jclouds.concurrent.Timeout;
  *      "http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_Domain_Admin.html"
  *      />
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface DomainAccountClient extends AccountClient {
 
    /**

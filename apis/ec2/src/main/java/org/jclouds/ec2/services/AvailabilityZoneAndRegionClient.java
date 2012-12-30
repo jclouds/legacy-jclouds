@@ -21,9 +21,6 @@ package org.jclouds.ec2.services;
 import java.net.URI;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.ec2.domain.AvailabilityZoneInfo;
 import org.jclouds.ec2.options.DescribeAvailabilityZonesOptions;
 import org.jclouds.ec2.options.DescribeRegionsOptions;
@@ -35,7 +32,6 @@ import org.jclouds.javax.annotation.Nullable;
  * 
  * @author Adrian Cole
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface AvailabilityZoneAndRegionClient {
 
    /**

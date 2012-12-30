@@ -18,9 +18,6 @@
  */
 package org.jclouds.openstack.nova.ec2;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.ec2.EC2Client;
 import org.jclouds.openstack.nova.ec2.services.NovaEC2KeyPairClient;
 import org.jclouds.rest.annotations.Delegate;
@@ -30,7 +27,6 @@ import org.jclouds.rest.annotations.Delegate;
  * 
  * @author Adam Lowe
  */
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface NovaEC2Client extends EC2Client {
 
    /**

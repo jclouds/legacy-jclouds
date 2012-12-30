@@ -18,9 +18,6 @@
  */
 package org.jclouds.sqs.features;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.sqs.domain.Action;
 
 /**
@@ -30,7 +27,6 @@ import org.jclouds.sqs.domain.Action;
  * @see PermissionAsyncApi
  * @author Adrian Cole
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface PermissionApi {
 
    /**

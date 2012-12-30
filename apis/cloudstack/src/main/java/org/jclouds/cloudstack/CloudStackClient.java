@@ -18,8 +18,6 @@
  */
 package org.jclouds.cloudstack;
 
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.cloudstack.features.AccountClient;
 import org.jclouds.cloudstack.features.AddressClient;
 import org.jclouds.cloudstack.features.AsyncJobClient;
@@ -43,7 +41,6 @@ import org.jclouds.cloudstack.features.VMGroupClient;
 import org.jclouds.cloudstack.features.VirtualMachineClient;
 import org.jclouds.cloudstack.features.VolumeClient;
 import org.jclouds.cloudstack.features.ZoneClient;
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
 
 /**
@@ -54,7 +51,6 @@ import org.jclouds.rest.annotations.Delegate;
  * @see CloudStackAsyncClient
  * @see <a href="http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_User.html" />
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface CloudStackClient {
    /**
     * Provides synchronous access to Zone features.

@@ -18,9 +18,6 @@
  */
 package org.jclouds.ec2;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.ec2.services.AMIClient;
 import org.jclouds.ec2.services.AvailabilityZoneAndRegionClient;
 import org.jclouds.ec2.services.ElasticBlockStoreClient;
@@ -36,7 +33,6 @@ import org.jclouds.rest.annotations.Delegate;
  * 
  * @author Adrian Cole
  */
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface EC2Client extends EC2Api {
    
    /**

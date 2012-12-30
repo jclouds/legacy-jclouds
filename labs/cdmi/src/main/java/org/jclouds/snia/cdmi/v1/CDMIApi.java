@@ -18,12 +18,9 @@
  */
 package org.jclouds.snia.cdmi.v1;
 
-import java.util.concurrent.TimeUnit;
-
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.snia.cdmi.v1.features.ContainerApi;
 import org.jclouds.snia.cdmi.v1.features.DataApi;
@@ -38,7 +35,6 @@ import org.jclouds.snia.cdmi.v1.features.DomainApi;
  * @see <a href="http://www.snia.org/cdmi">api doc</a>
  * @author Adrian Cole
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface CDMIApi {
 
    /**

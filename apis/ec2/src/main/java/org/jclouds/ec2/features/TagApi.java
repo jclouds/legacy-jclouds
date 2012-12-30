@@ -19,9 +19,6 @@
 package org.jclouds.ec2.features;
 
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.ec2.domain.Tag;
 import org.jclouds.ec2.util.TagFilterBuilder;
 import org.jclouds.rest.annotations.SinceApiVersion;
@@ -41,7 +38,6 @@ import com.google.common.collect.Multimap;
  * @author Adrian Cole
  */
 @SinceApiVersion("2010-08-31")
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface TagApi {
 
    /**

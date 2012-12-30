@@ -19,8 +19,6 @@
 package org.jclouds.cloudstack.features;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.Snapshot;
 import org.jclouds.cloudstack.domain.SnapshotPolicy;
@@ -28,7 +26,6 @@ import org.jclouds.cloudstack.domain.SnapshotPolicySchedule;
 import org.jclouds.cloudstack.options.CreateSnapshotOptions;
 import org.jclouds.cloudstack.options.ListSnapshotPoliciesOptions;
 import org.jclouds.cloudstack.options.ListSnapshotsOptions;
-import org.jclouds.concurrent.Timeout;
 
 /**
  * Provides synchronous access to CloudStack Snapshot features.
@@ -38,7 +35,6 @@ import org.jclouds.concurrent.Timeout;
  * @see http://download.cloud.com/releases/2.2.0/api/TOC_User.html
  * @author Richard Downer
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface SnapshotClient {
 
    /**

@@ -19,10 +19,6 @@
 package org.jclouds.elb.features;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
-
 /**
  * Provides access to Amazon ELB via the Query API
  * <p/>
@@ -31,7 +27,6 @@ import org.jclouds.concurrent.Timeout;
  * @see AvailabilityZoneAsyncApi
  * @author Adrian Cole
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface AvailabilityZoneApi {
 
    /**

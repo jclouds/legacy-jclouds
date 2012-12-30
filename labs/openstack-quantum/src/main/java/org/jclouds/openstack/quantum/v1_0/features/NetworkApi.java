@@ -18,9 +18,6 @@
  */
 package org.jclouds.openstack.quantum.v1_0.features;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.quantum.v1_0.domain.Network;
 import org.jclouds.openstack.quantum.v1_0.domain.NetworkDetails;
 import org.jclouds.openstack.quantum.v1_0.domain.Reference;
@@ -38,7 +35,6 @@ import com.google.common.collect.FluentIterable;
  * @see <a href=
  *      "http://docs.openstack.org/api/openstack-network/1.0/content/Networks.html">api doc</a>
  */
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface NetworkApi {
 
    /**

@@ -18,9 +18,6 @@
  */
 package org.jclouds.openstack.nova.ec2.services;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.ec2.services.KeyPairClient;
 import org.jclouds.javax.annotation.Nullable;
@@ -29,7 +26,6 @@ import org.jclouds.javax.annotation.Nullable;
  * 
  * @author Adrian Cole
  */
-@Timeout(duration = 90, timeUnit = TimeUnit.SECONDS)
 public interface NovaEC2KeyPairClient extends KeyPairClient {
 
    /**

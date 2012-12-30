@@ -19,9 +19,6 @@
 package org.jclouds.vcloud.director.v1_5.features;
 
 import java.net.URI;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.vcloud.director.v1_5.domain.Media;
@@ -36,7 +33,6 @@ import org.jclouds.vcloud.director.v1_5.functions.href.MediaURNToHref;
  * @see MediaAsyncApi
  * @author danikov, Adrian Cole
  */
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface MediaApi {
 
    /**

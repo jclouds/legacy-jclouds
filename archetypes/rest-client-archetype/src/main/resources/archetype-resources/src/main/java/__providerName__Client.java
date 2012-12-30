@@ -21,10 +21,6 @@
  */
 package ${package};
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
-
 /**
  * Provides synchronous access to ${providerName}.
  * <p/>
@@ -33,7 +29,6 @@ import org.jclouds.concurrent.Timeout;
  * @see <a href="TODO: insert URL of ${providerName} documentation" />
  * @author ${author}
  */
-@Timeout(duration = 4, timeUnit = TimeUnit.SECONDS)
 public interface ${providerName}Client {
    /*
     * Note all these delegate to methods in ${providerName}AsyncClient with a specified or inherited timeout.

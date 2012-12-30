@@ -19,12 +19,9 @@
 package org.jclouds.cloudstack.features;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.cloudstack.domain.VlanIPRange;
 import org.jclouds.cloudstack.options.CreateVlanIPRangeOptions;
 import org.jclouds.cloudstack.options.ListVlanIPRangesOptions;
-import org.jclouds.concurrent.Timeout;
 
 /**
  * Provides synchronous access to CloudStack VLAN features.
@@ -34,7 +31,6 @@ import org.jclouds.concurrent.Timeout;
  * @see <a href="http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_Global_Admin.html" />
  * @author Richard Downer
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface GlobalVlanClient {
 
    /**

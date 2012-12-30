@@ -19,9 +19,6 @@
 package org.jclouds.openstack.keystone.v2_0.features;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.keystone.v2_0.domain.Tenant;
 
 /**
@@ -34,7 +31,6 @@ import org.jclouds.openstack.keystone.v2_0.domain.Tenant;
  *      "http://docs.openstack.org/api/openstack-identity-service/2.0/content/Service_API_Api_Operations.html"
  *      />
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface ServiceApi {
 
    /**

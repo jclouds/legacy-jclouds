@@ -18,6 +18,8 @@
  */
 package org.jclouds.sqs;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AUTH_TAG;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_HEADER_TAG;
 import static org.jclouds.sqs.config.SQSProperties.CREATE_QUEUE_MAX_RETRIES;
@@ -57,9 +59,12 @@ public class SQSApiMetadata extends BaseRestApiMetadata {
    protected SQSApiMetadata(Builder builder) {
       super(builder);
    }
-   
+
    public static Properties defaultProperties() {
       Properties properties = BaseRestApiMetadata.defaultProperties();
+      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "default", SECONDS.toMillis(30) + "");
+      // this will gracefully attempt to resolve name issues
+      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "QueueApi.create", SECONDS.toMillis(61) + "");
       properties.setProperty(CREATE_QUEUE_MAX_RETRIES, "60");
       properties.setProperty(CREATE_QUEUE_RETRY_INTERVAL, "1000");
       properties.setProperty(PROPERTY_AUTH_TAG, "AWS");

@@ -18,9 +18,6 @@
  */
 package org.jclouds.openstack.swift.v1.features;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.swift.v1.domain.Account;
 
 /**
@@ -32,7 +29,6 @@ import org.jclouds.openstack.swift.v1.domain.Account;
  *      href="http://docs.openstack.org/api/openstack-object-storage/1.0/content/storage-account-services.html"
  *      >api doc</a>
  */
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface AccountApi {
    
    /**

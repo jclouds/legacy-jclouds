@@ -19,11 +19,8 @@
 
 package org.jclouds.abiquo.features;
 
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.abiquo.domain.cloud.options.ConversionOptions;
 import org.jclouds.abiquo.domain.cloud.options.VirtualMachineTemplateOptions;
-import org.jclouds.concurrent.Timeout;
 
 import com.abiquo.model.enumerator.DiskFormatType;
 import com.abiquo.model.transport.AcceptedRequestDto;
@@ -42,7 +39,6 @@ import com.abiquo.server.core.appslibrary.VirtualMachineTemplatesDto;
  * @author Ignasi Barrera
  * @author Francesc Montserrat
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface VirtualMachineTemplateApi {
    /*********************** Virtual Machine Template ***********************/
 
@@ -119,7 +115,6 @@ public interface VirtualMachineTemplateApi {
     *           datacenter and original template.
     * @return Response message to the persistent request.
     */
-   @Timeout(duration = 90, timeUnit = TimeUnit.SECONDS)
    AcceptedRequestDto<String> createPersistentVirtualMachineTemplate(Integer enterpriseId,
          Integer datacenterRepositoryId, VirtualMachineTemplatePersistentDto persistentOptions);
 

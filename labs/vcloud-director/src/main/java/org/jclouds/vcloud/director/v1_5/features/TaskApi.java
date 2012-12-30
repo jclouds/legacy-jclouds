@@ -19,9 +19,6 @@
 package org.jclouds.vcloud.director.v1_5.features;
 
 import java.net.URI;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.TasksList;
 
@@ -31,7 +28,6 @@ import org.jclouds.vcloud.director.v1_5.domain.TasksList;
  * @see TaskAsyncApi
  * @author grkvlt@apache.org, Adrian Cole
  */
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface TaskApi {
 
    /**

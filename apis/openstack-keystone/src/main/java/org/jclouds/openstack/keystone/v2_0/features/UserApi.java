@@ -19,10 +19,7 @@
 package org.jclouds.openstack.keystone.v2_0.features;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.collect.PagedIterable;
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.keystone.v2_0.domain.PaginatedCollection;
 import org.jclouds.openstack.keystone.v2_0.domain.Role;
 import org.jclouds.openstack.keystone.v2_0.domain.User;
@@ -41,7 +38,6 @@ import com.google.common.annotations.Beta;
  *      />
  */
 @Beta
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface UserApi {
 
    /**

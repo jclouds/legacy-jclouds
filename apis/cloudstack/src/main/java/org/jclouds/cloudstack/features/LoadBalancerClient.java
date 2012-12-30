@@ -19,15 +19,12 @@
 package org.jclouds.cloudstack.features;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.cloudstack.domain.LoadBalancerRule;
 import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.domain.LoadBalancerRule.Algorithm;
 import org.jclouds.cloudstack.options.CreateLoadBalancerRuleOptions;
 import org.jclouds.cloudstack.options.ListLoadBalancerRulesOptions;
 import org.jclouds.cloudstack.options.UpdateLoadBalancerRuleOptions;
-import org.jclouds.concurrent.Timeout;
 
 /**
  * Provides synchronous access to CloudStack LoadBalancer features.
@@ -37,7 +34,6 @@ import org.jclouds.concurrent.Timeout;
  * @see <a href="http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_User.html" />
  * @author Adrian Cole
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface LoadBalancerClient {
    /**
     * List the load balancer rules

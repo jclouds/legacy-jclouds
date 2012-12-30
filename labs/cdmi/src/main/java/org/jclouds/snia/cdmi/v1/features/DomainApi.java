@@ -18,10 +18,6 @@
  */
 package org.jclouds.snia.cdmi.v1.features;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
-
 /**
  * Domain Object Resource Operations
  * 
@@ -29,7 +25,6 @@ import org.jclouds.concurrent.Timeout;
  * @author Adrian Cole
  * @see <a href="http://www.snia.org/cdmi">api doc</a>
  */
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface DomainApi {
 
 }

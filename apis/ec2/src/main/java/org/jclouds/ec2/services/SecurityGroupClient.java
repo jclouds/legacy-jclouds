@@ -19,9 +19,6 @@
 package org.jclouds.ec2.services;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.ec2.domain.IpProtocol;
 import org.jclouds.ec2.domain.SecurityGroup;
 import org.jclouds.ec2.domain.UserIdGroupPair;
@@ -33,7 +30,6 @@ import org.jclouds.javax.annotation.Nullable;
  * 
  * @author Adrian Cole
  */
-@Timeout(duration = 45, timeUnit = TimeUnit.SECONDS)
 public interface SecurityGroupClient {
 
    /**

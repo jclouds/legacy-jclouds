@@ -18,12 +18,9 @@
  */
 package org.jclouds.fujitsu.fgcp.services;
 
-import java.util.concurrent.TimeUnit;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.fujitsu.fgcp.FGCPAsyncApi;
 import org.jclouds.fujitsu.fgcp.filters.RequestAuthenticator;
 import org.jclouds.fujitsu.fgcp.reference.RequestParameters;
@@ -41,7 +38,6 @@ import org.jclouds.rest.annotations.RequestFilters;
 @QueryParams(keys = RequestParameters.VERSION, values = FGCPAsyncApi.VERSION)
 @PayloadParams(keys = RequestParameters.VERSION, values = FGCPAsyncApi.VERSION)
 @Consumes(MediaType.TEXT_XML)
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface LoadBalancerAsyncApi extends BuiltinServerAsyncApi {
 
    /*

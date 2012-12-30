@@ -23,7 +23,6 @@ import org.jclouds.cloudwatch.domain.Datapoint;
 import org.jclouds.cloudwatch.domain.Statistics;
 import org.jclouds.cloudwatch.features.MetricApi;
 import org.jclouds.cloudwatch.options.GetMetricStatisticsOptions;
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.Region;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
@@ -32,8 +31,6 @@ import org.jclouds.rest.annotations.EndpointParam;
 
 import java.util.Date;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 /**
  * Provides access to Amazon CloudWatch via the Query API
  * <p/>
@@ -43,7 +40,6 @@ import java.util.concurrent.TimeUnit;
  *      />
  * @author Adrian Cole
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface CloudWatchApi {
    /**
     * 

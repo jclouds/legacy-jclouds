@@ -18,9 +18,6 @@
  */
 package org.jclouds.openstack.keystone.v2_0;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.openstack.keystone.v2_0.domain.Access;
 import org.jclouds.openstack.keystone.v2_0.domain.ApiAccessKeyCredentials;
@@ -35,7 +32,6 @@ import org.jclouds.openstack.keystone.v2_0.domain.PasswordCredentials;
  *      />
  * @author Adrian Cole
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface AuthenticationApi {
 
    /**

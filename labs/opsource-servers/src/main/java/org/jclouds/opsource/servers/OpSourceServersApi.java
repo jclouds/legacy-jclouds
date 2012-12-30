@@ -18,9 +18,6 @@
  */
 package org.jclouds.opsource.servers;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.opsource.servers.features.AccountApi;
 import org.jclouds.opsource.servers.features.ServerApi;
 import org.jclouds.opsource.servers.features.ServerImageApi;
@@ -32,7 +29,6 @@ import org.jclouds.rest.annotations.Delegate;
  * @see OpSourceServersAsyncApi
  * @author Adrian Cole
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface OpSourceServersApi {
 
    /**

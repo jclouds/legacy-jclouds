@@ -20,10 +20,6 @@ package org.jclouds.joyent.cloudapi.v6_5.features;
 
 import java.net.URI;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
-
 /**
  * Datacenter Services
  * 
@@ -31,7 +27,6 @@ import org.jclouds.concurrent.Timeout;
  * @author Adrian Cole
  * @see <a href="http://apidocs.joyent.com/sdcapidoc/cloudapi/index.html#datacenters">api doc</a>
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface DatacenterApi {
 
    /**

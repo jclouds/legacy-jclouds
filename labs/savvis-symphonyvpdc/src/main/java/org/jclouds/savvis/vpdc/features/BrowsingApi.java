@@ -19,11 +19,8 @@
 package org.jclouds.savvis.vpdc.features;
 
 import java.net.URI;
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.javax.annotation.Nullable;
 
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.savvis.vpdc.domain.FirewallService;
 import org.jclouds.savvis.vpdc.domain.Network;
 import org.jclouds.savvis.vpdc.domain.Org;
@@ -39,7 +36,6 @@ import org.jclouds.savvis.vpdc.options.GetVMOptions;
  * @see <a href="https://api.sandbox.savvis.net/doc/spec/api/" />
  * @author Adrian Cole
  */
-@Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
 public interface BrowsingApi {
    /**
     * Get an organization, which can contain list of vDC entities

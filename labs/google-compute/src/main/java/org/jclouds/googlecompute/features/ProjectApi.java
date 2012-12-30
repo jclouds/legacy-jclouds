@@ -19,13 +19,10 @@
 
 package org.jclouds.googlecompute.features;
 
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.googlecompute.domain.Operation;
 import org.jclouds.googlecompute.domain.Project;
 
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
 /**
  * Provides synchronous access to Projects via their REST API.
  * <p/>
@@ -34,7 +31,6 @@ import java.util.concurrent.TimeUnit;
  * @see ProjectAsyncApi
  * @see <a href="https://developers.google.com/compute/docs/reference/v1beta13/projects"/>
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface ProjectApi {
 
    /**

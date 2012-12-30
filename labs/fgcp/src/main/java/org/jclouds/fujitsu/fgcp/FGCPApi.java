@@ -18,9 +18,6 @@
  */
 package org.jclouds.fujitsu.fgcp;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.fujitsu.fgcp.services.AdditionalDiskApi;
 import org.jclouds.fujitsu.fgcp.services.DiskImageApi;
 import org.jclouds.fujitsu.fgcp.services.FirewallApi;
@@ -37,7 +34,6 @@ import org.jclouds.rest.annotations.Delegate;
  * 
  * @author Dies Koper
  */
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface FGCPApi {
 
    @Delegate

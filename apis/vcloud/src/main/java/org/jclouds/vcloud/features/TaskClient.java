@@ -19,9 +19,6 @@
 package org.jclouds.vcloud.features;
 
 import java.net.URI;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TasksList;
 
@@ -31,7 +28,6 @@ import org.jclouds.vcloud.domain.TasksList;
  * 
  * @author Adrian Cole
  */
-@Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
 public interface TaskClient {
 
    TasksList getTasksList(URI tasksListId);

@@ -18,9 +18,6 @@
  */
 package org.jclouds.glesys.features;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.glesys.domain.IpDetails;
 import org.jclouds.glesys.options.ListIpOptions;
 
@@ -34,7 +31,6 @@ import com.google.common.collect.FluentIterable;
  * @see IpAsyncApi
  * @see <a href="https://customer.glesys.com/api.php" />
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface IpApi {
    /**
     * Get a set of all IP addresses that are available and not used on any account or server.

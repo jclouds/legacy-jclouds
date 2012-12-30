@@ -19,9 +19,6 @@
 package org.jclouds.joyent.cloudapi.v6_5.features;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.joyent.cloudapi.v6_5.domain.Machine;
 import org.jclouds.joyent.cloudapi.v6_5.options.CreateMachineOptions;
 
@@ -33,7 +30,6 @@ import org.jclouds.joyent.cloudapi.v6_5.options.CreateMachineOptions;
  * @see MachineAsyncApi
  * @see <a href="http://apidocs.joyent.com/sdcapidoc/cloudapi/index.html#machines">api doc</a>
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface MachineApi {
 
    /**

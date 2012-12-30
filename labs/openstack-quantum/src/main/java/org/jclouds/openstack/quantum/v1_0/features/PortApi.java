@@ -18,9 +18,6 @@
  */
 package org.jclouds.openstack.quantum.v1_0.features;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.quantum.v1_0.domain.Attachment;
 import org.jclouds.openstack.quantum.v1_0.domain.Port;
 import org.jclouds.openstack.quantum.v1_0.domain.PortDetails;
@@ -40,7 +37,6 @@ import com.google.common.collect.FluentIterable;
  * @see <a href=
  *      "http://docs.openstack.org/api/openstack-network/1.0/content/Ports.html">api doc</a>
  */
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface PortApi {
    /**
     * Returns the list of all ports currently defined in Quantum for the requested network

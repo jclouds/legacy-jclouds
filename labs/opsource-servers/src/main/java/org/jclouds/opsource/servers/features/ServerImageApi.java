@@ -18,9 +18,6 @@
  */
 package org.jclouds.opsource.servers.features;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.opsource.servers.domain.ServerImagesList;
 
 /**
@@ -30,7 +27,6 @@ import org.jclouds.opsource.servers.domain.ServerImagesList;
  * @see ServerImageAsyncApi
  * @author Kedar Dave
  */
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface ServerImageApi {
 	
 	/**

@@ -18,9 +18,6 @@
  */
 package org.jclouds.vcloud.director.v1_5.features.admin;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.director.v1_5.domain.RoleReferences;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecords;
 import org.jclouds.vcloud.director.v1_5.features.QueryApi;
@@ -31,7 +28,6 @@ import org.jclouds.vcloud.director.v1_5.features.QueryApi;
  * @see AdminQueryAsyncApi
  * @author Aled Sage
  */
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface AdminQueryApi extends QueryApi {
    
    /**

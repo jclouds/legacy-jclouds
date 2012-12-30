@@ -19,9 +19,6 @@
 package org.jclouds.s3;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.s3.domain.AccessControlList;
@@ -49,7 +46,6 @@ import com.google.inject.Provides;
  * @author James Murty
  * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/RESTAPI.html" />
  */
-@Timeout(duration = 90, timeUnit = TimeUnit.SECONDS)
 public interface S3Client {
 
    /**
@@ -76,11 +72,6 @@ public interface S3Client {
     * <li>{@link GetObjectOptions#tail}</li>
     * </ul>
     * 
-    * <h3>Timeout</h3>
-    * The maximum size of an object in S3 is 5GB. We've set the timeout according to a rate of
-    * 512kb/s for the maximum size. If you wish a shorter timeout, please use the
-    * {@link S3AsyncClient} interface}.
-    * 
     * @param bucketName
     *           namespace of the object you are retrieving
     * @param key
@@ -93,7 +84,6 @@ public interface S3Client {
     * @see #getObject(String, String)
     * @see GetObjectOptions
     */
-   @Timeout(duration = 5 * 1024 * 1024 / 512, timeUnit = TimeUnit.SECONDS)
    S3Object getObject(String bucketName, String key, GetOptions... options);
 
    /**
@@ -150,10 +140,6 @@ public interface S3Client {
     * <p/>
     * This returns a byte[] of the eTag hash of what Amazon S3 received
     * <p />
-    * <h3>Timeout</h3>
-    * The maximum size of an object in S3 is 5GB. We've set the timeout according to a rate of
-    * 128kb/s for the maximum size. If you wish a shorter timeout, please use the
-    * {@link S3AsyncClient} interface}.
     * 
     * @param bucketName
     *           namespace of the object you are storing
@@ -169,7 +155,6 @@ public interface S3Client {
     *      href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTObjectPUT.html"
     *      />
     */
-   @Timeout(duration = 5 * 1024 * 1024 / 128, timeUnit = TimeUnit.SECONDS)
    String putObject(String bucketName, S3Object object, PutObjectOptions... options);
 
    /**
@@ -193,7 +178,6 @@ public interface S3Client {
     *      />
     * 
     */
-   @Timeout(duration = 90, timeUnit = TimeUnit.SECONDS)
    boolean putBucketInRegion(@Nullable String region, @Bucket String bucketName, PutBucketOptions... options);
 
    /**
@@ -273,7 +257,6 @@ public interface S3Client {
     * @see CopyObjectOptions
     * @see org.jclouds.s3.domain.CannedAccessPolicy
     */
-   @Timeout(duration = 10, timeUnit = TimeUnit.MINUTES)
    ObjectMetadata copyObject(String sourceBucket, String sourceObject, String destinationBucket,
             String destinationObject, CopyObjectOptions... options);
 

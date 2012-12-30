@@ -18,6 +18,8 @@
  */
 package org.jclouds.savvis.vpdc;
 
+import static java.util.concurrent.TimeUnit.MINUTES;
+import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
 import static org.jclouds.savvis.vpdc.reference.VPDCConstants.PROPERTY_VPDC_TIMEOUT_TASK_COMPLETED;
 
 import java.net.URI;
@@ -59,6 +61,8 @@ public class VPDCApiMetadata extends BaseRestApiMetadata {
 
    public static Properties defaultProperties() {
       Properties properties = BaseRestApiMetadata.defaultProperties();
+      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "default", MINUTES.toMillis(5) + "");
+      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "LoginApi.login", MINUTES.toMillis(3) + "");
       properties.setProperty(PROPERTY_VPDC_TIMEOUT_TASK_COMPLETED, 600l * 1000l + "");
       return properties;
    }

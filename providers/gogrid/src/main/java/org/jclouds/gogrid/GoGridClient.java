@@ -18,9 +18,6 @@
  */
 package org.jclouds.gogrid;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.gogrid.services.GridImageClient;
 import org.jclouds.gogrid.services.GridIpClient;
 import org.jclouds.gogrid.services.GridJobClient;
@@ -31,7 +28,6 @@ import org.jclouds.rest.annotations.Delegate;
 /**
  * @author Oleksiy Yarmula
  */
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface GoGridClient {
 
    /**

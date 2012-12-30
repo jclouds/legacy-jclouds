@@ -18,9 +18,6 @@
  */
 package org.jclouds.softlayer.features;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.softlayer.domain.ProductPackage;
 
 /**
@@ -31,7 +28,6 @@ import org.jclouds.softlayer.domain.ProductPackage;
  * @see <a href="http://sldn.softlayer.com/article/REST" />
  * @author Adrian Cole
  */
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface ProductPackageClient {
 
    /**

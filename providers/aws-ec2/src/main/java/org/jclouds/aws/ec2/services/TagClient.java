@@ -20,11 +20,8 @@ package org.jclouds.aws.ec2.services;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.aws.ec2.domain.Tag;
 import org.jclouds.aws.ec2.util.TagFilters.FilterName;
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
 
 /**
@@ -39,7 +36,6 @@ import org.jclouds.javax.annotation.Nullable;
  * @see TagApi
  */
 @Deprecated
-@Timeout(duration = 45, timeUnit = TimeUnit.SECONDS)
 public interface TagClient {
    /**
     * Creates tags.

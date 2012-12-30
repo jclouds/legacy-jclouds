@@ -22,9 +22,6 @@
 package ${package}.features;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import ${package}.domain.Key;
 
 /**
@@ -34,7 +31,6 @@ import ${package}.domain.Key;
  * @see KeyAsyncApi
  * @see <a href="TODO!">api doc</a>
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface KeyApi {
 
    /**

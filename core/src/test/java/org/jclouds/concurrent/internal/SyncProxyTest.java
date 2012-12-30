@@ -18,22 +18,19 @@
  */
 package org.jclouds.concurrent.internal;
 
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.testng.Assert.assertEquals;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
-import org.jclouds.concurrent.Futures;
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.internal.ClassMethodArgs;
 import org.jclouds.rest.functions.AlwaysPresentImplicitOptionalConverter;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Functions;
@@ -41,270 +38,84 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.google.inject.Provides;
 
 /**
  * Tests behavior of ListenableFutureExceptionParser
  * 
- * DISABLED as it always fails on cloudbees
- * 
  * @author Adrian Cole
  */
-@Test(enabled = false, groups = "unit", singleThreaded = true)
+@Test(groups = "unit", singleThreaded = true)
 public class SyncProxyTest {
 
-   @Test(enabled = false)
-   void testConvertNanos() {
-      assertEquals(SyncProxy.convertToNanos(Sync.class.getAnnotation(Timeout.class)), 40000000);
+   static ListenableFuture<String> future;
+
+   @SuppressWarnings("unchecked")
+   @BeforeMethod
+   void createMockedFuture() throws InterruptedException, ExecutionException, TimeoutException {
+      future = createMock(ListenableFuture.class);
+      expect(future.get(250000000, TimeUnit.NANOSECONDS)).andReturn("foo");
+      replay(future);
    }
-
-   @Timeout(duration = 40, timeUnit = TimeUnit.MILLISECONDS)
-   private static interface Sync {
-      String getString();
-
-      String newString();
-
-      @Provides
-      Set<String> string();
-
-      String getRuntimeException();
-
-      String getTypedException() throws FileNotFoundException;
-
-      String take20Milliseconds();
-
-      String take200MillisecondsAndTimeout();
-
-      @Timeout(duration = 300, timeUnit = TimeUnit.MILLISECONDS)
-      String take200MillisecondsAndOverride();
-
-      String takeXMillisecondsPropOverride(long ms);
-   }
-
-   static ExecutorService executorService = Executors.newCachedThreadPool();
 
    public static class Async {
-      public String toString() {
-         return "async";
+      public ListenableFuture<String> get() {
+         return future;
       }
-
-      public ListenableFuture<String> getString() {
-         return Futures.makeListenable(executorService.submit(new Callable<String>() {
-
-            public String call() throws Exception {
-               return "foo";
-            }
-
-         }), executorService);
-      }
-
-      public ListenableFuture<String> getRuntimeException() {
-         return Futures.makeListenable(executorService.submit(new Callable<String>() {
-
-            public String call() throws Exception {
-               throw new RuntimeException();
-            }
-
-         }), executorService);
-      }
-
-      public ListenableFuture<String> getTypedException() throws FileNotFoundException {
-         return Futures.makeListenable(executorService.submit(new Callable<String>() {
-
-            public String call() throws FileNotFoundException {
-               throw new FileNotFoundException();
-            }
-
-         }), executorService);
-      }
-
-      public String newString() {
-         return "new";
-      }
-
-      @Provides
-      public Set<String> string() {
-         return ImmutableSet.of("new");
-      }
-
-      public ListenableFuture<String> take20Milliseconds() {
-         return Futures.makeListenable(executorService.submit(new Callable<String>() {
-
-            public String call() {
-               try {
-                  Thread.sleep(20);
-               } catch (InterruptedException e) {
-                  e.printStackTrace();
-               }
-               return "foo";
-            }
-
-         }), executorService);
-      }
-
-      public ListenableFuture<String> take200MillisecondsAndTimeout() {
-         return Futures.makeListenable(executorService.submit(new Callable<String>() {
-
-            public String call() {
-               try {
-                  Thread.sleep(200);
-               } catch (InterruptedException e) {
-                  e.printStackTrace();
-               }
-               return "foo";
-            }
-
-         }), executorService);
-      }
-
-      public ListenableFuture<String> take200MillisecondsAndOverride() {
-         return take200MillisecondsAndTimeout();
-      }
-
-      public ListenableFuture<String> takeXMillisecondsPropOverride(final long ms) {
-         return Futures.makeListenable(executorService.submit(new Callable<String>() {
-
-            public String call() {
-               try {
-                  Thread.sleep(ms);
-               } catch (InterruptedException e) {
-                  e.printStackTrace();
-               }
-               return "foo";
-            }
-
-         }), executorService);
-      }
-
    }
 
-   private Sync sync;
+   private static interface Sync {
+      String get();
+   }
 
-   @BeforeTest
-   public void setUp() throws IllegalArgumentException, SecurityException, NoSuchMethodException {
+   public void testWithDefaultPropTimeout() throws Exception {
       LoadingCache<ClassMethodArgs, Object> cache = CacheBuilder.newBuilder().build(
             CacheLoader.from(Functions.<Object> constant(null)));
-      sync = SyncProxy.proxy(new AlwaysPresentImplicitOptionalConverter(), Sync.class, new Async(), cache, ImmutableMap.<Class<?>, Class<?>> of(),
-            ImmutableMap.of("Sync.takeXMillisecondsPropOverride", 250L));
-      // just to warm up
-      sync.string();
-   }
+      Sync withOverride = SyncProxy.proxy(new AlwaysPresentImplicitOptionalConverter(), Sync.class, new Async(), cache,
+            ImmutableMap.<Class<?>, Class<?>> of(), ImmutableMap.<String, Long> of("default", 250L));
 
-   @Test(enabled = false)
-   public void testUnwrapListenableFuture() {
-      assertEquals(sync.getString(), "foo");
-   }
-
-   @Test(enabled = false)
-   public void testPassSync() {
-      assertEquals(sync.newString(), "new");
-      assertEquals(sync.string(), ImmutableSet.of("new"));
-   }
-
-   @Test(enabled = false)
-   public void testTake20Milliseconds() {
-      assertEquals(sync.take20Milliseconds(), "foo");
+      assertEquals(withOverride.get(), "foo");
+      verify(future);
 
    }
 
-   @Test(enabled = false, expectedExceptions = RuntimeException.class)
-   public void testTake200MillisecondsAndTimeout() {
-      assertEquals(sync.take200MillisecondsAndTimeout(), "foo");
-   }
-
-   @Test(enabled = false)
-   public void testTake200MillisecondsAndOverride() {
-      assertEquals(sync.take200MillisecondsAndOverride(), "foo");
-   }
-
-   @Test(enabled = false)
-   public void testTake200MillisecondsPropOverride() {
-      assertEquals(sync.takeXMillisecondsPropOverride(200), "foo");
-   }
-
-   @Test(enabled = false, expectedExceptions = RuntimeException.class)
-   public void testTake300MillisecondsPropTimeout() {
-      assertEquals(sync.takeXMillisecondsPropOverride(300), "foo");
-   }
-
-   @Test(enabled = false)
-   public void testToString() {
-      assertEquals(sync.toString(), "Sync Proxy for: Async");
-   }
-
-   @Test(enabled = false, expectedExceptions = RuntimeException.class)
-   public void testUnwrapRuntimeException() {
-      sync.getRuntimeException();
-   }
-
-   @Test(enabled = false, expectedExceptions = FileNotFoundException.class)
-   public void testUnwrapTypedException() throws FileNotFoundException {
-      sync.getTypedException();
-   }
-
-   @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
-   private static interface SyncWrongException {
-      String getString();
-
-      String newString();
-
-      String getRuntimeException();
-
-      String getTypedException() throws UnsupportedEncodingException;
-
-   }
-
-   @Test(enabled = false, expectedExceptions = IllegalArgumentException.class)
-   public void testWrongTypedException() throws IllegalArgumentException, SecurityException, NoSuchMethodException,
-         IOException {
+   public void testWithClassPropTimeout() throws Exception {
       LoadingCache<ClassMethodArgs, Object> cache = CacheBuilder.newBuilder().build(
             CacheLoader.from(Functions.<Object> constant(null)));
-      SyncProxy.proxy(new AlwaysPresentImplicitOptionalConverter(), SyncWrongException.class, new Async(), cache, ImmutableMap.<Class<?>, Class<?>> of(),
+      Sync withOverride = SyncProxy.proxy(new AlwaysPresentImplicitOptionalConverter(), Sync.class, new Async(), cache,
+            ImmutableMap.<Class<?>, Class<?>> of(), ImmutableMap.<String, Long> of("default", 50L, "Sync", 250L));
+
+      assertEquals(withOverride.get(), "foo");
+      verify(future);
+
+   }
+
+   public void testWithMethodPropTimeout() throws Exception {
+      LoadingCache<ClassMethodArgs, Object> cache = CacheBuilder.newBuilder().build(
+            CacheLoader.from(Functions.<Object> constant(null)));
+      Sync withOverride = SyncProxy.proxy(new AlwaysPresentImplicitOptionalConverter(), Sync.class, new Async(), cache,
+            ImmutableMap.<Class<?>, Class<?>> of(),
+            ImmutableMap.<String, Long> of("default", 50L, "Sync", 100L, "Sync.get", 250L));
+
+      assertEquals(withOverride.get(), "foo");
+      verify(future);
+
+   }
+   
+   @SuppressWarnings("unchecked")
+   public void testWithMethodWithNoTimeoutsCallGetDirectly() throws Exception {
+      LoadingCache<ClassMethodArgs, Object> cache = CacheBuilder.newBuilder().build(
+            CacheLoader.from(Functions.<Object> constant(null)));
+      Sync withOverride = SyncProxy.proxy(new AlwaysPresentImplicitOptionalConverter(), Sync.class, new Async(), cache,
+            ImmutableMap.<Class<?>, Class<?>> of(),
             ImmutableMap.<String, Long> of());
-   }
 
-   private static interface SyncNoTimeOut {
-      String getString();
+      future = createMock(ListenableFuture.class);
+      expect(future.get()).andReturn("foo");
+      replay(future);
+      
+      assertEquals(withOverride.get(), "foo");
+      verify(future);
 
-      String newString();
-
-      String getRuntimeException();
-
-      String getTypedException() throws UnsupportedEncodingException;
-
-   }
-
-   @Test(enabled = false, expectedExceptions = IllegalArgumentException.class)
-   public void testNoTimeOutException() throws IllegalArgumentException, SecurityException, NoSuchMethodException,
-         IOException {
-      LoadingCache<ClassMethodArgs, Object> cache = CacheBuilder.newBuilder().build(
-            CacheLoader.from(Functions.<Object> constant(null)));
-      SyncProxy.proxy(new AlwaysPresentImplicitOptionalConverter(), SyncNoTimeOut.class, new Async(), cache, ImmutableMap.<Class<?>, Class<?>> of(),
-            ImmutableMap.<String, Long> of());
-   }
-
-   @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
-   private static interface SyncClassOverride {
-      String getString();
-
-      String newString();
-
-      String getRuntimeException();
-
-      @Timeout(duration = 300, timeUnit = TimeUnit.MILLISECONDS)
-      String takeXMillisecondsPropOverride(long ms);
-
-   }
-
-   @Test(enabled = false, expectedExceptions = RuntimeException.class)
-   public void testClassOverridePropTimeout() throws Exception {
-      LoadingCache<ClassMethodArgs, Object> cache = CacheBuilder.newBuilder().build(
-            CacheLoader.from(Functions.<Object> constant(null)));
-      final SyncClassOverride sync2 = SyncProxy.proxy(new AlwaysPresentImplicitOptionalConverter(), SyncClassOverride.class, new Async(), cache,
-            ImmutableMap.<Class<?>, Class<?>> of(), ImmutableMap.<String, Long> of("SyncClassOverride", 100L));
-
-      assertEquals(sync2.takeXMillisecondsPropOverride(200), "foo");
    }
 }

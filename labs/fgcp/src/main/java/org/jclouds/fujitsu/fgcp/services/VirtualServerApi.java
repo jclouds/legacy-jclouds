@@ -19,9 +19,6 @@
 package org.jclouds.fujitsu.fgcp.services;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.fujitsu.fgcp.domain.PerformanceInfo;
 import org.jclouds.fujitsu.fgcp.domain.VServer;
 import org.jclouds.fujitsu.fgcp.domain.VServerStatus;
@@ -32,7 +29,6 @@ import org.jclouds.fujitsu.fgcp.domain.VServerWithDetails;
  * 
  * @author Dies Koper
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface VirtualServerApi {
 
    void start(String id);

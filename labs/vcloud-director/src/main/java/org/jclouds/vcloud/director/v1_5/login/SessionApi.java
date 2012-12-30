@@ -19,9 +19,6 @@
 package org.jclouds.vcloud.director.v1_5.login;
 
 import java.net.URI;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.director.v1_5.domain.Session;
 import org.jclouds.vcloud.director.v1_5.domain.SessionWithToken;
 
@@ -32,7 +29,6 @@ import org.jclouds.vcloud.director.v1_5.domain.SessionWithToken;
  * @see SessionAsyncApi
  * @author Adrian Cole
  */
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface SessionApi {
 
    /**

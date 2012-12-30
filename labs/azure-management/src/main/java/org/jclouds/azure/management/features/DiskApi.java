@@ -19,10 +19,7 @@
 package org.jclouds.azure.management.features;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.azure.management.domain.Disk;
-import org.jclouds.concurrent.Timeout;
 
 /**
  * The Service Management API includes operations for managing the disks in your subscription.
@@ -31,7 +28,6 @@ import org.jclouds.concurrent.Timeout;
  * @see DiskAsyncApi
  * @author Gerald Pereira
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface DiskApi {
 
    /**

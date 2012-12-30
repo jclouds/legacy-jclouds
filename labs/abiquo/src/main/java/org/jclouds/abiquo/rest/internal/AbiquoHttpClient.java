@@ -19,9 +19,6 @@
 
 package org.jclouds.abiquo.rest.internal;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.HttpResponse;
 
 import com.abiquo.model.rest.RESTLink;
@@ -31,7 +28,6 @@ import com.abiquo.model.rest.RESTLink;
  * 
  * @author Ignasi Barrera
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface AbiquoHttpClient {
    /**
     * Perform a GET request to the given link.

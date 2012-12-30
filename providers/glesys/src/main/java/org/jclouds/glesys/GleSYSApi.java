@@ -18,9 +18,6 @@
  */
 package org.jclouds.glesys;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.glesys.features.ArchiveApi;
 import org.jclouds.glesys.features.DomainApi;
 import org.jclouds.glesys.features.EmailAccountApi;
@@ -36,7 +33,6 @@ import org.jclouds.rest.annotations.Delegate;
  * @see <a href="https://customer.glesys.com/api.php" />
  * @author Adrian Cole
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface GleSYSApi {
 
    /**

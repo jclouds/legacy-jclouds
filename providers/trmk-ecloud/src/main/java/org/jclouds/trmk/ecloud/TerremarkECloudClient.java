@@ -20,9 +20,6 @@ package org.jclouds.trmk.ecloud;
 
 import java.net.URI;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.trmk.ecloud.domain.ECloudOrg;
@@ -44,7 +41,6 @@ import org.jclouds.trmk.vcloud_0_8.domain.VAppExtendedInfo;
  *      />
  * @author Adrian Cole
  */
-@Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
 public interface TerremarkECloudClient extends TerremarkVCloudClient {
    /**
     * Provides synchronous access to Data Center Operations.

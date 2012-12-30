@@ -19,8 +19,6 @@
 package org.jclouds.cloudstack.features;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.ExtractMode;
 import org.jclouds.cloudstack.domain.ISO;
@@ -32,7 +30,6 @@ import org.jclouds.cloudstack.options.ListISOsOptions;
 import org.jclouds.cloudstack.options.RegisterISOOptions;
 import org.jclouds.cloudstack.options.UpdateISOOptions;
 import org.jclouds.cloudstack.options.UpdateISOPermissionsOptions;
-import org.jclouds.concurrent.Timeout;
 
 /**
  * 
@@ -42,7 +39,6 @@ import org.jclouds.concurrent.Timeout;
  * @see http://download.cloud.com/releases/2.2.12/api/TOC_User.html
  * @author Richard Downer
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface ISOClient {
 
    /**

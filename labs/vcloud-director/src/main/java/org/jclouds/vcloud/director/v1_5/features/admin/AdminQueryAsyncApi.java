@@ -18,14 +18,11 @@
  */
 package org.jclouds.vcloud.director.v1_5.features.admin;
 
-import java.util.concurrent.TimeUnit;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
@@ -43,7 +40,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Aled Sage
  */
 @RequestFilters(AddVCloudAuthorizationAndCookieToRequest.class)
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface AdminQueryAsyncApi extends QueryAsyncApi {
    
    @GET

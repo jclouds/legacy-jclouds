@@ -18,9 +18,6 @@
  */
 package org.jclouds.openstack.swift.v1.features;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.swift.v1.domain.Container;
 import org.jclouds.openstack.swift.v1.options.ListContainersOptions;
 
@@ -35,7 +32,6 @@ import com.google.common.collect.FluentIterable;
  *      "http://docs.openstack.org/api/openstack-object-storage/1.0/content/storage-container-services.html"
  *      >api doc</a>
  */
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface ContainerApi {
 
    /**

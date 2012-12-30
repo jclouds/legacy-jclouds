@@ -19,9 +19,6 @@
 package org.jclouds.openstack.nova.v2_0;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.Zone;
 import org.jclouds.location.functions.ZoneToEndpoint;
@@ -59,7 +56,6 @@ import com.google.inject.Provides;
  *      />
  * @author Adrian Cole
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface NovaApi {
    /**
     * 

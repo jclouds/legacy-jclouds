@@ -18,8 +18,6 @@
  */
 package org.jclouds.cloudstack.features;
 
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.cloudstack.domain.DiskOffering;
 import org.jclouds.cloudstack.domain.NetworkOffering;
 import org.jclouds.cloudstack.domain.ServiceOffering;
@@ -28,7 +26,6 @@ import org.jclouds.cloudstack.options.CreateServiceOfferingOptions;
 import org.jclouds.cloudstack.options.UpdateDiskOfferingOptions;
 import org.jclouds.cloudstack.options.UpdateNetworkOfferingOptions;
 import org.jclouds.cloudstack.options.UpdateServiceOfferingOptions;
-import org.jclouds.concurrent.Timeout;
 
 /**
  * Provides synchronous access to CloudStack zone features.
@@ -38,7 +35,6 @@ import org.jclouds.concurrent.Timeout;
  * @see <a href="http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_Global_Admin.html" />
  * @author Andrei Savu
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface GlobalOfferingClient extends OfferingClient {
 
    /**

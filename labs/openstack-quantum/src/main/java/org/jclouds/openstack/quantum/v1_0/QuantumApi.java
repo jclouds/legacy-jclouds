@@ -19,12 +19,9 @@
 package org.jclouds.openstack.quantum.v1_0;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.Zone;
 import org.jclouds.location.functions.ZoneToEndpoint;
@@ -44,7 +41,6 @@ import com.google.inject.Provides;
  * @see QuantumAsyncApi
  * @see <a href="http://docs.openstack.org/api/openstack-network/1.0/content">api doc</a>
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface QuantumApi {
    /**
     * @return the Zone codes configured

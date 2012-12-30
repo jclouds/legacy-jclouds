@@ -21,14 +21,11 @@ package org.jclouds.rest.annotationparsing;
 import static org.jclouds.providers.AnonymousProviderMetadata.forClientMappedToAsyncClientOnEndpoint;
 import static org.testng.Assert.assertTrue;
 
-import java.util.concurrent.TimeUnit;
-
 import javax.ws.rs.HEAD;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import org.jclouds.Fallbacks.FalseOnNotFoundOr404;
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.providers.ProviderMetadata;
@@ -51,7 +48,6 @@ import com.google.inject.Module;
 @Test(groups = "unit", testName = "DelegateAnnotationExpectTest")
 public class DelegateAnnotationExpectTest extends BaseRestClientExpectTest<DelegateAnnotationExpectTest.DelegatingApi> {
 
-   @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
    static interface DelegatingApi {
 
       @Delegate
@@ -66,7 +62,6 @@ public class DelegateAnnotationExpectTest extends BaseRestClientExpectTest<Deleg
       DiskAsyncApi getDiskApiForProject(@PathParam("project") String projectName);
    }
 
-   @Timeout(duration = 1, timeUnit = TimeUnit.SECONDS)
    static interface DiskApi {
 
       boolean exists(@PathParam("disk") String diskName);

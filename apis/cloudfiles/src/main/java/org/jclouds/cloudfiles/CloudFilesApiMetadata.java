@@ -18,6 +18,9 @@
  */
 package org.jclouds.cloudfiles;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
+
 import java.net.URI;
 import java.util.Properties;
 
@@ -65,6 +68,7 @@ public class CloudFilesApiMetadata extends SwiftApiMetadata {
 
    public static Properties defaultProperties() {
       Properties properties = SwiftApiMetadata.defaultProperties();
+      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "OpenStackAuthClient.authenticate", SECONDS.toMillis(30) + "");
       return properties;
    }
 

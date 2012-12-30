@@ -19,10 +19,7 @@
 package org.jclouds.aws.ec2.services;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.aws.ec2.options.CreateSecurityGroupOptions;
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.ec2.domain.IpPermission;
 import org.jclouds.ec2.domain.SecurityGroup;
 import org.jclouds.ec2.services.SecurityGroupClient;
@@ -37,7 +34,6 @@ import com.google.common.annotations.Beta;
  * @author Adrian Cole
  */
 @Beta
-@Timeout(duration = 90, timeUnit = TimeUnit.SECONDS)
 public interface AWSSecurityGroupClient extends SecurityGroupClient {
    
    String createSecurityGroupInRegionAndReturnId(@Nullable String region, String name, String desc,

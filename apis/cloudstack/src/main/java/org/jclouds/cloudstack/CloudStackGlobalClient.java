@@ -18,8 +18,6 @@
  */
 package org.jclouds.cloudstack;
 
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.cloudstack.features.GlobalAccountClient;
 import org.jclouds.cloudstack.features.GlobalAlertClient;
 import org.jclouds.cloudstack.features.GlobalCapacityClient;
@@ -33,7 +31,6 @@ import org.jclouds.cloudstack.features.GlobalUsageClient;
 import org.jclouds.cloudstack.features.GlobalUserClient;
 import org.jclouds.cloudstack.features.GlobalVlanClient;
 import org.jclouds.cloudstack.features.GlobalZoneClient;
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
 
 /**
@@ -46,7 +43,6 @@ import org.jclouds.rest.annotations.Delegate;
  *      "http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_Global_Admin.html"
  *      />
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface CloudStackGlobalClient extends CloudStackDomainClient {
 
    /**

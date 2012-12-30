@@ -18,9 +18,6 @@
  */
 package org.jclouds.http;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.io.Payload;
 
@@ -32,7 +29,6 @@ import com.google.inject.Provides;
  * 
  * @author Adrian Cole
  */
-@Timeout(duration = 40, timeUnit = TimeUnit.SECONDS)
 public interface IntegrationTestClient {
    String rowdy(String path);
 

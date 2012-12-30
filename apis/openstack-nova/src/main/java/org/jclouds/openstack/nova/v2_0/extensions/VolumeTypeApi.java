@@ -19,9 +19,6 @@
 package org.jclouds.openstack.nova.v2_0.extensions;
 
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.nova.v2_0.domain.VolumeType;
 import org.jclouds.openstack.nova.v2_0.options.CreateVolumeTypeOptions;
 import org.jclouds.openstack.v2_0.ServiceType;
@@ -41,7 +38,6 @@ import com.google.common.collect.FluentIterable;
  */
 @Beta
 @Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.VOLUME_TYPES)
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface VolumeTypeApi {
 
    /**
