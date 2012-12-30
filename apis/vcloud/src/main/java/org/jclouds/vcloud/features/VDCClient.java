@@ -19,9 +19,6 @@
 package org.jclouds.vcloud.features;
 
 import java.net.URI;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.domain.VDC;
 
 /**
@@ -30,7 +27,6 @@ import org.jclouds.vcloud.domain.VDC;
  * 
  * @author Adrian Cole
  */
-@Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
 public interface VDCClient {
    VDC getVDC(URI vdc);
 

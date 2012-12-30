@@ -19,9 +19,6 @@
 package org.jclouds.trmk.vcloudexpress;
 
 import java.net.URI;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudClient;
 import org.jclouds.trmk.vcloud_0_8.domain.InternetService;
 import org.jclouds.trmk.vcloud_0_8.domain.Protocol;
@@ -35,7 +32,6 @@ import org.jclouds.trmk.vcloud_0_8.options.AddInternetServiceOptions;
  *      />
  * @author Adrian Cole
  */
-@Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
 public interface TerremarkVCloudExpressClient extends TerremarkVCloudClient {
 
    InternetService addInternetServiceToVDC(URI vDCId, String serviceName, Protocol protocol, int port,

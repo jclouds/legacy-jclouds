@@ -18,9 +18,6 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.director.v1_5.domain.query.CatalogReferences;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryList;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecords;
@@ -32,7 +29,6 @@ import org.jclouds.vcloud.director.v1_5.domain.query.VAppReferences;
  * @see QueryAsyncApi
  * @author grkvlt@apache.org
  */
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface QueryApi {
 
    // TODO Add a typed object for filter syntax, or at least a fluent builder

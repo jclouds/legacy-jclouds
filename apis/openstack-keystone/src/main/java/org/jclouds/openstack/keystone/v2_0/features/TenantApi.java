@@ -18,10 +18,7 @@
  */
 package org.jclouds.openstack.keystone.v2_0.features;
 
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.collect.PagedIterable;
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.keystone.v2_0.domain.PaginatedCollection;
 import org.jclouds.openstack.keystone.v2_0.domain.Tenant;
 import org.jclouds.openstack.v2_0.options.PaginationOptions;
@@ -36,7 +33,6 @@ import org.jclouds.openstack.v2_0.options.PaginationOptions;
  *      "http://docs.openstack.org/api/openstack-identity-service/2.0/content/Tenant_Operations.html"
  *      />
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface TenantApi {
 
    /**

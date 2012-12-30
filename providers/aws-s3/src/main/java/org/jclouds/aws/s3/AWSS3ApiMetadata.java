@@ -18,6 +18,9 @@
  */
 package org.jclouds.aws.s3;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
+
 import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
@@ -60,6 +63,8 @@ public class AWSS3ApiMetadata extends S3ApiMetadata {
    
    public static Properties defaultProperties() {
       Properties properties = S3ApiMetadata.defaultProperties();
+      // 128KB/s for max size of 5GB
+      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "AWSS3Client.uploadPart", SECONDS.toMillis(5242880 / 128) + "");
       return properties;
    }
 

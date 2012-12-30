@@ -20,9 +20,7 @@ package org.jclouds.rest;
 
 import java.io.InputStream;
 import java.net.URI;
-import java.util.concurrent.TimeUnit;
 
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.io.Payload;
@@ -32,7 +30,6 @@ import org.jclouds.io.Payload;
  * 
  * @author Adrian Cole
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface HttpClient {
    /**
     * 

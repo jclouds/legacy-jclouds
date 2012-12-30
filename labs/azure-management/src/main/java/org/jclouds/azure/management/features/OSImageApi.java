@@ -19,11 +19,8 @@
 package org.jclouds.azure.management.features;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.azure.management.domain.OSImage;
 import org.jclouds.azure.management.domain.OSImageParams;
-import org.jclouds.concurrent.Timeout;
 
 /**
  * The Service Management API includes operations for managing the OS images in your subscription.
@@ -32,7 +29,6 @@ import org.jclouds.concurrent.Timeout;
  * @see OSImageAsyncApi
  * @author Gerald Pereira, Adrian Cole
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface OSImageApi {
 
    /**

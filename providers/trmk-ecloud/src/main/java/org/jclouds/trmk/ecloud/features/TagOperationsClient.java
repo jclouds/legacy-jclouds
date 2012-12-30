@@ -20,10 +20,6 @@ package org.jclouds.trmk.ecloud.features;
 
 import java.net.URI;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
-
 /**
  * Tag Based Operations
  * <p/>
@@ -31,7 +27,6 @@ import org.jclouds.concurrent.Timeout;
  * @see TagOperationsAsyncClient
  * @author Adrian Cole
  */
-@Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
 public interface TagOperationsClient {
 
    /**

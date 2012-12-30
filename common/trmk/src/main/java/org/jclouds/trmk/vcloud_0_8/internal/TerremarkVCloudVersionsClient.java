@@ -20,11 +20,6 @@ package org.jclouds.trmk.vcloud_0_8.internal;
 
 import java.net.URI;
 import java.util.SortedMap;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
-
-@Timeout(duration = 10, timeUnit = TimeUnit.SECONDS)
 public interface TerremarkVCloudVersionsClient {
 
    SortedMap<String, URI> getSupportedVersions();

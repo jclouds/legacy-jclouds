@@ -19,9 +19,6 @@
 package org.jclouds.vcloud.director.v1_5.features;
 
 import java.net.URI;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.dmtf.ovf.NetworkSection;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
@@ -42,7 +39,6 @@ import org.jclouds.vcloud.director.v1_5.functions.href.VAppTemplateURNToHref;
  * @author Adam Lowe, Adrian Cole
  * @see VAppTemplateAsyncApi
  */
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface VAppTemplateApi {
 
    /**

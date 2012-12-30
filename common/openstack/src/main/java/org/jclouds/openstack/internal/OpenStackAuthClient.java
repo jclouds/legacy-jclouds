@@ -17,9 +17,6 @@
  * under the License.
  */
 package org.jclouds.openstack.internal;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.domain.AuthenticationResponse;
 
 /**
@@ -29,7 +26,6 @@ import org.jclouds.openstack.domain.AuthenticationResponse;
  * @see <a href="http://docs.rackspacecloud.com/servers/api/cs-devguide-latest.pdf" />
  * @author Adrian Cole
  */
-@Timeout(duration = 10, timeUnit = TimeUnit.SECONDS)
 public interface OpenStackAuthClient {
 
    AuthenticationResponse authenticate(String user, String key);

@@ -1,10 +1,6 @@
 package org.jclouds.joyent.cloudapi.v6_5.features;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
-
 /**
  * Provides synchronous access to Packages.
  * <p/>
@@ -13,7 +9,6 @@ import org.jclouds.concurrent.Timeout;
  * @see PackageAsyncApi
  * @see <a href="http://apidocs.joyent.com/sdcapidoc/cloudapi/index.html#packages">api doc</a>
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface PackageApi {
 
    /**

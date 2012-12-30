@@ -20,9 +20,6 @@ package org.jclouds.fujitsu.fgcp.services;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.fujitsu.fgcp.domain.AddressRange;
 import org.jclouds.fujitsu.fgcp.domain.DiskImage;
 import org.jclouds.fujitsu.fgcp.domain.EventLog;
@@ -40,7 +37,6 @@ import org.jclouds.javax.annotation.Nullable;
  * @see VirtualDCAsyncApi
  * @author Dies Koper
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface VirtualDCApi {
 
    String createVirtualSystem(String descriptorId, String name);

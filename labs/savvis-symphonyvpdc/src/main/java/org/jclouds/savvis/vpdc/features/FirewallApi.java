@@ -18,9 +18,6 @@
  */
 package org.jclouds.savvis.vpdc.features;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.savvis.vpdc.domain.FirewallRule;
 import org.jclouds.savvis.vpdc.domain.Task;
 
@@ -31,7 +28,6 @@ import org.jclouds.savvis.vpdc.domain.Task;
  * @see <a href="https://api.sandbox.savvis.net/doc/spec/api/" />
  * @author Adrian Cole
  */
-@Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
 public interface FirewallApi {
 	
 	/**

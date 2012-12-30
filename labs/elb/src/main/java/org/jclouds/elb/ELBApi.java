@@ -19,9 +19,6 @@
 package org.jclouds.elb;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.elb.features.AvailabilityZoneApi;
 import org.jclouds.elb.features.InstanceApi;
 import org.jclouds.elb.features.LoadBalancerApi;
@@ -43,7 +40,6 @@ import com.google.inject.Provides;
  * @see ELBAsyncApi
  */
 @Beta
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface ELBApi {
    /**
     * 

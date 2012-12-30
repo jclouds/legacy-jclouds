@@ -19,7 +19,6 @@
 package org.jclouds.googlecompute;
 
 import com.google.common.annotations.Beta;
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.googlecompute.features.OperationApi;
 import org.jclouds.googlecompute.features.ProjectApi;
 import org.jclouds.googlecompute.features.ZoneApi;
@@ -27,8 +26,6 @@ import org.jclouds.rest.annotations.Delegate;
 
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import java.util.concurrent.TimeUnit;
-
 /**
  * Provides synchronous access to GoogleCompute.
  * <p/>
@@ -38,7 +35,6 @@ import java.util.concurrent.TimeUnit;
  * @see <a href="https://developers.google.com/compute/docs/reference/v1beta13">api doc</a>
  */
 @Beta
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface GoogleComputeApi {
 
    /**

@@ -19,8 +19,6 @@
 package org.jclouds.atmos;
 
 import java.net.URI;
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.atmos.domain.AtmosObject;
 import org.jclouds.atmos.domain.BoundedSet;
 import org.jclouds.atmos.domain.DirectoryEntry;
@@ -28,7 +26,6 @@ import org.jclouds.atmos.domain.SystemMetadata;
 import org.jclouds.atmos.domain.UserMetadata;
 import org.jclouds.atmos.options.ListOptions;
 import org.jclouds.atmos.options.PutOptions;
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.options.GetOptions;
 
 import com.google.inject.Provides;
@@ -41,7 +38,6 @@ import com.google.inject.Provides;
  * @see <a href="https://community.emc.com/community/labs/atmos_online" />
  * @author Adrian Cole
  */
-@Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
 public interface AtmosClient {
    /**
     * Creates a default implementation of AtmosObject
@@ -55,13 +51,10 @@ public interface AtmosClient {
 
    URI createDirectory(String directoryName, PutOptions... options);
 
-   @Timeout(duration = 10, timeUnit = TimeUnit.MINUTES)
    URI createFile(String parent, AtmosObject object, PutOptions... options);
 
-   @Timeout(duration = 10, timeUnit = TimeUnit.MINUTES)
    void updateFile(String parent, AtmosObject object, PutOptions... options);
 
-   @Timeout(duration = 10, timeUnit = TimeUnit.MINUTES)
    AtmosObject readFile(String path, GetOptions... options);
 
    AtmosObject headFile(String path);

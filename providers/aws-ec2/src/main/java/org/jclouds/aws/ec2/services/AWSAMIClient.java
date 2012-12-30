@@ -19,9 +19,6 @@
 package org.jclouds.aws.ec2.services;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.ec2.services.AMIClient;
 import org.jclouds.javax.annotation.Nullable;
 
@@ -31,8 +28,7 @@ import org.jclouds.javax.annotation.Nullable;
  * 
  * @author Adrian Cole
  */
-@Timeout(duration = 45, timeUnit = TimeUnit.SECONDS)
-public interface AWSAMIClient extends AMIClient{
+public interface AWSAMIClient extends AMIClient {
 
 
    /**

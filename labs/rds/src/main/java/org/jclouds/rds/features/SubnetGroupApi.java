@@ -18,11 +18,8 @@
  */
 package org.jclouds.rds.features;
 
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.collect.PagedIterable;
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.rds.domain.SubnetGroup;
 import org.jclouds.rds.options.ListSubnetGroupsOptions;
@@ -35,7 +32,6 @@ import org.jclouds.rds.options.ListSubnetGroupsOptions;
  * @see SubnetGroupAsyncApi
  * @author Adrian Cole
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface SubnetGroupApi {
 
    /**

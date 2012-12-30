@@ -19,10 +19,7 @@
 package org.jclouds.openstack.glance.v1_0.features;
 
 import java.io.InputStream;
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.collect.PagedIterable;
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.io.Payload;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.openstack.glance.v1_0.domain.Image;
@@ -40,7 +37,6 @@ import org.jclouds.openstack.keystone.v2_0.domain.PaginatedCollection;
  * @see ImageAsyncApi
  * @see <a href="http://glance.openstack.org/glanceapi.html">api doc</a>
  */
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface ImageApi {
 
    /**

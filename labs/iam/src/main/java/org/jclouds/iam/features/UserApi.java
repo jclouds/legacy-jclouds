@@ -18,11 +18,8 @@
  */
 package org.jclouds.iam.features;
 
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.collect.PagedIterable;
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.iam.domain.User;
 import org.jclouds.iam.options.ListUsersOptions;
 import org.jclouds.javax.annotation.Nullable;
@@ -34,7 +31,6 @@ import org.jclouds.javax.annotation.Nullable;
  * @see <a href="http://docs.amazonwebservices.com/IAM/latest/APIReference" />
  * @author Adrian Cole
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface UserApi {
    /**
     * Retrieves information about the current user, including the user's path, GUID, and ARN.

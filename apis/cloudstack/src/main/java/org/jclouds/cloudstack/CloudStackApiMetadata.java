@@ -18,6 +18,9 @@
  */
 package org.jclouds.cloudstack;
 
+import static java.util.concurrent.TimeUnit.MINUTES;
+import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
+
 import java.net.URI;
 import java.util.Properties;
 
@@ -69,6 +72,9 @@ public class CloudStackApiMetadata extends BaseRestApiMetadata {
 
    public static Properties defaultProperties() {
       Properties properties = BaseRestApiMetadata.defaultProperties();
+      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "default", MINUTES.toMillis(1) + "");
+      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "AddressClient.disassociateIPAddress", MINUTES.toMillis(2) + "");
+      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "NATClient.enableStaticNATForVirtualMachine", MINUTES.toMillis(2) + "");
       properties.setProperty("jclouds.ssh.max-retries", "7");
       properties.setProperty("jclouds.ssh.retry-auth", "true");
       return properties;

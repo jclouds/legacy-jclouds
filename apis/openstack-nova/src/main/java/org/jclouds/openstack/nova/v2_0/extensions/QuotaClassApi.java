@@ -18,9 +18,6 @@
  */
 package org.jclouds.openstack.nova.v2_0.extensions;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.nova.v2_0.domain.QuotaClass;
 import org.jclouds.openstack.v2_0.ServiceType;
 import org.jclouds.openstack.v2_0.services.Extension;
@@ -39,7 +36,6 @@ import com.google.common.annotations.Beta;
  */
 @Beta
 @Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.QUOTA_CLASSES)
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface QuotaClassApi {
 
    /**

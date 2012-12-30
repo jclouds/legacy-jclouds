@@ -18,11 +18,8 @@
  */
 package org.jclouds.rds.features;
 
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.collect.PagedIterable;
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.rds.domain.SecurityGroup;
 import org.jclouds.rds.options.ListSecurityGroupsOptions;
@@ -35,7 +32,6 @@ import org.jclouds.rds.options.ListSecurityGroupsOptions;
  * @see SecurityGroupAsyncApi
  * @author Adrian Cole
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface SecurityGroupApi {
    /**
     * Creates a new DB Security Group. DB Security Groups control access to a DB Instance.

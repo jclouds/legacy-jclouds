@@ -18,9 +18,6 @@
  */
 package org.jclouds.softlayer;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.softlayer.features.AccountClient;
 import org.jclouds.softlayer.features.DatacenterClient;
@@ -35,7 +32,6 @@ import org.jclouds.softlayer.features.VirtualGuestClient;
  * @see <a href="http://sldn.softlayer.com/article/REST" />
  * @author Adrian Cole
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface SoftLayerClient {
 
    /**

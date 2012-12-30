@@ -21,9 +21,6 @@
  */
 package ${package};
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import ${package}.features.KeyApi;
 import org.jclouds.rest.annotations.Delegate;
 
@@ -35,7 +32,6 @@ import org.jclouds.rest.annotations.Delegate;
  * @see <a href="TODO: docs!">api doc</a>
  * @author ${author}
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface ${providerName}Api {
 
    /**

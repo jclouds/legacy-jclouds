@@ -19,9 +19,6 @@
 package org.jclouds.jenkins.v1.features;
 
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.jenkins.v1.domain.JobDetails;
 import org.jclouds.jenkins.v1.domain.LastBuild;
 
@@ -32,7 +29,6 @@ import org.jclouds.jenkins.v1.domain.LastBuild;
  * @author Adrian Cole
  * @see <a href= "http://ci.jruby.org/computer/api/" >api doc</a>
  */
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface JobApi {
 
    /**

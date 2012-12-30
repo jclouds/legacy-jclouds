@@ -19,9 +19,6 @@
 package org.jclouds.vcloud.features;
 
 import java.net.URI;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.CatalogItem;
@@ -34,7 +31,6 @@ import org.jclouds.vcloud.options.CatalogItemOptions;
  * @see <a href="http://communities.vmware.com/community/developer/forums/vcloudapi" />
  * @author Adrian Cole
  */
-@Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
 public interface CatalogClient {
 
    Catalog getCatalog(URI catalogId);

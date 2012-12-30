@@ -19,13 +19,10 @@
 package org.jclouds.cloudstack.features;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.IPForwardingRule;
 import org.jclouds.cloudstack.options.CreateIPForwardingRuleOptions;
 import org.jclouds.cloudstack.options.ListIPForwardingRulesOptions;
-import org.jclouds.concurrent.Timeout;
 
 /**
  * Provides synchronous access to CloudStack IPForwardingRule features.
@@ -37,7 +34,6 @@ import org.jclouds.concurrent.Timeout;
  *      />
  * @author Adrian Cole
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface NATClient {
    /**
     * List the ip forwarding rules
@@ -99,7 +95,6 @@ public interface NATClient {
     */
    String deleteIPForwardingRule(String id);
 
-   @Timeout(duration = 120, timeUnit = TimeUnit.SECONDS)
    void enableStaticNATForVirtualMachine(String virtualMachineId, String IPAddressId);
 
    /**

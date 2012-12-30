@@ -18,9 +18,6 @@
  */
 package org.jclouds.openstack.keystone.v2_0;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.keystone.v2_0.domain.ApiMetadata;
 import org.jclouds.openstack.keystone.v2_0.features.ServiceApi;
 import org.jclouds.openstack.keystone.v2_0.features.TenantApi;
@@ -39,7 +36,6 @@ import com.google.common.base.Optional;
  * @see <a href="http://keystone.openstack.org/" />
  * @see KeystoneAsyncApi
  */
-@Timeout(duration = 10, timeUnit = TimeUnit.SECONDS)
 public interface KeystoneApi {
 
    /**

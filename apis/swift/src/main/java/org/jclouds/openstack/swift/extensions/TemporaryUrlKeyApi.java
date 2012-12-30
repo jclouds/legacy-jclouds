@@ -18,15 +18,11 @@
  */
 package org.jclouds.openstack.swift.extensions;
 
-import org.jclouds.concurrent.Timeout;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author Andrei Savu
  * @see <a href="http://docs.rackspace.com/files/api/v1/cf-devguide/content/Public_Access_to_Account-d1a4440.html" />
  */
-@Timeout(duration = 120, timeUnit = TimeUnit.SECONDS)
 public interface TemporaryUrlKeyApi {
    /**
     * Retrieve the key used to generate Temporary object access URLs

@@ -19,9 +19,6 @@
 package org.jclouds.joyent.cloudapi.v6_5;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.joyent.cloudapi.v6_5.features.DatacenterApi;
 import org.jclouds.joyent.cloudapi.v6_5.features.DatasetApi;
@@ -43,7 +40,6 @@ import com.google.inject.Provides;
  * @see <a href="http://cloudApi.joyent.org/cloudApiapi.html">api doc</a>
  * @author Adrian Cole
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface JoyentCloudApi {
 
    /**

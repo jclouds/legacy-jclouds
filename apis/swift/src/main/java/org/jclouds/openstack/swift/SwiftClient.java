@@ -18,16 +18,11 @@
  */
 package org.jclouds.openstack.swift;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
-
 /**
  * Functionality that's in Swift, and not in CloudFiles.
  * 
  * @author Adrian Cole
  */
-@Timeout(duration = 120, timeUnit = TimeUnit.SECONDS)
 public interface SwiftClient extends CommonSwiftClient {
 
 }

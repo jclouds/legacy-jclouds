@@ -18,15 +18,11 @@
  */
 package org.jclouds.savvis.vpdc.internal;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.savvis.vpdc.domain.internal.VCloudSession;
 
 /**
  * @author Adrian Cole
  */
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface LoginApi {
 
    /**

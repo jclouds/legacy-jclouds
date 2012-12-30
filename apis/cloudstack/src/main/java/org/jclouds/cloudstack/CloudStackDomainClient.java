@@ -18,13 +18,10 @@
  */
 package org.jclouds.cloudstack;
 
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.cloudstack.features.DomainAccountClient;
 import org.jclouds.cloudstack.features.DomainDomainClient;
 import org.jclouds.cloudstack.features.DomainLimitClient;
 import org.jclouds.cloudstack.features.DomainUserClient;
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
 
 /**
@@ -37,7 +34,6 @@ import org.jclouds.rest.annotations.Delegate;
  *      "http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_Domain_Admin.html"
  *      />
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface CloudStackDomainClient extends CloudStackClient {
 
    /**

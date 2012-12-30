@@ -18,9 +18,6 @@
  */
 package org.jclouds.fujitsu.fgcp.services;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.fujitsu.fgcp.domain.DiskImage;
 
 /**
@@ -28,7 +25,6 @@ import org.jclouds.fujitsu.fgcp.domain.DiskImage;
  * 
  * @author Dies Koper
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface DiskImageApi {
 
    DiskImage get(String id);

@@ -19,13 +19,10 @@
 package org.jclouds.azure.management.features;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.azure.management.domain.Deployment;
 import org.jclouds.azure.management.domain.HostedService;
 import org.jclouds.azure.management.domain.HostedServiceWithDetailedProperties;
 import org.jclouds.azure.management.options.CreateHostedServiceOptions;
-import org.jclouds.concurrent.Timeout;
 
 /**
  * The Service Management API includes operations for managing the hosted services beneath your
@@ -35,7 +32,6 @@ import org.jclouds.concurrent.Timeout;
  * @see HostedServiceAsyncApi
  * @author Gerald Pereira, Adrian Cole
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface HostedServiceApi {
 
    /**

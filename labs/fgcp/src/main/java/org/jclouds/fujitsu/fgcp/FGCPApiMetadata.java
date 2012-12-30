@@ -18,6 +18,9 @@
  */
 package org.jclouds.fujitsu.fgcp;
 
+import static java.util.concurrent.TimeUnit.MINUTES;
+import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
+
 import java.net.URI;
 import java.util.Properties;
 
@@ -55,6 +58,7 @@ public class FGCPApiMetadata extends BaseRestApiMetadata {
 
    public static Properties defaultProperties() {
       Properties properties = BaseRestApiMetadata.defaultProperties();
+      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "default", MINUTES.toMillis(1) + "");
       // enables peer verification using the CAs bundled with the JRE (or
       // value of javax.net.ssl.trustStore if set)
       properties.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "false");

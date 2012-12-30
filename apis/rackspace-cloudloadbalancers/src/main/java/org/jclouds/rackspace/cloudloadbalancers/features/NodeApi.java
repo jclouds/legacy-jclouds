@@ -19,11 +19,8 @@
 package org.jclouds.rackspace.cloudloadbalancers.features;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.collect.PagedIterable;
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.openstack.v2_0.options.PaginationOptions;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancerAttributes;
@@ -38,7 +35,6 @@ import org.jclouds.rackspace.cloudloadbalancers.domain.NodeRequest;
  * @see NodeAsyncApi
  * @author Everett Toews
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface NodeApi {
    /**
     * Create a new node with the configuration defined by the request.

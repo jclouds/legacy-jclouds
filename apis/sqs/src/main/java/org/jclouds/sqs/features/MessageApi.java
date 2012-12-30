@@ -19,9 +19,6 @@
 package org.jclouds.sqs.features;
 
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.sqs.domain.BatchResult;
 import org.jclouds.sqs.domain.Message;
 import org.jclouds.sqs.domain.MessageIdAndMD5;
@@ -38,7 +35,6 @@ import com.google.common.collect.Table;
  * @see MessageAsyncApi
  * @author Adrian Cole
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface MessageApi {
 
    /**

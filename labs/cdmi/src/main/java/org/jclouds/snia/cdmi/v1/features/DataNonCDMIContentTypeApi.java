@@ -18,9 +18,6 @@
  */
 package org.jclouds.snia.cdmi.v1.features;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.io.Payload;
 import org.jclouds.snia.cdmi.v1.domain.DataObject;
 import org.jclouds.snia.cdmi.v1.queryparams.DataObjectQueryParams;
@@ -32,7 +29,6 @@ import org.jclouds.snia.cdmi.v1.queryparams.DataObjectQueryParams;
  * @author Kenneth Nagin
  * @see <a href="http://www.snia.org/cdmi">api doc</a>
  */
-@Timeout(duration = 600, timeUnit = TimeUnit.SECONDS)
 public interface DataNonCDMIContentTypeApi {
    /**
     * get CDMI Data object

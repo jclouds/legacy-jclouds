@@ -18,11 +18,8 @@
  */
 package org.jclouds.elb.features;
 
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.collect.PagedIterable;
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.elb.domain.Listener;
 import org.jclouds.elb.domain.LoadBalancer;
 import org.jclouds.elb.options.ListLoadBalancersOptions;
@@ -36,7 +33,6 @@ import org.jclouds.javax.annotation.Nullable;
  * @see LoadBalancerAsyncApi
  * @author Adrian Cole
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface LoadBalancerApi {
 
    String createListeningInAvailabilityZones(String name, Iterable<Listener> listeners,

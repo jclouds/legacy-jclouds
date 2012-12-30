@@ -20,13 +20,10 @@
 package org.jclouds.googlecompute.features;
 
 import org.jclouds.collect.PagedIterable;
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.googlecompute.domain.ListPage;
 import org.jclouds.googlecompute.domain.Zone;
 import org.jclouds.googlecompute.options.ListOptions;
 import org.jclouds.javax.annotation.Nullable;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * Provides synchronous access to Zones via their REST API.
@@ -35,7 +32,6 @@ import java.util.concurrent.TimeUnit;
  * @author David Alves
  * @see <a href="https://developers.google.com/compute/docs/reference/v1beta13/zones"/>
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface ZoneApi {
 
    /**

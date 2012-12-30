@@ -19,8 +19,6 @@
 package org.jclouds.cloudservers;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 import javax.ws.rs.PathParam;
 
 import org.jclouds.cloudservers.domain.Addresses;
@@ -35,7 +33,6 @@ import org.jclouds.cloudservers.options.CreateServerOptions;
 import org.jclouds.cloudservers.options.CreateSharedIpGroupOptions;
 import org.jclouds.cloudservers.options.ListOptions;
 import org.jclouds.cloudservers.options.RebuildServerOptions;
-import org.jclouds.concurrent.Timeout;
 
 /**
  * Provides access to Cloud Servers via their REST API.
@@ -47,7 +44,6 @@ import org.jclouds.concurrent.Timeout;
  * @see <a href="http://docs.rackspacecloud.com/servers/api/cs-devguide-latest.pdf" />
  * @author Adrian Cole
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface CloudServersClient {
    /**
     * All accounts, by default, have a preconfigured set of thresholds (or limits) to manage
