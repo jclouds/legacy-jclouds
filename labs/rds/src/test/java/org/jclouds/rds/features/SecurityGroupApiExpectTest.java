@@ -195,7 +195,7 @@ public class SecurityGroupApiExpectTest extends BaseRDSApiExpectTest {
       RDSApi apiWhenExist = requestsSendResponses(
             list, listResponse, list2, list2Response);
 
-      assertEquals(apiWhenExist.getSecurityGroupApi().list().concat().toImmutableList(),
+      assertEquals(apiWhenExist.getSecurityGroupApi().list().concat().toList(),
                ImmutableList.copyOf(Iterables.concat(new DescribeDBSecurityGroupsResponseTest().expected(),
                         new DescribeDBSecurityGroupsResponseTest().expected())));
    }

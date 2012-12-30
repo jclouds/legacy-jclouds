@@ -49,7 +49,7 @@ public class ImageApiLiveTest extends BaseGlanceApiLiveTest {
    public void testList() throws Exception {
       for (String zoneId : glanceContext.getApi().getConfiguredZones()) {
          ImageApi api = glanceContext.getApi().getImageApiForZone(zoneId);
-         Set<? extends Image> response = api.list().concat().toImmutableSet();
+         Set<? extends Image> response = api.list().concat().toSet();
          assert null != response;
          for (Image image : response) {
             checkImage(image);
@@ -67,7 +67,7 @@ public class ImageApiLiveTest extends BaseGlanceApiLiveTest {
    public void testListInDetail() throws Exception {
       for (String zoneId : glanceContext.getApi().getConfiguredZones()) {
          ImageApi api = glanceContext.getApi().getImageApiForZone(zoneId);
-         Set<? extends ImageDetails> response = api.listInDetail().concat().toImmutableSet();
+         Set<? extends ImageDetails> response = api.listInDetail().concat().toSet();
          assert null != response;
          for (ImageDetails image : response) {
             checkImage(image);

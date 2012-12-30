@@ -18,7 +18,7 @@ public class IterableWithMarkersTest {
    public void testElementsEqual() {
 
       IterableWithMarker<String> initial = IterableWithMarkers.from(ImmutableSet.of("foo", "bar"));
-      Assert.assertEquals(initial.toImmutableSet(), ImmutableSet.of("foo", "bar"));
+      Assert.assertEquals(initial.toSet(), ImmutableSet.of("foo", "bar"));
       Assert.assertEquals(initial.nextMarker(), Optional.absent());
    }
 
@@ -26,7 +26,7 @@ public class IterableWithMarkersTest {
    public void testMarkerEqual() {
 
       IterableWithMarker<String> initial = IterableWithMarkers.from(ImmutableSet.of("foo", "bar"), "MARKER");
-      Assert.assertEquals(initial.toImmutableSet(), ImmutableSet.of("foo", "bar"));
+      Assert.assertEquals(initial.toSet(), ImmutableSet.of("foo", "bar"));
       Assert.assertEquals(initial.nextMarker(), Optional.of("MARKER"));
    }
 }

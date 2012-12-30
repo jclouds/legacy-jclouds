@@ -86,7 +86,7 @@ public class ConcurrentOpenSocketFinder implements OpenSocketFinder {
          public HostAndPort apply(String from) {
             return HostAndPort.fromParts(from, port);
          }
-      }).toImmutableSet();
+      }).toSet();
 
       // Specify a retry period of 1s, expressed in the same time units.
       long period = timeUnits.convert(1, TimeUnit.SECONDS);

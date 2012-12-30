@@ -149,7 +149,7 @@ public class UserApiExpectTest extends BaseIAMApiExpectTest {
 
       IAMApi apiWhenExist = requestsSendResponses(list, listResponse, list2, list2Response);
 
-      assertEquals(apiWhenExist.getUserApi().list().concat().toImmutableList(),
+      assertEquals(apiWhenExist.getUserApi().list().concat().toList(),
                ImmutableList.copyOf(Iterables.concat(new ListUsersResponseTest().expected(), new ListUsersResponseTest().expected())));
    }
 

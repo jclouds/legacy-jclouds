@@ -144,7 +144,7 @@ public class LoadBalancerApiExpectTest extends BaseELBApiExpectTest {
       LoadBalancer lb1 = new GetLoadBalancerResponseTest().expected().toBuilder().name("my-load-balancer-1").build();
       LoadBalancer lb2 = new GetLoadBalancerResponseTest().expected();
       
-      assertEquals(apiWhenExist.getLoadBalancerApi().list().concat().toImmutableSet(), ImmutableSet.of(lb1, lb2));
+      assertEquals(apiWhenExist.getLoadBalancerApi().list().concat().toSet(), ImmutableSet.of(lb1, lb2));
    }
    
    public void testList2PagesWhenResponseIs2xxInEU() throws Exception {
@@ -203,7 +203,7 @@ public class LoadBalancerApiExpectTest extends BaseELBApiExpectTest {
       ELBApi apiWhenDontExist = requestSendsResponse(
             list, listResponse);
 
-      assertEquals(apiWhenDontExist.getLoadBalancerApi().list().get(0).toImmutableSet(), ImmutableSet.of());
+      assertEquals(apiWhenDontExist.getLoadBalancerApi().list().get(0).toSet(), ImmutableSet.of());
 
    }
    

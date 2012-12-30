@@ -55,7 +55,7 @@ public class ArchiveApiExpectTest extends BaseGleSYSApiExpectTest {
       Set<Archive> expected = ImmutableSet.of(
             Archive.builder().username("xxxxx_test1").freeSize("20 GB").totalSize("30 GB").locked(false).build());
 
-      assertEquals(api.list().toImmutableSet(), expected);
+      assertEquals(api.list().toSet(), expected);
    }
 
    public void testListArchivesWhenResponseIs4xxReturnsEmpty() {

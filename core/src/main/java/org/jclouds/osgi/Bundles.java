@@ -58,7 +58,7 @@ public final class Bundles {
                            .filter(Predicates.notNull())
                            .transform(instantiateIfPossible(type))
                            .filter(Predicates.notNull())
-                           .toImmutableSet();
+                           .toSet();
    }
 
    /**

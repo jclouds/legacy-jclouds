@@ -68,7 +68,7 @@ public class PagedIterablesTest {
 
       PagedIterable<String> iterable = PagedIterables.advance(initial, markerToNext);
 
-      Assert.assertEquals(iterable.concat().toImmutableSet(),
+      Assert.assertEquals(iterable.concat().toSet(),
                ImmutableSet.of("foo", "bar", "boo", "baz", "ham", "cheeze"));
 
       EasyMock.verify(markerToNext);

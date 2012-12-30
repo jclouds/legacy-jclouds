@@ -44,7 +44,7 @@ public class SecurityGroupApiLiveTest extends BaseNovaApiLiveTest {
    public void list() throws Exception {
       for (String zoneId : novaContext.getApi().getConfiguredZones()) {
          SecurityGroupApi api = novaContext.getApi().getSecurityGroupExtensionForZone(zoneId).get();
-         Set<? extends SecurityGroup> securityGroupsList = api.list().toImmutableSet();
+         Set<? extends SecurityGroup> securityGroupsList = api.list().toSet();
          assertNotNull(securityGroupsList);
       }
    }

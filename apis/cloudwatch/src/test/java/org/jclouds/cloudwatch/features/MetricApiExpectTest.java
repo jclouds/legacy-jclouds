@@ -85,7 +85,7 @@ public class MetricApiExpectTest extends BaseCloudWatchApiExpectTest {
       CloudWatchApi apiWhenMetricsDontExist = requestSendsResponse(
             listMetrics, listMetricsResponse);
 
-      assertEquals(apiWhenMetricsDontExist.getMetricApiForRegion(null).list().get(0).toImmutableSet(), ImmutableSet.of());
+      assertEquals(apiWhenMetricsDontExist.getMetricApiForRegion(null).list().get(0).toSet(), ImmutableSet.of());
    }
    
    public void testListMetrics2PagesWhenResponseIs2xx() throws Exception {

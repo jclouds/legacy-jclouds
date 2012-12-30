@@ -166,7 +166,7 @@ public class TagApiExpectTest extends BaseEC2ApiExpectTest<EC2Api> {
       EC2Api apiWhenDontExist = requestSendsResponse(
             list, listResponse);
 
-      assertEquals(apiWhenDontExist.getTagApi().get().list().toImmutableSet(), ImmutableSet.of());
+      assertEquals(apiWhenDontExist.getTagApi().get().list().toSet(), ImmutableSet.of());
    }
    
    HttpRequest filter =
@@ -212,7 +212,7 @@ public class TagApiExpectTest extends BaseEC2ApiExpectTest<EC2Api> {
       assertEquals(apiWhenDontExist.getTagApi().get().filter(ImmutableMultimap.<String, String> builder()
             .put("resource-type", "instance")
             .put("key", "stack")
-            .build()).toImmutableSet(), ImmutableSet.of());
+            .build()).toSet(), ImmutableSet.of());
    }
    
    HttpRequest delete = HttpRequest.builder()

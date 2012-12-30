@@ -57,7 +57,7 @@ public class VolumeTypeApiExpectTest extends BaseNovaApiExpectTest {
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/volume_type_list.json")).build()
       ).getVolumeTypeExtensionForZone("az-1.region-a.geo-1").get();
 
-      Set<? extends VolumeType> types = api.list().toImmutableSet();
+      Set<? extends VolumeType> types = api.list().toSet();
       assertEquals(types, ImmutableSet.of(testVolumeType()));
    }
 

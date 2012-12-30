@@ -78,7 +78,7 @@ public class HostAggregateApiLiveTest extends BaseNovaApiLiveTest {
    public void testListAndGetAggregate() {
       if (apiOption.isPresent()) {
          HostAggregateApi api = apiOption.get();
-         Set<? extends HostAggregate> aggregates = api.list().toImmutableSet();
+         Set<? extends HostAggregate> aggregates = api.list().toSet();
          for (HostAggregate aggregate : aggregates) {
             assertNotNull(aggregate.getId());
             assertNotNull(aggregate.getName());

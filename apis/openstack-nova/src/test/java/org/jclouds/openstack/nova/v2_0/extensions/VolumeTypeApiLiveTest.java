@@ -97,7 +97,7 @@ public class VolumeTypeApiLiveTest extends BaseNovaApiLiveTest {
    @Test(dependsOnMethods = "testCreateVolumeType")
    public void testListVolumeTypes() {
       if (volumeTypeOption.isPresent()) {
-         Set<? extends VolumeType> volumeTypes = volumeTypeOption.get().list().toImmutableSet();
+         Set<? extends VolumeType> volumeTypes = volumeTypeOption.get().list().toSet();
          assertNotNull(volumeTypes);
          boolean foundIt = false;
          for (VolumeType vt : volumeTypes) {

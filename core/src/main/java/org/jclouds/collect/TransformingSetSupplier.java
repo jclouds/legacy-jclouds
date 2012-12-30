@@ -49,7 +49,7 @@ public class TransformingSetSupplier<F, T> implements Supplier<Set<? extends T>>
                            .filter(notNull())
                            .transform(converter)
                            .filter(notNull())
-                           .toImmutableSet();
+                           .toSet();
    }
 
    @Override

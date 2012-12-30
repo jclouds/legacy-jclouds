@@ -94,7 +94,7 @@ public abstract class BaseTagApiLiveTest extends BaseEC2ApiLiveTest {
                public boolean apply(Tag in) {
                   return in.getResourceId().equals(resource.id);
                }
-            }).toImmutableSet().equals(input);
+            }).toSet().equals(input);
          }
 
       }, 600, 200, 200, TimeUnit.MILLISECONDS).apply(ImmutableSet.of(tag, tag2)));
