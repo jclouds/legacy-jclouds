@@ -111,7 +111,7 @@ public class BulkMessageApiLiveTest extends BaseSQSApiLiveTest {
    }
 
    protected Set<Message> collectMessages(MessageApi api) {
-      return SQS.receiveAllAtRate(api, idPayload.size(), attribute("None").visibilityTimeout(5)).toImmutableSet();
+      return SQS.receiveAllAtRate(api, idPayload.size(), attribute("None").visibilityTimeout(5)).toSet();
    }
 
    @Test(dependsOnMethods = "testChangeMessageVisibility")

@@ -56,7 +56,7 @@ public class PortApiExpectTest extends BaseQuantumApiExpectTest {
             HttpResponse.builder().statusCode(200).payload(payloadFromStringWithContentType("{\"ports\": [{\"id\": \"a6058a59-fa8c-46cc-bac8-08904e6ff0a5\"}]}", APPLICATION_JSON)).build())
             .getPortApiForZoneAndNetwork("region-a.geo-1", "1a104cf5-cb18-4d35-9407-2fd2646d9d0b");
 
-      Set<? extends Reference> nets = api.listReferences().toImmutableSet();
+      Set<? extends Reference> nets = api.listReferences().toSet();
       assertEquals(nets, ImmutableSet.of(Reference.builder().id("a6058a59-fa8c-46cc-bac8-08904e6ff0a5").build()));
    }
 
@@ -77,7 +77,7 @@ public class PortApiExpectTest extends BaseQuantumApiExpectTest {
             HttpResponse.builder().statusCode(200).payload(payloadFromStringWithContentType("{\"ports\": [{\"state\": \"DOWN\", \"id\": \"814ae4bb-33d9-425f-8ee2-13a5c90b1465\"}]}", APPLICATION_JSON)).build())
             .getPortApiForZoneAndNetwork("region-a.geo-1", "1a104cf5-cb18-4d35-9407-2fd2646d9d0b");
 
-      Set<? extends Port> nets = api.list().toImmutableSet();
+      Set<? extends Port> nets = api.list().toSet();
       assertEquals(nets, ImmutableSet.of(Port.builder().state(Port.State.DOWN).id("814ae4bb-33d9-425f-8ee2-13a5c90b1465").build()));
    }
 

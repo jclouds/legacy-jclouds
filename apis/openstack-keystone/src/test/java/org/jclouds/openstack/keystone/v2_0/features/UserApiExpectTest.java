@@ -66,7 +66,7 @@ public class UserApiExpectTest extends BaseKeystoneRestApiExpectTest<KeystoneApi
             HttpResponse.builder().statusCode(200).payload(payloadFromResourceWithContentType("/user_list.json", APPLICATION_JSON)).build())
             .getUserApi().get();
      
-      assertEquals(api.list().concat().toImmutableSet(), expectedUsers);
+      assertEquals(api.list().concat().toSet(), expectedUsers);
    }
    
    public void testListUsersPage() {
@@ -80,7 +80,7 @@ public class UserApiExpectTest extends BaseKeystoneRestApiExpectTest<KeystoneApi
       assertFalse(users.isEmpty());
 
 
-      assertEquals(users.toImmutableSet(), expectedUsers);
+      assertEquals(users.toSet(), expectedUsers);
    }
    
    public void testListUsersNotFound() {

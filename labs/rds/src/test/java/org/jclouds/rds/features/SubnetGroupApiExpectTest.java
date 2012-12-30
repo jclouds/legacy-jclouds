@@ -141,7 +141,7 @@ public class SubnetGroupApiExpectTest extends BaseRDSApiExpectTest {
       RDSApi apiWhenExist = requestsSendResponses(
             list, listResponse, list2, list2Response);
 
-      assertEquals(apiWhenExist.getSubnetGroupApi().list().concat().toImmutableList(),
+      assertEquals(apiWhenExist.getSubnetGroupApi().list().concat().toList(),
                ImmutableList.copyOf(Iterables.concat(new DescribeDBSubnetGroupsResponseTest().expected(),
                         new DescribeDBSubnetGroupsResponseTest().expected())));
    }

@@ -61,7 +61,7 @@ public class TenantApiExpectTest extends BaseKeystoneRestApiExpectTest<KeystoneA
                         payloadFromResourceWithContentType("/tenant_list.json", APPLICATION_JSON)).build())
                .getTenantApi().get();
 
-      assertEquals(api.list().concat().toImmutableSet(), expectedTenants);
+      assertEquals(api.list().concat().toSet(), expectedTenants);
    }
    
    public void testListTenantsPage() {
@@ -72,7 +72,7 @@ public class TenantApiExpectTest extends BaseKeystoneRestApiExpectTest<KeystoneA
                HttpResponse.builder().statusCode(200).payload(
                         payloadFromResourceWithContentType("/tenant_list.json", APPLICATION_JSON)).build())
                .getTenantApi().get();
-      Set<? extends Tenant> tenants = api.list(new PaginationOptions()).toImmutableSet();
+      Set<? extends Tenant> tenants = api.list(new PaginationOptions()).toSet();
       assertNotNull(tenants);
       assertFalse(tenants.isEmpty());
 
@@ -93,7 +93,7 @@ public class TenantApiExpectTest extends BaseKeystoneRestApiExpectTest<KeystoneA
 
       Set<Tenant> expected = ImmutableSet.of(Tenant.builder().name("this-is-a-test").id("14").description("None").build());
 
-      assertEquals(api.list().concat().toImmutableSet(), expected);
+      assertEquals(api.list().concat().toSet(), expected);
    }
    
    // this is not a compatible format of json per:

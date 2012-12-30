@@ -73,7 +73,7 @@ public class ServerApiExpectTest extends BaseGleSYSApiExpectTest {
             HttpResponse.builder().statusCode(204).payload(payloadFromResource("/server_list.json")).build()).getServerApi();
       Server expected = Server.builder().id("vz1541880").hostname("mammamia").datacenter("Falkenberg").platform("OpenVZ").build();
 
-      assertEquals(api.list().toImmutableSet(), ImmutableSet.<Server>of(expected));
+      assertEquals(api.list().toSet(), ImmutableSet.<Server>of(expected));
    }
 
    public void testListServersWhenReponseIs404IsEmpty() {
@@ -162,7 +162,7 @@ public class ServerApiExpectTest extends BaseGleSYSApiExpectTest {
          expectedBuilder.add(OSTemplate.builder().name(name).minDiskSize(20).minMemSize(1024).os("windows").platform("Xen").build());
       }
 
-      assertEquals(api.listTemplates().toImmutableSet(), expectedBuilder.build());
+      assertEquals(api.listTemplates().toSet(), expectedBuilder.build());
    }
 
    public void testGetServerDetailsWhenResponseIs2xx() throws Exception {

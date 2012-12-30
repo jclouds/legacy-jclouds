@@ -59,7 +59,7 @@ public class VolumeApiExpectTest extends BaseCinderApiExpectTest {
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/volume_list_simple.json")).build()
       ).getVolumeApiForZone("RegionOne");
 
-      Set<? extends Volume> volumes = api.list().toImmutableSet();
+      Set<? extends Volume> volumes = api.list().toSet();
       assertEquals(volumes, ImmutableSet.of(testVolume()));
    }
    
@@ -72,7 +72,7 @@ public class VolumeApiExpectTest extends BaseCinderApiExpectTest {
             HttpResponse.builder().statusCode(404).build()
       ).getVolumeApiForZone("RegionOne");
 
-      Set<? extends Volume> volumes = api.list().toImmutableSet();
+      Set<? extends Volume> volumes = api.list().toSet();
       assertTrue(volumes.isEmpty());
    }
 
@@ -85,7 +85,7 @@ public class VolumeApiExpectTest extends BaseCinderApiExpectTest {
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/volume_list_details.json")).build()
       ).getVolumeApiForZone("RegionOne");
 
-      Set<? extends Volume> volumes = api.listInDetail().toImmutableSet();
+      Set<? extends Volume> volumes = api.listInDetail().toSet();
       assertEquals(volumes, ImmutableSet.of(testVolume()));
    }
 
@@ -98,7 +98,7 @@ public class VolumeApiExpectTest extends BaseCinderApiExpectTest {
             HttpResponse.builder().statusCode(404).build()
       ).getVolumeApiForZone("RegionOne");
 
-      Set<? extends Volume> volumes = api.listInDetail().toImmutableSet();
+      Set<? extends Volume> volumes = api.listInDetail().toSet();
       assertTrue(volumes.isEmpty());
    }
 

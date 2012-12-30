@@ -41,7 +41,7 @@ public class SimpleTenantUsageApiLiveTest extends BaseNovaApiLiveTest {
          Optional<? extends SimpleTenantUsageApi> optApi = novaContext.getApi().getSimpleTenantUsageExtensionForZone(zoneId);
          if (optApi.isPresent() && identity.endsWith(":admin")) {
             SimpleTenantUsageApi api = optApi.get();
-            Set<? extends SimpleTenantUsage> usages = api.list().toImmutableSet();
+            Set<? extends SimpleTenantUsage> usages = api.list().toSet();
             assertNotNull(usages);
             for (SimpleTenantUsage usage : usages) {
                SimpleTenantUsage details = api.get(usage.getTenantId());

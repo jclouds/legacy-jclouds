@@ -158,7 +158,7 @@ public class IpApiExpectTest extends BaseGleSYSApiExpectTest {
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/ip_list_free.json")).build())
             .getIpApi();
 
-      assertEquals(api.listFree(4, "Falkenberg", "OpenVZ").toImmutableSet(), ParseIpAddressFromResponseTest.EXPECTED_IPS);
+      assertEquals(api.listFree(4, "Falkenberg", "OpenVZ").toSet(), ParseIpAddressFromResponseTest.EXPECTED_IPS);
    }
 
    public void testListFreeWhenResponseIs404ReturnsEmptySet() {
@@ -169,7 +169,7 @@ public class IpApiExpectTest extends BaseGleSYSApiExpectTest {
             HttpResponse.builder().statusCode(404).build())
             .getIpApi();
 
-      assertEquals(api.listFree(6, "Falkenberg", "OpenVZ").toImmutableSet(), ImmutableSet.of());
+      assertEquals(api.listFree(6, "Falkenberg", "OpenVZ").toSet(), ImmutableSet.of());
    }
 
    public void testAddWhenResponseIs2xx() {

@@ -52,7 +52,7 @@ public class VolumeTypeApiExpectTest extends BaseCinderApiExpectTest {
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/volume_type_list_simple.json")).build()
       ).getVolumeTypeApiForZone("RegionOne");
 
-      Set<? extends VolumeType> types = api.list().toImmutableSet();
+      Set<? extends VolumeType> types = api.list().toSet();
       assertEquals(types, ImmutableSet.of(testVolumeType()));
    }
 

@@ -51,7 +51,7 @@ public class NodeApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<CloudL
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/nodes-list.json")).build()
       ).getNodeApiForZoneAndLoadBalancer("DFW", 2000);
 
-      Set<Node> nodes = api.list().concat().toImmutableSet();
+      Set<Node> nodes = api.list().concat().toSet();
       assertEquals(nodes, testNodes());
    }
 

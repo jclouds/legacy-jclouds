@@ -70,7 +70,7 @@ public class AdvanceUntilEmptyIterableTest {
 
       AdvanceUntilEmptyIterable<String> iterable = new AdvanceUntilEmptyIterable<String>(nextIterable);
 
-      Assert.assertEquals(iterable.concat().toImmutableSet(),
+      Assert.assertEquals(iterable.concat().toSet(),
             ImmutableSet.of("foo", "bar", "boo", "baz", "ham", "cheeze"));
 
       EasyMock.verify(nextIterable);

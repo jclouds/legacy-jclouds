@@ -69,7 +69,7 @@ public class EmailAccountApiExpectTest extends BaseGleSYSApiExpectTest {
                         .modified(dateService.iso8601SecondsDateParse("2012-06-24T11:53:48+02:00")).build()
             );
 
-      Set<EmailAccount> actual = api.listDomain("cl13016.test.jclouds.org").toImmutableSet();
+      Set<EmailAccount> actual = api.listDomain("cl13016.test.jclouds.org").toSet();
       assertEquals(actual, expected);
       assertEquals(Iterables.get(actual, 0).toString(), Iterables.get(expected, 0).toString());
    }

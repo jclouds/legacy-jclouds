@@ -105,7 +105,7 @@ public class VolumeAttachmentApiLiveTest extends BaseNovaApiLiveTest {
             final String serverId = server_id = createServerInZone(zone).getId();
 
             Set<? extends VolumeAttachment> attachments = 
-                  volumeAttachmentApi.get().listAttachmentsOnServer(serverId).toImmutableSet();
+                  volumeAttachmentApi.get().listAttachmentsOnServer(serverId).toSet();
             assertNotNull(attachments);
             final int before = attachments.size();
 
@@ -121,7 +121,7 @@ public class VolumeAttachmentApiLiveTest extends BaseNovaApiLiveTest {
                }
             }, 60 * 1000L).apply(volumeAttachmentApi.get()));
 
-            attachments = volumeAttachmentApi.get().listAttachmentsOnServer(serverId).toImmutableSet();
+            attachments = volumeAttachmentApi.get().listAttachmentsOnServer(serverId).toSet();
             assertNotNull(attachments);
             assertEquals(attachments.size(), before + 1);
 

@@ -59,7 +59,7 @@ public class HostAdministrationApiExpectTest extends BaseNovaApiExpectTest {
       
       Host expected = Host.builder().name("ubuntu").service("compute").build();
 
-      Set<? extends Host> result = api.list().toImmutableSet();
+      Set<? extends Host> result = api.list().toSet();
       Host host = Iterables.getOnlyElement(result);
       assertEquals(host.getName(), "ubuntu");
       assertEquals(host.getService(), "compute");
@@ -84,7 +84,7 @@ public class HostAdministrationApiExpectTest extends BaseNovaApiExpectTest {
             HostResourceUsage.builder().memoryMb(6144).project("f8535069c3fb404cb61c873b1a0b4921").cpu(3).diskGb(80).host("ubuntu").build()
       );
 
-      assertEquals(api.listResourceUsage("xyz").toImmutableSet(), expected);
+      assertEquals(api.listResourceUsage("xyz").toSet(), expected);
    }
    
    public void testEnableHost() {

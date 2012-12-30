@@ -106,7 +106,7 @@ public class LoadBalancerApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
    public void testListLoadBalancers() throws Exception {
       for (String zone: clbApi.getConfiguredZones()) {
 
-         Set<LoadBalancer> response = clbApi.getLoadBalancerApiForZone(zone).list().concat().toImmutableSet();
+         Set<LoadBalancer> response = clbApi.getLoadBalancerApiForZone(zone).list().concat().toSet();
          
          assertNotNull(response);
          assertTrue(response.size() >= 0);

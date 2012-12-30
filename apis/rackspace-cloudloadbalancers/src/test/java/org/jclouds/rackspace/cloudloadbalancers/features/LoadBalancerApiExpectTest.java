@@ -54,7 +54,7 @@ public class LoadBalancerApiExpectTest extends BaseCloudLoadBalancerApiExpectTes
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/loadbalancers-list.json")).build()
       ).getLoadBalancerApiForZone("DFW");
 
-      Set<LoadBalancer> loadBalancers = api.list().concat().toImmutableSet();
+      Set<LoadBalancer> loadBalancers = api.list().concat().toSet();
       assertEquals(loadBalancers, testLoadBalancers());
    }
 
