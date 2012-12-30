@@ -42,7 +42,7 @@ public class ImageApiLiveTest extends BaseNovaApiLiveTest {
    public void testListImages() throws Exception {
       for (String zoneId : zones) {
          ImageApi api = novaContext.getApi().getImageApiForZone(zoneId);
-         Set<? extends Resource> response = api.list().concat().toImmutableSet();
+         Set<? extends Resource> response = api.list().concat().toSet();
          assertNotNull(response);
          assertFalse(response.isEmpty());
          for (Resource image : response) {
@@ -57,7 +57,7 @@ public class ImageApiLiveTest extends BaseNovaApiLiveTest {
    public void testListImagesInDetail() throws Exception {
       for (String zoneId : novaContext.getApi().getConfiguredZones()) {
          ImageApi api = novaContext.getApi().getImageApiForZone(zoneId);
-         Set<? extends Image> response = api.listInDetail().concat().toImmutableSet();
+         Set<? extends Image> response = api.listInDetail().concat().toSet();
          assertNotNull(response);
          assertFalse(response.isEmpty());
          for (Image image : response) {
@@ -81,7 +81,7 @@ public class ImageApiLiveTest extends BaseNovaApiLiveTest {
    public void testGetImageById() throws Exception {
       for (String zoneId : novaContext.getApi().getConfiguredZones()) {
          ImageApi api = novaContext.getApi().getImageApiForZone(zoneId);
-         Set<? extends Image> response = api.listInDetail().concat().toImmutableSet();
+         Set<? extends Image> response = api.listInDetail().concat().toSet();
          for (Image image : response) {
             Image details = api.get(image.getId());
             assertNotNull(details);

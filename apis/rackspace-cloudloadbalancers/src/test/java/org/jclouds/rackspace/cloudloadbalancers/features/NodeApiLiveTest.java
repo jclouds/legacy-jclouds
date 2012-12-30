@@ -105,7 +105,7 @@ public class NodeApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
    @Test(dependsOnMethods = "testModifyNode")
    public void testListNodes() throws Exception {
       for (LoadBalancer lb : nodes.keySet()) {
-         Set<Node> response = clbApi.getNodeApiForZoneAndLoadBalancer(lb.getRegion(), lb.getId()).list().concat().toImmutableSet();
+         Set<Node> response = clbApi.getNodeApiForZoneAndLoadBalancer(lb.getRegion(), lb.getId()).list().concat().toSet();
          assert null != response;
          assertTrue(response.size() >= 0);
          for (Node n : response) {

@@ -60,7 +60,7 @@ public class SnapshotApiExpectTest extends BaseCinderApiExpectTest {
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/snapshot_list_simple.json")).build()
       ).getSnapshotApiForZone("RegionOne");
 
-      Set<? extends Snapshot> snapshots = api.list().toImmutableSet();
+      Set<? extends Snapshot> snapshots = api.list().toSet();
       assertEquals(snapshots, ImmutableSet.of(testSnapshot()));
    }
 
@@ -73,7 +73,7 @@ public class SnapshotApiExpectTest extends BaseCinderApiExpectTest {
             HttpResponse.builder().statusCode(404).build()
       ).getSnapshotApiForZone("RegionOne");
 
-      Set<? extends Snapshot> snapshots = api.list().toImmutableSet();
+      Set<? extends Snapshot> snapshots = api.list().toSet();
       assertTrue(snapshots.isEmpty());
    }
 
@@ -86,7 +86,7 @@ public class SnapshotApiExpectTest extends BaseCinderApiExpectTest {
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/snapshot_list_details.json")).build()
       ).getSnapshotApiForZone("RegionOne");
 
-      Set<? extends Snapshot> snapshots = api.listInDetail().toImmutableSet();
+      Set<? extends Snapshot> snapshots = api.listInDetail().toSet();
       assertEquals(snapshots, ImmutableSet.of(testSnapshot()));
 
       // double-check individual fields
@@ -108,7 +108,7 @@ public class SnapshotApiExpectTest extends BaseCinderApiExpectTest {
             HttpResponse.builder().statusCode(404).build()
       ).getSnapshotApiForZone("RegionOne");
 
-      Set<? extends Snapshot> snapshots = api.listInDetail().toImmutableSet();
+      Set<? extends Snapshot> snapshots = api.listInDetail().toSet();
       assertTrue(snapshots.isEmpty());
    }
 

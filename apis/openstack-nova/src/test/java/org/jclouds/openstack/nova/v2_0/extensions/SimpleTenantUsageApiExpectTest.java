@@ -58,7 +58,7 @@ public class SimpleTenantUsageApiExpectTest extends BaseNovaApiExpectTest {
                   .payload(payloadFromResource("/simple_tenant_usages.json")).build())
             .getSimpleTenantUsageExtensionForZone("az-1.region-a.geo-1").get();
       
-      Set<? extends SimpleTenantUsage> results = api.list().toImmutableSet();
+      Set<? extends SimpleTenantUsage> results = api.list().toSet();
       
       SimpleTenantUsage usage = Iterables.getOnlyElement(results);
       assertEquals(usage.getTenantId(), "f8535069c3fb404cb61c873b1a0b4921");

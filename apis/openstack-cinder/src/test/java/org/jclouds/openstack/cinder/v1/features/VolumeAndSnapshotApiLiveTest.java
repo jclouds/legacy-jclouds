@@ -92,7 +92,7 @@ public class VolumeAndSnapshotApiLiveTest extends BaseCinderApiLiveTest {
 
    @Test(dependsOnMethods = "testCreateVolume")
    public void testListVolumes() {
-      Set<? extends Volume> volumes = volumeApi.list().toImmutableSet();
+      Set<? extends Volume> volumes = volumeApi.list().toSet();
       assertNotNull(volumes);
       boolean foundIt = false;
       for (Volume vol : volumes) {
@@ -107,7 +107,7 @@ public class VolumeAndSnapshotApiLiveTest extends BaseCinderApiLiveTest {
 
    @Test(dependsOnMethods = "testCreateVolume")
    public void testListVolumesInDetail() {
-      Set<? extends Volume> volumes = volumeApi.listInDetail().toImmutableSet();
+      Set<? extends Volume> volumes = volumeApi.listInDetail().toSet();
       assertNotNull(volumes);
       boolean foundIt = false;
       for (Volume vol : volumes) {
@@ -146,7 +146,7 @@ public class VolumeAndSnapshotApiLiveTest extends BaseCinderApiLiveTest {
 
    @Test(dependsOnMethods = "testCreateSnapshot")
    public void testListSnapshots() {
-      Set<? extends Snapshot> snapshots = snapshotApi.list().toImmutableSet();
+      Set<? extends Snapshot> snapshots = snapshotApi.list().toSet();
       assertNotNull(snapshots);
       boolean foundIt = false;
       for (Snapshot snap : snapshots) {
@@ -163,7 +163,7 @@ public class VolumeAndSnapshotApiLiveTest extends BaseCinderApiLiveTest {
 
    @Test(dependsOnMethods = "testCreateSnapshot")
    public void testListSnapshotsInDetail() {
-      Set<? extends Snapshot> snapshots = snapshotApi.listInDetail().toImmutableSet();
+      Set<? extends Snapshot> snapshots = snapshotApi.listInDetail().toSet();
       assertNotNull(snapshots);
       boolean foundIt = false;
       for (Snapshot snap : snapshots) {

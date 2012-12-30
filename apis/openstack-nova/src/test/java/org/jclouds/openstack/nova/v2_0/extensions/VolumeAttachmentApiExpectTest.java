@@ -59,7 +59,7 @@ public class VolumeAttachmentApiExpectTest extends BaseNovaApiExpectTest {
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/attachment_list.json")).build()
       ).getVolumeAttachmentExtensionForZone("az-1.region-a.geo-1").get();
 
-      Set<? extends VolumeAttachment> attachments = api.listAttachmentsOnServer("instance-1").toImmutableSet();
+      Set<? extends VolumeAttachment> attachments = api.listAttachmentsOnServer("instance-1").toSet();
       assertEquals(attachments, ImmutableSet.of(testAttachment()));
       // double-check individual fields
       VolumeAttachment attachment = Iterables.getOnlyElement(attachments);

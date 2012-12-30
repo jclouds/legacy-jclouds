@@ -95,7 +95,7 @@ public class LocationIdToURIFromAccessForTypeAndVersion implements Supplier<Map<
    @Override
    public Map<String, Supplier<URI>> get() {
       FluentIterable<Service> services = FluentIterable.from(access.get()).filter(apiTypeEquals);
-      if (services.toImmutableSet().size() == 0)
+      if (services.toSet().size() == 0)
          throw new NoSuchElementException(String.format("apiType %s not found in catalog %s", apiType, services));
 
       Iterable<Endpoint> endpoints = concat(services);

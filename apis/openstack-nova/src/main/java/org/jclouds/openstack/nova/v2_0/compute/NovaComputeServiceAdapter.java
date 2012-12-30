@@ -159,7 +159,7 @@ public class NovaComputeServiceAdapter implements
       Set<String> zones = zoneIds.get();
       checkState(zones.size() > 0, "no zones found in supplier %s", zoneIds);
       for (final String zoneId : zones) {
-         Set<? extends Image> images = novaApi.getImageApiForZone(zoneId).listInDetail().concat().toImmutableSet();
+         Set<? extends Image> images = novaApi.getImageApiForZone(zoneId).listInDetail().concat().toSet();
          if (images.size() == 0) {
             logger.debug("no images found in zone %s", zoneId);
             continue;

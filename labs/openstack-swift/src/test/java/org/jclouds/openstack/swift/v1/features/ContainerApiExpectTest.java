@@ -68,7 +68,7 @@ public class ContainerApiExpectTest extends BaseSwiftApiExpectTest {
       SwiftApi apiWhenNoContainersExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, list, listResponse);
 
-      assertEquals(apiWhenNoContainersExist.getContainerApiForRegion("region-a.geo-1").list().toImmutableSet(),
+      assertEquals(apiWhenNoContainersExist.getContainerApiForRegion("region-a.geo-1").list().toSet(),
                ImmutableSet.of());
 
    }

@@ -55,7 +55,7 @@ public class VolumeTypeApiLiveTest extends BaseCinderApiLiveTest {
    }
 
    public void testListAndGetVolumeTypes() {
-      Set<? extends VolumeType> volumeTypes = volumeTypeApi.list().toImmutableSet();
+      Set<? extends VolumeType> volumeTypes = volumeTypeApi.list().toSet();
       assertNotNull(volumeTypes);
 
       for (VolumeType vt : volumeTypes) {

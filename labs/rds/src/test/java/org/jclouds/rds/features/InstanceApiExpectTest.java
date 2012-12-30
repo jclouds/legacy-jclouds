@@ -141,7 +141,7 @@ public class InstanceApiExpectTest extends BaseRDSApiExpectTest {
       RDSApi apiWhenExist = requestsSendResponses(
             list, listResponse, list2, list2Response);
 
-      assertEquals(apiWhenExist.getInstanceApi().list().concat().toImmutableList(),
+      assertEquals(apiWhenExist.getInstanceApi().list().concat().toList(),
                ImmutableList.copyOf(Iterables.concat(new DescribeDBInstancesResponseTest().expected(),
                         new DescribeDBInstancesResponseTest().expected())));
    }

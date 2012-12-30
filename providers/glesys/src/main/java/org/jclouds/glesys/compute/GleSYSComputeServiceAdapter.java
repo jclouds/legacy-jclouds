@@ -206,7 +206,7 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
 
    @Override
    public Set<OSTemplate> listImages() {
-      return api.getServerApi().listTemplates().toImmutableSet();
+      return api.getServerApi().listTemplates().toSet();
    }
    
    // cheat until we have a getTemplate command

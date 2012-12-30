@@ -42,8 +42,8 @@ public class NetworkApiLiveTest extends BaseQuantumApiLiveTest {
 
    public void testListNetworks() {
       for (String zoneId : quantumContext.getApi().getConfiguredZones()) {
-         Set<? extends Reference> ids = quantumContext.getApi().getNetworkApiForZone(zoneId).listReferences().toImmutableSet();
-         Set<? extends Network> networks = quantumContext.getApi().getNetworkApiForZone(zoneId).list().toImmutableSet();
+         Set<? extends Reference> ids = quantumContext.getApi().getNetworkApiForZone(zoneId).listReferences().toSet();
+         Set<? extends Network> networks = quantumContext.getApi().getNetworkApiForZone(zoneId).list().toSet();
          assertNotNull(ids);
          assertEquals(ids.size(), networks.size());
          for (Network network : networks) {
