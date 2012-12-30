@@ -19,10 +19,7 @@
 package org.jclouds.aws.ec2.services;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.aws.ec2.domain.AWSRunningInstance;
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.options.RunInstancesOptions;
 import org.jclouds.ec2.services.InstanceClient;
@@ -34,7 +31,6 @@ import org.jclouds.javax.annotation.Nullable;
  * 
  * @author Adrian Cole
  */
-@Timeout(duration = 90, timeUnit = TimeUnit.SECONDS)
 public interface AWSInstanceClient extends InstanceClient {
 
    @Override

@@ -48,7 +48,6 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
 import javax.inject.Qualifier;
@@ -69,7 +68,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.eclipse.jetty.http.HttpHeaders;
 import org.jclouds.ContextBuilder;
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.date.DateService;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
@@ -201,7 +199,6 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
    }
    
    @Endpoint(Localhost2.class)
-   @Timeout(duration = 10, timeUnit = TimeUnit.NANOSECONDS)
    public static interface Caller {
 
       // tests that we can pull from suppliers
@@ -226,15 +223,11 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       public Callee getCalleeWithPath(@EndpointParam URI endpoint, @PathParam("wibble") String wibble);
    }
 
-   @Timeout(duration = 10, timeUnit = TimeUnit.NANOSECONDS)
    public static interface Callee {
-
       void onePath(String path);
    }
    
-   @Timeout(duration = 10, timeUnit = TimeUnit.NANOSECONDS)
    public static interface Callee2 {
-      
       void onePath(String path);
    }
 

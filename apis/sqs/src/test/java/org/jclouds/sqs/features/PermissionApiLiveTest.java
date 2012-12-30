@@ -24,13 +24,10 @@ import static org.jclouds.sqs.reference.SQSParameters.ACTION;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
-import java.util.concurrent.TimeUnit;
-
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
 import org.jclouds.ContextBuilder;
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.XMLResponseParser;
@@ -64,8 +61,7 @@ public class PermissionApiLiveTest extends BaseSQSApiLiveTest {
       recreateQueueInRegion(prefix, null);
    }
 
-   @Timeout(duration = 5, timeUnit = TimeUnit.SECONDS)
-   static interface AnonymousAttributesApi {
+      static interface AnonymousAttributesApi {
       String getQueueArn();
    }
 

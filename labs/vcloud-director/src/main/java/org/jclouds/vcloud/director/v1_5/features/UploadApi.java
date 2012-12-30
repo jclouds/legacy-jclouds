@@ -19,9 +19,6 @@
 package org.jclouds.vcloud.director.v1_5.features;
 
 import java.net.URI;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.io.Payload;
 
 /**
@@ -30,7 +27,6 @@ import org.jclouds.io.Payload;
  * @see UploadAsyncApi
  * @author danikov
  */
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface UploadApi {
 
    /**

@@ -18,9 +18,6 @@
  */
 package org.jclouds.jenkins.v1;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.jenkins.v1.domain.Node;
 import org.jclouds.jenkins.v1.features.ComputerApi;
 import org.jclouds.jenkins.v1.features.JobApi;
@@ -34,7 +31,6 @@ import org.jclouds.rest.annotations.Delegate;
  * @see <a href="https://wiki.jenkins-ci.org/display/JENKINS/Remote+access+API">api doc</a>
  * @author Adrian Cole
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface JenkinsApi {
    /**
     * @return the master computer

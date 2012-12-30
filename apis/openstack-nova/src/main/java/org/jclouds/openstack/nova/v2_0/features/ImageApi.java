@@ -19,10 +19,7 @@
 package org.jclouds.openstack.nova.v2_0.features;
 
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.collect.PagedIterable;
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.openstack.keystone.v2_0.domain.PaginatedCollection;
 import org.jclouds.openstack.nova.v2_0.domain.Image;
@@ -39,7 +36,6 @@ import org.jclouds.openstack.v2_0.options.PaginationOptions;
  *      />
  * @author Adrian Cole
  */
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface ImageApi {
 
    /**

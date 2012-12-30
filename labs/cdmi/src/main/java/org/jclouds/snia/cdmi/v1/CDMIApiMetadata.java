@@ -18,6 +18,9 @@
  */
 package org.jclouds.snia.cdmi.v1;
 
+import static java.util.concurrent.TimeUnit.MINUTES;
+import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
+
 import java.net.URI;
 import java.util.Properties;
 
@@ -55,6 +58,8 @@ public class CDMIApiMetadata extends BaseRestApiMetadata {
 
    public static Properties defaultProperties() {
       Properties properties = BaseRestApiMetadata.defaultProperties();
+      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "default", MINUTES.toMillis(3) + "");
+      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "DataNonCDMIContentTypeApi", MINUTES.toMillis(10) + "");
       return properties;
    }
 

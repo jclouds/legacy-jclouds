@@ -18,10 +18,6 @@
  */
 package org.jclouds.openstack.swift.v1.features;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
-
 /**
  * Storage Object Services An object represents the data and any metadata for the files stored in
  * the system. Through the ReST interface, metadata for an object can be included by adding custom
@@ -37,7 +33,6 @@ import org.jclouds.concurrent.Timeout;
  *      "http://docs.openstack.org/api/openstack-object-storage/1.0/content/storage-object-services.html"
  *      >api doc</a>
  */
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface ObjectApi {
 
 }

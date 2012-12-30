@@ -18,9 +18,6 @@
  */
 package org.jclouds.glesys.features;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.glesys.domain.Archive;
 import org.jclouds.glesys.domain.ArchiveAllowedArguments;
 
@@ -34,7 +31,6 @@ import com.google.common.collect.FluentIterable;
  * @see ArchiveAsyncApi
  * @see <a href="https://customer.glesys.com/api.php" />
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface ArchiveApi {
 
    /**

@@ -19,10 +19,6 @@
 package org.jclouds.cloudstack.features;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
-
 /**
  * Provides synchronous access to CloudStack Operating System features.
  * <p/>
@@ -31,7 +27,6 @@ import org.jclouds.concurrent.Timeout;
  * @see <a href="http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_User.html" />
  * @author Adrian Cole
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface HypervisorClient {
    /**
     * Lists all supported hypervisors for this cloud.

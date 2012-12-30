@@ -18,9 +18,6 @@
  */
 package org.jclouds.openstack.keystone.v1_1;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.keystone.v1_1.domain.Auth;
 
 /**
@@ -32,7 +29,6 @@ import org.jclouds.openstack.keystone.v1_1.domain.Auth;
  *      />
  * @author Adrian Cole
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface AuthenticationClient {
 
    /**

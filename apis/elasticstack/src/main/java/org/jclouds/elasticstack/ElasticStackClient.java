@@ -19,9 +19,6 @@
 package org.jclouds.elasticstack;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.elasticstack.domain.Drive;
 import org.jclouds.elasticstack.domain.DriveData;
 import org.jclouds.elasticstack.domain.DriveInfo;
@@ -38,7 +35,6 @@ import org.jclouds.io.Payload;
  * @see <a href="TODO: insert URL of elasticstack documentation" />
  * @author Adrian Cole
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface ElasticStackClient {
    /**
     * list of server uuids in your account
@@ -94,7 +90,6 @@ public interface ElasticStackClient {
     * @param uuid
     *           what to start
     */
-   @Timeout(duration = 120, timeUnit = TimeUnit.SECONDS)
    void startServer(String uuid);
 
    /**
@@ -157,7 +152,6 @@ public interface ElasticStackClient {
     *           required parameters: name, size
     * @return newly created drive
     */
-   @Timeout(duration = 120, timeUnit = TimeUnit.SECONDS)
    DriveInfo createDrive(Drive createDrive);
 
    /**
@@ -185,7 +179,6 @@ public interface ElasticStackClient {
     * @param server
     * @return newly created server
     */
-   @Timeout(duration = 120, timeUnit = TimeUnit.SECONDS)
    ServerInfo createAndStartServer(Server server);
 
    /**

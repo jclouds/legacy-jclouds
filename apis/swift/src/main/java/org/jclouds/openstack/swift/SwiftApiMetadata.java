@@ -18,6 +18,9 @@
  */
 package org.jclouds.openstack.swift;
 
+import static java.util.concurrent.TimeUnit.MINUTES;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
 
@@ -62,6 +65,12 @@ public class SwiftApiMetadata extends BaseRestApiMetadata {
 
    public static Properties defaultProperties() {
       Properties properties = BaseRestApiMetadata.defaultProperties();
+      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "default", MINUTES.toMillis(2) + "");
+      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "OpenStackAuthClient.authenticate", SECONDS.toMillis(10) + "");
+      // TODO: value was randomly copied from S3: 512KB/s for max size of 5GB
+      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "CommonSwiftClient.getObject", SECONDS.toMillis(5242880 / 512) + "");
+      // TODO: value was randomly copied from S3: 128KB/s for max size of 5GB
+      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "CommonSwiftClient.putObject", SECONDS.toMillis(5242880 / 128) + "");
       properties.setProperty(PROPERTY_USER_METADATA_PREFIX, "X-Object-Meta-");
       properties.setProperty(PROPERTY_REGIONS, "DEFAULT");
       return properties;

@@ -20,10 +20,7 @@ package org.jclouds.openstack.swift;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.blobstore.domain.PageSet;
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.openstack.swift.domain.AccountMetadata;
 import org.jclouds.openstack.swift.domain.ContainerMetadata;
@@ -41,7 +38,6 @@ import com.google.inject.Provides;
  * @see <a href="http://www.rackspacecloud.com/cf-devguide-20090812.pdf" />
  * @author Adrian Cole
  */
-@Timeout(duration = 120, timeUnit = TimeUnit.SECONDS)
 public interface CommonSwiftClient {
    @Provides
    SwiftObject newSwiftObject();
@@ -103,14 +99,12 @@ public interface CommonSwiftClient {
 
    PageSet<ObjectInfo> listObjects(String container, ListContainerOptions... options);
 
-   @Timeout(duration = 5 * 1024 * 1024 / 512, timeUnit = TimeUnit.SECONDS)
    SwiftObject getObject(String container, String name, GetOptions... options);
 
    boolean setObjectInfo(String container, String name, Map<String, String> userMetadata);
 
    MutableObjectInfoWithMetadata getObjectInfo(String container, String name);
 
-   @Timeout(duration = 5 * 1024 * 1024 / 128, timeUnit = TimeUnit.SECONDS)
    String putObject(String container, SwiftObject object);
 
    /**

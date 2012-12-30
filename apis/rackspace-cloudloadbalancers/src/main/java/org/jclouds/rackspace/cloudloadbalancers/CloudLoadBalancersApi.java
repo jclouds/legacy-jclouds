@@ -19,12 +19,9 @@
 package org.jclouds.rackspace.cloudloadbalancers;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.Zone;
 import org.jclouds.location.functions.ZoneToEndpoint;
@@ -42,7 +39,6 @@ import com.google.inject.Provides;
  * @see CloudLoadBalancersAsyncApi 
  * @author Adrian Cole
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface CloudLoadBalancersApi {
    /**
     * @return the Zone codes configured

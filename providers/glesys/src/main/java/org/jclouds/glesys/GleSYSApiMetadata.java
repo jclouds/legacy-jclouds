@@ -18,6 +18,10 @@
  */
 package org.jclouds.glesys;
 
+import static java.util.concurrent.TimeUnit.MINUTES;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
+
 import java.net.URI;
 import java.util.Properties;
 
@@ -57,6 +61,9 @@ public class GleSYSApiMetadata extends BaseRestApiMetadata {
 
    public static Properties defaultProperties() {
       Properties properties = BaseRestApiMetadata.defaultProperties();
+      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "default", SECONDS.toMillis(30) + "");
+      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "ServerApi.createWithHostnameAndRootPassword", MINUTES.toMillis(3) + "");
+      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "ServerApi.clone", MINUTES.toMillis(3) + "");
       properties.setProperty("jclouds.ssh.max-retries", "5");
       properties.setProperty("jclouds.ssh.retry-auth", "true");
       return properties;

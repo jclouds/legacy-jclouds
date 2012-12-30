@@ -18,10 +18,7 @@
  */
 package org.jclouds.azure.management.features;
 
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.azure.management.domain.Operation;
-import org.jclouds.concurrent.Timeout;
 
 /**
  * The Service Management API includes one operation for tracking the progress of asynchronous requests.
@@ -30,7 +27,6 @@ import org.jclouds.concurrent.Timeout;
  * @see OperationAsyncApi
  * @author Gerald Pereira
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface OperationApi {
 
    Operation get(String requestId);

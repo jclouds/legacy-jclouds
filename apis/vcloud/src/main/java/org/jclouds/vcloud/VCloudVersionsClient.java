@@ -20,11 +20,6 @@ package org.jclouds.vcloud;
 
 import java.net.URI;
 import java.util.SortedMap;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
-
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface VCloudVersionsClient {
 
    SortedMap<String, URI> getSupportedVersions();

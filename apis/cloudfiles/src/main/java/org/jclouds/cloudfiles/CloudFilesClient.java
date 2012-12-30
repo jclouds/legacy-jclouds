@@ -20,11 +20,8 @@ package org.jclouds.cloudfiles;
 
 import java.net.URI;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.cloudfiles.domain.ContainerCDNMetadata;
 import org.jclouds.cloudfiles.options.ListCdnContainerOptions;
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.swift.CommonSwiftClient;
 
 /**
@@ -36,7 +33,6 @@ import org.jclouds.openstack.swift.CommonSwiftClient;
  * @author Adrian Cole
  * @see <a href="http://www.rackspacecloud.com/cf-devguide-20090812.pdf" />
  */
-@Timeout(duration = 120, timeUnit = TimeUnit.SECONDS)
 public interface CloudFilesClient extends CommonSwiftClient {
 
    /**
@@ -99,7 +95,7 @@ public interface CloudFilesClient extends CommonSwiftClient {
     */
    boolean setCDNStaticWebsiteIndex(String container, String index);
 
-   /*
+   /**
     * http://docs.rackspace.com/files/api/v1/cf-devguide/content/Set_Error_Pages_for_Static_Website-dle4005.html
     */
    boolean setCDNStaticWebsiteError(String container, String error);

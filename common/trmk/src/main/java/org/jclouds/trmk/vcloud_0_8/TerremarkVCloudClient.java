@@ -21,9 +21,6 @@ package org.jclouds.trmk.vcloud_0_8;
 import java.net.URI;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.trmk.vcloud_0_8.domain.Catalog;
 import org.jclouds.trmk.vcloud_0_8.domain.CatalogItem;
@@ -56,7 +53,6 @@ import org.jclouds.trmk.vcloud_0_8.options.InstantiateVAppTemplateOptions;
  *      />
  * @author Adrian Cole
  */
-@Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
 public interface TerremarkVCloudClient {
    Catalog getCatalog(URI catalogId);
 

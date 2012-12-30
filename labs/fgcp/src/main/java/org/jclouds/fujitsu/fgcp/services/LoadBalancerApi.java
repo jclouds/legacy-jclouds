@@ -18,16 +18,11 @@
  */
 package org.jclouds.fujitsu.fgcp.services;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
-
 /**
  * API relating to a built-in server of type software load balancer (SLB).
  * 
  * @author Dies Koper
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface LoadBalancerApi extends BuiltinServerApi {
 
 }

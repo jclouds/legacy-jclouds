@@ -19,9 +19,6 @@
 package org.jclouds.openstack.cinder.v1;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.Zone;
 import org.jclouds.location.functions.ZoneToEndpoint;
@@ -41,7 +38,6 @@ import com.google.inject.Provides;
  * @see <a href="http://api.openstack.org/">API Doc</a>
  * @author Everett Toews
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface CinderApi {
    /**
     * @return the Zone codes configured

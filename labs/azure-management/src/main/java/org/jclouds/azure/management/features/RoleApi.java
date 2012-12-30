@@ -18,11 +18,8 @@
  */
 package org.jclouds.azure.management.features;
 
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.azure.management.domain.DeploymentParams;
 import org.jclouds.azure.management.domain.role.PersistentVMRole;
-import org.jclouds.concurrent.Timeout;
 
 /**
  * The Service Management API includes operations for managing the virtual
@@ -32,7 +29,6 @@ import org.jclouds.concurrent.Timeout;
  * @see RoleAsyncApi
  * @author Gerald Pereira, Adrian Cole
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface RoleApi {
 
 	// FUUUUUU this is not the good REST call !!! Use getDeployment instead :@

@@ -20,9 +20,6 @@ package org.jclouds.vcloud.features;
 
 import java.net.URI;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.ReferenceType;
@@ -33,7 +30,6 @@ import org.jclouds.vcloud.domain.ReferenceType;
  * 
  * @author Adrian Cole
  */
-@Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
 public interface OrgClient {
 
    /**

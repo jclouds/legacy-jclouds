@@ -19,9 +19,6 @@
 package org.jclouds.vcloud.director.v1_5.features;
 
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 
@@ -33,7 +30,6 @@ import org.jclouds.vcloud.director.v1_5.domain.Task;
  */
 public interface MetadataApi {
 
-   @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
    public static interface Readable extends MetadataApi {
       /**
        * Retrieves an list of metadata
@@ -50,7 +46,6 @@ public interface MetadataApi {
       String get(String key);
    }
 
-   @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
    public static interface Writeable extends Readable {
 
       /**

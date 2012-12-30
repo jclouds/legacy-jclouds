@@ -20,9 +20,6 @@ package org.jclouds.gogrid.services;
 
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.gogrid.domain.IpPortPair;
 import org.jclouds.gogrid.domain.LoadBalancer;
 import org.jclouds.gogrid.domain.Option;
@@ -31,7 +28,6 @@ import org.jclouds.gogrid.options.AddLoadBalancerOptions;
 /**
  * @author Oleksiy Yarmula
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface GridLoadBalancerClient {
 
    /**

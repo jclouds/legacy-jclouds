@@ -19,10 +19,7 @@
 
 package org.jclouds.abiquo.features;
 
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.abiquo.domain.event.options.EventOptions;
-import org.jclouds.concurrent.Timeout;
 
 import com.abiquo.server.core.event.EventsDto;
 
@@ -35,7 +32,6 @@ import com.abiquo.server.core.event.EventsDto;
  * @author Ignasi Barrera
  * @author Vivien Mahé
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface EventApi {
    /**
     * List events.

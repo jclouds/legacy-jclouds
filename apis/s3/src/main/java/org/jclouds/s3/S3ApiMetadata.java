@@ -18,8 +18,11 @@
  */
 package org.jclouds.s3;
 
+import static java.util.concurrent.TimeUnit.MINUTES;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_RELAX_HOSTNAME;
+import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AUTH_TAG;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_HEADER_TAG;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.DIRECTORY_SUFFIX_FOLDER;
@@ -80,6 +83,12 @@ public class S3ApiMetadata extends BaseRestApiMetadata {
 
    public static Properties defaultProperties() {
       Properties properties = BaseRestApiMetadata.defaultProperties();
+      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "default", SECONDS.toMillis(90) + "");
+      // 512KB/s for max size of 5GB
+      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "S3Client.getObject", SECONDS.toMillis(5242880 / 512) + "");
+      // 128KB/s for max size of 5GB
+      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "S3Client.putObject", SECONDS.toMillis(5242880 / 128) + "");
+      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "S3Client.copyObject", MINUTES.toMillis(10) + "");
       properties.setProperty(PROPERTY_API_VERSION, S3AsyncClient.VERSION);
       properties.setProperty(PROPERTY_AUTH_TAG, "AWS");
       properties.setProperty(PROPERTY_HEADER_TAG, S3Headers.DEFAULT_AMAZON_HEADERTAG);

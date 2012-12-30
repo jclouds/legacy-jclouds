@@ -19,9 +19,6 @@
 package org.jclouds.openstack.v2_0.features;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.v2_0.domain.Extension;
 
 /**
@@ -34,7 +31,6 @@ import org.jclouds.openstack.v2_0.domain.Extension;
  *      />
  * @author Adrian Cole
  */
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface ExtensionApi {
 
    /**

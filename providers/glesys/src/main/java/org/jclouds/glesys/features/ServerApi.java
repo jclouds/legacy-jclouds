@@ -19,9 +19,6 @@
 package org.jclouds.glesys.features;
 
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.glesys.domain.AllowedArgumentsForCreateServer;
 import org.jclouds.glesys.domain.Console;
 import org.jclouds.glesys.domain.OSTemplate;
@@ -49,7 +46,6 @@ import com.google.common.collect.FluentIterable;
  * @see ServerAsyncApi
  * @see <a href="https://customer.glesys.com/api.php" />
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface ServerApi {
 
    /**
@@ -153,7 +149,6 @@ public interface ServerApi {
     * @param rootPassword the root password to use
     * @param options      optional settings ex. description
     */
-   @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
    ServerDetails createWithHostnameAndRootPassword(ServerSpec serverSpec, String hostname, String rootPassword,
          CreateServerOptions... options);
 
@@ -172,7 +167,6 @@ public interface ServerApi {
     * @param hostname the new host name of the cloned server
     * @param options  the settings to change
     */
-   @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
    ServerDetails clone(String serverid, String hostname, CloneServerOptions... options);
 
    /**

@@ -18,9 +18,6 @@
  */
 package org.jclouds.openstack.nova.v2_0.extensions;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.nova.v2_0.domain.Volume;
 import org.jclouds.openstack.nova.v2_0.domain.VolumeAttachment;
 import org.jclouds.openstack.nova.v2_0.domain.VolumeSnapshot;
@@ -42,7 +39,6 @@ import com.google.common.collect.FluentIterable;
  */
 @Beta
 @Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.VOLUMES)
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface VolumeApi {
    /**
     * Returns a summary list of snapshots.

@@ -19,11 +19,8 @@
 package org.jclouds.cloudstack.features;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.cloudstack.domain.Event;
 import org.jclouds.cloudstack.options.ListEventsOptions;
-import org.jclouds.concurrent.Timeout;
 
 /**
  * Provides synchronous access to CloudStack Event features.
@@ -32,7 +29,6 @@ import org.jclouds.concurrent.Timeout;
  * @author Vijay Kiran
  * @see <a href="http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_User.html" />
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface EventClient {
 
    /**

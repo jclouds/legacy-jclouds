@@ -20,10 +20,7 @@ package org.jclouds.openstack.nova.v2_0.features;
 
 import com.google.common.base.Optional;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.collect.PagedIterable;
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.openstack.keystone.v2_0.domain.PaginatedCollection;
 import org.jclouds.openstack.nova.v2_0.domain.RebootType;
@@ -44,7 +41,6 @@ import org.jclouds.openstack.v2_0.options.PaginationOptions;
  *      />
  * @author Adrian Cole
  */
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface ServerApi {
 
    /**
@@ -88,8 +84,6 @@ public interface ServerApi {
     *           request
     * @return the newly created server
     */
-   // blocking call
-   @Timeout(duration = 10, timeUnit = TimeUnit.MINUTES)
    ServerCreated create(String name, String imageRef, String flavorRef, CreateServerOptions... options);
 
    /**

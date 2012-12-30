@@ -20,9 +20,6 @@ package org.jclouds.gogrid.services;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.domain.Credentials;
 import org.jclouds.gogrid.domain.Option;
 import org.jclouds.gogrid.domain.PowerCommand;
@@ -40,7 +37,6 @@ import org.jclouds.gogrid.options.GetServerListOptions;
  * @author Adrian Cole
  * @author Oleksiy Yarmula
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface GridServerClient {
 
    /**

@@ -20,10 +20,7 @@ package org.jclouds.aws.s3;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.aws.s3.domain.DeleteResult;
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.io.Payload;
 import org.jclouds.s3.S3Client;
 import org.jclouds.s3.domain.ObjectMetadata;
@@ -35,7 +32,6 @@ import org.jclouds.s3.options.PutObjectOptions;
  * @author Adrian Cole
  * @see AWSS3AsyncClient
  */
-@Timeout(duration = 90, timeUnit = TimeUnit.SECONDS)
 public interface AWSS3Client extends S3Client {
 
    /**
@@ -109,7 +105,6 @@ public interface AWSS3Client extends S3Client {
     * @see <a href="http://docs.amazonwebservices.com/AmazonS3/latest/API/mpUploadUploadPart.html"
     *      />
     */
-   @Timeout(duration = 5 * 1024 * 1024 / 128, timeUnit = TimeUnit.SECONDS)
    String uploadPart(String bucketName, String key, int partNumber, String uploadId, Payload part);
 
    /**

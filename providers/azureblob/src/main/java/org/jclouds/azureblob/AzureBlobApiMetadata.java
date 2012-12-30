@@ -18,6 +18,8 @@
  */
 package org.jclouds.azureblob;
 
+import static java.util.concurrent.TimeUnit.MINUTES;
+import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
 
 import java.net.URI;
@@ -63,6 +65,10 @@ public class AzureBlobApiMetadata extends BaseRestApiMetadata {
   
    public static Properties defaultProperties() {
       Properties properties = BaseRestApiMetadata.defaultProperties();
+      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "default", MINUTES.toMillis(2) + "");
+      // 10 minutes per MB * max size of 64M
+      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "AzureBlobClient.putBlob", MINUTES.toMillis(10 * 64) + "");
+      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "AzureBlobClient.getBlob", MINUTES.toMillis(10 * 64) + "");
       properties.setProperty(PROPERTY_USER_METADATA_PREFIX, "x-ms-meta-");
       return properties;
    }

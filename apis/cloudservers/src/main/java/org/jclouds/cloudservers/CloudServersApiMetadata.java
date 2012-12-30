@@ -18,6 +18,10 @@
  */
 package org.jclouds.cloudservers;
 
+import static java.util.concurrent.TimeUnit.MINUTES;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
+
 import java.net.URI;
 import java.util.Properties;
 
@@ -57,6 +61,8 @@ public class CloudServersApiMetadata extends BaseRestApiMetadata {
 
    public static Properties defaultProperties() {
       Properties properties = BaseRestApiMetadata.defaultProperties();
+      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "default", MINUTES.toMillis(1) + "");
+      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "OpenStackAuthClient.authenticate", SECONDS.toMillis(30) + "");
       return properties;
    }
 

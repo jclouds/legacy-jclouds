@@ -20,9 +20,6 @@ package org.jclouds.sqs.features;
 
 import java.net.URI;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.sqs.domain.QueueAttributes;
 import org.jclouds.sqs.options.CreateQueueOptions;
 import org.jclouds.sqs.options.ListQueuesOptions;
@@ -36,7 +33,6 @@ import com.google.common.collect.FluentIterable;
  * @see QueueAsyncApi
  * @author Adrian Cole
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface QueueApi {
 
    /**
@@ -90,8 +86,7 @@ public interface QueueApi {
     * 
     * <h4>Note</h4>
     * 
-    * If you delete a queue, you must wait at least 60 seconds before creating a
-    * queue with the same name.
+    * This method will gracefully retry in case the queue name was recently taken.
     * 
     * If you provide the name of an existing queue, along with the exact names
     * and values of all the queue's attributes, CreateQueue returns the queue
@@ -111,8 +106,6 @@ public interface QueueApi {
     *           characters; alphanumeric characters, hyphens (-), and
     *           underscores (_) are allowed.
     */
-   // this will gracefully attempt to resolve name issues
-   @Timeout(duration = 61, timeUnit = TimeUnit.SECONDS)
    URI create(String queueName);
 
    /**
@@ -123,7 +116,6 @@ public interface QueueApi {
     *           options such as delay seconds
     * @see #create(String, String)
     */
-   @Timeout(duration = 61, timeUnit = TimeUnit.SECONDS)
    URI create(String queueName, CreateQueueOptions options);
 
    /**

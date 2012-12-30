@@ -18,9 +18,6 @@
  */
 package org.jclouds.opsource.servers.features;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.opsource.servers.domain.Account;
 import org.jclouds.opsource.servers.domain.DataCentersList;
 
@@ -31,7 +28,6 @@ import org.jclouds.opsource.servers.domain.DataCentersList;
  * @see AccountAsyncApi
  * @author Adrian Cole
  */
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface AccountApi {
 
    /**

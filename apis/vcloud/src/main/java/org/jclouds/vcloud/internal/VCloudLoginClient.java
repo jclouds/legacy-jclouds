@@ -18,12 +18,8 @@
  */
 package org.jclouds.vcloud.internal;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.domain.VCloudSession;
 
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface VCloudLoginClient {
 
    VCloudSession login();

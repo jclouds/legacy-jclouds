@@ -19,9 +19,6 @@
 package org.jclouds.gogrid.services;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.gogrid.domain.Job;
 import org.jclouds.gogrid.options.GetJobListOptions;
 
@@ -32,7 +29,6 @@ import org.jclouds.gogrid.options.GetJobListOptions;
  * 
  * @author Oleksiy Yarmula
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface GridJobClient {
 
    /**
@@ -45,7 +41,6 @@ public interface GridJobClient {
     * 
     * @return jobs found by request
     */
-   @Timeout(duration = 90, timeUnit = TimeUnit.SECONDS)
    Set<Job> getJobList(GetJobListOptions... options);
 
    /**

@@ -19,9 +19,6 @@
 package org.jclouds.gogrid.services;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.gogrid.domain.Option;
 import org.jclouds.gogrid.domain.ServerImage;
 import org.jclouds.gogrid.options.GetImageListOptions;
@@ -34,7 +31,6 @@ import org.jclouds.gogrid.options.SaveImageOptions;
  *      href="http://wiki.gogrid.com/wiki/index.php/API#Server_Image_Methods"/>
  * @author Oleksiy Yarmula
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface GridImageClient {
    /**
     * Deletes an existing image

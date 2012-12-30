@@ -19,9 +19,6 @@
 package org.jclouds.rds;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.Region;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
@@ -42,7 +39,6 @@ import com.google.inject.Provides;
  * @see RDSAsyncApi
  */
 @Beta
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface RDSApi {
    /**
     * 

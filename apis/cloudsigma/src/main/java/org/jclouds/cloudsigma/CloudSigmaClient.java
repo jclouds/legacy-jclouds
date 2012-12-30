@@ -19,8 +19,6 @@
 package org.jclouds.cloudsigma;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.cloudsigma.domain.Drive;
 import org.jclouds.cloudsigma.domain.DriveData;
 import org.jclouds.cloudsigma.domain.DriveInfo;
@@ -30,7 +28,6 @@ import org.jclouds.cloudsigma.domain.ServerInfo;
 import org.jclouds.cloudsigma.domain.StaticIPInfo;
 import org.jclouds.cloudsigma.domain.VLANInfo;
 import org.jclouds.cloudsigma.options.CloneDriveOptions;
-import org.jclouds.concurrent.Timeout;
 
 /**
  * Provides synchronous access to CloudSigma.
@@ -40,7 +37,6 @@ import org.jclouds.concurrent.Timeout;
  * @see <a href="TODO: insert URL of cloudsigma documentation" />
  * @author Adrian Cole
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface CloudSigmaClient {
 
    /**
@@ -219,7 +215,6 @@ public interface CloudSigmaClient {
     *           options to control size
     * @return new drive
     */
-   @Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
    DriveInfo cloneDrive(String sourceUuid, String newName, CloneDriveOptions... options);
 
    /**

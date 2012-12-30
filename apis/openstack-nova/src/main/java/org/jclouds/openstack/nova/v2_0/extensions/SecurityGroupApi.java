@@ -18,9 +18,6 @@
  */
 package org.jclouds.openstack.nova.v2_0.extensions;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.nova.v2_0.domain.Ingress;
 import org.jclouds.openstack.nova.v2_0.domain.SecurityGroup;
 import org.jclouds.openstack.nova.v2_0.domain.SecurityGroupRule;
@@ -39,7 +36,6 @@ import com.google.common.collect.FluentIterable;
  */
 @Beta
 @Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.SECURITY_GROUPS)
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface SecurityGroupApi {
 
    /**

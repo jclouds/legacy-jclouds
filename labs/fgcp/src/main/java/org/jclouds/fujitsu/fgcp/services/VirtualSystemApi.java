@@ -19,9 +19,6 @@
 package org.jclouds.fujitsu.fgcp.services;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.fujitsu.fgcp.domain.BuiltinServer;
 import org.jclouds.fujitsu.fgcp.domain.PublicIP;
 import org.jclouds.fujitsu.fgcp.domain.VDisk;
@@ -35,7 +32,6 @@ import org.jclouds.fujitsu.fgcp.domain.VSystemWithDetails;
  * 
  * @author Dies Koper
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface VirtualSystemApi {
 
    void destroy(String id);

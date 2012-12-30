@@ -18,6 +18,8 @@
  */
 package org.jclouds.openstack.nova.v2_0;
 
+import static java.util.concurrent.TimeUnit.MINUTES;
+import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
 import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.CREDENTIAL_TYPE;
 import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.SERVICE_TYPE;
 import static org.jclouds.openstack.nova.v2_0.config.NovaProperties.AUTO_ALLOCATE_FLOATING_IPS;
@@ -68,13 +70,13 @@ public class NovaApiMetadata extends BaseRestApiMetadata {
 
    public static Properties defaultProperties() {
       Properties properties = BaseRestApiMetadata.defaultProperties();
+      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "default", MINUTES.toMillis(3) + "");
+      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "ServerApi.create", MINUTES.toMillis(10) + "");
       // auth fail can happen while cloud-init applies keypair updates
       properties.setProperty("jclouds.ssh.max-retries", "7");
       properties.setProperty("jclouds.ssh.retry-auth", "true");
-      
       properties.setProperty(SERVICE_TYPE, ServiceType.COMPUTE);
       properties.setProperty(CREDENTIAL_TYPE, CredentialTypes.PASSWORD_CREDENTIALS);
-      
       properties.setProperty(AUTO_ALLOCATE_FLOATING_IPS, "false");
       properties.setProperty(AUTO_GENERATE_KEYPAIRS, "false");
       properties.setProperty(TIMEOUT_SECURITYGROUP_PRESENT, "500");

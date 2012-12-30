@@ -18,8 +18,6 @@
  */
 package org.jclouds.aws.ec2;
 
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.aws.ec2.services.AWSAMIClient;
 import org.jclouds.aws.ec2.services.AWSInstanceClient;
 import org.jclouds.aws.ec2.services.AWSKeyPairClient;
@@ -28,7 +26,6 @@ import org.jclouds.aws.ec2.services.MonitoringClient;
 import org.jclouds.aws.ec2.services.PlacementGroupClient;
 import org.jclouds.aws.ec2.services.SpotInstanceClient;
 import org.jclouds.aws.ec2.services.TagClient;
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.ec2.EC2Client;
 import org.jclouds.rest.annotations.Delegate;
 
@@ -37,7 +34,6 @@ import org.jclouds.rest.annotations.Delegate;
  * 
  * @author Adrian Cole
  */
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface AWSEC2Client extends EC2Client {
 
    /**

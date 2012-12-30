@@ -19,11 +19,8 @@
 
 package org.jclouds.abiquo.features;
 
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.abiquo.domain.enterprise.options.EnterpriseOptions;
 import org.jclouds.abiquo.reference.annotations.EnterpriseEdition;
-import org.jclouds.concurrent.Timeout;
 
 import com.abiquo.am.model.TemplatesStateDto;
 import com.abiquo.server.core.appslibrary.DatacenterRepositoryDto;
@@ -53,7 +50,6 @@ import com.abiquo.server.core.infrastructure.network.VLANNetworksDto;
  * @author Ignasi Barrera
  * @author Francesc Montserrat
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface EnterpriseApi {
 
    /*********************** Enterprise ********************** */
@@ -296,7 +292,6 @@ public interface EnterpriseApi {
     * @param datacenterRepositoryId
     *           Id of the datacenter repository containing the templates.
     */
-   @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
    void refreshTemplateRepository(Integer enterpriseId, Integer datacenterRepositoryId);
 
    /*********************** Network ***********************/

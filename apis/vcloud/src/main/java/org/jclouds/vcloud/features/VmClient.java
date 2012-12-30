@@ -20,9 +20,6 @@ package org.jclouds.vcloud.features;
 
 import java.io.InputStream;
 import java.net.URI;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.domain.GuestCustomizationSection;
 import org.jclouds.vcloud.domain.NetworkConnectionSection;
 import org.jclouds.vcloud.domain.Task;
@@ -34,7 +31,6 @@ import org.jclouds.vcloud.domain.Vm;
  * 
  * @author Adrian Cole
  */
-@Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
 public interface VmClient {
 
    Vm getVm(URI vApp);

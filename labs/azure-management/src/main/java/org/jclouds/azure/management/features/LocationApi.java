@@ -19,10 +19,7 @@
 package org.jclouds.azure.management.features;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.azure.management.domain.Location;
-import org.jclouds.concurrent.Timeout;
 
 /**
  * The Service Management API includes operations for listing the available data center locations
@@ -33,7 +30,6 @@ import org.jclouds.concurrent.Timeout;
  * @see LocationAsyncApi
  * @author Adrian Cole
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface LocationApi {
 
    /**

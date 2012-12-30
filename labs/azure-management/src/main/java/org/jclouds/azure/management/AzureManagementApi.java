@@ -18,15 +18,12 @@
  */
 package org.jclouds.azure.management;
 
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.azure.management.features.DiskApi;
 import org.jclouds.azure.management.features.HostedServiceApi;
 import org.jclouds.azure.management.features.LocationApi;
 import org.jclouds.azure.management.features.OSImageApi;
 import org.jclouds.azure.management.features.OperationApi;
 import org.jclouds.azure.management.features.RoleApi;
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
 
 /**
@@ -38,7 +35,6 @@ import org.jclouds.rest.annotations.Delegate;
  * @see <a href="http://msdn.microsoft.com/en-us/library/ee460799" >doc</a>
  * @author Gerald Pereira, Adrian Cole
  */
-@Timeout(duration = 4, timeUnit = TimeUnit.SECONDS)
 public interface AzureManagementApi {
    /**
     * The Service Management API includes operations for listing the available data center locations

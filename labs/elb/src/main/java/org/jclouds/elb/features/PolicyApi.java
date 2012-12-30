@@ -19,9 +19,6 @@
 package org.jclouds.elb.features;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.elb.domain.Policy;
 import org.jclouds.elb.domain.PolicyType;
 import org.jclouds.elb.options.ListPoliciesOptions;
@@ -34,7 +31,6 @@ import org.jclouds.javax.annotation.Nullable;
  * @see <a href="http://docs.amazonwebservices.com/ElasticLoadBalancing/latest/APIReference" />
  * @author Adrian Cole
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface PolicyApi {
 
    /**

@@ -19,14 +19,11 @@
 package org.jclouds.fujitsu.fgcp.services;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.fujitsu.fgcp.FGCPAsyncApi;
 import org.jclouds.fujitsu.fgcp.binders.BindAlsoToSystemId;
 import org.jclouds.fujitsu.fgcp.compute.functions.SingleElementResponseToElement;
@@ -55,7 +52,6 @@ import com.google.common.util.concurrent.ListenableFuture;
 @QueryParams(keys = RequestParameters.VERSION, values = FGCPAsyncApi.VERSION)
 @PayloadParams(keys = RequestParameters.VERSION, values = FGCPAsyncApi.VERSION)
 @Consumes(MediaType.TEXT_XML)
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface BuiltinServerAsyncApi {
 
    @GET

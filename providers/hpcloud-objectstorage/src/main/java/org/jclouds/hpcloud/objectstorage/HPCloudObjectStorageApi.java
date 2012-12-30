@@ -19,9 +19,6 @@
 package org.jclouds.hpcloud.objectstorage;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.hpcloud.objectstorage.extensions.CDNContainerApi;
 import org.jclouds.location.Region;
 import org.jclouds.openstack.swift.CommonSwiftClient;
@@ -43,7 +40,6 @@ import com.google.inject.Provides;
  *      Storage API</a>
  * @author Jeremy Daggett
  */
-@Timeout(duration = 120, timeUnit = TimeUnit.SECONDS)
 public interface HPCloudObjectStorageApi extends CommonSwiftClient {
    /**
     * 

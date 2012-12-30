@@ -19,9 +19,6 @@
 package org.jclouds.gogrid.services;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.gogrid.domain.Ip;
 import org.jclouds.gogrid.domain.Option;
 import org.jclouds.gogrid.options.GetIpListOptions;
@@ -29,7 +26,6 @@ import org.jclouds.gogrid.options.GetIpListOptions;
 /**
  * @author Oleksiy Yarmula
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface GridIpClient {
 
    /**

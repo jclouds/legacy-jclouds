@@ -18,9 +18,6 @@
  */
 package org.jclouds.vcloud;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.vcloud.features.CatalogClient;
 import org.jclouds.vcloud.features.NetworkClient;
@@ -38,7 +35,6 @@ import org.jclouds.vcloud.features.VmClient;
  * @see <a href="http://communities.vmware.com/community/developer/forums/vcloudapi" />
  * @author Adrian Cole
  */
-@Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
 public interface VCloudClient {
    /**
     * Provides asynchronous access to VApp Template features.

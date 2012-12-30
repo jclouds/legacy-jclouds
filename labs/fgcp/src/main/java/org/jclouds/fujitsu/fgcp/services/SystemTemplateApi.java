@@ -18,9 +18,6 @@
  */
 package org.jclouds.fujitsu.fgcp.services;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.fujitsu.fgcp.domain.VSystemDescriptor;
 
 /**
@@ -29,7 +26,6 @@ import org.jclouds.fujitsu.fgcp.domain.VSystemDescriptor;
  * 
  * @author Dies Koper
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface SystemTemplateApi {
 
    VSystemDescriptor get(String id);

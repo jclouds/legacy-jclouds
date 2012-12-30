@@ -19,8 +19,6 @@
 
 package org.jclouds.abiquo;
 
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.abiquo.features.AdminApi;
 import org.jclouds.abiquo.features.CloudApi;
 import org.jclouds.abiquo.features.ConfigApi;
@@ -30,7 +28,6 @@ import org.jclouds.abiquo.features.InfrastructureApi;
 import org.jclouds.abiquo.features.PricingApi;
 import org.jclouds.abiquo.features.TaskApi;
 import org.jclouds.abiquo.features.VirtualMachineTemplateApi;
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
 
 /**
@@ -41,7 +38,6 @@ import org.jclouds.rest.annotations.Delegate;
  * @see AbiquoAsyncApi
  * @author Ignasi Barrera
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface AbiquoApi {
    /**
     * Provides synchronous access to Admin features.

@@ -20,9 +20,6 @@ package org.jclouds.ec2.services;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.ec2.domain.Image;
 import org.jclouds.ec2.domain.Image.EbsBlockDevice;
 import org.jclouds.ec2.domain.Permission;
@@ -38,7 +35,6 @@ import org.jclouds.javax.annotation.Nullable;
  * 
  * @author Adrian Cole
  */
-@Timeout(duration = 45, timeUnit = TimeUnit.SECONDS)
 public interface AMIClient {
 
    /**
@@ -55,7 +51,6 @@ public interface AMIClient {
     *      />
     * @see DescribeImagesOptions
     */
-   @Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
    Set<? extends Image> describeImagesInRegion(@Nullable String region, DescribeImagesOptions... options);
 
    /**

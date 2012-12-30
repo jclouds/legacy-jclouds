@@ -19,9 +19,6 @@
 package org.jclouds.openstack.swift.v1;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.Region;
 import org.jclouds.location.functions.RegionToEndpoint;
@@ -42,7 +39,6 @@ import com.google.inject.Provides;
  * @see <a href="http://docs.openstack.org/api/openstack-object-storage/1.0/content">api doc</a>
  * @author Adrian Cole
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface SwiftApi {
    /**
     * 

@@ -20,9 +20,6 @@ package org.jclouds.savvis.vpdc.features;
 
 import java.net.URI;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.savvis.vpdc.domain.Task;
 import org.jclouds.savvis.vpdc.domain.VMSpec;
 
@@ -33,7 +30,6 @@ import org.jclouds.savvis.vpdc.domain.VMSpec;
  * @see <a href="https://api.sandbox.savvis.net/doc/spec/api/" />
  * @author Adrian Cole
  */
-@Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
 public interface VMApi {
 
    /**

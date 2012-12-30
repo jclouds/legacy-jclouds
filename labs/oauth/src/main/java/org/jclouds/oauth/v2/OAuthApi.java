@@ -18,12 +18,9 @@
  */
 package org.jclouds.oauth.v2;
 
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.oauth.v2.domain.Token;
 import org.jclouds.oauth.v2.domain.TokenRequest;
 import org.jclouds.rest.AuthorizationException;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * Provides synchronous access to OAuth.
@@ -32,7 +29,6 @@ import java.util.concurrent.TimeUnit;
  * @author David Alves
  * @see OAuthAsyncApi
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface OAuthApi {
 
    /**

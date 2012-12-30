@@ -18,9 +18,6 @@
  */
 package org.jclouds.iam;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.iam.domain.User;
 import org.jclouds.iam.features.UserApi;
 import org.jclouds.rest.annotations.Delegate;
@@ -34,7 +31,6 @@ import org.jclouds.rest.annotations.Delegate;
  *      />
  * @author Adrian Cole
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface IAMApi {
    /**
     * Retrieves information about the current user, including the user's path, GUID, and ARN.

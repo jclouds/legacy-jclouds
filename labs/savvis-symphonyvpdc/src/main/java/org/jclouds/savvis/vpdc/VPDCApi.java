@@ -19,10 +19,7 @@
 package org.jclouds.savvis.vpdc;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.compute.domain.CIMOperatingSystem;
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.savvis.vpdc.domain.Resource;
 import org.jclouds.savvis.vpdc.features.BrowsingApi;
@@ -38,7 +35,6 @@ import org.jclouds.savvis.vpdc.features.VMApi;
  * @see <a href="https://api.sandbox.savvis.net/doc/spec/api/index.html" />
  * @author Adrian Cole
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface VPDCApi {
 
    /**

@@ -1,8 +1,5 @@
 package org.jclouds.openstack.cinder.v1.features;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.cinder.v1.domain.Volume;
 import org.jclouds.openstack.cinder.v1.options.CreateVolumeOptions;
 
@@ -18,7 +15,6 @@ import com.google.common.collect.FluentIterable;
  * @see <a href="http://api.openstack.org/">API Doc</a>
  * @author Everett Toews
  */
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface VolumeApi {
    /**
     * Returns a summary list of Volumes.
