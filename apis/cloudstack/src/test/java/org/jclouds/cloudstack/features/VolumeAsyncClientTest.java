@@ -27,10 +27,7 @@ import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
 import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.ListVolumesOptions;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
-
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code EventAsyncClient}
@@ -148,11 +145,5 @@ public class VolumeAsyncClientTest extends BaseCloudStackAsyncClientTest<VolumeA
       assertFallbackClassEquals(method, VoidOnNotFoundOr404.class);
       checkFilters(httpRequest);
 
-   }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<VolumeAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<VolumeAsyncClient>>() {
-      };
    }
 }

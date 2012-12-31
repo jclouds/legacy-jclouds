@@ -43,7 +43,7 @@ import org.jclouds.rest.internal.RestAnnotationProcessor;
  */
 @Singleton
 public class AtmosBlobRequestSigner implements BlobRequestSigner {
-   private final RestAnnotationProcessor<AtmosAsyncClient> processor;
+   private final RestAnnotationProcessor processor;
    private final BlobToObject blobToObject;
    private final BlobToHttpGetOptions blob2ObjectGetOptions;
 
@@ -52,9 +52,9 @@ public class AtmosBlobRequestSigner implements BlobRequestSigner {
    private final Method createMethod;
 
    @Inject
-   public AtmosBlobRequestSigner(RestAnnotationProcessor<AtmosAsyncClient> processor, BlobToObject blobToObject,
+   public AtmosBlobRequestSigner(RestAnnotationProcessor.Factory processor, BlobToObject blobToObject,
             BlobToHttpGetOptions blob2ObjectGetOptions) throws SecurityException, NoSuchMethodException {
-      this.processor = checkNotNull(processor, "processor");
+      this.processor = checkNotNull(processor, "processor").declaring(AtmosAsyncClient.class);
       this.blobToObject = checkNotNull(blobToObject, "blobToObject");
       this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
       this.getMethod = AtmosAsyncClient.class.getMethod("readFile", String.class, GetOptions[].class);

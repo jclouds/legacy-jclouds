@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.rest.config;
+package org.jclouds.rest.internal;
 
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.reflect.Reflection.newProxy;

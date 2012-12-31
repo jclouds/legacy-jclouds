@@ -22,11 +22,8 @@ import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 import org.jclouds.gogrid.services.BaseGoGridAsyncClientTest;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code GoGridAsyncClient}
@@ -56,12 +53,6 @@ public class GoGridAsyncClientTest extends BaseGoGridAsyncClientTest<GoGridAsync
       assert asyncClient.getJobServices() != null;
       assert asyncClient.getLoadBalancerServices() != null;
       assert asyncClient.getServerServices() != null;
-   }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<GoGridAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<GoGridAsyncClient>>() {
-      };
    }
 
    @BeforeClass

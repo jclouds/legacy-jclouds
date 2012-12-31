@@ -33,10 +33,7 @@ import org.jclouds.ec2.xml.DescribeAvailabilityZonesResponseHandler;
 import org.jclouds.ec2.xml.DescribeRegionsResponseHandler;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
-
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code AvailabilityZoneAndRegionAsyncClient}
@@ -117,11 +114,4 @@ public class AvailabilityZoneAndRegionAsyncClientTest extends
 
       checkFilters(request);
    }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<AvailabilityZoneAndRegionAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<AvailabilityZoneAndRegionAsyncClient>>() {
-      };
-   }
-
 }

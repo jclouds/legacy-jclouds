@@ -24,11 +24,9 @@ import java.lang.reflect.Method;
 
 import org.jclouds.http.functions.ParseXMLWithJAXB;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
 import com.abiquo.server.core.event.EventsDto;
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests annotation parsing of {@code EventAsyncApi}
@@ -51,11 +49,5 @@ public class EventAsyncApiTest extends BaseAbiquoAsyncApiTest<EventAsyncApi> {
       assertFallbackClassEquals(method, null);
 
       checkFilters(request);
-   }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<EventAsyncApi>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<EventAsyncApi>>() {
-      };
    }
 }

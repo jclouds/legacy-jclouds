@@ -32,7 +32,6 @@ import org.jclouds.abiquo.functions.ReturnTaskReferenceOrNull;
 import org.jclouds.http.functions.ParseXMLWithJAXB;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
 import com.abiquo.model.enumerator.ConversionState;
@@ -44,7 +43,6 @@ import com.abiquo.server.core.appslibrary.ConversionsDto;
 import com.abiquo.server.core.appslibrary.VirtualMachineTemplateDto;
 import com.abiquo.server.core.appslibrary.VirtualMachineTemplatePersistentDto;
 import com.abiquo.server.core.appslibrary.VirtualMachineTemplatesDto;
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests annotation parsing of {@code VirtualMachineTemplateAsyncApi}
@@ -244,11 +242,5 @@ public class VirtualMachineTemplateAsyncApiTest extends BaseAbiquoAsyncApiTest<V
       assertFallbackClassEquals(method, NullOnNotFoundOr404.class);
 
       checkFilters(request);
-   }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<VirtualMachineTemplateAsyncApi>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<VirtualMachineTemplateAsyncApi>>() {
-      };
    }
 }

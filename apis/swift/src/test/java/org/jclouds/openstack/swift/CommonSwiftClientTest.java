@@ -38,7 +38,6 @@ import org.jclouds.openstack.swift.blobstore.config.SwiftBlobStoreContextModule;
 import org.jclouds.openstack.swift.blobstore.config.TemporaryUrlExtensionModule;
 import org.jclouds.openstack.swift.config.SwiftRestClientModule;
 import org.jclouds.rest.internal.BaseAsyncClientTest;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
@@ -58,14 +57,7 @@ import com.google.inject.TypeLiteral;
 public abstract class CommonSwiftClientTest extends BaseAsyncClientTest<SwiftAsyncClient> {
 
    public static final long UNIX_EPOCH_TIMESTAMP = 123456789L;
-
    public static final String TEMPORARY_URL_KEY = "get-or-set-X-Account-Meta-Temp-Url-Key";
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<SwiftAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<SwiftAsyncClient>>() {
-      };
-   }
 
    @Override
    protected void checkFilters(HttpRequest request) {

@@ -26,13 +26,10 @@ import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.fallbacks.MapHttp4xxCodesToExceptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.vcloud.internal.BaseVCloudAsyncClientTest;
 import org.jclouds.vcloud.xml.OrgHandler;
 import org.jclouds.vcloud.xml.OrgListHandler;
 import org.testng.annotations.Test;
-
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code OrgAsyncClient}
@@ -43,12 +40,6 @@ import com.google.inject.TypeLiteral;
 // surefire
 @Test(groups = "unit", testName = "OrgAsyncClientTest")
 public class OrgAsyncClientTest extends BaseVCloudAsyncClientTest<OrgAsyncClient> {
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<OrgAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<OrgAsyncClient>>() {
-      };
-   }
 
    public void testlistOrgs() throws SecurityException, NoSuchMethodException, IOException {
       Method method = OrgAsyncClient.class.getMethod("listOrgs");

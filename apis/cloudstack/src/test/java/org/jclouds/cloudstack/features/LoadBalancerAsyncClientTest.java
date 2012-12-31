@@ -31,10 +31,7 @@ import org.jclouds.cloudstack.options.UpdateLoadBalancerRuleOptions;
 import org.jclouds.fallbacks.MapHttp4xxCodesToExceptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
-
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code LoadBalancerAsyncClient}
@@ -150,11 +147,5 @@ public class LoadBalancerAsyncClientTest extends BaseCloudStackAsyncClientTest<L
 
       checkFilters(httpRequest);
 
-   }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<LoadBalancerAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<LoadBalancerAsyncClient>>() {
-      };
    }
 }

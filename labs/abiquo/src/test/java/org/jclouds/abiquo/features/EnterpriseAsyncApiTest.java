@@ -33,7 +33,6 @@ import org.jclouds.fallbacks.MapHttp4xxCodesToExceptions;
 import org.jclouds.http.functions.ParseXMLWithJAXB;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
 import com.abiquo.am.model.TemplatesStateDto;
@@ -54,7 +53,6 @@ import com.abiquo.server.core.infrastructure.DatacenterDto;
 import com.abiquo.server.core.infrastructure.DatacentersDto;
 import com.abiquo.server.core.infrastructure.MachinesDto;
 import com.abiquo.server.core.infrastructure.network.VLANNetworksDto;
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests annotation parsing of {@code EnterpriseAsyncApi}
@@ -651,11 +649,5 @@ public class EnterpriseAsyncApiTest extends BaseAbiquoAsyncApiTest<EnterpriseAsy
       assertFallbackClassEquals(method, null);
 
       checkFilters(request);
-   }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<EnterpriseAsyncApi>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<EnterpriseAsyncApi>>() {
-      };
    }
 }

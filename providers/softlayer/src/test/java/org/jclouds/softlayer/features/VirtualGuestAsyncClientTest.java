@@ -27,11 +27,9 @@ import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Iterables;
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests annotation parsing of {@code VirtualGuestAsyncClient}
@@ -173,11 +171,5 @@ public class VirtualGuestAsyncClientTest extends BaseSoftLayerAsyncClientTest<Vi
 
       checkFilters(httpRequest);
 
-   }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<VirtualGuestAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<VirtualGuestAsyncClient>>() {
-      };
    }
 }

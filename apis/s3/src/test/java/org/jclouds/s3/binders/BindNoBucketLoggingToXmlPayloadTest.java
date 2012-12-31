@@ -23,12 +23,9 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.s3.S3AsyncClient;
 import org.jclouds.s3.internal.BaseS3AsyncClientTest;
 import org.testng.annotations.Test;
-
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code BindNoBucketLoggingToXmlPayload}
@@ -38,12 +35,6 @@ import com.google.inject.TypeLiteral;
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "BindNoBucketLoggingToXmlPayloadTest")
 public class BindNoBucketLoggingToXmlPayloadTest extends BaseS3AsyncClientTest<S3AsyncClient> {
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<S3AsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<S3AsyncClient>>() {
-      };
-   }
 
    public void testApplyInputStream() throws IOException {
 

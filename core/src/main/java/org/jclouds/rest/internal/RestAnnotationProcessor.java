@@ -17,12 +17,12 @@
  * under the License.
  */
 package org.jclouds.rest.internal;
-
 import static com.google.common.base.Functions.compose;
 import static com.google.common.base.Functions.toStringFunction;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Predicates.and;
 import static com.google.common.base.Predicates.in;
 import static com.google.common.base.Predicates.not;
@@ -42,6 +42,7 @@ import static com.google.common.collect.Sets.newTreeSet;
 import static com.google.common.net.HttpHeaders.ACCEPT;
 import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
 import static com.google.common.net.HttpHeaders.HOST;
+import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_XML;
@@ -161,6 +162,7 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
+import com.google.inject.assistedinject.Assisted;
 import com.google.inject.util.Types;
 
 /**
@@ -168,12 +170,71 @@ import com.google.inject.util.Types;
  *
  * @author Adrian Cole
  */
-public class RestAnnotationProcessor<T> {
+public abstract class RestAnnotationProcessor {
+
+   public static interface Factory {
+      Declaring declaring(Class<?> declaring);
+      Caller caller(ClassMethodArgs caller);
+   }
+
+   public static final class Declaring extends RestAnnotationProcessor {
+      @Inject
+      private Declaring(Injector injector, LoadingCache<Class<?>, Cache<MethodKey, Method>> delegationMapCache,
+            @ApiVersion String apiVersion, @BuildVersion String buildVersion, ParseSax.Factory parserFactory,
+            HttpUtils utils, ContentMetadataCodec contentMetadataCodec, InputParamValidator inputParamValidator,
+            @Assisted Class<?> declaring) {
+         super(injector, delegationMapCache, apiVersion, buildVersion, parserFactory, utils, contentMetadataCodec,
+               inputParamValidator, declaring);
+      }
+   }
+
+   public static final class Caller extends RestAnnotationProcessor {
+      private final ClassMethodArgs caller;
+
+      @Inject
+      private Caller(Injector injector, LoadingCache<Class<?>, Cache<MethodKey, Method>> delegationMapCache,
+            @ApiVersion String apiVersion, @BuildVersion String buildVersion, ParseSax.Factory parserFactory,
+            HttpUtils utils, ContentMetadataCodec contentMetadataCodec, InputParamValidator inputParamValidator,
+            @Assisted ClassMethodArgs caller) {
+         super(injector, delegationMapCache, apiVersion, buildVersion, parserFactory, utils, contentMetadataCodec,
+               inputParamValidator, caller.getClazz());
+         // declaring class of method is the callee, this will lazily warm annotation cache
+         // until we have a better annotation cache warming approach
+         delegationMapCache.getUnchecked(caller.getMethod().getDeclaringClass());
+         this.caller = caller;
+      }
+
+      @Override
+      protected GeneratedHttpRequest.Builder requestBuilder() {
+         return super.requestBuilder().caller(caller);
+      }
+
+      @Override
+      protected Optional<URI> findEndpoint(Method method, Object... args) {
+         Optional<URI> endpoint = getEndpointFor(caller.getMethod(), caller.getArgs());
+         if (endpoint.isPresent())
+            logger.trace("using endpoint %s from caller %s for %s", endpoint, caller, cma(method, args));
+         else
+            endpoint = super.findEndpoint(method, args);
+         return endpoint;
+      }
+
+      @Override
+      protected Multimap<String, Object> addPathAndGetTokens(Class<?> clazz, Method method, Object[] args,
+            UriBuilder uriBuilder) {
+         Class<?> callerClass = caller.getMethod().getDeclaringClass();
+         return ImmutableMultimap.<String, Object> builder()
+               .putAll(super.addPathAndGetTokens(callerClass, caller.getMethod(), caller.getArgs(), uriBuilder))
+               .putAll(super.addPathAndGetTokens(clazz, method, args, uriBuilder)).build();
+      }
+   }
+
+   protected ClassMethodArgs cma(Method method, Object... args) {
+      return logger.isTraceEnabled() ? new ClassMethodArgs(method.getDeclaringClass(), method, args) : null;
+   }
 
    @Resource
    protected Logger logger = Logger.NULL;
-
-   private final Class<T> declaring;
 
    // TODO replace with Table object
    static final LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> methodToIndexOfParamToBinderParamAnnotation = createMethodToIndexOfParamToAnnotation(BinderParam.class);
@@ -187,9 +248,20 @@ public class RestAnnotationProcessor<T> {
    static final LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> methodToIndexOfParamToPostParamAnnotations = createMethodToIndexOfParamToAnnotation(PayloadParam.class);
    static final LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> methodToIndexOfParamToPartParamAnnotations = createMethodToIndexOfParamToAnnotation(PartParam.class);
    static final LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> methodToIndexOfParamToParamParserAnnotations = createMethodToIndexOfParamToAnnotation(ParamParser.class);
-
-   final Cache<MethodKey, Method> delegationMap;
-
+   static final LoadingCache<Method, Set<Integer>> methodToIndexesOfOptions = CacheBuilder.newBuilder().build(
+         new CacheLoader<Method, Set<Integer>>() {
+            @Override
+            public Set<Integer> load(Method method) {
+               Builder<Integer> toReturn = ImmutableSet.builder();
+               for (int index = 0; index < method.getParameterTypes().length; index++) {
+                  Class<?> type = method.getParameterTypes()[index];
+                  if (HttpRequestOptions.class.isAssignableFrom(type) || HttpRequestOptions[].class.isAssignableFrom(type))
+                     toReturn.add(index);
+               }
+               return toReturn.build();
+            }
+         });
+   
    static LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> createMethodToIndexOfParamToAnnotation(
             final Class<? extends Annotation> annotation) {
       return CacheBuilder.newBuilder().build(new CacheLoader<Method, LoadingCache<Integer, Set<Annotation>>>() {
@@ -216,41 +288,14 @@ public class RestAnnotationProcessor<T> {
                   }
                }));
       }
-
    }
 
    private static final Function<? super Entry<String, Object>, ? extends Part> ENTRY_TO_PART = new Function<Entry<String, Object>, Part>() {
-
       @Override
       public Part apply(Entry<String, Object> from) {
          return Part.create(from.getKey(), from.getValue().toString());
       }
-
    };
-
-   static final LoadingCache<Method, Set<Integer>> methodToIndexesOfOptions = CacheBuilder.newBuilder().build(
-         new CacheLoader<Method, Set<Integer>>() {
-            @Override
-            public Set<Integer> load(Method method) {
-               Builder<Integer> toReturn = ImmutableSet.builder();
-               for (int index = 0; index < method.getParameterTypes().length; index++) {
-                  Class<?> type = method.getParameterTypes()[index];
-                  if (HttpRequestOptions.class.isAssignableFrom(type) || HttpRequestOptions[].class.isAssignableFrom(type))
-                     toReturn.add(index);
-               }
-               return toReturn.build();
-            }
-         });
-
-   private final ParseSax.Factory parserFactory;
-   private final HttpUtils utils;
-   private final ContentMetadataCodec contentMetadataCodec;
-   private final LoadingCache<Class<?>, Boolean> seedAnnotationCache;
-   private final String apiVersion;
-   private final String buildVersion;
-
-   @Inject
-   private InputParamValidator inputParamValidator;
 
    @VisibleForTesting
    Function<HttpResponse, ?> createResponseParser(Method method, HttpRequest request) {
@@ -298,30 +343,49 @@ public class RestAnnotationProcessor<T> {
       return transformer;
    }
 
-   @SuppressWarnings("unchecked")
-   @Inject
-   public RestAnnotationProcessor(Injector injector, LoadingCache<Class<?>, Boolean> seedAnnotationCache, Cache<MethodKey, Method> delegationMap,
-            @ApiVersion String apiVersion, @BuildVersion String buildVersion, ParseSax.Factory parserFactory,
-            HttpUtils utils, ContentMetadataCodec contentMetadataCodec, TypeLiteral<T> typeLiteral) {
-      this.declaring = (Class<T>) typeLiteral.getRawType();
+   private final Class<?> declaring;
+   private final Injector injector;
+   private final ParseSax.Factory parserFactory;
+   private final HttpUtils utils;
+   private final ContentMetadataCodec contentMetadataCodec;
+   private final Cache<MethodKey, Method> delegationMap;
+   private final String apiVersion;
+   private final String buildVersion;
+   private final InputParamValidator inputParamValidator;
+   
+   private RestAnnotationProcessor(Injector injector,
+         LoadingCache<Class<?>, Cache<MethodKey, Method>> delegationMapCache, String apiVersion, String buildVersion,
+         ParseSax.Factory parserFactory, HttpUtils utils, ContentMetadataCodec contentMetadataCodec,
+         InputParamValidator inputParamValidator, Class<?> declaring) {
       this.injector = injector;
       this.parserFactory = parserFactory;
       this.utils = utils;
       this.contentMetadataCodec = contentMetadataCodec;
-      this.seedAnnotationCache = seedAnnotationCache;
-      seedAnnotationCache.getUnchecked(declaring);
-      this.delegationMap = delegationMap;
+      this.delegationMap = delegationMapCache.getUnchecked(declaring);
       this.apiVersion = apiVersion;
       this.buildVersion = buildVersion;
+      this.inputParamValidator = inputParamValidator;
+      this.declaring = declaring;
    }
-
 
    public Method getDelegateOrNull(Method in) {
       return delegationMap.getIfPresent(new MethodKey(in));
    }
 
    public static class MethodKey {
+      private final String name;
+      private final int parametersTypeHashCode;
+      private final Class<?> declaringClass;
 
+      public MethodKey(Method method) {
+         this.name = method.getName();
+         this.declaringClass = method.getDeclaringClass();
+         int parametersTypeHashCode = 0;
+         for (Class<?> param : method.getParameterTypes())
+            parametersTypeHashCode += param.hashCode();
+         this.parametersTypeHashCode = parametersTypeHashCode;
+      }
+      
       @Override
       public int hashCode() {
          return Objects.hashCode(declaringClass, name, parametersTypeHashCode);
@@ -336,71 +400,44 @@ public class RestAnnotationProcessor<T> {
                && equal(this.name, that.name)
                && equal(this.parametersTypeHashCode, that.parametersTypeHashCode);
       }
-
-      private final String name;
-      private final int parametersTypeHashCode;
-      private final Class<?> declaringClass;
-
-      public MethodKey(Method method) {
-         this.name = method.getName();
-         this.declaringClass = method.getDeclaringClass();
-         int parametersTypeHashCode = 0;
-         for (Class<?> param : method.getParameterTypes())
-            parametersTypeHashCode += param.hashCode();
-         this.parametersTypeHashCode = parametersTypeHashCode;
-      }
-
-   }
-
-   final Injector injector;
-
-   private ClassMethodArgs caller;
-
-   public void setCaller(ClassMethodArgs caller) {
-      seedAnnotationCache.getUnchecked(caller.getMethod().getDeclaringClass());
-      this.caller = caller;
    }
 
    public GeneratedHttpRequest createRequest(Method method, Object... args) {
       inputParamValidator.validateMethodParametersOrThrow(method, args);
 
-
-      Optional<URI> endpoint = findEndpoint(method, args);
-
-      if (!endpoint.isPresent()) {
-         throw new NoSuchElementException(String.format("no endpoint found for %s",
-               new ClassMethodArgs(method.getDeclaringClass(), method, args)));
+      Optional<URI> endpoint = Optional.absent();
+      HttpRequest r = findHttpRequestInArgs(args);
+      if (r != null) {
+         endpoint = Optional.fromNullable(r.getEndpoint());
+         if (endpoint.isPresent())
+            logger.trace("using endpoint %s from args for %s", endpoint, cma(method, args));
+      } else {
+         endpoint = findEndpoint(method, args);
       }
 
-      GeneratedHttpRequest.Builder requestBuilder = GeneratedHttpRequest.builder();
-      HttpRequest r = RestAnnotationProcessor.findHttpRequestInArgs(args);
+      if (!endpoint.isPresent())
+         throw new NoSuchElementException(format("no endpoint found for %s", cma(method, args)));
+
+      GeneratedHttpRequest.Builder requestBuilder = requestBuilder();
       if (r != null) {
          requestBuilder.fromHttpRequest(r);
       } else {
          requestBuilder.method(getHttpMethodOrConstantOrThrowException(method));
       }
-
-      // URI template in rfc6570 form
-      UriBuilder uriBuilder = uriBuilder(endpoint.get().toString());
-      
-      overridePathEncoding(uriBuilder, method);
       
       requestBuilder.declaring(declaring)
                     .javaMethod(method)
                     .args(args)
-                    .caller(caller)
                     .filters(getFiltersIfAnnotated(method));
       
       Multimap<String, Object> tokenValues = LinkedHashMultimap.create();
 
       tokenValues.put(Constants.PROPERTY_API_VERSION, apiVersion);
       tokenValues.put(Constants.PROPERTY_BUILD_VERSION, buildVersion);
-
-      // make sure any path from the caller is a prefix
-      if (caller != null) {
-         tokenValues.putAll(addPathAndGetTokens(caller.getMethod().getDeclaringClass(), caller.getMethod(),
-               caller.getArgs(), uriBuilder));
-      }
+      
+      UriBuilder uriBuilder = uriBuilder(endpoint.get().toString()); // URI template in rfc6570 form
+      
+      overridePathEncoding(uriBuilder, method);
       
       tokenValues.putAll(addPathAndGetTokens(declaring, method, args, uriBuilder));
       
@@ -491,6 +528,10 @@ public class RestAnnotationProcessor<T> {
       return request;
    }
 
+   protected org.jclouds.rest.internal.GeneratedHttpRequest.Builder requestBuilder() {
+      return GeneratedHttpRequest.builder();
+   }
+
    // TODO cache
    private void overridePathEncoding(UriBuilder uriBuilder, Method method) {
       if (declaring.isAnnotationPresent(SkipEncoding.class)) {
@@ -504,43 +545,19 @@ public class RestAnnotationProcessor<T> {
    // different than guava as accepts null
    private static enum NullableToStringFunction implements Function<Object, String> {
       INSTANCE;
-
       @Override
       public String apply(Object o) {
          if (o == null)
             return null;
          return o.toString();
       }
-
-      @Override
-      public String toString() {
-         return "toString";
-      }
    }
    
-   private Optional<URI> findEndpoint(Method method, Object... args) {
-      ClassMethodArgs cma = logger.isTraceEnabled() ? new ClassMethodArgs(method.getDeclaringClass(), method, args)
-            : null;
-      Optional<URI> endpoint = Optional.absent();
-
-      HttpRequest r = RestAnnotationProcessor.findHttpRequestInArgs(args);
-
-      if (r != null) {
-         endpoint = Optional.fromNullable(r.getEndpoint());
-         if (endpoint.isPresent())
-            logger.trace("using endpoint %s from args for %s", endpoint, cma);
-      }
-
-      if (!endpoint.isPresent() && caller != null) {
-         endpoint = getEndpointFor(caller.getMethod(), caller.getArgs());
-         if (endpoint.isPresent())
-            logger.trace("using endpoint %s from caller %s for %s", endpoint, caller, cma);
-      }
-      if (!endpoint.isPresent()) {
-         endpoint = getEndpointFor(method, args);
-         if (endpoint.isPresent())
-            logger.trace("using endpoint %s for %s", endpoint, cma);
-      }
+   protected Optional<URI> findEndpoint(Method method, Object... args) {
+      ClassMethodArgs cma = cma(method, args);
+      Optional<URI> endpoint = getEndpointFor(method, args);
+      if (endpoint.isPresent())
+         logger.trace("using endpoint %s for %s", endpoint, cma);
       if (!endpoint.isPresent()) {
          logger.trace("looking up default endpoint for %s", cma);
          endpoint = Optional.fromNullable(injector.getInstance(
@@ -558,7 +575,7 @@ public class RestAnnotationProcessor<T> {
 
    public static final String BOUNDARY = "--JCLOUDS--";
 
-   private Multimap<String, Object> addPathAndGetTokens(Class<?> clazz, Method method, Object[] args, UriBuilder uriBuilder) {
+   protected Multimap<String, Object> addPathAndGetTokens(Class<?> clazz, Method method, Object[] args, UriBuilder uriBuilder) {
       if (clazz.isAnnotationPresent(Path.class))
          uriBuilder.appendPath(clazz.getAnnotation(Path.class).value());
       if (method.isAnnotationPresent(Path.class))
@@ -661,8 +678,7 @@ public class RestAnnotationProcessor<T> {
 
    //TODO: change to LoadingCache<ClassMethodArgs, Optional<URI>> and move this logic to the CacheLoader.
    @VisibleForTesting
-   public static URI getEndpointInParametersOrNull(Method method, final Object[] args, Injector injector)
-         {
+   public static URI getEndpointInParametersOrNull(Method method, final Object[] args, Injector injector) {
       Map<Integer, Set<Annotation>> map = indexWithAtLeastOneAnnotation(method,
             methodToIndexOfParamToEndpointParamAnnotations);
       if (map.size() >= 1 && args.length > 0) {
@@ -674,29 +690,27 @@ public class RestAnnotationProcessor<T> {
             try {
                URI returnVal = parser.apply(args[index]);
                checkArgument(returnVal != null,
-                     String.format("endpoint for [%s] not configured for %s", args[index], method));
+                     format("endpoint for [%s] not configured for %s", args[index], method));
                return returnVal;
             } catch (NullPointerException e) {
-               throw new IllegalArgumentException(String.format("argument at index %d on method %s was null", index, method), e);
+               throw new IllegalArgumentException(format("argument at index %d on method %s was null", index, method),
+                     e);
             }
          } else {
             SortedSet<Integer> keys = newTreeSet(map.keySet());
             Iterable<Object> argsToParse = transform(keys, new Function<Integer, Object>() {
-
                @Override
                public Object apply(Integer from) {
                   return args[from];
                }
-
             });
             try {
                URI returnVal = parser.apply(argsToParse);
-               checkArgument(returnVal != null,
-                     String.format("endpoint for [%s] not configured for %s", argsToParse, method));
+               checkArgument(returnVal != null, format("endpoint for [%s] not configured for %s", argsToParse, method));
                return returnVal;
             } catch (NullPointerException e) {
-               throw new IllegalArgumentException(String.format("illegal argument in [%s] for method %s", argsToParse,
-                     method), e);
+               throw new IllegalArgumentException(
+                     format("illegal argument in [%s] for method %s", argsToParse, method), e);
             }
          }
       }
@@ -707,7 +721,7 @@ public class RestAnnotationProcessor<T> {
    };
 
    // TODO: change to LoadingCache<ClassMethodArgs, URI> and move this logic to the CacheLoader.
-   private Optional<URI> getEndpointFor(Method method, Object[] args) {
+   protected Optional<URI> getEndpointFor(Method method, Object[] args) {
       URI endpoint = getEndpointInParametersOrNull(method, args, injector);
       if (endpoint == null) {
          Endpoint annotation;
@@ -721,16 +735,14 @@ public class RestAnnotationProcessor<T> {
          }
          endpoint = injector.getInstance(Key.get(uriSupplierLiteral, annotation.value())).get();
       }
-      URI providerEndpoint = injector.getInstance(Key.get(uriSupplierLiteral, org.jclouds.location.Provider.class))
-               .get();
-      return Optional.fromNullable(addHostIfMissing(endpoint, providerEndpoint));
+      URI provider = injector.getInstance(Key.get(uriSupplierLiteral, org.jclouds.location.Provider.class)).get();
+      return Optional.fromNullable(addHostIfMissing(endpoint, provider));
    }
 
    @VisibleForTesting
    static URI addHostIfMissing(URI original, URI withHost) {
       checkNotNull(withHost, "URI withHost cannot be null");
       checkArgument(withHost.getHost() != null, "URI withHost must have host:" + withHost);
-
       if (original == null)
          return null;
       if (original.getHost() != null)
@@ -876,25 +888,18 @@ public class RestAnnotationProcessor<T> {
          if (http != null)
             methodsBuilder.add(http.value());
       }
-      Set<String> methods = methodsBuilder.build();
-      return (methods.size() == 0) ? null : methods;
+      return methodsBuilder.build();
    }
 
    public String getHttpMethodOrConstantOrThrowException(Method method) {
       Set<String> requests = getHttpMethods(method);
-      if (requests == null || requests.size() != 1) {
-         throw new IllegalStateException(
-               "You must use at least one, but no more than one http method or pathparam annotation on: "
-                     + method.toString());
-      }
-      return requests.iterator().next();
+      checkState(requests.size() == 1,
+            "You must use at least one, but no more than one http method or pathparam annotation on: %s", method);
+      return get(requests, 0);
    }
 
    public boolean shouldAddHostHeader(Method method) {
-      if (declaring.isAnnotationPresent(VirtualHost.class) || method.isAnnotationPresent(VirtualHost.class)) {
-         return true;
-      }
-      return false;
+      return (declaring.isAnnotationPresent(VirtualHost.class) || method.isAnnotationPresent(VirtualHost.class));
    }
 
    private static final Predicate<Set<?>> notEmpty = new Predicate<Set<?>>() {
@@ -949,14 +954,13 @@ public class RestAnnotationProcessor<T> {
             // (first, however, let's make sure we have enough args on the actual method)
             if (entry.getKey() >= request.getJavaMethod().getParameterAnnotations().length) {
                // not known whether this happens
-               throw new IllegalArgumentException("Argument index " + (entry.getKey() + 1)
-                        + " is out of bounds for method " + request.getJavaMethod());
+               throw new IllegalArgumentException(format("Argument index %s is out of bounds for method %s",
+                     entry.getKey() + 1, request.getJavaMethod()));
             }
 
             if (request.getJavaMethod().isVarArgs()
                      && entry.getKey() + 1 == request.getJavaMethod().getParameterTypes().length)
-               // allow null/missing for var args
-               continue OUTER;
+               continue OUTER; // allow null/missing for var args
 
             Annotation[] annotations = request.getJavaMethod().getParameterAnnotations()[entry.getKey()];
             for (Annotation a : annotations) {
@@ -966,7 +970,6 @@ public class RestAnnotationProcessor<T> {
             checkNotNull(null, request.getJavaMethod().getName() + " parameter " + (entry.getKey() + 1));
          }
       }
-
       return request;
    }
 
@@ -974,7 +977,7 @@ public class RestAnnotationProcessor<T> {
          LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> toRefine) {
       Map<Integer, Set<Annotation>> indexToPayloadAnnotation = indexWithAtLeastOneAnnotation(method, toRefine);
       if (indexToPayloadAnnotation.size() > 1) {
-         throw new IllegalStateException(String.format(
+         throw new IllegalStateException(format(
                "You must not specify more than one %s annotation on: %s; found %s", description, method.toString(),
                indexToPayloadAnnotation));
       }
@@ -1080,7 +1083,6 @@ public class RestAnnotationProcessor<T> {
          value = replaceTokens(value, tokenValues);
          headers.put(header.keys()[i], value);
       }
-
    }
 
    private List<Part> getParts(Method method, Object[] args, Multimap<String, ?> tokenValues) {
@@ -1143,7 +1145,6 @@ public class RestAnnotationProcessor<T> {
          String paramKey = method.getAnnotation(PathParam.class).value();
          String paramValue = injector.getInstance(method.getAnnotation(ParamParser.class).value()).apply(args);
          pathParamValues.put(paramKey, paramValue);
-
       }
       return pathParamValues;
    }
@@ -1154,8 +1155,7 @@ public class RestAnnotationProcessor<T> {
       Object arg = args[argIndex];
       if (extractors != null && extractors.size() > 0 && checkPresentOrNullable(method, paramKey, argIndex, arg)) {
          ParamParser extractor = (ParamParser) extractors.iterator().next();
-         // ParamParsers can deal with nullable parameters
-         arg = injector.getInstance(extractor.value()).apply(arg);
+         arg = injector.getInstance(extractor.value()).apply(arg); // ParamParsers can deal with nullable parameters
       }
       checkPresentOrNullable(method, paramKey, argIndex, arg);
       return Optional.fromNullable(arg);
@@ -1163,7 +1163,7 @@ public class RestAnnotationProcessor<T> {
 
    private static boolean checkPresentOrNullable(Method method, String paramKey, Integer argIndex, Object arg) {
       if (arg == null && !argNullable(method, argIndex))
-         throw new NullPointerException(String.format("param{%s} for method %s.%s", paramKey, method
+         throw new NullPointerException(format("param{%s} for method %s.%s", paramKey, method
                   .getDeclaringClass().getSimpleName(), method.getName()));
       return true;
    }
@@ -1173,7 +1173,6 @@ public class RestAnnotationProcessor<T> {
    }
 
    private static final Predicate<Annotation> NULLABLE = new Predicate<Annotation>() {
-
       @Override
       public boolean apply(Annotation in) {
          return Nullable.class.isAssignableFrom(in.annotationType());
@@ -1183,7 +1182,6 @@ public class RestAnnotationProcessor<T> {
    private static boolean containsNullable(Annotation[] annotations) {
       return any(ImmutableSet.copyOf(annotations), NULLABLE);
    }
-
 
    //TODO: change to LoadingCache<ClassMethodArgs, Multimap<String,String> and move this logic to the CacheLoader.
    //take care to manage size of this cache
@@ -1208,7 +1206,6 @@ public class RestAnnotationProcessor<T> {
          String paramKey = method.getAnnotation(FormParam.class).value();
          String paramValue = injector.getInstance(method.getAnnotation(ParamParser.class).value()).apply(args);
          formParamValues.put(paramKey, paramValue);
-
       }
       return formParamValues;
    }
@@ -1230,8 +1227,7 @@ public class RestAnnotationProcessor<T> {
                if (paramValue.get() instanceof Iterable) {                  
                   Iterable<String> iterableStrings = transform(Iterable.class.cast(paramValue.get()), toStringFunction());
                   queryParamValues.putAll(paramKey, iterableStrings);
-               }
-               else {
+               } else {
                   queryParamValues.put(paramKey, paramValue.get().toString());
                }
             }
@@ -1242,7 +1238,6 @@ public class RestAnnotationProcessor<T> {
          String paramKey = method.getAnnotation(QueryParam.class).value();
          String paramValue = injector.getInstance(method.getAnnotation(ParamParser.class).value()).apply(args);
          queryParamValues.put(paramKey, paramValue);
-
       }
       return queryParamValues;
    }
@@ -1263,12 +1258,5 @@ public class RestAnnotationProcessor<T> {
          }
       }
       return postParams;
-   }
-
-   /**
-    * the class that is being processed
-    */
-   public Class<T> getDeclaring(){
-      return declaring;
    }
 }

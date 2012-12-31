@@ -35,9 +35,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
-import com.google.inject.util.Types;
 
 @Test(groups = "unit")
 public class InputParamValidatorTest {
@@ -65,7 +62,7 @@ public class InputParamValidatorTest {
                String.class);
       Method oneParamValidatedMethod = InputParamValidatorForm.class.getMethod("oneParamValidated", String.class,
                String.class);
-      RestAnnotationProcessor<InputParamValidatorForm> restAnnotationProcessor = factory(InputParamValidatorForm.class);
+      RestAnnotationProcessor restAnnotationProcessor = factory(InputParamValidatorForm.class);
       restAnnotationProcessor.createRequest(allParamsValidatedMethod, "blah", "blah");
       restAnnotationProcessor.createRequest(oneParamValidatedMethod, "blah", "blah");
 
@@ -105,10 +102,8 @@ public class InputParamValidatorTest {
       new InputParamValidator(injector).validateMethodParametersOrThrow(method, 55);
    }
 
-   @SuppressWarnings("unchecked")
-   private <T> RestAnnotationProcessor<T> factory(Class<T> clazz) {
-      return ((RestAnnotationProcessor<T>) injector.getInstance(Key.get(TypeLiteral.get(Types.newParameterizedType(
-               RestAnnotationProcessor.class, clazz)))));
+   private RestAnnotationProcessor factory(Class<?> clazz) {
+      return injector.getInstance(RestAnnotationProcessor.Factory.class).declaring(clazz);
    }
 
    Injector injector;

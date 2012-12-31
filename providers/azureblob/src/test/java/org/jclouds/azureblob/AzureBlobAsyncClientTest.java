@@ -47,12 +47,10 @@ import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.rest.internal.BaseAsyncClientTest;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code AzureBlobAsyncClient}
@@ -281,12 +279,6 @@ public class AzureBlobAsyncClientTest extends BaseAsyncClientTest<AzureBlobAsync
    protected void checkFilters(HttpRequest request) {
       assertEquals(request.getFilters().size(), 1);
       assertEquals(request.getFilters().get(0).getClass(), SharedKeyLiteAuthentication.class);
-   }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<AzureBlobAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<AzureBlobAsyncClient>>() {
-      };
    }
 
    @Override

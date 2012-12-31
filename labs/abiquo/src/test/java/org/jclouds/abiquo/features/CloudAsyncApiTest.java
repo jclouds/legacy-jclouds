@@ -43,7 +43,6 @@ import org.jclouds.http.functions.ParseXMLWithJAXB;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.ReturnStringIf2xx;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
 import com.abiquo.model.enumerator.HypervisorType;
@@ -78,7 +77,6 @@ import com.abiquo.server.core.infrastructure.storage.TierDto;
 import com.abiquo.server.core.infrastructure.storage.TiersDto;
 import com.abiquo.server.core.infrastructure.storage.VolumeManagementDto;
 import com.abiquo.server.core.infrastructure.storage.VolumesManagementDto;
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests annotation parsing of {@code CloudAsyncApi}
@@ -1252,11 +1250,5 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
       assertFallbackClassEquals(method, MovedVolume.class);
 
       checkFilters(request);
-   }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<CloudAsyncApi>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<CloudAsyncApi>>() {
-      };
    }
 }

@@ -27,7 +27,6 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.ReturnInputStream;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Strings2;
 import org.jclouds.vcloud.domain.GuestCustomizationSection;
 import org.jclouds.vcloud.internal.BaseVCloudAsyncClientTest;
@@ -36,8 +35,6 @@ import org.jclouds.vcloud.xml.TaskHandler;
 import org.jclouds.vcloud.xml.VmHandler;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code VmAsyncClient}
@@ -48,12 +45,6 @@ import com.google.inject.TypeLiteral;
 // surefire
 @Test(groups = "unit", testName = "VmAsyncClientTest")
 public class VmAsyncClientTest extends BaseVCloudAsyncClientTest<VmAsyncClient> {
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<VmAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<VmAsyncClient>>() {
-      };
-   }
 
    public void testGetThumbnailOfVm() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VmAsyncClient.class.getMethod("getScreenThumbnailForVm", URI.class);

@@ -29,10 +29,7 @@ import org.jclouds.http.IntegrationTestClient;
 import org.jclouds.openstack.functions.ParseAuthenticationResponseFromHeaders;
 import org.jclouds.rest.AnonymousRestApiMetadata;
 import org.jclouds.rest.internal.BaseAsyncClientTest;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
-
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code OpenStackAuthAsyncClient}
@@ -80,11 +77,4 @@ public class OpenStackAuthAsyncClientTest extends BaseAsyncClientTest<OpenStackA
    @Override
    protected void checkFilters(HttpRequest request) {
    }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<OpenStackAuthAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<OpenStackAuthAsyncClient>>() {
-      };
-   }
-
 }

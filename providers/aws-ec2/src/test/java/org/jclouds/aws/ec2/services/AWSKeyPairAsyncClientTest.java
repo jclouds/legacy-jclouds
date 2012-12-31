@@ -28,10 +28,7 @@ import org.jclouds.ec2.xml.KeyPairResponseHandler;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
-
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code AWSKeyPairAsyncClient}
@@ -124,11 +121,4 @@ public class AWSKeyPairAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSKeyP
 
       checkFilters(request);
    }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<AWSKeyPairAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<AWSKeyPairAsyncClient>>() {
-      };
-   }
-
 }

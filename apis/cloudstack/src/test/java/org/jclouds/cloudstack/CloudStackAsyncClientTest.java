@@ -23,11 +23,8 @@ import java.util.concurrent.ExecutionException;
 
 import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code CloudStackAsyncClient}
@@ -104,12 +101,6 @@ public class CloudStackAsyncClientTest extends BaseCloudStackAsyncClientTest<Clo
       assert domainAsyncClient.getAccountClient() != null;
 
       assert globalAsyncClient.getAccountClient() != null;
-   }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<CloudStackAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<CloudStackAsyncClient>>() {
-      };
    }
 
    @BeforeClass

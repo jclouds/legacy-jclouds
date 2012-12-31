@@ -25,8 +25,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.jclouds.gogrid.mock.HttpCommandMock;
 import org.jclouds.http.HttpCommand;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.json.config.GsonModule;
 import org.testng.TestException;
@@ -71,19 +71,7 @@ public class GoGridErrorHandlerTest {
    }
 
    HttpCommand createHttpCommand() {
-      return new HttpCommandMock() {
-         private Exception exception;
-
-         @Override
-         public void setException(Exception exception) {
-            this.exception = exception;
-         }
-
-         @Override
-         public Exception getException() {
-            return exception;
-         }
-      };
+      return new HttpCommand(HttpRequest.builder().method("GET").endpoint("http://localhost").build());
    }
 
    InputStream createInputStreamFromString(String s) {

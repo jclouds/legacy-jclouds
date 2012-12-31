@@ -48,12 +48,10 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.rest.internal.BaseAsyncClientTest;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code CloudSigmaAsyncClient}
@@ -639,12 +637,6 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
    protected void checkFilters(HttpRequest request) {
       assertEquals(request.getFilters().size(), 1);
       assertEquals(request.getFilters().get(0).getClass(), BasicAuthentication.class);
-   }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<CloudSigmaAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<CloudSigmaAsyncClient>>() {
-      };
    }
 
    @Override

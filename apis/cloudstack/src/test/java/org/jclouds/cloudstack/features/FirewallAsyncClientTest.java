@@ -31,10 +31,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
-
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code FirewallAsyncClient}
@@ -116,11 +113,5 @@ public class FirewallAsyncClientTest extends BaseCloudStackAsyncClientTest<Firew
 
       checkFilters(httpRequest);
 
-   }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<FirewallAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<FirewallAsyncClient>>() {
-      };
    }
 }

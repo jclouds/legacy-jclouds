@@ -28,12 +28,10 @@ import org.jclouds.cloudstack.options.ListZonesOptions;
 import org.jclouds.functions.IdentityFunction;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Functions;
 import com.google.common.collect.Iterables;
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code ZoneAsyncClient}
@@ -105,11 +103,5 @@ public class ZoneAsyncClientTest extends BaseCloudStackAsyncClientTest<ZoneAsync
 
       checkFilters(httpRequest);
 
-   }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<ZoneAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<ZoneAsyncClient>>() {
-      };
    }
 }

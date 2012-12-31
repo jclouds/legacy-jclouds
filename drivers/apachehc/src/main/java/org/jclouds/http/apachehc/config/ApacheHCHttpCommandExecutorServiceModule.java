@@ -49,8 +49,6 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.http.HttpUtils;
-import org.jclouds.http.TransformingHttpCommandExecutorService;
-import org.jclouds.http.TransformingHttpCommandExecutorServiceImpl;
 import org.jclouds.http.apachehc.ApacheHCHttpCommandExecutorService;
 import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
 import org.jclouds.http.config.SSLModule;
@@ -169,9 +167,6 @@ public class ApacheHCHttpCommandExecutorServiceModule extends AbstractModule {
 
    protected void bindClient() {
       bind(HttpCommandExecutorService.class).to(ApacheHCHttpCommandExecutorService.class).in(Scopes.SINGLETON);
-
-      bind(TransformingHttpCommandExecutorService.class).to(TransformingHttpCommandExecutorServiceImpl.class).in(
-               Scopes.SINGLETON);
    }
 
 }

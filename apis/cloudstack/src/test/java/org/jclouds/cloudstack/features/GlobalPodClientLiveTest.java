@@ -34,7 +34,6 @@ import org.jclouds.cloudstack.internal.BaseCloudStackClientLiveTest;
 import org.jclouds.cloudstack.options.CreatePodOptions;
 import org.jclouds.cloudstack.options.ListPodsOptions;
 import org.jclouds.cloudstack.options.UpdatePodOptions;
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.Test;
 

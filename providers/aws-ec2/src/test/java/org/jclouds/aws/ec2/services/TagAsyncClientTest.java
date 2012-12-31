@@ -29,12 +29,10 @@ import org.jclouds.aws.ec2.xml.DescribeTagsResponseHandler;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code TagsAsyncClient}
@@ -106,11 +104,5 @@ public class TagAsyncClientTest extends BaseAWSEC2AsyncClientTest<TagAsyncClient
       assertFallbackClassEquals(method, EmptySetOnNotFoundOr404.class);
 
       checkFilters(request);
-   }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<TagAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<TagAsyncClient>>() {
-      };
    }
 }

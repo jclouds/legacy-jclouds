@@ -21,14 +21,11 @@ package org.jclouds.vcloud;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.vcloud.internal.BaseVCloudAsyncClientTest;
 import org.jclouds.vcloud.utils.TestUtils;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code VCloudAsyncClient}
@@ -39,12 +36,6 @@ import com.google.inject.TypeLiteral;
 // surefire
 @Test(groups = "unit", testName = "VCloudAsyncClientTest")
 public class VCloudAsyncClientTest extends BaseVCloudAsyncClientTest<VCloudAsyncClient> {
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<VCloudAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<VCloudAsyncClient>>() {
-      };
-   }
 
    private VCloudAsyncClient asyncClient;
    private VCloudClient syncClient;

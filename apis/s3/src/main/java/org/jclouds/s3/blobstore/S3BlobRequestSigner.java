@@ -43,7 +43,7 @@ import org.jclouds.s3.options.PutObjectOptions;
  */
 @Singleton
 public class S3BlobRequestSigner implements BlobRequestSigner {
-   private final RestAnnotationProcessor<S3AsyncClient> processor;
+   private final RestAnnotationProcessor processor;
    private final BlobToObject blobToObject;
    private final BlobToHttpGetOptions blob2HttpGetOptions;
 
@@ -52,9 +52,9 @@ public class S3BlobRequestSigner implements BlobRequestSigner {
    private final Method createMethod;
 
    @Inject
-   public S3BlobRequestSigner(RestAnnotationProcessor<S3AsyncClient> processor, BlobToObject blobToObject,
+   public S3BlobRequestSigner(RestAnnotationProcessor.Factory processor, BlobToObject blobToObject,
             BlobToHttpGetOptions blob2HttpGetOptions) throws SecurityException, NoSuchMethodException {
-      this.processor = checkNotNull(processor, "processor");
+      this.processor = checkNotNull(processor, "processor").declaring(S3AsyncClient.class);
       this.blobToObject = checkNotNull(blobToObject, "blobToObject");
       this.blob2HttpGetOptions = checkNotNull(blob2HttpGetOptions, "blob2HttpGetOptions");
       this.getMethod = S3AsyncClient.class.getMethod("getObject", String.class, String.class, GetOptions[].class);

@@ -32,7 +32,6 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.rest.ResourceNotFoundException;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.trmk.vcloud_0_8.domain.Protocol;
 import org.jclouds.trmk.vcloud_0_8.functions.ParseTaskFromLocationHeader;
 import org.jclouds.trmk.vcloud_0_8.options.AddInternetServiceOptions;
@@ -57,7 +56,6 @@ import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code TerremarkECloudAsyncClient}
@@ -72,12 +70,6 @@ public class TerremarkECloudAsyncClientTest extends BaseTerremarkECloudAsyncClie
    public void testListOrgs() {
       assertEquals(injector.getInstance(TerremarkECloudAsyncClient.class).listOrgs().toString(),
             ImmutableMap.of(ORG_REF.getName(), ORG_REF).toString());
-   }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<TerremarkECloudAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<TerremarkECloudAsyncClient>>() {
-      };
    }
 
    public void testNetwork() throws SecurityException, NoSuchMethodException, IOException {

@@ -25,10 +25,7 @@ import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.fallbacks.MapHttp4xxCodesToExceptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
-
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code ConfigurationAsyncClient}
@@ -55,11 +52,5 @@ public class ConfigurationAsyncClientTest extends BaseCloudStackAsyncClientTest<
 
       checkFilters(httpRequest);
 
-   }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<ConfigurationAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<ConfigurationAsyncClient>>() {
-      };
    }
 }

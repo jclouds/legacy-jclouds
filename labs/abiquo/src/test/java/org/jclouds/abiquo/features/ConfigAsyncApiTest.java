@@ -31,7 +31,6 @@ import org.jclouds.abiquo.domain.config.options.PropertyOptions;
 import org.jclouds.http.functions.ParseXMLWithJAXB;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
 import com.abiquo.server.core.appslibrary.CategoriesDto;
@@ -42,7 +41,6 @@ import com.abiquo.server.core.config.SystemPropertiesDto;
 import com.abiquo.server.core.config.SystemPropertyDto;
 import com.abiquo.server.core.enterprise.PrivilegeDto;
 import com.abiquo.server.core.enterprise.PrivilegesDto;
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests annotation parsing of {@code AdminAsyncApi}.
@@ -273,11 +271,5 @@ public class ConfigAsyncApiTest extends BaseAbiquoAsyncApiTest<ConfigAsyncApi> {
       assertFallbackClassEquals(method, null);
 
       checkFilters(request);
-   }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<ConfigAsyncApi>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<ConfigAsyncApi>>() {
-      };
    }
 }

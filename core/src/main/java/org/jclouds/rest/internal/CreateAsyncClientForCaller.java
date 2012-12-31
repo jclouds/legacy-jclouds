@@ -16,38 +16,26 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.rest;
+package org.jclouds.rest.internal;
 
 import static com.google.common.reflect.Reflection.newProxy;
-import static com.google.inject.util.Types.newParameterizedType;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import org.jclouds.internal.ClassMethodArgs;
+import org.jclouds.rest.internal.AsyncRestClientProxy.Factory;
 
-import org.jclouds.rest.internal.AsyncRestClientProxy;
+import com.google.common.cache.CacheLoader;
+import com.google.inject.Inject;
 
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
-
-/**
- * 
- * @author Adrian Cole
- */
-@Singleton
-public class AsyncClientFactory {
-   private final Injector injector;
+public final class CreateAsyncClientForCaller extends CacheLoader<ClassMethodArgs, Object> {
+   private final Factory factory;
 
    @Inject
-   private AsyncClientFactory(Injector injector) {
-      this.injector = injector;
+   private CreateAsyncClientForCaller(AsyncRestClientProxy.Factory factory) {
+      this.factory = factory;
    }
 
-   @SuppressWarnings("unchecked")
-   public <T> T create(Class<T> clazz) {
-      Key<AsyncRestClientProxy<T>> key = (Key<AsyncRestClientProxy<T>>) Key.get(TypeLiteral.get(newParameterizedType(
-            AsyncRestClientProxy.class, clazz)));
-      return newProxy(clazz, injector.getInstance(key));
+   @Override
+   public Object load(ClassMethodArgs from) {
+      return newProxy(from.getClazz(), factory.caller(from));
    }
-
 }

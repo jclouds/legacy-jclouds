@@ -29,11 +29,9 @@ import org.jclouds.gogrid.functions.ParseImageListFromJsonResponse;
 import org.jclouds.gogrid.options.GetImageListOptions;
 import org.jclouds.gogrid.options.SaveImageOptions;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Iterables;
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code GridImageAsyncClient}
@@ -191,11 +189,4 @@ public class GridImageAsyncClientTest extends BaseGoGridAsyncClientTest<GridImag
       assertFallbackClassEquals(method, null);
 
    }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<GridImageAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<GridImageAsyncClient>>() {
-      };
-   }
-
 }

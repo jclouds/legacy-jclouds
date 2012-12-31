@@ -33,13 +33,11 @@ import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.internal.BaseAsyncClientTest;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code AzureBlobRequestSigner}
@@ -114,12 +112,6 @@ public class AzureBlobRequestSignerTest extends BaseAsyncClientTest<AzureBlobAsy
 
    @Override
    protected void checkFilters(HttpRequest request) {
-   }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<AzureBlobAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<AzureBlobAsyncClient>>() {
-      };
    }
 
    @Override

@@ -19,23 +19,28 @@
 package org.jclouds.rest.internal;
 
 import static com.google.common.util.concurrent.Futures.immediateFailedFuture;
+import static com.google.common.util.concurrent.Futures.transform;
 import static com.google.common.util.concurrent.Futures.withFallback;
+import static org.jclouds.concurrent.Futures.makeListenable;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
 
 import javax.annotation.Resource;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Qualifier;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
 import org.jclouds.fallbacks.MapHttp4xxCodesToExceptions;
+import org.jclouds.http.HttpCommand;
+import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.TransformingHttpCommand;
 import org.jclouds.internal.ClassMethodArgs;
 import org.jclouds.internal.ClassMethodArgsAndReturnVal;
 import org.jclouds.logging.Logger;
@@ -61,12 +66,11 @@ import com.google.common.util.concurrent.FutureFallback;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Binding;
 import com.google.inject.ConfigurationException;
-import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Provides;
 import com.google.inject.ProvisionException;
-import com.google.inject.TypeLiteral;
+import com.google.inject.assistedinject.Assisted;
 import com.google.inject.util.Types;
 
 /**
@@ -94,40 +98,55 @@ import com.google.inject.util.Types;
  * @author Adrian Cole
  */
 @Singleton
-public class AsyncRestClientProxy<T> extends AbstractInvocationHandler {
-   public Class<T> getDeclaring() {
-      return declaring;
+public abstract class AsyncRestClientProxy extends AbstractInvocationHandler {
+   public static interface Factory {
+      Declaring declaring(Class<?> declaring);
+
+      Caller caller(ClassMethodArgs caller);
    }
 
-   private final Injector injector;
-   private final RestAnnotationProcessor<T> annotationProcessor;
-   private final Class<T> declaring;
-   private final Factory commandFactory;
+   public final static class Declaring extends AsyncRestClientProxy {
+      @Inject
+      private Declaring(Injector injector, Function<ClassMethodArgsAndReturnVal, Optional<Object>> optionalConverter,
+            HttpCommandExecutorService http, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
+            @Named("async") LoadingCache<ClassMethodArgs, Object> delegateMap, RestAnnotationProcessor.Factory rap,
+            @Assisted Class<?> declaring) {
+         super(injector, optionalConverter, http, userThreads, delegateMap, rap.declaring(declaring), declaring);
+      }
+   }
 
-   /**
-    * maximum duration of an unbackend http Request
-    */
-   @Inject(optional = true)
-   @Named(Constants.PROPERTY_REQUEST_TIMEOUT)
-   protected long requestTimeoutMilliseconds = 30000;
+   public final static class Caller extends AsyncRestClientProxy {
+      @Inject
+      private Caller(Injector injector, Function<ClassMethodArgsAndReturnVal, Optional<Object>> optionalConverter,
+            HttpCommandExecutorService http, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
+            @Named("async") LoadingCache<ClassMethodArgs, Object> delegateMap, RestAnnotationProcessor.Factory rap,
+            @Assisted ClassMethodArgs caller) {
+         super(injector, optionalConverter, http, userThreads, delegateMap, rap.caller(caller), caller.getClazz());
+      }
+   }
 
    @Resource
-   protected Logger logger = Logger.NULL;
+   private Logger logger = Logger.NULL;
+   
+   private final Injector injector;
+   private final HttpCommandExecutorService http;
+   private final ExecutorService userThreads;
    private final Function<ClassMethodArgsAndReturnVal, Optional<Object>> optionalConverter;
    private final LoadingCache<ClassMethodArgs, Object> delegateMap;
+   private final RestAnnotationProcessor annotationProcessor;
+   private final Class<?> declaring;
 
-   @SuppressWarnings("unchecked")
-   @Inject
-   public AsyncRestClientProxy(Injector injector, Factory factory, RestAnnotationProcessor<T> util,
-         TypeLiteral<T> typeLiteral, @Named("async") LoadingCache<ClassMethodArgs, Object> delegateMap) {
+   private AsyncRestClientProxy(Injector injector,
+         Function<ClassMethodArgsAndReturnVal, Optional<Object>> optionalConverter, HttpCommandExecutorService http,
+         ExecutorService userThreads, LoadingCache<ClassMethodArgs, Object> delegateMap,
+         RestAnnotationProcessor annotationProcessor, Class<?> declaring) {
       this.injector = injector;
-      this.optionalConverter = injector.getInstance(Key
-            .get(new TypeLiteral<Function<ClassMethodArgsAndReturnVal, Optional<Object>>>() {
-            }));
-      this.annotationProcessor = util;
-      this.declaring = (Class<T>) typeLiteral.getRawType();
-      this.commandFactory = factory;
+      this.optionalConverter = optionalConverter;
+      this.http = http;
+      this.userThreads = userThreads;
       this.delegateMap = delegateMap;
+      this.declaring = declaring;
+      this.annotationProcessor = annotationProcessor;
    }
 
    private static final Predicate<Annotation> isQualifierPresent = new Predicate<Annotation>() {
@@ -249,7 +268,7 @@ public class AsyncRestClientProxy<T> extends AbstractInvocationHandler {
          logger.trace("<< response from %s is parsed by %s", name, transformer.getClass().getSimpleName());
 
          logger.debug(">> invoking %s", name);
-         result = commandFactory.create(request, transformer).execute();
+         result = transform(makeListenable(http.submit(new HttpCommand(request)), userThreads), transformer);
       } catch (RuntimeException e) {
          AuthorizationException aex = Throwables2.getFirstThrowableOfType(e, AuthorizationException.class);
          if (aex != null)
@@ -262,10 +281,6 @@ public class AsyncRestClientProxy<T> extends AbstractInvocationHandler {
       }
       logger.trace("<< exceptions from %s are parsed by %s", name, fallback.getClass().getSimpleName());
       return withFallback(result, fallback);
-   }
-
-   public static interface Factory {
-      public TransformingHttpCommand<?> create(HttpRequest request, Function<HttpResponse, ?> transformer);
    }
 
    public String toString() {

@@ -32,11 +32,9 @@ import org.jclouds.cloudstack.options.ListServiceOfferingsOptions;
 import org.jclouds.functions.IdentityFunction;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Functions;
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code OfferingAsyncClient}
@@ -205,11 +203,5 @@ public class OfferingAsyncClientTest extends BaseCloudStackAsyncClientTest<Offer
 
       checkFilters(httpRequest);
 
-   }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<OfferingAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<OfferingAsyncClient>>() {
-      };
    }
 }

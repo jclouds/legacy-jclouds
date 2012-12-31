@@ -65,13 +65,11 @@ import org.jclouds.openstack.keystone.v1_1.domain.Auth;
 import org.jclouds.openstack.keystone.v1_1.parse.ParseAuthTest;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.internal.BaseAsyncClientTest;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Module;
 import com.google.inject.Provides;
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code CloudServersAsyncClient}
@@ -866,12 +864,6 @@ public class CloudServersAsyncClientTest extends BaseAsyncClientTest<CloudServer
       assertFallbackClassEquals(method, null);
 
       checkFilters(request);
-   }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<CloudServersAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<CloudServersAsyncClient>>() {
-      };
    }
 
    @Override

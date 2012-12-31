@@ -27,10 +27,7 @@ import org.jclouds.aws.ec2.xml.DescribePlacementGroupsResponseHandler;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
-
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code PlacementGroupAsyncClient}
@@ -125,11 +122,4 @@ public class PlacementGroupAsyncClientTest extends BaseAWSEC2AsyncClientTest<Pla
 
       checkFilters(request);
    }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<PlacementGroupAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<PlacementGroupAsyncClient>>() {
-      };
-   }
-
 }

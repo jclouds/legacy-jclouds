@@ -32,7 +32,6 @@ import org.jclouds.location.Provider;
 import org.jclouds.providers.AnonymousProviderMetadata;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.rest.internal.BaseAsyncClientTest;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.trmk.vcloud_0_8.endpoints.VCloudLogin;
 import org.jclouds.trmk.vcloud_0_8.functions.ParseLoginResponseFromHeaders;
 import org.testng.annotations.Test;
@@ -41,7 +40,6 @@ import com.google.common.base.Supplier;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Provides;
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code VCloudLoginAsyncClient}
@@ -72,12 +70,6 @@ public class TerremarkVCloudLoginAsyncClientTest extends BaseAsyncClientTest<Ter
    protected void checkFilters(HttpRequest request) {
       assertEquals(request.getFilters().size(), 1);
       assertEquals(request.getFilters().get(0).getClass(), BasicAuthentication.class);
-   }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<TerremarkVCloudLoginAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<TerremarkVCloudLoginAsyncClient>>() {
-      };
    }
 
    @Override
