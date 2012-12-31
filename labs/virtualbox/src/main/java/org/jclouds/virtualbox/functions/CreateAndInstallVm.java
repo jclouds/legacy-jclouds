@@ -45,17 +45,17 @@ import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.statements.InstallGuestAdditions;
 import org.jclouds.virtualbox.util.MachineController;
 import org.jclouds.virtualbox.util.MachineUtils;
-import org.virtualbox_4_1.DeviceType;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.IMediumAttachment;
+import org.virtualbox_4_2.DeviceType;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.IMediumAttachment;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
+import com.google.common.base.Stopwatch;
 import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.Uninterruptibles;
 import com.google.inject.Inject;
 
 @Singleton
@@ -87,7 +87,7 @@ public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
       this.machineUtils = machineUtils;
       this.imachineToNodeMetadata = imachineToNodeMetadata;
       this.machineController = machineController;
-      this.version = Iterables.get(Splitter.on('r').split(version), 0);
+      this.version = Iterables.get(Splitter.on('-').split(version), 0);
       this.preconfigurationUrl = preconfigurationUrl;
    }
 
@@ -103,31 +103,32 @@ public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
                preconfigurationUrl);
       
       configureOsInstallationWithKeyboardSequence(masterName, installationKeySequence);
-
-      // the OS installation is a long process: let's delay the check for ssh of 40 sec
-      Uninterruptibles.sleepUninterruptibly(40, TimeUnit.SECONDS);
       
       masterMachine.setExtraData(GUEST_OS_USER, masterSpec.getLoginCredentials().getUser());
       masterMachine.setExtraData(GUEST_OS_PASSWORD, masterSpec.getLoginCredentials().getPassword());
 
       SshClient client = sshClientForIMachine.apply(masterMachine);
       logger.debug(">> awaiting installation to finish node(%s)", masterName);
+      Stopwatch stopwatch = new Stopwatch();
+      stopwatch.start();
       checkState(sshResponds.apply(client), "timed out waiting for guest %s to be accessible via ssh", masterName);
+      stopwatch.stop();
+      logger.debug(String.format("Elapsed time for the OS installation: %d minutes", TimeUnit.SECONDS.convert(stopwatch.elapsed(TimeUnit.MILLISECONDS), TimeUnit.MILLISECONDS)));
       NodeMetadata nodeMetadata = imachineToNodeMetadata.apply(masterMachine);
 
       logger.debug(">> awaiting post-installation actions on vm: %s", masterName);
       ListenableFuture<ExecResponse> execCleanup = machineUtils.runScriptOnNode(nodeMetadata,
                call("cleanupUdevIfNeeded"), RunScriptOptions.NONE);
       ExecResponse cleanupResponse = Futures.getUnchecked(execCleanup);
-      checkState(cleanupResponse.getExitStatus() == 0);
+      checkState(cleanupResponse.getExitStatus() == 0, "post-installation actions on vm(%s) failed", masterName);
 
       logger.debug(">> awaiting installation of guest additions on vm: %s", masterName);
       ListenableFuture<ExecResponse> execInstallGA = machineUtils.runScriptOnNode(nodeMetadata,
                new InstallGuestAdditions(vmSpec, version), RunScriptOptions.NONE);
       ExecResponse gaInstallationResponse = Futures.getUnchecked(execInstallGA);
-      checkState(gaInstallationResponse.getExitStatus() == 0);
+      checkState(gaInstallationResponse.getExitStatus() == 0, "installation of guest additions on vm(%s) failed", masterName);
       
-      machineController.ensureMachineIsShutdown(masterName);      
+      machineController.ensureMachineIsShutdown(masterName);
 
       // detach DVD and ISOs, if needed
       Iterable<IMediumAttachment> mediumAttachments = Iterables.filter(
@@ -140,9 +141,9 @@ public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
                }
             });
       for (IMediumAttachment iMediumAttachment : mediumAttachments) {
-         logger.debug("Detach %s from (%s)", iMediumAttachment.getMedium()
+         logger.debug("<< iMedium(%s) detached from (%s)", iMediumAttachment.getMedium()
                .getName(), masterMachine.getName());
-         machineUtils.writeLockMachineAndApply(
+         machineUtils.sharedLockMachineAndApply(
                masterMachine.getName(),
                new DetachDistroMediumFromMachine(iMediumAttachment
                      .getController(), iMediumAttachment.getPort(),

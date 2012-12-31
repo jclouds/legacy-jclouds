@@ -27,19 +27,19 @@ import static org.easymock.EasyMock.replay;
 import java.util.Collections;
 import java.util.List;
 
-import com.google.common.collect.Lists;
-
 import org.jclouds.virtualbox.domain.HardDisk;
 import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
 import org.testng.annotations.Test;
-import org.virtualbox_4_1.CleanupMode;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.IMedium;
-import org.virtualbox_4_1.IProgress;
-import org.virtualbox_4_1.IVirtualBox;
-import org.virtualbox_4_1.StorageBus;
-import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_2.CleanupMode;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.IMedium;
+import org.virtualbox_4_2.IProgress;
+import org.virtualbox_4_2.IVirtualBox;
+import org.virtualbox_4_2.StorageBus;
+import org.virtualbox_4_2.VirtualBoxManager;
+
+import com.google.common.collect.Lists;
 
 @Test(groups = "unit", testName = "UnregisterMachineIfExistsTest")
 public class UnregisterMachineIfExistsAndDeleteItsMediaTest {
@@ -58,22 +58,20 @@ public class UnregisterMachineIfExistsAndDeleteItsMediaTest {
       IProgress progress = createNiceMock(IProgress.class);
       List<IMedium> media = Lists.newArrayList();
       List<IMedium> mediums = Collections.unmodifiableList(media);
-      
+
       StorageController ideController = StorageController.builder().name(ideControllerName).bus(StorageBus.IDE)
-              .attachISO(0, 0, "/tmp/ubuntu-11.04-server-i386.iso")
-              .attachHardDisk(HardDisk.builder().diskpath("/tmp/testadmin.vdi").controllerPort(0).deviceSlot(1).build())
-              .attachISO(1, 1, "/tmp/VBoxGuestAdditions_4.1.2.iso").build();
+            .attachISO(0, 0, "/tmp/ubuntu-11.04-server-i386.iso")
+            .attachHardDisk(HardDisk.builder().diskpath("/tmp/testadmin.vdi").controllerPort(0).deviceSlot(1).build())
+            .attachISO(1, 1, "/tmp/VBoxGuestAdditions_4.1.2.iso").build();
       VmSpec vmSpecification = VmSpec.builder().id(vmId).name(vmName).memoryMB(512).osTypeId(osTypeId)
-              .controller(ideController)
-              .forceOverwrite(true)
-              .cleanUpMode(CleanupMode.Full).build();
+            .controller(ideController).forceOverwrite(true).cleanUpMode(CleanupMode.Full).build();
 
       expect(manager.getVBox()).andReturn(vBox).anyTimes();
       expect(vBox.findMachine(vmName)).andReturn(registeredMachine);
 
       expect(registeredMachine.unregister(mode)).andReturn(mediums);
       expectLastCall().anyTimes();
-      
+
       expect(registeredMachine.delete(mediums)).andReturn(progress);
       expectLastCall().anyTimes();
 

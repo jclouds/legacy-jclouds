@@ -22,7 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.jclouds.virtualbox.domain.NetworkInterfaceCard;
 import org.jclouds.virtualbox.util.MachineUtils;
-import org.virtualbox_4_1.NetworkAttachmentType;
+import org.virtualbox_4_2.NetworkAttachmentType;
 
 import com.google.common.base.Function;
 
@@ -35,8 +35,8 @@ public class AttachNicToMachine implements Function<NetworkInterfaceCard, Void> 
    private final MachineUtils machineUtils;
 
    public AttachNicToMachine(String vmName, MachineUtils machineUtils) {
-      this.vmName = checkNotNull(vmName, "vmName");
-      this.machineUtils = checkNotNull(machineUtils, "machineUtils");
+      this.vmName = checkNotNull(vmName, "vmName can't be null");
+      this.machineUtils = checkNotNull(machineUtils, "machineUtils can't be null");
    }
 
    @Override

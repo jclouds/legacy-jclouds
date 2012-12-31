@@ -25,7 +25,6 @@ import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
 import java.net.URI;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,23 +50,21 @@ import org.jclouds.virtualbox.functions.RetrieveActiveBridgedInterfaces;
 import org.jclouds.virtualbox.statements.EnableNetworkInterface;
 import org.jclouds.virtualbox.statements.GetIPAddressFromMAC;
 import org.jclouds.virtualbox.statements.ScanNetworkWithPing;
-import org.virtualbox_4_1.HostNetworkInterfaceType;
-import org.virtualbox_4_1.IDHCPServer;
-import org.virtualbox_4_1.IHostNetworkInterface;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.INetworkAdapter;
-import org.virtualbox_4_1.ISession;
-import org.virtualbox_4_1.LockType;
-import org.virtualbox_4_1.NetworkAttachmentType;
-import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_2.HostNetworkInterfaceType;
+import org.virtualbox_4_2.IDHCPServer;
+import org.virtualbox_4_2.IHostNetworkInterface;
+import org.virtualbox_4_2.INetworkAdapter;
+import org.virtualbox_4_2.NetworkAttachmentType;
+import org.virtualbox_4_2.VirtualBoxManager;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import com.google.common.util.concurrent.Uninterruptibles;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
 
 /**
@@ -78,11 +75,11 @@ import com.google.inject.Inject;
 
 @Singleton
 public class NetworkUtils {
-   
+
    // TODO parameterize
    public static final int MASTER_PORT = 2222;
    private static final String VIRTUALBOX_HOST_GATEWAY = "10.0.2.15";
-   
+
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
@@ -97,68 +94,59 @@ public class NetworkUtils {
 
    @Inject
    public NetworkUtils(Supplier<VirtualBoxManager> manager, MachineUtils machineUtils,
-         MachineController machineController,
-         Supplier<NodeMetadata> host,
-         @Provider Supplier<URI> providerSupplier,
-         IpAddressesLoadingCache ipAddressesLoadingCache,
-         Supplier<NodeMetadata> hostSupplier,
+         MachineController machineController, Supplier<NodeMetadata> host, @Provider Supplier<URI> providerSupplier,
+         IpAddressesLoadingCache ipAddressesLoadingCache, Supplier<NodeMetadata> hostSupplier,
          RunScriptOnNode.Factory scriptRunnerFactory) {
       this.manager = manager;
       this.machineUtils = machineUtils;
-      this.host = checkNotNull(host, "host");
-      this.providerSupplier = checkNotNull(providerSupplier,
-            "endpoint to virtualbox websrvd is needed");
+      this.host = checkNotNull(host, "host can't be null");
+      this.providerSupplier = checkNotNull(providerSupplier, "endpoint to virtualbox web server can't be null");
       this.ipAddressesLoadingCache = ipAddressesLoadingCache;
       this.scriptRunnerFactory = scriptRunnerFactory;
       this.hostSupplier = hostSupplier;
    }
 
    public NetworkSpec createNetworkSpecWhenVboxIsLocalhost() {
-      NetworkAdapter natAdapter = NetworkAdapter.builder()
-            .networkAttachmentType(NetworkAttachmentType.NAT)
-            .build();
+      NetworkAdapter natAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.NAT).build();
 
-      NetworkInterfaceCard natIfaceCard = NetworkInterfaceCard.builder()
-            .addNetworkAdapter(natAdapter)
-            .slot(1L)
+      NetworkInterfaceCard natIfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(natAdapter).slot(1L).build();
+      NetworkAdapter hostOnlyAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.HostOnly)
             .build();
-      NetworkAdapter hostOnlyAdapter = NetworkAdapter.builder()
-            .networkAttachmentType(NetworkAttachmentType.HostOnly)
-               .build();
-      // create new hostOnly interface if needed, otherwise use the one already there with dhcp enabled ...
+      // create new hostOnly interface if needed, otherwise use the one already
+      // there with dhcp enabled ...
       String hostOnlyIfName = getHostOnlyIfOrCreate();
       NetworkInterfaceCard hostOnlyIfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(hostOnlyAdapter)
-               .addHostInterfaceName(hostOnlyIfName).slot(0L).build();      
+            .addHostInterfaceName(hostOnlyIfName).slot(0L).build();
       return createNetworkSpecForHostOnlyNATNICs(natIfaceCard, hostOnlyIfaceCard);
    }
-   
-   public boolean enableNetworkInterface(NodeMetadata nodeMetadata, NetworkInterfaceCard networkInterfaceCard) {
-      ExecResponse execResponse = null;
-      try {
-         execResponse = machineUtils.runScriptOnNode(nodeMetadata, 
-               new EnableNetworkInterface(networkInterfaceCard), RunScriptOptions.NONE).get();
-      } catch (InterruptedException e) {
-         logger.error(e.getMessage());
-      } catch (ExecutionException e) {
-         logger.error(e.getMessage());
-      }
-      if(execResponse == null)
-         return false;     
-      return execResponse.getExitStatus() == 0;
-   }
-   
-   private NetworkSpec createNetworkSpecForHostOnlyNATNICs(NetworkInterfaceCard natIfaceCard,
-            NetworkInterfaceCard hostOnlyIfaceCard) {
-      return NetworkSpec.builder()
-            .addNIC(hostOnlyIfaceCard)
-            .addNIC(natIfaceCard)
+
+   public NetworkInterfaceCard createHostOnlyNIC(long port) {
+      NetworkAdapter hostOnlyAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.HostOnly)
             .build();
+      // create new hostOnly interface if needed, otherwise use the one already
+      // there with dhcp enabled ...
+      String hostOnlyIfName = getHostOnlyIfOrCreate();
+      return NetworkInterfaceCard.builder().addNetworkAdapter(hostOnlyAdapter).addHostInterfaceName(hostOnlyIfName)
+            .slot(port).build();
    }
 
-   public String getHostOnlyIfOrCreate() {     
+   public boolean enableNetworkInterface(NodeMetadata nodeMetadata, NetworkInterfaceCard networkInterfaceCard) {
+      ListenableFuture<ExecResponse> execEnableNetworkInterface = null;
+      execEnableNetworkInterface = machineUtils.runScriptOnNode(nodeMetadata, new EnableNetworkInterface(
+            networkInterfaceCard), RunScriptOptions.NONE);
+      ExecResponse execEnableNetworkInterfaceResponse = Futures.getUnchecked(execEnableNetworkInterface);
+      return execEnableNetworkInterfaceResponse.getExitStatus() == 0;
+   }
+
+   private NetworkSpec createNetworkSpecForHostOnlyNATNICs(NetworkInterfaceCard natIfaceCard,
+         NetworkInterfaceCard hostOnlyIfaceCard) {
+      return NetworkSpec.builder().addNIC(hostOnlyIfaceCard).addNIC(natIfaceCard).build();
+   }
+
+   public String getHostOnlyIfOrCreate() {
       IHostNetworkInterface availableHostInterfaceIf = returnExistingHostNetworkInterfaceWithDHCPenabledOrNull(manager
-               .get().getVBox().getHost().getNetworkInterfaces());
-      if (availableHostInterfaceIf==null) {
+            .get().getVBox().getHost().getNetworkInterfaces());
+      if (availableHostInterfaceIf == null) {
          final String hostOnlyIfName = createHostOnlyIf();
          assignDHCPtoHostOnlyInterface(hostOnlyIfName);
          return hostOnlyIfName;
@@ -168,17 +156,17 @@ public class NetworkUtils {
    }
 
    private void assignDHCPtoHostOnlyInterface(final String hostOnlyIfName) {
-      List<IHostNetworkInterface> availableNetworkInterfaces = manager.get().getVBox().getHost()
-               .getNetworkInterfaces();
-      
-      IHostNetworkInterface iHostNetworkInterfaceWithHostOnlyIfName = Iterables.getOnlyElement(Iterables.filter(availableNetworkInterfaces, new Predicate<IHostNetworkInterface>() {
+      List<IHostNetworkInterface> availableNetworkInterfaces = manager.get().getVBox().getHost().getNetworkInterfaces();
 
-         @Override
-         public boolean apply(IHostNetworkInterface iHostNetworkInterface) {
-            return iHostNetworkInterface.getName().equals(hostOnlyIfName);
-         }
-      }));
-      
+      IHostNetworkInterface iHostNetworkInterfaceWithHostOnlyIfName = Iterables.getOnlyElement(Iterables.filter(
+            availableNetworkInterfaces, new Predicate<IHostNetworkInterface>() {
+
+               @Override
+               public boolean apply(IHostNetworkInterface iHostNetworkInterface) {
+                  return iHostNetworkInterface.getName().equals(hostOnlyIfName);
+               }
+            }));
+
       String hostOnlyIfIpAddress = iHostNetworkInterfaceWithHostOnlyIfName.getIPAddress();
       String dhcpIpAddress = hostOnlyIfIpAddress.substring(0, hostOnlyIfIpAddress.lastIndexOf(".")) + ".254";
       String dhcpNetmask = "255.255.255.0";
@@ -187,152 +175,135 @@ public class NetworkUtils {
       NodeMetadata hostNodeMetadata = getHostNodeMetadata();
 
       ExecResponse response = scriptRunnerFactory
-               .create(hostNodeMetadata,
-                        Statements.exec(String
-                                 .format("VBoxManage dhcpserver add --ifname %s --ip %s --netmask %s --lowerip %s --upperip %s --enable",
-                                          hostOnlyIfName, dhcpIpAddress, dhcpNetmask, dhcpLowerIp, dhcpUpperIp)), runAsRoot(false).wrapInInitScript(false)).init().call();
-      checkState(response.getExitStatus()==0);
+            .create(
+                  hostNodeMetadata,
+                  Statements.exec(String
+                        .format(
+                              "VBoxManage dhcpserver add --ifname %s --ip %s --netmask %s --lowerip %s --upperip %s --enable",
+                              hostOnlyIfName, dhcpIpAddress, dhcpNetmask, dhcpLowerIp, dhcpUpperIp)),
+                  runAsRoot(false).wrapInInitScript(false)).init().call();
+      checkState(response.getExitStatus() == 0);
    }
 
    private String createHostOnlyIf() {
-      final String hostOnlyIfName;
       NodeMetadata hostNodeMetadata = getHostNodeMetadata();
       ExecResponse createHostOnlyResponse = scriptRunnerFactory
-               .create(hostNodeMetadata, Statements.exec("VBoxManage hostonlyif create"),
-                        runAsRoot(false).wrapInInitScript(false)).init().call();
+            .create(hostNodeMetadata, Statements.exec("VBoxManage hostonlyif create"),
+                  runAsRoot(false).wrapInInitScript(false)).init().call();
       String output = createHostOnlyResponse.getOutput();
-      checkState(createHostOnlyResponse.getExitStatus()==0);
-      checkState(output.contains("'"), "cannot create hostonlyif");
-      hostOnlyIfName = output.substring(output.indexOf("'") + 1, output.lastIndexOf("'"));
-      return hostOnlyIfName;
+      checkState(createHostOnlyResponse.getExitStatus() == 0, "cannot create hostonly interface ");
+      checkState(output.contains("'"), "cannot create hostonly interface");
+      return output.substring(output.indexOf("'") + 1, output.lastIndexOf("'"));
    }
 
    private NodeMetadata getHostNodeMetadata() {
-      NodeMetadata hostNodeMetadata = NodeMetadataBuilder
-            .fromNodeMetadata(host.get())
-            .publicAddresses(
-                  ImmutableList.of(providerSupplier.get().getHost()))
-            .build();
-      return hostNodeMetadata;
+      return NodeMetadataBuilder.fromNodeMetadata(host.get())
+            .publicAddresses(ImmutableList.of(providerSupplier.get().getHost())).build();
    }
 
-   private IHostNetworkInterface returnExistingHostNetworkInterfaceWithDHCPenabledOrNull(Iterable<IHostNetworkInterface> availableNetworkInterfaces) {
+   private IHostNetworkInterface returnExistingHostNetworkInterfaceWithDHCPenabledOrNull(
+         Iterable<IHostNetworkInterface> availableNetworkInterfaces) {
       checkNotNull(availableNetworkInterfaces);
-      return Iterables.getFirst(filterAvailableNetworkInterfaceByHostOnlyAndDHCPenabled(availableNetworkInterfaces), null);
+      return Iterables.getFirst(filterAvailableNetworkInterfaceByHostOnlyAndDHCPenabled(availableNetworkInterfaces),
+            null);
    }
 
    /**
-    * @param availableNetworkInterfaces 
+    * @param availableNetworkInterfaces
     * @param hostOnlyIfIpAddress
     * @return
     */
-   private Iterable<IHostNetworkInterface> filterAvailableNetworkInterfaceByHostOnlyAndDHCPenabled(Iterable<IHostNetworkInterface> availableNetworkInterfaces) {
-      Iterable<IHostNetworkInterface> filteredNetworkInterfaces = Iterables.filter(availableNetworkInterfaces, new Predicate<IHostNetworkInterface>() {
-         @Override
-         public boolean apply(IHostNetworkInterface iHostNetworkInterface) {
-            // this is an horrible workaround cause iHostNetworkInterface.getDhcpEnabled is working only for windows host
-            boolean match = false;
-            List<IDHCPServer> availableDHCPservers = manager.get().getVBox().getDHCPServers();
-            for (IDHCPServer idhcpServer : availableDHCPservers) {
-               if(idhcpServer.getEnabled() && idhcpServer.getNetworkName().equals(iHostNetworkInterface.getNetworkName()))
-                  match  = true;
-            }
-            return iHostNetworkInterface.getInterfaceType().equals(HostNetworkInterfaceType.HostOnly) &&
-                    match;
-            }
-      });
+   private Iterable<IHostNetworkInterface> filterAvailableNetworkInterfaceByHostOnlyAndDHCPenabled(
+         Iterable<IHostNetworkInterface> availableNetworkInterfaces) {
+      Iterable<IHostNetworkInterface> filteredNetworkInterfaces = Iterables.filter(availableNetworkInterfaces,
+            new Predicate<IHostNetworkInterface>() {
+               @Override
+               public boolean apply(IHostNetworkInterface iHostNetworkInterface) {
+                  // this is an horrible workaround cause
+                  // iHostNetworkInterface.getDhcpEnabled is working only for
+                  // windows host
+                  boolean match = false;
+                  List<IDHCPServer> availableDHCPservers = manager.get().getVBox().getDHCPServers();
+                  for (IDHCPServer idhcpServer : availableDHCPservers) {
+                     if (idhcpServer.getEnabled()
+                           && idhcpServer.getNetworkName().equals(iHostNetworkInterface.getNetworkName()))
+                        match = true;
+                  }
+                  return iHostNetworkInterface.getInterfaceType().equals(HostNetworkInterfaceType.HostOnly) && match;
+               }
+            });
       return filteredNetworkInterfaces;
    }
 
-   
-   public String getIpAddressFromNicSlot(String machineNameOrId, long nicSlot) {
-      MachineNameOrIdAndNicSlot machineNameOrIdAndNicSlot = 
-            MachineNameOrIdAndNicSlot.fromParts(machineNameOrId, nicSlot);
-      logger.debug("Looking for an available IP address for %s at slot %s ...", 
-            machineNameOrIdAndNicSlot.getMachineNameOrId(),
-            machineNameOrIdAndNicSlot.getSlotText());
-      try {
-         String ipAddress = ipAddressesLoadingCache.get(machineNameOrIdAndNicSlot);
-         while(!isValidIpForHostOnly(machineNameOrIdAndNicSlot, ipAddress)) {
+   public String getValidHostOnlyIpFromVm(String machineNameOrId) {
+      long nicSlot = 0;
+      String ipAddress = "";
+      while (nicSlot < 4 && ipAddress.isEmpty()) {
+         MachineNameOrIdAndNicSlot machineNameOrIdAndNicSlot = MachineNameOrIdAndNicSlot.fromParts(machineNameOrId,
+               nicSlot);
+         ipAddress = getIpAddressFromNicSlot(machineNameOrIdAndNicSlot);
+         if (!isValidIpForHostOnly(machineNameOrIdAndNicSlot, ipAddress)) {
             ipAddressesLoadingCache.invalidate(machineNameOrIdAndNicSlot);
-            ipAddress = ipAddressesLoadingCache.get(machineNameOrIdAndNicSlot);
+            ipAddress = "";
          }
-         logger.debug("Found an available IP address %s for guest: %s at slot: %s",
-               ipAddress,
-               machineNameOrIdAndNicSlot.getMachineNameOrId(),
-               machineNameOrIdAndNicSlot.getSlotText());
-         return ipAddress;
+         nicSlot++;
+      }
+      return checkNotNull(Strings.emptyToNull(ipAddress),
+            String.format("Cannot find a valid IP address for the %s's HostOnly NIC", machineNameOrId));
+   }
+
+   public String getIpAddressFromNicSlot(String machineNameOrId, long nicSlot) {
+      MachineNameOrIdAndNicSlot machineNameOrIdAndNicSlot = MachineNameOrIdAndNicSlot.fromParts(machineNameOrId,
+            nicSlot);
+      return getIpAddressFromNicSlot(machineNameOrIdAndNicSlot);
+   }
+
+   public String getIpAddressFromNicSlot(MachineNameOrIdAndNicSlot machineNameOrIdAndNicSlot) {
+      try {
+         return ipAddressesLoadingCache.get(machineNameOrIdAndNicSlot);
       } catch (ExecutionException e) {
          logger.error("Problem in using the ipAddressCache", e.getCause());
          throw Throwables.propagate(e);
       }
    }
- 
+
+   public boolean isValidIpForHostOnly(MachineNameOrIdAndNicSlot machineNameOrIdAndNicSlot, String ip) {
+      return !ip.isEmpty() && isIpv4(ip) && !ipBelongsToNatRange(ip) && !ipEqualsToNatGateway(ip);
+   }
+
    public static boolean isIpv4(String s) {
-      String IP_V4_ADDRESS_PATTERN = "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
-            + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
-            + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
+      String IP_V4_ADDRESS_PATTERN = "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
+            + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
       Pattern pattern = Pattern.compile(IP_V4_ADDRESS_PATTERN);
       Matcher matcher = pattern.matcher(s);
       return matcher.matches();
    }
-   
-   public boolean isValidIpForHostOnly(MachineNameOrIdAndNicSlot machineNameOrIdAndNicSlot, String ip) {
-      final String vmNameOrId = machineNameOrIdAndNicSlot.getMachineNameOrId();
-      IMachine machine = manager.get().getVBox().findMachine(vmNameOrId);
-      long slot = machineNameOrIdAndNicSlot.getSlot();
-      
-      if(ip.equals(VIRTUALBOX_HOST_GATEWAY) || !isValidHostOnlyIpAddress(ip, slot, machine)) {
-         // restart vm
-         logger.debug("reset node (%s) to refresh guest properties.", vmNameOrId);
-         machineUtils.lockSessionOnMachineAndApply(vmNameOrId, LockType.Shared,
-               new Function<ISession, Void>() {
-                  @Override
-                  public Void apply(ISession session) {
-                     session.getConsole().reset();
-                     long time = 15;
-                     logger.debug("Waiting %s secs for the reset of (%s) ...", time, vmNameOrId);
-                     Uninterruptibles.sleepUninterruptibly(time, TimeUnit.SECONDS);
-                     return null;
-                  }
-               });
-         return false;
-      }
-      return true;
-   }
 
-   public static  boolean isValidHostOnlyIpAddress(String ip, long slot,
-         IMachine machine) {
-      boolean result = isIpv4(ip) && machine.getNetworkAdapter(slot).getAttachmentType().equals(NetworkAttachmentType.HostOnly)
-            && !ipBelongsToNatRange(ip);
-      return result;
+   private static boolean ipEqualsToNatGateway(String ip) {
+      return ip.equals(VIRTUALBOX_HOST_GATEWAY);
    }
 
    private static boolean ipBelongsToNatRange(String ip) {
       return ip.startsWith("10.0.3");
    }
-   
-   protected String getIpAddressFromBridgedNIC(INetworkAdapter networkAdapter,
-         String network) {
+
+   protected String getIpAddressFromBridgedNIC(INetworkAdapter networkAdapter, String network) {
       // RetrieveActiveBridgedInterfaces
-      List<BridgedIf> activeBridgedInterfaces = new RetrieveActiveBridgedInterfaces(scriptRunnerFactory).apply(hostSupplier.get());
+      List<BridgedIf> activeBridgedInterfaces = new RetrieveActiveBridgedInterfaces(scriptRunnerFactory)
+            .apply(hostSupplier.get());
       BridgedIf activeBridgedIf = checkNotNull(Iterables.get(activeBridgedInterfaces, 0), "activeBridgedInterfaces");
       network = activeBridgedIf.getIpAddress();
-      
+
       // scan ip
-      RunScriptOnNode ipScanRunScript = scriptRunnerFactory.create(
-            hostSupplier.get(), new ScanNetworkWithPing(network),
-            RunScriptOptions.NONE);
+      RunScriptOnNode ipScanRunScript = scriptRunnerFactory.create(hostSupplier.get(),
+            new ScanNetworkWithPing(network), RunScriptOptions.NONE);
       ExecResponse execResponse = ipScanRunScript.init().call();
       checkState(execResponse.getExitStatus() == 0);
 
       // retrieve ip from mac
-      RunScriptOnNode getIpFromMACAddressRunScript = scriptRunnerFactory
-            .create(hostSupplier.get(), new GetIPAddressFromMAC(
-                  networkAdapter.getMACAddress()),
-                  RunScriptOptions.NONE);
-      ExecResponse ipExecResponse = getIpFromMACAddressRunScript.init()
-            .call();
+      RunScriptOnNode getIpFromMACAddressRunScript = scriptRunnerFactory.create(hostSupplier.get(),
+            new GetIPAddressFromMAC(networkAdapter.getMACAddress()), RunScriptOptions.NONE);
+      ExecResponse ipExecResponse = getIpFromMACAddressRunScript.init().call();
       checkState(ipExecResponse.getExitStatus() == 0);
       return checkNotNull(ipExecResponse.getOutput(), "ipAddress");
    }

@@ -47,6 +47,7 @@ import com.google.common.collect.Iterables;
 @Test(groups = "live", singleThreaded = true, testName = "PreseedCfgServerTest")
 public class PreseedCfgServerTest {
    private static final String lineSeparator = System.getProperty("line.separator");
+
    @Test
    public void testJettyServerServesPreseedFile() throws Exception {
       Properties props = VirtualBoxApiMetadata.defaultProperties();

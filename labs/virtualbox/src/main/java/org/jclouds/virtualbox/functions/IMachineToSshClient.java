@@ -18,7 +18,6 @@
  */
 package org.jclouds.virtualbox.functions;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.GUEST_OS_PASSWORD;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.GUEST_OS_USER;
 
@@ -31,12 +30,13 @@ import org.jclouds.domain.LoginCredentials;
 import org.jclouds.logging.Logger;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.virtualbox.util.NetworkUtils;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.INetworkAdapter;
-import org.virtualbox_4_1.NetworkAttachmentType;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.INetworkAdapter;
+import org.virtualbox_4_2.NetworkAttachmentType;
 
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.net.HostAndPort;
 import com.google.inject.Inject;
@@ -44,65 +44,55 @@ import com.google.inject.Inject;
 @Singleton
 public class IMachineToSshClient implements Function<IMachine, SshClient> {
 
-	@Resource
-	@Named(ComputeServiceConstants.COMPUTE_LOGGER)
-	protected Logger logger = Logger.NULL;
+   @Resource
+   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
+   protected Logger logger = Logger.NULL;
 
-	private final SshClient.Factory sshClientFactory;
-	private final NetworkUtils networkUtils;
-	
-	@Inject
-	public IMachineToSshClient(SshClient.Factory sshClientFactory,
-	      NetworkUtils networkUtils) {
-		this.sshClientFactory = sshClientFactory;
-		this.networkUtils = networkUtils;
-	}
+   private final SshClient.Factory sshClientFactory;
+   private final NetworkUtils networkUtils;
 
-	@Override
+   @Inject
+   public IMachineToSshClient(SshClient.Factory sshClientFactory, NetworkUtils networkUtils) {
+      this.sshClientFactory = sshClientFactory;
+      this.networkUtils = networkUtils;
+   }
+
+   @Override
    public SshClient apply(final IMachine vm) {
-      INetworkAdapter networkAdapter = vm.getNetworkAdapter(0L);
-
-      SshClient client = null;
-      checkNotNull(networkAdapter);
-
-      String clientIpAddress = null;
       String sshPort = "22";
       String guestIdentity = vm.getExtraData(GUEST_OS_USER);
       String guestCredential = vm.getExtraData(GUEST_OS_PASSWORD);
-
-      LoginCredentials loginCredentials = LoginCredentials.builder()
-            .user(guestIdentity).password(guestCredential)
+      LoginCredentials loginCredentials = LoginCredentials.builder().user(guestIdentity).password(guestCredential)
             .authenticateSudo(true).build();
 
-		if (networkAdapter.getAttachmentType()
-				.equals(NetworkAttachmentType.NAT)) {
-			for (String nameProtocolnumberAddressInboundPortGuestTargetport : networkAdapter
-					.getNatDriver().getRedirects()) {
-				Iterable<String> stuff = Splitter.on(',').split(
-						nameProtocolnumberAddressInboundPortGuestTargetport);
-				String protocolNumber = Iterables.get(stuff, 1);
-				String hostAddress = Iterables.get(stuff, 2);
-				String inboundPort = Iterables.get(stuff, 3);
-				String targetPort = Iterables.get(stuff, 5);
-				if ("1".equals(protocolNumber) && "22".equals(targetPort)) {
-					clientIpAddress = hostAddress;
-					sshPort = inboundPort;
-				}
-			}
-		} else if (networkAdapter.getAttachmentType().equals(
-				NetworkAttachmentType.Bridged)) {
-			clientIpAddress = networkUtils.getIpAddressFromNicSlot(vm.getName(), networkAdapter.getSlot());
-		} else if (networkAdapter.getAttachmentType().equals(
-                        NetworkAttachmentType.HostOnly)) {
-	             clientIpAddress = networkUtils.getIpAddressFromNicSlot(vm.getName(), networkAdapter.getSlot());
-		}
-		
-		checkNotNull(clientIpAddress, "clientIpAddress");
-		client = sshClientFactory.create(
-				HostAndPort.fromParts(clientIpAddress, Integer.parseInt(sshPort)),
-				loginCredentials);
-		checkNotNull(client);
-		return client;
-	}
+      String clientIpAddress = null;
+
+      long nicSlot = 0;
+      while (nicSlot < 4 && Strings.isNullOrEmpty(clientIpAddress)) {
+         INetworkAdapter networkAdapter = vm.getNetworkAdapter(nicSlot);
+
+         if (networkAdapter.getAttachmentType().equals(NetworkAttachmentType.NAT)) {
+            for (String nameProtocolnumberAddressInboudportGuestTargetport : networkAdapter.getNATEngine()
+                  .getRedirects()) {
+               Iterable<String> stuff = Splitter.on(',').split(nameProtocolnumberAddressInboudportGuestTargetport);
+               String protocolNumber = Iterables.get(stuff, 1);
+               String hostAddress = Iterables.get(stuff, 2);
+               String inboundPort = Iterables.get(stuff, 3);
+               String targetPort = Iterables.get(stuff, 5);
+               if ("1".equals(protocolNumber) && "22".equals(targetPort)) {
+                  clientIpAddress = hostAddress;
+                  sshPort = inboundPort;
+               }
+            }
+         } else if (networkAdapter.getAttachmentType().equals(NetworkAttachmentType.Bridged)) {
+            clientIpAddress = networkUtils.getIpAddressFromNicSlot(vm.getName(), networkAdapter.getSlot());
+         } else if (networkAdapter.getAttachmentType().equals(NetworkAttachmentType.HostOnly)) {
+            clientIpAddress = networkUtils.getValidHostOnlyIpFromVm(vm.getName());
+         }
+         nicSlot++;
+      }
+      return sshClientFactory.create(HostAndPort.fromParts(clientIpAddress, Integer.parseInt(sshPort)),
+            loginCredentials);
+   }
 
 }

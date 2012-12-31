@@ -52,13 +52,13 @@ import org.jclouds.virtualbox.statements.DeleteGShadowLock;
 import org.jclouds.virtualbox.util.MachineController;
 import org.jclouds.virtualbox.util.MachineUtils;
 import org.jclouds.virtualbox.util.NetworkUtils;
-import org.virtualbox_4_1.CleanupMode;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.IProgress;
-import org.virtualbox_4_1.ISession;
-import org.virtualbox_4_1.LockType;
-import org.virtualbox_4_1.NetworkAttachmentType;
-import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_2.CleanupMode;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.IProgress;
+import org.virtualbox_4_2.ISession;
+import org.virtualbox_4_2.LockType;
+import org.virtualbox_4_2.NetworkAttachmentType;
+import org.virtualbox_4_2.VirtualBoxManager;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
@@ -118,7 +118,7 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
          } catch (Exception e) {
             throw new RuntimeException("error opening vbox machine session: " + e.getMessage(), e);
          }
-         logger.debug("Deleted an existing snapshot from %s", master.getMachine().getName());
+         logger.debug("<< deleted an existing snapshot of vm(%s)", master.getMachine().getName());
       }
       String masterNameWithoutPrefix = master.getMachine().getName().replace(VIRTUALBOX_IMAGE_PREFIX, "");
       String cloneName = VIRTUALBOX_NODE_PREFIX + masterNameWithoutPrefix + VIRTUALBOX_NODE_NAME_SEPARATOR
@@ -148,8 +148,8 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
       CloneSpec cloneSpec = CloneSpec.builder().linked(true).master(master.getMachine()).network(networkSpec)
                .vm(cloneVmSpec).build();
 
-      logger.debug("Cloning a new guest an existing snapshot from %s ...", master.getMachine().getName());
       IMachine cloned = cloner.apply(cloneSpec);
+      logger.debug("<< cloned a vm(%s) from master(%s)", cloneName, master.getMachine().getName());
       machineController.ensureMachineIsLaunched(cloneVmSpec.getVmName());
       
       // IMachineToNodeMetadata produces the final ip's but these need to be set before so we build a
@@ -161,7 +161,7 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
 
       if(optionalNatIfaceCard.isPresent())
          checkState(networkUtils.enableNetworkInterface(partialNodeMetadata, optionalNatIfaceCard.get()),
-         "cannot enable Nat Interface");
+         "cannot enable NAT Interface on vm(%s)", cloneName);
       
       LoginCredentials credentials = partialNodeMetadata.getCredentials();
       return new NodeAndInitialCredentials<IMachine>(cloned,
@@ -185,8 +185,10 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
       long slot = -1;
       long i = 0;
       while (slot == -1 && i < 4) {
-         if(clone.getNetworkAdapter(i).getAttachmentType().equals(networkAttachmentType))
+         if(clone.getNetworkAdapter(i).getAttachmentType().equals(networkAttachmentType)) {
             slot = i;
+            break;
+         }
          i++;
       }
       checkState(slot!=-1);

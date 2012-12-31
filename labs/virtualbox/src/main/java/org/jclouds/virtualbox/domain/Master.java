@@ -19,7 +19,7 @@
 
 package org.jclouds.virtualbox.domain;
 
-import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_2.IMachine;
 
 public class Master {
 

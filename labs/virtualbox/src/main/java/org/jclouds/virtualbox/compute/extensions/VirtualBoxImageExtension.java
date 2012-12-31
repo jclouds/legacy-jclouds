@@ -47,17 +47,18 @@ import org.jclouds.virtualbox.functions.IMachineToVmSpec;
 import org.jclouds.virtualbox.functions.TakeSnapshotIfNotAlreadyAttached;
 import org.jclouds.virtualbox.functions.admin.UnregisterMachineIfExistsAndDeleteItsMedia;
 import org.jclouds.virtualbox.util.MachineUtils;
-import org.virtualbox_4_1.CloneMode;
-import org.virtualbox_4_1.CloneOptions;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.IProgress;
-import org.virtualbox_4_1.ISnapshot;
-import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_2.CloneMode;
+import org.virtualbox_4_2.CloneOptions;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.IProgress;
+import org.virtualbox_4_2.ISnapshot;
+import org.virtualbox_4_2.VirtualBoxManager;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.Futures;
@@ -118,9 +119,12 @@ public class VirtualBoxImageExtension implements ImageExtension {
 
       IMachine source = manager.get().getVBox().findMachine(cloneTemplate.getSourceNodeId());
 
-      String settingsFile = manager.get().getVBox().composeMachineFilename(template.getName(), workingDir);
+      String flags = "";
+      List<String> groups = ImmutableList.of();
+      String group = "";
+      String settingsFile = manager.get().getVBox().composeMachineFilename(template.getName(), group , flags , workingDir);
       IMachine clonedMachine = manager.get().getVBox()
-               .createMachine(settingsFile, template.getName(), source.getOSTypeId(), template.getName(), true);
+               .createMachine(settingsFile, template.getName(), groups, source.getOSTypeId(), flags);
 
       List<CloneOptions> options = Lists.newArrayList();
       if (isLinkedClone)
@@ -136,7 +140,7 @@ public class VirtualBoxImageExtension implements ImageExtension {
       IProgress progress = currentSnapshot.getMachine().cloneTo(clonedMachine, CloneMode.MachineState, options);
       progress.waitForCompletion(-1);
 
-      logger.debug(String.format("Machine %s is cloned correctly", clonedMachine.getName()));
+      logger.debug(String.format("<< master(%s) is cloned correctly to vm(%s)", source.getName(), clonedMachine.getName()));
 
       // registering
       manager.get().getVBox().registerMachine(clonedMachine);

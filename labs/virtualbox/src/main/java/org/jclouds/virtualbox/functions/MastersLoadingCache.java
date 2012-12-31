@@ -69,23 +69,27 @@ import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.domain.YamlImage;
 import org.jclouds.virtualbox.functions.admin.PreseedCfgServer;
 import org.jclouds.virtualbox.predicates.RetryIfSocketNotYetOpen;
+import org.jclouds.virtualbox.statements.Md5;
 import org.jclouds.virtualbox.util.NetworkUtils;
-import org.virtualbox_4_1.CleanupMode;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.NetworkAttachmentType;
-import org.virtualbox_4_1.StorageBus;
-import org.virtualbox_4_1.VBoxException;
-import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_2.CleanupMode;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.NetworkAttachmentType;
+import org.virtualbox_4_2.StorageBus;
+import org.virtualbox_4_2.VBoxException;
+import org.virtualbox_4_2.VirtualBoxManager;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.cache.AbstractLoadingCache;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.net.HostAndPort;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * A {@link LoadingCache} for masters. If the requested master has been
@@ -100,218 +104,181 @@ import com.google.common.net.HostAndPort;
 @Singleton
 public class MastersLoadingCache extends AbstractLoadingCache<Image, Master> {
 
-	@Resource
-	@Named(ComputeServiceConstants.COMPUTE_LOGGER)
-	protected Logger logger = Logger.NULL;
+   @Resource
+   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
+   protected Logger logger = Logger.NULL;
 
-	private final Map<String, Master> masters = Maps.newHashMap();
-	private final Function<MasterSpec, IMachine> masterCreatorAndInstaller;
-	private final Map<String, YamlImage> imageMapping;
-	private final String workingDir;
-	private final String installationKeySequence;
-	private final String isosDir;
-	private final Supplier<VirtualBoxManager> manager;
-	private final String version;
-	private final String preconfigurationUrl;
+   private final Map<String, Master> masters = Maps.newHashMap();
+   private final Function<MasterSpec, IMachine> masterCreatorAndInstaller;
+   private final Map<String, YamlImage> imageMapping;
+   private final String workingDir;
+   private final String installationKeySequence;
+   private final String isosDir;
+   private final Supplier<VirtualBoxManager> manager;
+   private final String version;
+   private final String preconfigurationUrl;
 
-	private final Factory runScriptOnNodeFactory;
-	private final RetryIfSocketNotYetOpen socketTester;
-	private final Supplier<NodeMetadata> host;
-	private final Supplier<URI> providerSupplier;
+   private final Factory runScriptOnNodeFactory;
+   private final RetryIfSocketNotYetOpen socketTester;
+   private final Supplier<NodeMetadata> host;
+   private final Supplier<URI> providerSupplier;
    private final HardcodedHostToHostNodeMetadata hardcodedHostToHostNodeMetadata;
 
-	@Inject
-	public MastersLoadingCache(
-			@BuildVersion String version,
-			@Named(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE) String installationKeySequence,
-			@Named(VIRTUALBOX_PRECONFIGURATION_URL) String preconfigurationUrl,
-			@Named(VIRTUALBOX_WORKINGDIR) String workingDir,
-			Function<MasterSpec, IMachine> masterLoader,
-			Supplier<Map<Image, YamlImage>> yamlMapper,
-			Supplier<VirtualBoxManager> manager,
-			Factory runScriptOnNodeFactory,
-			RetryIfSocketNotYetOpen socketTester, Supplier<NodeMetadata> host,
-			@Provider Supplier<URI> providerSupplier,
-			HardcodedHostToHostNodeMetadata hardcodedHostToHostNodeMetadata) {
-		checkNotNull(version, "version");
-		checkNotNull(installationKeySequence, "installationKeySequence");
-		checkNotNull(manager, "vboxmanager");
-		this.manager = manager;
-		this.masterCreatorAndInstaller = masterLoader;
-		this.installationKeySequence = installationKeySequence;
-		this.workingDir = workingDir == null ? VIRTUALBOX_DEFAULT_DIR
-				: workingDir;
-		this.isosDir = workingDir + File.separator + "isos";
-		this.imageMapping = Maps.newLinkedHashMap();
-		for (Entry<Image, YamlImage> entry : yamlMapper.get().entrySet()) {
-			this.imageMapping.put(entry.getKey().getId(), entry.getValue());
-		}
-		this.version = Iterables.get(Splitter.on('r').split(version), 0);
-		this.preconfigurationUrl = preconfigurationUrl;
+   @Inject
+   public MastersLoadingCache(@BuildVersion String version,
+         @Named(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE) String installationKeySequence,
+         @Named(VIRTUALBOX_PRECONFIGURATION_URL) String preconfigurationUrl,
+         @Named(VIRTUALBOX_WORKINGDIR) String workingDir, Function<MasterSpec, IMachine> masterLoader,
+         Supplier<Map<Image, YamlImage>> yamlMapper, Supplier<VirtualBoxManager> manager,
+         Factory runScriptOnNodeFactory, RetryIfSocketNotYetOpen socketTester, Supplier<NodeMetadata> host,
+         @Provider Supplier<URI> providerSupplier, HardcodedHostToHostNodeMetadata hardcodedHostToHostNodeMetadata) {
+      this.manager = checkNotNull(manager, "vboxmanager can't be null");
+      this.masterCreatorAndInstaller = masterLoader;
+      this.installationKeySequence = checkNotNull(installationKeySequence, "installationKeySequence can't be null");
+      this.workingDir = workingDir == null ? VIRTUALBOX_DEFAULT_DIR : workingDir;
+      this.isosDir = workingDir + File.separator + "isos";
+      this.imageMapping = Maps.newLinkedHashMap();
+      for (Entry<Image, YamlImage> entry : yamlMapper.get().entrySet()) {
+         this.imageMapping.put(entry.getKey().getId(), entry.getValue());
+      }
+      this.version = Iterables.get(Splitter.on('r').split(checkNotNull(version, "version")), 0);
+      this.preconfigurationUrl = preconfigurationUrl;
 
-		this.runScriptOnNodeFactory = checkNotNull(runScriptOnNodeFactory,
-				"runScriptOnNodeFactory");
-		this.socketTester = checkNotNull(socketTester, "socketTester");
-		this.socketTester.seconds(3L);
-		this.host = checkNotNull(host, "host");
-		this.providerSupplier = checkNotNull(providerSupplier,
-				"endpoint to virtualbox websrvd is needed");
-		this.hardcodedHostToHostNodeMetadata = hardcodedHostToHostNodeMetadata;
-	}
+      this.runScriptOnNodeFactory = checkNotNull(runScriptOnNodeFactory, "runScriptOnNodeFactory");
+      this.socketTester = checkNotNull(socketTester, "socketTester");
+      this.socketTester.seconds(3L);
+      this.host = checkNotNull(host, "host");
+      this.providerSupplier = checkNotNull(providerSupplier, "endpoint to virtualbox websrvd is needed");
+      this.hardcodedHostToHostNodeMetadata = hardcodedHostToHostNodeMetadata;
+   }
 
-	@PostConstruct
-	public void createCacheDirStructure() {
-		if (!new File(workingDir).exists()) {
-			new File(workingDir, "isos").mkdirs();
-		}
-	}
+   @PostConstruct
+   public void createCacheDirStructure() {
+      if (!new File(workingDir).exists()) {
+         new File(workingDir, "isos").mkdirs();
+      }
+   }
 
-	@Override
-	public synchronized Master get(Image key) throws ExecutionException {
-		// check if we have loaded this machine before
-		if (masters.containsKey(key.getId())) {
-			return masters.get(key.getId());
-		}
-		checkState(!key.getId().contains(VIRTUALBOX_NODE_NAME_SEPARATOR),
-				"master image names cannot contain \""
-						+ VIRTUALBOX_NODE_NAME_SEPARATOR + "\"");
-		String vmName = VIRTUALBOX_IMAGE_PREFIX + key.getId();
-		IMachine masterMachine;
-		Master master;
-		// ready the preseed file server
-		PreseedCfgServer server = new PreseedCfgServer();
-		try {
-			// try and find a master machine in vbox
-			masterMachine = manager.get().getVBox().findMachine(vmName);
-			master = Master.builder().machine(masterMachine).build();
-		} catch (VBoxException e) {
-			if (machineNotFoundException(e)) {
-				// machine was not found try to build one from a yaml file
-				YamlImage currentImage = checkNotNull(imageMapping.get(key.getId()), "currentImage");
-				URI preseedServer;
+   @Override
+   public synchronized Master get(Image key) throws ExecutionException {
+      // check if we have loaded this machine before
+      if (masters.containsKey(key.getId())) {
+         return masters.get(key.getId());
+      }
+      checkState(!key.getId().contains(VIRTUALBOX_NODE_NAME_SEPARATOR), "master image names cannot contain \""
+            + VIRTUALBOX_NODE_NAME_SEPARATOR + "\"");
+      String vmName = VIRTUALBOX_IMAGE_PREFIX + key.getId();
+      IMachine masterMachine;
+      Master master;
+      // ready the preseed file server
+      PreseedCfgServer server = new PreseedCfgServer();
+      try {
+         // try and find a master machine in vbox
+         masterMachine = manager.get().getVBox().findMachine(vmName);
+         master = Master.builder().machine(masterMachine).build();
+      } catch (VBoxException e) {
+         if (machineNotFoundException(e)) {
+            // machine was not found try to build one from a yaml file
+            YamlImage currentImage = checkNotNull(imageMapping.get(key.getId()), "currentImage");
+            URI preseedServer;
             try {
                preseedServer = new URI(preconfigurationUrl);
-               if (!socketTester.apply(HostAndPort.fromParts(preseedServer.getHost(),
-                     preseedServer.getPort()))) {
+               if (!socketTester.apply(HostAndPort.fromParts(preseedServer.getHost(), preseedServer.getPort()))) {
                   server.start(preconfigurationUrl, currentImage.preseed_cfg);
                }
             } catch (URISyntaxException e1) {
                logger.error("Cannot start the preseed server", e);
                throw e;
             }
-				
-				MasterSpec masterSpec = buildMasterSpecFromYaml(currentImage,
-						vmName);
-				masterMachine = masterCreatorAndInstaller.apply(masterSpec);
-				master = Master.builder().machine(masterMachine)
-						.spec(masterSpec).build();
-			} else {
-			   logger.error("Problem during master creation", e);
-				throw e;
-			}
-		} finally {
-			server.stop();
-		}
 
-		masters.put(key.getId(), master);
-		return master;
-	}
+            MasterSpec masterSpec = buildMasterSpecFromYaml(currentImage, vmName);
+            masterMachine = masterCreatorAndInstaller.apply(masterSpec);
+            master = Master.builder().machine(masterMachine).spec(masterSpec).build();
+         } else {
+            logger.error("Problem during master creation", e);
+            throw e;
+         }
+      } finally {
+         server.stop();
+      }
 
-	private MasterSpec buildMasterSpecFromYaml(YamlImage currentImage,
-			String vmName) throws ExecutionException {
-		String guestAdditionsFileName = String.format(
-				"VBoxGuestAdditions_%s.iso", version);
-		String guestAdditionsIso = String.format("%s/%s", isosDir,
-				guestAdditionsFileName);
-		String guestAdditionsUri = "http://download.virtualbox.org/virtualbox/"
-				+ version + "/" + guestAdditionsFileName;
-		if (!new File(guestAdditionsIso).exists()) {
-			getFilePathOrDownload(guestAdditionsUri, null);
-		}
-		// check if the iso is here, download if not
-		String localIsoUrl = checkNotNull(getFilePathOrDownload(currentImage.iso, currentImage.iso_md5), "distro iso");
-		String adminDisk = workingDir + File.separator + vmName + ".vdi";
-		HardDisk hardDisk = HardDisk.builder().diskpath(adminDisk)
-				.autoDelete(true).controllerPort(0).deviceSlot(1).build();
+      masters.put(key.getId(), master);
+      return master;
+   }
 
-		StorageController ideController = StorageController.builder()
-				.name("IDE Controller").bus(StorageBus.IDE)
-				.attachISO(0, 0, localIsoUrl).attachHardDisk(hardDisk)
-				.attachISO(1, 0, guestAdditionsIso).build();
+   private MasterSpec buildMasterSpecFromYaml(YamlImage currentImage, String vmName) throws ExecutionException {
+      String guestAdditionsFileName = String.format("VBoxGuestAdditions_%s.iso", version);
+      String guestAdditionsIso = String.format("%s/%s", isosDir, guestAdditionsFileName);
+      String guestAdditionsUri = "http://download.virtualbox.org/virtualbox/" + version + "/" + guestAdditionsFileName;
+      if (!new File(guestAdditionsIso).exists()) {
+         getFilePathOrDownload(guestAdditionsUri, null);
+      }
+      // check if the iso is here, download if not
+      String localIsoUrl = checkNotNull(getFilePathOrDownload(currentImage.iso, currentImage.iso_md5), "distro iso");
+      String adminDisk = workingDir + File.separator + vmName + ".vdi";
+      HardDisk hardDisk = HardDisk.builder().diskpath(adminDisk).autoDelete(true).controllerPort(0).deviceSlot(1)
+            .build();
 
-      VmSpec vmSpecification = VmSpec.builder().id(currentImage.id)
-				.name(vmName).memoryMB(512).osTypeId(getOsTypeId(currentImage.os_family, currentImage.os_64bit))
-				.controller(ideController).forceOverwrite(true)
-				.guestUser(currentImage.username).guestPassword(currentImage.credential)
-				.cleanUpMode(CleanupMode.Full).build();
+      StorageController ideController = StorageController.builder().name("IDE Controller").bus(StorageBus.IDE)
+            .attachISO(0, 0, localIsoUrl).attachHardDisk(hardDisk).build();
 
-		NetworkAdapter networkAdapter = NetworkAdapter
-				.builder()
-				.networkAttachmentType(NetworkAttachmentType.NAT)
-				.tcpRedirectRule(providerSupplier.get().getHost(), NetworkUtils.MASTER_PORT,
-						"", 22).build();
+      VmSpec vmSpecification = VmSpec.builder().id(currentImage.id).name(vmName).memoryMB(512)
+            .osTypeId(getOsTypeId(currentImage.os_family, currentImage.os_64bit)).controller(ideController)
+            .forceOverwrite(true).guestUser(currentImage.username).guestPassword(currentImage.credential)
+            .cleanUpMode(CleanupMode.Full).build();
 
-		NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard
-				.builder().addNetworkAdapter(networkAdapter).slot(0L).build();
+      NetworkAdapter networkAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.NAT)
+            .tcpRedirectRule(providerSupplier.get().getHost(), NetworkUtils.MASTER_PORT, "", 22).build();
 
-		NetworkSpec networkSpec = NetworkSpec.builder()
-				.addNIC(networkInterfaceCard).build();
-      		
-		return MasterSpec
-				.builder()
-				.vm(vmSpecification)
-				.iso(IsoSpec
-						.builder()
-						.sourcePath(localIsoUrl)
-						.installationScript(
-								installationKeySequence.replace("HOSTNAME",
-										vmSpecification.getVmName())).build())
-				.network(networkSpec)
-				.credentials(new LoginCredentials(currentImage.username, currentImage.credential, null, true))
-				.build();
-	}
+      NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(networkAdapter)
+            .slot(0L).build();
+
+      NetworkSpec networkSpec = NetworkSpec.builder().addNIC(networkInterfaceCard).build();
+
+      return MasterSpec
+            .builder()
+            .vm(vmSpecification)
+            .iso(IsoSpec.builder().sourcePath(localIsoUrl)
+                  .installationScript(installationKeySequence.replace("HOSTNAME", vmSpecification.getVmName())).build())
+            .network(networkSpec)
+            .credentials(new LoginCredentials(currentImage.username, currentImage.credential, null, true)).build();
+   }
 
    @Override
-	public synchronized Master getIfPresent(Object key) {
-		checkArgument(key instanceof Image,
-				"this cache is for entries who's keys are Images");
-		Image image = Image.class.cast(key);
-		if (masters.containsKey(image.getId())) {
-			return masters.get(image.getId());
-		}
-		return null;
-	}
+   public synchronized Master getIfPresent(Object key) {
+      checkArgument(key instanceof Image, "this cache is for entries who's keys are Images");
+      Image image = Image.class.cast(key);
+      if (masters.containsKey(image.getId())) {
+         return masters.get(image.getId());
+      }
+      return null;
+   }
 
-   private String getFilePathOrDownload(String httpUrl, String md5)
-         throws ExecutionException {
-      String fileName = httpUrl.substring(httpUrl.lastIndexOf('/') + 1,
-            httpUrl.length());
+   private String getFilePathOrDownload(String httpUrl, String expectedMd5) throws ExecutionException {
+      String fileName = httpUrl.substring(httpUrl.lastIndexOf('/') + 1, httpUrl.length());
       URI provider = providerSupplier.get();
-      if (!socketTester.apply(HostAndPort.fromParts(provider.getHost(),
-            provider.getPort()))) {
+      if (!socketTester.apply(HostAndPort.fromParts(provider.getHost(), provider.getPort()))) {
          throw new RuntimeException("could not connect to virtualbox");
       }
       File file = new File(isosDir, fileName);
-      List<Statement> statements = Lists.newArrayList();
-      statements.add(Statements.saveHttpResponseTo(URI.create(httpUrl),
-            isosDir, fileName));
+      List<Statement> statements = new ImmutableList.Builder<Statement>().add(
+            Statements.saveHttpResponseTo(URI.create(httpUrl), isosDir, fileName)).build();
       StatementList statementList = new StatementList(statements);
-      NodeMetadata hostNodeMetadata = hardcodedHostToHostNodeMetadata
-            .apply(host.get());
-      runScriptOnNodeFactory
-            .create(hostNodeMetadata, statementList, runAsRoot(false)).init()
-            .call();
+      NodeMetadata hostNodeMetadata = hardcodedHostToHostNodeMetadata.apply(host.get());
+      ListenableFuture<ExecResponse> future = runScriptOnNodeFactory.submit(hostNodeMetadata, statementList,
+            runAsRoot(false));
+      Futures.getUnchecked(future);
 
-      ExecResponse response = runScriptOnNodeFactory
-            .create(
-                  hostNodeMetadata,
-                  Statements.exec("md5 " + isosDir + File.separator + fileName),
-                  runAsRoot(false)).init().call();
-      if (md5 != null) {
-         if (!Iterables.get(
-               Splitter.on("=").trimResults().split(response.getOutput()), 1)
-               .equals(md5))
-            return null;
+      if (expectedMd5 != null) {
+         String filePath = isosDir + File.separator + fileName;
+         ListenableFuture<ExecResponse> md5future = runScriptOnNodeFactory.submit(hostNodeMetadata, new Md5(filePath),
+               runAsRoot(false));
+
+         ExecResponse responseMd5 = Futures.getUnchecked(md5future);
+         assert responseMd5.getExitStatus() == 0 : hostNodeMetadata.getId() + ": " + responseMd5;
+         checkNotNull(responseMd5.getOutput(), "iso_md5 missing");
+         String actualMd5 = responseMd5.getOutput().trim();
+         checkState(actualMd5.equals(expectedMd5), "md5 of %s is %s but expected %s", filePath, actualMd5, expectedMd5);
       }
       return file.getAbsolutePath();
    }

@@ -21,8 +21,8 @@ package org.jclouds.virtualbox.functions;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.jclouds.virtualbox.domain.StorageController;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.VBoxException;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.VBoxException;
 
 import com.google.common.base.Function;
 
@@ -35,7 +35,7 @@ public class AddIDEControllerIfNotExists implements Function<IMachine, Void> {
    private final StorageController storageController;
 
    public AddIDEControllerIfNotExists(StorageController storageController) {
-      this.storageController = checkNotNull(storageController, "storageController");
+      this.storageController = checkNotNull(storageController, "storageController can't be null");
    }
 
    @Override

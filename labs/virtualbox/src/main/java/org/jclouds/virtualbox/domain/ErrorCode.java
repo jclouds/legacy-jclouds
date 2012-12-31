@@ -21,8 +21,8 @@ package org.jclouds.virtualbox.domain;
 
 import java.util.Map;
 
-import org.virtualbox_4_1.VBoxException;
-import org.virtualbox_4_1.jaxws.RuntimeFaultMsg;
+import org.virtualbox_4_2.VBoxException;
+import org.virtualbox_4_2.jaxws.RuntimeFaultMsg;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -76,7 +76,7 @@ public enum ErrorCode {
       this.code = code;
    }
 
-   private static final Map<Long, ErrorCode> TABLE;
+   private final static Map<Long, ErrorCode> TABLE;
    static {
       ImmutableMap.Builder<Long, ErrorCode> builder = ImmutableMap.builder();
       for (ErrorCode errorCode : ErrorCode.values()) {

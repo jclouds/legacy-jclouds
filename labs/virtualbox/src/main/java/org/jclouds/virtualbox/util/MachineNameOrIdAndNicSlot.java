@@ -7,6 +7,7 @@ import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 
 
@@ -61,32 +62,19 @@ public final class MachineNameOrIdAndNicSlot {
     return new MachineNameOrIdAndNicSlot(checkNotNull(machineNameOrId, "machineNameOrId"), slot);
   }
 
-   public static MachineNameOrIdAndNicSlot fromString(
-         String machineNameOrIdAndNicSlotString) {
-      checkNotNull(machineNameOrIdAndNicSlotString);
-      String machineNameOrId = null;
-      String nicSlotString = null;
-
-      Iterable<String> splittedString = Splitter.on(SEPARATOR).split(
-            machineNameOrIdAndNicSlotString);
+   public static MachineNameOrIdAndNicSlot fromString(String machineNameOrIdAndNicSlotString) {
+      Iterable<String> splittedString = Splitter.on(SEPARATOR).split(machineNameOrIdAndNicSlotString);
       checkState(Iterables.size(splittedString) == 2);
-      machineNameOrId = Iterables.get(splittedString, 0);
-      nicSlotString = Iterables.get(splittedString, 1);
-
-      long slot = -1;
-      if (nicSlotString != null) {
-         checkArgument(!nicSlotString.startsWith("+"),
-               "Unparseable slot number: %s", nicSlotString);
-         try {
-            slot = Long.parseLong(nicSlotString);
-         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Unparseable slot number: "
-                  + nicSlotString);
-         }
-         checkArgument(isValidSlot(slot), "Slot number out of range: %s",
-               nicSlotString);
+      String machineNameOrId = Strings.nullToEmpty(Iterables.get(splittedString, 0));
+      String nicSlotString = Strings.nullToEmpty(Iterables.get(splittedString, 1));
+      checkArgument(!nicSlotString.startsWith("+"), "Unparseable slot number: %s", nicSlotString);
+      try {
+         long slot = Long.parseLong(nicSlotString);
+         checkArgument(isValidSlot(slot), "Slot number out of range: %s", nicSlotString);
+         return new MachineNameOrIdAndNicSlot(machineNameOrId, slot);
+      } catch (NumberFormatException e) {
+         throw new IllegalArgumentException("Unparseable slot number: " + nicSlotString);
       }
-      return new MachineNameOrIdAndNicSlot(machineNameOrId, slot);
    }
 
   public MachineNameOrIdAndNicSlot withDefaultSlot(int defaultSlot) {

@@ -66,5 +66,4 @@ public class StringToKeyCode implements Function<String, List<Integer>> {
    private boolean containsSpecialCharacter(String s) {
       return s.startsWith("<");
    }
-   
 }
