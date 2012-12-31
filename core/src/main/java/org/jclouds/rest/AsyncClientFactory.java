@@ -39,7 +39,7 @@ public class AsyncClientFactory {
    private final Injector injector;
 
    @Inject
-   public AsyncClientFactory(Injector injector) {
+   private AsyncClientFactory(Injector injector) {
       this.injector = injector;
    }
 

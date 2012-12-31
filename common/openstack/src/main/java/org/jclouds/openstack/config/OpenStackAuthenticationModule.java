@@ -63,8 +63,7 @@ public class OpenStackAuthenticationModule extends AbstractModule {
    protected void configure() {
       bind(new TypeLiteral<Function<Credentials, AuthenticationResponse>>() {
       }).to(GetAuthenticationResponse.class);
-      // OpenStackAuthClient is used directly for filters and retry handlers, so let's bind it
-      // explicitly
+      // OpenStackAuthClient is used directly for filters and retry handlers, so let's bind it explicitly
       bindClientAndAsyncClient(binder(), OpenStackAuthClient.class, OpenStackAuthAsyncClient.class);
       install(new FactoryModuleBuilder().build(URIFromAuthenticationResponseForService.Factory.class));
       bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(RetryOnRenew.class);

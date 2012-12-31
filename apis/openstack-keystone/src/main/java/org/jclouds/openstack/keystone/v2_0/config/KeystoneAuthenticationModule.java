@@ -144,8 +144,7 @@ public class KeystoneAuthenticationModule extends AbstractModule {
    }
 
    protected void bindAuthenticationApi() {
-      // AuthenticationApi is used directly for filters and retry handlers, so let's bind it
-      // explicitly
+      // AuthenticationApi is used directly for filters and retry handlers, so let's bind it explicitly
       bindClientAndAsyncClient(binder(), AuthenticationApi.class, AuthenticationAsyncApi.class);
    }
 
