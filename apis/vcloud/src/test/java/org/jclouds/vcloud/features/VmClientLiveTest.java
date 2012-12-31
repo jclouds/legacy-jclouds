@@ -18,10 +18,11 @@
  */
 package org.jclouds.vcloud.features;
 
+import static com.google.common.base.Charsets.UTF_8;
 import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.getOnlyElement;
+import static com.google.common.io.BaseEncoding.base64;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.wrapInInitScript;
-import static org.jclouds.crypto.CryptoStreams.base64;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
@@ -119,7 +120,7 @@ public class VmClientLiveTest extends BaseVCloudClientLiveTest {
 
          ExecResponse vmTools = client.runScriptOnNode(node.getId(), PARSE_VMTOOLSD,
                wrapInInitScript(false).runAsRoot(false));
-         checkApiOutput(new String(base64(vmTools.getOutput().trim())));
+         checkApiOutput(new String(base64().decode(vmTools.getOutput().trim()), UTF_8));
 
          ExecResponse foo = client.runScriptOnNode(node.getId(), "cat /root/foo.txt", wrapInInitScript(false)
                .runAsRoot(false));

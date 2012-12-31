@@ -1,6 +1,7 @@
 package org.jclouds.io;
 
 import static com.google.common.collect.Iterables.any;
+import static com.google.common.io.BaseEncoding.base64;
 import static com.google.common.net.HttpHeaders.CONTENT_DISPOSITION;
 import static com.google.common.net.HttpHeaders.CONTENT_ENCODING;
 import static com.google.common.net.HttpHeaders.CONTENT_LANGUAGE;
@@ -14,7 +15,6 @@ import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.DateCodec;
 import org.jclouds.date.DateCodecFactory;
 import org.jclouds.io.ContentMetadataCodec.DefaultContentMetadataCodec;
@@ -81,7 +81,7 @@ public interface ContentMetadataCodec {
          if (md.getContentLength() != null)
             builder.put(CONTENT_LENGTH, md.getContentLength() + "");
          if (md.getContentMD5() != null)
-            builder.put(CONTENT_MD5, CryptoStreams.base64(md.getContentMD5()));
+            builder.put(CONTENT_MD5, base64().encode(md.getContentMD5()));
          if (md.getExpires() != null)
             builder.put(EXPIRES, getExpiresDateCodec().toString(md.getExpires()));
          return builder.build();
@@ -99,7 +99,7 @@ public interface ContentMetadataCodec {
             if (!chunked && CONTENT_LENGTH.equalsIgnoreCase(header.getKey())) {
                contentMetadata.setContentLength(Long.valueOf(header.getValue()));
             } else if (CONTENT_MD5.equalsIgnoreCase(header.getKey())) {
-               contentMetadata.setContentMD5(CryptoStreams.base64(header.getValue()));
+               contentMetadata.setContentMD5(base64().decode(header.getValue()));
             } else if (CONTENT_TYPE.equalsIgnoreCase(header.getKey())) {
                contentMetadata.setContentType(header.getValue());
             } else if (CONTENT_DISPOSITION.equalsIgnoreCase(header.getKey())) {

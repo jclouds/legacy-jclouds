@@ -19,10 +19,12 @@
 package org.jclouds.atmos.filters;
 
 import static com.google.common.base.Throwables.propagate;
+import static com.google.common.io.BaseEncoding.base64;
+import static com.google.common.io.ByteStreams.readBytes;
 import static org.jclouds.Constants.LOGGER_SIGNATURE;
-import static org.jclouds.crypto.CryptoStreams.base64;
-import static org.jclouds.crypto.CryptoStreams.mac;
+import static org.jclouds.crypto.Macs.asByteProcessor;
 import static org.jclouds.http.Uris.uriBuilder;
+import static org.jclouds.util.Strings2.toInputStream;
 
 import java.io.IOException;
 import java.net.URI;
@@ -36,7 +38,6 @@ import javax.inject.Singleton;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpException;
-import org.jclouds.io.InputSuppliers;
 import org.jclouds.location.Provider;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.annotations.Credential;
@@ -45,6 +46,7 @@ import org.jclouds.rest.annotations.Identity;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.io.ByteProcessor;
 
 /**
  * Signs the EMC Atmos Online Storage request.
@@ -73,7 +75,7 @@ public class ShareUrl implements Function<String, URI> {
    public ShareUrl(@Identity String uid, @Credential String encodedKey,
             @Provider Supplier<URI> provider, @TimeStamp javax.inject.Provider<Long> timeStampProvider, Crypto crypto) {
       this.uid = uid;
-      this.key = base64(encodedKey);
+      this.key = base64().decode(encodedKey);
       this.provider = provider;
       this.timeStampProvider = timeStampProvider;
       this.crypto = crypto;
@@ -100,7 +102,8 @@ public class ShareUrl implements Function<String, URI> {
 
    public String signString(String toSign) {
       try {
-         return base64(mac(InputSuppliers.of(toSign), crypto.hmacSHA1(key)));
+         ByteProcessor<byte[]> hmacSHA1 = asByteProcessor(crypto.hmacSHA1(key));
+         return base64().encode(readBytes(toInputStream(toSign), hmacSHA1));
       } catch (InvalidKeyException e) {
          throw propagate(e);
       } catch (IOException e) {

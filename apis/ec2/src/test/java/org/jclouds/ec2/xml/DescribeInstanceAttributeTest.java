@@ -75,10 +75,8 @@ public class DescribeInstanceAttributeTest extends BaseHandlerTest {
 
    public void testUnencodeStringValueHandler() {
       InputStream is = getClass().getResourceAsStream("/userData.xml");
-
       UnencodeStringValueHandler handler = injector.getInstance(UnencodeStringValueHandler.class);
       String result = factory.create(handler).parse(is);
-
       assertEquals(result, "#!/bin/bash\n");
    }
 }

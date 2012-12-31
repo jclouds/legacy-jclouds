@@ -16,40 +16,42 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.io;
+package org.jclouds.crypto;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.IOException;
-import java.io.InputStream;
+import javax.crypto.Mac;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Charsets;
-import com.google.common.io.ByteStreams;
-import com.google.common.io.InputSupplier;
+import com.google.common.io.ByteProcessor;
 
 /**
- * functions related to or replacing those in {@link com.google.common.io.InputSupplier}
+ * functions for {@link Mac}
  * 
  * @author Adrian Cole
  */
 @Beta
-public class InputSuppliers {
-   
-   public static InputSupplier<? extends InputStream> of(final InputStream in) {
-      checkNotNull(in, "in");
-      return new InputSupplier<InputStream>() {
+public class Macs {
 
-         @Override
-         public InputStream getInput() throws IOException {
-            return in;
+   /**
+    * Computes and returns the MAC value for a supplied input stream.
+    * 
+    * @param mac
+    *           the mac object
+    * @return the result of {@link Mac#doFinal()} on {@link ByteProcessor#getResult()}
+    */
+   public static ByteProcessor<byte[]> asByteProcessor(final Mac mac) {
+      checkNotNull(mac, "mac");
+      return new ByteProcessor<byte[]>() {
+         public boolean processBytes(byte[] buf, int off, int len) {
+            mac.update(buf, off, len);
+            return true;
          }
 
+         public byte[] getResult() {
+            return mac.doFinal();
+         }
       };
    }
 
-   public static InputSupplier<? extends InputStream> of(String in) {
-      byte[] bytes = checkNotNull(in, "in").getBytes(Charsets.UTF_8);
-      return ByteStreams.newInputStreamSupplier(bytes);
-   }
 }

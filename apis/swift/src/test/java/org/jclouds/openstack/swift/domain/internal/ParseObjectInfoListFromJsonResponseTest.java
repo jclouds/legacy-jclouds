@@ -18,6 +18,7 @@
  */
 package org.jclouds.openstack.swift.domain.internal;
 
+import static com.google.common.io.BaseEncoding.base16;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
@@ -27,7 +28,6 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.Set;
 
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.json.config.GsonModule.DateAdapter;
@@ -65,12 +65,12 @@ public class ParseObjectInfoListFromJsonResponseTest {
       InputStream is = getClass().getResourceAsStream("/test_list_container.json");
       Set<ObjectInfo> expects = ImmutableSet.<ObjectInfo> of(ObjectInfoImpl.builder().container("container").name(
                "test_obj_1").uri(URI.create("http://localhost/foo/test_obj_1")).hash(
-               CryptoStreams.hex("4281c348eaf83e70ddce0e07221c3d28")).bytes(14l)
+               base16().lowerCase().decode("4281c348eaf83e70ddce0e07221c3d28")).bytes(14l)
                .contentType("application/octet-stream").lastModified(
                         new SimpleDateFormatDateService().iso8601DateParse("2009-02-03T05:26:32.612Z")).build(),
                ObjectInfoImpl.builder().container("container").name("test_obj_2").uri(
                         URI.create("http://localhost/foo/test_obj_2")).hash(
-                        CryptoStreams.hex("b039efe731ad111bc1b0ef221c3849d0")).bytes(64l).contentType(
+                        base16().lowerCase().decode("b039efe731ad111bc1b0ef221c3849d0")).bytes(64l).contentType(
                         "application/octet-stream").lastModified(
                         new SimpleDateFormatDateService().iso8601DateParse("2009-02-03T05:26:32.612Z")).build());
       GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);

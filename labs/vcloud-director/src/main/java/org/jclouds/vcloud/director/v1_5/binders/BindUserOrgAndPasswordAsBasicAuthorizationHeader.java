@@ -17,19 +17,18 @@
  * under the License.
  */
 package org.jclouds.vcloud.director.v1_5.binders;
-
+import static com.google.common.base.Charsets.UTF_8;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.io.BaseEncoding.base64;
+import static java.lang.String.format;
 
 import java.util.Map;
 
 import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.MapBinder;
-
-import com.google.common.base.Charsets;
 
 /**
  * Uses Basic Authentication to sign the request.
@@ -45,9 +44,10 @@ public class BindUserOrgAndPasswordAsBasicAuthorizationHeader implements MapBind
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
       String header = "Basic "
-               + CryptoStreams.base64(String.format("%s@%s:%s", checkNotNull(postParams.get("user"), "user"),
+            + base64().encode(
+                  format("%s@%s:%s", checkNotNull(postParams.get("user"), "user"),
                         checkNotNull(postParams.get("org"), "org"),
-                        checkNotNull(postParams.get("password"), "password")).getBytes(Charsets.UTF_8));
+                        checkNotNull(postParams.get("password"), "password")).getBytes(UTF_8));
       return (R) request.toBuilder().replaceHeader(HttpHeaders.AUTHORIZATION, header).build();
    }
 

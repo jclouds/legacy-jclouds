@@ -18,11 +18,11 @@
  */
 package org.jclouds.sqs.parse;
 
+import static com.google.common.io.BaseEncoding.base16;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.sqs.domain.BatchResult;
 import org.jclouds.sqs.domain.MessageIdAndMD5;
@@ -56,10 +56,10 @@ public class SendMessageBatchResponseTest extends BaseHandlerTest {
             .<MessageIdAndMD5> builder()
             .put("test_msg_001",
                   MessageIdAndMD5.builder().id("0a5231c7-8bff-4955-be2e-8dc7c50a25fa")
-                        .md5(HashCodes.fromBytes(CryptoStreams.hex("0e024d309850c78cba5eabbeff7cae71"))).build())
+                        .md5(HashCodes.fromBytes(base16().lowerCase().decode("0e024d309850c78cba5eabbeff7cae71"))).build())
             .put("test_msg_002",
                   MessageIdAndMD5.builder().id("15ee1ed3-87e7-40c1-bdaa-2e49968ea7e9")
-                        .md5(HashCodes.fromBytes(CryptoStreams.hex("7fb8146a82f95e0af155278f406862c2"))).build())
+                        .md5(HashCodes.fromBytes(base16().lowerCase().decode("7fb8146a82f95e0af155278f406862c2"))).build())
             .build();
    }
 }

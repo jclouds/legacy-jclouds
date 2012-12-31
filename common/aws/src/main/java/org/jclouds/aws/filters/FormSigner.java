@@ -18,9 +18,12 @@
  */
 package org.jclouds.aws.filters;
 
+import static com.google.common.base.Charsets.UTF_8;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.Ordering.natural;
+import static com.google.common.io.BaseEncoding.base64;
+import static com.google.common.io.ByteStreams.readBytes;
 import static org.jclouds.aws.reference.FormParameters.ACTION;
 import static org.jclouds.aws.reference.FormParameters.AWS_ACCESS_KEY_ID;
 import static org.jclouds.aws.reference.FormParameters.SIGNATURE;
@@ -28,8 +31,7 @@ import static org.jclouds.aws.reference.FormParameters.SIGNATURE_METHOD;
 import static org.jclouds.aws.reference.FormParameters.SIGNATURE_VERSION;
 import static org.jclouds.aws.reference.FormParameters.TIMESTAMP;
 import static org.jclouds.aws.reference.FormParameters.VERSION;
-import static org.jclouds.crypto.CryptoStreams.base64;
-import static org.jclouds.crypto.CryptoStreams.mac;
+import static org.jclouds.crypto.Macs.asByteProcessor;
 import static org.jclouds.http.utils.Queries.encodeQueryLine;
 import static org.jclouds.http.utils.Queries.queryParser;
 import static org.jclouds.util.Strings2.toInputStream;
@@ -52,7 +54,6 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.internal.SignatureWire;
-import org.jclouds.io.InputSuppliers;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.RequestSigner;
 import org.jclouds.rest.annotations.ApiVersion;
@@ -64,6 +65,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.TreeMultimap;
+import com.google.common.io.ByteProcessor;
 
 /**
  * 
@@ -163,10 +165,11 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
    }
 
    @VisibleForTesting
-   public String sign(String stringToSign) {
+   public String sign(String toSign) {
       String signature;
       try {
-         signature = base64(mac(InputSuppliers.of(stringToSign), crypto.hmacSHA256(secretKey.getBytes())));
+         ByteProcessor<byte[]> hmacSHA256 = asByteProcessor(crypto.hmacSHA256(secretKey.getBytes(UTF_8)));
+         signature = base64().encode(readBytes(toInputStream(toSign), hmacSHA256));
          if (signatureWire.enabled())
             signatureWire.input(toInputStream(signature));
       } catch (Exception e) {

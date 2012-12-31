@@ -18,7 +18,9 @@
  */
 package org.jclouds.cloudstack.features;
 
-import static org.jclouds.crypto.CryptoStreams.md5Hex;
+import static com.google.common.base.Charsets.UTF_8;
+import static com.google.common.hash.Hashing.md5;
+import static com.google.common.io.BaseEncoding.base16;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -46,7 +48,7 @@ public class SessionClientExpectTest extends BaseCloudStackExpectTest<SessionCli
       String domain = "Partners/jCloud";
       String user = "jcloud";
       String password = "jcl0ud";
-      String md5password = md5Hex(password);
+      String md5password = base16().lowerCase().encode(md5().hashString(password, UTF_8).asBytes());
 
       HttpRequest request = HttpRequest.builder()
          .method("GET")

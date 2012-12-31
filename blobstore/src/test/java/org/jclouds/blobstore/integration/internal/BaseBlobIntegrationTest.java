@@ -18,6 +18,8 @@
  */
 package org.jclouds.blobstore.integration.internal;
 
+import static com.google.common.base.Charsets.UTF_8;
+import static com.google.common.hash.Hashing.md5;
 import static org.jclouds.blobstore.options.GetOptions.Builder.ifETagDoesntMatch;
 import static org.jclouds.blobstore.options.GetOptions.Builder.ifETagMatches;
 import static org.jclouds.blobstore.options.GetOptions.Builder.ifModifiedSince;
@@ -25,6 +27,7 @@ import static org.jclouds.blobstore.options.GetOptions.Builder.ifUnmodifiedSince
 import static org.jclouds.blobstore.options.GetOptions.Builder.range;
 import static org.jclouds.blobstore.util.BlobStoreUtils.getContentAsStringOrNullAndClose;
 import static org.jclouds.concurrent.FutureIterables.awaitCompletion;
+import static org.jclouds.io.ByteSources.asByteSource;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
@@ -58,7 +61,6 @@ import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.concurrent.Futures;
 import org.jclouds.crypto.Crypto;
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.encryption.internal.JCECrypto;
 import org.jclouds.http.BaseJettyTest;
 import org.jclouds.http.HttpResponseException;
@@ -97,7 +99,11 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
    public void setUpResourcesOnThisThread(ITestContext testContext) throws Exception {
       super.setUpResourcesOnThisThread(testContext);
       oneHundredOneConstitutions = getTestDataSupplier();
-      oneHundredOneConstitutionsMD5 = CryptoStreams.md5(oneHundredOneConstitutions);
+      oneHundredOneConstitutionsMD5 = md5Supplier(oneHundredOneConstitutions);
+   }
+
+   protected static byte[] md5Supplier(InputSupplier<InputStream> supplier) throws IOException {
+      return asByteSource(supplier.getInput()).hash(md5()).asBytes();
    }
 
    @SuppressWarnings("unchecked")
@@ -128,7 +134,7 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
       
       
       final Payload testPayload = Payloads.newFilePayload(payloadFile);
-      final byte[] md5 = CryptoStreams.md5(testPayload);
+      final byte[] md5 = md5Supplier(testPayload);
       testPayload.getContentMetadata().setContentType("image/png");
       
       final AtomicInteger blobCount = new AtomicInteger();
@@ -147,7 +153,7 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
                   assertConsistencyAwareBlobExists(container, name);
                   blob = view.getBlobStore().getBlob(container, name);
 
-                  assert Arrays.equals(CryptoStreams.md5(blob.getPayload()), md5) : String.format(
+                  assert Arrays.equals(md5Supplier(blob.getPayload()), md5) : String.format(
                            "md5 didn't match on %s/%s", container, name);
 
                   view.getBlobStore().removeBlob(container, name);
@@ -184,7 +190,7 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
                         public Void apply(Blob from) {
                            try {
                               validateMetadata(from.getMetadata(), container, name);
-                              assertEquals(CryptoStreams.md5(from.getPayload()), oneHundredOneConstitutionsMD5);
+                              assertEquals(md5Supplier(from.getPayload()), oneHundredOneConstitutionsMD5);
                               checkContentDisposition(from, expectedContentDisposition);
                            } catch (IOException e) {
                               Throwables.propagate(e);
@@ -598,7 +604,7 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
    }
 
    protected void checkMD5(BlobMetadata metadata) throws IOException {
-      assertEquals(metadata.getContentMetadata().getContentMD5(), CryptoStreams.md5(InputSuppliers.of(TEST_STRING)));
+      assertEquals(metadata.getContentMetadata().getContentMD5(), md5().hashString(TEST_STRING, UTF_8).asBytes());
    }
 
 }

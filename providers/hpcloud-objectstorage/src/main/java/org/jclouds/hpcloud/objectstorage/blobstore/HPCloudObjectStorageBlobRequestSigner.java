@@ -18,13 +18,19 @@
  */
 package org.jclouds.hpcloud.objectstorage.blobstore;
 
+import static com.google.common.base.Charsets.UTF_8;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.instanceOf;
 import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.Iterables.filter;
+import static com.google.common.io.BaseEncoding.base16;
+import static com.google.common.io.ByteStreams.readBytes;
 import static org.jclouds.blobstore.util.BlobStoreUtils.cleanRequest;
+import static org.jclouds.crypto.Macs.asByteProcessor;
+import static org.jclouds.util.Strings2.toInputStream;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.security.InvalidKeyException;
 
@@ -36,7 +42,6 @@ import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.crypto.Crypto;
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.hpcloud.objectstorage.HPCloudObjectStorageAsyncApi;
 import org.jclouds.http.HttpRequest;
@@ -51,6 +56,7 @@ import org.jclouds.rest.internal.RestAnnotationProcessor;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
+import com.google.common.io.ByteProcessor;
 import com.google.inject.Provider;
 
 /**
@@ -164,11 +170,13 @@ public class HPCloudObjectStorageBlobRequestSigner implements BlobRequestSigner 
           request.getEndpoint().getPath());
    }
 
-   private String createSignature(String key, String stringToSign) {
+   private String createSignature(String key, String toSign) {
       try {
-         return CryptoStreams.hex(crypto.hmacSHA1(key.getBytes()).doFinal(stringToSign.getBytes()));
-
+         ByteProcessor<byte[]> hmacSHA1 = asByteProcessor(crypto.hmacSHA1(key.getBytes(UTF_8)));
+         return base16().lowerCase().encode(readBytes(toInputStream(toSign), hmacSHA1));
       } catch (InvalidKeyException e) {
+         throw Throwables.propagate(e);
+      } catch (IOException e) {
          throw Throwables.propagate(e);
       }
    }

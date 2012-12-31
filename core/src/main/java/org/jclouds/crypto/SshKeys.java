@@ -24,10 +24,8 @@ import static com.google.common.base.Splitter.fixedLength;
 import static com.google.common.base.Throwables.propagate;
 import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.size;
+import static com.google.common.io.BaseEncoding.base16;
 import static com.google.common.io.BaseEncoding.base64;
-import static org.jclouds.crypto.CryptoStreams.base64;
-import static org.jclouds.crypto.CryptoStreams.hex;
-import static org.jclouds.crypto.CryptoStreams.md5;
 import static org.jclouds.crypto.Pems.pem;
 import static org.jclouds.crypto.Pems.privateKeySpec;
 import static org.jclouds.util.Strings2.toStringAndClose;
@@ -56,6 +54,8 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.hash.HashCode;
+import com.google.common.hash.Hashing;
 import com.google.common.io.InputSupplier;
 
 /**
@@ -156,7 +156,7 @@ public class SshKeys {
 
    public static String encodeAsOpenSSH(RSAPublicKey key) {
       byte[] keyBlob = keyBlob(key.getPublicExponent(), key.getModulus());
-      return "ssh-rsa " + base64(keyBlob);
+      return "ssh-rsa " + base64().encode(keyBlob);
    }
 
    /**
@@ -270,10 +270,8 @@ public class SshKeys {
     */
    public static String sha1(RSAPrivateCrtKeySpec privateKey) {
       try {
-         String sha1 = on(':').join(fixedLength(2).split(
-                           hex(CryptoStreams.sha1(KeyFactory.getInstance("RSA").generatePrivate(privateKey)
-                                    .getEncoded()))));
-         return sha1;
+         byte[] encodedKey = KeyFactory.getInstance("RSA").generatePrivate(privateKey).getEncoded();
+         return hexColonDelimited(Hashing.sha1().hashBytes(encodedKey));
       } catch (InvalidKeySpecException e) {
          throw propagate(e);
       } catch (NoSuchAlgorithmException e) {
@@ -310,7 +308,11 @@ public class SshKeys {
     */
    public static String fingerprint(BigInteger publicExponent, BigInteger modulus) {
       byte[] keyBlob = keyBlob(publicExponent, modulus);
-      return on(':').join(fixedLength(2).split(hex(md5(keyBlob))));
+      return hexColonDelimited(Hashing.md5().hashBytes(keyBlob));
+   }
+
+   private static String hexColonDelimited(HashCode hc) {
+      return on(':').join(fixedLength(2).split(base16().lowerCase().encode(hc.asBytes())));
    }
 
    public static byte[] keyBlob(BigInteger publicExponent, BigInteger modulus) {

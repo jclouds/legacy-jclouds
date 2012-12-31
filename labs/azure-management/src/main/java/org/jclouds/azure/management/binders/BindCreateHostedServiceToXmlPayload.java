@@ -18,7 +18,9 @@
  */
 package org.jclouds.azure.management.binders;
 
+import static com.google.common.base.Charsets.UTF_8;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.io.BaseEncoding.base64;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -26,7 +28,6 @@ import java.util.Map.Entry;
 import javax.inject.Singleton;
 
 import org.jclouds.azure.management.options.CreateHostedServiceOptions;
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.MapBinder;
 
@@ -46,9 +47,8 @@ public class BindCreateHostedServiceToXmlPayload implements MapBinder {
 
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
-
       String serviceName = checkNotNull(postParams.get("serviceName"), "serviceName").toString();
-      String label = CryptoStreams.base64(checkNotNull(postParams.get("label"), "label").toString().getBytes());
+      String label = base64().encode(checkNotNull(postParams.get("label"), "label").toString().getBytes(UTF_8));
 
       Optional<String> location = Optional.fromNullable((String) postParams.get("location"));
       Optional<String> affinityGroup = Optional.fromNullable((String) postParams.get("affinityGroup"));

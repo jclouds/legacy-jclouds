@@ -20,10 +20,9 @@ package org.jclouds.ec2.functions;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.io.BaseEncoding.base64;
 
 import javax.inject.Singleton;
-
-import org.jclouds.crypto.CryptoStreams;
 
 import com.google.common.base.Function;
 
@@ -38,10 +37,9 @@ public class ConvertUnencodedBytesToBase64EncodedString implements Function<Obje
    @Override
    public String apply(Object from) {
       checkArgument(checkNotNull(from, "input") instanceof byte[], "this binder is only valid for byte []!");
-
       byte[] unencodedData = (byte[]) from;
       checkArgument(checkNotNull(unencodedData, "unencodedData").length <= 16 * 1024,
-               "userData cannot be larger than 16kb");
-      return CryptoStreams.base64(unencodedData);
+            "userData cannot be larger than 16kb");
+      return base64().encode(unencodedData);
    }
 }

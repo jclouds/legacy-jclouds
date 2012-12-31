@@ -18,20 +18,22 @@
  */
 package org.jclouds.cloudstack.functions;
 
+import static com.google.common.base.Charsets.UTF_8;
+import static com.google.common.io.BaseEncoding.base64;
+
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.spec.KeySpec;
+import java.util.regex.Pattern;
 
 import javax.crypto.Cipher;
 
 import org.jclouds.cloudstack.domain.EncryptedPasswordAndPrivateKey;
 import org.jclouds.crypto.Crypto;
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.crypto.Pems;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.javax.annotation.Nullable;
 
-import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
 import com.google.inject.Inject;
@@ -51,12 +53,13 @@ public class WindowsLoginCredentialsFromEncryptedData implements Function<Encryp
    public WindowsLoginCredentialsFromEncryptedData(Crypto crypto) {
       this.crypto = crypto;
    }
-
+   
+   private static final Pattern whitespace = Pattern.compile("\\s");
+   
    @Override
    public LoginCredentials apply(@Nullable EncryptedPasswordAndPrivateKey dataAndKey) {
       if (dataAndKey == null)
          return null;
-
       try {
          KeySpec keySpec = Pems.privateKeySpec(dataAndKey.getPrivateKey());
          KeyFactory kf = crypto.rsaKeyFactory();
@@ -64,9 +67,9 @@ public class WindowsLoginCredentialsFromEncryptedData implements Function<Encryp
 
          Cipher cipher = crypto.cipher("RSA");
          cipher.init(Cipher.DECRYPT_MODE, privKey);
-         byte[] cipherText = CryptoStreams.base64(dataAndKey.getEncryptedPassword());
+         byte[] cipherText = base64().decode(whitespace.matcher(dataAndKey.getEncryptedPassword()).replaceAll(""));
          byte[] plainText = cipher.doFinal(cipherText);
-         String password = new String(plainText, Charsets.US_ASCII);
+         String password = new String(plainText, UTF_8);
 
          return LoginCredentials.builder()
             .user("Administrator")

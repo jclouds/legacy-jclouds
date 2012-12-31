@@ -19,6 +19,7 @@
 package org.jclouds.atmos.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.io.BaseEncoding.base16;
 
 import java.util.Map;
 
@@ -28,7 +29,6 @@ import javax.inject.Singleton;
 import org.jclouds.atmos.domain.FileType;
 import org.jclouds.atmos.domain.SystemMetadata;
 import org.jclouds.atmos.reference.AtmosHeaders;
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.DateService;
 import org.jclouds.http.HttpResponse;
 
@@ -57,7 +57,7 @@ public class ParseSystemMetadataFromHeaders implements Function<HttpResponse, Sy
          metaMap.put(entrySplit[0], entrySplit[1]);
       }
       assert metaMap.size() >= 12 : String.format("Should be 12 entries in %s", metaMap);
-      byte[] md5 = metaMap.containsKey("content-md5") ? CryptoStreams.hex(metaMap.get("content-md5")) : null;
+      byte[] md5 = metaMap.containsKey("content-md5") ? base16().lowerCase().decode(metaMap.get("content-md5")) : null;
       return new SystemMetadata(md5, dateService.iso8601SecondsDateParse(checkNotNull(metaMap.get("atime"), "atime")),
             dateService.iso8601SecondsDateParse(checkNotNull(metaMap.get("ctime"), "ctime")), checkNotNull(
                   metaMap.get("gid"), "gid"), dateService.iso8601SecondsDateParse(checkNotNull(metaMap.get("itime"),

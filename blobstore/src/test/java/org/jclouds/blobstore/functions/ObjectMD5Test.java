@@ -18,14 +18,12 @@
  */
 package org.jclouds.blobstore.functions;
 
+import static com.google.common.base.Charsets.UTF_8;
+import static com.google.common.hash.Hashing.md5;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
 
-import org.jclouds.crypto.CryptoStreams;
-import org.jclouds.encryption.internal.JCECrypto;
 import org.jclouds.http.HttpMessage;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
@@ -37,34 +35,26 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "unit")
 public class ObjectMD5Test {
-   private ObjectMD5 fn;
-
-   public ObjectMD5Test() throws NoSuchAlgorithmException, CertificateException {
-      fn = new ObjectMD5(new JCECrypto());
-   }
-
+   private ObjectMD5 fn = new ObjectMD5();
+   
    @Test
    public void testAlreadyHasMD5() {
       Payload payload = Payloads.newPayload("foo");
       payload.getContentMetadata().setContentMD5(new byte[] {});
-
       HttpMessage payloadEnclosing = HttpMessage.builder().payload(payload).build();
-
       assertEquals(fn.apply(payloadEnclosing), new byte[] {});
    }
 
    @Test
    public void testMD5PayloadEnclosing() throws IOException {
       Payload payload = Payloads.newPayload("foo");
-
       HttpMessage payloadEnclosing = HttpMessage.builder().payload(payload).build();
-
-      assertEquals(fn.apply(payloadEnclosing), CryptoStreams.md5("foo".getBytes()));
+      assertEquals(fn.apply(payloadEnclosing), md5().hashString("foo", UTF_8).asBytes());
    }
 
    @Test
    public void testMD5String() throws IOException {
-      assertEquals(fn.apply("foo"), CryptoStreams.md5("foo".getBytes()));
+      assertEquals(fn.apply("foo"), md5().hashString("foo", UTF_8).asBytes());
    }
 
    @Test(expectedExceptions = { NullPointerException.class, IllegalStateException.class })

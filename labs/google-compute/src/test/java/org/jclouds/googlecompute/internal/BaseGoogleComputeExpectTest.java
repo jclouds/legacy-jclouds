@@ -18,10 +18,14 @@
  */
 package org.jclouds.googlecompute.internal;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Ticker;
-import com.google.inject.Binder;
-import com.google.inject.Module;
+import static com.google.common.base.Charsets.UTF_8;
+import static com.google.common.io.BaseEncoding.base64Url;
+
+import java.net.URI;
+import java.util.Properties;
+
+import javax.ws.rs.core.MediaType;
+
 import org.jclouds.collect.PagedIterable;
 import org.jclouds.collect.PagedIterables;
 import org.jclouds.googlecompute.domain.ListPage;
@@ -30,12 +34,10 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.oauth.v2.OAuthConstants;
 import org.jclouds.rest.internal.BaseRestApiExpectTest;
 
-import javax.ws.rs.core.MediaType;
-import java.net.URI;
-import java.nio.charset.Charset;
-import java.util.Properties;
-
-import static org.jclouds.crypto.CryptoStreams.base64Url;
+import com.google.common.base.Joiner;
+import com.google.common.base.Ticker;
+import com.google.inject.Binder;
+import com.google.inject.Module;
 
 /**
  * @author Adrian Cole
@@ -93,9 +95,9 @@ public class BaseGoogleComputeExpectTest<T> extends BaseRestApiExpectTest<T> {
 
       String payload = "grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&" +
               // Base64 Encoded Header
-              "assertion=" + base64Url(header.getBytes(Charset.forName("UTF-8"))) + "." +
+              "assertion=" + base64Url().omitPadding().encode(header.getBytes(UTF_8)) + "." +
               // Base64 Encoded Claims
-              base64Url(claims.getBytes(Charset.forName("UTF-8"))) + ".";
+              base64Url().omitPadding().encode(claims.getBytes(UTF_8)) + ".";
 
       return HttpRequest.builder()
               .method("POST")

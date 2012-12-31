@@ -19,6 +19,7 @@
 
 package org.jclouds.abiquo.http.filters;
 
+import static org.jclouds.http.filters.BasicAuthentication.basic;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 
@@ -45,7 +46,7 @@ public class AbiquoAuthenticationTest {
       AbiquoAuthentication filter = new AbiquoAuthentication("identity", "credential", "false");
       HttpRequest filtered = filter.filter(request);
       HttpRequest expected = request.toBuilder()
-            .replaceHeader(HttpHeaders.AUTHORIZATION, AbiquoAuthentication.basicAuth("identity", "credential")).build();
+            .replaceHeader(HttpHeaders.AUTHORIZATION, basic("identity", "credential")).build();
 
       assertFalse(filtered.getHeaders().containsKey(HttpHeaders.COOKIE));
       assertEquals(filtered, expected);

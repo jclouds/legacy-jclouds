@@ -17,9 +17,11 @@
  * under the License.
  */
 package org.jclouds.oauth.v2.functions;
-
-import org.jclouds.crypto.CryptoStreams;
-import org.testng.annotations.Test;
+import static com.google.common.base.Charsets.UTF_8;
+import static com.google.common.base.Suppliers.ofInstance;
+import static com.google.common.io.BaseEncoding.base64Url;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.AssertJUnit.assertEquals;
 
 import java.io.IOException;
 import java.security.InvalidKeyException;
@@ -27,10 +29,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
 
-import static com.google.common.base.Suppliers.ofInstance;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.AssertJUnit.assertEquals;
-
+import org.testng.annotations.Test;
 
 /**
  * Tests the SignOrProduceMacForToken
@@ -58,8 +57,9 @@ public class SignerFunctionTest {
               ofInstance(OAuthCredentialsFromPKTest
                       .loadOAuthCredentials()));
       signer.loadSignatureOrMacOrNone();
-      byte[] payloadSignature = signer.apply(PAYLOAD.getBytes("UTF-8"));
+      byte[] payloadSignature = signer.apply(PAYLOAD.getBytes(UTF_8));
       assertNotNull(payloadSignature);
-      assertEquals(CryptoStreams.base64Url(payloadSignature), SHA256withRSA_PAYLOAD_SIGNATURE_RESULT);
+
+      assertEquals(base64Url().omitPadding().encode(payloadSignature), SHA256withRSA_PAYLOAD_SIGNATURE_RESULT);
    }
 }

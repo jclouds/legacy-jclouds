@@ -18,9 +18,11 @@
  */
 package org.jclouds.glesys.compute.functions;
 
+import static com.google.common.base.Charsets.UTF_8;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.io.BaseEncoding.base16;
 import static org.jclouds.compute.util.ComputeServiceUtils.addMetadataAndParseTagsFromCommaDelimitedValue;
 
 import java.util.Map;
@@ -45,14 +47,12 @@ import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.domain.internal.VolumeImpl;
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.domain.Location;
 import org.jclouds.glesys.domain.Ip;
 import org.jclouds.glesys.domain.ServerDetails;
 import org.jclouds.logging.Logger;
 import org.jclouds.util.InetAddresses2.IsPrivateIPAddress;
 
-import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
@@ -115,10 +115,11 @@ public class ServerDetailsToNodeMetadata implements Function<ServerDetails, Node
       
       // TODO: get glesys to stop stripping out equals and commas!
       if (!isNullOrEmpty(from.getDescription()) && from.getDescription().matches("^[0-9A-Fa-f]+$")) {
-         String decoded = new String(CryptoStreams.hex(from.getDescription()), Charsets.UTF_8);
+         String decoded = new String(base16().lowerCase().decode(from.getDescription()), UTF_8);
          addMetadataAndParseTagsFromCommaDelimitedValue(builder,
                   Splitter.on('\n').withKeyValueSeparator("=").split(decoded));
       }
+
       builder.imageId(from.getTemplateName() + "");
       builder.operatingSystem(parseOperatingSystem(from));
       builder.hardware(new HardwareBuilder().ids(from.getId() + "").ram(from.getMemorySizeMB())

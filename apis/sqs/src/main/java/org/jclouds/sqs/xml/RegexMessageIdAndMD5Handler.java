@@ -18,12 +18,13 @@
  */
 package org.jclouds.sqs.xml;
 
+import static com.google.common.io.BaseEncoding.base16;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ReturnStringIf2xx;
 import org.jclouds.sqs.domain.MessageIdAndMD5;
@@ -56,7 +57,7 @@ public class RegexMessageIdAndMD5Handler implements Function<HttpResponse, Messa
          if (matcher.find()) {
             return MessageIdAndMD5.builder()
                                   .id(matcher.group(1))
-                                  .md5(HashCodes.fromBytes(CryptoStreams.hex(matcher.group(2))))
+                                  .md5(HashCodes.fromBytes(base16().lowerCase().decode(matcher.group(2))))
                                   .build();
          }
       }

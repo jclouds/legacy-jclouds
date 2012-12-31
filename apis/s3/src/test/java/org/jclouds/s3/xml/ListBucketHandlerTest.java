@@ -18,13 +18,13 @@
  */
 package org.jclouds.s3.xml;
 
+import static com.google.common.io.BaseEncoding.base16;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 import java.net.URI;
 import java.util.TreeSet;
 
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.DateService;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.HttpException;
@@ -71,43 +71,43 @@ public class ListBucketHandlerTest extends BaseHandlerTest {
                new ObjectMetadataBuilder().key("apps/0").bucket(bucket).uri(URI.create("http://bucket.com/apps/0"))
                         .lastModified(dateService.iso8601DateParse("2009-05-07T18:27:08.000Z")).eTag(
                                  "\"c82e6a0025c31c5de5947fda62ac51ab\"").owner(owner).contentMD5(
-                                 CryptoStreams.hex("c82e6a0025c31c5de5947fda62ac51ab")).contentLength(8l).build(),
+                                 base16().lowerCase().decode("c82e6a0025c31c5de5947fda62ac51ab")).contentLength(8l).build(),
                new ObjectMetadataBuilder().key("apps/1").bucket(bucket).uri(URI.create("http://bucket.com/apps/1"))
                         .lastModified(dateService.iso8601DateParse("2009-05-07T18:27:09.000Z")).eTag(
                                  "\"944fab2c5a9a6bacf07db5e688310d7a\"").owner(owner).contentMD5(
-                                 CryptoStreams.hex("944fab2c5a9a6bacf07db5e688310d7a")).contentLength(8l).build(),
+                                 base16().lowerCase().decode("944fab2c5a9a6bacf07db5e688310d7a")).contentLength(8l).build(),
                new ObjectMetadataBuilder().key("apps/2").bucket(bucket).uri(URI.create("http://bucket.com/apps/2"))
                         .lastModified(dateService.iso8601DateParse("2009-05-07T18:27:09.000Z")).eTag(
                                  "\"a227b8888045c8fd159fb495214000f0\"").owner(owner).contentMD5(
-                                 CryptoStreams.hex("a227b8888045c8fd159fb495214000f0")).contentLength(8l).build(),
+                                 base16().lowerCase().decode("a227b8888045c8fd159fb495214000f0")).contentLength(8l).build(),
                new ObjectMetadataBuilder().key("apps/3").bucket(bucket).uri(URI.create("http://bucket.com/apps/3"))
                         .lastModified(dateService.iso8601DateParse("2009-05-07T18:27:09.000Z")).eTag(
                                  "\"c9caa76c3dec53e2a192608ce73eef03\"").owner(owner).contentMD5(
-                                 CryptoStreams.hex("c9caa76c3dec53e2a192608ce73eef03")).contentLength(8l).build(),
+                                 base16().lowerCase().decode("c9caa76c3dec53e2a192608ce73eef03")).contentLength(8l).build(),
                new ObjectMetadataBuilder().key("apps/4").bucket(bucket).uri(URI.create("http://bucket.com/apps/4"))
                         .lastModified(dateService.iso8601DateParse("2009-05-07T18:27:09.000Z")).eTag(
                                  "\"1ce5d0dcc6154a647ea90c7bdf82a224\"").owner(owner).contentMD5(
-                                 CryptoStreams.hex("1ce5d0dcc6154a647ea90c7bdf82a224")).contentLength(8l).build(),
+                                 base16().lowerCase().decode("1ce5d0dcc6154a647ea90c7bdf82a224")).contentLength(8l).build(),
                new ObjectMetadataBuilder().key("apps/5").bucket(bucket).uri(URI.create("http://bucket.com/apps/5"))
                         .lastModified(dateService.iso8601DateParse("2009-05-07T18:27:09.000Z")).eTag(
                                  "\"79433524d87462ee05708a8ef894ed55\"").owner(owner).contentMD5(
-                                 CryptoStreams.hex("79433524d87462ee05708a8ef894ed55")).contentLength(8l).build(),
+                                 base16().lowerCase().decode("79433524d87462ee05708a8ef894ed55")).contentLength(8l).build(),
                new ObjectMetadataBuilder().key("apps/6").bucket(bucket).uri(URI.create("http://bucket.com/apps/6"))
                         .lastModified(dateService.iso8601DateParse("2009-05-07T18:27:10.000Z")).eTag(
                                  "\"dd00a060b28ddca8bc5a21a49e306f67\"").owner(owner).contentMD5(
-                                 CryptoStreams.hex("dd00a060b28ddca8bc5a21a49e306f67")).contentLength(8l).build(),
+                                 base16().lowerCase().decode("dd00a060b28ddca8bc5a21a49e306f67")).contentLength(8l).build(),
                new ObjectMetadataBuilder().key("apps/7").bucket(bucket).uri(URI.create("http://bucket.com/apps/7"))
                         .lastModified(dateService.iso8601DateParse("2009-05-07T18:27:10.000Z")).eTag(
                                  "\"8cd06eca6e819a927b07a285d750b100\"").owner(owner).contentMD5(
-                                 CryptoStreams.hex("8cd06eca6e819a927b07a285d750b100")).contentLength(8l).build(),
+                                 base16().lowerCase().decode("8cd06eca6e819a927b07a285d750b100")).contentLength(8l).build(),
                new ObjectMetadataBuilder().key("apps/8").bucket(bucket).uri(URI.create("http://bucket.com/apps/8"))
                         .lastModified(dateService.iso8601DateParse("2009-05-07T18:27:10.000Z")).eTag(
                                  "\"174495094d0633b92cbe46603eee6bad\"").owner(owner).contentMD5(
-                                 CryptoStreams.hex("174495094d0633b92cbe46603eee6bad")).contentLength(8l).build(),
+                                 base16().lowerCase().decode("174495094d0633b92cbe46603eee6bad")).contentLength(8l).build(),
                new ObjectMetadataBuilder().key("apps/9").bucket(bucket).uri(URI.create("http://bucket.com/apps/9"))
                         .lastModified(dateService.iso8601DateParse("2009-05-07T18:27:10.000Z")).eTag(
                                  "\"cd8a19b26fea8a827276df0ad11c580d\"").owner(owner).contentMD5(
-                                 CryptoStreams.hex("cd8a19b26fea8a827276df0ad11c580d")).contentLength(8l).build()),
+                                 base16().lowerCase().decode("cd8a19b26fea8a827276df0ad11c580d")).contentLength(8l).build()),
                "apps/", null, null, 1000, null, false, new TreeSet<String>());
       return expected;
    }

@@ -18,6 +18,7 @@
  */
 package org.jclouds.sshj;
 
+import static com.google.common.base.Charsets.UTF_8;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
@@ -25,8 +26,8 @@ import static com.google.common.base.Predicates.instanceOf;
 import static com.google.common.base.Predicates.or;
 import static com.google.common.base.Throwables.getCausalChain;
 import static com.google.common.collect.Iterables.any;
-import static org.jclouds.crypto.CryptoStreams.hex;
-import static org.jclouds.crypto.CryptoStreams.md5;
+import static com.google.common.hash.Hashing.md5;
+import static com.google.common.io.BaseEncoding.base16;
 import static org.jclouds.crypto.SshKeys.fingerprintPrivateKey;
 import static org.jclouds.crypto.SshKeys.sha1PrivateKey;
 
@@ -150,8 +151,9 @@ public class SshjSshClient implements SshClient {
                "you must specify a password or a key");
       this.backoffLimitedRetryHandler = checkNotNull(backoffLimitedRetryHandler, "backoffLimitedRetryHandler");
       if (loginCredentials.getPrivateKey() == null) {
-         this.toString = String.format("%s:pw[%s]@%s:%d", loginCredentials.getUser(), hex(md5(loginCredentials
-                  .getPassword().getBytes())), host, socket.getPort());
+         this.toString = String.format("%s:pw[%s]@%s:%d", loginCredentials.getUser(),
+               base16().lowerCase().encode(md5().hashString(loginCredentials.getPassword(), UTF_8).asBytes()), host,
+               socket.getPort());
       } else {
          String fingerPrint = fingerprintPrivateKey(loginCredentials.getPrivateKey());
          String sha1 = sha1PrivateKey(loginCredentials.getPrivateKey());

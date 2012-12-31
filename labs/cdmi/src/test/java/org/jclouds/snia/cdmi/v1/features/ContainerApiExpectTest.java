@@ -18,9 +18,10 @@
  */
 package org.jclouds.snia.cdmi.v1.features;
 
+import static com.google.common.base.Charsets.UTF_8;
+import static com.google.common.io.BaseEncoding.base64;
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.snia.cdmi.v1.CDMIApi;
@@ -45,7 +46,7 @@ public class ContainerApiExpectTest extends BaseCDMIApiExpectTest {
                .endpoint("http://localhost:8080/MyContainer/")
                .headers(ImmutableMultimap.<String, String> builder().put("X-CDMI-Specification-Version", "1.0.1")
                         .put("TID", "tenantId")
-                        .put("Authorization", "Basic " + CryptoStreams.base64("username:password".getBytes()))
+                        .put("Authorization", "Basic " + base64().encode("username:password".getBytes(UTF_8)))
                         .put("Accept", "application/cdmi-container").build()).build();
 
       HttpResponse getResponse = HttpResponse.builder().statusCode(200).payload(payloadFromResource("/container.json"))

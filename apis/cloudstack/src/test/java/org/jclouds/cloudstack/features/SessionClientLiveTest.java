@@ -18,6 +18,9 @@
  */
 package org.jclouds.cloudstack.features;
 
+import static com.google.common.base.Charsets.UTF_8;
+import static com.google.common.hash.Hashing.md5;
+import static com.google.common.io.BaseEncoding.base16;
 import static org.jclouds.cloudstack.features.GlobalAccountClientLiveTest.createTestAccount;
 import static org.jclouds.cloudstack.features.GlobalUserClientLiveTest.createTestUser;
 import static org.testng.Assert.assertEquals;
@@ -31,7 +34,6 @@ import org.jclouds.cloudstack.domain.LoginResponse;
 import org.jclouds.cloudstack.domain.User;
 import org.jclouds.cloudstack.internal.BaseCloudStackClientLiveTest;
 import org.jclouds.cloudstack.util.ApiKeyPairs;
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.rest.AuthorizationException;
 import org.testng.annotations.Test;
 
@@ -83,8 +85,8 @@ public class SessionClientLiveTest extends BaseCloudStackClientLiveTest {
    }
 
    private void checkLoginAsTheNewUser(String expectedUsername) {
-      LoginResponse response = globalAdminClient.getSessionClient()
-         .loginUserInDomainWithHashOfPassword(expectedUsername, "", CryptoStreams.md5Hex("password"));
+      LoginResponse response = globalAdminClient.getSessionClient().loginUserInDomainWithHashOfPassword(
+            expectedUsername, "", base16().lowerCase().encode(md5().hashString("password", UTF_8).asBytes()));
 
       assertNotNull(response);
       assertNotNull(response.getSessionKey());

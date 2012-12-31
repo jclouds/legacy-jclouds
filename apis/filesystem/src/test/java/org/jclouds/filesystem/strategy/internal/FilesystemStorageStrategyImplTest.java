@@ -37,7 +37,6 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobBuilder;
 import org.jclouds.blobstore.domain.internal.BlobBuilderImpl;
 import org.jclouds.blobstore.options.ListContainerOptions;
-import org.jclouds.encryption.internal.JCECrypto;
 import org.jclouds.filesystem.predicates.validators.internal.FilesystemBlobKeyValidatorImpl;
 import org.jclouds.filesystem.predicates.validators.internal.FilesystemContainerNameValidatorImpl;
 import org.jclouds.filesystem.utils.TestUtils;
@@ -79,14 +78,10 @@ public class FilesystemStorageStrategyImplTest {
       storageStrategy = new FilesystemStorageStrategyImpl(new Provider<BlobBuilder>() {
          @Override
          public BlobBuilder get() {
-            try {
-               return new BlobBuilderImpl(new JCECrypto());
-            } catch (Exception e) {
-               return null;
-            }
+            return new BlobBuilderImpl();
          }
 
-      }, TestUtils.TARGET_BASE_DIR, new FilesystemContainerNameValidatorImpl(), new FilesystemBlobKeyValidatorImpl(), new JCECrypto());
+      }, TestUtils.TARGET_BASE_DIR, new FilesystemContainerNameValidatorImpl(), new FilesystemBlobKeyValidatorImpl());
       TestUtils.cleanDirectoryContent(TestUtils.TARGET_BASE_DIR);
    }
 
@@ -421,13 +416,9 @@ public class FilesystemStorageStrategyImplTest {
                new Provider<BlobBuilder>() {
                   @Override
                   public BlobBuilder get() {
-                     try {
-                        return new BlobBuilderImpl(new JCECrypto());
-                     } catch (Exception e) {
-                        return null;
-                     }
+                     return new BlobBuilderImpl();
                   }
-               }, absoluteBasePath, new FilesystemContainerNameValidatorImpl(), new FilesystemBlobKeyValidatorImpl(), new JCECrypto());
+               }, absoluteBasePath, new FilesystemContainerNameValidatorImpl(), new FilesystemBlobKeyValidatorImpl());
       TestUtils.cleanDirectoryContent(absoluteContainerPath);
 
       String blobKey;
