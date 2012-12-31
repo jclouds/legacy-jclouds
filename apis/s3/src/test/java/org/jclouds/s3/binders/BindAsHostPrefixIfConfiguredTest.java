@@ -27,13 +27,10 @@ import java.lang.reflect.Method;
 import java.util.Properties;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.s3.S3AsyncClient;
 import org.jclouds.s3.internal.BaseS3AsyncClientTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code BindAsHostPrefixIfConfigured}
@@ -43,12 +40,6 @@ import com.google.inject.TypeLiteral;
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "BindAsHostPrefixIfConfiguredTest")
 public class BindAsHostPrefixIfConfiguredTest extends BaseS3AsyncClientTest<S3AsyncClient> {
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<S3AsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<S3AsyncClient>>() {
-      };
-   }
 
    public void testBucket() throws IOException {
 

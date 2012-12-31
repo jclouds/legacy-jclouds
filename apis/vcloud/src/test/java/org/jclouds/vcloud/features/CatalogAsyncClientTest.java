@@ -25,14 +25,11 @@ import java.net.URI;
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.vcloud.internal.BaseVCloudAsyncClientTest;
 import org.jclouds.vcloud.options.CatalogItemOptions;
 import org.jclouds.vcloud.xml.CatalogHandler;
 import org.jclouds.vcloud.xml.CatalogItemHandler;
 import org.testng.annotations.Test;
-
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code CatalogAsyncClient}
@@ -43,12 +40,6 @@ import com.google.inject.TypeLiteral;
 // surefire
 @Test(groups = "unit", testName = "CatalogAsyncClientTest")
 public class CatalogAsyncClientTest extends BaseVCloudAsyncClientTest<CatalogAsyncClient> {
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<CatalogAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<CatalogAsyncClient>>() {
-      };
-   }
 
    public void testCatalog() throws SecurityException, NoSuchMethodException, IOException {
       Method method = CatalogAsyncClient.class.getMethod("getCatalog", URI.class);

@@ -23,12 +23,9 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.savvis.vpdc.features.BaseVPDCAsyncApiTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code VPDCAsyncApi}
@@ -56,12 +53,6 @@ public class VPDCAsyncApiTest extends BaseVPDCAsyncApiTest<VPDCAsyncApi> {
       assertEquals(asyncApi.listOrgs().size(), 1);
       assertEquals(asyncApi.listPredefinedOperatingSystems().size(), 3);
 
-   }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<VPDCAsyncApi>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<VPDCAsyncApi>>() {
-      };
    }
 
    @BeforeClass

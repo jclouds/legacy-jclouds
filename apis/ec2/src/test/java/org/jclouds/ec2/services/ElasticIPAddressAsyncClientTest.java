@@ -28,10 +28,7 @@ import org.jclouds.ec2.xml.DescribeAddressesResponseHandler;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
-
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code ElasticIPAddressAsyncClient}
@@ -124,11 +121,4 @@ public class ElasticIPAddressAsyncClientTest extends BaseEC2AsyncClientTest<Elas
 
       checkFilters(request);
    }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<ElasticIPAddressAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<ElasticIPAddressAsyncClient>>() {
-      };
-   }
-
 }

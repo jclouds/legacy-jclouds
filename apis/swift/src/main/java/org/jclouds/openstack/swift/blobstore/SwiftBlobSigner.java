@@ -54,7 +54,7 @@ import com.google.inject.Provider;
 @Singleton
 public class SwiftBlobSigner<T extends CommonSwiftAsyncClient> implements BlobRequestSigner {
 
-   private final RestAnnotationProcessor<T> processor;
+   private final RestAnnotationProcessor processor;
    private final Crypto crypto;
 
    private final Provider<Long> unixEpochTimestampProvider;
@@ -77,9 +77,9 @@ public class SwiftBlobSigner<T extends CommonSwiftAsyncClient> implements BlobRe
    protected SwiftBlobSigner(BlobToObject blobToObject, BlobToHttpGetOptions blob2HttpGetOptions, Crypto crypto,
          @TimeStamp Provider<Long> unixEpochTimestampProvider,
          @TemporaryUrlKey Supplier<String> temporaryUrlKeySupplier,
-         RestAnnotationProcessor<T> processor)
+         RestAnnotationProcessor.Factory processor, Class<T> clazz)
          throws SecurityException, NoSuchMethodException {
-      this.processor = checkNotNull(processor, "processor");
+      this.processor = checkNotNull(processor, "processor").declaring(clazz);
       this.crypto = checkNotNull(crypto, "crypto");
 
       this.unixEpochTimestampProvider = checkNotNull(unixEpochTimestampProvider, "unixEpochTimestampProvider");
@@ -88,9 +88,9 @@ public class SwiftBlobSigner<T extends CommonSwiftAsyncClient> implements BlobRe
       this.blobToObject = checkNotNull(blobToObject, "blobToObject");
       this.blob2HttpGetOptions = checkNotNull(blob2HttpGetOptions, "blob2HttpGetOptions");
 
-      this.getMethod = processor.getDeclaring().getMethod("getObject", String.class, String.class, GetOptions[].class);
-      this.deleteMethod = processor.getDeclaring().getMethod("removeObject", String.class, String.class);
-      this.createMethod = processor.getDeclaring().getMethod("putObject", String.class, SwiftObject.class);
+      this.getMethod = clazz.getMethod("getObject", String.class, String.class, GetOptions[].class);
+      this.deleteMethod = clazz.getMethod("removeObject", String.class, String.class);
+      this.createMethod = clazz.getMethod("putObject", String.class, SwiftObject.class);
    }
 
    @Override

@@ -19,8 +19,6 @@
 package org.jclouds.http.config;
 
 import org.jclouds.http.HttpCommandExecutorService;
-import org.jclouds.http.TransformingHttpCommandExecutorService;
-import org.jclouds.http.TransformingHttpCommandExecutorServiceImpl;
 import org.jclouds.http.internal.JavaUrlHttpCommandExecutorService;
 
 import com.google.inject.AbstractModule;
@@ -40,8 +38,6 @@ public class JavaUrlHttpCommandExecutorServiceModule extends AbstractModule {
    protected void configure() {
       install(new SSLModule());
       bind(HttpCommandExecutorService.class).to(JavaUrlHttpCommandExecutorService.class).in(Scopes.SINGLETON);
-      bind(TransformingHttpCommandExecutorService.class).to(TransformingHttpCommandExecutorServiceImpl.class).in(
-               Scopes.SINGLETON);
    }
 
 }

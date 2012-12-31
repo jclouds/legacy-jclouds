@@ -29,7 +29,6 @@ import org.jclouds.compute.domain.CIMOperatingSystem;
 import org.jclouds.fallbacks.MapHttp4xxCodesToExceptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.savvis.vpdc.domain.VMSpec;
 import org.jclouds.savvis.vpdc.xml.TaskHandler;
 import org.jclouds.savvis.vpdc.xml.TasksListHandler;
@@ -265,11 +264,4 @@ public class VMAsyncApiTest extends BaseVPDCAsyncApiTest<VMAsyncApi> {
 
       checkFilters(request);
    }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<VMAsyncApi>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<VMAsyncApi>>() {
-      };
-   }
-
 }

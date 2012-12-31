@@ -25,11 +25,8 @@ import java.net.URI;
 import org.jclouds.fallbacks.MapHttp4xxCodesToExceptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.savvis.vpdc.xml.TaskHandler;
 import org.testng.annotations.Test;
-
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests annotation parsing of {@code ServiceManagementAsyncApi}
@@ -38,12 +35,6 @@ import com.google.inject.TypeLiteral;
  */
 @Test(groups = "unit")
 public class ServiceManagementAsyncApiTest extends BaseVPDCAsyncApiTest<ServiceManagementAsyncApi> {
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<ServiceManagementAsyncApi>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<ServiceManagementAsyncApi>>() {
-      };
-   }
 
    public void testPowerOnVMVDC() throws SecurityException, NoSuchMethodException, IOException {
       Method method = ServiceManagementAsyncApi.class.getMethod("powerOnVMInVDC", String.class, String.class,

@@ -47,12 +47,10 @@ import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.rest.internal.BaseAsyncClientTest;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code ElasticStackAsyncClient}
@@ -444,12 +442,6 @@ public class ElasticStackAsyncClientTest extends BaseAsyncClientTest<ElasticStac
    protected void checkFilters(HttpRequest request) {
       assertEquals(request.getFilters().size(), 1);
       assertEquals(request.getFilters().get(0).getClass(), BasicAuthentication.class);
-   }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<ElasticStackAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<ElasticStackAsyncClient>>() {
-      };
    }
 
    @Override

@@ -30,10 +30,7 @@ import org.jclouds.cloudstack.options.UpdateServiceOfferingOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
-
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code GlobalOfferingAsyncClient}
@@ -158,11 +155,5 @@ public class GlobalOfferingAsyncClientTest extends BaseCloudStackAsyncClientTest
       assertFallbackClassEquals(method, NullOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
-   }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<GlobalOfferingAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<GlobalOfferingAsyncClient>>() {
-      };
    }
 }

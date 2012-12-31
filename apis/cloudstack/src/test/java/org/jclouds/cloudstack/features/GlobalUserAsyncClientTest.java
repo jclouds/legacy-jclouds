@@ -27,10 +27,7 @@ import org.jclouds.cloudstack.options.UpdateUserOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
-
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code GlobalUserAsyncClient}
@@ -87,11 +84,5 @@ public class GlobalUserAsyncClientTest extends BaseCloudStackAsyncClientTest<Glo
       assertFallbackClassEquals(method, NullOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
-   }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<GlobalUserAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<GlobalUserAsyncClient>>() {
-      };
    }
 }

@@ -26,12 +26,10 @@ import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.abiquo.features.BaseAbiquoAsyncApiTest;
 import org.jclouds.functions.IdentityFunction;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
 import com.abiquo.model.rest.RESTLink;
 import com.abiquo.server.core.infrastructure.DatacentersDto;
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests annotation parsing of {@code AbiquoHttpAsyncApi}.
@@ -57,11 +55,4 @@ public class AbiquoHttpAsyncClientTest extends BaseAbiquoAsyncApiTest<AbiquoHttp
 
       checkFilters(request);
    }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<AbiquoHttpAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<AbiquoHttpAsyncClient>>() {
-      };
-   }
-
 }

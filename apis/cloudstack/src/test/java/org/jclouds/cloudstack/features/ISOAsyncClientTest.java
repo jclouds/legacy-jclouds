@@ -33,11 +33,9 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.inject.TypeLiteral;
 /**
  * Tests the behaviour of ISOAsyncClient.
  * 
@@ -255,11 +253,4 @@ public class ISOAsyncClientTest extends BaseCloudStackAsyncClientTest<ISOAsyncCl
 
       checkFilters(httpRequest);
    }
-
-@Override
-   protected TypeLiteral<RestAnnotationProcessor<ISOAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<ISOAsyncClient>>() {
-      };
-   }
-
 }

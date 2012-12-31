@@ -28,7 +28,6 @@ import javax.ws.rs.core.HttpHeaders;
 import org.jclouds.blobstore.binders.BindBlobToMultipartFormTest;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.s3.S3AsyncClient;
 import org.jclouds.s3.domain.AccessControlList;
 import org.jclouds.s3.domain.CannedAccessPolicy;
@@ -41,7 +40,6 @@ import org.testng.annotations.Test;
 
 import com.google.common.collect.SortedSetMultimap;
 import com.google.common.collect.TreeMultimap;
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code RequestAuthorizeSignature}
@@ -51,12 +49,6 @@ import com.google.inject.TypeLiteral;
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "RequestAuthorizeSignatureTest")
 public class RequestAuthorizeSignatureTest extends BaseS3AsyncClientTest<S3AsyncClient> {
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<S3AsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<S3AsyncClient>>() {
-      };
-   }
 
    @DataProvider(parallel = true)
    public Object[][] dataProvider() throws NoSuchMethodException {

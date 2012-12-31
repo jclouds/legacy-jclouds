@@ -221,56 +221,7 @@ public class NovaErrorHandlerTest {
          new OverLimitParser(new GsonWrapper(new Gson())));
 
    private HttpCommand command() {
-      return new HttpCommand() {
-
-         private Exception exception;
-
-         @Override
-         public int getRedirectCount() {
-            return 0;
-         }
-
-         @Override
-         public int incrementRedirectCount() {
-            return 0;
-         }
-
-         @Override
-         public boolean isReplayable() {
-            return false;
-         }
-
-         @Override
-         public Exception getException() {
-            return exception;
-         }
-
-         @Override
-         public int getFailureCount() {
-            return 0;
-         }
-
-         @Override
-         public int incrementFailureCount() {
-            return 0;
-         }
-
-         @Override
-         public void setException(Exception exception) {
-            this.exception = exception;
-         }
-
-         @Override
-         public HttpRequest getCurrentRequest() {
-            return HttpRequest.builder().method("POST").endpoint("https://nova/v1.1/servers").build();
-         }
-
-         @Override
-         public void setCurrentRequest(HttpRequest request) {
-
-         }
-
-      };
+      return new HttpCommand(HttpRequest.builder().method("POST").endpoint("https://nova/v1.1/servers").build());
    }
 
 }

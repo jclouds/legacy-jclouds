@@ -29,7 +29,6 @@ import org.jclouds.abiquo.domain.PricingResources;
 import org.jclouds.http.functions.ParseXMLWithJAXB;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
 import com.abiquo.server.core.pricing.CostCodeCurrenciesDto;
@@ -43,7 +42,6 @@ import com.abiquo.server.core.pricing.PricingTemplateDto;
 import com.abiquo.server.core.pricing.PricingTemplatesDto;
 import com.abiquo.server.core.pricing.PricingTierDto;
 import com.abiquo.server.core.pricing.PricingTiersDto;
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests annotation parsing of {@code PricingAsyncApi}.
@@ -289,13 +287,7 @@ public class PricingAsyncApiTest extends BaseAbiquoAsyncApiTest<PricingAsyncApi>
 
       checkFilters(request);
    }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<PricingAsyncApi>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<PricingAsyncApi>>() {
-      };
-   }
-
+   
    /*********************** Cost Code Currency ***********************/
 
    public void testGetCostCodeCurrencies() throws SecurityException, NoSuchMethodException, IOException {

@@ -27,15 +27,12 @@ import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Strings2;
 import org.jclouds.vcloud.internal.BaseVCloudAsyncClientTest;
 import org.jclouds.vcloud.options.CloneVAppOptions;
 import org.jclouds.vcloud.xml.TaskHandler;
 import org.jclouds.vcloud.xml.VAppHandler;
 import org.testng.annotations.Test;
-
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code VAppAsyncClient}
@@ -46,12 +43,6 @@ import com.google.inject.TypeLiteral;
 // surefire
 @Test(groups = "unit", testName = "VAppAsyncClientTest")
 public class VAppAsyncClientTest extends BaseVCloudAsyncClientTest<VAppAsyncClient> {
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<VAppAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<VAppAsyncClient>>() {
-      };
-   }
 
    public void testopyVAppToVDCAndName() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VAppAsyncClient.class.getMethod("copyVAppToVDCAndName", URI.class, URI.class, String.class,

@@ -24,10 +24,7 @@ import java.lang.reflect.Method;
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseJson;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
-
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests annotation parsing of {@code ProductPackageAsyncClient}
@@ -53,11 +50,5 @@ public class ProductPackageAsyncClientTest extends BaseSoftLayerAsyncClientTest<
 
       checkFilters(httpRequest);
 
-   }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<ProductPackageAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<ProductPackageAsyncClient>>() {
-      };
    }
 }

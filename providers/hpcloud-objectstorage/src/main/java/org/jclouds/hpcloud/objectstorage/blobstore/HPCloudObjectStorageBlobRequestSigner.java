@@ -32,9 +32,6 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import com.google.common.base.Supplier;
-import com.google.common.base.Throwables;
-import com.google.inject.Provider;
 import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
@@ -52,6 +49,10 @@ import org.jclouds.rest.annotations.Credential;
 import org.jclouds.rest.annotations.Identity;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 
+import com.google.common.base.Supplier;
+import com.google.common.base.Throwables;
+import com.google.inject.Provider;
+
 /**
  * Signer for HP's variant of temporary signed URLs.  They prefix the signature
  * with the tenant id.
@@ -61,7 +62,7 @@ import org.jclouds.rest.internal.RestAnnotationProcessor;
 @Singleton
 public class HPCloudObjectStorageBlobRequestSigner implements BlobRequestSigner {
 
-   private final RestAnnotationProcessor<HPCloudObjectStorageAsyncApi> processor;
+   private final RestAnnotationProcessor processor;
    private final Crypto crypto;
 
    private final Provider<Long> unixEpochTimestampProvider;
@@ -78,13 +79,13 @@ public class HPCloudObjectStorageBlobRequestSigner implements BlobRequestSigner 
    private final Method createMethod;
 
    @Inject
-   public HPCloudObjectStorageBlobRequestSigner(RestAnnotationProcessor<HPCloudObjectStorageAsyncApi> processor, BlobToObject blobToObject,
+   public HPCloudObjectStorageBlobRequestSigner(RestAnnotationProcessor.Factory processor, BlobToObject blobToObject,
             BlobToHttpGetOptions blob2HttpGetOptions,
             Crypto crypto, @TimeStamp Provider<Long> unixEpochTimestampProvider,
             Supplier<Access> access,
             @Identity String accessKey, @Credential String secretKey)
             throws SecurityException, NoSuchMethodException {
-      this.processor = checkNotNull(processor, "processor");
+      this.processor = checkNotNull(processor, "processor").declaring(HPCloudObjectStorageAsyncApi.class);
       this.crypto = checkNotNull(crypto, "crypto");
 
       this.unixEpochTimestampProvider = checkNotNull(unixEpochTimestampProvider, "unixEpochTimestampProvider");
@@ -141,7 +142,7 @@ public class HPCloudObjectStorageBlobRequestSigner implements BlobRequestSigner 
    }
 
    private HttpRequest signForTemporaryAccess(HttpRequest request, long timeInSeconds) {
-      HttpRequest.Builder builder = request.toBuilder();
+      HttpRequest.Builder<?> builder = request.toBuilder();
       // HP Cloud does not use X-Auth-Token for temporary signed URLs and
       // leaking this allows clients arbitrary privileges until token timeout.
       builder.filters(filter(request.getFilters(), not(instanceOf(AuthenticateRequest.class))));

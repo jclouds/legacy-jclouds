@@ -42,12 +42,10 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Functions;
 import com.google.common.collect.ImmutableSet;
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code TemplateAsyncClient}
@@ -341,11 +339,5 @@ public class TemplateAsyncClientTest extends BaseCloudStackAsyncClientTest<Templ
       assertFallbackClassEquals(method, MapHttp4xxCodesToExceptions.class);
 
       checkFilters(httpRequest);
-   }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<TemplateAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<TemplateAsyncClient>>() {
-      };
    }
 }

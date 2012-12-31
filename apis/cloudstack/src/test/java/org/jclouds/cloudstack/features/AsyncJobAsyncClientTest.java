@@ -28,10 +28,7 @@ import org.jclouds.cloudstack.functions.ParseAsyncJobsFromHttpResponse;
 import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.ListAsyncJobsOptions;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
-
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code AsyncJobAsyncClient}
@@ -93,11 +90,5 @@ public class AsyncJobAsyncClientTest extends BaseCloudStackAsyncClientTest<Async
 
       checkFilters(httpRequest);
 
-   }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<AsyncJobAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<AsyncJobAsyncClient>>() {
-      };
    }
 }

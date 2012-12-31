@@ -27,14 +27,12 @@ import org.jclouds.abiquo.domain.CloudResources;
 import org.jclouds.abiquo.domain.TemplateResources;
 import org.jclouds.http.functions.ParseXMLWithJAXB;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
 import com.abiquo.model.rest.RESTLink;
 import com.abiquo.model.transport.SingleResourceTransportDto;
 import com.abiquo.server.core.task.TaskDto;
 import com.abiquo.server.core.task.TasksDto;
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests annotation parsing of {@code TaskAsyncApi}
@@ -120,11 +118,5 @@ public class TaskAsyncApiTest extends BaseAbiquoAsyncApiTest<TaskAsyncApi> {
       assertFallbackClassEquals(method, null);
 
       checkFilters(request);
-   }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<TaskAsyncApi>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<TaskAsyncApi>>() {
-      };
    }
 }

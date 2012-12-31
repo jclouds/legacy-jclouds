@@ -25,7 +25,6 @@ import java.net.URI;
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.savvis.vpdc.options.GetVMOptions;
 import org.jclouds.savvis.vpdc.xml.FirewallServiceHandler;
 import org.jclouds.savvis.vpdc.xml.NetworkHandler;
@@ -34,8 +33,6 @@ import org.jclouds.savvis.vpdc.xml.TaskHandler;
 import org.jclouds.savvis.vpdc.xml.VDCHandler;
 import org.jclouds.savvis.vpdc.xml.VMHandler;
 import org.testng.annotations.Test;
-
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests annotation parsing of {@code BrowsingAsyncApi}
@@ -236,11 +233,4 @@ public class BrowsingAsyncApiTest extends BaseVPDCAsyncApiTest<BrowsingAsyncApi>
 
       checkFilters(request);
    }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<BrowsingAsyncApi>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<BrowsingAsyncApi>>() {
-      };
-   }
-
 }

@@ -25,11 +25,9 @@ import org.jclouds.gogrid.domain.IpType;
 import org.jclouds.gogrid.functions.ParseIpListFromJsonResponse;
 import org.jclouds.gogrid.options.GetIpListOptions;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Iterables;
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code GridIpAsyncClient}
@@ -85,11 +83,5 @@ public class GridIpAsyncClientTest extends BaseGoGridAsyncClientTest<GridIpAsync
             + "sig=e9aafd0a5d4c69bb24536be4bce8a528&api_key=identity " + "HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null, null, false);
-   }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<GridIpAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<GridIpAsyncClient>>() {
-      };
    }
 }

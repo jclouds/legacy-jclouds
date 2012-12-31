@@ -25,11 +25,8 @@ import java.io.IOException;
 import org.jclouds.ec2.services.BaseEC2AsyncClientTest;
 import org.jclouds.ec2.services.InstanceAsyncClient;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code BindS3UploadPolicyAndSignature}
@@ -62,11 +59,5 @@ public class BindS3UploadPolicyAndSignatureTest extends BaseEC2AsyncClientTest<I
    public void testNullIsBad() {
       HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://momma").build();
       binder.bindToRequest(request, null);
-   }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<InstanceAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<InstanceAsyncClient>>() {
-      };
    }
 }

@@ -28,11 +28,9 @@ import org.jclouds.cloudstack.options.ListAccountsOptions;
 import org.jclouds.functions.IdentityFunction;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Functions;
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code AccountAsyncClient}
@@ -97,9 +95,4 @@ public class AccountAsyncClientTest extends BaseCloudStackAsyncClientTest<Accoun
 
    }
 
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<AccountAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<AccountAsyncClient>>() {
-      };
-   }
 }

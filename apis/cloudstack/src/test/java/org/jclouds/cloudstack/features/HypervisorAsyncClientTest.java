@@ -25,10 +25,7 @@ import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
 import org.jclouds.cloudstack.functions.ParseNamesFromHttpResponse;
 import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
-
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code HypervisorAsyncClient}
@@ -72,11 +69,5 @@ public class HypervisorAsyncClientTest extends BaseCloudStackAsyncClientTest<Hyp
 
       checkFilters(httpRequest);
 
-   }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<HypervisorAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<HypervisorAsyncClient>>() {
-      };
    }
 }

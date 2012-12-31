@@ -36,11 +36,9 @@ import org.jclouds.ec2.xml.PermissionHandler;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code AMIAsyncClient}
@@ -315,11 +313,4 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
 
       checkFilters(request);
    }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<AMIAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<AMIAsyncClient>>() {
-      };
-   }
-
 }
