@@ -19,6 +19,8 @@
 package org.jclouds.http;
 
 import static com.google.common.base.Throwables.getStackTraceAsString;
+import static com.google.common.hash.Hashing.md5;
+import static com.google.common.io.BaseEncoding.base64;
 import static com.google.common.io.ByteStreams.copy;
 import static com.google.common.io.ByteStreams.join;
 import static com.google.common.io.ByteStreams.newInputStreamSupplier;
@@ -32,7 +34,7 @@ import static com.google.common.util.concurrent.Uninterruptibles.sleepUninterrup
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 import static org.jclouds.Constants.PROPERTY_RELAX_HOSTNAME;
 import static org.jclouds.Constants.PROPERTY_TRUST_ALL_CERTS;
-import static org.jclouds.crypto.CryptoStreams.md5Base64;
+import static org.jclouds.io.ByteSources.asByteSource;
 import static org.jclouds.util.Strings2.toStringAndClose;
 
 import java.io.ByteArrayInputStream;
@@ -58,7 +60,6 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.server.ssl.SslSelectChannelConnector;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.jclouds.ContextBuilder;
-import org.jclouds.io.InputSuppliers;
 import org.jclouds.providers.AnonymousProviderMetadata;
 import org.jclouds.rest.RestContext;
 import org.testng.annotations.AfterClass;
@@ -97,8 +98,7 @@ public abstract class BaseJettyTest {
       this.testPort = testPort;
 
       final InputSupplier<InputStream> oneHundredOneConstitutions = getTestDataSupplier();
-
-      md5 = md5Base64(oneHundredOneConstitutions);
+      md5 = base64().encode(asByteSource(oneHundredOneConstitutions.getInput()).hash(md5()).asBytes());
 
       Handler server1Handler = new AbstractHandler() {
          public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
@@ -183,7 +183,7 @@ public abstract class BaseJettyTest {
          if (request.getHeader("Content-MD5") != null) {
             String expectedMd5 = request.getHeader("Content-MD5");
             String realMd5FromRequest;
-            realMd5FromRequest = md5Base64(InputSuppliers.of(body));
+            realMd5FromRequest = base64().encode(asByteSource(body).hash(md5()).asBytes());
             boolean matched = expectedMd5.equals(realMd5FromRequest);
             if (matched) {
                response.setStatus(SC_OK);

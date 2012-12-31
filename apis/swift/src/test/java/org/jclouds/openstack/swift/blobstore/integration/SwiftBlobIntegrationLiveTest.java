@@ -18,23 +18,23 @@
  */
 package org.jclouds.openstack.swift.blobstore.integration;
 
-import com.google.common.io.Files;
-import com.google.common.io.InputSupplier;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest;
 import org.jclouds.blobstore.options.PutOptions;
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
 import org.testng.ITestContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import java.io.File;
-import java.io.InputStream;
-import java.io.IOException;
-import java.util.Properties;
+import com.google.common.io.Files;
+import com.google.common.io.InputSupplier;
 
 /**
  * 
@@ -68,7 +68,7 @@ public class SwiftBlobIntegrationLiveTest extends BaseBlobIntegrationTest {
     public void setUpResourcesOnThisThread(ITestContext testContext) throws Exception {
         super.setUpResourcesOnThisThread(testContext);
         oneHundredOneConstitutions = getTestDataSupplier();
-        oneHundredOneConstitutionsMD5 = CryptoStreams.md5(oneHundredOneConstitutions);
+        oneHundredOneConstitutionsMD5 = md5Supplier(oneHundredOneConstitutions);
     }
 
    @Override

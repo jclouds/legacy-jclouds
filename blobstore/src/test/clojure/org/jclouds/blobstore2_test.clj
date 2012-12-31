@@ -21,7 +21,6 @@
   (:use [org.jclouds.blobstore2] :reload-all)
   (:use [clojure.test])
   (:import [org.jclouds.blobstore BlobStoreContextFactory]
-           [org.jclouds.crypto CryptoStreams]
            [java.io ByteArrayInputStream ByteArrayOutputStream
             StringBufferInputStream]
            [org.jclouds.util Strings2]))
@@ -152,10 +151,12 @@
 
 (deftest blob-test
   (let [a-blob (blob "test-name"
-                     :payload (.getBytes "test-payload")
+                     :payload "test-payload"
                      :calculate-md5 true)]
     (is (= (seq (.. a-blob (getPayload) (getContentMetadata) (getContentMD5)))
-           (seq (CryptoStreams/md5 (.getBytes "test-payload")))))))
+           (seq (.digest (doto (java.security.MessageDigest/getInstance "MD5")
+                               (.reset)
+                               (.update (.getBytes "test-payload")))))))))
 
 (deftest payload-protocol-test
   (is (instance? org.jclouds.io.Payload (payload "test")))

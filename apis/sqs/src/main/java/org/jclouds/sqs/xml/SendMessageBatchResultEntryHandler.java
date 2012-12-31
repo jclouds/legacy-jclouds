@@ -18,12 +18,12 @@
  */
 package org.jclouds.sqs.xml;
 
+import static com.google.common.io.BaseEncoding.base16;
 import static org.jclouds.util.SaxUtils.currentOrNull;
 
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.sqs.domain.MessageIdAndMD5;
 
@@ -61,7 +61,7 @@ public class SendMessageBatchResultEntryHandler extends
       } else if (qName.equals("MessageId")) {
          builder.id(currentOrNull(currentText));
       } else if (qName.equals("MD5OfMessageBody")) {
-         builder.md5(HashCodes.fromBytes(CryptoStreams.hex(currentOrNull(currentText))));
+         builder.md5(HashCodes.fromBytes(base16().lowerCase().decode(currentOrNull(currentText))));
       }
       currentText = new StringBuilder();
    }

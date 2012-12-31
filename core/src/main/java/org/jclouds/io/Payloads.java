@@ -17,24 +17,21 @@
  * under the License.
  */
 package org.jclouds.io;
-
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.hash.Hashing.md5;
 import static com.google.common.io.ByteStreams.toByteArray;
+import static org.jclouds.io.ByteSources.asByteSource;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.io.payloads.ByteArrayPayload;
 import org.jclouds.io.payloads.FilePayload;
 import org.jclouds.io.payloads.InputStreamPayload;
 import org.jclouds.io.payloads.StringPayload;
 import org.jclouds.io.payloads.UrlEncodedFormPayload;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.Multimap;
 
 /**
@@ -90,12 +87,10 @@ public class Payloads {
     * 
     * @param payload
     *           payload to calculate
-    * @param md5
-    *           digester to calculate payloads with.
     * @return new Payload with md5 set.
     * @throws IOException
     */
-   public static Payload calculateMD5(Payload payload, MessageDigest md5) throws IOException {
+   public static Payload calculateMD5(Payload payload) throws IOException {
       checkNotNull(payload, "payload");
       if (!payload.isRepeatable()) {
          MutableContentMetadata oldContentMetadata = payload.getContentMetadata();
@@ -109,48 +104,18 @@ public class Payloads {
          oldContentMetadata.setContentMD5(payload.getContentMetadata().getContentMD5());
          payload.setContentMetadata(oldContentMetadata);
       }
-      payload.getContentMetadata().setContentMD5(CryptoStreams.digest(payload, md5));
+      payload.getContentMetadata().setContentMD5(asByteSource(payload.getInput()).hash(md5()).asBytes());
       return payload;
    }
-
-   /**
-    * Uses default md5 generator.
-    * 
-    * @see #calculateMD5(Payload, MessageDigest)
-    */
-   public static Payload calculateMD5(Payload payload) throws IOException {
-      try {
-         return calculateMD5(payload, MessageDigest.getInstance("MD5"));
-      } catch (NoSuchAlgorithmException e) {
-         throw Throwables.propagate(e);
-      }
-   }
-
+   
    /**
     * Calculates the md5 on a payload, replacing as necessary.
-    * 
-    * @see #calculateMD5(Payload, MessageDigest)
     */
-   public static <T extends PayloadEnclosing> T calculateMD5(T payloadEnclosing, MessageDigest md5) throws IOException {
+   public static <T extends PayloadEnclosing> T calculateMD5(T payloadEnclosing) throws IOException {
       checkNotNull(payloadEnclosing, "payloadEnclosing");
-      Payload newPayload = calculateMD5(payloadEnclosing.getPayload(), md5);
+      Payload newPayload = calculateMD5(payloadEnclosing.getPayload());
       if (newPayload != payloadEnclosing.getPayload())
          payloadEnclosing.setPayload(newPayload);
       return payloadEnclosing;
-   }
-
-   /**
-    * Calculates the md5 on a payload, replacing as necessary.
-    * <p/>
-    * uses default md5 generator.
-    * 
-    * @see #calculateMD5(Payload, MessageDigest)
-    */
-   public static <T extends PayloadEnclosing> T calculateMD5(T payloadEnclosing) throws IOException {
-      try {
-         return calculateMD5(payloadEnclosing, MessageDigest.getInstance("MD5"));
-      } catch (NoSuchAlgorithmException e) {
-         throw Throwables.propagate(e);
-      }
    }
 }

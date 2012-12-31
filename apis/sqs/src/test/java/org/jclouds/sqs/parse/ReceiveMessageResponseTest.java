@@ -18,11 +18,11 @@
  */
 package org.jclouds.sqs.parse;
 
+import static com.google.common.io.BaseEncoding.base16;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.sqs.domain.Message;
 import org.jclouds.sqs.xml.ReceiveMessageResponseHandler;
@@ -58,7 +58,7 @@ public class ReceiveMessageResponseTest extends BaseHandlerTest {
             .id("5fea7756-0ea4-451a-a703-a558b933e274")
             .receiptHandle(
                   "+eXJYhj5rDr9cAe/9BuheT5fysi9BoqtEZSkO7IazVbNHg60eCCINxLqaSVv2pFHrWeWNpZwbleSkWRbCtZaQGgpOx/3cWJZiNSG1KKlJX4IOwISFvb3FwByMx4w0lnINeXzcw2VcKQXNrCatO9gdIiVPvJC3SCKatYM/7YTidtjqc8igrtYW2E2mHlCy3NXPCeXxP4tSvyEwIxpDAmMT7IF0mWvTHS6+JBUtFUsrmi61oIHlESNrD1OjdB1QQw+kdvJ6VbsntbJNNYKw+YqdqWNpZkiGQ8y1z9OdHsr1+4=")
-            .md5(HashCodes.fromBytes(CryptoStreams.hex("fafb00f5732ab283681e124bf8747ed1")))
+            .md5(HashCodes.fromBytes(base16().lowerCase().decode("fafb00f5732ab283681e124bf8747ed1")))
             .body("This is a test message")
             .addAttribute("SenderId", "195004372649")
             .addAttribute("SentTimestamp", "1238099229000")

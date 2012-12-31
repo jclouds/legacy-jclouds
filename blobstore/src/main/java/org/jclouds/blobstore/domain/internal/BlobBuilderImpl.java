@@ -27,12 +27,9 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobBuilder;
 import org.jclouds.blobstore.domain.StorageType;
-import org.jclouds.crypto.Crypto;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.io.payloads.PhantomPayload;
@@ -43,12 +40,6 @@ import com.google.common.collect.Maps;
  * @author Adrian Cole
  */
 public class BlobBuilderImpl implements BlobBuilder {
-   private final Crypto crypto;
-
-   @Inject
-   public BlobBuilderImpl(Crypto crypto) {
-      this.crypto = checkNotNull(crypto, "crypto");
-   }
 
    private Payload payload;
    private String name;
@@ -77,7 +68,7 @@ public class BlobBuilderImpl implements BlobBuilder {
    @Override
    public PayloadBlobBuilder payload(Payload payload) {
       this.payload = payload;
-      return new PayloadBlobBuilderImpl(this, payload, crypto);
+      return new PayloadBlobBuilderImpl(this, payload);
    }
 
    /**
@@ -127,12 +118,10 @@ public class BlobBuilderImpl implements BlobBuilder {
    public class PayloadBlobBuilderImpl implements PayloadBlobBuilder {
       private final BlobBuilder builder;
       private final Payload payload;
-      private final Crypto crypto;
 
-      public PayloadBlobBuilderImpl(BlobBuilder builder, Payload payload, Crypto crypto) {
+      public PayloadBlobBuilderImpl(BlobBuilder builder, Payload payload) {
          this.builder = checkNotNull(builder, "builder");
          this.payload = checkNotNull(payload, "payload");
-         this.crypto = checkNotNull(crypto, "crypto");
       }
 
       @Override
@@ -157,7 +146,7 @@ public class BlobBuilderImpl implements BlobBuilder {
 
       @Override
       public PayloadBlobBuilder calculateMD5() throws IOException {
-         return builder.payload(Payloads.calculateMD5(payload, crypto.md5()));
+         return builder.payload(Payloads.calculateMD5(payload));
       }
 
       @Override

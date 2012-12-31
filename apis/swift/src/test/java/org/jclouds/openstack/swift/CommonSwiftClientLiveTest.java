@@ -18,6 +18,7 @@
  */
 package org.jclouds.openstack.swift;
 
+import static com.google.common.io.BaseEncoding.base16;
 import static org.jclouds.openstack.swift.options.ListContainerOptions.Builder.underPath;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
@@ -35,7 +36,6 @@ import java.util.concurrent.TimeoutException;
 
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.io.Payloads;
@@ -197,7 +197,8 @@ public abstract class CommonSwiftClientLiveTest<C extends CommonSwiftClient> ext
          byte[] md5 = object.getPayload().getContentMetadata().getContentMD5();
          String newEtag = getApi().putObject(containerName, object);
          assert newEtag != null;
-         assertEquals(CryptoStreams.hex(md5), CryptoStreams.hex(object.getPayload().getContentMetadata()
+
+         assertEquals(base16().lowerCase().encode(md5), base16().lowerCase().encode(object.getPayload().getContentMetadata()
                   .getContentMD5()));
 
          // Test HEAD of missing object
@@ -210,8 +211,8 @@ public abstract class CommonSwiftClientLiveTest<C extends CommonSwiftClient> ext
          assertEquals(metadata.getBytes(), Long.valueOf(data.length()));
          assert metadata.getContentType().startsWith("text/plain") : metadata.getContentType();
 
-         assertEquals(CryptoStreams.hex(md5), CryptoStreams.hex(metadata.getHash()));
-         assertEquals(metadata.getHash(), CryptoStreams.hex(newEtag));
+         assertEquals(base16().lowerCase().encode(md5), base16().lowerCase().encode(metadata.getHash()));
+         assertEquals(metadata.getHash(), base16().lowerCase().decode(newEtag));
          assertEquals(metadata.getMetadata().entrySet().size(), 1);
          assertEquals(metadata.getMetadata().get("metadata"), "metadata-value");
 
@@ -230,8 +231,8 @@ public abstract class CommonSwiftClientLiveTest<C extends CommonSwiftClient> ext
          // object.getMetadata().getName());
          assertEquals(getBlob.getInfo().getBytes(), Long.valueOf(data.length()));
          testGetObjectContentType(getBlob);
-         assertEquals(CryptoStreams.hex(md5), CryptoStreams.hex(getBlob.getInfo().getHash()));
-         assertEquals(CryptoStreams.hex(newEtag), getBlob.getInfo().getHash());
+         assertEquals(base16().lowerCase().encode(md5), base16().lowerCase().encode(getBlob.getInfo().getHash()));
+         assertEquals(base16().lowerCase().decode(newEtag), getBlob.getInfo().getHash());
          assertEquals(getBlob.getInfo().getMetadata().entrySet().size(), 2);
          assertEquals(getBlob.getInfo().getMetadata().get("new-metadata-1"), "value-1");
          assertEquals(getBlob.getInfo().getMetadata().get("new-metadata-2"), "value-2");
@@ -240,7 +241,7 @@ public abstract class CommonSwiftClientLiveTest<C extends CommonSwiftClient> ext
          // transit)
          String correctEtag = newEtag;
          String incorrectEtag = "0" + correctEtag.substring(1);
-         object.getInfo().setHash(CryptoStreams.hex(incorrectEtag));
+         object.getInfo().setHash(base16().lowerCase().decode(incorrectEtag));
          try {
             getApi().putObject(containerName, object);
          } catch (HttpResponseException e) {
@@ -253,7 +254,7 @@ public abstract class CommonSwiftClientLiveTest<C extends CommonSwiftClient> ext
          blob.getInfo().setName("chunked-object");
          blob.setPayload(bais);
          newEtag = getApi().putObject(containerName, blob);
-         assertEquals(CryptoStreams.hex(md5), CryptoStreams.hex(getBlob.getInfo().getHash()));
+         assertEquals(base16().lowerCase().encode(md5), base16().lowerCase().encode(getBlob.getInfo().getHash()));
 
          // Test GET with options
          // Non-matching ETag
@@ -268,7 +269,7 @@ public abstract class CommonSwiftClientLiveTest<C extends CommonSwiftClient> ext
          // Matching ETag
          getBlob = getApi().getObject(containerName, object.getInfo().getName(),
                   GetOptions.Builder.ifETagMatches(newEtag));
-         assertEquals(getBlob.getInfo().getHash(), CryptoStreams.hex(newEtag));
+         assertEquals(getBlob.getInfo().getHash(), base16().lowerCase().decode(newEtag));
          getBlob = getApi().getObject(containerName, object.getInfo().getName(), GetOptions.Builder.startAt(8));
          assertEquals(Strings2.toString(getBlob.getPayload()), data.substring(8));
 

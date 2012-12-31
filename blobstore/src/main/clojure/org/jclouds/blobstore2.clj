@@ -54,20 +54,7 @@ See http://code.google.com/p/jclouds for details."
            [org.jclouds.io Payload Payloads payloads.StreamingPayload]
            java.util.Arrays
            [java.security DigestOutputStream MessageDigest]
-           com.google.common.collect.ImmutableSet
-           org.jclouds.encryption.internal.JCECrypto))
-
-(def ^{:private true}
-     crypto-impl
-     ;; BouncyCastle might not be present. Try to load it, but fall back to
-     ;; JCECrypto if we can't.
-     (try
-       (import 'org.jclouds.encryption.bouncycastle.BouncyCastleCrypto)
-       (.newInstance
-        (Class/forName
-         "org.jclouds.encryption.bouncycastle.BouncyCastleCrypto"))
-       (catch Exception e
-         (JCECrypto.))))
+           com.google.common.collect.ImmutableSet))
 
 ;;
 ;; Payload support for creating Blobs.
@@ -314,7 +301,7 @@ Options can also be specified for extension modules
             content-disposition content-encoding content-language metadata]}]
      {:pre [(not (and content-md5 calculate-md5))
             (not (and (nil? payload) calculate-md5))]}
-     (let [blob-builder (.name (BlobBuilderImpl. crypto-impl) name)
+     (let [blob-builder (.name (BlobBuilderImpl.) name)
            blob-builder (if payload
                           (.payload blob-builder
                                     (org.jclouds.blobstore2/payload payload))

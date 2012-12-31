@@ -18,7 +18,9 @@
  */
 package org.jclouds.cloudstack.internal;
 
-import static org.jclouds.crypto.CryptoStreams.md5Hex;
+import static com.google.common.base.Charsets.UTF_8;
+import static com.google.common.hash.Hashing.md5;
+import static com.google.common.io.BaseEncoding.base16;
 import static org.jclouds.util.Strings2.urlEncode;
 
 import java.util.Properties;
@@ -61,7 +63,7 @@ public abstract class BaseCloudStackExpectTest<S> extends BaseRestClientExpectTe
       .addQueryParam("response", "json")
       .addQueryParam("command", "login")
       .addQueryParam("username", "identity")
-      .addQueryParam("password", md5Hex("credential"))
+      .addQueryParam("password", base16().lowerCase().encode(md5().hashString("credential", UTF_8).asBytes()))
       .addQueryParam("domain", "")
       .addHeader("Accept", "application/json")
       .build();

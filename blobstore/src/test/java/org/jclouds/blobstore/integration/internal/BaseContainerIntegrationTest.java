@@ -18,8 +18,10 @@
  */
 package org.jclouds.blobstore.integration.internal;
 
+import static com.google.common.base.Charsets.UTF_8;
 import static com.google.common.base.Throwables.propagateIfPossible;
 import static com.google.common.collect.Iterables.get;
+import static com.google.common.hash.Hashing.md5;
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.afterMarker;
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.inDirectory;
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.maxResults;
@@ -36,8 +38,6 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
-import org.jclouds.crypto.CryptoStreams;
-import org.jclouds.io.InputSuppliers;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
@@ -97,7 +97,7 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
    }
 
    protected void checkMD5(BlobMetadata metadata) throws IOException {
-      assertEquals(metadata.getContentMetadata().getContentMD5(), CryptoStreams.md5(InputSuppliers.of(TEST_STRING)));
+      assertEquals(metadata.getContentMetadata().getContentMD5(), md5().hashString(TEST_STRING, UTF_8).asBytes());
    }
 
    @Test(groups = { "integration", "live" })

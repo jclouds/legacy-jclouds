@@ -18,16 +18,17 @@
  */
 package org.jclouds.aws.s3.binders;
 
-import org.jclouds.crypto.CryptoStreams;
+import static com.google.common.base.Charsets.UTF_8;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.hash.Hashing.md5;
+
+import javax.ws.rs.core.MediaType;
+
 import org.jclouds.http.HttpRequest;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.rest.Binder;
-
-import javax.ws.rs.core.MediaType;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @author Andrei Savu
@@ -55,8 +56,8 @@ public class BindIterableAsPayloadToDeleteRequest implements Binder {
 
       Payload payload = Payloads.newStringPayload(content);
       payload.getContentMetadata().setContentType(MediaType.TEXT_XML);
-      payload.getContentMetadata().setContentMD5(CryptoStreams.md5(content.getBytes()));
-
+      byte[] md5 = md5().hashString(content, UTF_8).asBytes();
+      payload.getContentMetadata().setContentMD5(md5);
       request.setPayload(payload);
       return request;
    }

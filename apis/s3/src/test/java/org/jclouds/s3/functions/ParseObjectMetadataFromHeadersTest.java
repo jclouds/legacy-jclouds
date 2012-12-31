@@ -18,6 +18,7 @@
  */
 package org.jclouds.s3.functions;
 
+import static com.google.common.io.BaseEncoding.base16;
 import static org.easymock.EasyMock.createMock;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_HEADER_TAG;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
@@ -29,7 +30,6 @@ import java.util.Map;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.RequestSigner;
@@ -71,7 +71,7 @@ public class ParseObjectMetadataFromHeadersTest {
       expects.getContentMetadata().setContentEncoding("encoding");
       expects.getContentMetadata().setContentType(MediaType.APPLICATION_OCTET_STREAM);
       expects.getContentMetadata().setContentLength(1025l);
-      expects.getContentMetadata().setContentMD5(CryptoStreams.hex("abcd"));
+      expects.getContentMetadata().setContentMD5(base16().lowerCase().decode("abcd"));
       expects.setETag("\"abcd\"");
       expects.setKey("key");
       expects.setLastModified(now);
@@ -129,7 +129,7 @@ public class ParseObjectMetadataFromHeadersTest {
       expects.setCacheControl("cacheControl");
       expects.getContentMetadata().setContentDisposition("contentDisposition");
       expects.getContentMetadata().setContentEncoding("encoding");
-      expects.getContentMetadata().setContentMD5(CryptoStreams.hex("abcd"));
+      expects.getContentMetadata().setContentMD5(base16().lowerCase().decode("abcd"));
       expects.getContentMetadata().setContentType(MediaType.APPLICATION_OCTET_STREAM);
       expects.getContentMetadata().setContentLength(1025l);
       expects.setETag("\"abcd\"");

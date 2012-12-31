@@ -18,15 +18,17 @@
  */
 package org.jclouds.glesys.compute;
 
+import static com.google.common.base.Charsets.UTF_8;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.io.BaseEncoding.base16;
 import static org.jclouds.compute.util.ComputeServiceUtils.metadataAndTagsAsCommaDelimitedValue;
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
 import java.util.Map;
-import java.util.UUID;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
@@ -38,6 +40,7 @@ import javax.inject.Singleton;
 import org.jclouds.Constants;
 import org.jclouds.collect.FindResourceInSet;
 import org.jclouds.collect.Memoized;
+import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.HardwareBuilder;
@@ -48,7 +51,6 @@ import org.jclouds.compute.domain.internal.VolumeImpl;
 import org.jclouds.compute.predicates.ImagePredicates;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.glesys.GleSYSApi;
@@ -66,7 +68,6 @@ import org.jclouds.logging.Logger;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.util.Iterables2;
 
-import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
@@ -121,9 +122,8 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
       if (md.size() > 0) {
          String description = Joiner.on('\n').withKeyValueSeparator("=").join(md);
          // TODO: get glesys to stop stripping out equals and commas!
-         createServerOptions.description(CryptoStreams.hex(description.getBytes(Charsets.UTF_8)));
+         createServerOptions.description(base16().lowerCase().encode(description.getBytes(UTF_8)));
       }
-
       ServerSpec.Builder<?> builder = ServerSpec.builder();
       builder.datacenter(template.getLocation().getId());
       builder.templateName(template.getImage().getId());

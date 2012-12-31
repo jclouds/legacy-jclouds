@@ -19,10 +19,10 @@
 package org.jclouds.blobstore.integration.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.io.BaseEncoding.base16;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Optional;
@@ -53,7 +53,7 @@ public class BaseBlobLiveTest extends BaseBlobStoreIntegrationTest {
       long length = response.getPayload().getContentMetadata().getContentLength();
 
       String name = "hello";
-      byte[] md5 = CryptoStreams.hex(httpStreamMD5);
+      byte[] md5 = base16().lowerCase().decode(httpStreamMD5);
 
       Blob blob = view.getBlobStore().blobBuilder(name).payload(response.getPayload()).contentLength(length)
                .contentMD5(md5).build();

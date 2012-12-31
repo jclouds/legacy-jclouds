@@ -19,6 +19,7 @@
 package org.jclouds.filesystem.strategy.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.io.BaseEncoding.base16;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,19 +30,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 
-import com.google.common.base.Function;
-import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Sets;
-import com.google.common.io.ByteStreams;
-import com.google.common.io.Files;
-
 import org.jclouds.blobstore.LocalStorageStrategy;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobBuilder;
 import org.jclouds.blobstore.options.ListContainerOptions;
-import org.jclouds.crypto.Crypto;
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.domain.Location;
 import org.jclouds.filesystem.predicates.validators.FilesystemBlobKeyValidator;
 import org.jclouds.filesystem.predicates.validators.FilesystemContainerNameValidator;
@@ -51,6 +43,13 @@ import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.annotations.ParamValidators;
+
+import com.google.common.base.Function;
+import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Sets;
+import com.google.common.io.ByteStreams;
+import com.google.common.io.Files;
 
 /**
  * 
@@ -67,20 +66,17 @@ public class FilesystemStorageStrategyImpl implements LocalStorageStrategy {
    protected final String baseDirectory;
    protected final FilesystemContainerNameValidator filesystemContainerNameValidator;
    protected final FilesystemBlobKeyValidator filesystemBlobKeyValidator;
-   private final Crypto crypto;
 
    @Inject
    protected FilesystemStorageStrategyImpl(Provider<BlobBuilder> blobBuilders,
          @Named(FilesystemConstants.PROPERTY_BASEDIR) String baseDir,
          FilesystemContainerNameValidator filesystemContainerNameValidator,
-         FilesystemBlobKeyValidator filesystemBlobKeyValidator,
-         Crypto crypto) {
+         FilesystemBlobKeyValidator filesystemBlobKeyValidator) {
       this.blobBuilders = checkNotNull(blobBuilders, "filesystem storage strategy blobBuilders");
       this.baseDirectory = checkNotNull(baseDir, "filesystem storage strategy base directory");
       this.filesystemContainerNameValidator = checkNotNull(filesystemContainerNameValidator,
             "filesystem container name validator");
       this.filesystemBlobKeyValidator = checkNotNull(filesystemBlobKeyValidator, "filesystem blob key validator");
-      this.crypto = crypto;
    }
 
    @Override
@@ -188,7 +184,7 @@ public class FilesystemStorageStrategyImpl implements LocalStorageStrategy {
       }
       Blob blob = builder.build();
       if (blob.getPayload().getContentMetadata().getContentMD5() != null)
-         blob.getMetadata().setETag(CryptoStreams.hex(blob.getPayload().getContentMetadata().getContentMD5()));
+         blob.getMetadata().setETag(base16().lowerCase().encode(blob.getPayload().getContentMetadata().getContentMD5()));
       return blob;
    }
 
@@ -207,8 +203,8 @@ public class FilesystemStorageStrategyImpl implements LocalStorageStrategy {
             payload = Payloads.newPayload(ByteStreams.toByteArray(payload));
             Files.copy(payload, outputFile);
          }
-         Payloads.calculateMD5(payload, crypto.md5());
-         String eTag = CryptoStreams.hex(payload.getContentMetadata().getContentMD5());
+         Payloads.calculateMD5(payload);
+         String eTag = base16().lowerCase().encode(payload.getContentMetadata().getContentMD5());
          return eTag;
       } catch (IOException ex) {
          if (outputFile != null) {

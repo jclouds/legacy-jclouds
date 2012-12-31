@@ -18,17 +18,17 @@
  */
 package org.jclouds.ec2.binders;
 
+import static com.google.common.base.Charsets.UTF_8;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.io.BaseEncoding.base64;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.filters.FormSigner;
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
 
-import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableMultimap.Builder;
 
@@ -48,7 +48,7 @@ public class BindS3UploadPolicyAndSignature implements Binder {
    @SuppressWarnings("unchecked")
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
-      String encodedJson = CryptoStreams.base64(checkNotNull(input, "json").toString().getBytes(Charsets.UTF_8));
+      String encodedJson = base64().encode(checkNotNull(input, "json").toString().getBytes(UTF_8));
       Builder<String, String> builder = ImmutableMultimap.builder();
       builder.put("Storage.S3.UploadPolicy", encodedJson);
       String signature = signer.sign(encodedJson);

@@ -19,13 +19,13 @@
 package org.jclouds.openstack.swift.functions;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.io.BaseEncoding.base16;
 import static org.jclouds.http.HttpUtils.attemptToParseSizeAndRangeFromHeaders;
 
 import javax.inject.Inject;
 
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.functions.ParseSystemAndUserMetadataFromHeaders;
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.swift.blobstore.functions.ResourceToObjectInfo;
@@ -64,7 +64,7 @@ public class ParseObjectInfoFromHeaders implements Function<HttpResponse, Mutabl
       to.setUri(base.getUri());
       String eTagHeader = from.getFirstHeaderOrNull("Etag");
       if (eTagHeader != null) {
-         to.setHash(CryptoStreams.hex(eTagHeader));
+         to.setHash(base16().lowerCase().decode(eTagHeader));
       }
       return to;
    }

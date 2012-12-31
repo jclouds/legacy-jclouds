@@ -25,6 +25,7 @@ import static com.google.common.base.Throwables.propagate;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.size;
+import static com.google.common.io.BaseEncoding.base64;
 import static com.google.common.io.ByteStreams.toByteArray;
 import static com.google.common.io.Closeables.closeQuietly;
 import static com.google.common.net.HttpHeaders.CONTENT_DISPOSITION;
@@ -44,7 +45,6 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.io.ContentMetadata;
 import org.jclouds.io.MutableContentMetadata;
 import org.jclouds.io.Payload;
@@ -219,7 +219,7 @@ public class HttpUtils {
                   .getContentLength());
          byte[] md5 = message.getPayload().getContentMetadata().getContentMD5();
          if (md5 != null)
-            logger.debug("%s %s: %s", prefix, CONTENT_MD5, CryptoStreams.base64(md5));
+            logger.debug("%s %s: %s", prefix, CONTENT_MD5, base64().encode(md5));
          if (message.getPayload().getContentMetadata().getContentDisposition() != null)
             logger.debug("%s %s: %s", prefix, CONTENT_DISPOSITION, message.getPayload().getContentMetadata()
                   .getContentDisposition());
@@ -282,7 +282,7 @@ public class HttpUtils {
    }
 
    public static String nullToEmpty(byte[] md5) {
-      return md5 != null ? CryptoStreams.base64(md5) : "";
+      return md5 != null ? base64().encode(md5) : "";
    }
 
    public static String nullToEmpty(Collection<String> collection) {

@@ -31,6 +31,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.jclouds.blobstore.BlobMap;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.InputStreamMap;
 import org.jclouds.blobstore.domain.Blob;
@@ -40,7 +41,6 @@ import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
 import org.jclouds.blobstore.strategy.GetBlobsInListStrategy;
 import org.jclouds.blobstore.strategy.PutBlobsStrategy;
 import org.jclouds.blobstore.strategy.internal.ListContainerAndRecurseThroughFolders;
-import org.jclouds.crypto.Crypto;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.io.payloads.ByteArrayPayload;
@@ -63,15 +63,13 @@ import com.google.common.base.Throwables;
  * @see BaseBlobMap
  */
 public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements InputStreamMap {
-   protected final Crypto crypto;
 
    @Inject
    public InputStreamMapImpl(BlobStore connection, Provider<BlobBuilder> blobBuilders,
          GetBlobsInListStrategy getAllBlobs, ListContainerAndRecurseThroughFolders listStrategy,
          ContainsValueInListStrategy containsValueStrategy, PutBlobsStrategy putBlobsStrategy, String containerName,
-         ListContainerOptions options, Crypto crypto) {
+         ListContainerOptions options) {
       super(connection, getAllBlobs, containsValueStrategy, putBlobsStrategy, listStrategy, containerName, options);
-      this.crypto = crypto;
    }
 
    @Override
@@ -146,7 +144,7 @@ public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements Inpu
    Blob newBlobWithMD5(String name, Object value) {
       Blob blob = blobstore.blobBuilder(prefixer.apply(name)).payload(newPayload(value)).build();
       try {
-         Payloads.calculateMD5(blob, crypto.md5());
+         Payloads.calculateMD5(blob);
       } catch (IOException e) {
          Throwables.propagate(e);
       }

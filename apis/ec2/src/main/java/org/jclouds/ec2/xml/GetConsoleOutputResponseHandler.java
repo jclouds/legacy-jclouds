@@ -18,10 +18,12 @@
  */
 package org.jclouds.ec2.xml;
 
-import org.jclouds.crypto.CryptoStreams;
-import org.jclouds.http.functions.ParseSax;
+import static com.google.common.base.Charsets.UTF_8;
+import static com.google.common.io.BaseEncoding.base64;
 
-import com.google.common.base.Charsets;
+import java.util.regex.Pattern;
+
+import org.jclouds.http.functions.ParseSax;
 
 /**
  * @author Andrew Kennedy
@@ -38,10 +40,12 @@ public class GetConsoleOutputResponseHandler extends ParseSax.HandlerWithResult<
        return output;
     }
 
+    private static final Pattern whitespace = Pattern.compile("\\s");
+
     @Override
     public void endElement(String uri, String name, String qName) {
        if (qName.equalsIgnoreCase("output")) {
-          this.output = new String(CryptoStreams.base64(currentText.toString().trim()), Charsets.UTF_8);
+          this.output = new String(base64().decode(whitespace.matcher(currentText).replaceAll("")), UTF_8);
        }
        currentText = new StringBuilder();
     }

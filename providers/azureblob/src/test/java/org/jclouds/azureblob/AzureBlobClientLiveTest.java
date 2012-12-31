@@ -18,6 +18,7 @@
  */
 package org.jclouds.azureblob;
 
+import static com.google.common.io.BaseEncoding.base16;
 import static org.jclouds.azure.storage.options.ListOptions.Builder.includeMetadata;
 import static org.jclouds.azureblob.options.CreateContainerOptions.Builder.withMetadata;
 import static org.jclouds.azureblob.options.CreateContainerOptions.Builder.withPublicAccess;
@@ -41,7 +42,6 @@ import org.jclouds.azureblob.domain.PublicAccess;
 import org.jclouds.azureblob.options.ListBlobsOptions;
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.io.Payloads;
@@ -226,9 +226,8 @@ public class AzureBlobClientLiveTest extends BaseBlobStoreIntegrationTest {
       object.getProperties().getMetadata().put("mykey", "metadata-value");
       byte[] md5 = object.getProperties().getContentMetadata().getContentMD5();
       String newEtag = getApi().putBlob(privateContainer, object);
-      assertEquals(CryptoStreams.hex(md5),
-            CryptoStreams.hex(object.getProperties().getContentMetadata().getContentMD5()));
-
+      assertEquals(base16().lowerCase().encode(md5),
+            base16().lowerCase().encode(object.getProperties().getContentMetadata().getContentMD5()));
       // Test HEAD of missing object
       assert getApi().getBlobProperties(privateContainer, "non-existent-object") == null;
 
@@ -247,8 +246,8 @@ public class AzureBlobClientLiveTest extends BaseBlobStoreIntegrationTest {
       // assertEquals(metadata.getSize(), data.length());
       assertEquals(metadata.getContentMetadata().getContentType(), "text/plain");
       // Azure doesn't return the Content-MD5 on head request..
-      assertEquals(CryptoStreams.hex(md5),
-            CryptoStreams.hex(object.getProperties().getContentMetadata().getContentMD5()));
+      assertEquals(base16().lowerCase().encode(md5),
+            base16().lowerCase().encode(object.getProperties().getContentMetadata().getContentMD5()));
       assertEquals(metadata.getETag(), newEtag);
       assertEquals(metadata.getMetadata().entrySet().size(), 1);
       assertEquals(metadata.getMetadata().get("mykey"), "metadata-value");
@@ -270,8 +269,8 @@ public class AzureBlobClientLiveTest extends BaseBlobStoreIntegrationTest {
       // TODO assertEquals(getBlob.getName(), object.getProperties().getName());
       assertEquals(getBlob.getPayload().getContentMetadata().getContentLength(), Long.valueOf(data.length()));
       assertEquals(getBlob.getProperties().getContentMetadata().getContentType(), "text/plain");
-      assertEquals(CryptoStreams.hex(md5),
-            CryptoStreams.hex(getBlob.getProperties().getContentMetadata().getContentMD5()));
+      assertEquals(base16().lowerCase().encode(md5),
+            base16().lowerCase().encode(getBlob.getProperties().getContentMetadata().getContentMD5()));
       assertEquals(newEtag, getBlob.getProperties().getETag());
       // wait until we can update metadata
       // assertEquals(getBlob.getProperties().getMetadata().entries().size(),
@@ -313,8 +312,8 @@ public class AzureBlobClientLiveTest extends BaseBlobStoreIntegrationTest {
       object.setPayload(bais);
       object.getPayload().getContentMetadata().setContentLength(Long.valueOf(data.getBytes().length));
       newEtag = getApi().putBlob(privateContainer, object);
-      assertEquals(CryptoStreams.hex(md5),
-            CryptoStreams.hex(getBlob.getProperties().getContentMetadata().getContentMD5()));
+      assertEquals(base16().lowerCase().encode(md5),
+            base16().lowerCase().encode(getBlob.getProperties().getContentMetadata().getContentMD5()));
 
       // Test GET with options
       // Non-matching ETag

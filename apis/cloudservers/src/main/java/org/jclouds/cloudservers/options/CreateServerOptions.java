@@ -21,6 +21,7 @@ package org.jclouds.cloudservers.options;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.io.BaseEncoding.base64;
 
 import java.util.List;
 import java.util.Map;
@@ -29,7 +30,6 @@ import java.util.Map.Entry;
 import javax.inject.Inject;
 
 import org.jclouds.cloudservers.domain.Addresses;
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.MapBinder;
 import org.jclouds.rest.binders.BindToJsonPayload;
@@ -54,7 +54,7 @@ public class CreateServerOptions implements MapBinder {
 
       public File(String path, byte[] contents) {
          this.path = checkNotNull(path, "path");
-         this.contents = CryptoStreams.base64(checkNotNull(contents, "contents"));
+         this.contents = base64().encode(checkNotNull(contents, "contents"));
          checkArgument(path.getBytes().length < 255, String.format(
                   "maximum length of path is 255 bytes.  Path specified %s is %d bytes", path, path.getBytes().length));
          checkArgument(contents.length < 10 * 1024, String.format(

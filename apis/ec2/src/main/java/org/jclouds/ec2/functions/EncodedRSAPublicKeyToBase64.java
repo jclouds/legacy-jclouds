@@ -18,15 +18,15 @@
  */
 package org.jclouds.ec2.functions;
 
+import static com.google.common.base.Charsets.UTF_8;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.io.BaseEncoding.base64;
 
 import javax.inject.Singleton;
 
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.util.Predicates2;
 
-import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
@@ -46,9 +46,8 @@ public class EncodedRSAPublicKeyToBase64 implements Function<Object, String> {
 
    @Override
    public String apply(Object from) {
-      checkNotNull(from, "input");
-      String fromString = from.toString();
+      String fromString = checkNotNull(from, "input").toString();
       checkArgument(ALLOWED_MARKERS.apply(fromString), "must be a ssh public key, conforming to %s ", ALLOWED_MARKERS);
-      return CryptoStreams.base64(fromString.getBytes(Charsets.UTF_8));
+      return base64().encode(fromString.getBytes(UTF_8));
    }
 }

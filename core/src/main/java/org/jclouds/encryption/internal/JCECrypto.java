@@ -21,7 +21,6 @@ package org.jclouds.encryption.internal;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
 import java.security.KeyPairGenerator;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.Provider;
 import java.security.cert.CertificateException;
@@ -84,54 +83,8 @@ public class JCECrypto implements Crypto {
    }
 
    @Override
-   public MessageDigest digest(String algorithm) throws NoSuchAlgorithmException {
-      return provider == null ? MessageDigest.getInstance(algorithm) : MessageDigest.getInstance(algorithm, provider);
-   }
-
-   @Override
    public Cipher cipher(String algorithm) throws NoSuchAlgorithmException, NoSuchPaddingException {
       return provider == null ? Cipher.getInstance(algorithm) : Cipher.getInstance(algorithm, provider);
-   }
-
-   public static final String MD5 = "MD5";
-   public static final String SHA1 = "SHA1";
-   public static final String SHA256 = "SHA-256";
-   public static final String SHA512 = "SHA-512";
-
-   @Override
-   public MessageDigest md5() {
-      try {
-         return digest(MD5);
-      } catch (NoSuchAlgorithmException e) {
-         throw new IllegalStateException("MD5 must be supported", e);
-      }
-   }
-
-   @Override
-   public MessageDigest sha1() {
-      try {
-         return digest(SHA1);
-      } catch (NoSuchAlgorithmException e) {
-         throw new IllegalStateException("MD5 must be supported", e);
-      }
-   }
-
-   @Override
-   public MessageDigest sha256() {
-      try {
-         return digest(SHA256);
-      } catch (NoSuchAlgorithmException e) {
-         throw new IllegalStateException(SHA256 + " must be supported", e);
-      }
-   }
-
-   @Override
-   public MessageDigest sha512() {
-      try {
-         return digest(SHA512);
-      } catch (NoSuchAlgorithmException e) {
-         throw new IllegalStateException(SHA512 + " must be supported", e);
-      }
    }
 
    public static final String HmacSHA256 = "HmacSHA256";

@@ -18,22 +18,24 @@
  */
 package org.jclouds.oauth.v2.json;
 
-import com.google.common.base.Charsets;
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableSet;
-import org.jclouds.crypto.CryptoStreams;
+import static com.google.common.base.Charsets.UTF_8;
+import static com.google.common.base.Joiner.on;
+import static com.google.common.io.BaseEncoding.base64Url;
+
+import java.util.Set;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.jclouds.http.HttpRequest;
 import org.jclouds.io.Payloads;
 import org.jclouds.json.Json;
 import org.jclouds.oauth.v2.domain.TokenRequest;
 import org.jclouds.oauth.v2.domain.TokenRequestFormat;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.util.Set;
-
-import static com.google.common.base.Joiner.on;
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Formats a token request into JWT format namely:
@@ -66,18 +68,14 @@ public class JWTTokenRequestFormat implements TokenRequestFormat {
    public <R extends HttpRequest> R formatRequest(R httpRequest, TokenRequest tokenRequest) {
       HttpRequest.Builder builder = httpRequest.toBuilder();
 
-      // transform to json and encode in base 64
-      // use commons-codec base 64 which properly encodes urls (jclouds's Base64 does not)
       String encodedHeader = json.toJson(tokenRequest.getHeader());
       String encodedClaimSet = json.toJson(tokenRequest.getClaimSet());
 
-      String encodedSignature = null;
+      encodedHeader = base64Url().omitPadding().encode(encodedHeader.getBytes(UTF_8));
+      encodedClaimSet = base64Url().omitPadding().encode(encodedClaimSet.getBytes(UTF_8));
 
-      encodedHeader =  CryptoStreams.base64Url(encodedHeader.getBytes(Charsets.UTF_8));
-      encodedClaimSet =  CryptoStreams.base64Url(encodedClaimSet.getBytes(Charsets.UTF_8));
-
-      byte[] signature = signer.apply(on(".").join(encodedHeader, encodedClaimSet).getBytes(Charsets.UTF_8));
-      encodedSignature = signature != null ?  CryptoStreams.base64Url(signature) : "";
+      byte[] signature = signer.apply(on(".").join(encodedHeader, encodedClaimSet).getBytes(UTF_8));
+      String encodedSignature = signature != null ?  base64Url().omitPadding().encode(signature) : "";
 
       // the final assertion in base 64 encoded {header}.{claimSet}.{signature} format
       String assertion = on(".").join(encodedHeader, encodedClaimSet, encodedSignature);

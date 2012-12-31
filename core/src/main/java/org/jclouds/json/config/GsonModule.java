@@ -18,6 +18,8 @@
  */
 package org.jclouds.json.config;
 
+import static com.google.common.io.BaseEncoding.base16;
+
 import java.beans.ConstructorProperties;
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -32,7 +34,6 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.DateService;
 import org.jclouds.domain.JsonBall;
 import org.jclouds.json.Json;
@@ -165,12 +166,12 @@ public class GsonModule extends AbstractModule {
 
       @Override
       public void write(JsonWriter writer, List<Byte> value) throws IOException {
-         writer.value(CryptoStreams.hex(Bytes.toArray(value)));
+         writer.value(base16().lowerCase().encode(Bytes.toArray(value)));
       }
 
       @Override
       public List<Byte> read(JsonReader reader) throws IOException {
-         return Bytes.asList(CryptoStreams.hex(reader.nextString()));
+         return Bytes.asList(base16().lowerCase().decode(reader.nextString()));
       }
 
    }
@@ -180,12 +181,12 @@ public class GsonModule extends AbstractModule {
 
       @Override
       public void write(JsonWriter writer, byte[] value) throws IOException {
-         writer.value(CryptoStreams.hex(value));
+         writer.value(base16().lowerCase().encode(value));
       }
 
       @Override
       public byte[] read(JsonReader reader) throws IOException {
-         return CryptoStreams.hex(reader.nextString());
+         return base16().lowerCase().decode(reader.nextString());
       }
    }
 

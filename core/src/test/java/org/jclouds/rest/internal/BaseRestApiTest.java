@@ -18,8 +18,10 @@
  */
 package org.jclouds.rest.internal;
 import static com.google.common.base.Throwables.propagate;
+import static com.google.common.hash.Hashing.md5;
 import static org.easymock.EasyMock.createMock;
 import static org.eclipse.jetty.http.HttpHeaders.TRANSFER_ENCODING;
+import static org.jclouds.io.ByteSources.asByteSource;
 import static org.jclouds.rest.internal.RestAnnotationProcessor.createResponseParser;
 import static org.jclouds.rest.internal.RestAnnotationProcessor.getSaxResponseParserClassOrNull;
 import static org.testng.Assert.assertEquals;
@@ -34,8 +36,6 @@ import java.util.concurrent.ExecutorService;
 import org.jclouds.Constants;
 import org.jclouds.concurrent.MoreExecutors;
 import org.jclouds.concurrent.config.ConfiguresExecutorService;
-import org.jclouds.crypto.Crypto;
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.fallbacks.MapHttp4xxCodesToExceptions;
 import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.http.HttpRequest;
@@ -63,7 +63,6 @@ public abstract class BaseRestApiTest {
 
    protected Injector injector;
    protected ParseSax.Factory parserFactory;
-   protected Crypto crypto;
 
    @ConfiguresHttpCommandExecutorService
    @ConfiguresExecutorService
@@ -118,7 +117,7 @@ public abstract class BaseRestApiTest {
          Long length = Long.valueOf(payload.getBytes().length);
          try {
             assertContentHeadersEqual(request, contentType, contentDispositon, contentEncoding, contentLanguage,
-                  length, contentMD5 ? CryptoStreams.md5(request.getPayload()) : null, expires);
+                  length, contentMD5 ? asByteSource(request.getPayload().getInput()).hash(md5()).asBytes() : null, expires);
          } catch (IOException e) {
             propagate(e);
          }

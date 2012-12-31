@@ -18,6 +18,8 @@
  */
 package org.jclouds.openstack.swift.blobstore.functions;
 
+import static com.google.common.io.BaseEncoding.base16;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -25,7 +27,6 @@ import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.blobstore.strategy.IfDirectoryReturnNameStrategy;
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.openstack.swift.domain.MutableObjectInfoWithMetadata;
 import org.jclouds.openstack.swift.domain.ObjectInfo;
 
@@ -51,7 +52,7 @@ public class ObjectToBlobMetadata implements Function<ObjectInfo, MutableBlobMet
       if (from.getContentType() != null)
          to.getContentMetadata().setContentType(from.getContentType());
       if (from.getHash() != null)
-         to.setETag(CryptoStreams.hex(from.getHash()));
+         to.setETag(base16().lowerCase().encode(from.getHash()));
       to.setName(from.getName());
       to.setContainer(from.getContainer());
       to.setUri(from.getUri());

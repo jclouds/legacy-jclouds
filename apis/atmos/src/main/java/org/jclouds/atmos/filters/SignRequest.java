@@ -18,9 +18,13 @@
  */
 package org.jclouds.atmos.filters;
 
+import static com.google.common.io.BaseEncoding.base64;
+import static com.google.common.io.ByteStreams.readBytes;
 import static org.jclouds.Constants.LOGGER_SIGNATURE;
+import static org.jclouds.crypto.Macs.asByteProcessor;
 import static org.jclouds.util.Patterns.NEWLINE_PATTERN;
 import static org.jclouds.util.Patterns.TWO_SPACE_PATTERN;
+import static org.jclouds.util.Strings2.toInputStream;
 
 import java.util.Set;
 
@@ -33,14 +37,12 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.atmos.reference.AtmosHeaders;
 import org.jclouds.crypto.Crypto;
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.internal.SignatureWire;
-import org.jclouds.io.InputSuppliers;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.annotations.Credential;
 import org.jclouds.rest.annotations.Identity;
@@ -52,6 +54,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.Sets;
+import com.google.common.io.ByteProcessor;
 
 /**
  * Signs the EMC Atmos Online Storage request.
@@ -83,7 +86,7 @@ public class SignRequest implements HttpRequestFilter {
          HttpUtils utils) {
       this.signatureWire = signatureWire;
       this.uid = uid;
-      this.key = CryptoStreams.base64(encodedKey);
+      this.key = base64().decode(encodedKey);
       this.timeStampProvider = timeStampProvider;
       this.crypto = crypto;
       this.utils = utils;
@@ -126,13 +129,12 @@ public class SignRequest implements HttpRequestFilter {
    }
 
    public String signString(String toSign) {
-      String signature;
       try {
-         signature = CryptoStreams.base64(CryptoStreams.mac(InputSuppliers.of(toSign), crypto.hmacSHA1(key)));
+         ByteProcessor<byte[]> hmacSHA1 = asByteProcessor(crypto.hmacSHA1(key));
+         return base64().encode(readBytes(toInputStream(toSign), hmacSHA1));
       } catch (Exception e) {
          throw new HttpException("error signing request", e);
       }
-      return signature;
    }
 
    private void appendMethod(HttpRequest request, StringBuilder toSign) {
