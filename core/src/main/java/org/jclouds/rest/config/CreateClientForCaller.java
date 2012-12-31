@@ -19,48 +19,37 @@
 package org.jclouds.rest.config;
 
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.reflect.Reflection.newProxy;
 
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.inject.Provider;
 
 import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.internal.ClassMethodArgs;
-import org.jclouds.internal.ClassMethodArgsAndReturnVal;
 import org.jclouds.util.Optionals2;
 
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
-import com.google.common.base.Throwables;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
-import com.google.inject.name.Names;
 
 /**
- * CreateClientForCaller is parameterized, so clients it creates aren't singletons. For example,
- * CreateClientForCaller satisfies a call like this:
- * {@code context.getProviderSpecificContext().getApi().getOrgClientForName(name)}
+ * CreateClientForCaller is parameterized, so clients it creates aren't singletons. For example, CreateClientForCaller
+ * satisfies a call like this: {@code context.getProviderSpecificContext().getApi().getOrgClientForName(name)}
  * 
  * @author Adrian Cole
  */
 public class CreateClientForCaller extends CacheLoader<ClassMethodArgs, Object> {
-   @Inject
-   Injector injector;
+   private final SyncProxy.Factory factory;
    private final LoadingCache<ClassMethodArgs, Object> asyncMap;
-   private final Provider<LoadingCache<ClassMethodArgs, Object>> delegateMap;
-   Map<Class<?>, Class<?>> sync2Async;
+   private final Map<Class<?>, Class<?>> sync2Async;
 
    @Inject
-   CreateClientForCaller(@Named("async") LoadingCache<ClassMethodArgs, Object> asyncMap,
-            @Named("sync") Provider<LoadingCache<ClassMethodArgs, Object>> delegateMap) {
+   private CreateClientForCaller(SyncProxy.Factory factory,
+         @Named("async") LoadingCache<ClassMethodArgs, Object> asyncMap, Map<Class<?>, Class<?>> sync2Async) {
+      this.factory = factory;
       this.asyncMap = asyncMap;
-      this.delegateMap = delegateMap;
+      this.sync2Async = sync2Async;
    }
 
    @Override
@@ -70,15 +59,6 @@ public class CreateClientForCaller extends CacheLoader<ClassMethodArgs, Object> 
       checkState(asyncClass != null, "configuration error, sync class " + syncClass + " not mapped to an async class");
       Object asyncClient = asyncMap.getUnchecked(from);
       checkState(asyncClient != null, "configuration error, sync client for " + from + " not found");
-      Function<ClassMethodArgsAndReturnVal, Optional<Object>> optionalConverter = injector.getInstance(Key.get(new TypeLiteral<Function<ClassMethodArgsAndReturnVal, Optional<Object>>>() {
-      }));
-      Map<String, Long> timeoutsMap = injector.getInstance(Key.get(new TypeLiteral<Map<String, Long>>() {
-      }, Names.named("TIMEOUTS")));
-      try {
-         return SyncProxy.proxy(optionalConverter, syncClass, asyncClient, delegateMap.get(), sync2Async, timeoutsMap);
-      } catch (Exception e) {
-         throw Throwables.propagate(e);
-      }
-
+      return newProxy(syncClass, factory.create(syncClass, asyncClient));
    }
 }

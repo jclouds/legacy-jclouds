@@ -49,21 +49,21 @@ public class BindRestContextWithWildcardExtendsExplicitAndRawType extends Abstra
    @SuppressWarnings("unchecked")
    @Override
    protected void configure() {
-      TypeToken concreteType = BaseRestApiMetadata.contextToken(TypeToken.of(restApiMetadata.getApi()), TypeToken
+      TypeToken<?> concreteType = BaseRestApiMetadata.contextToken(TypeToken.of(restApiMetadata.getApi()), TypeToken
                .of(restApiMetadata.getAsyncApi()));
       // bind explicit type
       bind(TypeLiteral.get(concreteType.getType())).to(
-               (TypeLiteral) TypeLiteral.get(Types.newParameterizedType(RestContextImpl.class,
-                        restApiMetadata.getApi(), restApiMetadata.getAsyncApi())));
+            TypeLiteral.class.cast(TypeLiteral.get(Types.newParameterizedType(RestContextImpl.class,
+                  restApiMetadata.getApi(), restApiMetadata.getAsyncApi()))));
       // bind potentially wildcard type
       if (!concreteType.equals(restApiMetadata.getContext())) {
          bind(TypeLiteral.get(restApiMetadata.getContext().getType())).to(
-                  (TypeLiteral) TypeLiteral.get(Types.newParameterizedType(RestContextImpl.class, restApiMetadata
-                           .getApi(), restApiMetadata.getAsyncApi())));
+               TypeLiteral.class.cast(TypeLiteral.get(Types.newParameterizedType(RestContextImpl.class,
+                     restApiMetadata.getApi(), restApiMetadata.getAsyncApi()))));
       }
       // bind w/o types
       bind(TypeLiteral.get(RestContext.class)).to(
-               (TypeLiteral) TypeLiteral.get(Types.newParameterizedType(RestContextImpl.class,
-                        restApiMetadata.getApi(), restApiMetadata.getAsyncApi())));
+            TypeLiteral.class.cast(TypeLiteral.get(Types.newParameterizedType(RestContextImpl.class,
+                  restApiMetadata.getApi(), restApiMetadata.getAsyncApi()))));
    }
 }

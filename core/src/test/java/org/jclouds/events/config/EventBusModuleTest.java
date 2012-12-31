@@ -25,7 +25,7 @@ import static org.testng.Assert.assertTrue;
 import org.jclouds.Constants;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.events.config.annotations.AsyncBus;
-import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.eventbus.AsyncEventBus;
@@ -44,7 +44,7 @@ import com.google.inject.name.Names;
 public class EventBusModuleTest {
     private Injector injector;
     
-    @BeforeMethod
+    @BeforeClass
     public void setup() {
         ExecutorServiceModule executorServiceModule = new ExecutorServiceModule() {
             @Override

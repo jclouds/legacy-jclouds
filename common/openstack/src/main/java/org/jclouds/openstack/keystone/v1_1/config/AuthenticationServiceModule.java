@@ -63,8 +63,7 @@ public class AuthenticationServiceModule extends AbstractModule {
    protected void configure() {
       bind(new TypeLiteral<Function<Credentials, Auth>>() {
       }).to(GetAuth.class);
-      // ServiceClient is used directly for filters and retry handlers, so let's bind it
-      // explicitly
+      // ServiceClient is used directly for filters and retry handlers, so let's bind it explicitly
       bindClientAndAsyncClient(binder(), AuthenticationClient.class, AuthenticationAsyncClient.class);
       install(new FactoryModuleBuilder().implement(RegionIdToURISupplier.class,
                RegionIdToURIFromAuthForServiceSupplier.class).build(RegionIdToURISupplier.Factory.class));

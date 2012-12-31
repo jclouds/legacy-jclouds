@@ -20,6 +20,7 @@ package org.jclouds.rest.config;
 
 import static com.google.common.reflect.Reflection.newProxy;
 import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
+import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
 
 import java.lang.reflect.Method;
 import java.net.URI;
@@ -29,6 +30,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.functions.IdentityFunction;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
@@ -76,7 +78,7 @@ public class RestModule extends AbstractModule {
 
    public static final TypeLiteral<Supplier<URI>> URI_SUPPLIER_TYPE = new TypeLiteral<Supplier<URI>>() {
    };
-   protected final Map<Class<?>, Class<?>> sync2Async;
+   private final Map<Class<?>, Class<?>> sync2Async;
    protected final AtomicReference<AuthorizationException> authException = Atomics.newReference();
    
    public RestModule() {
@@ -93,14 +95,14 @@ public class RestModule extends AbstractModule {
 
    @Override
    protected void configure() {
+      bind(new TypeLiteral<Map<Class<?>, Class<?>>>(){}).toInstance(sync2Async);
       install(new SaxParserModule());
       install(new GsonModule());
       install(new FactoryModuleBuilder().build(BindToJsonPayloadWrappedWith.Factory.class));
       bind(IdentityFunction.class).toInstance(IdentityFunction.INSTANCE);
       bind(AsyncRestClientProxy.Factory.class).to(Factory.class).in(Scopes.SINGLETON);
-      BinderUtils.bindAsyncClient(binder(), HttpAsyncClient.class);
-      BinderUtils.bindClient(binder(), HttpClient.class, HttpAsyncClient.class, ImmutableMap.<Class<?>, Class<?>> of(
-               HttpClient.class, HttpAsyncClient.class));
+      install(new FactoryModuleBuilder().build(SyncProxy.Factory.class));
+      bindClientAndAsyncClient(binder(), HttpClient.class, HttpAsyncClient.class);
       // this will help short circuit scenarios that can otherwise lock out users
       bind(new TypeLiteral<AtomicReference<AuthorizationException>>() {
       }).toInstance(authException);
@@ -195,14 +197,12 @@ public class RestModule extends AbstractModule {
       public TransformingHttpCommand<?> create(HttpRequest request, Function<HttpResponse, ?> transformer) {
          return new TransformingHttpCommandImpl(executorService, request, transformer);
       }
-
    }
 
    @Provides
    @Singleton
    @Named("sync")
    LoadingCache<ClassMethodArgs, Object> provideSyncDelegateMap(CreateClientForCaller createClientForCaller) {
-      createClientForCaller.sync2Async = sync2Async;
       return CacheBuilder.newBuilder().build(createClientForCaller);
    }
 

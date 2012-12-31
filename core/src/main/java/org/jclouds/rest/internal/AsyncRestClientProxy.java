@@ -226,14 +226,14 @@ public class AsyncRestClientProxy<T> extends AbstractInvocationHandler {
       // else try to create an instance
       return injector.getInstance(Key.get(genericReturnType, qualifier));
    }
-
+   
    private ListenableFuture<?> createListenableFutureForHttpRequestMappedToMethodAndArgs(Method method, Object[] args)
          throws ExecutionException {
       method = annotationProcessor.getDelegateOrNull(method);
-      logger.trace("Converting %s.%s", declaring.getSimpleName(), method.getName());
+      String name = method.getDeclaringClass().getSimpleName() + "." + method.getName();
+      logger.trace(">> converting %s", name);
       FutureFallback<?> fallback = fallbacks.getUnchecked(method);
-      // in case there is an exception creating the request, we should at least
-      // pass in args
+      // in case there is an exception creating the request, we should at least pass in args
       if (fallback instanceof InvocationContext) {
          InvocationContext.class.cast(fallback).setContext((HttpRequest) null);
       }
@@ -243,13 +243,12 @@ public class AsyncRestClientProxy<T> extends AbstractInvocationHandler {
          if (fallback instanceof InvocationContext) {
             InvocationContext.class.cast(fallback).setContext(request);
          }
-         logger.trace("Converted %s.%s to %s", declaring.getSimpleName(), method.getName(), request.getRequestLine());
+         logger.trace("<< converted %s to %s", name, request.getRequestLine());
 
          Function<HttpResponse, ?> transformer = annotationProcessor.createResponseParser(method, request);
-         logger.trace("Response from %s.%s is parsed by %s", declaring.getSimpleName(), method.getName(), transformer
-               .getClass().getSimpleName());
+         logger.trace("<< response from %s is parsed by %s", name, transformer.getClass().getSimpleName());
 
-         logger.debug("Invoking %s.%s", declaring.getSimpleName(), method.getName());
+         logger.debug(">> invoking %s", name);
          result = commandFactory.create(request, transformer).execute();
       } catch (RuntimeException e) {
          AuthorizationException aex = Throwables2.getFirstThrowableOfType(e, AuthorizationException.class);
@@ -261,8 +260,7 @@ public class AsyncRestClientProxy<T> extends AbstractInvocationHandler {
             return immediateFailedFuture(ex);
          }
       }
-      logger.trace("Exceptions from %s.%s are parsed by %s", declaring.getSimpleName(), method.getName(),
-            fallback.getClass().getSimpleName());
+      logger.trace("<< exceptions from %s are parsed by %s", name, fallback.getClass().getSimpleName());
       return withFallback(result, fallback);
    }
 

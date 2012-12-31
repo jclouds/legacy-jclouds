@@ -18,6 +18,8 @@
  */
 package org.jclouds.filesystem.config;
 
+import static org.jclouds.rest.config.BinderUtils.bindClient;
+
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.blobstore.BlobStore;
@@ -35,9 +37,7 @@ import org.jclouds.filesystem.predicates.validators.internal.FilesystemBlobKeyVa
 import org.jclouds.filesystem.predicates.validators.internal.FilesystemContainerNameValidatorImpl;
 import org.jclouds.filesystem.strategy.internal.FilesystemStorageStrategyImpl;
 import org.jclouds.filesystem.util.internal.FileSystemBlobUtilsImpl;
-import org.jclouds.rest.config.BinderUtils;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.inject.AbstractModule;
 
 /**
@@ -50,7 +50,7 @@ public class FilesystemBlobStoreContextModule extends AbstractModule {
    protected void configure() {
       bind(AsyncBlobStore.class).to(LocalAsyncBlobStore.class).asEagerSingleton();
       // forward all requests from TransientBlobStore to TransientAsyncBlobStore.  needs above binding as cannot proxy a class
-      BinderUtils.bindClient(binder(), LocalBlobStore.class, AsyncBlobStore.class, ImmutableMap.<Class<?>, Class<?>>of());
+      bindClient(binder(), LocalBlobStore.class, AsyncBlobStore.class);
       bind(BlobStore.class).to(LocalBlobStore.class);
 
       install(new BlobStoreObjectModule());

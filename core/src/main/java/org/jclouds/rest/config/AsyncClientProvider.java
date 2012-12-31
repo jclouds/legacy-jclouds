@@ -23,7 +23,6 @@ import javax.inject.Singleton;
 
 import org.jclouds.rest.AsyncClientFactory;
 
-import com.google.inject.Injector;
 import com.google.inject.Provider;
 
 /**
@@ -32,19 +31,19 @@ import com.google.inject.Provider;
  */
 @Singleton
 public class AsyncClientProvider<A> implements Provider<A> {
-   @Inject
-   Injector injector;
-   private final Class<?> asyncClientType;
+   private final Class<A> asyncClientType;
+   private final AsyncClientFactory factory;
 
    @Inject
-   AsyncClientProvider(Class<?> asyncClientType) {
+   private AsyncClientProvider(AsyncClientFactory factory, Class<A> asyncClientType) {
+      this.factory = factory;
       this.asyncClientType = asyncClientType;
    }
 
    @Override
    @Singleton
    public A get() {
-      return (A) injector.getInstance(AsyncClientFactory.class).create(asyncClientType);
+      return factory.create(asyncClientType);
    }
 
 }
