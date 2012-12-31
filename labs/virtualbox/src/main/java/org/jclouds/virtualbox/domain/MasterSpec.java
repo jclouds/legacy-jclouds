@@ -74,12 +74,9 @@ public class MasterSpec {
    }
 
    private MasterSpec(VmSpec vmSpec, IsoSpec isoSpec, NetworkSpec networkSpec, LoginCredentials loginCredentials) {
-      checkNotNull(vmSpec, "vmSpec");
-      checkNotNull(isoSpec, "isoSpec");
-      checkNotNull(networkSpec, "networkSpec");
-      this.vmSpec = vmSpec;
-      this.isoSpec = isoSpec;
-      this.networkSpec = networkSpec;
+      this.vmSpec = checkNotNull(vmSpec, "vmSpec can't be null");
+      this.isoSpec = checkNotNull(isoSpec, "isoSpec can't be null");
+      this.networkSpec = checkNotNull(networkSpec, "networkSpec can't be null");
       this.loginCredentials = loginCredentials;
    }
 

@@ -34,17 +34,19 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
+import org.jclouds.predicates.RetryableNumTimesPredicate;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.util.Throwables2;
 import org.jclouds.virtualbox.functions.IpAddressesLoadingCache;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.ISession;
-import org.virtualbox_4_1.LockType;
-import org.virtualbox_4_1.SessionState;
-import org.virtualbox_4_1.VBoxException;
-import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.ISession;
+import org.virtualbox_4_2.LockType;
+import org.virtualbox_4_2.SessionState;
+import org.virtualbox_4_2.VBoxException;
+import org.virtualbox_4_2.VirtualBoxManager;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.Uninterruptibles;
@@ -202,12 +204,15 @@ public class MachineUtils {
          throw new RuntimeException(String.format("error applying %s to %s with %s lock: %s", function, machineId,
                   type, e.getMessage()), e);
       } finally {
+         // this is a workaround for shared lock type, where session state is not updated immediately
+         if(type == LockType.Shared) {
+            Uninterruptibles.sleepUninterruptibly(1, TimeUnit.SECONDS);
+         }
          if (session.getState().equals(SessionState.Locked)) {
             session.unlockMachine();
-            while (!session.getState().equals(SessionState.Unlocked)) {
-               logger.debug("Session not unlocked - wait ...");
-               Uninterruptibles.sleepUninterruptibly(1, TimeUnit.SECONDS);
-            }
+         } 
+         if(!session.getState().equals(SessionState.Unlocked)) {
+            checkSessionIsUnlocked(session, 5, 3L, TimeUnit.SECONDS);
          }
       }
    }
@@ -215,8 +220,7 @@ public class MachineUtils {
    private ISession lockSession(String machineId, LockType type, int retries) {
       int count = 0;
       IMachine immutableMachine = manager.get().getVBox().findMachine(machineId);
-      ISession session = null;
-      
+      ISession session = null;      
       while (true) {
          try {
             session = manager.get().getSessionObject();
@@ -238,12 +242,6 @@ public class MachineUtils {
       }
       checkState(session.getState().equals(SessionState.Locked));
       return checkNotNull(session, "session");
-   }
-   
-   void print() {
-      for (StackTraceElement element : Thread.currentThread().getStackTrace()){
-         System.err.println(element.toString());
-      }
    }
 
    /**
@@ -269,6 +267,25 @@ public class MachineUtils {
    public static boolean machineNotFoundException(VBoxException e) {
       return e.getMessage().contains("VirtualBox error: Could not find a registered machine named ")
                || e.getMessage().contains("Could not find a registered machine with UUID {");
+   }
+
+   private void checkSessionIsUnlocked(ISession session, int attempts, long period, TimeUnit timeUnit) {
+      checkState(new RetryableNumTimesPredicate<SessionState>(new SessionStatePredicate(session), 
+            attempts, period, timeUnit).apply(SessionState.Unlocked), 
+            "timed out or number of retries(%s) reached waiting for session to be unlocked", attempts);
+   }
+
+   private static class SessionStatePredicate implements Predicate<SessionState> {
+      private final ISession session;
+      
+      SessionStatePredicate(ISession session) {
+         this.session = session;
+      }
+      
+      @Override
+      public boolean apply(SessionState input) {
+         return session.getState().equals(input);
+      }
    }
    
 }

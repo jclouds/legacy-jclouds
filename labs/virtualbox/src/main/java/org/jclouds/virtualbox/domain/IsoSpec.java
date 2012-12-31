@@ -32,8 +32,8 @@ public class IsoSpec {
    private final String sourcePath;
 
    public IsoSpec(String sourcePath, String installationKeySequence) {
-      this.sourcePath = checkNotNull(sourcePath, "sourcePath");
-      this.installationKeySequence = checkNotNull(installationKeySequence, "installationKeySequence");
+      this.sourcePath = checkNotNull(sourcePath, "sourcePath can't be null");
+      this.installationKeySequence = checkNotNull(installationKeySequence, "installationKeySequence can't be null");
    }
 
    public static Builder builder() {

@@ -28,10 +28,10 @@ import static org.testng.Assert.assertEquals;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.predicates.ImagePredicates;
 import org.testng.annotations.Test;
-import org.virtualbox_4_1.IGuestOSType;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.IVirtualBox;
-import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_2.IGuestOSType;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.IVirtualBox;
+import org.virtualbox_4_2.VirtualBoxManager;
 
 import com.google.common.base.Suppliers;
 

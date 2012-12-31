@@ -33,10 +33,8 @@ public class IsoImage {
    private String sourcePath;
 
    public IsoImage(DeviceDetails deviceDetails, String sourcePath) {
-      checkNotNull(deviceDetails, "deviceDetails");
-      checkNotNull(sourcePath, "sourcePath");
-      this.deviceDetails = deviceDetails;
-      this.sourcePath = sourcePath;
+      this.deviceDetails = checkNotNull(deviceDetails, "deviceDetails  can't be null");
+      this.sourcePath = checkNotNull(sourcePath, "sourcePath can't be null");
    }
 
    public DeviceDetails getDeviceDetails() {

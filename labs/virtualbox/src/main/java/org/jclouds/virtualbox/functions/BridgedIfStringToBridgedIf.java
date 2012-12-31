@@ -48,7 +48,7 @@ public class BridgedIfStringToBridgedIf implements Function<String, BridgedIf> {
 
 	@Override
 	public BridgedIf apply(String rawBridgedIf) {
-		checkNotNull(rawBridgedIf, "rawBridgedIf");
+		checkNotNull(rawBridgedIf, "bridged interface can't be null");
 
 		String transformedBridgedIf = transformRawBridgedIf(rawBridgedIf);
 		Map<String, String> bridgedIfMap = Splitter.on("\n")

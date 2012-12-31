@@ -24,8 +24,8 @@ import static com.google.common.collect.Iterables.filter;
 import java.util.Set;
 
 import org.jclouds.javax.annotation.Nullable;
-import org.virtualbox_4_1.DeviceType;
-import org.virtualbox_4_1.StorageBus;
+import org.virtualbox_4_2.DeviceType;
+import org.virtualbox_4_2.StorageBus;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
@@ -49,14 +49,10 @@ public class StorageController {
    private Set<IsoImage> isoImages;
 
    public StorageController(String name, StorageBus bus, Set<HardDisk> hardDisks, Set<IsoImage> isoImages) {
-      checkNotNull(name, "name");
-      checkNotNull(bus, "bus");
-      checkNotNull(hardDisks, "hardDisks");
-      checkNotNull(isoImages, "isoImages");
-      this.name = name;
-      this.bus = bus;
-      this.hardDisks = hardDisks;
-      this.isoImages = isoImages;
+      this.name = checkNotNull(name, "storage name can't be null");
+      this.bus = checkNotNull(bus, "bus can't be null");
+      this.hardDisks = checkNotNull(hardDisks, "hardDisks can't be null");
+      this.isoImages = checkNotNull(isoImages, "isoImages can't be null");
    }
 
    public String getName() {

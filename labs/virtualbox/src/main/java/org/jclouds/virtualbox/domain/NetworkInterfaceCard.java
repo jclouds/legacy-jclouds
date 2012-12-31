@@ -31,8 +31,8 @@ public class NetworkInterfaceCard {
 	private final boolean enabled;
 	
 	public NetworkInterfaceCard(long slot, NetworkAdapter networkAdapter, String hostInterfaceName, boolean enabled) {
-		this.slot = checkNotNull(slot, "slot");
-		this.networkAdapter = checkNotNull(networkAdapter, "networkAdapter");
+		this.slot = checkNotNull(slot, "slot can't be null");
+		this.networkAdapter = checkNotNull(networkAdapter, "networkAdapter can't be null");
 		this.hostInterfaceName = hostInterfaceName;
 		this.enabled = enabled;
 	}

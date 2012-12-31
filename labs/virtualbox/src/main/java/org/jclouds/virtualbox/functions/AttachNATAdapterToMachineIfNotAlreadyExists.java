@@ -19,15 +19,18 @@
 
 package org.jclouds.virtualbox.functions;
 
-import static org.virtualbox_4_1.NetworkAttachmentType.NAT;
+import static org.virtualbox_4_2.NetworkAttachmentType.NAT;
 
 import org.jclouds.virtualbox.domain.NetworkInterfaceCard;
 import org.jclouds.virtualbox.domain.RedirectRule;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.INetworkAdapter;
-import org.virtualbox_4_1.VBoxException;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.INetworkAdapter;
+import org.virtualbox_4_2.NetworkAdapterType;
+import org.virtualbox_4_2.VBoxException;
 
 import com.google.common.base.Function;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
 
 /**
  * @author Mattias Holmqvist, Andrea Turli
@@ -43,12 +46,19 @@ public class AttachNATAdapterToMachineIfNotAlreadyExists implements Function<IMa
    @Override
    public Void apply(IMachine machine) {
       INetworkAdapter iNetworkAdapter = machine.getNetworkAdapter(networkInterfaceCard.getSlot());
+      // clean up previously set rules
+      for (String redirectRule : iNetworkAdapter.getNATEngine().getRedirects()) {
+         String redirectRuleName = Iterables.getFirst(Splitter.on(",").split(redirectRule), null);
+         if(redirectRuleName != null) {
+            iNetworkAdapter.getNATEngine().removeRedirect(redirectRuleName);
+         }
+      }
       iNetworkAdapter.setAttachmentType(NAT);
       for (RedirectRule rule : networkInterfaceCard.getNetworkAdapter().getRedirectRules()) {
          try {
             String ruleName = String.format("%s@%s:%s->%s:%s",rule.getProtocol(), rule.getHost(), rule.getHostPort(), 
                      rule.getGuest(), rule.getGuestPort());
-            iNetworkAdapter.getNatDriver().addRedirect(ruleName, rule.getProtocol(), rule.getHost(), rule.getHostPort(),
+            iNetworkAdapter.getNATEngine().addRedirect(ruleName, rule.getProtocol(), rule.getHost(), rule.getHostPort(),
                      rule.getGuest(), rule.getGuestPort());
          } catch (VBoxException e) {
             if (!e.getMessage().contains("already exists"))

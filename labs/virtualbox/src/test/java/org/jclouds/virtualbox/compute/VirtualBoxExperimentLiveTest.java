@@ -72,10 +72,10 @@ public class VirtualBoxExperimentLiveTest extends BaseVirtualBoxClientLiveTest {
       int numNodes = 3;
       final String clusterName = "test-launch-cluster";
       Set<? extends NodeMetadata> nodes = context.getComputeService().createNodesInGroup(clusterName, numNodes,
-               TemplateOptions.Builder.overrideLoginUser("toor").runScript(AdminAccess.standard()));
+               TemplateOptions.Builder.overrideLoginUser("toor"));
       assertEquals(numNodes, nodes.size(), "wrong number of nodes");
       for (NodeMetadata node : nodes) {
-         assertEquals("test-launch-cluster", node.getGroup());
+         assertTrue(node.getGroup().equals("test-launch-cluster"));
          logger.debug("Created Node: %s", node);
          SshClient client = context.utils().sshForNode().apply(node);
          client.connect();

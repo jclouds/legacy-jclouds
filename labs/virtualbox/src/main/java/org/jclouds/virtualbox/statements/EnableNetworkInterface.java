@@ -82,5 +82,4 @@ public class EnableNetworkInterface implements Statement {
          throw new UnsupportedOperationException("windows not yet implemented");
       return statements.render(family);
    }
-
 }

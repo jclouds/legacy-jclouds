@@ -21,7 +21,7 @@ package org.jclouds.virtualbox.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.virtualbox_4_1.DeviceType;
+import org.virtualbox_4_2.DeviceType;
 
 import com.google.common.base.Objects;
 
@@ -46,12 +46,9 @@ public class HardDisk {
    private final boolean autoDelete;
 
    public HardDisk(DeviceDetails deviceDetails, String diskPath, String diskFormat, boolean autoDelete) {
-      checkNotNull(deviceDetails, "deviceDetails");
-      checkNotNull(diskPath, "diskPath");
-      checkNotNull(diskFormat, "diskFormat");
-      this.diskPath = diskPath;
-      this.diskFormat = diskFormat;
-      this.deviceDetails = deviceDetails;
+      this.diskPath = checkNotNull(diskPath, "diskPath can't be null");
+      this.diskFormat = checkNotNull(diskFormat, "diskFormat can't be null");
+      this.deviceDetails = checkNotNull(deviceDetails, "deviceDetails can't be null");
       this.name = diskPath.substring(diskPath.lastIndexOf("/") + 1);
       this.autoDelete = autoDelete;
    }

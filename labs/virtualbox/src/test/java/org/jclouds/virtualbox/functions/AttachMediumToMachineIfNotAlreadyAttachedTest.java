@@ -32,14 +32,14 @@ import org.jclouds.virtualbox.domain.DeviceDetails;
 import org.jclouds.virtualbox.domain.HardDisk;
 import org.jclouds.virtualbox.domain.StorageController;
 import org.testng.annotations.Test;
-import org.virtualbox_4_1.DeviceType;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.IMedium;
-import org.virtualbox_4_1.IProgress;
-import org.virtualbox_4_1.IVirtualBox;
-import org.virtualbox_4_1.StorageBus;
-import org.virtualbox_4_1.VBoxException;
-import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_2.DeviceType;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.IMedium;
+import org.virtualbox_4_2.IProgress;
+import org.virtualbox_4_2.IVirtualBox;
+import org.virtualbox_4_2.StorageBus;
+import org.virtualbox_4_2.VBoxException;
+import org.virtualbox_4_2.VirtualBoxManager;
 
 /**
  * @author Mattias Holmqvist

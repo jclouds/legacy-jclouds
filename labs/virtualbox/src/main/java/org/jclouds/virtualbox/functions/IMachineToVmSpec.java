@@ -30,12 +30,12 @@ import org.jclouds.virtualbox.domain.HardDisk;
 import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.StorageController.Builder;
 import org.jclouds.virtualbox.domain.VmSpec;
-import org.virtualbox_4_1.CleanupMode;
-import org.virtualbox_4_1.DeviceType;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.IMedium;
-import org.virtualbox_4_1.IMediumAttachment;
-import org.virtualbox_4_1.IStorageController;
+import org.virtualbox_4_2.CleanupMode;
+import org.virtualbox_4_2.DeviceType;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.IMedium;
+import org.virtualbox_4_2.IMediumAttachment;
+import org.virtualbox_4_2.IStorageController;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;

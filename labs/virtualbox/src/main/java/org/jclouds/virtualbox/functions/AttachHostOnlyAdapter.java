@@ -18,12 +18,11 @@
  */
 package org.jclouds.virtualbox.functions;
 
-import static org.virtualbox_4_1.NetworkAdapterType.Am79C973;
-import static org.virtualbox_4_1.NetworkAttachmentType.HostOnly;
-
 import org.jclouds.virtualbox.domain.NetworkInterfaceCard;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.INetworkAdapter;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.INetworkAdapter;
+import org.virtualbox_4_2.NetworkAdapterType;
+import org.virtualbox_4_2.NetworkAttachmentType;
 
 import com.google.common.base.Function;
 
@@ -41,8 +40,7 @@ public class AttachHostOnlyAdapter implements Function<IMachine, Void> {
    @Override
    public Void apply(IMachine machine) {
       INetworkAdapter iNetworkAdapter = machine.getNetworkAdapter(networkInterfaceCard.getSlot());
-      iNetworkAdapter.setAttachmentType(HostOnly);
-      iNetworkAdapter.setAdapterType(Am79C973);
+      iNetworkAdapter.setAttachmentType(NetworkAttachmentType.HostOnly);
       iNetworkAdapter.setMACAddress(networkInterfaceCard.getNetworkAdapter().getMacAddress());
       iNetworkAdapter.setHostOnlyInterface(networkInterfaceCard.getHostInterfaceName());
       iNetworkAdapter.setEnabled(networkInterfaceCard.isEnabled());

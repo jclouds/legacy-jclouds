@@ -20,12 +20,11 @@ package org.jclouds.virtualbox;
 
 import static org.jclouds.compute.config.ComputeServiceProperties.TEMPLATE;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_DEFAULT_DIR;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_GUEST_MEMORY;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGES_DESCRIPTOR;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_PRECONFIGURATION_URL;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_WORKINGDIR;
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_GUEST_MEMORY;
-
 
 import java.io.File;
 import java.net.URI;
@@ -65,15 +64,16 @@ public class VirtualBoxApiMetadata extends BaseApiMetadata {
       
       properties.put(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE, "<Esc><Esc><Enter> "
                + "/install/vmlinuz noapic preseed/url=PRECONFIGURATION_URL "
-               + "debian-installer=en_US auto locale=en_US kbd-chooser/method=us " + "hostname=" + "HOSTNAME "
+               + "debian-installer=en_US auto locale=en_US kbd-chooser/method=us " 
+               + "hostname=" + "HOSTNAME "
                + "fb=false debconf/frontend=noninteractive "
-               + "keyboard-configuration/layout=USA keyboard-configuration/variant=USA console-setup/ask_detect=false "
+               + "console-setup/ask_detect=false keyboard-configuration/layoutcode=us "
                + "initrd=/install/initrd.gz -- <Enter>");
 
       String workingDir = System.getProperty("test.virtualbox.workingDir", VIRTUALBOX_DEFAULT_DIR);
       properties.put(VIRTUALBOX_WORKINGDIR, workingDir);
 
-      String ram = System.getProperty(VIRTUALBOX_GUEST_MEMORY, "1024");
+      String ram = System.getProperty(VIRTUALBOX_GUEST_MEMORY, "512");
       properties.put(VIRTUALBOX_GUEST_MEMORY, ram);
       
       String yamlDescriptor = System.getProperty("test.virtualbox.image.descriptor.yaml", VIRTUALBOX_WORKINGDIR
@@ -81,7 +81,7 @@ public class VirtualBoxApiMetadata extends BaseApiMetadata {
 
       properties.put(VIRTUALBOX_IMAGES_DESCRIPTOR, yamlDescriptor);
       properties.put(VIRTUALBOX_PRECONFIGURATION_URL, "http://10.0.2.2:23232/preseed.cfg");
-      properties.setProperty(TEMPLATE, "osFamily=UBUNTU,osVersionMatches=12.04.1,os64Bit=true,osArchMatches=amd64"); 
+      properties.setProperty(TEMPLATE, "osFamily=UBUNTU,osVersionMatches=12.04.1,os64Bit=true,osArchMatches=amd64");
       return properties;
    }
 
@@ -96,10 +96,9 @@ public class VirtualBoxApiMetadata extends BaseApiMetadata {
          .defaultIdentity(System.getProperty("user.name"))
          .defaultCredential("CHANGE_ME")
          .defaultEndpoint("http://localhost:18083/")
-         .documentation(URI.create("https://github.com/jclouds/jclouds/tree/master/apis/byon"))
-          // later version not in maven, yet
-         .version("4.1.4")
-         .buildVersion("4.1.8r75467")
+         .documentation(URI.create("https://github.com/jclouds/jclouds/tree/master/labs/virtualbox"))
+         .version("4.2.4")
+         .buildVersion("4.2.4")
          .defaultProperties(VirtualBoxApiMetadata.defaultProperties())
          .view(ComputeServiceContext.class)
          .defaultModules(ImmutableSet.<Class<? extends Module>>of(HardcodeLocalhostAsNodeMetadataSupplier.class, VirtualBoxComputeServiceContextModule.class));

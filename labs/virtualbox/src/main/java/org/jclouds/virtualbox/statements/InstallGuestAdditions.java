@@ -78,7 +78,7 @@ public class InstallGuestAdditions implements Statement {
             return false;
          }
       }).isPresent()) {
-         statements.add(exec("mount -t iso9660 /dev/sr1 " + mountPoint));
+         statements.add(exec("mount -t iso9660 /dev/cdrom1 " + mountPoint));
       } else {
          String vboxGuestAdditionsIso = "VBoxGuestAdditions_" + vboxVersion + ".iso";
          URI download = URI.create("http://download.virtualbox.org/virtualbox/" + vboxVersion + "/"
@@ -87,7 +87,7 @@ public class InstallGuestAdditions implements Statement {
          statements.add(saveHttpResponseTo(download, "{tmp}{fs}", vboxGuestAdditionsIso));//
          statements.add(exec(String.format("mount -o loop {tmp}{fs}%s %s", vboxGuestAdditionsIso, mountPoint)));
       }
-      statements.add(exec(String.format("%s%s", mountPoint, "/VBoxLinuxAdditions.run --nox11"))); //
+      statements.add(exec(String.format("%s%s", mountPoint, "/VBoxLinuxAdditions.run --nox11")));
       return statements;
    }
 

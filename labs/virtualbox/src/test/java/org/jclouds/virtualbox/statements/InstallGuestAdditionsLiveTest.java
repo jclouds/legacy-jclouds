@@ -26,8 +26,8 @@ import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
 import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
 import org.testng.annotations.Test;
-import org.virtualbox_4_1.CleanupMode;
-import org.virtualbox_4_1.StorageBus;
+import org.virtualbox_4_2.CleanupMode;
+import org.virtualbox_4_2.StorageBus;
 
 /**
  * @author Andrea Turli, David Alves
@@ -44,8 +44,8 @@ public class InstallGuestAdditionsLiveTest extends BaseVirtualBoxClientLiveTest 
 
       InstallGuestAdditions installer = new InstallGuestAdditions(vmSpecification, "4.1.8");
       String scripts = installer.render(OsFamily.UNIX);
-      assertEquals("installModuleAssistantIfNeeded || return 1\n" + "mount -t iso9660 /dev/sr1 /mnt\n"
-            + "/mnt/VBoxLinuxAdditions.run --nox11\n", scripts);
+      assertEquals(scripts, "installModuleAssistantIfNeeded || return 1\n" + "mount -t iso9660 /dev/cdrom1 /mnt\n"
+            + "/mnt/VBoxLinuxAdditions.run --nox11\n");
    }
    
    public void testIsoNotPresent() {
@@ -56,12 +56,11 @@ public class InstallGuestAdditionsLiveTest extends BaseVirtualBoxClientLiveTest 
 
       InstallGuestAdditions installer = new InstallGuestAdditions(vmSpecification, "4.1.8");
       String scripts = installer.render(OsFamily.UNIX);
-      assertEquals(
+      assertEquals(scripts,
                "installModuleAssistantIfNeeded || return 1\n"
                         + "setupPublicCurl || return 1\n"
                         + "(mkdir -p /tmp/ && cd /tmp/ && [ ! -f VBoxGuestAdditions_4.1.8.iso ] && curl -q -s -S -L --connect-timeout 10 --max-time 600 --retry 20 -C - -X GET  http://download.virtualbox.org/virtualbox/4.1.8/VBoxGuestAdditions_4.1.8.iso >VBoxGuestAdditions_4.1.8.iso)\n"
                         + "mount -o loop /tmp/VBoxGuestAdditions_4.1.8.iso /mnt\n"
-                        + "/mnt/VBoxLinuxAdditions.run --nox11\n", scripts);
+                        + "/mnt/VBoxLinuxAdditions.run --nox11\n");
    }
-
 }

@@ -21,8 +21,8 @@ package org.jclouds.virtualbox.util;
 
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
+import static org.testng.AssertJUnit.assertTrue;
 import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertSame;
 
 import org.jclouds.config.ValueOfConfigurationKeyOrNull;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
@@ -40,12 +40,12 @@ import org.jclouds.virtualbox.functions.CreateAndInstallVm;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import org.virtualbox_4_1.CleanupMode;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.ISession;
-import org.virtualbox_4_1.NetworkAttachmentType;
-import org.virtualbox_4_1.SessionState;
-import org.virtualbox_4_1.StorageBus;
+import org.virtualbox_4_2.CleanupMode;
+import org.virtualbox_4_2.IMachine;
+import org.virtualbox_4_2.ISession;
+import org.virtualbox_4_2.NetworkAttachmentType;
+import org.virtualbox_4_2.SessionState;
+import org.virtualbox_4_2.StorageBus;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Function;
@@ -55,72 +55,62 @@ import com.google.inject.Injector;
 @Test(groups = "live", testName = "MachineControllerLiveTest")
 public class MachineControllerLiveTest extends BaseVirtualBoxClientLiveTest {
 
-   private MasterSpec machineSpec;
+   private MasterSpec masterSpec;
    private String instanceName;
+   private IMachine clonedMachine;
 
    @Override
    @BeforeClass(groups = "live")
    public void setupContext() {
       super.setupContext();
       instanceName = VIRTUALBOX_IMAGE_PREFIX
-               + CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, getClass().getSimpleName());
+            + CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, getClass().getSimpleName());
 
       StorageController ideController = StorageController
-               .builder()
-               .name("IDE Controller")
-               .bus(StorageBus.IDE)
-               .attachISO(0, 0, operatingSystemIso)
-               .attachHardDisk(
-                        HardDisk.builder().diskpath(adminDisk(instanceName)).controllerPort(0).deviceSlot(1)
-                                 .autoDelete(true).build()).attachISO(1, 1, guestAdditionsIso).build();
+            .builder()
+            .name("IDE Controller")
+            .bus(StorageBus.IDE)
+            .attachISO(0, 0, operatingSystemIso)
+            .attachHardDisk(
+                  HardDisk.builder().diskpath(adminDisk(instanceName)).controllerPort(0).deviceSlot(1).autoDelete(true)
+                        .build()).attachISO(1, 1, guestAdditionsIso).build();
 
       VmSpec instanceVmSpec = VmSpec.builder().id(instanceName).name(instanceName).osTypeId("").memoryMB(512)
-               .cleanUpMode(CleanupMode.Full).controller(ideController).forceOverwrite(true).build();
+            .cleanUpMode(CleanupMode.Full).controller(ideController).forceOverwrite(true).build();
 
       Injector injector = view.utils().injector();
-      Function<String, String> configProperties = injector
-            .getInstance(ValueOfConfigurationKeyOrNull.class);
+      Function<String, String> configProperties = injector.getInstance(ValueOfConfigurationKeyOrNull.class);
       IsoSpec isoSpec = IsoSpec
             .builder()
             .sourcePath(operatingSystemIso)
             .installationScript(
-                  configProperties.apply(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE)
-                        .replace("HOSTNAME", instanceVmSpec.getVmName()))
-            .build();
+                  configProperties.apply(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE).replace("HOSTNAME",
+                        instanceVmSpec.getVmName())).build();
 
-      NetworkAdapter networkAdapter = NetworkAdapter.builder()
-            .networkAttachmentType(NetworkAttachmentType.HostOnly).build();
-      NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard
-            .builder().addNetworkAdapter(networkAdapter)
+      NetworkAdapter networkAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.HostOnly)
+            .build();
+      NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(networkAdapter)
             .addHostInterfaceName("vboxnet0").slot(0L).build();
-      NetworkSpec networkSpec = NetworkSpec.builder()
-            .addNIC(networkInterfaceCard).build();
-      machineSpec = MasterSpec.builder().iso(isoSpec).vm(instanceVmSpec)
-            .network(networkSpec).build();
+      NetworkSpec networkSpec = NetworkSpec.builder().addNIC(networkInterfaceCard).build();
+      masterSpec = MasterSpec.builder().iso(isoSpec).vm(instanceVmSpec).network(networkSpec).build();
+      clonedMachine = cloneFromMaster();
    }
 
    @Test
    public void testEnsureMachineisLaunchedAndSessionIsUnlocked() {
-      cloneFromMaster();
-      ISession cloneMachineSession = machineController.ensureMachineIsLaunched(instanceName);
-      assertSame(cloneMachineSession.getState(), SessionState.Unlocked);
-      cloneMachineSession = machineController.ensureMachineHasPowerDown(instanceName);
-      assertSame(cloneMachineSession.getState(), SessionState.Unlocked);
-   }
-
-   @Test(dependsOnMethods="testEnsureMachineisLaunchedAndSessionIsUnlocked")
-   public void testEnsureMachineCanBePoweredOffMoreThanOneTimeAndSessionIsUnlocked() {
-      ISession cloneMachineSession = machineController.ensureMachineHasPowerDown(instanceName);
+      ISession cloneMachineSession = machineController.ensureMachineIsLaunched(clonedMachine.getName());
+      assertTrue(cloneMachineSession.getState() == SessionState.Unlocked);
+      cloneMachineSession = machineController.ensureMachineHasPowerDown(clonedMachine.getName());
       SessionState state = cloneMachineSession.getState();
       assertEquals(SessionState.Unlocked, state);
    }
 
    private IMachine cloneFromMaster() {
       IMachine source = getVmWithGuestAdditionsInstalled();
-      CloneSpec cloneSpec = CloneSpec.builder().vm(machineSpec.getVmSpec()).network(machineSpec.getNetworkSpec())
-               .master(source).linked(true).build();
+      CloneSpec cloneSpec = CloneSpec.builder().vm(masterSpec.getVmSpec()).network(masterSpec.getNetworkSpec())
+            .master(source).linked(true).build();
       return new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(manager, workingDir, machineUtils)
-               .apply(cloneSpec);
+            .apply(cloneSpec);
    }
 
    private IMachine getVmWithGuestAdditionsInstalled() {
