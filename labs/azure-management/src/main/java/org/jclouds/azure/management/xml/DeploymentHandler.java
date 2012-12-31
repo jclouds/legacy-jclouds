@@ -18,23 +18,24 @@
  */
 package org.jclouds.azure.management.xml;
 
+import static com.google.common.base.Charsets.UTF_8;
+import static com.google.common.io.BaseEncoding.base64;
 import static org.jclouds.util.SaxUtils.currentOrNull;
 import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
 import java.net.URI;
 import java.util.List;
 
-import com.google.common.collect.Lists;
-
 import org.jclouds.azure.management.domain.Deployment;
 import org.jclouds.azure.management.domain.DeploymentSlot;
 import org.jclouds.azure.management.domain.DeploymentStatus;
 import org.jclouds.azure.management.domain.InstanceStatus;
 import org.jclouds.azure.management.domain.RoleSize;
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.functions.ParseSax;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+
+import com.google.common.collect.Lists;
 
 /**
  * @see <a href="http://msdn.microsoft.com/en-us/library/ee460804" >api</a>
@@ -86,7 +87,7 @@ public class DeploymentHandler extends
 		} else if (equalsOrSuffix(qName, "Label")) {
 			String label = currentOrNull(currentText);
 			if (label != null)
-				builder.deploymentLabel(new String(CryptoStreams.base64(label)));
+				builder.deploymentLabel(new String(base64().decode(label), UTF_8));
 		} else if (equalsOrSuffix(qName, "Url")) {
 			final String url = currentOrNull(currentText);
 			if (url != null)

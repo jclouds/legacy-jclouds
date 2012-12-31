@@ -18,9 +18,8 @@
  */
 package org.jclouds.ec2.xml;
 
-import org.jclouds.crypto.CryptoStreams;
-
-import com.google.common.base.Charsets;
+import static com.google.common.base.Charsets.UTF_8;
+import static com.google.common.io.BaseEncoding.base64;
 
 /**
  * 
@@ -32,6 +31,9 @@ public class UnencodeStringValueHandler extends StringValueHandler {
 
    @Override
    public String getResult() {
-      return super.getResult() == null ? null : new String(CryptoStreams.base64(super.getResult()), Charsets.UTF_8);
+      String result = super.getResult();
+      if (result != null)
+         result = new String(base64().decode(result), UTF_8);
+      return result;
    }
 }

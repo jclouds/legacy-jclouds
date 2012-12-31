@@ -19,36 +19,25 @@
 
 package org.jclouds.oauth.v2.internal;
 
+import static com.google.common.base.Charsets.UTF_8;
+import static com.google.common.io.BaseEncoding.base64Url;
 import static org.testng.Assert.assertTrue;
 
-import org.jclouds.crypto.CryptoStreams;
 import org.testng.annotations.Test;
-
-import com.google.common.base.Charsets;
 
 /**
  * Tests that the Base64 implementations used to Base64 encode the tokens are Url safe.
- *
+ * 
  * @author David Alves
  */
 @Test(groups = "unit")
 public class Base64UrlSafeTest {
 
-   public static final String STRING_THAT_GENERATES_URL_UNSAFE_BASE64_ENCODING = "§1234567890'+±!\"#$%&/()" +
-           "=?*qwertyuiopº´WERTYUIOPªàsdfghjklç~ASDFGHJKLÇ^<zxcvbnm," +
-           ".->ZXCVBNM;:_@€";
-
-
-   public void testJcloudsCoreBase64IsNotUrlSafe() {
-      String encoded = new String(CryptoStreams.base64(STRING_THAT_GENERATES_URL_UNSAFE_BASE64_ENCODING
-            .getBytes(Charsets.UTF_8)));
-      assertTrue(encoded.contains("+"), encoded);
-      assertTrue(encoded.contains("/"), encoded);
-   }
+   public static final String STRING_THAT_GENERATES_URL_UNSAFE_BASE64_ENCODING = "§1234567890'+±!\"#$%&/()"
+         + "=?*qwertyuiopº´WERTYUIOPªàsdfghjklç~ASDFGHJKLÇ^<zxcvbnm,.->ZXCVBNM;:_@€";
 
    public void testUsedBase64IsUrlSafe() {
-      String encoded =  CryptoStreams.base64Url(
-              STRING_THAT_GENERATES_URL_UNSAFE_BASE64_ENCODING.getBytes(Charsets.UTF_8));
+      String encoded = base64Url().omitPadding().encode(STRING_THAT_GENERATES_URL_UNSAFE_BASE64_ENCODING.getBytes(UTF_8));
       assertTrue(!encoded.contains("+"));
       assertTrue(!encoded.contains("/"));
       assertTrue(!encoded.endsWith("="));

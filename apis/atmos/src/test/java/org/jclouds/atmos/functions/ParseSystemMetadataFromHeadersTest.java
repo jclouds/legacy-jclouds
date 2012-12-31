@@ -18,11 +18,11 @@
  */
 package org.jclouds.atmos.functions;
 
+import static com.google.common.io.BaseEncoding.base16;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.atmos.domain.FileType;
 import org.jclouds.atmos.domain.SystemMetadata;
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.DateService;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.testng.annotations.Test;
@@ -37,8 +37,7 @@ import com.google.inject.Guice;
 @Test(groups = "unit")
 public class ParseSystemMetadataFromHeadersTest {
    static final DateService dateService = new SimpleDateFormatDateService();
-   static final SystemMetadata EXPECTED = new SystemMetadata(CryptoStreams.hex("1f3870be274f6c49b3e31a0c6728957f"),
-
+   static final SystemMetadata EXPECTED = new SystemMetadata(base16().lowerCase().decode("1f3870be274f6c49b3e31a0c6728957f"),
    dateService.iso8601SecondsDateParse("2009-10-12T16:09:42Z"),
          dateService.iso8601SecondsDateParse("2009-10-19T04:37:00Z"), "rootr",
          dateService.iso8601SecondsDateParse("2009-10-12T16:09:42Z"),

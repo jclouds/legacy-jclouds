@@ -18,11 +18,11 @@
  */
 package org.jclouds.sqs.parse;
 
+import static com.google.common.io.BaseEncoding.base16;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ReturnStringIf2xx;
 import org.jclouds.sqs.domain.MessageIdAndMD5;
@@ -53,6 +53,6 @@ public class SendMessageResponseTest {
 
    public MessageIdAndMD5 expected() {
       return MessageIdAndMD5.builder().id("c332b2b0-b61f-42d3-8832-d03ebd89f68d")
-            .md5(HashCodes.fromBytes(CryptoStreams.hex("e32aedf2b2b25355d04b1507055532e6"))).build();
+            .md5(HashCodes.fromBytes(base16().lowerCase().decode("e32aedf2b2b25355d04b1507055532e6"))).build();
    }
 }

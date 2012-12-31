@@ -21,6 +21,7 @@ package org.jclouds.abiquo.http.filters;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.http.HttpUtils.releasePayload;
+import static org.jclouds.http.filters.BasicAuthentication.basic;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
@@ -140,8 +141,8 @@ public class AbiquoAuthenticationLiveApiTest {
       try {
          // Create a request to authenticate to the API and generate the token
          HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create(endpoint)).build();
-         String auth = AbiquoAuthentication.basicAuth(identity, credential);
-         request = request.toBuilder().replaceHeader(HttpHeaders.AUTHORIZATION, auth).build();
+        
+         request = request.toBuilder().replaceHeader(HttpHeaders.AUTHORIZATION, basic(identity, credential)).build();
 
          // Execute the request and read the generated token
          HttpResponse response = context.utils().http().invoke(request);

@@ -18,6 +18,7 @@
  */
 package org.jclouds.s3.functions;
 
+import static com.google.common.io.BaseEncoding.base16;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
 
 import java.util.regex.Matcher;
@@ -29,7 +30,6 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.functions.ParseSystemAndUserMetadataFromHeaders;
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.InvocationContext;
@@ -76,7 +76,7 @@ public class ParseObjectMetadataFromHeaders implements Function<HttpResponse, Mu
       if (to.getContentMetadata().getContentMD5() == null && to.getETag() != null) {
          Matcher md5Matcher = MD5_FROM_ETAG.matcher(to.getETag());
          if (md5Matcher.find()) {
-            byte[] md5 = CryptoStreams.hex(md5Matcher.group(1));
+            byte[] md5 = base16().lowerCase().decode(md5Matcher.group(1));
             // it is possible others will look at the http payload directly
             if (from.getPayload() != null)
                from.getPayload().getContentMetadata().setContentMD5(md5);

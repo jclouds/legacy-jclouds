@@ -68,7 +68,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.eclipse.jetty.http.HttpHeaders;
 import org.jclouds.ContextBuilder;
-import org.jclouds.crypto.Crypto;
 import org.jclouds.date.DateService;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.HttpCommand;
@@ -1775,7 +1774,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
    public void testPutPayloadEnclosingGenerateMD5() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TestTransformers.class.getMethod("put", PayloadEnclosing.class);
       PayloadEnclosing payloadEnclosing = new PayloadEnclosingImpl(newStringPayload("whoops"));
-      calculateMD5(payloadEnclosing, crypto.md5());
+      calculateMD5(payloadEnclosing);
       HttpRequest request = factory(TestQuery.class).createRequest(method, payloadEnclosing);
       assertRequestLineEquals(request, "PUT http://localhost:9999?x-ms-version=2009-07-17 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
@@ -1789,7 +1788,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       PayloadEnclosing payloadEnclosing = new PayloadEnclosingImpl(
             newInputStreamPayload(Strings2.toInputStream("whoops")));
 
-      calculateMD5(payloadEnclosing, crypto.md5());
+      calculateMD5(payloadEnclosing);
       HttpRequest request = factory(TestQuery.class).createRequest(method, payloadEnclosing);
       assertRequestLineEquals(request, "PUT http://localhost:9999?x-ms-version=2009-07-17 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
@@ -1846,7 +1845,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
    public void testPutPayloadWithGeneratedMD5AndNoContentType() throws SecurityException, NoSuchMethodException,
          IOException {
       Payload payload = newStringPayload("whoops");
-      calculateMD5(payload, crypto.md5());
+      calculateMD5(payload);
       Method method = TestTransformers.class.getMethod("put", Payload.class);
       HttpRequest request = factory(TestQuery.class).createRequest(method, payload);
       assertRequestLineEquals(request, "PUT http://localhost:9999?x-ms-version=2009-07-17 HTTP/1.1");
@@ -1867,7 +1866,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
    public void testPutInputStreamPayloadWithMD5() throws NoSuchAlgorithmException, IOException, SecurityException,
          NoSuchMethodException {
       Payload payload = newStringPayload("whoops");
-      calculateMD5(payload, crypto.md5());
+      calculateMD5(payload);
       Method method = TestTransformers.class.getMethod("put", Payload.class);
       HttpRequest request = factory(TestQuery.class).createRequest(method, payload);
       assertRequestLineEquals(request, "PUT http://localhost:9999?x-ms-version=2009-07-17 HTTP/1.1");
@@ -2583,7 +2582,6 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
                
             })).buildInjector();
       parserFactory = injector.getInstance(ParseSax.Factory.class);
-      crypto = injector.getInstance(Crypto.class);
    }
 
 }

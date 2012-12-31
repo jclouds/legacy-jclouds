@@ -65,8 +65,8 @@
 package org.jclouds.crypto;
 
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
-import org.jclouds.encryption.internal.JCECrypto;
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Throwables;
@@ -101,19 +101,10 @@ public class Sha512Crypt {
 
    public static enum Function implements com.google.common.base.Function<String, String> {
       INSTANCE;
-      private Crypto crypto;
-
-      Function() {
-         try {
-            this.crypto = new JCECrypto();
-         } catch (Exception e) {
-            Throwables.propagate(e);
-         }
-      }
 
       @Override
       public String apply(String input) {
-         return Sha512Crypt.makeShadowLine(input, null, crypto);
+         return Sha512Crypt.makeShadowLine(input, null);
       }
 
       @Override
@@ -150,9 +141,9 @@ public class Sha512Crypt {
     * 
     * @return The Sha512 Unix Crypt hash text for the password
     */
-   public static String makeShadowLine(String password, @Nullable String shadowPrefix, Crypto crypto) {
-      MessageDigest ctx = crypto.sha512();
-      MessageDigest alt_ctx = crypto.sha512();
+   public static String makeShadowLine(String password, @Nullable String shadowPrefix) {
+      MessageDigest ctx = sha512();
+      MessageDigest alt_ctx = sha512();
 
       byte[] alt_result;
       byte[] temp_result;
@@ -329,6 +320,14 @@ public class Sha512Crypt {
       ctx.reset();
 
       return buffer.toString();
+   }
+
+   private static MessageDigest sha512() {
+      try {
+         return MessageDigest.getInstance("SHA-512");
+      } catch (NoSuchAlgorithmException e) {
+         throw Throwables.propagate(e);
+      }
    }
 
    private static final String b64_from_24bit(byte B2, byte B1, byte B0, int size) {

@@ -18,7 +18,9 @@
  */
 package org.jclouds.fujitsu.fgcp.filters;
 
+import static com.google.common.base.Charsets.UTF_8;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.io.BaseEncoding.base64;
 import static org.jclouds.http.utils.Queries.queryParser;
 
 import java.security.InvalidKeyException;
@@ -42,7 +44,6 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.Constants;
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.fujitsu.fgcp.reference.RequestParameters;
 import org.jclouds.http.HttpException;
@@ -56,7 +57,6 @@ import org.jclouds.rest.annotations.ApiVersion;
 import org.jclouds.rest.annotations.Credential;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Charsets;
 import com.google.common.collect.Multimap;
 
 /**
@@ -171,8 +171,8 @@ public class RequestAuthenticator implements HttpRequestFilter, RequestSigner {
       String signed;
 
       try {
-         signer.update(stringToSign.getBytes(Charsets.UTF_8));
-         signed = CryptoStreams.base64(signer.sign());
+         signer.update(stringToSign.getBytes(UTF_8));
+         signed = base64().encode(signer.sign());
       } catch (SignatureException e) {
          throw new HttpException("error signing request", e);
       }
@@ -190,7 +190,7 @@ public class RequestAuthenticator implements HttpRequestFilter, RequestSigner {
 
       String signatureData = String.format("%s&%s&%s&%s", timezone, expires,
             signatureVersion, signatureMethod);
-      String accessKeyId = CryptoStreams.base64(signatureData.getBytes(Charsets.UTF_8));
+      String accessKeyId = base64().encode(signatureData.getBytes(UTF_8));
       return accessKeyId.replace("\n", "\r\n");
    }
 

@@ -18,12 +18,13 @@
  */
 package org.jclouds.aws.ec2.binders;
 
+import static com.google.common.base.Charsets.UTF_8;
+import static com.google.common.io.BaseEncoding.base64;
 import static org.testng.Assert.assertEquals;
 
 import java.net.UnknownHostException;
 
 import org.jclouds.aws.ec2.domain.LaunchSpecification;
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.ec2.domain.InstanceType;
 import org.testng.annotations.Test;
 
@@ -54,7 +55,7 @@ public class BindLaunchSpecificationToFormParamsTest {
 
       assertEquals(binder.apply(spec), ImmutableMap.of("LaunchSpecification.InstanceType", "t1.micro",
             "LaunchSpecification.ImageId", "ami-123", "LaunchSpecification.UserData",
-            CryptoStreams.base64("hello".getBytes())));
+            base64().encode("hello".getBytes(UTF_8))));
    }
 
    @Test

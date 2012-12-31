@@ -18,9 +18,13 @@
  */
 package org.jclouds.s3.filters;
 
+import static com.google.common.base.Charsets.UTF_8;
 import static com.google.common.collect.Iterables.get;
+import static com.google.common.io.BaseEncoding.base64;
+import static com.google.common.io.ByteStreams.readBytes;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AUTH_TAG;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_HEADER_TAG;
+import static org.jclouds.crypto.Macs.asByteProcessor;
 import static org.jclouds.http.utils.Queries.queryParser;
 import static org.jclouds.s3.reference.S3Constants.PROPERTY_S3_SERVICE_PATH;
 import static org.jclouds.s3.reference.S3Constants.PROPERTY_S3_VIRTUAL_HOST_BUCKETS;
@@ -40,14 +44,12 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.Constants;
 import org.jclouds.crypto.Crypto;
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.internal.SignatureWire;
-import org.jclouds.io.InputSuppliers;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.RequestSigner;
 import org.jclouds.rest.annotations.Credential;
@@ -62,6 +64,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.SortedSetMultimap;
 import com.google.common.collect.TreeMultimap;
+import com.google.common.io.ByteProcessor;
 
 /**
  * Signs the S3 request.
@@ -164,14 +167,12 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
    }
 
    public String sign(String toSign) {
-      String signature;
       try {
-         signature = CryptoStreams.base64(CryptoStreams.mac(InputSuppliers.of(toSign), crypto.hmacSHA1(secretKey
-                  .getBytes())));
+         ByteProcessor<byte[]> hmacSHA1 = asByteProcessor(crypto.hmacSHA1(secretKey.getBytes(UTF_8)));
+         return base64().encode(readBytes(toInputStream(toSign), hmacSHA1));
       } catch (Exception e) {
          throw new HttpException("error signing request", e);
       }
-      return signature;
    }
 
    void appendMethod(HttpRequest request, StringBuilder toSign) {

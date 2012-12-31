@@ -21,13 +21,13 @@ package org.jclouds.abiquo.http.filters;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.abiquo.config.AbiquoProperties.CREDENTIAL_IS_TOKEN;
+import static org.jclouds.http.filters.BasicAuthentication.basic;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
@@ -35,7 +35,6 @@ import org.jclouds.rest.annotations.Credential;
 import org.jclouds.rest.annotations.Identity;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Charsets;
 
 /**
  * Authenticates using Basic Authentication or a generated token from previous
@@ -64,16 +63,9 @@ public class AbiquoAuthentication implements HttpRequestFilter {
 
    @Override
    public HttpRequest filter(final HttpRequest request) throws HttpException {
-      String header = credentialIsToken ? tokenAuth(credential) : basicAuth(identity, credential);
+      String header = credentialIsToken ? tokenAuth(credential) : basic(identity, credential);
       return request.toBuilder()
             .replaceHeader(credentialIsToken ? HttpHeaders.COOKIE : HttpHeaders.AUTHORIZATION, header).build();
-   }
-
-   @VisibleForTesting
-   static String basicAuth(final String user, final String password) {
-      return "Basic "
-            + CryptoStreams.base64(String.format("%s:%s", checkNotNull(user, "user"),
-                  checkNotNull(password, "password")).getBytes(Charsets.UTF_8));
    }
 
    @VisibleForTesting

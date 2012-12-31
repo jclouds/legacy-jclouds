@@ -17,14 +17,16 @@
  * under the License.
  */
 package org.jclouds.http.filters;
+import static com.google.common.base.Charsets.UTF_8;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.io.BaseEncoding.base64;
 import static com.google.common.net.HttpHeaders.AUTHORIZATION;
+import static java.lang.String.format;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.crypto.Crypto;
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
@@ -45,9 +47,14 @@ public class BasicAuthentication implements HttpRequestFilter {
 
    @Inject
    public BasicAuthentication(@Identity String user, @Credential String password, Crypto crypto) {
-      this.header = "Basic "
-               + CryptoStreams.base64(String.format("%s:%s", checkNotNull(user, "user"),
-                        checkNotNull(password, "password")).getBytes());
+      checkNotNull(user, "user");
+      checkNotNull(password, "password");
+      this.header = basic(user, password);
+   }
+
+   public static String basic(String user, String password) {
+      return new StringBuilder("Basic ").append(base64().encode(format("%s:%s", user, password).getBytes(UTF_8)))
+            .toString();
    }
 
    @Override

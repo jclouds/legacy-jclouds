@@ -20,26 +20,19 @@ package org.jclouds.encryption.bouncycastle;
 
 import org.jclouds.crypto.Crypto;
 import org.jclouds.encryption.bouncycastle.config.BouncyCastleCryptoModule;
-import org.jclouds.io.CryptoTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
-/**
- * This tests the performance of Digest commands.
- * 
- * @author Adrian Cole
- */
-//NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
-@Test(groups = "performance", sequential = true, timeOut = 2 * 60 * 1000, testName = "BouncyCastleCryptoTest")
-public class BouncyCastleCryptoTest extends CryptoTest {
+@Test(groups = "unit")
+public class BouncyCastleCryptoTest  {
 
    @BeforeTest
    protected void createCrypto() {
       Injector i = Guice.createInjector(new BouncyCastleCryptoModule());
-      crypto = i.getInstance(Crypto.class);
+      Crypto crypto = i.getInstance(Crypto.class);
       assert crypto instanceof BouncyCastleCrypto;
    }
 }

@@ -19,8 +19,12 @@
 
 package org.jclouds.oauth.v2.json;
 
-import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertSame;
+import static org.testng.Assert.assertTrue;
+
+import java.io.IOException;
+
 import org.jclouds.ContextBuilder;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.oauth.v2.OAuthApiMetadata;
@@ -32,21 +36,19 @@ import org.jclouds.oauth.v2.domain.TokenRequestFormat;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
-
-import static org.jclouds.oauth.v2.internal.Base64UrlSafeTest.STRING_THAT_GENERATES_URL_UNSAFE_BASE64_ENCODING;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertSame;
-import static org.testng.Assert.assertTrue;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
 
 /**
  * @author David Alves
  */
 @Test(groups = "unit")
 public class JWTTokenRequestFormatTest {
+   public static final String STRING_THAT_GENERATES_URL_UNSAFE_BASE64_ENCODING = "§1234567890'+±!\"#$%&/()" +
+         "=?*qwertyuiopº´WERTYUIOPªàsdfghjklç~ASDFGHJKLÇ^<zxcvbnm," +
+         ".->ZXCVBNM;:_@€";
 
    public void testPayloadIsUrlSafe() throws IOException {
-
 
       TokenRequestFormat tokenRequestFormat = ContextBuilder.newBuilder(new OAuthApiMetadata()).overrides
               (OAuthTestUtils.defaultProperties(null)).build().utils()

@@ -18,6 +18,9 @@
  */
 package org.jclouds.gogrid.filters;
 
+import static com.google.common.base.Charsets.UTF_8;
+import static com.google.common.hash.Hashing.md5;
+import static com.google.common.io.BaseEncoding.base16;
 import static java.lang.String.format;
 
 import javax.annotation.Resource;
@@ -25,12 +28,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jclouds.Constants;
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
-import org.jclouds.io.InputSuppliers;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.annotations.Credential;
 import org.jclouds.rest.annotations.Identity;
@@ -74,11 +75,7 @@ public class SharedKeyLiteAuthentication implements HttpRequestFilter {
    }
 
    private String getMd5For(String stringToHash) {
-      try {
-         return CryptoStreams.md5Hex(InputSuppliers.of(stringToHash));
-      } catch (Exception e) {
-         throw new RuntimeException(e);
-      }
+      return base16().lowerCase().encode(md5().hashString(stringToHash, UTF_8).asBytes());
    }
 
 }

@@ -18,9 +18,9 @@
  */
 package org.jclouds.sqs.xml;
 
+import static com.google.common.io.BaseEncoding.base16;
 import static org.jclouds.util.SaxUtils.currentOrNull;
 
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.sqs.domain.Message;
 
@@ -57,7 +57,7 @@ public class MessageHandler extends ParseSax.HandlerForGeneratedRequestWithResul
       } else if (qName.equals("ReceiptHandle")) {
          builder.receiptHandle(currentOrNull(currentText));
       } else if (qName.equals("MD5OfBody")) {
-         builder.md5(HashCodes.fromBytes(CryptoStreams.hex(currentOrNull(currentText))));
+         builder.md5(HashCodes.fromBytes(base16().lowerCase().decode(currentOrNull(currentText))));
       } else if (qName.equals("Body")) {
          builder.body(currentOrNull(currentText));
       } else if (qName.equals("Name")) {

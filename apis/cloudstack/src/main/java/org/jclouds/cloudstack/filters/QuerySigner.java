@@ -20,9 +20,10 @@ package org.jclouds.cloudstack.filters;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Throwables.propagate;
+import static com.google.common.io.BaseEncoding.base64;
+import static com.google.common.io.ByteStreams.readBytes;
 import static org.jclouds.Constants.LOGGER_SIGNATURE;
-import static org.jclouds.crypto.CryptoStreams.base64;
-import static org.jclouds.crypto.CryptoStreams.mac;
+import static org.jclouds.crypto.Macs.asByteProcessor;
 import static org.jclouds.http.Uris.uriBuilder;
 import static org.jclouds.http.utils.Queries.encodeQueryLine;
 import static org.jclouds.http.utils.Queries.queryParser;
@@ -41,7 +42,6 @@ import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.internal.SignatureWire;
-import org.jclouds.io.InputSuppliers;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.RequestSigner;
 import org.jclouds.rest.annotations.Credential;
@@ -51,6 +51,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.TreeMultimap;
+import com.google.common.io.ByteProcessor;
 
 /**
  * 
@@ -99,10 +100,11 @@ public class QuerySigner implements AuthenticationFilter, RequestSigner {
    }
 
    @VisibleForTesting
-   public String sign(String stringToSign) {
+   public String sign(String toSign) {
       String signature;
       try {
-         signature = base64(mac(InputSuppliers.of(stringToSign), crypto.hmacSHA1(secretKey.getBytes())));
+         ByteProcessor<byte[]> hmacSHA1 = asByteProcessor(crypto.hmacSHA1(secretKey.getBytes()));
+         signature = base64().encode(readBytes(toInputStream(toSign), hmacSHA1));
          if (signatureWire.enabled())
             signatureWire.input(toInputStream(signature));
          return signature;

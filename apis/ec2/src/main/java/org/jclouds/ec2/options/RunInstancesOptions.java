@@ -20,10 +20,10 @@ package org.jclouds.ec2.options;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.io.BaseEncoding.base64;
 
 import java.util.Set;
 
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.ec2.domain.BlockDeviceMapping;
 import org.jclouds.ec2.domain.InstanceType;
 import org.jclouds.ec2.options.internal.BaseEC2RequestOptions;
@@ -90,7 +90,7 @@ public class RunInstancesOptions extends BaseEC2RequestOptions {
       int length = checkNotNull(unencodedData, "unencodedData").length;
       checkArgument(length > 0, "userData cannot be empty");
       checkArgument(length <= 16 * 1024, "userData cannot be larger than 16kb");
-      formParameters.put("UserData", CryptoStreams.base64(unencodedData));
+      formParameters.put("UserData", base64().encode(unencodedData));
       return this;
    }
 

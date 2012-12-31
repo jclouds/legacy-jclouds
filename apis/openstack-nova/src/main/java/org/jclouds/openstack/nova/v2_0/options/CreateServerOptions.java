@@ -23,6 +23,7 @@ import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.io.BaseEncoding.base64;
 
 import java.util.List;
 import java.util.Map;
@@ -32,7 +33,6 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.openstack.nova.v2_0.NovaApi;
 import org.jclouds.rest.MapBinder;
@@ -63,7 +63,7 @@ public class CreateServerOptions implements MapBinder {
 
       public File(String path, byte[] contents) {
          this.path = checkNotNull(path, "path");
-         this.contents = CryptoStreams.base64(checkNotNull(contents, "contents"));
+         this.contents = base64().encode(checkNotNull(contents, "contents"));
          checkArgument(
                path.getBytes().length < 255,
                String.format("maximum length of path is 255 bytes.  Path specified %s is %d bytes", path,
@@ -184,7 +184,7 @@ public class CreateServerOptions implements MapBinder {
       if (keyName != null)
          server.key_name = keyName;
       if (userData != null)
-          server.user_data = CryptoStreams.base64(userData);
+         server.user_data = base64().encode(userData);
       if (securityGroupNames.size() > 0) {
          server.securityGroupNames = Sets.newLinkedHashSet();
          for (String groupName : securityGroupNames) {

@@ -18,10 +18,10 @@
  */
 package org.jclouds.http;
 
+import static com.google.common.hash.Hashing.md5;
+import static com.google.common.io.BaseEncoding.base64;
 import static com.google.common.io.Closeables.closeQuietly;
 import static java.lang.String.format;
-import static org.jclouds.crypto.CryptoStreams.base64;
-import static org.jclouds.crypto.CryptoStreams.md5Base64;
 import static org.jclouds.http.options.GetOptions.Builder.tail;
 import static org.jclouds.io.Payloads.newFilePayload;
 import static org.jclouds.io.Payloads.newStringPayload;
@@ -29,25 +29,26 @@ import static org.jclouds.util.Throwables2.getFirstThrowableOfType;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.Writer;
 import java.net.URI;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.jclouds.io.InputSuppliers;
 import org.jclouds.io.Payload;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
+import com.google.common.io.ByteSource;
+import com.google.common.io.CharSink;
+import com.google.common.io.Files;
 
 /**
  * Tests for functionality all {@link HttpCommandExecutorService http executor
@@ -115,7 +116,7 @@ public abstract class BaseHttpCommandExecutorServiceIntegrationTest extends Base
    public void testGetBigFile() throws IOException {
       InputStream input = getConsitution();
       try {
-         assertEquals(md5Base64(InputSuppliers.of(input)), md5);
+         assertValidMd5(input);
       } catch (RuntimeException e) {
          closeQuietly(input);
          // since we are parsing client side, and not through a response
@@ -123,11 +124,20 @@ public abstract class BaseHttpCommandExecutorServiceIntegrationTest extends Base
          // lightning doesn't strike twice in the same spot.
          if (getFirstThrowableOfType(e, IOException.class) != null) {
             input = getConsitution();
-            assertEquals(md5Base64(InputSuppliers.of(input)), md5);
+            assertValidMd5(input);
          }
       } finally {
          closeQuietly(input);
       }
+   }
+
+   private void assertValidMd5(final InputStream input) throws IOException {
+      assertEquals(base64().encode(new ByteSource() {
+         @Override
+         public InputStream openStream() {
+            return input;
+         }
+      }.hash(md5()).asBytes()), md5);
    }
 
    private InputStream getConsitution() {
@@ -142,23 +152,24 @@ public abstract class BaseHttpCommandExecutorServiceIntegrationTest extends Base
    @Test(invocationCount = 1)
    public void testUploadBigFile() throws IOException {
       String filename = "jclouds";
-      OutputStream os = null;
       File f = null;
       try {
          // create a file, twice big as free heap memory
          f = File.createTempFile(filename, "tmp");
          f.deleteOnExit();
          long length = (long) (Runtime.getRuntime().freeMemory() * 1.1);
-         os = new BufferedOutputStream(new FileOutputStream(f.getAbsolutePath()));
-         MessageDigest digester = context.utils().crypto().md5();
+         
+         MessageDigest digester = md5Digest();
 
-         ByteArrayOutputStream out = new ByteArrayOutputStream();
+         CharSink fileSink = Files.asCharSink(f, Charsets.UTF_8);
+         Writer out = null;
          try {
+            out = fileSink.openStream();
             for (long i = 0; i < length; i++) {
+               out.append('a');
                digester.update((byte) 'a');
-               os.write((byte) 'a');
             }
-            os.flush();
+            out.flush();
          } finally {
             closeQuietly(out);
          }
@@ -167,12 +178,19 @@ public abstract class BaseHttpCommandExecutorServiceIntegrationTest extends Base
          byte[] digest = digester.digest();
          payload.getContentMetadata().setContentMD5(digest);
          Multimap<String, String> headers = client.postPayloadAndReturnHeaders("", payload);
-         assertEquals(headers.get("x-Content-MD5"), ImmutableList.of(base64(digest)));
+         assertEquals(headers.get("x-Content-MD5"), ImmutableList.of(base64().encode(digest)));
          payload.release();
       } finally {
-         closeQuietly(os);
          if (f != null && f.exists())
             f.delete();
+      }
+   }
+
+   private MessageDigest md5Digest() throws AssertionError {
+      try {
+         return MessageDigest.getInstance("MD5");
+      } catch (NoSuchAlgorithmException e) {
+         throw new AssertionError(e);
       }
    }
 

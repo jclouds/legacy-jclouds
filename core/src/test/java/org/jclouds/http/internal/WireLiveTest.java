@@ -19,8 +19,11 @@
 package org.jclouds.http.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.hash.Hashing.md5;
+import static com.google.common.io.BaseEncoding.base16;
 import static com.google.common.io.ByteStreams.copy;
 import static java.util.concurrent.Executors.newCachedThreadPool;
+import static org.jclouds.io.ByteSources.asByteSource;
 import static org.testng.Assert.assertEquals;
 
 import java.io.ByteArrayOutputStream;
@@ -32,8 +35,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.crypto.CryptoStreams;
-import org.jclouds.io.InputSuppliers;
 import org.jclouds.logging.Logger;
 import org.testng.annotations.Test;
 
@@ -59,9 +60,9 @@ public class WireLiveTest {
          InputStream in = wire.input(fromServer);
          ByteArrayOutputStream out = new ByteArrayOutputStream();// TODO
          copy(in, out);
-         byte[] compare = CryptoStreams.md5(out.toByteArray());
+         byte[] compare = md5().hashBytes(out.toByteArray()).asBytes();
          Thread.sleep(100);
-         assertEquals(CryptoStreams.hex(compare), checkNotNull(sysHttpStreamMd5, sysHttpStreamMd5));
+         assertEquals(base16().lowerCase().encode(compare), checkNotNull(sysHttpStreamMd5, sysHttpStreamMd5));
          assertEquals(((BufferLogger) wire.getWireLog()).buff.toString().getBytes().length, 3331484);
          return null;
       }
@@ -138,10 +139,10 @@ public class WireLiveTest {
          URL url = new URL(checkNotNull(sysHttpStreamUrl, "sysHttpStreamUrl"));
          URLConnection connection = url.openConnection();
          HttpWire wire = setUp();
-         final InputStream in = wire.input(connection.getInputStream());
-         byte[] compare = CryptoStreams.md5(InputSuppliers.of(in));
+         InputStream in = wire.input(connection.getInputStream());
+         byte[] compare = asByteSource(in).hash(md5()).asBytes();
          Thread.sleep(100);
-         assertEquals(CryptoStreams.hex(compare), checkNotNull(sysHttpStreamMd5, sysHttpStreamMd5));
+         assertEquals(base16().lowerCase().encode(compare), checkNotNull(sysHttpStreamMd5, sysHttpStreamMd5));
          assertEquals(((BufferLogger) wire.getWireLog()).buff.toString().getBytes().length, 3331484);
       } catch (UnknownHostException e) {
          // probably in offline mode
@@ -163,10 +164,10 @@ public class WireLiveTest {
          URL url = new URL(checkNotNull(sysHttpStreamUrl, "sysHttpStreamUrl"));
          URLConnection connection = url.openConnection();
          HttpWire wire = setUpSynch();
-         final InputStream in = wire.input(connection.getInputStream());
-         byte[] compare = CryptoStreams.md5(InputSuppliers.of(in));
+         InputStream in = wire.input(connection.getInputStream());
+         byte[] compare = asByteSource(in).hash(md5()).asBytes();
          Thread.sleep(100);
-         assertEquals(CryptoStreams.hex(compare), checkNotNull(sysHttpStreamMd5, sysHttpStreamMd5));
+         assertEquals(base16().lowerCase().encode(compare), checkNotNull(sysHttpStreamMd5, sysHttpStreamMd5));
          assertEquals(((BufferLogger) wire.getWireLog()).buff.toString().getBytes().length, 3331484);
       } catch (UnknownHostException e) {
          // probably in offline mode

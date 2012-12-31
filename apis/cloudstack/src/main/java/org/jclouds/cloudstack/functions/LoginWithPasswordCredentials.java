@@ -18,6 +18,10 @@
  */
 package org.jclouds.cloudstack.functions;
 
+import static com.google.common.base.Charsets.UTF_8;
+import static com.google.common.hash.Hashing.md5;
+import static com.google.common.io.BaseEncoding.base16;
+
 import java.io.File;
 
 import javax.inject.Inject;
@@ -25,7 +29,6 @@ import javax.inject.Singleton;
 
 import org.jclouds.cloudstack.domain.LoginResponse;
 import org.jclouds.cloudstack.features.SessionClient;
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.domain.Credentials;
 
 import com.google.common.base.Function;
@@ -50,9 +53,7 @@ public class LoginWithPasswordCredentials implements Function<Credentials, Login
          username = domainUsername.getName();
          domain = domainUsername.getParent();
       }
-
-      String hashedPassword = CryptoStreams.md5Hex(input.credential);
-
+      String hashedPassword = base16().lowerCase().encode(md5().hashString(input.credential, UTF_8).asBytes());
       return client.loginUserInDomainWithHashOfPassword(username, domain, hashedPassword);
    }
 

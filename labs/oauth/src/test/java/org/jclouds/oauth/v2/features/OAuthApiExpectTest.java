@@ -18,6 +18,15 @@
  */
 package org.jclouds.oauth.v2.features;
 
+import static com.google.common.base.Charsets.UTF_8;
+import static com.google.common.io.BaseEncoding.base64Url;
+import static org.testng.Assert.assertEquals;
+
+import java.net.URI;
+import java.util.Properties;
+
+import javax.ws.rs.core.MediaType;
+
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.oauth.v2.OAuthApi;
@@ -28,14 +37,6 @@ import org.jclouds.oauth.v2.domain.Token;
 import org.jclouds.oauth.v2.domain.TokenRequest;
 import org.jclouds.oauth.v2.internal.BaseOAuthApiExpectTest;
 import org.testng.annotations.Test;
-
-import javax.ws.rs.core.MediaType;
-import java.net.URI;
-import java.nio.charset.Charset;
-import java.util.Properties;
-
-import static org.jclouds.crypto.CryptoStreams.base64Url;
-import static org.testng.Assert.assertEquals;
 
 /**
  * Tests that a token requess is well formed.
@@ -68,9 +69,9 @@ public class OAuthApiExpectTest extends BaseOAuthApiExpectTest {
    private static final String URL_ENCODED_TOKEN_REQUEST =
            "grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&" +
                    // Base64 Encoded Header
-                   "assertion=" + base64Url(header.getBytes(Charset.forName("UTF-8"))) + "." +
+                   "assertion=" + base64Url().omitPadding().encode(header.getBytes(UTF_8)) + "." +
                    // Base64 Encoded Claims
-                   base64Url(claims.getBytes(Charset.forName("UTF-8"))) + "." +
+                   base64Url().omitPadding().encode(claims.getBytes(UTF_8)) + "." +
                    // Base64 encoded {header}.{claims} signature (using SHA256)
                    "W2Lesr_98AzVYiMbzxFqmwcOjpIWlwqkC6pNn1fXND9oSDNNnFhy-AAR6DKH-x9ZmxbY80" +
                    "R5fH-OCeWumXlVgceKN8Z2SmgQsu8ElTpypQA54j_5j8vUImJ5hsOUYPeyF1U2BUzZ3L5g" +

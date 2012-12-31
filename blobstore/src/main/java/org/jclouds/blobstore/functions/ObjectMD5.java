@@ -22,10 +22,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.IOException;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.crypto.Crypto;
 import org.jclouds.http.HttpMessage;
 import org.jclouds.io.PayloadEnclosing;
 import org.jclouds.io.Payloads;
@@ -40,13 +38,6 @@ import com.google.common.base.Throwables;
 @Singleton
 public class ObjectMD5 implements Function<Object, byte[]> {
 
-   protected final Crypto crypto;
-
-   @Inject
-   ObjectMD5(Crypto crypto) {
-      this.crypto = checkNotNull(crypto, "crypto");
-   }
-
    public byte[] apply(Object from) {
       checkNotNull(from, "thing to md5");
       PayloadEnclosing payloadEnclosing;
@@ -57,7 +48,7 @@ public class ObjectMD5 implements Function<Object, byte[]> {
       }
       if (payloadEnclosing.getPayload().getContentMetadata().getContentMD5() == null)
          try {
-            Payloads.calculateMD5(payloadEnclosing, crypto.md5());
+            Payloads.calculateMD5(payloadEnclosing);
          } catch (IOException e) {
             Throwables.propagate(e);
          }

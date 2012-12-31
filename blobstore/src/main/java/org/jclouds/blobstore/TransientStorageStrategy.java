@@ -19,6 +19,8 @@
 package org.jclouds.blobstore;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.io.BaseEncoding.base16;
+import static org.jclouds.http.Uris.uriBuilder;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -34,12 +36,9 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.Blob.Factory;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.util.BlobStoreUtils;
-import org.jclouds.crypto.Crypto;
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.DateService;
 import org.jclouds.domain.Location;
 import org.jclouds.http.HttpUtils;
-import static org.jclouds.http.Uris.*;
 import org.jclouds.io.ContentMetadataCodec;
 import org.jclouds.io.MutableContentMetadata;
 import org.jclouds.io.Payload;
@@ -58,16 +57,14 @@ public class TransientStorageStrategy implements LocalStorageStrategy {
    private final Supplier<Location> defaultLocation;
    private final DateService dateService;
    private final Factory blobFactory;
-   private final Crypto crypto;
    private final ContentMetadataCodec contentMetadataCodec;
 
    @Inject
    TransientStorageStrategy(Supplier<Location> defaultLocation, DateService dateService, Factory blobFactory,
-         Crypto crypto, ContentMetadataCodec contentMetadataCodec) {
+         ContentMetadataCodec contentMetadataCodec) {
       this.defaultLocation = defaultLocation;
       this.dateService = dateService;
       this.blobFactory = blobFactory;
-      this.crypto = crypto;
       this.contentMetadataCodec = contentMetadataCodec;
    }
 
@@ -130,9 +127,8 @@ public class TransientStorageStrategy implements LocalStorageStrategy {
       Blob newBlob = createUpdatedCopyOfBlobInContainer(containerName, blob);
       Map<String, Blob> map = containerToBlobs.get(containerName);
       map.put(newBlob.getMetadata().getName(), newBlob);
-      Payloads.calculateMD5(newBlob, crypto.md5());
-      String eTag = CryptoStreams.hex(newBlob.getPayload().getContentMetadata().getContentMD5());
-      return eTag;
+      Payloads.calculateMD5(newBlob);
+      return base16().lowerCase().encode(newBlob.getPayload().getContentMetadata().getContentMD5());
    }
 
    @Override
@@ -170,7 +166,7 @@ public class TransientStorageStrategy implements LocalStorageStrategy {
             HttpUtils.copy(oldMd, payload.getContentMetadata());
          } else {
             if (payload.getContentMetadata().getContentMD5() == null)
-               Payloads.calculateMD5(in, crypto.md5());
+               Payloads.calculateMD5(in);
          }
       } catch (IOException e) {
          Throwables.propagate(e);
@@ -181,7 +177,7 @@ public class TransientStorageStrategy implements LocalStorageStrategy {
       blob.getMetadata().setUri(
             uriBuilder(new StringBuilder("mem://").append(containerName)).path(in.getMetadata().getName()).build());
       blob.getMetadata().setLastModified(new Date());
-      String eTag = CryptoStreams.hex(payload.getContentMetadata().getContentMD5());
+      String eTag = base16().lowerCase().encode(payload.getContentMetadata().getContentMD5());
       blob.getMetadata().setETag(eTag);
       // Set HTTP headers to match metadata
       blob.getAllHeaders().replaceValues(HttpHeaders.LAST_MODIFIED,

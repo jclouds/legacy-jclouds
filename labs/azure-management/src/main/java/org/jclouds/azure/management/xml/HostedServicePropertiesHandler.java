@@ -18,11 +18,12 @@
  */
 package org.jclouds.azure.management.xml;
 
+import static com.google.common.base.Charsets.UTF_8;
+import static com.google.common.io.BaseEncoding.base64;
 import static org.jclouds.util.SaxUtils.currentOrNull;
 import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
 import org.jclouds.azure.management.domain.HostedServiceProperties;
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.functions.ParseSax;
 import org.xml.sax.SAXException;
 
@@ -60,7 +61,7 @@ public class HostedServicePropertiesHandler extends
       } else if (equalsOrSuffix(qName, "AffinityGroup")) {
          builder.affinityGroup(currentOrNull(currentText));
       } else if (equalsOrSuffix(qName, "Label")) {
-         builder.label(new String(CryptoStreams.base64(currentOrNull(currentText))));
+         builder.label(new String(base64().decode(currentOrNull(currentText)), UTF_8));
       }
       currentText = new StringBuilder();
    }

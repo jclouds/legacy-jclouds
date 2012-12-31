@@ -18,13 +18,15 @@
  */
 package org.jclouds.cloudstack.features;
 
+import static com.google.common.base.Charsets.UTF_8;
+import static com.google.common.hash.Hashing.md5;
+import static com.google.common.io.BaseEncoding.base16;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 import org.jclouds.cloudstack.CloudStackGlobalClient;
 import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.internal.BaseCloudStackClientLiveTest;
-import org.jclouds.crypto.CryptoStreams;
 import org.testng.annotations.Test;
 
 /**
@@ -36,9 +38,8 @@ import org.testng.annotations.Test;
 public class GlobalAccountClientLiveTest extends BaseCloudStackClientLiveTest {
 
    public static Account createTestAccount(CloudStackGlobalClient client, String prefix) {
-      return client.getAccountClient().createAccount(
-         prefix + "-account", Account.Type.USER, "dummy@example.com",
-         "First", "Last", CryptoStreams.md5Hex("password"));
+      return client.getAccountClient().createAccount(prefix + "-account", Account.Type.USER, "dummy@example.com",
+            "First", "Last", base16().lowerCase().encode(md5().hashString("password", UTF_8).asBytes()));
    }
 
    @Test

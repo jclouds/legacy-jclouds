@@ -18,7 +18,10 @@
  */
 package org.jclouds.cloudstack.features;
 
+import static com.google.common.base.Charsets.UTF_8;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.hash.Hashing.md5;
+import static com.google.common.io.BaseEncoding.base16;
 import static org.jclouds.cloudstack.features.GlobalAccountClientLiveTest.createTestAccount;
 import static org.jclouds.cloudstack.options.UpdateUserOptions.Builder.userName;
 import static org.testng.Assert.assertEquals;
@@ -35,7 +38,6 @@ import org.jclouds.cloudstack.domain.ApiKeyPair;
 import org.jclouds.cloudstack.domain.User;
 import org.jclouds.cloudstack.internal.BaseCloudStackClientLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.crypto.CryptoStreams;
 import org.testng.annotations.Test;
 
 /**
@@ -45,8 +47,8 @@ import org.testng.annotations.Test;
 public class GlobalUserClientLiveTest extends BaseCloudStackClientLiveTest {
 
    public static User createTestUser(CloudStackGlobalClient client, Account account, String prefix) {
-      return client.getUserClient().createUser(prefix + "-user",
-            account.getName(), "dummy2@example.com", CryptoStreams.md5Hex("password"), "First", "Last");
+      return client.getUserClient().createUser(prefix + "-user", account.getName(), "dummy2@example.com",
+            base16().lowerCase().encode(md5().hashString("password", UTF_8).asBytes()), "First", "Last");
    }
 
    @Test

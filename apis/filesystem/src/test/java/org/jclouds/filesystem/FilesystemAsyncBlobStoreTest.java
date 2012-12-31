@@ -18,6 +18,7 @@
  */
 package org.jclouds.filesystem;
 
+import static com.google.common.io.BaseEncoding.base16;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
@@ -31,7 +32,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
 
@@ -48,7 +48,6 @@ import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.options.GetOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.filesystem.reference.FilesystemConstants;
 import org.jclouds.filesystem.util.Utils;
 import org.jclouds.filesystem.utils.TestUtils;
@@ -62,7 +61,6 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Charsets;
 import com.google.common.collect.Sets;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
@@ -626,7 +624,7 @@ public class FilesystemAsyncBlobStoreTest {
         assertEquals(metadata.getName(), BLOB_KEY, "Wrong blob name");
         assertEquals(metadata.getType(), StorageType.BLOB, "Wrong blob type");
         assertEquals(metadata.getContentMetadata().getContentType(), "application/unknown", "Wrong blob content-type");
-        assertEquals(CryptoStreams.hex(metadata.getContentMetadata().getContentMD5()), metadata.getETag(),
+        assertEquals(base16().lowerCase().encode(metadata.getContentMetadata().getContentMD5()), metadata.getETag(),
                 "Wrong blob MD5");
         assertEquals(metadata.getLocation(), null, "Wrong blob location");
         assertEquals(metadata.getProviderId(), null, "Wrong blob provider id");

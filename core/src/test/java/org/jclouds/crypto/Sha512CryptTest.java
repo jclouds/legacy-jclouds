@@ -20,26 +20,14 @@ package org.jclouds.crypto;
 
 import static org.testng.Assert.assertEquals;
 
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 
 /**
  * @author Adrian Cole
  */
 @Test(groups = "unit")
 public class Sha512CryptTest {
-
-   protected Crypto crypto;
-
-   @BeforeTest
-   protected void createCrypto() {
-      Injector i = Guice.createInjector();
-      crypto = i.getInstance(Crypto.class);
-   }
 
    public static final Object[][] TEST_DATA = {
             { "Hello world!", "$6$saltstring",
@@ -72,6 +60,6 @@ public class Sha512CryptTest {
     */
    @Test(dataProvider = "data")
    public void testMakeCryptedPasswordHash(String password, String salt, String expected) {
-      assertEquals(Sha512Crypt.makeShadowLine(password, salt, crypto), expected);
+      assertEquals(Sha512Crypt.makeShadowLine(password, salt), expected);
    }
 }

@@ -24,32 +24,30 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Charsets;
-import com.google.common.io.ByteStreams;
-import com.google.common.io.InputSupplier;
+import com.google.common.io.ByteSource;
 
 /**
- * functions related to or replacing those in {@link com.google.common.io.InputSupplier}
+ * functions related to or replacing those in {@link ByteSource}
  * 
  * @author Adrian Cole
  */
 @Beta
-public class InputSuppliers {
-   
-   public static InputSupplier<? extends InputStream> of(final InputStream in) {
-      checkNotNull(in, "in");
-      return new InputSupplier<InputStream>() {
+public class ByteSources {
 
+   /**
+    * always returns the same stream
+    * 
+    * @param in
+    *           stream to always return
+    */
+   public static ByteSource asByteSource(final InputStream in) {
+      checkNotNull(in, "in");
+      return new ByteSource() {
          @Override
-         public InputStream getInput() throws IOException {
+         public InputStream openStream() throws IOException {
             return in;
          }
-
       };
    }
 
-   public static InputSupplier<? extends InputStream> of(String in) {
-      byte[] bytes = checkNotNull(in, "in").getBytes(Charsets.UTF_8);
-      return ByteStreams.newInputStreamSupplier(bytes);
-   }
 }

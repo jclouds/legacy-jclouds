@@ -18,7 +18,11 @@
  */
 package org.jclouds.azure.storage.filters;
 
+import static com.google.common.io.BaseEncoding.base64;
+import static com.google.common.io.ByteStreams.readBytes;
+import static org.jclouds.crypto.Macs.asByteProcessor;
 import static org.jclouds.util.Patterns.NEWLINE_PATTERN;
+import static org.jclouds.util.Strings2.toInputStream;
 
 import java.util.Collection;
 import java.util.Set;
@@ -32,14 +36,12 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.Constants;
 import org.jclouds.crypto.Crypto;
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.internal.SignatureWire;
-import org.jclouds.io.InputSuppliers;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.annotations.Credential;
 import org.jclouds.rest.annotations.Identity;
@@ -52,6 +54,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.Sets;
+import com.google.common.io.ByteProcessor;
 
 /**
  * Signs the Azure Storage request.
@@ -83,7 +86,7 @@ public class SharedKeyLiteAuthentication implements HttpRequestFilter {
       this.utils = utils;
       this.signatureWire = signatureWire;
       this.identity = identity;
-      this.key = CryptoStreams.base64(encodedKey);
+      this.key = base64().decode(encodedKey);
       this.timeStampProvider = timeStampProvider;
    }
 
@@ -139,13 +142,12 @@ public class SharedKeyLiteAuthentication implements HttpRequestFilter {
    }
 
    public String signString(String toSign) {
-      String signature;
       try {
-         signature = CryptoStreams.base64(CryptoStreams.mac(InputSuppliers.of(toSign), crypto.hmacSHA256(key)));
+         ByteProcessor<byte[]> hmacSHA256 = asByteProcessor(crypto.hmacSHA256(key));
+         return base64().encode(readBytes(toInputStream(toSign), hmacSHA256));
       } catch (Exception e) {
          throw new HttpException("error signing request", e);
       }
-      return signature;
    }
 
    private void appendMethod(HttpRequest request, StringBuilder toSign) {
