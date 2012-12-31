@@ -26,12 +26,9 @@ import java.util.NoSuchElementException;
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.vcloud.internal.BaseVCloudAsyncClientTest;
 import org.jclouds.vcloud.xml.VDCHandler;
 import org.testng.annotations.Test;
-
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code VDCAsyncClient}
@@ -42,12 +39,6 @@ import com.google.inject.TypeLiteral;
 // surefire
 @Test(groups = "unit", testName = "VDCAsyncClientTest")
 public class VDCAsyncClientTest extends BaseVCloudAsyncClientTest<VDCAsyncClient> {
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<VDCAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<VDCAsyncClient>>() {
-      };
-   }
 
    @Test(expectedExceptions = NoSuchElementException.class)
    public void testFindVDCInOrgNamedBadVDC() throws SecurityException, NoSuchMethodException, IOException {

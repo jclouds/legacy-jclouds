@@ -18,12 +18,16 @@
  */
 package org.jclouds.rest.config;
 
+import static com.google.common.reflect.Reflection.newProxy;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.rest.AsyncClientFactory;
+import org.jclouds.rest.internal.AsyncRestClientProxy;
+import org.jclouds.rest.internal.AsyncRestClientProxy.Factory;
 
 import com.google.inject.Provider;
+import com.google.inject.TypeLiteral;
 
 /**
  * 
@@ -31,19 +35,20 @@ import com.google.inject.Provider;
  */
 @Singleton
 public class AsyncClientProvider<A> implements Provider<A> {
-   private final Class<A> asyncClientType;
-   private final AsyncClientFactory factory;
+   private final Class<? super A> asyncClientType;
+   private final Factory factory;
 
    @Inject
-   private AsyncClientProvider(AsyncClientFactory factory, Class<A> asyncClientType) {
+   private AsyncClientProvider(AsyncRestClientProxy.Factory factory, TypeLiteral<A> asyncClientType) {
       this.factory = factory;
-      this.asyncClientType = asyncClientType;
+      this.asyncClientType = asyncClientType.getRawType();
    }
 
+   @SuppressWarnings("unchecked")
    @Override
    @Singleton
    public A get() {
-      return factory.create(asyncClientType);
+      return (A) newProxy(asyncClientType, factory.declaring(asyncClientType));
    }
 
 }

@@ -65,54 +65,7 @@ public class HeaderToRetryAfterExceptionTest {
                         .addHeader(HttpHeaders.RETRY_AFTER, "Sun, 2 Jan 2000 00:00:00 GMT").build()));
    }
 
-   public static HttpCommand command = new HttpCommand() {
-
-      @Override
-      public int getRedirectCount() {
-         return 0;
-      }
-
-      @Override
-      public int incrementRedirectCount() {
-         return 0;
-      }
-
-      @Override
-      public boolean isReplayable() {
-         return false;
-      }
-
-      @Override
-      public Exception getException() {
-         return null;
-      }
-
-      @Override
-      public int getFailureCount() {
-         return 0;
-      }
-
-      @Override
-      public int incrementFailureCount() {
-         return 0;
-      }
-
-      @Override
-      public void setException(Exception exception) {
-
-      }
-
-      @Override
-      public HttpRequest getCurrentRequest() {
-         return HttpRequest.builder().method("GET").endpoint("http://stub").build();
-      }
-
-      @Override
-      public void setCurrentRequest(HttpRequest request) {
-
-      }
-
-   };
+   public static HttpCommand command = new HttpCommand(HttpRequest.builder().method("GET").endpoint("http://stub").build());
 
    static DateCodec rfc822 = new DateServiceRfc822Codec(new SimpleDateFormatDateService());
    

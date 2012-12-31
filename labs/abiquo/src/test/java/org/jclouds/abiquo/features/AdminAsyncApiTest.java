@@ -30,14 +30,12 @@ import org.jclouds.abiquo.domain.EnterpriseResources;
 import org.jclouds.http.functions.ParseXMLWithJAXB;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
 import com.abiquo.server.core.enterprise.PrivilegesDto;
 import com.abiquo.server.core.enterprise.RoleDto;
 import com.abiquo.server.core.enterprise.RolesDto;
 import com.abiquo.server.core.enterprise.UserDto;
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests annotation parsing of {@code AdminAsyncApi}
@@ -172,11 +170,4 @@ public class AdminAsyncApiTest extends BaseAbiquoAsyncApiTest<AdminAsyncApi> {
 
       checkFilters(request);
    }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<AdminAsyncApi>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<AdminAsyncApi>>() {
-      };
-   }
-
 }

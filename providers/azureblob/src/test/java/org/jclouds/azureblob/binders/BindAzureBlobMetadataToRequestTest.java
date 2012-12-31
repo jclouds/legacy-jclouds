@@ -29,11 +29,9 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.rest.internal.BaseAsyncClientTest;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code BindAzureBlobMetadataToRequest}
@@ -133,12 +131,6 @@ public class BindAzureBlobMetadataToRequestTest extends BaseAsyncClientTest<Azur
 
    @Override
    protected void checkFilters(HttpRequest request) {
-   }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<AzureBlobAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<AzureBlobAsyncClient>>() {
-      };
    }
 
    @Override

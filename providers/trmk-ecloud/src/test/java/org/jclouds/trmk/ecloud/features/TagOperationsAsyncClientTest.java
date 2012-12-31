@@ -25,12 +25,9 @@ import java.net.URI;
 import org.jclouds.Fallbacks.EmptyMapOnNotFoundOr404;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.trmk.ecloud.BaseTerremarkECloudAsyncClientTest;
 import org.jclouds.trmk.ecloud.xml.TagNameToUsageCountHandler;
 import org.testng.annotations.Test;
-
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code TagOperationsAsyncClient}
@@ -41,12 +38,6 @@ import com.google.inject.TypeLiteral;
 // surefire
 @Test(groups = "unit", testName = "TagOperationsAsyncClientTest")
 public class TagOperationsAsyncClientTest extends BaseTerremarkECloudAsyncClientTest<TagOperationsAsyncClient> {
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<TagOperationsAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<TagOperationsAsyncClient>>() {
-      };
-   }
 
    public void testgetTagNameToUsageCount() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TagOperationsAsyncClient.class.getMethod("getTagNameToUsageCount", URI.class);

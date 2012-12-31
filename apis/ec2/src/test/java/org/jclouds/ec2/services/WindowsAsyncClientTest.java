@@ -27,10 +27,7 @@ import org.jclouds.ec2.xml.BundleTaskHandler;
 import org.jclouds.ec2.xml.DescribeBundleTasksResponseHandler;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
-
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code WindowsAsyncClient}
@@ -119,11 +116,4 @@ public class WindowsAsyncClientTest extends BaseEC2AsyncClientTest<WindowsAsyncC
 
       checkFilters(request);
    }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<WindowsAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<WindowsAsyncClient>>() {
-      };
-   }
-
 }

@@ -27,10 +27,7 @@ import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.fallbacks.MapHttp4xxCodesToExceptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
-
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code DomainLimitAsyncClient}
@@ -57,11 +54,5 @@ public class DomainLimitAsyncClientTest extends BaseCloudStackAsyncClientTest<Do
 
       checkFilters(httpRequest);
 
-   }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<DomainLimitAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<DomainLimitAsyncClient>>() {
-      };
    }
 }

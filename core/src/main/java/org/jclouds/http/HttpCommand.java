@@ -18,65 +18,125 @@
  */
 package org.jclouds.http;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import org.jclouds.rest.internal.GeneratedHttpRequest;
+
+import com.google.common.base.Objects;
+
 /**
  * Command whose endpoint is an http service.
  * 
  * @author Adrian Cole
  */
-public interface HttpCommand {
+//TODO: get rid of all the mock tests so that this can be made final
+public class HttpCommand {
 
-   /**
-    * increments the current number of redirect attempts for this command.
-    * 
-    * @see #getRedirectCount
-    */
-   int incrementRedirectCount();
+   private volatile HttpRequest request;
+   private volatile int failureCount;
+   private volatile int redirectCount;
+   private volatile Exception exception;
 
-   /**
-    * This displays the current number of redirect attempts for this command.
-    * 
-    * @see org.jclouds.Constants.PROPERTY_MAX_REDIRECTS
-    */
-   int getRedirectCount();
-
-   /**
-    * Commands need to be replayed, if redirected or on a retryable error. Typically, this implies
-    * the payload carried is not a streaming type.
-    */
-   boolean isReplayable();
-
-   /**
-    * increment the current failure count.
-    * 
-    * @see #getFailureCount
-    */
-   int incrementFailureCount();
+   public HttpCommand(HttpRequest request) {
+      this.request = checkNotNull(request, "request");
+      this.failureCount = 0;
+      this.redirectCount = 0;
+   }
 
    /**
     * This displays the current number of error retries for this command.
     * 
     * @see org.jclouds.Constants.PROPERTY_MAX_RETRIES
     */
-   int getFailureCount();
+   public int getFailureCount() {
+      return failureCount;
+   }
 
    /**
-    * The request associated with this command.
+    * increment the current failure count.
+    * 
+    * @see #getFailureCount
     */
-   HttpRequest getCurrentRequest();
-
-   /**
-    * The request associated with this command.
-    */
-   void setCurrentRequest(HttpRequest request);
+   public int incrementFailureCount() {
+      return ++failureCount;
+   }
 
    /**
     * Used to prevent a command from being re-executed, or having its response parsed.
     */
-   void setException(Exception exception);
+   public void setException(Exception exception) {
+      this.exception = exception;
+   }
 
    /**
     * @see #setException
     */
-   Exception getException();
+   public Exception getException() {
+      return exception;
+   }
+
+   /**
+    * increments the current number of redirect attempts for this command.
+    * 
+    * @see #getRedirectCount
+    */
+   public int incrementRedirectCount() {
+      return ++redirectCount;
+   }
+
+   /**
+    * This displays the current number of redirect attempts for this command.
+    * 
+    * @see org.jclouds.Constants.PROPERTY_MAX_REDIRECTS
+    */
+   public int getRedirectCount() {
+      return redirectCount;
+   }
+
+   /**
+    * Commands need to be replayed, if redirected or on a retryable error. Typically, this implies
+    * the payload carried is not a streaming type.
+    */
+   public boolean isReplayable() {
+      return (request.getPayload() == null) ? true : request.getPayload().isRepeatable();
+   }
+
+   /**
+    * The request associated with this command.
+    */
+   public HttpRequest getCurrentRequest() {
+      return request;
+   }
+
+   /**
+    * The request associated with this command.
+    */
+   public void setCurrentRequest(HttpRequest request) {
+      this.request = request;
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(request);
+   }
+
+   @Override
+   public boolean equals(Object that) {
+      if (that == null)
+         return false;
+      if (!(that instanceof HttpCommand))
+         return false;
+      return Objects.equal(this.request, HttpCommand.class.cast(that).getCurrentRequest());
+   }
+
+   @Override
+   public String toString() {
+      if (request instanceof GeneratedHttpRequest)
+         return String.format("[method=%s.%s, request=%s]", GeneratedHttpRequest.class.cast(request).getDeclaring()
+                  .getSimpleName(), GeneratedHttpRequest.class.cast(request).getJavaMethod().getName(), request
+                  .getRequestLine());
+      else
+         return "[request=" + request.getRequestLine() + "]";
+   }
 
 }

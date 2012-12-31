@@ -29,11 +29,8 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobBuilder;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.internal.BaseAsyncClientTest;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code LocalBlobRequestSigner}
@@ -118,12 +115,6 @@ public class TransientBlobRequestSignerTest extends BaseAsyncClientTest<LocalAsy
 
    @Override
    protected void checkFilters(HttpRequest request) {
-   }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<LocalAsyncBlobStore>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<LocalAsyncBlobStore>>() {
-      };
    }
 
    @Override

@@ -23,11 +23,8 @@ import java.util.concurrent.ExecutionException;
 
 import org.jclouds.aws.ec2.services.BaseAWSEC2AsyncClientTest;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code AWSEC2AsyncClient}
@@ -68,12 +65,6 @@ public class AWSEC2AsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSEC2Async
       assert asyncClient.getPlacementGroupServices() != null;
       assert asyncClient.getWindowsServices() != null;
       assert asyncClient.getTagServices() != null;
-   }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<AWSEC2AsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<AWSEC2AsyncClient>>() {
-      };
    }
 
    @BeforeClass

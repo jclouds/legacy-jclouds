@@ -29,26 +29,26 @@ import com.google.common.base.Objects.ToStringHelper;
  * 
  * @author Adrian Cole
  */
-public class ClassMethodArgsAndReturnVal extends ClassMethodArgs {
+public final class ClassMethodArgsAndReturnVal extends ClassMethodArgs {
 
-   public static Builder<?> builder() {
-      return new ConcreteBuilder();
+   public static Builder builder() {
+      return new Builder();
    }
 
-   public Builder<?> toBuilder() {
+   public Builder toBuilder() {
       return builder().fromClassMethodArgsAndReturnVal(this);
    }
 
-   public static class Builder<B extends Builder<B>> extends ClassMethodArgs.Builder<B> {
+   public final static class Builder extends ClassMethodArgs.Builder<Builder> {
 
       private Object returnVal;
 
       /**
        * @see ClassMethodArgsAndReturnVal#getReturnVal()
        */
-      public B returnVal(Object returnVal) {
+      public Builder returnVal(Object returnVal) {
          this.returnVal = returnVal;
-         return self();
+         return this;
       }
 
       @Override
@@ -56,22 +56,19 @@ public class ClassMethodArgsAndReturnVal extends ClassMethodArgs {
          return new ClassMethodArgsAndReturnVal(this);
       }
 
-      public B fromClassMethodArgsAndReturnVal(ClassMethodArgsAndReturnVal in) {
+      public Builder fromClassMethodArgsAndReturnVal(ClassMethodArgsAndReturnVal in) {
          return fromClassMethodArgs(in).returnVal(in.getReturnVal());
       }
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
-   }
-
    private final Object returnVal;
 
-   public ClassMethodArgsAndReturnVal(Class<?> clazz, Method method, Object[] args, Object returnVal) {
+   private ClassMethodArgsAndReturnVal(Class<?> clazz, Method method, Object[] args, Object returnVal) {
       super(clazz, method, args);
       this.returnVal = returnVal;
    }
 
-   public ClassMethodArgsAndReturnVal(Builder<?> builder) {
+   private ClassMethodArgsAndReturnVal(Builder builder) {
       super(builder);
       this.returnVal = builder.returnVal;
    }

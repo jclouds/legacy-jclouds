@@ -41,14 +41,12 @@ import org.jclouds.location.config.LocationModule;
 import org.jclouds.location.suppliers.RegionIdToURISupplier;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.internal.BaseAsyncApiTest;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Suppliers2;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code CloudWatchAsyncApi}
@@ -82,11 +80,6 @@ public class CloudWatchAsyncApiTest extends BaseAsyncApiTest<CloudWatchAsyncApi>
       checkFilters(request);
    }
 
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<CloudWatchAsyncApi>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<CloudWatchAsyncApi>>() {
-      };
-   }
 
    @ConfiguresRestClient
    private static final class TestMonitoringRestClientModule extends CloudWatchRestClientModule {
@@ -128,5 +121,6 @@ public class CloudWatchAsyncApiTest extends BaseAsyncApiTest<CloudWatchAsyncApi>
       assertEquals(request.getFilters().size(), 1);
       assertEquals(request.getFilters().get(0).getClass(), FormSigner.class);
    }
+
 
 }

@@ -26,11 +26,8 @@ import java.util.concurrent.ExecutionException;
 
 import org.jclouds.abiquo.features.BaseAbiquoAsyncApiTest;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests asynchronous and synchronous API delegates.
@@ -71,12 +68,6 @@ public class AbiquoDelegateApiTest extends BaseAbiquoAsyncApiTest<AbiquoAsyncApi
       assertNotNull(asyncApi.getVirtualMachineTemplateApi());
       assertNotNull(asyncApi.getTaskApi());
       assertNotNull(asyncApi.getPricingApi());
-   }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<AbiquoAsyncApi>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<AbiquoAsyncApi>>() {
-      };
    }
 
    @Override

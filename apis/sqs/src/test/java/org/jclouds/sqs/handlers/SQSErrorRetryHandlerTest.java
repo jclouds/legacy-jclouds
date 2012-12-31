@@ -83,56 +83,10 @@ public class SQSErrorRetryHandlerTest {
       assertTrue(watch.stop().elapsedTime(TimeUnit.MILLISECONDS) < 100);
    }
    
-   //TODO: make a builder for this
    HttpCommand createHttpCommandForFailureCount(final int failureCount) {
-      return new HttpCommand() {
-         int fCount = failureCount;
-
-         @Override
-         public int incrementRedirectCount() {
-            return 0;
-         }
-
-         @Override
-         public int getRedirectCount() {
-            return 0;
-         }
-
-         @Override
-         public boolean isReplayable() {
-            return false;
-         }
-
-         @Override
-         public int incrementFailureCount() {
-            return ++fCount;
-         }
-
-         @Override
-         public int getFailureCount() {
-            return fCount;
-         }
-
-         @Override
-         public HttpRequest getCurrentRequest() {
-            return null;
-         }
-
-         @Override
-         public void setCurrentRequest(HttpRequest request) {
-
-         }
-
-         @Override
-         public void setException(Exception exception) {
-         }
-
-         @Override
-         public Exception getException() {
-            return null;
-         }
-      };
+      HttpCommand command = new HttpCommand(HttpRequest.builder().method("GET").endpoint("http://localhost").build());
+      while (command.getFailureCount() != failureCount)
+         command.incrementFailureCount();
+      return command;
    }
-
-
 }

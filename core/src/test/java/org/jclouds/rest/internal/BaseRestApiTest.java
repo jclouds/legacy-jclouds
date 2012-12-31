@@ -18,7 +18,6 @@
  */
 package org.jclouds.rest.internal;
 import static com.google.common.base.Throwables.propagate;
-import static com.google.inject.util.Types.newParameterizedType;
 import static org.easymock.EasyMock.createMock;
 import static org.eclipse.jetty.http.HttpHeaders.TRANSFER_ENCODING;
 import static org.jclouds.rest.internal.RestAnnotationProcessor.createResponseParser;
@@ -53,7 +52,6 @@ import com.google.common.collect.SortedSetMultimap;
 import com.google.common.collect.TreeMultimap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
-import com.google.inject.Key;
 import com.google.inject.name.Names;
 
 /**
@@ -181,10 +179,8 @@ public abstract class BaseRestApiTest {
       assertEquals(createResponseParser(parserFactory, injector, method, request).getClass(), parserClass);
    }
 
-   @SuppressWarnings("unchecked")
-   protected <T> RestAnnotationProcessor<T> factory(Class<T> clazz) {
-      return ((RestAnnotationProcessor<T>) injector.getInstance(Key.get(newParameterizedType(
-            RestAnnotationProcessor.class, clazz))));
+   protected RestAnnotationProcessor factory(Class<?> clazz) {
+      return injector.getInstance(RestAnnotationProcessor.Factory.class).declaring(clazz);
    }
 
 }

@@ -27,10 +27,7 @@ import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.ListCapacityOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
-
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code GlobalCapacityAsyncClient}
@@ -72,12 +69,5 @@ public class GlobalCapacityAsyncClientTest extends BaseCloudStackAsyncClientTest
       assertFallbackClassEquals(method, EmptySetOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
-   }
-
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<GlobalCapacityAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<GlobalCapacityAsyncClient>>() {
-      };
    }
 }

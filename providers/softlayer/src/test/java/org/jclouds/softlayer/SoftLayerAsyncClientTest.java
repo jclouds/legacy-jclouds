@@ -22,12 +22,9 @@ import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.softlayer.features.BaseSoftLayerAsyncClientTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code SoftLayerAsyncClient}
@@ -51,12 +48,6 @@ public class SoftLayerAsyncClientTest extends BaseSoftLayerAsyncClientTest<SoftL
       assert asyncClient.getVirtualGuestClient() != null;
       assert asyncClient.getDatacenterClient() != null;
       assert asyncClient.getProductPackageClient() != null;
-   }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<SoftLayerAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<SoftLayerAsyncClient>>() {
-      };
    }
 
    @BeforeClass

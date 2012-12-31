@@ -24,11 +24,8 @@ import java.util.concurrent.ExecutionException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.rest.internal.BaseAsyncApiTest;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code GleSYSAsyncApi}
@@ -59,12 +56,6 @@ public class GleSYSAsyncApiTest extends BaseAsyncApiTest<GleSYSAsyncApi> {
       assert asyncApi.getIpApi() != null;
       assert asyncApi.getDomainApi() != null;
       assert asyncApi.getArchiveApi() != null;
-   }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<GleSYSAsyncApi>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<GleSYSAsyncApi>>() {
-      };
    }
 
    @BeforeClass

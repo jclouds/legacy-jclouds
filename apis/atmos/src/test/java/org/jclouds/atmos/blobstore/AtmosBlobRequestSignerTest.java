@@ -35,13 +35,11 @@ import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.internal.BaseAsyncClientTest;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code AtmosBlobRequestSigner}
@@ -121,12 +119,6 @@ public class AtmosBlobRequestSignerTest extends BaseAsyncClientTest<AtmosAsyncCl
    protected void checkFilters(HttpRequest request) {
       assertEquals(request.getFilters().size(), 1);
       assertEquals(request.getFilters().get(0).getClass(), SignRequest.class);
-   }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<AtmosAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<AtmosAsyncClient>>() {
-      };
    }
 
    @Override

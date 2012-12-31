@@ -26,10 +26,7 @@ import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.ListResourceLimitsOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
-
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code LimitAsyncClient}
@@ -71,11 +68,5 @@ public class LimitAsyncClientTest extends BaseCloudStackAsyncClientTest<LimitAsy
 
       checkFilters(httpRequest);
 
-   }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<LimitAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<LimitAsyncClient>>() {
-      };
    }
 }

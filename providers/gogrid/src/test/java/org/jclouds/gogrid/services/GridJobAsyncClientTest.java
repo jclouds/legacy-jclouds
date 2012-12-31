@@ -29,11 +29,9 @@ import org.jclouds.gogrid.domain.ObjectType;
 import org.jclouds.gogrid.functions.ParseJobListFromJsonResponse;
 import org.jclouds.gogrid.options.GetJobListOptions;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Iterables;
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code GridJobAsyncClient}
@@ -127,11 +125,4 @@ public class GridJobAsyncClientTest extends BaseGoGridAsyncClientTest<GridJobAsy
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null, null, false);
    }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<GridJobAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<GridJobAsyncClient>>() {
-      };
-   }
-
 }

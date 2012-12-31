@@ -40,7 +40,6 @@ import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.location.Region;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.s3.S3AsyncClient;
 import org.jclouds.s3.S3AsyncClientTest;
 import org.jclouds.s3.S3Client;
@@ -60,7 +59,6 @@ import com.google.common.base.Supplier;
 import com.google.common.cache.CacheLoader;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 
 /**
  * @author Adrian Cole
@@ -155,12 +153,6 @@ public class AWSS3AsyncClientTest extends S3AsyncClientTest<AWSS3AsyncClient> {
       assertFallbackClassEquals(method, FalseIfBucketAlreadyOwnedByYouOrOperationAbortedWhenBucketExists.class);
 
       checkFilters(request);
-   }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<AWSS3AsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<AWSS3AsyncClient>>() {
-      };
    }
 
    public void testInitiateMultipartUpload() throws SecurityException, NegativeArraySizeException,

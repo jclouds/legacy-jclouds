@@ -98,7 +98,6 @@ import org.jclouds.io.Payloads;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.providers.AnonymousProviderMetadata;
-import org.jclouds.rest.AsyncClientFactory;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.InvocationContext;
@@ -127,6 +126,7 @@ import org.jclouds.rest.annotations.WrapWith;
 import org.jclouds.rest.binders.BindAsHostPrefix;
 import org.jclouds.rest.binders.BindToJsonPayload;
 import org.jclouds.rest.binders.BindToStringPayload;
+import org.jclouds.rest.config.AsyncClientProvider;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rest.functions.ImplicitOptionalConverter;
 import org.jclouds.util.Strings2;
@@ -153,6 +153,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.AbstractModule;
 import com.google.inject.ConfigurationException;
 import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
@@ -1887,7 +1888,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
    }
 
    @SuppressWarnings("unchecked")
-   public static <T> Class<? extends Function<HttpResponse, ?>> unwrap(RestAnnotationProcessor<T> processor,
+   public static Class<? extends Function<HttpResponse, ?>> unwrap(RestAnnotationProcessor processor,
          Method method) {
       return (Class<? extends Function<HttpResponse, ?>>) RestAnnotationProcessor.getParserOrThrowException(method)
             .getTypeLiteral().getRawType();
@@ -1925,7 +1926,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
    }
 
    public void oneTransformerWithContext() throws SecurityException, NoSuchMethodException {
-      RestAnnotationProcessor<TestTransformers> processor = factory(TestTransformers.class);
+      RestAnnotationProcessor processor = factory(TestTransformers.class);
       Method method = TestTransformers.class.getMethod("oneTransformerWithContext");
       GeneratedHttpRequest request = GeneratedHttpRequest.builder()
             .method("GET").endpoint("http://localhost").declaring(TestTransformers.class)
@@ -2297,7 +2298,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
 
    @Test
    public void testPut() throws SecurityException, NoSuchMethodException, IOException {
-      RestAnnotationProcessor<TestPayload> processor = factory(TestPayload.class);
+      RestAnnotationProcessor processor = factory(TestPayload.class);
       Method method = TestPayload.class.getMethod("put", String.class);
       GeneratedHttpRequest request = processor.createRequest(method, "test");
 
@@ -2308,7 +2309,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
 
    @Test
    public void putWithPath() throws SecurityException, NoSuchMethodException, IOException {
-      RestAnnotationProcessor<TestPayload> processor = factory(TestPayload.class);
+      RestAnnotationProcessor processor = factory(TestPayload.class);
       Method method = TestPayload.class.getMethod("putWithPath", String.class, String.class);
       GeneratedHttpRequest request = processor.createRequest(method, "rabble", "test");
 
@@ -2384,26 +2385,27 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       void oneForm(@PathParam("bucket") String path);
    }
 
+   static final Key<AsyncClientProvider<TestClassForm>> formKey = Key.get(new TypeLiteral<AsyncClientProvider<TestClassForm>>(){});
    @Test
    public void testProvidesWithGeneric() throws SecurityException, NoSuchMethodException {
-      Set<String> set = injector.getInstance(AsyncClientFactory.class).create(TestClassForm.class).set();
+      Set<String> set = injector.getInstance(formKey).get().set();
       assertEquals(set, ImmutableSet.of("foo"));
    }
 
    @Test
    public void testProvidesWithGenericQualified() throws SecurityException, NoSuchMethodException {
-      Set<String> set = injector.getInstance(AsyncClientFactory.class).create(TestClassForm.class).foo();
+      Set<String> set = injector.getInstance(formKey).get().foo();
       assertEquals(set, ImmutableSet.of("bar"));
    }
 
    @Test(expectedExceptions = AuthorizationException.class)
    public void testProvidesWithGenericQualifiedAuthorizationException() throws SecurityException, NoSuchMethodException {
-      injector.getInstance(AsyncClientFactory.class).create(TestClassForm.class).exception();
+      injector.getInstance(formKey).get().exception();
    }
    
    @Test(expectedExceptions = NoSuchElementException.class)
    public void testProvidesWithGenericQualifiedNoSuchElementException() throws SecurityException, NoSuchMethodException {
-      injector.getInstance(AsyncClientFactory.class).create(TestClassForm.class).noSuchElementException();
+      injector.getInstance(formKey).get().noSuchElementException();
    }
    
    @Test
@@ -2463,7 +2465,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
 
    @Test
    public void testCreateJAXBResponseParserWithAnnotation() throws SecurityException, NoSuchMethodException {
-      RestAnnotationProcessor<TestJAXBResponseParser> processor = factory(TestJAXBResponseParser.class);
+      RestAnnotationProcessor processor = factory(TestJAXBResponseParser.class);
       Method method = TestJAXBResponseParser.class.getMethod("jaxbGetWithAnnotation");
       GeneratedHttpRequest request = GeneratedHttpRequest.builder().method("GET").endpoint("http://localhost")
             .declaring(TestJAXBResponseParser.class).javaMethod(method).args(new Object[] {}).build();
@@ -2473,7 +2475,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
 
    @Test
    public void testCreateJAXBResponseParserWithAcceptHeader() throws SecurityException, NoSuchMethodException {
-      RestAnnotationProcessor<TestJAXBResponseParser> processor = factory(TestJAXBResponseParser.class);
+      RestAnnotationProcessor processor = factory(TestJAXBResponseParser.class);
       Method method = TestJAXBResponseParser.class.getMethod("jaxbGetWithAcceptHeader");
       GeneratedHttpRequest request = GeneratedHttpRequest.builder().method("GET").endpoint("http://localhost")
             .declaring(TestJAXBResponseParser.class).javaMethod(method).args(new Object[] {}).build();

@@ -24,8 +24,6 @@ import org.jclouds.concurrent.config.ConfiguresExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.gae.GaeHttpCommandExecutorService;
 import org.jclouds.http.HttpCommandExecutorService;
-import org.jclouds.http.TransformingHttpCommandExecutorService;
-import org.jclouds.http.TransformingHttpCommandExecutorServiceImpl;
 import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.predicates.SocketOpenUnsupported;
@@ -77,7 +75,6 @@ public class GoogleAppEngineConfigurationModule extends AbstractModule {
    @Override
    protected void configure() {
       install(executorServiceModule);
-      bind(TransformingHttpCommandExecutorService.class).to(TransformingHttpCommandExecutorServiceImpl.class);
       bind(SocketOpen.class).to(SocketOpenUnsupported.class).in(Scopes.SINGLETON);
       bindHttpCommandExecutorService();
    }

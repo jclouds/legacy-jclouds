@@ -33,10 +33,7 @@ import org.jclouds.aws.ec2.xml.SpotInstancesHandler;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
-
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code SpotInstanceAsyncClient}
@@ -179,11 +176,4 @@ public class SpotInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<SpotI
 
       checkFilters(request);
    }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<SpotInstanceAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<SpotInstanceAsyncClient>>() {
-      };
-   }
-
 }

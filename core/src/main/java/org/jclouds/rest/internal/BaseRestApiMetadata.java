@@ -67,6 +67,7 @@ public class BaseRestApiMetadata extends BaseApiMetadata implements RestApiMetad
    
    public static <S, A> TypeToken<RestContext<S, A>> contextToken(TypeToken<S> apiToken, TypeToken<A> asyncApiToken) {
       return new TypeToken<RestContext<S, A>>() {
+         private static final long serialVersionUID = 1L;
       }.where(new TypeParameter<S>() {
       }, apiToken).where(new TypeParameter<A>() {
       }, asyncApiToken);

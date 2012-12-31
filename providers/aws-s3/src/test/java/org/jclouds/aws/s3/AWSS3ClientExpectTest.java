@@ -21,9 +21,7 @@ package org.jclouds.aws.s3;
 import static org.jclouds.aws.s3.blobstore.options.AWSS3PutObjectOptions.Builder.storageClass;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
 
-import com.google.common.collect.ImmutableSet;
 import org.jclouds.aws.s3.domain.DeleteResult;
 import org.jclouds.aws.s3.internal.BaseAWSS3ClientExpectTest;
 import org.jclouds.blobstore.domain.Blob;
@@ -39,6 +37,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Functions;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Injector;
 
 /**

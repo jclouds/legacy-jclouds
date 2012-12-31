@@ -36,12 +36,10 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Functions;
 import com.google.common.collect.ImmutableSet;
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests the behaviour of SnapshotAsyncClient.
@@ -230,11 +228,5 @@ public class SnapshotAsyncClientTest extends BaseCloudStackAsyncClientTest<Snaps
       assertFallbackClassEquals(method, EmptySetOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
-   }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<SnapshotAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<SnapshotAsyncClient>>() {
-      };
    }
 }

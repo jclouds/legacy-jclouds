@@ -33,11 +33,10 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Binder;
 import com.google.inject.Injector;
-import com.google.inject.Key;
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 
 /**
  * 
@@ -46,9 +45,7 @@ import com.google.inject.TypeLiteral;
 @Test(groups = "unit")
 public abstract class BaseAsyncApiTest<T> extends BaseRestApiTest {
 
-   protected RestAnnotationProcessor<T> processor;
-
-   protected abstract TypeLiteral<RestAnnotationProcessor<T>> createTypeLiteral();
+   protected RestAnnotationProcessor processor;
 
    protected abstract void checkFilters(HttpRequest request);
 
@@ -67,7 +64,9 @@ public abstract class BaseAsyncApiTest<T> extends BaseRestApiTest {
    protected void setupFactory() throws IOException {
       injector = createInjector();
       parserFactory = injector.getInstance(ParseSax.Factory.class);
-      processor = injector.getInstance(Key.get(createTypeLiteral()));
+      processor = injector.getInstance(RestAnnotationProcessor.Factory.class).declaring(new TypeToken<T>(getClass()) {
+         private static final long serialVersionUID = 1L;
+      }.getRawType());
    }
    
    protected String identity = "identity";

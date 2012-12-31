@@ -32,14 +32,12 @@ import org.jclouds.functions.IdentityFunction;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Functions;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code SecurityGroupAsyncClient}
@@ -236,11 +234,5 @@ public class SecurityGroupAsyncClientTest extends BaseCloudStackAsyncClientTest<
 
       checkFilters(httpRequest);
 
-   }
-
-   @Override
-   protected TypeLiteral<RestAnnotationProcessor<SecurityGroupAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<SecurityGroupAsyncClient>>() {
-      };
    }
 }

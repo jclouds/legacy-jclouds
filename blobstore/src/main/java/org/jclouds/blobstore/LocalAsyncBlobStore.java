@@ -369,47 +369,8 @@ public class LocalAsyncBlobStore extends BaseAsyncBlobStore {
 
    public static HttpResponseException returnResponseException(int code) {
       HttpResponse response = HttpResponse.builder().statusCode(code).build();
-      return new HttpResponseException(new HttpCommand() {
-
-         public int getRedirectCount() {
-            return 0;
-         }
-
-         public int incrementRedirectCount() {
-            return 0;
-         }
-
-         public boolean isReplayable() {
-            return false;
-         }
-
-         public Exception getException() {
-            return null;
-         }
-
-         public int getFailureCount() {
-            return 0;
-         }
-
-         public int incrementFailureCount() {
-            return 0;
-         }
-
-         public void setException(Exception exception) {
-
-         }
-
-         @Override
-         public HttpRequest getCurrentRequest() {
-            return HttpRequest.builder().method("GET").endpoint("http://stub").build();
-         }
-
-         @Override
-         public void setCurrentRequest(HttpRequest request) {
-
-         }
-
-      }, response);
+      return new HttpResponseException(new HttpCommand(HttpRequest.builder().method("GET").endpoint("http://stub")
+            .build()), response);
    }
 
    /**

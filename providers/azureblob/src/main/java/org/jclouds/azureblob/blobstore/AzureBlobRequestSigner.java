@@ -42,7 +42,7 @@ import org.jclouds.rest.internal.RestAnnotationProcessor;
  */
 @Singleton
 public class AzureBlobRequestSigner implements BlobRequestSigner {
-   private final RestAnnotationProcessor<AzureBlobAsyncClient> processor;
+   private final RestAnnotationProcessor processor;
    private final BlobToAzureBlob blobToBlob;
    private final BlobToHttpGetOptions blob2HttpGetOptions;
 
@@ -51,9 +51,9 @@ public class AzureBlobRequestSigner implements BlobRequestSigner {
    private final Method createMethod;
 
    @Inject
-   public AzureBlobRequestSigner(RestAnnotationProcessor<AzureBlobAsyncClient> processor, BlobToAzureBlob blobToBlob,
+   public AzureBlobRequestSigner(RestAnnotationProcessor.Factory processor, BlobToAzureBlob blobToBlob,
             BlobToHttpGetOptions blob2HttpGetOptions) throws SecurityException, NoSuchMethodException {
-      this.processor = checkNotNull(processor, "processor");
+      this.processor = checkNotNull(processor, "processor").declaring(AzureBlobAsyncClient.class);
       this.blobToBlob = checkNotNull(blobToBlob, "blobToBlob");
       this.blob2HttpGetOptions = checkNotNull(blob2HttpGetOptions, "blob2HttpGetOptions");
       this.getMethod = AzureBlobAsyncClient.class.getMethod("getBlob", String.class, String.class, GetOptions[].class);
