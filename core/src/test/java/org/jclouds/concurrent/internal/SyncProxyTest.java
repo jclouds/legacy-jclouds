@@ -18,6 +18,7 @@
  */
 package org.jclouds.concurrent.internal;
 
+import static com.google.common.reflect.Reflection.newProxy;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
@@ -69,53 +70,45 @@ public class SyncProxyTest {
    }
 
    public void testWithDefaultPropTimeout() throws Exception {
-      LoadingCache<ClassMethodArgs, Object> cache = CacheBuilder.newBuilder().build(
-            CacheLoader.from(Functions.<Object> constant(null)));
-      Sync withOverride = SyncProxy.proxy(new AlwaysPresentImplicitOptionalConverter(), Sync.class, new Async(), cache,
-            ImmutableMap.<Class<?>, Class<?>> of(), ImmutableMap.<String, Long> of("default", 250L));
-
+      Sync withOverride = syncProxyForTimeouts(ImmutableMap.of("default", 250L));
       assertEquals(withOverride.get(), "foo");
       verify(future);
 
    }
 
    public void testWithClassPropTimeout() throws Exception {
-      LoadingCache<ClassMethodArgs, Object> cache = CacheBuilder.newBuilder().build(
-            CacheLoader.from(Functions.<Object> constant(null)));
-      Sync withOverride = SyncProxy.proxy(new AlwaysPresentImplicitOptionalConverter(), Sync.class, new Async(), cache,
-            ImmutableMap.<Class<?>, Class<?>> of(), ImmutableMap.<String, Long> of("default", 50L, "Sync", 250L));
-
+      Sync withOverride = syncProxyForTimeouts(ImmutableMap.of("default", 50L, "Sync", 250L));
       assertEquals(withOverride.get(), "foo");
       verify(future);
 
    }
 
    public void testWithMethodPropTimeout() throws Exception {
-      LoadingCache<ClassMethodArgs, Object> cache = CacheBuilder.newBuilder().build(
-            CacheLoader.from(Functions.<Object> constant(null)));
-      Sync withOverride = SyncProxy.proxy(new AlwaysPresentImplicitOptionalConverter(), Sync.class, new Async(), cache,
-            ImmutableMap.<Class<?>, Class<?>> of(),
-            ImmutableMap.<String, Long> of("default", 50L, "Sync", 100L, "Sync.get", 250L));
-
+      Sync withOverride = syncProxyForTimeouts(ImmutableMap.of("default", 50L, "Sync", 100L, "Sync.get", 250L));
       assertEquals(withOverride.get(), "foo");
       verify(future);
-
    }
-   
+
    @SuppressWarnings("unchecked")
    public void testWithMethodWithNoTimeoutsCallGetDirectly() throws Exception {
-      LoadingCache<ClassMethodArgs, Object> cache = CacheBuilder.newBuilder().build(
-            CacheLoader.from(Functions.<Object> constant(null)));
-      Sync withOverride = SyncProxy.proxy(new AlwaysPresentImplicitOptionalConverter(), Sync.class, new Async(), cache,
-            ImmutableMap.<Class<?>, Class<?>> of(),
-            ImmutableMap.<String, Long> of());
-
       future = createMock(ListenableFuture.class);
       expect(future.get()).andReturn("foo");
       replay(future);
       
-      assertEquals(withOverride.get(), "foo");
+      Sync noOverrides = syncProxyForTimeouts(ImmutableMap.<String, Long> of());
+
+      assertEquals(noOverrides.get(), "foo");
       verify(future);
 
    }
+
+   private Sync syncProxyForTimeouts(ImmutableMap<String, Long> timeouts) throws NoSuchMethodException {
+      LoadingCache<ClassMethodArgs, Object> cache = CacheBuilder.newBuilder().build(
+            CacheLoader.from(Functions.<Object> constant(null)));
+      return newProxy(
+            Sync.class,
+            new SyncProxy(new AlwaysPresentImplicitOptionalConverter(), cache, ImmutableMap.<Class<?>, Class<?>> of(
+                  Sync.class, Async.class), timeouts, Sync.class, new Async()));
+   }
+
 }

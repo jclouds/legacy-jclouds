@@ -18,14 +18,11 @@
  */
 package org.jclouds.rest.config;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.util.Map;
-
-import com.google.common.collect.ImmutableMap;
+import com.google.common.reflect.TypeParameter;
+import com.google.common.reflect.TypeToken;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Binder;
-import com.google.inject.Provider;
+import com.google.inject.TypeLiteral;
 
 /**
  * 
@@ -34,64 +31,66 @@ import com.google.inject.Provider;
 public class BinderUtils {
 
    /**
-    * adds an explicit binding for a rest client, after which you can inject either the sync or
-    * async client class.
-    * 
-    * <h3>note</h3> This client cannot have @Delegate methods, so if you have them, use the
-    * {@link #bindClientAndAsyncClient(Binder, Class, Class, Map) overloaded method}.
+    * adds an explicit binding for {@code async} by parsing its annotations. Then. adds an explicit binding for an
+    * interface which synchronously blocks on similar calls to an {@code async} type.
     * 
     * @param <S>
-    *           sync client type
+    *           sync interface that blocks
     * @param <A>
-    *           async client type (all methods have same args as client, but return
-    *           listenablefuture)
+    *           async type where all methods have same args as {@code sync}, but returns {@link ListenableFuture}
     * @param binder
     *           guice binder
-    * @param syncClientType
-    *           interface for the sync client
-    * @param asyncClientType
-    *           interface for the async client
+    * @param sync
+    *           type interface that blocks
+    * @param async
+    *           type type that returns {@link ListenableFuture}
     */
-   public static <S, A> void bindClientAndAsyncClient(Binder binder, Class<?> syncClientType, Class<?> asyncClientType) {
-      bindClientAndAsyncClient(binder, syncClientType, asyncClientType, ImmutableMap.<Class<?>, Class<?>> of());
+   public static <S, A> void bindClientAndAsyncClient(Binder binder, Class<S> sync, Class<A> async) {
+      bindAsyncClient(binder, async);
+      bindClient(binder, sync, async);
    }
 
    /**
-    * adds an explicit binding for a rest client, after which you can inject either the sync or
-    * async client class.
+    * adds an explicit binding for an interface which synchronously blocks on similar calls to an {@code async} type.
     * 
     * @param <S>
-    *           sync client type
+    *           sync interface that blocks
     * @param <A>
-    *           async client type (all methods have same args as client, but return
-    *           listenablefuture)
+    *           async type where all methods have same args as {@code sync}, but returns {@link ListenableFuture}
     * @param binder
     *           guice binder
-    * @param syncClientType
-    *           interface for the sync client (ex. LoginClient)
-    * @param asyncClientType
-    *           interface for the async client (ex. LoginAsyncClient)
-    * @param sync2Async
-    *           presuming your clients are annotated with @Delegate, contains the sync to async
-    *           classes relating to these methods
+    * @param sync
+    *           type interface that blocks
+    * @param async
+    *           type type that returns {@link ListenableFuture}
     */
-   public static <S, A> void bindClientAndAsyncClient(Binder binder, Class<?> syncClientType, Class<?> asyncClientType,
-            Map<Class<?>, Class<?>> sync2Async) {
-      bindClient(binder, syncClientType, asyncClientType, sync2Async);
-      bindAsyncClient(binder, asyncClientType);
+   @SuppressWarnings("unchecked")
+   public static <S, A> void bindClient(Binder binder, Class<S> sync, Class<A> async) {
+      bindClass(binder, sync);
+      TypeToken<ClientProvider<S, A>> token = new TypeToken<ClientProvider<S, A>>() {
+         private static final long serialVersionUID = 1L;
+      }.where(new TypeParameter<S>() {
+      }, sync).where(new TypeParameter<A>() {
+      }, async);
+      binder.bind(sync).toProvider(TypeLiteral.class.cast(TypeLiteral.get(token.getType())));
    }
 
-   public static <K, V> void bindClient(Binder binder, Class<K> syncClientType, Class<V> asyncClientType,
-            Map<Class<?>, Class<?>> sync2Async) {
-      Provider<K> asyncProvider = new ClientProvider<K, V>(syncClientType, asyncClientType, sync2Async);
-      binder.requestInjection(asyncProvider);
-      binder.bind(syncClientType).toProvider(asyncProvider);
+   @SuppressWarnings("unchecked")
+   private static <K> void bindClass(Binder binder, Class<K> sync) {
+      binder.bind(TypeLiteral.class.cast(TypeLiteral.get(new TypeToken<Class<K>>() {
+         private static final long serialVersionUID = 1L;
+      }.where(new TypeParameter<K>() {
+      }, sync).getType()))).toInstance(sync);
    }
 
-   public static <T> void bindAsyncClient(Binder binder, Class<T> asyncClientType) {
-      Provider<T> asyncProvider = new AsyncClientProvider<T>(asyncClientType);
-      binder.requestInjection(asyncProvider);
-      binder.bind(asyncClientType).toProvider(asyncProvider);
+   @SuppressWarnings("unchecked")
+   private static <T> void bindAsyncClient(Binder binder, Class<T> async) {
+      bindClass(binder, async);
+      TypeToken<AsyncClientProvider<T>> token = new TypeToken<AsyncClientProvider<T>>() {
+         private static final long serialVersionUID = 1L;
+      }.where(new TypeParameter<T>() {
+      }, async);
+      binder.bind(async).toProvider(TypeLiteral.class.cast(TypeLiteral.get(token.getType())));
    }
 
 }

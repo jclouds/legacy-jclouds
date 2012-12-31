@@ -37,7 +37,6 @@ import org.jclouds.http.annotation.ServerError;
 import org.jclouds.location.Provider;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestContext;
-import org.jclouds.rest.config.BinderUtils;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.util.Suppliers2;
@@ -140,22 +139,6 @@ public class VCloudDirectorRestClientModule extends RestClientModule<VCloudDirec
          .put(UserApi.class, UserAsyncApi.class)
          .build();
    
-   @Override
-   protected void bindAsyncClient() {
-      // bind the user api (default)
-      super.bindAsyncClient();
-      // bind the admin api
-      BinderUtils.bindAsyncClient(binder(), VCloudDirectorAdminAsyncApi.class);
-   }
-   
-   @Override
-   protected void bindClient() {
-      // bind the user api (default)
-      super.bindClient();
-      // bind the admin api
-      BinderUtils.bindClient(binder(), VCloudDirectorAdminApi.class, VCloudDirectorAdminAsyncApi.class, ADMIN_DELEGATE_MAP);
-   }
-   
    public VCloudDirectorRestClientModule() {
       super(ADMIN_DELEGATE_MAP);
    }
@@ -176,6 +159,8 @@ public class VCloudDirectorRestClientModule extends RestClientModule<VCloudDirec
       bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(InvalidateSessionAndRetryOn401AndLogoutOnClose.class);
       
       super.configure();
+      bindClientAndAsyncClient(binder(),  VCloudDirectorAdminApi.class, VCloudDirectorAdminAsyncApi.class);
+
    }
    
    @Override

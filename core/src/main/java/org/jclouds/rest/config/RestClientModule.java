@@ -19,7 +19,7 @@
 package org.jclouds.rest.config;
 
 import java.util.Map;
-
+import static org.jclouds.rest.config.BinderUtils.*;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.util.TypeTokens2;
 
@@ -42,8 +42,10 @@ public class RestClientModule<S, A> extends RestModule {
    protected RestClientModule(Map<Class<?>, Class<?>> sync2Async) {
       super(sync2Async);
       this.syncClientType = TypeTokens2.checkBound(new TypeToken<S>(getClass()) {
+         private static final long serialVersionUID = 1L;
       });
       this.asyncClientType = TypeTokens2.checkBound(new TypeToken<A>(getClass()) {
+         private static final long serialVersionUID = 1L;
       });
    }
 
@@ -73,8 +75,7 @@ public class RestClientModule<S, A> extends RestModule {
    @Override
    protected void configure() {
       super.configure();
-      bindAsyncClient();
-      bindClient();
+      bindClientAndAsyncClient(binder(), syncClientType.getRawType(), asyncClientType.getRawType());
       bindErrorHandlers();
       bindRetryHandlers();
    }
@@ -109,14 +110,7 @@ public class RestClientModule<S, A> extends RestModule {
     * 
     */
    protected void bindErrorHandlers() {
-   }
 
-   protected void bindAsyncClient() {
-      BinderUtils.bindAsyncClient(binder(), asyncClientType.getRawType());
-   }
-
-   protected void bindClient() {
-      BinderUtils.bindClient(binder(), syncClientType.getRawType(), asyncClientType.getRawType(), sync2Async);
    }
 
 }

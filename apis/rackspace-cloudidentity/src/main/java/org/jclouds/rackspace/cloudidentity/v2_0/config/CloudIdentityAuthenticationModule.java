@@ -47,10 +47,9 @@ public class CloudIdentityAuthenticationModule extends KeystoneAuthenticationMod
 
    @Override
    protected void bindAuthenticationApi() {
-      // AuthenticationApi is used directly for filters and retry handlers, so let's bind it
-      // explicitly
+      // AuthenticationApi is used directly for filters and retry handlers, so let's bind it explicitly
       bindClientAndAsyncClient(binder(), CloudIdentityAuthenticationApi.class,
-               CloudIdentityAuthenticationAsyncApi.class);
+            CloudIdentityAuthenticationAsyncApi.class);
       bind(AuthenticationApi.class).to(CloudIdentityAuthenticationApi.class).in(Scopes.SINGLETON);
       bind(AuthenticationAsyncApi.class).to(CloudIdentityAuthenticationAsyncApi.class).in(Scopes.SINGLETON);
    }
