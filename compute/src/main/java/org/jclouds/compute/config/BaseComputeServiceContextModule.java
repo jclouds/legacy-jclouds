@@ -62,11 +62,11 @@ import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.ssh.SshClient;
-import org.jclouds.util.Suppliers2;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;
@@ -213,7 +213,7 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
    @Provides
    @Singleton
    protected Supplier<Map<String, ? extends Image>> provideImageMap(@Memoized Supplier<Set<? extends Image>> images) {
-      return Suppliers2.compose(new Function<Set<? extends Image>, Map<String, ? extends Image>>() {
+      return Suppliers.compose(new Function<Set<? extends Image>, Map<String, ? extends Image>>() {
 
          @Override
          public Map<String, ? extends Image> apply(Set<? extends Image> from) {
@@ -263,7 +263,7 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
    @Provides
    @Singleton
    protected Supplier<Map<String, ? extends Hardware>> provideSizeMap(@Memoized Supplier<Set<? extends Hardware>> sizes) {
-      return Suppliers2.compose(new Function<Set<? extends Hardware>, Map<String, ? extends Hardware>>() {
+      return Suppliers.compose(new Function<Set<? extends Hardware>, Map<String, ? extends Hardware>>() {
 
          @Override
          public Map<String, ? extends Hardware> apply(Set<? extends Hardware> from) {

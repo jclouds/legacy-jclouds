@@ -73,7 +73,7 @@ public class DefaultVCloudReferencesModule extends AbstractModule {
    @Singleton
    protected Supplier<ReferenceType> provideDefaultTasksList(DefaultTasksListForOrg defaultTasksListURIForOrg,
             @org.jclouds.vcloud.endpoints.Org Supplier<ReferenceType> defaultOrg) {
-      return Suppliers2.compose(defaultTasksListURIForOrg, defaultOrg);
+      return Suppliers.compose(defaultTasksListURIForOrg, defaultOrg);
    }
 
    @Provides
@@ -81,7 +81,7 @@ public class DefaultVCloudReferencesModule extends AbstractModule {
    @Singleton
    protected Supplier<ReferenceType> provideDefaultCatalog(DefaultCatalogForOrg defaultCatalogURIForOrg,
             @org.jclouds.vcloud.endpoints.Org Supplier<ReferenceType> defaultOrg) {
-      return Suppliers2.compose(defaultCatalogURIForOrg, defaultOrg);
+      return Suppliers.compose(defaultCatalogURIForOrg, defaultOrg);
    }
 
    @Provides
@@ -147,7 +147,7 @@ public class DefaultVCloudReferencesModule extends AbstractModule {
    @Singleton
    protected Supplier<ReferenceType> provideDefaultVDC(DefaultVDCForOrg defaultVDCURIForOrg,
             @org.jclouds.vcloud.endpoints.Org Supplier<ReferenceType> defaultOrg) {
-      return Suppliers2.compose(defaultVDCURIForOrg, defaultOrg);
+      return Suppliers.compose(defaultVDCURIForOrg, defaultOrg);
    }
 
    @Provides
@@ -162,7 +162,7 @@ public class DefaultVCloudReferencesModule extends AbstractModule {
    @Singleton
    protected Supplier<ReferenceType> provideDefaultNetwork(DefaultNetworkForVDC defaultNetworkURIForVDC,
             @org.jclouds.vcloud.endpoints.VDC Supplier<ReferenceType> defaultVDC) {
-      return Suppliers2.compose(defaultNetworkURIForVDC, defaultVDC);
+      return Suppliers.compose(defaultNetworkURIForVDC, defaultVDC);
    }
 
    @Provides

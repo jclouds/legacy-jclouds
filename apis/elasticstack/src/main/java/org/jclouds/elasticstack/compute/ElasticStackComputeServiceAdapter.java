@@ -21,7 +21,6 @@ package org.jclouds.elasticstack.compute;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.notNull;
-import static com.google.common.collect.Iterables.filter;
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
 import static org.jclouds.elasticstack.util.Servers.small;
 
@@ -35,6 +34,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
+import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.HardwareBuilder;
@@ -57,12 +57,12 @@ import org.jclouds.elasticstack.domain.ServerStatus;
 import org.jclouds.elasticstack.domain.WellKnownImage;
 import org.jclouds.elasticstack.reference.ElasticStackConstants;
 import org.jclouds.logging.Logger;
-import org.jclouds.util.Iterables2;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
@@ -163,7 +163,7 @@ public class ElasticStackComputeServiceAdapter implements
     */
    @Override
    public Iterable<DriveInfo> listImages() {
-      Iterable<? extends DriveInfo> drives = transformParallel(preinstalledImages.keySet(),
+      return FluentIterable.from(transformParallel(preinstalledImages.keySet(),
             new Function<String, Future<? extends DriveInfo>>() {
 
                @Override
@@ -183,8 +183,7 @@ public class ElasticStackComputeServiceAdapter implements
                   return "seedDriveCache()";
                }
 
-            }, executor, null, logger, "drives");
-      return Iterables2.concreteCopy(filter(drives, notNull()));
+            }, executor, null, logger, "drives")).filter(notNull());
    }
 
    @SuppressWarnings("unchecked")

@@ -18,8 +18,8 @@
  */
 package org.jclouds.domain;
 
+import org.jclouds.crypto.Pems;
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.util.CredentialUtils;
 
 import com.google.common.base.Optional;
 
@@ -27,7 +27,12 @@ import com.google.common.base.Optional;
  * @author Adrian Cole
  */
 public class LoginCredentials extends Credentials {
-   
+
+   public static boolean isPrivateKeyCredential(String credential) {
+      return credential != null
+            && (credential.startsWith(Pems.PRIVATE_PKCS1_MARKER) || credential.startsWith(Pems.PRIVATE_PKCS8_MARKER));
+   }
+
    public static LoginCredentials fromCredentials(Credentials creds) {
       if (creds == null)
          return null;
@@ -48,7 +53,7 @@ public class LoginCredentials extends Credentials {
    public static Builder builder() {
       return new Builder();
    }
-
+   
    public static class Builder extends Credentials.Builder<LoginCredentials> {
       private boolean authenticateSudo;
       private Optional<String> password;
@@ -87,7 +92,7 @@ public class LoginCredentials extends Credentials {
       }
 
       public Builder credential(String credential) {
-         if (CredentialUtils.isPrivateKeyCredential(credential))
+         if (isPrivateKeyCredential(credential))
             return noPassword().privateKey(credential);
          else if (credential != null)
             return password(credential).noPrivateKey();
@@ -119,7 +124,7 @@ public class LoginCredentials extends Credentials {
    }
 
    public LoginCredentials(String username, @Nullable Optional<String> password, @Nullable Optional<String> privateKey, boolean authenticateSudo) {
-      super(username, privateKey != null && privateKey.isPresent() && CredentialUtils.isPrivateKeyCredential(privateKey.get())
+      super(username, privateKey != null && privateKey.isPresent() && isPrivateKeyCredential(privateKey.get())
                     ? privateKey.get()
                     : (password != null && password.isPresent() ? password.get() : null));
       this.authenticateSudo = authenticateSudo;

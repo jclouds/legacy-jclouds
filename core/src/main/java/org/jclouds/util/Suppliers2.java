@@ -18,47 +18,21 @@
  */
 package org.jclouds.util;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Map;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
-import com.google.common.io.OutputSupplier;
 
 /**
  * 
  * @author Adrian Cole
  */
 public class Suppliers2 {
-
-   /**
-    * Supplies a value that corresponds to a particular key in a map, or null, if not found
-    */
-   public static <K, V> Supplier<V> valueForKey(final Supplier<Map<K, Supplier<V>>> input, final Supplier<K> key) {
-      return new Supplier<V>() {
-
-         @Override
-         public V get() {
-            K keyToFind = key.get();
-            Supplier<V> value = input.get().get(keyToFind);
-            return value != null ? value.get() : null;
-         }
-
-         @Override
-         public String toString() {
-            return "withKey()";
-         }
-      };
-   }
 
    public static <K, V> Supplier<V> getLastValueInMap(final Supplier<Map<K, Supplier<V>>> input) {
       return new Supplier<V>() {
@@ -86,19 +60,6 @@ public class Suppliers2 {
          @Override
          public String toString() {
             return "Suppliers.ofInstance()";
-         }
-      };
-   }
-
-   /**
-    * converts an {@link OutputStream} to an {@link OutputSupplier}
-    * 
-    */
-   public static OutputSupplier<OutputStream> newOutputStreamSupplier(final OutputStream output) {
-      checkNotNull(output, "output");
-      return new OutputSupplier<OutputStream>() {
-         public OutputStream getOutput() throws IOException {
-            return output;
          }
       };
    }
@@ -151,35 +112,6 @@ public class Suppliers2 {
                      .add("throwable", throwable.getSimpleName()).add("fallback", fallback).toString();
          }
       };
-   }
-
-   // only here until guava compose gives a toString!
-   // http://code.google.com/p/guava-libraries/issues/detail?id=1052
-   public static <F, T> Supplier<T> compose(Function<? super F, T> function, Supplier<F> supplier) {
-      Preconditions.checkNotNull(function);
-      Preconditions.checkNotNull(supplier);
-      return new SupplierComposition<F, T>(function, supplier);
-   }
-
-   private static class SupplierComposition<F, T> implements Supplier<T> {
-
-      final Function<? super F, T> function;
-      final Supplier<F> supplier;
-
-      SupplierComposition(Function<? super F, T> function, Supplier<F> supplier) {
-         this.function = function;
-         this.supplier = supplier;
-      }
-
-      @Override
-      public T get() {
-         return function.apply(supplier.get());
-      }
-
-      @Override
-      public String toString() {
-         return Objects.toStringHelper(this).add("function", function).add("supplier", supplier).toString();
-      }
    }
 
 }

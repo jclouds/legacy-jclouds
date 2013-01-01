@@ -38,7 +38,6 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rest.internal.RestContextImpl;
-import org.jclouds.util.Suppliers2;
 import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminApi;
 import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminAsyncApi;
 import org.jclouds.vcloud.director.v1_5.annotations.Login;
@@ -94,6 +93,7 @@ import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorAsyncApi;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
@@ -172,7 +172,7 @@ public class VCloudDirectorRestClientModule extends RestClientModule<VCloudDirec
    @Login
    protected Supplier<URI> loginUrl(@Provider Supplier<URI> provider) {
       // TODO: technically, we should implement version api, but this will work
-      return Suppliers2.compose(new Function<URI, URI>() {
+      return Suppliers.compose(new Function<URI, URI>() {
          
          @Override
          public URI apply(URI arg0) {
@@ -184,7 +184,7 @@ public class VCloudDirectorRestClientModule extends RestClientModule<VCloudDirec
    
    @Provides
    protected Supplier<Session> currentSession(Supplier<SessionWithToken> in) {
-      return Suppliers2.compose(new Function<SessionWithToken, Session>() {
+      return Suppliers.compose(new Function<SessionWithToken, Session>() {
          
          @Override
          public Session apply(SessionWithToken arg0) {
@@ -199,7 +199,7 @@ public class VCloudDirectorRestClientModule extends RestClientModule<VCloudDirec
    @Singleton
    @org.jclouds.vcloud.director.v1_5.annotations.Session
    protected Supplier<String> sessionToken(Supplier<SessionWithToken> in) {
-      return Suppliers2.compose(new Function<SessionWithToken, String>() {
+      return Suppliers.compose(new Function<SessionWithToken, String>() {
          
          @Override
          public String apply(SessionWithToken arg0) {

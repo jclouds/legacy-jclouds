@@ -26,9 +26,9 @@ import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.getLast;
 import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Maps.transformValues;
+import static com.google.common.collect.Maps.uniqueIndex;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
-import static org.jclouds.util.Maps2.uniqueIndex;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_FENCEMODE;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED;
 
@@ -58,7 +58,6 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.annotations.ApiVersion;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
-import org.jclouds.util.Suppliers2;
 import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.VCloudToken;
@@ -95,11 +94,11 @@ import org.jclouds.vcloud.features.VmClient;
 import org.jclouds.vcloud.functions.CatalogItemsInCatalog;
 import org.jclouds.vcloud.functions.CatalogItemsInOrg;
 import org.jclouds.vcloud.functions.CatalogsInOrg;
-import org.jclouds.vcloud.functions.VDCsInOrg;
 import org.jclouds.vcloud.functions.DefaultNetworkNameInTemplate;
 import org.jclouds.vcloud.functions.OrgsForLocations;
 import org.jclouds.vcloud.functions.OrgsForNames;
 import org.jclouds.vcloud.functions.VAppTemplatesForCatalogItems;
+import org.jclouds.vcloud.functions.VDCsInOrg;
 import org.jclouds.vcloud.handlers.ParseVCloudErrorFromHttpResponse;
 import org.jclouds.vcloud.internal.VCloudLoginAsyncClient;
 import org.jclouds.vcloud.internal.VCloudLoginClient;
@@ -114,6 +113,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -224,7 +224,7 @@ public class VCloudRestClientModule extends RestClientModule<VCloudClient, VClou
    @Singleton
    @org.jclouds.vcloud.endpoints.VDC
    protected Supplier<Map<String, String>> provideVDCtoORG(Supplier<Map<String, Org>> orgNameToOrgSupplier) {
-      return Suppliers2.compose(new Function<Map<String, Org>, Map<String, String>>() {
+      return Suppliers.compose(new Function<Map<String, Org>, Map<String, String>>() {
 
          @Override
          public Map<String, String> apply(Map<String, Org> arg0) {
@@ -252,7 +252,7 @@ public class VCloudRestClientModule extends RestClientModule<VCloudClient, VClou
    @Singleton
    @OrgList
    protected Supplier<URI> provideOrgListURI(Supplier<VCloudSession> sessionSupplier) {
-      return Suppliers2.compose(new Function<VCloudSession, URI>() {
+      return Suppliers.compose(new Function<VCloudSession, URI>() {
 
          @Override
          public URI apply(VCloudSession arg0) {
@@ -304,18 +304,15 @@ public class VCloudRestClientModule extends RestClientModule<VCloudClient, VClou
 
       @Override
       public Map<String, Map<String, Catalog>> get() {
-         return transformValues(
-                  transformValues(orgSupplier.get(), allCatalogsInOrg),
-                  new Function<Iterable<? extends Catalog>, 
-                  Map<String, Catalog>>() {
+         return transformValues(transformValues(orgSupplier.get(), allCatalogsInOrg),
+               new Function<Iterable<? extends Catalog>, Map<String, Catalog>>() {
 
-                     @Override
-                     public Map<String, Catalog> apply(
-                              Iterable<? extends Catalog> from) {
-                        return uniqueIndex(from, name);
-                     }
+                  @Override
+                  public Map<String, Catalog> apply(Iterable<? extends Catalog> from) {
+                     return ImmutableMap.copyOf(uniqueIndex(from, name));
+                  }
 
-                  });
+               });
       }
    }
 
@@ -323,7 +320,7 @@ public class VCloudRestClientModule extends RestClientModule<VCloudClient, VClou
    @Provides
    @Singleton
    Supplier<String> provideVCloudToken(Supplier<VCloudSession> cache) {
-      return Suppliers2.compose(new Function<VCloudSession, String>() {
+      return Suppliers.compose(new Function<VCloudSession, String>() {
 
          @Override
          public String apply(VCloudSession input) {
@@ -432,7 +429,7 @@ public class VCloudRestClientModule extends RestClientModule<VCloudClient, VClou
    @Singleton
    protected Supplier<Org> provideOrg(final Supplier<Map<String, Org>> orgSupplier,
          @org.jclouds.vcloud.endpoints.Org Supplier<ReferenceType> defaultOrg) {
-      return Suppliers2.compose(new Function<ReferenceType, Org>() {
+      return Suppliers.compose(new Function<ReferenceType, Org>() {
 
          @Override
          public Org apply(ReferenceType input) {

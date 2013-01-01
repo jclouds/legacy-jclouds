@@ -20,7 +20,7 @@ package org.jclouds.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.util.Patterns;
+import java.util.regex.Pattern;
 
 /**
  * 
@@ -30,7 +30,11 @@ import org.jclouds.util.Patterns;
  * @see <a href="http://code.google.com/p/google-gson/issues/detail?id=326"/>
  */
 public class JsonBall implements Comparable<String>, CharSequence {
-
+   
+   public static final Pattern JSON_STRING_PATTERN = Pattern.compile("^[^\"\\{\\[].*[^\\{\\[\"]$");
+   public static final Pattern JSON_NUMBER_PATTERN = Pattern.compile("^[0-9]*\\.?[0-9]*$");
+   public static final Pattern JSON_BOOLEAN_PATTERN = Pattern.compile("^(true|false)$");
+   
    private final String value;
 
    @Override
@@ -82,10 +86,10 @@ public class JsonBall implements Comparable<String>, CharSequence {
    public JsonBall(String value) {
       this.value = quoteStringIfNotNumberOrBoolean(checkNotNull(value, "value"));
    }
-   
+
    static String quoteStringIfNotNumberOrBoolean(String in) {
-      if (Patterns.JSON_STRING_PATTERN.matcher(in).find() && !Patterns.JSON_NUMBER_PATTERN.matcher(in).find()
-               && !Patterns.JSON_BOOLEAN_PATTERN.matcher(in).find()) {
+      if (JSON_STRING_PATTERN.matcher(in).find() && !JSON_NUMBER_PATTERN.matcher(in).find()
+            && !JSON_BOOLEAN_PATTERN.matcher(in).find()) {
          return "\"" + in + "\"";
       }
       return in;

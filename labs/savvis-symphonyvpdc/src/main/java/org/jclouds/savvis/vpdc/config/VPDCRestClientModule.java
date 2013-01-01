@@ -45,30 +45,30 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.annotations.Identity;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
-import org.jclouds.savvis.vpdc.VPDCAsyncApi;
 import org.jclouds.savvis.vpdc.VPDCApi;
+import org.jclouds.savvis.vpdc.VPDCAsyncApi;
 import org.jclouds.savvis.vpdc.domain.internal.VCloudSession;
-import org.jclouds.savvis.vpdc.features.BrowsingAsyncApi;
 import org.jclouds.savvis.vpdc.features.BrowsingApi;
-import org.jclouds.savvis.vpdc.features.FirewallAsyncApi;
+import org.jclouds.savvis.vpdc.features.BrowsingAsyncApi;
 import org.jclouds.savvis.vpdc.features.FirewallApi;
-import org.jclouds.savvis.vpdc.features.ServiceManagementAsyncApi;
+import org.jclouds.savvis.vpdc.features.FirewallAsyncApi;
 import org.jclouds.savvis.vpdc.features.ServiceManagementApi;
-import org.jclouds.savvis.vpdc.features.VMAsyncApi;
+import org.jclouds.savvis.vpdc.features.ServiceManagementAsyncApi;
 import org.jclouds.savvis.vpdc.features.VMApi;
+import org.jclouds.savvis.vpdc.features.VMAsyncApi;
 import org.jclouds.savvis.vpdc.handlers.VPDCErrorHandler;
-import org.jclouds.savvis.vpdc.internal.LoginAsyncApi;
 import org.jclouds.savvis.vpdc.internal.LoginApi;
+import org.jclouds.savvis.vpdc.internal.LoginAsyncApi;
 import org.jclouds.savvis.vpdc.internal.VCloudToken;
 import org.jclouds.savvis.vpdc.location.FirstNetwork;
 import org.jclouds.savvis.vpdc.predicates.TaskSuccess;
 import org.jclouds.util.Strings2;
-import org.jclouds.util.Suppliers2;
 
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.inject.Injector;
@@ -93,7 +93,7 @@ public class VPDCRestClientModule extends RestClientModule<VPDCApi, VPDCAsyncApi
    @Provides
    @Singleton
    protected Supplier<String> provideVCloudToken(Supplier<VCloudSession> cache) {
-      return Suppliers2.compose(new Function<VCloudSession, String>() {
+      return Suppliers.compose(new Function<VCloudSession, String>() {
 
          @Override
          public String apply(VCloudSession input) {
@@ -108,7 +108,7 @@ public class VPDCRestClientModule extends RestClientModule<VPDCApi, VPDCAsyncApi
    @Singleton
    protected Supplier<Set<org.jclouds.savvis.vpdc.domain.Resource>> provideOrgs(Supplier<VCloudSession> cache,
             @Identity final String user) {
-      return Suppliers2.compose(new Function<VCloudSession, Set<org.jclouds.savvis.vpdc.domain.Resource>>() {
+      return Suppliers.compose(new Function<VCloudSession, Set<org.jclouds.savvis.vpdc.domain.Resource>>() {
 
          @Override
          public Set<org.jclouds.savvis.vpdc.domain.Resource> apply(VCloudSession input) {
@@ -124,7 +124,7 @@ public class VPDCRestClientModule extends RestClientModule<VPDCApi, VPDCAsyncApi
    @Singleton
    protected Supplier<String> provideDefaultOrgId(
             @org.jclouds.savvis.vpdc.internal.Org Supplier<Set<org.jclouds.savvis.vpdc.domain.Resource>> orgs) {
-      return Suppliers2.compose(new Function<Set<org.jclouds.savvis.vpdc.domain.Resource>, String>() {
+      return Suppliers.compose(new Function<Set<org.jclouds.savvis.vpdc.domain.Resource>, String>() {
 
          @Override
          public String apply(Set<org.jclouds.savvis.vpdc.domain.Resource> input) {

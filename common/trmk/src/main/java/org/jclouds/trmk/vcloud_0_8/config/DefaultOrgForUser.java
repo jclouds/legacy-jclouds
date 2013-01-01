@@ -30,11 +30,11 @@ import org.jclouds.trmk.vcloud_0_8.domain.ReferenceType;
 import org.jclouds.trmk.vcloud_0_8.domain.VCloudSession;
 import org.jclouds.trmk.vcloud_0_8.endpoints.Org;
 import org.jclouds.trmk.vcloud_0_8.suppliers.OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefault;
-import org.jclouds.util.Suppliers2;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 
 /**
  * 
@@ -57,7 +57,7 @@ public class DefaultOrgForUser implements Function<String, Supplier<ReferenceTyp
 
    @Override
    public Supplier<ReferenceType> apply(final String user) {
-      return Suppliers2.compose(new Function<VCloudSession, ReferenceType>() {
+      return Suppliers.compose(new Function<VCloudSession, ReferenceType>() {
 
          @Override
          public ReferenceType apply(VCloudSession session) {

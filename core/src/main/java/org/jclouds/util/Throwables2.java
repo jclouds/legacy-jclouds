@@ -31,6 +31,7 @@ import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.InsufficientResourcesException;
 import org.jclouds.rest.ResourceNotFoundException;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
 import com.google.common.base.Throwables;
 import com.google.inject.CreationException;
@@ -58,10 +59,6 @@ public class Throwables2 {
       };
    }
 
-   public static boolean containsResourceNotFoundException(Throwable from) {
-      return getFirstThrowableOfType(from, ResourceNotFoundException.class) != null;
-   }
-
    @SuppressWarnings("unchecked")
    public static <T extends Throwable> T getFirstThrowableOfType(Throwable from, Class<T> clazz) {
       if (from instanceof ProvisionException)
@@ -77,7 +74,8 @@ public class Throwables2 {
       }
    }
 
-   public static <T extends Throwable> T getFirstThrowableOfType(TransformParallelException e, Class<T> clazz) {
+   @VisibleForTesting
+   static <T extends Throwable> T getFirstThrowableOfType(TransformParallelException e, Class<T> clazz) {
       for (Exception exception : e.getFromToException().values()) {
          T cause = getFirstThrowableOfType(exception, clazz);
          if (cause != null)
@@ -86,7 +84,8 @@ public class Throwables2 {
       return null;
    }
 
-   public static <T extends Throwable> T getFirstThrowableOfType(ProvisionException e, Class<T> clazz) {
+   @VisibleForTesting
+   static <T extends Throwable> T getFirstThrowableOfType(ProvisionException e, Class<T> clazz) {
       for (Message message : e.getErrorMessages()) {
          if (message.getCause() != null) {
             T cause = getFirstThrowableOfType(message.getCause(), clazz);
@@ -102,7 +101,8 @@ public class Throwables2 {
       return null;
    }
 
-   public static <T extends Throwable> T getFirstThrowableOfType(CreationException e, Class<T> clazz) {
+   @VisibleForTesting
+   static <T extends Throwable> T getFirstThrowableOfType(CreationException e, Class<T> clazz) {
       for (Message message : e.getErrorMessages()) {
          if (message.getCause() != null) {
             T cause = getFirstThrowableOfType(message.getCause(), clazz);

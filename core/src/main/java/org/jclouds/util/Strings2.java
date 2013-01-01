@@ -21,10 +21,7 @@ package org.jclouds.util;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.io.ByteStreams.toByteArray;
 import static com.google.common.io.Closeables.closeQuietly;
-import static org.jclouds.util.Patterns.CHAR_TO_ENCODED;
-import static org.jclouds.util.Patterns.CHAR_TO_PATTERN;
 import static org.jclouds.util.Patterns.TOKEN_TO_PATTERN;
-import static org.jclouds.util.Patterns.URL_ENCODED_PATTERN;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -41,6 +38,9 @@ import java.util.regex.Pattern;
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Charsets;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Multimap;
 import com.google.common.io.CharStreams;
 import com.google.common.io.InputSupplier;
@@ -77,6 +77,21 @@ public class Strings2 {
          throw new IllegalStateException("error creating pattern: " + in, e);
       }
    }
+   
+   private static final LoadingCache<Character, String> CHAR_TO_ENCODED = CacheBuilder.newBuilder()
+         .<Character, String> build(new CacheLoader<Character, String>() {
+            @Override
+            public String load(Character plain) throws ExecutionException {
+               try {
+                  return URLEncoder.encode(plain + "", "UTF-8");
+               } catch (UnsupportedEncodingException e) {
+                  throw new ExecutionException("Bad encoding on input: " + plain, e);
+               }
+            }
+         });
+
+   private static final Pattern URL_ENCODED_PATTERN = Pattern.compile(".*%[a-fA-F0-9][a-fA-F0-9].*");
+
    public static boolean isUrlEncoded(String in) {
       return URL_ENCODED_PATTERN.matcher(in).matches();
    }
@@ -106,13 +121,6 @@ public class Strings2 {
       return returnVal;
    }
 
-   public static String replaceAll(String input, char ifMatch, Pattern pattern, String replacement) {
-      if (input.indexOf(ifMatch) != -1) {
-         input = pattern.matcher(input).replaceAll(replacement);
-      }
-      return input;
-   }
-
    public static String replaceAll(String input, char match, String replacement) {
       if (input.indexOf(match) != -1) {
          try {
@@ -124,6 +132,14 @@ public class Strings2 {
       return input;
    }
 
+   private static final LoadingCache<Character, Pattern> CHAR_TO_PATTERN = CacheBuilder.newBuilder()
+         .<Character, Pattern> build(new CacheLoader<Character, Pattern>() {
+            @Override
+            public Pattern load(Character plain) {
+               return Pattern.compile(plain + "");
+            }
+         });
+   
    public static String toString(InputSupplier<? extends InputStream> supplier)
          throws IOException {
       return CharStreams.toString(CharStreams.newReaderSupplier(supplier,
@@ -157,7 +173,7 @@ public class Strings2 {
     *           token/value pairs
     */
    public static String replaceTokens(String input, Map<String, String> replacements) {
-      Matcher matcher = Patterns.TOKEN_PATTERN.matcher(input);
+      Matcher matcher = TOKEN_PATTERN.matcher(input);
       StringBuilder builder = new StringBuilder();
       int i = 0;
       while (matcher.find()) {
@@ -172,6 +188,8 @@ public class Strings2 {
       builder.append(input.substring(i, input.length()));
       return builder.toString();
    }
+   
+   private static final Pattern TOKEN_PATTERN = Pattern.compile("\\{(.+?)\\}");
 
    public static String replaceTokens(String input, Multimap<String, ?> tokenValues) {
       for (Entry<String, ?> tokenValue : tokenValues.entries()) {

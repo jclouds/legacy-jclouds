@@ -25,7 +25,6 @@ import static org.jclouds.blobstore.options.GetOptions.Builder.ifETagMatches;
 import static org.jclouds.blobstore.options.GetOptions.Builder.ifModifiedSince;
 import static org.jclouds.blobstore.options.GetOptions.Builder.ifUnmodifiedSince;
 import static org.jclouds.blobstore.options.GetOptions.Builder.range;
-import static org.jclouds.blobstore.util.BlobStoreUtils.getContentAsStringOrNullAndClose;
 import static org.jclouds.concurrent.FutureIterables.awaitCompletion;
 import static org.jclouds.io.ByteSources.asByteSource;
 import static org.testng.Assert.assertEquals;

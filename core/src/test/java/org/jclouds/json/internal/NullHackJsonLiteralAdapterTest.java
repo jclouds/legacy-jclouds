@@ -17,14 +17,15 @@
  * under the License.
  */
 package org.jclouds.json.internal;
-
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.domain.JsonBall.JSON_BOOLEAN_PATTERN;
+import static org.jclouds.domain.JsonBall.JSON_NUMBER_PATTERN;
+import static org.jclouds.domain.JsonBall.JSON_STRING_PATTERN;
 import static org.testng.Assert.assertEquals;
 
 import java.lang.reflect.Type;
 import java.util.Map;
 
-import org.jclouds.util.Patterns;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Objects;
@@ -80,8 +81,8 @@ public class NullHackJsonLiteralAdapterTest {
       }
 
       static String quoteStringIfNotNumberOrBoolean(String in) {
-         if (Patterns.JSON_STRING_PATTERN.matcher(in).find() && !Patterns.JSON_NUMBER_PATTERN.matcher(in).find()
-                  && !Patterns.JSON_BOOLEAN_PATTERN.matcher(in).find()) {
+         if (JSON_STRING_PATTERN.matcher(in).find() && !JSON_NUMBER_PATTERN.matcher(in).find()
+               && !JSON_BOOLEAN_PATTERN.matcher(in).find()) {
             return "\"" + in + "\"";
          }
          return in;
