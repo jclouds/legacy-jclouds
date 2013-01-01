@@ -25,7 +25,6 @@ import static org.jclouds.savvis.vpdc.reference.VPDCConstants.PROPERTY_VPDC_TIME
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.apis.ApiMetadata;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
@@ -44,6 +43,7 @@ import com.google.inject.Module;
 public class VPDCApiMetadata extends BaseRestApiMetadata {
 
    public static final TypeToken<RestContext<VPDCApi, VPDCAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<VPDCApi, VPDCAsyncApi>>() {
+      private static final long serialVersionUID = 1L;
    };
    
    @Override
@@ -67,9 +67,7 @@ public class VPDCApiMetadata extends BaseRestApiMetadata {
       return properties;
    }
 
-   public static class Builder
-         extends
-         BaseRestApiMetadata.Builder {
+   public static class Builder extends BaseRestApiMetadata.Builder<Builder> {
 
       protected Builder() {
          super(VPDCApi.class, VPDCAsyncApi.class);
@@ -93,11 +91,8 @@ public class VPDCApiMetadata extends BaseRestApiMetadata {
       }
 
       @Override
-      public Builder fromApiMetadata(ApiMetadata in) {
-         super.fromApiMetadata(in);
+      protected Builder self() {
          return this;
       }
-
    }
-
 }

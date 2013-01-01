@@ -41,6 +41,7 @@ import com.google.common.reflect.TypeToken;
 public class CloudWatchApiMetadata extends BaseRestApiMetadata {
 
    public static final TypeToken<RestContext<CloudWatchApi, CloudWatchAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<CloudWatchApi, CloudWatchAsyncApi>>() {
+      private static final long serialVersionUID = 1L;
    };
 
    @Override
@@ -64,7 +65,7 @@ public class CloudWatchApiMetadata extends BaseRestApiMetadata {
       return properties;
    }
 
-   public static class Builder extends BaseRestApiMetadata.Builder {
+   public static class Builder extends BaseRestApiMetadata.Builder<Builder> {
 
       protected Builder(Class<?> api, Class<?> asyncApi) {
          super(api, asyncApi);
@@ -85,10 +86,8 @@ public class CloudWatchApiMetadata extends BaseRestApiMetadata {
       }
       
       @Override
-      public Builder fromApiMetadata(ApiMetadata in) {
-         super.fromApiMetadata(in);
+      protected Builder self() {
          return this;
       }
    }
-
 }

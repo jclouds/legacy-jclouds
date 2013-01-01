@@ -36,18 +36,18 @@ public class TransientApiMetadata extends BaseApiMetadata {
 
    @Override
    public Builder toBuilder() {
-      return Builder.class.cast(builder().fromApiMetadata(this));
+      return new Builder().fromApiMetadata(this);
    }
 
    public TransientApiMetadata() {
-      super(builder());
+      super(new Builder());
    }
 
    protected TransientApiMetadata(Builder builder) {
       super(builder);
    }
 
-   public static class Builder extends BaseApiMetadata.Builder {
+   public static class Builder extends BaseApiMetadata.Builder<Builder> {
 
       protected Builder() {
          id("transient")
@@ -67,6 +67,9 @@ public class TransientApiMetadata extends BaseApiMetadata {
          return new TransientApiMetadata(this);
       }
 
+      @Override
+      protected Builder self() {
+         return this;
+      }
    }
-
 }

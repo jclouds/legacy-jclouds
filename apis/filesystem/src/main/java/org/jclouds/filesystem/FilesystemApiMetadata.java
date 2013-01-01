@@ -31,24 +31,20 @@ import org.jclouds.filesystem.config.FilesystemBlobStoreContextModule;
  */
 public class FilesystemApiMetadata extends BaseApiMetadata {
 
-   public static Builder builder() {
-      return new Builder();
-   }
-
    @Override
    public Builder toBuilder() {
-      return Builder.class.cast(builder().fromApiMetadata(this));
+      return new Builder().fromApiMetadata(this);
    }
 
    public FilesystemApiMetadata() {
-      super(builder());
+      super(new Builder());
    }
 
    protected FilesystemApiMetadata(Builder builder) {
       super(builder);
    }
 
-   public static class Builder extends BaseApiMetadata.Builder {
+   public static class Builder extends BaseApiMetadata.Builder<Builder> {
 
       protected Builder() {
          id("filesystem")
@@ -68,6 +64,9 @@ public class FilesystemApiMetadata extends BaseApiMetadata {
          return new FilesystemApiMetadata(this);
       }
 
+      @Override
+      protected Builder self() {
+         return this;
+      }
    }
-
 }

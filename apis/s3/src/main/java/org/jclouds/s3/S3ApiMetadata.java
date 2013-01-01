@@ -66,18 +66,19 @@ import com.google.inject.Module;
 public class S3ApiMetadata extends BaseRestApiMetadata {
    
    public static final TypeToken<RestContext<? extends S3Client,? extends  S3AsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<? extends S3Client,? extends  S3AsyncClient>>() {
+      private static final long serialVersionUID = 1L;
    };
 
    @Override
-   public Builder toBuilder() {
-      return (Builder) new Builder(getApi(), getAsyncApi()).fromApiMetadata(this);
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromApiMetadata(this);
    }
 
    public S3ApiMetadata() {
-      this(new Builder(S3Client.class, S3AsyncClient.class));
+      this(new ConcreteBuilder());
    }
 
-   protected S3ApiMetadata(Builder builder) {
+   protected S3ApiMetadata(Builder<?> builder) {
       super(builder);
    }
 
@@ -100,7 +101,10 @@ public class S3ApiMetadata extends BaseRestApiMetadata {
       return properties;
    }
    
-   public static class Builder extends BaseRestApiMetadata.Builder {
+   public static abstract class Builder<T extends Builder<T>> extends BaseRestApiMetadata.Builder<T> {
+      protected Builder() {
+         this(S3Client.class, S3AsyncClient.class);
+      }
 
       protected Builder(Class<?> syncClient, Class<?> asyncClient){
          super(syncClient, asyncClient);
@@ -121,12 +125,12 @@ public class S3ApiMetadata extends BaseRestApiMetadata {
       public ApiMetadata build() {
          return new S3ApiMetadata(this);
       }
-
+   }
+   
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
       @Override
-      public Builder fromApiMetadata(ApiMetadata in) {
-         super.fromApiMetadata(in);
+      protected ConcreteBuilder self() {
          return this;
       }
    }
-
 }

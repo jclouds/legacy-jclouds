@@ -85,7 +85,7 @@ public class VirtualBoxApiMetadata extends BaseApiMetadata {
       return properties;
    }
 
-   public static class Builder extends BaseApiMetadata.Builder {
+   public static class Builder extends BaseApiMetadata.Builder<Builder> {
 
       protected Builder() {
          id("virtualbox")
@@ -110,11 +110,8 @@ public class VirtualBoxApiMetadata extends BaseApiMetadata {
       }
 
       @Override
-      public Builder fromApiMetadata(ApiMetadata in) {
-         super.fromApiMetadata(in);
+      protected Builder self() {
          return this;
       }
-
    }
-
 }

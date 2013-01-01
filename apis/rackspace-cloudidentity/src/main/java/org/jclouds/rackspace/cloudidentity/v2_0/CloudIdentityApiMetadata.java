@@ -47,19 +47,16 @@ import com.google.inject.Module;
 public class CloudIdentityApiMetadata extends KeystoneApiMetadata {
    
    public static final TypeToken<RestContext<KeystoneApi, KeystoneAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<KeystoneApi, KeystoneAsyncApi>>() {
+      private static final long serialVersionUID = 1L;
    };
-   
-   private static Builder builder() {
-      return new Builder();
-   }
 
    @Override
    public Builder toBuilder() {
-      return builder().fromApiMetadata(this);
+      return new Builder().fromApiMetadata(this);
    }
 
    public CloudIdentityApiMetadata() {
-      this(builder());
+      this(new Builder());
    }
 
    protected CloudIdentityApiMetadata(Builder builder) {
@@ -72,7 +69,7 @@ public class CloudIdentityApiMetadata extends KeystoneApiMetadata {
       return properties;
    }
 
-   public static class Builder extends KeystoneApiMetadata.Builder {
+   public static class Builder extends KeystoneApiMetadata.Builder<Builder> {
       protected Builder(){
          super(KeystoneApi.class, KeystoneAsyncApi.class);
          id("rackspace-cloudidentity")
@@ -97,10 +94,8 @@ public class CloudIdentityApiMetadata extends KeystoneApiMetadata {
       }
 
       @Override
-      public Builder fromApiMetadata(ApiMetadata in) {
-         super.fromApiMetadata(in);
+      protected Builder self() {
          return this;
       }
    }
-
 }

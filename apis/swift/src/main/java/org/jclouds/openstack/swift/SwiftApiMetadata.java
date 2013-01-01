@@ -47,19 +47,20 @@ import com.google.inject.Module;
  */
 public class SwiftApiMetadata extends BaseRestApiMetadata {
 
-   public static final TypeToken<RestContext<SwiftClient, SwiftAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<SwiftClient, SwiftAsyncClient>>() {
+   public static final TypeToken<RestContext<? extends SwiftClient, ? extends SwiftAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<? extends SwiftClient, ? extends SwiftAsyncClient>>() {
+      private static final long serialVersionUID = 1L;
    };
 
    @Override
-   public Builder toBuilder() {
-      return (Builder) new Builder(getApi(), getAsyncApi()).fromApiMetadata(this);
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromApiMetadata(this);
    }
 
    public SwiftApiMetadata() {
-      this(new Builder(SwiftClient.class, SwiftAsyncClient.class));
+      this(new ConcreteBuilder());
    }
 
-   protected SwiftApiMetadata(Builder builder) {
+   protected SwiftApiMetadata(Builder<?> builder) {
       super(builder);
    }
 
@@ -76,7 +77,11 @@ public class SwiftApiMetadata extends BaseRestApiMetadata {
       return properties;
    }
 
-   public static class Builder extends BaseRestApiMetadata.Builder {
+   public static abstract class Builder<T extends Builder<T>> extends BaseRestApiMetadata.Builder<T> {
+      protected Builder() {
+         this(SwiftClient.class, SwiftAsyncClient.class);
+      }
+      
       protected Builder(Class<?> syncClient, Class<?> asyncClient){
          super(syncClient, asyncClient);
          id("swift")
@@ -99,10 +104,11 @@ public class SwiftApiMetadata extends BaseRestApiMetadata {
       public SwiftApiMetadata build() {
          return new SwiftApiMetadata(this);
       }
-
+   }
+   
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
       @Override
-      public Builder fromApiMetadata(ApiMetadata in) {
-         super.fromApiMetadata(in);
+      protected ConcreteBuilder self() {
          return this;
       }
    }

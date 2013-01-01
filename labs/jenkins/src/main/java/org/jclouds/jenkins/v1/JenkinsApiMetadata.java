@@ -43,6 +43,7 @@ public class JenkinsApiMetadata extends BaseRestApiMetadata {
    public static final String ANONYMOUS_IDENTITY = "ANONYMOUS";
 
    public static final TypeToken<RestContext<JenkinsApi, JenkinsAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<JenkinsApi, JenkinsAsyncApi>>() {
+      private static final long serialVersionUID = 1L;
    };
 
    @Override
@@ -64,7 +65,7 @@ public class JenkinsApiMetadata extends BaseRestApiMetadata {
       return properties;
    }
 
-   public static class Builder extends BaseRestApiMetadata.Builder {
+   public static class Builder extends BaseRestApiMetadata.Builder<Builder> {
 
       protected Builder() {
          super(JenkinsApi.class, JenkinsAsyncApi.class);
@@ -87,11 +88,8 @@ public class JenkinsApiMetadata extends BaseRestApiMetadata {
       }
 
       @Override
-      public Builder fromApiMetadata(ApiMetadata in) {
-         super.fromApiMetadata(in);
+      protected Builder self() {
          return this;
       }
-
    }
-
 }

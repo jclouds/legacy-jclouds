@@ -55,7 +55,7 @@ public class BYONApiMetadata extends BaseApiMetadata {
       super(builder);
    }
 
-   public static class Builder extends BaseApiMetadata.Builder {
+   public static class Builder extends BaseApiMetadata.Builder<Builder> {
 
       protected Builder() {
          id("byon")
@@ -77,11 +77,8 @@ public class BYONApiMetadata extends BaseApiMetadata {
       }
 
       @Override
-      public Builder fromApiMetadata(ApiMetadata in) {
-         super.fromApiMetadata(in);
+      protected Builder self() {
          return this;
       }
-
    }
-
 }

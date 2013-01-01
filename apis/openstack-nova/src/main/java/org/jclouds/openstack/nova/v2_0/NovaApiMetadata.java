@@ -46,13 +46,14 @@ import com.google.common.reflect.TypeToken;
 import com.google.inject.Module;
 
 /**
- * Implementation of {@link ApiMetadata} for Nova 1.0 API
+ * Implementation of {@link ApiMetadata} for Nova 2.0 API
  * 
  * @author Adrian Cole
  */
 public class NovaApiMetadata extends BaseRestApiMetadata {
 
    public static final TypeToken<RestContext<NovaApi, NovaAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<NovaApi, NovaAsyncApi>>() {
+      private static final long serialVersionUID = 1L;
    };
 
    @Override
@@ -83,7 +84,7 @@ public class NovaApiMetadata extends BaseRestApiMetadata {
       return properties;
    }
 
-   public static class Builder extends BaseRestApiMetadata.Builder {
+   public static class Builder extends BaseRestApiMetadata.Builder<Builder> {
 
       protected Builder() {
          super(NovaApi.class, NovaAsyncApi.class);
@@ -111,11 +112,8 @@ public class NovaApiMetadata extends BaseRestApiMetadata {
       }
 
       @Override
-      public Builder fromApiMetadata(ApiMetadata in) {
-         super.fromApiMetadata(in);
+      protected Builder self() {
          return this;
       }
-
    }
-
 }

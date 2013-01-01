@@ -48,7 +48,7 @@ public class JcloudsTestYetAnotherComputeApiMetadata extends BaseRestApiMetadata
       super(builder);
    }
 
-   public static class Builder extends BaseRestApiMetadata.Builder  {
+   public static class Builder extends BaseRestApiMetadata.Builder<Builder>  {
 
       protected Builder(){
          super(IntegrationTestClient.class, IntegrationTestAsyncClient.class);
@@ -65,6 +65,9 @@ public class JcloudsTestYetAnotherComputeApiMetadata extends BaseRestApiMetadata
          return new JcloudsTestYetAnotherComputeApiMetadata(this);
       }
 
+      @Override
+      protected Builder self() {
+         return this;
+      }
    }
-
 }

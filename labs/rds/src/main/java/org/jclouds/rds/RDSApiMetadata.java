@@ -43,6 +43,7 @@ import com.google.inject.Module;
 public class RDSApiMetadata extends BaseRestApiMetadata {
    
    public static final TypeToken<RestContext<RDSApi, RDSAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<RDSApi, RDSAsyncApi>>() {
+      private static final long serialVersionUID = 1L;
    };
 
    @Override
@@ -66,7 +67,7 @@ public class RDSApiMetadata extends BaseRestApiMetadata {
       return properties;
    }
    
-   public static class Builder extends BaseRestApiMetadata.Builder {
+   public static class Builder extends BaseRestApiMetadata.Builder<Builder> {
 
       protected Builder(Class<?> api, Class<?> asyncApi) {
          super(api, asyncApi);
@@ -85,12 +86,10 @@ public class RDSApiMetadata extends BaseRestApiMetadata {
       public RDSApiMetadata build() {
          return new RDSApiMetadata(this);
       }
-      
+
       @Override
-      public Builder fromApiMetadata(ApiMetadata in) {
-         super.fromApiMetadata(in);
+      protected Builder self() {
          return this;
       }
    }
-
 }

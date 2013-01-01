@@ -26,7 +26,7 @@ import org.jclouds.rest.internal.BaseRestApiMetadata;
  */
 public abstract class TerremarkVCloudApiMetadata extends BaseRestApiMetadata {
 
-   protected TerremarkVCloudApiMetadata(Builder builder) {
+   protected TerremarkVCloudApiMetadata(Builder<?> builder) {
       super(builder);
    }
 
@@ -50,7 +50,7 @@ public abstract class TerremarkVCloudApiMetadata extends BaseRestApiMetadata {
       return properties;
    }
 
-   public abstract static class Builder extends BaseRestApiMetadata.Builder {
+   public abstract static class Builder<B extends Builder<B>> extends BaseRestApiMetadata.Builder<B> {
 
       protected Builder(Class<?> syncClient, Class<?> asyncClient) {
          super(syncClient, asyncClient);
@@ -60,13 +60,5 @@ public abstract class TerremarkVCloudApiMetadata extends BaseRestApiMetadata {
          .defaultProperties(TerremarkVCloudApiMetadata.defaultProperties())
          .view(ComputeServiceContext.class);
       }
-
-      @Override
-      public Builder fromApiMetadata(ApiMetadata in) {
-         super.fromApiMetadata(in);
-         return this;
-      }
-
    }
-
 }
