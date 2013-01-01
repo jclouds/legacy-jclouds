@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.vcloud.director.v1_5.functions;
+package org.jclouds.vcloud.director.v1_5.loaders;
 
 import java.net.URI;
 
@@ -28,11 +28,11 @@ import org.jclouds.vcloud.director.v1_5.annotations.Login;
 import org.jclouds.vcloud.director.v1_5.domain.SessionWithToken;
 import org.jclouds.vcloud.director.v1_5.login.SessionApi;
 
-import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.common.cache.CacheLoader;
 
 @Singleton
-public class LoginUserInOrgWithPassword implements Function<Credentials, SessionWithToken> {
+public class LoginUserInOrgWithPassword extends CacheLoader<Credentials, SessionWithToken> {
    private final SessionApi api;
    private final Supplier<URI> loginUrl;
 
@@ -43,11 +43,10 @@ public class LoginUserInOrgWithPassword implements Function<Credentials, Session
    }
 
    @Override
-   public SessionWithToken apply(Credentials input) {
+   public SessionWithToken load(Credentials input) {
       String user = input.identity.substring(0, input.identity.lastIndexOf('@'));
       String org = input.identity.substring(input.identity.lastIndexOf('@') + 1);
       String password = input.credential;
-
       return api.loginUserInOrgWithPassword(loginUrl.get(), user, org, password);
    }
 
