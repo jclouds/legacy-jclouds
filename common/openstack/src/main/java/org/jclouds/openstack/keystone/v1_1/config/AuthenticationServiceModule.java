@@ -28,7 +28,6 @@ import java.util.concurrent.TimeoutException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.concurrent.RetryOnTimeOutExceptionFunction;
 import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.annotation.ClientError;
@@ -43,14 +42,12 @@ import org.jclouds.openstack.keystone.v1_1.handlers.RetryOnRenew;
 import org.jclouds.openstack.keystone.v1_1.suppliers.RegionIdToURIFromAuthForServiceSupplier;
 import org.jclouds.openstack.keystone.v1_1.suppliers.V1DefaultRegionIdSupplier;
 
-import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import com.google.inject.TypeLiteral;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 /**
@@ -61,8 +58,6 @@ public class AuthenticationServiceModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      bind(new TypeLiteral<Function<Credentials, Auth>>() {
-      }).to(GetAuth.class);
       // ServiceClient is used directly for filters and retry handlers, so let's bind it explicitly
       bindClientAndAsyncClient(binder(), AuthenticationClient.class, AuthenticationAsyncClient.class);
       install(new FactoryModuleBuilder().implement(RegionIdToURISupplier.class,
@@ -88,30 +83,30 @@ public class AuthenticationServiceModule extends AbstractModule {
    }
 
    @Singleton
-   public static class GetAuth extends RetryOnTimeOutExceptionFunction<Credentials, Auth> {
+   public static class GetAuth extends CacheLoader<Credentials, Auth> {
+
+      private final AuthenticationClient client;
 
       @Inject
       public GetAuth(final AuthenticationClient client) {
-         super(new Function<Credentials, Auth>() {
+         this.client = client;
+      }
 
-            @Override
-            public Auth apply(Credentials input) {
-               return client.authenticate(input.identity, input.credential);
-            }
+      @Override
+      public Auth load(Credentials input) {
+         return client.authenticate(input.identity, input.credential);
+      }
 
-            @Override
-            public String toString() {
-               return "authenticate()";
-            }
-         });
-
+      @Override
+      public String toString() {
+         return "authenticate()";
       }
    }
 
    @Provides
    @Singleton
-   public LoadingCache<Credentials, Auth> provideAuthCache(Function<Credentials, Auth> getAuth) {
-      return CacheBuilder.newBuilder().expireAfterWrite(23, TimeUnit.HOURS).build(CacheLoader.from(getAuth));
+   protected LoadingCache<Credentials, Auth> provideAuthCache(GetAuth getAuth) {
+      return CacheBuilder.newBuilder().expireAfterWrite(23, TimeUnit.HOURS).build(getAuth);
    }
 
    @Provides

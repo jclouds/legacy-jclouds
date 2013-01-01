@@ -52,7 +52,7 @@ public class TestOpenStackAuthenticationModule extends OpenStackAuthenticationMo
       }
 
       @Override
-      public AuthenticationResponse apply(Credentials input) {
+      public AuthenticationResponse load(Credentials input) {
          return new AuthenticationResponse("authToken", ImmutableMap.<String, URI> of(
                   AuthHeaders.SERVER_MANAGEMENT_URL, URI.create("http://endpoint/vapi-version"),
                   AuthHeaders.STORAGE_URL, URI.create("http://storage")));

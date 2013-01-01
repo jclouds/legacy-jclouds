@@ -19,6 +19,7 @@
 package org.jclouds.vcloud.director.v1_5.config;
 
 import static com.google.common.base.Throwables.propagate;
+import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
 
 import java.net.URI;
@@ -26,8 +27,6 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.Constants;
-import org.jclouds.concurrent.RetryOnTimeOutExceptionFunction;
 import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpRetryHandler;
@@ -84,10 +83,10 @@ import org.jclouds.vcloud.director.v1_5.features.admin.GroupApi;
 import org.jclouds.vcloud.director.v1_5.features.admin.GroupAsyncApi;
 import org.jclouds.vcloud.director.v1_5.features.admin.UserApi;
 import org.jclouds.vcloud.director.v1_5.features.admin.UserAsyncApi;
-import org.jclouds.vcloud.director.v1_5.functions.LoginUserInOrgWithPassword;
-import org.jclouds.vcloud.director.v1_5.functions.href.ResolveEntity;
 import org.jclouds.vcloud.director.v1_5.handlers.InvalidateSessionAndRetryOn401AndLogoutOnClose;
 import org.jclouds.vcloud.director.v1_5.handlers.VCloudDirectorErrorHandler;
+import org.jclouds.vcloud.director.v1_5.loaders.LoginUserInOrgWithPassword;
+import org.jclouds.vcloud.director.v1_5.loaders.ResolveEntity;
 import org.jclouds.vcloud.director.v1_5.login.SessionApi;
 import org.jclouds.vcloud.director.v1_5.login.SessionAsyncApi;
 import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorApi;
@@ -96,7 +95,6 @@ import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorAsyncApi;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Provides;
@@ -211,36 +209,18 @@ public class VCloudDirectorRestClientModule extends RestClientModule<VCloudDirec
       }, in);
       
    }
-   
+
    @Provides
    @Singleton
-   protected Function<String, Entity> makeSureResolveEntityRetriesOnTimeout(ResolveEntity resolveEntity) {
-      // we should retry on timeout exception logging in.
-      return new RetryOnTimeOutExceptionFunction<String, Entity>(resolveEntity);
+   LoadingCache<String, Entity> resolveEntityCache(ResolveEntity loader, @Named(PROPERTY_SESSION_INTERVAL) int seconds) {
+      return CacheBuilder.newBuilder().expireAfterWrite(seconds, TimeUnit.SECONDS).build(loader);
    }
 
    @Provides
    @Singleton
-   public LoadingCache<String, Entity> resolveEntityCache(Function<String, Entity> getEntity,
-            @Named(Constants.PROPERTY_SESSION_INTERVAL) int seconds) {
-      return CacheBuilder.newBuilder().expireAfterWrite(seconds, TimeUnit.SECONDS).build(CacheLoader.from(getEntity));
-   }
-
-   @Provides
-   @Singleton
-   protected Function<Credentials, SessionWithToken> makeSureFilterRetriesOnTimeout(
-         LoginUserInOrgWithPassword loginWithPasswordCredentials) {
-      // we should retry on timeout exception logging in.
-      return new RetryOnTimeOutExceptionFunction<Credentials, SessionWithToken>(loginWithPasswordCredentials);
-   }
-   
-   @Provides
-   @Singleton
-   public LoadingCache<Credentials, SessionWithToken> provideSessionWithTokenCache(
-         Function<Credentials, SessionWithToken> getSessionWithToken,
-         @Named(Constants.PROPERTY_SESSION_INTERVAL) int seconds) {
-      return CacheBuilder.newBuilder().expireAfterWrite(seconds, TimeUnit.SECONDS).build(
-            CacheLoader.from(getSessionWithToken));
+   LoadingCache<Credentials, SessionWithToken> provideSessionWithTokenCache(LoginUserInOrgWithPassword loader,
+         @Named(PROPERTY_SESSION_INTERVAL) int seconds) {
+      return CacheBuilder.newBuilder().expireAfterWrite(seconds, TimeUnit.SECONDS).build(loader);
    }
    
    // Temporary conversion of a cache to a supplier until there is a single-element cache

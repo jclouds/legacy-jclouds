@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.vcloud.director.v1_5.functions.href;
+package org.jclouds.vcloud.director.v1_5.loaders;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -26,10 +26,10 @@ import javax.inject.Singleton;
 import org.jclouds.vcloud.director.v1_5.domain.Entity;
 import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorApi;
 
-import com.google.common.base.Function;
+import com.google.common.cache.CacheLoader;
 
 @Singleton
-public class ResolveEntity implements Function<String, Entity> {
+public class ResolveEntity extends CacheLoader<String, Entity> {
    private final VCloudDirectorApi api;
 
    @Inject
@@ -38,7 +38,7 @@ public class ResolveEntity implements Function<String, Entity> {
    }
 
    @Override
-   public Entity apply(String input) {
+   public Entity load(String input) {
       return api.resolveEntity(checkNotNull(input, "urn"));
    }
 

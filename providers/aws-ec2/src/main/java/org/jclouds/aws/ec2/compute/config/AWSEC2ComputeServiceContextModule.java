@@ -42,7 +42,6 @@ import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.extensions.ImageExtension;
 import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.concurrent.RetryOnTimeOutExceptionSupplier;
 import org.jclouds.ec2.compute.config.EC2BindComputeStrategiesByClass;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.functions.RunningInstanceToNodeMetadata;
@@ -147,12 +146,7 @@ public class AWSEC2ComputeServiceContextModule extends BaseComputeServiceContext
                   }
                }
             };
-            
-            // wrap in retry logic
-            Supplier<Image> retryingSupplier = new RetryOnTimeOutExceptionSupplier<Image>(
-                  new SetAndThrowAuthorizationExceptionSupplier<Image>(rawSupplier, authException));
-            
-            return retryingSupplier.get();
+            return new SetAndThrowAuthorizationExceptionSupplier<Image>(rawSupplier, authException).get();
          }
          
       });

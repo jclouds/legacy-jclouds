@@ -29,7 +29,6 @@ import java.util.concurrent.TimeoutException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.concurrent.RetryOnTimeOutExceptionFunction;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpRetryHandler;
@@ -42,14 +41,12 @@ import org.jclouds.openstack.internal.Authentication;
 import org.jclouds.openstack.internal.OpenStackAuthAsyncClient;
 import org.jclouds.openstack.internal.OpenStackAuthClient;
 
-import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import com.google.inject.TypeLiteral;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 /**
@@ -61,8 +58,6 @@ public class OpenStackAuthenticationModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      bind(new TypeLiteral<Function<Credentials, AuthenticationResponse>>() {
-      }).to(GetAuthenticationResponse.class);
       // OpenStackAuthClient is used directly for filters and retry handlers, so let's bind it explicitly
       bindClientAndAsyncClient(binder(), OpenStackAuthClient.class, OpenStackAuthAsyncClient.class);
       install(new FactoryModuleBuilder().build(URIFromAuthenticationResponseForService.Factory.class));
@@ -85,33 +80,31 @@ public class OpenStackAuthenticationModule extends AbstractModule {
    }
 
    @Singleton
-   public static class GetAuthenticationResponse extends
-            RetryOnTimeOutExceptionFunction<Credentials, AuthenticationResponse> {
+   public static class GetAuthenticationResponse extends CacheLoader<Credentials, AuthenticationResponse> {
+      private final OpenStackAuthClient client;
 
       @Inject
       public GetAuthenticationResponse(final OpenStackAuthClient client) {
-         super(new Function<Credentials, AuthenticationResponse>() {
-
-            @Override
-            public AuthenticationResponse apply(Credentials input) {
-               return client.authenticate(input.identity, input.credential);
-            }
-
-            @Override
-            public String toString() {
-               return "authenticate()";
-            }
-         });
-
+         this.client = client;
       }
+
+      @Override
+      public AuthenticationResponse load(Credentials input) {
+         return client.authenticate(input.identity, input.credential);
+      }
+
+      @Override
+      public String toString() {
+         return "authenticate()";
+      }
+
    }
 
    @Provides
    @Singleton
    public LoadingCache<Credentials, AuthenticationResponse> provideAuthenticationResponseCache(
-            Function<Credentials, AuthenticationResponse> getAuthenticationResponse) {
-      return CacheBuilder.newBuilder().expireAfterWrite(23, TimeUnit.HOURS).build(
-               CacheLoader.from(getAuthenticationResponse));
+         GetAuthenticationResponse getAuthenticationResponse) {
+      return CacheBuilder.newBuilder().expireAfterWrite(23, TimeUnit.HOURS).build(getAuthenticationResponse);
    }
 
    @Provides
