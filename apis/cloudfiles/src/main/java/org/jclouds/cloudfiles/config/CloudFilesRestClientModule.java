@@ -18,9 +18,8 @@
  */
 package org.jclouds.cloudfiles.config;
 
-import static org.jclouds.util.Suppliers2.valueForKey;
-
 import java.net.URI;
+import java.util.Map;
 
 import javax.inject.Singleton;
 
@@ -36,6 +35,7 @@ import org.jclouds.openstack.swift.Storage;
 import org.jclouds.openstack.swift.config.SwiftRestClientModule;
 import org.jclouds.rest.ConfiguresRestClient;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.reflect.TypeToken;
@@ -77,6 +77,28 @@ public class CloudFilesRestClientModule extends SwiftRestClientModule<CloudFiles
          return valueForKey(factory.createForApiTypeAndVersion("cloudFiles", null),
                   defaultRegion.createForApiType("cloudFiles"));
       }
+
+   }
+   
+   /**
+    * Supplies a value that corresponds to a particular key in a map, or null, if not found
+    */
+   @VisibleForTesting
+   static <K, V> Supplier<V> valueForKey(final Supplier<Map<K, Supplier<V>>> input, final Supplier<K> key) {
+      return new Supplier<V>() {
+
+         @Override
+         public V get() {
+            K keyToFind = key.get();
+            Supplier<V> value = input.get().get(keyToFind);
+            return value != null ? value.get() : null;
+         }
+
+         @Override
+         public String toString() {
+            return "withKey()";
+         }
+      };
    }
 
 }

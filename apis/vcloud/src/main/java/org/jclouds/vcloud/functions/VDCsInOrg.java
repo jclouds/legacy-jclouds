@@ -30,7 +30,6 @@ import javax.inject.Singleton;
 
 import org.jclouds.Constants;
 import org.jclouds.logging.Logger;
-import org.jclouds.util.Iterables2;
 import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.ReferenceType;
@@ -57,16 +56,13 @@ public class VDCsInOrg implements Function<Org, Iterable<VDC>> {
 
    @Override
    public Iterable<VDC> apply(final Org org) {
+      return transformParallel(org.getVDCs().values(), new Function<ReferenceType, Future<? extends VDC>>() {
+         @Override
+         public Future<? extends VDC> apply(ReferenceType from) {
+            return aclient.getVDCClient().getVDC(from.getHref());
+         }
 
-      Iterable<VDC> catalogItems = transformParallel(org.getVDCs().values(),
-            new Function<ReferenceType, Future<? extends VDC>>() {
-               @Override
-               public Future<? extends VDC> apply(ReferenceType from) {
-                  return  aclient.getVDCClient().getVDC(from.getHref());
-               }
-
-            }, executor, null, logger, "vdcs in org " + org.getName());
-      return Iterables2.concreteCopy(catalogItems);
+      }, executor, null, logger, "vdcs in org " + org.getName());
    }
 
 }

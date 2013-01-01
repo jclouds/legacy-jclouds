@@ -35,19 +35,4 @@ public class Predicates2 {
          }
       };
    }
-
-   /** Returns a predicate that evaluates to true if the String being tested ends with a prefix. */
-   public static Predicate<String> endsWith(final String suffix) {
-      return new Predicate<String>() {
-         @Override
-         public boolean apply(final String input) {
-             return input.endsWith(suffix);
-         }
-
-         @Override
-         public String toString() {
-            return "endsWith(" + suffix + ")";
-         }
-      };
-   }
 }

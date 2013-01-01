@@ -25,11 +25,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Map;
 import java.util.Set;
 
-import org.jclouds.util.Multimaps2;
-
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 
 /**
@@ -91,10 +90,36 @@ public class Auth implements Comparable<Auth> {
 
    public Auth(Token token, Multimap<String, Endpoint> serviceCatalog) {
       this.token = checkNotNull(token, "token");
-      this.serviceCatalog = Multimaps2.toOldSchool(ImmutableMultimap.copyOf(checkNotNull(serviceCatalog,
-            "serviceCatalog")));
+      this.serviceCatalog = toOldSchool(ImmutableMultimap.copyOf(checkNotNull(serviceCatalog, "serviceCatalog")));
    }
 
+   /**
+    * The traditional way to represent a graph in Java is Map<V, Set<V>>, which is awkward in a number of ways. Guava's
+    * Multimap framework makes it easy to handle a mapping from keys to multiple values.
+    * <p/>
+    * Until we write or discover a gson Multimap deserializer, we may be stuck with this.
+    * 
+    * TODO: ask on stackoverflow and/or jesse wilson
+    */
+   @Deprecated
+   private static <K, V> Map<K, Set<V>> toOldSchool(Multimap<K, V> in) {
+      ImmutableMap.Builder<K, Set<V>> out = ImmutableMap.builder();
+      for (K type : in.keySet())
+         out.put(type, ImmutableSet.copyOf(in.get(type)));
+      return out.build();
+   }
+
+   /**
+    * @see #toOldSchool
+    */
+   @Deprecated
+   private static <K, V> ImmutableMultimap<K, V> fromOldSchool(Map<K, Set<V>> in) {
+      ImmutableMultimap.Builder<K, V> out = ImmutableMultimap.builder();
+      for (K type : in.keySet())
+         out.putAll(type, ImmutableSet.copyOf(in.get(type)));
+      return out.build();
+   }
+   
    /**
     * TODO
     */
@@ -106,7 +131,7 @@ public class Auth implements Comparable<Auth> {
     * TODO
     */
    public Multimap<String, Endpoint> getServiceCatalog() {
-      return Multimaps2.fromOldSchool(serviceCatalog);
+      return fromOldSchool(serviceCatalog);
    }
 
    @Override

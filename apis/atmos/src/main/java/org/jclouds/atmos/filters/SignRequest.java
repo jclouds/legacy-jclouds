@@ -23,10 +23,10 @@ import static com.google.common.io.ByteStreams.readBytes;
 import static org.jclouds.Constants.LOGGER_SIGNATURE;
 import static org.jclouds.crypto.Macs.asByteProcessor;
 import static org.jclouds.util.Patterns.NEWLINE_PATTERN;
-import static org.jclouds.util.Patterns.TWO_SPACE_PATTERN;
 import static org.jclouds.util.Strings2.toInputStream;
 
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -140,6 +140,8 @@ public class SignRequest implements HttpRequestFilter {
    private void appendMethod(HttpRequest request, StringBuilder toSign) {
       toSign.append(request.getMethod()).append("\n");
    }
+   
+   private static final Pattern TWO_SPACE_PATTERN = Pattern.compile("  ");
 
    private void appendCanonicalizedHeaders(HttpRequest request, StringBuilder toSign) {
       // TreeSet == Sort the headers alphabetically.

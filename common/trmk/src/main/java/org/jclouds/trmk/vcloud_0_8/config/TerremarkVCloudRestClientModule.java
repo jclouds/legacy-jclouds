@@ -82,12 +82,12 @@ import org.jclouds.trmk.vcloud_0_8.location.DefaultVDC;
 import org.jclouds.trmk.vcloud_0_8.location.OrgAndVDCToLocationSupplier;
 import org.jclouds.trmk.vcloud_0_8.predicates.TaskSuccess;
 import org.jclouds.util.Strings2;
-import org.jclouds.util.Suppliers2;
 
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Maps;
@@ -143,7 +143,7 @@ public class TerremarkVCloudRestClientModule<S, A> extends RestClientModule<S, A
    @org.jclouds.trmk.vcloud_0_8.endpoints.VDC
    protected Supplier<Map<String, String>> provideVDCtoORG(
          Supplier<Map<String, ? extends org.jclouds.trmk.vcloud_0_8.domain.Org>> orgNameToOrgSupplier) {
-      return Suppliers2.compose(
+      return Suppliers.compose(
             new Function<Map<String, ? extends org.jclouds.trmk.vcloud_0_8.domain.Org>, Map<String, String>>() {
 
                @Override
@@ -173,7 +173,7 @@ public class TerremarkVCloudRestClientModule<S, A> extends RestClientModule<S, A
    @Singleton
    @OrgList
    protected Supplier<URI> provideOrgListURI(Supplier<VCloudSession> sessionSupplier) {
-      return Suppliers2.compose(new Function<VCloudSession, URI>() {
+      return Suppliers.compose(new Function<VCloudSession, URI>() {
 
          @Override
          public URI apply(VCloudSession arg0) {
@@ -352,7 +352,7 @@ public class TerremarkVCloudRestClientModule<S, A> extends RestClientModule<S, A
    protected Supplier<org.jclouds.trmk.vcloud_0_8.domain.Org> provideOrg(
          final Supplier<Map<String, ? extends org.jclouds.trmk.vcloud_0_8.domain.Org>> orgSupplier,
          @org.jclouds.trmk.vcloud_0_8.endpoints.Org Supplier<ReferenceType> defaultOrg) {
-      return Suppliers2.compose(new Function<ReferenceType, org.jclouds.trmk.vcloud_0_8.domain.Org>() {
+      return Suppliers.compose(new Function<ReferenceType, org.jclouds.trmk.vcloud_0_8.domain.Org>() {
 
          @Override
          public org.jclouds.trmk.vcloud_0_8.domain.Org apply(ReferenceType input) {

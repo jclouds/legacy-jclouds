@@ -32,6 +32,8 @@ import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.jclouds.compute.util.ComputeServiceUtils.getCoresAndSpeed;
 import static org.jclouds.compute.util.ComputeServiceUtils.getSpace;
 
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -55,7 +57,6 @@ import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
-import org.jclouds.util.Lists2;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
@@ -800,7 +801,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
          Iterable<? extends Image> matchingImages = filter(supportedImages, imagePredicate);
          if (logger.isTraceEnabled())
             logger.trace("<<   matched images(%s)", transform(matchingImages, imageToId));
-         List<? extends Image> maxImages = Lists2.multiMax(DEFAULT_IMAGE_ORDERING, matchingImages);
+         List<? extends Image> maxImages = multiMax(DEFAULT_IMAGE_ORDERING, matchingImages);
          if (logger.isTraceEnabled())
             logger.trace("<<   best images(%s)", transform(maxImages, imageToId));
          return maxImages.get(maxImages.size() - 1);
@@ -811,7 +812,28 @@ public class TemplateBuilderImpl implements TemplateBuilder {
          return null;
       }
    }
-
+   
+   /**
+    * Like Ordering, but handle the case where there are multiple valid maximums
+    */
+   @SuppressWarnings("unchecked")
+   @VisibleForTesting
+   static <T, E extends T> List<E> multiMax(Comparator<T> ordering, Iterable<E> iterable) {
+      Iterator<E> iterator = iterable.iterator();
+      List<E> maxes = newArrayList(iterator.next());
+      E maxSoFar = maxes.get(0);
+      while (iterator.hasNext()) {
+         E current = iterator.next();
+         int comparison = ordering.compare(maxSoFar, current);
+         if (comparison == 0) {
+            maxes.add(current);
+         } else if (comparison < 0) {
+            maxes = newArrayList(current);
+            maxSoFar = current;
+         }
+      }
+      return maxes;
+   }
    protected Set<? extends Image> getImages() {
       return images.get();
    }

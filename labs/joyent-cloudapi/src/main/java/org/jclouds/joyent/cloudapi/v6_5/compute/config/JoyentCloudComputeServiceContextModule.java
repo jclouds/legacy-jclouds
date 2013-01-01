@@ -54,16 +54,16 @@ import org.jclouds.joyent.cloudapi.v6_5.domain.datacenterscoped.DatacenterAndNam
 import org.jclouds.joyent.cloudapi.v6_5.domain.datacenterscoped.DatasetInDatacenter;
 import org.jclouds.joyent.cloudapi.v6_5.domain.datacenterscoped.MachineInDatacenter;
 import org.jclouds.joyent.cloudapi.v6_5.domain.datacenterscoped.PackageInDatacenter;
-import org.jclouds.util.Iterables2;
-import org.jclouds.util.Suppliers2;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.inject.Injector;
@@ -134,11 +134,11 @@ public class JoyentCloudComputeServiceContextModule extends
    @Singleton
    protected Supplier<Map<String, Location>> createLocationIndexedById(
          @Memoized Supplier<Set<? extends Location>> locations) {
-      return Suppliers2.compose(new Function<Set<? extends Location>, Map<String, Location>>() {
+      return Suppliers.compose(new Function<Set<? extends Location>, Map<String, Location>>() {
 
          @Override
          public Map<String, Location> apply(Set<? extends Location> arg0) {
-            return Maps.uniqueIndex(Iterables2.concreteCopy(arg0), new Function<Location, String>() {
+            return Maps.uniqueIndex(ImmutableSet.<Location> copyOf(arg0), new Function<Location, String>() {
 
                @Override
                public String apply(Location arg0) {

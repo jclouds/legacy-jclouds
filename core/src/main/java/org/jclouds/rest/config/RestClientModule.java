@@ -18,10 +18,13 @@
  */
 package org.jclouds.rest.config;
 
+import static com.google.common.base.Preconditions.checkState;
+import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
+
+import java.lang.reflect.TypeVariable;
 import java.util.Map;
-import static org.jclouds.rest.config.BinderUtils.*;
+
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.util.TypeTokens2;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.reflect.TypeToken;
@@ -41,14 +44,22 @@ public class RestClientModule<S, A> extends RestModule {
     */
    protected RestClientModule(Map<Class<?>, Class<?>> sync2Async) {
       super(sync2Async);
-      this.syncClientType = TypeTokens2.checkBound(new TypeToken<S>(getClass()) {
+      this.syncClientType = checkBound(new TypeToken<S>(getClass()) {
          private static final long serialVersionUID = 1L;
       });
-      this.asyncClientType = TypeTokens2.checkBound(new TypeToken<A>(getClass()) {
+      this.asyncClientType = checkBound(new TypeToken<A>(getClass()) {
          private static final long serialVersionUID = 1L;
       });
    }
-
+   
+   /**
+    * @throws IllegalStateException if the type is an instanceof {@link TypeVariable}
+    */
+   private static <T> TypeToken<T> checkBound(TypeToken<T> type) throws IllegalStateException {
+      checkState(!(type.getType() instanceof TypeVariable<?>),
+               "unbound type variable: %s, use ctor that explicitly assigns this", type);
+      return type;
+   }
    /**
     * @see #RestClientModule(Map)
     */
@@ -68,8 +79,8 @@ public class RestClientModule<S, A> extends RestModule {
     */
    public RestClientModule(TypeToken<S> syncClientType, TypeToken<A> asyncClientType, Map<Class<?>, Class<?>> sync2Async) {
       super(sync2Async);
-      this.syncClientType = TypeTokens2.checkBound(syncClientType);
-      this.asyncClientType = TypeTokens2.checkBound(asyncClientType);
+      this.syncClientType = checkBound(syncClientType);
+      this.asyncClientType = checkBound(asyncClientType);
    }
 
    @Override

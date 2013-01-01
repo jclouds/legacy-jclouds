@@ -30,7 +30,6 @@ import javax.inject.Singleton;
 
 import org.jclouds.Constants;
 import org.jclouds.logging.Logger;
-import org.jclouds.util.Iterables2;
 import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.Org;
@@ -57,14 +56,11 @@ public class CatalogsInOrg implements Function<Org, Iterable<Catalog>> {
 
    @Override
    public Iterable<Catalog> apply(final Org org) {
-      Iterable<? extends Catalog> catalogs = transformParallel(org.getCatalogs().values(),
-            new Function<ReferenceType, Future<? extends Catalog>>() {
-               @Override
-               public Future<Catalog> apply(ReferenceType from) {
-                  return aclient.getCatalogClient().getCatalog(from.getHref());
-               }
-
-            }, executor, null, logger, "catalogs in " + org.getName());
-      return Iterables2.concreteCopy(catalogs);
+      return transformParallel(org.getCatalogs().values(), new Function<ReferenceType, Future<? extends Catalog>>() {
+         @Override
+         public Future<Catalog> apply(ReferenceType from) {
+            return aclient.getCatalogClient().getCatalog(from.getHref());
+         }
+      }, executor, null, logger, "catalogs in " + org.getName());
    }
 }

@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.util;
+package org.jclouds.cloudfiles.config;
 
 import static org.testng.Assert.assertEquals;
 
@@ -24,24 +24,25 @@ import java.util.Map;
 
 import org.testng.annotations.Test;
 
-import com.google.common.base.Function;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
 
-/**
- * @author Adrian Cole
- */
-@Test(groups = "unit")
-public class Maps2Test {
+public class CloudFilesRestClientModuleTest {
 
-   public void testTransformKeys() {
-      Map<String, String> map = ImmutableMap.of("prefix:foo", "bar");
-      assertEquals(Maps2.transformKeys(map, new Function<String, String>() {
+   @Test
+   public void testWithKey() {
+      assertEquals(
+            CloudFilesRestClientModule.<String, String> valueForKey(
+                  Suppliers.<Map<String, Supplier<String>>> ofInstance(ImmutableMap.of("foo",
+                        Suppliers.ofInstance("bar"))), Suppliers.ofInstance("foo")).get(), "bar");
+   }
 
-         @Override
-         public String apply(String arg0) {
-            return arg0.replace("prefix:", "");
-         }
-
-      }), ImmutableMap.of("foo", "bar"));
+   @Test
+   public void testWithKeyUnmatchedIsNull() {
+      assertEquals(
+            CloudFilesRestClientModule.<String, String> valueForKey(
+                  Suppliers.<Map<String, Supplier<String>>> ofInstance(ImmutableMap.of("boo",
+                        Suppliers.ofInstance("bar"))), Suppliers.ofInstance("foo")).get(), null);
    }
 }

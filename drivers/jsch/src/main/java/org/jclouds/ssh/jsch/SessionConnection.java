@@ -19,12 +19,10 @@
 package org.jclouds.ssh.jsch;
 
 import static com.google.common.base.Objects.equal;
-
-import java.util.Arrays;
+import static com.google.common.base.Preconditions.checkArgument;
 
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ssh.jsch.JschSshClient.Connection;
-import org.jclouds.util.CredentialUtils;
 
 import com.google.common.base.Objects;
 import com.google.common.net.HostAndPort;
@@ -120,13 +118,10 @@ public class SessionConnection implements Connection<Session> {
       if (loginCredentials.getPrivateKey() == null) {
          session.setPassword(loginCredentials.getPassword());
       } else {
+         checkArgument(!loginCredentials.getPrivateKey().contains("Proc-Type: 4,ENCRYPTED"),
+               "JschSshClientModule does not support private keys that require a passphrase");
          byte[] privateKey = loginCredentials.getPrivateKey().getBytes();
-         if (CredentialUtils.isPrivateKeyEncrypted(privateKey)) {
-            throw new IllegalArgumentException(
-                     "JschSshClientModule does not support private keys that require a passphrase");
-         }
-         jsch.addIdentity(loginCredentials.getUser(), Arrays.copyOf(privateKey, privateKey.length), null,
-                  emptyPassPhrase);
+         jsch.addIdentity(loginCredentials.getUser(), privateKey, null, emptyPassPhrase);
       }
       java.util.Properties config = new java.util.Properties();
       config.put("StrictHostKeyChecking", "no");

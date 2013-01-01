@@ -20,16 +20,13 @@ package org.jclouds.util;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableMultimap.Builder;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 
@@ -38,34 +35,6 @@ import com.google.common.collect.Multimaps;
  * @author Adrian Cole
  */
 public class Multimaps2 {
-
-   /**
-    * The traditional way to represent a graph in Java is Map<V, Set<V>>, which is awkward in a
-    * number of ways. Guava's Multimap framework makes it easy to handle a mapping from keys to
-    * multiple values.
-    * <p/>
-    * Until we write or discover a gson Multimap deserializer, we may be stuck with this.
-    * 
-    * TODO: ask on stackoverflow and/or jesse wilson
-    */
-   @Deprecated
-   public static <K, V> Map<K, Set<V>> toOldSchool(Multimap<K, V> in) {
-      ImmutableMap.Builder<K, Set<V>> out = ImmutableMap.builder();
-      for (K type : in.keySet())
-         out.put(type, ImmutableSet.copyOf(in.get(type)));
-      return out.build();
-   }
-
-   /**
-    * @see #toOldSchool
-    */
-   @Deprecated
-   public static <K, V> ImmutableMultimap<K, V> fromOldSchool(Map<K, Set<V>> in) {
-      Builder<K, V> out = ImmutableMultimap.builder();
-      for (K type : in.keySet())
-         out.putAll(type, ImmutableSet.copyOf(in.get(type)));
-      return out.build();
-   }
 
    public static <K, V> Multimap<K, V> replaceValue(Multimap<K, V> fromMultimap, final K key, final V value) {
       checkNotNull(fromMultimap, "input multimap");

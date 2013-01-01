@@ -24,8 +24,6 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.jclouds.blobstore.util.BlobStoreUtils.createParentIfNeededAsync;
 import static org.jclouds.blobstore.util.BlobStoreUtils.getNameFor;
-import static org.jclouds.blobstore.util.BlobStoreUtils.parseContainerFromPath;
-import static org.jclouds.blobstore.util.BlobStoreUtils.parsePrefixFromPath;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
@@ -147,24 +145,6 @@ public class BlobStoreUtilsTest {
       replay(request);
 
       assertEquals(getNameFor(request), "four");
-   }
-
-   public void testGetContainer() {
-      String container = parseContainerFromPath("foo");
-      assertEquals(container, "foo");
-      container = parseContainerFromPath("foo/");
-      assertEquals(container, "foo");
-      container = parseContainerFromPath("foo/bar");
-      assertEquals(container, "foo");
-   }
-
-   public void testGetPrefix() {
-      String prefix = parsePrefixFromPath("foo");
-      assertEquals(prefix, null);
-      prefix = parsePrefixFromPath("foo/");
-      assertEquals(prefix, null);
-      prefix = parsePrefixFromPath("foo/bar");
-      assertEquals(prefix, "bar");
    }
 
 }

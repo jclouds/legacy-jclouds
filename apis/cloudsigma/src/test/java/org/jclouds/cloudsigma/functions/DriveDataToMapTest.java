@@ -21,6 +21,7 @@ package org.jclouds.cloudsigma.functions;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.jclouds.cloudsigma.domain.ClaimType;
 import org.jclouds.cloudsigma.domain.DriveData;
@@ -36,6 +37,16 @@ import com.google.inject.Guice;
  */
 @Test(groups = { "unit" })
 public class DriveDataToMapTest {
+   
+   public void testRenameKeyWhenNotFound() {
+      Map<String, String> nothing = ImmutableMap.of();
+      assertEquals(DriveDataToMap.renameKey(nothing, "foo", "bar"), nothing);
+   }
+
+   public void testRenameKeyWhenFound() {
+      Map<String, String> nothing = ImmutableMap.of("foo", "bar");
+      assertEquals(DriveDataToMap.renameKey(nothing, "foo", "bar"), ImmutableMap.of("bar", "bar"));
+   }
 
    private static final DriveDataToMap BASEDRIVE_TO_MAP = Guice.createInjector().getInstance(DriveDataToMap.class);
 

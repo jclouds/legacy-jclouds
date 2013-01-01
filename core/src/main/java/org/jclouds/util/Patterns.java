@@ -18,9 +18,6 @@
  */
 package org.jclouds.util;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 import com.google.common.cache.CacheBuilder;
@@ -32,52 +29,8 @@ import com.google.common.cache.LoadingCache;
  * @author Adrian Cole
  */
 public class Patterns {
-   public static final Pattern TOKEN_PATTERN = Pattern.compile("\\{(.+?)\\}");
-   public static final Pattern TWO_SPACE_PATTERN = Pattern.compile("  ");
-   public static final Pattern URL_ENCODED_PATTERN = Pattern.compile(".*%[a-fA-F0-9][a-fA-F0-9].*");
-   public static final Pattern URI_PATTERN = Pattern.compile("([a-z0-9]+)://([^:]*):(.*)@(.*)");
-   public static final Pattern PATTERN_THAT_BREAKS_URI = Pattern.compile("[a-z0-9]+://.*/.*@.*");
-   public static final Pattern JSON_STRING_PATTERN = Pattern.compile("^[^\"\\{\\[].*[^\\{\\[\"]$");
-   public static final Pattern JSON_NUMBER_PATTERN = Pattern.compile("^[0-9]*\\.?[0-9]*$");
-   public static final Pattern JSON_BOOLEAN_PATTERN = Pattern.compile("^(true|false)$");
-   public static final Pattern PLUS_PATTERN = Pattern.compile("\\+");
-   public static final Pattern STAR_PATTERN = Pattern.compile("\\*");
-   public static final Pattern _7E_PATTERN = Pattern.compile("%7E");
+
    public static final Pattern NEWLINE_PATTERN = Pattern.compile("\r?\n");
-   public static final Pattern SLASH_PATTERN = Pattern.compile("[/]");
-   public static final Pattern IP_PATTERN = Pattern.compile("b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).)"
-         + "{3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)b");
-   public static final Pattern LEADING_SLASHES = Pattern.compile("^[/]+");
-   public static final Pattern TRAILING_SLASHES = Pattern.compile("[/]*$");
-   public static final Pattern REST_CONTEXT_BUILDER = Pattern.compile("(.*ContextBuilder)<([^,]+), ?([^>]+)>");
-
-   public static final LoadingCache<Character, String> CHAR_TO_ENCODED = CacheBuilder.newBuilder()
-         .<Character, String> build(new CacheLoader<Character, String>() {
-            @Override
-            public String load(Character plain) throws ExecutionException {
-               try {
-                  return URLEncoder.encode(plain + "", "UTF-8");
-               } catch (UnsupportedEncodingException e) {
-                  throw new ExecutionException("Bad encoding on input: " + plain, e);
-               }
-            }
-         });
-   
-   public static final LoadingCache<Character, Pattern> CHAR_TO_ENCODED_PATTERN = CacheBuilder.newBuilder()
-         .<Character, Pattern> build(new CacheLoader<Character, Pattern>() {
-            @Override
-            public Pattern load(Character plain) throws ExecutionException {
-               return Pattern.compile(CHAR_TO_ENCODED.get(plain));
-            }
-         });
-
-   public static final LoadingCache<Character, Pattern> CHAR_TO_PATTERN = CacheBuilder.newBuilder()
-         .<Character, Pattern> build(new CacheLoader<Character, Pattern>() {
-            @Override
-            public Pattern load(Character plain) {
-               return Pattern.compile(plain + "");
-            }
-         });
 
    public static final LoadingCache<String, Pattern> TOKEN_TO_PATTERN = CacheBuilder.newBuilder()
          .<String, Pattern> build(new CacheLoader<String, Pattern>() {

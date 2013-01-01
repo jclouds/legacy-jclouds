@@ -31,7 +31,6 @@ import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Location;
 import org.jclouds.functions.IdentityFunction;
-import org.jclouds.util.Suppliers2;
 import org.jclouds.vcloud.compute.functions.HardwareForVApp;
 import org.jclouds.vcloud.compute.functions.HardwareForVAppTemplate;
 import org.jclouds.vcloud.compute.functions.ImageForVAppTemplate;
@@ -52,6 +51,7 @@ import org.jclouds.vcloud.functions.VAppTemplatesInOrg;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -143,7 +143,7 @@ public class VCloudComputeServiceDependenciesModule extends AbstractModule {
    @Singleton
    public Supplier<NetworkConfig> networkConfig(@Network Supplier<ReferenceType> network,
          final FenceMode defaultFenceMode) {
-      return Suppliers2.compose(new Function<ReferenceType, NetworkConfig>() {
+      return Suppliers.compose(new Function<ReferenceType, NetworkConfig>() {
 
          @Override
          public NetworkConfig apply(ReferenceType input) {
