@@ -28,13 +28,12 @@ import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
-import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Location;
 import org.jclouds.softlayer.SoftLayerClient;
-import org.jclouds.softlayer.compute.functions.VirtualGuestToNodeMetadata.FindLocationForVirtualGuest;
 import org.jclouds.softlayer.domain.VirtualGuest;
 import org.jclouds.softlayer.parse.ParseBadVirtualGuest;
 import org.jclouds.softlayer.parse.ParseVirtualGuestHaltedTest;
@@ -67,8 +66,8 @@ public class VirtualGuestToNodeMetadataTest {
       Supplier<Set<? extends Location>> locationSupplier = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
             .<Location> of(expectedLocation));
 
-      VirtualGuestToNodeMetadata parser = new VirtualGuestToNodeMetadata(new FindLocationForVirtualGuest(
-            locationSupplier), new GetHardwareForVirtualGuestMock(), new GetImageForVirtualGuestMock(), namingConvention);
+      VirtualGuestToNodeMetadata parser = new VirtualGuestToNodeMetadata(
+            locationSupplier, new GetHardwareForVirtualGuestMock(), new GetImageForVirtualGuestMock(), namingConvention);
 
       NodeMetadata node = parser.apply(guest);
 
@@ -94,8 +93,8 @@ public class VirtualGuestToNodeMetadataTest {
       Supplier<Set<? extends Location>> locationSupplier = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
             .<Location> of());
 
-      VirtualGuestToNodeMetadata parser = new VirtualGuestToNodeMetadata(new FindLocationForVirtualGuest(
-            locationSupplier), new GetHardwareForVirtualGuestMock(), new GetImageForVirtualGuestMock(), namingConvention);
+      VirtualGuestToNodeMetadata parser = new VirtualGuestToNodeMetadata(locationSupplier,
+            new GetHardwareForVirtualGuestMock(), new GetImageForVirtualGuestMock(), namingConvention);
 
       NodeMetadata node = parser.apply(guest);
 
@@ -119,8 +118,8 @@ public class VirtualGuestToNodeMetadataTest {
       Supplier<Set<? extends Location>> locationSupplier = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
             .<Location> of(expectedLocation));
 
-      VirtualGuestToNodeMetadata parser = new VirtualGuestToNodeMetadata(new FindLocationForVirtualGuest(
-            locationSupplier), new GetHardwareForVirtualGuestMock(), new GetImageForVirtualGuestMock(), namingConvention);
+      VirtualGuestToNodeMetadata parser = new VirtualGuestToNodeMetadata(locationSupplier,
+            new GetHardwareForVirtualGuestMock(), new GetImageForVirtualGuestMock(), namingConvention);
 
       NodeMetadata node = parser.apply(guest);
 
@@ -147,8 +146,8 @@ public class VirtualGuestToNodeMetadataTest {
       Supplier<Set<? extends Location>> locationSupplier = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
             .<Location> of(expectedLocation));
 
-      VirtualGuestToNodeMetadata parser = new VirtualGuestToNodeMetadata(new FindLocationForVirtualGuest(
-            locationSupplier), new GetHardwareForVirtualGuestMock(), new GetImageForVirtualGuestMock(), namingConvention);
+      VirtualGuestToNodeMetadata parser = new VirtualGuestToNodeMetadata(locationSupplier,
+            new GetHardwareForVirtualGuestMock(), new GetImageForVirtualGuestMock(), namingConvention);
 
       NodeMetadata node = parser.apply(guest);
 
@@ -175,8 +174,8 @@ public class VirtualGuestToNodeMetadataTest {
       Supplier<Set<? extends Location>> locationSupplier = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
             .<Location> of(expectedLocation));
 
-      VirtualGuestToNodeMetadata parser = new VirtualGuestToNodeMetadata(new FindLocationForVirtualGuest(
-            locationSupplier), new GetHardwareForVirtualGuestMock(), new GetImageForVirtualGuestMock(), namingConvention);
+      VirtualGuestToNodeMetadata parser = new VirtualGuestToNodeMetadata(locationSupplier,
+            new GetHardwareForVirtualGuestMock(), new GetImageForVirtualGuestMock(), namingConvention);
 
       NodeMetadata node = parser.apply(guest);
 

@@ -19,6 +19,7 @@
 package org.jclouds.elasticstack.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.compute.predicates.ImagePredicates.idEquals;
 
 import java.util.Map;
 import java.util.Set;
@@ -27,16 +28,15 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.collect.FindResourceInSet;
 import org.jclouds.collect.Memoized;
 import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.domain.VolumeBuilder;
-import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Location;
 import org.jclouds.elasticstack.domain.Device;
@@ -47,8 +47,10 @@ import org.jclouds.elasticstack.domain.ServerStatus;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -70,19 +72,19 @@ public class ServerInfoToNodeMetadata implements Function<ServerInfo, NodeMetada
          .build();
 
    private final Function<Server, String> getImageIdFromServer;
-   private final Function<String, Image> findImageForId;
+   private final Supplier<Set<? extends Image>> images;
    private final Supplier<Location> locationSupplier;
    private final Function<Device, Volume> deviceToVolume;
    private final GroupNamingConvention nodeNamingConvention;
 
    @Inject
-   ServerInfoToNodeMetadata(Function<Server, String> getImageIdFromServer, Function<String, Image> findImageForId,
+   ServerInfoToNodeMetadata(Function<Server, String> getImageIdFromServer, @Memoized Supplier<Set<? extends Image>> images,
          Function<Device, Volume> deviceToVolume, Supplier<Location> locationSupplier,
          GroupNamingConvention.Factory namingConvention) {
       this.nodeNamingConvention = checkNotNull(namingConvention, "namingConvention").createWithoutPrefix();
       this.locationSupplier = checkNotNull(locationSupplier, "locationSupplier");
       this.deviceToVolume = checkNotNull(deviceToVolume, "deviceToVolume");
-      this.findImageForId = checkNotNull(findImageForId, "findImageForId");
+      this.images = checkNotNull(images, "images");
       this.getImageIdFromServer = checkNotNull(getImageIdFromServer, "getImageIdFromServer");
    }
 
@@ -97,9 +99,9 @@ public class ServerInfoToNodeMetadata implements Function<ServerInfo, NodeMetada
       builder.userMetadata(from.getUserMetadata());
       String imageId = getImageIdFromServer.apply(from);
       if (imageId != null) {
-         Image image = findImageForId.apply(imageId);
-         if (image != null) {
-            builder.operatingSystem(image.getOperatingSystem());
+         Optional<? extends Image> image = FluentIterable.from(images.get()).firstMatch(idEquals(imageId));
+         if (image.isPresent()) {
+            builder.operatingSystem(image.get().getOperatingSystem());
          }
       }
       builder.hardware(new HardwareBuilder().ids(from.getUuid()).hypervisor("kvm")
@@ -174,20 +176,6 @@ public class ServerInfoToNodeMetadata implements Function<ServerInfo, NodeMetada
             }
          }
          return imageId;
-      }
-   }
-
-   @Singleton
-   public static class FindImageForId extends FindResourceInSet<String, Image> {
-
-      @Inject
-      public FindImageForId(@Memoized Supplier<Set<? extends Image>> images) {
-         super(images);
-      }
-
-      @Override
-      public boolean matches(String from, Image input) {
-         return input.getProviderId().equals(from);
       }
    }
 

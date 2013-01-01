@@ -16,33 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.glesys.compute.functions;
+package org.jclouds.compute.predicates;
 
-import java.util.Set;
+import org.jclouds.ContextBuilder;
+import org.jclouds.compute.ComputeService;
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.domain.Hardware;
+import org.testng.annotations.Test;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-import org.jclouds.collect.FindResourceInSet;
-import org.jclouds.collect.Memoized;
-import org.jclouds.domain.Location;
-import org.jclouds.glesys.domain.ServerSpec;
-
-import com.google.common.base.Supplier;
+import com.google.common.collect.Iterables;
 
 /**
+ * 
  * @author Adrian Cole
  */
-@Singleton
-public class FindLocationForServerSpec extends FindResourceInSet<ServerSpec, Location> {
+@Test
+public class HardwarePredicatesTest {
+   ComputeService computeService = ContextBuilder.newBuilder("stub").build(ComputeServiceContext.class).getComputeService();
 
-   @Inject
-   public FindLocationForServerSpec(@Memoized Supplier<Set<? extends Location>> location) {
-      super(location);
+   public void testHardwareId() {
+      Hardware first = Iterables.get(computeService.listHardwareProfiles(), 0);
+      assert HardwarePredicates.idEquals(first.getId()).apply(first);
+      Hardware second = Iterables.get(computeService.listHardwareProfiles(), 1);
+      assert !HardwarePredicates.idEquals(first.getId()).apply(second);
    }
 
-   @Override
-   public boolean matches(ServerSpec from, Location input) {
-      return input.getId().equals(from.getDatacenter());
-   }
 }

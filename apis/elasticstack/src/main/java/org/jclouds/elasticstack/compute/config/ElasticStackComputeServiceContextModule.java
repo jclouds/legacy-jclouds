@@ -37,10 +37,9 @@ import org.jclouds.domain.Location;
 import org.jclouds.elasticstack.ElasticStackClient;
 import org.jclouds.elasticstack.compute.ElasticStackComputeServiceAdapter;
 import org.jclouds.elasticstack.compute.functions.ServerInfoToNodeMetadata;
-import org.jclouds.elasticstack.compute.functions.WellKnownImageToImage;
 import org.jclouds.elasticstack.compute.functions.ServerInfoToNodeMetadata.DeviceToVolume;
-import org.jclouds.elasticstack.compute.functions.ServerInfoToNodeMetadata.FindImageForId;
 import org.jclouds.elasticstack.compute.functions.ServerInfoToNodeMetadata.GetImageIdFromServer;
+import org.jclouds.elasticstack.compute.functions.WellKnownImageToImage;
 import org.jclouds.elasticstack.domain.Device;
 import org.jclouds.elasticstack.domain.DriveInfo;
 import org.jclouds.elasticstack.domain.Server;
@@ -88,8 +87,6 @@ public class ElasticStackComputeServiceContextModule extends
       }).to(DeviceToVolume.class);
       bind(new TypeLiteral<Function<Server, String>>() {
       }).to(GetImageIdFromServer.class);
-      bind(new TypeLiteral<Function<String, Image>>() {
-      }).to(FindImageForId.class);
       bind(new TypeLiteral<Function<DriveInfo, Image>>() {
       }).to(WellKnownImageToImage.class);
    }

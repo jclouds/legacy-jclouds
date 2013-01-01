@@ -22,12 +22,11 @@ import static org.testng.AssertJUnit.assertEquals;
 
 import java.util.Set;
 
-import org.jclouds.cloudstack.compute.functions.TemplateToImage.FindLocationForTemplate;
 import org.jclouds.cloudstack.domain.Template;
 import org.jclouds.cloudstack.parse.ListTemplatesResponseTest;
 import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.Image.Status;
+import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.domain.Location;
 import org.testng.annotations.Test;
 
@@ -46,8 +45,7 @@ public class TemplateToImageTest {
          .<Set<? extends Location>> ofInstance(ImmutableSet.<Location> of(ZoneToLocationTest.one,
                ZoneToLocationTest.two));
 
-   static TemplateToImage function = new TemplateToImage(new FindLocationForTemplate(locationSupplier),
-         TemplateToOperatingSystemTest.function);
+   static TemplateToImage function = new TemplateToImage(locationSupplier, TemplateToOperatingSystemTest.function);
 
    // location free image
    static Image one = new ImageBuilder().id("2").providerId("2").name("CentOS 5.3(64-bit) no GUI (XenServer)")

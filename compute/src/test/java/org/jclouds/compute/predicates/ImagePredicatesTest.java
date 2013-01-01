@@ -29,7 +29,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 
 /**
- * Tests possible uses of OperatingSystemPredicates
  * 
  * @author Adrian Cole
  */

@@ -19,6 +19,7 @@
 package org.jclouds.cloudstack.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.location.predicates.LocationPredicates.idEquals;
 
 import java.util.Set;
 
@@ -26,28 +27,28 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.cloudstack.domain.Template;
-import org.jclouds.collect.FindResourceInSet;
 import org.jclouds.collect.Memoized;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.Image.Status;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
-import org.jclouds.compute.domain.Image.Status;
 import org.jclouds.domain.Location;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.common.collect.FluentIterable;
 
 /**
  */
 @Singleton
 public class TemplateToImage implements Function<Template, Image> {
-   private final FindLocationForTemplate findLocationForTemplate;
+   private final Supplier<Set<? extends Location>> locations;
    private final Function<Template, OperatingSystem> templateToOperatingSystem;
 
    @Inject
-   public TemplateToImage(FindLocationForTemplate findLocationForTemplate,
+   public TemplateToImage(@Memoized Supplier<Set<? extends Location>> locations,
          Function<Template, OperatingSystem> templateToOperatingSystem) {
-      this.findLocationForTemplate = checkNotNull(findLocationForTemplate, "findLocationForTemplate");
+      this.locations = checkNotNull(locations, "locations");
       this.templateToOperatingSystem = checkNotNull(templateToOperatingSystem, "templateToOperatingSystem");
    }
 
@@ -61,24 +62,10 @@ public class TemplateToImage implements Function<Template, Image> {
             .description(template.getDisplayText()).operatingSystem(os);
 
       if (!template.isCrossZones())
-         builder.location(findLocationForTemplate.apply(template));
+         builder.location(FluentIterable.from(locations.get()).firstMatch(idEquals(template.getZoneId())).orNull());
 
       //TODO: implement status mapping!!!
       builder.status(Status.AVAILABLE);
       return builder.build();
-   }
-
-   @Singleton
-   public static class FindLocationForTemplate extends FindResourceInSet<Template, Location> {
-
-      @Inject
-      public FindLocationForTemplate(@Memoized Supplier<Set<? extends Location>> location) {
-         super(location);
-      }
-
-      @Override
-      public boolean matches(Template from, Location input) {
-         return input.getId().equals(from.getZoneId());
-      }
    }
 }
