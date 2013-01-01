@@ -24,14 +24,15 @@ import static com.google.common.collect.Iterables.find;
 import java.util.NoSuchElementException;
 import java.util.ServiceLoader;
 
-import com.google.common.collect.ImmutableSet;
 import org.jclouds.Context;
 import org.jclouds.View;
 import org.jclouds.apis.ApiMetadata;
+import org.jclouds.osgi.ProviderRegistry;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
 
 /**
@@ -72,9 +73,8 @@ public class Providers {
     * 
     * @return all available providers loaded from classpath via ServiceLoader
     */
-   @SuppressWarnings("unchecked")
    public static Iterable<ProviderMetadata> fromServiceLoader() {
-      return Iterable.class.cast(ServiceLoader.load(ProviderMetadata.class));
+      return ServiceLoader.load(ProviderMetadata.class);
    }
 
    /**

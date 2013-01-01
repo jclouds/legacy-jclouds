@@ -44,12 +44,12 @@ public class BundlesTest {
    @Test
    public void testInstantiateAvailableClassesWhenAllAssignable() throws ClassNotFoundException {
       Bundle bundle = createMock(Bundle.class);
-      expect(bundle.loadClass("org.jclouds.providers.JcloudsTestBlobStoreProviderMetadata"))
-         .andReturn(JcloudsTestBlobStoreProviderMetadata.class);
-      expect(bundle.loadClass("org.jclouds.providers.JcloudsTestComputeProviderMetadata"))
-         .andReturn(JcloudsTestComputeProviderMetadata.class);
-      expect(bundle.loadClass("org.jclouds.providers.JcloudsTestYetAnotherComputeProviderMetadata"))
-         .andReturn(JcloudsTestYetAnotherComputeProviderMetadata.class);
+      expect(bundle.loadClass("org.jclouds.providers.JcloudsTestBlobStoreProviderMetadata")).andReturn(
+            JcloudsTestBlobStoreProviderMetadata.class);
+      expect(bundle.loadClass("org.jclouds.providers.JcloudsTestComputeProviderMetadata")).andReturn(
+            JcloudsTestComputeProviderMetadata.class);
+      expect(bundle.loadClass("org.jclouds.providers.JcloudsTestYetAnotherComputeProviderMetadata")).andReturn(
+            JcloudsTestYetAnotherComputeProviderMetadata.class);
       replay(bundle);
 
       Iterable<ProviderMetadata> providers = Bundles.instantiateAvailableClasses(bundle, ImmutableSet.of(
@@ -65,12 +65,12 @@ public class BundlesTest {
    @Test
    public void testInstantiateAvailableClassesWhenNotAllAssignable() throws ClassNotFoundException {
       Bundle bundle = createMock(Bundle.class);
-      expect(bundle.loadClass("org.jclouds.providers.JcloudsTestBlobStoreProviderMetadata"))
-         .andReturn(JcloudsTestBlobStoreProviderMetadata.class);
-      expect(bundle.loadClass("org.jclouds.apis.JcloudsTestComputeApiMetadata"))
-         .andReturn(JcloudsTestComputeApiMetadata.class);
-      expect(bundle.loadClass("org.jclouds.providers.JcloudsTestYetAnotherComputeProviderMetadata"))
-         .andReturn(JcloudsTestYetAnotherComputeProviderMetadata.class);
+      expect(bundle.loadClass("org.jclouds.providers.JcloudsTestBlobStoreProviderMetadata")).andReturn(
+            JcloudsTestBlobStoreProviderMetadata.class);
+      expect(bundle.loadClass("org.jclouds.apis.JcloudsTestComputeApiMetadata")).andReturn(
+            JcloudsTestComputeApiMetadata.class);
+      expect(bundle.loadClass("org.jclouds.providers.JcloudsTestYetAnotherComputeProviderMetadata")).andReturn(
+            JcloudsTestYetAnotherComputeProviderMetadata.class);
       replay(bundle);
 
       Iterable<ProviderMetadata> providers = Bundles.instantiateAvailableClasses(bundle, ImmutableSet.of(
@@ -90,7 +90,7 @@ public class BundlesTest {
       expect(bundle.getEntry("/META-INF/services/org.jclouds.apis.ApiMetadata")).andReturn(null);
       replay(bundle);
 
-      assertEquals(Bundles.stringsForResorceInBundle("/META-INF/services/org.jclouds.apis.ApiMetadata", bundle),
+      assertEquals(Bundles.stringsForResourceInBundle("/META-INF/services/org.jclouds.apis.ApiMetadata", bundle),
             ImmutableSet.of());
 
       verify(bundle);
@@ -100,13 +100,12 @@ public class BundlesTest {
    public void testStringsForResourcesInBundleWhenResourcePresent() throws Exception {
 
       Bundle bundle = createMock(Bundle.class);
-      expect(bundle.getEntry("/META-INF/services/org.jclouds.providers.ProviderMetadata"))
-         .andReturn(getClass().getResource("/META-INF/services/org.jclouds.providers.ProviderMetadata"));
+      expect(bundle.getEntry("/META-INF/services/org.jclouds.providers.ProviderMetadata")).andReturn(
+            getClass().getResource("/META-INF/services/org.jclouds.providers.ProviderMetadata"));
       replay(bundle);
 
-      assertEquals(Bundles.stringsForResorceInBundle(
-            "/META-INF/services/org.jclouds.providers.ProviderMetadata", bundle), ImmutableSet.of(
-            "org.jclouds.providers.JcloudsTestBlobStoreProviderMetadata",
+      assertEquals(Bundles.stringsForResourceInBundle("/META-INF/services/org.jclouds.providers.ProviderMetadata",
+            bundle), ImmutableSet.of("org.jclouds.providers.JcloudsTestBlobStoreProviderMetadata",
             "org.jclouds.providers.JcloudsTestComputeProviderMetadata",
             "org.jclouds.providers.JcloudsTestYetAnotherComputeProviderMetadata"));
 
