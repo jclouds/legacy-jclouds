@@ -19,16 +19,14 @@
 package org.jclouds.compute.config;
 
 import static com.google.common.base.Functions.compose;
+import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Predicates.notNull;
-import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Iterables.transform;
 
 import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.collect.TransformingSetSupplier;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
@@ -48,9 +46,8 @@ import org.jclouds.domain.LoginCredentials;
 import org.jclouds.location.suppliers.LocationsSupplier;
 
 import com.google.common.base.Function;
-import com.google.common.base.Objects;
 import com.google.common.base.Supplier;
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.FluentIterable;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
@@ -61,16 +58,20 @@ import com.google.inject.Provides;
 public class ComputeServiceAdapterContextModule<N, H, I, L> extends BaseComputeServiceContextModule {
 
    /**
-    * install this, if you want to use your computeservice adapter to handle locations. Note that if
-    * you do this, you'll want to instantiate a subclass to prevent type erasure.
+    * install this, if you want to use your computeservice adapter to handle locations. Note that if you do this, you'll
+    * want to instantiate a subclass to prevent type erasure.
     * 
     * ex.
+    * 
     * <pre>
-    *       install(new LocationsFromComputeServiceAdapterModule<NodeMetadata, Hardware, Image, Location>(){});
+    * install(new LocationsFromComputeServiceAdapterModule&lt;NodeMetadata, Hardware, Image, Location&gt;() {
+    * });
     * </pre>
+    * 
     * not
+    * 
     * <pre>
-    *       install(new LocationsFromComputeServiceAdapterModule<NodeMetadata, Hardware, Image, Location>());
+    * install(new LocationsFromComputeServiceAdapterModule&lt;NodeMetadata, Hardware, Image, Location&gt;());
     * </pre>
     */
    public static class LocationsFromComputeServiceAdapterModule<N, H, I, L> extends AbstractModule {
@@ -82,17 +83,15 @@ public class ComputeServiceAdapterContextModule<N, H, I, L> extends BaseComputeS
       @Provides
       @Singleton
       protected LocationsSupplier supplyLocationsFromComputeServiceAdapter(
-               final ComputeServiceAdapter<N, H, I, L> adapter, final Function<L, Location> transformer) {
+            final ComputeServiceAdapter<N, H, I, L> adapter, final Function<L, Location> transformer) {
          return new LocationsSupplier() {
             @Override
             public Set<? extends Location> get() {
-               Iterable<L> locations = filter(adapter.listLocations(), notNull());
-               return ImmutableSet.<Location> copyOf(transform(locations, transformer));
+               return transformGuardingNull(adapter.listLocations(), transformer);
             }
 
-            @Override
             public String toString() {
-               return Objects.toStringHelper(adapter).add("method", "listLocations").toString();
+               return toStringHelper(adapter).add("method", "listLocations").toString();
             }
          };
       }
@@ -101,39 +100,37 @@ public class ComputeServiceAdapterContextModule<N, H, I, L> extends BaseComputeS
    @Provides
    @Singleton
    protected Supplier<Set<? extends Hardware>> provideHardware(final ComputeServiceAdapter<N, H, I, L> adapter,
-            Function<H, Hardware> transformer) {
-      return new TransformingSetSupplier<H, Hardware>(new Supplier<Iterable<H>>() {
+         final Function<H, Hardware> transformer) {
+      return new Supplier<Set<? extends Hardware>>() {
+         @Override
+         public Set<? extends Hardware> get() {
+            return transformGuardingNull(adapter.listHardwareProfiles(), transformer);
+         }
 
-         @Override
-         public Iterable<H> get() {
-            return adapter.listHardwareProfiles();
-         }
-         
-         @Override
          public String toString() {
-            return Objects.toStringHelper(adapter).add("method", "listHardwareProfiles").toString();
+            return toStringHelper(adapter).add("method", "listHardwareProfiles").toString();
          }
-         
-      }, transformer);
+      };
+   }
+
+   private static <F, T> Set<? extends T> transformGuardingNull(Iterable<F> from, Function<F, T> transformer) {
+      return FluentIterable.from(from).filter(notNull()).transform(transformer).filter(notNull()).toSet();
    }
 
    @Provides
    @Singleton
    protected Supplier<Set<? extends Image>> provideImages(final ComputeServiceAdapter<N, H, I, L> adapter,
-            Function<I, Image> transformer, AddDefaultCredentialsToImage addDefaultCredentialsToImage) {
-      return new TransformingSetSupplier<I, Image>(new Supplier<Iterable<I>>() {
+         final Function<I, Image> transformer, final AddDefaultCredentialsToImage addDefaultCredentialsToImage) {
+      return new Supplier<Set<? extends Image>>() {
+         @Override
+         public Set<? extends Image> get() {
+            return transformGuardingNull(adapter.listImages(), compose(addDefaultCredentialsToImage, transformer));
+         }
 
-         @Override
-         public Iterable<I> get() {
-            return filter(adapter.listImages(), notNull());
-         }
-         
-         @Override
          public String toString() {
-            return Objects.toStringHelper(adapter).add("method", "listImages").toString();
+            return toStringHelper(adapter).add("method", "listImages").toString();
          }
-         
-      }, compose(addDefaultCredentialsToImage, transformer));
+      };
    }
 
    @Singleton
@@ -155,14 +152,14 @@ public class ComputeServiceAdapterContextModule<N, H, I, L> extends BaseComputeS
 
       @Override
       public String toString() {
-         return Objects.toStringHelper(this).add("credsForImage", credsForImage).toString();
+         return toStringHelper(this).add("credsForImage", credsForImage).toString();
       }
    }
 
    @Provides
    @Singleton
    protected CreateNodeWithGroupEncodedIntoName defineAddNodeWithTagStrategy(
-            AdaptingComputeServiceStrategies<N, H, I, L> in) {
+         AdaptingComputeServiceStrategies<N, H, I, L> in) {
       return in;
    }
 
