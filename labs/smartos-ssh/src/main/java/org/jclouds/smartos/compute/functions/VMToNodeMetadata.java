@@ -19,6 +19,7 @@
 package org.jclouds.smartos.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.FluentIterable.from;
 
 import java.util.Map;
 import java.util.Set;
@@ -26,16 +27,18 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.collect.FindResourceInSet;
 import org.jclouds.collect.Memoized;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.functions.GroupNamingConvention;
+import org.jclouds.compute.predicates.HardwarePredicates;
+import org.jclouds.compute.predicates.ImagePredicates;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
+import org.jclouds.location.predicates.LocationPredicates;
 import org.jclouds.smartos.compute.domain.VM;
 
 import com.google.common.base.Function;
@@ -56,21 +59,21 @@ public class VMToNodeMetadata implements Function<VM, NodeMetadata> {
             .put(VM.State.INCOMPLETE, NodeMetadata.Status.PENDING)//
             .build();
 
-   private final FindHardwareForServer findHardwareForServer;
-   private final FindLocationForServer findLocationForServer;
-   private final FindImageForServer findImageForServer;
+   private final Supplier<Set<? extends Hardware>> hardware;
+   private final Supplier<Set<? extends Location>> locations;
+   private final Supplier<Set<? extends Image>> images;
    private final Map<String, Credentials> credentialStore;
    private final GroupNamingConvention nodeNamingConvention;
 
    @Inject
-   VMToNodeMetadata(Map<String, Credentials> credentialStore, FindHardwareForServer findHardwareForServer,
-            FindLocationForServer findLocationForServer, FindImageForServer findImageForServer,
-            GroupNamingConvention.Factory namingConvention) {
+   VMToNodeMetadata(Map<String, Credentials> credentialStore, @Memoized Supplier<Set<? extends Hardware>> hardware,
+         @Memoized Supplier<Set<? extends Location>> locations, @Memoized Supplier<Set<? extends Image>> images,
+         GroupNamingConvention.Factory namingConvention) {
       this.nodeNamingConvention = checkNotNull(namingConvention, "namingConvention").createWithoutPrefix();
       this.credentialStore = checkNotNull(credentialStore, "credentialStore");
-      this.findHardwareForServer = checkNotNull(findHardwareForServer, "findHardwareForServer");
-      this.findLocationForServer = checkNotNull(findLocationForServer, "findLocationForServer");
-      this.findImageForServer = checkNotNull(findImageForServer, "findImageForServer");
+      this.hardware = checkNotNull(hardware, "hardware");
+      this.locations = checkNotNull(locations, "locations");
+      this.images = checkNotNull(images, "images");
    }
 
    @Override
@@ -79,13 +82,13 @@ public class VMToNodeMetadata implements Function<VM, NodeMetadata> {
       NodeMetadataBuilder builder = new NodeMetadataBuilder();
       builder.ids(from.getUuid() + "");
       builder.name(from.getAlias());
-      builder.location(findLocationForServer.apply(from));
+      builder.location(from(locations.get()).firstMatch(LocationPredicates.idEquals(from.getUuid() + "")).orNull());
       builder.group(nodeNamingConvention.groupInUniqueNameOrNull(from.getType()));
       builder.imageId(from.getType() + "");
-      Image image = findImageForServer.apply(from);
+      Image image = from(images.get()).firstMatch(ImagePredicates.idEquals(from.getUuid() + "")).orNull();
       if (image != null)
          builder.operatingSystem(image.getOperatingSystem());
-      builder.hardware(findHardwareForServer.apply(from));
+      builder.hardware(from(hardware.get()).firstMatch(HardwarePredicates.idEquals(from.getUuid() + "")).orNull());
       builder.status(serverStatusToNodeStatus.get(from.getState()));
       try {
          if (from.getState() == VM.State.RUNNING) {
@@ -101,47 +104,5 @@ public class VMToNodeMetadata implements Function<VM, NodeMetadata> {
       // builder.privateAddresses(ImmutableSet.<String> of(from.privateAddress));
       builder.credentials(LoginCredentials.fromCredentials(credentialStore.get(from.getUuid() + "")));
       return builder.build();
-   }
-
-   @Singleton
-   public static class FindHardwareForServer extends FindResourceInSet<VM, Hardware> {
-
-      @Inject
-      public FindHardwareForServer(@Memoized Supplier<Set<? extends Hardware>> hardware) {
-         super(hardware);
-      }
-
-      @Override
-      public boolean matches(VM from, Hardware input) {
-         return input.getProviderId().equals(from.getUuid() + "");
-      }
-   }
-
-   @Singleton
-   public static class FindImageForServer extends FindResourceInSet<VM, Image> {
-
-      @Inject
-      public FindImageForServer(@Memoized Supplier<Set<? extends Image>> hardware) {
-         super(hardware);
-      }
-
-      @Override
-      public boolean matches(VM from, Image input) {
-         return input.getProviderId().equals(from.getUuid() + "");
-      }
-   }
-
-   @Singleton
-   public static class FindLocationForServer extends FindResourceInSet<VM, Location> {
-
-      @Inject
-      public FindLocationForServer(@Memoized Supplier<Set<? extends Location>> hardware) {
-         super(hardware);
-      }
-
-      @Override
-      public boolean matches(VM from, Location input) {
-         return input.getId().equals(from.getUuid() + "");
-      }
    }
 }

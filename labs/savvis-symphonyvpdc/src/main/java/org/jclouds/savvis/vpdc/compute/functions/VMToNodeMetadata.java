@@ -20,6 +20,7 @@ package org.jclouds.savvis.vpdc.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.not;
+import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.filter;
 
 import java.util.Map;
@@ -28,14 +29,14 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.collect.FindResourceInSet;
 import org.jclouds.collect.Memoized;
 import org.jclouds.compute.domain.CIMOperatingSystem;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeMetadata.Status;
+import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Location;
+import org.jclouds.location.predicates.LocationPredicates;
 import org.jclouds.savvis.vpdc.domain.VM;
 import org.jclouds.savvis.vpdc.util.Utils;
 import org.jclouds.util.InetAddresses2.IsPrivateIPAddress;
@@ -57,14 +58,14 @@ public class VMToNodeMetadata implements Function<VM, NodeMetadata> {
                      Status.UNRECOGNIZED).put(VM.Status.UNKNOWN, Status.UNRECOGNIZED).put(VM.Status.SUSPENDED,
                      Status.SUSPENDED).put(VM.Status.UNRESOLVED, Status.PENDING).build();
 
-   private final FindLocationForVM findLocationForVM;
+   private final Supplier<Set<? extends Location>> locations;
    private final GroupNamingConvention nodeNamingConvention;
 
    @Inject
-   VMToNodeMetadata(FindLocationForVM findLocationForVM,
+   VMToNodeMetadata(@Memoized Supplier<Set<? extends Location>> locations,
          GroupNamingConvention.Factory namingConvention) {
       this.nodeNamingConvention = checkNotNull(namingConvention, "namingConvention").createWithoutPrefix();
-      this.findLocationForVM = checkNotNull(findLocationForVM, "findLocationForVM");
+      this.locations = checkNotNull(locations, "locations");
    }
 
    @Override
@@ -72,7 +73,8 @@ public class VMToNodeMetadata implements Function<VM, NodeMetadata> {
       NodeMetadataBuilder builder = new NodeMetadataBuilder();
       builder.ids(from.getHref().toASCIIString());
       builder.name(from.getName());
-      builder.location(findLocationForVM.apply(from));
+      String locationId = Iterables.get(from.getNetworkSection().getNetworks(), 0).getName();
+      builder.location(from(locations.get()).firstMatch(LocationPredicates.idEquals(locationId)).orNull());
       builder.group(nodeNamingConvention.groupInUniqueNameOrNull(from.getName()));
       try {
          builder.operatingSystem(CIMOperatingSystem.toComputeOs(from.getOperatingSystemSection()));
@@ -86,19 +88,5 @@ public class VMToNodeMetadata implements Function<VM, NodeMetadata> {
       builder.publicAddresses(filter(addresses, not(IsPrivateIPAddress.INSTANCE)));
       builder.privateAddresses(filter(addresses, IsPrivateIPAddress.INSTANCE));
       return builder.build();
-   }
-
-   @Singleton
-   public static class FindLocationForVM extends FindResourceInSet<VM, Location> {
-
-      @Inject
-      public FindLocationForVM(@Memoized Supplier<Set<? extends Location>> hardware) {
-         super(hardware);
-      }
-
-      @Override
-      public boolean matches(VM from, Location input) {
-         return input.getId().equals(Iterables.get(from.getNetworkSection().getNetworks(), 0).getName());
-      }
    }
 }

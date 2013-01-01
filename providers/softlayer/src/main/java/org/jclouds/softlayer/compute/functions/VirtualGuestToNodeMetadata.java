@@ -19,6 +19,7 @@
 package org.jclouds.softlayer.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.FluentIterable.from;
 
 import java.util.Map;
 import java.util.Set;
@@ -26,17 +27,16 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.collect.FindResourceInSet;
 import org.jclouds.collect.Memoized;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeMetadata.Status;
+import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Location;
+import org.jclouds.location.predicates.LocationPredicates;
 import org.jclouds.softlayer.SoftLayerClient;
-import org.jclouds.softlayer.domain.Datacenter;
 import org.jclouds.softlayer.domain.ProductItem;
 import org.jclouds.softlayer.domain.ProductOrder;
 import org.jclouds.softlayer.domain.VirtualGuest;
@@ -59,19 +59,19 @@ public class VirtualGuestToNodeMetadata implements Function<VirtualGuest, NodeMe
          .put(VirtualGuest.State.PAUSED, Status.SUSPENDED).put(VirtualGuest.State.RUNNING, Status.RUNNING)
          .put(VirtualGuest.State.UNRECOGNIZED, Status.UNRECOGNIZED).build();
 
-   private final FindLocationForVirtualGuest findLocationForVirtualGuest;
-   private final GetHardwareForVirtualGuest getHardwareForVirtualGuest;
-   private final GetImageForVirtualGuest getImageForVirtualGuest;
+   private final Supplier<Set<? extends Location>> locations;
+   private final GetHardwareForVirtualGuest hardware;
+   private final GetImageForVirtualGuest images;
    private final GroupNamingConvention nodeNamingConvention;
 
    @Inject
-   VirtualGuestToNodeMetadata(FindLocationForVirtualGuest findLocationForVirtualGuest,
-         GetHardwareForVirtualGuest getHardwareForVirtualGuest, GetImageForVirtualGuest getImageForVirtualGuest,
+   VirtualGuestToNodeMetadata(@Memoized Supplier<Set<? extends Location>> locations,
+         GetHardwareForVirtualGuest hardware, GetImageForVirtualGuest images,
          GroupNamingConvention.Factory namingConvention) {
       this.nodeNamingConvention = checkNotNull(namingConvention, "namingConvention").createWithoutPrefix();
-      this.findLocationForVirtualGuest = checkNotNull(findLocationForVirtualGuest, "findLocationForVirtualGuest");
-      this.getHardwareForVirtualGuest = checkNotNull(getHardwareForVirtualGuest, "getHardwareForVirtualGuest");
-      this.getImageForVirtualGuest = checkNotNull(getImageForVirtualGuest, "getImageForVirtualGuest");
+      this.locations = checkNotNull(locations, "locations");
+      this.hardware = checkNotNull(hardware, "hardware");
+      this.images = checkNotNull(images, "images");
    }
 
    @Override
@@ -81,18 +81,18 @@ public class VirtualGuestToNodeMetadata implements Function<VirtualGuest, NodeMe
       builder.ids(from.getId() + "");
       builder.name(from.getHostname());
       builder.hostname(from.getHostname());
-      builder.location(findLocationForVirtualGuest.apply(from));
+      if (from.getDatacenter() != null)
+         builder.location(from(locations.get()).firstMatch(
+               LocationPredicates.idEquals(from.getDatacenter().getId() + "")).orNull());
       builder.group(nodeNamingConvention.groupInUniqueNameOrNull(from.getHostname()));
 
-      Image image = getImageForVirtualGuest.getImage(from);
+      Image image = images.getImage(from);
       if (image != null) {
          builder.imageId(image.getId());
          builder.operatingSystem(image.getOperatingSystem());
       }
 
-      Hardware hardware = getHardwareForVirtualGuest.getHardware(from);
-      if (hardware != null)
-         builder.hardware(hardware);
+      builder.hardware(hardware.getHardware(from));
 
       builder.status(serverStateToNodeStatus.get(from.getPowerState().getKeyName()));
 
@@ -102,23 +102,6 @@ public class VirtualGuestToNodeMetadata implements Function<VirtualGuest, NodeMe
       if (from.getPrimaryBackendIpAddress() != null)
          builder.privateAddresses(ImmutableSet.<String> of(from.getPrimaryBackendIpAddress()));
       return builder.build();
-   }
-
-   @Singleton
-   public static class FindLocationForVirtualGuest extends FindResourceInSet<VirtualGuest, Location> {
-
-      @Inject
-      public FindLocationForVirtualGuest(@Memoized Supplier<Set<? extends Location>> location) {
-         super(location);
-      }
-
-      @Override
-      public boolean matches(VirtualGuest from, Location input) {
-         Datacenter dc = from.getDatacenter();
-         if (dc == null)
-            return false;
-         return input.getId().equals(Integer.toString(dc.getId()));
-      }
    }
 
    @Singleton

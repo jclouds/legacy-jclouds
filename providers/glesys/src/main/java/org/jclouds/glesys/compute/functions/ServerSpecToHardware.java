@@ -19,10 +19,14 @@
 package org.jclouds.glesys.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.location.predicates.LocationPredicates.idEquals;
+
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.collect.Memoized;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Processor;
@@ -33,6 +37,8 @@ import org.jclouds.domain.Location;
 import org.jclouds.glesys.domain.ServerSpec;
 
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 
 /**
@@ -42,16 +48,16 @@ import com.google.common.collect.ImmutableList;
 @Singleton
 public class ServerSpecToHardware implements Function<ServerSpec, Hardware> {
 
-   private final FindLocationForServerSpec findLocationForServerSpec;
+   private final Supplier<Set<? extends Location>> locations;
 
    @Inject
-   ServerSpecToHardware(FindLocationForServerSpec findLocationForServerSpec) {
-      this.findLocationForServerSpec = checkNotNull(findLocationForServerSpec, "findLocationForServerSpec");
+   ServerSpecToHardware(@Memoized Supplier<Set<? extends Location>> locations) {
+      this.locations = checkNotNull(locations, "locations");
    }
 
    @Override
    public Hardware apply(ServerSpec spec) {
-      Location location = findLocationForServerSpec.apply(spec);
+      Location location = FluentIterable.from(locations.get()).firstMatch(idEquals(spec.getDatacenter())).orNull();
       assert location != null : String.format("no location matched ServerSpec %s", spec);
       return new HardwareBuilder().ids(spec.toString()).ram(spec.getMemorySizeMB()).processors(
                ImmutableList.of(new Processor(spec.getCpuCores(), 1.0))).volumes(

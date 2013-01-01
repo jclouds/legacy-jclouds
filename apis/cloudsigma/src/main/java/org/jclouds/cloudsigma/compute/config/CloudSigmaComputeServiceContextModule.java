@@ -30,7 +30,6 @@ import org.jclouds.cloudsigma.compute.functions.ParseOsFamilyVersion64BitFromIma
 import org.jclouds.cloudsigma.compute.functions.PreinstalledDiskToImage;
 import org.jclouds.cloudsigma.compute.functions.ServerInfoToNodeMetadata;
 import org.jclouds.cloudsigma.compute.functions.ServerInfoToNodeMetadata.DeviceToVolume;
-import org.jclouds.cloudsigma.compute.functions.ServerInfoToNodeMetadata.FindImageForId;
 import org.jclouds.cloudsigma.compute.functions.ServerInfoToNodeMetadata.GetImageIdFromServer;
 import org.jclouds.cloudsigma.compute.options.CloudSigmaTemplateOptions;
 import org.jclouds.cloudsigma.domain.Device;
@@ -86,8 +85,6 @@ public class CloudSigmaComputeServiceContextModule extends
       }).to(DeviceToVolume.class);
       bind(new TypeLiteral<Function<Server, String>>() {
       }).to(GetImageIdFromServer.class);
-      bind(new TypeLiteral<Function<String, Image>>() {
-      }).to(FindImageForId.class);
       bind(new TypeLiteral<Function<String, OsFamilyVersion64Bit>>() {
       }).to(ParseOsFamilyVersion64BitFromImageName.class);
       bind(TemplateBuilder.class)

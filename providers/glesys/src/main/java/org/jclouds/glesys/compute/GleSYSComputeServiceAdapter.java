@@ -38,7 +38,6 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
-import org.jclouds.collect.FindResourceInSet;
 import org.jclouds.collect.Memoized;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceAdapter;
@@ -66,12 +65,12 @@ import org.jclouds.glesys.options.DestroyServerOptions;
 import org.jclouds.location.predicates.LocationPredicates;
 import org.jclouds.logging.Logger;
 import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.util.Iterables2;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -154,20 +153,6 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
       return UUID.randomUUID().toString().replace("-","");
    }
 
-   @Singleton
-   public static class FindLocationForServerSpec extends FindResourceInSet<ServerSpec, Location> {
-
-      @Inject
-      public FindLocationForServerSpec(@Memoized Supplier<Set<? extends Location>> location) {
-         super(location);
-      }
-
-      @Override
-      public boolean matches(ServerSpec from, Location input) {
-         return input.getId().equals(from.getDatacenter());
-      }
-   }
-
    @Override
    public Iterable<Hardware> listHardwareProfiles() {
       Set<? extends Location> locationsSet = locations.get();
@@ -224,27 +209,24 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
    
    @Override
    public Iterable<ServerDetails> listNodes() {
-      return Iterables2.concreteCopy(transformParallel(api.getServerApi().list(), new Function<Server, Future<? extends ServerDetails>>() {
+      return transformParallel(api.getServerApi().list(), new Function<Server, Future<? extends ServerDetails>>() {
          @Override
          public Future<ServerDetails> apply(Server from) {
             return aapi.getServerApi().get(from.getId());
          }
 
-      }, userThreads, null, logger, "server details"));
+      }, userThreads, null, logger, "server details");
    }
 
    @Override
    public Set<String> listLocations() {
-      return ImmutableSet.copyOf(Iterables.concat(Iterables.transform(api.getServerApi()
-            .getAllowedArgumentsForCreateByPlatform().values(),
-            new Function<AllowedArgumentsForCreateServer, Set<String>>() {
-
+      return FluentIterable.from(api.getServerApi().getAllowedArgumentsForCreateByPlatform().values())
+            .transformAndConcat(new Function<AllowedArgumentsForCreateServer, Set<String>>() {
                @Override
                public Set<String> apply(AllowedArgumentsForCreateServer arg0) {
                   return arg0.getDataCenters();
                }
-
-            })));
+            }).toSet();
    }
 
    @Override
