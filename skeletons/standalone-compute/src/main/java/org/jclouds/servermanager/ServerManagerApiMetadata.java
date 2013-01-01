@@ -13,24 +13,20 @@ import org.jclouds.servermanager.compute.config.ServerManagerComputeServiceConte
  */
 public class ServerManagerApiMetadata extends BaseApiMetadata {
 
-   public static Builder builder() {
-      return new Builder();
-   }
-
    @Override
    public Builder toBuilder() {
-      return Builder.class.cast(builder().fromApiMetadata(this));
+      return new Builder().fromApiMetadata(this);
    }
 
    public ServerManagerApiMetadata() {
-      super(builder());
+      super(new Builder());
    }
 
    protected ServerManagerApiMetadata(Builder builder) {
       super(builder);
    }
 
-   public static class Builder extends BaseApiMetadata.Builder {
+   public static class Builder extends BaseApiMetadata.Builder<Builder> {
 
       protected Builder(){
          id("servermanager")
@@ -49,5 +45,9 @@ public class ServerManagerApiMetadata extends BaseApiMetadata {
          return new ServerManagerApiMetadata(this);
       }
 
+      @Override
+      protected Builder self() {
+         return this;
+      }
    }
 }

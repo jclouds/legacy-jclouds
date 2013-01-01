@@ -46,22 +46,19 @@ import com.google.inject.Module;
 public class SwiftKeystoneApiMetadata extends SwiftApiMetadata {
 
    public static final TypeToken<RestContext<SwiftKeystoneClient, SwiftKeystoneAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<SwiftKeystoneClient, SwiftKeystoneAsyncClient>>() {
+      private static final long serialVersionUID = 1L;
    };
 
-   private static Builder builder() {
-      return new Builder();
-   }
-
    @Override
-   public Builder toBuilder() {
-      return builder().fromApiMetadata(this);
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromApiMetadata(this);
    }
 
    public SwiftKeystoneApiMetadata() {
-      this(builder());
+      this(new ConcreteBuilder());
    }
 
-   protected SwiftKeystoneApiMetadata(Builder builder) {
+   protected SwiftKeystoneApiMetadata(Builder<?> builder) {
       super(builder);
    }
 
@@ -73,7 +70,7 @@ public class SwiftKeystoneApiMetadata extends SwiftApiMetadata {
       return properties;
    }
 
-   public static class Builder extends SwiftApiMetadata.Builder {
+   public static abstract class Builder<T extends Builder<T>> extends SwiftApiMetadata.Builder<T> {
       protected Builder() {
          this(SwiftKeystoneClient.class, SwiftKeystoneAsyncClient.class);
       }
@@ -100,10 +97,11 @@ public class SwiftKeystoneApiMetadata extends SwiftApiMetadata {
       public SwiftKeystoneApiMetadata build() {
          return new SwiftKeystoneApiMetadata(this);
       }
-
+   }
+   
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
       @Override
-      public Builder fromApiMetadata(ApiMetadata in) {
-         super.fromApiMetadata(in);
+      protected ConcreteBuilder self() {
          return this;
       }
    }

@@ -23,7 +23,6 @@ import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.apis.ApiMetadata;
 import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.hpcloud.objectstorage.blobstore.HPCloudObjectStorageBlobRequestSigner;
 import org.jclouds.hpcloud.objectstorage.blobstore.config.HPCloudObjectStorageBlobStoreContextModule;
@@ -47,19 +46,16 @@ import com.google.inject.Module;
 public class HPCloudObjectStorageApiMetadata extends SwiftKeystoneApiMetadata {
 
    public static final TypeToken<RestContext<HPCloudObjectStorageApi, HPCloudObjectStorageAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<HPCloudObjectStorageApi, HPCloudObjectStorageAsyncApi>>() {
+      private static final long serialVersionUID = 1L;
    };
-
-   private static Builder builder() {
-      return new Builder();
-   }
 
    @Override
    public Builder toBuilder() {
-      return builder().fromApiMetadata(this);
+      return new Builder().fromApiMetadata(this);
    }
 
    public HPCloudObjectStorageApiMetadata() {
-      this(builder());
+      this(new Builder());
    }
 
    protected HPCloudObjectStorageApiMetadata(Builder builder) {
@@ -71,7 +67,7 @@ public class HPCloudObjectStorageApiMetadata extends SwiftKeystoneApiMetadata {
       return properties;
    }
 
-   public static class Builder extends SwiftKeystoneApiMetadata.Builder {
+   public static class Builder extends SwiftKeystoneApiMetadata.Builder<Builder> {
       protected Builder(){
          super(HPCloudObjectStorageApi.class, HPCloudObjectStorageAsyncApi.class);
          id("hpcloud-objectstorage")
@@ -95,28 +91,23 @@ public class HPCloudObjectStorageApiMetadata extends SwiftKeystoneApiMetadata {
       }
 
       @Override
-      public Builder fromApiMetadata(ApiMetadata in) {
-         super.fromApiMetadata(in);
+      protected Builder self() {
          return this;
       }
    }
 
    /**
     * Ensures keystone auth is used instead of swift auth
-    *
     */
    public static class HPCloudObjectStorageTemporaryUrlExtensionModule extends
          TemporaryUrlExtensionModule<HPCloudObjectStorageAsyncApi> {
-
       @Override
       protected void bindRequestSigner() {
          bind(BlobRequestSigner.class).to(HPCloudObjectStorageBlobRequestSigner.class);
       }
-
       @Override
       protected void bindTemporaryUrlKeyApi() {
          bindClientAndAsyncClient(binder(), TemporaryUrlKeyApi.class, KeystoneTemporaryUrlKeyAsyncApi.class);
       }
-
    }
 }

@@ -46,19 +46,16 @@ import com.google.inject.Module;
 public class AWSEC2ApiMetadata extends EC2ApiMetadata {
    
    public static final TypeToken<RestContext<AWSEC2Client, AWSEC2AsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<AWSEC2Client, AWSEC2AsyncClient>>() {
+      private static final long serialVersionUID = 1L;
    };
-   
-   private static Builder builder() {
-      return new Builder();
-   }
 
    @Override
    public Builder toBuilder() {
-      return builder().fromApiMetadata(this);
+      return new Builder().fromApiMetadata(this);
    }
 
    public AWSEC2ApiMetadata() {
-      this(builder());
+      this(new Builder());
    }
 
    protected AWSEC2ApiMetadata(Builder builder) {
@@ -79,7 +76,7 @@ public class AWSEC2ApiMetadata extends EC2ApiMetadata {
       return properties;
    }
 
-   public static class Builder extends EC2ApiMetadata.Builder {
+   public static class Builder extends EC2ApiMetadata.Builder<Builder> {
       protected Builder(){
          super(AWSEC2Client.class, AWSEC2AsyncClient.class);
          id("aws-ec2")
@@ -97,10 +94,8 @@ public class AWSEC2ApiMetadata extends EC2ApiMetadata {
       }
 
       @Override
-      public Builder fromApiMetadata(ApiMetadata in) {
-         super.fromApiMetadata(in);
+      protected Builder self() {
          return this;
       }
    }
-
 }

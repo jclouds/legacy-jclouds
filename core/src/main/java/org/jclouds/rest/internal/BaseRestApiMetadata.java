@@ -38,23 +38,12 @@ import com.google.common.reflect.TypeToken;
  * @author Adrian Cole
  */
 @Beta
-public class BaseRestApiMetadata extends BaseApiMetadata implements RestApiMetadata {
+public abstract class BaseRestApiMetadata extends BaseApiMetadata implements RestApiMetadata {
 
    protected final Class<?> api;
    protected final Class<?> asyncApi;
 
-   @Override
-   public Builder toBuilder() {
-      return new Builder(getApi(), getAsyncApi()).fromApiMetadata(this);
-   }
-
-   public BaseRestApiMetadata(Class<?> api, Class<?> asyncApi) {
-      super(new Builder(api, asyncApi));
-      this.api = checkNotNull(api, "api");
-      this.asyncApi = checkNotNull(asyncApi, "asyncApi");
-   }
-
-   protected BaseRestApiMetadata(Builder builder) {
+   protected BaseRestApiMetadata(Builder<?> builder) {
       super(builder);
       this.api = checkNotNull(builder.api, "api");
       this.asyncApi = checkNotNull(builder.asyncApi, "asyncApi");
@@ -73,12 +62,11 @@ public class BaseRestApiMetadata extends BaseApiMetadata implements RestApiMetad
       }, asyncApiToken);
    }
    
-   public static class Builder extends BaseApiMetadata.Builder implements RestApiMetadata.Builder {
+   public static abstract class Builder<T extends Builder<T>> extends BaseApiMetadata.Builder<T> implements RestApiMetadata.Builder<T> {
       protected Class<?> api;
       protected Class<?> asyncApi;
-
       
-      public Builder(Class<?> api, Class<?> asyncApi) {
+      protected Builder(Class<?> api, Class<?> asyncApi) {
          checkNotNull(api, "api");
          checkNotNull(asyncApi, "asyncApi");
          javaApi(api, asyncApi)
@@ -91,26 +79,20 @@ public class BaseRestApiMetadata extends BaseApiMetadata implements RestApiMetad
        * {@inheritDoc}
        */
       @Override
-      public Builder javaApi(Class<?> api, Class<?> asyncApi) {
+      public T javaApi(Class<?> api, Class<?> asyncApi) {
          this.api = checkNotNull(api, "api");
          this.asyncApi = checkNotNull(asyncApi, "asyncApi");
-         return this;
-      }
-
-
-      @Override
-      public ApiMetadata build() {
-         return new BaseRestApiMetadata(this);
+         return self();
       }
 
       @Override
-      public Builder fromApiMetadata(ApiMetadata in) {
+      public T fromApiMetadata(ApiMetadata in) {
          if (in instanceof RestApiMetadata) {
             RestApiMetadata rest = RestApiMetadata.class.cast(in);
             javaApi(rest.getApi(), rest.getAsyncApi());
          }
          super.fromApiMetadata(in);
-         return this;
+         return self();
       }
 
    }

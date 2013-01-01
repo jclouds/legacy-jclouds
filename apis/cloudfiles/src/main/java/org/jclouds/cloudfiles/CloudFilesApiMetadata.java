@@ -47,19 +47,16 @@ import com.google.inject.TypeLiteral;
 public class CloudFilesApiMetadata extends SwiftApiMetadata {
 
    public static final TypeToken<RestContext<CloudFilesClient, CloudFilesAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<CloudFilesClient, CloudFilesAsyncClient>>() {
+      private static final long serialVersionUID = 1L;
    };
-
-   private static Builder builder() {
-      return new Builder();
-   }
 
    @Override
    public Builder toBuilder() {
-      return builder().fromApiMetadata(this);
+      return new Builder().fromApiMetadata(this);
    }
 
    public CloudFilesApiMetadata() {
-      this(builder());
+      this(new Builder());
    }
 
    protected CloudFilesApiMetadata(Builder builder) {
@@ -72,7 +69,7 @@ public class CloudFilesApiMetadata extends SwiftApiMetadata {
       return properties;
    }
 
-   public static class Builder extends SwiftApiMetadata.Builder {
+   public static class Builder extends SwiftApiMetadata.Builder<Builder> {
       protected Builder(){
          super(CloudFilesClient.class, CloudFilesAsyncClient.class);
          id("cloudfiles")
@@ -95,19 +92,16 @@ public class CloudFilesApiMetadata extends SwiftApiMetadata {
       }
 
       @Override
-      public Builder fromApiMetadata(ApiMetadata in) {
-         super.fromApiMetadata(in);
+      protected Builder self() {
          return this;
       }
    }
 
    public static class CloudFilesTemporaryUrlExtensionModule extends TemporaryUrlExtensionModule<CloudFilesAsyncClient> {
-
       @Override
       protected void bindRequestSigner() {
          bind(BlobRequestSigner.class).to(new TypeLiteral<SwiftBlobSigner<CloudFilesAsyncClient>>() {
          });
       }
-
    }
 }

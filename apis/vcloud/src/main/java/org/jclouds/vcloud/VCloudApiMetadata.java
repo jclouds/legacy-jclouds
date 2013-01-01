@@ -51,6 +51,7 @@ import com.google.inject.Module;
 public class VCloudApiMetadata extends BaseRestApiMetadata {
 
    public static final TypeToken<RestContext<VCloudClient, VCloudAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<VCloudClient, VCloudAsyncClient>>() {
+      private static final long serialVersionUID = 1L;
    };
    
    @Override
@@ -89,7 +90,7 @@ public class VCloudApiMetadata extends BaseRestApiMetadata {
       return properties;
    }
 
-   public static class Builder extends BaseRestApiMetadata.Builder {
+   public static class Builder extends BaseRestApiMetadata.Builder<Builder> {
 
       protected Builder() {
          super(VCloudClient.class, VCloudAsyncClient.class);
@@ -110,11 +111,8 @@ public class VCloudApiMetadata extends BaseRestApiMetadata {
       }
 
       @Override
-      public Builder fromApiMetadata(ApiMetadata in) {
-         super.fromApiMetadata(in);
+      protected Builder self() {
          return this;
       }
-
    }
-
 }

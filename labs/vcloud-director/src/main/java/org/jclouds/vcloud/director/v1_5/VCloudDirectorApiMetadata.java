@@ -77,9 +77,7 @@ public class VCloudDirectorApiMetadata extends BaseRestApiMetadata {
       return properties;
    }
 
-   public static class Builder
-         extends
-       BaseRestApiMetadata.Builder {
+   public static class Builder extends BaseRestApiMetadata.Builder<Builder> {
 
       protected Builder() {
          super(VCloudDirectorApi.class, VCloudDirectorAsyncApi.class);
@@ -92,8 +90,6 @@ public class VCloudDirectorApiMetadata extends BaseRestApiMetadata {
          .defaultProperties(VCloudDirectorApiMetadata.defaultProperties())
          .context(TypeToken.of(VCloudDirectorContext.class))
          .defaultModule(VCloudDirectorRestClientModule.class);
-//         .view(TypeToken.of(ComputeServiceContext.class))
-//         .defaultModules(ImmutableSet.<Class<? extends Module>>of(VCloudDirectorRestClientModule.class, VCloudDirectorComputeServiceContextModule.class));
       }
 
       @Override
@@ -102,11 +98,8 @@ public class VCloudDirectorApiMetadata extends BaseRestApiMetadata {
       }
 
       @Override
-      public Builder fromApiMetadata(ApiMetadata in) {
-         super.fromApiMetadata(in);
+      protected Builder self() {
          return this;
       }
-
    }
-
 }

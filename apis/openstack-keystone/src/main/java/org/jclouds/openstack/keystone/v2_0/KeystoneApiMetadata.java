@@ -27,7 +27,6 @@ import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.SERV
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.apis.ApiMetadata;
 import org.jclouds.openstack.keystone.v2_0.config.CredentialTypes;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneParserModule;
@@ -49,18 +48,19 @@ import com.google.inject.Module;
 public class KeystoneApiMetadata extends BaseRestApiMetadata {
    
    public static final TypeToken<RestContext<? extends KeystoneApi,? extends  KeystoneAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<? extends KeystoneApi,? extends  KeystoneAsyncApi>>() {
+      private static final long serialVersionUID = 1L;
    };
 
    @Override
-   public Builder toBuilder() {
-      return (Builder) new Builder(getApi(), getAsyncApi()).fromApiMetadata(this);
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromApiMetadata(this);
    }
 
    public KeystoneApiMetadata() {
-      this(new Builder(KeystoneApi.class, KeystoneAsyncApi.class));
+      this(new ConcreteBuilder());
    }
 
-   protected KeystoneApiMetadata(Builder builder) {
+   protected KeystoneApiMetadata(Builder<?> builder) {
       super(builder);
    }
 
@@ -73,7 +73,10 @@ public class KeystoneApiMetadata extends BaseRestApiMetadata {
       return properties;
    }
 
-   public static class Builder extends BaseRestApiMetadata.Builder {
+   public static abstract class Builder<T extends Builder<T>> extends BaseRestApiMetadata.Builder<T> {
+      protected Builder() {
+         this(KeystoneApi.class, KeystoneAsyncApi.class);
+      }
 
       protected Builder(Class<?> api, Class<?> asyncApi) {
          super(api, asyncApi);
@@ -97,13 +100,12 @@ public class KeystoneApiMetadata extends BaseRestApiMetadata {
       public KeystoneApiMetadata build() {
          return new KeystoneApiMetadata(this);
       }
-
-      @Override
-      public Builder fromApiMetadata(ApiMetadata in) {
-         super.fromApiMetadata(in);
-         return this;
-      }
-
    }
 
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
 }

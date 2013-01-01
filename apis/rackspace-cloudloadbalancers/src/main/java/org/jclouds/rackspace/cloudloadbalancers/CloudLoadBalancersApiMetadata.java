@@ -48,9 +48,9 @@ import com.google.inject.Module;
  */
 public class CloudLoadBalancersApiMetadata extends BaseRestApiMetadata {
 
-   @SuppressWarnings("serial")
-   public static final TypeToken<RestContext<CloudLoadBalancersApi, CloudLoadBalancersAsyncApi>> CONTEXT_TOKEN = 
-         new TypeToken<RestContext<CloudLoadBalancersApi, CloudLoadBalancersAsyncApi>>() {};
+   public static final TypeToken<RestContext<CloudLoadBalancersApi, CloudLoadBalancersAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<CloudLoadBalancersApi, CloudLoadBalancersAsyncApi>>() {
+      private static final long serialVersionUID = 1L;
+   };
 
    @Override
    public Builder toBuilder() {
@@ -73,7 +73,7 @@ public class CloudLoadBalancersApiMetadata extends BaseRestApiMetadata {
       return properties;
    }
 
-   public static class Builder extends BaseRestApiMetadata.Builder {
+   public static class Builder extends BaseRestApiMetadata.Builder<Builder> {
 
       protected Builder() {
          super(CloudLoadBalancersApi.class, CloudLoadBalancersAsyncApi.class);
@@ -81,8 +81,7 @@ public class CloudLoadBalancersApiMetadata extends BaseRestApiMetadata {
                .name("Rackspace Cloud Load Balancers API")
                .identityName("Username")
                .credentialName("API Key")
-               .documentation(
-                     URI.create("http://docs.rackspace.com/loadbalancers/api/clb-devguide-latest/index.html"))
+               .documentation(URI.create("http://docs.rackspace.com/loadbalancers/api/clb-devguide-latest/index.html"))
                .version("1.0")
                .defaultEndpoint("https://identity.api.rackspacecloud.com/v2.0/")
                .defaultProperties(CloudLoadBalancersApiMetadata.defaultProperties())
@@ -101,11 +100,8 @@ public class CloudLoadBalancersApiMetadata extends BaseRestApiMetadata {
       }
 
       @Override
-      public Builder fromApiMetadata(ApiMetadata in) {
-         super.fromApiMetadata(in);
+      protected Builder self() {
          return this;
       }
-
    }
-
 }

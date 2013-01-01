@@ -30,25 +30,21 @@ import org.jclouds.compute.stub.config.StubComputeServiceContextModule;
  * @author Adrian Cole
  */
 public class StubApiMetadata extends BaseApiMetadata {
-   
-   public static Builder builder() {
-      return new Builder();
-   }
 
    @Override
    public Builder toBuilder() {
-      return Builder.class.cast(builder().fromApiMetadata(this));
+      return new Builder().fromApiMetadata(this);
    }
 
    public StubApiMetadata() {
-      super(builder());
+      super(new Builder());
    }
 
    protected StubApiMetadata(Builder builder) {
       super(builder);
    }
 
-   public static class Builder extends BaseApiMetadata.Builder {
+   public static class Builder extends BaseApiMetadata.Builder<Builder> {
 
       protected Builder(){
          id("stub")
@@ -67,5 +63,9 @@ public class StubApiMetadata extends BaseApiMetadata {
          return new StubApiMetadata(this);
       }
 
+      @Override
+      protected Builder self() {
+         return this;
+      }
    }
 }

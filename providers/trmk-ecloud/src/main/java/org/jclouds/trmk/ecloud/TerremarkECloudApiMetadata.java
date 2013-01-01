@@ -24,6 +24,7 @@ import com.google.inject.Module;
 public class TerremarkECloudApiMetadata extends TerremarkVCloudApiMetadata {
 
    public static final TypeToken<RestContext<TerremarkECloudClient, TerremarkECloudAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<TerremarkECloudClient, TerremarkECloudAsyncClient>>() {
+      private static final long serialVersionUID = 1L;
    };
    
    @Override
@@ -46,7 +47,7 @@ public class TerremarkECloudApiMetadata extends TerremarkVCloudApiMetadata {
       return properties;
    }
 
-   public static class Builder extends TerremarkVCloudApiMetadata.Builder {
+   public static class Builder extends TerremarkVCloudApiMetadata.Builder<Builder> {
 
       protected Builder() {
          super(TerremarkECloudClient.class, TerremarkECloudAsyncClient.class);
@@ -63,12 +64,10 @@ public class TerremarkECloudApiMetadata extends TerremarkVCloudApiMetadata {
       public TerremarkECloudApiMetadata build() {
          return new TerremarkECloudApiMetadata(this);
       }
-
+      
       @Override
-      public Builder fromApiMetadata(ApiMetadata in) {
-         super.fromApiMetadata(in);
+      protected Builder self() {
          return this;
       }
    }
-
 }

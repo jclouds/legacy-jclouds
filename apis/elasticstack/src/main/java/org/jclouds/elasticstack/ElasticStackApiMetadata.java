@@ -44,6 +44,7 @@ import com.google.inject.Module;
 public class ElasticStackApiMetadata extends BaseRestApiMetadata {
 
    public static final TypeToken<RestContext<ElasticStackClient, ElasticStackAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<ElasticStackClient, ElasticStackAsyncClient>>() {
+      private static final long serialVersionUID = 1L;
    };
    
    @Override
@@ -73,9 +74,7 @@ public class ElasticStackApiMetadata extends BaseRestApiMetadata {
       return properties;
    }
 
-   public static class Builder
-         extends
-         BaseRestApiMetadata.Builder {
+   public static class Builder extends BaseRestApiMetadata.Builder<Builder> {
 
       protected Builder() {
          super(ElasticStackClient.class, ElasticStackAsyncClient.class);
@@ -97,11 +96,8 @@ public class ElasticStackApiMetadata extends BaseRestApiMetadata {
       }
 
       @Override
-      public Builder fromApiMetadata(ApiMetadata in) {
-         super.fromApiMetadata(in);
+      protected Builder self() {
          return this;
       }
-
    }
-
 }
