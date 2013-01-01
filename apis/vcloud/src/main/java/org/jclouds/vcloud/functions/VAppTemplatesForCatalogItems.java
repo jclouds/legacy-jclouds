@@ -19,6 +19,7 @@
 package org.jclouds.vcloud.functions;
 
 import static com.google.common.collect.Iterables.filter;
+import static org.jclouds.Constants.PROPERTY_USER_THREADS;
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
 import java.util.concurrent.ExecutorService;
@@ -29,13 +30,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.Constants;
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.concurrent.ExceptionParsingListenableFuture;
-import org.jclouds.concurrent.Futures;
 import org.jclouds.logging.Logger;
-import org.jclouds.rest.AuthorizationException;
-import org.jclouds.util.Iterables2;
 import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.CatalogItem;
@@ -44,7 +40,6 @@ import org.jclouds.vcloud.domain.VAppTemplate;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import com.google.common.base.Throwables;
 
 /**
  * @author Adrian Cole
@@ -53,34 +48,20 @@ import com.google.common.base.Throwables;
 public class VAppTemplatesForCatalogItems implements Function<Iterable<CatalogItem>, Iterable<VAppTemplate>> {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
-   public Logger logger = Logger.NULL;
+   private Logger logger = Logger.NULL;
    private final VCloudAsyncClient aclient;
    private final ExecutorService executor;
-   private final NullOnAuthorizationException NullOnAuthorizationException;
 
-   @Singleton
-   static class NullOnAuthorizationException implements Function<Exception, VAppTemplate> {
-
-      public VAppTemplate apply(Exception from) {
-         if (from instanceof AuthorizationException) {
-            return null;
-         }
-         throw Throwables.propagate(from);
-      }
-   }
 
    @Inject
-   VAppTemplatesForCatalogItems(VCloudAsyncClient aclient,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
-            NullOnAuthorizationException NullOnAuthorizationException) {
+   VAppTemplatesForCatalogItems(VCloudAsyncClient aclient, @Named(PROPERTY_USER_THREADS) ExecutorService executor) {
       this.aclient = aclient;
       this.executor = executor;
-      this.NullOnAuthorizationException = NullOnAuthorizationException;
    }
 
    @Override
    public Iterable<VAppTemplate> apply(Iterable<CatalogItem> from) {
-      return Iterables2.concreteCopy(filter(transformParallel(filter(from, new Predicate<CatalogItem>() {
+      return filter(transformParallel(filter(from, new Predicate<CatalogItem>() {
 
          @Override
          public boolean apply(CatalogItem input) {
@@ -91,12 +72,10 @@ public class VAppTemplatesForCatalogItems implements Function<Iterable<CatalogIt
 
          @Override
          public Future<VAppTemplate> apply(CatalogItem from) {
-            return new ExceptionParsingListenableFuture<VAppTemplate>(Futures.makeListenable(VCloudAsyncClient.class
-                     .cast(aclient).getVAppTemplateClient().getVAppTemplate(from.getEntity().getHref()), executor),
-                     NullOnAuthorizationException);
+            return aclient.getVAppTemplateClient().getVAppTemplate(from.getEntity().getHref());
          }
 
-      }, executor, null, logger, "vappTemplates in"), Predicates.notNull()));
+      }, executor, null, logger, "vappTemplates in"), Predicates.notNull());
    }
 
 }
