@@ -16,32 +16,36 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.apis;
+package org.jclouds.osgi;
 
 import java.util.Set;
 
+import org.jclouds.providers.ProviderMetadata;
+
+import com.google.common.annotations.Beta;
 import com.google.common.collect.Sets;
 
 /**
- * A registry for holding {@link org.jclouds.apis.ApiMetadata}.
+ * A registry for holding {@link org.jclouds.providers.ProviderMetadata}.
  */
-public class ApiRegistry {
+@Beta
+public class ProviderRegistry {
 
-  private static final Set<ApiMetadata> apis = Sets.newHashSet();
+   private static final Set<ProviderMetadata> providers = Sets.newHashSet();
 
-  public static void registerApi(ApiMetadata api) {
-    apis.add(api);
-  }
+   public static void registerProvider(ProviderMetadata provider) {
+      providers.add(provider);
+   }
 
-  public static void unRegisterApi(ApiMetadata api) {
-    apis.remove(api);
-  }
+   public static void unregisterProvider(ProviderMetadata provider) {
+      providers.remove(provider);
+   }
 
-  public static Iterable<ApiMetadata> fromRegistry() {
-    return Iterable.class.cast(apis);
-  }
+   public static Iterable<ProviderMetadata> fromRegistry() {
+      return providers;
+   }
 
-  public static void clear() {
-    apis.clear();
-  }
+   public static void clear() {
+      providers.clear();
+   }
 }

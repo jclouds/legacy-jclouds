@@ -22,25 +22,28 @@ package org.jclouds.osgi;
 import org.jclouds.providers.ProviderMetadata;
 
 /**
- * A listener interface for {@link ProviderMetadata}.
- * In OSGi a provider can be added or removed dynamically.
- * OSGi services using this interface will receive a notification whenever this happens.
+ * A listener interface for {@link ProviderMetadata}. In OSGi a provider can be added or removed dynamically. OSGi
+ * services using this interface will receive a notification whenever this happens.
  */
 public interface ProviderListener {
 
    /**
     * Method to be called when a Provider gets added.
-    *
-    * @param provider The provider that was added.
-    * @param <P>      The {@link ProviderMetadata}.
+    * 
+    * @param provider
+    *           The provider that was added.
+    * @param <P>
+    *           The {@link ProviderMetadata}.
     */
    <P extends ProviderMetadata> void added(P provider);
 
    /**
     * Method to be called when a Provider gets removed.
-    *
-    * @param provider The provider that was added.
-    * @param <P>      The {@link ProviderMetadata}.
+    * 
+    * @param provider
+    *           The provider that was added.
+    * @param <P>
+    *           The {@link ProviderMetadata}.
     */
    <P extends ProviderMetadata> void removed(P provider);
 

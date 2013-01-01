@@ -22,25 +22,28 @@ package org.jclouds.osgi;
 import org.jclouds.apis.ApiMetadata;
 
 /**
- * A listener interface for {@link org.jclouds.apis.ApiMetadata}.
- * In OSGi a api can be added or removed dynamically.
+ * A listener interface for {@link org.jclouds.apis.ApiMetadata}. In OSGi a api can be added or removed dynamically.
  * OSGi services using this interface will receive a notification whenever this happens.
  */
 public interface ApiListener {
 
    /**
     * Method to be called when an api gets added.
-    *
-    * @param api The api that was added.
-    * @param <A> The {@link org.jclouds.apis.ApiMetadata}.
+    * 
+    * @param api
+    *           The api that was added.
+    * @param <A>
+    *           The {@link org.jclouds.apis.ApiMetadata}.
     */
    <A extends ApiMetadata> void added(A api);
 
    /**
     * Method to be called when an api gets removed.
-    *
-    * @param api The api that was added.
-    * @param <A> The {@link ApiMetadata}.
+    * 
+    * @param api
+    *           The api that was added.
+    * @param <A>
+    *           The {@link ApiMetadata}.
     */
    <A extends ApiMetadata> void removed(A api);
 }
