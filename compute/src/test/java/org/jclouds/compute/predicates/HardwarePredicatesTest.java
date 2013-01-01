@@ -21,11 +21,9 @@ package org.jclouds.compute.predicates;
 import org.jclouds.ContextBuilder;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.ImageBuilder;
+import org.jclouds.compute.domain.Hardware;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 
 /**
@@ -33,23 +31,14 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 @Test
-public class ImagePredicatesTest {
+public class HardwarePredicatesTest {
    ComputeService computeService = ContextBuilder.newBuilder("stub").build(ComputeServiceContext.class).getComputeService();
 
-   public void testImageId() {
-      Image first = Iterables.get(computeService.listImages(), 0);
-      assert ImagePredicates.idEquals(first.getId()).apply(first);
-      Image second = Iterables.get(computeService.listImages(), 1);
-      assert !ImagePredicates.idEquals(first.getId()).apply(second);
-   }
-
-   public void testUserMetadataContains() {
-      Image first = Iterables.get(computeService.listImages(), 0);
-      first = ImageBuilder.fromImage(first).userMetadata(ImmutableMap.of("foo", "bar")).build();
-      assert ImagePredicates.userMetadataContains("foo", "bar").apply(first);
-      Image second = Iterables.get(computeService.listImages(), 1);
-      second = ImageBuilder.fromImage(second).userMetadata(ImmutableMap.of("foo", "baz")).build();
-      assert !ImagePredicates.userMetadataContains("foo", "bar").apply(second);
+   public void testHardwareId() {
+      Hardware first = Iterables.get(computeService.listHardwareProfiles(), 0);
+      assert HardwarePredicates.idEquals(first.getId()).apply(first);
+      Hardware second = Iterables.get(computeService.listHardwareProfiles(), 1);
+      assert !HardwarePredicates.idEquals(first.getId()).apply(second);
    }
 
 }
