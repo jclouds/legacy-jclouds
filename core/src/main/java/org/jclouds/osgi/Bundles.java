@@ -19,16 +19,16 @@
 package org.jclouds.osgi;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Predicates.notNull;
+import static org.jclouds.util.Strings2.toStringAndClose;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import org.jclouds.util.Strings2;
 import org.osgi.framework.Bundle;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicates;
 import com.google.common.base.Splitter;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableSet;
@@ -40,30 +40,30 @@ import com.google.common.collect.ImmutableSet;
  */
 public final class Bundles {
    private Bundles() {
-
    }
 
    /**
-    * instantiates the supplied classnames using the bundle classloader, and
-    * casts to the supplied type. Any errors are silently ignored.
+    * instantiates the supplied classnames using the bundle classloader, and casts to the supplied type. Any errors are
+    * silently ignored.
     * 
     * @return instances that could be instantiated without error.
     */
-   public static <T> ImmutableSet<T> instantiateAvailableClasses(Bundle bundle, Iterable<String> classNames, Class<T> type) {
+   public static <T> ImmutableSet<T> instantiateAvailableClasses(Bundle bundle, Iterable<String> classNames,
+         Class<T> type) {
       checkNotNull(bundle, "bundle");
       checkNotNull(classNames, "classNames");
       checkNotNull(type, "type");
       return FluentIterable.from(classNames)
                            .transform(loadClassIfAssignableFrom(bundle, type))
-                           .filter(Predicates.notNull())
+                           .filter(notNull())
                            .transform(instantiateIfPossible(type))
-                           .filter(Predicates.notNull())
+                           .filter(notNull())
                            .toSet();
    }
 
    /**
-    * A function that loads classes from the bundle, or returns null if the
-    * class isn't found or assignable by the input parameter
+    * A function that loads classes from the bundle, or returns null if the class isn't found or assignable by the input
+    * parameter
     * 
     * @param bundle
     *           where to find classes
@@ -90,8 +90,7 @@ public final class Bundles {
    }
 
    /**
-    * A function that instantiates classes or returns null, if it encounters any
-    * problems.
+    * A function that instantiates classes or returns null, if it encounters any problems.
     * 
     * @param clazz
     *           superclass to cast as
@@ -118,10 +117,9 @@ public final class Bundles {
     *           The path to the resource.
     * @param bundle
     *           The bundle to read from.
-    * @return strings delimited by newline in the stream or empty set, on any
-    *         exception.
+    * @return strings delimited by newline in the stream or empty set, on any exception.
     */
-   public static ImmutableSet<String> stringsForResorceInBundle(String resourcePath, Bundle bundle) {
+   public static ImmutableSet<String> stringsForResourceInBundle(String resourcePath, Bundle bundle) {
       checkNotNull(resourcePath, "resourcePath");
       checkNotNull(bundle, "bundle");
 
@@ -131,13 +129,12 @@ public final class Bundles {
       try {
          return ImmutableSet.copyOf(splitOrEmptyAndClose(resource.openStream()));
       } catch (IOException e) {
-         return ImmutableSet.of();
       } catch (RuntimeException ex) {
-         return ImmutableSet.of();
       }
+      return ImmutableSet.of();
    }
 
    private static Iterable<String> splitOrEmptyAndClose(InputStream in) throws IOException {
-      return Splitter.on('\n').omitEmptyStrings().split(Strings2.toStringAndClose(in));
+      return Splitter.on('\n').omitEmptyStrings().split(toStringAndClose(in));
    }
 }

@@ -26,6 +26,7 @@ import java.util.NoSuchElementException;
 import java.util.ServiceLoader;
 
 import org.jclouds.View;
+import org.jclouds.osgi.ApiRegistry;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -59,9 +60,8 @@ public class Apis {
     * 
     * @return all available apis loaded from classpath via ServiceLoader
     */
-   @SuppressWarnings("unchecked")
    private static Iterable<ApiMetadata> fromServiceLoader() {
-      return Iterable.class.cast(ServiceLoader.load(ApiMetadata.class));
+      return ServiceLoader.load(ApiMetadata.class);
    }
 
    /**
