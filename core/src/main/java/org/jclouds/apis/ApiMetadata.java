@@ -41,107 +41,107 @@ import com.google.inject.Module;
 @Beta
 public interface ApiMetadata {
 
-   public static interface Builder {
+   public static interface Builder<B extends Builder<B>>{
       /**
        * @see ApiMetadata#getId()
        */
-      Builder id(String id);
+      B id(String id);
 
       /**
        * @see ApiMetadata#getName()
        */
-      Builder name(String name);
+      B name(String name);
 
       /**
        * @see ApiMetadata#getContext()
        */
-      Builder context(TypeToken<? extends Context> context);
+      B context(TypeToken<? extends Context> context);
 
       /**
        * @see ApiMetadata#getViews()
        */
-      Builder view(Class<? extends View> view);
+      B view(Class<? extends View> view);
       
       /**
        * @see ApiMetadata#getViews()
        */
-      Builder view(TypeToken<? extends View> view);
+      B view(TypeToken<? extends View> view);
 
       /**
        * @see ApiMetadata#getViews()
        */
-      Builder views(Set<TypeToken<? extends View>> views);
+      B views(Set<TypeToken<? extends View>> views);
 
       /**
        * @see ApiMetadata#getEndpointName()
        */
-      Builder endpointName(String endpointName);
+      B endpointName(String endpointName);
 
       /**
        * @see ApiMetadata#getIdentityName()
        */
-      Builder identityName(String identityName);
+      B identityName(String identityName);
 
       /**
        * @see ApiMetadata#getCredentialName()
        */
-      Builder credentialName(@Nullable String credentialName);
+      B credentialName(@Nullable String credentialName);
 
       /**
        * @see ApiMetadata#getVersion()
        */
-      Builder version(String version);
+      B version(String version);
 
       /**
        * @see ApiMetadata#getBuildVersion()
        */
-      Builder buildVersion(@Nullable String buildVersion);
+      B buildVersion(@Nullable String buildVersion);
 
       /**
        * @see ApiMetadata#getDefaultEndpoint()
        */
-      Builder defaultEndpoint(@Nullable String defaultEndpoint);
+      B defaultEndpoint(@Nullable String defaultEndpoint);
 
       /**
        * @see ApiMetadata#getDefaultIdentity()
        */
-      Builder defaultIdentity(@Nullable String defaultIdentity);
+      B defaultIdentity(@Nullable String defaultIdentity);
 
       /**
        * @see ApiMetadata#getDefaultCredential()
        */
-      Builder defaultCredential(@Nullable String defaultCredential);
+      B defaultCredential(@Nullable String defaultCredential);
 
       /**
        * @see ApiMetadata#getDefaultProperties()
        */
-      Builder defaultProperties(Properties defaultProperties);
+      B defaultProperties(Properties defaultProperties);
       
       /**
        * @see ApiMetadata#getDefaultModules()
        */
-      Builder defaultModule(Class<? extends Module> defaultModule);
+      B defaultModule(Class<? extends Module> defaultModule);
 
       /**
        * @see ApiMetadata#getDefaultModules()
        */
-      Builder defaultModules(Set<Class<? extends Module>> defaultModules);
+      B defaultModules(Set<Class<? extends Module>> defaultModules);
       
       /**
        * @see ApiMetadata#getDocumentation()
        */
-      Builder documentation(URI documentation);
+      B documentation(URI documentation);
 
       ApiMetadata build();
 
-      Builder fromApiMetadata(ApiMetadata from);
+      B fromApiMetadata(ApiMetadata from);
       
    }
 
    /**
     * @see Builder
     */
-   Builder toBuilder();
+   Builder<?> toBuilder();
 
    /**
     * 

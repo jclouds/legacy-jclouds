@@ -42,17 +42,13 @@ import com.google.inject.Module;
  */
 public class CloudStackEC2ApiMetadata extends EC2ApiMetadata {
 
-   private static Builder builder() {
-      return new Builder();
-   }
-
    @Override
    public Builder toBuilder() {
-      return builder().fromApiMetadata(this);
+      return new Builder().fromApiMetadata(this);
    }
 
    public CloudStackEC2ApiMetadata() {
-      this(builder());
+      this(new Builder());
    }
 
    protected CloudStackEC2ApiMetadata(Builder builder) {
@@ -65,7 +61,7 @@ public class CloudStackEC2ApiMetadata extends EC2ApiMetadata {
       return properties;
    }
 
-   public static class Builder extends EC2ApiMetadata.Builder {
+   public static class Builder extends EC2ApiMetadata.Builder<Builder> {
       protected Builder(){
          super(EC2Client.class, EC2AsyncClient.class);
          id("cloudstack-ec2")
@@ -87,10 +83,8 @@ public class CloudStackEC2ApiMetadata extends EC2ApiMetadata {
       }
 
       @Override
-      public Builder fromApiMetadata(ApiMetadata in) {
-         super.fromApiMetadata(in);
+      protected Builder self() {
          return this;
       }
    }
-
 }

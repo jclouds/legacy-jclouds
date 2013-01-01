@@ -48,6 +48,7 @@ import com.google.inject.Module;
 public class CinderApiMetadata extends BaseRestApiMetadata {
    
    public static final TypeToken<RestContext<CinderApi, CinderAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<CinderApi, CinderAsyncApi>>() {
+      private static final long serialVersionUID = 1L;
    };
 
    @Override
@@ -71,7 +72,7 @@ public class CinderApiMetadata extends BaseRestApiMetadata {
       return properties;
    }
 
-   public static class Builder extends BaseRestApiMetadata.Builder {
+   public static class Builder extends BaseRestApiMetadata.Builder<Builder> {
 
       protected Builder() {
          super(CinderApi.class, CinderAsyncApi.class);
@@ -90,7 +91,7 @@ public class CinderApiMetadata extends BaseRestApiMetadata {
                                      .add(CinderParserModule.class)
                                      .add(CinderRestClientModule.class)
                                      .build());
-      }  
+      }
       
       @Override
       public CinderApiMetadata build() {
@@ -98,8 +99,7 @@ public class CinderApiMetadata extends BaseRestApiMetadata {
       }
 
       @Override
-      public Builder fromApiMetadata(ApiMetadata in) {
-         super.fromApiMetadata(in);
+      protected Builder self() {
          return this;
       }
    }

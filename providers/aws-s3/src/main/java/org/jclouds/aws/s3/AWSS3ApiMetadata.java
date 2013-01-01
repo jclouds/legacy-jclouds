@@ -42,19 +42,16 @@ import com.google.inject.Module;
 public class AWSS3ApiMetadata extends S3ApiMetadata {
    
    public static final TypeToken<RestContext<AWSS3Client, AWSS3AsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<AWSS3Client, AWSS3AsyncClient>>() {
+      private static final long serialVersionUID = 1L;
    };
-   
-   private static Builder builder() {
-      return new Builder();
-   }
 
    @Override
    public Builder toBuilder() {
-      return builder().fromApiMetadata(this);
+      return new Builder().fromApiMetadata(this);
    }
 
    public AWSS3ApiMetadata() {
-      this(builder());
+      this(new Builder());
    }
 
    protected AWSS3ApiMetadata(Builder builder) {
@@ -68,7 +65,7 @@ public class AWSS3ApiMetadata extends S3ApiMetadata {
       return properties;
    }
 
-   public static class Builder extends S3ApiMetadata.Builder {
+   public static class Builder extends S3ApiMetadata.Builder<Builder> {
       protected Builder(){
          super(AWSS3Client.class, AWSS3AsyncClient.class);
          id("aws-s3")
@@ -85,10 +82,8 @@ public class AWSS3ApiMetadata extends S3ApiMetadata {
       }
 
       @Override
-      public Builder fromApiMetadata(ApiMetadata in) {
-         super.fromApiMetadata(in);
+      protected Builder self() {
          return this;
       }
    }
-
 }

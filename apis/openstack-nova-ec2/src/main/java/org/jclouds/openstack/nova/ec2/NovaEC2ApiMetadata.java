@@ -47,19 +47,16 @@ import com.google.inject.Module;
 public class NovaEC2ApiMetadata extends EC2ApiMetadata {
 
    public static final TypeToken<RestContext<NovaEC2Client, NovaEC2AsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<NovaEC2Client, NovaEC2AsyncClient>>() {
+      private static final long serialVersionUID = 1L;
    };
-
-   private static Builder builder() {
-      return new Builder();
-   }
 
    @Override
    public Builder toBuilder() {
-      return builder().fromApiMetadata(this);
+      return new Builder().fromApiMetadata(this);
    }
 
    public NovaEC2ApiMetadata() {
-      this(builder());
+      this(new Builder());
    }
 
    protected NovaEC2ApiMetadata(Builder builder) {
@@ -83,7 +80,7 @@ public class NovaEC2ApiMetadata extends EC2ApiMetadata {
       return properties;
    }
 
-   public static class Builder extends EC2ApiMetadata.Builder {
+   public static class Builder extends EC2ApiMetadata.Builder<Builder> {
       protected Builder(){
          super(NovaEC2Client.class, NovaEC2AsyncClient.class);
          id("openstack-nova-ec2")
@@ -105,10 +102,8 @@ public class NovaEC2ApiMetadata extends EC2ApiMetadata {
       }
 
       @Override
-      public Builder fromApiMetadata(ApiMetadata in) {
-         super.fromApiMetadata(in);
+      protected Builder self() {
          return this;
       }
    }
-
 }

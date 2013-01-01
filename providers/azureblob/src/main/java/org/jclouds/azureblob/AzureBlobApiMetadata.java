@@ -44,6 +44,7 @@ import com.google.inject.Module;
 public class AzureBlobApiMetadata extends BaseRestApiMetadata {
 
    public static final TypeToken<RestContext<AzureBlobClient, AzureBlobAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<AzureBlobClient, AzureBlobAsyncClient>>() {
+      private static final long serialVersionUID = 1L;
    };
    
    private static Builder builder() {
@@ -73,7 +74,7 @@ public class AzureBlobApiMetadata extends BaseRestApiMetadata {
       return properties;
    }
    
-   public static class Builder extends BaseRestApiMetadata.Builder {
+   public static class Builder extends BaseRestApiMetadata.Builder<Builder> {
       protected Builder(){
          super(AzureBlobClient.class, AzureBlobAsyncClient.class);
          id("azureblob")
@@ -94,10 +95,8 @@ public class AzureBlobApiMetadata extends BaseRestApiMetadata {
       }
 
       @Override
-      public Builder fromApiMetadata(ApiMetadata in) {
-         super.fromApiMetadata(in);
+      protected Builder self() {
          return this;
       }
    }
-
 }

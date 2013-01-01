@@ -44,6 +44,7 @@ import com.google.inject.Module;
 public class SoftLayerApiMetadata extends BaseRestApiMetadata {
 
    public static final TypeToken<RestContext<SoftLayerClient, SoftLayerAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<SoftLayerClient, SoftLayerAsyncClient>>() {
+      private static final long serialVersionUID = 1L;
    };
    
    @Override
@@ -68,9 +69,7 @@ public class SoftLayerApiMetadata extends BaseRestApiMetadata {
       return properties;
    }
 
-   public static class Builder
-         extends
-         BaseRestApiMetadata.Builder {
+   public static class Builder extends BaseRestApiMetadata.Builder<Builder> {
 
       protected Builder() {
          super(SoftLayerClient.class, SoftLayerAsyncClient.class);
@@ -92,11 +91,8 @@ public class SoftLayerApiMetadata extends BaseRestApiMetadata {
       }
 
       @Override
-      public Builder fromApiMetadata(ApiMetadata in) {
-         super.fromApiMetadata(in);
+      protected Builder self() {
          return this;
       }
-
    }
-
 }

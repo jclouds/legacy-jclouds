@@ -45,6 +45,7 @@ import com.google.inject.Module;
 public class JoyentCloudApiMetadata extends BaseRestApiMetadata {
 
    public static final TypeToken<RestContext<JoyentCloudApi, JoyentCloudAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<JoyentCloudApi, JoyentCloudAsyncApi>>() {
+      private static final long serialVersionUID = 1L;
    };
 
    @Override
@@ -71,7 +72,7 @@ public class JoyentCloudApiMetadata extends BaseRestApiMetadata {
       return properties;
    }
 
-   public static class Builder extends BaseRestApiMetadata.Builder {
+   public static class Builder extends BaseRestApiMetadata.Builder<Builder> {
 
       protected Builder() {
          super(JoyentCloudApi.class, JoyentCloudAsyncApi.class);
@@ -93,11 +94,8 @@ public class JoyentCloudApiMetadata extends BaseRestApiMetadata {
       }
 
       @Override
-      public Builder fromApiMetadata(ApiMetadata in) {
-         super.fromApiMetadata(in);
+      protected Builder self() {
          return this;
       }
-
    }
-
 }

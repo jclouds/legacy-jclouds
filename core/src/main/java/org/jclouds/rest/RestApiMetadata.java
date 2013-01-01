@@ -30,13 +30,13 @@ import com.google.common.annotations.Beta;
 @Beta
 public interface RestApiMetadata extends ApiMetadata {
 
-   public static interface Builder extends ApiMetadata.Builder {
+   public static interface Builder<T extends Builder<T>> extends ApiMetadata.Builder<T> {
 
       /**
        * @see ApiMetadata#getApi()
        * @see ApiMetadata#getAsyncApi()
        */
-      Builder javaApi(Class<?> api, Class<?> asyncApi);
+      T javaApi(Class<?> api, Class<?> asyncApi);
    }
 
    /**

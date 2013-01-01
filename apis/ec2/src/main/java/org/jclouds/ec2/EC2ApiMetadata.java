@@ -62,18 +62,19 @@ import com.google.inject.Module;
 public class EC2ApiMetadata extends BaseRestApiMetadata {
    
    public static final TypeToken<RestContext<? extends EC2Client, ? extends EC2AsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<? extends EC2Client, ? extends EC2AsyncClient>>() {
+      private static final long serialVersionUID = 1L;
    };
 
    @Override
-   public Builder toBuilder() {
-      return (Builder) new Builder(getApi(), getAsyncApi()).fromApiMetadata(this);
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromApiMetadata(this);
    }
 
    public EC2ApiMetadata() {
-      this(new Builder(EC2Client.class, EC2AsyncClient.class));
+      this(new ConcreteBuilder());
    }
 
-   protected EC2ApiMetadata(Builder builder) {
+   protected EC2ApiMetadata(Builder<?> builder) {
       super(builder);
    }
 
@@ -90,8 +91,10 @@ public class EC2ApiMetadata extends BaseRestApiMetadata {
       return properties;
    }
 
-   public static class Builder
-         extends BaseRestApiMetadata.Builder {
+   public static abstract class Builder<T extends Builder<T>> extends BaseRestApiMetadata.Builder<T> {
+      protected Builder() {
+         this(EC2Client.class, EC2AsyncClient.class);
+      }
 
       protected Builder(Class<?> syncClient, Class<?> asyncClient) {
          super(syncClient, asyncClient);
@@ -112,13 +115,12 @@ public class EC2ApiMetadata extends BaseRestApiMetadata {
       public ApiMetadata build() {
          return new EC2ApiMetadata(this);
       }
-
+   }
+   
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
       @Override
-      public Builder fromApiMetadata(ApiMetadata in) {
-         super.fromApiMetadata(in);
+      protected ConcreteBuilder self() {
          return this;
       }
-
    }
-
 }

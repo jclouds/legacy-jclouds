@@ -41,17 +41,13 @@ import com.google.inject.Module;
 
 public class NodePoolApiMetadata extends BaseApiMetadata {
 
-   public static Builder builder() {
-      return new Builder();
-   }
-
    @Override
    public Builder toBuilder() {
-      return Builder.class.cast(builder().fromApiMetadata(this));
+      return new Builder().fromApiMetadata(this);
    }
 
    public NodePoolApiMetadata() {
-      super(builder());
+      super(new Builder());
    }
 
    protected NodePoolApiMetadata(Builder builder) {
@@ -76,7 +72,7 @@ public class NodePoolApiMetadata extends BaseApiMetadata {
       return properties;
    }
 
-   public static class Builder extends BaseApiMetadata.Builder {
+   public static class Builder extends BaseApiMetadata.Builder<Builder> {
       protected Builder() {
          id("nodepool")
                   .name("node pool provider wrapper")
@@ -98,6 +94,9 @@ public class NodePoolApiMetadata extends BaseApiMetadata {
          return new NodePoolApiMetadata(this);
       }
 
+      @Override
+      protected Builder self() {
+         return this;
+      }
    }
-
 }

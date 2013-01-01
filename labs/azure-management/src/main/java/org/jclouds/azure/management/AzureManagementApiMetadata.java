@@ -44,6 +44,7 @@ import com.google.inject.Module;
 public class AzureManagementApiMetadata extends BaseRestApiMetadata {
 
    public static final TypeToken<RestContext<AzureManagementApi, AzureManagementAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<AzureManagementApi, AzureManagementAsyncApi>>() {
+      private static final long serialVersionUID = 1L;
    };
 
    private static Builder builder() {
@@ -69,7 +70,7 @@ public class AzureManagementApiMetadata extends BaseRestApiMetadata {
       return properties;
    }
 
-   public static class Builder extends BaseRestApiMetadata.Builder {
+   public static class Builder extends BaseRestApiMetadata.Builder<Builder> {
       protected Builder() {
          super(AzureManagementApi.class, AzureManagementAsyncApi.class);
          id("azure-management")
@@ -91,10 +92,8 @@ public class AzureManagementApiMetadata extends BaseRestApiMetadata {
       }
 
       @Override
-      public Builder fromApiMetadata(ApiMetadata in) {
-         super.fromApiMetadata(in);
+      protected Builder self() {
          return this;
       }
    }
-
 }

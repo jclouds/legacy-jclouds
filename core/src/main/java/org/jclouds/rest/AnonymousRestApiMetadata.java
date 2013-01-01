@@ -20,7 +20,6 @@ package org.jclouds.rest;
 
 import java.net.URI;
 
-import org.jclouds.apis.ApiMetadata;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
 
 import com.google.common.annotations.Beta;
@@ -50,7 +49,7 @@ public class AnonymousRestApiMetadata extends BaseRestApiMetadata {
       super(builder);
    }
 
-   public static class Builder extends BaseRestApiMetadata.Builder {
+   public static final class Builder extends BaseRestApiMetadata.Builder<Builder> {
 
       public Builder(Class<?> client, Class<?> asyncClient) {
          super(client, asyncClient);
@@ -65,12 +64,10 @@ public class AnonymousRestApiMetadata extends BaseRestApiMetadata {
       public AnonymousRestApiMetadata build() {
          return new AnonymousRestApiMetadata(this);
       }
-      
+
       @Override
-      public Builder fromApiMetadata(ApiMetadata in) {
-         super.fromApiMetadata(in);
+      protected Builder self() {
          return this;
       }
    }
-
 }
