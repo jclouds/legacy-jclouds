@@ -116,10 +116,9 @@ import org.jclouds.cloudstack.features.ZoneClient;
 import org.jclouds.cloudstack.filters.AddSessionKeyAndJSessionIdToRequest;
 import org.jclouds.cloudstack.filters.AuthenticationFilter;
 import org.jclouds.cloudstack.filters.QuerySigner;
-import org.jclouds.cloudstack.functions.LoginWithPasswordCredentials;
 import org.jclouds.cloudstack.handlers.CloudStackErrorHandler;
 import org.jclouds.cloudstack.handlers.InvalidateSessionAndRetryOn401AndLogoutOnClose;
-import org.jclouds.concurrent.RetryOnTimeOutExceptionFunction;
+import org.jclouds.cloudstack.loaders.LoginWithPasswordCredentials;
 import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpRetryHandler;
@@ -134,10 +133,8 @@ import org.jclouds.rest.RestContext;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rest.internal.RestContextImpl;
 
-import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
@@ -269,24 +266,13 @@ public class CloudStackRestClientModule extends RestClientModule<CloudStackClien
       }
    }
 
-   @Provides
-   @Singleton
-   protected Function<Credentials, LoginResponse> makeSureFilterRetriesOnTimeout(
-            LoginWithPasswordCredentials loginWithPasswordCredentials) {
-      // we should retry on timeout exception logging in.
-      return new RetryOnTimeOutExceptionFunction<Credentials, LoginResponse>(loginWithPasswordCredentials);
-   }
-
-   // TODO: not sure we can action the timeout from loginresponse without extra code? modify default
-   // accordingly
    // PROPERTY_SESSION_INTERVAL is default to 60 seconds
    @Provides
    @Singleton
-   public LoadingCache<Credentials, LoginResponse> provideLoginResponseCache(
-            Function<Credentials, LoginResponse> getLoginResponse,
+   protected LoadingCache<Credentials, LoginResponse> provideLoginResponseCache(
+            LoginWithPasswordCredentials getLoginResponse,
             @Named(Constants.PROPERTY_SESSION_INTERVAL) int seconds) {
-      return CacheBuilder.newBuilder().expireAfterWrite(seconds, TimeUnit.SECONDS).build(
-               CacheLoader.from(getLoginResponse));
+      return CacheBuilder.newBuilder().expireAfterWrite(seconds, TimeUnit.SECONDS).build(getLoginResponse);
    }
 
    // Temporary conversion of a cache to a supplier until there is a single-element cache

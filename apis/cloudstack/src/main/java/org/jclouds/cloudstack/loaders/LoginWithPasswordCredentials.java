@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.cloudstack.functions;
+package org.jclouds.cloudstack.loaders;
 
 import static com.google.common.base.Charsets.UTF_8;
 import static com.google.common.hash.Hashing.md5;
@@ -31,10 +31,10 @@ import org.jclouds.cloudstack.domain.LoginResponse;
 import org.jclouds.cloudstack.features.SessionClient;
 import org.jclouds.domain.Credentials;
 
-import com.google.common.base.Function;
+import com.google.common.cache.CacheLoader;
 
 @Singleton
-public class LoginWithPasswordCredentials implements Function<Credentials, LoginResponse> {
+public class LoginWithPasswordCredentials extends CacheLoader<Credentials, LoginResponse> {
    private final SessionClient client;
 
    @Inject
@@ -43,7 +43,7 @@ public class LoginWithPasswordCredentials implements Function<Credentials, Login
    }
 
    @Override
-   public LoginResponse apply(Credentials input) {
+   public LoginResponse load(Credentials input) {
       String username = input.identity;
       String domain = "";  // empty = ROOT domain
 

@@ -887,7 +887,7 @@ public class CloudServersAsyncClientTest extends BaseAsyncClientTest<CloudServer
       GetAuth provideGetAuth() {
          return new GetAuth(null) {
             @Override
-            public Auth apply(Credentials in) {
+            public Auth load(Credentials in) {
                return new ParseAuthTest().expected();
             }
          };

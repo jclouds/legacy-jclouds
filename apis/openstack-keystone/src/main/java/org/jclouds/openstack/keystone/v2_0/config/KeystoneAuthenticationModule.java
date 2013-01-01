@@ -30,7 +30,6 @@ import java.util.concurrent.TimeoutException;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.concurrent.RetryOnTimeOutExceptionFunction;
 import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.annotation.ClientError;
@@ -47,8 +46,8 @@ import org.jclouds.location.suppliers.derived.RegionIdsFromRegionIdToURIKeySet;
 import org.jclouds.location.suppliers.derived.ZoneIdsFromZoneIdToURIKeySet;
 import org.jclouds.location.suppliers.implicit.FirstRegion;
 import org.jclouds.location.suppliers.implicit.FirstZone;
-import org.jclouds.openstack.keystone.v2_0.AuthenticationAsyncApi;
 import org.jclouds.openstack.keystone.v2_0.AuthenticationApi;
+import org.jclouds.openstack.keystone.v2_0.AuthenticationAsyncApi;
 import org.jclouds.openstack.keystone.v2_0.domain.Access;
 import org.jclouds.openstack.keystone.v2_0.functions.AuthenticateApiAccessKeyCredentials;
 import org.jclouds.openstack.keystone.v2_0.functions.AuthenticatePasswordCredentials;
@@ -179,9 +178,7 @@ public class KeystoneAuthenticationModule extends AbstractModule {
             Map<String, Function<Credentials, Access>> authenticationMethods) {
       checkArgument(authenticationMethods.containsKey(credentialType), "credential type %s not in supported list: %s",
                credentialType, authenticationMethods.keySet());
-      // regardless of how we authenticate, we should retry if there is a timeout exception logging
-      // in.
-      return new RetryOnTimeOutExceptionFunction<Credentials, Access>(authenticationMethods.get(credentialType));
+      return authenticationMethods.get(credentialType);
    }
 
    // TODO: what is the timeout of the session token? modify default accordingly
