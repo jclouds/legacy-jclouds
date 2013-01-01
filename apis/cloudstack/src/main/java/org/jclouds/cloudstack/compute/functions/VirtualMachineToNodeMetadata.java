@@ -22,6 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Sets.newHashSet;
+import static org.jclouds.location.predicates.LocationPredicates.idEquals;
 import static org.jclouds.util.InetAddresses2.isPrivateIPAddress;
 
 import java.util.Map;
@@ -33,15 +34,13 @@ import javax.inject.Singleton;
 import org.jclouds.cloudstack.domain.IPForwardingRule;
 import org.jclouds.cloudstack.domain.NIC;
 import org.jclouds.cloudstack.domain.VirtualMachine;
-import org.jclouds.collect.FindResourceInSet;
 import org.jclouds.collect.Memoized;
-import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.Processor;
-import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Location;
 import org.jclouds.rest.ResourceNotFoundException;
@@ -52,6 +51,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
@@ -75,25 +75,25 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
          .put(VirtualMachine.State.SHUTDOWNED, Status.PENDING)
          .put(VirtualMachine.State.UNRECOGNIZED, Status.UNRECOGNIZED).build();
 
-   private final FindLocationForVirtualMachine findLocationForVirtualMachine;
-   private final FindImageForVirtualMachine findImageForVirtualMachine;
+   private final Supplier<Set<? extends Location>> locations;
+   private final Supplier<Set<? extends Image>> images;
    private final LoadingCache<String, Set<IPForwardingRule>> getIPForwardingRulesByVirtualMachine;
    private final GroupNamingConvention nodeNamingConvention;
 
    @Inject
-   VirtualMachineToNodeMetadata(FindLocationForVirtualMachine findLocationForVirtualMachine,
-         FindImageForVirtualMachine findImageForVirtualMachine,
+   VirtualMachineToNodeMetadata(@Memoized Supplier<Set<? extends Location>> locations,
+         @Memoized Supplier<Set<? extends Image>> images,
          LoadingCache<String, Set<IPForwardingRule>> getIPForwardingRulesByVirtualMachine,
          GroupNamingConvention.Factory namingConvention) {
       this.nodeNamingConvention = checkNotNull(namingConvention, "namingConvention").createWithoutPrefix();
-      this.findLocationForVirtualMachine = checkNotNull(findLocationForVirtualMachine, "findLocationForVirtualMachine");
-      this.findImageForVirtualMachine = checkNotNull(findImageForVirtualMachine, "findImageForVirtualMachine");
+      this.locations = checkNotNull(locations, "locations");
+      this.images = checkNotNull(images, "images");
       this.getIPForwardingRulesByVirtualMachine = checkNotNull(getIPForwardingRulesByVirtualMachine,
             "getIPForwardingRulesByVirtualMachine");
    }
 
    @Override
-   public NodeMetadata apply(VirtualMachine from) {
+   public NodeMetadata apply(final VirtualMachine from) {
       // convert the result object to a jclouds NodeMetadata
       NodeMetadataBuilder builder = new NodeMetadataBuilder();
       builder.ids(from.getId() + "");
@@ -105,9 +105,16 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
       // we set displayName to the same value as name, but this could be wrong
       // on hosts not started with jclouds
       builder.hostname(from.getDisplayName());
-      builder.location(findLocationForVirtualMachine.apply(from));
+      builder.location(FluentIterable.from(locations.get()).firstMatch(idEquals(from.getZoneId())).orNull());
       builder.group(nodeNamingConvention.groupInUniqueNameOrNull(from.getDisplayName()));
-      Image image = findImageForVirtualMachine.apply(from);
+      Image image = FluentIterable.from(images.get()).firstMatch(new Predicate<Image>() {
+         @Override
+         public boolean apply(Image input) {
+            return input.getProviderId().equals(from.getTemplateId() + "")
+            // either location free image (location is null) or in the same zone as the VM
+                  && (input.getLocation() == null || input.getId().equals(from.getZoneId() + ""));
+         }
+      }).orNull();
       if (image != null) {
          builder.imageId(image.getId());
          builder.operatingSystem(image.getOperatingSystem());
@@ -170,50 +177,4 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
       }
       return builder.privateAddresses(privateAddresses).publicAddresses(publicAddresses).build();
    }
-
-   @Singleton
-   public static class FindLocationForVirtualMachine extends FindResourceInSet<VirtualMachine, Location> {
-
-      @Inject
-      public FindLocationForVirtualMachine(@Memoized Supplier<Set<? extends Location>> location) {
-         super(location);
-      }
-
-      @Override
-      public boolean matches(VirtualMachine from, Location input) {
-         return input.getId().equals(from.getZoneId());
-      }
-   }
-
-   @Singleton
-   public static class FindHardwareForVirtualMachine extends FindResourceInSet<VirtualMachine, Hardware> {
-
-      @Inject
-      public FindHardwareForVirtualMachine(@Memoized Supplier<Set<? extends Hardware>> location) {
-         super(location);
-      }
-
-      @Override
-      public boolean matches(VirtualMachine from, Hardware input) {
-         return input.getProviderId().equals(from.getServiceOfferingId());
-      }
-   }
-
-   @Singleton
-   public static class FindImageForVirtualMachine extends FindResourceInSet<VirtualMachine, Image> {
-
-      @Inject
-      public FindImageForVirtualMachine(@Memoized Supplier<Set<? extends Image>> location) {
-         super(location);
-      }
-
-      @Override
-      public boolean matches(VirtualMachine from, Image input) {
-         return input.getProviderId().equals(from.getTemplateId() + "")
-         // either location free image (location is null)
-         // or in the same zone as the VM
-               && (input.getLocation() == null || input.getId().equals(from.getZoneId() + ""));
-      }
-   }
-
 }

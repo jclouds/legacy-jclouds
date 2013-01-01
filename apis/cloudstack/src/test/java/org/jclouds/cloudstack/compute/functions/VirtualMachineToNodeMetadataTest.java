@@ -23,8 +23,6 @@ import static org.testng.Assert.assertEquals;
 import java.net.UnknownHostException;
 import java.util.Set;
 
-import org.jclouds.cloudstack.compute.functions.VirtualMachineToNodeMetadata.FindImageForVirtualMachine;
-import org.jclouds.cloudstack.compute.functions.VirtualMachineToNodeMetadata.FindLocationForVirtualMachine;
 import org.jclouds.cloudstack.domain.GuestIPType;
 import org.jclouds.cloudstack.domain.IPForwardingRule;
 import org.jclouds.cloudstack.domain.NIC;
@@ -35,8 +33,8 @@ import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeMetadata.Status;
+import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.domain.Location;
@@ -67,17 +65,14 @@ public class VirtualMachineToNodeMetadataTest {
 
       Supplier<Set<? extends Image>> imageSupplier = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet
          .<Image>of(TemplateToImageTest.one, TemplateToImageTest.two));
-      VirtualMachineToNodeMetadata parser = new VirtualMachineToNodeMetadata(new FindLocationForVirtualMachine(
-            locationSupplier), new FindImageForVirtualMachine(
-            imageSupplier), CacheBuilder.newBuilder().<String, Set<IPForwardingRule>> build(
-         new CacheLoader<String, Set<IPForwardingRule>>() {
-
-            @Override
-            public Set<IPForwardingRule> load(String arg0) throws Exception {
-               return ImmutableSet.of(IPForwardingRule.builder().id("1234l").IPAddress("1.1.1.1").build());
-            }
-
-         }), namingConvention);
+      VirtualMachineToNodeMetadata parser = new VirtualMachineToNodeMetadata(locationSupplier, imageSupplier,
+            CacheBuilder.newBuilder().<String, Set<IPForwardingRule>> build(
+                  new CacheLoader<String, Set<IPForwardingRule>>() {
+                     @Override
+                     public Set<IPForwardingRule> load(String arg0) throws Exception {
+                        return ImmutableSet.of(IPForwardingRule.builder().id("1234l").IPAddress("1.1.1.1").build());
+                     }
+                  }), namingConvention);
 
       // notice if we've already parsed this properly here, we can rely on it.
       VirtualMachine guest = Iterables.get(new ListVirtualMachinesResponseTest().expected(), 0);
@@ -104,16 +99,14 @@ public class VirtualMachineToNodeMetadataTest {
       Supplier<Set<? extends Image>> imageSupplier = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet
          .<Image>of(TemplateToImageTest.one, TemplateToImageTest.two));
 
-      VirtualMachineToNodeMetadata parser = new VirtualMachineToNodeMetadata(new FindLocationForVirtualMachine(
-         locationSupplier), new FindImageForVirtualMachine(
-         imageSupplier),  CacheBuilder.newBuilder().<String, Set<IPForwardingRule>> build(
-         new CacheLoader<String, Set<IPForwardingRule>>() {
-            @Override
-            public Set<IPForwardingRule> load(String arg0) throws Exception {
-               return ImmutableSet.of();
-            }
-
-         }), namingConvention);
+      VirtualMachineToNodeMetadata parser = new VirtualMachineToNodeMetadata(locationSupplier, imageSupplier,
+            CacheBuilder.newBuilder().<String, Set<IPForwardingRule>> build(
+                  new CacheLoader<String, Set<IPForwardingRule>>() {
+                     @Override
+                     public Set<IPForwardingRule> load(String arg0) throws Exception {
+                        return ImmutableSet.of();
+                     }
+                  }), namingConvention);
 
       VirtualMachine guest =VirtualMachine.builder()
          .id("54")
@@ -166,17 +159,16 @@ public class VirtualMachineToNodeMetadataTest {
 
       Supplier<Set<? extends Image>> imageSupplier = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet
          .<Image>of(TemplateToImageTest.one, TemplateToImageTest.two));
-      VirtualMachineToNodeMetadata parser = new VirtualMachineToNodeMetadata(new FindLocationForVirtualMachine(
-            locationSupplier), new FindImageForVirtualMachine(
-            imageSupplier), CacheBuilder.newBuilder().<String, Set<IPForwardingRule>> build(
-         new CacheLoader<String, Set<IPForwardingRule>>() {
+      VirtualMachineToNodeMetadata parser = new VirtualMachineToNodeMetadata(locationSupplier, imageSupplier,
+            CacheBuilder.newBuilder().<String, Set<IPForwardingRule>> build(
+                  new CacheLoader<String, Set<IPForwardingRule>>() {
 
-            @Override
-            public Set<IPForwardingRule> load(String arg0) throws Exception {
-               throw new ResourceNotFoundException("no ip forwarding rule for: " + arg0);
-            }
+                     @Override
+                     public Set<IPForwardingRule> load(String arg0) throws Exception {
+                        throw new ResourceNotFoundException("no ip forwarding rule for: " + arg0);
+                     }
 
-         }), namingConvention);
+                  }), namingConvention);
 
       // notice if we've already parsed this properly here, we can rely on it.
       VirtualMachine guest = Iterables.get(new ListVirtualMachinesResponseTest().expected(), 0);

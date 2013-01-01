@@ -75,10 +75,8 @@ public class ParseOsFamilyVersion64BitFromImageName implements Function<String, 
          Matcher matcher = PATTERN.matcher(input);
          if (matcher.find()) {
             OsFamily fam = OsFamily.fromValue(matcher.group(1).toLowerCase());
-            switch (fam) {
-               case UNRECOGNIZED:
-                  return new OsFamilyVersion64Bit(OsFamily.UNRECOGNIZED, null, is64Bit);
-            }
+            if (fam == OsFamily.UNRECOGNIZED)
+               return new OsFamilyVersion64Bit(OsFamily.UNRECOGNIZED, null, is64Bit);
             return new OsFamilyVersion64Bit(fam, ComputeServiceUtils.parseVersionOrReturnEmptyString(fam, matcher
                      .group(2), osVersionMap), is64Bit);
          } else {
