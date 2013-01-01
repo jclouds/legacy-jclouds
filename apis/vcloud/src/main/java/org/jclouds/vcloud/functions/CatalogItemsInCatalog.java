@@ -31,7 +31,6 @@ import javax.inject.Singleton;
 
 import org.jclouds.Constants;
 import org.jclouds.logging.Logger;
-import org.jclouds.util.Iterables2;
 import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.Catalog;
@@ -60,23 +59,17 @@ public class CatalogItemsInCatalog implements Function<Catalog, Iterable<Catalog
 
    @Override
    public Iterable<CatalogItem> apply(Catalog from) {
-
-      Iterable<? extends CatalogItem> catalogItems = transformParallel(filter(from.values(), new Predicate<ReferenceType>() {
-
+      return transformParallel(filter(from.values(), new Predicate<ReferenceType>() {
          @Override
          public boolean apply(ReferenceType input) {
             return input.getType().equals(VCloudMediaType.CATALOGITEM_XML);
          }
-
       }), new Function<ReferenceType, Future<? extends CatalogItem>>() {
-
          @Override
          public Future<CatalogItem> apply(ReferenceType from) {
             return aclient.getCatalogClient().getCatalogItem(from.getHref());
          }
-
       }, executor, null, logger, "catalogItems in " + from.getHref());
-      return Iterables2.concreteCopy(catalogItems);
    }
 
 }

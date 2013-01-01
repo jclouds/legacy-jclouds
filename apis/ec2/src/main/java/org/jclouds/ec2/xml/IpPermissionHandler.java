@@ -1,6 +1,5 @@
 package org.jclouds.ec2.xml;
 
-import static org.jclouds.util.SaxUtils.currentOrNegative;
 import static org.jclouds.util.SaxUtils.currentOrNull;
 import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
@@ -64,6 +63,10 @@ public class IpPermissionHandler extends ParseSax.HandlerForGeneratedRequestWith
       currentText = new StringBuilder();
    }
 
+   private static String currentOrNegative(StringBuilder currentText) {
+      String returnVal = currentText.toString().trim();
+      return returnVal.equals("") ? "-1" : returnVal;
+   }
    /**
     * {@inheritDoc}
     */

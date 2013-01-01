@@ -25,12 +25,13 @@ import static com.google.common.primitives.Ints.asList;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
 import static org.jclouds.http.HttpUtils.contains404;
 import static org.jclouds.http.HttpUtils.returnValueOnCodeOrNull;
-import static org.jclouds.util.Throwables2.containsResourceNotFoundException;
+import static org.jclouds.util.Throwables2.getFirstThrowableOfType;
 
 import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.collect.IterableWithMarkers;
 import org.jclouds.collect.PagedIterable;
 import org.jclouds.collect.PagedIterables;
+import org.jclouds.rest.ResourceNotFoundException;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.FluentIterable;
@@ -155,6 +156,10 @@ public final class Fallbacks {
       if (containsResourceNotFoundException(checkNotNull(t, "throwable")) || contains404(t))
          return immediateFuture(val);
       throw propagate(t);
+   }
+
+   private static boolean containsResourceNotFoundException(Throwable from) {
+      return getFirstThrowableOfType(from, ResourceNotFoundException.class) != null;
    }
 
 }

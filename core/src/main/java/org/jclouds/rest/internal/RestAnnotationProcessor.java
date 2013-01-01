@@ -48,7 +48,6 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_XML;
 import static org.jclouds.http.Uris.uriBuilder;
 import static org.jclouds.io.Payloads.newPayload;
-import static org.jclouds.util.Maps2.convertUnsafe;
 import static org.jclouds.util.Strings2.replaceTokens;
 
 import java.io.InputStream;
@@ -59,6 +58,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
 import java.net.URI;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -150,11 +150,13 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.primitives.Chars;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -527,7 +529,15 @@ public abstract class RestAnnotationProcessor {
       utils.checkRequestHasRequiredProperties(request);
       return request;
    }
-
+   
+   private static <K, V> Map<K, V> convertUnsafe(Multimap<K, V> in) {
+      LinkedHashMap<K, V> out = Maps.newLinkedHashMap();
+      for (Entry<K, V> entry : in.entries()) {
+         out.put(entry.getKey(), entry.getValue());
+      }
+      return ImmutableMap.copyOf(out);
+   }
+   
    protected org.jclouds.rest.internal.GeneratedHttpRequest.Builder requestBuilder() {
       return GeneratedHttpRequest.builder();
    }

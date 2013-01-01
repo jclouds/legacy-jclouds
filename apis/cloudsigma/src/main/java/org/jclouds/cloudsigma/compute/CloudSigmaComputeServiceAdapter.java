@@ -20,7 +20,6 @@ package org.jclouds.cloudsigma.compute;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Iterables.filter;
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
 import java.util.concurrent.ExecutorService;
@@ -43,6 +42,7 @@ import org.jclouds.cloudsigma.domain.ServerInfo;
 import org.jclouds.cloudsigma.options.CloneDriveOptions;
 import org.jclouds.cloudsigma.reference.CloudSigmaConstants;
 import org.jclouds.cloudsigma.util.Servers;
+import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.HardwareBuilder;
@@ -55,13 +55,13 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.logging.Logger;
-import org.jclouds.util.Iterables2;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
@@ -170,7 +170,7 @@ public class CloudSigmaComputeServiceAdapter implements
     */
    @Override
    public Iterable<DriveInfo> listImages() {
-      Iterable<? extends DriveInfo> drives = transformParallel(client.listStandardDrives(),
+      return FluentIterable.from(transformParallel(client.listStandardDrives(),
             new Function<String, Future<? extends DriveInfo>>() {
 
                @Override
@@ -189,8 +189,7 @@ public class CloudSigmaComputeServiceAdapter implements
                public String toString() {
                   return "seedDriveCache()";
                }
-            }, executor, null, logger, "drives");
-      return Iterables2.concreteCopy(filter(drives, PREINSTALLED_DISK));
+            }, executor, null, logger, "drives")).filter(PREINSTALLED_DISK);
    }
 
    @SuppressWarnings("unchecked")

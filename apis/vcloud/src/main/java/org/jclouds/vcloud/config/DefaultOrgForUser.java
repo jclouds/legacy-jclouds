@@ -26,7 +26,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.config.ValueOfConfigurationKeyOrNull;
-import org.jclouds.util.Suppliers2;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.VCloudSession;
 import org.jclouds.vcloud.endpoints.Org;
@@ -35,6 +34,7 @@ import org.jclouds.vcloud.suppliers.OnlyReferenceTypeFirstWithNameMatchingConfig
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 
 /**
  * 
@@ -57,7 +57,7 @@ public class DefaultOrgForUser implements Function<String, Supplier<ReferenceTyp
 
    @Override
    public Supplier<ReferenceType> apply(final String user) {
-      return Suppliers2.compose(new Function<VCloudSession, ReferenceType>() {
+      return Suppliers.compose(new Function<VCloudSession, ReferenceType>() {
 
          @Override
          public ReferenceType apply(VCloudSession session) {

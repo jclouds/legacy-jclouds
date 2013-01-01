@@ -33,6 +33,7 @@ import javax.inject.Provider;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.Image.Status;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
@@ -40,7 +41,6 @@ import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.domain.Volume;
-import org.jclouds.compute.domain.Image.Status;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.predicates.ImagePredicates;
 import org.jclouds.domain.Location;
@@ -52,6 +52,7 @@ import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Ordering;
 
 /**
  * 
@@ -59,6 +60,17 @@ import com.google.common.collect.ImmutableSet;
  */
 @Test(groups = "unit", singleThreaded = true, testName = "TemplateBuilderImplTest")
 public class TemplateBuilderImplTest {
+
+   public void testMultiMax() {
+      Iterable<String> values = ImmutableList.of("1", "2", "2", "3", "3");
+      assertEquals(TemplateBuilderImpl.multiMax(Ordering.natural(), values), ImmutableList.of("3", "3"));
+   }
+
+   public void testMultiMax1() {
+      Iterable<String> values = ImmutableList.of("1", "2", "2", "3");
+      assertEquals(TemplateBuilderImpl.multiMax(Ordering.natural(), values), ImmutableList.of("3"));
+   }
+   
    protected Location provider = new LocationBuilder().scope(LocationScope.PROVIDER).id("aws-ec2").description("aws-ec2").build();
 
    protected Location region = new LocationBuilder().scope(LocationScope.REGION).id("us-east-1")

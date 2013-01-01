@@ -52,12 +52,12 @@ import org.jclouds.location.suppliers.ZoneIdsSupplier;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.functions.ImplicitOptionalConverter;
 import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
-import org.jclouds.util.Suppliers2;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.Sets;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -120,7 +120,7 @@ public class LocationModule extends AbstractModule {
    protected Supplier<Set<String>> regionIdsSupplier(AtomicReference<AuthorizationException> authException,
             @Named(PROPERTY_SESSION_INTERVAL) long seconds, RegionIdFilter filter, RegionIdsSupplier uncached) {
       return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException,
-               Suppliers2.compose(new FilterStrings(filter), uncached), seconds, TimeUnit.SECONDS);
+               Suppliers.compose(new FilterStrings(filter), uncached), seconds, TimeUnit.SECONDS);
    }
    
    @Provides
@@ -130,7 +130,7 @@ public class LocationModule extends AbstractModule {
             AtomicReference<AuthorizationException> authException, @Named(PROPERTY_SESSION_INTERVAL) long seconds,
             ZoneIdFilter filter, ZoneIdsSupplier uncached) {
       return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException,
-               Suppliers2.compose(new FilterStrings(filter), uncached), seconds, TimeUnit.SECONDS);
+               Suppliers.compose(new FilterStrings(filter), uncached), seconds, TimeUnit.SECONDS);
    }
 
    static class FilterStrings implements Function<Set<String>, Set<String>>{

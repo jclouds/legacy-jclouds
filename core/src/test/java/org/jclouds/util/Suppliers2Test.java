@@ -32,22 +32,6 @@ import com.google.common.collect.ImmutableMap;
 public class Suppliers2Test {
 
    @Test
-   public void testWithKey() {
-      assertEquals(
-               Suppliers2.<String, String> valueForKey(
-                        Suppliers.<Map<String, Supplier<String>>> ofInstance(ImmutableMap.of("foo",
-                                 Suppliers.ofInstance("bar"))), Suppliers.ofInstance("foo")).get(), "bar");
-   }
-   
-   @Test
-   public void testWithKeyUnmatchedIsNull() {
-      assertEquals(
-               Suppliers2.<String, String> valueForKey(
-                        Suppliers.<Map<String, Supplier<String>>> ofInstance(ImmutableMap.of("boo",
-                                 Suppliers.ofInstance("bar"))), Suppliers.ofInstance("foo")).get(), null);
-   }
-   
-   @Test
    public void testGetLastValueInMap() {
       assertEquals(
                Suppliers2.<String, String> getLastValueInMap(

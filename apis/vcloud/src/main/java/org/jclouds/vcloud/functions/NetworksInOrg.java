@@ -30,7 +30,6 @@ import javax.inject.Singleton;
 
 import org.jclouds.Constants;
 import org.jclouds.logging.Logger;
-import org.jclouds.util.Iterables2;
 import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.ReferenceType;
@@ -57,16 +56,12 @@ public class NetworksInOrg implements Function<Org, Iterable<OrgNetwork>> {
 
    @Override
    public Iterable<OrgNetwork> apply(final Org org) {
-
-      Iterable<OrgNetwork> networkItems = transformParallel(org.getNetworks().values(),
-            new Function<ReferenceType, Future<? extends OrgNetwork>>() {
-               @Override
-               public Future<? extends OrgNetwork> apply(ReferenceType from) {
-                  return  aclient.getNetworkClient().getNetwork(from.getHref());
-               }
-
-            }, executor, null, logger, "OrgNetworks in org " + org.getName());
-      return Iterables2.concreteCopy(networkItems);
+      return transformParallel(org.getNetworks().values(), new Function<ReferenceType, Future<? extends OrgNetwork>>() {
+         @Override
+         public Future<? extends OrgNetwork> apply(ReferenceType from) {
+            return aclient.getNetworkClient().getNetwork(from.getHref());
+         }
+      }, executor, null, logger, "OrgNetworks in org " + org.getName());
    }
 
 }
