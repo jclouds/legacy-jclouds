@@ -397,11 +397,7 @@ public class Pems {
       return pem(key instanceof RSAPrivateCrtKey ? encode(RSAPrivateCrtKey.class.cast(key)) : key.getEncoded(), marker);
    }
 
-   private static String pem(byte[] key, String marker) {
-      return pem(key, marker, 64);
-   }
-
-   private static String pem(byte[] encoded, String marker, int length) {
+   private static String pem(byte[] encoded, String marker) {
       StringBuilder builder = new StringBuilder();
       builder.append(marker).append('\n');
       builder.append(on('\n').join(fixedLength(64).split(base64().encode(encoded)))).append('\n');
