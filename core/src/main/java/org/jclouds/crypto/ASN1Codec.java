@@ -1,21 +1,3 @@
-package org.jclouds.crypto;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Predicates.notNull;
-import static com.google.common.base.Throwables.propagate;
-import static com.google.common.collect.Iterators.filter;
-import static com.google.common.io.ByteStreams.limit;
-import static com.google.common.io.ByteStreams.toByteArray;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigInteger;
-import java.security.interfaces.RSAPrivateCrtKey;
-import java.security.spec.KeySpec;
-import java.security.spec.RSAPrivateCrtKeySpec;
-import java.security.spec.RSAPublicKeySpec;
-import java.util.Iterator;
 /**
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
@@ -34,6 +16,24 @@ import java.util.Iterator;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.jclouds.crypto;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Predicates.notNull;
+import static com.google.common.base.Throwables.propagate;
+import static com.google.common.collect.Iterators.filter;
+import static com.google.common.io.ByteStreams.limit;
+import static com.google.common.io.ByteStreams.toByteArray;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigInteger;
+import java.security.interfaces.RSAPrivateCrtKey;
+import java.security.spec.KeySpec;
+import java.security.spec.RSAPrivateCrtKeySpec;
+import java.security.spec.RSAPublicKeySpec;
+import java.util.Iterator;
 import java.util.List;
 
 import com.google.common.annotations.Beta;
