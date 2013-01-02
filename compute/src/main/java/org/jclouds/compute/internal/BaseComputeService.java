@@ -512,7 +512,7 @@ public class BaseComputeService implements ComputeService {
    @Override
    public Map<NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter, String runScript)
          throws RunScriptOnNodesException {
-      return runScriptOnNodesMatching(filter, Statements.exec(checkNotNull(runScript, "runScript")));
+      return runScriptOnNodesMatching(filter, Statements.literal(checkNotNull(runScript, "runScript")));
    }
 
    /**
@@ -527,7 +527,7 @@ public class BaseComputeService implements ComputeService {
    @Override
    public Map<? extends NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter,
          String runScript, RunScriptOptions options) throws RunScriptOnNodesException {
-      return runScriptOnNodesMatching(filter, Statements.exec(checkNotNull(runScript, "runScript")), options);
+      return runScriptOnNodesMatching(filter, Statements.literal(checkNotNull(runScript, "runScript")), options);
    }
 
    /**
@@ -585,7 +585,7 @@ public class BaseComputeService implements ComputeService {
     */
    @Override
    public ExecResponse runScriptOnNode(String id, String runScript, RunScriptOptions options) {
-      return runScriptOnNode(id, Statements.exec(checkNotNull(runScript, "runScript")), options);
+      return runScriptOnNode(id, Statements.literal(checkNotNull(runScript, "runScript")), options);
    }
 
    /**
@@ -614,6 +614,14 @@ public class BaseComputeService implements ComputeService {
       return response;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public ListenableFuture<ExecResponse> submitScriptOnNode(String id, String runScript, RunScriptOptions options) {
+      return submitScriptOnNode(id, Statements.literal(checkNotNull(runScript, "runScript")), options);
+   }
+   
    /**
     * {@inheritDoc}
     */

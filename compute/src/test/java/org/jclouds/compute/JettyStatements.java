@@ -20,6 +20,7 @@ package org.jclouds.compute;
 
 import static org.jclouds.scriptbuilder.domain.Statements.exec;
 import static org.jclouds.scriptbuilder.domain.Statements.extractTargzAndFlattenIntoDirectory;
+import static org.jclouds.scriptbuilder.domain.Statements.literal;
 
 import java.net.URI;
 
@@ -35,7 +36,7 @@ import org.jclouds.scriptbuilder.statements.login.AdminAccess;
 public class JettyStatements {
 
    public static final URI JETTY_URL = URI.create(System.getProperty("test.jetty-url",//
-         "http://download.eclipse.org/jetty/8.1.5.v20120716/dist/jetty-distribution-8.1.5.v20120716.tar.gz"));
+         "http://download.eclipse.org/jetty/8.1.8.v20121106/dist/jetty-distribution-8.1.8.v20121106.tar.gz"));
 
    public static final String JETTY_HOME = "/usr/local/jetty";
    
@@ -56,19 +57,20 @@ public class JettyStatements {
 
    private static Statement authorizePortInIpTables() {
       return new StatementList(
-               exec("iptables -I INPUT 1 -p tcp --dport " + port + " -j ACCEPT"),
-               exec("iptables-save"));
+            exec("iptables -I INPUT 1 -p tcp --dport " + port + " -j ACCEPT"),
+            exec("iptables-save"));
    }
    
    public static Statement start() {
       return new StatementList(
-            exec("cd " + JETTY_HOME),
-            exec("./bin/jetty.sh start"));
+            literal("cd " + JETTY_HOME),
+            literal("nohup java -jar start.jar jetty.port=" + port + " > start.out 2> start.err < /dev/null &"),
+            literal("test $? && sleep 1")); // in case it is slow starting the proc
    }
    
    public static Statement stop() {
       return new StatementList(
-            exec("cd " + JETTY_HOME),
-            exec("./bin/jetty.sh stop"));
+            literal("cd " + JETTY_HOME),
+            literal("./bin/jetty.sh stop"));
    }
 }
