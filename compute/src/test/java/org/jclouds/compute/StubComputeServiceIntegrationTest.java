@@ -319,8 +319,13 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
                expect(clientNew.exec("java -fullversion\n")).andReturn(EXEC_GOOD);
                clientNew.disconnect();
 
+               String startJetty = new StringBuilder()
+                  .append("cd /usr/local/jetty").append('\n')
+                  .append("nohup java -jar start.jar jetty.port=8080 > start.out 2> start.err < /dev/null &").append('\n')
+                  .append("test $? && sleep 1").append('\n').toString();
+
                clientNew.connect();
-               expect(clientNew.exec("cd /usr/local/jetty\n./bin/jetty.sh start\n")).andReturn(EXEC_GOOD);
+               expect(clientNew.exec(startJetty)).andReturn(EXEC_GOOD);
                clientNew.disconnect();
 
                clientNew.connect();
@@ -328,7 +333,7 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
                clientNew.disconnect();
 
                clientNew.connect();
-               expect(clientNew.exec("cd /usr/local/jetty\n./bin/jetty.sh start\n")).andReturn(EXEC_GOOD);
+               expect(clientNew.exec(startJetty)).andReturn(EXEC_GOOD);
                clientNew.disconnect();
 
             } catch (IOException e) {

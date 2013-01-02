@@ -225,7 +225,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
          assert good.credential != null : nodes;
 
          for (Entry<? extends NodeMetadata, ExecResponse> response : client.runScriptOnNodesMatching(
-               runningInGroup(group), Statements.exec("hostname"),
+               runningInGroup(group), "hostname",
                wrapInInitScript(false).runAsRoot(false).overrideLoginCredentials(good)).entrySet()) {
             checkResponseEqualsHostname(response.getValue(), response.getKey());
          }
@@ -289,7 +289,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
 
    @Test(enabled = false)
    public void weCanCancelTasks(NodeMetadata node) throws InterruptedException, ExecutionException {
-      ListenableFuture<ExecResponse> future = client.submitScriptOnNode(node.getId(), Statements.exec("sleep 300"),
+      ListenableFuture<ExecResponse> future = client.submitScriptOnNode(node.getId(), "sleep 300",
             nameTask("sleeper").runAsRoot(false));
       ExecResponse response = null;
       try {
@@ -297,11 +297,11 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
          fail(node.getId() + ": " + response);
       } catch (TimeoutException e) {
          assert !future.isDone();
-         response = client.runScriptOnNode(node.getId(), Statements.exec("/tmp/init-sleeper status"),
+         response = client.runScriptOnNode(node.getId(), "/tmp/init-sleeper status",
                wrapInInitScript(false).runAsRoot(false));
          assert !response.getOutput().trim().equals("") : node.getId() + ": " + response;
          future.cancel(true);
-         response = client.runScriptOnNode(node.getId(), Statements.exec("/tmp/init-sleeper status"),
+         response = client.runScriptOnNode(node.getId(), "/tmp/init-sleeper status",
                wrapInInitScript(false).runAsRoot(false));
          assert response.getOutput().trim().equals("") : node.getId() + ": " + response;
          try {
@@ -508,9 +508,9 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
          checkOsMatchesTemplate(metadata);
          assert (metadata.getStatus() == Status.RUNNING) : metadata;
          // due to DHCP the addresses can actually change in-between runs.
-         assertEquals(metadata.getPrivateAddresses().size(), node.getPrivateAddresses().size(), String.format(
+         assertEquals(metadata.getPrivateAddresses().size(), node.getPrivateAddresses().size(), format(
                "[%s] didn't match: [%s]", metadata.getPrivateAddresses(), node.getPrivateAddresses().size()));
-         assertEquals(metadata.getPublicAddresses().size(), node.getPublicAddresses().size(), String.format(
+         assertEquals(metadata.getPublicAddresses().size(), node.getPublicAddresses().size(), format(
                "[%s] didn't match: [%s]", metadata.getPublicAddresses(), node.getPublicAddresses().size()));
       }
       assertNodeZero(metadataMap.values());
@@ -602,7 +602,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
 
       @Override
       public String toString() {
-         return String.format("[backgroundProcessMilliseconds=%s, socketOpenMilliseconds=%s]",
+         return format("[backgroundProcessMilliseconds=%s, socketOpenMilliseconds=%s]",
                backgroundProcessMilliseconds, socketOpenMilliseconds);
       }
    }
@@ -618,7 +618,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
       try {
          socket = openSocketFinder.findOpenSocketOnNode(node, 8080, 60, TimeUnit.SECONDS);
       } catch (NoSuchElementException e) {
-         throw new NoSuchElementException(String.format("%s%n%s%s", e.getMessage(), exec.getOutput(), exec.getError()));
+         throw new NoSuchElementException(format("%s%n%s%s", e.getMessage(), exec.getOutput(), exec.getError()));
       }
 
       stats.socketOpenMilliseconds = watch.elapsedTime(TimeUnit.MILLISECONDS);
@@ -692,12 +692,12 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
    }
 
    protected void checkUserMetadataInNodeEquals(NodeMetadata node, ImmutableMap<String, String> userMetadata) {
-      assert node.getUserMetadata().equals(userMetadata) : String.format("node userMetadata did not match %s %s",
+      assert node.getUserMetadata().equals(userMetadata) : format("node userMetadata did not match %s %s",
             userMetadata, node);
    }
 
    protected void checkTagsInNodeEquals(NodeMetadata node, ImmutableSet<String> tags) {
-      assert node.getTags().equals(tags) : String.format("node tags did not match %s %s", tags, node);
+      assert node.getTags().equals(tags) : format("node tags did not match %s %s", tags, node);
    }
 
    public void testListImages() throws Exception {
