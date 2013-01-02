@@ -42,7 +42,6 @@ import org.xml.sax.Attributes;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.Sets;
-import com.google.inject.Provider;
 
 /**
  * 
@@ -52,21 +51,28 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
 
    protected final DateCodec dateCodec;
    protected final Supplier<String> defaultRegion;
-   protected final Provider<Builder> builderProvider;
 
    @Inject
-   public BaseReservationHandler(DateCodecFactory dateCodecFactory, @Region Supplier<String> defaultRegion,
-            Provider<RunningInstance.Builder> builderProvider) {
+   public BaseReservationHandler(DateCodecFactory dateCodecFactory, @Region Supplier<String> defaultRegion) {
       this.dateCodec = dateCodecFactory.iso8601();
       this.defaultRegion = defaultRegion;
-      this.builderProvider = builderProvider;
-      this.builder = builderProvider.get();
+   }
+
+   protected Builder<?> builder = newBuilder();
+
+   protected Builder<?> newBuilder() {
+      return RunningInstance.builder();
+   }
+
+   protected void inItem() {
+      if (endOfInstanceItem()) {
+         refineBuilderBeforeAddingInstance();
+         instances.add(builder.build());
+         builder = newBuilder();
+      }
    }
 
    protected StringBuilder currentText = new StringBuilder();
-
-   protected Builder builder;
-
    protected int itemDepth;
    protected boolean inInstancesSet;
    protected boolean inProductCodes;
@@ -181,22 +187,11 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
       currentText = new StringBuilder();
    }
 
-   protected void inItem() {
-      if (endOfInstanceItem()) {
-         refineBuilderBeforeAddingInstance();
-         instances.add(builder.build());
-         builder = builderProvider.get();
-      }
-   }
 
    protected void refineBuilderBeforeAddingInstance() {
       String region = getRequest() != null ? AWSUtils.findRegionInArgsOrNull(getRequest()) : null;
       builder.region((region == null) ? defaultRegion.get() : region);
       builder.groupNames(groupNames);
-   }
-
-   protected Builder builder() {
-      return builder;
    }
 
    protected boolean endOfInstanceItem() {

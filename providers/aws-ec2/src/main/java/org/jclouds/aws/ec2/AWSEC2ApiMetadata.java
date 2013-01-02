@@ -21,7 +21,6 @@ package org.jclouds.aws.ec2;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
-import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_GENERATE_INSTANCE_NAMES;
 import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
 
 import java.util.Properties;
@@ -66,13 +65,11 @@ public class AWSEC2ApiMetadata extends EC2ApiMetadata {
       Properties properties = EC2ApiMetadata.defaultProperties();
       properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "default", SECONDS.toMillis(90) + "");
       properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "SpotInstanceClient.describeSpotPriceHistoryInRegion", MINUTES.toMillis(2) + "");
-
       properties.remove(PROPERTY_EC2_AMI_OWNERS);
       // auth fail sometimes happens in EC2, as the rc.local script that injects the
       // authorized key executes after ssh has started.  
       properties.setProperty("jclouds.ssh.max-retries", "7");
       properties.setProperty("jclouds.ssh.retry-auth", "true");
-      properties.setProperty(PROPERTY_EC2_GENERATE_INSTANCE_NAMES, "true");
       return properties;
    }
 

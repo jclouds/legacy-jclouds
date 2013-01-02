@@ -36,7 +36,6 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.predicates.AtomicNodeRunning;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.util.ComputeUtils;
@@ -47,9 +46,9 @@ import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.compute.domain.RegionAndName;
+import org.jclouds.ec2.compute.functions.PresentInstances;
 import org.jclouds.ec2.compute.functions.RunningInstanceToNodeMetadata;
 import org.jclouds.ec2.compute.options.EC2TemplateOptions;
-import org.jclouds.ec2.compute.predicates.InstancePresent;
 import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.ec2.options.RunInstancesOptions;
@@ -62,7 +61,6 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
-import com.google.inject.util.Providers;
 
 /**
  * @author Adrian Cole
@@ -81,8 +79,7 @@ public class EC2CreateNodesInGroupThenAddToSetTest {
       NodeMetadata nodeMetadata = new NodeMetadataBuilder().id(region + "/" + instanceCreatedId)
             .providerId(instanceCreatedId).status(Status.RUNNING).build();
       // setup mocks
-      TemplateBuilder templateBuilder = createMock(TemplateBuilder.class);
-      EC2CreateNodesInGroupThenAddToSet strategy = setupStrategy(templateBuilder, nodeMetadata);
+      EC2CreateNodesInGroupThenAddToSet strategy = setupStrategy(nodeMetadata);
       InputParams input = new InputParams(location);
       InstanceClient instanceClient = createMock(InstanceClient.class);
       ElasticIPAddressClient ipClient = createMock(ElasticIPAddressClient.class);
@@ -122,7 +119,7 @@ public class EC2CreateNodesInGroupThenAddToSetTest {
       expect(instance.getRegion()).andReturn(region).atLeastOnce();
       expect(strategy.credentialStore.put("node#" + region + "/" + instanceCreatedId, creds)).andReturn(null);
 
-      expect(strategy.instancePresent.apply(new RegionAndName(region, instanceCreatedId))).andReturn(true);
+      expect(strategy.presentInstances.apply(ImmutableSet.of(new RegionAndName(region, instanceCreatedId)))).andReturn(ImmutableSet.of(instance));
       expect(input.template.getOptions()).andReturn(input.options).atLeastOnce();
       expect(input.options.getLoginUser()).andReturn(null);
       expect(input.options.getLoginPassword()).andReturn(null);
@@ -135,7 +132,6 @@ public class EC2CreateNodesInGroupThenAddToSetTest {
             .andReturn(null);
 
       // replay mocks
-      replay(templateBuilder);
       replay(instanceClient);
       replay(ipClient);
       replay(ec2Options);
@@ -147,7 +143,6 @@ public class EC2CreateNodesInGroupThenAddToSetTest {
       strategy.execute(input.tag, input.count, input.template, input.nodes, input.badNodes, input.customization);
 
       // verify mocks
-      verify(templateBuilder);
       verify(instanceClient);
       verify(ipClient);
       verify(ec2Options);
@@ -195,8 +190,7 @@ public class EC2CreateNodesInGroupThenAddToSetTest {
             .providerId(instanceCreatedId).status(Status.RUNNING).build();
 
       // setup mocks
-      TemplateBuilder templateBuilder = createMock(TemplateBuilder.class);
-      EC2CreateNodesInGroupThenAddToSet strategy = setupStrategy(templateBuilder, nodeMetadata);
+      EC2CreateNodesInGroupThenAddToSet strategy = setupStrategy(nodeMetadata);
       InputParams input = new InputParams(location);
       InstanceClient instanceClient = createMock(InstanceClient.class);
       RunInstancesOptions ec2Options = createMock(RunInstancesOptions.class);
@@ -223,7 +217,7 @@ public class EC2CreateNodesInGroupThenAddToSetTest {
       expect(instance.getRegion()).andReturn(region).atLeastOnce();
       expect(strategy.credentialStore.put("node#" + region + "/" + instanceCreatedId, creds)).andReturn(null);
 
-      expect(strategy.instancePresent.apply(new RegionAndName(region, instanceCreatedId))).andReturn(true);
+      expect(strategy.presentInstances.apply(ImmutableSet.of(new RegionAndName(region, instanceCreatedId)))).andReturn(ImmutableSet.of(instance));
       expect(input.template.getOptions()).andReturn(input.options).atLeastOnce();
       expect(input.options.getLoginUser()).andReturn(null);
       expect(input.options.getLoginPassword()).andReturn(null);
@@ -238,7 +232,6 @@ public class EC2CreateNodesInGroupThenAddToSetTest {
             .andReturn(null);
 
       // replay mocks
-      replay(templateBuilder);
       replay(instanceClient);
       replay(ec2Options);
       replay(instance);
@@ -249,7 +242,6 @@ public class EC2CreateNodesInGroupThenAddToSetTest {
       strategy.execute(input.tag, input.count, input.template, input.nodes, input.badNodes, input.customization);
 
       // verify mocks
-      verify(templateBuilder);
       verify(instanceClient);
       verify(ec2Options);
       verify(instance);
@@ -307,7 +299,7 @@ public class EC2CreateNodesInGroupThenAddToSetTest {
       verify(strategy.createKeyPairAndSecurityGroupsAsNeededAndReturncustomize);
       verify(strategy.client);
       verify(strategy.elasticIpCache);
-      verify(strategy.instancePresent);
+      verify(strategy.presentInstances);
       verify(strategy.runningInstanceToNodeMetadata);
       verify(strategy.instanceToCredentials);
       verify(strategy.credentialStore);
@@ -315,10 +307,10 @@ public class EC2CreateNodesInGroupThenAddToSetTest {
    }
 
    @SuppressWarnings("unchecked")
-   private EC2CreateNodesInGroupThenAddToSet setupStrategy(TemplateBuilder template, final NodeMetadata node) {
+   private EC2CreateNodesInGroupThenAddToSet setupStrategy(final NodeMetadata node) {
       EC2Client client = createMock(EC2Client.class);
       CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturncustomize = createMock(CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class);
-      InstancePresent instancePresent = createMock(InstancePresent.class);
+      PresentInstances presentInstances = createMock(PresentInstances.class);
       RunningInstanceToNodeMetadata runningInstanceToNodeMetadata = createMock(RunningInstanceToNodeMetadata.class);
       LoadingCache<RunningInstance, LoginCredentials> instanceToCredentials = createMock(LoadingCache.class);
       LoadingCache<RegionAndName, String> elasticIpCache = createMock(LoadingCache.class);
@@ -334,15 +326,15 @@ public class EC2CreateNodesInGroupThenAddToSetTest {
       Map<String, Credentials> credentialStore = createMock(Map.class);
       ComputeUtils utils = createMock(ComputeUtils.class);
       return new EC2CreateNodesInGroupThenAddToSet(client, elasticIpCache, new AtomicNodeRunning(nodeRunning),
-            Providers.<TemplateBuilder> of(template), createKeyPairAndSecurityGroupsAsNeededAndReturncustomize,
-            instancePresent, runningInstanceToNodeMetadata, instanceToCredentials, credentialStore, utils);
+            createKeyPairAndSecurityGroupsAsNeededAndReturncustomize, presentInstances, runningInstanceToNodeMetadata,
+            instanceToCredentials, credentialStore, utils);
    }
 
    private void replayStrategy(EC2CreateNodesInGroupThenAddToSet strategy) {
       replay(strategy.createKeyPairAndSecurityGroupsAsNeededAndReturncustomize);
       replay(strategy.client);
       replay(strategy.elasticIpCache);
-      replay(strategy.instancePresent);
+      replay(strategy.presentInstances);
       replay(strategy.runningInstanceToNodeMetadata);
       replay(strategy.instanceToCredentials);
       replay(strategy.credentialStore);

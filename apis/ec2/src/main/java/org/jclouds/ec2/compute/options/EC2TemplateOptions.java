@@ -42,6 +42,7 @@ import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.hash.Hashing;
 import com.google.common.primitives.Bytes;
 
 /**
@@ -119,7 +120,8 @@ public class EC2TemplateOptions extends TemplateOptions implements Cloneable {
       if (noKeyPair)
          toString.add("noKeyPair", noKeyPair);
       toString.add("keyPair", keyPair);
-      toString.add("userData", userData);
+      if (userData != null && userData.size() > 0)
+         toString.add("userDataCksum", Hashing.crc32().hashBytes(Bytes.toArray(userData)));
       ImmutableSet<BlockDeviceMapping> mappings = blockDeviceMappings.build();
       if (mappings.size() != 0)
          toString.add("blockDeviceMappings", mappings);

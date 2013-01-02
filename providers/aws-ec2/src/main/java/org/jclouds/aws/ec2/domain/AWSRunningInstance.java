@@ -32,7 +32,6 @@ import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
@@ -46,11 +45,17 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 public class AWSRunningInstance extends RunningInstance {
+   
    public static Builder builder() {
       return new Builder();
    }
 
-   public static class Builder extends org.jclouds.ec2.domain.RunningInstance.Builder {
+   @Override
+   public Builder toBuilder() {
+      return new Builder().fromRunningInstance(this);
+   }
+   
+   public static class Builder extends org.jclouds.ec2.domain.RunningInstance.Builder<Builder> {
       private MonitoringState monitoringState;
       private String placementGroup;
       private Set<String> productCodes = Sets.newLinkedHashSet();
@@ -59,19 +64,7 @@ public class AWSRunningInstance extends RunningInstance {
       private String vpcId;
       private Hypervisor hypervisor;
       private Map<String, String> securityGroupIdToNames = Maps.newLinkedHashMap();
-      private Map<String, String> tags = Maps.newLinkedHashMap();
 
-      public Builder tags(Map<String, String> tags) {
-         this.tags = ImmutableMap.copyOf(checkNotNull(tags, "tags"));
-         return this;
-      }
-
-      public Builder tag(String key, String value) {
-         if (key != null)
-            this.tags.put(key, Strings.nullToEmpty(value));
-         return this;
-      }
-      
       public Builder securityGroupIdToNames(Map<String, String> securityGroupIdToNames) {
          this.securityGroupIdToNames = ImmutableMap.copyOf(checkNotNull(securityGroupIdToNames,
                "securityGroupIdToNames"));
@@ -126,137 +119,30 @@ public class AWSRunningInstance extends RunningInstance {
       }
 
       @Override
-      public Builder amiLaunchIndex(String amiLaunchIndex) {
-         return Builder.class.cast(super.amiLaunchIndex(amiLaunchIndex));
-      }
-
-      @Override
-      public Builder availabilityZone(String availabilityZone) {
-         return Builder.class.cast(super.availabilityZone(availabilityZone));
-      }
-
-      @Override
-      public Builder devices(Map<String, BlockDevice> ebsBlockDevices) {
-         return Builder.class.cast(super.devices(ebsBlockDevices));
-      }
-
-      @Override
-      public Builder dnsName(String dnsName) {
-         return Builder.class.cast(super.dnsName(dnsName));
-      }
-
-      @Override
-      public Builder imageId(String imageId) {
-         return Builder.class.cast(super.imageId(imageId));
-      }
-
-      @Override
-      public Builder instanceId(String instanceId) {
-         return Builder.class.cast(super.instanceId(instanceId));
-      }
-
-      @Override
-      public Builder instanceState(InstanceState instanceState) {
-         return Builder.class.cast(super.instanceState(instanceState));
-      }
-      
-      @Override
-      public Builder rawState(String rawState) {
-         return Builder.class.cast(super.rawState(rawState));
-      }
-      
-      @Override
-      public Builder instanceType(String instanceType) {
-         return Builder.class.cast(super.instanceType(instanceType));
-      }
-
-      @Override
-      public Builder ipAddress(String ipAddress) {
-         return Builder.class.cast(super.ipAddress(ipAddress));
-      }
-
-      @Override
-      public Builder kernelId(String kernelId) {
-         return Builder.class.cast(super.kernelId(kernelId));
-      }
-
-      @Override
-      public Builder keyName(String keyName) {
-         return Builder.class.cast(super.keyName(keyName));
-      }
-
-      @Override
-      public Builder launchTime(Date launchTime) {
-         return Builder.class.cast(super.launchTime(launchTime));
-      }
-
-      @Override
-      public Builder platform(String platform) {
-         return Builder.class.cast(super.platform(platform));
-      }
-
-      @Override
-      public Builder privateDnsName(String privateDnsName) {
-         return Builder.class.cast(super.privateDnsName(privateDnsName));
-      }
-
-      @Override
-      public Builder privateIpAddress(String privateIpAddress) {
-         return Builder.class.cast(super.privateIpAddress(privateIpAddress));
-      }
-
-      @Override
-      public Builder ramdiskId(String ramdiskId) {
-         return Builder.class.cast(super.ramdiskId(ramdiskId));
-      }
-
-      @Override
-      public Builder reason(String reason) {
-         return Builder.class.cast(super.reason(reason));
-      }
-
-      @Override
-      public Builder region(String region) {
-         return Builder.class.cast(super.region(region));
-      }
-
-      @Override
-      public Builder rootDeviceName(String rootDeviceName) {
-         return Builder.class.cast(super.rootDeviceName(rootDeviceName));
-      }
-
-      @Override
-      public Builder rootDeviceType(RootDeviceType rootDeviceType) {
-         return Builder.class.cast(super.rootDeviceType(rootDeviceType));
-      }
-
-      @Override
-      public Builder virtualizationType(String virtualizationType) {
-         return Builder.class.cast(super.virtualizationType(virtualizationType));
-      }
-
-      @Override
-      public Builder device(String key, BlockDevice value) {
-         return Builder.class.cast(super.device(key, value));
-      }
-
-      @Override
-      public Builder groupName(String groupName) {
-         return Builder.class.cast(super.groupName(groupName));
-      }
-
-      @Override
-      public Builder groupNames(Iterable<String> groupNames) {
-         return Builder.class.cast(super.groupNames(groupNames));
-      }
-
-      @Override
       public AWSRunningInstance build() {
          return new AWSRunningInstance(region, securityGroupIdToNames, amiLaunchIndex, dnsName, imageId, instanceId,
                instanceState, rawState, instanceType, ipAddress, kernelId, keyName, launchTime, availabilityZone,
                virtualizationType, platform, privateDnsName, privateIpAddress, ramdiskId, reason, rootDeviceType,
                rootDeviceName, ebsBlockDevices, monitoringState, placementGroup, productCodes, subnetId,
                spotInstanceRequestId, vpcId, hypervisor, tags);
+      }
+      
+      @Override
+      public Builder fromRunningInstance(RunningInstance in) {
+         super.fromRunningInstance(in);
+         if (in instanceof AWSRunningInstance) {
+            AWSRunningInstance awsIn = AWSRunningInstance.class.cast(in);
+            monitoringState(awsIn.monitoringState).placementGroup(awsIn.placementGroup)
+                  .productCodes(awsIn.productCodes).subnetId(awsIn.subnetId)
+                  .spotInstanceRequestId(awsIn.spotInstanceRequestId).vpcId(awsIn.vpcId).hypervisor(awsIn.hypervisor)
+                  .securityGroupIdToNames(awsIn.securityGroupIdToNames);
+         }
+         return this;
+      }
+
+      @Override
+      protected Builder self() {
+         return this;
       }
 
    }
@@ -273,7 +159,6 @@ public class AWSRunningInstance extends RunningInstance {
    private final String vpcId;
    private final Hypervisor hypervisor;
    private final Map<String, String> securityGroupIdToNames;
-   private final Map<String, String> tags;
 
    protected AWSRunningInstance(String region, Map<String, String> securityGroupIdToNames, String amiLaunchIndex,
             String dnsName, String imageId, String instanceId, InstanceState instanceState, String rawState,
@@ -286,7 +171,7 @@ public class AWSRunningInstance extends RunningInstance {
       super(region, securityGroupIdToNames.values(), amiLaunchIndex, dnsName, imageId, instanceId, instanceState,
                rawState, instanceType, ipAddress, kernelId, keyName, launchTime, availabilityZone, virtualizationType,
                platform, privateDnsName, privateIpAddress, ramdiskId, reason, rootDeviceType, rootDeviceName,
-               ebsBlockDevices);
+               ebsBlockDevices, tags);
       this.monitoringState = checkNotNull(monitoringState, "monitoringState");
       this.placementGroup = placementGroup;
       this.productCodes = ImmutableSet.copyOf(checkNotNull(productCodes, "productCodes"));
@@ -296,7 +181,6 @@ public class AWSRunningInstance extends RunningInstance {
       this.hypervisor = checkNotNull(hypervisor, "hypervisor");
       this.securityGroupIdToNames = ImmutableMap.<String, String> copyOf(checkNotNull(securityGroupIdToNames,
             "securityGroupIdToNames"));
-      this.tags = ImmutableMap.<String, String> copyOf(checkNotNull(tags, "tags"));
    }
 
    public Map<String, String> getSecurityGroupIdToNames() {
@@ -356,18 +240,11 @@ public class AWSRunningInstance extends RunningInstance {
       return subnetId;
    }
 
-   /**
-    * tags that are present in the instance
-    */
-   public Map<String, String> getTags() {
-      return tags;
-   }
-
    @Override
    protected ToStringHelper string() {
       return super.string().add("monitoringState", monitoringState).add("placementGroup", placementGroup)
                .add("subnetId", subnetId).add("spotInstanceRequestId", spotInstanceRequestId).add("vpcId", vpcId)
-               .add("hypervisor", hypervisor).add("tags", tags);
+               .add("hypervisor", hypervisor);
    }
 
 }

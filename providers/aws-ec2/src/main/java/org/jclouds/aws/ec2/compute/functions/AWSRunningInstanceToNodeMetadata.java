@@ -18,8 +18,6 @@
  */
 package org.jclouds.aws.ec2.compute.functions;
 
-import static org.jclouds.compute.util.ComputeServiceUtils.addMetadataAndParseTagsFromValuesOfEmptyString;
-
 import java.util.Map;
 import java.util.Set;
 
@@ -31,8 +29,8 @@ import org.jclouds.collect.Memoized;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeMetadata.Status;
+import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
@@ -82,11 +80,4 @@ public class AWSRunningInstanceToNodeMetadata extends RunningInstanceToNodeMetad
       return HardwareBuilder.fromHardware(in).hypervisor(awsInstance.getHypervisor().toString()).build();
    }
 
-   @Override
-   protected NodeMetadataBuilder buildInstance(RunningInstance instance, NodeMetadataBuilder builder) {
-      AWSRunningInstance awsInstance = AWSRunningInstance.class.cast(instance);
-      builder.name(awsInstance.getTags().get("Name"));
-      addMetadataAndParseTagsFromValuesOfEmptyString(builder, awsInstance.getTags());
-      return super.buildInstance(instance, builder);
-   }
 }
