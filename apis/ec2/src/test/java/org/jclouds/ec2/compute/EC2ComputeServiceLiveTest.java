@@ -85,13 +85,14 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       return new SshjSshClientModule();
    }
 
-   // normal ec2 does not support metadata
    @Override
    protected void checkUserMetadataContains(NodeMetadata node, ImmutableMap<String, String> userMetadata) {
-      assert node.getUserMetadata().equals(ImmutableMap.<String, String> of()) : String.format(
-            "node userMetadata did not match %s %s", userMetadata, node);
+      if (view.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi().getTagApi().isPresent()) {
+         super.checkUserMetadataContains(node, userMetadata);
+      } else {
+         assertTrue(node.getUserMetadata().isEmpty(), "not expecting metadata when tag extension isn't present" + node);
+      }
    }
-   
 
    @Test(enabled = true, dependsOnMethods = "testCorrectAuthException")
    public void testImagesResolveCorrectly() {
@@ -324,7 +325,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       return instance;
    }
 
-   public static void cleanupExtendedStuffInRegion(String region, SecurityGroupClient securityGroupClient,
+   protected static void cleanupExtendedStuffInRegion(String region, SecurityGroupClient securityGroupClient,
             KeyPairClient keyPairClient, String group) throws InterruptedException {
       try {
          for (SecurityGroup secgroup : securityGroupClient.describeSecurityGroupsInRegion(region))

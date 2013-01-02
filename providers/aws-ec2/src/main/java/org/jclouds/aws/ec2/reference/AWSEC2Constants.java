@@ -37,10 +37,5 @@ public interface AWSEC2Constants extends EC2Constants {
    public static final String PROPERTY_EC2_CC_AMI_QUERY = "jclouds.ec2.cc-ami-query";
    public static final String PROPERTY_EC2_CC_REGIONS = "jclouds.ec2.cc-regions";
    public static final String PROPERTY_EC2_AMI_QUERY = "jclouds.ec2.ami-query";
-   /**
-    * If this property is set to true(default), jclouds generate a name for each instance based on
-    * the group. ex. i-ef34ae2 becomes hadoop-ef34ae2.
-    */
-   public static final String PROPERTY_EC2_GENERATE_INSTANCE_NAMES = "jclouds.ec2.generate-instance-names";
 
 }

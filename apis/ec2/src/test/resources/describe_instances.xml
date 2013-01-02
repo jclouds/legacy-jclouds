@@ -38,6 +38,16 @@
                     <kernelId>aki-ba3adfd3</kernelId>
                     <ramdiskId>ari-badbad00</ramdiskId>
                     <hypervisor>xen</hypervisor>
+                    <tagSet>
+                       <item>
+                           <key>Name</key>
+                           <value>ec2-o</value>
+                       </item>
+                       <item>
+                           <key>Empty</key>
+                           <value />
+                       </item>
+                    </tagSet>
                 </item>
                 <item>
                     <instanceId>i-28a64435</instanceId>

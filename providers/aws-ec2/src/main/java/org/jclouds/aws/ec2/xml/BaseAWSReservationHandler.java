@@ -49,7 +49,6 @@ import org.xml.sax.SAXException;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.google.inject.Provider;
 
 /**
  * 
@@ -62,21 +61,21 @@ public abstract class BaseAWSReservationHandler<T> extends HandlerForGeneratedRe
 
    protected final DateCodec dateCodec;
    protected final Supplier<String> defaultRegion;
-   protected final Provider<AWSRunningInstance.Builder> builderProvider;
 
    @Inject
-   public BaseAWSReservationHandler(DateCodecFactory dateCodecFactory, @Region Supplier<String> defaultRegion,
-         Provider<AWSRunningInstance.Builder> builderProvider) {
+   public BaseAWSReservationHandler(DateCodecFactory dateCodecFactory, @Region Supplier<String> defaultRegion) {
       this.dateCodec = dateCodecFactory.iso8601();
       this.defaultRegion = defaultRegion;
-      this.builderProvider = builderProvider;
-      this.builder = builderProvider.get();
+   }
+
+   protected AWSRunningInstance.Builder builder = newBuilder();
+
+   protected AWSRunningInstance.Builder newBuilder() {
+      return AWSRunningInstance.builder();
    }
 
    protected StringBuilder currentText = new StringBuilder();
-
-   protected AWSRunningInstance.Builder builder;
-
+   
    protected int itemDepth;
    boolean inInstancesSet;
    // attachments
@@ -215,7 +214,7 @@ public abstract class BaseAWSReservationHandler<T> extends HandlerForGeneratedRe
       if (endOfInstanceItem()) {
          refineBuilderBeforeAddingInstance();
          instances.add(builder.build());
-         builder = builderProvider.get();
+         builder = newBuilder();
       }
    }
 

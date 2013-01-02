@@ -30,7 +30,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderImpl;
 import org.jclouds.aws.ec2.compute.functions.AWSRunningInstanceToNodeMetadata;
-import org.jclouds.aws.ec2.compute.predicates.AWSEC2InstancePresent;
+import org.jclouds.aws.ec2.compute.functions.PresentSpotRequestsAndInstances;
 import org.jclouds.aws.ec2.compute.strategy.AWSEC2CreateNodesInGroupThenAddToSet;
 import org.jclouds.aws.ec2.compute.strategy.AWSEC2DestroyNodeStrategy;
 import org.jclouds.aws.ec2.compute.strategy.AWSEC2GetNodeMetadataStrategy;
@@ -44,11 +44,11 @@ import org.jclouds.compute.extensions.ImageExtension;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.ec2.compute.config.EC2BindComputeStrategiesByClass;
 import org.jclouds.ec2.compute.domain.RegionAndName;
+import org.jclouds.ec2.compute.functions.PresentInstances;
 import org.jclouds.ec2.compute.functions.RunningInstanceToNodeMetadata;
 import org.jclouds.ec2.compute.internal.EC2TemplateBuilderImpl;
 import org.jclouds.ec2.compute.loaders.RegionAndIdToImage;
 import org.jclouds.ec2.compute.options.EC2TemplateOptions;
-import org.jclouds.ec2.compute.predicates.InstancePresent;
 import org.jclouds.ec2.compute.strategy.CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions;
 import org.jclouds.ec2.compute.strategy.EC2CreateNodesInGroupThenAddToSet;
 import org.jclouds.ec2.compute.strategy.EC2DestroyNodeStrategy;
@@ -92,7 +92,7 @@ public class AWSEC2ComputeServiceContextModule extends BaseComputeServiceContext
       bind(EC2GetNodeMetadataStrategy.class).to(AWSEC2GetNodeMetadataStrategy.class);
       bind(EC2ListNodesStrategy.class).to(AWSEC2ListNodesStrategy.class);
       bind(EC2DestroyNodeStrategy.class).to(AWSEC2DestroyNodeStrategy.class);
-      bind(InstancePresent.class).to(AWSEC2InstancePresent.class);
+      bind(PresentInstances.class).to(PresentSpotRequestsAndInstances.class);
       bind(EC2CreateNodesInGroupThenAddToSet.class).to(AWSEC2CreateNodesInGroupThenAddToSet.class);
       bind(RunningInstanceToNodeMetadata.class).to(AWSRunningInstanceToNodeMetadata.class);
    }
@@ -100,7 +100,7 @@ public class AWSEC2ComputeServiceContextModule extends BaseComputeServiceContext
    protected void installDependencies() {
       install(new AWSEC2ComputeServiceDependenciesModule());
    }
-
+   
    @Override
    protected boolean shouldEagerlyParseImages(Injector injector) {
       Map<String, String> queries = injector.getInstance(Key.get(new TypeLiteral<Map<String, String>>() {

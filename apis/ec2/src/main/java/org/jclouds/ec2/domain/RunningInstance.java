@@ -28,6 +28,7 @@ import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.base.Strings;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -42,11 +43,18 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 public class RunningInstance implements Comparable<RunningInstance> {
-   public static Builder builder() {
-      return new Builder();
+
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public static class Builder {
+   public Builder<?> toBuilder() {
+      return new ConcreteBuilder().fromRunningInstance(this);
+   }
+   
+   public abstract static class Builder<T extends Builder<T>> {
+      protected abstract T self();
+
       protected String region;
       protected Set<String> groupNames = Sets.newLinkedHashSet();
       protected String amiLaunchIndex;
@@ -70,157 +78,174 @@ public class RunningInstance implements Comparable<RunningInstance> {
       protected RootDeviceType rootDeviceType = RootDeviceType.INSTANCE_STORE;
       protected String rootDeviceName;
       protected Map<String, BlockDevice> ebsBlockDevices = Maps.newLinkedHashMap();
+      protected Map<String, String> tags = Maps.newLinkedHashMap();
 
-      public Builder region(String region) {
+      public T tags(Map<String, String> tags) {
+         this.tags = ImmutableMap.copyOf(checkNotNull(tags, "tags"));
+         return self();
+      }
+
+      public T tag(String key, String value) {
+         if (key != null)
+            this.tags.put(key, Strings.nullToEmpty(value));
+         return self();
+      }
+      
+      public T region(String region) {
          this.region = region;
-         return this;
+         return self();
       }
 
-      public Builder groupNames(Iterable<String> groupNames) {
+      public T groupNames(Iterable<String> groupNames) {
          this.groupNames = ImmutableSet.copyOf(checkNotNull(groupNames, "groupNames"));
-         return this;
+         return self();
       }
 
-      public Builder groupName(String groupName) {
+      public T groupName(String groupName) {
          if (groupName != null)
             this.groupNames.add(groupName);
-         return this;
+         return self();
       }
 
-      public Builder amiLaunchIndex(String amiLaunchIndex) {
+      public T amiLaunchIndex(String amiLaunchIndex) {
          this.amiLaunchIndex = amiLaunchIndex;
-         return this;
+         return self();
       }
 
-      public Builder dnsName(String dnsName) {
+      public T dnsName(String dnsName) {
          this.dnsName = dnsName;
-         return this;
+         return self();
       }
 
-      public Builder imageId(String imageId) {
+      public T imageId(String imageId) {
          this.imageId = imageId;
-         return this;
+         return self();
       }
 
-      public Builder instanceId(String instanceId) {
+      public T instanceId(String instanceId) {
          this.instanceId = instanceId;
-         return this;
+         return self();
       }
 
-      public Builder instanceState(InstanceState instanceState) {
+      public T instanceState(InstanceState instanceState) {
          this.instanceState = instanceState;
-         return this;
+         return self();
       }
       
-      public Builder rawState(String rawState) {
+      public T rawState(String rawState) {
          this.rawState = rawState;
-         return this;
+         return self();
       }
       
-      public Builder instanceType(String instanceType) {
+      public T instanceType(String instanceType) {
          this.instanceType = instanceType;
-         return this;
+         return self();
       }
 
-      public Builder ipAddress(String ipAddress) {
+      public T ipAddress(String ipAddress) {
          this.ipAddress = ipAddress;
-         return this;
+         return self();
       }
 
-      public Builder kernelId(String kernelId) {
+      public T kernelId(String kernelId) {
          this.kernelId = kernelId;
-         return this;
+         return self();
       }
 
-      public Builder keyName(String keyName) {
+      public T keyName(String keyName) {
          this.keyName = keyName;
-         return this;
+         return self();
       }
 
-      public Builder launchTime(Date launchTime) {
+      public T launchTime(Date launchTime) {
          this.launchTime = launchTime;
-         return this;
+         return self();
       }
 
-      public Builder availabilityZone(String availabilityZone) {
+      public T availabilityZone(String availabilityZone) {
          this.availabilityZone = availabilityZone;
-         return this;
+         return self();
       }
 
-      public Builder virtualizationType(String virtualizationType) {
+      public T virtualizationType(String virtualizationType) {
          this.virtualizationType = virtualizationType;
-         return this;
+         return self();
       }
 
-      public Builder platform(String platform) {
+      public T platform(String platform) {
          this.platform = platform;
-         return this;
+         return self();
       }
 
-      public Builder privateDnsName(String privateDnsName) {
+      public T privateDnsName(String privateDnsName) {
          this.privateDnsName = privateDnsName;
-         return this;
+         return self();
       }
 
-      public Builder privateIpAddress(String privateIpAddress) {
+      public T privateIpAddress(String privateIpAddress) {
          this.privateIpAddress = privateIpAddress;
-         return this;
+         return self();
       }
 
-      public Builder ramdiskId(String ramdiskId) {
+      public T ramdiskId(String ramdiskId) {
          this.ramdiskId = ramdiskId;
-         return this;
+         return self();
       }
 
-      public Builder reason(String reason) {
+      public T reason(String reason) {
          this.reason = reason;
-         return this;
+         return self();
       }
 
-      public Builder rootDeviceType(RootDeviceType rootDeviceType) {
+      public T rootDeviceType(RootDeviceType rootDeviceType) {
          this.rootDeviceType = rootDeviceType;
-         return this;
+         return self();
       }
 
-      public Builder rootDeviceName(String rootDeviceName) {
+      public T rootDeviceName(String rootDeviceName) {
          this.rootDeviceName = rootDeviceName;
-         return this;
+         return self();
       }
 
-      public Builder devices(Map<String, BlockDevice> ebsBlockDevices) {
+      public T devices(Map<String, BlockDevice> ebsBlockDevices) {
          this.ebsBlockDevices = ImmutableMap.copyOf(checkNotNull(ebsBlockDevices, "ebsBlockDevices"));
-         return this;
+         return self();
       }
 
-      public Builder device(String key, BlockDevice value) {
+      public T device(String key, BlockDevice value) {
          if (key != null && value != null)
             this.ebsBlockDevices.put(key, value);
+         return self();
+      }
+      
+      public T fromRunningInstance(RunningInstance in) {
+         return region(in.region).groupNames(in.groupNames).amiLaunchIndex(in.amiLaunchIndex).dnsName(in.dnsName)
+               .imageId(in.imageId).instanceId(in.instanceId).instanceState(in.instanceState).rawState(in.rawState)
+               .instanceType(in.instanceType).ipAddress(in.ipAddress).kernelId(in.kernelId).keyName(in.keyName)
+               .launchTime(in.launchTime).availabilityZone(in.availabilityZone)
+               .virtualizationType(in.virtualizationType).platform(in.platform).privateDnsName(in.privateDnsName)
+               .privateIpAddress(in.privateIpAddress).ramdiskId(in.ramdiskId).reason(in.reason)
+               .rootDeviceType(in.rootDeviceType).rootDeviceName(in.rootDeviceName).devices(in.ebsBlockDevices)
+               .tags(in.tags);
+      }
+      
+      public abstract RunningInstance build();
+
+   }
+   
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
          return this;
       }
 
+      @Override
       public RunningInstance build() {
          return new RunningInstance(region, groupNames, amiLaunchIndex, dnsName, imageId, instanceId, instanceState,
-                  rawState, instanceType, ipAddress, kernelId, keyName, launchTime, availabilityZone,
-                  virtualizationType, platform, privateDnsName, privateIpAddress, ramdiskId, reason, rootDeviceType,
-                  rootDeviceName, ebsBlockDevices);
+               rawState, instanceType, ipAddress, kernelId, keyName, launchTime, availabilityZone, virtualizationType,
+               platform, privateDnsName, privateIpAddress, ramdiskId, reason, rootDeviceType, rootDeviceName,
+               ebsBlockDevices, tags);
       }
-
-      public String getDnsName() {
-         return dnsName;
-      }
-
-      public String getIpAddress() {
-         return ipAddress;
-      }
-
-      public String getPrivateDnsName() {
-         return privateDnsName;
-      }
-
-      public String getPrivateIpAddress() {
-         return privateIpAddress;
-      }
-
    }
 
    protected final String region;
@@ -256,6 +281,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
    @Nullable
    protected final String rootDeviceName;
    protected final Map<String, BlockDevice> ebsBlockDevices;
+   protected final Map<String, String> tags;
 
    protected RunningInstance(String region, Iterable<String> groupNames, @Nullable String amiLaunchIndex,
             @Nullable String dnsName, String imageId, String instanceId, InstanceState instanceState, String rawState,
@@ -263,7 +289,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
             Date launchTime, String availabilityZone, String virtualizationType, @Nullable String platform,
             @Nullable String privateDnsName, @Nullable String privateIpAddress, @Nullable String ramdiskId,
             @Nullable String reason, RootDeviceType rootDeviceType, @Nullable String rootDeviceName,
-            Map<String, BlockDevice> ebsBlockDevices) {
+            Map<String, BlockDevice> ebsBlockDevices, Map<String, String> tags) {
       this.region = checkNotNull(region, "region");
       this.amiLaunchIndex = amiLaunchIndex; // nullable on runinstances.
       this.dnsName = dnsName; // nullable on runinstances.
@@ -287,6 +313,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
       this.rootDeviceName = rootDeviceName;
       this.ebsBlockDevices = ImmutableMap.copyOf(checkNotNull(ebsBlockDevices, "ebsBlockDevices for %s/%s", region, instanceId));
       this.groupNames = ImmutableSet.copyOf(checkNotNull(groupNames, "groupNames for %s/%s", region, instanceId));
+      this.tags = ImmutableMap.<String, String> copyOf(checkNotNull(tags, "tags"));
    }
 
    /**
@@ -462,6 +489,13 @@ public class RunningInstance implements Comparable<RunningInstance> {
       return groupNames;
    }
 
+   /**
+    * tags that are present in the instance
+    */
+   public Map<String, String> getTags() {
+      return tags;
+   }
+
    @Override
    public int compareTo(RunningInstance other) {
       return ComparisonChain.start().compare(region, other.region).compare(instanceId, other.instanceId, Ordering.natural().nullsLast()).result();
@@ -489,7 +523,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
                .add("ipAddress", ipAddress).add("dnsName", dnsName).add("privateIpAddress", privateIpAddress)
                .add("privateDnsName", privateDnsName).add("keyName", keyName).add("groupNames", groupNames)
                .add("platform", platform).add("launchTime", launchTime).add("rootDeviceName", rootDeviceName)
-               .add("rootDeviceType", rootDeviceType).add("ebsBlockDevices", ebsBlockDevices);
+               .add("rootDeviceType", rootDeviceType).add("ebsBlockDevices", ebsBlockDevices).add("tags", tags);
    }
 
    @Override

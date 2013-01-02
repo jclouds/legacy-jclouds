@@ -41,6 +41,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -69,7 +70,7 @@ public class DescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest {
    public void testWhenRunning() throws UnknownHostException {
 
       Set<Reservation<RunningInstance>> contents = ImmutableSet.of(new Reservation<RunningInstance>(defaultRegion,
-               ImmutableSet.of("adriancole.ec2ingress"), ImmutableSet.of(new RunningInstance.Builder().region(
+               ImmutableSet.of("adriancole.ec2ingress"), ImmutableSet.of(RunningInstance.builder().region(
                         defaultRegion).groupName("adriancole.ec2ingress").amiLaunchIndex("0").dnsName(
                         "ec2-174-129-81-68.compute-1.amazonaws.com").imageId("ami-82e4b5c7").instanceId("i-0799056f")
                         .instanceState(InstanceState.RUNNING).rawState("running").instanceType(InstanceType.M1_SMALL)
@@ -91,7 +92,7 @@ public class DescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest {
 
    public void testApplyInputStream() {
       Set<Reservation<RunningInstance>> contents = ImmutableSet.of(new Reservation<RunningInstance>(defaultRegion,
-               ImmutableSet.of("default"), ImmutableSet.of(new RunningInstance.Builder().region(defaultRegion).groupName(
+               ImmutableSet.of("default"), ImmutableSet.of(RunningInstance.builder().region(defaultRegion).groupName(
                         "default").amiLaunchIndex("23").dnsName("ec2-72-44-33-4.compute-1.amazonaws.com").imageId(
                         "ami-6ea54007").instanceId("i-28a64341").instanceState(InstanceState.RUNNING).rawState(
                         "running").instanceType(InstanceType.M1_LARGE).kernelId("aki-ba3adfd3").keyName(
@@ -100,8 +101,9 @@ public class DescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest {
                         .availabilityZone("us-east-1b").virtualizationType("paravirtual").privateDnsName(
                                  "10-251-50-132.ec2.internal")// product codes
                         // ImmutableSet.of("774F4FF8")
+                        .tags(ImmutableMap.of("Name","ec2-o", "Empty",""))
                         .ramdiskId("ari-badbad00").rootDeviceType(RootDeviceType.INSTANCE_STORE).build(),
-                        new RunningInstance.Builder().region(defaultRegion).groupName("default").amiLaunchIndex("23")
+                        RunningInstance.builder().region(defaultRegion).groupName("default").amiLaunchIndex("23")
                                  .dnsName("ec2-72-44-33-6.compute-1.amazonaws.com").imageId("ami-6ea54007").instanceId(
                                           "i-28a64435").instanceState(InstanceState.RUNNING).rawState("running")
                                  .instanceType(InstanceType.M1_LARGE).kernelId("aki-ba3adfd3").keyName(
@@ -125,7 +127,7 @@ public class DescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest {
    public void testEBS() throws UnknownHostException {
 
       Set<Reservation<RunningInstance>> contents = ImmutableSet.of(new Reservation<RunningInstance>(defaultRegion,
-               ImmutableSet.of("adriancole.ec2ebsingress"), ImmutableSet.of(new RunningInstance.Builder().region(
+               ImmutableSet.of("adriancole.ec2ebsingress"), ImmutableSet.of(RunningInstance.builder().region(
                         defaultRegion).groupName("adriancole.ec2ebsingress").amiLaunchIndex("0").dnsName(
                         "ec2-75-101-203-146.compute-1.amazonaws.com").imageId("ami-849875ed").instanceId("i-e564438d")
                         .instanceState(InstanceState.RUNNING).rawState("running").instanceType(InstanceType.M1_SMALL)
