@@ -18,10 +18,15 @@
  */
 package org.jclouds.ec2.services;
 
+import static com.google.common.base.Predicates.compose;
+import static com.google.common.base.Predicates.in;
+import static com.google.common.collect.Iterables.all;
+import static com.google.common.collect.Iterables.getLast;
+import static com.google.common.collect.Iterables.getOnlyElement;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
-import java.util.Iterator;
 import java.util.Set;
 
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
@@ -34,10 +39,11 @@ import org.jclouds.ec2.domain.UserIdGroupPair;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 
 /**
  * Tests behavior of {@code SecurityGroupClient}
@@ -67,11 +73,19 @@ public class SecurityGroupClientLiveTest extends BaseComputeServiceContextLiveTe
          Set<SecurityGroup> allResults = client.describeSecurityGroupsInRegion(region);
          assertNotNull(allResults);
          if (allResults.size() >= 1) {
-            SecurityGroup group = Iterables.getLast(allResults);
-            Set<SecurityGroup> result = client.describeSecurityGroupsInRegion(region, group.getName());
-            assertNotNull(result);
-            SecurityGroup compare = Iterables.getLast(result);
-            assertEquals(compare, group);
+            final SecurityGroup group = getLast(allResults);
+            // in case there are multiple groups with the same name, which is the case with VPC
+            ImmutableSet<SecurityGroup> expected = FluentIterable.from(allResults)
+                  .filter(new Predicate<SecurityGroup>() {
+                     @Override
+                     public boolean apply(SecurityGroup in) {
+                        return group.getName().equals(in.getName());
+                     }
+                  }).toSet();
+            ImmutableSet<SecurityGroup> result = ImmutableSet.copyOf(client.describeSecurityGroupsInRegion(region,
+                  group.getName()));
+            // the above command has a chance of returning less groups than the original
+            assertTrue(expected.containsAll(result));
          }
       }
    }
@@ -197,7 +211,7 @@ public class SecurityGroupClientLiveTest extends BaseComputeServiceContextLiveTe
       public void run() {
          try {
             Set<SecurityGroup> oneResult = client.describeSecurityGroupsInRegion(null, group);
-            assert Iterables.all(Iterables.getOnlyElement(oneResult).getIpPermissions(), permission) : permission
+            assert all(getOnlyElement(oneResult), permission) : permission
                   + ": " + oneResult;
          } catch (Exception e) {
             throw new AssertionError(e);
@@ -220,7 +234,7 @@ public class SecurityGroupClientLiveTest extends BaseComputeServiceContextLiveTe
             assertNotNull(oneResult);
             assertEquals(oneResult.size(), 1);
             SecurityGroup listPair = oneResult.iterator().next();
-            assertEquals(listPair.getIpPermissions().size(), 0);
+            assertEquals(listPair.size(), 0);
          } catch (Exception e) {
             throw new AssertionError(e);
          }
@@ -230,15 +244,15 @@ public class SecurityGroupClientLiveTest extends BaseComputeServiceContextLiveTe
    protected void ensureGroupsExist(String group1Name, String group2Name) {
       Set<SecurityGroup> twoResults = client.describeSecurityGroupsInRegion(null, group1Name, group2Name);
       assertNotNull(twoResults);
-      assertEquals(twoResults.size(), 2);
-      Iterator<SecurityGroup> iterator = twoResults.iterator();
-      SecurityGroup listPair1 = iterator.next();
-      assertEquals(listPair1.getName(), group1Name);
-      assertEquals(listPair1.getDescription(), group1Name);
+      assertTrue(twoResults.size() >= 2);// in VPC could be multiple groups with the same name
 
-      SecurityGroup listPair2 = iterator.next();
-      assertEquals(listPair2.getName(), group2Name);
-      assertEquals(listPair2.getDescription(), group2Name);
+      assertTrue(all(twoResults, compose(in(ImmutableSet.of(group1Name, group2Name)),
+            new Function<SecurityGroup, String>() {
+               @Override
+               public String apply(SecurityGroup in) {
+                  return in.getName();
+               }
+            })));
    }
 
    private static final int INCONSISTENCY_WINDOW = 5000;
