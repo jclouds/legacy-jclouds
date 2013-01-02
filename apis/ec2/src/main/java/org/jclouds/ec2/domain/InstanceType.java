@@ -120,6 +120,28 @@ public class InstanceType {
     */
    public static final String M2_4XLARGE = "m2.4xlarge";
    /**
+    * M3 Extra Large Instance
+    * <ul>
+    * <li>15 GiB memory</li>
+    * <li>13 EC2 Compute Units (4 virtual cores with 3.25 EC2 Compute Units each)</li>
+    * <li>EBS storage only</li>
+    * <li>64-bit platform</li>
+    * <li>I/O Performance: Moderate</li>
+    * </ul>
+    */
+   public static final String M3_XLARGE = "m3.xlarge";
+   /**
+    * M3 Double Extra Large Instance
+    * <ul>
+    * <li>30 GiB memory</li>
+    * <li>26 EC2 Compute Units (8 virtual cores with 3.25 EC2 Compute Units each)</li>
+    * <li>EBS storage only</li>
+    * <li>64-bit platform</li>
+    * <li>I/O Performance: High</li>
+    * </ul>
+    */
+   public static final String M3_2XLARGE = "m3.2xlarge";
+   /**
     * High-CPU Medium Instance
     * <ul>
     * <li>1.7 GB of memory</li>
@@ -197,4 +219,16 @@ public class InstanceType {
     */
    public static final String HI1_4XLARGE = "hi1.4xlarge";
 
+   /**
+    * High Storage Eight Extra Large
+    * <ul>
+    * <li>117 GiB of memory</li>
+    * <li>35 EC2 Compute Units (16 virtual cores*)</li>
+    * <li>24 hard disk drives each with 2 TB of instance storage</li>
+    * <li>64-bit platform</li>
+    * <li>I/O Performance: Very High (10 Gigabit Ethernet)</li>
+    * <li>Storage I/O Performance: Very High**</li>
+    * </ul>
+    */
+   public static final String HS1_8XLARGE = "hs1.8xlarge";
 }
