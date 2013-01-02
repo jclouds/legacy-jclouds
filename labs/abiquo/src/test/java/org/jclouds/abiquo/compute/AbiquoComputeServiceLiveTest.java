@@ -112,7 +112,7 @@ public abstract class AbiquoComputeServiceLiveTest extends BaseComputeServiceLiv
 
    // Abiquo does not support metadata
    @Override
-   protected void checkUserMetadataInNodeEquals(final NodeMetadata node, final ImmutableMap<String, String> userMetadata) {
+   protected void checkUserMetadataContains(final NodeMetadata node, final ImmutableMap<String, String> userMetadata) {
       assert node.getUserMetadata().equals(ImmutableMap.<String, String> of()) : String.format(
             "node userMetadata did not match %s %s", userMetadata, node);
    }

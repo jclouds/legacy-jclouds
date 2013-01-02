@@ -55,7 +55,7 @@ public abstract class FGCPBaseComputeServiceLiveTest extends
 
    // fgcp does not support metadata
    @Override
-   protected void checkUserMetadataInNodeEquals(NodeMetadata node, ImmutableMap<String, String> userMetadata) {
+   protected void checkUserMetadataContains(NodeMetadata node, ImmutableMap<String, String> userMetadata) {
       assert node.getUserMetadata().isEmpty() : String.format(
             "node userMetadata not empty: %s %s", node,
             node.getUserMetadata());

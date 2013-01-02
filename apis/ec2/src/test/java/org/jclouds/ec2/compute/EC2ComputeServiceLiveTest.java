@@ -87,7 +87,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
    // normal ec2 does not support metadata
    @Override
-   protected void checkUserMetadataInNodeEquals(NodeMetadata node, ImmutableMap<String, String> userMetadata) {
+   protected void checkUserMetadataContains(NodeMetadata node, ImmutableMap<String, String> userMetadata) {
       assert node.getUserMetadata().equals(ImmutableMap.<String, String> of()) : String.format(
             "node userMetadata did not match %s %s", userMetadata, node);
    }
