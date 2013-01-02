@@ -48,6 +48,6 @@ public class GleSYSComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
    // GleSYS does not support metadata
    @Override
-   protected void checkUserMetadataInNodeEquals(NodeMetadata node, ImmutableMap<String, String> userMetadata) {
+   protected void checkUserMetadataContains(NodeMetadata node, ImmutableMap<String, String> userMetadata) {
    }
 }

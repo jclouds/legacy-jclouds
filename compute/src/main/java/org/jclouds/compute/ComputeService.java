@@ -350,6 +350,9 @@ public interface ComputeService {
     * @see org.jclouds.scriptbuilder.domain.Statements
     */
    @Beta
+   ListenableFuture<ExecResponse> submitScriptOnNode(String id, String runScript, RunScriptOptions options);
+
+   @Beta
    ListenableFuture<ExecResponse> submitScriptOnNode(String id, Statement runScript, RunScriptOptions options);
    
    /**
@@ -376,5 +379,6 @@ public interface ComputeService {
     */
    @Beta
    Optional<ImageExtension> getImageExtension();
+
 
 }

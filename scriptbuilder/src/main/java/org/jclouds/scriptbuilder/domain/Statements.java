@@ -149,6 +149,13 @@ public class Statements {
    }
 
    /**
+    * sends statement only appending a newline
+    */
+   public static Statement literal(String literalStatement) {
+      return new LiteralStatement(literalStatement);
+   }
+
+   /**
     * interprets and adds a newline to the statement
     */
    public static Statement exec(String portableStatement) {
