@@ -18,6 +18,8 @@
  */
 package org.jclouds.ec2.xml;
 
+import static org.jclouds.util.SaxUtils.equalsOrSuffix;
+
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -26,10 +28,11 @@ import org.jclouds.date.DateCodecFactory;
 import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.location.Region;
+import org.xml.sax.Attributes;
 
 import com.google.common.base.Supplier;
-import com.google.common.collect.Sets;
-import com.google.inject.Provider;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 
 /**
  * Parses the following XML document:
@@ -40,18 +43,53 @@ import com.google.inject.Provider;
  * @see <a href="http: />
  */
 public class DescribeInstancesResponseHandler extends
-         BaseReservationHandler<Set<Reservation<? extends RunningInstance>>> {
-   private Set<Reservation<? extends RunningInstance>> reservations = Sets.newLinkedHashSet();
+      BaseReservationHandler<Set<Reservation<? extends RunningInstance>>> {
+   private final TagSetHandler tagSetHandler;
+   private Builder<Reservation<? extends RunningInstance>> reservations = ImmutableSet
+         .<Reservation<? extends RunningInstance>> builder();
+   private boolean inTagSet;
 
    @Inject
-   public DescribeInstancesResponseHandler(DateCodecFactory dateCodecFactory,
-            @Region Supplier<String> defaultRegion, Provider<RunningInstance.Builder> builderProvider) {
-      super(dateCodecFactory, defaultRegion, builderProvider);
+   DescribeInstancesResponseHandler(DateCodecFactory dateCodecFactory, @Region Supplier<String> defaultRegion,
+         TagSetHandler tagSetHandler) {
+      super(dateCodecFactory, defaultRegion);
+      this.tagSetHandler = tagSetHandler;
+   }
+
+   @Override
+   public void startElement(String uri, String name, String qName, Attributes attrs) {
+      super.startElement(uri, name, qName, attrs);
+      if (equalsOrSuffix(qName, "tagSet")) {
+         inTagSet = true;
+      }
+      if (inTagSet) {
+         tagSetHandler.startElement(uri, name, qName, attrs);
+      }
+   }
+
+   @Override
+   public void characters(char ch[], int start, int length) {
+      if (inTagSet) {
+         tagSetHandler.characters(ch, start, length);
+      } else {
+         super.characters(ch, start, length);
+      }
+   }
+
+   @Override
+   public void endElement(String uri, String name, String qName) {
+      if (equalsOrSuffix(qName, "tagSet")) {
+         inTagSet = false;
+         builder.tags(tagSetHandler.getResult());
+      } else if (inTagSet) {
+         tagSetHandler.endElement(uri, name, qName);
+      }
+      super.endElement(uri, name, qName);
    }
 
    @Override
    public Set<Reservation<? extends RunningInstance>> getResult() {
-      return reservations;
+      return reservations.build();
    }
 
    protected boolean endOfReservationItem() {
@@ -67,4 +105,7 @@ public class DescribeInstancesResponseHandler extends
       }
    }
 
+   protected boolean endOfInstanceItem() {
+      return itemDepth == 2 && inInstancesSet;
+   }
 }

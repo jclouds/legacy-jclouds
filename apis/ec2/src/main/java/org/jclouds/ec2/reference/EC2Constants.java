@@ -18,6 +18,8 @@
  */
 package org.jclouds.ec2.reference;
 
+import org.jclouds.compute.ComputeService;
+
 /**
  * Configuration properties and constants used in EC2 connections.
  * 
@@ -40,4 +42,11 @@ public interface EC2Constants {
     * deallocate when the node is destroyed.
     */
    public static final String PROPERTY_EC2_AUTO_ALLOCATE_ELASTIC_IPS = "jclouds.ec2.auto-allocate-elastic-ips";
+   
+   /**
+    * If this property is set to true(default), jclouds generate a name for each instance based on the group. ex.
+    * i-ef34ae2 becomes hadoop-ef34ae2. Note that this depends on {@link EC2Api#getTagApi} returning present.
+    */
+   public static final String PROPERTY_EC2_GENERATE_INSTANCE_NAMES = "jclouds.ec2.generate-instance-names";
+
 }

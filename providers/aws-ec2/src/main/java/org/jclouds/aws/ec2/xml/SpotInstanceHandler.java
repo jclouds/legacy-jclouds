@@ -28,6 +28,7 @@ import org.jclouds.aws.ec2.domain.SpotInstanceRequest.Builder;
 import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.date.DateCodec;
 import org.jclouds.date.DateCodecFactory;
+import org.jclouds.ec2.xml.TagSetHandler;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.location.Region;
 import org.xml.sax.Attributes;
@@ -92,7 +93,7 @@ public class SpotInstanceHandler extends ParseSax.HandlerForGeneratedRequestWith
          inTagSet = false;
          builder.tags(tagSetHandler.getResult());
       } else if (inTagSet) {
-          tagSetHandler.endElement(uri, name, qName);
+         tagSetHandler.endElement(uri, name, qName);
       }
 
       if (qName.equals("launchSpecification")) {
@@ -143,9 +144,9 @@ public class SpotInstanceHandler extends ParseSax.HandlerForGeneratedRequestWith
    @Override
    public void characters(char ch[], int start, int length) {
       if (inLaunchSpecification) {
-           launchSpecificationHandler.characters(ch, start, length);
+         launchSpecificationHandler.characters(ch, start, length);
       } else if (inTagSet) {
-           tagSetHandler.characters(ch, start, length);
+         tagSetHandler.characters(ch, start, length);
       } else {
          currentText.append(ch, start, length);
       }

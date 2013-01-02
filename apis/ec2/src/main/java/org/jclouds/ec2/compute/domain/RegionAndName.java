@@ -18,26 +18,33 @@
  */
 package org.jclouds.ec2.compute.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import com.google.common.base.Function;
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
+
 /**
  * 
  * @author Adrian Cole
  */
 public class RegionAndName {
+
    protected final String region;
    protected final String name;
 
-   public RegionAndName(String region, String name) {
-      this.region = region;
-      this.name = name;
+   public String slashEncode() {
+      return new StringBuilder(region).append('/').append(name).toString();
    }
 
+   public RegionAndName(String region, String name) {
+      this.region = checkNotNull(region, "region");
+      this.name = checkNotNull(name, "name");
+   }
+   
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((region == null) ? 0 : region.hashCode());
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
-      return result;
+      return Objects.hashCode(region, name);
    }
 
    @Override
@@ -46,20 +53,10 @@ public class RegionAndName {
          return true;
       if (obj == null)
          return false;
-      if (getClass() != obj.getClass())
+      if (!(obj instanceof RegionAndName))
          return false;
-      RegionAndName other = (RegionAndName) obj;
-      if (region == null) {
-         if (other.region != null)
-            return false;
-      } else if (!region.equals(other.region))
-         return false;
-      if (name == null) {
-         if (other.name != null)
-            return false;
-      } else if (!name.equals(other.name))
-         return false;
-      return true;
+      RegionAndName other = RegionAndName.class.cast(obj);
+      return Objects.equal(region, other.region) && Objects.equal(name, other.name);
    }
 
    public String getRegion() {
@@ -72,7 +69,45 @@ public class RegionAndName {
 
    @Override
    public String toString() {
-      return "[region=" + region + ", name=" + name + "]";
+      return string().toString();
    }
 
+   protected ToStringHelper string() {
+      return Objects.toStringHelper("").add("region", region).add("name", name);
+   }
+
+   private static enum RegionFunction implements Function<RegionAndName, String> {
+      INSTANCE;
+      @Override
+      public String apply(RegionAndName input) {
+         return input.getRegion();
+      }
+
+      @Override
+      public String toString() {
+         return "getRegion()";
+      }
+   };
+
+   public static Function<RegionAndName, String> regionFunction() {
+      return RegionFunction.INSTANCE;
+   }
+
+   private static enum NameFunction implements Function<RegionAndName, String> {
+      INSTANCE;
+      @Override
+      public String apply(RegionAndName input) {
+         return input.getName();
+      }
+
+      @Override
+      public String toString() {
+         return "getName()";
+      }
+   };
+
+   public static Function<RegionAndName, String> nameFunction() {
+      return NameFunction.INSTANCE;
+   }
+   
 }

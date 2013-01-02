@@ -22,6 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.not;
 import static com.google.common.base.Strings.emptyToNull;
 import static com.google.common.collect.Iterables.filter;
+import static org.jclouds.compute.util.ComputeServiceUtils.addMetadataAndParseTagsFromValuesOfEmptyString;
 
 import java.util.List;
 import java.util.Map;
@@ -101,11 +102,8 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
       if (instance == null || instance.getId() == null)
          return null;
       NodeMetadataBuilder builder = new NodeMetadataBuilder();
-      builder = buildInstance(instance, builder);
-      return builder.build();
-   }
-
-   protected NodeMetadataBuilder buildInstance(final RunningInstance instance, NodeMetadataBuilder builder) {
+      builder.name(instance.getTags().get("Name"));
+      addMetadataAndParseTagsFromValuesOfEmptyString(builder, instance.getTags());
       builder.providerId(instance.getId());
       builder.id(instance.getRegion() + "/" + instance.getId());
       String group = getGroupForInstance(instance);
@@ -145,7 +143,7 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
       } catch (UncheckedExecutionException e) {
          logger.debug("error getting image for %s: %s", regionAndName, e);
       }
-      return builder;
+      return builder.build();
    }
 
    protected void addCredentialsForInstance(NodeMetadataBuilder builder, RunningInstance instance) {

@@ -25,6 +25,8 @@ import javax.inject.Singleton;
 import org.jclouds.aws.ec2.AWSEC2AsyncClient;
 import org.jclouds.aws.ec2.AWSEC2Client;
 import org.jclouds.aws.ec2.domain.AWSRunningInstance;
+import org.jclouds.aws.ec2.domain.SpotInstanceRequest;
+import org.jclouds.aws.ec2.functions.SpotInstanceRequestToAWSRunningInstance;
 import org.jclouds.aws.ec2.options.AWSRunInstancesOptions;
 import org.jclouds.aws.ec2.services.AWSAMIAsyncClient;
 import org.jclouds.aws.ec2.services.AWSAMIClient;
@@ -40,12 +42,9 @@ import org.jclouds.aws.ec2.services.PlacementGroupAsyncClient;
 import org.jclouds.aws.ec2.services.PlacementGroupClient;
 import org.jclouds.aws.ec2.services.SpotInstanceAsyncClient;
 import org.jclouds.aws.ec2.services.SpotInstanceClient;
-import org.jclouds.aws.ec2.services.TagAsyncClient;
-import org.jclouds.aws.ec2.services.TagClient;
 import org.jclouds.ec2.EC2AsyncClient;
 import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.config.EC2RestClientModule;
-import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.ec2.features.TagApi;
 import org.jclouds.ec2.features.TagAsyncApi;
 import org.jclouds.ec2.features.WindowsApi;
@@ -67,9 +66,11 @@ import org.jclouds.ec2.services.WindowsAsyncClient;
 import org.jclouds.ec2.services.WindowsClient;
 import org.jclouds.rest.ConfiguresRestClient;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
 
 /**
  * Configures the EC2 connection.
@@ -91,7 +92,6 @@ public class AWSEC2RestClientModule extends EC2RestClientModule<AWSEC2Client, AW
          .put(AvailabilityZoneAndRegionClient.class, AvailabilityZoneAndRegionAsyncClient.class)//
          .put(ElasticBlockStoreClient.class, ElasticBlockStoreAsyncClient.class)//
          .put(SpotInstanceClient.class, SpotInstanceAsyncClient.class)//
-         .put(TagClient.class, TagAsyncClient.class)//
          .put(WindowsApi.class, WindowsAsyncApi.class)//
          .put(TagApi.class, TagAsyncApi.class)//
          .build();
@@ -148,22 +148,11 @@ public class AWSEC2RestClientModule extends EC2RestClientModule<AWSEC2Client, AW
       return in.getAMIServices();
    }
 
-   @Singleton
-   @Provides
-   TagClient getTagServices(AWSEC2Client in) {
-      return in.getTagServices();
-   }
-
-   @Singleton
-   @Provides
-   TagAsyncClient getTagServices(AWSEC2AsyncClient in) {
-      return in.getTagServices();
-   }
-
    @Override
    protected void configure() {
-      bind(RunningInstance.Builder.class).to(AWSRunningInstance.Builder.class);
       bind(RunInstancesOptions.class).to(AWSRunInstancesOptions.class);
+      bind(new TypeLiteral<Function<SpotInstanceRequest, AWSRunningInstance>>() {
+      }).to(SpotInstanceRequestToAWSRunningInstance.class);
       super.configure();
    }
 }

@@ -18,24 +18,23 @@
  */
 package org.jclouds.aws.ec2.xml;
 
-import static org.jclouds.util.SaxUtils.currentOrNull;
 import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
 import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.jclouds.aws.ec2.domain.AWSRunningInstance;
 import org.jclouds.date.DateCodecFactory;
 import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.domain.RunningInstance;
+import org.jclouds.ec2.xml.TagSetHandler;
 import org.jclouds.location.Region;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 import com.google.common.base.Supplier;
-import com.google.common.collect.Sets;
-import com.google.inject.Provider;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 
 /**
  * Parses the following XML document:
@@ -47,22 +46,34 @@ import com.google.inject.Provider;
  */
 public class AWSDescribeInstancesResponseHandler extends
       BaseAWSReservationHandler<Set<Reservation<? extends RunningInstance>>> {
-   private Set<Reservation<? extends RunningInstance>> reservations = Sets.newLinkedHashSet();
+   private final TagSetHandler tagSetHandler;
+   private Builder<Reservation<? extends RunningInstance>> reservations = ImmutableSet.<Reservation<? extends RunningInstance>>builder();
    private boolean inTagSet;
-   private String key;
-   private String value;
 
    @Inject
    AWSDescribeInstancesResponseHandler(DateCodecFactory dateCodecFactory, @Region Supplier<String> defaultRegion,
-         Provider<AWSRunningInstance.Builder> builderProvider, TagSetHandler tagSetHandler) {
-      super(dateCodecFactory, defaultRegion, builderProvider);
+         TagSetHandler tagSetHandler) {
+      super(dateCodecFactory, defaultRegion);
+      this.tagSetHandler = tagSetHandler;
    }
 
    @Override
-   public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
-      super.startElement(uri, localName, qName, attrs);
+   public void startElement(String uri, String name, String qName, Attributes attrs) throws SAXException {
+      super.startElement(uri, name, qName, attrs);
       if (equalsOrSuffix(qName, "tagSet")) {
          inTagSet = true;
+      }
+      if (inTagSet) {
+         tagSetHandler.startElement(uri, name, qName, attrs);
+      }
+   }
+
+   @Override
+   public void characters(char ch[], int start, int length) {
+      if (inTagSet) {
+         tagSetHandler.characters(ch, start, length);
+      } else {
+         super.characters(ch, start, length);
       }
    }
 
@@ -70,19 +81,16 @@ public class AWSDescribeInstancesResponseHandler extends
    public void endElement(String uri, String name, String qName) {
       if (equalsOrSuffix(qName, "tagSet")) {
          inTagSet = false;
+         builder.tags(tagSetHandler.getResult());
       } else if (inTagSet) {
-         if (equalsOrSuffix(qName, "key")) {
-            key = currentOrNull(currentText);
-         } else if (equalsOrSuffix(qName, "value")) {
-            value = currentOrNull(currentText);
-         }
+         tagSetHandler.endElement(uri, name, qName);
       }
       super.endElement(uri, name, qName);
    }
 
    @Override
    public Set<Reservation<? extends RunningInstance>> getResult() {
-      return reservations;
+      return reservations.build();
    }
 
    protected boolean endOfReservationItem() {
@@ -93,10 +101,6 @@ public class AWSDescribeInstancesResponseHandler extends
    protected void inItem() {
       if (endOfReservationItem()) {
          reservations.add(super.newReservation());
-      } else if (inTagSet) {
-         builder.tag(key, value);
-         key = null;
-         value = null;
       } else {
          super.inItem();
       }

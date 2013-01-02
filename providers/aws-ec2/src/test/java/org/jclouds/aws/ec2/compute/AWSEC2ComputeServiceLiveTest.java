@@ -77,13 +77,6 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
       group = "ec2";
    }
 
-   // aws-ec2 supports userMetadata
-   @Override
-   protected void checkUserMetadataContains(NodeMetadata node, ImmutableMap<String, String> userMetadata) {
-      assert node.getUserMetadata().equals(userMetadata) : String.format("node userMetadata did not match %s %s",
-               userMetadata, node);
-   }
-   
    @Override
    @Test
    public void testExtendedOptionsAndLogin() throws Exception {
@@ -103,12 +96,14 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
       Date before = new Date();
 
       ImmutableMap<String, String> userMetadata = ImmutableMap.<String, String> of("test", group);
-      ImmutableSet<String> tags = ImmutableSet. of(group);
+
+      ImmutableSet<String> tags = ImmutableSet.of(group);
 
       // note that if you change the location, you must also specify image parameters
       Template template = client.templateBuilder().locationId(region).osFamily(AMZN_LINUX).os64Bit(true).build();
       template.getOptions().tags(tags);
       template.getOptions().userMetadata(userMetadata);
+      template.getOptions().tags(tags);
       template.getOptions().as(AWSEC2TemplateOptions.class).enableMonitoring();
       template.getOptions().as(AWSEC2TemplateOptions.class).spotPrice(0.3f);
 
@@ -136,9 +131,6 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
 
          Set<? extends NodeMetadata> nodes = client.createNodesInGroup(group, 1, template);
          NodeMetadata first = getOnlyElement(nodes);
-
-         // Name metadata should turn into node.name
-         assertEquals(first.getName(), group);
 
          checkUserMetadataContains(first, userMetadata);
          checkTagsInNodeEquals(first, tags);

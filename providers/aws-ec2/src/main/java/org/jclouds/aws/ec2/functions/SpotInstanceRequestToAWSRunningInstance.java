@@ -18,8 +18,6 @@
  */
 package org.jclouds.aws.ec2.functions;
 
-import javax.inject.Singleton;
-
 import org.jclouds.aws.ec2.domain.AWSRunningInstance;
 import org.jclouds.aws.ec2.domain.LaunchSpecification;
 import org.jclouds.aws.ec2.domain.MonitoringState;
@@ -32,7 +30,6 @@ import com.google.common.base.Function;
 /**
  * @author Adrian Cole
  */
-@Singleton
 public class SpotInstanceRequestToAWSRunningInstance implements Function<SpotInstanceRequest, AWSRunningInstance> {
 
    @Override

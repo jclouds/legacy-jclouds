@@ -20,14 +20,12 @@ package org.jclouds.aws.ec2.xml;
 
 import javax.inject.Inject;
 
-import org.jclouds.aws.ec2.domain.AWSRunningInstance;
 import org.jclouds.date.DateCodecFactory;
 import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.location.Region;
 
 import com.google.common.base.Supplier;
-import com.google.inject.Provider;
 
 /**
  * Parses the following XML document:
@@ -40,9 +38,8 @@ import com.google.inject.Provider;
 public class AWSRunInstancesResponseHandler extends BaseAWSReservationHandler<Reservation<? extends RunningInstance>> {
 
    @Inject
-   AWSRunInstancesResponseHandler(DateCodecFactory dateCodecFactory, @Region Supplier<String> defaultRegion,
-         Provider<AWSRunningInstance.Builder> builderProvider) {
-      super(dateCodecFactory, defaultRegion, builderProvider);
+   AWSRunInstancesResponseHandler(DateCodecFactory dateCodecFactory, @Region Supplier<String> defaultRegion) {
+      super(dateCodecFactory, defaultRegion);
    }
 
    @Override
