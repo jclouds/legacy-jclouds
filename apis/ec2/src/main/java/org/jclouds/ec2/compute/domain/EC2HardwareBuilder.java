@@ -43,6 +43,8 @@ import org.jclouds.ec2.domain.VirtualizationType;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * 
@@ -294,7 +296,23 @@ public class EC2HardwareBuilder extends HardwareBuilder {
                   ImmutableList.<Volume> of(new VolumeImpl(10.0f, "/dev/sda1", true, false), new VolumeImpl(840.0f,
                         "/dev/sdb", false, false), new VolumeImpl(840.0f, "/dev/sdc", false, false))).is64Bit(true);
    }
+   
+   /**
+    * @see InstanceType#M3_XLARGE
+    */
+   public static EC2HardwareBuilder m3_xlarge() {
+      return new EC2HardwareBuilder(InstanceType.M3_XLARGE).ram(15360)
+            .processors(ImmutableList.of(new Processor(4.0, 3.25))).rootDeviceType(RootDeviceType.EBS).is64Bit(true);
+   }
 
+   /**
+    * @see InstanceType#M3_2XLARGE
+    */
+   public static EC2HardwareBuilder m3_2xlarge() {
+      return new EC2HardwareBuilder(InstanceType.M3_2XLARGE).ram(30720)
+            .processors(ImmutableList.of(new Processor(8.0, 3.25))).rootDeviceType(RootDeviceType.EBS).is64Bit(true);
+   }
+   
    /**
     * @see InstanceType#C1_MEDIUM
     */
@@ -355,11 +373,27 @@ public class EC2HardwareBuilder extends HardwareBuilder {
    public static EC2HardwareBuilder hi1_4xlarge() {
       return new EC2HardwareBuilder(InstanceType.HI1_4XLARGE)
             .ram(60 * 1024 + 512)
-            .processors(ImmutableList.of(new Processor(8.0, 5.5), new Processor(8.0, 5.5)))
+            .processors(ImmutableList.of(new Processor(16.0, 2.1875)))
             .volumes(ImmutableList.<Volume> of(new VolumeImpl(1024.0f, "/dev/sda1", true, false),
-                  new VolumeImpl(1024.0f, "/dev/sdb", false, false)));
+                  new VolumeImpl(1024.0f, "/dev/sdb", false, false)))
+            .virtualizationType(VirtualizationType.HVM);
    }
-
+   
+   public static EC2HardwareBuilder hs1_8xlarge() {
+      float twoTB = 2048.0f * 1024.0f;
+      Builder<Volume> all24Volumes = ImmutableList.<Volume>builder();
+      all24Volumes.add(new VolumeImpl(twoTB, "/dev/sda1", true, false));
+      for (char letter : ImmutableSet.of('b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
+            'q', 'r', 's', 't', 'u', 'v', 'w', 'x')) {
+         all24Volumes.add(new VolumeImpl(twoTB, "/dev/sd" + letter, false, false));
+      }
+      return new EC2HardwareBuilder(InstanceType.HS1_8XLARGE)
+            .ram(117 * 1024)
+            .processors(ImmutableList.of(new Processor(16.0, 2.1875)))
+            .volumes(all24Volumes.build())
+            .virtualizationType(VirtualizationType.HVM);
+   }
+   
    @SuppressWarnings("unchecked")
    @Override
    public Hardware build() {

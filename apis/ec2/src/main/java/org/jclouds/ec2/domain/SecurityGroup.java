@@ -204,7 +204,7 @@ public class SecurityGroup extends ForwardingSet<IpPermission> {
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(region, id, name, ownerId, description, ipPermissions);
+      return Objects.hashCode(region, id, name, ownerId);
    }
 
    @Override
@@ -217,9 +217,7 @@ public class SecurityGroup extends ForwardingSet<IpPermission> {
       return Objects.equal(this.region, that.region)
             && Objects.equal(this.id, that.id)
             && Objects.equal(this.name, that.name)
-            && Objects.equal(this.ownerId, that.ownerId)
-            && Objects.equal(this.description, that.description)
-            && Objects.equal(this.ipPermissions, that.ipPermissions);
+            && Objects.equal(this.ownerId, that.ownerId);
    }
 
    protected ToStringHelper string() {
