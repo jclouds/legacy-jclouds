@@ -67,6 +67,7 @@ import java.util.Set;
 import java.util.SortedSet;
 
 import javax.annotation.Resource;
+import javax.lang.model.type.NullType;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.HeaderParam;
@@ -815,10 +816,16 @@ public abstract class RestAnnotationProcessor {
 
    @SuppressWarnings("unchecked")
    public static Key<? extends Function<HttpResponse, ?>> getJAXBParserKeyForMethod(Method method) {
-       Type returnVal = getReturnTypeForMethod(method);
-       Type parserType = Types.newParameterizedType(ParseXMLWithJAXB.class, returnVal);
-       return (Key<? extends Function<HttpResponse, ?>>) Key.get(parserType);
-    }
+      Optional<Type> configuredReturnVal = Optional.absent();
+      if (method.isAnnotationPresent(JAXBResponseParser.class)) {
+         Type configuredClass = method.getAnnotation(JAXBResponseParser.class).value();
+         configuredReturnVal = configuredClass.equals(NullType.class) ? Optional.<Type> absent() : Optional
+               .<Type> of(configuredClass);
+      }
+      Type returnVal = configuredReturnVal.or(getReturnTypeForMethod(method));
+      Type parserType = Types.newParameterizedType(ParseXMLWithJAXB.class, returnVal);
+      return (Key<? extends Function<HttpResponse, ?>>) Key.get(parserType);
+   }
 
    public static Type getReturnTypeForMethod(Method method) {
       Type returnVal;
