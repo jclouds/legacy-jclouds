@@ -22,8 +22,6 @@ import static com.google.common.base.Charsets.UTF_8;
 import static com.google.common.hash.Hashing.md5;
 import static com.google.common.io.BaseEncoding.base16;
 
-import java.io.File;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -49,9 +47,9 @@ public class LoginWithPasswordCredentials extends CacheLoader<Credentials, Login
 
       // domain may be present
       if (username.indexOf('/') != -1) {
-         File domainUsername = new File(username);
-         username = domainUsername.getName();
-         domain = domainUsername.getParent();
+         // username may not end with slash!
+         domain = username.substring(0,username.lastIndexOf('/'));
+         username = username.substring(username.lastIndexOf('/') + 1, username.length());
       }
       String hashedPassword = base16().lowerCase().encode(md5().hashString(input.credential, UTF_8).asBytes());
       return client.loginUserInDomainWithHashOfPassword(username, domain, hashedPassword);
