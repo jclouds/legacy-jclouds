@@ -24,6 +24,10 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import javax.lang.model.type.NullType;
+
+import org.jclouds.http.functions.ParseXMLWithJAXB;
+
 /**
  * Shows the transformer type used to parse XML with the
  * {@link ParseXMLWithJAXB} parser in a HttpResponse.
@@ -34,4 +38,10 @@ import java.lang.annotation.Target;
 @Retention(RUNTIME)
 public @interface JAXBResponseParser {
 
+   /**
+    * If present, this is the class that will be used to unmarshal the XML
+    * document. If omitted, the return type of the annotated method will be
+    * used.
+    */
+   Class<?> value() default NullType.class;
 }
