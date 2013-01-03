@@ -27,6 +27,7 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.json.BaseIterableWithMarkerParserTest;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancer;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancer.Status;
+import org.jclouds.rackspace.cloudloadbalancers.domain.internal.BaseLoadBalancer.Algorithm;
 import org.jclouds.rackspace.cloudloadbalancers.domain.VirtualIP;
 import org.testng.annotations.Test;
 
@@ -52,7 +53,7 @@ public class ParseLoadBalancersTest extends BaseIterableWithMarkerParserTest<Loa
                   .id(71)
                   .protocol("HTTP")
                   .port(80)
-                  .algorithm("RANDOM")
+                  .algorithm(Algorithm.RANDOM)
                   .status(Status.ACTIVE)
                   .nodeCount(1)
                   .virtualIPs(ImmutableSet.of(
@@ -67,7 +68,7 @@ public class ParseLoadBalancersTest extends BaseIterableWithMarkerParserTest<Loa
                   .id(166)
                   .protocol("HTTP")
                   .port(80)
-                  .algorithm("RANDOM")
+                  .algorithm(Algorithm.RANDOM)
                   .status(Status.ACTIVE)
                   .nodeCount(1)
                   .virtualIPs(ImmutableSet.of(

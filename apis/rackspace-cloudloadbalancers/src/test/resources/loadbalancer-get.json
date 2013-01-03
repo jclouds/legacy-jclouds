@@ -1,55 +1,105 @@
 {
-    "loadBalancer":{
+    "loadBalancer": {
         "id": 2000,
-        "name":"sample-loadbalancer",
-        "protocol":"HTTP",
+        "name": "sample-loadbalancer",
+        "protocol": "HTTP",
         "port": 80,
-        "algorithm":"RANDOM",
-        "status":"ACTIVE",
-        "connectionLogging":{
-            "enabled":"true"
+        "algorithm": "RANDOM",
+        "status": "ACTIVE",
+        "cluster": {
+            "name": "c1.dfw1"
         },
-        "virtualIps":[
-            {
-                "id": 1000,
-                "address":"206.10.10.210",
-                "type":"PUBLIC",
-                "ipVersion":"IPV4"
-            }
-        ],
-        "nodes":[
+        "nodes": [
             {
                 "id": 1041,
-                "address":"10.1.1.1",
+                "address": "10.1.1.1",
                 "port": 80,
-                "condition":"ENABLED",
-                "status":"ONLINE"
+                "condition": "ENABLED",
+                "status": "ONLINE"
             },
             {
                 "id": 1411,
-                "address":"10.1.1.2",
+                "address": "10.1.1.2",
                 "port": 80,
-                "condition":"ENABLED",
-                "status":"ONLINE"
+                "condition": "ENABLED",
+                "status": "ONLINE"
             }
         ],
-        "sessionPersistence":{
-            "persistenceType":"HTTP_COOKIE"
+        "created": {
+            "time": "2010-11-30T03:23:42Z"
         },
-        "connectionThrottle":{
+        "healthMonitor": {
+            "type": "CONNECT",
+            "delay": 10,
+            "timeout": 5,
+            "attemptsBeforeDeactivation": 2
+        },
+        "sslTermination": {
+            "enabled": true,
+            "secureTrafficOnly": false,
+            "securePort": 443
+        },
+        "sessionPersistence": {
+            "persistenceType": "HTTP_COOKIE"
+        },
+        "virtualIps": [
+            {
+                "id": 1000,
+                "address": "206.10.10.210",
+                "type": "PUBLIC",
+                "ipVersion": "IPV4"
+            },
+            {
+                "id": 1001,
+                "address": "2001:4800:7901:0000:9a32:3c2a:0000:0001",
+                "type": "PUBLIC",
+                "ipVersion": "IPV6"
+            }
+        ],
+        "sourceAddresses": {
+            "ipv6Public": "2001:4800:7901::5/64",
+            "ipv4Servicenet": "10.183.250.137",
+            "ipv4Public": "174.143.139.137"
+        },
+        "updated": {
+            "time": "2010-11-30T03:23:44Z"
+        },
+        "halfClosed": false,
+        "accessList": [
+            {
+                "address": "1.2.3.4/32",
+                "id": 22215,
+                "type": "DENY"
+            },
+            {
+                "address": "12.0.0.0/8",
+                "id": 22217,
+                "type": "ALLOW"
+            }
+        ],
+        "connectionThrottle": {
             "minConnections": 10,
             "maxConnections": 100,
             "maxConnectionRate": 50,
             "rateInterval": 60
         },
-        "cluster":{
-            "name":"c1.dfw1"
+        "connectionLogging": {
+            "enabled": true
         },
-        "created":{
-            "time":"2010-11-30T03:23:42Z"
+        "contentCaching": {
+            "enabled": true
         },
-        "updated":{
-            "time":"2010-11-30T03:23:44Z"
-        }
+        "metadata": [
+            {
+                "id": 1,
+                "key": "color",
+                "value": "red"
+            },
+            {
+                "id": 2,
+                "key": "label",
+                "value": "web-load-balancer"
+            }
+        ]
     }
 }

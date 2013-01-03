@@ -30,95 +30,17 @@ import com.google.common.base.Objects.ToStringHelper;
  * only within the region in which the load balancer resides.
  * 
  * @author Adrian Cole
- * @see <a href=
- *      "http://docs.rackspacecloud.com/loadbalancers/api/v1.0/clb-devguide/content/ch04s03s01.html"
- *      />
  */
 public class VirtualIP implements Comparable<VirtualIP> {
-   public static Builder builder() {
-      return new Builder();
-   }
-
-   public static class Builder {
-      private int id = -1;
-      private String address;
-      private Type type;
-      private IPVersion ipVersion = IPVersion.IPV4;
-
-      public Builder id(int id) {
-         this.id = id;
-         return this;
-      }
-
-      public Builder address(String address) {
-         this.address = address;
-         return this;
-      }
-
-      public Builder type(Type type) {
-         this.type = type;
-         return this;
-      }
-
-      public Builder ipVersion(IPVersion ipVersion) {
-         this.ipVersion = ipVersion;
-         return this;
-      }
-
-      public VirtualIP build() {
-         return new VirtualIP(id, address, type, ipVersion);
-      }
-   }
-
-   /**
-    * Virtual IP Types
-    */
-   public static enum Type {
-      /**
-       * An address that is routable on the public Internet.
-       */
-      PUBLIC,
-      /**
-       * An address that is routable only on ServiceNet.
-       */
-      SERVICENET, UNRECOGNIZED;
-
-      public static Type fromValue(String type) {
-         try {
-            return valueOf(checkNotNull(type, "type"));
-         } catch (IllegalArgumentException e) {
-            return UNRECOGNIZED;
-         }
-      }
-
-   }
-
-   /**
-    * Virtual IP Versions
-    */
-   public static enum IPVersion {
-
-      IPV4, IPV6, UNRECOGNIZED;
-
-      public static IPVersion fromValue(String ipVersion) {
-         try {
-            return valueOf(checkNotNull(ipVersion, "ipVersion"));
-         } catch (IllegalArgumentException e) {
-            return UNRECOGNIZED;
-         }
-      }
-
-   }
-
-   // for serialization only
-   VirtualIP() {
-
-   }
 
    private int id;
    private String address;
    private Type type;
    private IPVersion ipVersion;
+
+   // for serialization only
+   VirtualIP() {
+   }
 
    public VirtualIP(int id, String address, Type type, IPVersion ipVersion) {
       checkArgument(id != -1, "id must be specified");
@@ -171,5 +93,80 @@ public class VirtualIP implements Comparable<VirtualIP> {
 
       VirtualIP that = VirtualIP.class.cast(obj);
       return Objects.equal(this.id, that.id);
+   }
+
+   /**
+    * Virtual IP Types
+    */
+   public static enum Type {
+      /**
+       * An address that is routable on the public Internet.
+       */
+      PUBLIC,
+      /**
+       * An address that is routable only on ServiceNet.
+       */
+      SERVICENET, UNRECOGNIZED;
+
+      public static Type fromValue(String type) {
+         try {
+            return valueOf(checkNotNull(type, "type"));
+         } catch (IllegalArgumentException e) {
+            return UNRECOGNIZED;
+         }
+      }
+
+   }
+
+   /**
+    * Virtual IP Versions
+    */
+   public static enum IPVersion {
+
+      IPV4, IPV6, UNRECOGNIZED;
+
+      public static IPVersion fromValue(String ipVersion) {
+         try {
+            return valueOf(checkNotNull(ipVersion, "ipVersion"));
+         } catch (IllegalArgumentException e) {
+            return UNRECOGNIZED;
+         }
+      }
+
+   }
+
+   public static class Builder {
+      private int id = -1;
+      private String address;
+      private Type type;
+      private IPVersion ipVersion = IPVersion.IPV4;
+
+      public Builder id(int id) {
+         this.id = id;
+         return this;
+      }
+
+      public Builder address(String address) {
+         this.address = address;
+         return this;
+      }
+
+      public Builder type(Type type) {
+         this.type = type;
+         return this;
+      }
+
+      public Builder ipVersion(IPVersion ipVersion) {
+         this.ipVersion = ipVersion;
+         return this;
+      }
+
+      public VirtualIP build() {
+         return new VirtualIP(id, address, type, ipVersion);
+      }
+   }
+   
+   public static Builder builder() {
+      return new Builder();
    }
 }

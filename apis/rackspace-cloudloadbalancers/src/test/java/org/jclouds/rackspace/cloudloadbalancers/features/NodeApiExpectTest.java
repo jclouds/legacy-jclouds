@@ -91,6 +91,7 @@ public class NodeApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<CloudL
       NodeRequest nodeRequest2 = NodeRequest.builder()
             .address("10.1.1.2")
             .condition(NodeRequest.Condition.ENABLED)
+            .type(Node.Type.SECONDARY)
             .port(80)
             .weight(8)
             .build();
@@ -119,6 +120,7 @@ public class NodeApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<CloudL
 
       NodeAttributes nodeAttributes = NodeAttributes.Builder
             .condition(NodeRequest.Condition.DISABLED)
+            .type(NodeRequest.Type.SECONDARY)
             .weight(20);
 
       api.update(410, nodeAttributes);
@@ -156,6 +158,7 @@ public class NodeApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<CloudL
             .address("10.1.1.1")
             .port(80)
             .condition(Node.Condition.ENABLED)
+            .type(Node.Type.PRIMARY)
             .status(Node.Status.ONLINE)
             .weight(3)
             .build();
@@ -165,6 +168,7 @@ public class NodeApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<CloudL
             .address("10.1.1.2")
             .port(80)
             .condition(Node.Condition.ENABLED)
+            .type(Node.Type.SECONDARY)
             .status(Node.Status.ONLINE)
             .weight(8)
             .build();
@@ -174,6 +178,7 @@ public class NodeApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<CloudL
             .address("10.1.1.3")
             .port(80)
             .condition(Node.Condition.DISABLED)
+            .type(Node.Type.PRIMARY)
             .status(Node.Status.ONLINE)
             .weight(12)
             .build();
@@ -187,6 +192,7 @@ public class NodeApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<CloudL
             .address("10.1.1.1")
             .port(80)
             .condition(Node.Condition.ENABLED)
+            .type(Node.Type.PRIMARY)
             .status(Node.Status.ONLINE)
             .weight(12)
             .build();

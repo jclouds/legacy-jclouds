@@ -102,7 +102,7 @@ public class LoadBalancerApiExpectTest extends BaseCloudLoadBalancerApiExpectTes
             .name("sample-loadbalancer")
             .protocol("HTTP")
             .port(80)
-            .algorithm(LoadBalancer.Algorithm.RANDOM.name())
+            .algorithm(LoadBalancer.Algorithm.RANDOM)
             .virtualIPType(VirtualIP.Type.PUBLIC)
             .nodes(nodeRequests)
             .build();
@@ -125,7 +125,7 @@ public class LoadBalancerApiExpectTest extends BaseCloudLoadBalancerApiExpectTes
             .name("foo")
             .protocol("HTTPS")
             .port(443)
-            .algorithm(LoadBalancer.Algorithm.RANDOM.name());
+            .algorithm(LoadBalancer.Algorithm.RANDOM);
 
       api.update(2000, lbAttrs);
    }
