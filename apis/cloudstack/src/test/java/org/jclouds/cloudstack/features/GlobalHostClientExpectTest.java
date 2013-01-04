@@ -96,12 +96,26 @@ public class GlobalHostClientExpectTest extends BaseCloudStackExpectTest<GlobalH
       assertEquals(client.listHosts(), ImmutableSet.of());
    }
 
+   HttpRequest addHost = HttpRequest.builder().method("GET")
+                                    .endpoint("http://localhost:8080/client/api")
+                                    .addQueryParam("response", "json")
+                                    .addQueryParam("command", "addHost")
+                                    .addQueryParam("zoneid", "1")
+                                    .addQueryParam("url", "http%3A//example.com")
+                                    .addQueryParam("hypervisor", "XenServer")
+                                    .addQueryParam("username", "fred")
+                                    .addQueryParam("password", "sekrit")
+                                    .addQueryParam("hosttags", "")
+                                    .addQueryParam("allocationstate", "Enabled")
+                                    .addQueryParam("clusterid", "1")
+                                    .addQueryParam("clustername", "Xen%20Clust%201")
+                                    .addQueryParam("podid", "1")
+                                    .addQueryParam("apiKey", "identity")
+                                    .addQueryParam("signature", "ExGaljKKQIlVbWk5hd0BnnjmBzs=")
+                                    .addHeader("Accept", "application/json").build();
+
    @Test
    public void testAddHostWhenResponseIs2xx() {
-      HttpRequest request = HttpRequest.builder()
-         .method("GET")
-         .endpoint("http://localhost:8080/client/api?response=json&command=addHost&zoneid=1&hypervisor=XenServer&url=http%3A//example.com&username=fred&password=sekrit&hosttags=&allocationstate=Enabled&clusterid=1&clustername=Xen%20Clust%201&podid=1&apiKey=identity&signature=ExGaljKKQIlVbWk5hd0BnnjmBzs%3D")
-         .addHeader("Accept", "application/json").build();
       HttpResponse response = HttpResponse.builder()
          .payload(payloadFromResource("/addhostresponse.json"))
          .statusCode(200).build();
@@ -110,7 +124,7 @@ public class GlobalHostClientExpectTest extends BaseCloudStackExpectTest<GlobalH
       Date created = makeDate(2011, Calendar.NOVEMBER, 26, 23, 28, 36, "GMT+02:00");
       Host expected = Host.builder().id("1").name("cs2-xevsrv.alucloud.local").state(Host.State.UP).type(Host.Type.ROUTING).ipAddress("10.26.26.107").zoneId("1").zoneName("Dev Zone 1").podId("1").podName("Dev Pod 1").version("2.2.12.20110928142833").hypervisor("XenServer").cpuNumber(24).cpuSpeed(2266).cpuAllocated("2.76%").cpuUsed("0.1%").cpuWithOverProvisioning(54384.0F).networkKbsRead(4443).networkKbsWrite(15048).memoryTotal(100549733760L).memoryAllocated(3623878656L).memoryUsed(3623878656L).capabilities("xen-3.0-x86_64 , xen-3.0-x86_32p , hvm-3.0-x86_32 , hvm-3.0-x86_32p , hvm-3.0-x86_64").lastPinged(lastPinged).managementServerId("223098941760041").clusterId("1").clusterName("Xen Clust 1").clusterType(Host.ClusterType.CLOUD_MANAGED).localStorageActive(false).created(created).events("PrepareUnmanaged; HypervisorVersionChanged; ManagementServerDown; PingTimeout; AgentDisconnected; MaintenanceRequested; HostDown; AgentConnected; StartAgentRebalance; ShutdownRequested; Ping").hasEnoughCapacity(false).allocationState(AllocationState.ENABLED).build();
 
-      Host actual = requestSendsResponse(request, response).addHost("1", "http://example.com", "XenServer", "fred", "sekrit",
+      Host actual = requestSendsResponse(addHost, response).addHost("1", "http://example.com", "XenServer", "fred", "sekrit",
          AddHostOptions.Builder.hostTags(ImmutableSet.<String>of()).allocationState(AllocationState.ENABLED).clusterId("1").clusterName("Xen Clust 1").podId("1"));
 
       assertEquals(actual, expected);
@@ -135,16 +149,22 @@ public class GlobalHostClientExpectTest extends BaseCloudStackExpectTest<GlobalH
       assertEquals(actual, expected);
    }
 
+   HttpRequest updateHostPassword = HttpRequest.builder().method("GET")
+                                               .endpoint("http://localhost:8080/client/api")
+                                               .addQueryParam("response", "json")
+                                               .addQueryParam("command", "updateHostPassword")
+                                               .addQueryParam("hostid", "1")
+                                               .addQueryParam("username", "fred")
+                                               .addQueryParam("password", "sekrit")
+                                               .addQueryParam("apiKey", "identity")
+                                               .addQueryParam("signature", "g9nMKDWoiU72y0HhaRFekZCgfJc=")
+                                               .addHeader("Accept", "application/json").build();
+
    @Test
    public void testUpdateHostPasswordWhenResponseIs2xx() {
-      HttpRequest request = HttpRequest.builder()
-         .method("GET")
-         .endpoint("http://localhost:8080/client/api?response=json&command=updateHostPassword&hostid=1&password=sekrit&username=fred&apiKey=identity&signature=g9nMKDWoiU72y0HhaRFekZCgfJc%3D")
-         .addHeader("Accept", "application/json").build();
       HttpResponse response = HttpResponse.builder()
          .statusCode(200).build();
-
-      requestSendsResponse(request, response).updateHostPassword("1", "fred", "sekrit");
+      requestSendsResponse(updateHostPassword, response).updateHostPassword("1", "fred", "sekrit");
    }
 
    @Test
@@ -253,50 +273,79 @@ public class GlobalHostClientExpectTest extends BaseCloudStackExpectTest<GlobalH
       assertEquals(client.listClusters(), ImmutableSet.of());
    }
 
+   HttpRequest addCluster = HttpRequest.builder().method("GET")
+                                       .endpoint("http://localhost:8080/client/api")
+                                       .addQueryParam("response", "json")
+                                       .addQueryParam("command", "addCluster")
+                                       .addQueryParam("zoneid", "1")
+                                       .addQueryParam("clustername", "Xen Clust 1")
+                                       .addQueryParam("clustertype", "CloudManaged")
+                                       .addQueryParam("hypervisor", "XenServer")
+                                       .addQueryParam("allocationstate", "Enabled")
+                                       .addQueryParam("podid", "1")
+                                       .addQueryParam("url", "http://example.com/cluster")
+                                       .addQueryParam("username", "fred")
+                                       .addQueryParam("password", "sekrit")
+                                       .addQueryParam("apiKey", "identity")
+                                       .addQueryParam("signature", "2uIQ5qF0bVycXK111wxvogWp1Yw=")
+                                       .addHeader("Accept", "application/json").build();
+
    @Test
    public void testAddClusterWhenResponseIs2xx() {
-      HttpRequest request = HttpRequest.builder()
-         .method("GET")
-         .endpoint("http://localhost:8080/client/api?response=json&command=addCluster&zoneid=1&clustertype=CloudManaged&clustername=Xen%20Clust%201&hypervisor=XenServer&allocationstate=Enabled&podid=1&url=http%3A//example.com/cluster&username=fred&password=sekrit&apiKey=identity&signature=2uIQ5qF0bVycXK111wxvogWp1Yw%3D")
-         .addHeader("Accept", "application/json").build();
       HttpResponse response = HttpResponse.builder()
          .payload(payloadFromResource("/addclusterresponse.json"))
          .statusCode(200).build();
 
       Cluster expected = Cluster.builder().id("1").name("Xen Clust 1").podId("1").podName("Dev Pod 1").zoneId("1").zoneName("Dev Zone 1").hypervisor("XenServer").clusterType(Host.ClusterType.CLOUD_MANAGED).allocationState(AllocationState.ENABLED).managedState(Cluster.ManagedState.MANAGED).build();
 
-      Cluster actual = requestSendsResponse(request, response).addCluster("1", "Xen Clust 1", Host.ClusterType.CLOUD_MANAGED, "XenServer", AddClusterOptions.Builder.allocationState(AllocationState.ENABLED).podId("1").url("http://example.com/cluster").username("fred").password("sekrit"));
+      Cluster actual = requestSendsResponse(addCluster, response).addCluster("1", "Xen Clust 1", Host.ClusterType.CLOUD_MANAGED, "XenServer", AddClusterOptions.Builder.allocationState(AllocationState.ENABLED).podId("1").url("http://example.com/cluster").username("fred").password("sekrit"));
 
       assertEquals(actual, expected);
    }
 
+   HttpRequest updateCluster = HttpRequest.builder().method("GET")
+                                       .endpoint("http://localhost:8080/client/api")
+                                       .addQueryParam("response", "json")
+                                       .addQueryParam("command", "updateCluster")
+                                       .addQueryParam("id", "1")
+                                       .addQueryParam("allocationstate", "Enabled")
+                                       .addQueryParam("clustername", "Xen Clust 1")
+                                       .addQueryParam("clustertype", "CloudManaged")
+                                       .addQueryParam("hypervisor", "XenServer")
+                                       .addQueryParam("managedstate", "Managed")
+                                       .addQueryParam("apiKey", "identity")
+                                       .addQueryParam("signature", "/wbuYKwInciSXWkUf05lEfJZShQ=")
+                                       .addHeader("Accept", "application/json").build();
+
    @Test
    public void testUpdateClusterWhenResponseIs2xx() {
-      HttpRequest request = HttpRequest.builder()
-         .method("GET")
-         .endpoint("http://localhost:8080/client/api?response=json&command=updateCluster&id=1&allocationstate=Enabled&clustername=Xen%20Clust%201&clustertype=CloudManaged&hypervisor=XenServer&managedstate=Managed&apiKey=identity&signature=/wbuYKwInciSXWkUf05lEfJZShQ%3D")
-         .addHeader("Accept", "application/json").build();
       HttpResponse response = HttpResponse.builder()
          .payload(payloadFromResource("/updateclusterresponse.json"))
          .statusCode(200).build();
 
       Cluster expected = Cluster.builder().id("1").name("Xen Clust 1").podId("1").podName("Dev Pod 1").zoneId("1").zoneName("Dev Zone 1").hypervisor("XenServer").clusterType(Host.ClusterType.CLOUD_MANAGED).allocationState(AllocationState.ENABLED).managedState(Cluster.ManagedState.MANAGED).build();
 
-      Cluster actual = requestSendsResponse(request, response).updateCluster("1", UpdateClusterOptions.Builder.allocationState(AllocationState.ENABLED).clusterName("Xen Clust 1").clusterType(Host.ClusterType.CLOUD_MANAGED).hypervisor("XenServer").managedState(Cluster.ManagedState.MANAGED));
+      Cluster actual = requestSendsResponse(updateCluster, response).updateCluster("1", UpdateClusterOptions.Builder.allocationState(AllocationState.ENABLED).clusterName("Xen Clust 1").clusterType(Host.ClusterType.CLOUD_MANAGED).hypervisor("XenServer").managedState(Cluster.ManagedState.MANAGED));
 
       assertEquals(actual, expected);
    }
 
+   HttpRequest updateClusterPassword = HttpRequest.builder().method("GET")
+                                                  .endpoint("http://localhost:8080/client/api")
+                                                  .addQueryParam("response", "json")
+                                                  .addQueryParam("command", "updateHostPassword")
+                                                  .addQueryParam("clusterid", "1")
+                                                  .addQueryParam("username", "fred")
+                                                  .addQueryParam("password", "sekrit")
+                                                  .addQueryParam("apiKey", "identity")
+                                                  .addQueryParam("signature", "xwc83%2BoYK0cuAiFQAlg/7/1IVHE=")
+                                                  .addHeader("Accept", "application/json").build();
+
    @Test
    public void testUpdateClusterPasswordWhenResponseIs2xx() {
-      HttpRequest request = HttpRequest.builder()
-         .method("GET")
-         .endpoint("http://localhost:8080/client/api?response=json&command=updateHostPassword&clusterid=1&password=sekrit&username=fred&apiKey=identity&signature=xwc83%2BoYK0cuAiFQAlg/7/1IVHE%3D")
-         .addHeader("Accept", "application/json").build();
       HttpResponse response = HttpResponse.builder()
          .statusCode(200).build();
-
-      requestSendsResponse(request, response).updateClusterPassword("1", "fred", "sekrit");
+      requestSendsResponse(updateClusterPassword, response).updateClusterPassword("1", "fred", "sekrit");
    }
 
    @Test

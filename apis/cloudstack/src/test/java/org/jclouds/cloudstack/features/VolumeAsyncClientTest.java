@@ -71,14 +71,20 @@ public class VolumeAsyncClientTest extends BaseCloudStackAsyncClientTest<VolumeA
 
    }
 
+   HttpRequest createVolumeFromSnapshot = HttpRequest.builder().method("GET")
+                                                     .endpoint("http://localhost:8080/client/api")
+                                                     .addQueryParam("response", "json")
+                                                     .addQueryParam("command", "createVolume")
+                                                     .addQueryParam("name", "jclouds-volume")
+                                                     .addQueryParam("snapshotid", "999")
+                                                     .addQueryParam("zoneid", "111").build();
+
    public void testCreateVolumeWithSnapshot() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VolumeAsyncClient.class.getMethod("createVolumeFromSnapshotInZone", String.class, String.class,
             String.class);
       HttpRequest httpRequest = processor.createRequest(method, "jclouds-volume", 999L, 111l);
 
-      assertRequestLineEquals(
-            httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=createVolume&name=jclouds-volume&zoneid=111&snapshotid=999 HTTP/1.1");
+      assertRequestLineEquals(httpRequest, createVolumeFromSnapshot.getRequestLine());
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -87,14 +93,21 @@ public class VolumeAsyncClientTest extends BaseCloudStackAsyncClientTest<VolumeA
 
    }
 
+   HttpRequest createVolumeFromDiskOffering = HttpRequest.builder().method("GET")
+                                                         .endpoint("http://localhost:8080/client/api")
+                                                         .addQueryParam("response", "json")
+                                                         .addQueryParam("command", "createVolume")
+                                                         .addQueryParam("name", "jclouds-volume")
+                                                         .addQueryParam("diskofferingid", "999")
+                                                         .addQueryParam("zoneid", "111").build();
+
    public void testCreateVolumeFromDiskOffering() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VolumeAsyncClient.class.getMethod("createVolumeFromDiskOfferingInZone", String.class, String.class,
             String.class);
 
       HttpRequest httpRequest = processor.createRequest(method, "jclouds-volume", 999L, 111L);
 
-      assertRequestLineEquals(httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=createVolume&name=jclouds-volume&zoneid=111&diskofferingid=999 HTTP/1.1");
+      assertRequestLineEquals(httpRequest, createVolumeFromDiskOffering.getRequestLine());
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

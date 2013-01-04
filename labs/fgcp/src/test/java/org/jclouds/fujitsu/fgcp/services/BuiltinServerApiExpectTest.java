@@ -134,8 +134,8 @@ public class BuiltinServerApiExpectTest extends BaseFGCPRestApiExpectTest {
    public void testUpdate() {
       HttpRequest request = buildGETWithQuery("Action=UpdateEFMAttribute"
             + "&efmId=CONTRACT-VSYS00001-S-0001"
-            + "&attributeValue=new%20name"
             + "&attributeName=vserverName"
+            + "&attributeValue=new%20name"
             + "&vsysId=CONTRACT-VSYS00001");
       HttpResponse response = HttpResponse
             .builder()

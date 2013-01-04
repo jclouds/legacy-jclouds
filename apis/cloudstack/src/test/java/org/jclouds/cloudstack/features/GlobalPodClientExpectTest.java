@@ -105,17 +105,23 @@ public class GlobalPodClientExpectTest extends BaseCloudStackExpectTest<GlobalPo
       assertEquals(client.listPods(), ImmutableSet.of());
    }
 
+   HttpRequest createPod = HttpRequest.builder().method("GET")
+                                      .endpoint("http://localhost:8080/client/api")
+                                      .addQueryParam("response", "json")
+                                      .addQueryParam("command", "createPod")
+                                      .addQueryParam("name", "richard-pod")
+                                      .addQueryParam("zoneid", "10")
+                                      .addQueryParam("startip", "172.20.0.1")
+                                      .addQueryParam("endip", "172.20.0.250")
+                                      .addQueryParam("gateway", "172.20.0.254")
+                                      .addQueryParam("netmask", "255.255.255.0")
+                                      .addQueryParam("allocationstate", "Enabled")
+                                      .addQueryParam("apiKey", "identity")
+                                      .addQueryParam("signature", "fwsoQ77BmNQWfuqv4nVlPcKvKbU=")
+                                      .addHeader("Accept", "application/json").build();
+
    public void testCreatePodWhenResponseIs2xx() {
-      GlobalPodClient client = requestSendsResponse(
-         HttpRequest.builder()
-            .method("GET")
-            .endpoint(
-               URI.create("http://localhost:8080/client/api?response=json&command=createPod&netmask=255.255.255.0&name=richard-pod&startip=172.20.0.1&zoneid=10&endip=172.20.0.250&gateway=172.20.0.254&allocationstate=Enabled&apiKey=identity&signature=fwsoQ77BmNQWfuqv4nVlPcKvKbU%3D"))
-            .headers(
-               ImmutableMultimap.<String, String>builder()
-                  .put("Accept", "application/json")
-                  .build())
-            .build(),
+      GlobalPodClient client = requestSendsResponse(createPod,
          HttpResponse.builder()
             .statusCode(200)
             .payload(payloadFromResource("/createpodresponse.json"))

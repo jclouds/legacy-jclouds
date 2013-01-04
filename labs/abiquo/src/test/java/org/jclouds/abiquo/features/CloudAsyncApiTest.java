@@ -127,7 +127,7 @@ public class CloudAsyncApiTest extends BaseAbiquoAsyncApiTest<CloudAsyncApi> {
             InfrastructureResources.datacenterPut(), EnterpriseResources.enterprisePut());
 
       assertRequestLineEquals(request,
-            "POST http://localhost/api/cloud/virtualdatacenters?enterprise=1&datacenter=1 HTTP/1.1");
+            "POST http://localhost/api/cloud/virtualdatacenters?datacenter=1&enterprise=1 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: " + VirtualDatacenterDto.BASE_MEDIA_TYPE + "\n");
       assertPayloadEquals(request, withHeader(CloudResources.virtualDatacenterPostPayload()),
             VirtualDatacenterDto.class, VirtualDatacenterDto.BASE_MEDIA_TYPE, false);

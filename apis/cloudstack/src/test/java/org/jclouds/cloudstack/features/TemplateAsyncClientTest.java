@@ -87,11 +87,23 @@ public class TemplateAsyncClientTest extends BaseCloudStackAsyncClientTest<Templ
       checkFilters(httpRequest);
    }
 
+   HttpRequest registerTemplate = HttpRequest.builder().method("GET")
+                                             .endpoint("http://localhost:8080/client/api")
+                                             .addQueryParam("response", "json")
+                                             .addQueryParam("command", "registerTemplate")
+                                             .addQueryParam("format", "QCOW2")
+                                             .addQueryParam("hypervisor", "xen")
+                                             .addQueryParam("url", "http%3A//example.com/")
+                                             .addQueryParam("zoneid", "20")
+                                             .addQueryParam("name", "thename")
+                                             .addQueryParam("ostypeid", "10")
+                                             .addQueryParam("displaytext", "description").build();
+
    public void testRegisterTemplate() throws NoSuchMethodException {
       Method method = TemplateAsyncClient.class.getMethod("registerTemplate", TemplateMetadata.class, String.class, String.class, String.class, String.class, RegisterTemplateOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method, TemplateMetadata.builder().name("thename").osTypeId("10").displayText("description").build(), Template.Format.QCOW2, "xen", "http://example.com/", 20);
 
-      assertRequestLineEquals(httpRequest, "GET http://localhost:8080/client/api?response=json&command=registerTemplate&hypervisor=xen&format=QCOW2&url=http%3A//example.com/&zoneid=20&name=thename&ostypeid=10&displaytext=description HTTP/1.1");
+      assertRequestLineEquals(httpRequest, registerTemplate.getRequestLine());
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -102,12 +114,33 @@ public class TemplateAsyncClientTest extends BaseCloudStackAsyncClientTest<Templ
       checkFilters(httpRequest);
    }
 
+   HttpRequest registerTemplateOptions = HttpRequest.builder().method("GET")
+                                                    .endpoint("http://localhost:8080/client/api")
+                                                    .addQueryParam("response", "json")
+                                                    .addQueryParam("command", "registerTemplate")
+                                                    .addQueryParam("format", "QCOW2")
+                                                    .addQueryParam("hypervisor", "xen")
+                                                    .addQueryParam("url", "http%3A//example.com/")
+                                                    .addQueryParam("zoneid", "20")
+                                                    .addQueryParam("account", "mydomain")
+                                                    .addQueryParam("domainid", "3")
+                                                    .addQueryParam("bits", "32")
+                                                    .addQueryParam("checksum", "ABC")
+                                                    .addQueryParam("isextractable", "true")
+                                                    .addQueryParam("isfeatured", "true")
+                                                    .addQueryParam("ispublic", "true")
+                                                    .addQueryParam("passwordenabled", "true")
+                                                    .addQueryParam("requireshvm", "true")
+                                                    .addQueryParam("name", "thename")
+                                                    .addQueryParam("ostypeid", "10")
+                                                    .addQueryParam("displaytext", "description").build();
+
    public void testRegisterTemplateOptions() throws NoSuchMethodException {
       Method method = TemplateAsyncClient.class.getMethod("registerTemplate", TemplateMetadata.class, String.class, String.class, String.class, String.class, RegisterTemplateOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method, TemplateMetadata.builder().name("thename").osTypeId("10").displayText("description").build(), Template.Format.QCOW2, "xen", "http://example.com/", 20,
          RegisterTemplateOptions.Builder.accountInDomain("mydomain", "3").bits(32).checksum("ABC").isExtractable(true).isFeatured(true).isPublic(true).passwordEnabled(true).requiresHVM(true));
 
-      assertRequestLineEquals(httpRequest, "GET http://localhost:8080/client/api?response=json&command=registerTemplate&hypervisor=xen&format=QCOW2&url=http%3A//example.com/&zoneid=20&account=mydomain&domainid=3&bits=32&checksum=ABC&isextractable=true&isfeatured=true&ispublic=true&passwordenabled=true&requireshvm=true&name=thename&ostypeid=10&displaytext=description HTTP/1.1");
+      assertRequestLineEquals(httpRequest, registerTemplateOptions.getRequestLine());
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -148,11 +181,19 @@ public class TemplateAsyncClientTest extends BaseCloudStackAsyncClientTest<Templ
       checkFilters(httpRequest);
    }
 
+   HttpRequest copyTemplate = HttpRequest.builder().method("GET")
+                                         .endpoint("http://localhost:8080/client/api")
+                                         .addQueryParam("response", "json")
+                                         .addQueryParam("command", "copyTemplate")
+                                         .addQueryParam("id", "17")
+                                         .addQueryParam("sourcezoneid", "18")
+                                         .addQueryParam("destzoneid", "19").build();
+
    public void testCopyTemplate() throws NoSuchMethodException {
       Method method = TemplateAsyncClient.class.getMethod("copyTemplateToZone", String.class, String.class, String.class);
       HttpRequest httpRequest = processor.createRequest(method, 17, 18, 19);
 
-      assertRequestLineEquals(httpRequest, "GET http://localhost:8080/client/api?response=json&command=copyTemplate&id=17&destzoneid=19&sourcezoneid=18 HTTP/1.1");
+      assertRequestLineEquals(httpRequest,copyTemplate.getRequestLine());
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -311,11 +352,19 @@ public class TemplateAsyncClientTest extends BaseCloudStackAsyncClientTest<Templ
       checkFilters(httpRequest);
    }
 
+   HttpRequest extractTemplate = HttpRequest.builder().method("GET")
+                                            .endpoint("http://localhost:8080/client/api")
+                                            .addQueryParam("response", "json")
+                                            .addQueryParam("command", "extractTemplate")
+                                            .addQueryParam("id", "3")
+                                            .addQueryParam("mode", "HTTP_DOWNLOAD")
+                                            .addQueryParam("zoneid", "5").build();
+
    public void testExtractTemplate() throws NoSuchMethodException {
       Method method = TemplateAsyncClient.class.getMethod("extractTemplate", String.class, ExtractMode.class, String.class, ExtractTemplateOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method, 3, ExtractMode.HTTP_DOWNLOAD, 5);
 
-      assertRequestLineEquals(httpRequest, "GET http://localhost:8080/client/api?response=json&command=extractTemplate&id=3&zoneid=5&mode=HTTP_DOWNLOAD HTTP/1.1");
+      assertRequestLineEquals(httpRequest, extractTemplate.getRequestLine());
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -326,11 +375,20 @@ public class TemplateAsyncClientTest extends BaseCloudStackAsyncClientTest<Templ
       checkFilters(httpRequest);
    }
 
+   HttpRequest extractTemplateOptions = HttpRequest.builder().method("GET")
+                                                   .endpoint("http://localhost:8080/client/api")
+                                                   .addQueryParam("response", "json")
+                                                   .addQueryParam("command", "extractTemplate")
+                                                   .addQueryParam("id", "3")
+                                                   .addQueryParam("mode", "HTTP_DOWNLOAD")
+                                                   .addQueryParam("zoneid", "5")
+                                                   .addQueryParam("url", "http%3A//example.com/").build();
+
    public void testExtractTemplateOptions() throws NoSuchMethodException {
       Method method = TemplateAsyncClient.class.getMethod("extractTemplate", String.class, ExtractMode.class, String.class, ExtractTemplateOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method, 3, ExtractMode.HTTP_DOWNLOAD, 5, ExtractTemplateOptions.Builder.url("http://example.com/"));
 
-      assertRequestLineEquals(httpRequest, "GET http://localhost:8080/client/api?response=json&command=extractTemplate&id=3&zoneid=5&mode=HTTP_DOWNLOAD&url=http%3A//example.com/ HTTP/1.1");
+      assertRequestLineEquals(httpRequest, extractTemplateOptions.getRequestLine());
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

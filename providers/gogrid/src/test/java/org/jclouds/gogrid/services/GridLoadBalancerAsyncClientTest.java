@@ -66,40 +66,43 @@ public class GridLoadBalancerAsyncClientTest extends BaseGoGridAsyncClientTest<G
       assertPayloadEquals(httpRequest, null, null, false);
    }
 
+   HttpRequest addLoadBalancer = HttpRequest.builder().method("GET")
+                                            .endpoint("https://api.gogrid.com/api/grid/loadbalancer/add")
+                                            .addQueryParam("v", "1.5")
+                                            .addQueryParam("name", "BalanceIt")
+                                            .addQueryParam("loadbalancer.type", "Least Connect")
+                                            .addQueryParam("loadbalancer.persistence", "SSL Sticky")
+                                            .addQueryParam("virtualip.ip", "127.0.0.1")
+                                            .addQueryParam("virtualip.port", "80")
+                                            .addQueryParam("realiplist.0.ip", "127.0.0.1")
+                                            .addQueryParam("realiplist.0.port", "8080")
+                                            .addQueryParam("realiplist.1.ip", "127.0.0.1")
+                                            .addQueryParam("realiplist.1.port", "9090")
+                                            .addQueryParam("sig", "e9aafd0a5d4c69bb24536be4bce8a528")
+                                            .addQueryParam("api_key", "identity").build();
+
    @Test
    public void testAddLoadBalancer() throws NoSuchMethodException, IOException {
       Method method = GridLoadBalancerAsyncClient.class.getMethod("addLoadBalancer", String.class, IpPortPair.class,
             List.class, AddLoadBalancerOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, "BalanceIt",
+      HttpRequest request = processor.createRequest(method, "BalanceIt",
             IpPortPair.builder().ip(Ip.builder().ip("127.0.0.1").build()).port(80).build(),
             ImmutableList.of(IpPortPair.builder().ip(Ip.builder().ip("127.0.0.1").build()).port(8080).build(),
                   IpPortPair.builder().ip(Ip.builder().ip("127.0.0.1").build()).port(9090).build()),
             new AddLoadBalancerOptions.Builder().create(
                   LoadBalancerType.LEAST_CONNECTED, LoadBalancerPersistenceType.SSL_STICKY));
 
-      assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/loadbalancer/"
-            + "add?v=1.5&name=BalanceIt&loadbalancer.type=Least%20Connect&"
-            + "loadbalancer.persistence=SSL%20Sticky&realiplist.0.ip=127.0.0.1&"
-            + "realiplist.0.port=8080&realiplist.1.ip=127.0.0.1&realiplist.1.port=9090&"
-            + "virtualip.ip=127.0.0.1&virtualip.port=80 HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "");
-      assertPayloadEquals(httpRequest, null, null, false);
+      request = request.getFilters().get(0).filter(request);
 
-      assertResponseParserClassEquals(method, httpRequest, ParseLoadBalancerFromJsonResponse.class);
+      assertRequestLineEquals(request, addLoadBalancer.getRequestLine());
+      assertNonPayloadHeadersEqual(request, "");
+      assertPayloadEquals(request, null, null, false);
+
+      assertResponseParserClassEquals(method, request, ParseLoadBalancerFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);
       assertFallbackClassEquals(method, null);
 
-      checkFilters(httpRequest);
-      httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
-
-      assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/loadbalancer/"
-            + "add?v=1.5&name=BalanceIt&loadbalancer.type=Least%20Connect&"
-            + "loadbalancer.persistence=SSL%20Sticky&realiplist.0.ip=127.0.0.1&"
-            + "realiplist.0.port=8080&realiplist.1.ip=127.0.0.1&realiplist.1.port=9090&"
-            + "virtualip.ip=127.0.0.1&virtualip.port=80&" + "sig=e9aafd0a5d4c69bb24536be4bce8a528&api_key=identity "
-            + "HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "");
-      assertPayloadEquals(httpRequest, null, null, false);
+      checkFilters(request);
    }
 
    @Test

@@ -44,22 +44,23 @@ import com.google.common.collect.ImmutableMultimap;
 @Test(groups = "live", singleThreaded = true, testName = "SessionClientExpectTest")
 public class SessionClientExpectTest extends BaseCloudStackExpectTest<SessionClient> {
 
+   HttpRequest login = HttpRequest.builder().method("GET")
+                                  .endpoint("http://localhost:8080/client/api")
+                                  .addQueryParam("response", "json")
+                                  .addQueryParam("command", "login")
+                                  .addQueryParam("username", "jcloud")
+                                  .addQueryParam("domain", "Partners/jCloud")
+                                  .addQueryParam("password", "30e14b3727225d833aad2206acea1275")
+                                  .addHeader("Accept", "application/json").build();
+
    public void testLoginWhenResponseIs2xxIncludesJSessionId() throws IOException {
       String domain = "Partners/jCloud";
       String user = "jcloud";
       String password = "jcl0ud";
       String md5password = base16().lowerCase().encode(md5().hashString(password, UTF_8).asBytes());
 
-      HttpRequest request = HttpRequest.builder()
-         .method("GET")
-         .endpoint(
-            URI.create("http://localhost:8080/client/api?response=json&command=login&" +
-               "username=" + user + "&password=" + md5password + "&domain=" + domain))
-         .addHeader("Accept", "application/json")
-         .build();
-
       String jSessionId = "90DD65D13AEAA590ECCA312D150B9F6D";
-      SessionClient client = requestSendsResponse(request,
+      SessionClient client = requestSendsResponse(login,
          HttpResponse.builder()
             .statusCode(200)
             .headers(

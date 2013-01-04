@@ -122,8 +122,8 @@ public class DomainApiExpectTest extends BaseGleSYSApiExpectTest {
                        .addHeader("Accept", "application/json")
                        .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
                        .addFormParam("domainname", "jclouds.org")
-                       .addFormParam("type", "A")
                        .addFormParam("host", "jclouds.org")
+                       .addFormParam("type", "A")
                        .addFormParam("data", "").build(),
             HttpResponse.builder().statusCode(200)
                   .payload(payloadFromResourceWithContentType("/domain_record.json", MediaType.APPLICATION_JSON)).build())
@@ -143,8 +143,8 @@ public class DomainApiExpectTest extends BaseGleSYSApiExpectTest {
                        .addHeader("Accept", "application/json")
                        .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
                        .addFormParam("domainname", "jclouds.org")
-                       .addFormParam("type", "A")
                        .addFormParam("host", "jclouds.org")
+                       .addFormParam("type", "A")
                        .addFormParam("data", "").build(),
             HttpResponse.builder().statusCode(404).build()).getDomainApi();
 

@@ -86,7 +86,7 @@ public class FirewallAsyncClientTest extends BaseCloudStackAsyncClientTest<Firew
 
       assertRequestLineEquals(
             httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=createPortForwardingRule&ipaddressid=6&publicport=22&protocol=tcp&virtualmachineid=7&privateport=22 HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=createPortForwardingRule&ipaddressid=6&protocol=tcp&publicport=22&virtualmachineid=7&privateport=22 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

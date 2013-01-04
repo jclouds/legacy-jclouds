@@ -58,15 +58,29 @@ public class SecurityGroupAsyncClientTest extends BaseEC2AsyncClientTest<Securit
       checkFilters(request);
    }
 
+   HttpRequest createSecurityGroup = HttpRequest.builder().method("POST")
+                                                .endpoint("https://ec2.us-east-1.amazonaws.com/")
+                                                .addHeader("Host", "ec2.us-east-1.amazonaws.com")
+                                                .addFormParam("Action", "CreateSecurityGroup")
+                                                .addFormParam("GroupDescription", "description")
+                                                .addFormParam("GroupName", "name")
+                                                .addFormParam("Signature", "F3o0gnZcX9sWrtDUhVwi3k5GY2JKLP0Dhi6CcEqK2vE%3D")
+                                                .addFormParam("SignatureMethod", "HmacSHA256")
+                                                .addFormParam("SignatureVersion", "2")
+                                                .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
+                                                .addFormParam("Version", "2010-06-15")
+                                                .addFormParam("AWSAccessKeyId", "identity").build();
+
    public void testCreateSecurityGroup() throws SecurityException, NoSuchMethodException, IOException {
       Method method = SecurityGroupAsyncClient.class.getMethod("createSecurityGroupInRegion", String.class,
             String.class, String.class);
       HttpRequest request = processor.createRequest(method, null, "name", "description");
 
+      request = request.getFilters().get(0).filter(request);
+      
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request,
-            "Action=CreateSecurityGroup&GroupDescription=description&GroupName=name",
+      assertPayloadEquals(request, createSecurityGroup.getPayload().getRawContent().toString(),
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -130,25 +144,33 @@ public class SecurityGroupAsyncClientTest extends BaseEC2AsyncClientTest<Securit
       checkFilters(request);
    }
 
+   HttpRequest authorizeSecurityGroupIngressCidr = HttpRequest.builder().method("POST")
+                                                              .endpoint("https://ec2.us-east-1.amazonaws.com/")
+                                                              .addHeader("Host", "ec2.us-east-1.amazonaws.com")
+                                                              .addFormParam("Action", "AuthorizeSecurityGroupIngress")
+                                                              .addFormParam("CidrIp", "0.0.0.0/0")
+                                                              .addFormParam("FromPort", "6000")
+                                                              .addFormParam("GroupName", "group")
+                                                              .addFormParam("IpProtocol", "tcp")
+                                                              .addFormParam("Signature", "6NQega9YUGDxdwk3Y0Hv71u/lHi%2B0D6qMCJLpJVD/aI%3D")
+                                                              .addFormParam("SignatureMethod", "HmacSHA256")
+                                                              .addFormParam("SignatureVersion", "2")
+                                                              .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
+                                                              .addFormParam("ToPort", "7000")
+                                                              .addFormParam("Version", "2010-06-15")
+                                                              .addFormParam("AWSAccessKeyId", "identity").build();
+
    public void testAuthorizeSecurityGroupIngressCidr() throws SecurityException, NoSuchMethodException, IOException {
       Method method = SecurityGroupAsyncClient.class.getMethod("authorizeSecurityGroupIngressInRegion", String.class,
             String.class, IpProtocol.class, int.class, int.class, String.class);
       HttpRequest request = processor.createRequest(method, null, "group", IpProtocol.TCP, 6000, 7000, "0.0.0.0/0");
 
+      request = request.getFilters().get(0).filter(request);
+      
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      try {
-         assertPayloadEquals(
-               request,
-               "Action=AuthorizeSecurityGroupIngress&CidrIp=0.0.0.0/0&IpProtocol=tcp&GroupName=group&FromPort=6000&ToPort=7000",
-               "application/x-www-form-urlencoded", false);
-      } catch (AssertionError e) {
-         // mvn 3.0 osx 10.6.5 somehow sorts differently
-         assertPayloadEquals(
-               request,
-               "Action=AuthorizeSecurityGroupIngress&CidrIp=0.0.0.0/0&IpProtocol=tcp&GroupName=group&ToPort=7000&FromPort=6000",
-               "application/x-www-form-urlencoded", false);
-      }
+      assertPayloadEquals(request, authorizeSecurityGroupIngressCidr.getPayload().getRawContent().toString(),
+            "application/x-www-form-urlencoded", false);
+
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertFallbackClassEquals(method, null);
@@ -176,25 +198,34 @@ public class SecurityGroupAsyncClientTest extends BaseEC2AsyncClientTest<Securit
       checkFilters(request);
    }
 
+   HttpRequest revokeSecurityGroupIngressCidr = HttpRequest.builder().method("POST")
+                                                           .endpoint("https://ec2.us-east-1.amazonaws.com/")
+                                                           .addHeader("Host", "ec2.us-east-1.amazonaws.com")
+                                                           .addFormParam("Action", "RevokeSecurityGroupIngress")
+                                                           .addFormParam("CidrIp", "0.0.0.0/0")
+                                                           .addFormParam("FromPort", "6000")
+                                                           .addFormParam("GroupName", "group")
+                                                           .addFormParam("IpProtocol", "tcp")
+                                                           .addFormParam("Signature", "WPlDYXI8P6Ip4F2JIEP3lWrVlP/7gxbZvlshKYlrvxk%3D")
+                                                           .addFormParam("SignatureMethod", "HmacSHA256")
+                                                           .addFormParam("SignatureVersion", "2")
+                                                           .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
+                                                           .addFormParam("ToPort", "7000")
+                                                           .addFormParam("Version", "2010-06-15")
+                                                           .addFormParam("AWSAccessKeyId", "identity").build();
+
    public void testRevokeSecurityGroupIngressCidr() throws SecurityException, NoSuchMethodException, IOException {
       Method method = SecurityGroupAsyncClient.class.getMethod("revokeSecurityGroupIngressInRegion", String.class,
             String.class, IpProtocol.class, int.class, int.class, String.class);
       HttpRequest request = processor.createRequest(method, null, "group", IpProtocol.TCP, 6000, 7000, "0.0.0.0/0");
 
+      request = request.getFilters().get(0).filter(request);
+      
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      try {
-         assertPayloadEquals(
-               request,
-               "Action=RevokeSecurityGroupIngress&CidrIp=0.0.0.0/0&IpProtocol=tcp&GroupName=group&FromPort=6000&ToPort=7000",
-               "application/x-www-form-urlencoded", false);
-      } catch (AssertionError e) {
-         // mvn 3.0 osx 10.6.5 somehow sorts differently
-         assertPayloadEquals(
-               request,
-               "Action=RevokeSecurityGroupIngress&CidrIp=0.0.0.0/0&IpProtocol=tcp&GroupName=group&ToPort=7000&FromPort=6000",
-               "application/x-www-form-urlencoded", false);
-      }
+      assertPayloadEquals(request, revokeSecurityGroupIngressCidr.getPayload().getRawContent().toString(),
+            "application/x-www-form-urlencoded", false);
+
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertFallbackClassEquals(method, null);
