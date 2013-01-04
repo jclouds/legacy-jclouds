@@ -56,14 +56,29 @@ public class ElasticIPAddressAsyncClientTest extends BaseEC2AsyncClientTest<Elas
       checkFilters(request);
    }
 
+   HttpRequest associateAddress = HttpRequest.builder().method("POST")
+                                             .endpoint("https://ec2.us-east-1.amazonaws.com/")
+                                             .addHeader("Host", "ec2.us-east-1.amazonaws.com")
+                                             .addFormParam("Action", "AssociateAddress")
+                                             .addFormParam("InstanceId", "me")
+                                             .addFormParam("PublicIp", "127.0.0.1")
+                                             .addFormParam("Signature", "YmPyvEljuFw0INSUbQx5xAhC/1GQ4a1Ht6TdoXeMc9Y%3D")
+                                             .addFormParam("SignatureMethod", "HmacSHA256")
+                                             .addFormParam("SignatureVersion", "2")
+                                             .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
+                                             .addFormParam("Version", "2010-06-15")
+                                             .addFormParam("AWSAccessKeyId", "identity").build();
+
    public void testAssociateAddress() throws SecurityException, NoSuchMethodException, IOException {
       Method method = ElasticIPAddressAsyncClient.class.getMethod("associateAddressInRegion", String.class,
             String.class, String.class);
       HttpRequest request = processor.createRequest(method, null, "127.0.0.1", "me");
 
+      request = request.getFilters().get(0).filter(request);
+
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Action=AssociateAddress&InstanceId=me&PublicIp=127.0.0.1",
+      assertPayloadEquals(request, associateAddress.getPayload().getRawContent().toString(),
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);

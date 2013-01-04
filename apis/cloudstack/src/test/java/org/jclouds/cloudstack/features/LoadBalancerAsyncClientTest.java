@@ -78,14 +78,22 @@ public class LoadBalancerAsyncClientTest extends BaseCloudStackAsyncClientTest<L
 
    }
 
+   HttpRequest createLoadBalancerRule = HttpRequest.builder().method("GET")
+                                                   .endpoint("http://localhost:8080/client/api")
+                                                   .addQueryParam("response", "json")
+                                                   .addQueryParam("command", "createLoadBalancerRule")
+                                                   .addQueryParam("publicipid", "6")
+                                                   .addQueryParam("algorithm", "leastconn")
+                                                   .addQueryParam("name", "tcp")
+                                                   .addQueryParam("privateport", "22")
+                                                   .addQueryParam("publicport", "22").build();
+
    public void testCreateLoadBalancerRuleForPublicIP() throws SecurityException, NoSuchMethodException, IOException {
       Method method = LoadBalancerAsyncClient.class.getMethod("createLoadBalancerRuleForPublicIP", String.class,
             Algorithm.class, String.class, int.class, int.class, CreateLoadBalancerRuleOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method, 6, Algorithm.LEASTCONN, "tcp", 22, 22);
 
-      assertRequestLineEquals(
-            httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=createLoadBalancerRule&publicipid=6&name=tcp&algorithm=leastconn&privateport=22&publicport=22 HTTP/1.1");
+      assertRequestLineEquals(httpRequest, createLoadBalancerRule.getRequestLine());
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

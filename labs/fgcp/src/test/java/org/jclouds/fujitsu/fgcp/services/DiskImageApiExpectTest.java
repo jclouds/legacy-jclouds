@@ -50,8 +50,8 @@ public class DiskImageApiExpectTest extends BaseFGCPRestApiExpectTest {
    public void testUpdate() {
       HttpRequest request = buildGETWithQuery("Action=UpdateDiskImageAttribute"
             + "&diskImageId=IMG_A1B2C3_1234567890ABCD"
-            + "&attributeName=updateName"
             + "&updateLcId=en"
+            + "&attributeName=updateName"
             + "&attributeValue=new-name");
       HttpResponse response = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/UpdateDiskImageAttribute-response.xml"))
