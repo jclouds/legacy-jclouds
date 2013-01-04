@@ -40,11 +40,11 @@ import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.vcloud.binders.BindCatalogItemToXmlPayload;
+import org.jclouds.vcloud.binders.OrgNameAndCatalogNameToEndpoint;
+import org.jclouds.vcloud.binders.OrgNameCatalogNameItemNameToEndpoint;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.filters.AddVCloudAuthorizationAndCookieToRequest;
-import org.jclouds.vcloud.functions.OrgNameAndCatalogNameToEndpoint;
-import org.jclouds.vcloud.functions.OrgNameCatalogNameItemNameToEndpoint;
 import org.jclouds.vcloud.options.CatalogItemOptions;
 import org.jclouds.vcloud.xml.CatalogHandler;
 import org.jclouds.vcloud.xml.CatalogItemHandler;
@@ -76,9 +76,9 @@ public interface CatalogAsyncClient {
    @XMLResponseParser(CatalogHandler.class)
    @Fallback(NullOnNotFoundOr404.class)
    @Consumes(CATALOG_XML)
-   ListenableFuture<Catalog> findCatalogInOrgNamed(
-            @Nullable @EndpointParam(parser = OrgNameAndCatalogNameToEndpoint.class) String orgName,
-            @Nullable @EndpointParam(parser = OrgNameAndCatalogNameToEndpoint.class) String catalogName);
+   @MapBinder(OrgNameAndCatalogNameToEndpoint.class)
+   ListenableFuture<Catalog> findCatalogInOrgNamed(@Nullable @PayloadParam("orgName") String orgName,
+         @Nullable @PayloadParam("catalogName") String catalogName);
 
    /**
     * @see CatalogClient#getCatalogItem
@@ -96,10 +96,9 @@ public interface CatalogAsyncClient {
    @Consumes(CATALOGITEM_XML)
    @XMLResponseParser(CatalogItemHandler.class)
    @Fallback(NullOnNotFoundOr404.class)
-   ListenableFuture<CatalogItem> findCatalogItemInOrgCatalogNamed(
-            @Nullable @EndpointParam(parser = OrgNameCatalogNameItemNameToEndpoint.class) String orgName,
-            @Nullable @EndpointParam(parser = OrgNameCatalogNameItemNameToEndpoint.class) String catalogName,
-            @EndpointParam(parser = OrgNameCatalogNameItemNameToEndpoint.class) String itemName);
+   @MapBinder(OrgNameCatalogNameItemNameToEndpoint.class)
+   ListenableFuture<CatalogItem> findCatalogItemInOrgCatalogNamed(@Nullable @PayloadParam("orgName") String orgName,
+         @Nullable @PayloadParam("catalogName") String catalogName, @PayloadParam("itemName") String itemName);
 
    /**
     * @see CatalogClient#addVAppTemplateOrMediaImageToCatalog

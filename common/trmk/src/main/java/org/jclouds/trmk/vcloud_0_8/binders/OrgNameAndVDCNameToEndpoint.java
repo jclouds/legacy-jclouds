@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.trmk.vcloud_0_8.functions;
+package org.jclouds.trmk.vcloud_0_8.binders;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -27,11 +27,12 @@ import java.util.NoSuchElementException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.http.HttpRequest;
+import org.jclouds.rest.MapBinder;
 import org.jclouds.trmk.vcloud_0_8.domain.Org;
 import org.jclouds.trmk.vcloud_0_8.domain.ReferenceType;
 import org.jclouds.trmk.vcloud_0_8.endpoints.VDC;
 
-import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
 
@@ -40,7 +41,7 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 @Singleton
-public class OrgNameAndVDCNameToEndpoint implements Function<Object, URI> {
+public class OrgNameAndVDCNameToEndpoint implements MapBinder {
    private final Supplier<Map<String, ? extends Org>> orgNameToVDCEndpoint;
    private final Supplier<ReferenceType> defaultOrg;
    private final Supplier<ReferenceType> defaultVDC;
@@ -54,21 +55,26 @@ public class OrgNameAndVDCNameToEndpoint implements Function<Object, URI> {
    }
 
    @SuppressWarnings("unchecked")
-   public URI apply(Object from) {
-      Iterable<Object> orgVdc = (Iterable<Object>) checkNotNull(from, "args");
-      Object org = Iterables.get(orgVdc, 0);
-      Object vdc = Iterables.get(orgVdc, 1);
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
+      Object org = postParams.get("orgName");
+      Object vdc = postParams.get("vdcName");
       if (org == null && vdc == null)
-         return defaultVDC.get().getHref();
+         return (R) request.toBuilder().endpoint(defaultVDC.get().getHref()).build();
       else if (org == null)
          org = defaultOrg.get().getName();
 
       try {
          Map<String, ReferenceType> vdcs = checkNotNull(orgNameToVDCEndpoint.get().get(org)).getVDCs();
-         return vdc == null ? Iterables.getLast(vdcs.values()).getHref() : vdcs.get(vdc).getHref();
+         URI endpoint = vdc == null ? Iterables.getLast(vdcs.values()).getHref() : vdcs.get(vdc).getHref();
+         return (R) request.toBuilder().endpoint(endpoint).build();
       } catch (NullPointerException e) {
          throw new NoSuchElementException(org + "/" + vdc + " not found in " + orgNameToVDCEndpoint.get());
       }
    }
 
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
+      throw new IllegalStateException(getClass() + " needs parameters");
+   }
 }
