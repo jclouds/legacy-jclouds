@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.vcloud.functions;
+package org.jclouds.trmk.vcloud_0_8.binders;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -27,11 +27,12 @@ import java.util.NoSuchElementException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.vcloud.domain.Org;
-import org.jclouds.vcloud.domain.ReferenceType;
-import org.jclouds.vcloud.endpoints.Catalog;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.rest.MapBinder;
+import org.jclouds.trmk.vcloud_0_8.domain.Org;
+import org.jclouds.trmk.vcloud_0_8.domain.ReferenceType;
+import org.jclouds.trmk.vcloud_0_8.endpoints.Catalog;
 
-import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
 
@@ -40,36 +41,40 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 @Singleton
-public class OrgNameAndCatalogNameToEndpoint implements Function<Object, URI> {
-   private final Supplier<Map<String, Org>> orgMap;
+public class OrgNameAndCatalogNameToEndpoint implements MapBinder {
+   private final Supplier<Map<String, ? extends Org>> orgMap;
    private final Supplier<ReferenceType> defaultOrg;
    private final Supplier<ReferenceType> defaultCatalog;
 
    @Inject
-   public OrgNameAndCatalogNameToEndpoint(Supplier<Map<String, Org>> orgMap,
-         @org.jclouds.vcloud.endpoints.Org Supplier<ReferenceType> defaultOrg,
-         @Catalog Supplier<ReferenceType> defaultCatalog) {
+   public OrgNameAndCatalogNameToEndpoint(Supplier<Map<String, ? extends Org>> orgMap,
+         @org.jclouds.trmk.vcloud_0_8.endpoints.Org Supplier<ReferenceType> defaultOrg, @Catalog Supplier<ReferenceType> defaultCatalog) {
       this.orgMap = orgMap;
       this.defaultOrg = defaultOrg;
       this.defaultCatalog = defaultCatalog;
    }
 
    @SuppressWarnings("unchecked")
-   public URI apply(Object from) {
-      Iterable<Object> orgCatalog = (Iterable<Object>) checkNotNull(from, "args");
-      Object org = Iterables.get(orgCatalog, 0);
-      Object catalog = Iterables.get(orgCatalog, 1);
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
+      Object org = postParams.get("orgName");
+      Object catalog = postParams.get("catalogName");
       if (org == null && catalog == null)
-         return defaultCatalog.get().getHref();
+         return (R) request.toBuilder().endpoint(defaultCatalog.get().getHref()).build();
       else if (org == null)
          org = defaultOrg.get().getName();
 
       try {
          Map<String, ReferenceType> catalogs = checkNotNull(orgMap.get().get(org)).getCatalogs();
-         return catalog == null ? Iterables.getLast(catalogs.values()).getHref() : catalogs.get(catalog).getHref();
+         URI endpoint = catalog == null ? Iterables.getLast(catalogs.values()).getHref() : catalogs.get(catalog).getHref();
+         return (R) request.toBuilder().endpoint(endpoint).build();
       } catch (NullPointerException e) {
          throw new NoSuchElementException(org + "/" + catalog + " not found in " + orgMap.get());
       }
    }
 
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
+      throw new IllegalStateException(getClass() + " needs parameters");
+   }
 }

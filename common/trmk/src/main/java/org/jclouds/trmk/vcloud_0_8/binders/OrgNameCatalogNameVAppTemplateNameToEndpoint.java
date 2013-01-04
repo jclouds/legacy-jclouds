@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.trmk.vcloud_0_8.functions;
+package org.jclouds.trmk.vcloud_0_8.binders;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -27,21 +27,21 @@ import java.util.NoSuchElementException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.http.HttpRequest;
+import org.jclouds.rest.MapBinder;
 import org.jclouds.trmk.vcloud_0_8.domain.CatalogItem;
 import org.jclouds.trmk.vcloud_0_8.domain.ReferenceType;
 import org.jclouds.trmk.vcloud_0_8.endpoints.Catalog;
 import org.jclouds.trmk.vcloud_0_8.endpoints.Org;
 
-import com.google.common.base.Function;
 import com.google.common.base.Supplier;
-import com.google.common.collect.Iterables;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class OrgNameCatalogNameVAppTemplateNameToEndpoint implements Function<Object, URI> {
+public class OrgNameCatalogNameVAppTemplateNameToEndpoint implements MapBinder {
    private final Supplier<Map<String, Map<String, Map<String, ? extends org.jclouds.trmk.vcloud_0_8.domain.CatalogItem>>>> orgCatalogItemMap;
    private final Supplier<ReferenceType> defaultOrg;
    private final Supplier<ReferenceType> defaultCatalog;
@@ -56,11 +56,11 @@ public class OrgNameCatalogNameVAppTemplateNameToEndpoint implements Function<Ob
    }
 
    @SuppressWarnings("unchecked")
-   public URI apply(Object from) {
-      Iterable<Object> orgCatalog = (Iterable<Object>) checkNotNull(from, "args");
-      Object org = Iterables.get(orgCatalog, 0);
-      Object catalog = Iterables.get(orgCatalog, 1);
-      Object catalogItem = Iterables.get(orgCatalog, 2);
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
+      Object org = postParams.get("orgName");
+      Object catalog = postParams.get("catalogName");
+      Object catalogItem = postParams.get("itemName");
       if (org == null)
          org = defaultOrg.get().getName();
       if (catalog == null)
@@ -80,8 +80,13 @@ public class OrgNameCatalogNameVAppTemplateNameToEndpoint implements Function<Ob
                   + catalogMap.keySet());
       CatalogItem item = catalogMap.get(catalogItem);
 
-      return checkNotNull(item.getEntity(), "item: " + org + "/" + catalog + "/" + catalogItem + " has no entity")
-               .getHref();
+      URI endpoint = checkNotNull(item.getEntity(),
+            "item: " + org + "/" + catalog + "/" + catalogItem + " has no entity").getHref();
+      return (R) request.toBuilder().endpoint(endpoint).build();
    }
 
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
+      throw new IllegalStateException(getClass() + " needs parameters");
+   }
 }

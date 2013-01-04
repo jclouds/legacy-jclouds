@@ -49,11 +49,11 @@ import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.vcloud.binders.BindCaptureVAppParamsToXmlPayload;
 import org.jclouds.vcloud.binders.BindCloneVAppTemplateParamsToXmlPayload;
 import org.jclouds.vcloud.binders.BindInstantiateVAppTemplateParamsToXmlPayload;
+import org.jclouds.vcloud.binders.OrgNameCatalogNameVAppTemplateNameToEndpoint;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.filters.AddVCloudAuthorizationAndCookieToRequest;
-import org.jclouds.vcloud.functions.OrgNameCatalogNameVAppTemplateNameToEndpoint;
 import org.jclouds.vcloud.options.CaptureVAppOptions;
 import org.jclouds.vcloud.options.CloneVAppTemplateOptions;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
@@ -142,10 +142,9 @@ public interface VAppTemplateAsyncClient {
    @Consumes(VAPPTEMPLATE_XML)
    @XMLResponseParser(VAppTemplateHandler.class)
    @Fallback(NullOnNotFoundOr404.class)
-   ListenableFuture<VAppTemplate> findVAppTemplateInOrgCatalogNamed(
-            @Nullable @EndpointParam(parser = OrgNameCatalogNameVAppTemplateNameToEndpoint.class) String orgName,
-            @Nullable @EndpointParam(parser = OrgNameCatalogNameVAppTemplateNameToEndpoint.class) String catalogName,
-            @EndpointParam(parser = OrgNameCatalogNameVAppTemplateNameToEndpoint.class) String itemName);
+   @MapBinder(OrgNameCatalogNameVAppTemplateNameToEndpoint.class)
+   ListenableFuture<VAppTemplate> findVAppTemplateInOrgCatalogNamed(@Nullable @PayloadParam("orgName") String orgName,
+         @Nullable @PayloadParam("catalogName") String catalogName, @PayloadParam("itemName") String itemName);
 
    /**
     * @see VAppTemplateClient#getVAppTemplate

@@ -69,7 +69,7 @@ public class VDCAsyncClientTest extends BaseVCloudAsyncClientTest<VDCAsyncClient
 
    public void testFindVDCInOrgNamedNullOrgAndVDC() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VDCAsyncClient.class.getMethod("findVDCInOrgNamed", String.class, String.class);
-      HttpRequest request = processor.createRequest(method, null, null);
+      HttpRequest request = processor.createRequest(method, new Object[] { null, null });
 
       assertRequestLineEquals(request, "GET https://vcenterprise.bluelock.com/api/v1.0/vdc/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vdc+xml\n");
