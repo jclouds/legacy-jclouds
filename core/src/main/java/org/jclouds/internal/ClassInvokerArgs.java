@@ -22,22 +22,25 @@ import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
+import java.util.List;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.google.common.reflect.Invokable;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class ClassMethodArgs {
+public class ClassInvokerArgs {
    public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
 
    public Builder<?> toBuilder() {
-      return builder().fromClassMethodArgs(this);
+      return builder().fromClassInvokerArgs(this);
    }
 
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
@@ -45,8 +48,8 @@ public class ClassMethodArgs {
 
    public abstract static class Builder<B extends Builder<B>> {
       private Class<?> clazz;
-      private Method method;
-      private Object[] args = {};
+      private Invokable<?, ?> invoker;
+      private List<Object> args = ImmutableList.of();
 
       @SuppressWarnings("unchecked")
       protected B self() {
@@ -54,7 +57,7 @@ public class ClassMethodArgs {
       }
 
       /**
-       * @see ClassMethodArgs#getClazz()
+       * @see ClassInvokerArgs#getClazz()
        */
       public B clazz(Class<?> clazz) {
          this.clazz = clazz;
@@ -62,53 +65,78 @@ public class ClassMethodArgs {
       }
 
       /**
-       * @see ClassMethodArgs#getMethod()
+       * @see ClassInvokerArgs#getInvoker()
        */
-      public B method(Method method) {
-         this.method = method;
+      public B invoker(Invokable<?, ?> invoker) {
+         this.invoker = invoker;
          return self();
+      }
+      
+      /**
+       * @see ClassInvokerArgs#getInvoker()
+       */
+      @Deprecated
+      public B invoker(Method method) {
+         return invoker(Invokable.from(method));
       }
 
       /**
-       * @see ClassMethodArgs#getArgs()
+       * @see ClassInvokerArgs#getArgs()
        */
+      @Deprecated
       public B args(Object[] args) {
+         return args(args == null ? Lists.newArrayList(new Object[] { null }) : Lists.newArrayList(args));
+      }
+
+      /**
+       * @see ClassInvokerArgs#getArgs()
+       */
+      public B args(List<Object> args) {
          this.args = args;
          return self();
       }
 
-      public ClassMethodArgs build() {
-         return new ClassMethodArgs(this);
+      public ClassInvokerArgs build() {
+         return new ClassInvokerArgs(this);
       }
 
-      public B fromClassMethodArgs(ClassMethodArgs in) {
-         return clazz(in.getClazz()).method(in.getMethod()).args(in.getArgs());
+      public B fromClassInvokerArgs(ClassInvokerArgs in) {
+         return clazz(in.getClazz()).invoker(in.getInvoker()).args(in.getArgs());
       }
    }
 
    private final Class<?> clazz;
-   private final Method method;
-   private final Object[] args;
+   private final Invokable<?, ?> invoker;
+   private final List<Object> args;
 
-   public ClassMethodArgs(Builder<?> builder) {
-      this(builder.clazz, builder.method, builder.args);
+   public ClassInvokerArgs(Builder<?> builder) {
+      this(builder.clazz, builder.invoker, builder.args);
    }
 
-   public ClassMethodArgs(Class<?> clazz, Method method, Object[] args) {
+   /**
+    * @param args as these represent parameters, can contain nulls
+    */
+   public ClassInvokerArgs(Class<?> clazz, Invokable<?, ?> invoker, List<Object> args) {
       this.clazz = checkNotNull(clazz, "clazz");
-      this.method = checkNotNull(method, "method");
+      this.invoker = checkNotNull(invoker, "invoker");
       this.args = checkNotNull(args, "args");
    }
 
+   /**
+    * not necessarily the declaring class of the invoker.
+    */
    public Class<?> getClazz() {
       return clazz;
    }
 
-   public Method getMethod() {
-      return method;
+   public Invokable<?, ?> getInvoker() {
+      return invoker;
    }
-
-   public Object[] getArgs() {
+   
+   /**
+    * @param args as these represent parameters, can contain nulls
+    */
+   public List<Object> getArgs() {
       return args;
    }
 
@@ -118,13 +146,13 @@ public class ClassMethodArgs {
          return true;
       if (o == null || getClass() != o.getClass())
          return false;
-      ClassMethodArgs that = ClassMethodArgs.class.cast(o);
-      return equal(this.clazz, that.clazz) && equal(this.method, that.method) && equal(this.args, that.args);
+      ClassInvokerArgs that = ClassInvokerArgs.class.cast(o);
+      return equal(this.clazz, that.clazz) && equal(this.invoker, that.invoker) && equal(this.args, that.args);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(clazz, method, args);
+      return Objects.hashCode(clazz, invoker, args);
    }
 
    @Override
@@ -133,7 +161,7 @@ public class ClassMethodArgs {
    }
 
    protected ToStringHelper string() {
-      return Objects.toStringHelper("").omitNullValues().add("clazz", clazz).add("method", method)
-               .add("args", args.length != 0 ? Arrays.asList(args) : null);
+      return Objects.toStringHelper("").omitNullValues().add("clazz", clazz).add("invoker", invoker)
+               .add("args", args.size() != 0 ? args : null);
    }
 }

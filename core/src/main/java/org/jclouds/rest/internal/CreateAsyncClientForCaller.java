@@ -20,13 +20,13 @@ package org.jclouds.rest.internal;
 
 import static com.google.common.reflect.Reflection.newProxy;
 
-import org.jclouds.internal.ClassMethodArgs;
+import org.jclouds.internal.ClassInvokerArgs;
 import org.jclouds.rest.internal.AsyncRestClientProxy.Factory;
 
 import com.google.common.cache.CacheLoader;
 import com.google.inject.Inject;
 
-public final class CreateAsyncClientForCaller extends CacheLoader<ClassMethodArgs, Object> {
+public final class CreateAsyncClientForCaller extends CacheLoader<ClassInvokerArgs, Object> {
    private final Factory factory;
 
    @Inject
@@ -35,7 +35,7 @@ public final class CreateAsyncClientForCaller extends CacheLoader<ClassMethodArg
    }
 
    @Override
-   public Object load(ClassMethodArgs from) {
+   public Object load(ClassInvokerArgs from) {
       return newProxy(from.getClazz(), factory.caller(from));
    }
 }

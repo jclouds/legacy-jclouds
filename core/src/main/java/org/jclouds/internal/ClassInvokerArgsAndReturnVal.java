@@ -20,31 +20,32 @@ package org.jclouds.internal;
 
 import static com.google.common.base.Objects.equal;
 
-import java.lang.reflect.Method;
+import java.util.List;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.reflect.Invokable;
 
 /**
  * 
  * @author Adrian Cole
  */
-public final class ClassMethodArgsAndReturnVal extends ClassMethodArgs {
+public final class ClassInvokerArgsAndReturnVal extends ClassInvokerArgs {
 
    public static Builder builder() {
       return new Builder();
    }
 
    public Builder toBuilder() {
-      return builder().fromClassMethodArgsAndReturnVal(this);
+      return builder().fromClassInvokerArgsAndReturnVal(this);
    }
 
-   public final static class Builder extends ClassMethodArgs.Builder<Builder> {
+   public final static class Builder extends ClassInvokerArgs.Builder<Builder> {
 
       private Object returnVal;
 
       /**
-       * @see ClassMethodArgsAndReturnVal#getReturnVal()
+       * @see ClassInvokerArgsAndReturnVal#getReturnVal()
        */
       public Builder returnVal(Object returnVal) {
          this.returnVal = returnVal;
@@ -52,23 +53,23 @@ public final class ClassMethodArgsAndReturnVal extends ClassMethodArgs {
       }
 
       @Override
-      public ClassMethodArgsAndReturnVal build() {
-         return new ClassMethodArgsAndReturnVal(this);
+      public ClassInvokerArgsAndReturnVal build() {
+         return new ClassInvokerArgsAndReturnVal(this);
       }
 
-      public Builder fromClassMethodArgsAndReturnVal(ClassMethodArgsAndReturnVal in) {
-         return fromClassMethodArgs(in).returnVal(in.getReturnVal());
+      public Builder fromClassInvokerArgsAndReturnVal(ClassInvokerArgsAndReturnVal in) {
+         return fromClassInvokerArgs(in).returnVal(in.getReturnVal());
       }
    }
 
    private final Object returnVal;
 
-   private ClassMethodArgsAndReturnVal(Class<?> clazz, Method method, Object[] args, Object returnVal) {
-      super(clazz, method, args);
+   private ClassInvokerArgsAndReturnVal(Class<?> clazz, Invokable<?, ?> invoker, List<Object> args, Object returnVal) {
+      super(clazz, invoker, args);
       this.returnVal = returnVal;
    }
 
-   private ClassMethodArgsAndReturnVal(Builder builder) {
+   private ClassInvokerArgsAndReturnVal(Builder builder) {
       super(builder);
       this.returnVal = builder.returnVal;
    }
@@ -83,7 +84,7 @@ public final class ClassMethodArgsAndReturnVal extends ClassMethodArgs {
          return true;
       if (o == null || getClass() != o.getClass())
          return false;
-      ClassMethodArgsAndReturnVal that = ClassMethodArgsAndReturnVal.class.cast(o);
+      ClassInvokerArgsAndReturnVal that = ClassInvokerArgsAndReturnVal.class.cast(o);
       return super.equals(that) && equal(this.returnVal, that.returnVal);
    }
 

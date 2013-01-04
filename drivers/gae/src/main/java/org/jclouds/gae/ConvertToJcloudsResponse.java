@@ -17,6 +17,7 @@
  * under the License.
  */
 package org.jclouds.gae;
+import static org.jclouds.http.HttpUtils.filterOutContentHeaders;
 
 import javax.inject.Singleton;
 
@@ -24,7 +25,6 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.io.ContentMetadataCodec;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 
 import com.google.appengine.api.urlfetch.HTTPHeader;
 import com.google.appengine.api.urlfetch.HTTPResponse;
@@ -67,6 +67,6 @@ public class ConvertToJcloudsResponse implements Function<HTTPResponse, HttpResp
                          .statusCode(gaeResponse.getResponseCode())
                          .message(message)
                          .payload(payload)
-                         .headers(RestAnnotationProcessor.filterOutContentHeaders(headers)).build();
+                         .headers(filterOutContentHeaders(headers)).build();
    }
 }

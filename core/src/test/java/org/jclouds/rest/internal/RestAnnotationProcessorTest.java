@@ -64,7 +64,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import javax.xml.bind.annotation.XmlRootElement;
 
 import org.eclipse.jetty.http.HttpHeaders;
 import org.jclouds.ContextBuilder;
@@ -81,7 +80,6 @@ import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseURIFromListOrLocationHeaderIf20x;
-import org.jclouds.http.functions.ParseXMLWithJAXB;
 import org.jclouds.http.functions.ReturnInputStream;
 import org.jclouds.http.functions.ReturnStringIf2xx;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
@@ -90,7 +88,7 @@ import org.jclouds.http.internal.PayloadEnclosingImpl;
 import org.jclouds.http.options.BaseHttpRequestOptions;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.http.options.HttpRequestOptions;
-import org.jclouds.internal.ClassMethodArgsAndReturnVal;
+import org.jclouds.internal.ClassInvokerArgsAndReturnVal;
 import org.jclouds.io.Payload;
 import org.jclouds.io.PayloadEnclosing;
 import org.jclouds.io.Payloads;
@@ -106,7 +104,6 @@ import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.Headers;
-import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.OnlyElement;
 import org.jclouds.rest.annotations.OverrideRequestFilters;
@@ -129,7 +126,6 @@ import org.jclouds.rest.config.AsyncClientProvider;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rest.functions.ImplicitOptionalConverter;
 import org.jclouds.util.Strings2;
-import org.jclouds.xml.XMLParser;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
@@ -181,7 +177,6 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
          }).annotatedWith(Localhost2.class).toInstance(Suppliers.ofInstance(URI.create("http://localhost:1111")));
          bind(IOExceptionRetryHandler.class).toInstance(IOExceptionRetryHandler.NEVER_RETRY);
       }
-
    }
 
    @Path("/client/{jclouds.api-version}")
@@ -394,7 +389,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
             bind(ImplicitOptionalConverter.class).toInstance(new ImplicitOptionalConverter() {
 
                @Override
-               public Optional<Object> apply(ClassMethodArgsAndReturnVal input) {
+               public Optional<Object> apply(ClassInvokerArgsAndReturnVal input) {
                   return Optional.absent();
                }
 
@@ -1177,7 +1172,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       assertResponseParserClassEquals(method, request, ParseJson.class);
       // now test that it works!
 
-      Function<HttpResponse, View> parser = (Function<HttpResponse, View>) RestAnnotationProcessor
+      Function<HttpResponse, View> parser = (Function<HttpResponse, View>) AsyncRestClientProxy
             .createResponseParser(parserFactory, injector, method, request);
 
       assertEquals(parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload("{ foo:\"bar\"}").build()).foo, "bar");
@@ -1192,7 +1187,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       assertResponseParserClassEquals(method, request, ParseJson.class);
       // now test that it works!
 
-      Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) RestAnnotationProcessor
+      Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) AsyncRestClientProxy
             .createResponseParser(parserFactory, injector, method, request);
 
       assertEquals(parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload("{ foo:\"bar\"}").build()),
@@ -1208,7 +1203,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       assertResponseParserClassEquals(method, request, ParseJson.class);
       // now test that it works!
 
-      Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) RestAnnotationProcessor
+      Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) AsyncRestClientProxy
             .createResponseParser(parserFactory, injector, method, request);
 
       assertEquals(parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload("{ foo:\"bar\"}").build()),
@@ -1224,7 +1219,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       assertResponseParserClassEquals(method, request, ParseJson.class);
       // now test that it works!
 
-      Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) RestAnnotationProcessor
+      Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) AsyncRestClientProxy
             .createResponseParser(parserFactory, injector, method, request);
 
       assertEquals(parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload("{ foo:\"bar\"}").build()),
@@ -1240,7 +1235,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       assertResponseParserClassEquals(method, request, UnwrapOnlyJsonValue.class);
       // now test that it works!
 
-      Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) RestAnnotationProcessor
+      Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) AsyncRestClientProxy
             .createResponseParser(parserFactory, injector, method, request);
 
       assertEquals(parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload("{ foo:\"bar\"}").build()), "bar");
@@ -1255,7 +1250,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       assertResponseParserClassEquals(method, request, ParseFirstJsonValueNamed.class);
       // now test that it works!
 
-      Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) RestAnnotationProcessor
+      Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) AsyncRestClientProxy
             .createResponseParser(parserFactory, injector, method, request);
 
       assertEquals(parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload("{ foo:\"bar\"}").build()), "bar");
@@ -1276,7 +1271,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       assertResponseParserClassEquals(method, request, UnwrapOnlyJsonValue.class);
       // now test that it works!
 
-      Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) RestAnnotationProcessor
+      Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) AsyncRestClientProxy
             .createResponseParser(parserFactory, injector, method, request);
 
       assertEquals(parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload("{ foo:\"bar\"}").build()), "bar");
@@ -1291,7 +1286,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       assertResponseParserClassEquals(method, request, UnwrapOnlyJsonValue.class);
       // now test that it works!
 
-      Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) RestAnnotationProcessor
+      Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) AsyncRestClientProxy
             .createResponseParser(parserFactory, injector, method, request);
 
       assertEquals(parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload("{\"runit\":[\"0.7.0\",\"0.7.1\"]}").build()),
@@ -1306,7 +1301,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       assertResponseParserClassEquals(method, request, UnwrapOnlyJsonValue.class);
       // now test that it works!
 
-      Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) RestAnnotationProcessor
+      Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) AsyncRestClientProxy
             .createResponseParser(parserFactory, injector, method, request);
 
       assertEquals(parser.apply(HttpResponse.builder().statusCode(200).message("ok").payload("{\"runit\":[\"0.7.0\",\"0.7.1\"]}").build()),
@@ -1321,7 +1316,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       assertResponseParserClassEquals(method, request, ParseFirstJsonValueNamed.class);
       // now test that it works!
 
-      Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) RestAnnotationProcessor
+      Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) AsyncRestClientProxy
             .createResponseParser(parserFactory, injector, method, request);
 
       assertEquals(parser.apply(HttpResponse.builder().statusCode(200).message("ok")
@@ -1333,7 +1328,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       Method method = TestPut.class.getMethod("selectLongAddOne");
       HttpRequest request = factory(TestPut.class).createRequest(method);
 
-      Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) RestAnnotationProcessor
+      Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) AsyncRestClientProxy
             .createResponseParser(parserFactory, injector, method, request);
 
       assertEquals(parser.apply(HttpResponse.builder().statusCode(200).message("ok")
@@ -1476,13 +1471,6 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       @Path("/")
       public void oneFormParamExtractor(@FormParam("one") @ParamParser(FirstCharacter.class) String one) {
       }
-
-      @GET
-      @Path("/{path}")
-      @PathParam("path")
-      @ParamParser(FirstCharacterFirstElement.class)
-      public void onePathParamExtractorMethod(String path) {
-      }
    }
    
    @Test
@@ -1530,15 +1518,6 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       } catch (NullPointerException e) {
          assertEquals(e.getMessage(), "param{one} for method TestPath.oneFormParamExtractor");
       }
-   }
-   
-   @Test
-   public void testParamExtractorMethod() throws SecurityException, NoSuchMethodException {
-      Method method = TestPath.class.getMethod("onePathParamExtractorMethod", String.class);
-      HttpRequest request = factory(TestPath.class).createRequest(method, new Object[] { "localhost" });
-      assertEquals(request.getEndpoint().getPath(), "/l");
-      assertEquals(request.getMethod(), HttpMethod.GET);
-      assertEquals(request.getHeaders().size(), 0);
    }
 
    static class FirstCharacter implements Function<Object, String> {
@@ -1729,24 +1708,18 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
 
    public interface TestTransformers {
       @GET
-      int noTransformer();
+      ListenableFuture<Integer> noTransformer();
 
       @GET
       @ResponseParser(ReturnStringIf2xx.class)
-      void oneTransformer();
+      ListenableFuture<Void> oneTransformer();
 
       @GET
       @ResponseParser(ReturnStringIf200Context.class)
-      void oneTransformerWithContext();
-
-      @GET
-      InputStream inputStream();
+      ListenableFuture<Void> oneTransformerWithContext();
 
       @GET
       ListenableFuture<InputStream> futureInputStream();
-
-      @GET
-      URI uri();
 
       @GET
       ListenableFuture<URI> futureUri();
@@ -1874,12 +1847,6 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       assertPayloadEquals(request, "whoops", "application/unknown", true);
    }
 
-   public void testInputStream() throws SecurityException, NoSuchMethodException {
-      Method method = TestTransformers.class.getMethod("inputStream");
-      Class<? extends Function<HttpResponse, ?>> transformer = unwrap(factory(TestTransformers.class), method);
-      assertEquals(transformer, ReturnInputStream.class);
-   }
-
    public void testInputStreamListenableFuture() throws SecurityException, NoSuchMethodException {
       Method method = TestTransformers.class.getMethod("futureInputStream");
       Class<? extends Function<HttpResponse, ?>> transformer = unwrap(factory(TestTransformers.class), method);
@@ -1889,14 +1856,8 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
    @SuppressWarnings("unchecked")
    public static Class<? extends Function<HttpResponse, ?>> unwrap(RestAnnotationProcessor processor,
          Method method) {
-      return (Class<? extends Function<HttpResponse, ?>>) RestAnnotationProcessor.getParserOrThrowException(method)
+      return (Class<? extends Function<HttpResponse, ?>>) AsyncRestClientProxy.getParserOrThrowException(method)
             .getTypeLiteral().getRawType();
-   }
-
-   public void testURI() throws SecurityException, NoSuchMethodException {
-      Method method = TestTransformers.class.getMethod("uri");
-      Class<? extends Function<HttpResponse, ?>> transformer = unwrap(factory(TestTransformers.class), method);
-      assertEquals(transformer, ParseURIFromListOrLocationHeaderIf20x.class);
    }
 
    public void testURIListenableFuture() throws SecurityException, NoSuchMethodException {
@@ -1921,7 +1882,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
    @Test(expectedExceptions = { RuntimeException.class })
    public void testNoTransformer() throws SecurityException, NoSuchMethodException {
       Method method = TestTransformers.class.getMethod("noTransformer");
-      factory(TestTransformers.class).getParserOrThrowException(method);
+      AsyncRestClientProxy.getParserOrThrowException(method);
    }
 
    public void oneTransformerWithContext() throws SecurityException, NoSuchMethodException {
@@ -1930,7 +1891,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       GeneratedHttpRequest request = GeneratedHttpRequest.builder()
             .method("GET").endpoint("http://localhost").declaring(TestTransformers.class)
             .javaMethod(method).args(new Object[] {}).build();
-      Function<HttpResponse, ?> transformer = processor.createResponseParser(method, request);
+      Function<HttpResponse, ?> transformer = AsyncRestClientProxy.createResponseParser(parserFactory, injector, method, request);
       assertEquals(transformer.getClass(), ReturnStringIf200Context.class);
       assertEquals(((ReturnStringIf200Context) transformer).request, request);
    }
@@ -2272,13 +2233,11 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
 
    }
 
-   @SuppressWarnings("static-access")
-   @Test
+   @Test(expectedExceptions = IllegalStateException.class)
    public void testTwoDifferentEndpointParams() throws SecurityException, NoSuchMethodException, ExecutionException {
       Method method = TestEndpointParams.class.getMethod("twoEndpointParams", String.class, String.class);
-      URI uri = factory(TestEndpointParams.class).getEndpointInParametersOrNull(method,
+      factory(TestEndpointParams.class).getEndpointInParametersOrNull(method,
             new Object[] { "robot", "egg" }, injector);
-      assertEquals(uri, URI.create("robot/egg"));
    }
 
    public interface TestPayload {

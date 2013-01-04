@@ -32,7 +32,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.collect.Memoized;
 import org.jclouds.domain.Location;
-import org.jclouds.internal.ClassMethodArgsAndReturnVal;
+import org.jclouds.internal.ClassInvokerArgsAndReturnVal;
 import org.jclouds.location.Iso3166;
 import org.jclouds.location.Provider;
 import org.jclouds.location.Region;
@@ -73,7 +73,7 @@ public class LocationModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      bind(new TypeLiteral<Function<ClassMethodArgsAndReturnVal, Optional<Object>>>(){}).to(ImplicitOptionalConverter.class);
+      bind(new TypeLiteral<Function<ClassInvokerArgsAndReturnVal, Optional<Object>>>(){}).to(ImplicitOptionalConverter.class);
    }
 
    @Provides

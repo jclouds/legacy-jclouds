@@ -29,7 +29,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.internal.ClassMethodArgs;
+import org.jclouds.internal.ClassInvokerArgs;
 import org.jclouds.rest.functions.AlwaysPresentImplicitOptionalConverter;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -103,7 +103,7 @@ public class SyncProxyTest {
    }
 
    private Sync syncProxyForTimeouts(ImmutableMap<String, Long> timeouts) throws NoSuchMethodException {
-      LoadingCache<ClassMethodArgs, Object> cache = CacheBuilder.newBuilder().build(
+      LoadingCache<ClassInvokerArgs, Object> cache = CacheBuilder.newBuilder().build(
             CacheLoader.from(Functions.<Object> constant(null)));
       return newProxy(
             Sync.class,

@@ -19,12 +19,17 @@
 package org.jclouds.http;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Predicates.and;
 import static com.google.common.base.Predicates.equalTo;
+import static com.google.common.base.Predicates.in;
+import static com.google.common.base.Predicates.not;
+import static com.google.common.base.Predicates.notNull;
 import static com.google.common.base.Throwables.getCausalChain;
 import static com.google.common.base.Throwables.propagate;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.size;
+import static com.google.common.collect.Multimaps.filterKeys;
 import static com.google.common.io.BaseEncoding.base64;
 import static com.google.common.io.ByteStreams.toByteArray;
 import static com.google.common.io.Closeables.closeQuietly;
@@ -38,11 +43,13 @@ import static com.google.common.net.HttpHeaders.EXPIRES;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.Map.Entry;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
+import javax.ws.rs.HttpMethod;
 
 import org.jclouds.Constants;
 import org.jclouds.io.ContentMetadata;
@@ -53,7 +60,13 @@ import org.jclouds.io.Payloads;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.internal.Wire;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.ImmutableSet.Builder;
+import com.google.common.reflect.Invokable;
 import com.google.inject.Inject;
 
 /**
@@ -172,6 +185,24 @@ public class HttpUtils {
       return null;
    }
 
+   public static Optional<String> tryFindHttpMethod(Invokable<?, ?> method) {
+      Builder<String> methodsBuilder = ImmutableSet.builder();
+      for (Annotation annotation : method.getAnnotations()) {
+         HttpMethod http = annotation.annotationType().getAnnotation(HttpMethod.class);
+         if (http != null)
+            methodsBuilder.add(http.value());
+      }
+      Collection<String> methods = methodsBuilder.build();
+      switch (methods.size()) {
+      case 0:
+         return Optional.absent();
+      case 1:
+         return Optional.of(get(methods, 0));
+      default:
+         throw new IllegalStateException("You must specify at most one HttpMethod annotation on: " + method);
+      }
+   }
+   
    /**
     * Content stream may need to be read. However, we should always close the http stream.
     * 
@@ -320,6 +351,11 @@ public class HttpUtils {
          return value;
       }
       return null;
+   }
+
+   public static Multimap<String, String> filterOutContentHeaders(Multimap<String, String> headers) {
+      // http message usually comes in as a null key header, let's filter it out.
+      return ImmutableMultimap.copyOf(filterKeys(headers, and(notNull(), not(in(ContentMetadata.HTTP_HEADERS)))));
    }
 
    public static boolean contains404(Throwable t) {
