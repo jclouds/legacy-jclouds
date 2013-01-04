@@ -59,7 +59,7 @@ public class DomainAccountAsyncClientTest extends BaseCloudStackAsyncClientTest<
       HttpRequest httpRequest = processor.createRequest(method, "1", "2", true);
 
       assertRequestLineEquals(httpRequest,
-         "GET http://localhost:8080/client/api?response=json&command=disableAccount&account=1&lock=true&domainid=2 HTTP/1.1");
+         "GET http://localhost:8080/client/api?response=json&command=disableAccount&account=1&domainid=2&lock=true HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

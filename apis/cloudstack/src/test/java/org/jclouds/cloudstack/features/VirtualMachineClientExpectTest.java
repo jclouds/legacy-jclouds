@@ -24,6 +24,7 @@ import java.net.URI;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 
+import org.jclouds.cloudstack.CloudStackApiMetadata;
 import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.EncryptedPasswordAndPrivateKey;
@@ -87,8 +88,8 @@ public class VirtualMachineClientExpectTest extends BaseCloudStackExpectTest<Vir
       .addQueryParam("response", "json")
       .addQueryParam("command", "deployVirtualMachine")
       .addQueryParam("zoneid", "zone1")
-      .addQueryParam("templateid", "template1")
       .addQueryParam("serviceofferingid", "serviceOffering1")
+      .addQueryParam("templateid", "template1")
       .addQueryParam("apiKey", "identity")
       .addQueryParam("signature", "pBjjnTq7/ezN94Uj0gpy2T//cJQ%3D")
       .addHeader("Accept", "application/json")
@@ -119,6 +120,6 @@ public class VirtualMachineClientExpectTest extends BaseCloudStackExpectTest<Vir
 
    @Override
    protected VirtualMachineClient clientFrom(CloudStackContext context) {
-      return context.getProviderSpecificContext().getApi().getVirtualMachineClient();
+      return context.unwrap(CloudStackApiMetadata.CONTEXT_TOKEN).getApi().getVirtualMachineClient();
    }
 }

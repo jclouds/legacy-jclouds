@@ -151,12 +151,21 @@ public class SnapshotAsyncClientTest extends BaseCloudStackAsyncClientTest<Snaps
       checkFilters(httpRequest);
    }
 
+   HttpRequest extractIso = HttpRequest.builder().method("GET")
+                                       .endpoint("http://localhost:8080/client/api")
+                                       .addQueryParam("response", "json")
+                                       .addQueryParam("command", "createSnapshotPolicy")
+                                       .addQueryParam("maxsnaps", "10")
+                                       .addQueryParam("timezone", "UTC")
+                                       .addQueryParam("volumeid", "12")
+                                       .addQueryParam("intervaltype", "MONTHLY")
+                                       .addQueryParam("schedule", "07%3A06%3A05").build();
+
    public void testCreateSnapshotPolicy() throws NoSuchMethodException {
       Method method = SnapshotAsyncClient.class.getMethod("createSnapshotPolicy", SnapshotPolicySchedule.class, String.class, String.class, String.class);
       HttpRequest httpRequest = processor.createRequest(method, SnapshotPolicySchedules.monthly(5, 6, 7), 10, "UTC", 12);
 
-      assertRequestLineEquals(httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=createSnapshotPolicy&timezone=UTC&maxsnaps=10&volumeid=12&intervaltype=MONTHLY&schedule=07%3A06%3A05 HTTP/1.1");
+      assertRequestLineEquals(httpRequest,extractIso.getRequestLine());
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

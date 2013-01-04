@@ -348,61 +348,118 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
       checkFilters(request);
    }
 
+   HttpRequest setUserDataForInstance = HttpRequest.builder().method("POST")
+                                                   .endpoint("https://ec2.us-east-1.amazonaws.com/")
+                                                   .addHeader("Host", "ec2.us-east-1.amazonaws.com")
+                                                   .addFormParam("Action", "ModifyInstanceAttribute")
+                                                   .addFormParam("Attribute", "userData")
+                                                   .addFormParam("InstanceId", "1")
+                                                   .addFormParam("Signature", "LfUmzLM5DsACR5nQcEfGF5FPdznOwwhJ7tjhBWfHtGs%3D")
+                                                   .addFormParam("SignatureMethod", "HmacSHA256")
+                                                   .addFormParam("SignatureVersion", "2")
+                                                   .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
+                                                   .addFormParam("Value", "dGVzdA%3D%3D")
+                                                   .addFormParam("Version", "2010-06-15")
+                                                   .addFormParam("AWSAccessKeyId", "identity").build();
+
    public void testSetUserDataForInstanceInRegion() throws SecurityException, NoSuchMethodException, IOException {
       Method method = InstanceAsyncClient.class.getMethod("setUserDataForInstanceInRegion", String.class, String.class,
                Array.newInstance(byte.class, 0).getClass());
       HttpRequest request = processor.createRequest(method, null, "1", "test".getBytes());
 
+      request = request.getFilters().get(0).filter(request);
+
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request,
-               "Action=ModifyInstanceAttribute&Attribute=userData&Value=dGVzdA%3D%3D&InstanceId=1",
-               "application/x-www-form-urlencoded", false);
-      filter.filter(request);// ensure encoding worked properly
-      assertPayloadEquals(
-               request,
-               "Action=ModifyInstanceAttribute&Attribute=userData&InstanceId=1&Signature=LfUmzLM5DsACR5nQcEfGF5FPdznOwwhJ7tjhBWfHtGs%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2009-11-08T15%3A54%3A08.897Z&Value=dGVzdA%3D%3D&Version=2010-06-15&AWSAccessKeyId=identity",
-               "application/x-www-form-urlencoded", false);
+      assertPayloadEquals(request, setUserDataForInstance.getPayload().getRawContent().toString(),
+            "application/x-www-form-urlencoded", false);
+
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(request);
    }
+
+   HttpRequest setRamdiskForInstance = HttpRequest.builder().method("POST")
+                                                  .endpoint("https://ec2.us-east-1.amazonaws.com/")
+                                                  .addHeader("Host", "ec2.us-east-1.amazonaws.com")
+                                                  .addFormParam("Action", "ModifyInstanceAttribute")
+                                                  .addFormParam("Attribute", "ramdisk")
+                                                  .addFormParam("InstanceId", "1")
+                                                  .addFormParam("Signature", "qx6NeVbihiYrKvi5Oe5LzMsGHTjS7%2BqoNhh2abt275g%3D")
+                                                  .addFormParam("SignatureMethod", "HmacSHA256")
+                                                  .addFormParam("SignatureVersion", "2")
+                                                  .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
+                                                  .addFormParam("Value", "test")
+                                                  .addFormParam("Version", "2010-06-15")
+                                                  .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testSetRamdiskForInstanceInRegion() throws SecurityException, NoSuchMethodException, IOException {
       Method method = InstanceAsyncClient.class.getMethod("setRamdiskForInstanceInRegion", String.class, String.class,
                String.class);
       HttpRequest request = processor.createRequest(method, null, "1", "test");
 
+      request = request.getFilters().get(0).filter(request);
+
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request,
-               "Action=ModifyInstanceAttribute&Attribute=ramdisk&Value=test&InstanceId=1",
-               "application/x-www-form-urlencoded", false);
+      assertPayloadEquals(request, setRamdiskForInstance.getPayload().getRawContent().toString(),
+            "application/x-www-form-urlencoded", false);
+
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(request);
    }
+
+   HttpRequest setKernelForInstance = HttpRequest.builder().method("POST")
+                                                 .endpoint("https://ec2.us-east-1.amazonaws.com/")
+                                                 .addHeader("Host", "ec2.us-east-1.amazonaws.com")
+                                                 .addFormParam("Action", "ModifyInstanceAttribute")
+                                                 .addFormParam("Attribute", "kernel")
+                                                 .addFormParam("InstanceId", "1")
+                                                 .addFormParam("Signature", "juSiuoiXJzTxj3q0LUW2528HzDyP4JAcKin%2BI4AuIT0%3D")
+                                                 .addFormParam("SignatureMethod", "HmacSHA256")
+                                                 .addFormParam("SignatureVersion", "2")
+                                                 .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
+                                                 .addFormParam("Value", "test")
+                                                 .addFormParam("Version", "2010-06-15")
+                                                 .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testSetKernelForInstanceInRegion() throws SecurityException, NoSuchMethodException, IOException {
       Method method = InstanceAsyncClient.class.getMethod("setKernelForInstanceInRegion", String.class, String.class,
                String.class);
       HttpRequest request = processor.createRequest(method, null, "1", "test");
 
+      request = request.getFilters().get(0).filter(request);
+
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request,
-               "Action=ModifyInstanceAttribute&Attribute=kernel&Value=test&InstanceId=1",
-               "application/x-www-form-urlencoded", false);
+      assertPayloadEquals(request, setKernelForInstance.getPayload().getRawContent().toString(),
+            "application/x-www-form-urlencoded", false);
+
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(request);
    }
+
+   HttpRequest setApiTerminationDisabled = HttpRequest.builder().method("POST")
+                                                      .endpoint("https://ec2.us-east-1.amazonaws.com/")
+                                                      .addHeader("Host", "ec2.us-east-1.amazonaws.com")
+                                                      .addFormParam("Action", "ModifyInstanceAttribute")
+                                                      .addFormParam("Attribute", "disableApiTermination")
+                                                      .addFormParam("InstanceId", "1")
+                                                      .addFormParam("Signature", "tiBMWWTi22BWeAjsRfuzVom0tQgsOBeYTkatMuWRrbg%3D")
+                                                      .addFormParam("SignatureMethod", "HmacSHA256")
+                                                      .addFormParam("SignatureVersion", "2")
+                                                      .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
+                                                      .addFormParam("Value", "true")
+                                                      .addFormParam("Version", "2010-06-15")
+                                                      .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testSetApiTerminationDisabledForInstanceInRegion() throws SecurityException, NoSuchMethodException,
             IOException {
@@ -410,12 +467,12 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
                String.class, boolean.class);
       HttpRequest request = processor.createRequest(method, null, "1", true);
 
+      request = request.getFilters().get(0).filter(request);
+
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(
-               request,
-               "Action=ModifyInstanceAttribute&Attribute=disableApiTermination&Value=true&InstanceId=1",
-               "application/x-www-form-urlencoded", false);
+      assertPayloadEquals(request, setApiTerminationDisabled.getPayload().getRawContent().toString(),
+            "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -423,17 +480,32 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
 
       checkFilters(request);
    }
+
+   HttpRequest instanceTypeForInstance = HttpRequest.builder().method("POST")
+                                                    .endpoint("https://ec2.us-east-1.amazonaws.com/")
+                                                    .addHeader("Host", "ec2.us-east-1.amazonaws.com")
+                                                    .addFormParam("Action", "ModifyInstanceAttribute")
+                                                    .addFormParam("Attribute", "instanceType")
+                                                    .addFormParam("InstanceId", "1")
+                                                    .addFormParam("Signature", "XK%2BzQmQ0S57gXIgVRMqUkKunURN9TaCJD1YWiYMAOHo%3D")
+                                                    .addFormParam("SignatureMethod", "HmacSHA256")
+                                                    .addFormParam("SignatureVersion", "2")
+                                                    .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
+                                                    .addFormParam("Value", "c1.medium")
+                                                    .addFormParam("Version", "2010-06-15")
+                                                    .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testSetInstanceTypeForInstanceInRegion() throws SecurityException, NoSuchMethodException, IOException {
       Method method = InstanceAsyncClient.class.getMethod("setInstanceTypeForInstanceInRegion", String.class,
                String.class, String.class);
       HttpRequest request = processor.createRequest(method, null, "1", InstanceType.C1_MEDIUM);
 
+      request = request.getFilters().get(0).filter(request);
+
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request,
-               "Action=ModifyInstanceAttribute&Attribute=instanceType&Value=c1.medium&InstanceId=1",
-               "application/x-www-form-urlencoded", false);
+      assertPayloadEquals(request, instanceTypeForInstance.getPayload().getRawContent().toString(),
+            "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -441,6 +513,20 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
 
       checkFilters(request);
    }
+
+   HttpRequest setInstanceInitiatedShutdownBehavior = HttpRequest.builder().method("POST")
+                                                                 .endpoint("https://ec2.us-east-1.amazonaws.com/")
+                                                                 .addHeader("Host", "ec2.us-east-1.amazonaws.com")
+                                                                 .addFormParam("Action", "ModifyInstanceAttribute")
+                                                                 .addFormParam("Attribute", "instanceInitiatedShutdownBehavior")
+                                                                 .addFormParam("InstanceId", "1")
+                                                                 .addFormParam("Signature", "s5xBMLd%2BXNVp44x7C6qVE58qBov//f6yvxoM757KcZU%3D")
+                                                                 .addFormParam("SignatureMethod", "HmacSHA256")
+                                                                 .addFormParam("SignatureVersion", "2")
+                                                                 .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
+                                                                 .addFormParam("Value", "terminate")
+                                                                 .addFormParam("Version", "2010-06-15")
+                                                                 .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testSetInstanceInitiatedShutdownBehaviorForInstanceInRegion() throws SecurityException,
             NoSuchMethodException, IOException {
@@ -448,12 +534,12 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
                String.class, String.class, InstanceInitiatedShutdownBehavior.class);
       HttpRequest request = processor.createRequest(method, null, "1", InstanceInitiatedShutdownBehavior.TERMINATE);
 
+      request = request.getFilters().get(0).filter(request);
+
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(
-               request,
-               "Action=ModifyInstanceAttribute&Attribute=instanceInitiatedShutdownBehavior&Value=terminate&InstanceId=1",
-               "application/x-www-form-urlencoded", false);
+      assertPayloadEquals(request, setInstanceInitiatedShutdownBehavior.getPayload().getRawContent().toString(),
+            "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);

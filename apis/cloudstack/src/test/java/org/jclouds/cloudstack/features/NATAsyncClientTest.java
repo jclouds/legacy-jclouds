@@ -96,15 +96,21 @@ public class NATAsyncClientTest extends BaseCloudStackAsyncClientTest<NATAsyncCl
 
    }
 
+   HttpRequest createIpForwardingRule = HttpRequest.builder().method("GET")
+                                                             .endpoint("http://localhost:8080/client/api")
+                                                             .addQueryParam("response", "json")
+                                                             .addQueryParam("command", "createIpForwardingRule")
+                                                             .addQueryParam("ipaddressid", "7")
+                                                             .addQueryParam("protocol", "tcp")
+                                                             .addQueryParam("startport", "22").build();
+
    public void testCreateIPForwardingRuleForVirtualMachine() throws SecurityException, NoSuchMethodException,
          IOException {
       Method method = NATAsyncClient.class.getMethod("createIPForwardingRule", String.class, String.class, int.class,
             CreateIPForwardingRuleOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method, 7, "tcp", 22);
 
-      assertRequestLineEquals(
-            httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=createIpForwardingRule&ipaddressid=7&startport=22&protocol=tcp HTTP/1.1");
+      assertRequestLineEquals(httpRequest, createIpForwardingRule.getRequestLine());
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -116,6 +122,15 @@ public class NATAsyncClientTest extends BaseCloudStackAsyncClientTest<NATAsyncCl
 
    }
 
+   HttpRequest createIpForwardingRuleOptions = HttpRequest.builder().method("GET")
+                                                          .endpoint("http://localhost:8080/client/api")
+                                                          .addQueryParam("response", "json")
+                                                          .addQueryParam("command", "createIpForwardingRule")
+                                                          .addQueryParam("ipaddressid", "7")
+                                                          .addQueryParam("protocol", "tcp")
+                                                          .addQueryParam("startport", "22")
+                                                          .addQueryParam("endport", "22").build();
+
    public void testCreateIPForwardingRuleForVirtualMachineOptions() throws SecurityException, NoSuchMethodException,
          IOException {
       Method method = NATAsyncClient.class.getMethod("createIPForwardingRule", String.class, String.class, int.class,
@@ -123,9 +138,7 @@ public class NATAsyncClientTest extends BaseCloudStackAsyncClientTest<NATAsyncCl
       HttpRequest httpRequest = processor.createRequest(method, 7, "tcp", 22,
             CreateIPForwardingRuleOptions.Builder.endPort(22));
 
-      assertRequestLineEquals(
-            httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=createIpForwardingRule&ipaddressid=7&startport=22&protocol=tcp&endport=22 HTTP/1.1");
+      assertRequestLineEquals(httpRequest, createIpForwardingRuleOptions.getRequestLine());
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

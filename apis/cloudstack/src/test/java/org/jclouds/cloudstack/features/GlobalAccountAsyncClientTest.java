@@ -41,15 +41,25 @@ import com.google.inject.TypeLiteral;
 @Test(groups = "unit", testName = "GlobalAccountAsyncClientTest")
 public class GlobalAccountAsyncClientTest extends BaseCloudStackAsyncClientTest<GlobalAccountAsyncClient> {
 
+   HttpRequest create = HttpRequest.builder().method("GET")
+                                   .endpoint("http://localhost:8080/client/api")
+                                   .addQueryParam("response", "json")
+                                   .addQueryParam("command", "createAccount")
+                                   .addQueryParam("username", "user")
+                                   .addQueryParam("accounttype", "0")
+                                   .addQueryParam("email", "email@example.com")
+                                   .addQueryParam("firstname", "FirstName")
+                                   .addQueryParam("lastname", "LastName")
+                                   .addQueryParam("password", "hashed-password")
+                                   .build();
+
    public void testCreateAccount() throws Exception {
       Method method = GlobalAccountAsyncClient.class.getMethod("createAccount", String.class, Account.Type.class,
          String.class, String.class, String.class, String.class, CreateAccountOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method, "user", Account.Type.USER, "email@example.com",
          "FirstName", "LastName", "hashed-password");
 
-      assertRequestLineEquals(httpRequest,
-         "GET http://localhost:8080/client/api?response=json&command=createAccount&password=hashed-password&" +
-            "username=user&email=email%40example.com&accounttype=0&firstname=FirstName&lastname=LastName HTTP/1.1");
+      assertRequestLineEquals(httpRequest, create.getRequestLine());
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -60,14 +70,21 @@ public class GlobalAccountAsyncClientTest extends BaseCloudStackAsyncClientTest<
       checkFilters(httpRequest);
    }
 
+   HttpRequest update = HttpRequest.builder().method("GET")
+                                   .endpoint("http://localhost:8080/client/api")
+                                   .addQueryParam("response", "json")
+                                   .addQueryParam("command", "updateAccount")
+                                   .addQueryParam("account", "account")
+                                   .addQueryParam("domainid", "42")
+                                   .addQueryParam("newname", "new-account-name")
+                                   .build();
+
    public void testUpdateAccount() throws Exception {
       Method method = GlobalAccountAsyncClient.class.getMethod("updateAccount", String.class, String.class,
          String.class, UpdateAccountOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method, "account", 42L, "new-account-name");
 
-      assertRequestLineEquals(httpRequest,
-         "GET http://localhost:8080/client/api?response=json&command=updateAccount&account=account&" +
-            "newname=new-account-name&domainid=42 HTTP/1.1");
+      assertRequestLineEquals(httpRequest, update.getRequestLine());
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

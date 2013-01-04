@@ -61,8 +61,8 @@ public abstract class BaseCloudStackExpectTest<S> extends BaseRestClientExpectTe
       .addQueryParam("response", "json")
       .addQueryParam("command", "login")
       .addQueryParam("username", "identity")
-      .addQueryParam("password", md5Hex("credential"))
       .addQueryParam("domain", "")
+      .addQueryParam("password", md5Hex("credential"))
       .addHeader("Accept", "application/json")
       .build();
 

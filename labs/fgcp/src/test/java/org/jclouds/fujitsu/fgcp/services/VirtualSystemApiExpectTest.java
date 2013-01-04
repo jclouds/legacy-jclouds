@@ -84,8 +84,8 @@ public class VirtualSystemApiExpectTest extends BaseFGCPRestApiExpectTest {
 
    public void testUpdate() {
       HttpRequest request = buildGETWithQuery("Action=UpdateVSYSAttribute"
-            + "&vsysId=ABCDEFGH-A123B456CE" + "&attributeValue=new-name"
-            + "&attributeName=updateName");
+            + "&vsysId=ABCDEFGH-A123B456CE"
+            + "&attributeName=updateName" + "&attributeValue=new-name");
       HttpResponse response = HttpResponse
             .builder()
             .statusCode(200)
@@ -205,8 +205,8 @@ public class VirtualSystemApiExpectTest extends BaseFGCPRestApiExpectTest {
    public void testCreateServer() {
       HttpRequest request = buildGETWithQuery("Action=CreateVServer"
             + "&vserverName=vm1"
-            + "&diskImageId=IMG_A1B2C3_1234567890ABCD"
             + "&vserverType=economy"
+            + "&diskImageId=IMG_A1B2C3_1234567890ABCD"
             + "&networkId=ABCDEFGH-A123B456CE-N-DMZ"
             + "&vsysId=ABCDEFGH-A123B456CE");
       HttpResponse response = HttpResponse
@@ -225,9 +225,8 @@ public class VirtualSystemApiExpectTest extends BaseFGCPRestApiExpectTest {
 
    public void testCreateDisk() {
       HttpRequest request = buildGETWithQuery("Action=CreateVDisk"
-            + "&vsysId=ABCDEFGH-A123B456CE"
-            + "&size=10"
-            + "&vdiskName=disk1");
+            + "&vsysId=ABCDEFGH-A123B456CE" + "&vdiskName=disk1"
+            + "&size=10");
       HttpResponse response = HttpResponse
             .builder()
             .statusCode(200)

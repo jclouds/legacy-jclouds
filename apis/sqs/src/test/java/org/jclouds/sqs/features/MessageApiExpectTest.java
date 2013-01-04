@@ -476,23 +476,22 @@ public class MessageApiExpectTest extends BaseSQSApiExpectTest {
                   .toString(), new ChangeMessageVisibilityBatchResponseTest().expected().toString());
    }
 
-   public HttpRequest changeMessageVisibilityMapInt = HttpRequest.builder()
-         .method("POST")
-         .endpoint("https://sqs.us-east-1.amazonaws.com/993194456877/adrian-sqs11/")
-         .addHeader("Host", "sqs.us-east-1.amazonaws.com")
-         .addFormParam("Action", "ChangeMessageVisibilityBatch")
-         .addFormParam("ChangeMessageVisibilityBatchRequestEntry.1.Id", "foo1")
-         .addFormParam("ChangeMessageVisibilityBatchRequestEntry.1.ReceiptHandle", "aaaaaaaaa")
-         .addFormParam("ChangeMessageVisibilityBatchRequestEntry.1.VisibilityTimeout", "10")
-         .addFormParam("ChangeMessageVisibilityBatchRequestEntry.2.Id", "foo2")
-         .addFormParam("ChangeMessageVisibilityBatchRequestEntry.2.ReceiptHandle", "bbbbbbbbb")
-         .addFormParam("ChangeMessageVisibilityBatchRequestEntry.2.VisibilityTimeout", "10")
-         .addFormParam("Signature", "y/gaaxoE5wrG2P7NIAyfDo7DTgRx2PLJUi9/zNnWQ6A%3D")
-         .addFormParam("SignatureMethod", "HmacSHA256")
-         .addFormParam("SignatureVersion", "2")
-         .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
-         .addFormParam("Version", "2011-10-01")
-         .addFormParam("AWSAccessKeyId", "identity").build();
+   public HttpRequest changeMessageVisibilityMapInt = HttpRequest.builder().method("POST")
+                                                                           .endpoint("https://sqs.us-east-1.amazonaws.com/993194456877/adrian-sqs11/")
+                                                                           .addHeader("Host", "sqs.us-east-1.amazonaws.com")
+                                                                           .addFormParam("Action", "ChangeMessageVisibilityBatch")
+                                                                           .addFormParam("ChangeMessageVisibilityBatchRequestEntry.1.Id", "foo1")
+                                                                           .addFormParam("ChangeMessageVisibilityBatchRequestEntry.1.ReceiptHandle", "aaaaaaaaa")
+                                                                           .addFormParam("ChangeMessageVisibilityBatchRequestEntry.1.VisibilityTimeout", "10")
+                                                                           .addFormParam("ChangeMessageVisibilityBatchRequestEntry.2.Id", "foo2")
+                                                                           .addFormParam("ChangeMessageVisibilityBatchRequestEntry.2.ReceiptHandle", "bbbbbbbbb")
+                                                                           .addFormParam("ChangeMessageVisibilityBatchRequestEntry.2.VisibilityTimeout", "10")
+                                                                           .addFormParam("Signature", "y/gaaxoE5wrG2P7NIAyfDo7DTgRx2PLJUi9/zNnWQ6A%3D")
+                                                                           .addFormParam("SignatureMethod", "HmacSHA256")
+                                                                           .addFormParam("SignatureVersion", "2")
+                                                                           .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
+                                                                           .addFormParam("Version", "2011-10-01")
+                                                                           .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testChangeMessageVisibilityMapIntWhenResponseIs2xx() throws Exception {
 
@@ -509,23 +508,22 @@ public class MessageApiExpectTest extends BaseSQSApiExpectTest {
             .toString(), new ChangeMessageVisibilityBatchResponseTest().expected().toString());
    }
 
-   public HttpRequest changeMessageVisibilityIterableInt = HttpRequest.builder()
-         .method("POST")
-         .endpoint("https://sqs.us-east-1.amazonaws.com/993194456877/adrian-sqs11/")
-         .addHeader("Host", "sqs.us-east-1.amazonaws.com")
-         .addFormParam("Action", "ChangeMessageVisibilityBatch")
-         .addFormParam("ChangeMessageVisibilityBatchRequestEntry.1.Id", "1")
-         .addFormParam("ChangeMessageVisibilityBatchRequestEntry.1.ReceiptHandle", "aaaaaaaaa")
-         .addFormParam("ChangeMessageVisibilityBatchRequestEntry.1.VisibilityTimeout", "10")
-         .addFormParam("ChangeMessageVisibilityBatchRequestEntry.2.Id", "2")
-         .addFormParam("ChangeMessageVisibilityBatchRequestEntry.2.ReceiptHandle", "bbbbbbbbb")
-         .addFormParam("ChangeMessageVisibilityBatchRequestEntry.2.VisibilityTimeout", "10")
-         .addFormParam("Signature", "f5aq7zdKFErM3%2BIdtDX5NOzPO7mqCRzPGj2wUUEWjgE%3D")
-         .addFormParam("SignatureMethod", "HmacSHA256")
-         .addFormParam("SignatureVersion", "2")
-         .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
-         .addFormParam("Version", "2011-10-01")
-         .addFormParam("AWSAccessKeyId", "identity").build();
+   public HttpRequest changeMessageVisibilityIterableInt = HttpRequest.builder().method("POST")
+                                                                      .endpoint("https://sqs.us-east-1.amazonaws.com/993194456877/adrian-sqs11/")
+                                                                      .addHeader("Host", "sqs.us-east-1.amazonaws.com")
+                                                                      .addFormParam("Action", "ChangeMessageVisibilityBatch")
+                                                                      .addFormParam("ChangeMessageVisibilityBatchRequestEntry.1.Id", "1")
+                                                                      .addFormParam("ChangeMessageVisibilityBatchRequestEntry.1.ReceiptHandle", "aaaaaaaaa")
+                                                                      .addFormParam("ChangeMessageVisibilityBatchRequestEntry.1.VisibilityTimeout", "10")
+                                                                      .addFormParam("ChangeMessageVisibilityBatchRequestEntry.2.Id", "2")
+                                                                      .addFormParam("ChangeMessageVisibilityBatchRequestEntry.2.ReceiptHandle", "bbbbbbbbb")
+                                                                      .addFormParam("ChangeMessageVisibilityBatchRequestEntry.2.VisibilityTimeout", "10")
+                                                                      .addFormParam("Signature", "f5aq7zdKFErM3%2BIdtDX5NOzPO7mqCRzPGj2wUUEWjgE%3D")
+                                                                      .addFormParam("SignatureMethod", "HmacSHA256")
+                                                                      .addFormParam("SignatureVersion", "2")
+                                                                      .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
+                                                                      .addFormParam("Version", "2011-10-01")
+                                                                      .addFormParam("AWSAccessKeyId", "identity").build();
    
    public void testChangeMessageVisibilityIterableIntWhenResponseIs2xx() throws Exception {
 

@@ -243,14 +243,19 @@ public class FirewallClientExpectTest extends BaseCloudStackExpectTest<FirewallC
 
    public void testCreatePortForwardingRuleForVirtualMachine() {
       FirewallClient client = requestSendsResponse(
-         HttpRequest.builder()
-            .method("GET")
-            .endpoint(
-               URI.create("http://localhost:8080/client/api?response=json&command=createPortForwardingRule&" +
-                  "ipaddressid=2&publicport=22&protocol=tcp&virtualmachineid=1234&privateport=22&" +
-                  "apiKey=identity&signature=84dtGzQp0G6k3z3Gkc3F/HBNS2Y%3D"))
-            .addHeader("Accept", "application/json")
-            .build(),
+         HttpRequest.builder().method("GET")
+                    .endpoint("http://localhost:8080/client/api")
+                    .addQueryParam("response", "json")
+                    .addQueryParam("command", "createPortForwardingRule")
+                    .addQueryParam("ipaddressid", "2")
+                    .addQueryParam("protocol", "tcp")
+                    .addQueryParam("publicport", "22")
+                    .addQueryParam("virtualmachineid", "1234")
+                    .addQueryParam("privateport", "22")
+                    .addQueryParam("apiKey", "identity")
+                    .addQueryParam("signature", "84dtGzQp0G6k3z3Gkc3F/HBNS2Y%3D")
+                    .addHeader("Accept", "application/json")
+                    .build(),
          HttpResponse.builder()
             .statusCode(200)
             .payload(payloadFromResource("/createportforwardingrulesresponse.json"))

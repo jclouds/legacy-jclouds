@@ -122,15 +122,23 @@ public class SecurityGroupAsyncClientTest extends BaseCloudStackAsyncClientTest<
 
    }
 
+   HttpRequest authorizeSecurityGroupIngress3 = HttpRequest.builder().method("GET")
+                                                           .endpoint("http://localhost:8080/client/api")
+                                                           .addQueryParam("response", "json")
+                                                           .addQueryParam("command", "authorizeSecurityGroupIngress")
+                                                           .addQueryParam("securitygroupid", "2")
+                                                           .addQueryParam("protocol", "tcp")
+                                                           .addQueryParam("startport", "22")
+                                                           .addQueryParam("endport", "22")
+                                                           .addQueryParam("cidrlist", "1.1.1.1/24,1.2.2.2/16").build();
+
    public void testAuthorizeIngressPortsToCIDRs() throws SecurityException, NoSuchMethodException, IOException {
       Method method = SecurityGroupAsyncClient.class.getMethod("authorizeIngressPortsToCIDRs", String.class,
             String.class, int.class, int.class, Iterable.class, AccountInDomainOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method, 2, "tcp", 22, 22,
             ImmutableSet.of("1.1.1.1/24", "1.2.2.2/16"));
 
-      assertRequestLineEquals(
-            httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=authorizeSecurityGroupIngress&securitygroupid=2&startport=22&protocol=tcp&endport=22&cidrlist=1.1.1.1/24,1.2.2.2/16 HTTP/1.1");
+      assertRequestLineEquals(httpRequest, authorizeSecurityGroupIngress3.getRequestLine());
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -141,6 +149,21 @@ public class SecurityGroupAsyncClientTest extends BaseCloudStackAsyncClientTest<
       checkFilters(httpRequest);
 
    }
+
+   HttpRequest authorizeSecurityGroupIngress4 = HttpRequest.builder().method("GET")
+                                                           .endpoint("http://localhost:8080/client/api")
+                                                           .addQueryParam("response", "json")
+                                                           .addQueryParam("command", "authorizeSecurityGroupIngress")
+                                                           .addQueryParam("securitygroupid", "2")
+                                                           .addQueryParam("protocol", "tcp")
+                                                           .addQueryParam("startport", "22")
+                                                           .addQueryParam("endport", "22")
+                                                           .addQueryParam("usersecuritygrouplist%5B0%5D.account", "adrian")
+                                                           .addQueryParam("usersecuritygrouplist%5B0%5D.group", "group1")
+                                                           .addQueryParam("usersecuritygrouplist%5B1%5D.account", "adrian")
+                                                           .addQueryParam("usersecuritygrouplist%5B1%5D.group", "group2")
+                                                           .addQueryParam("usersecuritygrouplist%5B2%5D.account", "bob")
+                                                           .addQueryParam("usersecuritygrouplist%5B2%5D.group", "group1").build();
 
    public void testAuthorizeIngressPortsToSecurityGroups() throws SecurityException, NoSuchMethodException, IOException {
       Method method = SecurityGroupAsyncClient.class.getMethod("authorizeIngressPortsToSecurityGroups", String.class,
@@ -148,9 +171,7 @@ public class SecurityGroupAsyncClientTest extends BaseCloudStackAsyncClientTest<
       HttpRequest httpRequest = processor.createRequest(method, 2, "tcp", 22, 22,
             ImmutableMultimap.of("adrian", "group1", "adrian", "group2", "bob", "group1"));
 
-      assertRequestLineEquals(
-            httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=authorizeSecurityGroupIngress&securitygroupid=2&startport=22&protocol=tcp&endport=22&usersecuritygrouplist%5B0%5D.account=adrian&usersecuritygrouplist%5B0%5D.group=group1&usersecuritygrouplist%5B1%5D.account=adrian&usersecuritygrouplist%5B1%5D.group=group2&usersecuritygrouplist%5B2%5D.account=bob&usersecuritygrouplist%5B2%5D.group=group1 HTTP/1.1");
+      assertRequestLineEquals(httpRequest, authorizeSecurityGroupIngress4.getRequestLine());
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -161,15 +182,23 @@ public class SecurityGroupAsyncClientTest extends BaseCloudStackAsyncClientTest<
       checkFilters(httpRequest);
 
    }
+
+   HttpRequest authorizeSecurityGroupIngress1 = HttpRequest.builder().method("GET")
+                                                           .endpoint("http://localhost:8080/client/api")
+                                                           .addQueryParam("response", "json")
+                                                           .addQueryParam("command", "authorizeSecurityGroupIngress")
+                                                           .addQueryParam("protocol", "ICMP")
+                                                           .addQueryParam("securitygroupid", "2")
+                                                           .addQueryParam("icmpcode", "22")
+                                                           .addQueryParam("icmptype", "22")
+                                                           .addQueryParam("cidrlist", "1.1.1.1/24,1.2.2.2/16").build();
 
    public void testAuthorizeIngressICMPToCIDRs() throws SecurityException, NoSuchMethodException, IOException {
       Method method = SecurityGroupAsyncClient.class.getMethod("authorizeIngressICMPToCIDRs", String.class , int.class,
             int.class, Iterable.class, AccountInDomainOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method, 2, 22, 22, ImmutableSet.of("1.1.1.1/24", "1.2.2.2/16"));
 
-      assertRequestLineEquals(
-            httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=authorizeSecurityGroupIngress&protocol=ICMP&securitygroupid=2&icmptype=22&icmpcode=22&cidrlist=1.1.1.1/24,1.2.2.2/16 HTTP/1.1");
+      assertRequestLineEquals(httpRequest, authorizeSecurityGroupIngress1.getRequestLine());
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -180,6 +209,21 @@ public class SecurityGroupAsyncClientTest extends BaseCloudStackAsyncClientTest<
       checkFilters(httpRequest);
 
    }
+
+   HttpRequest authorizeSecurityGroupIngress2 = HttpRequest.builder().method("GET")
+                                                           .endpoint("http://localhost:8080/client/api")
+                                                           .addQueryParam("response", "json")
+                                                           .addQueryParam("command", "authorizeSecurityGroupIngress")
+                                                           .addQueryParam("protocol", "ICMP")
+                                                           .addQueryParam("securitygroupid", "2")
+                                                           .addQueryParam("icmpcode", "22")
+                                                           .addQueryParam("icmptype", "22")
+                                                           .addQueryParam("usersecuritygrouplist%5B0%5D.account", "adrian")
+                                                           .addQueryParam("usersecuritygrouplist%5B0%5D.group", "group1")
+                                                           .addQueryParam("usersecuritygrouplist%5B1%5D.account", "adrian")
+                                                           .addQueryParam("usersecuritygrouplist%5B1%5D.group", "group2")
+                                                           .addQueryParam("usersecuritygrouplist%5B2%5D.account", "bob")
+                                                           .addQueryParam("usersecuritygrouplist%5B2%5D.group", "group1").build();
 
    public void testAuthorizeIngressICMPToSecurityGroups() throws SecurityException, NoSuchMethodException, IOException {
       Method method = SecurityGroupAsyncClient.class.getMethod("authorizeIngressICMPToSecurityGroups", String.class,
@@ -187,9 +231,7 @@ public class SecurityGroupAsyncClientTest extends BaseCloudStackAsyncClientTest<
       HttpRequest httpRequest = processor.createRequest(method, 2, 22, 22,
             ImmutableMultimap.of("adrian", "group1", "adrian", "group2", "bob", "group1"));
 
-      assertRequestLineEquals(
-            httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=authorizeSecurityGroupIngress&protocol=ICMP&securitygroupid=2&icmptype=22&icmpcode=22&usersecuritygrouplist%5B0%5D.account=adrian&usersecuritygrouplist%5B0%5D.group=group1&usersecuritygrouplist%5B1%5D.account=adrian&usersecuritygrouplist%5B1%5D.group=group2&usersecuritygrouplist%5B2%5D.account=bob&usersecuritygrouplist%5B2%5D.group=group1 HTTP/1.1");
+      assertRequestLineEquals(httpRequest, authorizeSecurityGroupIngress2.getRequestLine());
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

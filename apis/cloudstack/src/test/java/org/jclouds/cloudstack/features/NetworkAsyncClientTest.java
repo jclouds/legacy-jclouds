@@ -99,14 +99,21 @@ public class NetworkAsyncClientTest extends BaseCloudStackAsyncClientTest<Networ
 
    }
 
+   HttpRequest createNetwork = HttpRequest.builder().method("GET")
+                                          .endpoint("http://localhost:8080/client/api")
+                                          .addQueryParam("response", "json")
+                                          .addQueryParam("command", "createNetwork")
+                                          .addQueryParam("zoneid", "1")
+                                          .addQueryParam("networkofferingid", "2")
+                                          .addQueryParam("name", "named")
+                                          .addQueryParam("displaytext", "lovely").build();
+
    public void testCreateNetworkInZone() throws SecurityException, NoSuchMethodException, IOException {
       Method method = NetworkAsyncClient.class.getMethod("createNetworkInZone", String.class, String.class, String.class,
             String.class, CreateNetworkOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method, 1, 2, "named", "lovely");
 
-      assertRequestLineEquals(
-            httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=createNetwork&zoneid=1&name=named&networkofferingid=2&displaytext=lovely HTTP/1.1");
+      assertRequestLineEquals(httpRequest, createNetwork.getRequestLine());
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -118,6 +125,17 @@ public class NetworkAsyncClientTest extends BaseCloudStackAsyncClientTest<Networ
 
    }
 
+   HttpRequest createNetworkOptions = HttpRequest.builder().method("GET")
+                                                 .endpoint("http://localhost:8080/client/api")
+                                                 .addQueryParam("response", "json")
+                                                 .addQueryParam("command", "createNetwork")
+                                                 .addQueryParam("zoneid", "1")
+                                                 .addQueryParam("networkofferingid", "2")
+                                                 .addQueryParam("name", "named")
+                                                 .addQueryParam("displaytext", "lovely")
+                                                 .addQueryParam("netmask", "255.255.255.0")
+                                                 .addQueryParam("domainid", "6").build();
+
    public void testCreateNetworkInZoneOptions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = NetworkAsyncClient.class.getMethod("createNetworkInZone", String.class, String.class, String.class,
             String.class, CreateNetworkOptions[].class);
@@ -125,9 +143,7 @@ public class NetworkAsyncClientTest extends BaseCloudStackAsyncClientTest<Networ
       HttpRequest httpRequest = processor.createRequest(method, 1, 2, "named", "lovely", CreateNetworkOptions.Builder
             .netmask("255.255.255.0").domainId("6"));
 
-      assertRequestLineEquals(
-            httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=createNetwork&zoneid=1&name=named&networkofferingid=2&displaytext=lovely&netmask=255.255.255.0&domainid=6 HTTP/1.1");
+      assertRequestLineEquals(httpRequest, createNetworkOptions.getRequestLine());
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

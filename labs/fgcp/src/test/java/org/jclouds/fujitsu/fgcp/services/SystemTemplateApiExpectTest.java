@@ -51,8 +51,8 @@ public class SystemTemplateApiExpectTest extends BaseFGCPRestApiExpectTest {
 
    public void testUpdate() {
       HttpRequest request = buildGETWithQuery("Action=UpdateVSYSDescriptorAttribute"
-            + "&vsysDescriptorId=3-tier%20Skeleton" + "&attributeName=updateName"
-            + "&updateLcId=en"
+            + "&vsysDescriptorId=3-tier%20Skeleton"
+            + "&updateLcId=en" + "&attributeName=updateName"
             + "&attributeValue=new-name");
       HttpResponse response = HttpResponse
             .builder()

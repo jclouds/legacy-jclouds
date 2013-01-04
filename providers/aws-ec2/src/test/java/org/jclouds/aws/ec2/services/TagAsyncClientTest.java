@@ -50,7 +50,7 @@ public class TagAsyncClientTest extends BaseAWSEC2AsyncClientTest<TagAsyncClient
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Action=DeleteTags&Tag.1.Key=yyy&Tag.1.Value=zzz&ResourceId.1=xxx",
+      assertPayloadEquals(request, "Action=DeleteTags&ResourceId.1=xxx&Tag.1.Key=yyy&Tag.1.Value=zzz",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -66,7 +66,7 @@ public class TagAsyncClientTest extends BaseAWSEC2AsyncClientTest<TagAsyncClient
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Action=CreateTags&Tag.1.Key=yyy&Tag.1.Value=zzz&ResourceId.1=xxx",
+      assertPayloadEquals(request, "Action=CreateTags&ResourceId.1=xxx&Tag.1.Key=yyy&Tag.1.Value=zzz",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
