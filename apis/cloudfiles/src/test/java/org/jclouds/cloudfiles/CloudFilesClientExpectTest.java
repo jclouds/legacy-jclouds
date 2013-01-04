@@ -115,8 +115,8 @@ public class CloudFilesClientExpectTest extends BaseCloudFilesRestClientExpectTe
 	   HttpRequest cdnContainerRequest = HttpRequest.builder()
             .method("POST")
             .endpoint("https://cdn3.clouddrive.com/v1/MossoCloudFS_83a9d536-2e25-4166-bd3b-a503a934f953/container")
-            .addHeader(CloudFilesHeaders.CDN_LOG_RETENTION, "true")
             .addHeader(CloudFilesHeaders.CDN_TTL, "259200")
+            .addHeader(CloudFilesHeaders.CDN_LOG_RETENTION, "true")
             .addHeader("X-Auth-Token", authToken)
             .build();
 
@@ -142,8 +142,8 @@ public class CloudFilesClientExpectTest extends BaseCloudFilesRestClientExpectTe
       HttpRequest cdnContainerRequest = HttpRequest.builder()
             .method("POST")
             .endpoint("https://cdn3.clouddrive.com/v1/MossoCloudFS_83a9d536-2e25-4166-bd3b-a503a934f953/container")
-            .addHeader(CloudFilesHeaders.CDN_LOG_RETENTION, "true")
             .addHeader(CloudFilesHeaders.CDN_TTL, "259200")
+            .addHeader(CloudFilesHeaders.CDN_LOG_RETENTION, "true")
             .addHeader("X-Auth-Token", authToken)
             .build();
 

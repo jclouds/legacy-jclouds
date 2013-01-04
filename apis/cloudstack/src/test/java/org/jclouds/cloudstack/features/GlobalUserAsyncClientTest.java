@@ -35,15 +35,24 @@ import org.testng.annotations.Test;
 @Test(groups = "unit", testName = "GlobalUserAsyncClientTest")
 public class GlobalUserAsyncClientTest extends BaseCloudStackAsyncClientTest<GlobalUserAsyncClient> {
 
+   HttpRequest createUser = HttpRequest.builder().method("GET")
+                                       .endpoint("http://localhost:8080/client/api")
+                                       .addQueryParam("response", "json")
+                                       .addQueryParam("command", "createUser")
+                                       .addQueryParam("username", "user")
+                                       .addQueryParam("account", "account")
+                                       .addQueryParam("email", "email%40example.com")
+                                       .addQueryParam("password", "hashed-password")
+                                       .addQueryParam("firstname", "FirstName")
+                                       .addQueryParam("lastname", "LastName").build();
+
    public void testCreateAccount() throws Exception {
       Method method = GlobalUserAsyncClient.class.getMethod("createUser", String.class, String.class,
          String.class, String.class, String.class, String.class, CreateUserOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method, "user", "account", "email@example.com",
          "hashed-password", "FirstName", "LastName");
 
-      assertRequestLineEquals(httpRequest,
-         "GET http://localhost:8080/client/api?response=json&command=createUser&lastname=LastName&" +
-            "username=user&email=email%40example.com&account=account&password=hashed-password&firstname=FirstName HTTP/1.1");
+      assertRequestLineEquals(httpRequest, createUser.getRequestLine());
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

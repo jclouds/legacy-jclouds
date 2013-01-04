@@ -526,8 +526,8 @@ public class ServerApiExpectTest extends BaseGleSYSApiExpectTest {
                        .addHeader("Accept", "application/json")
                        .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
                        .addFormParam("serverid", "server777")
-                       .addFormParam("resolution", "minute")
-                       .addFormParam("resource", "diskioread").build(),
+                       .addFormParam("resource", "diskioread")
+                       .addFormParam("resolution", "minute").build(),
             HttpResponse.builder().statusCode(200)
                   .payload(payloadFromResourceWithContentType("/server_resource_usage.json", MediaType.APPLICATION_JSON))
                   .build())
@@ -555,8 +555,8 @@ public class ServerApiExpectTest extends BaseGleSYSApiExpectTest {
                        .addHeader("Accept", "application/json")
                        .addHeader("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
                        .addFormParam("serverid", "server777")
-                       .addFormParam("resolution", "minute")
-                       .addFormParam("resource", "diskioread").build(),
+                       .addFormParam("resource", "diskioread")
+                       .addFormParam("resolution", "minute").build(),
             HttpResponse.builder().statusCode(401).build())
             .getServerApi();
 

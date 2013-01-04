@@ -168,8 +168,8 @@ public class VirtualServerApiExpectTest extends BaseFGCPRestApiExpectTest {
    public void testUpdate() {
       HttpRequest request = buildGETWithQuery("Action=UpdateVServerAttribute"
             + "&vserverId=CONTRACT-VSYS00001-S-0005"
-            + "&attributeValue=new%20name"
             + "&attributeName=vserverName"
+            + "&attributeValue=new%20name"
             + "&vsysId=CONTRACT-VSYS00001");
       HttpResponse response = HttpResponse
             .builder()

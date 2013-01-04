@@ -40,13 +40,22 @@ import org.testng.annotations.Test;
 @Test(groups = "unit", testName = "GlobalOfferingAsyncClientTest")
 public class GlobalOfferingAsyncClientTest extends BaseCloudStackAsyncClientTest<GlobalOfferingAsyncClient> {
 
+   HttpRequest createServiceOffering = HttpRequest.builder().method("GET")
+                                                  .endpoint("http://localhost:8080/client/api")
+                                                  .addQueryParam("response", "json")
+                                                  .addQueryParam("command", "createServiceOffering")
+                                                  .addQueryParam("name", "name")
+                                                  .addQueryParam("displaytext", "displayText")
+                                                  .addQueryParam("cpunumber", "1")
+                                                  .addQueryParam("cpuspeed", "2")
+                                                  .addQueryParam("memory", "3").build();
+
    public void testCreateServiceOffering() throws Exception {
       Method method = GlobalOfferingAsyncClient.class.getMethod("createServiceOffering",
          String.class, String.class, int.class, int.class, int.class, CreateServiceOfferingOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method, "name", "displayText", 1, 2, 3);
 
-      assertRequestLineEquals(httpRequest,
-         "GET http://localhost:8080/client/api?response=json&command=createServiceOffering&name=name&cpunumber=1&displaytext=displayText&cpuspeed=2&memory=3 HTTP/1.1");
+      assertRequestLineEquals(httpRequest, createServiceOffering.getRequestLine());
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

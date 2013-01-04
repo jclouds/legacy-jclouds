@@ -101,14 +101,20 @@ public class VirtualMachineAsyncClientTest extends BaseCloudStackAsyncClientTest
 
    }
 
+   HttpRequest deployVirtualMachine = HttpRequest.builder().method("GET")
+                                                 .endpoint("http://localhost:8080/client/api")
+                                                 .addQueryParam("response", "json")
+                                                 .addQueryParam("command", "deployVirtualMachine")
+                                                 .addQueryParam("zoneid", "6")
+                                                 .addQueryParam("serviceofferingid", "4")
+                                                 .addQueryParam("templateid", "5").build();
+
    public void testDeployVirtualMachineInZone() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VirtualMachineAsyncClient.class.getMethod("deployVirtualMachineInZone", String.class, String.class,
             String.class, DeployVirtualMachineOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method, 6, 4, 5);
 
-      assertRequestLineEquals(
-            httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=deployVirtualMachine&zoneid=6&templateid=5&serviceofferingid=4 HTTP/1.1");
+      assertRequestLineEquals(httpRequest, deployVirtualMachine.getRequestLine());
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

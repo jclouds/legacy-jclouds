@@ -35,7 +35,7 @@ import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.filterValues;
-import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Maps.newLinkedHashMap;
 import static com.google.common.collect.Multimaps.filterKeys;
 import static com.google.common.collect.Multimaps.transformValues;
 import static com.google.common.collect.Sets.newTreeSet;
@@ -155,6 +155,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
+import com.google.common.collect.ImmutableSortedMap;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Maps;
@@ -692,7 +693,7 @@ public abstract class RestAnnotationProcessor {
    public static URI getEndpointInParametersOrNull(Method method, final Object[] args, Injector injector) {
       Map<Integer, Set<Annotation>> map = indexWithAtLeastOneAnnotation(method,
             methodToIndexOfParamToEndpointParamAnnotations);
-      if (map.size() >= 1 && args.length > 0) {
+      if (map.size() >= 1 && args != null && args.length > 0) {
          EndpointParam firstAnnotation = (EndpointParam) get(get(map.values(), 0), 0);
          Function<Object, URI> parser = injector.getInstance(firstAnnotation.parser());
 
@@ -927,10 +928,10 @@ public abstract class RestAnnotationProcessor {
 
    public GeneratedHttpRequest decorateRequest(GeneratedHttpRequest request) throws NegativeArraySizeException {
       Iterable<Entry<Integer, Set<Annotation>>> binderOrWrapWith = concat(
-            filterValues(methodToIndexOfParamToBinderParamAnnotation.getUnchecked(request.getJavaMethod()).asMap(),
-                  notEmpty).entrySet(),
-            filterValues(methodToIndexOfParamToWrapWithAnnotation.getUnchecked(request.getJavaMethod()).asMap(),
-                  notEmpty).entrySet());
+            ImmutableSortedMap.copyOf(filterValues(methodToIndexOfParamToBinderParamAnnotation.getUnchecked(request.getJavaMethod()).asMap(),
+                  notEmpty)).entrySet(),
+            ImmutableSortedMap.copyOf(filterValues(methodToIndexOfParamToWrapWithAnnotation.getUnchecked(request.getJavaMethod()).asMap(),
+                  notEmpty)).entrySet());
       OUTER: for (Entry<Integer, Set<Annotation>> entry : binderOrWrapWith) {
          boolean shouldBreak = false;
          Annotation annotation = get(entry.getValue(), 0);
@@ -1009,7 +1010,7 @@ public abstract class RestAnnotationProcessor {
                   return input.size() == 1;
                }
             });
-      return indexToPayloadAnnotation;
+      return ImmutableSortedMap.copyOf(indexToPayloadAnnotation);
    }
 
   //TODO: change to LoadingCache<ClassMethodArgs, HttpRequestOptions and move this logic to the CacheLoader.
@@ -1040,7 +1041,7 @@ public abstract class RestAnnotationProcessor {
       addHeaderIfAnnotationPresentOnMethod(headers, method, tokenValues);
       LoadingCache<Integer, Set<Annotation>> indexToHeaderParam = methodToIndexOfParamToHeaderParamAnnotations
             .getUnchecked(method);
-      for (Entry<Integer, Set<Annotation>> entry : indexToHeaderParam.asMap().entrySet()) {
+      for (Entry<Integer, Set<Annotation>> entry : ImmutableSortedMap.copyOf(indexToHeaderParam.asMap()).entrySet()) {
          for (Annotation key : entry.getValue()) {
             String value = args[entry.getKey()].toString();
             value = replaceTokens(value, tokenValues);
@@ -1106,7 +1107,7 @@ public abstract class RestAnnotationProcessor {
       ImmutableList.Builder<Part> parts = ImmutableList.<Part> builder();
       LoadingCache<Integer, Set<Annotation>> indexToPartParam = methodToIndexOfParamToPartParamAnnotations
             .getUnchecked(method);
-      for (Entry<Integer, Set<Annotation>> entry : indexToPartParam.asMap().entrySet()) {
+      for (Entry<Integer, Set<Annotation>> entry : ImmutableSortedMap.copyOf(indexToPartParam.asMap()).entrySet()) {
          for (Annotation key : entry.getValue()) {
             PartParam param = (PartParam) key;
             PartOptions options = new PartOptions();
@@ -1149,7 +1150,7 @@ public abstract class RestAnnotationProcessor {
       LoadingCache<Integer, Set<Annotation>> indexToPathParam = methodToIndexOfParamToPathParamAnnotations.getUnchecked(method);
 
       LoadingCache<Integer, Set<Annotation>> indexToParamExtractor = methodToIndexOfParamToParamParserAnnotations.getUnchecked(method);
-      for (Entry<Integer, Set<Annotation>> entry : indexToPathParam.asMap().entrySet()) {
+      for (Entry<Integer, Set<Annotation>> entry : ImmutableSortedMap.copyOf(indexToPathParam.asMap()).entrySet()) {
          for (Annotation key : entry.getValue()) {
             Set<Annotation> extractors = indexToParamExtractor.getUnchecked(entry.getKey());
             String paramKey = ((PathParam) key).value();
@@ -1209,7 +1210,7 @@ public abstract class RestAnnotationProcessor {
 
       LoadingCache<Integer, Set<Annotation>> indexToParamExtractor = methodToIndexOfParamToParamParserAnnotations
             .getUnchecked(method);
-      for (Entry<Integer, Set<Annotation>> entry : indexToFormParam.asMap().entrySet()) {
+      for (Entry<Integer, Set<Annotation>> entry : ImmutableSortedMap.copyOf(indexToFormParam.asMap()).entrySet()) {
          for (Annotation key : entry.getValue()) {
             Set<Annotation> extractors = indexToParamExtractor.getUnchecked(entry.getKey());
             String paramKey = ((FormParam) key).value();
@@ -1235,7 +1236,7 @@ public abstract class RestAnnotationProcessor {
 
       LoadingCache<Integer, Set<Annotation>> indexToParamExtractor = methodToIndexOfParamToParamParserAnnotations
             .getUnchecked(method);
-      for (Entry<Integer, Set<Annotation>> entry : indexToQueryParam.asMap().entrySet()) {
+      for (Entry<Integer, Set<Annotation>> entry : ImmutableSortedMap.copyOf(indexToQueryParam.asMap()).entrySet()) {
          for (Annotation key : entry.getValue()) {
             Set<Annotation> extractors = indexToParamExtractor.getUnchecked(entry.getKey());
             String paramKey = ((QueryParam) key).value();
@@ -1262,10 +1263,10 @@ public abstract class RestAnnotationProcessor {
    //TODO: change to LoadingCache<ClassMethodArgs, Map<String,Object> and move this logic to the CacheLoader.
    //take care to manage size of this cache
    private Map<String, Object> buildPostParams(Method method, Object... args) {
-      Map<String, Object> postParams = newHashMap();
+      Map<String, Object> postParams = newLinkedHashMap();
       LoadingCache<Integer, Set<Annotation>> indexToPathParam = methodToIndexOfParamToPostParamAnnotations.getUnchecked(method);
       LoadingCache<Integer, Set<Annotation>> indexToParamExtractor = methodToIndexOfParamToParamParserAnnotations.getUnchecked(method);
-      for (Entry<Integer, Set<Annotation>> entry : indexToPathParam.asMap().entrySet()) {
+      for (Entry<Integer, Set<Annotation>> entry : ImmutableSortedMap.copyOf(indexToPathParam.asMap()).entrySet()) {
          for (Annotation key : entry.getValue()) {
             Set<Annotation> extractors = indexToParamExtractor.getUnchecked(entry.getKey());
             String paramKey = ((PayloadParam) key).value();

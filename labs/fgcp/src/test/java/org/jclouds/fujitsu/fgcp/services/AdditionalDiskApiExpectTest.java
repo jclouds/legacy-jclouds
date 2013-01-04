@@ -68,7 +68,7 @@ public class AdditionalDiskApiExpectTest extends BaseFGCPRestApiExpectTest {
    public void testUpdate() {
       HttpRequest request = buildGETWithQuery("Action=UpdateVDiskAttribute"
             + "&vdiskId=CONTRACT-VSYS00001-D-0001"
-            + "&attributeValue=new-name" + "&attributeName=updateName"
+            + "&attributeName=updateName" + "&attributeValue=new-name"
             + "&vsysId=CONTRACT-VSYS00001");
       HttpResponse response = HttpResponse
             .builder()

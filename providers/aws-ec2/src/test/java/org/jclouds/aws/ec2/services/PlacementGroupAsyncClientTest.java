@@ -55,15 +55,30 @@ public class PlacementGroupAsyncClientTest extends BaseAWSEC2AsyncClientTest<Pla
       checkFilters(request);
    }
 
+   HttpRequest createPlacementGroup = HttpRequest.builder().method("POST")
+                                                 .endpoint("https://ec2.us-east-1.amazonaws.com/")
+                                                 .addHeader("Host", "ec2.us-east-1.amazonaws.com")
+                                                 .addFormParam("Action", "CreatePlacementGroup")
+                                                 .addFormParam("GroupName", "name")
+                                                 .addFormParam("Signature", "V3o3tjvFQfI1zdP4iZJLnlusP3dSpPFx7bJVJlJbs2w=")
+                                                 .addFormParam("SignatureMethod", "HmacSHA256")
+                                                 .addFormParam("SignatureVersion", "2")
+                                                 .addFormParam("Strategy", "cluster")
+                                                 .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
+                                                 .addFormParam("Version", "2011-05-15")
+                                                 .addFormParam("AWSAccessKeyId", "identity").build();
+
    public void testCreatePlacementGroup() throws SecurityException, NoSuchMethodException, IOException {
       Method method = PlacementGroupAsyncClient.class.getMethod("createPlacementGroupInRegion", String.class,
                String.class, String.class);
       HttpRequest request = processor.createRequest(method, null, "name", "cluster");
 
+      request = request.getFilters().get(0).filter(request);
+      
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Action=CreatePlacementGroup&Strategy=cluster&GroupName=name",
-               "application/x-www-form-urlencoded", false);
+      assertPayloadEquals(request, createPlacementGroup.getPayload().getRawContent().toString(),
+            "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);

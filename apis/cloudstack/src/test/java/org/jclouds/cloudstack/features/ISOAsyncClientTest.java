@@ -142,13 +142,20 @@ public class ISOAsyncClientTest extends BaseCloudStackAsyncClientTest<ISOAsyncCl
       checkFilters(httpRequest);
    }
 
+   HttpRequest copyIso = HttpRequest.builder().method("GET")
+                                    .endpoint("http://localhost:8080/client/api")
+                                    .addQueryParam("response", "json")
+                                    .addQueryParam("command", "copyIso")
+                                    .addQueryParam("id", "3")
+                                    .addQueryParam("sourcezoneid", "5")
+                                    .addQueryParam("destzoneid", "7")
+                                    .build();
+
    public void testCopyISO() throws NoSuchMethodException {
       Method method = ISOAsyncClient.class.getMethod("copyISO", String.class, String.class, String.class);
       HttpRequest httpRequest = processor.createRequest(method, 3, 5, 7);
 
-      assertRequestLineEquals(httpRequest,
-         "GET http://localhost:8080/client/api?response=json&command=copyIso&id=3&destzoneid=7&sourcezoneid=5 HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertRequestLineEquals(httpRequest, copyIso.getRequestLine());
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, UnwrapOnlyJsonValue.class);
@@ -222,12 +229,20 @@ public class ISOAsyncClientTest extends BaseCloudStackAsyncClientTest<ISOAsyncCl
       checkFilters(httpRequest);
    }
 
+   HttpRequest extractIso = HttpRequest.builder().method("GET")
+                                       .endpoint("http://localhost:8080/client/api")
+                                       .addQueryParam("response", "json")
+                                       .addQueryParam("command", "extractIso")
+                                       .addQueryParam("id", "3")
+                                       .addQueryParam("mode", "HTTP_DOWNLOAD")
+                                       .addQueryParam("zoneid", "5")
+                                       .build();
+
    public void testExtractISO() throws NoSuchMethodException {
       Method method = ISOAsyncClient.class.getMethod("extractISO", String.class, ExtractMode.class, String.class, ExtractISOOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method, 3, ExtractMode.HTTP_DOWNLOAD, 5);
 
-      assertRequestLineEquals(httpRequest,
-         "GET http://localhost:8080/client/api?response=json&command=extractIso&id=3&zoneid=5&mode=HTTP_DOWNLOAD HTTP/1.1");
+      assertRequestLineEquals(httpRequest, extractIso.getRequestLine());
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -238,12 +253,21 @@ public class ISOAsyncClientTest extends BaseCloudStackAsyncClientTest<ISOAsyncCl
       checkFilters(httpRequest);
    }
 
+   HttpRequest extractIsoOptions = HttpRequest.builder().method("GET")
+                                              .endpoint("http://localhost:8080/client/api")
+                                              .addQueryParam("response", "json")
+                                              .addQueryParam("command", "extractIso")
+                                              .addQueryParam("id", "3")
+                                              .addQueryParam("mode", "HTTP_DOWNLOAD")
+                                              .addQueryParam("zoneid", "5")
+                                              .addQueryParam("url", "http://example.com/")
+                                              .build();
+
    public void testExtractISOOptions() throws NoSuchMethodException {
       Method method = ISOAsyncClient.class.getMethod("extractISO", String.class, ExtractMode.class, String.class, ExtractISOOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method, 3, ExtractMode.HTTP_DOWNLOAD, 5, ExtractISOOptions.Builder.url("http://example.com/"));
 
-      assertRequestLineEquals(httpRequest,
-         "GET http://localhost:8080/client/api?response=json&command=extractIso&id=3&zoneid=5&mode=HTTP_DOWNLOAD&url=http%3A//example.com/ HTTP/1.1");
+      assertRequestLineEquals(httpRequest, extractIsoOptions.getRequestLine());
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

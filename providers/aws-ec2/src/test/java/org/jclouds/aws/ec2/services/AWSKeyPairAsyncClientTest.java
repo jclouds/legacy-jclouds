@@ -55,14 +55,29 @@ public class AWSKeyPairAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSKeyP
       checkFilters(request);
    }
 
+   HttpRequest importKeyPair = HttpRequest.builder().method("POST")
+                                          .endpoint("https://ec2.us-east-1.amazonaws.com/")
+                                          .addHeader("Host", "ec2.us-east-1.amazonaws.com")
+                                          .addFormParam("Action", "ImportKeyPair")
+                                          .addFormParam("KeyName", "mykey")
+                                          .addFormParam("PublicKeyMaterial", "c3NoLXJzYSBBQQ%3D%3D")
+                                          .addFormParam("Signature", "hI3Y8ggtVzXrEMmHp4Kem2/HCAX9hYN2NKjhDBz9SkY=")
+                                          .addFormParam("SignatureMethod", "HmacSHA256")
+                                          .addFormParam("SignatureVersion", "2")
+                                          .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
+                                          .addFormParam("Version", "2011-05-15")
+                                          .addFormParam("AWSAccessKeyId", "identity").build();
+
    public void testImportKeyPair() throws SecurityException, NoSuchMethodException, IOException {
       Method method = AWSKeyPairAsyncClient.class.getMethod("importKeyPairInRegion", String.class, String.class,
             String.class);
       HttpRequest request = processor.createRequest(method, null, "mykey", "ssh-rsa AA");
 
+      request = request.getFilters().get(0).filter(request);
+
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Action=ImportKeyPair&PublicKeyMaterial=c3NoLXJzYSBBQQ%3D%3D&KeyName=mykey",
+      assertPayloadEquals(request, importKeyPair.getPayload().getRawContent().toString(),
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);

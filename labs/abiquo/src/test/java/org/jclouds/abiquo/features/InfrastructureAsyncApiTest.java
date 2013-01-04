@@ -484,7 +484,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
 
       assertRequestLineEquals(
             request,
-            "POST http://localhost/api/admin/datacenters/1/racks/1/logicservers/associate?bladeDn=blade&org=org-root/org-Finance&lsName=server HTTP/1.1");
+            "POST http://localhost/api/admin/datacenters/1/racks/1/logicservers/associate?bladeDn=blade&lsName=server&org=org-root/org-Finance HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
@@ -503,7 +503,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
 
       assertRequestLineEquals(
             request,
-            "POST http://localhost/api/admin/datacenters/1/racks/1/logicservers/associatetemplate?newName=newname&bladeDn=blade&org=org-root/org-Finance&lsName=server HTTP/1.1");
+            "POST http://localhost/api/admin/datacenters/1/racks/1/logicservers/associatetemplate?newName=newname&bladeDn=blade&lsName=server&org=org-root/org-Finance HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
@@ -522,7 +522,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
 
       assertRequestLineEquals(
             request,
-            "POST http://localhost/api/admin/datacenters/1/racks/1/logicservers/assocclone?newName=newname&bladeDn=blade&org=org-root/org-Finance&lsName=server HTTP/1.1");
+            "POST http://localhost/api/admin/datacenters/1/racks/1/logicservers/assocclone?newName=newname&bladeDn=blade&lsName=server&org=org-root/org-Finance HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
@@ -559,7 +559,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
 
       assertRequestLineEquals(
             request,
-            "POST http://localhost/api/admin/datacenters/1/racks/1/logicservers/clone?newName=name&org=org-root/org-Finance&lsName=server HTTP/1.1");
+            "POST http://localhost/api/admin/datacenters/1/racks/1/logicservers/clone?newName=name&lsName=server&org=org-root/org-Finance HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
@@ -714,7 +714,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
             "10.60.1.222", HypervisorType.XENSERVER, "user", "pass");
 
       String baseUrl = "http://localhost/api/admin/datacenters/1/action/discoversingle";
-      String query = "hypervisor=XENSERVER&ip=10.60.1.222&user=user&password=pass";
+      String query = "ip=10.60.1.222&hypervisor=XENSERVER&user=user&password=pass";
       String expectedRequest = String.format("GET %s?%s HTTP/1.1", baseUrl, query);
 
       assertRequestLineEquals(request, expectedRequest);
@@ -735,7 +735,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
             "80.80.80.80", HypervisorType.KVM, "user", "pass", MachineOptions.builder().port(8889).build());
 
       String baseUrl = "http://localhost/api/admin/datacenters/1/action/discoversingle";
-      String query = "hypervisor=KVM&ip=80.80.80.80&user=user&password=pass&port=8889";
+      String query = "ip=80.80.80.80&hypervisor=KVM&user=user&password=pass&port=8889";
       String expectedRequest = String.format("GET %s?%s HTTP/1.1", baseUrl, query);
 
       assertRequestLineEquals(request, expectedRequest);
@@ -756,7 +756,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
             "80.80.80.80", HypervisorType.KVM, "user", "pass", MachineOptions.builder().build());
 
       String baseUrl = "http://localhost/api/admin/datacenters/1/action/discoversingle";
-      String query = "hypervisor=KVM&ip=80.80.80.80&user=user&password=pass";
+      String query = "ip=80.80.80.80&hypervisor=KVM&user=user&password=pass";
       String expectedRequest = String.format("GET %s?%s HTTP/1.1", baseUrl, query);
 
       assertRequestLineEquals(request, expectedRequest);
@@ -778,7 +778,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
             "10.60.1.222", "10.60.1.250", HypervisorType.XENSERVER, "user", "pass");
 
       String baseUrl = "http://localhost/api/admin/datacenters/1/action/discovermultiple";
-      String query = "password=pass&ipTo=10.60.1.250&ipFrom=10.60.1.222&hypervisor=XENSERVER&user=user";
+      String query = "ipFrom=10.60.1.222&ipTo=10.60.1.250&hypervisor=XENSERVER&user=user&password=pass";
       String expectedRequest = String.format("GET %s?%s HTTP/1.1", baseUrl, query);
 
       assertRequestLineEquals(request, expectedRequest);
@@ -800,7 +800,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
                   .build());
 
       String baseUrl = "http://localhost/api/admin/datacenters/1/action/discovermultiple";
-      String query = "password=pass&ipTo=80.80.80.86&ipFrom=80.80.80.80&hypervisor=KVM&user=user&port=8889";
+      String query = "ipFrom=80.80.80.80&ipTo=80.80.80.86&hypervisor=KVM&user=user&password=pass&port=8889";
       String expectedRequest = String.format("GET %s?%s HTTP/1.1", baseUrl, query);
 
       assertRequestLineEquals(request, expectedRequest);
@@ -821,7 +821,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
             "10.60.1.222", HypervisorType.XENSERVER, "user", "pass");
 
       String baseUrl = "http://localhost/api/admin/datacenters/1/action/checkmachinestate";
-      String query = "hypervisor=XENSERVER&ip=10.60.1.222&user=user&password=pass";
+      String query = "ip=10.60.1.222&hypervisor=XENSERVER&user=user&password=pass";
       String expectedRequest = String.format("GET %s?%s HTTP/1.1", baseUrl, query);
 
       assertRequestLineEquals(request, expectedRequest);
@@ -842,7 +842,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
             "10.60.1.222", HypervisorType.XENSERVER, "user", "pass", MachineOptions.builder().port(8889).build());
 
       String baseUrl = "http://localhost/api/admin/datacenters/1/action/checkmachinestate";
-      String query = "hypervisor=XENSERVER&ip=10.60.1.222&user=user&password=pass&port=8889";
+      String query = "ip=10.60.1.222&hypervisor=XENSERVER&user=user&password=pass&port=8889";
       String expectedRequest = String.format("GET %s?%s HTTP/1.1", baseUrl, query);
 
       assertRequestLineEquals(request, expectedRequest);
@@ -863,7 +863,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
             "10.60.1.222", "user", "pass");
 
       String baseUrl = "http://localhost/api/admin/datacenters/1/action/checkmachineipmistate";
-      String query = "user=user&ip=10.60.1.222&password=pass";
+      String query = "ip=10.60.1.222&user=user&password=pass";
       String expectedRequest = String.format("GET %s?%s HTTP/1.1", baseUrl, query);
 
       assertRequestLineEquals(request, expectedRequest);
@@ -884,7 +884,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
             "10.60.1.222", "user", "pass", IpmiOptions.builder().port(8889).build());
 
       String baseUrl = "http://localhost/api/admin/datacenters/1/action/checkmachineipmistate";
-      String query = "user=user&ip=10.60.1.222&password=pass&port=8889";
+      String query = "ip=10.60.1.222&user=user&password=pass&port=8889";
       String expectedRequest = String.format("GET %s?%s HTTP/1.1", baseUrl, query);
 
       assertRequestLineEquals(request, expectedRequest);
