@@ -6,7 +6,7 @@ import java.net.URI;
 import java.util.Set;
 
 import org.jclouds.date.internal.SimpleDateFormatDateService;
-import org.jclouds.internal.ClassMethodArgsAndReturnVal;
+import org.jclouds.internal.ClassInvokerArgsAndReturnVal;
 import org.jclouds.openstack.v2_0.ServiceType;
 import org.jclouds.openstack.v2_0.domain.Extension;
 import org.jclouds.rest.annotations.Delegate;
@@ -17,10 +17,12 @@ import com.google.common.base.Optional;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
+import com.google.common.reflect.Invokable;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Provides;
@@ -61,16 +63,19 @@ public class PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensio
 
    }
 
-   ClassMethodArgsAndReturnVal getFloatingIPExtension() throws SecurityException, NoSuchMethodException {
-      return ClassMethodArgsAndReturnVal.builder().clazz(FloatingIPAsyncApi.class).method(
-               NovaAsyncApi.class.getDeclaredMethod("getFloatingIPExtensionForZone", String.class)).args(
-               new Object[] { "zone" }).returnVal("foo").build();
+   ClassInvokerArgsAndReturnVal getFloatingIPExtension() throws SecurityException, NoSuchMethodException {
+      return ClassInvokerArgsAndReturnVal
+            .builder()
+            .clazz(FloatingIPAsyncApi.class)
+            .invoker(
+                  Invokable.from(NovaAsyncApi.class.getDeclaredMethod("getFloatingIPExtensionForZone", String.class)))
+            .args(ImmutableList.<Object> of("zone")).returnVal("foo").build();
    }
 
-   ClassMethodArgsAndReturnVal getKeyPairExtension() throws SecurityException, NoSuchMethodException {
-      return ClassMethodArgsAndReturnVal.builder().clazz(KeyPairAsyncApi.class).method(
-               NovaAsyncApi.class.getDeclaredMethod("getKeyPairExtensionForZone", String.class)).args(
-               new Object[] { "zone" }).returnVal("foo").build();
+   ClassInvokerArgsAndReturnVal getKeyPairExtension() throws SecurityException, NoSuchMethodException {
+      return ClassInvokerArgsAndReturnVal.builder().clazz(KeyPairAsyncApi.class)
+            .invoker(Invokable.from(NovaAsyncApi.class.getDeclaredMethod("getKeyPairExtensionForZone", String.class)))
+            .args(ImmutableList.<Object> of("zone")).returnVal("foo").build();
    }
 
    public void testPresentWhenExtensionsIncludeNamespaceFromAnnotationAbsentWhenNot() throws SecurityException, NoSuchMethodException {
@@ -83,9 +88,9 @@ public class PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensio
    
    public void testZoneWithoutExtensionsReturnsAbsent() throws SecurityException, NoSuchMethodException {
       assertEquals(whenExtensionsInZoneInclude("zone", floatingIps).apply(
-               getFloatingIPExtension().toBuilder().args(new Object[] { "differentzone" }).build()), Optional.absent());
+               getFloatingIPExtension().toBuilder().args(ImmutableList.<Object> of("differentzone")).build()), Optional.absent());
       assertEquals(whenExtensionsInZoneInclude("zone", keypairs).apply(
-               getKeyPairExtension().toBuilder().args(new Object[] { "differentzone" }).build()), Optional.absent());
+               getKeyPairExtension().toBuilder().args(ImmutableList.<Object> of("differentzone")).build()), Optional.absent());
    }
 
    /**

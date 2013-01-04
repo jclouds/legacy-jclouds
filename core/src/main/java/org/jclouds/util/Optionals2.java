@@ -24,18 +24,28 @@ import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
 
 import com.google.common.base.Optional;
+import com.google.common.reflect.Invokable;
+import com.google.common.reflect.TypeToken;
 
 /**
  * 
  * @author Adrian Cole
  */
 public class Optionals2 {
+   public static Class<?> returnTypeOrTypeOfOptional(Invokable<?, ?> method) {
+      TypeToken<?> type = method.getReturnType();
+      return returnTypeOrTypeOfOptional(type.getRawType(), type.getType());
+   }
 
    public static Class<?> returnTypeOrTypeOfOptional(Method method) {
-      boolean optional = isReturnTypeOptional(method);
-      Class<?> syncClass;
-      if (optional) {
-         ParameterizedType futureType = ParameterizedType.class.cast(method.getGenericReturnType());
+      Class<?> syncClass = method.getReturnType();
+      Type genericType = method.getGenericReturnType();
+      return returnTypeOrTypeOfOptional(syncClass, genericType);
+   }
+
+   private static Class<?> returnTypeOrTypeOfOptional(Class<?> syncClass, Type genericType) {
+      if (syncClass.isAssignableFrom(Optional.class)) {
+         ParameterizedType futureType = ParameterizedType.class.cast(genericType);
          // TODO: error checking in case this is a type, not a class.
          Type t = futureType.getActualTypeArguments()[0];
          if (t instanceof WildcardType) {
@@ -43,14 +53,12 @@ public class Optionals2 {
          }
          syncClass = Class.class.cast(t);
       } else {
-         syncClass = method.getReturnType();
       }
       return syncClass;
    }
 
    public static boolean isReturnTypeOptional(Method method) {
-      boolean optional = method.getReturnType().isAssignableFrom(Optional.class);
-      return optional;
+      return method.getReturnType().isAssignableFrom(Optional.class);
    }
 
 }

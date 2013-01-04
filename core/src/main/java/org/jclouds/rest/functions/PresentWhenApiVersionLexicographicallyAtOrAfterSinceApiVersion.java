@@ -23,7 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.internal.ClassMethodArgsAndReturnVal;
+import org.jclouds.internal.ClassInvokerArgsAndReturnVal;
 import org.jclouds.rest.annotations.ApiVersion;
 import org.jclouds.rest.annotations.SinceApiVersion;
 
@@ -43,7 +43,7 @@ import com.google.common.cache.LoadingCache;
 public class PresentWhenApiVersionLexicographicallyAtOrAfterSinceApiVersion implements ImplicitOptionalConverter {
 
    @VisibleForTesting
-   static final class Loader extends CacheLoader<ClassMethodArgsAndReturnVal, Optional<Object>> {
+   static final class Loader extends CacheLoader<ClassInvokerArgsAndReturnVal, Optional<Object>> {
       private final String apiVersion;
 
       @Inject
@@ -52,7 +52,7 @@ public class PresentWhenApiVersionLexicographicallyAtOrAfterSinceApiVersion impl
       }
 
       @Override
-      public Optional<Object> load(ClassMethodArgsAndReturnVal input) {
+      public Optional<Object> load(ClassInvokerArgsAndReturnVal input) {
          Optional<SinceApiVersion> sinceApiVersion = Optional.fromNullable(input.getClazz().getAnnotation(
                SinceApiVersion.class));
          if (sinceApiVersion.isPresent()) {
@@ -67,7 +67,7 @@ public class PresentWhenApiVersionLexicographicallyAtOrAfterSinceApiVersion impl
       }
    }
 
-   private final LoadingCache<ClassMethodArgsAndReturnVal, Optional<Object>> lookupCache;
+   private final LoadingCache<ClassInvokerArgsAndReturnVal, Optional<Object>> lookupCache;
 
    @Inject
    protected PresentWhenApiVersionLexicographicallyAtOrAfterSinceApiVersion(@ApiVersion String apiVersion) {
@@ -76,7 +76,7 @@ public class PresentWhenApiVersionLexicographicallyAtOrAfterSinceApiVersion impl
    }
 
    @Override
-   public Optional<Object> apply(ClassMethodArgsAndReturnVal input) {
+   public Optional<Object> apply(ClassInvokerArgsAndReturnVal input) {
       return lookupCache.getUnchecked(input);
    }
 

@@ -26,6 +26,7 @@ import static com.google.common.io.Closeables.closeQuietly;
 import static com.google.common.net.HttpHeaders.CONTENT_LENGTH;
 import static com.google.common.net.HttpHeaders.HOST;
 import static com.google.common.net.HttpHeaders.USER_AGENT;
+import static org.jclouds.http.HttpUtils.filterOutContentHeaders;
 import static org.jclouds.io.Payloads.newInputStreamPayload;
 
 import java.io.ByteArrayInputStream;
@@ -65,7 +66,6 @@ import org.jclouds.io.ContentMetadataCodec;
 import org.jclouds.io.MutableContentMetadata;
 import org.jclouds.io.Payload;
 import org.jclouds.logging.Logger;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMultimap;
@@ -142,7 +142,7 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
          contentMetadataCodec.fromHeaders(payload.getContentMetadata(), headers);
          builder.payload(payload);
       }
-      builder.headers(RestAnnotationProcessor.filterOutContentHeaders(headers));
+      builder.headers(filterOutContentHeaders(headers));
       return builder.build();
    }
 

@@ -27,7 +27,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jclouds.concurrent.internal.SyncProxy;
-import org.jclouds.internal.ClassMethodArgs;
+import org.jclouds.internal.ClassInvokerArgs;
 import org.jclouds.util.Optionals2;
 
 import com.google.common.cache.CacheLoader;
@@ -39,22 +39,22 @@ import com.google.common.cache.LoadingCache;
  * 
  * @author Adrian Cole
  */
-public class CreateClientForCaller extends CacheLoader<ClassMethodArgs, Object> {
+public class CreateClientForCaller extends CacheLoader<ClassInvokerArgs, Object> {
    private final SyncProxy.Factory factory;
-   private final LoadingCache<ClassMethodArgs, Object> asyncMap;
+   private final LoadingCache<ClassInvokerArgs, Object> asyncMap;
    private final Map<Class<?>, Class<?>> sync2Async;
 
    @Inject
    private CreateClientForCaller(SyncProxy.Factory factory,
-         @Named("async") LoadingCache<ClassMethodArgs, Object> asyncMap, Map<Class<?>, Class<?>> sync2Async) {
+         @Named("async") LoadingCache<ClassInvokerArgs, Object> asyncMap, Map<Class<?>, Class<?>> sync2Async) {
       this.factory = factory;
       this.asyncMap = asyncMap;
       this.sync2Async = sync2Async;
    }
 
    @Override
-   public Object load(ClassMethodArgs from) {
-      Class<?> syncClass = Optionals2.returnTypeOrTypeOfOptional(from.getMethod());
+   public Object load(ClassInvokerArgs from) {
+      Class<?> syncClass = Optionals2.returnTypeOrTypeOfOptional(from.getInvoker());
       Class<?> asyncClass = sync2Async.get(syncClass);
       checkState(asyncClass != null, "configuration error, sync class " + syncClass + " not mapped to an async class");
       Object asyncClient = asyncMap.getUnchecked(from);
