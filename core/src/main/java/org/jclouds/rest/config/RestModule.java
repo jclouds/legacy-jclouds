@@ -21,7 +21,6 @@ package org.jclouds.rest.config;
 import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
 import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
 
-import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -32,7 +31,7 @@ import javax.inject.Singleton;
 import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.functions.IdentityFunction;
 import org.jclouds.http.functions.config.SaxParserModule;
-import org.jclouds.internal.ClassMethodArgs;
+import org.jclouds.internal.ClassInvokerArgs;
 import org.jclouds.internal.FilterStringsBoundToInjectorByName;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.location.config.LocationModule;
@@ -44,15 +43,12 @@ import org.jclouds.rest.internal.AsyncRestClientProxy;
 import org.jclouds.rest.internal.CreateAsyncClientForCaller;
 import org.jclouds.rest.internal.CreateClientForCaller;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.rest.internal.RestAnnotationProcessor.MethodKey;
-import org.jclouds.rest.internal.SeedAnnotationCache;
 import org.jclouds.util.Maps2;
 import org.jclouds.util.Predicates2;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
-import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
@@ -124,24 +120,18 @@ public class RestModule extends AbstractModule {
       });
 
    }
-   
-   @Provides
-   @Singleton
-   private LoadingCache<Class<?>, Cache<MethodKey, Method>> seedAnnotationCache(SeedAnnotationCache seedAnnotationCache) {
-      return CacheBuilder.newBuilder().build(seedAnnotationCache);
-   }
 
    @Provides
    @Singleton
    @Named("async")
-   LoadingCache<ClassMethodArgs, Object> provideAsyncDelegateMap(CreateAsyncClientForCaller createAsyncClientForCaller) {
+   LoadingCache<ClassInvokerArgs, Object> provideAsyncDelegateMap(CreateAsyncClientForCaller createAsyncClientForCaller) {
       return CacheBuilder.newBuilder().build(createAsyncClientForCaller);
    }
 
    @Provides
    @Singleton
    @Named("sync")
-   LoadingCache<ClassMethodArgs, Object> provideSyncDelegateMap(CreateClientForCaller createClientForCaller) {
+   LoadingCache<ClassInvokerArgs, Object> provideSyncDelegateMap(CreateClientForCaller createClientForCaller) {
       return CacheBuilder.newBuilder().build(createClientForCaller);
    }
 

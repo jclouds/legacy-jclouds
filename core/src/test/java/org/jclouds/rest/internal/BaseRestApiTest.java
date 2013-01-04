@@ -22,8 +22,6 @@ import static com.google.common.hash.Hashing.md5;
 import static org.easymock.EasyMock.createMock;
 import static org.eclipse.jetty.http.HttpHeaders.TRANSFER_ENCODING;
 import static org.jclouds.io.ByteSources.asByteSource;
-import static org.jclouds.rest.internal.RestAnnotationProcessor.createResponseParser;
-import static org.jclouds.rest.internal.RestAnnotationProcessor.getSaxResponseParserClassOrNull;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
@@ -44,6 +42,7 @@ import org.jclouds.http.functions.ParseSax;
 import org.jclouds.io.MutableContentMetadata;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.rest.annotations.Fallback;
+import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
@@ -171,11 +170,13 @@ public abstract class BaseRestApiTest {
    }
 
    protected void assertSaxResponseParserClassEquals(Method method, @Nullable Class<?> parserClass) {
-      assertEquals(getSaxResponseParserClassOrNull(method), parserClass);
+      XMLResponseParser annotation = method.getAnnotation(XMLResponseParser.class);
+      Class<?> expected =  (annotation != null) ? annotation.value() :null;
+      assertEquals(expected, parserClass);
    }
 
    protected void assertResponseParserClassEquals(Method method, HttpRequest request, @Nullable Class<?> parserClass) {
-      assertEquals(createResponseParser(parserFactory, injector, method, request).getClass(), parserClass);
+      assertEquals(AsyncRestClientProxy.createResponseParser(parserFactory, injector, method, request).getClass(), parserClass);
    }
 
    protected RestAnnotationProcessor factory(Class<?> clazz) {

@@ -25,7 +25,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.jclouds.internal.ClassMethodArgsAndReturnVal;
+import org.jclouds.internal.ClassInvokerArgsAndReturnVal;
 import org.jclouds.openstack.v2_0.domain.Extension;
 import org.jclouds.openstack.v2_0.predicates.ExtensionPredicates;
 import org.jclouds.rest.functions.ImplicitOptionalConverter;
@@ -57,17 +57,17 @@ public class PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensio
    }
 
    @Override
-   public Optional<Object> apply(ClassMethodArgsAndReturnVal input) {
+   public Optional<Object> apply(ClassInvokerArgsAndReturnVal input) {
       Optional<org.jclouds.openstack.v2_0.services.Extension> ext = Optional.fromNullable(input.getClazz().getAnnotation(
             org.jclouds.openstack.v2_0.services.Extension.class));
       if (ext.isPresent()) {
          URI namespace = URI.create(ext.get().namespace());
-         if (input.getArgs().length == 0) {
+         if (input.getArgs().isEmpty()) {
 	        if (Iterables.any(extensions.getUnchecked(""),
 	              ExtensionPredicates.namespaceOrAliasEquals(namespace, aliases.get(namespace))))
 	           return Optional.of(input.getReturnVal());
-	     } else if (input.getArgs().length == 1) {
-	        if (Iterables.any(extensions.getUnchecked(checkNotNull(input.getArgs()[0], "arg[0] in %s", input).toString()),
+	     } else if (input.getArgs().size() == 1) {
+	        if (Iterables.any(extensions.getUnchecked(checkNotNull(input.getArgs().get(0), "arg[0] in %s", input).toString()),
 	              ExtensionPredicates.namespaceOrAliasEquals(namespace, aliases.get(namespace))))
 	           return Optional.of(input.getReturnVal());
          } else {

@@ -17,9 +17,9 @@
  * under the License.
  */
 package org.jclouds.http.apachehc;
-
 import static com.google.common.hash.Hashing.md5;
 import static com.google.common.io.BaseEncoding.base64;
+import static org.jclouds.http.HttpUtils.filterOutContentHeaders;
 import static org.jclouds.io.ByteSources.asByteSource;
 
 import java.io.IOException;
@@ -45,7 +45,6 @@ import org.jclouds.http.internal.HttpWire;
 import org.jclouds.io.ContentMetadataCodec;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
@@ -108,7 +107,7 @@ public class ApacheHCHttpCommandExecutorService extends BaseHttpCommandExecutorS
       return HttpResponse.builder().statusCode(apacheResponse.getStatusLine().getStatusCode())
                                    .message(apacheResponse.getStatusLine().getReasonPhrase())
                                    .payload(payload)
-                                   .headers(RestAnnotationProcessor.filterOutContentHeaders(headers)).build();
+                                   .headers(filterOutContentHeaders(headers)).build();
    }
 
    private org.apache.http.HttpResponse executeRequest(HttpUriRequest nativeRequest) throws IOException,

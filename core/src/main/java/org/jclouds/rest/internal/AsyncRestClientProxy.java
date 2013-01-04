@@ -18,14 +18,34 @@
  */
 package org.jclouds.rest.internal;
 
+import static com.google.common.base.Functions.compose;
+import static com.google.common.base.Throwables.propagate;
+import static com.google.common.collect.Iterables.any;
+import static com.google.common.collect.Iterables.find;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Sets.difference;
+import static com.google.common.util.concurrent.Callables.returning;
 import static com.google.common.util.concurrent.Futures.immediateFailedFuture;
 import static com.google.common.util.concurrent.Futures.transform;
 import static com.google.common.util.concurrent.Futures.withFallback;
+import static com.google.inject.util.Types.newParameterizedType;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static javax.ws.rs.core.MediaType.APPLICATION_XML;
 import static org.jclouds.concurrent.Futures.makeListenable;
+import static org.jclouds.http.HttpUtils.tryFindHttpMethod;
+import static org.jclouds.util.Optionals2.isReturnTypeOptional;
+import static org.jclouds.util.Optionals2.returnTypeOrTypeOfOptional;
+import static org.jclouds.util.Throwables2.getFirstThrowableOfType;
 
+import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.lang.reflect.WildcardType;
+import java.net.URI;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 
@@ -34,34 +54,60 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Qualifier;
 import javax.inject.Singleton;
+import javax.lang.model.type.NullType;
+import javax.ws.rs.Path;
 
 import org.jclouds.Constants;
 import org.jclouds.fallbacks.MapHttp4xxCodesToExceptions;
+import org.jclouds.functions.IdentityFunction;
+import org.jclouds.functions.OnlyElementOrNull;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.internal.ClassMethodArgs;
-import org.jclouds.internal.ClassMethodArgsAndReturnVal;
+import org.jclouds.http.functions.ParseFirstJsonValueNamed;
+import org.jclouds.http.functions.ParseJson;
+import org.jclouds.http.functions.ParseSax;
+import org.jclouds.http.functions.ParseSax.HandlerWithResult;
+import org.jclouds.http.functions.ParseURIFromListOrLocationHeaderIf20x;
+import org.jclouds.http.functions.ParseXMLWithJAXB;
+import org.jclouds.http.functions.ReleasePayloadAndReturn;
+import org.jclouds.http.functions.ReturnInputStream;
+import org.jclouds.http.functions.ReturnStringIf2xx;
+import org.jclouds.http.functions.ReturnTrueIf2xx;
+import org.jclouds.http.functions.UnwrapOnlyJsonValue;
+import org.jclouds.internal.ClassInvokerArgs;
+import org.jclouds.internal.ClassInvokerArgsAndReturnVal;
+import org.jclouds.json.internal.GsonWrapper;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.Fallback;
-import org.jclouds.util.Optionals2;
-import org.jclouds.util.Throwables2;
+import org.jclouds.rest.annotations.JAXBResponseParser;
+import org.jclouds.rest.annotations.OnlyElement;
+import org.jclouds.rest.annotations.ResponseParser;
+import org.jclouds.rest.annotations.SelectJson;
+import org.jclouds.rest.annotations.Transform;
+import org.jclouds.rest.annotations.Unwrap;
+import org.jclouds.rest.annotations.XMLResponseParser;
+import org.jclouds.rest.internal.RestAnnotationProcessor.InvokerKey;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
-import com.google.common.base.Throwables;
+import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.AbstractInvocationHandler;
+import com.google.common.reflect.Invokable;
+import com.google.common.reflect.Parameter;
+import com.google.common.reflect.TypeToken;
 import com.google.common.util.concurrent.FutureFallback;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Binding;
@@ -70,27 +116,23 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Provides;
 import com.google.inject.ProvisionException;
+import com.google.inject.TypeLiteral;
 import com.google.inject.assistedinject.Assisted;
-import com.google.inject.util.Types;
 
 /**
  * Generates RESTful clients from appropriately annotated interfaces.
  * <p/>
  * Particularly, this code delegates calls to other things.
  * <ol>
- * <li>if the method has a {@link Provides} annotation, it responds via a
- * {@link Injector} lookup</li>
- * <li>if the method has a {@link Delegate} annotation, it responds with an
- * instance of interface set in returnVal, adding the current JAXrs annotations
- * to whatever are on that class.</li>
+ * <li>if the method has a {@link Provides} annotation, it responds via a {@link Injector} lookup</li>
+ * <li>if the method has a {@link Delegate} annotation, it responds with an instance of interface set in returnVal,
+ * adding the current JAXrs annotations to whatever are on that class.</li>
  * <ul>
- * <li>ex. if the method with {@link Delegate} has a {@code Path} annotation,
- * and the returnval interface also has {@code Path}, these values are combined.
- * </li>
+ * <li>ex. if the method with {@link Delegate} has a {@code Path} annotation, and the returnval interface also has
+ * {@code Path}, these values are combined.</li>
  * </ul>
- * <li>if {@link RestAnnotationProcessor#delegationMap} contains a mapping for
- * this, and the returnVal is properly assigned as a {@link ListenableFuture},
- * it responds with an http implementation.</li>
+ * <li>if {@link RestAnnotationProcessor#delegationMap} contains a mapping for this, and the returnVal is properly
+ * assigned as a {@link ListenableFuture}, it responds with an http implementation.</li>
  * <li>otherwise a RuntimeException is thrown with a message including:
  * {@code method is intended solely to set constants}</li>
  * </ol>
@@ -102,51 +144,86 @@ public abstract class AsyncRestClientProxy extends AbstractInvocationHandler {
    public static interface Factory {
       Declaring declaring(Class<?> declaring);
 
-      Caller caller(ClassMethodArgs caller);
+      Caller caller(ClassInvokerArgs caller);
    }
 
    public final static class Declaring extends AsyncRestClientProxy {
       @Inject
-      private Declaring(Injector injector, Function<ClassMethodArgsAndReturnVal, Optional<Object>> optionalConverter,
+      private Declaring(Injector injector, Function<ClassInvokerArgsAndReturnVal, Optional<Object>> optionalConverter,
             HttpCommandExecutorService http, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
-            @Named("async") LoadingCache<ClassMethodArgs, Object> delegateMap, RestAnnotationProcessor.Factory rap,
-            @Assisted Class<?> declaring) {
-         super(injector, optionalConverter, http, userThreads, delegateMap, rap.declaring(declaring), declaring);
+            @Named("async") LoadingCache<ClassInvokerArgs, Object> delegateMap, RestAnnotationProcessor.Factory rap,
+            ParseSax.Factory parserFactory, @Assisted Class<?> declaring) {
+         super(injector, optionalConverter, http, userThreads, delegateMap, rap.declaring(declaring), parserFactory,
+               declaring);
       }
    }
 
    public final static class Caller extends AsyncRestClientProxy {
       @Inject
-      private Caller(Injector injector, Function<ClassMethodArgsAndReturnVal, Optional<Object>> optionalConverter,
+      private Caller(Injector injector, Function<ClassInvokerArgsAndReturnVal, Optional<Object>> optionalConverter,
             HttpCommandExecutorService http, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
-            @Named("async") LoadingCache<ClassMethodArgs, Object> delegateMap, RestAnnotationProcessor.Factory rap,
-            @Assisted ClassMethodArgs caller) {
-         super(injector, optionalConverter, http, userThreads, delegateMap, rap.caller(caller), caller.getClazz());
+            @Named("async") LoadingCache<ClassInvokerArgs, Object> delegateMap, RestAnnotationProcessor.Factory rap,
+            ParseSax.Factory parserFactory, @Assisted ClassInvokerArgs caller) {
+         super(injector, optionalConverter, http, userThreads, delegateMap, rap.caller(caller), parserFactory, caller
+               .getClazz());
       }
    }
 
    @Resource
    private Logger logger = Logger.NULL;
-   
+
    private final Injector injector;
    private final HttpCommandExecutorService http;
    private final ExecutorService userThreads;
-   private final Function<ClassMethodArgsAndReturnVal, Optional<Object>> optionalConverter;
-   private final LoadingCache<ClassMethodArgs, Object> delegateMap;
+   private final Function<ClassInvokerArgsAndReturnVal, Optional<Object>> optionalConverter;
+   private final LoadingCache<ClassInvokerArgs, Object> delegateMap;
    private final RestAnnotationProcessor annotationProcessor;
+   private final ParseSax.Factory parserFactory;
    private final Class<?> declaring;
 
+   private static final LoadingCache<Class<?>, Cache<InvokerKey, Invokable<?, ?>>> delegationMapCache = CacheBuilder
+         .newBuilder().build(new CacheLoader<Class<?>, Cache<InvokerKey, Invokable<?, ?>>>() {
+            public Cache<InvokerKey, Invokable<?, ?>> load(Class<?> declaring) throws ExecutionException {
+               Cache<InvokerKey, Invokable<?, ?>> delegationMap = CacheBuilder.newBuilder()
+                     .<InvokerKey, Invokable<?, ?>> build();
+               for (Method method : difference(ImmutableSet.copyOf(declaring.getMethods()),
+                     ImmutableSet.copyOf(Object.class.getMethods()))) {
+                  Invokable<?, ?> invoker = Invokable.from(method);
+                  if (isHttpMethod(invoker) || method.isAnnotationPresent(Delegate.class)) {
+                     delegationMap.get(new InvokerKey(invoker), returning(invoker));
+                  } else if (!method.getDeclaringClass().equals(declaring)) { // potentially overridden
+                  } else if (method.isAnnotationPresent(Provides.class)) {
+                  }
+               }
+               return delegationMap;
+            }
+         });
+
+   private Invokable<?, ?> getDelegateOrNull(Invokable<?, ?> in) {
+      return delegationMapCache.getUnchecked(declaring).getIfPresent(new InvokerKey(in));
+   }
+
+   private static boolean isHttpMethod(Invokable<?, ?> invoker) {
+      return invoker.isAnnotationPresent(Path.class) || tryFindHttpMethod(invoker).isPresent()
+            || any(invoker.getParameters(), new Predicate<Parameter>() {
+               public boolean apply(Parameter in) {
+                  return in.getType().isAssignableFrom(HttpRequest.class);
+               }
+            });
+   }
+
    private AsyncRestClientProxy(Injector injector,
-         Function<ClassMethodArgsAndReturnVal, Optional<Object>> optionalConverter, HttpCommandExecutorService http,
-         ExecutorService userThreads, LoadingCache<ClassMethodArgs, Object> delegateMap,
-         RestAnnotationProcessor annotationProcessor, Class<?> declaring) {
+         Function<ClassInvokerArgsAndReturnVal, Optional<Object>> optionalConverter, HttpCommandExecutorService http,
+         ExecutorService userThreads, LoadingCache<ClassInvokerArgs, Object> delegateMap,
+         RestAnnotationProcessor annotationProcessor, ParseSax.Factory parserFactory, Class<?> declaring) {
       this.injector = injector;
       this.optionalConverter = optionalConverter;
       this.http = http;
       this.userThreads = userThreads;
       this.delegateMap = delegateMap;
-      this.declaring = declaring;
       this.annotationProcessor = annotationProcessor;
+      this.parserFactory = parserFactory;
+      this.declaring = declaring;
    }
 
    private static final Predicate<Annotation> isQualifierPresent = new Predicate<Annotation>() {
@@ -172,44 +249,42 @@ public abstract class AsyncRestClientProxy extends AbstractInvocationHandler {
       }
    }
 
-   public boolean isRestCall(Method method) {
-      return annotationProcessor.getDelegateOrNull(method) != null
+   private boolean isRestCall(Method method) {
+      return getDelegateOrNull(Invokable.from(method)) != null
             && ListenableFuture.class.isAssignableFrom(method.getReturnType());
    }
 
-   public Object propagateContextToDelegate(Method method, Object[] args) throws ExecutionException {
-      Class<?> asyncClass = Optionals2.returnTypeOrTypeOfOptional(method);
-      ClassMethodArgs cma = new ClassMethodArgs(asyncClass, method, args);
+   private Object propagateContextToDelegate(Method method, Object[] args) throws ExecutionException {
+      Class<?> asyncClass = returnTypeOrTypeOfOptional(method);
+      ClassInvokerArgs cma = ClassInvokerArgs.builder().clazz(asyncClass).invoker(method).args(args).build();
       Object returnVal = delegateMap.get(cma);
-      if (Optionals2.isReturnTypeOptional(method)) {
-         ClassMethodArgsAndReturnVal cmar = ClassMethodArgsAndReturnVal.builder().fromClassMethodArgs(cma)
+      if (isReturnTypeOptional(method)) {
+         ClassInvokerArgsAndReturnVal cmar = ClassInvokerArgsAndReturnVal.builder().fromClassInvokerArgs(cma)
                .returnVal(returnVal).build();
          return optionalConverter.apply(cmar);
       }
       return returnVal;
    }
 
-   public Object lookupValueFromGuice(Method method) {
+   private Object lookupValueFromGuice(Method method) {
       try {
-         // TODO: tidy
          Type genericReturnType = method.getGenericReturnType();
          try {
-            Annotation qualifier = Iterables.find(ImmutableList.copyOf(method.getAnnotations()), isQualifierPresent);
+            Annotation qualifier = find(ImmutableList.copyOf(method.getAnnotations()), isQualifierPresent);
             return getInstanceOfTypeWithQualifier(genericReturnType, qualifier);
          } catch (ProvisionException e) {
-            throw Throwables.propagate(e.getCause());
+            throw propagate(e.getCause());
          } catch (RuntimeException e) {
             return instanceOfTypeOrPropagate(genericReturnType, e);
          }
       } catch (ProvisionException e) {
-         AuthorizationException aex = Throwables2.getFirstThrowableOfType(e, AuthorizationException.class);
+         AuthorizationException aex = getFirstThrowableOfType(e, AuthorizationException.class);
          if (aex != null)
             throw aex;
          throw e;
       }
    }
 
-   // TODO: tidy
    private Object instanceOfTypeOrPropagate(Type genericReturnType, RuntimeException e) {
       try {
          // look for an existing binding
@@ -218,7 +293,7 @@ public abstract class AsyncRestClientProxy extends AbstractInvocationHandler {
             return binding.getProvider().get();
 
          // then, try looking via supplier
-         binding = injector.getExistingBinding(Key.get(Types.newParameterizedType(Supplier.class, genericReturnType)));
+         binding = injector.getExistingBinding(Key.get(newParameterizedType(Supplier.class, genericReturnType)));
          if (binding != null)
             return Supplier.class.cast(binding.getProvider().get()).get();
 
@@ -229,7 +304,6 @@ public abstract class AsyncRestClientProxy extends AbstractInvocationHandler {
       }
    }
 
-   // TODO: tidy
    private Object getInstanceOfTypeWithQualifier(Type genericReturnType, Annotation qualifier) {
       // look for an existing binding
       Binding<?> binding = injector.getExistingBinding(Key.get(genericReturnType, qualifier));
@@ -237,40 +311,102 @@ public abstract class AsyncRestClientProxy extends AbstractInvocationHandler {
          return binding.getProvider().get();
 
       // then, try looking via supplier
-      binding = injector.getExistingBinding(Key.get(Types.newParameterizedType(Supplier.class, genericReturnType),
-            qualifier));
+      binding = injector
+            .getExistingBinding(Key.get(newParameterizedType(Supplier.class, genericReturnType), qualifier));
       if (binding != null)
          return Supplier.class.cast(binding.getProvider().get()).get();
 
       // else try to create an instance
       return injector.getInstance(Key.get(genericReturnType, qualifier));
    }
-   
+
+   @Deprecated
+   static Function<HttpResponse, ?> createResponseParser(ParseSax.Factory parserFactory, Injector injector,
+         Method method, HttpRequest request) {
+      return createResponseParser(parserFactory, injector, Invokable.from(method), request);
+   }
+
+   @SuppressWarnings("unchecked")
+   @VisibleForTesting
+   private static Function<HttpResponse, ?> createResponseParser(ParseSax.Factory parserFactory, Injector injector,
+         Invokable<?, ?> method, HttpRequest request) {
+      Function<HttpResponse, ?> transformer;
+      Class<? extends HandlerWithResult<?>> handler = getSaxResponseParserClassOrNull(method);
+      if (handler != null) {
+         transformer = parserFactory.create(injector.getInstance(handler));
+      } else {
+         transformer = getTransformerForMethod(method, injector);
+      }
+      if (transformer instanceof InvocationContext<?>) {
+         ((InvocationContext<?>) transformer).setContext(request);
+      }
+      if (method.isAnnotationPresent(Transform.class)) {
+         Function<?, ?> wrappingTransformer = injector.getInstance(method.getAnnotation(Transform.class).value());
+         if (wrappingTransformer instanceof InvocationContext<?>) {
+            ((InvocationContext<?>) wrappingTransformer).setContext(request);
+         }
+         transformer = compose(Function.class.cast(wrappingTransformer), transformer);
+      }
+      return transformer;
+   }
+
+   private static Class<? extends HandlerWithResult<?>> getSaxResponseParserClassOrNull(Invokable<?, ?> method) {
+      XMLResponseParser annotation = method.getAnnotation(XMLResponseParser.class);
+      if (annotation != null) {
+         return annotation.value();
+      }
+      return null;
+   }
+
+   // TODO: refactor this out of here
+   @VisibleForTesting
+   @SuppressWarnings({ "rawtypes", "unchecked" })
+   public static Function<HttpResponse, ?> getTransformerForMethod(Invokable<?, ?> method, Injector injector) {
+      Function<HttpResponse, ?> transformer;
+      if (method.isAnnotationPresent(SelectJson.class)) {
+         Type returnVal = getReturnTypeFor(method.getReturnType());
+         if (method.isAnnotationPresent(OnlyElement.class))
+            returnVal = newParameterizedType(Set.class, returnVal);
+         transformer = new ParseFirstJsonValueNamed(injector.getInstance(GsonWrapper.class),
+               TypeLiteral.get(returnVal), method.getAnnotation(SelectJson.class).value());
+         if (method.isAnnotationPresent(OnlyElement.class))
+            transformer = compose(new OnlyElementOrNull(), transformer);
+      } else {
+         transformer = injector.getInstance(getParserOrThrowException(method));
+      }
+      return transformer;
+   }
+
    private ListenableFuture<?> createListenableFutureForHttpRequestMappedToMethodAndArgs(Method method, Object[] args)
          throws ExecutionException {
-      method = annotationProcessor.getDelegateOrNull(method);
-      String name = method.getDeclaringClass().getSimpleName() + "." + method.getName();
+      return createListenableFutureForHttpRequestMappedToMethodAndArgs(method, Invokable.from(method),
+            args == null ? newArrayList(new Object[] { null }) : newArrayList(args));
+   }
+
+   private ListenableFuture<?> createListenableFutureForHttpRequestMappedToMethodAndArgs(Method method,
+         Invokable<?, ?> invoker, List<Object> args) throws ExecutionException {
+      String name = invoker.getDeclaringClass().getSimpleName() + "." + invoker.getName();
       logger.trace(">> converting %s", name);
-      FutureFallback<?> fallback = fallbacks.getUnchecked(method);
+      FutureFallback<?> fallback = fallbacks.getUnchecked(invoker);
       // in case there is an exception creating the request, we should at least pass in args
       if (fallback instanceof InvocationContext) {
          InvocationContext.class.cast(fallback).setContext((HttpRequest) null);
       }
       ListenableFuture<?> result;
       try {
-         GeneratedHttpRequest request = annotationProcessor.createRequest(method, args);
+         GeneratedHttpRequest request = annotationProcessor.createRequest(method, invoker, newArrayList(args));
          if (fallback instanceof InvocationContext) {
             InvocationContext.class.cast(fallback).setContext(request);
          }
          logger.trace("<< converted %s to %s", name, request.getRequestLine());
 
-         Function<HttpResponse, ?> transformer = annotationProcessor.createResponseParser(method, request);
+         Function<HttpResponse, ?> transformer = createResponseParser(parserFactory, injector, invoker, request);
          logger.trace("<< response from %s is parsed by %s", name, transformer.getClass().getSimpleName());
 
          logger.debug(">> invoking %s", name);
          result = transform(makeListenable(http.submit(new HttpCommand(request)), userThreads), transformer);
       } catch (RuntimeException e) {
-         AuthorizationException aex = Throwables2.getFirstThrowableOfType(e, AuthorizationException.class);
+         AuthorizationException aex = getFirstThrowableOfType(e, AuthorizationException.class);
          if (aex != null)
             e = aex;
          try {
@@ -283,15 +419,16 @@ public abstract class AsyncRestClientProxy extends AbstractInvocationHandler {
       return withFallback(result, fallback);
    }
 
+   @Override
    public String toString() {
       return "Client Proxy for :" + declaring.getName();
    }
 
-   private final LoadingCache<Method, FutureFallback<?>> fallbacks = CacheBuilder.newBuilder().build(
-         new CacheLoader<Method, FutureFallback<?>>() {
+   private final LoadingCache<Invokable<?, ?>, FutureFallback<?>> fallbacks = CacheBuilder.newBuilder().build(
+         new CacheLoader<Invokable<?, ?>, FutureFallback<?>>() {
 
             @Override
-            public FutureFallback<?> load(Method key) throws Exception {
+            public FutureFallback<?> load(Invokable<?, ?> key) throws Exception {
                Fallback annotation = key.getAnnotation(Fallback.class);
                if (annotation != null) {
                   return injector.getInstance(annotation.value());
@@ -301,4 +438,96 @@ public abstract class AsyncRestClientProxy extends AbstractInvocationHandler {
 
          });
 
+   private static final TypeToken<ListenableFuture<Boolean>> futureBooleanLiteral = new TypeToken<ListenableFuture<Boolean>>() {
+      private static final long serialVersionUID = 1L;
+   };
+   private static final TypeToken<ListenableFuture<String>> futureStringLiteral = new TypeToken<ListenableFuture<String>>() {
+      private static final long serialVersionUID = 1L;
+   };
+   private static final TypeToken<ListenableFuture<Void>> futureVoidLiteral = new TypeToken<ListenableFuture<Void>>() {
+      private static final long serialVersionUID = 1L;
+   };
+   private static final TypeToken<ListenableFuture<URI>> futureURILiteral = new TypeToken<ListenableFuture<URI>>() {
+      private static final long serialVersionUID = 1L;
+   };
+   private static final TypeToken<ListenableFuture<InputStream>> futureInputStreamLiteral = new TypeToken<ListenableFuture<InputStream>>() {
+      private static final long serialVersionUID = 1L;
+   };
+   private static final TypeToken<ListenableFuture<HttpResponse>> futureHttpResponseLiteral = new TypeToken<ListenableFuture<HttpResponse>>() {
+      private static final long serialVersionUID = 1L;
+   };
+
+   @Deprecated
+   static Key<? extends Function<HttpResponse, ?>> getParserOrThrowException(Method method) {
+      return getParserOrThrowException(Invokable.from(method));
+   }
+
+   @SuppressWarnings("unchecked")
+   private static Key<? extends Function<HttpResponse, ?>> getParserOrThrowException(Invokable<?, ?> method) {
+
+      ResponseParser annotation = method.getAnnotation(ResponseParser.class);
+      if (annotation == null) {
+         if (method.getReturnType().equals(void.class) || method.getReturnType().equals(futureVoidLiteral)) {
+            return Key.get(ReleasePayloadAndReturn.class);
+         } else if (method.getReturnType().equals(boolean.class) || method.getReturnType().equals(Boolean.class)
+               || method.getReturnType().equals(futureBooleanLiteral)) {
+            return Key.get(ReturnTrueIf2xx.class);
+         } else if (method.getReturnType().equals(InputStream.class)
+               || method.getReturnType().equals(futureInputStreamLiteral)) {
+            return Key.get(ReturnInputStream.class);
+         } else if (method.getReturnType().equals(HttpResponse.class)
+               || method.getReturnType().equals(futureHttpResponseLiteral)) {
+            return Key.get(Class.class.cast(IdentityFunction.class));
+         } else if (RestAnnotationProcessor.getAcceptHeadersOrNull(method).contains(APPLICATION_JSON)) {
+            return getJsonParserKeyForMethod(method);
+         } else if (RestAnnotationProcessor.getAcceptHeadersOrNull(method).contains(APPLICATION_XML)
+               || method.isAnnotationPresent(JAXBResponseParser.class)) {
+            return getJAXBParserKeyForMethod(method);
+         } else if (method.getReturnType().equals(String.class) || method.getReturnType().equals(futureStringLiteral)) {
+            return Key.get(ReturnStringIf2xx.class);
+         } else if (method.getReturnType().equals(URI.class) || method.getReturnType().equals(futureURILiteral)) {
+            return Key.get(ParseURIFromListOrLocationHeaderIf20x.class);
+         } else {
+            throw new IllegalStateException("You must specify a ResponseParser annotation on: " + method.toString());
+         }
+      }
+      return Key.get(annotation.value());
+   }
+
+   @SuppressWarnings("unchecked")
+   private static Key<? extends Function<HttpResponse, ?>> getJAXBParserKeyForMethod(Invokable<?, ?> method) {
+      Optional<Type> configuredReturnVal = Optional.absent();
+      if (method.isAnnotationPresent(JAXBResponseParser.class)) {
+         Type configuredClass = method.getAnnotation(JAXBResponseParser.class).value();
+         configuredReturnVal = configuredClass.equals(NullType.class) ? Optional.<Type> absent() : Optional
+               .<Type> of(configuredClass);
+      }
+      Type returnVal = configuredReturnVal.or(getReturnTypeFor(method.getReturnType()));
+      Type parserType = newParameterizedType(ParseXMLWithJAXB.class, returnVal);
+      return (Key<? extends Function<HttpResponse, ?>>) Key.get(parserType);
+   }
+
+   @SuppressWarnings({ "unchecked" })
+   private static Key<? extends Function<HttpResponse, ?>> getJsonParserKeyForMethod(Invokable<?, ?> method) {
+      ParameterizedType parserType;
+      if (method.isAnnotationPresent(Unwrap.class)) {
+         parserType = newParameterizedType(UnwrapOnlyJsonValue.class, getReturnTypeFor(method.getReturnType()));
+      } else {
+         parserType = newParameterizedType(ParseJson.class, getReturnTypeFor(method.getReturnType()));
+      }
+      return (Key<? extends Function<HttpResponse, ?>>) Key.get(parserType);
+   }
+
+   private static Type getReturnTypeFor(TypeToken<?> typeToken) {
+      Type returnVal = typeToken.getType();
+      if (typeToken.getRawType().getTypeParameters().length == 0) {
+         returnVal = typeToken.getRawType();
+      } else if (typeToken.getRawType().equals(ListenableFuture.class)) {
+         ParameterizedType futureType = (ParameterizedType) typeToken.getType();
+         returnVal = futureType.getActualTypeArguments()[0];
+         if (returnVal instanceof WildcardType)
+            returnVal = WildcardType.class.cast(returnVal).getUpperBounds()[0];
+      }
+      return returnVal;
+   }
 }

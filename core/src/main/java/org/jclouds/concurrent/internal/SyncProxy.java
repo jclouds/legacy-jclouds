@@ -33,8 +33,8 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.jclouds.internal.ClassMethodArgs;
-import org.jclouds.internal.ClassMethodArgsAndReturnVal;
+import org.jclouds.internal.ClassInvokerArgs;
+import org.jclouds.internal.ClassInvokerArgsAndReturnVal;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.util.Optionals2;
@@ -74,20 +74,20 @@ public final class SyncProxy extends AbstractInvocationHandler {
    @Resource
    private Logger logger = Logger.NULL;
    
-   private final Function<ClassMethodArgsAndReturnVal, Optional<Object>> optionalConverter;
+   private final Function<ClassInvokerArgsAndReturnVal, Optional<Object>> optionalConverter;
    private final Object delegate;
    private final Class<?> declaring;
    private final Map<Method, Method> methodMap;
    private final Map<Method, Method> syncMethodMap;
    private final Map<Method, Optional<Long>> timeoutMap;
-   private final LoadingCache<ClassMethodArgs, Object> delegateMap;
+   private final LoadingCache<ClassInvokerArgs, Object> delegateMap;
    private final Map<Class<?>, Class<?>> sync2Async;
    private static final Set<Method> objectMethods = ImmutableSet.copyOf(Object.class.getMethods());
 
    @Inject
    @VisibleForTesting
-   SyncProxy(Function<ClassMethodArgsAndReturnVal, Optional<Object>> optionalConverter,
-         @Named("sync") LoadingCache<ClassMethodArgs, Object> delegateMap, Map<Class<?>, Class<?>> sync2Async,
+   SyncProxy(Function<ClassInvokerArgsAndReturnVal, Optional<Object>> optionalConverter,
+         @Named("sync") LoadingCache<ClassInvokerArgs, Object> delegateMap, Map<Class<?>, Class<?>> sync2Async,
          @Named("TIMEOUTS") Map<String, Long> timeouts, @Assisted Class<?> declaring, @Assisted Object async)
          throws SecurityException, NoSuchMethodException {
       this.optionalConverter = optionalConverter;
@@ -138,10 +138,10 @@ public final class SyncProxy extends AbstractInvocationHandler {
          // pass any parameters necessary to get a relevant instance of that async class
          // ex. getClientForRegion("north") might return an instance whose endpoint is
          // different that "south"
-         ClassMethodArgs cma = new ClassMethodArgs(asyncClass, method, args);
+         ClassInvokerArgs cma = ClassInvokerArgs.builder().clazz(asyncClass).invoker(method).args(args).build();
          Object returnVal = delegateMap.get(cma);
          if (Optionals2.isReturnTypeOptional(method)){
-            ClassMethodArgsAndReturnVal cmar = ClassMethodArgsAndReturnVal.builder().fromClassMethodArgs(cma)
+            ClassInvokerArgsAndReturnVal cmar = ClassInvokerArgsAndReturnVal.builder().fromClassInvokerArgs(cma)
                   .returnVal(returnVal).build();
             return optionalConverter.apply(cmar);
          }
