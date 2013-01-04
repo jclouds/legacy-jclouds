@@ -55,6 +55,7 @@ import org.jclouds.trmk.ecloud.features.TagOperationsAsyncClient;
 import org.jclouds.trmk.ecloud.xml.ECloudOrgHandler;
 import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudAsyncClient;
 import org.jclouds.trmk.vcloud_0_8.binders.BindCreateKeyToXmlPayload;
+import org.jclouds.trmk.vcloud_0_8.binders.OrgNameVDCNameNetworkNameToEndpoint;
 import org.jclouds.trmk.vcloud_0_8.domain.InternetService;
 import org.jclouds.trmk.vcloud_0_8.domain.IpAddress;
 import org.jclouds.trmk.vcloud_0_8.domain.KeyPair;
@@ -65,8 +66,6 @@ import org.jclouds.trmk.vcloud_0_8.domain.PublicIpAddress;
 import org.jclouds.trmk.vcloud_0_8.domain.VAppExtendedInfo;
 import org.jclouds.trmk.vcloud_0_8.filters.SetVCloudTokenCookie;
 import org.jclouds.trmk.vcloud_0_8.functions.OrgNameToEndpoint;
-import org.jclouds.trmk.vcloud_0_8.functions.OrgNameVDCNameNetworkNameToEndpoint;
-import org.jclouds.trmk.vcloud_0_8.functions.OrgNameVDCNameResourceEntityNameToEndpoint;
 import org.jclouds.trmk.vcloud_0_8.functions.OrgURIToKeysListEndpoint;
 import org.jclouds.trmk.vcloud_0_8.functions.VDCURIToInternetServicesEndpoint;
 import org.jclouds.trmk.vcloud_0_8.functions.VDCURIToPublicIPsEndpoint;
@@ -230,21 +229,6 @@ public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
    @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<? extends KeyPair> getKeyPair(@EndpointParam URI keyId);
 
-   // TODO
-   // /**
-   // * @see TerremarkVCloudClient#configureKeyPair
-   // */
-   // @PUT
-   // @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
-   // @Path("/extensions/key/{keyId}")
-   // @Produces(APPLICATION_XML)
-   // @Consumes(APPLICATION_XML)
-   // @XMLResponseParser(KeyPairHandler.class)
-   // ListenableFuture<? extends KeyPair> configureKeyPair(
-   // @PathParam("keyId") int keyId,
-   // @BinderParam(BindKeyPairConfigurationToXmlPayload.class)
-   // KeyPairConfiguration keyConfiguration);
-
    /**
     * @see TerremarkECloudClient#deleteKeyPair
     */
@@ -260,10 +244,9 @@ public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
    @Consumes(NETWORK_XML)
    @XMLResponseParser(NetworkHandler.class)
    @Fallback(NullOnNotFoundOr404.class)
-   ListenableFuture<? extends Network> findNetworkInOrgVDCNamed(
-         @Nullable @EndpointParam(parser = OrgNameVDCNameNetworkNameToEndpoint.class) String orgName,
-         @Nullable @EndpointParam(parser = OrgNameVDCNameNetworkNameToEndpoint.class) String catalogName,
-         @EndpointParam(parser = OrgNameVDCNameResourceEntityNameToEndpoint.class) String networkName);
+   @MapBinder(OrgNameVDCNameNetworkNameToEndpoint.class)
+   ListenableFuture<? extends Network> findNetworkInOrgVDCNamed(@Nullable @PayloadParam("orgName") String orgName,
+         @Nullable @PayloadParam("vdcName") String vdcName, @PayloadParam("resourceName") String networkName);
 
    /**
     * @see TerremarkECloudClient#getNetwork

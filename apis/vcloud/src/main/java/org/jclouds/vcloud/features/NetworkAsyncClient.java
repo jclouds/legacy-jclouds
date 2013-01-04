@@ -29,11 +29,13 @@ import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.Fallback;
+import org.jclouds.rest.annotations.MapBinder;
+import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
+import org.jclouds.vcloud.binders.OrgNameVDCNameNetworkNameToEndpoint;
 import org.jclouds.vcloud.domain.network.OrgNetwork;
 import org.jclouds.vcloud.filters.AddVCloudAuthorizationAndCookieToRequest;
-import org.jclouds.vcloud.functions.OrgNameVDCNameResourceEntityNameToEndpoint;
 import org.jclouds.vcloud.xml.OrgNetworkHandler;
 
 import com.google.common.util.concurrent.ListenableFuture;
@@ -54,10 +56,9 @@ public interface NetworkAsyncClient {
    @Consumes(NETWORK_XML)
    @XMLResponseParser(OrgNetworkHandler.class)
    @Fallback(NullOnNotFoundOr404.class)
-   ListenableFuture<OrgNetwork> findNetworkInOrgVDCNamed(
-            @Nullable @EndpointParam(parser = OrgNameVDCNameResourceEntityNameToEndpoint.class) String orgName,
-            @Nullable @EndpointParam(parser = OrgNameVDCNameResourceEntityNameToEndpoint.class) String catalogName,
-            @EndpointParam(parser = OrgNameVDCNameResourceEntityNameToEndpoint.class) String networkName);
+   @MapBinder(OrgNameVDCNameNetworkNameToEndpoint.class)
+   ListenableFuture<OrgNetwork> findNetworkInOrgVDCNamed(@Nullable @PayloadParam("orgName") String orgName,
+         @Nullable @PayloadParam("vdcName") String vdcName, @PayloadParam("resourceName") String networkName);
 
    /**
     * @see NetworkClient#getNetwork

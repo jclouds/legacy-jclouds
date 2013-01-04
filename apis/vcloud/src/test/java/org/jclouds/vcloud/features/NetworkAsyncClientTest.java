@@ -60,7 +60,7 @@ public class NetworkAsyncClientTest extends BaseVCloudAsyncClientTest<NetworkAsy
                String.class);
       HttpRequest request = processor.createRequest(method, "org", "vdc", "network");
 
-      assertRequestLineEquals(request, "GET https://vcenterprise.bluelock.com/api/v1.0/vdcItem/2 HTTP/1.1");
+      assertRequestLineEquals(request, "GET https://vcloud.safesecureweb.com/network/1990 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.network+xml\n");
       assertPayloadEquals(request, null, null, false);
 

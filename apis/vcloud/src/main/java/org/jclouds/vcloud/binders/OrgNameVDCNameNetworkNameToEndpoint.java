@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.trmk.vcloud_0_8.functions;
+package org.jclouds.vcloud.binders;
 
 import java.net.URI;
 import java.util.Map;
@@ -25,9 +25,9 @@ import java.util.NoSuchElementException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.trmk.vcloud_0_8.domain.ReferenceType;
-import org.jclouds.trmk.vcloud_0_8.endpoints.Org;
-import org.jclouds.trmk.vcloud_0_8.endpoints.VDC;
+import org.jclouds.vcloud.domain.ReferenceType;
+import org.jclouds.vcloud.endpoints.Org;
+import org.jclouds.vcloud.endpoints.VDC;
 
 import com.google.common.base.Supplier;
 
@@ -39,13 +39,13 @@ import com.google.common.base.Supplier;
 public class OrgNameVDCNameNetworkNameToEndpoint extends OrgNameVDCNameResourceNameToEndpoint {
    @Inject
    public OrgNameVDCNameNetworkNameToEndpoint(
-         Supplier<Map<String, Map<String, ? extends org.jclouds.trmk.vcloud_0_8.domain.VDC>>> orgVDCMap,
+         Supplier<Map<String, Map<String, org.jclouds.vcloud.domain.VDC>>> orgVDCMap,
          @Org Supplier<ReferenceType> defaultOrg, @VDC Supplier<ReferenceType> defaultVDC) {
       super(orgVDCMap, defaultOrg, defaultVDC);
    }
 
    protected URI getEndpointOfResourceInVDC(Object org, Object vDC, Object resource,
-         org.jclouds.trmk.vcloud_0_8.domain.VDC vDCObject) {
+         org.jclouds.vcloud.domain.VDC vDCObject) {
       ReferenceType resourceEntity = vDCObject.getAvailableNetworks().get(resource);
       if (resourceEntity == null)
          throw new NoSuchElementException("network " + resource + " in vdc " + vDC + ", org " + org + " not found in "
