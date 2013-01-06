@@ -19,7 +19,6 @@
 package org.jclouds.cloudstack.features;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 
 import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
 import org.jclouds.cloudstack.domain.Capacity;
@@ -28,6 +27,9 @@ import org.jclouds.cloudstack.options.ListCapacityOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code GlobalCapacityAsyncClient}
@@ -40,8 +42,8 @@ import org.testng.annotations.Test;
 public class GlobalCapacityAsyncClientTest extends BaseCloudStackAsyncClientTest<GlobalCapacityAsyncClient> {
 
    public void testListCapacity() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = GlobalCapacityAsyncClient.class.getMethod("listCapacity", ListCapacityOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method);
+      Invokable<?, ?> method = Invokable.from(GlobalCapacityAsyncClient.class.getMethod("listCapacity", ListCapacityOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listCapacity&listAll=true HTTP/1.1");
@@ -56,8 +58,8 @@ public class GlobalCapacityAsyncClientTest extends BaseCloudStackAsyncClientTest
    }
 
    public void testListCapacityOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = GlobalCapacityAsyncClient.class.getMethod("listCapacity", ListCapacityOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, ListCapacityOptions.Builder.hostId("3").keyword("fred").podId("4").type(Capacity.Type.CPU_ALLOCATED_MHZ).zoneId("6"));
+      Invokable<?, ?> method = Invokable.from(GlobalCapacityAsyncClient.class.getMethod("listCapacity", ListCapacityOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(ListCapacityOptions.Builder.hostId("3").keyword("fred").podId("4").type(Capacity.Type.CPU_ALLOCATED_MHZ).zoneId("6")));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listCapacity&listAll=true&hostid=3&keyword=fred&podid=4&type=1&zoneid=6 HTTP/1.1");

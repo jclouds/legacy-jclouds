@@ -84,7 +84,7 @@ public class BindToPath implements Binder {
     */
    static RESTLink getLinkToUse(final GeneratedHttpRequest request, final SingleResourceTransportDto payload) {
       int argIndex = request.getArgs().indexOf(payload);
-      Annotation[] annotations = request.getJavaMethod().getParameterAnnotations()[argIndex];
+      Annotation[] annotations = request.getInvoker().getParameters().get(argIndex).getAnnotations();
 
       EndpointLink linkName = (EndpointLink) Iterables.find(Arrays.asList(annotations),
             Predicates.instanceOf(EndpointLink.class), null);

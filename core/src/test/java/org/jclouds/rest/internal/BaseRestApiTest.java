@@ -26,7 +26,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
@@ -49,6 +48,7 @@ import org.testng.annotations.Test;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.SortedSetMultimap;
 import com.google.common.collect.TreeMultimap;
+import com.google.common.reflect.Invokable;
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.name.Names;
@@ -160,7 +160,7 @@ public abstract class BaseRestApiTest {
       assertEquals(request.getRequestLine(), toMatch);
    }
 
-   protected void assertFallbackClassEquals(Method method, @Nullable Class<?> expected) {
+   protected void assertFallbackClassEquals(Invokable<?, ?> method, @Nullable Class<?> expected) {
       Fallback fallbackAnnotation = method.getAnnotation(Fallback.class);
       Class<?> assigned = fallbackAnnotation != null ? fallbackAnnotation.value() : MapHttp4xxCodesToExceptions.class;
       if (expected == null)
@@ -169,13 +169,13 @@ public abstract class BaseRestApiTest {
          assertEquals(assigned, expected);
    }
 
-   protected void assertSaxResponseParserClassEquals(Method method, @Nullable Class<?> parserClass) {
+   protected void assertSaxResponseParserClassEquals(Invokable<?, ?> method, @Nullable Class<?> parserClass) {
       XMLResponseParser annotation = method.getAnnotation(XMLResponseParser.class);
       Class<?> expected =  (annotation != null) ? annotation.value() :null;
       assertEquals(expected, parserClass);
    }
 
-   protected void assertResponseParserClassEquals(Method method, HttpRequest request, @Nullable Class<?> parserClass) {
+   protected void assertResponseParserClassEquals(Invokable<?, ?> method, HttpRequest request, @Nullable Class<?> parserClass) {
       assertEquals(AsyncRestClientProxy.createResponseParser(parserFactory, injector, method, request).getClass(), parserClass);
    }
 

@@ -21,13 +21,11 @@ package org.jclouds.internal;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.lang.reflect.Method;
 import java.util.List;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import com.google.common.reflect.Invokable;
 
 /**
@@ -70,22 +68,6 @@ public class ClassInvokerArgs {
       public B invoker(Invokable<?, ?> invoker) {
          this.invoker = invoker;
          return self();
-      }
-      
-      /**
-       * @see ClassInvokerArgs#getInvoker()
-       */
-      @Deprecated
-      public B invoker(Method method) {
-         return invoker(Invokable.from(method));
-      }
-
-      /**
-       * @see ClassInvokerArgs#getArgs()
-       */
-      @Deprecated
-      public B args(Object[] args) {
-         return args(args == null ? Lists.newArrayList(new Object[] { null }) : Lists.newArrayList(args));
       }
 
       /**

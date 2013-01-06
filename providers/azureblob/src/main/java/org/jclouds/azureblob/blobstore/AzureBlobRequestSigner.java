@@ -21,8 +21,6 @@ package org.jclouds.azureblob.blobstore;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.blobstore.util.BlobStoreUtils.cleanRequest;
 
-import java.lang.reflect.Method;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -36,6 +34,9 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.Invokable;
+
 /**
  * 
  * @author Adrian Cole
@@ -46,24 +47,29 @@ public class AzureBlobRequestSigner implements BlobRequestSigner {
    private final BlobToAzureBlob blobToBlob;
    private final BlobToHttpGetOptions blob2HttpGetOptions;
 
-   private final Method getMethod;
-   private final Method deleteMethod;
-   private final Method createMethod;
+   private final Invokable<?, ?> getMethod;
+   private final Invokable<?, ?> deleteMethod;
+   private final Invokable<?, ?> createMethod;
 
    @Inject
    public AzureBlobRequestSigner(RestAnnotationProcessor.Factory processor, BlobToAzureBlob blobToBlob,
-            BlobToHttpGetOptions blob2HttpGetOptions) throws SecurityException, NoSuchMethodException {
+         BlobToHttpGetOptions blob2HttpGetOptions) throws SecurityException, NoSuchMethodException {
       this.processor = checkNotNull(processor, "processor").declaring(AzureBlobAsyncClient.class);
       this.blobToBlob = checkNotNull(blobToBlob, "blobToBlob");
       this.blob2HttpGetOptions = checkNotNull(blob2HttpGetOptions, "blob2HttpGetOptions");
-      this.getMethod = AzureBlobAsyncClient.class.getMethod("getBlob", String.class, String.class, GetOptions[].class);
-      this.deleteMethod = AzureBlobAsyncClient.class.getMethod("deleteBlob", String.class, String.class);
-      this.createMethod = AzureBlobAsyncClient.class.getMethod("putBlob", String.class, AzureBlob.class);
+      this.getMethod = Invokable.from(AzureBlobAsyncClient.class.getMethod("getBlob", String.class, String.class,
+            GetOptions[].class));
+      this.deleteMethod = Invokable
+            .from(AzureBlobAsyncClient.class.getMethod("deleteBlob", String.class, String.class));
+      this.createMethod = Invokable
+            .from(AzureBlobAsyncClient.class.getMethod("putBlob", String.class, AzureBlob.class));
    }
 
    @Override
    public HttpRequest signGetBlob(String container, String name) {
-      return cleanRequest(processor.createRequest(getMethod, container, name));
+      checkNotNull(container, "container");
+      checkNotNull(name, "name");
+      return cleanRequest(processor.createRequest(getMethod, ImmutableList.<Object> of(container, name)));
    }
 
    @Override
@@ -73,7 +79,10 @@ public class AzureBlobRequestSigner implements BlobRequestSigner {
 
    @Override
    public HttpRequest signPutBlob(String container, Blob blob) {
-      return cleanRequest(processor.createRequest(createMethod, container, blobToBlob.apply(blob)));
+      checkNotNull(container, "container");
+      checkNotNull(blob, "blob");
+      return cleanRequest(processor.createRequest(createMethod,
+            ImmutableList.<Object> of(container, blobToBlob.apply(blob))));
    }
 
    @Override
@@ -83,11 +92,16 @@ public class AzureBlobRequestSigner implements BlobRequestSigner {
 
    @Override
    public HttpRequest signRemoveBlob(String container, String name) {
-      return cleanRequest(processor.createRequest(deleteMethod, container, name));
+      checkNotNull(container, "container");
+      checkNotNull(name, "name");
+      return cleanRequest(processor.createRequest(deleteMethod, ImmutableList.<Object> of(container, name)));
    }
 
    @Override
    public HttpRequest signGetBlob(String container, String name, org.jclouds.blobstore.options.GetOptions options) {
-      return cleanRequest(processor.createRequest(getMethod, container, name, blob2HttpGetOptions.apply(options)));
+      checkNotNull(container, "container");
+      checkNotNull(name, "name");
+      return cleanRequest(processor.createRequest(getMethod,
+            ImmutableList.of(container, name, blob2HttpGetOptions.apply(checkNotNull(options, "options")))));
    }
 }

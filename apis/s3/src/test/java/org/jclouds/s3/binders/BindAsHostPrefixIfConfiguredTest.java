@@ -23,7 +23,6 @@ import static org.jclouds.s3.reference.S3Constants.PROPERTY_S3_VIRTUAL_HOST_BUCK
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.Properties;
 
 import org.jclouds.http.HttpRequest;
@@ -31,6 +30,9 @@ import org.jclouds.s3.S3AsyncClient;
 import org.jclouds.s3.internal.BaseS3AsyncClientTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code BindAsHostPrefixIfConfigured}
@@ -59,8 +61,8 @@ public class BindAsHostPrefixIfConfiguredTest extends BaseS3AsyncClientTest<S3As
       request = binder.bindToRequest(request, "testbucket.example.com");
       assertEquals(request.getRequestLine(), "GET http://euc/services/Walrus/testbucket.example.com HTTP/1.1");
 
-      Method method = S3AsyncClient.class.getMethod("deleteObject", String.class, String.class);
-      request = processor.createRequest(method, "testbucket.example.com", "test.jpg");
+      Invokable<?, ?> method = Invokable.from(S3AsyncClient.class.getMethod("deleteObject", String.class, String.class));
+      request = processor.createRequest(method, ImmutableList.<Object> of("testbucket.example.com", "test.jpg"));
 
       assertRequestLineEquals(request, "DELETE http://euc/services/Walrus/testbucket.example.com/test.jpg HTTP/1.1");
    }

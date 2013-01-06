@@ -19,7 +19,6 @@
 package org.jclouds.cloudstack.features;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 
 import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
@@ -29,6 +28,9 @@ import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.ListAsyncJobsOptions;
 import org.jclouds.http.HttpRequest;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code AsyncJobAsyncClient}
@@ -41,8 +43,8 @@ import org.testng.annotations.Test;
 public class AsyncJobAsyncClientTest extends BaseCloudStackAsyncClientTest<AsyncJobAsyncClient> {
 
    public void testGetAsyncJob() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AsyncJobAsyncClient.class.getMethod("getAsyncJob", String.class);
-      HttpRequest httpRequest = processor.createRequest(method, 11l);
+      Invokable<?, ?> method = Invokable.from(AsyncJobAsyncClient.class.getMethod("getAsyncJob", String.class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(11l));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=queryAsyncJobResult&jobid=11 HTTP/1.1");
@@ -58,8 +60,8 @@ public class AsyncJobAsyncClientTest extends BaseCloudStackAsyncClientTest<Async
    }
 
    public void testListAsyncJobs() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AsyncJobAsyncClient.class.getMethod("listAsyncJobs", ListAsyncJobsOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method);
+      Invokable<?, ?> method = Invokable.from(AsyncJobAsyncClient.class.getMethod("listAsyncJobs", ListAsyncJobsOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listAsyncJobs&listAll=true HTTP/1.1");
@@ -75,9 +77,9 @@ public class AsyncJobAsyncClientTest extends BaseCloudStackAsyncClientTest<Async
    }
 
    public void testListAsyncJobsOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AsyncJobAsyncClient.class.getMethod("listAsyncJobs", ListAsyncJobsOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method,
-            ListAsyncJobsOptions.Builder.accountInDomain("adrian", "5"));
+      Invokable<?, ?> method = Invokable.from(AsyncJobAsyncClient.class.getMethod("listAsyncJobs", ListAsyncJobsOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(
+            ListAsyncJobsOptions.Builder.accountInDomain("adrian", "5")));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listAsyncJobs&listAll=true&account=adrian&domainid=5 HTTP/1.1");

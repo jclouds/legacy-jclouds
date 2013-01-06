@@ -21,7 +21,6 @@ package org.jclouds.cloudstack.features;
 import static org.jclouds.cloudstack.domain.NetworkOfferingAvailabilityType.DEFAULT;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 
 import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
@@ -35,6 +34,8 @@ import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Functions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code OfferingAsyncClient}
@@ -46,8 +47,8 @@ import com.google.common.base.Functions;
 @Test(groups = "unit", testName = "OfferingAsyncClientTest")
 public class OfferingAsyncClientTest extends BaseCloudStackAsyncClientTest<OfferingAsyncClient> {
    public void testListDiskOfferings() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = OfferingAsyncClient.class.getMethod("listDiskOfferings", ListDiskOfferingsOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method);
+      Invokable<?, ?> method = Invokable.from(OfferingAsyncClient.class.getMethod("listDiskOfferings", ListDiskOfferingsOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listDiskOfferings&listAll=true HTTP/1.1");
@@ -63,8 +64,8 @@ public class OfferingAsyncClientTest extends BaseCloudStackAsyncClientTest<Offer
    }
 
    public void testListDiskOfferingsOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = OfferingAsyncClient.class.getMethod("listDiskOfferings", ListDiskOfferingsOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, ListDiskOfferingsOptions.Builder.domainId("6").id("5"));
+      Invokable<?, ?> method = Invokable.from(OfferingAsyncClient.class.getMethod("listDiskOfferings", ListDiskOfferingsOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(ListDiskOfferingsOptions.Builder.domainId("6").id("5")));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listDiskOfferings&listAll=true&domainid=6&id=5 HTTP/1.1");
@@ -80,8 +81,8 @@ public class OfferingAsyncClientTest extends BaseCloudStackAsyncClientTest<Offer
    }
 
    public void testGetDiskOffering() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = OfferingAsyncClient.class.getMethod("getDiskOffering", String.class);
-      HttpRequest httpRequest = processor.createRequest(method, "5");
+      Invokable<?, ?> method = Invokable.from(OfferingAsyncClient.class.getMethod("getDiskOffering", String.class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("5"));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listDiskOfferings&listAll=true&id=5 HTTP/1.1");
@@ -98,8 +99,8 @@ public class OfferingAsyncClientTest extends BaseCloudStackAsyncClientTest<Offer
    }
 
    public void testListNetworkOfferings() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = OfferingAsyncClient.class.getMethod("listNetworkOfferings", ListNetworkOfferingsOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method);
+      Invokable<?, ?> method = Invokable.from(OfferingAsyncClient.class.getMethod("listNetworkOfferings", ListNetworkOfferingsOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listNetworkOfferings&listAll=true HTTP/1.1");
@@ -115,9 +116,9 @@ public class OfferingAsyncClientTest extends BaseCloudStackAsyncClientTest<Offer
    }
 
    public void testListNetworkOfferingsOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = OfferingAsyncClient.class.getMethod("listNetworkOfferings", ListNetworkOfferingsOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method,
-         ListNetworkOfferingsOptions.Builder.availability(DEFAULT).isShared(true).id("6"));
+      Invokable<?, ?> method = Invokable.from(OfferingAsyncClient.class.getMethod("listNetworkOfferings", ListNetworkOfferingsOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(
+         ListNetworkOfferingsOptions.Builder.availability(DEFAULT).isShared(true).id("6")));
 
       assertRequestLineEquals(
             httpRequest,
@@ -134,8 +135,8 @@ public class OfferingAsyncClientTest extends BaseCloudStackAsyncClientTest<Offer
    }
 
    public void testGetNetworkOffering() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = OfferingAsyncClient.class.getMethod("getNetworkOffering", String.class);
-      HttpRequest httpRequest = processor.createRequest(method, "5");
+      Invokable<?, ?> method = Invokable.from(OfferingAsyncClient.class.getMethod("getNetworkOffering", String.class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("5"));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listNetworkOfferings&listAll=true&id=5 HTTP/1.1");
@@ -152,8 +153,8 @@ public class OfferingAsyncClientTest extends BaseCloudStackAsyncClientTest<Offer
    }
 
    public void testListServiceOfferings() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = OfferingAsyncClient.class.getMethod("listServiceOfferings", ListServiceOfferingsOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method);
+      Invokable<?, ?> method = Invokable.from(OfferingAsyncClient.class.getMethod("listServiceOfferings", ListServiceOfferingsOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listServiceOfferings&listAll=true HTTP/1.1");
@@ -169,9 +170,9 @@ public class OfferingAsyncClientTest extends BaseCloudStackAsyncClientTest<Offer
    }
 
    public void testListServiceOfferingsOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = OfferingAsyncClient.class.getMethod("listServiceOfferings", ListServiceOfferingsOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, ListServiceOfferingsOptions.Builder.virtualMachineId("4")
-            .domainId("5").id("6"));
+      Invokable<?, ?> method = Invokable.from(OfferingAsyncClient.class.getMethod("listServiceOfferings", ListServiceOfferingsOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(ListServiceOfferingsOptions.Builder.virtualMachineId("4")
+            .domainId("5").id("6")));
 
       assertRequestLineEquals(
             httpRequest,
@@ -188,8 +189,8 @@ public class OfferingAsyncClientTest extends BaseCloudStackAsyncClientTest<Offer
    }
 
    public void testGetServiceOffering() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = OfferingAsyncClient.class.getMethod("getServiceOffering", String.class);
-      HttpRequest httpRequest = processor.createRequest(method, "5");
+      Invokable<?, ?> method = Invokable.from(OfferingAsyncClient.class.getMethod("getServiceOffering", String.class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("5"));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listServiceOfferings&listAll=true&id=5 HTTP/1.1");

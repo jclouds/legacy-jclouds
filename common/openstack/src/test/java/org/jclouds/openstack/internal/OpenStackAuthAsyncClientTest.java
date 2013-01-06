@@ -19,7 +19,6 @@
 package org.jclouds.openstack.internal;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.fallbacks.MapHttp4xxCodesToExceptions;
@@ -31,6 +30,9 @@ import org.jclouds.rest.AnonymousRestApiMetadata;
 import org.jclouds.rest.internal.BaseAsyncClientTest;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.Invokable;
+
 /**
  * Tests behavior of {@code OpenStackAuthAsyncClient}
  * 
@@ -41,8 +43,8 @@ import org.testng.annotations.Test;
 public class OpenStackAuthAsyncClientTest extends BaseAsyncClientTest<OpenStackAuthAsyncClient> {
 
    public void testAuthenticate() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = OpenStackAuthAsyncClient.class.getMethod("authenticate", String.class, String.class);
-      HttpRequest httpRequest = processor.createRequest(method, "foo", "bar");
+      Invokable<?, ?> method = Invokable.from(OpenStackAuthAsyncClient.class.getMethod("authenticate", String.class, String.class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("foo", "bar"));
 
       assertRequestLineEquals(httpRequest, "GET http://localhost:8080/v1.0 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: */*\nHost: localhost:8080\nX-Auth-Key: bar\nX-Auth-User: foo\n");
@@ -55,8 +57,8 @@ public class OpenStackAuthAsyncClientTest extends BaseAsyncClientTest<OpenStackA
    }
 
    public void testAuthenticateStorage() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = OpenStackAuthAsyncClient.class.getMethod("authenticateStorage", String.class, String.class);
-      HttpRequest httpRequest = processor.createRequest(method, "foo", "bar");
+      Invokable<?, ?> method = Invokable.from(OpenStackAuthAsyncClient.class.getMethod("authenticateStorage", String.class, String.class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("foo", "bar"));
 
       assertRequestLineEquals(httpRequest, "GET http://localhost:8080/v1.0 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: */*\nHost: localhost:8080\nX-Storage-Pass: bar\nX-Storage-User: foo\n");

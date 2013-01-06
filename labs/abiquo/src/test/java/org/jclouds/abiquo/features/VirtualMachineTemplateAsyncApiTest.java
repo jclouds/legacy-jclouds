@@ -22,7 +22,6 @@ package org.jclouds.abiquo.features;
 import static org.jclouds.abiquo.domain.DomainUtils.withHeader;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.abiquo.domain.TemplateResources;
@@ -43,6 +42,8 @@ import com.abiquo.server.core.appslibrary.ConversionsDto;
 import com.abiquo.server.core.appslibrary.VirtualMachineTemplateDto;
 import com.abiquo.server.core.appslibrary.VirtualMachineTemplatePersistentDto;
 import com.abiquo.server.core.appslibrary.VirtualMachineTemplatesDto;
+import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.Invokable;
 
 /**
  * Tests annotation parsing of {@code VirtualMachineTemplateAsyncApi}
@@ -55,9 +56,9 @@ public class VirtualMachineTemplateAsyncApiTest extends BaseAbiquoAsyncApiTest<V
    /*********************** Virtual Machine Template ***********************/
 
    public void testListVirtualMachineTemplates() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VirtualMachineTemplateAsyncApi.class.getMethod("listVirtualMachineTemplates", Integer.class,
-            Integer.class);
-      GeneratedHttpRequest request = processor.createRequest(method, 1, 1);
+      Invokable<?, ?> method = Invokable.from(VirtualMachineTemplateAsyncApi.class.getMethod("listVirtualMachineTemplates", Integer.class,
+            Integer.class));
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(1, 1));
 
       assertRequestLineEquals(request,
             "GET http://localhost/api/admin/enterprises/1/datacenterrepositories/1/virtualmachinetemplates HTTP/1.1");
@@ -73,10 +74,10 @@ public class VirtualMachineTemplateAsyncApiTest extends BaseAbiquoAsyncApiTest<V
 
    public void testListVirtualMachineTemplatesWithOptions() throws SecurityException, NoSuchMethodException,
          IOException {
-      Method method = VirtualMachineTemplateAsyncApi.class.getMethod("listVirtualMachineTemplates", Integer.class,
-            Integer.class, VirtualMachineTemplateOptions.class);
-      GeneratedHttpRequest request = processor.createRequest(method, 1, 1, VirtualMachineTemplateOptions.builder()
-            .hypervisorType(HypervisorType.XENSERVER).categoryName("Firewalls").build());
+      Invokable<?, ?> method = Invokable.from(VirtualMachineTemplateAsyncApi.class.getMethod("listVirtualMachineTemplates", Integer.class,
+            Integer.class, VirtualMachineTemplateOptions.class));
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(1, 1, VirtualMachineTemplateOptions.builder()
+            .hypervisorType(HypervisorType.XENSERVER).categoryName("Firewalls").build()));
 
       assertRequestLineEquals(request,
             "GET http://localhost/api/admin/enterprises/1/datacenterrepositories/1/virtualmachinetemplates"
@@ -92,9 +93,9 @@ public class VirtualMachineTemplateAsyncApiTest extends BaseAbiquoAsyncApiTest<V
    }
 
    public void testGetVirtualMachineTemplate() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VirtualMachineTemplateAsyncApi.class.getMethod("getVirtualMachineTemplate", Integer.class,
-            Integer.class, Integer.class);
-      GeneratedHttpRequest request = processor.createRequest(method, 1, 1, 1);
+      Invokable<?, ?> method = Invokable.from(VirtualMachineTemplateAsyncApi.class.getMethod("getVirtualMachineTemplate", Integer.class,
+            Integer.class, Integer.class));
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(1, 1, 1));
 
       assertRequestLineEquals(request,
             "GET http://localhost/api/admin/enterprises/1/datacenterrepositories/1/virtualmachinetemplates/1 HTTP/1.1");
@@ -109,9 +110,9 @@ public class VirtualMachineTemplateAsyncApiTest extends BaseAbiquoAsyncApiTest<V
    }
 
    public void testUpdateVirtualMachineTemplate() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VirtualMachineTemplateAsyncApi.class.getMethod("updateVirtualMachineTemplate",
-            VirtualMachineTemplateDto.class);
-      GeneratedHttpRequest request = processor.createRequest(method, TemplateResources.virtualMachineTemplatePut());
+      Invokable<?, ?> method = Invokable.from(VirtualMachineTemplateAsyncApi.class.getMethod("updateVirtualMachineTemplate",
+            VirtualMachineTemplateDto.class));
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(TemplateResources.virtualMachineTemplatePut()));
 
       assertRequestLineEquals(request,
             "PUT http://localhost/api/admin/enterprises/1/datacenterrepositories/1/virtualmachinetemplates/1 HTTP/1.1");
@@ -127,9 +128,9 @@ public class VirtualMachineTemplateAsyncApiTest extends BaseAbiquoAsyncApiTest<V
    }
 
    public void testDeleteVirtualMachineTemplate() throws SecurityException, NoSuchMethodException {
-      Method method = VirtualMachineTemplateAsyncApi.class.getMethod("deleteVirtualMachineTemplate",
-            VirtualMachineTemplateDto.class);
-      GeneratedHttpRequest request = processor.createRequest(method, TemplateResources.virtualMachineTemplatePut());
+      Invokable<?, ?> method = Invokable.from(VirtualMachineTemplateAsyncApi.class.getMethod("deleteVirtualMachineTemplate",
+            VirtualMachineTemplateDto.class));
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(TemplateResources.virtualMachineTemplatePut()));
 
       assertRequestLineEquals(request,
             "DELETE http://localhost/api/admin/enterprises/1/datacenterrepositories/1/virtualmachinetemplates/1 HTTP/1.1");
@@ -145,9 +146,9 @@ public class VirtualMachineTemplateAsyncApiTest extends BaseAbiquoAsyncApiTest<V
 
    public void testCreatePersistentVirtualMachineTemplate() throws SecurityException, NoSuchMethodException,
          IOException {
-      Method method = VirtualMachineTemplateAsyncApi.class.getMethod("createPersistentVirtualMachineTemplate",
-            Integer.class, Integer.class, VirtualMachineTemplatePersistentDto.class);
-      GeneratedHttpRequest request = processor.createRequest(method, 1, 1, TemplateResources.persistentData());
+      Invokable<?, ?> method = Invokable.from(VirtualMachineTemplateAsyncApi.class.getMethod("createPersistentVirtualMachineTemplate",
+            Integer.class, Integer.class, VirtualMachineTemplatePersistentDto.class));
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(1, 1, TemplateResources.persistentData()));
 
       assertRequestLineEquals(request,
             "POST http://localhost/api/admin/enterprises/1/datacenterrepositories/1/virtualmachinetemplates HTTP/1.1");
@@ -165,11 +166,11 @@ public class VirtualMachineTemplateAsyncApiTest extends BaseAbiquoAsyncApiTest<V
    /*********************** Conversions ***********************/
 
    public void testRequestConversion() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VirtualMachineTemplateAsyncApi.class.getMethod("requestConversion",
-            VirtualMachineTemplateDto.class, DiskFormatType.class, ConversionDto.class);
+      Invokable<?, ?> method = Invokable.from(VirtualMachineTemplateAsyncApi.class.getMethod("requestConversion",
+            VirtualMachineTemplateDto.class, DiskFormatType.class, ConversionDto.class));
 
-      GeneratedHttpRequest request = processor.createRequest(method, TemplateResources.virtualMachineTemplatePut(),
-            DiskFormatType.VMDK_STREAM_OPTIMIZED, TemplateResources.conversionPut());
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(TemplateResources.virtualMachineTemplatePut(),
+            DiskFormatType.VMDK_STREAM_OPTIMIZED, TemplateResources.conversionPut()));
 
       assertRequestLineEquals(
             request,
@@ -187,9 +188,9 @@ public class VirtualMachineTemplateAsyncApiTest extends BaseAbiquoAsyncApiTest<V
    }
 
    public void testListConversions() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VirtualMachineTemplateAsyncApi.class
-            .getMethod("listConversions", VirtualMachineTemplateDto.class);
-      GeneratedHttpRequest request = processor.createRequest(method, TemplateResources.virtualMachineTemplatePut());
+      Invokable<?, ?> method = Invokable.from(VirtualMachineTemplateAsyncApi.class
+            .getMethod("listConversions", VirtualMachineTemplateDto.class));
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(TemplateResources.virtualMachineTemplatePut()));
 
       assertRequestLineEquals(request,
             "GET http://localhost/api/admin/enterprises/1/datacenterrepositories/1/virtualmachinetemplates/1/conversions HTTP/1.1");
@@ -204,13 +205,13 @@ public class VirtualMachineTemplateAsyncApiTest extends BaseAbiquoAsyncApiTest<V
    }
 
    public void testListConversionsWithOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VirtualMachineTemplateAsyncApi.class.getMethod("listConversions",
-            VirtualMachineTemplateDto.class, ConversionOptions.class);
+      Invokable<?, ?> method = Invokable.from(VirtualMachineTemplateAsyncApi.class.getMethod("listConversions",
+            VirtualMachineTemplateDto.class, ConversionOptions.class));
       GeneratedHttpRequest request = processor.createRequest(
             method,
-            TemplateResources.virtualMachineTemplatePut(),
+            ImmutableList.<Object> of(TemplateResources.virtualMachineTemplatePut(),
             ConversionOptions.builder().hypervisorType(HypervisorType.XENSERVER)
-                  .conversionState(ConversionState.FINISHED).build());
+                  .conversionState(ConversionState.FINISHED).build()));
 
       assertRequestLineEquals(request,
             "GET http://localhost/api/admin/enterprises/1/datacenterrepositories/1/virtualmachinetemplates/1/conversions"
@@ -226,10 +227,10 @@ public class VirtualMachineTemplateAsyncApiTest extends BaseAbiquoAsyncApiTest<V
    }
 
    public void testGetConversion() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VirtualMachineTemplateAsyncApi.class.getMethod("getConversion", VirtualMachineTemplateDto.class,
-            DiskFormatType.class);
-      GeneratedHttpRequest request = processor.createRequest(method, TemplateResources.virtualMachineTemplatePut(),
-            DiskFormatType.RAW);
+      Invokable<?, ?> method = Invokable.from(VirtualMachineTemplateAsyncApi.class.getMethod("getConversion", VirtualMachineTemplateDto.class,
+            DiskFormatType.class));
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(TemplateResources.virtualMachineTemplatePut(),
+            DiskFormatType.RAW));
 
       assertRequestLineEquals(
             request,

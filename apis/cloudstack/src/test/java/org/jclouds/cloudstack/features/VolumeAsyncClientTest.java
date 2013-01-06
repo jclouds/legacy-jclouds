@@ -19,7 +19,6 @@
 package org.jclouds.cloudstack.features;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 
 import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
@@ -28,6 +27,9 @@ import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.ListVolumesOptions;
 import org.jclouds.http.HttpRequest;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code EventAsyncClient}
@@ -40,8 +42,8 @@ import org.testng.annotations.Test;
 public class VolumeAsyncClientTest extends BaseCloudStackAsyncClientTest<VolumeAsyncClient> {
 
    public void testListVolumes() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VolumeAsyncClient.class.getMethod("listVolumes", ListVolumesOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method);
+      Invokable<?, ?> method = Invokable.from(VolumeAsyncClient.class.getMethod("listVolumes", ListVolumesOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listVolumes&listAll=true HTTP/1.1");
@@ -56,8 +58,8 @@ public class VolumeAsyncClientTest extends BaseCloudStackAsyncClientTest<VolumeA
    }
 
    public void testGetVolume() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VolumeAsyncClient.class.getMethod("getVolume", String.class);
-      HttpRequest httpRequest = processor.createRequest(method, 111L);
+      Invokable<?, ?> method = Invokable.from(VolumeAsyncClient.class.getMethod("getVolume", String.class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(111L));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listVolumes&listAll=true&id=111 HTTP/1.1");
@@ -80,9 +82,9 @@ public class VolumeAsyncClientTest extends BaseCloudStackAsyncClientTest<VolumeA
                                                      .addQueryParam("zoneid", "111").build();
 
    public void testCreateVolumeWithSnapshot() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VolumeAsyncClient.class.getMethod("createVolumeFromSnapshotInZone", String.class, String.class,
-            String.class);
-      HttpRequest httpRequest = processor.createRequest(method, "jclouds-volume", 999L, 111l);
+      Invokable<?, ?> method = Invokable.from(VolumeAsyncClient.class.getMethod("createVolumeFromSnapshotInZone", String.class, String.class,
+            String.class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("jclouds-volume", 999L, 111l));
 
       assertRequestLineEquals(httpRequest, createVolumeFromSnapshot.getRequestLine());
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
@@ -102,10 +104,10 @@ public class VolumeAsyncClientTest extends BaseCloudStackAsyncClientTest<VolumeA
                                                          .addQueryParam("zoneid", "111").build();
 
    public void testCreateVolumeFromDiskOffering() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VolumeAsyncClient.class.getMethod("createVolumeFromDiskOfferingInZone", String.class, String.class,
-            String.class);
+      Invokable<?, ?> method = Invokable.from(VolumeAsyncClient.class.getMethod("createVolumeFromDiskOfferingInZone", String.class, String.class,
+            String.class));
 
-      HttpRequest httpRequest = processor.createRequest(method, "jclouds-volume", 999L, 111L);
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("jclouds-volume", 999L, 111L));
 
       assertRequestLineEquals(httpRequest, createVolumeFromDiskOffering.getRequestLine());
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
@@ -117,9 +119,9 @@ public class VolumeAsyncClientTest extends BaseCloudStackAsyncClientTest<VolumeA
    }
 
    public void testAttachVolume() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VolumeAsyncClient.class.getMethod("attachVolume", String.class, String.class);
+      Invokable<?, ?> method = Invokable.from(VolumeAsyncClient.class.getMethod("attachVolume", String.class, String.class));
 
-      HttpRequest httpRequest = processor.createRequest(method, 111L, 999L);
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(111L, 999L));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=attachVolume&id=111&virtualmachineid=999 HTTP/1.1");
@@ -132,9 +134,9 @@ public class VolumeAsyncClientTest extends BaseCloudStackAsyncClientTest<VolumeA
    }
 
    public void testDetachVolume() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VolumeAsyncClient.class.getMethod("detachVolume", String.class);
+      Invokable<?, ?> method = Invokable.from(VolumeAsyncClient.class.getMethod("detachVolume", String.class));
 
-      HttpRequest httpRequest = processor.createRequest(method, 111L);
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(111L));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=detachVolume&id=111 HTTP/1.1");
@@ -147,8 +149,8 @@ public class VolumeAsyncClientTest extends BaseCloudStackAsyncClientTest<VolumeA
    }
 
    public void testDeleteVolume() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VolumeAsyncClient.class.getMethod("deleteVolume", String.class);
-      HttpRequest httpRequest = processor.createRequest(method, 111L);
+      Invokable<?, ?> method = Invokable.from(VolumeAsyncClient.class.getMethod("deleteVolume", String.class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(111L));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=deleteVolume&id=111 HTTP/1.1");

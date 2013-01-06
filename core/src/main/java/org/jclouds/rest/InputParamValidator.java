@@ -21,12 +21,10 @@ package org.jclouds.rest;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Collections2.filter;
 
-import java.lang.reflect.Method;
 import java.util.List;
 
 import javax.inject.Inject;
 
-import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.predicates.Validator;
 import org.jclouds.rest.annotations.ParamValidators;
 
@@ -72,12 +70,6 @@ public class InputParamValidator {
     * @throws IllegalStateException
     *            if validation failed
     */
-   @Deprecated
-   public void validateMethodParametersOrThrow(Method method, @Nullable Object... args) {
-      validateMethodParametersOrThrow(Invokable.from(checkNotNull(method, "method")),
-            Lists.newArrayList(args));
-   }
-
    public void validateMethodParametersOrThrow(Invokable<?, ?> method, List<Object> args) {
       try {
          performMethodValidation(checkNotNull(method, "method"), args);

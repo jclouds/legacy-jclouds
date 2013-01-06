@@ -18,13 +18,17 @@
  */
 package org.jclouds.oauth.v2.functions;
 
-import com.google.common.base.Function;
-import com.google.common.base.Joiner;
-import com.google.common.base.Supplier;
-import com.google.common.base.Ticker;
-import com.google.common.collect.ImmutableMap;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
+import static com.google.common.base.Preconditions.checkState;
+import static org.jclouds.oauth.v2.OAuthConstants.ADDITIONAL_CLAIMS;
+import static org.jclouds.oauth.v2.config.OAuthProperties.AUDIENCE;
+import static org.jclouds.oauth.v2.config.OAuthProperties.SCOPES;
+import static org.jclouds.oauth.v2.config.OAuthProperties.SIGNATURE_OR_MAC_ALGORITHM;
+
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import javax.inject.Singleton;
+
 import org.jclouds.Constants;
 import org.jclouds.oauth.v2.config.OAuthScopes;
 import org.jclouds.oauth.v2.domain.ClaimSet;
@@ -34,15 +38,13 @@ import org.jclouds.oauth.v2.domain.TokenRequest;
 import org.jclouds.oauth.v2.domain.TokenRequestFormat;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 
-import javax.inject.Singleton;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
-import static com.google.common.base.Preconditions.checkState;
-import static org.jclouds.oauth.v2.OAuthConstants.ADDITIONAL_CLAIMS;
-import static org.jclouds.oauth.v2.config.OAuthProperties.AUDIENCE;
-import static org.jclouds.oauth.v2.config.OAuthProperties.SCOPES;
-import static org.jclouds.oauth.v2.config.OAuthProperties.SIGNATURE_OR_MAC_ALGORITHM;
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
+import com.google.common.base.Supplier;
+import com.google.common.base.Ticker;
+import com.google.common.collect.ImmutableMap;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 /**
  * The default authenticator.
@@ -113,7 +115,7 @@ public class BuildTokenRequest implements Function<GeneratedHttpRequest, TokenRe
 
    protected String getOAuthScopes(GeneratedHttpRequest request) {
       OAuthScopes classScopes = request.getDeclaring().getAnnotation(OAuthScopes.class);
-      OAuthScopes methodScopes = request.getJavaMethod().getAnnotation(OAuthScopes.class);
+      OAuthScopes methodScopes = request.getInvoker().getAnnotation(OAuthScopes.class);
 
       // if no annotations are present the rely on globally set scopes
       if (classScopes == null && methodScopes == null) {
@@ -121,7 +123,7 @@ public class BuildTokenRequest implements Function<GeneratedHttpRequest, TokenRe
                  "with OAuthScopes specifying required permissions. Alternatively a global property " +
                  "\"oauth.scopes\" may be set to define scopes globally. REST Class: %s, Method: %s",
                  request.getDeclaring().getName(),
-                 request.getJavaMethod().getName()));
+                 request.getInvoker().getName()));
          return globalScopes;
       }
 

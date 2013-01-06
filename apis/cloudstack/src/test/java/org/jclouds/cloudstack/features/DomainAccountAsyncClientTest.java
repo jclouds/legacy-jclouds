@@ -18,14 +18,15 @@
  */
 package org.jclouds.cloudstack.features;
 
-import java.lang.reflect.Method;
-
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code DomainAccountAsyncClient}
@@ -36,8 +37,8 @@ import org.testng.annotations.Test;
 public class DomainAccountAsyncClientTest extends BaseCloudStackAsyncClientTest<DomainAccountAsyncClient> {
 
    public void testEnableAccount() throws Exception {
-      Method method = DomainAccountAsyncClient.class.getMethod("enableAccount", String.class, String.class);
-      HttpRequest httpRequest = processor.createRequest(method, "goo", "2");
+      Invokable<?, ?> method = Invokable.from(DomainAccountAsyncClient.class.getMethod("enableAccount", String.class, String.class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("goo", "2"));
 
       assertRequestLineEquals(httpRequest,
          "GET http://localhost:8080/client/api?response=json&command=enableAccount&account=goo&domainid=2 HTTP/1.1");
@@ -52,8 +53,8 @@ public class DomainAccountAsyncClientTest extends BaseCloudStackAsyncClientTest<
    }
 
    public void testDisableAccount() throws Exception {
-      Method method = DomainAccountAsyncClient.class.getMethod("disableAccount", String.class, String.class, boolean.class);
-      HttpRequest httpRequest = processor.createRequest(method, "1", "2", true);
+      Invokable<?, ?> method = Invokable.from(DomainAccountAsyncClient.class.getMethod("disableAccount", String.class, String.class, boolean.class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("1", "2", true));
 
       assertRequestLineEquals(httpRequest,
          "GET http://localhost:8080/client/api?response=json&command=disableAccount&account=1&domainid=2&lock=true HTTP/1.1");

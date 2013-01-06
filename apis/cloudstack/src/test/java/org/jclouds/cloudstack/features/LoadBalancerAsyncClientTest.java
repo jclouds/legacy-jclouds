@@ -19,7 +19,6 @@
 package org.jclouds.cloudstack.features;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 
 import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
@@ -33,6 +32,9 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.Invokable;
+
 /**
  * Tests behavior of {@code LoadBalancerAsyncClient}
  * 
@@ -43,9 +45,9 @@ import org.testng.annotations.Test;
 @Test(groups = "unit", testName = "LoadBalancerAsyncClientTest")
 public class LoadBalancerAsyncClientTest extends BaseCloudStackAsyncClientTest<LoadBalancerAsyncClient> {
    public void testListLoadBalancerRules() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = LoadBalancerAsyncClient.class.getMethod("listLoadBalancerRules",
-            ListLoadBalancerRulesOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method);
+      Invokable<?, ?> method = Invokable.from(LoadBalancerAsyncClient.class.getMethod("listLoadBalancerRules",
+            ListLoadBalancerRulesOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listLoadBalancerRules&listAll=true HTTP/1.1");
@@ -61,9 +63,9 @@ public class LoadBalancerAsyncClientTest extends BaseCloudStackAsyncClientTest<L
    }
 
    public void testListLoadBalancerRulesOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = LoadBalancerAsyncClient.class.getMethod("listLoadBalancerRules",
-            ListLoadBalancerRulesOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, ListLoadBalancerRulesOptions.Builder.publicIPId("3"));
+      Invokable<?, ?> method = Invokable.from(LoadBalancerAsyncClient.class.getMethod("listLoadBalancerRules",
+            ListLoadBalancerRulesOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(ListLoadBalancerRulesOptions.Builder.publicIPId("3")));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listLoadBalancerRules&listAll=true&publicipid=3 HTTP/1.1");
@@ -89,9 +91,9 @@ public class LoadBalancerAsyncClientTest extends BaseCloudStackAsyncClientTest<L
                                                    .addQueryParam("publicport", "22").build();
 
    public void testCreateLoadBalancerRuleForPublicIP() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = LoadBalancerAsyncClient.class.getMethod("createLoadBalancerRuleForPublicIP", String.class,
-            Algorithm.class, String.class, int.class, int.class, CreateLoadBalancerRuleOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, 6, Algorithm.LEASTCONN, "tcp", 22, 22);
+      Invokable<?, ?> method = Invokable.from(LoadBalancerAsyncClient.class.getMethod("createLoadBalancerRuleForPublicIP", String.class,
+            Algorithm.class, String.class, int.class, int.class, CreateLoadBalancerRuleOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(6, Algorithm.LEASTCONN, "tcp", 22, 22));
 
       assertRequestLineEquals(httpRequest, createLoadBalancerRule.getRequestLine());
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
@@ -106,8 +108,8 @@ public class LoadBalancerAsyncClientTest extends BaseCloudStackAsyncClientTest<L
    }
 
    public void testUpdateLoadBalancerRule() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = LoadBalancerAsyncClient.class.getMethod("updateLoadBalancerRule", String.class, UpdateLoadBalancerRuleOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, 5);
+      Invokable<?, ?> method = Invokable.from(LoadBalancerAsyncClient.class.getMethod("updateLoadBalancerRule", String.class, UpdateLoadBalancerRuleOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(5));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=updateLoadBalancerRule&id=5 HTTP/1.1");
@@ -122,8 +124,8 @@ public class LoadBalancerAsyncClientTest extends BaseCloudStackAsyncClientTest<L
    }
 
    public void testDeleteLoadBalancerRule() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = LoadBalancerAsyncClient.class.getMethod("deleteLoadBalancerRule", String.class);
-      HttpRequest httpRequest = processor.createRequest(method, 5);
+      Invokable<?, ?> method = Invokable.from(LoadBalancerAsyncClient.class.getMethod("deleteLoadBalancerRule", String.class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(5));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=deleteLoadBalancerRule&id=5 HTTP/1.1");
@@ -140,9 +142,9 @@ public class LoadBalancerAsyncClientTest extends BaseCloudStackAsyncClientTest<L
 
    public void testListVirtualMachinesAssignedToLoadBalancerRule() throws SecurityException, NoSuchMethodException,
          IOException {
-      Method method = LoadBalancerAsyncClient.class.getMethod("listVirtualMachinesAssignedToLoadBalancerRule",
-            String.class);
-      HttpRequest httpRequest = processor.createRequest(method, 5);
+      Invokable<?, ?> method = Invokable.from(LoadBalancerAsyncClient.class.getMethod("listVirtualMachinesAssignedToLoadBalancerRule",
+            String.class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(5));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listLoadBalancerRuleInstances&listAll=true&id=5 HTTP/1.1");

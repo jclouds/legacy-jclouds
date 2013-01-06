@@ -19,8 +19,6 @@
 package org.jclouds.aws.ec2.services;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.lang.reflect.Method;
 
 import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
 import org.jclouds.ec2.xml.DescribeKeyPairsResponseHandler;
@@ -29,6 +27,9 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.Lists;
+import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code AWSKeyPairAsyncClient}
@@ -40,8 +41,8 @@ import org.testng.annotations.Test;
 public class AWSKeyPairAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSKeyPairAsyncClient> {
 
    public void testCreateKeyPair() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AWSKeyPairAsyncClient.class.getMethod("createKeyPairInRegion", String.class, String.class);
-      HttpRequest request = processor.createRequest(method, null, "mykey");
+      Invokable<?, ?> method = Invokable.from(AWSKeyPairAsyncClient.class.getMethod("createKeyPairInRegion", String.class, String.class));
+      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "mykey"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -69,9 +70,9 @@ public class AWSKeyPairAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSKeyP
                                           .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testImportKeyPair() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AWSKeyPairAsyncClient.class.getMethod("importKeyPairInRegion", String.class, String.class,
-            String.class);
-      HttpRequest request = processor.createRequest(method, null, "mykey", "ssh-rsa AA");
+      Invokable<?, ?> method = Invokable.from(AWSKeyPairAsyncClient.class.getMethod("importKeyPairInRegion", String.class, String.class,
+            String.class));
+      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "mykey", "ssh-rsa AA"));
 
       request = request.getFilters().get(0).filter(request);
 
@@ -88,8 +89,8 @@ public class AWSKeyPairAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSKeyP
    }
 
    public void testDeleteKeyPair() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AWSKeyPairAsyncClient.class.getMethod("deleteKeyPairInRegion", String.class, String.class);
-      HttpRequest request = processor.createRequest(method, null, "mykey");
+      Invokable<?, ?> method = Invokable.from(AWSKeyPairAsyncClient.class.getMethod("deleteKeyPairInRegion", String.class, String.class));
+      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "mykey"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -104,9 +105,9 @@ public class AWSKeyPairAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSKeyP
    }
 
    public void testDescribeKeyPairs() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AWSKeyPairAsyncClient.class.getMethod("describeKeyPairsInRegion", String.class, Array
-            .newInstance(String.class, 0).getClass());
-      HttpRequest request = processor.createRequest(method, (String) null);
+      Invokable<?, ?> method = Invokable.from(AWSKeyPairAsyncClient.class.getMethod("describeKeyPairsInRegion", String.class,
+            String[].class));
+      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList((String) null));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -121,9 +122,9 @@ public class AWSKeyPairAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSKeyP
    }
 
    public void testDescribeKeyPairsArgs() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AWSKeyPairAsyncClient.class.getMethod("describeKeyPairsInRegion", String.class, Array
-            .newInstance(String.class, 0).getClass());
-      HttpRequest request = processor.createRequest(method, null, "1", "2");
+      Invokable<?, ?> method = Invokable.from(AWSKeyPairAsyncClient.class.getMethod("describeKeyPairsInRegion", String.class,
+            String[].class));
+      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1", "2"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
