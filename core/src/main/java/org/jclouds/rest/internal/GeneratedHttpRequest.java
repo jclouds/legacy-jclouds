@@ -20,7 +20,6 @@ package org.jclouds.rest.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collections;
@@ -54,7 +53,6 @@ public class GeneratedHttpRequest extends HttpRequest {
 
    public static class Builder extends HttpRequest.Builder<Builder>  {
       protected Class<?> declaring;
-      protected Method javaMethod;
       protected Invokable<?, ?> invoker;
       // args can be null, so cannot use immutable list
       protected List<Object> args = Lists.newArrayList();
@@ -68,16 +66,6 @@ public class GeneratedHttpRequest extends HttpRequest {
          return this;
       }
 
-      /** 
-       * @see GeneratedHttpRequest#getJavaMethod()
-       */
-      @Deprecated
-      public Builder javaMethod(Method javaMethod) {
-         this.javaMethod = checkNotNull(javaMethod, "javaMethod");
-         this.invoker(Invokable.from(javaMethod));
-         return this;
-      }
-      
       /**
        * @see GeneratedHttpRequest#getInvoker()
        */
@@ -116,16 +104,15 @@ public class GeneratedHttpRequest extends HttpRequest {
          this.caller = Optional.fromNullable(caller);
          return this;
       }
-      
+
       public GeneratedHttpRequest build() {
-         return new GeneratedHttpRequest(method, endpoint, headers.build(), payload, declaring, javaMethod, invoker,
-               args, filters.build(), caller);
+         return new GeneratedHttpRequest(method, endpoint, headers.build(), payload, declaring, invoker, args,
+               filters.build(), caller);
       }
 
       public Builder fromGeneratedHttpRequest(GeneratedHttpRequest in) {
          return super.fromHttpRequest(in)
                      .declaring(in.getDeclaring())
-                     .javaMethod(in.getJavaMethod())
                      .invoker(in.invoker)
                      .args(in.getArgs())
                      .caller(in.getCaller().orNull());
@@ -138,20 +125,18 @@ public class GeneratedHttpRequest extends HttpRequest {
    }
    
    private final Class<?> declaring;
-   private final Method javaMethod;
    private final Invokable<?, ?> invoker;
    private final List<Object> args;
    private final Optional<ClassInvokerArgs> caller;
 
    protected GeneratedHttpRequest(String method, URI endpoint, Multimap<String, String> headers,
-         @Nullable Payload payload, Class<?> declaring, Method javaMethod, Invokable<?, ?> invoker,
-         Iterable<Object> args, Iterable<HttpRequestFilter> filters, Optional<ClassInvokerArgs> caller) {
+         @Nullable Payload payload, Class<?> declaring, Invokable<?, ?> invoker,
+         List<Object> args, Iterable<HttpRequestFilter> filters, Optional<ClassInvokerArgs> caller) {
       super(method, endpoint, headers, payload, filters);
       this.declaring = checkNotNull(declaring, "declaring");
-      this.javaMethod = checkNotNull(javaMethod, "javaMethod");
       this.invoker = checkNotNull(invoker, "invoker");
       // TODO make immutable. ImmutableList.of() doesn't accept nulls
-      this.args = Lists.newArrayList(checkNotNull(args, "args"));
+      this.args = Collections.unmodifiableList(checkNotNull(args, "args"));
       this.caller = checkNotNull(caller, "caller");
    }
 
@@ -159,20 +144,12 @@ public class GeneratedHttpRequest extends HttpRequest {
       return declaring;
    }
 
-   /**
-    * @deprecated see {@link #getInvoker()}
-    */
-   @Deprecated
-   public Method getJavaMethod() {
-      return javaMethod;
-   }
-
    public Invokable<?,?> getInvoker() {
       return invoker;
    }
    
    public List<Object> getArgs() {
-      return Collections.unmodifiableList(args);
+      return args;
    }
 
    public Optional<ClassInvokerArgs> getCaller() {

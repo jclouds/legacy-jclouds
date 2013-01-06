@@ -33,6 +33,8 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Stopwatch;
+import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.Invokable;
 
 /**
  * Allows you to use simple api version comparison to determine if a feature is
@@ -163,8 +165,8 @@ public class PresentWhenApiVersionLexicographicallyAtOrAfterSinceApiVersionTest 
    ClassInvokerArgsAndReturnVal getApi(String name, Class<?> type) {
       try {
          return ClassInvokerArgsAndReturnVal.builder().clazz(type)
-               .invoker(EC2AsyncApi.class.getDeclaredMethod("get" + name + "ApiForRegion", String.class))
-               .args(new Object[] { "region" }).returnVal("present").build();
+               .invoker(Invokable.from(EC2AsyncApi.class.getDeclaredMethod("get" + name + "ApiForRegion", String.class)))
+               .args(ImmutableList.<Object> of("region")).returnVal("present").build();
       } catch (Exception e) {
          throw propagate(e);
       }

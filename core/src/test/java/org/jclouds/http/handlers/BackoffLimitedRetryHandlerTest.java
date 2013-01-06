@@ -23,7 +23,6 @@ import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Method;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -50,6 +49,8 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.Invokable;
 
 @Test(groups = "unit", testName = "BackoffLimitedRetryHandlerTest")
 public class BackoffLimitedRetryHandlerTest {
@@ -169,9 +170,9 @@ public class BackoffLimitedRetryHandlerTest {
          .getInstance(RestAnnotationProcessor.Factory.class).declaring(IntegrationTestAsyncClient.class);
 
    private HttpCommand createCommand() throws SecurityException, NoSuchMethodException {
-      Method method = IntegrationTestAsyncClient.class.getMethod("download", String.class);
+      Invokable<?, Object> method = Invokable.from(IntegrationTestAsyncClient.class.getMethod("download", String.class));
 
-      return new HttpCommand(processor.createRequest(method, "1"));
+      return new HttpCommand(processor.createRequest(method, ImmutableList.<Object> of("1")));
    }
 
    @Test

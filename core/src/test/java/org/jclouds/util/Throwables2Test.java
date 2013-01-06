@@ -26,8 +26,8 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.net.SocketException;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.concurrent.TransformParallelException;
@@ -41,6 +41,7 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.reflect.TypeToken;
 import com.google.inject.CreationException;
 import com.google.inject.ProvisionException;
 import com.google.inject.spi.Message;
@@ -117,153 +118,160 @@ public class Throwables2Test {
       assertEquals(getFirstThrowableOfType(pex, AuthorizationException.class), null);
    }
 
-   @SuppressWarnings("unchecked")
    public void testGetCauseTransformParallel() {
       Exception aex = createMock(AuthorizationException.class);
-      TransformParallelException pex = new TransformParallelException((Map) ImmutableMap.of(), ImmutableMap.of("bad",
-               aex), "test");
+      TransformParallelException pex = new TransformParallelException(ImmutableMap.<Object, Future<?>> of(),
+            ImmutableMap.of("bad", aex), "test");
       assertEquals(getFirstThrowableOfType(pex, AuthorizationException.class), aex);
    }
 
-   @SuppressWarnings("unchecked")
    public void testGetFirstThrowableOfTypeInnerTransformParallel() {
       Exception aex = createMock(AuthorizationException.class);
-      TransformParallelException pex = new TransformParallelException((Map) ImmutableMap.of(), ImmutableMap.of("bad",
-               (Exception) new ExecutionException(aex)), "test");
+      TransformParallelException pex = new TransformParallelException(ImmutableMap.<Object, Future<?>> of(),
+            ImmutableMap.of("bad", (Exception) new ExecutionException(aex)), "test");
       assertEquals(getFirstThrowableOfType(pex, AuthorizationException.class), aex);
    }
 
-   @SuppressWarnings("unchecked")
    public void testGetFirstThrowableOfTypeOuterTransformParallel() {
       Exception aex = createMock(AuthorizationException.class);
-      TransformParallelException pex = new TransformParallelException((Map) ImmutableMap.of(), ImmutableMap.of("bad",
-               (Exception) aex), "test");
+      TransformParallelException pex = new TransformParallelException(ImmutableMap.<Object, Future<?>> of(),
+            ImmutableMap.of("bad", (Exception) aex), "test");
       assertEquals(getFirstThrowableOfType(new ExecutionException(pex), AuthorizationException.class), aex);
    }
 
-   @SuppressWarnings("unchecked")
    public void testGetFirstThrowableOfTypeFailTransformParallel() {
       Exception aex = createMock(TimeoutException.class);
-      TransformParallelException pex = new TransformParallelException((Map) ImmutableMap.of(), ImmutableMap.of("bad",
-               aex), "test");
+      TransformParallelException pex = new TransformParallelException(ImmutableMap.<Object, Future<?>> of(),
+            ImmutableMap.of("bad", aex), "test");
       assertEquals(getFirstThrowableOfType(pex, AuthorizationException.class), null);
    }
 
    @Test
    public void testReturnExceptionThatsInList() throws Exception {
       Exception e = new TestException();
-      assertEquals(returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] { TestException.class }, e),
-               e);
-      assertEquals(returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] { TestException.class },
-               new RuntimeException(e)), e);
+      assertEquals(
+            returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(
+                  ImmutableSet.<TypeToken<? extends Throwable>> of(TypeToken.of(TestException.class)), e), e);
+      assertEquals(
+            returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(
+                  ImmutableSet.<TypeToken<? extends Throwable>> of(TypeToken.of(TestException.class)),
+                  new RuntimeException(e)), e);
    }
 
    @Test(expectedExceptions = TestException.class)
    public void testThrowExceptionNotInList() throws Exception {
       Exception e = new TestException();
-      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, e);
+      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(ImmutableSet.<TypeToken<? extends Throwable>> of(), e);
    }
 
    @Test(expectedExceptions = IllegalStateException.class)
    public void testPropagateStandardExceptionIllegalStateException() throws Exception {
       Exception e = new IllegalStateException();
-      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new RuntimeException(e));
+      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(ImmutableSet.<TypeToken<? extends Throwable>> of(),
+            new RuntimeException(e));
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testPropagateStandardExceptionIllegalArgumentException() throws Exception {
       Exception e = new IllegalArgumentException();
-      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new RuntimeException(e));
+      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(ImmutableSet.<TypeToken<? extends Throwable>> of(),
+            new RuntimeException(e));
    }
 
    @Test(expectedExceptions = UnsupportedOperationException.class)
    public void testPropagateStandardExceptionUnsupportedOperationException() throws Exception {
       Exception e = new UnsupportedOperationException();
-      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new RuntimeException(e));
+      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(ImmutableSet.<TypeToken<? extends Throwable>> of(),
+            new RuntimeException(e));
    }
 
    @Test(expectedExceptions = AssertionError.class)
    public void testPropagateStandardExceptionAssertionError() throws Exception {
       AssertionError e = new AssertionError();
-      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new RuntimeException(e));
+      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(ImmutableSet.<TypeToken<? extends Throwable>> of(),
+            new RuntimeException(e));
    }
 
    @Test(expectedExceptions = AuthorizationException.class)
    public void testPropagateStandardExceptionAuthorizationException() throws Exception {
       Exception e = new AuthorizationException();
-      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new RuntimeException(e));
+      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(ImmutableSet.<TypeToken<? extends Throwable>> of(),
+            new RuntimeException(e));
    }
 
    @Test(expectedExceptions = AuthorizationException.class)
    public void testPropagateProvisionExceptionAuthorizationException() throws Exception {
       Exception e = new AuthorizationException();
-      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new ProvisionException(ImmutableSet.of(new Message(
-               ImmutableList.of(), "Error in custom provider",e))));
+      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(ImmutableSet.<TypeToken<? extends Throwable>> of(),
+            new ProvisionException(ImmutableSet.of(new Message(ImmutableList.of(), "Error in custom provider", e))));
    }
 
    @Test(expectedExceptions = AuthorizationException.class)
    public void testPropagateCreationExceptionAuthorizationException() throws Exception {
       Exception e = new AuthorizationException();
-      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new CreationException(ImmutableSet.of(new Message(
-               ImmutableList.of(), "Error in custom provider",e))));
+      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(ImmutableSet.<TypeToken<? extends Throwable>> of(),
+            new CreationException(ImmutableSet.of(new Message(ImmutableList.of(), "Error in custom provider", e))));
    }
 
    @Test(expectedExceptions = InsufficientResourcesException.class)
    public void testPropagateStandardExceptionInsufficientResourcesException() throws Exception {
       Exception e = new InsufficientResourcesException();
-      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new RuntimeException(e));
+      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(ImmutableSet.<TypeToken<? extends Throwable>> of(),
+            new RuntimeException(e));
    }
 
    @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testPropagateStandardExceptionResourceNotFoundException() throws Exception {
       Exception e = new ResourceNotFoundException();
-      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new RuntimeException(e));
+      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(ImmutableSet.<TypeToken<? extends Throwable>> of(),
+            new RuntimeException(e));
    }
 
    @Test(expectedExceptions = IllegalStateException.class)
    public void testPropagateStandardExceptionIllegalStateExceptionNestedInHttpResponseException() throws Exception {
       Exception e = new IllegalStateException();
-      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new HttpResponseException("goo",
-               createNiceMock(HttpCommand.class), null, e));
+      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(ImmutableSet.<TypeToken<? extends Throwable>> of(),
+            new HttpResponseException("goo", createNiceMock(HttpCommand.class), null, e));
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testPropagateStandardExceptionIllegalArgumentExceptionNestedInHttpResponseException() throws Exception {
       Exception e = new IllegalArgumentException();
-      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new HttpResponseException("goo",
-               createNiceMock(HttpCommand.class), null, e));
+      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(ImmutableSet.<TypeToken<? extends Throwable>> of(),
+            new HttpResponseException("goo", createNiceMock(HttpCommand.class), null, e));
    }
 
    @Test(expectedExceptions = UnsupportedOperationException.class)
    public void testPropagateStandardExceptionUnsupportedOperationExceptionNestedInHttpResponseException()
-            throws Exception {
+         throws Exception {
       Exception e = new UnsupportedOperationException();
-      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new HttpResponseException("goo",
-               createNiceMock(HttpCommand.class), null, e));
+      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(ImmutableSet.<TypeToken<? extends Throwable>> of(),
+            new HttpResponseException("goo", createNiceMock(HttpCommand.class), null, e));
    }
 
    @Test(expectedExceptions = AuthorizationException.class)
    public void testPropagateStandardExceptionAuthorizationExceptionNestedInHttpResponseException() throws Exception {
       Exception e = new AuthorizationException();
-      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new HttpResponseException("goo",
-               createNiceMock(HttpCommand.class), null, e));
+      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(ImmutableSet.<TypeToken<? extends Throwable>> of(),
+            new HttpResponseException("goo", createNiceMock(HttpCommand.class), null, e));
    }
 
    @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testPropagateStandardExceptionResourceNotFoundExceptionNestedInHttpResponseException() throws Exception {
       Exception e = new ResourceNotFoundException();
-      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new HttpResponseException("goo",
-               createNiceMock(HttpCommand.class), null, e));
+      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(ImmutableSet.<TypeToken<? extends Throwable>> of(),
+            new HttpResponseException("goo", createNiceMock(HttpCommand.class), null, e));
    }
 
    @Test(expectedExceptions = HttpResponseException.class)
    public void testPropagateStandardExceptionHttpResponseException() throws Exception {
       Exception e = new HttpResponseException("goo", createNiceMock(HttpCommand.class), null);
-      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new RuntimeException(e));
+      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(ImmutableSet.<TypeToken<? extends Throwable>> of(),
+            new RuntimeException(e));
    }
 
    static class TestException extends Exception {
-
+      private static final long serialVersionUID = 1L;
    }
 
 }

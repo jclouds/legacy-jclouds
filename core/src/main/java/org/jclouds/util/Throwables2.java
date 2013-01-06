@@ -34,6 +34,7 @@ import org.jclouds.rest.ResourceNotFoundException;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
 import com.google.common.base.Throwables;
+import com.google.common.reflect.TypeToken;
 import com.google.inject.CreationException;
 import com.google.inject.ProvisionException;
 import com.google.inject.spi.Message;
@@ -120,10 +121,10 @@ public class Throwables2 {
 
    // Note this needs to be kept up-to-date with all top-level exceptions jclouds works against
    @SuppressWarnings( { "unchecked", "rawtypes" })
-   public static Exception returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(Class[] exceptionTypes,
+   public static Exception returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(Iterable<TypeToken<? extends Throwable>> throwables,
             Exception exception) throws Exception {
-      for (Class type : exceptionTypes) {
-         Throwable throwable = getFirstThrowableOfType(exception, type);
+      for (TypeToken<? extends Throwable> type : throwables) {
+         Throwable throwable = getFirstThrowableOfType(exception, (Class<Throwable>) type.getRawType());
          if (throwable != null) {
             return (Exception) throwable;
          }
