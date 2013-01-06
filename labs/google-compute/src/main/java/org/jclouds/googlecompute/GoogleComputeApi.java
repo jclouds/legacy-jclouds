@@ -19,6 +19,7 @@
 package org.jclouds.googlecompute;
 
 import com.google.common.annotations.Beta;
+import org.jclouds.googlecompute.features.DiskApi;
 import org.jclouds.googlecompute.features.OperationApi;
 import org.jclouds.googlecompute.features.ProjectApi;
 import org.jclouds.googlecompute.features.ZoneApi;
@@ -26,6 +27,7 @@ import org.jclouds.rest.annotations.Delegate;
 
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+
 /**
  * Provides synchronous access to GoogleCompute.
  * <p/>
@@ -36,6 +38,15 @@ import javax.ws.rs.PathParam;
  */
 @Beta
 public interface GoogleComputeApi {
+
+   /**
+    * Provides synchronous access to Disk features
+    *
+    * @param projectName the name of the project
+    */
+   @Delegate
+   @Path("/projects/{project}")
+   DiskApi getDiskApiForProject(@PathParam("project") String projectName);
 
    /**
     * Provides synchronous access to Project features
