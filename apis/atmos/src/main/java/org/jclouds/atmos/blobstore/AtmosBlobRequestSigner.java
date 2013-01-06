@@ -21,8 +21,6 @@ package org.jclouds.atmos.blobstore;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.blobstore.util.BlobStoreUtils.cleanRequest;
 
-import java.lang.reflect.Method;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -37,6 +35,9 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.Invokable;
+
 /**
  * 
  * @author Adrian Cole
@@ -47,24 +48,27 @@ public class AtmosBlobRequestSigner implements BlobRequestSigner {
    private final BlobToObject blobToObject;
    private final BlobToHttpGetOptions blob2ObjectGetOptions;
 
-   private final Method getMethod;
-   private final Method deleteMethod;
-   private final Method createMethod;
+   private final Invokable<?, ?> getMethod;
+   private final Invokable<?, ?> deleteMethod;
+   private final Invokable<?, ?> createMethod;
 
    @Inject
    public AtmosBlobRequestSigner(RestAnnotationProcessor.Factory processor, BlobToObject blobToObject,
-            BlobToHttpGetOptions blob2ObjectGetOptions) throws SecurityException, NoSuchMethodException {
+         BlobToHttpGetOptions blob2ObjectGetOptions) throws SecurityException, NoSuchMethodException {
       this.processor = checkNotNull(processor, "processor").declaring(AtmosAsyncClient.class);
       this.blobToObject = checkNotNull(blobToObject, "blobToObject");
       this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
-      this.getMethod = AtmosAsyncClient.class.getMethod("readFile", String.class, GetOptions[].class);
-      this.deleteMethod = AtmosAsyncClient.class.getMethod("deletePath", String.class);
-      this.createMethod = AtmosAsyncClient.class.getMethod("createFile", String.class, AtmosObject.class, PutOptions[].class);
+      this.getMethod = Invokable.from(AtmosAsyncClient.class.getMethod("readFile", String.class, GetOptions[].class));
+      this.deleteMethod = Invokable.from(AtmosAsyncClient.class.getMethod("deletePath", String.class));
+      this.createMethod = Invokable.from(AtmosAsyncClient.class.getMethod("createFile", String.class,
+            AtmosObject.class, PutOptions[].class));
    }
 
    @Override
    public HttpRequest signGetBlob(String container, String name) {
-      return cleanRequest(processor.createRequest(getMethod, getPath(container, name)));
+      checkNotNull(container, "container");
+      checkNotNull(name, "name");
+      return cleanRequest(processor.createRequest(getMethod, ImmutableList.<Object> of(getPath(container, name))));
    }
 
    @Override
@@ -74,7 +78,10 @@ public class AtmosBlobRequestSigner implements BlobRequestSigner {
 
    @Override
    public HttpRequest signPutBlob(String container, Blob blob) {
-      return cleanRequest(processor.createRequest(createMethod, container, blobToObject.apply(blob)));
+      checkNotNull(container, "container");
+      checkNotNull(blob, "blob");
+      return cleanRequest(processor.createRequest(createMethod,
+            ImmutableList.<Object> of(container, blobToObject.apply(blob))));
    }
 
    @Override
@@ -84,7 +91,9 @@ public class AtmosBlobRequestSigner implements BlobRequestSigner {
 
    @Override
    public HttpRequest signRemoveBlob(String container, String name) {
-      return cleanRequest(processor.createRequest(deleteMethod, getPath(container, name)));
+      checkNotNull(container, "container");
+      checkNotNull(name, "name");
+      return cleanRequest(processor.createRequest(deleteMethod, ImmutableList.<Object> of(getPath(container, name))));
    }
 
    private String getPath(String container, String name) {
@@ -93,8 +102,10 @@ public class AtmosBlobRequestSigner implements BlobRequestSigner {
 
    @Override
    public HttpRequest signGetBlob(String container, String name, org.jclouds.blobstore.options.GetOptions options) {
-      return cleanRequest(processor.createRequest(getMethod, getPath(container, name), blob2ObjectGetOptions
-               .apply(options)));
+      checkNotNull(container, "container");
+      checkNotNull(name, "name");
+      return cleanRequest(processor.createRequest(getMethod,
+            ImmutableList.of(getPath(container, name), blob2ObjectGetOptions.apply(checkNotNull(options, "options")))));
    }
 
 }

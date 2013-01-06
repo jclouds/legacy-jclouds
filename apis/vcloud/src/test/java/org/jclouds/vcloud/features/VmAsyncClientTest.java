@@ -19,7 +19,6 @@
 package org.jclouds.vcloud.features;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.net.URI;
 
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
@@ -36,6 +35,9 @@ import org.jclouds.vcloud.xml.VmHandler;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.Invokable;
+
 /**
  * Tests behavior of {@code VmAsyncClient}
  * 
@@ -47,9 +49,9 @@ import org.testng.annotations.Test;
 public class VmAsyncClientTest extends BaseVCloudAsyncClientTest<VmAsyncClient> {
 
    public void testGetThumbnailOfVm() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VmAsyncClient.class.getMethod("getScreenThumbnailForVm", URI.class);
+      Invokable<?, ?> method = Invokable.from(VmAsyncClient.class.getMethod("getScreenThumbnailForVm", URI.class));
       HttpRequest request = processor
-               .createRequest(method, URI.create("http://vcloud.example.com/api/v1.0/vApp/vm-12"));
+               .createRequest(method, ImmutableList.<Object> of(URI.create("http://vcloud.example.com/api/v1.0/vApp/vm-12")));
 
       assertRequestLineEquals(request, "GET http://vcloud.example.com/api/v1.0/vApp/vm-12/screen HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: image/png\n");
@@ -64,13 +66,13 @@ public class VmAsyncClientTest extends BaseVCloudAsyncClientTest<VmAsyncClient> 
 
    @Test(dataProvider = "ignoreOnWindows", description = "see http://code.google.com/p/jclouds/issues/detail?id=402")
    public void testUpdateGuestConfiguration() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VmAsyncClient.class.getMethod("updateGuestCustomizationOfVm", GuestCustomizationSection.class,
-               URI.class);
+      Invokable<?, ?> method = Invokable.from(VmAsyncClient.class.getMethod("updateGuestCustomizationOfVm", GuestCustomizationSection.class,
+               URI.class));
       GuestCustomizationSection guest = new GuestCustomizationSection(URI
                .create("http://vcloud.example.com/api/v1.0/vApp/vm-12/guestCustomizationSection"));
       guest.setCustomizationScript("cat > /tmp/foo.txt<<EOF\nI love candy\nEOF");
-      HttpRequest request = processor.createRequest(method, guest, URI
-               .create("http://vcloud.example.com/api/v1.0/vApp/vm-12"));
+      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(guest, URI
+               .create("http://vcloud.example.com/api/v1.0/vApp/vm-12")));
 
       assertRequestLineEquals(request,
                "PUT http://vcloud.example.com/api/v1.0/vApp/vm-12/guestCustomizationSection HTTP/1.1");
@@ -86,9 +88,9 @@ public class VmAsyncClientTest extends BaseVCloudAsyncClientTest<VmAsyncClient> 
    }
 
    public void testUpdateCPUCountOfVm() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VmAsyncClient.class.getMethod("updateCPUCountOfVm", int.class, URI.class);
-      HttpRequest request = processor.createRequest(method, 2, URI
-               .create("http://vcloud.example.com/api/v1.0/vApp/vm-12"));
+      Invokable<?, ?> method = Invokable.from(VmAsyncClient.class.getMethod("updateCPUCountOfVm", int.class, URI.class));
+      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(2, URI
+               .create("http://vcloud.example.com/api/v1.0/vApp/vm-12")));
 
       assertRequestLineEquals(request,
                "PUT http://vcloud.example.com/api/v1.0/vApp/vm-12/virtualHardwareSection/cpu HTTP/1.1");
@@ -104,9 +106,9 @@ public class VmAsyncClientTest extends BaseVCloudAsyncClientTest<VmAsyncClient> 
    }
 
    public void testUpdateMemoryMBOfVm() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VmAsyncClient.class.getMethod("updateMemoryMBOfVm", int.class, URI.class);
-      HttpRequest request = processor.createRequest(method, 512, URI
-               .create("http://vcloud.example.com/api/v1.0/vApp/vm-12"));
+      Invokable<?, ?> method = Invokable.from(VmAsyncClient.class.getMethod("updateMemoryMBOfVm", int.class, URI.class));
+      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(512, URI
+               .create("http://vcloud.example.com/api/v1.0/vApp/vm-12")));
 
       assertRequestLineEquals(request,
                "PUT http://vcloud.example.com/api/v1.0/vApp/vm-12/virtualHardwareSection/memory HTTP/1.1");
@@ -122,9 +124,9 @@ public class VmAsyncClientTest extends BaseVCloudAsyncClientTest<VmAsyncClient> 
    }
 
    public void testDeployVm() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VmAsyncClient.class.getMethod("deployVm", URI.class);
-      HttpRequest request = processor.createRequest(method, URI
-               .create("https://vcenterprise.bluelock.com/api/v1.0/vApp/1"));
+      Invokable<?, ?> method = Invokable.from(VmAsyncClient.class.getMethod("deployVm", URI.class));
+      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
+               .create("https://vcenterprise.bluelock.com/api/v1.0/vApp/1")));
 
       assertRequestLineEquals(request, "POST https://vcenterprise.bluelock.com/api/v1.0/vApp/1/action/deploy HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
@@ -139,9 +141,9 @@ public class VmAsyncClientTest extends BaseVCloudAsyncClientTest<VmAsyncClient> 
    }
 
    public void testDeployAndPowerOnVm() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VmAsyncClient.class.getMethod("deployAndPowerOnVm", URI.class);
-      HttpRequest request = processor.createRequest(method, URI
-               .create("https://vcenterprise.bluelock.com/api/v1.0/vApp/1"));
+      Invokable<?, ?> method = Invokable.from(VmAsyncClient.class.getMethod("deployAndPowerOnVm", URI.class));
+      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
+               .create("https://vcenterprise.bluelock.com/api/v1.0/vApp/1")));
 
       assertRequestLineEquals(request, "POST https://vcenterprise.bluelock.com/api/v1.0/vApp/1/action/deploy HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
@@ -156,9 +158,9 @@ public class VmAsyncClientTest extends BaseVCloudAsyncClientTest<VmAsyncClient> 
    }
 
    public void testGetVm() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VmAsyncClient.class.getMethod("getVm", URI.class);
-      HttpRequest request = processor.createRequest(method, URI
-               .create("https://vcenterprise.bluelock.com/api/v1.0/vm/1"));
+      Invokable<?, ?> method = Invokable.from(VmAsyncClient.class.getMethod("getVm", URI.class));
+      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
+               .create("https://vcenterprise.bluelock.com/api/v1.0/vm/1")));
 
       assertRequestLineEquals(request, "GET https://vcenterprise.bluelock.com/api/v1.0/vm/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vm+xml\n");
@@ -172,9 +174,9 @@ public class VmAsyncClientTest extends BaseVCloudAsyncClientTest<VmAsyncClient> 
    }
 
    public void testRebootVm() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VmAsyncClient.class.getMethod("rebootVm", URI.class);
-      HttpRequest request = processor.createRequest(method, URI
-               .create("https://vcenterprise.bluelock.com/api/v1.0/vApp/1"));
+      Invokable<?, ?> method = Invokable.from(VmAsyncClient.class.getMethod("rebootVm", URI.class));
+      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
+               .create("https://vcenterprise.bluelock.com/api/v1.0/vApp/1")));
 
       assertRequestLineEquals(request,
                "POST https://vcenterprise.bluelock.com/api/v1.0/vApp/1/power/action/reboot HTTP/1.1");
@@ -189,9 +191,9 @@ public class VmAsyncClientTest extends BaseVCloudAsyncClientTest<VmAsyncClient> 
    }
 
    public void testUndeployVm() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VmAsyncClient.class.getMethod("undeployVm", URI.class);
-      HttpRequest request = processor.createRequest(method, URI
-               .create("https://vcenterprise.bluelock.com/api/v1.0/vApp/1"));
+      Invokable<?, ?> method = Invokable.from(VmAsyncClient.class.getMethod("undeployVm", URI.class));
+      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
+               .create("https://vcenterprise.bluelock.com/api/v1.0/vApp/1")));
 
       assertRequestLineEquals(request,
                "POST https://vcenterprise.bluelock.com/api/v1.0/vApp/1/action/undeploy HTTP/1.1");
@@ -207,9 +209,9 @@ public class VmAsyncClientTest extends BaseVCloudAsyncClientTest<VmAsyncClient> 
    }
 
    public void testUndeployAndSaveStateOfVmSaveState() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VmAsyncClient.class.getMethod("undeployAndSaveStateOfVm", URI.class);
-      HttpRequest request = processor.createRequest(method, URI
-               .create("https://vcenterprise.bluelock.com/api/v1.0/vApp/1"));
+      Invokable<?, ?> method = Invokable.from(VmAsyncClient.class.getMethod("undeployAndSaveStateOfVm", URI.class));
+      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
+               .create("https://vcenterprise.bluelock.com/api/v1.0/vApp/1")));
 
       assertRequestLineEquals(request,
                "POST https://vcenterprise.bluelock.com/api/v1.0/vApp/1/action/undeploy HTTP/1.1");
@@ -226,9 +228,9 @@ public class VmAsyncClientTest extends BaseVCloudAsyncClientTest<VmAsyncClient> 
    }
 
    public void testPowerOnVm() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VmAsyncClient.class.getMethod("powerOnVm", URI.class);
-      HttpRequest request = processor.createRequest(method, URI
-               .create("https://vcenterprise.bluelock.com/api/v1.0/vApp/1"));
+      Invokable<?, ?> method = Invokable.from(VmAsyncClient.class.getMethod("powerOnVm", URI.class));
+      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
+               .create("https://vcenterprise.bluelock.com/api/v1.0/vApp/1")));
 
       assertRequestLineEquals(request,
                "POST https://vcenterprise.bluelock.com/api/v1.0/vApp/1/power/action/powerOn HTTP/1.1");
@@ -243,9 +245,9 @@ public class VmAsyncClientTest extends BaseVCloudAsyncClientTest<VmAsyncClient> 
    }
 
    public void testPowerOffVm() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VmAsyncClient.class.getMethod("powerOffVm", URI.class);
-      HttpRequest request = processor.createRequest(method, URI
-               .create("https://vcenterprise.bluelock.com/api/v1.0/vApp/1"));
+      Invokable<?, ?> method = Invokable.from(VmAsyncClient.class.getMethod("powerOffVm", URI.class));
+      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
+               .create("https://vcenterprise.bluelock.com/api/v1.0/vApp/1")));
 
       assertRequestLineEquals(request,
                "POST https://vcenterprise.bluelock.com/api/v1.0/vApp/1/power/action/powerOff HTTP/1.1");
@@ -260,9 +262,9 @@ public class VmAsyncClientTest extends BaseVCloudAsyncClientTest<VmAsyncClient> 
    }
 
    public void testResetVm() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VmAsyncClient.class.getMethod("resetVm", URI.class);
-      HttpRequest request = processor.createRequest(method, URI
-               .create("https://vcenterprise.bluelock.com/api/v1.0/vApp/1"));
+      Invokable<?, ?> method = Invokable.from(VmAsyncClient.class.getMethod("resetVm", URI.class));
+      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
+               .create("https://vcenterprise.bluelock.com/api/v1.0/vApp/1")));
 
       assertRequestLineEquals(request,
                "POST https://vcenterprise.bluelock.com/api/v1.0/vApp/1/power/action/reset HTTP/1.1");
@@ -277,9 +279,9 @@ public class VmAsyncClientTest extends BaseVCloudAsyncClientTest<VmAsyncClient> 
    }
 
    public void testSuspendVm() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VmAsyncClient.class.getMethod("suspendVm", URI.class);
-      HttpRequest request = processor.createRequest(method, URI
-               .create("https://vcenterprise.bluelock.com/api/v1.0/vApp/1"));
+      Invokable<?, ?> method = Invokable.from(VmAsyncClient.class.getMethod("suspendVm", URI.class));
+      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
+               .create("https://vcenterprise.bluelock.com/api/v1.0/vApp/1")));
 
       assertRequestLineEquals(request,
                "POST https://vcenterprise.bluelock.com/api/v1.0/vApp/1/power/action/suspend HTTP/1.1");
@@ -294,9 +296,9 @@ public class VmAsyncClientTest extends BaseVCloudAsyncClientTest<VmAsyncClient> 
    }
 
    public void testShutdownVm() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VmAsyncClient.class.getMethod("shutdownVm", URI.class);
-      HttpRequest request = processor.createRequest(method, URI
-               .create("https://vcenterprise.bluelock.com/api/v1.0/vApp/1"));
+      Invokable<?, ?> method = Invokable.from(VmAsyncClient.class.getMethod("shutdownVm", URI.class));
+      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
+               .create("https://vcenterprise.bluelock.com/api/v1.0/vApp/1")));
 
       assertRequestLineEquals(request,
                "POST https://vcenterprise.bluelock.com/api/v1.0/vApp/1/power/action/shutdown HTTP/1.1");

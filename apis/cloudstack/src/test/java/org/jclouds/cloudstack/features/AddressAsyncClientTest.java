@@ -19,7 +19,6 @@
 package org.jclouds.cloudstack.features;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 
 import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
@@ -36,6 +35,8 @@ import org.jclouds.http.functions.UnwrapOnlyJsonValue;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Functions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code AddressAsyncClient}
@@ -47,8 +48,8 @@ import com.google.common.base.Functions;
 @Test(groups = "unit", testName = "AddressAsyncClientTest")
 public class AddressAsyncClientTest extends BaseCloudStackAsyncClientTest<AddressAsyncClient> {
    public void testListPublicIPAddresses() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AddressAsyncClient.class.getMethod("listPublicIPAddresses", ListPublicIPAddressesOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method);
+      Invokable<?, ?> method = Invokable.from(AddressAsyncClient.class.getMethod("listPublicIPAddresses", ListPublicIPAddressesOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listPublicIpAddresses&listAll=true HTTP/1.1");
@@ -64,9 +65,9 @@ public class AddressAsyncClientTest extends BaseCloudStackAsyncClientTest<Addres
    }
 
    public void testListPublicIPAddressesOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AddressAsyncClient.class.getMethod("listPublicIPAddresses", ListPublicIPAddressesOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method,
-            ListPublicIPAddressesOptions.Builder.accountInDomain("adrian", "6").usesVirtualNetwork(true));
+      Invokable<?, ?> method = Invokable.from(AddressAsyncClient.class.getMethod("listPublicIPAddresses", ListPublicIPAddressesOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(
+            ListPublicIPAddressesOptions.Builder.accountInDomain("adrian", "6").usesVirtualNetwork(true)));
 
       assertRequestLineEquals(
             httpRequest,
@@ -83,8 +84,8 @@ public class AddressAsyncClientTest extends BaseCloudStackAsyncClientTest<Addres
    }
 
    public void testGetPublicIPAddress() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AddressAsyncClient.class.getMethod("getPublicIPAddress", String.class);
-      HttpRequest httpRequest = processor.createRequest(method, 5);
+      Invokable<?, ?> method = Invokable.from(AddressAsyncClient.class.getMethod("getPublicIPAddress", String.class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(5));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listPublicIpAddresses&listAll=true&id=5 HTTP/1.1");
@@ -101,9 +102,9 @@ public class AddressAsyncClientTest extends BaseCloudStackAsyncClientTest<Addres
    }
 
    public void testAssociateIPAddressInZone() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AddressAsyncClient.class.getMethod("associateIPAddressInZone", String.class,
-            AssociateIPAddressOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, 6);
+      Invokable<?, ?> method = Invokable.from(AddressAsyncClient.class.getMethod("associateIPAddressInZone", String.class,
+            AssociateIPAddressOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(6));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=associateIpAddress&zoneid=6 HTTP/1.1");
@@ -119,8 +120,8 @@ public class AddressAsyncClientTest extends BaseCloudStackAsyncClientTest<Addres
    }
 
    public void testDisassociateIPAddress() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AddressAsyncClient.class.getMethod("disassociateIPAddress", String.class);
-      HttpRequest httpRequest = processor.createRequest(method, 5);
+      Invokable<?, ?> method = Invokable.from(AddressAsyncClient.class.getMethod("disassociateIPAddress", String.class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(5));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=disassociateIpAddress&id=5 HTTP/1.1");

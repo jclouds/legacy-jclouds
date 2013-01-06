@@ -30,6 +30,7 @@ import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Maps;
+import com.google.common.reflect.Invokable;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -59,7 +60,7 @@ public class BindCloneVAppParamsToXmlPayloadTest {
       CloneVAppOptions options = new CloneVAppOptions().deploy().powerOn().withDescription(
                "The description of the new vApp");
       GeneratedHttpRequest request = GeneratedHttpRequest.builder().method("POST").endpoint("http://localhost/key")
-            .declaring(String.class).javaMethod(String.class.getDeclaredMethod("toString")).arg(options).build();
+            .declaring(String.class).invoker(Invokable.from(String.class.getDeclaredMethod("toString"))).arg(options).build();
 
 
       BindCloneVAppParamsToXmlPayload binder = injector.getInstance(BindCloneVAppParamsToXmlPayload.class);
@@ -74,7 +75,7 @@ public class BindCloneVAppParamsToXmlPayloadTest {
       String expected = Strings2.toStringAndClose(getClass().getResourceAsStream("/cloneVApp-default.xml"));
 
       GeneratedHttpRequest request = GeneratedHttpRequest.builder().method("POST").endpoint("http://localhost/key")
-            .declaring(String.class).javaMethod(String.class.getDeclaredMethod("toString")).build();
+            .declaring(String.class).invoker(Invokable.from(String.class.getDeclaredMethod("toString"))).build();
 
       BindCloneVAppParamsToXmlPayload binder = injector.getInstance(BindCloneVAppParamsToXmlPayload.class);
 

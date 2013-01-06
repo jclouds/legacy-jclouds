@@ -18,8 +18,6 @@
  */
 package org.jclouds.cloudstack.features;
 
-import java.lang.reflect.Method;
-
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.CreateDiskOfferingOptions;
@@ -31,6 +29,9 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code GlobalOfferingAsyncClient}
@@ -51,9 +52,9 @@ public class GlobalOfferingAsyncClientTest extends BaseCloudStackAsyncClientTest
                                                   .addQueryParam("memory", "3").build();
 
    public void testCreateServiceOffering() throws Exception {
-      Method method = GlobalOfferingAsyncClient.class.getMethod("createServiceOffering",
-         String.class, String.class, int.class, int.class, int.class, CreateServiceOfferingOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, "name", "displayText", 1, 2, 3);
+      Invokable<?, ?> method = Invokable.from(GlobalOfferingAsyncClient.class.getMethod("createServiceOffering",
+         String.class, String.class, int.class, int.class, int.class, CreateServiceOfferingOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("name", "displayText", 1, 2, 3));
 
       assertRequestLineEquals(httpRequest, createServiceOffering.getRequestLine());
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
@@ -67,9 +68,9 @@ public class GlobalOfferingAsyncClientTest extends BaseCloudStackAsyncClientTest
    }
 
    public void testUpdateServiceOffering() throws Exception {
-      Method method = GlobalOfferingAsyncClient.class.getMethod("updateServiceOffering",
-         String.class, UpdateServiceOfferingOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, 1L);
+      Invokable<?, ?> method = Invokable.from(GlobalOfferingAsyncClient.class.getMethod("updateServiceOffering",
+         String.class, UpdateServiceOfferingOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(1L));
 
       assertRequestLineEquals(httpRequest,
          "GET http://localhost:8080/client/api?response=json&command=updateServiceOffering&id=1 HTTP/1.1");
@@ -84,8 +85,8 @@ public class GlobalOfferingAsyncClientTest extends BaseCloudStackAsyncClientTest
    }
 
    public void testDeleteServiceOffering() throws Exception {
-      Method method = GlobalOfferingAsyncClient.class.getMethod("deleteServiceOffering", String.class);
-      HttpRequest httpRequest = processor.createRequest(method, 1L);
+      Invokable<?, ?> method = Invokable.from(GlobalOfferingAsyncClient.class.getMethod("deleteServiceOffering", String.class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(1L));
 
       assertRequestLineEquals(httpRequest,
          "GET http://localhost:8080/client/api?response=json&command=deleteServiceOffering&id=1 HTTP/1.1");
@@ -100,9 +101,9 @@ public class GlobalOfferingAsyncClientTest extends BaseCloudStackAsyncClientTest
    }
 
    public void testCreateDiskOffering() throws Exception {
-      Method method = GlobalOfferingAsyncClient.class.getMethod("createDiskOffering",
-         String.class, String.class, CreateDiskOfferingOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, "name", "displayText");
+      Invokable<?, ?> method = Invokable.from(GlobalOfferingAsyncClient.class.getMethod("createDiskOffering",
+         String.class, String.class, CreateDiskOfferingOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("name", "displayText"));
 
       assertRequestLineEquals(httpRequest,
          "GET http://localhost:8080/client/api?response=json&command=createDiskOffering&name=name&displaytext=displayText HTTP/1.1");
@@ -117,9 +118,9 @@ public class GlobalOfferingAsyncClientTest extends BaseCloudStackAsyncClientTest
    }
 
    public void testUpdateDiskOffering() throws Exception {
-      Method method = GlobalOfferingAsyncClient.class.getMethod("updateDiskOffering",
-         String.class, UpdateDiskOfferingOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, 1L);
+      Invokable<?, ?> method = Invokable.from(GlobalOfferingAsyncClient.class.getMethod("updateDiskOffering",
+         String.class, UpdateDiskOfferingOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(1L));
 
       assertRequestLineEquals(httpRequest,
          "GET http://localhost:8080/client/api?response=json&command=updateDiskOffering&id=1 HTTP/1.1");
@@ -134,8 +135,8 @@ public class GlobalOfferingAsyncClientTest extends BaseCloudStackAsyncClientTest
    }
 
    public void testDeleteDiskOffering() throws Exception {
-      Method method = GlobalOfferingAsyncClient.class.getMethod("deleteDiskOffering", String.class);
-      HttpRequest httpRequest = processor.createRequest(method, 1L);
+      Invokable<?, ?> method = Invokable.from(GlobalOfferingAsyncClient.class.getMethod("deleteDiskOffering", String.class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(1L));
 
       assertRequestLineEquals(httpRequest,
          "GET http://localhost:8080/client/api?response=json&command=deleteDiskOffering&id=1 HTTP/1.1");
@@ -150,9 +151,9 @@ public class GlobalOfferingAsyncClientTest extends BaseCloudStackAsyncClientTest
    }
 
    public void testUpdateNetworkOffering() throws Exception {
-      Method method = GlobalOfferingAsyncClient.class.getMethod("updateNetworkOffering",
-         String.class, UpdateNetworkOfferingOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, 1L);
+      Invokable<?, ?> method = Invokable.from(GlobalOfferingAsyncClient.class.getMethod("updateNetworkOffering",
+         String.class, UpdateNetworkOfferingOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(1L));
 
       assertRequestLineEquals(httpRequest,
          "GET http://localhost:8080/client/api?response=json&command=updateNetworkOffering&id=1 HTTP/1.1");

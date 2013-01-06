@@ -18,9 +18,9 @@
  */
 package org.jclouds.ec2.compute;
 
-import static org.jclouds.http.internal.TrackingJavaUrlHttpCommandExecutorService.getJavaArgsForRequestAtIndex;
-import static org.jclouds.http.internal.TrackingJavaUrlHttpCommandExecutorService.getJavaMethodForRequest;
-import static org.jclouds.http.internal.TrackingJavaUrlHttpCommandExecutorService.getJavaMethodForRequestAtIndex;
+import static org.jclouds.http.internal.TrackingJavaUrlHttpCommandExecutorService.getArgsForRequestAtIndex;
+import static org.jclouds.http.internal.TrackingJavaUrlHttpCommandExecutorService.getInvokerOfRequest;
+import static org.jclouds.http.internal.TrackingJavaUrlHttpCommandExecutorService.getInvokerOfRequestAtIndex;
 import static org.testng.Assert.assertEquals;
 
 import java.lang.reflect.Method;
@@ -73,14 +73,14 @@ public abstract class EC2TemplateBuilderLiveTest extends BaseTemplateBuilderLive
                      AvailabilityZoneAndRegionAsyncClient.class.getMethod("describeAvailabilityZonesInRegion", String.class, DescribeAvailabilityZonesOptions[].class));
             @Override
             public boolean apply(HttpCommand input) {
-               return !ignored.contains(getJavaMethodForRequest(input));
+               return !ignored.contains(getInvokerOfRequest(input));
             }
          });
          
          assert filteredCommandsInvoked.size() == 1 : commandsInvoked;
-         assertEquals(getJavaMethodForRequestAtIndex(filteredCommandsInvoked, 0), AMIAsyncClient.class
+         assertEquals(getInvokerOfRequestAtIndex(filteredCommandsInvoked, 0), AMIAsyncClient.class
                   .getMethod("describeImagesInRegion", String.class, DescribeImagesOptions[].class));
-         assertDescribeImagesOptionsEquals((DescribeImagesOptions[])getJavaArgsForRequestAtIndex(filteredCommandsInvoked, 0).get(1), 
+         assertDescribeImagesOptionsEquals((DescribeImagesOptions[])getArgsForRequestAtIndex(filteredCommandsInvoked, 0).get(1), 
                   defaultImageProviderId);
 
       } finally {

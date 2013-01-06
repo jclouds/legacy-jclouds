@@ -19,7 +19,6 @@
 package org.jclouds.gogrid.services;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 
 import org.jclouds.gogrid.domain.IpType;
 import org.jclouds.gogrid.functions.ParseIpListFromJsonResponse;
@@ -27,7 +26,9 @@ import org.jclouds.gogrid.options.GetIpListOptions;
 import org.jclouds.http.HttpRequest;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code GridIpAsyncClient}
@@ -40,9 +41,9 @@ public class GridIpAsyncClientTest extends BaseGoGridAsyncClientTest<GridIpAsync
 
    @Test
    public void testGetIpListWithOptions() throws NoSuchMethodException, IOException {
-      Method method = GridIpAsyncClient.class.getMethod("getIpList", GetIpListOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, new GetIpListOptions()
-            .onlyUnassigned().onlyWithType(IpType.PUBLIC));
+      Invokable<?, ?> method = Invokable.from(GridIpAsyncClient.class.getMethod("getIpList", GetIpListOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(new GetIpListOptions()
+            .onlyUnassigned().onlyWithType(IpType.PUBLIC)));
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/ip/list?v=1.5&ip.state=Unassigned&"
             + "ip.type=Public HTTP/1.1");
@@ -64,8 +65,8 @@ public class GridIpAsyncClientTest extends BaseGoGridAsyncClientTest<GridIpAsync
 
    @Test
    public void testGetAssignedIpList() throws NoSuchMethodException, IOException {
-      Method method = GridIpAsyncClient.class.getMethod("getAssignedIpList");
-      HttpRequest httpRequest = processor.createRequest(method);
+      Invokable<?, ?> method = Invokable.from(GridIpAsyncClient.class.getMethod("getAssignedIpList"));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
             "GET https://api.gogrid.com/api/grid/ip/list?v=1.5&ip.state=Assigned HTTP/1.1");

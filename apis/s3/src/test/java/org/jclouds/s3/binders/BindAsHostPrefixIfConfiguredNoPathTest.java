@@ -21,13 +21,15 @@ package org.jclouds.s3.binders;
 import static org.jclouds.s3.reference.S3Constants.PROPERTY_S3_VIRTUAL_HOST_BUCKETS;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.Properties;
 
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.s3.S3AsyncClient;
 import org.jclouds.s3.internal.BaseS3AsyncClientTest;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code BindAsHostPrefixIfConfigured}
@@ -40,8 +42,8 @@ public class BindAsHostPrefixIfConfiguredNoPathTest extends BaseS3AsyncClientTes
 
    public void testBucketWithHostnameStyle() throws IOException, SecurityException, NoSuchMethodException {
 
-      Method method = S3AsyncClient.class.getMethod("deleteObject", String.class, String.class);
-      GeneratedHttpRequest request = processor.createRequest(method, "testbucket.example.com", "test.jpg");
+      Invokable<?, ?> method = Invokable.from(S3AsyncClient.class.getMethod("deleteObject", String.class, String.class));
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("testbucket.example.com", "test.jpg"));
       assertRequestLineEquals(request, "DELETE https://s3.amazonaws.com/testbucket.example.com/test.jpg HTTP/1.1");
    }
 

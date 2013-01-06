@@ -19,7 +19,6 @@
 package org.jclouds.trmk.ecloud.features;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.net.URI;
 
 import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
@@ -28,6 +27,9 @@ import org.jclouds.http.functions.ParseSax;
 import org.jclouds.trmk.ecloud.BaseTerremarkECloudAsyncClientTest;
 import org.jclouds.trmk.vcloud_0_8.xml.DataCentersHandler;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code DataCenterOperationsAsyncClient}
@@ -41,11 +43,11 @@ public class DataCenterOperationsAsyncClientTest extends
       BaseTerremarkECloudAsyncClientTest<DataCenterOperationsAsyncClient> {
 
    public void testlistDataCenters() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = DataCenterOperationsAsyncClient.class.getMethod("listDataCenters", URI.class);
+      Invokable<?, ?> method = Invokable.from(DataCenterOperationsAsyncClient.class.getMethod("listDataCenters", URI.class));
       HttpRequest request = processor
             .createRequest(
-                  method,
-                  URI.create("https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/extensions/org/1910324/dataCenters"));
+                  method, ImmutableList.<Object> of(
+                  URI.create("https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/extensions/org/1910324/dataCenters")));
 
       assertRequestLineEquals(request,
             "GET https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.8/extensions/org/1910324/dataCenters HTTP/1.1");
@@ -60,9 +62,9 @@ public class DataCenterOperationsAsyncClientTest extends
    }
 
    public void testlistDataCentersInOrg() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = DataCenterOperationsAsyncClient.class.getMethod("listDataCentersInOrg", URI.class);
-      HttpRequest request = processor.createRequest(method,
-            URI.create("https://vcloud.safesecureweb.com/api/v0.8/org/1"));
+      Invokable<?, ?> method = Invokable.from(DataCenterOperationsAsyncClient.class.getMethod("listDataCentersInOrg", URI.class));
+      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(
+            URI.create("https://vcloud.safesecureweb.com/api/v0.8/org/1")));
 
       assertRequestLineEquals(request, "GET https://vcloud.safesecureweb.com/api/v0.8/datacentersList/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.tmrk.ecloud.dataCentersList+xml\n");

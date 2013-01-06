@@ -78,8 +78,8 @@ public class S3Utils {
 
       String bucketName = null;
 
-      for (int i = 0; i < request.getJavaMethod().getParameterAnnotations().length; i++) {
-         if (any(Arrays.asList(request.getJavaMethod().getParameterAnnotations()[i]), ANNOTATIONTYPE_BUCKET)) {
+      for (int i = 0; i < request.getInvoker().getParameters().size(); i++) {
+         if (any(Arrays.asList(request.getInvoker().getParameters().get(i).getAnnotations()), ANNOTATIONTYPE_BUCKET)) {
             bucketName = (String) request.getArgs().get(i);
             break;
          }

@@ -19,7 +19,7 @@
 package org.jclouds.aws.ec2.compute;
 
 import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
-import static org.jclouds.http.internal.TrackingJavaUrlHttpCommandExecutorService.getJavaMethodForRequestAtIndex;
+import static org.jclouds.http.internal.TrackingJavaUrlHttpCommandExecutorService.getInvokerOfRequestAtIndex;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -337,9 +337,9 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
    private static void assertOnlyOneRegionQueriedForAvailabilityZone(List<HttpCommand> commandsInvoked)
          throws NoSuchMethodException {
       assert commandsInvoked.size() == 2 : commandsInvoked;
-      assertEquals(getJavaMethodForRequestAtIndex(commandsInvoked, 0),
+      assertEquals(getInvokerOfRequestAtIndex(commandsInvoked, 0),
             AvailabilityZoneAndRegionAsyncClient.class.getMethod("describeRegions", DescribeRegionsOptions[].class));
-      assertEquals(getJavaMethodForRequestAtIndex(commandsInvoked, 1),
+      assertEquals(getInvokerOfRequestAtIndex(commandsInvoked, 1),
             AvailabilityZoneAndRegionAsyncClient.class.getMethod("describeAvailabilityZonesInRegion", String.class,
                   DescribeAvailabilityZonesOptions[].class));
    }

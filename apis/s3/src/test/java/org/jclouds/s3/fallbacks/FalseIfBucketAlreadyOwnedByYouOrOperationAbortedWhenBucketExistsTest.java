@@ -33,6 +33,8 @@ import org.jclouds.s3.options.PutBucketOptions;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.google.common.reflect.Invokable;
+
 /**
  * @author Adrian Cole
  */
@@ -48,8 +50,8 @@ public class FalseIfBucketAlreadyOwnedByYouOrOperationAbortedWhenBucketExistsTes
             .method("PUT")
             .endpoint("https://adriancole-blobstore113.s3.amazonaws.com/")
             .declaring(S3Client.class)
-            .javaMethod(
-                  S3Client.class.getMethod("putBucketInRegion", String.class, String.class, PutBucketOptions[].class))
+            .invoker(Invokable.from(
+                  S3Client.class.getMethod("putBucketInRegion", String.class, String.class, PutBucketOptions[].class)))
             .args(new Object[] { null, "bucket" }).build();
    }
 

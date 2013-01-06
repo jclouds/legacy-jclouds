@@ -19,7 +19,6 @@
 package org.jclouds.cloudstack.features;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 
 import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
 import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
@@ -27,6 +26,9 @@ import org.jclouds.cloudstack.options.ListResourceLimitsOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code LimitAsyncClient}
@@ -37,8 +39,8 @@ import org.testng.annotations.Test;
 public class LimitAsyncClientTest extends BaseCloudStackAsyncClientTest<LimitAsyncClient> {
 
    public void testListResourceLimits() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = LimitAsyncClient.class.getMethod("listResourceLimits", ListResourceLimitsOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method);
+      Invokable<?, ?> method = Invokable.from(LimitAsyncClient.class.getMethod("listResourceLimits", ListResourceLimitsOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listResourceLimits&listAll=true HTTP/1.1");
@@ -54,8 +56,8 @@ public class LimitAsyncClientTest extends BaseCloudStackAsyncClientTest<LimitAsy
    }
 
    public void testListResourceLimitsOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = LimitAsyncClient.class.getMethod("listResourceLimits", ListResourceLimitsOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, ListResourceLimitsOptions.Builder.account("jclouds" , "23"));
+      Invokable<?, ?> method = Invokable.from(LimitAsyncClient.class.getMethod("listResourceLimits", ListResourceLimitsOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(ListResourceLimitsOptions.Builder.account("jclouds" , "23")));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listResourceLimits&listAll=true&account=jclouds&domainid=23 HTTP/1.1");

@@ -18,14 +18,15 @@
  */
 package org.jclouds.cloudstack.features;
 
-import java.lang.reflect.Method;
-
 import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.ListStoragePoolsOptions;
 import org.jclouds.fallbacks.MapHttp4xxCodesToExceptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code GlobalStoragePoolAsyncClient}
@@ -36,8 +37,8 @@ import org.testng.annotations.Test;
 public class GlobalStoragePoolAsyncClientTest extends BaseCloudStackAsyncClientTest<GlobalStoragePoolAsyncClient> {
 
    public void testListStoragePools() throws NoSuchMethodException {
-      Method method = GlobalStoragePoolAsyncClient.class.getMethod("listStoragePools", ListStoragePoolsOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method);
+      Invokable<?, ?> method = Invokable.from(GlobalStoragePoolAsyncClient.class.getMethod("listStoragePools", ListStoragePoolsOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
          "GET http://localhost:8080/client/api?response=json&command=listStoragePools&listAll=true HTTP/1.1");
@@ -52,8 +53,8 @@ public class GlobalStoragePoolAsyncClientTest extends BaseCloudStackAsyncClientT
    }
 
    public void testListStoragePoolsOptions() throws NoSuchMethodException {
-      Method method = GlobalStoragePoolAsyncClient.class.getMethod("listStoragePools", ListStoragePoolsOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, ListStoragePoolsOptions.Builder.clusterId("3").id("4").ipAddress("192.168.42.42").keyword("fred").name("bob").path("/mnt/store42").podId("4").zoneId("5"));
+      Invokable<?, ?> method = Invokable.from(GlobalStoragePoolAsyncClient.class.getMethod("listStoragePools", ListStoragePoolsOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(ListStoragePoolsOptions.Builder.clusterId("3").id("4").ipAddress("192.168.42.42").keyword("fred").name("bob").path("/mnt/store42").podId("4").zoneId("5")));
 
       assertRequestLineEquals(httpRequest,
          "GET http://localhost:8080/client/api?response=json&command=listStoragePools&listAll=true&clusterid=3&id=4&ipaddress=192.168.42.42&keyword=fred&name=bob&path=/mnt/store42&podid=4&zoneid=5 HTTP/1.1");
