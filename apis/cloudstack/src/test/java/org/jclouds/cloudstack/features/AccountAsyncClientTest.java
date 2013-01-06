@@ -19,7 +19,6 @@
 package org.jclouds.cloudstack.features;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 
 import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
@@ -31,6 +30,8 @@ import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Functions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code AccountAsyncClient}
@@ -43,8 +44,8 @@ import com.google.common.base.Functions;
 public class AccountAsyncClientTest extends BaseCloudStackAsyncClientTest<AccountAsyncClient> {
 
    public void testListAccounts() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AccountAsyncClient.class.getMethod("listAccounts", ListAccountsOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method);
+      Invokable<?, ?> method = Invokable.from(AccountAsyncClient.class.getMethod("listAccounts", ListAccountsOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listAccounts&listAll=true HTTP/1.1");
@@ -60,9 +61,9 @@ public class AccountAsyncClientTest extends BaseCloudStackAsyncClientTest<Accoun
    }
 
    public void testListAccountsOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AccountAsyncClient.class.getMethod("listAccounts", ListAccountsOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method,
-            ListAccountsOptions.Builder.accountInDomain("jclouds", "123"));
+      Invokable<?, ?> method = Invokable.from(AccountAsyncClient.class.getMethod("listAccounts", ListAccountsOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(
+            ListAccountsOptions.Builder.accountInDomain("jclouds", "123")));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listAccounts&listAll=true&account=jclouds&domainid=123 HTTP/1.1");
@@ -78,8 +79,8 @@ public class AccountAsyncClientTest extends BaseCloudStackAsyncClientTest<Accoun
    }
 
    public void testGetAccount() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AccountAsyncClient.class.getMethod("getAccount", String.class);
-      HttpRequest httpRequest = processor.createRequest(method, "3");
+      Invokable<?, ?> method = Invokable.from(AccountAsyncClient.class.getMethod("getAccount", String.class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("3"));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listAccounts&listAll=true&id=3 HTTP/1.1");

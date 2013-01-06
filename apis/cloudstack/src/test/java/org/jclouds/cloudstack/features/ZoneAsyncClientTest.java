@@ -19,7 +19,6 @@
 package org.jclouds.cloudstack.features;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 
 import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
@@ -31,7 +30,9 @@ import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Functions;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code ZoneAsyncClient}
@@ -43,8 +44,8 @@ import com.google.common.collect.Iterables;
 @Test(groups = "unit", testName = "ZoneAsyncClientTest")
 public class ZoneAsyncClientTest extends BaseCloudStackAsyncClientTest<ZoneAsyncClient> {
    public void testListZones() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = ZoneAsyncClient.class.getMethod("listZones", ListZonesOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method);
+      Invokable<?, ?> method = Invokable.from(ZoneAsyncClient.class.getMethod("listZones", ListZonesOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listZones&listAll=true HTTP/1.1");
@@ -70,9 +71,9 @@ public class ZoneAsyncClientTest extends BaseCloudStackAsyncClientTest<ZoneAsync
    }
 
    public void testListZonesOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = ZoneAsyncClient.class.getMethod("listZones", ListZonesOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, ListZonesOptions.Builder.available(true).domainId("5")
-            .id("6"));
+      Invokable<?, ?> method = Invokable.from(ZoneAsyncClient.class.getMethod("listZones", ListZonesOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(ListZonesOptions.Builder.available(true).domainId("5")
+            .id("6")));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listZones&listAll=true&available=true&domainid=5&id=6 HTTP/1.1");
@@ -88,8 +89,8 @@ public class ZoneAsyncClientTest extends BaseCloudStackAsyncClientTest<ZoneAsync
    }
 
    public void testGetZone() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = ZoneAsyncClient.class.getMethod("getZone", String.class);
-      HttpRequest httpRequest = processor.createRequest(method, 6);
+      Invokable<?, ?> method = Invokable.from(ZoneAsyncClient.class.getMethod("getZone", String.class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(6));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listZones&listAll=true&id=6 HTTP/1.1");

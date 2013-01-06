@@ -18,7 +18,6 @@
  */
 package org.jclouds.util;
 
-import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
@@ -37,12 +36,6 @@ public class Optionals2 {
       return returnTypeOrTypeOfOptional(type.getRawType(), type.getType());
    }
 
-   public static Class<?> returnTypeOrTypeOfOptional(Method method) {
-      Class<?> syncClass = method.getReturnType();
-      Type genericType = method.getGenericReturnType();
-      return returnTypeOrTypeOfOptional(syncClass, genericType);
-   }
-
    private static Class<?> returnTypeOrTypeOfOptional(Class<?> syncClass, Type genericType) {
       if (syncClass.isAssignableFrom(Optional.class)) {
          ParameterizedType futureType = ParameterizedType.class.cast(genericType);
@@ -57,8 +50,7 @@ public class Optionals2 {
       return syncClass;
    }
 
-   public static boolean isReturnTypeOptional(Method method) {
-      return method.getReturnType().isAssignableFrom(Optional.class);
+   public static boolean isReturnTypeOptional(Invokable<?, ?> method) {
+      return method.getReturnType().getRawType().isAssignableFrom(Optional.class);
    }
-
 }

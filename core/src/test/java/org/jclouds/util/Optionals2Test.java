@@ -22,11 +22,10 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
-import java.lang.reflect.Method;
-
 import org.testng.annotations.Test;
 
 import com.google.common.base.Optional;
+import com.google.common.reflect.Invokable;
 
 /**
  * @author Adrian Cole
@@ -41,25 +40,25 @@ public class Optionals2Test {
    }
 
    public void testReturnTypeOrTypeOfOptionalWhenOptional() throws SecurityException, NoSuchMethodException {
-      Method method = Test.class.getMethod("getOptional");
+      Invokable<?, ?> method = Invokable.from(Test.class.getMethod("getOptional"));
 
       assertEquals(Optionals2.returnTypeOrTypeOfOptional(method), String.class);
    }
 
    public void testReturnTypeOrTypeOfOptionalWhenNotOptional() throws SecurityException, NoSuchMethodException {
-      Method method = Test.class.getMethod("getNotOptional");
+      Invokable<?, ?> method = Invokable.from(Test.class.getMethod("getNotOptional"));
 
       assertEquals(Optionals2.returnTypeOrTypeOfOptional(method), String.class);
    }
 
    public void testIsReturnTypeOptionalWhenOptional() throws SecurityException, NoSuchMethodException {
-      Method method = Test.class.getMethod("getOptional");
+      Invokable<?, ?> method = Invokable.from(Test.class.getMethod("getOptional"));
 
       assertTrue(Optionals2.isReturnTypeOptional(method));
    }
 
    public void testIsReturnTypeOptionalWhenNotOptional() throws SecurityException, NoSuchMethodException {
-      Method method = Test.class.getMethod("getNotOptional");
+      Invokable<?, ?> method = Invokable.from(Test.class.getMethod("getNotOptional"));
 
       assertFalse(Optionals2.isReturnTypeOptional(method));
    }

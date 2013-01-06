@@ -133,7 +133,7 @@ public class HttpCommand {
    public String toString() {
       if (request instanceof GeneratedHttpRequest)
          return String.format("[method=%s.%s, request=%s]", GeneratedHttpRequest.class.cast(request).getDeclaring()
-                  .getSimpleName(), GeneratedHttpRequest.class.cast(request).getJavaMethod().getName(), request
+                  .getSimpleName(), GeneratedHttpRequest.class.cast(request).getInvoker().getName(), request
                   .getRequestLine());
       else
          return "[request=" + request.getRequestLine() + "]";

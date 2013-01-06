@@ -18,8 +18,6 @@
  */
 package org.jclouds.rest;
 
-import java.lang.reflect.Method;
-
 import javax.ws.rs.POST;
 import javax.ws.rs.PathParam;
 
@@ -34,6 +32,8 @@ import org.testng.TestException;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.Invokable;
 import com.google.inject.Injector;
 
 @Test(groups = "unit")
@@ -58,26 +58,26 @@ public class InputParamValidatorTest {
     */
    @Test
    public void testInputParamsValidation() throws Exception {
-      Method allParamsValidatedMethod = InputParamValidatorForm.class.getMethod("allParamsValidated", String.class,
-               String.class);
-      Method oneParamValidatedMethod = InputParamValidatorForm.class.getMethod("oneParamValidated", String.class,
-               String.class);
+      Invokable<?, ?> allParamsValidatedMethod = Invokable.from(InputParamValidatorForm.class.getMethod(
+            "allParamsValidated", String.class, String.class));
+      Invokable<?, ?> oneParamValidatedMethod = Invokable.from(InputParamValidatorForm.class.getMethod(
+            "oneParamValidated", String.class, String.class));
       RestAnnotationProcessor restAnnotationProcessor = factory(InputParamValidatorForm.class);
-      restAnnotationProcessor.createRequest(allParamsValidatedMethod, "blah", "blah");
-      restAnnotationProcessor.createRequest(oneParamValidatedMethod, "blah", "blah");
+      restAnnotationProcessor.createRequest(allParamsValidatedMethod, ImmutableList.<Object> of("blah", "blah"));
+      restAnnotationProcessor.createRequest(oneParamValidatedMethod, ImmutableList.<Object> of("blah", "blah"));
 
       try {
-         restAnnotationProcessor.createRequest(allParamsValidatedMethod, "BLAH", "blah");
+         restAnnotationProcessor.createRequest(allParamsValidatedMethod, ImmutableList.<Object> of("BLAH", "blah"));
          throw new TestException(
                   "AllLowerCaseValidator shouldn't have passed 'BLAH' as a parameter because it's uppercase.");
       } catch (IllegalArgumentException e) {
          // supposed to happen - continue
       }
 
-      restAnnotationProcessor.createRequest(oneParamValidatedMethod, "BLAH", "blah");
+      restAnnotationProcessor.createRequest(oneParamValidatedMethod, ImmutableList.<Object> of("BLAH", "blah"));
 
       try {
-         restAnnotationProcessor.createRequest(oneParamValidatedMethod, "blah", "BLAH");
+         restAnnotationProcessor.createRequest(oneParamValidatedMethod, ImmutableList.<Object> of("blah", "BLAH"));
          throw new TestException(
                   "AllLowerCaseValidator shouldn't have passed 'BLAH' as the second parameter because it's uppercase.");
       } catch (IllegalArgumentException e) {
@@ -98,8 +98,8 @@ public class InputParamValidatorTest {
 
    @Test(expectedExceptions = ClassCastException.class)
    public void testWrongPredicateTypeLiteral() throws Exception {
-      Method method = WrongValidator.class.getMethod("method", Integer.class);
-      new InputParamValidator(injector).validateMethodParametersOrThrow(method, 55);
+      Invokable<?, ?> method = Invokable.from(WrongValidator.class.getMethod("method", Integer.class));
+      new InputParamValidator(injector).validateMethodParametersOrThrow(method, ImmutableList.<Object> of(55));
    }
 
    private RestAnnotationProcessor factory(Class<?> clazz) {

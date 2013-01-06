@@ -18,8 +18,6 @@
  */
 package org.jclouds.cloudstack.features;
 
-import java.lang.reflect.Method;
-
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.CreateUserOptions;
@@ -28,6 +26,9 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code GlobalUserAsyncClient}
@@ -47,10 +48,10 @@ public class GlobalUserAsyncClientTest extends BaseCloudStackAsyncClientTest<Glo
                                        .addQueryParam("lastname", "LastName").build();
 
    public void testCreateAccount() throws Exception {
-      Method method = GlobalUserAsyncClient.class.getMethod("createUser", String.class, String.class,
-         String.class, String.class, String.class, String.class, CreateUserOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, "user", "account", "email@example.com",
-         "hashed-password", "FirstName", "LastName");
+      Invokable<?, ?> method = Invokable.from(GlobalUserAsyncClient.class.getMethod("createUser", String.class, String.class,
+         String.class, String.class, String.class, String.class, CreateUserOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("user", "account", "email@example.com",
+         "hashed-password", "FirstName", "LastName"));
 
       assertRequestLineEquals(httpRequest, createUser.getRequestLine());
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
@@ -64,8 +65,8 @@ public class GlobalUserAsyncClientTest extends BaseCloudStackAsyncClientTest<Glo
    }
 
    public void testUpdateUser() throws Exception {
-      Method method = GlobalUserAsyncClient.class.getMethod("updateUser", String.class, UpdateUserOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, 42L);
+      Invokable<?, ?> method = Invokable.from(GlobalUserAsyncClient.class.getMethod("updateUser", String.class, UpdateUserOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(42L));
 
       assertRequestLineEquals(httpRequest,
          "GET http://localhost:8080/client/api?response=json&command=updateUser&id=42 HTTP/1.1");
@@ -80,8 +81,8 @@ public class GlobalUserAsyncClientTest extends BaseCloudStackAsyncClientTest<Glo
    }
 
    public void testDeleteUser() throws Exception {
-      Method method = GlobalUserAsyncClient.class.getMethod("deleteUser", String.class);
-      HttpRequest httpRequest = processor.createRequest(method, 42L);
+      Invokable<?, ?> method = Invokable.from(GlobalUserAsyncClient.class.getMethod("deleteUser", String.class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(42L));
 
       assertRequestLineEquals(httpRequest,
          "GET http://localhost:8080/client/api?response=json&command=deleteUser&id=42 HTTP/1.1");

@@ -19,7 +19,6 @@
 package org.jclouds.cloudstack.features;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 
 import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
@@ -33,6 +32,8 @@ import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Functions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code GuestOSAsyncClient}
@@ -45,8 +46,8 @@ import com.google.common.base.Functions;
 public class GuestOSAsyncClientTest extends BaseCloudStackAsyncClientTest<GuestOSAsyncClient> {
 
    public void testGetOSCategory() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = GuestOSAsyncClient.class.getMethod("getOSCategory", String.class);
-      HttpRequest httpRequest = processor.createRequest(method, 11l);
+      Invokable<?, ?> method = Invokable.from(GuestOSAsyncClient.class.getMethod("getOSCategory", String.class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(11l));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listOsCategories&listAll=true&id=11 HTTP/1.1");
@@ -62,8 +63,8 @@ public class GuestOSAsyncClientTest extends BaseCloudStackAsyncClientTest<GuestO
    }
 
    public void testListOSCategories() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = GuestOSAsyncClient.class.getMethod("listOSCategories");
-      HttpRequest httpRequest = processor.createRequest(method);
+      Invokable<?, ?> method = Invokable.from(GuestOSAsyncClient.class.getMethod("listOSCategories"));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listOsCategories&listAll=true HTTP/1.1");
@@ -79,8 +80,8 @@ public class GuestOSAsyncClientTest extends BaseCloudStackAsyncClientTest<GuestO
    }
 
    public void testGetOSType() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = GuestOSAsyncClient.class.getMethod("getOSType", String.class);
-      HttpRequest httpRequest = processor.createRequest(method, 11l);
+      Invokable<?, ?> method = Invokable.from(GuestOSAsyncClient.class.getMethod("getOSType", String.class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(11l));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listOsTypes&listAll=true&id=11 HTTP/1.1");
@@ -97,8 +98,8 @@ public class GuestOSAsyncClientTest extends BaseCloudStackAsyncClientTest<GuestO
    }
 
    public void testListOSTypes() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = GuestOSAsyncClient.class.getMethod("listOSTypes", ListOSTypesOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method);
+      Invokable<?, ?> method = Invokable.from(GuestOSAsyncClient.class.getMethod("listOSTypes", ListOSTypesOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listOsTypes&listAll=true HTTP/1.1");
@@ -114,8 +115,8 @@ public class GuestOSAsyncClientTest extends BaseCloudStackAsyncClientTest<GuestO
    }
 
    public void testListOSTypesOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = GuestOSAsyncClient.class.getMethod("listOSTypes", ListOSTypesOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, ListOSTypesOptions.Builder.OSCategoryId("11"));
+      Invokable<?, ?> method = Invokable.from(GuestOSAsyncClient.class.getMethod("listOSTypes", ListOSTypesOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(ListOSTypesOptions.Builder.OSCategoryId("11")));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listOsTypes&listAll=true&oscategoryid=11 HTTP/1.1");

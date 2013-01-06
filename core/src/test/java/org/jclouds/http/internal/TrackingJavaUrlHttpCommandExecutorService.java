@@ -18,7 +18,6 @@
  */
 package org.jclouds.http.internal;
 
-import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -42,6 +41,7 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
+import com.google.common.reflect.Invokable;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
@@ -73,16 +73,15 @@ public class TrackingJavaUrlHttpCommandExecutorService extends JavaUrlHttpComman
       };
    }
    
-   public static Method getJavaMethodForRequestAtIndex(final Collection<HttpCommand> commandsInvoked, int index) {
-      return getJavaMethodForRequest(Iterables.get(commandsInvoked, index));
+   public static Invokable<?, ?> getInvokerOfRequestAtIndex(final Collection<HttpCommand> commandsInvoked, int index) {
+      return getInvokerOfRequest(Iterables.get(commandsInvoked, index));
    }
 
-   public static Method getJavaMethodForRequest(HttpCommand commandInvoked) {
-      return GeneratedHttpRequest.class.cast(commandInvoked.getCurrentRequest()).getJavaMethod();
+   public static Invokable<?, ?> getInvokerOfRequest(HttpCommand commandInvoked) {
+      return GeneratedHttpRequest.class.cast(commandInvoked.getCurrentRequest()).getInvoker();
    }
 
-   @SuppressWarnings("unchecked")
-   public static List<Object> getJavaArgsForRequestAtIndex(final Collection<HttpCommand> commandsInvoked, int index) {
+   public static List<Object> getArgsForRequestAtIndex(final Collection<HttpCommand> commandsInvoked, int index) {
       return GeneratedHttpRequest.class.cast(Iterables.get(commandsInvoked, index).getCurrentRequest()).getArgs();
    }
 

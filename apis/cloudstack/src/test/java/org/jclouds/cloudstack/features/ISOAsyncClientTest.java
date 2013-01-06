@@ -18,8 +18,6 @@
  */
 package org.jclouds.cloudstack.features;
 
-import java.lang.reflect.Method;
-
 import org.jclouds.cloudstack.domain.ExtractMode;
 import org.jclouds.cloudstack.domain.PermissionOperation;
 import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
@@ -35,7 +33,9 @@ import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.reflect.Invokable;
 /**
  * Tests the behaviour of ISOAsyncClient.
  * 
@@ -47,8 +47,8 @@ import com.google.common.collect.ImmutableSet;
 public class ISOAsyncClientTest extends BaseCloudStackAsyncClientTest<ISOAsyncClient> {
 
    public void testAttachISO() throws NoSuchMethodException {
-      Method method = ISOAsyncClient.class.getMethod("attachISO", String.class, String.class);
-      HttpRequest httpRequest = processor.createRequest(method, "3", "5");
+      Invokable<?, ?> method = Invokable.from(ISOAsyncClient.class.getMethod("attachISO", String.class, String.class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("3", "5"));
 
       assertRequestLineEquals(httpRequest,
          "GET http://localhost:8080/client/api?response=json&command=attachIso&id=3&virtualmachineid=5 HTTP/1.1");
@@ -63,8 +63,8 @@ public class ISOAsyncClientTest extends BaseCloudStackAsyncClientTest<ISOAsyncCl
    }
 
    public void testDetachISO() throws NoSuchMethodException {
-      Method method = ISOAsyncClient.class.getMethod("detachISO", String.class);
-      HttpRequest httpRequest = processor.createRequest(method, 3);
+      Invokable<?, ?> method = Invokable.from(ISOAsyncClient.class.getMethod("detachISO", String.class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(3));
 
       assertRequestLineEquals(httpRequest,
          "GET http://localhost:8080/client/api?response=json&command=detachIso&virtualmachineid=3 HTTP/1.1");
@@ -79,8 +79,8 @@ public class ISOAsyncClientTest extends BaseCloudStackAsyncClientTest<ISOAsyncCl
    }
 
    public void testUpdateISO() throws NoSuchMethodException {
-      Method method = ISOAsyncClient.class.getMethod("updateISO", String.class, UpdateISOOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, 3);
+      Invokable<?, ?> method = Invokable.from(ISOAsyncClient.class.getMethod("updateISO", String.class, UpdateISOOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(3));
 
       assertRequestLineEquals(httpRequest,
          "GET http://localhost:8080/client/api?response=json&command=updateIso&id=3 HTTP/1.1");
@@ -95,8 +95,8 @@ public class ISOAsyncClientTest extends BaseCloudStackAsyncClientTest<ISOAsyncCl
    }
 
    public void testUpdateISOOptions() throws NoSuchMethodException {
-      Method method = ISOAsyncClient.class.getMethod("updateISO", String.class, UpdateISOOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, 3, UpdateISOOptions.Builder.bootable(true).displayText("robert").format("format").name("bob").osTypeId("9").passwordEnabled(true));
+      Invokable<?, ?> method = Invokable.from(ISOAsyncClient.class.getMethod("updateISO", String.class, UpdateISOOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(3, UpdateISOOptions.Builder.bootable(true).displayText("robert").format("format").name("bob").osTypeId("9").passwordEnabled(true)));
 
       assertRequestLineEquals(httpRequest,
          "GET http://localhost:8080/client/api?response=json&command=updateIso&id=3&bootable=true&displaytext=robert&format=format&name=bob&ostypeid=9&passwordenabled=true HTTP/1.1");
@@ -111,8 +111,8 @@ public class ISOAsyncClientTest extends BaseCloudStackAsyncClientTest<ISOAsyncCl
    }
 
    public void testDeleteISO() throws NoSuchMethodException {
-      Method method = ISOAsyncClient.class.getMethod("deleteISO", String.class, DeleteISOOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, 3);
+      Invokable<?, ?> method = Invokable.from(ISOAsyncClient.class.getMethod("deleteISO", String.class, DeleteISOOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(3));
 
       assertRequestLineEquals(httpRequest,
          "GET http://localhost:8080/client/api?response=json&command=deleteIso&id=3 HTTP/1.1");
@@ -127,8 +127,8 @@ public class ISOAsyncClientTest extends BaseCloudStackAsyncClientTest<ISOAsyncCl
    }
 
    public void testDeleteISOOptions() throws NoSuchMethodException {
-      Method method = ISOAsyncClient.class.getMethod("deleteISO", String.class, DeleteISOOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, 3, DeleteISOOptions.Builder.zoneId("5"));
+      Invokable<?, ?> method = Invokable.from(ISOAsyncClient.class.getMethod("deleteISO", String.class, DeleteISOOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(3, DeleteISOOptions.Builder.zoneId("5")));
 
       assertRequestLineEquals(httpRequest,
          "GET http://localhost:8080/client/api?response=json&command=deleteIso&id=3&zoneid=5 HTTP/1.1");
@@ -152,8 +152,8 @@ public class ISOAsyncClientTest extends BaseCloudStackAsyncClientTest<ISOAsyncCl
                                     .build();
 
    public void testCopyISO() throws NoSuchMethodException {
-      Method method = ISOAsyncClient.class.getMethod("copyISO", String.class, String.class, String.class);
-      HttpRequest httpRequest = processor.createRequest(method, 3, 5, 7);
+      Invokable<?, ?> method = Invokable.from(ISOAsyncClient.class.getMethod("copyISO", String.class, String.class, String.class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(3, 5, 7));
 
       assertRequestLineEquals(httpRequest, copyIso.getRequestLine());
       assertPayloadEquals(httpRequest, null, null, false);
@@ -166,8 +166,8 @@ public class ISOAsyncClientTest extends BaseCloudStackAsyncClientTest<ISOAsyncCl
    }
 
    public void testUpdateISOPermissions() throws NoSuchMethodException {
-      Method method = ISOAsyncClient.class.getMethod("updateISOPermissions", String.class, UpdateISOPermissionsOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, 3);
+      Invokable<?, ?> method = Invokable.from(ISOAsyncClient.class.getMethod("updateISOPermissions", String.class, UpdateISOPermissionsOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(3));
 
       assertRequestLineEquals(httpRequest,
          "GET http://localhost:8080/client/api?response=json&command=updateIsoPermissions&id=3 HTTP/1.1");
@@ -182,8 +182,8 @@ public class ISOAsyncClientTest extends BaseCloudStackAsyncClientTest<ISOAsyncCl
    }
 
    public void testUpdateISOPermissionsOptions() throws NoSuchMethodException {
-      Method method = ISOAsyncClient.class.getMethod("updateISOPermissions", String.class, UpdateISOPermissionsOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, 3, UpdateISOPermissionsOptions.Builder.accounts(ImmutableSet.<String>of("fred", "bob")).isExtractable(true).isFeatured(true).isPublic(true).operation(PermissionOperation.add));
+      Invokable<?, ?> method = Invokable.from(ISOAsyncClient.class.getMethod("updateISOPermissions", String.class, UpdateISOPermissionsOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(3, UpdateISOPermissionsOptions.Builder.accounts(ImmutableSet.<String>of("fred", "bob")).isExtractable(true).isFeatured(true).isPublic(true).operation(PermissionOperation.add)));
 
       assertRequestLineEquals(httpRequest,
          "GET http://localhost:8080/client/api?response=json&command=updateIsoPermissions&id=3&accounts=fred,bob&isextractable=true&isfeatured=true&ispublic=true&op=add HTTP/1.1");
@@ -198,8 +198,8 @@ public class ISOAsyncClientTest extends BaseCloudStackAsyncClientTest<ISOAsyncCl
    }
 
    public void testListISOPermissions() throws NoSuchMethodException {
-      Method method = ISOAsyncClient.class.getMethod("listISOPermissions", String.class, AccountInDomainOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, 3);
+      Invokable<?, ?> method = Invokable.from(ISOAsyncClient.class.getMethod("listISOPermissions", String.class, AccountInDomainOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(3));
 
       assertRequestLineEquals(httpRequest,
          "GET http://localhost:8080/client/api?response=json&command=listIsoPermissions&listAll=true&id=3 HTTP/1.1");
@@ -214,8 +214,8 @@ public class ISOAsyncClientTest extends BaseCloudStackAsyncClientTest<ISOAsyncCl
    }
 
    public void testListISOPermissionsOptions() throws NoSuchMethodException {
-      Method method = ISOAsyncClient.class.getMethod("listISOPermissions", String.class, AccountInDomainOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, 3, AccountInDomainOptions.Builder.accountInDomain("fred", "5"));
+      Invokable<?, ?> method = Invokable.from(ISOAsyncClient.class.getMethod("listISOPermissions", String.class, AccountInDomainOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(3, AccountInDomainOptions.Builder.accountInDomain("fred", "5")));
 
       assertRequestLineEquals(httpRequest,
          "GET http://localhost:8080/client/api?response=json&command=listIsoPermissions&listAll=true&id=3&account=fred&domainid=5 HTTP/1.1");
@@ -239,8 +239,8 @@ public class ISOAsyncClientTest extends BaseCloudStackAsyncClientTest<ISOAsyncCl
                                        .build();
 
    public void testExtractISO() throws NoSuchMethodException {
-      Method method = ISOAsyncClient.class.getMethod("extractISO", String.class, ExtractMode.class, String.class, ExtractISOOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, 3, ExtractMode.HTTP_DOWNLOAD, 5);
+      Invokable<?, ?> method = Invokable.from(ISOAsyncClient.class.getMethod("extractISO", String.class, ExtractMode.class, String.class, ExtractISOOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(3, ExtractMode.HTTP_DOWNLOAD, 5));
 
       assertRequestLineEquals(httpRequest, extractIso.getRequestLine());
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
@@ -264,8 +264,8 @@ public class ISOAsyncClientTest extends BaseCloudStackAsyncClientTest<ISOAsyncCl
                                               .build();
 
    public void testExtractISOOptions() throws NoSuchMethodException {
-      Method method = ISOAsyncClient.class.getMethod("extractISO", String.class, ExtractMode.class, String.class, ExtractISOOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, 3, ExtractMode.HTTP_DOWNLOAD, 5, ExtractISOOptions.Builder.url("http://example.com/"));
+      Invokable<?, ?> method = Invokable.from(ISOAsyncClient.class.getMethod("extractISO", String.class, ExtractMode.class, String.class, ExtractISOOptions[].class));
+      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(3, ExtractMode.HTTP_DOWNLOAD, 5, ExtractISOOptions.Builder.url("http://example.com/")));
 
       assertRequestLineEquals(httpRequest, extractIsoOptions.getRequestLine());
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");

@@ -21,8 +21,6 @@ package org.jclouds.aws.ec2.services;
 import static org.jclouds.ec2.options.DescribeImagesOptions.Builder.executableBy;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.lang.reflect.Method;
 
 import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
 import org.jclouds.aws.ec2.xml.ProductCodesHandler;
@@ -40,6 +38,8 @@ import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code AWSAMIAsyncClient}
@@ -67,9 +67,9 @@ public class AWSAMIAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSAMIAsync
                                         .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testCreateImage() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AWSAMIAsyncClient.class.getMethod("createImageInRegion", String.class, String.class, String.class,
-               Array.newInstance(CreateImageOptions.class, 0).getClass());
-      HttpRequest request = processor.createRequest(method, null, "name", "instanceId");
+      Invokable<?, ?> method = Invokable.from(AWSAMIAsyncClient.class.getMethod("createImageInRegion", String.class, String.class, String.class,
+               CreateImageOptions[].class));
+      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "name", "instanceId"));
 
       request = request.getFilters().get(0).filter(request);
       
@@ -100,10 +100,10 @@ public class AWSAMIAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSAMIAsync
                                                .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testCreateImageOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AWSAMIAsyncClient.class.getMethod("createImageInRegion", String.class, String.class, String.class,
-               Array.newInstance(CreateImageOptions.class, 0).getClass());
-      HttpRequest request = processor.createRequest(method, null, "name", "instanceId", new CreateImageOptions()
-               .withDescription("description").noReboot());
+      Invokable<?, ?> method = Invokable.from(AWSAMIAsyncClient.class.getMethod("createImageInRegion", String.class, String.class, String.class,
+               CreateImageOptions[].class));
+      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "name", "instanceId", new CreateImageOptions()
+               .withDescription("description").noReboot()));
 
       request = request.getFilters().get(0).filter(request);
       
@@ -131,9 +131,9 @@ public class AWSAMIAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSAMIAsync
                                            .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testDescribeImages() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AWSAMIAsyncClient.class.getMethod("describeImagesInRegion", String.class, Array.newInstance(
-               DescribeImagesOptions.class, 0).getClass());
-      HttpRequest request = processor.createRequest(method, (String) null);
+      Invokable<?, ?> method = Invokable.from(AWSAMIAsyncClient.class.getMethod("describeImagesInRegion", String.class,
+               DescribeImagesOptions[].class));
+      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList((String) null));
 
       request = request.getFilters().get(0).filter(request);
       
@@ -166,10 +166,10 @@ public class AWSAMIAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSAMIAsync
                                                   .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testDescribeImagesOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AWSAMIAsyncClient.class.getMethod("describeImagesInRegion", String.class, Array.newInstance(
-               DescribeImagesOptions.class, 0).getClass());
-      HttpRequest request = processor.createRequest(method, null, executableBy("me").ownedBy("fred", "nancy").imageIds(
-               "1", "2"));
+      Invokable<?, ?> method = Invokable.from(AWSAMIAsyncClient.class.getMethod("describeImagesInRegion", String.class,
+               DescribeImagesOptions[].class));
+      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, executableBy("me").ownedBy("fred", "nancy").imageIds(
+               "1", "2")));
 
       request = request.getFilters().get(0).filter(request);
       
@@ -198,8 +198,8 @@ public class AWSAMIAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSAMIAsync
                                             .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testDeregisterImage() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AWSAMIAsyncClient.class.getMethod("deregisterImageInRegion", String.class, String.class);
-      HttpRequest request = processor.createRequest(method, null, "imageId");
+      Invokable<?, ?> method = Invokable.from(AWSAMIAsyncClient.class.getMethod("deregisterImageInRegion", String.class, String.class));
+      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "imageId"));
 
       request = request.getFilters().get(0).filter(request);
       
@@ -229,9 +229,9 @@ public class AWSAMIAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSAMIAsync
                                                       .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testRegisterImageFromManifest() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AWSAMIAsyncClient.class.getMethod("registerImageFromManifestInRegion", String.class, String.class,
-               String.class, Array.newInstance(RegisterImageOptions.class, 0).getClass());
-      HttpRequest request = processor.createRequest(method, null, "name", "pathToManifest");
+      Invokable<?, ?> method = Invokable.from(AWSAMIAsyncClient.class.getMethod("registerImageFromManifestInRegion", String.class, String.class,
+               String.class, RegisterImageOptions[].class));
+      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "name", "pathToManifest"));
 
       request = request.getFilters().get(0).filter(request);
       
@@ -261,10 +261,10 @@ public class AWSAMIAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSAMIAsync
                                                              .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testRegisterImageFromManifestOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AWSAMIAsyncClient.class.getMethod("registerImageFromManifestInRegion", String.class, String.class,
-               String.class, Array.newInstance(RegisterImageOptions.class, 0).getClass());
-      HttpRequest request = processor.createRequest(method, null, "name", "pathToManifest", new RegisterImageOptions()
-               .withDescription("description"));
+      Invokable<?, ?> method = Invokable.from(AWSAMIAsyncClient.class.getMethod("registerImageFromManifestInRegion", String.class, String.class,
+               String.class, RegisterImageOptions[].class));
+      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "name", "pathToManifest", new RegisterImageOptions()
+               .withDescription("description")));
 
       request = request.getFilters().get(0).filter(request);
       
@@ -296,9 +296,9 @@ public class AWSAMIAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSAMIAsync
                                                      .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testRegisterImageBackedByEBS() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AWSAMIAsyncClient.class.getMethod("registerUnixImageBackedByEbsInRegion", String.class,
-               String.class, String.class, Array.newInstance(RegisterImageBackedByEbsOptions.class, 0).getClass());
-      HttpRequest request = processor.createRequest(method, null, "imageName", "snapshotId");
+      Invokable<?, ?> method = Invokable.from(AWSAMIAsyncClient.class.getMethod("registerUnixImageBackedByEbsInRegion", String.class,
+               String.class, String.class, RegisterImageBackedByEbsOptions[].class));
+      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "imageName", "snapshotId"));
 
       request = request.getFilters().get(0).filter(request);
       
@@ -337,11 +337,11 @@ public class AWSAMIAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSAMIAsync
                                                             .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testRegisterImageBackedByEBSOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AWSAMIAsyncClient.class.getMethod("registerUnixImageBackedByEbsInRegion", String.class,
-               String.class, String.class, Array.newInstance(RegisterImageBackedByEbsOptions.class, 0).getClass());
-      HttpRequest request = processor.createRequest(method, null, "imageName", "snapshotId",
+      Invokable<?, ?> method = Invokable.from(AWSAMIAsyncClient.class.getMethod("registerUnixImageBackedByEbsInRegion", String.class,
+               String.class, String.class, RegisterImageBackedByEbsOptions[].class));
+      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "imageName", "snapshotId",
                new RegisterImageBackedByEbsOptions().withDescription("description").addBlockDeviceFromSnapshot(
-                        "/dev/device", null, "snapshot").addNewBlockDevice("/dev/newdevice", "newblock", 100));
+                        "/dev/device", null, "snapshot").addNewBlockDevice("/dev/newdevice", "newblock", 100)));
 
       request = request.getFilters().get(0).filter(request);
       
@@ -371,9 +371,9 @@ public class AWSAMIAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSAMIAsync
                                                            .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testGetBlockDeviceMappingsForImage() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AWSAMIAsyncClient.class.getMethod("getBlockDeviceMappingsForImageInRegion", String.class,
-               String.class);
-      HttpRequest request = processor.createRequest(method, null, "imageId");
+      Invokable<?, ?> method = Invokable.from(AWSAMIAsyncClient.class.getMethod("getBlockDeviceMappingsForImageInRegion", String.class,
+               String.class));
+      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "imageId"));
 
       request = request.getFilters().get(0).filter(request);
       
@@ -403,8 +403,8 @@ public class AWSAMIAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSAMIAsync
                                                         .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testGetLaunchPermissionForImage() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AWSAMIAsyncClient.class.getMethod("getLaunchPermissionForImageInRegion", String.class, String.class);
-      HttpRequest request = processor.createRequest(method, null, "imageId");
+      Invokable<?, ?> method = Invokable.from(AWSAMIAsyncClient.class.getMethod("getLaunchPermissionForImageInRegion", String.class, String.class));
+      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "imageId"));
 
       request = request.getFilters().get(0).filter(request);
       
@@ -438,10 +438,10 @@ public class AWSAMIAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSAMIAsync
                                                           .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testAddLaunchPermissionsToImage() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AWSAMIAsyncClient.class.getMethod("addLaunchPermissionsToImageInRegion", String.class,
-               Iterable.class, Iterable.class, String.class);
-      HttpRequest request = processor.createRequest(method, null, ImmutableList.of("bob", "sue"), ImmutableList
-               .of("all"), "imageId");
+      Invokable<?, ?> method = Invokable.from(AWSAMIAsyncClient.class.getMethod("addLaunchPermissionsToImageInRegion", String.class,
+               Iterable.class, Iterable.class, String.class));
+      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, ImmutableList.of("bob", "sue"), ImmutableList
+               .of("all"), "imageId"));
 
       request = request.getFilters().get(0).filter(request);
       
@@ -475,10 +475,10 @@ public class AWSAMIAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSAMIAsync
                                                    .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testRemoveLaunchPermissionsFromImage() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AWSAMIAsyncClient.class.getMethod("removeLaunchPermissionsFromImageInRegion", String.class,
-               Iterable.class, Iterable.class, String.class);
-      HttpRequest request = processor.createRequest(method, null, ImmutableList.of("bob", "sue"), ImmutableList
-               .of("all"), "imageId");
+      Invokable<?, ?> method = Invokable.from(AWSAMIAsyncClient.class.getMethod("removeLaunchPermissionsFromImageInRegion", String.class,
+               Iterable.class, Iterable.class, String.class));
+      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, ImmutableList.of("bob", "sue"), ImmutableList
+               .of("all"), "imageId"));
 
       request = request.getFilters().get(0).filter(request);
       
@@ -507,9 +507,9 @@ public class AWSAMIAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSAMIAsync
                                                           .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testResetLaunchPermissionsOnImage() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AWSAMIAsyncClient.class.getMethod("resetLaunchPermissionsOnImageInRegion", String.class,
-               String.class);
-      HttpRequest request = processor.createRequest(method, null, "imageId");
+      Invokable<?, ?> method = Invokable.from(AWSAMIAsyncClient.class.getMethod("resetLaunchPermissionsOnImageInRegion", String.class,
+               String.class));
+      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "imageId"));
 
       request = request.getFilters().get(0).filter(request);
       
@@ -525,8 +525,8 @@ public class AWSAMIAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSAMIAsync
    }
 
    public void testGetProductCodesForImage() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AWSAMIAsyncClient.class.getMethod("getProductCodesForImageInRegion", String.class, String.class);
-      HttpRequest request = processor.createRequest(method, null, "imageId");
+      Invokable<?, ?> method = Invokable.from(AWSAMIAsyncClient.class.getMethod("getProductCodesForImageInRegion", String.class, String.class));
+      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "imageId"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -542,9 +542,9 @@ public class AWSAMIAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSAMIAsync
    }
 
    public void testAddProductCodesToImage() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AWSAMIAsyncClient.class.getMethod("addProductCodesToImageInRegion", String.class, Iterable.class,
-            String.class);
-      HttpRequest request = processor.createRequest(method, null, ImmutableList.of("code1", "code2"), "imageId");
+      Invokable<?, ?> method = Invokable.from(AWSAMIAsyncClient.class.getMethod("addProductCodesToImageInRegion", String.class, Iterable.class,
+            String.class));
+      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, ImmutableList.of("code1", "code2"), "imageId"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -561,9 +561,9 @@ public class AWSAMIAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSAMIAsync
    }
 
    public void testRemoveProductCodesFromImage() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AWSAMIAsyncClient.class.getMethod("removeProductCodesFromImageInRegion", String.class,
-            Iterable.class, String.class);
-      HttpRequest request = processor.createRequest(method, null, ImmutableList.of("code1", "code2"), "imageId");
+      Invokable<?, ?> method = Invokable.from(AWSAMIAsyncClient.class.getMethod("removeProductCodesFromImageInRegion", String.class,
+            Iterable.class, String.class));
+      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, ImmutableList.of("code1", "code2"), "imageId"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");

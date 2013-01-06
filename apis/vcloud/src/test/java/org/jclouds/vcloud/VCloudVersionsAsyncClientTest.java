@@ -21,7 +21,6 @@ package org.jclouds.vcloud;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
@@ -30,6 +29,9 @@ import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.rest.internal.BaseAsyncClientTest;
 import org.jclouds.vcloud.xml.SupportedVersionsHandler;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code VCloudVersionsAsyncClient}
@@ -41,8 +43,8 @@ import org.testng.annotations.Test;
 public class VCloudVersionsAsyncClientTest extends BaseAsyncClientTest<VCloudVersionsAsyncClient> {
 
    public void testVersions() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudVersionsAsyncClient.class.getMethod("getSupportedVersions");
-      HttpRequest request = processor.createRequest(method);
+      Invokable<?, ?> method = Invokable.from(VCloudVersionsAsyncClient.class.getMethod("getSupportedVersions"));
+      HttpRequest request = processor.createRequest(method, ImmutableList.of());
 
       assertEquals(request.getRequestLine(), "GET http://localhost:8080/versions HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");

@@ -19,7 +19,6 @@
 package org.jclouds.savvis.vpdc.features;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.net.URI;
 
 import org.jclouds.fallbacks.MapHttp4xxCodesToExceptions;
@@ -27,6 +26,9 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.savvis.vpdc.xml.TaskHandler;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.Invokable;
 
 /**
  * Tests annotation parsing of {@code ServiceManagementAsyncApi}
@@ -37,9 +39,9 @@ import org.testng.annotations.Test;
 public class ServiceManagementAsyncApiTest extends BaseVPDCAsyncApiTest<ServiceManagementAsyncApi> {
 
    public void testPowerOnVMVDC() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = ServiceManagementAsyncApi.class.getMethod("powerOnVMInVDC", String.class, String.class,
-               String.class);
-      HttpRequest request = processor.createRequest(method, "11", "22", "33");
+      Invokable<?, ?> method = Invokable.from(ServiceManagementAsyncApi.class.getMethod("powerOnVMInVDC", String.class, String.class,
+               String.class));
+      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("11", "22", "33"));
 
       assertRequestLineEquals(request,
                "POST https://api.savvis.net/vpdc/v1.0/org/11/vdc/22/vApp/33/action/powerOn HTTP/1.1");
@@ -54,9 +56,9 @@ public class ServiceManagementAsyncApiTest extends BaseVPDCAsyncApiTest<ServiceM
    }
 
    public void testPowerOnVM() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = ServiceManagementAsyncApi.class.getMethod("powerOnVM", URI.class);
-      HttpRequest request = processor.createRequest(method, URI
-               .create("https://api.savvis.net/vpdc/v1.0/org/11/vdc/22/vApp/33"));
+      Invokable<?, ?> method = Invokable.from(ServiceManagementAsyncApi.class.getMethod("powerOnVM", URI.class));
+      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
+               .create("https://api.savvis.net/vpdc/v1.0/org/11/vdc/22/vApp/33")));
 
       assertRequestLineEquals(request,
                "POST https://api.savvis.net/vpdc/v1.0/org/11/vdc/22/vApp/33/action/powerOn HTTP/1.1");
@@ -71,9 +73,9 @@ public class ServiceManagementAsyncApiTest extends BaseVPDCAsyncApiTest<ServiceM
    }
 
    public void testPowerOffVMVDC() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = ServiceManagementAsyncApi.class.getMethod("powerOffVMInVDC", String.class, String.class,
-               String.class);
-      HttpRequest request = processor.createRequest(method, "11", "22", "33");
+      Invokable<?, ?> method = Invokable.from(ServiceManagementAsyncApi.class.getMethod("powerOffVMInVDC", String.class, String.class,
+               String.class));
+      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("11", "22", "33"));
 
       assertRequestLineEquals(request,
                "POST https://api.savvis.net/vpdc/v1.0/org/11/vdc/22/vApp/33/action/powerOff HTTP/1.1");
@@ -88,9 +90,9 @@ public class ServiceManagementAsyncApiTest extends BaseVPDCAsyncApiTest<ServiceM
    }
 
    public void testPowerOffVM() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = ServiceManagementAsyncApi.class.getMethod("powerOffVM", URI.class);
-      HttpRequest request = processor.createRequest(method, URI
-               .create("https://api.savvis.net/vpdc/v1.0/org/11/vdc/22/vApp/33"));
+      Invokable<?, ?> method = Invokable.from(ServiceManagementAsyncApi.class.getMethod("powerOffVM", URI.class));
+      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
+               .create("https://api.savvis.net/vpdc/v1.0/org/11/vdc/22/vApp/33")));
 
       assertRequestLineEquals(request,
                "POST https://api.savvis.net/vpdc/v1.0/org/11/vdc/22/vApp/33/action/powerOff HTTP/1.1");

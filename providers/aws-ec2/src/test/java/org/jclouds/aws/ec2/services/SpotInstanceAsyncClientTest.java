@@ -19,7 +19,6 @@
 package org.jclouds.aws.ec2.services;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.Date;
 
 import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
@@ -34,6 +33,10 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code SpotInstanceAsyncClient}
@@ -59,9 +62,9 @@ public class SpotInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<SpotI
                                                  .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testRequestSpotInstance() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = SpotInstanceAsyncClient.class.getMethod("requestSpotInstanceInRegion", String.class,
-            float.class, String.class, String.class);
-      HttpRequest request = processor.createRequest(method, null, 0.01f, "m1.small", "ami-voo");
+      Invokable<?, ?> method = Invokable.from(SpotInstanceAsyncClient.class.getMethod("requestSpotInstanceInRegion", String.class,
+            float.class, String.class, String.class));
+      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, 0.01f, "m1.small", "ami-voo"));
 
       request = request.getFilters().get(0).filter(request);
       
@@ -100,12 +103,12 @@ public class SpotInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<SpotI
                                                         .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testRequestSpotInstancesOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = SpotInstanceAsyncClient.class.getMethod("requestSpotInstancesInRegion", String.class,
-            float.class, int.class, LaunchSpecification.class, RequestSpotInstancesOptions[].class);
-      HttpRequest request = processor.createRequest(method, "eu-west-1", 0.01, 3,
+      Invokable<?, ?> method = Invokable.from(SpotInstanceAsyncClient.class.getMethod("requestSpotInstancesInRegion", String.class,
+            float.class, int.class, LaunchSpecification.class, RequestSpotInstancesOptions[].class));
+      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("eu-west-1", 0.01, 3,
             LaunchSpecification.builder().instanceType("m1.small").imageId("ami-voo").availabilityZone("eu-west-1a")
                   .kernelId("kernelId").securityGroupName("group1").build(), new RequestSpotInstancesOptions().validFrom(from)
-                  .validUntil(to).availabilityZoneGroup("availabilityZoneGroup").launchGroup("launchGroup"));
+                  .validUntil(to).availabilityZoneGroup("availabilityZoneGroup").launchGroup("launchGroup")));
 
       request = request.getFilters().get(0).filter(request);
       
@@ -122,9 +125,9 @@ public class SpotInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<SpotI
    }
 
    public void testCancelSpotInstanceRequests() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = SpotInstanceAsyncClient.class.getMethod("cancelSpotInstanceRequestsInRegion", String.class,
-            String[].class);
-      HttpRequest request = processor.createRequest(method, null, "id");
+      Invokable<?, ?> method = Invokable.from(SpotInstanceAsyncClient.class.getMethod("cancelSpotInstanceRequestsInRegion", String.class,
+            String[].class));
+      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "id"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -139,9 +142,9 @@ public class SpotInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<SpotI
    }
 
    public void testDescribeSpotInstanceRequests() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = SpotInstanceAsyncClient.class.getMethod("describeSpotInstanceRequestsInRegion", String.class,
-            String[].class);
-      HttpRequest request = processor.createRequest(method, (String) null);
+      Invokable<?, ?> method = Invokable.from(SpotInstanceAsyncClient.class.getMethod("describeSpotInstanceRequestsInRegion", String.class,
+            String[].class));
+      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList((String) null));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -156,9 +159,9 @@ public class SpotInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<SpotI
    }
 
    public void testDescribeSpotInstanceRequestsArgs() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = SpotInstanceAsyncClient.class.getMethod("describeSpotInstanceRequestsInRegion", String.class,
-            String[].class);
-      HttpRequest request = processor.createRequest(method, null, "1", "2");
+      Invokable<?, ?> method = Invokable.from(SpotInstanceAsyncClient.class.getMethod("describeSpotInstanceRequestsInRegion", String.class,
+            String[].class));
+      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1", "2"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -175,9 +178,9 @@ public class SpotInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<SpotI
    }
 
    public void testDescribeSpotPriceHistory() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = SpotInstanceAsyncClient.class.getMethod("describeSpotPriceHistoryInRegion", String.class,
-            DescribeSpotPriceHistoryOptions[].class);
-      HttpRequest request = processor.createRequest(method, (String) null);
+      Invokable<?, ?> method = Invokable.from(SpotInstanceAsyncClient.class.getMethod("describeSpotPriceHistoryInRegion", String.class,
+            DescribeSpotPriceHistoryOptions[].class));
+      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList((String) null));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -195,10 +198,10 @@ public class SpotInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<SpotI
    Date to = new Date(1234567891011l);
 
    public void testDescribeSpotPriceHistoryArgs() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = SpotInstanceAsyncClient.class.getMethod("describeSpotPriceHistoryInRegion", String.class,
-            DescribeSpotPriceHistoryOptions[].class);
-      HttpRequest request = processor.createRequest(method, null, DescribeSpotPriceHistoryOptions.Builder.from(from)
-            .to(to).productDescription("description").instanceType("m1.small"));
+      Invokable<?, ?> method = Invokable.from(SpotInstanceAsyncClient.class.getMethod("describeSpotPriceHistoryInRegion", String.class,
+            DescribeSpotPriceHistoryOptions[].class));
+      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, DescribeSpotPriceHistoryOptions.Builder.from(from)
+            .to(to).productDescription("description").instanceType("m1.small")));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");

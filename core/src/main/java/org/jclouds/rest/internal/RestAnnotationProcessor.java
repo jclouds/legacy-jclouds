@@ -18,7 +18,6 @@
  */
 package org.jclouds.rest.internal;
 import static com.google.common.base.Functions.toStringFunction;
-import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
@@ -44,7 +43,6 @@ import static org.jclouds.util.Strings2.replaceTokens;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
-import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -104,7 +102,6 @@ import org.jclouds.rest.binders.BindToJsonPayloadWrappedWith;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
-import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
@@ -118,7 +115,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.primitives.Chars;
@@ -194,15 +190,6 @@ public abstract class RestAnnotationProcessor {
    @Resource
    protected Logger logger = Logger.NULL;
 
-   static final LoadingCache<Method, Invokable<?, ?>> methods = CacheBuilder.newBuilder().build(
-         new CacheLoader<Method, Invokable<?, ?>>() {
-            @Override
-            public Invokable<?, ?> load(Method method) {
-               return Invokable.from(method);
-            }
-         });
-   
-
    private static final Function<? super Entry<String, Object>, ? extends Part> ENTRY_TO_PART = new Function<Entry<String, Object>, Part>() {
       @Override
       public Part apply(Entry<String, Object> from) {
@@ -229,45 +216,8 @@ public abstract class RestAnnotationProcessor {
       this.inputParamValidator = inputParamValidator;
       this.declaring = declaring;
    }
-   
-   public static class InvokerKey {
-      private final String name;
-      private final int parametersTypeHashCode;
-      private final Class<?> declaringClass;
 
-      public InvokerKey(Invokable<?, ?> invoker) {
-         this.name = invoker.getName();
-         this.declaringClass = invoker.getDeclaringClass();
-         int parametersTypeHashCode = 0;
-         for (Parameter param : invoker.getParameters())
-            parametersTypeHashCode += param.getType().hashCode();
-         this.parametersTypeHashCode = parametersTypeHashCode;
-      }
-      
-      @Override
-      public int hashCode() {
-         return Objects.hashCode(declaringClass, name, parametersTypeHashCode);
-      }
-
-      @Override
-      public boolean equals(Object obj) {
-         if (this == obj) return true;
-         if (obj == null || getClass() != obj.getClass()) return false;
-         InvokerKey that = InvokerKey.class.cast(obj);
-         return equal(this.declaringClass, that.declaringClass)
-               && equal(this.name, that.name)
-               && equal(this.parametersTypeHashCode, that.parametersTypeHashCode);
-      }
-   }
-   
-   @Deprecated
-   public GeneratedHttpRequest createRequest(Method method, @Nullable Object... args) {
-      List<Object> list = args == null ? Lists.newArrayList(new Object[] { null }) : Lists.newArrayList(args);
-      return createRequest(method, methods.getUnchecked(method), list);
-   }
-   
-   public GeneratedHttpRequest createRequest(Method method, Invokable<?, ?> invoker, List<Object> args) {
-      checkNotNull(method, "method");
+   public GeneratedHttpRequest createRequest(Invokable<?, ?> invoker, List<Object> args) {
       checkNotNull(invoker, "invoker");
       checkNotNull(args, "args");
       inputParamValidator.validateMethodParametersOrThrow(invoker, args);
@@ -293,7 +243,6 @@ public abstract class RestAnnotationProcessor {
       }
       
       requestBuilder.declaring(declaring)
-                    .javaMethod(method)
                     .invoker(invoker)
                     .args(args)
                     .filters(getFiltersIfAnnotated(invoker));
@@ -549,14 +498,9 @@ public abstract class RestAnnotationProcessor {
       }
       return filters;
    }
-
-   @Deprecated
-   public static URI getEndpointInParametersOrNull(Method method, @Deprecated Object[] args, Injector injector) {
-      return getEndpointInParametersOrNull(methods.getUnchecked(method), args != null ? Lists.newArrayList(args)
-            : ImmutableList.of(), injector);
-   }
    
-   private static URI getEndpointInParametersOrNull(Invokable<?,?> method, List<Object> args, Injector injector) {
+   @VisibleForTesting
+   static URI getEndpointInParametersOrNull(Invokable<?,?> method, List<Object> args, Injector injector) {
       Collection<Parameter> endpointParams = parametersWithAnnotation(method, EndpointParam.class);
       if (endpointParams.isEmpty())
          return null;
@@ -603,7 +547,6 @@ public abstract class RestAnnotationProcessor {
    }
 
    @VisibleForTesting
-   @Deprecated
    static URI addHostIfMissing(URI original, URI withHost) {
       checkNotNull(withHost, "URI withHost cannot be null");
       checkArgument(withHost.getHost() != null, "URI withHost must have host:" + withHost);
@@ -740,12 +683,6 @@ public abstract class RestAnnotationProcessor {
       return result.build();
    }
 
-   @Deprecated
-   public Multimap<String, String> buildHeaders(Multimap<String, ?> tokenValues, Method method, Object... args) {
-      return buildHeaders(tokenValues, methods.getUnchecked(method), args != null ? Lists.newArrayList(args)
-            : ImmutableList.of());
-   }
-
    private Multimap<String, String> buildHeaders(Multimap<String, ?> tokenValues, Invokable<?, ?> method,
          List<Object> args) {
       Multimap<String, String> headers = LinkedHashMultimap.create();
@@ -762,24 +699,16 @@ public abstract class RestAnnotationProcessor {
    }
 
    private void addConsumesIfPresentOnTypeOrMethod(Multimap<String, String> headers, Invokable<?,?> method) {
-      List<String> accept = getAcceptHeadersOrNull(method);
-      if (accept.size() > 0)
+      Set<String> accept = getAcceptHeaders(method);
+      if (!accept.isEmpty())
          headers.replaceValues(ACCEPT, accept);
    }
    
    // TODO: refactor this out
-   @VisibleForTesting
-   static List<String> getAcceptHeadersOrNull(Invokable<?,?> method) {
-      List<String> accept = ImmutableList.of();
-      if (method.getDeclaringClass().isAnnotationPresent(Consumes.class)) {
-         Consumes header = method.getDeclaringClass().getAnnotation(Consumes.class);
-         accept = asList(header.value());
-      }
-      if (method.isAnnotationPresent(Consumes.class)) {
-         Consumes header = method.getAnnotation(Consumes.class);
-         accept = asList(header.value());
-      }
-      return accept;
+   static Set<String> getAcceptHeaders(Invokable<?, ?> method) {
+      Optional<Consumes> accept = Optional.fromNullable(method.getAnnotation(Consumes.class)).or(
+            Optional.fromNullable(method.getDeclaringClass().getAnnotation(Consumes.class)));
+      return (accept.isPresent()) ? ImmutableSet.copyOf(accept.get().value()) : ImmutableSet.<String> of();
    }
 
    private void addProducesIfPresentOnTypeOrMethod(Multimap<String, String> headers, Invokable<?,?> method) {
