@@ -51,7 +51,7 @@ public class Operation extends Resource {
    }
 
    private final URI targetLink;
-   private final String targetId;
+   private final Optional<String> targetId;
    private final Optional<String> clientOperationId;
    private final Status status;
    private final Optional<String> statusMessage;
@@ -72,7 +72,7 @@ public class Operation extends Resource {
       super(Kind.OPERATION, checkNotNull(id, "id of %s", name), fromNullable(creationTimestamp),
               checkNotNull(selfLink, "selfLink of %s", name), checkNotNull(name, "name"), fromNullable(description));
       this.targetLink = checkNotNull(targetLink, "targetLink of %s", name);
-      this.targetId = checkNotNull(targetId, "targetId of %s", name);
+      this.targetId = fromNullable(targetId);
       this.clientOperationId = fromNullable(clientOperationId);
       this.status = checkNotNull(status, "status of %s", name);
       this.statusMessage = fromNullable(statusMessage);
@@ -101,7 +101,7 @@ public class Operation extends Resource {
    /**
     * @return unique target id which identifies a particular incarnation of the target.
     */
-   public String getTargetId() {
+   public Optional<String> getTargetId() {
       return targetId;
    }
 
@@ -192,7 +192,7 @@ public class Operation extends Resource {
       return super.string()
               .omitNullValues()
               .add("targetLink", targetLink)
-              .add("targetId", targetId)
+              .add("targetId", targetId.orNull())
               .add("clientOperationId", clientOperationId.orNull())
               .add("status", status)
               .add("statusMessage", statusMessage.orNull())
@@ -373,10 +373,17 @@ public class Operation extends Resource {
       }
 
       public Builder fromOperation(Operation in) {
-         return super.fromResource(in).targetLink(in.getTargetLink()).targetId(in.getTargetId()).clientOperationId(in
-                 .getClientOperationId().orNull()).status(in.getStatus()).statusMessage(in.getStatusMessage().orNull())
-                 .user(in.getUser()).progress(in.getProgress().get()).insertTime(in.getInsertTime())
-                 .startTime(in.getStartTime().orNull()).endTime(in.getEndTime().orNull())
+         return super.fromResource(in)
+                 .targetLink(in.getTargetLink())
+                 .targetId(in.getTargetId().orNull())
+                 .clientOperationId(in.getClientOperationId().orNull())
+                 .status(in.getStatus())
+                 .statusMessage(in.getStatusMessage().orNull())
+                 .user(in.getUser())
+                 .progress(in.getProgress().get())
+                 .insertTime(in.getInsertTime())
+                 .startTime(in.getStartTime().orNull())
+                 .endTime(in.getEndTime().orNull())
                  .httpErrorStatusCode(in.getHttpError().isPresent() ? in.getHttpError().get().getStatusCode() : null)
                  .httpErrorMessage(in.getHttpError().isPresent() ? in.getHttpError().get().getMessage() : null)
                  .operationType(in.getOperationType()).errors(in.getErrors());
