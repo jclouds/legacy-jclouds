@@ -23,29 +23,27 @@ import com.google.common.base.Function;
 import com.google.inject.TypeLiteral;
 import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.googlecompute.GoogleComputeApi;
-import org.jclouds.googlecompute.domain.Disk;
+import org.jclouds.googlecompute.domain.Kernel;
 import org.jclouds.googlecompute.domain.ListPage;
 import org.jclouds.googlecompute.options.ListOptions;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.json.Json;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @author David Alves
  */
-@Singleton
-public class ParseDisks extends ParseJson<ListPage<Disk>> {
+public class ParseKernels extends ParseJson<ListPage<Kernel>> {
 
    @Inject
-   public ParseDisks(Json json) {
-      super(json, new TypeLiteral<ListPage<Disk>>() {});
+   public ParseKernels(Json json) {
+      super(json, new TypeLiteral<ListPage<Kernel>>() {});
    }
 
-   public static class ToPagedIterable extends BaseToPagedIterable<Disk, ToPagedIterable> {
+   public static class ToPagedIterable extends BaseToPagedIterable<Kernel, ToPagedIterable> {
 
       private final GoogleComputeApi api;
 
@@ -55,14 +53,14 @@ public class ParseDisks extends ParseJson<ListPage<Disk>> {
       }
 
       @Override
-      protected Function<Object, IterableWithMarker<Disk>> fetchNextPage(final String projectName,
-                                                                         final String marker,
-                                                                         final ListOptions options) {
-         return new Function<Object, IterableWithMarker<Disk>>() {
+      protected Function<Object, IterableWithMarker<Kernel>> fetchNextPage(final String projectName,
+                                                                           final String marker,
+                                                                           final ListOptions options) {
+         return new Function<Object, IterableWithMarker<Kernel>>() {
 
             @Override
-            public IterableWithMarker<Disk> apply(Object input) {
-               return api.getDiskApiForProject(projectName).listAtMarker(marker, options);
+            public IterableWithMarker<Kernel> apply(Object input) {
+               return api.getKernelApiForProject(projectName).listAtMarker(marker, options);
             }
          };
       }
