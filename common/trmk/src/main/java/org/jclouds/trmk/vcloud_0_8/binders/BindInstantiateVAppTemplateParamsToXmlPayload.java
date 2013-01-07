@@ -87,7 +87,6 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
       checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest,
             "this binder is only valid for GeneratedHttpRequests!");
       GeneratedHttpRequest gRequest = (GeneratedHttpRequest) request;
-      checkState(gRequest.getArgs() != null, "args should be initialized at this point");
       String name = checkNotNull(postParams.remove("name"), "name").toString();
       String template = checkNotNull(postParams.remove("template"), "template").toString();
 
@@ -174,7 +173,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
 
    protected InstantiateVAppTemplateOptions findOptionsInArgsOrNull(GeneratedHttpRequest gRequest) {
       InstantiateVAppTemplateOptions options = null;
-      for (Object arg : gRequest.getArgs()) {
+      for (Object arg : gRequest.getInvocation().getArgs()) {
          if (arg instanceof InstantiateVAppTemplateOptions) {
             options = (InstantiateVAppTemplateOptions) arg;
          } else if (arg instanceof InstantiateVAppTemplateOptions[]) {

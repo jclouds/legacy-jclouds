@@ -32,7 +32,6 @@ import javax.inject.Singleton;
 
 import org.jclouds.collect.Memoized;
 import org.jclouds.domain.Location;
-import org.jclouds.internal.ClassInvokerArgsAndReturnVal;
 import org.jclouds.location.Iso3166;
 import org.jclouds.location.Provider;
 import org.jclouds.location.Region;
@@ -49,6 +48,7 @@ import org.jclouds.location.suppliers.RegionIdToZoneIdsSupplier;
 import org.jclouds.location.suppliers.RegionIdsSupplier;
 import org.jclouds.location.suppliers.ZoneIdToURISupplier;
 import org.jclouds.location.suppliers.ZoneIdsSupplier;
+import org.jclouds.reflect.InvocationSuccess;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.functions.ImplicitOptionalConverter;
 import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
@@ -73,7 +73,7 @@ public class LocationModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      bind(new TypeLiteral<Function<ClassInvokerArgsAndReturnVal, Optional<Object>>>(){}).to(ImplicitOptionalConverter.class);
+      bind(new TypeLiteral<Function<InvocationSuccess, Optional<Object>>>(){}).to(ImplicitOptionalConverter.class);
    }
 
    @Provides

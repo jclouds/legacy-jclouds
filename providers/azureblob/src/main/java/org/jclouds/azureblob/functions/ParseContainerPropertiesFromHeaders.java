@@ -63,7 +63,7 @@ public class ParseContainerPropertiesFromHeaders implements Function<HttpRespons
 
    public ContainerProperties apply(HttpResponse from) {
       MutableContainerPropertiesWithMetadata to = new MutableContainerPropertiesWithMetadataImpl();
-      to.setName(request.getArgs().get(0).toString());
+      to.setName(request.getInvocation().getArgs().get(0).toString());
       addUserMetadataTo(from, to);
       parseLastModifiedOrThrowException(from, to);
       addETagTo(from, to);

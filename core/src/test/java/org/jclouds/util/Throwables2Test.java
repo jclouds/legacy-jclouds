@@ -21,7 +21,7 @@ package org.jclouds.util;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.jclouds.util.Throwables2.getFirstThrowableOfType;
-import static org.jclouds.util.Throwables2.returnFirstExceptionIfInListOrThrowStandardExceptionOrCause;
+import static org.jclouds.util.Throwables2.propagateIfPossible;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -52,17 +52,16 @@ import com.google.inject.spi.Message;
 @Test
 public class Throwables2Test {
 
-
    public void testGetFirstThrowableOfTypeSubclass() {
       SocketException aex = createMock(SocketException.class);
       assertEquals(getFirstThrowableOfType(aex, IOException.class), aex);
    }
-   
+
    public void testGetFirstThrowableOfTypeOuter() {
       AuthorizationException aex = createMock(AuthorizationException.class);
       assertEquals(getFirstThrowableOfType(aex, AuthorizationException.class), aex);
    }
-   
+
    public void testGetCause() {
       AuthorizationException aex = createMock(AuthorizationException.class);
       Message message = new Message(ImmutableList.of(), "test", aex);
@@ -89,7 +88,6 @@ public class Throwables2Test {
       ProvisionException pex = new ProvisionException(ImmutableSet.of(message));
       assertEquals(getFirstThrowableOfType(pex, AuthorizationException.class), null);
    }
-
 
    public void testGetCauseCreation() {
       AuthorizationException aex = createMock(AuthorizationException.class);
@@ -146,132 +144,125 @@ public class Throwables2Test {
       assertEquals(getFirstThrowableOfType(pex, AuthorizationException.class), null);
    }
 
-   @Test
-   public void testReturnExceptionThatsInList() throws Exception {
+   @Test(expectedExceptions = TestException.class)
+   public void testPropagateExceptionThatsInList() throws Throwable {
       Exception e = new TestException();
-      assertEquals(
-            returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(
-                  ImmutableSet.<TypeToken<? extends Throwable>> of(TypeToken.of(TestException.class)), e), e);
-      assertEquals(
-            returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(
-                  ImmutableSet.<TypeToken<? extends Throwable>> of(TypeToken.of(TestException.class)),
-                  new RuntimeException(e)), e);
+      propagateIfPossible(e, ImmutableSet.<TypeToken<? extends Throwable>> of(TypeToken.of(TestException.class)));
    }
 
    @Test(expectedExceptions = TestException.class)
-   public void testThrowExceptionNotInList() throws Exception {
+   public void testPropagateWrappedExceptionThatsInList() throws Throwable {
       Exception e = new TestException();
-      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(ImmutableSet.<TypeToken<? extends Throwable>> of(), e);
+      propagateIfPossible(new RuntimeException(e),
+            ImmutableSet.<TypeToken<? extends Throwable>> of(TypeToken.of(TestException.class)));
+   }
+
+   public void testPropagateIfPossibleDoesnThrowExceptionNotInList() throws Throwable {
+      Exception e = new TestException();
+      propagateIfPossible(e, ImmutableSet.<TypeToken<? extends Throwable>> of());
    }
 
    @Test(expectedExceptions = IllegalStateException.class)
-   public void testPropagateStandardExceptionIllegalStateException() throws Exception {
+   public void testPropagateStandardExceptionIllegalStateException() throws Throwable {
       Exception e = new IllegalStateException();
-      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(ImmutableSet.<TypeToken<? extends Throwable>> of(),
-            new RuntimeException(e));
+      propagateIfPossible(new RuntimeException(e), ImmutableSet.<TypeToken<? extends Throwable>> of());
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
-   public void testPropagateStandardExceptionIllegalArgumentException() throws Exception {
+   public void testPropagateStandardExceptionIllegalArgumentException() throws Throwable {
       Exception e = new IllegalArgumentException();
-      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(ImmutableSet.<TypeToken<? extends Throwable>> of(),
-            new RuntimeException(e));
+      propagateIfPossible(new RuntimeException(e), ImmutableSet.<TypeToken<? extends Throwable>> of());
    }
 
    @Test(expectedExceptions = UnsupportedOperationException.class)
-   public void testPropagateStandardExceptionUnsupportedOperationException() throws Exception {
+   public void testPropagateStandardExceptionUnsupportedOperationException() throws Throwable {
       Exception e = new UnsupportedOperationException();
-      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(ImmutableSet.<TypeToken<? extends Throwable>> of(),
-            new RuntimeException(e));
+      propagateIfPossible(new RuntimeException(e), ImmutableSet.<TypeToken<? extends Throwable>> of());
    }
 
    @Test(expectedExceptions = AssertionError.class)
-   public void testPropagateStandardExceptionAssertionError() throws Exception {
+   public void testPropagateStandardExceptionAssertionError() throws Throwable {
       AssertionError e = new AssertionError();
-      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(ImmutableSet.<TypeToken<? extends Throwable>> of(),
-            new RuntimeException(e));
+      propagateIfPossible(new RuntimeException(e), ImmutableSet.<TypeToken<? extends Throwable>> of());
    }
 
    @Test(expectedExceptions = AuthorizationException.class)
-   public void testPropagateStandardExceptionAuthorizationException() throws Exception {
+   public void testPropagateStandardExceptionAuthorizationException() throws Throwable {
       Exception e = new AuthorizationException();
-      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(ImmutableSet.<TypeToken<? extends Throwable>> of(),
-            new RuntimeException(e));
+      propagateIfPossible(new RuntimeException(e), ImmutableSet.<TypeToken<? extends Throwable>> of());
    }
 
    @Test(expectedExceptions = AuthorizationException.class)
-   public void testPropagateProvisionExceptionAuthorizationException() throws Exception {
+   public void testPropagateProvisionExceptionAuthorizationException() throws Throwable {
       Exception e = new AuthorizationException();
-      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(ImmutableSet.<TypeToken<? extends Throwable>> of(),
-            new ProvisionException(ImmutableSet.of(new Message(ImmutableList.of(), "Error in custom provider", e))));
+      propagateIfPossible(
+            new ProvisionException(ImmutableSet.of(new Message(ImmutableList.of(), "Error in custom provider", e))),
+            ImmutableSet.<TypeToken<? extends Throwable>> of());
    }
 
    @Test(expectedExceptions = AuthorizationException.class)
-   public void testPropagateCreationExceptionAuthorizationException() throws Exception {
+   public void testPropagateCreationExceptionAuthorizationException() throws Throwable {
       Exception e = new AuthorizationException();
-      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(ImmutableSet.<TypeToken<? extends Throwable>> of(),
-            new CreationException(ImmutableSet.of(new Message(ImmutableList.of(), "Error in custom provider", e))));
+      propagateIfPossible(
+            new CreationException(ImmutableSet.of(new Message(ImmutableList.of(), "Error in custom provider", e))),
+            ImmutableSet.<TypeToken<? extends Throwable>> of());
    }
 
    @Test(expectedExceptions = InsufficientResourcesException.class)
-   public void testPropagateStandardExceptionInsufficientResourcesException() throws Exception {
+   public void testPropagateStandardExceptionInsufficientResourcesException() throws Throwable {
       Exception e = new InsufficientResourcesException();
-      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(ImmutableSet.<TypeToken<? extends Throwable>> of(),
-            new RuntimeException(e));
+      propagateIfPossible(new RuntimeException(e), ImmutableSet.<TypeToken<? extends Throwable>> of());
    }
 
    @Test(expectedExceptions = ResourceNotFoundException.class)
-   public void testPropagateStandardExceptionResourceNotFoundException() throws Exception {
+   public void testPropagateStandardExceptionResourceNotFoundException() throws Throwable {
       Exception e = new ResourceNotFoundException();
-      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(ImmutableSet.<TypeToken<? extends Throwable>> of(),
-            new RuntimeException(e));
+      propagateIfPossible(new RuntimeException(e), ImmutableSet.<TypeToken<? extends Throwable>> of());
    }
 
    @Test(expectedExceptions = IllegalStateException.class)
-   public void testPropagateStandardExceptionIllegalStateExceptionNestedInHttpResponseException() throws Exception {
+   public void testPropagateStandardExceptionIllegalStateExceptionNestedInHttpResponseException() throws Throwable {
       Exception e = new IllegalStateException();
-      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(ImmutableSet.<TypeToken<? extends Throwable>> of(),
-            new HttpResponseException("goo", createNiceMock(HttpCommand.class), null, e));
+      propagateIfPossible(new HttpResponseException("goo", createNiceMock(HttpCommand.class), null, e),
+            ImmutableSet.<TypeToken<? extends Throwable>> of());
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
-   public void testPropagateStandardExceptionIllegalArgumentExceptionNestedInHttpResponseException() throws Exception {
+   public void testPropagateStandardExceptionIllegalArgumentExceptionNestedInHttpResponseException() throws Throwable {
       Exception e = new IllegalArgumentException();
-      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(ImmutableSet.<TypeToken<? extends Throwable>> of(),
-            new HttpResponseException("goo", createNiceMock(HttpCommand.class), null, e));
+      propagateIfPossible(new HttpResponseException("goo", createNiceMock(HttpCommand.class), null, e),
+            ImmutableSet.<TypeToken<? extends Throwable>> of());
    }
 
    @Test(expectedExceptions = UnsupportedOperationException.class)
    public void testPropagateStandardExceptionUnsupportedOperationExceptionNestedInHttpResponseException()
-         throws Exception {
+         throws Throwable {
       Exception e = new UnsupportedOperationException();
-      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(ImmutableSet.<TypeToken<? extends Throwable>> of(),
-            new HttpResponseException("goo", createNiceMock(HttpCommand.class), null, e));
+      propagateIfPossible(new HttpResponseException("goo", createNiceMock(HttpCommand.class), null, e),
+            ImmutableSet.<TypeToken<? extends Throwable>> of());
    }
 
    @Test(expectedExceptions = AuthorizationException.class)
-   public void testPropagateStandardExceptionAuthorizationExceptionNestedInHttpResponseException() throws Exception {
+   public void testPropagateStandardExceptionAuthorizationExceptionNestedInHttpResponseException() throws Throwable {
       Exception e = new AuthorizationException();
-      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(ImmutableSet.<TypeToken<? extends Throwable>> of(),
-            new HttpResponseException("goo", createNiceMock(HttpCommand.class), null, e));
+      propagateIfPossible(new HttpResponseException("goo", createNiceMock(HttpCommand.class), null, e),
+            ImmutableSet.<TypeToken<? extends Throwable>> of());
    }
 
    @Test(expectedExceptions = ResourceNotFoundException.class)
-   public void testPropagateStandardExceptionResourceNotFoundExceptionNestedInHttpResponseException() throws Exception {
+   public void testPropagateStandardExceptionResourceNotFoundExceptionNestedInHttpResponseException() throws Throwable {
       Exception e = new ResourceNotFoundException();
-      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(ImmutableSet.<TypeToken<? extends Throwable>> of(),
-            new HttpResponseException("goo", createNiceMock(HttpCommand.class), null, e));
+      propagateIfPossible(new HttpResponseException("goo", createNiceMock(HttpCommand.class), null, e),
+            ImmutableSet.<TypeToken<? extends Throwable>> of());
    }
 
    @Test(expectedExceptions = HttpResponseException.class)
-   public void testPropagateStandardExceptionHttpResponseException() throws Exception {
+   public void testPropagateStandardExceptionHttpResponseException() throws Throwable {
       Exception e = new HttpResponseException("goo", createNiceMock(HttpCommand.class), null);
-      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(ImmutableSet.<TypeToken<? extends Throwable>> of(),
-            new RuntimeException(e));
+      propagateIfPossible(new RuntimeException(e), ImmutableSet.<TypeToken<? extends Throwable>> of());
    }
 
    static class TestException extends Exception {
       private static final long serialVersionUID = 1L;
    }
-
 }

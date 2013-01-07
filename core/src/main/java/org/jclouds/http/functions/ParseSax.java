@@ -212,7 +212,7 @@ public class ParseSax<T> implements Function<HttpResponse, T>, InvocationContext
 
       @Override
       public HandlerForGeneratedRequestWithResult<T> setContext(HttpRequest request) {
-         checkArgument(request instanceof GeneratedHttpRequest, "note this handler requires a GeneratedHttpRequest");
+         checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest, "note this handler requires a GeneratedHttpRequest");
          super.setContext(request);
          return this;
       }

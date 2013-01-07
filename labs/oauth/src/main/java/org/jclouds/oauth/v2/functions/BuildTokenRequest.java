@@ -43,6 +43,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Supplier;
 import com.google.common.base.Ticker;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.reflect.Invokable;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -114,16 +115,19 @@ public class BuildTokenRequest implements Function<GeneratedHttpRequest, TokenRe
    }
 
    protected String getOAuthScopes(GeneratedHttpRequest request) {
-      OAuthScopes classScopes = request.getDeclaring().getAnnotation(OAuthScopes.class);
-      OAuthScopes methodScopes = request.getInvoker().getAnnotation(OAuthScopes.class);
+      Invokable<?, ?> invokable = request.getInvocation().getInvokable();
+      Class<?> interfaceType = request.getInvocation().getInterfaceType();
+      
+      OAuthScopes classScopes = interfaceType.getAnnotation(OAuthScopes.class);
+      OAuthScopes methodScopes = invokable.getAnnotation(OAuthScopes.class);
 
       // if no annotations are present the rely on globally set scopes
       if (classScopes == null && methodScopes == null) {
          checkState(globalScopes != null, String.format("REST class or method should be annotated " +
                  "with OAuthScopes specifying required permissions. Alternatively a global property " +
                  "\"oauth.scopes\" may be set to define scopes globally. REST Class: %s, Method: %s",
-                 request.getDeclaring().getName(),
-                 request.getInvoker().getName()));
+                 interfaceType.getName(),
+                 invokable.getName()));
          return globalScopes;
       }
 

@@ -64,7 +64,7 @@ public class LocationConstraintHandler extends ParseSax.HandlerWithResult<String
    @Override
    public LocationConstraintHandler setContext(HttpRequest request) {
       super.setContext(request);
-      setBucket(GeneratedHttpRequest.class.cast(getRequest()).getArgs().get(0).toString());
+      setBucket(GeneratedHttpRequest.class.cast(getRequest()).getInvocation().getArgs().get(0).toString());
       return this;
    }
 

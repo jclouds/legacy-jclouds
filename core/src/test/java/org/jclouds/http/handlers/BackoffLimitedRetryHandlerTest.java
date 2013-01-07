@@ -167,7 +167,7 @@ public class BackoffLimitedRetryHandlerTest {
    }
 
    private final RestAnnotationProcessor processor = BaseJettyTest.newBuilder(8100, new Properties()).buildInjector()
-         .getInstance(RestAnnotationProcessor.Factory.class).declaring(IntegrationTestAsyncClient.class);
+         .getInstance(RestAnnotationProcessor.class);
 
    private HttpCommand createCommand() throws SecurityException, NoSuchMethodException {
       Invokable<?, Object> method = Invokable.from(IntegrationTestAsyncClient.class.getMethod("download", String.class));

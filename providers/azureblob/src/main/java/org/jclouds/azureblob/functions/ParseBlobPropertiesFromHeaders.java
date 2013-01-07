@@ -68,7 +68,7 @@ public class ParseBlobPropertiesFromHeaders implements Function<HttpResponse, Mu
    public ParseBlobPropertiesFromHeaders setContext(HttpRequest request) {
       checkArgument(request instanceof GeneratedHttpRequest, "note this handler requires a GeneratedHttpRequest");
       blobMetadataParser.setContext(request);
-      return setContainer(GeneratedHttpRequest.class.cast(request).getArgs().get(0).toString());
+      return setContainer(GeneratedHttpRequest.class.cast(request).getInvocation().getArgs().get(0).toString());
    }
 
    private ParseBlobPropertiesFromHeaders setContainer(String container) {

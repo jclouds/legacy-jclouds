@@ -19,26 +19,28 @@
 package org.jclouds.openstack.v2_0.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.any;
+import static org.jclouds.openstack.v2_0.predicates.ExtensionPredicates.namespaceOrAliasEquals;
+import static org.jclouds.util.Optionals2.unwrapIfOptional;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.jclouds.internal.ClassInvokerArgsAndReturnVal;
 import org.jclouds.openstack.v2_0.domain.Extension;
-import org.jclouds.openstack.v2_0.predicates.ExtensionPredicates;
+import org.jclouds.reflect.InvocationSuccess;
 import org.jclouds.rest.functions.ImplicitOptionalConverter;
 
 import com.google.common.base.Optional;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
 
 /**
- * We use the annotation {@link org.jclouds.openstack.services.Extension} to
- * bind a class that implements an extension API to an {@link Extension}.
+ * We use the annotation {@link org.jclouds.openstack.services.Extension} to bind a class that implements an extension
+ * API to an {@link Extension}.
  * 
  * @author Adrian Cole
  * 
@@ -47,36 +49,36 @@ public class PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensio
       ImplicitOptionalConverter {
    private final LoadingCache<String, Set<? extends Extension>> extensions;
    private final Multimap<URI, URI> aliases;
-   
+
    @Inject
    public PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensionsSet(
-         LoadingCache<String, Set<? extends Extension>> extensions,
-         Multimap<URI, URI> aliases) {
+         LoadingCache<String, Set<? extends Extension>> extensions, Multimap<URI, URI> aliases) {
       this.extensions = checkNotNull(extensions, "extensions");
-      this.aliases = aliases == null ? ImmutableMultimap.<URI, URI>of() : ImmutableMultimap.copyOf(aliases);
+      this.aliases = aliases == null ? ImmutableMultimap.<URI, URI> of() : ImmutableMultimap.copyOf(aliases);
    }
 
    @Override
-   public Optional<Object> apply(ClassInvokerArgsAndReturnVal input) {
-      Optional<org.jclouds.openstack.v2_0.services.Extension> ext = Optional.fromNullable(input.getClazz().getAnnotation(
-            org.jclouds.openstack.v2_0.services.Extension.class));
+   public Optional<Object> apply(InvocationSuccess input) {
+      Class<?> target = unwrapIfOptional(input.getInvocation().getInvokable().getReturnType());
+      Optional<org.jclouds.openstack.v2_0.services.Extension> ext = Optional.fromNullable(target
+            .getAnnotation(org.jclouds.openstack.v2_0.services.Extension.class));
       if (ext.isPresent()) {
          URI namespace = URI.create(ext.get().namespace());
-         if (input.getArgs().isEmpty()) {
-	        if (Iterables.any(extensions.getUnchecked(""),
-	              ExtensionPredicates.namespaceOrAliasEquals(namespace, aliases.get(namespace))))
-	           return Optional.of(input.getReturnVal());
-	     } else if (input.getArgs().size() == 1) {
-	        if (Iterables.any(extensions.getUnchecked(checkNotNull(input.getArgs().get(0), "arg[0] in %s", input).toString()),
-	              ExtensionPredicates.namespaceOrAliasEquals(namespace, aliases.get(namespace))))
-	           return Optional.of(input.getReturnVal());
+         List<Object> args = input.getInvocation().getArgs();
+         if (args.isEmpty()) {
+            if (any(extensions.getUnchecked(""), namespaceOrAliasEquals(namespace, aliases.get(namespace))))
+               return input.getResult();
+         } else if (args.size() == 1) {
+            String arg0 = checkNotNull(args.get(0), "arg[0] in %s", input).toString();
+            if (any(extensions.getUnchecked(arg0), namespaceOrAliasEquals(namespace, aliases.get(namespace))))
+               return input.getResult();
          } else {
             throw new RuntimeException(String.format("expecting zero or one args %s", input));
          }
          return Optional.absent();
       } else {
          // No extension annotation, should check whether to return absent
-	     return Optional.of(input.getReturnVal());
+         return input.getResult();
       }
    }
 

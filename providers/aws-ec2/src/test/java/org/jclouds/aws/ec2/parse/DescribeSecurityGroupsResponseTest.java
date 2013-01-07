@@ -18,6 +18,7 @@
  */
 package org.jclouds.aws.ec2.parse;
 
+import static com.google.common.base.Throwables.propagate;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
@@ -32,11 +33,12 @@ import org.jclouds.ec2.domain.SecurityGroup;
 import org.jclouds.ec2.xml.BaseEC2HandlerTest;
 import org.jclouds.ec2.xml.DescribeSecurityGroupsResponseHandler;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.reflect.Invocation;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.reflect.Invokable;
 
 /**
  *
@@ -78,9 +80,6 @@ public class DescribeSecurityGroupsResponseTest extends BaseEC2HandlerTest {
    }
 
    private void addDefaultRegionToHandler(ParseSax.HandlerWithResult<?> handler) {
-      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
-      expect(request.getArgs()).andReturn(ImmutableList.<Object> of()).atLeastOnce();
-      replay(request);
       handler.setContext(request);
    }
 

@@ -22,7 +22,6 @@ import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Predicates.instanceOf;
 import static com.google.common.collect.Iterables.find;
 
@@ -50,11 +49,10 @@ public class CreateServerOptions implements MapBinder {
       checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest,
             "this binder is only valid for GeneratedHttpRequests!");
       GeneratedHttpRequest gRequest = (GeneratedHttpRequest) request;
-      checkState(gRequest.getArgs() != null, "args should be initialized at this point");
-
       ImmutableMultimap.Builder<String, String> formParams = ImmutableMultimap.builder();
       for(String key : postParams.keySet()) formParams.put(key, (String) postParams.get(key));
-      ServerSpec serverSpec = ServerSpec.class.cast(find(gRequest.getArgs(), instanceOf(ServerSpec.class)));
+      ServerSpec serverSpec = ServerSpec.class.cast(find(gRequest.getInvocation().getArgs(),
+            instanceOf(ServerSpec.class)));
       formParams.put("datacenter", serverSpec.getDatacenter());
       formParams.put("platform", serverSpec.getPlatform());
       formParams.put("templatename", serverSpec.getTemplateName());

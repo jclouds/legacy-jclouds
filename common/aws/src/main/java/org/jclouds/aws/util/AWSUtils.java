@@ -213,7 +213,7 @@ public class AWSUtils {
    }
 
    public static String findRegionInArgsOrNull(GeneratedHttpRequest gRequest) {
-      for (Object arg : gRequest.getArgs()) {
+      for (Object arg : gRequest.getInvocation().getArgs()) {
          if (arg instanceof String) {
             String regionName = (String) arg;
             // TODO regions may not be amazon regions!

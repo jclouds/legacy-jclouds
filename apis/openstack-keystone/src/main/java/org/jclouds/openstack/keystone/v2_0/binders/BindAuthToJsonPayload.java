@@ -20,7 +20,6 @@ package org.jclouds.openstack.keystone.v2_0.binders;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 
 import java.util.Map;
 
@@ -37,8 +36,8 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
 import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.Iterables;
 
 /**
  * 
@@ -58,7 +57,7 @@ public class BindAuthToJsonPayload extends BindToJsonPayload implements MapBinde
    }
 
    protected void addCredentialsInArgsOrNull(GeneratedHttpRequest gRequest, Builder<String, Object> builder) {
-      for (Object arg : Iterables.filter(gRequest.getArgs(), Predicates.notNull())) {
+      for (Object arg : Iterables.filter(gRequest.getInvocation().getArgs(), Predicates.notNull())) {
          if (arg.getClass().isAnnotationPresent(CredentialType.class)) {
             builder.put(arg.getClass().getAnnotation(CredentialType.class).value(), arg);
          }
@@ -70,7 +69,6 @@ public class BindAuthToJsonPayload extends BindToJsonPayload implements MapBinde
       checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest,
                "this binder is only valid for GeneratedHttpRequests!");
       GeneratedHttpRequest gRequest = (GeneratedHttpRequest) request;
-      checkState(gRequest.getArgs() != null, "args should be initialized at this point");
 
       Builder<String, Object> builder = ImmutableMap.builder();
       addCredentialsInArgsOrNull(gRequest, builder);

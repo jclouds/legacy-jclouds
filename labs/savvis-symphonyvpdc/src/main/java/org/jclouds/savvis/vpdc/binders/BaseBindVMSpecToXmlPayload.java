@@ -20,11 +20,10 @@ package org.jclouds.savvis.vpdc.binders;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 
 import java.util.Map;
-import java.util.Properties;
 import java.util.Map.Entry;
+import java.util.Properties;
 
 import javax.ws.rs.core.MediaType;
 import javax.xml.parsers.FactoryConfigurationError;
@@ -59,8 +58,6 @@ public abstract class BaseBindVMSpecToXmlPayload<T> extends BindToStringPayload 
       checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest,
                "this binder is only valid for GeneratedHttpRequests!");
       GeneratedHttpRequest gRequest = (GeneratedHttpRequest) request;
-      checkState(gRequest.getArgs() != null, "args should be initialized at this point");
-
       request = super.bindToRequest(request, generateXml(findSpecInArgsOrNull(gRequest)));
       request.getPayload().getContentMetadata().setContentType(MediaType.APPLICATION_XML);
       return request;

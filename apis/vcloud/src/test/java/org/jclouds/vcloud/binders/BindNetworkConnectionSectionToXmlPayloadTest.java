@@ -24,17 +24,13 @@ import java.io.IOException;
 import java.net.URI;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.vcloud.VCloudApiMetadata;
 import org.jclouds.vcloud.domain.NetworkConnection;
 import org.jclouds.vcloud.domain.NetworkConnectionSection;
 import org.jclouds.vcloud.domain.network.IpAddressAllocationMode;
-import org.nnsoft.guice.rocoto.Rocoto;
-import org.nnsoft.guice.rocoto.configuration.ConfigurationModule;
+import org.jclouds.vcloud.internal.BasePayloadTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 
 /**
  * Tests behavior of {@code BindNetworkConnectionSectionToXmlPayload}
@@ -42,14 +38,7 @@ import com.google.inject.Injector;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "BindNetworkConnectionSectionToXmlPayloadTest")
-public class BindNetworkConnectionSectionToXmlPayloadTest {
-   Injector injector = Guice.createInjector(Rocoto.expandVariables(new ConfigurationModule() {
-
-      @Override
-      protected void bindConfigurations() {
-         bindProperties(new VCloudApiMetadata().getDefaultProperties());
-      }
-   }));
+public class BindNetworkConnectionSectionToXmlPayloadTest extends BasePayloadTest {
 
    public void testWithIpAllocationModeNONE() throws IOException {
 

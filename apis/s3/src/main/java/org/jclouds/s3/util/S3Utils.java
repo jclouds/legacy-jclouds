@@ -48,24 +48,23 @@ public class S3Utils {
    public static String validateBucketName(String bucketName) {
       checkNotNull(bucketName, "bucketName");
       checkArgument(
-               BUCKET_NAME_PATTERN.matcher(bucketName).matches(),
-               "bucketName name must start with a number or letter and  can only contain lowercase letters, numbers, periods (.), underscores (_), and dashes (-)");
+            BUCKET_NAME_PATTERN.matcher(bucketName).matches(),
+            "bucketName name must start with a number or letter and  can only contain lowercase letters, numbers, periods (.), underscores (_), and dashes (-)");
       checkArgument(bucketName.length() > 2 && bucketName.length() < 256,
-               "bucketName name must be between 3 and 255 characters long");
-      checkArgument(!IP_PATTERN.matcher(bucketName).matches(),
-               "bucketName name cannot be ip address style");
+            "bucketName name must be between 3 and 255 characters long");
+      checkArgument(!IP_PATTERN.matcher(bucketName).matches(), "bucketName name cannot be ip address style");
       return bucketName;
    }
 
    /**
-    * This implementation invokes {@link S3Client#deleteBucketIfEmpty} followed by
-    * {@link S3Client#bucketExists} until it is true.
+    * This implementation invokes {@link S3Client#deleteBucketIfEmpty} followed by {@link S3Client#bucketExists} until
+    * it is true.
     */
    public static boolean deleteAndVerifyContainerGone(S3Client sync, String container) {
       sync.deleteBucketIfEmpty(container);
       return !sync.bucketExists(container);
    }
-   
+
    private static final Predicate<Annotation> ANNOTATIONTYPE_BUCKET = new Predicate<Annotation>() {
       public boolean apply(Annotation input) {
          return input.annotationType().equals(Bucket.class);
@@ -78,9 +77,10 @@ public class S3Utils {
 
       String bucketName = null;
 
-      for (int i = 0; i < request.getInvoker().getParameters().size(); i++) {
-         if (any(Arrays.asList(request.getInvoker().getParameters().get(i).getAnnotations()), ANNOTATIONTYPE_BUCKET)) {
-            bucketName = (String) request.getArgs().get(i);
+      for (int i = 0; i < request.getInvocation().getInvokable().getParameters().size(); i++) {
+         if (any(Arrays.asList(request.getInvocation().getInvokable().getParameters().get(i).getAnnotations()),
+               ANNOTATIONTYPE_BUCKET)) {
+            bucketName = (String) request.getInvocation().getArgs().get(i);
             break;
          }
       }

@@ -40,26 +40,26 @@ public class Optionals2Test {
    }
 
    public void testReturnTypeOrTypeOfOptionalWhenOptional() throws SecurityException, NoSuchMethodException {
-      Invokable<?, ?> method = Invokable.from(Test.class.getMethod("getOptional"));
+      Invokable<?, ?> invoked = Invokable.from(Test.class.getMethod("getOptional"));
 
-      assertEquals(Optionals2.returnTypeOrTypeOfOptional(method), String.class);
+      assertEquals(Optionals2.unwrapIfOptional(invoked.getReturnType()), String.class);
    }
 
    public void testReturnTypeOrTypeOfOptionalWhenNotOptional() throws SecurityException, NoSuchMethodException {
-      Invokable<?, ?> method = Invokable.from(Test.class.getMethod("getNotOptional"));
+      Invokable<?, ?> invoked = Invokable.from(Test.class.getMethod("getNotOptional"));
 
-      assertEquals(Optionals2.returnTypeOrTypeOfOptional(method), String.class);
+      assertEquals(Optionals2.unwrapIfOptional(invoked.getReturnType()), String.class);
    }
 
    public void testIsReturnTypeOptionalWhenOptional() throws SecurityException, NoSuchMethodException {
-      Invokable<?, ?> method = Invokable.from(Test.class.getMethod("getOptional"));
+      Invokable<?, ?> invoked = Invokable.from(Test.class.getMethod("getOptional"));
 
-      assertTrue(Optionals2.isReturnTypeOptional(method));
+      assertTrue(Optionals2.isReturnTypeOptional(invoked));
    }
 
    public void testIsReturnTypeOptionalWhenNotOptional() throws SecurityException, NoSuchMethodException {
-      Invokable<?, ?> method = Invokable.from(Test.class.getMethod("getNotOptional"));
+      Invokable<?, ?> invoked = Invokable.from(Test.class.getMethod("getNotOptional"));
 
-      assertFalse(Optionals2.isReturnTypeOptional(method));
+      assertFalse(Optionals2.isReturnTypeOptional(invoked));
    }
 }

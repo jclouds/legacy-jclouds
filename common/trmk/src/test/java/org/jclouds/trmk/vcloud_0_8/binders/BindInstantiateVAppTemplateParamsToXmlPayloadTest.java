@@ -18,9 +18,7 @@
  */
 package org.jclouds.trmk.vcloud_0_8.binders;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
+import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.net.URI;
@@ -32,6 +30,7 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.trmk.vcloud_0_8.domain.ReferenceType;
 import org.jclouds.trmk.vcloud_0_8.domain.internal.ReferenceTypeImpl;
 import org.jclouds.trmk.vcloud_0_8.endpoints.Network;
+import org.jclouds.trmk.vcloud_0_8.internal.BasePayloadTest;
 import org.jclouds.trmk.vcloud_0_8.internal.TerremarkVCloudApiMetadata;
 import org.jclouds.trmk.vcloud_0_8.options.InstantiateVAppTemplateOptions;
 import org.jclouds.trmk.vcloud_0_8.options.InstantiateVAppTemplateOptions.NetworkConfig;
@@ -42,11 +41,8 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
@@ -57,7 +53,7 @@ import com.google.inject.Provides;
  * @author Adrian Cole
  */
 @Test(groups = "unit")
-public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
+public class BindInstantiateVAppTemplateParamsToXmlPayloadTest extends BasePayloadTest {
    Injector injector = Guice.createInjector(Rocoto.expandVariables(new ConfigurationModule() {
 
       @Override
@@ -69,7 +65,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
       @Provides
       @Singleton
       Supplier<ReferenceType> provideNetwork() {
-         return Suppliers.<ReferenceType>ofInstance(new ReferenceTypeImpl(null, null, URI
+         return Suppliers.<ReferenceType> ofInstance(new ReferenceTypeImpl(null, null, URI
                .create("https://vcloud.safesecureweb.com/network/1990")));
       }
    }));
@@ -78,25 +74,18 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
 
       String expected = Strings2.toStringAndClose(getClass().getResourceAsStream(
             "/InstantiateVAppTemplateParams-options-test.xml"));
-      Multimap<String, String> headers = Multimaps.synchronizedMultimap(HashMultimap.<String, String> create());
-      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
-      expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
-      expect(request.getArgs()).andReturn(
-            ImmutableList.<Object> of(InstantiateVAppTemplateOptions.Builder.processorCount(2).memory(512)
-                  .inGroup("group").withPassword("password").inRow("row")
-                  .addNetworkConfig(new NetworkConfig(URI.create("http://network"))))).atLeastOnce();
-      expect(request.getFirstHeaderOrNull("Content-Type")).andReturn("application/unknown").atLeastOnce();
-      expect(request.getHeaders()).andReturn(headers).atLeastOnce();
-      request.setPayload(expected);
-      replay(request);
 
-       BindInstantiateVAppTemplateParamsToXmlPayload binder = injector
+      GeneratedHttpRequest request = requestForArgs(ImmutableList.<Object> of(InstantiateVAppTemplateOptions.Builder
+            .processorCount(2).memory(512).inGroup("group").withPassword("password").inRow("row")
+            .addNetworkConfig(new NetworkConfig(URI.create("http://network")))));
+
+      BindInstantiateVAppTemplateParamsToXmlPayload binder = injector
             .getInstance(BindInstantiateVAppTemplateParamsToXmlPayload.class);
 
       Map<String, Object> map = Maps.newHashMap();
       map.put("name", "name");
       map.put("template", "https://vcloud/vAppTemplate/3");
-      binder.bindToRequest(request, map);
+      assertEquals(binder.bindToRequest(request, map).getPayload().getRawContent(), expected);
    }
 
 }

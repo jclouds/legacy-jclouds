@@ -19,11 +19,12 @@
 package org.jclouds.rest.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.util.Optionals2.unwrapIfOptional;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.internal.ClassInvokerArgsAndReturnVal;
+import org.jclouds.reflect.InvocationSuccess;
 import org.jclouds.rest.annotations.ApiVersion;
 import org.jclouds.rest.annotations.SinceApiVersion;
 
@@ -43,7 +44,7 @@ import com.google.common.cache.LoadingCache;
 public class PresentWhenApiVersionLexicographicallyAtOrAfterSinceApiVersion implements ImplicitOptionalConverter {
 
    @VisibleForTesting
-   static final class Loader extends CacheLoader<ClassInvokerArgsAndReturnVal, Optional<Object>> {
+   static final class Loader extends CacheLoader<InvocationSuccess, Optional<Object>> {
       private final String apiVersion;
 
       @Inject
@@ -52,22 +53,22 @@ public class PresentWhenApiVersionLexicographicallyAtOrAfterSinceApiVersion impl
       }
 
       @Override
-      public Optional<Object> load(ClassInvokerArgsAndReturnVal input) {
-         Optional<SinceApiVersion> sinceApiVersion = Optional.fromNullable(input.getClazz().getAnnotation(
-               SinceApiVersion.class));
+      public Optional<Object> load(InvocationSuccess input) {
+         Class<?> target = unwrapIfOptional(input.getInvocation().getInvokable().getReturnType());
+         Optional<SinceApiVersion> sinceApiVersion = Optional.fromNullable(target.getAnnotation(SinceApiVersion.class));
          if (sinceApiVersion.isPresent()) {
             String since = sinceApiVersion.get().value();
             if (since.compareTo(apiVersion) <= 0)
-               return Optional.of(input.getReturnVal());
+               return input.getResult();
             return Optional.absent();
          } else {
             // No SinceApiVersion annotation, so return present
-            return Optional.of(input.getReturnVal());
+            return input.getResult();
          }
       }
    }
 
-   private final LoadingCache<ClassInvokerArgsAndReturnVal, Optional<Object>> lookupCache;
+   private final LoadingCache<InvocationSuccess, Optional<Object>> lookupCache;
 
    @Inject
    protected PresentWhenApiVersionLexicographicallyAtOrAfterSinceApiVersion(@ApiVersion String apiVersion) {
@@ -76,7 +77,7 @@ public class PresentWhenApiVersionLexicographicallyAtOrAfterSinceApiVersion impl
    }
 
    @Override
-   public Optional<Object> apply(ClassInvokerArgsAndReturnVal input) {
+   public Optional<Object> apply(InvocationSuccess input) {
       return lookupCache.getUnchecked(input);
    }
 

@@ -18,13 +18,11 @@
  */
 package org.jclouds.rest.config;
 
-import static com.google.common.reflect.Reflection.newProxy;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.reflect.FunctionalReflection;
 import org.jclouds.rest.internal.AsyncRestClientProxy;
-import org.jclouds.rest.internal.AsyncRestClientProxy.Factory;
 
 import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
@@ -36,11 +34,11 @@ import com.google.inject.TypeLiteral;
 @Singleton
 public class AsyncClientProvider<A> implements Provider<A> {
    private final Class<? super A> asyncClientType;
-   private final Factory factory;
+   private final AsyncRestClientProxy proxy;
 
    @Inject
-   private AsyncClientProvider(AsyncRestClientProxy.Factory factory, TypeLiteral<A> asyncClientType) {
-      this.factory = factory;
+   private AsyncClientProvider(AsyncRestClientProxy proxy, TypeLiteral<A> asyncClientType) {
+      this.proxy = proxy;
       this.asyncClientType = asyncClientType.getRawType();
    }
 
@@ -48,7 +46,7 @@ public class AsyncClientProvider<A> implements Provider<A> {
    @Override
    @Singleton
    public A get() {
-      return (A) newProxy(asyncClientType, factory.declaring(asyncClientType));
+      return (A) FunctionalReflection.newProxy(asyncClientType, proxy);
    }
 
 }

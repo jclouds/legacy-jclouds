@@ -48,7 +48,7 @@ public class KeyPairByNameHandler extends ParseSax.HandlerForGeneratedRequestWit
 
    @Override
    public KeyPair getResult() {
-      final String name = getRequest().getArgs().get(1).toString();
+      final String name = getRequest().getInvocation().getArgs().get(1).toString();
       try {
          return Iterables.find(handler.getResult(), new Predicate<KeyPair>() {
 
@@ -59,7 +59,8 @@ public class KeyPairByNameHandler extends ParseSax.HandlerForGeneratedRequestWit
 
          });
       } catch (NoSuchElementException e) {
-         logger.debug("keypair %s/%s not found in %s", getRequest().getArgs().get(0), name, handler.getResult());
+         logger.debug("keypair %s/%s not found in %s", getRequest().getInvocation().getArgs().get(0), name,
+               handler.getResult());
          return null;
       }
    }

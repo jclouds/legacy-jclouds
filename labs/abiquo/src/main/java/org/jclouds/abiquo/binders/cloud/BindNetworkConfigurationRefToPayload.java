@@ -57,10 +57,10 @@ public class BindNetworkConfigurationRefToPayload extends BindToXMLPayload {
       checkArgument(checkNotNull(input, "input") instanceof VLANNetworkDto,
             "this binder is only valid for VLANNetworkDto");
       GeneratedHttpRequest gRequest = (GeneratedHttpRequest) request;
-      checkState(gRequest.getArgs() != null, "args should be initialized at this point");
+      checkState(gRequest.getInvocation().getArgs() != null, "args should be initialized at this point");
 
       VLANNetworkDto network = (VLANNetworkDto) input;
-      VirtualMachineDto vm = (VirtualMachineDto) Iterables.find(gRequest.getArgs(),
+      VirtualMachineDto vm = (VirtualMachineDto) Iterables.find(gRequest.getInvocation().getArgs(),
             Predicates.instanceOf(VirtualMachineDto.class));
 
       RESTLink configLink = checkNotNull(vm.searchLink("configurations"), "missing required link");

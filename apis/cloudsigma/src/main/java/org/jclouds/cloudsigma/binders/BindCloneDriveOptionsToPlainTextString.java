@@ -20,7 +20,6 @@ package org.jclouds.cloudsigma.binders;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 
 import java.util.Map;
 
@@ -58,7 +57,6 @@ public class BindCloneDriveOptionsToPlainTextString implements MapBinder {
       checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest,
             "this binder is only valid for GeneratedHttpRequests!");
       GeneratedHttpRequest gRequest = GeneratedHttpRequest.class.cast(request);
-      checkState(gRequest.getArgs() != null, "args should be initialized at this point");
 
       CloneDriveOptions options = findOptionsInArgsOrNull(gRequest);
       if (options != null) {
@@ -76,7 +74,7 @@ public class BindCloneDriveOptionsToPlainTextString implements MapBinder {
    }
 
    static CloneDriveOptions findOptionsInArgsOrNull(GeneratedHttpRequest gRequest) {
-      for (Object arg : gRequest.getArgs()) {
+      for (Object arg : gRequest.getInvocation().getArgs()) {
          if (arg instanceof CloneDriveOptions) {
             return (CloneDriveOptions) arg;
          } else if (arg instanceof CloneDriveOptions[]) {

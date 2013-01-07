@@ -19,11 +19,10 @@
 package org.jclouds.vcloud.binders;
 
 import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
 import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.addNetworkConfig;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_FENCEMODE;
+import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.net.URI;
@@ -41,6 +40,7 @@ import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
 import org.jclouds.vcloud.domain.network.FenceMode;
 import org.jclouds.vcloud.domain.network.NetworkConfig;
 import org.jclouds.vcloud.endpoints.Network;
+import org.jclouds.vcloud.internal.BasePayloadTest;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.nnsoft.guice.rocoto.Rocoto;
 import org.nnsoft.guice.rocoto.configuration.ConfigurationModule;
@@ -66,7 +66,7 @@ import com.google.inject.Provides;
  * @author Adrian Cole
  */
 @Test(groups = "unit")
-public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
+public class BindInstantiateVAppTemplateParamsToXmlPayloadTest extends BasePayloadTest {
    Injector createInjector(final URI vAppTemplate, final VAppTemplate value) {
 
       return Guice.createInjector(Rocoto.expandVariables(new ConfigurationModule() {
@@ -109,15 +109,10 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
    public void testDefault() throws IOException {
       URI templateUri = URI.create("https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/3");
       VAppTemplate template = createMock(VAppTemplate.class);
+      replay(template);
 
       String expected = Strings2.toStringAndClose(getClass().getResourceAsStream("/instantiationparams.xml"));
-      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
-      expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
-      expect(request.getArgs()).andReturn(ImmutableList.<Object> of(new InstantiateVAppTemplateOptions()))
-               .atLeastOnce();
-      request.setPayload(expected);
-
-      replay(request, template);
+      GeneratedHttpRequest request = requestForArgs(ImmutableList.<Object> of(new InstantiateVAppTemplateOptions()));
 
       BindInstantiateVAppTemplateParamsToXmlPayload binder = createInjector(templateUri, template).getInstance(
                BindInstantiateVAppTemplateParamsToXmlPayload.class);
@@ -125,24 +120,17 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
       Map<String, Object> map = Maps.newHashMap();
       map.put("name", "my-vapp");
       map.put("template", templateUri.toASCIIString());
-      binder.bindToRequest(request, map);
-
-      verify(request, template);
+      assertEquals(binder.bindToRequest(request, map).getPayload().getRawContent(), expected);
    }
 
    public void testDescription() throws IOException {
       URI templateUri = URI.create("https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/3");
       VAppTemplate template = createMock(VAppTemplate.class);
+      replay(template);
 
       String expected = Strings2.toStringAndClose(getClass()
                .getResourceAsStream("/instantiationparams-description.xml"));
-      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
-      expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
-      expect(request.getArgs()).andReturn(
-               ImmutableList.<Object> of(new InstantiateVAppTemplateOptions().description("my foo"))).atLeastOnce();
-      request.setPayload(expected);
-
-      replay(request, template);
+      GeneratedHttpRequest request = requestForArgs(ImmutableList.<Object> of(new InstantiateVAppTemplateOptions().description("my foo")));
 
       BindInstantiateVAppTemplateParamsToXmlPayload binder = createInjector(templateUri, template).getInstance(
                BindInstantiateVAppTemplateParamsToXmlPayload.class);
@@ -150,22 +138,16 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
       Map<String, Object> map = Maps.newHashMap();
       map.put("name", "my-vapp");
       map.put("template", templateUri.toASCIIString());
-      binder.bindToRequest(request, map);
-
-      verify(request, template);
-
+      assertEquals(binder.bindToRequest(request, map).getPayload().getRawContent(), expected);
    }
 
    public void testWhenTemplateDoesntExist() throws IOException {
       URI templateUri = URI.create("https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/3");
       VAppTemplate template = createMock(VAppTemplate.class);
+      replay(template);
 
       String expected = Strings2.toStringAndClose(getClass().getResourceAsStream("/instantiationparams.xml"));
-      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
-      expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
-      expect(request.getArgs()).andReturn(ImmutableList.<Object> of()).atLeastOnce();
-      request.setPayload(expected);
-      replay(request, template);
+      GeneratedHttpRequest request = requestForArgs(ImmutableList.<Object> of());
 
       BindInstantiateVAppTemplateParamsToXmlPayload binder = createInjector(templateUri, template).getInstance(
                BindInstantiateVAppTemplateParamsToXmlPayload.class);
@@ -173,52 +155,19 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
       Map<String, Object> map = Maps.newHashMap();
       map.put("name", "my-vapp");
       map.put("template", templateUri.toASCIIString());
-      binder.bindToRequest(request, map);
-      verify(request, template);
-
-   }
-
-   // TODO!!! figure out how to get this to work
-   @Test(enabled = false)
-   public void testWithProcessorMemoryDisk() throws IOException {
-      URI templateUri = URI.create("https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/3");
-      VAppTemplate template = null;
-
-      InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
-
-      String expected = Strings2.toStringAndClose(getClass().getResourceAsStream("/instantiationparams.xml"));
-      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
-      expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
-      expect(request.getArgs()).andReturn(ImmutableList.<Object> of(options)).atLeastOnce();
-      request.setPayload(expected);
-      replay(request);
-
-      BindInstantiateVAppTemplateParamsToXmlPayload binder = createInjector(templateUri, template).getInstance(
-               BindInstantiateVAppTemplateParamsToXmlPayload.class);
-
-      Map<String, Object> map = Maps.newHashMap();
-      map.put("name", "my-vapp");
-      map.put("template", "https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/3");
-
-      binder.bindToRequest(request, map);
-      verify(request);
-
+      assertEquals(binder.bindToRequest(request, map).getPayload().getRawContent(), expected);
    }
 
    public void testWithNetworkNameFenceMode() throws IOException {
       URI templateUri = URI.create("https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/3");
       VAppTemplate template = createMock(VAppTemplate.class);
+      replay(template);
 
       InstantiateVAppTemplateOptions options = addNetworkConfig(new NetworkConfig("aloha", URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/network/1991"), FenceMode.NAT_ROUTED));
 
       String expected = Strings2.toStringAndClose(getClass().getResourceAsStream("/instantiationparams-network.xml"));
-
-      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
-      expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
-      expect(request.getArgs()).andReturn(ImmutableList.<Object> of(options)).atLeastOnce();
-      request.setPayload(expected);
-      replay(request, template);
+      GeneratedHttpRequest request = requestForArgs(ImmutableList.<Object> of(options));
 
       BindInstantiateVAppTemplateParamsToXmlPayload binder = createInjector(templateUri, template).getInstance(
                BindInstantiateVAppTemplateParamsToXmlPayload.class);
@@ -227,7 +176,6 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
       map.put("name", "my-vapp");
       map.put("template", "https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/3");
 
-      binder.bindToRequest(request, map);
-      verify(request, template);
+      assertEquals(binder.bindToRequest(request, map).getPayload().getRawContent(), expected);
    }
 }

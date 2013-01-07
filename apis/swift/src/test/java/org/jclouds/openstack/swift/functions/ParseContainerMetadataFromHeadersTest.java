@@ -18,24 +18,15 @@
  */
 package org.jclouds.openstack.swift.functions;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
 import static org.testng.Assert.assertEquals;
-
-import java.net.URI;
 
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.swift.domain.ContainerMetadata;
-import org.jclouds.openstack.swift.functions.ParseContainerMetadataFromHeaders;
+import org.jclouds.openstack.swift.internal.BasePayloadTest;
 import org.jclouds.openstack.swift.reference.SwiftHeaders;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 
 /**
  * Tests behavior of {@code ParseContainerMetadataFromHeaders}
@@ -43,22 +34,12 @@ import com.google.inject.Injector;
  * @author Everett Toews
  */
 @Test(groups = "unit")
-public class ParseContainerMetadataFromHeadersTest {
-	
-	Injector i = Guice.createInjector(new AbstractModule() {
-	
-		@Override
-		protected void configure() {
-		}	
-	});
+public class ParseContainerMetadataFromHeadersTest extends BasePayloadTest {
 
 	public void testParseContainerMetadataHeaders() {
 		ParseContainerMetadataFromHeaders parser = i.getInstance(ParseContainerMetadataFromHeaders.class);
-		GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
-		expect(request.getArgs()).andReturn(ImmutableList.<Object> of("container", "key")).atLeastOnce();
-		expect(request.getEndpoint()).andReturn(URI.create("http://localhost/test")).atLeastOnce();
-		replay(request);
-		parser.setContext(request);
+
+		parser.setContext(requestForArgs(ImmutableList.<Object> of("container", "key")));
 		
 		HttpResponse response = HttpResponse.builder().statusCode(204).message("No Content").payload("")
 			.addHeader(SwiftHeaders.CONTAINER_BYTES_USED, "42")
