@@ -40,11 +40,13 @@ import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.io.MutableContentMetadata;
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.reflect.Invocation;
 import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.SortedSetMultimap;
 import com.google.common.collect.TreeMultimap;
@@ -176,11 +178,8 @@ public abstract class BaseRestApiTest {
    }
 
    protected void assertResponseParserClassEquals(Invokable<?, ?> method, HttpRequest request, @Nullable Class<?> parserClass) {
-      assertEquals(AsyncRestClientProxy.createResponseParser(parserFactory, injector, method, request).getClass(), parserClass);
+      assertEquals(
+            AsyncRestClientProxy.createResponseParser(parserFactory, injector,
+                  Invocation.create(method, ImmutableList.of()), request).getClass(), parserClass);
    }
-
-   protected RestAnnotationProcessor factory(Class<?> clazz) {
-      return injector.getInstance(RestAnnotationProcessor.Factory.class).declaring(clazz);
-   }
-
 }

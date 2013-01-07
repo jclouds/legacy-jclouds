@@ -28,10 +28,12 @@ import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.config.BlobStoreMapModule;
 import org.jclouds.domain.Location;
+import org.jclouds.s3.S3AsyncClient;
 import org.jclouds.s3.S3Client;
 import org.jclouds.s3.blobstore.S3AsyncBlobStore;
 import org.jclouds.s3.blobstore.S3BlobRequestSigner;
 import org.jclouds.s3.blobstore.S3BlobStore;
+import org.jclouds.s3.blobstore.S3BlobStoreContext;
 import org.jclouds.s3.blobstore.functions.LocationFromBucketName;
 import org.jclouds.s3.domain.AccessControlList;
 
@@ -57,11 +59,16 @@ public class S3BlobStoreContextModule extends AbstractModule {
       bind(ConsistencyModel.class).toInstance(ConsistencyModel.EVENTUAL);
       bind(AsyncBlobStore.class).to(S3AsyncBlobStore.class).in(Scopes.SINGLETON);
       bind(BlobStore.class).to(S3BlobStore.class).in(Scopes.SINGLETON);
-      bind(BlobRequestSigner.class).to(S3BlobRequestSigner.class);
       bind(new TypeLiteral<Function<String, Location>>() {
       }).to(LocationFromBucketName.class);
+      bindRequestSigner();
    }
 
+   protected void bindRequestSigner() {
+      bind(BlobRequestSigner.class).to(new TypeLiteral<S3BlobRequestSigner<S3AsyncClient>>() {
+      });
+   }
+   
    @Provides
    @Singleton
    protected LoadingCache<String, AccessControlList> bucketAcls(final S3Client client) {

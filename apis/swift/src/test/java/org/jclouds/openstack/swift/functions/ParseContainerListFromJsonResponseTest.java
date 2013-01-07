@@ -26,15 +26,13 @@ import java.util.Map;
 
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseJson;
-import org.jclouds.json.config.GsonModule;
 import org.jclouds.openstack.swift.domain.ContainerMetadata;
+import org.jclouds.openstack.swift.internal.BasePayloadTest;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 
@@ -44,8 +42,7 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 @Test(groups = "unit")
-public class ParseContainerListFromJsonResponseTest {
-   Injector i = Guice.createInjector(new GsonModule());
+public class ParseContainerListFromJsonResponseTest extends BasePayloadTest {
 
    @Test
    public void testApplyInputStream() {

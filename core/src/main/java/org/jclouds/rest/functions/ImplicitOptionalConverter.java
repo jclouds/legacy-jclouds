@@ -18,7 +18,9 @@
  */
 package org.jclouds.rest.functions;
 
-import org.jclouds.internal.ClassInvokerArgsAndReturnVal;
+import org.jclouds.reflect.InvocationSuccess;
+import org.jclouds.rest.annotations.ApiVersion;
+import org.jclouds.rest.annotations.SinceApiVersion;
 import org.jclouds.rest.config.RestClientModule;
 
 import com.google.common.annotations.Beta;
@@ -39,19 +41,19 @@ import com.google.inject.ImplementedBy;
  * }
  * </pre>
  * 
- * The input object of type {@link ClassInvokerArgsAndReturnVal} will include the
+ * The input object of type {@link InvocationSuccess} will include the
  * following.
  * <ol>
  * <li>the class declaring the method that returns optional:
- * {@link ClassInvokerArgsAndReturnVal#getClazz}; in the example above,
+ * {@link InvocationSuccess#getClazz}; in the example above,
  * {@code MyCloud}</li>
  * <li>the method returning the optional:
- * {@link ClassInvokerArgsAndReturnVal#getMethod}; in the example above,
+ * {@link InvocationSuccess#getMethod}; in the example above,
  * {@code getKeyPairExtensionForRegion}</li>
  * <li>the args passed to that method at runtime:
- * {@link ClassInvokerArgsAndReturnVal#getArgs}; for example {@code North}</li>
+ * {@link InvocationSuccess#getArgs}; for example {@code North}</li>
  * <li>the rest client to be enclosed in the optional, should you choose to
- * return it: {@link ClassInvokerArgsAndReturnVal#getReturnVal}; in the example
+ * return it: {@link InvocationSuccess#getReturnVal}; in the example
  * above, an implementation of {@code KeyPairClient}</li>
  * </ol>
  * 
@@ -80,6 +82,6 @@ import com.google.inject.ImplementedBy;
  */
 @Beta
 @ImplementedBy(PresentWhenApiVersionLexicographicallyAtOrAfterSinceApiVersion.class)
-public interface ImplicitOptionalConverter extends Function<ClassInvokerArgsAndReturnVal, Optional<Object>> {
+public interface ImplicitOptionalConverter extends Function<InvocationSuccess, Optional<Object>> {
 
 }

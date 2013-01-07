@@ -68,7 +68,6 @@ public class BindCloneVAppParamsToXmlPayload implements MapBinder {
       checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest,
             "this binder is only valid for GeneratedHttpRequests!");
       GeneratedHttpRequest gRequest = (GeneratedHttpRequest) request;
-      checkState(gRequest.getArgs() != null, "args should be initialized at this point");
       String newName = checkNotNull(postParams.remove("newName"), "newName").toString();
       String vApp = checkNotNull(postParams.remove("vApp"), "vApp").toString();
 
@@ -108,7 +107,7 @@ public class BindCloneVAppParamsToXmlPayload implements MapBinder {
    }
 
    protected CloneVAppOptions findOptionsInArgsOrNull(GeneratedHttpRequest gRequest) {
-      for (Object arg : gRequest.getArgs()) {
+      for (Object arg : gRequest.getInvocation().getArgs()) {
          if (arg instanceof CloneVAppOptions) {
             return (CloneVAppOptions) arg;
          } else if (arg instanceof CloneVAppOptions[]) {

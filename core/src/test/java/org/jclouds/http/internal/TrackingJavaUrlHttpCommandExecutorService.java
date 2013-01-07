@@ -78,11 +78,12 @@ public class TrackingJavaUrlHttpCommandExecutorService extends JavaUrlHttpComman
    }
 
    public static Invokable<?, ?> getInvokerOfRequest(HttpCommand commandInvoked) {
-      return GeneratedHttpRequest.class.cast(commandInvoked.getCurrentRequest()).getInvoker();
+      return GeneratedHttpRequest.class.cast(commandInvoked.getCurrentRequest()).getInvocation().getInvokable();
    }
 
    public static List<Object> getArgsForRequestAtIndex(final Collection<HttpCommand> commandsInvoked, int index) {
-      return GeneratedHttpRequest.class.cast(Iterables.get(commandsInvoked, index).getCurrentRequest()).getArgs();
+      return GeneratedHttpRequest.class.cast(Iterables.get(commandsInvoked, index).getCurrentRequest()).getInvocation()
+            .getArgs();
    }
 
    @Inject

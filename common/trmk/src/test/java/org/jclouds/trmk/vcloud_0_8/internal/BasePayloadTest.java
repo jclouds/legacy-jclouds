@@ -16,51 +16,18 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.cloudsigma.binders;
+package org.jclouds.trmk.vcloud_0_8.internal;
 
-import static org.testng.Assert.assertEquals;
-
-import java.io.IOException;
 import java.net.URI;
 import java.util.List;
-import java.util.Map;
 
-import org.jclouds.cloudsigma.options.CloneDriveOptions;
 import org.jclouds.reflect.Invocation;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.testng.annotations.Test;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.reflect.Invokable;
-import com.google.inject.Guice;
 
-/**
- * 
- * @author Adrian Cole
- */
-@Test(groups = "unit")
-public class BindCloneDriveOptionsToPlainTextStringTest {
-
-   private static final BindCloneDriveOptionsToPlainTextString binder = Guice.createInjector().getInstance(
-         BindCloneDriveOptionsToPlainTextString.class);
-
-   public void testDefault() throws IOException {
-      String expected = "name newdrive";
-      GeneratedHttpRequest request = requestForArgs(ImmutableList.<Object> of());
-
-      Map<String, Object> map = ImmutableMap.<String, Object> of("name", "newdrive");
-      assertEquals(binder.bindToRequest(request, map).getPayload().getRawContent(), expected);
-   }
-
-   public void testWithSize() throws IOException {
-      String expected = "name newdrive\nsize 1024";
-      GeneratedHttpRequest request = requestForArgs(ImmutableList.<Object> of(new CloneDriveOptions().size(1024)));
-
-      Map<String, Object> map = ImmutableMap.<String, Object> of("name", "newdrive");
-      assertEquals(binder.bindToRequest(request, map).getPayload().getRawContent(), expected);
-   }
+public class BasePayloadTest {
 
    protected GeneratedHttpRequest requestForArgs(List<Object> args) {
       try {

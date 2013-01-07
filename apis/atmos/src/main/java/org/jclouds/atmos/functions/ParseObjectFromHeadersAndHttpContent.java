@@ -79,7 +79,7 @@ public class ParseObjectFromHeadersAndHttpContent implements Function<HttpRespon
    @Override
    public ParseObjectFromHeadersAndHttpContent setContext(HttpRequest request) {
       this.uri = request.getEndpoint();
-      return setPath(GeneratedHttpRequest.class.cast(request).getArgs().get(0).toString());
+      return setPath(GeneratedHttpRequest.class.cast(request).getInvocation().getArgs().get(0).toString());
    }
 
    private ParseObjectFromHeadersAndHttpContent setPath(String path) {

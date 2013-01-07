@@ -18,9 +18,6 @@
  */
 package org.jclouds.ec2.xml;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
@@ -30,11 +27,9 @@ import org.jclouds.date.DateService;
 import org.jclouds.ec2.domain.InstanceState;
 import org.jclouds.ec2.domain.InstanceStateChange;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -95,9 +90,6 @@ public class InstanceStateChangeHandlerTest extends BaseEC2HandlerTest {
    }
 
    private void addDefaultRegionToHandler(ParseSax.HandlerWithResult<?> handler) {
-      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
-      expect(request.getArgs()).andReturn(ImmutableList.<Object>of()).atLeastOnce();
-      replay(request);
       handler.setContext(request);
    }
 }

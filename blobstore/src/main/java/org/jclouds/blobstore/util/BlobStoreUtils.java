@@ -20,6 +20,7 @@ package org.jclouds.blobstore.util;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -60,12 +61,13 @@ public class BlobStoreUtils {
 
    public static String getNameFor(GeneratedHttpRequest request) {
       checkNotNull(request, "request");
+      List<Object> args = request.getInvocation().getArgs();
       // assume first params are container and key
-      if (request.getArgs().size() >= 2 && request.getArgs().get(0) instanceof String
-            && request.getArgs().get(1) instanceof String) {
-         return request.getArgs().get(1).toString();
-      } else if (request.getArgs().size() >= 1 && request.getArgs().get(0) instanceof String) {
-         Matcher matcher = keyFromContainer.matcher(request.getArgs().get(0).toString());
+      if (args.size() >= 2 && args.get(0) instanceof String
+            && args.get(1) instanceof String) {
+         return args.get(1).toString();
+      } else if (args.size() >= 1 && args.get(0) instanceof String) {
+         Matcher matcher = keyFromContainer.matcher(args.get(0).toString());
          if (matcher.find())
             return matcher.group(1);
       }

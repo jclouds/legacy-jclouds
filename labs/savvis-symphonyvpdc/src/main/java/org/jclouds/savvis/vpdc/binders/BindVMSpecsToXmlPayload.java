@@ -40,7 +40,7 @@ public class BindVMSpecsToXmlPayload extends BaseBindVMSpecToXmlPayload<Iterable
 
    @SuppressWarnings("unchecked")
    protected Iterable<VMSpec> findSpecInArgsOrNull(GeneratedHttpRequest gRequest) {
-      for (Object arg : gRequest.getArgs()) {
+      for (Object arg : gRequest.getInvocation().getArgs()) {
          if (arg instanceof Iterable<?>) {
             Iterable<VMSpec> specs = (Iterable<VMSpec>) arg;
             checkArgument(Iterables.size(specs) > 0,

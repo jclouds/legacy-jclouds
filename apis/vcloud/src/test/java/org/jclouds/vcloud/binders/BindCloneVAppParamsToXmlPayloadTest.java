@@ -20,21 +20,15 @@ package org.jclouds.vcloud.binders;
 
 import static org.testng.Assert.assertEquals;
 
-import java.util.Properties;
-
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.util.Strings2;
-import org.jclouds.vcloud.VCloudApiMetadata;
+import org.jclouds.vcloud.internal.BasePayloadTest;
 import org.jclouds.vcloud.options.CloneVAppOptions;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
-import com.google.common.reflect.Invokable;
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.name.Names;
 
 /**
  * Tests behavior of {@code BindCloneVAppParamsToXmlPayload}
@@ -42,26 +36,15 @@ import com.google.inject.name.Names;
  * @author Adrian Cole
  */
 @Test(groups = "unit")
-public class BindCloneVAppParamsToXmlPayloadTest {
-   Injector injector = Guice.createInjector(new AbstractModule() {
-
-      @Override
-      protected void configure() {
-         Properties props = new VCloudApiMetadata().getDefaultProperties();
-         props.setProperty("jclouds.vcloud.xml.ns", "http://www.vmware.com/vcloud/v1");
-         props.setProperty("jclouds.vcloud.xml.schema", "http://vcloud.safesecureweb.com/ns/vcloud.xsd");
-         Names.bindProperties(binder(), props);
-      }
-   });
-
+public class BindCloneVAppParamsToXmlPayloadTest extends BasePayloadTest {
+   
    public void testWithDescriptionDeployOn() throws Exception {
       String expected = Strings2.toStringAndClose(getClass().getResourceAsStream("/copyVApp.xml"));
 
       CloneVAppOptions options = new CloneVAppOptions().deploy().powerOn().description(
                "The description of the new vApp");
-      GeneratedHttpRequest request = GeneratedHttpRequest.builder().method("POST").endpoint("http://localhost/key")
-            .declaring(String.class).invoker(Invokable.from(String.class.getDeclaredMethod("toString"))).arg(options).build();
-
+      GeneratedHttpRequest request = requestForArgs(ImmutableList.<Object> of(options));
+      
       BindCloneVAppParamsToXmlPayload binder = injector.getInstance(BindCloneVAppParamsToXmlPayload.class);
 
       Builder<String, Object> map = ImmutableMap.builder();
@@ -75,9 +58,7 @@ public class BindCloneVAppParamsToXmlPayloadTest {
 
       CloneVAppOptions options = new CloneVAppOptions().deploy().powerOn().description(
                "The description of the new vApp");
-      GeneratedHttpRequest request = GeneratedHttpRequest.builder().method("POST").endpoint("http://localhost/key")
-            .declaring(String.class).invoker(Invokable.from(String.class.getDeclaredMethod("toString"))).arg(options).build();
-
+      GeneratedHttpRequest request = requestForArgs(ImmutableList.<Object> of(options));
 
       BindCloneVAppParamsToXmlPayload binder = injector.getInstance(BindCloneVAppParamsToXmlPayload.class);
 
@@ -90,10 +71,7 @@ public class BindCloneVAppParamsToXmlPayloadTest {
 
    public void testDefault() throws Exception {
       String expected = Strings2.toStringAndClose(getClass().getResourceAsStream("/copyVApp-default.xml"));
-
-      GeneratedHttpRequest request = GeneratedHttpRequest.builder().method("POST").endpoint("http://localhost/key")
-            .declaring(String.class).invoker(Invokable.from(String.class.getDeclaredMethod("toString"))).build();
-
+      GeneratedHttpRequest request = requestForArgs(ImmutableList.<Object> of());
 
       BindCloneVAppParamsToXmlPayload binder = injector.getInstance(BindCloneVAppParamsToXmlPayload.class);
 

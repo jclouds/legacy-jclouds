@@ -73,7 +73,7 @@ public class ParseObjectInfoFromHeaders implements Function<HttpResponse, Mutabl
    public ParseObjectInfoFromHeaders setContext(HttpRequest request) {
       blobMetadataParser.setContext(request);
       checkArgument(request instanceof GeneratedHttpRequest, "note this handler requires a GeneratedHttpRequest");
-      return setContainer(GeneratedHttpRequest.class.cast(request).getArgs().get(0).toString());
+      return setContainer(GeneratedHttpRequest.class.cast(request).getInvocation().getArgs().get(0).toString());
    }
 
    private ParseObjectInfoFromHeaders setContainer(String container) {

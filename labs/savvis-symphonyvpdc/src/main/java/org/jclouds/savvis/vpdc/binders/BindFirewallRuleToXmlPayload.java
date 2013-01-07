@@ -20,7 +20,6 @@ package org.jclouds.savvis.vpdc.binders;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 
 import java.util.Map;
 import java.util.Properties;
@@ -52,7 +51,7 @@ public class BindFirewallRuleToXmlPayload extends BindToStringPayload implements
    }
 
    protected FirewallRule findRuleInArgsOrNull(GeneratedHttpRequest gRequest) {
-      for (Object arg : gRequest.getArgs()) {
+      for (Object arg : gRequest.getInvocation().getArgs()) {
          if (arg instanceof FirewallRule) {
             return (FirewallRule) arg;
          } else if (arg instanceof FirewallRule[]) {
@@ -68,8 +67,6 @@ public class BindFirewallRuleToXmlPayload extends BindToStringPayload implements
       checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest,
             "this binder is only valid for GeneratedHttpRequests!");
       GeneratedHttpRequest gRequest = (GeneratedHttpRequest) request;
-      checkState(gRequest.getArgs() != null, "args should be initialized at this point");
-
       request = super.bindToRequest(request,
             generateXml(findRuleInArgsOrNull(gRequest)));
       request.getPayload().getContentMetadata().setContentType(MediaType.APPLICATION_XML);

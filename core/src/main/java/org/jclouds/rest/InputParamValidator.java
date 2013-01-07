@@ -26,12 +26,12 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.jclouds.predicates.Validator;
+import org.jclouds.reflect.Invocation;
 import org.jclouds.rest.annotations.ParamValidators;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.google.common.reflect.Invokable;
 import com.google.common.reflect.Parameter;
 import com.google.inject.Injector;
 
@@ -70,14 +70,13 @@ public class InputParamValidator {
     * @throws IllegalStateException
     *            if validation failed
     */
-   public void validateMethodParametersOrThrow(Invokable<?, ?> method, List<Object> args) {
+   public void validateMethodParametersOrThrow(Invocation invocation) {
       try {
-         performMethodValidation(checkNotNull(method, "method"), args);
-         performParameterValidation(method.getParameters(), args);
+         performMethodValidation(checkNotNull(invocation, "invocation"));
+         performParameterValidation(invocation);
       } catch (IllegalArgumentException e) {
-         throw new IllegalArgumentException(String.format("Validation on '%s#%s' didn't pass for arguments: "
-               + "%s. %n Reason: %s.", method.getDeclaringClass().getName(), method.getName(), args,
-               e.getMessage()));
+         throw new IllegalArgumentException(String.format("Validation on '%s' didn't pass:%n Reason: %s.", invocation,
+               e.getMessage()), e);
       }
    }
 
@@ -90,14 +89,14 @@ public class InputParamValidator {
     * @param args
     *           method's parameters
     */
-   private void performMethodValidation(Invokable<?, ?> method, List<Object> args) {
-      ParamValidators paramValidatorsAnnotation = method.getAnnotation(ParamValidators.class);
+   private void performMethodValidation(Invocation invocation) {
+      ParamValidators paramValidatorsAnnotation = invocation.getInvokable().getAnnotation(ParamValidators.class);
       if (paramValidatorsAnnotation == null)
          return; // by contract
 
       List<Validator<?>> methodValidators = getValidatorsFromAnnotation(paramValidatorsAnnotation);
 
-      runPredicatesAgainstArgs(methodValidators, args);
+      runPredicatesAgainstArgs(methodValidators, invocation.getArgs());
    }
 
    /**
@@ -109,8 +108,8 @@ public class InputParamValidator {
     * @param args
     *           arguments that correspond to the array of annotations
     */
-   private void performParameterValidation(List<Parameter> parameters, List<Object> args) {
-      for (Parameter param : filter(parameters, new Predicate<Parameter>() {
+   private void performParameterValidation(Invocation invocation) {
+      for (Parameter param : filter(invocation.getInvokable().getParameters(), new Predicate<Parameter>() {
          public boolean apply(Parameter in) {
             return in.isAnnotationPresent(ParamValidators.class);
          }
@@ -119,7 +118,8 @@ public class InputParamValidator {
          if (annotation == null)
             continue;
          List<Validator<?>> parameterValidators = getValidatorsFromAnnotation(annotation);
-         runPredicatesAgainstArg(parameterValidators, args.get(param.hashCode()));// TODO position guava issue 1243
+         // TODO position guava issue 1243
+         runPredicatesAgainstArg(parameterValidators, invocation.getArgs().get(param.hashCode()));
       }
    }
 
@@ -130,7 +130,7 @@ public class InputParamValidator {
       }
       return validators;
    }
-   
+
    @SuppressWarnings("unchecked")
    private void runPredicatesAgainstArg(List<Validator<?>> predicates, Object arg) {
       for (@SuppressWarnings("rawtypes")

@@ -20,7 +20,6 @@ package org.jclouds.vcloud.binders;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_NAMESPACE;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_SCHEMA;
 
@@ -69,7 +68,6 @@ public class BindCatalogItemToXmlPayload implements MapBinder {
       checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest,
                "this binder is only valid for GeneratedHttpRequests!");
       GeneratedHttpRequest gRequest = (GeneratedHttpRequest) request;
-      checkState(gRequest.getArgs() != null, "args should be initialized at this point");
       String name = checkNotNull(postParams.get("name"), "name").toString();
       URI entity = URI.create(checkNotNull(postParams.get("Entity"), "Entity").toString());
 
@@ -107,7 +105,7 @@ public class BindCatalogItemToXmlPayload implements MapBinder {
    }
 
    protected CatalogItemOptions findOptionsInArgsOrNew(GeneratedHttpRequest gRequest) {
-      for (Object arg : gRequest.getArgs()) {
+      for (Object arg : gRequest.getInvocation().getArgs()) {
          if (arg instanceof CatalogItemOptions) {
             return CatalogItemOptions.class.cast(arg);
          } else if (arg.getClass().isArray()) {

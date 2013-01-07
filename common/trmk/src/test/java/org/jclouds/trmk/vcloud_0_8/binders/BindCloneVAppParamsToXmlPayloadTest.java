@@ -24,13 +24,14 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.jclouds.rest.internal.GeneratedHttpRequest;
+import org.jclouds.trmk.vcloud_0_8.internal.BasePayloadTest;
 import org.jclouds.trmk.vcloud_0_8.internal.TerremarkVCloudApiMetadata;
 import org.jclouds.trmk.vcloud_0_8.options.CloneVAppOptions;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
-import com.google.common.reflect.Invokable;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -42,7 +43,7 @@ import com.google.inject.name.Names;
  * @author Adrian Cole
  */
 @Test(groups = "unit")
-public class BindCloneVAppParamsToXmlPayloadTest {
+public class BindCloneVAppParamsToXmlPayloadTest extends BasePayloadTest {
    Injector injector = Guice.createInjector(new AbstractModule() {
 
       @Override
@@ -53,15 +54,13 @@ public class BindCloneVAppParamsToXmlPayloadTest {
          Names.bindProperties(binder(), props);
       }
    });
-
+   
    public void testWithDescriptionDeployOn() throws Exception {
       String expected = Strings2.toStringAndClose(getClass().getResourceAsStream("/cloneVApp.xml"));
 
       CloneVAppOptions options = new CloneVAppOptions().deploy().powerOn().withDescription(
                "The description of the new vApp");
-      GeneratedHttpRequest request = GeneratedHttpRequest.builder().method("POST").endpoint("http://localhost/key")
-            .declaring(String.class).invoker(Invokable.from(String.class.getDeclaredMethod("toString"))).arg(options).build();
-
+      GeneratedHttpRequest request = requestForArgs(ImmutableList.<Object> of(options));
 
       BindCloneVAppParamsToXmlPayload binder = injector.getInstance(BindCloneVAppParamsToXmlPayload.class);
 
@@ -74,8 +73,7 @@ public class BindCloneVAppParamsToXmlPayloadTest {
    public void testDefault() throws Exception {
       String expected = Strings2.toStringAndClose(getClass().getResourceAsStream("/cloneVApp-default.xml"));
 
-      GeneratedHttpRequest request = GeneratedHttpRequest.builder().method("POST").endpoint("http://localhost/key")
-            .declaring(String.class).invoker(Invokable.from(String.class.getDeclaredMethod("toString"))).build();
+      GeneratedHttpRequest request = requestForArgs(ImmutableList.<Object> of());
 
       BindCloneVAppParamsToXmlPayload binder = injector.getInstance(BindCloneVAppParamsToXmlPayload.class);
 

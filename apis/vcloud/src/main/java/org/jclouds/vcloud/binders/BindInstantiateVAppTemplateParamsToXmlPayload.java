@@ -20,7 +20,6 @@ package org.jclouds.vcloud.binders;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.Iterables.transform;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_NAMESPACE;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_SCHEMA;
@@ -92,7 +91,6 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
       checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest,
             "this binder is only valid for GeneratedHttpRequests!");
       GeneratedHttpRequest gRequest = (GeneratedHttpRequest) request;
-      checkState(gRequest.getArgs() != null, "args should be initialized at this point");
       String name = checkNotNull(postParams.remove("name"), "name").toString();
       URI template = URI.create(checkNotNull(postParams.remove("template"), "template").toString());
 
@@ -203,7 +201,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
    }
 
    protected InstantiateVAppTemplateOptions findOptionsInArgsOrNull(GeneratedHttpRequest gRequest) {
-      for (Object arg : gRequest.getArgs()) {
+      for (Object arg : gRequest.getInvocation().getArgs()) {
          if (arg instanceof InstantiateVAppTemplateOptions) {
             return (InstantiateVAppTemplateOptions) arg;
          } else if (arg instanceof InstantiateVAppTemplateOptions[]) {

@@ -49,6 +49,7 @@ import org.jclouds.openstack.keystone.v2_0.domain.Access;
 import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.openstack.swift.blobstore.functions.BlobToObject;
 import org.jclouds.openstack.swift.domain.SwiftObject;
+import org.jclouds.reflect.Invocation;
 import org.jclouds.rest.annotations.Credential;
 import org.jclouds.rest.annotations.Identity;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
@@ -61,9 +62,8 @@ import com.google.common.reflect.Invokable;
 import com.google.inject.Provider;
 
 /**
- * Signer for HP's variant of temporary signed URLs.  They prefix the signature
- * with the tenant id.
- *
+ * Signer for HP's variant of temporary signed URLs. They prefix the signature with the tenant id.
+ * 
  * @author Andrew Gaul
  */
 @Singleton
@@ -86,13 +86,11 @@ public class HPCloudObjectStorageBlobRequestSigner implements BlobRequestSigner 
    private final Invokable<?, ?> createMethod;
 
    @Inject
-   public HPCloudObjectStorageBlobRequestSigner(RestAnnotationProcessor.Factory processor, BlobToObject blobToObject,
-            BlobToHttpGetOptions blob2HttpGetOptions,
-            Crypto crypto, @TimeStamp Provider<Long> unixEpochTimestampProvider,
-            Supplier<Access> access,
-            @Identity String accessKey, @Credential String secretKey)
-            throws SecurityException, NoSuchMethodException {
-      this.processor = checkNotNull(processor, "processor").declaring(HPCloudObjectStorageAsyncApi.class);
+   public HPCloudObjectStorageBlobRequestSigner(RestAnnotationProcessor processor, BlobToObject blobToObject,
+         BlobToHttpGetOptions blob2HttpGetOptions, Crypto crypto, @TimeStamp Provider<Long> unixEpochTimestampProvider,
+         Supplier<Access> access, @Identity String accessKey, @Credential String secretKey) throws SecurityException,
+         NoSuchMethodException {
+      this.processor = checkNotNull(processor, "processor");
       this.crypto = checkNotNull(crypto, "crypto");
 
       this.unixEpochTimestampProvider = checkNotNull(unixEpochTimestampProvider, "unixEpochTimestampProvider");
@@ -104,10 +102,12 @@ public class HPCloudObjectStorageBlobRequestSigner implements BlobRequestSigner 
       this.blobToObject = checkNotNull(blobToObject, "blobToObject");
       this.blob2HttpGetOptions = checkNotNull(blob2HttpGetOptions, "blob2HttpGetOptions");
 
-      this.getMethod = Invokable.from(HPCloudObjectStorageAsyncApi.class.getMethod("getObject", String.class, String.class,
-               GetOptions[].class));
-      this.deleteMethod = Invokable.from(HPCloudObjectStorageAsyncApi.class.getMethod("removeObject", String.class, String.class));
-      this.createMethod = Invokable.from(HPCloudObjectStorageAsyncApi.class.getMethod("putObject", String.class, SwiftObject.class));
+      this.getMethod = Invokable.from(HPCloudObjectStorageAsyncApi.class.getMethod("getObject", String.class,
+            String.class, GetOptions[].class));
+      this.deleteMethod = Invokable.from(HPCloudObjectStorageAsyncApi.class.getMethod("removeObject", String.class,
+            String.class));
+      this.createMethod = Invokable.from(HPCloudObjectStorageAsyncApi.class.getMethod("putObject", String.class,
+            SwiftObject.class));
    }
 
    @PostConstruct
@@ -120,14 +120,16 @@ public class HPCloudObjectStorageBlobRequestSigner implements BlobRequestSigner 
    public HttpRequest signGetBlob(String container, String name) {
       checkNotNull(container, "container");
       checkNotNull(name, "name");
-      return cleanRequest(processor.createRequest(getMethod, ImmutableList.<Object> of(container, name)));
+      return cleanRequest(processor.apply(Invocation.create(HPCloudObjectStorageAsyncApi.class, getMethod,
+            ImmutableList.<Object> of(container, name))));
    }
 
    @Override
    public HttpRequest signGetBlob(String container, String name, long timeInSeconds) {
       checkNotNull(container, "container");
       checkNotNull(name, "name");
-      HttpRequest request = processor.createRequest(getMethod, ImmutableList.<Object> of(container, name));
+      HttpRequest request = processor.apply(Invocation.create(HPCloudObjectStorageAsyncApi.class, getMethod,
+            ImmutableList.<Object> of(container, name)));
       return cleanRequest(signForTemporaryAccess(request, timeInSeconds));
    }
 
@@ -135,24 +137,24 @@ public class HPCloudObjectStorageBlobRequestSigner implements BlobRequestSigner 
    public HttpRequest signGetBlob(String container, String name, org.jclouds.blobstore.options.GetOptions options) {
       checkNotNull(container, "container");
       checkNotNull(name, "name");
-      return cleanRequest(processor.createRequest(getMethod, ImmutableList.of(container, name, 
-            blob2HttpGetOptions.apply(checkNotNull(options, "options")))));
+      return cleanRequest(processor.apply(Invocation.create(HPCloudObjectStorageAsyncApi.class, getMethod,
+            ImmutableList.of(container, name, blob2HttpGetOptions.apply(checkNotNull(options, "options"))))));
    }
 
    @Override
    public HttpRequest signPutBlob(String container, Blob blob) {
       checkNotNull(container, "container");
       checkNotNull(blob, "blob");
-      return cleanRequest(processor.createRequest(createMethod,
-            ImmutableList.<Object> of(container, blobToObject.apply(blob))));
+      return cleanRequest(processor.apply(Invocation.create(HPCloudObjectStorageAsyncApi.class, createMethod,
+            ImmutableList.<Object> of(container, blobToObject.apply(blob)))));
    }
 
    @Override
    public HttpRequest signPutBlob(String container, Blob blob, long timeInSeconds) {
       checkNotNull(container, "container");
       checkNotNull(blob, "blob");
-      HttpRequest request = processor.createRequest(createMethod,
-            ImmutableList.<Object> of(container, blobToObject.apply(blob)));
+      HttpRequest request = processor.apply(Invocation.create(HPCloudObjectStorageAsyncApi.class, createMethod,
+            ImmutableList.<Object> of(container, blobToObject.apply(blob))));
       return cleanRequest(signForTemporaryAccess(request, timeInSeconds));
    }
 
@@ -160,7 +162,8 @@ public class HPCloudObjectStorageBlobRequestSigner implements BlobRequestSigner 
    public HttpRequest signRemoveBlob(String container, String name) {
       checkNotNull(container, "container");
       checkNotNull(name, "name");
-      return cleanRequest(processor.createRequest(deleteMethod, ImmutableList.<Object> of(container, name)));
+      return cleanRequest(processor.apply(Invocation.create(HPCloudObjectStorageAsyncApi.class, deleteMethod,
+            ImmutableList.<Object> of(container, name))));
    }
 
    private HttpRequest signForTemporaryAccess(HttpRequest request, long timeInSeconds) {

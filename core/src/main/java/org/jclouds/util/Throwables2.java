@@ -33,7 +33,6 @@ import org.jclouds.rest.ResourceNotFoundException;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
-import com.google.common.base.Throwables;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.CreationException;
 import com.google.inject.ProvisionException;
@@ -119,32 +118,6 @@ public class Throwables2 {
       return null;
    }
 
-   // Note this needs to be kept up-to-date with all top-level exceptions jclouds works against
-   @SuppressWarnings( { "unchecked", "rawtypes" })
-   public static Exception returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(Iterable<TypeToken<? extends Throwable>> throwables,
-            Exception exception) throws Exception {
-      for (TypeToken<? extends Throwable> type : throwables) {
-         Throwable throwable = getFirstThrowableOfType(exception, (Class<Throwable>) type.getRawType());
-         if (throwable != null) {
-            return (Exception) throwable;
-         }
-      }
-      for (Class<Exception> propagatableExceptionType : new Class[] { IllegalStateException.class,
-               AssertionError.class, UnsupportedOperationException.class, IllegalArgumentException.class,
-               AuthorizationException.class, ResourceNotFoundException.class, InsufficientResourcesException.class,
-               HttpResponseException.class }) {
-         Throwable throwable = getFirstThrowableOfType(exception, propagatableExceptionType);
-         if (throwable != null) {
-            if (throwable instanceof AssertionError)
-               throw (AssertionError) throwable;
-            else
-               throw (Exception) throwable;
-         }
-      }
-      Throwables.propagateIfPossible(exception.getCause(), Exception.class);
-      throw exception;
-   }
-
    public static <T> T propagateAuthorizationOrOriginalException(Exception e) {
       AuthorizationException aex = getFirstThrowableOfType(e, AuthorizationException.class);
       if (aex != null)
@@ -154,4 +127,24 @@ public class Throwables2 {
       return null;
    }
 
+   // Note this needs to be kept up-to-date with all top-level exceptions jclouds works against
+   @SuppressWarnings("unchecked")
+   public static void propagateIfPossible(Throwable exception, Iterable<TypeToken<? extends Throwable>> throwables)
+         throws Throwable {
+      for (TypeToken<? extends Throwable> type : throwables) {
+         Throwable throwable = Throwables2.getFirstThrowableOfType(exception, (Class<Throwable>) type.getRawType());
+         if (throwable != null) {
+            throw throwable;
+         }
+      }
+      for (Class<Exception> propagatableExceptionType : new Class[] { IllegalStateException.class,
+            AssertionError.class, UnsupportedOperationException.class, IllegalArgumentException.class,
+            AuthorizationException.class, ResourceNotFoundException.class, InsufficientResourcesException.class,
+            HttpResponseException.class }) {
+         Throwable throwable = Throwables2.getFirstThrowableOfType(exception, propagatableExceptionType);
+         if (throwable != null) {
+            throw throwable;
+         }
+      }
+   }
 }

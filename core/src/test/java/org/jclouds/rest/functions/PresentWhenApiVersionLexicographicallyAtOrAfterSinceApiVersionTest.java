@@ -25,7 +25,8 @@ import static org.testng.Assert.assertTrue;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-import org.jclouds.internal.ClassInvokerArgsAndReturnVal;
+import org.jclouds.reflect.Invocation;
+import org.jclouds.reflect.InvocationSuccess;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.SinceApiVersion;
 import org.jclouds.rest.functions.PresentWhenApiVersionLexicographicallyAtOrAfterSinceApiVersion.Loader;
@@ -122,7 +123,7 @@ public class PresentWhenApiVersionLexicographicallyAtOrAfterSinceApiVersionTest 
    }
 
    public void testCacheIsFasterWhenNoAnnotationPresent() {
-      ClassInvokerArgsAndReturnVal keyPairApi = getKeyPairApi();
+      InvocationSuccess keyPairApi = getKeyPairApi();
       ImplicitOptionalConverter fn = forApiVersion("2011-07-15");
       Stopwatch watch = new Stopwatch().start();
       fn.apply(keyPairApi);
@@ -136,7 +137,7 @@ public class PresentWhenApiVersionLexicographicallyAtOrAfterSinceApiVersionTest 
    }
 
    public void testCacheIsFasterWhenAnnotationPresent() {
-      ClassInvokerArgsAndReturnVal floatingIpApi = getKeyPairApi();
+      InvocationSuccess floatingIpApi = getKeyPairApi();
       ImplicitOptionalConverter fn = forApiVersion("2011-07-15");
       Stopwatch watch = new Stopwatch().start();
       fn.apply(floatingIpApi);
@@ -150,23 +151,23 @@ public class PresentWhenApiVersionLexicographicallyAtOrAfterSinceApiVersionTest 
 
    }
 
-   ClassInvokerArgsAndReturnVal getFloatingIPApi() {
+   InvocationSuccess getFloatingIPApi() {
       return getApi("Tag", TagAsyncApi.class);
    }
 
-   ClassInvokerArgsAndReturnVal getKeyPairApi() {
+   InvocationSuccess getKeyPairApi() {
       return getApi("KeyPair", KeyPairAsyncApi.class);
    }
 
-   ClassInvokerArgsAndReturnVal getVpcApi() {
+   InvocationSuccess getVpcApi() {
       return getApi("Vpc", VpcAsyncApi.class);
    }
 
-   ClassInvokerArgsAndReturnVal getApi(String name, Class<?> type) {
+   InvocationSuccess getApi(String name, Class<?> target) {
       try {
-         return ClassInvokerArgsAndReturnVal.builder().clazz(type)
-               .invoker(Invokable.from(EC2AsyncApi.class.getDeclaredMethod("get" + name + "ApiForRegion", String.class)))
-               .args(ImmutableList.<Object> of("region")).returnVal("present").build();
+         return InvocationSuccess.create(Invocation.create(
+               Invokable.from(EC2AsyncApi.class.getDeclaredMethod("get" + name + "ApiForRegion", String.class)),
+               ImmutableList.<Object> of("region")), "present");
       } catch (Exception e) {
          throw propagate(e);
       }
