@@ -20,7 +20,7 @@
 package org.jclouds.googlecompute.parse;
 
 import org.jclouds.date.internal.SimpleDateFormatDateService;
-import org.jclouds.googlecompute.domain.Disk;
+import org.jclouds.googlecompute.domain.Kernel;
 import org.jclouds.googlecompute.internal.BaseGoogleComputeParseTest;
 import org.testng.annotations.Test;
 
@@ -32,24 +32,22 @@ import java.net.URI;
  * @author David Alves
  */
 @Test(groups = "unit")
-public class ParseDiskTest extends BaseGoogleComputeParseTest<Disk> {
+public class ParseKernelTest extends BaseGoogleComputeParseTest<Kernel> {
 
    @Override
    public String resource() {
-      return "/disk_get.json";
+      return "/kernel.json";
    }
 
    @Override
    @Consumes(MediaType.APPLICATION_JSON)
-   public Disk expected() {
-      return Disk.builder()
-              .id("13050421646334304115")
-              .creationTimestamp(new SimpleDateFormatDateService().iso8601DateParse("2012-11-25T01:38:48.306"))
-              .selfLink(URI.create("https://www.googleapis.com/compute/v1beta13/projects/myproject/disks/testimage1"))
-              .name("testimage1")
-              .sizeGb(1)
-              .zone(URI.create("https://www.googleapis.com/compute/v1beta13/projects/myproject/zones/us-central1-a"))
-              .status("READY")
+   public Kernel expected() {
+      return Kernel.builder()
+              .id("12941177846308850718")
+              .creationTimestamp(new SimpleDateFormatDateService().iso8601DateParse("2012-07-16T21:42:16.950"))
+              .selfLink(URI.create("https://www.googleapis.com/compute/v1beta13/projects/google/kernels/gce-20110524"))
+              .name("gce-20110524")
+              .description("DEPRECATED. Created Tue, 24 May 2011 00:48:22 +0000")
               .build();
    }
 }
