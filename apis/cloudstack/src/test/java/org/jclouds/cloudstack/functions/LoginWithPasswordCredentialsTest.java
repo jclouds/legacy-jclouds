@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.cloudstack.loaders;
+package org.jclouds.cloudstack.functions;
 
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.createMock;
@@ -47,7 +47,7 @@ public class LoginWithPasswordCredentialsTest {
       LoginWithPasswordCredentials obj = new LoginWithPasswordCredentials(client);
       Credentials cred = new Credentials("Test/Domain/User", "koffiedik");
 
-      obj.load(cred);
+      obj.apply(cred);
    }
 
    @Test
@@ -61,7 +61,7 @@ public class LoginWithPasswordCredentialsTest {
       LoginWithPasswordCredentials obj = new LoginWithPasswordCredentials(client);
       Credentials cred = new Credentials("Domain/User", "koffiedik");
 
-      obj.load(cred);
+      obj.apply(cred);
    }
 
    @Test
@@ -75,6 +75,6 @@ public class LoginWithPasswordCredentialsTest {
        LoginWithPasswordCredentials obj = new LoginWithPasswordCredentials(client);
        Credentials cred = new Credentials("User", "koffiedik");
 
-       obj.load(cred);
+       obj.apply(cred);
    }
 }
