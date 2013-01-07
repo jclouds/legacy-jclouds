@@ -51,7 +51,7 @@ public class BindAddNodeServiceToXmlPayloadTest {
       @Override
       protected void configure() {
          bindConstant().annotatedWith(Names.named(PROPERTY_TERREMARK_EXTENSION_NS)).to(
-                  "urn:tmrk:vCloudExpressExtensions-1.6");
+               "urn:tmrk:vCloudExpressExtensions-1.6");
       }
 
       @Singleton
@@ -64,11 +64,9 @@ public class BindAddNodeServiceToXmlPayloadTest {
    });
 
    public void testApplyInputStream() throws IOException {
-      String expected = Strings2.toStringAndClose(getClass().getResourceAsStream(
-               "/CreateNodeService-test.xml"));
+      String expected = Strings2.toStringAndClose(getClass().getResourceAsStream("/CreateNodeService-test.xml"));
       HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://test").build();
-      BindAddNodeServiceToXmlPayload binder = injector
-               .getInstance(BindAddNodeServiceToXmlPayload.class);
+      BindAddNodeServiceToXmlPayload binder = injector.getInstance(BindAddNodeServiceToXmlPayload.class);
 
       Map<String, Object> map = Maps.newHashMap();
       map.put("name", "Node for Jim");
@@ -76,8 +74,6 @@ public class BindAddNodeServiceToXmlPayloadTest {
       map.put("port", "80");
       map.put("enabled", "false");
       map.put("description", "Some test node");
-      binder.bindToRequest(request, map);
-      assertEquals(request.getPayload().getRawContent(), expected);
-
+      assertEquals(binder.bindToRequest(request, map).getPayload().getRawContent(), expected);
    }
 }

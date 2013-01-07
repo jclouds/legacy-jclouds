@@ -18,9 +18,7 @@
  */
 package org.jclouds.aws.ec2.xml;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
+import static com.google.common.collect.Iterables.getOnlyElement;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
@@ -28,11 +26,7 @@ import java.io.InputStream;
 import org.jclouds.aws.ec2.domain.PlacementGroup;
 import org.jclouds.ec2.xml.BaseEC2HandlerTest;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
 
 /**
  * Tests behavior of {@code DescribePlacementGroupsResponseHandler}
@@ -50,15 +44,12 @@ public class DescribePlacementGroupsResponseHandlerTest extends BaseEC2HandlerTe
       DescribePlacementGroupsResponseHandler handler = injector
                .getInstance(DescribePlacementGroupsResponseHandler.class);
       addDefaultRegionToHandler(handler);
-      PlacementGroup result = Iterables.getOnlyElement(factory.create(handler).parse(is));
+      PlacementGroup result = getOnlyElement(factory.create(handler).parse(is));
 
       assertEquals(result, expected);
    }
 
    private void addDefaultRegionToHandler(ParseSax.HandlerWithResult<?> handler) {
-      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
-      expect(request.getArgs()).andReturn(ImmutableList.<Object>of());
-      replay(request);
       handler.setContext(request);
    }
 }

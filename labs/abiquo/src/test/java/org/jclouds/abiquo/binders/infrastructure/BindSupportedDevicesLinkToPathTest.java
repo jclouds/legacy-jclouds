@@ -26,6 +26,7 @@ import java.net.URI;
 import javax.ws.rs.HttpMethod;
 
 import org.jclouds.abiquo.features.InfrastructureAsyncApi;
+import org.jclouds.reflect.Invocation;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
@@ -62,8 +63,9 @@ public class BindSupportedDevicesLinkToPathTest {
       Invokable<?, ?> withEndpointLink = Invokable.from(InfrastructureAsyncApi.class.getMethod(
             "listSupportedStorageDevices", DatacenterDto.class));
 
-      GeneratedHttpRequest request = GeneratedHttpRequest.builder().declaring(InfrastructureAsyncApi.class)
-            .invoker(withEndpointLink).args(ImmutableList.<Object> of(datacenter)).method(HttpMethod.GET)
+      GeneratedHttpRequest request = GeneratedHttpRequest.builder()
+            .invocation(Invocation.create(withEndpointLink, ImmutableList.<Object> of(datacenter)))
+            .method(HttpMethod.GET)
             .endpoint(URI.create("http://foo/bar")).build();
 
       assertEquals(binder.getNewEndpoint(request, datacenter), "http://foo/bar/action/supported");
@@ -78,8 +80,9 @@ public class BindSupportedDevicesLinkToPathTest {
       Invokable<?, ?> withEndpointLink = Invokable.from(InfrastructureAsyncApi.class.getMethod(
             "listSupportedStorageDevices", DatacenterDto.class));
 
-      GeneratedHttpRequest request = GeneratedHttpRequest.builder().declaring(InfrastructureAsyncApi.class)
-            .invoker(withEndpointLink).args(ImmutableList.<Object> of(datacenter)).method(HttpMethod.GET)
+      GeneratedHttpRequest request = GeneratedHttpRequest.builder()
+            .invocation(Invocation.create(withEndpointLink, ImmutableList.<Object> of(datacenter)))
+            .method(HttpMethod.GET)
             .endpoint(URI.create("http://foo/bar")).build();
 
       assertEquals(binder.getNewEndpoint(request, datacenter), "http://foo/bar/action/supported");

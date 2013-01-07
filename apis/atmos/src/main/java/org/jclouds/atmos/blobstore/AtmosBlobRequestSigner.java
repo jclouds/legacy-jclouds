@@ -33,6 +33,7 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.options.GetOptions;
+import org.jclouds.reflect.Invocation;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 
 import com.google.common.collect.ImmutableList;
@@ -53,9 +54,9 @@ public class AtmosBlobRequestSigner implements BlobRequestSigner {
    private final Invokable<?, ?> createMethod;
 
    @Inject
-   public AtmosBlobRequestSigner(RestAnnotationProcessor.Factory processor, BlobToObject blobToObject,
+   public AtmosBlobRequestSigner(RestAnnotationProcessor processor, BlobToObject blobToObject,
          BlobToHttpGetOptions blob2ObjectGetOptions) throws SecurityException, NoSuchMethodException {
-      this.processor = checkNotNull(processor, "processor").declaring(AtmosAsyncClient.class);
+      this.processor = checkNotNull(processor, "processor");
       this.blobToObject = checkNotNull(blobToObject, "blobToObject");
       this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
       this.getMethod = Invokable.from(AtmosAsyncClient.class.getMethod("readFile", String.class, GetOptions[].class));
@@ -68,7 +69,8 @@ public class AtmosBlobRequestSigner implements BlobRequestSigner {
    public HttpRequest signGetBlob(String container, String name) {
       checkNotNull(container, "container");
       checkNotNull(name, "name");
-      return cleanRequest(processor.createRequest(getMethod, ImmutableList.<Object> of(getPath(container, name))));
+      return cleanRequest(processor.apply(Invocation.create(getMethod,
+            ImmutableList.<Object> of(getPath(container, name)))));
    }
 
    @Override
@@ -80,8 +82,8 @@ public class AtmosBlobRequestSigner implements BlobRequestSigner {
    public HttpRequest signPutBlob(String container, Blob blob) {
       checkNotNull(container, "container");
       checkNotNull(blob, "blob");
-      return cleanRequest(processor.createRequest(createMethod,
-            ImmutableList.<Object> of(container, blobToObject.apply(blob))));
+      return cleanRequest(processor.apply(Invocation.create(createMethod,
+            ImmutableList.<Object> of(container, blobToObject.apply(blob)))));
    }
 
    @Override
@@ -93,7 +95,8 @@ public class AtmosBlobRequestSigner implements BlobRequestSigner {
    public HttpRequest signRemoveBlob(String container, String name) {
       checkNotNull(container, "container");
       checkNotNull(name, "name");
-      return cleanRequest(processor.createRequest(deleteMethod, ImmutableList.<Object> of(getPath(container, name))));
+      return cleanRequest(processor.apply(Invocation.create(deleteMethod,
+            ImmutableList.<Object> of(getPath(container, name)))));
    }
 
    private String getPath(String container, String name) {
@@ -104,8 +107,8 @@ public class AtmosBlobRequestSigner implements BlobRequestSigner {
    public HttpRequest signGetBlob(String container, String name, org.jclouds.blobstore.options.GetOptions options) {
       checkNotNull(container, "container");
       checkNotNull(name, "name");
-      return cleanRequest(processor.createRequest(getMethod,
-            ImmutableList.of(getPath(container, name), blob2ObjectGetOptions.apply(checkNotNull(options, "options")))));
+      return cleanRequest(processor.apply(Invocation.create(getMethod,
+            ImmutableList.of(getPath(container, name), blob2ObjectGetOptions.apply(checkNotNull(options, "options"))))));
    }
 
 }

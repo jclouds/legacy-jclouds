@@ -29,6 +29,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.abiquo.rest.annotations.EndpointLink;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.reflect.Invocation;
 import org.jclouds.rest.binders.BindException;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
@@ -60,8 +61,9 @@ public class BindToPathTest {
    @Test(expectedExceptions = NullPointerException.class)
    public void testInvalidNullInput() throws SecurityException, NoSuchMethodException {
       Invokable<?, ?> withEndpointLink = Invokable.from(TestEndpointLink.class.getMethod("withEndpointLink", TestDto.class));
-      GeneratedHttpRequest request = GeneratedHttpRequest.builder().declaring(TestEndpointLink.class)
-            .invoker(withEndpointLink).args(ImmutableList.<Object> of(new TestDto())).method(HttpMethod.GET)
+      GeneratedHttpRequest request = GeneratedHttpRequest.builder()
+            .invocation(Invocation.create(withEndpointLink, ImmutableList.<Object> of(new TestDto())))
+            .method(HttpMethod.GET)
             .endpoint(URI.create("http://localhost")).build();
 
       BindToPath binder = new BindToPath();
@@ -71,8 +73,9 @@ public class BindToPathTest {
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testInvalidInputType() throws SecurityException, NoSuchMethodException {
       Invokable<?, ?> withEndpointLink = Invokable.from(TestEndpointLink.class.getMethod("withEndpointLink", TestDto.class));
-      GeneratedHttpRequest request = GeneratedHttpRequest.builder().declaring(TestEndpointLink.class)
-            .invoker(withEndpointLink).args(ImmutableList.<Object> of(new TestDto())).method(HttpMethod.GET)
+      GeneratedHttpRequest request = GeneratedHttpRequest.builder()
+            .invocation(Invocation.create(withEndpointLink, ImmutableList.<Object> of(new TestDto())))
+            .method(HttpMethod.GET)
             .endpoint(URI.create("http://localhost")).build();
 
       BindToPath binder = new BindToPath();
@@ -83,8 +86,9 @@ public class BindToPathTest {
    public void testAnnotationNotPresent() throws SecurityException, NoSuchMethodException {
       TestDto dto = new TestDto();
       Invokable<?, ?> withoutEndpointLink = Invokable.from(TestEndpointLink.class.getMethod("withoutEndpointLink", TestDto.class));
-      GeneratedHttpRequest request = GeneratedHttpRequest.builder().declaring(TestEndpointLink.class)
-            .invoker(withoutEndpointLink).args(ImmutableList.<Object> of(dto)).method(HttpMethod.GET)
+      GeneratedHttpRequest request = GeneratedHttpRequest.builder()
+            .invocation(Invocation.create(withoutEndpointLink, ImmutableList.<Object> of(dto)))
+            .method(HttpMethod.GET)
             .endpoint(URI.create("http://localhost")).build();
 
       BindToPath binder = new BindToPath();
@@ -95,8 +99,9 @@ public class BindToPathTest {
    public void testLinkNotPresent() throws SecurityException, NoSuchMethodException {
       TestDto dto = new TestDto();
       Invokable<?, ?> withUnexistingLink = Invokable.from(TestEndpointLink.class.getMethod("withUnexistingLink", TestDto.class));
-      GeneratedHttpRequest request = GeneratedHttpRequest.builder().declaring(TestEndpointLink.class)
-            .invoker(withUnexistingLink).args(ImmutableList.<Object> of(dto)).method(HttpMethod.GET)
+      GeneratedHttpRequest request = GeneratedHttpRequest.builder()
+            .invocation(Invocation.create(withUnexistingLink, ImmutableList.<Object> of(dto)))
+            .method(HttpMethod.GET)
             .endpoint(URI.create("http://localhost")).build();
 
       BindToPath binder = new BindToPath();
@@ -106,8 +111,9 @@ public class BindToPathTest {
    public void testBindWithoutParameters() throws SecurityException, NoSuchMethodException {
       TestDto dto = new TestDto();
       Invokable<?, ?> withEndpointLink = Invokable.from(TestEndpointLink.class.getMethod("withEndpointLink", TestDto.class));
-      GeneratedHttpRequest request = GeneratedHttpRequest.builder().declaring(TestEndpointLink.class)
-            .invoker(withEndpointLink).args(ImmutableList.<Object> of(dto)).method(HttpMethod.GET)
+      GeneratedHttpRequest request = GeneratedHttpRequest.builder()
+            .invocation(Invocation.create(withEndpointLink, ImmutableList.<Object> of(dto)))
+            .method(HttpMethod.GET)
             .endpoint(URI.create("http://localhost")).build();
 
       BindToPath binder = new BindToPath();
@@ -118,8 +124,9 @@ public class BindToPathTest {
    public void testBindWithQueryParameters() throws SecurityException, NoSuchMethodException {
       TestDto dto = new TestDto();
       Invokable<?, ?> withEndpointLink = Invokable.from(TestEndpointLink.class.getMethod("withEndpointLink", TestDto.class));
-      GeneratedHttpRequest request = GeneratedHttpRequest.builder().declaring(TestEndpointLink.class)
-            .invoker(withEndpointLink).args(ImmutableList.<Object> of(dto)).method(HttpMethod.GET)
+      GeneratedHttpRequest request = GeneratedHttpRequest.builder()
+            .invocation(Invocation.create(withEndpointLink, ImmutableList.<Object> of(dto)))
+            .method(HttpMethod.GET)
             .endpoint(URI.create("http://localhost?param=value")).build();
 
       BindToPath binder = new BindToPath();

@@ -18,17 +18,14 @@
  */
 package org.jclouds.trmk.vcloud_0_8.xml;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 
 import java.io.InputStream;
 import java.net.URI;
 import java.net.UnknownHostException;
 
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.trmk.vcloud_0_8.domain.KeyPair;
 import org.testng.annotations.Test;
 
@@ -59,15 +56,11 @@ public class KeyPairByNameHandlerTest extends BaseHandlerTest {
 
       KeyPair result = factory.create(
             addOrgAndNameToHandler(injector.getInstance(KeyPairByNameHandler.class), "org", "monster")).parse(is);
-      assertEquals(result, null);
-
+      assertNull(result);
    }
 
-   private static KeyPairByNameHandler addOrgAndNameToHandler(KeyPairByNameHandler handler, String org, String name) {
-      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
-      expect(request.getArgs()).andReturn(ImmutableList.<Object> of(org, name)).anyTimes();
-      replay(request);
-      handler.setContext(request);
+   private KeyPairByNameHandler addOrgAndNameToHandler(KeyPairByNameHandler handler, String org, String name) {
+      handler.setContext(requestForArgs(ImmutableList.<Object> of(org, name)));
       return handler;
    }
 }

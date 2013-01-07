@@ -20,6 +20,8 @@ package org.jclouds.openstack.nova.v2_0.binders;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Predicates.instanceOf;
+import static com.google.common.collect.Iterables.find;
 
 import java.util.Map;
 
@@ -33,9 +35,7 @@ import org.jclouds.rest.MapBinder;
 import org.jclouds.rest.binders.BindToJsonPayload;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 
-import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.ImmutableMap.Builder;
 
 /**
@@ -63,7 +63,7 @@ public class BindSecurityGroupRuleToJsonPayload extends BindToJsonPayload implem
                "this binder is only valid for GeneratedHttpRequests!");
       GeneratedHttpRequest gRequest = (GeneratedHttpRequest) request;
 
-      Ingress ingress = Ingress.class.cast(Iterables.find(gRequest.getArgs(), Predicates.instanceOf(Ingress.class)));
+      Ingress ingress = Ingress.class.cast(find(gRequest.getInvocation().getArgs(), instanceOf(Ingress.class)));
       payload.put("ip_protocol", ingress.getIpProtocol().toString());
       payload.put("from_port", ingress.getFromPort() + "");
       payload.put("to_port", ingress.getToPort() + "");

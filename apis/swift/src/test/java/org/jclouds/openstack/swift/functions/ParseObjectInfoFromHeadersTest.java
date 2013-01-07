@@ -18,25 +18,14 @@
  */
 package org.jclouds.openstack.swift.functions;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
 import static org.testng.Assert.assertNotNull;
 
-import java.net.URI;
-
-import org.jclouds.Constants;
-import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.swift.domain.MutableObjectInfoWithMetadata;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
+import org.jclouds.openstack.swift.internal.BasePayloadTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.name.Names;
 
 /**
  * Tests behavior of {@code ParseContainerListFromJsonResponse}
@@ -44,26 +33,13 @@ import com.google.inject.name.Names;
  * @author Adrian Cole
  */
 @Test(groups = "unit")
-public class ParseObjectInfoFromHeadersTest {
-
-   Injector i = Guice.createInjector(new AbstractModule() {
-
-      @Override
-      protected void configure() {
-         bindConstant().annotatedWith(Names.named(BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX)).to("sdf");
-         bindConstant().annotatedWith(Names.named(Constants.PROPERTY_API_VERSION)).to("1");
-      }
-
-   });
+public class ParseObjectInfoFromHeadersTest extends BasePayloadTest {
 
    public void testEtagCaseIssue() {
       ParseObjectInfoFromHeaders parser = i.getInstance(ParseObjectInfoFromHeaders.class);
-      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
-      expect(request.getArgs()).andReturn(ImmutableList.<Object> of("container", "key")).atLeastOnce();
+      
+      parser.setContext(requestForArgs(ImmutableList.<Object> of("container", "key")));
 
-      expect(request.getEndpoint()).andReturn(URI.create("http://localhost/test")).atLeastOnce();
-      replay(request);
-      parser.setContext(request);
       HttpResponse response = HttpResponse.builder().statusCode(200).message("ok").payload("")
                                           .addHeader("Last-Modified", "Fri, 12 Jun 2007 13:40:18 GMT")
                                           .addHeader("Content-Length", "0")

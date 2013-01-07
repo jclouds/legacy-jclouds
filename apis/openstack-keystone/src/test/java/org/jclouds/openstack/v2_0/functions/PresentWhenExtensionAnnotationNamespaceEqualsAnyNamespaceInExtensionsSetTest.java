@@ -3,12 +3,14 @@ package org.jclouds.openstack.v2_0.functions;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Set;
 
 import org.jclouds.date.internal.SimpleDateFormatDateService;
-import org.jclouds.internal.ClassInvokerArgsAndReturnVal;
 import org.jclouds.openstack.v2_0.ServiceType;
 import org.jclouds.openstack.v2_0.domain.Extension;
+import org.jclouds.reflect.Invocation;
+import org.jclouds.reflect.InvocationSuccess;
 import org.jclouds.rest.annotations.Delegate;
 import org.testng.annotations.Test;
 
@@ -63,34 +65,31 @@ public class PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensio
 
    }
 
-   ClassInvokerArgsAndReturnVal getFloatingIPExtension() throws SecurityException, NoSuchMethodException {
-      return ClassInvokerArgsAndReturnVal
-            .builder()
-            .clazz(FloatingIPAsyncApi.class)
-            .invoker(
-                  Invokable.from(NovaAsyncApi.class.getDeclaredMethod("getFloatingIPExtensionForZone", String.class)))
-            .args(ImmutableList.<Object> of("zone")).returnVal("foo").build();
+   InvocationSuccess getFloatingIPExtension(List<Object> args) throws SecurityException, NoSuchMethodException {
+      return InvocationSuccess.create(Invocation.create(
+            Invokable.from(NovaAsyncApi.class.getDeclaredMethod("getFloatingIPExtensionForZone", String.class)),
+            args), "foo");
    }
 
-   ClassInvokerArgsAndReturnVal getKeyPairExtension() throws SecurityException, NoSuchMethodException {
-      return ClassInvokerArgsAndReturnVal.builder().clazz(KeyPairAsyncApi.class)
-            .invoker(Invokable.from(NovaAsyncApi.class.getDeclaredMethod("getKeyPairExtensionForZone", String.class)))
-            .args(ImmutableList.<Object> of("zone")).returnVal("foo").build();
+   InvocationSuccess getKeyPairExtension(List<Object> args) throws SecurityException, NoSuchMethodException {
+      return InvocationSuccess.create(Invocation.create(
+            Invokable.from(NovaAsyncApi.class.getDeclaredMethod("getKeyPairExtensionForZone", String.class)),
+            args), "foo");
    }
 
    public void testPresentWhenExtensionsIncludeNamespaceFromAnnotationAbsentWhenNot() throws SecurityException, NoSuchMethodException {
 
-      assertEquals(whenExtensionsInZoneInclude("zone", keypairs, floatingIps).apply(getFloatingIPExtension()), Optional.of("foo"));
-      assertEquals(whenExtensionsInZoneInclude("zone", keypairs, floatingIps).apply(getKeyPairExtension()), Optional.of("foo"));
-      assertEquals(whenExtensionsInZoneInclude("zone", keypairs).apply(getFloatingIPExtension()), Optional.absent());
-      assertEquals(whenExtensionsInZoneInclude("zone", floatingIps).apply(getKeyPairExtension()), Optional.absent());
+      assertEquals(whenExtensionsInZoneInclude("zone", keypairs, floatingIps).apply(getFloatingIPExtension(ImmutableList.<Object> of("zone"))), Optional.of("foo"));
+      assertEquals(whenExtensionsInZoneInclude("zone", keypairs, floatingIps).apply(getKeyPairExtension(ImmutableList.<Object> of("zone"))), Optional.of("foo"));
+      assertEquals(whenExtensionsInZoneInclude("zone", keypairs).apply(getFloatingIPExtension(ImmutableList.<Object> of("zone"))), Optional.absent());
+      assertEquals(whenExtensionsInZoneInclude("zone", floatingIps).apply(getKeyPairExtension(ImmutableList.<Object> of("zone"))), Optional.absent());
    }
    
    public void testZoneWithoutExtensionsReturnsAbsent() throws SecurityException, NoSuchMethodException {
       assertEquals(whenExtensionsInZoneInclude("zone", floatingIps).apply(
-               getFloatingIPExtension().toBuilder().args(ImmutableList.<Object> of("differentzone")).build()), Optional.absent());
+               getFloatingIPExtension(ImmutableList.<Object> of("differentzone"))), Optional.absent());
       assertEquals(whenExtensionsInZoneInclude("zone", keypairs).apply(
-               getKeyPairExtension().toBuilder().args(ImmutableList.<Object> of("differentzone")).build()), Optional.absent());
+               getKeyPairExtension(ImmutableList.<Object> of("differentzone"))), Optional.absent());
    }
 
    /**
@@ -107,9 +106,9 @@ public class PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensio
                .getNamespace());
 
       assertEquals(whenExtensionsAndAliasesInZoneInclude("zone", ImmutableSet.of(keypairsWithDifferentNamespace), aliases).apply(
-              getKeyPairExtension()), Optional.of("foo"));
+              getKeyPairExtension(ImmutableList.<Object> of("zone"))), Optional.of("foo"));
       assertEquals(whenExtensionsAndAliasesInZoneInclude("zone", ImmutableSet.of(keypairsWithDifferentNamespace), aliases).apply(
-              getFloatingIPExtension()), Optional.absent());
+              getFloatingIPExtension(ImmutableList.<Object> of("zone"))), Optional.absent());
 
    }
 

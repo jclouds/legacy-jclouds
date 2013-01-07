@@ -18,7 +18,7 @@
  */
 package org.jclouds.rest.functions;
 
-import org.jclouds.internal.ClassInvokerArgsAndReturnVal;
+import org.jclouds.reflect.InvocationSuccess;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
@@ -31,8 +31,8 @@ import com.google.common.base.Optional;
 public class AlwaysPresentImplicitOptionalConverter implements ImplicitOptionalConverter {
 
    @Override
-   public Optional<Object> apply(ClassInvokerArgsAndReturnVal input) {
-      return Optional.of(input.getReturnVal());
+   public Optional<Object> apply(InvocationSuccess input) {
+      return input.getResult();
    }
 
 }

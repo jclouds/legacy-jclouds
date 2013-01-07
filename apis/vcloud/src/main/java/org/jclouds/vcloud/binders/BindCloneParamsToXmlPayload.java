@@ -20,7 +20,6 @@ package org.jclouds.vcloud.binders;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_NAMESPACE;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_SCHEMA;
 
@@ -69,7 +68,6 @@ public abstract class BindCloneParamsToXmlPayload<O extends CloneOptions> implem
       checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest,
                "this binder is only valid for GeneratedHttpRequests!");
       GeneratedHttpRequest gRequest = (GeneratedHttpRequest) request;
-      checkState(gRequest.getArgs() != null, "args should be initialized at this point");
       String name = checkNotNull(postParams.get("name"), "name").toString();
       String source = checkNotNull(postParams.get("Source"), "Source").toString();
       boolean isSourceDelete = Boolean.parseBoolean((String) postParams.get("IsSourceDelete"));
@@ -110,7 +108,7 @@ public abstract class BindCloneParamsToXmlPayload<O extends CloneOptions> implem
 
    @SuppressWarnings("unchecked")
    protected O findOptionsInArgsOrNew(GeneratedHttpRequest gRequest) {
-      for (Object arg : gRequest.getArgs()) {
+      for (Object arg : gRequest.getInvocation().getArgs()) {
          if (getOptionClass().isInstance(arg)) {
             return (O) arg;
          } else if (arg.getClass().isArray()) {

@@ -36,7 +36,7 @@ import com.jamesmurty.utils.XMLBuilder;
 public class BindVMSpecToXmlPayload extends BaseBindVMSpecToXmlPayload<VMSpec> {
 
    protected VMSpec findSpecInArgsOrNull(GeneratedHttpRequest gRequest) {
-      for (Object arg : gRequest.getArgs()) {
+      for (Object arg : gRequest.getInvocation().getArgs()) {
          if (arg instanceof VMSpec) {
             return VMSpec.class.cast(arg);
          }

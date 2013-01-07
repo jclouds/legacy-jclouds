@@ -25,6 +25,7 @@ import java.io.File;
 import javax.ws.rs.PathParam;
 
 import org.jclouds.http.HttpRequest;
+import org.jclouds.reflect.Invocation;
 import org.jclouds.rest.annotations.Payload;
 import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
@@ -55,7 +56,7 @@ public class BindMapToStringPayloadTest {
    public void testCorrect() throws SecurityException, NoSuchMethodException {
       Invokable<?, Object> testPayload = Invokable.from(TestPayload.class.getMethod("testPayload", String.class));
       GeneratedHttpRequest request = GeneratedHttpRequest.builder()
-            .declaring(TestPayload.class).invoker(testPayload).args(ImmutableList.<Object> of("robot"))
+            .invocation(Invocation.create(testPayload, ImmutableList.<Object> of("robot")))
             .method("POST").endpoint("http://localhost").build();
 
       GeneratedHttpRequest newRequest = binder()
@@ -69,7 +70,7 @@ public class BindMapToStringPayloadTest {
    public void testDecodes() throws SecurityException, NoSuchMethodException {
       Invokable<?, Object> testPayload = Invokable.from(TestPayload.class.getMethod("changeAdminPass", String.class));
       GeneratedHttpRequest request = GeneratedHttpRequest.builder()
-            .declaring(TestPayload.class).invoker(testPayload).args(ImmutableList.<Object> of("foo"))
+            .invocation(Invocation.create(testPayload, ImmutableList.<Object> of("foo")))
             .method("POST").endpoint("http://localhost").build();
 
       GeneratedHttpRequest newRequest = binder()
@@ -83,7 +84,7 @@ public class BindMapToStringPayloadTest {
    public void testMustHavePayloadAnnotation() throws SecurityException, NoSuchMethodException {
       Invokable<?, Object> noPayload = Invokable.from(TestPayload.class.getMethod("noPayload", String.class));
       GeneratedHttpRequest request = GeneratedHttpRequest.builder()
-            .declaring(TestPayload.class).invoker(noPayload).args(ImmutableList.<Object> of("robot"))
+            .invocation(Invocation.create(noPayload, ImmutableList.<Object> of("robot")))
             .method("POST").endpoint("http://localhost").build();
       binder().bindToRequest(request, ImmutableMap.<String,Object>of("fooble", "robot"));
    }

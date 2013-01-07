@@ -54,7 +54,7 @@ public class BindToXMLPayloadAndPath extends BindToXMLPayload {
       checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest,
             "this binder is only valid for GeneratedHttpRequests");
       GeneratedHttpRequest gRequest = (GeneratedHttpRequest) request;
-      checkState(gRequest.getArgs() != null, "args should be initialized at this point");
+      checkState(gRequest.getInvocation().getArgs() != null, "args should be initialized at this point");
 
       // Update the request URI with the configured link URI
       String newEndpoint = getNewEndpoint(gRequest, payload);

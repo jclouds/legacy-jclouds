@@ -17,6 +17,7 @@
  * under the License.
  */
 package org.jclouds.rest.internal;
+
 import static com.google.common.base.Functions.toStringFunction;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -67,7 +68,6 @@ import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.Uris.UriBuilder;
 import org.jclouds.http.options.HttpRequestOptions;
-import org.jclouds.internal.ClassInvokerArgs;
 import org.jclouds.io.ContentMetadataCodec;
 import org.jclouds.io.Payload;
 import org.jclouds.io.PayloadEnclosing;
@@ -77,6 +77,7 @@ import org.jclouds.io.payloads.Part;
 import org.jclouds.io.payloads.Part.PartOptions;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.logging.Logger;
+import org.jclouds.reflect.Invocation;
 import org.jclouds.rest.Binder;
 import org.jclouds.rest.InputParamValidator;
 import org.jclouds.rest.annotations.ApiVersion;
@@ -127,34 +128,25 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.assistedinject.Assisted;
 
 /**
- * Creates http methods based on annotations on a class or interface.
- *
+ * Creates http invocation.getInvoked()s based on annotations on a class or interface.
+ * 
  * @author Adrian Cole
  */
-public abstract class RestAnnotationProcessor {
-
-   public static interface Factory {
-      Declaring declaring(Class<?> declaring);
-      Caller caller(ClassInvokerArgs caller);
-   }
-
-   public static final class Declaring extends RestAnnotationProcessor {
-      @Inject
-      private Declaring(Injector injector, @ApiVersion String apiVersion, @BuildVersion String buildVersion,
-            HttpUtils utils, ContentMetadataCodec contentMetadataCodec, InputParamValidator inputParamValidator,
-            @Assisted Class<?> declaring) {
-         super(injector, apiVersion, buildVersion, utils, contentMetadataCodec, inputParamValidator, declaring);
-      }
-   }
+public class RestAnnotationProcessor implements Function<Invocation, GeneratedHttpRequest> {
 
    public static final class Caller extends RestAnnotationProcessor {
-      private final ClassInvokerArgs caller;
+
+      public static interface Factory {
+         Caller caller(Invocation caller);
+      }
+
+      private final Invocation caller;
 
       @Inject
       private Caller(Injector injector, @ApiVersion String apiVersion, @BuildVersion String buildVersion,
             HttpUtils utils, ContentMetadataCodec contentMetadataCodec, InputParamValidator inputParamValidator,
-            @Assisted ClassInvokerArgs caller) {
-         super(injector, apiVersion, buildVersion, utils, contentMetadataCodec, inputParamValidator, caller.getClazz());
+            @Assisted Invocation caller) {
+         super(injector, apiVersion, buildVersion, utils, contentMetadataCodec, inputParamValidator);
          this.caller = caller;
       }
 
@@ -164,27 +156,20 @@ public abstract class RestAnnotationProcessor {
       }
 
       @Override
-      protected Optional<URI> findEndpoint(Invokable<?,?> method, List<Object> args) {
-         Optional<URI> endpoint = getEndpointFor(caller.getInvoker(), caller.getArgs());
+      protected Optional<URI> findEndpoint(Invocation invocation) {
+         Optional<URI> endpoint = getEndpointFor(caller);
          if (endpoint.isPresent())
-            logger.trace("using endpoint %s from caller %s for %s", endpoint, caller, cma(method, args));
+            logger.trace("using endpoint %s from caller %s for %s", endpoint, caller, invocation);
          else
-            endpoint = super.findEndpoint(method, args);
+            endpoint = super.findEndpoint(invocation);
          return endpoint;
       }
 
       @Override
-      protected Multimap<String, Object> addPathAndGetTokens(Class<?> clazz, Invokable<?,?> method, List<Object> args,
-            UriBuilder uriBuilder) {
-         Class<?> callerClass = caller.getInvoker().getDeclaringClass();
-         return ImmutableMultimap.<String, Object> builder()
-               .putAll(super.addPathAndGetTokens(callerClass, caller.getInvoker(), caller.getArgs(), uriBuilder))
-               .putAll(super.addPathAndGetTokens(clazz, method, args, uriBuilder)).build();
+      protected Multimap<String, Object> addPathAndGetTokens(Invocation invocation, UriBuilder uriBuilder) {
+         return ImmutableMultimap.<String, Object> builder().putAll(super.addPathAndGetTokens(caller, uriBuilder))
+               .putAll(super.addPathAndGetTokens(invocation, uriBuilder)).build();
       }
-   }
-
-   protected ClassInvokerArgs cma(Invokable<?,?> method, List<Object> args) {
-      return logger.isTraceEnabled() ? new ClassInvokerArgs(method.getDeclaringClass(), method, args) : null;
    }
 
    @Resource
@@ -197,75 +182,79 @@ public abstract class RestAnnotationProcessor {
       }
    };
 
-   private final Class<?> declaring;
    private final Injector injector;
    private final HttpUtils utils;
    private final ContentMetadataCodec contentMetadataCodec;
    private final String apiVersion;
    private final String buildVersion;
    private final InputParamValidator inputParamValidator;
-   
-   private RestAnnotationProcessor(Injector injector, String apiVersion, String buildVersion,
-          HttpUtils utils, ContentMetadataCodec contentMetadataCodec,
-         InputParamValidator inputParamValidator, Class<?> declaring) {
+
+   @Inject
+   private RestAnnotationProcessor(Injector injector, @ApiVersion String apiVersion, @BuildVersion String buildVersion,
+         HttpUtils utils, ContentMetadataCodec contentMetadataCodec, InputParamValidator inputParamValidator) {
       this.injector = injector;
       this.utils = utils;
       this.contentMetadataCodec = contentMetadataCodec;
       this.apiVersion = apiVersion;
       this.buildVersion = buildVersion;
       this.inputParamValidator = inputParamValidator;
-      this.declaring = declaring;
    }
 
-   public GeneratedHttpRequest createRequest(Invokable<?, ?> invoker, List<Object> args) {
-      checkNotNull(invoker, "invoker");
-      checkNotNull(args, "args");
-      inputParamValidator.validateMethodParametersOrThrow(invoker, args);
+   /**
+    * Note this is dangerous as it cannot pass the inheriting class! Using this when subclassing interfaces may result
+    * in lost data.
+    */
+   @Deprecated
+   public GeneratedHttpRequest createRequest(Invokable<?, ?> invokable, List<Object> args) {
+      return apply(Invocation.create(invokable, args));
+   }
+
+   @Override
+   public GeneratedHttpRequest apply(Invocation invocation) {
+      checkNotNull(invocation, "invocation");
+      inputParamValidator.validateMethodParametersOrThrow(invocation);
 
       Optional<URI> endpoint = Optional.absent();
-      HttpRequest r = findOrNull(args, HttpRequest.class);
+      HttpRequest r = findOrNull(invocation.getArgs(), HttpRequest.class);
       if (r != null) {
          endpoint = Optional.fromNullable(r.getEndpoint());
          if (endpoint.isPresent())
-            logger.trace("using endpoint %s from args for %s", endpoint, cma(invoker, args));
+            logger.trace("using endpoint %s from invocation.getArgs() for %s", endpoint, invocation);
       } else {
-         endpoint = findEndpoint(invoker, args);
+         endpoint = findEndpoint(invocation);
       }
 
       if (!endpoint.isPresent())
-         throw new NoSuchElementException(format("no endpoint found for %s", cma(invoker, args)));
+         throw new NoSuchElementException(format("no endpoint found for %s", invocation));
 
       GeneratedHttpRequest.Builder requestBuilder = requestBuilder();
       if (r != null) {
          requestBuilder.fromHttpRequest(r);
       } else {
-         requestBuilder.method(tryFindHttpMethod(invoker).get());
+         requestBuilder.method(tryFindHttpMethod(invocation.getInvokable()).get());
       }
-      
-      requestBuilder.declaring(declaring)
-                    .invoker(invoker)
-                    .args(args)
-                    .filters(getFiltersIfAnnotated(invoker));
-      
+
+      requestBuilder.invocation(invocation).filters(getFiltersIfAnnotated(invocation));
+
       Multimap<String, Object> tokenValues = LinkedHashMultimap.create();
 
       tokenValues.put(Constants.PROPERTY_API_VERSION, apiVersion);
       tokenValues.put(Constants.PROPERTY_BUILD_VERSION, buildVersion);
-      
+
       UriBuilder uriBuilder = uriBuilder(endpoint.get().toString()); // URI template in rfc6570 form
-      
-      overridePathEncoding(uriBuilder, invoker);
-      
-      tokenValues.putAll(addPathAndGetTokens(declaring, invoker, args, uriBuilder));
-      
-      Multimap<String, Object> formParams = addFormParams(tokenValues, invoker, args);
-      Multimap<String, Object> queryParams = addQueryParams(tokenValues, invoker, args);
-      Multimap<String, String> headers = buildHeaders(tokenValues, invoker, args);
+
+      overridePathEncoding(uriBuilder, invocation);
+
+      tokenValues.putAll(addPathAndGetTokens(invocation, uriBuilder));
+
+      Multimap<String, Object> formParams = addFormParams(tokenValues, invocation);
+      Multimap<String, Object> queryParams = addQueryParams(tokenValues, invocation);
+      Multimap<String, String> headers = buildHeaders(tokenValues, invocation);
 
       if (r != null)
          headers.putAll(r.getHeaders());
 
-      if (shouldAddHostHeader(invoker)) {
+      if (shouldAddHostHeader(invocation)) {
          StringBuilder hostHeader = new StringBuilder(endpoint.get().getHost());
          if (endpoint.get().getPort() != -1)
             hostHeader.append(":").append(endpoint.get().getPort());
@@ -273,7 +262,7 @@ public abstract class RestAnnotationProcessor {
       }
 
       Payload payload = null;
-      for(HttpRequestOptions options : findOptionsIn(invoker, args)) {
+      for (HttpRequestOptions options : findOptionsIn(invocation)) {
          injector.injectMembers(options);// TODO test case
          for (Entry<String, String> header : options.buildRequestHeaders().entries()) {
             headers.put(header.getKey(), replaceTokens(header.getValue(), tokenValues));
@@ -293,7 +282,7 @@ public abstract class RestAnnotationProcessor {
          if (stringPayload != null)
             payload = Payloads.newStringPayload(stringPayload);
       }
-      
+
       if (queryParams.size() > 0) {
          uriBuilder.query(queryParams);
       }
@@ -301,16 +290,16 @@ public abstract class RestAnnotationProcessor {
       requestBuilder.headers(filterOutContentHeaders(headers));
 
       requestBuilder.endpoint(uriBuilder.build(convertUnsafe(tokenValues)));
-      
+
       if (payload == null) {
-         PayloadEnclosing payloadEnclosing = findOrNull(args, PayloadEnclosing.class);
-         payload = (payloadEnclosing != null) ? payloadEnclosing.getPayload() : findOrNull(args, Payload.class);
+         PayloadEnclosing payloadEnclosing = findOrNull(invocation.getArgs(), PayloadEnclosing.class);
+         payload = (payloadEnclosing != null) ? payloadEnclosing.getPayload() : findOrNull(invocation.getArgs(),
+               Payload.class);
       }
 
-      List<? extends Part> parts = getParts(invoker, args, ImmutableMultimap.<String, Object> builder()
-                                                                           .putAll(tokenValues)
-                                                                           .putAll(formParams).build());
-      
+      List<? extends Part> parts = getParts(invocation, ImmutableMultimap.<String, Object> builder()
+            .putAll(tokenValues).putAll(formParams).build());
+
       if (parts.size() > 0) {
          if (formParams.size() > 0) {
             parts = newLinkedList(concat(transform(formParams.entries(), ENTRY_TO_PART), parts));
@@ -328,11 +317,11 @@ public abstract class RestAnnotationProcessor {
       }
       GeneratedHttpRequest request = requestBuilder.build();
 
-      org.jclouds.rest.MapBinder mapBinder = getMapPayloadBinderOrNull(invoker, args);
+      org.jclouds.rest.MapBinder mapBinder = getMapPayloadBinderOrNull(invocation);
       if (mapBinder != null) {
-         Map<String, Object> mapParams = buildPayloadParams(invoker, args);
-         if (invoker.isAnnotationPresent(PayloadParams.class)) {
-            PayloadParams params = invoker.getAnnotation(PayloadParams.class);
+         Map<String, Object> mapParams = buildPayloadParams(invocation);
+         if (invocation.getInvokable().isAnnotationPresent(PayloadParams.class)) {
+            PayloadParams params = invocation.getInvokable().getAnnotation(PayloadParams.class);
             addMapPayload(mapParams, params, headers);
          }
          request = mapBinder.bindToRequest(request, mapParams);
@@ -347,10 +336,10 @@ public abstract class RestAnnotationProcessor {
       return request;
    }
 
-   private <T> T findOrNull(Iterable<Object> args, Class<T> clazz) {
+   private static <T> T findOrNull(Iterable<Object> args, Class<T> clazz) {
       return clazz.cast(tryFind(args, instanceOf(clazz)).orNull());
    }
-   
+
    private static <K, V> Map<K, V> convertUnsafe(Multimap<K, V> in) {
       LinkedHashMap<K, V> out = Maps.newLinkedHashMap();
       for (Entry<K, V> entry : in.entries()) {
@@ -358,17 +347,18 @@ public abstract class RestAnnotationProcessor {
       }
       return ImmutableMap.copyOf(out);
    }
-   
+
    protected org.jclouds.rest.internal.GeneratedHttpRequest.Builder requestBuilder() {
       return GeneratedHttpRequest.builder();
    }
 
-   private void overridePathEncoding(UriBuilder uriBuilder, Invokable<?, ?> method) {
-      if (declaring.isAnnotationPresent(SkipEncoding.class)) {
-         uriBuilder.skipPathEncoding(Chars.asList(declaring.getAnnotation(SkipEncoding.class).value()));
+   private void overridePathEncoding(UriBuilder uriBuilder, Invocation invocation) {
+      if (invocation.getInterfaceType().isAnnotationPresent(SkipEncoding.class)) {
+         uriBuilder.skipPathEncoding(Chars.asList(invocation.getInterfaceType().getAnnotation(SkipEncoding.class)
+               .value()));
       }
-      if (method.isAnnotationPresent(SkipEncoding.class)) {
-         uriBuilder.skipPathEncoding(Chars.asList(method.getAnnotation(SkipEncoding.class).value()));
+      if (invocation.getInvokable().isAnnotationPresent(SkipEncoding.class)) {
+         uriBuilder.skipPathEncoding(Chars.asList(invocation.getInvokable().getAnnotation(SkipEncoding.class).value()));
       }
    }
 
@@ -382,64 +372,60 @@ public abstract class RestAnnotationProcessor {
          return o.toString();
       }
    }
-   
-   protected Optional<URI> findEndpoint(Invokable<?,?> method, List<Object> args) {
-      ClassInvokerArgs cma = cma(method, args);
-      Optional<URI> endpoint = getEndpointFor(method, args);
+
+   protected Optional<URI> findEndpoint(Invocation invocation) {
+      Optional<URI> endpoint = getEndpointFor(invocation);
       if (endpoint.isPresent())
-         logger.trace("using endpoint %s for %s", endpoint, cma);
+         logger.trace("using endpoint %s for %s", endpoint, invocation);
       if (!endpoint.isPresent()) {
-         logger.trace("looking up default endpoint for %s", cma);
+         logger.trace("looking up default endpoint for %s", invocation);
          endpoint = Optional.fromNullable(injector.getInstance(
                Key.get(uriSupplierLiteral, org.jclouds.location.Provider.class)).get());
          if (endpoint.isPresent())
-            logger.trace("using default endpoint %s for %s", endpoint, cma);
+            logger.trace("using default endpoint %s for %s", endpoint, invocation);
       }
       return endpoint;
    }
 
-   protected Multimap<String, Object> addPathAndGetTokens(Class<?> clazz, Invokable<?, ?> method, List<Object> args,
-         UriBuilder uriBuilder) {
-      if (clazz.isAnnotationPresent(Path.class))
-         uriBuilder.appendPath(clazz.getAnnotation(Path.class).value());
-      if (method.isAnnotationPresent(Path.class))
-         uriBuilder.appendPath(method.getAnnotation(Path.class).value());
-      return getPathParamKeyValues(method, args);
+   protected Multimap<String, Object> addPathAndGetTokens(Invocation invocation, UriBuilder uriBuilder) {
+      if (invocation.getInterfaceType().isAnnotationPresent(Path.class))
+         uriBuilder.appendPath(invocation.getInterfaceType().getAnnotation(Path.class).value());
+      if (invocation.getInvokable().isAnnotationPresent(Path.class))
+         uriBuilder.appendPath(invocation.getInvokable().getAnnotation(Path.class).value());
+      return getPathParamKeyValues(invocation);
    }
 
-   private Multimap<String, Object> addFormParams(Multimap<String, ?> tokenValues, Invokable<?, ?> method,
-         List<Object> args) {
+   private Multimap<String, Object> addFormParams(Multimap<String, ?> tokenValues, Invocation invocation) {
       Multimap<String, Object> formMap = LinkedListMultimap.create();
-      if (declaring.isAnnotationPresent(FormParams.class)) {
-         FormParams form = declaring.getAnnotation(FormParams.class);
+      if (invocation.getInterfaceType().isAnnotationPresent(FormParams.class)) {
+         FormParams form = invocation.getInterfaceType().getAnnotation(FormParams.class);
          addForm(formMap, form, tokenValues);
       }
 
-      if (method.isAnnotationPresent(FormParams.class)) {
-         FormParams form = method.getAnnotation(FormParams.class);
+      if (invocation.getInvokable().isAnnotationPresent(FormParams.class)) {
+         FormParams form = invocation.getInvokable().getAnnotation(FormParams.class);
          addForm(formMap, form, tokenValues);
       }
 
-      for (Entry<String, Object> form : getFormParamKeyValues(method, args).entries()) {
+      for (Entry<String, Object> form : getFormParamKeyValues(invocation).entries()) {
          formMap.put(form.getKey(), replaceTokens(form.getValue().toString(), tokenValues));
       }
       return formMap;
    }
 
-   private Multimap<String, Object> addQueryParams(Multimap<String, ?> tokenValues, Invokable<?, ?> method,
-         List<Object> args) {
+   private Multimap<String, Object> addQueryParams(Multimap<String, ?> tokenValues, Invocation invocation) {
       Multimap<String, Object> queryMap = LinkedListMultimap.create();
-      if (declaring.isAnnotationPresent(QueryParams.class)) {
-         QueryParams query = declaring.getAnnotation(QueryParams.class);
+      if (invocation.getInterfaceType().isAnnotationPresent(QueryParams.class)) {
+         QueryParams query = invocation.getInterfaceType().getAnnotation(QueryParams.class);
          addQuery(queryMap, query, tokenValues);
       }
 
-      if (method.isAnnotationPresent(QueryParams.class)) {
-         QueryParams query = method.getAnnotation(QueryParams.class);
+      if (invocation.getInvokable().isAnnotationPresent(QueryParams.class)) {
+         QueryParams query = invocation.getInvokable().getAnnotation(QueryParams.class);
          addQuery(queryMap, query, tokenValues);
       }
 
-      for (Entry<String, Object> query : getQueryParamKeyValues(method, args).entries()) {
+      for (Entry<String, Object> query : getQueryParamKeyValues(invocation).entries()) {
          queryMap.put(query.getKey(), replaceTokens(query.getValue().toString(), tokenValues));
       }
       return queryMap;
@@ -478,47 +464,53 @@ public abstract class RestAnnotationProcessor {
       }
    }
 
-   private List<HttpRequestFilter> getFiltersIfAnnotated(Invokable<?,?> method) {
+   private List<HttpRequestFilter> getFiltersIfAnnotated(Invocation invocation) {
       List<HttpRequestFilter> filters = newArrayList();
-      if (declaring.isAnnotationPresent(RequestFilters.class)) {
-         for (Class<? extends HttpRequestFilter> clazz : declaring.getAnnotation(RequestFilters.class).value()) {
+      if (invocation.getInterfaceType().isAnnotationPresent(RequestFilters.class)) {
+         for (Class<? extends HttpRequestFilter> clazz : invocation.getInterfaceType()
+               .getAnnotation(RequestFilters.class).value()) {
             HttpRequestFilter instance = injector.getInstance(clazz);
             filters.add(instance);
-            logger.trace("adding filter %s from annotation on %s", instance, declaring.getName());
+            logger.trace("adding filter %s from annotation on %s", instance, invocation.getInterfaceType().getName());
          }
       }
-      if (method.isAnnotationPresent(RequestFilters.class)) {
-         if (method.isAnnotationPresent(OverrideRequestFilters.class))
+      if (invocation.getInvokable().isAnnotationPresent(RequestFilters.class)) {
+         if (invocation.getInvokable().isAnnotationPresent(OverrideRequestFilters.class))
             filters.clear();
-         for (Class<? extends HttpRequestFilter> clazz : method.getAnnotation(RequestFilters.class).value()) {
+         for (Class<? extends HttpRequestFilter> clazz : invocation.getInvokable().getAnnotation(RequestFilters.class)
+               .value()) {
             HttpRequestFilter instance = injector.getInstance(clazz);
             filters.add(instance);
-            logger.trace("adding filter %s from annotation on %s", instance, method.getName());
+            logger.trace("adding filter %s from annotation on %s", instance, invocation.getInvokable().getName());
          }
       }
       return filters;
    }
-   
+
    @VisibleForTesting
-   static URI getEndpointInParametersOrNull(Invokable<?,?> method, List<Object> args, Injector injector) {
-      Collection<Parameter> endpointParams = parametersWithAnnotation(method, EndpointParam.class);
+   static URI getEndpointInParametersOrNull(Invocation invocation, Injector injector) {
+      Collection<Parameter> endpointParams = parametersWithAnnotation(invocation.getInvokable(), EndpointParam.class);
       if (endpointParams.isEmpty())
          return null;
-      checkState(endpointParams.size() == 1, "method %s has too many EndpointParam annotations", method);
+      checkState(endpointParams.size() == 1, "invocation.getInvoked() %s has too many EndpointParam annotations",
+            invocation.getInvokable());
       Parameter endpointParam = get(endpointParams, 0);
       Function<Object, URI> parser = injector.getInstance(endpointParam.getAnnotation(EndpointParam.class).parser());
       int position = endpointParam.hashCode();// guava issue 1243
       try {
-         URI returnVal = parser.apply(args.get(position));
-         checkArgument(returnVal != null, format("endpoint for [%s] not configured for %s", position, method));
+         URI returnVal = parser.apply(invocation.getArgs().get(position));
+         checkArgument(returnVal != null,
+               format("endpoint for [%s] not configured for %s", position, invocation.getInvokable()));
          return returnVal;
       } catch (NullPointerException e) {
-         throw new IllegalArgumentException(format("argument at index %d on method %s was null", position, method), e);
+         throw new IllegalArgumentException(format("argument at index %d on invocation.getInvoked() %s was null",
+               position, invocation.getInvokable()), e);
       }
    }
 
-   private static Collection<Parameter> parametersWithAnnotation(Invokable<?, ?> method, final Class<? extends Annotation> annotationType) {
-      return filter(method.getParameters(), new Predicate<Parameter>() {
+   private static Collection<Parameter> parametersWithAnnotation(Invokable<?, ?> invokable,
+         final Class<? extends Annotation> annotationType) {
+      return filter(invokable.getParameters(), new Predicate<Parameter>() {
          public boolean apply(Parameter in) {
             return in.isAnnotationPresent(annotationType);
          }
@@ -528,16 +520,16 @@ public abstract class RestAnnotationProcessor {
    private static final TypeLiteral<Supplier<URI>> uriSupplierLiteral = new TypeLiteral<Supplier<URI>>() {
    };
 
-   protected Optional<URI> getEndpointFor(Invokable<?,?> method, List<Object> args) {
-      URI endpoint = getEndpointInParametersOrNull(method, args, injector);
+   protected Optional<URI> getEndpointFor(Invocation invocation) {
+      URI endpoint = getEndpointInParametersOrNull(invocation, injector);
       if (endpoint == null) {
          Endpoint annotation;
-         if (method.isAnnotationPresent(Endpoint.class)) {
-            annotation = method.getAnnotation(Endpoint.class);
-         } else if (method.getDeclaringClass().isAnnotationPresent(Endpoint.class)) {
-            annotation = method.getDeclaringClass().getAnnotation(Endpoint.class);
+         if (invocation.getInvokable().isAnnotationPresent(Endpoint.class)) {
+            annotation = invocation.getInvokable().getAnnotation(Endpoint.class);
+         } else if (invocation.getInterfaceType().isAnnotationPresent(Endpoint.class)) {
+            annotation = invocation.getInterfaceType().getAnnotation(Endpoint.class);
          } else {
-            logger.trace("no annotations on class or method: %s", method);
+            logger.trace("no annotations on class or invocation.getInvoked(): %s", invocation.getInvokable());
             return Optional.absent();
          }
          endpoint = injector.getInstance(Key.get(uriSupplierLiteral, annotation.value())).get();
@@ -557,9 +549,9 @@ public abstract class RestAnnotationProcessor {
       return withHost.resolve(original);
    }
 
-   private org.jclouds.rest.MapBinder getMapPayloadBinderOrNull(Invokable<?,?> method, List<Object> args) {
-      if (args != null) {
-         for (Object arg : args) {
+   private org.jclouds.rest.MapBinder getMapPayloadBinderOrNull(Invocation invocation) {
+      if (invocation.getArgs() != null) {
+         for (Object arg : invocation.getArgs()) {
             if (arg instanceof Object[]) {
                Object[] postBinders = (Object[]) arg;
                if (postBinders.length == 0) {
@@ -571,8 +563,9 @@ public abstract class RestAnnotationProcessor {
                   }
                } else {
                   if (postBinders[0] instanceof org.jclouds.rest.MapBinder) {
-                     throw new IllegalArgumentException("we currently do not support multiple varargs postBinders in: "
-                           + method.getName());
+                     throw new IllegalArgumentException(
+                           "we currently do not support multiple varinvocation.getArgs() postBinders in: "
+                                 + invocation.getInvokable().getName());
                   }
                }
             } else if (arg instanceof org.jclouds.rest.MapBinder) {
@@ -582,25 +575,28 @@ public abstract class RestAnnotationProcessor {
             }
          }
       }
-      if (method.isAnnotationPresent(MapBinder.class)) {
-         return injector.getInstance(method.getAnnotation(MapBinder.class).value());
-      } else if (method.isAnnotationPresent(org.jclouds.rest.annotations.Payload.class)) {
+      if (invocation.getInvokable().isAnnotationPresent(MapBinder.class)) {
+         return injector.getInstance(invocation.getInvokable().getAnnotation(MapBinder.class).value());
+      } else if (invocation.getInvokable().isAnnotationPresent(org.jclouds.rest.annotations.Payload.class)) {
          return injector.getInstance(BindMapToStringPayload.class);
-      } else if (method.isAnnotationPresent(WrapWith.class)) {
+      } else if (invocation.getInvokable().isAnnotationPresent(WrapWith.class)) {
          return injector.getInstance(BindToJsonPayloadWrappedWith.Factory.class).create(
-            method.getAnnotation(WrapWith.class).value());
+               invocation.getInvokable().getAnnotation(WrapWith.class).value());
       }
       return null;
    }
 
-   private boolean shouldAddHostHeader(Invokable<?, ?> method) {
-      return (declaring.isAnnotationPresent(VirtualHost.class) || method.isAnnotationPresent(VirtualHost.class));
+   private boolean shouldAddHostHeader(Invocation invocation) {
+      return (invocation.getInterfaceType().isAnnotationPresent(VirtualHost.class) || invocation.getInvokable()
+            .isAnnotationPresent(VirtualHost.class));
    }
-   
-   private GeneratedHttpRequest decorateRequest(GeneratedHttpRequest request) throws NegativeArraySizeException {
-      Set<Parameter> binderOrWrapWith = ImmutableSet.copyOf(concat(parametersWithAnnotation(request.getInvoker(), BinderParam.class),
-            parametersWithAnnotation(request.getInvoker(), WrapWith.class)));
 
+   private GeneratedHttpRequest decorateRequest(GeneratedHttpRequest request) throws NegativeArraySizeException {
+      Invocation invocation = request.getInvocation();
+      List<Object> args = request.getInvocation().getArgs();
+      Set<Parameter> binderOrWrapWith = ImmutableSet.copyOf(concat(
+            parametersWithAnnotation(invocation.getInvokable(), BinderParam.class),
+            parametersWithAnnotation(invocation.getInvokable(), WrapWith.class)));
       OUTER: for (Parameter entry : binderOrWrapWith) {
          int position = entry.hashCode();
          boolean shouldBreak = false;
@@ -610,18 +606,19 @@ public abstract class RestAnnotationProcessor {
          else
             binder = injector.getInstance(BindToJsonPayloadWrappedWith.Factory.class).create(
                   entry.getAnnotation(WrapWith.class).value());
-         Object arg = request.getArgs().size() >= position + 1 ? request.getArgs().get(position) : null;
-         if (request.getArgs().size() >= position + 1 && arg != null) {
+         Object arg = args.size() >= position + 1 ? args.get(position) : null;
+         if (args.size() >= position + 1 && arg != null) {
             Class<?> parameterType = entry.getType().getRawType();
             Class<? extends Object> argType = arg.getClass();
-            if (!argType.isArray() && parameterType.isArray()) { // TODO && varargs guava issue 1244
-               int arrayLength = request.getArgs().size() - request.getInvoker().getParameters().size() + 1;
+            if (!argType.isArray() && parameterType.isArray()) { // TODO && varinvocation.getArgs() guava issue 1244
+               int arrayLength = args.size() - invocation.getInvokable().getParameters().size() + 1;
                if (arrayLength == 0)
                   break OUTER;
                arg = (Object[]) Array.newInstance(arg.getClass(), arrayLength);
-               System.arraycopy(request.getArgs().toArray(), position, arg, 0, arrayLength);
+               System.arraycopy(args.toArray(), position, arg, 0, arrayLength);
                shouldBreak = true;
-            } else if (argType.isArray() && parameterType.isArray()) { // TODO && varargs guava issue 1244
+            } else if (argType.isArray() && parameterType.isArray()) { // TODO && varinvocation.getArgs() guava issue
+                                                                       // 1244
             } else {
                if (arg.getClass().isArray()) {
                   Object[] payloadArray = (Object[]) arg;
@@ -634,24 +631,24 @@ public abstract class RestAnnotationProcessor {
             if (shouldBreak)
                break OUTER;
          } else {
-            if (position + 1 == request.getInvoker().getParameters().size() && entry.getType().isArray())
-               continue OUTER;  // TODO should only skip on null when varargs: guava issue 1244
+            if (position + 1 == invocation.getInvokable().getParameters().size() && entry.getType().isArray())
+               continue OUTER; // TODO should only skip on null when varinvocation.getArgs(): guava issue 1244
 
             if (entry.isAnnotationPresent(Nullable.class)) {
                continue OUTER;
             }
-            checkNotNull(arg, request.getInvoker().getName() + " parameter " + (position + 1));
+            checkNotNull(arg, invocation.getInvokable().getName() + " parameter " + (position + 1));
          }
       }
       return request;
    }
 
-   private static final LoadingCache<Invokable<?, ?>, Set<Integer>> methodToIndexesOfOptions = CacheBuilder.newBuilder().build(
-         new CacheLoader<Invokable<?, ?>, Set<Integer>>() {
+   private static final LoadingCache<Invokable<?, ?>, Set<Integer>> invokableToIndexesOfOptions = CacheBuilder
+         .newBuilder().build(new CacheLoader<Invokable<?, ?>, Set<Integer>>() {
             @Override
-            public Set<Integer> load(Invokable<?, ?> method) {
+            public Set<Integer> load(Invokable<?, ?> invokable) {
                Builder<Integer> toReturn = ImmutableSet.builder();
-               for (Parameter param : method.getParameters()) {
+               for (Parameter param : invokable.getParameters()) {
                   Class<?> type = param.getType().getRawType();
                   if (HttpRequestOptions.class.isAssignableFrom(type)
                         || HttpRequestOptions[].class.isAssignableFrom(type))
@@ -660,21 +657,21 @@ public abstract class RestAnnotationProcessor {
                return toReturn.build();
             }
          });
-   
-  private Set<HttpRequestOptions> findOptionsIn(Invokable<?,?> method, List<Object> args) {
-     ImmutableSet.Builder<HttpRequestOptions> result = ImmutableSet.builder();
-     for (int index : methodToIndexesOfOptions.getUnchecked(method)) {
-         if (args.size() >= index + 1) {// accommodate varargs
-            if (args.get(index) instanceof Object[]) {
-               for (Object option : (Object[]) args.get(index)) {
+
+   private Set<HttpRequestOptions> findOptionsIn(Invocation invocation) {
+      ImmutableSet.Builder<HttpRequestOptions> result = ImmutableSet.builder();
+      for (int index : invokableToIndexesOfOptions.getUnchecked(invocation.getInvokable())) {
+         if (invocation.getArgs().size() >= index + 1) {// accommodate varinvocation.getArgs()
+            if (invocation.getArgs().get(index) instanceof Object[]) {
+               for (Object option : (Object[]) invocation.getArgs().get(index)) {
                   if (option instanceof HttpRequestOptions) {
                      result.add((HttpRequestOptions) option);
                   }
                }
             } else {
-               for (; index < args.size(); index++) {
-                  if (args.get(index) instanceof HttpRequestOptions) {
-                     result.add((HttpRequestOptions) args.get(index));
+               for (; index < invocation.getArgs().size(); index++) {
+                  if (invocation.getArgs().get(index) instanceof HttpRequestOptions) {
+                     result.add((HttpRequestOptions) invocation.getArgs().get(index));
                   }
                }
             }
@@ -683,58 +680,57 @@ public abstract class RestAnnotationProcessor {
       return result.build();
    }
 
-   private Multimap<String, String> buildHeaders(Multimap<String, ?> tokenValues, Invokable<?, ?> method,
-         List<Object> args) {
+   private Multimap<String, String> buildHeaders(Multimap<String, ?> tokenValues, Invocation invocation) {
       Multimap<String, String> headers = LinkedHashMultimap.create();
-      addHeaderIfAnnotationPresentOnMethod(headers, method, tokenValues);
-      for (Parameter headerParam : parametersWithAnnotation(method, HeaderParam.class)) {
+      addHeaderIfAnnotationPresentOnMethod(headers, invocation, tokenValues);
+      for (Parameter headerParam : parametersWithAnnotation(invocation.getInvokable(), HeaderParam.class)) {
          Annotation key = headerParam.getAnnotation(HeaderParam.class);
-         String value = args.get(headerParam.hashCode()).toString(); // TODO position guava issue 1243
+         String value = invocation.getArgs().get(headerParam.hashCode()).toString(); // TODO position guava issue 1243
          value = replaceTokens(value, tokenValues);
          headers.put(((HeaderParam) key).value(), value);
       }
-      addProducesIfPresentOnTypeOrMethod(headers, method);
-      addConsumesIfPresentOnTypeOrMethod(headers, method);
+      addProducesIfPresentOnTypeOrMethod(headers, invocation);
+      addConsumesIfPresentOnTypeOrMethod(headers, invocation);
       return headers;
    }
 
-   private void addConsumesIfPresentOnTypeOrMethod(Multimap<String, String> headers, Invokable<?,?> method) {
-      Set<String> accept = getAcceptHeaders(method);
+   private static void addConsumesIfPresentOnTypeOrMethod(Multimap<String, String> headers, Invocation invocation) {
+      Set<String> accept = getAcceptHeaders(invocation);
       if (!accept.isEmpty())
          headers.replaceValues(ACCEPT, accept);
    }
-   
+
    // TODO: refactor this out
-   static Set<String> getAcceptHeaders(Invokable<?, ?> method) {
-      Optional<Consumes> accept = Optional.fromNullable(method.getAnnotation(Consumes.class)).or(
-            Optional.fromNullable(method.getDeclaringClass().getAnnotation(Consumes.class)));
+   static Set<String> getAcceptHeaders(Invocation invocation) {
+      Optional<Consumes> accept = Optional.fromNullable(invocation.getInvokable().getAnnotation(Consumes.class)).or(
+            Optional.fromNullable(invocation.getInterfaceType().getAnnotation(Consumes.class)));
       return (accept.isPresent()) ? ImmutableSet.copyOf(accept.get().value()) : ImmutableSet.<String> of();
    }
 
-   private void addProducesIfPresentOnTypeOrMethod(Multimap<String, String> headers, Invokable<?,?> method) {
-      if (declaring.isAnnotationPresent(Produces.class)) {
-         Produces header = declaring.getAnnotation(Produces.class);
+   private static void addProducesIfPresentOnTypeOrMethod(Multimap<String, String> headers, Invocation invocation) {
+      if (invocation.getInterfaceType().isAnnotationPresent(Produces.class)) {
+         Produces header = invocation.getInterfaceType().getAnnotation(Produces.class);
          headers.replaceValues(CONTENT_TYPE, asList(header.value()));
       }
-      if (method.isAnnotationPresent(Produces.class)) {
-         Produces header = method.getAnnotation(Produces.class);
+      if (invocation.getInvokable().isAnnotationPresent(Produces.class)) {
+         Produces header = invocation.getInvokable().getAnnotation(Produces.class);
          headers.replaceValues(CONTENT_TYPE, asList(header.value()));
       }
    }
 
-   private void addHeaderIfAnnotationPresentOnMethod(Multimap<String, String> headers, Invokable<?,?> method,
+   private static void addHeaderIfAnnotationPresentOnMethod(Multimap<String, String> headers, Invocation invocation,
          Multimap<String, ?> tokenValues) {
-      if (declaring.isAnnotationPresent(Headers.class)) {
-         Headers header = declaring.getAnnotation(Headers.class);
+      if (invocation.getInterfaceType().isAnnotationPresent(Headers.class)) {
+         Headers header = invocation.getInterfaceType().getAnnotation(Headers.class);
          addHeader(headers, header, tokenValues);
       }
-      if (method.isAnnotationPresent(Headers.class)) {
-         Headers header = method.getAnnotation(Headers.class);
+      if (invocation.getInvokable().isAnnotationPresent(Headers.class)) {
+         Headers header = invocation.getInvokable().getAnnotation(Headers.class);
          addHeader(headers, header, tokenValues);
       }
    }
 
-   private void addHeader(Multimap<String, String> headers, Headers header, Multimap<String, ?> tokenValues) {
+   private static void addHeader(Multimap<String, String> headers, Headers header, Multimap<String, ?> tokenValues) {
       for (int i = 0; i < header.keys().length; i++) {
          String value = header.values()[i];
          value = replaceTokens(value, tokenValues);
@@ -742,16 +738,16 @@ public abstract class RestAnnotationProcessor {
       }
    }
 
-   private List<Part> getParts(Invokable<?, ?> method, List<Object> args, Multimap<String, ?> tokenValues) {
+   private static List<Part> getParts(Invocation invocation, Multimap<String, ?> tokenValues) {
       ImmutableList.Builder<Part> parts = ImmutableList.<Part> builder();
-      for (Parameter param : parametersWithAnnotation(method, PartParam.class)) {
+      for (Parameter param : parametersWithAnnotation(invocation.getInvokable(), PartParam.class)) {
          PartParam partParam = param.getAnnotation(PartParam.class);
          PartOptions options = new PartOptions();
          if (!PartParam.NO_CONTENT_TYPE.equals(partParam.contentType()))
             options.contentType(partParam.contentType());
          if (!PartParam.NO_FILENAME.equals(partParam.filename()))
             options.filename(replaceTokens(partParam.filename(), tokenValues));
-         Object arg = args.get(param.hashCode()); // TODO position guava issue 1243
+         Object arg = invocation.getArgs().get(param.hashCode()); // TODO position guava issue 1243
          checkNotNull(arg, partParam.name());
          Part part = Part.create(partParam.name(), newPayload(arg), options);
          parts.add(part);
@@ -759,12 +755,12 @@ public abstract class RestAnnotationProcessor {
       return parts.build();
    }
 
-   private Multimap<String, Object> getPathParamKeyValues(Invokable<?, ?> method, List<Object> args) {
+   private Multimap<String, Object> getPathParamKeyValues(Invocation invocation) {
       Multimap<String, Object> pathParamValues = LinkedHashMultimap.create();
-      for (Parameter param : parametersWithAnnotation(method, PathParam.class)) {
+      for (Parameter param : parametersWithAnnotation(invocation.getInvokable(), PathParam.class)) {
          PathParam pathParam = param.getAnnotation(PathParam.class);
          String paramKey = pathParam.value();
-         Optional<?> paramValue = getParamValue(method, args, param.getAnnotation(ParamParser.class), param.hashCode(),
+         Optional<?> paramValue = getParamValue(invocation, param.getAnnotation(ParamParser.class), param.hashCode(),
                paramKey); // TODO position guava issue 1243
          if (paramValue.isPresent())
             pathParamValues.put(paramKey, paramValue.get().toString());
@@ -772,29 +768,29 @@ public abstract class RestAnnotationProcessor {
       return pathParamValues;
    }
 
-   private Optional<?> getParamValue(Invokable<?,?> method, List<Object> args, @Nullable ParamParser extractor,
-            int argIndex, String paramKey) {
-      Object arg = args.get(argIndex);
-      if (extractor != null && checkPresentOrNullable(method, paramKey, argIndex, arg)) {
+   private Optional<?> getParamValue(Invocation invocation, @Nullable ParamParser extractor, int argIndex,
+         String paramKey) {
+      Object arg = invocation.getArgs().get(argIndex);
+      if (extractor != null && checkPresentOrNullable(invocation, paramKey, argIndex, arg)) {
          arg = injector.getInstance(extractor.value()).apply(arg); // ParamParsers can deal with nullable parameters
       }
-      checkPresentOrNullable(method, paramKey, argIndex, arg);
+      checkPresentOrNullable(invocation, paramKey, argIndex, arg);
       return Optional.fromNullable(arg);
    }
 
-   private static boolean checkPresentOrNullable(Invokable<?,?> method, String paramKey, int argIndex, Object arg) {
-      if (arg == null && !method.getParameters().get(argIndex).isAnnotationPresent(Nullable.class))
-         throw new NullPointerException(format("param{%s} for method %s.%s", paramKey, method
-                  .getDeclaringClass().getSimpleName(), method.getName()));
+   private static boolean checkPresentOrNullable(Invocation invocation, String paramKey, int argIndex, Object arg) {
+      if (arg == null && !invocation.getInvokable().getParameters().get(argIndex).isAnnotationPresent(Nullable.class))
+         throw new NullPointerException(format("param{%s} for invocation %s.%s", paramKey, invocation
+               .getInterfaceType().getSimpleName(), invocation.getInvokable().getName()));
       return true;
    }
 
-   private Multimap<String, Object> getFormParamKeyValues(Invokable<?,?> method, List<Object> args) {
+   private Multimap<String, Object> getFormParamKeyValues(Invocation invocation) {
       Multimap<String, Object> formParamValues = LinkedHashMultimap.create();
-      for (Parameter param : parametersWithAnnotation(method, FormParam.class)) {
+      for (Parameter param : parametersWithAnnotation(invocation.getInvokable(), FormParam.class)) {
          FormParam formParam = param.getAnnotation(FormParam.class);
          String paramKey = formParam.value();
-         Optional<?> paramValue = getParamValue(method, args, param.getAnnotation(ParamParser.class), param.hashCode(),
+         Optional<?> paramValue = getParamValue(invocation, param.getAnnotation(ParamParser.class), param.hashCode(),
                paramKey); // TODO position guava issue 1243
          if (paramValue.isPresent())
             formParamValues.put(paramKey, paramValue.get().toString());
@@ -802,15 +798,15 @@ public abstract class RestAnnotationProcessor {
       return formParamValues;
    }
 
-   private Multimap<String, Object> getQueryParamKeyValues(Invokable<?,?> method, List<Object> args) {
+   private Multimap<String, Object> getQueryParamKeyValues(Invocation invocation) {
       Multimap<String, Object> queryParamValues = LinkedHashMultimap.create();
-      for (Parameter param : parametersWithAnnotation(method, QueryParam.class)) {
+      for (Parameter param : parametersWithAnnotation(invocation.getInvokable(), QueryParam.class)) {
          QueryParam queryParam = param.getAnnotation(QueryParam.class);
          String paramKey = queryParam.value();
-         Optional<?> paramValue = getParamValue(method, args, param.getAnnotation(ParamParser.class), param.hashCode(),
+         Optional<?> paramValue = getParamValue(invocation, param.getAnnotation(ParamParser.class), param.hashCode(),
                paramKey); // TODO position guava issue 1243
          if (paramValue.isPresent())
-            if (paramValue.get() instanceof Iterable) {                  
+            if (paramValue.get() instanceof Iterable) {
                @SuppressWarnings("unchecked")
                Iterable<String> iterableStrings = transform(Iterable.class.cast(paramValue.get()), toStringFunction());
                queryParamValues.putAll(paramKey, iterableStrings);
@@ -821,12 +817,12 @@ public abstract class RestAnnotationProcessor {
       return queryParamValues;
    }
 
-   private Map<String, Object> buildPayloadParams(Invokable<?,?> method, List<Object> args) {
+   private Map<String, Object> buildPayloadParams(Invocation invocation) {
       Map<String, Object> payloadParamValues = Maps.newLinkedHashMap();
-      for (Parameter param : parametersWithAnnotation(method, PayloadParam.class)) {
+      for (Parameter param : parametersWithAnnotation(invocation.getInvokable(), PayloadParam.class)) {
          PayloadParam payloadParam = param.getAnnotation(PayloadParam.class);
          String paramKey = payloadParam.value();
-         Optional<?> paramValue = getParamValue(method, args, param.getAnnotation(ParamParser.class), param.hashCode(),
+         Optional<?> paramValue = getParamValue(invocation, param.getAnnotation(ParamParser.class), param.hashCode(),
                paramKey); // TODO position guava issue 1243
          if (paramValue.isPresent())
             payloadParamValues.put(paramKey, paramValue.get());

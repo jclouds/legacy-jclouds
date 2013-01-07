@@ -29,10 +29,11 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.concurrent.internal.SyncProxy;
+import org.jclouds.concurrent.internal.SyncProxy.CreateClientForCaller;
 import org.jclouds.functions.IdentityFunction;
 import org.jclouds.http.functions.config.SaxParserModule;
-import org.jclouds.internal.ClassInvokerArgs;
 import org.jclouds.internal.FilterStringsBoundToInjectorByName;
+import org.jclouds.internal.ForwardInvocationToInterface;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.location.config.LocationModule;
 import org.jclouds.rest.AuthorizationException;
@@ -40,8 +41,6 @@ import org.jclouds.rest.HttpAsyncClient;
 import org.jclouds.rest.HttpClient;
 import org.jclouds.rest.binders.BindToJsonPayloadWrappedWith;
 import org.jclouds.rest.internal.AsyncRestClientProxy;
-import org.jclouds.rest.internal.CreateAsyncClientForCaller;
-import org.jclouds.rest.internal.CreateClientForCaller;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Maps2;
 import org.jclouds.util.Predicates2;
@@ -49,8 +48,6 @@ import org.jclouds.util.Predicates2;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.Atomics;
@@ -84,8 +81,8 @@ public class RestModule extends AbstractModule {
       install(new SaxParserModule());
       install(new GsonModule());
       install(new FactoryModuleBuilder().build(BindToJsonPayloadWrappedWith.Factory.class));
-      install(new FactoryModuleBuilder().build(RestAnnotationProcessor.Factory.class));
-      install(new FactoryModuleBuilder().build(AsyncRestClientProxy.Factory.class));
+      install(new FactoryModuleBuilder().build(RestAnnotationProcessor.Caller.Factory.class));
+      install(new FactoryModuleBuilder().build(AsyncRestClientProxy.Caller.Factory.class));
       bind(IdentityFunction.class).toInstance(IdentityFunction.INSTANCE);
       install(new FactoryModuleBuilder().build(SyncProxy.Factory.class));
       bindClientAndAsyncClient(binder(), HttpClient.class, HttpAsyncClient.class);
@@ -94,6 +91,10 @@ public class RestModule extends AbstractModule {
       }).toInstance(authException);
       bind(new TypeLiteral<Function<Predicate<String>, Map<String, String>>>() {
       }).to(FilterStringsBoundToInjectorByName.class);
+      bind(new TypeLiteral<Function<Predicate<String>, Map<String, String>>>() {
+      }).to(FilterStringsBoundToInjectorByName.class);
+      bind(new TypeLiteral<Function<ForwardInvocationToInterface, Object>>() {
+      }).to(CreateClientForCaller.class);
       installLocations();
    }
 
@@ -120,19 +121,4 @@ public class RestModule extends AbstractModule {
       });
 
    }
-
-   @Provides
-   @Singleton
-   @Named("async")
-   LoadingCache<ClassInvokerArgs, Object> provideAsyncDelegateMap(CreateAsyncClientForCaller createAsyncClientForCaller) {
-      return CacheBuilder.newBuilder().build(createAsyncClientForCaller);
-   }
-
-   @Provides
-   @Singleton
-   @Named("sync")
-   LoadingCache<ClassInvokerArgs, Object> provideSyncDelegateMap(CreateClientForCaller createClientForCaller) {
-      return CacheBuilder.newBuilder().build(createClientForCaller);
-   }
-
 }

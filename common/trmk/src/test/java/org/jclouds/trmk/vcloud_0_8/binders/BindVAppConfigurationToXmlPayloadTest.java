@@ -18,11 +18,8 @@
  */
 package org.jclouds.trmk.vcloud_0_8.binders;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
 import static org.jclouds.trmk.vcloud_0_8.domain.VAppConfiguration.Builder.changeNameTo;
+import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.net.URI;
@@ -35,6 +32,7 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.trmk.vcloud_0_8.domain.Status;
 import org.jclouds.trmk.vcloud_0_8.domain.VAppConfiguration;
 import org.jclouds.trmk.vcloud_0_8.domain.internal.VAppImpl;
+import org.jclouds.trmk.vcloud_0_8.internal.BasePayloadTest;
 import org.jclouds.trmk.vcloud_0_8.internal.TerremarkVCloudApiMetadata;
 import org.jclouds.util.Strings2;
 import org.nnsoft.guice.rocoto.Rocoto;
@@ -54,7 +52,7 @@ import com.google.inject.Injector;
  * @author Adrian Cole
  */
 @Test(groups = "unit")
-public class BindVAppConfigurationToXmlPayloadTest {
+public class BindVAppConfigurationToXmlPayloadTest extends BasePayloadTest {
    Injector injector = Guice.createInjector(Rocoto.expandVariables(new ConfigurationModule() {
 
       @Override
@@ -80,17 +78,11 @@ public class BindVAppConfigurationToXmlPayloadTest {
 
       VAppConfiguration config = new VAppConfiguration().changeNameTo("roberto");
 
-      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
-      expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
-      expect(request.getArgs()).andReturn(ImmutableList.<Object> of(vApp, config)).atLeastOnce();
-      request.setPayload(expected);
-      replay(request);
-
+      GeneratedHttpRequest request = requestForArgs(ImmutableList.<Object> of(vApp, config));
       BindVAppConfigurationToXmlPayload binder = injector.getInstance(BindVAppConfigurationToXmlPayload.class);
 
       Map<String, Object> map = Maps.newHashMap();
-      binder.bindToRequest(request, map);
-      verify(request);
+      assertEquals(binder.bindToRequest(request, map).getPayload().getRawContent(), expected);
    }
 
    public void testRemoveDisk() throws IOException {
@@ -115,18 +107,13 @@ public class BindVAppConfigurationToXmlPayloadTest {
                .replace("eduardo", "MyAppServer6");
 
       VAppConfiguration config = new VAppConfiguration().deleteDiskWithAddressOnParent(1);
-
-      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
-      expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
-      expect(request.getArgs()).andReturn(ImmutableList.<Object> of(vApp, config)).atLeastOnce();
-      request.setPayload(expected);
-      replay(request);
+      
+      GeneratedHttpRequest request = requestForArgs(ImmutableList.<Object> of(vApp, config));
 
       BindVAppConfigurationToXmlPayload binder = injector.getInstance(BindVAppConfigurationToXmlPayload.class);
 
       Map<String, Object> map = Maps.newHashMap();
-      binder.bindToRequest(request, map);
-      verify(request);
+      assertEquals(binder.bindToRequest(request, map).getPayload().getRawContent(), expected);
    }
 
    public void testChangeAll() throws IOException {
@@ -145,17 +132,12 @@ public class BindVAppConfigurationToXmlPayloadTest {
       VAppConfiguration config = changeNameTo("eduardo").changeMemoryTo(1536).changeProcessorCountTo(1).addDisk(
                25 * 1048576).addDisk(25 * 1048576);
 
-      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
-      expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
-      expect(request.getArgs()).andReturn(ImmutableList.<Object> of(vApp, config)).atLeastOnce();
-      request.setPayload(expected);
-      replay(request);
+      GeneratedHttpRequest request = requestForArgs(ImmutableList.<Object> of(vApp, config));
 
       BindVAppConfigurationToXmlPayload binder = injector.getInstance(BindVAppConfigurationToXmlPayload.class);
 
       Map<String, Object> map = Maps.newHashMap();
-      binder.bindToRequest(request, map);
-      verify(request);
+      assertEquals(binder.bindToRequest(request, map).getPayload().getRawContent(), expected);
    }
 
    public void testChangeCPUCountTo4() throws IOException {
@@ -172,17 +154,12 @@ public class BindVAppConfigurationToXmlPayloadTest {
 
       VAppConfiguration config = new VAppConfiguration().changeProcessorCountTo(4);
 
-      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
-      expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
-      expect(request.getArgs()).andReturn(ImmutableList.<Object> of(vApp, config)).atLeastOnce();
-      request.setPayload(expected);
-      replay(request);
+      GeneratedHttpRequest request = requestForArgs(ImmutableList.<Object> of(vApp, config));
 
       BindVAppConfigurationToXmlPayload binder = injector.getInstance(BindVAppConfigurationToXmlPayload.class);
 
       Map<String, Object> map = Maps.newHashMap();
-      binder.bindToRequest(request, map);
-      verify(request);
+      assertEquals(binder.bindToRequest(request, map).getPayload().getRawContent(), expected);
    }
 
    public void testChangeMemoryTo1536() throws IOException {
@@ -201,16 +178,11 @@ public class BindVAppConfigurationToXmlPayloadTest {
 
       VAppConfiguration config = new VAppConfiguration().changeMemoryTo(1536);
 
-      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
-      expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
-      expect(request.getArgs()).andReturn(ImmutableList.<Object> of(vApp, config)).atLeastOnce();
-      request.setPayload(expected);
-      replay(request);
+      GeneratedHttpRequest request = requestForArgs(ImmutableList.<Object> of(vApp, config));
 
       BindVAppConfigurationToXmlPayload binder = injector.getInstance(BindVAppConfigurationToXmlPayload.class);
 
       Map<String, Object> map = Maps.newHashMap();
-      binder.bindToRequest(request, map);
-      verify(request);
+      assertEquals(binder.bindToRequest(request, map).getPayload().getRawContent(), expected);
    }
 }

@@ -18,12 +18,11 @@
  */
 package org.jclouds.rest.config;
 
-import static com.google.common.reflect.Reflection.newProxy;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.concurrent.internal.SyncProxy;
+import org.jclouds.reflect.FunctionalReflection;
 
 import com.google.inject.Provider;
 
@@ -50,6 +49,6 @@ public class ClientProvider<S, A> implements Provider<S> {
    @Override
    @Singleton
    public S get() {
-      return newProxy(syncClientType, factory.create(syncClientType, asyncClient));
+      return FunctionalReflection.newProxy(syncClientType, factory.create(syncClientType, asyncClient));
    }
 }

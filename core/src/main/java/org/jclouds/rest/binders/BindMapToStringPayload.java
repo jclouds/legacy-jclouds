@@ -32,21 +32,24 @@ import org.jclouds.rest.MapBinder;
 import org.jclouds.rest.annotations.Payload;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 
+import com.google.common.reflect.Invokable;
+
 /**
  * 
  * @author Adrian Cole
  */
 @Singleton
 public class BindMapToStringPayload implements MapBinder {
-   
+
    @SuppressWarnings("unchecked")
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
       checkNotNull(postParams, "postParams");
       GeneratedHttpRequest r = GeneratedHttpRequest.class.cast(checkNotNull(request, "request"));
-      checkArgument(r.getInvoker().isAnnotationPresent(Payload.class),
-            "method %s must have @Payload annotation to use this binder", r.getInvoker());
-      String payload = r.getInvoker().getAnnotation(Payload.class).value();
+      Invokable<?, ?> invoked = r.getInvocation().getInvokable();
+      checkArgument(invoked.isAnnotationPresent(Payload.class),
+            "method %s must have @Payload annotation to use this binder", invoked);
+      String payload = invoked.getAnnotation(Payload.class).value();
       if (postParams.size() > 0) {
          payload = urlDecode(expand(payload, postParams));
       }

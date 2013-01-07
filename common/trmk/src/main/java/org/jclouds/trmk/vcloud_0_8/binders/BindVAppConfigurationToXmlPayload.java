@@ -82,8 +82,6 @@ public class BindVAppConfigurationToXmlPayload implements MapBinder, Function<Ob
       checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest,
                "this binder is only valid for GeneratedHttpRequests!");
       GeneratedHttpRequest gRequest = (GeneratedHttpRequest) request;
-      checkState(gRequest.getArgs() != null, "args should be initialized at this point");
-
       VApp vApp = checkNotNull(findVAppInArgsOrNull(gRequest), "vApp");
       checkArgument(vApp.getStatus() == Status.OFF, "vApp must be off!");
       VAppConfiguration configuration = checkNotNull(findConfigInArgsOrNull(gRequest), "config");
@@ -182,7 +180,7 @@ public class BindVAppConfigurationToXmlPayload implements MapBinder, Function<Ob
    }
 
    protected VApp findVAppInArgsOrNull(GeneratedHttpRequest gRequest) {
-      for (Object arg : gRequest.getArgs()) {
+      for (Object arg : gRequest.getInvocation().getArgs()) {
          if (arg instanceof VApp) {
             return (VApp) arg;
          } else if (arg instanceof VApp[]) {
@@ -194,7 +192,7 @@ public class BindVAppConfigurationToXmlPayload implements MapBinder, Function<Ob
    }
 
    protected VAppConfiguration findConfigInArgsOrNull(GeneratedHttpRequest gRequest) {
-      for (Object arg : gRequest.getArgs()) {
+      for (Object arg : gRequest.getInvocation().getArgs()) {
          if (arg instanceof VAppConfiguration) {
             return (VAppConfiguration) arg;
          } else if (arg instanceof VAppConfiguration[]) {

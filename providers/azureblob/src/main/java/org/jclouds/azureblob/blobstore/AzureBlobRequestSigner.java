@@ -32,6 +32,7 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.options.GetOptions;
+import org.jclouds.reflect.Invocation;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 
 import com.google.common.collect.ImmutableList;
@@ -52,9 +53,9 @@ public class AzureBlobRequestSigner implements BlobRequestSigner {
    private final Invokable<?, ?> createMethod;
 
    @Inject
-   public AzureBlobRequestSigner(RestAnnotationProcessor.Factory processor, BlobToAzureBlob blobToBlob,
+   public AzureBlobRequestSigner(RestAnnotationProcessor processor, BlobToAzureBlob blobToBlob,
          BlobToHttpGetOptions blob2HttpGetOptions) throws SecurityException, NoSuchMethodException {
-      this.processor = checkNotNull(processor, "processor").declaring(AzureBlobAsyncClient.class);
+      this.processor = checkNotNull(processor, "processor");
       this.blobToBlob = checkNotNull(blobToBlob, "blobToBlob");
       this.blob2HttpGetOptions = checkNotNull(blob2HttpGetOptions, "blob2HttpGetOptions");
       this.getMethod = Invokable.from(AzureBlobAsyncClient.class.getMethod("getBlob", String.class, String.class,
@@ -69,7 +70,7 @@ public class AzureBlobRequestSigner implements BlobRequestSigner {
    public HttpRequest signGetBlob(String container, String name) {
       checkNotNull(container, "container");
       checkNotNull(name, "name");
-      return cleanRequest(processor.createRequest(getMethod, ImmutableList.<Object> of(container, name)));
+      return cleanRequest(processor.apply(Invocation.create(getMethod, ImmutableList.<Object> of(container, name))));
    }
 
    @Override
@@ -81,8 +82,8 @@ public class AzureBlobRequestSigner implements BlobRequestSigner {
    public HttpRequest signPutBlob(String container, Blob blob) {
       checkNotNull(container, "container");
       checkNotNull(blob, "blob");
-      return cleanRequest(processor.createRequest(createMethod,
-            ImmutableList.<Object> of(container, blobToBlob.apply(blob))));
+      return cleanRequest(processor.apply(Invocation.create(createMethod,
+            ImmutableList.<Object> of(container, blobToBlob.apply(blob)))));
    }
 
    @Override
@@ -94,14 +95,14 @@ public class AzureBlobRequestSigner implements BlobRequestSigner {
    public HttpRequest signRemoveBlob(String container, String name) {
       checkNotNull(container, "container");
       checkNotNull(name, "name");
-      return cleanRequest(processor.createRequest(deleteMethod, ImmutableList.<Object> of(container, name)));
+      return cleanRequest(processor.apply(Invocation.create(deleteMethod, ImmutableList.<Object> of(container, name))));
    }
 
    @Override
    public HttpRequest signGetBlob(String container, String name, org.jclouds.blobstore.options.GetOptions options) {
       checkNotNull(container, "container");
       checkNotNull(name, "name");
-      return cleanRequest(processor.createRequest(getMethod,
-            ImmutableList.of(container, name, blob2HttpGetOptions.apply(checkNotNull(options, "options")))));
+      return cleanRequest(processor.apply(Invocation.create(getMethod,
+            ImmutableList.of(container, name, blob2HttpGetOptions.apply(checkNotNull(options, "options"))))));
    }
 }

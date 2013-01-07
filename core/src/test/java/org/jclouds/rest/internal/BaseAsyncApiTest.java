@@ -33,7 +33,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.reflect.TypeToken;
 import com.google.inject.Binder;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -64,9 +63,7 @@ public abstract class BaseAsyncApiTest<T> extends BaseRestApiTest {
    protected void setupFactory() throws IOException {
       injector = createInjector();
       parserFactory = injector.getInstance(ParseSax.Factory.class);
-      processor = injector.getInstance(RestAnnotationProcessor.Factory.class).declaring(new TypeToken<T>(getClass()) {
-         private static final long serialVersionUID = 1L;
-      }.getRawType());
+      processor = injector.getInstance(RestAnnotationProcessor.class);
    }
    
    protected String identity = "identity";

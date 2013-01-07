@@ -31,23 +31,17 @@ import com.google.common.reflect.TypeToken;
  * @author Adrian Cole
  */
 public class Optionals2 {
-   public static Class<?> returnTypeOrTypeOfOptional(Invokable<?, ?> method) {
-      TypeToken<?> type = method.getReturnType();
-      return returnTypeOrTypeOfOptional(type.getRawType(), type.getType());
-   }
-
-   private static Class<?> returnTypeOrTypeOfOptional(Class<?> syncClass, Type genericType) {
-      if (syncClass.isAssignableFrom(Optional.class)) {
-         ParameterizedType futureType = ParameterizedType.class.cast(genericType);
+   public static Class<?> unwrapIfOptional(TypeToken<?> type) {
+      if (type.getRawType().isAssignableFrom(Optional.class)) {
+         ParameterizedType futureType = ParameterizedType.class.cast(type.getType());
          // TODO: error checking in case this is a type, not a class.
          Type t = futureType.getActualTypeArguments()[0];
          if (t instanceof WildcardType) {
             t = ((WildcardType) t).getUpperBounds()[0];
          }
-         syncClass = Class.class.cast(t);
-      } else {
+         return Class.class.cast(t);
       }
-      return syncClass;
+      return type.getRawType();
    }
 
    public static boolean isReturnTypeOptional(Invokable<?, ?> method) {

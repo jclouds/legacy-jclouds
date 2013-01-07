@@ -18,24 +18,17 @@
  */
 package org.jclouds.vcloud.binders;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
+import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.Map;
 
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.vcloud.VCloudApiMetadata;
-import org.nnsoft.guice.rocoto.Rocoto;
-import org.nnsoft.guice.rocoto.configuration.ConfigurationModule;
+import org.jclouds.vcloud.internal.BasePayloadTest;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 
 /**
  * Tests behavior of {@code BindDeployVAppParamsToXmlPayload}
@@ -43,44 +36,28 @@ import com.google.inject.Injector;
  * @author Adrian Cole
  */
 @Test(groups = "unit")
-public class BindDeployVAppParamsToXmlPayloadTest {
-   Injector injector = Guice.createInjector(Rocoto.expandVariables(new ConfigurationModule() {
-
-      @Override
-      protected void bindConfigurations() {
-         bindProperties(new VCloudApiMetadata().getDefaultProperties());
-      }
-   }));
+public class BindDeployVAppParamsToXmlPayloadTest extends BasePayloadTest {
 
    public void testPowerOnTrue() throws IOException {
       String expected = "<DeployVAppParams xmlns=\"http://www.vmware.com/vcloud/v1\" powerOn=\"true\"/>";
 
-      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
-      expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
-      request.setPayload(expected);
-      replay(request);
+      GeneratedHttpRequest request = requestForArgs(ImmutableList.<Object> of());
 
       BindDeployVAppParamsToXmlPayload binder = injector.getInstance(BindDeployVAppParamsToXmlPayload.class);
 
       Map<String, Object> map = Maps.newHashMap();
       map.put("powerOn", "true");
-      binder.bindToRequest(request, map);
-      verify(request);
+      assertEquals(binder.bindToRequest(request, map).getPayload().getRawContent(), expected);
    }
 
    public void testDefault() throws IOException {
       String expected = "<DeployVAppParams xmlns=\"http://www.vmware.com/vcloud/v1\"/>";
 
-      GeneratedHttpRequest request = createMock(GeneratedHttpRequest.class);
-      expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
-      request.setPayload(expected);
-      replay(request);
+      GeneratedHttpRequest request = requestForArgs(ImmutableList.<Object> of());
 
       BindDeployVAppParamsToXmlPayload binder = injector.getInstance(BindDeployVAppParamsToXmlPayload.class);
 
       Map<String, Object> map = Maps.newHashMap();
-
-      binder.bindToRequest(request, map);
-      verify(request);
+      assertEquals(binder.bindToRequest(request, map).getPayload().getRawContent(), expected);
    }
 }

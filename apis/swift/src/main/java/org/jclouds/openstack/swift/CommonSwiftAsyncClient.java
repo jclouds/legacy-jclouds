@@ -40,7 +40,6 @@ import org.jclouds.blobstore.binders.BindMapToHeadersWithPrefix;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.http.functions.ParseETagHeader;
 import org.jclouds.http.options.GetOptions;
-import org.jclouds.openstack.filters.AuthenticateRequest;
 import org.jclouds.openstack.swift.SwiftFallbacks.TrueOn404FalseOn409;
 import org.jclouds.openstack.swift.binders.BindIterableToHeadersWithContainerDeleteMetadataPrefix;
 import org.jclouds.openstack.swift.binders.BindMapToHeadersWithContainerMetadataPrefix;
@@ -60,12 +59,10 @@ import org.jclouds.openstack.swift.options.CreateContainerOptions;
 import org.jclouds.openstack.swift.options.ListContainerOptions;
 import org.jclouds.openstack.swift.reference.SwiftHeaders;
 import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.QueryParams;
-import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 
 import com.google.common.annotations.Beta;
@@ -79,8 +76,6 @@ import com.google.inject.Provides;
  * @see <a href="http://www.rackspacecloud.com/cf-devguide-20090812.pdf" />
  * @author Adrian Cole
  */
-@RequestFilters(AuthenticateRequest.class)
-@Endpoint(Storage.class)
 public interface CommonSwiftAsyncClient {
    @Provides
    SwiftObject newSwiftObject();

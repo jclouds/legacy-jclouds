@@ -51,10 +51,10 @@ public abstract class BaseToPagedIterable<T, I extends BaseToPagedIterable<T, I>
 
       Optional<Object> project = tryFind(request.getCaller().get().getArgs(), instanceOf(String.class));
 
-      Optional<Object> listOptions = tryFind(request.getArgs(), instanceOf(ListOptions.class));
+      Optional<Object> listOptions = tryFind(request.getInvocation().getArgs(), instanceOf(ListOptions.class));
 
       assert project.isPresent() : String.format("programming error, method %s should have a string param for the "
-            + "project", request.getCaller().get().getInvoker());
+            + "project", request.getCaller().get().getInvokable());
 
       return PagedIterables.advance(
             input,

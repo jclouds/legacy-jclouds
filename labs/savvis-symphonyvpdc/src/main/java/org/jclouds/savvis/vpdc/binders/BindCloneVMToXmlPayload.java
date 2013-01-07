@@ -20,7 +20,6 @@ package org.jclouds.savvis.vpdc.binders;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 
 import java.net.URI;
 import java.util.Map;
@@ -53,7 +52,7 @@ public class BindCloneVMToXmlPayload extends BindToStringPayload implements MapB
    }
 
    protected URI findVAppURIInArgsOrNull(GeneratedHttpRequest gRequest) {
-      for (Object arg : gRequest.getArgs()) {
+      for (Object arg : gRequest.getInvocation().getArgs()) {
          if (arg instanceof URI) {
             return (URI) arg;
          } else if (arg instanceof FirewallRule[]) {
@@ -69,8 +68,6 @@ public class BindCloneVMToXmlPayload extends BindToStringPayload implements MapB
       checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest,
             "this binder is only valid for GeneratedHttpRequests!");
       GeneratedHttpRequest gRequest = (GeneratedHttpRequest) request;
-      checkState(gRequest.getArgs() != null, "args should be initialized at this point");
-
       request = super.bindToRequest(request,
             generateXml(findVAppURIInArgsOrNull(gRequest), (String) postParams.get("name"), (String) postParams.get("networkTierName")));
       request.getPayload().getContentMetadata().setContentType(MediaType.APPLICATION_XML);

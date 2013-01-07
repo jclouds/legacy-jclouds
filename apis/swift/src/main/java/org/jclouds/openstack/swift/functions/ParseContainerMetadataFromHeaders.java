@@ -45,7 +45,7 @@ public class ParseContainerMetadataFromHeaders implements Function<HttpResponse,
    private GeneratedHttpRequest request;
 
    public ContainerMetadata apply(HttpResponse from) {
-      return ContainerMetadata.builder().name(request.getArgs().get(0).toString())
+      return ContainerMetadata.builder().name(request.getInvocation().getArgs().get(0).toString())
             .readACL(from.getFirstHeaderOrNull(SwiftHeaders.CONTAINER_READ))
             .bytes(Long.valueOf(from.getFirstHeaderOrNull(SwiftHeaders.CONTAINER_BYTES_USED)))
             .count(Long.valueOf(from.getFirstHeaderOrNull(SwiftHeaders.CONTAINER_OBJECT_COUNT)))
