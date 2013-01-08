@@ -1338,33 +1338,6 @@
             <outputDirectory>providers/skalicloud-sdg-my</outputDirectory>            
         </fileSet>
         
-        <!-- providers: slicehost -->
-        <fileSet>
-            <directory>providers/slicehost/target</directory>
-            <includes>
-                <include>slicehost-${project.version}-jar-with-dependencies.jar</include>
-            </includes>
-            <outputDirectory>providers/slicehost/lib</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>providers/slicehost/target</directory>
-            <includes>
-                <include>slicehost-${project.version}-sources.jar</include>
-            </includes>
-            <outputDirectory>providers/slicehost/src</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>providers/slicehost/target/apidocs</directory>
-            <outputDirectory>providers/slicehost/docs</outputDirectory>            
-        </fileSet>   
-        <fileSet>
-            <directory>providers/slicehost</directory>
-            <includes>
-                <include>README.txt</include>
-            </includes>
-            <outputDirectory>providers/slicehost</outputDirectory>            
-        </fileSet>     
-        
         <!-- providers: synaptic-storage -->
         <fileSet>
             <directory>providers/synaptic-storage/target</directory>
